@@ -3075,7 +3075,6 @@ abstract class CommonObject
 				if (get_class($this) == 'Fournisseur') {
 					$this->cond_reglement_supplier_id = $id;
 				}
-				$this->cond_reglement = $id; // for compatibility
 				$this->deposit_percent = $deposit_percent;
 				return 1;
 			} else {
@@ -5103,7 +5102,7 @@ abstract class CommonObject
 	 */
 	public function getTotalDiscount()
 	{
-		if (!empty($this->table_element_line)) {
+		if (!empty($this->table_element_line) && ($this->table_element_line != 'expeditiondet')) {
 			$total_discount = 0.00;
 
 			$sql = "SELECT subprice as pu_ht, qty, remise_percent, total_ht";

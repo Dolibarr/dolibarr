@@ -116,6 +116,13 @@ foreach ($modules as $const => $desc) {
 	}
 }
 
+if (GETPOST('action') == 'enable_specialchar') {
+	dolibarr_set_const($db, "FCKEDITOR_ENABLE_SPECIALCHAR", "1", 'chaine', 0, '', $conf->entity);
+}
+if (GETPOST('action') == 'disable_specialchar') {
+	dolibarr_del_const($db, "FCKEDITOR_ENABLE_SPECIALCHAR", $conf->entity);
+}
+
 if (GETPOST('save', 'alpha')) {
 	$error = 0;
 
@@ -213,7 +220,7 @@ if (empty($conf->use_javascript_ajax)) {
 	print '<td class="center"></td>';
 	print "</tr>\n";
 
-	$constante = 'FCKEDITOR_ENANLE_SPECIALCHAR';
+	$constante = 'FCKEDITOR_ENABLE_SPECIALCHAR';
 	print '<!-- constant = '.$constante.' -->'."\n";
 	print '<tr class="oddeven">';
 	print '<td>';
@@ -222,9 +229,9 @@ if (empty($conf->use_javascript_ajax)) {
 	print '<td class="center width100">';
 	$value = getDolGlobalInt($constante, 0);
 	if ($value == 0) {
-		print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=enable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+		print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=enable_specialchar&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 	} elseif ($value == 1) {
-		print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=disable_'.strtolower($const).'&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
+		print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=disable_specialchar&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 	}
 
 	print "</td>";

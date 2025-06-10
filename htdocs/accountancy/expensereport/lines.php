@@ -25,8 +25,8 @@
  * \ingroup 	Accountancy (Double entries)
  * \brief 		Page of detail of the lines of ventilation of expense reports
  */
-require '../../main.inc.php';
 
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
@@ -123,6 +123,10 @@ if (getDolGlobalString('ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE')) {
 }
 // @phpstan-ignore-next-line
 $arrayfields = dol_sort_array($arrayfields, 'position');
+
+$object = null;
+$action = '';
+
 
 /*
  * Actions
@@ -523,8 +527,11 @@ if ($result) {
 	$expensereportstatic = new ExpenseReport($db);
 	$accountingaccountstatic = new AccountingAccount($db);
 	$userstatic = new User($db);
-	$totalarray = array();
-	$totalarray['nbfield'] = 0;
+
+	if (min($num_lines, $limit)) {
+		$totalarray = array();
+		$totalarray['nbfield'] = 0;
+	}
 
 	$i = 0;
 	while ($i < min($num_lines, $limit)) {
@@ -564,34 +571,46 @@ if ($result) {
 		// Line id
 		if (!empty($arrayfields['erd.rowid']['checked'])) {
 			print '<td>'.$objp->rowid.'</td>';
-			$totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Login
 		if (!empty($arrayfields['u.login']['checked'])) {
 			print '<td class="nowraponall">';
 			print $userstatic->getNomUrl(-1, '', 0, 0, 24, 1, 'login', '', 1);
 			print '</td>';
-			$totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Ref Expense report
 		if (!empty($arrayfields['er.ref']['checked'])) {
 			print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
-			$totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Date validation
 		if (!empty($arrayfields['er.date_valid']['checked'])) {
 			print '<td class="center">'.dol_print_date($db->jdate($objp->date_valid), 'day').'</td>';
-			$totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Date
 		if (!empty($arrayfields['erd.date']['checked'])) {
 			print '<td class="center">'.dol_print_date($db->jdate($objp->date), 'day').'</td>';
-			$totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Fees label
 		if (!empty($arrayfields['f.label']['checked'])) {
 			print '<td class="tdoverflow">'.($langs->trans($objp->type_fees_code) == $objp->type_fees_code ? $objp->type_fees_label : $langs->trans(($objp->type_fees_code))).'</td>';
-			$totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Fees description -- Can be null
 		if (!empty($arrayfields['erd.comments']['checked'])) {
@@ -600,17 +619,23 @@ if ($result) {
 			$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION', 32);
 			print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->comments);
 			print '</td>';
-			$totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Amount without taxes
 		if (!empty($arrayfields['erd.total_ht']['checked'])) {
 			print '<td class="right nowraponall amount">'.price($objp->total_ht).'</td>';
-			$totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Vat rate
 		if (!empty($arrayfields['erd.tva_tx']['checked'])) {
 			print '<td class="center">'.vatrate($objp->tva_tx.($objp->vat_src_code ? ' ('.$objp->vat_src_code.')' : '')).'</td>';
-			$totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Accounting account affected
 		if (!empty($arrayfields['aa.account_number']['checked'])) {
@@ -620,7 +645,9 @@ if ($result) {
 			print '</a> ';
 			print $accountingaccountstatic->getNomUrl(0, 1, 1, '', 1);
 			print '</td>';
-			$totalarray['nbfield']++;
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
 		// Fields from hook
 		$parameters = array('arrayfields' => $arrayfields, 'obj' => $objp, 'i' => $i, 'totalarray' => &$totalarray);
@@ -640,6 +667,7 @@ if ($result) {
 		print "</tr>";
 		$i++;
 	}
+
 	if ($num_lines == 0) {
 		print '<tr><td colspan="'.$totalarray['nbfield'].'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}

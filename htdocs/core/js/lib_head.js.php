@@ -1029,8 +1029,8 @@ function newpopup(url, title) {
 }
 
 /**
- * Function show document preview. It uses the "dialog" function.
- * The a tag around the img must have the src='', class='documentpreview', mime='image/xxx', target='_blank' from getAdvancedPreviewUrl().
+ * Function to show a document preview popup. It uses the "dialog" function.
+ * The "a" tag around the "img" must have the src='', class='documentpreview', mime='image/xxx', target='_blank' from getAdvancedPreviewUrl().
  *
  * @param 	file 		Url
  * @param 	type 		Mime file type ("image/jpeg", "application/pdf", "text/html")
@@ -1075,7 +1075,7 @@ function document_preview(file, type, title)
 			console.log("object_height="+object_height+" window height="+height);
 			if(object_height < height){
 				console.log("Object height is small, we set height of popup according to image height.");
-				height = object_height + 80
+				height = object_height + 100
 			}
 			else
 			{
@@ -1104,6 +1104,7 @@ function document_preview(file, type, title)
 				};
 		}
 
+		$("#dialogforpopup").addClass("center");
 		$("#dialogforpopup").html(newElem);
 
 		$("#dialogforpopup").dialog({

@@ -99,6 +99,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		$texte .= '<table class="nobordernopadding" width="100%">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("ThirdParty"), $langs->transnoentities("ThirdParty"));
+		$tooltip .= $langs->trans("GenericMaskCodes1");
 		//$tooltip.=$langs->trans("GenericMaskCodes2");	Not required for third party numbering
 		$tooltip .= $langs->trans("GenericMaskCodes2b").'<br>';
 		$tooltip .= '<br>';

@@ -159,38 +159,38 @@ $search_eyear	= GETPOSTINT('search_eyear');
 $search_date_start_startmonth = GETPOSTINT('search_date_start_startmonth');
 $search_date_start_startyear = GETPOSTINT('search_date_start_startyear');
 $search_date_start_startday = GETPOSTINT('search_date_start_startday');
-$search_date_start_start = dol_mktime(0, 0, 0, $search_date_start_startmonth, $search_date_start_startday, $search_date_start_startyear);	// Use tzserver
+$search_date_start_start = GETPOSTDATE('search_date_start_start');	// Use tzserver
 $search_date_start_endmonth = GETPOSTINT('search_date_start_endmonth');
 $search_date_start_endyear = GETPOSTINT('search_date_start_endyear');
 $search_date_start_endday = GETPOSTINT('search_date_start_endday');
-$search_date_start_end = dol_mktime(23, 59, 59, $search_date_start_endmonth, $search_date_start_endday, $search_date_start_endyear);	// Use tzserver
+$search_date_start_end = GETPOSTDATE('search_date_start_end', 'end');	// Use tzserver
 
 $search_date_end_startmonth = GETPOSTINT('search_date_end_startmonth');
 $search_date_end_startyear = GETPOSTINT('search_date_end_startyear');
 $search_date_end_startday = GETPOSTINT('search_date_end_startday');
-$search_date_end_start = dol_mktime(0, 0, 0, $search_date_end_startmonth, $search_date_end_startday, $search_date_end_startyear);	// Use tzserver
+$search_date_end_start = GETPOSTDATE('search_date_end_start');	// Use tzserver
 $search_date_end_endmonth = GETPOSTINT('search_date_end_endmonth');
 $search_date_end_endyear = GETPOSTINT('search_date_end_endyear');
 $search_date_end_endday = GETPOSTINT('search_date_end_endday');
-$search_date_end_end = dol_mktime(23, 59, 59, $search_date_end_endmonth, $search_date_end_endday, $search_date_end_endyear);	// Use tzserver
+$search_date_end_end = GETPOSTDATE('search_date_end_end', 'end');	;	// Use tzserver
 
 $search_date_creation_startmonth = GETPOSTINT('search_date_creation_startmonth');
 $search_date_creation_startyear = GETPOSTINT('search_date_creation_startyear');
 $search_date_creation_startday = GETPOSTINT('search_date_creation_startday');
-$search_date_creation_start = dol_mktime(0, 0, 0, $search_date_creation_startmonth, $search_date_creation_startday, $search_date_creation_startyear);	// Use tzserver
+$search_date_creation_start = GETPOSTDATE('search_date_creation_start');	// Use tzserver
 $search_date_creation_endmonth = GETPOSTINT('search_date_creation_endmonth');
 $search_date_creation_endyear = GETPOSTINT('search_date_creation_endyear');
 $search_date_creation_endday = GETPOSTINT('search_date_creation_endday');
-$search_date_creation_end = dol_mktime(23, 59, 59, $search_date_creation_endmonth, $search_date_creation_endday, $search_date_creation_endyear);	// Use tzserver
+$search_date_creation_end = GETPOSTDATE('search_date_creation_end', 'end');	// Use tzserver
 
 $search_date_modif_startmonth = GETPOSTINT('search_date_modif_startmonth');
 $search_date_modif_startyear = GETPOSTINT('search_date_modif_startyear');
 $search_date_modif_startday = GETPOSTINT('search_date_modif_startday');
-$search_date_modif_start = dol_mktime(0, 0, 0, $search_date_modif_startmonth, $search_date_modif_startday, $search_date_modif_startyear);	// Use tzserver
+$search_date_modif_start = GETPOSTDATE('search_date_modif_start');	// Use tzserver
 $search_date_modif_endmonth = GETPOSTINT('search_date_modif_endmonth');
 $search_date_modif_endyear = GETPOSTINT('search_date_modif_endyear');
 $search_date_modif_endday = GETPOSTINT('search_date_modif_endday');
-$search_date_modif_end = dol_mktime(23, 59, 59, $search_date_modif_endmonth, $search_date_modif_endday, $search_date_modif_endyear);	// Use tzserver
+$search_date_modif_end = GETPOSTDATE('search_date_modif_end', 'end');	// Use tzserver
 
 $search_category_array = array();
 
@@ -208,18 +208,18 @@ $search_option = GETPOST('search_option', 'alpha');
 if ($search_option == 'late') {
 	$search_status = '1';
 }
-// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+// Initialize technical objects
 $object = new Project($db);
 $hookmanager->initHooks(array('projectlist'));
 $extrafields = new ExtraFields($db);
 
-// fetch optionals attributes and labels
+// Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
-// List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
+// List of fields to search into when doing a "search in all"
 foreach ($object->fields as $key => $val) {
 	if (empty($val['searchall'])) {
 		continue;
@@ -239,12 +239,13 @@ $fieldstosearchall['s.name_alias'] = "AliasNameShort";
 $fieldstosearchall['s.code_client'] = "CustomerCode";
 
 // Definition of array of fields for columns
+$tableprefix = 'p';
 $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval((string) $val['visible'], 1, 1, '1');
-		$arrayfields['p.'.$key] = array(
+		$visible = (int) dol_eval((string) $val['visible'], 1);
+		$arrayfields[$tableprefix.'.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? '0' : '1'),
 			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
@@ -304,7 +305,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $groupbyvalues = array();
 $groupofcollpasedvalues = array();
 $groupbyold = null;
-if ($mode == 'kanban' && $groupby) {
+if ($mode == 'kanbangroupby' && $groupby) {
 	$groupbyfield = preg_replace('/[a-z]\./', '', $groupby);
 	if (!empty($object->fields[$groupbyfield]['alias'])) {
 		$groupbyfield = $object->fields[$groupbyfield]['alias'];
@@ -508,14 +509,13 @@ unset($_SESSION['pageforbacktolist']['project']);
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
-
-$now = dol_now();
-
 $companystatic = new Societe($db);
 $taskstatic = new Task($db);
 $formother = new FormOther($db);
 $formproject = new FormProjets($db);
 $userstatic = new User($db);
+
+$now = dol_now();
 
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 $title = $langs->trans("LeadsOrProjects");
@@ -562,7 +562,10 @@ if (count($listofprojectcontacttypeexternal) == 0) {
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
-$sql = "SELECT p.rowid as id, p.ref, p.title, p.fk_statut as status, p.fk_opp_status, p.public, p.fk_user_creat,";
+// Build and execute select
+// --------------------------------------------------------------------
+$sql = "SELECT";
+$sql .= " p.rowid as id, p.ref, p.title, p.fk_statut as status, p.fk_opp_status, p.public, p.fk_user_creat,";
 $sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount * p.opp_percent / 100) as opp_weighted_amount, p.tms as date_modification, p.budget_amount,";
 $sql .= " p.usage_opportunity, p.usage_task, p.usage_bill_time, p.usage_organize_event,";
 $sql .= " p.email_msgid, p.import_key,";
@@ -574,20 +577,20 @@ $sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as u
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
+		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : "");
 	}
 }
 // Add fields from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 
 $sqlfields = $sql; // $sql fields to remove for count total
 
-$sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as p";
+$sql .= " FROM ".$db->prefix().$object->table_element." as p";
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (p.rowid = ef.fk_object)";
+	$sql .= " LEFT JOIN ".$db->prefix().$object->table_element."_extrafields as ef on (p.rowid = ef.fk_object)";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on country.rowid = s.fk_pays";
@@ -596,8 +599,9 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON p.fk_user_creat = u.rowid';
 // We'll need this table joined to the select in order to filter by sale
 // No check is done on company permission because readability is managed by public status of project and assignment.
 //if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
-
-$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
 if ($search_entity > 0) {
@@ -706,9 +710,9 @@ if ($search_public != '') {
 // Search on sale representative
 if ($search_sale && $search_sale != '-1') {
 	if ($search_sale == -2) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
+		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".$db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc)";
 	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".$db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
 	}
 }
 if ($search_project_user > 0) {
@@ -855,7 +859,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -867,7 +871,6 @@ $sql .= $db->order($sortfield, $sortorder);
 if ($limit) {
 	$sql .= $db->plimit($limit + 1, $offset);
 }
-//print $sql;
 
 $resql = $db->query($sql);
 if (!$resql) {
@@ -878,7 +881,7 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 // Direct jump if only one record found
-if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
+if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	header("Location: ".DOL_URL_ROOT.'/projet/card.php?id='.$obj->id);
 	exit;
@@ -888,7 +891,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-project page-list');
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-project page-list bodyforlist');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -1156,8 +1159,11 @@ if ($search_usage_event_organization == 1) {
 }
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+if ($contextpage == 'lead') {
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanbanGroupBy'), '', 'fa fa-grip-vertical imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanbangroupby&groupby=p.fk_opp_status'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'kanbangroupby' ? 2 : 1), array('morecss' => 'reposition'));
+}
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewProject'), '', 'fa fa-plus-circle', $url, '', $user->hasRight('projet', 'creer'));
 
@@ -1263,7 +1269,7 @@ if (!empty($moreforfilter)) {
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
-$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
+$selectedfields = (($mode != 'kanban' && $mode != 'kanbangroupby') ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 
@@ -1664,7 +1670,6 @@ while ($i < $imaxinloop) {
 	$object->date_creation = $db->jdate($obj->date_creation);
 	$object->date_start = $db->jdate($obj->date_start);
 	$object->date_end = $db->jdate($obj->date_end);
-	$object->statut = $obj->status; // deprecated
 	$object->status = $obj->status;
 	$object->public = $obj->public;
 	$object->opp_percent = $obj->opp_percent;
@@ -1721,7 +1726,7 @@ while ($i < $imaxinloop) {
 		}
 	}
 
-	if ($mode == 'kanban') {
+	if ($mode == 'kanban' || $mode == 'kanbangroupby') {
 		if ($i == 0) {
 			print '<tr class="trkanban'.(empty($groupby) ? '' : ' trkanbangroupby').'"><td colspan="'.$savnbfield.'">';
 		}
@@ -1729,6 +1734,9 @@ while ($i < $imaxinloop) {
 		$groupbyvalue = 'unset';
 		$groupbyfield = 'unsetfield';
 		if (!empty($groupby)) {
+			$groupbyfield = preg_replace('/^[a-z]+\./', '', $groupby);
+			//var_dump("groupby=$groupby groupbyvalue=$groupbyvalue groupbyfield=$groupbyfield");
+
 			if (is_null($groupbyold)) {
 				print '<div class="box-flex-container-columns kanban">';	// Start div for all kanban columns
 			}
@@ -1738,6 +1746,7 @@ while ($i < $imaxinloop) {
 			} else {
 				$groupbyvalue = $obj->$groupbyfield;
 			}
+
 			if ($groupbyold !== $groupbyvalue) {
 				if (!is_null($groupbyold)) {
 					print '</div>';	// We need a new kanban column - end box-flex-container

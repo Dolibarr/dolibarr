@@ -76,6 +76,7 @@ $action    = GETPOST('action', 'aZ09');
 $cancel    = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+$contextpage = GETPOST('contextpage', 'aZ');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma') ? GETPOST('sortfield', 'aZ09comma') : "a.datep";
@@ -856,7 +857,7 @@ if ($action == 'create' || $action == 'presend') {
 				$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 				// Ref
-				print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';
+				print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="3">';
 				// Define a complementary filter for search of next/prev ref.
 				if (!$user->hasRight('projet', 'all', 'lire')) {
 					$objectsListId = $projectstat->getProjectsAuthorizedForUser($user, $mine, 0);
@@ -1058,7 +1059,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '<table class="border tableforfield centpercent">';
 
 		// Track ID
-		print '<tr><td class="titlefield">'.$langs->trans("TicketTrackId").'</td><td>';
+		print '<tr><td class="titlefieldmiddle">'.$langs->trans("TicketTrackId").'</td><td>';
 		if (!empty($object->track_id)) {
 			if (empty($object->ref)) {
 				$object->ref = (string) $object->id;
@@ -1083,7 +1084,7 @@ if ($action == 'create' || $action == 'presend') {
 		// Creation date
 		print '<tr><td>'.$langs->trans("DateCreation").'</td><td>';
 		print dol_print_date($object->datec, 'dayhour', 'tzuser');
-		print '<span class="opacitymedium"> - '.$langs->trans("TimeElapsedSince").': <i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->datec, 60)).'</i></span>';
+		print '<span class="opacitymedium"><span class="small"> - '.$langs->trans("TimeElapsedSince").': <b><i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->datec, 60)).'</i></b></span></span>';
 		print '</td></tr>';
 
 		// Origin
@@ -1107,8 +1108,10 @@ if ($action == 'create' || $action == 'presend') {
 		print '<tr><td>'.$langs->trans("TicketReadOn").'</td><td>';
 		if (!empty($object->date_read)) {
 			print dol_print_date($object->date_read, 'dayhour', 'tzuser');
-			print '<span class="opacitymedium"> - '.$langs->trans("TicketTimeElapsedBeforeSince").': <i>'.convertSecondToTime(roundUpToNextMultiple($object->date_read - $object->datec, 60)).'</i>';
-			print ' / <i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->date_read, 60)).'</i></span>';
+			print '<span class="opacitymedium"><span class="small"> - '.$langs->trans("TimeElapsedSince").': ';
+			//print '<b><i>'.convertSecondToTime(roundUpToNextMultiple($object->date_read - $object->datec, 60)).'</i></b>';
+			//print ' / ';
+			print '<b><i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->date_read, 60)).'</i></b></span></span>';
 		}
 		print '</td></tr>';
 
@@ -1570,7 +1573,7 @@ if ($action == 'create' || $action == 'presend') {
 			$formticket->param['models'] = $modelmail;
 			$formticket->param['models_id'] = GETPOSTINT('modelmailselected');
 			//$formticket->param['socid']=$object->fk_soc;
-			$formticket->param['returnurl'] = $_SERVER["PHP_SELF"].'?track_id='.$object->track_id;
+			$formticket->param['returnurl'] = $_SERVER["PHP_SELF"].'?track_id='.urldecode($object->track_id);
 
 			$formticket->withsubstit = 1;
 			$formticket->substit = $substitutionarray;

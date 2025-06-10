@@ -59,7 +59,7 @@ llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admi
 
 print load_fiche_titre($langs->trans("SetupArea"), '', 'tools');
 
-
+// Show
 if (getDolGlobalString('MAIN_MOTD_SETUPPAGE')) {
 	$conf->global->MAIN_MOTD_SETUPPAGE = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', getDolGlobalString('MAIN_MOTD_SETUPPAGE'));
 	if (getDolGlobalString('MAIN_MOTD_SETUPPAGE')) {
@@ -75,8 +75,8 @@ if (getDolGlobalString('MAIN_MOTD_SETUPPAGE')) {
 		}
 
 		print "\n<!-- Start of welcome text for setup page -->\n";
-		print '<table width="100%" class="notopnoleftnoright"><tr><td>';
-		print dol_htmlentitiesbr($conf->global->MAIN_MOTD_SETUPPAGE);
+		print '<table class="centpercent notopnoleftnoright"><tr><td>';
+		print dol_htmlentitiesbr(getDolGlobalString('MAIN_MOTD_SETUPPAGE'));
 		print '</td></tr></table><br>';
 		print "\n<!-- End of welcome text for setup page -->\n";
 	}
@@ -89,9 +89,22 @@ print $langs->trans("SetupDescription2", $langs->transnoentities("MenuCompanySet
 print "<br><br>";
 print '</span>';
 
+
+// Show info depending on country if defined
+$constkey = 'MAIN_INFO_SETUP_FOR_COUNTRY_'.$mysoc->country_code;
+//$conf->global->$constkey = 'rrr';
+if (getDolGlobalString($constkey)) {
+	$langs->load("errors");
+	$warnpicto = img_warning('', 'style="padding-right: 6px;"');
+	print '<div class="warning">'.$warnpicto.$langs->trans(getDolGlobalString($constkey)).'</div>';
+}
+
+
 print '<br>';
 
+
 // Show info setup company
+
 if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY') || getDolGlobalString('MAIN_INFO_SOCIETE_SETUP_TODO_WARNING')) {
 	$setupcompanynotcomplete = 1;
 }
@@ -112,6 +125,9 @@ print '</section>';
 
 print '<br>';
 print '<br>';
+
+
+// Show info setup modules
 
 print '<section class="setupsection setupmodules cursorpointer">';
 

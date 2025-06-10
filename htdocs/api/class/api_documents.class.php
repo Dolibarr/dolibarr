@@ -1,11 +1,12 @@
 <?php
 
-/* Copyright (C) 2016   Xebax Christy           <xebax@wanadoo.fr>
- * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2016   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2023   Romain Neil             <contact@romain-neil.fr>
+/* Copyright (C) 2016   	Xebax Christy           <xebax@wanadoo.fr>
+ * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2016   	Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2023   	Romain Neil             <contact@romain-neil.fr>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		William Mead			<william@m34d.com>
  *
  * This program is free software you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -520,7 +521,7 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'expensereport') {
 			require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
-			if (!DolibarrApiAccess::$user->hasRight('expensereport', 'read') && !DolibarrApiAccess::$user->hasRight('expensereport', 'read')) {
+			if (!DolibarrApiAccess::$user->hasRight('expensereport', 'read')) {
 				throw new RestException(403);
 			}
 

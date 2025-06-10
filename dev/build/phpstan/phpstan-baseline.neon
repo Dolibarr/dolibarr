@@ -6913,12 +6913,6 @@ parameters:
 			path: ../../../htdocs/core/ajax/editinline.php
 
 		-
-			message: '#^Variable \$upload_dir in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/core/ajax/flowjs-server.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
@@ -8543,18 +8537,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''formai''\|''formaiforlines''\|''formaiwithlines'' and ''formforlines'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/class/html.formai.class.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''formai''\|''formaiforlines''\|''formaiwithlines'' and ''formwithlines'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/class/html.formai.class.php
 
 		-
 			message: '#^Variable \$select_encoder might not be defined\.$#'

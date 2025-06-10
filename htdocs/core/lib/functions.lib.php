@@ -1216,7 +1216,7 @@ function GETPOSTFLOAT($paramname, $rounding = '')
  * 										or 'end' means '23:59:59'
  * 										or '' means '00:00:00' (default)
  * @param 	int|string 	$gm 			Passed to dol_mktime. In most cases, when used with 'getpost' or 'getpostend', it should be 'tzuserrel'. Use 'auto' if you need dates related to 'tzserver' (like in accountancy).
- * @param	string		$saverestore	Use a string context to save retrieved date so it will be used on next retrieve using same context if not defined.
+ * @param	string		$saverestore	Use a string family context to save retrieved date so it will be used on the next retrieval for the same family context (if value not already defined in parameters).
  * @return 	int|string  				Date as a timestamp, '' or false if error
  *
  * @see dol_mktime()
@@ -13562,6 +13562,10 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 	// Actually this conf is used in css too for external module compatibility and smooth transition to this function
 	if (getDolGlobalString('MAIN_BUTTON_HIDE_UNAUTHORIZED') && (!$user->admin) && $status <= 0) {
 		return '';
+	}
+	// Fix old picto fa-th-list to use fa-grid-vertical instead
+	if ($iconClass == 'fa fa-th-list imgforviewmode') {
+		$iconClass = ' fa fa-grip-horizontal imgforviewmode';
 	}
 
 	$class = 'btnTitle';

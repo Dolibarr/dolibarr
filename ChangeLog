@@ -13,6 +13,7 @@ NEW: shipment kits with dispatcher v2 (#33750)
 NEW: ticket : display files linked to actioncomm (#32325)
 NEW: Support of monthly or weekly recurring events
 NEW: AI feature to autofill extrafields
+NEW: Introduce the view "Kanban Grouped By" opportunity status in projects
 NEW: #22848
 NEW: #32706 - Treasury accountancy (#33701)
 NEW: #33506 Add a constant to apply a ratio to resize images in ODT templates (#33543)

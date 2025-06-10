@@ -77,7 +77,6 @@ $projectstatic = new Project($db);
 $diroutputmassaction = $conf->eventorganization->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array($contextpage, 'globalcard')); // Note that conf->hooks_modules contains array
 
-
 $confOrBooth = null;
 if ($conf_or_booth_id > 0) {
 	$confOrBooth = new ConferenceOrBooth($db);	// Actioncomm
@@ -543,14 +542,14 @@ if ($action == 'create' && $confOrBooth === null) {
 }
 
 // Part to edit attendee
-if (($id || $ref) && $action == 'edit' && $confOrBooth !== null) {
+if (($id || $ref) && $action == 'edit') {
 	print load_fiche_titre($langs->trans("ConferenceOrBoothAttendee"), '', 'object_'.$object->picto);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
-	if ($confOrBooth->id > 0) {
+	if (is_object($confOrBooth) && $confOrBooth->id > 0) {
 		print '<input type="hidden" name="conforboothid" value="'.$confOrBooth->id.'">';
 	}
 	if ($object->fk_actioncomm > 0) {
@@ -586,7 +585,7 @@ if (($id || $ref) && $action == 'edit' && $confOrBooth !== null) {
 }
 
 // Part to show attendee
-if ($confOrBooth !== null && $object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
+if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$object->fetch_optionals();
 
 	$moreparam = '';
@@ -676,9 +675,9 @@ if ($confOrBooth !== null && $object->id > 0 && (empty($action) || ($action != '
 		if (empty($reshook)) {
 			// Send
 			if (empty($user->socid)) {
-				print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.(!empty($confOrBooth->id) ? '&conforboothid='.$confOrBooth->id : '').(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : '').'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle');
+				print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.(is_object($confOrBooth) && !empty($confOrBooth->id) ? '&conforboothid='.$confOrBooth->id : '').(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : '').'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle');
 			}
-			print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.(!empty($confOrBooth->id) ? '&conforboothid='.$confOrBooth->id : '').(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : '').'&action=edit&token='.newToken(), '', $permissiontoadd);
+			print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?id='.$object->id.(is_object($confOrBooth) && !empty($confOrBooth->id) ? '&conforboothid='.$confOrBooth->id : '').(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : '').'&action=edit&token='.newToken(), '', $permissiontoadd);
 
 			// Clone
 			print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken().(!empty($projectstatic->id) ? '&fk_project='.$projectstatic->id : ''), '', $permissiontoadd);
