@@ -2064,4 +2064,3 @@ class FactureFournisseurRec extends CommonInvoice
 		}
 	}
 }
-
