@@ -608,7 +608,7 @@ class Users extends DolibarrApi
 			$usergroup->$field = $this->_checkValForAPI($field, $value, $usergroup);
 		}
 
-		if ($usergroup->create(DolibarrApiAccess::$user) < 0) {
+		if ($usergroup->create(1) < 0) {
 			throw new RestException(500, 'Error creating', array_merge(array($usergroup->error), $usergroup->errors));
 		}
 		return $usergroup->id;
