@@ -120,11 +120,11 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public $total_tva;
 	/**
-	 * @var float
+	 * @var float|null
 	 */
 	public $total_localtax1;
 	/**
-	 * @var float
+	 * @var float|null
 	 */
 	public $total_localtax2;
 	/**
@@ -132,7 +132,7 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public $total_ttc;
 	/**
-	 * @var float
+	 * @var float|null
 	 */
 	public $revenuestamp;
 

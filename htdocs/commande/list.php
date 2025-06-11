@@ -2240,6 +2240,8 @@ while ($i < $imaxinloop) {
 		break; // Should not happen
 	}
 
+	$typenArray = $formcompany->typent_array(1);
+
 	$notshippable = 0;
 	$warning = 0;
 	$text_info = '';
