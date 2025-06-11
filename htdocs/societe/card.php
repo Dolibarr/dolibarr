@@ -118,8 +118,8 @@ $cancel		= GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
-$confirm 	= GETPOST('confirm', 'alpha');
-$canvas		= GETPOST('canvas', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+$canvas = GETPOST('canvas', 'alpha');
 
 $dol_openinpopup = '';
 if (!empty($backtopagejsfields)) {
@@ -1821,7 +1821,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			// Local Taxes
-			//TODO: Place into a function to control showing by country or study better option
+			// TODO: Place into a function to control showing by country or study better option
 			if ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj == "1") {
 				print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td>';
 				print '<input id="localtax1assuj_value" name="localtax1assuj_value" type="checkbox" ' . (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1) ? 'checked="checked"' : '') . ' value="1">';
@@ -1971,8 +1971,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<td colspan="3" class="maxwidthonsmartphone">';
 			// TODO Use select_doluser in multiselect mode
 			$userlist = $form->select_dolusers($selected, '', 0, null, 0, '', '', '0', 0, 0, 'u.statut:=:1', 0, '', '', 0, 2);
-			// Note: If user has no right to "see all thirdparties", we force selection of sale representative to him, so after creation he can see the record.
-			$selected = (GETPOSTISARRAY('commercial') ? GETPOST('commercial', 'array:int') : (GETPOSTINT('commercial') > 0 ? array(GETPOSTINT('commercial')) : array($user->id)));
+			$selected = (GETPOSTISARRAY('commercial') ? GETPOST('commercial', 'array:int') : (GETPOSTINT('commercial') > 0 ? array(GETPOSTINT('commercial')) : []));
+			if (!$user->hasRight('societe', 'client', 'voir')) {
+				// Note: If user has no right to "see all thirdparties", we force selection of sale representative to him, so after creation he can see the record.
+				$selected = array_merge(array($user->id), $selected);
+			}
 			print img_picto('', 'user').$form->multiselectarray('commercial', $userlist, $selected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 			print '</td></tr>';
 
