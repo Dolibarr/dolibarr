@@ -6,8 +6,8 @@
  * Copyright (C) 2003       Jean-Louis Bergamo          <jlb@j1b.org>
  * Copyright (C) 2004-2015  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin               <regis.houssin@inodbox.com>
- * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,11 +90,11 @@ class CMailFile
 	/** @var ?int<1,1> When 1, there is at least one file */
 	public $atleastonefile;
 
-	/** @var string $msg Message to send */
+	/** @var string Message to send */
 	public $msg;
-	/** @var string $msg End of line sequence */
+	/** @var string End of line sequence */
 	public $eol;
-	/** @var string $msg End of line sequence (header ?) */
+	/** @var string End of line sequence (header ?) */
 	public $eol2;
 
 	/**
@@ -198,6 +198,7 @@ class CMailFile
 		'png'  => 'image/png',
 		'tif'  => 'image/tiff',
 		'tiff' => 'image/tiff',
+		'webp' => 'image/webp',
 	);
 
 
@@ -541,7 +542,7 @@ class CMailFile
 			$text_body = $this->write_body($msg);
 
 			// Add attachments to text_encoded
-			if (!empty($this->atleastonefile)) {
+			if (!empty($this->atleastonefile) && $filename_list !== null && $mimetype_list !== null && $mimefilename_list !== null) {
 				$files_encoded = $this->write_files($filename_list, $mimetype_list, $mimefilename_list, $cid_list);
 			}
 
@@ -650,7 +651,7 @@ class CMailFile
 				$smtps->setOptions($options);
 			}
 
-			$this->msgid = time().'.SMTPs-dolibarr-'.$this->trackid.'@'.$host;
+			$this->msgid = time().'.'.mt_rand(100, 999).'.SMTPs-dolibarr-'.$this->trackid.'@'.$host;
 
 			$this->smtps = $smtps;
 		} elseif ($this->sendmode == 'swiftmailer') {
@@ -673,7 +674,7 @@ class CMailFile
 			$headers = $this->message->getHeaders();
 
 			$headers->addTextHeader('X-Dolibarr-TRACKID', $this->trackid.'@'.$host);
-			$this->msgid = time().'.swiftmailer-dolibarr-'.$this->trackid.'@'.$host;
+			$this->msgid = time().'.'.mt_rand(100, 999).'.swiftmailer-dolibarr-'.$this->trackid.'@'.$host;
 			$headerID = $this->msgid;
 			$msgid = $headers->get('Message-ID');
 			if ($msgid instanceof Swift_Mime_Headers_IdentificationHeader) {
@@ -1216,7 +1217,7 @@ class CMailFile
 					$result = $this->smtps->sendMsg();
 
 					if (getDolGlobalString('MAIN_MAIL_DEBUG')) {
-						$this->dump_mail();
+						$this->dump_mail();	// Create file dolibarr_mail.log or dolibarr_mail.log.vXXX if option for archive is on
 					}
 
 					$smtperrorcode = 0;
@@ -1237,9 +1238,12 @@ class CMailFile
 							}
 							*/
 						}
+					} else {
+						dol_syslog("CMailFile::sendfile: mail SMTP sendMsg is success", LOG_DEBUG);
 					}
 
 					$result = $this->smtps->getErrors();	// applicative error code (not SMTP error code)
+
 					if (empty($this->error) && empty($result)) {
 						dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
 						$res = true;
@@ -1251,7 +1255,7 @@ class CMailFile
 						$res = false;
 
 						if (getDolGlobalString('MAIN_MAIL_DEBUG')) {
-							$this->save_dump_mail_in_err('Mail smtp error '.$smtperrorcode.' with topic '.$this->subject);
+							$this->save_dump_mail_in_err('Mail smtp error '.$smtperrorcode.' with topic '.$this->subject.' - '.$this->error);
 						}
 					}
 				}
@@ -1503,24 +1507,26 @@ class CMailFile
 			$outputfile = $dolibarr_main_data_root."/dolibarr_mail.log";
 			$fp = fopen($outputfile, "w");	// overwrite
 
-			if ($this->sendmode == 'mail') {
-				fwrite($fp, $this->headers);
-				fwrite($fp, $this->eol); // This eol is added by the mail function, so we add it in log
-				fwrite($fp, $this->message);
-			} elseif ($this->sendmode == 'smtps') {
-				fwrite($fp, $this->smtps->log); // this->smtps->log is filled only if MAIN_MAIL_DEBUG was set to on
-			} elseif ($this->sendmode == 'swiftmailer') {
-				fwrite($fp, "smtpheader=\n".$this->message->getHeaders()->toString()."\n");
-				fwrite($fp, $this->logger->dump()); // this->logger is filled only if MAIN_MAIL_DEBUG was set to on
-			}
+			if ($fp) {
+				if ($this->sendmode == 'mail') {
+					fwrite($fp, $this->headers);
+					fwrite($fp, $this->eol); // This eol is added by the mail function, so we add it in log
+					fwrite($fp, $this->message);
+				} elseif ($this->sendmode == 'smtps') {
+					fwrite($fp, $this->smtps->log); // this->smtps->log is filled only if MAIN_MAIL_DEBUG was set to on
+				} elseif ($this->sendmode == 'swiftmailer') {
+					fwrite($fp, "smtpheader=\n".$this->message->getHeaders()->toString()."\n");
+					fwrite($fp, $this->logger->dump()); // this->logger is filled only if MAIN_MAIL_DEBUG was set to on
+				}
 
-			fclose($fp);
-			dolChmod($outputfile);
+				fclose($fp);
+				dolChmod($outputfile);
 
-			// Move dolibarr_mail.log into a dolibarr_mail.log.v123456789
-			if (getDolGlobalInt('MAIN_MAIL_DEBUG_LOG_WITH_DATE')) {
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-				archiveOrBackupFile($outputfile, getDolGlobalInt('MAIN_MAIL_DEBUG_LOG_WITH_DATE'));
+				// Move dolibarr_mail.log into a dolibarr_mail.log.v123456789
+				if (getDolGlobalInt('MAIN_MAIL_DEBUG_LOG_WITH_DATE')) {
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+					archiveOrBackupFile($outputfile, getDolGlobalInt('MAIN_MAIL_DEBUG_LOG_WITH_DATE'));
+				}
 			}
 		}
 	}
@@ -1671,11 +1677,11 @@ class CMailFile
 
 		$trackid = $this->trackid;
 		if ($trackid) {
-			$this->msgid = time().'.phpmail-dolibarr-'.$trackid.'@'.$host;
+			$this->msgid = time().'.'.mt_rand(100, 999).'.phpmail-dolibarr-'.$trackid.'@'.$host;
 			$out .= 'Message-ID: <'.$this->msgid.">".$this->eol2; // Uppercase seems replaced by phpmail
 			$out .= 'X-Dolibarr-TRACKID: '.$trackid.'@'.$host.$this->eol2;
 		} else {
-			$this->msgid = time().'.phpmail@'.$host;
+			$this->msgid = time().'.'.mt_rand(100, 999).'.phpmail@'.$host;
 			$out .= 'Message-ID: <'.$this->msgid.">".$this->eol2;
 		}
 
@@ -1708,17 +1714,16 @@ class CMailFile
 	/**
 	 * Create header MIME (mode = 'mail')
 	 *
-	 * @param	string[]	$filename_list			Array of filenames
-	 * @param 	string[]	$mimefilename_list		Array of mime types
+	 * @param	?string[]	$filename_list			Array of filenames
+	 * @param 	?string[]	$mimefilename_list		Array of mime types
 	 * @return	string							mime headers
 	 */
 	public function write_mimeheaders($filename_list, $mimefilename_list)
 	{
 		// phpcs:enable
-		$mimedone = 0;
 		$out = "";
 
-		if (is_array($filename_list)) {
+		if (is_array($filename_list) && is_array($mimefilename_list)) {
 			$filename_list_size = count($filename_list);
 			for ($i = 0; $i < $filename_list_size; $i++) {
 				if ($filename_list[$i]) {

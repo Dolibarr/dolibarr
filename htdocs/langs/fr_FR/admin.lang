@@ -121,7 +121,7 @@ UserSetup=Configuration de la gestion des utilisateurs
 MultiCurrencySetup=Configuration du module Multi-devise
 MenuLimits=Limites et précision
 MenuIdParent=Identifiant du menu parent
-DetailMenuIdParent=Identifiant du menu parent (vide pour un menu du haut)
+DetailMenuIdParent=Identifiant du menu parent
 ParentID=Id du parent
 DetailPosition=Numéro d'ordre déterminant la position du menu
 AllMenus=Tous
@@ -220,7 +220,7 @@ ModulesDeployDesc=Si les permissions de votre système de fichier le permettent 
 ModulesMarketPlaces=Rechercher un module/application externe
 ModulesDevelopYourModule=Développer son propre module/application
 ModulesDevelopDesc=Vous pouvez également développer votre propre module ou trouver un partenaire pour en développer un pour vous.
-DOLISTOREdescriptionLong=Au lieu de basculer sur le site web <a href="https://www.dolistore.com"> www.dolistore.com </a>pour trouver un module externe, vous pouvez utiliser cet outil intégré qui fera la recherche sur la place de marché pour vous (peut être lent, besoin d'un accès Internet) ...
+DOLISTOREdescriptionLong=Au lieu de basculer sur le site web <a href="https://www.dolistore.com"> www.dolistore.com </a> pour trouver un module externe, vous pouvez utiliser cet outil intégré qui effectuera la recherche sur la place de marché ainsi que sur le dépôt dolibarr-community-modules pour vous (peut être lent, nécessite un accès Internet) ...
 FreeModule=Gratuit
 CompatibleUpTo=Compatible avec la version %s
 NotCompatible=Ce module n'est pas compatible avec votre version %s de Dolibarr (version min. %s - version max. %s).
@@ -234,7 +234,7 @@ Updated=Mise à jour effectuée
 AchatTelechargement=Acheter/télécharger
 GoModuleSetupArea=Pour déployer/installer un nouveau module, rendez vous dans la zone de configuration des modules : <a href="%s">%s</a>
 DoliStoreDesc=DoliStore, la place de marché officielle des modules et extensions complémentaires pour Dolibarr ERP/CRM
-CommunityModulesDesc=dolibarr-community-modules, This repository contains all community modules for Dolibarr ERP CRM.
+CommunityModulesDesc=Dolibarr community modules repository. This repository contains some modules for Dolibarr ERP CRM referenced on the community repository.
 DoliPartnersDesc=Liste de quelques sociétés qui peuvent fournir/développer des modules ou fonctions sur mesure. <br>Remarque: Dolibarr étant une application Open Source, <i>toute société</i> connaissant le langage PHP peut fournir du développement spécifique.
 WebSiteDesc=Sites fournisseurs à consulter pour trouver plus de modules (extensions)...
 DevelopYourModuleDesc=Quelques pistes pour développer votre propre module/application...
@@ -563,7 +563,7 @@ DAV_ALLOW_PUBLIC_DIRTooltip=Le répertoire public génrique WebDav est un réper
 DAV_ALLOW_ECM_DIR=Activer le répertoire privé de la GED (répertoire racine du module GED - identification requise)
 DAV_ALLOW_ECM_DIRTooltip=Répertoire racine où tous les fichiers sont téléchargés manuellement lors de l’utilisation du module GED. Comme pour la fonctionnalité via l'interface Web, vous aurez besoin d'un identifiant / mot de passe valide avec les autorisations accordées pour y accéder.
 ##### Modules #####
-Module0Name=Utilisateurs & Groupes
+Module0Name=Utilisateurs et Groupes
 Module0Desc=Gestion des utilisateurs / employés et groupes
 Module1Name=Tiers
 Module1Desc=Gestion des tiers (clients, prospects) et contacts
@@ -1811,7 +1811,7 @@ SendingsNumberingModules=Modèles de numérotation des expéditions
 SendingsAbility=Prise en charge des bons d'expédition pour les livraisons clients
 NoNeedForDeliveryReceipts=Dans le plupart des cas, la fiche expédition est utilisée en tant que bon d'expédition (liste des produits expédiés) et bon de livraison (signée par le client). Le bon de réception est un doublon de fonctionnalité et est rarement utilisé.
 FreeLegalTextOnShippings=Mention complémentaire sur les expéditions
-DontPrefillShipmentQty = Ne pas préremplir les quantités de lignes lors de la création de l'expédition
+DontPrefillShipmentQty = Ne pas pré-remplir les quantités des lignes à la création d'une expédition
 ##### Deliveries #####
 DeliveryOrderNumberingModules=Modèle de numérotation des bons de réception client
 DeliveryOrderModel=Modèle de bon de réception client
@@ -2630,3 +2630,6 @@ AvailableWithSomePDFTemplatesOnly=Fonctionnalité non prise en charge sur les an
 SelectAService=Select the kind of service to use
 SelectFeatureToTest=Select the feature to test
 AIModelForFeature=AI model for features (AI service %s)
+WebhookTargetTypeHelp=Bloquant: Si une erreur se produit, un message d'erreur est affiché et l'action est annulée<br>Non bloquant: Si une erreur se produit, le message d'erreur est seulement enregistré dans les logs Dolibarr et l'action est n'est pas annulée
+Blocking=Bloquant
+NoBlocking=Non bloquant

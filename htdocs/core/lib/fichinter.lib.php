@@ -232,7 +232,7 @@ function fichinter_rec_prepare_head($object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/fichinter/card-rec.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("CardFichinter");
+	$head[$h][1] = $langs->trans("InterventionCard");
 	$head[$h][2] = 'card';
 	$h++;
 

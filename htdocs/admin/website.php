@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -258,7 +258,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 		// Modifie valeur des champs
 		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldmodify)) {
 			$sql .= $tabrowid[$id]."=";
-			$sql .= "'".$db->escape($rowid)."', ";
+			$sql .= "'".$db->escape((string) $rowid)."', ";
 		}
 		$i = 0;
 		foreach ($listfieldmodify as $field) {
@@ -424,10 +424,12 @@ $head[$h][1] = $langs->trans("WebSites");
 $head[$h][2] = 'website';
 $h++;
 
+/* disable, no option for the moment
 $head[$h][0] = DOL_URL_ROOT."/admin/website_options.php";
 $head[$h][1] = $langs->trans("Options");
 $head[$h][2] = 'options';
 $h++;
+*/
 
 print dol_get_fiche_head($head, 'website', '', -1);
 

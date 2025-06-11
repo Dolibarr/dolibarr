@@ -28,17 +28,17 @@ global $langs;
 	<?php
 	//$jNotifyCSSUrl = $context->rootUrl.'includes/jquery/plugins/jnotify/jquery.jnotify.css';
 	$jNotifyCSSUrl = dol_buildpath('/includes/jquery/plugins/jnotify/jquery.jnotify.min.css', 2);
-	print '<link rel="stylesheet" href="'.$jNotifyCSSUrl.' ">';
+	print '<link rel="stylesheet" href="'.$jNotifyCSSUrl.' ">'."\n";
 
 	// JQuery
 	//$jQueryJSUrl = $context->rootUrl.'includes/jquery/js/jquery.js';
 	$jQueryJSUrl = dol_buildpath('/includes/jquery/js/jquery.js', 2);
-	print '<script src="'.$jQueryJSUrl.'"></script>';
+	print '<script src="'.$jQueryJSUrl.'"></script>'."\n";
 
 	// JNotify
 	//$jNotifyJSUrl = $context->rootUrl.'includes/jquery/plugins/jnotify/jquery.jnotify.js';
 	$jNotifyJSUrl = dol_buildpath('/includes/jquery/plugins/jnotify/jquery.jnotify.min.js', 2);
-	print '<script src="'.$jNotifyJSUrl.'"></script>';
+	print '<script src="'.$jNotifyJSUrl.'"></script>'."\n";
 	?>
 </head>
 <body class="login-page">

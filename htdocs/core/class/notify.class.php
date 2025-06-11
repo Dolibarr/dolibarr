@@ -78,7 +78,7 @@ class Notify
 	public $contact_id;
 
 	/**
-	 * @var string fk_user
+	 * @var int fk_user
 	 */
 	public $fk_user;
 

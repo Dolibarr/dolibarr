@@ -66,7 +66,7 @@ class AssetDepreciationOptions extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -107,7 +107,7 @@ class AssetDepreciationOptions extends CommonObject
 		),
 	);
 	/**
-	 * @var int
+	 * @var int		ID parent asset
 	 */
 	public $fk_asset;
 	/**
@@ -316,7 +316,7 @@ class AssetDepreciationOptions extends CommonObject
 		foreach ($this->deprecation_options_fields as $mode_key => $mode_info) {
 			if (!empty($mode_info['enabled_field'])) {
 				$info = explode(':', $mode_info['enabled_field']);
-				if ($deprecation_options[$info[0]][$info[1]] != $info[2]) {
+				if (!empty($this->deprecation_options[$info[0]][$info[1]]) && $deprecation_options[$info[0]][$info[1]] != $info[2]) {
 					unset($deprecation_options[$info[0]][$info[1]]);
 				}
 			}
@@ -502,7 +502,7 @@ class AssetDepreciationOptions extends CommonObject
 			if (!$error && !empty($this->deprecation_options[$mode_key])) {
 				if (!empty($mode_info['enabled_field'])) {
 					$info = explode(':', $mode_info['enabled_field']);
-					if ($this->deprecation_options[$info[0]][$info[1]] != $info[2]) {
+					if (!empty($this->deprecation_options[$info[0]][$info[1]]) && $this->deprecation_options[$info[0]][$info[1]] != $info[2]) {
 						continue;
 					}
 				}

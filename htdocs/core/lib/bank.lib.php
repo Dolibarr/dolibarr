@@ -133,13 +133,8 @@ function bank_prepare_head(Account $object)
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/compta/bank/annuel.php?account=".$object->id;
-	$head[$h][1] = $langs->trans("IOMonthlyReporting");
+	$head[$h][1] = $langs->trans("Reports");
 	$head[$h][2] = 'annual';
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT."/compta/bank/graph.php?account=".$object->id;
-	$head[$h][1] = $langs->trans("Graph");
-	$head[$h][2] = 'graph';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/compta/bank/treso.php?account=".$object->id;
@@ -159,6 +154,32 @@ function bank_prepare_head(Account $object)
 	$h++;*/
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank', 'remove');
+
+	return $head;
+}
+
+/**
+ * Prepare array with list of tabs for bank report
+ *
+ * @param   Account	$object		Object related to tabs
+ * @return  array<array{0:string,1:string,2:string}>	Array of tabs to show
+ */
+function bank_report_prepare_head(Account $object)
+{
+	global $db, $langs, $conf, $user;
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT."/compta/bank/annuel.php?account=".$object->id;
+	$head[$h][1] = $langs->trans("IOMonthlyReporting");
+	$head[$h][2] = 'annual';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/compta/bank/graph.php?account=".$object->id;
+	$head[$h][1] = $langs->trans("Graph");
+	$head[$h][2] = 'graph';
+	$h++;
 
 	return $head;
 }

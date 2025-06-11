@@ -217,6 +217,14 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 			$link->url = 'http://'.$link->url;
 		}
 		$link->label = GETPOST('label', 'alphanohtml');
+
+		$shareenabled = GETPOST('shareenabled', 'alpha');
+		if ($shareenabled) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+			$link->share = getRandomPassword(true);
+		} else {
+			$link->share = '';
+		}
 		$res = $link->update($user);
 		if (!$res) {
 			setEventMessages($langs->trans("ErrorFailedToUpdateLink", $link->label), null, 'mesgs');
@@ -289,7 +297,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 						$langs->load("errors"); // lang must be loaded because we can't rely on loading during output, we need var substitution to be done now.
 						setEventMessages($langs->trans("ErrorFilenameCantStartWithDot", $filenameto), null, 'errors');
 					} elseif (!file_exists($destpath)) {
-						$result = dol_move($srcpath, $destpath);
+						$result = dol_move($srcpath, $destpath, '0', 1, 0, 1);
 						if ($result) {
 							// Define if we have to generate thumbs or not
 							$generatethumbs = 1;

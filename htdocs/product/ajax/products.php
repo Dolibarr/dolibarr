@@ -4,6 +4,7 @@
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +69,7 @@ $finished = GETPOSTINT('finished');
 $alsoproductwithnosupplierprice = GETPOSTINT('alsoproductwithnosupplierprice');
 $warehouseStatus = GETPOST('warehousestatus', 'alpha');
 $hidepriceinlabel = GETPOSTINT('hidepriceinlabel');
-$warehouseId = GETPOST('warehouseid', 'int');
+$warehouseId = GETPOSTINT('warehouseid');
 
 // Security check
 restrictedArea($user, 'produit|service|commande|propal|facture', 0, 'product&product');
@@ -214,18 +215,25 @@ if ($action == 'fetch' && !empty($id)) {
 
 			$prodcustprice = new ProductCustomerPrice($db);
 
-			$filter = array('t.fk_product' => $object->id, 't.fk_soc' => $socid);
+			$filter = array('t.fk_product' => (string) $object->id, 't.fk_soc' => (string) $socid);
 
 			$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 			if ($result) {
 				if (count($prodcustprice->lines) > 0) {
-					$found = true;
-					$outprice_ht = price($prodcustprice->lines[0]->price);
-					$outprice_ttc = price($prodcustprice->lines[0]->price_ttc);
-					$outpricebasetype = $prodcustprice->lines[0]->price_base_type;
-					$outtva_tx_formated = price($prodcustprice->lines[0]->tva_tx);
-					$outtva_tx = price2num($prodcustprice->lines[0]->tva_tx);
-					$outdefault_vat_code = $prodcustprice->lines[0]->default_vat_code;
+					$date_now = (int) floor(dol_now() / 86400) * 86400; // date without hours
+					foreach ($prodcustprice->lines as $k => $custprice_line) {
+						if ($custprice_line->date_begin <= $date_now && (empty($custprice_line->date_end) || $date_now <= $custprice_line->date_end)) {
+							$found = true;
+							$outprice_ht = price($custprice_line->price);
+							$outprice_ttc = price($custprice_line->price_ttc);
+							$outpricebasetype = $custprice_line->price_base_type;
+							$outtva_tx_formated = price($custprice_line->tva_tx);
+							$outtva_tx = price2num($custprice_line->tva_tx);
+							$outdefault_vat_code = $custprice_line->default_vat_code;
+							$outdiscount = $custprice_line->discount_percent;
+							break;
+						}
+					}
 				}
 			}
 		}
@@ -252,7 +260,7 @@ if ($action == 'fetch' && !empty($id)) {
 			$tmpvatwithcode = get_default_tva($mysoc, $thirdparty_buyer, $id, 0);
 
 			if (!is_numeric($tmpvatwithcode) || $tmpvatwithcode != -1) {
-				$reg =array();
+				$reg = array();
 				if (preg_match('/(.+)\s\((.+)\)/', $tmpvatwithcode, $reg)) {
 					$outtva_tx = price2num($reg[1]);
 					$outtva_tx_formated = price($outtva_tx);
@@ -286,7 +294,7 @@ if ($action == 'fetch' && !empty($id)) {
 			'qty' => $outqty,
 			'discount' => $outdiscount,
 			'mandatory_period' => $mandatory_period,
-			'array_options'=>$object->array_options
+			'array_options' => $object->array_options
 		);
 	}
 
@@ -325,9 +333,9 @@ if ($action == 'fetch' && !empty($id)) {
 
 	$arrayresult = [];
 	if (empty($mode) || $mode == 1) {  // mode=1: customer
-		$arrayresult = $form->select_produits_list("", $htmlname, $type, getDolGlobalInt('PRODUIT_LIMIT_SIZE', 1000), $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', $hidepriceinlabel, $warehouseStatus, $status_purchase, $warehouseId);
+		$arrayresult = $form->select_produits_list(0, $htmlname, $type, getDolGlobalInt('PRODUIT_LIMIT_SIZE', 1000), $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', $hidepriceinlabel, $warehouseStatus, $status_purchase, $warehouseId);
 	} elseif ($mode == 2) {            // mode=2: supplier
-		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson, getDolGlobalInt('PRODUIT_LIMIT_SIZE', 1000), $alsoproductwithnosupplierprice);
+		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson, getDolGlobalInt('PRODUIT_LIMIT_SIZE', 1000), $alsoproductwithnosupplierprice, '', getDolGlobalInt('SUPPLIER_SHOW_STOCK_IN_PRODUCTS_COMBO'));
 	}
 
 	$db->close();

@@ -2,8 +2,8 @@
 /* Copyright (C) 2017       ATM Consulting      <contact@atm-consulting.fr>
  * Copyright (C) 2017-2020  Laurent Destailleur <eldy@destailleur.fr>
  * Copyright (C) 2022 		charlene benke		<charlene@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,12 +102,12 @@ class BlockedLog
 	public $fk_user = 0;
 
 	/**
-	 * @var int|string date_creation
+	 * @var int|string
 	 */
 	public $date_creation;
 
 	/**
-	 * @var int|string $date_modification;
+	 * @var int|string
 	 */
 	public $date_modification;
 
@@ -395,11 +395,11 @@ class BlockedLog
 	/**
 	 *	Populate properties of log from object data
 	 *
-	 *	@param	CommonObject	$object		object to store
-	 *	@param	string			$action		action
-	 *	@param	float|int		$amounts	amounts
-	 *	@param	?User			$fuser		User object (forced)
-	 *	@return	int<-1,-1>|int<1,1>			>0 if OK, <0 if KO
+	 *	@param	CommonObject|stdClass	$object		object to store
+	 *	@param	string					$action		action
+	 *	@param	float|int				$amounts	amounts
+	 *	@param	?User					$fuser		User object (forced)
+	 *	@return	int<-1,-1>|int<1,1>					>0 if OK, <0 if KO
 	 */
 	public function setObjectData(&$object, $action, $amounts, $fuser = null)
 	{
@@ -833,8 +833,8 @@ class BlockedLog
 
 				return 1;
 			} else {
-				$langs->load("blockedlog");
-				$this->error = $langs->trans("RecordNotFound");
+				$langs->load("errors");
+				$this->error = $langs->trans("ErrorRecordNotFound");
 				return 0;
 			}
 		} else {
@@ -1115,7 +1115,7 @@ class BlockedLog
 		if (empty($previoussignature)) {
 			$sql = "SELECT rowid, signature FROM ".MAIN_DB_PREFIX."blockedlog";
 			if ($beforeid) {
-				$sql.= $this->db->hintindex('entity_rowid', 1);
+				$sql .= $this->db->hintindex('entity_rowid', 1);
 			}
 			$sql .= " WHERE entity = ".((int) $conf->entity);
 			if ($beforeid) {

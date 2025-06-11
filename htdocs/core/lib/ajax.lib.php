@@ -2,7 +2,7 @@
 /* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007-2015 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,20 +31,20 @@
  * The HTML field must be an input text with id=search_$htmlname.
  * This use the jQuery "autocomplete" function. If we want to use the select2, we must instead use input select into functions that call this method.
  *
- * @param string	$selected 			Preselected value
- * @param string	$htmlname 			HTML name of input field
- * @param string	$url 				Ajax Url to call for request: /path/page.php. Must return a json array ('key'=>id, 'value'=>String shown into input field once selected, 'label'=>String shown into combo list)
- * @param string	$urloption			More parameters on URL request
- * @param int		$minLength			Minimum number of chars to trigger that Ajax search
- * @param int		$autoselect			Automatic selection if just one value (trigger("change") on field is done if search return only 1 result)
+ * @param string		$selected 			Preselected value
+ * @param string|int	$htmlname 			HTML name of input field
+ * @param string		$url 				Ajax Url to call for request: /path/page.php. Must return a json array ('key'=>id, 'value'=>String shown into input field once selected, 'label'=>String shown into combo list)
+ * @param string		$urloption			More parameters on URL request
+ * @param int			$minLength			Minimum number of chars to trigger that Ajax search
+ * @param int			$autoselect			Automatic selection if just one value (trigger("change") on field is done if search return only 1 result)
  * @param array<string,string|string[]>	$ajaxoptions	Multiple options array
  *                                                      - Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
  *                                                      - Ex: array('disabled'=> )
  *                                                      - Ex: array('show'=> )
  *                                                      - Ex: array('update_textarea'=> )
  *                                                      - Ex: array('option_disabled'=> id to disable and warning to show if we select a disabled value (this is possible when using autocomplete ajax)
- * @param string	$moreparams			More params provided to ajax call
- * @return string   					Script
+ * @param string		$moreparams			More params provided to ajax call
+ * @return string   						Script
  */
 function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLength = 2, $autoselect = 0, $ajaxoptions = array(), $moreparams = '')
 {
@@ -130,6 +130,18 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 										console.log("Received answer from ajax GET, we populate array to return to the jquery autocomplete");
 										if (autoselect == 1 && data.length == 1) {
 											$("#search_'.$htmlnamejquery.'").val(item.value);
+		';
+	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
+		$script .= '
+											// When product has only one price by qty and 1 result, must set data attributes before triggering change
+											$("#'.$htmlname.'").attr("data-pbq", item.pbq);
+											$("#'.$htmlname.'").attr("data-pbqup", item.price_ht);
+											$("#'.$htmlname.'").attr("data-pbqbase", item.pricebasetype);
+											$("#'.$htmlname.'").attr("data-pbqqty", item.qty);
+											$("#'.$htmlname.'").attr("data-pbqpercent", item.discount);
+		';
+	}
+	$script .= '
 											$("#'.$htmlnamejquery.'").val(item.key).trigger("change");
 										}
 										var label = "";
@@ -446,14 +458,14 @@ function ajax_dialog($title, $message, $w = 350, $h = 150)
  * Use ajax_combobox() only for small combo list! If not, use instead ajax_autocompleter().
  * TODO: It is used when COMPANY_USE_SEARCH_TO_SELECT and CONTACT_USE_SEARCH_TO_SELECT are set by html.formcompany.class.php. Should use ajax_autocompleter instead like done by html.form.class.php for select_produits.
  *
- * @param	string	$htmlname					Name of html select field ('myid' or '.myclass')
+ * @param	string		$htmlname					Name of html select field ('myid' or '.myclass')
  * @param	array<array{method:string,url:string,htmlname:string,params?:array<string,string>}>	$events						More events option. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
- * @param  	int		$minLengthToAutocomplete	Minimum length of input string to start autocomplete
- * @param	int		$forcefocus					Force focus on field
- * @param	string	$widthTypeOfAutocomplete	'resolve' or 'off'
- * @param	string	$idforemptyvalue			'-1'
- * @param	string	$morecss					More css
- * @return	string								Return html string to convert a select field into a combo, or '' if feature has been disabled for some reason.
+ * @param  	int<0,max>	$minLengthToAutocomplete	Minimum length of input string to start autocomplete
+ * @param	int<0,1>	$forcefocus					Force focus on field
+ * @param	'resolve'|'off'	$widthTypeOfAutocomplete	'resolve' or 'off'
+ * @param	string		$idforemptyvalue			Defaults to '-1'
+ * @param	string		$morecss					More css
+ * @return	string									Return html string to convert a select field into a combo, or '' if feature has been disabled for some reason.
  * @see selectArrayAjax() of html.form.class
  */
 function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 0, $forcefocus = 0, $widthTypeOfAutocomplete = 'resolve', $idforemptyvalue = '-1', $morecss = '')
@@ -517,7 +529,7 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 	 					/* Code to add class of origin OPTION propagated to the new select2 <li> tag */
 						if (data.element) { $(container).addClass($(data.element).attr("class")); }
 						//console.log("data html is "+$(data.element).attr("data-html"));
-						if (data.id == '.((int) $idforemptyvalue).' && $(data.element).attr("data-html") == undefined) {
+						if (data.id == \''.(dol_escape_js($idforemptyvalue)).'\' && $(data.element).attr("data-html") == undefined) {
 							return \'&nbsp;\';
 						}
 						if ($(data.element).attr("data-html") != undefined) {
@@ -530,7 +542,7 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 						return data.text;
 					},
 					templateSelection: function (selection) {		/* Format visible output of selected value */
-						if (selection.id == '.((int) $idforemptyvalue).') return \'<span class="placeholder">\'+selection.text+\'</span>\';
+						if (selection.id == \''.(dol_escape_js($idforemptyvalue)).'\') return \'<span class="placeholder">\'+selection.text+\'</span>\';
 						return selection.text;
 					},
 					escapeMarkup: function(markup) {
@@ -675,7 +687,7 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 				var input = '.json_encode($input).';
 				var url = \''.DOL_URL_ROOT.'/core/ajax/constantonoff.php\';
 				var code = \''.dol_escape_js($code).'\';
-				var entity = \''.dol_escape_js($entity).'\';
+				var entity = \''.dol_escape_js((string) $entity).'\';
 				var strict = \''.dol_escape_js((string) $strict).'\';
 				var userid = \''.dol_escape_js((string) $user->id).'\';
 				var userconst = '.((int) $userconstid).';

@@ -77,6 +77,7 @@ $formSetup = new FormSetup($db);
 // Setup conf BOOKCAL_PUBLIC_INTERFACE_TOPIC
 $item = $formSetup->newItem('BOOKCAL_PUBLIC_INTERFACE_TOPIC');
 $item->defaultFieldValue = 'MyBigCompany public interface for Bookcal';
+$item->cssClass = 'minwidth300';
 
 $setupnotempty = + count($formSetup->items);
 

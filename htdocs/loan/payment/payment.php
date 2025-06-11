@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2014-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2015-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +63,12 @@ if (!$user->hasRight('loan', 'write')) {
 $loan = new Loan($db);
 $loan->fetch($chid);
 
+$line_id = 0;
 $echance = 0;
+$amount_capital = 0;
+$amount_insurance = 0;
+$amount_interest = 0;
+
 $ls = new LoanSchedule($db);
 // grab all loanschedule
 $res = $ls->fetchAll($chid);
@@ -198,7 +204,7 @@ if ($action == 'add_payment' && $permissiontoadd) {
 							$ls->lines[$k - 1]->fk_bank = $payment->fk_bank;
 							$ls->lines[$k - 1]->fk_payment_loan = $payment->id;
 						}
-						$ls->lines[$k - 1]->amount_capital = $v['mens'] - $v['interet'];
+						$ls->lines[$k - 1]->amount_capital = ((float) price2num($v['mens'])) - $v['interet'];
 						$ls->lines[$k - 1]->amount_interest = $v['interet'];
 						$ls->lines[$k - 1]->tms = dol_now();
 						$ls->lines[$k - 1]->fk_user_modif = $user->id;
@@ -249,6 +255,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-loan pag
 // Form to create loan's payment
 if ($action == 'create') {
 	$total = $loan->capital;
+	$sumpaid = 0;
 
 	print load_fiche_titre($langs->trans("DoPayment"));
 
@@ -317,7 +324,7 @@ if ($action == 'create') {
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td colspan="2">';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOSTINT("accountid") : $loan->accountid, "accountid", 0, 'courant = '.Account::TYPE_CURRENT, 1); // Show opend bank account list
+	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOSTINT("accountid") : $loan->accountid, "accountid", 0, 'courant = '.Account::TYPE_CURRENT, 1); // Show opened bank account list
 	print '</td></tr>';
 
 	// Number

@@ -258,9 +258,9 @@ if (is_array($results)) {
 			print  $langs->trans("ContactForRecruitment").' : ';
 			$emailforcontact = $object->email_recruiter;
 			if (empty($emailforcontact)) {
-				$emailforcontact = $tmpuser->email;
+				$emailforcontact = $tmpuser->email ?? '';
 				if (empty($emailforcontact)) {
-					$emailforcontact = $mysoc->email;
+					$emailforcontact = $mysoc->email ?? '';
 				}
 			}
 			print '<b class="wordbreak">';
