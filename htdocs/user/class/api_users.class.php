@@ -587,6 +587,35 @@ class Users extends DolibarrApi
 	}
 
 	/**
+	 * Create user group
+	 *
+	 * @param array $request_data New user group data
+	 * @phan-param ?array<string,mixed> $request_data
+	 * @phpstan-param ?array<string,mixed> $request_data
+	 * @return int
+	 *
+	 * @url	POST /groups
+	 * @throws RestException 401 Not allowed
+	 */
+	public function postGroups($request_data = null)
+	{
+		// Check user authorization
+		if (!DolibarrApiAccess::$user->hasRight('user', 'creer') && empty(DolibarrApiAccess::$user->admin)) {
+			throw new RestException(403, "User creation not allowed for login ".DolibarrApiAccess::$user->login);
+		}
+		$usergroup = new UserGroup($this->db);
+		foreach ($request_data as $field => $value) {
+			$usergroup->$field = $this->_checkValForAPI($field, $value, $usergroup);
+		}
+
+		if ($usergroup->create(DolibarrApiAccess::$user) < 0) {
+			throw new RestException(500, 'Error creating', array_merge(array($usergroup->error), $usergroup->errors));
+		}
+		return $usergroup->id;
+	}
+
+
+	/**
 	 * List Groups
 	 *
 	 * Return an array with a list of Groups
