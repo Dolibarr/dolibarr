@@ -835,9 +835,6 @@ if (empty($reshook)) {
 			if ($value == 'sortorder') {
 				continue; // For a column name 'sortorder', we use the field name 'position'
 			}
-			if ($value == 'type_vat' && GETPOST('type_vat') == -1) {
-				$_POST['type_vat'] = '';  // We set value to "" to prevent add of bad value -1 in database and block empty type vat
-			}
 			if ((!GETPOSTISSET($value) || GETPOST($value) == '')
 				&& (
 					!in_array($value, array('decalage', 'module', 'accountancy_code', 'accountancy_code_sell', 'accountancy_code_buy', 'tracking', 'picto', 'deposit_percent'))  // Fields that are not mandatory
@@ -2919,7 +2916,7 @@ function dictFieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 		} elseif ($value == 'type_vat') {
 			// VAT type 0: all, 1: sell, 2: purchase
 			print '<td class="center">';
-			print $form->selectarray($value, $type_vatList, (empty($obj->{$value}) ? ($context == 'add' ? '' : '0') : $obj->{$value}), 1);
+			print $form->selectarray($value, $type_vatList, (empty($obj->{$value}) ? ($context == 'add' ? '' : '0') : $obj->{$value}));
 			print '</td>';
 		} elseif ($value == 'localtax1_type' || $value == 'localtax2_type') {
 			// Le type de taxe locale
