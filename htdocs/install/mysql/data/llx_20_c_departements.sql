@@ -842,88 +842,92 @@ INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc
 
 
 -- Morocco/Maroc Provinces (62) & Prefectures (13)  (id country=12)
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1209, 'MA',   '', 0, '', 'Province de Benslimane');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1209, 'MA1',  '', 0, '', 'Province de Berrechid');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1209, 'MA2',  '', 0, '', 'Province de Khouribga');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1209, 'MA3',  '', 0, '', 'Province de Settat');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1210, 'MA4',  '', 0, '', 'Province d''El Jadida');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1210, 'MA5',  '', 0, '', 'Province de Safi');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1210, 'MA6',  '', 0, '', 'Province de Sidi Bennour');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1210, 'MA7',  '', 0, '', 'Province de Youssoufia');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1205, 'MA6B', '', 0, '', 'Préfecture de Fès');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1205, 'MA7B', '', 0, '', 'Province de Boulemane');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1205, 'MA8',  '', 0, '', 'Province de Moulay Yacoub');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1205, 'MA9',  '', 0, '', 'Province de Sefrou');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1202, 'MA8A', '', 0, '', 'Province de Kénitra');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1202, 'MA9A', '', 0, '', 'Province de Sidi Kacem');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1202, 'MA10', '', 0, '', 'Province de Sidi Slimane');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1208, 'MA11', '', 0, '', 'Préfecture de Casablanca');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1208, 'MA12', '', 0, '', 'Préfecture de Mohammédia');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1208, 'MA13', '', 0, '', 'Province de Médiouna');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1208, 'MA14', '', 0, '', 'Province de Nouaceur');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1214, 'MA15', '', 0, '', 'Province d''Assa-Zag');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1214, 'MA16', '', 0, '', 'Province d''Es-Semara');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1214, 'MA17A','', 0, '', 'Province de Guelmim');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1214, 'MA18', '', 0, '', 'Province de Tata');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1214, 'MA19', '', 0, '', 'Province de Tan-Tan');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1215, 'MA15', '', 0, '', 'Province de Boujdour');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1215, 'MA16', '', 0, '', 'Province de Lâayoune');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1215, 'MA17', '', 0, '', 'Province de Tarfaya');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1211, 'MA18', '', 0, '', 'Préfecture de Marrakech');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1211, 'MA19', '', 0, '', 'Province d''Al Haouz');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1211, 'MA20', '', 0, '', 'Province de Chichaoua');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1211, 'MA21', '', 0, '', 'Province d''El Kelâa des Sraghna');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1211, 'MA22', '', 0, '', 'Province d''Essaouira');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1211, 'MA23', '', 0, '', 'Province de Rehamna');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1206, 'MA24', '', 0, '', 'Préfecture de Meknès');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1206, 'MA25', '', 0, '', 'Province d’El Hajeb');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1206, 'MA26', '', 0, '', 'Province d''Errachidia');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1206, 'MA27', '', 0, '', 'Province d’Ifrane');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1206, 'MA28', '', 0, '', 'Province de Khénifra');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1206, 'MA29', '', 0, '', 'Province de Midelt');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1204, 'MA30', '', 0, '', 'Préfecture d''Oujda-Angad');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1204, 'MA31', '', 0, '', 'Province de Berkane');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1204, 'MA32', '', 0, '', 'Province de Driouch');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1204, 'MA33', '', 0, '', 'Province de Figuig');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1204, 'MA34', '', 0, '', 'Province de Jerada');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1204, 'MA35', '', 0, '', 'Province de Nador');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1204, 'MA36', '', 0, '', 'Province de Taourirt');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1216, 'MA37', '', 0, '', 'Province d''Aousserd');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1216, 'MA38', '', 0, '', 'Province d''Oued Ed-Dahab');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1207, 'MA39', '', 0, '', 'Préfecture de Rabat');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1207, 'MA40', '', 0, '', 'Préfecture de Skhirat-Témara');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1207, 'MA41', '', 0, '', 'Préfecture de Salé');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1207, 'MA42', '', 0, '', 'Province de Khémisset');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1213, 'MA43', '', 0, '', 'Préfecture d''Agadir Ida-Outanane');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1213, 'MA44', '', 0, '', 'Préfecture d''Inezgane-Aït Melloul');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1213, 'MA45', '', 0, '', 'Province de Chtouka-Aït Baha');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1213, 'MA46', '', 0, '', 'Province d''Ouarzazate');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1213, 'MA47', '', 0, '', 'Province de Sidi Ifni');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1213, 'MA48', '', 0, '', 'Province de Taroudant');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1213, 'MA49', '', 0, '', 'Province de Tinghir');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1213, 'MA50', '', 0, '', 'Province de Tiznit');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1213, 'MA51', '', 0, '', 'Province de Zagora');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1212, 'MA52', '', 0, '', 'Province d''Azilal');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1212, 'MA53', '', 0, '', 'Province de Beni Mellal');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1212, 'MA54', '', 0, '', 'Province de Fquih Ben Salah');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1201, 'MA55', '', 0, '', 'Préfecture de M''diq-Fnideq');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1201, 'MA56', '', 0, '', 'Préfecture de Tanger-Asilah');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1201, 'MA57', '', 0, '', 'Province de Chefchaouen');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1201, 'MA58', '', 0, '', 'Province de Fahs-Anjra');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1201, 'MA59', '', 0, '', 'Province de Larache');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1201, 'MA60', '', 0, '', 'Province d''Ouezzane');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1201, 'MA61', '', 0, '', 'Province de Tétouan');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1203, 'MA62', '', 0, '', 'Province de Guercif');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1203, 'MA63', '', 0, '', 'Province d''Al Hoceïma');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1203, 'MA64', '', 0, '', 'Province de Taounate');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1203, 'MA65', '', 0, '', 'Province de Taza');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1205, 'MA6A', '', 0, '', 'Préfecture de Fès');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1205, 'MA7A', '', 0, '', 'Province de Boulemane');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1214, 'MA15A','', 0, '', 'Province d''Assa-Zag');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1214, 'MA16A','', 0, '', 'Province d''Es-Semara');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1211, 'MA18A','', 0, '', 'Préfecture de Marrakech');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1214, 'MA19A','', 0, '', 'Province de Tan-Tan');
-INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1214, 'MA19B','', 0, '', 'Province de Tan-Tan');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1201, 'MA01', '', 0, '', 'Préfecture de Tanger-Assilah');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1201, 'MA02', '', 0, '', "Préfecture de M'diq-Fnideq");
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1201, 'MA03', '', 0, '', 'Province de Tétouan');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1201, 'MA04', '', 0, '', 'Province de Fahs-Anjra');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1201, 'MA05', '', 0, '', 'Province de Larache');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1201, 'MA06', '', 0, '', "Province d'Al Hoceïma");
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1201, 'MA07', '', 0, '', 'Province de Chefchaouen');
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1201, 'MA08', '', 0, '', 'Province de Ouezzane');
+
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1202, 'MA09', '', 0, '', "Préfecture d'Oujda-Angad"),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1202, 'MA10', '', 0, '', 'Province de Nador'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1202, 'MA11', '', 0, '', 'Province de Driouch'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1202, 'MA12', '', 0, '', 'Province de Jerada'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1202, 'MA13', '', 0, '', 'Province de Berkane'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1202, 'MA14', '', 0, '', 'Province de Taourirt'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1202, 'MA15', '', 0, '', 'Province de Guercif'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1202, 'MA16', '', 0, '', 'Province de Figuig');
+
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1203, 'MA17', '', 0, '', 'Préfecture de Fès'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1203, 'MA18', '', 0, '', 'Préfecture de Meknès'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1203, 'MA19', '', 0, '', 'Province de Taza'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1203, 'MA20', '', 0, '', "Province d'El Hajeb"),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1203, 'MA21', '', 0, '', "Province d'Ifrane"),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1203, 'MA22', '', 0, '', 'Province de Moulay Yaâcoub'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1203, 'MA23', '', 0, '', 'Province de Séfrou'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1203, 'MA24', '', 0, '', 'Province de Boulemane'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1203, 'MA25', '', 0, '', 'Province de Taounate');
+
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1204, 'MA26', '', 0, '', 'Préfecture de Rabat'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1204, 'MA27', '', 0, '', 'Préfecture de Salé'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1204, 'MA28', '', 0, '', 'Préfecture de Skhirate-Témara'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1204, 'MA29', '', 0, '', 'Province de Kénitra'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1204, 'MA30', '', 0, '', 'Province de Khémisset'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1204, 'MA31', '', 0, '', 'Province de Sidi Kacem'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1204, 'MA32', '', 0, '', 'Province de Sidi Slimane');
+
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1205, 'MA33', '', 0, '', 'Province de Béni-Mellal'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1205, 'MA34', '', 0, '', "Province d'Azilal"),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1205, 'MA35', '', 0, '', 'Province de Fquih Ben Salah'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1205, 'MA36', '', 0, '', 'Province de Khénifra'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1205, 'MA37', '', 0, '', 'Province de Khouribga');
+
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1206, 'MA38', '', 0, '', 'Préfecture de Casablanca'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1206, 'MA39', '', 0, '', 'Préfecture de Mohammédia'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1206, 'MA40', '', 0, '', "Province d'El Jadida"),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1206, 'MA41', '', 0, '', 'Province de Nouaceur'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1206, 'MA42', '', 0, '', 'Province de Médiouna'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1206, 'MA43', '', 0, '', 'Province de Benslimane'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1206, 'MA44', '', 0, '', 'Province de Berrechid'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1206, 'MA45', '', 0, '', 'Province de Settat'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1206, 'MA46', '', 0, '', 'Province de Sidi Bennour');
+
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1207, 'MA47', '', 0, '', 'Préfecture de Marrakech'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1207, 'MA48', '', 0, '', 'Province de Chichaoua'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1207, 'MA49', '', 0, '', "Province d'Al Haouz"),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1207, 'MA50', '', 0, '', "Province d'El Kelaâ des Sraghna"),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1207, 'MA51', '', 0, '', "Province d'Essaouira"),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1207, 'MA52', '', 0, '', 'Province de Rehamna'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1207, 'MA53', '', 0, '', 'Province de Safi'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1207, 'MA54', '', 0, '', 'Province de Youssoufia');
+
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1208, 'MA55', '', 0, '', "Province d''Errachidia"),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1208, 'MA56', '', 0, '', 'Province de Ouarzazate'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1208, 'MA57', '', 0, '', 'Province de Midelt'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1208, 'MA58', '', 0, '', 'Province de Tinghir'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1208, 'MA59', '', 0, '', 'Province de Zagora');
+
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1209, 'MA60', '', 0, '', "Préfecture d'Agadir Ida-Outanane"),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1209, 'MA61', '', 0, '', "Préfecture d'Inezgane-Aït Melloul"),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1209, 'MA62', '', 0, '', 'Province de Chtouka-Aït Baha'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1209, 'MA63', '', 0, '', 'Province de Taroudant'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1209, 'MA64', '', 0, '', 'Province de Tiznit'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1209, 'MA65', '', 0, '', 'Province de Tata');
+
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1210, 'MA66', '', 0, '', 'Province de Guelmim'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1210, 'MA67', '', 0, '', "Province d'Assa-Zag"),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1210, 'MA68', '', 0, '', 'Province de Tan-Tan'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1210, 'MA69', '', 0, '', 'Province de Sidi Ifni');
+
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1211, 'MA70', '', 0, '', 'Province de Laâyoune'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1211, 'MA71', '', 0, '', 'Province de Boujdour'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1211, 'MA72', '', 0, '', 'Province de Tarfaya'),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1211, 'MA73', '', 0, '', "Province d'Es-Semara");
+
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1212, 'MA74', '', 0, '', "Province d'Oued Ed-Dahab"),
+INSERT INTO llx_c_departements (fk_region, code_departement, cheflieu, tncc, ncc, nom) VALUES (1212, 'MA75', '', 0, '', "Province d'Aousserd");
 
 
 -- Netherlands/Nederland Provinces (id country=17)
