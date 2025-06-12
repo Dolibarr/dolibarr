@@ -14066,14 +14066,12 @@ function getElementProperties($elementType)
 	}
 
 	// Overwrite value for special cases
-	if (isModEnabled('fournisseur')) {
-		if ($element == 'order_supplier') {
-			$dir_output = $conf->fournisseur->commande->dir_output;
-			$dir_temp = $conf->fournisseur->commande->dir_temp;
-		} elseif ($element == 'invoice_supplier') {
-			$dir_output = $conf->fournisseur->facture->dir_output;
-			$dir_temp = $conf->fournisseur->facture->dir_temp;
-		}
+	if ($element == 'order_supplier' && isModEnabled('fournisseur')) {
+		$dir_output = $conf->fournisseur->commande->dir_output;
+		$dir_temp = $conf->fournisseur->commande->dir_temp;
+	} elseif ($element == 'invoice_supplier' && isModEnabled('fournisseur')) {
+		$dir_output = $conf->fournisseur->facture->dir_output;
+		$dir_temp = $conf->fournisseur->facture->dir_temp;
 	}
 	$dir_output .= $subdir;
 	$dir_temp .= $subdir;
