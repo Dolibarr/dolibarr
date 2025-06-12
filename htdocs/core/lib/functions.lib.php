@@ -19,7 +19,7 @@
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022       Anthony Berton	         	<anthony.berton@bb2a.fr>
  * Copyright (C) 2022       Ferran Marcet           	<fmarcet@2byte.es>
- * Copyright (C) 2022       Charlene Benke           	<charlene@patas-monkey.com>
+ * Copyright (C) 2022-2025  Charlene Benke           	<charlene@patas-monkey.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2023-2024  Joachim Kueter              <git-jk@bloxera.com>
  * Copyright (C) 2024		Lenin Rivas					<lenin.rivas777@gmail.com>
@@ -14066,12 +14066,14 @@ function getElementProperties($elementType)
 	}
 
 	// Overwrite value for special cases
-	if ($element == 'order_supplier') {
-		$dir_output = $conf->fournisseur->commande->dir_output;
-		$dir_temp = $conf->fournisseur->commande->dir_temp;
-	} elseif ($element == 'invoice_supplier') {
-		$dir_output = $conf->fournisseur->facture->dir_output;
-		$dir_temp = $conf->fournisseur->facture->dir_temp;
+	if (isModEnabled('fournisseur')) {
+		if ($element == 'order_supplier') {
+			$dir_output = $conf->fournisseur->commande->dir_output;
+			$dir_temp = $conf->fournisseur->commande->dir_temp;
+		} elseif ($element == 'invoice_supplier') {
+			$dir_output = $conf->fournisseur->facture->dir_output;
+			$dir_temp = $conf->fournisseur->facture->dir_temp;
+		}
 	}
 	$dir_output .= $subdir;
 	$dir_temp .= $subdir;
