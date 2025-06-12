@@ -121,6 +121,9 @@ $search_warehouse = GETPOST('search_warehouse', 'intcomma');
 $search_note_public = GETPOST('search_note_public', 'alphanohtml');
 $search_note_private = GETPOST('search_note_private', 'alphanohtml');
 
+$search_module_source = GETPOST('search_module_source', 'alphanohtml');
+$search_pos_source = GETPOST('search_pos_source', 'alphanohtml');
+
 $search_multicurrency_code = GETPOST('search_multicurrency_code', 'alpha');
 $search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
 $search_multicurrency_montant_ht  = GETPOST('search_multicurrency_montant_ht', 'alpha');
@@ -2236,6 +2239,8 @@ while ($i < $imaxinloop) {
 	if (empty($obj)) {
 		break; // Should not happen
 	}
+
+	$typenArray = $formcompany->typent_array(1);
 
 	$notshippable = 0;
 	$warning = 0;

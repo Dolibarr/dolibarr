@@ -132,7 +132,7 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public $total_ttc;
 	/**
-	 * @var float
+	 * @var float|null
 	 */
 	public $revenuestamp;
 
@@ -2267,6 +2267,12 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	 * @var float
 	 */
 	public $total_ttc;
+
+	/**
+	 * @var float|null
+	 */
+	public $revenuestamp;
+
 
 	/**
 	 * @var int<0,1>
