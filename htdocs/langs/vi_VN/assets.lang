@@ -17,6 +17,7 @@ AccountancyCodeAsset=Mã kế toán (tài sản)
 AccountancyCodeDepreciationAsset=Mã kế toán (tài khoản khấu hao tài sản)
 AccountancyCodeDepreciationExpense=Mã kế toán (tài khoản chi phí khấu hao)
 AssetsLines=Tài sản
+ConfirmValidateAsset=Bạn có chắc chắn muốn xác thực tài sản này bằng tham chiếu <b>%s</b> không?
 DeleteType=Xóa
 DeleteAnAssetType=Xóa một mô hình tài sản
 ConfirmDeleteAssetType=Bạn có chắc muốn xóa mô hình tài sản này?
@@ -34,7 +35,7 @@ AssetsTypeId=ID mô hình tài sản
 AssetsTypeLabel=Nhãn mô hình nội dung
 AssetsTypes=Mô hình tài sản
 ASSET_ACCOUNTANCY_CATEGORY=Nhóm kế toán tài sản cố định
-ASSET_DEPRECIATION_DURATION_PER_YEAR=Proportional period in days for calculating amortization over one year
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Tỷ lệ thời gian tính theo ngày để tính khấu hao trong một năm
 # Menu
 MenuAssets=Tài sản
 MenuNewAsset=Tài sản mới
@@ -70,6 +71,7 @@ AssetDisposal=Thanh lý
 AssetConfirmDisposalAsk=Bạn có chắc chắn muốn thanh lý nội dung <b> %s</b> không?
 AssetConfirmReOpenAsk=Bạn có chắc chắn muốn mở lại nội dung <b> %s</b> không?
 # Asset status
+AssetInDraft=Dự thảo
 AssetInProgress=Trong tiến trình xử lý
 AssetDisposed=xử lý
 AssetRecorded=Đã hạch toán

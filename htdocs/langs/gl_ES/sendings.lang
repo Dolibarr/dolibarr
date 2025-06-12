@@ -66,7 +66,9 @@ NoLineGoOnTabToAddSome=Sen liña, vai á lapela "%s" para engadir
 CreateInvoiceForThisCustomerFromSendings=Crear facturas
 IfValidateInvoiceIsNoSendingStayUnbilled=Se a validación da factura é "Non", o envío permanecerá no estado "Non facturado" ata que se valide a factura.
 OptionToSetSendingBilledNotEnabled=A opción do módulo Fluxo de traballo, para establecer o envío como 'Facturado' automaticamente cando se valida a factura, non está habilitada, polo que terá que configurar o estado dos envíos en 'Facturado' manualmente despois de xerar a factura.
+NoWarehouseInBase=Non hai almacén na base
 ShipmentUpdated=O envío actualizouse correctamente
+ShipmentIncrementStockOnDelete = Aumentar o stock ao eliminar
 
 # Sending methods
 # ModelDocument
@@ -78,6 +80,7 @@ SumOfProductWeights=Suma do peso dos produtos
 # warehouse details
 DetailWarehouseNumber= Detalles do almacén
 DetailWarehouseFormat= Alm.:%s (Cant. : %d)
+DetailChildrenFormat=%s : %s (Cantidade: %s)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Mostra a última data de entrada en stock durante a creación do envío para o número de serie ou o lote
 CreationOptions=Opcións dispoñibles durante a creación do envío
 ShipmentDistribution=Distribución do envío
@@ -92,3 +95,4 @@ TypeContact_shipping_external_SHIPPING=Contacto do cliente para envío
 TypeContact_shipping_external_DELIVERY=Contacto cliente para envíos
 CloseShipment=Pechar o envío
 ConfirmCloseShipment=Confirmar o peche do envío
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=Preseleccione o número de lote/serie coa data de caducidade/consumo máis próxima ao crear un envío

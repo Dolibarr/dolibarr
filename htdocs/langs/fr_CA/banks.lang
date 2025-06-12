@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - banks
 MenuBankCash=Banques | Encaisse
 BankAccountsAndGateways=Comptes bancaires | Passerelles
+DateInitialBalance=Date du solde initial
 SwiftValid=BIC / SWIFT valide
 IbanValid=BAN valide
 IbanNotValid=BAN non valide
@@ -34,6 +35,7 @@ Conciliated=Reconcilié
 BankLineConciliated=Entrée reconciliée avec reçu bancaire
 BankLineReconciled=Reconcilié
 BankLineNotReconciled=Pas réconcilié
+CustomerInvoicePayment=Paiement client
 SubscriptionPayment=Paiement d'adhésion
 WithdrawalPayment=Paiement par prélèvement automatique
 BankTransferPayment=Paiement par virement bancaire
@@ -93,3 +95,5 @@ AlreadyOneBankAccount=Déjà un compte bancaire défini
 SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation=Variante de fichier SEPA
 SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp=Oui = Enregistrer « Type de paiement » dans la section « Virement » du fichier SEPA<br><br>Lors de la génération d'un fichier XML SEPA pour les virements, la section « PaymentTypeInformation » peut désormais être placée à l'intérieur de la section « CreditTransferTransactionInformation » (au lieu de la section « Paiement »). Nous vous recommandons fortement de ne pas cocher cette case pour placer PaymentTypeInformation au niveau Paiement, car toutes les banques ne l'accepteront pas nécessairement au niveau CreditTransferTransactionInformation. Contactez votre banque avant de placer PaymentTypeInformation au niveau CreditTransferTransactionInformation.
 XNewLinesConciliated=%s nouvelle(s) ligne(s) conciliée(s)
+InSepa=Zone SEPA
+CountryIsInSepa=Pays de la zone SEPA

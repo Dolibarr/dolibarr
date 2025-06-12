@@ -23,7 +23,10 @@ AllPropals=Alle tilbud
 SearchAProposal=Søk i tilbud
 NoProposal=Ingen tilbud
 ProposalsStatistics=Tilbudsstatistikk
+NumberOfProposals=Antall tilbud
 NumberOfProposalsByMonth=Antall tilbud pr måned
+AmountOfProposals=Amount of proposals
+AmountOfProposalsHT=Amount of proposals (excl. tax)
 AmountOfProposalsByMonthHT=Beløp per måned (ekskl. MVA)
 NbOfProposals=Antall tilbud
 ShowPropal=Vis tilbud
@@ -77,7 +80,7 @@ AvailabilityTypeAV_1W=1 uke
 AvailabilityTypeAV_2W=2 uker
 AvailabilityTypeAV_3W=3 uker
 AvailabilityTypeAV_1M=En måned
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Representant for oppfølging av tilbud
 TypeContact_propal_external_BILLING=Kundekontakt faktura
 TypeContact_propal_external_CUSTOMER=Kundens tilbudsoppfølger

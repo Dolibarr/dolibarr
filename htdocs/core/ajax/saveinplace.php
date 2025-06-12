@@ -19,7 +19,7 @@
 
 /**
  *       \file       htdocs/core/ajax/saveinplace.php
- *       \brief      File to load field value. used only when option "Edit In Place" is set (MAIN_USE_JQUERY_JEDITABLE).
+ *       \brief      File to load or update field value. Was used in past when option "Edit In Place" is set (MAIN_USE_JQUERY_JEDITABLE).
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -38,6 +38,7 @@ if (!defined('NOREQUIRESOC')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
+
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -120,6 +121,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 	$return = array();
 	$error = 0;
 
+	$regs = array();
 	if ($element != 'order_supplier' && $element != 'invoice_supplier' && preg_match('/^([^_]+)_([^_]+)/i', $element, $regs)) {
 		$element = $regs[1];
 		$subelement = $regs[2];
@@ -166,12 +168,6 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 	//var_dump($newelement.'-'.$subelement."-".$feature."-".$object_id);
 	$check_access = restrictedArea($user, $feature, $object_id, '', (string) $feature2);
 	//var_dump($user->rights);
-	/*
-	if (!empty($user->rights->$newelement->creer) || !empty($user->rights->$newelement->create) || !empty($user->rights->$newelement->write)
-		|| (isset($subelement) && (!empty($user->rights->$newelement->$subelement->creer) || !empty($user->rights->$newelement->$subelement->write)))
-		|| ($element == 'payment' && $user->rights->facture->paiement)
-		|| ($element == 'payment_supplier' && $user->rights->fournisseur->facture->creer))
-	*/
 
 	if ($check_access) {
 		// Clean parameters

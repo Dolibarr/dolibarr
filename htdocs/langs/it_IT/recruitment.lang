@@ -64,3 +64,7 @@ NoPositionOpen=Nessuna posizione aperta al momento
 ConfirmClose=Conferma la cancellazione
 ConfirmCloseAsk=Sei sicuro che vuoi a cancella questa Selezione candidatura
 Recruitment=Selezione
+ApplyJobCandidature=Candidati per questo lavoro
+ErrorRecruitmmentCandidatureAlreadyExists= La candidatura Selezione esiste già con email %s
+RecruitmentCandidatureSaved=Candidatura di reclutamento salvata con successo
+NoOpenJobOffer=Nessuna offerta di lavoro aperto al momento

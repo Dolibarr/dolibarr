@@ -148,7 +148,7 @@ CSSListClass=তালিকার জন্য CSS
 NotEditable=সম্পাদনাযোগ্য নয়
 ForeignKey=বিদেশী চাবি
 ForeignKeyDesc=যদি এই ক্ষেত্রের মান অবশ্যই অন্য টেবিলে উপস্থিত থাকার নিশ্চয়তা দিতে হবে। এখানে একটি মান মেলে সিনট্যাক্স লিখুন: tablename.parentfieldtocheck
-TypeOfFieldsHelp=উদাহরণ:<br>varchar(99)<br>ইমেল<br> class='notranslate'><br>ip<br>urlTXPROTECT-342fccfda19b-Password class='notranslate'><br>ডাবল(24,8)<br>বাস্তব<br>  class='notranslate'><br>html<br>তারিখ<br>time class='notranslate'><br>timestamp<br>stars(NumberOfStars) স্টার সংখ্যা ১ থেকে ১০ এর মধ্যে হতে হবে।<br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' মানে আমরা রেকর্ড তৈরি করতে কম্বোর পরে একটি + বোতাম যোগ করি<br>'filter' হল একটি Universal Filter সিনট্যাক্স শর্ত, উদাহরণস্বরূপ: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
+TypeOfFieldsHelp=Example:<br>varchar(99)<br>email<br>phone<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>stars(NumberOfStars) NumberOfStars must be between 1 and 10.<br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' means we add a + button after the combo to create the record<br>'filter' is an Universal Filter syntax condition, example: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=এটি হল ক্ষেত্র/বিশিষ্টের ধরন।
 AsciiToHtmlConverter=Ascii থেকে HTML রূপান্তরকারী
 AsciiToPdfConverter=Ascii থেকে পিডিএফ কনভার্টার

@@ -3,8 +3,6 @@ MenuFinancial=Facturación | Pago
 TaxModuleSetupToModifyRules=Vaya a <a href="%s"> Configuración del módulo de impuestos </a> para modificar las reglas de cálculo.
 TaxModuleSetupToModifyRulesLT=Vaya a <a href="%s"> Configuración de la compañía </a> para modificar las reglas de cálculo.
 OptionMode=Opción para la contabilidad.
-OptionModeVirtual=Opción Reclamaciones-Deudas
-OptionModeTrueDesc=En este contexto, el volumen de negocios se calcula sobre pagos (fecha de pagos). La validez de las cifras está asegurada solo si la contabilidad se examina a través de la entrada / salida en las cuentas a través de facturas.
 OptionModeVirtualDesc=En este contexto, el volumen de negocios se calcula sobre las facturas (fecha de validación). Cuando estas facturas vencen, hayan sido pagadas o no, se enumeran en la producción del volumen de negocios.
 FeatureIsSupportedInInOutModeOnly=Función solo disponible en el modo de contabilidad CRÉDITOS-DEUDAS (Consulte Configuración del módulo de contabilidad)
 VATReportBuildWithOptionDefinedInModule=Las cantidades que se muestran aquí se calculan utilizando las reglas definidas por la configuración del módulo de impuestos.
@@ -74,7 +72,6 @@ PaymentCustomerInvoice=Pago factura a cliente
 PaymentSupplierInvoice=pago de factura del proveedor
 PaymentSocialContribution=Pago de impuestos sociales / fiscales
 PaymentVat=Pago del IVA
-AutomaticCreationPayment=También registre el pago
 ListPayment=Lista de pagos
 ListOfCustomerPayments=Lista de pagos de clientes
 ListOfSupplierPayments=Lista de pagos de proveedores
@@ -227,6 +224,7 @@ LinkedFichinter=Enlace a una intervención
 ImportDataset_tax_contrib=Impuestos sociales / fiscales
 ErrorBankAccountNotFound=Error: cuenta bancaria no encontrada
 FiscalPeriod=Período contable
+FiscalYearFromTo=Período desde %s hasta %s
 ListSocialContributionAssociatedProject=Listado de cotizaciones sociales asociadas al proyecto.
 AccountingAffectation=Asignación de contabilidad
 LastDayTaxIsRelatedTo=Último día del período en que el impuesto está relacionado con
