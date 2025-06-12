@@ -365,7 +365,7 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1
 insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 154, 15401, '', 0, 'Mexique');
 
 
-Morocco / Maroc - Regions since 2015 (id country=12)
+--Morocco / Maroc - Regions since 2015 (id country=12)
 INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 12, 1201, '', 0, 'Tanger-Tétouan-Al Hoceima');
 INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 12, 1202, '', 0, 'Oriental');
 INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 12, 1203, '', 0, 'Fès-Meknès');                                                                
