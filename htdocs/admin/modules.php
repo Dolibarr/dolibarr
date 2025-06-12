@@ -1377,7 +1377,7 @@ if ($mode == 'marketplace') {
 				</div>
 			<?php } ?>
 
-			<div id="listing-content" <?php if (empty($categories_tree)) { ?>style="width:100%;"<?php } ?>>
+			<div id="listing-content" class="div-table-responsive" <?php if (empty($categories_tree)) { ?>style="width:100%;"<?php } ?>>
 				<table summary="list_of_modules" id="list_of_modules" class="productlist centpercent">
 					<tbody id="listOfModules">
 						<?php //echo $remotestore->get_products($nbmaxtoshow); ?>
