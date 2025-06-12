@@ -257,7 +257,19 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1005','S
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1006','Groupement d''intérêt économique (GEI)');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1007','Groupe de sociétés');
 
--- The Netherlands
+-- Morocco
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (12, '1200', 'Entreprise individuelle', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (12, '1201', 'Société en nom collectif (SNC)', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (12, '1202', 'Société en Commandite Simple (SCS)', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (12, '1203', 'Société à Responsabilité Limitée (SARL)', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (12, '1204', 'Société Anonyme (S.A)', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (12, '1205', 'Société en Commandite par Actions (SCA)', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (12, '1206', 'Société Anonyme Simplifiée (SAS)', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (12, '1207', 'Le groupement d''intérêt économique (GIE)', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (12, '1208', 'Coopérative', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (12, '1209', 'Association', 1);
+
+-- The Netherlands 
 INSERT INTO llx_c_forme_juridique (fk_pays,code,libelle,isvatexempted,active,module) VALUES (17,1701,'Eenmanszaak',0,1,NULL);
 INSERT INTO llx_c_forme_juridique (fk_pays,code,libelle,isvatexempted,active,module) VALUES (17,1702,'Maatschap',0,1,NULL);
 INSERT INTO llx_c_forme_juridique (fk_pays,code,libelle,isvatexempted,active,module) VALUES (17,1703,'Vennootschap onder firma',0,1,NULL);
