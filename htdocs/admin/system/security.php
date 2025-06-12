@@ -676,16 +676,10 @@ print load_fiche_titre($langs->trans("API"), '', 'folder');
 
 print '<div class="divsection wordbreak">';
 
-if (!isModEnabled('api') && !isModEnabled('webservices')) {
+if (!isModEnabled('api')) {
 	print $langs->trans("APIsAreNotEnabled");
 } else {
-	if (isModEnabled('webservices')) {
-		print img_picto('', 'warning').' '.$langs->trans('YouEnableDeprecatedWSAPIsUseRESTAPIsInstead')."<br>\n";
-		print '<br>';
-	}
-	if (isModEnabled('api')) {
-		print '<strong>API_ENDPOINT_RULES</strong> = '.getDolGlobalString('API_ENDPOINT_RULES', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Example").': login:0,users:0,setup:1,status:1,tickets:1,...)</span>')."<br>\n";
-	}
+    print '<strong>API_ENDPOINT_RULES</strong> = '.getDolGlobalString('API_ENDPOINT_RULES', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Example").': login:0,users:0,setup:1,status:1,tickets:1,...)</span>')."<br>\n";
 }
 
 print '<br>';

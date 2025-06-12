@@ -128,11 +128,11 @@ if (empty($reshook)) {
 
 
 	// Visible
-	$alwayscheckedmodules = array('barcode', 'bookmark', 'categorie', 'externalrss', 'fckeditor', 'geoipmaxmind', 'gravatar', 'memcached', 'syslog', 'user', 'webservices'); // Technical module we always want
+	$alwayscheckedmodules = array('barcode', 'bookmark', 'categorie', 'externalrss', 'fckeditor', 'geoipmaxmind', 'gravatar', 'memcached', 'syslog', 'user'); // Technical module we always want
 	$alwaysuncheckedmodules = array('ai', 'dav', 'dynamicprices', 'incoterm', 'loan', 'multicurrency', 'paybox', 'paypal', 'stripe', 'google', 'printing', 'scanner', 'socialnetworks', 'webhook', 'webportal', 'website', 'zapier'); // Module we don't want by default
 	// Not visible
 	$alwayshiddencheckedmodules = array('accounting', 'api', 'barcode', 'blockedlog', 'bookmark', 'clicktodial', 'comptabilite', 'cron', 'document', 'domain', 'externalrss', 'externalsite', 'fckeditor', 'geoipmaxmind', 'gravatar', 'label', 'ldap',
-									'mailmanspip', 'notification', 'oauth', 'syslog', 'user', 'webservices', 'workflow',
+									'mailmanspip', 'notification', 'oauth', 'syslog', 'user', 'workflow',
 									// Extended modules
 									'memcached', 'numberwords', 'zipautofillfr');
 	$alwayshiddenuncheckedmodules = array('cashdesk', 'collab', 'dav', 'debugbar', 'emailcollector', 'ftp', 'hrm', 'modulebuilder', 'printing', 'webservicesclient', 'zappier',
