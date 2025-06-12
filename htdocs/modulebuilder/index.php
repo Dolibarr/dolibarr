@@ -3669,6 +3669,8 @@ if ($module == 'initmodule') {
 					print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
 					print '<input type="hidden" name="tab" value="'.dol_escape_htmltag($tab).'">';
 					print '<input type="hidden" name="keydescription" value="'.dol_escape_htmltag(GETPOST('keydescription', 'alpha')).'">';
+
+					print '<div class="div-table-responsive-no-min">';
 					print '<table class="border centpercent">';
 					print '<tr class="liste_titre"><td class="titlefield">';
 					print $langs->trans("Parameter");
@@ -3806,6 +3808,7 @@ if ($module == 'initmodule') {
 					print '</td></tr>';
 
 					print '</table>';
+					print '</div>';
 					print '</form>';
 				} else {
 					print $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module).'<br>';

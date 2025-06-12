@@ -6,9 +6,9 @@ ProductStatusNotOnBatch=Ne (serija/serija nije korištena)
 ProductStatusOnBatchShort=Lot
 ProductStatusOnSerialShort=Serial
 ProductStatusNotOnBatchShort=Ne
-BatchSellOrEatByMandatoryList=Make %s or %s mandatory
+BatchSellOrEatByMandatoryList=%s ili %s je obavezno
 BatchSellOrEatByMandatoryNone=Ništa
-BatchSellOrEatByMandatoryAll=%s and %s
+BatchSellOrEatByMandatoryAll=%s i %s
 Batch=Lot/Serial
 atleast1batchfield=Datum konzumiranja ili Datum prodaje ili Lot/serijski broj
 batch_number=Lot/serijski broj
@@ -50,3 +50,4 @@ ToReplace=Zamijenite
 CantMoveNonExistantSerial=Greška. Tražite premještanje na ploču za seriju koja više ne postoji. Možda uzimate istu seriju na istom magacinu nekoliko puta u istoj pošiljci ili je koristila druga pošiljka. Uklonite ovu pošiljku i pripremite drugu.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Tabela lota nepotpuna popravka pokretanja s parametrom '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Potrebna ispravka zaliha jer je jedinstven serijski broj.
+ErrorBatchesNeedStockManagement=Greška. Proizvod sa upravljanjem serijama/lotovima mora se upravljati na zalihama.

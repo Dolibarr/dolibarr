@@ -7,3 +7,6 @@ NewDonation=تبرع جديد
 PublicDonation=تبرع عام
 DonationsArea=منطقة التبرعات
 DonationStatusPromiseValidatedShort=معتمد
+DonationStatusPaidShort=تم الاستلام
+donationPublic=تبرع عام
+AnyAmountForDonation=أي مبلغ تختاره

@@ -3,9 +3,9 @@ MenuFinancial=Fakturering | Betaling
 TaxModuleSetupToModifyRules=Gå til <a href="%s">Oppsett av Skatter/avgifter-modul</a> for å endre regler for utregning
 TaxModuleSetupToModifyRulesLT=Gå til <a href="%s">Firmaoppsett</a> for  å endre kalkulasjonsreglene
 OptionMode=Alternativ for regnskap
-OptionModeTrue=Alternativ Inntekt-Utgifter
-OptionModeVirtual=Alternativ Kredit-Debet
-OptionModeTrueDesc=I denne sammenheng, er omsetning beregnet ut fra utbetalinger (dato for betaling). Gyldigheten av de tallene er avhengig av nøyaktig bokføring av inngående og utgående fakturaer.
+OptionModeTrue=Accrual accounting
+OptionModeVirtual=Cash accounting
+OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
 OptionModeVirtualDesc=I denne sammenheng er omsetningen beregnet ut fra fakturaer (dato for validering). Når disse fakturaene forfaller, enten de er betalt eller ikke, blir de oppført i utregning for omsetningen.
 FeatureIsSupportedInInOutModeOnly=Funksjonen er bare tilgjengelig i KREDIT-DEBET regnskapsføringsmodus (Se konfigurasjon i Regnskapsmodul )
 VATReportBuildWithOptionDefinedInModule=Beløp som vises her er beregnet ved hjelp av regler definert av Skattmodul-oppsett.
@@ -325,3 +325,7 @@ InvoiceToPay30Days=Å betale (> 30 dager)
 ConfirmPreselectAccount=Forhåndsvelg regnskapskode
 ConfirmPreselectAccountQuestion=Er du sikker på at du vil forhåndsvelge de %s valgte linjene med denne regnskapskoden?
 AmountPaidMustMatchAmountOfDownPayment=Innbetalt beløp må samsvare med beløpet for nedbetaling
+RuleForLinesDates=Rule for lines dates
+Prepaid=Prepaid
+Postpaid=Postpaid
+SetRuleForLinesDates=Set rule for lines dates
