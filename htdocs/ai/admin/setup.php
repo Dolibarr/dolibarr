@@ -144,7 +144,6 @@ print dol_get_fiche_head($head, 'settings', $langs->trans($title), -1, "ai");
 
 if ($action == 'edit') {
 	print $formSetup->generateOutput(true);
-	print '<br>';
 } elseif (!empty($formSetup->items)) {
 	print $formSetup->generateOutput();
 	print '<div class="tabsAction">';
@@ -205,6 +204,8 @@ print dol_get_fiche_end();
 // The section for test
 
 if (getDolGlobalString("AI_API_SERVICE")) {
+	print '<br>';
+
 	// Section to test
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';

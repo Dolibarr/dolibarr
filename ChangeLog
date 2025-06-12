@@ -140,6 +140,7 @@ NEW: introduce method dolSetCookie
 NEW: Invoice - Document - Add hook on action
 NEW: Pagination data for intervention APi
 NEW: Add experimental Website Template for Association
+NEW: Remove jeditable.
 
 WARNING:
 --------

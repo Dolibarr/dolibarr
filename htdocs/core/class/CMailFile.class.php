@@ -651,7 +651,7 @@ class CMailFile
 				$smtps->setOptions($options);
 			}
 
-			$this->msgid = time().'.SMTPs-dolibarr-'.$this->trackid.'@'.$host;
+			$this->msgid = time().'.'.mt_rand(100, 999).'.SMTPs-dolibarr-'.$this->trackid.'@'.$host;
 
 			$this->smtps = $smtps;
 		} elseif ($this->sendmode == 'swiftmailer') {
@@ -674,7 +674,7 @@ class CMailFile
 			$headers = $this->message->getHeaders();
 
 			$headers->addTextHeader('X-Dolibarr-TRACKID', $this->trackid.'@'.$host);
-			$this->msgid = time().'.swiftmailer-dolibarr-'.$this->trackid.'@'.$host;
+			$this->msgid = time().'.'.mt_rand(100, 999).'.swiftmailer-dolibarr-'.$this->trackid.'@'.$host;
 			$headerID = $this->msgid;
 			$msgid = $headers->get('Message-ID');
 			if ($msgid instanceof Swift_Mime_Headers_IdentificationHeader) {
@@ -1677,11 +1677,11 @@ class CMailFile
 
 		$trackid = $this->trackid;
 		if ($trackid) {
-			$this->msgid = time().'.phpmail-dolibarr-'.$trackid.'@'.$host;
+			$this->msgid = time().'.'.mt_rand(100, 999).'.phpmail-dolibarr-'.$trackid.'@'.$host;
 			$out .= 'Message-ID: <'.$this->msgid.">".$this->eol2; // Uppercase seems replaced by phpmail
 			$out .= 'X-Dolibarr-TRACKID: '.$trackid.'@'.$host.$this->eol2;
 		} else {
-			$this->msgid = time().'.phpmail@'.$host;
+			$this->msgid = time().'.'.mt_rand(100, 999).'.phpmail@'.$host;
 			$out .= 'Message-ID: <'.$this->msgid.">".$this->eol2;
 		}
 
@@ -1721,7 +1721,6 @@ class CMailFile
 	public function write_mimeheaders($filename_list, $mimefilename_list)
 	{
 		// phpcs:enable
-		$mimedone = 0;
 		$out = "";
 
 		if (is_array($filename_list) && is_array($mimefilename_list)) {

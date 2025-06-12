@@ -2033,7 +2033,7 @@ class Societe extends CommonObject
 				$this->entity       = $obj->entity;
 				$this->canvas = $obj->canvas;
 
-				$this->ref          = $obj->rowid;
+				$this->ref          = $obj->name;
 				$this->name = $obj->name;
 				$this->nom          = $obj->name; // deprecated
 				$this->name_alias = $obj->name_alias;

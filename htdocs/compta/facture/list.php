@@ -77,10 +77,7 @@ $langs->loadLangs(array('bills', 'companies', 'products', 'categories'));
 
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
-$id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
-$ref = GETPOST('ref', 'alpha');
-$socid = GETPOSTINT('socid');
-
+// Get Parameters
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
@@ -93,6 +90,10 @@ $mode = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy'
 if ($contextpage == 'poslist') {
 	$optioncss = 'print';
 }
+
+$id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
+$ref = GETPOST('ref', 'alpha');
+$socid = GETPOSTINT('socid');
 
 $userid = GETPOSTINT('userid');
 $search_ref = GETPOST('sf_ref') ? GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
@@ -178,8 +179,9 @@ $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1 or if we click on clear filters
+}
 $offset = $limit * $page;
 if (!$sortorder && getDolGlobalString('INVOICE_DEFAULT_UNPAYED_SORT_ORDER') && $search_status == '1') {
 	$sortorder = getDolGlobalString('INVOICE_DEFAULT_UNPAYED_SORT_ORDER');
@@ -786,7 +788,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = f.fk_projet";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON f.fk_user_author = u.rowid';
 // Add table from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
 $sql .= ' WHERE f.fk_soc = s.rowid';
@@ -986,7 +988,7 @@ if ($search_user > 0) {
 	$sql .= " SELECT ec.fk_c_type_contact, ec.element_id, ec.fk_socpeople";
 	$sql .= " FROM ".MAIN_DB_PREFIX."element_contact as ec";
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."c_type_contact as tc";
-	$sql .= " ON ec.fk_c_type_contact = tc.rowid AND tc.element='facture' AND tc.source='internal'";
+	$sql .= " ON ec.fk_c_type_contact = tc.rowid AND tc.element = 'facture' AND tc.source = 'internal'";
 	$sql .= " WHERE ec.element_id = f.rowid AND ec.fk_socpeople = ".((int) $search_user).")";
 }
 // Search on sale representative
@@ -1089,7 +1091,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -1134,8 +1136,7 @@ if ($search_fk_fac_rec_source) {
 	print dol_get_fiche_head($head, 'generated', $langs->trans('InvoicesGeneratedFromRec'), -1, 'bill'); // Add a div
 }
 
-
-$param = '&socid='.urlencode((string) ($socid));
+$param = '';
 if (!empty($mode)) {
 	$param .= '&mode='.urlencode($mode);
 }
@@ -1153,6 +1154,9 @@ if ($show_files) {
 }
 if ($search_all) {
 	$param .= '&search_all='.urlencode($search_all);
+}
+if ($socid > 0) {
+	$param .= '&socid='.((int) $socid);
 }
 if ($search_date_startday) {
 	$param .= '&search_date_startday='.urlencode((string) ($search_date_startday));
@@ -1376,6 +1380,7 @@ if ($contextpage != 'poslist') {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewBill'), '', 'fa fa-plus-circle', $url, '', $user->hasRight("facture", "creer"));
 }
 
+// Lines of title fields
 $i = 0;
 print '<form method="POST" id="searchFormList" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 if ($optioncss != '') {
@@ -1432,7 +1437,7 @@ if ($user->hasRight("user", "user", "lire")) {
 	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$formother->select_salesrepresentatives($search_sale, 'search_sale', $user, 0, $tmptitle, 'maxwidth200');
 	$moreforfilter .= '</div>';
 }
-// If the user can view prospects other than his'
+// If the user can view other users
 if ($user->hasRight("user", "user", "lire")) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('LinkedToSpecificUsers');
@@ -1729,7 +1734,7 @@ if (!empty($arrayfields['f.multicurrency_total_vat']['checked'])) {
 if (!empty($arrayfields['f.multicurrency_total_ttc']['checked'])) {
 	// Amount
 	print '<td class="liste_titre right">';
-	print '<input class="flat" type="text" size="4" name="search_multicurrency_montant_ttc" value="'.dol_escape_htmltag($search_multicurrency_montant_ttc).'">';
+	print '<input class="flat width75" type="text" name="search_multicurrency_montant_ttc" value="'.dol_escape_htmltag($search_multicurrency_montant_ttc).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['multicurrency_dynamount_payed']['checked'])) {
@@ -2023,7 +2028,7 @@ if (!empty($arrayfields['total_mark_rate']['checked'])) {
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => $totalarray);
+$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (!empty($arrayfields['f.datec']['checked'])) {
@@ -2061,7 +2066,7 @@ if (!empty($arrayfields['f.fk_statut']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	$totalarray['nbfield']++;
 }
 
@@ -2376,7 +2381,7 @@ if ($num > 0) {
 				}
 			}
 
-			// Project title
+			// Project label
 			if (!empty($arrayfields['p.title']['checked'])) {
 				print '<td class="nowraponall">';
 				if ($obj->project_id > 0) {
@@ -2401,7 +2406,7 @@ if ($num > 0) {
 					$totalarray['nbfield']++;
 				}
 			}
-			// Alias
+			// Alias name
 			if (!empty($arrayfields['s.name_alias']['checked'])) {
 				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companystatic->name_alias).'">';
 				print dol_escape_htmltag($companystatic->name_alias);
@@ -2442,7 +2447,7 @@ if ($num > 0) {
 			// Town
 			if (!empty($arrayfields['s.town']['checked'])) {
 				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->town).'">';
-				print dol_escape_htmltag($obj->town);
+				print dolPrintLabel($obj->town);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2451,7 +2456,7 @@ if ($num > 0) {
 			// Zip
 			if (!empty($arrayfields['s.zip']['checked'])) {
 				print '<td class="nowraponall">';
-				print dol_escape_htmltag($obj->zip);
+				print dolPrintLabel($obj->zip);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2468,7 +2473,7 @@ if ($num > 0) {
 			if (!empty($arrayfields['country.code_iso']['checked'])) {
 				$tmparray = getCountry($obj->fk_pays, 'all');
 				print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($tmparray['label']).'">';
-				print dol_escape_htmltag($tmparray['label']);
+				print dolPrintLabel($tmparray['label']);
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2479,7 +2484,7 @@ if ($num > 0) {
 				if (!is_array($typenArray) || count($typenArray) == 0) {
 					$typenArray = $formcompany->typent_array(1);
 				}
-				print '<td class="center tdoverflowmax100" title="'.dolPrintHTML($typenArray[$obj->typent_code]).'">';
+				print '<td class="center tdoverflowmax100" title="'.dolPrintHTMLForAttribute($typenArray[$obj->typent_code]).'">';
 				if (!empty($obj->typent_code)) {
 					print $typenArray[$obj->typent_code];
 				}
@@ -2542,7 +2547,6 @@ if ($num > 0) {
 					$totalarray['nbfield']++;
 				}
 			}
-
 			// POS Terminal
 			if (!empty($arrayfields['f.pos_source']['checked'])) {
 				print '<td>';
@@ -2555,7 +2559,7 @@ if ($num > 0) {
 
 			// Amount HT
 			if (!empty($arrayfields['f.total_ht']['checked'])) {
-				print '<td class="right nowraponall amount">'.price($obj->total_ht)."</td>\n";
+				print '<td class="right nowraponall"><span class="amount">'.price($obj->total_ht)."</span></td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -2928,7 +2932,7 @@ if ($num > 0) {
 				}
 			}
 
-			print '</tr>'."\n";
+			print "</tr>\n";
 		}
 
 		$i++;

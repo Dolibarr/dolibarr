@@ -578,7 +578,6 @@ class CommandeFournisseur extends CommonOrder
 			$this->fk_project = $obj->fk_project;
 			$this->cond_reglement_id = $obj->fk_cond_reglement;
 			$this->cond_reglement_code = $obj->cond_reglement_code;
-			$this->cond_reglement = $obj->cond_reglement_label;			// deprecated
 			$this->cond_reglement_label = $obj->cond_reglement_label;
 			$this->cond_reglement_doc = $obj->cond_reglement_doc;
 			$this->fk_account = $obj->fk_account;

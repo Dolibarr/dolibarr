@@ -159,12 +159,12 @@ class Translate
 		if (!empty($langpart[1])) {	// If it's for a codetouse that is a long code xx_YY
 			// Array force long code from first part, even if long code is defined
 			$longforshort = array('ar' => 'ar_SA');
-			$longforshortexcep = array('ar_EG');
+			$longforshortexcep = array('ar_DZ', 'ar_EG', 'ar_IQ', 'ar_JO', 'ar_SY');
 			if (isset($longforshort[strtolower($langpart[0])]) && !in_array($codetouse, $longforshortexcep)) {
 				$srclang = $longforshort[strtolower($langpart[0])];
 			} elseif (!is_numeric($langpart[1])) {		// Second part YY may be a numeric with some Chrome browser
 				$srclang = strtolower($langpart[0]) . "_" . strtoupper($langpart[1]);
-				$longforlong = array('no_nb' => 'nb_NO');
+				$longforlong = array('no_nb' => 'nb_NO');	// When lang and code are inverted by browser
 				if (isset($longforlong[strtolower($srclang)])) {
 					$srclang = $longforlong[strtolower($srclang)];
 				}

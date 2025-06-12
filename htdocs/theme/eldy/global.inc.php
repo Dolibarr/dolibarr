@@ -503,7 +503,7 @@ textarea {
 	border-right: solid 1px var(--inputbordercolor);
 	border-bottom: solid 1px var(--inputbordercolor);
 
-	padding:4px;
+	padding:8px;
 	margin-left:0px;
 	margin-bottom:1px;
 	margin-top:1px;
@@ -2843,11 +2843,11 @@ span.widthpictotitle.pictotitle {
 }
 .pictofixedwidth {
 	text-align: start;
-	width: 1.35em;
+	width: 20px;	/* Do not use em unit here */
 	/* padding-right: 0; */
 }
 img.pictofixedwidth {
-	width: 1.2em;
+	width: 18px;	/* Do not use em unit here */
 	padding-right: 2px;
 }
 

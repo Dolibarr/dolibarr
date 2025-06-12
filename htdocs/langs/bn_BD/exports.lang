@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - exports
+ImportExportArea=Imports / Exports
 ExportsArea=Exports
 ImportArea=আমদানি
 NewExport=নতুন রপ্তানি
@@ -31,10 +32,10 @@ ExportCsvSeparator=Csv অক্ষর বিভাজক
 ImportCsvSeparator=Csv অক্ষর বিভাজক
 Step=Step
 FormatedImport=সহকারী আমদানি করুন
-FormatedImportDesc1=এই মডিউল আপনাকে একটি সহকারী ব্যবহার করে, প্রযুক্তিগত জ্ঞান ছাড়াই একটি ফাইল থেকে বিদ্যমান ডেটা আপডেট করতে বা ডেটাবেসে নতুন অবজেক্ট যোগ করতে দেয়।
+FormatedImportDesc1=Click here to use the assistant to update existing data or add new objects into the database from a file.
 FormatedImportDesc2=প্রথম ধাপ হল আপনি যে ধরনের ডেটা আমদানি করতে চান, তারপরে সোর্স ফাইলের বিন্যাস, তারপর আপনি যে ক্ষেত্রগুলি আমদানি করতে চান তা বেছে নেওয়া।
 FormatedExport=রপ্তানি সহকারী
-FormatedExportDesc1=এই টুলগুলি আপনাকে প্রযুক্তিগত জ্ঞানের প্রয়োজন ছাড়াই প্রক্রিয়ায় সাহায্য করার জন্য একজন সহকারী ব্যবহার করে ব্যক্তিগতকৃত ডেটা রপ্তানির অনুমতি দেয়।
+FormatedExportDesc1=Click here to use the assistant to export data in a supported format
 FormatedExportDesc2=প্রথম ধাপ হল একটি পূর্বনির্ধারিত ডেটাসেট বেছে নেওয়া, তারপর আপনি কোন ক্ষেত্রগুলি রপ্তানি করতে চান এবং কোন ক্রমে।
 FormatedExportDesc3=রপ্তানির জন্য ডেটা নির্বাচন করা হলে, আপনি আউটপুট ফাইলের বিন্যাস চয়ন করতে পারেন।
 Sheet=Sheet

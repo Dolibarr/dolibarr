@@ -7,6 +7,7 @@
  * Copyright (C) 2018-2022  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2024       Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Charlene Benke          <charlene@patas-monkey.com>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -2474,6 +2475,52 @@ class Setup extends DolibarrApi
 		}
 
 		return getDolGlobalString($constantname);
+	}
+
+	/**
+	 * Get all setup variables
+	 *
+	 * Note that conf variables that stores security key or password hashes can't be loaded with API.
+	 *
+	 * @return array				List of establishments
+	 * @phan-return array<Object|false>
+	 * @phpstan-return array<Object|false>
+	 *
+	 * @url     GET conf/
+	 *
+	 * @throws RestException 400 Error Bad or unknown value for constantname
+	 * @throws RestException 403 Forbidden
+	 */
+	public function getConfs()
+	{
+		global $conf;
+		$list = array();
+
+		if (!DolibarrApiAccess::$user->admin
+			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_CONST_READ') || DolibarrApiAccess::$user->login != getDolGlobalString('API_LOGINS_ALLOWED_FOR_CONST_READ'))) {
+			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_CONST_READ');
+		}
+
+		$sql = "select name, value";
+		$sql .= " FROM ".MAIN_DB_PREFIX."const";
+		$sql .= " WHERE entity IN (".getEntity('const').')';
+
+		$result = $this->db->query($sql);
+
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			for ($i = 0; $i < $num; $i++) {
+				$obj = $this->db->fetch_object($result);
+				if (!isASecretKey($obj->name)) {
+					// We do not return secret keys
+					$list[$obj->name] = $obj->value;
+				}
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieving list of const : '.$this->db->lasterror());
+		}
+
+		return $list;
 	}
 
 	/**

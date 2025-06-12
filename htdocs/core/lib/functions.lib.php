@@ -3010,7 +3010,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 	if ($popuptab) {	// If there is some tabs not shown
 		$left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
 		$right = ($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right');
-		$widthofpopup = 200;
+		$widthofpopup = 240;
 
 		$tabsname = $moretabssuffix;
 		if (empty($tabsname)) {
@@ -15659,9 +15659,11 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 
 		$out .= "</ul>\n";
 
+		// Code to manage the click on button data-read-more-action to show full description of an event
 		$out .= '<script>
 				jQuery(document).ready(function () {
 				   $(document).on("click", "[data-read-more-action]", function(e){
+						console.log("We click on data-read-more-action");
 					   let readMoreBloc = $(this).closest(".readmore-block");
 					   if(readMoreBloc.length > 0){
 							e.preventDefault();
