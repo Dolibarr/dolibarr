@@ -3786,7 +3786,7 @@ if (!function_exists("llxFooter")) {
 						$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
 						// Try to guess the distrib used
 						$distrib = 'standard';
-						if ($_SERVER["SERVER_ADMIN"] == 'doliwamp@localhost') {
+						if (isset($_SERVER["SERVER_ADMIN"]) && $_SERVER["SERVER_ADMIN"] == 'doliwamp@localhost') {
 							$distrib = 'doliwamp';
 						}
 						if (!empty($dolibarr_distrib)) {
