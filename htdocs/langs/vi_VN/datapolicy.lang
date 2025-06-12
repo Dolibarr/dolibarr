@@ -17,9 +17,9 @@ Module4100Name = Chính sách bảo mật dữ liệu
 Module4100Desc = Mô-đun quản lý quyền riêng tư dữ liệu (Tuân thủ GDPR)
 # Administration page
 datapolicySetup = Thiết lập chính sách bảo mật dữ liệu mô-đun
-DataDeletion=Deletion of data
-DataAnonymization=Anonymization of data
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
+DataDeletion=Xóa dữ liệu
+DataAnonymization=Ẩn danh dữ liệu
+datapolicySetupPage = Tùy thuộc vào luật pháp của quốc gia bạn (Ví dụ <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Điều 5</a> của GDPR), dữ liệu cá nhân phải được lưu giữ trong thời gian không vượt quá thời gian dữ liệu cần thiết cho mục đích mà dữ liệu được thu thập, ngoại trừ mục đích lưu trữ. <br>Mô-đun này sẽ tự động ẩn danh sau một khoảng thời gian nhất định mà không có sự kiện nào (khoảng thời gian mà bạn sẽ chỉ định bên dưới) và nếu đối tượng không có đối tượng kinh doanh con nào hiện có.
 NB_MONTHS = %s tháng
 ONE_YEAR = 1 năm
 NB_YEARS = %s năm
@@ -34,14 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Khách hàng tiềm năng
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Cũng không phải khách hàng tiềm năng/Cũng không phải khách hàng
 DATAPOLICY_CONTACT_FOURNISSEUR = Nhà cung cấp
 DATAPOLICY_ADHERENT = Thành viên
-DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
+DATAPOLICY_Tooltip_SETUP=Việc ẩn danh được thực hiện bởi công việc theo lịch trình "%s" do mô-đun "%s" chạy, do đó mô-đun này phải được bật và hoạt động chính xác.
 SendAgreementText = Bạn có thể gửi email GDPR đến tất cả các địa chỉ liên hệ có liên quan của mình (những người chưa nhận được email và bạn chưa đăng ký bất kỳ điều gì về thỏa thuận GDPR của họ). Để thực hiện việc này, hãy sử dụng nút sau.
 SendAgreement = Gửi email
 AllAgreementSend = Tất cả các email đã được gửi
 TXTLINKDATAPOLICYACCEPT = Văn bản cho liên kết "thỏa thuận"
 TXTLINKDATAPOLICYREFUSE = Văn bản cho liên kết "bất đồng"
-DelayForAnonymization=Delay for anonymization
-DelayForDeletion=Delay for deletion
+DelayForAnonymization=Trì hoãn để ẩn danh
+DelayForDeletion=Trì hoãn xóa
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = GDPR: Xử lý dữ liệu cá nhân
 DATAPOLICY_consentement = Đã có sự đồng ý cho việc xử lý dữ liệu cá nhân

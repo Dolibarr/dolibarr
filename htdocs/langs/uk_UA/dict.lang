@@ -295,8 +295,8 @@ CurrencyXPF=франки CFP
 CurrencySingXPF=франк CFP
 CurrencyCentEUR=центів
 CurrencyCentSingEUR=цент
-CurrencyCentINR=paise
-CurrencyCentSingINR=paisa
+CurrencyCentINR=пайс
+CurrencyCentSingINR=пайса
 CurrencyThousandthSingTND=тисячний
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Інтернет

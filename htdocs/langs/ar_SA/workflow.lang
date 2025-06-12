@@ -19,18 +19,18 @@ descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=عند إغلاق شحنة،
 # Autoclassify purchase proposal
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=عند التحقق من صحة فاتورة البائع، قم بتصنيف اقتراح البائع المصدر المرتبط على أنه تم إصدار فاتورة له (وإذا كان مبلغ الفاتورة هو نفس المبلغ الإجمالي للعروض المرتبطة)
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=When a vendor invoice is validated, classify linked source purchase order as billed (and if the amount of the invoice is the same as the total amount of the linked orders)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=When a reception is validated, classify linked source purchase order as received (and if the quantity received by all receptions is the same as in the purchase order to update)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=When a reception is closed, classify linked source purchase orders as received (and if the quantity received by all receptions issued from the purchase order is the same as in the purchase order to update)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=عند التحقق من صحة فاتورة البائع، قم بتصنيف مصدر طلب الشراء المرتبط على أنه تم إصدار فاتورة له (وإذا كان مبلغ الفاتورة هو نفس المبلغ الإجمالي للطلبات المرتبطة)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=عند التحقق من صحة الاستلام، قم بتصنيف طلب شراء المصدر المرتبط على أنه مستلم (و إذا كانت الكمية المستلمة من قبل جميع الاستلامات هي نفسها الموجودة في طلب الشراء، فقم بالتحديث)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=عند إغلاق الاستقبال، قم بتصنيف أوامر الشراء المصدر المرتبطة على أنها مستلمة (وإذا كانت الكمية المستلمة من جميع عمليات الاستقبال الصادرة من أمر الشراء هي نفسها الموجودة في أمر الشراء، قم بالتحديث)
 # Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=When a customer invoice is validated, classify the linked source shipment as closed (and if the amount of the invoice is the same as the total amount of the linked shipments)
-descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=When a customer invoice is validated, classify the linked source shipment as billed (and if the amount of the invoice is the same as the total amount of the linked shipments)
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=عند التحقق من صحة فاتورة العميل، قم بتصنيف شحنة المصدر المرتبطة على أنها مغلقة (وإذا كان مبلغ الفاتورة هو نفس المبلغ الإجمالي للشحنات المرتبطة)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=عند التحقق من صحة فاتورة العميل، قم بتصنيف شحنة المصدر المرتبطة على أنها تم إصدار فاتورة لها (وإذا كان مبلغ الفاتورة هو نفس المبلغ الإجمالي للشحنات المرتبطة)
 # Autoclassify receptions
-descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=When a purchase invoice is validated, classify linked source receptions as closed (and if the amount of the invoice is the same as the total amount of the linked receptions)
-descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=When a purchase invoice is validated, classify linked source receptions as billed (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=عند التحقق من صحة فاتورة الشراء، قم بتصنيف عمليات الاستلام المصدرية المرتبطة على أنها مغلقة (وإذا كان مبلغ الفاتورة هو نفس المبلغ الإجمالي لعمليات الاستلام المرتبطة)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=عند التحقق من صحة فاتورة الشراء، قم بتصنيف عمليات الاستلام من المصدر المرتبط على أنها تم تحصيلها (وإذا كان مبلغ الفاتورة هو نفس المبلغ الإجمالي لعمليات الاستلام المرتبطة)
 # Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=When a ticket is created, link it with available contracts, matching the same third party than the ticket
-descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=When linking automatically a ticket with contracts, search contracts among those of the parents companies
+descWORKFLOW_TICKET_LINK_CONTRACT=عند إنشاء تذكرة، قم بربطها بالعقود المتاحة، والتي تتطابق مع نفس الطرف الثالث غير التذكرة
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=عند ربط تذكرة تلقائيًا بالعقود، ابحث عن العقود بين عقود الشركات الأم
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=إغلاق جميع المداخلات المرتبطة بالتذكرة عند إغلاق التذكرة
 AutomaticCreation=إنشاء تلقائي

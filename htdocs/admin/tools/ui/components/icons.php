@@ -62,7 +62,7 @@ if (!GETPOST('hidenavmenu')) {
 }
 ?>
 
-<div class="doc-wrapper">
+<div class="doc-wrapper<?php print GETPOST('hidenavmenu') ? "-bis" : ""; ?>">
 
 		<?php
 		if (!GETPOST('hidenavmenu')) {
