@@ -901,6 +901,11 @@ function security_prepare_head()
 	$head[$h][2] = 'audit';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT."/admin/openid.php";
+	$head[$h][1] = $langs->trans("Audit");
+	$head[$h][2] = 'audit';
+	$h++;
+
 
 	// Show permissions lines
 	$nbPerms = 0;
