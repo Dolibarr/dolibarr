@@ -3,6 +3,7 @@
  * Copyright (C) 2020-2025  Thibault FOUCART		<support@ptibogxiv.net>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * COpyright (C) 2025		William Mead		<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 
 /**
  * API class for users
+ *
+ * @since	5.0.0	Initial implementation
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
@@ -62,6 +65,8 @@ class Users extends DolibarrApi
 	 *
 	 * Get a list of Users
 	 *
+	 * @since	5.0.0	Initial implementation
+	 *
 	 * @param string	$sortfield	Sort field
 	 * @param string	$sortorder	Sort order
 	 * @param int		$limit		Limit for list
@@ -73,6 +78,8 @@ class Users extends DolibarrApi
 	 * @return  array               Array of User objects
 	 * @phan-return Object[]
 	 * @phpstan-return Object[]
+	 *
+	 * @throws RestException
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '0', $category = 0, $sqlfilters = '', $properties = '')
 	{
@@ -143,6 +150,8 @@ class Users extends DolibarrApi
 
 	/**
 	 * Get properties of an user object
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param	int		$id						ID of user
 	 * @param	int		$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
@@ -307,6 +316,8 @@ class Users extends DolibarrApi
 	/**
 	 * Create user account
 	 *
+	 * @since	5.0.0	Initial implementation
+	 *
 	 * @param array $request_data New user data
 	 * @phan-param ?array<string,mixed> $request_data
 	 * @phpstan-param ?array<string,mixed> $request_data
@@ -360,6 +371,8 @@ class Users extends DolibarrApi
 
 	/**
 	 * Update user account
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param	int			$id					Id of account to update
 	 * @param	array		$request_data		Datas
@@ -542,6 +555,8 @@ class Users extends DolibarrApi
 	/**
 	 * Add a user into a group
 	 *
+	 * @since	5.0.0	Initial implementation
+	 *
 	 * @param   int     $id        User ID
 	 * @param   int     $group     Group ID
 	 * @param   int     $entity    Entity ID (valid only for superadmin in multicompany transverse mode)
@@ -699,6 +714,8 @@ class Users extends DolibarrApi
 
 	/**
 	 * Delete account/user
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param   int     $id Account ID
 	 * @return  array
