@@ -91,13 +91,18 @@ if ($action == 'update') {
 	if (GETPOSTISSET('MAIN_GENERATE_PROPOSALS_WITH_PICTURE')) {
 		dolibarr_set_const($db, "MAIN_GENERATE_PROPOSALS_WITH_PICTURE", GETPOST("MAIN_GENERATE_PROPOSALS_WITH_PICTURE"), 'chaine', 0, '', $conf->entity);
 	}
+	if (GETPOSTISSET('PROPOSAL_SHOW_SHIPPING_ADDRESS')) {
+		dolibarr_set_const($db, "PROPOSAL_SHOW_SHIPPING_ADDRESS", GETPOSTINT("PROPOSAL_SHOW_SHIPPING_ADDRESS"), 'chaine', 0, '', $conf->entity);
+	}
 	if (GETPOSTISSET('SALES_ORDER_SHOW_SHIPPING_ADDRESS')) {
 		dolibarr_set_const($db, "SALES_ORDER_SHOW_SHIPPING_ADDRESS", GETPOSTINT("SALES_ORDER_SHOW_SHIPPING_ADDRESS"), 'chaine', 0, '', $conf->entity);
 		dolibarr_del_const($db, "SALES_ORDER_SHOW_SHIPPING_ADDRESS", $conf->entity);
 	}
+	
 	if (GETPOSTISSET('MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_UNIT_PRICE')) {
 		dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_UNIT_PRICE", GETPOST("MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_UNIT_PRICE"), 'chaine', 0, '', $conf->entity);
 	}
+	
 	if (GETPOSTISSET('MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_TOTAL_COLUMN')) {
 		dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_TOTAL_COLUMN", GETPOST("MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_TOTAL_COLUMN"), 'chaine', 0, '', $conf->entity);
 	}
@@ -244,7 +249,6 @@ print '<input type="hidden" name="action" value="update">';
 
 if (isModEnabled('propal')) {
 	print load_fiche_titre($langs->trans("Proposal"), '', 'proposal');
-
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="more" class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px"></td></tr>';
@@ -281,6 +285,18 @@ if (isModEnabled('propal')) {
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 		print $form->selectarray("MAIN_GENERATE_PROPOSALS_WITH_PICTURE", $arrval, getDolGlobalString('MAIN_GENERATE_PROPOSALS_WITH_PICTURE'));
+	}
+	print '</td></tr>';
+	
+	// Add delivery address option for proposals
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("PROPOSAL_SHOW_SHIPPING_ADDRESS"), $langs->trans("PROPOSAL_SHOW_SHIPPING_ADDRESSMore"));
+	print '</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('PROPOSAL_SHOW_SHIPPING_ADDRESS');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("PROPOSAL_SHOW_SHIPPING_ADDRESS", $arrval, getDolGlobalString('PROPOSAL_SHOW_SHIPPING_ADDRESS'));
 	}
 	print '</td></tr>';
 
