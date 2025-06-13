@@ -1484,9 +1484,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					break;
 			}
 
-			$selectedprospect = ((GETPOSTISSET('prospect') || $action == 'create') ? GETPOSTINT('prospect') : $selectedprospect);
-			$selectedcustomer = ((GETPOSTISSET('customer') || $action == 'create') ? GETPOSTINT('customer') : $selectedcustomer);
-			$selectedsupplier = ((GETPOSTISSET('supplier') || $action == 'create') ? GETPOSTINT('supplier') : $object->fournisseur);
+			$selectedprospect = ((GETPOSTISSET('prospect') && $action == 'create') ? GETPOSTINT('prospect') : $selectedprospect);
+			$selectedcustomer = ((GETPOSTISSET('customer') && $action == 'create') ? GETPOSTINT('customer') : $selectedcustomer);
+			$selectedsupplier = ((GETPOSTISSET('supplier') && $action == 'create') ? GETPOSTINT('supplier') : $object->fournisseur);
 
 			print '<tr class="marginbottomlarge height50">';
 			if ($conf->browser->layout != 'phone') {
