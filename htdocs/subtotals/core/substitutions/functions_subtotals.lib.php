@@ -24,7 +24,6 @@ function subtotals_completesubstitutionarray_lines(&$substitutionarray, $langs, 
 			$subtotal_total = $object->getSubtotalLineMulticurrencyAmount($line); // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
 		} else {
 			$subtotal_total = $object->getSubtotalLineAmount($line); // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
-			var_dump($subtotal_total);
 		}
 		$substitutionarray['subtotals_total'] = ($subtotal_total == 0) ? "" : $subtotal_total;
 		$substitutionarray['subtotals_level'] = abs($line->qty);
