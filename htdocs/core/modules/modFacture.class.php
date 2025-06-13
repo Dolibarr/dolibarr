@@ -775,6 +775,8 @@ class modFacture extends DolibarrModules
 	{
 		global $conf, $langs;
 
+		$this->_load_tables('/install/mysql/', 'facture');
+		
 		// Remove permissions and default values
 		$this->remove($options);
 
