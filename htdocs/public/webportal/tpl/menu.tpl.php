@@ -1,7 +1,8 @@
 <!-- file menu.tpl.php -->
 <?php
 /* Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,35 +33,79 @@ $navMenu = $navGroupMenu = $navUserMenu = array();
 $maxTopMenu = 0;
 
 if ($context->userIsLog()) {
+	$socid = $context->logged_thirdparty->id;
+
 	// menu propal
 	if (isModEnabled('propal') && getDolGlobalInt('WEBPORTAL_PROPAL_LIST_ACCESS')) {
+		$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."propal";
+		$sql.= " WHERE fk_soc = ".((int) $socid);
+		$sql.= " AND entity IN (".getEntity('propal').")"; // we use getEntity to get the entity of the order module
+		$resql = $context->db->query($sql);
+		if ($resql) {
+			$obj = $context->db->fetch_object($resql);
+			if ($obj && isset($obj->nb) && $obj->nb > 0) {
+				// if there is at least one order, we display the menu
+				$nbPropal = (int) $obj->nb;
+			}
+		} else {
+			dol_print_error($context->db);
+		}
+
 		$navMenu['propal_list'] = array(
 			'id' => 'propal_list',
 			'rank' => 10,
 			'url' => $context->getControllerUrl('propallist'),
-			'name' => $langs->trans('WebPortalPropalListMenu'),
+			'name' => $langs->trans('WebPortalPropalListMenu').($nbPropal? " (".$nbPropal.")" : ''),
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
 
 	// menu orders
 	if (isModEnabled('order') && getDolGlobalInt('WEBPORTAL_ORDER_LIST_ACCESS')) {
+		$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."commande";
+		$sql.= " WHERE fk_soc = ".((int) $socid);
+		$sql.= " AND entity IN (".getEntity('order').")"; // we use getEntity to get the entity of the order module
+		$resql = $context->db->query($sql);
+		if ($resql) {
+			$obj = $context->db->fetch_object($resql);
+			if ($obj && isset($obj->nb) && $obj->nb > 0) {
+				// if there is at least one order, we display the menu
+				$nbOrder = (int) $obj->nb;
+			}
+		} else {
+			dol_print_error($context->db);
+		}
+
 		$navMenu['order_list'] = array(
 			'id' => 'order_list',
 			'rank' => 20,
 			'url' => $context->getControllerUrl('orderlist'),
-			'name' => $langs->trans('WebPortalOrderListMenu'),
+			'name' => $langs->trans('WebPortalOrderListMenu').($nbOrder? " (".$nbOrder.")" : ''),
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
 
 	// menu invoices
 	if (isModEnabled('invoice') && getDolGlobalInt('WEBPORTAL_INVOICE_LIST_ACCESS')) {
+		$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."facture";
+		$sql.= " WHERE fk_soc = ".((int) $socid);
+		$sql.= " AND entity IN (".getEntity('facture').")"; // we use getEntity to get the entity of the order module
+		$resql = $context->db->query($sql);
+		if ($resql) {
+			$obj = $context->db->fetch_object($resql);
+			if ($obj && isset($obj->nb) && $obj->nb > 0) {
+				// if there is at least one order, we display the menu
+				$nbInvoice= (int) $obj->nb;
+			}
+		} else {
+			dol_print_error($context->db);
+		}
+		
 		$navMenu['invoice_list'] = array(
 			'id' => 'invoice_list',
 			'rank' => 30,
 			'url' => $context->getControllerUrl('invoicelist'),
-			'name' => $langs->trans('WebPortalInvoiceListMenu'),
+			'name' => $langs->trans('WebPortalInvoiceListMenu').($nbInvoice? " (".$nbInvoice.")" : ''),
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
