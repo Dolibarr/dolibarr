@@ -383,7 +383,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'User not found');
 			}
 
-			$upload_dir = $conf->user->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, 'user').'/'.$object->id;
+			$upload_dir = getMultidirOutput('', 'user') . '/'.get_exdir(0, 0, 0, 0, $object, 'user').'/'.$object->id;
 		} elseif ($modulepart == 'adherent' || $modulepart == 'member') {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
@@ -439,7 +439,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Order not found');
 			}
 
-			$upload_dir = $conf->commande->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'commande');
+			$upload_dir = getMultidirOutput('', 'order') . "/".get_exdir(0, 0, 0, 1, $object, 'commande');
 		} elseif ($modulepart == 'commande_fournisseur' || $modulepart == 'supplier_order') {
 			$modulepart = 'supplier_order';
 
