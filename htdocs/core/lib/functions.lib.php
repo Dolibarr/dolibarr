@@ -14012,7 +14012,7 @@ function getElementProperties($elementType)
 		$table_element = 'ecmfiles';
 		$subelement = '';
 	} elseif ($elementType == 'knowledgerecord' || $elementType == 'knowledgemanagement') {
-		$module = '';
+		$module = 'knowledgemanagement';
 		$classpath = 'knowledgemanagement/class';
 		$classfile = 'knowledgerecord';
 		$classname = 'KnowledgeRecord';

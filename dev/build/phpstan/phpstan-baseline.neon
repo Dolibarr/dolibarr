@@ -1887,7 +1887,7 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 2
+			count: 1
 			path: ../../../htdocs/api/class/api_documents.class.php
 
 		-
@@ -3933,7 +3933,7 @@ parameters:
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 3
+			count: 1
 			path: ../../../htdocs/commande/list.php
 
 		-
@@ -4706,42 +4706,6 @@ parameters:
 
 		-
 			message: '#^Property Facture\:\:\$retained_warranty_fk_cond_reglement \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property Facture\:\:\$revenuestamp \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property Facture\:\:\$total_ht \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property Facture\:\:\$total_localtax1 \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property Facture\:\:\$total_localtax2 \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property Facture\:\:\$total_ttc \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property Facture\:\:\$total_tva \(float\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/compta/facture/class/facture.class.php
@@ -7791,12 +7755,6 @@ parameters:
 		-
 			message: '#^Property CommonObject\:\:\$childtables \(array\<array\<string\>\|string\>\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/core/class/commonobject.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$cond_reglement \(int\|string\) is never assigned string so it can be removed from the property type\.$#'
-			identifier: property.unusedType
 			count: 1
 			path: ../../../htdocs/core/class/commonobject.class.php
 
@@ -18275,12 +18233,6 @@ parameters:
 			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/product/dynamic_price/editor.php
-
-		-
-			message: '#^Variable \$lastmodified might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/index.php
 
 		-
 			message: '#^If condition is always false\.$#'

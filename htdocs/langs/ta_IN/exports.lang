@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - exports
+ImportExportArea=Imports / Exports
 ExportsArea=ஏற்றுமதி
 ImportArea=இறக்குமதி
 NewExport=புதிய ஏற்றுமதி
@@ -31,10 +32,10 @@ ExportCsvSeparator=Csv character separator
 ImportCsvSeparator=Csv character separator
 Step=படி
 FormatedImport=இறக்குமதி உதவியாளர்
-FormatedImportDesc1=இந்த தொகுதியானது, உதவியாளரைப் பயன்படுத்தி, தொழில்நுட்ப அறிவு இல்லாத கோப்பிலிருந்து ஏற்கனவே உள்ள தரவைப் புதுப்பிக்க அல்லது புதிய பொருட்களை தரவுத்தளத்தில் சேர்க்க உங்களை அனுமதிக்கிறது.
+FormatedImportDesc1=Click here to use the assistant to update existing data or add new objects into the database from a file.
 FormatedImportDesc2=முதல் படி, நீங்கள் எந்த வகையான தரவை இறக்குமதி செய்ய விரும்புகிறீர்கள், பின்னர் மூலக் கோப்பின் வடிவம், பின்னர் நீங்கள் இறக்குமதி செய்ய விரும்பும் புலங்கள் ஆகியவற்றைத் தேர்ந்தெடுக்க வேண்டும்.
 FormatedExport=ஏற்றுமதி உதவியாளர்
-FormatedExportDesc1=தொழில்நுட்ப அறிவு தேவையில்லாமல் செயல்பாட்டில் உங்களுக்கு உதவ, உதவியாளரைப் பயன்படுத்தி தனிப்பயனாக்கப்பட்ட தரவை ஏற்றுமதி செய்ய இந்தக் கருவிகள் அனுமதிக்கின்றன.
+FormatedExportDesc1=Click here to use the assistant to export data in a supported format
 FormatedExportDesc2=முதல் படி, முன் வரையறுக்கப்பட்ட தரவுத்தொகுப்பைத் தேர்வுசெய்து, எந்தப் புலங்களை நீங்கள் ஏற்றுமதி செய்ய விரும்புகிறீர்கள், எந்த வரிசையில் இருக்க வேண்டும்.
 FormatedExportDesc3=ஏற்றுமதி செய்வதற்கான தரவு தேர்ந்தெடுக்கப்பட்டால், வெளியீட்டு கோப்பின் வடிவமைப்பை நீங்கள் தேர்வு செய்யலாம்.
 Sheet=தாள்

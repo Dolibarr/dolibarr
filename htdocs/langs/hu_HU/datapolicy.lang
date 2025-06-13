@@ -17,9 +17,9 @@ Module4100Name = Adatvédelmi szabályzat
 Module4100Desc = Adatvédelmi modul (a GDPR-nak megfelelő)
 # Administration page
 datapolicySetup = A modul adatvédelmi szabályzatának beállítása
-DataDeletion=Deletion of data
-DataAnonymization=Anonymization of data
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
+DataDeletion=Adatok törlése
+DataAnonymization=Az adatok anonimizálása
+datapolicySetupPage = Az Ön országának törvényeitől függően (például a GDPR 5. cikkének <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">5. cikke</a> értelmében) a személyes adatokat legfeljebb addig kell megőrizni, ameddig az adatokra szükség van a gyűjtésük céljához, kivéve archiválási célokat.<br>Ez a modul egy bizonyos időtartam elteltével (az alábbiakban megadott időtartam) automatikusan anonimizálja az adatokat, ha az objektumnak nincsenek meglévő üzleti objektum alárendeltjei.
 NB_MONTHS = %s hónap
 ONE_YEAR = 1 év
 NB_YEARS = %s év
@@ -34,14 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = jelentkező/vevő
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Sem jelentkező/Sem vevő
 DATAPOLICY_CONTACT_FOURNISSEUR = Beszállító
 DATAPOLICY_ADHERENT = Tag
-DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
+DATAPOLICY_Tooltip_SETUP=Az anonimizálást az ütemezett "%s" feladat végzi, amelyet a "%s" modul futtat, ezért ennek a modulnak engedélyezve kell lennie, és megfelelően kell működnie.
 SendAgreementText = Küldhet GDPR e-mailt minden érintett kapcsolattartójának (akik még nem kaptak e-mailt, és akikhez még nem regisztrált semmit a GDPR-megállapodásukkal kapcsolatban). Ehhez használja a következő gombot.
 SendAgreement = Emaileket küld
 AllAgreementSend = Minden e-mailt elküldtünk
 TXTLINKDATAPOLICYACCEPT = Szöveg a linkhez "megállapodás"
 TXTLINKDATAPOLICYREFUSE = Szöveg a "nézeteltérés" linkhez
-DelayForAnonymization=Delay for anonymization
-DelayForDeletion=Delay for deletion
+DelayForAnonymization=Anonimizálás késleltetése
+DelayForDeletion=Törlés késleltetése
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = GDPR: Személyes adatok feldolgozása
 DATAPOLICY_consentement = A személyes adatok feldolgozásához kapott hozzájárulás

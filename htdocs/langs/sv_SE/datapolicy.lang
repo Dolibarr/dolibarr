@@ -18,8 +18,8 @@ Module4100Desc = Modul för att hantera sekretess (i enlighet med GDPR)
 # Administration page
 datapolicySetup = Inställning av sekretesspolicy
 DataDeletion=Radering av data
-DataAnonymization=Anonymization of data
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
+DataAnonymization=Anonymisering av data
+datapolicySetupPage = Beroende på lagarna i ditt land (exempel <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">artikel 5</a> i GDPR) måste personuppgifter lagras under en period som inte överstiger den tid uppgifterna behövs för det ändamål för vilket de samlades in, med undantag för arkiveringsändamål.<br>Denna modul gör en anonymisering automatiskt efter en viss tid utan händelser (den tid som du anger nedan) och om objektet inte har några befintliga underordnade affärsobjekt.
 NB_MONTHS = %s månader
 ONE_YEAR = 1 år
 NB_YEARS = %s år
@@ -34,14 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Prospekt/kund
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Inte prospekt eller kund
 DATAPOLICY_CONTACT_FOURNISSEUR = Leverantör
 DATAPOLICY_ADHERENT = Medlem
-DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
+DATAPOLICY_Tooltip_SETUP=Anonymiseringen görs av det schemalagda jobbet "%s" som körs av modulen "%s", så denna modul måste vara aktiverad och fungera korrekt.
 SendAgreementText = Du kan skicka e-post angående GDPR till alla dina relevanta kontakter (som ännu inte har fått ett mejl och som du inte har registrerat något för om deras GDPR-avtal). För att göra detta, använd följande knapp.
 SendAgreement = Skicka e-post
 AllAgreementSend = All e-post har skickats
 TXTLINKDATAPOLICYACCEPT = Text för länken "godkänn"
 TXTLINKDATAPOLICYREFUSE = Text för länken "oenighet"
-DelayForAnonymization=Delay for anonymization
-DelayForDeletion=Delay for deletion
+DelayForAnonymization=Fördröjning för anonymisering
+DelayForDeletion=Fördröjning för radering
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = GDPR: hantering av personuppgifter
 DATAPOLICY_consentement = Samtycke inhämtat för behandling av personuppgifter

@@ -80,7 +80,7 @@ SumOfProductWeights=পণ্যের ওজনের যোগফল
 # warehouse details
 DetailWarehouseNumber= গুদাম বিবরণ
 DetailWarehouseFormat= W:%s (Qty: %d)
-DetailChildrenFormat=%s : %s (পরিমাণ: TXPROTECT-ecb2ec87f-TXEND>
+DetailChildrenFormat=%s : %s (Qty: %s)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=সিরিয়াল নম্বর বা ব্যাচের জন্য চালান তৈরির সময় স্টকে প্রবেশের শেষ তারিখ প্রদর্শন করুন
 CreationOptions=চালান তৈরির সময় উপলব্ধ বিকল্প
 ShipmentDistribution=চালান বিতরণ

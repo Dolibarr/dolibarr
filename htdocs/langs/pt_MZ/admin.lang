@@ -734,7 +734,6 @@ Permission63001=Ler recursos
 Permission63002=Criar/Modificar recursos
 Permission63003=Excluir recursos
 Permission63004=Conectar os recursos aos eventos da agenda
-Permission67001=Permitir impressão de recibos
 Permission68001=Ler o relatório intracomm
 Permission68002=Criar / alterar relatório intracomm
 Permission68004=Excluir relatório intracomm
@@ -841,7 +840,6 @@ SetupDescription2=As duas seções a seguir são obrigatórias (as duas primeira
 SetupDescription3=<a href="%s"> %s -> %s </a> <br> <br> Parâmetros básicos usados para personalizar o comportamento padrão do seu aplicativo (por exemplo, para recursos relacionados ao país).
 SetupDescription4=<a href="%s"> %s -> %s </a> <br> <br> Este software é um conjunto de muitos módulos/aplicativos. Os módulos relacionados às suas necessidades devem estar habilitados e configurados. As entradas do menu aparecerão com a ativação desses módulos.
 SetupDescription5=Outras entradas do menu de configuração gerenciam parâmetros opcionais.
-SetupDescriptionLink=<a href="%s"> %s - %s </a>
 SetupDescription3b=Parâmetros básicos usados para personalizar o comportamento padrão do seu aplicativo (por exemplo, para recursos relacionados ao país).
 AuditedSecurityEvents=Eventos de segurança que são auditados
 NoSecurityEventsAreAduited=Nenhum evento de segurança é auditado. Você pode habilitá-los no menu %s

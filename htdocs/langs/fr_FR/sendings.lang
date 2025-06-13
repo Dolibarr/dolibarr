@@ -66,8 +66,9 @@ NoLineGoOnTabToAddSome=Aucune ligne, allez sur l'onglet "%s" pour en ajouter
 CreateInvoiceForThisCustomerFromSendings=Créer factures
 IfValidateInvoiceIsNoSendingStayUnbilled=Si la validation de la facture est "Non", l'envoi restera à l'état "Non facturé" jusqu'à ce que la facture soit validée.
 OptionToSetSendingBilledNotEnabled=L'option du module Workflow, qui permet de définir l'envoi comme "facturé" automatiquement lorsque la facture est validée, n'est pas activée. Vous devrez donc définir manuellement l'état des envois comme "facturé" après que la facture a été générée.
+NoWarehouseInBase=Pas de entrepôt dans la base
 ShipmentUpdated=Expédition mise à jour avec succès
-ShipmentIncrementStockOnDelete = Réincrémenter le stock à la suppression
+ShipmentIncrementStockOnDelete = Augmenter le stock lors de la suppression
 
 # Sending methods
 # ModelDocument
@@ -79,6 +80,7 @@ SumOfProductWeights=Somme des poids des produits
 # warehouse details
 DetailWarehouseNumber= Détail de l'entrepôt
 DetailWarehouseFormat= W:%s (Qté : %d)
+DetailChildrenFormat=%s : %s (Qté : %s)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Afficher la dernière date d'entrée en stock lors de la création de l'expédition pour les numéros de série ou les lots
 CreationOptions=Options disponibles lors de la création de l'expédition
 ShipmentDistribution=Répartition des expéditions
@@ -93,3 +95,4 @@ TypeContact_shipping_external_SHIPPING=client contact pour expédition
 TypeContact_shipping_external_DELIVERY=Contact client pour la livraison
 CloseShipment=Expédition fermée
 ConfirmCloseShipment=Confirmer la clôture de l'expédition
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=Présélectionnez le lot/Numéro de série avec la date limite de consommation/vente la plus proche lors de la création d'une expédition
