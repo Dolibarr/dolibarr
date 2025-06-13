@@ -1623,9 +1623,9 @@ $(document).on('select2:open', (e) => {
 
 
 if (getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE')) {
-	
+
 	// Code to manage drag and drop inside kanban group by view - handles sortable columns and item movement between status columns
-	
+
 	$(document).ready(function() {
 		if ($('.kanban .column:not(.kanbancollapsed)').length > 0) {
 			$('.kanban .column:not(.kanbancollapsed)').sortable({
@@ -1641,7 +1641,7 @@ if (getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE')) {
 				receive: function(_, ui) {
 					var originalColumn = ui.item.data('original-column');
 					var newColumn = $(this);
-					
+
 					if (!originalColumn.is(newColumn)) {
 						onKanbanColumnChange(ui.item, newColumn);
 					}
@@ -1649,14 +1649,13 @@ if (getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE')) {
 			});
 		}
 	});
-	
+
 	/**
 	 * Function called when an item is moved to a different column
 	 * @param {jQuery} item - The dragged item
 	 * @param {jQuery} newColumn - The new column
 	 */
 	function onKanbanColumnChange(item, newColumn) {
-		
 		jQuery.ajax({
 			method: "POST",
 			url: "<?php echo DOL_URL_ROOT; ?>/core/ajax/saveinplace.php",
