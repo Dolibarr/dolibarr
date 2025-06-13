@@ -848,7 +848,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Presend form
 	$modelmail = 'bom';
 	$defaulttopic = 'InformationMessage';
-	$diroutput = $conf->bom->dir_output;
+	$diroutput = getMultidirOutput($object);
 	$trackid = 'bom'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
