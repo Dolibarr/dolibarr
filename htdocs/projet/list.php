@@ -1784,7 +1784,7 @@ while ($i < $imaxinloop) {
 				$selected = 1;
 			}
 		}
-		$arrayofdata = array('assignedusers' => $stringassignedusers, 'thirdparty' => $companystatic, 'selected' => $selected);
+		$arrayofdata = array('assignedusers' => $stringassignedusers, 'thirdparty' => $companystatic, 'selected' => $selected, 'mode' => $mode);
 
 		print $object->getKanbanView('', $arrayofdata, ($groupby ? 'small' : ''));
 
