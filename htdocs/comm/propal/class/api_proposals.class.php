@@ -6,6 +6,7 @@
  * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
 /**
  * API class for orders
+ *
+ * @since	5.0.0	Initial implementation
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
@@ -60,6 +63,8 @@ class Proposals extends DolibarrApi
 	 * Get properties of a commercial proposal object
 	 *
 	 * Return an array with commercial proposal information
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param   int         $id				ID of commercial proposal
 	 * @param   int         $contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
@@ -157,6 +162,8 @@ class Proposals extends DolibarrApi
 	 * List commercial proposals
 	 *
 	 * Get a list of commercial proposals
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param string	$sortfield			Sort field
 	 * @param string	$sortorder			Sort order
@@ -278,6 +285,8 @@ class Proposals extends DolibarrApi
 	/**
 	 * Create commercial proposal object
 	 *
+	 * @since	5.0.0	Initial implementation
+	 *
 	 * @param   array   $request_data   Request data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
@@ -316,6 +325,8 @@ class Proposals extends DolibarrApi
 
 	/**
 	 * Get lines of a commercial proposal
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param int		$id				Id of commercial proposal
 	 * @param string    $sqlfilters		Other criteria to filter answers separated by a comma. d is the alias for proposal lines table, p is the alias for product table. "Syntax example "(p.ref:like:'SO-%') AND (d.date_start:<:'20220101')"
@@ -360,6 +371,8 @@ class Proposals extends DolibarrApi
 
 	/**
 	 * Add a line to given commercial proposal
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param int   $id             Id of commercial proposal to update
 	 * @param array $request_data   Commercial proposal line data
@@ -512,6 +525,8 @@ class Proposals extends DolibarrApi
 	/**
 	 * Update a line of given commercial proposal
 	 *
+	 * @since	5.0.0	Initial implementation
+	 *
 	 * @param	int				$id             Id of commercial proposal to update
 	 * @param	int				$lineid         Id of line to update
 	 * @param	array			$request_data   Commercial proposal line data
@@ -589,6 +604,7 @@ class Proposals extends DolibarrApi
 	/**
 	 * Delete a line of given commercial proposal
 	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param	int				$id             Id of commercial proposal to update
 	 * @param	int				$lineid         Id of line to delete
@@ -728,6 +744,8 @@ class Proposals extends DolibarrApi
 	/**
 	 * Update commercial proposal general fields (won't touch lines of commercial proposal)
 	 *
+	 * @since	5.0.0	Initial implementation
+	 *
 	 * @param	int		$id             Id of commercial proposal to update
 	 * @param	array	$request_data   Datas
 	 * @phan-param ?array<string,string> $request_data
@@ -786,6 +804,8 @@ class Proposals extends DolibarrApi
 
 	/**
 	 * Delete commercial proposal
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param   int     $id         Commercial proposal ID
 	 * @return  array
@@ -870,6 +890,8 @@ class Proposals extends DolibarrApi
 	 * {
 	 * "notrigger": 0
 	 * }
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param   int     $id             Commercial proposal ID
 	 * @param   int     $notrigger      1=Does not execute triggers, 0= execute triggers
