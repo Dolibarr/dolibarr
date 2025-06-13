@@ -98,7 +98,7 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "SALES_ORDER_SHOW_SHIPPING_ADDRESS", GETPOSTINT("SALES_ORDER_SHOW_SHIPPING_ADDRESS"), 'chaine', 0, '', $conf->entity);
 		dolibarr_del_const($db, "SALES_ORDER_SHOW_SHIPPING_ADDRESS", $conf->entity);
 	}
-	
+
 	if (GETPOSTISSET('MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_UNIT_PRICE')) {
 		dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_UNIT_PRICE", GETPOST("MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_UNIT_PRICE"), 'chaine', 0, '', $conf->entity);
 	}
