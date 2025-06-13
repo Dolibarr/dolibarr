@@ -888,7 +888,7 @@ if ($object->id > 0) {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AmountMustBePositive")).'">'.$buttonlabel.'</a>';
 		}
 	} else {
-		if ($num == 0) {
+		if ($numopen == 0) {
 			if ($object->status > $object::STATUS_DRAFT) {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AlreadyPaid")).'">'.$buttonlabel.'</a>';
 			} else {
