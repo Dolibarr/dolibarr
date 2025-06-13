@@ -529,7 +529,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Event not found');
 			}
 
-			$upload_dir = $conf->agenda->dir_output.'/'.dol_sanitizeFileName($object->ref);
+			$upload_dir = getMultidirOutput('', 'agenda') .'/'.dol_sanitizeFileName($object->ref);
 		} elseif ($modulepart == 'expensereport') {
 			require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
