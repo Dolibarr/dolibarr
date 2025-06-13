@@ -1102,10 +1102,14 @@ class FormMail extends Form
 				$showlinktoailabel = $langs->trans("AIEnhancements");
 				$formatforouput = '';
 				$htmlname = 'message';
+
 				$formai->substit = $this->substit;
 				$formai->substit_lines = $this->substit_lines;
 
 				// Fill $out
+				if (!isset($db)) {
+					$db=$db = $this->db;
+				}
 				include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
 
 				$out .= '</td>';
