@@ -1768,7 +1768,7 @@ while ($i < $imaxinloop) {
 					print '<div class="kanbanlabel">'.$langs->trans($tmpgroupbyvalue).'</div>';
 					print '</div>';	// Start and end the new column
 				}
-				print '<div class="box-flex-container-column kanban column" data-groupbyid="'.preg_replace('/[^a-z0-9]/', '', $groupbyvalue).'">';	// Start new column
+				print '<div class="box-flex-container-column kanban column" data-groupbyid="'.preg_replace('/[^a-z0-9]/', '', $groupbyvalue).'" data-groupbyfield="'.$groupbyfield.'">';	// Start new column
 				print '<div class="kanbanlabel">'.$langs->trans(empty($groupbyvalues[$groupbyvalue]) ? 'Undefined' : $groupbyvalues[$groupbyvalue]).'</div>';
 			}
 			$groupbyold = $groupbyvalue;
