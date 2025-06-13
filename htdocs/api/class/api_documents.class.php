@@ -397,7 +397,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Member not found');
 			}
 
-			$upload_dir = $conf->adherent->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'member');
+			$upload_dir = getMultidirOutput('', 'member') . "/".get_exdir(0, 0, 0, 1, $object, 'member');
 		} elseif ($modulepart == 'propal' || $modulepart == 'proposal') {
 			require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
