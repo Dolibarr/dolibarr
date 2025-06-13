@@ -82,6 +82,8 @@ class Proposals extends DolibarrApi
 	 *
 	 * Return an array with proposal information
 	 *
+	 * @since	12.0.0	Initial implementation
+	 *
 	 * @param       string		$ref			Ref of object
 	 * @param       int         $contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
 	 * @return		Object						Object with cleaned properties
@@ -99,6 +101,8 @@ class Proposals extends DolibarrApi
 	 * Get properties of an proposal object by ref_ext
 	 *
 	 * Return an array with proposal information
+	 *
+	 * @since	12.0.0	Initial implementation
 	 *
 	 * @param       string		$ref_ext		External reference of object
 	 * @param       int         $contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
@@ -177,6 +181,8 @@ class Proposals extends DolibarrApi
 	 * @return  array                       Array of order objects
 	 * @phan-return Propal[]|array{data:Propal[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 * @phpstan-return Propal[]|array{data:Propal[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 *
+	 * @throws	RestException
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0)
 	{
@@ -291,6 +297,8 @@ class Proposals extends DolibarrApi
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return  int     ID of proposal
+	 *
+	 * @throws	RestException
 	 */
 	public function post($request_data = null)
 	{
@@ -336,6 +344,8 @@ class Proposals extends DolibarrApi
 	 * @return array
 	 * @phan-return PropaleLigne[]
 	 * @phpstan-return PropaleLigne[]
+	 *
+	 * @throws	RestException
 	 */
 	public function getLines($id, $sqlfilters = '')
 	{
@@ -382,6 +392,8 @@ class Proposals extends DolibarrApi
 	 * @url	POST {id}/line
 	 *
 	 * @return int
+	 *
+	 * @throws	RestException
 	 */
 	public function postLine($id, $request_data = null)
 	{
@@ -450,6 +462,8 @@ class Proposals extends DolibarrApi
 	 * @url	POST {id}/lines
 	 *
 	 * @return int
+	 *
+	 * @throws	RestException
 	 */
 	public function postLines($id, $request_data = null)
 	{
@@ -535,6 +549,8 @@ class Proposals extends DolibarrApi
 	 * @return  Object|false					Object with cleaned properties
 	 *
 	 * @url	PUT {id}/lines/{lineid}
+	 *
+	 * @throws	RestException
 	 */
 	public function putLine($id, $lineid, $request_data = null)
 	{
@@ -641,6 +657,8 @@ class Proposals extends DolibarrApi
 	/**
 	 * Add a contact type of given commercial proposal
 	 *
+	 * @since	10.0.0	Initial implementation
+	 *
 	 * @param int    $id             Id of commercial proposal to update
 	 * @param int    $contactid      Id of external or internal contact to add
 	 * @param string $type           Type of the external contact (BILLING, SHIPPING, CUSTOMER), internal contact (SALESREPFOLL)
@@ -699,6 +717,8 @@ class Proposals extends DolibarrApi
 	/**
 	 * Delete a contact type of given commercial proposal
 	 *
+	 * @since	10.0.0	Initial implementation
+	 *
 	 * @param	int    $id				Id of commercial proposal to update
 	 * @param	int    $contactid		Row key of the contact in the array contact_ids.
 	 * @param	string $type			Type of the contact (BILLING, SHIPPING, CUSTOMER).
@@ -751,6 +771,8 @@ class Proposals extends DolibarrApi
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	Object					Object with cleaned properties
+	 *
+	 * @throws RestException
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -811,6 +833,8 @@ class Proposals extends DolibarrApi
 	 * @return  array
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @throws RestException
 	 */
 	public function delete($id)
 	{
@@ -841,10 +865,14 @@ class Proposals extends DolibarrApi
 	/**
 	 * Set a proposal to draft
 	 *
+	 * @since	7.0.0	Initial implementation
+	 *
 	 * @param   int     $id             Order ID
 	 * @return	Object					Object with cleaned properties
 	 *
 	 * @url POST    {id}/settodraft
+	 *
+	 * @throws RestException
 	 */
 	public function settodraft($id)
 	{
@@ -943,6 +971,8 @@ class Proposals extends DolibarrApi
 	/**
 	 * Close (Accept or refuse) a quote / commercial proposal
 	 *
+	 * @since	7.0.0	Initial implementation
+	 *
 	 * @param   int     $id             Commercial proposal ID
 	 * @param   int		$status			Must be 2 (accepted) or 3 (refused)				{@min 2}{@max 3}
 	 * @param   string  $note_private   Add this mention at end of private note
@@ -951,6 +981,8 @@ class Proposals extends DolibarrApi
 	 * @return	Object					Object with cleaned properties
 	 *
 	 * @url POST    {id}/close
+	 *
+	 * @throws RestException
 	 */
 	public function close($id, $status, $note_private = '', $notrigger = 0, $note_public = '')
 	{
@@ -990,6 +1022,8 @@ class Proposals extends DolibarrApi
 
 	/**
 	 * Set a commercial proposal billed. Could be also called setbilled
+	 *
+	 * @since	7.0.0	Initial implementation
 	 *
 	 * @param   int     $id             Commercial proposal ID
 	 * @return	Object					Object with cleaned properties
