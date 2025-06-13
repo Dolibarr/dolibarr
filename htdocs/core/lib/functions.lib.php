@@ -14019,14 +14019,14 @@ function getElementProperties($elementType)
 		$table_element = 'knowledgemanagement_knowledgerecord';
 		$subelement = '';
 	} elseif ($elementType == 'customer') {
-		$module = 'thirdparty';
+		$module = 'societe';
 		$classpath = 'societe/class';
 		$classfile = 'client';
 		$classname = 'Client';
 		$table_element = 'societe';
 		$subelement = '';
 	} elseif ($elementType == 'fournisseur' || $elementType == 'supplier') {
-		$module = 'thirdparty';
+		$module = 'societe';
 		$classpath = 'fourn/class';
 		$classfile = 'fournisseur';
 		$classname = 'Fournisseur';
