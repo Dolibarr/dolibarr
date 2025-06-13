@@ -1764,7 +1764,7 @@ while ($i < $imaxinloop) {
 					if (in_array($tmpcursor, $groupofcollpasedvalues)) {
 						print ' kanbancollapsed';
 					}
-					print '" data-groupbyid="'.preg_replace('/[^a-z0-9]/', '', $tmpcursor).'">';
+					print '" data-groupbyid="'.preg_replace('/[^a-z0-9]/', '', $tmpcursor).'" data-groupbyfield="'.$groupbyfield.'">';
 					print '<div class="kanbanlabel">'.$langs->trans($tmpgroupbyvalue).'</div>';
 					print '</div>';	// Start and end the new column
 				}
@@ -1803,7 +1803,7 @@ while ($i < $imaxinloop) {
 					if (in_array($tmpcursor, $groupofcollpasedvalues)) {
 						print ' kanbancollapsed';
 					}
-					print '" data-groupbyid="'.preg_replace('/[^a-z0-9]/', '', $tmpcursor).'">';
+					print '" data-groupbyid="'.preg_replace('/[^a-z0-9]/', '', $tmpcursor).'" data-groupbyfield="'.$groupbyfield.'">';
 					print '<div class="kanbanlabel">'.$langs->trans(empty($tmpgroupbyvalue) ? 'Undefined' : $tmpgroupbyvalue).'</div>';
 					print '</div>';	// Start and end the new column
 				}
