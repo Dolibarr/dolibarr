@@ -811,7 +811,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Documents
 		$objref = dol_sanitizeFileName($object->ref);
 		$relativepath = $objref.'/'.$objref.'.pdf';
-		$filedir = $conf->bom->dir_output.'/'.$objref;
+		$filedir = getMultidirOutput($object) . '/'.$objref;
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = $user->hasRight('bom', 'read'); // If you can read, you can build the PDF to read content
 		$delallowed = $user->hasRight('bom', 'write'); // If you can create/edit, you can remove a file on card
