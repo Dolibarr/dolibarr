@@ -407,7 +407,7 @@ class dolReceiptPrinter extends Printer
 			5 => $langs->trans('CONNECTOR_CUPS_PRINT'),
 		);
 
-		$this->resprint = Form::selectarray($htmlname, $options, $selected);
+		$this->resprint = Form::selectarray($htmlname, $options, $selected, 0, 0, 0, '', 0, 0, 0, '', 'minwidth150');
 
 		return 0;
 	}
@@ -432,7 +432,7 @@ class dolReceiptPrinter extends Printer
 			4 => $langs->trans('PROFILE_STAR'),
 		);
 
-		$this->profileresprint = Form::selectarray($htmlname, $options, $selected);
+		$this->profileresprint = Form::selectarray($htmlname, $options, $selected, 0, 0, 0, '', 0, 0, 0, '', 'minwidth150');
 		return 0;
 	}
 
