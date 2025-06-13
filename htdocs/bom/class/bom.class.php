@@ -987,7 +987,7 @@ class BOM extends CommonObject
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($num);
-				$dirsource = $conf->bom->dir_output.'/'.$oldref;
+				$dirsource = getMultidirOutput($this) . '/'.$oldref;
 				$dirdest = $conf->bom->dir_output.'/'.$newref;
 				if (!$error && file_exists($dirsource)) {
 					dol_syslog(get_class($this)."::validate() rename dir ".$dirsource." into ".$dirdest);
