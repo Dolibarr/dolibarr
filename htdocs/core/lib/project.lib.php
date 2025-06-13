@@ -923,6 +923,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 								$c->fetch($contacttask['id']);
 								if (!empty($c->photo)) {
 									if (get_class($c) == 'User') {
+										/** @var User $c */
 										print $c->getNomUrl(-2, '', 0, 0, 24, 1, '', ($ifisrt ? '' : 'notfirst'));
 									} else {
 										/** @var Contact $c */
@@ -930,6 +931,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 									}
 								} else {
 									if (get_class($c) == 'User') {
+										/** @var User $c */
 										print $c->getNomUrl(2, '', 0, 0, 24, 1, '', ($ifisrt ? '' : 'notfirst'));
 									} else {
 										/** @var Contact $c */
