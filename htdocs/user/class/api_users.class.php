@@ -149,7 +149,7 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of an user object
+	 * Get a user
 	 *
 	 * @since	5.0.0	Initial implementation
 	 *
@@ -189,7 +189,9 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of an user object by login
+	 * Get a user by login
+	 *
+	 * @since	13.0.0	Initial implementation
 	 *
 	 * @param	string	$login					Login of user
 	 * @param	int		$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
@@ -230,7 +232,9 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of an user object by Email
+	 * Get a user by Email
+	 *
+	 * @since	13.0.0	Initial implementation
 	 *
 	 * @param	string	$email					Email of user
 	 * @param	int		$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
@@ -273,6 +277,8 @@ class Users extends DolibarrApi
 	/**
 	 * Get more properties of a user
 	 *
+	 * @since	11.0.0	Initial implementation
+	 *
 	 * @url	GET /info
 	 *
 	 * @param	int			$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
@@ -314,7 +320,7 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * Create user account
+	 * Create a user
 	 *
 	 * @since	5.0.0	Initial implementation
 	 *
@@ -370,7 +376,7 @@ class Users extends DolibarrApi
 
 
 	/**
-	 * Update user account
+	 * Update a user
 	 *
 	 * @since	5.0.0	Initial implementation
 	 *
@@ -465,6 +471,8 @@ class Users extends DolibarrApi
 	/**
 	 * Update a user password
 	 *
+	 * @since	21.0.0	Initial implementation
+	 *
 	 * @param   int     $id        			User ID
 	 * @param	bool	$send_password		Only if set to true, the new password will send to the user
 	 * @return  int                			1 if password changed, 2 if password changed and sent
@@ -520,6 +528,8 @@ class Users extends DolibarrApi
 	/**
 	 * List the groups of a user
 	 *
+	 * @since	10.0.0	Initial implementation
+	 *
 	 * @param int $id     Id of user
 	 * @return array      Array of group objects
 	 * @phan-return Object[]
@@ -553,7 +563,7 @@ class Users extends DolibarrApi
 
 
 	/**
-	 * Add a user into a group
+	 * Add a user to a group
 	 *
 	 * @since	5.0.0	Initial implementation
 	 *
@@ -605,6 +615,8 @@ class Users extends DolibarrApi
 	 * List Groups
 	 *
 	 * Return an array with a list of Groups
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @url	GET /groups
 	 *
@@ -682,9 +694,11 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of an group object
+	 * Get properties of a user group
 	 *
 	 * Return an array with group information
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @url	GET /groups/{group}
 	 *
@@ -753,7 +767,7 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * Get notifications for an user
+	 * Get notifications for a user
 	 *
 	 * @since	22.0.0	Initial implementation
 	 *
@@ -826,7 +840,7 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * Create a notification for an user
+	 * Create a notification for a user
 	 *
 	 * @since	22.0.0	Initial implementation
 	 *
@@ -885,7 +899,7 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * Create a notification for an User using action trigger code
+	 * Create a notification for a User using action trigger code
 	 *
 	 * @since	22.0.0	Initial implementation
 	 *
@@ -957,7 +971,7 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * Delete a notification attached to an user
+	 * Delete a notification attached to a user
 	 *
 	 * @since	22.0.0	Initial implementation
 	 *
@@ -990,7 +1004,7 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * Update a notification for an user
+	 * Update a notification for a user
 	 *
 	 * @since	22.0.0	Initial implementation
 	 *
