@@ -3074,7 +3074,7 @@ class Adherent extends CommonObject
 
 		$now = dol_now();
 
-		return $this->datefin < ($now - getWarningDelay('member', 'subscrition'));
+		return $this->datefin < ($now - getWarningDelay('member', 'subscription'));
 	}
 
 
