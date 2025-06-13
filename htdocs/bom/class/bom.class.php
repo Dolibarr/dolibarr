@@ -988,7 +988,7 @@ class BOM extends CommonObject
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($num);
 				$dirsource = getMultidirOutput($this) . '/'.$oldref;
-				$dirdest = $getMultidirOutput($this) . '/'.$newref;
+				$dirdest = getMultidirOutput($this) . '/'.$newref;
 				if (!$error && file_exists($dirsource)) {
 					dol_syslog(get_class($this)."::validate() rename dir ".$dirsource." into ".$dirdest);
 
