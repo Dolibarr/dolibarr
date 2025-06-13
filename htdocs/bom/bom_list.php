@@ -190,7 +190,7 @@ if (empty($reshook)) {
 	$objectlabel = 'BillOfMaterials';
 	$permissiontoread = $user->hasRight('bom', 'read');
 	$permissiontodelete = $user->hasRight('bom', 'delete');
-	$uploaddir = $conf->bom->dir_output;
+	$uploaddir = getMultidirOutput($object);
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 
