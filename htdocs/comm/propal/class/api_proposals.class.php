@@ -78,7 +78,7 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Get a proposal by ref
+	 * Get a commercial proposal by ref
 	 *
 	 * Return an array with proposal information
 	 *
@@ -98,7 +98,7 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Get a proposal by ref_ext
+	 * Get a commercial proposal by ref_ext
 	 *
 	 * Return an array with proposal information
 	 *
@@ -863,7 +863,7 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Set a proposal to draft
+	 * Set a commercial proposal to draft
 	 *
 	 * @since	7.0.0	Initial implementation
 	 *
@@ -969,7 +969,7 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Close (Accept or refuse) a commercial proposal
+	 * Close (accept or refuse) a commercial proposal
 	 *
 	 * @since	7.0.0	Initial implementation
 	 *
