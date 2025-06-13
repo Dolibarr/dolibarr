@@ -1107,9 +1107,7 @@ class FormMail extends Form
 				$formai->substit_lines = $this->substit_lines;
 
 				// Fill $out
-				if (!isset($db)) {
-					$db = $this->db;
-				}
+				$db = $this->db;
 				include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
 
 				$out .= '</td>';
