@@ -383,7 +383,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'User not found');
 			}
 
-			$upload_dir = $conf->user->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, 'user').'/'.$object->id;
+			$upload_dir = getMultidirOutput($object) . '/'.get_exdir(0, 0, 0, 0, $object, 'user').'/'.$object->id;
 		} elseif ($modulepart == 'adherent' || $modulepart == 'member') {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
