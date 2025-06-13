@@ -543,7 +543,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Expense report not found');
 			}
 
-			$upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
+			$upload_dir = getMultidirOutput('', 'expensereport') .'/'.dol_sanitizeFileName($object->ref);
 		} elseif ($modulepart == 'knowledgemanagement') {
 			require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class.php';
 
