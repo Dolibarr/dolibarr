@@ -31,7 +31,8 @@ html,body {
 .phonebuttonsrow{
 	margin: 0 auto;
 	width: 100%;
-	height: 5%;
+	padding-top: 5px;
+    padding-bottom: 10px;
 }
 
 .phonediv1{
@@ -76,7 +77,7 @@ button.phonebutton {
 	vertical-align: middle;
 	text-align: center;
 	overflow: visible; /* removes extra width in IE */
-	width:24%;
+	padding: 6px;
 	height:90%;
 	font-weight: bold;
 }
@@ -90,25 +91,10 @@ button.publicphonebutton {
 	vertical-align: middle;
 	text-align: center;
 	overflow: visible; /* removes extra width in IE */
-	width:33%;
-	height:50px;
+	width:33.33%;
+	height: 2em;
 	font-weight: bold;
 	color: #fff;
-}
-
-.phoneblue{
-	color: #fff;
-	background-color: #428bca;
-	border-color: #357ebd;
-}
-
-.phonegreen{
-	color: #fff;
-	background-color: #5cb85c;
-	border-color: #4cae4c;
-	font-size:20px;
-	text-align:center;
-	width:20px;
 }
 
 .phonetable{
@@ -118,23 +104,38 @@ button.publicphonebutton {
 .phoneqty{
 	font-size:24px;
 	font-weight: bold;
-	
-	
+}
+
+.phoneblue{
+	color: #fff;
+	background-color: #428bca;
+	border-color: #357ebd;
+	border-width: inherit;
+}
+
+.phonegreen{
+	color: #fff;
+	background-color: #5cb85c;
+	border-color: #4cae4c;
+	text-align:center;
+	width:20px;
+	border-width: inherit;
 }
 
 .phonered{
 	color: #fff;
 	background-color: #dc3545;
 	border-color: #dc3545;
-	font-size:20px;
 	text-align:center;
 	width:20px;
+	border-width: inherit;
 }
 
 .phoneorange{
 	color: #fff;
 	background-color: #f0ad4e;
 	border-color: #eea236;
+	border-width: inherit;
 }
 
 .total{
@@ -168,7 +169,7 @@ button.publicphonebutton2 {
 	vertical-align: middle;
 	text-align: center;
 	overflow: visible; /* removes extra width in IE */
-	width:33%;
+	width:33.33%;
 	font-weight: bold;
 	padding: 8px 16px;
 }
@@ -190,10 +191,14 @@ button.publicphonebutton2 {
 }
 
 .textinput {
-    float: left;
-    width: 100%;
     min-height: 75px;
+    width: 90%;
     outline: none;
     resize: none;
     border: 1px solid grey;
+}
+
+img.imgwrapper {
+    max-width: 100%;
+    max-height: 100%;
 }

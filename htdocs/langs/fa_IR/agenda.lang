@@ -8,8 +8,6 @@ LocalAgenda=Default calendar
 ActionsOwnedBy=مالک روی‌داد 
 ActionsOwnedByShort=مالک
 AffectedTo=نسبت‌داده‌شده به
-Event=روی‌داد
-Events=روی‌دادها
 EventsNb=تعداد روی‌دادها
 ListOfActions=فهرست‌روی‌دادها
 EventReports=گزارش روی‌دادها
@@ -23,7 +21,6 @@ MenuDoneMyActions=روی‌دادهای لغوشدۀ من
 ListOfEvents=List of events (default calendar)
 ActionsAskedBy=روی‌دادهای گزارش‌شده توسط
 ActionsToDoBy=روی‌دادها اختصاص‌یافته به
-ActionsDoneBy=روی‌دادهای انجام شده توسط
 ActionAssignedTo=روی‌داد اختصاص یافته به
 ViewCal=نمای ماهانه
 ViewDay=نمای روزانه
@@ -89,6 +86,8 @@ ShippingSentByEMail=ارسال-حمل و نقل- %s توسط رایانامه ف
 ShippingValidated= ارسال %s تائید شد
 InterventionSentByEMail=واسطه‌گری %s توسط رایانامه ارسال شد
 ProjectSentByEMail=Project %s sent by email
+ProjectDeletedInDolibarr=طرح %s حذف شد
+ProjectClosedInDolibarr=Project %s closed
 ProposalDeleted=پیشنهاد حذف شد
 OrderDeleted=سفارش حذف شد
 InvoiceDeleted=صورت‌حساب حذف شد
@@ -128,17 +127,21 @@ MRP_MO_PRODUCEDInDolibarr=MO produced
 MRP_MO_DELETEInDolibarr=MO deleted
 MRP_MO_CANCELInDolibarr=MO canceled
 PAIDInDolibarr=%s paid
+ENABLEDISABLEInDolibarr=User enabled or disabled
+CANCELInDolibarr=لغو ظده
 ##### End agenda events #####
 AgendaModelModule=قالب‌های مستند برای روی‌دادهای
 DateActionStart=تاریخ شروع
 DateActionEnd=تاریخ پایان
 AgendaUrlOptions1=شما همچنین می‌توانید مؤلفه‌های زیر را برای گزینش خروجی استفاده نمائید:
-AgendaUrlOptions3=<b>logina=%s</b> برای محدود کردن خروجی به کنش‌های متعلق به یک کاربر <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> برای محدودکردن خروجی به کنش‌هائی که به کاربر <b>%s</b> متعلق نیست.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>logint=%s</b> برای محدود کردن خروجی به کنش‌هائی که به کاربر <b>%s</b> اختصاص داده شده است (مالک و سایرین).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b>  برای محدود کردن خروجی به کنش‌های مرتبط به یک طرح <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> برای مستثنی کردن روی‌دادهای خودکار.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Birthdays of contacts
 AgendaHideBirthdayEvents=پنهان کردن تاریخ تولد طرف‌های تماس
 Busy=مشغول
@@ -181,3 +184,24 @@ Reminders=Reminders
 ActiveByDefault=Enabled by default
 Until=until
 DataFromWasMerged=Data from %s was merged
+AgendaShowBookcalCalendar=Booking calendar: %s
+MenuBookcalIndex=Online appointment
+BookcalLabelAvailabilityHelp=Label of the availability range. For example:<br>General availability<br>Availability during christmas holidays
+DurationOfRange=Duration of ranges
+BookCalSetup = Online appointment setup
+BookCalSetupPage = Online appointment setup page
+BOOKCAL_PUBLIC_INTERFACE_TOPIC = عنوان صفحه
+BookCalAbout = About BookCal
+BookCalAboutPage = BookCal about page
+Calendars=تقویم
+Availabilities=Availabilities
+NewAvailabilities=New availabilities
+NewCalendar=New calendar
+ThirdPartyBookCalHelp=Event booked in this calendar will be automatically linked to this third-party.
+AppointmentDuration = Appointment Duration : %s
+BookingSuccessfullyBooked=Your booking has been saved
+BookingReservationHourAfter=We confirm the reservation of our meeting at the date %s
+BookcalBookingTitle=Online appointment
+Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less

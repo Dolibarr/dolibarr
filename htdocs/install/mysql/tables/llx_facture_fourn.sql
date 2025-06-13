@@ -30,6 +30,7 @@ create table llx_facture_fourn
   ref_ext				varchar(255),                  -- reference into an external system (not used by dolibarr)
 
   type					smallint DEFAULT 0 NOT NULL,
+  subtype				smallint DEFAULT NULL,					-- subtype of invoice (some countries need a subtype to classify invoices)
   fk_soc				integer NOT NULL,
   
   datec					datetime,                      -- date de creation de la facture
@@ -49,12 +50,13 @@ create table llx_facture_fourn
 
   vat_reverse_charge    tinyint          DEFAULT 0,	      -- By default, supplier invoice not concerned by vat reverse charge
 
-  tva					double(24,8)     DEFAULT 0,
+  tva					double(24,8)     DEFAULT 0,				-- deprecated
+
+  total_tva				double(24,8)     DEFAULT 0,
   localtax1				double(24,8)     DEFAULT 0,
   localtax2				double(24,8)     DEFAULT 0,
-  total					double(24,8)     DEFAULT 0,
+  revenuestamp          double(24,8)     DEFAULT 0,				-- amount total revenuestamp
   total_ht				double(24,8)     DEFAULT 0,
-  total_tva				double(24,8)     DEFAULT 0,
   total_ttc				double(24,8)     DEFAULT 0,
 
   fk_statut				smallint DEFAULT 0 NOT NULL,

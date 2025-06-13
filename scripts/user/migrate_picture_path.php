@@ -3,6 +3,8 @@
 /*
  * Copyright (C) 2007-2016 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2015 Jean Heimburger <http://tiaris.eu>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +37,7 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 @set_time_limit(0); // No timeout for this script
@@ -43,11 +45,17 @@ define('EVEN_IF_ONLY_LOGIN_ALLOWED', 1); // Set this define to 0 if you want to 
 
 // Include and load Dolibarr environment variables
 require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/user/class/user.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 // After this $db, $mysoc, $langs, $conf and $hookmanager are defined (Opened $db handler to database will be closed at end of file).
 // $user is created but empty.
-
+/**
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 // $langs->setDefaultLang('en_US'); // To change default language of $langs
 $langs->load("main"); // To load language file for default language
 
@@ -56,12 +64,19 @@ $version = DOL_VERSION;
 $error = 0;
 $forcecommit = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
+/*
+ * Main
+ */
+
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',', $argv));
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
 
 if (!isset($argv[1]) || $argv[1] != 'user') {
 	print "Usage:  $script_file user\n";
-	exit(-1);
+	exit(1);
 }
 
 print '--- start'."\n";
@@ -99,7 +114,7 @@ function migrate_user_filespath($u)
 {
 	global $conf;
 
-	// Les fichiers joints des users sont toujours sur l'entité 1
+	// Les fichiers implodets des users sont toujours sur l'entité 1
 	$dir = $conf->user->dir_output;
 	$origin = $dir.'/'.get_exdir($u->id, 2, 0, 0, $u, 'user');
 	$destin = $dir.'/'.$u->id;

@@ -6,5 +6,5 @@
 # More information on https://wiki.dolibarr.org/index.php/Module_ClickToDial_En
 #---------------------------------------------------------
 
-ekiga -c $1 &
+ekiga -c "$1" &
 

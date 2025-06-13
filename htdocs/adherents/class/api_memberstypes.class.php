@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2017	Regis Houssin	<regis.houssin@inodbox.com>
+ * Copyright (C) 2025	MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025   Frédéric France	<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 class MembersTypes extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]	Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'label',
@@ -39,17 +41,17 @@ class MembersTypes extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
 		$this->db = $db;
 	}
 
 	/**
 	 * Get properties of a member type object
 	 *
-	 * Return an array with member type informations
+	 * Return an array with member type information
 	 *
-	 * @param   int     $id 			ID of member type
-	 * @return  Object              	Object with cleaned properties
+	 * @param   int     $id				ID of member type
+	 * @return  Object					Object with cleaned properties
 	 *
 	 * @throws  RestException
 	 */
@@ -82,14 +84,15 @@ class MembersTypes extends DolibarrApi
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.libelle:like:'SO-%') and (t.subscription:=:'1')"
+	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of member type objects
+	 * @phan-return AdherentType[]
+	 * @phpstan-return AdherentType[]
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
-		global $db, $conf;
-
 		$obj_ret = array();
 
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
@@ -128,15 +131,12 @@ class MembersTypes extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$membertype = new AdherentType($this->db);
 				if ($membertype->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($membertype);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($membertype), $properties);
 				}
 				$i++;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieve member type list : '.$this->db->lasterror());
-		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No member type found');
 		}
 
 		return $obj_ret;
@@ -145,7 +145,9 @@ class MembersTypes extends DolibarrApi
 	/**
 	 * Create member type object
 	 *
-	 * @param array $request_data   Request data
+	 * @param array	$request_data   Request data
+	 * @phan-param ?array<string,string>    $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int  ID of member type
 	 */
 	public function post($request_data = null)
@@ -153,11 +155,17 @@ class MembersTypes extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'configurer')) {
 			throw new RestException(401);
 		}
-		// Check mandatory fields
-		$result = $this->_validate($request_data);
+		// Check mandatory fields. Throw exception on error.
+		$this->_validate($request_data);
 
 		$membertype = new AdherentType($this->db);
 		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$membertype->context['caller'] = $request_data['caller'];
+				continue;
+			}
+
 			$membertype->$field = $value;
 		}
 		if ($membertype->create(DolibarrApiAccess::$user) < 0) {
@@ -171,7 +179,9 @@ class MembersTypes extends DolibarrApi
 	 *
 	 * @param int   $id             ID of member type to update
 	 * @param array $request_data   Datas
-	 * @return int
+	 * @phan-param ?array<string,string>    $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 * @return Object
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -193,6 +203,11 @@ class MembersTypes extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$membertype->context['caller'] = $request_data['caller'];
+				continue;
+			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
 					$membertype->array_options[$index] = $this->_checkValForAPI($field, $val, $membertype);
@@ -201,7 +216,7 @@ class MembersTypes extends DolibarrApi
 			}
 			// Process the status separately because it must be updated using
 			// the validate(), resiliate() and exclude() methods of the class AdherentType.
-			$membertype->$field = $value;
+			$membertype->$field = $this->_checkValForAPI($field, $value, $membertype);
 		}
 
 		// If there is no error, update() returns the number of affected rows
@@ -218,6 +233,8 @@ class MembersTypes extends DolibarrApi
 	 *
 	 * @param int $id   member type ID
 	 * @return array
+	 * @phan-return array<string,array{code:int,message:string}>
+	 * @phpstan-return array<string,array{code:int,message:string}>
 	 */
 	public function delete($id)
 	{
@@ -234,7 +251,7 @@ class MembersTypes extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$res = $membertype->delete();
+		$res = $membertype->delete(DolibarrApiAccess::$user);
 		if ($res < 0) {
 			throw new RestException(500, "Can't delete, error occurs");
 		} elseif ($res == 0) {
@@ -252,8 +269,8 @@ class MembersTypes extends DolibarrApi
 	/**
 	 * Validate fields before creating an object
 	 *
-	 * @param array|null    $data   Data to validate
-	 * @return array
+	 * @param ?array<null|int|float|string> $data   Data to validate
+	 * @return array<string,null|int|float|string>
 	 *
 	 * @throws RestException
 	 */
@@ -273,8 +290,8 @@ class MembersTypes extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
-	 * @param   Object  $object    Object to clean
-	 * @return    Object    Object with cleaned properties
+	 * @param	Object  $object		Object to clean
+	 * @return	Object				Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{

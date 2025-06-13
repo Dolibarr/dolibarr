@@ -32,6 +32,7 @@ CKEDITOR.editorConfig = function( config )
 	//config.autoParagraph = false;
 	//config.removeFormatTags = 'b,big,code,del,dfn,em,font,i,ins,kbd';		// See also rules on this.dataProcessor.writer.setRules
 	//config.forcePasteAsPlainText = true;
+	config.entities_latin = false;
 
 	config.toolbar_Full =
 	[
@@ -47,7 +48,7 @@ CKEDITOR.editorConfig = function( config )
 	    ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
 	    ['BidiLtr', 'BidiRtl'],
 	    ['Link','Unlink'],
-	    ['Image','Table','HorizontalRule','Smiley'],
+	    ['Image','Table','HorizontalRule','SpecialChar'],
 	    ['Styles','Format','Font','FontSize'],
 	    ['TextColor','BGColor'],
 	 	['Source']
@@ -58,13 +59,13 @@ CKEDITOR.editorConfig = function( config )
 	[
 	 	['Maximize','Preview'],
 	 	['SpellChecker', 'Scayt'],
-	 	['Undo','Redo','-','Find','Replace'],
+	 	['Find','Replace'],
 	 	['CreateDiv','ShowBlocks'],
 	    ['Format','Font','FontSize'],
 	 	['Bold','Italic','Underline','Strike','-','TextColor','RemoveFormat'],
 	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-	 	['Link','Unlink','Image','Table','HorizontalRule'],
+	 	['Link','Unlink','Image','Table','HorizontalRule','SpecialChar'],
 	 	['Source']
 	 ];
 
@@ -73,12 +74,12 @@ CKEDITOR.editorConfig = function( config )
 	[
 	 	['Maximize'],
 	 	['SpellChecker', 'Scayt'],		// 'Cut','Copy','Paste','-', are useless, can be done with right click, even on smarpthone
-	 	['Undo','Redo','-','Find','Replace'],
-	    ['Font','FontSize'],
+	 	['Find','Replace'],
+	    ['Format','FontSize'],
 	 	['Bold','Italic','Underline','Strike','-','TextColor','RemoveFormat'],
 	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-	    ['Link','Unlink','Image','Table','HorizontalRule'],
+	    ['Link','Unlink','Image','Table','HorizontalRule','SpecialChar'],
 	 	['Source']
 	];
 
@@ -102,6 +103,7 @@ CKEDITOR.editorConfig = function( config )
 	 	['Find'],
 	 	['Image'],
 	 	['Source']
+		['SpecialChar'],
 	];
 };
 

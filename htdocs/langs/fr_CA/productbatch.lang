@@ -1,6 +1,10 @@
 # Dolibarr language file - Source file is en_US - productbatch
 ManageLotSerial=Utilisation du lot / numéro de série
+ProductStatusOnBatch=Oui (beaucoup requis)
 ProductStatusNotOnBatch=Non (lot / série non utilisé)
+ProductStatusOnBatchShort=Parcelle
+ProductStatusOnSerialShort=En série
+BatchSellOrEatByMandatoryList=%s ou %s est obligatoire
 Batch=Lot / série
 atleast1batchfield=Date de livraison ou date de vente ou Lot / Numéro de série
 batch_number=Lot / numéro de série
@@ -9,8 +13,23 @@ SellByDate=La date de péremption
 DetailBatchNumber=Détails du lot / série
 printBatch=Lot / série: %s
 printSellby=Vendre par: %s
+printPlannedWarehouse=Entrepôt : %s
 AddDispatchBatchLine=Ajouter une ligne pour l'expédition de la durée de conservation
+WhenProductBatchModuleOnOptionAreForced=Lorsque le module Lot/Série est activé, la diminution automatique du stock est forcée à '%s' et le mode d'augmentation automatique est forcé à '%s'. Certains choix peuvent ne pas être disponibles. D'autres options peuvent être définies selon vos souhaits.
 ProductDoesNotUseBatchSerial=Ce produit n'utilise pas de lot / numéro de série
 ProductLotSetup=Configuration du module lot / série
 ShowCurrentStockOfLot=Afficher le stock actuel pour un produit / lot partiel
 ShowLogOfMovementIfLot=Afficher le journal des mouvements pour deux produits / lot
+StockDetailPerBatch=Détail du stock par lot
+CustomMasks=Possibilité de définir un masque de numérotation différent pour chaque produit
+BatchLotNumberingModules=Règle de numérotation pour la génération automatique du numéro de lot
+BatchSerialNumberingModules=Règle de numérotation pour la génération automatique du numéro de série (pour les produits avec la propriété 1 lot/série unique pour chaque produit)
+QtyToAddAfterBarcodeScan=Quantité à %s pour chaque code-barres/lot/série scanné
+EndOfLife=Fin de vie
+FirstUseDate=Date de première utilisation
+HideLots=Cacher beaucoup
+OutOfOrder=En panne
+CantMoveNonExistantSerial=Erreur. Vous demandez un déplacement sur un enregistrement pour un numéro de série qui n'existe plus. Il se peut que vous ayez pris le même numéro de série sur le même entrepôt plusieurs fois dans le même envoi ou qu'il ait été utilisé par un autre envoi. Retirez cet envoi et préparez-en un autre.
+TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Réparation incomplète de la table de lots avec le paramètre '...repair.php?standard=confirmed'
+IlligalQtyForSerialNumbers=Correction de stock requise car numéro de série unique.
+ErrorBatchesNeedStockManagement=Erreur. Un produit avec gestion par lot doit être géré en stock.

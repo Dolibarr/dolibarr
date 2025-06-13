@@ -10,6 +10,7 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
- * Need to have following variables defined:
+ * Need to have the following variables defined:
  * $object (invoice, order, ...)
  * $conf
  * $langs
@@ -36,14 +37,18 @@
  *
  * $type, $text, $description, $line
  */
+/**
+ * @var Form $form
+ * @var Translate $langs
+ */
 
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
-print "<!-- BEGIN PHP TEMPLATE objectline_title.tpl.php -->\n";
+print "<!-- BEGIN PHP TEMPLATE hrm/core/tpl/objectline_title.tpl.php -->\n";
 
 // Title line
 print "<thead>\n";
@@ -51,28 +56,22 @@ print "<thead>\n";
 print '<tr class="liste_titre nodrag nodrop">';
 
 // Adds a line numbering column
-if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
-	print '<td class="linecolnum center">&nbsp;</td>';
+if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER')) {
+	print '<th class="linecolnum center">&nbsp;</th>';
 }
 
 // Skill type
-print '<td class="linecollabel">'.$langs->trans('SkillType').'</td>';
+print '<th class="linecollabel">'.$langs->trans('SkillType').'</th>';
 
 // Label skill
-print '<td class="linecollabel">'.$langs->trans('Label').'</td>';
+print '<th class="linecollabel">'.$langs->trans('Label').'</th>';
 
-// Description
-print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
+// Comment
+print '<th class="linecolcomment"></th>';
 
 // Note
-print '<td class="linecolrank right" style="width: 80px">'.$form->textwithpicto($langs->trans("Level"), $langs->trans('EmployeeRank')).'</td>';
+print '<th class="linecolrank right" style="width: 80px">'.$form->textwithpicto($langs->trans("Level"), $langs->trans('EmployeeRank')).'</th>';
 
-
-//print '<td class="linecoledit"></td>'; // No width to allow autodim
-
-//print '<td class="linecoldelete" style="width: 10px"></td>';
-
-//print '<td class="linecolmove" style="width: 10px"></td>';
 
 print "</tr>\n";
 print "</thead>\n";

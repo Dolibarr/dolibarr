@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019 Maxime Kohlhaas <maxime@atm-consulting.fr>
- * Copyright (C) 2020     	Frédéric France		<frederic.france@netlogic.fr>
- * Copyright (C) 2022     	Christian Humpel		<christian.humpel@live.com>
+ * Copyright (C) 2020-2024  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2022		Christian Humpel		<christian.humpel@live.com>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,7 @@ require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 
 
 /**
- * \file    bom/class/api_boms.class.php
+ * \file    htdocs/bom/class/api_boms.class.php
  * \ingroup bom
  * \brief   File for API management of BOM.
  */
@@ -38,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 class Boms extends DolibarrApi
 {
 	/**
-	 * @var BOM $bom {@type BOM}
+	 * @var BOM {@type BOM}
 	 */
 	public $bom;
 
@@ -47,7 +48,8 @@ class Boms extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
+
 		$this->db = $db;
 		$this->bom = new BOM($this->db);
 	}
@@ -55,18 +57,22 @@ class Boms extends DolibarrApi
 	/**
 	 * Get properties of a bom object
 	 *
-	 * Return an array with bom informations
+	 * Return an array with bom information
 	 *
-	 * @param 	int 	$id 			ID of bom
-	 * @return  Object              	Object with cleaned properties
+	 * @param	int		$id				ID of bom
+	 * @return  Object					Object with cleaned properties
+	 * @phan-return BOM
+	 * @phpstan-return BOM
 	 *
 	 * @url	GET {id}
-	 * @throws 	RestException
+	 *
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		BOM not found
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->bom->read) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('bom', 'read')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->bom->fetch($id);
@@ -75,7 +81,7 @@ class Boms extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('bom', $this->bom->id, 'bom_bom')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($this->bom);
@@ -87,21 +93,24 @@ class Boms extends DolibarrApi
 	 *
 	 * Get a list of boms
 	 *
-	 * @param string	       $sortfield	        Sort field
-	 * @param string	       $sortorder	        Sort order
-	 * @param int		       $limit		        Limit for list
-	 * @param int		       $page		        Page number
+	 * @param string		   $sortfield			Sort field
+	 * @param string		   $sortorder			Sort order
+	 * @param int			   $limit				Limit for list
+	 * @param int			   $page				Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
+	 * @phan-return BOM[]
+	 * @phpstan-return BOM[]
 	 *
-	 * @throws RestException
+	 * @throws	RestException	400		Bad sqlfilters
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	503		Error retrieving list of boms
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
-		global $db, $conf;
-
-		if (!DolibarrApiAccess::$user->rights->bom->read) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('bom', 'read')) {
+			throw new RestException(403);
 		}
 
 		$obj_ret = array();
@@ -113,40 +122,27 @@ class Boms extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if ($restrictonsocid && !DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) {
+		if ($restrictonsocid && !DolibarrApiAccess::$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$search_sale = DolibarrApiAccess::$user->id;
 		}
 
 		$sql = "SELECT t.rowid";
-		if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
-			$sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
-		}
-		$sql .= " FROM ".MAIN_DB_PREFIX.$tmpobject->table_element." AS t LEFT JOIN ".MAIN_DB_PREFIX.$tmpobject->table_element."_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
-
-		if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
-			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
-		}
+		$sql .= " FROM ".MAIN_DB_PREFIX.$tmpobject->table_element." AS t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$tmpobject->table_element."_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= " WHERE 1 = 1";
-
-		// Example of use $mode
-		//if ($mode == 1) $sql.= " AND s.client IN (1, 3)";
-		//if ($mode == 2) $sql.= " AND s.client IN (2, 3)";
-
 		if ($tmpobject->ismultientitymanaged) {
 			$sql .= ' AND t.entity IN ('.getEntity($tmpobject->element).')';
-		}
-		if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) {
-			$sql .= " AND t.fk_soc = sc.fk_soc";
 		}
 		if ($restrictonsocid && $socid) {
 			$sql .= " AND t.fk_soc = ".((int) $socid);
 		}
-		if ($restrictonsocid && $search_sale > 0) {
-			$sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
-		}
-		// Insert sale filter
-		if ($restrictonsocid && $search_sale > 0) {
-			$sql .= " AND sc.fk_user = ".((int) $search_sale);
+		// Search on sale representative
+		if ($search_sale && $search_sale != '-1') {
+			if ($search_sale == -2) {
+				$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
+			} elseif ($search_sale > 0) {
+				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+			}
 		}
 		if ($sqlfilters) {
 			$errormessage = '';
@@ -174,35 +170,44 @@ class Boms extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$bom_static = new BOM($this->db);
 				if ($bom_static->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($bom_static);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($bom_static), $properties);
 				}
 				$i++;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieve bom list');
 		}
-		if (!count($obj_ret)) {
-			throw new RestException(404, 'No bom found');
-		}
+
 		return $obj_ret;
 	}
 
 	/**
 	 * Create bom object
 	 *
-	 * @param array $request_data   Request datas
-	 * @return int  ID of bom
+	 * @param array $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 * @return int  				ID of bom
+	 *
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	500		Error retrieving list of boms
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->bom->write) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('bom', 'write')) {
+			throw new RestException(403);
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
-			$this->bom->$field = $value;
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->bom->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			$this->bom->$field = $this->_checkValForAPI($field, $value, $this->bom);
 		}
 
 		$this->checkRefNumbering();
@@ -216,15 +221,22 @@ class Boms extends DolibarrApi
 	/**
 	 * Update bom
 	 *
-	 * @param int   $id             Id of bom to update
-	 * @param array $request_data   Datas
+	 * @param 	int   		$id             Id of bom to update
+	 * @param 	array 		$request_data   Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 * @return 	Object						Object after update
+	 * @phan-return BOM
+	 * @phpstan-return BOM
 	 *
-	 * @return int
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		BOM not found
+	 * @throws	RestException	500		Error updating bom
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->bom->write) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('bom', 'write')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->bom->fetch($id);
@@ -233,20 +245,26 @@ class Boms extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('bom', $this->bom->id, 'bom_bom')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach ($request_data as $field => $value) {
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->bom->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
 					$this->bom->array_options[$index] = $this->_checkValForAPI($field, $val, $this->bom);
 				}
 				continue;
 			}
-			$this->bom->$field = $value;
+			$this->bom->$field = $this->_checkValForAPI($field, $value, $this->bom);
 		}
 
 		$this->checkRefNumbering();
@@ -263,11 +281,17 @@ class Boms extends DolibarrApi
 	 *
 	 * @param   int     $id   BOM ID
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		BOM not found
+	 * @throws	RestException	500		Error deleting bom
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->bom->delete) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('bom', 'delete')) {
+			throw new RestException(403);
 		}
 		$result = $this->bom->fetch($id);
 		if (!$result) {
@@ -275,7 +299,7 @@ class Boms extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('bom', $this->bom->id, 'bom_bom')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->bom->delete(DolibarrApiAccess::$user)) {
@@ -298,11 +322,16 @@ class Boms extends DolibarrApi
 	 * @url	GET {id}/lines
 	 *
 	 * @return array
+	 * @phan-return BOMLine[]
+	 * @phpstan-return BOMLine[]
+	 *
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		BOM not found
 	 */
 	public function getLines($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->bom->read) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('bom', 'read')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->bom->fetch($id);
@@ -311,7 +340,7 @@ class Boms extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('bom_bom', $this->bom->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->bom->getLinesArray();
 		$result = array();
@@ -326,15 +355,21 @@ class Boms extends DolibarrApi
 	 *
 	 * @param int   $id             Id of BOM to update
 	 * @param array $request_data   BOMLine data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @url	POST {id}/lines
 	 *
 	 * @return int
+	 *
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		BOM not found
+	 * @throws	RestException	500		Error adding bom line
 	 */
 	public function postLine($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->bom->write) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('bom', 'write')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->bom->fetch($id);
@@ -343,7 +378,7 @@ class Boms extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('bom_bom', $this->bom->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$request_data = (object) $request_data;
@@ -357,13 +392,15 @@ class Boms extends DolibarrApi
 			$request_data->position,
 			$request_data->fk_bom_child,
 			$request_data->import_key,
-			$request_data->fk_unit
+			$request_data->fk_unit,
+			$request_data->array_options,
+			$request_data->fk_default_workstation
 		);
 
 		if ($updateRes > 0) {
 			return $updateRes;
 		} else {
-			throw new RestException(400, $this->bom->error);
+			throw new RestException(500, $this->bom->error);
 		}
 	}
 
@@ -373,15 +410,20 @@ class Boms extends DolibarrApi
 	 * @param int   $id             Id of BOM to update
 	 * @param int   $lineid         Id of line to update
 	 * @param array $request_data   BOMLine data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @url	PUT {id}/lines/{lineid}
 	 *
 	 * @return object|bool
+	 *
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		BOM not found
 	 */
 	public function putLine($id, $lineid, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->bom->write) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('bom', 'write')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->bom->fetch($id);
@@ -390,7 +432,7 @@ class Boms extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('bom_bom', $this->bom->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		$request_data = (object) $request_data;
@@ -403,7 +445,9 @@ class Boms extends DolibarrApi
 			$request_data->efficiency,
 			$request_data->position,
 			$request_data->import_key,
-			$request_data->fk_unit
+			$request_data->fk_unit,
+			$request_data->array_options,
+			$request_data->fk_default_workstation
 		);
 
 		if ($updateRes > 0) {
@@ -423,16 +467,18 @@ class Boms extends DolibarrApi
 	 *
 	 * @url	DELETE {id}/lines/{lineid}
 	 *
-	 * @return int
+	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
-	 * @throws RestException 401
-	 * @throws RestException 404
-	 * @throws RestException 500
+	 * @throws	RestException	403		Access denied
+	 * @throws	RestException	404		BOM not found
+	 * @throws	RestException	500		Error deleting bom line
 	 */
 	public function deleteLine($id, $lineid)
 	{
-		if (!DolibarrApiAccess::$user->rights->bom->write) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('bom', 'write')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->bom->fetch($id);
@@ -441,7 +487,7 @@ class Boms extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('bom_bom', $this->bom->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		//Check the rowid is a line of current bom object
@@ -456,11 +502,16 @@ class Boms extends DolibarrApi
 			throw new RestException(500, 'Line to delete (rowid: '.$lineid.') is not a line of BOM (id: '.$this->bom->id.')');
 		}
 
-		$updateRes = $this->bom->deleteline(DolibarrApiAccess::$user, $lineid);
+		$updateRes = $this->bom->deleteLine(DolibarrApiAccess::$user, $lineid);
 		if ($updateRes > 0) {
-			return $this->get($id);
+			return array(
+				'success' => array(
+					'code' => 200,
+					'message' => 'line ' .$lineid. ' deleted'
+				)
+			);
 		} else {
-			throw new RestException(405, $this->bom->error);
+			throw new RestException(500, $this->bom->error);
 		}
 	}
 
@@ -511,6 +562,14 @@ class Boms extends DolibarrApi
 		unset($object->fk_incoterms);
 		unset($object->label_incoterms);
 		unset($object->location_incoterms);
+		unset($object->multicurrency_code);
+		unset($object->multicurrency_tx);
+		unset($object->multicurrency_total_ht);
+		unset($object->multicurrency_total_ttc);
+		unset($object->multicurrency_total_tva);
+		unset($object->multicurrency_total_localtax1);
+		unset($object->multicurrency_total_localtax2);
+
 
 		// If object has lines, remove $db property
 		if (isset($object->lines) && is_array($object->lines) && count($object->lines) > 0) {
@@ -529,22 +588,25 @@ class Boms extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param	array		$data   Array of data to validate
-	 * @return	array
+	 * @param	?array<string,string>		$data   Array of data to validate
+	 * @return	array<string,string>
 	 *
 	 * @throws	RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$myobject = array();
 		foreach ($this->bom->fields as $field => $propfield) {
-			if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat')) || $propfield['notnull'] != 1) {
+			if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat')) || empty($propfield['notnull']) || $propfield['notnull'] != 1) {
 				continue; // Not a mandatory field
 			}
 			if (!isset($data[$field])) {
 				throw new RestException(400, "$field field missing");
 			}
-				$myobject[$field] = $data[$field];
+			$myobject[$field] = $data[$field];
 		}
 		return $myobject;
 	}

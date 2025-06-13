@@ -15,7 +15,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-/** @var boolean	$force_install_nophpinfo 		Hide PHP informations */
+/** @var boolean	$force_install_nophpinfo 		Hide PHP information */
 $force_install_nophpinfo = true;
 
 /** @var int	$force_install_noedit 				1 = Lock and hide environment variables, 2 = Lock all set variables */

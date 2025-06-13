@@ -1,7 +1,11 @@
 # Dolibarr language file - Source file is en_US - resource
 ConfirmDeleteResourceElement=Bestätige das Entfernen der Ressource von diesem Element.
+NoResourceInDatabase=Keine Ressource in Datenbank
+NoResourceLinked=Keine Ressource verknüpft
 ResourceCard=Ressourcen-Karte
 ResourceFormLabel_ref=Name der Ressource
-ResourceType=Typ der Ressource
 ResourceFormLabel_description=Beschreibung
+ResourceType=Typ der Ressource
+ResourcesLinkedToElement=mit Element verknüpfte Ressourcen
+ResourceElementPage=Element-Ressourcen
 ResourceTypeCode=Ressourcentyp - Code

@@ -7,6 +7,7 @@
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2021       Charlene Benke      	<charlene@patas-monkey.com>
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
 *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +48,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
+'
+@phan-var-force ?string $dolibarr_main_url_root_alt
+@phan-var-force ?string $dolibarr_main_db_prefix
+';
+
 $conf = new Conf();
 
 // Force $_REQUEST["logtohtml"]
@@ -62,8 +68,6 @@ if (isset($_SERVER["DOCUMENT_URI"]) && $_SERVER["DOCUMENT_URI"]) {
 $includeconferror = '';
 
 
-// Define vars
-$conffiletoshowshort = "conf.php";
 // Define localization of conf file
 $conffile = "../conf/conf.php";
 $conffiletoshow = "htdocs/conf/conf.php";
@@ -90,7 +94,7 @@ $long_options = array(
  * @param string $header  the message to signal to the user
  * @return void
  */
-function usage($program, $header)
+function install_usage($program, $header)
 {
 	echo $header."\n";
 	echo "  php ".$program." [options] [script options]\n";
@@ -134,27 +138,45 @@ if (php_sapi_name() === "cli" && (float) PHP_VERSION > 7.0) {
 	$rest_index = 0;
 	$opts = getopt($short_options, $long_options, $rest_index);
 
-	foreach ($opts as $opt => $arg) switch ($opt) {
-		case 'c':
-		case 'config':
-			$conffile = $arg;
-			$conffiletoshow = $arg;
-			break;
-		case 'h':
-		case 'help':
-			usage($argv[0], "Usage:");
-			exit(0);
+	foreach ($opts as $opt => $arg) {
+		switch ($opt) {
+			case 'c':
+			case 'config':
+				$conffile = $arg;
+				$conffiletoshow = $arg;
+				break;
+			case 'h':
+			case 'help':
+				install_usage($argv[0], "Usage:");
+				exit(0);
+		}
 	}
 
 	// Parse the arguments to find the options.
-	$args_options = array_filter(array_slice($argv, 0, $rest_index), function ($arg) {
-		return strlen($arg) >= 2 && $arg[0] == '-';
-	});
-	$parsed_options = array_map(function ($arg) {
-		if (strlen($arg) > 1)
-			return "--" . $arg;
-		return "-" . $arg;
-	}, array_keys($opts));
+	$args_options = array_filter(
+		array_slice($argv, 0, $rest_index),
+		/**
+		 * @param string $arg
+		 * @return bool
+		 */
+		static function ($arg) {
+			return strlen($arg) >= 2 && $arg[0] == '-';
+		}
+	);
+	$parsed_options = array_map(
+		/**
+		 * Previx option with '-' for single characters and -- for more than single characters
+		 * @param string $arg
+		 * @return string
+		 */
+		static function ($arg) {
+			if (strlen($arg) > 1) {
+				return "--" . $arg;
+			}
+			return "-" . $arg;
+		},
+		array_keys($opts)
+	);
 
 	// Find options (dash-prefixed) that were not parsed.
 	$unknown_options = array_diff($args_options, $parsed_options);
@@ -165,7 +187,7 @@ if (php_sapi_name() === "cli" && (float) PHP_VERSION > 7.0) {
 	// typo right now.
 	if (count($unknown_options) > 0) {
 		echo "Unknown option: ".array_values($unknown_options)[0]."\n";
-		usage($argv[0], "Usage:");
+		install_usage($argv[0], "Usage:");
 		exit(1);
 	}
 
@@ -190,16 +212,16 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 			$dolibarr_main_db_type = 'mysqli';
 		}
 
-		if (empty($dolibarr_main_db_port) && ($dolibarr_main_db_type == 'mysqli')) {
+		if (!isset($dolibarr_main_db_port) && ($dolibarr_main_db_type == 'mysqli')) {
 			$dolibarr_main_db_port = '3306'; // For backward compatibility
 		}
 
 		// Clean parameters
-		$dolibarr_main_data_root = isset($dolibarr_main_data_root) ?trim($dolibarr_main_data_root) : DOL_DOCUMENT_ROOT.'/../documents';
-		$dolibarr_main_url_root         = isset($dolibarr_main_url_root) ?trim($dolibarr_main_url_root) : '';
-		$dolibarr_main_url_root_alt     = isset($dolibarr_main_url_root_alt) ?trim($dolibarr_main_url_root_alt) : '';
-		$dolibarr_main_document_root    = isset($dolibarr_main_document_root) ?trim($dolibarr_main_document_root) : '';
-		$dolibarr_main_document_root_alt = isset($dolibarr_main_document_root_alt) ?trim($dolibarr_main_document_root_alt) : '';
+		$dolibarr_main_data_root = isset($dolibarr_main_data_root) ? trim($dolibarr_main_data_root) : DOL_DOCUMENT_ROOT.'/../documents';
+		$dolibarr_main_url_root         = isset($dolibarr_main_url_root) ? trim($dolibarr_main_url_root) : '';
+		$dolibarr_main_url_root_alt     = isset($dolibarr_main_url_root_alt) ? trim($dolibarr_main_url_root_alt) : '';
+		$dolibarr_main_document_root    = isset($dolibarr_main_document_root) ? trim($dolibarr_main_document_root) : '';
+		$dolibarr_main_document_root_alt = isset($dolibarr_main_document_root_alt) ? trim($dolibarr_main_document_root_alt) : '';
 
 		// Remove last / or \ on directories or url value
 		if (!empty($dolibarr_main_document_root) && !preg_match('/^[\\/]+$/', $dolibarr_main_document_root)) {
@@ -223,7 +245,7 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 			$result = conf($dolibarr_main_document_root);
 		}
 		// Load database driver
-		if ($result) {
+		if ($result > 0) {
 			if (!empty($dolibarr_main_document_root) && !empty($dolibarr_main_db_type)) {
 				$result = include_once $dolibarr_main_document_root."/core/db/".$dolibarr_main_db_type.'.class.php';
 				if (!$result) {
@@ -237,6 +259,7 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 		$includeconferror = 'ErrorBadFormatForConfFile';
 	}
 }
+
 $conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 
 // Define prefix
@@ -245,7 +268,7 @@ if (!isset($dolibarr_main_db_prefix) || !$dolibarr_main_db_prefix) {
 }
 define('MAIN_DB_PREFIX', (isset($dolibarr_main_db_prefix) ? $dolibarr_main_db_prefix : ''));
 
-define('DOL_CLASS_PATH', 'class/'); // Filsystem path to class dir
+define('DOL_CLASS_PATH', 'class/'); // Filesystem path to class dir
 define('DOL_DATA_ROOT', (isset($dolibarr_main_data_root) ? $dolibarr_main_data_root : DOL_DOCUMENT_ROOT.'/../documents'));
 define('DOL_MAIN_URL_ROOT', (isset($dolibarr_main_url_root) ? $dolibarr_main_url_root : '')); // URL relative root
 $uri = preg_replace('/^http(s?):\/\//i', '', constant('DOL_MAIN_URL_ROOT')); // $uri contains url without http*
@@ -275,7 +298,7 @@ if (empty($conf->db->user)) {
 	$conf->db->user = '';
 }
 
-// Define array of document root directories
+// Define an array of document root directories
 $conf->file->dol_document_root = array(DOL_DOCUMENT_ROOT);
 if (!empty($dolibarr_main_document_root_alt)) {
 	// dolibarr_main_document_root_alt contains several directories
@@ -298,7 +321,7 @@ if (constant('DOL_DATA_ROOT') === null) {
 	$lockfile = '../../documents/install.lock';
 	$upgradeunlockfile = '../../documents/upgrade.unlock';
 }
-$islocked=false;
+$islocked = false;
 if (@file_exists($lockfile) || @file_exists($lockfile2)) {
 	if (!defined('ALLOWED_IF_UPGRADE_UNLOCK_FOUND') || (! @file_exists($upgradeunlockfile) && ! @file_exists($upgradeunlockfile2))) {
 		// If this is a dangerous install page (ALLOWED_IF_UPGRADE_UNLOCK_FOUND not defined) or
@@ -322,7 +345,7 @@ if ($islocked) {	// Pages are locked
 		print $langs->trans("YouTryUpgradeDisabledByMissingFileUnLock").'<br>';
 	}
 	if (!empty($dolibarr_main_url_root)) {
-		if (GETPOST('action') != 'upgrade') {
+		if (GETPOST('action') != 'upgrade' && (!file_exists($conffile) || !isset($dolibarr_main_url_root))) {
 			print $langs->trans("ClickOnLinkOrRemoveManualy").'<br>';
 		} else {
 			print $langs->trans("ClickOnLinkOrCreateUnlockFileManualy").'<br>';
@@ -373,8 +396,8 @@ foreach ($handlers as $handler) {
 
 	require_once $file;
 	$loghandlerinstance = new $handler();
-	if (!$loghandlerinstance instanceof LogHandlerInterface) {
-		throw new Exception('Log handler does not extend LogHandlerInterface');
+	if (!$loghandlerinstance instanceof LogHandler) {
+		throw new Exception('Log handler does not extend LogHandler');
 	}
 
 	if (empty($conf->loghandlers[$handler])) {
@@ -395,7 +418,7 @@ if (GETPOST('lang', 'aZ09')) {
  * Load conf file (file must exists)
  *
  * @param	string		$dolibarr_main_document_root		Root directory of Dolibarr bin files
- * @return	int												<0 if KO, >0 if OK
+ * @return	int												Return integer <0 if KO, >0 if OK
  */
 function conf($dolibarr_main_document_root)
 {
@@ -406,11 +429,13 @@ function conf($dolibarr_main_document_root)
 	global $dolibarr_main_db_name;
 	global $dolibarr_main_db_user;
 	global $dolibarr_main_db_pass;
+	global $dolibarr_main_db_collation;
+	global $dolibarr_main_db_character_set;
 	global $character_set_client;
 	global $dolibarr_main_instance_unique_id;
 	global $dolibarr_main_cookie_cryptkey;
 
-	$return = include_once $dolibarr_main_document_root.'/core/class/conf.class.php';
+	$return = @include_once $dolibarr_main_document_root.'/core/class/conf.class.php';
 	if (!$return) {
 		return -1;
 	}
@@ -486,8 +511,8 @@ function conf($dolibarr_main_document_root)
 
 		require_once $file;
 		$loghandlerinstance = new $handler();
-		if (!$loghandlerinstance instanceof LogHandlerInterface) {
-			throw new Exception('Log handler does not extend LogHandlerInterface');
+		if (!$loghandlerinstance instanceof LogHandler) {
+			throw new Exception('Log handler does not extend LogHandler');
 		}
 
 		if (empty($conf->loghandlers[$handler])) {
@@ -567,16 +592,18 @@ function pHeader($subtitle, $next, $action = 'set', $param = '', $forcejqueryurl
 
 	print '<div class="divlogoinstall" style="text-align:center">';
 	print '<img class="imglogoinstall" src="../theme/dolibarr_logo.svg" alt="Dolibarr logo" width="300px"><br>';
-	print DOL_VERSION;
+	print '<span class="opacitymedium">'.DOL_VERSION.'</span>';
 	print '</div><br>';
 
-	print '<span class="titre">'.$langs->trans("DolibarrSetup");
+	print '<span class="titre">';
 	if ($subtitle) {
-		print ' - '.$subtitle;
+		print $subtitle;
+	} else {
+		print $langs->trans("DolibarrSetup");
 	}
 	print '</span>'."\n";
 
-	print '<form name="forminstall" style="width: 100%" action="'.$next.'.php'.($param ? '?'.$param : '').'" method="POST"';
+	print '<form name="forminstall" id="forminstall" class="centpercent" action="'.$next.'.php'.($param ? '?'.$param : '').'" method="POST"';
 	if ($next == 'step5') {
 		print ' autocomplete="off"';
 	}
@@ -584,9 +611,11 @@ function pHeader($subtitle, $next, $action = 'set', $param = '', $forcejqueryurl
 	print '<input type="hidden" name="testpost" value="ok">'."\n";
 	print '<input type="hidden" name="action" value="'.$action.'">'."\n";
 
-	print '<table class="main" width="100%"><tr><td>'."\n";
+	print '<div id="divinstall">';
 
-	print '<table class="'.$csstable.'" width="100%"><tr><td>'."\n";
+	print '<table class="main centpercent"><tr><td>'."\n";
+
+	print '<table class="'.$csstable.' centpercent"><tr><td>'."\n";
 }
 
 /**
@@ -612,6 +641,8 @@ function pFooter($nonext = 0, $setuplang = '', $jscheckfunction = '', $withpleas
 
 	print $morehtml;
 
+	print '</div>';
+
 	if (!$nonext || ($nonext == '2')) {
 		print '<div class="nextbutton" id="nextbutton">';
 		if ($nonext == '2') {
@@ -625,7 +656,8 @@ function pFooter($nonext = 0, $setuplang = '', $jscheckfunction = '', $withpleas
 		if ($jscheckfunction) {
 			print ' onClick="return '.$jscheckfunction.'();"';
 		}
-		print '></div>';
+		print '>';
+		print '</div>';
 		if ($withpleasewait) {
 			print '<div style="visibility: hidden;" class="pleasewait" id="pleasewait"><br>'.$langs->trans("NextStepMightLastALongTime").'<br><br><div class="blinkwait">'.$langs->trans("PleaseBePatient").'</div></div>';
 		}
@@ -699,8 +731,7 @@ function detect_dolibarr_main_document_root()
  */
 function detect_dolibarr_main_data_root($dolibarr_main_document_root)
 {
-	$dolibarr_main_data_root = preg_replace("/\/htdocs$/", "", $dolibarr_main_document_root);
-	$dolibarr_main_data_root .= "/documents";
+	$dolibarr_main_data_root = preg_replace("/\/[^\/]+$/", "/documents", $dolibarr_main_document_root);
 	return $dolibarr_main_data_root;
 }
 

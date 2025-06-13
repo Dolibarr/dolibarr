@@ -1,10 +1,12 @@
 <?php
-/* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2010	   Pierre Morin         <pierre.morin@auguria.net>
- * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
+/* Copyright (C) 2004-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Simon Tosser            <simon@kornog-computing.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2010	    Pierre Morin            <pierre.morin@auguria.net>
+ * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +42,19 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $module
+ * @var string $mode
+ * @var string $websitekey
+ * @var int $pageid
+ */
+
 if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	require_once '../../main.inc.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -53,10 +68,12 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	$urlsource = GETPOST("urlsource", 'alpha');
 	$search_doc_ref = GETPOST('search_doc_ref', 'alpha');
 
-	$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+	$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 	$sortfield = GETPOST("sortfield", 'aZ09comma');
 	$sortorder = GETPOST("sortorder", 'aZ09comma');
-	$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+	$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
+	$showonrightsize = '';
+
 	if (empty($page) || $page == -1) {
 		$page = 0;
 	}     // If $page is not defined, or '' or -1
@@ -76,14 +93,23 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 
 	$ecmdir = new EcmDirectory($db);
 	if ($section > 0) {
-		$result = $ecmdir->fetch($section);
-		if (!($result > 0)) {
-			//dol_print_error($db,$ecmdir->error);
-			//exit;
-		}
+		$result = $ecmdir->fetch((int) $section);
+		//if (!($result > 0)) {
+		//dol_print_error($db,$ecmdir->error);
+		//exit;
+		//}
 	}
 } else {
-	// For no ajax call
+	// When no an ajax call (include from other file)
+	/**
+	 * @var string $module
+	 */
+	'
+	@phan-var-force int $section
+	@phan-var-force string $module
+	@phan-var-force string $showonrightsize
+	';
+
 	$rootdirfordoc = $conf->ecm->dir_output;
 
 	$ecmdir = new EcmDirectory($db);
@@ -129,7 +155,7 @@ if ($user->socid > 0) {
 if (preg_match('/\.\./', $upload_dir) || preg_match('/[<>|]/', $upload_dir)) {
 	dol_syslog("Refused to deliver file ".$upload_dir);
 	// Do no show plain path in shown error message
-	dol_print_error(0, $langs->trans("ErrorFileNameInvalid", $upload_dir));
+	dol_print_error(null, $langs->trans("ErrorFileNameInvalid", $upload_dir));
 	exit;
 }
 // Check permissions
@@ -174,7 +200,7 @@ if (!dol_is_dir($upload_dir)) {
 	exit;*/
 }
 
-print '<!-- ajaxdirpreview type='.$type.' module='.$module.' modulepart='.$modulepart.'-->'."\n";
+print '<!-- ajaxdirpreview mode='.$mode.' type='.$type.' module='.$module.' modulepart='.$modulepart.'-->'."\n";
 //print '<!-- Page called with mode='.dol_escape_htmltag(isset($mode)?$mode:'').' type='.dol_escape_htmltag($type).' module='.dol_escape_htmltag($module).' url='.dol_escape_htmltag($url).' '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 $param = ($sortfield ? '&sortfield='.urlencode($sortfield) : '').($sortorder ? '&sortorder='.urlencode($sortorder) : '');
@@ -182,7 +208,7 @@ if (!empty($websitekey)) {
 	$param .= '&website='.urlencode($websitekey);
 }
 if (!empty($pageid)) {
-	$param .= '&pageid='.urlencode($pageid);
+	$param .= '&pageid='.((int) $pageid);
 }
 
 
@@ -192,7 +218,7 @@ if ($type == 'directory') {
 
 	$maxlengthname = 40;
 	$excludefiles = array('^SPECIMEN\.pdf$', '^\.', '(\.meta|_preview.*\.png)$', '^temp$', '^payments$', '^CVS$', '^thumbs$');
-	$sorting = (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC);
+	$sorting = (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC);
 
 	// Right area. If module is defined here, we are in automatic ecm.
 	$automodules = array(
@@ -216,11 +242,12 @@ if ($type == 'directory') {
 		'holiday',
 		'recruitment-recruitmentcandidature',
 		'banque',
+		'bank-statement',
 		'chequereceipt',
 		'mrp-mo'
 	);
 
-	$parameters = array('modulepart'=>$module);
+	$parameters = array('modulepart' => $module);
 	$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
 	if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray) > 0) {
 		$automodules[] = $hookmanager->resArray['module'];
@@ -231,7 +258,7 @@ if ($type == 'directory') {
 		$upload_dir = $conf->societe->dir_output;
 		$excludefiles[] = '^contact$'; // The subdir 'contact' contains files of contacts.
 	} elseif ($module == 'invoice') {
-		$upload_dir = $conf->facture->dir_output;
+		$upload_dir = $conf->invoice->dir_output;
 	} elseif ($module == 'invoice_supplier') {
 		$upload_dir = $conf->fournisseur->facture->dir_output;
 	} elseif ($module == 'propal') {
@@ -239,11 +266,11 @@ if ($type == 'directory') {
 	} elseif ($module == 'supplier_proposal') {
 		$upload_dir = $conf->supplier_proposal->dir_output;
 	} elseif ($module == 'order') {
-		$upload_dir = $conf->commande->dir_output;
+		$upload_dir = $conf->order->dir_output;
 	} elseif ($module == 'order_supplier') {
 		$upload_dir = $conf->fournisseur->commande->dir_output;
 	} elseif ($module == 'contract') {
-		$upload_dir = $conf->contrat->dir_output;
+		$upload_dir = $conf->contract->dir_output;
 	} elseif ($module == 'product') {
 		$upload_dir = $conf->product->dir_output;
 	} elseif ($module == 'tax') {
@@ -269,12 +296,14 @@ if ($type == 'directory') {
 		$upload_dir = $conf->recruitment->dir_output.'/recruitmentcandidature';
 	} elseif ($module == 'banque') {
 		$upload_dir = $conf->bank->dir_output;
+	} elseif ($module == 'bank-statement') {
+		$upload_dir = $conf->bank->dir_output.'/*/statement';
 	} elseif ($module == 'chequereceipt') {
 		$upload_dir = $conf->bank->dir_output.'/checkdeposits';
 	} elseif ($module == 'mrp-mo') {
 		$upload_dir = $conf->mrp->dir_output;
 	} else {
-		$parameters = array('modulepart'=>$module);
+		$parameters = array('modulepart' => $module);
 		$reshook = $hookmanager->executeHooks('addSectionECMAuto', $parameters);
 		if ($reshook > 0 && is_array($hookmanager->resArray) && count($hookmanager->resArray) > 0) {
 			$upload_dir = $hookmanager->resArray['directory'];
@@ -283,18 +312,36 @@ if ($type == 'directory') {
 
 	// Automatic list
 	if (in_array($module, $automodules)) {
-		$param .= '&module='.$module;
+		$param .= '&module='.urlencode($module);
 		if (isset($search_doc_ref) && $search_doc_ref != '') {
 			$param .= '&search_doc_ref='.urlencode($search_doc_ref);
 		}
 
 		$textifempty = ($section ? $langs->trans("NoFileFound") : ($showonrightsize == 'featurenotyetavailable' ? $langs->trans("FeatureNotYetAvailable") : $langs->trans("NoFileFound")));
 
-		$filter = preg_quote($search_doc_ref, '/');
+		$filter = preg_quote((string) $search_doc_ref, '/');
 		$filearray = dol_dir_list($upload_dir, "files", 1, $filter, $excludefiles, $sortfield, $sorting, 1);
+		//var_dump($filearray);
 
-		$perm = $user->rights->ecm->upload;
+		// To allow external users,we must restrict $filearray to entries the user is a thirdparty.
+		// This can be done by filtering on entries found into llx_ecm
+		if ($user->socid > 0) {
+			$filearrayallowedtoexternal = array();	// 'fullpath' => array(...)
 
+			// Search files in ECM with select filepath.filename where src_object_type = $module and src_object_type EXISTS in (select rowid from $objecttablename WERE fk_soc = '.$user->socid.' and entity in getEntity($objecttbalename)
+			// TODO
+
+			// Now clean $filearray to keep only record also found into $filearrayallowedtoexternal.
+			foreach ($filearray as $key => $val) {
+				if (!in_array($upload_dir.'/'.$val['relativename'], $filearrayallowedtoexternal)) {
+					unset($filearray[$key]);
+				}
+			}
+		}
+
+		$perm = $user->hasRight('ecm', 'upload');
+
+		// Print list of files
 		$formfile->list_of_autoecmfiles($upload_dir, $filearray, $module, $param, 1, '', $perm, 1, $textifempty, $maxlengthname, $url, 1);
 	} else {
 		// Manual list
@@ -310,7 +357,7 @@ if ($type == 'directory') {
 			  'max_file_size' => string '2097152' (length=7)
 			  'sendit' => string 'Envoyer fichier' (length=15)
 			 */
-			$relativepath = GETPOST('file', 'alpha') ?GETPOST('file', 'alpha') : GETPOST('section_dir', 'alpha');
+			$relativepath = GETPOST('file', 'alpha') ? GETPOST('file', 'alpha') : GETPOST('section_dir', 'alpha');
 			if ($relativepath && $relativepath != '/') {
 				$relativepath .= '/';
 			}
@@ -321,7 +368,7 @@ if ($type == 'directory') {
 					$param .= '&website='.urlencode(GETPOST('website', 'alpha'));
 				}
 				if (!preg_match('/pageid=/', $param)) {
-					$param .= '&pageid='.urlencode(GETPOST('pageid', 'int'));
+					$param .= '&pageid='.GETPOSTINT('pageid');
 				}
 				//if (!preg_match('/backtopage=/',$param)) $param.='&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid);
 			}
@@ -354,6 +401,7 @@ if ($type == 'directory') {
 			$textifempty = ($showonrightsize == 'featurenotyetavailable' ? $langs->trans("FeatureNotYetAvailable") : $langs->trans("ECMSelectASection"));
 		}
 
+		$useinecm = 0;
 		if ($module == 'medias') {
 			$useinecm = 6;
 			$modulepart = 'medias';
@@ -387,8 +435,9 @@ if ($type == 'directory') {
 
 		// When we show list of files for ECM files, $filearray contains file list, and directory is defined with modulepart + section into $param
 		// When we show list of files for a directory, $filearray ciontains file list, and directory is defined with modulepart + $relativepath
-		//var_dump("section=".$section." title=".$title." modulepart=".$modulepart." useinecm=".$useinecm." perm=".$perm." relativepath=".$relativepath." param=".$param." url=".$url);
-		$formfile->list_of_documents($filearray, '', $modulepart, $param, 1, $relativepath, $perm, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm, '', $sortfield, $sortorder);
+		//var_dump("section=".$section." title=".$title." modulepart=".$modulepart." useinecm=".$useinecm." perm(permtoeditline)=".$perm." relativepath=".$relativepath." upload_dir=".$upload_dir." param=".$param." url=".$url);
+
+		$formfile->list_of_documents($filearray, null, $modulepart, $param, 1, $relativepath, $perm, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm, $upload_dir, $sortfield, $sortorder);
 	}
 }
 
@@ -402,7 +451,7 @@ if (!empty($conf->dol_use_jmobile)) {
 if (empty($conf->use_javascript_ajax)) {
 	$useajax = 0;
 }
-if (!empty($conf->global->MAIN_ECM_DISABLE_JS)) {
+if (getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 	$useajax = 0;
 }
 
@@ -422,20 +471,21 @@ if ($useajax || $action == 'deletefile') {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 	$form = new Form($db);
-	$formquestion['urlfile'] = array('type'=>'hidden', 'value'=>$urlfile, 'name'=>'urlfile'); // We must always put field, even if empty because it is filled by javascript later
-	$formquestion['section'] = array('type'=>'hidden', 'value'=>$section, 'name'=>'section'); // We must always put field, even if empty because it is filled by javascript later
-	$formquestion['section_id'] = array('type'=>'hidden', 'value'=>$section_id, 'name'=>'section_id'); // We must always put field, even if empty because it is filled by javascript later
-	$formquestion['section_dir'] = array('type'=>'hidden', 'value'=>$section_dir, 'name'=>'section_dir'); // We must always put field, even if empty because it is filled by javascript later
-	$formquestion['sortfield'] = array('type'=>'hidden', 'value'=>$sortfield, 'name'=>'sortfield'); // We must always put field, even if empty because it is filled by javascript later
-	$formquestion['sortorder'] = array('type'=>'hidden', 'value'=>$sortorder, 'name'=>'sortorder'); // We must always put field, even if empty because it is filled by javascript later
+	$formquestion = array();
+	$formquestion['urlfile'] = array('type' => 'hidden', 'value' => $urlfile, 'name' => 'urlfile'); // We must always put field, even if empty because it is filled by javascript later
+	$formquestion['section'] = array('type' => 'hidden', 'value' => $section, 'name' => 'section'); // We must always put field, even if empty because it is filled by javascript later
+	$formquestion['section_id'] = array('type' => 'hidden', 'value' => $section_id, 'name' => 'section_id'); // We must always put field, even if empty because it is filled by javascript later
+	$formquestion['section_dir'] = array('type' => 'hidden', 'value' => $section_dir, 'name' => 'section_dir'); // We must always put field, even if empty because it is filled by javascript later
+	$formquestion['sortfield'] = array('type' => 'hidden', 'value' => $sortfield, 'name' => 'sortfield'); // We must always put field, even if empty because it is filled by javascript later
+	$formquestion['sortorder'] = array('type' => 'hidden', 'value' => $sortorder, 'name' => 'sortorder'); // We must always put field, even if empty because it is filled by javascript later
 	if (!empty($action) && $action == 'file_manager') {
-		$formquestion['file_manager'] = array('type'=>'hidden', 'value'=>1, 'name'=>'file_manager');
+		$formquestion['file_manager'] = array('type' => 'hidden', 'value' => 1, 'name' => 'file_manager');
 	}
 	if (!empty($websitekey)) {
-		$formquestion['website'] = array('type'=>'hidden', 'value'=>$websitekey, 'name'=>'website');
+		$formquestion['website'] = array('type' => 'hidden', 'value' => $websitekey, 'name' => 'website');
 	}
 	if (!empty($pageid) && $pageid > 0) {
-		$formquestion['pageid'] = array('type'=>'hidden', 'value'=>$pageid, 'name'=>'pageid');
+		$formquestion['pageid'] = array('type' => 'hidden', 'value' => $pageid, 'name' => 'pageid');
 	}
 
 	print $form->formconfirm($url, $langs->trans("DeleteFile"), $langs->trans("ConfirmDeleteFile"), 'confirm_deletefile', $formquestion, "no", ($useajax ? 'deletefile' : 0));

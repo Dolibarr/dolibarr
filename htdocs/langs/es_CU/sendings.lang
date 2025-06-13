@@ -2,7 +2,6 @@
 RefSending=Árbitro. envío
 Receivings=Recibos de entrega
 SendingsArea=Zona de envíos
-ListOfSendings=Lista de envíos
 LastSendings=Últimos envíos %s
 SendingCard=Tarjeta de envío
 QtyShipped=Cantidad enviada
@@ -23,7 +22,6 @@ StatusSendingProcessed=Procesada
 StatusSendingProcessedShort=Procesada
 SendingSheet=Hoja de envío
 ConfirmDeleteSending=¿Está seguro de que desea eliminar este envío?
-ConfirmValidateSending=¿Está seguro de que desea validar este envío con la referencia <b> %s </b>?
 ConfirmCancelSending=¿Está seguro de que desea cancelar este envío?
 DocumentModelMerou=Merou modelo A5
 WarningNoQtyLeftToSend=Advertencia, no hay productos en espera de ser enviados.
