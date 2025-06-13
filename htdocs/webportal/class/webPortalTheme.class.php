@@ -27,6 +27,8 @@
  */
 
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php'; // used for color functions
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
 
 /**
  * Class WebPortalTheme
