@@ -240,7 +240,7 @@ class Users extends DolibarrApi
 	 * @param	int		$includepermissions		Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
 	 * @return	array|mixed						Data without useless information
 	 * @phan-return Object
-	 * @phpstan-return Object[
+	 * @phpstan-return Object
 	 *
 	 * @url GET email/{email}
 	 *
