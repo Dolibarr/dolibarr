@@ -61,7 +61,7 @@ class Users extends DolibarrApi
 
 
 	/**
-	 * List Users
+	 * List users
 	 *
 	 * Get a list of Users
 	 *
@@ -232,7 +232,7 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * Get a user by Email
+	 * Get a user by email
 	 *
 	 * @since	13.0.0	Initial implementation
 	 *
@@ -612,7 +612,7 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * List Groups
+	 * List groups
 	 *
 	 * Return an array with a list of Groups
 	 *
@@ -727,7 +727,7 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * Delete account/user
+	 * Delete a user
 	 *
 	 * @since	5.0.0	Initial implementation
 	 *
@@ -899,7 +899,7 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * Create a notification for a User using action trigger code
+	 * Create a notification for a user using action trigger code
 	 *
 	 * @since	22.0.0	Initial implementation
 	 *
