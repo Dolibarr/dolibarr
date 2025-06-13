@@ -620,7 +620,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'MO not found');
 			}
 
-			$upload_dir = $conf->mrp->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'mrp');
+			$upload_dir = getMultidirOutput($object) . "/" . get_exdir(0, 0, 0, 1, $object, 'mrp');
 		} else {
 			throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
 		}
