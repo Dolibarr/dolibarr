@@ -60,7 +60,7 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of a commercial proposal object
+	 * Get a commercial proposal
 	 *
 	 * Return an array with commercial proposal information
 	 *
@@ -78,7 +78,7 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of an proposal object by ref
+	 * Get a proposal by ref
 	 *
 	 * Return an array with proposal information
 	 *
@@ -98,7 +98,7 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of an proposal object by ref_ext
+	 * Get a proposal by ref_ext
 	 *
 	 * Return an array with proposal information
 	 *
@@ -289,7 +289,7 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Create commercial proposal object
+	 * Create a commercial proposal
 	 *
 	 * @since	5.0.0	Initial implementation
 	 *
@@ -380,7 +380,7 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Add a line to given commercial proposal
+	 * Add a line to a commercial proposal
 	 *
 	 * @since	5.0.0	Initial implementation
 	 *
@@ -452,7 +452,7 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Add lines to given commercial proposal
+	 * Add lines to a commercial proposal
 	 *
 	 * @param int   $id             Id of commercial proposal to update
 	 * @param array $request_data   Commercial proposal line data
@@ -537,7 +537,7 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Update a line of given commercial proposal
+	 * Update a line of a commercial proposal
 	 *
 	 * @since	5.0.0	Initial implementation
 	 *
@@ -618,7 +618,7 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Delete a line of given commercial proposal
+	 * Delete a line of a commercial proposal
 	 *
 	 * @since	5.0.0	Initial implementation
 	 *
@@ -655,7 +655,7 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Add a contact type of given commercial proposal
+	 * Add (link) a contact to a commercial proposal
 	 *
 	 * @since	10.0.0	Initial implementation
 	 *
@@ -715,7 +715,7 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Delete a contact type of given commercial proposal
+	 * Remove (unlink) a contact from commercial proposal
 	 *
 	 * @since	10.0.0	Initial implementation
 	 *
@@ -762,7 +762,7 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Update commercial proposal general fields (won't touch lines of commercial proposal)
+	 * Update a commercial proposal general fields (won't change lines of commercial proposal)
 	 *
 	 * @since	5.0.0	Initial implementation
 	 *
@@ -825,7 +825,7 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Delete commercial proposal
+	 * Delete a commercial proposal
 	 *
 	 * @since	5.0.0	Initial implementation
 	 *
@@ -969,7 +969,7 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Close (Accept or refuse) a quote / commercial proposal
+	 * Close (Accept or refuse) a commercial proposal
 	 *
 	 * @since	7.0.0	Initial implementation
 	 *
@@ -1021,7 +1021,7 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Set a commercial proposal billed. Could be also called setbilled
+	 * Set a commercial proposal to billed
 	 *
 	 * @since	7.0.0	Initial implementation
 	 *
@@ -1029,6 +1029,8 @@ class Proposals extends DolibarrApi
 	 * @return	Object					Object with cleaned properties
 	 *
 	 * @url POST    {id}/setinvoiced
+	 *
+	 * @throws RestException
 	 */
 	public function setinvoiced($id)
 	{
