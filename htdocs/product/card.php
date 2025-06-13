@@ -541,7 +541,7 @@ if (empty($reshook)) {
 		}
 		$stockable_product = (int) ($type == 0 || ($type == 1 && getDolGlobalInt('STOCK_SUPPORTS_SERVICES')));
 		if (GETPOST('status_batch') && $stockable_product == 0 && isModEnabled('stock') && isModEnabled('productbatch')) {
-			setEventMessages($langs->trans('ErrorBatchesNeedStockManagement', $langs->transnoentities('Unit')), null, 'errors');
+			setEventMessages($langs->trans('ErrorBatchesNeedStockManagement'), null, 'errors');
 			$action = "create";
 			$error++;
 		}
@@ -857,7 +857,7 @@ if (empty($reshook)) {
 				$object->stockable_product   = (int) GETPOSTISSET('stockable_product');
 				if ($object->status_batch > 0  && $object->stockable_product == 0 && isModEnabled('stock') && isModEnabled('productbatch')) {
 					$object->stockable_product = 1;
-					setEventMessages($langs->trans('ForceBatchesNeedStockManagement', $langs->transnoentities('Unit')), null, 'warnings');
+					setEventMessages($langs->trans('ForceBatchesNeedStockManagement'), null, 'warnings');
 				}
 
 				$units = GETPOSTINT('units');
