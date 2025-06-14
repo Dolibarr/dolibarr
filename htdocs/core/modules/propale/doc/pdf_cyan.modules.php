@@ -1864,7 +1864,7 @@ class pdf_cyan extends ModelePDFPropales
 
 			$hautcadre = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 38 : 40;
 			$widthrecbox = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 82;
-			$shipp_shift = 0;
+			$shipp_shift = 3,14;
 
 			// Show sender frame
 			if (!getDolGlobalString('MAIN_PDF_NO_SENDER_FRAME')) {
