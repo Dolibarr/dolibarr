@@ -592,8 +592,6 @@ class ExpenseReports extends DolibarrApi
 		return $this->_cleanObjectDatas($this->expensereport);
 	}
 
-
-
 	/**
 	 * Get the list of payments of an expense report
 	 *
