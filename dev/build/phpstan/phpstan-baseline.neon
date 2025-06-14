@@ -4861,12 +4861,6 @@ parameters:
 			path: ../../../htdocs/compta/facture/prelevement.php
 
 		-
-			message: '#^Variable \$num might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/compta/facture/prelevement.php
-
-		-
 			message: '#^Variable \$type might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -23285,12 +23279,6 @@ parameters:
 			identifier: variable.undefined
 			count: 3
 			path: ../../../htdocs/user/card.php
-
-		-
-			message: '#^PHPDoc tag @phpstan\-return has invalid value \(Object\[\)\: Unexpected token "\[", expected TOKEN_HORIZONTAL_WS at offset 346 on line 8$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: ../../../htdocs/user/class/api_users.class.php
 
 		-
 			message: '#^Call to function method_exists\(\) with \$this\(User\) and ''getLibStatut'' will always evaluate to true\.$#'
