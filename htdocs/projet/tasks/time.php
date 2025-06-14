@@ -278,10 +278,12 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 		$error++;
 	}
 
+	//If timespent date is not provided in POST (for eg, because in list the column date is hidden) we keep the actual date
+	$timespent_date =dol_mktime(12, 0, 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
+
 	if (!$error) {
 		if (GETPOST('taskid', 'int') != $id) {        // GETPOST('taskid') is id of new task
 			$id_temp = GETPOST('taskid', 'int'); // should not overwrite $id
-
 
 			$object->fetchTimeSpent(GETPOST('lineid', 'int'));
 
@@ -290,23 +292,20 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 				$result = $object->delTimeSpent($user);
 			}
 
-			$timespent_date =dol_mktime(12, 0, 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
-
 			$object->fetch($id_temp, $ref);
 
 			$object->timespent_note = GETPOST("timespent_note_line", "alphanohtml");
 			$object->timespent_old_duration = GETPOST("old_duration", "int");
 			$object->timespent_duration = GETPOSTINT("new_durationhour") * 60 * 60; // We store duration in seconds
 			$object->timespent_duration += (GETPOSTINT("new_durationmin") ? GETPOSTINT('new_durationmin') : 0) * 60; // We store duration in seconds
-			if (GETPOST("timelinehour") != '' && GETPOST("timelinehour") >= 0) {    // If hour was entered
-				if (!empty($timespent_date)) {
-					$object->timespent_date = dol_mktime(GETPOST("timelinehour"), GETPOST("timelinemin"), 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
-					$object->timespent_withhour = 1;
-				}
-			} else {
-				if (empty($timespent_date)) {
-					$object->timespent_date = $timespent_date;
-				}
+			if (GETPOST("timelinehour") != ''
+				&& GETPOST("timelinehour") >= 0
+				&& !empty($timespent_date)) {
+				// If hour was entered
+				$object->timespent_date = dol_mktime(GETPOST("timelinehour"), GETPOST("timelinemin"), 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
+				$object->timespent_withhour = 1;
+			} elseif (!empty($timespent_date)) {
+				$object->timespent_date = $timespent_date;
 			}
 			$object->timespent_fk_user = GETPOST("userid_line", 'int');
 			$object->timespent_fk_product = GETPOST("fk_product", 'int');
@@ -326,16 +325,20 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 		} else {
 			$object->fetch($id, $ref);
 
+			$object->fetchTimeSpent(GETPOST('lineid', 'int'));
+
 			$object->timespent_id = GETPOST("lineid", 'int');
 			$object->timespent_note = GETPOST("timespent_note_line", "alphanohtml");
 			$object->timespent_old_duration = GETPOST("old_duration", "int");
 			$object->timespent_duration = GETPOSTINT("new_durationhour") * 60 * 60; // We store duration in seconds
 			$object->timespent_duration += (GETPOSTINT("new_durationmin") ? GETPOSTINT('new_durationmin') : 0) * 60; // We store duration in seconds
-			if (GETPOST("timelinehour") != '' && GETPOST("timelinehour") >= 0) {    // If hour was entered
+			if (GETPOST("timelinehour") != ''
+				&& GETPOST("timelinehour") >= 0
+				&& !empty($timespent_date)) {    // If hour was entered
 				$object->timespent_date = dol_mktime(GETPOST("timelinehour", 'int'), GETPOST("timelinemin", 'int'), 0, GETPOST("timelinemonth", 'int'), GETPOST("timelineday", 'int'), GETPOST("timelineyear", 'int'));
 				$object->timespent_withhour = 1;
-			} else {
-				$object->timespent_date = dol_mktime(12, 0, 0, GETPOST("timelinemonth", 'int'), GETPOST("timelineday", 'int'), GETPOST("timelineyear", 'int'));
+			} elseif (!empty($timespent_date)) {    // If hour w
+				$object->timespent_date = $timespent_date;
 			}
 			$object->timespent_fk_user = GETPOST("userid_line", 'int');
 			$object->timespent_fk_product = GETPOST("fk_product", 'int');
