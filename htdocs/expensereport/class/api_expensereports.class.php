@@ -613,7 +613,7 @@ class ExpenseReports extends DolibarrApi
 	 */
 	public function approve($id, $notrigger = 0)
 	{
-		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'approve')) {
 			throw new RestException(403, "Insuffisant rights");
 		}
 		$result = $this->expensereport->fetch($id);
