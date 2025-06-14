@@ -51,3 +51,4 @@ CantMoveNonExistantSerial=Error. You ask a move on a record for a serial that do
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Lot table incomplete run repair with parameter '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Stock correction required because unique serial number.
 ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must be managed in stock.
+ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)

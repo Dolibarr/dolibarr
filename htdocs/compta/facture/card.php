@@ -3870,7 +3870,7 @@ if ($action == 'create') {
 				</script>';
 			}
 			if (!GETPOSTINT('fac_rec')) {
-				print ' <a class="valignmiddle" href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
+				print ' <a class="valignmiddle" href="'.DOL_URL_ROOT.'/societe/card.php?action=create&customer=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 			}
 			print '</td>';
 			print '</tr>'."\n";
