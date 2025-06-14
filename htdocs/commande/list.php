@@ -1152,7 +1152,7 @@ if ($search_sale && $search_sale != '-1') {
 	}
 }
 
-// Search for tag/category ($searchCategoryInvoiceList is an array of ID)
+// Search for tag/category ($searchCategoryOrderList is an array of ID)
 if (!empty($searchCategoryOrderList)) {
 	$searchCategoryOrderSqlList = array();
 	$listofcategoryid = '';
