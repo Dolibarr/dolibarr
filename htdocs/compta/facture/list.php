@@ -379,7 +379,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_user = '';
 	$search_sale = '';
 	$search_product_category = '';
-	$search_invoice_category = array();
+	$searchCategoryInvoiceList = array();
 	$search_ref = '';
 	$search_refcustomer = '';
 	$search_type = '';
