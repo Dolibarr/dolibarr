@@ -2666,14 +2666,22 @@ function addMailingEventTypeSQL($actioncode, $objcon, $filterobj)
  * @param   Translate	$langs			Output language
  * @return	void
  */
-function htmlPrintOnlineHeader($mysoc, $langs)
+function htmlPrintOnlineHeader($mysoc, $langs, $suffix = '')
 {
 	global $conf;
 
 	// Define urllogo
 	$urllogo = DOL_URL_ROOT.'/theme/common/login_logo.png';
+	$suffix = GETPOST("suffix", 'aZ09');
 
-	if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
+	$customLogoWithSuffix = getDolGlobalString('ONLINE_SIGN_LOGO_'.$suffix);
+	$customLogo = getDolGlobalString('ONLINE_SIGN_LOGO');
+
+	if (!empty($customLogoWithSuffix) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$customLogoWithSuffix)) {
+		$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$customLogoWithSuffix);
+	} elseif (!empty($customLogo) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$customLogo)) {
+		$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$customLogo);
+	} elseif (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
 		$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
 	} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
 		$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo);
