@@ -1764,11 +1764,11 @@ while ($i < $imaxinloop) {
 					if (in_array($tmpcursor, $groupofcollpasedvalues)) {
 						print ' kanbancollapsed';
 					}
-					print '" data-groupbyid="'.preg_replace('/[^a-z0-9]/', '', $tmpcursor).'">';
+					print '" data-groupbyid="'.preg_replace('/[^a-z0-9]/', '', $tmpcursor).'" data-groupbyfield="'.$groupbyfield.'">';
 					print '<div class="kanbanlabel">'.$langs->trans($tmpgroupbyvalue).'</div>';
 					print '</div>';	// Start and end the new column
 				}
-				print '<div class="box-flex-container-column kanban column" data-groupbyid="'.preg_replace('/[^a-z0-9]/', '', $groupbyvalue).'">';	// Start new column
+				print '<div class="box-flex-container-column kanban column" data-groupbyid="'.preg_replace('/[^a-z0-9]/', '', $groupbyvalue).'" data-groupbyfield="'.$groupbyfield.'">';	// Start new column
 				print '<div class="kanbanlabel">'.$langs->trans(empty($groupbyvalues[$groupbyvalue]) ? 'Undefined' : $groupbyvalues[$groupbyvalue]).'</div>';
 			}
 			$groupbyold = $groupbyvalue;
@@ -1784,7 +1784,7 @@ while ($i < $imaxinloop) {
 				$selected = 1;
 			}
 		}
-		$arrayofdata = array('assignedusers' => $stringassignedusers, 'thirdparty' => $companystatic, 'selected' => $selected);
+		$arrayofdata = array('assignedusers' => $stringassignedusers, 'thirdparty' => $companystatic, 'selected' => $selected, 'mode' => $mode);
 
 		print $object->getKanbanView('', $arrayofdata, ($groupby ? 'small' : ''));
 
@@ -1803,7 +1803,7 @@ while ($i < $imaxinloop) {
 					if (in_array($tmpcursor, $groupofcollpasedvalues)) {
 						print ' kanbancollapsed';
 					}
-					print '" data-groupbyid="'.preg_replace('/[^a-z0-9]/', '', $tmpcursor).'">';
+					print '" data-groupbyid="'.preg_replace('/[^a-z0-9]/', '', $tmpcursor).'" data-groupbyfield="'.$groupbyfield.'">';
 					print '<div class="kanbanlabel">'.$langs->trans(empty($tmpgroupbyvalue) ? 'Undefined' : $tmpgroupbyvalue).'</div>';
 					print '</div>';	// Start and end the new column
 				}

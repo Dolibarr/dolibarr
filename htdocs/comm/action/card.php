@@ -940,6 +940,18 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 			$object->contact_id = key($object->socpeopleassigned);
 		}
 		$object->fk_project  = GETPOSTINT("projectid");
+		$taskid = GETPOSTINT('taskid');
+		if (!empty($taskid)) {
+			$taskProject = new Task($db);
+			if ($taskProject->fetch($taskid) > 0) {
+				$object->fk_project = $taskProject->fk_project;
+			}
+
+			$object->fk_element = $taskid;
+			$object->elementid = $taskid;
+			$object->elementtype = 'task';
+		}
+
 		$object->note_private = trim(GETPOST("note", "restricthtml"));
 
 		if (GETPOST("elementtype", 'alpha')) {
@@ -2282,7 +2294,7 @@ if ($id > 0 && $action != 'create') {
 		}
 
 		// Object linked
-		if (!empty($object->fk_element) && !empty($object->elementtype)) {
+		if ($object->fk_project || (!empty($object->fk_element) && !empty($object->elementtype))) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			print '<tr>';
 			print '<td>'.$langs->trans("LinkedObject").'</td>';
@@ -2311,11 +2323,42 @@ if ($id > 0 && $action != 'create') {
 
 				print '</td>';
 			} else {
-				print '<td>';
-				print dolGetElementUrl($object->fk_element, $object->elementtype, 1);
-				print '<input type="hidden" name="fk_element" value="'.$object->fk_element.'">';
-				print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
-				print '</td>';
+				if (empty($object->elementtype) && empty($object->elementid) && $object->fk_project) {
+					$projectsListId = GETPOSTINT('projectid') ? GETPOSTINT('projectid') : $object->fk_project;
+
+					print '<td id="project-task-input-container" >';
+
+					// update task list
+					print "\n".'<script type="text/javascript">';
+					print '$(document).ready(function () {
+							$("#projectid").change(function () {
+									var url = "'.DOL_URL_ROOT.'/projet/ajax/projects.php?mode=gettasks&socid="+$("#search_socid").val()+"&projectid="+$("#projectid").val();
+									console.log("Call url to get new list of tasks: "+url);
+									$.get(url, function(data) {
+										console.log(data);
+										if (data) $("#taskid").html(data).select2();
+									})
+							});
+						})';
+					print '</script>'."\n";
+
+					$tid = '';
+					if (GETPOSTISSET("projecttaskid") && GETPOSTINT("projecttaskid") > 0) {
+						$tid = GETPOSTINT("projecttaskid");
+					} elseif (GETPOSTISSET("taskid") && GETPOSTINT("taskid") > 0) {
+						$tid = GETPOSTINT("taskid");
+					}
+
+					$formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 24, 0, '1', 1, 0, 0, 'maxwidth500 widthcentpercentminusxx', (string) $projectsListId);
+
+					print '</td>';
+				} else {
+					print '<td>';
+					print dolGetElementUrl($object->fk_element, $object->elementtype, 1);
+					print '<input type="hidden" name="fk_element" value="'.$object->fk_element.'">';
+					print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
+					print '</td>';
+				}
 			}
 
 			print '</tr>';
