@@ -59,8 +59,8 @@ $lang = GETPOST('lang', 'aZ09');
 
 $type = GETPOST('type');
 
-if (!$user->hasRight('categorie','lire')){
-	restrictedArea($user,'categorie');
+if (!$user->hasRight('categorie', 'lire')) {
+	restrictedArea($user, 'categorie');
 }
 /*
  * Actions
