@@ -1945,7 +1945,6 @@ class pdf_cyan extends ModelePDFPropales
 			$pdf->SetXY($posx + 2, $posy);
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, $ltrdirection);
-			
 			// Show shipping/delivery addressAdd commentMore actions
 			if (getDolGlobalInt('PROPOSAL_SHOW_SHIPPING_ADDRESS')) {
 				$idaddressshipping = $object->getIdContact('external', 'SHIPPING');
@@ -1985,12 +1984,9 @@ class pdf_cyan extends ModelePDFPropales
 
 					$shipp_shift += $hautcadre + 10;
 				}
-			}		
-			
+			}
 		}
-
 		$pdf->SetTextColor(0, 0, 0);
-
 		return $shipp_shift;
 	}
 
