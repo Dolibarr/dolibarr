@@ -100,7 +100,7 @@ if ($context->userIsLog()) {
 		} else {
 			dol_print_error($context->db);
 		}
-		
+
 		$navMenu['invoice_list'] = array(
 			'id' => 'invoice_list',
 			'rank' => 30,
