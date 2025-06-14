@@ -168,6 +168,12 @@ $search_datem_start = GETPOSTDATE('search_datem_start', 'getpost', 'tzuserrel');
 $search_datem_end = GETPOSTDATE('search_datem_end', 'getpostend', 'tzuserrel');
 
 $search_categ_cus = GETPOST("search_categ_cus", 'intcomma');
+$searchCategoryInvoiceOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategoryInvoiceOperator = GETPOSTINT('search_category_invoice_operator');
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
+	$searchCategoryInvoiceOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
+}
 $searchCategoryInvoiceList = GETPOST('search_category_invoice_list', 'array');
 $search_product_category = GETPOST('search_product_category', 'intcomma');
 $search_fac_rec_source_title = GETPOST("search_fac_rec_source_title", 'alpha');
@@ -1007,13 +1013,12 @@ if ($search_sale && $search_sale != '-1') {
 }
 
 // Search for tag/category ($searchCategoryInvoiceList is an array of ID)
-$searchCategoryInvoiceOperator = 0;
 if (!empty($searchCategoryInvoiceList)) {
 	$searchCategoryInvoiceSqlList = array();
 	$listofcategoryid = '';
 	foreach ($searchCategoryInvoiceList as $searchCategoryInvoice) {
 		if (intval($searchCategoryInvoice) == -2) {
-			$searchCategoryProductSqlList[] = "NOT EXISTS (SELECT ck.fk_invoice FROM ".MAIN_DB_PREFIX."categorie_invoice as ck WHERE f.rowid = ck.fk_invoice)";
+			$searchCategoryInvoiceSqlList[] = "NOT EXISTS (SELECT ck.fk_invoice FROM ".MAIN_DB_PREFIX."categorie_invoice as ck WHERE f.rowid = ck.fk_invoice)";
 		} elseif (intval($searchCategoryInvoice) > 0) {
 			if ($searchCategoryInvoiceOperator == 0) {
 				$searchCategoryInvoiceSqlList[] = " EXISTS (SELECT ck.fk_invoice FROM ".MAIN_DB_PREFIX."categorie_invoice as ck WHERE f.rowid = ck.fk_invoice AND ck.fk_categorie = ".((int) $searchCategoryInvoice).")";
@@ -1298,6 +1303,9 @@ if ($search_user > 0) {
 }
 if ($search_login) {
 	$param .= '&search_login='.urlencode($search_login);
+}
+if ($searchCategoryInvoiceOperator == 1) {
+	$param .= "&search_category_invoice_operator=".urlencode((string) ($searchCategoryInvoiceOperator));
 }
 foreach ($searchCategoryInvoiceList as $searchCategoryInvoice) {
 	$param .= "&search_category_invoice_list[]=".urlencode($searchCategoryInvoice);
