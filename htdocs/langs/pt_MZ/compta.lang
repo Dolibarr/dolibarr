@@ -3,8 +3,6 @@ MenuFinancial=Faturamento | Forma de pagamento
 TaxModuleSetupToModifyRules=Vá para <a href="%s">configuração do módulo Impostos</a> para modificar regras de cálculo
 TaxModuleSetupToModifyRulesLT=Vá até <a href="%s">Configuração >> Empresa</a> para modificar as regras de cálculo
 OptionMode=Opção de Administração Contabilidade
-OptionModeTrue=Opção Rendimentos-Despesas
-OptionModeTrueDesc=Neste método, o balanço calcula-se sobre a base das faturas pagas.\nA validade dos valores não está garantida pois a Administração da Contabilidade pasa rigurosamente pelas entradas/saidas das contas mediante as faturas.\nNota : Nesta Versão, Dolibarr utiliza a data da fatura ao estado ' Validada ' e não a data do estado ' paga '.
 OptionModeVirtualDesc=neste método, o balanço se calcula sobre a base das faturas validadas. pagas o não, aparecen ao resultado em quanto sejam discolocaçãos.
 FeatureIsSupportedInInOutModeOnly=função disponível somente ao modo contas CREDITOS-dividas (Véase a configuração do módulo contas)
 VATReportBuildWithOptionDefinedInModule=Os valores aqui apresentados são calculados usando as regras definidas pela configuração do módulo Fiscal.

@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2023	   Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -176,9 +177,9 @@ if ($id > 0 || !empty($ref)) {
 
 		$sql = "SELECT";
 		//      $sql .= " sum(".$db->ifsql("cd.role='toconsume'", "cd.qty", 0).') as nb_toconsume,';
-		$sql .= " sum(".$db->ifsql("cd.role='consumed'", "cd.qty", 0).') as nb_consumed,';
+		$sql .= " sum(".$db->ifsql("cd.role='consumed'", "cd.qty", '0').') as nb_consumed,';
 		//      $sql .= " sum(".$db->ifsql("cd.role='toproduce'", "cd.qty", 0).') as nb_toproduce,';
-		$sql .= " sum(".$db->ifsql("cd.role='produced'", "cd.qty", 0).') as nb_produced,';
+		$sql .= " sum(".$db->ifsql("cd.role='produced'", "cd.qty", '0').') as nb_produced,';
 		$sql .= " c.rowid as rowid, c.ref, c.date_valid, c.status";
 		//$sql .= " s.nom as name, s.rowid as socid, s.code_client";
 		$sql .= " FROM ".MAIN_DB_PREFIX."mrp_mo as c";
@@ -187,10 +188,10 @@ if ($id > 0 || !empty($ref)) {
 		$sql .= " AND c.entity IN (".getEntity('mo').")";
 		$sql .= " AND cd.batch = '".($db->escape($object->batch))."'";
 		if (!empty($search_month)) {
-			$sql .= ' AND MONTH(c.date_valid) IN ('.$db->sanitize($search_month).')';
+			$sql .= ' AND MONTH(c.date_valid) IN ('.$db->sanitize((string) $search_month).')';
 		}
 		if (!empty($search_year)) {
-			$sql .= ' AND YEAR(c.date_valid) IN ('.$db->sanitize($search_year).')';
+			$sql .= ' AND YEAR(c.date_valid) IN ('.$db->sanitize((string) $search_year).')';
 		}
 		if ($socid > 0) {
 			$sql .= " AND s.rowid = ".((int) $socid);
@@ -244,7 +245,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<div class="divsearchfield">';
 			print $langs->trans('Period').' ('.$langs->trans("DateCreation").') - ';
 			print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.$search_month.'"> ';
-			print $langs->trans('Year').':'.$formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
+			print $langs->trans('Year').':'.$formother->selectyear($search_year ? (string) $search_year : '-1', 'search_year', 1, 20, 5);
 			print '<div style="vertical-align: middle; display: inline-block">';
 			print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 			print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';

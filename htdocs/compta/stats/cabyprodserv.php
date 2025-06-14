@@ -5,7 +5,7 @@
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024       Charlene Benke      	<charlene@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -296,12 +296,6 @@ if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) {
 	$periodlink = '';
 }
 
-$builddate = 0;
-$calcmode = '';
-$name = '';
-$period = '';
-$periodlink = '';
-
 report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $tableparams, $calcmode);
 
 if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
@@ -434,7 +428,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$sql .= $hookmanager->resPrint;
 
 	$sql .= " GROUP BY p.rowid, p.ref, p.label, p.fk_product_type";
-	$sql .= $db->order($sortfield, $sortorder);
+	$sql .= $db->order((string) $sortfield, (string) $sortorder);
 
 	dol_syslog("cabyprodserv", LOG_DEBUG);
 	$result = $db->query($sql);
@@ -480,7 +474,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	print '<tr class="liste_titre">';
 	print '<td>';
 	print img_picto('', 'category', 'class="pictofixedwidth"');
-	print $formother->select_categories(Categorie::TYPE_PRODUCT, $selected_cat, 'search_categ', 0, $langs->trans("Category"));
+	print $formother->select_categories(Categorie::TYPE_PRODUCT, (int) $selected_cat, 'search_categ', 0, $langs->trans("Category"));
 	print ' ';
 	print '<input type="checkbox" class="marginleft" id="subcat" name="subcat" value="yes"';
 	if ($subcat) {
@@ -494,7 +488,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	// Third party filter
 	print '<br>';
 	print img_picto('', 'category', 'class="pictofixedwidth"');
-	print $formother->select_categories(Categorie::TYPE_CUSTOMER, $selected_catsoc, 'search_categ_soc', 0, $langs->trans("CustomersProspectsCategoriesShort"));
+	print $formother->select_categories(Categorie::TYPE_CUSTOMER, (int) $selected_catsoc, 'search_categ_soc', 0, $langs->trans("CustomersProspectsCategoriesShort"));
 
 	// Type of third party filter
 	print '&nbsp; &nbsp;';

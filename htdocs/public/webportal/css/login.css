@@ -121,7 +121,7 @@ body.login-page {
 .login__icon {
     position: absolute;
     top: 30px;
-    left: 5px;
+    left: -15px;
     color: var(--login-form-icon-color);
 }
 

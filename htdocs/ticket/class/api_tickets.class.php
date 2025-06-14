@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016   Jean-François Ferry     <hello@librethic.io>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 class Tickets extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'subject',
@@ -40,7 +40,7 @@ class Tickets extends DolibarrApi
 	);
 
 	/**
-	 * @var array   $FIELDS_MESSAGES     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS_MESSAGES = array(
 		'track_id',
@@ -48,7 +48,7 @@ class Tickets extends DolibarrApi
 	);
 
 	/**
-	 * @var Ticket $ticket {@type Ticket}
+	 * @var Ticket {@type Ticket}
 	 */
 	public $ticket;
 
@@ -162,17 +162,19 @@ class Tickets extends DolibarrApi
 				if ($this->ticket->cache_msgs_ticket[$i]['fk_user_author'] > 0) {
 					$user_action = new User($this->db);
 					$user_action->fetch($this->ticket->cache_msgs_ticket[$i]['fk_user_author']);
+				} else {
+					$user_action = null;
 				}
 
 				// Now define messages
 				$messages[] = array(
-				'id' => $this->ticket->cache_msgs_ticket[$i]['id'],
-				'fk_user_action' => $this->ticket->cache_msgs_ticket[$i]['fk_user_author'],
-				'fk_user_action_socid' =>  $user_action->socid,
-				'fk_user_action_string' => dolGetFirstLastname($user_action->firstname, $user_action->lastname),
-				'message' => $this->ticket->cache_msgs_ticket[$i]['message'],
-				'datec' => $this->ticket->cache_msgs_ticket[$i]['datec'],
-				'private' => $this->ticket->cache_msgs_ticket[$i]['private']
+					'id' => $this->ticket->cache_msgs_ticket[$i]['id'],
+					'fk_user_action' => $this->ticket->cache_msgs_ticket[$i]['fk_user_author'],
+					'fk_user_action_socid' =>  $user_action === null ? '' : $user_action->socid,
+					'fk_user_action_string' => $user_action === null ? '' : dolGetFirstLastname($user_action->firstname, $user_action->lastname),
+					'message' => $this->ticket->cache_msgs_ticket[$i]['message'],
+					'datec' => $this->ticket->cache_msgs_ticket[$i]['datec'],
+					'private' => $this->ticket->cache_msgs_ticket[$i]['private']
 				);
 				$i++;
 			}
@@ -200,7 +202,8 @@ class Tickets extends DolibarrApi
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 *
 	 * @return array Array of ticket objects
-	 *
+	 * @phan-return Ticket[]|array{data:Ticket[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return Ticket[]|array{data:Ticket[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 */
 	public function index($socid = 0, $sortfield = "t.rowid", $sortorder = "ASC", $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
@@ -301,7 +304,9 @@ class Tickets extends DolibarrApi
 	/**
 	 * Create ticket object
 	 *
-	 * @param array $request_data   Request datas
+	 * @param array $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int  ID of ticket
 	 */
 	public function post($request_data = null)
@@ -339,9 +344,10 @@ class Tickets extends DolibarrApi
 	/**
 	 * Add a new message to an existing ticket identified by property ->track_id into request.
 	 *
-	 * @param array $request_data   Request datas
+	 * @param array $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int  ID of ticket
-	 *
 	 */
 	public function postNewMessage($request_data = null)
 	{
@@ -377,7 +383,9 @@ class Tickets extends DolibarrApi
 	 * Update ticket
 	 *
 	 * @param 	int   	$id             	Id of ticket to update
-	 * @param 	array 	$request_data   	Datas
+	 * @param 	array 	$request_data   	Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
@@ -427,7 +435,8 @@ class Tickets extends DolibarrApi
 	 *
 	 * @param   int     $id   Ticket ID
 	 * @return  array
-	 *
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
@@ -458,13 +467,16 @@ class Tickets extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param array $data   Data to validate
-	 * @return array
+	 * @param ?array<string,string> $data   Data to validate
+	 * @return array<string,string>
 	 *
 	 * @throws RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$ticket = array();
 		foreach (Tickets::$FIELDS as $field) {
 			if (!isset($data[$field])) {
@@ -478,13 +490,16 @@ class Tickets extends DolibarrApi
 	/**
 	 * Validate fields before create or update object message
 	 *
-	 * @param array $data   Data to validate
-	 * @return array
+	 * @param ?array<string,string> $data   Data to validate
+	 * @return array<string,string>
 	 *
 	 * @throws RestException
 	 */
 	private function _validateMessage($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$ticket = array();
 		foreach (Tickets::$FIELDS_MESSAGES as $field) {
 			if (!isset($data[$field])) {
@@ -503,7 +518,6 @@ class Tickets extends DolibarrApi
 	 * @return  Object              Object with cleaned properties
 	 *
 	 * @todo use an array for properties to clean
-	 *
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -552,7 +566,6 @@ class Tickets extends DolibarrApi
 			"cache_msgs_ticket",
 			"cache_logs_ticket",
 			"cache_types_tickets",
-			"cache_category_tickets",
 			"regeximgext",
 			"labelStatus",
 			"labelStatusShort",

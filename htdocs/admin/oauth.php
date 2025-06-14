@@ -217,7 +217,8 @@ if ($action == 'delete_entry') {
 		|| !dolibarr_del_const($db, $globalkey.'_SECRET', $conf->entity)
 		|| !dolibarr_del_const($db, $globalkey.'_URL', $conf->entity)
 		|| !dolibarr_del_const($db, $globalkey.'_URLAUTHORIZE', $conf->entity)
-		|| !dolibarr_del_const($db, $globalkey.'_SCOPE', $conf->entity)) {
+		|| !dolibarr_del_const($db, $globalkey.'_SCOPE', $conf->entity)
+		|| !dolibarr_del_const($db, $globalkey.'_TENANT', $conf->entity)) {
 		setEventMessages($langs->trans("ErrorInEntryDeletion"), null, 'errors');
 		$error++;
 	} else {
@@ -293,7 +294,7 @@ foreach ($list as $key) {
 }
 print '</select>';
 print ajax_combobox('provider');
-print ' <input type="text" name="label" value="" placeholder="'.$langs->trans("Label").'" pattern="^\S+$" title="'.$langs->trans("SpaceOrSpecialCharAreNotAllowed").'">';
+print ' <input type="text" name="label" value="" placeholder="'.$langs->trans("Label").'" pattern="^[a-zA-Z0-9]+$" title="'.$langs->trans("SpaceOrSpecialCharAreNotAllowed").'">';
 print ' <input type="submit" class="button small" name="add" value="'.$langs->trans("Add").'">';
 
 print '<br>';

@@ -6,7 +6,7 @@ ProductStatusNotOnBatch=Jo (seriali/seriali nuk është përdorur)
 ProductStatusOnBatchShort=Shumë
 ProductStatusOnSerialShort=Serial
 ProductStatusNotOnBatchShort=Nr
-BatchSellOrEatByMandatoryList=%s or %s is mandatory
+BatchSellOrEatByMandatoryList=%s ose %s është i detyrueshëm
 BatchSellOrEatByMandatoryNone=Asnje
 BatchSellOrEatByMandatoryAll=%s dhe %s
 Batch=Lot/Serial
@@ -50,3 +50,4 @@ ToReplace=Zëvendësoni
 CantMoveNonExistantSerial=Gabim. Ju kërkoni një lëvizje në një disk për një serial që nuk ekziston më. Mund të merrni të njëjtin serial në të njëjtën magazinë disa herë në të njëjtën dërgesë ose është përdorur nga një dërgesë tjetër. Hiqeni këtë dërgesë dhe përgatitni një tjetër.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Riparimi i ekzekutimit jo të plotë të tabelës së loteve me parametrin '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Kërkohet korrigjim i stokut sepse numri unik i serisë.
+ErrorBatchesNeedStockManagement=Gabim. Një produkt me menaxhim serie/loti duhet të menaxhohet në magazinë.

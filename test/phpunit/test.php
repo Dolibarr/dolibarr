@@ -57,12 +57,12 @@ print "\n";
 print "\n";
 
 // dol_escape_htmltag(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 0, 0, 0, array('br', 'b', 'font', 'hr', 'span')), 1, -1, '', 0, 1);
-print ">>> dolPrintHtmlForattribute(< > bb<b>bold</b> ç & )\n";
+print ">>> dolPrintHTMLForAttribute(< > bb<b>bold</b> ç & )\n";
 print dolPrintHTMLForAttribute("< > bb<b>bold</b> ç &");
 print "\n";
 print ">>> dolPrintHTMLForAttribute(&lt; &gt; bb<b>bold</b> ç &)\n";
 print dolPrintHTMLForAttribute("&lt; &gt; bb<b>bold</b> ç &");
 print "\n";
-print '>>> dolPrintHtmlForattribute(&lt;script&gt;alert("azerty")&lt;/script&gt;)'."\n";
+print '>>> dolPrintHTMLForAttribute(&lt;script&gt;alert("azerty")&lt;/script&gt;)'."\n";
 print dolPrintHTMLForAttribute('&lt;script&gt;alert("azerty")&lt;/script&gt;');
 print "\n";

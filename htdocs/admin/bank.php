@@ -3,7 +3,7 @@
  * Copyright (C) 2010-2016  Juanjo Menent	       <jmenent@2byte.es>
  * Copyright (C) 2013-2018  Philippe Grand         <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Jean-François Ferry    <jfefe@aternatik.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -413,7 +413,7 @@ foreach ($dirmodels as $reldir) {
 								//$htmltooltip .= '<br>' . $langs->trans("WatermarkOnDraftOrders") . ': ' . yn($module->option_draft_watermark, 1, 1);
 
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								// Preview
@@ -540,7 +540,7 @@ if (!getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$form->textwithpicto($langs->trans("AllowOnLineSign"), $langs->trans("AllowOnLineSignDesc")).'</td>';
 	print '<td class="center">';
-	print ajax_constantonoff('SOCIETE_RIB_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, $langs->transnoentitiesnoconv("WarningOnlineSignature"));
+	print ajax_constantonoff('SOCIETE_RIB_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, $langs->transnoentitiesnoconv("WarningOnlineSignature", "https://www.dolistore.com"));
 	print '</td></tr>';
 }
 

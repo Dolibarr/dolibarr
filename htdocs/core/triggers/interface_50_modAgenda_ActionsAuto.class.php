@@ -8,7 +8,8 @@
  * Copyright (C) 2022		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2023       Christian Foellmann	<christian@foellmann.de>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -184,13 +185,13 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			if (empty($object->actionmsg2)) {
 				if (empty($object->context['actionmsg2'])) {
-					$object->actionmsg2 = $langs->transnoentities("CONTACT_MODIFYInDolibarr", $object->name);
+					$object->actionmsg2 = $langs->transnoentities("CONTACT_MODIFYInDolibarr", (string) $object->name);
 				} else {
 					$object->actionmsg2 = $object->context['actionmsg2'];
 				}
 			}
 			if (empty($object->actionmsg)) {
-				$object->actionmsg = $langs->transnoentities("CONTACT_MODIFYInDolibarr", $object->name);
+				$object->actionmsg = $langs->transnoentities("CONTACT_MODIFYInDolibarr", (string) $object->name);
 			}
 
 			$object->sendtoid = array($object->id => $object->id);
@@ -424,14 +425,14 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "bills"));
 
-			if (empty($object->actionmsg2)) {
+			if (empty($object->actionmsg2)) {	// Label
 				if (empty($object->context['actionmsg2'])) {
 					$object->actionmsg2 = $langs->transnoentities("InvoiceValidatedInDolibarr", ($object->newref ? $object->newref : $object->ref));
 				} else {
 					$object->actionmsg2 = $object->context['actionmsg2'];
 				}
 			}
-			if (empty($object->actionmsg)) {
+			if (empty($object->actionmsg)) {	// Description
 				$object->actionmsg = $langs->transnoentities("InvoiceValidatedInDolibarr", ($object->newref ? $object->newref : $object->ref));
 			}
 
@@ -1121,13 +1122,13 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			if (empty($object->actionmsg2)) {
 				if (empty($object->context['actionmsg2'])) {
-					$object->actionmsg2 = $langs->transnoentities("MemberSubscriptionAddedInDolibarr", $object->id, $member->getFullName($langs));
+					$object->actionmsg2 = $langs->transnoentities("MemberSubscriptionAddedInDolibarr", (string) $object->id, $member->getFullName($langs));
 				} else {
 					$object->actionmsg2 = $object->context['actionmsg2'];
 				}
 			}
 			if (empty($object->actionmsg)) {
-				$object->actionmsg = $langs->transnoentities("MemberSubscriptionAddedInDolibarr", $object->id, $member->getFullName($langs));
+				$object->actionmsg = $langs->transnoentities("MemberSubscriptionAddedInDolibarr", (string) $object->id, $member->getFullName($langs));
 				$object->actionmsg .= "\n".$langs->transnoentities("Member").': '.$member->getFullName($langs);
 				$object->actionmsg .= "\n".$langs->transnoentities("Type").': '.$object->fk_type;
 				$object->actionmsg .= "\n".$langs->transnoentities("Amount").': '.$object->amount;
@@ -1152,13 +1153,13 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 			if (empty($object->actionmsg2)) {
 				if (empty($object->context['actionmsg2'])) {
-					$object->actionmsg2 = $langs->transnoentities("MemberSubscriptionModifiedInDolibarr", $object->id, $member->getFullName($langs));
+					$object->actionmsg2 = $langs->transnoentities("MemberSubscriptionModifiedInDolibarr", (string) $object->id, $member->getFullName($langs));
 				} else {
 					$object->actionmsg2 = $object->context['actionmsg2'];
 				}
 			}
 			if (empty($object->actionmsg)) {
-				$object->actionmsg = $langs->transnoentities("MemberSubscriptionModifiedInDolibarr", $object->id, $member->getFullName($langs));
+				$object->actionmsg = $langs->transnoentities("MemberSubscriptionModifiedInDolibarr", (string) $object->id, $member->getFullName($langs));
 				$object->actionmsg .= "\n".$langs->transnoentities("Member").': '.$member->getFullName($langs);
 				$object->actionmsg .= "\n".$langs->transnoentities("Type").': '.$object->fk_type;
 				$object->actionmsg .= "\n".$langs->transnoentities("Amount").': '.$object->amount;
@@ -1394,7 +1395,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				}
 			}
 			if (empty($object->actionmsg)) {
-				$object->actionmsg = $langs->transnoentities("TaskModifieddInDolibarr", $object->ref);
+				$object->actionmsg = $langs->transnoentities("TaskModifiedInDolibarr", $object->ref);
 				$object->actionmsg .= "\n".$langs->transnoentities("Task").': '.$object->ref;
 			}
 
@@ -1489,17 +1490,17 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				}
 			}
 
-			// Concat note with data from context
-			if (!empty($object->context['actionmsgmore'])) {	// For description
-				$object->actionmsg = dol_concatdesc($object->actionmsg, $object->context['actionmsgmore']);
-			}
-			if (!empty($object->context['actionmsg2more'])) {	// For label
-				$object->actionmsg2 = dol_concatdesc($object->actionmsg2, $object->context['actionmsg2more']);
-			}
-
 			if (!isset($object->sendtoid) || !is_array($object->sendtoid)) {
 				$object->sendtoid = array();
 			}
+		}
+
+		// Concat note with data from context
+		if (!empty($object->context['actionmsgmore'])) {	// For description
+			$object->actionmsg = dol_concatdesc($object->actionmsg, $object->context['actionmsgmore']);
+		}
+		if (!empty($object->context['actionmsg2more'])) {	// For label
+			$object->actionmsg2 = dol_concatdesc($object->actionmsg2, $object->context['actionmsg2more']);
 		}
 
 		// If trackid is not defined, we set it.
@@ -1682,6 +1683,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		// Reset value set by caller
 		unset($object->context['actionmsg']);
 		unset($object->context['actionmsg2']);
+		unset($object->context['actionmsgmore']);
+		unset($object->context['actionmsg2more']);
 		unset($object->actionmsg);
 		unset($object->actionmsg2);
 		unset($object->actiontypecode); // When several action are called on same object, we must be sure to not reuse value of first action.

@@ -1446,8 +1446,8 @@ class Cronjob extends CommonObject
 
 		if ($error && !empty($this->email_alert)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			$subject = $langs->trans("ErrorInBatch", $this->label);
-			$msg = $langs->trans("ErrorInBatch", $this->label);
+			$subject = $langs->transnoentitiesnoconv("ErrorInBatch", $this->label);
+			$msg = $langs->transnoentitiesnoconv("ErrorInBatch", $this->label);
 			$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 			$cmailfile = new CMailFile($subject, $this->email_alert, $from, $msg);
 			$result = $cmailfile->sendfile();	// Do not test result

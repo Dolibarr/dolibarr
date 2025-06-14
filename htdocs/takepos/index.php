@@ -2,7 +2,7 @@
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
  * Copyright (C) 2019	Josep Lluís Amador	<joseplluis@lliuretic.cat>
  * Copyright (C) 2020	Thibault FOUCART	<support@ptibogxiv.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -77,7 +77,7 @@ if (empty($_SESSION["takeposterminal"])) {
 
 if ($setterminal > 0) {
 	$_SESSION["takeposterminal"] = $setterminal;
-	setcookie("takeposterminal", (string) $setterminal, (time() + (86400 * 354)), '/', '', !empty($dolibarr_main_force_https), true); // Permanent takeposterminal var in a cookie
+	dolSetCookie("takeposterminal", (string) $setterminal, -1); // takeposterminal var in a 1 year cookie
 }
 
 if ($setcurrency != "") {
@@ -362,11 +362,11 @@ function LoadProducts(position, issubcat) {
 	// Only show products for sale (tosell=1)
 	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&thirdpartyid=' + jQuery('#thirdpartyid').val() + '&category='+currentcat+'&tosell=1&limit='+limit+'&offset=0', function(data) {
 		console.log("Call ajax.php (in LoadProducts) to get Products of category "+currentcat+" then loop on result to fill image thumbs");
-		console.log(data);
+		//console.log(data);
 
 		while (ishow < maxproduct) {
 			console.log("ishow"+ishow+" idata="+idata);
-			//console.log(data[idata]);
+			console.log(data[idata]);
 
 			if (typeof (data[idata]) == "undefined") {
 				<?php if (!getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) {
@@ -479,7 +479,8 @@ function MoreProducts(moreorless) {
 	if (maxproduct >= 1) {
 		limit = maxproduct-1;
 	}
-	var offset = <?php echo($MAXPRODUCT - 2); ?> * pageproducts;
+	var nb_cat_shown = $('.div5 div.wrapper2[data-iscat=1]').length;
+	var offset = <?php echo($MAXPRODUCT - 2); ?> * pageproducts - nb_cat_shown;
 	// Only show products for sale (tosell=1)
 	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&category='+currentcat+'&tosell=1&limit='+limit+'&offset='+offset, function(data) {
 		console.log("Call ajax.php (in MoreProducts) to get Products of category "+currentcat);
@@ -541,6 +542,10 @@ function MoreProducts(moreorless) {
 
 function ClickProduct(position, qty = 1) {
 	console.log("ClickProduct at position"+position);
+	if ($('#invoiceid').val() == "") {
+		invoiceid = $('#invoiceid').val();
+		Refresh();
+	}
 	$('#proimg'+position).animate({opacity: '0.5'}, 1);
 	$('#proimg'+position).animate({opacity: '1'}, 100);
 	if ($('#prodiv'+position).data('iscat') == 1){
@@ -605,9 +610,11 @@ function Reduction() {
 	console.log("Open popup to enter reduction on invoiceid="+invoiceid);
 	$.colorbox({href:"reduction.php?place="+place+"&invoiceid="+invoiceid, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
 }
-
+var closeBillParams="";
 function CloseBill() {
 	<?php
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('paramsForCloseBill', $parameters, $obj, $action);
 	if (getDolGlobalString('TAKEPOS_FORBID_SALES_TO_DEFAULT_CUSTOMER')) {
 		echo "customerAnchorTag = document.querySelector('a[id=\"customer\"]'); ";
 		echo "if (customerAnchorTag && customerAnchorTag.innerText.trim() === '".$langs->trans("Customer")."') { ";
@@ -636,7 +643,7 @@ function CloseBill() {
 		$payurl = dol_buildpath($alternative_payurl, 1);
 	}
 	?>
-	$.colorbox({href:"<?php echo $payurl; ?>?place="+place+"&invoiceid="+invoiceid, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
+	$.colorbox({href:"<?php echo $payurl; ?>?place="+place+"&invoiceid="+invoiceid+closeBillParams, width:"80%", height:"90%", transition:"none", iframe:"true", title:""});
 }
 
 function Split() {
@@ -748,7 +755,7 @@ function Search2(keyCodeForEnter, moreorless) {
 			pageproducts = 0;
 			jQuery(".wrapper2 .catwatermark").hide();
 			var nbsearchresults = 0;
-			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&token=<?php echo newToken();?>&term=' + search_term + '&thirdpartyid=' + jQuery('#thirdpartyid').val() + '&search_start=' + search_start + '&search_limit=' + search_limit, function (data) {
+			$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=search&token=<?php echo newToken();?>&search_term=' + search_term + '&thirdpartyid=' + jQuery('#thirdpartyid').val() + '&search_start=' + search_start + '&search_limit=' + search_limit, function (data) {
 				for (i = 0; i < <?php echo $MAXPRODUCT ?>; i++) {
 					if (typeof (data[i]) == "undefined") {
 						$("#prowatermark" + i).html("");
@@ -1029,6 +1036,7 @@ function ModalBox(ModalID)
 function DirectPayment(){
 	console.log("DirectPayment");
 	$("#poslines").load("invoice.php?place="+place+"&action=valid&token=<?php echo newToken(); ?>&pay=LIQ", function() {
+		$('#invoiceid').val("");
 	});
 }
 
@@ -1065,6 +1073,7 @@ $( document ).ready(function() {
 		$sql .= " entity = ".((int) $conf->entity)." AND ";
 		$sql .= " posnumber = ".((int) $_SESSION["takeposterminal"])." AND ";
 		$sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
+		$sql .= " AND status = 0 ";
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
@@ -1360,7 +1369,7 @@ if (isset($_SESSION["takeposterminal"]) && $_SESSION["takeposterminal"]) {
 if (count($maincategories) == 0) {
 	if (getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) {
 		$tmpcategory = new Categorie($db);
-		$tmpcategory->fetch(getDolGlobalString('TAKEPOS_ROOT_CATEGORY_ID'));
+		$tmpcategory->fetch(getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID'));
 		setEventMessages($langs->trans("TakeposNeedsAtLeastOnSubCategoryIntoParentCategory", $tmpcategory->label), null, 'errors');
 	} else {
 		setEventMessages($langs->trans("TakeposNeedsCategories"), null, 'errors');
@@ -1445,6 +1454,7 @@ $sql = "SELECT rowid, status, entity FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE
 $sql .= " entity = ".((int) $conf->entity)." AND ";
 $sql .= " posnumber = ".((int) empty($_SESSION["takeposterminal"]) ? 0 : $_SESSION["takeposterminal"])." AND ";
 $sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
+$sql .= " AND status = 0";
 
 $resql = $db->query($sql);
 if ($resql) {
@@ -1574,15 +1584,15 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 	$count = 0;
 
 	while ($count < $MAXPRODUCT) {
-		print '<div class="wrapper2'.(($count >= ($MAXPRODUCT - 2)) ? ' arrow' : '').'" id="prodiv'.$count.'"  '; ?>
-										<?php if ($count == ($MAXPRODUCT - 2)) {
-											?> onclick="MoreProducts('less')" <?php
-										}
-										if ($count == ($MAXPRODUCT - 1)) {
-											?> onclick="MoreProducts('more')" <?php
-										} else {
-											echo 'onclick="ClickProduct('.$count.')"';
-										} ?>>
+		print '<div class="wrapper2'.(($count >= ($MAXPRODUCT - 2)) ? ' arrow' : '').'" id="prodiv'.$count.'" '; ?>
+												<?php if ($count == ($MAXPRODUCT - 2)) {
+													?> onclick="MoreProducts('less')" <?php
+												}
+												if ($count == ($MAXPRODUCT - 1)) {
+													?> onclick="MoreProducts('more')" <?php
+												} else {
+													echo 'onclick="ClickProduct('.((int) $count).')"';
+												} ?>>
 					<?php
 					if ($count == ($MAXPRODUCT - 2)) {
 						//echo '<img class="imgwrapper" src="img/arrow-prev-top.png" height="100%" id="proimg'.$count.'" />';

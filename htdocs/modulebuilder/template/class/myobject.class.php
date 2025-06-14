@@ -182,7 +182,7 @@ class MyObject extends CommonObject
 	public $fk_user_modif;
 
 	/**
-	 * @var string public $last_main_doc
+	 * @var string public
 	 */
 	public $last_main_doc;
 
@@ -201,7 +201,7 @@ class MyObject extends CommonObject
 	// public $table_element_line = 'mymodule_myobjectline';
 
 	// /**
-	//  * @var string    Field with ID of parent key if this object has a parent
+	//  * @var string    Field name with ID of parent key if this object has a parent, Or Field name of in child tables to link to this record.
 	//  */
 	// public $fk_element = 'fk_myobject';
 
@@ -217,8 +217,9 @@ class MyObject extends CommonObject
 
 	// /**
 	//  * @var array    List of child tables. To know object to delete on cascade.
-	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
+	//  *               If name matches '@ClassName:FilePathClass:ParentFkFieldName' (the recommended mode) it will
+	//  *               call method ClassName->deleteByParentField(parentId, 'ParentFkFieldName') to fetch and delete child object.
+	//  *               Using an array like childtables should not be implemented because a child may have other child, so we must only use the method that call deleteByParentField().
 	//  */
 	// protected $childtablesoncascade = array('mymodule_myobjectdet');
 
@@ -283,13 +284,16 @@ class MyObject extends CommonObject
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
-		$resultcreate = $this->createCommon($user, $notrigger);
+		$result = $this->createCommon($user, $notrigger);
 
 		// uncomment lines below if you want to validate object after creation
+		// if ($result > 0) {
 		// $this->fetch($this->id); // needed to retrieve some fields (ie date_creation for masked ref)
-		// $resultcreate = $this->validate($user, $notrigger);
+		// $resultupdate = $this->validate($user, $notrigger);
+		// if ($resultupdate < 0) { return $resultupdate; }
+		// }
 
-		return $resultcreate;
+		return $result;
 	}
 
 	/**
@@ -588,7 +592,7 @@ class MyObject extends CommonObject
 
 		if (!empty($num)) {
 			// Validate
-			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
 			$sql .= " SET ";
 			if (!empty($this->fields['ref'])) {
 				$sql .= " ref = '".$this->db->escape($num)."',";
@@ -626,14 +630,14 @@ class MyObject extends CommonObject
 			// Rename directory if dir was a temporary ref
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'myobject/".$this->db->escape($this->newref)."'";
+				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'myobject/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'myobject/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'myobject/".$this->db->escape($this->newref)."'";
+				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filepath = 'myobject/".$this->db->escape($this->newref)."'";
 				$sql .= " WHERE filepath = 'myobject/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) {
@@ -803,7 +807,7 @@ class MyObject extends CommonObject
 
 		$result = '';
 		$params = [
-			'id' => $this->id,
+			'id' => (string) $this->id,
 			'objecttype' => $this->element.($this->module ? '@'.$this->module : ''),
 			'option' => $option,
 		];
@@ -909,7 +913,7 @@ class MyObject extends CommonObject
 	 *	Return a thumb for kanban views
 	 *
 	 *	@param	string	    			$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param	?array<string,string>	$arraydata	Array of data
+	 *  @param	?array<string,mixed>	$arraydata	Array of data
 	 *  @return	string								HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
@@ -1027,7 +1031,7 @@ class MyObject extends CommonObject
 		if (!empty($this->fields['fk_user_valid'])) {
 			$sql .= ", fk_user_valid";
 		}
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
 		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		$result = $this->db->query($sql);

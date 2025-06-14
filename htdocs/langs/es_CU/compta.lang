@@ -3,8 +3,6 @@ MenuFinancial=Facturación | Pago
 TaxModuleSetupToModifyRules=Vaya a <a href="%s"> Configuración del módulo de impuestos </a> para modificar las reglas de cálculo
 TaxModuleSetupToModifyRulesLT=Vaya a <a href="%s"> Configuración de la empresa </a> para modificar las reglas de cálculo
 OptionMode=opción de contabilidad
-OptionModeVirtual=Opción Reclamaciones-Deudas
-OptionModeTrueDesc=En este contexto, el volumen de negocios se calcula sobre pagos (fecha de pagos). La validez de las cifras está asegurada solo si la contabilidad se controla a través de la entrada/salida en las cuentas a través de facturas.
 OptionModeVirtualDesc=En este contexto, la facturación se calcula sobre las facturas (fecha de validación). Cuando estas facturas vencen, ya sea que hayan sido pagadas o no, se enumeran en la salida de facturación.
 FeatureIsSupportedInInOutModeOnly=Funcionalidad solo disponible en modo contabilidad CRÉDITOS-DEUDAS (Ver configuración del módulo Contabilidad)
 VATReportBuildWithOptionDefinedInModule=Los montos que se muestran aquí se calculan utilizando las reglas definidas por la configuración del módulo de impuestos.
@@ -222,6 +220,7 @@ LinkedFichinter=Enlace a una intervención
 ErrorBankAccountNotFound=Error: Cuenta bancaria no encontrada
 FiscalPeriod=Período contable
 ListSocialContributionAssociatedProject=Relación de contribuciones sociales asociadas al proyecto
+DeleteFromCat=Eliminar del grupo contable
 AccountingAffectation=Asignación contable
 LastDayTaxIsRelatedTo=Último día del período al que se refiere el impuesto
 VATDue=Impuesto sobre las ventas reclamado

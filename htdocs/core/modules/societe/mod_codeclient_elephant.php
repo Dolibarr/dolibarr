@@ -5,7 +5,7 @@
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2013-2018 Philippe Grand      	<philippe.grand@atoo-net.com>
  * Copyright (C) 2020-2024	Frédéric France		<frederic.france@free.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Eric Seigne 		<eric.seigne@cap-rel.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -99,6 +99,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		$texte .= '<table class="nobordernopadding" width="100%">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("ThirdParty"), $langs->transnoentities("ThirdParty"));
+		$tooltip .= $langs->trans("GenericMaskCodes1");
 		//$tooltip.=$langs->trans("GenericMaskCodes2");	Not required for third party numbering
 		$tooltip .= $langs->trans("GenericMaskCodes2b").'<br>';
 		$tooltip .= '<br>';
@@ -219,8 +220,8 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	/**
 	 * Return next value
 	 *
-	 * @param	Societe|string	$objsoc     Object third party
-	 * @param  	int		    	$type       Client ou fournisseur (0:customer, 1:supplier)
+	 * @param	Societe|string|null	$objsoc	Object third party
+	 * @param	int<-1,2>			$type	Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return 	string|-1      				Value if OK, '' if module not configured, -1 if KO
 	 */
 	public function getNextValue($objsoc = '', $type = -1)

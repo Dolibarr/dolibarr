@@ -47,11 +47,20 @@ function mymoduleAdminPrepareHead()
 	/*
 	$head[$h][0] = dol_buildpath("/mymodule/admin/myobject_extrafields.php", 1);
 	$head[$h][1] = $langs->trans("ExtraFields");
-	$nbExtrafields = is_countable($extrafields->attributes['myobject']['label']) ? count($extrafields->attributes['myobject']['label']) : 0;
+	$nbExtrafields = (isset($extrafields->attributes['myobject']['label']) && is_countable($extrafields->attributes['myobject']['label'])) ? count($extrafields->attributes['myobject']['label']) : 0;
 	if ($nbExtrafields > 0) {
-		$head[$h][1] .= ' <span class="badge">' . $nbExtrafields . '</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbExtrafields . '</span>';
 	}
 	$head[$h][2] = 'myobject_extrafields';
+	$h++;
+
+	$head[$h][0] = dol_buildpath("/mymodule/admin/myobjectline_extrafields.php", 1);
+	$head[$h][1] = $langs->trans("ExtraFieldsLines");
+	$nbExtrafields = (isset($extrafields->attributes['myobjectline']['label']) && is_countable($extrafields->attributes['myobjectline']['label'])) ? count($extrafields->attributes['myobject']['label']) : 0;
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbExtrafields . '</span>';
+	}
+	$head[$h][2] = 'myobject_extrafieldsline';
 	$h++;
 	*/
 

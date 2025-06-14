@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 class Projects extends DolibarrApi
 {
 	/**
-	 * @var string[]   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'ref',
@@ -39,12 +39,12 @@ class Projects extends DolibarrApi
 	);
 
 	/**
-	 * @var Project $project {@type Project}
+	 * @var Project {@type Project}
 	 */
 	public $project;
 
 	/**
-	 * @var Task $task {@type Task}
+	 * @var Task {@type Task}
 	 */
 	public $task;
 
@@ -459,7 +459,7 @@ class Projects extends DolibarrApi
 			$userp = new User($this->db);
 			$userp->fetch($userid);
 		}
-		$this->project->roles = $taskstatic->getUserRolesForProjectsOrTasks($userp, null, $id, 0);
+		$this->project->roles = $taskstatic->getUserRolesForProjectsOrTasks($userp, null, (string) $id, 0);
 		$result = array();
 		foreach ($this->project->roles as $line) {
 			array_push($result, $this->_cleanObjectDatas($line));

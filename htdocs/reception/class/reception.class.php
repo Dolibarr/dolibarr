@@ -12,7 +12,7 @@
  * Copyright (C) 2016-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018		Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
  * Copyright (C) 2022-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -435,7 +435,7 @@ class Reception extends CommonObject
 		$sql .= ', e.fk_incoterms, e.location_incoterms';
 		$sql .= ', i.libelle as label_incoterms';
 		$sql .= " FROM ".MAIN_DB_PREFIX."reception as e";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."' AND el.sourcetype = 'order_supplier'";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
 		$sql .= " WHERE e.entity IN (".getEntity('reception').")";
 		if ($id) {
@@ -872,16 +872,16 @@ class Reception extends CommonObject
 	 * If STOCK_WAREHOUSE_NOT_REQUIRED_FOR_RECEPTIONS is set, you can add a reception line, with no stock source defined
 	 * If STOCK_MUST_BE_ENOUGH_FOR_RECEPTION is not set, you can add a reception line, even if not enough into stock
 	 *
-	 * @param 	int			$entrepot_id		Id of warehouse
-	 * @param 	int			$id					Id of source line (supplier order line)
-	 * @param 	float		$qty				Quantity
+	 * @param 	int				$entrepot_id		Id of warehouse
+	 * @param 	int				$id					Id of source line (supplier order line)
+	 * @param 	float			$qty				Quantity
 	 * @param	array<string, mixed>	$array_options		extrafields array
-	 * @param	string		$comment			Comment for stock movement
-	 * @param	int			$eatby				eat-by date
-	 * @param	int			$sellby				sell-by date
-	 * @param	string		$batch				Lot number
-	 * @param	float		$cost_price			Line cost
-	 * @return	int							Return integer <0 if KO, index of line if OK
+	 * @param	string			$comment			Comment for stock movement
+	 * @param	int				$eatby				eat-by date
+	 * @param	int				$sellby				sell-by date
+	 * @param	string			$batch				Lot number
+	 * @param	float|string	$cost_price			Line cost (Can be '' to keep AWP unchanged or a float value)
+	 * @return	int									Return integer <0 if KO, index of line if OK
 	 */
 	public function addline($entrepot_id, $id, $qty, $array_options = [], $comment = '', $eatby = null, $sellby = null, $batch = '', $cost_price = 0)
 	{
@@ -1447,9 +1447,9 @@ class Reception extends CommonObject
 	/**
 	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
-	 *  @return		string											HTML Code for Kanban thumb.
+	 *	@param	string	    			$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param	?array<string,mixed>	$arraydata	Array of data
+	 *  @return	string								HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

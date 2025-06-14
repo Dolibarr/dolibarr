@@ -4,9 +4,9 @@
  * Copyright (C) 2004-2016	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2017		Open-DSI					<support@open-dsi.fr>
- * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -167,26 +167,25 @@ if (!$user->hasRight('agenda', 'allactions', 'read') || $filter == 'mine') {	// 
 }
 
 $arrayfields = array(
-	'a.id' => array('label' => "Ref", 'checked' => 1),
-	'owner' => array('label' => "Owner", 'checked' => 1),
-	'c.libelle' => array('label' => "Type", 'checked' => 1),
-	'a.label' => array('label' => "Title", 'checked' => 1),
-	'a.note' => array('label' => 'Description', 'checked' => 0),
-	'a.datep' => array('label' => "DateStart", 'checked' => 1),
-	'a.datep2' => array('label' => "DateEnd", 'checked' => 1),
-	's.nom' => array('label' => "ThirdParty", 'checked' => 1),
-	'a.fk_contact' => array('label' => "Contact", 'checked' => 0),
-	'a.fk_element' => array('label' => "LinkedObject", 'checked' => 1, 'enabled' => (getDolGlobalString('AGENDA_SHOW_LINKED_OBJECT'))),
-	'a.datec' => array('label' => 'DateCreation', 'checked' => 0, 'position' => 510),
-	'a.tms' => array('label' => 'DateModification', 'checked' => 0, 'position' => 520),
-	'a.percent' => array('label' => "Status", 'checked' => 1, 'position' => 1000)
+	'a.id' => array('label' => "Ref", 'checked' => '1'),
+	'owner' => array('label' => "Owner", 'checked' => '1'),
+	'c.libelle' => array('label' => "Type", 'checked' => '1'),
+	'a.label' => array('label' => "Title", 'checked' => '1'),
+	'a.note' => array('label' => 'Description', 'checked' => '0'),
+	'a.datep' => array('label' => "DateStart", 'checked' => '1'),
+	'a.datep2' => array('label' => "DateEnd", 'checked' => '1'),
+	's.nom' => array('label' => "ThirdParty", 'checked' => '1'),
+	'a.fk_contact' => array('label' => "Contact", 'checked' => '0'),
+	'a.fk_element' => array('label' => "LinkedObject", 'checked' => '1', 'enabled' => (getDolGlobalString('AGENDA_SHOW_LINKED_OBJECT'))),
+	'a.datec' => array('label' => 'DateCreation', 'checked' => '0', 'position' => 510),
+	'a.tms' => array('label' => 'DateModification', 'checked' => '0', 'position' => 520),
+	'a.percent' => array('label' => "Status", 'checked' => '1', 'position' => 1000)
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $result = restrictedArea($user, 'agenda', 0, '', 'myactions');
 if ($user->socid && $socid) {
@@ -436,6 +435,7 @@ $sql .= " a.id, a.code, a.label, a.note, a.datep as dp, a.datep2 as dp2, a.fulld
 $sql .= " a.fk_user_author, a.fk_user_action,";
 $sql .= " a.fk_contact, a.note, a.percent as percent,";
 $sql .= " a.fk_element, a.elementtype, a.datec, a.tms as datem,";
+$sql .= " a.recurid, a.recurrule, a.recurdateend,";
 $sql .= " c.code as type_code, c.libelle as type_label, c.color as type_color, c.type as type_type, c.picto as type_picto,";
 $sql .= " sp.lastname, sp.firstname, sp.email, sp.phone, sp.address, sp.phone as phone_pro, sp.phone_mobile, sp.phone_perso, sp.fk_pays as country_id";
 
@@ -492,13 +492,26 @@ if (!empty($actioncode)) {
 			}
 		}
 	} else {
-		if ($actioncode == 'AC_NON_AUTO') {
+		if ($actioncode === 'AC_NON_AUTO') {
 			$sql .= " AND c.type != 'systemauto'";
-		} elseif ($actioncode == 'AC_ALL_AUTO') {
+		} elseif ($actioncode === 'AC_ALL_AUTO') {
 			$sql .= " AND c.type = 'systemauto'";
 		} else {
 			if (is_array($actioncode)) {
-				$sql .= " AND c.code IN (".$db->sanitize("'".implode("','", $actioncode)."'", 1).")";
+				// Remove all -1 values
+				$actioncode = array_filter(
+					$actioncode,
+					/**
+					 * @param string $value
+					 * @return	bool
+					 */
+					function ($value) {
+						return ((string) $value !== '-1');
+					}
+				);
+				if (count($actioncode)) {
+					$sql .= " AND c.code IN (".$db->sanitize("'".implode("','", $actioncode)."'", 1).")";
+				}
 			} elseif ($actioncode !== '-1') {
 				$sql .= " AND c.code IN (".$db->sanitize("'".implode("','", explode(',', $actioncode))."'", 1).")";
 			}
@@ -511,6 +524,7 @@ if ($resourceid > 0) {
 if ($pid) {
 	$sql .= " AND a.fk_project=".((int) $pid);
 }
+
 // If the internal user must only see his customers, force searching by him
 $search_sale = 0;
 if (isModEnabled("societe") && !$user->hasRight('societe', 'client', 'voir')) {
@@ -978,6 +992,9 @@ while ($i < $imaxinloop) {
 	$actionstatic->percentage = $obj->percent;
 	$actionstatic->authorid = $obj->fk_user_author;
 	$actionstatic->userownerid = $obj->fk_user_action;
+	$actionstatic->recurid = $obj->recurid;
+	$actionstatic->recurrule = $obj->recurrule;
+	$actionstatic->recurdateend = $db->jdate($obj->recurdateend);
 
 	// Initialize $this->userassigned && this->socpeopleassigned array && this->userownerid
 	// but only if we need it

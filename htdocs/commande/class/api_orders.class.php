@@ -2,6 +2,7 @@
 /* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 class Orders extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'socid',
@@ -38,7 +39,7 @@ class Orders extends DolibarrApi
 	);
 
 	/**
-	 * @var Commande $commande {@type Commande}
+	 * @var Commande {@type Commande}
 	 */
 	public $commande;
 
@@ -59,12 +60,12 @@ class Orders extends DolibarrApi
 	 * Return an array with order information
 	 *
 	 * @param       int         $id            ID of order
-	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
 	 * @return	array|mixed data without useless information
 	 *
 	 * @throws	RestException
 	 */
-	public function get($id, $contact_list = 1)
+	public function get($id, $contact_list = -1)
 	{
 		return $this->_fetch($id, '', '', $contact_list);
 	}
@@ -75,14 +76,14 @@ class Orders extends DolibarrApi
 	 * Return an array with order information
 	 *
 	 * @param       string		$ref			Ref of object
-	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
 	 * @return	array|mixed data without useless information
 	 *
 	 * @url GET    ref/{ref}
 	 *
 	 * @throws	RestException
 	 */
-	public function getByRef($ref, $contact_list = 1)
+	public function getByRef($ref, $contact_list = -1)
 	{
 		return $this->_fetch(0, $ref, '', $contact_list);
 	}
@@ -93,14 +94,14 @@ class Orders extends DolibarrApi
 	 * Return an array with order information
 	 *
 	 * @param       string		$ref_ext			External reference of object
-	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
 	 * @return	array|mixed data without useless information
 	 *
 	 * @url GET    ref_ext/{ref_ext}
 	 *
 	 * @throws	RestException
 	 */
-	public function getByRefExt($ref_ext, $contact_list = 1)
+	public function getByRefExt($ref_ext, $contact_list = -1)
 	{
 		return $this->_fetch(0, '', $ref_ext, $contact_list);
 	}
@@ -113,12 +114,12 @@ class Orders extends DolibarrApi
 	 * @param       int         $id				ID of order
 	 * @param		string		$ref			Ref of object
 	 * @param		string		$ref_ext		External reference of object
-	 * @param       int         $contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+	 * @param       int         $contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
 	 * @return		Object						Object with cleaned properties
 	 *
 	 * @throws	RestException
 	 */
-	private function _fetch($id, $ref = '', $ref_ext = '', $contact_list = 1)
+	private function _fetch($id, $ref = '', $ref_ext = '', $contact_list = -1)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
 			throw new RestException(403);
@@ -133,11 +134,18 @@ class Orders extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		// Add external contacts ids
-		$tmparray = $this->commande->liste_contact(-1, 'external', $contact_list);
-		if (is_array($tmparray)) {
-			$this->commande->contacts_ids = $tmparray;
+		if ($contact_list > -1) {
+			// Add external contacts ids
+			$tmparray = $this->commande->liste_contact(-1, 'external', $contact_list);
+			if (is_array($tmparray)) {
+				$this->commande->contacts_ids = $tmparray;
+			}
+			$tmparray = $this->commande->liste_contact(-1, 'internal', $contact_list);
+			if (is_array($tmparray)) {
+				$this->commande->contacts_ids_internal = $tmparray;
+			}
 		}
+
 		$this->commande->fetchObjectLinked();
 
 		// Add online_payment_url, cf #20477
@@ -163,6 +171,8 @@ class Orders extends DolibarrApi
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @param int			   $loadlinkedobjects	Load also linked object
 	 * @return  array                               Array of order objects
+	 * @phan-return Commande[]|array{data:Commande[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return Commande[]|array{data:Commande[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
 	 * @throws RestException 404 Not found
 	 * @throws RestException 503 Error
@@ -291,6 +301,8 @@ class Orders extends DolibarrApi
 	 * Example: { "socid": 2, "date": 1595196000, "type": 0, "lines": [{ "fk_product": 2, "qty": 1 }] }
 	 *
 	 * @param   array   $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return  int     ID of order
 	 */
 	public function post($request_data = null)
@@ -333,6 +345,8 @@ class Orders extends DolibarrApi
 	 * @url	GET {id}/lines
 	 *
 	 * @return array
+	 * @phan-return OrderLine[]
+	 * @phpstan-return OrderLine[]
 	 */
 	public function getLines($id)
 	{
@@ -357,10 +371,47 @@ class Orders extends DolibarrApi
 	}
 
 	/**
+	 * Get properties of a line of an order object by id
+	 *
+	 * @param int   $id             Id of order
+	 * @param int   $lineid         Id of line
+	 * @param string                $properties     Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 *
+	 * @url    GET {id}/lines/{lineid}
+	 *
+	 * @return Object
+	 */
+	public function getLine($id, $lineid, $properties = '')
+	{
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->commande->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Order not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$this->commande->fetch_lines();
+		foreach ($this->commande->lines as $line) {
+			if ($line->id == $lineid) {
+				return $this->_filterObjectProperties($this->_cleanObjectDatas($line), $properties);
+			}
+		}
+		throw new RestException(404, 'Line not found');
+	}
+
+	/**
 	 * Add a line to given order
 	 *
 	 * @param int   $id             Id of order to update
 	 * @param array $request_data   OrderLine data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @url	POST {id}/lines
 	 *
@@ -429,6 +480,8 @@ class Orders extends DolibarrApi
 	 * @param	int   $id             Id of order to update
 	 * @param	int   $lineid         Id of line to update
 	 * @param	array $request_data   OrderLine data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	Object|false		  Object with cleaned properties
 	 *
 	 * @url	PUT {id}/lines/{lineid}
@@ -564,6 +617,8 @@ class Orders extends DolibarrApi
 	 * @param int    $contactid      Id of contact to add
 	 * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER)
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @url	POST {id}/contact/{contactid}/{type}
 	 *
@@ -613,6 +668,8 @@ class Orders extends DolibarrApi
 	 * @url	DELETE {id}/contact/{contactid}/{type}
 	 *
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
@@ -657,7 +714,9 @@ class Orders extends DolibarrApi
 	 * Update order general fields (won't touch lines of order)
 	 *
 	 * @param	int		$id             Id of order to update
-	 * @param	array	$request_data   Datas
+	 * @param	array	$request_data   Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	Object					Object with cleaned properties
 	 */
 	public function put($id, $request_data = null)
@@ -712,6 +771,8 @@ class Orders extends DolibarrApi
 	 *
 	 * @param   int     $id         Order ID
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
@@ -759,7 +820,6 @@ class Orders extends DolibarrApi
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 * @throws RestException 500 System error
-	 *
 	 */
 	public function validate($id, $idwarehouse = 0, $notrigger = 0)
 	{
@@ -1021,6 +1081,8 @@ class Orders extends DolibarrApi
 	 * @url     GET {id}/shipment
 	 *
 	 * @return array
+	 * @phan-return Expedition[]
+	 * @phpstan-return Expedition[]
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
@@ -1137,12 +1199,15 @@ class Orders extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   array           $data   Array with data to verify
-	 * @return  array
+	 * @param ?array<string,string> $data   Array with data to verify
+	 * @return array<string,string>
 	 * @throws  RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$commande = array();
 		foreach (Orders::$FIELDS as $field) {
 			if (!isset($data[$field])) {
