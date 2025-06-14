@@ -547,49 +547,6 @@ class ExpenseReports extends DolibarrApi
 	}
 
 	/**
-	 * Validate an Expense Report
-	 *
-	 * @param   int $id             Expense Report ID
-	 *
-	 * @url POST    {id}/validate
-	 *
-	 * @return  array
-	 * FIXME An error 403 is returned if the request has an empty body.
-	 * Error message: "Forbidden: Content type `text/plain` is not supported."
-	 * Workaround: send this in the body
-	 * {
-	 *   "idwarehouse": 0
-	 * }
-	 */
-	/*
-	public function validate($id, $idwarehouse=0)
-	{
-		if(! DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
-			throw new RestException(403);
-		}
-
-		$result = $this->expensereport->fetch($id);
-		if( ! $result ) {
-			throw new RestException(404, 'expensereport not found');
-		}
-
-		if( ! DolibarrApi::_checkAccessToResource('expensereport',$this->expensereport->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
-
-		if( ! $this->expensereport->valid(DolibarrApiAccess::$user, $idwarehouse)) {
-			throw new RestException(500, 'Error when validate expensereport');
-		}
-
-		return array(
-			'success' => array(
-				'code' => 200,
-				'message' => 'expensereport validated'
-			)
-		);
-	}*/
-
-	/**
 	 * Validate an expense report
 	 *
 	 * If you get a bad value for param notrigger check, provide this in body
