@@ -430,7 +430,7 @@ function getWarningDelay($module, $parmlevel1, $parmlevel2 = '')
 		}
 	} else {
 		if (!empty($conf->$module->$warningDelayPath->warning_delay)) {
-			return (int) $conf->$module->$warningDelayPath->$parmlevel1->warning_delay;
+			return (int) $conf->$module->$warningDelayPath->warning_delay;
 		}
 	}
 
