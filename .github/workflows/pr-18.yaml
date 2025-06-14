@@ -29,7 +29,7 @@ jobs:
 
     - name: Assign reviewer
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
         url: ${{ github.event.pull_request.html_url }}
       run: |
         gh pr edit "$url" --add-reviewer rycks
