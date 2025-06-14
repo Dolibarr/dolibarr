@@ -170,7 +170,7 @@ if ($id) {
 			print '<tr><td class="titlefield">'.$langs->trans("BankTransfers").'</td><td>';
 		} else {
 			print '<tr><td class="titlefield">'.$langs->trans("WithdrawalsReceipts").'</td><td>';
-		}	
+		}
 
 		print $bon->getNomUrl(1).'</td></tr>';
 
