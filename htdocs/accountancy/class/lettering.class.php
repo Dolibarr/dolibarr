@@ -574,7 +574,7 @@ class Lettering extends BookKeeping
 
 		$grouped_lines = array();
 		foreach (self::$doc_type_infos as $doc_type => $doc_type_info) {
-			if (!is_array($bookkeeping_lines_by_type[$doc_type])) {
+			if (empty($bookkeeping_lines_by_type[$doc_type]) || !is_array($bookkeeping_lines_by_type[$doc_type])) {
 				continue;
 			}
 

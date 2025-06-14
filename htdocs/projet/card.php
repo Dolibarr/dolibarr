@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+/* Copyright (C) 2001-2005 	Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2016 	Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012 	Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2025		Benjamin Falière	<benjamin@faliere.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1570,13 +1571,17 @@ if ($action == 'create' && $user->rights->projet->creer) {
 
 			// Buttons Create
 			if (empty($conf->global->PROJECT_HIDE_CREATE_OBJECT_BUTTON)) {
+				// We check the type of thirdparty
+				$is_customer_or_prospect = (!empty($object->thirdparty->prospect) || !empty($object->thirdparty->client));
+				$is_supplier_only= (!empty($object->thirdparty->fournisseur) && $is_customer_or_prospect == false);
+
 				$arrayforbutaction = array(
-					10 => array('lang'=>'propal', 'enabled'=>isModEnabled("propal"), 'perm'=>$user->hasRight('propal', 'creer'), 'label' => 'AddProp', 'url'=>'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
-					20 => array('lang'=>'orders', 'enabled'=>isModEnabled("commande"), 'perm'=>$user->hasRight('commande', 'creer'), 'label' => 'CreateOrder', 'url'=>'/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
-					30 => array('lang'=>'bills', 'enabled'=>isModEnabled("facture"), 'perm'=>$user->hasRight('facture', 'creer'), 'label' => 'CreateBill', 'url'=>'/compta/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
-					40 => array('lang'=>'supplier_proposal', 'enabled'=>isModEnabled("supplier_proposal"), 'perm'=>$user->hasRight('supplier_proposal', 'creer'), 'label' => 'AddSupplierProposal', 'url'=>'/supplier_proposal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
-					50 => array('lang'=>'suppliers', 'enabled'=>isModEnabled("supplier_order"), 'perm'=>$user->hasRight('fournisseur', 'commande', 'creer'), 'label' => 'AddSupplierOrder', 'url'=>'/fourn/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
-					60 => array('lang'=>'suppliers', 'enabled'=>isModEnabled("supplier_invoice"), 'perm'=>$user->hasRight('fournisseur', 'facture', 'creer'), 'label' => 'AddSupplierInvoice', 'url'=>'/fourn/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+					10 => array('lang'=>'propal', 'enabled'=>(isModEnabled("propal") && $is_customer_or_prospect == true), 'perm'=>$user->hasRight('propal', 'creer'), 'label' => 'AddProp', 'url'=>'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+					20 => array('lang'=>'orders', 'enabled'=>(isModEnabled("commande") && $is_customer_or_prospect == true), 'perm'=>$user->hasRight('commande', 'creer'), 'label' => 'CreateOrder', 'url'=>'/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+					30 => array('lang'=>'bills', 'enabled'=>(isModEnabled("facture") && $is_customer_or_prospect == true), 'perm'=>$user->hasRight('facture', 'creer'), 'label' => 'CreateBill', 'url'=>'/compta/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+					40 => array('lang'=>'supplier_proposal', 'enabled'=>isModEnabled("supplier_proposal"), 'perm'=>$user->hasRight('supplier_proposal', 'creer'), 'label' => 'AddSupplierProposal', 'url'=>'/supplier_proposal/card.php?action=create&amp;projectid='.$object->id.($is_supplier_only == true ? '&amp;socid='.$object->socid : '')),
+					50 => array('lang'=>'suppliers', 'enabled'=>isModEnabled("supplier_order"), 'perm'=>$user->hasRight('fournisseur', 'commande', 'creer'), 'label' => 'AddSupplierOrder', 'url'=>'/fourn/commande/card.php?action=create&amp;projectid='.$object->id.($is_supplier_only == true ? '&amp;socid='.$object->socid : '')),
+					60 => array('lang'=>'suppliers', 'enabled'=>isModEnabled("supplier_invoice"), 'perm'=>$user->hasRight('fournisseur', 'facture', 'creer'), 'label' => 'AddSupplierInvoice', 'url'=>'/fourn/facture/card.php?action=create&amp;projectid='.$object->id.($is_supplier_only == true ? '&amp;socid='.$object->socid : '')),
 					70 => array('lang'=>'interventions', 'enabled'=>isModEnabled("ficheinter"), 'perm'=>$user->hasRight('fichinter', 'creer'), 'label' => 'AddIntervention', 'url'=>'/fichinter/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
 					80 => array('lang'=>'contracts', 'enabled'=>isModEnabled("contrat"), 'perm'=>$user->hasRight('contrat', 'creer'), 'label' => 'AddContract', 'url'=>'/contrat/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
 					90 => array('lang'=>'trips', 'enabled'=>isModEnabled("expensereport"), 'perm'=>$user->hasRight('expensereport', 'creer'), 'label' => 'AddTrip', 'url'=>'/expensereport/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
