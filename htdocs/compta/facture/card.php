@@ -98,7 +98,7 @@ $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
 $fac_rec = GETPOST('fac_rec', 'int');
 $facid = GETPOST('facid', 'int');
-$ref_client = GETPOST('ref_client', 'int');
+$ref_client = GETPOST('ref_client', 'alpha');
 $rank = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
 $projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : 0);
 
@@ -643,7 +643,7 @@ if (empty($reshook)) {
 		$object->setValueFrom('ref', GETPOST('ref'), '', null, '', '', $user, 'BILL_MODIFY');
 	} elseif ($action == 'setref_client' && $usercancreate) {
 		$object->fetch($id);
-		$object->set_ref_client(GETPOST('ref_client'));
+		$object->set_ref_client(GETPOST('ref_client', 'alpha'));
 	} elseif ($action == 'confirm_valid' && $confirm == 'yes' && $usercanvalidate) {
 		// Classify to validated
 		$idwarehouse = GETPOST('idwarehouse', 'int');
