@@ -98,11 +98,9 @@ if ($action == 'update') {
 		dolibarr_set_const($db, "SALES_ORDER_SHOW_SHIPPING_ADDRESS", GETPOSTINT("SALES_ORDER_SHOW_SHIPPING_ADDRESS"), 'chaine', 0, '', $conf->entity);
 		dolibarr_del_const($db, "SALES_ORDER_SHOW_SHIPPING_ADDRESS", $conf->entity);
 	}
-
 	if (GETPOSTISSET('MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_UNIT_PRICE')) {
 		dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_UNIT_PRICE", GETPOST("MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_UNIT_PRICE"), 'chaine', 0, '', $conf->entity);
 	}
-	
 	if (GETPOSTISSET('MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_TOTAL_COLUMN')) {
 		dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_TOTAL_COLUMN", GETPOST("MAIN_GENERATE_DOCUMENTS_SUPPLIER_PROPOSAL_WITHOUT_TOTAL_COLUMN"), 'chaine', 0, '', $conf->entity);
 	}
@@ -165,7 +163,6 @@ if ($action == 'update') {
 	if (GETPOSTISSET('BARCODE_ON_STOCKTRANSFER_PDF')) {
 		dolibarr_set_const($db, "BARCODE_ON_STOCKTRANSFER_PDF", GETPOSTINT("BARCODE_ON_STOCKTRANSFER_PDF"), 'chaine', 0, '', $conf->entity);
 	}
-
 	// add file to concat
 	foreach (array('MAIN_INFO_PROPAL_TERMSOFSALE', 'MAIN_INFO_ORDER_TERMSOFSALE', 'MAIN_INFO_INVOICE_TERMSOFSALE') as $varname) {
 		if ($_FILES[$varname]["name"]) {
@@ -197,8 +194,6 @@ if ($action == 'update') {
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
 }
-
-
 // Remove file to concat
 if ($action == 'removetermsofsale') {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -287,7 +282,6 @@ if (isModEnabled('propal')) {
 		print $form->selectarray("MAIN_GENERATE_PROPOSALS_WITH_PICTURE", $arrval, getDolGlobalString('MAIN_GENERATE_PROPOSALS_WITH_PICTURE'));
 	}
 	print '</td></tr>';
-	
 	// Add delivery address option for proposals
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("PROPOSAL_SHOW_SHIPPING_ADDRESS"), $langs->trans("PROPOSAL_SHOW_SHIPPING_ADDRESSMore"));
@@ -299,7 +293,6 @@ if (isModEnabled('propal')) {
 		print $form->selectarray("PROPOSAL_SHOW_SHIPPING_ADDRESS", $arrval, getDolGlobalString('PROPOSAL_SHOW_SHIPPING_ADDRESS'));
 	}
 	print '</td></tr>';
-
 	// Concat PDF
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSOFSALE_PROPAL"), $tooltipconcatpdf);
