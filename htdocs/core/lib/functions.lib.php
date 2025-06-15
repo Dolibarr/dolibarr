@@ -2067,10 +2067,10 @@ function dolPrintHTML($s, $allowiframe = 0)
  * Return a string ready to be output into an HTML attribute (alt, title, data-html, ...)
  * With dolPrintHTMLForAttribute(), the content is HTML encode, even if it is already HTML content.
  *
- * @param	string	$s						String to print
- * @param	int		$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
- * @param	array	$allowothertags			List of other tags allowed
- * @return	string							String ready for HTML output
+ * @param	string		$s						String to print
+ * @param	int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
+ * @param	string[]	$allowothertags			List of other tags allowed
+ * @return	string								String ready for HTML output
  * @see dolPrintHTML(), dolPrintHTMLFortextArea()
  */
 function dolPrintHTMLForAttribute($s, $escapeonlyhtmltags = 0, $allowothertags = array())
@@ -5157,7 +5157,7 @@ function getPictoForType($key, $morecss = '')
  *  @param		string		$alt					Force alt for blind people
  *  @param		string		$morecss				Add more class css on img tag (For example 'myclascss').
  *  @param		int 		$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No margin left. Works for fontawesome picto only.
- *  @param		array		$allowothertags			List of other tags allowed in title and alt attribute
+ *  @param		string[]	$allowothertags			List of other tags allowed in title and alt attribute
  *  @return     string       				    	Return img tag
  *  @see        img_object(), img_picto_common()
  */
@@ -5517,15 +5517,15 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 /**
  *	Show a picto called object_picto (generic function)
  *
- *	@param	string	$titlealt			Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *	@param	string	$picto				Name of image to show object_picto (example: user, group, action, bill, contract, propal, product, ...)
- *										For external modules use imagename@mymodule to search into directory "img" of module.
- *	@param	string	$moreatt			Add more attribute on img tag (ie: class="datecallink")
- *	@param	int		$pictoisfullpath	If 1, image path is a full path
- *	@param	int		$srconly			Return only content of the src attribute of img.
- *  @param	int		$notitle			1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
- *  @param	array	$allowothertags		List of other tags allowed in title attribute
- *	@return	string						Return img tag
+ *	@param	string		$titlealt			Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
+ *	@param	string		$picto				Name of image to show object_picto (example: user, group, action, bill, contract, propal, product, ...)
+ *											For external modules use imagename@mymodule to search into directory "img" of module.
+ *	@param	string		$moreatt			Add more attribute on img tag (ie: class="datecallink")
+ *	@param	int			$pictoisfullpath	If 1, image path is a full path
+ *	@param	int			$srconly			Return only content of the src attribute of img.
+ *  @param	int			$notitle			1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
+ *  @param	string[]	$allowothertags		List of other tags allowed in title attribute
+ *	@return	string							Return img tag
  *	@see	img_picto(), img_picto_common()
  */
 function img_object($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srconly = 0, $notitle = 0, $allowothertags = array())
