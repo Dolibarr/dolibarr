@@ -166,6 +166,23 @@ $conffiletoshow = "htdocs/conf/conf.php";
 // @phpstan-ignore-next-line
 $result = @include_once $conffile; // Keep @ because with some error reporting mode, this breaks the redirect done when file is not found
 
+/**
+ * @var ?string $dolibarr_main_stream_to_disable
+ * @var ?string $dolibarr_main_instance_unique_id
+ * @var ?string $dolibarr_strict_mode
+ * @var ?string $dolibarr_main_data_root
+ * @var ?string $dolibarr_main_db_prefix
+ * @var ?string $dolibarr_main_db_root
+ * @var ?string $dolibarr_main_db_user
+ * @var ?string $dolibarr_main_db_pass
+ * @var ?string $dolibarr_main_db_port
+ * @var ?string $dolibarr_main_db_type
+ * @var ?string $dolibarr_main_db_encryption
+ * @var ?string $dolibarr_main_db_encrypted_pass
+ * @var ?string $dolibarr_main_prod
+ * @var ?string $dolibarr_main_dolcrypt_key
+ */
+
 // Disable some not used PHP stream
 $listofwrappers = stream_get_wrappers();
 // We need '.phar' for geoip2. TODO Replace phar in geoip with exploded files so we can disable phar by default.
@@ -474,7 +491,7 @@ if ((!empty($dolibarr_main_db_pass) && preg_match('/(dolcrypt|crypted):/i', $dol
 		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
 		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this so we can use it later to know the password was initially encrypted
 	} elseif (!empty($dolibarr_main_db_pass) && preg_match('/dolcrypt:/i', $dolibarr_main_db_pass)) {
-		$dolibarr_main_db_pass = dolDecrypt($dolibarr_main_db_pass, (empty($dolibarr_main_dolcrypt_key) ? $dolibarr_main_instance_unique_id : $dolibarr_main_dolcrypt_key));
+		$dolibarr_main_db_pass = dolDecrypt($dolibarr_main_db_pass, (empty($dolibarr_main_dolcrypt_key) ? (empty($dolibarr_main_instance_unique_id) ? '' : $dolibarr_main_instance_unique_id) : $dolibarr_main_dolcrypt_key));
 		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this so we can use it later to know the password was initially encrypted
 	} else {
 		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
