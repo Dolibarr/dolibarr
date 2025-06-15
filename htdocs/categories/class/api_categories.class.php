@@ -183,6 +183,29 @@ class Categories extends DolibarrApi
 	}
 
 	/**
+	 * List categories types
+	 *
+	 * Get a list of type of categories according to filters
+	 *
+	 * @return array                Array of category type
+	 * @phan-return Categorie[]
+	 * @phpstan-return Categorie[]
+	 *
+	 * @url GET /types
+	 * @throws RestException
+	 */
+	public function getTypes()
+	{
+
+		if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
+			throw new RestException(403);
+		}
+
+		return $this->category->MAP_TYPE_TITLE_AREA;
+	}
+
+
+	/**
 	 * Create category object
 	 *
 	 * @param array $request_data   Request data
