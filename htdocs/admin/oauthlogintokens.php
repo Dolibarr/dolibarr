@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014-2018  Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2014-2024	Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2020		Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -35,6 +35,16 @@ use OAuth\Common\Consumer\Credentials;
 
 $supportedoauth2array = getSupportedOauth2Array();
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'printing', 'oauth'));
 
@@ -60,23 +70,20 @@ if (!$user->admin) {
 /*
  * Action
  */
+$error = 0;
 
-/*if (($mode == 'test' || $mode == 'setup') && empty($driver))
-{
+/*if (($mode == 'test' || $mode == 'setup') && empty($driver)) {
 	setEventMessages($langs->trans('PleaseSelectaDriverfromList'), null);
 	header("Location: ".$_SERVER['PHP_SELF'].'?mode=config');
 	exit;
 }*/
 
 if ($action == 'setconst' && $user->admin) {
-	$error = 0;
 	$db->begin();
 
 	$setupconstarray = GETPOST('setupdriver', 'array');
 
 	foreach ($setupconstarray as $setupconst) {
-		//print '<pre>'.print_r($setupconst, true).'</pre>';
-
 		$constname = dol_escape_htmltag($setupconst['varname']);
 		$constvalue = dol_escape_htmltag($setupconst['value']);
 		$consttype = dol_escape_htmltag($setupconst['type']);
@@ -125,8 +132,20 @@ if ($action == 'refreshtoken' && $user->admin) {
 	$tokenobj = null;
 	// Load OAUth libraries
 	require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
+
+	$keyforsupportedoauth2array = $OAUTH_SERVICENAME;
+	if (preg_match('/^.*-/', $keyforsupportedoauth2array)) {
+		$keyforprovider = preg_replace('/^.*-/', '', $keyforsupportedoauth2array);
+	} else {
+		$keyforprovider = '';
+	}
+	$keyforsupportedoauth2array = preg_replace('/-.*$/', '', strtoupper($keyforsupportedoauth2array));
+	$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
+
+	$keyforparamtenant = 'OAUTH_'.strtoupper(empty($supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']).($keyforprovider ? '-'.$keyforprovider : '').'_TENANT';
+
 	// Dolibarr storage
-	$storage = new DoliStorage($db, $conf, $keyforprovider);
+	$storage = new DoliStorage($db, $conf, $keyforprovider, getDolGlobalString($keyforparamtenant));
 	try {
 		// $OAUTH_SERVICENAME is for example 'Google-keyforprovider'
 		print '<!-- '.$OAUTH_SERVICENAME.' -->'."\n";
@@ -161,8 +180,15 @@ if ($action == 'refreshtoken' && $user->admin) {
 		//$httpClient->setCurlParameters($params);
 		$serviceFactory->setHttpClient($httpClient);
 
+		$scopes = array();
+		if (preg_match('/^Microsoft/', $OAUTH_SERVICENAME)) {
+			//$extraparams = $tokenobj->getExtraParams();
+			$tmp = explode('-', $OAUTH_SERVICENAME);
+			$scopes = explode(',', getDolGlobalString('OAUTH_'.strtoupper($tmp[0]).(empty($tmp[1]) ? '' : '-'.$tmp[1]).'_SCOPE'));
+		}
+
 		// ex service is Google-Emails we need only the first part Google
-		$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, array());
+		$apiService = $serviceFactory->createService($oauthname[0], $credentials, $storage, $scopes);
 
 		if ($apiService instanceof OAuth\OAuth2\Service\AbstractService || $apiService instanceof OAuth\OAuth1\Service\AbstractService) {
 			// ServiceInterface does not provide refreshAccessToekn, AbstractService does
@@ -254,11 +280,14 @@ if ($mode == 'setup' && $user->admin) {
 				$keybeforeprovider = $keyforsupportedoauth2array;
 				$keyforprovider = '';
 			}
-			$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
+			$keyforsupportedoauth2array = preg_replace('/-.*$/', '', strtoupper($keyforsupportedoauth2array));
 			$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
 
+			$nameofservice = ucfirst(strtolower(empty($supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']));
+			$nameofservice .= ($keyforprovider ? '-'.$keyforprovider : '');
+			$OAUTH_SERVICENAME = $nameofservice;
 
-			$OAUTH_SERVICENAME = (empty($supportedoauth2array[$keyforsupportedoauth2array]['name']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['name'].($keyforprovider ? '-'.$keyforprovider : ''));
+			$keyforparamtenant = 'OAUTH_'.strtoupper(empty($supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']) ? 'Unknown' : $supportedoauth2array[$keyforsupportedoauth2array]['callbackfile']).($keyforprovider ? '-'.$keyforprovider : '').'_TENANT';
 
 			$shortscope = '';
 			if (getDolGlobalString($key[4])) {
@@ -309,7 +338,7 @@ if ($mode == 'setup' && $user->admin) {
 			// Token
 			require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
 			// Dolibarr storage
-			$storage = new DoliStorage($db, $conf, $keyforprovider);
+			$storage = new DoliStorage($db, $conf, $keyforprovider, getDolGlobalString($keyforparamtenant));
 			try {
 				// $OAUTH_SERVICENAME is for example 'Google-keyforprovider'
 				print '<!-- '.$OAUTH_SERVICENAME.' -->'."\n";

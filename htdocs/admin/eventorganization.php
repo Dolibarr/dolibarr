@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,12 +26,18 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 
-global $langs, $user;
-
 // Libraries
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/eventorganization.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Translations
 $langs->loadLangs(array("admin", "eventorganization", "categories"));
@@ -47,6 +54,10 @@ $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'myobject';
 
+if (empty($action)) {
+	$action = 'edit';
+}
+
 $arrayofparameters = array(
 	'EVENTORGANIZATION_TASK_LABEL' => array('type' => 'textarea','enabled' => 1, 'css' => ''),
 	'EVENTORGANIZATION_CATEG_THIRDPARTY_CONF' => array('type' => 'category:'.Categorie::TYPE_CUSTOMER, 'enabled' => 1, 'css' => ''),
@@ -59,9 +70,8 @@ $arrayofparameters = array(
 	'EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT' => array('type' => 'emailtemplate:conferenceorbooth', 'enabled' => 1, 'css' => ''),
 	//'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER'=>array('type'=>'emailtemplate:conferenceorbooth', 'enabled'=>1, 'css' => ''),
 	//'EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES'=>array('type'=>'emailtemplate:conferenceorbooth', 'enabled'=>1, 'css' => ''),
-	'SERVICE_BOOTH_LOCATION' => array('type' => 'product', 'enabled' => 1, 'css' => ''),
-	'SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION' => array('type' => 'product', 'enabled' => 1, 'css' => ''),
-	'EVENTORGANIZATION_SECUREKEY' => array('type' => 'securekey', 'enabled' => 1, 'css' => ''),
+	'SERVICE_BOOTH_LOCATION' => array('type' => 'product', 'enabled' => 1, 'css' => 'maxwidth500'),
+	'SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION' => array('type' => 'product', 'enabled' => 1, 'css' => 'maxwidth500'),
 );
 
 $error = 0;
@@ -123,31 +133,7 @@ if ($action == 'updateMask') {
 			}
 		}
 	}
-}/* elseif ($action == 'setdoc') {
-	// Set or unset default model
-	$tmpobjectkey = GETPOST('object', 'aZ09');
-	if (!empty($tmpobjectkey)) {
-		$constforval = 'EVENTORGANIZATION_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
-		if (dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity)) {
-			// The constant that was read before the new set
-			// We therefore requires a variable to have a coherent view
-			$conf->global->$constforval = $value;
-		}
-
-		// We disable/enable the document template (into llx_document_model table)
-		$ret = delDocumentModel($value, $type);
-		if ($ret > 0) {
-			$ret = addDocumentModel($value, $type, $label, $scandir);
-		}
-	}
-} elseif ($action == 'unsetdoc') {
-	$tmpobjectkey = GETPOST('object', 'aZ09');
-	if (!empty($tmpobjectkey)) {
-		$constforval = 'EVENTORGANIZATION_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
-		dolibarr_del_const($db, $constforval, $conf->entity);
-	}
-}*/
-
+}
 
 
 /*
@@ -170,7 +156,8 @@ $head = eventorganizationAdminPrepareHead();
 print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, 'eventorganization');
 
 // Setup page goes here
-echo '<span class="opacitymedium">'.$langs->trans("EventOrganizationSetupPage").'</span><br><br>';
+//print '<span class="opacitymedium">'.$langs->trans("EventOrganizationSetupPage").'</span><br>';
+print '<br>';
 
 
 if ($action == 'edit') {
@@ -179,7 +166,7 @@ if ($action == 'edit') {
 	print '<input type="hidden" name="action" value="update">';
 
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 	foreach ($arrayofparameters as $constname => $val) {
 		if ($val['enabled'] == 1) {
@@ -194,12 +181,6 @@ if ($action == 'edit') {
 				print '<textarea class="flat" name="'.$constname.'" id="'.$constname.'" cols="50" rows="5" wrap="soft">' . "\n";
 				print getDolGlobalString($constname);
 				print "</textarea>\n";
-			} elseif ($val['type'] == 'html') {
-				require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-				$doleditor = new DolEditor($constname, getDolGlobalString($constname), '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
-				$doleditor->Create();
-			} elseif ($val['type'] == 'yesno') {
-				print $form->selectyesno($constname, getDolGlobalString($constname), 1);
 			} elseif (preg_match('/emailtemplate:/', $val['type'])) {
 				include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 				$formmail = new FormMail($db);
@@ -227,23 +208,14 @@ if ($action == 'edit') {
 
 				$tmp = explode(':', $val['type']);
 				print img_picto('', 'category', 'class="pictofixedwidth"');
-				print $formother->select_categories($tmp[1], getDolGlobalString($constname), $constname, 0, $langs->trans('CustomersProspectsCategoriesShort'));
+				print $formother->select_categories($tmp[1], getDolGlobalInt($constname), $constname, 0, $langs->trans('CustomersProspectsCategoriesShort'));
 			} elseif (preg_match('/thirdparty_type/', $val['type'])) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 				$formcompany = new FormCompany($db);
-				print $formcompany->selectProspectCustomerType(getDolGlobalString($constname), $constname, 'customerorprospect', 'form', '', 1);
-			} elseif ($val['type'] == 'securekey') {
-				print '<input type="text" class="flat" id="'.$constname.'" name="'.$constname.'" value="'.(GETPOST($constname, 'alpha') ? GETPOST($constname, 'alpha') : getDolGlobalString($constname)).'" size="40">';
-				if (!empty($conf->use_javascript_ajax)) {
-					print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token'.$constname.'" class="linkobject"');
-				}
-
-				// Add button to autosuggest a key
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-				print dolJSToSetRandomPassword($constname, 'generate_token'.$constname);
+				print $formcompany->selectProspectCustomerType(getDolGlobalString($constname), $constname, 'customerorprospect', 'form', '', '1');
 			} elseif ($val['type'] == 'product') {
 				if (isModEnabled("product") || isModEnabled("service")) {
-					$selected = getDolGlobalString($constname);
+					$selected = getDolGlobalInt($constname);
 					print img_picto('', 'product', 'class="pictofixedwidth"');
 					print $form->select_produits($selected, $constname, '', 0, 0, 1, 2, '', 0, array(), 0, '1', 0, 'maxwidth500 widthcentpercentminusx', 0, '', null, 1);
 				}
@@ -255,101 +227,94 @@ if ($action == 'edit') {
 	}
 	print '</table>';
 
-	print $form->buttonsSaveCancel();
+	print $form->buttonsSaveCancel('Save', '');
 
 	print '</form>';
 	print '<br>';
 } else {
-	if (!empty($arrayofparameters)) {
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td></td></tr>';
 
-		foreach ($arrayofparameters as $constname => $val) {
-			if ($val['enabled'] == 1) {
-				$setupnotempty++;
-				print '<tr class="oddeven">';
-				print '<td><!-- '.$constname.' -->';
-				$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
-				$tooltiphelp .= (($langs->trans($constname . 'Tooltip2') && $langs->trans($constname . 'Tooltip2') != $constname . 'Tooltip2') ? '<br><br>'."\n".$langs->trans($constname . 'Tooltip2') : '');
-				print $form->textwithpicto($langs->trans($constname), $tooltiphelp);
-				print '</td><td>';
+	foreach ($arrayofparameters as $constname => $val) {
+		/*if ($val['enabled'] != 1) {
+			continue;
+		}*/
+		$setupnotempty++;
+		print '<tr class="oddeven">';
+		print '<td><!-- '.$constname.' -->';
+		$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
+		$tooltiphelp .= (($langs->trans($constname . 'Tooltip2') && $langs->trans($constname . 'Tooltip2') != $constname . 'Tooltip2') ? '<br><br>'."\n".$langs->trans($constname . 'Tooltip2') : '');
+		print $form->textwithpicto($langs->trans($constname), $tooltiphelp);
+		print '</td><td>';
 
-				if ($val['type'] == 'textarea') {
-					print dol_nl2br(getDolGlobalString($constname));
-				} elseif ($val['type'] == 'html') {
-					print getDolGlobalString($constname);
-				} elseif ($val['type'] == 'yesno') {
-					print ajax_constantonoff($constname);
-				} elseif (preg_match('/emailtemplate:/', $val['type'])) {
-					if (getDolGlobalString($constname)) {
-						include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
-						$formmail = new FormMail($db);
+		if ($val['type'] == 'textarea') {
+			print dol_nl2br(getDolGlobalString($constname));
+		} elseif (preg_match('/emailtemplate:/', $val['type'])) {
+			if (getDolGlobalString($constname)) {
+				include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
+				$formmail = new FormMail($db);
 
-						$tmp = explode(':', $val['type']);
-						$labelemailtemplate = getDolGlobalString($constname);
-						if ($labelemailtemplate && $labelemailtemplate != '-1') {
-							$template = $formmail->getEMailTemplate($db, $tmp[1], $user, $langs, getDolGlobalString($constname));
-							if (is_numeric($template) && $template < 0) {
-								setEventMessages($formmail->error, $formmail->errors, 'errors');
-							} else {
-								if ($template->label != 'default') {
-									print $langs->trans($template->label);
-								}
-							}
+				$tmp = explode(':', $val['type']);
+				$labelemailtemplate = getDolGlobalString($constname);
+				if ($labelemailtemplate && $labelemailtemplate != '-1') {
+					$template = $formmail->getEMailTemplate($db, $tmp[1], $user, $langs, getDolGlobalInt($constname));
+					if (is_numeric($template) && $template < 0) {
+						setEventMessages($formmail->error, $formmail->errors, 'errors');
+					} else {
+						if ($template->label != 'default') {
+							print $langs->trans($template->label);
 						}
 					}
-				} elseif (preg_match('/category:/', $val['type'])) {
-					if (getDolGlobalString($constname)) {
-						$c = new Categorie($db);
-						$result = $c->fetch(getDolGlobalString($constname));
-						if ($result < 0) {
-							setEventMessages(null, $c->errors, 'errors');
-						}
-						$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
-						$toprint = array();
-						foreach ($ways as $way) {
-							$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';
-						}
-						print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
-					}
-				} elseif (preg_match('/thirdparty_type/', $val['type'])) {
-					if (getDolGlobalString($constname) == 2) {
-						print $langs->trans("Prospect");
-					} elseif (getDolGlobalString($constname) == 3) {
-						print $langs->trans("ProspectCustomer");
-					} elseif (getDolGlobalString($constname) == 1) {
-						print $langs->trans("Customer");
-					} elseif (getDolGlobalString($constname) == 0) {
-						print $langs->trans("NorProspectNorCustomer");
-					}
-				} elseif ($val['type'] == 'product') {
-					$product = new Product($db);
-					$idproduct = getDolGlobalString($constname);
-					if ($idproduct > 0) {
-						$resprod = $product->fetch($idproduct);
-						if ($resprod > 0) {
-							print $product->getNomUrl(1);
-						} elseif ($resprod < 0) {
-							setEventMessages($product->error, $product->errors, "errors");
-						}
-					}
-				} else {
-					print getDolGlobalString($constname);
 				}
-				print '</td>';
-
-				print '</tr>';
 			}
+		} elseif (preg_match('/category:/', $val['type'])) {
+			if (getDolGlobalInt($constname)) {
+				$c = new Categorie($db);
+				$result = $c->fetch(getDolGlobalInt($constname));
+				if ($result < 0) {
+					setEventMessages(null, $c->errors, 'errors');
+				}
+				$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
+				$toprint = array();
+				foreach ($ways as $way) {
+					$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';
+				}
+				print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
+			}
+		} elseif (preg_match('/thirdparty_type/', $val['type'])) {
+			if (getDolGlobalString($constname) == 2) {
+				print $langs->trans("Prospect");
+			} elseif (getDolGlobalString($constname) == 3) {
+				print $langs->trans("ProspectCustomer");
+			} elseif (getDolGlobalString($constname) == 1) {
+				print $langs->trans("Customer");
+			} elseif (getDolGlobalString($constname) == 0) {
+				print $langs->trans("NorProspectNorCustomer");
+			}
+		} elseif ($val['type'] == 'product') {
+			$product = new Product($db);
+			$idproduct = getDolGlobalInt($constname);
+			if ($idproduct > 0) {
+				$resprod = $product->fetch($idproduct);
+				if ($resprod > 0) {
+					print $product->getNomUrl(1);
+				} elseif ($resprod < 0) {
+					setEventMessages($product->error, $product->errors, "errors");
+				}
+			}
+		} else {
+			print getDolGlobalString($constname);
 		}
+		print '</td>';
 
-		print '</table>';
-
-		print '<div class="tabsAction">';
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
-		print '</div>';
-	} else {
-		print '<br>'.$langs->trans("NothingToSetup");
+		print '</tr>';
 	}
+
+	print '</table>';
+
+	print '<div class="tabsAction">';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
+	print '</div>';
 }
 
 

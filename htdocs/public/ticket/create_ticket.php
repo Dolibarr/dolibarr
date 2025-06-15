@@ -2,7 +2,8 @@
 /* Copyright (C) 2013-2016    Jean-François FERRY <hello@librethic.io>
  * Copyright (C) 2016         Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2023         Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,6 +65,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'other', 'mails', 'ticket'));
@@ -144,12 +153,13 @@ if (empty($reshook)) {
 		$upload_dir_tmp = $vardir.'/temp/'.session_id();
 
 		// TODO Delete only files that was uploaded from form
-		dol_remove_file_process(GETPOST('removedfile'), 0, 0);
+		dol_remove_file_process(GETPOSTINT('removedfile'), 0, 0);
 		$action = 'create_ticket';
 	}
 
-	if ($action == 'create_ticket' && GETPOST('save', 'alpha')) {
+	if ($action == 'create_ticket' && GETPOST('save', 'alpha')) {	// Test on permission not required. This is a public form. Security is managed by mitigation.
 		$error = 0;
+		$cid = -1;
 		$origin_email = GETPOST('email', 'email');
 		if (empty($origin_email)) {
 			$error++;
@@ -157,16 +167,18 @@ if (empty($reshook)) {
 			$action = '';
 		} else {
 			// Search company saved with email
-			$searched_companies = $object->searchSocidByEmail($origin_email, '0');
+			$searched_companies = $object->searchSocidByEmail($origin_email, 0);
 
 			// Chercher un contact existent avec cette address email
 			// Le premier contact trouvé est utilisé pour déterminer le contact suivi
 			$contacts = $object->searchContactByEmail($origin_email);
+			if (!is_array($contacts)) {
+				$contacts = array();
+			}
 
 			// Ensure that contact is active and select first active contact
-			$cid = -1;
 			foreach ($contacts as $key => $contact) {
-				if ((int) $contact->statut == 1) {
+				if ((int) $contact->status == 1) {
 					$cid = $key;
 					break;
 				}
@@ -186,7 +198,7 @@ if (empty($reshook)) {
 		$contact_phone = '';
 		if ($with_contact) {
 			// set linked contact to add in form
-			if (is_array($contacts) && count($contacts) == 1) {
+			if (/* is_array($contacts) && */ count($contacts) == 1) {
 				$with_contact = current($contacts);
 			}
 
@@ -211,21 +223,21 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!GETPOST("subject", "alphanohtml")) {
-			$error++;
-			array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")));
-			$action = '';
-		}
-		if (!GETPOST("message", "restricthtml")) {
-			$error++;
-			array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Message")));
-			$action = '';
-		}
+
+		$fieldsToCheck = [
+			'type_code' => ['check' => 'alpha', 'langs' => 'TicketTypeRequest'],
+			'category_code' => ['check' => 'alpha', 'langs' => 'TicketCategory'],
+			'severity_code' => ['check' => 'alpha', 'langs' => 'TicketSeverity'],
+			'subject' => ['check' => 'alphanohtml', 'langs' => 'Subject'],
+			'message' => ['check' => 'restricthtml', 'langs' => 'Message']
+		];
+
+		FormTicket::checkRequiredFields($fieldsToCheck, $error);
 
 		// Check email address
 		if (!empty($origin_email) && !isValidEmail($origin_email)) {
 			$error++;
-			array_push($object->errors, $langs->trans("ErrorBadEmailAddress", $langs->transnoentities("email")));
+			array_push($object->errors, $langs->trans("ErrorBadEmailAddress", $langs->transnoentities("Email")));
 			$action = '';
 		}
 
@@ -300,7 +312,7 @@ if (empty($reshook)) {
 				if ($result < 0) {
 					$error++;
 					$errors = ($company->error ? array($company->error) : $company->errors);
-					array_push($object->errors, $errors);
+					$object->errors = array_merge($object->errors, $errors);
 					$action = 'create_ticket';
 				}
 
@@ -315,7 +327,7 @@ if (empty($reshook)) {
 					if ($result < 0) {
 						$error++;
 						$errors = ($with_contact->error ? array($with_contact->error) : $with_contact->errors);
-						array_push($object->errors, $errors);
+						$object->errors = array_merge($object->errors, $errors);
 						$action = 'create_ticket';
 					} else {
 						$contacts = array($with_contact);
@@ -327,7 +339,7 @@ if (empty($reshook)) {
 				$object->fk_soc = $searched_companies[0]->id;
 			}
 
-			if (is_array($contacts) && count($contacts) > 0 && $cid >= 0) {
+			if (/* is_array($contacts) && */ count($contacts) > 0 && $cid >= 0) {
 				$object->fk_soc = $contacts[$cid]->socid;
 				$usertoassign = $contacts[$cid]->id;
 			}
@@ -354,7 +366,9 @@ if (empty($reshook)) {
 				if ($id <= 0) {
 					$error++;
 					$errors = ($object->error ? array($object->error) : $object->errors);
-					array_push($object->errors, $object->error ? array($object->error) : $object->errors);
+					if ($object->error) {
+						array_push($object->errors, $object->error);
+					}
 					$action = 'create_ticket';
 				}
 			}
@@ -412,8 +426,8 @@ if (empty($reshook)) {
 						$sendtocc = '';
 						$deliveryreceipt = 0;
 
-						if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO') !== '') {
-							$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO');
+						$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO');
+						if ($old_MAIN_MAIL_AUTOCOPY_TO !== '') {
 							$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 						}
 						include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -423,7 +437,7 @@ if (empty($reshook)) {
 						} else {
 							$result = $mailfile->sendfile();
 						}
-						if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO') !== '') {
+						if ($old_MAIN_MAIL_AUTOCOPY_TO !== '') {
 							$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
 						}
 
@@ -455,8 +469,8 @@ if (empty($reshook)) {
 							$from = getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' <' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
 							$replyto = $from;
 
-							if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO') !== '') {
-								$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO');
+							$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO');
+							if ($old_MAIN_MAIL_AUTOCOPY_TO !== '') {
 								$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 							}
 							include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -466,7 +480,7 @@ if (empty($reshook)) {
 							} else {
 								$result = $mailfile->sendfile();
 							}
-							if ((getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO') !== '')) {
+							if ($old_MAIN_MAIL_AUTOCOPY_TO !== '') {
 								$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
 							}
 						}
@@ -517,7 +531,7 @@ $arrayofcss = array(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/public/t
 llxHeaderTicket($langs->trans("CreateTicket"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 
-print '<div class="ticketpublicarea ticketlargemargin centpercent">';
+print '<div class="ticketpublicarea ticketlargemargin">';
 
 if ($action != "infos_success") {
 	$formticket->withfromsocid = isset($socid) ? $socid : $user->socid;
@@ -533,7 +547,7 @@ if ($action != "infos_success") {
 
 	$formticket->param = array('returnurl' => $_SERVER['PHP_SELF'].($conf->entity > 1 ? '?entity='.$conf->entity : ''));
 
-	print load_fiche_titre($langs->trans('NewTicket'), '', '', 0, 0, 'marginleftonly');
+	print load_fiche_titre($langs->trans('NewTicket'), '', '', 0, '', 'marginleftonly');
 
 	if (!getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM')) {
 		$langs->load("errors");

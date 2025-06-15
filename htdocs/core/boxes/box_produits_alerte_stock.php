@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012 Maxime Kohlhaas      <mko@atm-consulting.fr>
  * Copyright (C) 2015-2021 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2015      Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,9 +54,11 @@ class box_produits_alerte_stock extends ModeleBoxes
 		$this->db = $db;
 
 		$listofmodulesforexternal = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
-		$tmpentry = array('enabled' => ((isModEnabled("product") || isModEnabled("service")) && isModEnabled('stock')), 'perms' => $user->hasRight('stock', 'lire'), 'module' => 'product|service|stock');
+		$tmpentry = array('enabled' => (int) ((isModEnabled("product") || isModEnabled("service")) && isModEnabled('stock')), 'perms' => (string) (int) $user->hasRight('stock', 'lire'), 'module' => 'product|service|stock');
 		$showmode = isVisibleToUserType(($user->socid > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
 		$this->hidden = ($showmode != 1);
+		$this->urltoaddentry = DOL_URL_ROOT.'/product/card.php?action=create';
+		$this->msgNoRecords = 'NoTooLowStockProducts';
 	}
 
 	/**
@@ -161,7 +163,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 						$price_base_type = $langs->trans($objp->price_base_type);
 						$price = ($objp->price_base_type == 'HT') ? price($objp->price) : $price = price($objp->price_ttc);
 					} else { //Parse the dynamic price
-						$productstatic->fetch($objp->rowid, '', '', 1);
+						$productstatic->fetch($objp->rowid, '', '', '1');
 
 						require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 						$priceparser = new PriceParser($this->db);
@@ -202,12 +204,12 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 					$line++;
 				}
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text' => $langs->trans("NoTooLowStockProducts"),
-					);
-				}
+				// if ($num == 0) {
+				// 	$this->info_box_contents[$line][0] = array(
+				// 		'td' => 'class="center"',
+				// 		'text' => $langs->trans("NoTooLowStockProducts"),
+				// 	);
+				// }
 
 				$this->db->free($result);
 			} else {
@@ -225,11 +227,13 @@ class box_produits_alerte_stock extends ModeleBoxes
 		}
 	}
 
+
+
 	/**
-	 *	Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
-	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
 	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */

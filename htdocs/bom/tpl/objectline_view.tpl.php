@@ -6,7 +6,8 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,13 +36,24 @@
  */
 
 /**
+ * @var Conf $conf
+ * @var CommonObject $this
+ * @var CommonObject $object
  * @var CommonObjectLine $line
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var int $i
  * @var int $num
+ * @var string $action
  */
-'@phan-var-force CommonObjectLine $line
- @phan-var-force int $num
- @phan-var-force CommonObject $this
- @phan-var-force CommonObject $object';
+'
+@phan-var-force BOMLine $line
+@phan-var-force int $num
+@phan-var-force int $i
+@phan-var-force CommonObject $this
+@phan-var-force CommonObject $object
+';
 
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 
@@ -107,7 +119,7 @@ $coldisplay++;
 $tmpproduct = new Product($object->db);
 $tmpproduct->fetch($line->fk_product);
 $tmpbom = new BOM($object->db);
-$res = $tmpbom->fetch($line->fk_bom_child);
+$res = $tmpbom->fetch((int) $line->fk_bom_child);
 if ($tmpbom->id > 0) {
 	print $tmpproduct->getNomUrl(1);
 	print ' '.$langs->trans("or").' ';
@@ -122,7 +134,7 @@ if ($tmpbom->id > 0) {
 
 // Line extrafield
 if (!empty($extrafields)) {
-	$temps = $line->showOptionals($extrafields, 'view', array(), '', '', 1, 'line');
+	$temps = $line->showOptionals($extrafields, 'view', array(), '', '', '1', 'line');
 	if (!empty($temps)) {
 		print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
 		print $temps;
@@ -141,7 +153,7 @@ print '</td>';
 if ($filtertype != 1) { // Product
 	if (getDolGlobalInt('PRODUCT_USE_UNITS')) {		// For product, unit is shown only if option PRODUCT_USE_UNITS is on
 		print '<td class="linecoluseunit nowrap">';
-		$label = measuringUnitString($line->fk_unit, '', '', 1);
+		$label = measuringUnitString((int) $line->fk_unit, '', null, 1);
 		if ($label !== '') {
 			print $langs->trans($label);
 		}
@@ -189,6 +201,16 @@ if ($filtertype == 1 && isModEnabled('workstation')) {
 	print '<td class="linecolworkstation nowrap">';
 	$coldisplay++;
 	if ($res > 0) {
+		$unit = new CUnits($object->db);
+		$fk_defaultUnit = $unit->getUnitFromCode('h', 'short_label', 'time');
+		$nbPlannedHour = $unit->unitConverter($line->qty, $line->fk_unit, $fk_defaultUnit);
+		$line->total_cost = 0;
+		if ($workstation->thm_machine_estimated) {
+			$line->total_cost += $nbPlannedHour * $workstation->thm_machine_estimated;
+		}
+		if ($workstation->thm_operator_estimated) {
+			$line->total_cost += $nbPlannedHour * $workstation->thm_operator_estimated;
+		}
 		echo $workstation->getNomUrl(1);
 	}
 	print '</td>';
@@ -196,6 +218,7 @@ if ($filtertype == 1 && isModEnabled('workstation')) {
 
 // Cost
 $total_cost = 0;
+
 $tmpbom->calculateCosts();
 print '<td id="costline_'.$line->id.'" class="linecolcost nowrap right">';
 $coldisplay++;
@@ -336,7 +359,7 @@ if ($resql) {
 			$total_cost += $sub_bom->total_cost * $sub_bom_line->qty * (float) $line->qty;
 		} elseif ($sub_bom_product->type == Product::TYPE_SERVICE && isModEnabled('workstation') && !empty($sub_bom_product->fk_default_workstation)) {
 			//Convert qty to hour
-			$unit = measuringUnitString($sub_bom_line->fk_unit, '', '', 1);
+			$unit = measuringUnitString($sub_bom_line->fk_unit, '', null, 1);
 			$qty = convertDurationtoHour($sub_bom_line->qty, $unit);
 			$workstation = new Workstation($this->db);
 			$res = $workstation->fetch($sub_bom_product->fk_default_workstation);

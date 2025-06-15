@@ -36,12 +36,13 @@ Definition:
 
 As the Developer:
 
-1. [Fork](https://help.github.com/articles/fork-a-repo) the [GitHub repository](https://github.com/Dolibarr/dolibarr).
-2. Clone your fork.
-3. Choose a branch(See the [Branches](#branches) section below).
-4. Read our developer documentation on the [Dolibarr Wiki](https://wiki.dolibarr.org/index.php?title=Developer_documentation).
-5. Commit and push your changes.
-6. [Make a pull request](https://help.github.com/articles/creating-a-pull-request).
+1. Check you agree with the terms of the [DCO - Developer's Certificate of Origin](https://github.com/Dolibarr/dolibarr/blob/develop/DCO)
+2. [Fork](https://help.github.com/articles/fork-a-repo) the [GitHub repository](https://github.com/Dolibarr/dolibarr).
+3. Clone your fork.
+4. Choose a branch(See the [Branches](#branches) section below).
+5. Read our developer documentation on the [Dolibarr Wiki](https://wiki.dolibarr.org/index.php?title=Developer_documentation).
+6. Commit and push your changes.
+7. [Make a pull request](https://help.github.com/articles/creating-a-pull-request).
 
 As the PR Maintainer:
 
@@ -184,7 +185,7 @@ A so high ratio is very rare on a so popular project and with the increasing pop
 
 Translations
 ------------
-The source language (en_US) is maintained in the repository. See the [Code](#code) section above.
+The source language (en_US) is maintained in the repository.
 
 All other translations are managed online at [Transifex](https://www.transifex.com/dolibarr-association/dolibarr/).
 

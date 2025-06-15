@@ -4,71 +4,52 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 NewAsset=নতুন সম্পদ
 AccountancyCodeAsset=অ্যাকাউন্টিং কোড (সম্পদ)
 AccountancyCodeDepreciationAsset=অ্যাকাউন্টিং কোড (অবচরণ সম্পদ অ্যাকাউন্ট)
 AccountancyCodeDepreciationExpense=অ্যাকাউন্টিং কোড (অবচরণ খরচ অ্যাকাউন্ট)
 AssetsLines=সম্পদ
+ConfirmValidateAsset=আপনি কি নিশ্চিত যে আপনি এই সম্পদটি <b>%s</b> রেফারেন্স দিয়ে যাচাই করতে চান?
 DeleteType=মুছে ফেলা
 DeleteAnAssetType=একটি সম্পদ মডেল মুছুন
 ConfirmDeleteAssetType=আপনি কি এই সম্পদ মডেল মুছে ফেলার বিষয়ে নিশ্চিত?
 ShowTypeCard=মডেল দেখান '%s'
-
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=সম্পদ
 # Module description 'ModuleAssetsDesc'
 ModuleAssetsDesc=সম্পদের বিবরণ
-
-#
 # Admin page
-#
 AssetSetup=সম্পদ সেটআপ
 AssetSetupPage=সম্পদ সেটআপ পৃষ্ঠা
 ExtraFieldsAssetModel=পরিপূরক বৈশিষ্ট্য (সম্পদ মডেল)
-
 AssetsType=সম্পদ মডেল
 AssetsTypeId=সম্পদ মডেল আইডি
 AssetsTypeLabel=সম্পদ মডেল লেবেল
 AssetsTypes=সম্পদের মডেল
 ASSET_ACCOUNTANCY_CATEGORY=স্থায়ী সম্পদ অ্যাকাউন্টিং গ্রুপ
-
-#
+ASSET_DEPRECIATION_DURATION_PER_YEAR=এক বছরের বেশি সময় ধরে পরিশোধ গণনার জন্য আনুপাতিক সময়কাল দিনে
 # Menu
-#
 MenuAssets=সম্পদ
 MenuNewAsset=নতুন সম্পদ
 MenuAssetModels=মডেল সম্পদ
 MenuListAssets=তালিকা
 MenuNewAssetModel=নতুন সম্পদের মডেল
 MenuListAssetModels=তালিকা
-
-#
 # Module
-#
 ConfirmDeleteAsset=আপনি কি সত্যিই এই সম্পদ সরাতে চান?
-
-#
 # Tab
-#
 AssetDepreciationOptions=অবচয় বিকল্প
 AssetAccountancyCodes=অ্যাকাউন্টিং অ্যাকাউন্ট
 AssetDepreciation=অবচয়
-
-#
 # Asset
-#
 Asset=সম্পদ
 Assets=সম্পদ
 AssetReversalAmountHT=বিপরীত পরিমাণ (ট্যাক্স ছাড়া)
@@ -89,32 +70,21 @@ AssetNotDepreciated=অবমূল্যায়ন নয়
 AssetDisposal=নিষ্পত্তি
 AssetConfirmDisposalAsk=আপনি কি <b> %s</b> সম্পদের নিষ্পত্তি করার বিষয়ে নিশ্চিত?
 AssetConfirmReOpenAsk=আপনি কি <b> %s</b> সম্পদ পুনরায় খুলতে চান?
-
-#
 # Asset status
-#
+AssetInDraft=খসড়া
 AssetInProgress=চলমান
 AssetDisposed=নিষ্পত্তি
 AssetRecorded=অ্যাকাউন্টেড
-
-#
 # Asset disposal
-#
 AssetDisposalDate=নিষ্পত্তির তারিখ
 AssetDisposalAmount=নিষ্পত্তি মূল্য
 AssetDisposalType=নিষ্পত্তির ধরন
 AssetDisposalDepreciated=স্থানান্তরের বছর অবমূল্যায়ন করুন
 AssetDisposalSubjectToVat=ভ্যাট সাপেক্ষে নিষ্পত্তি
-
-#
 # Asset model
-#
 AssetModel=সম্পদের মডেল
 AssetModels=সম্পদের মডেল
-
-#
 # Asset depreciation options
-#
 AssetDepreciationOptionEconomic=অর্থনৈতিক অবচয়
 AssetDepreciationOptionAcceleratedDepreciation=ত্বরিত অবচয় (কর)
 AssetDepreciationOptionDepreciationType=অবচয় প্রকার
@@ -122,7 +92,6 @@ AssetDepreciationOptionDepreciationTypeLinear=রৈখিক
 AssetDepreciationOptionDepreciationTypeDegressive=অধঃপতনশীল
 AssetDepreciationOptionDepreciationTypeExceptional=ব্যতিক্রমী
 AssetDepreciationOptionDegressiveRate=অধঃপতন হার
-AssetDepreciationOptionAcceleratedDepreciation=ত্বরিত অবচয় (কর)
 AssetDepreciationOptionDuration=সময়কাল
 AssetDepreciationOptionDurationType=সময়কাল টাইপ করুন
 AssetDepreciationOptionDurationTypeAnnual=বার্ষিক
@@ -132,10 +101,7 @@ AssetDepreciationOptionRate=হার (%%)
 AssetDepreciationOptionAmountBaseDepreciationHT=অবচয় বেস (ভ্যাট বাদে)
 AssetDepreciationOptionAmountBaseDeductibleHT=কর্তনযোগ্য ভিত্তি (ভ্যাট বাদে)
 AssetDepreciationOptionTotalAmountLastDepreciationHT=মোট পরিমাণ শেষ অবচয় (ভ্যাট বাদে)
-
-#
 # Asset accountancy codes
-#
 AssetAccountancyCodeDepreciationEconomic=অর্থনৈতিক অবমূল্যায়ন
 AssetAccountancyCodeAsset=সম্পদ
 AssetAccountancyCodeDepreciationAsset=অবচয়
@@ -149,10 +115,7 @@ AssetAccountancyCodeDepreciationAcceleratedDepreciation=ত্বরিত অ�
 AssetAccountancyCodeAcceleratedDepreciation=হিসাব
 AssetAccountancyCodeEndowmentAcceleratedDepreciation=অবচয় ব্যয়
 AssetAccountancyCodeProvisionAcceleratedDepreciation=দখল/বিধান
-
-#
 # Asset depreciation
-#
 AssetBaseDepreciationHT=অবচয় ভিত্তিতে (ভ্যাট বাদে)
 AssetDepreciationBeginDate=অবচয় শুরু
 AssetDepreciationDuration=সময়কাল
@@ -164,10 +127,7 @@ AssetResidualHT=অবশিষ্ট মান (ভ্যাট বাদে)
 AssetDispatchedInBookkeeping=অবচয় রেকর্ড করা হয়েছে
 AssetFutureDepreciationLine=ভবিষ্যৎ অবচয়
 AssetDepreciationReversal=উল্টো
-
-#
 # Errors
-#
 AssetErrorAssetOrAssetModelIDNotProvide=সম্পদের আইডি বা পাওয়া মডেল প্রদান করা হয়নি
 AssetErrorFetchAccountancyCodesForMode='%s' অবচয় মোডের জন্য অ্যাকাউন্টিং অ্যাকাউন্টগুলি পুনরুদ্ধার করার সময় ত্রুটি
 AssetErrorDeleteAccountancyCodesForMode='%s' অবচয় মোড থেকে অ্যাকাউন্টিং অ্যাকাউন্টগুলি মুছে ফেলার সময় ত্রুটি

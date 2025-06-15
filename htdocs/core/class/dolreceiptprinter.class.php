@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020       Andreu Bisquerra    <jove@bisquerra.com>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Abbes Bahfir        <bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -140,6 +140,9 @@ class dolReceiptPrinter extends Printer
 	 * @var \Mike42\Escpos\Printer
 	 */
 	public $printer;
+	/**
+	 * @var string
+	 */
 	public $template;
 
 	/**
@@ -150,13 +153,13 @@ class dolReceiptPrinter extends Printer
 
 	/**
 	 * Array with list of printers
-	 * @var array	List of printers
+	 * @var array<array{rowid:int,name:string,fk_type:int,fk_type_name:string,fk_profile:int,fk_profile_name:string,parameter:string}>	List of printers
 	 */
 	public $listprinters;
 
 	/**
 	 * Array with list of printer templates
-	 * @var array	List of printer templates
+	 * @var array<array{rowid:int,name:string,template:string}>	List of printer templates
 	 */
 	public $listprinterstemplates;
 
@@ -404,7 +407,7 @@ class dolReceiptPrinter extends Printer
 			5 => $langs->trans('CONNECTOR_CUPS_PRINT'),
 		);
 
-		$this->resprint = Form::selectarray($htmlname, $options, $selected);
+		$this->resprint = Form::selectarray($htmlname, $options, $selected, 0, 0, 0, '', 0, 0, 0, '', 'minwidth150');
 
 		return 0;
 	}
@@ -429,7 +432,7 @@ class dolReceiptPrinter extends Printer
 			4 => $langs->trans('PROFILE_STAR'),
 		);
 
-		$this->profileresprint = Form::selectarray($htmlname, $options, $selected);
+		$this->profileresprint = Form::selectarray($htmlname, $options, $selected, 0, 0, 0, '', 0, 0, 0, '', 'minwidth150');
 		return 0;
 	}
 
@@ -511,7 +514,7 @@ class dolReceiptPrinter extends Printer
 	 *  Function to add a printer template in db
 	 *
 	 *  @param    string    $name           Template name
-	 *  @param    int       $template       Template
+	 *  @param    string    $template       Template
 	 *  @return   int                       0 if OK; >0 if KO
 	 */
 	public function addTemplate($name, $template)
@@ -554,7 +557,7 @@ class dolReceiptPrinter extends Printer
 	 *  Function to Update a printer template in db
 	 *
 	 *  @param    string    $name           Template name
-	 *  @param    int       $template       Template
+	 *  @param    string    $template       Template
 	 *  @param    int       $templateid     Template id
 	 *  @return   int                       0 if OK; >0 if KO
 	 */
@@ -772,7 +775,11 @@ class dolReceiptPrinter extends Printer
 						//var_dump($object);
 						$vatarray = array();
 						foreach ($object->lines as $line) {
-							$vatarray[$line->tva_tx] += $line->total_tva;
+							$vat_rate = $line->tva_tx;
+							if (!array_key_exists($vat_rate, $vatarray)) {
+								$vatarray[$vat_rate] = 0;
+							}
+							$vatarray[$vat_rate] += $line->total_tva;
 						}
 						foreach ($vatarray as $vatkey => $vatvalue) {
 							$spacestoadd = $nbcharactbyline - strlen($vatkey) - 12;
@@ -895,10 +902,10 @@ class dolReceiptPrinter extends Printer
 						$this->printer->setTextSize(1, 1);
 						break;
 					case 'DOL_UNDERLINE':
-						$this->printer->setUnderline(true);
+						$this->printer->setUnderline(1);
 						break;
 					case 'DOL_UNDERLINE_DISABLED':
-						$this->printer->setUnderline(false);
+						$this->printer->setUnderline(0);
 						break;
 					case 'DOL_BEEP':
 						$this->printer->getPrintConnector() -> write("\x1e");

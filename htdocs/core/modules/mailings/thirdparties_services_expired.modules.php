@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
 * This file is an example to follow to add your own email selector inside
 * the Dolibarr email tool.
@@ -23,13 +24,29 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  */
 class mailing_thirdparties_services_expired extends MailingTargets
 {
+	/**
+	 * @var string name of mailing module
+	 */
 	public $name = 'DolibarrContractsLinesExpired';
-	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+
+	/**
+	 * @var string This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+	 */
 	public $desc = 'Third parties with expired contract\'s lines';
+
+	/**
+	 * @var int
+	 */
 	public $require_admin = 0;
 
+	/**
+	 * @var string[] This module allows to select by categories must be also enabled if category module is not activated
+	 */
 	public $require_module = array('contrat');
 
+	/**
+	 * @var string condition to enable module
+	 */
 	public $enabled = 'isModEnabled("societe")';
 
 	/**
@@ -37,6 +54,9 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	 */
 	public $picto = 'company';
 
+	/**
+	 * @var array<int,string>
+	 */
 	public $arrayofproducts = array();
 
 
@@ -141,7 +161,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 					('Contract='.$obj->fk_contrat).';'.
 					('ContactLine='.$obj->cdid),
 					'source_url' => $this->url($obj->id),
-					'source_id' => $obj->id,
+					'source_id' => (int) $obj->id,
 					'source_type' => 'thirdparty'
 					);
 					$old = $obj->email;

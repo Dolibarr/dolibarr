@@ -4,6 +4,8 @@
  * Copyright (C) 2012 Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013 Florian Henry <forian.henry@open-concept.pro
  * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,18 +62,27 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ */
+
 // Check parameters
 if (!isset($argv[1]) || !$argv[1]) {
-	usage($path, $script_file);
+	usageCron($path, $script_file);
 	exit(1);
 }
 $key = $argv[1];
 
 if (!isset($argv[2]) || !$argv[2]) {
-	usage($path, $script_file);
+	usageCron($path, $script_file);
 	exit(1);
 }
 
@@ -132,7 +143,7 @@ if ($userlogin == 'firstadmin') {
 
 // Check user login
 $user = new User($db);
-$result = $user->fetch('', $userlogin, '', 1);
+$result = $user->fetch(0, $userlogin, '', 1);
 if ($result < 0) {
 	echo "User Error: ".$user->error;
 	dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
@@ -157,7 +168,7 @@ if ($langs->getDefaultLang() != $langcode) {
 // Language Management
 $langs->loadLangs(array('main', 'admin', 'cron', 'dict'));
 
-$user->getrights();
+$user->loadRights();
 
 if (isset($argv[3]) && $argv[3]) {
 	$id = $argv[3];
@@ -209,6 +220,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 
 	// Loop over job
 	foreach ($object->lines as $line) {
+		'@phan-var-force CronJob $line';
 		dol_syslog("cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label, LOG_DEBUG);
 		echo "cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label;
 
@@ -217,13 +229,18 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 			dol_syslog("cron_run_jobs.php: we work on another entity conf than ".$conf->entity." so we reload mysoc, langs, user and conf", LOG_DEBUG);
 			echo " -> we change entity so we reload mysoc, langs, user and conf";
 
+			// if we switch to a different entity, we have to reset the $extrafields global var to
+			// make sure the extrafield definitions from this entity are properly loaded
+			if (($line->entity ?: 1) != $conf->entity && isset($extrafields) && !empty($extrafields->attributes)) {
+				$extrafields = new ExtraFields($db);
+			}
 			$conf->entity = (empty($line->entity) ? 1 : $line->entity);
 			$conf->setValues($db); // This make also the $mc->setValues($conf); that reload $mc->sharings
 			$mysoc->setMysoc($conf);
 
 			// Force recheck that user is ok for the entity to process and reload permission for entity
 			if ($conf->entity != $user->entity) {
-				$result = $user->fetch('', $userlogin, '', 1);
+				$result = $user->fetch(0, $userlogin, '', 1);
 				if ($result < 0) {
 					echo "\nUser Error: ".$user->error."\n";
 					dol_syslog("cron_run_jobs.php: User Error:".$user->error, LOG_ERR);
@@ -235,7 +252,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 						exit(1);
 					}
 				}
-				$user->getrights();
+				$user->loadRights('', 1); // We force rights reload to have the correct permissions for user in the entity we just switched in
 			}
 
 			// Reload langs
@@ -271,6 +288,10 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 				dol_syslog("cron_run_jobs.php::fetch Error ".$cronjob->error, LOG_ERR);
 				exit(1);
 			}
+
+			$parameters = array('cronjob' => $cronjob, 'line' => $line);
+			$reshook    = $hookmanager->executeHooks('beforeRunCronJob', $parameters, $object);
+
 			// Execute job
 			$result = $cronjob->run_jobs($userlogin);
 			if ($result < 0) {
@@ -283,6 +304,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 			} else {
 				$nbofjobslaunchedok++;
 				$resultstring = 'OK';
+				echo " - ";
 			}
 
 			echo "Result of run_jobs ".$resultstring." result = ".$result;
@@ -296,7 +318,10 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 				exit(1);
 			}
 
-			echo "Job re-scheduled\n";
+			echo " - Job re-scheduled\n";
+
+			$parameters = array('cronjob' => $cronjob, 'line' => $line);
+			$reshook    = $hookmanager->executeHooks('afterRunCronJob', $parameters, $object);
 		} else {
 			echo " - not qualified (datenextrunok=".($datenextrunok ?: 0).", datestartok=".($datestartok ?: 0).", dateendok=".($dateendok ?: 0).")\n";
 
@@ -320,13 +345,13 @@ exit(0);
 
 
 /**
- * script cron usage
+ * script cron usageCron
  *
  * @param string $path				Path
  * @param string $script_file		Filename
  * @return void
  */
-function usage($path, $script_file)
+function usageCron($path, $script_file)
 {
 	print "Usage: ".$script_file." securitykey userlogin|'firstadmin' [cronjobid] [--force]\n";
 	print "The script return 0 when everything worked successfully.\n";

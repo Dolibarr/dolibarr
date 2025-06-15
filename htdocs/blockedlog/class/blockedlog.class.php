@@ -2,7 +2,8 @@
 /* Copyright (C) 2017       ATM Consulting      <contact@atm-consulting.fr>
  * Copyright (C) 2017-2020  Laurent Destailleur <eldy@destailleur.fr>
  * Copyright (C) 2022 		charlene benke		<charlene@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,12 +102,12 @@ class BlockedLog
 	public $fk_user = 0;
 
 	/**
-	 * @var int|string date_creation
+	 * @var int|string
 	 */
 	public $date_creation;
 
 	/**
-	 * @var int|string $date_modification;
+	 * @var int|string
 	 */
 	public $date_modification;
 
@@ -168,7 +169,7 @@ class BlockedLog
 		// Customer Invoice/Facture / Payment
 		if (isModEnabled('invoice')) {
 			$this->trackedevents['BILL_VALIDATE'] = 'logBILL_VALIDATE';
-			$this->trackedevents['BILL_DELETE'] = 'logBILL_DELETE';
+			//$this->trackedevents['BILL_UPDATE'] = 'logBILL_UPDATE';
 			$this->trackedevents['BILL_SENTBYMAIL'] = 'logBILL_SENTBYMAIL';
 			$this->trackedevents['DOC_DOWNLOAD'] = 'BlockedLogBillDownload';
 			$this->trackedevents['DOC_PREVIEW'] = 'BlockedLogBillPreview';
@@ -200,7 +201,7 @@ class BlockedLog
 
 		/*
 		// Salary
-		if (!empty($conf->salary->enabled)) {
+		if (isModEnabled('salary')) {
 			$this->trackedevents['PAYMENT_SALARY_CREATE']='BlockedLogSalaryPaymentCreate';
 			$this->trackedevents['PAYMENT_SALARY_MODIFY']='BlockedLogSalaryPaymentCreate';
 			$this->trackedevents['PAYMENT_SALARY_DELETE']='BlockedLogSalaryPaymentCreate';
@@ -349,6 +350,8 @@ class BlockedLog
 			} else {
 				$this->error = (string) (((int) $this->error) + 1);
 			}
+		} elseif ($this->action == 'BLOCKEDLOG_EXPORT') {
+			return '<i class="opacitymedium">'.$langs->trans("logBLOCKEDLOG_EXPORT").'</i>';
 		} elseif ($this->action == 'MODULE_SET') {
 			return '<i class="opacitymedium">'.$langs->trans("BlockedLogEnabled").'</i>';
 		} elseif ($this->action == 'MODULE_RESET') {
@@ -392,11 +395,11 @@ class BlockedLog
 	/**
 	 *	Populate properties of log from object data
 	 *
-	 *	@param	CommonObject	$object		object to store
-	 *	@param	string			$action		action
-	 *	@param	float|int		$amounts	amounts
-	 *	@param	?User			$fuser		User object (forced)
-	 *	@return	int<-1,-1>|int<1,1>			>0 if OK, <0 if KO
+	 *	@param	CommonObject|stdClass	$object		object to store
+	 *	@param	string					$action		action
+	 *	@param	float|int				$amounts	amounts
+	 *	@param	?User					$fuser		User object (forced)
+	 *	@return	int<-1,-1>|int<1,1>					>0 if OK, <0 if KO
 	 */
 	public function setObjectData(&$object, $action, $amounts, $fuser = null)
 	{
@@ -529,7 +532,8 @@ class BlockedLog
 					continue; // Discard some properties
 				}
 				if (!in_array($key, array(
-					'ref', 'ref_client', 'ref_supplier', 'date', 'datef', 'datev', 'type', 'total_ht', 'total_tva', 'total_ttc', 'localtax1', 'localtax2', 'revenuestamp', 'datepointoftax', 'note_public', 'lines'
+					'ref', 'ref_client', 'ref_supplier', 'date', 'datef', 'datev', 'type', 'total_ht', 'total_tva', 'total_ttc', 'localtax1', 'localtax2', 'revenuestamp', 'datepointoftax', 'note_public', 'lines',
+					'module_source', 'pos_source'
 				))) {
 					continue; // Discard if not into a dedicated list
 				}
@@ -539,7 +543,13 @@ class BlockedLog
 						$lineid++;
 						foreach ($tmpline as $keyline => $valueline) {
 							if (!in_array($keyline, array(
-								'ref', 'multicurrency_code', 'multicurrency_total_ht', 'multicurrency_total_tva', 'multicurrency_total_ttc', 'qty', 'product_type', 'product_label', 'vat_src_code', 'tva_tx', 'info_bits', 'localtax1_tx', 'localtax2_tx', 'total_ht', 'total_tva', 'total_ttc', 'total_localtax1', 'total_localtax2'
+								'ref', 'product_type', 'product_label',
+								'qty',
+								'subprice',
+								'vat_src_code', 'tva_tx', 'localtax1_tx', 'localtax2_tx',
+								'total_ht', 'total_tva', 'total_ttc', 'total_localtax1', 'total_localtax2',
+								'multicurrency_code', 'multicurrency_total_ht', 'multicurrency_total_tva', 'multicurrency_total_ttc',
+								'info_bits', 'special_code',
 							))) {
 								continue; // Discard if not into a dedicated list
 							}
@@ -823,8 +833,8 @@ class BlockedLog
 
 				return 1;
 			} else {
-				$langs->load("blockedlog");
-				$this->error = $langs->trans("RecordNotFound");
+				$langs->load("errors");
+				$this->error = $langs->trans("ErrorRecordNotFound");
 				return 0;
 			}
 		} else {
@@ -843,12 +853,12 @@ class BlockedLog
 	 */
 	public function dolEncodeBlockedData($data, $mode = 0)
 	{
+		$aaa = '';
 		try {
 			$aaa = json_encode($data);
 		} catch (Exception $e) {
-			//print $e->getErrs);
+			// print $e->getErrs);
 		}
-		//var_dump($aaa);
 
 		return $aaa;
 	}
@@ -863,12 +873,12 @@ class BlockedLog
 	 */
 	public function dolDecodeBlockedData($data, $mode = 0)
 	{
+		$aaa = null;
 		try {
 			$aaa = (object) jsonOrUnserialize($data);
 		} catch (Exception $e) {
-			//print $e->getErrs);
+			// print $e->getErrs);
 		}
-		//var_dump($aaa);
 
 		return $aaa;
 	}
@@ -898,11 +908,9 @@ class BlockedLog
 	 */
 	public function create($user, $forcesignature = '')
 	{
-		global $conf, $langs, $hookmanager;
+		global $conf, $langs;
 
 		$langs->load('blockedlog');
-
-		$error = 0;
 
 		// Clean data
 		$this->amounts = (float) $this->amounts;
@@ -938,9 +946,9 @@ class BlockedLog
 
 		$this->db->begin();
 
-		$previoushash = $this->getPreviousHash(1, 0); // This get last record and lock database until insert is done
+		$previoushash = $this->getPreviousHash(1, 0); // This get last record and lock database until insert is done and transaction closed
 
-		$keyforsignature = $this->buildKeyForSignature();
+		$keyforsignature = $this->buildKeyForSignature();	// All the information for the has (meta data + data saved)
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 
@@ -974,7 +982,7 @@ class BlockedLog
 		$sql .= "'".$this->db->escape($this->signature)."',";
 		$sql .= "'".$this->db->escape($this->signature_line)."',";
 		$sql .= "'".$this->db->escape($this->element)."',";
-		$sql .= $this->fk_object.",";
+		$sql .= (int) $this->fk_object.",";
 		$sql .= "'".$this->db->idate($this->date_object)."',";
 		$sql .= "'".$this->db->escape($this->ref_object)."',";
 		$sql .= "'".$this->db->escape($this->dolEncodeBlockedData($this->object_data))."',";
@@ -1085,23 +1093,47 @@ class BlockedLog
 
 		$previoussignature = '';
 
-		$sql = "SELECT rowid, signature FROM ".MAIN_DB_PREFIX."blockedlog";
-		$sql .= " WHERE entity = ".((int) $conf->entity);
+		// Fast search of previous record by searching with beforeid - 1. This is very fast and will work 99% of time.
 		if ($beforeid) {
-			$sql .= " AND rowid < ".(int) $beforeid;
-		}
-		$sql .= " ORDER BY rowid DESC LIMIT 1";
-		$sql .= ($withlock ? " FOR UPDATE " : "");
+			$sql = "SELECT rowid, signature FROM ".MAIN_DB_PREFIX."blockedlog";
+			$sql .= " WHERE entity = ".((int) $conf->entity);
+			$sql .= " AND rowid = ".((int) $beforeid - 1);
+			$sql .= ($withlock ? " FOR UPDATE " : "");
 
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$obj = $this->db->fetch_object($resql);
-			if ($obj) {
-				$previoussignature = $obj->signature;
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					$previoussignature = $obj->signature;
+				}
+			} else {
+				dol_print_error($this->db);
+				exit;
 			}
-		} else {
-			dol_print_error($this->db);
-			exit;
+		}
+
+		if (empty($previoussignature)) {
+			$sql = "SELECT rowid, signature FROM ".MAIN_DB_PREFIX."blockedlog";
+			if ($beforeid) {
+				$sql .= $this->db->hintindex('entity_rowid', 1);
+			}
+			$sql .= " WHERE entity = ".((int) $conf->entity);
+			if ($beforeid) {
+				$sql .= " AND rowid < ".(int) $beforeid;
+			}
+			$sql .= " ORDER BY rowid DESC LIMIT 1";
+			$sql .= ($withlock ? " FOR UPDATE " : "");
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					$previoussignature = $obj->signature;
+				}
+			} else {
+				dol_print_error($this->db);
+				exit;
+			}
 		}
 
 		if (empty($previoussignature)) {
@@ -1115,18 +1147,18 @@ class BlockedLog
 	/**
 	 *	Return array of log objects (with criteria)
 	 *
-	 *	@param	string 		$element      	element to search
-	 *	@param	int		 	$fk_object		id of object to search
-	 *	@param	int<0,max> 	$limit      	max number of element, 0 for all
-	 *	@param	string 		$sortfield     	sort field
-	 *	@param	string 		$sortorder     	sort order
-	 *	@param	int 		$search_fk_user id of user(s)
-	 *	@param	int 		$search_start   start time limit
-	 *	@param	int 		$search_end     end time limit
-	 *  @param	string		$search_ref		search ref
-	 *  @param	string		$search_amount	search amount
-	 *  @param	string		$search_code	search code
-	 *	@return	BlockedLog[]|int<-2,-1>		Array of object log or <0 if error
+	 *	@param	string 					$element      	element to search
+	 *	@param	int		 				$fk_object		id of object to search
+	 *	@param	int<0,max> 				$limit      	max number of element, 0 for all
+	 *	@param	string 					$sortfield     	sort field
+	 *	@param	string 					$sortorder     	sort order
+	 *	@param	int 					$search_fk_user id of user(s)
+	 *	@param	int 					$search_start   start time limit
+	 *	@param	int 					$search_end     end time limit
+	 *  @param	string					$search_ref		search ref
+	 *  @param	string					$search_amount	search amount
+	 *  @param	string|string[]	        $search_code	search code
+	 *	@return	BlockedLog[]|int<-2,-1>					Array of object log or <0 if error
 	 */
 	public function getLog($element, $fk_object, $limit = 0, $sortfield = '', $sortorder = '', $search_fk_user = -1, $search_start = -1, $search_end = -1, $search_ref = '', $search_amount = '', $search_code = '')
 	{
@@ -1151,10 +1183,10 @@ class BlockedLog
 		}
 
 		if ($fk_object) {
-			$sql .= natural_search("rowid", $fk_object, 1);
+			$sql .= natural_search("rowid", (string) $fk_object, 1);
 		}
 		if ($search_fk_user > 0) {
-			$sql .= natural_search("fk_user", $search_fk_user, 2);
+			$sql .= natural_search("fk_user", (string) $search_fk_user, 2);
 		}
 		if ($search_start > 0) {
 			$sql .= " AND date_creation >= '".$this->db->idate($search_start)."'";
@@ -1168,8 +1200,14 @@ class BlockedLog
 		if ($search_amount != '') {
 			$sql .= natural_search("amounts", $search_amount, 1);
 		}
-		if ($search_code != '' && $search_code != '-1') {
-			$sql .= natural_search("action", $search_code, 3);
+		if (is_array($search_code)) {
+			if (!empty($search_code)) {
+				$sql .= natural_search("action", implode(',', $search_code), 3);
+			}
+		} else {
+			if ($search_code != '' && $search_code != '-1') {
+				$sql .= natural_search("action", $search_code, 3);
+			}
 		}
 
 		$sql .= $this->db->order($sortfield, $sortorder);
@@ -1219,7 +1257,7 @@ class BlockedLog
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
-			$fingerprint = dol_hash(print_r($mysoc, true).getRandomPassword(1), '5');
+			$fingerprint = dol_hash(print_r($mysoc, true).getRandomPassword(true), '5');
 
 			dolibarr_set_const($db, 'BLOCKEDLOG_ENTITY_FINGERPRINT', $fingerprint, 'chaine', 0, 'Numeric Unique Fingerprint', $conf->entity);
 
@@ -1259,7 +1297,7 @@ class BlockedLog
 			dol_print_error($this->db);
 		}
 
-		dol_syslog("Module Blockedlog alreadyUsed with ignoresystem=".$ignoresystem." is ".json_encode($result));
+		dol_syslog("Module Blockedlog alreadyUsed(ignoresystem=".$ignoresystem.") returns ".json_encode($result));
 
 		return $result;
 	}

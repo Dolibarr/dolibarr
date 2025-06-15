@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2007-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,18 +22,24 @@
  *  \brief      Tab for notes on productlot
  */
 
-
-
 require '../../main.inc.php';
-dol_include_once('/product/stock/class/productlot.class.php');
-dol_include_once('/core/lib/product.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('other', 'products'));
 
 // Get parameters
 $id = GETPOSTINT('id');
-$ref        = GETPOST('ref', 'alpha');
+$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
 // Initialize a technical objects
@@ -81,7 +87,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 $help_url = '';
-llxHeader('', $langs->trans('productlot'), $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_productlot_note');
+llxHeader('', $langs->trans('ProductLot'), $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_productlot_note');
 
 if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();

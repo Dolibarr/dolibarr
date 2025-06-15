@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
+/* Copyright (C) 2013-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +24,18 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $action = GETPOST('action', 'aZ09');
 
@@ -32,10 +43,11 @@ $action = GETPOST('action', 'aZ09');
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page == -1) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -54,8 +66,8 @@ $errors = array();
 
 // List of status
 static $tmpstatut2label = array(
-		'0' => 'OpenFiscalYear',
-		'1' => 'CloseFiscalYear'
+	'0' => 'OpenFiscalYear',
+	'1' => 'CloseFiscalYear'
 );
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
@@ -73,7 +85,25 @@ if (!$user->hasRight('accounting', 'fiscalyear', 'write')) {              // If 
 /*
  * Actions
  */
+if ($action == 'setdefault') {
+	// Set a fiscal year as default
+	$error = 0;
 
+	$defaultFiscalYear = GETPOSTINT('value');
+	$defaultFiscalYearLabel = GETPOST('label', 'alpha');
+
+	if (!empty($defaultFiscalYear)) {
+		dolibarr_set_const($db, 'ACCOUNTANCY_FISCALYEAR_DEFAULT', $defaultFiscalYear, 'chaine', 0, '', $conf->entity);
+	} else {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("FiscalYearSetAsDefault", $defaultFiscalYearLabel), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
 
 
 /*
@@ -123,14 +153,14 @@ if ($result) {
 	$newcardbutton = empty($hookmanager->resPrint) ? '' : $hookmanager->resPrint;
 
 	if (empty($reshook)) {
-		$newcardbutton .= dolGetButtonTitle($langs->trans('NewFiscalYear'), '', 'fa fa-plus-circle', 'fiscalyear_card.php?action=create', '', $user->hasRight('accounting', 'fiscalyear', 'write'));
+		$newcardbutton .= dolGetButtonTitle($langs->trans('NewFiscalYear'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/accountancy/admin/fiscalyear_card.php?action=create', '', $user->hasRight('accounting', 'fiscalyear', 'write'));
 	}
 
 	$title = $langs->trans('AccountingPeriods');
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'calendar', 0, $newcardbutton, '', $limit, 1);
 
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste centpercent">';
+	print '<table class="tagtable liste centpercent noborder">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Ref").'</td>';
 	print '<td>'.$langs->trans("Label").'</td>';
@@ -138,6 +168,7 @@ if ($result) {
 	print '<td>'.$langs->trans("DateEnd").'</td>';
 	print '<td class="center">'.$langs->trans("NumberOfAccountancyEntries").'</td>';
 	print '<td class="center">'.$langs->trans("NumberOfAccountancyMovements").'</td>';
+	print '<td class="center">'.$langs->trans("Default").'</td>';
 	print '<td class="right">'.$langs->trans("Status").'</td>';
 	print '</tr>';
 
@@ -150,9 +181,10 @@ if ($result) {
 
 			$fiscalyearstatic->ref = $obj->rowid;
 			$fiscalyearstatic->id = $obj->rowid;
+			$fiscalyearstatic->label = $obj->label;
 			$fiscalyearstatic->date_start = $obj->date_start;
 			$fiscalyearstatic->date_end = $obj->date_end;
-			$fiscalyearstatic->statut = $obj->status;
+			$fiscalyearstatic->statut = $obj->status;	// deprecated
 			$fiscalyearstatic->status = $obj->status;
 
 			print '<tr class="oddeven">';
@@ -164,12 +196,22 @@ if ($result) {
 			print '<td class="left">'.dol_print_date($db->jdate($obj->date_end), 'day').'</td>';
 			print '<td class="center">'.$object->getAccountancyEntriesByFiscalYear($obj->date_start, $obj->date_end).'</td>';
 			print '<td class="center">'.$object->getAccountancyMovementsByFiscalYear($obj->date_start, $obj->date_end).'</td>';
+
+			// Default
+			print '<td class="center">';
+			if (getDolGlobalString('ACCOUNTANCY_FISCALYEAR_DEFAULT') == (int) $fiscalyearstatic->ref) {
+				print img_picto($langs->trans("Default"), 'on');
+			} else {
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdefault&token='.newToken().'&value='.urlencode($fiscalyearstatic->ref).'&label='.urlencode($fiscalyearstatic->label).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("SetAsDefault"), 'off').'</a>';
+			}
+			print '</td>';
+
 			print '<td class="right">'.$fiscalyearstatic->LibStatut($obj->status, 5).'</td>';
 			print '</tr>';
 			$i++;
 		}
 	} else {
-		print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+		print '<tr class="oddeven"><td colspan="8"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 	print '</table>';
 	print '</div>';

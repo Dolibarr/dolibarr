@@ -73,18 +73,23 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
 		$texte .= '<input type="hidden" name="maskconstexpedition" value="EXPEDITION_RIBERA_MASK">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<input type="hidden" name="page_y" value="">';
+
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Shipment"), $langs->transnoentities("Shipment"));
+		$tooltip .= $langs->trans("GenericMaskCodes1");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes2");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Shipment"), $langs->transnoentities("Shipment"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
 		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskexpedition" value="'.getDolGlobalString('EXPEDITION_RIBERA_MASK').'">', $tooltip, 1, 1).'</td>';
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskexpedition" value="'.getDolGlobalString('EXPEDITION_RIBERA_MASK').'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Save").'"></td>';
 		$texte .= '</tr>';
 		$texte .= '</table>';
 		$texte .= '</form>';
@@ -138,7 +143,7 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 			return 0;
 		}
 
-		$date = $shipment->date_expedition;
+		$date = $shipment->date_shipping;
 
 		$numFinal = get_next_value($db, $mask, 'expedition', 'ref', '', $objsoc, $date);
 

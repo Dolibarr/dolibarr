@@ -3,7 +3,8 @@
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021	Alexis LAURIER			<contact@alexislaurier.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024   Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,6 +107,13 @@ call_user_func(
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 
 $url = $_SERVER['PHP_SELF'];
@@ -166,6 +174,7 @@ $refreshcache = (getDolGlobalString('API_PRODUCTION_DO_NOT_ALWAYS_REFRESH_CACHE'
 if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $reg[2] == '/swagger.json/root' || $reg[2] == '/resources.json' || $reg[2] == '/resources.json/root')) {
 	$refreshcache = true;
 	if (!is_writable($conf->api->dir_temp)) {
+		dol_syslog("ErrorFailedToWriteInApiTempDirectory ".$conf->api->dir_temp, LOG_ERR);
 		print 'Erreur temp dir api/temp not writable';
 		header('HTTP/1.1 500 temp dir api/temp not writable');
 		exit(0);
@@ -342,6 +351,9 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 	if ($moduleobject == 'interventions') {
 		$classfile = 'interventions';
 	}
+	if ($moduleobject == 'eventattendees') {
+		$moduledirforclass = 'eventorganization';
+	}
 
 	$dir_part_file = dol_buildpath('/'.$moduledirforclass.'/class/api_'.$classfile.'.class.php', 0, 2);
 
@@ -368,6 +380,15 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 			//session_destroy();
 			exit(0);
 		}
+	}
+
+	$parameters = array('url' => $url, 'ip' => getUserRemoteIP(), 'moduleobject' => $moduleobject, 'classfile' => $classfile, 'classname' => $classname);
+	$object = $api;
+	$action = $api->r->requestMethod;
+	// Note that $action and $object may be modified by some hooks
+	$reshook = $hookmanager->executeHooks('beforeApiCall', $parameters, $object, $action);
+	if ($reshook < 0) {
+		dol_syslog('beforeapicall Failed to call hook '.$hookmanager->error, LOG_ERR);
 	}
 
 	dol_syslog('Search api file /'.$moduledirforclass.'/class/api_'.$classfile.'.class.php => dir_part_file='.$dir_part_file.', classname='.$classname);

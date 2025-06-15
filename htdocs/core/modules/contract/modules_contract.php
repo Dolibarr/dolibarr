@@ -90,4 +90,11 @@ abstract class ModelNumRefContracts extends CommonNumRefGenerator
 	 *	@return string|int<-1,0>  			Next value if OK, -1 or 0 if KO
 	 */
 	abstract public function getNextValue($objsoc, $contract);
+
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	abstract public function getExample();
 }

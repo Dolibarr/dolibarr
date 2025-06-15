@@ -73,12 +73,33 @@ class Cronjob extends CommonObject
 	 * @var string Job command
 	 */
 	public $command;
+	/**
+	 * @var null|string
+	 */
 	public $classesname;
+	/**
+	 * @var null|string
+	 */
 	public $objectname;
+	/**
+	 * @var null|string
+	 */
 	public $methodename;
+	/**
+	 * @var null|string
+	 */
 	public $params;
+	/**
+	 * @var null|string
+	 */
 	public $md5params;
+	/**
+	 * @var null|string
+	 */
 	public $module_name;
+	/**
+	 * @var null|int|string
+	 */
 	public $priority;
 
 	/**
@@ -515,9 +536,9 @@ class Cronjob extends CommonObject
 	 * @param	string			$sortfield		Sort field
 	 * @param	int				$limit			Limit page
 	 * @param	int				$offset			Offset ppage
-	 * @param	int				$status			Display active or not (-1=no filter, 0=not active, 1=active, 2=archived)
-	 * @param	string|array	$filter			Filter USF.
-	 * @param	int				$processing		Processing or not (-1=all, 0=not in progress, 1=in progress)
+	 * @param	int<-1,2>		$status			Display active or not (-1=no filter, 0=not active, 1=active, 2=archived)
+	 * @param	string|array<string,string>	$filter	Filter USF.
+	 * @param	int<-1,1>		$processing		Processing or not (-1=all, 0=not in progress, 1=in progress)
 	 * @return	int								if KO: <0 || if OK: >0
 	 */
 	public function fetchAll(string $sortorder = 'DESC', string $sortfield = 't.rowid', int $limit = 0, int $offset = 0, int $status = 1, $filter = '', int $processing = -1)
@@ -664,11 +685,11 @@ class Cronjob extends CommonObject
 	/**
 	 * Update object into database
 	 *
-	 * @param	User|null	$user		User that modifies
-	 * @param	int			$notrigger	0=launch triggers after, 1=disable triggers
+	 * @param	?User		$user		User that modifies
+	 * @param	int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
 	 * @return	int						if KO: <0 || if OK: >0
 	 */
-	public function update(User $user = null, int $notrigger = 0)
+	public function update($user = null, int $notrigger = 0)
 	{
 		global $conf, $langs;
 
@@ -992,10 +1013,9 @@ class Cronjob extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param	array		$params		params to construct tooltip data
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return	array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -1044,7 +1064,7 @@ class Cronjob extends CommonObject
 	 * @param	int		$save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 * @return	string								String with URL
 	 */
-	public function getNomUrl(int $withpicto = 0, string $option = '', int $notooltip = 0, string $morecss = '', int $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, string $option = '', int $notooltip = 0, string $morecss = '', int $save_lastsearch_value = -1)
 	{
 		global $conf, $langs;
 
@@ -1085,9 +1105,9 @@ class Cronjob extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowCronJob");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1203,7 +1223,7 @@ class Cronjob extends CommonObject
 		dol_syslog(get_class($this)."::run_jobs jobtype=".$this->jobtype." userlogin=".$userlogin, LOG_DEBUG);
 
 		// Increase limit of time. Works only if we are not in safe mode
-		$ExecTimeLimit = 600;
+		$ExecTimeLimit = getDolGlobalInt('MAIN_CRON_EXEC_TIME_LIMIT', 600);
 		if (!empty($ExecTimeLimit)) {
 			$err = error_reporting();
 			error_reporting(0); // Disable all errors
@@ -1211,7 +1231,7 @@ class Cronjob extends CommonObject
 			@set_time_limit($ExecTimeLimit); // Need more than 240 on Windows 7/64
 			error_reporting($err);
 		}
-		$MemoryLimit = 0;
+		$MemoryLimit = getDolGlobalString('MAIN_CRON_MEMORY_LIMIT');
 		if (!empty($MemoryLimit)) {
 			@ini_set('memory_limit', $MemoryLimit);
 		}
@@ -1405,7 +1425,7 @@ class Cronjob extends CommonObject
 
 					$this->error      = $arrayresult['error'];
 					$this->lastoutput = $arrayresult['output'];
-					$this->lastresult = $arrayresult['result'];
+					$this->lastresult = (string) $arrayresult['result'];
 				}
 			}
 		}
@@ -1426,8 +1446,8 @@ class Cronjob extends CommonObject
 
 		if ($error && !empty($this->email_alert)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			$subject = $langs->trans("ErrorInBatch", $this->label);
-			$msg = $langs->trans("ErrorInBatch", $this->label);
+			$subject = $langs->transnoentitiesnoconv("ErrorInBatch", $this->label);
+			$msg = $langs->transnoentitiesnoconv("ErrorInBatch", $this->label);
 			$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 			$cmailfile = new CMailFile($subject, $this->email_alert, $from, $msg);
 			$result = $cmailfile->sendfile();	// Do not test result
@@ -1560,13 +1580,13 @@ class Cronjob extends CommonObject
 		}
 
 		$statusType = 'status4';
-		if ($status == 1 && $processing) {
+		if ($status == self::STATUS_ENABLED && $processing) {
 			$statusType = 'status1';
 		}
-		if ($status == 0) {
+		if ($status == self::STATUS_DISABLED) {
 			$statusType = 'status5';
 		}
-		if ($this->lastresult) {
+		if ($status == self::STATUS_ENABLED && $this->lastresult) {
 			$statusType = 'status8';
 		}
 

@@ -3,6 +3,7 @@
  * Copyright (C) 2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2022	Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,14 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('errors', 'admin', 'modulebuilder', 'exports'));
@@ -93,6 +102,7 @@ $dirmod = array();
 $i = 0; // is a sequencer of modules found
 $j = 0; // j is module number. Automatically affected if module number not defined.
 $modNameLoaded = array();
+$familyinfo = array();
 
 foreach ($modulesdir as $dir) {
 	// Load modules attributes in arrays (name, numero, orders) from dir directory
@@ -163,9 +173,6 @@ foreach ($modulesdir as $dir) {
 
 									// Gives the possibility to the module, to provide his own family info and position of this family
 									if (is_array($objMod->familyinfo) && !empty($objMod->familyinfo)) {
-										if (!is_array($familyinfo)) {
-											$familyinfo = array();
-										}
 										$familyinfo = array_merge($familyinfo, $objMod->familyinfo);
 										$familykey = key($objMod->familyinfo);
 									} else {
@@ -352,8 +359,6 @@ if ($mode == 'desc') {
 
 	$text .= '<br><span class="opacitymedium">'.$langs->trans("IdModule").':</span> '.$objMod->numero;
 
-	$text .= '<br><span class="opacitymedium">'.$langs->trans("Version").':</span> '.$version;
-
 	$textexternal = '';
 	if ($objMod->isCoreOrExternalModule() == 'external') {
 		$tmpdirofmoduletoshow = preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', (string) $dirofmodule);
@@ -383,8 +388,10 @@ if ($mode == 'desc') {
 		} elseif (!empty($objMod->enabled_bydefault)) {
 			$text .= ' &nbsp; <span class="italic opacitymedium">('.$langs->trans("EnabledByDefaultAtInstall").')</span>';
 		}
-		$text .= '<br>';
 	}
+
+	$text .= '<br><span class="opacitymedium">'.$langs->trans("Version").':</span> '.$version;
+
 	$text .= '<br>';
 
 	$moduledesclong = $objMod->getDescLong();
@@ -522,7 +529,7 @@ if ($mode == 'feature') {
 	if (isset($objMod->module_parts) && isset($objMod->module_parts['triggers']) && $objMod->module_parts['triggers']) {
 		$yesno = 'Yes';
 	} else {
-		$yesno = '<span class="opacitymedium">No</span>';
+		$yesno = '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
 	require_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
 	$interfaces = new Interfaces($db);

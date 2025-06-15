@@ -17,7 +17,7 @@ MarginDetails=利潤明細
 ProductMargins=產品利潤
 CustomerMargins=客戶利潤
 SalesRepresentativeMargins=銷售代表利潤
-ContactOfInvoice=發票聯繫人
+ContactOfInvoice=發票聯絡人
 UserMargins=用戶利潤
 ProductService=產品或服務
 AllProducts=所有產品和服務
@@ -37,7 +37,7 @@ MarginTypeDesc=* 最佳購買價格利潤 = 銷售價格 - 產品卡上定義的
 CostPrice=成本價
 UnitCharges=單位收費
 Charges=收費
-AgentContactType=商業代理聯繫方式
+AgentContactType=商業代理聯絡方式
 AgentContactTypeDetails=定義將用於每個聯絡人/地址利潤報告的聯絡人類型（連接到發票上）。請注意，讀取聯絡人的統計數據不可靠，因為在大多數情況下，聯絡人可能不會在發票上明確定義。
 rateMustBeNumeric=利率必須是數字值
 markRateShouldBeLesserThan100=標記利率應低於100

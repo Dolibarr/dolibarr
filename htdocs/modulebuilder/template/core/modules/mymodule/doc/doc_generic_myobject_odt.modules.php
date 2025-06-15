@@ -97,6 +97,11 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 0; // Support add of a watermark on drafts
 
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
 		// Get source company
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) {
@@ -113,7 +118,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 	 */
 	public function info($langs)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("errors", "companies"));
@@ -141,7 +146,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 				continue;
 			}
 			if (!is_dir($tmpdir)) {
-				$texttitle .= img_warning($langs->trans("ErrorDirNotFound", $tmpdir), 0);
+				$texttitle .= img_warning($langs->trans("ErrorDirNotFound", $tmpdir), '');
 			} else {
 				$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.(ods|odt)');
 				if (count($tmpfiles)) {
@@ -154,20 +159,6 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 		// Add list of substitution keys
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
-
-		if (!getDolGlobalString('MAIN_NO_MULTIDIR_FOR_ODT')) {
-			$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
-			$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
-			$texte .= '<textarea class="flat" cols="60" name="value1">';
-			$texte .= getDolGlobalString('MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH');
-			$texte .= '</textarea>';
-			$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-			$texte .= '<input type="submit" class="button smallpaddingimp reposition" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
-			$texte .= '<br></div></div>';
-		} else {
-			$texte .= '<br>';
-			$texte .= '<input type="hidden" name="value1" value="MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH">';
-		}
 
 		// Scan directories
 		$nbofiles = count($listoffiles);
@@ -188,6 +179,21 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 				$texte .= '<br>';
 			}
 			$texte .= '</div>';
+		}
+
+		if (!getDolGlobalString('MAIN_NO_MULTIDIR_FOR_ODT')) {
+			$texte .= '<br><br>';
+			$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
+			$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
+			$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
+			$texte .= getDolGlobalString('MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH');
+			$texte .= '</textarea>';
+			$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
+			$texte .= '<input type="submit" class="button button-edit smallpaddingimp reposition" name="modify" value="'.dolPrintHTMLForAttribute($langs->trans("Modify")).'">';
+			$texte .= '<br></div></div>';
+		} else {
+			$texte .= '<br>';
+			$texte .= '<input type="hidden" name="value1" value="MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH">';
 		}
 
 		// Add input to upload a new template file.
@@ -236,7 +242,12 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 		}
 
 		// Add odtgeneration hook
+		if (!is_object($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($this->db);
+		}
 		$hookmanager->initHooks(array('odtgeneration'));
+		global $action;
 
 		if (!is_object($outputlangs)) {
 			$outputlangs = $langs;
@@ -359,10 +370,10 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 					$odfHandler = new Odf(
 						$srctemplatepath,
 						array(
-						'PATH_TO_TMP'	  => $conf->mymodule->dir_temp,
-						'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
-						'DELIMITER_LEFT'  => '{',
-						'DELIMITER_RIGHT' => '}'
+							'PATH_TO_TMP'	  => $conf->mymodule->dir_temp,
+							'ZIP_PROXY'		  => getDolGlobalString('MAIN_ODF_ZIP_PROXY', 'PclZipProxy'), // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+							'DELIMITER_LEFT'  => '{',
+							'DELIMITER_RIGHT' => '}'
 						)
 					);
 				} catch (Exception $e) {
@@ -376,6 +387,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 				//print html_entity_decode($odfHandler->__toString());
 				//print exit;
 
+				$object->fetch_optionals();
 
 				// Make substitutions into odt of freetext
 				try {
@@ -405,12 +417,19 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 				$parameters = array('odfHandler' => &$odfHandler, 'file' => $file, 'object' => $object, 'outputlangs' => $outputlangs, 'substitutionarray' => &$tmparray);
 				$reshook = $hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
+				// retrieve the constant to apply a ratio for image size or set the ratio to 1
+				if (getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO')) {
+					$ratio = floatval(getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO'));
+				} else {
+					$ratio = 1;
+				}
+
 				foreach ($tmparray as $key => $value) {
 					try {
 						if (preg_match('/logo$/', $key)) {
 							// Image
 							if (file_exists($value)) {
-								$odfHandler->setImage($key, $value);
+								$odfHandler->setImage($key, $value, $ratio);
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
@@ -435,6 +454,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 				if ($foundtagforlines) {
 					$linenumber = 0;
 					foreach ($object->lines as $line) {
+						/** @var CommonObjectLine $line */
 						$linenumber++;
 						$tmparray = $this->get_substitutionarray_lines($line, $outputlangs, $linenumber);
 						complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");

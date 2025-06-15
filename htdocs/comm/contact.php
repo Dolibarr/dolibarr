@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,14 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->load("companies");
@@ -70,6 +79,8 @@ $result = restrictedArea($user, 'societe', $socid, '');
 
 llxHeader('', $langs->trans("Contacts"));
 
+$urlfiche = null;
+
 if ($type == "c" || $type == "p") {
 	$label = $langs->trans("Customers");
 	$urlfiche = "card.php";
@@ -109,7 +120,7 @@ if (!empty($search_company)) {
 	$sql .= " AND s.nom LIKE '%".$db->escape($search_company)."%'";
 }
 if (!empty($contactname)) { // access a partir du module de recherche
-	$sql .= " AND (p.lastname LIKE '%".$db->escape($contactname)."%' OR lower(p.firstname) LIKE '%".$db->escape($contactname)."%') ";
+	$sql .= " AND (p.lastname LIKE '%".$db->escape($contactname)."%' OR p.firstname LIKE '%".$db->escape($contactname)."%') ";
 	$sortfield = "p.lastname";
 	$sortorder = "ASC";
 }
@@ -159,7 +170,7 @@ if ($resql) {
 	print '<td class="liste_titre"><input class="flat" name="search_firstname" size="12"  value="'.$search_firstname.'"></td>';
 	print '<td class="liste_titre"><input class="flat" name="search_company" size="12"  value="'.$search_company.'"></td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre right"><input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
+	print '<td class="liste_titre right"><input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"), 'search.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
 	print "</tr>\n";
 
 	$i = 0;

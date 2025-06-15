@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('ecm', 'companies', 'other', 'users', 'orders', 'propal', 'bills', 'contracts'));
@@ -98,13 +107,14 @@ $permissiontodeletedir = $user->hasRight('ecm', 'setup');
  */
 
 // TODO Replace sendit and confirm_deletefile with
-//$backtopage=$_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid;	// used after a confirm_deletefile into actions_linkedfiles.inc.php
+//$backtopage = $_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid;	// used after a confirm_deletefile into actions_linkedfiles.inc.php
 //include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
+
+$relativepath = '';
 
 // Upload file (code similar but different than actions_linkedfiles.inc.php)
 if (GETPOST("sendit", 'alphanohtml') && getDolGlobalString('MAIN_UPLOAD_DOC') && $permissiontocreate) {
 	// Define relativepath and upload_dir
-	$relativepath = '';
 	if ($ecmdir->id) {
 		$relativepath = $ecmdir->getRelativePath();
 	} else {
@@ -269,11 +279,11 @@ if ($action == 'refreshmanual' && $permissiontoread) {
 				//print $ecmdirtmp->cachenbofdoc."<br>\n";exit;
 				$id = $ecmdirtmp->create($user);
 				if ($id > 0) {
-					$newdirsql = array('id'=>$id,
-									 'id_mere'=>$ecmdirtmp->fk_parent,
-									 'label'=>$ecmdirtmp->label,
-									 'description'=>$ecmdirtmp->description,
-									 'fullrelativename'=>$relativepathmissing);
+					$newdirsql = array('id' => $id,
+									 'id_mere' => $ecmdirtmp->fk_parent,
+									 'label' => $ecmdirtmp->label,
+									 'description' => $ecmdirtmp->description,
+									 'fullrelativename' => $relativepathmissing);
 					$sqltree[] = $newdirsql; // We complete fulltree for following loops
 					//var_dump($sqltree);
 					$adirwascreated = 1;
@@ -319,22 +329,15 @@ if ($action == 'refreshmanual' && $permissiontoread) {
 //print $_SESSION["dol_screenheight"];
 $maxheightwin = (isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 466) ? ($_SESSION["dol_screenheight"] - 136) : 660; // Also into index_auto.php file
 
-$moreheadcss = '';
-$moreheadjs = '';
-
-//$morejs=array();
-$morejs = array('includes/jquery/plugins/blockUI/jquery.blockUI.js', 'core/js/blockUI.js'); // Used by ecm/tpl/enabledfiletreeajax.tpl.pgp
+$morejs=array();
 if (!getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 	$morejs[] = "includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
 }
 
-$moreheadjs .= '<script type="text/javascript">'."\n";
-$moreheadjs .= 'var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
-$moreheadjs .= '</script>'."\n";
+llxHeader('', $langs->trans("ECMArea"), '', '', 0, 0, $morejs, '', '', 'mod-ecm page-index');
 
-llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', 0, 0, $morejs, '', 0, 'mod-ecm page-index');
+$head = ecm_prepare_dasboard_head();
 
-$head = ecm_prepare_dasboard_head(null);
 print dol_get_fiche_head($head, 'index', '', -1, '');
 
 

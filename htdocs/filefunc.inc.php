@@ -9,7 +9,8 @@
  * Copyright (C) 2006 	   Andre Cianfarani     <andre.cianfarani@acdeveloppement.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Bahfir Abbes         <bafbes@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,11 +32,38 @@
  *  \brief      File that include conf.php file and commons lib like functions.lib.php
  */
 
+/**
+ * @var ?string $dolibarr_font_DOL_DEFAULT_TTF
+ * @var ?string $dolibarr_font_DOL_DEFAULT_TTF_BOLD
+ * @var ?string $dolibarr_js_CKEDITOR
+ * @var ?string $dolibarr_js_JQUERY
+ * @var ?string $dolibarr_js_JQUERY_UI
+ * @var ?string $dolibarr_lib_NUSOAP_PATH
+ * @var ?string $dolibarr_lib_ODTPHP_PATH
+ * @var ?string $dolibarr_lib_ODTPHP_PATHTOPCLZIP
+ * @var ?string $dolibarr_lib_PHPEXCELNEW_PATH
+ * @var ?string $dolibarr_lib_TCPDF_PATH
+ * @var ?string $dolibarr_lib_TCPDI_PATH
+ */
+'
+@phan-var-force ?string $dolibarr_font_DOL_DEFAULT_TTF
+@phan-var-force ?string $dolibarr_font_DOL_DEFAULT_TTF_BOLD
+@phan-var-force ?string $dolibarr_js_CKEDITOR
+@phan-var-force ?string $dolibarr_js_JQUERY
+@phan-var-force ?string $dolibarr_js_JQUERY_UI
+@phan-var-force ?string $dolibarr_lib_NUSOAP_PATH
+@phan-var-force ?string $dolibarr_lib_ODTPHP_PATH
+@phan-var-force ?string $dolibarr_lib_ODTPHP_PATHTOPCLZIP
+@phan-var-force ?string $dolibarr_lib_PHPEXCELNEW_PATH
+@phan-var-force ?string $dolibarr_lib_TCPDF_PATH
+@phan-var-force ?string $dolibarr_lib_TCPDI_PATH
+';
+
 if (!defined('DOL_APPLICATION_TITLE')) {
 	define('DOL_APPLICATION_TITLE', 'Dolibarr');
 }
 if (!defined('DOL_VERSION')) {
-	define('DOL_VERSION', '21.0.0-alpha'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
+	define('DOL_VERSION', '22.0.0-beta'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
 }
 
 if (!defined('EURO')) {
@@ -122,8 +150,6 @@ function dol_session_rotate($sessionname = '')
 
 
 
-// Define vars
-$conffiletoshowshort = "conf.php";
 // Define localization of conf file
 // --- Start of part replaced by Dolibarr packager makepack-dolibarr
 $conffile = "conf/conf.php";
@@ -137,7 +163,25 @@ $conffiletoshow = "htdocs/conf/conf.php";
 // --- End of part replaced by Dolibarr packager makepack-dolibarr
 
 // Include configuration
+// @phpstan-ignore-next-line
 $result = @include_once $conffile; // Keep @ because with some error reporting mode, this breaks the redirect done when file is not found
+
+/**
+ * @var ?string $dolibarr_main_stream_to_disable
+ * @var ?string $dolibarr_main_instance_unique_id
+ * @var ?string $dolibarr_strict_mode
+ * @var ?string $dolibarr_main_data_root
+ * @var ?string $dolibarr_main_db_prefix
+ * @var ?string $dolibarr_main_db_root
+ * @var ?string $dolibarr_main_db_user
+ * @var ?string $dolibarr_main_db_pass
+ * @var ?string $dolibarr_main_db_port
+ * @var ?string $dolibarr_main_db_type
+ * @var ?string $dolibarr_main_db_encryption
+ * @var ?string $dolibarr_main_db_encrypted_pass
+ * @var ?string $dolibarr_main_prod
+ * @var ?string $dolibarr_main_dolcrypt_key
+ */
 
 // Disable some not used PHP stream
 $listofwrappers = stream_get_wrappers();
@@ -203,10 +247,19 @@ if (!$result && !empty($_SERVER["GATEWAY_INTERFACE"])) {    // If install not do
 }
 
 // Force PHP error_reporting setup (Dolibarr may report warning without this)
-if (!empty($dolibarr_strict_mode)) {
-	error_reporting(E_ALL | E_STRICT);
+if (version_compare(phpversion(), '8.4', '<')) {
+	if (!empty($dolibarr_strict_mode)) {
+		error_reporting(E_ALL | E_STRICT);
+	} else {
+		error_reporting(E_ALL & ~(E_STRICT | E_NOTICE | E_DEPRECATED));
+	}
 } else {
-	error_reporting(E_ALL & ~(E_STRICT | E_NOTICE | E_DEPRECATED));
+	// E_STRICT is deprecated since PHP 8.4
+	if (!empty($dolibarr_strict_mode)) {
+		error_reporting(E_ALL);
+	} else {
+		error_reporting(E_ALL & ~(E_NOTICE | E_DEPRECATED));
+	}
 }
 
 // Disable php display errors
@@ -266,7 +319,7 @@ if (empty($dolibarr_strict_mode)) {
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root); // Filesystem core php (htdocs)
 
 if (!file_exists(DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php")) {
-	print "Error: Dolibarr config file content seems to be not correctly defined.<br>\n";
+	print "Error: Dolibarr config file content seems to be not correctly defined (file ".DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php not found).<br>\n";
 	print "Please run dolibarr setup by calling page <b>/install</b>.<br>\n";
 	exit(1);
 }
@@ -343,6 +396,7 @@ if (!empty($_SERVER["DOCUMENT_ROOT"])) {
 $paths = explode('/', str_replace('\\', '/', $_SERVER["SCRIPT_NAME"])); // C) Value reported by web server, to say full path on filesystem of a file. Ex: /dolibarr/htdocs/admin/system/phpinfo.php
 // Try to detect if $_SERVER["DOCUMENT_ROOT"]+start of $_SERVER["SCRIPT_NAME"] is $dolibarr_main_document_root. If yes, relative url to add before dol files is this start part.
 $concatpath = '';
+$tmp3 = '';
 foreach ($paths as $tmppath) {	// We check to find (B+start of C)=A
 	if (empty($tmppath)) {
 		continue;
@@ -431,10 +485,13 @@ if (!defined('DOL_DEFAULT_TTF_BOLD')) {
  */
 
 // If password is encoded, we decode it. Note: When page is called for install, $dolibarr_main_db_pass may not be defined yet.
-if ((!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) || !empty($dolibarr_main_db_encrypted_pass)) {
+if ((!empty($dolibarr_main_db_pass) && preg_match('/(dolcrypt|crypted):/i', $dolibarr_main_db_pass)) || !empty($dolibarr_main_db_encrypted_pass)) {
 	if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
 		$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
 		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
+		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this so we can use it later to know the password was initially encrypted
+	} elseif (!empty($dolibarr_main_db_pass) && preg_match('/dolcrypt:/i', $dolibarr_main_db_pass)) {
+		$dolibarr_main_db_pass = dolDecrypt($dolibarr_main_db_pass, (empty($dolibarr_main_dolcrypt_key) ? (empty($dolibarr_main_instance_unique_id) ? '' : $dolibarr_main_instance_unique_id) : $dolibarr_main_dolcrypt_key));
 		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this so we can use it later to know the password was initially encrypted
 	} else {
 		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);

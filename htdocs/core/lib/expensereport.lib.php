@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2011	Regis Houssin	<regis.houssin@inodbox.com>
- * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2011		Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
  * Prepare array with list of tabs
  *
  * @param   Object	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function expensereport_prepare_head($object)
 {
@@ -94,7 +94,7 @@ function expensereport_prepare_head($object)
  * It loads tabs from modules looking for the entity payment
  *
  * @param	PaymentExpenseReport	$object		Current payment object
- * @return	array								Tabs for the payment section
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function payment_expensereport_prepare_head(PaymentExpenseReport $object)
 {
@@ -127,7 +127,7 @@ function payment_expensereport_prepare_head(PaymentExpenseReport $object)
 /**
  *  Return array head with list of tabs to view object information.
  *
- *  @return	array   	        head array with tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function expensereport_admin_prepare_head()
 {

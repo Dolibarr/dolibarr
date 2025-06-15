@@ -160,7 +160,6 @@ ContactCreatedByEmailCollector=Contacto / dirección creada por el recopilador d
 ProjectCreatedByEmailCollector=Proyecto creado por el recopilador de correo electrónico del correo electrónico MSGID %s
 TicketCreatedByEmailCollector=Ticket creado por el recopilador de correo electrónico del correo electrónico MSGID %s
 OpeningHoursFormatDesc=Use a - para separar las horas de apertura y cierre. <br> Use un espacio para ingresar diferentes rangos. <br> Ejemplo: 8-12 14-18
-ExportsArea=Area de exportaciones
 LibraryUsed=Biblioteca utilizada
 LibraryVersion=Versión de la biblioteca
 NoExportableData=No hay datos exportables (no hay módulos cargados con datos exportables o faltan permisos)

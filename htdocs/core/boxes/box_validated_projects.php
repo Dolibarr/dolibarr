@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2012-2014 Charles-François BENKE <charles.fr@benke.fr>
  * Copyright (C) 2014      Marcos García          <marcosgdf@gmail.com>
- * Copyright (C) 2015      Frederic France        <frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France        <frederic.france@free.fr>
  * Copyright (C) 2016      Juan José Menent       <jmenent@2byte.es>
  * Copyright (C) 2020      Pierre Ardoin          <mapiolca@me.com>
  * Copyright (C) 2023      Gauthier VERDOL        <gauthier.verdol@atm-consulting.fr>
@@ -36,6 +36,9 @@ class box_validated_projects extends ModeleBoxes
 {
 	public $boxcode = "validated_project";
 	public $boximg = "object_projectpub";
+	/**
+	 * @var string
+	 */
 	public $boxlabel;
 	//var $depends = array("projet");
 
@@ -170,7 +173,7 @@ class box_validated_projects extends ModeleBoxes
 
 					$this->info_box_contents[$i][] = array(
 						'td' => 'class="center"',
-						'text' => $objp->startDate,
+						'text' => $objp->startdate,
 					);
 
 					$this->info_box_contents[$i][] = array(
@@ -186,11 +189,13 @@ class box_validated_projects extends ModeleBoxes
 		}
 	}
 
+
+
 	/**
-	 *	Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
-	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
 	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */

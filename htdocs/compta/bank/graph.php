@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,11 +31,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories'));
 
-$WIDTH = DolGraph::getDefaultGraphSizeForStats('width', 768);
-$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', 200);
+$WIDTH = DolGraph::getDefaultGraphSizeForStats('width', '768');
+$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', '200');
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('bankstats', 'globalcard'));
@@ -86,6 +94,13 @@ if (GETPOST("ref")) {
 
 $title = $object->ref.' - '.$langs->trans("Graph");
 $helpurl = "";
+$show1 = '';
+$show2 = '';
+$show3 = '';
+$show4 = '';
+$show5 = '';
+$morehtml = '';
+
 llxHeader('', $title, $helpurl);
 
 $result = dol_mkdir($conf->bank->dir_temp);
@@ -757,7 +772,7 @@ if ($result < 0) {
 
 // Onglets
 $head = bank_prepare_head($object);
-print dol_get_fiche_head($head, 'graph', $langs->trans("FinancialAccount"), 0, 'account');
+print dol_get_fiche_head($head, 'annual', $langs->trans("FinancialAccount"), 0, 'account');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -778,7 +793,7 @@ if ($account) {
 		$bankaccount = new Account($db);
 		$listid = explode(',', $account);
 		foreach ($listid as $key => $id) {
-			$bankaccount->fetch($id);
+			$bankaccount->fetch((int) $id);
 			$bankaccount->label = $bankaccount->ref;
 			print $bankaccount->getNomUrl(1);
 			if ($key < (count($listid) - 1)) {
@@ -792,6 +807,8 @@ if ($account) {
 
 print dol_get_fiche_end();
 
+$head = bank_report_prepare_head($object);
+print dol_get_fiche_head($head, 'graph', $langs->trans("FinancialAccount"), 0);
 
 print '<table class="notopnoleftnoright" width="100%">';
 
@@ -867,6 +884,7 @@ if ($mode == 'showalltime') {
 	print '</div>';
 }
 
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

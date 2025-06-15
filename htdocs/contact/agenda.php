@@ -8,6 +8,7 @@
  * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +30,6 @@
  *       \brief      Card agenda of a contact
  */
 
-
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -46,15 +46,27 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'users', 'other', 'commercial'));
 
-$mesg = ''; $error = 0; $errors = array();
+$mesg = '';
+$error = 0;
+$errors = array();
 
 // Get parameters
 $action		= (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $confirm	= GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$contextpage = GETPOST('contextpage', 'aZ09');
+
 $id = GETPOSTINT('id');
 $socid		= GETPOSTINT('socid');
 
@@ -99,10 +111,11 @@ $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'ro
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page == -1) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -215,7 +228,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		 * Card in view mode
 		 */
 
-		dol_htmloutput_errors($error, $errors);
+		dol_htmloutput_errors((string) $error, $errors);
 
 		print dol_get_fiche_head($head, 'agenda', $title, -1, 'contact');
 
@@ -269,10 +282,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$permok = $user->hasRight('agenda', 'myactions', 'create');
 			if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
 				if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') {
-					$out .= '&amp;originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&amp;socid='.$objthirdparty->id : '');
+					$out .= '&originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&socid='.$objthirdparty->id : '');
 				}
-				$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;origin=contact&amp;originid='.$object->id.'&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].($objcon->id > 0 ? '?id='.$objcon->id : ''));
-				$out .= '&amp;datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog'));
+				$out .= (!empty($objcon->id) ? '&contactid='.$objcon->id : '').'&origin=contact&originid='.$object->id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].($objcon->id > 0 ? '?id='.$objcon->id : ''));
+				$out .= '&datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog'));
 			}
 
 			if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {

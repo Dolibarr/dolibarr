@@ -100,19 +100,19 @@ class box_graph_invoices_permonth extends ModeleBoxes
 		if ($user->hasRight('facture', 'lire')) {
 			$mesg = '';
 
-			$param_year = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
-			$param_shownb = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_shownb';
-			$param_showtot = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_showtot';
+			$param_year = 'DOLUSER_box_'.$this->boxcode.'_year';
+			$param_shownb = 'DOLUSER_box_'.$this->boxcode.'_shownb';
+			$param_showtot = 'DOLUSER_box_'.$this->boxcode.'_showtot';
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 			$autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
-			if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode, $autosetarray)) {
+			if (in_array('DOLUSER_box_'.$this->boxcode, $autosetarray)) {
 				$endyear = GETPOSTINT($param_year);
 				$shownb = GETPOST($param_shownb, 'alpha');
 				$showtot = GETPOST($param_showtot, 'alpha');
 			} else {
-				$tmparray = (!empty($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode]) ? json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode], true) : array());
+				$tmparray = (!empty($_COOKIE['DOLUSER_box_'.$this->boxcode]) ? json_decode($_COOKIE['DOLUSER_box_'.$this->boxcode], true) : array());
 				$endyear = (!empty($tmparray['year']) ? $tmparray['year'] : '');
 				$shownb = (!empty($tmparray['shownb']) ? $tmparray['shownb'] : '');
 				$showtot = (!empty($tmparray['showtot']) ? $tmparray['showtot'] : '');
@@ -133,6 +133,8 @@ class box_graph_invoices_permonth extends ModeleBoxes
 
 			$stats = new FactureStats($this->db, $socid, $mode, 0);
 			$stats->where = "f.fk_statut > 0";
+			$px1 = null;
+			$px2 = null;
 
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($shownb) {
@@ -234,27 +236,27 @@ class box_graph_invoices_permonth extends ModeleBoxes
 				$stringtoshow .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$stringtoshow .= '<input type="hidden" name="action" value="'.$refreshaction.'">';
 				$stringtoshow .= '<input type="hidden" name="page_y" value="">';
-				$stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_box_'.$this->boxcode.':year,shownb,showtot">';
-				$stringtoshow .= '<input type="checkbox" name="'.$param_shownb.'"'.($shownb ? ' checked' : '').'> '.$langs->trans("NumberOfBillsByMonth");
+				$stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSER_box_'.$this->boxcode.':year,shownb,showtot">';
+				$stringtoshow .= '<input type="checkbox" id="'.$param_shownb.'" name="'.$param_shownb.'"'.($shownb ? ' checked' : '').'><label for="'.$param_shownb.'"> '.$langs->trans("NumberOfBillsByMonth").'</label>';
 				$stringtoshow .= ' &nbsp; ';
-				$stringtoshow .= '<input type="checkbox" name="'.$param_showtot.'"'.($showtot ? ' checked' : '').'> '.$langs->trans("AmountOfBillsByMonthHT");
+				$stringtoshow .= '<input type="checkbox" id="'.$param_showtot.'" name="'.$param_showtot.'"'.($showtot ? ' checked' : '').'><label for="'.$param_showtot.'"> '.$langs->trans("AmountOfBillsByMonthHT").'</label>';
 				$stringtoshow .= '<br>';
 				$stringtoshow .= $langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
-				$stringtoshow .= '<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', '', 1).'">';
+				$stringtoshow .= '<input type="image" class="reposition inline-block valigntextbottom" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', 0, 1).'">';
 				$stringtoshow .= '</form>';
 				$stringtoshow .= '</div>';
 				if ($shownb && $showtot) {
 					$stringtoshow .= '<div class="fichecenter">';
 					$stringtoshow .= '<div class="fichehalfleft">';
 				}
-				if ($shownb) {
+				if ($shownb && $px1 !== null) {
 					$stringtoshow .= $px1->show();
 				}
 				if ($shownb && $showtot) {
 					$stringtoshow .= '</div>';
 					$stringtoshow .= '<div class="fichehalfright">';
 				}
-				if ($showtot) {
+				if ($showtot && $px2 !== null) {
 					$stringtoshow .= $px2->show();
 				}
 				if ($shownb && $showtot) {
@@ -273,11 +275,13 @@ class box_graph_invoices_permonth extends ModeleBoxes
 		}
 	}
 
+
+
 	/**
-	 *	Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
-	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
 	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */

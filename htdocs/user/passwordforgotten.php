@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2007-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2008-2011	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2014       Teddy Andreotti    	<125155@supinfo.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2007-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2008-2011	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2014       Teddy Andreotti    		<125155@supinfo.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 if (isModEnabled('ldap')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by page
 $langs->loadLangs(array('errors', 'users', 'companies', 'ldap', 'other'));
@@ -93,7 +102,7 @@ if (empty($reshook)) {
 	// Validate new password
 	if ($action == 'validatenewpassword' && $username && $passworduidhash) {	// Test on permission not required here. Security is managed by $passworduihash
 		$edituser = new User($db);
-		$result = $edituser->fetch('', $username, '', 0, $conf->entity);
+		$result = $edituser->fetch(0, $username, '', 0, $conf->entity);
 		if ($result < 0) {
 			$message = '<div class="error">'.dol_escape_htmltag($langs->trans("ErrorTechnicalError")).'</div>';
 		} else {
@@ -124,18 +133,19 @@ if (empty($reshook)) {
 
 		// Verify code
 		if (!$ok) {
+			dol_syslog('Bad value for code, password reset refused', LOG_NOTICE);
+
 			$message = '<div class="error">'.$langs->trans("ErrorBadValueForCode").'</div>';
 		} else {
 			$isanemail = preg_match('/@/', $username);
 
 			$edituser = new User($db);
-			$result = $edituser->fetch('', $username, '', 1, $conf->entity);
+			$result = $edituser->fetch(0, $username, '', 1, $conf->entity);
 			if ($result == 0 && $isanemail) {
-				$result = $edituser->fetch('', '', '', 1, $conf->entity, $username);
+				$result = $edituser->fetch(0, '', '', 1, $conf->entity, $username);
 			}
 
-			// Set the message to show (must be the same if login/email exists or not
-			// to avoid to guess them.
+			// Set the message to show (must be the same if login/email exists or not to avoid to guess them.
 			$messagewarning = '<div class="warning paddingtopbottom'.(!getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? '' : ' backgroundsemitransparent boxshadow').'">';
 			if (!$isanemail) {
 				$messagewarning .= $langs->trans("IfLoginExistPasswordRequestSent");
@@ -186,8 +196,18 @@ if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 	$title = getDolGlobalString('MAIN_APPLICATION_TITLE');
 }
 
-// Select templates
-if (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/passwordforgotten.tpl.php")) {
+// Select templates dir
+$template_dir = '';
+if (!empty($conf->modules_parts['tpl'])) {	// Using this feature slow down application
+	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl/'));
+	foreach ($dirtpls as $reldir) {
+		$tmp = dol_buildpath($reldir.'passwordforgotten.tpl.php');
+		if (file_exists($tmp)) {
+			$template_dir = preg_replace('/passwordforgotten\.tpl\.php$/', '', $tmp);
+			break;
+		}
+	}
+} elseif (file_exists(DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/passwordforgotten.tpl.php")) {
 	$template_dir = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/tpl/";
 } else {
 	$template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
@@ -197,15 +217,6 @@ if (!$username) {
 	$focus_element = 'username';
 } else {
 	$focus_element = 'password';
-}
-
-// Send password button enabled ?
-$disabled = 'disabled';
-if (preg_match('/dolibarr/i', $mode)) {
-	$disabled = '';
-}
-if (getDolGlobalString('MAIN_SECURITY_ENABLE_SENDPASSWORD')) {
-	$disabled = ''; // To force button enabled
 }
 
 // Show logo (search in order: small company logo, large company logo, theme logo, common logo)
@@ -223,10 +234,19 @@ if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/log
 	$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
 }
 
+// Send password button enabled ?
+$disabled = 'disabled';
+if (preg_match('/dolibarr/i', $mode)) {
+	$disabled = '';
+}
+if (getDolGlobalString('MAIN_SECURITY_ENABLE_SENDPASSWORD')) {
+	$disabled = ''; // To force button enabled
+}
+
 // Security graphical code
-if (function_exists("imagecreatefrompng") && !$disabled) {
-	$captcha = 1;
-	$captcha_refresh = img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"');
+$captcha = '';
+if (!$disabled) {
+	$captcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
 }
 
 // Execute hook getPasswordForgottenPageOptions (for table)

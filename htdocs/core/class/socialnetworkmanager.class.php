@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/mastodonhandler.class.php';
 class SocialNetworkManager
 {
 	/**
-	 * @var DoliDb Database handler
+	 * @var DoliDB Database handler
 	 */
 	public $db;
 
@@ -46,7 +46,7 @@ class SocialNetworkManager
 	private $handler;
 
 	/**
-	 * @var String Error code (or message)
+	 * @var string Error code (or message)
 	 */
 	public $error = '';
 
@@ -58,8 +58,8 @@ class SocialNetworkManager
 	/**
 	 *	Constructor
 	 *
-	 *  @param		string		$platform      name of social network
-	 *  @param      array       $authParams    other parameters
+	 *  @param	string		$platform      name of social network
+	 *  @param	array{username?:string,password?:string,name_app?:string,client_id?:string,client_secret?:string,redirect_uri?:string,access_token?:string}	$authParams    other parameters
 	 */
 	public function __construct($platform, $authParams = [])
 	{
@@ -69,7 +69,7 @@ class SocialNetworkManager
 
 	/**
 	 * Initialize the social network needed
-	 *  @param      array       $authParams    other parameters
+	 * @param	array{username?:string,password?:string,name_app?:string,client_id?:string,client_secret?:string,redirect_uri?:string,access_token?:string}	$authParams    other parameters
 	 * @return void   new instance if founded
 	 */
 	private function initializeHandler($authParams)
@@ -89,7 +89,7 @@ class SocialNetworkManager
 	 * @param int       $maxNb      Maximum number of posts to retrieve (default is 5).
 	 * @param int       $cacheDelay Number of seconds to use cached data (0 to disable caching).
 	 * @param string    $cacheDir   Directory to store cached data.
-	 * @param array $authParams Authentication parameters
+	 * @param array{username?:string,password?:string,name_app?:string,client_id?:string,client_secret?:string,redirect_uri?:string,access_token?:string}	$authParams Authentication parameters
 	 * @return bool      Status code: false if error,  array if success.
 	 */
 	public function fetchPosts($urlAPI, $maxNb = 5, $cacheDelay = 60, $cacheDir = '', $authParams = [])
@@ -97,13 +97,21 @@ class SocialNetworkManager
 		if (!$this->handler) {
 			return false;
 		}
-		return $this->handler->fetch($urlAPI, $maxNb, $cacheDelay, $cacheDir, $authParams);
+
+		// This fetch URL
+		$result = $this->handler->fetch($urlAPI, $maxNb, $cacheDelay, $cacheDir, $authParams);
+
+		if (!empty($this->handler->error)) {
+			$this->error = $this->handler->error;
+		}
+
+		return $result;
 	}
 
 	/**
 	 * Get the list of retrieved posts.
 	 *
-	 * @return array<array{id:string,content:string,created_at:string,url:string,media_url:string}|array{}>	List of posts.
+	 * @return array<array{id:string,content:string,created_at:string,url:string,author_name:string,author_avatar?:string}|array{}>		Posts fetched from the API
 	 */
 	public function getPosts()
 	{

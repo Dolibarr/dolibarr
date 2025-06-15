@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +18,10 @@
  */
 
 /**
- *       \file       htdocs/core/ajax/objectonoff.php
- *       \brief      File to set status for an object. Called when ajax_object_onoff() is used.
- *       			 This Ajax service is often called when option MAIN_DIRECT_STATUS_UPDATE is set.
+ *       \file      htdocs/core/ajax/objectonoff.php
+ *       \brief     File to set status for an object. Called when ajax_object_onoff() is used.
+ *       			This Ajax service is often called when option MAIN_DIRECT_STATUS_UPDATE is set.
+ *       			TODO Rename into updatestatus.php
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -42,6 +44,14 @@ if (!defined('NOREQUIRESOC')) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage');
 
@@ -56,6 +66,7 @@ $object = fetchObjectByElement($id, $element);
 if (!is_object($object)) {
 	httponly_accessforbidden("Bad value for combination of parameters element/field: Object not found.");	// This includes the exit.
 }
+'@phan-var-force CommonObject $object';
 
 $object->fields[$field] = array('type' => $format, 'enabled' => 1);
 
@@ -88,6 +99,13 @@ if (preg_match('/stat[u][st]$/', $field) || ($field == 'evenunsubscribe' && $obj
 
 
 /*
+ * Actions
+ */
+
+// None
+
+
+/*
  * View
  */
 
@@ -96,7 +114,7 @@ top_httphead();
 print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Registering new values
-if (($action == 'set') && !empty($id)) {
+if (($action == 'set') && !empty($id)) {	// Test on permission already done in header according to object and field.
 	$triggerkey = strtoupper(($module != $element ? $module.'_' : '').$element).'_UPDATE';
 	// Special case
 	if ($triggerkey == 'SOCIETE_UPDATE') {

@@ -2,6 +2,7 @@
 
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,13 @@ require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstationusergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation_workstation.lib.php';
 
-global $conf, $db, $hookmanager, $langs, $user;
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('mrp', 'other'));
@@ -227,13 +234,13 @@ if ($action == 'create') {
 	// Common attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_add.tpl.php';
 
-	print '<tr id="usergroups"';
-	print ' ><td>';
-	print $langs->trans('Groups');
+	print '<tr id="usergroups">';
+	print '<td>';
+	print $langs->trans('UserGroups');
 	print '</td>';
 	print '<td>';
 	print img_picto('', 'group');
-	print $form->select_dolgroups($groups, 'groups', 1, '', 0, '', '', $object->entity, true, 'quatrevingtpercent widthcentpercentminusx');
+	print $form->select_dolgroups($groups, 'groups', 1, '', 0, '', array(), (string) $object->entity, true, 'quatrevingtpercent widthcentpercentminusx');
 	print '</td></tr>';
 
 	print '<tr id="wsresources"><td>';
@@ -241,7 +248,7 @@ if ($action == 'create') {
 	print '</td>';
 	print '<td>';
 	print img_picto('', 'resource');
-	print $formresource->select_resource_list($resources, 'resources', [], '', 0, '', '', $object->entity, true, 0, 'quatrevingtpercent widthcentpercentminusx', true);
+	print $formresource->select_resource_list($resources, 'resources', '', 0, 0, 0, array(), (string) $object->entity, 0, 0, 'quatrevingtpercent widthcentpercentminusx', true);
 	print '</td></tr>';
 
 	// Other attributes
@@ -282,11 +289,11 @@ if (($id || $ref) && $action == 'edit') {
 
 	print '<tr id="usergroups"';
 	print '><td>';
-	print $langs->trans('Groups');
+	print $langs->trans('UserGroups');
 	print '</td>';
 	print '<td>';
 	print img_picto('', 'group');
-	print $form->select_dolgroups(empty($groups) ? $object->usergroups : $groups, 'groups', 1, '', 0, '', '', $object->entity, true, 'quatrevingtpercent widthcentpercentminusx');
+	print $form->select_dolgroups(empty($groups) ? $object->usergroups : $groups, 'groups', 1, '', 0, '', array(), (string) $object->entity, true, 'quatrevingtpercent widthcentpercentminusx');
 	print '</td></tr>';
 
 	print '<tr id="wsresources"><td>';
@@ -294,7 +301,7 @@ if (($id || $ref) && $action == 'edit') {
 	print '</td>';
 	print '<td>';
 	print img_picto('', 'resource');
-	print $formresource->select_resource_list(empty($resources) ? $object->resources : $resources, 'resources', [], '', 0, '', '', $object->entity, true, 0, 'quatrevingtpercent widthcentpercentminusx', true);
+	print $formresource->select_resource_list(empty($resources) ? $object->resources : $resources, 'resources', '', 0, 0, 0, array(), (string) $object->entity, 1, 0, 'quatrevingtpercent widthcentpercentminusx', true);
 	print '</td></tr>';
 
 	// Other attributes
@@ -321,10 +328,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action == 'delete' || ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))) {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteWorkstation'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 'action-delete');
 	}
+	$formquestion = array();
 	// Clone confirmation
 	if ($action == 'clone') {
 		// Create an array for form
-		$formquestion = array();
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 

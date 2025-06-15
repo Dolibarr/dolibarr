@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014 	   Charles-Fr BENKE        <charles.fr@benke.fr>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -55,6 +55,9 @@ class box_actions extends ModeleBoxes
 		$this->enabled = isModEnabled('agenda');
 
 		$this->hidden = !($user->hasRight('agenda', 'myactions', 'read'));
+
+		$this->urltoaddentry = DOL_URL_ROOT.'/comm/action/card.php?action=create';
+		$this->msgNoRecords = 'NoActionsToDo';
 	}
 
 	/**
@@ -65,7 +68,7 @@ class box_actions extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $conf;
+		global $user, $langs;
 
 		$this->max = $max;
 
@@ -84,21 +87,21 @@ class box_actions extends ModeleBoxes
 			$sql .= ", s.code_client, s.code_compta as code_compta_client, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm AS ta, ".MAIN_DB_PREFIX."actioncomm AS a";
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 			}
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 			$sql .= " WHERE a.fk_action = ta.id";
 			$sql .= " AND a.entity IN (".getEntity('actioncomm').")";
 			$sql .= " AND a.percent >= 0 AND a.percent < 100";
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND (a.fk_soc IS NULL OR sc.fk_user = ".((int) $user->id).")";
 			}
 			if ($user->socid) {
 				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
 			if (!$user->hasRight('agenda', 'allactions', 'read')) {
-				$sql .= " AND (a.fk_user_author = ".((int) $user->id)." OR a.fk_user_action = ".((int) $user->id)." OR a.fk_user_done = ".((int) $user->id).")";
+				$sql .= " AND (a.fk_user_author = ".((int) $user->id)." OR a.fk_user_action = ".((int) $user->id).")";
 			}
 			$sql .= " ORDER BY a.datep ASC";
 			$sql .= $this->db->plimit($max, 0);
@@ -107,7 +110,7 @@ class box_actions extends ModeleBoxes
 			$result = $this->db->query($sql);
 			if ($result) {
 				$now = dol_now();
-				$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
+				$delay_warning = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO') * 24 * 60 * 60;
 
 				$num = $this->db->num_rows($result);
 
@@ -126,7 +129,6 @@ class box_actions extends ModeleBoxes
 					$societestatic->name = $objp->name;
 					//$societestatic->name_alias = $objp->name_alias;
 					$societestatic->code_client = $objp->code_client;
-					$societestatic->code_compta = $objp->code_compta;
 					$societestatic->code_compta_client = $objp->code_compta_client;
 					$societestatic->client = $objp->client;
 					$societestatic->logo = $objp->logo;
@@ -174,12 +176,12 @@ class box_actions extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num == 0) {
-					$this->info_box_contents[$line][0] = array(
-						'td' => 'class="center"',
-						'text' => '<span class="opacitymedium">'.$langs->trans("NoActionsToDo").'</span>'
-					);
-				}
+				// if ($num == 0) {
+				// 	$this->info_box_contents[$line][0] = array(
+				// 		'td' => 'class="center"',
+				// 		'text' => '<span class="opacitymedium">'.$langs->trans("NoActionsToDo").'</span>'
+				// 	);
+				// }
 
 				$this->db->free($result);
 			} else {
@@ -197,11 +199,13 @@ class box_actions extends ModeleBoxes
 		}
 	}
 
+
+
 	/**
-	 *	Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
-	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
 	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
@@ -213,6 +217,7 @@ class box_actions extends ModeleBoxes
 		if (getDolGlobalString('SHOW_DIALOG_HOMEPAGE')) {
 			$actioncejour = false;
 			$contents = $this->info_box_contents;
+			$nblines = 0;
 			if (is_countable($contents) && count($contents) > 0) {
 				$nblines = count($contents);
 			}

@@ -2,6 +2,8 @@
 /* Copyright (C) 2011-2016 Jean-François Ferry    <hello@librethic.io>
  * Copyright (C) 2011      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +41,14 @@ if (isModEnabled('project')) {
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'ticket'));
@@ -88,6 +98,7 @@ $permissiontoadd = $user->hasRight('ticket', 'write');
 /*
  * Actions
  */
+$error = 0;
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -101,24 +112,22 @@ if ($action == 'addcontact' && $user->hasRight('ticket', 'write')) {
 		$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 
-		$error = 0;
-
 		$codecontact = dol_getIdFromCode($db, $typeid, 'c_type_contact', 'rowid', 'code');
-		if ($codecontact=='SUPPORTTEC') {
+		if ($codecontact == 'SUPPORTTEC') {
 			$internal_contacts = $object->listeContact(-1, 'internal', 0, 'SUPPORTTEC');
 			foreach ($internal_contacts as $key => $contact) {
 				if ($contact['id'] !== $contactid) {
 					//print "user à effacer : ".$useroriginassign;
 					$result = $object->delete_contact($contact['rowid']);
-					if ($result<0) {
-						$error ++;
+					if ($result < 0) {
+						$error++;
 						setEventMessages($object->error, $object->errors, 'errors');
 					}
 				}
 			}
 			$ret = $object->assignUser($user, $contactid);
 			if ($ret < 0) {
-				$error ++;
+				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
@@ -155,10 +164,10 @@ if ($action == 'deletecontact' && $user->hasRight('ticket', 'write')) {
 	if ($object->fetch($id, '', $track_id)) {
 		$internal_contacts = $object->listeContact(-1, 'internal', 0, 'SUPPORTTEC');
 		foreach ($internal_contacts as $key => $contact) {
-			if ($contact['rowid'] == $lineid && $object->fk_user_assign==$contact['id']) {
-				$ret = $object->assignUser($user, null);
+			if ($contact['rowid'] == $lineid && $object->fk_user_assign == $contact['id']) {
+				$ret = $object->assignUser($user, 0);
 				if ($ret < 0) {
-					$error ++;
+					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
@@ -206,9 +215,9 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 		}
 
 		if (!$user->socid && getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY')) {
-			$object->next_prev_filter = "te.fk_user_assign ='".((int) $user->id);
+			$object->next_prev_filter = "te.fk_user_assign:=:'".((int) $user->id);
 		} elseif ($user->socid > 0) {
-			$object->next_prev_filter = "te.fk_soc = ".((int) $user->socid);
+			$object->next_prev_filter = "te.fk_soc:=:".((int) $user->socid);
 		}
 
 		$head = ticket_prepare_head($object);
@@ -219,17 +228,20 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 		$morehtmlref .= $object->subject;
 		// Author
 		if ($object->fk_user_create > 0) {
-			$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
+			$morehtmlref .= '<br>';
+			//$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("CreatedBy").'</span> ';
 
 			$fuser = new User($db);
 			$fuser->fetch($object->fk_user_create);
 			$morehtmlref .= $fuser->getNomUrl(-1);
 		} elseif (!empty($object->email_msgid)) {
-			$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
+			$morehtmlref .= '<br>';
+			//$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("CreatedBy").'</span> ';
 			$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
 			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $langs->trans("EmailMsgID").': '.$object->email_msgid).')</small>';
 		} elseif (!empty($object->origin_email)) {
-			$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
+			$morehtmlref .= '<br>';
+			//$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("CreatedBy").'</span> ';
 			$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
 			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">('.$langs->trans("CreatedByPublicPortal").')</small>';
 		}
@@ -241,7 +253,7 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 			if ($action != 'editcustomer' && $permissiontoadd) {
 				$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editcustomer&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->transnoentitiesnoconv('SetThirdParty'), 0).'</a> ';
 			}
-			$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, $action == 'editcustomer' ? 'editcustomer' : 'none', '', 1, 0, 0, array(), 1);
+			$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, (string) $object->socid, $action == 'editcustomer' ? 'editcustomer' : 'none', '', 1, 0, 0, array(), 1);
 		}
 
 		// Project
@@ -253,7 +265,7 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
 					$morehtmlref .= '<br>';

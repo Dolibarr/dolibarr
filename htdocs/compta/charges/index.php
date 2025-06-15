@@ -7,7 +7,8 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +40,15 @@ require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $hookmanager = new HookManager($db);
 
@@ -156,8 +166,8 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 		$sql .= " OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 		$sql .= ")";
 	}
-	if (preg_match('/^cs\./', $sortfield) || preg_match('/^c\./', $sortfield) || preg_match('/^pc\./', $sortfield) || preg_match('/^pct\./', $sortfield)) {
-		$sql .= $db->order($sortfield, $sortorder);
+	if (preg_match('/^(cs?|pct?)\./', (string) $sortfield)) {
+		$sql .= $db->order((string) $sortfield, (string) $sortorder);
 	}
 	//$sql.= $db->plimit($limit+1,$offset);
 	//print $sql;
@@ -300,8 +310,8 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 		// so we are compatible when period is not mandatory
 		$sql .= " AND pv.datev between '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
 	}
-	if (preg_match('/^pv\./', $sortfield) || preg_match('/^ptva\./', $sortfield)) {
-		$sql .= $db->order($sortfield, $sortorder);
+	if (preg_match('/^(pv|ptva)\./', (string) $sortfield)) {
+		$sql .= $db->order((string) $sortfield, (string) $sortorder);
 	}
 
 	$result = $db->query($sql);
@@ -455,8 +465,8 @@ while ($j < $numlt) {
 		// so we are compatible when period is not mandatory
 		$sql .= " AND pv.datev between '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
 	}
-	if (preg_match('/^pv/', $sortfield)) {
-		$sql .= $db->order($sortfield, $sortorder);
+	if (preg_match('/^pv/', (string) $sortfield)) {
+		$sql .= $db->order((string) $sortfield, (string) $sortorder);
 	}
 
 	$result = $db->query($sql);

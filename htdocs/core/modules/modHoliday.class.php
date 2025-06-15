@@ -111,7 +111,7 @@ class modHoliday extends DolibarrModules
 
 		$this->const[$r][0] = "HOLIDAY_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/holiday";
+		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/holiday";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
@@ -308,7 +308,7 @@ class modHoliday extends DolibarrModules
 
 		//ODT template
 		/*$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/holiday/template_holiday.odt';
-		$dirodt=DOL_DATA_ROOT.'/doctemplates/holiday';
+		$dirodt=DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/holiday';
 		$dest=$dirodt.'/template_order.odt';
 
 		if (file_exists($src) && ! file_exists($dest))

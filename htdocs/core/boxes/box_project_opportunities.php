@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2012-2014 Charles-François BENKE <charles.fr@benke.fr>
  * Copyright (C) 2014      Marcos García          <marcosgdf@gmail.com>
- * Copyright (C) 2015      Frederic France        <frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France        <frederic.france@free.fr>
  * Copyright (C) 2016      Juan José Menent       <jmenent@2byte.es>
  * Copyright (C) 2020      Pierre Ardoin          <mapiolca@me.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -34,6 +34,9 @@ class box_project_opportunities extends ModeleBoxes
 {
 	public $boxcode = "project_opportunities";
 	public $boximg  = "object_projectpub";
+	/**
+	 * @var string
+	 */
 	public $boxlabel;
 	// var $depends = array("projet");
 
@@ -55,6 +58,8 @@ class box_project_opportunities extends ModeleBoxes
 
 		$this->enabled = getDolGlobalInt('PROJECT_USE_OPPORTUNITIES');
 		$this->hidden = !$user->hasRight('projet', 'lire');
+		$this->urltoaddentry = DOL_URL_ROOT.'/projet/card.php?action=create';
+		$this->msgNoRecords = 'NoOpenedProjectsOpportunities';
 	}
 
 	/**
@@ -72,6 +77,7 @@ class box_project_opportunities extends ModeleBoxes
 		$textHead = $langs->trans("OpenedProjectsOpportunities");
 		$this->info_box_head = array('text' => $textHead, 'limit' => dol_strlen($textHead));
 
+		$num = 0;
 		$i = 0;
 		// list the summary of the orders
 		if ($user->hasRight('projet', 'lire')) {
@@ -119,6 +125,7 @@ class box_project_opportunities extends ModeleBoxes
 					$projectstatic->title = $objp->title;
 					$projectstatic->public = $objp->public;
 					$projectstatic->statut = $objp->status;
+					$projectstatic->status = $objp->status;
 					$projectstatic->opp_status = $objp->opp_status;
 					$projectstatic->opp_status_code = $objp->opp_status_code;
 					$projectstatic->opp_percent = $objp->opp_percent;
@@ -160,40 +167,43 @@ class box_project_opportunities extends ModeleBoxes
 			}
 		}
 
-
-		// Add the sum à the bottom of the boxes
-		$this->info_box_contents[$i][] = array(
-			'tr' => 'class="liste_total_wrap"',
-			'td' => 'class="liste_total"',
-			'text' => $langs->trans("Total")."&nbsp;".$textHead,
-		);
-		$this->info_box_contents[$i][] = array(
-			'td' => 'class="right liste_total" ',
-			'text' => round($num, 0)."&nbsp;".$langs->trans("Projects"),
-		);
-		$this->info_box_contents[$i][] = array(
-			'td' => 'class="liste_total"',
-			'text' => "&nbsp;",
-		);
-		$this->info_box_contents[$i][] = array(
-			'td' => 'class="liste_total"',
-			'text' => "&nbsp;",
-		);
-		$this->info_box_contents[$i][] = array(
-			'td' => 'class="liste_total"',
-			'text' => "&nbsp;",
-		);
-		$this->info_box_contents[$i][] = array(
-			'td' => 'class="liste_total"',
-			'text' => "&nbsp;",
-		);
+		if ($num > 0) {
+			// Add the sum à the bottom of the boxes
+			$this->info_box_contents[$i][] = array(
+				'tr' => 'class="liste_total_wrap"',
+				'td' => 'class="liste_total"',
+				'text' => $langs->trans("Total")."&nbsp;".$textHead,
+			);
+			$this->info_box_contents[$i][] = array(
+				'td' => 'class="right liste_total" ',
+				'text' => round($num, 0)."&nbsp;".$langs->trans("Projects"),
+			);
+			$this->info_box_contents[$i][] = array(
+				'td' => 'class="liste_total"',
+				'text' => "&nbsp;",
+			);
+			$this->info_box_contents[$i][] = array(
+				'td' => 'class="liste_total"',
+				'text' => "&nbsp;",
+			);
+			$this->info_box_contents[$i][] = array(
+				'td' => 'class="liste_total"',
+				'text' => "&nbsp;",
+			);
+			$this->info_box_contents[$i][] = array(
+				'td' => 'class="liste_total"',
+				'text' => "&nbsp;",
+			);
+		}
 	}
 
+
+
 	/**
-	 *	Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param	?array{text?:string,sublink?:string,subpicto:?string,nbcol?:int,limit?:int,subclass?:string,graph?:string}	$head	Array with properties of box title
-	 *	@param	?array<array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:string}>>	$contents	Array with properties of box lines
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
 	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */

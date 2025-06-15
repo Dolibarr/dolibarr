@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2002       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,18 +37,28 @@ if (!defined('NOIPCHECK')) {
 /**
  * Header function
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
+ * @param 	string		$title				Title
+ * @param 	string		$head				Head array
+ * @param 	int    		$disablejs			More content into html header
+ * @param 	int    		$disablehead		More content into html header
+ * @param 	string[]|string	$arrayofjs			Array of complementary js files
+ * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge()
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
 {
 	print '<html><title>List of donators</title><body>';
 }
 /**
- * Header function
+ * Footer function
+ *
+ * Note: also called by functions.lib:recordNotFound
  *
  * @return	void
  */
-function llxFooterVierge()
+function llxFooterVierge()  // @phan-suppress-current-line PhanRedefineFunction
 {
 	print '</body></html>';
 }
@@ -69,7 +80,7 @@ $langs->load("donations");
  * View
  */
 
-llxHeaderVierge();
+llxHeaderVierge("");
 
 $sql = "SELECT d.datedon as datedon, d.lastname, d.firstname, d.amount, d.public, d.societe";
 $sql .= " FROM ".MAIN_DB_PREFIX."don as d";
@@ -79,7 +90,7 @@ $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
 	if ($num) {
-		print "<table border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+		print '<table class="centpercent" cellspacing="0" cellpadding="4">';
 
 		print '<tr>';
 		print "<td>".$langs->trans("Name")." / ".$langs->trans("Company")."</td>";
@@ -97,7 +108,7 @@ if ($resql) {
 				print "<td>".$langs->trans("Anonymous")."</td>\n";
 			}
 			print "<td>".dol_print_date($db->jdate($objp->datedon))."</td>\n";
-			print '<td class="right">'.number_format($objp->amount, 2, '.', ' ').' '.$langs->trans("Currency".$conf->currency).'</td>';
+			print '<td class="right">'.price($objp->amount).' '.$langs->trans("Currency".$conf->currency).'</td>';
 			print "</tr>";
 			$i++;
 		}

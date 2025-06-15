@@ -60,7 +60,7 @@ abstract class ModelePDFTask extends CommonDocGenerator
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param	Project		$object					Object source to build document
+	 *	@param	Task		$object					Object source to build document
 	 *	@param	Translate	$outputlangs			Lang output object
 	 * 	@param	string		$srctemplatepath		Full path of source filename for generator using a template file
 	 *	@return	int<-1,1>							1 if OK, <=0 if KO
@@ -80,8 +80,15 @@ abstract class ModeleNumRefTask extends CommonNumRefGenerator
 	 *  Return next value
 	 *
 	 *  @param	null|Societe|string	$objsoc	Object third party
-	 *  @param	null|Project|string	$object	Object Project
+	 *  @param	null|Task|string	$object	Object Task
 	 *  @return	string|int<-1,0>			Value if OK, <=0 if KO
 	 */
 	abstract public function getNextValue($objsoc, $object);
+
+	/**
+	 *  Return an example of numbering
+	 *
+	 *  @return     string      Example
+	 */
+	abstract public function getExample();
 }

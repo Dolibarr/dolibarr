@@ -5,9 +5,9 @@
  * Copyright (C) 2014-2016  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Maxime DEMAREST         <maxime@indelog.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +34,16 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
-$langs->loadLangs(array('compta', 'bills', 'donation', 'salaries'));
+$langs->loadLangs(array('compta', 'bills', 'donation', 'accountancy', 'salaries'));
 
 $date_startday = GETPOSTINT('date_startday');
 $date_startmonth = GETPOSTINT('date_startmonth');
@@ -142,6 +150,11 @@ llxHeader();
 
 $form = new Form($db);
 
+
+$builddate = 0;
+$name = '';
+$period = '';
+$periodlink = '';
 $exportlink = '';
 
 $encaiss = array();
@@ -201,11 +214,10 @@ if (isModEnabled('accounting')) {
 }
 $calcmode .= '</label>';
 
-
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 
 if (isModEnabled('accounting') && $modecompta != 'BOOKKEEPING') {
-	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, '1');
 }
 
 
@@ -269,9 +281,9 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($modecompta == "BOOKKEEPING") {
-	// Nothing from this table
-}
+} // elseif ($modecompta == "BOOKKEEPING") {
+// Nothing from this table
+//}
 
 if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
 	// On ajoute les paiements clients anciennes version, non lies par paiement_facture
@@ -314,12 +326,12 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 		} else {
 			dol_print_error($db);
 		}
-	} elseif ($modecompta == "RECETTES-DEPENSES") {
-		// Nothing from this table
-	}
-} elseif ($modecompta == "BOOKKEEPING") {
+	} //elseif ($modecompta == "RECETTES-DEPENSES") {
 	// Nothing from this table
-}
+	//}
+} //elseif ($modecompta == "BOOKKEEPING") {
+// Nothing from this table
+//}
 
 
 /*
@@ -383,9 +395,9 @@ if (isModEnabled('invoice') && ($modecompta == 'CREANCES-DETTES' || $modecompta 
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($modecompta == "BOOKKEEPING") {
-	// Nothing from this table
-}
+} //elseif ($modecompta == "BOOKKEEPING") {
+// Nothing from this table
+//}
 
 
 
@@ -549,9 +561,9 @@ if (isModEnabled('tax') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "
 			dol_print_error($db);
 		}
 	}
-} elseif ($modecompta == "BOOKKEEPING") {
-	// Nothing from this table
-}
+}// elseif ($modecompta == "BOOKKEEPING") {
+// Nothing from this table
+//}
 
 /*
  * Social contributions
@@ -608,9 +620,9 @@ if (isModEnabled('tax') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($modecompta == "BOOKKEEPING") {
-	// Nothing from this table
-}
+} //elseif ($modecompta == "BOOKKEEPING") {
+// Nothing from this table
+//}
 
 
 /*
@@ -618,6 +630,7 @@ if (isModEnabled('tax') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "
  */
 
 if (isModEnabled('salaries') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "RECETTES-DEPENSES")) {
+	$sql = '';
 	if ($modecompta == 'CREANCES-DETTES') {
 		$column = 's.dateep';		// we use the date of end of period of salary
 
@@ -670,9 +683,9 @@ if (isModEnabled('salaries') && ($modecompta == 'CREANCES-DETTES' || $modecompta
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($modecompta == "BOOKKEEPING") {
-	// Nothing from this table
-}
+} //elseif ($modecompta == "BOOKKEEPING") {
+// Nothing from this table
+//}
 
 
 /*
@@ -732,9 +745,9 @@ if (isModEnabled('expensereport') && ($modecompta == 'CREANCES-DETTES' || $modec
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($modecompta == 'BOOKKEEPING') {
-	// Nothing from this table
-}
+} //elseif ($modecompta == 'BOOKKEEPING') {
+// Nothing from this table
+//}
 
 
 /*
@@ -792,9 +805,9 @@ if (isModEnabled('don') && ($modecompta == 'CREANCES-DETTES' || $modecompta == "
 	} else {
 		dol_print_error($db);
 	}
-} elseif ($modecompta == 'BOOKKEEPING') {
-	// Nothing from this table
-}
+} //elseif ($modecompta == 'BOOKKEEPING') {
+// Nothing from this table
+//}
 
 /*
  * Various Payments
@@ -919,7 +932,7 @@ if (isModEnabled('accounting') && ($modecompta == 'BOOKKEEPING')) {
 	$predefinedgroupwhere .= ")";
 
 	$charofaccountstring = getDolGlobalInt('CHARTOFACCOUNTS');
-	$charofaccountstring = dol_getIdFromCode($db, getDolGlobalInt('CHARTOFACCOUNTS'), 'accounting_system', 'rowid', 'pcg_version');
+	$charofaccountstring = dol_getIdFromCode($db, getDolGlobalString('CHARTOFACCOUNTS'), 'accounting_system', 'rowid', 'pcg_version');
 
 	$sql = "SELECT b.doc_ref, b.numero_compte, b.subledger_account, b.subledger_label, aa.pcg_type, date_format(b.doc_date,'%Y-%m') as dm, sum(b.debit) as debit, sum(b.credit) as credit, sum(b.montant) as amount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b, ".MAIN_DB_PREFIX."accounting_account as aa";

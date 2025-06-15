@@ -295,8 +295,8 @@ CurrencyXPF=Ffranc CFP
 CurrencySingXPF=CFP Ffranc
 CurrencyCentEUR=cents
 CurrencyCentSingEUR=cant
-CurrencyCentINR=paisa
-CurrencyCentSingINR=pais
+CurrencyCentINR=paise
+CurrencyCentSingINR=paisa
 CurrencyThousandthSingTND=milfed
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Rhyngrwyd

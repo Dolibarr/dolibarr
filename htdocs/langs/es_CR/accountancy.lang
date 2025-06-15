@@ -150,7 +150,6 @@ CleanFixHistory=Eliminar código de contabilidad de las líneas que no existen e
 CleanHistory=Restablecer todos los enlaces del año seleccionado
 PredefinedGroups=Grupos predefinidos
 ValueNotIntoChartOfAccount=Este valor de la cuenta de contabilidad no existe en el gráfico de la cuenta
-SaleEECWithoutVATNumber=Algunos programas de contabilidad solo aceptan un código de dos letras. Este parámetro le permite establecer este aspecto. El numero predeterminado de letras es tres
 ForbiddenTransactionAlreadyExported=Prohibido: La transacción ha sido validada y/o exportada.
 ForbiddenTransactionAlreadyValidated=Prohibido: La transacción ha sido validada.
 AccountancyUnletteringModifiedSuccessfully=%s No reconciliado modificado con éxito

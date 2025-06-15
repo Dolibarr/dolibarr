@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,18 +20,36 @@
  * $backtopage
  */
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var Product|MouvementStock $object
+ * @var FormProduct $formproduct
+ * @var Translate $langs
+ *
+ * @var string $backtopage
+ */
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
 
+'
+@phan-var-force Entrepot|MouvementStock $object
+@phan-var-force FormProduct $formproduct
+@phan-var-force string $backtopage
+';
+
 ?>
 
-<!-- BEGIN PHP TEMPLATE STOCKCORRECTION.TPL.PHP -->
+<!-- BEGIN PHP TEMPLATE STOCKTRANSFER.TPL.PHP -->
 <?php
 $productref = '';
 if ($object->element == 'product') {
+	/** @var Product $object */
 	$productref = $object->ref;
 }
 
@@ -70,6 +89,7 @@ print '<table class="border centpercent">';
 // Source warehouse or product
 print '<tr>';
 if ($object->element == 'product') {
+	/** @var Product $object */
 	print '<td class="fieldrequired">'.$langs->trans("WarehouseSource").'</td>';
 	print '<td>';
 	print img_picto('', 'stock');
@@ -79,10 +99,11 @@ if ($object->element == 'product') {
 	print '</td>';
 }
 if ($object->element == 'stockmouvement') {
+	/** @var MouvementStock $object */
 	print '<td class="fieldrequired">'.$langs->trans("Product").'</td>';
 	print '<td>';
 	print img_picto('', 'product');
-	$form->select_produits(GETPOSTINT('product_id'), 'product_id', (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') ? '0' : ''), 0, 0, -1, 2, '', 0, null, 0, 1, 0, 'maxwidth500');
+	$form->select_produits(GETPOSTINT('product_id'), 'product_id', (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') ? '0' : ''), 0, 0, -1, 2, '', 0, array(), 0, 1, 0, 'maxwidth500');
 	print '</td>';
 }
 
@@ -97,6 +118,7 @@ if (isModEnabled('productbatch') &&
 (($object->element == 'product' && $object->hasbatch())
 || ($object->element == 'stockmouvement'))
 ) {
+	/** @var Product|MouvementStock $object */
 	print '<tr>';
 	print '<td'.($object->element == 'stockmouvement' ? '' : ' class="fieldrequired"').'>'.$langs->trans("batch_number").'</td><td colspan="3">';
 	if ($pdluoid > 0) {

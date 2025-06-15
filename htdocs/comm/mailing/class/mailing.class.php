@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,6 +74,16 @@ class Mailing extends CommonObject
 	public $evenunsubscribe;
 
 	/**
+	 * @var	string Text content for public notes
+	 */
+	public $note_public;
+
+	/**
+	 * @var	string Text content for private notes
+	 */
+	public $note_private;
+
+	/**
 	 * @var int number of email
 	 */
 	public $nbemail;
@@ -89,7 +100,7 @@ class Mailing extends CommonObject
 
 	/**
 	 * @var int status
-	 * @deprecated
+	 * @deprecated Use $status
 	 */
 	public $statut; // Status 0=Draft, 1=Validated, 2=Sent partially, 3=Sent completely
 
@@ -144,22 +155,22 @@ class Mailing extends CommonObject
 	public $date_envoi;
 
 	/**
-	 * @var array extraparams
+	 * @var array<string,string>  (Encoded as JSON in database)
 	 */
 	public $extraparams = array();
 
 	/**
-	 * @var array statut dest
+	 * @var array<int,string> statut dest
 	 */
 	public $statut_dest = array();
 
 	/**
-	 * @var array substitutionarray
+	 * @var array<string,string> substitutionarray
 	 */
 	public $substitutionarray;
 
 	/**
-	 * @var array substitutionarrayfortest
+	 * @var array<string,string> substitutionarrayfortest
 	 */
 	public $substitutionarrayfortest;
 
@@ -299,6 +310,8 @@ class Mailing extends CommonObject
 		$sql .= ", bgcolor = '".($this->bgcolor ? $this->db->escape($this->bgcolor) : null)."'";
 		$sql .= ", bgimage = '".($this->bgimage ? $this->db->escape($this->bgimage) : null)."'";
 		$sql .= ", evenunsubscribe = ".((int) $this->evenunsubscribe);
+		$sql .= ", note_public = '".$this->db->escape($this->note_public)."'";
+		$sql .= ", note_private = '".$this->db->escape($this->note_private)."'";
 		$sql .= " WHERE rowid = ".(int) $this->id;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -343,6 +356,7 @@ class Mailing extends CommonObject
 	public function fetch($rowid, $ref = '')
 	{
 		$sql = "SELECT m.rowid, m.messtype, m.titre as title, m.sujet, m.body, m.bgcolor, m.bgimage, m.evenunsubscribe";
+		$sql .= ", m.note_public, m.note_private";
 		$sql .= ", m.email_from, m.email_replyto, m.email_errorsto";
 		$sql .= ", m.statut as status, m.nbemail";
 		$sql .= ", m.fk_user_creat, m.fk_user_valid";
@@ -384,6 +398,8 @@ class Mailing extends CommonObject
 				$this->bgcolor = $obj->bgcolor;
 				$this->bgimage = $obj->bgimage;
 				$this->evenunsubscribe = $obj->evenunsubscribe;
+				$this->note_public = $obj->note_public;
+				$this->note_private = $obj->note_private;
 
 				$this->email_from = $obj->email_from;
 				$this->email_replyto = $obj->email_replyto;
@@ -451,6 +467,8 @@ class Mailing extends CommonObject
 			$object->bgcolor            = '';
 			$object->bgimage            = '';
 			$object->evenunsubscribe    = 0;
+			$object->note_public        = '';
+			$object->note_private       = '';
 
 			//$object->email_from         = '';		// We do not reset from email because it is a mandatory value
 			$object->email_replyto      = '';
@@ -498,14 +516,14 @@ class Mailing extends CommonObject
 					if ($this->db->num_rows($result)) {
 						while ($obj = $this->db->fetch_object($result)) {
 							$target_array[] = array(
-								'fk_contact'=>$obj->fk_contact,
-								'lastname'=>$obj->lastname,
-								'firstname'=>$obj->firstname,
-								'email'=>$obj->email,
-								'other'=>$obj->other,
-								'source_url'=>$obj->source_url,
-								'source_id'=>$obj->source_id,
-								'source_type'=>$obj->source_type
+								'fk_contact' => $obj->fk_contact,
+								'lastname' => $obj->lastname,
+								'firstname' => $obj->firstname,
+								'email' => $obj->email,
+								'other' => $obj->other,
+								'source_url' => $obj->source_url,
+								'source_id' => $obj->source_id,
+								'source_type' => $obj->source_type
 							);
 						}
 					}
@@ -772,10 +790,9 @@ class Mailing extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array $params ex option, infologin
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -852,9 +869,9 @@ class Mailing extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowEMailing");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -876,7 +893,7 @@ class Mailing extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('emailingdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;

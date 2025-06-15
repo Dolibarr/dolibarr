@@ -1,8 +1,9 @@
 <?php
+
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -81,6 +82,11 @@ class doc_generic_user_odt extends ModelePDFUser
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 0; // Support add of a watermark on drafts
 
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
 		// Get source company
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) {
@@ -97,7 +103,7 @@ class doc_generic_user_odt extends ModelePDFUser
 	 */
 	public function info($langs)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array('companies', 'errors'));
@@ -118,7 +124,7 @@ class doc_generic_user_odt extends ModelePDFUser
 			$texte .= '<input type="hidden" name="param3" value="USER_ADDON_PDF_ODT_TOBILL">';
 			$texte .= '<input type="hidden" name="param4" value="USER_ADDON_PDF_ODT_CLOSED">';
 		}
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		// List of directories area
 		$texte .= '<tr><td>';
@@ -133,7 +139,7 @@ class doc_generic_user_odt extends ModelePDFUser
 				continue;
 			}
 			if (!is_dir($tmpdir)) {
-				$texttitle .= img_warning($langs->trans("ErrorDirNotFound", $tmpdir), 0);
+				$texttitle .= img_warning($langs->trans("ErrorDirNotFound", $tmpdir), '');
 			} else {
 				$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.(ods|odt)');
 				if (count($tmpfiles)) {
@@ -146,15 +152,6 @@ class doc_generic_user_odt extends ModelePDFUser
 		// Add list of substitution keys
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
-
-		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
-		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
-		$texte .= '<textarea class="flat" cols="60" name="value1">';
-		$texte .= $odtPath;
-		$texte .= '</textarea>';
-		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
-		$texte .= '<br></div></div>';
 
 		// Scan directories
 		if (count($listofdir)) {
@@ -192,6 +189,17 @@ class doc_generic_user_odt extends ModelePDFUser
 			}
 			$texte .= '</div>';
 		}
+
+		$texte .= '<br>';
+		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
+		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
+		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
+		$texte .= $odtPath;
+		$texte .= '</textarea>';
+		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
+		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
+		$texte .= '<br></div></div>';
+
 		// Add input to upload a new template file.
 		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
 		$maxfilesizearray = getMaxFileSizeArray();
@@ -229,7 +237,7 @@ class doc_generic_user_odt extends ModelePDFUser
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
-		global $user, $langs, $conf, $mysoc, $hookmanager;
+		global $langs, $conf, $mysoc, $hookmanager;
 
 		if (empty($srctemplatepath)) {
 			dol_syslog("doc_generic_odt::write_file parameter srctemplatepath empty", LOG_WARNING);
@@ -322,6 +330,7 @@ class doc_generic_user_odt extends ModelePDFUser
 					$result = $object->fetch_contact($arrayidcontact[0]);
 				}
 
+				$contactobject = null;
 				// Recipient name
 				if (!empty($usecontact)) {
 					if ($object->contact->socid != $object->thirdparty->id && (!isset($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) || getDolGlobalString('MAIN_USE_COMPANY_NAME_OF_CONTACT'))) {
@@ -342,7 +351,7 @@ class doc_generic_user_odt extends ModelePDFUser
 						$srctemplatepath,
 						array(
 							'PATH_TO_TMP'	  => $conf->user->dir_temp,
-							'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+							'ZIP_PROXY'		  => getDolGlobalString('MAIN_ODF_ZIP_PROXY', 'PclZipProxy'), // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 							'DELIMITER_LEFT'  => '{',
 							'DELIMITER_RIGHT' => '}'
 						)
@@ -370,11 +379,19 @@ class doc_generic_user_odt extends ModelePDFUser
 				// Call the ODTSubstitution hook
 				$parameters = array('file' => $file, 'object' => $object, 'outputlangs' => $outputlangs, 'substitutionarray' => &$tmparray);
 				$reshook = $hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+
+				// retrieve the constant to apply a ratio for image size or set the ratio to 1
+				if (getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO')) {
+					$ratio = floatval(getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO'));
+				} else {
+					$ratio = 1;
+				}
+
 				foreach ($tmparray as $key => $value) {
 					try {
 						if (preg_match('/logo$/', $key)) { // Image
 							if (file_exists($value)) {
-								$odfHandler->setImage($key, $value);
+								$odfHandler->setImage($key, $value, $ratio);
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
@@ -444,7 +461,7 @@ class doc_generic_user_odt extends ModelePDFUser
 	 * @param CommonObject  $object         user
 	 * @param Translate     $outputlangs    translation object
 	 * @param string        $array_key      key for array
-	 * @return array                        array of substitutions
+	 * @return array<string,int|string>     array of substitutions
 	 */
 	public function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
 	{

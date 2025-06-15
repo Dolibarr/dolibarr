@@ -1,11 +1,12 @@
 <?php
+
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013		Florian Henry		<florian.henry@ope-concept.pro>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,6 +122,11 @@ class doc_generic_task_odt extends ModelePDFTask
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 0; // Support add of a watermark on drafts
 
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
 		// Get source company
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) {
@@ -136,7 +142,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 * @param   CommonObject	$object             Main object to use as data source
 	 * @param   Translate		$outputlangs        Lang object to use for output
 	 * @param   string		    $array_key	        Name of the key for return array
-	 * @return	array								Array of substitution
+	 * @return	array<string,int|string>			Array of substitution
 	 */
 	public function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
 	{
@@ -180,7 +186,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	 *	@param  Task			$task				Task Object
 	 *	@param  Translate		$outputlangs        Lang object to use for output
 	 *  @param  string		    $array_key	        Name of the key for return array
-	 *  @return	array								Return a substitution array
+	 *  @return	array<string,int|string>			Return a substitution array
 	 */
 	public function get_substitutionarray_tasks($task, $outputlangs, $array_key = 'task')
 	{
@@ -203,8 +209,8 @@ class doc_generic_task_odt extends ModelePDFTask
 			'task_public' => $task->public,
 			'task_date_start' => dol_print_date($task->date_start, 'day'),
 			'task_date_end' => dol_print_date($task->date_end, 'day'),
-			'task_note_private' => $task->note_private,
-			'task_note_public' => $task->note_public
+			'task_note_private' => (string) $task->note_private,
+			'task_note_public' => (string) $task->note_public
 		);
 
 		// Retrieve extrafields
@@ -221,9 +227,9 @@ class doc_generic_task_odt extends ModelePDFTask
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  array			$contact			Contact array
+	 *	@param  array{id:int,rowid:int,libelle:string,lastname:string,firstname:string,fullname:string,socname:string,email:string}			$contact			Contact array
 	 *	@param  Translate		$outputlangs        Lang object to use for output
-	 *  @return	array								Return a substitution array
+	 *  @return	array<string,int|string>			Return a substitution array
 	 */
 	public function get_substitutionarray_project_contacts($contact, $outputlangs)
 	{
@@ -244,9 +250,9 @@ class doc_generic_task_odt extends ModelePDFTask
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  array			$file				file array
+	 *	@param  array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}	$file		file array
 	 *	@param  Translate		$outputlangs        Lang object to use for output
-	 *  @return	array								Return a substitution array
+	 *  @return	array<string,int|string>			Return a substitution array
 	 */
 	public function get_substitutionarray_project_file($file, $outputlangs)
 	{
@@ -262,9 +268,9 @@ class doc_generic_task_odt extends ModelePDFTask
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  array			$refdetail			Reference array
+	 *	@param  array{type:string,ref:string,date:int,socname:string,amountht:float|string,amountttc:float|string,status:string}			$refdetail			Reference array
 	 *	@param  Translate		$outputlangs        Lang object to use for output
-	 *  @return	array								Return a substitution array
+	 *  @return	array<string,int|string>			Return a substitution array
 	 */
 	public function get_substitutionarray_project_reference($refdetail, $outputlangs)
 	{
@@ -284,9 +290,9 @@ class doc_generic_task_odt extends ModelePDFTask
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  array			$taskresource		Resource array
+	 *	@param  array{rowid:int,libelle:string,lastname:string,firstname:string,fullname:string,socname:string,email:string}		$taskresource		Resource array
 	 *	@param  Translate		$outputlangs        Lang object to use for output
-	 *  @return	array								Return a substitution array
+	 *  @return	array<string,int|string>			Return a substitution array
 	 */
 	public function get_substitutionarray_tasksressource($taskresource, $outputlangs)
 	{
@@ -308,9 +314,9 @@ class doc_generic_task_odt extends ModelePDFTask
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  array			$tasktime			times object
+	 *	@param  array{rowid:int,task_date:string,task_duration:int,note:string,fk_user:int,lastname:string,firstname:string,fullcivname:string}		$tasktime	times object
 	 *	@param  Translate		$outputlangs        Lang object to use for output
-	 *  @return	array								Return a substitution array
+	 *  @return	array<string,string|int>			Return a substitution array
 	 */
 	public function get_substitutionarray_taskstime($tasktime, $outputlangs)
 	{
@@ -333,9 +339,9 @@ class doc_generic_task_odt extends ModelePDFTask
 	/**
 	 *	Define array with couple substitution key => substitution value
 	 *
-	 *	@param  array			$file				file array
+	 *	@param  array{name:string,date:string,size:int}	$file		file array
 	 *	@param  Translate		$outputlangs        Lang object to use for output
-	 *  @return	array								Return a substitution array
+	 *  @return	array{tasksfile_name:string,tasksfile_date:string,tasksfile_size:int}		Return a substitution array
 	 */
 	public function get_substitutionarray_task_file($file, $outputlangs)
 	{
@@ -384,7 +390,7 @@ class doc_generic_task_odt extends ModelePDFTask
 				continue;
 			}
 			if (!is_dir($tmpdir)) {
-				$texttitle .= img_warning($langs->trans("ErrorDirNotFound", $tmpdir), 0);
+				$texttitle .= img_warning($langs->trans("ErrorDirNotFound", $tmpdir), '');
 			} else {
 				$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.(ods|odt)');
 				if (count($tmpfiles)) {
@@ -400,7 +406,7 @@ class doc_generic_task_odt extends ModelePDFTask
 
 		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
-		$texte .= '<textarea class="flat" cols="60" name="value1">';
+		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
 		$texte .= getDolGlobalString('PROJECT_TASK_ADDON_PDF_ODT_PATH');
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
@@ -452,7 +458,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param	Project		$object					Object source to build document
+	 *	@param	Task		$object					Object source to build document
 	 *	@param	Translate	$outputlangs			Lang output object
 	 * 	@param	string		$srctemplatepath		Full path of source filename for generator using a template file
 	 *	@return	int<-1,1>							1 if OK, <=0 if KO
@@ -466,6 +472,14 @@ class doc_generic_task_odt extends ModelePDFTask
 			dol_syslog("doc_generic_odt::write_file parameter srctemplatepath empty", LOG_WARNING);
 			return -1;
 		}
+
+		// Add odtgeneration hook
+		if (!is_object($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('odtgeneration'));
+		global $action;
 
 		if (!is_object($outputlangs)) {
 			$outputlangs = $langs;
@@ -548,7 +562,7 @@ class doc_generic_task_odt extends ModelePDFTask
 						$srctemplatepath,
 						array(
 							'PATH_TO_TMP'	  => $conf->project->dir_temp,
-							'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+							'ZIP_PROXY'		  => getDolGlobalString('MAIN_ODF_ZIP_PROXY', 'PclZipProxy'), // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 							'DELIMITER_LEFT'  => '{',
 							'DELIMITER_RIGHT' => '}'
 						)
@@ -576,11 +590,18 @@ class doc_generic_task_odt extends ModelePDFTask
 				$tmparray = array_merge($substitutionarray, $array_object_from_properties, $array_user, $array_soc, $array_thirdparty, $array_objet, $array_other);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 
+				// retrieve the constant to apply a ratio for image size or set the ratio to 1
+				if (getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO')) {
+					$ratio = floatval(getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO'));
+				} else {
+					$ratio = 1;
+				}
+
 				foreach ($tmparray as $key => $value) {
 					try {
 						if (preg_match('/logo$/', $key)) { // Image
 							if (file_exists($value)) {
-								$odfHandler->setImage($key, $value);
+								$odfHandler->setImage($key, $value, $ratio);
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
@@ -591,6 +612,8 @@ class doc_generic_task_odt extends ModelePDFTask
 						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
+
+				/** @var Task $object */
 
 				// Replace tags of lines for tasks
 				try {
@@ -612,11 +635,11 @@ class doc_generic_task_odt extends ModelePDFTask
 
 					// Replace tags of lines for contacts task
 					$sourcearray = array('internal', 'external');
-					$contact_arrray = array();
+					$contact_array = array();
 					foreach ($sourcearray as $source) {
 						$contact_temp = $object->liste_contact(-1, $source);
 						if ((is_array($contact_temp) && count($contact_temp) > 0)) {
-							$contact_arrray = array_merge($contact_arrray, $contact_temp);
+							$contact_array = array_merge($contact_array, $contact_temp);
 						}
 					}
 					// Check for segment
@@ -628,8 +651,8 @@ class doc_generic_task_odt extends ModelePDFTask
 						$foundtagforlines = 0;
 						dol_syslog($e->getMessage(), LOG_INFO);
 					}
-					if ($foundtagforlines && (is_array($contact_arrray) && count($contact_arrray) > 0)) {
-						foreach ($contact_arrray as $contact) {
+					if ($foundtagforlines && (is_array($contact_array) && count($contact_array) > 0)) {
+						foreach ($contact_array as $contact) {
 							if ($contact['source'] == 'internal') {
 								$objectdetail = new User($this->db);
 								$objectdetail->fetch($contact['id']);
@@ -641,8 +664,11 @@ class doc_generic_task_odt extends ModelePDFTask
 								$soc = new Societe($this->db);
 								$soc->fetch($contact['socid']);
 								$contact['socname'] = $soc->name;
+							} else {
+								dol_syslog(get_class().'::'.__METHOD__.' Unexpected contact source:'.$contact['source'], LOG_WARNING);
+								$objectdetail = null;
 							}
-							$contact['fullname'] = $objectdetail->getFullName($outputlangs, 1);
+							$contact['fullname'] = is_object($objectdetail) ? $objectdetail->getFullName($outputlangs, 1) : null;
 
 							$tmparray = $this->get_substitutionarray_tasksressource($contact, $outputlangs);
 
@@ -788,11 +814,11 @@ class doc_generic_task_odt extends ModelePDFTask
 
 				// Replace tags of lines for contacts
 				$sourcearray = array('internal', 'external');
-				$contact_arrray = array();
+				$contact_array = array();
 				foreach ($sourcearray as $source) {
 					$contact_temp = $project->liste_contact(-1, $source);
 					if ((is_array($contact_temp) && count($contact_temp) > 0)) {
-						$contact_arrray = array_merge($contact_arrray, $contact_temp);
+						$contact_array = array_merge($contact_array, $contact_temp);
 					}
 				}
 				// Check for segment
@@ -804,9 +830,9 @@ class doc_generic_task_odt extends ModelePDFTask
 					$foundtagforlines = 0;
 					dol_syslog($e->getMessage(), LOG_INFO);
 				}
-				if ($foundtagforlines && (is_array($contact_arrray) && count($contact_arrray) > 0)) {
+				if ($foundtagforlines && (is_array($contact_array) && count($contact_array) > 0)) {
 					try {
-						foreach ($contact_arrray as $contact) {
+						foreach ($contact_array as $contact) {
 							if ($contact['source'] == 'internal') {
 								$objectdetail = new User($this->db);
 								$objectdetail->fetch($contact['id']);
@@ -818,6 +844,9 @@ class doc_generic_task_odt extends ModelePDFTask
 								$soc = new Societe($this->db);
 								$soc->fetch($contact['socid']);
 								$contact['socname'] = $soc->name;
+							} else {
+								dol_syslog(get_class().'::'.__METHOD__.' Unexpected contact source:'.$contact['source'], LOG_ERR);
+								continue;
 							}
 							$contact['fullname'] = $objectdetail->getFullName($outputlangs, 1);
 

@@ -51,15 +51,30 @@ class ImportCsv extends ModeleImports
 	 */
 	public $version = 'dolibarr';
 
-	public $label_lib; // Label of external lib used by driver
+	/**
+	 * @var string Label of external lib used by driver
+	 */
+	public $label_lib;
 
-	public $version_lib; // Version of external lib used by driver
+	/**
+	 * @var string Version of external lib used by driver
+	 */
+	public $version_lib;
 
+	/**
+	 * @var string|string[]
+	 */
 	public $separator;
 
+	/**
+	 * @var string
+	 */
 	public $file; // Path of file
 
-	public $handle; // Handle fichier
+	/**
+	 * @var resource
+	 */
+	public $handle; // File handle
 
 	public $cacheconvert = array(); // Array to cache list of value found after a conversion
 
@@ -71,6 +86,9 @@ class ImportCsv extends ModeleImports
 
 	public $charset = '';
 
+	/**
+	 * @var int
+	 */
 	public $col;
 
 
@@ -135,7 +153,7 @@ class ImportCsv extends ModeleImports
 	 * 	Output title line of an example file for this format
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
-	 *  @param	array		$headerlinefields	Array of fields name
+	 *  @param	string[]	$headerlinefields	Array of fields name
 	 * 	@return	string							String output
 	 */
 	public function write_title_example($outputlangs, $headerlinefields)
@@ -150,7 +168,7 @@ class ImportCsv extends ModeleImports
 	 * 	Output record of an example file for this format
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
-	 * 	@param	array		$contentlinevalues	Array of lines
+	 * 	@param	string[]	$contentlinevalues	Array of lines
 	 * 	@return	string							String output
 	 */
 	public function write_record_example($outputlangs, $contentlinevalues)
@@ -191,12 +209,13 @@ class ImportCsv extends ModeleImports
 
 		ini_set('auto_detect_line_endings', 1); // For MAC compatibility
 
-		$this->handle = fopen(dol_osencode($file), "r");
-		if (!$this->handle) {
+		$handle = fopen(dol_osencode($file), "r");
+		if (!$handle) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorFailToOpenFile", $file);
 			$ret = -1;
 		} else {
+			$this->handle = $handle;
 			$this->file = $file;
 		}
 
@@ -252,6 +271,8 @@ class ImportCsv extends ModeleImports
 		//var_dump($this->handle);
 		//var_dump($arrayres);exit;
 		$newarrayres = array();
+		$key = 1; // Default value to ensure $key is declared
+
 		if ($arrayres && is_array($arrayres)) {
 			foreach ($arrayres as $key => $val) {
 				if (getDolGlobalString('IMPORT_CSV_FORCE_CHARSET')) {	// Forced charset
@@ -297,12 +318,12 @@ class ImportCsv extends ModeleImports
 	/**
 	 * Insert a record into database
 	 *
-	 * @param	array	$arrayrecord					Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
-	 * @param	array	$array_match_file_to_database	Array of target fields where to insert data: [fieldpos] => 's.fieldname', [fieldpos+1]...
-	 * @param 	Object	$objimport						Object import (contains objimport->array_import_tables, objimport->array_import_fields, objimport->array_import_convertvalue, ...)
-	 * @param	int		$maxfields						Max number of fields to use
-	 * @param	string	$importid						Import key
-	 * @param	array	$updatekeys						Array of keys to use to try to do an update first before insert. This field are defined into the module descriptor.
+	 * @param	array<int,array{val:mixed,type:int}>|bool	$arrayrecord			Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
+	 * @param	array<int|string,string>	$array_match_file_to_database	Array of target fields where to insert data: [fieldpos] => 's.fieldname', [fieldpos+1]...
+	 * @param 	Object		$objimport						Object import (contains objimport->array_import_tables, objimport->array_import_fields, objimport->array_import_convertvalue, ...)
+	 * @param	int			$maxfields						Max number of fields to use
+	 * @param	string		$importid						Import key
+	 * @param	string[]	$updatekeys						Array of keys to use to try to do an update first before insert. This field are defined into the module descriptor.
 	 * @return	int										Return integer <0 if KO, >0 if OK
 	 */
 	public function import_insert($arrayrecord, $array_match_file_to_database, $objimport, $maxfields, $importid, $updatekeys)
@@ -569,7 +590,7 @@ class ImportCsv extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getcustomercodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$this->thirdpartyobject->get_codeclient(0, 0);
+										$this->thirdpartyobject->get_codeclient(null, 0);
 										$newval = $this->thirdpartyobject->code_client;
 										//print 'code_client='.$newval;
 									}
@@ -578,7 +599,7 @@ class ImportCsv extends ModeleImports
 									}
 								} elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'getsuppliercodeifauto') {
 									if (strtolower($newval) == 'auto') {
-										$this->thirdpartyobject->get_codefournisseur(0, 1);
+										$this->thirdpartyobject->get_codefournisseur(null, 1);
 										$newval = $this->thirdpartyobject->code_fournisseur;
 										//print 'code_fournisseur='.$newval;
 									}
@@ -711,7 +732,7 @@ class ImportCsv extends ModeleImports
 										}
 									}
 
-									// Now we check cache is not empty (should not) and key is into cache
+									// Now we check cache is not empty (should not) and key is in cache
 									if (!is_array($this->cachefieldtable[$cachekey]) || !in_array($newval, $this->cachefieldtable[$cachekey])) {
 										$tableforerror = $table;
 										if (!empty($filter)) {
@@ -809,7 +830,7 @@ class ImportCsv extends ModeleImports
 							$tmp = explode('-', $tmpval, 2);
 							$listfields[] = $keyfield;
 							$listvalues[] = "'".$this->db->escape($tmp[1])."'";
-						} elseif (preg_match('/^rule-/', $tmpval)) {
+						} elseif (preg_match('/^rule-/', $tmpval)) {	// Example: rule-computeAmount, rule-computeDirection, ...
 							$fieldname = $tmpkey;
 							if (!empty($objimport->array_import_convertvalue[0][$fieldname])) {
 								if ($objimport->array_import_convertvalue[0][$fieldname]['rule'] == 'compute') {
@@ -914,6 +935,7 @@ class ImportCsv extends ModeleImports
 									if ($num_rows == 1) {
 										$res = $this->db->fetch_object($resql);
 										$lastinsertid = $res->rowid;
+										$keyfield = 'rowid';
 										if ($is_table_category_link) {
 											$lastinsertid = 'linktable';
 										} // used to apply update on tables like llx_categorie_product and avoid being blocked for all file content if at least one entry already exists
@@ -938,10 +960,10 @@ class ImportCsv extends ModeleImports
 								// may already exists. So we rescan the extrafield table to know if record exists or not for the rowid.
 								// Note: For extrafield tablename, we have in importfieldshidden_array an entry 'extra.fk_object'=>'lastrowid-tableparent' so $keyfield is 'fk_object'
 								$sqlSelect = "SELECT rowid FROM ".$tablename;
-
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';
 								}
+
 								$sqlSelect .= " WHERE ".$keyfield." = ".((int) $lastinsertid);
 
 								if (!empty($tablewithentity_cache[$tablename])) {
@@ -983,10 +1005,10 @@ class ImportCsv extends ModeleImports
 									$set[] = $key." = ".$val;	// $val was escaped/sanitized previously
 								}
 								$sqlstart .= " SET ".implode(', ', $set).", import_key = '".$this->db->escape($importid)."'";
-
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';
 								}
+
 								$sqlend = " WHERE ".$keyfield." = ".((int) $lastinsertid);
 
 								if ($is_table_category_link) {

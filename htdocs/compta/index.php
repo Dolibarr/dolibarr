@@ -1,17 +1,17 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2020 Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2020      Tobias Sekan         <tobias.sekan@startmail.com>
- * Copyright (C) 2020      Josep Lluís Amador   <joseplluis@lliuretic.cat>
- * Copyright (C) 2021-2024 Frédéric France		<frederic.france@free.fr>
- * Copyright (C) 2024      Rafael San José      <rsanjose@alxarafe.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2001-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2022  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2020  Juanjo Menent	        <jmenent@2byte.es>
+ * Copyright (C) 2015       Jean-François Ferry	    <jfefe@aternatik.fr>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
+ * Copyright (C) 2020       Josep Lluís Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2021-2025  Frédéric France		    <frederic.france@free.fr>
+ * Copyright (C) 2024       Rafael San José         <rsanjose@alxarafe.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 // par de nombreux modules (banque, facture, commande a facturer, etc...) independamment
 // de l'utilisation de la compta ou non. C'est au sein de cet espace que chaque sous fonction
 // est protegee par le droit qui va bien du module concerne.
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills'));
@@ -153,7 +161,7 @@ if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 	// Filter on sale representative
-	if (!$user->hasRight('societe', 'client', 'voir')) {
+	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 	}
 	// Add where from hooks
@@ -201,9 +209,10 @@ if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 				$tmpinvoice->total_ht = $obj->total_ht;
 				$tmpinvoice->total_tva = $obj->total_tva;
 				$tmpinvoice->total_ttc = $obj->total_ttc;
-				$tmpinvoice->statut = $obj->status;
+				$tmpinvoice->statut = $obj->status;	// deprecated
 				$tmpinvoice->status = $obj->status;
-				$tmpinvoice->paye = $obj->paye;
+				$tmpinvoice->paye = $obj->paye;	// deprecated
+				$tmpinvoice->paid = $obj->paye;
 				$tmpinvoice->date_lim_reglement = $db->jdate($obj->datelimite);
 				$tmpinvoice->type = $obj->type;
 
@@ -219,6 +228,9 @@ if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 				$thirdpartystatic->code_compta_client = $obj->code_compta_client;
 				//$thirdpartystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
+				$totalallpayments = $tmpinvoice->getSommePaiement(0);
+				$totalallpayments += $tmpinvoice->getSumCreditNotesUsed(0);
+				$totalallpayments += $tmpinvoice->getSumDepositsUsed(0);
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
 
@@ -234,7 +246,7 @@ if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 				}
 				print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 				$filename = dol_sanitizeFileName($obj->ref);
-				$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($obj->ref);
+				$filedir = $conf->invoice->dir_output.'/'.dol_sanitizeFileName($obj->ref);
 				$urlsource = $_SERVER['PHP_SELF'].'?facid='.$obj->rowid;
 				print $formfile->getDocumentsLink($tmpinvoice->element, $filename, $filedir);
 				print '</td></tr></table>';
@@ -251,7 +263,7 @@ if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 
 				print '<td class="right" title="'.dol_escape_htmltag($langs->trans("DateModificationShort").' : '.dol_print_date($db->jdate($obj->tms), 'dayhour', 'tzuserrel')).'">'.dol_print_date($db->jdate($obj->tms), 'day', 'tzuserrel').'</td>';
 
-				print '<td>'.$tmpinvoice->getLibStatut(3, $obj->am).'</td>';
+				print '<td>'.$tmpinvoice->getLibStatut(3, $totalallpayments).'</td>';
 
 				print '</tr>';
 
@@ -301,7 +313,7 @@ if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 		$sql .= " AND ff.fk_soc = ".((int) $socid);
 	}
 	// Filter on sale representative
-	if (!$user->hasRight('societe', 'client', 'voir')) {
+	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = ff.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 	}
 	// Add where from hooks
@@ -349,9 +361,9 @@ if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 				$facstatic->total_ht = $obj->total_ht;
 				$facstatic->total_tva = $obj->total_tva;
 				$facstatic->total_ttc = $obj->total_ttc;
-				$facstatic->statut = $obj->status;
+				$facstatic->statut = $obj->status;	// deprecated
 				$facstatic->status = $obj->status;
-				$facstatic->paye = $obj->paye;
+				$facstatic->paye = $obj->paye;	// deprecated
 				$facstatic->paid = $obj->paye;
 				$facstatic->type = $obj->type;
 				$facstatic->ref_supplier = $obj->ref_supplier;
@@ -379,9 +391,14 @@ if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 				}
 				print '<td class="nowrap right"><span class="amount">'.price($obj->total_ttc).'</span></td>';
 				print '<td class="right" title="'.dol_escape_htmltag($langs->trans("DateModificationShort").' : '.dol_print_date($db->jdate($obj->tms), 'dayhour', 'tzuserrel')).'">'.dol_print_date($db->jdate($obj->tms), 'day', 'tzuserrel').'</td>';
+
 				$alreadypaid = $facstatic->getSommePaiement();
+				$alreadypaid += $facstatic->getSumCreditNotesUsed();
+				$alreadypaid += $facstatic->getSumDepositsUsed();
+
 				print '<td>'.$facstatic->getLibStatut(3, $alreadypaid).'</td>';
 				print '</tr>';
+
 				$total_ht += $obj->total_ht;
 				$total_ttc += $obj->total_ttc;
 				$totalam += $obj->am;
@@ -410,14 +427,14 @@ if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 
 
 
-// Latest donations
+// Last donations
 if (isModEnabled('don') && $user->hasRight('don', 'lire')) {
 	include_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 	$langs->load("boxes");
 	$donationstatic = new Don($db);
 
-	$sql = "SELECT d.rowid, d.lastname, d.firstname, d.societe, d.datedon as date, d.tms as dm, d.amount, d.fk_statut as status";
+	$sql = "SELECT d.rowid, d.lastname, d.firstname, d.societe, d.datedon as date, d.tms as dm, d.amount, d.fk_statut as status, d.fk_soc as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."don as d";
 	$sql .= " WHERE d.entity IN (".getEntity('donation').")";
 	// Add where from hooks
@@ -439,7 +456,7 @@ if (isModEnabled('don') && $user->hasRight('don', 'lire')) {
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedDonations", $max);
-		print '<a href="'.DOL_URL_ROOT.'/don/list.php?sortfield=f.tms&sortorder=desc"><span class="badge marginleftonly">...</span></a>';
+		print '<a href="'.DOL_URL_ROOT.'/don/list.php?sortfield=d.tms&sortorder=desc"><span class="badge marginleftonly">...</span></a>';
 		print '</th>';
 		print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
 		print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
@@ -465,12 +482,20 @@ if (isModEnabled('don') && $user->hasRight('don', 'lire')) {
 				$donationstatic->lastname = $obj->lastname;
 				$donationstatic->firstname = $obj->firstname;
 				$donationstatic->date = $db->jdate($obj->date);
-				$donationstatic->statut = $obj->status;
 				$donationstatic->status = $obj->status;
 
-				$label = $donationstatic->getFullName($langs);
-				if ($obj->societe) {
-					$label .= ($label ? ' - ' : '').$obj->societe;
+				$label = '';
+				if (!empty($obj->socid)) {
+					$companystatic = new Societe($db);
+					$ret = $companystatic->fetch($obj->socid);
+					if ($ret > 0) {
+						$label = $companystatic->getNomUrl(1);
+					}
+				} else {
+					$label = $donationstatic->getFullName($langs);
+					if ($obj->societe) {
+						$label .= ($label ? ' - ' : '').$obj->societe;
+					}
 				}
 
 				print '<tr class="oddeven tdoverflowmax100">';
@@ -619,7 +644,7 @@ if (isModEnabled('invoice') && isModEnabled('order') && $user->hasRight("command
 	$sql .= " AND c.fk_statut = ".((int) Commande::STATUS_CLOSED);
 	$sql .= " AND c.facture = 0";
 	// Filter on sale representative
-	if (!$user->hasRight('societe', 'client', 'voir')) {
+	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 	}
 
@@ -683,7 +708,8 @@ if (isModEnabled('invoice') && isModEnabled('order') && $user->hasRight("command
 
 				$commandestatic->id = $obj->rowid;
 				$commandestatic->ref = $obj->ref;
-				$commandestatic->statut = $obj->status;
+				$commandestatic->statut = $obj->status; // deprecated
+				$commandestatic->status = $obj->status;
 				$commandestatic->billed = $obj->facture;
 
 				print '<tr class="oddeven">';
@@ -698,7 +724,7 @@ if (isModEnabled('invoice') && isModEnabled('order') && $user->hasRight("command
 				print '</td>';
 				print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 				$filename = dol_sanitizeFileName($obj->ref);
-				$filedir = $conf->commande->dir_output.'/'.dol_sanitizeFileName($obj->ref);
+				$filedir = $conf->order->dir_output.'/'.dol_sanitizeFileName($obj->ref);
 				$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 				print $formfile->getDocumentsLink($commandestatic->element, $filename, $filedir);
 				print '</td></tr></table>';
@@ -750,6 +776,7 @@ if (isModEnabled('invoice') && isModEnabled('order') && $user->hasRight("command
 // TODO Mettre ici recup des actions en rapport avec la compta
 $sql = '';
 if ($sql) {
+	$langs->load("projects");
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("TasksToDo").'</th>';

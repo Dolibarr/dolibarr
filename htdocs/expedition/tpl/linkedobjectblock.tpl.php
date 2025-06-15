@@ -30,7 +30,9 @@ print "<!-- BEGIN PHP TEMPLATE expedition/tpl/linkedobjectblock.tpl.php -->\n";
 global $user;
 
 $langs = $GLOBALS['langs'];
+'@phan-var-force Translate $langs';
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
+'@phan-var-force CommonObject[] $linkedObjectBlock';
 
 // Load translation files required by the page
 $langs->load("sendings");
@@ -46,9 +48,9 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	} ?>
 	<tr class="<?php echo $trclass; ?>">
 		<td><?php echo $langs->trans("Shipment"); ?></td>
-		<td><?php echo $objectlink->getNomUrl(1); ?></td>
-		<td><?php echo $objectlink->ref_customer; ?></td>
-		<td class="center"><?php echo dol_print_date($objectlink->date_delivery, 'day'); ?></td>
+		<td class="tdoverflowmax125"><?php echo $objectlink->getNomUrl(1); ?></td>
+		<td class="tdoverflowmax125" title="<?php dolPrintHTMLForAttribute($objectlink->ref_customer); ?>"><?php echo dolPrintHTML($objectlink->ref_customer); ?></td>
+		<td class="center"><?php echo dol_print_date($objectlink->date_delivery ? $objectlink->date_delivery : $objectlink->date_creation, 'day'); ?></td>
 		<td class="right"><?php
 		if ($user->hasRight('expedition', 'lire')) {
 			$total += $objectlink->total_ht;

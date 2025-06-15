@@ -33,6 +33,7 @@ doubleclick
 errorstring
 exten
 falsy
+focusin
 master
 medias
 projet
@@ -85,6 +86,15 @@ fonction
 espace
 methode
 datee
+
+# Some string found because part of a text the is html entities escaped into file
+tre
+activ
+
+# Translation keys
+addin
+amountin
+alltime
 
 # other
 blacklists
