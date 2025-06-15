@@ -2073,7 +2073,6 @@ function dolPrintHTML($s, $allowiframe = 0)
  * @return	string							String ready for HTML output
  * @see dolPrintHTML(), dolPrintHTMLFortextArea()
  */
-
 function dolPrintHTMLForAttribute($s, $escapeonlyhtmltags = 0, $allowothertags = array())
 {
 	$allowedtags = array('br', 'b', 'font', 'hr', 'span');
