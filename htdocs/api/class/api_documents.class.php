@@ -31,6 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 /**
  * API class for receive files
  *
+ * @since	6.0.0	Initial implementation
+ *
  * @access protected
  * @class Documents {@requires user,external}
  */
@@ -47,10 +49,12 @@ class Documents extends DolibarrApi
 
 
 	/**
-	 * Download a document.
+	 * Download a document
 	 *
 	 * Note that, this API is similar to using the wrapper link "documents.php" to download a file (used for
 	 * internal HTML links of documents into application), but with no need to have a session cookie (the token is used instead).
+	 *
+	 * @since	7.0.0	Initial implementation
 	 *
 	 * @param   string  $modulepart     Name of module or area concerned by file download ('facture', ...)
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: IN201701-999/IN201701-999.pdf)
@@ -115,11 +119,16 @@ class Documents extends DolibarrApi
 
 
 	/**
-	 * Build a document.
+	 * Build a document
 	 *
 	 * Test sample 1: { "modulepart": "invoice", "original_file": "FA1701-001/FA1701-001.pdf", "doctemplate": "crabe", "langcode": "fr_FR" }.
 	 *
-	 * Supported modules: invoice, order, proposal, contract, shipment
+	 * Supported modules: invoice, order, proposal, contract, supplier invoice, shipment, mrp
+	 *
+	 * @since	7.0.0	Initial implementation, support for invoice, order and proposal documents
+	 * @since	18.0.0	Added support for contract and suppliers invoice documents
+	 * @since	19.0.0	Added support for shipment documents
+	 * @since	20.0.0	Added support for mrp documents
 	 *
 	 * @param   string  $modulepart		Name of module or area concerned by file download ('thirdparty', 'member', 'proposal', 'supplier_proposal', 'order', 'supplier_order', 'invoice', 'supplier_invoice', 'shipment', 'project',  ...)
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: IN201701-999/IN201701-999.pdf).
@@ -301,9 +310,12 @@ class Documents extends DolibarrApi
 	}
 
 	/**
-	 * Return the list of documents of a dedicated element (from its ID or Ref)
+	 * List documents of an element
 	 *
+	 * Use element ID or Ref.
 	 * Supported modules: thirdparty, user, member, proposal, order, supplier_order, shipment, invoice, supplier_invoice, product, event, expensereport, knowledgemanagement, category, contract
+	 *
+	 * @since	7.0.0	Initial implementation
 	 *
 	 * @param   string 	$modulepart		Name of module or area concerned ('thirdparty', 'member', 'proposal', 'order', 'invoice', 'supplier_invoice', 'shipment', 'project',  ...)
 	 * @param	int		$id				ID of element
@@ -683,13 +695,15 @@ class Documents extends DolibarrApi
 
 
 	/**
-	 * Upload a document.
+	 * Upload a document
 	 *
 	 * Test sample for invoice: { "filename": "mynewfile.txt", "modulepart": "invoice", "ref": "FA1701-001", "subdir": "", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
 	 * Test sample for supplier invoice: { "filename": "mynewfile.txt", "modulepart": "supplier_invoice", "ref": "FA1701-001", "subdir": "", "filecontent": "content text", "fileencoding": "", "overwriteifexists": "0" }.
 	 * Test sample for medias file: { "filename": "mynewfile.txt", "modulepart": "medias", "ref": "", "subdir": "image/mywebsite", "filecontent": "Y29udGVudCB0ZXh0Cg==", "fileencoding": "base64", "overwriteifexists": "0" }.
 	 *
 	 * Supported modules: invoice, order, supplier_order, task/project_task, product/service, expensereport, fichinter, member, propale, agenda, contact
+	 *
+	 * @since	6.0.0	Initial implementation
 	 *
 	 * @param   string  $filename           	Name of file to create ('FA1705-0123.txt')
 	 * @param   string  $modulepart         	Name of module or area concerned by file upload ('product', 'service', 'invoice', 'proposal', 'project', 'project_task', 'supplier_invoice', 'expensereport', 'member', ...)
@@ -1008,7 +1022,9 @@ class Documents extends DolibarrApi
 	}
 
 	/**
-	 * Delete a document.
+	 * Delete a document
+	 *
+	 * @since	11.0.0	Initial implementation
 	 *
 	 * @param   string  $modulepart     Name of module or area concerned by file download ('product', ...)
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: PRODUCT-REF-999/IMAGE-999.jpg)

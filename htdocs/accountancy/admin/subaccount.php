@@ -427,12 +427,12 @@ if ($resql) {
 		$obj = $db->fetch_object($resql);
 
 		if ($obj->type == 1) {
-			$companystatic->id = $obj->id;
+			$companystatic->id = $obj->rowid;
 			$companystatic->client = $obj->nature;
 			$companystatic->fournisseur = 0;
 		}
 		if ($obj->type == 2) {
-			$companystatic->id = $obj->id;
+			$companystatic->id = $obj->rowid;
 			$companystatic->client = 0;
 			$companystatic->fournisseur = $obj->nature2;
 		}

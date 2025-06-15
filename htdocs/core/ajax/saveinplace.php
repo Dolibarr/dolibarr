@@ -107,7 +107,7 @@ top_httphead();
 // Load original field value
 if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_element)) {
 	$ext_element = GETPOST('ext_element', 'alpha', 2);
-	$field = substr($field, 8); // remove prefix val_
+	$field = substr($field, 8); // remove prefix editval_
 	$type = GETPOST('type', 'alpha', 2);
 	$value = ($type == 'ckeditor' ? GETPOST('value', '', 2) : GETPOST('value', 'alpha', 2));
 	$loadmethod = GETPOST('loadmethod', 'alpha', 2);

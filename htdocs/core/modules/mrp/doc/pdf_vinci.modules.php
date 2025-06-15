@@ -243,7 +243,11 @@ class pdf_vinci extends ModelePDFMo
 				$pdf->SetSubject($outputlangs->transnoentities("ManufacturingOrder"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("ManufacturingOrder")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
+				$key_word=$outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("ManufacturingOrder");
+				if (isset($object->thirdparty->name) && $object->thirdparty->name !== "") {
+					$key_word.=" ".$outputlangs->convToOutputCharset($object->thirdparty->name);
+				}
+				$pdf->SetKeyWords($key_word);
 				if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 					$pdf->SetCompression(false);
 				}
@@ -1141,7 +1145,7 @@ class pdf_vinci extends ModelePDFMo
 			$pdf->MultiCell(190, 3, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->delivery_date, $usehourmin, false, $outputlangs, true), '', 'R');
 		}
 
-		if ($object->thirdparty->code_fournisseur) {
+		if (isset($object->thirdparty->code_fournisseur)) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);

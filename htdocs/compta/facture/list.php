@@ -62,6 +62,10 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 if (isModEnabled('order')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
+if (isModEnabled('category')) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+}
 
 /**
  * @var Conf $conf
@@ -164,6 +168,13 @@ $search_datem_start = GETPOSTDATE('search_datem_start', 'getpost', 'tzuserrel');
 $search_datem_end = GETPOSTDATE('search_datem_end', 'getpostend', 'tzuserrel');
 
 $search_categ_cus = GETPOST("search_categ_cus", 'intcomma');
+$searchCategoryInvoiceOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategoryInvoiceOperator = GETPOSTINT('search_category_invoice_operator');
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
+	$searchCategoryInvoiceOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
+}
+$searchCategoryInvoiceList = GETPOST('search_category_invoice_list', 'array');
 $search_product_category = GETPOST('search_product_category', 'intcomma');
 $search_fac_rec_source_title = GETPOST("search_fac_rec_source_title", 'alpha');
 $search_fk_fac_rec_source = GETPOST('search_fk_fac_rec_source', 'int');
@@ -368,6 +379,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_user = '';
 	$search_sale = '';
 	$search_product_category = '';
+	$searchCategoryInvoiceList = array();
 	$search_ref = '';
 	$search_refcustomer = '';
 	$search_type = '';
@@ -1000,6 +1012,35 @@ if ($search_sale && $search_sale != '-1') {
 	}
 }
 
+// Search for tag/category ($searchCategoryInvoiceList is an array of ID)
+if (!empty($searchCategoryInvoiceList)) {
+	$searchCategoryInvoiceSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryInvoiceList as $searchCategoryInvoice) {
+		if (intval($searchCategoryInvoice) == -2) {
+			$searchCategoryInvoiceSqlList[] = "NOT EXISTS (SELECT ck.fk_invoice FROM ".MAIN_DB_PREFIX."categorie_invoice as ck WHERE f.rowid = ck.fk_invoice)";
+		} elseif (intval($searchCategoryInvoice) > 0) {
+			if ($searchCategoryInvoiceOperator == 0) {
+				$searchCategoryInvoiceSqlList[] = " EXISTS (SELECT ck.fk_invoice FROM ".MAIN_DB_PREFIX."categorie_invoice as ck WHERE f.rowid = ck.fk_invoice AND ck.fk_categorie = ".((int) $searchCategoryInvoice).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryInvoice);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryInvoiceSqlList[] = " EXISTS (SELECT ck.fk_invoice FROM ".MAIN_DB_PREFIX."categorie_invoice as ck WHERE f.rowid = ck.fk_invoice AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryInvoiceOperator == 1) {
+		if (!empty($searchCategoryInvoiceSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryInvoiceSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryInvoiceSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryInvoiceSqlList).")";
+		}
+	}
+}
+
 // Search for tag/category ($searchCategoryProductList is an array of ID)
 $searchCategoryProductList = $search_product_category ? array($search_product_category) : array();
 $searchCategoryProductOperator = 0;
@@ -1263,6 +1304,12 @@ if ($search_user > 0) {
 if ($search_login) {
 	$param .= '&search_login='.urlencode($search_login);
 }
+if ($searchCategoryInvoiceOperator == 1) {
+	$param .= "&search_category_invoice_operator=".urlencode((string) ($searchCategoryInvoiceOperator));
+}
+foreach ($searchCategoryInvoiceList as $searchCategoryInvoice) {
+	$param .= "&search_category_invoice_list[]=".urlencode($searchCategoryInvoice);
+}
 if ($search_product_category > 0) {
 	$param .= '&search_product_category='.urlencode((string) $search_product_category);
 }
@@ -1430,6 +1477,12 @@ if ($search_all) {
 
 // If the user can view prospects other than his'
 $moreforfilter = '';
+
+if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
+	$formcategory = new FormCategory($db);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_INVOICE, $searchCategoryInvoiceList, 'minwidth300', $searchCategoryInvoiceOperator ? $searchCategoryInvoiceOperator : 0);
+}
+
 if ($user->hasRight("user", "user", "lire")) {
 	$langs->load("commercial");
 	$moreforfilter .= '<div class="divsearchfield">';
