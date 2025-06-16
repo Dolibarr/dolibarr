@@ -4,18 +4,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModulePartnershipName=Menaxhimi i partneritetit
 PartnershipDescription=Moduli i Menaxhimit të Partneritetit
 PartnershipDescriptionLong= Moduli i Menaxhimit të Partneritetit
@@ -24,17 +20,11 @@ Partnerships=Partneritetet
 AddPartnership=Shto partneritet
 CancelPartnershipForExpiredMembers=Partneriteti: Anuloni partneritetin e anëtarëve me abonime të skaduara
 PartnershipCheckBacklink=Partneriteti: Kontrolloni lidhjen referuese
-
-#
 # Menu
-#
 NewPartnership=Partneritet i Ri
 NewPartnershipbyWeb=Kërkesa juaj për partneritet është shtuar me sukses. Mund t'ju kontaktojmë së shpejti...
 ListOfPartnerships=Lista e partneritetit
-
-#
 # Admin page
-#
 PartnershipSetup=Konfigurimi i partneritetit
 PartnershipAbout=Rreth Partneritetit
 PartnershipAboutPage=Partneriteti rreth faqes
@@ -45,10 +35,7 @@ PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb ditë përpara anuli
 ReferingWebsiteCheck=Kontrolli i referencës së faqes në internet
 ReferingWebsiteCheckDesc=Mund të aktivizoni një veçori për të kontrolluar nëse partnerët tuaj kanë shtuar një lidhje prapa në domenet e faqes suaj të internetit në faqen e tyre të internetit.
 PublicFormRegistrationPartnerDesc=Dolibarr mund t'ju ofrojë një URL/faqe të internetit publike për të lejuar vizitorët e jashtëm të kërkojnë të jenë pjesë e programit të partneritetit.
-
-#
 # Object
-#
 DeletePartnership=Fshi një partneritet
 PartnershipDedicatedToThisThirdParty=Partneritet kushtuar kësaj pale të tretë
 PartnershipDedicatedToThisMember=Partneritet kushtuar këtij anëtari
@@ -68,30 +55,24 @@ PartnershipAccepted=Pranuar
 PartnershipRefused=Refuzuar
 PartnershipCanceled=Anulluar
 PartnershipManagedFor=Partnerët janë
-
-#
 # Template Mail
-#
 SendingEmailOnPartnershipWillSoonBeCanceled=Partneriteti do të anulohet së shpejti
 SendingEmailOnPartnershipRefused=Partneriteti refuzoi
 SendingEmailOnPartnershipAccepted=Partneriteti i pranuar
 SendingEmailOnPartnershipCanceled=Partneriteti u anulua
-
 YourPartnershipWillSoonBeCanceledTopic=Partneriteti do të anulohet së shpejti
 YourPartnershipRefusedTopic=Partneriteti refuzoi
 YourPartnershipAcceptedTopic=Partneriteti i pranuar
 YourPartnershipCanceledTopic=Partneriteti u anulua
-
 YourPartnershipWillSoonBeCanceledContent=Dëshirojmë t'ju informojmë se partneriteti ynë së shpejti do të anulohet (nuk kemi marrë rinovim ose një parakusht për partneritetin tonë nuk është përmbushur). Ju lutemi na kontaktoni nëse e keni marrë këtë për shkak të një gabimi.
 YourPartnershipRefusedContent=Ne dëshirojmë t'ju informojmë se kërkesa juaj për partneritet është refuzuar. Nuk janë plotësuar kushtet paraprake. Ju lutemi na kontaktoni nëse keni nevojë për më shumë informacion.
 YourPartnershipAcceptedContent=Ju informojmë se kërkesa juaj për partneritet është pranuar.
 YourPartnershipCanceledContent=Ju informojmë se partneriteti ynë është anuluar. Ju lutemi na kontaktoni nëse keni nevojë për më shumë informacion.
-
 CountLastUrlCheckError=Numri i gabimeve për kontrollin e fundit të URL-së
 LastCheckBacklink=Data e kontrollit të fundit të URL-së
-
 NewPartnershipRequest=Kërkesë e re për partneritet
 NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Kjo faqe duhet të përmbajë të paktën një lidhje me një nga domenet e mëposhtme: %s
-
 IPOfApplicant=IP e aplikantit
+PartnershipToReopen=Për të rihapur
+PartnershipConfirmReOpenAsk=A jeni i sigurt që doni ta rihapni këtë partneritet <b> %s</b>?

@@ -43,7 +43,7 @@ ConfirmCancelSending=Вы уверены, что хотите отменить �
 DocumentModelMerou=Модель Merou A5
 WarningNoQtyLeftToSend=Внимание, нет товаров ожидающих отправки.
 StatsOnShipmentsOnlyValidated=Статистика предназначена только для подтвержденных отправлений. Используемая дата - это дата подтверждения отгрузки (плановая дата доставки не всегда известна)
-DateShipping=Sending date
+DateShipping=Отправка дата
 DateDeliveryPlanned=Планируемая дата доставки
 RefDeliveryReceipt=Квитанция о доставке реф.
 StatusReceipt=Квитанция о доставке статуса
@@ -63,10 +63,12 @@ NoProductToShipFoundIntoStock=Товаров для отправки не обн
 WeightVolShort=Вес / об.
 ValidateOrderFirstBeforeShipment=Вы должны сначала подтвердить заказ перед отправкой.
 NoLineGoOnTabToAddSome=Нет, линия, перейдите на вкладку "%s", чтобы добавить
-CreateInvoiceForThisCustomerFromSendings=Create Bills
-IfValidateInvoiceIsNoSendingStayUnbilled=If invoice validation is 'No', the sending will remain to status 'Unbilled' until the invoice is validated.
-OptionToSetSendingBilledNotEnabled=Option from module Workflow, to set sending to 'Billed' automatically when invoice is validated, is not enabled, so you will have to set the status of sendings to 'Billed' manually after the invoice has been generated.
-ShipmentUpdated=Shipment successfully updated
+CreateInvoiceForThisCustomerFromSendings=создать Счета
+IfValidateInvoiceIsNoSendingStayUnbilled=Если счет-фактура подтверждение равно «Нет», отправка на статус останется «Не выставленной на счет» до тех пор, пока счет-фактура не будет проверена.
+OptionToSetSendingBilledNotEnabled=Параметр из рабочего процесса модуль для установки отправки на 'счет выставлен' автоматически при проверке счет-фактура не включен, поэтому вам придется установить статус отправок на 'счет выставлен' вручную после генерации счет-фактура.
+NoWarehouseInBase=Нет склад в базе
+ShipmentUpdated=Отгрузка успешно обновлена
+ShipmentIncrementStockOnDelete = Увеличивать остаток при удалении
 
 # Sending methods
 # ModelDocument
@@ -78,6 +80,7 @@ SumOfProductWeights=Вес товара в сумме
 # warehouse details
 DetailWarehouseNumber= Детали склада
 DetailWarehouseFormat= W: %s (Кол-во: %d)
+DetailChildrenFormat=%s: %s (Кол-во: %s)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Отобразить последнюю дата запись в остаток во время создания отправления для Серийный номер или пакета
 CreationOptions=Доступные опции при создании отгрузки
 ShipmentDistribution=Распределение грузов
@@ -87,8 +90,9 @@ ErrorTooMuchShipped=Отгруженное количество не должн�
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Представитель следующие меры судоходства
 TypeContact_shipping_external_BILLING=свяжитесь со счета
-TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
-TypeContact_shipping_external_SHIPPING=Customer contact for shipping
-TypeContact_shipping_external_DELIVERY=Customer contact for delivery
-CloseShipment=Close shipment
-ConfirmCloseShipment=Confirm close shipment
+TypeContact_shipping_external_CUSTOMER=клиент контакт следующий-вверх перевозка
+TypeContact_shipping_external_SHIPPING=клиент свяжитесь с перевозка
+TypeContact_shipping_external_DELIVERY=клиент контакт для доставка
+CloseShipment=Закрыть отгрузку
+ConfirmCloseShipment=Подтвердите близкую отправку
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=Предварительно выберите партию/Серийный номер с самым ранним Годен до/Срок годности при создании отправки

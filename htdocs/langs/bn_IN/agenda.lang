@@ -136,7 +136,7 @@ AgendaModelModule=ইভেন্টের জন্য নথির টেম�
 DateActionStart=শুরুর তারিখ
 DateActionEnd=শেষ তারিখ
 AgendaUrlOptions1=আপনি ফিল্টার আউটপুট নিম্নলিখিত পরামিতি যোগ করতে পারেন:
-AgendaUrlOptions3=<b>logina=%s</b> ব্যবহারকারীর মালিকানাধীন ক্রিয়াগুলিতে আউটপুট সীমাবদ্ধ করতে <b>%s</b> (<span ব্যবহার করুন class='notranslate'><b>logina=!%s</b> ব্যবহারকারীর মালিকানাধীন নয় এমন ইভেন্টের জন্য)।
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsType=স্বয়ংক্রিয় বা ম্যানুয়াল ইভেন্ট পেতে <b>actiontype=%s</b>

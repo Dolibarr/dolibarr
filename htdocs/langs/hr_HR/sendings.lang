@@ -66,7 +66,9 @@ NoLineGoOnTabToAddSome=Nema reda, idite na karticu "%s" da dodate
 CreateInvoiceForThisCustomerFromSendings=izradi Računi
 IfValidateInvoiceIsNoSendingStayUnbilled=Ako je validacija fakture 'Ne', slanje će ostati u statusu 'Nenaplaćeno' dok se faktura ne potvrdi.
 OptionToSetSendingBilledNotEnabled=Opcija iz modula Tijek rada, da se slanje automatski postavi na 'Naplaćeno' kada se faktura potvrdi, nije uključena, tako da ćete nakon generiranja računa morati ručno postaviti status slanja na 'Naplaćeno'.
-ShipmentUpdated=Shipment successfully updated
+NoWarehouseInBase=Nema skladišta u bazi
+ShipmentUpdated=Pošiljka uspješno ažurirana
+ShipmentIncrementStockOnDelete = Povećanje zaliha prilikom brisanja
 
 # Sending methods
 # ModelDocument
@@ -78,6 +80,7 @@ SumOfProductWeights=Ukupna masa proizvoda
 # warehouse details
 DetailWarehouseNumber= Skladišni detalji
 DetailWarehouseFormat= W:%s (Količina: %d)
+DetailChildrenFormat=%s : %s (Količina: %s)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Prikaz posljednjeg datuma unosa na zalihu tijekom kreiranja pošiljke za serijski broj ili seriju
 CreationOptions=Dostupne opcije tijekom izrade pošiljke
 ShipmentDistribution=Distribucija pošiljaka
@@ -87,8 +90,9 @@ ErrorTooMuchShipped=Količina koja se šalje ne smije biti veća od količine na
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Predstavnik praćenja utovara
 TypeContact_shipping_external_BILLING=Kontakt osoba za račun
-TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
-TypeContact_shipping_external_SHIPPING=Customer contact for shipping
-TypeContact_shipping_external_DELIVERY=Customer contact for delivery
-CloseShipment=Close shipment
-ConfirmCloseShipment=Confirm close shipment
+TypeContact_shipping_external_CUSTOMER=Kontakt s kupcem nakon dostave
+TypeContact_shipping_external_SHIPPING=Kontakt kupca za dostavu
+TypeContact_shipping_external_DELIVERY=Kontakt kupca za dostavu
+CloseShipment=Zatvori pošiljku
+ConfirmCloseShipment=Potvrdi zatvaranje pošiljke
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=Prilikom kreiranja pošiljke unaprijed odaberite broj serije/serijski broj s najranijim datumom upotrebe/roka trajanja

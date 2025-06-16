@@ -4,71 +4,52 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 NewAsset=አዲስ ንብረት
 AccountancyCodeAsset=የሂሳብ ኮድ (ንብረት)
 AccountancyCodeDepreciationAsset=የሂሳብ ኮድ (የዋጋ ቅነሳ የንብረት መለያ)
 AccountancyCodeDepreciationExpense=የሂሳብ ኮድ (የዋጋ ቅናሽ ሂሳብ)
 AssetsLines=ንብረቶች
+ConfirmValidateAsset=Are you sure you want to validate this asset with the reference <b>%s</b>?
 DeleteType=ሰርዝ
 DeleteAnAssetType=የንብረት ሞዴልን ሰርዝ
 ConfirmDeleteAssetType=እርግጠኛ ነዎት ይህን የንብረት ሞዴል መሰረዝ ይፈልጋሉ?
 ShowTypeCard=ሞዴል '%s' አሳይ
-
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=ንብረቶች
 # Module description 'ModuleAssetsDesc'
 ModuleAssetsDesc=የንብረት መግለጫ
-
-#
 # Admin page
-#
 AssetSetup=የንብረት ማዋቀር
 AssetSetupPage=የንብረት ማዋቀር ገጽ
 ExtraFieldsAssetModel=ተጨማሪ ባህሪያት (የንብረት ሞዴል)
-
 AssetsType=የንብረት ሞዴል
 AssetsTypeId=የንብረት ሞዴል መታወቂያ
 AssetsTypeLabel=የንብረት ሞዴል መለያ
 AssetsTypes=የንብረት ሞዴሎች
 ASSET_ACCOUNTANCY_CATEGORY=ቋሚ የንብረት ሒሳብ ቡድን
-
-#
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Proportional period in days for calculating amortization over one year
 # Menu
-#
 MenuAssets=ንብረቶች
 MenuNewAsset=አዲስ ንብረት
 MenuAssetModels=የሞዴል ንብረቶች
 MenuListAssets=ዝርዝር
 MenuNewAssetModel=አዲስ የንብረት ሞዴል
 MenuListAssetModels=ዝርዝር
-
-#
 # Module
-#
 ConfirmDeleteAsset=ይህን ንብረት በእርግጥ ማስወገድ ይፈልጋሉ?
-
-#
 # Tab
-#
 AssetDepreciationOptions=የዋጋ ቅነሳ አማራጮች
 AssetAccountancyCodes=የሂሳብ አያያዝ መለያዎች
 AssetDepreciation=የዋጋ ቅነሳ
-
-#
 # Asset
-#
 Asset=ንብረት
 Assets=ንብረቶች
 AssetReversalAmountHT=የተገላቢጦሽ መጠን (ያለ ታክስ)
@@ -89,32 +70,21 @@ AssetNotDepreciated=አልቀነሰም።
 AssetDisposal=ማስወገድ
 AssetConfirmDisposalAsk=Are you sure you want to dispose of the asset <b> %s</b>?
 AssetConfirmReOpenAsk=Are you sure you want to reopen the asset <b> %s</b>?
-
-#
 # Asset status
-#
+AssetInDraft=Draft
 AssetInProgress=በሂደት ላይ
 AssetDisposed=ተወግዷል
 AssetRecorded=ተቆጥሯል።
-
-#
 # Asset disposal
-#
 AssetDisposalDate=የሚወገድበት ቀን
 AssetDisposalAmount=የማስወገጃ ዋጋ
 AssetDisposalType=የማስወገጃ አይነት
 AssetDisposalDepreciated=የዝውውር ዓመት ዋጋን ይቀንሱ
 AssetDisposalSubjectToVat=አወጋገድ ተ.እ.ታ
-
-#
 # Asset model
-#
 AssetModel=የንብረት ሞዴል
 AssetModels=የንብረት ሞዴሎች
-
-#
 # Asset depreciation options
-#
 AssetDepreciationOptionEconomic=የኢኮኖሚ ዋጋ መቀነስ
 AssetDepreciationOptionAcceleratedDepreciation=የተፋጠነ የዋጋ ቅናሽ (ግብር)
 AssetDepreciationOptionDepreciationType=የዋጋ ቅነሳ ዓይነት
@@ -131,10 +101,7 @@ AssetDepreciationOptionRate=ደረጃ ይስጡ (%%)
 AssetDepreciationOptionAmountBaseDepreciationHT=የዋጋ ቅናሽ መሰረት (ከተጨማሪ እሴት ታክስ በስተቀር)
 AssetDepreciationOptionAmountBaseDeductibleHT=የሚቀነሰው መሠረት (ከተጨማሪ እሴት ታክስ በስተቀር)
 AssetDepreciationOptionTotalAmountLastDepreciationHT=የዋጋ ቅናሽ ጠቅላላ መጠን (ከተጨማሪ እሴት ታክስ በስተቀር)
-
-#
 # Asset accountancy codes
-#
 AssetAccountancyCodeDepreciationEconomic=የኢኮኖሚ ዋጋ መቀነስ
 AssetAccountancyCodeAsset=ንብረት
 AssetAccountancyCodeDepreciationAsset=የዋጋ ቅነሳ
@@ -148,10 +115,7 @@ AssetAccountancyCodeDepreciationAcceleratedDepreciation=የተፋጠነ የዋ�
 AssetAccountancyCodeAcceleratedDepreciation=መለያ
 AssetAccountancyCodeEndowmentAcceleratedDepreciation=የዋጋ ቅነሳ ወጪ
 AssetAccountancyCodeProvisionAcceleratedDepreciation=መልሶ ማግኘት/ አቅርቦት
-
-#
 # Asset depreciation
-#
 AssetBaseDepreciationHT=የዋጋ ቅናሽ መሰረት (ከተጨማሪ እሴት ታክስ በስተቀር)
 AssetDepreciationBeginDate=የዋጋ ቅነሳ ጅምር በርቷል።
 AssetDepreciationDuration=ቆይታ
@@ -163,10 +127,7 @@ AssetResidualHT=ቀሪ እሴት (ከተጨማሪ እሴት ታክስ በስተ�
 AssetDispatchedInBookkeeping=የዋጋ ቅናሽ ተመዝግቧል
 AssetFutureDepreciationLine=የወደፊት የዋጋ ቅነሳ
 AssetDepreciationReversal=መቀልበስ
-
-#
 # Errors
-#
 AssetErrorAssetOrAssetModelIDNotProvide=የንብረቱ መታወቂያ ወይም የተገኘው ሞዴል አልቀረበም።
 AssetErrorFetchAccountancyCodesForMode=ለ'%sየዋጋ ቅነሳ ሁነታ የሂሳብ መለያዎችን በማውጣት ላይ ስህተት
 AssetErrorDeleteAccountancyCodesForMode=የሒሳብ መለያዎችን ከ'%sየዋጋ ቅነሳ ሁነታ ሲሰረዝ ስህተት

@@ -1490,9 +1490,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					break;
 			}
 
-			$selectedprospect = ((GETPOSTISSET('prospect') || $action == 'create') ? GETPOSTINT('prospect') : $selectedprospect);
-			$selectedcustomer = ((GETPOSTISSET('customer') || $action == 'create') ? GETPOSTINT('customer') : $selectedcustomer);
-			$selectedsupplier = ((GETPOSTISSET('supplier') || $action == 'create') ? GETPOSTINT('supplier') : $object->fournisseur);
+			$selectedprospect = ((GETPOSTISSET('prospect') && $action == 'create') ? GETPOSTINT('prospect') : $selectedprospect);
+			$selectedcustomer = ((GETPOSTISSET('customer') && $action == 'create') ? GETPOSTINT('customer') : $selectedcustomer);
+			$selectedsupplier = ((GETPOSTISSET('supplier') && $action == 'create') ? GETPOSTINT('supplier') : $object->fournisseur);
 
 			print '<tr class="marginbottomlarge height50">';
 			if ($conf->browser->layout != 'phone') {
@@ -1868,7 +1868,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<tr><td>'.$form->editfieldkey('JuridicalStatus', 'forme_juridique_code', '', $object, 0).'</td>';
 			print '<td colspan="3" class="maxwidthonsmartphone">';
 			if ($object->country_id) {
-				print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_id, '', 'forme_juridique_code');
+				print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'forme_juridique_code');
 			} else {
 				print $countrynotdefined;
 			}

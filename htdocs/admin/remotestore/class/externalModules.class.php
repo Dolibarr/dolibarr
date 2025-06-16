@@ -876,7 +876,8 @@ class ExternalModules
 					continue;
 				}
 				$adaptedPackage = [
-					'ref' => str_replace(' ', '', $package['modulename'].'-'.$package['current_version'].'@'.$package['author']),
+					'ref' => str_replace(' ', '', $package['modulename'] . '-' . $package['current_version'] . '@' .
+						(array_key_exists('author', $package) ? $package['author'] : 'unkownauthor')),
 					'label' => !empty($package['label'][substr($this->lang, 0, 2)])
 						? $package['label'][substr($this->lang, 0, 2)]
 						: (!empty($package['label']['en']) ? $package['label']['en'] : $package['modulename']),

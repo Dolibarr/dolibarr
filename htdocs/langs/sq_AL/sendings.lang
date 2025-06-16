@@ -8,13 +8,12 @@ Shipments=Dërgesat
 ShowSending=Shfaq dërgesat
 Receivings=Faturat e dorëzimit
 SendingsArea=Zona e dërgesave
-ListOfSendings=Lista e dërgesave
 SendingMethod=Metoda e transportit
 LastSendings=Dërgesat më të fundit %s
 StatisticsOfSendings=Statistikat për dërgesat
 NbOfSendings=Numri i dërgesave
 NumberOfShipmentsByMonth=Numri i dërgesave sipas muajit
-SendingCard=Karta e dërgesës
+SendingCard=Dërgesë
 NewSending=Dërgesë e re
 CreateShipment=Krijo dërgesë
 QtyShipped=Sasia e dërguar
@@ -44,6 +43,7 @@ ConfirmCancelSending=Jeni i sigurt që dëshironi ta anuloni këtë dërgesë?
 DocumentModelMerou=Modeli Merou A5
 WarningNoQtyLeftToSend=Paralajmërim, nuk ka produkte që presin për t'u dërguar.
 StatsOnShipmentsOnlyValidated=Statistikat janë vetëm për dërgesat e vërtetuara. Data e përdorur është data e vërtetimit të dërgesës (data e planifikuar e dorëzimit nuk dihet gjithmonë)
+DateShipping=Data e dërgimit
 DateDeliveryPlanned=Data e planifikuar e dorëzimit
 RefDeliveryReceipt=Ref faturë e dorëzimit
 StatusReceipt=Fatura e dorëzimit të statusit
@@ -63,6 +63,12 @@ NoProductToShipFoundIntoStock=No product to ship found in warehouse <b>%s</b>. C
 WeightVolShort=Peshë/Vëll
 ValidateOrderFirstBeforeShipment=Së pari duhet të vërtetoni porosinë përpara se të jeni në gjendje të bëni dërgesa.
 NoLineGoOnTabToAddSome=Nuk ka rresht, shkoni në skedën "%s" për të shtuar
+CreateInvoiceForThisCustomerFromSendings=Krijo Fatura
+IfValidateInvoiceIsNoSendingStayUnbilled=Nëse validimi i faturës është 'Jo', dërgimi do të mbetet në statusin 'Pa faturuar' derisa fatura të validohet.
+OptionToSetSendingBilledNotEnabled=Opsioni nga moduli Workflow, për ta vendosur automatikisht dërgimin në 'Faturë' kur fatura validohet, nuk është aktivizuar, kështu që do t'ju duhet ta vendosni statusin e dërgimeve në 'Faturë' manualisht pasi të jetë gjeneruar fatura.
+NoWarehouseInBase=Nuk ka depo në bazë
+ShipmentUpdated=Dërgesa u përditësua me sukses
+ShipmentIncrementStockOnDelete = Rrit stokun me fshirje
 
 # Sending methods
 # ModelDocument
@@ -71,16 +77,22 @@ DocumentModelStorm=Modeli më i plotë i dokumentit për faturat e dorëzimit dh
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER konstante nuk është përcaktuar
 SumOfProductVolumes=Shuma e vëllimeve të produktit
 SumOfProductWeights=Shuma e peshave të produktit
-
 # warehouse details
 DetailWarehouseNumber= Detajet e magazinës
 DetailWarehouseFormat= W:%s (Sasia: %d)
+DetailChildrenFormat=%s : %s (Sasia: %s)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Shfaq datën e fundit të hyrjes në magazinë gjatë krijimit të dërgesës për numrin serial ose grumbull
 CreationOptions=Opsionet e disponueshme gjatë krijimit të dërgesës
-
 ShipmentDistribution=Shpërndarja e dërgesës
-
 ErrorTooManyCombinationBatchcode=Asnjë dërgim për linjën %s pasi u gjetën shumë kombinime të magazinës, produktit, kodit të grupit (%s).
 ErrorNoCombinationBatchcode=Nuk mund të ruhej rreshti %s si kombinim i warehouse-product-lot/serial (%s, %s, %s) nuk u gjet në magazinë.
-
 ErrorTooMuchShipped=Sasia e dërguar nuk duhet të jetë më e madhe se sasia e porositur për linjën %s
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=Transportim përfaqësues pasues
+TypeContact_shipping_external_BILLING=Kontakti i faturës së klientit
+TypeContact_shipping_external_CUSTOMER=Kontaktoni klientin pas dërgesës
+TypeContact_shipping_external_SHIPPING=Kontakti i klientit për dërgesë
+TypeContact_shipping_external_DELIVERY=Kontakti i klientit për dërgesë
+CloseShipment=Mbyll dërgesën
+ConfirmCloseShipment=Konfirmo mbylljen e dërgesës
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=Zgjidhni paraprakisht numrin e serisë/serialit me datën më të hershme të skadimit/përdorimit kur krijoni një dërgesë.

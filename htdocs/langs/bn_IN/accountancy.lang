@@ -485,7 +485,7 @@ AccountancyClosureConfirmClose=আপনি কি নিশ্চিত আপ�
 AccountancyClosureConfirmAccountingReversal=আপনি কি "রক্ষিত উপার্জন" এর জন্য এন্ট্রি রেকর্ড করার বিষয়ে নিশ্চিত?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=(doc_type=%s, doc_id=%s, doc_det=<span এর জন্য লেনদেন class='notranslate'>%s) ইতিমধ্যেই রেকর্ড করা হয়েছে
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) were already recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=সেটআপের কিছু বাধ্যতামূলক পদক্ষেপ করা হয়নি, অনুগ্রহ করে সেগুলি সম্পূর্ণ করুন৷

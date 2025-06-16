@@ -64,3 +64,7 @@ NoPositionOpen=Ayni paytda hech qanday lavozim ochilmagan
 ConfirmClose=Bekor qilishni tasdiqlang
 ConfirmCloseAsk=Haqiqatan ham bu ishga yollash nomzodini bekor qilmoqchimisiz
 Recruitment=Ishga qabul qilish
+ApplyJobCandidature=Ushbu ish uchun ariza bering
+ErrorRecruitmmentCandidatureAlreadyExists= Ishga qabul qilish uchun nomzod %s elektron pochta manzilida allaqachon mavjud.
+RecruitmentCandidatureSaved=Ishga qabul qilish uchun nomzod muvaffaqiyatli saqlandi
+NoOpenJobOffer=Hozircha ochiq ish takliflari yo'q

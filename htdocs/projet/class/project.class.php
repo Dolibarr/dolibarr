@@ -2534,7 +2534,7 @@ class Project extends CommonObject
 			}
 		}
 
-		$return = '<div class="box-flex-item '.($size == 'small' ? 'box-flex-item-small' : '').' box-flex-grow-zero">';
+		$return = '<div class="box-flex-item '.($size == 'small' ? 'box-flex-item-small' : '').' box-flex-grow-zero '.($arraydata['mode'] == 'kanbangroupby' ? 'kanban-draggable" data-itemid="'.$this->id.'" data-element="'.$this->element.'" data-tableelement="'.$this->table_element.'"' : '"').'>';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
 		$return .= img_picto('', $this->public ? 'projectpub' : $this->picto);
