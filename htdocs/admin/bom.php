@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2019 Laurent Destailleur          <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,7 +122,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->BOM_ADDON_PDF == "$value") {
+		if (getDolGlobalString('BOM_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'BOM_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -225,6 +225,7 @@ foreach ($dirmodels as $reldir) {
 					$module = new $classname($db);
 
 					'@phan-var-force ModeleNumRefBoms $module';
+					/** @var ModeleNumRefBoms $module */
 
 					// Show modules according to features level
 					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -253,7 +254,7 @@ foreach ($dirmodels as $reldir) {
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->BOM_ADDON == $file) {
+						if (getDolGlobalString('BOM_ADDON') == $file) {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'">';
@@ -364,6 +365,7 @@ foreach ($dirmodels as $reldir) {
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
 							'@phan-var-force ModelePDFBom $module';
+							/** @var ModelePDFBom $module */
 
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
