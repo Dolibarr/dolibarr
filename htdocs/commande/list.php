@@ -55,6 +55,11 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+if (isModEnabled('category')) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+}
+
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -99,6 +104,13 @@ $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datedeliver
 $socid = GETPOSTINT('socid');
 
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
+$searchCategoryOrderOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategoryOrderOperator = GETPOSTINT('search_category_order_operator');
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
+	$searchCategoryOrderOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
+}
+$searchCategoryOrderList = GETPOST('search_category_order_list', 'array');
 $search_product_category = GETPOST('search_product_category', 'intcomma');
 $search_id = GETPOST('search_id', 'int');
 $search_ref = GETPOST('search_ref', 'alpha') != '' ? GETPOST('search_ref', 'alpha') : GETPOST('sref', 'alpha');
@@ -315,6 +327,7 @@ if (empty($reshook)) {
 		$search_user = '';
 		$search_sale = '';
 		$search_product_category = '';
+		$searchCategoryOrderList = array();
 		$search_id = '';
 		$search_ref = '';
 		$search_ref_ext = '';
@@ -1138,6 +1151,36 @@ if ($search_sale && $search_sale != '-1') {
 		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
 	}
 }
+
+// Search for tag/category ($searchCategoryOrderList is an array of ID)
+if (!empty($searchCategoryOrderList)) {
+	$searchCategoryOrderSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryOrderList as $searchCategoryOrder) {
+		if (intval($searchCategoryOrder) == -2) {
+			$searchCategoryOrderSqlList[] = "NOT EXISTS (SELECT ck.fk_order FROM ".MAIN_DB_PREFIX."categorie_order as ck WHERE c.rowid = ck.fk_order)";
+		} elseif (intval($searchCategoryOrder) > 0) {
+			if ($searchCategoryOrderOperator == 0) {
+				$searchCategoryOrderSqlList[] = " EXISTS (SELECT ck.fk_order FROM ".MAIN_DB_PREFIX."categorie_order as ck WHERE c.rowid = ck.fk_order AND ck.fk_categorie = ".((int) $searchCategoryOrder).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryOrder);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryOrderSqlList[] = " EXISTS (SELECT ck.fk_order FROM ".MAIN_DB_PREFIX."categorie_order as ck WHERE c.rowid = ck.fk_order AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryOrderOperator == 1) {
+		if (!empty($searchCategoryOrderSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryOrderSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryOrderSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryOrderSqlList).")";
+		}
+	}
+}
+
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
 $searchCategoryCustomerOperator = -1;
 $searchCategoryCustomerList = array($search_categ_cus);
@@ -1423,6 +1466,12 @@ if ($search_country != '') {
 if ($search_type_thirdparty && $search_type_thirdparty != '-1') {
 	$param .= '&search_type_thirdparty='.urlencode((string) ($search_type_thirdparty));
 }
+if ($searchCategoryOrderOperator == 1) {
+	$param .= "&search_category_order_operator=".urlencode((string) ($searchCategoryOrderOperator));
+}
+foreach ($searchCategoryOrderList as $searchCategoryOrder) {
+	$param .= "&search_category_order_list[]=".urlencode($searchCategoryOrder);
+}
 if ($search_product_category != '') {
 	$param .= '&search_product_category='.urlencode((string) ($search_product_category));
 }
@@ -1594,6 +1643,11 @@ if ($search_all) {
 }
 
 $moreforfilter = '';
+
+if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
+	$formcategory = new FormCategory($db);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_ORDER, $searchCategoryOrderList, 'minwidth300', $searchCategoryOrderOperator ? $searchCategoryOrderOperator : 0);
+}
 
 // If the user can view prospects? sales other than his own
 if ($user->hasRight("user", "user", "lire")) {
