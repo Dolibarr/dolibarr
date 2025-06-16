@@ -1972,7 +1972,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			// TODO Use select_doluser in multiselect mode
 			$userlist = $form->select_dolusers($selected, '', 0, null, 0, '', '', '0', 0, 0, 'u.statut:=:1', 0, '', '', 0, 2);
 			$selected = (GETPOSTISARRAY('commercial') ? GETPOST('commercial', 'array:int') : (GETPOSTINT('commercial') > 0 ? array(GETPOSTINT('commercial')) : []));
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (!$user->hasRight('societe', 'client', 'voir') && !getDolGlobalInt('THIRDPARTY_DO_NOT_ASSIGN_POWERFUL_AUTHOR_AS_SALE_REPRESENTATIVE')) {
 				// Note: If user has no right to "see all thirdparties", we force selection of sale representative to him, so after creation he can see the record.
 				$selected = array_merge(array($user->id), $selected);
 			}
