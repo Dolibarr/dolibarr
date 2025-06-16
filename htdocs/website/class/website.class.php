@@ -283,7 +283,13 @@ class Website extends CommonObject
 			$stringtodolibarrfile = "# Some properties for Dolibarr web site CMS\n";
 			$stringtodolibarrfile .= "param=value\n";
 			//print $conf->website->dir_output.'/'.$this->ref.'/.dolibarr';exit;
-			file_put_contents($conf->website->dir_output.'/'.$this->ref.'/.dolibarr', $stringtodolibarrfile);
+			file_put_contents($pathofwebsite.'/.dolibarr', $stringtodolibarrfile);
+		}
+
+		$filelicense = $pathofwebsite.'/LICENSE';
+		if (!dol_is_file($filelicense)) {
+			$licensecontent = "LICENSE\n-------\nThis website template content (HTML and PHP code) is published under the license CC-BY-SA - https://creativecommons.org/licenses/by/4.0/";
+			$result = dolSaveLicense($filelicense, $licensecontent);
 		}
 
 		// Commit or rollback

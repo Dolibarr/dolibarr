@@ -14023,12 +14023,6 @@ parameters:
 			path: ../../../htdocs/fichinter/tpl/linkedobjectblock.tpl.php
 
 		-
-			message: '#^Variable \$dolibarr_main_db_encrypted_pass might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/filefunc.inc.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 10
@@ -21657,12 +21651,6 @@ parameters:
 		-
 			message: '#^Property RecruitmentJobPosition\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/recruitment/recruitmentjobposition_card.php
-
-		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/recruitment/recruitmentjobposition_card.php
 

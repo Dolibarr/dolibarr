@@ -2742,6 +2742,8 @@ class Form
 			if (isModEnabled('variants') && is_array($selected_combinations)) {
 				// Code to automatically insert with javascript the select of attributes under the select of product
 				// when a parent of variant has been selected.
+				// Note: Samecode than for product input using select
+				$htmltag = 'input';
 				$out .= '
 				<!-- script to auto show attributes select tags if a variant was selected -->
 				<script nonce="' . getNonce() . '">
@@ -2757,7 +2759,7 @@ class Form
 							}
 						});
 
-						jQuery("input#' . $htmlname . '").change(function () {
+						jQuery("'.$htmltag.'#' . $htmlname . '").change(function () {
 
 							if (!jQuery(this).val()) {
 								jQuery(\'div#attributes_box\').empty();
@@ -2809,7 +2811,7 @@ class Form
 							})
 						});
 
-						' . ($selected ? 'jQuery("input#' . $htmlname . '").change();' : '') . '
+						' . ($selected ? 'jQuery("'.$htmltag.'#' . $htmlname . '").change();' : '') . '
 					});
 				</script>
                 ';
@@ -2832,6 +2834,84 @@ class Form
 			$out .= ajax_autocompleter((string) $selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, getDolGlobalInt('PRODUIT_USE_SEARCH_TO_SELECT'), getDolGlobalInt('PRODUCT_SEARCH_AUTO_SELECT_IF_ONLY_ONE', 1), $ajaxoptions);
 		} else {
 			$out .= $this->select_produits_list($selected, $htmlname, $filtertype, $limit, $price_level, '', $status, $finished, 0, $socid, $showempty, $forcecombo, $morecss, $hidepriceinlabel, $warehouseStatus, $status_purchase, $warehouseId);
+
+			if (isModEnabled('variants') && is_array($selected_combinations)) {
+				// Code to automatically insert with javascript the select of attributes under the select of product
+				// when a parent of variant has been selected.
+				// Note: Samecode than for product input using Ajax
+				$htmltag = 'select';
+				$out .= '
+				<!-- script to auto show attributes select tags if a variant was selected -->
+				<script nonce="' . getNonce() . '">
+					// auto show attributes fields
+					selected = ' . json_encode($selected_combinations) . ';
+					combvalues = {};
+
+					jQuery(document).ready(function () {
+
+						jQuery("input[name=\'prod_entry_mode\']").change(function () {
+							if (jQuery(this).val() == \'free\') {
+								jQuery(\'div#attributes_box\').empty();
+							}
+						});
+
+						jQuery("'.$htmltag.'#' . $htmlname . '").change(function () {
+
+							if (!jQuery(this).val()) {
+								jQuery(\'div#attributes_box\').empty();
+								return;
+							}
+
+							console.log("A change has started. We get variants fields to inject html select");
+
+							jQuery.getJSON("' . DOL_URL_ROOT . '/variants/ajax/getCombinations.php", {
+								id: jQuery(this).val()
+							}, function (data) {
+								jQuery(\'div#attributes_box\').empty();
+
+								jQuery.each(data, function (key, val) {
+
+									combvalues[val.id] = val.values;
+
+									var span = jQuery(document.createElement(\'div\')).css({
+										\'display\': \'table-row\'
+									});
+
+									span.append(
+										jQuery(document.createElement(\'div\')).text(val.label).css({
+											\'font-weight\': \'bold\',
+											\'display\': \'table-cell\'
+										})
+									);
+
+									var html = jQuery(document.createElement(\'select\')).attr(\'name\', \'combinations[\' + val.id + \']\').css({
+										\'margin-left\': \'15px\',
+										\'white-space\': \'pre\'
+									}).append(
+										jQuery(document.createElement(\'option\')).val(\'\')
+									);
+
+									jQuery.each(combvalues[val.id], function (key, val) {
+										var tag = jQuery(document.createElement(\'option\')).val(val.id).html(val.value);
+
+										if (selected[val.fk_product_attribute] == val.id) {
+											tag.attr(\'selected\', \'selected\');
+										}
+
+										html.append(tag);
+									});
+
+									span.append(html);
+									jQuery(\'div#attributes_box\').append(span);
+								});
+							})
+						});
+
+						' . ($selected ? 'jQuery("'.$htmltag.'#' . $htmlname . '").change();' : '') . '
+					});
+				</script>
+                ';
+			}
 		}
 
 		if (empty($nooutput)) {
