@@ -24,7 +24,7 @@
 /**
  * @var Conf $conf
  * @var CommonObject $object
- * @var Extrafields $extrafields
+ * @var ExtraFields $extrafields
  *
  * @var array	$search_array_options
  * @var string	$search_options_pattern
