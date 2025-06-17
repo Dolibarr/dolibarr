@@ -34,6 +34,8 @@ class AgendaEvents extends DolibarrApi
 	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
+		'userownerid',
+		'type_code'
 	);
 
 	/**
