@@ -601,7 +601,7 @@ if (empty($reshook)) {
 				// PREPARE SEND
 				$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
 
-				if (!empty($mailfile->error)) {
+				if (empty($mailfile->error)) {
 					// SEND
 					$result = $mailfile->sendfile();
 					if ($result) {
@@ -721,7 +721,7 @@ if (empty($reshook)) {
 
 				$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, $emailCC, '', 0, -1);
 
-				if (!empty($mailfile->error)) {
+				if (empty($mailfile->error)) {
 					// SEND
 					$result = $mailfile->sendfile();
 					if ($result) {
@@ -837,7 +837,7 @@ if (empty($reshook)) {
 				// PREPARE SEND
 				$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
 
-				if (!empty($mailfile->error)) {
+				if (empty($mailfile->error)) {
 					// SEND
 					$result = $mailfile->sendfile();
 					if ($result) {
@@ -958,7 +958,7 @@ if (empty($reshook)) {
 						// PREPARE SEND
 						$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
 
-						if (!empty($mailfile->error)) {
+						if (empty($mailfile->error)) {
 							// SEND
 							$result = $mailfile->sendfile();
 							if ($result) {
@@ -1144,7 +1144,7 @@ if (empty($reshook)) {
 				// PREPARE SEND
 				$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
 
-				if (!empty($mailfile->error)) {
+				if (empty($mailfile->error)) {
 					// SEND
 					$result = $mailfile->sendfile();
 					if ($result) {

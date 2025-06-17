@@ -1513,15 +1513,15 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
  *  Remove a file or several files with a mask.
  *  This delete file physically but also database indexes.
  *
- *  @param	string	$file           File to delete or mask of files to delete
- *  @param  int		$disableglob    Disable usage of glob like * so function is an exact delete function that will return error if no file found
- *  @param  int		$nophperrors    Disable all PHP output errors
- *  @param	int		$nohook			Disable all hooks
+ *  @param	string	$file           	File to delete or mask of files to delete
+ *  @param  int		$disableglob    	Disable usage of glob like * so function is an exact delete function that will return error if no file found
+ *  @param  int		$nophperrors    	Disable all PHP output errors
+ *  @param	int		$nohook				Disable all hooks
  *  @param	object|null	$object			Current object in use
- *  @param	boolean	$allowdotdot	Allow to delete file path with .. inside. Never use this, it is reserved for migration purpose.
- *  @param	int		$indexdatabase	Try to remove also index entries.
- *  @param	int		$nolog			Disable log file
- *  @return boolean         		True if no error (file is deleted or if glob is used and there's nothing to delete), False if error
+ *  @param	boolean	$allowdotdot		Allow to delete file path with .. inside. Never use this, it is reserved for migration purpose.
+ *  @param	int		$indexdatabase		Try to remove also index entries.
+ *  @param	int		$nolog				Disable log file
+ *  @return boolean         			True if no error (file is deleted or if glob is used and there's nothing to delete), False if error
  *  @see dol_delete_dir()
  */
 function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0, $object = null, $allowdotdot = false, $indexdatabase = 1, $nolog = 0)

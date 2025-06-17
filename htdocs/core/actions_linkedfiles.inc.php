@@ -20,11 +20,6 @@
  * or see https://www.gnu.org/
  */
 
-// Variable $upload_dir must be defined when entering here.
-// Variable $upload_dirold may also exists.
-// Variable $confirm must be defined.
-// If variable $permissiontoadd is defined, we check it is true. Note: A test on permission should already have been done into the restrictedArea() method called by parent page.
-
 /**
  * @var CommonObject $object
  * @var Conf $conf
@@ -33,9 +28,11 @@
  * @var Translate $langs
  * @var User $user
  *
+ * @var string $action
  * @var string $upload_dir
  * @var string $upload_dirold
  * @var string $confirm
+ * @var int	$permissiontoadd	If variable $permissiontoadd is defined, we check it is true. Note: A test on permission should already have been done into the restrictedArea() method called by parent page.
  * @var	string $forceFullTextIndexation
  */
 '
