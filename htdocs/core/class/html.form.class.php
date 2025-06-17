@@ -3796,19 +3796,20 @@ class Form
 	/**
 	 * Return list of products for customer (in Ajax if Ajax activated or go to select_produits_fournisseurs_list)
 	 *
-	 * @param int 		$socid 			Id third party
-	 * @param string 	$selected 		Preselected product
-	 * @param string 	$htmlname 		Name of HTML Select
-	 * @param string 	$filtertype 	Filter on product type (''=nofilter, 0=product, 1=service)
-	 * @param string 	$filtre 		For a SQL filter
-	 * @param array<string,string|string[]>	$ajaxoptions 	Options for ajax_autocompleter
-	 * @param int<0,1>	$hidelabel 		Hide label (0=no, 1=yes)
-	 * @param int<0,1>	$alsoproductwithnosupplierprice 1=Add also product without supplier prices
-	 * @param string 	$morecss 		More CSS
-	 * @param string 	$placeholder 	Placeholder
-	 * @return    void
+	 * @param 	int 		$socid 							Id third party
+	 * @param 	string 		$selected 						Preselected product
+	 * @param 	string 		$htmlname 						Name of HTML Select
+	 * @param 	string 		$filtertype 					Filter on product type (''=nofilter, 0=product, 1=service)
+	 * @param 	string 		$filtre 						For a SQL filter
+	 * @param 	array<string,string|string[]>	$ajaxoptions 	Options for ajax_autocompleter
+	 * @param 	int<0,1>	$hidelabel 						Hide label (0=no, 1=yes)
+	 * @param 	int<0,1>	$alsoproductwithnosupplierprice 1=Add also product without supplier prices
+	 * @param 	string 		$morecss 						More CSS
+	 * @param 	string 		$placeholder 					Placeholder
+	 * @param	int			$nooutput						1=do not output but return string instead
+	 * @return  void
 	 */
-	public function select_produits_fournisseurs($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $ajaxoptions = array(), $hidelabel = 0, $alsoproductwithnosupplierprice = 0, $morecss = '', $placeholder = '')
+	public function select_produits_fournisseurs($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $ajaxoptions = array(), $hidelabel = 0, $alsoproductwithnosupplierprice = 0, $morecss = '', $placeholder = '', $nooutput = 0)
 	{
 		// phpcs:enable
 		global $langs, $conf;
@@ -3830,11 +3831,18 @@ class Form
 
 			// mode=2 means suppliers products
 			$urloption = ($socid > 0 ? 'socid=' . $socid . '&' : '') . 'htmlname=' . $htmlname . '&outjson=1&price_level=' . $price_level . '&type=' . $filtertype . '&mode=2&status=' . $status . '&finished=' . $finished . '&alsoproductwithnosupplierprice=' . $alsoproductwithnosupplierprice;
-			print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, getDolGlobalInt('PRODUIT_USE_SEARCH_TO_SELECT'), 0, $ajaxoptions);
 
-			print($hidelabel ? '' : $langs->trans("RefOrLabel") . ' : ') . '<input type="text" class="'.$morecss.'" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . $placeholder . '"' : '') . '>';
+			$s = ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, getDolGlobalInt('PRODUIT_USE_SEARCH_TO_SELECT'), 0, $ajaxoptions);
+
+			$s .= ($hidelabel ? '' : $langs->trans("RefOrLabel") . ' : ') . '<input type="text" class="'.$morecss.'" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . $placeholder . '"' : '') . '>';
 		} else {
-			print $this->select_produits_fournisseurs_list($socid, $selected, $htmlname, $filtertype, $filtre, '', $status, 0, 0, $alsoproductwithnosupplierprice, $morecss, getDolGlobalInt('SUPPLIER_SHOW_STOCK_IN_PRODUCTS_COMBO'), $placeholder);
+			$s = $this->select_produits_fournisseurs_list($socid, $selected, $htmlname, $filtertype, $filtre, '', $status, 0, 0, $alsoproductwithnosupplierprice, $morecss, getDolGlobalInt('SUPPLIER_SHOW_STOCK_IN_PRODUCTS_COMBO'), $placeholder);
+		}
+
+		if ($nooutput) {
+			return $s;
+		} else {
+			print $s;
 		}
 	}
 
