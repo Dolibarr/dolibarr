@@ -322,7 +322,7 @@ if (empty($reshook)) {
 		$search_billed = '';
 		$toselect = array();
 		$search_array_options = array();
-		$search_categ_cus = 0;
+		$search_categ_cus = '';
 		$search_datecloture_start = '';
 		$search_datecloture_end = '';
 		$search_fk_cond_reglement = '';
@@ -596,7 +596,7 @@ if ($search_sale && $search_sale != '-1') {
 }
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
 $searchCategoryCustomerOperator = -1;
-$searchCategoryCustomerList = array($search_categ_cus);
+$searchCategoryCustomerList = ($search_categ_cus !== '-1' ? explode(',', $search_categ_cus) : array());
 if (!empty($searchCategoryCustomerList)) {
 	$searchCategoryCustomerSqlList = array();
 	$listofcategoryid = '';

@@ -268,11 +268,11 @@ class Commande extends CommonOrder
 
 
 	/**
-	 * @var string key of module source when order generated from a dedicated module ('cashdesk', 'takepos', ...)
+	 * @var ?string 			key of module source when order generated from a dedicated module ('cashdesk', 'takepos', ...)
 	 */
 	public $module_source;
 	/**
-	 * @var string key of pos source ('0', '1', ...)
+	 * @var ?string 			key of pos source ('0', '1', ...)
 	 */
 	public $pos_source;
 

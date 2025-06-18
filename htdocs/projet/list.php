@@ -332,8 +332,6 @@ if ($mode == 'kanbangroupby' && $groupby) {
 			$resql = $db->query($sql);
 			if ($resql) {
 				$num = $db->num_rows($resql);
-				$i = 0;
-				$groupbyvalues[$i] = array('id' => '0', 'label' => 'Undefined');
 
 				$i = 1;
 				while ($i < ($num + 1)) {	// $num + 1 because we added the undefined entry so we start with $i=1;
@@ -1764,6 +1762,8 @@ while ($i < $imaxinloop) {
 			// Start kanban column
 			if (is_null($obj->$groupbyfield)) {
 				$groupbyvalue = 'undefined';
+				// We found a null value, we add an undefined value in dictionary of values $groupbyvalues
+				$groupbyvalues[0] = array('id' => '0', 'label' => 'Undefined');
 			} else {
 				$groupbyvalue = $obj->$groupbyfield;
 			}
@@ -1773,11 +1773,12 @@ while ($i < $imaxinloop) {
 					print '</div>';	// We need a new kanban column - end box-flex-container
 				}
 
+				$indexofgroupbyvalue = null;
+
 				// We show column that we must show before the first current record
 				//var_dump("groupbyold=".$groupbyold.", current record to show has group value groupbyvalue=".$groupbyvalue);
 				foreach ($groupbyvalues as $tmpcursor => $tmpgroupbyvalue) {	// $tmpcursor is a i index like 0, 1, 2, ...
 					// Is $tmpcursor a key before, equal or after the $groupbyvalue into the $groupbyvalues
-					$indexofgroupbyvalue = null;
 					foreach ($groupbyvalues as $tmpcursor2 => $tmpgroupbyvalue2) {
 						if ($tmpgroupbyvalue2['id'] == $groupbyvalue) {	// We found the index of $groupbyvalue
 							$indexofgroupbyvalue = $tmpcursor2;
@@ -1805,18 +1806,17 @@ while ($i < $imaxinloop) {
 					}
 
 					// We found a possible column with no value, we output the empty column
-					print '<div class="box-flex-container-column kanban column';
+					print '<!-- empty column before column of fetched value --><div class="box-flex-container-column kanban column';
 					if (array_key_exists($tmpcursor, $groupofcollpasedvalues)) {
 						print ' kanbancollapsed';
 					}
-					print '" data-groupbyid="'.preg_replace('/[^a-z0-9]/', '', $tmpcursor).'" data-groupbyfield="'.$groupbyfield.'">';
+					print '" data-groupbyid="'.preg_replace('/[^a-z0-9]/', '', $tmpgroupbyvalue['id']).'" data-groupbyfield="'.$groupbyfield.'">';
 					print '<div class="kanbanlabel">'.$langs->trans($tmpgroupbyvalue['label']).'</div>';
 					print '</div>';	// Start and end the new column
 				}
 
-				//var_dump($groupbyvalues[$groupbyvalue]);
-				print '<div class="box-flex-container-column kanban column" data-groupbyid="'.preg_replace('/[^a-z0-9]/', '', $groupbyvalue).'" data-groupbyfield="'.$groupbyfield.'">';	// Start new column
-				print '<div class="kanbanlabel">'.$langs->trans(empty($groupbyvalues[$indexofgroupbyvalue]['label']) ? 'Undefined' : $groupbyvalues[$indexofgroupbyvalue]['label']).'</div>';
+				print '<!-- start column for value --><div class="box-flex-container-column kanban column" data-groupbyid="'.preg_replace('/[^a-z0-9]/i', '', $groupbyvalue).'" data-groupbyfield="'.$groupbyfield.'">';	// Start new column
+				print '<div class="kanbanlabel">'.$langs->trans((is_null($indexofgroupbyvalue) || empty($groupbyvalues[$indexofgroupbyvalue]['label'])) ? 'Undefined' : $groupbyvalues[$indexofgroupbyvalue]['label']).'</div>';
 			}
 			$groupbyold = $groupbyvalue;
 		} elseif ($i == 0) {
@@ -1870,11 +1870,11 @@ while ($i < $imaxinloop) {
 						continue;
 					}
 					// We found a possible column with no value, we output the empty column
-					print '<div class="box-flex-container-column kanban column';
+					print '<!-- empty column after column of fetched value --><div class="box-flex-container-column kanban column';
 					if (array_key_exists($tmpcursor, $groupofcollpasedvalues)) {
 						print ' kanbancollapsed';
 					}
-					print '" data-groupbyid="'.preg_replace('/[^a-z0-9]/', '', $tmpcursor).'" data-groupbyfield="'.$groupbyfield.'">';
+					print '" data-groupbyid="'.preg_replace('/[^a-z0-9]/', '', $tmpgroupbyvalue['id']).'" data-groupbyfield="'.$groupbyfield.'">';
 					print '<div class="kanbanlabel">'.$langs->trans(empty($tmpgroupbyvalue['label']) ? 'Undefined' : $tmpgroupbyvalue['label']).'</div>';
 					print '</div>';	// Start and end the new column
 				}
