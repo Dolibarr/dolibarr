@@ -103,6 +103,7 @@ class AgendaEvents extends DolibarrApi
 	 * Get a list of agenda events
 	 *
 	 * @since	5.0.0	Initial implementation
+	 * @since	21.0.0	Added data pagination
 	 *
 	 * @param	string	$sortfield			Sort field
 	 * @param	string	$sortorder			Sort order
