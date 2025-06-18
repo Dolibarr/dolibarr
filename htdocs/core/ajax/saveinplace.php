@@ -115,9 +115,6 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 	//$ext_element = GETPOST('ext_element', 'alpha', 2);
 	$ext_element = 'notused';
 
-	//$loadmethod = GETPOST('loadmethod', 'alpha', 2);
-	$loadmethod = 'notused';
-
 	//$savemethod = GETPOST('savemethod', 'alpha', 2);
 	//$savemethodname = (!empty($savemethod) ? $savemethod : 'setValueFrom');
 	$savemethodname = 'setValueFrom';
@@ -125,7 +122,6 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 	$newelement = $element;
 	$subelement = null;
 
-	$view = '';
 	$format = 'text';
 	$return = array();
 	$error = 0;
@@ -197,10 +193,6 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 		}
 
 		if (!$error) {
-			if ((isset($object) && !is_object($object))) {
-				$object = new GenericObject($db);
-			}
-
 			// Specific for add_object_linked()
 			// TODO add a function for variable treatment
 			$object->ext_fk_element = $newvalue;
@@ -217,7 +209,6 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 				}
 
 				$return['value'] = $value;
-				$return['view'] = (!empty($view) ? $view : $value);
 			} else {
 				$return['error'] = $object->error;
 			}

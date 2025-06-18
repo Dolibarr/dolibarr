@@ -365,7 +365,7 @@ if (empty($reshook)) {
 		$search_multicurrency_montant_vat = '';
 		$search_multicurrency_montant_ttc = '';
 		$search_login = '';
-		$search_product_category = '';
+		$search_product_category = 0;
 		$search_town = '';
 		$search_zip = "";
 		$search_state = "";
@@ -412,7 +412,7 @@ if (empty($reshook)) {
 		$search_date_signature_start = '';
 		$search_date_signature_end = '';
 		$search_import_key = '';
-		$search_categ_cus = 0;
+		$search_categ_cus = '';
 
 		$search_all = '';
 		$toselect = array();
@@ -782,8 +782,8 @@ if ($search_sale && $search_sale != '-1') {
 	}
 }
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
-$searchCategoryCustomerOperator = -1;
-$searchCategoryCustomerList = array($search_categ_cus);
+$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator', -1);
+$searchCategoryCustomerList = ($search_categ_cus !== '-1' ? explode(',', $search_categ_cus) : array());
 if (!empty($searchCategoryCustomerList)) {
 	$searchCategoryCustomerSqlList = array();
 	$listofcategoryid = '';
@@ -812,7 +812,7 @@ if (!empty($searchCategoryCustomerList)) {
 	}
 }
 // Search for tag/category ($searchCategoryProductList is an array of ID)
-$searchCategoryProductOperator = -1;
+$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator', -1);
 $searchCategoryProductList = array($search_product_category);
 if (!empty($searchCategoryProductList)) {
 	$searchCategoryProductSqlList = array();
@@ -1202,7 +1202,7 @@ if ($user->hasRight('user', 'user', 'lire')) {
 }
 // If the user can view products
 if (isModEnabled('category') && $user->hasRight('categorie', 'read') && ($user->hasRight('product', 'read') || $user->hasRight('service', 'read'))) {
-	$searchCategoryProductOperator = -1;
+	$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator', -1);
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
 	$formcategory = new FormCategory($db);
