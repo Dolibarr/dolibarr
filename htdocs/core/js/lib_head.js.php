@@ -1657,6 +1657,7 @@ $(document).ready(function() {
  * @param {jQuery} newColumn - The new column
  */
 function onKanbanColumnChange(item, newColumn) {
+	console.log("Call onKanbanColumnChange");
 	jQuery.ajax({
 		method: 'POST',
 		url: '<?php echo DOL_URL_ROOT; ?>/core/ajax/saveinplace.php',
