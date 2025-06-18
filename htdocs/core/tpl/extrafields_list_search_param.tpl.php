@@ -26,10 +26,10 @@
  * @var CommonObject $object
  * @var ExtraFields $extrafields
  *
- * @var array	$search_array_options
- * @var string	$search_options_pattern
- * @var string 	$param
- * @var string	$extrafieldsobjectkey
+ * @var array<string,mixed>	$search_array_options
+ * @var string				$search_options_pattern
+ * @var string 				$param
+ * @var string				$extrafieldsobjectkey
  */
 
 // Protection to avoid direct call of template
