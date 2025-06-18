@@ -68,7 +68,7 @@ $toselect = GETPOST('toselect', 'array');
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'projectlist';
 $mode = GETPOST('mode', 'alpha');
-$groupby = GETPOST('groupby', 'aZ09');	// Example: $groupby = 'p.fk_opp_status' or $groupby = 'p.fk_statut'
+$groupby = GETPOST('groupby', 'aZ09');	// Example: $groupby = 'p.fk_opp_status' or $groupby = 'p.fk_statut'. Must be a field into $object->fields
 
 $title = $langs->trans("Projects");
 
@@ -300,17 +300,17 @@ if ($contextpage == 'lead') {
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
-// Add a groupby field. Set $groupby and $groupbyvalues.
+// Set $groupbyvalues with array of all possible dictionary values (even if no data for this value exists).
 // TODO Move this into a inc file
 $groupbyvalues = array();
 $groupofcollpasedvalues = array();
 $groupbyold = null;
 if ($mode == 'kanbangroupby' && $groupby) {
-	$groupbyfield = preg_replace('/[a-z]\./', '', $groupby);
+	$groupbyfield = preg_replace('/[a-z]+\./', '', $groupby);
 	if (!empty($object->fields[$groupbyfield]['alias'])) {
 		$groupbyfield = $object->fields[$groupbyfield]['alias'];
 	}
-	if (!in_array(preg_replace('/[a-z]\./', '', $groupby), array_keys($object->fields))) {
+	if (!in_array(preg_replace('/[a-z]+\./', '', $groupby), array_keys($object->fields))) {
 		$groupby = '';
 	} else {
 		if (!empty($object->fields[$groupby]['arrayofkeyval'])) {
@@ -323,32 +323,47 @@ if ($mode == 'kanbangroupby' && $groupby) {
 			// TODO
 			// $groupbyvalues = ...
 
-			$sql = "SELECT cls.rowid, cls.code, cls.percent, cls.label";
+			$sql = "SELECT cls.rowid, cls.code, cls.percent, cls.label, cls.position";
 			$sql .= " FROM ".MAIN_DB_PREFIX."c_lead_status as cls";
 			$sql .= " WHERE active = 1";
 			//$sql .= " AND cls.code <> 'LOST'";
 			//$sql .= " AND cls.code <> 'WON'";
-			$sql .= $db->order('cls.rowid', 'ASC');	// Must use the same order key than the key in $groupby
+			$sql .= $db->order('cls.position,cls.rowid', 'ASC');	// Must use the same order key than the key in $groupby
 			$resql = $db->query($sql);
 			if ($resql) {
 				$num = $db->num_rows($resql);
 				$i = 0;
+				$groupbyvalues[$i] = array('id' => '0', 'label' => 'Undefined');
 
-				while ($i < $num) {
+				$i = 1;
+				while ($i < ($num + 1)) {	// $num + 1 because we added the undefined entry so we start with $i=1;
 					$objp = $db->fetch_object($resql);
-					$groupbyvalues[$objp->rowid] = $objp->label;
+					$groupbyvalues[$i] = array('id' => (string) $objp->rowid, 'label' => $objp->label);
+					// If this is a group code that need to be collapsed
+					if ($objp->code == 'WON') {
+						$groupofcollpasedvalues[$i] = array('id' => (string) $objp->rowid, 'label' => $objp->label);
+					} elseif ($objp->code == 'LOST') {
+						$groupofcollpasedvalues[$i] = array('id' => (string) $objp->rowid, 'label' => $objp->label);
+					}
+
 					$i++;
 				}
 			}
-
-			$groupofcollpasedvalues = array(6,7);	// LOST and WON
 		}
-		//var_dump($groupbyvalues);
+		/*var_dump($groupbyvalues);
+		var_dump($groupofcollpasedvalues);
+		*/
 	}
+
 	// Add a filter on the group by if not yet included first
-	if ($groupby && !preg_match('/^'.preg_quote($db->sanitize($groupby), '/').'/', $sortfield)) {
-		//var_dump($arrayfields);
-		$sortfield = $db->sanitize($groupby).($sortfield ? ",".$sortfield : "");
+	$groupbystringforsql = $groupby;
+	// Special case
+	if ($groupby == 'p.fk_opp_status') {
+		$groupbystringforsql = 'cls.position,p.fk_opp_status';
+	}
+
+	if ($groupbystringforsql && !preg_match('/^'.preg_quote($db->sanitize($groupbystringforsql), '/').'/', $sortfield)) {
+		$sortfield = $db->sanitize($groupbystringforsql).($sortfield ? ",".$sortfield : "");
 		$sortorder = "ASC".($sortfield ? ",".$sortorder : "");
 	}
 }
@@ -357,6 +372,7 @@ if ($mode == 'kanbangroupby' && $groupby) {
 /*
  * Actions
  */
+
 $error = 0;
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
@@ -565,7 +581,8 @@ $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfi
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = "SELECT";
-$sql .= " p.rowid as id, p.ref, p.title, p.fk_statut as status, p.fk_opp_status, p.public, p.fk_user_creat,";
+$sql .= " p.rowid as id, p.ref, p.title, p.fk_statut as status, cls.position, ";
+$sql .= $db->ifsql("p.fk_opp_status IS NULL", "0", "p.fk_opp_status")." as fk_opp_status, p.public, p.fk_user_creat,";
 $sql .= " p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount * p.opp_percent / 100) as opp_weighted_amount, p.tms as date_modification, p.budget_amount,";
 $sql .= " p.usage_opportunity, p.usage_task, p.usage_bill_time, p.usage_organize_event,";
 $sql .= " p.email_msgid, p.import_key,";
@@ -871,6 +888,7 @@ $sql .= $db->order($sortfield, $sortorder);
 if ($limit) {
 	$sql .= $db->plimit($limit + 1, $offset);
 }
+//print $sql;
 
 $resql = $db->query($sql);
 if (!$resql) {
@@ -1733,8 +1751,11 @@ while ($i < $imaxinloop) {
 
 		$groupbyvalue = 'unset';
 		$groupbyfield = 'unsetfield';
+		//var_dump($groupbyvalues);
+
 		if (!empty($groupby)) {
 			$groupbyfield = preg_replace('/^[a-z]+\./', '', $groupby);
+			// $groupbyold will be the value after the first pass to find break on the next pass.
 			//var_dump("groupby=$groupby groupbyvalue=$groupbyvalue groupbyfield=$groupbyfield");
 
 			if (is_null($groupbyold)) {
@@ -1747,29 +1768,55 @@ while ($i < $imaxinloop) {
 				$groupbyvalue = $obj->$groupbyfield;
 			}
 
-			if ($groupbyold !== $groupbyvalue) {
+			if ($groupbyold !== $groupbyvalue) {	// We found a break on a new column
 				if (!is_null($groupbyold)) {
 					print '</div>';	// We need a new kanban column - end box-flex-container
 				}
-				foreach ($groupbyvalues as $tmpcursor => $tmpgroupbyvalue) {
-					//var_dump("tmpcursor=".$tmpcursor." groupbyold=".$groupbyold." groupbyvalue=".$groupbyvalue);
-					if (!is_null($groupbyold) && ($tmpcursor <= $groupbyold)) {
+
+				// We show column that we must show before the first current record
+				//var_dump("groupbyold=".$groupbyold.", current record to show has group value groupbyvalue=".$groupbyvalue);
+				foreach ($groupbyvalues as $tmpcursor => $tmpgroupbyvalue) {	// $tmpcursor is a i index like 0, 1, 2, ...
+					// Is $tmpcursor a key before, equal or after the $groupbyvalue into the $groupbyvalues
+					$indexofgroupbyvalue = null;
+					foreach ($groupbyvalues as $tmpcursor2 => $tmpgroupbyvalue2) {
+						if ($tmpgroupbyvalue2['id'] == $groupbyvalue) {	// We found the index of $groupbyvalue
+							$indexofgroupbyvalue = $tmpcursor2;
+							break;
+						}
+					}
+					//var_dump('indexofgroupbyvalue='.$indexofgroupbyvalue);
+
+					if (!is_null($groupbyold)) {
+						$indexofgroupbyold = null;
+						foreach ($groupbyvalues as $tmpcursor2 => $tmpgroupbyvalue2) {
+							if ($tmpgroupbyvalue2['id'] == $groupbyold) {	// We found the index of $groupbyold
+								$indexofgroupbyold = $tmpcursor2;
+								break;
+							}
+						}
+						//var_dump('indexofgroupbyold='.$indexofgroupbyold);
+
+						if ($tmpcursor <= $indexofgroupbyold) {
+							continue;
+						}
+					}
+					if ($tmpcursor >= $indexofgroupbyvalue) {	// We reach the column to show, so we stop
 						continue;
 					}
-					if ($tmpcursor >= $groupbyvalue) {
-						continue;
-					}
+
 					// We found a possible column with no value, we output the empty column
 					print '<div class="box-flex-container-column kanban column';
-					if (in_array($tmpcursor, $groupofcollpasedvalues)) {
+					if (array_key_exists($tmpcursor, $groupofcollpasedvalues)) {
 						print ' kanbancollapsed';
 					}
 					print '" data-groupbyid="'.preg_replace('/[^a-z0-9]/', '', $tmpcursor).'" data-groupbyfield="'.$groupbyfield.'">';
-					print '<div class="kanbanlabel">'.$langs->trans($tmpgroupbyvalue).'</div>';
+					print '<div class="kanbanlabel">'.$langs->trans($tmpgroupbyvalue['label']).'</div>';
 					print '</div>';	// Start and end the new column
 				}
+
+				//var_dump($groupbyvalues[$groupbyvalue]);
 				print '<div class="box-flex-container-column kanban column" data-groupbyid="'.preg_replace('/[^a-z0-9]/', '', $groupbyvalue).'" data-groupbyfield="'.$groupbyfield.'">';	// Start new column
-				print '<div class="kanbanlabel">'.$langs->trans(empty($groupbyvalues[$groupbyvalue]) ? 'Undefined' : $groupbyvalues[$groupbyvalue]).'</div>';
+				print '<div class="kanbanlabel">'.$langs->trans(empty($groupbyvalues[$indexofgroupbyvalue]['label']) ? 'Undefined' : $groupbyvalues[$indexofgroupbyvalue]['label']).'</div>';
 			}
 			$groupbyold = $groupbyvalue;
 		} elseif ($i == 0) {
@@ -1793,18 +1840,42 @@ while ($i < $imaxinloop) {
 			// Close kanban column
 			if (!empty($groupby)) {
 				print '</div>';	// end box-flex-container
+
+				// We show column that we must show after the last current record
+				//var_dump("groupbyold=".$groupbyold.", current record to show has group value groupbyvalue=".$groupbyvalue);
 				foreach ($groupbyvalues as $tmpcursor => $tmpgroupbyvalue) {
+					// Is $tmpcursor a key before, equal or after the $groupbyvalue into the $groupbyvalues
+					$indexofgroupbyvalue = null;
+					foreach ($groupbyvalues as $tmpcursor2 => $tmpgroupbyvalue2) {
+						if ($tmpgroupbyvalue2['id'] == $groupbyvalue) {	// We found the index of $groupbyvalue
+							$indexofgroupbyvalue = $tmpcursor2;
+							break;
+						}
+					}
+					//var_dump('indexofgroupbyvalue='.$indexofgroupbyvalue);
+
+					if (!is_null($groupbyold)) {
+						$indexofgroupbyold = null;
+						foreach ($groupbyvalues as $tmpcursor2 => $tmpgroupbyvalue2) {
+							if ($tmpgroupbyvalue2['id'] == $groupbyold) {	// We found the index of $groupbyold
+								$indexofgroupbyold = $tmpcursor2;
+								break;
+							}
+						}
+						//var_dump('indexofgroupbyold='.$indexofgroupbyold);
+					}
+
 					//var_dump("tmpcursor=".$tmpcursor." groupbyold=".$groupbyold." groupbyvalue=".$groupbyvalue);
-					if ($tmpcursor <= $groupbyvalue) {
+					if ($tmpcursor <= $indexofgroupbyvalue) {
 						continue;
 					}
 					// We found a possible column with no value, we output the empty column
 					print '<div class="box-flex-container-column kanban column';
-					if (in_array($tmpcursor, $groupofcollpasedvalues)) {
+					if (array_key_exists($tmpcursor, $groupofcollpasedvalues)) {
 						print ' kanbancollapsed';
 					}
 					print '" data-groupbyid="'.preg_replace('/[^a-z0-9]/', '', $tmpcursor).'" data-groupbyfield="'.$groupbyfield.'">';
-					print '<div class="kanbanlabel">'.$langs->trans(empty($tmpgroupbyvalue) ? 'Undefined' : $tmpgroupbyvalue).'</div>';
+					print '<div class="kanbanlabel">'.$langs->trans(empty($tmpgroupbyvalue['label']) ? 'Undefined' : $tmpgroupbyvalue['label']).'</div>';
 					print '</div>';	// Start and end the new column
 				}
 				print '</div>';	// end box-flex-container-columns

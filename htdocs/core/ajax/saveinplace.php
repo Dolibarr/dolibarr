@@ -65,6 +65,8 @@ savemethod:
 savemethodname:
 */
 
+print 'field='.$field.' - element='.$element.' - table_element='.$table_element.' - id/fk_element='.$fk_element."\n";
+
 // Load object according to $id and $element
 $element_ref = '';
 if (is_numeric($fk_element)) {
@@ -74,6 +76,9 @@ if (is_numeric($fk_element)) {
 	$id = 0;
 }
 $object = fetchObjectByElement($id, $element, $element_ref);
+if (! is_object($object)) {
+	httponly_accessforbidden('Not allowed, bad combination of parameters for fetchObjectByElement');
+}
 
 $module = $object->module;
 $element = $object->element;
@@ -81,17 +86,12 @@ $usesublevelpermission = ($module != $element ? $element : '');
 if ($usesublevelpermission && !$user->hasRight($module, $element)) {	// There is no permission on object defined, we will check permission on module directly
 	$usesublevelpermission = '';
 }
-
-//print $object->id.' - '.$object->module.' - '.$object->element.' - '.$object->table_element.' - '.$usesublevelpermission."\n";
+print 'object->id='.$object->id.' - object->module='.$object->module.' - object->element='.$object->element.' - object->table_element='.$object->table_element.' - usesublevelpermission='.$usesublevelpermission."\n";
 
 // Security check
 $result = restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission, 'fk_soc', 'rowid', 0, 1);	// Call with mode return
 if (!$result) {
 	httponly_accessforbidden('Not allowed by restrictArea');
-}
-
-if (!getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE')) {
-	httponly_accessforbidden('Can be used only when option MAIN_USE_JQUERY_JEDITABLE is set');
 }
 
 
@@ -106,13 +106,22 @@ top_httphead();
 
 // Load original field value
 if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_element)) {
-	$ext_element = GETPOST('ext_element', 'alpha', 2);
-	$field = substr($field, 8); // remove prefix editval_
-	$type = GETPOST('type', 'alpha', 2);
+	$field = preg_replace('/^editval_/', '', $field); 	// remove prefix "editval_"
+
+	$type = GETPOST('type', 'alpha', 2);	// type string by default
+
 	$value = ($type == 'ckeditor' ? GETPOST('value', '', 2) : GETPOST('value', 'alpha', 2));
-	$loadmethod = GETPOST('loadmethod', 'alpha', 2);
-	$savemethod = GETPOST('savemethod', 'alpha', 2);
-	$savemethodname = (!empty($savemethod) ? $savemethod : 'setValueFrom');
+
+	//$ext_element = GETPOST('ext_element', 'alpha', 2);
+	$ext_element = 'notused';
+
+	//$loadmethod = GETPOST('loadmethod', 'alpha', 2);
+	$loadmethod = 'notused';
+
+	//$savemethod = GETPOST('savemethod', 'alpha', 2);
+	//$savemethodname = (!empty($savemethod) ? $savemethod : 'setValueFrom');
+	$savemethodname = 'setValueFrom';
+
 	$newelement = $element;
 	$subelement = null;
 
@@ -233,7 +242,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 		}
 
 		if (!$error) {
-			if ((isset($object) && !is_object($object)) || empty($savemethod)) {
+			if ((isset($object) && !is_object($object))) {
 				$object = new GenericObject($db);
 			}
 
