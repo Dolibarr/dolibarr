@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('other', 'products'));
+$langs->loadLangs(array('other', 'products', 'productbatch'));
 
 // Get parameters
 $id = GETPOSTINT('id');
