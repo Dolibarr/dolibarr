@@ -988,6 +988,24 @@ $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas|DE:Modul_GeschÃ
 
 llxHeader('', $title, $help_url);
 
+// Load object modBarCodeProduct
+$res = 0;
+$modBarCodeSociete = null;
+if (isModEnabled('barcode') && getDolGlobalString('BARCODE_THIRDPARTY_ADDON_NUM')) {
+	$module = strtolower(getDolGlobalString('BARCODE_THIRDPARTY_ADDON_NUM'));
+	$dirbarcode = array_merge(array('/core/modules/barcode/'), $conf->modules_parts['barcode']);
+	foreach ($dirbarcode as $dirroot) {
+		$res = dol_include_once($dirroot . $module . '.php');
+		if ($res) {
+			break;
+		}
+	}
+	if ($res > 0) {
+		$modBarCodeSociete = new $module();
+		'@phan-var-force ModeleNumRefBarCode $modBarCodeProduct';
+	}
+}
+
 $countrynotdefined = $langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')';
 
 $canvasdisplayaction = $action;
@@ -1334,6 +1352,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<input type="hidden" name="code_auto" value="1">';
 		}
 
+		if (!empty($modBarCodeSociete->code_auto)) {
+			print '<input type="hidden" name="barcode_auto" value="1">';
+		}
+
 		print dol_get_fiche_head(array(), 'card', '', 0, '');
 
 		// Call Hook tabContentCreateThirdparty
@@ -1602,11 +1624,34 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '</td></tr>';
 
 			// Barcode
-			if (isModEnabled('barcode')) {
-				print '<tr><td>'.$form->editfieldkey('Gencod', 'barcode', '', $object, 0).'</td>';
-				print '<td colspan="3">';
+			$showbarcode = isModEnabled('barcode');
+			if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !$user->hasRight('barcode','lire_advance')) {
+				$showbarcode = 0;
+			}
+
+			if ($showbarcode && is_object($modBarCodeSociete)) {
+				print '<tr><td>'.$langs->trans('BarcodeType').'</td><td>';
+				if (GETPOSTISSET('fk_barcode_type')) {
+					$fk_barcode_type = GETPOST('fk_barcode_type') ? GETPOST('fk_barcode_type') : 0;
+				} else {
+					if (empty($fk_barcode_type) && getDolGlobalString('GENBARCODE_BARCODETYPE_THIRDPARTY')) {
+						$fk_barcode_type = getDolGlobalInt("GENBARCODE_BARCODETYPE_THIRDPARTY");
+					} else {
+						$fk_barcode_type = 0;
+					}
+				}
+				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
+				$formbarcode = new FormBarCode($db);
+				print $formbarcode->selectBarcodeType($fk_barcode_type, 'fk_barcode_type', 1);
+				print '</td>';
+				print '</tr><tr>';
+				print '<td>'.$langs->trans("BarcodeValue").'</td><td>';
+				$tmpcode = GETPOSTISSET('barcode') ? GETPOST('barcode') : $object->barcode;
+				if (empty($tmpcode) && !empty($modBarCodeSociete->code_auto)) {
+					$tmpcode = $modBarCodeSociete->getNextValue($object, $fk_barcode_type);
+				}
 				print img_picto('', 'barcode', 'class="pictofixedwidth"');
-				print '<input type="text" class="minwidth200 maxwidth300 widthcentpercentminusx" name="barcode" id="barcode" value="'.dol_escape_htmltag($object->barcode).'">';
+				print '<input class="maxwidth100" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
 				print '</td></tr>';
 			}
 
