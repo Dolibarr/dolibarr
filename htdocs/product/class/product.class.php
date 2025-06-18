@@ -5046,6 +5046,7 @@ class Product extends CommonObject
 		foreach ($this->getChildsArbo($this->id) as $keyChild => $valueChild) {    // Warning. getChildsArbo can call getChildsArbo recursively. Starting point is $value[0]=id of product
 			$parent[$this->label][$keyChild] = $valueChild;
 		}
+		$this->sousprods = array();
 		foreach ($parent as $key => $value) {        // key=label, value is array of childs
 			$this->sousprods[$key] = $value;
 		}
