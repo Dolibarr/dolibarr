@@ -163,7 +163,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_p
 
 if ($object->id) {
 	$head = productlot_prepare_head($object);
-	print dol_get_fiche_head($head, 'documents', $langs->trans("Batch"), -1, 'barcode');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("Batch"), -1, $object->picto);
 
 
 	$parameters = array();
