@@ -139,7 +139,7 @@ $search_date_delivery_endyear = GETPOSTINT('search_date_delivery_endyear');
 $search_date_delivery_start = dol_mktime(0, 0, 0, $search_date_delivery_startmonth, $search_date_delivery_startday, $search_date_delivery_startyear);
 $search_date_delivery_end = dol_mktime(23, 59, 59, $search_date_delivery_endmonth, $search_date_delivery_endday, $search_date_delivery_endyear);
 $search_availability = GETPOST('search_availability', 'intcomma');
-$search_categ_cus = GETPOST("search_categ_cus", 'intcomma');
+$search_categ_cus = GETPOSTINT("search_categ_cus");
 $search_fk_cond_reglement = GETPOST("search_fk_cond_reglement", 'intcomma');
 $search_fk_shipping_method = GETPOST("search_fk_shipping_method", 'intcomma');
 $search_fk_input_reason = GETPOST("search_fk_input_reason", 'intcomma');
@@ -412,7 +412,7 @@ if (empty($reshook)) {
 		$search_date_signature_start = '';
 		$search_date_signature_end = '';
 		$search_import_key = '';
-		$search_categ_cus = '';
+		$search_categ_cus = 0;
 
 		$search_all = '';
 		$toselect = array();
@@ -782,7 +782,7 @@ if ($search_sale && $search_sale != '-1') {
 	}
 }
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
-$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator', -1);
+$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
 $searchCategoryCustomerList = ($search_categ_cus !== '-1' ? explode(',', $search_categ_cus) : array());
 if (!empty($searchCategoryCustomerList)) {
 	$searchCategoryCustomerSqlList = array();
@@ -812,7 +812,7 @@ if (!empty($searchCategoryCustomerList)) {
 	}
 }
 // Search for tag/category ($searchCategoryProductList is an array of ID)
-$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator', -1);
+$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
 $searchCategoryProductList = array($search_product_category);
 if (!empty($searchCategoryProductList)) {
 	$searchCategoryProductSqlList = array();

@@ -345,7 +345,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 
 	// Search for tag/category ($searchCategoryProductList is an array of ID)
-	$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator', -1);
+	$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
 	$searchCategoryProductList = array($selected_cat);
 	if ($subcat) {
 		$TListOfCats = $categorie->get_full_arbo('product', $selected_cat, 1);
@@ -383,7 +383,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	}
 
 	// Search for tag/category ($searchCategorySocieteList is an array of ID)
-	$searchCategorySocieteOperator = GETPOSTINT('search_category_societe_operator', -1);
+	$searchCategorySocieteOperator = GETPOSTINT('search_category_societe_operator');
 	$searchCategorySocieteList = array($selected_catsoc);
 	if (!empty($searchCategorySocieteList)) {
 		$searchCategorySocieteSqlList = array();
