@@ -1,11 +1,10 @@
 # Action to prepare the github action
-# Go on Dolibarr - Settings - Developper settings - Enter a name + webhook to disable + Permissions (see app test) + Can install by any account
+# Go on Dolibarr - Settings - Developer settings - Enter a name + webhook to disable + Permissions (see app test) + Can install by any account
 # Click on generate the private keys
 # Click on Install application - choose user of the Organization
-# Go on Organisation - Secret and variables and create a secret PR18_SECRET_KEY and copy the content of received private key. Chooose the repository access to "Repository Dolibarr".
-# Go on Organisation - Secret and variables and create a variable PR18_APP_ID and copy the ID of the previously create ID. Chooose the repository access to "Repository Dolibarr".
-# 
-# 
+# Go on Organisation - Secret and variables and create a secret PR18_SECRET_KEY and copy the content of received private key. Choose the repository access to "Repository Dolibarr".
+# Go on Organisation - Secret and variables and create a variable PR18_APP_ID and copy the ID of the previously create ID. Choose the repository access to "Repository Dolibarr".
+#
 
 name: Set reviewer for v18
 on:
