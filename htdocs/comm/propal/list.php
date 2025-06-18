@@ -783,7 +783,7 @@ if ($search_sale && $search_sale != '-1') {
 }
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
 $searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
-$searchCategoryCustomerList = ($search_categ_cus !== '-1' ? explode(',', $search_categ_cus) : array());
+$searchCategoryCustomerList = ($search_categ_cus !== '-1' ? explode(',', (string) $search_categ_cus) : array());
 if (!empty($searchCategoryCustomerList)) {
 	$searchCategoryCustomerSqlList = array();
 	$listofcategoryid = '';
@@ -1202,7 +1202,7 @@ if ($user->hasRight('user', 'user', 'lire')) {
 }
 // If the user can view products
 if (isModEnabled('category') && $user->hasRight('categorie', 'read') && ($user->hasRight('product', 'read') || $user->hasRight('service', 'read'))) {
-	$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator', -1);
+	$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
 	$formcategory = new FormCategory($db);
