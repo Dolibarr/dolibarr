@@ -55,6 +55,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'compta', 'admin', 'other'));
 
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
+
 $action     = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
@@ -122,6 +124,14 @@ $pagenext = $page + 1;
 // Initialize a technical objects
 $object = new FactureRec($db);
 $extrafields = new ExtraFields($db);
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+	'f.titre' => "Ref",
+	's.nom' => "ThirdParty",
+	's.code_client' => "CustomerCodeShort",
+	'fdc.description' => 'Description',
+);
 
 if (($id > 0 || $ref) && $action != 'create' && $action != 'add') {
 	$ret = $object->fetch($id, $ref);
@@ -246,6 +256,7 @@ if (empty($reshook)) {
 		$search_unit_frequency = '';
 		$search_nb_gen_done = '';
 		$search_status = '';
+		$search_all = '';
 		$toselect = array();
 		$search_array_options = array();
 	}
@@ -290,7 +301,11 @@ $today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['
 // Build and execute select
 // --------------------------------------------------------------------
 
-$sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre as title, f.total_ht, f.total_tva, f.total_ttc, f.frequency, f.unit_frequency,";
+$sql = "SELECT";
+if ($search_all) {
+	$sql = 'SELECT DISTINCT';	// Because of joining llx_facturedet_rec
+}
+$sql .= " s.nom as name, s.rowid as socid, f.rowid as facid, f.titre as title, f.total_ht, f.total_tva, f.total_ttc, f.frequency, f.unit_frequency,";
 $sql .= " f.nb_gen_done, f.nb_gen_max, f.date_last_gen, f.date_when, f.suspended,";
 $sql .= " f.datec, f.fk_user_author, f.tms, f.fk_user_modif,";
 $sql .= " f.fk_cond_reglement, f.fk_mode_reglement";
@@ -312,6 +327,9 @@ $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_rec as 
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_rec_extrafields as ef ON ef.fk_object = f.rowid";
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+}
+if ($search_all) {
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet_rec as fdc ON f.rowid = fdc.fk_facture';
 }
 // Add table from hooks
 $parameters = array();
@@ -389,6 +407,10 @@ if ($search_date_when_end) {
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
+if ($search_all) {
+	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
+}
+
 // Count total nb of records
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
@@ -429,6 +451,12 @@ if (!$resql) {
 
 $num = $db->num_rows($resql);
 
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all) {
+	$obj = $db->fetch_object($resql);
+	$id = $obj->facid;
+	header("Location: ".DOL_URL_ROOT.'/compta/facture/card-rec.php?facid='.$id);
+	exit;
+}
 
 // Output page
 // --------------------------------------------------------------------
@@ -446,6 +474,9 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
+}
+if ($search_all) {
+	$param .= '&search_all='.urlencode($search_all);
 }
 if ($socid > 0) {
 	$param .= '&socid='.urlencode((string) ($socid));
@@ -565,6 +596,13 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bill', 0, '', '', $limit, 0, 0, 1);
 
 print '<span class="opacitymedium">'.$langs->trans("ToCreateAPredefinedInvoice", $langs->transnoentitiesnoconv("ChangeIntoRepeatableInvoice")).'</span><br><br>';
+
+if ($search_all) {
+	foreach ($fieldstosearchall as $key => $val) {
+		$fieldstosearchall[$key] = $langs->trans($val);
+	}
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
+}
 
 $i = 0;
 
