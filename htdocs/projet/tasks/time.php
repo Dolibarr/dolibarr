@@ -337,7 +337,7 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 				&& !empty($timespent_date)) {    // If hour was entered
 				$object->timespent_date = dol_mktime(GETPOST("timelinehour", 'int'), GETPOST("timelinemin", 'int'), 0, GETPOST("timelinemonth", 'int'), GETPOST("timelineday", 'int'), GETPOST("timelineyear", 'int'));
 				$object->timespent_withhour = 1;
-			} elseif (!empty($timespent_date)) {    // If hour w
+			} elseif (!empty($timespent_date)) {
 				$object->timespent_date = $timespent_date;
 			}
 			$object->timespent_fk_user = GETPOST("userid_line", 'int');
