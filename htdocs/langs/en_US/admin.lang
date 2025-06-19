@@ -3,6 +3,7 @@ BoldRefAndPeriodOnPDF=Print reference and period of product item in PDF
 BoldLabelOnPDF=Print label of product item in Bold in PDF
 Foundation=Foundation
 Version=Version
+Versions=Versions
 Publisher=Publisher
 Provider=Provider
 VersionProgram=Version program
