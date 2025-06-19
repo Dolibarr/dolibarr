@@ -268,11 +268,11 @@ class Commande extends CommonOrder
 
 
 	/**
-	 * @var string key of module source when order generated from a dedicated module ('cashdesk', 'takepos', ...)
+	 * @var ?string 			key of module source when order generated from a dedicated module ('cashdesk', 'takepos', ...)
 	 */
 	public $module_source;
 	/**
-	 * @var string key of pos source ('0', '1', ...)
+	 * @var ?string 			key of pos source ('0', '1', ...)
 	 */
 	public $pos_source;
 
@@ -1047,7 +1047,7 @@ class Commande extends CommonOrder
 		$sql .= ", '".$this->db->escape($this->location_incoterms)."'";
 		$sql .= ", ".(int) $this->entity;
 		$sql .= ", ".($this->module_source ? "'".$this->db->escape($this->module_source)."'" : "null");
-		$sql .= ", ".($this->pos_source != '' ? "'".$this->db->escape($this->pos_source)."'" : "null");
+		$sql .= ", ".((!is_null($this->pos_source) && $this->pos_source != '') ? "'".$this->db->escape($this->pos_source)."'" : "null");	// Can be null, '', '0', '1'
 		$sql .= ", ".(int) $this->fk_multicurrency;
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql .= ", ".(float) $this->multicurrency_tx;

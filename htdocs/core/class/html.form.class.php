@@ -3797,7 +3797,7 @@ class Form
 	 * Return list of products for customer (in Ajax if Ajax activated or go to select_produits_fournisseurs_list)
 	 *
 	 * @param 	int 		$socid 							Id third party
-	 * @param 	string 		$selected 						Preselected product
+	 * @param 	string|int	$selected 						Preselected product
 	 * @param 	string 		$htmlname 						Name of HTML Select
 	 * @param 	string 		$filtertype 					Filter on product type (''=nofilter, 0=product, 1=service)
 	 * @param 	string 		$filtre 						For a SQL filter
@@ -3807,7 +3807,7 @@ class Form
 	 * @param 	string 		$morecss 						More CSS
 	 * @param 	string 		$placeholder 					Placeholder
 	 * @param	int			$nooutput						1=do not output but return string instead
-	 * @return  void
+	 * @return  string|void									HTML select or nothing
 	 */
 	public function select_produits_fournisseurs($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $ajaxoptions = array(), $hidelabel = 0, $alsoproductwithnosupplierprice = 0, $morecss = '', $placeholder = '', $nooutput = 0)
 	{
@@ -3821,7 +3821,7 @@ class Form
 
 		$selected_input_value = '';
 		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('PRODUIT_USE_SEARCH_TO_SELECT')) {
-			if ($selected > 0) {
+			if ((int) $selected > 0) {
 				require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 				$producttmpselect = new Product($this->db);
 				$producttmpselect->fetch((int) $selected);

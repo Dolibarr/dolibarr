@@ -414,9 +414,6 @@ if (empty($reshook)) {
 					$user->fetch($object->fk_user_author);
 					$newlang = $user->lang;
 				}
-				if (empty($newlang)) {
-					$newlang = $langs;
-				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
@@ -536,9 +533,6 @@ if (empty($reshook)) {
 					$user->fetch($object->fk_user_author);
 					$newlang = $user->lang;
 				}
-				if (empty($newlang)) {
-					$newlang = $langs;
-				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
@@ -652,9 +646,6 @@ if (empty($reshook)) {
 					$user = new User($db);
 					$user->fetch($object->fk_user_author);
 					$newlang = $user->lang;
-				}
-				if (empty($newlang)) {
-					$newlang = $langs;
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -774,9 +765,6 @@ if (empty($reshook)) {
 					$user->fetch($object->fk_user_author);
 					$newlang = $user->lang;
 				}
-				if (empty($newlang)) {
-					$newlang = $langs;
-				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
@@ -895,9 +883,6 @@ if (empty($reshook)) {
 							$user->fetch($object->fk_user_author);
 							$newlang = $user->lang;
 						}
-						if (empty($newlang)) {
-							$newlang = $langs;
-						}
 						if (!empty($newlang)) {
 							$outputlangs = new Translate("", $conf);
 							$outputlangs->setDefaultLang($newlang);
@@ -1014,9 +999,6 @@ if (empty($reshook)) {
 						$user->fetch($object->fk_user_author);
 						$newlang = $user->lang;
 					}
-					if (empty($newlang)) {
-						$newlang = $langs;
-					}
 					if (!empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
@@ -1058,9 +1040,6 @@ if (empty($reshook)) {
 					$user->fetch($object->fk_user_author);
 					$newlang = $user->lang;
 				}
-				if (empty($newlang)) {
-					$newlang = $langs;
-				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
 					$outputlangs->setDefaultLang($newlang);
@@ -1091,9 +1070,6 @@ if (empty($reshook)) {
 					$user = new User($db);
 					$user->fetch($object->fk_user_author);
 					$newlang = $user->lang;
-				}
-				if (empty($newlang)) {
-					$newlang = $langs;
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -1331,12 +1307,6 @@ if (empty($reshook)) {
 						$user->fetch($object->fk_user_author);
 						$newlang = $user->lang;
 					}
-					if (empty($newlang)) {
-						$newlang = $langs;
-					}
-					if (empty($newlang)) {
-						$newlang = $langs;
-					}
 					if (!empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
@@ -1435,9 +1405,6 @@ if (empty($reshook)) {
 							$user = new User($db);
 							$user->fetch($object->fk_user_author);
 							$newlang = $user->lang;
-						}
-						if (empty($newlang)) {
-							$newlang = $langs;
 						}
 						if (!empty($newlang)) {
 							$outputlangs = new Translate("", $conf);

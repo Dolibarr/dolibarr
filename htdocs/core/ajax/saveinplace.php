@@ -115,9 +115,6 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 	//$ext_element = GETPOST('ext_element', 'alpha', 2);
 	$ext_element = 'notused';
 
-	//$loadmethod = GETPOST('loadmethod', 'alpha', 2);
-	$loadmethod = 'notused';
-
 	//$savemethod = GETPOST('savemethod', 'alpha', 2);
 	//$savemethodname = (!empty($savemethod) ? $savemethod : 'setValueFrom');
 	$savemethodname = 'setValueFrom';
@@ -125,7 +122,6 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 	$newelement = $element;
 	$subelement = null;
 
-	$view = '';
 	$format = 'text';
 	$return = array();
 	$error = 0;
@@ -194,58 +190,9 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 			$timestamp = GETPOSTINT('timestamp', 2);
 			$format = 'date';
 			$newvalue = ($timestamp / 1000);
-		} elseif ($type == 'select') {
-			$loadmethodname = 'load_cache_'.$loadmethod;
-			$loadcachename = 'cache_'.$loadmethod;
-			$loadviewname = 'view_'.$loadmethod;
-
-			$form = new Form($db);
-			if (method_exists($form, $loadmethodname)) {
-				$ret = $form->$loadmethodname();
-				if ($ret > 0) {
-					$loadcache = $form->$loadcachename;
-					$value = $loadcache[$newvalue];
-
-					if (!empty($form->$loadviewname)) {
-						$loadview = $form->$loadviewname;
-						$view = $loadview[$newvalue];
-					}
-				} else {
-					$error++;
-					$return['error'] = $form->error;
-				}
-			} else {
-				$module = $subelement = $ext_element;
-				if (preg_match('/^([^_]+)_([^_]+)/i', $ext_element, $regs)) {
-					$module = $regs[1];
-					$subelement = $regs[2];
-				}
-
-				dol_include_once('/'.$module.'/class/actions_'.$subelement.'.class.php');
-				$classname = 'Actions'.ucfirst($subelement);
-				$object = new $classname($db);
-				'@phan-var-force CommonHookActions $object';
-				$ret = $object->$loadmethodname();
-				if ($ret > 0) {
-					$loadcache = $object->$loadcachename;
-					$value = $loadcache[$newvalue];
-
-					if (!empty($object->$loadviewname)) {
-						$loadview = $object->$loadviewname;
-						$view = $loadview[$newvalue];
-					}
-				} else {
-					$error++;
-					$return['error'] = $object->error;
-				}
-			}
 		}
 
 		if (!$error) {
-			if ((isset($object) && !is_object($object))) {
-				$object = new GenericObject($db);
-			}
-
 			// Specific for add_object_linked()
 			// TODO add a function for variable treatment
 			$object->ext_fk_element = $newvalue;
@@ -262,7 +209,6 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 				}
 
 				$return['value'] = $value;
-				$return['view'] = (!empty($view) ? $view : $value);
 			} else {
 				$return['error'] = $object->error;
 			}
