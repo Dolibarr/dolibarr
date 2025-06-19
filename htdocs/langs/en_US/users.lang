@@ -144,3 +144,5 @@ CloneCategoriesUser=Clone the user's categories
 ConfirmUserClone=Are you sure you want to clone the user: <b>%s</b>?
 NewEmailUserClone=Email address of the new user
 SocialNetworksUser=Social networks for user
+ShowAsConversation=Show as conversation list
+MessageListViewType=Show as table list
