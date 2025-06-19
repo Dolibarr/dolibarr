@@ -69,6 +69,7 @@ CreateTableAndPrimaryKey=%s cədvəli yaradın
 CreateOtherKeysForTable=%s cədvəli üçün xarici açarlar və indekslər yaradın
 OtherKeysCreation=Xarici açarların və indekslərin yaradılması
 FunctionsCreation=Funksiyaların yaradılması
+CreationOfUser=İstifadəçinin yaradılması
 AdminAccountCreation=Administrator girişinin yaradılması
 PleaseTypePassword=Zəhmət olmasa parol daxil edin, boş parollara icazə verilmir!
 PleaseTypeALogin=Zəhmət olmasa giriş daxil edin!
@@ -139,7 +140,7 @@ KeepDefaultValuesDeb=Siz Dolibarr quraşdırma sehrbazını Linux paketindən (U
 KeepDefaultValuesMamp=Siz DoliMamp-dan Dolibarr quraşdırma sehrbazından istifadə etdiniz, ona görə də burada təklif olunan dəyərlər artıq optimallaşdırılıb. Onları yalnız nə etdiyinizi bildiyiniz halda dəyişdirin.
 KeepDefaultValuesProxmox=Siz Proxmox virtual cihazından Dolibarr quraşdırma sehrbazından istifadə etdiniz, ona görə də burada təklif olunan dəyərlər artıq optimallaşdırılıb. Onları yalnız nə etdiyinizi bildiyiniz halda dəyişdirin.
 UpgradeExternalModule=Xarici modulun xüsusi təkmilləşdirmə prosesini işə salın
-SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=URL-də 'test' və ya 'təsdiq' dəyəri ilə ən azı bir variantı parametr kimi təyin edin. Məsələn: '...repair.php?standard=confirmed'
 NothingToDelete=Təmizləmək/silmək üçün heç nə yoxdur
 NothingToDo=Etməli bir şey yoxdur
 #########
@@ -211,9 +212,12 @@ YouTryInstallDisabledByFileLock=The application tried to self-upgrade, but the i
 YouTryUpgradeDisabledByMissingFileUnLock=Tətbiq özünü təkmilləşdirməyə çalışdı, lakin təkmilləşdirmə prosesinə hazırda icazə verilmir.<br>
 ClickHereToGoToApp=Tətbiqinizə getmək üçün bura klikləyin
 ClickOnLinkOrRemoveManualy=Təkmilləşdirmə davam edirsə, gözləyin. Əgər yoxsa, aşağıdakı linkə klikləyin. Həmişə eyni səhifəni görürsünüzsə, sənədlər kataloqunda install.lock faylını silməli/adını dəyişdirməlisiniz.
-ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
+ClickOnLinkOrCreateUnlockFileManualy=Təkmilləşdirmə davam edirsə, lütfən gözləyin... Əgər yoxsa, siz install.lock faylını (yaxud təkmilləşdirmək üçün upgrade.unlock faylını yaratmalısınız) Dolibarr sənədlər qovluğuna silməlisiniz.
 Loaded=Yükləndi
 FunctionTest=Funksiya testi
 NodoUpgradeAfterDB=Verilənlər bazasını təkmilləşdirdikdən sonra xarici modullar tərəfindən heç bir hərəkət tələb olunmur
 NodoUpgradeAfterFiles=Faylların və ya qovluqların təkmilləşdirilməsindən sonra xarici modullar tərəfindən heç bir hərəkət tələb olunmur
 MigrationContractLineRank=Rankdan istifadə etmək üçün Müqavilə Xəttini köçürün (və Yenidən Sifarişi aktivləşdirin)
+MigrationProductLotPath=Məhsul toplu fayllarının yolunu köçürün
+MigrationAccountancyBookkeeping=Ref istifadə etmək üçün mühasibat uçotunu köçürün
+InvoiceExportModelsMigration=Faktura ixrac modellərini köçürün

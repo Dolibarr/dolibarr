@@ -6,7 +6,7 @@ ProductStatusNotOnBatch=Não (não é necessário lote/número de série)
 ProductStatusOnBatchShort=Lote
 ProductStatusOnSerialShort=Série
 ProductStatusNotOnBatchShort=Não
-BatchSellOrEatByMandatoryList=%s or %s is mandatory
+BatchSellOrEatByMandatoryList=%s ou %s é obrigatório
 BatchSellOrEatByMandatoryNone=Nenhum
 BatchSellOrEatByMandatoryAll=%s e %s
 Batch=Lote/Nr. de Série
@@ -50,3 +50,4 @@ ToReplace=Substituir
 CantMoveNonExistantSerial=Erro. Está a pedir uma mudança num registo para uma série que não existe. Talvez tenha usado o mesmo número de série no mesmo armazém várias vezes na mesma remessa ou tenha sido usado por outra remessa. Remova esta remessa e prepare outra.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Reparo de execução incompleta da tabela de lote com parâmetro '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Correção de estoque necessária devido ao número de série exclusivo.
+ErrorBatchesNeedStockManagement=Erro. Um produto com gerenciamento de lote/lote deve ser gerenciado em estoque.

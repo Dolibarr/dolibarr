@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - exports
+ImportExportArea=Imports / Exports
 ExportsArea=ወደ ውጭ መላክ
 ImportArea=አስመጣ
 NewExport=አዲስ ወደ ውጭ መላክ
@@ -31,10 +32,10 @@ ExportCsvSeparator=Csv ቁምፊ መለያያ
 ImportCsvSeparator=Csv ቁምፊ መለያያ
 Step=ደረጃ
 FormatedImport=አስመጪ ረዳት
-FormatedImportDesc1=ይህ ሞጁል ረዳትን በመጠቀም ያለ ቴክኒካዊ እውቀት ከፋይል ውስጥ ያለውን ውሂብ እንዲያዘምኑ ወይም አዳዲስ ነገሮችን ወደ ዳታቤዝ ውስጥ ለመጨመር ያስችልዎታል።
+FormatedImportDesc1=Click here to use the assistant to update existing data or add new objects into the database from a file.
 FormatedImportDesc2=የመጀመሪያው እርምጃ ማስመጣት የሚፈልጉትን አይነት ዳታ ከዛም የምንጭ ፋይሉን ፎርማት ከዚያም ማስመጣት የሚፈልጓቸውን መስኮች መምረጥ ነው።
 FormatedExport=ወደ ውጭ መላክ ረዳት
-FormatedExportDesc1=እነዚህ መሳሪያዎች ቴክኒካል እውቀትን ሳይጠይቁ በሂደቱ ውስጥ እርስዎን ለማገዝ ረዳትን በመጠቀም ግላዊ መረጃን ወደ ውጭ ለመላክ ያስችላሉ።
+FormatedExportDesc1=Click here to use the assistant to export data in a supported format
 FormatedExportDesc2=የመጀመሪያው እርምጃ አስቀድሞ የተወሰነ የውሂብ ስብስብ መምረጥ ነው, ከዚያ የትኞቹን መስኮች ወደ ውጭ መላክ እንደሚፈልጉ እና በየትኛው ቅደም ተከተል.
 FormatedExportDesc3=ወደ ውጭ የሚላከው ውሂብ ሲመረጥ የውጤት ፋይል ቅርጸት መምረጥ ይችላሉ።
 Sheet=ሉህ

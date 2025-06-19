@@ -64,3 +64,7 @@ NoPositionOpen=Inga lediga tjänster för tillfället
 ConfirmClose=Bekräfta avbokningen
 ConfirmCloseAsk=Är du säker på att du vill avbryta denna rekryteringskandidatur
 Recruitment=Rekrytering
+ApplyJobCandidature=Ansök om det här jobbet
+ErrorRecruitmmentCandidatureAlreadyExists= Rekryteringsansökan finns redan med e-postadressen %s
+RecruitmentCandidatureSaved=Rekryteringsansökan har sparats
+NoOpenJobOffer=Inga lediga jobberbjudanden just nu

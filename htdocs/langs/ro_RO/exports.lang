@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - exports
+ImportExportArea=Importuri / Exporturi
 ExportsArea=Exporturi
 ImportArea=Import
 NewExport=Export nou
@@ -31,10 +32,10 @@ ExportCsvSeparator=Caracter separator CSV
 ImportCsvSeparator=Caracter separator CSV
 Step=Pas
 FormatedImport=Asistent import
-FormatedImportDesc1=Acest modul vă permite să actualizați datele existente sau să adăugați obiecte noi în baza de date dintr-un fișier fără cunoștințe tehnice, utilizând un asistent.
+FormatedImportDesc1=Faceți clic aici pentru a utiliza asistentul pentru a actualiza datele existente sau a adăuga obiecte noi în baza de date dintr-un fișier.
 FormatedImportDesc2=Primul pas este să alegi tipul de date pe care doreşti să-l imporți, apoi formatul fișierului sursă, apoi câmpurile pe care vrei să le imporți.
 FormatedExport=Asistent export
-FormatedExportDesc1=Aceste instrumente permit exportul de date personalizate folosind un asistent, pentru a te ajuta în acest proces fără a necesita cunoștințe tehnice.
+FormatedExportDesc1=Faceți clic aici pentru a utiliza asistentul pentru a exporta date într-un format acceptat
 FormatedExportDesc2=Primul pas este să alegeți un set de date predefinit, apoi câmpurile pe care doriți să le exportați și în ce ordine.
 FormatedExportDesc3=Când sunt selectate datele de export, puteți alege formatul fișierului de ieșire.
 Sheet=Foaie

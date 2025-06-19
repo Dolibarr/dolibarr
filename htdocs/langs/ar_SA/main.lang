@@ -115,6 +115,7 @@ SeeAbove=أنظر فوق
 HomeArea=الصفحة الرئيسية
 LastConnexion=آخر تسجيل دخول
 PreviousConnexion=تسجيل الدخول السابق
+LastPasswordChange=آخر تغيير لكلمة المرور
 PreviousValue=القيمة السابقه
 ConnectedOnMultiCompany=متصل بالبيئة
 ConnectedSince=متصل منذ
@@ -539,6 +540,7 @@ By=بواسطة
 From=من
 FromDate=من تاريخ
 FromLocation=من
+FromIP=من IP
 to=إلى
 To=إلى
 ToDate=إلى
@@ -914,6 +916,7 @@ Genderother=الآخر
 ViewList=عرض القائمة
 ViewGantt=عرض Gantt
 ViewKanban=عرض Kanban
+ViewKanbanGroupBy=عرض كانبان (مُجمّع حسب)
 Mandatory=إلزامي
 Hello=أهلا
 GoodBye=مع السلامة
@@ -929,6 +932,7 @@ MassFilesArea=مساحة للملفات التي تم إنشاؤها بواسط�
 ShowTempMassFilesArea=عرض مساحة الملفات التي تم إنشاؤها بواسطة الإجراءات الجماعية
 ConfirmMassDeletion=تأكيد الحذف الضخم
 ConfirmMassDeletionQuestion=هل أنت متأكد من أنك تريد حذف %s السجل (السجلات) المحددة؟
+ConfirmMassCancellationQuestion = هل أنت متأكد أنك تريد إلغاء %s السجل(السجلات) المحددة؟
 ConfirmMassClone=تأكيد الاستنساخ بالجملة
 ConfirmMassCloneQuestion=حدد مشروع للاستنساخ فيه
 ConfirmMassCloneToOneProject=استنساخ إلى مشروع %s
@@ -1066,6 +1070,7 @@ million=مليون
 billion=مليار
 trillion=تريليون
 quadrillion=كوادريليون
+centimes=سنتات
 SelectMailModel=حدد قالب بريد إلكتروني
 SetRef=تعيين المرجع
 Select2ResultFoundUseArrows=تم العثور على بعض النتائج. استخدم الأسهم للتحديد.
@@ -1122,7 +1127,9 @@ KeyboardShortcut=اختصارات لوحة المفاتيح
 AssignedTo=مخصص ل
 Deletedraft=حذف المسودة
 ConfirmMassDraftDeletion=تأكيد الحذف الشامل للمسودة
+Shared=مشترك
 FileSharedViaALink=تمت مشاركة الملف العام عبر الرابط
+LinkSharedViaALink=رابط عام تمت مشاركته عبر الرابط
 SelectAThirdPartyFirst=حدد طرف ثالث أولاً ...
 YouAreCurrentlyInSandboxMode=أنت حاليًا في وضع %s "sandbox"
 Inventory=المخزون
@@ -1161,7 +1168,7 @@ ContactAddedAutomatically=تمت إضافة جهة الاتصال من أدوا�
 More=أكثر
 ShowDetails=عرض التفاصيل
 CustomReports=تقارير مخصصة
-BICustomReports=BI - Custom reports
+BICustomReports=التقارير المخصصة للاستخبارات التجارية -BI-
 StatisticsOn=إحصائيات على
 SelectYourGraphOptionsFirst=حدد خيارات الرسم البياني الخاصة بك لإنشاء رسم بياني
 Measures=قياسات
@@ -1249,7 +1256,7 @@ ConfirmAllocateCommercial=تعيين تأكيد مندوب المبيعات
 ConfirmUnallocateCommercial=هل أنت متأكد من أنك تريد إلغاء تعيين ممثل(ي) المبيعات من كافة الجهات الخارجية المحددة؟
 ConfirmAllocateCommercialQuestion=هل أنت متأكد من أنك تريد تعيين السجل (السجلات) المحددة %s؟
 ConfirmUnallocateCommercialQuestion=هل أنت متأكد أنك تريد إلغاء تحديد %s سجل/سجلات المحدد(ة)؟
-CommercialsAffected=تم تعيين مندوبي المبيعات
+CommercialsAffected=%s تم تعيين ممثلي المبيعات
 CommercialAffected=تم تعيين مندوب مبيعات
 CommercialsDisaffected=مندوبي المبيعات غير مرتبطين
 CommercialDisaffected=مندوب المبيعات غير مرتبط
@@ -1321,6 +1328,7 @@ NbRecordQualified=عدد السجلات المؤهلة
 auto=آلي
 UploadFile=الاستيراد المباشر للوثيقة
 OrClickToSelectAFile=أو انقر لتحديد ملف على القرص
+SelectAPredefinedFilter=حدد مرشحًا محددًا مسبقًا
 NetTotal=المجموع الصافي
 VATAmount=مبلغ ضريبة القيمة المضافة
 TotalDiscount=إجمالي الخصم
@@ -1343,6 +1351,7 @@ addToFilter=إضافة
 FilterAssistance=محرر المرشح
 Operator=المشغل
 AllFieldsRequired=جميع الحقول مطلوبة.
+QuestionSendManualTrigger=إرسال جميع أهداف webhook اليدوية لهذا الرمز المشغل؟
 IsDefined=مُعَرف بـ
 IsNotDefined=غير مُعَرف بـ
 SpecialLine=خط خاص
@@ -1352,4 +1361,7 @@ AllTime=من البداية
 Transferred=تم نقله
 Anonymous=مجهول
 Automatic=التلقائي
-Nobody=Nobody
+Nobody=لا أحد
+Registered=مسجل
+ClickOnPlusToCreateOne=انقر على زر "زائد" لإضافة واحد.
+Free=حر

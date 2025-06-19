@@ -5,6 +5,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 }
 include_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
+
 /**
  * @var string $colorbackhmenu1
  * @var string $colorbacklinepair1
@@ -25,7 +26,7 @@ include_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
 ';
 
 $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0;
-
+$WIDTHMENUDROPDOWN = 370;
 ?>
 
 /* IDE Hack <style type="text/css"> */
@@ -48,8 +49,9 @@ button.dropdown-item.global-search-item {
 }
 
 #topmenu-bookmark-dropdown .dropdown-menu {
-	min-width: 370px;
-	max-width: 400px;
+	min-width: <?php echo $WIDTHMENUDROPDOWN; ?>px;
+	max-width: <?php echo $WIDTHMENUDROPDOWN; ?>px;
+	width: <?php echo $WIDTHMENUDROPDOWN; ?>px;
 }
 
 
@@ -203,9 +205,8 @@ div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::af
 	border-top-right-radius: 0;
 	border-top-left-radius: 0;
 	padding: 0 0 0 0;
-	margin-top: 2px !important;
 	border-top-width: 0;
-	width: 360px;
+	width: <?php echo $WIDTHMENUDROPDOWN; ?>px;
 }
 .topnav .user-menu .dropdown-menu {
 	top: 50px;
@@ -251,7 +252,10 @@ a.top-menu-dropdown-link {
 }
 
 .dropdown-menu > .user-header{
-	background: var(--colorbackhmenu1);
+	/* background: var(--colorbackhmenu1);
+	color: var(--colortextbackhmenu); */
+	background: #f9f9f9;
+	color: #000;
 }
 
 .dropdown-menu .dropdown-header{
@@ -449,7 +453,7 @@ li.liinputsearch {
  */
 
 #topmenu-quickadd-dropdown .dropdown-menu {
-	width: 310px !important;
+	width: <?php echo $WIDTHMENUDROPDOWN; ?>px;
 	color: #444;
 }
 
@@ -633,11 +637,7 @@ div.quickaddblock:focus {
 		right: 0;
 	}
 
-	#topmenu-quickadd-dropdown .dropdown-menu {
-		min-width: 220px;
-		max-width: 270px;
-	}
-	#topmenu-bookmark-dropdown .dropdown-menu {
+	#topmenu-bookmark-dropdown .dropdown-menu, #topmenu-quickadd-dropdown .dropdown-menu {
 		min-width: 220px;
 		max-width: 360px;
 	}
@@ -648,6 +648,7 @@ div.quickaddblock:focus {
 	.dropdown-menu:not(.ai_dropdown) {
 		border: none;
 		box-shadow: none;
+		border-bottom: 1px solid #888;
 	}
 
 }

@@ -90,6 +90,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		$texte .= '<table class="nobordernopadding" width="100%">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("BarCode"), $langs->transnoentities("BarCode"));
+		$tooltip .= $langs->trans("GenericMaskCodes1");
 		$tooltip .= $langs->trans("GenericMaskCodes3EAN");
 		$tooltip .= '<strong>'.$langs->trans("Example").':</strong><br>';
 		$tooltip .= '04{0000000000}? (for internal use)<br>';

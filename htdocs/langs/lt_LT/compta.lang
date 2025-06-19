@@ -3,9 +3,9 @@ MenuFinancial=Billing | Payment
 TaxModuleSetupToModifyRules=Eiti į <a href="%s"> Mokesčių modulio nustatymus</a>pakeisti skaičiavimo taisykles
 TaxModuleSetupToModifyRulesLT=Go to <a href="%s">Company setup</a> to modify rules for calculation
 OptionMode=Apskaitos opcija
-OptionModeTrue=Pajamų-sąnaudų opcija
-OptionModeVirtual=Pretenzijų-skolų opcija
-OptionModeTrueDesc=Šiame kontekste apyvarta skaičiuojama nuo mokėjimų (mokėjimų datos). Skaitmenų galiojimas užtikrinamas tik tada, jei buhalterija yra kruopščiai tikrinama per įvedimą/išvedimą sąskaitose per sąskaitas-faktūras.
+OptionModeTrue=Accrual accounting
+OptionModeVirtual=Cash accounting
+OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
 OptionModeVirtualDesc=Atsižvelgiant į tai, apyvarta skaičiuojama nuo sąskaitų-faktūrų (pagal patvirtinimo datą). Kai šios sąskaitos-faktūros yra apmokėtinos, nesvarbu ar jos buvo apmokėtos ar ne, jos įtraukiamos į apyvartos apimtį.
 FeatureIsSupportedInInOutModeOnly=Funkcija prieinama CREDITS-DEBTS apskaitos režime (žr. Apskaitos modulio konfigūracija)
 VATReportBuildWithOptionDefinedInModule=Pateiktos sumos apskaičiuojamos taikant nustatytas Mokesčių modulyje taisykles.
@@ -325,3 +325,7 @@ InvoiceToPay30Days=To pay (> 30 days)
 ConfirmPreselectAccount=Preselect accountancy code
 ConfirmPreselectAccountQuestion=Are you sure you want to preselect the %s selected lines with this accountancy code ?
 AmountPaidMustMatchAmountOfDownPayment=Amount paid must match amount of down payment
+RuleForLinesDates=Rule for lines dates
+Prepaid=Prepaid
+Postpaid=Postpaid
+SetRuleForLinesDates=Set rule for lines dates

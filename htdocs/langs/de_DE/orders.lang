@@ -93,6 +93,7 @@ AllOrders=Alle Bestellungen
 NbOfOrders=Anzahl der Bestellungen
 OrdersStatistics=Statistik Kundenaufträge
 OrdersStatisticsSuppliers=Statistik Lieferantenbestellungen
+NumberOfOrders=Anzahl der Bestellungen
 NumberOfOrdersByMonth=Anzahl der Bestellungen pro Monat
 AmountOfOrders=Betrag der Kundenaufträge
 AmountOfOrdersHT=Betrag der Kundenaufträge (exkl. Steuer)
@@ -141,7 +142,7 @@ OrderShowDetail=Auftragsdetail anzeigen
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Mitarbeiter für die Nachbetreuung des Kundenauftrags
 TypeContact_commande_internal_SHIPPING=Mitarbeiter für die Nachbetreuung des Versands
-TypeContact_commande_external_BILLING=Rechnungskontakt des Kunden
+TypeContact_commande_external_BILLING=Kundenkontakt für Rechnungen
 TypeContact_commande_external_SHIPPING=Lieferadresse Kunde
 TypeContact_commande_external_CUSTOMER=Kundenkontakt für die Nachbetreuung des Kundenauftrags
 TypeContact_order_supplier_internal_SALESREPFOLL=Mitarbeiter für die Nachbetreuung der Lieferantenbestellung

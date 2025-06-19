@@ -87,13 +87,17 @@ $options['no_page']   		= ((int) GETPOSTINT('no_page') ? GETPOSTINT('no_page') :
 $options['categorie'] 		= ((int) (GETPOSTINT('categorie') ? GETPOSTINT('categorie') : 0));
 $options['search']    		= GETPOST('search_keyword', 'alpha');
 
+
+// MAIN_ENABLE_EXTERNALMODULES_DOLISTORE is 1 if we enabled the dolistore modules
 $options['search_source_dolistore']	= getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_DOLISTORE');
+// MAIN_ENABLE_EXTERNALMODULES_COMMUNITY is 1 if we enabled the community modules
 $options['search_source_github']	= getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY');
 
 //$remotestore = new Dolistore(false);
 $remotestore = new ExternalModules();
-$remotestore->loadRemoteSources();
-
+if ($mode == 'marketplace') {
+	$remotestore->loadRemoteSources();
+}
 
 if (!$user->admin) {
 	accessforbidden();
@@ -1305,7 +1309,7 @@ if ($mode == 'marketplace') {
 	print '</td>';
 	print '<td class="center">';
 	if (!getDolGlobalString('MAIN_DISABLE_EXTERNALMODULES_COMMUNITY') && getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY')) {
-		$messagetoadd = '<br><br><span class="small">Content of the repository index file '.$remotestore->file_source_url.' is in the local cache file '.$remotestore->cache_file.'</span>';
+		$messagetoadd = '<br><br><span class="small">Content of the repository index file '.$remotestore->file_source_url.' is in the local cache file '.$remotestore->cache_file.' (Date: '.dol_print_date(dol_filemtime($remotestore->cache_file), 'dayhour', 'tzuserrel').')</span>';
 		print $remotestore->libStatus($remotestore->githubFileStatus, 2, $messagetoadd);
 	}
 	print '</td>';
@@ -1373,7 +1377,7 @@ if ($mode == 'marketplace') {
 				</div>
 			<?php } ?>
 
-			<div id="listing-content" <?php if (empty($categories_tree)) { ?>style="width:100%;"<?php } ?>>
+			<div id="listing-content" class="div-table-responsive" <?php if (empty($categories_tree)) { ?>style="width:100%;"<?php } ?>>
 				<table summary="list_of_modules" id="list_of_modules" class="productlist centpercent">
 					<tbody id="listOfModules">
 						<?php //echo $remotestore->get_products($nbmaxtoshow); ?>
