@@ -337,7 +337,7 @@ function _debug(string $message): void
  * Exits with an error message and an HTTP response code
  *
  * @param	string	$message	The message to print
- * @param	int		$status		HTTP reponse code
+ * @param	int		$status		HTTP response code
  * @return	void
  */
 function _error(string $message, int $status = 500): void
