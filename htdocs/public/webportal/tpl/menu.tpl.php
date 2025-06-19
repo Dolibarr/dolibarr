@@ -41,6 +41,7 @@ if ($context->userIsLog()) {
 		$sql.= " WHERE fk_soc = ".((int) $socid);
 		$sql.= " AND entity IN (".getEntity('propal').")"; // we use getEntity to get the entity of the order module
 		$resql = $context->db->query($sql);
+		$nbPropal =0;
 		if ($resql) {
 			$obj = $context->db->fetch_object($resql);
 			if ($obj && isset($obj->nb) && $obj->nb > 0) {
@@ -66,6 +67,7 @@ if ($context->userIsLog()) {
 		$sql.= " WHERE fk_soc = ".((int) $socid);
 		$sql.= " AND entity IN (".getEntity('order').")"; // we use getEntity to get the entity of the order module
 		$resql = $context->db->query($sql);
+		$nbOrder = 0;
 		if ($resql) {
 			$obj = $context->db->fetch_object($resql);
 			if ($obj && isset($obj->nb) && $obj->nb > 0) {
@@ -91,6 +93,7 @@ if ($context->userIsLog()) {
 		$sql.= " WHERE fk_soc = ".((int) $socid);
 		$sql.= " AND entity IN (".getEntity('facture').")"; // we use getEntity to get the entity of the order module
 		$resql = $context->db->query($sql);
+		$nbInvoice= 0;
 		if ($resql) {
 			$obj = $context->db->fetch_object($resql);
 			if ($obj && isset($obj->nb) && $obj->nb > 0) {
