@@ -20,6 +20,7 @@
 /**
  * @var CommonObject $this
  * @var Conf $conf
+ * @var CommonObjectLine $line
  */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -29,9 +30,28 @@ if (empty($conf) || !is_object($conf)) {
 
 ?>
 
-<!-- BEGIN PHP TEMPLATE originproductline.tpl.php -->
+<!-- BEGIN PHP TEMPLATE core/tpl/originproductline.tpl.php -->
 <?php
-'@phan-var-force CommonObject $this';
+'
+@phan-var-force CommonObject $this
+@phan-var-force PropaleLigne|ContratLigne|CommonObjectLine|CommonInvoiceLine|CommonOrderLine|ExpeditionLigne|DeliveryLine|FactureFournisseurLigneRec|SupplierInvoiceLine|SupplierProposalLine $line
+';
+
+if ($line->element == 'shipping') {
+	$classname = ucfirst($line->element_type);
+	$objectsrc = new $classname($this->db);
+	$objectsrc_line = new $objectsrc->class_element_line($this->db);
+	'@phan-var-force CommonObjectLine $objectsrc_line';
+	$objectsrc_line->fetch($line->origin_line_id);
+	$shipping_use_tpl = ($objectsrc_line->special_code == SUBTOTALS_SPECIAL_CODE);
+}
+
+// Handle subtotals line edit
+if (defined('SUBTOTALS_SPECIAL_CODE') && $line->special_code == SUBTOTALS_SPECIAL_CODE || isset($shipping_use_tpl)) {
+	return require DOL_DOCUMENT_ROOT.'/core/tpl/originsubtotalline.tpl.php';
+}
+
+// Show line using ->tpl[]
 print '<tr data-id="'.$this->tpl['id'].'" class="oddeven'.(empty($this->tpl['strike']) ? '' : ' strikefordisabled').'">';
 print '<td class="linecolref">'.$this->tpl['label'].'</td>';
 print '<td class="linecoldescription">'.$this->tpl['description'].'</td>';

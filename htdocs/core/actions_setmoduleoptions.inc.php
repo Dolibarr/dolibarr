@@ -45,14 +45,14 @@
 @phan-var-force FormSetup $formSetup
 ';
 
-if ($action == 'update' && !empty($formSetup) && is_object($formSetup) && !empty($user->admin)) {
+if (($action == 'update' || !empty($websitetemplateconf)) && !empty($formSetup) && is_object($formSetup) && !empty($user->admin)) {
 	$formSetup->saveConfFromPost();
 	return;
 }
 
 $upload_dir = null;
 
-if ($action == 'update' && !empty($arrayofparameters) && is_array($arrayofparameters) && !empty($user->admin)) {
+if (($action == 'update' || !empty($websitetemplateconf)) && !empty($arrayofparameters) && is_array($arrayofparameters) && !empty($user->admin)) {
 	$db->begin();
 
 	foreach ($arrayofparameters as $key => $val) {

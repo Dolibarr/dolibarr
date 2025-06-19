@@ -89,13 +89,14 @@ class PclZipProxy implements ZipInterface
 		if (file_exists($this->filename) && !is_writable($this->filename)) {
 			return false;
 		}
+
 		$localname = preg_replace("/(?:\.|\/)*(.*)/", "\\1", $localname);
 		$localpath = dirname($localname);
 		$tmpfilename = $this->tmpdir . '/' . basename($localname);
 		if (false !== file_put_contents($tmpfilename, $contents)) {
 			//print "tmpfilename=".$tmpfilename;
 			//print "localname=".$localname;
-			$res=$this->pclzip->delete(PCLZIP_OPT_BY_NAME, $localname);
+			$res = $this->pclzip->delete(PCLZIP_OPT_BY_NAME, $localname);		// after this with pclzip handler, the odt/zip file is ocrrupted. No way to edit the zip with file roller.
 			$add = $this->pclzip->add($tmpfilename,
 				PCLZIP_OPT_REMOVE_PATH, $this->tmpdir,
 				PCLZIP_OPT_ADD_PATH, $localpath);
@@ -158,5 +159,3 @@ class PclZipProxy implements ZipInterface
 		return true;
 	}
 }
-
-?>

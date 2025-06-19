@@ -403,7 +403,7 @@ class Documentation
 	{
 		$i = 0;
 		$menu_entry = [];
-		if (!empty($this->view)) :
+		if (!empty($this->view)) {
 			// On se place au bon niveau
 			foreach ($this->view as $view) {
 				$i++;
@@ -413,11 +413,11 @@ class Documentation
 					$menu_entry = $menu_entry['submenu'][$view];
 				}
 			}
-		endif;
+		}
 
-		if (!empty($menu_entry['summary']) || !empty($menu_entry['submenu'] && $showsubmenu)) {
+		if (!empty($menu_entry['summary']) || (!empty($menu_entry['submenu']) && $showsubmenu)) {
 			print '<div class="summary-wrapper">';
-				$this->displaySummary($menu_entry);
+			$this->displaySummary($menu_entry);
 			print '</div>';
 		}
 	}
@@ -434,21 +434,29 @@ class Documentation
 	 */
 	public function displaySummary($menu, $level = 0, $showsubmenu = 1, $showsubmenu_summary = 1)
 	{
-
 		global $langs;
 
 		$level++;
 		print '<ul class="documentation-summary level-'.$level.'"">';
 
-		if (!empty($menu['summary'])) :
+		if (!empty($menu['summary'])) {
 			foreach ($menu['summary'] as $summary_label => $summary_link) {
+				/*
 				if ($summary_link[0] == '#') {
-					$summary_link = $menu['url'].$summary_link;
+					$tmp_summary_link = $menu['url'];
+					if (GETPOSTINT('hidenavmenu')) {
+						$tmp_summary_link .= (strpos($tmp_summary_link, '?') === false ? '?' : '&').'hidenavmenu=1';
+					}
+					if (GETPOSTINT('displayMode')) {
+						$tmp_summary_link .= (strpos($tmp_summary_link, '?') === false ? '?' : '&').'displayMode=1';
+					}
+					$summary_link = $tmp_summary_link;
 				}
+				*/
 
 				print '<li><a href="'.$summary_link.'">'.$langs->trans($summary_label).'</a></li>';
 			}
-		endif;
+		}
 
 		if ($showsubmenu && !empty($menu['submenu'])) {
 			foreach ($menu['submenu'] as $key => $item) {

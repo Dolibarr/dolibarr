@@ -50,6 +50,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+require_once DOL_DOCUMENT_ROOT.'/subtotals/class/commonsubtotal.class.php';
 
 if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
@@ -63,6 +64,8 @@ if (isModEnabled('accounting')) {
  */
 class Facture extends CommonInvoice
 {
+	use CommonSubtotal;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -145,31 +148,6 @@ class Facture extends CommonInvoice
 	public $ref_customer;
 
 	/**
-	 * @var float
-	 */
-	public $total_ht;
-	/**
-	 * @var float
-	 */
-	public $total_tva;
-	/**
-	 * @var float
-	 */
-	public $total_localtax1;
-	/**
-	 * @var float
-	 */
-	public $total_localtax2;
-	/**
-	 * @var float
-	 */
-	public $total_ttc;
-	/**
-	 * @var float
-	 */
-	public $revenuestamp;
-
-	/**
 	 * @var float|string
 	 */
 	public $resteapayer;
@@ -181,13 +159,14 @@ class Facture extends CommonInvoice
 	public $paye;
 
 	/**
-	 * @var string key of module source when invoice generated from a dedicated module ('cashdesk', 'takepos', ...)
+	 * @var ?string key of module source when invoice generated from a dedicated module ('cashdesk', 'takepos', 'marketplace', ...)
 	 */
 	public $module_source;
 	/**
-	 * @var string key of pos source ('0', '1', ...)
+	 * @var ?string key of POS terminal ('0', '1', ...)
 	 */
 	public $pos_source;
+
 	/**
 	 * @var int id of template invoice when generated from a template invoice
 	 */
@@ -279,7 +258,7 @@ class Facture extends CommonInvoice
 	public $date_closing;
 
 	/**
-	 * @var int
+	 * @var ?int 	Order mode. How we received the invoice request (by phone, by email, ...)
 	 */
 	public $source;
 
@@ -463,6 +442,8 @@ class Facture extends CommonInvoice
 
 		$this->ismultientitymanaged = 1;
 		$this->isextrafieldmanaged = 1;
+
+		$this->fields['ref_ext']['visible'] = getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT');
 	}
 
 	/**
@@ -742,7 +723,7 @@ class Facture extends CommonInvoice
 		$sql .= ", ".($this->ref_customer ? "'".$this->db->escape($this->ref_customer)."'" : ($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null"));
 		$sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
 		$sql .= ", ".($this->module_source ? "'".$this->db->escape($this->module_source)."'" : "null");
-		$sql .= ", ".($this->pos_source != '' ? "'".$this->db->escape($this->pos_source)."'" : "null");
+		$sql .= ", ".($this->pos_source != '' ? "'".$this->db->escape((string) $this->pos_source)."'" : "null");
 		$sql .= ", ".($this->fk_fac_rec_source ? "'".$this->db->escape((string) $this->fk_fac_rec_source)."'" : "null");
 		$sql .= ", ".($this->fk_facture_source ? "'".$this->db->escape((string) $this->fk_facture_source)."'" : "null");
 		$sql .= ", ".($origin_user_author_id > 0 ? (int) $origin_user_author_id : "null");
@@ -826,13 +807,13 @@ class Facture extends CommonInvoice
 					}
 				}
 
-				$sqlcontact = "SELECT ctc.code, ctc.source, ec.fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
+				$sqlcontact = "SELECT ctc.code, ctc.source, ec.fk_socpeople";
+				$sqlcontact .= " FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
 				$sqlcontact .= " WHERE element_id = ".((int) $originidforcontact)." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$this->db->escape($originforcontact)."'";
 
 				$resqlcontact = $this->db->query($sqlcontact);
 				if ($resqlcontact) {
 					while ($objcontact = $this->db->fetch_object($resqlcontact)) {
-						//print $objcontact->code.'-'.$objcontact->source.'-'.$objcontact->fk_socpeople."\n";
 						$this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source); // May failed because of duplicate key or because code of contact type does not exists for new object
 					}
 				} else {
@@ -1103,6 +1084,13 @@ class Facture extends CommonInvoice
 						1
 					);
 
+					foreach ($this->lines as $line) {
+						if ($line->id == $result_insert) {
+							$line->extraparams = $_facrec->lines[$i]->extraparams;
+							$line->setExtraParameters();
+						}
+					}
+
 					// Defined the new fk_parent_line
 					if ($result_insert > 0 && $_facrec->lines[$i]->product_type == 9) {
 						$fk_parent_line = $result_insert;
@@ -1304,6 +1292,7 @@ class Facture extends CommonInvoice
 		$object->date_modification = '';
 		$object->date_validation    = '';
 		$object->ref_client         = '';
+		$object->ref_customer         = '';
 		$object->close_code         = '';
 		$object->close_note         = '';
 		if (getDolGlobalInt('MAIN_DONT_KEEP_NOTE_ON_CLONING') == 1) {
@@ -1403,7 +1392,7 @@ class Facture extends CommonInvoice
 	 */
 	public function createFromOrder($object, User $user)
 	{
-		global $conf, $hookmanager;
+		global $hookmanager;
 
 		$error = 0;
 
@@ -1476,6 +1465,7 @@ class Facture extends CommonInvoice
 		$this->fk_delivery_address  = $object->fk_delivery_address; // deprecated
 		$this->contact_id           = $object->contact_id;
 		$this->ref_client           = $object->ref_client;
+		$this->ref_customer         = $object->ref_client;
 
 		if (!getDolGlobalString('MAIN_DISABLE_PROPAGATE_NOTES_FROM_ORIGIN')) {
 			$this->note_private = $object->note_private;
@@ -1490,6 +1480,7 @@ class Facture extends CommonInvoice
 		$this->origin_id = $object->id;
 
 		$this->fk_user_author = $user->id;
+		$this->user_creation_id = $user->id;
 
 		// get extrafields from original line
 		$object->fetch_optionals();
@@ -1537,7 +1528,7 @@ class Facture extends CommonInvoice
 	 */
 	public function createFromContract($object, User $user, $lines = array())
 	{
-		global $conf, $hookmanager;
+		global $hookmanager;
 
 		$error = 0;
 
@@ -1717,6 +1708,7 @@ class Facture extends CommonInvoice
 		$deposit->type = self::TYPE_DEPOSIT;
 		$deposit->fk_project = $origin->fk_project;
 		$deposit->ref_client = $origin->ref_client;
+		$deposit->ref_customer = $origin->ref_client;
 		$deposit->date = $date;
 		$deposit->mode_reglement_id = $origin->mode_reglement_id;
 		$deposit->cond_reglement_id = $payment_terms_id;
@@ -2699,10 +2691,6 @@ class Facture extends CommonInvoice
 		if (isset($this->ref_ext)) {
 			$this->ref_ext = trim($this->ref_ext);
 		}
-		// deprecated
-		if (!empty($this->ref_client)) {
-			$this->ref_client = trim($this->ref_client);
-		}
 		if (!empty($this->ref_customer)) {
 			$this->ref_customer = trim($this->ref_customer);
 		}
@@ -2756,11 +2744,11 @@ class Facture extends CommonInvoice
 		$sql .= " paye=".(isset($this->paye) ? $this->db->escape((string) $this->paye) : 0).",";
 		$sql .= " close_code=".(isset($this->close_code) ? "'".$this->db->escape($this->close_code)."'" : "null").",";
 		$sql .= " close_note=".(isset($this->close_note) ? "'".$this->db->escape($this->close_note)."'" : "null").",";
-		$sql .= " total_tva=".(isset($this->total_tva) ? (float) $this->total_tva : "null").",";
-		$sql .= " localtax1=".(isset($this->total_localtax1) ? (float) $this->total_localtax1 : "null").",";
-		$sql .= " localtax2=".(isset($this->total_localtax2) ? (float) $this->total_localtax2 : "null").",";
-		$sql .= " total_ht=".(isset($this->total_ht) ? (float) $this->total_ht : "null").",";
-		$sql .= " total_ttc=".(isset($this->total_ttc) ? (float) $this->total_ttc : "null").",";
+		$sql .= " total_tva=".((float) $this->total_tva).",";
+		$sql .= " localtax1=".((float) $this->total_localtax1).",";
+		$sql .= " localtax2=".((float) $this->total_localtax2).",";
+		$sql .= " total_ht=".((float) $this->total_ht).",";
+		$sql .= " total_ttc=".((float) $this->total_ttc).",";
 		$sql .= " revenuestamp=".((isset($this->revenuestamp) && $this->revenuestamp != '') ? (float) $this->revenuestamp : "null").",";
 		$sql .= " fk_statut=".(isset($this->status) ? (int) $this->status : "null").",";
 		$sql .= " fk_user_author=".(isset($this->user_creation_id) ? ((int) $this->user_creation_id) : "null").",";
@@ -2770,17 +2758,19 @@ class Facture extends CommonInvoice
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? (int) $this->cond_reglement_id : "null").",";
 		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? (int) $this->mode_reglement_id : "null").",";
 		$sql .= " date_lim_reglement=".(strval($this->date_lim_reglement) != '' ? "'".$this->db->idate($this->date_lim_reglement)."'" : 'null').",";
-		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
-		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
-		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
-		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null").",";
-		$sql .= " situation_cycle_ref=".(empty($this->situation_cycle_ref) ? "null" : (int) $this->situation_cycle_ref).",";
-		$sql .= " situation_counter=".(empty($this->situation_counter) ? "null" : (int) $this->situation_counter).",";
-		$sql .= " situation_final=".(empty($this->situation_final) ? "0" : (int) $this->situation_final).",";
-		$sql .= " retained_warranty=".(empty($this->retained_warranty) ? "0" : (float) $this->retained_warranty).",";
-		$sql .= " retained_warranty_date_limit=".(strval($this->retained_warranty_date_limit) != '' ? "'".$this->db->idate($this->retained_warranty_date_limit)."'" : 'null').",";
-		$sql .= " retained_warranty_fk_cond_reglement=".(isset($this->retained_warranty_fk_cond_reglement) ? (int) $this->retained_warranty_fk_cond_reglement : "null");
-		$sql .= " WHERE rowid=".((int) $this->id);
+		$sql .= " note_private = ".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
+		$sql .= " note_public = ".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
+		$sql .= " model_pdf = ".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
+		$sql .= " import_key = ".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null").",";
+		$sql .= " module_source = ".(isset($this->module_source) ? "'".$this->db->escape($this->module_source)."'" : "null").",";
+		$sql .= " pos_source = ".(isset($this->pos_source) ? "'".$this->db->escape($this->pos_source)."'" : "null").",";
+		$sql .= " situation_cycle_ref = ".(empty($this->situation_cycle_ref) ? "null" : (int) $this->situation_cycle_ref).",";
+		$sql .= " situation_counter = ".(empty($this->situation_counter) ? "null" : (int) $this->situation_counter).",";
+		$sql .= " situation_final = ".(empty($this->situation_final) ? "0" : (int) $this->situation_final).",";
+		$sql .= " retained_warranty = ".(empty($this->retained_warranty) ? "0" : (float) $this->retained_warranty).",";
+		$sql .= " retained_warranty_date_limit = ".(strval($this->retained_warranty_date_limit) != '' ? "'".$this->db->idate($this->retained_warranty_date_limit)."'" : 'null').",";
+		$sql .= " retained_warranty_fk_cond_reglement = ".(isset($this->retained_warranty_fk_cond_reglement) ? (int) $this->retained_warranty_fk_cond_reglement : "null");
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -2936,11 +2926,11 @@ class Facture extends CommonInvoice
 
 		$this->db->begin();
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
 		if (empty($ref_client)) {
-			$sql .= ' SET ref_client = NULL';
+			$sql .= " SET ref_client = NULL";
 		} else {
-			$sql .= ' SET ref_client = \''.$this->db->escape($ref_client).'\'';
+			$sql .= " SET ref_client = '".$this->db->escape($ref_client)."'";
 		}
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -3476,6 +3466,7 @@ class Facture extends CommonInvoice
 	/**
 	 * Tag invoice as validated + call trigger BILL_VALIDATE
 	 * Object must have lines loaded with fetch_lines
+	 * This may rename files on disk because ref is modified but it does not generate any document.
 	 *
 	 * @param	User	$user           Object user that validate
 	 * @param   string	$force_number	Reference to force on invoice
@@ -3850,7 +3841,7 @@ class Facture extends CommonInvoice
 			}
 
 			if (!$error) {
-				// Rename directory if dir was a temporary ref
+				// Rename directory in index entry if dir was a temporary ref
 				if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 					// Now we rename also files into index
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'facture/".$this->db->escape($this->newref)."'";
@@ -3912,7 +3903,8 @@ class Facture extends CommonInvoice
 			}
 		}
 
-		// Rename directory if dir was a temporary ref
+		// All database actions are now complete
+		// We rename the directory and files on disk if old dir was a temporary ref.
 		if (!$error && preg_match('/^[\(]?PROV/i', $this->oldref)) {
 			// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 			$oldref = dol_sanitizeFileName($this->oldref);
@@ -3924,7 +3916,7 @@ class Facture extends CommonInvoice
 
 				if (@rename($dirsource, $dirdest)) {
 					dol_syslog("Rename ok");
-					// Rename docs starting with $oldref with $newref
+					// Rename also docs starting with $oldref with $newref
 					$listoffiles = dol_dir_list($conf->facture->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
 					foreach ($listoffiles as $fileentry) {
 						$dirsource = $fileentry['name'];
@@ -4423,6 +4415,13 @@ class Facture extends CommonInvoice
 					}
 
 					$this->lines[] = $this->line;
+				} else {
+					foreach ($this->lines as $line) {
+						if ($line->id == $origin_id) {
+							$this->line->extraparams = $line->extraparams;
+							$this->line->setExtraParameters();
+						}
+					}
 				}
 
 				if ($result > 0) {
@@ -5362,11 +5361,13 @@ class Facture extends CommonInvoice
 		if ($socid > 0) {
 			$sql .= " AND f.fk_soc = ".((int) $socid);
 		}
-		$sql .= " ORDER BY f.ref";
 
 		if (getDolGlobalInt('LIST_OF_QUALIFIED_INVOICES_LIMIT_DEFINED') > 0) {
-			$sql .= " DESC"; //order by
+			$sql .= " ORDER BY CASE WHEN f.rowid = ".((int) GETPOST('fac_avoir'))."' THEN 0 ELSE 1 END, f.ref";
+			$sql .= " DESC";
 			$sql .= " LIMIT " . getDolGlobalInt('LIST_OF_QUALIFIED_INVOICES_LIMIT_DEFINED');
+		} else {
+			$sql .= " ORDER BY f.ref";
 		}
 
 		dol_syslog(get_class($this)."::list_qualified_avoir_invoices", LOG_DEBUG);
@@ -5711,8 +5712,6 @@ class Facture extends CommonInvoice
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $langs;
-
 		$outputlangs->loadLangs(array("bills", "products"));
 
 		if (!dol_strlen($modele)) {

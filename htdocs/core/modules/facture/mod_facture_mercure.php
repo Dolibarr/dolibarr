@@ -86,6 +86,8 @@ class mod_facture_mercure extends ModeleNumRefFactures
 		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Invoice"), $langs->transnoentities("Invoice"));
+		$tooltip .= $langs->trans("GenericMaskCodes1");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes2");
 		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes3");

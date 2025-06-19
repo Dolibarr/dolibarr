@@ -3455,7 +3455,7 @@ if ($module == 'initmodule') {
 
 	print '<span class="opacitymedium small">';
 	print ' &nbsp; &nbsp; ';
-	print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?hidenavmenu=1&displayMode=icon-only#img-picto-section-list', '', '');
+	print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?hidenavmenu=1&displayMode=icon-only&mode=no-btn#img-picto-section-list', '', '');
 	print '</span>';
 
 	print '</div></div>';
@@ -3669,6 +3669,8 @@ if ($module == 'initmodule') {
 					print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
 					print '<input type="hidden" name="tab" value="'.dol_escape_htmltag($tab).'">';
 					print '<input type="hidden" name="keydescription" value="'.dol_escape_htmltag(GETPOST('keydescription', 'alpha')).'">';
+
+					print '<div class="div-table-responsive-no-min">';
 					print '<table class="border centpercent">';
 					print '<tr class="liste_titre"><td class="titlefield">';
 					print $langs->trans("Parameter");
@@ -3806,6 +3808,7 @@ if ($module == 'initmodule') {
 					print '</td></tr>';
 
 					print '</table>';
+					print '</div>';
 					print '</form>';
 				} else {
 					print $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module).'<br>';
@@ -4036,7 +4039,14 @@ if ($module == 'initmodule') {
 				print '<span class="opacitymedium">'.$langs->trans("Picto").'</span> &nbsp; ';
 				print '</div><div class="tagtd">';
 				print '<input type="text" name="idpicto" value="fa-file" placeholder="'.dol_escape_htmltag($langs->trans("Picto")).'">';
+
 				print $form->textwithpicto('', $langs->trans("Example").': fa-file, fa-globe, ... any font awesome code.<br>Advanced syntax is fa-fakey[_faprefix[_facolor[_fasize]]]');
+
+				print '<span class="opacitymedium small">';
+				print ' &nbsp; &nbsp; ';
+				print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?hidenavmenu=1&displayMode=icon-only&mode=no-btn#img-picto-section-list', '', '');
+				print '</span>';
+
 				print '</div></div>';
 
 				print '<div class="tagtr"><div class="tagtd">';

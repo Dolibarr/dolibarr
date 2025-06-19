@@ -19,7 +19,7 @@ Module4100Desc = Modul za upravljanje privatnošću podataka (sukladnost s GDPR-
 datapolicySetup = Podešavanje pravila o privatnosti podataka modula
 DataDeletion=Brisanje podataka
 DataAnonymization=Anonimizacija podataka
-datapolicySetupPage = Depending on the laws of your country (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
+datapolicySetupPage = Ovisno o zakonima vaše zemlje (primjer <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Članak 5</a> GDPR-a), osobni podaci moraju se čuvati u razdoblju koje ne prelazi trajanje u kojem su podaci potrebni za svrhu za koju su prikupljeni, osim u arhivske svrhe.<br>Ovaj će modul automatski izvršiti anonimizaciju nakon određenog razdoblja bez događaja (trajanje koje ćete navesti u nastavku) i ako objekt nema postojećih podređenih poslovnih objekata.
 NB_MONTHS = %s mjeseci
 ONE_YEAR = 1 godina
 NB_YEARS = %s godina

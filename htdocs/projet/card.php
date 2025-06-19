@@ -553,14 +553,11 @@ if (empty($reshook)) {
 			// Load new object
 			$newobject = new Project($db);
 			$newobject->fetch($result);
-			$newobject->fetch_optionals();
-			$newobject->fetch_thirdparty(); // Load new object
-			$object = $newobject;
-			$action = 'view';
-			$comefromclone = true;
 
 			setEventMessages($langs->trans("ProjectCreatedInDolibarr", $newobject->ref), null, 'mesgs');
-			//var_dump($newobject); exit;
+
+			header('Location: '.$_SERVER['PHP_SELF'].'?id='.$result.'&action=edit&comefromclone=1');
+			exit;
 		}
 	}
 
@@ -821,12 +818,12 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			print $text;
 		}
 		if (!GETPOSTISSET('backtopage')) {
-			$url = '/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create');
+			$url = '/societe/card.php?action=create&customer=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create');
 			$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span>';
 			// TODO @LDR Implement this
 			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-				$tmpbacktopagejsfields = 'addthirdparty:socid,search_socid';
-				print dolButtonToOpenUrlInDialogPopup('addthirdparty', $langs->transnoentitiesnoconv('AddThirdParty'), $newbutton, $url, '', '', '', $tmpbacktopagejsfields);
+				$jsonclose = '';
+				print dolButtonToOpenUrlInDialogPopup('addthirdparty', $langs->transnoentitiesnoconv('AddThirdParty'), $newbutton, $url, '', '', '', $jsonclose);
 			} else {
 				print ' <a href="'.DOL_URL_ROOT.$url.'">'.$newbutton.'</a>';
 			}
@@ -900,9 +897,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	if (isModEnabled('category')) {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PROJECT, '', 'parent', 64, 0, 3);
-		$arrayselected = GETPOST('categories', 'array');
-		print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+		print $form->selectCategories(Categorie::TYPE_PROJECT, 'categories', $object);
 		print "</td></tr>";
 	}
 
@@ -1315,15 +1310,8 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 		// Tags-Categories
 		if (isModEnabled('category')) {
-			$arrayselected = array();
 			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PROJECT, '', 'parent', 64, 0, 3);
-			$c = new Categorie($db);
-			$cats = $c->containing($object->id, Categorie::TYPE_PROJECT);
-			foreach ($cats as $cat) {
-				$arrayselected[] = $cat->id;
-			}
-			print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, '0');
+			print $form->selectCategories(Categorie::TYPE_PROJECT, 'categories', $object);
 			print "</td></tr>";
 		}
 

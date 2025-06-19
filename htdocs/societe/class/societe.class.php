@@ -1187,8 +1187,6 @@ class Societe extends CommonObject
 	 */
 	public function create_individual(User $user, $no_email = 0, $tags = array(), $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 
 		$this->db->begin();
@@ -1260,7 +1258,7 @@ class Societe extends CommonObject
 	 */
 	public function verify()
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		$error = 0;
 		$this->errors = array();
@@ -2035,7 +2033,7 @@ class Societe extends CommonObject
 				$this->entity       = $obj->entity;
 				$this->canvas = $obj->canvas;
 
-				$this->ref          = $obj->rowid;
+				$this->ref          = $obj->name;
 				$this->name = $obj->name;
 				$this->nom          = $obj->name; // deprecated
 				$this->name_alias = $obj->name_alias;
@@ -3080,7 +3078,7 @@ class Societe extends CommonObject
 			}
 			// deliberately not making new list because fax uses same list as phone
 			if ($this->phone_mobile) {
-				$phonelist[] = dol_print_phone($this->phone_mobile, $this->country_code, $this->id, 0, '', '&nbsp', 'phone_mobile');
+				$phonelist[] = dol_print_phone($this->phone_mobile, $this->country_code, $this->id, 0, '', '&nbsp', 'mobile');
 			}
 			if ($this->fax) {
 				$phonelist[] = dol_print_phone($this->fax, $this->country_code, $this->id, 0, '', '&nbsp', 'fax');

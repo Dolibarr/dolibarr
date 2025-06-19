@@ -691,3 +691,4 @@ InputValueIsNotAnNumber=Input value is not a number
 LimitDepositInvoicePossibilityForConsistency=Limit deposit invoice type to keep consistencies between lines (from proposals or orders)
 ExtPaymentID=External payment ID
 ExtPaymentSite=External payment Site
+CantConvertToReducAnInvoiceOfThisType=Cant convert to discount an invoice of this type

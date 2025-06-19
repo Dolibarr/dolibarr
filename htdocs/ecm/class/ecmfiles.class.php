@@ -113,7 +113,7 @@ class EcmFiles extends CommonObject
 	public $position;
 
 	/**
-	 * @var 'generated'|'uploaded'|'unknown'|'copy'|''
+	 * @var 'generated'|'uploaded'|'unknown'|'api'|'copy'|''
 	 */
 	public $gen_or_uploaded;
 

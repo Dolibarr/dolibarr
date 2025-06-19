@@ -121,8 +121,9 @@ if (!$rowid) {
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("DateOperation", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'left ');
-	print_liste_field_titre("Paid", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');
-	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", '', '', '', 'right ');
+	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');	// For info links
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", '', '', '', 'center ');
 	print "</tr>\n";
 
 	print "</tr>\n";
@@ -151,18 +152,24 @@ if (!$rowid) {
 				$url = 'https://dashboard.stripe.com/'.$connect.'payouts/'.$payout->id;
 			}
 
-			print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." ".$payout->id."</a></td>\n";
+			print '<td><a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'globe')." ".dolPrintHTML($payout->id)."</a></td>\n";
 
 			// Date payment
 			print '<td class="center">'.dol_print_date($payout->created, 'dayhour')."</td>\n";
 			// Date payment
 			print '<td class="center">'.dol_print_date($payout->arrival_date, 'dayhour')."</td>\n";
 			// Type
-			print '<td>'.$payout->description.'</td>';
+			print '<td>'.dolPrintHTML($payout->description).'</td>';
 			// Amount
 			print '<td class="right"><span class="amount">'.price(($payout->amount) / 100, 0, '', 1, -1, -1, strtoupper($payout->currency))."</span></td>";
+			// Info links
+			print '<td>';
+			print '<span class="small">';
+			// TODO Add missing link to bank transfer for the num_chq = $payout->id
+			print '</span>';
+			print "</td>";
 			// Status
-			print "<td class='right'>";
+			print '<td class="center">';
 			if ($payout->status == 'paid') {
 				print img_picto($langs->trans($payout->status), 'statut4');
 			} elseif ($payout->status == 'pending') {

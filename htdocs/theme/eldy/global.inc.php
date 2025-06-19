@@ -503,7 +503,7 @@ textarea {
 	border-right: solid 1px var(--inputbordercolor);
 	border-bottom: solid 1px var(--inputbordercolor);
 
-	padding:4px;
+	padding:8px;
 	margin-left:0px;
 	margin-bottom:1px;
 	margin-top:1px;
@@ -1013,7 +1013,7 @@ textarea.centpercent {
 	transform: scaleX(-1) translate(<?php print($left == 'left' ? '' : '-'); ?>2px, 0);
 }
 .rotate90 {
-	transform: rotate(90deg) translate(0, <?php print($left == 'left' ? '' : '-'); ?>2px);
+	transform: rotate(90deg) translate(2px, <?php print($left == 'left' ? '' : '-'); ?>4px);
 }
 .center {
 	text-align: center;
@@ -2404,6 +2404,10 @@ td.showDragHandle {
 .bodyforlist #id-right {
 	padding-bottom: 4px;
 }
+.bodyforlist.poslist #id-right {
+	display: block;
+}
+
 .page-modulehelp div#id-right {
 	display: flex;
 }
@@ -2625,6 +2629,11 @@ div.fiche {
 		print 'margin-bottom: 12px;'."\n";
 	} ?>
 }
+.dol_openinpopup div.fiche {
+	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '24' : '6')); ?>px;
+	margin-top: 0px;
+}
+
 .page-modulehelp div.fiche {
 	width: 100%;
 }
@@ -2834,11 +2843,11 @@ span.widthpictotitle.pictotitle {
 }
 .pictofixedwidth {
 	text-align: start;
-	width: 20px;
+	width: 20px;	/* Do not use em unit here */
 	/* padding-right: 0; */
 }
 img.pictofixedwidth {
-	width: 18px;
+	width: 18px;	/* Do not use em unit here */
 	padding-right: 2px;
 }
 
@@ -4537,7 +4546,7 @@ table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.nobor
 td.linecoldescription {
 	padding: 6px 10px 6px 12px !important;			/* t r b l */
 }
-table.tableforfield td, .tagtr.table-border-row .tagtd {
+table.tableforfield td, .tagtr.table-border-row .tagtd, table.border.margintable .trforfield td {
 	padding: 2px 4px 2px 10px;			/* t r b l */
 }
 table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
@@ -5283,7 +5292,7 @@ span.dashboardlineko {
 }
 
 
-.fichecenter .tableforfield tr td, .tagtr.table-border-row {
+.fichecenter .tableforfield:not(.margintable) tr td, .tagtr.table-border-row {
 	background-color: var(--colorbacklineimpair2);
 }
 table.liste tr.oddeven:nth-of-type(odd) {
@@ -5388,6 +5397,7 @@ img.boxhandle, img.boxclose {
 	font-size: 1rem;
 	cursor: pointer;
 	display: flex;
+	white-space: nowrap;
 }
 .star {
 	color: #ccc;
@@ -5468,10 +5478,10 @@ div.ok {
 }
 
 div.info, div.warning, div.error, div.green {
-	padding-top: 8px;
+	padding-top: 16px;
 	padding-left: 10px;
 	padding-right: 4px;
-	padding-bottom: 8px;
+	padding-bottom: 16px;
 	margin: 1em 0em 1em 0em;
 	border-radius: 5px;
 }
@@ -5695,7 +5705,7 @@ div.backgreypublicpayment {
 .poweredbypublicpayment {
 	float: right;
 	top: 8px;
-	right: 8px;
+	right: 12px;
 	position: absolute;
 	font-size: 0.8em;
 	color: #222;
@@ -5789,6 +5799,7 @@ div#card-errors {
 .ui-dialog-titlebar {
 }
 .ui-dialog-content {
+	margin-bottom: 10px;	/* same than .ui-widget-header */
 }
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
 	z-index: 1005 !important;		/* Default 101 with ui-jquery, top menu have a z-index of 1000 */
@@ -5806,6 +5817,24 @@ div#card-errors {
 	padding-top: 5px;
 	padding-bottom: 5px;
 }
+.ui-widget-header {
+	padding: 8px !important;
+	background: unset;
+	border: unset;
+	border-bottom: 1px solid #AAA;
+	margin-bottom: 12px;
+}
+button.ui-button-icon-only.ui-dialog-titlebar-close {
+	padding: 12px;
+	margin-top: -15px;
+}
+.ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-dialog-buttons.ui-draggable {
+	box-shadow: 5px 5px 20px #AAA;
+}
+.ui-dialog .ui-dialog-buttonpane {
+	padding: .5em 1em .3em .4em;
+}
+
 
 /* ============================================================================== */
 /* For content of image preview                                                   */
@@ -5855,7 +5884,7 @@ div.ui-tooltip {
 }
 div.ui-tooltip.mytooltip {
 	border: none !important;
-	padding: 10px 15px;
+	padding: 20px 20px;
 	border-radius: 4px;
 	margin: 2px;
 	font-stretch: condensed;
@@ -5902,8 +5931,6 @@ if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 		max-width: 230px;
 	}
 }
-
-
 
 
 
@@ -6171,6 +6198,11 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
 	margin: unset;
 }
 
+#divbodywebsite #websitetemplateconfigpage{
+	max-width: 1200px;
+	margin: 50px auto 0;
+}
+
 
 /* ============================================================================== */
 /*  Module agenda                                                                 */
@@ -6247,6 +6279,7 @@ td.peruser_holiday_imp {
 
 .cal_available { background: #0060d450; }
 .cal_chosen { background: #0060d4; }
+
 
 /* ============================================================================== */
 /*  Ajax - Combo list for autocompletion                                          */
@@ -8064,11 +8097,11 @@ div.tabsElem a.tab {
 	border: 1px solid #888;
 }
 .publicnewmemberform div.tabBarWithBottom {
-	border: 1px solid #e8e8e8;
+	border: 2px solid #e8e8e8;
 	padding: 30px;
 	border-radius: 8px;
-	background-color: var(--colorbackgrey);
-	/*box-shadow: 2px 2px 10px #ddd;*/
+	/* background-color: var(--colorbackgrey); */
+	box-shadow: 2px 2px 10px #ddd;
 }
 
 .publicnewmemberform #tablesubscribe {
@@ -8449,6 +8482,32 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 
 
 /* ============================================================================== */
+/* For dolUIBlock() feature                                                       */
+/* ============================================================================== */
+
+#dol-block-ui {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.6);
+	z-index: 9999;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#dol-block-ui .message {
+	padding: 15px 20px 15px 50px;
+	color: #fff;
+	background: #000 no-repeat 10px center;
+	border-radius: 10px;
+	font-family: sans-serif;
+}
+
+
+/* ============================================================================== */
 /* For copy-paste feature                                                         */
 /* ============================================================================== */
 
@@ -8498,7 +8557,7 @@ div.clipboardCPValue.hidewithsize {
 
 
 /* ============================================================================== */
-/* CSS style used for hrm skill/rank (may be we can remove this)                  */
+/* CSS style used for HRM skill/rank (may be we can remove this)                  */
 /* ============================================================================== */
 
 .radio_js_bloc_number {
@@ -8532,12 +8591,13 @@ div.clipboardCPValue.hidewithsize {
 }
 
 #virtualcard-iframe {
-	border: 40px solid #aaa;
+	border: 1px solid #aaa;
 	vertical-align: top;
 	width: 10%;
 	min-width: 100px;
 	border-radius: 10px;
 	aspect-ratio: 0.6;
+	box-shadow: 0 0 5px #bbb;
 }
 .nopointervent {
 	pointer-events: none;
@@ -8810,9 +8870,12 @@ table.jPicker {
 	.loginbuttonexternal {
 		width: 260px;
 	}
-	.side-nav-vert .user-menu .dropdown-menu {
-		width: 278px !important;	/* must be width of menu + padding + padding of sidenav */
+
+	.side-nav-vert .user-menu .dropdown-menu, #topmenu-bookmark-dropdown .dropdown-menu, #topmenu-quickadd-dropdown .dropdown-menu {
+		width: 285px !important;	/* must be width of menu + padding + padding of sidenav */
+		min-width: unset !important;
 	}
+
 	div.login_block_other {
 		margin-right: unset;
 	}
@@ -8937,6 +9000,12 @@ table.jPicker {
 
 @media only screen and (max-width: 768px)
 {
+	.pictofixedwidth {
+		text-align: start;
+		width: 1.5em;
+		/* padding-right: 0; */
+	}
+
 	.ai_dropdown{
 		min-width : 280px !important;
 		width: calc(100% - 50px);
@@ -9029,6 +9098,11 @@ table.jPicker {
 	.dropdown dd ul {
 		max-width: 230px;
 	}
+}
+
+/** For toggle Display of customer/Supplyer Invoices and Credit Notes on Payment Page */
+:where(#fourn-invoices-paiments-list,#customer-invoices-paiments-list)[data-display-all-invoices="1"] tr[data-row-type="2"]{
+	font-weight: bold;
 }
 
 <?php

@@ -8,6 +8,7 @@
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025  		Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -328,6 +329,13 @@ if (!empty($force_install_noedit)) {
 	if (!isset($dolibarr_main_db_host)) {
 		$dolibarr_main_db_host = "localhost";
 	}
+	if (!isset($dolibarr_main_db_port)) {
+		$dolibarr_main_db_port = "";
+	}
+	if (!isset($dolibarr_main_db_user)) {
+		$dolibarr_main_db_user = "";
+	}
+
 	?>
 	<tr>
 		<!-- Driver type -->

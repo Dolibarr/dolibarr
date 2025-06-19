@@ -50,3 +50,4 @@ ToReplace=يحل محل
 CantMoveNonExistantSerial=خطأ. أنت تطلب نقلًا على سجل لمسلسل لم يعد موجودًا بعد الآن. قد تأخذ نفس المسلسل في نفس المستودع عدة مرات في نفس الشحنة أو تم استخدامه بواسطة شحنة أخرى. قم بإزالة هذه الشحنة وإعداد واحدة أخرى.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=إصلاح تشغيل جدول الدفعة غير مكتمل باستخدام المعلمة '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= مطلوب تصحيح المخزون بسبب الرقم التسلسلي الفريد.
+ErrorBatchesNeedStockManagement=خطأ. يجب إدارة المنتج الذي لديه إدارة دفعات/دفعات في المخزون.

@@ -24,7 +24,7 @@
 /**
  * \file        class/position.class.php
  * \ingroup     hrm
- * \brief       This file is a CRUD class file for Position (Create/Read/Update/Delete)
+ * \brief       This file is a CRUD class file for Position (Create/Read/Update/Delete) = Link job - employee
  */
 
 // Put here all includes required by your class file

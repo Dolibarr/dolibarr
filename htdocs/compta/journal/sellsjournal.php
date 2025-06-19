@@ -257,7 +257,8 @@ if ($result) {
 print '<table class="liste noborder centpercent">';
 print '<tr class="liste_titre">';
 //print "<td>".$langs->trans("JournalNum")."</td>";
-print '<td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Piece').' ('.$langs->trans('InvoiceRef').')</td>';
+print '<td>'.$langs->trans('Date').'</td>';
+print '<td>'.$langs->trans('Piece').' ('.$langs->trans('InvoiceRef').')</td>';
 print '<td>'.$langs->trans('Account').'</td>';
 print '<td>'.$langs->trans('Type').'</td>';
 print '<td class="right">'.$langs->trans('AccountingDebit').'</td>';
@@ -306,8 +307,8 @@ foreach ($tabfac as $key => $val) {
 		foreach ($line['var'] as $k => $mt) {
 			if (isset($line['nomtcheck']) || $mt) {
 				print '<tr class="oddeven">';
-				print "<td>".dol_print_date($db->jdate($val["date"]))."</td>";
-				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
+				print '<td class="nowraponall">'.dol_print_date($db->jdate($val["date"]), 'day')."</td>";
+				print '<td class="tdoverflowmax150">'.$invoicestatic->getNomUrl(1)."</td>";
 				print "<td>".$k."</td><td>".$line['label']."</td>";
 
 				if (isset($line['inv'])) {

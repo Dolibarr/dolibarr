@@ -399,7 +399,7 @@ if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt(
 		//dol_syslog("_SESSION['token']=".$sessiontokenforthisurl, LOG_DEBUG);
 		// Do not output anything on standard output because this create problems when using the BACK button on browsers. So we just set a message into session.
 		if (!defined('NOTOKENRENEWAL')) {
-			// If the page is not a page that disable the token renewal, we report a warning message to explain token has epired.
+			// If the page is not a page that disable the token renewal, we report a warning message to explain token has expired.
 			setEventMessages('SecurityTokenHasExpiredSoActionHasBeenCanceledPleaseRetry', null, 'warnings', '', 1);
 		}
 		$savid = null;
@@ -1393,6 +1393,10 @@ if (!function_exists("llxHeader")) {
 
 		if (getDolGlobalString('MAIN_OPTIMIZEFORCOLORBLIND')) {
 			$tmpcsstouse .= ' colorblind-'.strip_tags(getDolGlobalString('MAIN_OPTIMIZEFORCOLORBLIND'));
+		}
+
+		if (GETPOST('dol_openinpopup', 'aZ09')) {
+			$tmpcsstouse .= ' dol_openinpopup';
 		}
 
 		print '<body id="mainbody" class="'.$tmpcsstouse.'">'."\n";
@@ -2433,7 +2437,8 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	// Defined the links for bottom of card
 	$profilLink = '<a accesskey="u" href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="button-top-menu-dropdown" title="'.dol_escape_htmltag($langs->trans("YourUserFile").' ('.$stringforfirstkey.' u)').'"><i class="fa fa-user"></i>  '.$langs->trans("Card").'</a>';
 	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $user->id);
-	$virtuelcardLink = dolButtonToOpenUrlInDialogPopup('publicvirtualcardmenu', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").(is_object($user) ? ' - '.$user->getFullName($langs) : '').' ('.$stringforfirstkey.' v)', img_picto($langs->trans("PublicVirtualCardUrl").' ('.$stringforfirstkey.' v)', 'card', ''), $urltovirtualcard, '', 'button-top-menu-dropdown marginleftonly nohover', "closeTopMenuLoginDropdown()", '', 'v');
+	$jsonopen = "closeTopMenuLoginDropdown()";
+	$virtuelcardLink = dolButtonToOpenUrlInDialogPopup('publicvirtualcardmenu', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").(is_object($user) ? ' - '.$user->getFullName($langs) : '').' ('.$stringforfirstkey.' v)', img_picto($langs->trans("PublicVirtualCardUrl").' ('.$stringforfirstkey.' v)', 'card', ''), $urltovirtualcard, '', 'button-top-menu-dropdown marginleftonly nohover', $jsonopen, '', 'v');
 	$logoutLink = '<a accesskey="l" href="'.$urllogout.'" class="button-top-menu-dropdown" title="'.dol_escape_htmltag($langs->trans("Logout").' ('.$stringforfirstkey.' l)').'"><i class="fa fa-sign-out-alt pictofixedwidth"></i><span class="hideonsmartphone">'.$langs->trans("Logout").'</span></a>';
 
 	$profilName = $user->getFullName($langs).' ('.$user->login.')';
@@ -3750,6 +3755,11 @@ if (!function_exists("llxFooter")) {
 		print "\n<!-- A div to allow dialog popup by jQuery('#dialogforpopup').dialog() -->\n";
 		print '<div id="dialogforpopup" style="display: none;"></div>'."\n";
 
+		// A div for the #uiblock
+		print "\n<!-- A div to allow uiblock by dolBlockUI(message) -->\n";
+		print '<div id="dol-block-ui" style="display: none;"><div class="message">Loading...</div></div>'."\n";
+
+
 		// Add code for the asynchronous anonymous first ping (for telemetry)
 		// You can use &forceping=1 in parameters to force the ping if the ping was already sent.
 		$forceping = GETPOST('forceping', 'alpha');
@@ -3776,7 +3786,7 @@ if (!function_exists("llxFooter")) {
 						$url_for_ping = getDolGlobalString('MAIN_URL_FOR_PING', "https://ping.dolibarr.org/");
 						// Try to guess the distrib used
 						$distrib = 'standard';
-						if ($_SERVER["SERVER_ADMIN"] == 'doliwamp@localhost') {
+						if (isset($_SERVER["SERVER_ADMIN"]) && $_SERVER["SERVER_ADMIN"] == 'doliwamp@localhost') {
 							$distrib = 'doliwamp';
 						}
 						if (!empty($dolibarr_distrib)) {

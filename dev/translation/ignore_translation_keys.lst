@@ -157,7 +157,6 @@ Bookings
 BoxTitleLast
 BoxTitleLatest
 BoxTitleLatestModifiedMyObjects
-ByDefault
 Bzip2
 CLI
 CSS
@@ -166,7 +165,6 @@ CalcModeLT
 CalculatedFromProductsToConsume
 CancelReception
 Candidatures
-CantConvertToReducAnInvoiceOfThisType
 CardFichinter
 CardProduct
 CashDeskBankAccountForStripeTerminal
@@ -963,8 +961,8 @@ Collation
 Config
 Creation
 CronLib
-CronModuleNotEnabledInThisEntity
 DateInitialBalance
+CronModuleNotEnabledInThisEntity
 Dimension
 Don
 ECM
@@ -974,7 +972,6 @@ ErrorLDAPFunctionsAreDisabledOnThisPHP
 ErrorUpdating
 Extra
 FailedToConnectToSFTPAfterSSHAuthentication
-FailedToLogin
 First
 GroupCreate
 GroupUpdate

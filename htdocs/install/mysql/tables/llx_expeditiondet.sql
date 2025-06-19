@@ -31,6 +31,7 @@ create table llx_expeditiondet
   qty               real,              						    -- Quantity
   fk_unit           integer, 				                    -- ID of unit code
   fk_entrepot       integer,           						    -- Warehouse for departure of product
+  description		text,										-- Product description/label of non origin
   rang              integer  DEFAULT 0,							-- Position of line
   extraparams		varchar(255)				 				-- To save other parameters in json format
 )ENGINE=innodb;

@@ -132,8 +132,6 @@ print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 $head = webportalAdminPrepareHead();
 print dol_get_fiche_head($head, 'themesettings', $langs->trans($title), -1, "webportal");
 
-// Setup page goes here
-//print info_admin($langs->trans("UserAccountForWebPortalAreInThirdPartyTabHelp"));
 
 if ($action == 'edit') {
 	print $formSetup->generateOutput(true);

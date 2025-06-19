@@ -29,8 +29,8 @@ CronExecute=ابھی لانچ کریں۔
 CronConfirmExecute=کیا آپ واقعی ان طے شدہ ملازمتوں کو ابھی انجام دینا چاہتے ہیں؟
 CronInfo=شیڈول کردہ جاب ماڈیول ملازمتوں کو خود بخود انجام دینے کے لیے شیڈول کرنے کی اجازت دیتا ہے۔ ملازمتیں دستی طور پر بھی شروع کی جا سکتی ہیں۔
 CronTask=جاب
-CronNone=Next run of scheduled task
-CronNotYetRan=Never executed
+CronNone=طے شدہ کام کا اگلا دوڑ
+CronNotYetRan=کبھی پھانسی نہیں دی گئی۔
 CronDtStart=پہلے نہیں۔
 CronDtEnd=کے بعد نہیں۔
 CronDtNextLaunch=اگلی پھانسی
@@ -50,7 +50,7 @@ JobFinished=کام شروع ہوا اور ختم ہوا۔
 Scheduled=طے شدہ
 #Page card
 CronAdd=ملازمتیں شامل کریں۔
-CronEvery=Run job every
+CronEvery=ہر کام چلائیں۔
 CronObject=مثال/تخلیق کے لیے آبجیکٹ
 CronArgs=پیرامیٹرز
 CronSaveSucess=کامیابی سے محفوظ کریں۔
@@ -77,6 +77,7 @@ CronType=ملازمت کی قسم
 CronType_method=پی ایچ پی کلاس کا کال طریقہ
 CronType_command=شیل کمانڈ
 CronCannotLoadClass=کلاس فائل %s لوڈ نہیں کی جا سکتی (کلاس %s استعمال کرنے کے لیے)
+CronModuleNotEnabledInThisEntity=Cron module not enabled in this entity (to use %s method of %s object)
 CronCannotLoadObject=کلاس فائل %s لوڈ کی گئی تھی، لیکن اس میں آبجیکٹ %s نہیں ملا
 UseMenuModuleToolsToAddCronJobs=مینو میں جائیں " <a href="%s"> ہوم - ایڈمن ٹولز - شیڈیولڈ جابز </a>" شیڈول جابز کو دیکھنے اور ان میں ترمیم کرنے کے لیے۔
 JobDisabled=ملازمت غیر فعال

@@ -1245,6 +1245,9 @@ class ActionComm extends CommonObject
 					if (!is_array($val)) {	// For backward compatibility when val=id
 						$val = array('id' => $val);
 					}
+					if (!isset($val['id']) || !is_scalar($val['id'])) {
+						continue;
+					}
 					if (!empty($already_inserted[$val['id']])) {
 						continue;
 					}
@@ -1706,7 +1709,7 @@ class ActionComm extends CommonObject
 
 	/**
 	 *  Return URL of event
-	 *  Use $this->id, $this->type_code, $this->label and $this->type_label
+	 *  This uses $this->id, $this->type_code, $this->label and $this->type_label
 	 *
 	 *  @param	int<0,2>	$withpicto				0 = No picto, 1 = Include picto into link, 2 = Only picto
 	 *  @param	int			$maxlength				Max number of characters into label. If negative, use the ref as label.
@@ -1759,7 +1762,7 @@ class ActionComm extends CommonObject
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
 			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
-			$label = '';
+			//$label = '';		// $label is used as ref when $maxlength is not negative, so we must not empty it.
 		} else {
 			$label = implode($this->getTooltipContentArray($params));
 		}

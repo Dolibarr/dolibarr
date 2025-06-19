@@ -132,7 +132,7 @@ a.vmenu span, span.vmenu, span.vmenu span {
 	/* To force no color on picto in left menu */
 	/* color: var(--colortextbackvmenu) !important; */
 }
-div.login_block_other a {
+div.login_block_other:not(.takepos) a {
 	color: var(--colortextbackvmenu);
 }
 
@@ -407,6 +407,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 .info-box-sm .info-box-module-enabled {
 	/* background: linear-gradient(0.35turn, #fff, #fff, #f6faf8, #e4efe8) */
 	background: var(--infoboxmoduleenabledbgcolor);
+	border-radius: 6px;
 }
 .info-box-content-warning span.font-status4 {
 	color: #bc9526 !important;
@@ -608,6 +609,8 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .kanban.kanbancollapsed {
 	flex: unset;
 	width: 80px;
+	max-width: 80px;
+	overflow: hidden;
 }
 .kanban.kanbancollapsed .kanbanlabel, .text-vertical {
 	writing-mode: vertical-rl;
@@ -672,7 +675,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	max-width: 350px;
 }
 .info-box-module .info-box-content {
-	height: 6.3em;
+	height: 94px;
 }
 .fright {
 	float:right;

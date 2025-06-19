@@ -41,13 +41,8 @@ if (empty($conf) || !is_object($conf)) {
 	exit(1);
 }
 
-
 if (empty($langs)) {
 	print 'Parameter langs not defined.';
-	exit(1);
-}
-if (empty($object)) {
-	print 'Parameter object not defined.';
 	exit(1);
 }
 if (empty($htmlname)) {
@@ -147,11 +142,13 @@ if ($showlinktolayout) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 			$formmail = new FormMail($db);
 		}
-		$out .= $formmail->getModelEmailTemplate($htmlname, $showlinktolayout);
+		$out .= $formmail->getEmailLayoutSelector($htmlname, $showlinktolayout);
 	}
 } else {
 	$out .= '<!-- No link to the layout feature, $formmail->withlayout must be set to a string use case, module WYSIWYG must be enabled and MAIN_EMAIL_USE_LAYOUT must be set -->';
 }
+
+/** @var ?FormAI $formai */
 
 if ($showlinktoai) {
 	if (empty($formai) || $formai instanceof FormAI) {
@@ -163,7 +160,7 @@ if ($showlinktoai) {
 	if (empty($onlyenhancements)) {
 		$onlyenhancements = '';
 	}
-	if (!empty($aiprompt)) {
+	if (!empty($aiprompt) && !empty($object)) {
 		$formai->setSubstitFromObject($object, $langs);
 		$aiprompt = make_substitutions($aiprompt, $formai->substit);
 	}

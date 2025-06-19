@@ -3075,7 +3075,6 @@ abstract class CommonObject
 				if (get_class($this) == 'Fournisseur') {
 					$this->cond_reglement_supplier_id = $id;
 				}
-				$this->cond_reglement = $id; // for compatibility
 				$this->deposit_percent = $deposit_percent;
 				return 1;
 			} else {
@@ -3496,14 +3495,14 @@ abstract class CommonObject
 		dol_syslog(get_class($this)."::getChildrenOfLine search children lines for line ".$id, LOG_DEBUG);
 
 		$resql = $this->db->query($sql);
-		if ($resql) {
-			if ($this->db->num_rows($resql) > 0) {
-				while ($row = $this->db->fetch_row($resql)) {
-					$rows[] = $row[0];
-					if (!empty($includealltree) && $includealltree <= 1000) {	// Test <= 1000 is a protection in depth of recursive call to avoid infinite loop
-						$rows = array_merge($rows, $this->getChildrenOfLine($row[0], $includealltree + 1));
-					}
-				}
+		if (!$resql || $this->db->num_rows($resql) <= 0) {
+			return array();
+		}
+
+		while ($row = $this->db->fetch_row($resql)) {
+			$rows[] = $row[0];
+			if (!empty($includealltree) && $includealltree <= 1000) {	// Test <= 1000 is a protection in depth of recursive call to avoid infinite loop
+				$rows = array_merge($rows, $this->getChildrenOfLine($row[0], $includealltree + 1));
 			}
 		}
 		return $rows;
@@ -4910,8 +4909,6 @@ abstract class CommonObject
 	 */
 	public function getCanvas($id = 0, $ref = '')
 	{
-		global $conf;
-
 		if (empty($id) && empty($ref)) {
 			return 0;
 		}
@@ -5105,7 +5102,7 @@ abstract class CommonObject
 	 */
 	public function getTotalDiscount()
 	{
-		if (!empty($this->table_element_line)) {
+		if (!empty($this->table_element_line) && ($this->table_element_line != 'expeditiondet')) {
 			$total_discount = 0.00;
 
 			$sql = "SELECT subprice as pu_ht, qty, remise_percent, total_ht";
@@ -5567,6 +5564,7 @@ abstract class CommonObject
 	{
 		global $langs, $hookmanager, $form, $action;
 
+		print '<!-- printOriginLinesList '.get_class($this).' -->'."\n";
 		print '<tr class="liste_titre">';
 		print '<td class="linecolref">'.$langs->trans('Ref').'</td>';
 		print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
@@ -5581,7 +5579,9 @@ abstract class CommonObject
 		}
 		print '<td class="linecoldiscount right">'.$langs->trans('ReductionShort').'</td>';
 		print '<td class="linecolht right">'.$langs->trans('TotalHT').'</td>';
-		print '<td class="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
+		print '<td class="center">';
+		print $form->showCheckAddButtons('checkforselect', 1);
+		print '</td>';
 		print '</tr>';
 		$i = 0;
 
@@ -5642,6 +5642,7 @@ abstract class CommonObject
 			}
 		}
 
+		// Set thevalue into ->tpl[] array.
 		$this->tpl['id'] = $line->id;
 
 		$this->tpl['label'] = '';
@@ -5673,7 +5674,7 @@ abstract class CommonObject
 				$this->tpl['label'] .= get_date_range($date_start, $date_end);
 			}
 		} else {
-			$this->tpl['label'] .= ($line->product_type == -1 ? '&nbsp;' : ($line->product_type == 1 ? img_object($langs->trans(''), 'service') : img_object($langs->trans(''), 'product')));
+			$this->tpl['label'] .= ($line->product_type == -1 ? '&nbsp;' : ($line->product_type == 1 ? img_object($langs->trans('Service'), 'service', 'class="pictofixedwidth"') : img_object($langs->trans('Product'), 'product', 'class="pictofixedwidth"')));
 			if (!empty($line->desc)) {
 				$this->tpl['label'] .= $line->desc;
 			} else {
@@ -6782,7 +6783,7 @@ abstract class CommonObject
 					if (!is_numeric($value) && $value != '') {
 						$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 						return -1;
-					} elseif ($value == '') {
+					} elseif ($value === '') {
 						$new_array_options[$key] = null;
 					}
 					break;
@@ -7532,6 +7533,7 @@ abstract class CommonObject
 	{
 		global $conf, $langs, $form;
 
+
 		// TODO pass the current object as a parameter to give more flexibility (like disable showing input for extra fields when canAlwaysBeEdited is false and $object->status is not draft...)
 
 		if (!is_object($form)) {
@@ -7798,7 +7800,7 @@ abstract class CommonObject
 			}
 			$out .= '</div>';
 			$out .= '<script>
-				jQuery(function($) {
+				jQuery(function($) {	/* commonobject.class.php 1 */
 					let container = $("#'.$keyprefix.$key.$keysuffix.'_selection");
 					let selectedStars = parseInt($("#'.$keyprefix.$key.$keysuffix.'").val()) || 0;
 					container.find(".star").each(function() {
@@ -8615,7 +8617,7 @@ abstract class CommonObject
 			}
 			$value .= '</div>';
 			$value .= '<script>
-				$(document).ready(function() {
+				$(document).ready(function() {	/* commonobject.class.php 2 */
 						let container = $("#'.$keyprefix.$key.$keysuffix.$this->id.'_selection");
 						let selectedStars = parseInt($("#'.$keyprefix.$key.$keysuffix.$this->id.'").val()) || 0;
 						container.find(".star").each(function() {
@@ -10926,6 +10928,7 @@ abstract class CommonObject
 					if (!empty($deleteFromObject[3])) {
 						$filter = $deleteFromObject[3];
 					}
+
 					if (dol_include_once($filePath)) {
 						$childObject = new $className($this->db);
 						if (method_exists($childObject, 'deleteByParentField')) {
@@ -11031,7 +11034,28 @@ abstract class CommonObject
 		$error = 0;
 		$deleted = 0;
 
+		//dol_syslog("deleteByParentField for ".$parentId.' '.$parentField);
+
 		if (!empty($parentId) && !empty($parentField)) {
+			if (empty($this->table_element)) {
+				$this->error = 'Property table_element for object is not defined';
+				$this->errors[] = $this->error;
+				$error++;
+				return -1;
+			}
+			if (!method_exists($this, 'fetch')) {
+				$this->error = 'Method fetch for object is not defined';
+				$this->errors[] = $this->error;
+				$error++;
+				return -1;
+			}
+			if (!method_exists($this, 'delete')) {
+				$this->error = 'Method delete for object is not defined';
+				$this->errors[] = $this->error;
+				$error++;
+				return -1;
+			}
+
 			$this->db->begin();
 
 			$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element;
@@ -11471,6 +11495,9 @@ abstract class CommonObject
 						$element = 'projet/'.dol_sanitizeFileName($this->project->ref).'/';
 					}
 					// no break
+				case 'contrat':
+					$element = 'contract';
+					break;
 				default:
 					$element = $this->element;
 			}

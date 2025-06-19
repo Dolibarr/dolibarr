@@ -103,10 +103,15 @@ Recopy the content of the output file into the file ChangeLog.
 This files describe steps made by Dolibarr packaging team to make a complete release of Dolibarr, step by step.
 We suppose the branch x.y has already been created during the beta (see previous step) and we want to release a version x.y.z (with z >= 0)
 
+- Check there is no pending issue with flag "Priority High/Blocking". List can be found here: https://github.com/Dolibarr/dolibarr/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22Priority%20-%20High%20%2F%20Blocking%22
+
+- Check there is no pending open security issu: List can be found here: https://github.com/Dolibarr/dolibarr/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22Priority%20-%20Critical%20or%20Security%22
+
 - Check all files are committed.
+
 - Update version/info in ChangeLog, for this:
 
-To generate a changelog of a **major new version** x.y.0 (from a repo on branch develop), you can do
+To generate a changelog of a **major new version** x.0.0 (from a repo on branch develop), you can do
 
 ```
 cd ~/git/dolibarr

@@ -222,3 +222,15 @@ UPDATE llx_c_units SET scale = 1 WHERE code = 'S';
 UPDATE llx_c_tva SET taux = 3 WHERE fk_pays = 102 AND taux = 16;
 
 UPDATE llx_menu SET url = CONCAT(url, '&mode=init') WHERE fk_mainmenu = 'ticket' AND titre = 'NewTicket' AND url LIKE '/ticket/card.php?action=create%' AND url NOT LIKE '%mode=init%';
+
+-- VMYSQL4.1 ALTER TABLE llx_asset MODIFY COLUMN not_depreciated boolean DEFAULT false;
+-- VPGSQL8.2 ALTER TABLE llx_asset ALTER COLUMN not_depreciated DROP DEFAULT, ALTER COLUMN not_depreciated TYPE boolean USING not_depreciated::integer <> 0, ALTER COLUMN not_depreciated SET DEFAULT false;
+
+-- VMYSQL4.1 ALTER TABLE llx_asset MODIFY COLUMN disposal_depreciated boolean DEFAULT false;
+-- VPGSQL8.2 ALTER TABLE llx_asset ALTER COLUMN disposal_depreciated DROP DEFAULT, ALTER COLUMN disposal_depreciated TYPE boolean USING disposal_depreciated::integer <> 0, ALTER COLUMN disposal_depreciated SET DEFAULT false;
+
+-- VMYSQL4.1 ALTER TABLE llx_asset MODIFY COLUMN disposal_subject_to_vat boolean DEFAULT false;
+-- VPGSQL8.2 ALTER TABLE llx_asset ALTER COLUMN disposal_subject_to_vat DROP DEFAULT, ALTER COLUMN disposal_subject_to_vat TYPE boolean USING disposal_subject_to_vat::integer <> 0, ALTER COLUMN disposal_subject_to_vat SET DEFAULT false;
+
+-- VMYSQL4.1 ALTER TABLE llx_asset_depreciation_options_economic MODIFY COLUMN accelerated_depreciation_option boolean DEFAULT false;
+-- VPGSQL8.2 ALTER TABLE llx_asset ALTER COLUMN llx_asset_depreciation_options_economic DROP DEFAULT, ALTER COLUMN llx_asset_depreciation_options_economic TYPE boolean USING llx_asset_depreciation_options_economic::integer <> 0, ALTER COLUMN llx_asset_depreciation_options_economic SET DEFAULT false;

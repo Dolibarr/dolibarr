@@ -61,6 +61,11 @@ if (empty($object) || !is_object($object)) {
 @phan-var-force string $var
 ';
 
+// Handle subtotals line edit
+if (defined('SUBTOTALS_SPECIAL_CODE') && $line->special_code == SUBTOTALS_SPECIAL_CODE) {
+	return require DOL_DOCUMENT_ROOT.'/core/tpl/subtotal_edit.tpl.php';
+}
+
 $usemargins = 0;
 if (isModEnabled('margin') && !empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande'))) {
 	$usemargins = 1;

@@ -47,7 +47,7 @@ if (isModEnabled('order')) {
 }
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionlinebatch.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonsignedobject.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/subtotals/class/commonsubtotal.class.php';
 
 /**
  *	Class to manage shipments
@@ -58,6 +58,7 @@ class Expedition extends CommonObject
 {
 	use CommonIncoterm;
 	use CommonSignedObject;
+	use CommonSubtotal;
 
 	/**
 	 * @var string ID to identify managed object
@@ -500,6 +501,14 @@ class Expedition extends CommonObject
 				$kits_list = array();
 				if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
 					for ($i = 0; $i < $num; $i++) {
+						$objectsrc = new OrderLine($this->db);
+						$objectsrc->fetch($this->lines[$i]->origin_line_id);
+						if ($this->lines[$i]->product_type == "9" && $objectsrc->special_code == SUBTOTALS_SPECIAL_CODE) {
+							if ($this->create_line($this->lines[$i]->entrepot_id, $this->lines[$i]->origin_line_id, $this->lines[$i]->qty, $this->lines[$i]->rang, $this->lines[$i]->array_options) <= 0) {
+								$error++;
+							}
+							continue;
+						}
 						if (empty($this->lines[$i]->product_type) || getDolGlobalString('STOCK_SUPPORTS_SERVICES') || getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
 							// virtual products
 							$line = $this->lines[$i];
@@ -1917,7 +1926,7 @@ class Expedition extends CommonObject
 		$sql .= ", cd.total_ht, cd.total_localtax1, cd.total_localtax2, cd.total_ttc, cd.total_tva";
 		$sql .= ", cd.fk_remise_except, cd.fk_product_fournisseur_price as fk_fournprice";
 		$sql .= ", cd.vat_src_code, cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.localtax1_type, cd.localtax2_type, cd.info_bits, cd.price, cd.subprice, cd.remise_percent,cd.buy_price_ht as pa_ht";
-		$sql .= ", cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc, cd.rang, cd.date_start, cd.date_end";
+		$sql .= ", cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc, cd.rang, cd.date_start, cd.date_end, cd.special_code";
 		$sql .= ", ed.rowid as line_id, ed.qty as qty_shipped, ed.fk_element, ed.fk_elementdet, ed.element_type, ed.fk_entrepot, ed.extraparams";
 		$sql .= ", p.ref as product_ref, p.label as product_label, p.fk_product_type, p.barcode as product_barcode";
 		$sql .= ", p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units";
@@ -2054,6 +2063,8 @@ class Expedition extends CommonObject
 
 				$line->date_start       = $this->db->jdate($obj->date_start);
 				$line->date_end         = $this->db->jdate($obj->date_end);
+
+				$line->special_code     = $obj->special_code;
 
 				// Multicurrency
 				$this->fk_multicurrency = $obj->fk_multicurrency;

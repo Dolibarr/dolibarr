@@ -69,6 +69,82 @@ class EventAttendees extends DolibarrApi
 	}
 
 	/**
+	 * Delete an event attendee
+	 *
+	 * @param   int     $id         event attendee ID
+	 * @return  array
+	 * @phan-return array<array<string,int|string>>
+	 * @phpstan-return array<array<string,int|string>>
+	 *
+	 * @url	DELETE {id}
+	 *
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 500
+	 */
+	public function deleteById($id)
+	{
+		$allowaccess = $this->_checkAccessRights('delete', 0);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied read access to Event attendees');
+		}
+
+		$result = $this->event_attendees->fetch($id, '');
+		if (!$result) {
+			throw new RestException(404, 'Event attendee with id '.$id.' not found');
+		}
+
+		if (!$this->event_attendees->delete(DolibarrApiAccess::$user)) {
+			throw new RestException(500, 'Error when delete event attendee : '.$this->event_attendees->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'event attendee deleted'
+			)
+		);
+	}
+
+	/**
+	 * Delete an event attendee
+	 *
+	 * @param   string     $ref         event attendee ref
+	 * @return  array
+	 * @phan-return array<array<string,int|string>>
+	 * @phpstan-return array<array<string,int|string>>
+	 *
+	 * @url	DELETE ref/{ref}
+	 *
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 500
+	 */
+	public function deleteByRef($ref)
+	{
+		$allowaccess = $this->_checkAccessRights('delete', 0);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied read access to Event attendees');
+		}
+
+		$result = $this->event_attendees->fetch(0, $ref);
+		if (!$result) {
+			throw new RestException(404, "Event attendee with ref ".$ref." not found");
+		}
+
+		if (!$this->event_attendees->delete(DolibarrApiAccess::$user)) {
+			throw new RestException(500, 'Error when delete event attendee : '.$this->event_attendees->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'event attendee deleted'
+			)
+		);
+	}
+
+	/**
 	 * Get properties of a event attendee by id
 	 *
 	 * Return an array with event attendee information

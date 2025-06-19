@@ -260,8 +260,8 @@ foreach ($tabfac as $key => $val) {
 		foreach ($line['var'] as $k => $mt) {
 			if (isset($line['nomtcheck']) || $mt) {
 				print '<tr class="oddeven">';
-				print "<td>".dol_print_date($db->jdate($val["date"]))."</td>";
-				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
+				print '<td class="nowraponall">'.dol_print_date($db->jdate($val["date"]), 'day')."</td>";
+				print '<td class="tdoverflowmax150">'.$invoicestatic->getNomUrl(1)."</td>";
 				print "<td>".$k."</td>";
 				print "<td>".$line['label']."</td>";
 
