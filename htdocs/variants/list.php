@@ -866,7 +866,7 @@ print '</div>'."\n";
 
 print '</form>'."\n";
 
-$forcereloadpage = getDolGlobalString('MAIN_FORCE_RELOAD_PAGE') ? 1 : 0;
+$forcereloadpage = getDolGlobalInt('MAIN_FORCE_RELOAD_PAGE');
 $tagidfortablednd = (empty($tagidfortablednd) ? 'tableattributes' : $tagidfortablednd);
 ?>
 	<script>
@@ -887,7 +887,7 @@ $tagidfortablednd = (empty($tagidfortablednd) ? 'tableattributes' : $tagidfortab
 
 			$("#<?php echo $tagidfortablednd; ?>").tableDnD({
 				onDrop: function(table, row) {
-					console.log('drop');
+					console.log('onDrop variant .tableDnD');
 					$('#<?php echo $tagidfortablednd; ?> tr[data-element=extrafield]').attr('id', '');	// Set extrafields id to empty value in order to ignore them in tableDnDSerialize function
 					$('#<?php echo $tagidfortablednd; ?> tr[data-ignoreidfordnd=1]').attr('id', '');	// Set id to empty value in order to ignore them in tableDnDSerialize function
 					var reloadpage = "<?php echo $forcereloadpage; ?>";

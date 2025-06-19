@@ -3603,12 +3603,12 @@ abstract class CommonObject
 	 *
 	 * 	@param	int		$rowid		Id of line
 	 * 	@param	int		$rang		Position
-	 * 	@return	void
+	 * 	@return	int<-1,1>			Return integer <0 if KO, >0 if OK
 	 */
 	public function updateLineUp($rowid, $rang)
 	{
 		if ($rang <= 1) {
-			return;
+			return -1;
 		}
 
 		$fieldposition = 'rang';
@@ -3620,15 +3620,18 @@ abstract class CommonObject
 		$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
 		$sql .= " AND " . $fieldposition . " = " . ((int) ($rang - 1));
 		if (!$this->db->query($sql)) {
-			dol_print_error($this->db);
-			return;
+			$this->error = $this->db->lasterror();
+			return -1;
 		}
 
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) ($rang - 1));
 		$sql .= ' WHERE rowid = '.((int) $rowid);
 		if (!$this->db->query($sql)) {
-			dol_print_error($this->db);
+			$this->error = $this->db->lasterror();
+			return -1;
 		}
+
+		return 1;
 	}
 
 	/**
@@ -7847,6 +7850,7 @@ abstract class CommonObject
 
 			$tmpselect = '';
 			$nbchoice = 0;
+
 			foreach ($param['options'] as $keyb => $valb) {
 				if ((string) $keyb == '') {
 					continue;
@@ -7865,7 +7869,7 @@ abstract class CommonObject
 			}
 
 			$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
-			if ((!isset($this->fields[$key]['default'])) || ($this->fields[$key]['notnull'] != 1) || $nbchoice >= 2) {
+			if ((!isset($this->fields[$key]['default'])) || empty($this->fields[$key]['notnull']) || ($this->fields[$key]['notnull'] != 1) || $nbchoice >= 2) {
 				$out .= '<option value="0">&nbsp;</option>';
 			}
 			$out .= $tmpselect;
