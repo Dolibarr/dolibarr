@@ -339,4 +339,3 @@ function _error(string $message): void
 	_out('Error: ' . $message);
 	exit;
 }
-
