@@ -138,10 +138,11 @@ $form = new Form($db);
 										</button>
 									</div>
 								</td>
-								<td><input class="flat" type="text" name="search_firstname" value=""></td>
-								<td><input class="flat" type="text" name="search_lasttname" value=""></td>
+								<td><input class="flat maxwidth150" type="text" name="search_firstname" value=""></td>
+								<td><input class="flat maxwidth150" type="text" name="search_lasttname" value=""></td>
 								<td class="center"><input class="maxwidth50 flat" type="text" name="search_age" value=""></td>
 								<td class="right"><input class="flat" type="text" name="search_country" value=""></td>
+								<td class="right"></td>
 							</tr>
 							<tr class="liste_titre">
 								<th>
@@ -181,15 +182,17 @@ $form = new Form($db);
 								<th class="wrapcolumntitle left" title="Last Name">Last Name</th>
 								<th class="wrapcolumntitle center" title="Age">Age</th>
 								<th class="wrapcolumntitle right" title="Country">Country</th>
+								<th class="wrapcolumntitle center" title="action">action</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr class="oddeven row-with-select" >
 								<td><input class="checkforselect" type="checkbox" name="" value="" ></td>
-								<td class="left">John</td>
+								<td class="left"><a href="#top" >This is a link</a></td>
 								<td class="left">Doe</td>
 								<td class="center">37</td>
 								<td class="right">U.S.A</td>
+								<td class="center"><button >Button</button></td>
 							</tr>
 							<tr class="oddeven row-with-select">
 								<td><input class="checkforselect" type="checkbox" name="" value="" ></td>
@@ -197,6 +200,7 @@ $form = new Form($db);
 								<td class="left">Sparrow</td>
 								<td class="center">29</td>
 								<td class="right">Caribbean</td>
+								<td class="center"><button >Button</button></td>
 							</tr>
 							<tr class="oddeven row-with-select">
 								<td><input class="checkforselect" type="checkbox" name="" value="" ></td>
@@ -204,6 +208,7 @@ $form = new Form($db);
 								<td class="left">Ketchum</td>
 								<td class="center">16</td>
 								<td class="right">Kanto</td>
+								<td class="center"><button >Button</button></td>
 							</tr>
 							<tr class="oddeven row-with-select">
 								<td><input class="checkforselect" type="checkbox" name="" value="" ></td>
@@ -211,6 +216,7 @@ $form = new Form($db);
 								<td class="left">Einstein</td>
 								<td class="center">72</td>
 								<td class="right">Germany</td>
+								<td class="center"><button >Button</button></td>
 							</tr>
 							<tr class="oddeven row-with-select" >
 								<td><input class="checkforselect" type="checkbox" name="" value="" ></td>
@@ -218,6 +224,7 @@ $form = new Form($db);
 								<td class="left">Doe</td>
 								<td class="center">37</td>
 								<td class="right">U.S.A</td>
+								<td class="center"><button >Button</button></td>
 							</tr>
 							<tr class="oddeven row-with-select">
 								<td><input class="checkforselect" type="checkbox" name="" value="" ></td>
@@ -225,6 +232,7 @@ $form = new Form($db);
 								<td class="left">Sparrow</td>
 								<td class="center">29</td>
 								<td class="right">Caribbean</td>
+								<td class="center"><button >Button</button></td>
 							</tr>
 							<tr class="oddeven row-with-select">
 								<td><input class="checkforselect" type="checkbox" name="" value="" ></td>
@@ -232,6 +240,7 @@ $form = new Form($db);
 								<td class="left">Ketchum</td>
 								<td class="center">16</td>
 								<td class="right">Kanto</td>
+								<td class="center"><button >Button</button></td>
 							</tr>
 							<tr class="oddeven row-with-select">
 								<td><input class="checkforselect" type="checkbox" name="" value="" ></td>
@@ -239,6 +248,7 @@ $form = new Form($db);
 								<td class="left">Einstein</td>
 								<td class="center">72</td>
 								<td class="right">Germany</td>
+								<td class="center"><button >Button</button></td>
 							</tr>
 							<tr class="oddeven row-with-select" >
 								<td><input class="checkforselect" type="checkbox" name="" value="" ></td>
@@ -246,6 +256,7 @@ $form = new Form($db);
 								<td class="left">Doe</td>
 								<td class="center">37</td>
 								<td class="right">U.S.A</td>
+								<td class="center"><button >Button</button></td>
 							</tr>
 							<tr class="oddeven row-with-select">
 								<td><input class="checkforselect" type="checkbox" name="" value="" ></td>
@@ -253,6 +264,7 @@ $form = new Form($db);
 								<td class="left">Sparrow</td>
 								<td class="center">29</td>
 								<td class="right">Caribbean</td>
+								<td class="center"><button >Button</button></td>
 							</tr>
 							<tr class="oddeven row-with-select">
 								<td><input class="checkforselect" type="checkbox" name="" value="" ></td>
@@ -260,6 +272,7 @@ $form = new Form($db);
 								<td class="left">Ketchum</td>
 								<td class="center">16</td>
 								<td class="right">Kanto</td>
+								<td class="center"><button >Button</button></td>
 							</tr>
 							<tr class="oddeven row-with-select">
 								<td><input class="checkforselect" type="checkbox" name="" value="" ></td>
@@ -267,6 +280,7 @@ $form = new Form($db);
 								<td class="left">Einstein</td>
 								<td class="center">72</td>
 								<td class="right">Germany</td>
+								<td class="center"><button >Button</button></td>
 							</tr>
 							<tr class="oddeven row-with-select" >
 								<td><input class="checkforselect" type="checkbox" name="" value="" ></td>
@@ -274,6 +288,7 @@ $form = new Form($db);
 								<td class="left">Doe</td>
 								<td class="center">37</td>
 								<td class="right">U.S.A</td>
+								<td class="center"><button >Button</button></td>
 							</tr>
 							<tr class="oddeven row-with-select">
 								<td><input class="checkforselect" type="checkbox" name="" value="" ></td>
@@ -281,6 +296,7 @@ $form = new Form($db);
 								<td class="left">Sparrow</td>
 								<td class="center">29</td>
 								<td class="right">Caribbean</td>
+								<td class="center"><button >Button</button></td>
 							</tr>
 							<tr class="oddeven row-with-select">
 								<td><input class="checkforselect" type="checkbox" name="" value="" ></td>
@@ -288,6 +304,7 @@ $form = new Form($db);
 								<td class="left">Ketchum</td>
 								<td class="center">16</td>
 								<td class="right">Kanto</td>
+								<td class="center"><button >Button</button></td>
 							</tr>
 							<tr class="oddeven row-with-select">
 								<td><input class="checkforselect" type="checkbox" name="" value="" ></td>
@@ -295,6 +312,7 @@ $form = new Form($db);
 								<td class="left">Einstein</td>
 								<td class="center">72</td>
 								<td class="right">Germany</td>
+								<td class="center"><button >Button</button></td>
 							</tr>
 						</tbody>
 					</table>
@@ -337,7 +355,7 @@ $form = new Form($db);
 						 * Because Ctrl + Click on link is also used for open ion a new tab
 						 * we need to block select tool
 						 */
-						$(document).on("click", ".row-with-select a, .row-with-select button", function (e) {
+						$(document).on("click", ".row-with-select a, .row-with-select button, [role='button']", function (e) {
 							// we need to block select tool
 							if (e.ctrlKey) {
 								e.stopPropagation();
