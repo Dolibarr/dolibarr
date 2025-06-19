@@ -553,12 +553,6 @@ parameters:
 			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
 
 		-
-			message: '#^Call to function is_array\(\) with non\-empty\-array will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/accountancy/class/lettering.class.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -1641,18 +1635,6 @@ parameters:
 		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
-			count: 1
-			path: ../../../htdocs/admin/system/security.php
-
-		-
-			message: '#^Variable \$dolibarr_main_document_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/admin/system/security.php
-
-		-
-			message: '#^Variable \$dolibarr_main_prod might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/admin/system/security.php
 
@@ -3103,12 +3085,6 @@ parameters:
 			path: ../../../htdocs/comm/action/info.php
 
 		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/comm/action/info.php
-
-		-
 			message: '#^Variable \$socid might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -3673,18 +3649,6 @@ parameters:
 			path: ../../../htdocs/comm/propal/document.php
 
 		-
-			message: '#^Loose comparison using \=\= between \-1 and 0 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/comm/propal/list.php
-
-		-
-			message: '#^Loose comparison using \=\= between \-1 and 1 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/comm/propal/list.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 1
@@ -3700,12 +3664,6 @@ parameters:
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 2
-			path: ../../../htdocs/comm/propal/list.php
-
-		-
-			message: '#^Variable \$searchCategoryCustomerList in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
 			path: ../../../htdocs/comm/propal/list.php
 
 		-
@@ -3916,18 +3874,6 @@ parameters:
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 6
-			path: ../../../htdocs/commande/list.php
-
-		-
-			message: '#^Loose comparison using \=\= between \-1 and 0 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/commande/list.php
-
-		-
-			message: '#^Loose comparison using \=\= between \-1 and 1 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
 			path: ../../../htdocs/commande/list.php
 
 		-
@@ -5641,18 +5587,6 @@ parameters:
 			path: ../../../htdocs/compta/sociales/payments.php
 
 		-
-			message: '#^Loose comparison using \=\= between \-1 and 0 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/compta/stats/cabyprodserv.php
-
-		-
-			message: '#^Loose comparison using \=\= between \-1 and 1 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/compta/stats/cabyprodserv.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
@@ -6445,18 +6379,6 @@ parameters:
 			path: ../../../htdocs/contrat/index.php
 
 		-
-			message: '#^Loose comparison using \=\= between \-1 and 0 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/contrat/list.php
-
-		-
-			message: '#^Loose comparison using \=\= between \-1 and 1 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/contrat/list.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -6634,12 +6556,6 @@ parameters:
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/core/actions_linkedfiles.inc.php
-
-		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
 			path: ../../../htdocs/core/actions_linkedfiles.inc.php
 
 		-
@@ -11881,24 +11797,6 @@ parameters:
 			path: ../../../htdocs/core/tpl/extrafields_list_print_fields.tpl.php
 
 		-
-			message: '#^Variable \$extrafields might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/tpl/extrafields_list_search_param.tpl.php
-
-		-
-			message: '#^Variable \$extrafieldsobjectkey might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/tpl/extrafields_list_search_param.tpl.php
-
-		-
-			message: '#^Variable \$param might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
-			path: ../../../htdocs/core/tpl/extrafields_list_search_param.tpl.php
-
-		-
 			message: '#^Variable \$db might not be defined\.$#'
 			identifier: variable.undefined
 			count: 8
@@ -13495,18 +13393,6 @@ parameters:
 			path: ../../../htdocs/expedition/list.php
 
 		-
-			message: '#^Loose comparison using \=\= between \-1 and 0 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/expedition/list.php
-
-		-
-			message: '#^Loose comparison using \=\= between \-1 and 1 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/expedition/list.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 2
@@ -13582,12 +13468,6 @@ parameters:
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
-			path: ../../../htdocs/expensereport/card.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 5
 			path: ../../../htdocs/expensereport/card.php
 
 		-
@@ -13767,12 +13647,6 @@ parameters:
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/expensereport/payment/list.php
-
-		-
-			message: '#^Variable \$toselect might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/expensereport/payment/list.php
 
@@ -14607,18 +14481,6 @@ parameters:
 		-
 			message: '#^Call to function method_exists\(\) with CommandeFournisseur and ''fetch_lines'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/fourn/commande/list.php
-
-		-
-			message: '#^Loose comparison using \=\= between \-1 and 0 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/fourn/commande/list.php
-
-		-
-			message: '#^Loose comparison using \=\= between \-1 and 1 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
 			count: 1
 			path: ../../../htdocs/fourn/commande/list.php
 
@@ -17241,12 +17103,6 @@ parameters:
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/mrp/mo_agenda.php
-
-		-
-			message: '#^Variable \$socid might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/mrp/mo_agenda.php
 
@@ -22659,18 +22515,6 @@ parameters:
 		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/supplier_proposal/list.php
-
-		-
-			message: '#^Loose comparison using \=\= between \-1 and 0 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/supplier_proposal/list.php
-
-		-
-			message: '#^Loose comparison using \=\= between \-1 and 1 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
 			count: 1
 			path: ../../../htdocs/supplier_proposal/list.php
 
