@@ -310,8 +310,10 @@ curl_close($c);
 
 
 /**
- * @param string $message
- * @return void
+ * Echoes a message with an EOL
+ *
+ * @param	string	$message	The message to print
+ * @return	void
  */
 function _out(string $message): void
 {
@@ -319,8 +321,10 @@ function _out(string $message): void
 }
 
 /**
- * @param string $message
- * @return void
+ * Echoes a message if debug mode is enabled
+ *
+ * @param	string	$message	The message to print
+ * @return	void
  */
 function _debug(string $message): void
 {
@@ -330,12 +334,15 @@ function _debug(string $message): void
 }
 
 /**
- * @param string $message
- * @return void
+ * Exits with an error message and an HTTP response code
+ *
+ * @param	string	$message	The message to print
+ * @param	int		$status		HTTP reponse code
+ * @return	void
  */
-function _error(string $message): void
+function _error(string $message, int $status = 500): void
 {
-	http_response_code(500);
+	http_response_code($status);
 	_out('Error: ' . $message);
 	exit;
 }
