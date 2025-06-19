@@ -19,6 +19,7 @@
  * Copyright (C) 2023       Lenin Rivas      	<lenin.rivas777@gmail.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2025		Alexandre Janniaux	<alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3573,12 +3574,12 @@ abstract class CommonObject
 		if (!$this->db->query($sql)) {
 			dol_print_error($this->db);
 			return -1;
-		} else {
-			$parameters = array('rowid' => $rowid, 'rang' => $rang, 'fieldposition' => $fieldposition);
-			$action = '';
-			$reshook = $hookmanager->executeHooks('afterRankOfLineUpdate', $parameters, $this, $action);
-			return 1;
 		}
+
+		$parameters = array('rowid' => $rowid, 'rang' => $rang, 'fieldposition' => $fieldposition);
+		$action = '';
+		$reshook = $hookmanager->executeHooks('afterRankOfLineUpdate', $parameters, $this, $action);
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -3602,29 +3603,35 @@ abstract class CommonObject
 	 *
 	 * 	@param	int		$rowid		Id of line
 	 * 	@param	int		$rang		Position
-	 * 	@return	void
+	 * 	@return	int<-1,1>			Return integer <0 if KO, >0 if OK
 	 */
 	public function updateLineUp($rowid, $rang)
 	{
-		if ($rang > 1) {
-			$fieldposition = 'rang';
-			if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
-				$fieldposition = 'position';
-			}
-
-			$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) $rang);
-			$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
-			$sql .= " AND " . $fieldposition . " = " . ((int) ($rang - 1));
-			if ($this->db->query($sql)) {
-				$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) ($rang - 1));
-				$sql .= ' WHERE rowid = '.((int) $rowid);
-				if (!$this->db->query($sql)) {
-					dol_print_error($this->db);
-				}
-			} else {
-				dol_print_error($this->db);
-			}
+		if ($rang <= 1) {
+			return -1;
 		}
+
+		$fieldposition = 'rang';
+		if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
+			$fieldposition = 'position';
+		}
+
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) $rang);
+		$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
+		$sql .= " AND " . $fieldposition . " = " . ((int) ($rang - 1));
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) ($rang - 1));
+		$sql .= ' WHERE rowid = '.((int) $rowid);
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		return 1;
 	}
 
 	/**

@@ -463,7 +463,7 @@ if ($search_sale && $search_sale != '-1') {
 	}
 }
 // Search for tag/category ($searchCategoryProductList is an array of ID)
-$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator', -1);
+$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
 $searchCategoryProductList = array($search_product_category);
 if (!empty($searchCategoryProductList)) {
 	$searchCategoryProductSqlList = array();
