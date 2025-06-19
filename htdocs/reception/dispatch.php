@@ -238,7 +238,7 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 								if ($product > 0) {
 									// $price should take into account discount (except if option STOCK_EXCLUDE_DISCOUNT_FOR_PMP is on)
 									$mouv->origin = $objectsrc;
-									$mouv->setOrigin($objectsrc->element, $objectsrc->id);
+									$mouv->setOrigin($objectsrc->element, $objectsrc->id, 0, 0, $objectsrc->fk_project);
 
 									// Method change if qty < 0
 									if (getDolGlobalString('SUPPLIER_ORDER_ALLOW_NEGATIVE_QTY_FOR_SUPPLIER_ORDER_RETURN') && $qtymouv < 0) {

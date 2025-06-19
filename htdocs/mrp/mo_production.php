@@ -293,7 +293,7 @@ if (empty($reshook)) {
 						if (!$error && GETPOST('idwarehouse-'.$line->id.'-'.$i) > 0) {
 							// Record stock movement
 							$id_product_batch = 0;
-							$stockmove->setOrigin($object->element, $object->id);
+							$stockmove->setOrigin($object->element, $object->id, 0,  0, $object->fk_project);
 							$stockmove->context['mrp_role'] = 'toconsume';
 
 							if ($qtytoprocess >= 0) {

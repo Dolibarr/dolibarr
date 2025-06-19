@@ -163,7 +163,7 @@ if (empty($reshook)) {
 	// Close inventory by recording the stock movements
 	if ($action == 'update' && $permissiontoupdatestock && $object->status == $object::STATUS_VALIDATED) {
 		$stockmovment = new MouvementStock($db);
-		$stockmovment->setOrigin($object->element, $object->id);
+		$stockmovment->setOrigin($object->element, $object->id, 0,  0, $object->fk_project);
 
 		$cacheOfProducts = array();
 

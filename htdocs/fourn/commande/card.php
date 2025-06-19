@@ -1146,7 +1146,7 @@ if (empty($reshook)) {
 						$batch = $stockmovementline->batch;
 
 						$mouv = new MouvementStock($db);
-						$mouv->setOrigin($object->element, $object->id);
+						$mouv->setOrigin($object->element, $object->id, 0, 0, $object->fk_project);
 						$result = $mouv->livraison($user, $product, $entrepot, $qty, $price, $comment, '', $eatby, $sellby, $batch);
 						if ($result < 0) {
 							$errorsOnDelete = $mouv->errors;

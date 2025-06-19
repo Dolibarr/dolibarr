@@ -1903,7 +1903,7 @@ class FactureFournisseur extends CommonInvoice
 					if ($this->lines[$i]->fk_product > 0) {
 						$mouvP = new MouvementStock($this->db);
 						$mouvP->origin = &$this;
-						$mouvP->setOrigin($this->element, $this->id);
+						$mouvP->setOrigin($this->element, $this->id, 0,  0, $this->fk_project);
 						// We increase stock for product
 						$up_ht_disc = $this->lines[$i]->subprice;
 						if (!empty($this->lines[$i]->remise_percent) && !getDolGlobalString('STOCK_EXCLUDE_DISCOUNT_FOR_PMP')) {
@@ -2045,7 +2045,7 @@ class FactureFournisseur extends CommonInvoice
 					if ($this->lines[$i]->fk_product > 0) {
 						$mouvP = new MouvementStock($this->db);
 						$mouvP->origin = &$this;
-						$mouvP->setOrigin($this->element, $this->id);
+						$mouvP->setOrigin($this->element, $this->id, 0,  0, $this->fk_project);
 						// We increase stock for product
 						if ($this->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
 							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceBackToDraftInDolibarr", $this->ref));

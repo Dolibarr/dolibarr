@@ -636,7 +636,7 @@ class Reception extends CommonObject
 					//var_dump($this->lines[$i]);
 					$mouvS = new MouvementStock($this->db);
 					$mouvS->origin = &$this;
-					$mouvS->setOrigin($this->element, $this->id);
+					$mouvS->setOrigin($this->element, $this->id, 0,  0, $this->fk_project);
 
 					if (empty($obj->batch)) {
 						// line without batch detail
@@ -1752,7 +1752,7 @@ class Reception extends CommonObject
 
 						$mouvS = new MouvementStock($this->db);
 						$mouvS->origin = &$this;
-						$mouvS->setOrigin($this->element, $this->id);
+						$mouvS->setOrigin($this->element, $this->id, 0,  0, $this->fk_project);
 
 						if (empty($obj->batch)) {
 							// line without batch detail
@@ -1911,7 +1911,7 @@ class Reception extends CommonObject
 						//var_dump($this->lines[$i]);
 						$mouvS = new MouvementStock($this->db);
 						$mouvS->origin = &$this;
-						$mouvS->setOrigin($this->element, $this->id);
+						$mouvS->setOrigin($this->element, $this->id, 0,  0, $this->fk_project);
 
 						if (empty($obj->batch)) {
 							// line without batch detail
@@ -2047,7 +2047,7 @@ class Reception extends CommonObject
 						//var_dump($this->lines[$i]);
 						$mouvS = new MouvementStock($this->db);
 						$mouvS->origin = &$this;
-						$mouvS->setOrigin($this->element, $this->id);
+						$mouvS->setOrigin($this->element, $this->id, 0,  0, $this->fk_project);
 
 						if (empty($obj->batch)) {
 							// line without batch detail

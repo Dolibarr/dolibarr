@@ -426,7 +426,7 @@ class Mos extends DolibarrApi
 							// Record consumption to do and stock movement
 							$id_product_batch = 0;
 
-							$stockmove->setOrigin($this->mo->element, $this->mo->id);
+							$stockmove->setOrigin($this->mo->element, $this->mo->id, 0,  0, $this->mo->fk_project);
 
 							if ($arrayname == 'arraytoconsume') {
 								$moline = new MoLine($this->db);

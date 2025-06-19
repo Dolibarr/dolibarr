@@ -375,7 +375,7 @@ if (empty($reshook)) {
 						$prod_batch->find(0, '', '', $line->batch, $warehouseid);
 
 						$mouvP = new MouvementStock($db);
-						$mouvP->setOrigin($invoice->element, $invoice->id);
+						$mouvP->setOrigin($invoice->element, $invoice->id, 0,  0, $invoice->fk_project);
 
 						$res = $mouvP->livraison($user, $line->fk_product, $warehouseid, $line->qty, $line->price, $labeltakeposmovement, '', '', '', $prod_batch->batch, $prod_batch->id, $inventorycode);
 						if ($res < 0) {
@@ -384,7 +384,7 @@ if (empty($reshook)) {
 						}
 					} else {
 						$mouvP = new MouvementStock($db);
-						$mouvP->setOrigin($invoice->element, $invoice->id);
+						$mouvP->setOrigin($invoice->element, $invoice->id, 0,  0, $invoice->fk_project);
 
 						$res = $mouvP->livraison($user, $line->fk_product, $warehouseid, $line->qty, $line->price, $labeltakeposmovement, '', '', '', '', 0, $inventorycode);
 						if ($res < 0) {
@@ -581,7 +581,7 @@ if (empty($reshook)) {
 						//$prod_batch->find(0, '', '', $line->batch, $warehouseid);
 
 						$mouvP = new MouvementStock($db);
-						$mouvP->setOrigin($creditnote->element, $creditnote->id);
+						$mouvP->setOrigin($creditnote->element, $creditnote->id, 0,  0, $creditnote->fk_project);
 
 						$res = $mouvP->reception($user, $line->fk_product, $warehouseid, $line->qty, $line->price, $labeltakeposmovement, '', '', $line->batch, '', 0, $inventorycode);
 						if ($res < 0) {
@@ -590,7 +590,7 @@ if (empty($reshook)) {
 						}
 					} else {
 						$mouvP = new MouvementStock($db);
-						$mouvP->setOrigin($creditnote->element, $creditnote->id);
+						$mouvP->setOrigin($creditnote->element, $creditnote->id, 0,  0, $creditnote->fk_project);
 
 						$res = $mouvP->reception($user, $line->fk_product, $warehouseid, $line->qty, $line->price, $labeltakeposmovement, '', '', '', '', 0, $inventorycode);
 						if ($res < 0) {
