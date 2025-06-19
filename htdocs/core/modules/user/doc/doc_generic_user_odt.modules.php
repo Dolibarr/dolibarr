@@ -103,7 +103,7 @@ class doc_generic_user_odt extends ModelePDFUser
 	 */
 	public function info($langs)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array('companies', 'errors'));
@@ -124,7 +124,7 @@ class doc_generic_user_odt extends ModelePDFUser
 			$texte .= '<input type="hidden" name="param3" value="USER_ADDON_PDF_ODT_TOBILL">';
 			$texte .= '<input type="hidden" name="param4" value="USER_ADDON_PDF_ODT_CLOSED">';
 		}
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		// List of directories area
 		$texte .= '<tr><td>';
@@ -152,15 +152,6 @@ class doc_generic_user_odt extends ModelePDFUser
 		// Add list of substitution keys
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
-
-		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
-		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
-		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
-		$texte .= $odtPath;
-		$texte .= '</textarea>';
-		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
-		$texte .= '<br></div></div>';
 
 		// Scan directories
 		if (count($listofdir)) {
@@ -198,6 +189,17 @@ class doc_generic_user_odt extends ModelePDFUser
 			}
 			$texte .= '</div>';
 		}
+
+		$texte .= '<br>';
+		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
+		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
+		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
+		$texte .= $odtPath;
+		$texte .= '</textarea>';
+		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
+		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
+		$texte .= '<br></div></div>';
+
 		// Add input to upload a new template file.
 		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
 		$maxfilesizearray = getMaxFileSizeArray();
@@ -235,7 +237,7 @@ class doc_generic_user_odt extends ModelePDFUser
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
-		global $user, $langs, $conf, $mysoc, $hookmanager;
+		global $langs, $conf, $mysoc, $hookmanager;
 
 		if (empty($srctemplatepath)) {
 			dol_syslog("doc_generic_odt::write_file parameter srctemplatepath empty", LOG_WARNING);

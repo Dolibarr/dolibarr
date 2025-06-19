@@ -17,9 +17,9 @@ Module4100Name = Kebijakan Privasi Data
 Module4100Desc = Modul untuk mengelola Privasi Data (Kesesuaian dengan GDPR)
 # Administration page
 datapolicySetup = Pengaturan Kebijakan Privasi Data Modul
-DataDeletion=Deletion of data
-DataAnonymization=Anonymization of data
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
+DataDeletion=Penghapusan data
+DataAnonymization=Anonimisasi data
+datapolicySetupPage = Bergantung pada undang-undang di negara Anda (Contoh <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Pasal 5</a> GDPR), data pribadi harus disimpan untuk jangka waktu yang tidak melebihi durasi data diperlukan untuk tujuan pengumpulannya, kecuali untuk tujuan pengarsipan.<br>Modul ini akan melakukan anonimisasi secara otomatis setelah durasi tertentu tanpa kejadian (durasi yang akan Anda tunjukkan di bawah) dan jika objek tersebut tidak memiliki turunan objek bisnis yang ada.
 NB_MONTHS = %s bulan
 ONE_YEAR = 1 tahun
 NB_YEARS = %s tahun
@@ -34,14 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Prospek/Pelanggan
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Maupun calon pelanggan/Mau pelanggan
 DATAPOLICY_CONTACT_FOURNISSEUR = Suplier
 DATAPOLICY_ADHERENT = Anggota
-DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
+DATAPOLICY_Tooltip_SETUP=Anonimisasi dilakukan oleh pekerjaan terjadwal "%s" yang dijalankan oleh modul "%s", jadi modul ini harus diaktifkan dan berfungsi dengan benar.
 SendAgreementText = Anda dapat mengirim email GDPR ke semua kontak Anda yang relevan (yang belum menerima email dan Anda belum mendaftarkan apa pun tentang perjanjian GDPR mereka). Untuk melakukan ini, gunakan tombol berikut.
 SendAgreement = Mengirim email
 AllAgreementSend = Semua email telah terkirim
 TXTLINKDATAPOLICYACCEPT = Teks untuk tautan "perjanjian"
 TXTLINKDATAPOLICYREFUSE = Teks untuk tautan "ketidaksepakatan"
-DelayForAnonymization=Delay for anonymization
-DelayForDeletion=Delay for deletion
+DelayForAnonymization=Penundaan untuk anonimisasi
+DelayForDeletion=Penundaan untuk penghapusan
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = GDPR : Pemrosesan data pribadi
 DATAPOLICY_consentement = Persetujuan diperoleh untuk pemrosesan data pribadi

@@ -19,7 +19,7 @@
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022       Anthony Berton	         	<anthony.berton@bb2a.fr>
  * Copyright (C) 2022       Ferran Marcet           	<fmarcet@2byte.es>
- * Copyright (C) 2022       Charlene Benke           	<charlene@patas-monkey.com>
+ * Copyright (C) 2022-2025  Charlene Benke           	<charlene@patas-monkey.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2023-2024  Joachim Kueter              <git-jk@bloxera.com>
  * Copyright (C) 2024		Lenin Rivas					<lenin.rivas777@gmail.com>
@@ -1216,7 +1216,7 @@ function GETPOSTFLOAT($paramname, $rounding = '')
  * 										or 'end' means '23:59:59'
  * 										or '' means '00:00:00' (default)
  * @param 	int|string 	$gm 			Passed to dol_mktime. In most cases, when used with 'getpost' or 'getpostend', it should be 'tzuserrel'. Use 'auto' if you need dates related to 'tzserver' (like in accountancy).
- * @param	string		$saverestore	Use a string context to save retrieved date so it will be used on next retrieve using same context if not defined.
+ * @param	string		$saverestore	Use a string family context to save retrieved date so it will be used on the next retrieval for the same family context (if value not already defined in parameters).
  * @return 	int|string  				Date as a timestamp, '' or false if error
  *
  * @see dol_mktime()
@@ -2262,7 +2262,7 @@ function dolPrintPassword($s)
 function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapetags = '', $escapeonlyhtmltags = 0, $cleanalsojavascript = 0)
 {
 	if ($noescapetags == 'common') {
-		$noescapetags = 'html,body,a,b,em,hr,i,u,ul,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody,h1,h2,h3,h4,h5,h6,h7,h8,h9';
+		$noescapetags = 'html,body,a,b,em,hr,i,u,ul,ol,li,br,div,img,font,p,span,strong,table,tr,td,th,tbody,h1,h2,h3,h4,h5,h6,h7,h8,h9';
 		// Add also html5 tags
 		$noescapetags .= ',header,footer,nav,section,menu,menuitem';
 	}
@@ -3010,7 +3010,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 	if ($popuptab) {	// If there is some tabs not shown
 		$left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
 		$right = ($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right');
-		$widthofpopup = 200;
+		$widthofpopup = 240;
 
 		$tabsname = $moretabssuffix;
 		if (empty($tabsname)) {
@@ -3511,7 +3511,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 	// See format of addresses on https://en.wikipedia.org/wiki/Address
 	// Address
 	if (empty($mode)) {
-		$ret .= ($extralangcode ? $object->array_languages['address'][$extralangcode] : (empty($object->address) ? '' : preg_replace('/(\r\n|\r|\n)+/', $sep, $object->address)));
+		$ret .= (($extralangcode && !empty($object->array_languages['address'][$extralangcode])) ? $object->array_languages['address'][$extralangcode] : (empty($object->address) ? '' : preg_replace('/(\r\n|\r|\n)+/', $sep, $object->address)));
 	}
 	// Zip/Town/State
 	if (isset($object->country_code) && in_array($object->country_code, array('AU', 'CA', 'US', 'CN')) || getDolGlobalString('MAIN_FORCE_STATE_INTO_ADDRESS')) {
@@ -3556,7 +3556,7 @@ function dol_format_address($object, $withcountry = 0, $sep = "\n", $outputlangs
 		$ret .= (empty($object->state_code) ? '' : (' '.$object->state_code));
 	} else {
 		// Other: title firstname name \n address lines \n zip town[, state] \n country
-		$town = ($extralangcode ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
+		$town = (($extralangcode && !empty($object->array_languages['address'][$extralangcode])) ? $object->array_languages['town'][$extralangcode] : (empty($object->town) ? '' : $object->town));
 		$ret .= !empty($object->zip) ? (($ret ? $sep : '').$object->zip) : '';
 		$ret .= ($town ? (($object->zip ? ' ' : ($ret ? $sep : '')).$town) : '');
 		if (!empty($object->state) && in_array($object->country_code, $countriesusingstate)) {
@@ -12296,7 +12296,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 				}
 				$i2++; // a criteria for 1 more field was added to string
 			} elseif ($mode == 2 || $mode == -2) {
-				$crit = preg_replace('/[^0-9,]/', '', $crit); // ID are always integer
+				$crit = preg_replace('/[^\-0-9,]/', '', $crit); // ID are always integer
 				$newres .= ($i2 > 0 ? ' OR ' : '').$db->sanitize($field)." ".($mode == -2 ? 'NOT ' : '');
 				$newres .= $crit ? "IN (".$db->sanitize($db->escape($crit)).")" : "IN (0)";
 				if ($mode == -2) {
@@ -13563,6 +13563,10 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 	if (getDolGlobalString('MAIN_BUTTON_HIDE_UNAUTHORIZED') && (!$user->admin) && $status <= 0) {
 		return '';
 	}
+	// Fix old picto fa-th-list to use fa-grid-vertical instead
+	if ($iconClass == 'fa fa-th-list imgforviewmode') {
+		$iconClass = ' fa fa-grip-horizontal imgforviewmode';
+	}
 
 	$class = 'btnTitle';
 	if (in_array($iconClass, array('fa fa-plus-circle', 'fa fa-plus-circle size15x', 'fa fa-comment-dots', 'fa fa-paper-plane'))) {
@@ -14008,21 +14012,21 @@ function getElementProperties($elementType)
 		$table_element = 'ecmfiles';
 		$subelement = '';
 	} elseif ($elementType == 'knowledgerecord' || $elementType == 'knowledgemanagement') {
-		$module = '';
+		$module = 'knowledgemanagement';
 		$classpath = 'knowledgemanagement/class';
 		$classfile = 'knowledgerecord';
 		$classname = 'KnowledgeRecord';
 		$table_element = 'knowledgemanagement_knowledgerecord';
 		$subelement = '';
 	} elseif ($elementType == 'customer') {
-		$module = 'thirdparty';
+		$module = 'societe';
 		$classpath = 'societe/class';
 		$classfile = 'client';
 		$classname = 'Client';
 		$table_element = 'societe';
 		$subelement = '';
 	} elseif ($elementType == 'fournisseur' || $elementType == 'supplier') {
-		$module = 'thirdparty';
+		$module = 'societe';
 		$classpath = 'fourn/class';
 		$classfile = 'fournisseur';
 		$classname = 'Fournisseur';
@@ -14062,10 +14066,10 @@ function getElementProperties($elementType)
 	}
 
 	// Overwrite value for special cases
-	if ($element == 'order_supplier') {
+	if ($element == 'order_supplier' && isModEnabled('fournisseur')) {
 		$dir_output = $conf->fournisseur->commande->dir_output;
 		$dir_temp = $conf->fournisseur->commande->dir_temp;
-	} elseif ($element == 'invoice_supplier') {
+	} elseif ($element == 'invoice_supplier' && isModEnabled('fournisseur')) {
 		$dir_output = $conf->fournisseur->facture->dir_output;
 		$dir_temp = $conf->fournisseur->facture->dir_temp;
 	}
@@ -15655,9 +15659,11 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 
 		$out .= "</ul>\n";
 
+		// Code to manage the click on button data-read-more-action to show full description of an event
 		$out .= '<script>
 				jQuery(document).ready(function () {
 				   $(document).on("click", "[data-read-more-action]", function(e){
+						console.log("We click on data-read-more-action");
 					   let readMoreBloc = $(this).closest(".readmore-block");
 					   if(readMoreBloc.length > 0){
 							e.preventDefault();

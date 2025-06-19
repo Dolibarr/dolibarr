@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Nastavení modulu Stripe
-StripeDesc=Offer your customers an online payment page for payments with credit/debit cards via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
+StripeDesc=Nabídněte svým zákazníkům online platební stránku pro platby kreditními/debetními kartami prostřednictvím <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. Tuto stránku lze použít k tomu, aby vaši zákazníci mohli provádět jednorázové platby nebo platby související s konkrétním objektem Dolibarr (faktura, objednávka atd.).
 StripeOrCBDoPayment=Platba kreditní kartou nebo Stripe
 FollowingUrlAreAvailableToMakePayments=Přes URL jsou k dispozici nabízené stránky, které zákazníkovi umožní provést platbu na Dolibarr objektech
 PaymentForm=Formulář platby
@@ -12,6 +12,7 @@ YourEMail=E-mail pro potvrzení platby
 STRIPE_PAYONLINE_SENDEMAIL=E-mailové oznámení po pokusu o platbu (úspěch nebo neúspěch)
 Creditor=Věřitel
 PaymentCode=Platební kód
+StripeAutoRecordPayout=Povolit automatické zaznamenávání bankovního převodu (když Stripe provádí výplatu a volá webhook IPN payout.create/payout.paid)
 StripeDoPayment=Platba kreditní nebo debetní kartou (Stripe)
 YouWillBeRedirectedOnStripe=Budete přesměrováni na zabezpečené stránce Stripe, abyste mohli zadat informace o kreditní kartě
 Continue=Další
@@ -22,7 +23,7 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL, která nabízí online platební
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL, která nabízí online platební stránku %s jakékoli částky bez existujícího objektu
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL, která nabízí online platební stránku %s pro předplatné člena
 ToOfferALinkForOnlinePaymentOnDonation=URL, která nabízí online platební stránku %s pro výplatu daru
-YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanAddTagOnUrl=Můžete také přidat parametr URL <b>&tag=value</b> k kterékoli z těchto URL (povinné pouze pro platby, které nejsou propojeny s objektem), abyste přidali vlastní tag komentáře k platbě.<br>Pro URL plateb bez existujícího objektu můžete také přidat parametr <strong>&noidempotency=1</strong>, aby stejný odkaz se stejnou značkou mohl být použit několikrát (některé platební režimy mohou omezit platbu na 1 pro každý jiný odkaz bez tohoto parametru)
 YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Nastavte Stripe pomocí url <b> %s </b>, aby se platba automaticky vytvořila při ověření Stripe.
 AccountParameter=Parametry účtu
@@ -33,6 +34,7 @@ CSSUrlForPaymentForm=CSS styly url platebního formuláře
 NewStripePaymentReceived=Byla obdržena nová platba Stripe
 NewStripePaymentFailed=Pokus o novou Stripe platbu, ta ale selhala
 FailedToChargeCard=Nepodařilo se nabít kartu
+FailedToChargeSEPA=Zúčtování SEPA se nepodařilo
 STRIPE_TEST_SECRET_KEY=Tajný testovací klíč
 STRIPE_TEST_PUBLISHABLE_KEY=Testovatelný klíč pro publikování
 STRIPE_TEST_WEBHOOK_KEY=Testovací klíč Webhook
@@ -42,8 +44,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook live klíč
 ONLINE_PAYMENT_WAREHOUSE=Sklad, který se má použít k poklesu akcií, když je hotovo on-line platba <br> (TODO Pokud se volba k poklesu zásob uskuteční na akci na faktuře a on-line platba vygeneruje fakturu?)
 StripeLiveEnabled=Stripe live povoleno (jinak testovací režim / režim sandbox)
 StripeImportPayment=Platby importu Stripe
-ExampleOfTestCreditCard=Example of credit card for a test payment: %s => valid, %s => error CVC, %s => expired, %s => charge fails
-ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
+ExampleOfTestCreditCard=Příklad platební karty pro testovací platbu: %s => platný, %s => chybný CVC, %s => vypršela platnost, %s => platba selhala
+ExampleOfTestBankAcountForSEPA=Příklad zákazu bankovního účtu pro test inkasa: %s
 StripeGateways=Brána Stripe
 OAUTH_STRIPE_TEST_ID=Připojení klienta Stripe Connect (ca _...)
 OAUTH_STRIPE_LIVE_ID=Připojení klienta Stripe Connect (ca _...)
@@ -52,7 +54,7 @@ StripeAccount=Stripe účet
 StripeChargeList=Seznam Stripe poplatků
 StripeTransactionList=Seznam transakcí Stripe
 StripeCustomerId=Stripe ID zákazníka
-StripePaymentId=Stripe payment id
+StripePaymentId=ID platby Stripe
 StripePaymentModes=Stripe režimy platby
 LocalID=Místní identifikační číslo
 StripeID=ID Stripe
@@ -64,7 +66,7 @@ DeleteACard=Smazat kartu
 ConfirmDeleteCard=Opravdu chcete tuto kreditní nebo debetní kartu smazat?
 CreateCustomerOnStripe=Vytvořte zákazníka na Stripe
 CreateCardOnStripe=Vytvořte kartu na Stripe
-CreateBANOnStripe=Create bank on Stripe
+CreateBANOnStripe=Vytvořte si banku na Stripe
 ShowInStripe=Zobrazit ve Stripe
 StripeUserAccountForActions=Uživatelský účet, který se má používat pro e-mailové upozornění na některé události Stripe (Stripe výplaty)
 StripePayoutList=Seznam páskových výplat
@@ -72,19 +74,20 @@ ToOfferALinkForTestWebhook=Odkaz na nastavení Stripe WebHook pro volání IPN (
 ToOfferALinkForLiveWebhook=Odkaz na nastavení Stripe WebHook pro volání IPN (provozní režim)
 PaymentWillBeRecordedForNextPeriod=Platba bude zaznamenána pro další období.
 ClickHereToTryAgain= <a href="%s"> Klikněte zde a zkuste to znovu ... </a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe back office. You can click here to switch on Stripe customer record: %s
-STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
-TERMINAL_LOCATION=Location (address) for Stripe Terminals
-RequestDirectDebitWithStripe=Request Direct Debit with Stripe
-RequesCreditTransferWithStripe=Request Credit Transfer with Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
-STRIPE_KLARNA=Enable the payments using Klarna
-STRIPE_BANCONTACT=Enable the payments using BANCONTACT
-STRIPE_IDEAL=Enable the payments using IDEAL
-STRIPE_GIROPAY=Enable the payments using GIROPAY
-STRIPE_SOFORT=Enable the payments using SOFORT
-StripeConnect_Mode=Stripe Connect mode
-ExampleOnlyForBECustomers=Only for belgium customers
-ExampleOnlyForDECustomers=Only for german customers
-ExampleOnlyForNLCustomers=Only for dutch customers
-ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Vzhledem k pravidlům silného ověřování zákazníků musí být vytvoření karty provedeno z administrativní podpory Stripe. Záznam zákazníků Stripe můžete zapnout kliknutím sem: %s
+STRIPE_CARD_PRESENT=Karta je k dispozici pro terminály Stripe
+TERMINAL_LOCATION=Místo (adresa) pro terminály Stripe
+RequestDirectDebitWithStripe=Žádost o inkaso se Stripe
+RequesCreditTransferWithStripe=Žádost o převod kreditu se Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Povolte platby inkasem přes Stripe
+STRIPE_KLARNA=Povolte platby pomocí Klarna
+STRIPE_BANCONTACT=Povolte platby pomocí BANCONTACT
+STRIPE_IDEAL=Povolte platby pomocí IDEAL
+STRIPE_GIROPAY=Povolte platby pomocí GIROPAY
+STRIPE_SOFORT=Povolte platby pomocí SOFORT
+StripeConnect_Mode=Režim Stripe Connect
+ExampleOnlyForBECustomers=Pouze pro zákazníky z Belgie
+ExampleOnlyForDECustomers=Pouze pro německé zákazníky
+ExampleOnlyForNLCustomers=Pouze pro nizozemské zákazníky
+ExampleOnlyForATBEDEITNLESCustomers=Pouze pro zákazníky z Rakouska, Belgie, Německa, Itálie, Nizozemska, Španělska
+ListOfSupportedHooksToActivate=Seznam podporovaných hooků k aktivaci

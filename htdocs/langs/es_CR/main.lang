@@ -553,6 +553,7 @@ thirteen=tercero
 hundred=centenar
 billion=mil millones
 trillion=billones
+centimes=centavos
 SelectMailModel=Seleccione una plantilla de correo electrónico
 SetRef=Establecer referencia
 Select2ResultFoundUseArrows=Algunos resultados encontrados. Utilice las flechas para seleccionar.

@@ -578,7 +578,6 @@ class CommandeFournisseur extends CommonOrder
 			$this->fk_project = $obj->fk_project;
 			$this->cond_reglement_id = $obj->fk_cond_reglement;
 			$this->cond_reglement_code = $obj->cond_reglement_code;
-			$this->cond_reglement = $obj->cond_reglement_label;			// deprecated
 			$this->cond_reglement_label = $obj->cond_reglement_label;
 			$this->cond_reglement_doc = $obj->cond_reglement_doc;
 			$this->fk_account = $obj->fk_account;
@@ -723,7 +722,7 @@ class CommandeFournisseur extends CommonOrder
 						$objsearchpackage = $this->db->fetch_object($resqlsearchpackage);
 						if ($objsearchpackage) {
 							$line->fk_fournprice = $objsearchpackage->rowid;
-							$line->packaging     = $objsearchpackage->packaging;
+							$line->packaging     = (float) $objsearchpackage->packaging;
 						}
 					} else {
 						$this->error = $this->db->lasterror();
@@ -3187,10 +3186,16 @@ class CommandeFournisseur extends CommonOrder
 				if ($qty < $this->line->packaging) {
 					$qty = $this->line->packaging;
 				} else {
-					if (!empty($this->line->packaging) && ($qty % $this->line->packaging) > 0) {
-						$coeff = intval($qty / $this->line->packaging) + 1;
-						$qty = $this->line->packaging * $coeff;
-						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
+					// Ensure packaging is numeric, positive, and use fmod instead of %, to prevent error with decimal packaging values (resulting in division by zero)
+					if (
+							!empty($this->line->packaging)
+							&& is_numeric($this->line->packaging)
+							&& (float) $this->line->packaging > 0
+							&& fmod((float) $qty, (float) $this->line->packaging) > 0
+						) {
+							$coeff = intval($qty / $this->line->packaging) + 1;
+							$qty = $this->line->packaging * $coeff;
+							setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
 					}
 				}
 			}
@@ -3250,6 +3255,8 @@ class CommandeFournisseur extends CommonOrder
 				$this->db->commit();
 				return $result;
 			} else {
+				$this->errors[] = $this->line->error;
+				$this->errors = array_merge($this->errors, $this->line->errors);
 				$this->error = $this->db->lasterror();
 				$this->db->rollback();
 				return -1;

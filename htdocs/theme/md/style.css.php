@@ -706,7 +706,7 @@ textarea {
 	border-bottom:solid 1px var(--inputbordercolor);
 
 	background-color: #FFF;
-	padding:4px;
+	padding:8px;
 	margin-left:1px;
 	margin-bottom:1px;
 	margin-top:1px;
@@ -2927,11 +2927,11 @@ img.hideonsmartphone.pictoactionview {
 
 .pictofixedwidth {
 	text-align: start;
-	width: 20px;
+	width: 20px;	/* do not use em unit here */
 	/* padding-right: 0; */
 }
 img.pictofixedwidth {
-	width: 18px;
+	width: 18px;	/* Do not use em unit here */
 	padding-right: 2px;
 }
 
@@ -5671,7 +5671,7 @@ div.backgreypublicpayment {
 .poweredbypublicpayment {
 	float: right;
 	top: 8px;
-	right: 8px;
+	right: 12px;
 	position: absolute;
 	font-size: 0.8em;
 	color: #222;
@@ -5760,6 +5760,7 @@ div#card-errors {
 .ui-dialog-titlebar {
 }
 .ui-dialog-content {
+	maring-bottom: 10px;	/* same than .ui-widget-header */
 	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize; ?> !important;
 }
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
@@ -5831,7 +5832,7 @@ div.ui-tooltip {
 }
 
 div.ui-tooltip.mytooltip {
-	padding: 10px 20px;
+	padding: 20px 20px;
 	border-radius: 4px;
 	box-shadow: 0 0 4px #888;
 	margin: 2px;

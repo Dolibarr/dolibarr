@@ -356,7 +356,7 @@ if (empty($reshook)) {
 		$listofaccountsforgroup2 = array();
 		if (is_array($listofaccountsforgroup)) {
 			foreach ($listofaccountsforgroup as $tmpval) {
-				$listofaccountsforgroup2[] = "'".$db->escape((string) $tmpval['id'])."'";
+				$listofaccountsforgroup2[] = "'".$db->escape((string) $tmpval['account_number'])."'";
 			}
 		}
 		$filter['t.search_accounting_code_in'] = implode(',', $listofaccountsforgroup2);
@@ -984,13 +984,21 @@ $moreforfilter .= '<div class="divsearchfield">';
 $moreforfilter .= $langs->trans('AccountAccounting').': ';
 $moreforfilter .= '<div class="nowrap inline-block">';
 if ($type == 'sub') {
-	$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), 'maxwidth200');
+	if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
+		$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), 'maxwidth200');
+	} else {
+		$moreforfilter .= '<input type="text" class="maxwidth150" name="search_accountancy_code_start" value="'.dol_escape_htmltag($search_accountancy_code_start).'" placeholder="'.$langs->trans('From').'">';
+	}
 } else {
 	$moreforfilter .= $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), array(), 1, 1, 'maxwidth200');
 }
 $moreforfilter .= ' ';
 if ($type == 'sub') {
-	$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), 'maxwidth200');
+	if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
+		$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), 'maxwidth200');
+	} else {
+		$moreforfilter .= '<input type="text" class="maxwidth150" name="search_accountancy_code_end" value="'.dol_escape_htmltag($search_accountancy_code_end).'" placeholder="'.$langs->trans('to').'">';
+	}
 } else {
 	$moreforfilter .= $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), array(), 1, 1, 'maxwidth200');
 }
@@ -1245,6 +1253,21 @@ $colspan = 0;			// colspan before field 'label of operation'
 $colspanend = 0;		// colspan after debit/credit
 $accountg = '-';
 
+$colspan = 0;			// colspan before field 'label of operation'
+$colspanend = 3;		// colspan after debit/credit
+if (!empty($arrayfields['t.piece_num']['checked'])) { $colspan++; }
+if (!empty($arrayfields['t.code_journal']['checked'])) { $colspan++; }
+if (!empty($arrayfields['t.doc_date']['checked'])) { $colspan++; }
+if (!empty($arrayfields['t.doc_ref']['checked'])) { $colspan++; }
+if (!empty($arrayfields['t.label_operation']['checked'])) { $colspan++; }
+if (!empty($arrayfields['t.date_export']['checked'])) { $colspanend++; }
+if (!empty($arrayfields['t.date_validated']['checked'])) { $colspanend++; }
+if (!empty($arrayfields['t.lettering_code']['checked'])) { $colspanend++; }
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	$colspan++;
+	$colspanend--;
+}
+
 while ($i < min($num, $limit)) {
 	$line = $object->lines[$i];
 
@@ -1374,8 +1397,6 @@ while ($i < min($num, $limit)) {
 		//if (empty($displayed_account_number)) $displayed_account_number='-';
 		$sous_total_debit = 0;
 		$sous_total_credit = 0;
-
-		$colspan = 0;
 	}
 
 	print '<tr class="oddeven">';

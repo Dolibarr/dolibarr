@@ -42,6 +42,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
 class doc_generic_asset_odt extends ModelePDFAsset
 {
 	/**
+	 * Issuer
+	 * @var Societe
+	 */
+	public $emetteur;
+
+	/**
+	 * @var array{0:int,1:int} Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 7.0 = array(7, 0)
+	 */
+	public $phpmin = array(7, 0);
+
+	/**
 	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental' Dolibarr version of the loaded document
 	 */
 	public $version = 'dolibarr';
@@ -103,7 +115,7 @@ class doc_generic_asset_odt extends ModelePDFAsset
 	 */
 	public function info($langs)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("errors", "companies"));
@@ -111,16 +123,17 @@ class doc_generic_asset_odt extends ModelePDFAsset
 		$form = new Form($this->db);
 
 		$texte = $this->description.".<br>\n";
-		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="ASSET_ASSET_ADDON_PDF_ODT_PATH">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		// List of directories area
 		$texte .= '<tr><td>';
 		$texttitle = $langs->trans("ListOfDirectories");
-		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim($conf->global->ASSET_ASSET_ADDON_PDF_ODT_PATH)));
+		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim(getDolGlobalString('ASSET_ASSET_ADDON_PDF_ODT_PATH'))));
 		$listoffiles = array();
 		foreach ($listofdir as $key => $tmpdir) {
 			$tmpdir = trim($tmpdir);
@@ -151,7 +164,7 @@ class doc_generic_asset_odt extends ModelePDFAsset
 			$texte .= getDolGlobalString('ASSET_ASSET_ADDON_PDF_ODT_PATH');
 			$texte .= '</textarea>';
 			$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-			$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'">';
+			$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dolPrintHTMLForAttribute($langs->trans("Modify")).'">';
 			$texte .= '<br></div></div>';
 		} else {
 			$texte .= '<br>';
@@ -170,6 +183,7 @@ class doc_generic_asset_odt extends ModelePDFAsset
 
 		if ($nbofiles) {
 			$texte .= '<div id="div_'.get_class($this).'" class="hidden">';
+			// Show list of found files
 			foreach ($listoffiles as $file) {
 				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=asset_asset/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a>';
 				$texte .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?modulepart=doctemplates&keyforuploaddir=ASSET_ASSET_ADDON_PDF_ODT_PATH&action=deletefile&token='.newToken().'&file='.urlencode(basename($file['name'])).'">'.img_picto('', 'delete').'</a>';
@@ -177,6 +191,18 @@ class doc_generic_asset_odt extends ModelePDFAsset
 			}
 			$texte .= '</div>';
 		}
+
+		// Add input to upload a new template file.
+		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
+		$maxfilesizearray = getMaxFileSizeArray();
+		$maxmin = $maxfilesizearray['maxmin'];
+		if ($maxmin > 0) {
+			$texte .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.($maxmin * 1024).'">';	// MAX_FILE_SIZE must precede the field type=file
+		}
+		$texte .= ' <input type="file" name="uploadfile">';
+		$texte .= '<input type="hidden" value="MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
+		$texte .= '<input type="submit" class="button smallpaddingimp reposition" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+		$texte .= '</div>';
 
 		$texte .= '</td>';
 
@@ -204,6 +230,7 @@ class doc_generic_asset_odt extends ModelePDFAsset
 	{
 		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;
+		global $action;
 
 		if (empty($srctemplatepath)) {
 			dol_syslog("doc_generic_odt::write_file parameter srctemplatepath empty", LOG_WARNING);
@@ -286,7 +313,7 @@ class doc_generic_asset_odt extends ModelePDFAsset
 					return -1;
 				}
 
-				// If CUSTOMER contact defined on order, we use it
+				// If CUSTOMER contact defined on object, we use it
 				$usecontact = false;
 				$arrayidcontact = $object->getIdContact('external', 'CUSTOMER');
 				if (count($arrayidcontact) > 0) {

@@ -553,14 +553,11 @@ if (empty($reshook)) {
 			// Load new object
 			$newobject = new Project($db);
 			$newobject->fetch($result);
-			$newobject->fetch_optionals();
-			$newobject->fetch_thirdparty(); // Load new object
-			$object = $newobject;
-			$action = 'view';
-			$comefromclone = true;
 
 			setEventMessages($langs->trans("ProjectCreatedInDolibarr", $newobject->ref), null, 'mesgs');
-			//var_dump($newobject); exit;
+
+			header('Location: '.$_SERVER['PHP_SELF'].'?id='.$result.'&action=edit&comefromclone=1');
+			exit;
 		}
 	}
 
@@ -821,7 +818,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			print $text;
 		}
 		if (!GETPOSTISSET('backtopage')) {
-			$url = '/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create');
+			$url = '/societe/card.php?action=create&customer=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create');
 			$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span>';
 			// TODO @LDR Implement this
 			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {

@@ -175,6 +175,7 @@ class DoliDBPgsql extends DoliDB
 			$line = preg_replace('/GROUP_CONCAT/i', 'STRING_AGG', $line);
 			$line = preg_replace('/ SEPARATOR/i', ',', $line);
 			$line = preg_replace('/STRING_AGG\(([^,\)]+)\)/i', 'STRING_AGG(\\1, \',\')', $line);
+			$line = preg_replace('/STRING_AGG\(([^,]+),([^\)]+)\)/i', 'STRING_AGG(\\1::TEXT,\\2::TEXT)', $line);
 			//print $line."\n";
 
 			if ($type == 'auto') {

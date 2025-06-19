@@ -23,7 +23,10 @@ AllPropals=Todos los presupuestos
 SearchAProposal=Buscar un presupuesto
 NoProposal=Sin presupuestos
 ProposalsStatistics=Estadísticas de presupuestos
+NumberOfProposals=Número de pedidos
 NumberOfProposalsByMonth=Número por mes
+AmountOfProposals=Cantidad de presupuestos
+AmountOfProposalsHT=Importe de los presupuestos (sin IVA)
 AmountOfProposalsByMonthHT=Importe por mes (sin IVA)
 NbOfProposals=Número presupuestos
 ShowPropal=Ver presupuesto
@@ -77,13 +80,11 @@ AvailabilityTypeAV_1W=1 semana
 AvailabilityTypeAV_2W=2 semanas
 AvailabilityTypeAV_3W=3 semanas
 AvailabilityTypeAV_1M=1 mes
-
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Comercial seguimiento presupuesto
 TypeContact_propal_external_BILLING=Contacto cliente de facturación presupuesto
 TypeContact_propal_external_CUSTOMER=Contacto cliente seguimiento presupuesto
 TypeContact_propal_external_SHIPPING=Contacto cliente para envíos
-
 # Document models
 CantBeNoSign=no se puede establecer no firmado
 CaseFollowedBy=Caso seguido por
@@ -122,3 +123,5 @@ SignSociete_rib=Mandato de firma
 SignPropal=Aceptar presupuesto
 Signed=firmado
 SignedOnly=Solo firmado
+ExpeditionSigned=Envío firmado
+SignExpedition=Firmar envío

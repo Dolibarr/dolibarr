@@ -458,3 +458,4 @@ GenerateImage=Generate image
 GenerateWithAI=Generate with AI
 PriceByCustomeAndMultiPricesAbility=Different prices for each customer + Multiple price segments per product/service (each customer is in one price segment)
 WhenProductVirtualOnOptionAreForced=When virtual products option is on, automatic stock decrease is forced to 'Decrease real stocks on shipping validation' and automatic increase mode is forced to 'Increase real stocks on manual dispatching into warehouses' and can't be edited. Other options can be defined as you want.
+UpdatedRecently=Updated recently

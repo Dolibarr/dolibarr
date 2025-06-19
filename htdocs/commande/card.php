@@ -676,6 +676,14 @@ if (empty($reshook)) {
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
+	} elseif ($action == 'setposinfo' && $usercancreate) {
+		$object->fetch($id);
+		$object->module_source = GETPOST('posmodule');
+		$object->pos_source = GETPOST('posterminal');
+		$result = $object->update($user);
+		if ($result < 0) {
+			dol_print_error($db, $object->error);
+		}
 	} elseif ($action == 'setmulticurrencycode' && $usercancreate) {
 		// Multicurrency Code
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
@@ -2312,7 +2320,7 @@ if ($action == 'create' && $usercancreate) {
 				});
 				</script>';
 			}
-			print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
+			print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&customer=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 			print '</td>';
 		}
 		print '</tr>'."\n";
@@ -2823,16 +2831,12 @@ if ($action == 'create' && $usercancreate) {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('UnvalidateOrder'), $text, 'confirm_modif', $formquestion, "yes", 1, 220);
 		}
 
-		/*
-		 * Confirmation de la cloture
-		*/
+		// Confirmation of closing
 		if ($action == 'shipped') {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('CloseOrder'), $langs->trans('ConfirmCloseOrder'), 'confirm_shipped', '', 0, 1);
 		}
 
-		/*
-		 * Confirmation de l'annulation
-		 */
+		// Confirmation of cancellation
 		if ($action == 'cancel') {
 			$qualified_for_stock_change = 0;
 			if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
@@ -2966,6 +2970,34 @@ if ($action == 'create' && $usercancreate) {
 			print '<div class="underbanner clearboth"></div>';
 
 			print '<table class="border tableforfield centpercent">';
+
+			// POS
+			if (isModEnabled('takepos') || $object->module_source || getDolGlobalString('ORDER_ALLOW_POS_SOURCE_EDIT')) {
+				$langs->load("cashdesk");
+				print '<tr><td class="fieldname_type">';
+				print '<table class="nobordernopadding centpercent"><tr><td>';
+				print $form->textwithpicto($langs->trans('PointOfSale'), $langs->trans('POSInfo'));
+				print '</td>';
+				if ($action != 'editposinfo' && $object->status == $object::STATUS_DRAFT && $usercancreate) {
+					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editposinfo&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetPOSInfo'), 1).'</a></td>';
+				}
+				print '</tr></table>';
+				print '</td><td class="valuefield fieldname_type">';
+				print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" name="formposinfo">';
+				print '<input type="hidden" name="action" value="setposinfo">';
+				print '<input type="hidden" name="token" value="' . newToken() . '">';
+				if ($action == 'editposinfo') {
+					print '<input type="text" class="maxwidth150" name="posmodule" placeholder="'.$langs->trans("POSModule").'" value="'.$object->module_source.'"> ';
+					print '<input type="text" class="maxwidth100" name="posterminal" placeholder="'.$langs->trans("Terminal").'" value="'.$object->pos_source.'">';
+					print '<input type="submit" class="button" name="submitposinfo" value="'.$langs->trans("Submit").'">';
+				} else {
+					if ($object->module_source) {
+						print '<span class="opacitymediumbycolor paddingleft">'.dolPrintHTML(ucfirst($object->module_source).' - '.$langs->transnoentitiesnoconv("Terminal").' '.$object->pos_source).'</span>';
+					}
+				}
+				print '</form>';
+				print '</td></tr>';
+			}
 
 			if ($soc->outstanding_limit) {
 				// Outstanding Bill

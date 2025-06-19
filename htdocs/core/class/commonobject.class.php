@@ -3075,7 +3075,6 @@ abstract class CommonObject
 				if (get_class($this) == 'Fournisseur') {
 					$this->cond_reglement_supplier_id = $id;
 				}
-				$this->cond_reglement = $id; // for compatibility
 				$this->deposit_percent = $deposit_percent;
 				return 1;
 			} else {
@@ -3496,14 +3495,14 @@ abstract class CommonObject
 		dol_syslog(get_class($this)."::getChildrenOfLine search children lines for line ".$id, LOG_DEBUG);
 
 		$resql = $this->db->query($sql);
-		if ($resql) {
-			if ($this->db->num_rows($resql) > 0) {
-				while ($row = $this->db->fetch_row($resql)) {
-					$rows[] = $row[0];
-					if (!empty($includealltree) && $includealltree <= 1000) {	// Test <= 1000 is a protection in depth of recursive call to avoid infinite loop
-						$rows = array_merge($rows, $this->getChildrenOfLine($row[0], $includealltree + 1));
-					}
-				}
+		if (!$resql || $this->db->num_rows($resql) <= 0) {
+			return array();
+		}
+
+		while ($row = $this->db->fetch_row($resql)) {
+			$rows[] = $row[0];
+			if (!empty($includealltree) && $includealltree <= 1000) {	// Test <= 1000 is a protection in depth of recursive call to avoid infinite loop
+				$rows = array_merge($rows, $this->getChildrenOfLine($row[0], $includealltree + 1));
 			}
 		}
 		return $rows;
@@ -5103,7 +5102,7 @@ abstract class CommonObject
 	 */
 	public function getTotalDiscount()
 	{
-		if (!empty($this->table_element_line)) {
+		if (!empty($this->table_element_line) && ($this->table_element_line != 'expeditiondet')) {
 			$total_discount = 0.00;
 
 			$sql = "SELECT subprice as pu_ht, qty, remise_percent, total_ht";
@@ -11496,6 +11495,9 @@ abstract class CommonObject
 						$element = 'projet/'.dol_sanitizeFileName($this->project->ref).'/';
 					}
 					// no break
+				case 'contrat':
+					$element = 'contract';
+					break;
 				default:
 					$element = $this->element;
 			}

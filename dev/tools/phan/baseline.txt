@@ -241,7 +241,6 @@ return [
         'htdocs/imports/import.php' => ['PhanTypeMismatchArgument'],
         'htdocs/intracommreport/card.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/knowledgemanagement/class/knowledgerecord.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/knowledgemanagement/knowledgerecord_card.php' => ['PhanTypeMismatchArgument'],
         'htdocs/loan/class/paymentloan.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/loan/document.php' => ['PhanUndeclaredProperty'],
         'htdocs/loan/note.php' => ['PhanUndeclaredProperty'],

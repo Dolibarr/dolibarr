@@ -673,18 +673,6 @@ parameters:
 			path: ../../../htdocs/accountancy/expensereport/list.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 2
-			path: ../../../htdocs/accountancy/index.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../../htdocs/accountancy/index.php
-
-		-
 			message: '#^Call to function is_array\(\) with non\-empty\-array will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 4
@@ -1899,7 +1887,7 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 2
+			count: 1
 			path: ../../../htdocs/api/class/api_documents.class.php
 
 		-
@@ -3945,7 +3933,7 @@ parameters:
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 3
+			count: 1
 			path: ../../../htdocs/commande/list.php
 
 		-
@@ -4723,42 +4711,6 @@ parameters:
 			path: ../../../htdocs/compta/facture/class/facture.class.php
 
 		-
-			message: '#^Property Facture\:\:\$revenuestamp \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property Facture\:\:\$total_ht \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property Facture\:\:\$total_localtax1 \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property Facture\:\:\$total_localtax2 \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property Facture\:\:\$total_ttc \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property Facture\:\:\$total_tva \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 3
@@ -4906,12 +4858,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
-			path: ../../../htdocs/compta/facture/prelevement.php
-
-		-
-			message: '#^Variable \$num might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/compta/facture/prelevement.php
 
 		-
@@ -6913,12 +6859,6 @@ parameters:
 			path: ../../../htdocs/core/ajax/editinline.php
 
 		-
-			message: '#^Variable \$upload_dir in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/core/ajax/flowjs-server.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
@@ -7813,12 +7753,6 @@ parameters:
 			path: ../../../htdocs/core/class/commonobject.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$cond_reglement \(int\|string\) is never assigned string so it can be removed from the property type\.$#'
-			identifier: property.unusedType
-			count: 1
-			path: ../../../htdocs/core/class/commonobject.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$fields \(array\<string, array\<string, array\<int\|string, string\>\|int\|string\>\>\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -8461,12 +8395,6 @@ parameters:
 			path: ../../../htdocs/core/class/html.form.class.php
 
 		-
-			message: '#^Parameter \#3 \$selected of method Form\:\:multiselectarray\(\) expects array\<string\>, list\<int\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
 			message: '#^Parameter \#7 \$ajaxoptions of function ajax_autocompleter expects array\<string, array\<string\>\|string\>, array\<array\<string, array\<string, string\>\|string\>\> given\.$#'
 			identifier: argument.type
 			count: 1
@@ -8549,18 +8477,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''formai''\|''formaiforlines''\|''formaiwithlines'' and ''formforlines'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/class/html.formai.class.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''formai''\|''formaiforlines''\|''formaiwithlines'' and ''formwithlines'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/class/html.formai.class.php
 
 		-
 			message: '#^Variable \$select_encoder might not be defined\.$#'
@@ -14107,12 +14023,6 @@ parameters:
 			path: ../../../htdocs/fichinter/tpl/linkedobjectblock.tpl.php
 
 		-
-			message: '#^Variable \$dolibarr_main_db_encrypted_pass might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/filefunc.inc.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 10
@@ -15743,12 +15653,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/hrm/job_document.php
-
-		-
-			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/hrm/job_list.php
 
 		-
 			message: '#^Comparison operation "\<" between int\<0, max\> and 0 is always false\.$#'
@@ -18317,12 +18221,6 @@ parameters:
 			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/product/dynamic_price/editor.php
-
-		-
-			message: '#^Variable \$lastmodified might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/index.php
 
 		-
 			message: '#^If condition is always false\.$#'
@@ -21760,12 +21658,6 @@ parameters:
 			message: '#^Variable \$maxlength might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/recruitment/recruitmentjobposition_card.php
-
-		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/recruitment/recruitmentjobposition_document.php
 
 		-
@@ -23375,12 +23267,6 @@ parameters:
 			identifier: variable.undefined
 			count: 3
 			path: ../../../htdocs/user/card.php
-
-		-
-			message: '#^PHPDoc tag @phpstan\-return has invalid value \(Object\[\)\: Unexpected token "\[", expected TOKEN_HORIZONTAL_WS at offset 346 on line 8$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: ../../../htdocs/user/class/api_users.class.php
 
 		-
 			message: '#^Call to function method_exists\(\) with \$this\(User\) and ''getLibStatut'' will always evaluate to true\.$#'

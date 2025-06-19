@@ -56,6 +56,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/stripe/stripe-php/init.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -260,21 +261,25 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 			$typefrom = 'PRE';
 			$typeto = 'VIR';
 
+			$numChqOrOpe = '';	// TODO Store the po ref from $event->data
+
 			$db->begin();
 
+			// Add entry into table llx_bank
 			if (!$error) {
-				$bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1 * (float) price2num($amount), '', 0, $user);
+				$bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1 * (float) price2num($amount), $numChqOrOpe, 0, $user, '', '', '', null, '', null, 'Record payout from public/stripe/ipn.php');
 			}
 			if (!($bank_line_id_from > 0)) {
 				$error++;
 			}
 			if (!$error) {
-				$bank_line_id_to = $accountto->addline($dateo, $typeto, $label, (float) price2num($amount), '', 0, $user);
+				$bank_line_id_to = $accountto->addline($dateo, $typeto, $label, (float) price2num($amount), $numChqOrOpe, 0, $user, '', '', '', null, '', null, 'Record payout from public/stripe/ipn.php');
 			}
 			if (!($bank_line_id_to > 0)) {
 				$error++;
 			}
 
+			// Now add links of detail into llx_bank_url
 			if (!$error) {
 				$result = $accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
 			}
@@ -296,16 +301,16 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 
 			// Send email
 			if (!$error) {
-				$subject = '['.$societeName.'] - NotificationOTIFICATION] Stripe payout done';
+				$subject = '['.$societeName.'] Notification - Stripe payout done';
 				if (!empty($user->email)) {
 					$sendto = dolGetFirstLastname($user->firstname, $user->lastname)." <".$user->email.">";
 				} else {
-					$sendto = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') . '" <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
+					$sendto = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL');
 				}
 				$replyto = $sendto;
 				$sendtocc = '';
 				if (getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL')) {
-					$sendtocc = getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL') . '" <' . getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL').'>';
+					$sendtocc = getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL');
 				}
 
 				$message = "A bank transfer of ".price2num($event->data->object->amount / 100)." ".$event->data->object->currency." has been done to your account the ".dol_print_date($event->data->object->arrival_date, 'dayhour');

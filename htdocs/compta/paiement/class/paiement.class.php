@@ -426,8 +426,8 @@ class Paiement extends CommonObject
 			}
 		}
 
-		$totalamount = (float) price2num($totalamount);
-		$totalamount_converted = (float) price2num($totalamount_converted);
+		$totalamount = (float) price2num($totalamount, 'MT');
+		$totalamount_converted = (float) price2num($totalamount_converted, 'MT');
 
 		// Check parameters
 		if (empty($totalamount) && empty($atleastonepaymentnotnull)) {	 // We accept negative amounts for withdraw reject but not empty arrays

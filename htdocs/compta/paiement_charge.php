@@ -99,7 +99,7 @@ if (($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == '
 			}
 		}
 
-		if (count($amounts) <= 0) {
+		if (empty($amounts)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorNoPaymentDefined"), null, 'errors');
 			$action = 'create';
@@ -129,9 +129,9 @@ if (($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == '
 
 			if (!$error) {
 				$result = $paiement->addPaymentToBank($user, 'payment_sc', '(SocialContributionPayment)', GETPOSTINT('accountid'), '', '');
-				if (!($result > 0)) {
+				if ($result <= 0) {
 					$error++;
-					setEventMessages($paiement->error, null, 'errors');
+					setEventMessages($paiement->error, $paiement->errors, 'errors');
 					$action = 'create';
 				}
 			}

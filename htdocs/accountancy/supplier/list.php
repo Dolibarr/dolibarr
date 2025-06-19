@@ -1,12 +1,12 @@
 <?php
 /* Copyright (C) 2013-2014	Olivier Geffroy				<jeff@jeffinfo.com>
- * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)			<github@accedinfo.com>
  * Copyright (C) 2013-2021	Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>s
  * Copyright (C) 2016		Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -131,10 +131,10 @@ if (!$user->hasRight('accounting', 'bind', 'write')) {
 $arrayfields = array(
 	'l.rowid'               => array('label' => "LineId",                           'position' => 1, 'checked' => '1', 'enabled' => '1'),
 	'f.ref'                 => array('label' => "Invoice",                          'position' => 1, 'checked' => '1', 'enabled' => '1'),
-	'f.libelle'             => array('label' => "InvoiceLabel",                     'position' => 1, 'checked' => '1', 'enabled' => '1'),
+	'f.libelle'             => array('label' => "InvoiceLabel",                     'position' => 1, 'checked' => '-1', 'enabled' => '1'),
 	'f.datef'               => array('label' => "Date",                             'position' => 1, 'checked' => '1', 'enabled' => '1'), // f.datef, f.ref, l.rowid
 	'p.ref'                 => array('label' => "ProductRef",                       'position' => 1, 'checked' => '1', 'enabled' => '1'),
-	'l.description'         => array('label' => "ProducDescription",       		'position' => 1, 'checked' => '1', 'enabled' => '1'),
+	'l.description'         => array('label' => "ProductDescription",       		'position' => 1, 'checked' => '-1', 'enabled' => '1'),
 	'l.total_ht'            => array('label' => "Amount",                           'position' => 1, 'checked' => '1', 'enabled' => '1'),
 	'l.tva_tx'              => array('label' => "VATRate",                          'position' => 1, 'checked' => '1', 'enabled' => '1'),
 	's.nom'                 => array('label' => "ThirdParty",                       'position' => 1, 'checked' => '1', 'enabled' => '1'),
@@ -150,6 +150,8 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 if (empty($search_date_start) && getDolGlobalInt('ACCOUNTING_DATE_START_BINDING')) {
 	$search_date_start = $db->idate(getDolGlobalInt('ACCOUNTING_DATE_START_BINDING'));
 }
+
+$object = null;
 
 
 /*
@@ -564,12 +566,12 @@ if ($result) {
 		print '</td>';
 	}
 	// Invoice label
-	if (!empty($arrayfields['f.ref']['checked'])) {
+	if (!empty($arrayfields['f.label']['checked'])) {
 		print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
 	}
 	// Date
 	if (!empty($arrayfields['f.datef']['checked'])) {
-		print '<td class="liste_titre center nowraponall">';
+		print '<td class="liste_titre center">';
 		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
@@ -584,13 +586,13 @@ if ($result) {
 		print '<input type="text" class="flat maxwidth50" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 		print '</td>';
 	}
-	   // description
+	// Description
 	if (!empty($arrayfields['l.description']['checked'])) {
 		print '<td class="liste_titre" data-key="desc">';
 		print '<input type="text" class="flat maxwidth50" name="search_desc" value="'.dol_escape_htmltag($search_desc).'">';
 		print '</td>';
 	}
-	// amount
+	// Amount
 	if (!empty($arrayfields['l.total_ht']['checked'])) {
 		print '<td class="liste_titre" data-key="amount">';
 		print '<input type="text" class="right flat maxwidth50" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
@@ -611,7 +613,7 @@ if ($result) {
 	// Country
 	if (!empty($arrayfields['co.label']['checked'])) {
 		print '<td class="liste_titre" data-key="country">';
-		print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth150', 'code2', 1, 0, 1);
+		print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth125', 'code2', 1, 0, 1);
 		print '</td>';
 	}
 	// TVA Intracom
@@ -1011,7 +1013,13 @@ if ($result) {
 		$i++;
 	}
 	if ($num_lines == 0) {
-		print '<tr><td colspan="'.$totalarray['nbfield'].'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+		$colspan = 1;
+		foreach ($arrayfields as $key => $val) {
+			if (!empty($val['checked'])) {
+				$colspan++;
+			}
+		}
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
 	$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);

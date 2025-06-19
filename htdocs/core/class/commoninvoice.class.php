@@ -114,6 +114,26 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 * @var float
 	 */
+	public $total_ht;
+	/**
+	 * @var float
+	 */
+	public $total_tva;
+	/**
+	 * @var float
+	 */
+	public $total_localtax1;
+	/**
+	 * @var float
+	 */
+	public $total_localtax2;
+	/**
+	 * @var float
+	 */
+	public $total_ttc;
+	/**
+	 * @var float|null
+	 */
 	public $revenuestamp;
 
 	/**
@@ -315,6 +335,7 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 * 	Return amount of payments already done. This must include ONLY the record into the payment table.
 	 *  Payments done using discounts, credit notes, etc are not included.
+	 *  This also set ->sumpayed and ->sumpayed_multicurrency
 	 *
 	 *  @param 		int<-1,1>		$multicurrency 		Return multicurrency_amount instead of amount. -1=Return both.
 	 *	@return		float|int|array{alreadypaid:float,alreadypaid_multicurrency:float}	Amount of payment already done, <0 and set ->error if KO
@@ -2246,6 +2267,12 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	 * @var float
 	 */
 	public $total_ttc;
+
+	/**
+	 * @var float|null
+	 */
+	public $revenuestamp;
+
 
 	/**
 	 * @var int<0,1>
