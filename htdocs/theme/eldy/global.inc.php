@@ -503,7 +503,7 @@ textarea {
 	border-right: solid 1px var(--inputbordercolor);
 	border-bottom: solid 1px var(--inputbordercolor);
 
-	padding:4px;
+	padding:8px;
 	margin-left:0px;
 	margin-bottom:1px;
 	margin-top:1px;

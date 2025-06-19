@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - compta
+OptionModeTrue=Comptabilité d'exercice
+OptionModeVirtual=Comptabilité de caisse
 RemainingAmountPayment=Montant restant à payer :
 Accountparent=Compte Parent
 Accountsparent=Comptes parents
@@ -169,7 +171,11 @@ LinkedFichinter=Lien vers une intervention
 ImportDataset_tax_contrib=Charges sociales
 ErrorBankAccountNotFound=Erreur: compte bancaire introuvable
 FiscalPeriod=Période de comptabilité
-FiscalYearOpenedShort=Ouvert
+ErrorNoFiscalyearDefined=Erreur, aucun exercice financier défini (Voir %s - %s - %s)
+FiscalYearSetAsDefault=Exercice fiscal (%s) défini par défaut
+FiscalYearFromTo=Période de %s à %s
+FiscalYearOpened=Année fiscale ouverte
+FiscalYearClosed=Exercice clos
 FiscalYearClosedShort=Fermée
 ListSocialContributionAssociatedProject=Liste des contributions sociales associées au projet
 AccountingAffectation=Mission de comptabilité

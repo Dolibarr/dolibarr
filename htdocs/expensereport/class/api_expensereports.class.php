@@ -547,49 +547,50 @@ class ExpenseReports extends DolibarrApi
 	}
 
 	/**
-	 * Validate an Expense Report
+	 * Validate an expense report
 	 *
-	 * @param   int $id             Expense Report ID
-	 *
-	 * @url POST    {id}/validate
-	 *
-	 * @return  array
-	 * FIXME An error 403 is returned if the request has an empty body.
-	 * Error message: "Forbidden: Content type `text/plain` is not supported."
-	 * Workaround: send this in the body
+	 * If you get a bad value for param notrigger check, provide this in body
 	 * {
-	 *   "idwarehouse": 0
+	 *   "notrigger": 0
 	 * }
+	 *
+	 * @since	23.0.0	Initial implementation
+	 *
+	 * @param	int		$id				Expense report ID
+	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 *
+	 * @url		POST	{id}/validate
+	 *
+	 * @return	Object
+	 *
+	 * @throws RestException
 	 */
-	/*
-	public function validate($id, $idwarehouse=0)
+	public function validate($id, $notrigger = 0)
 	{
-		if(! DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
-			throw new RestException(403);
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'creer')) {
+			throw new RestException(403, "Insuffisant rights");
 		}
-
 		$result = $this->expensereport->fetch($id);
-		if( ! $result ) {
-			throw new RestException(404, 'expensereport not found');
+		if (!$result) {
+			throw new RestException(404, 'Expense report not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('expensereport',$this->expensereport->id)) {
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if( ! $this->expensereport->valid(DolibarrApiAccess::$user, $idwarehouse)) {
-			throw new RestException(500, 'Error when validate expensereport');
+		$result = $this->expensereport->setValidate(DolibarrApiAccess::$user, $notrigger);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already validated');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when validating expense report: '.$this->expensereport->error);
 		}
 
-		return array(
-			'success' => array(
-				'code' => 200,
-				'message' => 'expensereport validated'
-			)
-		);
-	}*/
+		$this->expensereport->fetchObjectLinked();
 
-
+		return $this->_cleanObjectDatas($this->expensereport);
+	}
 
 	/**
 	 * Get the list of payments of an expense report

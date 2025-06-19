@@ -3497,7 +3497,7 @@ class User extends CommonObject
 		if ($this->note_public && getDolGlobalString('LDAP_FIELD_DESCRIPTION')) {
 			$info[getDolGlobalString('LDAP_FIELD_DESCRIPTION')] = dol_string_nohtmltag($this->note_public, 2);
 		}
-		if ($this->socid > 0) {
+		if ($this->socid > 0 && getDolGlobalString('LDAP_FIELD_COMPANY')) {
 			$soc = new Societe($this->db);
 			$soc->fetch($this->socid);
 

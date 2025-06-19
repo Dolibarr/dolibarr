@@ -3870,7 +3870,7 @@ if ($action == 'create') {
 				</script>';
 			}
 			if (!GETPOSTINT('fac_rec')) {
-				print ' <a class="valignmiddle" href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
+				print ' <a class="valignmiddle" href="'.DOL_URL_ROOT.'/societe/card.php?action=create&customer=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 			}
 			print '</td>';
 			print '</tr>'."\n";
@@ -5230,6 +5230,7 @@ if ($action == 'create') {
 
 		// POS
 		if (isModEnabled('takepos') || $object->module_source || getDolGlobalString('INVOICE_ALLOW_POS_SOURCE_EDIT')) {
+			$langs->load("cashdesk");
 			print '<tr><td class="fieldname_type">';
 			print '<table class="nobordernopadding centpercent"><tr><td>';
 			print $form->textwithpicto($langs->trans('PointOfSale'), $langs->trans('POSInfo'));

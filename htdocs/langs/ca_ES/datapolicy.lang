@@ -18,8 +18,8 @@ Module4100Desc = Mòdul de gestió de la privadesa de dades (conformitat amb el 
 # Administration page
 datapolicySetup = Configuració de la política de privadesa de dades del mòdul
 DataDeletion=Supressió de dades
-DataAnonymization=Anonymization of data
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
+DataAnonymization=Anonimització de dades
+datapolicySetupPage = Depenent de les lleis del vostre país (Exemple <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> del RGPD), les dades personals s'han de conservar durant un període no superior a la durada per a la qual s'hagin recopilat les dades, excepte per al qual s'hagin de recollir. finalitats.<br>Aquest mòdul farà una anonimització automàticament després d'un cert temps sense esdeveniments (la durada que haureu indicat a continuació) i si l'objecte no té fills d'objecte de negoci existents.
 NB_MONTHS = %s mesos
 ONE_YEAR = 1 any
 NB_YEARS = %s anys
@@ -34,14 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Client potencial/client
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ni prospecte/Ni client
 DATAPOLICY_CONTACT_FOURNISSEUR = Proveïdor
 DATAPOLICY_ADHERENT = Soci
-DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
+DATAPOLICY_Tooltip_SETUP=L'anonimització es fa mitjançant la tasca programada "%s" executada pel mòdul "%s", de manera que aquest mòdul ha d'estar habilitat i funcionant correctament.
 SendAgreementText = Podeu enviar un correu electrònic de GDPR a tots els vostres contactes rellevants (que encara no han rebut cap correu electrònic i per als quals no heu registrat res sobre el seu acord de GDPR). Per a fer-ho, utilitzeu el botó següent.
 SendAgreement = Envieu correus electrònics
 AllAgreementSend = S'han enviat tots els correus electrònics
 TXTLINKDATAPOLICYACCEPT = Text per a l'enllaç "acord"
 TXTLINKDATAPOLICYREFUSE = Text per a l'enllaç «desacord»
-DelayForAnonymization=Delay for anonymization
-DelayForDeletion=Delay for deletion
+DelayForAnonymization=Retard per a l'anonimització
+DelayForDeletion=Retard per a la supressió
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = GDPR: Tractament de dades personals
 DATAPOLICY_consentement = Consentiment obtingut per al tractament de dades personals

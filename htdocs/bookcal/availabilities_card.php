@@ -150,7 +150,7 @@ if (empty($reshook)) {
 	$startyear = GETPOSTINT('startyear');
 	$starthour = GETPOSTINT('startHour');
 
-	if (GETPOST('startHour') == "") {
+	if (GETPOST('startHour') == "" && ($action == 'add' || $action == 'update')) {
 		$error++;
 		setEventMessages($langs->trans("ErrorStartHourIsNull"), $hookmanager->errors, 'errors');
 	}
@@ -162,7 +162,7 @@ if (empty($reshook)) {
 	$endyear = GETPOSTINT('endyear');
 	$endhour = GETPOSTINT('endHour');
 
-	if (GETPOST('endHour') == "") {
+	if (GETPOST('endHour') == "" && ($action == 'add' || $action == 'update')) {
 		$error++;
 		setEventMessages($langs->trans("ErrorEndHourIsNull"), $hookmanager->errors, 'errors');
 	}

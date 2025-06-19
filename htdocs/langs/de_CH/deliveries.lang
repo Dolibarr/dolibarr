@@ -2,7 +2,7 @@
 DeliveryRef=Lieferungsnummer
 CreateDeliveryOrder=Erzeuge Lieferschein
 DeliveryStateSaved=Lieferstatus gespeichert
-SetDeliveryDate=Liefertermin setzen
+SetShippingDate=Liefertermin setzen
 ValidateDeliveryReceiptConfirm=Bist du sicher, dass du diesen Lieferschein frei geben willst?
 DeleteDeliveryReceiptConfirm=Bist du sicher, dass du den Lieferschein <b>%s</b> löschen willst?
 TrackingNumber=Sendungsverfolgungsnummer

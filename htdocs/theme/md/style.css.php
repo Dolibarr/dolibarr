@@ -706,7 +706,7 @@ textarea {
 	border-bottom:solid 1px var(--inputbordercolor);
 
 	background-color: #FFF;
-	padding:4px;
+	padding:8px;
 	margin-left:1px;
 	margin-bottom:1px;
 	margin-top:1px;

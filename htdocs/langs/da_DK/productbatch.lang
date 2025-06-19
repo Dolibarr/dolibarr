@@ -50,3 +50,4 @@ ToReplace=Erstatte
 CantMoveNonExistantSerial=Fejl. Du beder om et træk på en plade til en serial, der ikke eksisterer længere. Det kan være, du tager den samme serie på samme lager flere gange i samme forsendelse, eller den blev brugt af en anden forsendelse. Fjern denne forsendelse og klargør en anden.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Lottabel ufuldstændig kørselsreparation med parameteren '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Lagerkorrektion påkrævet, fordi unikt serienummer.
+ErrorBatchesNeedStockManagement=Fejl. Et produkt med batch/lot management skal administreres på lager.
