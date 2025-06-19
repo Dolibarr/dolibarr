@@ -18,24 +18,24 @@
 /*
  * This code handles GitHub webhooks so that when a pull request is
  * created or edited (in case it is not draft), or made ready for review,
- * a list of targetted users is assigned to it as reviewers. This is
+ * a list of targeted users is assigned to it as reviewers. This is
  * done using GitHub REST API.
  *
  * You must first create an API token. I strongly advise to create a
  * "fine-grained token", this will enable you to restrict access to
  * features. To do so:
  * * Go to your account settings (top right menu > "Settings")
- * * Click on "Developper settings" on the bottom left
+ * * Click on "Developer settings" on the bottom left
  * * Click on left menu "Personal access tokens" > "Fine-grained tokens"
  * * On the top right, click on "Generate new token"
  * * Fill the necessary information:
  *     - "Token name"
- *     - "Resource owner": if the targetted repository is part of an
+ *     - "Resource owner": if the targeted repository is part of an
  *       organization, you must choose it
  *     - "Expiration": self explanatory
  *           /!\ This script does not handle token renewal
  *     - "Repository access": unless you have a specific use-case,
- *       choose "Only select repositories" and select the targetted
+ *       choose "Only select repositories" and select the targeted
  *       repository
  *           /!\ I couldn't select the repository with AdBlock enabled
  *     - "Permissions": only the following permission is required:
