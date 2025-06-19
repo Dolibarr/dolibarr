@@ -1290,7 +1290,7 @@ class Conf extends stdClass
 			}
 
 			if (empty($this->global->MAIN_MODULE_DOLISTORE_API_SRV)) {
-				$this->global->MAIN_MODULE_DOLISTORE_API_SRV = 'https://www.dolistore.com';
+				$this->global->MAIN_MODULE_DOLISTORE_API_SRV = 'https://www.dolistore.com/api/';
 			}
 			if (empty($this->global->MAIN_MODULE_DOLISTORE_API_KEY)) {
 				$this->global->MAIN_MODULE_DOLISTORE_API_KEY = 'dolistorecatalogpublickey1234567';

@@ -193,3 +193,5 @@ PageLinkedByAMenuEntry=Páxina ligada polo menos por unha entrada de menú
 FieldsEdit=Editar campos
 FieldsInsert=Insertar campos
 FieldsView=Vista de campos
+AIPromptExtrafield=Solicitude de IA
+AIPromptExtrafieldDesc=As constantes empregadas neste campo serán substituídas polo valor correspondente.

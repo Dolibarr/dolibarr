@@ -139,7 +139,7 @@ $search_date_delivery_endyear = GETPOSTINT('search_date_delivery_endyear');
 $search_date_delivery_start = dol_mktime(0, 0, 0, $search_date_delivery_startmonth, $search_date_delivery_startday, $search_date_delivery_startyear);
 $search_date_delivery_end = dol_mktime(23, 59, 59, $search_date_delivery_endmonth, $search_date_delivery_endday, $search_date_delivery_endyear);
 $search_availability = GETPOST('search_availability', 'intcomma');
-$search_categ_cus = GETPOST("search_categ_cus", 'intcomma');
+$search_categ_cus = GETPOSTINT("search_categ_cus");
 $search_fk_cond_reglement = GETPOST("search_fk_cond_reglement", 'intcomma');
 $search_fk_shipping_method = GETPOST("search_fk_shipping_method", 'intcomma');
 $search_fk_input_reason = GETPOST("search_fk_input_reason", 'intcomma');
@@ -365,7 +365,7 @@ if (empty($reshook)) {
 		$search_multicurrency_montant_vat = '';
 		$search_multicurrency_montant_ttc = '';
 		$search_login = '';
-		$search_product_category = '';
+		$search_product_category = 0;
 		$search_town = '';
 		$search_zip = "";
 		$search_state = "";
@@ -782,8 +782,8 @@ if ($search_sale && $search_sale != '-1') {
 	}
 }
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
-$searchCategoryCustomerOperator = -1;
-$searchCategoryCustomerList = array($search_categ_cus);
+$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
+$searchCategoryCustomerList = ($search_categ_cus !== '-1' ? explode(',', (string) $search_categ_cus) : array());
 if (!empty($searchCategoryCustomerList)) {
 	$searchCategoryCustomerSqlList = array();
 	$listofcategoryid = '';
@@ -812,7 +812,7 @@ if (!empty($searchCategoryCustomerList)) {
 	}
 }
 // Search for tag/category ($searchCategoryProductList is an array of ID)
-$searchCategoryProductOperator = -1;
+$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
 $searchCategoryProductList = array($search_product_category);
 if (!empty($searchCategoryProductList)) {
 	$searchCategoryProductSqlList = array();
@@ -1202,7 +1202,7 @@ if ($user->hasRight('user', 'user', 'lire')) {
 }
 // If the user can view products
 if (isModEnabled('category') && $user->hasRight('categorie', 'read') && ($user->hasRight('product', 'read') || $user->hasRight('service', 'read'))) {
-	$searchCategoryProductOperator = -1;
+	$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
 	$formcategory = new FormCategory($db);

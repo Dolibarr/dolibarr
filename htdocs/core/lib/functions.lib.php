@@ -19,7 +19,7 @@
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022       Anthony Berton	         	<anthony.berton@bb2a.fr>
  * Copyright (C) 2022       Ferran Marcet           	<fmarcet@2byte.es>
- * Copyright (C) 2022       Charlene Benke           	<charlene@patas-monkey.com>
+ * Copyright (C) 2022-2025  Charlene Benke           	<charlene@patas-monkey.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2023-2024  Joachim Kueter              <git-jk@bloxera.com>
  * Copyright (C) 2024		Lenin Rivas					<lenin.rivas777@gmail.com>
@@ -1216,7 +1216,7 @@ function GETPOSTFLOAT($paramname, $rounding = '')
  * 										or 'end' means '23:59:59'
  * 										or '' means '00:00:00' (default)
  * @param 	int|string 	$gm 			Passed to dol_mktime. In most cases, when used with 'getpost' or 'getpostend', it should be 'tzuserrel'. Use 'auto' if you need dates related to 'tzserver' (like in accountancy).
- * @param	string		$saverestore	Use a string context to save retrieved date so it will be used on next retrieve using same context if not defined.
+ * @param	string		$saverestore	Use a string family context to save retrieved date so it will be used on the next retrieval for the same family context (if value not already defined in parameters).
  * @return 	int|string  				Date as a timestamp, '' or false if error
  *
  * @see dol_mktime()
@@ -3010,7 +3010,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 	if ($popuptab) {	// If there is some tabs not shown
 		$left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
 		$right = ($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right');
-		$widthofpopup = 200;
+		$widthofpopup = 240;
 
 		$tabsname = $moretabssuffix;
 		if (empty($tabsname)) {
@@ -13563,6 +13563,10 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 	if (getDolGlobalString('MAIN_BUTTON_HIDE_UNAUTHORIZED') && (!$user->admin) && $status <= 0) {
 		return '';
 	}
+	// Fix old picto fa-th-list to use fa-grid-vertical instead
+	if ($iconClass == 'fa fa-th-list imgforviewmode') {
+		$iconClass = ' fa fa-grip-horizontal imgforviewmode';
+	}
 
 	$class = 'btnTitle';
 	if (in_array($iconClass, array('fa fa-plus-circle', 'fa fa-plus-circle size15x', 'fa fa-comment-dots', 'fa fa-paper-plane'))) {
@@ -14008,21 +14012,21 @@ function getElementProperties($elementType)
 		$table_element = 'ecmfiles';
 		$subelement = '';
 	} elseif ($elementType == 'knowledgerecord' || $elementType == 'knowledgemanagement') {
-		$module = '';
+		$module = 'knowledgemanagement';
 		$classpath = 'knowledgemanagement/class';
 		$classfile = 'knowledgerecord';
 		$classname = 'KnowledgeRecord';
 		$table_element = 'knowledgemanagement_knowledgerecord';
 		$subelement = '';
 	} elseif ($elementType == 'customer') {
-		$module = 'thirdparty';
+		$module = 'societe';
 		$classpath = 'societe/class';
 		$classfile = 'client';
 		$classname = 'Client';
 		$table_element = 'societe';
 		$subelement = '';
 	} elseif ($elementType == 'fournisseur' || $elementType == 'supplier') {
-		$module = 'thirdparty';
+		$module = 'societe';
 		$classpath = 'fourn/class';
 		$classfile = 'fournisseur';
 		$classname = 'Fournisseur';
@@ -14062,10 +14066,10 @@ function getElementProperties($elementType)
 	}
 
 	// Overwrite value for special cases
-	if ($element == 'order_supplier') {
+	if ($element == 'order_supplier' && isModEnabled('fournisseur')) {
 		$dir_output = $conf->fournisseur->commande->dir_output;
 		$dir_temp = $conf->fournisseur->commande->dir_temp;
-	} elseif ($element == 'invoice_supplier') {
+	} elseif ($element == 'invoice_supplier' && isModEnabled('fournisseur')) {
 		$dir_output = $conf->fournisseur->facture->dir_output;
 		$dir_temp = $conf->fournisseur->facture->dir_temp;
 	}
@@ -15655,9 +15659,11 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 
 		$out .= "</ul>\n";
 
+		// Code to manage the click on button data-read-more-action to show full description of an event
 		$out .= '<script>
 				jQuery(document).ready(function () {
 				   $(document).on("click", "[data-read-more-action]", function(e){
+						console.log("We click on data-read-more-action");
 					   let readMoreBloc = $(this).closest(".readmore-block");
 					   if(readMoreBloc.length > 0){
 							e.preventDefault();

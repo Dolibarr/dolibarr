@@ -111,7 +111,7 @@ We suppose the branch x.y has already been created during the beta (see previous
 
 - Update version/info in ChangeLog, for this:
 
-To generate a changelog of a **major new version** x.y.0 (from a repo on branch develop), you can do
+To generate a changelog of a **major new version** x.0.0 (from a repo on branch develop), you can do
 
 ```
 cd ~/git/dolibarr

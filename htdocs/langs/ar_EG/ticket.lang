@@ -1,0 +1,11 @@
+# Dolibarr language file - Source file is en_US - ticket
+TicketTypeShortPROJET=مشروع
+TicketTypeShortOTHER=أخرى
+TicketSeverityShortHIGH=مرتفع
+TicketCategoryShortOTHER=أخرى
+TypeContact_ticket_internal_CONTRIBUTOR=مساهم في المهمة (خارجي)
+TicketPublicInterfaceTopicLabelAdmin=عنوان واجهة الحجز
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket(Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined).
+CreatedBy=تم الإنشاء بواسطة المستخدم
+Unread=غير مقروء
+NewUser=مستخدم جديد

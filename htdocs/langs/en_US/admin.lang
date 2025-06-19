@@ -225,8 +225,8 @@ ModulesDevelopDesc=You may also develop your own module or find a partner to dev
 DOLISTOREdescriptionLong=Instead of switching on <a href="https://www.dolistore.com">www.dolistore.com</a> web site to find an external module, you can use this embedded tool that will perform the search on the external market place and dolibarr-community-modules repository for you (may be slow, need an internet access)...
 FreeModule=Free
 CompatibleUpTo=Compatible with version %s (Min %s - Max %s).
-NotCompatible=This module does not seem compatible with your Dolibarr %s (Min %s - Max %s).
-CompatibleAfterUpdate=This module requires an update to your Dolibarr %s (Min %s - Max %s).
+NotCompatible=Module not compatible with your Dolibarr %s (Min %s - Max %s).
+CompatibleAfterUpdate=This module requires a Dolibarr upgrade to %s (Min %s - Max %s).
 SeeInMarkerPlace=See in Market place
 SeeSetupOfModule=See setup of module %s
 SeeSetupPage=See setup page at %s
@@ -255,7 +255,7 @@ Security=Security
 Passwords=Passwords
 DoNotStoreClearPassword=Encrypt passwords stored in database.
 MainDbPasswordFileConfEncrypted=Obfuscate the database password stored in conf.php. It is recommended to activate this option.
-InstrucToEncodePass=To have password encoded into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="...";</b><br>by<br><b>$dolibarr_main_db_pass="crypted:%s";</b>
+InstrucToEncodePass=To have password encoded into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="...";</b><br>by<br><b>$dolibarr_main_db_pass="%s";</b>
 InstrucToClearPass=To have password decoded (clear) into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="crypted:...";</b><br>by<br><b>$dolibarr_main_db_pass="%s";</b>
 ProtectAndEncryptPdfFiles=Protect generated PDF files. This is NOT recommended as it breaks bulk PDF generation.
 ProtectAndEncryptPdfFilesDesc=Protection of a PDF document keeps it available to read and print with any PDF browser. However, editing and copying is not possible anymore. Note that using this feature makes building of a global merged PDFs not working.
@@ -366,7 +366,8 @@ LastActivationIP=Latest activation IP
 LastActivationVersion=Latest activation version
 UpdateServerOffline=Update server offline
 WithCounter=Manage a counter
-GenericMaskCodes=You may enter any numbering mask. In this mask, the following tags can be used:<br><b>{000000}</b> corresponds to a number which will be incremented on each %s. Enter as many zeros as the desired length of the counter. The counter will be completed by zeros from the left in order to have as many zeros as the mask. <br><b>{000000+000}</b> same as the previous one but an offset corresponding to the number to the right of the + sign is applied starting on the first %s. <br><b>{000000@x}</b> same as the previous one but the counter is reset to zero when month x is reached (x between 1 and 12, or 0 to use the early months of fiscal year defined in your configuration, or 99 to reset to zero every month). If this option is used and x is 2 or higher, then the sequence {yy}{mm} or {yyyy}{mm} is also required. <br><b>{dd}</b> day (01 to 31).<br><b>{mm}</b> month (01 to 12).<br><b>{yy}</b>, <b>{yyyy}</b> or <b>{y}</b> year over 2, 4 or 1 numbers. <br>
+GenericMaskCodes=You may enter any numbering mask. In this mask, the following tags can be used:<br><b>{000000}</b> corresponds to a number which will be incremented on each %s. Enter as many zeros as the desired length of the counter. The counter will be completed by zeros from the left in order to have as many zeros as the mask. <br><b>{000000+000}</b> same as the previous one but an offset corresponding to the number to the right of the + sign is applied starting on the first %s. <br><b>{000000@x}</b> same as the previous one but the counter is reset to zero when month x is reached (x between 1 and 12, or 0 to use the early months of fiscal year defined in your configuration, or 99 to reset to zero every month). If this option is used and x is 2 or higher, then the sequence {yy}{mm} or {yyyy}{mm} is also required.<br>
+GenericMaskCodes1=<b>{yy}</b>, <b>{yyyy}</b> or <b>{y}</b> year over 2, 4 or 1 numbers. <br><b>{mm}</b> month (01 to 12).<br><b>{dd}</b> day (01 to 31).<br>
 GenericMaskCodes2=<b>{cccc}</b> the client code on n characters<br><b>{cccc000}</b> the client code on n characters is followed by a counter dedicated to the customer. This counter dedicated to customer is reset at same time as the global counter.<br><b>{tttt}</b> The code of third party type on n characters (see menu Home - Setup - Dictionary - Types of third parties). If you add this tag, the counter will be different for each type of third party.<br>
 GenericMaskCodes2b=<b>{uuuu}</b> the n first characters of the lastname of the user that creates the object (n is number of "u").
 GenericMaskCodes3=All other characters in the mask will remain intact.<br>Spaces are not allowed.<br>
@@ -1292,7 +1293,6 @@ SetupDescription2=The following two sections are mandatory (the two first entrie
 SetupDescription3=<a href="%s">%s -> %s</a><br><br>Basic parameters used to customize the default behavior of your application (e.g for country-related features).
 SetupDescription4=<a href="%s">%s -> %s</a><br><br>This software is a suite of many modules/applications. The modules related to your needs must be enabled and configured. Menu entries will appears with the activation of these modules.
 SetupDescription5=Other Setup menu entries manage optional parameters.
-SetupDescriptionLink=<a href="%s">%s - %s</a>
 SetupDescription3b=Basic parameters used to customize the default behavior of your application (e.g for country-related features).
 SetupDescription4b=This software is a suite of many modules/applications. The modules related to your needs must be activated. Menu entries will appears with the activation of these modules.
 AuditedSecurityEvents=Security events that are audited
@@ -2553,8 +2553,8 @@ TextTranslation=Text translation
 ImageGeneration=Image generation
 VideoGeneration=Video generation
 AudioGeneration=Audio generation
-AIPromptForFeatures=AI custom prompts for features (AI service %s)
-AIModelForFeature=AI model for features (AI service %s)
+AIPromptForFeatures=AI custom prompts per features (AI service %s)
+AIModelForFeature=AI model per features (AI service %s)
 NewCustomPrompt=New custom prompt
 AudioTranscription=Audio transcription
 AudioTranslation=Audio translation

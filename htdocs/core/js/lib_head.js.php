@@ -1029,8 +1029,8 @@ function newpopup(url, title) {
 }
 
 /**
- * Function show document preview. It uses the "dialog" function.
- * The a tag around the img must have the src='', class='documentpreview', mime='image/xxx', target='_blank' from getAdvancedPreviewUrl().
+ * Function to show a document preview popup. It uses the "dialog" function.
+ * The "a" tag around the "img" must have the src='', class='documentpreview', mime='image/xxx', target='_blank' from getAdvancedPreviewUrl().
  *
  * @param 	file 		Url
  * @param 	type 		Mime file type ("image/jpeg", "application/pdf", "text/html")
@@ -1075,7 +1075,7 @@ function document_preview(file, type, title)
 			console.log("object_height="+object_height+" window height="+height);
 			if(object_height < height){
 				console.log("Object height is small, we set height of popup according to image height.");
-				height = object_height + 80
+				height = object_height + 100
 			}
 			else
 			{
@@ -1104,6 +1104,7 @@ function document_preview(file, type, title)
 				};
 		}
 
+		$("#dialogforpopup").addClass("center");
 		$("#dialogforpopup").html(newElem);
 
 		$("#dialogforpopup").dialog({
@@ -1597,7 +1598,7 @@ function setListDependencies() {
 <?php
 if (!getDolGlobalString('MAIN_DISABLE_SELECT2_FOCUS_PROTECTION') && !defined('DISABLE_SELECT2_FOCUS_PROTECTION')) {
 	?>
-/*
+/**
  * Hacky fix for a bug in select2 with jQuery 3.6.4's new nested-focus "protection"
  * This fix the need to click a second time when clicking into a combo with ajax (see Test4d and Test5a in test_forms.php
  * see: https://github.com/select2/select2/issues/5993
@@ -1605,12 +1606,13 @@ if (!getDolGlobalString('MAIN_DISABLE_SELECT2_FOCUS_PROTECTION') && !defined('DI
  *
  * TODO: Recheck with the select2 GH issue and remove once this is fixed on their side
  */
+
 $(document).on('select2:open', (e) => {
 	console.log("Execute the focus (click on combo or use space when on component)");
 	const target = $(e.target);
 	if (target && target.length) {
 		let id = target[0].id || target[0].name;
-		if (id.substr(-2) == "[]") {
+		if (id.substr(-2) == '[]') {
 			id = id.substr(0,id.length-2);
 		}
 		document.querySelector('input[aria-controls*='+id+']').focus();
@@ -1619,6 +1621,63 @@ $(document).on('select2:open', (e) => {
 	<?php
 }
 ?>
+
+
+/**
+ * Code to manage drag and drop inside kanban group by view - handles sortable columns and item movement between status columns
+ */
+
+$(document).ready(function() {
+	if ($('.kanban .column').length > 0) {
+		$('.kanban .column').sortable({
+			items: '.kanban-draggable',
+			connectWith: '.kanban .column',
+			cursor: 'move',
+			opacity: 0.8,
+			tolerance: 'pointer',
+			start: function(_, ui) {
+				ui.item.data('original-column', ui.item.parent());
+				ui.placeholder.height(ui.item.outerHeight());
+			},
+			receive: function(_, ui) {
+				var originalColumn = ui.item.data('original-column');
+				var newColumn = $(this);
+
+				if (!originalColumn.is(newColumn)) {
+					onKanbanColumnChange(ui.item, newColumn);
+				}
+			}
+		});
+	}
+});
+
+/**
+ * Function called when an item is moved to a different column
+ * @param {jQuery} item - The dragged item
+ * @param {jQuery} newColumn - The new column
+ */
+function onKanbanColumnChange(item, newColumn) {
+	console.log("Call onKanbanColumnChange");
+	jQuery.ajax({
+		method: 'POST',
+		url: '<?php echo DOL_URL_ROOT; ?>/core/ajax/saveinplace.php',
+		data: {
+			field: 'editval_'+newColumn.data('groupbyfield'),
+			element: item.data('element'),
+			table_element: item.data('tableelement'),
+			fk_element: item.data('itemid'),
+			value: newColumn.data('groupbyid'),
+			token: '<?php echo currentToken() ?>'
+		},
+		context: document.body,
+		success: function() {
+			if (newColumn.hasClass('kanbancollapsed')) {
+				item.hide();
+			}
+		}
+	});
+	item.data('original-column', newColumn);
+}
 
 
 // End of lib_head.js.php

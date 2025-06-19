@@ -262,3 +262,8 @@ if ($object->id > 0) {
 		show_actions_messaging($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
 	}
 }
+
+
+// End of page
+llxFooter();
+$db->close();

@@ -370,6 +370,9 @@ if ($mode == 'hierarchy') {
 	if ($type != '') {
 		$param .= '&type='.urlencode($type);
 	}
+	if (GETPOST('dol_openinpopup', 'aZ')) {
+		$param .= '&dol_openinpopup='.urlencode(GETPOST('dol_openinpopup', 'aZ'));
+	}
 
 	$typetext = $type;
 
@@ -522,7 +525,7 @@ if ($mode == 'hierarchy') {
 } else {
 	// Mode list
 
-	llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-aaa page-list bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for a horizontal scroll in the table instead of page
+	llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-acategory page-list bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for a horizontal scroll in the table instead of page
 
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -542,6 +545,9 @@ if ($mode == 'hierarchy') {
 	}
 	if ($type != '') {
 		$param .= '&type='.urlencode($type);
+	}
+	if (GETPOST('dol_openinpopup', 'aZ')) {
+		$param .= '&dol_openinpopup='.urlencode(GETPOST('dol_openinpopup', 'aZ'));
 	}
 	foreach ($search as $key => $val) {
 		if (is_array($search[$key])) {
