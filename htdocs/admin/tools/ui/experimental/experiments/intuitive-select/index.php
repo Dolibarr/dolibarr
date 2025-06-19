@@ -355,7 +355,7 @@ $form = new Form($db);
 						 * Because Ctrl + Click on link is also used for open ion a new tab
 						 * we need to block select tool
 						 */
-						$(document).on("click", ".row-with-select a, .row-with-select button, [role='button']", function (e) {
+						$(document).on("click", ".row-with-select a, .row-with-select button,  .row-with-select [role='button']", function (e) {
 							// we need to block select tool
 							if (e.ctrlKey) {
 								e.stopPropagation();
