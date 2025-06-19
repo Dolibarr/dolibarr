@@ -63,6 +63,7 @@
  * * On the top right, click on "Add webhook"
  * * Fill the necessary information:
  *     - "Payload URL" is the path to this script
+ *           You can add `?debug` to output more information:wq;
  *     - "Content type" should be left as "application/x-www-form-
  *       urlencoded"
  *           /!\ This script currently does not handle "application/json"
