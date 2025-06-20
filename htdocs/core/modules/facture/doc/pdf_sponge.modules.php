@@ -2131,7 +2131,7 @@ class pdf_sponge extends ModelePDFFactures
 			// Not used in this case, initialized to avoid CI warnings
 			$deja_regle_origin = 0;
 			$creditnoteamount_origin = 0;
-			$resteapayer_origin = 0;
+			$depositsamount_origin = 0;
 			$resteapayer_origin = 0;
 		} else {
 			$deja_regle_origin = $object->getSommePaiement(0);
