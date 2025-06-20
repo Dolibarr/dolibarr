@@ -2,6 +2,74 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 18.0.7 compared to 18.0.6 *****
+138 files changed, 1622 insertions(+), 530 deletions(-)
+
+FIX: 17.0 API endpoints "PUT": prevent overwriting all extrafields if only some are supplied in the request
+FIX: 17.0 API endpoints "PUT": prevent overwriting all extrafields if only some are supplied in the request cf. PR #29237
+FIX: 17.0 - collisions in cache for dol_getIdFromCode
+FIX: 17.0 - missing error handling for FactureRec::fetch in card-rec.php
+FIX: 17.0: warnings due to uninitialized variables + delete code that doesn't apply to recurring invoices (AFAIK, there is no recurring credit note feature)
+FIX: #21294 Stock import sql query
+FIX: #26250 fatal error on kit
+FIX: #32339 Delete a loan settlement is partial
+FIX: #33038 drag and drop files are not prefixed with object reference
+FIX: #33117 accountancy export Quadratus when doc ref is less than 10 char
+FIX: #33145 wrong label status buy on prodcut tooltip
+FIX: #33145 wrong label status buy on product tooltip
+FIX: accountancy export Quadratus when doc ref is less than 10 char
+FIX: bad dispatched quantities for batches on shipment card
+FIX: bank payment rejection on SEPA (backport commit 100a657) (#33838)
+FIX: calculate start date of cloned task from cloned project (#31799)
+FIX: can not delete files in task card
+FIX: close all services on contract will close all lines (#33466)
+FIX: compatibility with multicompany
+FIX: constant PAYMENTBYBANKTRANSFER_ADDDAYS was never saved (#33799)
+FIX: Count on supplier invoice list does not match count in DB (#33351)
+FIX: #CVE-2024-34051
+FIX: delete supplier order line when linked to customer order line
+FIX: delete supplier order when at least one line linked to customer order line
+FIX: display error when loan can't be deleted
+FIX: display full tree on shipment card when a kit contains a same component in other sub-kit
+FIX: Fix case when the value of a extrafields of the type 'boolean', 'select' or other have an option with a value equal to '0'.
+FIX: Fix return value of hook sendMail when hook return -1 who must be return false in sendfile() function
+FIX: GETPOST('private_message')
+FIX: in projet/element.php total_time is always back to 0
+FIX: invoice creation : use dol_include_once instead of require_once to allow external modules
+FIX: invoice creation : use dol_include_once instead of require_once to allow external modules.
+FIX: issue #28222 Edit date extrafield displayed on all on lines (#31914)
+FIX: Many status on invoice linked object block
+FIX: Multilangs : PDF lines description
+FIX: ODT substitution when many HTML tags in string
+FIX: old copy not needed in supplier order create method (#31733)
+FIX: PAIEMENT Wrong field displayed for DateChequeReceived (#33390)
+FIX: phpcs
+FIX: product variants copy: also copy multiprice variations
+FIX: qual
+FIX: removes traces of <<<HEAD conflicts following the postponement of branch 13 modifications (#32014)
+FIX: Replace compromised tj-actions/changed-files (#33481)
+FIX: selectcontact is loading all contacts if socid is empty and MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT is not set
+FIX: selectcontact is loading all contacts when update event
+FIX: select group and severity search fields on ticket list
+FIX: send email to assigned user on ticket create
+FIX: send mail to BCC when email formatted as Fullname <email> (#31983)
+FIX: Show true error when send notify email at validate expense report
+FIX: status ticket update for new message
+FIX: swiftmailer: correctly set errors-to header (#31826)
+FIX: TakePos barcode rule (#31857)
+FIX: There were many status indicator in the invoice linked object block (propal card)
+FIX(ticket): Notification email without public interface
+FIX: Update on a sold line of bank entries set the type to empty, now it's fixed #22539 (#31888)
+FIX: update status on create supplier order for trigger (#31642)
+FIX: use tax with code on supplier order line give tax code missing in supplier invoice (#32018)
+FIX: use vat with code on supplier order result code missing in supplier invoice
+FIX: warehouse list: broken status filter (#33667)
+FIX: warnings (#33423)
+FIX: wrong left margin (v18 to develop ?)
+FIX: wrong message on update shipment
+FIX: wrong update function parameter
+
+
 ***** ChangeLog for 18.0.6 compared to 18.0.5 *****
 FIX: 16.0 - parent company gets emptied when updating a third party from the card in edit mode (#28269)
 FIX: 16.0 - the e-mail templates configured in the notification module are not used if the recipient is a fixed e-mail address (#29407)
