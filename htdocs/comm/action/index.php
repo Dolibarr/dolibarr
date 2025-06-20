@@ -760,10 +760,7 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // N
 $sql .= $hookmanager->resPrint;
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
-// We must filter on resource table
-if ($resourceid > 0) {
-	$sql .= ", ".MAIN_DB_PREFIX."element_resources as r";
-}
+
 // We must filter on assignment table
 if ($filtert > 0 || $usergroup > 0) {
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as ar";
@@ -774,6 +771,10 @@ if ($filtert > 0 || $usergroup > 0) {
 	if ($usergroup > 0) {
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element AND ugu.fk_usergroup = ".((int) $usergroup);
 	}
+}
+// We must filter on resource table
+if ($resourceid > 0) {
+	$sql .= ", ".MAIN_DB_PREFIX."element_resources as r";
 }
 $sql .= ' WHERE a.fk_action = ca.id';
 $sql .= ' AND a.entity IN ('.getEntity('agenda').')';	// bookcal is a "virtual view" of agenda
