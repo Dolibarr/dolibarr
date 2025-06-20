@@ -22,7 +22,7 @@ descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=當供應商發票已
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=在驗證收貨時將連結的來源採購訂單分類為已收貨（並且如果所有收貨的數量與要更新的採購訂單中的數量相同）
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=收貨結束時將連結的來源採購訂單分類為已收貨（如果所有收貨的數量與要更新的採購訂單中的數量相同）
 # Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
 # Automatically link ticket to contract
 descWORKFLOW_TICKET_LINK_CONTRACT=當建立服務單時，連結符合之合作方的可用合約
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=當連結合約時，在母公司的合約中搜尋

@@ -410,6 +410,7 @@ InvoiceAutoValidate=Validate invoices automatically
 GeneratedFromRecurringInvoice=Generated from template recurring invoice %s
 DateIsNotEnough=Date not reached yet
 InvoiceGeneratedFromTemplate=Invoice %s generated from recurring template invoice %s
+InvoiceGeneratedFromTemplateError=Error Invoice %s generated from recurring template invoice %s : %s
 GeneratedFromTemplate=Generated from template invoice %s
 WarningInvoiceDateInFuture=Warning, the invoice date is higher than current date
 WarningInvoiceDateTooFarInFuture=Warning, the invoice date is too far from current date

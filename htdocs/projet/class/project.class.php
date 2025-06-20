@@ -897,14 +897,19 @@ class Project extends CommonObject
 
 		// Set fk_projet into elements to null
 		$listoftables = array(
-			'propal'=>'fk_projet', 'commande'=>'fk_projet', 'facture'=>'fk_projet',
-			'supplier_proposal'=>'fk_projet', 'commande_fournisseur'=>'fk_projet', 'facture_fourn'=>'fk_projet',
-			'expensereport_det'=>'fk_projet', 'contrat'=>'fk_projet',
-			'fichinter'=>'fk_projet',
-			'don'=>array('field'=>'fk_projet', 'module'=>'don'),
-			'actioncomm'=>'fk_project',
-			'mrp_mo'=>'fk_project',
-			'entrepot'=>'fk_project'
+			'propal' => 'fk_projet',
+			'commande' => 'fk_projet',
+			'facture' => 'fk_projet',
+			'supplier_proposal' => 'fk_projet',
+			'commande_fournisseur' => 'fk_projet',
+			'facture_fourn' => 'fk_projet',
+			'expensereport_det' => 'fk_projet',
+			'contrat' => 'fk_projet',
+			'fichinter' => 'fk_projet',
+			'don' => array('field' => 'fk_projet', 'module' => 'don'),
+			'actioncomm' => 'fk_project',
+			'mrp_mo' => array('field' => 'fk_project', 'module' => 'mrp'),
+			'entrepot' => 'fk_project',
 		);
 		foreach ($listoftables as $key => $value) {
 			if (is_array($value)) {

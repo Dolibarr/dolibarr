@@ -516,7 +516,7 @@ if ($search_sale == -2) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
 	//elseif ($search_sale || (empty($user->rights->societe->client->voir) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->societe->client->readallthirdparties_advance)) && !$socid)) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 } elseif (!empty($search_sale) && $search_sale != '-1' || (empty($user->rights->societe->client->voir) && !$socid)) {
-	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe_commerciaux AS sc ON s.rowid = sc.fk_soc";
 }
 // Add table from hooks
 $parameters = array();
@@ -526,9 +526,6 @@ $sql .= " WHERE s.entity IN (".getEntity('societe').")";
 //if (empty($user->rights->societe->client->voir) && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->societe->client->readallthirdparties_advance)) && !$socid)	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 if (empty($user->rights->societe->client->voir) && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-}
-if ($search_sale && $search_sale != '-1' && $search_sale != '-2') {
-	$sql .= " AND s.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
 }
 if (empty($user->rights->fournisseur->lire)) {
 	$sql .= " AND (s.fournisseur <> 1 OR s.client <> 0)"; // client=0, fournisseur=0 must be visible

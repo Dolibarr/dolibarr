@@ -22,7 +22,7 @@ descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Clasificar automátic
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Clasifique la orden de compra de fuente vinculada como recibida cuando se valida una recepción (y si la cantidad recibida por todas las recepciones es la misma que en la orden de compra para actualizar)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Clasifique la orden de compra de fuente vinculada como recibida cuando una recepción está cerrada (y si la cantidad recibida por todas las recepciones es la misma que en la orden de compra para actualizar)
 # Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Clasificar las recepciones como "facturadas" cuando se valida una factura de compra vinculada (y si el monto de la factura es el mismo que el monto total de las recepciones vinculadas)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Clasificar las recepciones como "facturadas" cuando se valida una factura de compra vinculada (y si el monto de la factura es el mismo que el monto total de las recepciones vinculadas)
 # Automatically link ticket to contract
 descWORKFLOW_TICKET_LINK_CONTRACT=Al crear un ticket, vincule los contratos disponibles de terceros coincidentes
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=A la hora de vincular contratos, buscar entre los de las casas matrices

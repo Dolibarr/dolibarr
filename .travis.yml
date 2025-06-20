@@ -2,9 +2,9 @@
 # from Dolibarr GitHub repository.
 # For syntax, see https://docs.travis-ci.com/user/languages/php/
 
-# We use dist: bionic = 18.04, focal = 20.04
+# We use dist: focal = 20.04, jammy = 22.04
 os: linux
-dist: focal
+dist: jammy
 
 language: generic
 
@@ -21,7 +21,7 @@ services:
 
 
 addons:
-  mariadb: '10.5'
+  mariadb: '10.6'
 
 
 env:
@@ -123,7 +123,8 @@ install:
   sudo php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
   sudo chmod -R a+rwx /usr/local/bin/composer
   composer -V
-  composer -n config -g vendor-dir htdocs/includes
+  sudo composer -n config -g vendor-dir htdocs/includes
+  sudo chmod -R a+rwx /home/travis/.config/composer
   echo
 
 - |
@@ -193,8 +194,8 @@ before_script:
     phpcs -i | head -
     # Check PHP Vardump check version
     echo "PHP Vardump check version"
-    which var_dump_check
-    var_dump_check --version
+    which var-dump-check
+    var-dump-check --version
     # Check PHPUnit version
     echo "PHPUnit version"
     which phpunit

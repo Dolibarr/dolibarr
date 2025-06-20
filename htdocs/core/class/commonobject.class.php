@@ -2111,7 +2111,9 @@ abstract class CommonObject
 		$sql = "SELECT MAX(te.".$fieldid.")";
 		$sql .= " FROM ".(empty($nodbprefix) ?$this->db->prefix():'').$this->table_element." as te";
 		if ($this->element == 'user' && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-			$sql .= ",".$this->db->prefix()."usergroup_user as ug";
+			if (empty($user->admin) || !empty($user->entity) || $conf->entity != 1) {
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON ug.fk_user = te.rowid";
+			}
 		}
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
@@ -2148,7 +2150,6 @@ abstract class CommonObject
 				if (!empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
 					$sql .= " AND te.entity IS NOT NULL"; // Show all users
 				} else {
-					$sql .= " AND ug.fk_user = te.rowid";
 					$sql .= " AND ug.entity IN (".getEntity('usergroup').")";
 				}
 			} else {
@@ -2181,7 +2182,9 @@ abstract class CommonObject
 		$sql = "SELECT MIN(te.".$fieldid.")";
 		$sql .= " FROM ".(empty($nodbprefix) ?$this->db->prefix():'').$this->table_element." as te";
 		if ($this->element == 'user' && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-			$sql .= ",".$this->db->prefix()."usergroup_user as ug";
+			if (empty($user->admin) || !empty($user->entity) || $conf->entity != 1) {
+				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON ug.fk_user = te.rowid";
+			}
 		}
 		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
 			$tmparray = explode('@', $this->ismultientitymanaged);
@@ -2218,7 +2221,6 @@ abstract class CommonObject
 				if (!empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
 					$sql .= " AND te.entity IS NOT NULL"; // Show all users
 				} else {
-					$sql .= " AND ug.fk_user = te.rowid";
 					$sql .= " AND ug.entity IN (".getEntity('usergroup').")";
 				}
 			} else {
@@ -4056,8 +4058,12 @@ abstract class CommonObject
 						$classpath = 'adherents/class';
 						$module = 'adherent';
 					} elseif ($objecttype == 'contact') {
-						 $module = 'societe';
+						$module = 'societe';
+					} elseif ($objecttype == 'action') {
+						$module = 'agenda';
+						$subelement = 'actionComm';
 					}
+
 					// Set classfile
 					$classfile = strtolower($subelement);
 					$classname = ucfirst($subelement);
@@ -5207,16 +5213,12 @@ abstract class CommonObject
 			$discount->fk_soc = $this->socid;
 			$this->tpl['label'] .= $discount->getNomUrl(0, 'discount');
 		} elseif (!empty($line->fk_product)) {
-			$productstatic = new Product($this->db);
-			$productstatic->id = $line->fk_product;
-			$productstatic->ref = $line->ref;
-			$productstatic->type = $line->fk_product_type;
-			if (empty($productstatic->ref)) {
+			if (empty($line->product)) {
 				$line->fetch_product();
-				$productstatic = $line->product;
 			}
+			$productstatic = $line->product;
 
-			$this->tpl['label'] .= $productstatic->getNomUrl(1);
+			$this->tpl['label'] .= (is_object($productstatic) ? $productstatic->getNomUrl(1) : $line->ref);
 			$this->tpl['label'] .= ' - '.(!empty($line->label) ? $line->label : $line->product_label);
 			// Dates
 			if ($line->product_type == 1 && ($date_start || $date_end)) {
@@ -7042,7 +7044,7 @@ abstract class CommonObject
 			}
 
 			$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
-			if ((!isset($this->fields[$key]['default'])) || ($this->fields[$key]['notnull'] != 1)) {
+			if ((!isset($this->fields[$key]['default'])) || empty($this->fields[$key]['notnull']) || ($this->fields[$key]['notnull'] != 1)) {
 				$out .= '<option value="0">&nbsp;</option>';
 			}
 			foreach ($param['options'] as $keyb => $valb) {
@@ -8208,6 +8210,10 @@ abstract class CommonObject
 					if (($mode == 'create') && abs($visibility) != 1 && abs($visibility) != 3) {
 						continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
 					} elseif (($mode == 'edit') && abs($visibility) != 1 && abs($visibility) != 3 && abs($visibility) != 4) {
+						// We need to make sure, that the values of hidden extrafields are also part of $_POST. Otherwise, they would be empty after an update of the object. See also getOptionalsFromPost
+						$ef_name = 'options_' . $key;
+						$ef_value = $this->array_options[$ef_name];
+						$out .= '<input type="hidden" name="' . $ef_name . '" id="' . $ef_name . '" value="' . $ef_value . '" />' . "\n";
 						continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list and <> 4 = not visible at the creation
 					} elseif ($mode == 'view' && empty($visibility)) {
 						continue;
@@ -8329,7 +8335,7 @@ abstract class CommonObject
 								}
 							}
 							$datekey = $keyprefix.'options_'.$key.$keysuffix;
-							$value = (GETPOSTISSET($datekey)) ? dol_mktime(12, 0, 0, GETPOST($datekey.'month', 'int', 3), GETPOST($datekey.'day', 'int', 3), GETPOST($datekey.'year', 'int', 3)) : $datenotinstring;
+							$value = (GETPOSTISSET($datekey) && $this->id == GETPOST('elrowid', 'int')) ? dol_mktime(12, 0, 0, GETPOST($datekey.'month', 'int', 3), GETPOST($datekey.'day', 'int', 3), GETPOST($datekey.'year', 'int', 3)) : $datenotinstring;
 						}
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('datetime'))) {
 							$datenotinstring = null;
@@ -9517,6 +9523,7 @@ abstract class CommonObject
 		if ($resql) {
 			$num_rows = $this->db->num_rows($resql);
 			$i = 0;
+			$this->lines = array();
 			while ($i < $num_rows) {
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {

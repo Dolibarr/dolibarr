@@ -300,7 +300,7 @@ class Zapier extends DolibarrApi
 			$this->hook->$field = $value;
 		}
 
-		if ($this->hook->update($id, DolibarrApiAccess::$user) > 0) {
+		if ($this->hook->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
 		} else {
 			throw new RestException(500, $this->hook->error);

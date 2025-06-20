@@ -91,7 +91,10 @@ $pagenext = $page + 1;
 $object = new FactureRec($db);
 if (($id > 0 || $ref) && $action != 'create' && $action != 'add') {
 	$ret = $object->fetch($id, $ref);
-	if (!$ret) {
+	if ($ret < 0) {
+		dol_print_error($db, $object->error, $object->errors);
+		exit;
+	} elseif (! $ret) {
 		setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
 	}
 }
@@ -1304,14 +1307,10 @@ if ($action == 'create') {
 		}
 		print '</tr></table>';
 		print '</td><td>';
-		if ($object->type != Facture::TYPE_CREDIT_NOTE) {
-			if ($action == 'editconditions') {
-				$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->cond_reglement_id, 'cond_reglement_id');
-			} else {
-				$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->cond_reglement_id, 'none');
-			}
+		if ($action == 'editconditions') {
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->cond_reglement_id, 'cond_reglement_id');
 		} else {
-			print '&nbsp;';
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->cond_reglement_id, 'none');
 		}
 		print '</td></tr>';
 
@@ -1735,6 +1734,7 @@ if ($action == 'create') {
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
+		$morehtmlcenter = '';
 		$somethingshown = $formactions->showactions($object, $object->element, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlcenter);
 
 		print '</div>';

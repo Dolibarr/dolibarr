@@ -69,10 +69,10 @@ if (GETPOST('btn_view_ticket_list')) {
 	unset($_SESSION['track_id_customer']);
 	unset($_SESSION['email_customer']);
 }
-if (isset($_SESSION['track_id_customer'])) {
+if (empty($track_id) && isset($_SESSION['track_id_customer'])) {
 	$track_id = $_SESSION['track_id_customer'];
 }
-if (isset($_SESSION['email_customer'])) {
+if (empty($email) && isset($_SESSION['email_customer'])) {
 	$email = strtolower($_SESSION['email_customer']);
 }
 
@@ -209,6 +209,7 @@ if ($action == "view_ticketlist") {
 
 		// Store current page url
 		$url_page_current = dol_buildpath('/public/ticket/list.php', 1);
+		$contextpage = $url_page_current;
 
 		// Do we click on purge search criteria ?
 		if (GETPOST("button_removefilter_x")) {
@@ -266,7 +267,7 @@ if ($action == "view_ticketlist") {
 		if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 				if ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate') {
-					$enabled = abs(dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1, 1, 0));
+					$enabled = abs((int) dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1, 1, 0));
 					$enabled = (($enabled == 0 || $enabled == 3) ? 0 : $enabled);
 					$arrayfields["ef.".$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'checked' => ($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1, 'position' => $extrafields->attributes[$object->table_element]['pos'][$key], 'enabled' => $enabled && $extrafields->attributes[$object->table_element]['perms'][$key]);
 				}

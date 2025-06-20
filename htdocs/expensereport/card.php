@@ -392,7 +392,9 @@ if (empty($reshook)) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$newlang = $object->thirdparty->default_lang;
+					$user = new User($db);
+					$user->fetch($object->fk_user_author);
+					$newlang = $user->lang;
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -460,10 +462,15 @@ if (empty($reshook)) {
 						setEventMessages($mesg, null, 'mesgs');
 					} else {
 						$langs->load("other");
-						if ($mailfile->error) {
+						if (!empty($mailfile->error) || !empty($mailfile->errors)) {
 							$mesg = '';
-							$mesg .= $langs->trans('ErrorFailedToSendMail', $emailFrom, $emailTo);
-							$mesg .= '<br>'.$mailfile->error;
+							$mesg .= $langs->transnoentities('ErrorFailedToSendMail', dol_escape_htmltag($emailFrom), dol_escape_htmltag($emailTo));
+							if (!empty($mailfile->error)) {
+								$mesg .= '<br>' . $mailfile->error;
+							}
+							if (!empty($mailfile->errors) && is_array($mailfile->errors)) {
+								$mesg .= '<br>' . implode('<br>', $mailfile->errors);
+							}
 							setEventMessages($mesg, null, 'errors');
 						} else {
 							setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
@@ -502,7 +509,9 @@ if (empty($reshook)) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$newlang = $object->thirdparty->default_lang;
+					$user = new User($db);
+					$user->fetch($object->fk_user_author);
+					$newlang = $user->lang;
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -611,7 +620,9 @@ if (empty($reshook)) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$newlang = $object->thirdparty->default_lang;
+					$user = new User($db);
+					$user->fetch($object->fk_user_author);
+					$newlang = $user->lang;
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -725,7 +736,9 @@ if (empty($reshook)) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$newlang = $object->thirdparty->default_lang;
+					$user = new User($db);
+					$user->fetch($object->fk_user_author);
+					$newlang = $user->lang;
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -839,7 +852,9 @@ if (empty($reshook)) {
 							$newlang = GETPOST('lang_id', 'aZ09');
 						}
 						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-							$newlang = $object->thirdparty->default_lang;
+							$user = new User($db);
+							$user->fetch($object->fk_user_author);
+							$newlang = $user->lang;
 						}
 						if (!empty($newlang)) {
 							$outputlangs = new Translate("", $conf);
@@ -951,7 +966,9 @@ if (empty($reshook)) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-						$newlang = $object->thirdparty->default_lang;
+						$user = new User($db);
+						$user->fetch($object->fk_user_author);
+						$newlang = $user->lang;
 					}
 					if (!empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
@@ -990,7 +1007,9 @@ if (empty($reshook)) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$newlang = $object->thirdparty->default_lang;
+					$user = new User($db);
+					$user->fetch($object->fk_user_author);
+					$newlang = $user->lang;
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -1019,7 +1038,9 @@ if (empty($reshook)) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$newlang = $object->thirdparty->default_lang;
+					$user = new User($db);
+					$user->fetch($object->fk_user_author);
+					$newlang = $user->lang;
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -1245,7 +1266,9 @@ if (empty($reshook)) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-						$newlang = $object->thirdparty->default_lang;
+						$user = new User($db);
+						$user->fetch($object->fk_user_author);
+						$newlang = $user->lang;
 					}
 					if (!empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
@@ -1337,7 +1360,9 @@ if (empty($reshook)) {
 							$newlang = GETPOST('lang_id', 'aZ09');
 						}
 						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-							$newlang = $object->thirdparty->default_lang;
+							$user = new User($db);
+							$user->fetch($object->fk_user_author);
+							$newlang = $user->lang;
 						}
 						if (!empty($newlang)) {
 							$outputlangs = new Translate("", $conf);
@@ -2216,7 +2241,11 @@ if ($action == 'create') {
 										}
 									}
 
-									if (!$thumbshown) {
+									if (!$thumbshown && $fileinfo['extension'] == 'pdf' && !empty($filepdf) && !empty($relativepath) && !empty($fileinfo['filename'])) {
+										$formFile = new FormFile($db);
+										$imgpreview = $formFile->showPreview([], $modulepart, $relativepath.'/'.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 0);
+										print $imgpreview;
+									} elseif (!$thumbshown) {
 										print img_mime($ecmfilesstatic->filename);
 									}
 								}
@@ -2866,7 +2895,7 @@ if ($action != 'presend') {
 }
 
 // Presend form
-$modelmail = 'expensereport';
+$modelmail = 'expensereport_send';
 $defaulttopic = 'SendExpenseReportRef';
 $diroutput = $conf->expensereport->dir_output;
 $trackid = 'exp'.$object->id;

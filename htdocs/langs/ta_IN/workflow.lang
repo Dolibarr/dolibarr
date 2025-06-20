@@ -22,7 +22,7 @@ descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=விற்பனை
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=ஒரு வரவேற்பு சரிபார்க்கப்படும் போது பெறப்பட்ட இணைக்கப்பட்ட மூல கொள்முதல் ஆர்டரை வகைப்படுத்தவும் (மற்றும் அனைத்து வரவேற்புகளிலும் பெறப்பட்ட அளவு வாங்குதல் ஆர்டரில் உள்ளதைப் போலவே புதுப்பிக்கவும்)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=ஒரு வரவேற்பு மூடப்படும் போது பெறப்பட்ட இணைக்கப்பட்ட மூல கொள்முதல் ஆர்டரை வகைப்படுத்தவும் (மற்றும் அனைத்து வரவேற்புகளிலும் பெறப்பட்ட அளவு வாங்குதல் ஆர்டரில் உள்ளதைப் போலவே புதுப்பிக்கவும்)
 # Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
 # Automatically link ticket to contract
 descWORKFLOW_TICKET_LINK_CONTRACT=When creating a ticket, link available contracts of matching thirdparty
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=When linking contracts, search among those of parents companies

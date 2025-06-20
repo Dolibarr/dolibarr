@@ -622,6 +622,12 @@ class Invoices extends DolibarrApi
 			if ($field == 'id') {
 				continue;
 			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->invoice->array_options[$index] = $this->_checkValForAPI($field, $val, $this->invoice);
+				}
+				continue;
+			}
 			$this->invoice->$field = $value;
 		}
 
@@ -632,11 +638,11 @@ class Invoices extends DolibarrApi
 			}
 		}
 
-		if ($this->invoice->update(DolibarrApiAccess::$user)) {
+		if ($this->invoice->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
+		} else {
+			throw new RestException(500, $this->invoice->error);
 		}
-
-		return false;
 	}
 
 	/**

@@ -22,7 +22,7 @@ descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Razvrsti naročilo po
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Razvrsti naročilo povezanega vira kot prejeto, ko je sprejem potrjen (in če je količina, ki so jo prejeli vsi sprejemi, enaka kot v naročilu za posodobitev)
 descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Razvrstite naročilo povezanega vira kot prejeto, ko je sprejem zaprt (in če je količina, ki so jo prejeli vsi sprejemi, enaka kot v naročilu za posodobitev)
 # Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Prejeme razvrstite v »zaračunane«, ko je povezan račun za nakup potrjen (in če je znesek računa enak skupnemu znesku povezanih prejemov)
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Prejeme razvrstite v »zaračunane«, ko je povezan račun za nakup potrjen (in če je znesek računa enak skupnemu znesku povezanih prejemov)
 # Automatically link ticket to contract
 descWORKFLOW_TICKET_LINK_CONTRACT=Ko ustvarjate vstopnico, povežite razpoložljive pogodbe z partnerjem
 descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Pri povezovanju pogodb iščite med pogodbami matičnih podjetij

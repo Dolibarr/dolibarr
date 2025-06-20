@@ -163,6 +163,14 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 												 price_ttc: item.price_ttc,
 												 price_unit_ht: item.price_unit_ht,
 												 price_unit_ht_locale: item.price_unit_ht_locale,
+		';
+	if (isModEnabled('multicurrency')) {
+		$script .= '
+												multicurrency_code: item.multicurrency_code,
+												multicurrency_unitprice: item.multicurrency_unitprice,
+		';
+	}
+		$script .= '
 												 description : item.description,
 												 ref_customer: item.ref_customer,
 												 tva_tx: item.tva_tx,
@@ -194,7 +202,14 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 							$("#'.$htmlnamejquery.'").attr("data-tvatx", ui.item.tva_tx);
 							$("#'.$htmlnamejquery.'").attr("data-default-vat-code", ui.item.default_vat_code);
 	';
-	if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
+	if (isModEnabled('multicurrency')) {
+		$script .= '
+							// For multi-currency values
+							$("#'.$htmlnamejquery.'").attr("data-multicurrency-code", ui.item.multicurrency_code);
+							$("#'.$htmlnamejquery.'").attr("data-multicurrency-unitprice", ui.item.multicurrency_unitprice);
+		';
+	}
+	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
 		$script .= '
 							// For customer price when PRODUIT_CUSTOMER_PRICES_BY_QTY is on
 							console.log("PRODUIT_CUSTOMER_PRICES_BY_QTY is on, propagate also prices by quantity into data-pbqxxx properties");

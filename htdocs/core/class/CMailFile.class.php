@@ -577,7 +577,7 @@ class CMailFile
 
 			if (!empty($this->errors_to)) {
 				try {
-					$headers->addTextHeader('Errors-To', $this->getArrayAddress($this->errors_to));
+					$headers->addTextHeader('Errors-To', $this->getValidAddress($this->errors_to, 0));
 				} catch (Exception $e) {
 					$this->errors[] = $e->getMessage();
 				}
@@ -644,7 +644,6 @@ class CMailFile
 					$this->errors[] = $e->getMessage();
 				}
 			}
-			//if (!empty($this->errors_to)) $this->message->setErrorsTo($this->getArrayAddress($this->errors_to));
 			if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) {
 				try {
 					$this->message->setReadReceiptTo($this->getArrayAddress($this->addr_from));
@@ -687,7 +686,7 @@ class CMailFile
 				$this->error = "Error in hook maildao sendMail ".$reshook;
 				dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 
-				return $reshook;
+				return false;
 			}
 			if ($reshook == 1) {	// Hook replace standard code
 				return true;
@@ -894,7 +893,7 @@ class CMailFile
 				}
 			} elseif ($this->sendmode == 'smtps') {
 				if (!is_object($this->smtps)) {
-					$this->error = "Failed to send mail with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport."<br>Constructor of object CMailFile was not initialized without errors.";
+					$this->error = "Failed to send mail with smtps lib to HOST=".ini_get('SMTP').", PORT=".$conf->global->$keyforsmtpport."<br>Constructor of object CMailFile was not initialized without errors.";
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					return false;
 				}
@@ -1190,9 +1189,10 @@ class CMailFile
 				$res = true;
 				if (!empty($this->error) || !empty($this->errors) || !$result) {
 					if (!empty($failedRecipients)) {
-						$this->errors[] = 'Transport failed for the following addresses: "' . join('", "', $failedRecipients) . '".';
+						$this->error = 'Transport failed for the following addresses: "' . join('", "', $failedRecipients) . '".';
+						$this->errors[] = $this->error;
 					}
-					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
+					dol_syslog("CMailFile::sendfile: mail end error=". join(' ', $this->errors), LOG_ERR);
 					$res = false;
 
 					if (!empty($conf->global->MAIN_MAIL_DEBUG)) {

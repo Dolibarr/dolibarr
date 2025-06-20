@@ -348,6 +348,12 @@ class Members extends DolibarrApi
 					}
 				}
 			} else {
+				if ($field == 'array_options' && is_array($value)) {
+					foreach ($value as $index => $val) {
+						$member->array_options[$index] = $this->_checkValForAPI($field, $val, $member);
+					}
+					continue;
+				}
 				$member->$field = $value;
 			}
 		}

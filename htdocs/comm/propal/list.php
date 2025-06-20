@@ -17,6 +17,7 @@
  * Copyright (C) 2021	   Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2021      Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2022      Josep Lluís Amador		<joseplluis@lliuretic.cat>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -145,6 +146,12 @@ $search_status = GETPOST('search_status', 'alpha');
 
 $optioncss = GETPOST('optioncss', 'alpha');
 $object_statut = GETPOST('search_statut', 'alpha');
+
+$search_option = GETPOST('search_option', 'alpha');
+if ($search_option == 'late') {
+	$search_status = '1';
+	$object_statut = '1';
+}
 
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $mesg = (GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
@@ -389,6 +396,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_date_signature_endyear = '';
 	$search_date_signature_start = '';
 	$search_date_signature_end = '';
+	$search_option = '';
 }
 if ($object_statut != '') {
 	$search_status = $object_statut;
@@ -764,6 +772,9 @@ if ($search_date_signature_start) {
 if ($search_date_signature_end) {
 	$sql .= " AND p.date_signature <= '".$db->idate($search_date_signature_end)."'";
 }
+if ($search_option == 'late') {
+	$sql .= " AND p.fin_validite < '".$db->idate(dol_now() - $conf->propal->cloture->warning_delay)."'";
+}
 // Search for tag/category ($searchCategoryProductList is an array of ID)
 $searchCategoryProductOperator = -1;
 $searchCategoryProductList = array($search_product_category);
@@ -1042,6 +1053,9 @@ if ($resql) {
 	if ($search_date_signature_endyear) {
 		$param .= '&search_date_signature_endyear='.urlencode($search_date_signature_endyear);
 	}
+	if ($search_option) {
+		$param .= "&search_option=".urlencode($search_option);
+	}
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -1166,6 +1180,7 @@ if ($resql) {
 		$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', $tmptitle, 0, 0, $tmptitle);
 		$moreforfilter .= '</div>';
 	}
+
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if (empty($reshook)) {

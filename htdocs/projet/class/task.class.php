@@ -1984,15 +1984,15 @@ class Task extends CommonObjectLine
 			$projectstatic = new Project($this->db);
 			$projectstatic->fetch($ori_project_id);
 
-			//Origin project strat date
-			$orign_project_dt_start = $projectstatic->date_start;
+			// Origin project start date
+			$orign_project_dt_start = (!isset($projectstatic->date_start) || $projectstatic->date_start == '') ? $projectstatic->date_c : $projectstatic->date_start;
 
-			//Calcultate new task start date with difference between origin proj start date and origin task start date
+			// Calculate new task start date with difference between origin proj start date and origin task start date
 			if (!empty($clone_task->date_start)) {
 				$clone_task->date_start = $now + $clone_task->date_start - $orign_project_dt_start;
 			}
 
-			//Calcultate new task end date with difference between origin proj end date and origin task end date
+			// Calculate new task end date with difference between origin proj start date and origin task end date
 			if (!empty($clone_task->date_end)) {
 				$clone_task->date_end = $now + $clone_task->date_end - $orign_project_dt_start;
 			}

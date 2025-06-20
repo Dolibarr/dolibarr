@@ -216,6 +216,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('odtgeneration'));
+		global $action;
 
 		if (!is_object($outputlangs)) {
 			$outputlangs = $langs;

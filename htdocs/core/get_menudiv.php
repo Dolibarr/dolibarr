@@ -252,7 +252,7 @@ if (!class_exists('MenuManager')) {
 	$menufound = 0;
 	$dirmenus = array_merge(array("/core/menus/"), (array) $conf->modules_parts['menus']);
 	foreach ($dirmenus as $dirmenu) {
-		$menufound = dol_include_once($dirmenu."standard/".$file_menu);
+		$menufound = dol_include_once($dirmenu."standard/".dol_sanitizeFileName($file_menu));
 		if ($menufound) {
 			break;
 		}
@@ -260,7 +260,7 @@ if (!class_exists('MenuManager')) {
 	if (!$menufound) {	// If failed to include, we try with standard
 		dol_syslog("You define a menu manager '".$file_menu."' that can not be loaded.", LOG_WARNING);
 		$file_menu = 'eldy_menu.php';
-		include_once DOL_DOCUMENT_ROOT."/core/menus/standard/".$file_menu;
+		include_once DOL_DOCUMENT_ROOT."/core/menus/standard/".dol_sanitizeFileName($file_menu);
 	}
 }
 $menumanager = new MenuManager($db, empty($user->socid) ? 0 : 1);

@@ -7,6 +7,7 @@
  * Copyright (C) 2013-2020  Philippe Grand	            <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2018-2020  Frédéric France             <frederic.france@netlogic.fr>
+ * Copyright (C) 2024		Éric Seigne             	<eric.seigne@cap-rel.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -300,11 +301,24 @@ class pdf_strato extends ModelePDFContract
 				$tab_top_newpage = (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD') ? 42 : 10);
 
 				// Display notes
-				if (!empty($object->note_public)) {
+				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
+
+				// Extrafields in note
+				$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
+				if (!empty($extranote)) {
+					$notetoshow = dol_concatdesc($notetoshow, $extranote);
+				}
+
+				if (!empty($notetoshow)) {
 					$tab_top -= 2;
 
+					$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
+					complete_substitutions_array($substitutionarray, $outputlangs, $object);
+					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
+					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
+
 					$pdf->SetFont('', '', $default_font_size - 1);
-					$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top - 1, dol_htmlentitiesbr($object->note_public), 0, 1);
+					$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top - 1, dol_htmlentitiesbr($notetoshow), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note = $nexY - $tab_top;
 
