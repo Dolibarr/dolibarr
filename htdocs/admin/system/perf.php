@@ -71,7 +71,7 @@ print '<br>';
 
 print '<br>';
 print img_picto('', 'folder', 'class="pictofixedwidth"');
-print '<strong>'.$langs->trans("Versions").'</strong><br>';
+print '<strong>'.$langs->trans("Version").'</strong><br>';
 print '<div class="divsection">';
 
 // Get PHP version
