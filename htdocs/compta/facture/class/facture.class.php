@@ -451,12 +451,13 @@ class Facture extends CommonInvoice
 	 *  Note: this->ref can be set or empty. If empty, we will use "(PROV999)"
 	 *  Note: this->fac_rec must be set to create invoice from a recurring invoice
 	 *
-	 *	@param	User	$user      		Object user that create
-	 *	@param  int		$notrigger		1=Does not execute triggers, 0 otherwise
-	 * 	@param	int		$forceduedate	If set, do not recalculate due date from payment condition but force it with value
-	 *	@return	int						Return integer <0 if KO, >0 if OK
+	 *	@param	User	$user      				Object user that create
+	 *	@param  int		$notrigger				1=Does not execute triggers, 0 otherwise
+	 * 	@param	int		$forceduedate			If set, do not recalculate due date from payment condition but force it with value
+	 *  @param	int		$updatecurrencyrate		Update currency rate when generation done from template invoice
+	 *	@return	int								Return integer <0 if KO, >0 if OK
 	 */
-	public function create(User $user, $notrigger = 0, $forceduedate = 0)
+	public function create(User $user, $notrigger = 0, $forceduedate = 0, $updatecurrencyrate = 0)
 	{
 		global $langs, $conf, $mysoc;
 		$error = 0;
@@ -488,7 +489,7 @@ class Facture extends CommonInvoice
 				// If original rate is not set, we take a default value from date
 				list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date);
 			} else {
-				// original rate multicurrency_tx and multicurrency_code are set, we use them
+				// original rate multicurrency_tx and multicurrency_code are already known, so we keep them and we catch only the ID of the currency.
 				$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 			}
 		} else {
@@ -563,9 +564,12 @@ class Facture extends CommonInvoice
 					: $originaldatewhen;
 			}
 
+			// Define thirdparty
 			if (!empty($_facrec->frequency)) {  // Invoice are created on same thirdparty than template when there is a recurrence, but not necessarily when there is no recurrence.
 				$this->socid = $_facrec->socid;
 			}
+
+			// Define the entity
 			$this->entity            = $_facrec->entity; // Invoice created in same entity than template
 
 			// Fields coming from GUI.
@@ -821,9 +825,7 @@ class Facture extends CommonInvoice
 				}
 			}
 
-			/*
-			 *  Insert lines of invoices, if not from template invoice, into database
-			 */
+			// Insert lines of invoices, if not coming from template invoice, into database
 			if (!$error && empty($this->fac_rec) && count($this->lines) && is_object($this->lines[0])) {	// If this->lines is array of InvoiceLines (preferred mode)
 				$fk_parent_line = 0;
 
@@ -916,7 +918,7 @@ class Facture extends CommonInvoice
 						}
 					}
 				}
-			} elseif (!$error && empty($this->fac_rec)) { 		// If this->lines is an array of invoice line arrays
+			} elseif (!$error && empty($this->fac_rec)) { 		// If not coming from a template invoice and this->lines is an array of invoice line arrays
 				$fk_parent_line = 0;
 
 				dol_syslog("There is ".count($this->lines)." lines into ->lines as a simple array");
@@ -1004,9 +1006,7 @@ class Facture extends CommonInvoice
 				}
 			}
 
-			/*
-			 * Insert lines coming from the template invoice
-			 */
+			// Insert lines when coming from a template invoice
 			if (!$error && $this->fac_rec > 0 && is_object($_facrec)) {
 				dol_syslog("There is ".count($_facrec->lines)." lines from recurring invoice");
 				$fk_parent_line = 0;
@@ -1048,6 +1048,13 @@ class Facture extends CommonInvoice
 								}
 							}
 						}
+					}
+
+					// Update price according to $updatecurrencyrate
+					if ($updatecurrencyrate == 1) {
+						// TODO
+					} elseif ($updatecurrencyrate == 2) {
+						// TODO
 					}
 
 					$result_insert = $this->addline(

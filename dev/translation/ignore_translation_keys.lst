@@ -471,7 +471,6 @@ Lifetime
 LinkedElementsInvalidDeleted
 LinkedToAConcialitedTransaction
 ListOfAttendeesPerConference
-ListOfBookmark
 ListTicketsLinkToContract
 Load
 LocalTaxReport
@@ -511,7 +510,6 @@ Modulebuilder
 ModulebuilderSetup
 MonthShort
 MonthVeryShort
-Morphy
 Movement
 MultiCompanyMode
 Multicompanies
