@@ -7,6 +7,7 @@
  * Copyright (C) 2020-2024	Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Eric Seigne 		<eric.seigne@cap-rel.fr>
+ * Copyright (C) 2025		Charlene Benke 		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,8 +131,10 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 				if (GETPOST('value4') == 1) {
 					$dateinput = GETPOSTDATE('value3');
 					$res = dolibarr_set_const($this->db, 'COMPANY_ELEPHANT_DATE_START', $dateinput, 'chaine', 0, '', $conf->entity);
+					$res = dolibarr_set_const($this->db, 'COMPANY_ELEPHANT_DATE_START_ENABLE', 1, 'chaine', 0, '', $conf->entity);
 				} else {
 					$res = dolibarr_set_const($this->db, 'COMPANY_ELEPHANT_DATE_START', '', 'chaine', 0, '', $conf->entity);
+					$res = dolibarr_set_const($this->db, 'COMPANY_ELEPHANT_DATE_START_ENABLE', 1, 'chaine', 0, '', $conf->entity);
 				}
 			} else {
 				$dateinput = $datedb;
@@ -140,14 +143,19 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		if (empty($dateinput)) {
 			$dateinput = dol_now();
 		}
+		$isEnabled = getDolGlobalString('COMPANY_ELEPHANT_DATE_START_ENABLE');
 		$texte .= '<tr><td>';
-		$texte .= '<input type="checkbox" onclick="if (this.checked) { jQuery(\'#elephantchoosedate\').show(); } else { jQuery(\'#elephantchoosedate\').hide(); }" id="elephantdisablebefore" name="value4" value="1" class="inline-block"/>';
+		$texte .= '<input type="checkbox"';
+		if ($isEnabled) {
+			$texte .= ' checked="checked"';
+		}
+		$texte .= ' onclick="if (this.checked) { jQuery(\'#elephantchoosedate\').show(); } else { jQuery(\'#elephantchoosedate\').hide(); }" id="elephantdisablebefore" name="value4" value="1" class="inline-block"/>';
 		$texte .= '<label for="elephantdisablebefore" class="small">';
 		$texte .= $form->textwithpicto($langs->trans("DateStartThatModel"), $langs->trans("DateStartThatModelHelp"));
 		$texte .= '</label>';
 		$texte .= '</td>';
 		$texte .= '<td class="nowraponall right">';
-		$texte .= '<div class="hideobject inline-block" id="elephantchoosedate">';
+		$texte .= '<div class="'.($isEnabled ? '' : 'hideobject ').' inline-block" id="elephantchoosedate">';
 		$texte .= $form->selectDate($dateinput, 'value3', 0, 0, 1, '', 1, 0, $disabled ? 1 : 0);
 		$texte .= '</div>';
 		$texte .= '</td>';

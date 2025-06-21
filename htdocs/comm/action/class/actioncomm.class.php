@@ -1598,7 +1598,7 @@ class ActionComm extends CommonObject
 			$statusType = 'status6';
 		}
 
-		$params['badgeParams'] = array('attr' => array('title' => '<b>'.$langs->trans("Progression").'</b> : '.$labelStatus));
+		$params = array('badgeParams' => array('attr' => array('title' => '<b>'.$langs->trans("Progression").'</b> : '.$labelStatus)));
 
 		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $params);
 	}
