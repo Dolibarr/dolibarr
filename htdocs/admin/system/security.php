@@ -39,8 +39,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
  * @var Translate $langs
  * @var User $user
  *
- * @var string[] $arrayofstreamtodisable // $arrayofstreamtodisable is defined into filefunc.inc.php
- * @var string $conffile // $conffile is defined into filefunc.inc.php
+ * @var string[]	$arrayofstreamtodisable // $arrayofstreamtodisable is defined into filefunc.inc.php
+ * @var string 		$conffile 				// $conffile is defined into filefunc.inc.php
+ * @var string 		$dolibarr_main_prod
+ * @var string		$dolibarr_main_document_root
  */
 
 // Load translation files required by the page
@@ -118,10 +120,10 @@ if (function_exists('exec')) {
 }
 print '<br>';
 
-print "<strong>PHP session.use_strict_mode</strong> = ".(ini_get('session.use_strict_mode') ? img_picto('', 'tick').' ' : img_warning().' ').(ini_get('session.use_strict_mode') ? ini_get('session.use_strict_mode') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", '1').")</span><br>\n";
-print "<strong>PHP session.use_only_cookies</strong> = ".(ini_get('session.use_only_cookies') ? img_picto('', 'tick').' ' : img_warning().' ').(ini_get('session.use_only_cookies') ? ini_get('session.use_only_cookies') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", '1').")</span><br>\n";
-print "<strong>PHP session.cookie_httponly</strong> = ".(ini_get('session.cookie_httponly') ? img_picto('', 'tick').' ' : img_warning().' ').(ini_get('session.cookie_httponly') ? ini_get('session.cookie_httponly') : '').' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", '1').")</span><br>\n";
-print "<strong>PHP session.cookie_samesite</strong> = ".(ini_get('session.cookie_samesite') ? img_picto('', 'tick').' ' .ini_get('session.cookie_samesite') : 'None');
+print (ini_get('session.use_strict_mode') ? img_picto('', 'tick', 'class="pictofixedwidth"') : img_warning('', '', 'pictofixedwidth nopaddingleft'))."<strong>PHP session.use_strict_mode</strong> = ".(ini_get('session.use_strict_mode') ? ini_get('session.use_strict_mode') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", '1').")</span><br>\n";
+print (ini_get('session.use_only_cookies') ? img_picto('', 'tick', 'class="pictofixedwidth"') : img_warning('', '', 'pictofixedwidth nopaddingleft'))."<strong>PHP session.use_only_cookies</strong> = ".(ini_get('session.use_only_cookies') ? ini_get('session.use_only_cookies') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", '1').")</span><br>\n";
+print (ini_get('session.cookie_httponly') ? img_picto('', 'tick', 'class="pictofixedwidth"') : img_warning('', '', 'pictofixedwidth nopaddingleft'))."<strong>PHP session.cookie_httponly</strong> = ".(ini_get('session.cookie_httponly') ? ini_get('session.cookie_httponly') : '').' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", '1').")</span><br>\n";
+print (ini_get('session.cookie_samesite') ? img_picto('', 'tick', 'class="pictofixedwidth"') : img_warning('', '', 'pictofixedwidth nopaddingleft'))."<strong>PHP session.cookie_samesite</strong> = ".(ini_get('session.cookie_samesite') ? ini_get('session.cookie_samesite') : 'None');
 if (!ini_get('session.cookie_samesite') || ini_get('session.cookie_samesite') == 'Lax') {
 	print ' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", 'Lax').")</span>";
 } elseif (ini_get('session.cookie_samesite') == 'Strict') {
@@ -129,13 +131,13 @@ if (!ini_get('session.cookie_samesite') || ini_get('session.cookie_samesite') ==
 }
 print "<br>\n";
 
-print "<strong>PHP open_basedir</strong> = ".(ini_get('open_basedir') ? img_picto('', 'tick').' '.ini_get('open_basedir') : img_warning().' '.yn(0).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("ARestrictedPath").', '.$langs->transnoentitiesnoconv("Example").': '.$_SERVER["DOCUMENT_ROOT"].','.DOL_DATA_ROOT).')</span>')."<br>\n";
+print (ini_get('open_basedir') ? img_picto('', 'tick', 'class="pictofixedwidth"') : img_warning('', '', 'pictofixedwidth nopaddingleft'))."<strong>PHP open_basedir</strong> = ".(ini_get('open_basedir') ? ini_get('open_basedir') : yn(0).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("ARestrictedPath").', '.$langs->transnoentitiesnoconv("Example").': '.$_SERVER["DOCUMENT_ROOT"].','.DOL_DATA_ROOT).')</span>')."<br>\n";
 
-print "<strong>PHP short_open_tag</strong> = ".((empty(ini_get('short_open_tag')) || ini_get('short_open_tag') == 'Off') ? img_picto('', 'tick').' '.yn(0) : img_warning().' '.yn(1)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).')</span>'."<br>\n";
+print ((empty(ini_get('short_open_tag')) || ini_get('short_open_tag') == 'Off') ? img_picto('', 'tick', 'class="pictofixedwidth"') : img_warning('', '', 'pictofixedwidth nopaddingleft'))."<strong>PHP short_open_tag</strong> = ".((empty(ini_get('short_open_tag')) || ini_get('short_open_tag') == 'Off') ? yn(0) : yn(1)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).')</span>'."<br>\n";
 
-print "<strong>PHP allow_url_fopen</strong> = ".(ini_get('allow_url_fopen') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_fopen') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).", except if Yes is required by some external modules)</span><br>\n";
+print (ini_get('allow_url_fopen') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning', 'class="pictofixedwidth nopaddingleft"') : img_picto('', 'tick', 'class="pictofixedwidth"'))."<strong>PHP allow_url_fopen</strong> = ".(ini_get('allow_url_fopen') ? ini_get('allow_url_fopen') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).", except if Yes is required by some external modules)</span><br>\n";
 
-print "<strong>PHP allow_url_include</strong> = ".(ini_get('allow_url_include') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_include') : img_picto('', 'tick').' '.yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).")</span><br>\n";
+print (ini_get('allow_url_include') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning', 'class="pictofixedwidth nopaddingleft"') : img_picto('', 'tick', 'class="pictofixedwidth"')). "<strong>PHP allow_url_include</strong> = ".(ini_get('allow_url_include') ? ini_get('allow_url_include') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).")</span><br>\n";
 //print "<strong>PHP safe_mode</strong> = ".(ini_get('safe_mode') ? ini_get('safe_mode') : yn(0)).' &nbsp; <span class="opacitymedium">'.$langs->trans("Deprecated")." (removed in PHP 5.4)</span><br>\n";
 
 if (getDolGlobalString('MAIN_SECURITY_SHOW_MORE_INFO')) {
@@ -144,7 +146,8 @@ if (getDolGlobalString('MAIN_SECURITY_SHOW_MORE_INFO')) {
 	print "<strong>PHP sendmail_path</strong> = ".(ini_get('sendmail_path') ? ini_get('sendmail_path') : '')."</span><br>\n";
 }
 
-print "<strong>PHP disable_functions</strong> = ";
+print '<br>';
+print "<strong>PHP disable_functions</strong>: ";
 $arrayoffunctionsdisabled = explode(',', ini_get('disable_functions'));
 $arrayoffunctionstodisable = explode(',', 'dl,apache_note,apache_setenv,pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals,show_source,virtual');
 //$arrayoffunctionstodisable[] = 'stream_wrapper_restore';
@@ -177,7 +180,7 @@ foreach ($arrayoffunctionstodisable as $functiontodisable) {
 	}
 }
 if ($todisabletext) {
-	print img_picto('', 'warning', 'class="pictofixedwidth"').$langs->trans("YouShouldDisablePHPFunctions").': '.$todisabletext;
+	print img_picto('', 'warning', 'class="pictofixedwidth nopaddingleft"').$langs->trans("YouShouldDisablePHPFunctions").': '.$todisabletext;
 	print '<br>';
 }
 $todisabletext = '';
@@ -192,7 +195,7 @@ foreach ($arrayoffunctionstodisable2 as $functiontodisable) {
 	}
 }
 if ($todisabletext) {
-	print img_picto('', 'warning', 'class="pictofixedwidth"').$langs->trans("IfCLINotRequiredYouShouldDisablePHPFunctions").': '.$todisabletext;
+	print img_picto('', 'warning', 'class="pictofixedwidth nopaddingleft"').$langs->trans("IfCLINotRequiredYouShouldDisablePHPFunctions").': '.$todisabletext;
 	print '<br>';
 }
 if (!\function_exists($functiontokeep)) {
@@ -207,23 +210,33 @@ print '<br>';
 print '<br>';
 
 // JSON
-print '<strong>JSON</strong>: ';
 $loadedExtensions    = array_map('strtolower', get_loaded_extensions(false));
 $test = !in_array('json', $loadedExtensions);
 if ($test || function_exists('dol_json_decode')) {
-	print img_picto('', 'error').' '.$langs->trans("NotInstalled").' - '.$langs->trans("VulnerableToRCEAttack");
+	print img_picto('', 'error', 'class="pictofixedwidth nopaddingleft"');
 } else {
-	print img_picto('', 'tick').' '.$langs->trans("Available").' <span class="opacitymedium">(PHP native so not emulated, safe)</span>';
+	print img_picto('', 'tick', 'class="pictofixedwidth"');
+}
+print '<strong>JSON</strong>: ';
+if ($test || function_exists('dol_json_decode')) {
+	print $langs->trans("NotInstalled").' - '.$langs->trans("VulnerableToRCEAttack");
+} else {
+	print $langs->trans("Available").' <span class="opacitymedium">(PHP native so not emulated, safe)</span>';
 }
 print '<br>';
 
 // XDebug
-print '<strong>XDebug</strong>: ';
 $test = !function_exists('xdebug_is_enabled') && !extension_loaded('xdebug');
 if ($test) {
-	print img_picto('', 'tick').' '.$langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
+	print img_picto('', 'tick', 'class="pictofixedwidth"');
 } else {
-	print img_picto('', 'warning').' '.$langs->trans("ModuleActivatedMayExposeInformation", $langs->transnoentities("XDebug"));
+	print img_picto('', 'warning', 'class="pictofixedwidth nopaddingleft"');
+}
+print '<strong>XDebug</strong>: ';
+if ($test) {
+	print $langs->trans("NotInstalled").' - '.$langs->trans("NotRiskOfLeakWithThis");
+} else {
+	print $langs->trans("ModuleActivatedMayExposeInformation", $langs->transnoentities("XDebug"));
 	print ' - '.$langs->trans("MoreInformation").' <a href="'.DOL_URL_ROOT.'/admin/system/xdebug.php">XDebug admin page</a>';
 }
 
@@ -232,7 +245,7 @@ print '</div>';
 print '<br>';
 
 
-// OS Permissions
+// OS Setup - Permissions on files
 
 print '<br>';
 print load_fiche_titre($langs->trans("OSSetup").' - '.$langs->trans("PermissionsOnFiles"), '', 'folder');
@@ -252,7 +265,8 @@ if (empty($fileswithwritepermission)) {
 	print img_picto('', 'tick').' '.$langs->trans("NoWritableFilesFoundIntoRootDir");
 } else {
 	print img_warning().' '.$langs->trans("SomeFilesOrDirInRootAreWritable");
-	print '<br>'.$langs->trans("Example").': ';
+	print ' &nbsp; - &nbsp; <span class="classlink cursorpointer" onclick="javascript: console.log(\'Toggle examples\'); jQuery(\'#examplewritablefiles\').toggle();">'.$langs->trans("Examples").'</span>';
+	print '<span id="examplewritablefiles" class="hideobject"><br>'.$langs->trans("Example").': ';
 	$i = 0;
 	foreach ($fileswithwritepermission as $filewithwritepermission) {
 		if ($i > 0) {
@@ -265,6 +279,7 @@ if (empty($fileswithwritepermission)) {
 		}
 		$i++;
 	}
+	print '</span>';
 }
 print '<br>';
 print '<br>';
@@ -296,8 +311,9 @@ $upgradeunlock = DOL_DATA_ROOT.'/upgrade.unlock';
 $installmoduleslock = DOL_DATA_ROOT.'/installmodules.lock';
 
 // Is install (upgrade) locked
+$test = file_exists($installlock);
 print '<strong>'.$langs->trans("DolibarrSetup").'</strong>: ';
-if (file_exists($installlock)) {
+if ($test) {
 	if (file_exists($upgradeunlock)) {
 		print img_picto('', 'tick').' '.$langs->trans("InstallLockedBy", $installlock);
 	} else {
@@ -321,8 +337,9 @@ if (file_exists($installlock)) {	// If install not locked, no need to show this.
 }
 
 // Is addon install locked ?
+$test = file_exists($installmoduleslock);
 print '<strong>'.$langs->trans("DolibarrAddonInstall").'</strong>: ';
-if (file_exists($installmoduleslock)) {
+if ($test) {
 	print img_picto('', 'tick').' '.$langs->trans("InstallAndUpgradeLockedBy", $installmoduleslock);
 } else {
 	print $langs->trans("InstallOfAddonIsNotBlocked", DOL_DATA_ROOT);
@@ -757,13 +774,13 @@ $exampletodecrypt = GETPOST('exampletodecrypt', 'password');
 
 print '<strong>'.$langs->trans("AlgorithmFor", $langs->transnoentitiesnoconv("SensitiveData"));
 print $form->textwithpicto('', 'reversible encryption done with dolEncrypt/dolDecrypt');
-print '</strong>: '.constant('MAIN_SECURITY_REVERSIBLE_ALGO').' with key defined into conf.php file in $dolibarr_main_instance_unique_id<br>';
+print '</strong>: '.constant('MAIN_SECURITY_REVERSIBLE_ALGO').' with key defined into conf.php file in $dolibarr_main_dolcrypt_key (or $dolibarr_main_instance_unique_id)<br>';
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="action" value="doldecrypt">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="page_y" value="">';
 print $langs->trans("ToolToDecryptAString").': ';
-print '<input type="text" name="exampletodecrypt" placeholder="dolcrypt:ALGOXXXX:ABCDFEF1234" value="'.$exampletodecrypt.'">';
+print '<input type="text" class="minwidth300" name="exampletodecrypt" placeholder="dolcrypt:ALGOXXXX:ABCDFEF1234" value="'.$exampletodecrypt.'">';
 print '<input type="submit" class="reposition button small smallpaddingimp" name="submit" value="'.$langs->transnoentitiesnoconv("Decrypt").'">';
 if ($action == 'doldecrypt' && $user->admin && $exampletodecrypt) {
 	usleep(200);

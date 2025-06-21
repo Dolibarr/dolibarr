@@ -145,17 +145,17 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		}
 		$isEnabled = getDolGlobalString('COMPANY_ELEPHANT_DATE_START_ENABLE');
 		$texte .= '<tr><td>';
-		$texte .= $form->textwithpicto($langs->trans("DateStartThatModel"), $langs->trans("DateStartThatModelHelp")).'</td>';
-		$texte .= '<td class="nowraponall right" valign="top">';
-		$texte .= '<input type="checkbox" ';
+		$texte .= '<input type="checkbox"';
 		if ($isEnabled) {
-			$texte .= 'checked="checked" ';
+			$texte .= ' checked="checked"';
 		}
-		$texte .= ' onclick="let d=document.getElementById(\'elephantchoosedate\'); if(this.checked){d.style.cssText = \'display: block;\'}else{{d.style.cssText = \'display: none;\'}}" name="value4" value="1" style="float: left;"/>';
-		if ($isEnabled)
-			$texte .= '<div style="display: visible;" id="elephantchoosedate">';
-		else 
-			$texte .= '<div style="display: none;" id="elephantchoosedate">';
+    $texte .= ' onclick="if (this.checked) { jQuery(\'#elephantchoosedate\').show(); } else { jQuery(\'#elephantchoosedate\').hide(); }" id="elephantdisablebefore" name="value4" value="1" class="inline-block"/>';
+		$texte .= '<label for="elephantdisablebefore" class="small">';
+		$texte .= $form->textwithpicto($langs->trans("DateStartThatModel"), $langs->trans("DateStartThatModelHelp"));
+		$texte .= '</label>';
+		$texte .= '</td>';
+		$texte .= '<td class="nowraponall right">';
+		$texte .= '<div class="'.($isEnabled ? '' : 'hideobject ').' inline-block" id="elephantchoosedate">';
 		$texte .= $form->selectDate($dateinput, 'value3', 0, 0, 1, '', 1, 0, $disabled ? 1 : 0);
 		$texte .= '</div>';
 		$texte .= '</td>';
