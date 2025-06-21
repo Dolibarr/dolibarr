@@ -15456,6 +15456,10 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			}
 			$out .= "</span></span>\n";
 
+			$out .= '<span class="time">';
+			$out .= $actionstatic->getLibStatut(2);
+			$out .= '</span>';
+
 			// Ref
 			$out .= '<h3 class="timeline-header">';
 

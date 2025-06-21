@@ -215,14 +215,14 @@ class Products extends DolibarrApi
 		$sql .= ' WHERE t.entity IN ('.getEntity('product').')';
 
 		if ($variant_filter == 1) {
-			$sql .= ' AND t.rowid not in (select distinct fk_product_parent from '.$this->db->prefix().'product_attribute_combination)';
-			$sql .= ' AND t.rowid not in (select distinct fk_product_child from '.$this->db->prefix().'product_attribute_combination)';
+			$sql .= ' AND NOT EXISTS (select pac.rowid FROM '.$this->db->prefix().'product_attribute_combination as pac WHERE pac.fk_product_parent = t.rowid)';
+			$sql .= ' AND NOT EXISTS (select pac.rowid FROM '.$this->db->prefix().'product_attribute_combination as pac WHERE pac.fk_product_child = t.rowid)';
 		}
 		if ($variant_filter == 2) {
-			$sql .= ' AND t.rowid in (select distinct fk_product_parent from '.$this->db->prefix().'product_attribute_combination)';
+			$sql .= ' AND EXISTS (select pac.rowid FROM '.$this->db->prefix().'product_attribute_combination as pac WHERE pac.fk_product_parent = t.rowid)';
 		}
 		if ($variant_filter == 3) {
-			$sql .= ' AND t.rowid in (select distinct fk_product_child from '.$this->db->prefix().'product_attribute_combination)';
+			$sql .= ' AND EXISTS (select pac.rowid FROM '.$this->db->prefix().'product_attribute_combination as pac WHERE pac.fk_product_child = t.rowid)';
 		}
 
 		// Select products of given category

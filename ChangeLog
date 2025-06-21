@@ -115,6 +115,7 @@ NEW: Add constant to show stock in products combo
 NEW: Can edit the module_source and pos_source field.
 NEW: Accountancy - Add actions on entries (Cloning, assigning, returning)
 NEW: Add conf PDF_HIDE_LINKED_OBJECT_IN_PUBLIC_NOTE to hide linked object in public note of pdf.
+NEW: Add MULTICURRENCY_SHOW_ALSO_MAIN_CURRENCY_ON_PDF for legal requirement that need both currencies on PDF
 
 For developers:
 ----------
