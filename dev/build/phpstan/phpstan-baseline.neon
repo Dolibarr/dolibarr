@@ -8277,7 +8277,7 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 2
+			count: 1
 			path: ../../../htdocs/core/class/html.form.class.php
 
 		-
@@ -8380,12 +8380,6 @@ parameters:
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 8
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Variable \$more in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
 			path: ../../../htdocs/core/class/html.form.class.php
 
 		-

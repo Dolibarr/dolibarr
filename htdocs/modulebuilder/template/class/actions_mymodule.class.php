@@ -380,5 +380,26 @@ class ActionsMyModule extends CommonHookActions
 		}
 	}
 
+
+	/**
+	 * Overload the showLinkToObjectBlock function : add or replace array of object likable
+	 *
+	 * @param	array<string,mixed>	$parameters		Hook metadata (context, etc...)
+	 * @param	CommonObject		$object			The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
+	 * @param	?string				$action			Current action (if set). Generally create or edit or null
+	 * @param	HookManager			$hookmanager	Hook manager propagated to allow calling another hook
+	 * @return	int									Return integer < 0 on error, 0 on success, 1 to replace standard code
+	 */
+	public function showLinkToObjectBlock($parameters, &$object, &$action, $hookmanager)
+	{
+		$myobject = new MyObject($object->db);
+		$this->results = array('myobject@mymodule' => array(
+			'enabled' => isModEnabled('mymodule'),
+			'perms' => 1,
+			'label' => 'LinkToMyObject',
+			'sql' => "SELECT t.rowid, t.ref, t.ref as 'name' FROM " . $this->db->prefix() . $myobject->table_element. " as t "),);
+
+		return 1;
+	}
 	/* Add other hook methods here... */
 }

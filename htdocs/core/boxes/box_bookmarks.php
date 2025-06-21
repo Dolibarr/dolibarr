@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -73,7 +73,7 @@ class box_bookmarks extends ModeleBoxes
 			$this->info_box_head['subtext'] = $langs->trans("BookmarksManagement");
 		} else {
 			$this->info_box_head['subpicto'] = 'bookmark';
-			$this->info_box_head['subtext'] = $langs->trans("ListOfBookmark");
+			$this->info_box_head['subtext'] = $langs->trans("ListOfBookmarks");
 		}
 
 		if ($user->hasRight('bookmark', 'lire')) {
