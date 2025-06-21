@@ -24,18 +24,33 @@ class CoSousTraitant
 			if (!$facture->project) return [];
 		}
 
-		$paiementSousTraitantId = PaiementTools::getPaimentSousTraitantId($db);
-		if (!$paiementSousTraitantId) return [];
+		$payDirId = PaiementTools::getPaimentPaiementDirectMoId($db);
+		if (!$payDirId) return [];
 
 		$commandesFourn = CommandFournisseurTools::getOrdersValidatedFromProject($facture->project, $db);
 		$facturesFourn = FactureFournisseurTools::getFacturesFournValidatedFromProject($facture->project, $db);
 		if (!$commandesFourn && !$facturesFourn) return [];
 
-		$filter = fn($arr, $isSous) => array_filter($arr, fn($el) => ($el->mode_reglement_id == $paiementSousTraitantId) === $isSous);
-		$commandesCotraitants = $filter($commandesFourn, false);
-		$commandesSousTraitants = $filter($commandesFourn, true);
-		$facturesCoTraitants = $filter($facturesFourn, false);
-		$facturesFournSousTraitant = $filter($facturesFourn, true);
+		// N'apparaisent dans le tableau 'CoSousTraitant'qui ceux qui ont le mode de règlement 'PAYDIR'
+		$filterUsePayDir = fn($arr) => array_filter($arr, fn($el) => $el->mode_reglement_id == $payDirId);
+		$commandesFourn = $filterUsePayDir($commandesFourn);
+		$facturesFourn = $filterUsePayDir($facturesFourn);
+		if (!$commandesFourn && !$facturesFourn) return [];
+
+		// CommandeFournisseur via extrafields: options_typefournisseur, 1 pour co-traitant, 2 pour sous-traitant
+		$filterCommandesFourn = fn($arr, $type) => array_filter($arr, fn(CommandeFournisseur $el) =>
+			array_key_exists('options_typefournisseur', $el->array_options) && $el->array_options['options_typefournisseur'] == $type
+		);
+		$commandesFournCotraitants = $filterCommandesFourn($commandesFourn, '1');
+		$commandesFournSousTraitants = $filterCommandesFourn($commandesFourn, '2');
+
+		// Autoliquidation de TVA = sous traitant, pas d'autoliquidation de TVA = co-traitant
+		$facturesFournCoTraitants = array_filter($facturesFourn, fn($el) => !$el->vat_reverse_charge);
+		$facturesFournSousTraitant = array_filter($facturesFourn, fn($el) => $el->vat_reverse_charge);
+
+		if (!$commandesFournCotraitants && !$commandesFournSousTraitants && !$facturesFournCoTraitants && !$facturesFournSousTraitant) {
+			return [];
+		}
 
 		$sumFacturedFourn = array_sum(array_column($facturesFourn, 'total_ht'));
 		$facturedMainCompanyDiff = $facture->getLastSituationCompletePrice(false) - $sumFacturedFourn;
@@ -47,8 +62,8 @@ class CoSousTraitant
 				'market' => ['sum_total_ht' => $totalHtOrders - $sumFacturedFourn],
 				'factured' => ['sum_total_ht' => round($facturedMainCompanyDiff, 2)],
 			],
-			'co_trait' => self::structureFacturesBySocid($db, $commandesCotraitants, $facturesCoTraitants),
-			'sous_trait' => self::structureFacturesBySocid($db, $commandesSousTraitants, $facturesFournSousTraitant),
+			'co_trait' => self::structureFacturesBySocid($db, $commandesFournCotraitants, $facturesFournCoTraitants),
+			'sous_trait' => self::structureFacturesBySocid($db, $commandesFournSousTraitants, $facturesFournSousTraitant),
 		];
 	}
 

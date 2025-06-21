@@ -11,7 +11,7 @@ class PaiementTools
 	 * @param DoliDB $db Database handler
 	 * @return int|null ID of the subcontractor payment method or null if not found
 	 */
-	public static function getPaimentSousTraitantId(DoliDB $db): ?int
+	public static function getPaimentPaiementDirectMoId(DoliDB $db): ?int
 	{
 		$sql = "SELECT id type FROM " . MAIN_DB_PREFIX . "c_paiement WHERE code = 'PAYDIR'";
 		$resql = $db->query($sql);
