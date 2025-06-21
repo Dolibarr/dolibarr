@@ -149,7 +149,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		if ($isEnabled) {
 			$texte .= ' checked="checked"';
 		}
-    $texte .= ' onclick="if (this.checked) { jQuery(\'#elephantchoosedate\').show(); } else { jQuery(\'#elephantchoosedate\').hide(); }" id="elephantdisablebefore" name="value4" value="1" class="inline-block"/>';
+		$texte .= ' onclick="if (this.checked) { jQuery(\'#elephantchoosedate\').show(); } else { jQuery(\'#elephantchoosedate\').hide(); }" id="elephantdisablebefore" name="value4" value="1" class="inline-block"/>';
 		$texte .= '<label for="elephantdisablebefore" class="small">';
 		$texte .= $form->textwithpicto($langs->trans("DateStartThatModel"), $langs->trans("DateStartThatModelHelp"));
 		$texte .= '</label>';
