@@ -870,8 +870,8 @@ function migrate_paiements_orphelins_1($db, $langs, $conf)
 	$result = $db->DDLDescTable(MAIN_DB_PREFIX."paiement", "fk_facture");
 	$obj = $db->fetch_object($result);
 	if ($obj) {
-		// Tous les enregistrements qui sortent de cette requete devrait avoir un pere dans llx_paiement_facture
-		$sql = "SELECT distinct p.rowid, p.datec, p.amount as pamount, bu.fk_bank, b.amount as bamount,";
+		// All answer of this requests should have a parent into llx_paiement_facture
+		$sql = "SELECT DISTINCT p.rowid, p.datec, p.amount as pamount, bu.fk_bank, b.amount as bamount,";
 		$sql .= " bu2.url_id as socid";
 		$sql .= " FROM (".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."bank_url as bu, ".MAIN_DB_PREFIX."bank as b)";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON pf.fk_paiement = p.rowid";
@@ -917,7 +917,7 @@ function migrate_paiements_orphelins_1($db, $langs, $conf)
 				}
 
 				// Look for invoices without payment relations with the same amount and same comppany
-				$sql = " SELECT distinct f.rowid from ".MAIN_DB_PREFIX."facture as f";
+				$sql = " SELECT DISTINCT f.rowid from ".MAIN_DB_PREFIX."facture as f";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
 				$sql .= " WHERE f.fk_statut in (2,3) AND fk_soc = ".((int) $row[$i]['socid'])." AND total_ttc = ".((float) $row[$i]['pamount']);
 				$sql .= " AND pf.fk_facture IS NULL";
@@ -981,7 +981,7 @@ function migrate_paiements_orphelins_2($db, $langs, $conf)
 	$obj = $db->fetch_object($result);
 	if ($obj) {
 		// Tous les enregistrements qui sortent de cette requete devrait avoir un pere dans llx_paiement_facture
-		$sql = "SELECT distinct p.rowid, p.datec, p.amount as pamount, bu.fk_bank, b.amount as bamount,";
+		$sql = "SELECT DISTINCT p.rowid, p.datec, p.amount as pamount, bu.fk_bank, b.amount as bamount,";
 		$sql .= " bu2.url_id as socid";
 		$sql .= " FROM (".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."bank_url as bu, ".MAIN_DB_PREFIX."bank as b)";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON pf.fk_paiement = p.rowid";
@@ -1028,7 +1028,7 @@ function migrate_paiements_orphelins_2($db, $langs, $conf)
 				}
 
 				// Look for invoices without payment relations with the same amount and same comppany
-				$sql = " SELECT distinct f.rowid from ".MAIN_DB_PREFIX."facture as f";
+				$sql = " SELECT DISTINCT f.rowid from ".MAIN_DB_PREFIX."facture as f";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
 				$sql .= " WHERE f.fk_statut in (2,3) AND fk_soc = ".((int) $row[$i]['socid'])." AND total_ttc = ".((float) $row[$i]['pamount']);
 				$sql .= " AND pf.fk_facture IS NULL";

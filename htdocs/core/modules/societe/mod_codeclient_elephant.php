@@ -141,10 +141,13 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 			$dateinput = dol_now();
 		}
 		$texte .= '<tr><td>';
-		$texte .= $form->textwithpicto($langs->trans("DateStartThatModel"), $langs->trans("DateStartThatModelHelp")).'</td>';
+		$texte .= '<input type="checkbox" onclick="if (this.checked) { jQuery(\'#elephantchoosedate\').show(); } else { jQuery(\'#elephantchoosedate\').hide(); }" id="elephantdisablebefore" name="value4" value="1" class="inline-block"/>';
+		$texte .= '<label for="elephantdisablebefore" class="small">';
+		$texte .= $form->textwithpicto($langs->trans("DateStartThatModel"), $langs->trans("DateStartThatModelHelp"));
+		$texte .= '</label>';
+		$texte .= '</td>';
 		$texte .= '<td class="nowraponall right">';
-		$texte .= '<input type="checkbox" onclick="let d=document.getElementById(\'elephantchoosedate\'); if(this.checked){d.style.cssText = \'display: block;\'}else{{d.style.cssText = \'display: none;\'}}" name="value4" value="1" style="float: left;"/>';
-		$texte .= '<div style="display: none;" id="elephantchoosedate">';
+		$texte .= '<div class="hideobject inline-block" id="elephantchoosedate">';
 		$texte .= $form->selectDate($dateinput, 'value3', 0, 0, 1, '', 1, 0, $disabled ? 1 : 0);
 		$texte .= '</div>';
 		$texte .= '</td>';

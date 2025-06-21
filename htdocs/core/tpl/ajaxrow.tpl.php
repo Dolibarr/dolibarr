@@ -26,8 +26,8 @@
  * $object->fk_element or $fk_element must be defined
  * you must have ($nboflines or count($object->lines) or count($taskarray) > 0)
  * you must have $table_element_line = 'tablename' or $object->table_element_line with line to move
- *
  */
+
 /**
  * @var Conf $conf
  * @var CommonObject $object
@@ -58,7 +58,7 @@ $id = $object->id;
 $fk_element = empty($object->fk_element) ? $fk_element : $object->fk_element;
 $table_element_line = (empty($table_element_line) ? $object->table_element_line : $table_element_line);
 $nboflines = (isset($object->lines) ? count($object->lines) : (isset($tasksarray) ? count($tasksarray) : (empty($nboflines) ? 0 : $nboflines)));
-$forcereloadpage = !getDolGlobalString('MAIN_FORCE_RELOAD_PAGE') ? 0 : 1;
+$forcereloadpage = getDolGlobalInt('MAIN_FORCE_RELOAD_PAGE');
 $tagidfortablednd = (empty($tagidfortablednd) ? 'tablelines' : $tagidfortablednd);
 $filepath = (empty($filepath) ? '' : $filepath);
 
@@ -75,6 +75,7 @@ $(document).ready(function(){
 	console.log("Prepare tableDnd for #<?php echo $tagidfortablednd; ?>");
 	$("#<?php echo $tagidfortablednd; ?>").tableDnD({
 		onDrop: function(table, row) {
+			var page_y = jQuery(document).scrollTop();
 			var reloadpage = "<?php echo $forcereloadpage; ?>";
 			console.log("tableDND onDrop");
 			console.log(decodeURI($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize()));
@@ -96,14 +97,15 @@ $(document).ready(function(){
 						token: token
 					},
 					function() {
-						console.log("tableDND end of ajax call");
+						console.log("tableDND end of ajax call, reloadpage = " + reloadpage);
 						if (reloadpage == 1) {
 							<?php
 							$redirectURL = empty($urltorefreshaftermove) ? ($_SERVER['PHP_SELF'].'?'.dol_escape_js($_SERVER['QUERY_STRING'])) : $urltorefreshaftermove;
-							// remove action parameter from URL
+							// remove some parameters from URL
 							$redirectURL = preg_replace('/(&|\?)action=[^&#]*/', '', $redirectURL);
+							$redirectURL = preg_replace('/(&|\?)page_y=[^&#]*/', '', $redirectURL);
 							?>
-							location.href = '<?php echo dol_escape_js($redirectURL); ?>';
+							location.href = '<?php echo dol_escape_js($redirectURL); ?>&page_y='+page_y;
 						} else {
 							$("#<?php echo $tagidfortablednd; ?> .drag").each(
 									function( intIndex ) {

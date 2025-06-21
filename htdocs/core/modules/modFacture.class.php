@@ -120,12 +120,12 @@ class modFacture extends DolibarrModules
 				'objectname' => 'FactureRec',
 				'method' => 'createRecurringInvoices',
 				'parameters' => '',
-				'comment' => 'Generate recurring invoices',
+				'comment' => 'Generate recurring invoices.',
 				'frequency' => 1,
 				'unitfrequency' => 3600 * 24,
 				'priority' => 51,
 				'status' => 1,
-				'test' => '$conf->facture->enabled',
+				'test' => 'isModEnabled("invoice")',
 				'datestart' => $datestart
 			),
 			1 => array(
@@ -140,7 +140,7 @@ class modFacture extends DolibarrModules
 				'unitfrequency' => 3600 * 24,
 				'priority' => 50,
 				'status' => 0,
-				'test' => '$conf->facture->enabled',
+				'test' => 'isModEnabled("invoice")',
 				'datestart' => $datestart
 			),
 		);

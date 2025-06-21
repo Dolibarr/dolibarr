@@ -631,7 +631,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						print '<th>'.$langs->trans('Invoice').'</th>';
 						print '<th>'.$langs->trans('RefSupplier').'</th>';
 						if ($displayAllInvoices) {
-							print '<th>' . $langs->trans('Type') . '</th>';
+							print '<th class="center">' . $langs->trans('Type') . '</th>';
 						}
 						print '<th class="center">'.$langs->trans('Date').'</th>';
 						print '<th class="center">'.$langs->trans('DateMaxPayment').'</th>';

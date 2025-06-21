@@ -156,8 +156,6 @@ TicketViewNonClosedOnly=View only open tickets
 TicketStatByStatus=Tickets by status
 OrderByDateAsc=Sort by ascending date
 OrderByDateDesc=Sort by descending date
-ShowAsConversation=Show as conversation list
-MessageListViewType=Show as table list
 ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
 ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
 # Ticket card
