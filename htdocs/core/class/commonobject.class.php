@@ -3750,9 +3750,7 @@ abstract class CommonObject
 				} else {
 					return $this->getRangOfLine($fk_parent_line);
 				}
-			}
-			else
-			{
+			} else {
 				return $row[0];
 			}
 		}
