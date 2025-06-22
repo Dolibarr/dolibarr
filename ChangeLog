@@ -37,7 +37,7 @@ FIX: GETPOST('private_message')
 FIX: in projet/element.php total_time is always back to 0
 FIX: invoice creation : use dol_include_once instead of require_once to allow external modules
 FIX: invoice creation : use dol_include_once instead of require_once to allow external modules.
-FIX: issue #28222 Edit date extrafield diplayed on all on lines (#31914)
+FIX: issue #28222 Edit date extrafield displayed on all on lines (#31914)
 FIX: Many status on invoice linked object block
 FIX: Multilangs : PDF lines description
 FIX: ODT substitution when many HTML tags in string
@@ -52,14 +52,14 @@ FIX: selectcontact is loading all contacts if socid is empty and MAIN_ACTIONCOM_
 FIX: selectcontact is loading all contacts when update event
 FIX: select group and severity search fields on ticket list
 FIX: send email to assigned user on ticket create
-FIX: send mail to BCC when email formated as Fullname <email> (#31983)
+FIX: send mail to BCC when email formatted as Fullname <email> (#31983)
 FIX: Show true error when send notify email at validate expense report
 FIX: status ticket update for new message
 FIX: swiftmailer: correctly set errors-to header (#31826)
 FIX: TakePos barcode rule (#31857)
 FIX: There were many status indicator in the invoice linked object block (propal card)
 FIX(ticket): Notification email without public interface
-FIX: Update on a sold line of bank entrie set the type to empty, now it's fixed #22539 (#31888)
+FIX: Update on a sold line of bank entries set the type to empty, now it's fixed #22539 (#31888)
 FIX: update status on create supplier order for trigger (#31642)
 FIX: use tax with code on supplier order line give tax code missing in supplier invoice (#32018)
 FIX: use vat with code on supplier order result code missing in supplier invoice
