@@ -9,7 +9,7 @@
  */
 return [
     // # Issue statistics:
-    // PhanUndeclaredProperty : 460+ occurrences
+    // PhanUndeclaredProperty : 450+ occurrences
     // PhanTypeMismatchProperty : 100+ occurrences
     // PhanTypeMismatchArgument : 90+ occurrences
     // PhanUndeclaredGlobalVariable : 90+ occurrences
@@ -20,10 +20,10 @@ return [
     // PhanUndeclaredConstant : 15+ occurrences
     // PhanTypeMismatchArgumentProbablyReal : 10+ occurrences
     // PhanUndeclaredMethod : 9 occurrences
-    // PhanPluginDuplicateExpressionBinaryOp : 6 occurrences
     // PhanPossiblyUndeclaredGlobalVariable : 6 occurrences
     // PhanTypeArraySuspiciousNull : 6 occurrences
     // PhanTypeComparisonFromArray : 6 occurrences
+    // PhanPluginDuplicateExpressionBinaryOp : 5 occurrences
     // PhanPluginUndeclaredVariableIsset : 5 occurrences
     // PhanParamTooMany : 4 occurrences
     // PhanPluginDuplicateArrayKey : 4 occurrences
@@ -60,7 +60,6 @@ return [
         'htdocs/categories/viewcat.php' => ['PhanUndeclaredProperty'],
         'htdocs/collab/index.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/action/index.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchProperty'],
-        'htdocs/comm/action/info.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/action/pertype.php' => ['PhanTypeComparisonFromArray', 'PhanTypeExpectedObjectPropAccess', 'PhanTypeMismatchDimFetch'],
         'htdocs/comm/action/peruser.php' => ['PhanTypeComparisonFromArray', 'PhanTypeMismatchArgument'],
         'htdocs/comm/card.php' => ['PhanTypeMismatchArgument'],
@@ -156,9 +155,7 @@ return [
         'htdocs/core/modules/expedition/doc/pdf_merou.modules.php' => ['PhanTypeMismatchArgumentNullable'],
         'htdocs/core/modules/expedition/doc/pdf_rouget.modules.php' => ['PhanTypeMismatchArgumentNullable'],
         'htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/modules/facture/doc/pdf_crabe.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/facture/doc/pdf_octopus.modules.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
-        'htdocs/core/modules/facture/doc/pdf_sponge.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/fichinter/doc/pdf_soleil.modules.php' => ['PhanTypeMismatchArgumentNullable'],
         'htdocs/core/modules/holiday/mod_holiday_immaculate.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/hrm/doc/pdf_standard_evaluation.modules.php' => ['PhanUndeclaredProperty'],
@@ -298,7 +295,7 @@ return [
         'htdocs/recruitment/recruitmentcandidature_list.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/recruitment/recruitmentjobposition_agenda.php' => ['PhanUndeclaredProperty'],
         'htdocs/recruitment/recruitmentjobposition_applications.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
-        'htdocs/recruitment/recruitmentjobposition_card.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
+        'htdocs/recruitment/recruitmentjobposition_card.php' => ['PhanUndeclaredProperty'],
         'htdocs/recruitment/recruitmentjobposition_document.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/recruitment/recruitmentjobposition_note.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/salaries/paiement_salary.php' => ['PhanUndeclaredProperty'],
