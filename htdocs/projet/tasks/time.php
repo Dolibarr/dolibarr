@@ -279,7 +279,7 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 	}
 
 	//If timespent date is not provided in POST (for eg, because in list the column date is hidden) we keep the actual date
-	$timespent_date =dol_mktime(12, 0, 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
+	$timespent_date = dol_mktime(12, 0, 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
 
 	if (!$error) {
 		if (GETPOST('taskid', 'int') != $id) {        // GETPOST('taskid') is id of new task
