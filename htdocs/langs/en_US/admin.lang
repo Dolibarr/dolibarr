@@ -255,7 +255,7 @@ Security=Security
 Passwords=Passwords
 DoNotStoreClearPassword=Encrypt passwords stored in database.
 MainDbPasswordFileConfEncrypted=Obfuscate the database password stored in conf.php. It is recommended to activate this option.
-InstrucToEncodePass=To have password encoded into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="...";</b><br>by<br><b>$dolibarr_main_db_pass="crypted:%s";</b>
+InstrucToEncodePass=To have password encoded into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="...";</b><br>by<br><b>$dolibarr_main_db_pass="%s";</b>
 InstrucToClearPass=To have password decoded (clear) into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="crypted:...";</b><br>by<br><b>$dolibarr_main_db_pass="%s";</b>
 ProtectAndEncryptPdfFiles=Protect generated PDF files. This is NOT recommended as it breaks bulk PDF generation.
 ProtectAndEncryptPdfFilesDesc=Protection of a PDF document keeps it available to read and print with any PDF browser. However, editing and copying is not possible anymore. Note that using this feature makes building of a global merged PDFs not working.
@@ -378,8 +378,8 @@ GenericMaskCodes4c=<u>Example on product created on 2023-01-31:</u><br>
 GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> will give <b>ABC2301-000099</b><br><b>{0000+100@1}-ZZZ/{dd}/XXX</b> will give <b>0199-ZZZ/31/XXX</b>
 GenericMaskCodes5b=<b>IN{yy}{mm}-{0000}-{t}</b> will give <b>IN2301-0099-A</b> if the type of company is 'Responsable Inscripto' with code for type that is 'A_RI'
 GenericNumRefModelDesc=Returns a customizable number according to a defined mask.
-DateStartThatModel=Disable use of this numbering rule for all thirdparties created before
-DateStartThatModelHelp=You can disable elephant numbering rule for thirdparties created before a date (for example, because they were imported by a migration, from another software using a different rule). Let that field empty to have the rule applied on all thirdparties.
+DateStartThatModel=Disable use of this numbering rule for all thirdparties created before the
+DateStartThatModelHelp=You can disable the numbering rule for thirdparties created before a date (for example, because they were imported by a migration, from another software using a different rule). Let that field empty to have the rule applied on all thirdparties.
 ServerAvailableOnIPOrPort=Server is available at address <b>%s</b> on port <b>%s</b>
 ServerNotAvailableOnIPOrPort=Server is not available at address <b>%s</b> on port <b>%s</b>
 DoTestServerAvailability=Test server connectivity

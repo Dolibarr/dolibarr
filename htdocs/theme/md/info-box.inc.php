@@ -609,6 +609,8 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .kanban.kanbancollapsed {
 	flex: unset;
 	width: 80px;
+	max-width: 80px;
+	overflow: hidden;
 }
 .kanban.kanbancollapsed .kanbanlabel, .text-vertical {
 	writing-mode: vertical-rl;

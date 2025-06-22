@@ -51,3 +51,4 @@ CantMoveNonExistantSerial=Erreur : un numéro de série sur lequel vous avez dem
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Réparation incomplète de la table des lots, lancez le script repair avec le paramètre '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Correction de stock requise, car Numéro de série unique.
 ErrorBatchesNeedStockManagement=Erreur. Un produit avec gestion de lot doit être géré en stock.
+ForceBatchesNeedStockManagement=Un produit avec gestion de lot doit être géré en stock (Gestion du stock forcé)

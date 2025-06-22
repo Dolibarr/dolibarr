@@ -1512,9 +1512,11 @@ class Account extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @param array<string,mixed> $params params to construct tooltip data
-	 * @since v18
+	 *
+	 * @param array<string,mixed> 	$params 	Params to construct tooltip data
 	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
+	 *
+	 * @since v18
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -1531,10 +1533,10 @@ class Account extends CommonObject
 		}
 		$datas['picto'] = $pictos;
 		$datas['label'] = '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
-		$datas['accountnumber'] = '<br><b>'.$langs->trans('AccountNumber').':</b> '.$this->number;
+		$datas['accountnumber'] = '<br><br><b>'.$langs->trans('AccountNumber').':</b> '.$this->number;
 		$datas['iban'] = '<br><b>'.$langs->trans('IBAN').':</b> '.getIbanHumanReadable($this);
 		$datas['bic'] = '<br><b>'.$langs->trans('BIC').':</b> '.$this->bic;
-		$datas['accountcurrency'] = '<br><b>'.$langs->trans("AccountCurrency").':</b> '.$this->currency_code;
+		$datas['accountcurrency'] = '<br><br><b>'.$langs->trans("AccountCurrency").':</b> '.$this->currency_code;
 
 		if (isModEnabled('accounting')) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';

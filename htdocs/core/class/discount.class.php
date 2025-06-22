@@ -705,7 +705,7 @@ class DiscountAbsolute extends CommonObject
 	 *
 	 *	@param      CommonInvoice	  $invoice	    	Object invoice
 	 *	@param      int<-1,1>	      $multicurrency	1=Return multicurrency_amount instead of amount. TODO Add a mode multicurrency = -1 to return array with amount + multicurrency amount
-	 *	@return     int					        		Return integer <0 if KO, Sum of credit notes and excess received amount otherwise
+	 *	@return     float|string		        		Return string 'Error...' if KO, Sum of credit notes and excess received amount otherwise
 	 */
 	public function getSumCreditNotesUsed($invoice, $multicurrency = 0)
 	{
@@ -724,7 +724,7 @@ class DiscountAbsolute extends CommonObject
 		} else {
 			$this->error = get_class($this)."::getSumCreditNotesUsed was called with a bad object as a first parameter";
 			dol_print_error($this->db, $this->error);
-			return -1;
+			return 'ErrorBadElementType';
 		}
 
 		$resql = $this->db->query($sql);
@@ -737,7 +737,7 @@ class DiscountAbsolute extends CommonObject
 			}
 		} else {
 			$this->error = $this->db->lasterror();
-			return -1;
+			return 'ErrorBadSQLquery';
 		}
 	}
 	/**

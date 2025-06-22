@@ -19,7 +19,7 @@
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022       Anthony Berton	         	<anthony.berton@bb2a.fr>
  * Copyright (C) 2022       Ferran Marcet           	<fmarcet@2byte.es>
- * Copyright (C) 2022       Charlene Benke           	<charlene@patas-monkey.com>
+ * Copyright (C) 2022-2025  Charlene Benke           	<charlene@patas-monkey.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2023-2024  Joachim Kueter              <git-jk@bloxera.com>
  * Copyright (C) 2024		Lenin Rivas					<lenin.rivas777@gmail.com>
@@ -14019,14 +14019,14 @@ function getElementProperties($elementType)
 		$table_element = 'knowledgemanagement_knowledgerecord';
 		$subelement = '';
 	} elseif ($elementType == 'customer') {
-		$module = 'thirdparty';
+		$module = 'societe';
 		$classpath = 'societe/class';
 		$classfile = 'client';
 		$classname = 'Client';
 		$table_element = 'societe';
 		$subelement = '';
 	} elseif ($elementType == 'fournisseur' || $elementType == 'supplier') {
-		$module = 'thirdparty';
+		$module = 'societe';
 		$classpath = 'fourn/class';
 		$classfile = 'fournisseur';
 		$classname = 'Fournisseur';
@@ -14066,10 +14066,10 @@ function getElementProperties($elementType)
 	}
 
 	// Overwrite value for special cases
-	if ($element == 'order_supplier') {
+	if ($element == 'order_supplier' && isModEnabled('fournisseur')) {
 		$dir_output = $conf->fournisseur->commande->dir_output;
 		$dir_temp = $conf->fournisseur->commande->dir_temp;
-	} elseif ($element == 'invoice_supplier') {
+	} elseif ($element == 'invoice_supplier' && isModEnabled('fournisseur')) {
 		$dir_output = $conf->fournisseur->facture->dir_output;
 		$dir_temp = $conf->fournisseur->facture->dir_temp;
 	}
@@ -15455,6 +15455,10 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				$out .= img_warning($langs->trans("Late")).' ';
 			}
 			$out .= "</span></span>\n";
+
+			$out .= '<span class="time">';
+			$out .= $actionstatic->getLibStatut(2);
+			$out .= '</span>';
 
 			// Ref
 			$out .= '<h3 class="timeline-header">';
