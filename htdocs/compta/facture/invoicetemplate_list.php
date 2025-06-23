@@ -301,11 +301,7 @@ $today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['
 // Build and execute select
 // --------------------------------------------------------------------
 
-$sql = "SELECT";
-if ($search_all) {
-	$sql = 'SELECT DISTINCT';	// Because of joining llx_facturedet_rec
-}
-$sql .= " s.nom as name, s.rowid as socid, f.rowid as facid, f.titre as title, f.total_ht, f.total_tva, f.total_ttc, f.frequency, f.unit_frequency,";
+$sql = "SELECT s.nom as name, s.rowid as socid, f.rowid as facid, f.titre as title, f.total_ht, f.total_tva, f.total_ttc, f.frequency, f.unit_frequency,";
 $sql .= " f.nb_gen_done, f.nb_gen_max, f.date_last_gen, f.date_when, f.suspended,";
 $sql .= " f.datec, f.fk_user_author, f.tms, f.fk_user_modif,";
 $sql .= " f.fk_cond_reglement, f.fk_mode_reglement";
@@ -327,9 +323,6 @@ $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_rec as 
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_rec_extrafields as ef ON ef.fk_object = f.rowid";
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-}
-if ($search_all) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet_rec as fdc ON f.rowid = fdc.fk_facture';
 }
 // Add table from hooks
 $parameters = array();
@@ -408,7 +401,7 @@ if ($search_date_when_end) {
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
 if ($search_all) {
-	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
+	$sql .= " AND EXISTS (SELECT fdc.rowid FROM ".MAIN_DB_PREFIX."facturedet_rec as fdc WHERE f.rowid = fdc.fk_facture ".natural_search(array_keys($fieldstosearchall), $search_all).")";
 }
 
 // Count total nb of records
