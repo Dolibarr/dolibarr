@@ -90,6 +90,7 @@ trait CommonSignedObject
 	{
 		global $langs;
 		$langs->loadLangs(array('commercial'));
+		$status == -1 ? $status = 0 : $status;
 		$this->signed_status = $status;
 		$this->context['signature'] = $status;
 		switch ($status) {
