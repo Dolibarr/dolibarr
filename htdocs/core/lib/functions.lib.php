@@ -2185,19 +2185,24 @@ function dolPrintHTML($s, $allowiframe = 0)
  * Return a string ready to be output into an HTML attribute (alt, title, data-html, ...)
  * With dolPrintHTMLForAttribute(), the content is HTML encode, even if it is already HTML content.
  *
- * @param	string	$s						String to print
- * @param	int		$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
- * @return	string							String ready for HTML output
+ * @param	string		$s						String to print
+ * @param	int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
+ * @param	string[]	$allowothertags			List of other tags allowed
+ * @return	string								String ready for HTML output
  * @see dolPrintHTML(), dolPrintHTMLFortextArea()
  */
-function dolPrintHTMLForAttribute($s, $escapeonlyhtmltags = 0)
+function dolPrintHTMLForAttribute($s, $escapeonlyhtmltags = 0, $allowothertags = array())
 {
+	$allowedtags = array('br', 'b', 'font', 'hr', 'span');
+	if (!empty($allowothertags) && is_array($allowothertags)) {
+		$allowedtags = array_merge($allowedtags, $allowothertags);
+	}
 	// The dol_htmlentitiesbr will convert simple text into html, including switching accent into HTML entities
 	// The dol_escape_htmltag will escape html tags.
 	if ($escapeonlyhtmltags) {
-		return dol_escape_htmltag(dol_string_onlythesehtmltags($s, 1, 0, 0, 0, array('br', 'b', 'font', 'hr', 'span')), 1, -1, '', 1, 1);
+		return dol_escape_htmltag(dol_string_onlythesehtmltags($s, 1, 0, 0, 0, $allowedtags), 1, -1, '', 1, 1);
 	} else {
-		return dol_escape_htmltag(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 0, 0, 0, array('br', 'b', 'font', 'hr', 'span')), 1, -1, '', 0, 1);
+		return dol_escape_htmltag(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 0, 0, 0, $allowedtags), 1, -1, '', 0, 1);
 	}
 }
 
@@ -5286,10 +5291,11 @@ function getPictoForType($key, $morecss = '')
  *  @param		string		$alt					Force alt for blind people
  *  @param		string		$morecss				Add more class css on img tag (For example 'myclascss').
  *  @param		int 		$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No margin left. Works for fontawesome picto only.
+ *  @param		string[]	$allowothertags			List of other tags allowed in title and alt attribute
  *  @return     string       				    	Return img tag
  *  @see        img_object(), img_picto_common()
  */
-function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srconly = 0, $notitle = 0, $alt = '', $morecss = '', $marginleftonlyshort = 2)
+function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srconly = 0, $notitle = 0, $alt = '', $morecss = '', $marginleftonlyshort = 2, $allowothertags = array())
 {
 	global $conf;
 
@@ -5552,7 +5558,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 	}
 
 	// tag title is used for tooltip on <a>, tag alt can be used with very simple text on image for blind people
-	return '<img src="'.$fullpathpicto.'"'.($notitle ? '' : ' alt="'.dol_escape_htmltag($alt).'"').(($notitle || empty($titlealt)) ? '' : ' title="'.dol_escape_htmltag($titlealt).'"').($moreatt ? ' '.$moreatt.($morecss ? ' class="'.$morecss.'"' : '') : ' class="inline-block'.($morecss ? ' '.$morecss : '').'"').'>'; // Alt is used for accessibility, title for popup
+	return '<img src="'.$fullpathpicto.'"'.($notitle ? '' : ' alt="'.dolPrintHTMLForAttribute($alt, 0, $allowothertags).'"').(($notitle || empty($titlealt)) ? '' : ' title="'.dolPrintHTMLForAttribute($titlealt, 0, $allowothertags).'"').($moreatt ? ' '.$moreatt.($morecss ? ' class="'.$morecss.'"' : '') : ' class="inline-block'.($morecss ? ' '.$morecss : '').'"').'>'; // Alt is used for accessibility, title for popup
 }
 
 /**
@@ -5594,7 +5600,7 @@ function getImgPictoNameList()
 		'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'replacement', 'resource', 'recurring', 'rss',
 		'search-plus', 'shapes', 'skill', 'square', 'sort-numeric-down', 'status', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 		'terminal', 'tick', 'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda', 'trip',
-		'uncheck', 'undo', 'url', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
+		'uncheck', 'undo', 'url', 'user-cog', 'user-injured', 'user-md', 'upload', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
 		'conferenceorbooth', 'eventorganization',
 		'stamp', 'signature',
 		'webportal'
@@ -5675,22 +5681,23 @@ function getImgPictoConv($mode = 'fa')
 /**
  *	Show a picto called object_picto (generic function)
  *
- *	@param	string	$titlealt			Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *	@param	string	$picto				Name of image to show object_picto (example: user, group, action, bill, contract, propal, product, ...)
- *										For external modules use imagename@mymodule to search into directory "img" of module.
- *	@param	string	$moreatt			Add more attribute on img tag (ie: class="datecallink")
- *	@param	int		$pictoisfullpath	If 1, image path is a full path
- *	@param	int		$srconly			Return only content of the src attribute of img.
- *  @param	int		$notitle			1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
- *	@return	string						Return img tag
+ *	@param	string		$titlealt			Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
+ *	@param	string		$picto				Name of image to show object_picto (example: user, group, action, bill, contract, propal, product, ...)
+ *											For external modules use imagename@mymodule to search into directory "img" of module.
+ *	@param	string		$moreatt			Add more attribute on img tag (ie: class="datecallink")
+ *	@param	int			$pictoisfullpath	If 1, image path is a full path
+ *	@param	int			$srconly			Return only content of the src attribute of img.
+ *  @param	int			$notitle			1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
+ *  @param	string[]	$allowothertags		List of other tags allowed in title attribute
+ *	@return	string							Return img tag
  *	@see	img_picto(), img_picto_common()
  */
-function img_object($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srconly = 0, $notitle = 0)
+function img_object($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srconly = 0, $notitle = 0, $allowothertags = array())
 {
 	if (strpos($picto, '^') === 0) {
-		return img_picto($titlealt, str_replace('^', '', $picto), $moreatt, $pictoisfullpath, $srconly, $notitle);
+		return img_picto($titlealt, str_replace('^', '', $picto), $moreatt, $pictoisfullpath, $srconly, $notitle, '', '', 2, $allowothertags);
 	} else {
-		return img_picto($titlealt, 'object_'.$picto, $moreatt, $pictoisfullpath, $srconly, $notitle);
+		return img_picto($titlealt, 'object_'.$picto, $moreatt, $pictoisfullpath, $srconly, $notitle, '', '', 2, $allowothertags);
 	}
 }
 
@@ -6214,7 +6221,7 @@ function img_mime($file, $titlealt = '', $morecss = '')
 	}
 
 	//return img_picto_common($titlealt, 'mime/'.$mimeimg, 'class="'.$morecss.'"');
-	return '<i class="fa fa-'.$mimefa.' paddingright'.($morecss ? ' '.$morecss : '').'"'.($titlealt ? ' title="'.dolPrintHTMLForAttribute($titlealt).'"' : '').'></i>';
+	return '<i class="fa fa-'.$mimefa.' '.(preg_match('/pictofixedwidth/', $morecss) ? '' : 'paddingright ').($morecss ? ' '.$morecss : '').'"'.($titlealt ? ' title="'.dolPrintHTMLForAttribute($titlealt).'"' : '').'></i>';
 }
 
 
@@ -15455,6 +15462,10 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				$out .= img_warning($langs->trans("Late")).' ';
 			}
 			$out .= "</span></span>\n";
+
+			$out .= '<span class="time">';
+			$out .= $actionstatic->getLibStatut(2);
+			$out .= '</span>';
 
 			// Ref
 			$out .= '<h3 class="timeline-header">';

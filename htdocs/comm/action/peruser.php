@@ -578,8 +578,8 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 
 	$s .= '<script type="text/javascript">'."\n";
 	$s .= 'jQuery(document).ready(function () {'."\n";
-	$s .= 'jQuery(".check_birthday").click(function() { console.log("Toggle class .peruser_birthday"); jQuery(".peruser_birthday").addClass("peruser_birthday_imp"); });'."\n";
-	$s .= 'jQuery(".check_holiday").click(function() { console.log("Toggle class .peruser_holiday"); if (jQuery(".peruser_holiday").hasClass("peruser_holiday_imp")) { jQuery(".peruser_holiday").removeClass("peruser_holiday_imp"); } else { jQuery(".peruser_holiday").addClass("peruser_holiday_imp"); } });'."\n";
+	$s .= 'jQuery(".check_birthday").click(function() { console.log("Click on .check_birthday so we toggle class .peruser_birthday"); jQuery(".peruser_birthday").addClass("peruser_birthday_imp"); });'."\n";
+	$s .= 'jQuery(".check_holiday").click(function() { console.log("Click on .check_holiday so we toggle class .peruser_holiday"); if (jQuery(".peruser_holiday").hasClass("peruser_holiday_imp")) { jQuery(".peruser_holiday").removeClass("peruser_holiday_imp"); } else { jQuery(".peruser_holiday").addClass("peruser_holiday_imp"); } });'."\n";
 	if (isModEnabled("bookcal") && !empty($bookcalcalendars["calendars"])) {
 		foreach ($bookcalcalendars["calendars"] as $key => $value) {
 			$s .= 'jQuery(".check_bookcal_calendar_'.$value['id'].'").click(function() { console.log("Toggle Bookcal Calendar '.$value['id'].'"); jQuery(".family_bookcal_calendar_'.$value['id'].'").toggle(); });'."\n";
@@ -1786,10 +1786,9 @@ print "\n";
 print '<script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery(".onclickopenref").click(function() {
-		console.log("We click on a class onclickopenref");
-
 		var ref=$(this).attr(\'ref\');
 		var res = ref.split("_");
+		var type = res[0];
 		var userid = res[1];
 		var year = res[2];
 		var month = res[3];
@@ -1797,6 +1796,9 @@ jQuery(document).ready(function() {
 		var hour = res[5];
 		var min = res[6];
 		var ids = res[7];
+
+		console.log("We click on a class onclickopenref in page peruser with ref="+ref+" type="+type);
+
 		if (ids == \'none\') /* No event */
 		{
 			/* alert(\'no event\'); */
@@ -1808,11 +1810,13 @@ jQuery(document).ready(function() {
 			/* alert(\'several events\'); */
 			url = "'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&search_actioncode="+jQuery("#search_actioncode").val()+"&search_status="+jQuery("#selectsearch_status").val()+"&filtert="+userid+"&dateselectyear="+year+"&dateselectmonth="+month+"&dateselectday="+day;
 			window.location.href = url;
-		}
-		else	/* One event */
-		{
+		} else {	/* One event */
 			/* alert(\'one event\'); */
-			url = "'.DOL_URL_ROOT.'/comm/action/card.php?action=view&id="+ids
+			if (type == \'holiday\') {
+				url = "'.DOL_URL_ROOT.'/holiday/card.php?id="+ids
+			} else {
+				url = "'.DOL_URL_ROOT.'/comm/action/card.php?action=view&id="+ids
+ 			}
 			window.location.href = url;
 		}
 	});
@@ -2021,6 +2025,9 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 							$cases1[$h][$event->id]['typecode'] = $event->type_code;
 							if ($event->type_code == 'HOLIDAY') {
 								$cases1[$h][$event->id]['css'] = 'peruser_holiday ';
+								if (GETPOSTINT('check_holiday')) {
+									$cases1[$h][$event->id]['css'] .= 'peruser_holiday_imp ';
+								}
 							} else {
 								$cases1[$h][$event->id]['color'] = $color;
 
@@ -2069,6 +2076,9 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 							$cases2[$h][$event->id]['typecode'] = $event->type_code;
 							if ($event->type_code == 'HOLIDAY') {
 								$cases2[$h][$event->id]['css'] = 'peruser_holiday ';
+								if (GETPOSTINT('check_holiday')) {
+									$cases2[$h][$event->id]['css'] .= 'peruser_holiday_imp ';
+								}
 							} else {
 								$cases2[$h][$event->id]['color'] = $color;
 
@@ -2117,6 +2127,9 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 							$cases3[$h][$event->id]['typecode'] = $event->type_code;
 							if ($event->type_code == 'HOLIDAY') {
 								$cases3[$h][$event->id]['css'] .= 'peruser_holiday ';
+								if (GETPOSTINT('check_holiday')) {
+									$cases3[$h][$event->id]['css'] .= 'peruser_holiday_imp ';
+								}
 							} else {
 								$cases3[$h][$event->id]['color'] = $color;
 
@@ -2165,6 +2178,9 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 							$cases4[$h][$event->id]['typecode'] = $event->type_code;
 							if ($event->type_code == 'HOLIDAY') {
 								$cases4[$h][$event->id]['css'] = 'peruser_holiday ';
+								if (GETPOSTINT('check_holiday')) {
+									$cases4[$h][$event->id]['css'] .= 'peruser_holiday_imp ';
+								}
 							} else {
 								$cases4[$h][$event->id]['color'] = $color;
 
@@ -2346,62 +2362,91 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		} else {
 			echo '<td class="'.$style.' cal_peruser'.($var ? ' cal_impair '.$style.'_impair' : '').'">';
 		}
-		// only 1 event
+
+		// only 1 event in first quarter
 		if (!empty($cases1[$h]) && is_array($cases1[$h]) && count($cases1[$h]) == 1) {
 			$output = array_slice($cases1[$h], 0, 1);
-			$title1 = $langs->trans("Ref").' '.$ids1.($title1 ? ' - '.$title1 : '');
-			if ($output[0]['string']) {
-				$title1 .= ($title1 ? ' - ' : '').$output[0]['string'];
+			if ($output[0]['typecode'] == 'HOLIDAY') {
+				$ref1 = 'holiday';
+				$title1 = $langs->trans("Holiday");
+			} else {
+				$ref1 = 'ref';
+				$title1 = $langs->trans("Ref").' '.$ids1.($title1 ? ' - '.$title1 : '');
+				if ($output[0]['string']) {
+					$title1 .= ($title1 ? ' - ' : '').$output[0]['string'];
+				}
 			}
 			if ($output[0]['color']) {
 				$color1 = $output[0]['color'];
 			}
 		} elseif (!empty($cases1[$h]) && is_array($cases1[$h]) && count($cases1[$h]) > 1) {
+			$ref1 = 'ref';
 			$title1 = $langs->trans("Ref").' '.$ids1.($title1 ? ' - '.$title1 : '');
 			$color1 = '222222';
 		}
 
-		// only 1 event
+		// only 1 event in second quarter
 		if (!empty($cases2[$h]) && is_array($cases2[$h]) && count($cases2[$h]) == 1) {
 			$output = array_slice($cases2[$h], 0, 1);
-			$title2 = $langs->trans("Ref").' '.$ids2.($title2 ? ' - '.$title2 : '');
-			if ($output[0]['string']) {
-				$title2 .= ($title2 ? ' - ' : '').$output[0]['string'];
+			if ($output[0]['typecode'] == 'HOLIDAY') {
+				$ref2 = 'holiday';
+				$title2 = $langs->trans("Holiday");
+			} else {
+				$ref2 = 'ref';
+				$title2 = $langs->trans("Ref").' '.$ids2.($title2 ? ' - '.$title2 : '');
+				if ($output[0]['string']) {
+					$title2 .= ($title2 ? ' - ' : '').$output[0]['string'];
+				}
 			}
 			if ($output[0]['color']) {
 				$color2 = $output[0]['color'];
 			}
 		} elseif (!empty($cases2[$h]) && is_array($cases2[$h]) && count($cases2[$h]) > 1) {
+			$ref2 = 'ref';
 			$title2 = $langs->trans("Ref").' '.$ids2.($title2 ? ' - '.$title2 : '');
 			$color2 = '222222';
 		}
 
-		// only 1 event
+		// only 1 event in third quarter
 		if (!empty($cases3[$h]) && is_array($cases3[$h]) && count($cases3[$h]) == 1) {
 			$output = array_slice($cases3[$h], 0, 1);
-			$title3 = $langs->trans("Ref").' '.$ids3.($title3 ? ' - '.$title3 : '');
-			if ($output[0]['string']) {
-				$title3 .= ($title3 ? ' - ' : '').$output[0]['string'];
+			if ($output[0]['typecode'] == 'HOLIDAY') {
+				$ref3 = 'holiday';
+				$title3 = $langs->trans("Holiday");
+			} else {
+				$ref3 = 'ref';
+				$title3 = $langs->trans("Ref").' '.$ids3.($title3 ? ' - '.$title3 : '');
+				if ($output[0]['string']) {
+					$title3 .= ($title3 ? ' - ' : '').$output[0]['string'];
+				}
 			}
 			if ($output[0]['color']) {
 				$color3 = $output[0]['color'];
 			}
 		} elseif (!empty($cases3[$h]) && is_array($cases3[$h]) && count($cases3[$h]) > 1) {
+			$ref3 = 'ref';
 			$title3 = $langs->trans("Ref").' '.$ids3.($title3 ? ' - '.$title3 : '');
 			$color3 = '222222';
 		}
 
-		// only 1 event
+		// only 1 event in fourth quarter
 		if (!empty($cases4[$h]) && is_array($cases4[$h]) && count($cases4[$h]) == 1) {
 			$output = array_slice($cases4[$h], 0, 1);
-			$title4 = $langs->trans("Ref").' '.$ids3.($title4 ? ' - '.$title4 : '');
-			if ($output[0]['string']) {
-				$title4 .= ($title4 ? ' - ' : '').$output[0]['string'];
+			if ($output[0]['typecode'] == 'HOLIDAY') {
+				$ref4 = 'holiday';
+				$title4 = $langs->trans("Holiday");
+			} else {
+				$ref4 = 'ref';
+				$title4 = $langs->trans("Ref").' '.$ids3.($title4 ? ' - '.$title4 : '');
+				if ($output[0]['string']) {
+					$title4 .= ($title4 ? ' - ' : '').$output[0]['string'];
+				}
 			}
 			if ($output[0]['color']) {
 				$color4 = $output[0]['color'];
 			}
 		} elseif (!empty($cases4[$h]) && is_array($cases4[$h]) && count($cases4[$h]) > 1) {
+			$ref4 = 'ref';
 			$title4 = $langs->trans("Ref").' '.$ids4.($title4 ? ' - '.$title4 : '');
 			$color4 = '222222';
 		}
@@ -2415,8 +2460,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			print 'style="background: #'.$color1.'; "';
 		}
 		print 'class="';
-		print($style1 ? $style1.' ' : '');
-		print 'center'.($title2 ? ' classfortooltip' : '').($title1 ? ' cursorpointer' : '').'" ref="ref_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_00_'.($ids1 ? $ids1 : 'none').'"'.($title1 ? ' title="'.$title1.'"' : '').'>';
+		print ($style1 ? $style1.' ' : '');
+		print 'center'.($title1 ? ' classfortooltip' : '').($title1 ? ' cursorpointer' : '').'"';
+		print 'ref="'.$ref1.'_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_00_'.($ids1 ? $ids1 : 'none').'"';
+		print ($title1 ? ' title="'.$title1.'"' : '').'>';
 		print $string1;
 		print '</td>';
 
@@ -2427,8 +2474,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			print 'style="background: #'.$color2.'; "';
 		}
 		print 'class="';
-		print($style2 ? $style2.' ' : '');
-		print 'center'.($title2 ? ' classfortooltip' : '').($title1 ? ' cursorpointer' : '').'" ref="ref_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_15_'.($ids2 ? $ids2 : 'none').'"'.($title2 ? ' title="'.$title2.'"' : '').'>';
+		print ($style2 ? $style2.' ' : '');
+		print 'center'.($title2 ? ' classfortooltip' : '').($title2 ? ' cursorpointer' : '').'"';
+		print ' ref="'.$ref2.'_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_15_'.($ids2 ? $ids2 : 'none').'"';
+		print ($title2 ? ' title="'.$title2.'"' : '').'>';
 		print $string2;
 		print '</td>';
 
@@ -2439,8 +2488,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			print 'style="background: #'.$color3.'; "';
 		}
 		print 'class="';
-		print $style3.' ';
-		print 'center'.($title2 ? ' classfortooltip' : '').($title3 ? ' cursorpointer' : '').'" ref="ref_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_30_'.($ids3 ? $ids3 : 'none').'"'.($title3 ? ' title="'.$title3.'"' : '').'>';
+		print ($style3 ? $style3.' ' : '');
+		print 'center'.($title3 ? ' classfortooltip' : '').($title3 ? ' cursorpointer' : '').'"';
+		print ' ref="'.$ref3.'_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_30_'.($ids3 ? $ids3 : 'none').'"';
+		print ($title3 ? ' title="'.$title3.'"' : '').'>';
 		print $string3;
 		print '</td>';
 
@@ -2451,8 +2502,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			print 'style="background: #'.$color4.'; "';
 		}
 		print 'class="';
-		print $style4.' ';
-		print 'center'.($title3 ? ' classfortooltip' : '').($title4 ? ' cursorpointer' : '').'" ref="ref_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_45_'.($ids4 ? $ids4 : 'none').'"'.($title4 ? ' title="'.$title4.'"' : '').'>';
+		print ($style4 ? $style4.' ' : '');
+		print 'center'.($title4 ? ' classfortooltip' : '').($title4 ? ' cursorpointer' : '').'"';
+		print ' ref="'.$ref4.'_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_45_'.($ids4 ? $ids4 : 'none').'"';
+		print ($title4 ? ' title="'.$title4.'"' : '').'>';
 		print $string4;
 		print '</td>';
 

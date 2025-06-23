@@ -83,6 +83,7 @@ if (GETPOST('search_endyear') != '') {
 $search_code = GETPOST('search_code', 'array:alpha');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
+$search_signature = GETPOST('search_signature', 'alpha');
 
 if (($search_start == -1 || empty($search_start)) && !GETPOSTISSET('search_startmonth') && !GETPOSTISSET('begin')) {
 	$search_start = dol_time_plus_duree(dol_now(), -1, 'w');
@@ -141,6 +142,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_code = array();
 	$search_ref = '';
 	$search_amount = '';
+	$search_signature = '';
 	$search_showonlyerrors = 0;
 	$search_startyear = '';
 	$search_startmonth = '';
@@ -250,7 +252,7 @@ if ($action === 'downloadblockchain') {
 		if ($res) {
 			header('Content-Type: application/octet-stream');
 			header("Content-Transfer-Encoding: Binary");
-			header("Content-disposition: attachment; filename=\"unalterable-log-archive-".$dolibarr_main_db_name."-".(GETPOSTINT('yeartoexport') > 0 ? GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') > 0 ? sprintf("%02d", GETPOSTINT('monthtoexport')) : '').'-' : '').$previoushash.".csv\"");
+			header("Content-disposition: attachment; filename=\"unalterable-log-archive-".$dolibarr_main_db_name."-".(GETPOSTINT('yeartoexport') > 0 ? GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') > 0 ? sprintf("%02d", GETPOSTINT('monthtoexport')) : '').'-' : '').'after'.$previoushash.".csv\"");
 
 			print $langs->transnoentities('Id')
 				.';'.$langs->transnoentities('Date')
@@ -353,7 +355,7 @@ $help_url = "EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Ina
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-blockedlog page-admin_blockedlog_list');
 
-$blocks = $block_static->getLog('all', (int) $search_id, $MAXLINES, $sortfield, $sortorder, (int) $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code);
+$blocks = $block_static->getLog('all', (int) $search_id, $MAXLINES, $sortfield, $sortorder, (int) $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code, $search_signature);
 if (!is_array($blocks)) {
 	if ($blocks == -2) {
 		setEventMessages($langs->trans("TooManyRecordToScanRestrictFilters", $MAXLINES), null, 'errors');
@@ -420,6 +422,12 @@ if ($search_endmonth > 0) {
 }
 if ($search_endday > 0) {
 	$param .= '&search_endday='.((int) $search_endday);
+}
+if ($search_amount) {
+	$param .= '&search_amount='.urlencode($search_amount);
+}
+if ($search_signature) {
+	$param .= '&search_signature='.urlencode($search_signature);
 }
 if ($search_showonlyerrors > 0) {
 	$param .= '&search_showonlyerrors='.((int) $search_showonlyerrors);
@@ -496,7 +504,6 @@ print '</td>';
 
 // Actions code
 print '<td class="liste_titre">';
-//print $form->selectarray('search_code', $block_static->trackedevents, $search_code, 1, 0, 0, '', 1, 0, 0, 'ASC', 'maxwidth150', 1);
 print $form->multiselectarray('search_code', $block_static->trackedevents, $search_code, 0, 0, 'maxwidth150', 1);
 print '</td>';
 
@@ -510,7 +517,7 @@ print '<td class="liste_titre right"><input type="text" class="maxwidth50" name=
 print '<td class="liste_titre"></td>';
 
 // Fingerprint
-print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"><input type="text" class="maxwidth50" name="search_signature" value="'.dol_escape_htmltag($search_signature).'"></td>';
 
 // Status
 print '<td class="liste_titre center minwidth75imp parentonrightofpage">';

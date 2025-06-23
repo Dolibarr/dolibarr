@@ -1644,7 +1644,7 @@ if ($action == 'create') {
 	}
 
 	// Status
-	print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
+	print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Progression").'</td>';
 	print '<td>';
 	$percent = $complete !== '' ? $complete : -1;
 	if (GETPOSTISSET('status')) {
@@ -2216,7 +2216,7 @@ if ($id > 0 && $action != 'create') {
 		}
 
 		// Status
-		print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Progression").'</td><td colspan="3">';
 		$percent = GETPOSTISSET("percentage") ? GETPOSTINT("percentage") : $object->percentage;
 		$formactions->form_select_status_action('formaction', (string) $percent, 1, 'complete', 0, 0, 'maxwidth200');
 		print '</td></tr>';
