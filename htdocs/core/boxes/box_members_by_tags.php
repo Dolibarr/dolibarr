@@ -65,9 +65,9 @@ class box_members_by_tags extends ModeleBoxes
 	/**
 	 *  Load data into info_box_contents array to show array later.
 	 *
-	 *  @param	array	$sumMembers		Array of statistics of Member to use
-	 *	@param	array	$staticmember	Member object to use method of the class
-	 *	@param  array	$line	  		Array with properties of box lines
+	 *  @param	mixed	$sumMembers		Array of statistics of Member to use
+	 *	@param	mixed	$staticmember	Member object to use method of the class
+	 *	@param  mixed	$line	  		Array with properties of box lines
 	 *  @return	int		the next no of line of the box
 	 */
 	private function addRows($sumMembers, $staticmember, $line)
@@ -173,7 +173,7 @@ class box_members_by_tags extends ModeleBoxes
 				var totalRow = tbody.rows[tbody.rows.length - 1];
 				var select = document.querySelector('#maxdepth');
 				var max_depth = select.value;
-				
+
 				for (var i = 1; i < (howManyRows - 1); i++) {
 				  if (max_depth === '' || (typeof(tbody.rows[i].cells[0].getAttribute('depth')) !== 'undefined' && tbody.rows[i].cells[0].getAttribute('depth') <= max_depth)) {
 					tbody.rows[i].style.display='';

@@ -350,12 +350,12 @@ class AdherentStats extends Stats
 	 *	Recursive function returning a multidimensional array representing
 	 *  a parent-child tree with the addition of a "depth" property at each level
 	 *
-	 * @param		array	$elements 		Array of elements in which build a tree
+	 * @param		mixed	$elements 		Array of elements in which build a tree
 	 * @param		int		$fk_parent		First parent branch to build the tree (0 is the trunk for tags)
 	 * @param		int		$limit_depth    Maximum depth, beyond which elements are deleted from the returned tree
-	 * @return		array 					Multidimensional array representing a tree with a "depth" property
+	 * @return		mixed 					Multidimensional array representing a tree with a "depth" property
 	 */
-	public function buildTree(array $elements, int $fk_parent = 0, int $limit_depth = -1)
+	public function buildTree($elements, int $fk_parent = 0, int $limit_depth = -1)
 	{
 		$branch = array();
 		$depth = $limit_depth > 0 ? $limit_depth : -($limit_depth + 1);
@@ -382,11 +382,11 @@ class AdherentStats extends Stats
 	/**
 	 *	Recursive function returning the deepest level of a multidimensional array
 	 *
-	 * @param		array	$array 		Array of elements in which build a tree
+	 * @param		mixed	$array 		Array of elements in which build a tree
 	 * @param		int		$depth 		Array of elements in which build a tree
 	 * @return		int 	Maximum tree depth
 	 */
-	public function arrayDepth(array $array, $depth = 0)
+	public function arrayDepth($array, $depth = 0)
 	{
 		// test against infinite loop
 		$depth = $depth + 1;
