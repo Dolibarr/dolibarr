@@ -74,22 +74,17 @@ class modFicheinter extends DolibarrModules
 
 		// Constants
 		$this->const = array();
-		$r = 0;
 
 		if (!isset($conf->ficheinter) || !isset($conf->ficheinter->enabled)) {
 			$conf->ficheinter = new stdClass();
 			$conf->ficheinter->enabled = 0;
 		}
 
-		$this->const[$r][0] = "FICHEINTER_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "soleil";
-		$r++;
-
-		$this->const[$r][0] = "FICHEINTER_ADDON";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "pacific";
-		$r++;
+		$this->const = array(
+			0 => array('FICHEINTER_ADDON_PDF', 'chaine', 'soleil'),
+			1 => array('FICHEINTER_ADDON', 'chaine', 'pacific'),
+			2 => array('FICHEINTER_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT'.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/fichinters', 'Ficheinter templates ODT/ODS directory for templates', 0),
+		);
 
 		// Boxes
 		$this->boxes = array(0=>array('file'=>'box_ficheinter.php', 'enabledbydefaulton'=>'Home'));
@@ -223,6 +218,22 @@ class modFicheinter extends DolibarrModules
 	public function init($options = '')
 	{
 		global $conf;
+
+		//ODT template
+		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/fichinters/template_fichinter.odt';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/fichinters';
+		$dest = $dirodt.'/template_fichinter.odt';
+
+		if (file_exists($src) && !file_exists($dest)) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			dol_mkdir($dirodt);
+			$result = dol_copy($src, $dest, '0', 0);
+			if ($result < 0) {
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
+				return 0;
+			}
+		}
 
 		// Permissions
 		$this->remove($options);
