@@ -2,7 +2,7 @@
 /* Copyright (C) 2016       Neil Orley          <neil.orley@oeris.fr>
  * Copyright (C) 2013-2016  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2013-2020  Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2024  Alexandre Spangaro  <alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2025  Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024       MDW                 <mdeweerd@users.noreply.github.com>
  *
@@ -801,13 +801,21 @@ $moreforfilter .= '<div class="divsearchfield">';
 $moreforfilter .= $langs->trans('AccountAccounting').': ';
 $moreforfilter .= '<div class="nowrap inline-block">';
 if ($type == 'sub') {
-	$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), 'maxwidth200');
+	if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
+		$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), 'maxwidth200');
+	} else {
+		$moreforfilter .= '<input type="text" class="maxwidth150" name="search_accountancy_code_start" value="'.dol_escape_htmltag($search_accountancy_code_start).'" placeholder="'.$langs->trans('From').'">';
+	}
 } else {
 	$moreforfilter .= $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), array(), 1, 1, 'maxwidth200');
 }
 $moreforfilter .= ' ';
 if ($type == 'sub') {
-	$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), 'maxwidth200');
+	if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
+		$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), 'maxwidth200');
+	} else {
+		$moreforfilter .= '<input type="text" class="maxwidth150" name="search_accountancy_code_end" value="'.dol_escape_htmltag($search_accountancy_code_end).'" placeholder="'.$langs->trans('to').'">';
+	}
 } else {
 	$moreforfilter .= $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), array(), 1, 1, 'maxwidth200');
 }

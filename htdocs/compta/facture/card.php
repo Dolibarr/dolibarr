@@ -108,7 +108,7 @@ $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOSTINT('originid') ? GETPOSTINT('originid') : GETPOSTINT('origin_id')); // For backward compatibility
 $fac_rec = GETPOSTINT('fac_rec');
 $facid = GETPOSTINT('facid');
-$ref_client = GETPOSTINT('ref_client');
+$ref_client = GETPOST('ref_client', 'alpha');
 $rank = (GETPOSTINT('rank') > 0) ? GETPOSTINT('rank') : -1;
 $projectid = (GETPOSTINT('projectid') ? GETPOSTINT('projectid') : 0);
 $selectedLines = GETPOST('toselect', 'array');
@@ -685,7 +685,7 @@ if (empty($reshook)) {
 		$object->setValueFrom('ref', GETPOST('ref'), '', 0, '', '', $user, 'BILL_MODIFY');
 	} elseif ($action == 'setref_client' && $usercancreate) {
 		$object->fetch($id);
-		$object->set_ref_client(GETPOST('ref_client'));
+		$object->set_ref_client(GETPOST('ref_client', 'alpha'));
 	} elseif ($action == 'confirm_valid' && $confirm == 'yes' && $usercanvalidate) {
 		// Classify to validated
 		$idwarehouse = GETPOSTINT('idwarehouse');
@@ -3520,7 +3520,7 @@ if ($action == 'create') {
 				</script>';
 			}
 			if (!GETPOSTINT('fac_rec')) {
-				print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
+				print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&customer=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 			}
 			print '</td>';
 			print '</tr>'."\n";

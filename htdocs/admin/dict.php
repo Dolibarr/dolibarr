@@ -2916,7 +2916,7 @@ function dictFieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 		} elseif ($value == 'type_vat') {
 			// VAT type 0: all, 1: sell, 2: purchase
 			print '<td class="center">';
-			print $form->selectarray($value, $type_vatList, (empty($obj->{$value}) ? '' : $obj->{$value}), 1);
+			print $form->selectarray($value, $type_vatList, (empty($obj->{$value}) ? '0' : $obj->{$value}));
 			print '</td>';
 		} elseif ($value == 'localtax1_type' || $value == 'localtax2_type') {
 			// Le type de taxe locale

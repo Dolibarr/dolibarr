@@ -5030,7 +5030,7 @@ abstract class CommonObject
 	 */
 	public function getTotalDiscount()
 	{
-		if (!empty($this->table_element_line)) {
+		if (!empty($this->table_element_line) && ($this->table_element_line != 'expeditiondet')) {
 			$total_discount = 0.00;
 
 			$sql = "SELECT subprice as pu_ht, qty, remise_percent, total_ht";
@@ -7774,6 +7774,7 @@ abstract class CommonObject
 
 			$tmpselect = '';
 			$nbchoice = 0;
+
 			foreach ($param['options'] as $keyb => $valb) {
 				if ((string) $keyb == '') {
 					continue;
@@ -7792,7 +7793,7 @@ abstract class CommonObject
 			}
 
 			$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
-			if ((!isset($this->fields[$key]['default'])) || ($this->fields[$key]['notnull'] != 1) || $nbchoice >= 2) {
+			if ((!isset($this->fields[$key]['default'])) || empty($this->fields[$key]['notnull']) || ($this->fields[$key]['notnull'] != 1) || $nbchoice >= 2) {
 				$out .= '<option value="0">&nbsp;</option>';
 			}
 			$out .= $tmpselect;

@@ -403,7 +403,9 @@ if (empty($reshook)) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$newlang = $object->thirdparty->default_lang;
+					$user = new User($db);
+					$user->fetch($object->fk_user_author);
+					$newlang = $user->lang;
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -465,7 +467,7 @@ if (empty($reshook)) {
 				// PREPARE SEND
 				$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
 
-				if (!empty($mailfile->error)) {
+				if (empty($mailfile->error)) {
 					// SEND
 					$result = $mailfile->sendfile();
 					if ($result) {
@@ -520,7 +522,9 @@ if (empty($reshook)) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$newlang = $object->thirdparty->default_lang;
+					$user = new User($db);
+					$user->fetch($object->fk_user_author);
+					$newlang = $user->lang;
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -584,7 +588,7 @@ if (empty($reshook)) {
 				// PREPARE SEND
 				$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
 
-				if (!empty($mailfile->error)) {
+				if (empty($mailfile->error)) {
 					// SEND
 					$result = $mailfile->sendfile();
 					if ($result) {
@@ -632,7 +636,9 @@ if (empty($reshook)) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$newlang = $object->thirdparty->default_lang;
+					$user = new User($db);
+					$user->fetch($object->fk_user_author);
+					$newlang = $user->lang;
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -699,7 +705,7 @@ if (empty($reshook)) {
 
 				$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, $emailCC, '', 0, -1);
 
-				if (!empty($mailfile->error)) {
+				if (empty($mailfile->error)) {
 					// SEND
 					$result = $mailfile->sendfile();
 					if ($result) {
@@ -748,7 +754,9 @@ if (empty($reshook)) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$newlang = $object->thirdparty->default_lang;
+					$user = new User($db);
+					$user->fetch($object->fk_user_author);
+					$newlang = $user->lang;
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -810,7 +818,7 @@ if (empty($reshook)) {
 				// PREPARE SEND
 				$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
 
-				if (!empty($mailfile->error)) {
+				if (empty($mailfile->error)) {
 					// SEND
 					$result = $mailfile->sendfile();
 					if ($result) {
@@ -864,7 +872,9 @@ if (empty($reshook)) {
 							$newlang = GETPOST('lang_id', 'aZ09');
 						}
 						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-							$newlang = $object->thirdparty->default_lang;
+							$user = new User($db);
+							$user->fetch($object->fk_user_author);
+							$newlang = $user->lang;
 						}
 						if (!empty($newlang)) {
 							$outputlangs = new Translate("", $conf);
@@ -926,7 +936,7 @@ if (empty($reshook)) {
 						// PREPARE SEND
 						$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
 
-						if (!empty($mailfile->error)) {
+						if (empty($mailfile->error)) {
 							// SEND
 							$result = $mailfile->sendfile();
 							if ($result) {
@@ -978,7 +988,9 @@ if (empty($reshook)) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-						$newlang = $object->thirdparty->default_lang;
+						$user = new User($db);
+						$user->fetch($object->fk_user_author);
+						$newlang = $user->lang;
 					}
 					if (!empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
@@ -1017,7 +1029,9 @@ if (empty($reshook)) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$newlang = $object->thirdparty->default_lang;
+					$user = new User($db);
+					$user->fetch($object->fk_user_author);
+					$newlang = $user->lang;
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -1046,7 +1060,9 @@ if (empty($reshook)) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$newlang = $object->thirdparty->default_lang;
+					$user = new User($db);
+					$user->fetch($object->fk_user_author);
+					$newlang = $user->lang;
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -1097,7 +1113,7 @@ if (empty($reshook)) {
 				// PREPARE SEND
 				$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
 
-				if (!empty($mailfile->error)) {
+				if (empty($mailfile->error)) {
 					// SEND
 					$result = $mailfile->sendfile();
 					if ($result) {
@@ -1226,6 +1242,9 @@ if (empty($reshook)) {
 						$user->fetch($object->fk_user_author);
 						$newlang = $user->lang;
 					}
+					if (empty($newlang)) {
+						$newlang = $langs;
+					}
 					if (!empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
@@ -1277,7 +1296,9 @@ if (empty($reshook)) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-						$newlang = $object->thirdparty->default_lang;
+						$user = new User($db);
+						$user->fetch($object->fk_user_author);
+						$newlang = $user->lang;
 					}
 					if (!empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
@@ -1374,7 +1395,9 @@ if (empty($reshook)) {
 							$newlang = GETPOST('lang_id', 'aZ09');
 						}
 						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-							$newlang = $object->thirdparty->default_lang;
+							$user = new User($db);
+							$user->fetch($object->fk_user_author);
+							$newlang = $user->lang;
 						}
 						if (!empty($newlang)) {
 							$outputlangs = new Translate("", $conf);
