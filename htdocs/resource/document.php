@@ -84,7 +84,7 @@ $object = new Dolresource($db);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
-$upload_dir = $conf->resource->dir_output.'/'.dol_sanitizeFileName($object->ref);
+$upload_dir = $conf->resource->dir_output.'/'.dol_sanitizeFileName($object->id);
 $modulepart = 'resource';
 
 $result = restrictedArea($user, 'resource', $object->id, 'resource');
