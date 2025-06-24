@@ -518,7 +518,7 @@ if (empty($reshook)) {
 										$error++;
 									}
 								}
-							}							
+							}
 						}
 					}
 				}
