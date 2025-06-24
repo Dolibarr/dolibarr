@@ -8851,7 +8851,7 @@ class Form
 				    		},
 				    		cache: true
 				    	},
-		 				language: select2arrayoflanguage,
+		 				language: (typeof select2arrayoflanguage === \'undefined\') ? \'en\' : select2arrayoflanguage,
 						containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
 					    placeholder: "' . dol_escape_js($placeholder) . '",
 				    	escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
@@ -8941,7 +8941,7 @@ class Form
 
 					$(".' . $htmlname . '").select2({
 						data: data,
-						language: select2arrayoflanguage,
+						language: (typeof select2arrayoflanguage === \'undefined\') ? \'en\' : select2arrayoflanguage,
 						containerCssClass: \':all:\',					/* Line to add class of origin SELECT propagated to the new <span class="select2-selection...> tag */
 						placeholder: "' . dol_escape_js($placeholder) . '",
 						escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work

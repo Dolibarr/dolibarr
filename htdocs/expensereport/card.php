@@ -394,7 +394,9 @@ if (empty($reshook)) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$newlang = $object->thirdparty->default_lang;
+					$user = new User($db);
+					$user->fetch($object->fk_user_author);
+					$newlang = $user->lang;
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -511,7 +513,9 @@ if (empty($reshook)) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$newlang = $object->thirdparty->default_lang;
+					$user = new User($db);
+					$user->fetch($object->fk_user_author);
+					$newlang = $user->lang;
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -622,7 +626,9 @@ if (empty($reshook)) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$newlang = $object->thirdparty->default_lang;
+					$user = new User($db);
+					$user->fetch($object->fk_user_author);
+					$newlang = $user->lang;
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -738,7 +744,9 @@ if (empty($reshook)) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$newlang = $object->thirdparty->default_lang;
+					$user = new User($db);
+					$user->fetch($object->fk_user_author);
+					$newlang = $user->lang;
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -854,7 +862,9 @@ if (empty($reshook)) {
 							$newlang = GETPOST('lang_id', 'aZ09');
 						}
 						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-							$newlang = $object->thirdparty->default_lang;
+							$user = new User($db);
+							$user->fetch($object->fk_user_author);
+							$newlang = $user->lang;
 						}
 						if (!empty($newlang)) {
 							$outputlangs = new Translate("", $conf);
@@ -968,7 +978,9 @@ if (empty($reshook)) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-						$newlang = $object->thirdparty->default_lang;
+						$user = new User($db);
+						$user->fetch($object->fk_user_author);
+						$newlang = $user->lang;
 					}
 					if (!empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
@@ -1007,7 +1019,9 @@ if (empty($reshook)) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$newlang = $object->thirdparty->default_lang;
+					$user = new User($db);
+					$user->fetch($object->fk_user_author);
+					$newlang = $user->lang;
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -1036,7 +1050,9 @@ if (empty($reshook)) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$newlang = $object->thirdparty->default_lang;
+					$user = new User($db);
+					$user->fetch($object->fk_user_author);
+					$newlang = $user->lang;
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -1269,7 +1285,9 @@ if (empty($reshook)) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-						$newlang = $object->thirdparty->default_lang;
+						$user = new User($db);
+						$user->fetch($object->fk_user_author);
+						$newlang = $user->lang;
 					}
 					if (!empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
@@ -1366,7 +1384,9 @@ if (empty($reshook)) {
 							$newlang = GETPOST('lang_id', 'aZ09');
 						}
 						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-							$newlang = $object->thirdparty->default_lang;
+							$user = new User($db);
+							$user->fetch($object->fk_user_author);
+							$newlang = $user->lang;
 						}
 						if (!empty($newlang)) {
 							$outputlangs = new Translate("", $conf);

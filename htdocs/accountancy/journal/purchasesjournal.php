@@ -374,7 +374,7 @@ if (!empty($tabfac)) {
 		fd.product_type <= 2
 		AND fd.fk_code_ventilation <= 0
 		AND fd.total_ttc <> 0
-		AND fk_facture_fourn IN (".$db->sanitize(join(",", array_keys($tabfac))).")
+		AND fk_facture_fourn IN (".$db->sanitize(implode(",", array_keys($tabfac))).")
 	GROUP BY fk_facture_fourn
 	";
 	$resql = $db->query($sql);

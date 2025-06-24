@@ -479,6 +479,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " cr.code as cond_reglement_code, cr.libelle as cond_reglement_label, cr.libelle_facture as cond_reglement_doc,";
 		$sql .= " p.code as mode_reglement_code, p.libelle as mode_reglement_libelle";
 		$sql .= ', c.fk_incoterms, c.location_incoterms';
+		$sql .= ', c.last_main_doc';
 		$sql .= ', i.libelle as label_incoterms';
 		$sql .= " FROM ".$this->db->prefix()."commande_fournisseur as c";
 		$sql .= " LEFT JOIN ".$this->db->prefix()."c_payment_term as cr ON c.fk_cond_reglement = cr.rowid";
@@ -516,6 +517,7 @@ class CommandeFournisseur extends CommonOrder
 			$this->statut = $obj->status;	// deprecated
 			$this->status = $obj->status;
 			$this->billed = $obj->billed;
+			$this->last_main_doc = $obj->last_main_doc;
 			$this->user_author_id = $obj->user_author_id;
 			$this->user_validation_id = $obj->user_validation_id;
 			$this->user_approve_id = $obj->user_approve_id;

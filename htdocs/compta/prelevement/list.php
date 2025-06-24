@@ -471,7 +471,7 @@ while ($i < $imaxinloop) {
 		print '<td>';
 		print $line->LibStatut($obj->statut_ligne, 2);
 		print "&nbsp;";
-		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid_ligne.'">';
+		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid_ligne.($type == 'bank-transfer' ? '&type=bank-transfer' : '').'">';
 		print substr('000000'.$obj->rowid_ligne, -6);
 		print '</a></td>';
 
