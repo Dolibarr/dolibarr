@@ -724,5 +724,5 @@ ALTER TABLE llx_mailing_advtarget CHANGE COLUMN tms tms timestamp DEFAULT CURREN
 
 -- migrate boolean fields
 
--- VMYSQL4.1 ALTER TABLE llx_extrafields MODIFY COLUMN totalizable tinyint(1) DEFAULT 0;
+-- VMYSQL4.1 ALTER TABLE llx_extrafields MODIFY COLUMN totalizable tinyint DEFAULT 0;
 -- VPGSQL8.2 ALTER TABLE llx_extrafields ALTER COLUMN totalizable DROP DEFAULT, ALTER COLUMN totalizable TYPE smallint USING CASE totalizable WHEN 't' THEN 1 ELSE 0 END, ALTER COLUMN totalizable SET DEFAULT 0;

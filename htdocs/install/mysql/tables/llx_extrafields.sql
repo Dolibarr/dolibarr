@@ -37,7 +37,7 @@ create table llx_extrafields
 	param			text,										-- extra parameters to define possible values of field
 	list			varchar(255) DEFAULT '1',					-- visibility of field. 0=Never visible, 1=Visible on list and forms, 2=Visible on list only. Using a negative value means field is not shown by default on list but can be selected for viewing
 	printable		integer DEFAULT 0,					     	-- is the extrafield output on documents
-	totalizable		tinyint(1) DEFAULT 0,						-- is extrafield totalizable on list
+	totalizable		tinyint DEFAULT 0,							-- is extrafield totalizable on list
 	langs			varchar(64),								-- example: fileofmymodule@mymodule
 	help            text,                                       -- to store help tooltip
 	css             varchar(128),                               -- to store css on create/update forms

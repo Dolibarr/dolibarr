@@ -337,7 +337,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 			} elseif (in_array($type, array('link', 'sellist', 'duration'))) {
 				$type = 'integer';
 			} elseif ($type == 'boolean') {
-				$type = 'tinyint(1)';
+				$type = 'tinyint';
 			}
 			$texttoinsert .= "\t".$key." ".$type;
 			if ($key == 'rowid') {
