@@ -2509,7 +2509,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				$out .= '<td>&nbsp;</td>';
 			}
 
-			// Status
+			// Status / Progression
 			$out .= '<td class="nowrap center">'.$actionstatic->LibStatut($histo[$key]['percent'], 2, 0, $histo[$key]['datestart']).'</td>';
 
 			// Action column

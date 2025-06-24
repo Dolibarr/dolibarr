@@ -710,7 +710,7 @@ if (!empty($search_type)) {
 }
 // Search criteria amount
 if ($search_debit) {
-	$sql .= natural_search('ABS(b.amount)', $search_debit, 1);
+	$sql .= natural_search('-b.amount', $search_debit, 1);
 	$sql .= ' AND b.amount <= 0';
 }
 if ($search_credit) {

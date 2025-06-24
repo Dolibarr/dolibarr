@@ -3796,19 +3796,20 @@ class Form
 	/**
 	 * Return list of products for customer (in Ajax if Ajax activated or go to select_produits_fournisseurs_list)
 	 *
-	 * @param int 		$socid 			Id third party
-	 * @param string 	$selected 		Preselected product
-	 * @param string 	$htmlname 		Name of HTML Select
-	 * @param string 	$filtertype 	Filter on product type (''=nofilter, 0=product, 1=service)
-	 * @param string 	$filtre 		For a SQL filter
-	 * @param array<string,string|string[]>	$ajaxoptions 	Options for ajax_autocompleter
-	 * @param int<0,1>	$hidelabel 		Hide label (0=no, 1=yes)
-	 * @param int<0,1>	$alsoproductwithnosupplierprice 1=Add also product without supplier prices
-	 * @param string 	$morecss 		More CSS
-	 * @param string 	$placeholder 	Placeholder
-	 * @return    void
+	 * @param 	int 		$socid 							Id third party
+	 * @param 	string|int	$selected 						Preselected product
+	 * @param 	string 		$htmlname 						Name of HTML Select
+	 * @param 	string 		$filtertype 					Filter on product type (''=nofilter, 0=product, 1=service)
+	 * @param 	string 		$filtre 						For a SQL filter
+	 * @param 	array<string,string|string[]>	$ajaxoptions 	Options for ajax_autocompleter
+	 * @param 	int<0,1>	$hidelabel 						Hide label (0=no, 1=yes)
+	 * @param 	int<0,1>	$alsoproductwithnosupplierprice 1=Add also product without supplier prices
+	 * @param 	string 		$morecss 						More CSS
+	 * @param 	string 		$placeholder 					Placeholder
+	 * @param	int			$nooutput						1=do not output but return string instead
+	 * @return  string|void									HTML select or nothing
 	 */
-	public function select_produits_fournisseurs($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $ajaxoptions = array(), $hidelabel = 0, $alsoproductwithnosupplierprice = 0, $morecss = '', $placeholder = '')
+	public function select_produits_fournisseurs($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $ajaxoptions = array(), $hidelabel = 0, $alsoproductwithnosupplierprice = 0, $morecss = '', $placeholder = '', $nooutput = 0)
 	{
 		// phpcs:enable
 		global $langs, $conf;
@@ -3820,7 +3821,7 @@ class Form
 
 		$selected_input_value = '';
 		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('PRODUIT_USE_SEARCH_TO_SELECT')) {
-			if ($selected > 0) {
+			if ((int) $selected > 0) {
 				require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 				$producttmpselect = new Product($this->db);
 				$producttmpselect->fetch((int) $selected);
@@ -3830,11 +3831,18 @@ class Form
 
 			// mode=2 means suppliers products
 			$urloption = ($socid > 0 ? 'socid=' . $socid . '&' : '') . 'htmlname=' . $htmlname . '&outjson=1&price_level=' . $price_level . '&type=' . $filtertype . '&mode=2&status=' . $status . '&finished=' . $finished . '&alsoproductwithnosupplierprice=' . $alsoproductwithnosupplierprice;
-			print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, getDolGlobalInt('PRODUIT_USE_SEARCH_TO_SELECT'), 0, $ajaxoptions);
 
-			print($hidelabel ? '' : $langs->trans("RefOrLabel") . ' : ') . '<input type="text" class="'.$morecss.'" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . $placeholder . '"' : '') . '>';
+			$s = ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, getDolGlobalInt('PRODUIT_USE_SEARCH_TO_SELECT'), 0, $ajaxoptions);
+
+			$s .= ($hidelabel ? '' : $langs->trans("RefOrLabel") . ' : ') . '<input type="text" class="'.$morecss.'" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . $placeholder . '"' : '') . '>';
 		} else {
-			print $this->select_produits_fournisseurs_list($socid, $selected, $htmlname, $filtertype, $filtre, '', $status, 0, 0, $alsoproductwithnosupplierprice, $morecss, getDolGlobalInt('SUPPLIER_SHOW_STOCK_IN_PRODUCTS_COMBO'), $placeholder);
+			$s = $this->select_produits_fournisseurs_list($socid, $selected, $htmlname, $filtertype, $filtre, '', $status, 0, 0, $alsoproductwithnosupplierprice, $morecss, getDolGlobalInt('SUPPLIER_SHOW_STOCK_IN_PRODUCTS_COMBO'), $placeholder);
+		}
+
+		if ($nooutput) {
+			return $s;
+		} else {
+			print $s;
 		}
 	}
 
@@ -5945,8 +5953,9 @@ class Form
 	{
 		global $langs, $conf;
 
-		$more = '<!-- formconfirm - before call, page=' . dol_escape_htmltag($page) . ' -->';
-		$formconfirm = '';
+		$more = '';
+		$formconfirm = '<!-- formconfirm - before call, page=' . dol_escape_htmltag($page) . ' -->';
+
 		$inputok = array();
 		$inputko = array();
 
@@ -5991,11 +6000,6 @@ class Form
 					} elseif ($input['type'] == 'password') {
 						$more .= '<div class="tagtr"><div class="tagtd' . (empty($input['tdclass']) ? '' : (' ' . $input['tdclass'])) . '">' . $input['label'] . '</div><div class="tagtd"><input type="password" class="flat' . $morecss . '" id="' . dol_escape_htmltag($input['name']) . '" name="' . dol_escape_htmltag($input['name']) . '"' . $size . ' value="' . (empty($input['value']) ? '' : $input['value']) . '"' . $moreattr . ' /></div></div>' . "\n";
 					} elseif ($input['type'] == 'textarea') {
-						/*$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].'</div><div class="tagtd">';
-						$more .= '<textarea name="'.$input['name'].'" class="'.$morecss.'"'.$moreattr.'>';
-						$more .= $input['value'];
-						$more .= '</textarea>';
-						$more .= '</div></div>'."\n";*/
 						$moreonecolumn .= '<div class="margintoponly">';
 						$moreonecolumn .= $input['label'] . '<br>';
 						$moreonecolumn .= '<textarea name="' . dol_escape_htmltag($input['name']) . '" id="' . dol_escape_htmltag($input['name']) . '" class="' . $morecss . '"' . $moreattr . '>';
@@ -10025,12 +10029,21 @@ class Form
 				}
 
 				$regs = array();
+
 				if ($objecttype != 'supplier_proposal' && preg_match('/^([^_]+)_([^_]+)/i', $objecttype, $regs)) {
 					$element = $regs[1];
 					$subelement = $regs[2];
 					$tplpath = $element . '/' . $subelement;
 				}
 				$tplname = 'linkedobjectblock';
+
+				// If we ask a resource form external module (instead of default path)
+				if (preg_match('/^([^@]+)@([^@]+)$/i', $objecttype, $regs)) {	// 'myobject@mymodule'
+					$element = $regs[1];
+					$module = $regs[2];
+					$tplpath = $module. '/' . $element;
+					$tplname = $tplname.'_'.$element;
+				}
 
 				// To work with non standard path
 				if ($objecttype == 'facture') {
@@ -10099,6 +10112,7 @@ class Form
 
 				// Output template part (modules that overwrite templates must declare this into descriptor)
 				$dirtpls = array_merge($conf->modules_parts['tpl'], array('/' . $tplpath . '/tpl'));
+
 				foreach ($dirtpls as $reldir) {
 					$reldir = rtrim($reldir, '/');
 					if ($nboftypesoutput == ($nbofdifferenttypes - 1)) {    // No more type to show after
@@ -10295,6 +10309,14 @@ class Form
 				continue;
 			}
 
+
+			// If we ask a resource form external module (instead of default path)
+			$module='';
+			if (preg_match('/^([^@]+)@([^@]+)$/i', $key, $regs)) {	// 'myobject@mymodule'
+				$key = $regs[1];
+				$module=$regs[2];
+			}
+
 			if (!empty($possiblelink['perms']) && (empty($restrictlinksto) || in_array($key, $restrictlinksto)) && (empty($excludelinksto) || !in_array($key, $excludelinksto))) {
 				$htmltoenteralink .= '<div id="' . $key . 'list"' . (empty($conf->use_javascript_ajax) ? '' : ' style="display:none"') . '>';
 
@@ -10306,7 +10328,7 @@ class Form
 					$htmltoenteralink .= '<input type="hidden" name="token" value="' . newToken() . '">';
 					$htmltoenteralink .= '<input type="hidden" name="action" value="addlinkbyref">';
 					$htmltoenteralink .= '<input type="hidden" name="id" value="' . $object->id . '">';
-					$htmltoenteralink .= '<input type="hidden" name="addlink" value="' . $key . '">';
+					$htmltoenteralink .= '<input type="hidden" name="addlink" value="' . $key .(!empty($module)?'@'.$module:''). '">';
 					$htmltoenteralink .= '<table class="noborder">';
 					$htmltoenteralink .= '<tr class="liste_titre">';
 					//print '<td>' . $langs->trans("Ref") . '</td>';
@@ -10335,7 +10357,7 @@ class Form
 						$htmltoenteralink .= '<input type="hidden" name="token" value="' . newToken() . '">';
 						$htmltoenteralink .= '<input type="hidden" name="action" value="addlink">';
 						$htmltoenteralink .= '<input type="hidden" name="id" value="' . $object->id . '">';
-						$htmltoenteralink .= '<input type="hidden" name="addlink" value="' . $key . '">';
+						$htmltoenteralink .= '<input type="hidden" name="addlink" value="' . $key . (!empty($module)?'@'.$module:''). '">';
 						$htmltoenteralink .= '<table class="noborder">';
 						$htmltoenteralink .= '<tr class="liste_titre">';
 						$htmltoenteralink .= '<td class="nowrap"></td>';
