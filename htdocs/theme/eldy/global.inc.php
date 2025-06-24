@@ -7630,7 +7630,7 @@ div.multi-select-menu[role="menu"] {
 
 .multi-select-menu input {
   margin-right: 0.3em;
-  vertical-align: 0.1em;
+  /* vertical-align: 0.1em; */
 }
 
 .multi-select-button {
@@ -7646,9 +7646,11 @@ div.multi-select-menu[role="menu"] {
   border: none;
   border-bottom: solid 1px var(--inputbordercolor);
   padding: 5px;
-  padding-left: 2px;
+  padding-left: 6px;
   height: 17px;
   border-radius: 3px;
+
+  text-align: start;
 }
 .multi-select-button:focus {
   outline: none;
@@ -7663,9 +7665,12 @@ div.multi-select-menu[role="menu"] {
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 0.5em 0.23em 0em 0.23em;
+  border-width: 0.4em 0.3em 0em 0.3em;
   border-color: #888 transparent transparent transparent;
   margin-left: 0.4em;
+  position: absolute;
+  right: 10px;
+  top: 12px;
 }
 
 .multi-select-container--open .multi-select-menu { display: block; }
@@ -7678,10 +7683,10 @@ div.multi-select-menu[role="menu"] {
 .multi-select-menuitem {
 	clear: both;
 	float: left;
-	padding-left: 5px;
+	padding-left: 10px;
 }
 label.multi-select-menuitem {
-	line-height: 24px;
+	line-height: 32px;
 	text-align: start;
 }
 

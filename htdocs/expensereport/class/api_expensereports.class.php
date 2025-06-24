@@ -554,7 +554,7 @@ class ExpenseReports extends DolibarrApi
 	 *   "notrigger": 0
 	 * }
 	 *
-	 * @since	23.0.0	Initial implementation
+	 * @since	22.0.0	Initial implementation
 	 *
 	 * @param	int		$id				Expense report ID
 	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
@@ -591,6 +591,102 @@ class ExpenseReports extends DolibarrApi
 
 		return $this->_cleanObjectDatas($this->expensereport);
 	}
+
+
+	/**
+	 * Approve an expense report
+	 *
+	 * If you get a bad value for param notrigger check, provide this in body
+	 * {
+	 *   "notrigger": 0
+	 * }
+	 *
+	 * @since	22.0.0	Initial implementation
+	 *
+	 * @param	int		$id				Expense report ID
+	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 *
+	 * @url		POST	{id}/approve
+	 *
+	 * @return	Object
+	 *
+	 * @throws RestException
+	 */
+	public function approve($id, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'approve')) {
+			throw new RestException(403, "Insuffisant rights");
+		}
+		$result = $this->expensereport->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Expense report not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->expensereport->setApproved(DolibarrApiAccess::$user, $notrigger);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already approved');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when approving expense report: '.$this->expensereport->error);
+		}
+
+		$this->expensereport->fetchObjectLinked();
+
+		return $this->_cleanObjectDatas($this->expensereport);
+	}
+
+
+	/**
+	 * Deny an expense report
+	 *
+	 * If you get a bad value for param notrigger check, provide this in body
+	 * {
+	 *   "notrigger": 0
+	 * }
+	 *
+	 * @since	22.0.0	Initial implementation
+	 *
+	 * @param	int		$id				Expense report ID
+	 * @param	string	$details		Comments for denial
+	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
+	 *
+	 * @url		POST	{id}/deny
+	 *
+	 * @return	Object
+	 *
+	 * @throws RestException
+	 */
+	public function deny($id, $details, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'approve')) {
+			throw new RestException(403, "Insuffisant rights");
+		}
+		$result = $this->expensereport->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Expense report not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('expensereport', $this->expensereport->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->expensereport->setDeny(DolibarrApiAccess::$user, $details, $notrigger);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already denied');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when denying expense report: '.$this->expensereport->error);
+		}
+
+		$this->expensereport->fetchObjectLinked();
+
+		return $this->_cleanObjectDatas($this->expensereport);
+	}
+
 
 	/**
 	 * Get the list of payments of an expense report

@@ -468,7 +468,7 @@ if ($step == 1 || !$datatoexport) {
 	$hselected = (string) $h;
 	$h++;
 
-	print dol_get_fiche_head($head, $hselected, '', -1);
+	print dol_get_fiche_head($head, $hselected, 'Export', -1, 'download');
 
 	print '<div class="opacitymedium">'.$langs->trans("SelectExportDataSet").'</div><br>';
 
@@ -533,7 +533,8 @@ if ($step == 2 && $datatoexport) {
 	$hselected = (string) $h;
 	$h++;
 
-	print dol_get_fiche_head($head, $hselected, '', -2);
+
+	print dol_get_fiche_head($head, $hselected, 'Export', -2, 'download');
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
@@ -734,7 +735,7 @@ if ($step == 3 && $datatoexport) {
 	$hselected = (string) $h;
 	$h++;
 
-	print dol_get_fiche_head($head, $hselected, '', -2);
+	print dol_get_fiche_head($head, $hselected, 'Export', -2, 'download');
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
@@ -930,7 +931,7 @@ if ($step == 4 && $datatoexport) {
 	$hselected = (string) $h;
 	$h++;
 
-	print dol_get_fiche_head($head, $hselected, '', -2);
+	print dol_get_fiche_head($head, $hselected, 'Export', -2, 'download');
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
@@ -1227,7 +1228,7 @@ if ($step == 5 && $datatoexport) {
 	$hselected = (string) $h;
 	$h++;
 
-	print dol_get_fiche_head($head, $hselected, '', -2);
+	print dol_get_fiche_head($head, $hselected, 'Export', -2, 'download');
 
 	/*
 	 * Confirmation suppression fichier
@@ -1378,6 +1379,7 @@ function getablenamefromfield($code, $sqlmaxforexport)
 	$newsql = preg_replace('/^(.*) FROM /i', '', $newsql); // Remove part before the FROM
 	$newsql = preg_replace('/WHERE (.*)$/i', '', $newsql); // Remove part after the WHERE so we have now only list of table aliases in a string. We must keep the ' ' before WHERE
 
+	$reg = array();
 	if (preg_match($regexstring, $newsql, $reg)) {
 		return $reg[1]; // The tablename
 	} else {

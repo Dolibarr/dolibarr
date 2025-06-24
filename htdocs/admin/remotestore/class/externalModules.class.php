@@ -946,8 +946,8 @@ class ExternalModules
 					'price_ttc' => $package['price_ttc'],
 					'dolibarr_min' => $package['dolibarr_min'],
 					'dolibarr_max' => $package['dolibarr_max'],
-					'phpmin' => $package['phpmin'],
-					'phpmax' => $package['phpmax'],
+					'phpmin' => empty($package['phpmin']) ? '' : $package['phpmin'],
+					'phpmax' => empty($package['phpmax']) ? '' : $package['phpmax'],
 					'module_version' => $package['module_version'],
 					'cover_photo_url' => $urlphoto,
 					'source' => 'dolistore'

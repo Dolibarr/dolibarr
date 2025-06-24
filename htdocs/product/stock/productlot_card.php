@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2007-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018      All-3kcis       		 <contact@all-3kcis.fr>
- * Copyright (C) 2021      Noé Cendrier         <noe.cendrier@altairis.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2007-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2018		All-3kcis				<contact@all-3kcis.fr>
+ * Copyright (C) 2021		Noé Cendrier			<noe.cendrier@altairis.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,8 +23,7 @@
 /**
  *   	\file       product/stock/productlot_card.php
  *		\ingroup    stock
- *		\brief      This file is an example of a php page
- *					Initially built by build_class_from_table on 2016-05-17 12:22
+ *		\brief      Batch/series card on products
  */
 
 // Load Dolibarr environment
@@ -287,8 +287,10 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-$title = $langs->trans("ProductLot");
 $help_url = '';
+$shortlabel = dol_trunc($object->batch, 16);
+$title = $langs->trans('Batch')." ".$shortlabel." - ".$langs->trans('Card');
+$help_url = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-product page-stock_productlot_card');
 

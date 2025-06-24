@@ -178,7 +178,12 @@ print '<td class="titlefield">';
 print $langs->trans("ListOfTrackedEvents").'</td><td>';
 $arrayoftrackedevents = $block_static->trackedevents;
 foreach ($arrayoftrackedevents as $key => $val) {
-	print $key.' - '.$langs->trans($val).'<br>';
+	print $key.' - ';
+	if (is_array($val)) {
+		print $langs->trans($val['labelhtml']).'<br>';
+	} else {
+		print $langs->trans($val).'<br>';
+	}
 }
 
 print '</td></tr>';

@@ -353,7 +353,7 @@ if (count($listoftaskcontacttype) == 0) {
 
 // Build and execute select
 // --------------------------------------------------------------------
-$distinct = 'DISTINCT'; // We add distinct until we are added a protection to be sure a contact of a project and task is assigned only once.
+$distinct = 'DISTINCT'; // We add distinct until we have rewritten the filter on contact of a project and task (into element_contact) to use a AND EXISTS instead of a join.
 $sql = "SELECT ".$distinct." p.rowid as projectid, p.ref as projectref, p.title as projecttitle, p.fk_statut as projectstatus, p.datee as projectdatee, p.fk_opp_status, p.public, p.fk_user_creat as projectusercreate, p.usage_bill_time,";
 $sql .= " s.nom as name, s.name_alias as alias, s.rowid as socid,";
 $sql .= " t.datec as date_creation, t.dateo as date_start, t.datee as date_end, t.tms as date_modification,";
@@ -420,7 +420,7 @@ if ($search_task_description) {
 	$sql .= natural_search('t.description', $search_task_description);
 }
 if ($search_task_ref_parent) {
-	$sql .= ' AND t.fk_task_parent IN (SELECT ipt.rowid FROM '.MAIN_DB_PREFIX.'projet_task  as ipt WHERE '.natural_search('ipt.ref', $search_task_ref_parent, 0, 1).')';
+	$sql .= ' AND t.fk_task_parent IN (SELECT ipt.rowid FROM '.MAIN_DB_PREFIX.'projet_task as ipt WHERE '.natural_search('ipt.ref', $search_task_ref_parent, 0, 1).')';
 }
 if ($search_task_progress) {
 	$sql .= natural_search('t.progress', $search_task_progress, 1);
