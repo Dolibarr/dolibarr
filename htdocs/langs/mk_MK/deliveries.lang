@@ -10,7 +10,7 @@ SetDeliveryDate=Поставете датум за испорака
 ValidateDeliveryReceipt=Потврдете ја потврдата за испорака
 ValidateDeliveryReceiptConfirm=Дали сте сигурни дека сакате да ја потврдите оваа потврда за испорака?
 DeleteDeliveryReceipt=Избришете ја потврдата за испорака
-DeleteDeliveryReceiptConfirm=Дали сте сигурни дека сакате да ја избришете потврдата за испорака <b>%s<span class='notranslate'>b09a4b739f17f?
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
 DeliveryMethod=Начин на достава
 TrackingNumber=Број за следење
 DeliveryNotValidated=Испораката не е потврдена

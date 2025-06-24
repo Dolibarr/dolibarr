@@ -20,7 +20,7 @@ AddSupplierProposal=Направете барање за цена
 SupplierProposalRefFourn=Продавач ref
 SupplierProposalDate=Датум на испорака
 SupplierProposalRefFournNotice=Пред да го затворите „Прифатено“, размислете да ги сфатите референците на добавувачите.
-ConfirmValidateAsk=Дали сте сигурни дека сакате да го потврдите ова барање за цена под името <b>%s<span class='notranslate'>b09a4b739f17f8z >?
+ConfirmValidateAsk=Are you sure you want to validate this price request under name <b>%s</b>?
 DeleteAsk=Избриши барање
 ValidateAsk=Потврдете го барањето
 SupplierProposalStatusDraft=Предлози (треба да се потврдат)
@@ -35,11 +35,11 @@ SupplierProposalStatusSignedShort=Прифатено
 SupplierProposalStatusNotSignedShort=Refused
 CopyAskFrom=Направете барање за цена со копирање на постоечко барање
 CreateEmptyAsk=Создадете празно барање
-ConfirmReOpenAsk=Дали сте сигурни дека сакате да го вратите барањето за цена <b>%s<span class='notranslate'></b> ?
+ConfirmReOpenAsk=Are you sure you want to open back the price request <b>%s</b>?
 SendAskByMail=Испратете барање за цена по пошта
 SendAskRef=Испраќање на барањето за цена %s
 SupplierProposalCard=Барај картичка
-ConfirmDeleteAsk=Дали сте сигурни дека сакате да го избришете ова барање за цена <b>%s<span class='notranslate'></b>?
+ConfirmDeleteAsk=Are you sure you want to delete this price request <b>%s</b>?
 ActionsOnSupplierProposal=Настани по барање на цена
 DocModelAuroreDescription=Целосен образец за барање за понуда на продавач (стара имплементација на шаблонот Sponge)
 DocModelZenithDescription=Целосен образец за барање за понуда на продавач

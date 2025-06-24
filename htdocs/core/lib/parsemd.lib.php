@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2008-2023	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,10 +25,10 @@
 /**
  * Function to parse MD content into HTML
  *
- * @param	string	  $content			    MD content
- * @param   string    $parser               'parsedown' or 'nl2br'
- * @param   string    $replaceimagepath     Replace path to image with another path. Example: ('doc/'=>'xxx/aaa/')
- * @return	string                          Parsed content
+ * @param	string	  $content				MD content
+ * @param	'parsedown'|'nl2br'	$parser		'parsedown' or 'nl2br'
+ * @param	?array<string,string>	$replaceimagepath	Replace path to image with another path. Example: ('doc/'=>'xxx/aaa/')
+ * @return	string							Parsed content
  */
 function dolMd2Html($content, $parser = 'parsedown', $replaceimagepath = null)
 {
@@ -72,7 +73,7 @@ function dolMd2Html($content, $parser = 'parsedown', $replaceimagepath = null)
  *
  * @param	string	  $content			    MD content
  * @param   string    $parser               'dolibarr'
- * @param   string    $replaceimagepath     Replace path to image with another path. Example: ('doc/'=>'xxx/aaa/')
+ * @param   ?array<string,string>	$replaceimagepath	Replace path to image with another path. Example: ('doc/'=>'xxx/aaa/')
  * @return	string                          Parsed content
  */
 function dolMd2Asciidoc($content, $parser = 'dolibarr', $replaceimagepath = null)

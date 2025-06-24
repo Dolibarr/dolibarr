@@ -1,9 +1,11 @@
 <?php
-/* Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018	   Nicolas ZABOURI 	<info@inovea-conseil.com>
- * Copyright (C) 2019 Maxime Kohlhaas <maxime@atm-consulting.fr>
- * Copyright (C) 2021 Ferran Marcet <fmarcet@2byte.es>
+/* Copyright (C) 2004-2018 	Laurent Destailleur  		<eldy@users.sourceforge.net>
+ * Copyright (C) 2018	   	Nicolas ZABOURI 			<info@inovea-conseil.com>
+ * Copyright (C) 2019 		Maxime Kohlhaas 			<maxime@atm-consulting.fr>
+ * Copyright (C) 2021 		Ferran Marcet 				<fmarcet@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Rafael San José				<rsanjose@alxarafe.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,7 +128,7 @@ class modBom extends DolibarrModules
 		$this->const = array(
 			1 => array('BOM_ADDON_PDF', 'chaine', 'generic_bom_odt', 'Name of PDF model of BOM', 0),
 			2 => array('BOM_ADDON', 'chaine', 'mod_bom_standard', 'Name of numbering rules of BOM', 0),
-			3 => array('BOM_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT/doctemplates/boms', '', 0)
+			3 => array('BOM_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT'.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/boms', '', 0)
 		);
 
 		// Some keys to add into the overwriting translation tables
@@ -300,6 +302,7 @@ class modBom extends DolibarrModules
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'bom_bom as t';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bom_bom_extrafields as extra on (t.rowid = extra.fk_object)';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bom_bomline as tl ON tl.fk_bom = t.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bom_bomline_extrafields as extraline ON tl.rowid = extraline.fk_object';
 		$this->export_sql_end[$r] .= ' WHERE 1 = 1';
 		$this->export_sql_end[$r] .= ' AND t.entity IN ('.getEntity('bom').')';
 		$r++;
@@ -455,6 +458,8 @@ class modBom extends DolibarrModules
 	{
 		global $conf, $langs;
 
+		$result = $this->_load_tables('/install/mysql/', 'bom');
+
 		// Create extrafields
 		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		//$extrafields = new ExtraFields($this->db);
@@ -476,13 +481,13 @@ class modBom extends DolibarrModules
 
 		// ODT template
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/boms/template_bom.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/boms';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/boms';
 		$dest = $dirodt.'/template_bom.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result = dol_copy($src, $dest, 0, 0);
+			$result = dol_copy($src, $dest, '0', 0);
 			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);

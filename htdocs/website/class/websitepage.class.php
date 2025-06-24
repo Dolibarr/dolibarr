@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020 	   Nicolas ZABOURI		<info@inovea-conseil.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,22 +38,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 class WebsitePage extends CommonObject
 {
 	/**
-	 * @var string Id to identify managed objects
+	 * @var string 		Id to identify managed objects
 	 */
 	public $element = 'websitepage';
 
 	/**
-	 * @var string Name of table without prefix where object is stored
+	 * @var string 		Name of table without prefix where object is stored
 	 */
 	public $table_element = 'website_page';
 
 	/**
-	 * @var string String with name of icon for websitepage. Must be the part after the 'object_' into object_myobject.png
+	 * @var string 		String with name of icon for websitepage. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'file-code';
 
 	/**
-	 * @var string 	Field with ID of parent key if this field has a parent or for child tables
+	 * @var string 		Field with ID of parent key if this field has a parent or for child tables
 	 */
 	public $fk_element = 'fk_website_page';
 
@@ -62,69 +62,113 @@ class WebsitePage extends CommonObject
 	 */
 	protected $childtablesoncascade = array('categorie_website_page');
 
-
 	/**
-	 * @var int ID
+	 * @var int 		Website ID
 	 */
 	public $fk_website;
 
+	/**
+	 * @var ?int 		Page ID
+	 */
 	public $fk_page;		// If translation of another page
 
+	/**
+	 * @var string 		Page url
+	 */
 	public $pageurl;
+
+	/**
+	 * @var string 		Alias alt
+	 */
 	public $aliasalt;
+
+	/**
+	 * @var string 		Container type
+	 */
 	public $type_container;
 
 	/**
-	 * @var string title
+	 * @var string 		Title
 	 */
 	public $title;
+
 	/**
-	 * @var string description
+	 * @var string 		Description
 	 */
 	public $description;
+
 	/**
-	 * @var string image
+	 * @var string 		Image (deprecated)
 	 */
 	public $image;
+
 	/**
-	 * @var string keywords
+	 * @var string 		Keywords
 	 */
 	public $keywords;
+
 	/**
-	 * @var string language code ('en', 'fr', 'en-gb', ..)
+	 * @var string 		Language code ('en', 'fr', 'en-gb', ..)
 	 */
 	public $lang;
 
+	/**
+	 * @var int 		Page allowed in frames
+	 */
 	public $allowed_in_frames;
+
+	/**
+	 * @var string		Disable WAF ('all', 'NOSCANAUDIOFORINJECTION,NOSCANIFRAMEFORINJECTION,NOSCANOBJECTFORINJECTION')
+	 */
+	public $disable_waf = 'NOSCANAUDIOFORINJECTION,NOSCANIFRAMEFORINJECTION,NOSCANOBJECTFORINJECTION';	// TODO Manage field in page setup
+
+	/**
+	 * @var string 		Page html header
+	 */
 	public $htmlheader;
+
+	/**
+	 * @var string 		Page content
+	 */
 	public $content;
+
+	/**
+	 * @var string 		Url page was grabbed from
+	 */
 	public $grabbed_from;
 
 	/**
-	 * @var int Status
+	 * @var int<0,1>	Status online or offline
 	 */
 	public $status;
 
+	/**
+	 * @var int 		ID use of creation
+	 */
 	public $fk_user_creat;
+
+	/**
+	 * @var int 		ID user of last modification
+	 */
 	public $fk_user_modif;
 
 	/**
-	 * @var string author_alias
+	 * @var string 		Author alias
 	 */
 	public $author_alias;
 
 	/**
-	 * @var string path of external object
+	 * @var string 		Path of external object
 	 */
 	public $object_type;
 
 	/**
-	 * @var string id of external object
+	 * @var string 		Id of external object
 	 */
 	public $fk_object;
 
 	/**
-	 * @var int			Another ID that is the $id but with an offset so that ID of pages of the website start at 1
+	 * @var int			Another ID that is the but with an offset so that ID of pages of the website start at 1
 	 */
 	public $newid;
 
@@ -159,7 +203,7 @@ class WebsitePage extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid'          => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
@@ -181,13 +225,14 @@ class WebsitePage extends CommonObject
 		'date_creation'  => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500),
 		'tms'            => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 501),
 		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateValidation',     'enabled'=>1, 'visible'=>-1, 'position'=>502),
-		'fk_user_creat'  => array('type' => 'integer', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'notnull' => true, 'position' => 510),
+		'fk_user_creat'  => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 510),
 		'author_alias'   => array('type' => 'varchar(64)', 'label' => 'AuthorAlias', 'enabled' => 1, 'visible' => -1, 'index' => 0, 'position' => 511, 'comment' => 'Author alias'),
-		'fk_user_modif'  => array('type' => 'integer', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -1, 'position' => 512),
+		'fk_user_modif'  => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -1, 'position' => 512),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'import_key'     => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -1, 'index' => 1, 'position' => 1000, 'notnull' => -1),
 		'object_type' => array('type' => 'varchar(255)', 'label' => 'ObjectType', 'enabled' => 1, 'visible' => 0, 'position' => 46, 'searchall' => 0, 'help' => ''),
-		'fk_object' => array('type' => 'varchar(255)', 'label' => 'ObjectId', 'enabled' => 1, 'visible' => 0, 'position' => 47, 'searchall' => 0, 'help' => '')
+		'fk_object' => array('type' => 'varchar(255)', 'label' => 'ObjectId', 'enabled' => 1, 'visible' => 0, 'position' => 47, 'searchall' => 0, 'help' => ''),
+		'status'      => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 510),
 	);
 	// END MODULEBUILDER PROPERTIES
 
@@ -205,9 +250,9 @@ class WebsitePage extends CommonObject
 	/**
 	 * Create object into database
 	 *
-	 * @param  User $user      User that creates
-	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int             Return integer <0 if KO, Id of created object if OK
+	 * @param  User		$user      User that creates
+	 * @param  int<0,1> $notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int      	       Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
@@ -230,15 +275,17 @@ class WebsitePage extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int       $id             Id object.
-	 *                                  - If this is 0, the value into $page will be used. If not found or $page not defined, the default page of website_id will be used or the first page found if not set.
-	 *                                  - If value is < 0, we must exclude this ID.
-	 * @param string    $website_id     Web site id (page name must also be filled if this parameter is used)
-	 * @param string    $page           Page name (website id must also be filled if this parameter is used). Example 'myaliaspage' or 'fr/myaliaspage'
-	 * @param string    $aliasalt       Alternative alias to search page (slow)
-	 * @return int<-1,1>				Return integer <0 if KO, 0 if not found, >0 if OK
+	 * @param 	int       	$id             		Id object.
+	 *                                  			- If this is 0, the value into $page will be used. If not found or $page not defined, the default page of website_id will be used or the first page found if not set.
+	 *                                  			- If value is < 0, we must exclude this ID.
+	 * @param 	?string    	$website_id     		Web site id (page name must also be filled if this parameter is used)
+	 * @param 	?string    	$page           		Page name (website id must also be filled if this parameter is used). Example 'myaliaspage' or 'fr/myaliaspage'
+	 * @param 	?string    	$aliasalt       		Alternative alias to search page (slow)
+	 * @param	int			$translationparentid	Translation parent ID (a main language page ID to get the translated page). Parameter $translationparentlang must also be set.
+	 * @param	string		$translationparentlang	Translation parent Lang (a language lang to search the translation of the main page ID). Parameter $translationparentid must also be set.
+	 * @return 	int<-1,1>							Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $website_id = null, $page = null, $aliasalt = null)
+	public function fetch($id, $website_id = null, $page = null, $aliasalt = null, $translationparentid = 0, $translationparentlang = '')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -255,7 +302,7 @@ class WebsitePage extends CommonObject
 		$sql .= " t.htmlheader,";
 		$sql .= " t.content,";
 		$sql .= " t.lang,";
-		$sql .= " t.fk_page,";
+		$sql .= " t.fk_page,";				// Translation parent page (in mani language)
 		$sql .= " t.allowed_in_frames,";
 		$sql .= " t.status,";
 		$sql .= " t.grabbed_from,";
@@ -274,7 +321,7 @@ class WebsitePage extends CommonObject
 			$sql .= ' AND t.rowid = '.((int) $id);
 		} else {
 			if ($id < 0) {
-				$sql .= ' AND t.rowid <> '.abs($id);
+				$sql .= ' AND t.rowid <> '.((int) abs($id));
 			}
 			if (null !== $website_id) {
 				$sql .= " AND t.fk_website = '".$this->db->escape($website_id)."'";
@@ -294,7 +341,11 @@ class WebsitePage extends CommonObject
 					}
 				}
 				if ($aliasalt) {
-					$sql .= " AND (t.aliasalt LIKE '%,".$this->db->escape($aliasalt).",%' OR t.aliasalt LIKE '%, ".$this->db->escape($aliasalt).",%')";
+					$sql .= " AND (t.aliasalt LIKE '%,".$this->db->escape($this->db->escapeforlike($aliasalt)).",%' OR t.aliasalt LIKE '%, ".$this->db->escape($this->db->escapeforlike($aliasalt)).",%')";
+				}
+				if ($translationparentid && $translationparentlang) {
+					$sql .= " AND t.fk_page = ".((int) $translationparentid);
+					$sql .= " AND t.lang = '".$this->db->escape($translationparentlang)."'";
 				}
 			}
 		}
@@ -353,13 +404,13 @@ class WebsitePage extends CommonObject
 	/**
 	 * Return array of all web site pages.
 	 *
-	 * @param  string      	$websiteid   	Web site
+	 * @param  string|int  	$websiteid   	Web site ID
 	 * @param  string      	$sortorder   	Sort Order
 	 * @param  string      	$sortfield    	Sort field
 	 * @param  int         	$limit        	limit
 	 * @param  int         	$offset       	Offset
-	 * @param  string|array	$filter       	Filter as an Universal Search string.
-	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  string|string[]	$filter       	Filter as an Universal Search string.
+	 *                                          Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
 	 * @param  string      	$filtermode   	No more used
 	 * @return WebSitePage[]|int<-1,-1>    	int <0 if KO, array of pages if OK
 	 */
@@ -504,12 +555,13 @@ class WebsitePage extends CommonObject
 	/**
 	 * Count objects in the database.
 	 *
-	 * @param  string      $websiteid    Web site
-	 * @param  array       $filter       Filter array
-	 * @param  string      $filtermode   Filter mode (AND or OR)
-	 * @return int         		         int <0 if KO, array of pages if OK
+	 * @param  string      	$websiteid    	Web site
+	 * @param  string|string[]	$filter       	Filter as an Universal Search string.
+	 *                                          Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  string      	$filtermode   	Filter mode (AND or OR)
+	 * @return int         		         	int <0 if KO, array of pages if OK
 	 */
-	public function countAll($websiteid, array $filter = array(), $filtermode = 'AND')
+	public function countAll($websiteid, $filter = '', $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -519,36 +571,53 @@ class WebsitePage extends CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE t.fk_website = '.((int) $websiteid);
 
-		// Manage filter (same than into fetchAll)
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid' || $key == 't.fk_website' || $key == 'status') {
-					$sqlwhere[] = $key." = ".((int) $value);
-				} elseif ($key == 'type_container') {
-					$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
-				} elseif ($key == 'lang' || $key == 't.lang') {
-					$listoflang = array();
-					$foundnull = 0;
-					foreach (explode(',', $value) as $tmpvalue) {
-						if ($tmpvalue == 'null') {
-							$foundnull++;
-							continue;
+		// Deprecated. If we receive an array, we use it. Prefer using the USF syntax.
+		if (is_array($filter)) {
+			$sqlwhere = array();
+
+			if (count($filter) > 0) {
+				foreach ($filter as $key => $value) {
+					if ($key == 't.rowid' || $key == 'rowid' || $key == 't.fk_website' || $key == 'fk_website' || $key == 'status' || $key == 't.status') {
+						$sqlwhere[] = $key." = ".((int) $value);
+					} elseif ($key == 'type_container' || $key == 't.type_container') {
+						$sqlwhere[] = $key." = '".$this->db->escape($value)."'";
+					} elseif ($key == 'lang' || $key == 't.lang') {
+						$listoflang = array();
+						$foundnull = 0;
+						foreach (explode(',', $value) as $tmpvalue) {
+							if ($tmpvalue == 'null') {
+								$foundnull++;
+								continue;
+							}
+							$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
 						}
-						$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
+						$stringtouse = $this->db->sanitize($key)." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
+						if ($foundnull) {
+							$stringtouse = "(".$stringtouse." OR ".$this->db->sanitize($key)." IS NULL)";
+						}
+						$sqlwhere[] = $stringtouse;
+					} else {
+						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($value)."%'";
 					}
-					$stringtouse = $key." IN (".$this->db->sanitize(implode(',', $listoflang), 1).")";
-					if ($foundnull) {
-						$stringtouse = "(".$stringtouse." OR ".$key." IS NULL)";
-					}
-					$sqlwhere[] = $stringtouse;
-				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
+			if (count($sqlwhere) > 0) {
+				if (!empty($websiteid)) {
+					$sql .= " AND (".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+				} else {
+					$sql .= " WHERE ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
+				}
+			}
+
+			$filter = '';
 		}
-		if (count($sqlwhere) > 0) {
-			$sql .= ' AND ('.implode(' '.$this->db->escape($filtermode).' ', $sqlwhere).')';
+
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			return -1;
 		}
 
 		$resql = $this->db->query($sql);
@@ -573,9 +642,9 @@ class WebsitePage extends CommonObject
 	/**
 	 * Update object into database
 	 *
-	 * @param  User $user      User that modifies
-	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int             Return integer <0 if KO, >0 if OK
+	 * @param  User		$user		User that modifies
+	 * @param  int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return int					Return integer <0 if KO, >0 if OK
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
@@ -598,7 +667,7 @@ class WebsitePage extends CommonObject
 				return -1;
 			}
 			$tmppage = new WebsitePage($this->db);
-			$tmppage->fetch($this->fk_page);
+			$tmppage->fetch((int) $this->fk_page);
 			if ($tmppage->lang == $this->lang) {
 				$this->error = "ErrorLanguageOfTranslatedPageIsSameThanThisPage";
 				return -1;
@@ -672,16 +741,17 @@ class WebsitePage extends CommonObject
 	/**
 	 * Load an object from its id and create a new one in database
 	 *
-	 * @param	User	$user				User making the clone
-	 * @param 	int 	$fromid 			Id of object to clone
-	 * @param	string	$newref				New ref/alias of page
-	 * @param	string	$newlang			New language
-	 * @param	int		$istranslation		1=New page is a translation of the cloned page.
-	 * @param	int		$newwebsite			0=Same web site, >0=Id of new website
-	 * @param	string	$newtitle			New title
-	 * @return 	mixed 						New object created, <0 if KO
+	 * @param	User		$user				User making the clone
+	 * @param 	int 		$fromid 			Id of object to clone
+	 * @param	string		$newref				New ref/alias of page
+	 * @param	string		$newlang			New language
+	 * @param	int			$istranslation		1=New page is a translation of the cloned page.
+	 * @param	int			$newwebsite			0=Same web site, >0=Id of new website
+	 * @param	string		$newtitle			New title
+	 * @param	?Website	$website			Website
+	 * @return 	self|int<-1,-1>					New object created, <0 if KO
 	 */
-	public function createFromClone(User $user, $fromid, $newref, $newlang = '', $istranslation = 0, $newwebsite = 0, $newtitle = '')
+	public function createFromClone(User $user, $fromid, $newref, $newlang = '', $istranslation = 0, $newwebsite = 0, $newtitle = '', $website = null)
 	{
 		global $hookmanager, $langs;
 
@@ -704,6 +774,19 @@ class WebsitePage extends CommonObject
 			return -1;
 		}
 
+		if ($istranslation) {
+			if (is_null($website)) {
+				$website = new Website($this->db);
+			}
+			$website->fetch($object->fk_website);
+
+			if ($website->id != $newwebsite) {
+				$langs->load("errors");
+				$this->error = $langs->trans("WebsiteMustBeSameThanClonedPageIfTranslation");
+				return -1;
+			}
+		}
+
 		$this->db->begin();
 
 		// Load source object
@@ -723,11 +806,18 @@ class WebsitePage extends CommonObject
 		if (!empty($newlang)) {
 			$object->lang = $newlang;
 		}
+
 		if ($istranslation) {
-			$object->fk_page = $fromid;
+			if ($website->lang == $newlang) {
+				// The new page is into the website language, the parent page will be 0, and we must instead update the source page later.
+				$object->fk_page = 0;
+			} else {
+				$object->fk_page = $fromid;
+			}
 		} else {
 			$object->fk_page = 0;
 		}
+
 		if (!empty($newwebsite)) {
 			$object->fk_website = $newwebsite;
 		}
@@ -742,6 +832,19 @@ class WebsitePage extends CommonObject
 			$this->error = $object->error;
 			$this->errors = $object->errors;
 			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+		}
+
+		if ($istranslation) {
+			if ($website->lang == $newlang) {
+				// We must now update the source page to link to the new page as a translation of.
+				$sql = "UPDATE ".MAIN_DB_PREFIX."website_page SET fk_page = ".((int) $result)." WHERE rowid = ".((int) $fromid);
+
+				$result = $this->db->query($sql);
+				if (!$result) {
+					$error++;
+					$this->error = $this->db->lasterror();
+				}
+			}
 		}
 
 		unset($object->context['createfromclone']);
@@ -762,12 +865,12 @@ class WebsitePage extends CommonObject
 	 *  Return a link to the user card (with optionally the picto)
 	 * 	Use this->id,this->lastname, this->firstname
 	 *
-	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *	@param	string	$option				On what the link point to
-	 *  @param	integer	$notooltip			1=Disable tooltip
-	 *  @param	int		$maxlen				Max length of visible user name
-	 *  @param  string  $morecss            Add more css on link
-	 *	@return	string						String with URL
+	 *	@param	int<0,2>	$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *	@param	string		$option				On what the link point to
+	 *  @param	int<0,1>	$notooltip			1=Disable tooltip
+	 *  @param	int			$maxlen				Max length of visible user name
+	 *  @param  string		$morecss            Add more css on link
+	 *	@return	string							String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
 	{
@@ -790,9 +893,9 @@ class WebsitePage extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -819,8 +922,8 @@ class WebsitePage extends CommonObject
 	/**
 	 *  Return the label of the status
 	 *
-	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return	string 			       Label of status
+	 *  @param  int<0,6>	$mode	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 				Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -831,9 +934,9 @@ class WebsitePage extends CommonObject
 	/**
 	 *  Return the label of a given status
 	 *
-	 *  @param	int		$status        Id status
-	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return string 			       Label of status
+	 *  @param	int			$status		Id status
+	 *  @param  int<0,6>	$mode		0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 					Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{

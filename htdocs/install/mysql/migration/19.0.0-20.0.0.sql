@@ -56,6 +56,9 @@ DELETE FROM llx_boxes_def WHERE file = 'box_members.php';
 UPDATE llx_c_units SET scale = 1 WHERE code = 'S';
 
 
+UPDATE llx_menu SET url = CONCAT(url, '&mode=init') WHERE fk_mainmenu = 'ticket' AND titre = 'NewTicket' AND url LIKE '/ticket/card.php?action=create%' AND url NOT LIKE '%mode=init%';
+
+
 -- Use unique keys for extrafields
 ALTER TABLE llx_actioncomm_extrafields DROP INDEX idx_actioncomm_extrafields;
 ALTER TABLE llx_actioncomm_extrafields ADD UNIQUE INDEX uk_actioncomm_extrafields (fk_object);
@@ -241,6 +244,9 @@ ALTER TABLE llx_knowledgemanagement_knowledgerecord MODIFY COLUMN answer longtex
 ALTER TABLE llx_commande_fournisseur_dispatch_extrafields RENAME TO llx_receptiondet_batch_extrafields;
 ALTER TABLE llx_commande_fournisseur_dispatch RENAME TO llx_receptiondet_batch;
 
+-- VPGSQL8.2 ALTER SEQUENCE llx_commande_fournisseur_dispatch_extrafields_rowid_seq RENAME TO llx_receptiondet_batch_extrafields_rowid_seq;
+-- VPGSQL8.2 ALTER SEQUENCE llx_commande_fournisseur_dispatch_rowid_seq RENAME TO llx_receptiondet_batch_rowid_seq;
+
 -- Rename const to add customer categories on not customer/prospect third-party if enabled
 UPDATE llx_const SET name = 'THIRDPARTY_CAN_HAVE_CUSTOMER_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT' WHERE name = 'THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER';
 
@@ -265,6 +271,8 @@ ALTER TABLE llx_ticket ADD COLUMN origin_references text DEFAULT NULL;
 
 ALTER TABLE llx_expensereport MODIFY COLUMN model_pdf varchar(255) DEFAULT NULL;
 ALTER TABLE llx_fichinter_rec MODIFY COLUMN modelpdf varchar(255) DEFAULT NULL;
+ALTER TABLE llx_hrm_evaluation MODIFY COLUMN modelpdf varchar(255) DEFAULT NULL;
+
 ALTER TABLE llx_societe ADD COLUMN geolat double(24,8) DEFAULT NULL;
 ALTER TABLE llx_societe ADD COLUMN geolong double(24,8) DEFAULT NULL;
 ALTER TABLE llx_societe ADD COLUMN geopoint point DEFAULT NULL;
@@ -344,7 +352,8 @@ ALTER TABLE llx_societe_commerciaux ADD COLUMN fk_c_type_contact_code varchar(32
 -- VPGSQL8.2 DROP INDEX uk_societe_commerciaux;
 ALTER TABLE llx_societe_commerciaux ADD UNIQUE INDEX uk_societe_commerciaux_c_type_contact (fk_soc, fk_user, fk_c_type_contact_code);
 ALTER TABLE llx_c_type_contact ADD INDEX idx_c_type_contact_code (code);
-ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_c_type_contact_code FOREIGN KEY (fk_c_type_contact_code)  REFERENCES llx_c_type_contact(code);
+-- Removed, not unique. ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_c_type_contact_code FOREIGN KEY (fk_c_type_contact_code)  REFERENCES llx_c_type_contact(code);
+ALTER TABLE llx_societe_commerciaux DROP FOREIGN KEY fk_societe_commerciaux_fk_c_type_contact_code;
 ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_soc FOREIGN KEY (fk_soc)  REFERENCES llx_societe(rowid);
 ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_user FOREIGN KEY (fk_user)  REFERENCES llx_user(rowid);
 
@@ -357,7 +366,7 @@ ALTER TABLE llx_ecm_files DROP column keyword;
 
 ALTER TABLE llx_c_type_container ADD COLUMN typecontainer varchar(10) DEFAULT 'page';
 UPDATE llx_c_type_container SET typecontainer  = 'container' WHERE code IN ('banner', 'other', 'menu');
---UPDATE llx_c_type_container SET typecontainer  = 'page' WHERE code IN ('page', 'blogpost');
+-- UPDATE llx_c_type_container SET typecontainer  = 'page' WHERE code IN ('page', 'blogpost');
 UPDATE llx_c_type_container SET position = 10  WHERE code IN ('page');
 UPDATE llx_c_type_container SET position = 20  WHERE code IN ('blogpost');
 
@@ -407,7 +416,7 @@ ALTER TABLE llx_hrm_evaluation ADD COLUMN entity INTEGER DEFAULT 1 NOT NULL;
 -- Error SQL DB_ERROR_1170 BLOB/TEXT column 'url' used in key specification without a key length, so we remove completely the unique key
 ALTER TABLE llx_menu DROP INDEX idx_menu_uk_menu;
 ALTER TABLE llx_menu MODIFY COLUMN url TEXT NOT NULL;
---ALTER TABLE llx_menu ADD UNIQUE INDEX idx_menu_uk_menu (menu_handler, fk_menu, position, entity, url);
+-- ALTER TABLE llx_menu ADD UNIQUE INDEX idx_menu_uk_menu (menu_handler, fk_menu, position, entity, url);
 
 UPDATE llx_c_units SET short_label = 'mn' WHERE short_label = 'i' AND code = 'MI';
 
@@ -415,3 +424,7 @@ UPDATE llx_c_units SET short_label = 'mn' WHERE short_label = 'i' AND code = 'MI
 ALTER TABLE llx_c_holiday_types DROP INDEX uk_c_holiday_types;
 ALTER TABLE llx_c_holiday_types ADD COLUMN entity	integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_c_holiday_types ADD UNIQUE INDEX uk_c_holiday_types (entity, code);
+
+
+-- Add ref_ext to asset_model to use various CommonOjbect methods
+ALTER TABLE llx_asset_model ADD COLUMN ref_ext varchar(255) AFTER ref;

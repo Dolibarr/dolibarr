@@ -3,6 +3,8 @@
  * Copyright (C) 2013		Florian Henry		<forian.henry@open-cocnept.pro>
  * Copyright (C) 2013-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2017		Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,8 +70,12 @@ require '../../main.inc.php';
 
 // cron jobs library
 dol_include_once("/cron/class/cronjob.class.php");
-
-global $langs, $conf;
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
+global $langs, $conf, $db;
 
 // Language Management
 $langs->loadLangs(array("admin", "cron", "dict"));
@@ -106,7 +112,7 @@ if (empty($userlogin)) {
 }
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 $user = new User($db);
-$result = $user->fetch('', $userlogin);
+$result = $user->fetch(0, $userlogin);
 if ($result < 0) {
 	echo "User Error:".$user->error;
 	dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
@@ -155,6 +161,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 
 	// Loop over job
 	foreach ($object->lines as $line) {
+		'@phan-var-force Cronjob $line';
 		dol_syslog("cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label, LOG_DEBUG);
 		echo "cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label;
 
@@ -168,7 +175,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 
 			// Force recheck that user is ok for the entity to process and reload permission for entity
 			if ($conf->entity != $user->entity && $user->entity != 0) {
-				$result = $user->fetch('', $userlogin, '', 0, $conf->entity);
+				$result = $user->fetch(0, $userlogin, '', 0, $conf->entity);
 				if ($result < 0) {
 					echo "\nUser Error: ".$user->error."\n";
 					dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
@@ -224,13 +231,13 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 			// We re-program the next execution and stores the last execution time for this job
 			$result = $cronjob->reprogram_jobs($userlogin, $now);
 			if ($result < 0) {
-				echo "Error cronjobid: ".$line->id." cronjob->reprogram_job: ".$cronjob->error."\n";
+				echo " - Error cronjobid: ".$line->id." cronjob->reprogram_job: ".$cronjob->error."\n";
 				echo "Enable module Log if not yet enabled, run again and take a look into dolibarr.log file\n";
 				dol_syslog("cron_run_jobs.php::reprogram_jobs Error".$cronjob->error, LOG_ERR);
-				exit;
+				exit(1);
 			}
 
-			echo "Job re-scheduled\n";
+			echo " - Job re-scheduled\n";
 		} else {
 			echo " - not qualified (datenextrunok=".($datenextrunok ?: 0).", datestartok=".($datestartok ?: 0).", dateendok=".($dateendok ?: 0).")\n";
 

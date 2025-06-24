@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016       Pierre-Henry Favre  <phf@atm-consulting.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,10 +27,8 @@
  * \brief   This file is a CRUD class file (Create/Read/Update/Delete) for multicurrency
  */
 
-// Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/currencyrate.class.php';
 
 /**
  * Class Currency
@@ -95,6 +93,14 @@ class MultiCurrency extends CommonObject
 	 */
 	public $rate;
 
+	/**
+	 * @var string			URL endpoint for update of currency
+	 */
+	public $urlendpoint;
+
+
+	const MULTICURRENCY_APP_ENDPOINT_DEFAULT = 'https://api.currencylayer.com/live?access_key=__MULTICURRENCY_APP_KEY__&source=__MULTICURRENCY_APP_SOURCE__';
+
 
 	/**
 	 * Constructor
@@ -104,6 +110,12 @@ class MultiCurrency extends CommonObject
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		$key = getDolGlobalString("MULTICURRENCY_APP_KEY");
+		$source = getDolGlobalString('MULTICURRENCY_APP_SOURCE', 'USD');
+		$urlendpoint = getDolGlobalString("MULTICURRENCY_APP_ENDPOINT", self::MULTICURRENCY_APP_ENDPOINT_DEFAULT);
+
+		$this->urlendpoint = str_replace(array('__MULTICURRENCY_APP_KEY__', '__MULTICURRENCY_APP_SOURCE__'), array($key, $source), $urlendpoint);
 	}
 
 	/**
@@ -185,20 +197,18 @@ class MultiCurrency extends CommonObject
 	 * Load object in memory from the database
 	 *
 	 * @param int    $id  		Id object
-	 * @param string $code 		code
+	 * @param ?string $code 		code
 	 * @return int 				Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $code = null)
 	{
 		dol_syslog('MultiCurrency::fetch', LOG_DEBUG);
 
-		global $conf;
-
-		$sql = "SELECT";
-		$sql .= ' c.rowid, c.name, c.code, c.entity, c.date_create, c.fk_user';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' AS c';
+		$sql = "SELECT c.rowid, c.name, c.code, c.entity, c.date_create, c.fk_user";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." AS c";
 		if (!empty($code)) {
-			$sql .= ' WHERE c.code = \''.$this->db->escape($code).'\' AND c.entity = '.$conf->entity;
+			$sql .= " WHERE c.code = '".$this->db->escape($code)."'";
+			$sql .= " AND c.entity IN (".getEntity($this->element).")";
 		} else {
 			$sql .= ' WHERE c.rowid = '.((int) $id);
 		}
@@ -244,9 +254,10 @@ class MultiCurrency extends CommonObject
 	public function fetchAllCurrencyRate()
 	{
 		$sql = "SELECT cr.rowid";
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as cr';
-		$sql .= ' WHERE cr.fk_multicurrency = '.((int) $this->id);
-		$sql .= ' ORDER BY cr.date_sync DESC';
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element_line." as cr";
+		$sql .= " WHERE cr.entity IN (".getEntity($this->element).")";
+		$sql .= " AND cr.fk_multicurrency = ".((int) $this->id);
+		$sql .= " ORDER BY cr.date_sync DESC";
 
 		$this->rates = array();
 
@@ -482,10 +493,13 @@ class MultiCurrency extends CommonObject
 	{
 		$sql = "SELECT cr.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element_line." as cr";
-		$sql .= " WHERE cr.fk_multicurrency = ".((int) $this->id);
-		$sql .= " AND cr.date_sync = (SELECT MAX(cr2.date_sync) FROM ".MAIN_DB_PREFIX.$this->table_element_line." AS cr2 WHERE cr2.fk_multicurrency = ".((int) $this->id).")";
+		$sql .= " WHERE cr.entity IN (".getEntity($this->element).")";
+		$sql .= " AND cr.fk_multicurrency = ".((int) $this->id);
+		$sql .= " AND cr.date_sync = (SELECT MAX(cr2.date_sync) FROM ".MAIN_DB_PREFIX.$this->table_element_line." AS cr2";
+		$sql .= " WHERE cr2.entity IN (".getEntity($this->element).") AND cr2.fk_multicurrency = ".((int) $this->id).")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql && ($obj = $this->db->fetch_object($resql))) {
 			$this->rate = new CurrencyRate($this->db);
@@ -521,19 +535,16 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Get id and rate of currency from code
 	 *
-	 * @param DoliDB			$dbs	        Object db
-	 * @param string			$code	        Code value search
-	 * @param integer|string	$date_document	Date from document (propal, order, invoice, ...)
+	 * @param DoliDB		$dbs	        Object db
+	 * @param string		$code	        Code value search
+	 * @param int			$date_document	Date from document (propal, order, invoice, ...)
 	 *
-	 * @return 	array			[0] => id currency
-	 *							[1] => rate
+	 * @return 	array{0:int,1:float}		[0] => id currency
+	 *										[1] => rate
 	 */
-	public static function getIdAndTxFromCode($dbs, $code, $date_document = '')
+	public static function getIdAndTxFromCode($dbs, $code, $date_document = 0)
 	{
-		global $conf;
-
 		$sql1 = "SELECT m.rowid, mc.rate FROM ".MAIN_DB_PREFIX."multicurrency m";
-
 		$sql1 .= ' LEFT JOIN '.MAIN_DB_PREFIX.'multicurrency_rate mc ON (m.rowid = mc.fk_multicurrency)';
 		$sql1 .= " WHERE m.code = '".$dbs->escape($code)."'";
 		$sql1 .= " AND m.entity IN (".getEntity('multicurrency').")";
@@ -576,7 +587,8 @@ class MultiCurrency extends CommonObject
 		if (!is_null($invoice_rate)) {
 			$multicurrency_tx = $invoice_rate;
 		} else {
-			$multicurrency_tx = self::getInvoiceRate($fk_facture, $table);
+			$tmparray = self::getInvoiceRate($fk_facture, $table);
+			$multicurrency_tx = $tmparray['invoice_multicurrency_tx'];
 		}
 
 		if ($multicurrency_tx) {
@@ -595,28 +607,31 @@ class MultiCurrency extends CommonObject
 	 *
 	 *  @param	int 		$fk_facture 	id of facture
 	 *  @param 	string 		$table 			facture or facture_fourn
-	 *  @return float|bool					Rate of currency or false if error
+	 *  @return array{invoice_multicurrency_tx: float,invoice_multicurrency_code: string}|bool	Rate and code of currency or false if error
 	 */
 	public static function getInvoiceRate($fk_facture, $table = 'facture')
 	{
 		global $db;
 
-		$sql = "SELECT multicurrency_tx FROM ".MAIN_DB_PREFIX.$table." WHERE rowid = ".((int) $fk_facture);
+		$sql = "SELECT multicurrency_tx, multicurrency_code";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$db->sanitize($table);
+		$sql .= " WHERE rowid = ".((int) $fk_facture);
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $db->query($sql);
 		if ($resql && ($line = $db->fetch_object($resql))) {
-			return $line->multicurrency_tx;
+			return array('invoice_multicurrency_tx' => $line->multicurrency_tx, 'invoice_multicurrency_code' => $line->multicurrency_code);
 		}
 
 		return false;
 	}
 
 	/**
-	 * With free account we can't set source then recalcul all rates to force another source.
+	 * With free account we can't set source to something else than US, to we recalculate all rates to force another source.
 	 * This modify the array &$TRate.
+	 * It is called by the syncRates() method.
 	 *
-	 * @param   stdClass	$TRate	Object containing all currencies rates
+	 * @param   stdClass	$TRate	Object containing all currencies rates to recalculate
 	 * @return	int					-1 if KO, 0 if nothing, 1 if OK
 	 */
 	public function recalculRates(&$TRate)
@@ -641,16 +656,17 @@ class MultiCurrency extends CommonObject
 	}
 
 	/**
-	 * Sync rates from API
+	 * Sync rates from API.
+	 * This is called by the admin page and by the autoupdate cron job.
 	 *
-	 * @param 	string  $key                Key to use. Come from getDolGlobalString("MULTICURRENCY_APP_ID")
-	 * @param   int     $addifnotfound      Add if not found
-	 * @param   string  $mode				"" for standard use, "cron" to use it in a cronjob
-	 * @return  int							Return integer <0 if KO, >0 if OK, if mode = "cron" OK is 0
+	 * @param 	int			$nu	                No more used
+	 * @param   int 	    $addifnotfound      Add if not found
+	 * @param   string  	$mode				"" for standard use, "cron" to use it in a cronjob
+	 * @return  int								Return integer <0 if KO, >0 if OK, if mode = "cron" OK is 0
 	 */
-	public function syncRates($key, $addifnotfound = 0, $mode = "")
+	public function syncRates($nu = 0, $addifnotfound = 0, $mode = "")
 	{
-		global $conf, $db, $langs;
+		global $db, $langs;
 
 		if (getDolGlobalString('MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER')) {
 			if ($mode == "cron") {
@@ -661,20 +677,22 @@ class MultiCurrency extends CommonObject
 			return -1;
 		}
 
-		if (empty($key)) {
-			$key = getDolGlobalString("MULTICURRENCY_APP_ID");
-		}
-
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-		$urlendpoint = 'http://api.currencylayer.com/live?access_key='.$key;
-		$urlendpoint .= '&source=' . (!getDolGlobalString('MULTICURRENCY_APP_SOURCE') ? 'USD' : $conf->global->MULTICURRENCY_APP_SOURCE);
+		$urlendpoint = $this->urlendpoint;
 
 		dol_syslog("Call url endpoint ".$urlendpoint);
 
-		$resget = getURLContent($urlendpoint);
+		$addheaders = array('apikey: '.getDolGlobalString('MULTICURRENCY_APP_KEY'));
 
-		if ($resget['content']) {
+		$resget = getURLContent($urlendpoint, 'GET', '', 1, $addheaders);
+
+		// Example of result with https://currencylayer.com/live and https://api.apilayer.com/currency_data/live
+		// 'content' => string '{"success":true,"terms":"https:\/\/currencylayer.com\/terms","privacy":"https:\/\/currencylayer.com\/privacy","timestamp":1742562251,"source":"USD","quotes":{"USDAED":3.67302,"USDAFN":70.6213,"USDALL":91.042287,"USDAMD":390.984233,"USDANG":1.802039,"USDAOA":913.498241,"USDARS":1068.745088,"USDAUD":1.591824,"USDAWG":1.8,"USDAZN":1.699323,"USDBAM":1.80224,"USDBBD":2.018881,"USDBDT":121.488567,"USDBGN":1.802745,"USDBHD":0.376878,"USDBIF":2963.403228,"USDBMD":1,"USDBND":1.333573,"USDBOB":6.909262,"USDBRL":5.721'... (length=3337)
+		//var_dump($urlendpoint);
+		//var_dump($resget);
+
+		if (!empty($resget['content'])) {
 			$response = $resget['content'];
 			$response = json_decode($response);
 
@@ -682,6 +700,7 @@ class MultiCurrency extends CommonObject
 				$TRate = $response->quotes;
 				//$timestamp = $response->timestamp;
 
+				// Recalculate rate and update it (or add it) into database
 				if ($this->recalculRates($TRate) >= 0) {
 					foreach ($TRate as $currency_code => $rate) {
 						$code = substr($currency_code, 3, 3);
@@ -699,15 +718,27 @@ class MultiCurrency extends CommonObject
 				}
 				return 1;
 			} else {
-				dol_syslog("Failed to call endpoint ".$response->error->info, LOG_WARNING);
-				if ($mode == "cron") {
-					$this->output = $langs->trans('multicurrency_syncronize_error', $response->error->info);
+				if (isset($response->error->info)) {
+					$error_info_syslog = $response->error->info;  // @phan-suppress-current-line PhanTypeExpectedObjectPropAccess
+					$error_info = $error_info_syslog;
 				} else {
-					setEventMessages($langs->trans('multicurrency_syncronize_error', $response->error->info), null, 'errors');
+					$error_info_syslog = json_encode($response);
+					if (empty($resget['content'])) {
+						$error_info = "No error information found (see syslog)";
+					} else {
+						$error_info = $resget['content'];
+					}
 				}
+
+				dol_syslog("Failed to call endpoint ".$error_info_syslog, LOG_WARNING);
+
+				$this->output = $langs->trans('multicurrency_syncronize_error', $error_info);
+
 				return -1;
 			}
 		} else {
+			$this->output = $resget['curl_error_msg'];
+
 			return -1;
 		}
 	}
@@ -715,289 +746,16 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Check in database if the current code already exists
 	 *
-	 * @param	string	$code 	current code to search
-	 * @return	boolean         True if exists, false if not exists
+	 * @param	string	$code	current code to search
+	 * @return	bool			True if exists, false if not exists
 	 */
 	public function checkCodeAlreadyExists($code)
 	{
 		$currencytmp = new MultiCurrency($this->db);
-		if ($currencytmp->fetch('', $code) > 0) {
+		if ($currencytmp->fetch(0, $code) > 0) {
 			return true;
 		} else {
 			return false;
-		}
-	}
-}
-
-
-/**
- * Class CurrencyRate
- */
-class CurrencyRate extends CommonObjectLine
-{
-	/**
-	 * @var string Id to identify managed objects
-	 */
-	public $element = 'multicurrency_rate';
-
-	/**
-	 * @var string Name of table without prefix where object is stored
-	 */
-	public $table_element = 'multicurrency_rate';
-
-	/**
-	 * @var int ID
-	 */
-	public $id;
-
-	/**
-	 * @var double Rate
-	 */
-	public $rate;
-
-	/**
-	 * @var double Rate Indirect
-	 */
-	public $rate_indirect;
-
-	/**
-	 * @var integer    Date synchronisation
-	 */
-	public $date_sync;
-
-	/**
-	 * @var int Id of currency
-	 */
-	public $fk_multicurrency;
-
-	/**
-	 * @var int Id of entity
-	 */
-	public $entity;
-
-
-	/**
-	 * Constructor
-	 *
-	 * @param DoliDB $db Database handler
-	 */
-	public function __construct(DoliDB $db)
-	{
-		$this->db = $db;
-	}
-
-	/**
-	 * Create object into database
-	 *
-	 * @param	User	$user				User making the deletion
-	 * @param  	int		$fk_multicurrency	Id of currency
-	 * @param  	int 	$notrigger 			0=launch triggers after, 1=disable triggers
-	 * @return 	int 						Return integer <0 if KO, Id of created object if OK
-	 */
-	public function create(User $user, int $fk_multicurrency, $notrigger = 0)
-	{
-		global $conf;
-
-		dol_syslog('CurrencyRate::create', LOG_DEBUG);
-
-		$error = 0;
-		$this->rate = (float) price2num($this->rate);
-		if (empty($this->entity) || $this->entity <= 0) {
-			$this->entity = $conf->entity;
-		}
-		$now = empty($this->date_sync) ? dol_now() : $this->date_sync;
-
-		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
-		$sql .= ' rate,';
-		$sql .= ' rate_indirect,';
-		$sql .= ' date_sync,';
-		$sql .= ' fk_multicurrency,';
-		$sql .= ' entity';
-		$sql .= ') VALUES (';
-		$sql .= ' '.((float) $this->rate).',';
-		$sql .= ' '.((float) $this->rate_indirect).',';
-		$sql .= " '".$this->db->idate($now)."',";
-		$sql .= " ".((int) $fk_multicurrency).",";
-		$sql .= " ".((int) $this->entity);
-		$sql .= ')';
-
-		$this->db->begin();
-
-		dol_syslog(__METHOD__, LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$error++;
-			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog('CurrencyRate::create '.implode(',', $this->errors), LOG_ERR);
-		}
-
-		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
-			$this->fk_multicurrency = $fk_multicurrency;
-			$this->date_sync = $now;
-
-			if (empty($notrigger)) {
-				$result = $this->call_trigger('CURRENCYRATE_CREATE', $user);
-				if ($result < 0) {
-					$error++;
-				}
-			}
-		}
-
-		if ($error) {
-			$this->db->rollback();
-
-			return -1 * $error;
-		} else {
-			$this->db->commit();
-
-			return $this->id;
-		}
-	}
-
-	/**
-	 * Load object in memory from the database
-	 *
-	 * @param 	int    $id  Id object
-	 * @return 	int 		Return integer <0 if KO, 0 if not found, >0 if OK
-	 */
-	public function fetch($id)
-	{
-		dol_syslog('CurrencyRate::fetch', LOG_DEBUG);
-
-		$sql = "SELECT cr.rowid, cr.rate, cr.rate_indirect, cr.date_sync, cr.fk_multicurrency, cr.entity";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." AS cr";
-		$sql .= " WHERE cr.rowid = ".((int) $id);
-
-		dol_syslog(__METHOD__, LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql) {
-			$numrows = $this->db->num_rows($resql);
-			if ($numrows) {
-				$obj = $this->db->fetch_object($resql);
-
-				$this->id = $obj->rowid;
-				$this->rate = $obj->rate;
-				$this->rate_indirect = $obj->rate_indirect;
-				$this->date_sync = $this->db->jdate($obj->date_sync);
-				$this->fk_multicurrency = $obj->fk_multicurrency;
-				$this->entity = $obj->entity;
-			}
-			$this->db->free($resql);
-
-			if ($numrows) {
-				return 1;
-			} else {
-				return 0;
-			}
-		} else {
-			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog('CurrencyRate::fetch '.implode(',', $this->errors), LOG_ERR);
-
-			return -1;
-		}
-	}
-
-	/**
-	 * Update object into database
-	 *
-	 * @param	User	$user		User making the deletion
-	 * @param  	int 	$notrigger 	0=launch triggers after, 1=disable triggers
-	 * @return 	int 				Return integer <0 if KO, >0 if OK
-	 */
-	public function update(User $user, $notrigger = 0)
-	{
-		$error = 0;
-
-		dol_syslog('CurrencyRate::update', LOG_DEBUG);
-
-		$this->rate = (float) price2num($this->rate);
-
-		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
-		$sql .= "SET rate = ".((float) $this->rate);
-		if (!empty($this->date_sync)) {
-			$sql .= ", date_sync = '".$this->db->idate($this->date_sync)."'";
-		}
-		if (!empty($this->fk_multicurrency)) {
-			$sql .= ', fk_multicurrency = '.((int) $this->fk_multicurrency);
-		}
-		$sql .= " WHERE rowid =".((int) $this->id);
-
-		$this->db->begin();
-
-		dol_syslog(__METHOD__, LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$error++;
-			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog('CurrencyRate::update '.implode(',', $this->errors), LOG_ERR);
-		}
-
-		if (!$error && empty($notrigger)) {
-			$result = $this->call_trigger('CURRENCYRATE_MODIFY', $user);
-			if ($result < 0) {
-				$error++;
-			}
-		}
-
-		// Commit or rollback
-		if ($error) {
-			$this->db->rollback();
-
-			return -1 * $error;
-		} else {
-			$this->db->commit();
-
-			return 1;
-		}
-	}
-
-	/**
-	 * Delete object in database
-	 *
-	 * @param	User	$user		User making the deletion
-	 * @param  	int 	$notrigger 	0=launch triggers after, 1=disable triggers
-	 * @return 	int 				Return integer <0 if KO, >0 if OK
-	 */
-	public function delete(User $user, $notrigger = 0)
-	{
-		dol_syslog('CurrencyRate::delete', LOG_DEBUG);
-
-		$error = 0;
-
-		$this->db->begin();
-
-		if (empty($notrigger)) {
-			$result = $this->call_trigger('CURRENCYRATE_DELETE', $user);
-			if ($result < 0) {
-				$error++;
-			}
-		}
-
-		if (!$error) {
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= ' WHERE rowid='.((int) $this->id);
-
-			dol_syslog(__METHOD__, LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$error++;
-				$this->errors[] = 'Error '.$this->db->lasterror();
-				dol_syslog('CurrencyRate::delete '.implode(',', $this->errors), LOG_ERR);
-			}
-		}
-
-		// Commit or rollback
-		if ($error) {
-			$this->db->rollback();
-
-			return -1 * $error;
-		} else {
-			$this->db->commit();
-
-			return 1;
 		}
 	}
 }

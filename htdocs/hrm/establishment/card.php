@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2015      Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +29,15 @@ require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'hrm'));
 
@@ -39,8 +50,8 @@ $id = GETPOSTINT('id');
 
 // List of status
 static $tmpstatus2label = array(
-		'0'=>'CloseEtablishment',
-		'1'=>'OpenEtablishment'
+		'0' => 'CloseEtablishment',
+		'1' => 'OpenEtablishment'
 );
 $status2label = array('');
 foreach ($tmpstatus2label as $key => $val) {
@@ -55,6 +66,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 $permissiontoread = $user->admin;
 $permissiontoadd = $user->admin; // Used by the include of actions_addupdatedelete.inc.php
 $permissiontodelete = $user->admin;
+
 $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check - Protection if external user
@@ -74,7 +86,7 @@ if (empty($permissiontoread)) {
  * Actions
  */
 
-if ($action == 'confirm_delete' && $confirm == "yes") {
+if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontodelete) {
 	$result = $object->delete($user);
 	if ($result >= 0) {
 		header("Location: ../admin/admin_establishment.php");
@@ -82,7 +94,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-} elseif ($action == 'add') {
+} elseif ($action == 'add' && $permissiontoadd) {
 	if (!$cancel) {
 		$error = 0;
 
@@ -117,7 +129,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 		header("Location: ../admin/admin_establishment.php");
 		exit;
 	}
-} elseif ($action == 'update') {
+} elseif ($action == 'update' && $permissiontoadd) {
 	// Update record
 	$error = 0;
 
@@ -153,6 +165,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 	}
 }
 
+
 /*
  * View
  */
@@ -162,9 +175,7 @@ llxHeader();
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 
-/*
- * Action create
- */
+// Action create
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewEstablishment"));
 
@@ -232,7 +243,7 @@ if ($action == 'create') {
 	print '<tr>';
 	print '<td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td>';
 	print '<td class="maxwidthonsmartphone">';
-	print $form->select_country(GETPOSTISSET('country_id') ? GETPOSTINT('country_id') : ($object->country_id ? $object->country_id : $mysoc->country_id), 'country_id');
+	print $form->select_country((string) (GETPOSTISSET('country_id') ? GETPOSTINT('country_id') : ($object->country_id ? $object->country_id : $mysoc->country_id)), 'country_id');
 	if ($user->admin) {
 		print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 	}
@@ -316,7 +327,7 @@ if ((!empty($id) || !empty($ref)) && $action == 'edit') {
 			// Country
 			print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td>';
 			print '<td class="maxwidthonsmartphone">';
-			print $form->select_country($object->country_id, 'country_id');
+			print $form->select_country((string) $object->country_id, 'country_id');
 			if ($user->admin) {
 				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			}
@@ -409,7 +420,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($object->country_id > 0) {
 		$img = picto_from_langcode($object->country_code);
 		print $img ? $img.' ' : '';
-		print getCountry($object->getCountryCode(), 0, $db);
+		print getCountry($object->getCountryCode(), '', $db);
 	}
 	print '</td>';
 	print '</tr>';

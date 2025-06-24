@@ -5,6 +5,7 @@
  * Copyright (C) 2016		Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,14 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadlangs(array('users', 'other', 'holiday', 'hrm'));
@@ -74,10 +83,10 @@ $extrafields = new ExtraFields($db);
 $holiday = new Holiday($db);
 
 $arrayfields = array(
-	'cp.rowid' => array('label' => $langs->trans("Employee"), 'checked' => 1, 'position' => 20),
-	'cp.fk_user' => array('label' => $langs->trans("Supervisor"), 'checked' => 1, 'position' => 30),
-	'cp.nbHoliday' => array('label' => $langs->trans("MenuConfCP"), 'checked' => 1, 'position' => 40),
-	'cp.note_public' => array('label' => $langs->trans("Note"), 'checked' => 1, 'position' => 50),
+	'cp.rowid' => array('label' => $langs->trans("Employee"), 'checked' => '1', 'position' => 20),
+	'cp.fk_user' => array('label' => $langs->trans("Supervisor"), 'checked' => '1', 'position' => 30),
+	'cp.nbHoliday' => array('label' => $langs->trans("MenuConfCP"), 'checked' => '1', 'position' => 40),
+	'cp.note_public' => array('label' => $langs->trans("Note"), 'checked' => '1', 'position' => 50),
 );
 
 $permissiontoread = $user->hasRight('holiday', 'read');
@@ -169,7 +178,7 @@ if (empty($reshook)) {
 			//print 'holiday: '.$val['rowid'].'-'.$userValue;exit;
 			if ($userValue != '') {
 				// We add the modification to the log (must be done before the update of balance because we read current value of balance inside this method)
-				$result = $holiday->addLogCP($user->id, $userID, $langs->transnoentitiesnoconv('ManualUpdate').$comment, $userValue, $val['rowid']);
+				$result = $holiday->addLogCP($user->id, $userID, $langs->transnoentitiesnoconv('ManualUpdate').$comment, (float) $userValue, $val['rowid']);
 				if ($result < 0) {
 					setEventMessages($holiday->error, $holiday->errors, 'errors');
 					$error++;
@@ -179,7 +188,7 @@ if (empty($reshook)) {
 				if ($result > 0) {
 					$nbok++;
 
-					$result = $holiday->updateSoldeCP($userID, $userValue, $val['rowid']);
+					$result = $holiday->updateSoldeCP($userID, (float) $userValue, $val['rowid']);
 					if ($result < 0) {
 						setEventMessages($holiday->error, $holiday->errors, 'errors');
 						$error++;
@@ -264,7 +273,7 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorde
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($massaction == 'preincreaseholiday') {
-	$langs->load("holiday", "hrm");
+	$langs->loadLangs(array("holiday", "hrm"));
 	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 	$staticholiday = new Holiday($db);
 	$arraytypeholidays = $staticholiday->getTypes(1, 1);
@@ -364,7 +373,7 @@ if (count($typeleaves) == 0) {
 	// Supervisor
 	if (!empty($arrayfields['cp.fk_user']['checked'])) {
 		print '<td class="liste_titre">';
-		print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, null, 0, null, null, 0, 0, 0, '', 0, '', 'maxwidth150');
+		print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, null, 0, array(), '', '', 0, 0, '', 0, '', 'maxwidth150');
 		print '</td>';
 	}
 	// Type of leave request
@@ -484,7 +493,7 @@ if (count($typeleaves) == 0) {
 				foreach ($typeleaves as $key => $val) {
 					$nbtoshow = '';
 					if ($holiday->getCPforUser($users['rowid'], $val['rowid']) != '') {
-						$nbtoshow = price2num($holiday->getCPforUser($users['rowid'], $val['rowid']), 5);
+						$nbtoshow = price2num((float) $holiday->getCPforUser($users['rowid'], $val['rowid']), 5);
 					}
 
 					//var_dump($users['rowid'].' - '.$val['rowid']);

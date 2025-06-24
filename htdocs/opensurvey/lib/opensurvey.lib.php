@@ -2,6 +2,7 @@
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014 Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
  * It loads tabs from modules looking for the entity Opensurveyso
  *
  * @param Opensurveysondage $object Current viewing poll
- * @return array Tabs for the opensurvey section
+ * @return	array<array{0:string,1:string,2:string}>	Tabs for the opensurvey section
  */
 function opensurvey_prepare_head(Opensurveysondage $object)
 {
@@ -69,15 +70,14 @@ function opensurvey_prepare_head(Opensurveysondage $object)
  * @param 	string		$head				Head array
  * @param 	int    		$disablejs			More content into html header
  * @param 	int    		$disablehead		More content into html header
- * @param 	array  		$arrayofjs			Array of complementary js files
- * @param 	array  		$arrayofcss			Array of complementary css files
+ * @param 	string[]|string	$arrayofjs			Array of complementary js files
+ * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @param	string		$numsondage			Num survey
  * @return	void
  */
 function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [], $numsondage = '')
 {
-	global $conf, $langs, $mysoc;
-	global $dolibarr_main_url_root;
+	global $langs, $mysoc;
 
 	// $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 
@@ -85,47 +85,16 @@ function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	print '<body id="mainbody" class="publicnewmemberform">';
 
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+	htmlPrintOnlineHeader($mysoc, $langs, 'OPENSURVEY_IMAGE_PUBLIC_INTERFACE');
+
 	print '<span id="dolpaymentspan"></span>'."\n";
 	print '<div class="center">'."\n";
+
 	print '<form name="formulaire" action="studs.php?sondage='.urlencode($numsondage).'#bas" method="POST">'."\n";
 	print '<input type="hidden" name="sondage" value="'.$numsondage.'"/>';
 	print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 	print "\n";
-
-	// Show logo (search order: logo defined by PAYMENT_LOGO_suffix, then PAYMENT_LOGO, then small company logo, large company logo, theme logo, common logo)
-	// Define logo and logosmall
-	$logosmall = $mysoc->logo_small;
-	$logo = $mysoc->logo;
-	// print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
-	// Define urllogo
-	$urllogo = '';
-	$urllogofull = '';
-	if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall)) {
-		$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
-		$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
-	} elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo)) {
-		$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
-		$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
-	}
-
-	// Output html code for logo
-	if ($urllogo) {
-		print '<div class="backgreypublicpayment">';
-		print '<div class="logopublicpayment">';
-		print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
-		print '>';
-		print '</div>';
-		if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
-			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
-		}
-		print '</div>';
-	}
-
-	if (getDolGlobalString('OPENSURVEY_IMAGE_PUBLIC_INTERFACE')) {
-		print '<div class="backimagepublicopensurvey">';
-		print '<img id="idOPENSURVEY_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('OPENSURVEY_IMAGE_PUBLIC_INTERFACE').'">';
-		print '</div>';
-	}
 
 	print '<div class="survey_borders"><br><br>';
 }
@@ -166,7 +135,7 @@ function get_server_name()
 	$url = $urlwithouturlroot.dol_buildpath('/opensurvey/', 1);
 
 	if (!preg_match("|/$|", $url)) {
-		$url = $url."/";
+		$url .= "/";
 	}
 
 	return $url;
@@ -176,7 +145,7 @@ function get_server_name()
  * Fonction vérifiant l'existance et la valeur non vide d'une clé d'un tableau
  *
  * @param   string  $name       Key to test
- * @param   array   $tableau    Array in which searching key ($_POST by default)
+ * @param   ?array<string,null|mixed|mixed[]>   $tableau    Array in which searching key ($_POST by default)
  * @return  bool                True if key exists and return a non empty value
  */
 function issetAndNoEmpty($name, $tableau = null)
@@ -185,7 +154,7 @@ function issetAndNoEmpty($name, $tableau = null)
 		$tableau = $_POST;
 	}
 
-	return (isset($tableau[$name]) === true && empty($tableau[$name]) === false);
+	return (isset($tableau[$name]) && !empty($tableau[$name]));
 }
 
 

@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - ldap
-YouMustChangePassNextLogon=Лозинка за корисникот <b>%s</b></span class=' доменот notranslate'><b>%s</b> мора да се смени.
+YouMustChangePassNextLogon=Password for user <b>%s</b> on the domain <b>%s</b> must be changed.
 UserMustChangePassNextLogon=Корисникот мора да ја смени лозинката на доменот %s
 LDAPInformationsForThisContact=Информации во базата на податоци LDAP за овој контакт
 LDAPInformationsForThisUser=Информации во базата на податоци LDAP за овој корисник

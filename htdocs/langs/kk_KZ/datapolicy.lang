@@ -17,8 +17,9 @@ Module4100Name = Деректер құпиялылығы саясаты
 Module4100Desc = Деректер құпиялығын басқару модулі (GDPR сәйкестік)
 # Administration page
 datapolicySetup = Модуль деректерінің құпиялылық саясатын орнату
-Deletion = Деректерді жою
-datapolicySetupPage = Елдеріңіздің заңдарына байланысты (мысал <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">GDPR 5-бабы</a>), жеке деректер белгілі бір мерзімге сақталуы керек мұрағаттық мақсаттарды қоспағанда, деректер жинау мақсаты үшін қажет ұзақтықтан аспайды.<br>Жою белгілі бір уақыттан кейін оқиғаларсыз автоматты түрде орындалады (ұзақтық). төменде көрсетілген болады).
+DataDeletion=Deletion of data
+DataAnonymization=Anonymization of data
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
 NB_MONTHS = %s ай
 ONE_YEAR = 1 жыл
 NB_YEARS = %s жыл
@@ -33,12 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Болашақ/Тұтынушы
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Не перспективалы/Не тұтынушы
 DATAPOLICY_CONTACT_FOURNISSEUR = Жеткізуші
 DATAPOLICY_ADHERENT = мүше
-DATAPOLICY_Tooltip_SETUP = Контакт түрі - әр түр үшін таңдауыңызды көрсетіңіз.
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
 SendAgreementText = Сіз GDPR электрондық поштасын барлық сәйкес контактілеріңізге (әлі электрондық поштаны алмаған және GDPR келісімі туралы ештеңе тіркемеген) жібере аласыз. Мұны істеу үшін келесі түймені пайдаланыңыз.
 SendAgreement = Электрондық хаттарды жіберу
 AllAgreementSend = Барлық электрондық хаттар жіберілді
 TXTLINKDATAPOLICYACCEPT = «Келісім» сілтемесі үшін мәтін
 TXTLINKDATAPOLICYREFUSE = «Келіспеушілік» сілтемесі үшін мәтін
+DelayForAnonymization=Delay for anonymization
+DelayForDeletion=Delay for deletion
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = GDPR: жеке деректерді өңдеу
 DATAPOLICY_consentement = Жеке деректерді өңдеуге алынған келісім

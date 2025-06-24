@@ -3,6 +3,7 @@
  * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("agenda", "commercial"));
@@ -66,11 +75,11 @@ if (!$user->hasRight("agenda", "allactions", "read")) {
  * Actions
  */
 
-if ($action == 'builddoc') {
+if ($action == 'builddoc' && $user->hasRight("agenda", "allactions", "read")) {
 	require_once DOL_DOCUMENT_ROOT.'/core/modules/action/doc/pdf_standard_actions.class.php';
 
 	$cat = new pdf_standard_actions($db, $month, $year);
-	$result = $cat->write_file(0, $langs);
+	$result = $cat->write_file(null, $langs);
 	if ($result < 0) {
 		setEventMessages($cat->error, $cat->errors, 'errors');
 	}

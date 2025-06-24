@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,11 +38,11 @@ class Login
 	 */
 	public function __construct()
 	{
-		global $conf, $db;
+		global $db;
 		$this->db = $db;
 
-		//$conf->global->MAIN_MODULE_API_LOGIN_DISABLED = 1;
-		if (getDolGlobalString('MAIN_MODULE_API_LOGIN_DISABLED')) {
+		//$conf->global->API_DISABLE_LOGIN_API = 1;
+		if (getDolGlobalString('API_DISABLE_LOGIN_API')) {
 			throw new RestException(403, "Error login APIs are disabled. You must get the token from backoffice to be able to use APIs");
 		}
 	}
@@ -59,6 +60,8 @@ class Login
 	 * @param   string  $entity			Entity (when multicompany module is used). '' means 1=first company.
 	 * @param   int     $reset          Reset token (0=get current token, 1=ask a new token and canceled old token. This means access using current existing API token of user will fails: new token will be required for new access)
 	 * @return  array                   Response status and user token
+	 * @phan-return array{success:array{code:int,message:string,token:array{pass_encrypted:string,pass_encoding:string}|string,entity:int}}
+	 * @phpstan-return array{success:array{code:int,message:string,token:array{pass_encrypted:string,pass_encoding:string}|string,entity:int}}
 	 *
 	 * @throws RestException 403 Access denied
 	 * @throws RestException 500 System error
@@ -83,6 +86,8 @@ class Login
 	 * @param   string  $entity			Entity (when multicompany module is used). '' means 1=first company.
 	 * @param   int     $reset          Reset token (0=get current token, 1=ask a new token and canceled old token. This means access using current existing API token of user will fails: new token will be required for new access)
 	 * @return  array                   Response status and user token
+	 * @phan-return array{success:array{code:int,message:string,token:array{pass_encrypted:string,pass_encoding:string}|string,entity:int}}
+	 * @phpstan-return array{success:array{code:int,message:string,token:array{pass_encrypted:string,pass_encoding:string}|string,entity:int}}
 	 *
 	 * @throws RestException 403 Access denied
 	 * @throws RestException 500 System error
@@ -100,7 +105,7 @@ class Login
 		}
 
 		// Authentication mode
-		if (empty($dolibarr_main_authentication)) {
+		if (empty($dolibarr_main_authentication) || $dolibarr_main_authentication == 'openid_connect') {
 			$dolibarr_main_authentication = 'dolibarr';
 		}
 
@@ -137,7 +142,7 @@ class Login
 		$token = 'failedtogenerateorgettoken';
 
 		$tmpuser = new User($this->db);
-		$tmpuser->fetch(0, $login, 0, 0, $entity);
+		$tmpuser->fetch(0, $login, '0', 0, $entity);
 		if (empty($tmpuser->id)) {
 			throw new RestException(500, 'Failed to load user');
 		}
@@ -154,7 +159,7 @@ class Login
 			}
 
 			// Generate token for user
-			$token = dol_hash($login.uniqid().(!getDolGlobalString('MAIN_API_KEY') ? '' : $conf->global->MAIN_API_KEY), 1);
+			$token = dol_hash($login.uniqid().getDolGlobalString('MAIN_API_KEY'), '1');
 
 			// We store API token into database
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";

@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - exports
+ImportExportArea=Imports / Exports
 ExportsArea=Exports
 ImportArea=Увоз
 NewExport=Нов извоз
@@ -31,10 +32,10 @@ ExportCsvSeparator=Csv сепаратор на знаци
 ImportCsvSeparator=Csv сепаратор на знаци
 Step=Чекор
 FormatedImport=Помошник за увоз
-FormatedImportDesc1=Овој модул ви овозможува да ги ажурирате постоечките податоци или да додавате нови објекти во базата на податоци од датотека без техничко знаење, користејќи асистент.
+FormatedImportDesc1=Click here to use the assistant to update existing data or add new objects into the database from a file.
 FormatedImportDesc2=Првиот чекор е да изберете вид на податоци што сакате да ги увезете, потоа форматот на изворната датотека, потоа полињата што сакате да ги увезете.
 FormatedExport=Асистент за извоз
-FormatedExportDesc1=Овие алатки овозможуваат извоз на персонализирани податоци со помош на асистент, за да ви помогнат во процесот без да барате техничко знаење.
+FormatedExportDesc1=Click here to use the assistant to export data in a supported format
 FormatedExportDesc2=Првиот чекор е да изберете претходно дефинирана база на податоци, потоа кои полиња сакате да ги извезете и по кој редослед.
 FormatedExportDesc3=Кога се избираат податоците за извоз, можете да го изберете форматот на излезната датотека.
 Sheet=Лист
@@ -67,7 +68,7 @@ ChooseFormatOfFileToImport=Изберете го форматот на дато�
 ChooseFileToImport=Поставете датотека, а потоа кликнете на иконата %s за да ја изберете датотеката како изворна увозна датотека...
 SourceFileFormat=Изворниот формат на датотека
 FieldsInSourceFile=Полиња во изворната датотека
-FieldsInTargetDatabase=Целни полиња во базата на податоци на Dolibarr (задебелување=задолжително)
+FieldsInTargetDatabase=Target fields in Dolibarr database
 NoFields=Нема полиња
 MoveField=Преместете го бројот на колоната на полето %s
 ExampleOfImportFile=Пример_на_увозна_датотека
@@ -78,26 +79,26 @@ FieldsTarget=Насочени полиња
 FieldTarget=Целно поле
 FieldSource=Изворно поле
 NbOfSourceLines=Број на линии во изворната датотека
-NowClickToTestTheImport=Проверете дали форматот на датотеката (разграничувачи на полиња и низи) на вашата датотека се совпаѓа со прикажаните опции и дали сте ја испуштиле линијата за заглавие, или тие ќе бидат означени како грешки во следната симулација.<br>Кликнете на копчето „<b>%s</b>" за да извршите</s> проверете ја структурата/содржината на датотеката и симулирајте го процесот на увоз.<span class='notranslate'><br><b>Нема да се сменат податоци во вашата база на податоци</b>.
+NowClickToTestTheImport=Check that the file format (field and string delimiters) of your file matches the options shown and that you have omitted the header line, or these will be flagged as errors in the following simulation.<br>Click on the "<b>%s</b>" button to run a check of the file structure/contents and simulate the import process.<br><b>No data will be changed in your database</b>.
 RunSimulateImportFile=Изврши симулација за увоз
 FieldNeedSource=Ова поле бара податоци од изворната датотека
 SomeMandatoryFieldHaveNoSource=Некои задолжителни полиња немаат извор од датотеката со податоци
-InformationOnSourceFile=Информации за изворната датотека
-InformationOnTargetTables=Информации за целните полиња
+InformationOnSourceFile=Source file
+InformationOnTargetTables=Target fields
 SelectAtLeastOneField=Променете најмалку едно изворно поле во колоната полиња за извоз
 SelectFormat=Изберете го овој формат на датотека за увоз
 RunImportFile=Увезете податоци
 NowClickToRunTheImport=Проверете ги резултатите од симулацијата за увоз. Поправете ги сите грешки и повторно тестирајте.<br>Кога симулацијата не пријави грешки, можете да продолжите со увезување на податоците во базата на податоци.
 DataLoadedWithId=Увезените податоци ќе имаат дополнително поле во секоја табела со база на податоци со овој увозен ID: <b>%s</b>, за да може да се пребарува во случај на истражување на проблем поврзан со овој увоз.
-ErrorMissingMandatoryValue=Задолжителните податоци се празни во изворната датотека во колоната <b>%s<span class='notranslate'>b09a4b739f17f80z.
+ErrorMissingMandatoryValue=Mandatory data is empty in the source file in column <b>%s</b>.
 TooMuchErrors=Сè уште има <b>%s</b> други изворни линии, но има излезни линии бил ограничен.
 TooMuchWarnings=Сè уште има <b>%s</b> други изворни линии, но има излезни линии од изворот бил ограничен.
 EmptyLine=Празна линија (ќе биде отфрлена)
-CorrectErrorBeforeRunningImport=Вие <b>мора</b> да ги исправите сите грешки b0aee83365837fz>b0aee83365837fz<span class='notranslate'></b> notranslate'></b></span> го извршува дефинитивниот увоз.
+CorrectErrorBeforeRunningImport=You <b>must</b> correct all errors <b>before</b> running the definitive import.
 FileWasImported=Датотеката е увезена со број <b>%s</b>.
 YouCanUseImportIdToFindRecord=Можете да ги најдете сите увезени записи во вашата база на податоци со филтрирање на полето <b>import_key='%s'</b>.
-NbOfLinesOK=Број на линии без грешки и без предупредувања: <b>%s<span class='notranslate'>b09a4b78z0f1>f.
-NbOfLinesImported=Број на линии успешно увезени: <b>%s<span class='notranslate'></b></s.
+NbOfLinesOK=Number of lines with no errors and no warnings: <b>%s</b>.
+NbOfLinesImported=Number of lines successfully imported: <b>%s</b>.
 DataComeFromNoWhere=Вредноста за вметнување доаѓа од никаде во изворната датотека.
 DataComeFromFileFieldNb=Вредноста за вметнување доаѓа од колоната <b>%s</b> во изворната датотека.
 DataComeFromIdFoundFromRef=Вредноста што доаѓа од изворната датотека ќе се користи за да се најде id на матичниот објект што треба да се користи (така што објектот <b>%s</b> што има ref од изворната датотека мора да постои во базата на податоци).
@@ -108,10 +109,10 @@ DataCodeIDSourceIsInsertedInto=ИД на матичната линија, про
 SourceRequired=Вредноста на податоците е задолжителна
 SourceExample=Пример за можна вредност на податоците
 ExampleAnyRefFoundIntoElement=Пронајден реф за елементот <b>%s</b>
-ExampleAnyCodeOrIdFoundIntoDictionary=Кој било код (или идентификатор) пронајден во речникот <b>%s<span class='notranslate'>b09a4b739f17panf8z</s0
-CSVFormatDesc=<b>Вредност одвоена со запирка</b> формат на датотека (.csv).b0349This</'notranslate'></b> е формат на текстуална датотека каде полињата се одделени со сепаратор [ %s ]. Ако се најде раздвојувач во содржината на полето, полето се заокружува со кружен знак [ %s ]. Знак за бегство за да се избегне кружен знак е [ %s ].
-Excel95FormatDesc=<b>Excel</b> формат на датотека (.xls)<span class='notranslate'>b0342fccfda19>b0 Формат на Excel 95 (BIFF5).
-Excel2007FormatDesc=<b>Excel</b> формат на датотека (.xlsx)<span class='notranslate'>b0342fccfda19>z Формат на Excel 2007 (SpreadsheetML).
+ExampleAnyCodeOrIdFoundIntoDictionary=Any code (or id) found into dictionary <b>%s</b>
+CSVFormatDesc=<b>Comma Separated Value</b> file format (.csv).<br>This is a text file format where fields are separated by a separator [ %s ]. If separator is found inside a field content, field is rounded by round character [ %s ]. Escape character to escape round character is [ %s ].
+Excel95FormatDesc=<b>Excel</b> file format (.xls)<br>This is the native Excel 95 format (BIFF5).
+Excel2007FormatDesc=<b>Excel</b> file format (.xlsx)<br>This is the native Excel 2007 format (SpreadsheetML).
 TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab].
 ExportFieldAutomaticallyAdded=Полето <b>%s</b> беше автоматски додадено. Ќе избегнете слични линии да се третираат како дупликат запис (со додадено ова поле, сите линии ќе поседуваат сопствен ид и ќе се разликуваат).
 CsvOptions=Опции за формат CSV

@@ -99,7 +99,7 @@ AttachANewFile=Прикачете нова датотека/документ
 LinkedObject=Поврзан објект
 NbOfActiveNotifications=Број на известувања (бр. е-пошта на примачи)
 PredefinedMailTest=__(Здраво)__\nОва е тест пошта испратена на __EMAIL__.\nЛиниите се одделени со враќање на кочија.\n\n__SENDEREMAIL_SIGNATURE__
-PredefinedMailTestHtml=__(Здраво)__<br>Ова е <b>тестb09a4b739f17f испрати е-пошта</span8> до __EMAIL__ (тестот на зборот мора да биде со задебелени букви).<span class='notranslate'><br>Риниците се одделени со враќање на кочија.<br><br>__SENDEREMAIL_SIGNATURE__
+PredefinedMailTestHtml=__(Hello)__<br>This is a <b>test</b> mail sent to __EMAIL__ (the word test must be in bold).<br>The lines are separated by a carriage return.<br><br>__SENDEREMAIL_SIGNATURE__
 PredefinedMailContentContract=__(Здраво)__\n\n\n__(Со почит)__\n\n__SENDEREMAIL_SIGNATURE__
 PredefinedMailContentSendInvoice=__(Здраво)__\n\nВо прилог најдете фактура __REF__ \n\n__ONLINE_PAYMENT_TEXT_AND_URL__\n\n__(Со почит)__\n\n__SENDEREMAIL_SIGNATURE__
 PredefinedMailContentSendInvoiceReminder=__(Здраво)__\n\nСакаме да ве потсетиме дека фактурата __REF__ изгледа не е платена. За потсетување е приложена копија од фактурата.\n\n__ONLINE_PAYMENT_TEXT_AND_URL__\n\n__(Со почит)__\n\n__SENDEREMAIL_SIGNATURE__
@@ -112,7 +112,7 @@ PredefinedMailContentSendShipping=__(Здраво)__\n\nВо прилог нај
 PredefinedMailContentSendFichInter=__(Здраво)__\n\nВо прилог најдете интервенција __REF__\n\n\n__(Со почит)__\n\n__SENDEREMAIL_SIGNATURE__
 PredefinedMailContentLink=Можете да кликнете на врската подолу за да ја извршите вашата уплата доколку тоа веќе не е направено.\n\n%s\n\n
 PredefinedMailContentGeneric=__(Здраво)__\n\n\n__(Со почит)__\n\n__SENDEREMAIL_SIGNATURE__
-PredefinedMailContentSendActionComm=Потсетник за настан „__EVENT_LABEL__“ на __EVENT_DATE__ во __EVENT_TIME__<br><span class='notranslate'><br>, ве молиме не правете ја повторно пораката автоматски.
+PredefinedMailContentSendActionComm=Event reminder "__EVENT_LABEL__" on __EVENT_DATE__ at __EVENT_TIME__<br><br>This is an automatic message, please do not reply.
 DemoDesc=Dolibarr е компактен ERP/CRM кој поддржува неколку деловни модули. Демо прикажување на сите модули нема смисла бидејќи ова сценарио никогаш не се случува (достапни се неколку стотици). Значи, достапни се неколку демо профили.
 ChooseYourDemoProfil=Изберете го демо-профилот што најмногу одговара на вашите потреби...
 ChooseYourDemoProfilMore=...или изградете свој профил<br>(рачен избор на модул)
@@ -192,7 +192,7 @@ BugTracker=Следење на грешки
 SendNewPasswordDesc=Овој формулар ви овозможува да побарате нова лозинка. Ќе биде испратена на вашата адреса за е-пошта.<br>Промената ќе стапи на сила откако ќе кликнете на врската за потврда во е-поштата.<br> Проверете го вашето сандаче.
 EnterNewPasswordHere=Внесете ја вашата нова лозинка овде
 BackToLoginPage=Назад на страницата за најавување
-AuthenticationDoesNotAllowSendNewPassword=Режимот за автентикација е <b>%s</b></span'notranslate'>. ><br>Во овој режим, Dolibarr не може да ја знае ниту да ја промени вашата лозинка.<br>Контактирајте го вашиот системски администратор ако сакате да ја промените лозинката.
+AuthenticationDoesNotAllowSendNewPassword=Authentication mode is <b>%s</b>.<br>In this mode, Dolibarr can't know nor change your password.<br>Contact your system administrator if you want to change your password.
 EnableGDLibraryDesc=Инсталирајте или овозможете GD библиотека на вашата PHP инсталација за да ја користите оваа опција.
 ProfIdShortDesc=<b>ИД на професорот %s</b> е информација за трета страна. <br>На пример, за земја <b>%s</spanno><span class= '></b>, тоа е шифрата <b>%s<span class='nofaspan4'7>300.
 DolibarrDemo=Демо за ERP/CRM на Dolibarr

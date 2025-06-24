@@ -28,9 +28,10 @@ InvoiceProFormaDesc=<b> Профактурата </b>  е иста како ви
 InvoiceReplacement=Замена на фактура
 InvoiceReplacementShort=Замена
 InvoiceReplacementAsk=Замена на фактура за фактура
-InvoiceReplacementDesc=<b>Фактура за замена</b> се користи за комплетна замена на фактура без веќе примено плаќање.<span class='notranslate'notranslate'></b></span>. </span><br>Забелешка: може да се заменат само фактури без плаќање. Ако фактурата што ја замените сè уште не е затворена, таа автоматски ќе биде затворена за „напуштена“.
+InvoiceReplacementDesc=<b>Replacement invoice</b> is used to completely replace an invoice with no payment already received.<br><br>Note: Only invoices with no payment on it can be replaced. If the invoice you replace is not yet closed, it will be automatically closed to 'abandoned'.
 InvoiceAvoir=Кредитна белешка
-InvoiceAvoirAsk=Кредитна белешка за корекција на фактурата
+InvoiceAvoirAsk=Credit note for correction
+InvoiceAvoirAskCombo=Invoice to correct
 InvoiceAvoirDesc=<b>кредитната белешка</b> е негативна фактура што се користи за да се исправи фактот дека фактурата покажува износ што се разликува од износот што всушност платено (на пр. клиентот по грешка платил премногу, или нема да ја плати целата сума бидејќи некои производи се вратени).
 invoiceAvoirWithLines=Креирајте кредитна белешка со линии од почетната фактура
 invoiceAvoirWithPaymentRestAmount=Креирајте кредитна белешка со преостанатата неплатена фактура за потекло
@@ -169,6 +170,7 @@ BillTo=До
 ShippingTo=Испорака до
 ActionsOnBill=Дејства на фактура
 ActionsOnBillRec=Дејства на повторлива фактура
+InvoicesGeneratedFromRec=Generated invoices
 RecurringInvoiceTemplate=Шаблон / Повторлива фактура
 NoQualifiedRecurringInvoiceTemplateFound=Нема повторлива шаблонска фактура квалификувана за генерирање.
 FoundXQualifiedRecurringInvoiceTemplate=%s повторливи шаблонски фактури квалификувани за генерирање.
@@ -182,6 +184,7 @@ LastCustomersBills=Најнови %s фактури од клиенти
 LastSuppliersBills=Најнови %s фактури на продавачот
 AllBills=Сите фактури
 AllCustomerTemplateInvoices=Сите шаблонски фактури
+AllSupplierTemplateInvoices=All template invoices
 OtherBills=Други фактури
 DraftBills=Нацрт-фактури
 CustomersDraftInvoices=Клиент нацрт фактури
@@ -189,12 +192,12 @@ SuppliersDraftInvoices=Добавувачот нацрт фактури
 Unpaid=Неплатено
 ErrorNoPaymentDefined=Грешка Не е дефинирано плаќање
 ConfirmDeleteBill=Дали сте сигурни дека сакате да ја избришете оваа фактура?
-ConfirmValidateBill=Дали сте сигурни дека сакате да ја потврдите оваа фактура со референцата <b>%s<span class='notranslate'>b09a4b739f17 >?
-ConfirmUnvalidateBill=Дали сте сигурни дека сакате да ја промените фактурата <b>%s<span class='notranslate'></b> во нацрт статусот ?
-ConfirmClassifyPaidBill=Дали сте сигурни дека сакате да ја промените фактурата <b>%s<span class='notranslate'></b> статусот платен</s0 ?
-ConfirmCancelBill=Дали сте сигурни дека сакате да ја откажете фактурата <b>%s<span class='notranslate'>b09a4b739f17f8z>s?
+ConfirmValidateBill=Are you sure you want to validate this invoice with the reference <b>%s</b>?
+ConfirmUnvalidateBill=Are you sure you want to change invoice <b>%s</b> to draft status?
+ConfirmClassifyPaidBill=Are you sure you want to change invoice <b>%s</b> to status paid?
+ConfirmCancelBill=Are you sure you want to cancel invoice <b>%s</b>?
 ConfirmCancelBillQuestion=Зошто сакате да ја класифицирате оваа фактура „напуштена“?
-ConfirmClassifyPaidPartially=Дали сте сигурни дека сакате да ја промените фактурата <b>%s<span class='notranslate'></b> статусот платен</s ?
+ConfirmClassifyPaidPartially=Are you sure you want to change invoice <b>%s</b> to status paid?
 ConfirmClassifyPaidPartiallyQuestion=Оваа фактура не е целосно платена. Која е причината за затворање на оваа фактура?
 ConfirmClassifyPaidPartiallyReasonAvoir=Преостанат неплатен <b>(%s %s</span' class=>) ></b> е доделен попуст бидејќи плаќањето е извршено пред терминот. ДДВ-то го регулирам со кредитна белешка.
 ConfirmClassifyPaidPartiallyReasonDiscount=Преостанат неплатен <b>(%s %s</span' class=>) ></b> е доделен попуст бидејќи плаќањето е извршено пред терминот.
@@ -211,14 +214,14 @@ ConfirmClassifyPaidPartiallyReasonDiscountVatDesc=Во некои земји, о
 ConfirmClassifyPaidPartiallyReasonAvoirDesc=Користете го овој избор ако сите други не одговараат
 ConfirmClassifyPaidPartiallyReasonBadCustomerDesc=<b>лош клиент</b> е клиент кој одбива да го плати својот долг.
 ConfirmClassifyPaidPartiallyReasonProductReturnedDesc=Овој избор се користи кога плаќањето не е завршено бидејќи дел од производите се вратени
-ConfirmClassifyPaidPartiallyReasonBankChargeDesc=Неплатениот износ е <b>надоместоци за посредничка банка</b>, одземен директно од <span class='notranslate'873338s</span/b05e >точен износ</b> платен од Клиентот.
+ConfirmClassifyPaidPartiallyReasonBankChargeDesc=The unpaid amount is <b>intermediary bank fees</b>, deducted directly from the <b>correct amount</b> paid by the Customer.
 ConfirmClassifyPaidPartiallyReasonWithholdingTaxDesc=Неплатениот износ никогаш нема да се плати бидејќи е задржан данок
 ConfirmClassifyPaidPartiallyReasonOtherDesc=Користете го овој избор ако сите други не се соодветни, на пример во следнава ситуација:<br>- плаќањето не е завршено бидејќи некои производи се вратени назад<br> span>- износот што се бара премногу важен затоа што попустот е заборавен<br>Во сите случаи, износот што е претерано побаран мора да се коригира во сметководствениот систем со креирање кредитна белешка.
 ConfirmClassifyPaidPartiallyReasonBadSupplierDesc=<b>лош добавувач</b> е добавувач што одбиваме да го платиме.
 ConfirmClassifyAbandonReasonOther=Друго
 ConfirmClassifyAbandonReasonOtherDesc=Овој избор ќе се користи во сите други случаи. На пример затоа што планирате да креирате фактура за замена.
-ConfirmCustomerPayment=Дали го потврдувате овој внес за плаќање за <b>%s</b> <span class='notranslate'>%s</b></span=> 'notranslate'>%s?
-ConfirmSupplierPayment=Дали го потврдувате овој внес за плаќање за <b>%s</b> <span class='notranslate'>%s</b></span=> 'notranslate'>%s?
+ConfirmCustomerPayment=Do you confirm this payment input for <b>%s</b> %s?
+ConfirmSupplierPayment=Do you confirm this payment input for <b>%s</b> %s?
 ConfirmValidatePayment=Дали сте сигурни дека сакате да ја потврдите оваа исплата? Не може да се направи промена откако ќе се потврди плаќањето.
 ValidateBill=Потврдете ја фактурата
 UnvalidateBill=Поништи фактура
@@ -374,12 +377,12 @@ PaymentNumber=Број на плаќање
 RemoveDiscount=Отстранете го попустот
 WatermarkOnDraftBill=Воден печат на нацрт-фактури (ништо ако е празно)
 InvoiceNotChecked=Не е избрана фактура
-ConfirmCloneInvoice=Дали сте сигурни дека сакате да ја клонирате оваа фактура <b>%s<span class='notranslate'>b09a4b739f17f>z?
+ConfirmCloneInvoice=Are you sure you want to clone this invoice <b>%s</b>?
 DisabledBecauseReplacedInvoice=Дејството е оневозможено бидејќи фактурата е заменета
 DescTaxAndDividendsArea=Оваа област претставува резиме на сите плаќања направени за посебни трошоци. Овде се вклучени само записите со плаќања во текот на фиксната година.
 NbOfPayments=Број на плаќања
 SplitDiscount=Поделете го попустот на два дела
-ConfirmSplitDiscount=Дали сте сигурни дека сакате да го поделите овој попуст од <b>%sb09a4b739f17f8z <0 span class='notranslate'>%s во два помали попусти?
+ConfirmSplitDiscount=Are you sure you want to split this discount of <b>%s</b> %s into two smaller discounts?
 TypeAmountOfEachNewDiscount=Влезен износ за секој од двата дела:
 TotalOfTwoDiscountMustEqualsOriginal=Вкупниот број на двата нови попусти мора да биде еднаков на оригиналниот износ на попуст.
 ConfirmRemoveDiscount=Дали сте сигурни дека сакате да го отстраните овој попуст?
@@ -389,6 +392,7 @@ RelatedCustomerInvoices=Поврзани фактури на клиентите
 RelatedSupplierInvoices=Поврзани фактури на продавачите
 LatestRelatedBill=Најнова поврзана фактура
 WarningBillExist=Предупредување, една или повеќе фактури веќе постојат
+WarningInvoiceCanNeverBeEdited=Warning, once validated, you will no longer be able to modify this invoice
 MergingPDFTool=Алатка за спојување PDF
 AmountPaymentDistributedOnInvoice=Износот на плаќање распределен на фактура
 PaymentOnDifferentThirdBills=Дозволете плаќања на сметки од различни трети страни, но иста матична компанија
@@ -405,7 +409,7 @@ FrequencyPer_d=Секој %s дена
 FrequencyPer_m=Секој %s месеци
 FrequencyPer_y=На секои %s години
 FrequencyUnit=Фреквентна единица
-toolTipFrequency=Примери:<br><b>Поставка 7, денb09a4b739f17panvoice>дај нова на секои 7 дена<br><b>Поставете 3, месец<span class='notranslate'>b09a4b739f17f8z: дајте фактура на секои 3 месеци
+toolTipFrequency=Examples:<br><b>Set 7, Day</b>: give a new invoice every 7 days<br><b>Set 3, Month</b>: give a new invoice every 3 month
 NextDateToExecution=Датум за следната генерација на фактура
 NextDateToExecutionShort=Датум на следната генерација.
 DateLastGeneration=Датум на последната генерација
@@ -419,6 +423,7 @@ InvoiceAutoValidate=Потврдете ги фактурите автоматс�
 GeneratedFromRecurringInvoice=Генериран од шаблон повторлива фактура %s
 DateIsNotEnough=Датумот сè уште не е постигнат
 InvoiceGeneratedFromTemplate=Фактура %s генерирана од повторлива фактура за шаблон %s
+InvoiceGeneratedFromTemplateError=Error Invoice %s generated from recurring template invoice %s : %s
 GeneratedFromTemplate=Генерирана од шаблон фактура %s
 WarningInvoiceDateInFuture=Предупредување, датумот на фактурата е повисок од тековниот датум
 WarningInvoiceDateTooFarInFuture=Предупредување, датумот на фактурата е премногу далеку од тековниот датум
@@ -463,6 +468,11 @@ ValidateGeneratedDeposit=Потврдете го генерираниот деп
 DepositGenerated=Создаден депозит
 ErrorCanOnlyAutomaticallyGenerateADepositFromProposalOrOrder=Можете само автоматски да генерирате депозит од предлог или нарачка
 ErrorPaymentConditionsNotEligibleToDepositCreation=Избраните услови за плаќање не се подобни за автоматско создавање депозит
+# Paiement page
+DisplayOtherInvoicesToo = Display other invoices too
+DisplayCreditNotesToo = Display credit notes too
+HideOtherInvoices = Hide other invoices
+HideCreditNotes = Hide credit notes
 # PaymentType
 PaymentTypeVIR=банкарски трансфер
 PaymentTypeShortVIR=банкарски трансфер
@@ -495,6 +505,8 @@ IBANNumber=Број на IBAN сметка
 IBAN=IBAN
 CustomerIBAN=IBAN на клиентот
 SupplierIBAN=IBAN на продавачот
+DebitBankAccount = Direct debit bank account
+SetDebitBankAccount = Define direct debit bank account
 BIC=BIC/SWIFT
 BICNumber=BIC/SWIFT код
 ExtraInfos=Дополнителни информации
@@ -513,10 +525,12 @@ PrettyLittleSentence=Прифатете го износот на исплати�
 IntracommunityVATNumber=Внатре-заедница ДДВ ID
 PaymentByChequeOrderedTo=Плаќањата со чек (вклучувајќи данок) се плаќаат на %s, испратете до
 PaymentByChequeOrderedToShort=Се плаќа чек (вклучувајќи данок).
+StructuredCommunication=Structured communication
 SendTo=испратени до
 PaymentByTransferOnThisBankAccount=Плаќање со трансфер на следната банкарска сметка
 VATIsNotUsedForInvoice=* Неприменлив ДДВ член-293B на CGI
 VATIsNotUsedForInvoiceAsso=* Неприменлив ДДВ член-261-7 од CGI
+VATIsNotUsedReverseChargeProcedure=* Non applicable VAT art-259-1 of CGI
 LawApplicationPart1=Со примена на законот 80.335 од 05.12.80
 LawApplicationPart2=стоката останува сопственост на
 LawApplicationPart3=продавачот до целосна исплата на
@@ -571,7 +585,7 @@ PDFCrabeDescription=Фактура PDF шаблон Crabe. Целосен обр
 PDFSpongeDescription=Фактура PDF шаблон Сунѓер. Целосен образец за фактура
 PDFOctopusDescription=Шаблон PDF на фактура Октопод. Комплетен образец за фактура за фактури за ситуации
 TerreNumRefModelDesc1=Враќање број во формат %syymm-nnnn за стандардни фактури и %syymm-nnnn за кредитни белешки каде yy е мм година, е месец и nnnn е секвенцијален автоматско зголемување на бројот без прекин и без враќање на 0
-MarsNumRefModelDesc1=Вратете го бројот во формат %syymm-nnnn за стандардни фактури, %syymm-nnnn за замена на фактури class=', <span notranslate'>%s</span>yymm-nnnn за авансни фактури и %syymm-nnnn за кредитни белешки каде yy е година, mm е месец и nnnn автоматско- секвенција зголемување на бројот без прекин и без враќање на 0
+MarsNumRefModelDesc1=Return number in the format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for down payment invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequential auto-incrementing number with no break and no return to 0
 TerreNumRefModelError=Сметката што започнува со $syymm веќе постои и не е компатибилна со овој модел на низа. Отстранете го или преименувајте го за да го активирате овој модул.
 CactusNumRefModelDesc1=Вратете го бројот во формат %syymm-nnnn за стандардни фактури, %syymm-nnnn за кредитни белешки и %syymm-nnnn за авансни фактури каде yy е година, mm е месец и nnnn е секвенцијален автоматско зголемување на бројот без прекин и без враќање на 0
 EarlyClosingReason=Причина за рано затворање
@@ -605,6 +619,7 @@ DisabledBecauseNotLastInCycle=Следната ситуација веќе по�
 DisabledBecauseFinal=Оваа ситуација е конечна.
 situationInvoiceShortcode_AS=AS
 situationInvoiceShortcode_S=С
+CantBeNullOrPositive=The progress of a credit note invoice can't be null or positive
 CantBeLessThanMinPercent=Напредокот не може да биде помал од неговата вредност во претходната ситуација.
 NoSituations=Нема отворени ситуации
 InvoiceSituationLast=Конечна и општа фактура
@@ -625,7 +640,7 @@ TotalSituationInvoiceWithRetainedWarranty=Вкупно (вклучено дан�
 invoiceLineProgressError=Напредокот на линијата на фактурата не може да биде поголем или еднаков на следната линија на фактура
 updatePriceNextInvoiceErrorUpdateline=Грешка: ажурирајте ја цената на линијата на фактурата: %s
 ToCreateARecurringInvoice=За да креирате повторлива фактура за овој договор, прво креирајте ја оваа нацрт-фактура, потоа претворете ја во шаблон за фактура и дефинирајте ја фреквенцијата за генерирање идни фактури.
-ToCreateARecurringInvoiceGene=За да генерирате идни фактури редовно и рачно, само одете во менито <strong>%s - b0ecb9fz87f span> - <span class='notranslate'>%s</strong>.
+ToCreateARecurringInvoiceGene=To generate future invoices regularly and manually, just go on menu <strong>%s - %s - %s</strong>.
 ToCreateARecurringInvoiceGeneAuto=Ако треба автоматски да се генерираат такви фактури, побарајте од вашиот администратор да го овозможи и постави модулот <strong>%s</strong>. Имајте предвид дека и двата методи (рачни и автоматски) може да се користат заедно без ризик од дуплирање.
 DeleteRepeatableInvoice=Избриши шаблон фактура
 ConfirmDeleteRepeatableInvoice=Дали сте сигурни дека сакате да ја избришете шаблонот фактура?
@@ -661,6 +676,7 @@ MentionCategoryOfOperations0=Испорака на стоки
 MentionCategoryOfOperations1=Обезбедување на услуги
 MentionCategoryOfOperations2=Мешани - Испорака на стоки и обезбедување на услуги
 Salaries=Плати
+InvoiceSubtype=Invoice Subtype
 SalaryInvoice=Salary
 BillsAndSalaries=Сметки и плати
 CreateCreditNoteWhenClientInvoiceExists=Оваа опција е овозможена само кога постојат потврдени фактури за клиент или кога се користи константна INVOICE_CREDIT_NOTE_STANDALONE (корисно за некои земји)
@@ -669,3 +685,10 @@ SearchValidatedSupplierInvoicesWithDate=Пребарувајте неплате�
 SendEmailsRemindersOnSupplierInvoiceDueDate=Испратете потсетник по е-пошта за потврдени и неплатени фактури од добавувачи
 PaymentMadeForSeveralInvoices=Исплата е извршена за неколку фактури
 SituationInvoiceProgressCurrent=Напредок на фактурата
+CumulativeProgression=Cumulative progress
+INVOICE_ADD_EPC_QR_CODEPay=Scan this QR code to pay with a smartphone supporting payment with EPC QR code.
+InputValueIsNotAnNumber=Input value is not a number
+LimitDepositInvoicePossibilityForConsistency=Limit deposit invoice type to keep consistencies between lines (from proposals or orders)
+ExtPaymentID=External payment ID
+ExtPaymentSite=External payment Site
+CantConvertToReducAnInvoiceOfThisType=Cant convert to discount an invoice of this type

@@ -44,3 +44,4 @@ InterLineDuration=Intervención de duración de línea
 InterLineDesc=Intervención de descripción de línea
 ToCreateAPredefinedIntervention=Para crear una intervención predefinida o recurrente, cree una intervención común y conviértala en una plantilla de intervención
 ConfirmReopenIntervention=¿Está seguro de que desea volver a abrir la intervención <b> %s </b>?
+TypeContact_fichinter_external_CUSTOMER=Seguimiento del contacto con el cliente

@@ -4,7 +4,8 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2023-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2023-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,14 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/skill.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_skill.lib.php';
 
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('hrm', 'other', 'products'));  // why products?
@@ -82,6 +91,7 @@ include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'inc
 $permissiontoread   = $user->hasRight('hrm', 'all', 'read');
 $permissiontoadd    = $user->hasRight('hrm', 'all', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->hasRight('hrm', 'all', 'delete');
+
 $upload_dir = $conf->hrm->multidir_output[isset($object->entity) ? $object->entity : 1] . '/skill';
 
 // Security check (enable the most restrictive one)
@@ -126,29 +136,61 @@ if (empty($reshook)) {
 
 	$triggermodname = 'HRM_SKILL_MODIFY'; // Name of trigger action code to execute when we modify record
 
-
-	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
-	$noback = 1;
-	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
-
-	// action update on Skilldet
+	// action update on Skilldet must be done before real update action in core/actions_addupdatedelete.inc.php
 	$skilldetArray = GETPOST("descriptionline", "array:alphanohtml");
-
 	if (!$error) {
 		if (is_array($skilldetArray) && count($skilldetArray) > 0) {
-			foreach ($skilldetArray as $key => $SkValueToUpdate) {
-				$skilldetObj = new Skilldet($object->db);
-				$res = $skilldetObj->fetch($key);
-				if ($res > 0) {
-					$skilldetObj->description = $SkValueToUpdate;
-					$resupd = $skilldetObj->update($user);
-					if ($resupd <= 0) {
-						setEventMessage($langs->trans('errorUpdateSkilldet'));
+			if ($action == 'update' && $permissiontoadd) {
+				foreach ($skilldetArray as $key => $SkValueToUpdate) {
+					$skilldetObj = new Skilldet($object->db);
+					$res = $skilldetObj->fetch($key);
+					if ($res > 0) {
+						$skilldetObj->description = $SkValueToUpdate;
+						$resupd = $skilldetObj->update($user);
+						if ($resupd <= 0) {
+							setEventMessage($langs->trans('errorUpdateSkilldet'), 'errors');
+							$error++;
+						}
 					}
 				}
 			}
 		}
 	}
+
+	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
+	$noback = 1;
+	if (in_array($action, array("confirm_delete", "update"))) {
+		$noback = 0;
+	}
+
+	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
+
+	if (!$error) {
+		if (is_array($skilldetArray) && count($skilldetArray) > 0) {
+			if ($action == 'add' && $permissiontoadd) {
+				$arraySkill = $object->fetchLines();
+				'@phan-var-force Skilldet[] $arraySkill';
+				$index = 0;
+				foreach ($arraySkill as $skilldet) {
+					if ($skilldet->rankorder != 0) {
+						if (isset($skilldetArray[$index])) {
+							$SkValueToUpdate = $skilldetArray[$index];
+							$skilldet->description = !empty($SkValueToUpdate) ? $SkValueToUpdate : $skilldet->description;
+							$resupd = $skilldet->update($user);
+							if ($resupd <= 0) {
+								setEventMessage($langs->trans('errorUpdateSkilldet'), 'errors');
+							}
+						}
+						$index++;
+					}
+				}
+				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
+				exit;
+			}
+		}
+	}
+
+
 
 
 	// Actions when linking object each other
@@ -164,7 +206,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', null, 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
 		$object->setProject(GETPOSTINT('projectid'));
@@ -232,14 +274,21 @@ if ($action == 'create') {
 	//print $object->showInputField($val, $key, $value, '', '['']', '', 0);
 
 	print '</table>' . "\n";
+	print '<hr>';
+
+	print '<table class="border centpercent =">' . "\n";
+	for ($i = 1; $i <= $MaxNumberSkill; $i++) {
+		print '<tr><td class="titlefieldcreate tdtop">'. $langs->trans('Description') . ' ' . $langs->trans('rank') . ' ' . $i . '</td>';
+		print '<td class="valuefieldcreate"><textarea name="descriptionline[]" rows="5"  class="flat minwidth100" style="margin-top: 5px; width: 90%"></textarea></td>';
+	}
+	print '</table>';
 
 	print dol_get_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" name="add" value="' . dol_escape_htmltag($langs->trans("Create")) . '">';
 	print '&nbsp; ';
-
-	print '<input type="' . ($backtopage ? "submit" : "button") . '" class="button button-cancel" name="cancel" value="' . dol_escape_htmltag($langs->trans("Cancel")) . '"' . ($backtopage ? '' : ' onclick="history.go(-1)"') . '>'; // Cancel for create does not post form if we don't know the backtopage
+	print '<input type="' . ($backtopage ? "submit" : "button") . '" class="button button-cancel" name="cancel" value="' . dol_escape_htmltag($langs->trans("Cancel")) . '"' . ($backtopage ? '' : ' onclick="history.go(-1)"') . '>';
 	print '</div>';
 
 	print '</form>';
@@ -279,6 +328,7 @@ if (($id || $ref) && $action == 'edit') {
 
 	// SKILLDET
 	$SkilldetRecords = $object->fetchLines();
+	'@phan-var-force Skilldet[] $SkilldetRecords';
 
 	if (is_array($SkilldetRecords) && count($SkilldetRecords) == 0) {
 		$object->createSkills(1);
@@ -319,7 +369,7 @@ if (($id || $ref) && $action == 'edit') {
 				print '</td>';
 				print '<td class="valuefieldcreate">';
 				//              if (!empty($val['picto'])) {
-				//                  print img_picto('', $val['picto'], '', false, 0, 0, '', 'pictofixedwidth');
+				//                  print img_picto('', $val['picto'], '', 0, 0, 0, '', 'pictofixedwidth');
 				//              }
 				//              if (in_array($val['type'], array('int', 'integer'))) {
 				//                  $value = GETPOSTISSET($key) ? GETPOST($key, 'int') : $sk->$key;
@@ -337,7 +387,7 @@ if (($id || $ref) && $action == 'edit') {
 				if (empty($skilldetArray)) {
 					$value = GETPOSTISSET($key) ? GETPOST($key, $check) : $sk->$key;
 				} else {
-					$value=$skilldetArray[$sk->id];
+					$value = $skilldetArray[$sk->id];
 				}
 				//
 				//              } elseif ($val['type'] == 'price') {
@@ -395,22 +445,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->label), 'confirm_clone', $formquestion, 'yes', 1, 280);
 	}
 
-	// Confirmation of action xxxx
-	if ($action == 'xxx') {
-		$formquestion = array();
-		/*
-		$forcecombo=0;
-		if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
-		$formquestion = array(
-			// 'text' => $langs->trans("ConfirmClone"),
-			// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
-			// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-			// array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
-		);
-		*/
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
-	}
-
 	// Call Hook formConfirm
 	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -430,7 +464,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 
 	$morehtmlref = '<div class="refid">';
-	$morehtmlref.= $object->label;
+	$morehtmlref .= $object->label;
 	$morehtmlref .= '</div>';
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'rowid', $morehtmlref);
 
@@ -440,7 +474,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">' . "\n";
 
-	$object->fields['label']['visible']=0; // Already in banner
+	$object->fields['label']['visible'] = 0; // Already in banner
 	include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes. Fields from hook formObjectOptions and Extrafields.
@@ -541,7 +575,7 @@ if ($action != "create" && $action != "edit") {
 	}
 
 	// Initialize array of search criteria
-	$search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
+	$search_all = GETPOST('search_all', 'alphanohtml');
 	$search = array();
 	foreach ($objectline->fields as $key => $val) {
 		if (GETPOST('search_' . $key, 'alpha') !== '') {
@@ -566,7 +600,7 @@ if ($action != "create" && $action != "edit") {
 	foreach ($objectline->fields as $key => $val) {
 		// If $val['visible']==0, then we never show the field
 		if (!empty($val['visible'])) {
-			$visible = (int) dol_eval($val['visible'], 1, 1, '1');
+			$visible = (int) dol_eval((string) $val['visible'], 1, 1, '1');
 			$arrayfields['t.' . $key] = array(
 				'label' => $val['label'],
 				'checked' => (($visible < 0) ? 0 : 1),
@@ -581,9 +615,7 @@ if ($action != "create" && $action != "edit") {
 	$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
-	/*
-	 * View
-	 */
+	// View
 
 	$form = new Form($db);
 
@@ -606,6 +638,7 @@ if ($action != "create" && $action != "edit") {
 		$sql .= " WHERE 1 = 1 ";
 	}
 	$sql .= " AND fk_skill = ".((int) $id);
+	$sql .= " AND rankorder <> 0";
 
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
@@ -743,7 +776,7 @@ if ($action != "create" && $action != "edit") {
 				if ($key == 'status') {
 					print $objectline->getLibStatut(5);
 				} elseif ($key == 'rowid') {
-					print $objectline->showOutputField($val, $key, $objectline->id, '');
+					print $objectline->showOutputField($val, $key, (string) $objectline->id, '');
 					// ajout pencil
 					print '<a class="timeline-btn" href="' . DOL_MAIN_URL_ROOT . '/comm/action/skilldet_card.php?action=edit&id=' . $objectline->id . '"><i class="fa fa-pencil" title="' . $langs->trans("Modify") . '" ></i></a>';
 				} else {
@@ -852,7 +885,11 @@ if ($action != "create" && $action != "edit") {
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
 	// Show links to link elements
-	$linktoelem = $form->showLinkToObjectBlock($object, null, array('skill'));
+	$tmparray = $form->showLinkToObjectBlock($object, array(), array('skill'), 1);
+	$linktoelem = $tmparray['linktoelem'];
+	$htmltoenteralink = $tmparray['htmltoenteralink'];
+	print $htmltoenteralink;
+
 	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 	print '</div><div class="fichehalfright">';

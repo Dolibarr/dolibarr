@@ -6,6 +6,7 @@
  * Copyright (C) 2019-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +39,14 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'other', 'holiday', 'hrm'));
@@ -84,7 +93,7 @@ if (!$sortfield) {
 	$sortfield = "cp.ref";
 }
 
-$search_all          = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all          = trim(GETPOST('search_all', 'alphanohtml'));
 $search_ref          = GETPOST('search_ref', 'alphanohtml');
 $search_day_create   = GETPOST('search_day_create', 'int');
 $search_month_create = GETPOST('search_month_create', 'int');
@@ -120,18 +129,18 @@ $fieldstosearchall = array(
 );
 
 $arrayfields = array(
-	'cp.ref' => array('label' => $langs->trans("Ref"), 'checked' => 1),
-	'cp.fk_user' => array('label' => $langs->trans("Employee"), 'checked' => 1, 'position' => 20),
-	'cp.fk_validator' => array('label' => $langs->trans("ValidatorCP"), 'checked' => 1, 'position' => 30),
-	'cp.fk_type' => array('label' => $langs->trans("Type"), 'checked' => 1, 'position' => 35),
-	'duration' => array('label' => $langs->trans("NbUseDaysCPShort"), 'checked' => 1, 'position' => 38),
-	'cp.date_debut' => array('label' => $langs->trans("DateStart"), 'checked' => 1, 'position' => 40),
-	'cp.date_fin' => array('label' => $langs->trans("DateEnd"), 'checked' => 1, 'position' => 42),
-	'cp.date_valid' => array('label' => $langs->trans("DateValidation"), 'checked' => 1, 'position' => 60),
-	'cp.date_approval' => array('label' => $langs->trans("DateApprove"), 'checked' => 1, 'position' => 70),
-	'cp.date_create' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
-	'cp.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 501),
-	'cp.statut' => array('label' => $langs->trans("Status"), 'checked' => 1, 'position' => 1000),
+	'cp.ref' => array('label' => $langs->trans("Ref"), 'checked' => '1'),
+	'cp.fk_user' => array('label' => $langs->trans("Employee"), 'checked' => '1', 'position' => 20),
+	'cp.fk_validator' => array('label' => $langs->trans("ValidatorCP"), 'checked' => '1', 'position' => 30),
+	'cp.fk_type' => array('label' => $langs->trans("Type"), 'checked' => '1', 'position' => 35),
+	'duration' => array('label' => $langs->trans("NbUseDaysCPShort"), 'checked' => '1', 'position' => 38),
+	'cp.date_debut' => array('label' => $langs->trans("DateStart"), 'checked' => '1', 'position' => 40),
+	'cp.date_fin' => array('label' => $langs->trans("DateEnd"), 'checked' => '1', 'position' => 42),
+	'cp.date_valid' => array('label' => $langs->trans("DateValidation"), 'checked' => '1', 'position' => 60),
+	'cp.date_approval' => array('label' => $langs->trans("DateApprove"), 'checked' => '1', 'position' => 70),
+	'cp.date_create' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
+	'cp.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => '0', 'position' => 501),
+	'cp.statut' => array('label' => $langs->trans("Status"), 'checked' => '1', 'position' => 1000),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -223,8 +232,6 @@ if (empty($reshook)) {
 }
 
 
-
-
 /*
  * View
  */
@@ -239,7 +246,7 @@ $holidaystatic = new Holiday($db);
 // Update sold
 $result = $object->updateBalance();
 
-$title = $langs->trans('CPTitreMenu');
+$title = $langs->trans('Holidays');
 $help_url = 'EN:Module_Holiday';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-holiday page-list');
@@ -357,7 +364,7 @@ if (!$user->hasRight('holiday', 'readall')) {
 	$sql .= ' AND cp.fk_user IN ('.$db->sanitize(implode(',', $childids)).')';
 }
 if ($id > 0) {
-	$sql .= " AND cp.fk_user IN (".$db->sanitize($id).")";
+	$sql .= " AND cp.fk_user = ".((int) $id);
 }
 
 // Add where from extra fields
@@ -535,9 +542,6 @@ if ($id > 0) {		// For user tab
 
 	print '</div>';
 } else {
-	$title = $langs->trans("ListeCP");
-
-
 	$newcardbutton = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
@@ -576,9 +580,6 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array('type' => $type);
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print '</div>';
 }
 
@@ -626,7 +627,7 @@ if (!empty($arrayfields['cp.fk_user']['checked'])) {
 	}
 
 	print '<td class="liste_titre maxwidthonsmartphone left">';
-	print $form->select_dolusers($search_employee, "search_employee", 1, "", $disabled, $include, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth125');
+	print $form->select_dolusers($search_employee, "search_employee", 1, null, $disabled, $include, '', '0', 0, 0, $morefilter, 0, '', 'maxwidth125');
 	print '</td>';
 }
 
@@ -635,13 +636,13 @@ if (!empty($arrayfields['cp.fk_validator']['checked'])) {
 	if ($user->hasRight('holiday', 'readall')) {
 		print '<td class="liste_titre maxwidthonsmartphone left">';
 		$validator = new UserGroup($db);
-		$excludefilter = $user->admin ? '' : 'u.rowid <> '.$user->id;
+		$excludefilter = $user->admin ? '' : 'u.rowid <> '.((int) $user->id);
 		$valideurobjects = $validator->listUsersForGroup($excludefilter, 1);
 		$valideurarray = array();
 		foreach ($valideurobjects as $val) {
 			$valideurarray[$val] = $val;
 		}
-		print $form->select_dolusers($search_valideur, "search_valideur", 1, "", 0, $valideurarray, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth125');
+		print $form->select_dolusers($search_valideur, "search_valideur", 1, null, 0, $valideurarray, '', '0', 0, 0, $morefilter, 0, '', 'maxwidth125');
 		print '</td>';
 	} else {
 		print '<td class="liste_titre">&nbsp;</td>';
@@ -820,7 +821,7 @@ $listhalfday = array('morning' => $langs->trans("Morning"), "afternoon" => $lang
 // If we ask a dedicated card and not allow to see it, we force on user.
 if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) {
 	$langs->load("errors");
-	print '<tr class="oddeven opacitymediuem"><td colspan="10">'.$langs->trans("NotEnoughPermissions").'</td></tr>';
+	print '<tr class="oddeven opacitymedium"><td colspan="10">'.$langs->trans("NotEnoughPermissions").'</td></tr>';
 	$result = 0;
 } elseif ($num > 0 && !empty($mysoc->country_id)) {
 	// Lines
@@ -885,6 +886,7 @@ if ($id && !$user->hasRight('holiday', 'readall') && !in_array($id, $childids)) 
 
 			$holidaystatic->fk_type = empty($typeleaves[$obj->fk_type]['rowid']) ? 0 : $typeleaves[$obj->fk_type]['rowid'];
 
+			$arraydata = array();
 			// Output Kanban
 			if ($massactionbutton || $massaction) {
 				$selected = 0;
@@ -1126,7 +1128,7 @@ function showMyBalance($holiday, $user_id)
 		$nb_holiday += $nb_type;
 		$out .= ' - '.$val['label'].': <strong>'.($nb_type ? price2num($nb_type) : 0).'</strong><br>';
 	}
-	$out = $langs->trans('SoldeCPUser', round($nb_holiday, 5)).'<br>'.$out;
+	$out = $langs->trans('SoldeCPUser', (string) round($nb_holiday, 5)).'<br>'.$out;
 
 	return $out;
 }

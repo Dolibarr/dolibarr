@@ -246,7 +246,6 @@ CleanFixHistory=Elimine el código de contabilidad de las líneas que no existen
 CleanHistory=Restablecer todos los enlaces para el año seleccionado
 PredefinedGroups=Grupos predefinidos
 ValueNotIntoChartOfAccount=Este valor de la cuenta contable no existe en el plan de cuentas
-SaleEECWithVAT=Venta en CEE con IVA no nulo, por lo que suponemos que NO se trata de una venta intracomunitaria y la cuenta sugerida es la cuenta estándar de producto.
 ForbiddenTransactionAlreadyExported=Prohibido: La transacción ha sido validada y/o exportada.
 ForbiddenTransactionAlreadyValidated=Prohibido: La transacción ha sido validada.
 LetteringAuto=conciliar automáticamente

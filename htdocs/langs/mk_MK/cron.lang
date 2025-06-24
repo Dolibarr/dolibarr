@@ -63,8 +63,8 @@ CronStatusInactiveBtn=Disable
 CronTaskInactive=Оваа работа е оневозможена (не е закажана)
 CronId=Id
 CronClassFile=Име на датотека со класа
-CronModuleHelp=Име на директориумот на модулите Dolibarr (исто така работи со надворешен Dolibarr модул). <BR> На пример, да се повика методот на преземање на Dolibarr производ објект /htdocs/<u>производ<span class='notranslate'87z4b0cada </span>/class/product.class.php, вредноста за модулот е<br><i>производ</i>
-CronClassFileHelp=Релативната патека и името на датотеката што треба да се вчита (патот е во однос на root директориумот на веб-серверот). <BR> На пример, да се повика методот на преземање на Dolibarr Product објект htdocs/product/class/<u>product.class.php<s class='notranslate'></u></span>, вредноста за името на датотеката на класата е<br><i>product/cla .class.php</i>
+CronModuleHelp=Name of Dolibarr module directory (also work with external Dolibarr module). <BR> For example to call the fetch method of Dolibarr Product object /htdocs/<u>product</u>/class/product.class.php, the value for module is<br><i>product</i>
+CronClassFileHelp=The relative path and file name to load (path is relative to web server root directory). <BR> For example to call the fetch method of Dolibarr Product object htdocs/product/class/<u>product.class.php</u>, the value for class file name is<br><i>product/class/product.class.php</i>
 CronObjectHelp=Името на објектот што треба да се вчита. <BR> На пример, за да го повикате методот на преземање на Dolibarr Product објектот /htdocs/product/class/product.class.php, вредноста за името на датотеката на класата е<br><i>Производ</i>
 CronMethodHelp=Методот на објект за лансирање. <BR> На пример, за да се повика методот на преземање на Dolibarr Product објект /htdocs/product/class/product.class.php, вредноста за методот е <br><i>земи</i>
 CronArgsHelp=Аргументи на методот. <BR> На пример, за да го повикате методот на преземање на Dolibarr Product објект /htdocs/product/class/product.class.php, вредноста за параметрите може да биде<br><i>0, ProductRef</i>

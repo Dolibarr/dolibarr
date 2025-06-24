@@ -2,7 +2,8 @@
 /* Copyright (C) 2017		Franck Moreau				<franck.moreau@theobald.com>
  * Copyright (C) 2018-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,14 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $loanid = GETPOSTINT('loanid');
 $action = GETPOST('action', 'aZ09');
 
@@ -66,11 +75,14 @@ if ($object->paid > 0 && count($echeances->lines) == 0) {
 	$pay_without_schedule = 0;
 }
 
+$permissiontoadd = $user->hasRight('loan', 'write');
+
+
 /*
  * Actions
  */
 
-if ($action == 'createecheancier' && empty($pay_without_schedule)) {
+if ($action == 'createecheancier' && empty($pay_without_schedule) && $permissiontoadd) {
 	$db->begin();
 	$i = 1;
 	while ($i < $object->nbterm + 1) {
@@ -85,7 +97,7 @@ if ($action == 'createecheancier' && empty($pay_without_schedule)) {
 		$new_echeance->datec = dol_now();
 		$new_echeance->tms = dol_now();
 		$new_echeance->datep = $date;
-		$new_echeance->amount_capital = $mens - (float) $int;
+		$new_echeance->amount_capital = (float) $mens - (float) $int;
 		$new_echeance->amount_insurance = $insurance;
 		$new_echeance->amount_interest = $int;
 		$new_echeance->fk_typepayment = 3;
@@ -94,9 +106,9 @@ if ($action == 'createecheancier' && empty($pay_without_schedule)) {
 		$new_echeance->fk_user_modif = $user->id;
 		$result = $new_echeance->create($user);
 		if ($result < 0) {
-			setEventMessages($new_echeance->error, $echeance->errors, 'errors');
+			setEventMessages($new_echeance->error, $new_echeance->errors, 'errors');
 			$db->rollback();
-			unset($echeances->lines);
+			$echeances->lines = [];
 			break;
 		}
 		$echeances->lines[] = $new_echeance;
@@ -107,19 +119,19 @@ if ($action == 'createecheancier' && empty($pay_without_schedule)) {
 	}
 }
 
-if ($action == 'updateecheancier' && empty($pay_without_schedule)) {
+if ($action == 'updateecheancier' && empty($pay_without_schedule) && $permissiontoadd) {
 	$db->begin();
 	$i = 1;
 	while ($i < $object->nbterm + 1) {
 		$mens = price2num(GETPOST('mens'.$i));
 		$int = price2num(GETPOST('hi_interets'.$i));
-		$id = GETPOST('hi_rowid'.$i);
+		$id = GETPOSTINT('hi_rowid'.$i);
 		$insurance = price2num(GETPOST('hi_insurance'.$i));
 
 		$new_echeance = new LoanSchedule($db);
 		$new_echeance->fetch($id);
 		$new_echeance->tms = dol_now();
-		$new_echeance->amount_capital = $mens - (float) $int;
+		$new_echeance->amount_capital = (float) $mens - (float) $int;
 		$new_echeance->amount_insurance = $insurance;
 		$new_echeance->amount_interest = $int;
 		$new_echeance->fk_user_modif = $user->id;
@@ -139,13 +151,15 @@ if ($action == 'updateecheancier' && empty($pay_without_schedule)) {
 	}
 }
 
+
 /*
  * View
  */
+
 $form = new Form($db);
 $formproject = new FormProjets($db);
 
-$title = $langs->trans("Loan").' - '.$langs->trans("Card");
+$title = $langs->trans("Loan").' - '.$langs->trans("FinancialCommitment");
 $help_url = 'EN:Module_Loan|FR:Module_Emprunt';
 
 llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-loan page-card_schedule');
@@ -171,11 +185,11 @@ if (isModEnabled('project')) {
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-				$morehtmlref .= $formproject->select_projects(-1, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+				$morehtmlref .= $formproject->select_projects(-1, (string) $object->fk_project, 'projectid', 16, 0, 1, 0, 1, 0, 0, '', 1);
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, -1, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, -1, (string) $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 			}
 		}
 	} else {
@@ -200,34 +214,45 @@ dol_banner_tab($object, 'loanid', $linkback, 1, 'rowid', 'ref', $morehtmlref, ''
 ?>
 <script type="text/javascript">
 $(document).ready(function() {
-	$('[name^="mens"]').focusout(function() {
-		var echeance=$(this).attr('ech');
-		var mens=price2numjs($(this).val());
-		var idcap=echeance-1;
+	var timeout = null;
+	var delay = 750;   // 0.75 seconds
+	$('[name^="mens"]').keyup(function() {
+		clearTimeout(timeout);
+		timeout = setTimeout(() => {
+			var echeance = $(this).attr('ech');
+			var mens = $(this).val();
+			calculateMens(echeance, mens);
+		}, delay);
+	});
+	function calculateMens(echeance, mens) {
+		var table = $('[name^="mens"]');
+		var idcap = echeance-1;
 		idcap = '#hi_capital'+idcap;
-		var capital=price2numjs($(idcap).val());
+		var capital = price2numjs($(idcap).val());
 		console.log("Change monthly amount echeance="+echeance+" idcap="+idcap+" capital="+capital);
 		$.ajax({
-			  method: "GET",
-			  dataType: 'json',
-			  url: 'calcmens.php',
-			  data: { echeance: echeance, mens: mens, capital:capital, rate:<?php echo $object->rate / 100; ?>, nbterm: <?php echo $object->nbterm; ?>, token: '<?php echo currentToken(); ?>' },
-			  success: function(data) {
+			method: "GET",
+			dataType: 'json',
+			url: 'calcmens.php',
+			data: {
+				echeance: echeance,
+				mens: price2numjs(mens),
+				capital: capital,
+				rate: <?php echo $object->rate / 100; ?>,
+				nbterm: <?php echo $object->nbterm; ?>,
+				token: '<?php echo currentToken(); ?>'
+			},
+			success: function(data) {
 				$.each(data, function(index, element) {
-					var idcap_res='#hi_capital'+index;
-					var idcap_res_srt='#capital'+index;
-					var interet_res='#hi_interets'+index;
-					var interet_res_str='#interets'+index;
-					var men_res='#mens'+index;
-					$(idcap_res).val(element.cap_rest);
-					$(idcap_res_srt).text(element.cap_rest_str);
-					$(interet_res).val(element.interet);
-					$(interet_res_str).text(element.interet_str);
-					$(men_res).val(element.mens);
+					$('#hi_capital'+index).val(element.cap_rest);
+					$('#capital'+index).text(element.cap_rest_str);
+					$('#hi_interets'+index).val(element.interet);
+					$('#interets'+index).text(element.interet_str);
+					$('#mens'+index).val(element.mens);
 				});
 			}
 		});
-	});
+	}
 });
 </script>
 <?php
@@ -288,7 +313,7 @@ if ($object->nbterm > 0 && count($echeances->lines) == 0) {
 		print '<td class="center" id ="date'.$i.'"><input type="hidden" name="hi_date'.$i.'" id ="hi_date'.$i.'" value="'.dol_time_plus_duree($object->datestart, $i - 1, 'm').'">'.dol_print_date(dol_time_plus_duree($object->datestart, $i - 1, 'm'), 'day').'</td>';
 		print '<td class="center amount" id="insurance'.$i.'">'.price($insu, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_insurance'.$i.'" id ="hi_insurance'.$i.'" value="'.$insu.'">';
 		print '<td class="center amount" id="interets'.$i.'">'.price($int, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_interets'.$i.'" id ="hi_interets'.$i.'" value="'.$int.'">';
-		print '<td class="center"><input class="width75 right" name="mens'.$i.'" id="mens'.$i.'" value="'.$mens.'" ech="'.$i.'"></td>';
+		print '<td class="center"><input class="width75 right" name="mens'.$i.'" id="mens'.$i.'" value="'.price($mens).'" ech="'.$i.'"></td>';
 		print '<td class="center amount" id="capital'.$i.'">'.price($cap_rest).'</td><input type="hidden" name="hi_capital'.$i.'" id ="hi_capital'.$i.'" value="'.$cap_rest.'">';
 		print '</tr>'."\n";
 		$i++;
@@ -313,7 +338,7 @@ if ($object->nbterm > 0 && count($echeances->lines) == 0) {
 		print '<td class="center amount" id="insurance'.$i.'">'.price($insu, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_insurance'.$i.'" id ="hi_insurance'.$i.'" value="'.$insu.'">';
 		print '<td class="center amount" id="interets'.$i.'">'.price($int, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="hi_interets'.$i.'" id ="hi_interets'.$i.'" value="'.$int.'">';
 		if (empty($line->fk_bank)) {
-			print '<td class="center"><input class="right width75" name="mens'.$i.'" id="mens'.$i.'" value="'.$mens.'" ech="'.$i.'"></td>';
+			print '<td class="center"><input class="right width75" name="mens'.$i.'" id="mens'.$i.'" value="'.price($mens).'" ech="'.$i.'"></td>';
 		} else {
 			print '<td class="center amount">'.price($mens, 0, '', 1, -1, -1, $conf->currency).'</td><input type="hidden" name="mens'.$i.'" id ="mens'.$i.'" value="'.$mens.'">';
 		}

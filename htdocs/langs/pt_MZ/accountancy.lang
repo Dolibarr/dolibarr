@@ -163,7 +163,6 @@ WithoutValidAccount=Sem conta dedicada válida
 ValueNotIntoChartOfAccount=Este valor da conta contábil não existe no gráfico de conta
 AccountRemovedFromGroup=Conta removida do grupo
 SaleEEC=Venda na CEE
-SaleEECWithVAT=A venda na CEE com um IVA não nulo; portanto, supomos que essa NÃO seja uma venda intracomunitária e a conta sugerida é a conta padrão do produto.
 Range=Faixa da conta da Contabilidade
 ConfirmMassDeleteBookkeepingWriting=Confirmação exclusão em massa
 SomeMandatoryStepsOfSetupWereNotDone=Algumas etapas obrigatórias de configuração não foram feitas, preencha-as

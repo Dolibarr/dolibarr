@@ -13,8 +13,8 @@ PHPSupportPOSTGETOk=Овој PHP поддржува променливи POST и
 PHPSupportPOSTGETKo=Можно е вашето поставување на PHP да не поддржува променливи POST и/или GET. Проверете го параметарот <b>variables_order</b> во php.ini.
 PHPSupportSessions=Овој PHP поддржува сесии.
 PHPSupport=Овој PHP поддржува функции %s.
-PHPMemoryOK=Вашата PHP макс меморија за сесија е поставена на <b>%s<span class='notranslate'>b09a4b739f17panf8z</s0. Ова треба да биде доволно.
-PHPMemoryTooLow=Вашата PHP макс меморија за сесија е поставена на <b>%sb09a4b739f17panf8z0</s0. Ова е премногу ниско. Променете ја вашата <span class='notranslate'><b>php.ini</b> за да поставите b0aee833658spanlimity<0aee833658spanlimity<0aee833658spanlimity>me ='notranslate'></b> параметар до најмалку <b>%s<span class='notranslate'8 /span> бајти.
+PHPMemoryOK=Your PHP max session memory is set to <b>%s</b>. This should be enough.
+PHPMemoryTooLow=Your PHP max session memory is set to <b>%s</b> bytes. This is too low. Change your <b>php.ini</b> to set <b>memory_limit</b> parameter to at least <b>%s</b> bytes.
 Recheck=Кликнете овде за подетален тест
 ErrorPHPDoesNotSupportSessions=Вашата PHP инсталација не поддржува сесии. Оваа функција е потребна за да се дозволи Dolibarr да работи. Проверете го поставувањето на PHP и дозволите на директориумот за сесии.
 ErrorPHPDoesNotSupport=Вашата PHP инсталација не поддржува функции %s.
@@ -77,7 +77,7 @@ SetupEnd=Крај на поставувањето
 SystemIsInstalled=Оваа инсталација е завршена.
 SystemIsUpgraded=Dolibarr е успешно надграден.
 YouNeedToPersonalizeSetup=Треба да го конфигурирате Dolibarr да одговара на вашите потреби (изглед, карактеристики, ...). За да го направите ова, ве молиме следете ја врската подолу:
-AdminLoginCreatedSuccessfuly=Најава на администраторот на Dolibarr '<b>%s<span class='notranslate'></b> е успешно креирана</span'span.
+AdminLoginCreatedSuccessfuly=Dolibarr administrator login '<b>%s</b>' created successfully.
 GoToDolibarr=Одете во Долибар
 GoToSetupArea=Одете во Dolibarr (област за поставување)
 MigrationNotFinished=Верзијата на базата на податоци не е целосно ажурирана: повторно извршете го процесот на надградба.
@@ -108,15 +108,15 @@ DatabaseVersion=Верзија на база на податоци
 ServerVersion=Верзија на серверот за база на податоци
 YouMustCreateItAndAllowServerToWrite=Мора да го креирате овој директориум и да дозволите веб-серверот да запише во него.
 DBSortingCollation=Редоследот на сортирање знаци
-YouAskDatabaseCreationSoDolibarrNeedToConnect=Избравте создавање база на податоци <b>%s</b></spanli>, но потребно е ова, за да се поврзете на серверот <span class='notranslate'><b>%s</b> со супер корисник <b>%s</b> дозволи.
-YouAskLoginCreationSoDolibarrNeedToConnect=Избравте создавање корисник на база на податоци <b>%s</b></spanli>, но треба да се поврзе со серверот <span class='notranslate'><b>%s</b> <span class> со супер корисник ='notranslate'><b>%s</b> дозволи.
+YouAskDatabaseCreationSoDolibarrNeedToConnect=You selected create database <b>%s</b>, but for this, Dolibarr needs to connect to server <b>%s</b> with super user <b>%s</b> permissions.
+YouAskLoginCreationSoDolibarrNeedToConnect=You selected create database user <b>%s</b>, but for this, Dolibarr needs to connect to server <b>%s</b> with super user <b>%s</b> permissions.
 BecauseConnectionFailedParametersMayBeWrong=Врската со базата на податоци не успеа: параметрите на домаќинот или супер корисникот мора да се погрешни.
 OrphelinsPaymentsDetectedByMethod=Откриено плаќање за деца без родители со методот %s
 RemoveItManuallyAndPressF5ToContinue=Отстранете го рачно и притиснете F5 за да продолжите.
 FieldRenamed=Полето е преименувано
 IfLoginDoesNotExistsCheckCreateUser=Ако корисникот сè уште не постои, мора да ја проверите опцијата „Креирај корисник“
-ErrorConnection=Сервер "<b>%s</b>", име на базата на податоци "<span> 'notranslate'><b></span>%s</b>", најавете се „<span class33f4058 span>%s</b>", или лозинката за базата на податоци може да е погрешна или верзијата на клиентот PHP може да е премногу стара во споредба со верзијата на базата на податоци .
-InstallChoiceRecommanded=Препорачан избор за инсталирање верзија <b>%s</b> од вашата тековна верзија <span> class='notranslate'><b>%s</b>
+ErrorConnection=Server "<b>%s</b>", database name "<b>%s</b>", login "<b>%s</b>", or database password may be wrong or the PHP client version may be too old compared to the database version.
+InstallChoiceRecommanded=Recommended choice to install version <b>%s</b> from your current version <b>%s</b>
 InstallChoiceSuggested=<b>Изборот за инсталирање предложен од инсталаторот</b>.
 MigrateIsDoneStepByStep=Целната верзија (%s) има празнина од неколку верзии. Волшебникот за инсталација ќе се врати за да предложи понатамошна миграција штом оваа ќе заврши.
 CheckThatDatabasenameIsCorrect=Проверете дали името на базата на податоци "<b>%s</b>" е точно.
@@ -168,7 +168,7 @@ MigrationContractsEmptyDatesUpdateSuccess=Исправката на датумо
 MigrationContractsEmptyDatesNothingToUpdate=Нема празен датум на договор за корекција
 MigrationContractsEmptyCreationDatesNothingToUpdate=Нема датум за создавање договор за корекција
 MigrationContractsInvalidDatesUpdate=Корекција на договорот со датумот на лоша вредност
-MigrationContractsInvalidDateFix=Точен договор %s (Датум на договор=%s, датум на започнување на услугата min=<span class='notranslate'>b0ecb2ec87f4 >)
+MigrationContractsInvalidDateFix=Correct contract %s (Contract date=%s, Starting service date min=%s)
 MigrationContractsInvalidDatesNumber=%s договорите се изменети
 MigrationContractsInvalidDatesNothingToUpdate=Нема датум со лоша вредност за корекција
 MigrationContractsIncoherentCreationDateUpdate=Корекција на датумот на создавање договор со лоша вредност

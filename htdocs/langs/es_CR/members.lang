@@ -99,7 +99,6 @@ TurnoverOrBudget=Facturación (para una empresa) o Presupuesto (para una fundaci
 MembersStatisticsByProperties=Estadísticas de miembros por naturaleza
 NoEmailSentToMember=No se han enviado correos al miembro
 EmailSentToMember=Correo enviado al miembro a %s
-SendReminderForExpiredSubscriptionTitle=Enviar un recordatorio por correo para la suscripción expirada
 YouMayFindYourInvoiceInThisEmail=Puede encontrar su factura adjunta a este correo
 XMembersClosed=%s miembro(s) cerrado
 XExternalUserCreated=%s usuario(s) externos creados

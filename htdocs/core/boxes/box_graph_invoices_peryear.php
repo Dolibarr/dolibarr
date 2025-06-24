@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,13 +75,13 @@ class box_graph_invoices_peryear extends ModeleBoxes
 		$text = $langs->trans("Turnover", $max);
 		$this->info_box_head = array(
 			'text' => $text,
-			'limit'=> dol_strlen($text),
-			'graph'=> 1,
-			'sublink'=>'',
-			'subtext'=>$langs->trans("Filter"),
-			'subpicto'=>'filter.png',
-			'subclass'=>'linkobject boxfilter',
-			'target'=>'none'	// Set '' to get target="_blank"
+			'limit' => dol_strlen($text),
+			'graph' => 1,
+			'sublink' => '',
+			'subtext' => $langs->trans("Filter"),
+			'subpicto' => 'filter.png',
+			'subclass' => 'linkobject boxfilter',
+			'target' => 'none'	// Set '' to get target="_blank"
 		);
 
 		$dir = ''; // We don't need a path because image file will not be saved into disk
@@ -96,17 +97,17 @@ class box_graph_invoices_peryear extends ModeleBoxes
 		if ($user->hasRight('facture', 'lire')) {
 			$mesg = '';
 
-			$param_year = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_year';
-			$param_showtot = 'DOLUSERCOOKIE_box_'.$this->boxcode.'_showtot';
+			$param_year = 'DOLUSER_box_'.$this->boxcode.'_year';
+			$param_showtot = 'DOLUSER_box_'.$this->boxcode.'_showtot';
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 			$autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
-			if (in_array('DOLUSERCOOKIE_box_'.$this->boxcode, $autosetarray)) {
+			if (in_array('DOLUSER_box_'.$this->boxcode, $autosetarray)) {
 				$endyear = GETPOSTINT($param_year);
 				$showtot = GETPOST($param_showtot, 'alpha');
 			} else {
-				$tmparray = json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode], true);
+				$tmparray = json_decode($_COOKIE['DOLUSER_box_'.$this->boxcode], true);
 				$endyear = $tmparray['year'];
 				$showtot = $tmparray['showtot'];
 			}
@@ -187,15 +188,15 @@ class box_graph_invoices_peryear extends ModeleBoxes
 				$stringtoshow .= '<input type="hidden" name="token" value="'.newToken().'">';
 				$stringtoshow .= '<input type="hidden" name="action" value="'.$refreshaction.'">';
 				$stringtoshow .= '<input type="hidden" name="page_y" value="">';
-				$stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSERCOOKIE_box_'.$this->boxcode.':year,showtot">';
+				$stringtoshow .= '<input type="hidden" name="DOL_AUTOSET_COOKIE" value="DOLUSER_box_'.$this->boxcode.':year,showtot">';
 				$stringtoshow .= $langs->trans("Year").' <input class="flat" size="4" type="text" name="'.$param_year.'" value="'.$endyear.'">';
-				$stringtoshow .= '<input class="reposition inline-block valigntextbottom" type="image" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', '', 1).'">';
+				$stringtoshow .= '<input class="reposition inline-block valigntextbottom" type="image" alt="'.$langs->trans("Refresh").'" src="'.img_picto($langs->trans("Refresh"), 'refresh.png', '', 0, 1).'">';
 				$stringtoshow .= '</form>';
 				$stringtoshow .= '</div>';
 				$stringtoshow .= $px2->show();
-				$this->info_box_contents[0][0] = array('tr'=>'class="oddeven nohover"', 'td' => 'class="nohover center"', 'textnoformat'=>$stringtoshow);
+				$this->info_box_contents[0][0] = array('tr' => 'class="oddeven nohover"', 'td' => 'class="nohover center"', 'textnoformat' => $stringtoshow);
 			} else {
-				$this->info_box_contents[0][0] = array('tr'=>'class="oddeven nohover"', 'td' => 'class="nohover left"', 'maxlength'=>500, 'text' => $mesg);
+				$this->info_box_contents[0][0] = array('tr' => 'class="oddeven nohover"', 'td' => 'class="nohover left"', 'maxlength' => 500, 'text' => $mesg);
 			}
 		} else {
 			$this->info_box_contents[0][0] = array(
@@ -205,12 +206,14 @@ class box_graph_invoices_peryear extends ModeleBoxes
 		}
 	}
 
+
+
 	/**
-	 *	Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

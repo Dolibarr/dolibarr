@@ -17,8 +17,9 @@ Module4100Name = Datu konfidencialitātes politika
 Module4100Desc = Datu konfidencialitātes pārvaldības modulis (atbilstība GDPR)
 # Administration page
 datapolicySetup = Moduļa datu konfidencialitātes politikas iestatīšana
-Deletion = Datu dzēšana
-datapolicySetupPage = Atkarībā no jūsu valsts tiesību aktiem (piemērs <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">VDAR 5. pants</a>) personas dati ir jāglabā noteiktu laiku. nepārsniedzot laiku, cik ilgi dati ir nepieciešami mērķim, kuram tie tika vākti, izņemot arhivēšanas nolūkos.<br>Dzēšana tiks veikta automātiski pēc noteikta laika bez notikumiem (ilgums). ko būsiet norādījis tālāk).
+DataDeletion=Datu dzēšana
+DataAnonymization=Anonymization of data
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
 NB_MONTHS = %s mēneši
 ONE_YEAR = 1 gads
 NB_YEARS = %s gadi
@@ -33,12 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Iespējamais/klients
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ne potenciālais/ne klients
 DATAPOLICY_CONTACT_FOURNISSEUR = Piegādātājs
 DATAPOLICY_ADHERENT = Dalībnieks
-DATAPOLICY_Tooltip_SETUP = Saziņas veids — norādiet savu izvēli katram veidam.
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
 SendAgreementText = Jūs varat nosūtīt GDPR e-pastu uz visām jūsu attiecīgajām kontaktpersonām (kuras vēl nav saņēmušas e-pastu un kurām neesat reģistrējis neko par viņu GDPR līgumu). Lai to izdarītu, izmantojiet šo pogu.
 SendAgreement = Sūtīt ēpastus
 AllAgreementSend = Visi e-pasti ir nosūtīti
 TXTLINKDATAPOLICYACCEPT = Teksts saitei "vienošanās"
 TXTLINKDATAPOLICYREFUSE = Teksts saitei "domstarpības"
+DelayForAnonymization=Delay for anonymization
+DelayForDeletion=Delay for deletion
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = GDPR: personas datu apstrāde
 DATAPOLICY_consentement = Saņemta piekrišana personas datu apstrādei

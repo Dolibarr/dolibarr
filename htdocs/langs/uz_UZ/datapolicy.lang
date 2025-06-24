@@ -17,8 +17,9 @@ Module4100Name = Ma'lumotlar maxfiyligi siyosati
 Module4100Desc = Ma'lumotlar maxfiyligini boshqarish moduli (GDPRga muvofiqlik)
 # Administration page
 datapolicySetup = Modul maʼlumotlarining maxfiylik siyosatini oʻrnatish
-Deletion = Ma'lumotlarni o'chirish
-datapolicySetupPage = Mamlakatlaringiz qonunlariga qarab (misol <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">GDPRning 5-moddasi</a>), shaxsiy maʼlumotlar bir muddat saqlanishi kerak maʼlumotlar yigʻilgan maqsad uchun zarur boʻlgan muddatdan oshmasligi, arxiv maqsadlari bundan mustasno.<br>Oʻchirish maʼlum bir vaqtdan soʻng hodisalarsiz avtomatik ravishda amalga oshiriladi (davomiylik). Siz quyida ko'rsatgan bo'lasiz).
+DataDeletion=Ma'lumotlarni o'chirish
+DataAnonymization=Ma'lumotlarni anonimlashtirish
+datapolicySetupPage = Mamlakatingiz qonunlariga qarab (misol <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">GDPRning 5-moddasi</a>), shaxsiy maʼlumotlar zarur boʻlgan muddat davomida saqlanishi kerak boʻlgan muddatdan oshmasligi kerak. u yig'ilgan, arxiv maqsadlaridan tashqari.<br>Ushbu modul ma'lum vaqtdan so'ng hodisalarsiz (quyida ko'rsatgan muddat) va ob'ektda mavjud biznes ob'ekti bolalari bo'lmasa, avtomatik ravishda anonimlashtirishni amalga oshiradi.
 NB_MONTHS = %s oy
 ONE_YEAR = 1 yil
 NB_YEARS = %s yil
@@ -33,12 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Istiqbolli/mijoz
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Na istiqbolli / na mijoz
 DATAPOLICY_CONTACT_FOURNISSEUR = Yetkazib beruvchi
 DATAPOLICY_ADHERENT = A'zo
-DATAPOLICY_Tooltip_SETUP = Kontakt turi - har bir tur uchun tanlovingizni ko'rsating.
+DATAPOLICY_Tooltip_SETUP=Anonimlashtirish "%s" moduli tomonidan boshqariladigan "%s" rejalashtirilgan ish tomonidan amalga oshiriladi, shuning uchun bu modul yoqilgan va to'g'ri ishlashi kerak.
 SendAgreementText = Siz GDPR elektron pochta xabarini barcha tegishli kontaktlaringizga yuborishingiz mumkin (ular hali elektron pochta xabarini olmagan va siz GDPR shartnomasi haqida hech narsa ro'yxatdan o'tmagan). Buning uchun quyidagi tugmani ishlating.
 SendAgreement = Elektron pochta xabarlarini yuboring
 AllAgreementSend = Barcha elektron pochta xabarlari yuborildi
 TXTLINKDATAPOLICYACCEPT = "Shartnoma" havolasi uchun matn
 TXTLINKDATAPOLICYREFUSE = "Ixtilof" havolasi uchun matn
+DelayForAnonymization=Anonimlashtirish uchun kechikish
+DelayForDeletion=Oʻchirish uchun kechikish
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = GDPR: Shaxsiy ma'lumotlarni qayta ishlash
 DATAPOLICY_consentement = Shaxsiy ma'lumotlarni qayta ishlash uchun olingan rozilik

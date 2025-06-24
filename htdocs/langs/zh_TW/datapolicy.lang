@@ -17,8 +17,9 @@ Module4100Name = 資料數據隱私政策
 Module4100Desc = 管理資料數據隱私的模組（符合 GDPR）
 # Administration page
 datapolicySetup = 資料數據隱私政策模組設定
-Deletion = 刪除資料
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
+DataDeletion=刪除資料
+DataAnonymization=Anonymization of data
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
 NB_MONTHS = %s 個月
 ONE_YEAR = 1年
 NB_YEARS = %s 年
@@ -33,12 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = 潛在方/客戶
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = 非潛在方或客戶
 DATAPOLICY_CONTACT_FOURNISSEUR = 供應商
 DATAPOLICY_ADHERENT = 會員
-DATAPOLICY_Tooltip_SETUP = 聯絡方式 - 說明您對每種類型的選擇。
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
 SendAgreementText = 您可以向所有相關的聯絡人發送 GDPR 電子郵件（尚未收到過電子郵件且您尚未記錄有關其 GDPR 協議的任何信息）。要執行此操作，請使用以下按鈕。
 SendAgreement = 發送電子郵件
 AllAgreementSend = 所有電子郵件已發送
 TXTLINKDATAPOLICYACCEPT = “同意”的超連結文字
 TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
+DelayForAnonymization=Delay for anonymization
+DelayForDeletion=Delay for deletion
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = GDPR：個人數資料處理
 DATAPOLICY_consentement = 同意個人數據處理

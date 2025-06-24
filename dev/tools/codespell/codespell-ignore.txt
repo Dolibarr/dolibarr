@@ -1,5 +1,5 @@
 # List of words codespell will ignore
-# one per line, case-sensitive (when not lowercase)
+# one per line, must be in lower case.
 
 # PROVid
 provid
@@ -7,10 +7,15 @@ provid
 # PostgreSQL
 postgresql
 
+# ZAR currency
+zar
+
 # Name of contributores
 noe
 udo
 tim
+
+ConfirmActionXxx
 
 # Inside email
 ba
@@ -28,6 +33,7 @@ doubleclick
 errorstring
 exten
 falsy
+focusin
 master
 medias
 projet
@@ -81,5 +87,15 @@ espace
 methode
 datee
 
+# Some string found because part of a text the is html entities escaped into file
+tre
+activ
+
+# Translation keys
+addin
+amountin
+alltime
+
 # other
 blacklists
+confirmactionxxx

@@ -53,7 +53,7 @@ function show_skin($fuser, $edit = 0)
 
 	$colspan = 2;
 
-	$thumbsbyrow = 6;
+
 	print '<table class="noborder centpercent">';
 
 	$var = false;

@@ -2,6 +2,7 @@
 IdAgenda=ID sự kiện
 Actions=Sự kiện
 Agenda=Lịch làm việc
+AgendaEvents=Sự kiện chương trình nghị sự
 TMenuAgenda=Chương trình nghị sự
 Agendas=Lịch làm việc
 LocalAgenda=lịch mặc định
@@ -44,6 +45,7 @@ PropalClosedRefusedInDolibarr=Đề xuất %s từ chối
 PropalValidatedInDolibarr=Đề nghị xác nhận %s
 PropalBackToDraftInDolibarr=Đề xuất %s quay lại trạng thái dự thảo
 PropalClassifiedBilledInDolibarr=Đề xuất %s được phân loại hóa đơn
+InvoiceCreatedInDolibarr=Hóa đơn %s đã được tạo
 InvoiceValidatedInDolibarr=Hoá đơn %s xác nhận
 InvoiceValidatedInDolibarrFromPos=Hóa đơn %s được xác thực từ POS
 InvoiceBackToDraftInDolibarr=Hoá đơn %s trở lại trạng thái soạn thảo
@@ -134,14 +136,14 @@ AgendaModelModule=Mẫu tài liệu cho sự kiện
 DateActionStart=Ngày bắt đầu
 DateActionEnd=Ngày kết thúc
 AgendaUrlOptions1=Bạn cũng có thể thêm các thông số sau đây để lọc đầu ra:
-AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
+AgendaUrlOptions3=<b>logina=%s</b> để hạn chế đầu ra cho các hành động thuộc sở hữu của người dùng <b>%s</b> (sử dụng <b>logina=!%s</b> đối với các sự kiện không thuộc sở hữu của người dùng).
 AgendaUrlOptions4=<b>logint = %s</b> để hạn chế đầu ra cho các hành động được chỉ định cho người dùng <b>%s</b> (chủ sở hữu và những người khác).
 AgendaUrlOptionsProject=<b>project = __PROJECT_ID__</b> để hạn chế đầu ra cho các hành động được liên kết với dự án <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
-AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
+AgendaUrlOptionsType=<b>actiontype=%s</b> để nhận sự kiện tự động hoặc thủ công
+AgendaUrlOptionsCode=<b>actioncode=%s</b> để chỉ lấy các sự kiện có mã nhất định
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> bào gồm các ngày nghỉ sự kiện
-AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
-AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> để giới hạn các sự kiện trong %s ngày gần nhất (mặc định là %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> để giới hạn ở 50 sự kiện mới nhất (mặc định và tối đa là %s).
 AgendaShowBirthdayEvents=Sinh nhật của các liên hệ
 AgendaHideBirthdayEvents=Ẩn ngày sinh của các liên lạc
 Busy=Bận
@@ -203,5 +205,8 @@ BookingSuccessfullyBooked=Đặt chỗ của bạn đã được lưu
 BookingReservationHourAfter=Chúng tôi xác nhận việc đặt trước cuộc họp của chúng tôi vào ngày %s
 BookcalBookingTitle=Cuộc hẹn trực tuyến
 Transparency = Minh bạch
-ReadMore = Read more
-ReadLess = Read less
+ReadMore = Đọc thêm
+ReadLess = Đọc ít hơn
+RecurringEvent=Sự kiện định kỳ
+EventPartOfARecurringSerie=Sự kiện là một phần của chuỗi sự kiện định kỳ có ID %s
+BookCalSystem=Đặt chỗ trực tuyến

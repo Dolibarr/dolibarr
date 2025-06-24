@@ -5,6 +5,7 @@
  * Copyright (C) 2010		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,10 +32,18 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
-$action = GETPOST('action', 'aZ09');
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->load("companies");
+
+$action = GETPOST('action', 'aZ09');
 
 $id = GETPOSTINT('id');
 
@@ -49,15 +58,13 @@ if ($user->socid > 0) {
 		accessforbidden();
 	}
 }
-$result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
-
-
-$permissionnote = $user->hasRight('societe', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
-// $hookmanager->initHooks(array('contactcard')); -> Name conflict with product/card.php
 $hookmanager->initHooks(array('contactnote'));
 
+$result = restrictedArea($user, 'contact', $id, 'socpeople&societe');
+
+$permissionnote = $user->hasRight('societe', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 /*
  * Actions
@@ -89,7 +96,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-societe page-contact
 
 if ($id > 0) {
 	/*
-	 * Affichage onglets
+	 * Show tabs
 	 */
 	if (isModEnabled('notification')) {
 		$langs->load("mails");

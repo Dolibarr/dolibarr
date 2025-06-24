@@ -3,7 +3,7 @@ PayBoxSetup=PayBox module setup
 PayBoxDesc=Овој модул нуди страници за да се дозволи плаќање на <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> од страна на клиентите. Ова може да се користи за бесплатно плаќање или за плаќање на одреден предмет Dolibarr (фактура, нарачка, ...)
 PayBoxDoPayment=Плаќајте со Paybox
 YouWillBeRedirectedOnPayBox=You will be redirected on secured Paybox page to input you credit card information
-SetupPayBoxToHavePaymentCreatedAutomatically=Поставете го вашето Paybox со URL <b>%s<span class='notranslate'></b> автоматски да се креираат плаќања</span потврдено од Paybox.
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=This page confirms that your payment has been recorded. Thank you.
 YourPaymentHasNotBeenRecorded=Вашата уплата НЕ е снимена и трансакцијата е откажана. Ви благодарам.
 PAYBOX_CGI_URL_V2=Url of Paybox CGI module for payment

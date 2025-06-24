@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) - 2013-2018    Jean-François FERRY    <hello@librethic.io>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2013-2018 Jean-François FERRY      <hello@librethic.io>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,12 +110,12 @@ class modTicket extends DolibarrModules
 		$this->const = array(
 			1 => array('TICKET_ENABLE_PUBLIC_INTERFACE', 'chaine', '0', 'Enable ticket public interface', 0),
 			2 => array('TICKET_ADDON', 'chaine', 'mod_ticket_simple', 'Ticket ref module', 0),
-			3 => array('TICKET_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT/doctemplates/tickets', 'Ticket templates ODT/ODS directory for templates', 0),
+			3 => array('TICKET_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT'.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/tickets', 'Ticket templates ODT/ODS directory for templates', 0),
 			4 => array('TICKET_AUTO_READ_WHEN_CREATED_FROM_BACKEND', 'chaine', 0, 'Automatically mark ticket as read when created from backend', 0),
 			5 => array('TICKET_DELAY_BEFORE_FIRST_RESPONSE', 'chaine', '0', 'Maximum wanted elapsed time before a first answer to a ticket (in hours). Display a warning in tickets list if not respected.', 0),
 			6 => array('TICKET_DELAY_SINCE_LAST_RESPONSE', 'chaine', '0', 'Maximum wanted elapsed time between two answers on the same ticket (in hours). Display a warning in tickets list if not respected.', 0),
 			7 => array('TICKET_NOTIFY_AT_CLOSING', 'chaine', '0', 'Default notify contacts when closing a module', 0),
-			8 => array('TICKET_PRODUCT_CATEGORY', 'chaine', 0, 'The category of product that is being used for ticket accounting', 0),
+			8 => array('TICKET_PRODUCT_CATEGORY', 'chaine', 0, 'The category of product that is being used to find contract to link to created ticket', 0),
 			9 => array('TICKET_NOTIFICATION_EMAIL_FROM', 'chaine', getDolGlobalString('MAIN_MAIL_EMAIL_FROM'), 'Email to use by default as sender for messages sent from Dolibarr', 0),
 			10 => array('TICKET_MESSAGE_MAIL_INTRO', 'chaine', $langs->trans('TicketMessageMailIntroText'), 'Introduction text of ticket replies sent from Dolibarr', 0),
 			11 => array('TICKET_MESSAGE_MAIL_SIGNATURE', 'chaine', $default_footer, 'Signature to use by default for messages sent from Dolibarr', 0),
@@ -303,7 +303,7 @@ class modTicket extends DolibarrModules
 			'type' => 'left',
 			'titre' => 'NewTicket',
 			'mainmenu' => 'ticket',
-			'url' => '/ticket/card.php?action=create',
+			'url' => '/ticket/card.php?action=create&mode=init',
 			'langs' => 'ticket',
 			'position' => 102,
 			'enabled' => 'isModEnabled("ticket")',
@@ -317,7 +317,7 @@ class modTicket extends DolibarrModules
 			'titre' => 'List',
 			'mainmenu' => 'ticket',
 			'leftmenu' => 'ticketlist',
-			'url' => '/ticket/list.php?search_fk_status=non_closed',
+			'url' => '/ticket/list.php?search_fk_statut=openall',
 			'langs' => 'ticket',
 			'position' => 103,
 			'enabled' => 'isModEnabled("ticket")',
@@ -331,7 +331,7 @@ class modTicket extends DolibarrModules
 			'titre' => 'MenuTicketMyAssign',
 			'mainmenu' => 'ticket',
 			'leftmenu' => 'ticketmy',
-			'url' => '/ticket/list.php?mode=mine&search_fk_status=non_closed',
+			'url' => '/ticket/list.php?mode=mine&search_fk_statut=openall',
 			'langs' => 'ticket',
 			'position' => 105,
 			'enabled' => 'isModEnabled("ticket")',
@@ -357,7 +357,7 @@ class modTicket extends DolibarrModules
 			'type' => 'left',
 			'titre' => 'Categories',
 			'mainmenu' => 'ticket',
-			'url' => '/categories/index.php?type=12',
+			'url' => '/categories/categorie_list.php?type=12',
 			'langs' => 'ticket',
 			'position' => 107,
 			'enabled' => 'isModEnabled("ticket") && isModEnabled("categorie")',
@@ -414,13 +414,13 @@ class modTicket extends DolibarrModules
 
 		//ODT template
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/tickets/template_ticket.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/tickets';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/tickets';
 		$dest = $dirodt.'/template_ticket.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result = dol_copy($src, $dest, 0, 0);
+			$result = dol_copy($src, $dest, '0', 0);
 			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);

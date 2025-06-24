@@ -28,8 +28,16 @@ require '../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-dol_include_once('/bookcal/class/calendar.class.php');
-dol_include_once('/bookcal/lib/bookcal_calendar.lib.php');
+require_once DOL_DOCUMENT_ROOT.'/bookcal/class/calendar.class.php';
+require_once DOL_DOCUMENT_ROOT.'/bookcal/lib/bookcal_calendar.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("agenda", "companies", "other", "mails"));
@@ -118,7 +126,7 @@ if ($action == 'addcontact' && $permission) {
 $title = $langs->trans('Calendar')." - ".$langs->trans('ContactsAddresses');
 $help_url = '';
 //$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bookcal page-card_calendar_contact');
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);

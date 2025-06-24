@@ -29,6 +29,14 @@ require_once "../../main.inc.php";
 require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT . "/webportal/lib/webportal.lib.php";
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Translations
 $langs->loadLangs(array("admin", "webportal", "website"));
 
@@ -60,6 +68,18 @@ if (!class_exists('FormSetup')) {
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formsetup.class.php';
 }
 $formSetup = new FormSetup($db);
+
+
+// Add logged user
+//$formSetup->newItem('WEBPORTAL_USER_LOGGED2')->setAsSelectUser();
+// only enabled users
+$userList = $formSetup->form->select_dolusers(getDolGlobalInt('WEBPORTAL_USER_LOGGED'), 'WEBPORTAL_USER_LOGGED', 1, null, 0, '', '', '0', 0, 0, '', 0, '', '', 1, 2);
+
+$item = $formSetup->newItem('WEBPORTAL_USER_LOGGED');
+$item->setAsSelect($userList);
+$item->picto = 'user';
+$item->helpText = $langs->transnoentities('WebPortalUserLoggedHelp');
+// TODO Add a property mandatory to set style to "fieldrequired" and to add a check in submit
 
 
 // root url
@@ -115,15 +135,6 @@ if (isModEnabled('member')) {
 	$item->helpText = $langs->transnoentities('WebPortalMemberCardAccessHelp');
 }
 
-// Add logged user
-//$formSetup->newItem('WEBPORTAL_USER_LOGGED2')->setAsSelectUser();
-// only enabled users
-$userList = $formSetup->form->select_dolusers(getDolGlobalInt('WEBPORTAL_USER_LOGGED'), 'WEBPORTAL_USER_LOGGED', 0, null, 0, '', '', '0', 0, 0, '', 0, '', '', 1, 2);
-
-$item = $formSetup->newItem('WEBPORTAL_USER_LOGGED');
-$item->setAsSelect($userList);
-$item->picto = 'user';
-$item->helpText = $langs->transnoentities('WebPortalUserLoggedHelp');
 
 $setupnotempty += count($formSetup->items);
 
@@ -194,7 +205,7 @@ print ajax_autoselect('publicurlmember');
 //print '<a target="_blank" href="'.Context::getRootConfigUrl().'" >'.img_picto('', 'globe', 'class="pictofixedwidth"').Context::getRootConfigUrl().'</a>';
 
 // Setup page goes here
-print info_admin($langs->trans("UserAccountForWebPortalAreInThirdPartyTabHelp"));
+print info_admin($langs->trans("UserAccountForWebPortalAreInThirdPartyTabHelp", $langs->transnoentities("WebsiteAccount")));
 
 print '<br><br>';
 

@@ -28,6 +28,9 @@ abstract class LogHandler
 	 */
 	public $code;
 
+	/**
+	 * @var int
+	 */
 	protected $ident = 0;
 
 	/**
@@ -79,7 +82,7 @@ abstract class LogHandler
 	/**
 	 * Is the logger active ?
 	 *
-	 * @return int		1 if logger enabled
+	 * @return int<0,1>		1 if logger enabled
 	 */
 	public function isActive()
 	{
@@ -87,9 +90,9 @@ abstract class LogHandler
 	}
 
 	/**
-	 * Configuration variables of the module
+	 *	Configuration variables of the module
 	 *
-	 * @return array
+	 * 	@return	array<array{name:string,constant:string,default:string,css?:string}>	Return array of configuration data
 	 */
 	public function configure()
 	{
@@ -111,7 +114,7 @@ abstract class LogHandler
 	/**
 	 * Set current ident.
 	 *
-	 * @param	int		$ident		1=Increase ident of 1, -1=Decrease ident of 1
+	 * @param	int<-1,1>	$ident		1=Increase ident of 1, -1=Decrease ident of 1
 	 * @return 	void
 	 */
 	public function setIdent($ident)
@@ -122,7 +125,7 @@ abstract class LogHandler
 	/**
 	 * Export the message
 	 *
-	 * @param   array   $content            Array containing the info about the message
+	 * @param	array{level:int,ip:string,ospid:string,osuser:string,message:string}	$content 	Array containing the info about the message
 	 * @param   string  $suffixinfilename   When output is a file, append this suffix into default log filename.
 	 * @return  void
 	 */

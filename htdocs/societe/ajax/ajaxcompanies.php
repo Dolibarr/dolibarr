@@ -4,6 +4,7 @@
  * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Cyrille de Lambert   <info@auguria.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +44,14 @@ if (!defined('NOREQUIRESOC')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 
 $id = GETPOSTINT('socid');
 if ($id == 0) {
@@ -118,6 +127,10 @@ if ($socid) {
 		$sql .= " OR s.rowid = ".((int) $socid);
 	}
 	$sql .= ")";
+}
+// user right to see all companies
+if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+	$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user = ".(int) $user->id .")";
 }
 // Protection for external user access
 if ($user->socid > 0) {

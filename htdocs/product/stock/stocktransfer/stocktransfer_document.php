@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021  Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/class/stocktransfer.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/lib/stocktransfer_stocktransfer.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("stocks", "companies", "other", "mails"));
@@ -70,7 +79,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 
-//if ($id > 0 || !empty($ref)) $upload_dir = $conf->stocktransfer->multidir_output[$object->entity?$object->entity:$conf->entity] . "/stocktransfer/" . dol_sanitizeFileName($object->id);
+//if ($id > 0 || !empty($ref)) $upload_dir = $conf->stocktransfer->multidir_output[$object->entity?$object->entity:$conf->entity] . "/stocktransfer/" . dol_sanitizeFileName((string) $object->id);
 if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->stocktransfer->multidir_output[$object->entity ? $object->entity : $conf->entity]."/stocktransfer/".dol_sanitizeFileName($object->ref);
 }
