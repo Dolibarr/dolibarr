@@ -1093,7 +1093,6 @@ class Paiement extends CommonObject
 				if (!$result) {
 					$this->error = 'Error -1 '.$this->db->error();
 				}
-				
 				return 0;
 			} else {
 				$this->error = 'Error -1 '.$this->db->error();
