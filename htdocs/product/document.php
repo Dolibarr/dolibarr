@@ -246,6 +246,8 @@ if ($object->id > 0) {
 		$filearray = array_merge($filearray, $filearrayold);
 	}
 
+	$filearray = $object->enrichFileArrayWithDatabaseInfos($filearray, $modulepart, $sortfield, $sortorder);
+
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];

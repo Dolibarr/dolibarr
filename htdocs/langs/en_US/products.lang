@@ -114,6 +114,7 @@ MultiPricesAbility=Multiple price segments per product/service (each customer is
 MultiPricesNumPrices=Number of prices
 DefaultPriceType=Base of prices per default (with versus without tax) when adding new sale prices
 AssociatedProductsAbility=Enable Kits (set of several products)
+OrderPhotoByPosition=Sort photos by position
 VariantsAbility=Enable Variants (variations of products, for example color, size)
 AssociatedProducts=Kits
 AssociatedProductsNumber=Number of products composing this kit

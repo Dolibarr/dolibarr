@@ -943,7 +943,12 @@ class FormFile
 
 					//var_dump($sortfield.' - '.$sortorder);
 					if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
-						$file_list = dol_sort_array($file_list, $sortfield, $sortorder);
+						if (getDolGlobalInt('OrderPhotoByPosition')) {
+							$filearray = dol_sort_array($filearray, 'position', $sortorder);
+
+						} else {
+							$filearray = dol_sort_array($filearray, $sortfield, $sortorder);
+						}
 					}
 				}
 
