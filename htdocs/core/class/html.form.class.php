@@ -3178,13 +3178,25 @@ class Form
 		}
 
 		if (getDolGlobalString('PRODUIT_ATTRIBUTES_HIDECHILD')) {
-			$sql .= " LEFT JOIN " . $this->db->prefix() . "product_attribute_combination pac ON pac.fk_product_child = p.rowid";
+			if(getDolGlobalString('SEARCH_VARIANTS_OF_EAN13')){
+				if(strlen($filterkey)!=13){
+					 $sql .= " LEFT JOIN " . $this->db->prefix() . "product_attribute_combination pac ON pac.fk_product_child = p.rowid";
+				}
+		    }else{
+				$sql .= " LEFT JOIN " . $this->db->prefix() . "product_attribute_combination pac ON pac.fk_product_child = p.rowid";
+			}
 		}
 
 		$sql .= ' WHERE p.entity IN (' . getEntity('product') . ')';
 
 		if (getDolGlobalString('PRODUIT_ATTRIBUTES_HIDECHILD')) {
-			$sql .= " AND pac.rowid IS NULL";
+			if(getDolGlobalString('SEARCH_VARIANTS_OF_EAN13')){
+				if(strlen($filterkey)!=13){
+					$sql .= " AND pac.rowid IS NULL";	
+				}
+			}else{
+				$sql .= " AND pac.rowid IS NULL";
+			}
 		}
 
 		if ($finished == 0) {
