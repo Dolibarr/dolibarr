@@ -74,12 +74,11 @@ class box_members_by_tags extends ModeleBoxes
 	{
 		$now = dol_now();
 		foreach ($sumMembers as $key => $data) {
-			$adhtag = new Categorie($this->db);
-			$adhtag->id = $key;
-
-			if ($key=='total') {
-				break;
+			if ($key == 'total' || $key == 'arraydepth' || !is_array($data)) {
+				continue;
 			}
+			$adhtag = new Categorie($this->db);
+			$adhtag->id = (int) $key;
 			$adhtag->label = !empty($data['label']) ? $data['label'] : "";
 			$styledisplay = !empty($data['depth']) ? "none" : "";
 
@@ -142,7 +141,7 @@ class box_members_by_tags extends ModeleBoxes
 	public function loadBox($max = 5)
 	{
 		global $user, $langs;
-		$langs->load("boxes", "members");
+		$langs->load(array('boxes', 'members'));
 
 		$this->max = $max;
 
@@ -162,7 +161,7 @@ class box_members_by_tags extends ModeleBoxes
 
 			// Show array
 			$sumMembers = $stats->countMembersByTagAndStatus($numberyears);
-			if (!empty($sumMembers) && is_array($sumMembers)) {
+			if ($sumMembers && is_array($sumMembers)) {
 				$line = 0;
 
 				// select max tag level inside widget
@@ -182,8 +181,8 @@ class box_members_by_tags extends ModeleBoxes
 				  }
 				}";
 				$selectdepth = '<select name="maxdepth" id="maxdepth" onchange="'.$onchange.'">';
-				if (isset($sumMembers['arraydepth']) && $sumMembers['arraydepth'] > 0) {
-					foreach (range(0, $sumMembers['arraydepth']-1) as $k => $v) {
+				if (isset($sumMembers['arraydepth']) && is_numeric($sumMembers['arraydepth']) && $sumMembers['arraydepth'] > 0) {
+					foreach (range(0, (int) $sumMembers['arraydepth']-1) as $k => $v) {
 						$selectdepth .= '<option value="'.$v.'">'.$langs->trans('MaxLevelTagToShow', $v). '</option>';
 					}
 				}
