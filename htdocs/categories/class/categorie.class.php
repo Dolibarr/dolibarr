@@ -1256,7 +1256,7 @@ class Categorie extends CommonObject
 	 *                                                  - int (id of category)
 	 *                                                  - string (categories ids separated by comma)
 	 *                                                  - array (list of categories ids)
-	 * @param   int<0,1>            $include            [=0] Removed or 1=Keep only
+	 * @param   int<0,1>            $include            [=0] Removed or 1=Keep only the ID into $fromid
 	 * @param	string				$forcelangcode		Lang code to force ('fr_FR', 'en_US', ...) or 'none'
 	 * @return  int<-1,-1>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string,level:?int}>              					Array of categories. this->cats and this->motherof are set, -1 on error
 	 */
@@ -1298,7 +1298,8 @@ class Categorie extends CommonObject
 		}
 
 		// Init $this->cats array
-		$sql = "SELECT DISTINCT c.rowid, c.label, c.ref_ext, c.description, c.color, c.position, c.fk_parent, c.visible"; // Distinct reduce pb with old tables with duplicates
+		// Note: The DISTINCT reduces pb with old tables with duplicates but should not be used
+		$sql = "SELECT DISTINCT c.rowid, c.label, c.ref_ext, c.description, c.color, c.position, c.fk_parent, c.visible";
 		if (getDolGlobalInt('MAIN_MULTILANGS') && $current_lang !== 'none') {
 			$sql .= ", t.label as label_trans, t.description as description_trans";
 		}
@@ -1310,6 +1311,7 @@ class Categorie extends CommonObject
 		$sql .= " AND c.type = ".(int) $type;
 
 		dol_syslog(get_class($this)."::get_full_arbo get category list", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$i = 0;
@@ -1326,7 +1328,7 @@ class Categorie extends CommonObject
 				$this->cats[$obj->rowid]['visible'] = $obj->visible;
 				$this->cats[$obj->rowid]['ref_ext'] = $obj->ref_ext;
 				$this->cats[$obj->rowid]['picto'] = 'category';
-				// fields are filled with buildPathFromId
+				// fields are filled with buildPathFromId later
 				$this->cats[$obj->rowid]['fullpath'] = '';
 				$this->cats[$obj->rowid]['fulllabel'] = '';
 				$i++;

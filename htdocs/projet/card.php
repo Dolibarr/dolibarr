@@ -62,15 +62,10 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'aZ09');
 
 $dol_openinpopup = '';
-if (!empty($backtopagejsfields)) {
-	$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
-	$dol_openinpopup = preg_replace('/[^a-z0-9_]/i', '', $tmpbacktopagejsfields[0]);
-}
 
 $status = GETPOSTINT('status');
 $opp_status = GETPOSTINT('opp_status');
@@ -641,7 +636,6 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
-	print '<input type="hidden" name="backtopagejsfields" value="'.$backtopagejsfields.'">';
 	print '<input type="hidden" name="dol_openinpopup" value="'.$dol_openinpopup.'">';
 
 	print dol_get_fiche_head();
@@ -822,7 +816,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span>';
 			// TODO @LDR Implement this
 			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-				$jsonclose = '';
+				$jsonclose = 'TODO Not yet implemented';
 				print dolButtonToOpenUrlInDialogPopup('addthirdparty', $langs->transnoentitiesnoconv('AddThirdParty'), $newbutton, $url, '', '', '', $jsonclose);
 			} else {
 				print ' <a href="'.DOL_URL_ROOT.$url.'">'.$newbutton.'</a>';

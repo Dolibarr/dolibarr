@@ -172,7 +172,7 @@ class ExternalModules
 			$this->githubFileStatus = dol_is_file($this->cache_file) ? 1 : 0;
 		}
 
-		// Check access to Dolistore API
+		// Check access to Dolistore API /api/categories -> /api/index.php/marketplace/categories
 		if (getDolGlobalString('MAIN_ENABLE_EXTERNALMODULES_DOLISTORE')) {
 			$this->dolistoreApiStatus = $this->checkApiStatus();
 		}
@@ -212,8 +212,7 @@ class ExternalModules
 			$url .= '?' . http_build_query($options);
 		}
 
-		$url .= (preg_match('/\?/', $url) ? '&' : '?').'apikey='.$this->dolistore_api_key;
-		$response = getURLContent($url, 'GET', '', 1, $httpheader);
+		$response = getURLContent($url, 'GET', '', 1, $httpheader, array('https'), 0, -1, 5, 5);
 
 		$status_code = $response['http_code'];
 		$body = 'Error';
@@ -221,9 +220,24 @@ class ExternalModules
 		if ($status_code == 200) {
 			$body = $response['content'];
 			$body = json_decode($body, true);
+			$returnarray = array(
+				'status_code' => $status_code,
+				'response' => $body
+			);
+		} else {
+			$returnarray = array(
+				'status_code' => $status_code,
+				'response' => $body
+			);
+			if (!empty($response['curl_error_no'])) {
+				$returnarray['curl_error_no'] = $response['curl_error_no'];
+			}
+			if (!empty($response['curl_error_msg'])) {
+				$returnarray['curl_error_msg'] = $response['curl_error_msg'];
+			}
 		}
 
-		return array('status_code' => $status_code, 'response' => $body);
+		return $returnarray;
 	}
 
 	/**
@@ -402,27 +416,45 @@ class ExternalModules
 			// free or pay ?
 			if ($product["price_ttc"] > 0) {
 				$price = '<h3>'.price(price2num($product["price_ttc"], 'MT'), 0, $langs, 1, -1, -1, 'EUR').' '.$langs->trans("TTC").'</h3>';
-				$download_link = '<a target="_blank" href="'.$this->shop_url.'/product.php?id='.((int) $product['id']).'"><img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/follow.png" /></a>';
+
+				$download_link = '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("View").'" href="'.$this->shop_url.'/product.php?id='.((int) $product['id']).'">';
+				$download_link .= img_picto('', 'url', 'class="size2x paddingright"');
+				$download_link .= '</a>';
 			} else {
 				$download_link = '#';
 				$price         = '<h3>'.$langs->trans('Free').'</h3>';
 
 				if ($product['source'] === 'githubcommunity') {
-					$download_link = '<a class="paddingleft paddingright" target="_blank" href="'.$product["link"].'"><img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/follow.png" /></a>';
-					if (!empty($product['direct-download']) && $product['direct-download'] == 'yes') {
-						$urldownload = $product["dolistore-download"];		// In a future, we will have the download to the zip file
-						$reg = array();
-						if (preg_match('/https:.*\?id=(\d+)$/', $urldownload, $reg)) {
-							$urldownload = 'https://www.dolistore.com/_service_download.php?t=free&p='.$reg[1];
-						}
-						$download_link .= '<a class="paddingleft paddingright" target="_blank" href="'.$urldownload.'" rel="noopener noreferrer"><img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/Download-128.png" /></a>';
-					}
-				}
+					$download_link = '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("Sources").'"  href="'.$product["link"].'">';
+					$download_link .= img_picto('', 'file-code', 'class="size2x paddingright"');
+					$download_link .= '</a>';
 
-				if ($product['source'] === 'dolistore') {
+					$urlview = $product["dolistore-download"];		// In a future, we will have the download to the zip file
+					if ($urlview) {
+						$download_link .= '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("View").'" href="'.$urlview.'" rel="noopener noreferrer">';
+						$download_link .= img_picto('', 'url', 'class="size2x"');
+						$download_link .= '</a>';
+					}
+
+					if (!empty($product['direct-download']) && $product['direct-download'] == 'yes') {
+						$reg = array();
+						if (preg_match('/https:.*\?id=(\d+)$/', $urlview, $reg)) {
+							$urldownload = 'https://www.dolistore.com/_service_download.php?t=free&p='.$reg[1];
+							$download_link .= '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("Download").'" href="'.$urldownload.'" rel="noopener noreferrer">';
+							$download_link .= img_picto('', 'download', 'class="size2x paddingright"');
+							//$download_link .= '<img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/download.png" />';
+							$download_link .= '</a>';
+						}
+					}
+				} elseif ($product['source'] === 'dolistore') {
 					$urldownload = 'https://www.dolistore.com/_service_download.php?t=free&p=' . $product['id'];
-					$download_link = '<a class="paddingleft paddingright" target="_blank" href="'.$this->shop_url.'/product.php?id='.((int) $product["id"]).'"><img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/follow.png" /></a>';
-					$download_link .= '<a class="paddingleft paddingright" target="_blank" href="'.$urldownload.'" rel="noopener noreferrer"><img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/Download-128.png" /></a>';
+					$download_link = '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("View").'" href="'.$this->shop_url.'/product.php?id='.((int) $product["id"]).'">';
+					$download_link .= img_picto('', 'url', 'class="size2x"');
+					$download_link .= '</a>';
+					$download_link .= '<a class="paddingleft paddingright" target="_blank" title="'.$langs->trans("Download").'" href="'.$urldownload.'" rel="noopener noreferrer">';
+					$download_link .= img_picto('', 'download', 'class="size2x paddingright"');
+					//$download_link .= '<img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/download.png" />';
+					$download_link .= '</a>';
 				}
 			}
 
@@ -746,6 +778,10 @@ class ExternalModules
 			}
 		}
 
+		if (!empty($request['response']['curl_error_msg'])) {
+			$error_message .= ' - ' . $request['response']['curl_error_msg'];
+		}
+
 		// Return the formatted error message
 		return sprintf('This call to the API failed and returned an HTTP status of %d. That means: %s.', $request['status_code'], $error_message);
 	}
@@ -1034,6 +1070,7 @@ class ExternalModules
 	 */
 	public function checkApiStatus()
 	{
+		// Call remote API
 		$testRequest = $this->callApi('categories');
 
 		if (!isset($testRequest['response']) || !is_array($testRequest['response']) || ($testRequest['status_code'] != 200 && $testRequest['status_code'] != 201)) {

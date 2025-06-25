@@ -61,7 +61,6 @@ $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'projecttasklist';
 $backtopage = GETPOST('backtopage', 'alpha');					// if not set, a default page will be used
 //$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
-//$backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 $optioncss  = GETPOST('optioncss', 'aZ');
 $backtopage = GETPOST('backtopage', 'alpha');
 $toselect = GETPOST('toselect', 'array');
