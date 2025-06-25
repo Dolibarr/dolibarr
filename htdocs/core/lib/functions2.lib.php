@@ -1965,7 +1965,7 @@ function version_webserver()
  */
 function getListOfModels($db, $type, $maxfilenamelength = 0)
 {
-	global $conf, $hookmanager, $langs, $user;
+	global $conf, $hookmanager, $langs;
 
 	$docmodels = array();
 	$found = 0;
@@ -2045,7 +2045,7 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 		'list' => &$docmodels,
 		'found' => &$found,
 	);
-	$reshook = $hookmanager->executeHooks('getListOfModels', $parameters, $user);
+	$reshook = $hookmanager->executeHooks('getListOfModels', $parameters);
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
