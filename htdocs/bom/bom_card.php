@@ -248,7 +248,7 @@ if (empty($reshook)) {
 				unset($_POST['disable_stock_change']);
 			}
 
-			$object->fetchLines();
+			$object->fetch($object->id);
 
 			$object->calculateCosts();
 		}
@@ -304,7 +304,7 @@ if (empty($reshook)) {
 				unset($_POST['disable_stock_change']);
 			}
 
-			$object->fetchLines();
+			$object->fetch($object->id);
 
 			$object->calculateCosts();
 		}
