@@ -117,15 +117,10 @@ $action		= (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
 $cancel		= GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 $confirm 	= GETPOST('confirm', 'alpha');
 $canvas		= GETPOST('canvas', 'alpha');
 
 $dol_openinpopup = '';
-if (!empty($backtopagejsfields)) {
-	$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
-	$dol_openinpopup = preg_replace('/[^a-z0-9_]/i', '', $tmpbacktopagejsfields[0]);
-}
 
 $socid = GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('id');
 if ($user->socid) {
@@ -639,24 +634,6 @@ if (empty($reshook)) {
 
 				if ($result >= 0 && !$error) {
 					$db->commit();
-
-					if ($backtopagejsfields) {
-						llxHeader('', '', '');
-
-						$retstring = '<script>';
-						$retstring .= 'jQuery(document).ready(function() {
-												console.log(\'We execute action to create. We save id and go back - '.$dol_openinpopup.'\');
-												console.log(\'id = '.$object->id.'\');
-												$(\'#varforreturndialogid'.$dol_openinpopup.'\', window.parent.document).text(\''.$object->id.'\');
-												$(\'#varforreturndialoglabel'.$dol_openinpopup.'\', window.parent.document).text(\''.$object->name.'\');
-												window.parent.jQuery(\'#idfordialog'.$dol_openinpopup.'\').dialog(\'close\');
-				 							});';
-						$retstring .= '</script>';
-						print $retstring;
-
-						llxFooter();
-						exit;
-					}
 
 					if (!empty($backtopage)) {
 						$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', (string) $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
@@ -1324,7 +1301,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-		print '<input type="hidden" name="backtopagejsfields" value="'.$backtopagejsfields.'">';
 		print '<input type="hidden" name="dol_openinpopup" value="'.$dol_openinpopup.'">';
 		print '<input type="hidden" name="private" value='.$object->particulier.'>';
 		print '<input type="hidden" name="type" value='.GETPOST("type", 'alpha').'>';

@@ -5967,7 +5967,7 @@ class Form
 
 		// Set height automatically if not defined
 		if (empty($height)) {
-			$height = 220;
+			$height = 240;
 			if (is_array($formquestion) && count($formquestion) > 2) {
 				$height += ((count($formquestion) - 2) * 24);
 			}
