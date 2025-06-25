@@ -5898,14 +5898,17 @@ class Form
 
 			$postconfirmas = 'GET';
 
-			if ($height !== 'auto') $height = (int) $height;
-			if ($width !== 'auto') $width = (int) $width;
-
+			if ($height !== 'auto') {
+				$height = (int) $height;
+			}
+			if ($width !== 'auto') {
+				$width = (int) $width;
+			}
 
 			$formconfirm .= '
                     resizable: false,
-                    height: '.json_encode($height).',
-                    width: '.json_encode($width).',
+					height: \'' . dol_escape_js($height) . '\',
+                    width: \'' . dol_escape_js($width) . '\',
                     modal: true,
                     closeOnEscape: false,
                     buttons: {
