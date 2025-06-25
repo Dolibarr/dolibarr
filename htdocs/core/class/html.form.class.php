@@ -5898,10 +5898,14 @@ class Form
 
 			$postconfirmas = 'GET';
 
+			if ($height !== 'auto') $height = (int) $height;
+			if ($width !== 'auto') $width = (int) $width;
+
+
 			$formconfirm .= '
                     resizable: false,
-                    height: \'' . ((int) $height) . '\',
-                    width: \'' . ((int) $width) . '\',
+                    height: '.json_encode($height).',
+                    width: '.json_encode($width).',
                     modal: true,
                     closeOnEscape: false,
                     buttons: {
