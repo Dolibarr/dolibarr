@@ -1101,13 +1101,9 @@ class BlockedLog
 	 */
 	private function buildFirstPartOfKeyForSignature()
 	{
-		//print_r($this->object_data);
-		if (((int) $this->object_version) >= 18) {
-			// Note: $this->amounts can be '0', '1.1', '1.123';  // All 0 at end should have been removed already
-			return $this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname;
-		} else {
-			return $this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname;
-		}
+		// Note: $this->amounts can be '0', '1.1', '1.123';  // All 0 at end should have been removed already
+		//if (((int) $this->object_version) >= 18) {
+		return $this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname;
 	}
 
 
