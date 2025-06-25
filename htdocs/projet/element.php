@@ -803,8 +803,8 @@ foreach ($listofreferent as $key => $value) {
 	}
 	$name = $langs->trans($value['name']);
 	$qualified = $value['test'];
-	$margin = empty($value['margin']) ? '' : $value['margin'];
-	if ($qualified && isset($margin)) {		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
+	$margin = empty($value['margin']) ? 0 : $value['margin'];
+	if ($qualified && $margin) {		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
 		if ($margin === 'add') {
 			$tooltiponprofitplus .= ' &gt; '.$name." (+)<br>\n";
 		}
@@ -853,7 +853,7 @@ foreach ($listofreferent as $key => $value) {
 	$qualified = $value['test'];
 	$margin = empty($value['margin']) ? 0 : $value['margin'];
 	$project_field = empty($value['project_field']) ? '' : $value['project_field'];
-	if ($qualified && isset($margin)) {		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
+	if ($qualified && $margin) {		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
 		$element = new $classname($db);
 
 		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, !empty($project_field) ? $project_field : 'fk_projet');
