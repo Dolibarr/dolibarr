@@ -1532,6 +1532,7 @@ class Account extends CommonObject
 			$pictos .= ' '.$this->getLibStatut(5);
 		}
 		$datas['picto'] = $pictos;
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		$datas['label'] = '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
 		$datas['accountnumber'] = '<br><br><b>'.$langs->trans('AccountNumber').':</b> '.$this->number;
 		$datas['iban'] = '<br><b>'.$langs->trans('IBAN').':</b> '.getIbanHumanReadable($this);

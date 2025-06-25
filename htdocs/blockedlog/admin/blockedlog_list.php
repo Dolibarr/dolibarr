@@ -25,7 +25,6 @@
  *    \brief      Page setup for blockedlog module
  */
 
-
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/lib/blockedlog.lib.php';
@@ -179,7 +178,7 @@ if ($action === 'downloadblockchain') {
 		// Get the ID of the first line qualified
 		$sql = "SELECT rowid,date_creation,tms,user_fullname,action,amounts,element,fk_object,date_object,ref_object,signature,fk_user,object_data";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
-		$sql .= " WHERE entity = ".$conf->entity;
+		$sql .= " WHERE entity = ".((int) $conf->entity);
 		if (GETPOSTINT('monthtoexport') > 0 || GETPOSTINT('yeartoexport') > 0) {
 			$dates = dol_get_first_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') ? GETPOSTINT('monthtoexport') : 1);
 			$datee = dol_get_last_day(GETPOSTINT('yeartoexport'), GETPOSTINT('monthtoexport') ? GETPOSTINT('monthtoexport') : 12);
@@ -193,11 +192,11 @@ if ($action === 'downloadblockchain') {
 			// Make the first fetch to get first line
 			$obj = $db->fetch_object($res);
 			if ($obj) {
-				$previoushash = $block_static->getPreviousHash(0, $obj->rowid);
 				$firstid = $obj->rowid;
+				$previoushash = $block_static->getPreviousHash(0, $firstid);
 			} else {	// If not data found for filter, we do not need previoushash neither firstid
-				$previoushash = 'nodata';
 				$firstid = '';
+				$previoushash = 'nodata';
 			}
 		} else {
 			$error++;
@@ -238,7 +237,7 @@ if ($action === 'downloadblockchain') {
 
 	if (!$error) {
 		// Now restart request with all data = no limit(1) in sql request
-		$sql = "SELECT rowid, date_creation, tms, user_fullname, action, amounts, element, fk_object, date_object, ref_object, signature, fk_user, object_data, object_version";
+		$sql = "SELECT rowid, date_creation, tms, user_fullname, action, amounts, element, fk_object, date_object, ref_object, signature, fk_user, object_data, object_version, debuginfo";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog";
 		$sql .= " WHERE entity = ".((int) $conf->entity);
 		if (GETPOSTINT('monthtoexport') > 0 || GETPOSTINT('yeartoexport') > 0) {
@@ -248,13 +247,16 @@ if ($action === 'downloadblockchain') {
 		}
 		$sql .= " ORDER BY rowid ASC"; // Required so later we can use the parameter $previoushash of checkSignature()
 
-		$res = $db->query($sql);
-		if ($res) {
-			header('Content-Type: application/octet-stream');
-			header("Content-Transfer-Encoding: Binary");
-			header("Content-disposition: attachment; filename=\"unalterable-log-archive-".$dolibarr_main_db_name."-".(GETPOSTINT('yeartoexport') > 0 ? GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') > 0 ? sprintf("%02d", GETPOSTINT('monthtoexport')) : '').'-' : '').'after'.$previoushash.".csv\"");
+		$resql = $db->query($sql);
+		if ($resql) {
+			$nameofdownoadedfile = "unalterable-log-archive-".$dolibarr_main_db_name."-".(GETPOSTINT('yeartoexport') > 0 ? GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') > 0 ? sprintf("%02d", GETPOSTINT('monthtoexport')) : '').'-' : '').dol_print_date(dol_now(), 'dayhourlog', 'gmt').'UTC-DONOTMODIFY';
 
-			print $langs->transnoentities('Id')
+			$tmpfile = $conf->admin->dir_temp.'/unalterable-log-archive-tmp-'.$user->id.'.csv';
+
+			$fh = fopen($tmpfile, 'w');
+
+			// Print line with title
+			fwrite($fh, $langs->transnoentities('Id')
 				.';'.$langs->transnoentities('Date')
 				.';'.$langs->transnoentities('User')
 				.';'.$langs->transnoentities('Action')
@@ -268,12 +270,13 @@ if ($action === 'downloadblockchain') {
 				.';'.$langs->transnoentities('Note')
 				.';'.$langs->transnoentities('Version')
 				.';'.$langs->transnoentities('FullData')
-				."\n";
+				.';'.$langs->transnoentities('DebugInfo')
+				."\n");
 
 			$loweridinerror = 0;
 			$i = 0;
 
-			while ($obj = $db->fetch_object($res)) {
+			while ($obj = $db->fetch_object($resql)) {
 				// We set here all data used into signature calculation (see checkSignature method) and more
 				// IMPORTANT: We must have here, the same rule for transformation of data than into the fetch method (db->jdate for date, ...)
 				$block_static->id = $obj->rowid;
@@ -290,6 +293,7 @@ if ($action === 'downloadblockchain') {
 				$block_static->signature = $obj->signature;
 				$block_static->object_data = $block_static->dolDecodeBlockedData($obj->object_data);
 				$block_static->object_version = $obj->object_version;
+				$block_static->debuginfo = $obj->debuginfo;
 
 				$checksignature = $block_static->checkSignature($previoushash); // If $previoushash is not defined, checkSignature will search it
 
@@ -309,27 +313,42 @@ if ($action === 'downloadblockchain') {
 				if ($i == 0) {
 					$statusofrecordnote = $langs->trans("PreviousFingerprint").': '.$previoushash.($statusofrecordnote ? ' - '.$statusofrecordnote : '');
 				}
-				print $obj->rowid;
-				print ';'.$obj->date_creation;
-				print ';"'.str_replace('"', '""', $obj->user_fullname).'"';
-				print ';'.$obj->action;
-				print ';'.$obj->element;
-				print ';'.$obj->amounts;
-				print ';'.$obj->fk_object;
-				print ';'.$obj->date_object;
-				print ';"'.str_replace('"', '""', $obj->ref_object).'"';
-				print ';'.$obj->signature;
-				print ';'.$statusofrecord;
-				print ';'.$statusofrecordnote;
-				print ';'.$obj->object_version;
-				print ';"'.str_replace('"', '""', $obj->object_data).'"';
-				print "\n";
+				fwrite($fh, $obj->rowid
+					.';'.$obj->date_creation
+					.';"'.str_replace('"', '""', $obj->user_fullname).'";'
+					.$obj->action
+					.';'.$obj->element
+					.';'.$obj->amounts
+					.';'.$obj->fk_object
+					.';'.$obj->date_object
+					.';"'.str_replace('"', '""', $obj->ref_object).'";'
+					.$obj->signature
+					.';'.$statusofrecord
+					.';'.$statusofrecordnote
+					.';'.$obj->object_version
+					.';"'.str_replace('"', '""', $obj->object_data).'";'
+					.str_replace('"', '""', $obj->debuginfo).'"'
+					."\n");
 
 				// Set new previous hash for next fetch
 				$previoushash = $obj->signature;
 
 				$i++;
 			}
+
+			fclose($fh);
+
+			// Calculate the md5 of the file (the last line has a return line)
+			$md5value = md5_file($tmpfile);
+
+			// Now add a signature to check integrity at end of file
+			file_put_contents($tmpfile, 'END - md5='.$md5value, FILE_APPEND);
+
+			header('Content-Type: application/octet-stream');
+			header("Content-Transfer-Encoding: Binary");
+			header("Content-disposition: attachment; filename=\"".$nameofdownoadedfile.".csv\"");
+
+			readfile($tmpfile);
 
 			exit;
 		} else {
@@ -449,7 +468,7 @@ print '<div class="right">';
 print $langs->trans("RestrictYearToExport").': ';
 // Month
 print $formother->select_month((string) GETPOSTINT('monthtoexport'), 'monthtoexport', 1, 0, 'minwidth50 maxwidth75imp valignmiddle', true);
-print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth50imp" value="'.GETPOST('yeartoexport').'" placeholder="'.$langs->trans("Year").'">';
+print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth75imp" value="'.GETPOST('yeartoexport').'" placeholder="'.$langs->trans("Year").'">';
 print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
 print '<input type="submit" name="downloadcsv" class="button" value="'.$langs->trans('DownloadLogCSV').'">';
 if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY')) {

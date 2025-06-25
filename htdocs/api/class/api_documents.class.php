@@ -7,6 +7,7 @@
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
+ * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -599,6 +600,17 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->contract->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'contract');
+		} elseif ($modulepart == 'intervention' || $modulepart == 'ficheinter') {
+			$modulepart = 'ficheinter';
+			require_once DOL_DOCUMENT_ROOT . '/fichinter/class/fichinter.class.php';
+
+			$object = new Fichinter($this->db);
+			$result = $object->fetch($id, $ref);
+			if (!$result) {
+				throw new RestException(404, 'Interventional not found');
+			}
+
+			$upload_dir = $conf->ficheinter->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'ficheinter');
 		} elseif ($modulepart == 'projet' || $modulepart == 'project') {
 			$modulepart = 'project';
 			require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
@@ -808,7 +820,7 @@ class Documents extends DolibarrApi
 			} elseif ($modulepart == 'expensereport') {
 				require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 				$object = new ExpenseReport($this->db);
-			} elseif ($modulepart == 'fichinter') {
+			} elseif ($modulepart == 'ficheinter' || $modulepart == 'intervention') {
 				require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 				$object = new Fichinter($this->db);
 			} elseif ($modulepart == 'adherent' || $modulepart == 'member') {
@@ -836,6 +848,8 @@ class Documents extends DolibarrApi
 				$modulepart = 'mrp';
 				require_once DOL_DOCUMENT_ROOT . '/mrp/class/mo.class.php';
 				$object = new Mo($this->db);
+			} elseif ($modulepart == 'ecm') {
+				throw new RestException(500, 'Using a non empty "ref" is not compatible with using modulepart = '.$modulepart);
 			} else {
 				// TODO Implement additional moduleparts
 				throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
@@ -867,16 +881,16 @@ class Documents extends DolibarrApi
 			}
 
 			// Test on permissions
-			if ($modulepart != 'ecm') {
-				$relativefile = $tmpreldir.dol_sanitizeFileName($object->ref);
-				$tmp = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, $ref, 'write');
-				$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
-			} else {
+			//if ($modulepart != 'ecm') {	// Here $modulepart is always != 'ecm'
+			$relativefile = $tmpreldir.dol_sanitizeFileName($object->ref);
+			$tmp = dol_check_secure_access_document($modulepart, $relativefile, $entity, DolibarrApiAccess::$user, $ref, 'write');
+			$upload_dir = $tmp['original_file']; // No dirname here, tmp['original_file'] is already the dir because dol_check_secure_access_document was called with param original_file that is only the dir
+			/*} else {
 				if (!DolibarrApiAccess::$user->hasRight('ecm', 'upload')) {
 					throw new RestException(403, 'Missing permission to upload files in ECM module');
 				}
 				$upload_dir = $conf->medias->multidir_output[$conf->entity];
-			}
+			}*/
 
 			if (empty($upload_dir) || $upload_dir == '/') {
 				throw new RestException(500, 'This value of modulepart ('.$modulepart.') does not support yet usage of ref. Check modulepart parameter or try to use subdir parameter instead of ref.');

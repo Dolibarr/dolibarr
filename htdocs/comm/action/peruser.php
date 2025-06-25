@@ -2364,89 +2364,85 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		}
 
 		// only 1 event in first quarter
+		$ref1 = 'ref';
 		if (!empty($cases1[$h]) && is_array($cases1[$h]) && count($cases1[$h]) == 1) {
 			$output = array_slice($cases1[$h], 0, 1);
 			if ($output[0]['typecode'] == 'HOLIDAY') {
 				$ref1 = 'holiday';
 				$title1 = $langs->trans("Holiday");
 			} else {
-				$ref1 = 'ref';
 				$title1 = $langs->trans("Ref").' '.$ids1.($title1 ? ' - '.$title1 : '');
 				if ($output[0]['string']) {
-					$title1 .= ($title1 ? ' - ' : '').$output[0]['string'];
+					$title1 .= ' - '.$output[0]['string'];
 				}
 			}
 			if ($output[0]['color']) {
 				$color1 = $output[0]['color'];
 			}
 		} elseif (!empty($cases1[$h]) && is_array($cases1[$h]) && count($cases1[$h]) > 1) {
-			$ref1 = 'ref';
 			$title1 = $langs->trans("Ref").' '.$ids1.($title1 ? ' - '.$title1 : '');
 			$color1 = '222222';
 		}
 
 		// only 1 event in second quarter
+		$ref2 = 'ref';
 		if (!empty($cases2[$h]) && is_array($cases2[$h]) && count($cases2[$h]) == 1) {
 			$output = array_slice($cases2[$h], 0, 1);
 			if ($output[0]['typecode'] == 'HOLIDAY') {
 				$ref2 = 'holiday';
 				$title2 = $langs->trans("Holiday");
 			} else {
-				$ref2 = 'ref';
 				$title2 = $langs->trans("Ref").' '.$ids2.($title2 ? ' - '.$title2 : '');
 				if ($output[0]['string']) {
-					$title2 .= ($title2 ? ' - ' : '').$output[0]['string'];
+					$title2 .= ' - '.$output[0]['string'];
 				}
 			}
 			if ($output[0]['color']) {
 				$color2 = $output[0]['color'];
 			}
 		} elseif (!empty($cases2[$h]) && is_array($cases2[$h]) && count($cases2[$h]) > 1) {
-			$ref2 = 'ref';
 			$title2 = $langs->trans("Ref").' '.$ids2.($title2 ? ' - '.$title2 : '');
 			$color2 = '222222';
 		}
 
 		// only 1 event in third quarter
+		$ref3 = 'ref';
 		if (!empty($cases3[$h]) && is_array($cases3[$h]) && count($cases3[$h]) == 1) {
 			$output = array_slice($cases3[$h], 0, 1);
 			if ($output[0]['typecode'] == 'HOLIDAY') {
 				$ref3 = 'holiday';
 				$title3 = $langs->trans("Holiday");
 			} else {
-				$ref3 = 'ref';
 				$title3 = $langs->trans("Ref").' '.$ids3.($title3 ? ' - '.$title3 : '');
 				if ($output[0]['string']) {
-					$title3 .= ($title3 ? ' - ' : '').$output[0]['string'];
+					$title3 .= ' - '.$output[0]['string'];
 				}
 			}
 			if ($output[0]['color']) {
 				$color3 = $output[0]['color'];
 			}
 		} elseif (!empty($cases3[$h]) && is_array($cases3[$h]) && count($cases3[$h]) > 1) {
-			$ref3 = 'ref';
 			$title3 = $langs->trans("Ref").' '.$ids3.($title3 ? ' - '.$title3 : '');
 			$color3 = '222222';
 		}
 
 		// only 1 event in fourth quarter
+		$ref4 = 'ref';
 		if (!empty($cases4[$h]) && is_array($cases4[$h]) && count($cases4[$h]) == 1) {
 			$output = array_slice($cases4[$h], 0, 1);
 			if ($output[0]['typecode'] == 'HOLIDAY') {
 				$ref4 = 'holiday';
 				$title4 = $langs->trans("Holiday");
 			} else {
-				$ref4 = 'ref';
 				$title4 = $langs->trans("Ref").' '.$ids3.($title4 ? ' - '.$title4 : '');
 				if ($output[0]['string']) {
-					$title4 .= ($title4 ? ' - ' : '').$output[0]['string'];
+					$title4 .= ' - '.$output[0]['string'];
 				}
 			}
 			if ($output[0]['color']) {
 				$color4 = $output[0]['color'];
 			}
 		} elseif (!empty($cases4[$h]) && is_array($cases4[$h]) && count($cases4[$h]) > 1) {
-			$ref4 = 'ref';
 			$title4 = $langs->trans("Ref").' '.$ids4.($title4 ? ' - '.$title4 : '');
 			$color4 = '222222';
 		}

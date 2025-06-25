@@ -924,7 +924,6 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 						$numcontact = count($tab);
 						if (!empty($numcontact)) {
 							foreach ($tab as $contacttask) {
-								//var_dump($contacttask);
 								if ($source == 'internal') {
 									$c = new User($db);
 								} else {
@@ -933,15 +932,23 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 								$c->fetch($contacttask['id']);
 								if (!empty($c->photo)) {
 									if (get_class($c) == 'User') {
+										/** @var User $c */
+										'@phan-var-force User $c';
 										print $c->getNomUrl(-2, '', 0, 0, 24, 1, '', ($ifisrt ? '' : 'notfirst'));
 									} else {
-										print $c->getNomUrl(-2, '', 0, 0, -1, 0, ($ifisrt ? '' : 'notfirst'));
+										/** @var Contact $c */
+										'@phan-var-force Contact $c';
+										print $c->getNomUrl(-2, '', 0, '', -1, 0, ($ifisrt ? '' : 'notfirst'));
 									}
 								} else {
 									if (get_class($c) == 'User') {
+										/** @var User $c */
+										'@phan-var-force User $c';
 										print $c->getNomUrl(2, '', 0, 0, 24, 1, '', ($ifisrt ? '' : 'notfirst'));
 									} else {
-										print $c->getNomUrl(2, '', 0, 0, -1, 0, ($ifisrt ? '' : 'notfirst'));
+										/** @var Contact $c */
+										'@phan-var-force Contact $c';
+										print $c->getNomUrl(2, '', 0, '', -1, 0, ($ifisrt ? '' : 'notfirst'));
 									}
 								}
 								$ifisrt = 0;

@@ -247,7 +247,7 @@ fputs($fp, '</dolibarr_script_dir_checksum>'."\n");
 
 $checksumconcat = array();
 
-fputs($fp, '<dolibarr_unlaterable_files version="'.$release.'">'."\n");
+fputs($fp, '<dolibarr_unalterable_files version="'.$release.'">'."\n");
 
 $regextoinclude = '(\.php|\.sql)$';
 $regextoexclude = '';  // Exclude dirs
@@ -325,12 +325,12 @@ if (filetype($file) == "file") {
 if ($needtoclose) {
 	fputs($fp, '  </dir>'."\n");
 }
-fputs($fp, '</dolibarr_unlaterable_files>'."\n");
+fputs($fp, '</dolibarr_unalterable_files>'."\n");
 
 asort($checksumconcat); // Sort list of checksum
-fputs($fp, '<dolibarr_unlaterable_files_checksum>'."\n");
+fputs($fp, '<dolibarr_unalterable_files_checksum>'."\n");
 fputs($fp, md5(join(',', $checksumconcat))."\n");
-fputs($fp, '</dolibarr_unlaterable_files_checksum>'."\n");
+fputs($fp, '</dolibarr_unalterable_files_checksum>'."\n");
 
 
 

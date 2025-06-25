@@ -3737,31 +3737,26 @@ abstract class CommonObject
 			$positionfield = 'position';
 		}
 
+		$sql = "SELECT max(".$positionfield.") FROM ".$this->db->prefix().$this->table_element_line;
+		$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
+
 		// Search the last rang with fk_parent_line
 		if ($fk_parent_line) {
-			$sql = "SELECT max(".$positionfield.") FROM ".$this->db->prefix().$this->table_element_line;
-			$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
 			$sql .= " AND fk_parent_line = ".((int) $fk_parent_line);
+		}
 
-			dol_syslog(get_class($this)."::line_max", LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				$row = $this->db->fetch_row($resql);
+		dol_syslog(get_class($this)."::line_max", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$row = $this->db->fetch_row($resql);
+
+			if ($fk_parent_line) {
 				if (!empty($row[0])) {
 					return $row[0];
 				} else {
 					return $this->getRangOfLine($fk_parent_line);
 				}
-			}
-		} else {
-			// If not, search the last rang of element
-			$sql = "SELECT max(".$positionfield.") FROM ".$this->db->prefix().$this->table_element_line;
-			$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
-
-			dol_syslog(get_class($this)."::line_max", LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				$row = $this->db->fetch_row($resql);
+			} else {
 				return $row[0];
 			}
 		}

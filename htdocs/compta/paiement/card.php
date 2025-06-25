@@ -435,7 +435,7 @@ if (isModEnabled("bank")) {
 }
 
 // Comments
-print '<tr><td class="tdtop">'.$form->editfieldkey("Comments", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement')).'</td><td class="wordbreak">';
+print '<tr><td class="'.($user->hasRight('facture', 'paiement') ? 'tdtop' : '').'">'.$form->editfieldkey("Comments", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement'), 'string', '', 0, 0).'</td><td class="wordbreak">';
 print $form->editfieldval("Note", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement'), 'textarea:'.ROWS_3.':90%');
 print '</td></tr>';
 
