@@ -851,7 +851,7 @@ foreach ($listofreferent as $key => $value) {
 	$tablename = $value['table'];
 	$datefieldname = $value['datefieldname'];
 	$qualified = $value['test'];
-	$margin = empty($value['margin']) ? 0 : $value['margin'];
+	$margin = empty($value['margin']) ? '' : $value['margin'];
 	$project_field = empty($value['project_field']) ? '' : $value['project_field'];
 	if ($qualified && $margin) {		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
 		$element = new $classname($db);
