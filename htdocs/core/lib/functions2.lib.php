@@ -2044,6 +2044,8 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 	$parameters = array(
 		'list' => &$docmodels,
 		'found' => &$found,
+		'type' => $type,
+		'maxfilenamelength' => $maxfilenamelength,
 	);
 	$reshook = $hookmanager->executeHooks('getListOfModels', $parameters);
 	if ($reshook < 0) {
