@@ -143,7 +143,7 @@ class BlockedLog
 
 	/**
 	 * Array of tracked event codes
-	 * @var string[]
+	 * @var array<string,string|mixed>
 	 */
 	public $trackedevents = array();
 
