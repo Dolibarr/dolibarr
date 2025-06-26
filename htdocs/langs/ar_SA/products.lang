@@ -69,6 +69,8 @@ UpdateVAT=تحديث ضريبة القيمة المضافة
 UpdateDefaultPrice=تحديث السعر الافتراضي
 UpdateLevelPrices=أسعار التحديث لكل مستوى
 AppliedPricesFrom=تطبق من
+AppliedPricesTo=تطبق على
+ErrorAppliedPricesIntersectAnotherPeriod=يتقاطع تاريخ البداية أو النهاية مع فترة أخرى موجودة.
 SellingPrice=سعر البيع
 SellingPriceHT=سعر البيع (بدون الضريبة)
 SellingPriceTTC=سعر البيع (شامل الضريبية)
@@ -119,8 +121,8 @@ ParentProductsNumber=عدد منتج التعبئة الاب
 ParentProducts=المنتجات الأم
 IfZeroItIsNotAVirtualProduct=إذا كانت القيمة 0 ، فهذا المنتج ليس مجموعة
 IfZeroItIsNotUsedByVirtualProduct=إذا كانت القيمة 0 ، فلا تستخدم أي مجموعة هذا المنتج
-KeywordFilter=فلتر الكلمة المقتاحية
-CategoryFilter=فلتر التصنيف
+KeywordFilter=البحث عن طريق الكلمة الرئيسية
+CategoryFilter=البحث حسب الفئة
 ProductToAddSearch= إبحث عن منتج لإضافتة
 NoMatchFound=لا يوجد نتائج متطابقة
 ListOfProductsServices=قائمة المنتجات / الخدمات
@@ -171,7 +173,8 @@ BuyingPrices=شراء أسعار
 CustomerPrices=أسعار العميل
 SuppliersPrices=أسعار المورد
 SuppliersPricesOfProductsOrServices=أسعار البائعين (للمنتجات أو الخدمات)
-CustomCode=رمز الجمارك| ا لسلع | النظام المنسق | TARIC
+CustomsCode=تسمية الجمارك
+CustomsCodeHelp=الرمز الذي تستخدمه الجمارك. يُسمى أيضًا رمز السلعة، أو رمز النظام المنسق، أو رمز TARIC.
 CountryOrigin=بلد المنشأ
 RegionStateOrigin=منطقة المنشأ
 StateOrigin=الولاية | مقاطعة المنشأ
@@ -447,6 +450,12 @@ AllowStockMovementVariantParentHelp=افتراضيًا، يكون الأصل ل�
 ConfirmSetToDraftInventory=هل أنت متأكد أنك تريد الرجوع إلى المسودة حالة؟<br>ستتم إعادة تعيين الكميات المحددة حاليًا في المخزون.
 WarningLineProductNotToSell=تم استنساخ المنتج أو الخدمة "%s" للبيع و
 PriceLabel=السعر تسمية
+StockableProduct=إدارة المخزون
+StockableProductDescription=إذا تم تفعيل هذا الخيار، فسيتم الاحتفاظ بالتعديلات المتوفرة لهذا المنتج. وإلا، فسيتم تعطيل جميع التعديلات المتوفرة لهذا المنتج.
+StockDisabled=تم تعطيل المخزون
+StockEnabled=تم تمكين المخزون
 GenerateImage=إنشاء صورة
 GenerateWithAI=توليد بإستخدام الذكاء الاصطناعي
 PriceByCustomeAndMultiPricesAbility=أسعار مختلفة لكل عميل + شرائح سعرية متعددة لكل منتج/خدمة (كل عميل في شريحة سعرية واحدة)
+WhenProductVirtualOnOptionAreForced=When virtual products option is on, automatic stock decrease is forced to 'Decrease real stocks on shipping validation' and automatic increase mode is forced to 'Increase real stocks on manual dispatching into warehouses' and can't be edited. Other options can be defined as you want.
+UpdatedRecently=تم التحديث مؤخرا

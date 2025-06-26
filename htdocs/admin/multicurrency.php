@@ -149,8 +149,8 @@ if ($action == 'add_currency') {			// Manual insertion of a rate
 
 		setEventMessages($langs->trans("SetupSaved"), null);
 	} else {
-		// Run the update
-		$result = $multicurrency->syncRates();
+		// Run the update o currency rate (this may updates database)
+		$result = $multicurrency->syncRates(0, 0, '');
 		if ($result > 0) {
 			setEventMessages($langs->trans("CurrencyRateSyncSucceed"), null, "mesgs");
 		} else {
@@ -224,7 +224,8 @@ print '</td></tr>';
 
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->transnoentitiesnoconv("multicurrency_useOriginTx").'</td>';
+$tooltip = $langs->trans("multicurrency_useOriginTxHelp");
+print '<td>'.$form->textwithpicto($langs->transnoentitiesnoconv("multicurrency_useOriginTx"), $tooltip).'</td>';
 print '<td class="center">';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MULTICURRENCY_USE_ORIGIN_TX', array(), null, 0, 0, 0, 2, 0, 1);

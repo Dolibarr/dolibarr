@@ -19,6 +19,7 @@
  * Copyright (C) 2023       Lenin Rivas      	<lenin.rivas777@gmail.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
+ * Copyright (C) 2025		Alexandre Janniaux	<alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3075,7 +3076,6 @@ abstract class CommonObject
 				if (get_class($this) == 'Fournisseur') {
 					$this->cond_reglement_supplier_id = $id;
 				}
-				$this->cond_reglement = $id; // for compatibility
 				$this->deposit_percent = $deposit_percent;
 				return 1;
 			} else {
@@ -3496,14 +3496,14 @@ abstract class CommonObject
 		dol_syslog(get_class($this)."::getChildrenOfLine search children lines for line ".$id, LOG_DEBUG);
 
 		$resql = $this->db->query($sql);
-		if ($resql) {
-			if ($this->db->num_rows($resql) > 0) {
-				while ($row = $this->db->fetch_row($resql)) {
-					$rows[] = $row[0];
-					if (!empty($includealltree) && $includealltree <= 1000) {	// Test <= 1000 is a protection in depth of recursive call to avoid infinite loop
-						$rows = array_merge($rows, $this->getChildrenOfLine($row[0], $includealltree + 1));
-					}
-				}
+		if (!$resql || $this->db->num_rows($resql) <= 0) {
+			return array();
+		}
+
+		while ($row = $this->db->fetch_row($resql)) {
+			$rows[] = $row[0];
+			if (!empty($includealltree) && $includealltree <= 1000) {	// Test <= 1000 is a protection in depth of recursive call to avoid infinite loop
+				$rows = array_merge($rows, $this->getChildrenOfLine($row[0], $includealltree + 1));
 			}
 		}
 		return $rows;
@@ -3574,12 +3574,12 @@ abstract class CommonObject
 		if (!$this->db->query($sql)) {
 			dol_print_error($this->db);
 			return -1;
-		} else {
-			$parameters = array('rowid' => $rowid, 'rang' => $rang, 'fieldposition' => $fieldposition);
-			$action = '';
-			$reshook = $hookmanager->executeHooks('afterRankOfLineUpdate', $parameters, $this, $action);
-			return 1;
 		}
+
+		$parameters = array('rowid' => $rowid, 'rang' => $rang, 'fieldposition' => $fieldposition);
+		$action = '';
+		$reshook = $hookmanager->executeHooks('afterRankOfLineUpdate', $parameters, $this, $action);
+		return 1;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -3603,29 +3603,35 @@ abstract class CommonObject
 	 *
 	 * 	@param	int		$rowid		Id of line
 	 * 	@param	int		$rang		Position
-	 * 	@return	void
+	 * 	@return	int<-1,1>			Return integer <0 if KO, >0 if OK
 	 */
 	public function updateLineUp($rowid, $rang)
 	{
-		if ($rang > 1) {
-			$fieldposition = 'rang';
-			if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
-				$fieldposition = 'position';
-			}
-
-			$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) $rang);
-			$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
-			$sql .= " AND " . $fieldposition . " = " . ((int) ($rang - 1));
-			if ($this->db->query($sql)) {
-				$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) ($rang - 1));
-				$sql .= ' WHERE rowid = '.((int) $rowid);
-				if (!$this->db->query($sql)) {
-					dol_print_error($this->db);
-				}
-			} else {
-				dol_print_error($this->db);
-			}
+		if ($rang <= 1) {
+			return -1;
 		}
+
+		$fieldposition = 'rang';
+		if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
+			$fieldposition = 'position';
+		}
+
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) $rang);
+		$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
+		$sql .= " AND " . $fieldposition . " = " . ((int) ($rang - 1));
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) ($rang - 1));
+		$sql .= ' WHERE rowid = '.((int) $rowid);
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		return 1;
 	}
 
 	/**
@@ -3634,29 +3640,35 @@ abstract class CommonObject
 	 * 	@param	int		$rowid		Id of line
 	 * 	@param	int		$rang		Position
 	 * 	@param	int		$max		Max
-	 * 	@return	void
+	 * 	@return	int<-1,1>			Return integer <0 if KO, >0 if OK
 	 */
 	public function updateLineDown($rowid, $rang, $max)
 	{
-		if ($rang < $max) {
-			$fieldposition = 'rang';
-			if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
-				$fieldposition = 'position';
-			}
-
-			$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) $rang);
-			$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
-			$sql .= " AND " . $fieldposition . " = " . ((int) ($rang + 1));
-			if ($this->db->query($sql)) {
-				$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) ($rang + 1));
-				$sql .= ' WHERE rowid = '.((int) $rowid);
-				if (!$this->db->query($sql)) {
-					dol_print_error($this->db);
-				}
-			} else {
-				dol_print_error($this->db);
-			}
+		if ($rang >= $max) {
+			return -1;
 		}
+
+		$fieldposition = 'rang';
+		if (in_array($this->table_element_line, array('ecm_files', 'emailcollector_emailcollectoraction', 'product_attribute_value'))) {
+			$fieldposition = 'position';
+		}
+
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) $rang);
+		$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
+		$sql .= " AND " . $fieldposition . " = " . ((int) ($rang + 1));
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element_line." SET ".$fieldposition." = ".((int) ($rang + 1));
+		$sql .= ' WHERE rowid = '.((int) $rowid);
+		if (!$this->db->query($sql)) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		return 1;
 	}
 
 	/**
@@ -3677,12 +3689,12 @@ abstract class CommonObject
 
 		dol_syslog(get_class($this)."::getRangOfLine", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql) {
-			$row = $this->db->fetch_row($resql);
-			return $row[0];
+		if (!$resql) {
+			return 0;
 		}
 
-		return 0;
+		$row = $this->db->fetch_row($resql);
+		return $row[0];
 	}
 
 	/**
@@ -3702,12 +3714,12 @@ abstract class CommonObject
 		$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
 		$sql .= " AND " . $fieldposition . " = ".((int) $rang);
 		$resql = $this->db->query($sql);
-		if ($resql) {
-			$row = $this->db->fetch_row($resql);
-			return $row[0];
+		if (!$resql) {
+			return 0;
 		}
 
-		return 0;
+		$row = $this->db->fetch_row($resql);
+		return $row[0];
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -3725,31 +3737,26 @@ abstract class CommonObject
 			$positionfield = 'position';
 		}
 
+		$sql = "SELECT max(".$positionfield.") FROM ".$this->db->prefix().$this->table_element_line;
+		$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
+
 		// Search the last rang with fk_parent_line
 		if ($fk_parent_line) {
-			$sql = "SELECT max(".$positionfield.") FROM ".$this->db->prefix().$this->table_element_line;
-			$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
 			$sql .= " AND fk_parent_line = ".((int) $fk_parent_line);
+		}
 
-			dol_syslog(get_class($this)."::line_max", LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				$row = $this->db->fetch_row($resql);
+		dol_syslog(get_class($this)."::line_max", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$row = $this->db->fetch_row($resql);
+
+			if ($fk_parent_line) {
 				if (!empty($row[0])) {
 					return $row[0];
 				} else {
 					return $this->getRangOfLine($fk_parent_line);
 				}
-			}
-		} else {
-			// If not, search the last rang of element
-			$sql = "SELECT max(".$positionfield.") FROM ".$this->db->prefix().$this->table_element_line;
-			$sql .= " WHERE ".$this->fk_element." = ".((int) $this->id);
-
-			dol_syslog(get_class($this)."::line_max", LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if ($resql) {
-				$row = $this->db->fetch_row($resql);
+			} else {
 				return $row[0];
 			}
 		}
@@ -5103,7 +5110,7 @@ abstract class CommonObject
 	 */
 	public function getTotalDiscount()
 	{
-		if (!empty($this->table_element_line)) {
+		if (!empty($this->table_element_line) && ($this->table_element_line != 'expeditiondet')) {
 			$total_discount = 0.00;
 
 			$sql = "SELECT subprice as pu_ht, qty, remise_percent, total_ht";
@@ -7844,6 +7851,7 @@ abstract class CommonObject
 
 			$tmpselect = '';
 			$nbchoice = 0;
+
 			foreach ($param['options'] as $keyb => $valb) {
 				if ((string) $keyb == '') {
 					continue;
@@ -7862,7 +7870,7 @@ abstract class CommonObject
 			}
 
 			$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
-			if ((!isset($this->fields[$key]['default'])) || ($this->fields[$key]['notnull'] != 1) || $nbchoice >= 2) {
+			if ((!isset($this->fields[$key]['default'])) || empty($this->fields[$key]['notnull']) || ($this->fields[$key]['notnull'] != 1) || $nbchoice >= 2) {
 				$out .= '<option value="0">&nbsp;</option>';
 			}
 			$out .= $tmpselect;

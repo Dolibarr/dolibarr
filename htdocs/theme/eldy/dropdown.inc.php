@@ -205,7 +205,6 @@ div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::af
 	border-top-right-radius: 0;
 	border-top-left-radius: 0;
 	padding: 0 0 0 0;
-	margin-top: 2px !important;
 	border-top-width: 0;
 	width: <?php echo $WIDTHMENUDROPDOWN; ?>px;
 }
@@ -649,6 +648,7 @@ div.quickaddblock:focus {
 	.dropdown-menu:not(.ai_dropdown) {
 		border: none;
 		box-shadow: none;
+		border-bottom: 1px solid #888;
 	}
 
 }

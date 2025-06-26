@@ -114,6 +114,26 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 * @var float
 	 */
+	public $total_ht;
+	/**
+	 * @var float
+	 */
+	public $total_tva;
+	/**
+	 * @var float
+	 */
+	public $total_localtax1;
+	/**
+	 * @var float
+	 */
+	public $total_localtax2;
+	/**
+	 * @var float
+	 */
+	public $total_ttc;
+	/**
+	 * @var float|null
+	 */
 	public $revenuestamp;
 
 	/**
@@ -402,7 +422,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  Return amount (with tax) of all credit notes invoices + excess received used by invoice
 	 *
 	 * 	@param 		int 	$multicurrency 		Return multicurrency_amount instead of amount
-	 *	@return		float						Return integer <0 and set ->error if KO, Sum of credit notes and deposits amount otherwise
+	 *	@return		float|string				Return string 'Error...' and set ->error if KO, Sum of credit notes and deposits amount otherwise
 	 *	@see getSommePaiement(), getSumDepositsUsed()
 	 */
 	public function getSumCreditNotesUsed($multicurrency = 0)
@@ -411,7 +431,7 @@ abstract class CommonInvoice extends CommonObject
 
 		$discountstatic = new DiscountAbsolute($this->db);
 		$result = $discountstatic->getSumCreditNotesUsed($this, $multicurrency);
-		if ($result >= 0) {
+		if (is_numeric($result)) {
 			if ($multicurrency) {
 				$this->sumcreditnote_multicurrency = $result;
 			} else {
@@ -421,7 +441,7 @@ abstract class CommonInvoice extends CommonObject
 			return $result;
 		} else {
 			$this->error = $discountstatic->error;
-			return -1;
+			return $result;
 		}
 	}
 
@@ -2247,6 +2267,12 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	 * @var float
 	 */
 	public $total_ttc;
+
+	/**
+	 * @var float|null
+	 */
+	public $revenuestamp;
+
 
 	/**
 	 * @var int<0,1>

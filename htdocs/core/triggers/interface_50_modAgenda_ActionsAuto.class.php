@@ -425,14 +425,14 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			// Load translation files required by the page
 			$langs->loadLangs(array("agenda", "other", "bills"));
 
-			if (empty($object->actionmsg2)) {
+			if (empty($object->actionmsg2)) {	// Label
 				if (empty($object->context['actionmsg2'])) {
 					$object->actionmsg2 = $langs->transnoentities("InvoiceValidatedInDolibarr", ($object->newref ? $object->newref : $object->ref));
 				} else {
 					$object->actionmsg2 = $object->context['actionmsg2'];
 				}
 			}
-			if (empty($object->actionmsg)) {
+			if (empty($object->actionmsg)) {	// Description
 				$object->actionmsg = $langs->transnoentities("InvoiceValidatedInDolibarr", ($object->newref ? $object->newref : $object->ref));
 			}
 
@@ -1683,6 +1683,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		// Reset value set by caller
 		unset($object->context['actionmsg']);
 		unset($object->context['actionmsg2']);
+		unset($object->context['actionmsgmore']);
+		unset($object->context['actionmsg2more']);
 		unset($object->actionmsg);
 		unset($object->actionmsg2);
 		unset($object->actiontypecode); // When several action are called on same object, we must be sure to not reuse value of first action.

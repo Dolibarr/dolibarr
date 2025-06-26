@@ -207,7 +207,7 @@ class Ticket extends CommonObject
 	public $date_last_msg_sent;
 
 	/**
-	 * @var int Close ticket date
+	 * @var int 	Close ticket date
 	 */
 	public $date_close;
 
@@ -237,12 +237,12 @@ class Ticket extends CommonObject
 	public $email_date;
 
 	/**
-	 * @var string 	IP address
+	 * @var string 			IP address
 	 */
 	public $ip;
 
 	/**
-	 * @var Ticket[] Array of Tickets
+	 * @var Ticket[] 		Array of Tickets
 	 */
 	public $lines;
 
@@ -1810,7 +1810,7 @@ class Ticket extends CommonObject
 	 * @param	string[]	$mimefilename_list	List of attached file name in message
 	 * @param	bool		$send_email			Whether the message is sent by email
 	 * @param	int<0,1>	$public_area		0=Default, 1 if we are creating the message from a public area (so we can search contact from email to add it as contact of ticket if TICKET_ASSIGN_CONTACT_TO_MESSAGE is set)
-	 * @return	int								Return integer <0 if KO, >0 if OK
+	 * @return	int								Return integer <0 if KO, ID of actioncomm create if OK
 	 */
 	public function createTicketMessage($user, $notrigger = 0, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $send_email = false, $public_area = 0)
 	{
@@ -1853,10 +1853,12 @@ class Ticket extends CommonObject
 		$actioncomm->percentage = -1; // percentage is not relevant for punctual events
 		$actioncomm->elementtype = 'ticket';
 		$actioncomm->fk_element = $this->id;
+		$actioncomm->elementid = $this->id;
+		$actioncomm->elementtype = 'ticket';
 		$actioncomm->fk_project = $this->fk_project;
 
 		// Add first contact id found in database from submitter email entered into public interface
-		// Feature disabled: This has a security trouble. The public interface is a no login interface, so being able to show the contact info from an
+		// Feature disabled by default: This has a security trouble. The public interface is a no login interface, so being able to show the contact info from an
 		// email decided by the submiter allows anybody to get information on any contact (customer or supplier) in Dolibarr database.
 		// He can even check if contact exists by trying any email if this feature is enabled.
 		if ($public_area && !empty($this->origin_email) && getDolGlobalString('TICKET_ASSIGN_CONTACT_TO_MESSAGE')) {
@@ -1929,7 +1931,7 @@ class Ticket extends CommonObject
 			return -1 * $error;
 		} else {
 			$this->db->commit();
-			return 1;
+			return $actionid;
 		}
 	}
 
@@ -2714,7 +2716,11 @@ class Ticket extends CommonObject
 			$listofnames = $resarray['listofnames'];
 			$listofmimes = $resarray['listofmimes'];
 
+			// Add the ticket message in database (even if email is requested, we store a simple record
+			// like a simple private message, with no information about emails) because
+			// information about emails sent will be fill later after email sending.
 			$id = $object->createTicketMessage($user, 0, $listofpaths, $listofmimes, $listofnames, $send_email, $public_area);
+
 			if ($id <= 0) {
 				$error++;
 				$this->error = $object->error;
@@ -2725,6 +2731,7 @@ class Ticket extends CommonObject
 			if (!$error && $id > 0) {
 				setEventMessages($langs->trans('TicketMessageSuccessfullyAdded'), null, 'mesgs');
 
+				// Now send emails
 				if (!empty($public_area)) {
 					/*
 					 * Message created from the Public interface
@@ -2814,16 +2821,19 @@ class Ticket extends CommonObject
 							$message .= '<br><br>';
 							$message .= $langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal').' : <a href="'.$url_internal_ticket.'">'.$object->track_id.'</a>';
 
-							$this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames);
+							$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
+
+							// don't try to send email if no recipient
+							$this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames, array(), $from);
 						}
 					}
 				} else {
 					/*
-					 * Message send from the Backoffice / Private area
+					 * Message created from the Backoffice / Private area
 					 *
 					 * Send emails to internal users (linked contacts) then, if private is not set, to external users (linked contacts or thirdparty email if no contact set)
 					 */
-					if ($send_email > 0) {
+					if ((int) $send_email > 0) {
 						// Retrieve internal contact datas
 						$internal_contacts = $object->getInfosTicketInternalContact(1);
 
@@ -2854,8 +2864,9 @@ class Ticket extends CommonObject
 
 							// Build array to display recipient list
 							foreach ($internal_contacts as $key => $info_sendto) {
-								// Avoid duplicate notifications
+								// Check if recipient email is current user, if yes, we avoid to send email to him.
 								if ($info_sendto['id'] == $user->id) {
+									dol_syslog("We cancel sending email to internal user ".$info_sendto['email']." because it is current user", LOG_DEBUG);
 									continue;
 								}
 
@@ -2889,9 +2900,11 @@ class Ticket extends CommonObject
 								$sendtocc = explode(',', getDolGlobalString("TICKET_SEND_INTERNAL_CC"));
 							}
 
+							$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
+
 							// don't try to send email if no recipient
 							if (!empty($sendto)) {
-								$this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames, $sendtocc);
+								$this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames, $sendtocc, $from);
 							}
 						}
 
@@ -2942,7 +2955,7 @@ class Ticket extends CommonObject
 								$message .= '<br><br>';
 
 								foreach ($external_contacts as $key => $info_sendto) {
-									// avoid duplicate emails to external contacts
+									// Check if recipient email is current user, if yes, we avoid to send email to him.
 									if ($info_sendto['id'] == $user->contact_id) {
 										continue;
 									}
@@ -3000,11 +3013,25 @@ class Ticket extends CommonObject
 
 								// Don't try to send email when no recipient
 								if (!empty($sendto)) {
-									$result = $this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames, $sendtocc);
+									$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
+
+									$result = $this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames, $sendtocc, $from);
 									if ($result) {
-										// update last_msg_sent date (for last message sent to external users)
+										// update last_msg_sent date of ticket (for last message sent to external users)
 										$this->date_last_msg_sent = dol_now();
 										$this->update($user, 1);	// disable trigger when updating date_last_msg_sent. sendTicketMessageByEmail already create an event in actioncomm table.
+
+										// update event actioncomm $id
+										//print 'update actioncomm id='.$id.' with sendto='.json_encode($sendto)." sendtocc=".json_encode($sendtocc)." email_msgid=".json_encode($this->email_msgid);
+										$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm";
+										$sql .= " SET email_msgid = '".$this->db->escape($this->email_msgid)."',";
+										$sql .= " email_subject = '".$this->db->escape($subject)."',";
+										$sql .= " email_from = '".$this->db->escape($from)."',";
+										$sql .= " email_to = '".$this->db->escape(implode(',', $sendto))."',";
+										$sql .= " email_tocc = '".$this->db->escape(implode(',', $sendtocc))."'";
+										$sql .= " WHERE id = ".((int) $id);
+
+										$resql = $this->db->query($sql);
 									}
 								}
 							}
@@ -3047,9 +3074,10 @@ class Ticket extends CommonObject
 	 * @param string[]		$mimetype_list      List of MIME type of attached files
 	 * @param string[]		$mimefilename_list  List of attached file name in message
 	 * @param array<string>	$array_receiver_cc	Array of receiver in CC. Example array('john@doe.com')
+	 * @param string		$from				Email from
 	 * @return boolean     						True if mail sent to at least one receiver, false otherwise
 	 */
-	public function sendTicketMessageByEmail($subject, $message, $send_internal_cc = 0, $array_receiver = array(), $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $array_receiver_cc = array())
+	public function sendTicketMessageByEmail($subject, $message, $send_internal_cc = 0, $array_receiver = array(), $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $array_receiver_cc = array(), $from = '')
 	{
 		global $conf, $langs, $user;
 
@@ -3069,6 +3097,9 @@ class Ticket extends CommonObject
 			$array_receiver = array_merge($array_receiver, $this->getInfosTicketExternalContact(1));
 		}
 
+		dol_syslog("sendTicketMessageByEmail array_receiver=".json_encode($array_receiver), LOG_DEBUG);
+		dol_syslog("sendTicketMessageByEmail array_receiver_cc=".json_encode($array_receiver_cc), LOG_DEBUG);
+
 		$sendtocc = '';
 		if ($send_internal_cc) {
 			$sendtocc = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
@@ -3077,10 +3108,15 @@ class Ticket extends CommonObject
 			$sendtocc .= ($sendtocc ? ',' : '').implode(',', $array_receiver_cc);
 		}
 
-		$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
+		if (empty($from)) {
+			$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
+		}
+
 		$is_sent = false;
+		$this->email_msgids = array();
+
 		if (is_array($array_receiver) && count($array_receiver) > 0) {
-			foreach ($array_receiver as $key => $receiver) {
+			//foreach ($array_receiver as $key => $receiver) {
 				$deliveryreceipt = 0;
 				$filepath = $filename_list;
 				$filename = $mimefilename_list;
@@ -3089,9 +3125,9 @@ class Ticket extends CommonObject
 				// Send email
 
 				$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
-				if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
-					$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
-				}
+			if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
+				$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
+			}
 
 				$upload_dir_tmp = $conf->user->dir_output."/".$user->id.'/temp';
 
@@ -3099,51 +3135,59 @@ class Ticket extends CommonObject
 				$trackid = "tic".$this->id;
 
 				$moreinheader = 'X-Dolibarr-Info: sendTicketMessageByEmail'."\r\n";
-				if (!empty($this->email_msgid)) {
-					// We must also add 1 entry In-Reply-To: <$this->email_msgid> with Message-ID we respond from (See RFC5322).
-					$moreinheader .= 'In-Reply-To: <'.$this->email_msgid.'>'."\r\n";
-					// TODO We should now be able to give the in_reply_to as a dedicated parameter of new CMailFile() instead of into $moreinheader.
-				}
+			if (!empty($this->email_msgid)) {
+				// We must also add 1 entry In-Reply-To: <$this->email_msgid> with Message-ID we respond from (See RFC5322).
+				$moreinheader .= 'In-Reply-To: <'.$this->email_msgid.'>'."\r\n";
+				// TODO We should now be able to give the in_reply_to as a dedicated parameter of new CMailFile() instead of into $moreinheader.
+			}
 
 				// We should add here also a header 'References:'
 				// According to RFC5322, we should add here all the References fields of the initial message concatenated with
 				// the Message-ID of the message we respond from (but each ID must be once).
 				$references = '';
-				if (!empty($this->origin_references)) {		// $this->origin_references should be '<'.$this->origin_references.'>'
-					$references .= (empty($references) ? '' : ' ').$this->origin_references;
-				}
-				if (!empty($this->email_msgid) && !preg_match('/'.preg_quote($this->email_msgid, '/').'/', $references)) {
-					$references .= (empty($references) ? '' : ' ').'<'.$this->email_msgid.'>';
-				}
-				if ($references) {
-					$moreinheader .= 'References: '.$references."\r\n";
-					// TODO We should now be able to give the references as a dedicated parameter of new CMailFile() instead of into $moreinheader.
-				}
+			if (!empty($this->origin_references)) {		// $this->origin_references should be '<'.$this->origin_references.'>'
+				$references .= (empty($references) ? '' : ' ').$this->origin_references;
+			}
+			if (!empty($this->email_msgid) && !preg_match('/'.preg_quote($this->email_msgid, '/').'/', $references)) {
+				$references .= (empty($references) ? '' : ' ').'<'.$this->email_msgid.'>';
+			}
+			if ($references) {
+				$moreinheader .= 'References: '.$references."\r\n";
+				// TODO We should now be able to give the references as a dedicated parameter of new CMailFile() instead of into $moreinheader.
+			}
 
-				$mailfile = new CMailFile($subject, $receiver, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', $trackid, $moreinheader, 'ticket', '', $upload_dir_tmp);
+				$receiverstring = '';
+			foreach ($array_receiver as $key => $receiver) {
+				$receiverstring .= ($receiverstring ? ',' : '').$receiver;
+			}
+				$mailfile = new CMailFile($subject, $receiverstring, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', $trackid, $moreinheader, 'ticket', '', $upload_dir_tmp);
 
-				if ($mailfile->error) {
-					setEventMessages($mailfile->error, null, 'errors');
+
+			if ($mailfile->error) {
+				setEventMessages($mailfile->error, null, 'errors');
+			} else {
+				$result = $mailfile->sendfile();
+
+				if ($result) {
+					setEventMessages($langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($receiverstring, 2)), null, 'mesgs');
+					$is_sent = true;
+
+					$this->email_msgid = $mailfile->msgid;
 				} else {
-					$result = $mailfile->sendfile();
-					if ($result) {
-						setEventMessages($langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($receiver, 2)), null, 'mesgs');
-						$is_sent = true;
+					$langs->load("other");
+					if ($mailfile->error) {
+						setEventMessages($langs->trans('ErrorFailedToSendMail', $from, $receiver), null, 'errors');
+						dol_syslog($langs->trans('ErrorFailedToSendMail', $from, $receiver).' : '.$mailfile->error);
 					} else {
-						$langs->load("other");
-						if ($mailfile->error) {
-							setEventMessages($langs->trans('ErrorFailedToSendMail', $from, $receiver), null, 'errors');
-							dol_syslog($langs->trans('ErrorFailedToSendMail', $from, $receiver).' : '.$mailfile->error);
-						} else {
-							setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'errors');
-						}
+						setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'errors');
 					}
 				}
-
-				if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
-					$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
-				}
 			}
+
+			if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
+				$conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
+			}
+			//}
 		} else {
 			$langs->load("other");
 			setEventMessages($langs->trans('ErrorMailRecipientIsEmptyForSendTicketMessage'), null, 'warnings');

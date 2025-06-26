@@ -567,6 +567,8 @@ a.vmenu span, span.vmenu, span.vmenu span {
 .kanban.kanbancollapsed {
 	flex: unset;
 	width: 80px;
+	max-width: 80px;
+	overflow: hidden;
 }
 .kanban.kanbancollapsed .kanbanlabel, .text-vertical {
 	writing-mode: vertical-rl;

@@ -18,8 +18,8 @@ Module4100Desc = Módulo para gestionar la Privacidad de los Datos (Conformidad 
 # Administration page
 datapolicySetup = Configuración del módulo de Política de Privacidad de Datos
 DataDeletion=Eliminación de datos
-DataAnonymization=Anonymization of data
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
+DataAnonymization=Anonimización de datos
+datapolicySetupPage = Dependiendo de las leyes de su país (Ejemplo <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Artículo 5</a> del RGPD), los datos personales deben conservarse durante un período que no exceda la duración en la que los datos son necesarios para el propósito para el cual fueron recopilados, excepto para fines de archivo.<br>Este módulo realizará una anonimización automáticamente después de una cierta duración sin eventos (la duración que habrá indicado a continuación) y si el objeto no tiene hijos de objetos comerciales existentes.
 NB_MONTHS = %s meses
 ONE_YEAR = 1 año
 NB_YEARS = %s años
@@ -34,14 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Cliente potencial/Cliente
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = No es cliente potencial/cliente
 DATAPOLICY_CONTACT_FOURNISSEUR = Proveedor
 DATAPOLICY_ADHERENT = Miembro
-DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
+DATAPOLICY_Tooltip_SETUP=La anonimización se realiza mediante el trabajo programado "%s" ejecutado por el módulo "%s", por lo que este módulo debe estar habilitado y funcionando correctamente.
 SendAgreementText = Puede enviar un correo electrónico de GDPR a todos sus contactos relevantes (que aún no han recibido un correo electrónico y para los cuales no ha registrado nada sobre su acuerdo de GDPR). Para ello, utilice el siguiente botón.
 SendAgreement = Enviar correos electrónicos
 AllAgreementSend = Todos los correos electrónicos han sido enviados.
 TXTLINKDATAPOLICYACCEPT = Texto para el enlace "acuerdo"
 TXTLINKDATAPOLICYREFUSE = Texto para el enlace "desacuerdo"
-DelayForAnonymization=Delay for anonymization
-DelayForDeletion=Delay for deletion
+DelayForAnonymization=Retraso para la anonimización
+DelayForDeletion=Retraso para la eliminación
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = RGPD: Tratamiento de datos personales
 DATAPOLICY_consentement = Consentimiento obtenido para el tratamiento de datos personales

@@ -19,7 +19,7 @@
  * Copyright (C) 2021       Gauthier VERDOL         	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022       Anthony Berton	         	<anthony.berton@bb2a.fr>
  * Copyright (C) 2022       Ferran Marcet           	<fmarcet@2byte.es>
- * Copyright (C) 2022       Charlene Benke           	<charlene@patas-monkey.com>
+ * Copyright (C) 2022-2025  Charlene Benke           	<charlene@patas-monkey.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2023-2024  Joachim Kueter              <git-jk@bloxera.com>
  * Copyright (C) 2024		Lenin Rivas					<lenin.rivas777@gmail.com>
@@ -2185,19 +2185,24 @@ function dolPrintHTML($s, $allowiframe = 0)
  * Return a string ready to be output into an HTML attribute (alt, title, data-html, ...)
  * With dolPrintHTMLForAttribute(), the content is HTML encode, even if it is already HTML content.
  *
- * @param	string	$s						String to print
- * @param	int		$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
- * @return	string							String ready for HTML output
+ * @param	string		$s						String to print
+ * @param	int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
+ * @param	string[]	$allowothertags			List of other tags allowed
+ * @return	string								String ready for HTML output
  * @see dolPrintHTML(), dolPrintHTMLFortextArea()
  */
-function dolPrintHTMLForAttribute($s, $escapeonlyhtmltags = 0)
+function dolPrintHTMLForAttribute($s, $escapeonlyhtmltags = 0, $allowothertags = array())
 {
+	$allowedtags = array('br', 'b', 'font', 'hr', 'span');
+	if (!empty($allowothertags) && is_array($allowothertags)) {
+		$allowedtags = array_merge($allowedtags, $allowothertags);
+	}
 	// The dol_htmlentitiesbr will convert simple text into html, including switching accent into HTML entities
 	// The dol_escape_htmltag will escape html tags.
 	if ($escapeonlyhtmltags) {
-		return dol_escape_htmltag(dol_string_onlythesehtmltags($s, 1, 0, 0, 0, array('br', 'b', 'font', 'hr', 'span')), 1, -1, '', 1, 1);
+		return dol_escape_htmltag(dol_string_onlythesehtmltags($s, 1, 0, 0, 0, $allowedtags), 1, -1, '', 1, 1);
 	} else {
-		return dol_escape_htmltag(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 0, 0, 0, array('br', 'b', 'font', 'hr', 'span')), 1, -1, '', 0, 1);
+		return dol_escape_htmltag(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 0, 0, 0, $allowedtags), 1, -1, '', 0, 1);
 	}
 }
 
@@ -2777,24 +2782,6 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 
 	$out = '';
 
-	/* canceled
-	$backtopagejsfieldsid = '';
-	$backtopagejsfieldslabel = '';
-	$backtopagejsfieldshtml = '';
-	if ($backtopagejsfields) {
-		$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
-		if (empty($tmpbacktopagejsfields[1])) {	// If the part 'keyforpopupid:' is missing, we add $name for it.
-			$tmp2backtopagejsfields = explode(',', $tmpbacktopagejsfields[0]);
-		} else {
-			$tmp2backtopagejsfields = explode(',', $tmpbacktopagejsfields[1]);
-		}
-		$backtopagejsfieldsid = empty($tmp2backtopagejsfields[0]) ? '' : $tmp2backtopagejsfields[0];
-		$backtopagejsfieldslabel = empty($tmp2backtopagejsfields[1]) ? '' : $tmp2backtopagejsfields[1];
-		$backtopagejsfieldshtml = empty($tmp2backtopagejsfields[2]) ? '' : $tmp2backtopagejsfields[2];
-		$url .= '&backtopagejsfields='.urlencode($backtopagejsfields);
-	}
-	*/
-
 	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
 	$out .= '<!-- a link for button to open url into a dialog popup -->';
 	$out .= '<a '.($accesskey ? ' accesskey="'.$accesskey.'"' : '').' class="cursorpointer reposition button_'.$name.($morecss ? ' '.$morecss : '').'"'.$disabled.' title="'.dol_escape_htmltag($label).'"';
@@ -2811,12 +2798,7 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 		// Add code to open url using the popup.
 		$out .= '<!-- code to open popup and variables to retrieve returned variables -->';
 		$out .= '<div id="idfordialog'.$name.'" class="hidden">'.(getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2 ? 'div for dialog' : '').'</div>';
-		/* canceled
-		// Add also hidden field to retrieve the returned variables
-		$out .= '<div id="varforreturndialogid'.$name.'" class="hidden">'.(getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2 ? 'div for returned id' : '').'</div>';
-		$out .= '<div id="varforreturndialoglabel'.$name.'" class="hidden">'.(getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2 ? 'div for returned label' : '').'</div>';
-		$out .= '<div id="varforreturndialoghtml'.$name.'" class="hidden">'.(getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2 ? 'div for returned html' : '').'</div>';
-		*/
+
 		$out .= '<!-- Add js code to open dialog popup on dialog -->';
 		$out .= '<script nonce="'.getNonce().'" type="text/javascript">
 					jQuery(document).ready(function () {
@@ -3010,7 +2992,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 	if ($popuptab) {	// If there is some tabs not shown
 		$left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
 		$right = ($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right');
-		$widthofpopup = 200;
+		$widthofpopup = 240;
 
 		$tabsname = $moretabssuffix;
 		if (empty($tabsname)) {
@@ -5286,10 +5268,11 @@ function getPictoForType($key, $morecss = '')
  *  @param		string		$alt					Force alt for blind people
  *  @param		string		$morecss				Add more class css on img tag (For example 'myclascss').
  *  @param		int 		$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No margin left. Works for fontawesome picto only.
+ *  @param		string[]	$allowothertags			List of other tags allowed in title and alt attribute
  *  @return     string       				    	Return img tag
  *  @see        img_object(), img_picto_common()
  */
-function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srconly = 0, $notitle = 0, $alt = '', $morecss = '', $marginleftonlyshort = 2)
+function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srconly = 0, $notitle = 0, $alt = '', $morecss = '', $marginleftonlyshort = 2, $allowothertags = array())
 {
 	global $conf;
 
@@ -5552,7 +5535,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 	}
 
 	// tag title is used for tooltip on <a>, tag alt can be used with very simple text on image for blind people
-	return '<img src="'.$fullpathpicto.'"'.($notitle ? '' : ' alt="'.dol_escape_htmltag($alt).'"').(($notitle || empty($titlealt)) ? '' : ' title="'.dol_escape_htmltag($titlealt).'"').($moreatt ? ' '.$moreatt.($morecss ? ' class="'.$morecss.'"' : '') : ' class="inline-block'.($morecss ? ' '.$morecss : '').'"').'>'; // Alt is used for accessibility, title for popup
+	return '<img src="'.$fullpathpicto.'"'.($notitle ? '' : ' alt="'.dolPrintHTMLForAttribute($alt, 0, $allowothertags).'"').(($notitle || empty($titlealt)) ? '' : ' title="'.dolPrintHTMLForAttribute($titlealt, 0, $allowothertags).'"').($moreatt ? ' '.$moreatt.($morecss ? ' class="'.$morecss.'"' : '') : ' class="inline-block'.($morecss ? ' '.$morecss : '').'"').'>'; // Alt is used for accessibility, title for popup
 }
 
 /**
@@ -5583,7 +5566,7 @@ function getImgPictoNameList()
 		'margin', 'map-marker-alt', 'member', 'meeting', 'minus', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
 		'off', 'on', 'order',
 		'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'proposal', 'puce',
-		'stock', 'resize', 'service', 'stats',
+		'resize', 'search', 'service', 'stats', 'stock',
 		'security', 'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'switch_on_grey', 'switch_on_warning', 'switch_on_red', 'tools', 'unlink', 'uparrow', 'user', 'user-tie', 'vcard', 'wrench',
 		'discord', 'facebook', 'flickr', 'instagram','linkedin', 'github', 'google', 'jabber', 'meetup', 'microsoft', 'skype', 'slack', 'twitter', 'pinterest', 'reddit', 'snapchat', 'tumblr', 'youtube', 'viadeo', 'google-plus-g', 'whatsapp',
 		'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
@@ -5594,7 +5577,7 @@ function getImgPictoNameList()
 		'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'replacement', 'resource', 'recurring', 'rss',
 		'search-plus', 'shapes', 'skill', 'square', 'sort-numeric-down', 'status', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 		'terminal', 'tick', 'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda', 'trip',
-		'uncheck', 'undo', 'url', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
+		'uncheck', 'undo', 'url', 'user-cog', 'user-injured', 'user-md', 'upload', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
 		'conferenceorbooth', 'eventorganization',
 		'stamp', 'signature',
 		'webportal'
@@ -5675,22 +5658,23 @@ function getImgPictoConv($mode = 'fa')
 /**
  *	Show a picto called object_picto (generic function)
  *
- *	@param	string	$titlealt			Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *	@param	string	$picto				Name of image to show object_picto (example: user, group, action, bill, contract, propal, product, ...)
- *										For external modules use imagename@mymodule to search into directory "img" of module.
- *	@param	string	$moreatt			Add more attribute on img tag (ie: class="datecallink")
- *	@param	int		$pictoisfullpath	If 1, image path is a full path
- *	@param	int		$srconly			Return only content of the src attribute of img.
- *  @param	int		$notitle			1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
- *	@return	string						Return img tag
+ *	@param	string		$titlealt			Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
+ *	@param	string		$picto				Name of image to show object_picto (example: user, group, action, bill, contract, propal, product, ...)
+ *											For external modules use imagename@mymodule to search into directory "img" of module.
+ *	@param	string		$moreatt			Add more attribute on img tag (ie: class="datecallink")
+ *	@param	int			$pictoisfullpath	If 1, image path is a full path
+ *	@param	int			$srconly			Return only content of the src attribute of img.
+ *  @param	int			$notitle			1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
+ *  @param	string[]	$allowothertags		List of other tags allowed in title attribute
+ *	@return	string							Return img tag
  *	@see	img_picto(), img_picto_common()
  */
-function img_object($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srconly = 0, $notitle = 0)
+function img_object($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srconly = 0, $notitle = 0, $allowothertags = array())
 {
 	if (strpos($picto, '^') === 0) {
-		return img_picto($titlealt, str_replace('^', '', $picto), $moreatt, $pictoisfullpath, $srconly, $notitle);
+		return img_picto($titlealt, str_replace('^', '', $picto), $moreatt, $pictoisfullpath, $srconly, $notitle, '', '', 2, $allowothertags);
 	} else {
-		return img_picto($titlealt, 'object_'.$picto, $moreatt, $pictoisfullpath, $srconly, $notitle);
+		return img_picto($titlealt, 'object_'.$picto, $moreatt, $pictoisfullpath, $srconly, $notitle, '', '', 2, $allowothertags);
 	}
 }
 
@@ -6214,7 +6198,7 @@ function img_mime($file, $titlealt = '', $morecss = '')
 	}
 
 	//return img_picto_common($titlealt, 'mime/'.$mimeimg, 'class="'.$morecss.'"');
-	return '<i class="fa fa-'.$mimefa.' paddingright'.($morecss ? ' '.$morecss : '').'"'.($titlealt ? ' title="'.dolPrintHTMLForAttribute($titlealt).'"' : '').'></i>';
+	return '<i class="fa fa-'.$mimefa.' '.(preg_match('/pictofixedwidth/', $morecss) ? '' : 'paddingright ').($morecss ? ' '.$morecss : '').'"'.($titlealt ? ' title="'.dolPrintHTMLForAttribute($titlealt).'"' : '').'></i>';
 }
 
 
@@ -6578,7 +6562,7 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 
 	$tagstart = '<'.$tag.' class="'.$prefix.$liste_titre.'" '.$moreattrib;
 	//$out .= (($field && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && preg_match('/^[a-zA-Z_0-9\s\.\-:&;]*$/', $name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
-	$tagstart .= ($name && !getDolGlobalString('MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE') && empty($forcenowrapcolumntitle) && !dol_textishtml($name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '';
+	$tagstart .= ($name && !getDolGlobalString('MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE') && empty($forcenowrapcolumntitle) && !dol_textishtml($name)) ? ' title="'.dolPrintHTMLForAttribute($langs->trans($name)).'"' : '';
 	$tagstart .= '>';
 
 	if (empty($thead) && $field && empty($disablesortlink)) {    // If this is a sort field
@@ -14012,21 +13996,21 @@ function getElementProperties($elementType)
 		$table_element = 'ecmfiles';
 		$subelement = '';
 	} elseif ($elementType == 'knowledgerecord' || $elementType == 'knowledgemanagement') {
-		$module = '';
+		$module = 'knowledgemanagement';
 		$classpath = 'knowledgemanagement/class';
 		$classfile = 'knowledgerecord';
 		$classname = 'KnowledgeRecord';
 		$table_element = 'knowledgemanagement_knowledgerecord';
 		$subelement = '';
 	} elseif ($elementType == 'customer') {
-		$module = 'thirdparty';
+		$module = 'societe';
 		$classpath = 'societe/class';
 		$classfile = 'client';
 		$classname = 'Client';
 		$table_element = 'societe';
 		$subelement = '';
 	} elseif ($elementType == 'fournisseur' || $elementType == 'supplier') {
-		$module = 'thirdparty';
+		$module = 'societe';
 		$classpath = 'fourn/class';
 		$classfile = 'fournisseur';
 		$classname = 'Fournisseur';
@@ -14066,10 +14050,10 @@ function getElementProperties($elementType)
 	}
 
 	// Overwrite value for special cases
-	if ($element == 'order_supplier') {
+	if ($element == 'order_supplier' && isModEnabled('fournisseur')) {
 		$dir_output = $conf->fournisseur->commande->dir_output;
 		$dir_temp = $conf->fournisseur->commande->dir_temp;
-	} elseif ($element == 'invoice_supplier') {
+	} elseif ($element == 'invoice_supplier' && isModEnabled('fournisseur')) {
 		$dir_output = $conf->fournisseur->facture->dir_output;
 		$dir_temp = $conf->fournisseur->facture->dir_temp;
 	}
@@ -15456,6 +15440,10 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			}
 			$out .= "</span></span>\n";
 
+			$out .= '<span class="time">';
+			$out .= $actionstatic->getLibStatut(2);
+			$out .= '</span>';
+
 			// Ref
 			$out .= '<h3 class="timeline-header">';
 
@@ -15659,9 +15647,11 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 
 		$out .= "</ul>\n";
 
+		// Code to manage the click on button data-read-more-action to show full description of an event
 		$out .= '<script>
 				jQuery(document).ready(function () {
 				   $(document).on("click", "[data-read-more-action]", function(e){
+						console.log("We click on data-read-more-action");
 					   let readMoreBloc = $(this).closest(".readmore-block");
 					   if(readMoreBloc.length > 0){
 							e.preventDefault();

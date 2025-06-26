@@ -456,6 +456,8 @@ class modCommande extends DolibarrModules
 	{
 		global $conf, $langs;
 
+		$this->_load_tables('/install/mysql/', 'commande');
+
 		// Permissions
 		$this->remove($options);
 

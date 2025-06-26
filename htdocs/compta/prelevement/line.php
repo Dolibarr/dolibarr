@@ -179,7 +179,12 @@ if ($id) {
 		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
 		print $id.'</td></tr>';
 
-		print '<tr><td class="titlefield">'.$langs->trans("WithdrawalsReceipts").'</td><td>';
+		if ($type == 'bank-transfer') {
+			print '<tr><td class="titlefield">'.$langs->trans("BankTransfers").'</td><td>';
+		} else {
+			print '<tr><td class="titlefield">'.$langs->trans("WithdrawalsReceipts").'</td><td>';
+		}
+
 		print $bon->getNomUrl(1).'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("Date").'</td><td>'.dol_print_date($bon->datec, 'day').'</td></tr>';

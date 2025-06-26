@@ -148,31 +148,6 @@ class Facture extends CommonInvoice
 	public $ref_customer;
 
 	/**
-	 * @var float
-	 */
-	public $total_ht;
-	/**
-	 * @var float
-	 */
-	public $total_tva;
-	/**
-	 * @var float
-	 */
-	public $total_localtax1;
-	/**
-	 * @var float
-	 */
-	public $total_localtax2;
-	/**
-	 * @var float
-	 */
-	public $total_ttc;
-	/**
-	 * @var float
-	 */
-	public $revenuestamp;
-
-	/**
 	 * @var float|string
 	 */
 	public $resteapayer;
@@ -191,6 +166,7 @@ class Facture extends CommonInvoice
 	 * @var ?string key of POS terminal ('0', '1', ...)
 	 */
 	public $pos_source;
+
 	/**
 	 * @var int id of template invoice when generated from a template invoice
 	 */
@@ -466,6 +442,8 @@ class Facture extends CommonInvoice
 
 		$this->ismultientitymanaged = 1;
 		$this->isextrafieldmanaged = 1;
+
+		$this->fields['ref_ext']['visible'] = getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT');
 	}
 
 	/**
@@ -473,12 +451,13 @@ class Facture extends CommonInvoice
 	 *  Note: this->ref can be set or empty. If empty, we will use "(PROV999)"
 	 *  Note: this->fac_rec must be set to create invoice from a recurring invoice
 	 *
-	 *	@param	User	$user      		Object user that create
-	 *	@param  int		$notrigger		1=Does not execute triggers, 0 otherwise
-	 * 	@param	int		$forceduedate	If set, do not recalculate due date from payment condition but force it with value
-	 *	@return	int						Return integer <0 if KO, >0 if OK
+	 *	@param	User	$user      				Object user that create
+	 *	@param  int		$notrigger				1=Does not execute triggers, 0 otherwise
+	 * 	@param	int		$forceduedate			If set, do not recalculate due date from payment condition but force it with value
+	 *  @param	int		$updatecurrencyrate		Update currency rate when generation done from template invoice
+	 *	@return	int								Return integer <0 if KO, >0 if OK
 	 */
-	public function create(User $user, $notrigger = 0, $forceduedate = 0)
+	public function create(User $user, $notrigger = 0, $forceduedate = 0, $updatecurrencyrate = 0)
 	{
 		global $langs, $conf, $mysoc;
 		$error = 0;
@@ -510,7 +489,7 @@ class Facture extends CommonInvoice
 				// If original rate is not set, we take a default value from date
 				list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date);
 			} else {
-				// original rate multicurrency_tx and multicurrency_code are set, we use them
+				// original rate multicurrency_tx and multicurrency_code are already known, so we keep them and we catch only the ID of the currency.
 				$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 			}
 		} else {
@@ -585,9 +564,12 @@ class Facture extends CommonInvoice
 					: $originaldatewhen;
 			}
 
+			// Define thirdparty
 			if (!empty($_facrec->frequency)) {  // Invoice are created on same thirdparty than template when there is a recurrence, but not necessarily when there is no recurrence.
 				$this->socid = $_facrec->socid;
 			}
+
+			// Define the entity
 			$this->entity            = $_facrec->entity; // Invoice created in same entity than template
 
 			// Fields coming from GUI.
@@ -843,9 +825,7 @@ class Facture extends CommonInvoice
 				}
 			}
 
-			/*
-			 *  Insert lines of invoices, if not from template invoice, into database
-			 */
+			// Insert lines of invoices, if not coming from template invoice, into database
 			if (!$error && empty($this->fac_rec) && count($this->lines) && is_object($this->lines[0])) {	// If this->lines is array of InvoiceLines (preferred mode)
 				$fk_parent_line = 0;
 
@@ -938,7 +918,7 @@ class Facture extends CommonInvoice
 						}
 					}
 				}
-			} elseif (!$error && empty($this->fac_rec)) { 		// If this->lines is an array of invoice line arrays
+			} elseif (!$error && empty($this->fac_rec)) { 		// If not coming from a template invoice and this->lines is an array of invoice line arrays
 				$fk_parent_line = 0;
 
 				dol_syslog("There is ".count($this->lines)." lines into ->lines as a simple array");
@@ -1026,9 +1006,7 @@ class Facture extends CommonInvoice
 				}
 			}
 
-			/*
-			 * Insert lines coming from the template invoice
-			 */
+			// Insert lines when coming from a template invoice
 			if (!$error && $this->fac_rec > 0 && is_object($_facrec)) {
 				dol_syslog("There is ".count($_facrec->lines)." lines from recurring invoice");
 				$fk_parent_line = 0;
@@ -1070,6 +1048,13 @@ class Facture extends CommonInvoice
 								}
 							}
 						}
+					}
+
+					// Update price according to $updatecurrencyrate
+					if ($updatecurrencyrate == 1) {
+						// TODO
+					} elseif ($updatecurrencyrate == 2) {
+						// TODO
 					}
 
 					$result_insert = $this->addline(
@@ -2149,14 +2134,11 @@ class Facture extends CommonInvoice
 		if ($addlinktonotes) {
 			$txttoshow = ($user->socid > 0 ? $this->note_public : $this->note_private);
 			if ($txttoshow) {
-				//$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.dol_string_nohtmltag($txttoshow, 1);
 				$notetoshow = $langs->trans("ViewPrivateNote").':<br>'.$txttoshow;
 				$result .= ' <span class="note inline-block">';
-				$result .= '<a href="'.DOL_URL_ROOT.'/compta/facture/note.php?id='.$this->id.'" class="classfortooltip" title="'.dol_escape_htmltag($notetoshow, 1, 1).'">';
+				$result .= '<a href="'.DOL_URL_ROOT.'/compta/facture/note.php?id='.$this->id.'" class="classfortooltip" title="'.dolPrintHTMLForAttribute($notetoshow, 1, 1).'">';
 				$result .= img_picto('', 'note');
 				$result .= '</a>';
-				//$result.=img_picto($langs->trans("ViewNote"),'object_generic');
-				//$result.='</a>';
 				$result .= '</span>';
 			}
 		}
@@ -2766,11 +2748,11 @@ class Facture extends CommonInvoice
 		$sql .= " paye=".(isset($this->paye) ? $this->db->escape((string) $this->paye) : 0).",";
 		$sql .= " close_code=".(isset($this->close_code) ? "'".$this->db->escape($this->close_code)."'" : "null").",";
 		$sql .= " close_note=".(isset($this->close_note) ? "'".$this->db->escape($this->close_note)."'" : "null").",";
-		$sql .= " total_tva=".(isset($this->total_tva) ? (float) $this->total_tva : "null").",";
-		$sql .= " localtax1=".(isset($this->total_localtax1) ? (float) $this->total_localtax1 : "null").",";
-		$sql .= " localtax2=".(isset($this->total_localtax2) ? (float) $this->total_localtax2 : "null").",";
-		$sql .= " total_ht=".(isset($this->total_ht) ? (float) $this->total_ht : "null").",";
-		$sql .= " total_ttc=".(isset($this->total_ttc) ? (float) $this->total_ttc : "null").",";
+		$sql .= " total_tva=".((float) $this->total_tva).",";
+		$sql .= " localtax1=".((float) $this->total_localtax1).",";
+		$sql .= " localtax2=".((float) $this->total_localtax2).",";
+		$sql .= " total_ht=".((float) $this->total_ht).",";
+		$sql .= " total_ttc=".((float) $this->total_ttc).",";
 		$sql .= " revenuestamp=".((isset($this->revenuestamp) && $this->revenuestamp != '') ? (float) $this->revenuestamp : "null").",";
 		$sql .= " fk_statut=".(isset($this->status) ? (int) $this->status : "null").",";
 		$sql .= " fk_user_author=".(isset($this->user_creation_id) ? ((int) $this->user_creation_id) : "null").",";
@@ -5469,7 +5451,7 @@ class Facture extends CommonInvoice
 
 				if ($generic_facture->hasDelay()) {
 					$response->nbtodolate++;
-					$response->url_late = DOL_URL_ROOT.'/compta/facture/list.php?search_late=late&mainmenu=billing&leftmenu=customers_bills';
+					$response->url_late = DOL_URL_ROOT.'/compta/facture/list.php?search_option=late&mainmenu=billing&leftmenu=customers_bills';
 				}
 			}
 

@@ -23,7 +23,10 @@ AllPropals=ሁሉም ሀሳቦች
 SearchAProposal=ፕሮፖዛል ፈልግ
 NoProposal=ምንም ፕሮፖዛል የለም።
 ProposalsStatistics=የንግድ ፕሮፖዛል ስታቲስቲክስ
+NumberOfProposals=Number of proposals
 NumberOfProposalsByMonth=ቁጥር በወር
+AmountOfProposals=Amount of proposals
+AmountOfProposalsHT=Amount of proposals (excl. tax)
 AmountOfProposalsByMonthHT=መጠን በወር (ከግብር በስተቀር)
 NbOfProposals=የንግድ ፕሮፖዛል ብዛት
 ShowPropal=ፕሮፖዛል አሳይ
@@ -77,13 +80,11 @@ AvailabilityTypeAV_1W=1 ሳምንት
 AvailabilityTypeAV_2W=2 ሳምንታት
 AvailabilityTypeAV_3W=3 ሳምንታት
 AvailabilityTypeAV_1M=1 ወር
-
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=የክትትል ፕሮፖዛል ተወካይ
 TypeContact_propal_external_BILLING=የደንበኛ የክፍያ መጠየቂያ እውቂያ
 TypeContact_propal_external_CUSTOMER=የደንበኛ ግንኙነት ተከታይ ሀሳብ
 TypeContact_propal_external_SHIPPING=ለማድረስ የደንበኛ ግንኙነት
-
 # Document models
 CantBeNoSign=አልተፈረመም ሊዘጋጅ አይችልም
 CaseFollowedBy=ጉዳይ ተከትሎ
@@ -122,3 +123,5 @@ SignSociete_rib=የመፈረም ሥልጣን
 SignPropal=ሀሳብ ተቀበል
 Signed=ተፈራረመ
 SignedOnly=ብቻ የተፈረመ
+ExpeditionSigned=Shipment signed
+SignExpedition=Sign shipment

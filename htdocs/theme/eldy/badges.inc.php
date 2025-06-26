@@ -274,8 +274,8 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 		}
 
 		if (in_array((string) $statusName, $TBadgeBorderOnly)) {
-			$thisBadgeTextColor = '#212529';
-			$thisBadgeBackgroundColor = "";
+			$thisBadgeTextColor = '#9c850b';
+			$thisBadgeBackgroundColor = "hsl(0, 0%, 0%, 0)";
 		}
 
 		if (in_array((string) $statusName, array('0', '5', '9'))) {

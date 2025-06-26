@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - exports
+ImportExportArea=Imports / Exports
 ExportsArea=صادرات
 ImportArea=واردات
 NewExport=صادرات جدید
@@ -31,10 +32,10 @@ ExportCsvSeparator=Csv character separator
 ImportCsvSeparator=Csv character separator
 Step=گام
 FormatedImport=دستیار واردات
-FormatedImportDesc1=این واحد به شما امکان می‌دهد با استفاده از فایل و بدون دانش فنی، با استفاده از یک دستیار داده‌های موجود را روزآمد کرده یا اشیاء جدید به پایگاه‌داده اضافه کنید.
+FormatedImportDesc1=Click here to use the assistant to update existing data or add new objects into the database from a file.
 FormatedImportDesc2=گام اول برای انتخاب نوع داده‌هائی است که برای وارد کردن در نظر دارید، سپس نوع فایل منبع را انتخاب کرده و سپس بخش‌هائی که باید وارد شوند را انتخاب می‌کنید.
 FormatedExport=دستیار صادرات
-FormatedExportDesc1=این ابزار به شما امکان عمل بدون دانش فنی و صادر کردن داده‌های مورد نظر را با استفاده از یک دستیار می‌دهد.
+FormatedExportDesc1=Click here to use the assistant to export data in a supported format
 FormatedExportDesc2=اولین گام انتخاب یک مجموعۀ دادۀ از پیش تعریفق شده است، سپس انتخاب بخش‌هائی که صادر می‌کنید و سپس ترتیب آن است.
 FormatedExportDesc3=هنگامی که داده‌های صادرات انتخاب شد، شما می‌توانید نوع فایل خروجی را انتخاب کنید.
 Sheet=ورق
