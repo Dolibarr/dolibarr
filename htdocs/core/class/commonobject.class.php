@@ -130,7 +130,7 @@ abstract class CommonObject
 	public $ismultientitymanaged;
 
 	/**
-	 * @var int<0,1>		  	Does this object dont have a link to societe with fk_soc ?
+	 * @var int<0,1>		  	Does this object don't have a link to societe with fk_soc ?
 	 * 							0=No, 1=Yes
 	 */
 	public $donthavefksoc;
