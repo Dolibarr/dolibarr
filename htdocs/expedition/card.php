@@ -2142,7 +2142,7 @@ if ($action == 'create') {
 
 	// Confirm unsign
 	if ($action == 'unsign') {
-		$text = $langs->trans('ConfirmUnsignIntervention');
+		$text = $langs->trans('ConfirmUnsignShipping');
 		if (isModEnabled('notification')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 			$notify = new Notify($db);
