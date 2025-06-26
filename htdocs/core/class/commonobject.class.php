@@ -9919,9 +9919,9 @@ abstract class CommonObject
 
 		if (count($filearray)) {
 			if ($sortfield && $sortorder) {
-				if(getDolGlobalInt('OrderPhotoByPosition')) {
+				if (getDolGlobalInt('OrderPhotoByPosition')) {
 					$filearray = dol_sort_array($filearray, 'position', $sortorder);
-				}else{
+				} else {
 					$filearray = dol_sort_array($filearray, $sortfield, $sortorder);
 				}
 			}
