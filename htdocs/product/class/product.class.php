@@ -7302,7 +7302,7 @@ class Product extends CommonObject
 	 * @param string $sortorder   The sorting order ('ASC' or 'DESC').
 	 * @return array              Array of files enriched with database metadata and sorted accordingly.
 	 */
-	public function enrichFileArrayWithDatabaseInfos($filearray, $modulepart = 'produit', $sortfield = 'position_name', $sortorder = 'ASC')
+	public function enrichFileArrayWithDatabaseInfos(array $filearray, string $modulepart = 'produit', string $sortfield = 'position_name', string $sortorder = 'ASC'): array
 	{
 
 		$relativedir = get_exdir(0, 0, 0, 0, $this, $modulepart);
