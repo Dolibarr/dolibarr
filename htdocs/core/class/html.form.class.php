@@ -5898,13 +5898,6 @@ class Form
 
 			$postconfirmas = 'GET';
 
-			if ($height !== 'auto') {
-				$height = (int) $height;
-			}
-			if ($width !== 'auto') {
-				$width = (int) $width;
-			}
-
 			$formconfirm .= '
                     resizable: false,
 					height: \'' . dol_escape_js($height) . '\',
