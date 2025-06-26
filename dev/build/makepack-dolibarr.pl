@@ -515,6 +515,8 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.codeclimate.yml`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.externalToolBuilders`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.git*`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/.mailmap`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/.phpunit.result.cache`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.project`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.pydevproject`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.settings`;
