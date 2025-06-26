@@ -9136,7 +9136,7 @@ class Form
 				if (!is_numeric($objecttmp->ismultientitymanaged)) {
 					$sql .= " AND parenttable.entity = t." . $this->db->sanitize($tmparray[0]);
 				}
-				if ($objecttmp->ismultientitymanaged == 1 && !empty($user->socid)) {
+				if ($objecttmp->ismultientitymanaged == 1 && !empty($user->socid) && empty($objecttmp->donthavesocparent)) {
 					if ($objecttmp->element == 'societe') {
 						$sql .= " AND t.rowid = " . ((int) $user->socid);
 					} else {

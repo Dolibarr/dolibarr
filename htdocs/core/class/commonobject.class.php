@@ -130,6 +130,12 @@ abstract class CommonObject
 	public $ismultientitymanaged;
 
 	/**
+	 * @var int<0,1>		  	Does this object dont have a link to societe with fk_soc ?
+	 * 							0=No, 1=Yes
+	 */
+	public $donthavesocparent;
+
+	/**
 	 * @var ?string		Key value used to track if data is coming from import wizard
 	 */
 	public $import_key;
