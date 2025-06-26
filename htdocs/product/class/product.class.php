@@ -7293,16 +7293,15 @@ class Product extends CommonObject
 	}
 
 	/**
-	 * Enriches a list of physical files with additional metadata retrieved from the database
-	 * (such as position, label, cover, etc.) and sorts the array according to the specified criteria.
+	 * Enrichit le tableau de fichiers avec des infos BDD
 	 *
-	 * @param array  $filearray   Array of physical files (as returned by dol_dir_list).
-	 * @param string $modulepart  The Dolibarr module part (e.g., 'produit').
-	 * @param string $sortfield   The field used for sorting (e.g., 'position_name', 'name').
-	 * @param string $sortorder   The sorting order ('ASC' or 'DESC').
-	 * @return array              Array of files enriched with database metadata and sorted accordingly.
+	 * @param array<int, array<string, int|string>> $filearray
+	 * @param string $modulepart
+	 * @param string $sortfield
+	 * @param string $sortorder
+	 * @return array<int, array<string, int|string>>
 	 */
-	public function enrichFileArrayWithDatabaseInfos(array $filearray, string $modulepart = 'produit', string $sortfield = 'position_name', string $sortorder = 'ASC'): array
+	public function enrichFileArrayWithDatabaseInfos(array $filearray, string $modulepart = 'produit',string $sortfield = 'position_name', string $sortorder = 'ASC'): array
 	{
 
 		$relativedir = get_exdir(0, 0, 0, 0, $this, $modulepart);
