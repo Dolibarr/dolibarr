@@ -133,7 +133,7 @@ abstract class CommonObject
 	 * @var int<0,1>		  	Does this object dont have a link to societe with fk_soc ?
 	 * 							0=No, 1=Yes
 	 */
-	public $donthavesocparent;
+	public $donthavefksoc;
 
 	/**
 	 * @var ?string		Key value used to track if data is coming from import wizard
