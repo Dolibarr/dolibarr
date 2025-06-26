@@ -251,6 +251,9 @@ if (empty($reshook)) {
 			$object->fetchLines();
 
 			$object->calculateCosts();
+
+			header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
+			exit();
 		}
 	}
 
@@ -307,6 +310,9 @@ if (empty($reshook)) {
 			$object->fetchLines();
 
 			$object->calculateCosts();
+
+			header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
+			exit();
 		}
 	}
 }
