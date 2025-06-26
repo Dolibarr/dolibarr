@@ -985,19 +985,15 @@ foreach ($listofreferent as $key => $value) {
 			// Each element with at least one line is output
 
 			// Calculate margin
-			if ($margin) {
-				if ($margin === 'add') {
-					$total_revenue_ht += $total_ht;
-				}
-
-				if ($margin === "minus") {	// Revert sign
-					$total_ht = -$total_ht;
-					$total_ttc = -$total_ttc;
-				}
-
-				$balance_ht += $total_ht;
-				$balance_ttc += $total_ttc;
+			if ($margin === 'add') {
+				$total_revenue_ht += $total_ht;
+			} elseif ($margin === "minus") {	// Revert sign
+				$total_ht = -$total_ht;
+				$total_ttc = -$total_ttc;
 			}
+
+			$balance_ht += $total_ht;
+			$balance_ttc += $total_ttc;
 
 			print '<tr class="oddeven">';
 			// Module
