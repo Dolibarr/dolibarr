@@ -143,11 +143,9 @@ git log x.y.(z-1)..   | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u
 
 - Commit all changes and push the changes (direct commit or PR) and check that CI is green after the push.
 
-- Run makepack-dolibarr.pl with option 0 to generate the signature file and all packages (or run with option 1, then option of packages you want to build).
+- Run makepack-dolibarr.pl with option 0 to generate the signature file and all the packages (or run the option 1 alone and then option of each packages you want to build).
 
-- Check content of built packages.
-
-- Commit and push the created file filelist-x.y.z.xml (Note: No PR must be validated except this one between the previous launch of makepack-dolibarr and the next one to publish files)
+- Check content of built packages (the files must have a relative dir "dolibarr-x.y.z/..." and the filelist-x.y.z.xml should be inside the packages too.
 
 - Run makepack-dolibarr.pl again with option 98 to publish files on dolibarr foundation server (Dir /home/dolibarr/wwwroot/files/stable on www.dolibarr.org).
 
