@@ -7,6 +7,7 @@
  * Copyright (C) 2020      Open-DSI	                    <support@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,6 +65,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 		global $db, $langs;
 
 		$langs->load('cashdesk@cashdesk');
+		$langs->load('bills');
 
 		$form = new Form($db);
 
@@ -72,6 +74,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
 		$texte .= '<input type="hidden" name="maskconst" value="TAKEPOS_REF_UNIVERSAL_MASK">';
+		$texte .= '<input type="hidden" name="maskconstcreditnote" value="TAKEPOS_REF_UNIVERSAL_MASK_CREDIT_NOTE">';
 		$texte .= '<input type="hidden" name="page_y" value="">';
 
 		$texte .= '<table class="nobordernopadding centpercent">';
@@ -93,6 +96,10 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 
 		$texte .= '<td class="left" rowspan="2"><input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Save").'"></td>';
 
+		$texte .= '</tr>';
+
+        $texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceAvoir").'):</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskcreditvalue" value="'.getDolGlobalString("TAKEPOS_REF_UNIVERSAL_MASK_CREDIT_NOTE").'">', $tooltip, 1, 1).'</td>';
 		$texte .= '</tr>';
 
 		$texte .= '</table>';
@@ -136,7 +143,12 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We define search criteria counter
+        if (is_object($invoice) && $invoice->type == 2) {
+            $mask = getDolGlobalString('TAKEPOS_REF_UNIVERSAL_MASK_CREDIT_NOTE');
+        }
+        else {
 		$mask = getDolGlobalString('TAKEPOS_REF_UNIVERSAL_MASK');
+        }
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';

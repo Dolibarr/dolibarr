@@ -5,6 +5,7 @@
  * Copyright (C) 2022       Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,9 +112,12 @@ if ($action == 'set') {
 	}
 } elseif ($action == 'updateMask') {
 	$maskconst = GETPOST('maskconst', 'aZ09');
+	$maskconstcreditnote = GETPOST('maskconstcreditnote', 'aZ09');
 	$maskvalue = GETPOST('maskvalue', 'alpha');
+	$maskcreditvalue = GETPOST('maskcreditvalue', 'alpha');
 	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, $maskconstcreditnote, $maskcreditvalue, 'chaine', 0, '', $conf->entity);
 	}
 	if (!($res > 0)) {
 		$error++;

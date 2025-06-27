@@ -5,6 +5,7 @@
  * Copyright (C) 2022-2023	Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -297,7 +298,7 @@ if (empty($reshook)) {
 		// Add the payment
 		if (!$error && $res >= 0) {
 			$remaintopay = $invoice->getRemainToPay();
-			if ($remaintopay > 0) {
+			if ($remaintopay != 0) {
 				$payment = new Paiement($db);
 
 				$payment->datepaye = $now;
@@ -309,7 +310,7 @@ if (empty($reshook)) {
 				$payment->amounts[$invoice->id] = $amountofpayment;
 				// If user has not used change control, add total invoice payment
 				// Or if user has used change control and the amount of payment is higher than remain to pay, add the remain to pay
-				if ($amountofpayment <= 0 || $amountofpayment > $remaintopay) {
+                if (abs($amountofpayment) <= 0 || abs($amountofpayment) > abs($remaintopay)) {
 					$payment->amounts[$invoice->id] = $remaintopay;
 				}
 				// We do not set $payments->multicurrency_amounts because we want payment to be in main currency.
@@ -532,7 +533,7 @@ if (empty($reshook)) {
 
 		$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
 		$allowstockchange = getDolGlobalString($constantforkey) != "1";
-
+		/*
 		if (isModEnabled('stock') && !isModEnabled('productbatch') && $allowstockchange) {
 			// If module stock is enabled and we do not setup takepo to disable stock decrease
 			// The case for isModEnabled('productbatch') is processed few lines later.
@@ -556,7 +557,7 @@ if (empty($reshook)) {
 			$conf->global->STOCK_CALCULATE_ON_BILL = $savconst;
 		} else {
 			$res = $creditnote->validate($user);
-		}
+		}*/
 
 		// Update stock for batch products
 		if (!$error && $res >= 0) {

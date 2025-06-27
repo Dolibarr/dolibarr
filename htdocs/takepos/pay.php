@@ -3,6 +3,7 @@
  * Copyright (C) 2021-2022	Thibault FOUCART	<support@ptibogxiv.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -303,9 +304,9 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 		alreadypaydplusreceived=price2numjs(alreadypayed + parseFloat(received));
 		//console.log("already+received = "+alreadypaydplusreceived);
 		//console.log("total_ttc = "+<?php echo (float) $invoice->total_ttc; ?>);
-		if (alreadypaydplusreceived > <?php echo (float) $invoice->total_ttc; ?>)
+		if (Math.abs(alreadypaydplusreceived) > <?php echo (float) abs($invoice->total_ttc); ?>)
 		   {
-			var change=parseFloat(alreadypayed + parseFloat(received) - <?php echo (float) $invoice->total_ttc; ?>);
+			var change=parseFloat(alreadypayed + parseFloat(received) - <?php echo (float) ($invoice->type == Facture::TYPE_CREDIT_NOTE ? ($remaintopay * -1) : $remaintopay); ?>);
 			$('.change2').html(pricejs(change, 'MT'));
 			$('.change2').val(change);
 			$('.change1').removeClass('colorred');
@@ -357,12 +358,28 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 		var accountid = $("#selectaccountid").val();
 		var amountpayed = $("#change1").val();
 		var excess = $("#change2").val();
-		if (amountpayed > <?php echo $invoice->total_ttc; ?>) {
+		var isCreditNote = <?php echo ($invoice->type == Facture::TYPE_CREDIT_NOTE ? 'true' : 'false'); ?>;
+		if(isCreditNote){
+			amountpayed = amountpayed * -1;
+			if (amountpayed < <?php echo $invoice->total_ttc; ?>) {
+				amountpayed = <?php echo $invoice->total_ttc; ?>;
+			}
+		} else if (amountpayed > <?php echo $invoice->total_ttc; ?>) {
 			amountpayed = <?php echo $invoice->total_ttc; ?>;
 		}
 		console.log("We click on the payment mode to pay amount = "+amountpayed);
 		parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&token=<?php echo newToken(); ?>&pay="+payment+"&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
-			if (amountpayed > <?php echo $remaintopay; ?> || amountpayed == <?php echo $remaintopay; ?> || amountpayed==0 ) {
+			if(isCreditNote){
+				if (amountpayed < <?php echo $remaintopay; ?> || amountpayed == <?php echo $remaintopay; ?> || amountpayed==0 ){
+					console.log("Close popup");
+					parent.$('#invoiceid').val("");
+					parent.$.colorbox.close();
+				}
+				else {
+					console.log("Amount is not complete, so we do NOT close popup and reload it.");
+					location.reload();
+				}
+			}else if (amountpayed > <?php echo $remaintopay; ?> || amountpayed == <?php echo $remaintopay; ?> || amountpayed==0 ) {
 				console.log("Close popup");
 				parent.$('#invoiceid').val("");
 				parent.$.colorbox.close();
@@ -536,6 +553,28 @@ if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
 	});";
 }
 ?>
+</script>
+
+<script>
+var isCreditNote = <?php echo ($invoice->type == Facture::TYPE_CREDIT_NOTE ? 'true' : 'false'); ?>;
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    if (isCreditNote) {
+        // Cambia el texto del label "Recibido" por "A devolver al cliente"
+        document.querySelectorAll('.takepospay').forEach(function(el) {
+            if (el.innerHTML.includes('<?php echo $langs->trans("Received"); ?>')) {
+                el.innerHTML = el.innerHTML.replace('<?php echo $langs->trans("Received"); ?>', '<?php echo $langs->trans("PaymentBack"); ?>');
+            }
+        });
+        // Opcional: Cambia el color del importe recibido a verde
+        var recibidoAmount = document.querySelector('.change1');
+        if (recibidoAmount) {
+            recibidoAmount.classList.remove('colorred');
+            recibidoAmount.classList.add('colorgreen');
+        }
+    }
+});
 </script>
 
 <?php
