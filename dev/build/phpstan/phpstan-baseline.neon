@@ -1861,7 +1861,7 @@ parameters:
 			path: ../../../htdocs/api/class/api_documents.class.php
 
 		-
-			message: '#^Loose comparison using \!\= between ''adherent''\|''agenda''\|''commande''\|''contact''\|''contrat''\|''expensereport''\|''facture''\|''fichinter''\|''mrp''\|''product''\|''produit''\|''produit\|service''\|''project''\|''project_task''\|''projet''\|''propale''\|''service''\|''supplier_invoice''\|''supplier_order'' and ''ecm'' will always evaluate to true\.$#'
+			message: '#^Loose comparison using \!\= between ''adherent''\|''agenda''\|''commande''\|''contact''\|''contrat''\|''expedition''\|''expensereport''\|''facture''\|''fichinter''\|''mrp''\|''product''\|''produit''\|''produit\|service''\|''project''\|''project_task''\|''projet''\|''propale''\|''service''\|''supplier_invoice''\|''supplier_order'' and ''ecm'' will always evaluate to true\.$#'
 			identifier: notEqual.alwaysTrue
 			count: 1
 			path: ../../../htdocs/api/class/api_documents.class.php
