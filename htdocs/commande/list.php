@@ -569,6 +569,13 @@ if (empty($reshook)) {
 				// Call action to build doc
 				$savobject = $object;
 				$object = $objecttmp;
+
+				// To be sure vars is defined
+				$hidedetails = !empty($hidedetails) ? $hidedetails : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0);
+				$hidedesc = !empty($hidedesc) ? $hidedesc : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0);
+				$hideref = !empty($hideref) ? $hideref : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0);
+				$moreparams = !empty($moreparams) ? $moreparams : null;
+
 				include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 				$object = $savobject;
 			}
