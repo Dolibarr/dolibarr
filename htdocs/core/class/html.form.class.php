@@ -9107,7 +9107,7 @@ class Form
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "product as p ON p.rowid = t.fk_product";
 		}
 		if (!empty($objecttmp->ismultientitymanaged)) {
-			if ($objecttmp->ismultientitymanaged == 1) {
+			if ($objecttmp->ismultientitymanaged == 1) {	// @phan-suppress-current-line PhanPluginEmptyStatementIf
 				// No need to join/link another table
 			}
 			if (!is_numeric($objecttmp->ismultientitymanaged)) {
