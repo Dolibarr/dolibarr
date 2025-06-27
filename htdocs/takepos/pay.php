@@ -567,7 +567,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 el.innerHTML = el.innerHTML.replace('<?php echo $langs->trans("Received"); ?>', '<?php echo $langs->trans("PaymentBack"); ?>');
             }
         });
-        // Opcional: Cambia el color del importe recibido a verde
         var recibidoAmount = document.querySelector('.change1');
         if (recibidoAmount) {
             recibidoAmount.classList.remove('colorred');
