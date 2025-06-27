@@ -369,7 +369,7 @@ print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("
 print '</td>'."\n";
 print '</tr>'."\n";
 //"(t.type:=:".$mode.") AND (t.entity:in:("((int)$user->entity).", ".((int)$conf->entity)."))"
-$result = $object->fetchAll($sortorder, $sortfield, 0, 0, "(t.type:=:'".$mode."') AND (t.entity:in:".((int)$user->entity).", ".((int)$conf->entity).")");
+$result = $object->fetchAll($sortorder, $sortfield, 0, 0, "(t.type:=:'".$mode."') AND (t.entity:in:".((int) $user->entity).", ".((int) $conf->entity).")");
 
 if (!is_array($result) && $result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
