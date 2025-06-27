@@ -972,4 +972,31 @@ class Tva extends CommonObject
 		$return .= '</div>';
 		return $return;
 	}
+
+	/**
+	 *	Id of vat payment object
+	 *
+	 *	@param	string		$label     Label of vat payment
+	 *	@return	int
+	 */
+	public function getIdForLabel($label)
+	{
+		$id = 0;
+		$sql = "SELECT t.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
+		$sql .= " WHERE t.label = '".$label."'";
+
+		dol_syslog(get_class($this)."::getIdForLabel", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result) {
+			if ($this->db->num_rows($result)) {
+				$obj = $this->db->fetch_object($result);
+				$id = $obj->rowid;
+			}
+			$this->db->free($result);
+		} else {
+			dol_print_error($this->db);
+		}
+		return $id;
+	}
 }
