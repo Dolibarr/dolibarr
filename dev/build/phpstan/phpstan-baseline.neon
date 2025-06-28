@@ -973,12 +973,6 @@ parameters:
 			path: ../../../htdocs/adherents/list.php
 
 		-
-			message: '#^Variable \$diroutputmassaction might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/adherents/list.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -1858,12 +1852,6 @@ parameters:
 			message: '#^Call to function is_object\(\) with ActionComm\|Adherent\|Commande\|CommandeFournisseur\|Contact\|Contrat\|ExpenseReport\|Facture\|FactureFournisseur\|Fichinter\|Mo\|Product\|Project\|Propal\|Task will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 2
-			path: ../../../htdocs/api/class/api_documents.class.php
-
-		-
-			message: '#^Loose comparison using \!\= between ''adherent''\|''agenda''\|''commande''\|''contact''\|''contrat''\|''expensereport''\|''facture''\|''fichinter''\|''mrp''\|''product''\|''produit''\|''produit\|service''\|''project''\|''project_task''\|''projet''\|''propale''\|''service''\|''supplier_invoice''\|''supplier_order'' and ''ecm'' will always evaluate to true\.$#'
-			identifier: notEqual.alwaysTrue
-			count: 1
 			path: ../../../htdocs/api/class/api_documents.class.php
 
 		-
@@ -3273,7 +3261,7 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 6
+			count: 4
 			path: ../../../htdocs/comm/action/peruser.php
 
 		-
@@ -6675,12 +6663,6 @@ parameters:
 		-
 			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/core/actions_setmoduleoptions.inc.php
-
-		-
-			message: '#^Variable \$modulepart might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/core/actions_setmoduleoptions.inc.php
 
@@ -19366,12 +19348,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
-			path: ../../../htdocs/projet/element.php
-
-		-
-			message: '#^Variable \$margin in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
-			count: 2
 			path: ../../../htdocs/projet/element.php
 
 		-
