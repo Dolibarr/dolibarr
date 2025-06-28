@@ -1399,10 +1399,10 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		$param .= '&search_note_private='.urlencode($search_note_private);
 	}
 	if ($search_birthday_dtstart != '') {
-		$param .= '&search_birthday_dtstart='.urlencode($search_birthday_dtstart);
+		$param .= '&search_birthday_dtstart='.urlencode((string) $search_birthday_dtstart);
 	}
 	if ($search_birthday_dtend != '') {
-		$param .= '&search_birthday_dtend='.urlencode($search_birthday_dtend);
+		$param .= '&search_birthday_dtend='.urlencode((string) $search_birthday_dtend);
 	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);

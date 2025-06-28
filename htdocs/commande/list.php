@@ -800,6 +800,9 @@ if (empty($reshook)) {
 			if ($search_project_ref >= 0) {
 				$param .= "&search_project_ref=".urlencode($search_project_ref);
 			}
+			if ($search_project != '') {
+				$param .= "&search_project=".urlencode($search_project);
+			}
 			if ($search_billed != '') {
 				$param .= '&search_billed='.urlencode($search_billed);
 			}
@@ -1481,6 +1484,9 @@ if ($search_multicurrency_montant_ttc != '') {
 }
 if ($search_project_ref >= 0) {
 	$param .= "&search_project_ref=".urlencode($search_project_ref);
+}
+if ($search_project != '') {
+	$param .= "&search_project=".urlencode($search_project);
 }
 if ($search_town != '') {
 	$param .= '&search_town='.urlencode($search_town);

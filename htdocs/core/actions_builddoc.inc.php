@@ -29,20 +29,29 @@
 // $permissiontoadd must be defined
 // $upload_dir must be defined (example $conf->project->dir_output . "/";)
 // $hidedetails, $hidedesc, $hideref and $moreparams may have been set or not.
+
 /**
  * @var Conf $conf
  * @var Translate $langs
  * @var User $user
+ * @var CommonObject $object
+ *
  * @var string $action
  * @var int $id
- * @var CommonObject $object
- * @var ?int $permissiontocreate
+ * @var ?int $permissioncreate
+ * @var ?int $usercangeneratedoc
  * @var int $permissiontoadd
  * @var string $upload_dir
+ *
  * @var ?int $hidedetails
  * @var ?int $hidedesc
  * @var ?int $hideref
+ * @var ?array<string,mixed> $moreparams
  */
+'
+@phan-var-force ?array<string,mixed> $moreparams
+';
+
 if (!empty($permissioncreate) && empty($permissiontoadd)) {
 	$permissiontoadd = $permissioncreate; // For backward compatibility
 }
@@ -87,18 +96,10 @@ if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneretedoc))) 
 		}
 
 		// To be sure vars is defined
-		if (empty($hidedetails)) {
-			$hidedetails = 0;
-		}
-		if (empty($hidedesc)) {
-			$hidedesc = 0;
-		}
-		if (empty($hideref)) {
-			$hideref = 0;
-		}
-		if (empty($moreparams)) {
-			$moreparams = null;
-		}
+		$hidedetails = isset($hidedetails) ? $hidedetails : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0);
+		$hidedesc = isset($hidedesc) ? $hidedesc : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0);
+		$hideref = isset($hideref) ? $hideref : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0);
+		$moreparams = isset($moreparams) ? $moreparams : null;
 
 		$result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		if ($result <= 0) {

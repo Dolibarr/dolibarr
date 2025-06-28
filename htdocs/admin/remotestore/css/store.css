@@ -201,6 +201,13 @@ tr.NotCompatible{
 tr.NotCompatible:hover{
     opacity: 0.7;
 }
+span.details{
+    font-size: 12px;
+    margin-left: 10px;
+    vertical-align: super;
+}
+
+
 @media only screen and (min-width: 1150px) {
     #categorieArea{
         display:none;
@@ -213,8 +220,10 @@ tr.NotCompatible:hover{
         float: right;
     }
 }
-span.details{
-    font-size: 12px;
-    margin-left: 10px;
-    vertical-align: super;
+
+@media only screen and (max-width: 724px) {
+    .imgstore {
+    	max-height: 50px;
+    	width: 50px;
+    }
 }

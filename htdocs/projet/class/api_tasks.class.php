@@ -500,6 +500,7 @@ class Tasks extends DolibarrApi
 	 * @return  array
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
+	 * @throws RestException
 	 */
 	public function delete($id)
 	{
@@ -515,7 +516,7 @@ class Tasks extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!$this->task->delete(DolibarrApiAccess::$user)) {
+		if ($this->task->delete(DolibarrApiAccess::$user) <= 0) {
 			throw new RestException(500, 'Error when delete task : '.$this->task->error);
 		}
 

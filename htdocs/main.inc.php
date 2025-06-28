@@ -146,7 +146,7 @@ require_once 'master.inc.php';
 // Uncomment this and set session.save_handler = user to use local session storing
 // include DOL_DOCUMENT_ROOT.'/core/lib/phpsessionindb.inc.php
 
-// If software has been locked. Only login $conf->global->MAIN_ONLY_LOGIN_ALLOWED is allowed.
+// If software has been locked. Only login getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED') is allowed.
 if (getDolGlobalString('MAIN_ONLY_LOGIN_ALLOWED')) {
 	$ok = 0;
 	if ((!session_id() || !isset($_SESSION["dol_login"])) && !isset($_POST["username"]) && !empty($_SERVER["GATEWAY_INTERFACE"])) {
@@ -327,7 +327,7 @@ if (!defined('NOTOKENRENEWAL') && !defined('NOSESSION')) {
 	}
 }
 
-//dol_syslog("CSRF info: ".defined('NOCSRFCHECK')." - ".$dolibarr_nocsrfcheck." - ".$conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN." - ".$_SERVER['REQUEST_METHOD']." - ".GETPOST('token', 'alpha'));
+//dol_syslog("CSRF info: ".defined('NOCSRFCHECK')." - ".$dolibarr_nocsrfcheck." - ".getDolGlobalString('MAIN_SECURITY_CSRF_WITH_TOKEN')." - ".$_SERVER['REQUEST_METHOD']." - ".GETPOST('token', 'alpha'));
 
 // Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set into page
 if ((!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && getDolGlobalInt('MAIN_SECURITY_CSRF_WITH_TOKEN')) || defined('CSRFCHECK_WITH_TOKEN')) {
@@ -777,6 +777,7 @@ if (!defined('NOLOGIN')) {
 		}
 
 		$resultFetchUser = $user->fetch(0, $login, '', 1, ($entitytotest > 0 ? $entitytotest : -1)); // value for $login was retrieved previously when checking password.
+
 		if ($resultFetchUser <= 0 || $user->isNotIntoValidityDateRange()) {
 			dol_syslog('User not found or not valid, connection refused');
 			session_destroy();
@@ -1054,7 +1055,7 @@ if (!defined('NOLOGIN')) {
 		}
 
 		// Change landing page if defined.
-		$landingpage = (empty($user->conf->MAIN_LANDING_PAGE) ? (!getDolGlobalString('MAIN_LANDING_PAGE') ? '' : $conf->global->MAIN_LANDING_PAGE) : $user->conf->MAIN_LANDING_PAGE);
+		$landingpage = getDolUserString('MAIN_LANDING_PAGE', getDolGlobalString('MAIN_LANDING_PAGE'));
 		if (!empty($landingpage)) {    // Example: /index.php
 			$newpath = dol_buildpath($landingpage, 1);
 			if ($_SERVER["PHP_SELF"] != $newpath) {   // not already on landing page (avoid infinite loop)
@@ -1732,7 +1733,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify-alt.min.css'.($ext ? '?'.$ext : '').'">'."\n"; // JNotify
 			}
 			if (!defined('DISABLE_SELECT2') && (getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') || defined('REQUIRE_JQUERY_MULTISELECT'))) {     // jQuery plugin "mutiselect", "multiple-select", "select2"...
-				$tmpplugin = !getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') ? constant('REQUIRE_JQUERY_MULTISELECT') : $conf->global->MAIN_USE_JQUERY_MULTISELECT;
+				$tmpplugin = !getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') ? constant('REQUIRE_JQUERY_MULTISELECT') : getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT');
 				print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/dist/css/'.$tmpplugin.'.css'.($ext ? '?'.$ext : '').'">'."\n";
 			}
 		}
@@ -1873,7 +1874,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			}
 			if (!defined('DISABLE_SELECT2') && (getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') || defined('REQUIRE_JQUERY_MULTISELECT'))) {
 				// jQuery plugin "mutiselect", "multiple-select", "select2", ...
-				$tmpplugin = !getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') ? constant('REQUIRE_JQUERY_MULTISELECT') : $conf->global->MAIN_USE_JQUERY_MULTISELECT;
+				$tmpplugin = !getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') ? constant('REQUIRE_JQUERY_MULTISELECT') : getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT');
 				print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/dist/js/'.$tmpplugin.'.full.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n"; // We include full because we need the support of containerCssClass
 			}
 			if (!defined('DISABLE_MULTISELECT')) {     // jQuery plugin "mutiselect" to select with checkboxes. Can be removed once we have an enhanced search tool
@@ -2294,7 +2295,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 {
 	global $langs, $conf, $db, $hookmanager, $user, $mysoc;
 	global $dolibarr_main_authentication, $dolibarr_main_demo;
-	global $menumanager;
+	global $menumanager, $form;
 
 	// Return empty in some case
 	if ($conf->browser->name == 'textbrowser') {
@@ -2392,12 +2393,13 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 
 	$tz = (int) $_SESSION['dol_tz'] + (int) $_SESSION['dol_dst'];
 	$dropdownBody .= '<br><b>'.$langs->trans("ClientTZ").':</b> '.($tz ? ($tz >= 0 ? '+' : '').$tz : '');
-	$dropdownBody .= ' ('.$_SESSION['dol_tz_string'].')';
+	$dropdownBody .= ' <span class="opacitymedium">('.$_SESSION['dol_tz_string'].')</span>';
 	//$dropdownBody .= ' &nbsp; &nbsp; &nbsp; '.$langs->trans("DaylingSavingTime").': ';
 	//if ($_SESSION['dol_dst'] > 0) $dropdownBody .= yn(1);
 	//else $dropdownBody .= yn(0);
 
-	$dropdownBody .= '<br><b>'.$langs->trans("Browser").':</b> '.$conf->browser->name.($conf->browser->version ? ' '.$conf->browser->version : '').' <small class="opacitymedium">('.dol_escape_htmltag($_SERVER['HTTP_USER_AGENT']).')</small>';
+	$dropdownBody .= '<br><b>'.$langs->trans("Browser").':</b> '.ucfirst($conf->browser->name).($conf->browser->version ? ' '.$conf->browser->version : '');
+	$dropdownBody .= $form->textwithpicto('', dol_escape_htmltag($_SERVER['HTTP_USER_AGENT']), 1, 'help', 'valignmiddle', 0, 3, 'useragent');
 	$dropdownBody .= '<br><b>'.$langs->trans("Layout").':</b> '.$conf->browser->layout;
 	$dropdownBody .= '<br><b>'.$langs->trans("Screen").':</b> '.$_SESSION['dol_screenwidth'].' x '.$_SESSION['dol_screenheight'];
 	if ($conf->browser->layout == 'phone') {
@@ -2537,7 +2539,6 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 		';
 
 
-		//if ($conf->theme != 'md') {
 		$btnUser .= '
 	            jQuery("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
 					console.log("Click on #topmenu-login-dropdown .dropdown-toggle");
@@ -2547,14 +2548,19 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 
 	            jQuery("#topmenulogincompanyinfo-btn").on("click", function() {
 					console.log("Click on #topmenulogincompanyinfo-btn");
+					if (!jQuery("#topmenuloginmoreinfo").is(\':hidden\')) {
+	                	jQuery("#topmenuloginmoreinfo").slideToggle();
+					}
 	                jQuery("#topmenulogincompanyinfo").slideToggle();
 	            });
 
 	            jQuery("#topmenuloginmoreinfo-btn").on("click", function() {
 					console.log("Click on #topmenuloginmoreinfo-btn");
+					if (!jQuery("#topmenulogincompanyinfo").is(\':hidden\')) {
+		                jQuery("#topmenulogincompanyinfo").slideToggle();
+					}
 	                jQuery("#topmenuloginmoreinfo").slideToggle();
 	            });';
-		//}
 
 		$btnUser .= '
         });
@@ -3764,11 +3770,11 @@ if (!function_exists("llxFooter")) {
 		// You can use &forceping=1 in parameters to force the ping if the ping was already sent.
 		$forceping = GETPOST('forceping', 'alpha');
 		if (($_SERVER["PHP_SELF"] == DOL_URL_ROOT.'/index.php') || $forceping) {
-			//print '<!-- instance_unique_id='.$conf->file->instance_unique_id.' MAIN_FIRST_PING_OK_ID='.$conf->global->MAIN_FIRST_PING_OK_ID.' -->';
+			//print '<!-- instance_unique_id='.$conf->file->instance_unique_id.' MAIN_FIRST_PING_OK_ID='.getDolGlobalString('MAIN_FIRST_PING_OK_ID').' -->';
 			$hash_unique_id = dol_hash('dolibarr'.$conf->file->instance_unique_id, 'sha256');	// Note: if the global salt changes, this hash changes too so ping may be counted twice. We don't mind. It is for statistics purpose only.
 
 			if (!getDolGlobalString('MAIN_FIRST_PING_OK_DATE')
-				|| (!empty($conf->file->instance_unique_id) && ($hash_unique_id != $conf->global->MAIN_FIRST_PING_OK_ID) && (getDolGlobalString('MAIN_FIRST_PING_OK_ID') != 'disabled'))
+				|| (!empty($conf->file->instance_unique_id) && ($hash_unique_id != getDolGlobalString('MAIN_FIRST_PING_OK_ID')) && (getDolGlobalString('MAIN_FIRST_PING_OK_ID') != 'disabled'))
 			|| $forceping) {
 				// No ping done if we are into an alpha version
 				if (strpos('alpha', DOL_VERSION) > 0 && !$forceping) {
@@ -3776,7 +3782,7 @@ if (!function_exists("llxFooter")) {
 				} elseif (empty($_COOKIE['DOLINSTALLNOPING_'.$hash_unique_id]) || $forceping) {	// Cookie is set when we uncheck the checkbox in the installation wizard.
 					// MAIN_LAST_PING_KO_DATE
 					// Disable ping if MAIN_LAST_PING_KO_DATE is set and is recent (this month)
-					if (getDolGlobalString('MAIN_LAST_PING_KO_DATE') && substr($conf->global->MAIN_LAST_PING_KO_DATE, 0, 6) == dol_print_date(dol_now(), '%Y%m') && !$forceping) {
+					if (getDolGlobalString('MAIN_LAST_PING_KO_DATE') && substr(getDolGlobalString('MAIN_LAST_PING_KO_DATE'), 0, 6) == dol_print_date(dol_now(), '%Y%m') && !$forceping) {
 						print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. An error already occurred this month, we will try later. -->\n";
 					} else {
 						include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
