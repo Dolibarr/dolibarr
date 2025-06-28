@@ -29,20 +29,26 @@
 // $permissiontoadd must be defined
 // $upload_dir must be defined (example $conf->project->dir_output . "/";)
 // $hidedetails, $hidedesc, $hideref and $moreparams may have been set or not.
+
 /**
  * @var Conf $conf
  * @var Translate $langs
  * @var User $user
+ * @var CommonObject $object
+ *
  * @var string $action
  * @var int $id
- * @var CommonObject $object
- * @var ?int $permissiontocreate
+ * @var ?int $permissioncreate
+ * @var ?int $usercangeneratedoc
  * @var int $permissiontoadd
  * @var string $upload_dir
+ *
  * @var ?int $hidedetails
  * @var ?int $hidedesc
  * @var ?int $hideref
+ * @var ?array<string,mixed> $moreparams
  */
+
 if (!empty($permissioncreate) && empty($permissiontoadd)) {
 	$permissiontoadd = $permissioncreate; // For backward compatibility
 }
