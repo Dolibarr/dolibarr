@@ -82,6 +82,7 @@
 @phan-var-force ?string $objectlabel
 @phan-var-force ?string $option
 @phan-var-force int $deliveryreceipt
+@phan-var-force ?array<string,mixed> $moreparams
 ';
 
 

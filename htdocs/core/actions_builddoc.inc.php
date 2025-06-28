@@ -48,6 +48,9 @@
  * @var ?int $hideref
  * @var ?array<string,mixed> $moreparams
  */
+'
+@phan-var-force ?array<string,mixed> $moreparams
+';
 
 if (!empty($permissioncreate) && empty($permissiontoadd)) {
 	$permissiontoadd = $permissioncreate; // For backward compatibility
