@@ -3107,9 +3107,9 @@ if ($action == 'create') {
 			// Sign
 			if ($object->status > Expedition::STATUS_DRAFT) {
 				if ($object->signed_status != Expedition::$SIGNED_STATUSES['STATUS_SIGNED_ALL']) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=sign&token='.newToken().'">'.$langs->trans("ShippingSign").'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=sign&token='.newToken().'">'.$langs->trans("SignShipping").'</a></div>';
 				} else {
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=unsign&token='.newToken().'">'.$langs->trans("ShippingUnsign").'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=unsign&token='.newToken().'">'.$langs->trans("UnsignShipping").'</a></div>';
 				}
 			}
 
