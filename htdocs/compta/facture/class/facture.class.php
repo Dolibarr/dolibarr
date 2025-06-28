@@ -5094,116 +5094,117 @@ class Facture extends CommonInvoice
 
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
-				if (!$error) {
-					// Load event
-					$res = $tmpinvoice->fetch($obj->id);
+				// Create a loopError that is reset at each loop, this counter is added to the global counter at the end of loop
+				$loopError = 0;
+				// Load event
+				$res = $tmpinvoice->fetch($obj->id);
+				if ($res > 0) {
+					$tmpinvoice->fetch_thirdparty();
+
+					$outputlangs = new Translate('', $conf);
+					if ($tmpinvoice->thirdparty->default_lang) {
+						$outputlangs->setDefaultLang($tmpinvoice->thirdparty->default_lang);
+						$outputlangs->loadLangs(array("main", "bills"));
+					} else {
+						$outputlangs = $langs;
+					}
+
+					// Select email template
+					$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : 0), 1, (is_numeric($template) ? '' : $template));
+					if (is_numeric($arraymessage) && $arraymessage <= 0) {
+						$langs->load("errors");
+						$this->output .= $langs->trans('ErrorFailedToFindEmailTemplate', $template);
+						return 0; // Hint: Strange to return 0 in case of error, because this function is used by cron task and 0 means OK.
+					}
+
+					// PREPARE EMAIL
+					$errormesg = '';
+
+					// Make substitution in email content
+					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, '', $tmpinvoice);
+
+					complete_substitutions_array($substitutionarray, $outputlangs, $tmpinvoice);
+
+					// Topic
+					$sendTopic = make_substitutions(empty($arraymessage->topic) ? $outputlangs->transnoentitiesnoconv('InformationMessage') : $arraymessage->topic, $substitutionarray, $outputlangs, 1);
+
+					// Content
+					$content = $outputlangs->transnoentitiesnoconv($arraymessage->content);
+
+					$sendContent = make_substitutions($content, $substitutionarray, $outputlangs, 1);
+
+					// Recipient
+					$res = $tmpinvoice->fetch_thirdparty();
+					$recipient = $tmpinvoice->thirdparty;
 					if ($res > 0) {
-						$tmpinvoice->fetch_thirdparty();
-
-						$outputlangs = new Translate('', $conf);
-						if ($tmpinvoice->thirdparty->default_lang) {
-							$outputlangs->setDefaultLang($tmpinvoice->thirdparty->default_lang);
-							$outputlangs->loadLangs(array("main", "bills"));
+						if (!empty($recipient->email)) {
+							$to = $recipient->email;
 						} else {
-							$outputlangs = $langs;
-						}
-
-						// Select email template
-						$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : 0), 1, (is_numeric($template) ? '' : $template));
-						if (is_numeric($arraymessage) && $arraymessage <= 0) {
-							$langs->load("errors");
-							$this->output .= $langs->trans('ErrorFailedToFindEmailTemplate', $template);
-							return 0;
-						}
-
-						// PREPARE EMAIL
-						$errormesg = '';
-
-						// Make substitution in email content
-						$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, '', $tmpinvoice);
-
-						complete_substitutions_array($substitutionarray, $outputlangs, $tmpinvoice);
-
-						// Topic
-						$sendTopic = make_substitutions(empty($arraymessage->topic) ? $outputlangs->transnoentitiesnoconv('InformationMessage') : $arraymessage->topic, $substitutionarray, $outputlangs, 1);
-
-						// Content
-						$content = $outputlangs->transnoentitiesnoconv($arraymessage->content);
-
-						$sendContent = make_substitutions($content, $substitutionarray, $outputlangs, 1);
-
-						// Recipient
-						$res = $tmpinvoice->fetch_thirdparty();
-						$recipient = $tmpinvoice->thirdparty;
-						if ($res > 0) {
-							if (!empty($recipient->email)) {
-								$to = $recipient->email;
-							} else {
-								$errormesg = "Failed to send remind to thirdparty id=".$tmpinvoice->fk_soc.". No email defined for user.";
-								$error++;
-							}
-						} else {
-							$errormesg = "Failed to load recipient with thirdparty id=".$tmpinvoice->fk_soc;
-							$error++;
-						}
-
-						// Sender
-						$from = $conf->global->MAIN_MAIL_EMAIL_FROM;
-						if (empty($from)) {
-							$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
-							$error++;
-						}
-
-						if (!$error) {
-							// Errors Recipient
-							$errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;
-
-							$trackid = 'inv'.$tmpinvoice->id;
-
-							//join file is asked
-							$joinFile = [];
-							$joinFileName = [];
-							$joinFileMime = [];
-							if ($arraymessage->joinfiles == 1 && !empty($tmpinvoice->last_main_doc)) {
-								$joinFile[] = DOL_DATA_ROOT.$tmpinvoice->last_main_doc;
-								$joinFileName[] = basename($tmpinvoice->last_main_doc);
-								$joinFileMime[] = dol_mimetype(DOL_DATA_ROOT.$tmpinvoice->last_main_doc);
-							}
-
-							// Mail Creation
-							$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, $joinFile, $joinFileMime, $joinFileName, '', "", 0, 1, $errors_to, '', $trackid, '', '', '');
-
-							// Sending Mail
-							if ($cMailFile->sendfile()) {
-								$nbMailSend++;
-							} else {
-								$errormesg = $cMailFile->error.' : '.$to;
-								$error++;
-							}
-						}
-
-						if ($errormesg) {
-							$errorsMsg[] = $errormesg;
+							$errormesg = "Failed to send remind to thirdparty id=".$tmpinvoice->fk_soc.". No email defined for user.";
+							$loopError++;
 						}
 					} else {
-						$errorsMsg[] = 'Failed to fetch record invoice with ID = '.$obj->id;
-						$error++;
+						$errormesg = "Failed to load recipient with thirdparty id=".$tmpinvoice->fk_soc;
+						$loopError++;
 					}
+
+					// Sender
+					$from = $conf->global->MAIN_MAIL_EMAIL_FROM;
+					if (empty($from)) {
+						$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
+						$loopError++;
+					}
+
+					if (!$loopError) { // No error until then
+						// Errors Recipient
+						$errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;
+
+						$trackid = 'inv'.$tmpinvoice->id;
+
+						//join file is asked
+						$joinFile = [];
+						$joinFileName = [];
+						$joinFileMime = [];
+						if ($arraymessage->joinfiles == 1 && !empty($tmpinvoice->last_main_doc)) {
+							$joinFile[] = DOL_DATA_ROOT.$tmpinvoice->last_main_doc;
+							$joinFileName[] = basename($tmpinvoice->last_main_doc);
+							$joinFileMime[] = dol_mimetype(DOL_DATA_ROOT.$tmpinvoice->last_main_doc);
+						}
+
+						// Mail Creation
+						$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, $joinFile, $joinFileMime, $joinFileName, '', "", 0, 1, $errors_to, '', $trackid, '', '', '');
+
+						// Sending Mail
+						if ($cMailFile->sendfile()) {
+							$nbMailSend++;
+						} else {
+							$errormesg = $cMailFile->error.' : '.$to;
+							$loopError++;
+						}
+					}
+
+					if ($errormesg) {
+						$errorsMsg[] = $errormesg;
+					}
+				} else {
+					$errorsMsg[] = 'Failed to fetch record invoice with ID = '.$obj->id;
+					$loopError++;
 				}
+				$error += $loopError;
 			}
 		} else {
 			$error++;
 		}
 
-		if (!$error) {
-			$this->output .= 'Nb of emails sent : '.$nbMailSend;
-			$this->db->commit();
-			return 0;
-		} else {
+		if ($error > 0) { // If there is azt least an error, early return with specific message
 			$this->db->commit(); // We commit also on error, to have the error message recorded.
 			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? join(', ', $errorsMsg) : $error;
 			return $error;
 		}
+
+		$this->output .= 'Nb of emails sent : '.$nbMailSend;
+		$this->db->commit();
+		return 0;
 	}
 }
 
