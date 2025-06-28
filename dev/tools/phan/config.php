@@ -161,6 +161,7 @@ $VALID_MODULE_MAPPING = array(
 	'stock' => 'Stock',
 	'stocktransfer' => 'StockTransfer',
 	'stripe' => 'Stripe',
+	'subtotals' => 'Subtotals',
 	'supplier_invoice' => null,  // Special case, uses invoice
 	'supplier_order' => null,  // Special case, uses invoice
 	'supplier_proposal' => 'SupplierProposal',
@@ -427,6 +428,7 @@ return [
 	'suppress_issue_types' => [
 		// Dolibarr uses a lot of internal deprecated stuff, not reporting
 		'PhanDeprecatedProperty',
+		'PhanDeprecatedImplicitNullableParam',
 
 		'PhanCompatibleNegativeStringOffset',	// return false positive
 		'PhanPluginConstantVariableBool',		// a lot of false positive, in most cases, we want to keep the code as it is

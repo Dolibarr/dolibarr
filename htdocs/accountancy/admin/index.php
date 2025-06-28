@@ -67,20 +67,21 @@ $nbletter = GETPOSTINT('ACCOUNTING_LETTERING_NBLETTERS');
 $formSetup = new FormSetup($db);
 
 // Main options
-$formSetup->newItem('BANK_DISABLE_DIRECT_INPUT')
-	->setAsYesNo();
-$formSetup->newItem('ACCOUNTANCY_COMBO_FOR_AUX')
-	->setAsYesNo();
-$formSetup->newItem('ACCOUNTING_MANAGE_ZERO')
-	->setAsYesNo();
+$formSetup->newItem('BANK_DISABLE_DIRECT_INPUT')->setAsYesNo();
+
+$formSetup->newItem('ACCOUNTANCY_COMBO_FOR_AUX')->setAsYesNo();
+
+$item = $formSetup->newItem('ACCOUNTING_MANAGE_ZERO')->setAsYesNo();
+$item->helpText = $langs->trans('ACCOUNTING_MANAGE_ZERO2');
+$item->fieldParams['helpText'] = 'noclick';
+
+
 if (!getDolGlobalInt('ACCOUNTING_MANAGE_ZERO')) {
-	$item = $formSetup->newItem('ACCOUNTING_LENGTH_GACCOUNT')
-		->setAsString();
+	$item = $formSetup->newItem('ACCOUNTING_LENGTH_GACCOUNT')->setAsString();
 	$item->fieldAttr['type'] = 'number';
 	$item->fieldAttr['class'] = 'maxwidth50 right';
 
-	$item = $formSetup->newItem('ACCOUNTING_LENGTH_AACCOUNT')
-		->setAsString();
+	$item = $formSetup->newItem('ACCOUNTING_LENGTH_AACCOUNT')->setAsString();
 	$item->fieldAttr['type'] = 'number';
 	$item->fieldAttr['class'] = 'maxwidth50 right';
 }
@@ -659,7 +660,7 @@ foreach ($arrayofmodules as $module) {
 		if (getDolGlobalString('BOOKKEEPING_ADDON') == $file) {
 			print img_picto($langs->trans("Activated"), 'switch_on');
 		} else {
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'">';
+			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'">';
 			print img_picto($langs->trans("Disabled"), 'switch_off');
 			print '</a>';
 		}

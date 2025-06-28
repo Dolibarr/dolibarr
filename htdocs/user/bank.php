@@ -74,7 +74,7 @@ if (!isset($moreparam)) {
 }
 
 // Load translation files required by page
-$langs->loadLangs(array('companies', 'commercial', 'banks', 'bills', 'trips', 'holiday', 'salaries'));
+$langs->loadLangs(array('accountancy', 'companies', 'commercial', 'banks', 'bills', 'trips', 'holiday', 'salaries'));
 
 if (isModEnabled('accounting')) {
 	$langs->load('compta');
@@ -406,9 +406,9 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		$addadmin = '';
 		if (property_exists($object, 'admin')) {
 			if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
-				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
+				$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft valignmiddle"');
 			} elseif (!empty($object->admin)) {
-				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
+				$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft valignmiddle"');
 			}
 		}
 		print showValueWithClipboardCPButton($object->login).$addadmin;

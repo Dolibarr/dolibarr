@@ -242,7 +242,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 	$expedition = new Expedition($db);
 	$warehousestatic = new Entrepot($db);
 
-	$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end,";
+	$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end, obj.special_code,";
 	$sql .= " ed.rowid as edrowid, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_elementdet, ed.fk_entrepot as warehouse_id,";
 	$sql .= " e.rowid as sendingid, e.ref as exp_ref, e.date_creation, e.date_delivery, e.date_expedition, e.billed, e.fk_statut as status, e.signed_status,";
 	$sql .= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.tobatch as product_tobatch,';
@@ -255,6 +255,9 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 	$sql .= " WHERE e.entity IN (".getEntity('expedition').")";
 	$sql .= " AND obj.fk_".$origin." = ".((int) $origin_id);
 	$sql .= " AND obj.rowid = ed.fk_elementdet";
+	if (isModEnabled('subtotals')) {
+		$sql .= " AND obj.special_code <> ".SUBTOTALS_SPECIAL_CODE;
+	}
 	$sql .= " AND ed.fk_expedition = e.rowid";
 	if ($filter) {
 		$sql .= $filter;

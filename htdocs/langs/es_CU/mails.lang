@@ -70,7 +70,6 @@ ToAddRecipientsChooseHere=Agregue destinatarios eligiendo de las listas
 IdRecord=registro de identificación
 DeliveryReceipt=Confirmación de entrega
 YouCanUseCommaSeparatorForSeveralRecipients=Puede utilizar el separador <b> coma </b> para especificar varios destinatarios.
-TagCheckMail=Seguimiento de apertura de correo
 TagUnsubscribe=Enlace para darse de baja
 EMailRecipient=Receptor de E-mail
 TagMailtoEmail=Correo electrónico del destinatario (incluido el enlace html "mailto:")

@@ -6,6 +6,7 @@
  * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
 /**
  * API class for orders
+ *
+ * @since	5.0.0	Initial implementation
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
@@ -57,9 +60,11 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of a commercial proposal object
+	 * Get a commercial proposal
 	 *
 	 * Return an array with commercial proposal information
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param   int         $id				ID of commercial proposal
 	 * @param   int         $contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
@@ -73,9 +78,11 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of an proposal object by ref
+	 * Get a commercial proposal by ref
 	 *
 	 * Return an array with proposal information
+	 *
+	 * @since	12.0.0	Initial implementation
 	 *
 	 * @param       string		$ref			Ref of object
 	 * @param       int         $contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
@@ -91,9 +98,11 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of an proposal object by ref_ext
+	 * Get a commercial proposal by ref_ext
 	 *
 	 * Return an array with proposal information
+	 *
+	 * @since	12.0.0	Initial implementation
 	 *
 	 * @param       string		$ref_ext		External reference of object
 	 * @param       int         $contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
@@ -136,10 +145,16 @@ class Proposals extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		// Add external contacts ids.
-		$tmparray = $this->propal->liste_contact(-1, 'external', $contact_list);
-		if (is_array($tmparray)) {
-			$this->propal->contacts_ids = $tmparray;
+		if ($contact_list > -1) {
+			// Add external contacts ids.
+			$tmparray = $this->propal->liste_contact(-1, 'external', $contact_list);
+			if (is_array($tmparray)) {
+				$this->propal->contacts_ids = $tmparray;
+			}
+			$tmparray = $this->propal->liste_contact(-1, 'internal', $contact_list);
+			if (is_array($tmparray)) {
+				$this->propal->contacts_ids_internal = $tmparray;
+			}
 		}
 
 		$this->propal->fetchObjectLinked();
@@ -151,6 +166,8 @@ class Proposals extends DolibarrApi
 	 * List commercial proposals
 	 *
 	 * Get a list of commercial proposals
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param string	$sortfield			Sort field
 	 * @param string	$sortorder			Sort order
@@ -164,6 +181,8 @@ class Proposals extends DolibarrApi
 	 * @return  array                       Array of order objects
 	 * @phan-return Propal[]|array{data:Propal[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 * @phpstan-return Propal[]|array{data:Propal[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 *
+	 * @throws	RestException
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0)
 	{
@@ -270,12 +289,16 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Create commercial proposal object
+	 * Create a commercial proposal
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param   array   $request_data   Request data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return  int     ID of proposal
+	 *
+	 * @throws	RestException
 	 */
 	public function post($request_data = null)
 	{
@@ -311,6 +334,8 @@ class Proposals extends DolibarrApi
 	/**
 	 * Get lines of a commercial proposal
 	 *
+	 * @since	5.0.0	Initial implementation
+	 *
 	 * @param int		$id				Id of commercial proposal
 	 * @param string    $sqlfilters		Other criteria to filter answers separated by a comma. d is the alias for proposal lines table, p is the alias for product table. "Syntax example "(p.ref:like:'SO-%') AND (d.date_start:<:'20220101')"
 	 *
@@ -319,6 +344,8 @@ class Proposals extends DolibarrApi
 	 * @return array
 	 * @phan-return PropaleLigne[]
 	 * @phpstan-return PropaleLigne[]
+	 *
+	 * @throws	RestException
 	 */
 	public function getLines($id, $sqlfilters = '')
 	{
@@ -353,7 +380,9 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Add a line to given commercial proposal
+	 * Add a line to a commercial proposal
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param int   $id             Id of commercial proposal to update
 	 * @param array $request_data   Commercial proposal line data
@@ -363,6 +392,8 @@ class Proposals extends DolibarrApi
 	 * @url	POST {id}/line
 	 *
 	 * @return int
+	 *
+	 * @throws	RestException
 	 */
 	public function postLine($id, $request_data = null)
 	{
@@ -421,7 +452,7 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Add lines to given commercial proposal
+	 * Add lines to a commercial proposal
 	 *
 	 * @param int   $id             Id of commercial proposal to update
 	 * @param array $request_data   Commercial proposal line data
@@ -431,6 +462,8 @@ class Proposals extends DolibarrApi
 	 * @url	POST {id}/lines
 	 *
 	 * @return int
+	 *
+	 * @throws	RestException
 	 */
 	public function postLines($id, $request_data = null)
 	{
@@ -504,7 +537,9 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Update a line of given commercial proposal
+	 * Update a line of a commercial proposal
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param	int				$id             Id of commercial proposal to update
 	 * @param	int				$lineid         Id of line to update
@@ -514,6 +549,8 @@ class Proposals extends DolibarrApi
 	 * @return  Object|false					Object with cleaned properties
 	 *
 	 * @url	PUT {id}/lines/{lineid}
+	 *
+	 * @throws	RestException
 	 */
 	public function putLine($id, $lineid, $request_data = null)
 	{
@@ -581,8 +618,9 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Delete a line of given commercial proposal
+	 * Delete a line of a commercial proposal
 	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param	int				$id             Id of commercial proposal to update
 	 * @param	int				$lineid         Id of line to delete
@@ -617,7 +655,9 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Add a contact type of given commercial proposal
+	 * Add (link) a contact to a commercial proposal
+	 *
+	 * @since	10.0.0	Initial implementation
 	 *
 	 * @param int    $id             Id of commercial proposal to update
 	 * @param int    $contactid      Id of external or internal contact to add
@@ -675,7 +715,9 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Delete a contact type of given commercial proposal
+	 * Remove (unlink) a contact from commercial proposal
+	 *
+	 * @since	10.0.0	Initial implementation
 	 *
 	 * @param	int    $id				Id of commercial proposal to update
 	 * @param	int    $contactid		Row key of the contact in the array contact_ids.
@@ -720,13 +762,17 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Update commercial proposal general fields (won't touch lines of commercial proposal)
+	 * Update a commercial proposal general fields (won't change lines of commercial proposal)
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param	int		$id             Id of commercial proposal to update
 	 * @param	array	$request_data   Datas
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	Object					Object with cleaned properties
+	 *
+	 * @throws RestException
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -779,12 +825,16 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Delete commercial proposal
+	 * Delete a commercial proposal
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param   int     $id         Commercial proposal ID
 	 * @return  array
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @throws RestException
 	 */
 	public function delete($id)
 	{
@@ -813,12 +863,16 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Set a proposal to draft
+	 * Set a commercial proposal to draft
+	 *
+	 * @since	7.0.0	Initial implementation
 	 *
 	 * @param   int     $id             Order ID
 	 * @return	Object					Object with cleaned properties
 	 *
 	 * @url POST    {id}/settodraft
+	 *
+	 * @throws RestException
 	 */
 	public function settodraft($id)
 	{
@@ -864,6 +918,8 @@ class Proposals extends DolibarrApi
 	 * {
 	 * "notrigger": 0
 	 * }
+	 *
+	 * @since	5.0.0	Initial implementation
 	 *
 	 * @param   int     $id             Commercial proposal ID
 	 * @param   int     $notrigger      1=Does not execute triggers, 0= execute triggers
@@ -913,7 +969,9 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Close (Accept or refuse) a quote / commercial proposal
+	 * Close (accept or refuse) a commercial proposal
+	 *
+	 * @since	7.0.0	Initial implementation
 	 *
 	 * @param   int     $id             Commercial proposal ID
 	 * @param   int		$status			Must be 2 (accepted) or 3 (refused)				{@min 2}{@max 3}
@@ -923,6 +981,8 @@ class Proposals extends DolibarrApi
 	 * @return	Object					Object with cleaned properties
 	 *
 	 * @url POST    {id}/close
+	 *
+	 * @throws RestException
 	 */
 	public function close($id, $status, $note_private = '', $notrigger = 0, $note_public = '')
 	{
@@ -961,12 +1021,16 @@ class Proposals extends DolibarrApi
 	}
 
 	/**
-	 * Set a commercial proposal billed. Could be also called setbilled
+	 * Set a commercial proposal to billed
+	 *
+	 * @since	7.0.0	Initial implementation
 	 *
 	 * @param   int     $id             Commercial proposal ID
 	 * @return	Object					Object with cleaned properties
 	 *
 	 * @url POST    {id}/setinvoiced
+	 *
+	 * @throws RestException
 	 */
 	public function setinvoiced($id)
 	{

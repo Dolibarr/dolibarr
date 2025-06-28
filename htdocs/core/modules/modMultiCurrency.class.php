@@ -145,19 +145,19 @@ class modMultiCurrency extends DolibarrModules
 
 		$this->cronjobs = array(
 			0 => array(
-				'priority'=>61,
-				'label'=>$langs->trans('MutltiCurrencyAutoUpdateCurrencies'),
-				'jobtype'=>'method',
-				'class'=>'multicurrency/class/multicurrency.class.php',
-				'objectname'=>'MultiCurrency',
-				'method'=>'syncRates',
-				'parameters'=>'0,0,cron',
-				'comment'=>'Update all the currencies using the currencylayer API. An API key needs to be given in the multi-currency module config page',
-				'frequency'=>1,
-				'unitfrequency'=>2678400,
-				'status'=>$statusatinstall,
-				'test'=>'isModEnabled("cron")',
-				'datestart'=>$datestart
+				'priority' => 61,
+				'label' => $langs->trans('MutltiCurrencyAutoUpdateCurrencies'),
+				'jobtype' => 'method',
+				'class' => 'multicurrency/class/multicurrency.class.php',
+				'objectname' => 'MultiCurrency',
+				'method' => 'syncRates',
+				'parameters' => '0,0,cron',
+				'comment' => 'Update all the currencies using the currencylayer API. An API key needs to be given in the multi-currency module config page to have this job working.<br>First param is not used, Second parameter is 0 to update only already existing currency defined into the Multicurrency module or 1 to add any currency. Third parameter must be "cron".',
+				'frequency' => 1,
+				'unitfrequency' => 2678400,
+				'status' => $statusatinstall,
+				'test' => 'isModEnabled("cron")',
+				'datestart' => $datestart
 			),
 		);
 

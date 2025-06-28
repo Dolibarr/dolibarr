@@ -22,6 +22,8 @@ $PROJECT="dolibarr";
 $PUBLISHBETARC="$ENV{'DESTIASSOLOGIN'}\@vmprod1.dolibarr.org:/home/dolibarr/asso.dolibarr.org/dolibarr_documents/website/www.dolibarr.org/files";
 $PUBLISHSTABLE="$ENV{'DESTISFLOGIN'}\@frs.sourceforge.net:/home/frs/project/dolibarr";
 
+# due to implicit origin on git commands, example: implicit origin, lionel upstream, eric dolibarr
+$GITREMOTENAME="$ENV{'GITREMOTENAME'}";
 #@LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
 @LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
 %REQUIREMENTPUBLISH=(
@@ -113,6 +115,13 @@ if (! $ENV{"DESTIBETARC"} || ! $ENV{"DESTISTABLE"})
 if (! -d $ENV{"DESTIBETARC"} || ! -d $ENV{"DESTISTABLE"})
 {
 	print "Error: Directory of environment variable DESTIBETARC ($ENV{'DESTIBETARC'}) or DESTISTABLE ($ENV{'DESTISTABLE'}) does not exist.\n";
+	print "$PROG.$Extension aborted.\n";
+	sleep 2;
+	exit 1;
+}
+
+if (! $ENV{"GITREMOTENAME"}) {
+	print "Error: environment variable GITREMOTENAME does not exist. You can set it to 'origin' or any other git remote name.\n";
 	print "$PROG.$Extension aborted.\n";
 	sleep 2;
 	exit 1;
@@ -391,7 +400,9 @@ if ($nboftargetok) {
 		if (! $BUILD || $BUILD eq '0-alpha' || $BUILD eq '0-beta' || $BUILD eq '0-rc')	# For a major or future version
 		{
 			print "Building changeLog file for a major version:\n";
-			print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log `git rev-list --boundary '.$MAJOR.'.'.$MINOR.'..origin/develop | grep ^- | cut -c2- | head -n 1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\|PERF\|SEC\|QUAL\|CLOSE\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/CLOSE/NEW/g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' | sed \'s/^* //g\' > /tmp/aaa';
+			print 'cd ~/git/dolibarr_dev; ';
+			#print 'git log `git rev-list --boundary '.$MAJOR.'.'.$MINOR.'..origin/develop | grep ^- | cut -c2- | head -n 1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\|PERF\|SEC\|QUAL\|CLOSE\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/CLOSE/NEW/g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' | sed \'s/^* //g\' > /tmp/aaa';
+			print 'git log `diff -u <(git rev-list --first-parent '.($MAJOR - 1).'.0)  <(git rev-list --first-parent develop) | sed -ne \'s/^ //p\' | head -1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/changelogtocopy'
 		}
 		else			# For a maintenance release
 		{
@@ -466,15 +477,15 @@ if ($nboftargetok) {
 			{
 				print 'Run git tag -a -f -m "'.$MAJOR.'.'.$MINOR.'.'.$BUILD.'" "'.$MAJOR.'.'.$MINOR.'.'.$BUILD.'"'."\n";
 				$ret=`git tag -a -f -m "$MAJOR.$MINOR.$BUILD" "$MAJOR.$MINOR.$BUILD"`;
-				print 'Run git push -f --tags'."\n";
-				$ret=`git push -f --tags`;
+				print 'Run git push $GITREMOTENAME -f --tags'."\n";
+				$ret=`git push $GITREMOTENAME -f --tags`;
 				#$ret=`git push -f origin "$MAJOR.$MINOR.$BUILD"`;
 			}
 		}
 		else
 		{
-			print 'Run git push --tags'."\n";
-			$ret=`git push --tags`;
+			print 'Run git push $GITREMOTENAME --tags'."\n";
+			$ret=`git push $GITREMOTENAME --tags`;
 			#$ret=`git push origin "$MAJOR.$MINOR.$BUILD"`;
 		}
 		chdir("$olddir");
@@ -504,6 +515,8 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.codeclimate.yml`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.externalToolBuilders`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.git*`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/.mailmap`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/.phpunit.result.cache`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.project`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.pydevproject`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.settings`;

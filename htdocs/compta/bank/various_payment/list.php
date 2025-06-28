@@ -234,6 +234,7 @@ if (empty($reshook)) {
 	}
 }
 
+
 /*
  * View
  */
@@ -311,7 +312,7 @@ if ($search_bank_entry > 0) {
 if ($search_accountancy_account > 0) {
 	$sql .= " AND v.accountancy_code = ".((int) $search_accountancy_account);
 }
-if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
+if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX') && ($search_accountancy_subledger > 0)) {
 	$sql .= " AND v.subledger_account = '".$db->escape($search_accountancy_subledger)."'";
 } else {
 	if ($search_accountancy_subledger != '' && $search_accountancy_subledger != '-1') {
@@ -403,16 +404,16 @@ if ($search_label) {
 	$param .= '&search_label='.urlencode($search_label);
 }
 if ($search_datep_start) {
-	$param .= '&search_datep_start='.urlencode($search_datep_start);
+	$param .= '&search_datep_start='.urlencode((string) $search_datep_start);
 }
 if ($search_datep_end) {
-	$param .= '&search_datep_end='.urlencode($search_datep_end);
+	$param .= '&search_datep_end='.urlencode((string) $search_datep_end);
 }
 if ($search_datev_start) {
-	$param .= '&search_datev_start='.urlencode($search_datev_start);
+	$param .= '&search_datev_start='.urlencode((string) $search_datev_start);
 }
 if ($search_datev_end) {
-	$param .= '&search_datev_end='.urlencode($search_datev_end);
+	$param .= '&search_datev_end='.urlencode((string) $search_datev_end);
 }
 if ($search_type_id > 0) {
 	$param .= '&search_type_id='.urlencode((string) ($search_type_id));

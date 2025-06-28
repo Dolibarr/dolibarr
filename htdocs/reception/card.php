@@ -700,7 +700,7 @@ if (empty($reshook)) {
 
 					$line->id = $line_id;
 					$line->fk_entrepot = GETPOSTINT($stockLocation);
-					$line->qty = GETPOSTINT($qty);
+					$line->qty = GETPOSTFLOAT($qty, 'MS');
 					$line->comment = GETPOST($comment, 'alpha');
 
 					if (isModEnabled('productbatch')) {
@@ -725,7 +725,7 @@ if (empty($reshook)) {
 				} else { // Product no predefined
 					$qty = "qtyl".$line_id;
 					$line->id = $line_id;
-					$line->qty = GETPOSTINT($qty);
+					$line->qty = GETPOSTFLOAT($qty, 'MS');
 					$line->fk_entrepot = 0;
 					if ($line->update($user) < 0) {
 						setEventMessages($line->error, $line->errors, 'errors');

@@ -20,6 +20,8 @@
  /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var CommonObject 	$object
+ * @var Translate 		$langs
  * @var ?FormMail 		$formmail
  * @var ?FormWebsite 	$formwebsite
  * @var ?FormAI 		$formai
@@ -30,6 +32,7 @@
  * @var string 			$showlinktoailabel		'...'
  * @var	string			$htmlname
  * @var ?string			$out
+ * @var	?string			$aiprompt
  */
 
 //Protection to avoid direct call of template
@@ -38,6 +41,10 @@ if (empty($conf) || !is_object($conf)) {
 	exit(1);
 }
 
+if (empty($langs)) {
+	print 'Parameter langs not defined.';
+	exit(1);
+}
 if (empty($htmlname)) {
 	print 'Parameter htmlname not defined.';
 	exit(1);
@@ -57,6 +64,7 @@ if (empty($htmlname)) {
 @phan-var-force string          $showlinktoailabel
 @phan-var-force ?string         $out
 @phan-var-force ?string         $morecss
+@phan-var-force string          $aiprompt
 ';
 
 if (!isset($out)) {	// Init to empty string if not defined
@@ -65,7 +73,9 @@ if (!isset($out)) {	// Init to empty string if not defined
 if (!isset($morecss)) {	// Init to empty string if not defined
 	$morecss = '';
 }
-
+if (!isset($aiprompt)) {	// Init to empty string if not defined
+	$aiprompt = '';
+}
 // Add link to add layout
 if ($showlinktolayout) {	// May be set only if MAIN_EMAIL_USE_LAYOUT is set
 	$out .= '<a href="#" id="linkforlayouttemplates" class="notasortlink inline-block alink marginrightonly">';
@@ -132,11 +142,13 @@ if ($showlinktolayout) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 			$formmail = new FormMail($db);
 		}
-		$out .= $formmail->getModelEmailTemplate($htmlname, $showlinktolayout);
+		$out .= $formmail->getEmailLayoutSelector($htmlname, $showlinktolayout);
 	}
 } else {
 	$out .= '<!-- No link to the layout feature, $formmail->withlayout must be set to a string use case, module WYSIWYG must be enabled and MAIN_EMAIL_USE_LAYOUT must be set -->';
 }
+
+/** @var ?FormAI $formai */
 
 if ($showlinktoai) {
 	if (empty($formai) || $formai instanceof FormAI) {
@@ -148,7 +160,11 @@ if ($showlinktoai) {
 	if (empty($onlyenhancements)) {
 		$onlyenhancements = '';
 	}
-	$out .= $formai->getSectionForAIEnhancement($showlinktoai, $formmail->withaiprompt, $htmlname, $onlyenhancements);
+	if (!empty($aiprompt) && !empty($object)) {
+		$formai->setSubstitFromObject($object, $langs);
+		$aiprompt = make_substitutions($aiprompt, $formai->substit);
+	}
+	$out .= $formai->getSectionForAIEnhancement($showlinktoai, $formmail->withaiprompt, $htmlname, $onlyenhancements, $aiprompt);
 } else {
 	$out .= '<!-- No link to the AI feature, $formmail->withaiprompt must be set to the ai feature and module ai must be enabled -->';
 }

@@ -553,12 +553,6 @@ parameters:
 			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
 
 		-
-			message: '#^Call to function is_array\(\) with non\-empty\-array will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/accountancy/class/lettering.class.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -671,18 +665,6 @@ parameters:
 			identifier: ternary.alwaysFalse
 			count: 1
 			path: ../../../htdocs/accountancy/expensereport/list.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 2
-			path: ../../../htdocs/accountancy/index.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../../htdocs/accountancy/index.php
 
 		-
 			message: '#^Call to function is_array\(\) with non\-empty\-array will always evaluate to true\.$#'
@@ -987,12 +969,6 @@ parameters:
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/adherents/list.php
-
-		-
-			message: '#^Variable \$diroutputmassaction might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/adherents/list.php
 
@@ -1657,18 +1633,6 @@ parameters:
 			path: ../../../htdocs/admin/system/security.php
 
 		-
-			message: '#^Variable \$dolibarr_main_document_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/admin/system/security.php
-
-		-
-			message: '#^Variable \$dolibarr_main_prod might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/admin/system/security.php
-
-		-
 			message: '#^Call to function is_bool\(\) with true will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -1885,27 +1849,15 @@ parameters:
 			path: ../../../htdocs/ai/admin/setup.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to method DolibarrApi\:\:_cleanObjectDatas\(\)$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/api/class/api.class.php
-
-		-
 			message: '#^Call to function is_object\(\) with ActionComm\|Adherent\|Commande\|CommandeFournisseur\|Contact\|Contrat\|ExpenseReport\|Facture\|FactureFournisseur\|Fichinter\|Mo\|Product\|Project\|Propal\|Task will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 2
 			path: ../../../htdocs/api/class/api_documents.class.php
 
 		-
-			message: '#^Loose comparison using \!\= between ''adherent''\|''agenda''\|''commande''\|''contact''\|''contrat''\|''expensereport''\|''facture''\|''fichinter''\|''mrp''\|''product''\|''produit''\|''produit\|service''\|''project''\|''project_task''\|''projet''\|''propale''\|''service''\|''supplier_invoice''\|''supplier_order'' and ''ecm'' will always evaluate to true\.$#'
-			identifier: notEqual.alwaysTrue
-			count: 1
-			path: ../../../htdocs/api/class/api_documents.class.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 2
+			count: 1
 			path: ../../../htdocs/api/class/api_documents.class.php
 
 		-
@@ -2191,12 +2143,6 @@ parameters:
 			path: ../../../htdocs/asset/model/card.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/asset/model/card.php
-
-		-
 			message: '#^Property CommonObject\:\:\$entity \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -2411,12 +2357,6 @@ parameters:
 			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/bom/class/bom.class.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/bom/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: '#^Variable \$object might not be defined\.$#'
@@ -3133,12 +3073,6 @@ parameters:
 			path: ../../../htdocs/comm/action/info.php
 
 		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/comm/action/info.php
-
-		-
 			message: '#^Variable \$socid might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -3327,7 +3261,7 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 6
+			count: 4
 			path: ../../../htdocs/comm/action/peruser.php
 
 		-
@@ -3541,20 +3475,8 @@ parameters:
 			path: ../../../htdocs/comm/propal/card.php
 
 		-
-			message: '#^Loose comparison using \=\= between ''HT''\|null and ''TTC'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/comm/propal/card.php
-
-		-
 			message: '#^Property CommonObject\:\:\$fk_project \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/comm/propal/card.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
 			count: 1
 			path: ../../../htdocs/comm/propal/card.php
 
@@ -3687,7 +3609,7 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 3
+			count: 2
 			path: ../../../htdocs/comm/propal/class/propaleligne.class.php
 
 		-
@@ -3715,18 +3637,6 @@ parameters:
 			path: ../../../htdocs/comm/propal/document.php
 
 		-
-			message: '#^Loose comparison using \=\= between \-1 and 0 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/comm/propal/list.php
-
-		-
-			message: '#^Loose comparison using \=\= between \-1 and 1 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/comm/propal/list.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 1
@@ -3745,12 +3655,6 @@ parameters:
 			path: ../../../htdocs/comm/propal/list.php
 
 		-
-			message: '#^Variable \$searchCategoryCustomerList in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/comm/propal/list.php
-
-		-
 			message: '#^Variable \$searchCategoryProductList in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -3761,12 +3665,6 @@ parameters:
 			identifier: if.alwaysFalse
 			count: 1
 			path: ../../../htdocs/comm/propal/note.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/comm/propal/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: '#^Variable \$object might not be defined\.$#'
@@ -3781,27 +3679,9 @@ parameters:
 			path: ../../../htdocs/commande/agenda.php
 
 		-
-			message: '#^Loose comparison using \=\= between null and ''HT'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/commande/card.php
-
-		-
-			message: '#^Loose comparison using \=\= between null and ''TTC'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/commande/card.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
-			path: ../../../htdocs/commande/card.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 2
 			path: ../../../htdocs/commande/card.php
 
 		-
@@ -3985,27 +3865,9 @@ parameters:
 			path: ../../../htdocs/commande/list.php
 
 		-
-			message: '#^Loose comparison using \=\= between \-1 and 0 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/commande/list.php
-
-		-
-			message: '#^Loose comparison using \=\= between \-1 and 1 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/commande/list.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/commande/list.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 3
+			count: 1
 			path: ../../../htdocs/commande/list.php
 
 		-
@@ -4055,12 +3917,6 @@ parameters:
 			identifier: if.alwaysFalse
 			count: 1
 			path: ../../../htdocs/commande/note.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/commande/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: '#^Variable \$object might not be defined\.$#'
@@ -4333,12 +4189,6 @@ parameters:
 			path: ../../../htdocs/compta/bank/list.php
 
 		-
-			message: '#^Variable \$buttonreconcile might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/bank/releve.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -4555,18 +4405,6 @@ parameters:
 			path: ../../../htdocs/compta/facture/card.php
 
 		-
-			message: '#^Loose comparison using \=\= between '''' and ''HT'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/compta/facture/card.php
-
-		-
-			message: '#^Loose comparison using \=\= between '''' and ''TTC'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/compta/facture/card.php
-
-		-
 			message: '#^Loose comparison using \=\= between 0 and 0 will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 1
@@ -4594,12 +4432,6 @@ parameters:
 			message: '#^Property CommonObject\:\:\$fk_project \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/compta/facture/card.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 2
 			path: ../../../htdocs/compta/facture/card.php
 
 		-
@@ -4635,7 +4467,7 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
-			count: 5
+			count: 4
 			path: ../../../htdocs/compta/facture/class/api_invoices.class.php
 
 		-
@@ -4813,42 +4645,6 @@ parameters:
 			path: ../../../htdocs/compta/facture/class/facture.class.php
 
 		-
-			message: '#^Property Facture\:\:\$revenuestamp \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property Facture\:\:\$total_ht \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property Facture\:\:\$total_localtax1 \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property Facture\:\:\$total_localtax2 \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property Facture\:\:\$total_ttc \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property Facture\:\:\$total_tva \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 3
@@ -4969,12 +4765,6 @@ parameters:
 			path: ../../../htdocs/compta/facture/list.php
 
 		-
-			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/compta/facture/list.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -5005,22 +4795,10 @@ parameters:
 			path: ../../../htdocs/compta/facture/prelevement.php
 
 		-
-			message: '#^Variable \$num might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/compta/facture/prelevement.php
-
-		-
 			message: '#^Variable \$type might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/compta/facture/stats/index.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/compta/facture/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: '#^Variable \$object might not be defined\.$#'
@@ -5797,18 +5575,6 @@ parameters:
 			path: ../../../htdocs/compta/sociales/payments.php
 
 		-
-			message: '#^Loose comparison using \=\= between \-1 and 0 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/compta/stats/cabyprodserv.php
-
-		-
-			message: '#^Loose comparison using \=\= between \-1 and 1 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/compta/stats/cabyprodserv.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
@@ -6391,12 +6157,6 @@ parameters:
 			path: ../../../htdocs/contact/list.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/contact/list.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -6607,24 +6367,6 @@ parameters:
 			path: ../../../htdocs/contrat/index.php
 
 		-
-			message: '#^Loose comparison using \=\= between \-1 and 0 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/contrat/list.php
-
-		-
-			message: '#^Loose comparison using \=\= between \-1 and 1 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/contrat/list.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/contrat/list.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -6805,12 +6547,6 @@ parameters:
 			path: ../../../htdocs/core/actions_linkedfiles.inc.php
 
 		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
-			path: ../../../htdocs/core/actions_linkedfiles.inc.php
-
-		-
 			message: '#^Call to function is_object\(\) with Adherent\|ConferenceOrBoothAttendee\|Contact\|Societe\|User will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -6931,12 +6667,6 @@ parameters:
 			path: ../../../htdocs/core/actions_setmoduleoptions.inc.php
 
 		-
-			message: '#^Variable \$modulepart might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/actions_setmoduleoptions.inc.php
-
-		-
 			message: '#^Variable \$result might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -7025,12 +6755,6 @@ parameters:
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
 			path: ../../../htdocs/core/ajax/editinline.php
-
-		-
-			message: '#^Variable \$upload_dir in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/core/ajax/flowjs-server.php
 
 		-
 			message: '#^If condition is always true\.$#'
@@ -7927,12 +7651,6 @@ parameters:
 			path: ../../../htdocs/core/class/commonobject.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$cond_reglement \(int\|string\) is never assigned string so it can be removed from the property type\.$#'
-			identifier: property.unusedType
-			count: 1
-			path: ../../../htdocs/core/class/commonobject.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$fields \(array\<string, array\<string, array\<int\|string, string\>\|int\|string\>\>\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -8541,7 +8259,7 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 2
+			count: 1
 			path: ../../../htdocs/core/class/html.form.class.php
 
 		-
@@ -8570,12 +8288,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#3 \$optJson of method Form\:\:constructProjectListOption\(\) expects array\{key\: string, value\: string, type\: string\}, array\{\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Parameter \#3 \$selected of method Form\:\:multiselectarray\(\) expects array\<string\>, list\<int\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/class/html.form.class.php
@@ -8653,34 +8365,10 @@ parameters:
 			path: ../../../htdocs/core/class/html.form.class.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 2
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Variable \$more in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
 			message: '#^Variable \$pageyes in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''formai''\|''formaiforlines''\|''formaiwithlines'' and ''formforlines'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/class/html.formai.class.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''formai''\|''formaiforlines''\|''formaiwithlines'' and ''formwithlines'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/class/html.formai.class.php
 
 		-
 			message: '#^Variable \$select_encoder might not be defined\.$#'
@@ -10006,12 +9694,6 @@ parameters:
 			message: '#^Strict comparison using \!\=\= between string and false will always evaluate to true\.$#'
 			identifier: notIdentical.alwaysTrue
 			count: 2
-			path: ../../../htdocs/core/lib/modulebuilder.lib.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
 			path: ../../../htdocs/core/lib/modulebuilder.lib.php
 
 		-
@@ -12091,24 +11773,6 @@ parameters:
 			path: ../../../htdocs/core/tpl/extrafields_list_print_fields.tpl.php
 
 		-
-			message: '#^Variable \$extrafields might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/tpl/extrafields_list_search_param.tpl.php
-
-		-
-			message: '#^Variable \$extrafieldsobjectkey might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/tpl/extrafields_list_search_param.tpl.php
-
-		-
-			message: '#^Variable \$param might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
-			path: ../../../htdocs/core/tpl/extrafields_list_search_param.tpl.php
-
-		-
 			message: '#^Variable \$db might not be defined\.$#'
 			identifier: variable.undefined
 			count: 8
@@ -12673,12 +12337,6 @@ parameters:
 			path: ../../../htdocs/delivery/class/delivery.class.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/delivery/tpl/linkedobjectblock.tpl.php
-
-		-
 			message: '#^Variable \$object might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -12809,12 +12467,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/don/info.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/don/list.php
 
 		-
 			message: '#^Variable \$projectstatic might not be defined\.$#'
@@ -13252,12 +12904,6 @@ parameters:
 			message: '#^Variable \$mode might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorbooth_contact.php
-
-		-
-			message: '#^Variable \$permission might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
 			path: ../../../htdocs/eventorganization/conferenceorbooth_contact.php
 
 		-
@@ -13723,18 +13369,6 @@ parameters:
 			path: ../../../htdocs/expedition/list.php
 
 		-
-			message: '#^Loose comparison using \=\= between \-1 and 0 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/expedition/list.php
-
-		-
-			message: '#^Loose comparison using \=\= between \-1 and 1 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/expedition/list.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 2
@@ -13810,12 +13444,6 @@ parameters:
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
-			path: ../../../htdocs/expensereport/card.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 5
 			path: ../../../htdocs/expensereport/card.php
 
 		-
@@ -13995,12 +13623,6 @@ parameters:
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/expensereport/payment/list.php
-
-		-
-			message: '#^Variable \$toselect might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/expensereport/payment/list.php
 
@@ -14245,22 +13867,10 @@ parameters:
 			path: ../../../htdocs/fichinter/note.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/fichinter/tpl/linkedobjectblock.tpl.php
-
-		-
 			message: '#^Variable \$object might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/fichinter/tpl/linkedobjectblock.tpl.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_encrypted_pass might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/filefunc.inc.php
 
 		-
 			message: '#^If condition is always true\.$#'
@@ -14847,18 +14457,6 @@ parameters:
 		-
 			message: '#^Call to function method_exists\(\) with CommandeFournisseur and ''fetch_lines'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/fourn/commande/list.php
-
-		-
-			message: '#^Loose comparison using \=\= between \-1 and 0 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/fourn/commande/list.php
-
-		-
-			message: '#^Loose comparison using \=\= between \-1 and 1 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
 			count: 1
 			path: ../../../htdocs/fourn/commande/list.php
 
@@ -15895,12 +15493,6 @@ parameters:
 			path: ../../../htdocs/hrm/job_document.php
 
 		-
-			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/hrm/job_list.php
-
-		-
 			message: '#^Comparison operation "\<" between int\<0, max\> and 0 is always false\.$#'
 			identifier: smaller.alwaysFalse
 			count: 1
@@ -15979,12 +15571,6 @@ parameters:
 			path: ../../../htdocs/hrm/skill_card.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/hrm/skill_card.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -16001,12 +15587,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/hrm/skill_document.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/hrm/skill_list.php
 
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
@@ -16255,12 +15835,6 @@ parameters:
 			path: ../../../htdocs/includes/odtphp/odf.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/index.php
-
-		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
 			count: 1
@@ -16268,12 +15842,6 @@ parameters:
 
 		-
 			message: '#^Variable \$boxwork might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/index.php
-
-		-
-			message: '#^Variable \$conffile might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/index.php
@@ -16867,12 +16435,6 @@ parameters:
 			path: ../../../htdocs/modulebuilder/index.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/modulebuilder/index.php
-
-		-
 			message: '#^Variable \$class might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -17019,12 +16581,6 @@ parameters:
 		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/class/api_mymodule.class.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to method MyModuleApi\:\:_cleanObjectDatas\(\)$#'
-			identifier: argument.templateType
 			count: 1
 			path: ../../../htdocs/modulebuilder/template/class/api_mymodule.class.php
 
@@ -17527,12 +17083,6 @@ parameters:
 			path: ../../../htdocs/mrp/mo_agenda.php
 
 		-
-			message: '#^Variable \$socid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/mrp/mo_agenda.php
-
-		-
 			message: '#^Property Mo\:\:\$entity \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -17627,12 +17177,6 @@ parameters:
 			identifier: empty.variable
 			count: 2
 			path: ../../../htdocs/mrp/mo_production.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/mrp/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: '#^Variable \$action might not be defined\.$#'
@@ -18091,12 +17635,6 @@ parameters:
 			path: ../../../htdocs/product/class/api_products.class.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to method Products\:\:_cleanObjectDatas\(\)$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/product/class/api_products.class.php
-
-		-
 			message: '#^Strict comparison using \=\=\= between 2 and 2 will always evaluate to true\.$#'
 			identifier: identical.alwaysTrue
 			count: 1
@@ -18515,12 +18053,6 @@ parameters:
 			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/product/dynamic_price/editor.php
-
-		-
-			message: '#^Variable \$lastmodified might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/index.php
 
 		-
 			message: '#^If condition is always false\.$#'
@@ -19609,12 +19141,6 @@ parameters:
 			path: ../../../htdocs/projet/class/api_tasks.class.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to method Tasks\:\:_cleanObjectDatas\(\)$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/projet/class/api_tasks.class.php
-
-		-
 			message: '#^Call to function method_exists\(\) with \$this\(Project\) and ''getLibStatut'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -19822,12 +19348,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
-			path: ../../../htdocs/projet/element.php
-
-		-
-			message: '#^Variable \$margin in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
-			count: 2
 			path: ../../../htdocs/projet/element.php
 
 		-
@@ -20321,12 +19841,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/projet/tasks/time.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/projet/tasks/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: '#^Variable \$object might not be defined\.$#'
@@ -21183,7 +20697,7 @@ parameters:
 		-
 			message: '#^Variable \$conf might not be defined\.$#'
 			identifier: variable.undefined
-			count: 3
+			count: 2
 			path: ../../../htdocs/public/webportal/webportal.main.inc.php
 
 		-
@@ -21619,12 +21133,6 @@ parameters:
 			path: ../../../htdocs/reception/note.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/reception/tpl/linkedobjectblock.tpl.php
-
-		-
 			message: '#^Variable \$object might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -21969,12 +21477,6 @@ parameters:
 		-
 			message: '#^Property RecruitmentJobPosition\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/recruitment/recruitmentjobposition_card.php
-
-		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/recruitment/recruitmentjobposition_card.php
 
@@ -22987,18 +22489,6 @@ parameters:
 			path: ../../../htdocs/supplier_proposal/list.php
 
 		-
-			message: '#^Loose comparison using \=\= between \-1 and 0 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/supplier_proposal/list.php
-
-		-
-			message: '#^Loose comparison using \=\= between \-1 and 1 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/supplier_proposal/list.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 2
@@ -23201,12 +22691,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/theme/eldy/style.css.php
-
-		-
-			message: '#^Variable \$nbtopmenuentries might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/theme/md/btn.inc.php
 
 		-
 			message: '#^Variable \$left might not be defined\.$#'
@@ -23557,12 +23041,6 @@ parameters:
 			path: ../../../htdocs/ticket/messaging.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/ticket/tpl/linkedobjectblock.tpl.php
-
-		-
 			message: '#^Variable \$object might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -23603,12 +23081,6 @@ parameters:
 			identifier: variable.undefined
 			count: 3
 			path: ../../../htdocs/user/card.php
-
-		-
-			message: '#^PHPDoc tag @phpstan\-return has invalid value \(Object\[\)\: Unexpected token "\[", expected TOKEN_HORIZONTAL_WS at offset 346 on line 8$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: ../../../htdocs/user/class/api_users.class.php
 
 		-
 			message: '#^Call to function method_exists\(\) with \$this\(User\) and ''getLibStatut'' will always evaluate to true\.$#'
@@ -24031,12 +23503,6 @@ parameters:
 			path: ../../../htdocs/variants/list.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/variants/list.php
-
-		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -24201,12 +23667,6 @@ parameters:
 		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
-			count: 1
-			path: ../../../htdocs/webportal/class/html.formlistwebportal.class.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
 			count: 1
 			path: ../../../htdocs/webportal/class/html.formlistwebportal.class.php
 
@@ -24739,12 +24199,6 @@ parameters:
 			path: ../../../scripts/members/sync_members_dolibarr2ldap.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to function array_values$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../scripts/members/sync_members_ldap2dolibarr.php
-
-		-
 			message: '#^Variable \$user might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -24791,9 +24245,3 @@ parameters:
 			identifier: equal.alwaysTrue
 			count: 1
 			path: ../../../scripts/user/migrate_picture_path.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function array_values$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../scripts/user/sync_users_ldap2dolibarr.php

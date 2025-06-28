@@ -86,9 +86,12 @@ cd ~/git/dolibarr_x.y
 git log x.y.z-1.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/changelogtocopy
 ```
 
-Recopy the content of the output file into the file ChangeLog.
-- Note: To know number of lines changes: git diff --shortstat A B
+- Recopy the content of the output file into the file ChangeLog.
+  
+  Note: To know number of lines changes: git diff --shortstat A B
+  
 - Update version number with x.y.z-w in file htdocs/filefunc.inc.php
+
 - Commit all changes.
 
 - Run `makepack-dolibarr.pl` to check the generation of all packages. No need to publish them.
@@ -103,10 +106,15 @@ Recopy the content of the output file into the file ChangeLog.
 This files describe steps made by Dolibarr packaging team to make a complete release of Dolibarr, step by step.
 We suppose the branch x.y has already been created during the beta (see previous step) and we want to release a version x.y.z (with z >= 0)
 
+- Check there is no pending issue with flag "Priority High/Blocking". List can be found here: https://github.com/Dolibarr/dolibarr/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22Priority%20-%20High%20%2F%20Blocking%22
+
+- Check there is no pending open security issue: List can be found here: https://github.com/Dolibarr/dolibarr/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22Priority%20-%20Critical%20or%20Security%22
+
 - Check all files are committed.
+
 - Update version/info in ChangeLog, for this:
 
-To generate a changelog of a **major new version** x.y.0 (from a repo on branch develop), you can do
+To generate a changelog of a **major new version** x.0.0 (from a repo on branch develop), you can do
 
 ```
 cd ~/git/dolibarr
@@ -132,13 +140,15 @@ git log x.y.(z-1)..   | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u
   Note: To know the number of lines changes: git diff --shortstat vA vB
 
 - Update version number with x.y.z in file htdocs/filefunc.inc.php
-- Commit all changes.
 
-- Run makepack-dolibarr.pl to generate all packages.
+- Commit all changes and push the changes (direct commit or PR) and check that CI is green after the push.
 
-- Check content of built packages.
+- Run makepack-dolibarr.pl with option 0 to generate the signature file and all the packages (or run the option 1 alone and then option of each packages you want to build).
 
-- Run makepack-dolibarr.pl again with option to publish files on dolibarr foundation server (Dir /home/dolibarr/wwwroot/files/stable on www.dolibarr.org).
-- Run makepack-dolibarr.pl again with option to publish files on sourceforge. This will also add the official tag x.y.z.
+- Check content of built packages (the files must have a relative dir "dolibarr-x.y.z/..." and the filelist-x.y.z.xml should be inside the packages too.
+
+- Run makepack-dolibarr.pl again with option 98 to publish files on dolibarr foundation server (Dir /home/dolibarr/wwwroot/files/stable on www.dolibarr.org).
+
+- Run makepack-dolibarr.pl again with option 99 to publish files on sourceforge. This will also add the official tag x.y.z.
 
 - Post a news message in dolibarr.org web site by cloning a past news + relay the news url on social networks

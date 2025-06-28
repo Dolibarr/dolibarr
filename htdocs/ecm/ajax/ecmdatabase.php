@@ -50,6 +50,8 @@ $element = GETPOST('element', 'alpha');
 
 $permissiontoread = $user->hasRight('ecm', 'read');
 
+$error = 0;
+
 
 /*
  * Actions
@@ -68,8 +70,6 @@ top_httphead();
 
 // Load original field value
 if (isset($action) && !empty($action)) {
-	$error = 0;
-
 	if ($action == 'build' && !empty($element) && $permissiontoread) {
 		require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
@@ -82,11 +82,13 @@ if (isset($action) && !empty($action)) {
 		$diroutputslash = str_replace('\\', '/', $conf->$element->dir_output);
 		$diroutputslash .= '/';
 
-		// Scan directory tree on disk
+		// Scan directory tree on disk to get list of all directories
 		$disktree = dol_dir_list($conf->$element->dir_output, 'directories', 1, '', array('^temp$'), '', 0, 0);
+		//dol_syslog("Found ".count($disktree)." directories on disk");
 
 		// Scan directory tree in database
 		$sqltree = $ecmdirstatic->get_full_arbo(0);
+		//dol_syslog("Found ".count($sqltree)." directories in database");
 
 		$adirwascreated = 0;
 

@@ -35,6 +35,16 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
 $servicename = 'Stripe';
+$listofsupportedhooks = array('payment_intent.payment_failed', 'payment_intent.succeeded');
+// Add IPN for dispute (used mostly by SEPA)
+$listofsupportedhooks[] = 'charge.dispute.closed';
+$listofsupportedhooks[] = 'charge.dispute.created';
+$listofsupportedhooks[] = 'charge.dispute.funds_withdrawn';
+// Add IPN for Payout
+if (getDolGlobalString('STRIPE_AUTO_RECORD_PAYOUT')) {
+	$listofsupportedhooks[] = 'payout.create';
+	$listofsupportedhooks[] = 'payout.paid';
+}
 
 /**
  * @var Conf $conf
@@ -210,7 +220,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("AccountParameter").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td></td>';
 print '<td></td>';
 print "</tr>\n";
 
@@ -251,6 +261,7 @@ if (empty($conf->stripeconnect->enabled)) {
 	$out .= '<input type="text" id="onlinetestwebhookurl" class="minwidth500" value="'.$url.'" disabled>';
 	$out .= ajax_autoselect("onlinetestwebhookurl");
 	print '<br>'.$out;
+	print $form->textwithpicto('', $langs->trans('ListOfSupportedHooksToActivate').':<br><br>'.implode('<br>', $listofsupportedhooks), 1, 'help', 'valignmiddle', 0, 3, 'webhookscodetest');
 	print '</td><td>';
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		if (getDolGlobalString('STRIPE_TEST_WEBHOOK_KEY') && getDolGlobalString('STRIPE_TEST_SECRET_KEY') && getDolGlobalString('STRIPE_TEST_WEBHOOK_ID')) {
@@ -292,10 +303,10 @@ if (empty($conf->stripeconnect->enabled)) {
 	print '<tr class="oddeven"><td>'.$langs->trans("StripeConnect").'</td>';
 	print '<td><b>'.$langs->trans("StripeConnect_Mode").'</b><br>';
 	print $langs->trans("STRIPE_APPLICATION_FEE_PLATFORM").' ';
-	print price($conf->global->STRIPE_APPLICATION_FEE_PERCENT);
+	print price(getDolGlobalString('STRIPE_APPLICATION_FEE_PERCENT'));
 	print '% + ';
-	print price($conf->global->STRIPE_APPLICATION_FEE);
-	print ' '.$langs->getCurrencySymbol($conf->currency).' '.$langs->trans("minimum").' '.price($conf->global->STRIPE_APPLICATION_FEE_MINIMAL).' '.$langs->getCurrencySymbol($conf->currency);
+	print price(getDolGlobalString('STRIPE_APPLICATION_FEE'));
+	print ' '.$langs->getCurrencySymbol($conf->currency).' '.$langs->trans("minimum").' '.price(getDolGlobalString('STRIPE_APPLICATION_FEE_MINIMAL')).' '.$langs->getCurrencySymbol($conf->currency);
 	print '</td><td></td></tr>';
 }
 
@@ -324,6 +335,7 @@ if (empty($conf->stripeconnect->enabled)) {
 	$out .= '<input type="text" id="onlinelivewebhookurl" class="minwidth500" value="'.$url.'" disabled>';
 	$out .= ajax_autoselect("onlinelivewebhookurl", '0');
 	print '<br>'.$out;
+	print $form->textwithpicto('', $langs->trans('ListOfSupportedHooksToActivate').':<br><br>'.implode('<br>', $listofsupportedhooks), 1, 'help', 'valignmiddle', 0, 3, 'webhookscodeprod');
 	print '</td><td>';
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		if (getDolGlobalString('STRIPE_LIVE_WEBHOOK_KEY') && getDolGlobalString('STRIPE_LIVE_SECRET_KEY') && getDolGlobalString('STRIPE_LIVE_WEBHOOK_ID')) {
@@ -370,7 +382,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("UsageParameter").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td></td>';
 print "</tr>\n";
 
 print '<tr class="oddeven"><td>';

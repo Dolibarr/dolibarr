@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
@@ -37,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/factureligne.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/subtotals/class/commonsubtotal.class.php';
 
 
 /**
@@ -44,7 +44,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class FactureRec extends CommonInvoice
 {
+	use CommonSubtotal;
+
 	const TRIGGER_PREFIX = 'BILLREC';
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -204,10 +207,16 @@ class FactureRec extends CommonInvoice
 	 * @var int<0,1>
 	 */
 	public $auto_validate; // 0 to create in draft, 1 to create and validate the new invoice
+
 	/**
 	 * @var int<0,1>
 	 */
 	public $generate_pdf; // 1 to generate PDF on invoice generation (default)
+
+	/**
+	 * @var int<0,2>		Default is 0, 1=Use the last known currency rate to update main price, 2=to update foreign price
+	 */
+	public $usenewcurrencyrate;
 
 
 
@@ -490,6 +499,12 @@ class FactureRec extends CommonInvoice
 							}
 
 							$result = $objectline->insertExtraFields();
+							if ($result < 0) {
+								$error++;
+							}
+
+							$objectline->extraparams = $facline->extraparams;
+							$result = $objectline->setExtraParameters();
 							if ($result < 0) {
 								$error++;
 							}
@@ -1442,6 +1457,7 @@ class FactureRec extends CommonInvoice
 					$facture->status = self::STATUS_DRAFT;
 					$facture->date = (empty($facturerec->date_when) ? $now : $facturerec->date_when); // We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
 					$facture->socid = $facturerec->socid;
+
 					if (!empty($facturerec->fk_multicurrency)) {
 						$facture->fk_multicurrency = $facturerec->fk_multicurrency;
 						$facture->multicurrency_code = $facturerec->multicurrency_code;
@@ -1459,7 +1475,8 @@ class FactureRec extends CommonInvoice
 					$parameters['facture'] = &$facture;
 					$reshook = $hookmanager->executeHooks('beforeCreationOfEachRecurringInvoice', $parameters, $facturerec, $action); // note that $facturerec or $facture might be modified by hooks
 
-					$invoiceidgenerated = $facture->create($user);
+					// Create invoice. This may update prices according to multiplrice rules
+					$invoiceidgenerated = $facture->create($user, 0, 0, (isModEnabled('multicurrency') ? $facturerec->usenewcurrencyrate : 0));
 					if ($invoiceidgenerated <= 0) {
 						$this->setErrorsFromObject($facture);
 						$error++;

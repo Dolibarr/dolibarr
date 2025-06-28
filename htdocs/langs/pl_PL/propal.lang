@@ -16,20 +16,23 @@ CancelPropal=Anuluj
 AddProp=Utwórz wniosek
 ConfirmDeleteProp=Czy na pewno chcesz usunąć tę ofertę handlową?
 ConfirmValidateProp=Czy na pewno chcesz zatwierdzić tę ofertę handlową pod numerem  <b> %s </b>?
-ConfirmCancelPropal=Are you sure you want to cancel commercial proposal <b>%s</b>?
+ConfirmCancelPropal=Czy na pewno chcesz anulować ofertę komercyjną <b>%s</b>?
 LastPropals=Najnowsze propozycje %s
 LastModifiedProposals=Ostatnich %s zmodyfikowanych ofert
 AllPropals=Wszystkie oferty
 SearchAProposal=Szukaj oferty
 NoProposal=Brak propozycji
 ProposalsStatistics=Statystyki ofert handlowych
+NumberOfProposals=Liczba propozycji
 NumberOfProposalsByMonth=Ilość w miesiącu
+AmountOfProposals=Ilość propozycji
+AmountOfProposalsHT=Ilość propozycji (bez podatku)
 AmountOfProposalsByMonthHT=Kwota według miesiąca (bez podatku)
 NbOfProposals=Liczba ofert handlowych
 ShowPropal=Pokaż oferty
 PropalsDraft=Szkice
 PropalsOpened=Otwarte
-PropalStatusCanceled=Canceled (Abandoned)
+PropalStatusCanceled=Anulowane (porzucone)
 PropalStatusDraft=Szkic (musi zostać zatwierdzony)
 PropalStatusValidated=Zatwierdzona (oferta jest otwarta)
 PropalStatusSigned=Zaakceptowana (do zafakturowania)
@@ -77,13 +80,11 @@ AvailabilityTypeAV_1W=1 tydzień
 AvailabilityTypeAV_2W=2 tygodnie
 AvailabilityTypeAV_3W=3 tygodnie
 AvailabilityTypeAV_1M=1 miesiąc
-
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Przedstawiciela w ślad za wniosek
 TypeContact_propal_external_BILLING=Kontakt do klienta w sprawie faktury
-TypeContact_propal_external_CUSTOMER=kontakt klienta w ślad za wniosek
-TypeContact_propal_external_SHIPPING=Kontakt z klientem w sprawie dostawy
-
+TypeContact_propal_external_CUSTOMER=Dane kontaktowe do ofert
+TypeContact_propal_external_SHIPPING=Dane kontaktowe do dostawy
 # Document models
 CantBeNoSign=nie można ustawić, nie jest podpisany
 CaseFollowedBy=Przypadek, po którym następuje
@@ -118,7 +119,9 @@ RefusePropal=Odrzuć propozycję
 Sign=Podpisać
 SignContract=Podpisać kontrakt
 SignFichinter=Podpisz interwencję
-SignSociete_rib=Sign mandate
+SignSociete_rib=Podpisz mandat
 SignPropal=Zaakceptuj propozycję
 Signed=podpisany
 SignedOnly=Tylko podpisane
+ExpeditionSigned=Przesyłka podpisana
+SignExpedition=Znak wysyłki

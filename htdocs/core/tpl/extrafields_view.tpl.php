@@ -229,25 +229,38 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 					$fieldid = 'socid';
 				}
 
-				print '<td class="right"><a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?'.$fieldid.'='.$valueid.'&action=edit_extras&token='.newToken().'&attribute='.$tmpkeyextra.'&ignorecollapsesetup=1">'.img_edit().'</a></td>';
-			}
-			if (isModEnabled("ai") && $action == 'edit_extras' && GETPOST('attribute') == $tmpkeyextra && !empty($extrafields->attributes[$object->table_element]["type"][$tmpkeyextra])) {
-				if (in_array($extrafields->attributes[$object->table_element]["type"][$tmpkeyextra], array("varchar", "text", "html", "int", 'double', 'price'))) {
-					$showlinktoai = "extrafieldfiller";		// 'textgenerationemail', 'textgenerationwebpage', 'imagegeneration', ...
+				print '<td class="right">';
+				if (isModEnabled("ai") && !empty($extrafields->attributes[$object->table_element]["aiprompt"][$tmpkeyextra])) {
+					$showlinktoai = "extrafieldfiller_".$tmpkeyextra;
 					$showlinktoailabel = $langs->trans("FillExtrafieldWithAi");
-					$htmlname = "options_".$tmpkeyextra;
+					$htmlname = !empty($object->id) ? $object->element.'_extras_'.$tmpkeyextra.'_'.$object->id : "options_".$tmpkeyextra;
 					$onlyenhancements = "textgenerationextrafield";
 					$morecss = "editfielda";
+					$aiprompt = $extrafields->attributes[$object->table_element]["aiprompt"][$tmpkeyextra];
 					$out = "";
 
 					// Fill $out
 					include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
-					print '<td class="right">';
-					print '<!-- TODO Step 2 Have code that will make the AI call and update input field without the popup-->';
-					print '<!-- TODO Step 3 Then a next step will be to use the ajax call core/aja/updateextrafield.php to update field in database directly with no need to pass by edit_extras step -->';
 					print $out;
-					print '</td>';
+					print '<script>
+						$(document).ready(function() {
+							$("#'.$htmlname.'").on("change", function () {
+								value = $(this).html();
+								$.ajax({
+									method: "POST",
+									dataType: "json",
+									url: "'. DOL_URL_ROOT.'/core/ajax/updateextrafield.php",
+									data: {"token": "'.currentToken().'", "objectType": "'.$object->element.'", "objectId": "'.$object->id.'", "field": "'.$tmpkeyextra.'", "value": value},
+									success: function(response) {
+										console.log("Extrafield "+'.$tmpkeyextra.'+" successfully updated");
+									},
+								});
+							});
+						});
+					</script>';
 				}
+				print '<a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?'.$fieldid.'='.$valueid.'&action=edit_extras&token='.newToken().'&attribute='.$tmpkeyextra.'&ignorecollapsesetup=1">'.img_edit().'</a>';
+				print'</td>';
 			}
 			print '</tr></table>';
 			print '</td>';
@@ -319,31 +332,6 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 		print '
 				<script>
 				    jQuery(document).ready(function() {
-				    	function showOptions(child_list, parent_list)
-				    	{
-				    		var val = $("select[name="+parent_list+"]").val();
-				    		var parentVal = parent_list + ":" + val;
-							if(val > 0) {
-					    		$("select[name=\""+child_list+"\"] option[parent]").hide();
-					    		$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
-							} else {
-								$("select[name=\""+child_list+"\"] option").show();
-							}
-				    	}
-						function setListDependencies() {
-					    	jQuery("select option[parent]").parent().each(function() {
-					    		var child_list = $(this).attr("name");
-								var parent = $(this).find("option[parent]:first").attr("parent");
-								var infos = parent.split(":");
-								var parent_list = infos[0];
-								showOptions(child_list, parent_list);
-
-								/* Activate the handler to call showOptions on each future change */
-								$("select[name=\""+parent_list+"\"]").change(function() {
-									showOptions(child_list, parent_list);
-								});
-					    	});
-						}
 						setListDependencies();
 				    });
 				</script>'."\n";

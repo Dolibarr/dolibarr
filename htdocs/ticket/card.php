@@ -76,6 +76,7 @@ $action    = GETPOST('action', 'aZ09');
 $cancel    = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+$contextpage = GETPOST('contextpage', 'aZ');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma') ? GETPOST('sortfield', 'aZ09comma') : "a.datep";
@@ -202,7 +203,7 @@ if (empty($reshook)) {
 		$action = 'view';
 	}
 
-	if (($action == 'add' || ($action == 'update' && $object->status < Ticket::STATUS_CLOSED)) && $permissiontoadd) {
+	if ((($action == 'add' && GETPOST('save', 'alpha')) || ($action == 'update' && $object->status < Ticket::STATUS_CLOSED)) && $permissiontoadd) {
 		$ifErrorAction = ($action == 'add' ? 'create' : 'edit');	// Test on permission not required here
 		if ($action == 'add') {		// Test on permission already done
 			$object->track_id = null;
@@ -856,7 +857,7 @@ if ($action == 'create' || $action == 'presend') {
 				$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 				// Ref
-				print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';
+				print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="3">';
 				// Define a complementary filter for search of next/prev ref.
 				if (!$user->hasRight('projet', 'all', 'lire')) {
 					$objectsListId = $projectstat->getProjectsAuthorizedForUser($user, $mine, 0);
@@ -940,7 +941,8 @@ if ($action == 'create' || $action == 'presend') {
 		// Author
 		$createdbyshown = 0;
 		if ($object->fk_user_create > 0) {
-			$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
+			$morehtmlref .= '<br>';
+			//$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("CreatedBy").'</span> ';
 
 			$fuser = new User($db);
 			$fuser->fetch($object->fk_user_create);
@@ -961,9 +963,9 @@ if ($action == 'create' || $action == 'presend') {
 		//var_dump($object);
 		if ($createdfrompublicticket) {
 			$htmltooptip = $langs->trans("OriginEmail").': '.$object->origin_email;
-			$htmltooptip .= '<br>'.$langs->trans("IP").': '.$object->ip;
+			$htmltooptip .= '<br>'.$langs->trans("IP").': '.dol_print_ip($object->ip);
 			$morehtmlref .= ($createdbyshown ? ' - ' : '<br>');
-			$morehtmlref .= ($createdbyshown ? '' : $langs->trans("CreatedBy").' : ');
+			//$morehtmlref .= ($createdbyshown ? '' : '<span class="opacitymedium">'.$langs->trans("CreatedBy").' </span> ');
 			$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
 			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">- '.$form->textwithpicto($langs->trans("CreatedByPublicPortal"), $htmltooptip, 1, 'help', '', 0, 3, 'tooltip').'</small>';
 		} elseif ($createdfromemailcollector) {
@@ -974,7 +976,7 @@ if ($action == 'create' || $action == 'presend') {
 			$htmltooltip .= '<br>'.$langs->trans("MailReply").': '.$object->origin_replyto;
 			$htmltooltip .= '<br>'.$langs->trans("MailReferences").': '.$object->origin_references;
 			$morehtmlref .= ($createdbyshown ? ' - ' : '<br>');
-			$morehtmlref .= ($createdbyshown ? '' : $langs->trans("CreatedBy").' : ');
+			//$morehtmlref .= ($createdbyshown ? '' : '<span class="opacitymedium">'.$langs->trans("CreatedBy").'</span> ');
 			$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
 			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">- '.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $htmltooltip, 1, 'help', '', 0, 3, 'tooltip').'</small>';
 		}
@@ -985,8 +987,8 @@ if ($action == 'create' || $action == 'presend') {
 		// Thirdparty
 		if (isModEnabled("societe")) {
 			$morehtmlref .= '<br>';
-			$morehtmlref .= img_picto($langs->trans("ThirdParty"), 'company', 'class="pictofixedwidth"');
 			if ($action != 'editcustomer' && $permissiontoedit) {
+				$morehtmlref .= img_picto($langs->trans("ThirdParty"), 'company', 'class="pictofixedwidth"');
 				$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editcustomer&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->transnoentitiesnoconv('SetThirdParty'), 0).'</a> ';
 			}
 			$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, (string) $object->socid, $action == 'editcustomer' ? 'editcustomer' : 'none', '', 1, 0, 0, array(), 1);
@@ -1057,7 +1059,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '<table class="border tableforfield centpercent">';
 
 		// Track ID
-		print '<tr><td class="titlefield">'.$langs->trans("TicketTrackId").'</td><td>';
+		print '<tr><td class="titlefieldmiddle">'.$langs->trans("TicketTrackId").'</td><td>';
 		if (!empty($object->track_id)) {
 			if (empty($object->ref)) {
 				$object->ref = (string) $object->id;
@@ -1082,7 +1084,7 @@ if ($action == 'create' || $action == 'presend') {
 		// Creation date
 		print '<tr><td>'.$langs->trans("DateCreation").'</td><td>';
 		print dol_print_date($object->datec, 'dayhour', 'tzuser');
-		print '<span class="opacitymedium"> - '.$langs->trans("TimeElapsedSince").': <i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->datec, 60)).'</i></span>';
+		print '<span class="opacitymedium"><span class="small"> - '.$langs->trans("TimeElapsedSince").': <b><i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->datec, 60)).'</i></b></span></span>';
 		print '</td></tr>';
 
 		// Origin
@@ -1106,8 +1108,10 @@ if ($action == 'create' || $action == 'presend') {
 		print '<tr><td>'.$langs->trans("TicketReadOn").'</td><td>';
 		if (!empty($object->date_read)) {
 			print dol_print_date($object->date_read, 'dayhour', 'tzuser');
-			print '<span class="opacitymedium"> - '.$langs->trans("TicketTimeElapsedBeforeSince").': <i>'.convertSecondToTime(roundUpToNextMultiple($object->date_read - $object->datec, 60)).'</i>';
-			print ' / <i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->date_read, 60)).'</i></span>';
+			print '<span class="opacitymedium"><span class="small"> - '.$langs->trans("TimeElapsedSince").': ';
+			//print '<b><i>'.convertSecondToTime(roundUpToNextMultiple($object->date_read - $object->datec, 60)).'</i></b>';
+			//print ' / ';
+			print '<b><i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->date_read, 60)).'</i></b></span></span>';
 		}
 		print '</td></tr>';
 
@@ -1283,39 +1287,29 @@ if ($action == 'create' || $action == 'presend') {
 
 		// Tags/Categories
 		if (isModEnabled('category')) {
+			print '<!-- tag/categories -->'."\n";
 			print '<table class="border centpercent tableforfield">';
 			print '<tr>';
 			print '<td class="valignmiddle titlefield">';
-			print '<table class="nobordernopadding centpercent"><tr><td class="titlefield">';
+			print '<table class="nobordernopadding centpercent"><tr><td class="none">';
 			print $langs->trans("Categories");
 			if ($action != 'categories' && !$user->socid) {
-				print '<td class="right"><a class="editfielda" href="'.$url_page_current.'?action=categories&amp;track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
+				print '</td><td class="right"><a class="editfielda" href="'.$url_page_current.'?action=categories&track_id='.urlencode($object->track_id).'">'.img_edit($langs->trans('Modify')).'</a>';
 			}
+			print '</td>';
 			print '</table>';
 			print '</td>';
 
 			if ($user->hasRight('ticket', 'write') && $action == 'categories') {
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_TICKET, '', 'parent', 64, 0, 3);
-				if (is_array($cate_arbo)) {
-					// Categories
-					print '<td colspan="3">';
-					print '<form action="'.$url_page_current.'" method="POST">';
-					print '<input type="hidden" name="token" value="'.newToken().'">';
-					print '<input type="hidden" name="track_id" value="'.$track_id.'">';
-					print '<input type="hidden" name="action" value="set_categories">';
-
-					$category = new Categorie($db);
-					$cats = $category->containing($object->id, 'ticket');
-					$arrayselected = array();
-					foreach ($cats as $cat) {
-						$arrayselected[] = $cat->id;
-					}
-
-					print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'maxwidth500 widthcentpercentminusx', 0, 0);
-					print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Save').'">';
-					print '</form>';
-					print "</td>";
-				}
+				print '<td colspan="3">';
+				print '<form action="'.$url_page_current.'" method="POST">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="track_id" value="'.$track_id.'">';
+				print '<input type="hidden" name="action" value="set_categories">';
+				print $form->selectCategories(Categorie::TYPE_TICKET, 'categories', $object);
+				print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Save').'">';
+				print '</form>';
+				print "</td>";
 			} else {
 				print '<td colspan="3">';
 				print $form->showCategories($object->id, Categorie::TYPE_TICKET, 1);
@@ -1579,7 +1573,7 @@ if ($action == 'create' || $action == 'presend') {
 			$formticket->param['models'] = $modelmail;
 			$formticket->param['models_id'] = GETPOSTINT('modelmailselected');
 			//$formticket->param['socid']=$object->fk_soc;
-			$formticket->param['returnurl'] = $_SERVER["PHP_SELF"].'?track_id='.$object->track_id;
+			$formticket->param['returnurl'] = $_SERVER["PHP_SELF"].'?track_id='.urldecode($object->track_id);
 
 			$formticket->withsubstit = 1;
 			$formticket->substit = $substitutionarray;

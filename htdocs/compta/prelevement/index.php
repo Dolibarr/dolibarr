@@ -108,7 +108,7 @@ print '</span></td></tr></table></div><br>';
 
 
 /*
- * Invoices waiting for withdraw
+ * Invoices waiting for direct debit
  */
 $sql = "SELECT f.ref, f.rowid, f.total_ttc, f.fk_statut as status, f.paye, f.type,";
 $sql .= " pfd.date_demande, pfd.amount,";
@@ -143,7 +143,9 @@ if ($resql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<th colspan="5">'.$langs->trans("InvoiceWaitingWithdraw").' ('.$num.')</th></tr>';
+	print '<th colspan="5">'.$langs->trans("InvoiceWaitingWithdraw");
+	print '<a class="badge badge-info marginleftonly" href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0">'.$num.'</a>';
+	print '</th></tr>';
 	if ($num) {
 		while ($i < $num && $i < 20) {
 			$obj = $db->fetch_object($resql);
@@ -153,6 +155,7 @@ if ($resql) {
 			$invoicestatic->statut = $obj->status;	// deprecated
 			$invoicestatic->status = $obj->status;
 			$invoicestatic->paye = $obj->paye;
+			$invoicestatic->paid = $obj->paye;
 			$invoicestatic->type = $obj->type;
 
 			$totalallpayments = $invoicestatic->getSommePaiement(0);
@@ -229,7 +232,9 @@ if ($result) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<th>'.$langs->trans("LastWithdrawalReceipt", $limit).'</th>';
+	print '<th>'.$langs->trans("LastWithdrawalReceipt", $limit);
+	print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/orders_list.php?sortfield=p.datec&sortorder=desc"><span class="badge marginleftonly">...</span></a>';
+	print '</th>';
 	print '<th>'.$langs->trans("Date").'</th>';
 	print '<th class="right">'.$langs->trans("Amount").'</th>';
 	print '<th class="right">'.$langs->trans("Status").'</th>';

@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - exports
+ImportExportArea=Imports / Exports
 ExportsArea=Allforion
 ImportArea=Mewnforio
 NewExport=Allforio Newydd
@@ -31,10 +32,10 @@ ExportCsvSeparator=Gwahanydd nodau Csv
 ImportCsvSeparator=Gwahanydd nodau Csv
 Step=Cam
 FormatedImport=Cynorthwyydd Mewnforio
-FormatedImportDesc1=Mae'r modiwl hwn yn eich galluogi i ddiweddaru data presennol neu ychwanegu gwrthrychau newydd i'r gronfa ddata o ffeil heb wybodaeth dechnegol, gan ddefnyddio cynorthwyydd.
+FormatedImportDesc1=Click here to use the assistant to update existing data or add new objects into the database from a file.
 FormatedImportDesc2=Y cam cyntaf yw dewis y math o ddata rydych chi am ei fewnforio, yna fformat y ffeil ffynhonnell, yna'r meysydd rydych chi am eu mewnforio.
 FormatedExport=Cynorthwy-ydd Allforio
-FormatedExportDesc1=Mae'r offer hyn yn caniatáu allforio data personol gan ddefnyddio cynorthwyydd, i'ch helpu yn y broses heb fod angen gwybodaeth dechnegol.
+FormatedExportDesc1=Click here to use the assistant to export data in a supported format
 FormatedExportDesc2=Y cam cyntaf yw dewis set ddata wedi'i diffinio ymlaen llaw, yna pa feysydd rydych chi am eu hallforio, ac ym mha drefn.
 FormatedExportDesc3=Pan ddewisir data i'w allforio, gallwch ddewis fformat y ffeil allbwn.
 Sheet=Cynfas

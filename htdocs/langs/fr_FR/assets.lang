@@ -17,6 +17,7 @@ AccountancyCodeAsset=Code comptable (immobilisation)
 AccountancyCodeDepreciationAsset=Code comptable (compte d'amortissement)
 AccountancyCodeDepreciationExpense=Code comptable (compte de charges d'amortissement)
 AssetsLines=Immobilisations
+ConfirmValidateAsset=Êtes-vous sûr de à valider ce immobilisation avec la référence <b>%s</b> ?
 DeleteType=Supprimer
 DeleteAnAssetType=Supprimer un modèle d'immobilisation
 ConfirmDeleteAssetType=Êtes-vous sûr de vouloir supprimer ce modèle d'immobilisation ?
@@ -70,6 +71,7 @@ AssetDisposal=Cession
 AssetConfirmDisposalAsk=Êtes-vous sûr de vouloir céder l'immobilisation <b> %s </b> ?
 AssetConfirmReOpenAsk=Êtes-vous sûr de vouloir rouvrir l'immobilisation <b> %s </b> ?
 # Asset status
+AssetInDraft=Brouillon
 AssetInProgress=En cours
 AssetDisposed=Cédée
 AssetRecorded=Comptabilisé

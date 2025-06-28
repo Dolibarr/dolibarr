@@ -187,7 +187,10 @@ include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder nohover centpercent">';
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Services").'</th></tr>'."\n";
-$listofstatus = array(0, 4, 4, 5);
+$listofstatus = array(0, 4, 4);	// Note: status 5=closed is useless as it increase all the time. We are interesting with 0, 4 expired and 4 non expired only.
+if (!getDolGlobalString('CONTRACT_HIDE_CLOSED_SERVICES_IN_GRAPH')) {
+	$listofstatus[] = 5;	// We add this status too (even if useless
+}
 $bool = false;
 foreach ($listofstatus as $status) {
 	$bool_str = (string) $bool;

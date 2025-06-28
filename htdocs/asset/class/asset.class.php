@@ -52,6 +52,24 @@ class Asset extends CommonObject
 	 */
 	public $picto = 'asset';
 
+	/**
+	 * @var string|int	Field with ID of parent key if this field has a parent (a string). For example 'fk_product'.
+	 *					ID of parent key itself (an int). For example in few classes like 'Comment', 'ActionComm' or 'AdvanceTargetingMailing'.
+	 */
+	public $fk_element = 'fk_asset';
+
+	/**
+	 * @var string[]	List of child tables. To know object to delete on cascade.
+	 *               	If name matches '@ClassName:FilePathClass:ParentFkFieldName' (the recommended mode) it will
+	 *               	call method ClassName->deleteByParentField(parentId, 'ParentFkFieldName') to fetch and delete child object.
+	 *               	Using an array like childtables should not be implemented because a child may have other child, so we must only use the method that call deleteByParentField().
+	 */
+	protected $childtablesoncascade = array(
+		'@AssetAccountancyCodes:/asset/class/assetaccountancycodes.class.php:fk_asset',
+		'@AssetAccountancyCodesFiscal:/asset/class/assetaccountancycodesfiscal.class.php:fk_asset'
+	);
+
+
 	const STATUS_DRAFT = 0; 	// Draft
 	const STATUS_VALIDATED = 1; 	// In progress
 	const STATUS_DISPOSED = 9;	// Disposed
@@ -246,14 +264,17 @@ class Asset extends CommonObject
 	 * @var AssetDepreciationOptions	Used for computed fields of depreciation options class.
 	 */
 	public $asset_depreciation_options;
+
 	/**
 	 * @var AssetAccountancyCodes
 	 */
 	public $asset_accountancy_codes;
+
 	/**
 	 * @var array<string,array<array{id:int,ref:string,depreciation_date:string,depreciation_ht:string,cumulative_depreciation_ht:string,bookkeeping:Bookkeeping}>>	List of depreciation lines for each mode (sort by depreciation date).
 	 */
 	public $depreciation_lines = array();
+
 
 	/**
 	 * Constructor
@@ -569,6 +590,21 @@ class Asset extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'asset_depreciation_codes_economic WHERE fk_asset = '.((int) $this->id);
+		$this->db->query($sql);
+
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'asset_depreciation_codes_fiscal WHERE fk_asset = '.((int) $this->id);
+		$this->db->query($sql);
+
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'asset_depreciation_options_fiscal WHERE fk_asset = '.((int) $this->id);
+		$this->db->query($sql);
+
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'asset_depreciation_options_economic WHERE fk_asset = '.((int) $this->id);
+		$this->db->query($sql);
+
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'asset_depreciation WHERE fk_asset = '.((int) $this->id);
+		$this->db->query($sql);
+
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
 	}
@@ -1073,7 +1109,7 @@ class Asset extends CommonObject
 				//-----------------------------------------------------
 				$nb_days_in_year = getDolGlobalInt('ASSET_DEPRECIATION_DURATION_PER_YEAR', 360);
 				$nb_days_in_month = getDolGlobalInt('ASSET_DEPRECIATION_DURATION_PER_MONTH', 30);
-				$period_amount = (float) price2num($depreciation_period_amount / $fields['duration'], 'MT');
+				$period_amount = (float) ($fields['duration'] > 0 ? price2num($depreciation_period_amount / $fields['duration'], 'MT') : 0);
 				$first_period_found = false;
 				// TODO fix declaration of $begin_period
 				$first_period_date = isset($begin_period) && $begin_period > $fiscal_period_start ? $begin_period : $fiscal_period_start;
