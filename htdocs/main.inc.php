@@ -777,6 +777,7 @@ if (!defined('NOLOGIN')) {
 		}
 
 		$resultFetchUser = $user->fetch(0, $login, '', 1, ($entitytotest > 0 ? $entitytotest : -1)); // value for $login was retrieved previously when checking password.
+
 		if ($resultFetchUser <= 0 || $user->isNotIntoValidityDateRange()) {
 			dol_syslog('User not found or not valid, connection refused');
 			session_destroy();

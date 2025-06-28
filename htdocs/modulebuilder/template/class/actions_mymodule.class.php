@@ -102,12 +102,9 @@ class ActionsMyModule extends CommonHookActions
 	 */
 	public function doActions($parameters, &$object, &$action, $hookmanager)
 	{
-		global $conf, $user, $langs;
-
 		$error = 0; // Error counter
 
 		/* print_r($parameters); print_r($object); echo "action: " . $action; */
-		// @phan-suppress-next-line PhanPluginEmptyStatementIf
 		if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2'))) {	    // do something only for the context 'somecontext1' or 'somecontext2'
 			// Do what you want here...
 			// You can for example load and use call global vars like $fieldstosearchall to overwrite them, or update the database depending on $action and GETPOST values.
@@ -216,7 +213,8 @@ class ActionsMyModule extends CommonHookActions
 
 		/* print_r($parameters); print_r($object); echo "action: " . $action; */
 		// @phan-suppress-next-line PhanPluginEmptyStatementIf
-		if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2'))) {		// do something only for the context 'somecontext1' or 'somecontext2'
+		if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2'))) {
+			// do something only for the context 'somecontext1' or 'somecontext2'
 		}
 
 		return $ret;

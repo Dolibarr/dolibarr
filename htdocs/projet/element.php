@@ -178,13 +178,6 @@ if ($id == '' && $ref == '') {
 	exit();
 }
 
-if ($dates === '') {
-	$dates = null;
-}
-if ($datee === '') {
-	$datee = null;
-}
-
 $mine = GETPOST('mode') == 'mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
@@ -317,14 +310,13 @@ if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($object->usage_opp
 	if ($code) {
 		print $langs->trans("OppStatus".$code);
 	}
-	print '</td></tr>';
 
 	// Opportunity percent
-	print '<tr><td>'.$langs->trans("OpportunityProbability").'</td><td>';
-	if (!is_null($object->opp_percent) && strcmp($object->opp_percent, '')) {
+	print ' <span title="'.$langs->trans("OpportunityProbability").'"> / ';
+	if (strcmp($object->opp_percent, '')) {
 		print price($object->opp_percent, 0, $langs, 1, 0).' %';
 	}
-	print '</td></tr>';
+	print '</span></td></tr>';
 
 	// Opportunity Amount
 	print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
@@ -609,7 +601,7 @@ $listofreferent = array(
 		'name' => "Loan",
 		'title' => "ListLoanAssociatedProject",
 		'class' => 'Loan',
-		'margin' => 'add',
+		'margin' => '',
 		'table' => 'loan',
 		'datefieldname' => 'datestart',
 		'disableamount' => 0,
@@ -766,10 +758,10 @@ if (!$showdatefilter) {
 	print '<input type="hidden" name="tablename" value="'.(empty($tablename) ? '' : $tablename).'">';
 	print '<input type="hidden" name="action" value="view">';
 	print '<div class="inline-block">';
-	print $form->selectDate((int) $dates, 'dates', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
+	print $form->selectDate($dates, 'dates', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
 	print '</div>';
 	print '<div class="inline-block">';
-	print $form->selectDate((int) $datee, 'datee', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
+	print $form->selectDate($datee, 'datee', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
 	print '</div>';
 	print '<div class="inline-block">';
 	print '<input type="submit" name="refresh" value="'.$langs->trans("Refresh").'" class="button small">';
@@ -804,11 +796,10 @@ foreach ($listofreferent as $key => $value) {
 	$name = $langs->trans($value['name']);
 	$qualified = $value['test'];
 	$margin = empty($value['margin']) ? '' : $value['margin'];
-	if ($qualified && isset($margin)) {		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
+	if ($qualified && $margin) {		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
 		if ($margin === 'add') {
 			$tooltiponprofitplus .= ' &gt; '.$name." (+)<br>\n";
-		}
-		if ($margin === 'minus') {
+		} elseif ($margin === 'minus') {
 			$tooltiponprofitminus .= ' &gt; '.$name." (-)<br>\n";
 		}
 	}
@@ -853,7 +844,7 @@ foreach ($listofreferent as $key => $value) {
 	$qualified = $value['test'];
 	$margin = empty($value['margin']) ? 0 : $value['margin'];
 	$project_field = empty($value['project_field']) ? '' : $value['project_field'];
-	if ($qualified && isset($margin)) {		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
+	if ($qualified) {		// If this element must be included into profit summary table ($margin is '', 'minus' or 'add')
 		$element = new $classname($db);
 
 		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, !empty($project_field) ? $project_field : 'fk_projet');
