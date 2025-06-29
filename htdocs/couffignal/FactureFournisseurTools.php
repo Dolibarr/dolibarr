@@ -20,7 +20,8 @@ class FactureFournisseurTools
 		foreach ($factureFournRowIdList as $facutreFournRowId) {
 			$factureFourn = new FactureFournisseur($db);
 			$factureFourn->fetch($facutreFournRowId);
-			if ($factureFourn->status == FactureFournisseur::STATUS_VALIDATED) {
+			$statusValid = [FactureFournisseur::STATUS_VALIDATED, FactureFournisseur::STATUS_CLOSED];
+			if (in_array($factureFourn->status, $statusValid)) {
 				$facturesFourn[] = $factureFourn;
 			}
 		}

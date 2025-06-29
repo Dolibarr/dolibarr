@@ -52,6 +52,7 @@ class CoSousTraitant
 			return [];
 		}
 
+		$sumCommandesFournCotraitants = array_sum(array_column($commandesFournCotraitants, 'total_ht'));
 		$sumFacturedFourn = array_sum(array_column($facturesFourn, 'total_ht'));
 		$facturedMainCompanyDiff = $facture->getLastSituationCompletePrice(false) - $sumFacturedFourn;
 		$totalHtOrders = array_sum(array_column(CommandeTools::getOrdersValidatedFromProject($db, $facture->project, null), 'total_ht'));
@@ -59,7 +60,7 @@ class CoSousTraitant
 		return [
 			'company' => [
 				'name' => 'Couffignal',
-				'market' => ['sum_total_ht' => $totalHtOrders - $sumFacturedFourn],
+				'market' => ['sum_total_ht' => $totalHtOrders - $sumCommandesFournCotraitants],
 				'factured' => ['sum_total_ht' => round($facturedMainCompanyDiff, 2)],
 			],
 			'co_trait' => self::structureFacturesBySocid($db, $commandesFournCotraitants, $facturesFournCoTraitants),
