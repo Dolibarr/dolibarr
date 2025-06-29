@@ -104,7 +104,7 @@ print '<br>';
 print '<table class="liste centpercent">';
 print '<tr>';
 print '<th>Option</th>';
-print '<th>Informations</th>';
+print '<th>Information</th>';
 print '<th>Launch test</th>';
 print '<th>Launch confirmed</th>';
 print '<th>Actual value</th>';
