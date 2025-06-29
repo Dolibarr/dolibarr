@@ -96,7 +96,10 @@ pHeader($langs->trans("Repair"), "upgrade2", GETPOST('action', 'aZ09'));
 // Action to launch the repair script
 $actiondone = 1;
 
-print 'Select a link "test" or "confirmed" to launch a reparation on the chosen option<br>';
+print '<div class="warning" style="padding-top: 10px">';
+print 'Select a link "test" or "confirmed" to launch a reparation on the chosen option';
+print '</div>';
+print '<br>';
 
 print '<table class="liste centpercent">';
 print '<tr>';
