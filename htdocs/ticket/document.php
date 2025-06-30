@@ -262,12 +262,12 @@ if ($action === 'addfile') {
 
 
 
-print load_fiche_titre($langs->trans("Attach Photo to Ticket"), );
+print load_fiche_titre($langs->trans("AttachPhototoTicket"), );
 
 print '<table class="border" width="100%">';
 print '<tr><td>'.$langs->trans("Reference").':</td><td>'.$object->ref.'</td></tr>';
 if (!empty($object->thirdparty->name)) {
-    print '<tr><td>'.$langs->trans("Thirt Party").':</td><td>'.$object->thirdparty->name.'</td></tr>';
+    print '<tr><td>'.$langs->trans("ThirtParty").':</td><td>'.$object->thirdparty->name.'</td></tr>';
 }
 print '</table><br>';
 
@@ -278,12 +278,12 @@ print '<input type="hidden" name="trackid" value="'.$track_id.'">';
 
 print '<table class="border" width="100%">';
 print '<tr>';
-print '  <td class="titlefield">'.$langs->trans("Only Photos from the Phone").'</td>';
+print '  <td class="titlefield">'.$langs->trans("OnlyPhotosfromthePhone").'</td>';
 print '  <td>';
 print '    <input type="file" name="userfile" accept="image/*" capture="environment" required'
     .' onClick="if(!navigator.userAgent.match(/Android|iPhone|iPad/i)){alert(\''
-    .$langs->trans("Lejohet vetëm nga Telefoni").'\');return false;}">';
-print '    <br><small>'.$langs->trans("Use Phone Only").'</small>';
+    .$langs->trans("Allowedonlyfromthephone").'\');return false;}">';
+print '    <br><small>'.$langs->trans("UsePhoneOnly").'</small>';
 print '  </td>';
 print '</tr>';
 print '</table>';
