@@ -560,6 +560,7 @@ if (empty($reshook)) {
 		}*/
 
 		// Update stock for batch products
+		$res = 0;
 		if (!$error && $res >= 0) {
 			if (isModEnabled('stock') && isModEnabled('productbatch') && $allowstockchange) {
 				// Update stocks

@@ -99,7 +99,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 		$texte .= '</tr>';
 
 		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceAvoir").'):</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskcreditvalue" value="'.getDolGlobalString("TAKEPOS_REF_UNIVERSAL_MASK_CREDIT_NOTE").'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskcreditvalue" value="'.getDolGlobalString("TAKEPOS_REF_UNIVERSAL_MASK_CREDIT_NOTE").'">', $tooltip, 1, 'help').'</td>';
 		$texte .= '</tr>';
 
 		$texte .= '</table>';
