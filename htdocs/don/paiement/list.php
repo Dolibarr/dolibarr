@@ -87,6 +87,8 @@ if (!$sortfield) {
 
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
+$object = new Don($db);
+
 $morejs = array();
 $morecss = array();
 
@@ -163,7 +165,6 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
-object = new Don($db);
 $companystatic = new Societe($db);
 $bankline = new AccountLine($db);
 $accountstatic = new Account($db);
