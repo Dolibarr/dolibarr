@@ -561,7 +561,7 @@ var isCreditNote = <?php echo ($invoice->type == Facture::TYPE_CREDIT_NOTE ? 'tr
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     if (isCreditNote) {
-        // Cambia el texto del label "Recibido" por "A devolver al cliente"
+		// Change the text of the label "Received" to "PaymentBack"
         document.querySelectorAll('.takepospay').forEach(function(el) {
             if (el.innerHTML.includes('<?php echo $langs->trans("Received"); ?>')) {
                 el.innerHTML = el.innerHTML.replace('<?php echo $langs->trans("Received"); ?>', '<?php echo $langs->trans("PaymentBack"); ?>');

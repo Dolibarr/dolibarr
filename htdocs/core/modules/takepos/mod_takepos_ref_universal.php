@@ -98,7 +98,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 
 		$texte .= '</tr>';
 
-        $texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceAvoir").'):</td>';
+		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceAvoir").'):</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskcreditvalue" value="'.getDolGlobalString("TAKEPOS_REF_UNIVERSAL_MASK_CREDIT_NOTE").'">', $tooltip, 1, 1).'</td>';
 		$texte .= '</tr>';
 
@@ -143,12 +143,12 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		// We define search criteria counter
-        if (is_object($invoice) && $invoice->type == 2) {
-            $mask = getDolGlobalString('TAKEPOS_REF_UNIVERSAL_MASK_CREDIT_NOTE');
-        }
-        else {
-		$mask = getDolGlobalString('TAKEPOS_REF_UNIVERSAL_MASK');
-        }
+		if (is_object($invoice) && $invoice->type == 2) {
+			$mask = getDolGlobalString('TAKEPOS_REF_UNIVERSAL_MASK_CREDIT_NOTE');
+		}
+		else {
+			$mask = getDolGlobalString('TAKEPOS_REF_UNIVERSAL_MASK');
+		}
 
 		if (!$mask) {
 			$this->error = 'NotConfigured';

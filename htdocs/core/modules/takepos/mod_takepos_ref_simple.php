@@ -47,11 +47,11 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 	 */
 	public $prefix = 'TC';
 
-    /**
-     * Prefixcreditnote
-     * @var string
-     */
-    public $prefixcreditnote = 'ATC';
+	/**
+	 * Prefixcreditnote
+	 * @var string
+	 */
+	public $prefixcreditnote = 'ATC';
 
 	/**
 	 * @var string Error code (or message)
