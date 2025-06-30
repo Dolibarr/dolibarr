@@ -124,19 +124,19 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 		}
 
 
-        if ($pryymm && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $pryymm)) {
-            $langs->load("errors");
-            $this->error = $langs->trans('ErrorNumRefModel', $max);
-            return false;
-        }
+		if ($pryymm && !preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $pryymm)) {
+			$langs->load("errors");
+			$this->error = $langs->trans('ErrorNumRefModel', $max);
+			return false;
+		}
 
-        $pryymm = '';
-        $posindice = strlen($this->prefixcreditnote.$pos_source.'-____-') + 1;	// So posindice is position after TCX-YYMM-
+		$pryymm = '';
+		$posindice = strlen($this->prefixcreditnote.$pos_source.'-____-') + 1;	// So posindice is position after TCX-YYMM-
 
-        $sql  = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-        $sql .= " FROM ".MAIN_DB_PREFIX."facture";
-        $sql .= " WHERE ref LIKE '".$db->escape($this->prefixcreditnote.$pos_source."-____-%")."'";
-        $sql .= " AND entity = ".$conf->entity;
+		$sql  = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
+		$sql .= " FROM ".MAIN_DB_PREFIX."facture";
+		$sql .= " WHERE ref LIKE '".$db->escape($this->prefixcreditnote.$pos_source."-____-%")."'";
+		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -171,10 +171,10 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 	{
 		global $db;
 
-        $prefix = $this->prefix;
-        if ($invoice->type == 2) {
-            $prefix = $this->prefixcreditnote;
-        }
+		$prefix = $this->prefix;
+		if ($invoice->type == 2) {
+			$prefix = $this->prefixcreditnote;
+		}
 
 		$pos_source = is_object($invoice) && $invoice->pos_source > 0 ? $invoice->pos_source : 0;	// POS source = Terminal ID
 
