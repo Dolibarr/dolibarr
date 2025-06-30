@@ -6,6 +6,7 @@
  * Copyright (C) 2013-2016      Jean-François Ferry  <hello@librethic.io>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Burim Kuqi				<burim@kuqi.eu> Mobile capture for tickets
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -221,6 +222,77 @@ if ($object->id) {
 	dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
 	print dol_get_fiche_end();
+
+		
+	// Fix for trackid if sent as track_id
+if (empty($trackid) && GETPOST('track_id', 'int') > 0) {
+    $trackid = GETPOST('track_id', 'int');
+    $_REQUEST['trackid'] = $trackid;
+}
+
+if ($action === 'addfile') {
+    if (!empty($_FILES['userfile']) && $_FILES['userfile']['error'] === UPLOAD_ERR_OK) {
+        $upload_dir = $conf->ticket->dir_output.'/'.dol_sanitizeFileName($object->ref);
+        dol_mkdir($upload_dir);
+
+        $timestamp = dol_print_date(dol_now(), '%Y%m%d-%H%M%S');
+        $filename = dol_sanitizeFileName($object->ref).'_'.$timestamp.'.jpg';
+        $destfile = $upload_dir.'/'.$filename;
+        $tmpfile = $_FILES['userfile']['tmp_name'];
+
+        if (is_uploaded_file($tmpfile)) {
+            if (dol_move_uploaded_file($tmpfile, $destfile, 1)) {
+              //  $result = addDocumentToObject($object, $destfile, $filename, '', $user);
+                if ($result > 0) {
+                    setEventMessages("The photo was uploaded successfully", null, 'mesgs');
+                } else {
+                    setEventMessages("The file was saved, but it was not linked to the ticket", null, 'warnings');
+                }
+            } else {
+                setEventMessages("An error occurred while moving the file", null, 'errors');
+            }
+        } else {
+            setEventMessages("The file was not accepted by the server", null, 'errors');
+        }
+    } else {
+        setEventMessages("No file has been submitted", null, 'errors');
+    }
+}
+
+
+
+
+print load_fiche_titre($langs->trans("Attach Photo to Ticket"), );
+
+print '<table class="border" width="100%">';
+print '<tr><td>'.$langs->trans("Reference").':</td><td>'.$object->ref.'</td></tr>';
+if (!empty($object->thirdparty->name)) {
+    print '<tr><td>'.$langs->trans("Thirt Party").':</td><td>'.$object->thirdparty->name.'</td></tr>';
+}
+print '</table><br>';
+
+print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&track_id='.$track_id.'" method="POST">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="addfile">';
+print '<input type="hidden" name="trackid" value="'.$track_id.'">';
+
+print '<table class="border" width="100%">';
+print '<tr>';
+print '  <td class="titlefield">'.$langs->trans("Only Photos from the Phone").'</td>';
+print '  <td>';
+print '    <input type="file" name="userfile" accept="image/*" capture="environment" required'
+    .' onClick="if(!navigator.userAgent.match(/Android|iPhone|iPad/i)){alert(\''
+    .$langs->trans("Lejohet vetëm nga Telefoni").'\');return false;}">';
+print '    <br><small>'.$langs->trans("Use Phone Only").'</small>';
+print '  </td>';
+print '</tr>';
+print '</table>';
+
+print '<div class="center">';
+print '  <input type="submit" class="button" value="'.$langs->trans("Upload").'">';
+print '</div>';
+print '</form><br>';
+
 
 	// Build file list
 	$filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
