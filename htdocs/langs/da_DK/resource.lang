@@ -9,33 +9,30 @@ ActionsOnResource=Arrangementer om denne ressource
 ResourcePageIndex=Ressourcer liste
 ResourceSingular=Ressource
 ResourceCard=Ressource kort
+NewResource=Ny ressource
 AddResource=Opret en ressource
 ResourceFormLabel_ref=Ressource navn
-ResourceType=Ressourcetype
 ResourceFormLabel_description=Ressource beskrivelse
-
+ResourceType=Ressourcetype
+ResourceTypeID=Ressourcetype-id
+ResourceTypeLabel=Ressourcetype-etiket
 ResourcesLinkedToElement=Ressourcer forbundet med element
 
 ShowResource=Vis ressource
-
 ResourceElementPage=Element ressourcer
 ResourceCreatedWithSuccess=Ressource oprettet med succes
 RessourceLineSuccessfullyDeleted=Ressource linje slettet korrekt
 RessourceLineSuccessfullyUpdated=Ressource linje opdateret
 ResourceLinkedWithSuccess=Ressource forbundet med succes
-
 ConfirmDeleteResource=Bekræft for at slette denne ressource
 RessourceSuccessfullyDeleted=Ressource slettet korrekt
 DictionaryResourceType=Type af ressourcer
-
 SelectResource=Vælg ressource
-
 IdResource=Id ressource
 AssetNumber=Serienummer
 ResourceTypeCode=Ressource type kode
 ImportDataset_resource_1=Ressourcer
-
 ErrorResourcesAlreadyInUse=Nogle ressourcer er i brug
 ErrorResourceUseInEvent=%s bruges i %s tilfælde
-
 MaxUsers=Maksimalt antal brugere (pladser, sæder osv.)
+MaxUsersLabel=Maksimalt antal brugere

@@ -2,6 +2,8 @@
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +30,13 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('bookmarks', 'other'));
@@ -39,7 +48,7 @@ $action = GETPOST("action", "alpha");
 $title = (string) GETPOST("title", "alpha");
 $url = (string) GETPOST("url", "alpha");
 $urlsource = GETPOST("urlsource", "alpha");
-$target = GETPOSTINT("target");
+$target = GETPOST("target", "alpha");
 $userid = GETPOSTINT("userid");
 $position = GETPOSTINT("position");
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -166,7 +175,7 @@ if ($action == 'create') {
 
 	print load_fiche_titre($langs->trans("NewBookmark"), '', 'bookmark');
 
-	print dol_get_fiche_head(null, 'bookmark', '', 0, '');
+	print dol_get_fiche_head([], 'bookmark', '', 0, '');
 
 	print '<table class="border centpercent tableforfieldcreate">';
 
@@ -178,7 +187,7 @@ if ($action == 'create') {
 
 	// Target
 	print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';
-	$liste = array(0=>$langs->trans("ReplaceWindow"), 1=>$langs->trans("OpenANewWindow"));
+	$liste = array(0 => $langs->trans("ReplaceWindow"), 1 => $langs->trans("OpenANewWindow"));
 	$defaulttarget = 1;
 	if ($url && !preg_match('/^http/i', $url)) {
 		$defaulttarget = 0;
@@ -189,7 +198,7 @@ if ($action == 'create') {
 	// Visibility / Owner
 	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
 	print img_picto('', 'user', 'class="pictofixedwidth"');
-	print $form->select_dolusers(GETPOSTISSET('userid') ? GETPOSTINT('userid') : $user->id, 'userid', 0, '', 0, ($user->admin ? '' : array($user->id)), '', 0, 0, 0, '', ($user->admin) ? 1 : 0, '', 'maxwidth300 widthcentpercentminusx');
+	print $form->select_dolusers(GETPOSTISSET('userid') ? GETPOSTINT('userid') : $user->id, 'userid', 0, null, 0, ($user->admin ? '' : array($user->id)), '', '0', 0, 0, '', ($user->admin) ? 1 : 0, '', 'maxwidth300 widthcentpercentminusx');
 	print '</td><td class="hideonsmartphone"></td></tr>';
 
 	// Position
@@ -270,13 +279,13 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 
 	print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';
 	if ($action == 'edit') {
-		$liste = array(1=>$langs->trans("OpenANewWindow"), 0=>$langs->trans("ReplaceWindow"));
+		$liste = array(1 => $langs->trans("OpenANewWindow"), 0 => $langs->trans("ReplaceWindow"));
 		print $form->selectarray('target', $liste, GETPOSTISSET("target") ? GETPOST("target") : $object->target);
 	} else {
-		if ($object->target == 0) {
+		if ($object->target == '0') {
 			print $langs->trans("ReplaceWindow");
 		}
-		if ($object->target == 1) {
+		if ($object->target == '1') {
 			print $langs->trans("OpenANewWindow");
 		}
 	}
@@ -286,7 +295,7 @@ if ($id > 0 && !preg_match('/^add/i', $action)) {
 	print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
 	if ($action == 'edit' && $user->admin) {
 		print img_picto('', 'user', 'class="pictofixedwidth"');
-		print $form->select_dolusers(GETPOSTISSET('userid') ? GETPOSTINT('userid') : ($object->fk_user ? $object->fk_user : ''), 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300 widthcentpercentminusx');
+		print $form->select_dolusers(GETPOSTISSET('userid') ? GETPOSTINT('userid') : ($object->fk_user ? $object->fk_user : ''), 'userid', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth300 widthcentpercentminusx');
 	} else {
 		if ($object->fk_user > 0) {
 			$fuser = new User($db);

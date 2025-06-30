@@ -17,8 +17,9 @@ Module4100Name = Polisi Preifatrwydd Data
 Module4100Desc = Modiwl i reoli Preifatrwydd Data (Cydymffurfiaeth â'r GDPR)
 # Administration page
 datapolicySetup = Gosod Polisi Preifatrwydd Data Modiwl
-Deletion = Dileu data
-datapolicySetupPage = Yn dibynnu ar gyfreithiau eich gwledydd (Enghraifft <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Erthygl 5</a> o'r GDPR), rhaid cadw data personol am gyfnod heb fod yn hwy na'r hyd y mae angen y data at y diben y'i casglwyd ar ei gyfer, ac eithrio at ddibenion archifol.<br>Bydd y dilead yn cael ei wneud yn awtomatig ar ôl cyfnod penodol heb ddigwyddiadau (yr hyd y byddwch wedi'i nodi isod).
+DataDeletion=Deletion of data
+DataAnonymization=Anonymization of data
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
 NB_MONTHS = %s mis
 ONE_YEAR = 1 flwyddyn
 NB_YEARS = %s mlynedd
@@ -33,12 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Rhagolygon/Cwsmer
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Na gobaith/Na chwsmer
 DATAPOLICY_CONTACT_FOURNISSEUR = Cyflenwr
 DATAPOLICY_ADHERENT = Aelod
-DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
 SendAgreementText = Gallwch anfon e-bost GDPR at eich holl gysylltiadau perthnasol (nad ydynt wedi derbyn e-bost eto ac nad ydych wedi cofrestru unrhyw beth am eu cytundeb GDPR ar ei gyfer). I wneud hyn, defnyddiwch y botwm canlynol.
 SendAgreement = Anfon e-byst
 AllAgreementSend = Mae pob e-bost wedi'i anfon
 TXTLINKDATAPOLICYACCEPT = Testun ar gyfer y ddolen "cytundeb"
 TXTLINKDATAPOLICYREFUSE = Testun ar gyfer y ddolen "anghytundeb"
+DelayForAnonymization=Delay for anonymization
+DelayForDeletion=Delay for deletion
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = GDPR : Prosesu data personol
 DATAPOLICY_consentement = Cafwyd caniatâd i brosesu data personol

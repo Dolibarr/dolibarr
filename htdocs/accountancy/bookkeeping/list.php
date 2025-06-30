@@ -1,12 +1,13 @@
 <?php
 /* Copyright (C) 2013-2016  Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2016  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2024  Alexandre Spangaro      <alexandre@inoveasya.solutions>
+ * Copyright (C) 2013-2025  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2022  		Lionel Vessiller        <lvessiller@open-dsi.fr>
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022  		Progiseize         		<a.bisotti@progiseiea-conseil.com>
- * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Nicolas Barrouillet		<nicolas@pragma-tech.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,7 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfiscalyear.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -40,11 +42,22 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/lettering.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy", "compta"));
 
 // Get Parameters
 $socid = GETPOSTINT('socid');
+$journal_code = GETPOST('code_journal', 'alpha');
+$account = GETPOST("account", 'int');
+$massdate = dol_mktime(0, 0, 0, GETPOSTINT('massdatemonth'), GETPOSTINT('massdateday'), GETPOSTINT('massdateyear'));
 
 // action+display Parameters
 $action = GETPOST('action', 'aZ09');
@@ -57,47 +70,36 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bo
 $search_mvt_num = GETPOST('search_mvt_num', 'alpha');
 $search_doc_type = GETPOST("search_doc_type", 'alpha');
 $search_doc_ref = GETPOST("search_doc_ref", 'alpha');
-$search_date_startyear =  GETPOSTINT('search_date_startyear');
-$search_date_startmonth =  GETPOSTINT('search_date_startmonth');
-$search_date_startday =  GETPOSTINT('search_date_startday');
-$search_date_endyear =  GETPOSTINT('search_date_endyear');
-$search_date_endmonth =  GETPOSTINT('search_date_endmonth');
-$search_date_endday =  GETPOSTINT('search_date_endday');
-$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);
-$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
-$search_doc_date = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
-$search_date_creation_startyear =  GETPOSTINT('search_date_creation_startyear');
-$search_date_creation_startmonth =  GETPOSTINT('search_date_creation_startmonth');
-$search_date_creation_startday =  GETPOSTINT('search_date_creation_startday');
-$search_date_creation_endyear =  GETPOSTINT('search_date_creation_endyear');
-$search_date_creation_endmonth =  GETPOSTINT('search_date_creation_endmonth');
-$search_date_creation_endday =  GETPOSTINT('search_date_creation_endday');
-$search_date_creation_start = dol_mktime(0, 0, 0, $search_date_creation_startmonth, $search_date_creation_startday, $search_date_creation_startyear);
-$search_date_creation_end = dol_mktime(23, 59, 59, $search_date_creation_endmonth, $search_date_creation_endday, $search_date_creation_endyear);
-$search_date_modification_startyear =  GETPOSTINT('search_date_modification_startyear');
-$search_date_modification_startmonth =  GETPOSTINT('search_date_modification_startmonth');
-$search_date_modification_startday =  GETPOSTINT('search_date_modification_startday');
-$search_date_modification_endyear =  GETPOSTINT('search_date_modification_endyear');
-$search_date_modification_endmonth =  GETPOSTINT('search_date_modification_endmonth');
-$search_date_modification_endday =  GETPOSTINT('search_date_modification_endday');
-$search_date_modification_start = dol_mktime(0, 0, 0, $search_date_modification_startmonth, $search_date_modification_startday, $search_date_modification_startyear);
-$search_date_modification_end = dol_mktime(23, 59, 59, $search_date_modification_endmonth, $search_date_modification_endday, $search_date_modification_endyear);
-$search_date_export_startyear =  GETPOSTINT('search_date_export_startyear');
-$search_date_export_startmonth =  GETPOSTINT('search_date_export_startmonth');
-$search_date_export_startday =  GETPOSTINT('search_date_export_startday');
-$search_date_export_endyear =  GETPOSTINT('search_date_export_endyear');
-$search_date_export_endmonth =  GETPOSTINT('search_date_export_endmonth');
-$search_date_export_endday =  GETPOSTINT('search_date_export_endday');
-$search_date_export_start = dol_mktime(0, 0, 0, $search_date_export_startmonth, $search_date_export_startday, $search_date_export_startyear);
-$search_date_export_end = dol_mktime(23, 59, 59, $search_date_export_endmonth, $search_date_export_endday, $search_date_export_endyear);
-$search_date_validation_startyear =  GETPOSTINT('search_date_validation_startyear');
-$search_date_validation_startmonth =  GETPOSTINT('search_date_validation_startmonth');
-$search_date_validation_startday =  GETPOSTINT('search_date_validation_startday');
-$search_date_validation_endyear =  GETPOSTINT('search_date_validation_endyear');
-$search_date_validation_endmonth =  GETPOSTINT('search_date_validation_endmonth');
-$search_date_validation_endday =  GETPOSTINT('search_date_validation_endday');
-$search_date_validation_start = dol_mktime(0, 0, 0, $search_date_validation_startmonth, $search_date_validation_startday, $search_date_validation_startyear);
-$search_date_validation_end = dol_mktime(23, 59, 59, $search_date_validation_endmonth, $search_date_validation_endday, $search_date_validation_endyear);
+
+$search_doc_date = GETPOSTDATE('doc_date', 'getpost');	// deprecated. Can use 'search_date_start/end'
+
+$search_date_start = GETPOSTDATE('search_date_start', 'getpost', 'auto', 'search_date_start_accountancy');
+$search_date_end = GETPOSTDATE('search_date_end', 'getpostend', 'auto', 'search_date_end_accountancy');
+
+$search_date_creation_start = GETPOSTDATE('search_date_creation_start', 'getpost');
+$search_date_creation_end = GETPOSTDATE('search_date_creation_end', 'getpostend');
+
+$search_date_modification_start = GETPOSTDATE('search_date_modification_start', 'getpost');
+$search_date_modification_end = GETPOSTDATE('search_date_modification_end', 'getpostend');
+
+$search_date_export_start = GETPOSTDATE('search_date_export_start', 'getpost');
+$search_date_export_end = GETPOSTDATE('search_date_export_end', 'getpostend');
+
+$search_date_validation_start = GETPOSTDATE('search_date_validation_start', 'getpost');
+$search_date_validation_end = GETPOSTDATE('search_date_validation_end', 'getpostend');
+
+// Due date start
+$search_date_due_start_day = GETPOSTINT('search_date_due_start_day');
+$search_date_due_start_month = GETPOSTINT('search_date_due_start_month');
+$search_date_due_start_year = GETPOSTINT('search_date_due_start_year');
+$search_date_due_start = GETPOSTDATE('search_date_due_start_', 'getpost');
+
+// Due date end
+$search_date_due_end_day = GETPOSTINT('search_date_due_end_day');
+$search_date_due_end_month = GETPOSTINT('search_date_due_end_month');
+$search_date_due_end_year = GETPOSTINT('search_date_due_end_year');
+$search_date_due_end = GETPOSTDATE('search_date_due_end_', 'getpostend');
+
 $search_import_key = GETPOST("search_import_key", 'alpha');
 
 $search_account_category = GETPOSTINT('search_account_category');
@@ -148,18 +150,25 @@ if ($sortfield == "") {
 	$sortfield = "t.piece_num,t.rowid";
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new BookKeeping($db);
 $hookmanager->initHooks(array('bookkeepinglist'));
 
+$formfiscalyear = new FormFiscalYear($db);
 $formaccounting = new FormAccounting($db);
 $form = new Form($db);
 
 if (!in_array($action, array('delmouv', 'delmouvconfirm')) && !GETPOSTISSET('begin') && !GETPOSTISSET('formfilteraction') && GETPOST('page', 'alpha') == '' && !GETPOSTINT('noreset') && $user->hasRight('accounting', 'mouvements', 'export')) {
-	if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('restore_lastsearch_values') && !GETPOST('search_accountancy_code_start')) {
-		$query = "SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
-		$query .= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."' limit 1";
-		$res = $db->query($query);
+	if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('restore_lastsearch_values') && !GETPOST('search_mvt_num') && !GETPOST('search_accountancy_code_start')) {
+		$sql = "SELECT date_start, date_end";
+		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_fiscalyear ";
+		if (getDolGlobalInt('ACCOUNTANCY_FISCALYEAR_DEFAULT')) {
+			$sql .= " WHERE rowid = " . getDolGlobalInt('ACCOUNTANCY_FISCALYEAR_DEFAULT');
+		} else {
+			$sql .= " WHERE date_start < '" . $db->idate(dol_now()) . "' and date_end > '" . $db->idate(dol_now()) . "'";
+		}
+		$sql .= $db->plimit(1);
+		$res = $db->query($sql);
 
 		if ($db->num_rows($res) > 0) {
 			$fiscalYear = $db->fetch_object($res);
@@ -167,7 +176,7 @@ if (!in_array($action, array('delmouv', 'delmouvconfirm')) && !GETPOSTISSET('beg
 			$search_date_end = strtotime($fiscalYear->date_end);
 		} else {
 			$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
-			$year_start = dol_print_date(dol_now(), '%Y');
+			$year_start = (int) dol_print_date(dol_now(), '%Y');
 			if (dol_print_date(dol_now(), '%m') < $month_start) {
 				$year_start--; // If current month is lower that starting fiscal month, we start last year
 			}
@@ -185,21 +194,22 @@ if (!in_array($action, array('delmouv', 'delmouvconfirm')) && !GETPOSTISSET('beg
 
 
 $arrayfields = array(
-	't.piece_num' => array('label' => $langs->trans("TransactionNumShort"), 'checked' => 1),
-	't.code_journal' => array('label' => $langs->trans("Codejournal"), 'checked' => 1),
-	't.doc_date' => array('label' => $langs->trans("Docdate"), 'checked' => 1),
-	't.doc_ref' => array('label' => $langs->trans("Piece"), 'checked' => 1),
-	't.numero_compte' => array('label' => $langs->trans("AccountAccountingShort"), 'checked' => 1),
-	't.subledger_account' => array('label' => $langs->trans("SubledgerAccount"), 'checked' => 1),
-	't.label_operation' => array('label' => $langs->trans("Label"), 'checked' => 1),
-	't.debit' => array('label' => $langs->trans("AccountingDebit"), 'checked' => 1),
-	't.credit' => array('label' => $langs->trans("AccountingCredit"), 'checked' => 1),
-	't.lettering_code' => array('label' => $langs->trans("LetteringCode"), 'checked' => 1),
-	't.date_creation' => array('label' => $langs->trans("DateCreation"), 'checked' => 0),
-	't.tms' => array('label' => $langs->trans("DateModification"), 'checked' => 0),
-	't.date_export' => array('label' => $langs->trans("DateExport"), 'checked' => 0),
-	't.date_validated' => array('label' => $langs->trans("DateValidationAndLock"), 'checked' => 0, 'enabled' => !getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")),
-	't.import_key' => array('label' => $langs->trans("ImportId"), 'checked' => 0, 'position' => 1100),
+	't.piece_num' => array('label' => $langs->trans("TransactionNumShort"), 'checked' => '1'),
+	't.code_journal' => array('label' => $langs->trans("Codejournal"), 'checked' => '1'),
+	't.doc_date' => array('label' => $langs->trans("Docdate"), 'checked' => '1'),
+	't.doc_ref' => array('label' => $langs->trans("Piece"), 'checked' => '1'),
+	't.numero_compte' => array('label' => $langs->trans("AccountAccountingShort"), 'checked' => '1'),
+	't.subledger_account' => array('label' => $langs->trans("SubledgerAccount"), 'checked' => '1'),
+	't.label_operation' => array('label' => $langs->trans("Label"), 'checked' => '1'),
+	't.debit' => array('label' => $langs->trans("AccountingDebit"), 'checked' => '1'),
+	't.credit' => array('label' => $langs->trans("AccountingCredit"), 'checked' => '1'),
+	't.lettering_code' => array('label' => $langs->trans("LetteringCode"), 'checked' => '1'),
+	't.date_creation' => array('label' => $langs->trans("DateCreation"), 'checked' => '0'),
+	't.tms' => array('label' => $langs->trans("DateModification"), 'checked' => '0'),
+	't.date_export' => array('label' => $langs->trans("DateExport"), 'checked' => '0'),
+	't.date_validated' => array('label' => $langs->trans("DateValidationAndLock"), 'checked' => '0', 'enabled' => (string) (int) !getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")),
+	't.date_lim_reglement' => array('label' => $langs->trans("DateDue"), 'checked' => '0'),
+	't.import_key' => array('label' => $langs->trans("ImportId"), 'checked' => '0', 'position' => 1100),
 );
 
 if (!getDolGlobalString('ACCOUNTING_ENABLE_LETTERING')) {
@@ -226,12 +236,13 @@ $permissiontoadd = $user->hasRight('accounting', 'mouvements', 'creer');
  */
 
 $param = '';
+$filter = array();
 
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
 }
-if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'preunletteringauto' && $massaction != 'preunletteringmanual' && $massaction != 'predeletebookkeepingwriting') {
+if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'preunletteringauto' && $massaction != 'preunletteringmanual' && $massaction != 'predeletebookkeepingwriting' && $massaction != 'preclonebookkeepingwriting' && $massaction != 'preassignaccountbookkeepingwriting' && $massaction != 'prereturnaccountbookkeepingwriting') {
 	$massaction = '';
 }
 
@@ -259,56 +270,41 @@ if (empty($reshook)) {
 		$search_mvt_label = '';
 		$search_direction = '';
 		$search_ledger_code = array();
-		$search_date_startyear = '';
-		$search_date_startmonth = '';
-		$search_date_startday = '';
-		$search_date_endyear = '';
-		$search_date_endmonth = '';
-		$search_date_endday = '';
 		$search_date_start = '';
 		$search_date_end = '';
-		$search_date_creation_startyear = '';
-		$search_date_creation_startmonth = '';
-		$search_date_creation_startday = '';
-		$search_date_creation_endyear = '';
-		$search_date_creation_endmonth = '';
-		$search_date_creation_endday = '';
 		$search_date_creation_start = '';
 		$search_date_creation_end = '';
-		$search_date_modification_startyear = '';
-		$search_date_modification_startmonth = '';
-		$search_date_modification_startday = '';
-		$search_date_modification_endyear = '';
-		$search_date_modification_endmonth = '';
-		$search_date_modification_endday = '';
 		$search_date_modification_start = '';
 		$search_date_modification_end = '';
-		$search_date_export_startyear = '';
-		$search_date_export_startmonth = '';
-		$search_date_export_startday = '';
-		$search_date_export_endyear = '';
-		$search_date_export_endmonth = '';
-		$search_date_export_endday = '';
 		$search_date_export_start = '';
 		$search_date_export_end = '';
-		$search_date_validation_startyear = '';
-		$search_date_validation_startmonth = '';
-		$search_date_validation_startday = '';
-		$search_date_validation_endyear = '';
-		$search_date_validation_endmonth = '';
-		$search_date_validation_endday = '';
 		$search_date_validation_start = '';
 		$search_date_validation_end = '';
+		// Due date start
+		$search_date_due_start_day = '';
+		$search_date_due_start_month = '';
+		$search_date_due_start_year = '';
+		$search_date_due_start = '';
+		// Due date end
+		$search_date_due_end_day = '';
+		$search_date_due_end_month =  '';
+		$search_date_due_end_year = '';
+		$search_date_due_end = '';
 		$search_debit = '';
 		$search_credit = '';
 		$search_lettering_code = '';
 		$search_not_reconciled = '';
 		$search_import_key = '';
 		$toselect = array();
+		unset($_SESSION['DOLDATE_search_date_start_accountancy_day']);
+		unset($_SESSION['DOLDATE_search_date_start_accountancy_month']);
+		unset($_SESSION['DOLDATE_search_date_start_accountancy_year']);
+		unset($_SESSION['DOLDATE_search_date_end_accountancy_day']);
+		unset($_SESSION['DOLDATE_search_date_end_accountancy_month']);
+		unset($_SESSION['DOLDATE_search_date_end_accountancy_year']);
 	}
 
 	// Must be after the remove filter action, before the export.
-	$filter = array();
 	if (!empty($search_date_start)) {
 		$filter['t.doc_date>='] = $search_date_start;
 		$tmp = dol_getdate($search_date_start);
@@ -340,7 +336,7 @@ if (empty($reshook)) {
 		$listofaccountsforgroup2 = array();
 		if (is_array($listofaccountsforgroup)) {
 			foreach ($listofaccountsforgroup as $tmpval) {
-				$listofaccountsforgroup2[] = "'".$db->escape($tmpval['id'])."'";
+				$listofaccountsforgroup2[] = "'".$db->escape((string) $tmpval['account_number'])."'";
 			}
 		}
 		$filter['t.search_accounting_code_in'] = implode(',', $listofaccountsforgroup2);
@@ -428,6 +424,16 @@ if (empty($reshook)) {
 		$tmp = dol_getdate($search_date_validation_end);
 		$param .= '&search_date_validation_endmonth='.((int) $tmp['mon']).'&search_date_validation_endday='.((int) $tmp['mday']).'&search_date_validation_endyear='.((int) $tmp['year']);
 	}
+	// Due date start
+	if (!empty($search_date_due_start)) {
+		$filter['t.date_lim_reglement>='] = $search_date_due_start;
+		$param .= '&search_date_due_start_day='.$search_date_due_start_day.'&search_date_due_start_month='.$search_date_due_start_month.'&search_date_due_start_year='.$search_date_due_start_year;
+	}
+	// Due date end
+	if (!empty($search_date_due_end)) {
+		$filter['t.date_lim_reglement<='] = $search_date_due_end;
+		$param .= '&search_date_due_end_day='.$search_date_due_end_day.'&search_date_due_end_month='.$search_date_due_end_month.'&search_date_due_end_year='.$search_date_due_end_year;
+	}
 	if (!empty($search_debit)) {
 		$filter['t.debit'] = $search_debit;
 		$param .= '&search_debit='.urlencode($search_debit);
@@ -449,13 +455,35 @@ if (empty($reshook)) {
 		$param .= '&search_import_key='.urlencode($search_import_key);
 	}
 
-	// Mass actions
-	$objectclass = 'Bookkeeping';
-	$objectlabel = 'Bookkeeping';
+	// Permissions
 	$permissiontoread = $user->hasRight('societe', 'lire');
 	$permissiontodelete = $user->hasRight('societe', 'supprimer');
 	$permissiontoadd = $user->hasRight('societe', 'creer');
+
+	// Actions
+	if ($action === 'exporttopdf' && $permissiontoadd) {
+		$object->fetchAll('ASC,ASC,ASC', 'code_journal,doc_date,piece_num', 0, 0, $filter);
+		require_once DOL_DOCUMENT_ROOT . '/core/modules/accountancy/doc/pdf_bookkeeping.modules.php';
+		$pdf = new pdf_bookkeeping($db);
+		$pdf->fromDate = $search_date_start;
+		$pdf->toDate = $search_date_end;
+
+		$result = $pdf->write_file($object, $langs);
+
+		if ($result < 0) {
+			setEventMessage($pdf->error, "errors");
+		} else {
+			// Generated PDF is directly sent to the browser
+			exit;
+		}
+	}
+
+	// Mass actions
+	$objectclass = 'Bookkeeping';
+	$objectlabel = 'Bookkeeping';
 	$uploaddir = $conf->societe->dir_output;
+
+	global $error;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	if (!$error && $action == 'deletebookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'supprimer')) {
@@ -510,6 +538,51 @@ if (empty($reshook)) {
 
 			header("Location: ".$_SERVER["PHP_SELF"]."?noreset=1".($param ? '&'.$param : ''));
 			exit;
+		} else {
+			$db->rollback();
+		}
+	}
+
+	// massaction cloning
+	if (!$error && $action == 'clonebookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
+		$result = $object->newCloneMass($toselect, $journal_code, $massdate);
+		if ($result == -1) {
+			$error++;
+		}
+		if ($error) {
+			$db->commit();
+			header("Location: ".$_SERVER["PHP_SELF"]."?noreset=1".($param ? '&'.$param : ''));
+			exit;
+		} else {
+			$db->rollback();
+		}
+	}
+
+	// massaction assign new account
+	if (!$error && $action == 'assignaccountbookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
+		$result = $object->assignAccountMass($toselect, (int) $account);
+		if ($result == -1) {
+			$error++;
+		}
+		if (!$error) {
+			$db->commit();
+			header("Location: ".$_SERVER["PHP_SELF"]."?noreset=1".($param ? '&'.$param : ''));
+			exit();
+		} else {
+			$db->rollback();
+		}
+	}
+
+	// mass action return account
+	if (!$error && $action == 'returnaccountbookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
+		$result = $object->newReturnAccount($toselect, $journal_code, $massdate);
+		if ($result == -1) {
+			$error++;
+		}
+		if (!$error) {
+			$db->commit();
+			header("Location: ".$_SERVER["PHP_SELF"]."?noreset=1".($param ? '&'.$param : ''));
+			exit();
 		} else {
 			$db->rollback();
 		}
@@ -572,7 +645,7 @@ if (empty($reshook)) {
 		} elseif ($action == 'unletteringmanual' && $confirm == "yes" && $permissiontoadd) {
 			$lettering = new Lettering($db);
 			$nb_lettering = $lettering->deleteLettering($toselect);
-			if ($result < 0) {
+			if ($nb_lettering < 0) {
 				setEventMessages('', $lettering->errors, 'errors');
 			} else {
 				setEventMessages($langs->trans('AccountancyOneUnletteringModifiedSuccessfully'), array(), 'mesgs');
@@ -610,10 +683,12 @@ $sql .= " t.import_key,";
 $sql .= " t.code_journal,";
 $sql .= " t.journal_label,";
 $sql .= " t.piece_num,";
+$sql .= " t.ref,";
 $sql .= " t.date_creation,";
 $sql .= " t.tms as date_modification,";
 $sql .= " t.date_export,";
 $sql .= " t.date_validated as date_validation,";
+$sql .= " t.date_lim_reglement,";
 $sql .= " t.import_key";
 
 $sqlfields = $sql; // $sql fields to remove for count total
@@ -629,10 +704,6 @@ if (count($filter) > 0) {
 			$sqlwhere[] = "t.doc_date >= '".$db->idate($value)."'";
 		} elseif ($key == 't.doc_date<=') {
 			$sqlwhere[] = "t.doc_date <= '".$db->idate($value)."'";
-		} elseif ($key == 't.doc_date>') {
-			$sqlwhere[] = "t.doc_date > '".$db->idate($value)."'";
-		} elseif ($key == 't.doc_date<') {
-			$sqlwhere[] = "t.doc_date < '".$db->idate($value)."'";
 		} elseif ($key == 't.numero_compte>=') {
 			$sqlwhere[] = "t.numero_compte >= '".$db->escape($value)."'";
 		} elseif ($key == 't.numero_compte<=') {
@@ -641,12 +712,12 @@ if (count($filter) > 0) {
 			$sqlwhere[] = "t.subledger_account >= '".$db->escape($value)."'";
 		} elseif ($key == 't.subledger_account<=') {
 			$sqlwhere[] = "t.subledger_account <= '".$db->escape($value)."'";
-		} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
-			$sqlwhere[] = $db->sanitize($key).' = '.((int) $value);
+			/* } elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') { // these fields doesn't exists
+			$sqlwhere[] = $db->sanitize($key).' = '.((int) $value); */
 		} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
 			$sqlwhere[] = $db->sanitize($key)." LIKE '".$db->escape($db->escapeforlike($value))."%'";
-		} elseif ($key == 't.subledger_account') {
-			$sqlwhere[] = natural_search($key, $value, 0, 1);
+			/* } elseif ($key == 't.subledger_account') { // test is always false
+			$sqlwhere[] = natural_search($key, $value, 0, 1); */
 		} elseif ($key == 't.tms>=') {
 			$sqlwhere[] = "t.tms >= '".$db->idate($value)."'";
 		} elseif ($key == 't.tms<=') {
@@ -663,6 +734,10 @@ if (count($filter) > 0) {
 			$sqlwhere[] = "t.date_validated >= '".$db->idate($value)."'";
 		} elseif ($key == 't.date_validated<=') {
 			$sqlwhere[] = "t.date_validated <= '".$db->idate($value)."'";
+		} elseif ($key == 't.date_lim_reglement>=') {
+			$sqlwhere[] = "t.date_lim_reglement >= '".$db->idate($value)."'";
+		} elseif ($key == 't.date_lim_reglement<=') {
+			$sqlwhere[] = "t.date_lim_reglement <= '".$db->idate($value)."'";
 		} elseif ($key == 't.credit' || $key == 't.debit') {
 			$sqlwhere[] = natural_search($key, $value, 1, 1);
 		} elseif ($key == 't.reconciled_option') {
@@ -717,6 +792,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$db->free($resql);
 }
 
+
 // Complete request and execute it with limit
 $sql .= $db->order($sortfield, $sortorder);
 if ($limit) {
@@ -759,10 +835,20 @@ if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->hasRight('accountin
 	$arrayofmassactions['letteringmanual'] = img_picto('', 'check', 'class="pictofixedwidth"') . $langs->trans('LetteringManual');
 	$arrayofmassactions['preunletteringmanual'] = img_picto('', 'uncheck', 'class="pictofixedwidth"') . $langs->trans('UnletteringManual');
 }
+if ($user->hasRight('accounting', 'mouvements', 'creer')) {
+	$arrayofmassactions['preclonebookkeepingwriting'] = img_picto('', 'clone', 'class="pictofixedwidth"').$langs->trans("Clone");
+}
+if ($user->hasRight('accounting', 'mouvements', 'creer')) {
+	$arrayofmassactions['preassignaccountbookkeepingwriting'] = img_picto('', 'fa-exchange-alt', 'class="pictofixedwidth"').$langs->trans("AssignAccount");
+}
+if ($user->hasRight('accounting', 'mouvements', 'creer')) {
+	$arrayofmassactions['prereturnaccountbookkeepingwriting'] = img_picto('', 'undo', 'class="pictofixedwidth"').$langs->trans("ReturnAccount");
+}
 if ($user->hasRight('accounting', 'mouvements', 'supprimer')) {
 	$arrayofmassactions['predeletebookkeepingwriting'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-if (GETPOSTINT('nomassaction') || in_array($massaction, array('preunletteringauto', 'preunletteringmanual', 'predeletebookkeepingwriting'))) {
+
+if (GETPOSTINT('nomassaction') || in_array($massaction, array('preunletteringauto', 'preunletteringmanual', 'predeletebookkeepingwriting', 'preclonebookkeepingwriting', 'preassignaccountbookkeepingwriting', 'prereturnaccountbookkeepingwriting'))) {
 	$arrayofmassactions = array();
 }
 $massactionbutton = $form->selectMassAction($massaction, $arrayofmassactions);
@@ -796,13 +882,14 @@ if (empty($reshook)) {
 	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param, '', 1, array('morecss' => 'marginleftonly'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?type=sub'.$param, '', 1, array('morecss' => 'marginleftonly'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'] . '?action=exporttopdf&' . $param, '', 1, array('morecss' => 'marginleftonly'));
 
-	$url = './card.php?action=create';
+	$url = './card.php?action=create'.(!empty($type) ? '&type=sub' : '').'&backtopage='.urlencode($_SERVER['PHP_SELF']);
 	if (!empty($socid)) {
 		$url .= '&socid='.$socid;
 	}
 	$newcardbutton .= dolGetButtonTitleSeparator();
-	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', $url, '', $user->hasRight('accounting', 'mouvements', 'creer'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', $url, '', $permissiontoadd);
 }
 
 print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
@@ -813,6 +900,43 @@ if ($massaction == 'preunletteringauto') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassUnletteringManual"), $langs->trans("ConfirmMassUnletteringQuestion", count($toselect)), "unletteringmanual", null, '', 0, 200, 500, 1);
 } elseif ($massaction == 'predeletebookkeepingwriting') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDeleteBookkeepingWriting"), $langs->trans("ConfirmMassDeleteBookkeepingWritingQuestion", count($toselect)), "deletebookkeepingwriting", null, '', 0, 200, 500, 1);
+} elseif ($massaction == 'preassignaccountbookkeepingwriting') {
+	$input = $formaccounting->select_account('', 'account', 1);
+	$formquestion = array(array('type' => 'other', 'name' => 'account', 'label' => '<span class="fieldrequired">' . $langs->trans("AccountAccountingShort") . '</span>', 'value' => $input),);
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("confirmMassAssignAccountBookkeepingWritingConfirm"), $langs->trans("ConfirmMassAssignAccountBookkeepingWritingQuestion", count($toselect)), "assignaccountbookkeepingwriting", $formquestion, '', 0, 200, 500, 1);
+} elseif ($massaction == 'preclonebookkeepingwriting') {
+	$input1 = $form->selectDate('', 'massdate', 0, 0, 0, "create_mvt", 1, 1);
+	$input2 = $formaccounting->select_journal($journal_code, 'code_journal', 0, 0, 1, 1) . '</td>';
+	$formquestion = array(
+		array(
+			'type' => 'other',
+			'name' => 'massdate',
+			'label' => '<span class="fieldrequired">' . $langs->trans("Docdate") . '</span>',
+			'value' => $input1
+		)
+	);
+
+	if (getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL')) {
+		$formquestion[] = array(
+			'type' => 'text',
+			'name' => 'code_journal',
+			'label' => '<span class="fieldrequired">' . $langs->trans("Codejournal") . '</span>',
+			'value' => $input2
+		);
+	}
+
+	print $form->formconfirm(
+		$_SERVER["PHP_SELF"],
+		$langs->trans("ConfirmMassCloneBookkeepingWriting"),
+		$langs->trans("ConfirmMassCloneBookkeepingWritingQuestion", count($toselect)),
+		"clonebookkeepingwriting",
+		$formquestion,
+		'', 0, 200, 500, 1
+	);
+} elseif ($massaction == 'prereturnaccountbookkeepingwriting') {
+	$input1 = $form->selectDate('', 'massdate', 0, 0, 0, "create_mvt", 1, 1);
+	$formquestion = array(array('type' => 'other', 'name' => 'massdate', 'label' => '<span class="fieldrequired">' . $langs->trans("Docdate") . '</span>', 'value' => $input1));
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassReturnAccountBookkeepingWriting"), $langs->trans("ConfirmMassReturnAccountBookkeepingWritingQuestion", count($toselect)), "returnaccountbookkeepingwriting", $formquestion, '', 0, 200, 500, 1);
 }
 
 //$topicmail = "Information";
@@ -866,7 +990,7 @@ if (!empty($arrayfields['t.piece_num']['checked'])) {
 // Code journal
 if (!empty($arrayfields['t.code_journal']['checked'])) {
 	print '<td class="liste_titre center">';
-	print $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1, 'small maxwidth75');
+	print $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1, 'maxwidth75');
 	print '</td>';
 }
 // Date document
@@ -882,7 +1006,7 @@ if (!empty($arrayfields['t.doc_date']['checked'])) {
 }
 // Ref document
 if (!empty($arrayfields['t.doc_ref']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_doc_ref" size="8" value="'.dol_escape_htmltag($search_doc_ref).'"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_doc_ref" class="width75" value="'.dol_escape_htmltag($search_doc_ref).'"></td>';
 }
 // Accountancy account
 if (!empty($arrayfields['t.numero_compte']['checked'])) {
@@ -988,6 +1112,17 @@ if (!empty($arrayfields['t.date_validated']['checked'])) {
 	print '</div>';
 	print '</td>';
 }
+// Due date start and end
+if (!empty($arrayfields['t.date_lim_reglement']['checked'])) {
+	print '<td class="liste_titre center">';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_date_due_start, 'search_date_due_start_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("From"));
+	print '</div>';
+	print '<div class="nowrapfordate">';
+	print $form->selectDate($search_date_due_end, 'search_date_due_end_', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans("to"));
+	print '</div>';
+	print '</td>';
+}
 if (!empty($arrayfields['t.import_key']['checked'])) {
 	print '<td class="liste_titre center">';
 	print '<input class="flat searchstring maxwidth50" type="text" name="search_import_key" value="'.dol_escape_htmltag($search_import_key).'">';
@@ -1052,6 +1187,10 @@ if (!empty($arrayfields['t.date_export']['checked'])) {
 if (!empty($arrayfields['t.date_validated']['checked'])) {
 	print_liste_field_titre($arrayfields['t.date_validated']['label'], $_SERVER['PHP_SELF'], "t.date_validated,t.doc_date", "", $param, '', $sortfield, $sortorder, 'center ');
 }
+// Due date
+if (!empty($arrayfields['t.date_lim_reglement']['checked'])) {
+	print_liste_field_titre($arrayfields['t.date_lim_reglement']['label'], $_SERVER['PHP_SELF'], 't.date_lim_reglement', '', $param, '', $sortfield, $sortorder, 'center ');
+}
 if (!empty($arrayfields['t.import_key']['checked'])) {
 	print_liste_field_titre($arrayfields['t.import_key']['label'], $_SERVER["PHP_SELF"], "t.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
 }
@@ -1101,10 +1240,13 @@ while ($i < min($num, $limit)) {
 	$line->code_journal = $obj->code_journal;
 	$line->journal_label = $obj->journal_label;
 	$line->piece_num = $obj->piece_num;
+	$line->ref = $obj->ref;
 	$line->date_creation = $db->jdate($obj->date_creation);
 	$line->date_modification = $db->jdate($obj->date_modification);
 	$line->date_export = $db->jdate($obj->date_export);
 	$line->date_validation = $db->jdate($obj->date_validation);
+	// Due date
+	$line->date_lim_reglement = $db->jdate($obj->date_lim_reglement);
 
 	print '<tr class="oddeven">';
 	// Action column
@@ -1128,6 +1270,7 @@ while ($i < min($num, $limit)) {
 		print '<td>';
 		$object->id = $line->id;
 		$object->piece_num = $line->piece_num;
+		$object->ref = $line->ref;
 		print $object->getNomUrl(1, '', 0, '', 1);
 		print '</td>';
 		if (!$i) {
@@ -1161,9 +1304,11 @@ while ($i < min($num, $limit)) {
 	}
 
 	// Document ref
-	$modulepart = '';
+	$modulepart = '';	// may be used by include*.tpl.php
 	if (!empty($arrayfields['t.doc_ref']['checked'])) {
-		if ($line->doc_type == 'customer_invoice') {
+		$objectstatic = null;
+
+		if ($line->doc_type === 'customer_invoice') {
 			$langs->loadLangs(array('bills'));
 
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -1175,7 +1320,7 @@ while ($i < min($num, $limit)) {
 			$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
 			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
-		} elseif ($line->doc_type == 'supplier_invoice') {
+		} elseif ($line->doc_type === 'supplier_invoice') {
 			$langs->loadLangs(array('bills'));
 
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
@@ -1196,7 +1341,7 @@ while ($i < min($num, $limit)) {
 			} else {
 				$documentlink = $line->doc_ref;
 			}
-		} elseif ($line->doc_type == 'expense_report') {
+		} elseif ($line->doc_type === 'expense_report') {
 			$langs->loadLangs(array('trips'));
 
 			require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
@@ -1208,7 +1353,7 @@ while ($i < min($num, $limit)) {
 			$filedir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
 			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
-		} elseif ($line->doc_type == 'bank') {
+		} elseif ($line->doc_type === 'bank') {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$objectstatic = new AccountLine($db);
 			$objectstatic->fetch($line->fk_doc);
@@ -1219,11 +1364,11 @@ while ($i < min($num, $limit)) {
 		$labeltoshow = '';
 		$labeltoshowalt = '';
 		$classforlabel = '';
-		if ($line->doc_type == 'customer_invoice' || $line->doc_type == 'supplier_invoice' || $line->doc_type == 'expense_report') {
+		if (($line->doc_type === 'customer_invoice' || $line->doc_type === 'supplier_invoice' || $line->doc_type === 'expense_report') && is_object($objectstatic)) {
 			$labeltoshow .= $objectstatic->getNomUrl(1, '', 0, 0, '', 0, -1, 1);
 			$labeltoshow .= $documentlink;
 			$labeltoshowalt .= $objectstatic->ref;
-		} elseif ($line->doc_type == 'bank') {
+		} elseif ($line->doc_type === 'bank' && is_object($objectstatic)) {
 			$labeltoshow .= $objectstatic->getNomUrl(1);
 			$labeltoshowalt .= $objectstatic->ref;
 			$bank_ref = strstr($line->doc_ref, '-');
@@ -1331,6 +1476,14 @@ while ($i < min($num, $limit)) {
 	// Validated operation date
 	if (!empty($arrayfields['t.date_validated']['checked'])) {
 		print '<td class="center nowraponall">'.dol_print_date($line->date_validation, 'dayhour', 'tzuserrel').'</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
+
+	// Due date
+	if (!empty($arrayfields['t.date_lim_reglement']['checked'])) {
+		print '<td class="center">'.dol_print_date($line->date_lim_reglement, 'day').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

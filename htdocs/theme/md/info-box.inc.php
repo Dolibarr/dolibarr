@@ -1,8 +1,26 @@
 <?php
+/* Copyright (C) 2024		MDW	<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
-/* <style type="text/css" > */
+}
+
+/**
+ * @var Conf $conf
+ */
+
+// Expected to be defined by including parent
+'
+@phan-var-force string $right
+@phan-var-force string $left
+';
+
+$borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0;
+
+?>
+
+/* IDE Hack <style type="text/css"> */
 
 
 /*
@@ -19,14 +37,27 @@ if (getDolGlobalString('THEME_INFOBOX_COLOR_ON_BACKGROUND')) {
 }
 
 if (!isset($conf->global->THEME_SATURATE_RATIO)) {
-	$conf->global->THEME_SATURATE_RATIO = 0.7;
+	$conf->global->THEME_SATURATE_RATIO = 0.8;
 }
 if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
-	$conf->global->THEME_SATURATE_RATIO = GETPOSTINT('THEME_SATURATE_RATIO');
+	$conf->global->THEME_SATURATE_RATIO = GETPOSTFLOAT('THEME_SATURATE_RATIO');
 }
 
 ?>
 
+.nonature-back {
+	background-color: #EEE;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
+}
+.prospect-back {
+	background-color: #a7c5b0 !important;
+	color: #FFF !important;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
+}
 .customer-back {
 	background-color: #65953d !important;
 	color: #FFF !important;
@@ -49,17 +80,19 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	border-radius: 3px;
 }
 .member-company-back {
-	padding: 2px 7px 2px 7px;
+	padding: 2px;
+	margin: 2px;
 	background-color: #e4e4e4;
 	color: #666;
-	border-radius: 10px;
+	border-radius: 3px;
 	white-space: nowrap;
 }
 .member-individual-back {
-	padding: 2px 7px 2px 7px;
+	padding: 2px;
+	margin: 2px;
 	background-color: #e4e4e4;
 	color: #666;
-	border-radius: 10px;
+	border-radius: 3px;
 	white-space: nowrap;
 }
 
@@ -90,13 +123,16 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .bg-infobox-holiday{
 	<?php echo $prefix; ?>color: #755114  !important;
 }
+.bg-infobox-cubes{
+	<?php echo $prefix; ?>color: #b0a53e  !important;
+}
 
 /* Disable colors on left vmenu */
 a.vmenu span, span.vmenu, span.vmenu span {
 	/* To force no color on picto in left menu */
 	/* color: var(--colortextbackvmenu) !important; */
 }
-div.login_block_other a {
+div.login_block_other:not(.takepos) a {
 	color: var(--colortextbackvmenu);
 }
 
@@ -161,6 +197,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	border-radius: 2px;
 	margin-bottom: 15px;
 	border: 1px solid #e9e9e9;
+	border-radius: <?php print $borderradius; ?>px;
 }
 .info-box.info-box-sm {
 	min-height: 80px;
@@ -195,7 +232,6 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 		color: #fff;
 		text-align: center;
 		background-color: #337ab7;
-		-webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
 		box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
 		-webkit-transition: width .6s ease;
 		-o-transition: width .6s ease;
@@ -207,12 +243,14 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	float: left;
 	text-align: center;
 	font-size: 45px;
-	line-height: 94px;;	/* must be same height as min-height of .info-box */
-	height: 94px;;		/* must be same height as min-height of .info-box */
+	line-height: 94px;	/* must be same height as min-height of .info-box */
+	height: 94px;		/* must be same height as min-height of .info-box */
 	width: 86px;
 	background: var(--colorbacktitle1) !important;
-	<?php if (isset($conf->global->THEME_SATURATE_RATIO)) { ?>
-		filter: saturate(<?php echo $conf->global->THEME_SATURATE_RATIO; ?>);
+	border-top-left-radius: <?php print $borderradius; ?>px;
+	border-bottom-left-radius: <?php print $borderradius; ?>px;
+	<?php if (getDolGlobalString('THEME_SATURATE_RATIO')) { ?>
+		filter: saturate(<?php echo getDolGlobalString('THEME_SATURATE_RATIO'); ?>);
 	<?php } ?>
 }
 
@@ -369,6 +407,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 .info-box-sm .info-box-module-enabled {
 	/* background: linear-gradient(0.35turn, #fff, #fff, #f6faf8, #e4efe8) */
 	background: var(--infoboxmoduleenabledbgcolor);
+	border-radius: 6px;
 }
 .info-box-content-warning span.font-status4 {
 	color: #bc9526 !important;
@@ -400,12 +439,14 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	font-size: 0.90em;
 }
 /* Force values for small screen 480 */
+/*
 @media only screen and (max-width: 480px)
 {
 	.info-box-text {
 		font-size: 0.85em;
 	}
 }
+*/
 .info-box-text:first-letter{text-transform: uppercase}
 a.info-box-text{ text-decoration: none;}
 
@@ -429,10 +470,10 @@ if (getDolGlobalString('THEME_INFOBOX_COLOR_ON_BACKGROUND')) {
 }
 
 if (!isset($conf->global->THEME_SATURATE_RATIO)) {
-	$conf->global->THEME_SATURATE_RATIO = 0.7;
+	$conf->global->THEME_SATURATE_RATIO = 0.8;
 }
 if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
-	$conf->global->THEME_SATURATE_RATIO = GETPOSTINT('THEME_SATURATE_RATIO');
+	$conf->global->THEME_SATURATE_RATIO = GETPOSTFLOAT('THEME_SATURATE_RATIO');
 }
 ?>
 .bg-infobox-project i.fa{
@@ -465,6 +506,9 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 .bg-infobox-holiday i.fa{
 	color: #755114  !important;
+}
+.bg-infobox-cubes i.fa{
+	color: #b0a53e  !important;
 }
 
 
@@ -504,6 +548,9 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .fa-dol-holiday:before {
 	content: "\f5ca";
 }
+.fa-dol-cubes:before {
+	content: "\f1b3";
+}
 
 
 /* USING FONTAWESOME FOR WEATHER */
@@ -532,35 +579,6 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 
 
-/* USING IMAGES FOR WEATHER INSTEAD OF FONT AWESOME */
-/* For other themes just uncomment this part */
-/*.info-box-weather-level0,
-.info-box-weather-level1,
-.info-box-weather-level2,
-.info-box-weather-level3,
-.info-box-weather-level4 {
-	background-position: 15px 50%;
-	background-repeat: no-repeat;
-}
-
-.info-box-weather .info-box-icon{
-	display: none !important;
-}
-.info-box-weather-level0 {
-	background-image: url("img/weather/weather-clear.png");
-}
-.info-box-weather-level1 {
-	background-image: url("img/weather/weather-few-clouds.png");
-}
-.info-box-weather-level2 {
-	background-image: url("img/weather/weather-clouds.png");
-}
-.info-box-weather-level3 {
-	background-image: url("img/weather/weather-many-clouds.png");
-}
-.info-box-weather-level4 {
-	background-image: url("img/weather/weather-storm.png");
-}*/
 
 
 
@@ -591,6 +609,8 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .kanban.kanbancollapsed {
 	flex: unset;
 	width: 80px;
+	max-width: 80px;
+	overflow: hidden;
 }
 .kanban.kanbancollapsed .kanbanlabel, .text-vertical {
 	writing-mode: vertical-rl;
@@ -604,7 +624,6 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	flex-grow : 1;
 	flex-shrink: 1;
 	flex-basis: auto;
-
 	width: 300px;
 }
 .box-flex-item.filler{
@@ -625,6 +644,9 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .kanban .box-flex-item {
 	line-height: 1.4em;
 }
+.kanban .box-flex-item-5lines {
+	line-height: 1.18em;
+}
 
 /* css for small kanban */
 .box-flex-item-small {
@@ -641,7 +663,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 @media only screen and (max-width: 767px)
 {
 	.box-flex-container {
-		margin: 0 0 0 -8px !important;
+		margin: 0 0 0 0 !important;
 	}
 }
 
@@ -653,7 +675,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	max-width: 350px;
 }
 .info-box-module .info-box-content {
-	height: 6.3em;
+	height: 94px;
 }
 .fright {
 	float:right;
@@ -681,10 +703,12 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 		padding-left: 10px;
 		padding-right: 2px;
 	}
+	/*
 	.info-box-line-text {
 		width: calc(100% - 92px);
 		max-width: calc(100% - 82px);
 	}
+	*/
 }
 
 @media only screen and (max-width: 480px) {

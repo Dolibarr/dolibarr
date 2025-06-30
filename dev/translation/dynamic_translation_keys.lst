@@ -1029,7 +1029,6 @@ ErrorLanguageOfTranslatedPageIsSameThanThisPage
 ErrorLoginDisabled
 ErrorLoginDoesNotExists
 ErrorLoginHasNoEmail
-ErrorMandatoryParametersNotProvided
 ErrorMaxNumberReachForThisMask
 ErrorNewRefIsAlreadyUsed
 ErrorNoImagickReadimage
@@ -1204,6 +1203,7 @@ Feature
 FeatureIsSupportedInInOutModeOnly
 Features
 FichinterNoContractLinked
+FichintersCategoriesArea
 FieldNeedSource
 FieldTarget
 FieldTitle
@@ -2992,7 +2992,6 @@ UserHideExternal
 UserHideNonEmployee
 UserID
 UserLogged
-UserLoginFailed
 UserLogoff
 UserMargins
 UserModif

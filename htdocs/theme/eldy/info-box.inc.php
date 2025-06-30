@@ -1,8 +1,22 @@
 <?php
+/* Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
-/* <style type="text/css" > */
+}
+/**
+ * @var Conf $conf
+ * @var string $left
+ * @var string $right
+ */
+// Expected to be defined by including parent
+'
+@phan-var-force string $right
+@phan-var-force string $left
+';
+?>
+/* IDE Hack <style type="text/css"> */
 
 /*
  * Component: Info Box
@@ -23,7 +37,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	min-height: 94px;	/* must be same height than info-box-icon */
 	background: var(--colorbacklineimpair2);
 	width: 100%;
-	box-shadow: 1px 1px 15px rgba(192, 192, 192, 0.2);
+	box-shadow: 1px 1px 12px rgba(192, 192, 192, 0.2);
 	border-radius: 2px;
 	border: 1px solid #e9e9e9;
 	margin-bottom: 15px;
@@ -69,7 +83,6 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	color: #fff;
 	text-align: center;
 	background-color: #337ab7;
-	-webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
 	box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
 	-webkit-transition: width .6s ease;
 	-o-transition: width .6s ease;
@@ -257,12 +270,6 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 .info-box-content-warning span.font-status4 {
 	color: #bc9526 !important;
 }
-/*.info-box-sm .info-box-content-warning {
-	background: #ffd7a3;
-}*/
-/*.info-box-icon.info-box-icon-module-enabled {
-	background: #e4f0e4 !important;
-}*/
 
 .info-box-number {
 	display: block;
@@ -292,7 +299,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 @media only screen and (max-width: 480px)
 {
 	.info-box-text {
-		font-size: 0.82em;
+		font-size: 0.85em;
 	}
 	.info-box-line {
 		line-height: 1.25em;
@@ -323,10 +330,10 @@ if (getDolGlobalString('THEME_INFOBOX_COLOR_ON_BACKGROUND')) {
 }
 
 if (!isset($conf->global->THEME_SATURATE_RATIO)) {
-	$conf->global->THEME_SATURATE_RATIO = 0.7;
+	$conf->global->THEME_SATURATE_RATIO = 0.8;
 }
 if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
-	$conf->global->THEME_SATURATE_RATIO = GETPOSTINT('THEME_SATURATE_RATIO');
+	$conf->global->THEME_SATURATE_RATIO = GETPOSTFLOAT('THEME_SATURATE_RATIO');
 }
 
 ?>
@@ -335,11 +342,24 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	color: #fff !important;
 	<?php } ?>
 	opacity: 0.95;
-	<?php if (isset($conf->global->THEME_SATURATE_RATIO)) { ?>
-		filter: saturate(<?php echo $conf->global->THEME_SATURATE_RATIO; ?>);
+	<?php if (getDolGlobalString('THEME_SATURATE_RATIO')) { ?>
+		filter: saturate(<?php echo getDolGlobalString('THEME_SATURATE_RATIO'); ?>);
 	<?php } ?>
 }
 
+.nonature-back {
+	background-color: #EEE;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
+}
+.prospect-back {
+	background-color: #a7c5b0 !important;
+	color: #FFF !important;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
+}
 .customer-back {
 	background-color: #55955d !important;
 	color: #FFF !important;
@@ -362,17 +382,19 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	border-radius: 3px;
 }
 .member-company-back {
-	padding: 2px 7px 2px 7px;
+	padding: 2px;
+	margin: 2px;
 	background-color: #e4e4e4;
 	color: #666;
-	border-radius: 10px;
+	border-radius: 3px;
 	white-space: nowrap;
 }
 .member-individual-back {
-	padding: 2px 7px 2px 7px;
+	padding: 2px;
+	margin: 2px;
 	background-color: #e4e4e4;
 	color: #666;
-	border-radius: 10px;
+	border-radius: 3px;
 	white-space: nowrap;
 }
 
@@ -403,6 +425,9 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 .bg-infobox-holiday{
 	<?php echo $prefix; ?>color: #755114 !important;
+}
+.bg-infobox-cubes{
+	<?php echo $prefix; ?>color: #b0a53e !important;
 }
 
 /* Disable colors on left vmenu */
@@ -485,6 +510,9 @@ a.vmenu span, span.vmenu, span.vmenu span {
 .fa-dol-holiday:before {
 	content: "\f5ca";
 }
+.fa-dol-cubes:before {
+	content: "\f1b3";
+}
 
 
 /* USING FONTAWESOME FOR WEATHER */
@@ -539,6 +567,8 @@ a.vmenu span, span.vmenu, span.vmenu span {
 .kanban.kanbancollapsed {
 	flex: unset;
 	width: 80px;
+	max-width: 80px;
+	overflow: hidden;
 }
 .kanban.kanbancollapsed .kanbanlabel, .text-vertical {
 	writing-mode: vertical-rl;
@@ -571,6 +601,9 @@ a.vmenu span, span.vmenu, span.vmenu span {
 }
 .kanban .box-flex-item {
 	line-height: 1.4em;
+}
+.kanban .box-flex-item-5lines {
+	line-height: 1.2em;
 }
 
 /* css for small kanban */
@@ -670,8 +703,10 @@ a.vmenu span, span.vmenu, span.vmenu span {
 		padding-left: 10px;
 		padding-right: 2px;
 	}
+	/*
 	.info-box-line-text {
 		width: calc(100% - 98px);
 		max-width: calc(100% - 88px);
 	}
+	*/
 }

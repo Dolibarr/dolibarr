@@ -2,7 +2,7 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,7 +109,7 @@ class WebPortalMember extends Adherent
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 10,),
@@ -142,6 +142,9 @@ class WebPortalMember extends Adherent
 
 		'status' => array('type' => 'smallint(6)', 'label' => 'Status', 'enabled' => 1, 'visible' => 5, 'notnull' => 1, 'position' => 500, 'arrayofkeyval' => self::ARRAY_STATUS_LABEL, 'showonheader' => 1,),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
 	//public $ref;
 	//public $lastname;
@@ -155,10 +158,11 @@ class WebPortalMember extends Adherent
 	//public $phone;
 	//public $phone_perso;
 	//public $phone_mobile;
-	//public $email;
-	//public $url;
 	//public $socialnetworks;
 	//public $login;
+	/**
+	 * @var int
+	 */
 	public $fk_adherent_type;
 	//public $morphy;
 	//public $societe;
@@ -186,7 +190,7 @@ class WebPortalMember extends Adherent
 	/**
 	 * Constructor
 	 *
-	 * @param	DoliDb	$db		Database handler
+	 * @param	DoliDB	$db		Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -212,10 +216,9 @@ class WebPortalMember extends Adherent
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param	array	$params		Params to construct tooltip data
-	 * @return	array
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -230,13 +233,13 @@ class WebPortalMember extends Adherent
 		if (isset($this->status)) {
 			$datas['picto'] .= ' ' . $this->getLibStatut(5);
 		}
-		$datas['ref'] .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+		$datas['ref'] = '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
 		return $datas;
 	}
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 * @param	int		$withpictoimg			0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
 	 * @param	int		$maxlen					Length max label
@@ -344,7 +347,7 @@ class WebPortalMember extends Adherent
 			} elseif ($mode == 'ref') {
 				$result .= $this->ref;
 			} else {
-				$result .= $this->getFullName($langs, '', ($mode == 'firstname' ? 2 : ($mode == 'lastname' ? 4 : -1)), $maxlen);
+				$result .= $this->getFullName($langs, 0, ($mode == 'firstname' ? 2 : ($mode == 'lastname' ? 4 : -1)), $maxlen);
 			}
 			if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$result .= '</span>';

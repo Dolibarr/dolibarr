@@ -1,12 +1,13 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Yetkazib berish
 DeliveryRef=Yetkazib berish
-DeliveryCard=Birja kvitansiyasi
+DeliveryCard=Yetkazib berish kvitansiyasi
 DeliveryOrder=Yetkazib berish kvitansiyasi
 DeliveryDate=Yetkazib berish sanasi
 CreateDeliveryOrder=Yetkazib berish kvitansiyasini yarating
 DeliveryStateSaved=Yetkazib berish holati saqlandi
-SetDeliveryDate=Yetkazib berish sanasini belgilang
+SetDeliveryDate=Taxminiy etkazib berish sanasini belgilang
+SetShippingDate=Yetkazib berish sanasini belgilang
 ValidateDeliveryReceipt=Yetkazib berish kvitansiyasini tasdiqlang
 ValidateDeliveryReceiptConfirm=Ushbu etkazib berish kvitansiyasini tasdiqlamoqchimisiz?
 DeleteDeliveryReceipt=Yetkazib berish kvitansiyasini o'chirib tashlang

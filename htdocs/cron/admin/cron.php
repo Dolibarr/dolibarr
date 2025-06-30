@@ -4,6 +4,7 @@
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,15 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'cron'));
@@ -94,13 +104,13 @@ if (getDolGlobalInt('CRON_DISABLE_KEY_CHANGE') > 0) {
 	$disabled = ' disabled="disabled"';
 }
 print '<td>';
-if (getDolGlobalString('CRON_DISABLE_KEY_CHANGE') != 1) {
+if (getDolGlobalInt('CRON_DISABLE_KEY_CHANGE') != 1) {
 	print '<input type="text" class="flat minwidth300 widthcentpercentminusx"'.$disabled.' id="CRON_KEY" name="CRON_KEY" value="'.(GETPOST('CRON_KEY') ? GETPOST('CRON_KEY') : getDolGlobalString('CRON_KEY')).'">';
-	if (getDolGlobalString('CRON_DISABLE_KEY_CHANGE') == 0) {
+	if (getDolGlobalInt('CRON_DISABLE_KEY_CHANGE') == 0) {
 		if (!empty($conf->use_javascript_ajax)) {
 			print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 		}
-	} elseif (getDolGlobalString('CRON_DISABLE_KEY_CHANGE') == -1) {
+	} elseif (getDolGlobalInt('CRON_DISABLE_KEY_CHANGE') == -1) {
 		$langs->load("errors");
 		print '&nbsp;'.img_picto($langs->trans("WarningChangingThisMayBreakStopTaskScheduler"), 'info');
 	}
@@ -116,7 +126,7 @@ print '</table>';
 
 print dol_get_fiche_end();
 
-if (!getDolGlobalString('CRON_DISABLE_KEY_CHANGE')) {
+if (!getDolGlobalInt('CRON_DISABLE_KEY_CHANGE')) {
 	print $form->buttonsSaveCancel("Save", '');
 }
 

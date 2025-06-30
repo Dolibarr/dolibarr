@@ -29,10 +29,18 @@ require_once "../../main.inc.php";
 require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT . "/webportal/lib/webportal.lib.php";
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Translations
 $langs->loadLangs(array("admin", "webportal", "website"));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('webportalsetup', 'globalsetup'));
 
 // Parameters
@@ -197,7 +205,7 @@ print ajax_autoselect('publicurlmember');
 //print '<a target="_blank" href="'.Context::getRootConfigUrl().'" >'.img_picto('', 'globe', 'class="pictofixedwidth"').Context::getRootConfigUrl().'</a>';
 
 // Setup page goes here
-print info_admin($langs->trans("UserAccountForWebPortalAreInThirdPartyTabHelp"));
+print info_admin($langs->trans("UserAccountForWebPortalAreInThirdPartyTabHelp", $langs->transnoentities("WebsiteAccount")));
 
 print '<br><br>';
 

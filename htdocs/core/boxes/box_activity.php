@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2012      Charles-François BENKE <charles.fr@benke.fr>
  * Copyright (C) 2005-2015 Laurent Destailleur    <eldy@users.sourceforge.net>
- * Copyright (C) 2014-2021 Frederic France        <frederic.france@netlogic.fr>
+ * Copyright (C) 2014-2024  Frédéric France        <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,7 +89,7 @@ class box_activity extends ModeleBoxes
 		$textHead = $langs->trans("Activity").' - '.$langs->trans("LastXMonthRolling", $nbofperiod);
 		$this->info_box_head = array(
 			'text' => $textHead,
-			'limit'=> dol_strlen($textHead),
+			'limit' => dol_strlen($textHead),
 		);
 
 		// compute the year limit to show
@@ -102,7 +103,7 @@ class box_activity extends ModeleBoxes
 
 			$data = array();
 
-			$sql = "SELECT p.fk_statut, SUM(p.total_ttc) as Mnttot, COUNT(*) as nb";
+			$sql = "SELECT p.fk_statut, SUM(p.total_ttc) as mnttot, COUNT(*) as nb";
 			$sql .= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
 			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -162,7 +163,7 @@ class box_activity extends ModeleBoxes
 
 					$this->info_box_contents[$line][3] = array(
 						'td' => 'class="nowraponall right amount"',
-						'text' => price($data[$j]->Mnttot, 1, $langs, 0, 0, -1, $conf->currency),
+						'text' => price($data[$j]->mnttot, 1, $langs, 0, 0, -1, $conf->currency),
 					);
 					$this->info_box_contents[$line][4] = array(
 						'td' => 'class="right" width="18"',
@@ -175,7 +176,7 @@ class box_activity extends ModeleBoxes
 				if (count($data) == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=>'<span class="opacitymedium">'.$langs->trans("NoRecordedProposals").'</span>',
+						'text' => '<span class="opacitymedium">'.$langs->trans("NoRecordedProposals").'</span>',
 					);
 					$line++;
 				}
@@ -191,7 +192,7 @@ class box_activity extends ModeleBoxes
 
 			$data = array();
 
-			$sql = "SELECT c.fk_statut, sum(c.total_ttc) as Mnttot, count(*) as nb";
+			$sql = "SELECT c.fk_statut, sum(c.total_ttc) as mnttot, count(*) as nb";
 			$sql .= " FROM (".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
 			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -235,7 +236,7 @@ class box_activity extends ModeleBoxes
 
 					$this->info_box_contents[$line][1] = array(
 						'td' => '',
-						'text' =>$langs->trans("Orders")."&nbsp;".$commandestatic->LibStatut($data[$j]->fk_statut, 0, 0),
+						'text' => $langs->trans("Orders")."&nbsp;".$commandestatic->LibStatut($data[$j]->fk_statut, 0, 0),
 					);
 
 					$this->info_box_contents[$line][2] = array(
@@ -248,7 +249,7 @@ class box_activity extends ModeleBoxes
 
 					$this->info_box_contents[$line][3] = array(
 						'td' => 'class="nowraponall right amount"',
-						'text' => price($data[$j]->Mnttot, 1, $langs, 0, 0, -1, $conf->currency),
+						'text' => price($data[$j]->mnttot, 1, $langs, 0, 0, -1, $conf->currency),
 					);
 					$this->info_box_contents[$line][4] = array(
 						'td' => 'class="right" width="18"',
@@ -261,7 +262,7 @@ class box_activity extends ModeleBoxes
 				if (count($data) == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=>$langs->trans("NoRecordedOrders"),
+						'text' => $langs->trans("NoRecordedOrders"),
 					);
 					$line++;
 				}
@@ -276,7 +277,7 @@ class box_activity extends ModeleBoxes
 
 			// part 1
 			$data = array();
-			$sql = "SELECT f.fk_statut, SUM(f.total_ttc) as Mnttot, COUNT(*) as nb";
+			$sql = "SELECT f.fk_statut, SUM(f.total_ttc) as mnttot, COUNT(*) as nb";
 			$sql .= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -333,7 +334,7 @@ class box_activity extends ModeleBoxes
 
 					$this->info_box_contents[$line][3] = array(
 						'td' => 'class="nowraponall right amount"',
-						'text' => price($data[$j]->Mnttot, 1, $langs, 0, 0, -1, $conf->currency)
+						'text' => price($data[$j]->mnttot, 1, $langs, 0, 0, -1, $conf->currency)
 					);
 
 					// We add only for the current year
@@ -349,7 +350,7 @@ class box_activity extends ModeleBoxes
 				if (count($data) == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=>$langs->trans("NoRecordedInvoices"),
+						'text' => $langs->trans("NoRecordedInvoices"),
 					);
 					$line++;
 				}
@@ -357,7 +358,7 @@ class box_activity extends ModeleBoxes
 
 			// part 2
 			$data = array();
-			$sql = "SELECT f.fk_statut, SUM(f.total_ttc) as Mnttot, COUNT(*) as nb";
+			$sql = "SELECT f.fk_statut, SUM(f.total_ttc) as mnttot, COUNT(*) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 			$sql .= " WHERE f.entity IN (".getEntity('invoice').')';
 			$sql .= " AND f.fk_soc = s.rowid";
@@ -406,7 +407,7 @@ class box_activity extends ModeleBoxes
 					$totalnb += $data[$j]->nb;
 					$this->info_box_contents[$line][3] = array(
 						'td' => 'class="nowraponall right amount"',
-						'text' => price($data[$j]->Mnttot, 1, $langs, 0, 0, -1, $conf->currency),
+						'text' => price($data[$j]->mnttot, 1, $langs, 0, 0, -1, $conf->currency),
 					);
 					$this->info_box_contents[$line][4] = array(
 						'td' => 'class="right" width="18"',
@@ -418,7 +419,7 @@ class box_activity extends ModeleBoxes
 				if (count($data) == 0) {
 					$this->info_box_contents[$line][0] = array(
 						'td' => 'class="center"',
-						'text'=>$langs->trans("NoRecordedUnpaidInvoices"),
+						'text' => $langs->trans("NoRecordedUnpaidInvoices"),
 					);
 					$line++;
 				}
@@ -436,13 +437,15 @@ class box_activity extends ModeleBoxes
 	}
 
 
+
+
 	/**
-	 *  Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *  @param	array	$head       Array with properties of box title
-	 *  @param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *  @return	string
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
+	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)
 	{

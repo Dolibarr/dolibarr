@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,7 +30,6 @@ require_once DOL_DOCUMENT_ROOT . '/webportal/class/html.formwebportal.class.php'
 /**
  *    Class to manage generation of HTML components
  *    Only common components for WebPortal must be here.
- *
  */
 class FormCardWebPortal
 {
@@ -48,11 +47,6 @@ class FormCardWebPortal
 	 * @var string Back to page for cancel
 	 */
 	public $backtopageforcancel = '';
-
-	/**
-	 * @var string Back to page for JS fields
-	 */
-	public $backtopagejsfields = '';
 
 	/**
 	 * @var string Cancel
@@ -174,9 +168,8 @@ class FormCardWebPortal
 		$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'webportal' . $elementEn . 'card'; // To manage different context of search
 		$backtopage = GETPOST('backtopage', 'alpha');                    // if not set, a default page will be used
 		$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');    // if not set, $backtopage will be used
-		$backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 
-		// Initialize technical objects
+		// Initialize a technical objects
 		$object = new $objectclass($this->db);
 		//$extrafields = new ExtraFields($db);
 		$hookmanager->initHooks(array('webportal' . $elementEn . 'card', 'globalcard')); // Note that conf->hooks_modules contains array
@@ -190,7 +183,7 @@ class FormCardWebPortal
 		}
 
 		// Load object
-		include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+		include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 		// Security check (enable the most restrictive one)
 		if (!isModEnabled('webportal')) {
@@ -204,10 +197,9 @@ class FormCardWebPortal
 		$this->action = $action;
 		$this->backtopage = $backtopage;
 		$this->backtopageforcancel = $backtopageforcancel;
-		$this->backtopagejsfields = $backtopagejsfields;
 		$this->cancel = $cancel;
 		$this->elementEn = $elementEn;
-		$this->id = $id;
+		$this->id = (int) $id;
 		$this->object = $object;
 		$this->permissiontoread = $permissiontoread;
 		$this->permissiontoadd = $permissiontoadd;
@@ -482,13 +474,14 @@ class FormCardWebPortal
 		}
 		$html .= '<div><strong>';
 		if ($object->element == 'member') {
+			'@phan-var-force Adherent $object';
 			if ($object->morphy == 'mor' && !empty($object->societe)) {
-				$html .= dol_htmlentities($object->societe);
+				$html .= dol_htmlentities((string) $object->societe);
 				$html .= (!empty($fullname) && $object->societe != $fullname) ? ' (' . dol_htmlentities($fullname) . $addgendertxt . ')' : '';
 			} else {
 				$html .= dol_htmlentities($fullname) . $addgendertxt;
 				if (empty($object->fk_soc)) {
-					$html .= (!empty($object->societe) && $object->societe != $fullname) ? ' (' . dol_htmlentities($object->societe) . ')' : '';
+					$html .= (!empty($object->societe) && $object->societe != $fullname) ? ' (' . dol_htmlentities((string) $object->societe) . ')' : '';
 				}
 			}
 		} else {
@@ -617,7 +610,7 @@ class FormCardWebPortal
 					$cardRight = true;
 				}
 			}
-			if ($cardRight === true) {
+			if ($cardRight) {
 				$html .= '</div>';
 				$html .= '<div class="card-right">';
 			}
@@ -711,8 +704,10 @@ class FormCardWebPortal
 
 			if (!empty($val['noteditable'])) {
 				$html .= $this->form->showOutputFieldForObject($object, $val, $key, $value, '', '', '', 0);
+				//$html .= $object->showOutputFieldForObject($object, $val, $key, $value, '', '', '', 0);
 			} else {
-				$html .= $this->form->showInputField($val, $key, $value, '', '', '', '');
+				$html .= $this->form->showInputFieldForObject($object, $val, $key, $value, '', '', '', '');
+				//$html .= $object->showInputField($val, $key, $value, '', '', '', '');
 			}
 			$html .= '</div>';
 			$html .= '</div>';
@@ -751,7 +746,6 @@ class FormCardWebPortal
 		$action = $this->action;
 		$backtopage = $this->backtopage;
 		$backtopageforcancel = $this->backtopageforcancel;
-		//$backtopagejsfields = $this->backtopagejsfields;
 		//$elementEn = $this->elementEn;
 		$id = $this->id;
 		$object = $this->object;

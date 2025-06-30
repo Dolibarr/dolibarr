@@ -3,11 +3,12 @@
  * Copyright (C) 2007-2010  Jean Heimburger         <jean@tiaris.info>
  * Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2012  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2025  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +38,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'other', 'bills', 'compta'));
 
@@ -51,13 +61,16 @@ $date_endyear = GETPOST('date_endyear');
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(['selljournallist']);
+
 if (isModEnabled('comptabilite')) {
 	$result = restrictedArea($user, 'compta', '', '', 'resultat');
 }
 if (isModEnabled('accounting')) {
 	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
-$hookmanager->initHooks(['selljournallist']);
 
 /*
  * Actions
@@ -78,17 +91,17 @@ $morequery = '&date_startyear='.$date_startyear.'&date_startmonth='.$date_startm
 llxHeader('', $langs->trans("SellsJournal"), '', '', 0, 0, '', '', $morequery);
 
 
-$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+$year_current = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 //$pastmonth = strftime("%m", dol_now()) - 1;
-$pastmonth = dol_print_date(dol_now(), "%m") - 1;
+$pastmonth = (int) dol_print_date(dol_now(), "%m") - 1;
 $pastmonthyear = $year_current;
 if ($pastmonth == 0) {
 	$pastmonth = 12;
 	$pastmonthyear--;
 }
 
-$date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
-$date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
+$date_start = dol_mktime(0, 0, 0, (int) $date_startmonth, (int) $date_startday, (int) $date_startyear);
+$date_end = dol_mktime(23, 59, 59, (int) $date_endmonth, (int) $date_endday, (int) $date_endyear);
 
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
 	$date_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
@@ -111,9 +124,9 @@ report_header($name, '', $period, $periodlink, $description, $builddate, $export
 $p = explode(":", getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY'));
 $idpays = $p[0];
 
-$sql = "SELECT f.rowid, f.ref, f.type, f.datef, f.ref_client,";
+$sql = "SELECT f.rowid, f.ref, f.type, f.datef, f.ref_client, f.situation_cycle_ref,";
 $sql .= " fd.product_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.total_ttc, fd.localtax1_tx, fd.localtax2_tx, fd.total_localtax1, fd.total_localtax2, fd.rowid as id, fd.situation_percent,";
-$sql .= " s.rowid as socid, s.nom as name, s.code_compta, s.client,";
+$sql .= " s.rowid as socid, s.nom as name, s.code_compta as code_compta_client, s.client,";
 $sql .= " p.rowid as pid, p.ref as pref,";
 if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 	$sql .= " ppe.accountancy_code_sell,";
@@ -130,6 +143,7 @@ $sql .= " JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 $sql .= " JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_tva ct ON fd.tva_tx = ct.taux AND fd.info_bits = ct.recuperableonly AND ct.fk_pays = ".((int) $idpays);
 $sql .= " WHERE f.entity IN (".getEntity('invoice').")";
+$sql .= " AND ct.entity IN (".getEntity('invoice').")";
 $sql .= " AND f.fk_statut > 0";
 if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
 	$sql .= " AND f.type IN (".Facture::TYPE_STANDARD.",".Facture::TYPE_REPLACEMENT.",".Facture::TYPE_CREDIT_NOTE.",".Facture::TYPE_SITUATION.")";
@@ -148,9 +162,10 @@ if (in_array($db->type, array('mysql', 'mysqli'))) {
 	$db->query('SET SQL_BIG_SELECTS=1');
 }
 
+$tabfac = array();
+
 $result = $db->query($sql);
 if ($result) {
-	$tabfac = array();
 	$tabht = array();
 	$tabtva = array();
 	$tablocaltax1 = array();
@@ -167,7 +182,7 @@ if ($result) {
 		$obj = $db->fetch_object($result);
 		// les variables
 		$cptcli = ((getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') != "") ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : $langs->trans("CodeNotDef"));
-		$compta_soc = (!empty($obj->code_compta) ? $obj->code_compta : $cptcli);
+		$compta_soc = (!empty($obj->code_compta_client) ? $obj->code_compta_client : $cptcli);
 		$compta_prod = $obj->accountancy_code_sell;
 		if (empty($compta_prod)) {
 			if ($obj->product_type == 0) {
@@ -179,16 +194,16 @@ if ($result) {
 		$cpttva = (getDolGlobalString('ACCOUNTING_VAT_SOLD_ACCOUNT') ? $conf->global->ACCOUNTING_VAT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
 		$compta_tva = (!empty($obj->account_tva) ? $obj->account_tva : $cpttva);
 
-		$account_localtax1 = getLocalTaxesFromRate($obj->tva_tx, 1, $obj->thirdparty, $mysoc);
+		$account_localtax1 = getLocalTaxesFromRate($obj->tva_tx, 1, $obj->socid, $mysoc);
 		$compta_localtax1 = (!empty($account_localtax1[3]) ? $account_localtax1[3] : $langs->trans("CodeNotDef"));
-		$account_localtax2 = getLocalTaxesFromRate($obj->tva_tx, 2, $obj->thirdparty, $mysoc);
+		$account_localtax2 = getLocalTaxesFromRate($obj->tva_tx, 2, $obj->socid, $mysoc);
 		$compta_localtax2 = (!empty($account_localtax2[3]) ? $account_localtax2[3] : $langs->trans("CodeNotDef"));
 
 		// Situation invoices handling
 		$line = new FactureLigne($db);
 		$line->fetch($obj->id); // id of line
 		$prev_progress = 0;
-		if ($obj->type == Facture::TYPE_SITUATION) {
+		if ($obj->situation_cycle_ref > 0) {	// It is a situation invoice
 			// Avoid divide by 0
 			if ($obj->situation_percent == 0) {
 				$situation_ratio = 0;
@@ -226,7 +241,7 @@ if ($result) {
 		}
 		$tablocaltax1[$obj->rowid][$compta_localtax1] += $obj->total_localtax1;
 		$tablocaltax2[$obj->rowid][$compta_localtax2] += $obj->total_localtax2;
-		$tabcompany[$obj->rowid] = array('id'=>$obj->socid, 'name'=>$obj->name, 'client'=>$obj->client);
+		$tabcompany[$obj->rowid] = array('id' => $obj->socid, 'name' => $obj->name, 'client' => $obj->client);
 		$i++;
 	}
 } else {
@@ -242,7 +257,8 @@ if ($result) {
 print '<table class="liste noborder centpercent">';
 print '<tr class="liste_titre">';
 //print "<td>".$langs->trans("JournalNum")."</td>";
-print '<td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Piece').' ('.$langs->trans('InvoiceRef').')</td>';
+print '<td>'.$langs->trans('Date').'</td>';
+print '<td>'.$langs->trans('Piece').' ('.$langs->trans('InvoiceRef').')</td>';
 print '<td>'.$langs->trans('Account').'</td>';
 print '<td>'.$langs->trans('Type').'</td>';
 print '<td class="right">'.$langs->trans('AccountingDebit').'</td>';
@@ -291,8 +307,8 @@ foreach ($tabfac as $key => $val) {
 		foreach ($line['var'] as $k => $mt) {
 			if (isset($line['nomtcheck']) || $mt) {
 				print '<tr class="oddeven">';
-				print "<td>".dol_print_date($db->jdate($val["date"]))."</td>";
-				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
+				print '<td class="nowraponall">'.dol_print_date($db->jdate($val["date"]), 'day')."</td>";
+				print '<td class="tdoverflowmax150">'.$invoicestatic->getNomUrl(1)."</td>";
 				print "<td>".$k."</td><td>".$line['label']."</td>";
 
 				if (isset($line['inv'])) {

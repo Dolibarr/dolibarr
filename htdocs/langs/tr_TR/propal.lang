@@ -23,7 +23,10 @@ AllPropals=Tüm teklifler
 SearchAProposal=Teklif ara
 NoProposal=Teklif yok
 ProposalsStatistics=Teklif istatistikleri
+NumberOfProposals=Teklif sayısı
 NumberOfProposalsByMonth=Aylara göre sayısı
+AmountOfProposals=Teklif miktarı
+AmountOfProposalsHT=Teklif miktarı (vergi hariç)
 AmountOfProposalsByMonthHT=Aylık tutar (KDV hariç)
 NbOfProposals=Teklif sayısı
 ShowPropal=Teklif göster
@@ -77,7 +80,7 @@ AvailabilityTypeAV_1W=Listedeki tüm ürünler 1 haftada teslim edilecektir
 AvailabilityTypeAV_2W=Listedeki tüm ürünler 2 haftada teslim edilecektir
 AvailabilityTypeAV_3W=Listedeki tüm ürünler 3 haftada teslim edilecektir
 AvailabilityTypeAV_1M=Listedeki tüm ürünler 4-6 haftada teslim edilecektir
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Teklif izleme temsilcisi
 TypeContact_propal_external_BILLING=Müşteri faturası ilgilisi
 TypeContact_propal_external_CUSTOMER=Müşteri teklif izleme ilgilisi

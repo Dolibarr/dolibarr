@@ -3,8 +3,6 @@ MenuFinancial=Faturamento | Forma de pagamento
 TaxModuleSetupToModifyRules=Vá para <a href="%s">configuração do módulo Impostos</a> para modificar regras de cálculo
 TaxModuleSetupToModifyRulesLT=Vá até <a href="%s">Configuração >> Empresa</a> para modificar as regras de cálculo
 OptionMode=Opção de Administração Contabilidade
-OptionModeTrue=Opção Rendimentos-Despesas
-OptionModeTrueDesc=Neste método, o balanço calcula-se sobre a base das faturas pagas.\nA validade dos valores não está garantida pois a Administração da Contabilidade pasa rigurosamente pelas entradas/saidas das contas mediante as faturas.\nNota : Nesta Versão, Dolibarr utiliza a data da fatura ao estado ' Validada ' e não a data do estado ' paga '.
 OptionModeVirtualDesc=neste método, o balanço se calcula sobre a base das faturas validadas. pagas o não, aparecen ao resultado em quanto sejam discolocaçãos.
 FeatureIsSupportedInInOutModeOnly=função disponível somente ao modo contas CREDITOS-dividas (Véase a configuração do módulo contas)
 VATReportBuildWithOptionDefinedInModule=Os valores aqui apresentados são calculados usando as regras definidas pela configuração do módulo Fiscal.
@@ -50,7 +48,6 @@ LT2SupplierES=IRPF de compras
 LT2CustomerIN=Vendas de SGST
 LT2SupplierIN=Compras SGST
 VATCollected=IVA recuperado
-VATExpensesArea=Área para todos os pagamentos de IVA
 SocialContribution=Contribuição fiscal ou social
 SocialContributions=Encargos sociais e fiscais
 SocialContributionsDeductibles=Contribuições fiscais ou sociais dedutíveis
@@ -155,6 +152,7 @@ SameCountryCustomersWithVAT=Informar os clientes nacionais
 BasedOnTwoFirstLettersOfVATNumberBeingTheSameAsYourCompanyCountry=Com base nas duas primeiras letras do número de IVA sendo o mesmo que o código do país da sua própria empresa
 LinkedFichinter=Vincular a uma intervenção
 ImportDataset_tax_contrib=Contribuições fiscais/sociais
+FiscalYearClosedShort=Encerrado
 LabelToShow=Etiqueta curta
 PurchaseTurnoverCollected=Rotatividade de compras coletadas
 RulesPurchaseTurnoverDue=- Inclui as faturas de fornecedores, pagas ou não. <br>- É baseado na data da fatura.<br>

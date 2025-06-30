@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2023 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,9 +47,18 @@ if (!defined("NOLOGIN")) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $action = GETPOST('action', 'aZ09');
 
 $module = GETPOST('module', 'aZ09arobase');
+$uploaddirname = dol_sanitizeFileName(GETPOST('uploaddirname', 'alpha'));
 
 $flowFilename = GETPOST('flowFilename', 'alpha');
 $flowIdentifier = GETPOST('flowIdentifier', 'alpha');
@@ -56,7 +66,7 @@ $flowChunkNumber = GETPOST('flowChunkNumber', 'alpha');
 $flowChunkSize = GETPOST('flowChunkSize', 'alpha');
 $flowTotalSize = GETPOST('flowTotalSize', 'alpha');
 
-$result = restrictedArea($user, $module, 0, '', 0, 'fk_soc', 'rowid', 0, 1);	// Call with mode return
+$result = restrictedArea($user, $module, 0, '', '', 'fk_soc', 'rowid', 0, 1);	// Call with mode return
 
 if ($action != 'upload') {
 	httponly_accessforbidden("Param action must be 'upload'");
@@ -64,6 +74,9 @@ if ($action != 'upload') {
 
 if (!empty($conf->$module->dir_temp)) {
 	$upload_dir = $conf->$module->dir_temp;
+	if (!empty($uploaddirname)) {
+		$upload_dir .= "/".$uploaddirname;
+	}
 } else {
 	httponly_accessforbidden("Param module does not has a dir_temp directory. Module does not exists or is not activated.");
 }

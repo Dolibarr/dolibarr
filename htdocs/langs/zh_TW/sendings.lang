@@ -8,13 +8,12 @@ Shipments=出貨
 ShowSending=顯示出貨
 Receivings=發貨收據
 SendingsArea=出貨
-ListOfSendings=出貨清單列表
 SendingMethod=送貨方式
 LastSendings=最新的%s出貨
 StatisticsOfSendings=統計出貨數量
 NbOfSendings=出貨數量
 NumberOfShipmentsByMonth=每月出貨數量
-SendingCard=出貨卡
+SendingCard=出貨
 NewSending=建立出貨
 CreateShipment=建立出貨
 QtyShipped=已出貨數量
@@ -44,13 +43,14 @@ ConfirmCancelSending=您確定要取消此出貨嗎？
 DocumentModelMerou=Merou A5 範本
 WarningNoQtyLeftToSend=警告，沒有等待出貨的產品。
 StatsOnShipmentsOnlyValidated=統計數據僅適用於經過驗證的出貨。日期是使用出貨驗證日期（並不是總是知道計劃的出貨日期）
+DateShipping=Sending date
 DateDeliveryPlanned=預計交貨日期
 RefDeliveryReceipt=參考交貨收據
 StatusReceipt=送貨單狀態
 DateReceived=收貨日期
 ClassifyReception=Classify Received
 SendShippingByEMail=通過電子郵件寄送出貨
-SendShippingRef=提交出貨%s 
+SendShippingRef=提交出貨%s
 ActionsOnShipping=出貨事件
 LinkToTrackYourPackage=連結追踪您的包裹
 ShipmentCreationIsDoneFromOrder=目前，新裝運的建立是從銷售訂單記錄中完成的。
@@ -63,6 +63,10 @@ NoProductToShipFoundIntoStock=在倉庫<b>%s中</b>找不到要運輸的產品�
 WeightVolShort=重量/體積
 ValidateOrderFirstBeforeShipment=您必須先驗證訂單，然後才能進行出貨。
 NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
+CreateInvoiceForThisCustomerFromSendings=Create Bills
+IfValidateInvoiceIsNoSendingStayUnbilled=If invoice validation is 'No', the sending will remain to status 'Unbilled' until the invoice is validated.
+OptionToSetSendingBilledNotEnabled=Option from module Workflow, to set sending to 'Billed' automatically when invoice is validated, is not enabled, so you will have to set the status of sendings to 'Billed' manually after the invoice has been generated.
+ShipmentUpdated=Shipment successfully updated
 
 # Sending methods
 # ModelDocument
@@ -71,16 +75,20 @@ DocumentModelStorm=更完整的文件模型，可用於交貨單和域外兼容�
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=常數EXPEDITION_ADDON_NUMBER未定義
 SumOfProductVolumes=產品體積總和
 SumOfProductWeights=產品重量總和
-
 # warehouse details
 DetailWarehouseNumber= 倉庫詳細訊息
 DetailWarehouseFormat= 重量：%s（數量：%d）
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
 CreationOptions=Available options during shipment creation
-
 ShipmentDistribution=Shipment distribution
-
 ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
 ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
-
 ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=貨運追蹤
+TypeContact_shipping_external_BILLING=客戶發票聯絡人
+TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
+TypeContact_shipping_external_SHIPPING=Customer contact for shipping
+TypeContact_shipping_external_DELIVERY=客戶交貨聯絡人
+CloseShipment=Close shipment
+ConfirmCloseShipment=Confirm close shipment

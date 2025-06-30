@@ -1,12 +1,13 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=توصيل
 DeliveryRef=معرف التسليم
-DeliveryCard=استلام المخزون
+DeliveryCard=إيصال التسليم
 DeliveryOrder=إيصال التسليم
 DeliveryDate=تاريخ التسليم او الوصول
 CreateDeliveryOrder=إنشاء إيصال الاستلام
 DeliveryStateSaved=تم حفظ حالة التسليم
-SetDeliveryDate=تعيين تاريخ الشحن
+SetDeliveryDate=تعيين تاريخ التسليم المحتمل
+SetShippingDate=تعيين تاريخ الشحن
 ValidateDeliveryReceipt=التحقق من إيصال الاستلام
 ValidateDeliveryReceiptConfirm=هل تريد تأكيد إيصال الاستلام هذا؟
 DeleteDeliveryReceipt=حذف إيصال التسليم

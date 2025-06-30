@@ -8,6 +8,7 @@
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011-2018	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2020   	Floriazn Henry			<florian.henry@atm-consulting.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,14 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'exports', 'other'));
@@ -90,7 +99,7 @@ print '<td class="center" width="100"></td>'."\n";
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ImportCsvSeparator").' ('.$langs->trans("ByDefault").')</td>';
-print '<td width="60" align="center">'."<input size=\"3\" class=\"flat\" type=\"text\" name=\"value\" value=\"".(!getDolGlobalString('IMPORT_CSV_SEPARATOR_TO_USE') ? ',' : $conf->global->IMPORT_CSV_SEPARATOR_TO_USE)."\"></td>";
+print '<td width="60" align="center"><input size="3" class="flat" type="text" name="value" value="'.getDolGlobalString('IMPORT_CSV_SEPARATOR_TO_USE', ',').'"></td>';
 print '<td class="right"><input type="submit" class="button button-edit reposition" value="'.$langs->trans("Modify").'"></td>';
 print '</td></tr>';
 
