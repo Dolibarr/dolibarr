@@ -1855,12 +1855,6 @@ parameters:
 			path: ../../../htdocs/api/class/api_documents.class.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/api/class/api_documents.class.php
-
-		-
 			message: '#^Variable \$disablevirusscan in empty\(\) always exists and is always falsy\.$#'
 			identifier: empty.variable
 			count: 1
