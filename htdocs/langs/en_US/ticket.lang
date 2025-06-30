@@ -1,3 +1,4 @@
+
 # en_US lang file for module ticket
 # Copyright (C) 2013  Jean-François FERRY <hello@librethic.io>
 #
@@ -190,6 +191,10 @@ TicketProperties=Classification
 LatestNewTickets=Latest %s newest tickets (not read)
 TicketSeverity=Severity
 ShowTicket=See ticket
+AttachPhototoTicket=Attach Photo to Ticket
+OnlyPhotosfromthePhone=Only Photos from the Phone
+UsePhoneOnly=Use Phone Only
+Allowedonlyfromthephone=Allowed only from the phone
 RelatedTickets=Related tickets
 TicketAddIntervention=Create intervention
 CloseTicket=Close|Solve
