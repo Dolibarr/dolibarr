@@ -110,6 +110,7 @@ print '<th>Launch confirmed</th>';
 print '<th>Actual value</th>';
 print '</tr>';
 
+$warning_using_utf8mb4 = '';
 if ($dolibarr_main_db_character_set != 'utf8mb4') {
 	$warning_using_utf8mb4 = '<img src="../theme/eldy/img/warning.png" class="pictofortooltip valignmiddle" title="If you switch to utf8mb4, you must also check the value for $dolibarr_main_db_character_set and $dolibarr_main_db_collation into conf/conf.php file.">';
 }
