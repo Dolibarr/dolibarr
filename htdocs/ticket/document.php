@@ -226,37 +226,37 @@ if ($object->id) {
 		
 	// Fix for trackid if sent as track_id
 if (empty($trackid) && GETPOST('track_id', 'int') > 0) {
-    $trackid = GETPOST('track_id', 'int');
-    $_REQUEST['trackid'] = $trackid;
+	$trackid = GETPOST('track_id', 'int');
+	$_REQUEST['trackid'] = $trackid;
 }
 
 if ($action === 'addfile') {
-    if (!empty($_FILES['userfile']) && $_FILES['userfile']['error'] === UPLOAD_ERR_OK) {
-        $upload_dir = $conf->ticket->dir_output.'/'.dol_sanitizeFileName($object->ref);
-        dol_mkdir($upload_dir);
+	if (!empty($_FILES['userfile']) && $_FILES['userfile']['error'] === UPLOAD_ERR_OK) {
+		$upload_dir = $conf->ticket->dir_output.'/'.dol_sanitizeFileName($object->ref);
+		dol_mkdir($upload_dir);
 
-        $timestamp = dol_print_date(dol_now(), '%Y%m%d-%H%M%S');
-        $filename = dol_sanitizeFileName($object->ref).'_'.$timestamp.'.jpg';
-        $destfile = $upload_dir.'/'.$filename;
-        $tmpfile = $_FILES['userfile']['tmp_name'];
+		$timestamp = dol_print_date(dol_now(), '%Y%m%d-%H%M%S');
+		$filename = dol_sanitizeFileName($object->ref).'_'.$timestamp.'.jpg';
+		$destfile = $upload_dir.'/'.$filename;
+		$tmpfile = $_FILES['userfile']['tmp_name'];
 
-        if (is_uploaded_file($tmpfile)) {
-            if (dol_move_uploaded_file($tmpfile, $destfile, 1)) {
-              //  $result = addDocumentToObject($object, $destfile, $filename, '', $user);
-                if ($result > 0) {
-                    setEventMessages("The photo was uploaded successfully", null, 'mesgs');
-                } else {
-                    setEventMessages("The file was saved, but it was not linked to the ticket", null, 'warnings');
-                }
-            } else {
-                setEventMessages("An error occurred while moving the file", null, 'errors');
-            }
-        } else {
-            setEventMessages("The file was not accepted by the server", null, 'errors');
-        }
-    } else {
-        setEventMessages("No file has been submitted", null, 'errors');
-    }
+		if (is_uploaded_file($tmpfile)) {
+			if (dol_move_uploaded_file($tmpfile, $destfile, 1)) {
+			  //  $result = addDocumentToObject($object, $destfile, $filename, '', $user);
+				if ($result > 0) {
+					setEventMessages("The photo was uploaded successfully", null, 'mesgs');
+				} else {
+					setEventMessages("The file was saved, but it was not linked to the ticket", null, 'warnings');
+				}
+			} else {
+				setEventMessages("An error occurred while moving the file", null, 'errors');
+			}
+		} else {
+			setEventMessages("The file was not accepted by the server", null, 'errors');
+		}
+	} else {
+		setEventMessages("No file has been submitted", null, 'errors');
+	}
 }
 
 
@@ -267,7 +267,7 @@ print load_fiche_titre($langs->trans("AttachPhototoTicket"), );
 print '<table class="border" width="100%">';
 print '<tr><td>'.$langs->trans("Reference").':</td><td>'.$object->ref.'</td></tr>';
 if (!empty($object->thirdparty->name)) {
-    print '<tr><td>'.$langs->trans("ThirtParty").':</td><td>'.$object->thirdparty->name.'</td></tr>';
+	print '<tr><td>'.$langs->trans("ThirtParty").':</td><td>'.$object->thirdparty->name.'</td></tr>';
 }
 print '</table><br>';
 
@@ -281,8 +281,8 @@ print '<tr>';
 print '  <td class="titlefield">'.$langs->trans("OnlyPhotosfromthePhone").'</td>';
 print '  <td>';
 print '    <input type="file" name="userfile" accept="image/*" capture="environment" required'
-    .' onClick="if(!navigator.userAgent.match(/Android|iPhone|iPad/i)){alert(\''
-    .$langs->trans("Allowedonlyfromthephone").'\');return false;}">';
+	.' onClick="if(!navigator.userAgent.match(/Android|iPhone|iPad/i)){alert(\''
+	.$langs->trans("Allowedonlyfromthephone").'\');return false;}">';
 print '    <br><small>'.$langs->trans("UsePhoneOnly").'</small>';
 print '  </td>';
 print '</tr>';
