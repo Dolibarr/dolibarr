@@ -310,7 +310,7 @@ if (empty($reshook)) {
 				$payment->amounts[$invoice->id] = $amountofpayment;
 				// If user has not used change control, add total invoice payment
 				// Or if user has used change control and the amount of payment is higher than remain to pay, add the remain to pay
-                if (abs($amountofpayment) <= 0 || abs($amountofpayment) > abs($remaintopay)) {
+				if (abs($amountofpayment) <= 0 || abs($amountofpayment) > abs($remaintopay)) {
 					$payment->amounts[$invoice->id] = $remaintopay;
 				}
 				// We do not set $payments->multicurrency_amounts because we want payment to be in main currency.
@@ -1351,369 +1351,369 @@ if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->la
 }
 
 ?>
-<!-- invoice.php -->
-<script type="text/javascript">
-var selectedline=0;
-var selectedtext="";
-<?php if ($action == "valid") {
-	echo "var place=0;";
-}?> // Set to default place after close sale
-var placeid=<?php echo($placeid > 0 ? $placeid : 0); ?>;
-$(document).ready(function() {
-	var idoflineadded = <?php echo(empty($idoflineadded) ? 0 : $idoflineadded); ?>;
+	<!-- invoice.php -->
+	<script type="text/javascript">
+		var selectedline=0;
+		var selectedtext="";
+		<?php if ($action == "valid") {
+			echo "var place=0;";
+		}?> // Set to default place after close sale
+		var placeid=<?php echo($placeid > 0 ? $placeid : 0); ?>;
+		$(document).ready(function() {
+			var idoflineadded = <?php echo(empty($idoflineadded) ? 0 : $idoflineadded); ?>;
 
-	$('.posinvoiceline').click(function(){
-		console.log("Click done on "+this.id);
-		$('.posinvoiceline').removeClass("selected");
-		$(this).addClass("selected");
-		if (!this.id) {
-			return;
-		}
-		if (selectedline == this.id) {
-			return; // If is already selected
-		} else {
-			selectedline = this.id;
-		}
-		selectedtext=$('#'+selectedline).find("td:first").html();
-		<?php
-		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-			print '$("#phonediv1").load("'.DOL_URL_ROOT.'/takepos/public/auto_order.php?action=editline&token='.newToken().'&placeid="+placeid+"&selectedline="+selectedline, function() {
+			$('.posinvoiceline').click(function(){
+				console.log("Click done on "+this.id);
+				$('.posinvoiceline').removeClass("selected");
+				$(this).addClass("selected");
+				if (!this.id) {
+					return;
+				}
+				if (selectedline == this.id) {
+					return; // If is already selected
+				} else {
+					selectedline = this.id;
+				}
+				selectedtext=$('#'+selectedline).find("td:first").html();
+				<?php
+				if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+					print '$("#phonediv1").load("'.DOL_URL_ROOT.'/takepos/public/auto_order.php?action=editline&token='.newToken().'&placeid="+placeid+"&selectedline="+selectedline, function() {
 			});';
-		}
-		?>
-	});
+				}
+				?>
+			});
 
-	/* Autoselect the line */
-	if (idoflineadded > 0)
-	{
-		console.log("Auto select "+idoflineadded);
-		$('.posinvoiceline#'+idoflineadded).click();
-	}
-<?php
-
-if ($action == "order" && !empty($order_receipt_printer1)) {
-	if (filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
-		?>
-		$.ajax({
-			type: "POST",
-			url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/printer/index.php',
-			data: 'invoice='+orderprinter1esc
-		});
-		<?php
-	} else {
-		?>
-		$.ajax({
-			type: "POST",
-			url: 'http://<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>:8111/print',
-			data: '<?php
-			print $headerorder.$order_receipt_printer1.$footerorder; ?>'
-		});
-		<?php
-	}
-}
-
-if ($action == "order" && !empty($order_receipt_printer2)) {
-	if (filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
-		?>
-		$.ajax({
-			type: "POST",
-			url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/printer/index.php?printer=2',
-			data: 'invoice='+orderprinter2esc
-		});
-		<?php
-	} else {
-		?>
-		$.ajax({
-			type: "POST",
-			url: 'http://<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>:8111/print2',
-			data: '<?php
-			print $headerorder.$order_receipt_printer2.$footerorder; ?>'
-		});
-		<?php
-	}
-}
-
-if ($action == "order" && !empty($order_receipt_printer3)) {
-	if (filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
-		?>
-		$.ajax({
-			type: "POST",
-			url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/printer/index.php?printer=3',
-			data: 'invoice='+orderprinter3esc
-		});
-		<?php
-	}
-}
-
-// Set focus to search field
-if ($action == "search" || $action == "valid") {
-	?>
-	parent.ClearSearch(true);
-	<?php
-}
-
-
-if ($action == "temp" && !empty($ticket_printer1)) {
-	?>
-	$.ajax({
-		type: "POST",
-		url: 'http://<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>:8111/print',
-		data: '<?php
-		print $header_soc.$header_ticket.$body_ticket.$ticket_printer1.$ticket_total.$footer_ticket; ?>'
-	});
-	<?php
-}
-
-if ($action == "search") {
-	?>
-	$('#search').focus();
-	<?php
-}
-
-?>
-
-});
-
-function SendTicket(id)
-{
-	console.log("Open box to select the Print/Send form");
-	$.colorbox({href:"send.php?facid="+id, width:"70%", height:"30%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("SendTicket")); ?>'});
-	return true;
-}
-
-function PrintBox(id, action) {
-	console.log("Open box before printing");
-	$.colorbox({href:"printbox.php?facid="+id+"&action="+action+"&token=<?php echo newToken(); ?>", width:"80%", height:"200px", transition:"none", iframe:"true", title:"<?php echo $langs->trans("PrintWithoutDetails"); ?>"});
-	return true;
-}
-
-function Print(id, gift){
-	console.log("Call Print() to generate the receipt.");
-	$.colorbox({href:"receipt.php?facid="+id+"&gift="+gift, width:"40%", height:"90%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("PrintTicket")); ?>'});
-	return true;
-}
-
-function TakeposPrinting(id){
-	var receipt;
-	console.log("TakeposPrinting" + id);
-	$.get("receipt.php?facid="+id, function(data, status) {
-		receipt=data.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '');
-		$.ajax({
-			type: "POST",
-			url: 'http://<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>:8111/print',
-			data: receipt
-		});
-	});
-	return true;
-}
-
-function TakeposConnector(id){
-	console.log("TakeposConnector" + id);
-	$.get("<?php echo DOL_URL_ROOT; ?>/takepos/ajax/ajax.php?action=printinvoiceticket&token=<?php echo newToken(); ?>&term=<?php echo urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : ''); ?>&id="+id+"&token=<?php echo currentToken(); ?>", function(data, status) {
-		$.ajax({
-			type: "POST",
-			url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/printer/index.php',
-			data: 'invoice='+data
-		});
-	});
-	return true;
-}
-
-// Call the ajax to execute the print.
-// With some external module another method may be called.
-function DolibarrTakeposPrinting(id) {
-	console.log("DolibarrTakeposPrinting Printing invoice ticket " + id);
-	$.ajax({
-		type: "GET",
-		data: { token: '<?php echo currentToken(); ?>' },
-		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=printinvoiceticket&token='.newToken().'&term='.urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '').'&id='; ?>" + id,
-
-	});
-	return true;
-}
-
-// Call url to generate a credit note (with same lines) from existing invoice
-function CreditNote() {
-	$("#poslines").load("<?php print DOL_URL_ROOT; ?>/takepos/invoice.php?action=creditnote&token=<?php echo newToken() ?>&invoiceid="+placeid, function() {	});
-	return true;
-}
-
-// Call url to add notes
-function SetNote() {
-	$("#poslines").load("<?php print DOL_URL_ROOT; ?>/takepos/invoice.php?action=addnote&token=<?php echo newToken() ?>&invoiceid="+placeid+"&idline="+selectedline, { "addnote": $("#textinput").val() });
-	return true;
-}
-
-
-$( document ).ready(function() {
-	console.log("Set customer info and sales in header placeid=<?php echo $placeid; ?> status=<?php echo $invoice->statut; ?>");
-
-	<?php
-	$s = $langs->trans("Customer");
-	if ($invoice->id > 0 && ($invoice->socid != getDolGlobalString($constforcompanyid))) {
-		$s = $soc->name;
-		if (getDolGlobalInt('TAKEPOS_CHOOSE_CONTACT')) {
-			$contactids = $invoice->getIdContact('external', 'BILLING');
-			$contactid = $contactids[0];
-			if ($contactid > 0) {
-				$contact = new Contact($db);
-				$contact->fetch($contactid);
-				$s .= " - " . $contact->getFullName($langs);
+			/* Autoselect the line */
+			if (idoflineadded > 0)
+			{
+				console.log("Auto select "+idoflineadded);
+				$('.posinvoiceline#'+idoflineadded).click();
 			}
-		}
-	} elseif (getDolGlobalInt("TAKEPOS_NO_GENERIC_THIRDPARTY")) {
-		print '$("#idcustomer").val("");';
-	}
-	?>
+			<?php
 
-	$("#customerandsales").html('');
-	$("#shoppingcart").html('');
-
-	<?php if (getDolGlobalInt('TAKEPOS_CHOOSE_CONTACT') == 0) { ?>
-		$("#customerandsales").append('<a class="valignmiddle tdoverflowmax100 minwidth100" id="customer" onclick="Customer();" title="<?php print dol_escape_js(dol_escape_htmltag((string) $s)); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js((string) $s); ?></a>');
-	<?php } else { ?>
-		$("#customerandsales").append('<a class="valignmiddle tdoverflowmax300 minwidth100" id="contact" onclick="Contact();" title="<?php print dol_escape_js(dol_escape_htmltag((string) $s)); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js((string) $s); ?></a>');
-	<?php } ?>
-
-	<?php
-	$sql = "SELECT rowid, datec, ref FROM ".MAIN_DB_PREFIX."facture";
-	$sql .= " WHERE entity IN (".getEntity('invoice').")";
-	if (!getDolGlobalString('TAKEPOS_CAN_EDIT_IF_ALREADY_VALIDATED')) {
-		// By default, only invoices with a ref not already defined can in list of open invoice we can edit.
-		$sql .= " AND ref LIKE '(PROV-POS".$db->escape(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '')."-0%'";
-	} else {
-		// If TAKEPOS_CAN_EDIT_IF_ALREADY_VALIDATED set, we show also draft invoice that already has a reference defined
-		$sql .= " AND pos_source = '".$db->escape((string) $_SESSION["takeposterminal"])."'";
-		$sql .= " AND module_source = 'takepos'";
-	}
-
-	$sql .= $db->order('datec', 'ASC');
-	$resql = $db->query($sql);
-	if ($resql) {
-		$max_sale = 0;
-		while ($obj = $db->fetch_object($resql)) {
-			echo '$("#shoppingcart").append(\'';
-			echo '<a class="valignmiddle" title="'.dol_escape_js($langs->trans("SaleStartedAt", dol_print_date($db->jdate($obj->datec), '%H:%M', 'tzuser')).' - '.$obj->ref).'" onclick="place=\\\'';
-			$num_sale = str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $obj->ref));
-			echo $num_sale;
-			if (str_replace("-", "", $num_sale) > $max_sale) {
-				$max_sale = str_replace("-", "", $num_sale);
-			}
-			echo '\\\'; invoiceid=\\\'';
-			echo $obj->rowid;
-			echo '\\\'; Refresh();">';
-			if ($placeid == $obj->rowid) {
-				echo '<span class="basketselected">';
+			if ($action == "order" && !empty($order_receipt_printer1)) {
+			if (filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
+			?>
+			$.ajax({
+				type: "POST",
+				url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/printer/index.php',
+				data: 'invoice='+orderprinter1esc
+			});
+			<?php
 			} else {
-				echo '<span class="basketnotselected">';
+			?>
+			$.ajax({
+				type: "POST",
+				url: 'http://<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>:8111/print',
+				data: '<?php
+					print $headerorder.$order_receipt_printer1.$footerorder; ?>'
+			});
+			<?php
 			}
-			echo '<span class="fa fa-shopping-cart paddingright"></span>'.dol_print_date($db->jdate($obj->datec), '%H:%M', 'tzuser');
-			echo '</span>';
-			echo '</a>\');';
+			}
+
+			if ($action == "order" && !empty($order_receipt_printer2)) {
+			if (filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
+			?>
+			$.ajax({
+				type: "POST",
+				url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/printer/index.php?printer=2',
+				data: 'invoice='+orderprinter2esc
+			});
+			<?php
+			} else {
+			?>
+			$.ajax({
+				type: "POST",
+				url: 'http://<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>:8111/print2',
+				data: '<?php
+					print $headerorder.$order_receipt_printer2.$footerorder; ?>'
+			});
+			<?php
+			}
+			}
+
+			if ($action == "order" && !empty($order_receipt_printer3)) {
+			if (filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER'), FILTER_VALIDATE_URL) == true) {
+			?>
+			$.ajax({
+				type: "POST",
+				url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/printer/index.php?printer=3',
+				data: 'invoice='+orderprinter3esc
+			});
+			<?php
+			}
+			}
+
+			// Set focus to search field
+			if ($action == "search" || $action == "valid") {
+			?>
+			parent.ClearSearch(true);
+			<?php
+			}
+
+
+			if ($action == "temp" && !empty($ticket_printer1)) {
+			?>
+			$.ajax({
+				type: "POST",
+				url: 'http://<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>:8111/print',
+				data: '<?php
+					print $header_soc.$header_ticket.$body_ticket.$ticket_printer1.$ticket_total.$footer_ticket; ?>'
+			});
+			<?php
+			}
+
+			if ($action == "search") {
+			?>
+			$('#search').focus();
+			<?php
+			}
+
+			?>
+
+		});
+
+		function SendTicket(id)
+		{
+			console.log("Open box to select the Print/Send form");
+			$.colorbox({href:"send.php?facid="+id, width:"70%", height:"30%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("SendTicket")); ?>'});
+			return true;
 		}
-		echo '$("#shoppingcart").append(\'<a onclick="place=\\\'0-';
-		echo $max_sale + 1;
-		echo '\\\'; invoiceid=0; Refresh();"><div><span class="fa fa-plus" title="'.dol_escape_htmltag($langs->trans("StartAParallelSale")).'"><span class="fa fa-shopping-cart"></span></div></a>\');';
-	} else {
-		dol_print_error($db);
-	}
 
-	$s = '';
+		function PrintBox(id, action) {
+			console.log("Open box before printing");
+			$.colorbox({href:"printbox.php?facid="+id+"&action="+action+"&token=<?php echo newToken(); ?>", width:"80%", height:"200px", transition:"none", iframe:"true", title:"<?php echo $langs->trans("PrintWithoutDetails"); ?>"});
+			return true;
+		}
 
-	$idwarehouse = 0;
-	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
-	if (isModEnabled('stock')) {
-		if (getDolGlobalString($constantforkey) != "1") {
-			$constantforkey = 'CASHDESK_ID_WAREHOUSE'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
-			$idwarehouse = getDolGlobalInt($constantforkey);
-			if ($idwarehouse > 0) {
+		function Print(id, gift){
+			console.log("Call Print() to generate the receipt.");
+			$.colorbox({href:"receipt.php?facid="+id+"&gift="+gift, width:"40%", height:"90%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("PrintTicket")); ?>'});
+			return true;
+		}
+
+		function TakeposPrinting(id){
+			var receipt;
+			console.log("TakeposPrinting" + id);
+			$.get("receipt.php?facid="+id, function(data, status) {
+				receipt=data.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '');
+				$.ajax({
+					type: "POST",
+					url: 'http://<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>:8111/print',
+					data: receipt
+				});
+			});
+			return true;
+		}
+
+		function TakeposConnector(id){
+			console.log("TakeposConnector" + id);
+			$.get("<?php echo DOL_URL_ROOT; ?>/takepos/ajax/ajax.php?action=printinvoiceticket&token=<?php echo newToken(); ?>&term=<?php echo urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : ''); ?>&id="+id+"&token=<?php echo currentToken(); ?>", function(data, status) {
+				$.ajax({
+					type: "POST",
+					url: '<?php print getDolGlobalString('TAKEPOS_PRINT_SERVER'); ?>/printer/index.php',
+					data: 'invoice='+data
+				});
+			});
+			return true;
+		}
+
+		// Call the ajax to execute the print.
+		// With some external module another method may be called.
+		function DolibarrTakeposPrinting(id) {
+			console.log("DolibarrTakeposPrinting Printing invoice ticket " + id);
+			$.ajax({
+				type: "GET",
+				data: { token: '<?php echo currentToken(); ?>' },
+				url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=printinvoiceticket&token='.newToken().'&term='.urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '').'&id='; ?>" + id,
+
+			});
+			return true;
+		}
+
+		// Call url to generate a credit note (with same lines) from existing invoice
+		function CreditNote() {
+			$("#poslines").load("<?php print DOL_URL_ROOT; ?>/takepos/invoice.php?action=creditnote&token=<?php echo newToken() ?>&invoiceid="+placeid, function() {	});
+			return true;
+		}
+
+		// Call url to add notes
+		function SetNote() {
+			$("#poslines").load("<?php print DOL_URL_ROOT; ?>/takepos/invoice.php?action=addnote&token=<?php echo newToken() ?>&invoiceid="+placeid+"&idline="+selectedline, { "addnote": $("#textinput").val() });
+			return true;
+		}
+
+
+		$( document ).ready(function() {
+			console.log("Set customer info and sales in header placeid=<?php echo $placeid; ?> status=<?php echo $invoice->statut; ?>");
+
+			<?php
+			$s = $langs->trans("Customer");
+			if ($invoice->id > 0 && ($invoice->socid != getDolGlobalString($constforcompanyid))) {
+				$s = $soc->name;
+				if (getDolGlobalInt('TAKEPOS_CHOOSE_CONTACT')) {
+					$contactids = $invoice->getIdContact('external', 'BILLING');
+					$contactid = $contactids[0];
+					if ($contactid > 0) {
+						$contact = new Contact($db);
+						$contact->fetch($contactid);
+						$s .= " - " . $contact->getFullName($langs);
+					}
+				}
+			} elseif (getDolGlobalInt("TAKEPOS_NO_GENERIC_THIRDPARTY")) {
+				print '$("#idcustomer").val("");';
+			}
+			?>
+
+			$("#customerandsales").html('');
+			$("#shoppingcart").html('');
+
+			<?php if (getDolGlobalInt('TAKEPOS_CHOOSE_CONTACT') == 0) { ?>
+			$("#customerandsales").append('<a class="valignmiddle tdoverflowmax100 minwidth100" id="customer" onclick="Customer();" title="<?php print dol_escape_js(dol_escape_htmltag((string) $s)); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js((string) $s); ?></a>');
+			<?php } else { ?>
+			$("#customerandsales").append('<a class="valignmiddle tdoverflowmax300 minwidth100" id="contact" onclick="Contact();" title="<?php print dol_escape_js(dol_escape_htmltag((string) $s)); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js((string) $s); ?></a>');
+			<?php } ?>
+
+			<?php
+			$sql = "SELECT rowid, datec, ref FROM ".MAIN_DB_PREFIX."facture";
+			$sql .= " WHERE entity IN (".getEntity('invoice').")";
+			if (!getDolGlobalString('TAKEPOS_CAN_EDIT_IF_ALREADY_VALIDATED')) {
+				// By default, only invoices with a ref not already defined can in list of open invoice we can edit.
+				$sql .= " AND ref LIKE '(PROV-POS".$db->escape(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '')."-0%'";
+			} else {
+				// If TAKEPOS_CAN_EDIT_IF_ALREADY_VALIDATED set, we show also draft invoice that already has a reference defined
+				$sql .= " AND pos_source = '".$db->escape((string) $_SESSION["takeposterminal"])."'";
+				$sql .= " AND module_source = 'takepos'";
+			}
+
+			$sql .= $db->order('datec', 'ASC');
+			$resql = $db->query($sql);
+			if ($resql) {
+				$max_sale = 0;
+				while ($obj = $db->fetch_object($resql)) {
+					echo '$("#shoppingcart").append(\'';
+					echo '<a class="valignmiddle" title="'.dol_escape_js($langs->trans("SaleStartedAt", dol_print_date($db->jdate($obj->datec), '%H:%M', 'tzuser')).' - '.$obj->ref).'" onclick="place=\\\'';
+					$num_sale = str_replace(")", "", str_replace("(PROV-POS".$_SESSION["takeposterminal"]."-", "", $obj->ref));
+					echo $num_sale;
+					if (str_replace("-", "", $num_sale) > $max_sale) {
+						$max_sale = str_replace("-", "", $num_sale);
+					}
+					echo '\\\'; invoiceid=\\\'';
+					echo $obj->rowid;
+					echo '\\\'; Refresh();">';
+					if ($placeid == $obj->rowid) {
+						echo '<span class="basketselected">';
+					} else {
+						echo '<span class="basketnotselected">';
+					}
+					echo '<span class="fa fa-shopping-cart paddingright"></span>'.dol_print_date($db->jdate($obj->datec), '%H:%M', 'tzuser');
+					echo '</span>';
+					echo '</a>\');';
+				}
+				echo '$("#shoppingcart").append(\'<a onclick="place=\\\'0-';
+				echo $max_sale + 1;
+				echo '\\\'; invoiceid=0; Refresh();"><div><span class="fa fa-plus" title="'.dol_escape_htmltag($langs->trans("StartAParallelSale")).'"><span class="fa fa-shopping-cart"></span></div></a>\');';
+			} else {
+				dol_print_error($db);
+			}
+
+			$s = '';
+
+			$idwarehouse = 0;
+			$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
+			if (isModEnabled('stock')) {
+				if (getDolGlobalString($constantforkey) != "1") {
+					$constantforkey = 'CASHDESK_ID_WAREHOUSE'. (isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
+					$idwarehouse = getDolGlobalInt($constantforkey);
+					if ($idwarehouse > 0) {
+						$s = '<span class="small">';
+						$warehouse = new Entrepot($db);
+						$warehouse->fetch($idwarehouse);
+						$s .= '<span class="hideonsmartphone">'.$langs->trans("Warehouse").'<br></span>'.$warehouse->ref;
+						if ($warehouse->statut == Entrepot::STATUS_CLOSED) {
+							$s .= ' ('.$langs->trans("Closed").')';
+						}
+						$s .= '</span>';
+						print "$('#infowarehouse').html('".dol_escape_js($s)."');";
+						print '$("#infowarehouse").css("display", "inline-block");';
+					} else {
+						$s = '<span class="small hideonsmartphone">';
+						$s .= $langs->trans("StockChangeDisabled").'<br>'.$langs->trans("NoWarehouseDefinedForTerminal");
+						$s .= '</span>';
+						print "$('#infowarehouse').html('".dol_escape_js($s)."');";
+						if (!empty($conf->dol_optimize_smallscreen)) {
+							print '$("#infowarehouse").css("display", "none");';
+						}
+					}
+				} else {
+					$s = '<span class="small hideonsmartphone">'.$langs->trans("StockChangeDisabled").'</span>';
+					print "$('#infowarehouse').html('".dol_escape_js($s)."');";
+					if (!empty($conf->dol_optimize_smallscreen)) {
+						print '$("#infowarehouse").css("display", "none");';
+					}
+				}
+			}
+
+
+			// Module Adherent
+			$s = '';
+			if (isModEnabled('member') && $invoice->socid > 0 && $invoice->socid != getDolGlobalInt($constforcompanyid)) {
 				$s = '<span class="small">';
-				$warehouse = new Entrepot($db);
-				$warehouse->fetch($idwarehouse);
-				$s .= '<span class="hideonsmartphone">'.$langs->trans("Warehouse").'<br></span>'.$warehouse->ref;
-				if ($warehouse->statut == Entrepot::STATUS_CLOSED) {
-					$s .= ' ('.$langs->trans("Closed").')';
+				require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+				$langs->load("members");
+				$s .= $langs->trans("Member").': ';
+				$adh = new Adherent($db);
+				$result = $adh->fetch(0, '', $invoice->socid);
+				if ($result > 0) {
+					$adh->ref = $adh->getFullName($langs);
+					if (empty($adh->statut) || $adh->statut == Adherent::STATUS_EXCLUDED) {
+						$s .= "<s>";
+					}
+					$s .= $adh->getFullName($langs);
+					$s .= ' - '.$adh->type;
+					if ($adh->datefin) {
+						$s .= '<br>'.$langs->trans("SubscriptionEndDate").': '.dol_print_date($adh->datefin, 'day');
+						if ($adh->hasDelay()) {
+							$s .= " ".img_warning($langs->trans("Late"));
+						}
+					} else {
+						$s .= '<br>'.$langs->trans("SubscriptionNotReceived");
+						if ($adh->statut > 0) {
+							$s .= " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
+						}
+					}
+					if (empty($adh->statut) || $adh->statut == Adherent::STATUS_EXCLUDED) {
+						$s .= "</s>";
+					}
+				} else {
+					$s .= '<br>'.$langs->trans("ThirdpartyNotLinkedToMember");
 				}
 				$s .= '</span>';
-				print "$('#infowarehouse').html('".dol_escape_js($s)."');";
-				print '$("#infowarehouse").css("display", "inline-block");';
-			} else {
-				$s = '<span class="small hideonsmartphone">';
-				$s .= $langs->trans("StockChangeDisabled").'<br>'.$langs->trans("NoWarehouseDefinedForTerminal");
-				$s .= '</span>';
-				print "$('#infowarehouse').html('".dol_escape_js($s)."');";
-				if (!empty($conf->dol_optimize_smallscreen)) {
-					print '$("#infowarehouse").css("display", "none");';
-				}
 			}
-		} else {
-			$s = '<span class="small hideonsmartphone">'.$langs->trans("StockChangeDisabled").'</span>';
-			print "$('#infowarehouse').html('".dol_escape_js($s)."');";
-			if (!empty($conf->dol_optimize_smallscreen)) {
-				print '$("#infowarehouse").css("display", "none");';
-			}
-		}
-	}
+			?>
+			$("#moreinfo").html('<?php print dol_escape_js($s); ?>');
+
+		});
 
 
-	// Module Adherent
-	$s = '';
-	if (isModEnabled('member') && $invoice->socid > 0 && $invoice->socid != getDolGlobalInt($constforcompanyid)) {
-		$s = '<span class="small">';
-		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-		$langs->load("members");
-		$s .= $langs->trans("Member").': ';
-		$adh = new Adherent($db);
-		$result = $adh->fetch(0, '', $invoice->socid);
-		if ($result > 0) {
-			$adh->ref = $adh->getFullName($langs);
-			if (empty($adh->statut) || $adh->statut == Adherent::STATUS_EXCLUDED) {
-				$s .= "<s>";
-			}
-			$s .= $adh->getFullName($langs);
-			$s .= ' - '.$adh->type;
-			if ($adh->datefin) {
-				$s .= '<br>'.$langs->trans("SubscriptionEndDate").': '.dol_print_date($adh->datefin, 'day');
-				if ($adh->hasDelay()) {
-					$s .= " ".img_warning($langs->trans("Late"));
-				}
-			} else {
-				$s .= '<br>'.$langs->trans("SubscriptionNotReceived");
-				if ($adh->statut > 0) {
-					$s .= " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
-				}
-			}
-			if (empty($adh->statut) || $adh->statut == Adherent::STATUS_EXCLUDED) {
-				$s .= "</s>";
-			}
-		} else {
-			$s .= '<br>'.$langs->trans("ThirdpartyNotLinkedToMember");
-		}
-		$s .= '</span>';
-	}
-	?>
-	$("#moreinfo").html('<?php print dol_escape_js($s); ?>');
-
-});
-
-
-<?php
-if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
-	echo "function CustomerDisplay(){";
-	echo "var line1='".$CUSTOMER_DISPLAY_line1."'.substring(0,20);";
-	echo "line1=line1.padEnd(20);";
-	echo "var line2='".$CUSTOMER_DISPLAY_line2."'.substring(0,20);";
-	echo "line2=line2.padEnd(20);";
-	echo "$.ajax({
+		<?php
+		if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
+			echo "function CustomerDisplay(){";
+			echo "var line1='".$CUSTOMER_DISPLAY_line1."'.substring(0,20);";
+			echo "line1=line1.padEnd(20);";
+			echo "var line2='".$CUSTOMER_DISPLAY_line2."'.substring(0,20);";
+			echo "line2=line2.padEnd(20);";
+			echo "$.ajax({
 		type: 'GET',
 		data: { text: line1+line2 },
 		url: '".getDolGlobalString('TAKEPOS_PRINT_SERVER')."/display/index.php',
 	});";
-	echo "}";
-}
-?>
+			echo "}";
+		}
+		?>
 
-</script>
+	</script>
 
 <?php
 // Add again js for footer because this content is injected into index.php page so all init
