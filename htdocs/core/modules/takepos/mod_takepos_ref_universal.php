@@ -145,8 +145,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 		// We define search criteria counter
 		if (is_object($invoice) && $invoice->type == 2) {
 			$mask = getDolGlobalString('TAKEPOS_REF_UNIVERSAL_MASK_CREDIT_NOTE');
-		}
-		else {
+		} else {
 			$mask = getDolGlobalString('TAKEPOS_REF_UNIVERSAL_MASK');
 		}
 

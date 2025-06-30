@@ -313,8 +313,7 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 			$('.change1').addClass('colorgreen');
 			$('.change2').removeClass('colorwhite');
 			$('.change2').addClass('colorred');
-		}
-		else
+		} else
 		{
 			$('.change2').html(pricejs(0, 'MT'));
 			$('.change2').val(0);
@@ -325,8 +324,7 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 				$('.change2').removeClass('colorred');
 				$('.change2').addClass('colorwhite');
 			}
-			else
-			{
+			else {
 				$('.change1').removeClass('colorgreen');
 				$('.change1').addClass('colorred');
 				$('.change2').removeClass('colorred');
@@ -374,8 +372,7 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 					console.log("Close popup");
 					parent.$('#invoiceid').val("");
 					parent.$.colorbox.close();
-				}
-				else {
+				} else {
 					console.log("Amount is not complete, so we do NOT close popup and reload it.");
 					location.reload();
 				}
@@ -383,8 +380,7 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 				console.log("Close popup");
 				parent.$('#invoiceid').val("");
 				parent.$.colorbox.close();
-			}
-			else {
+			} else {
 				console.log("Amount is not complete, so we do NOT close popup and reload it.");
 				location.reload();
 			}
@@ -487,8 +483,7 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 			if (amountpayed > <?php echo $remaintopay; ?> || amountpayed == <?php echo $remaintopay; ?> || amountpayed==0 ) {
 				console.log("Close popup");
 				parent.$.colorbox.close();
-			}
-			else {
+			} else {
 				console.log("Amount is not comple, so we do NOT close popup and reload it.");
 				location.reload();
 			}
