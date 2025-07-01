@@ -226,7 +226,7 @@ if ($object->id) {
 	// Fix for trackid if sent as track_id
 	if (empty($trackid) && GETPOST('track_id', 'int') > 0) {
 		$trackid = GETPOST('track_id', 'int');
-		5$_REQUEST['trackid'] = $trackid;
+		$_REQUEST['trackid'] = $trackid;
 	}
 
 	if ($action === 'addfile') {
@@ -235,62 +235,62 @@ if ($object->id) {
 			dol_mkdir($upload_dir);
 
 			$timestamp = dol_print_date(dol_now(), '%Y%m%d-%H%M%S');
-		$filename = dol_sanitizeFileName($object->ref).'_'.$timestamp.'.jpg';
-		$destfile = $upload_dir.'/'.$filename;
-		$tmpfile = $_FILES['userfile']['tmp_name'];
+			$filename = dol_sanitizeFileName($object->ref).'_'.$timestamp.'.jpg';
+			$destfile = $upload_dir.'/'.$filename;
+			$tmpfile = $_FILES['userfile']['tmp_name'];
 
-		if (is_uploaded_file($tmpfile)) {
-			if (dol_move_uploaded_file($tmpfile, $destfile, 1)) {
-			  //  $result = addDocumentToObject($object, $destfile, $filename, '', $user);
-				if ($result > 0) {
-					setEventMessages("The photo was uploaded successfully", null, 'mesgs');
+			if (is_uploaded_file($tmpfile)) {
+				if (dol_move_uploaded_file($tmpfile, $destfile, 1)) {
+
+					if ($result > 0) {
+						setEventMessages("The photo was uploaded successfully", null, 'mesgs');
+					} else {
+						setEventMessages("The file was saved, but it was not linked to the ticket", null, 'warnings');
+					}
 				} else {
-					setEventMessages("The file was saved, but it was not linked to the ticket", null, 'warnings');
+					setEventMessages("An error occurred while moving the file", null, 'errors');
 				}
 			} else {
-				setEventMessages("An error occurred while moving the file", null, 'errors');
+				setEventMessages("The file was not accepted by the server", null, 'errors');
 			}
-		} else {
-			setEventMessages("The file was not accepted by the server", null, 'errors');
+		} else {    
+			setEventMessages("No file has been submitted", null, 'errors');
 		}
-	} else {
-		setEventMessages("No file has been submitted", null, 'errors');
+	}    
+
+
+
+
+	print load_fiche_titre($langs->trans("AttachPhototoTicket"),);
+
+	print '<table class="border" width="100%">';
+	print '<tr><td>'.$langs->trans("Reference").':</td><td>'.$object->ref.'</td></tr>';
+	if (!empty($object->thirdparty->name)) {
+		print '<tr><td>'.$langs->trans("ThirtParty").':</td><td>'.$object->thirdparty->name.'</td></tr>';
 	}
-}
+	print '</table><br>';
 
+	print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&track_id='.$track_id.'" method="POST">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="addfile">';
+	print '<input type="hidden" name="trackid" value="'.$track_id.'">';
 
+	print '<table class="border" width="100%">';
+	print '<tr>';
+	print '  <td class="titlefield">'.$langs->trans("OnlyPhotosfromthePhone").'</td>';
+	print '  <td>';
+	print '<input type="file" name="userfile" accept="image/*" capture="environment" required '
+    . 'onClick="if(!navigator.userAgent.match(/Android|iPhone|iPad/i)) { '
+    . 'alert(\'' . $langs->trans("Allowedonlyfromthephone") . '\'); return false; }">';
+	print '    <br><small>'.$langs->trans("UsePhoneOnly").'</small>';
+	print '  </td>';
+	print '</tr>';
+	print '</table>';
 
-
-print load_fiche_titre($langs->trans("AttachPhototoTicket"), );
-
-print '<table class="border" width="100%">';
-print '<tr><td>'.$langs->trans("Reference").':</td><td>'.$object->ref.'</td></tr>';
-if (!empty($object->thirdparty->name)) {
-	print '<tr><td>'.$langs->trans("ThirtParty").':</td><td>'.$object->thirdparty->name.'</td></tr>';
-}
-print '</table><br>';
-
-print '<form enctype="multipart/form-data" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&track_id='.$track_id.'" method="POST">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="addfile">';
-print '<input type="hidden" name="trackid" value="'.$track_id.'">';
-
-print '<table class="border" width="100%">';
-print '<tr>';
-print '  <td class="titlefield">'.$langs->trans("OnlyPhotosfromthePhone").'</td>';
-print '  <td>';
-print '    <input type="file" name="userfile" accept="image/*" capture="environment" required'
-	.' onClick="if(!navigator.userAgent.match(/Android|iPhone|iPad/i)){alert(\''
-	.$langs->trans("Allowedonlyfromthephone").'\');return false;}">';
-print '    <br><small>'.$langs->trans("UsePhoneOnly").'</small>';
-print '  </td>';
-print '</tr>';
-print '</table>';
-
-print '<div class="center">';
-print '  <input type="submit" class="button" value="'.$langs->trans("Upload").'">';
-print '</div>';
-print '</form><br>';
+	print '<div class="center">';
+	print '  <input type="submit" class="button" value="'.$langs->trans("Upload").'">';
+	print '</div>';
+	print '</form><br>';
 
 
 	// Build file list
