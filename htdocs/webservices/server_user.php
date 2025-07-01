@@ -561,7 +561,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 					$sql = "SELECT rowid";
 					$sql .= " FROM ".MAIN_DB_PREFIX."c_country";
 					$sql .= " WHERE active = 1";
-					$sql .= " AND code='".$db->escape($thirdparty->country_code)."'";
+					$sql .= " AND code = '".$db->escape($thirdparty->country_code)."'";
 
 					$resql = $db->query($sql);
 					if ($resql) {
@@ -575,12 +575,12 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 					$thirdparty->fax = $thirdpartywithuser['fax'];
 					$thirdparty->email = $thirdpartywithuser['email'];
 					$thirdparty->url = $thirdpartywithuser['url'];
-					$thirdparty->idprof1 = $thirdpartywithuser['prof1'];
-					$thirdparty->idprof2 = $thirdpartywithuser['prof2'];
-					$thirdparty->idprof3 = $thirdpartywithuser['prof3'];
-					$thirdparty->idprof4 = $thirdpartywithuser['prof4'];
-					$thirdparty->idprof5 = $thirdpartywithuser['prof5'];
-					$thirdparty->idprof6 = $thirdpartywithuser['prof6'];
+					$thirdparty->idprof1 = $thirdpartywithuser['profid1'];
+					$thirdparty->idprof2 = $thirdpartywithuser['profid2'];
+					$thirdparty->idprof3 = $thirdpartywithuser['profid3'];
+					$thirdparty->idprof4 = $thirdpartywithuser['profid4'];
+					$thirdparty->idprof5 = $thirdpartywithuser['profid5'];
+					$thirdparty->idprof6 = $thirdpartywithuser['profid6'];
 
 					$thirdparty->client = (int) $thirdpartywithuser['client'];
 					$thirdparty->fournisseur = (int) $thirdpartywithuser['fournisseur'];
