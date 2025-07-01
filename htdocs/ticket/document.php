@@ -223,19 +223,18 @@ if ($object->id) {
 
 	print dol_get_fiche_end();
 
-		
 	// Fix for trackid if sent as track_id
-if (empty($trackid) && GETPOST('track_id', 'int') > 0) {
-	$trackid = GETPOST('track_id', 'int');
-	$_REQUEST['trackid'] = $trackid;
-}
+	if (empty($trackid) && GETPOST('track_id', 'int') > 0) {
+		$trackid = GETPOST('track_id', 'int');
+		5$_REQUEST['trackid'] = $trackid;
+	}
 
-if ($action === 'addfile') {
-	if (!empty($_FILES['userfile']) && $_FILES['userfile']['error'] === UPLOAD_ERR_OK) {
-		$upload_dir = $conf->ticket->dir_output.'/'.dol_sanitizeFileName($object->ref);
-		dol_mkdir($upload_dir);
+	if ($action === 'addfile') {
+		if (!empty($_FILES['userfile']) && $_FILES['userfile']['error'] === UPLOAD_ERR_OK) {
+			$upload_dir = $conf->ticket->dir_output.'/'.dol_sanitizeFileName($object->ref);
+			dol_mkdir($upload_dir);
 
-		$timestamp = dol_print_date(dol_now(), '%Y%m%d-%H%M%S');
+			$timestamp = dol_print_date(dol_now(), '%Y%m%d-%H%M%S');
 		$filename = dol_sanitizeFileName($object->ref).'_'.$timestamp.'.jpg';
 		$destfile = $upload_dir.'/'.$filename;
 		$tmpfile = $_FILES['userfile']['tmp_name'];
