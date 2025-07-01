@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (c) 2002-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
@@ -5823,7 +5822,7 @@ class Form
 	 * @param 	int<0,1>			$include 		[=0] Removed or 1=Keep only
 	 * @param 	string 				$morecss 		More CSS
 	 * @param	int<0,2>			$useempty		0=No empty value, 1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries. Default is 1.
-	 * @return	string|array<int,string>|array<int,array{id:int,fulllabel:string,data-html:?string,color:string,picto:string}>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string,data-html:?string}>		String list or Array of categories
+	 * @return	string|array<int,string>|array<int,array{id:int,fulllabel:string,data-html?:string,color:string,picto:string}>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string,data-html?:string}>		String list or Array of categories
 	 * @see select_categories()
 	 */
 	public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $fromid = 0, $outputmode = 0, $include = 0, $morecss = '', $useempty = 1)
