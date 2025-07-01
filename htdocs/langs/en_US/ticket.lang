@@ -179,7 +179,6 @@ TicketHistory=Ticket history
 AssignUser=Assign to user
 TicketAssigned=Ticket is now assigned
 TicketChangeType=Change type
-ThirtParty=Thirt Party
 TicketChangeCategory=Change analytic code
 TicketChangeSeverity=Change severity
 TicketAddMessage=Add or send a message
