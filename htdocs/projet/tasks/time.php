@@ -1490,7 +1490,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print $langs->trans('ServiceToUseOnLines');
 					print '</td>';
 					print '<td>';
-					$form->select_produits(0, 'productid', '1', 0, $projectstatic->thirdparty->price_level, 1, 2, '', 0, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth500');
+					$form->select_produits(0, 'productid', 1, 0, $projectstatic->thirdparty->price_level, 1, 2, '', 0, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth500');
 					print '</td>';
 					print '</tr>';
 				}
@@ -1884,7 +1884,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if (isModEnabled("service") && !empty($projectstatic->thirdparty) && $projectstatic->thirdparty->id > 0 && $projectstatic->usage_bill_time) {
 					print '<td class="nowraponall">';
 					print img_picto('', 'service');
-					print $form->select_produits((GETPOSTISSET('fk_product') ? GETPOSTINT("fk_product") : ''), 'fk_product', '1', 0, $projectstatic->thirdparty->price_level, 1, 2, '', 1, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth150', 0, '', null, 1);
+					print $form->select_produits((GETPOSTISSET('fk_product') ? GETPOSTINT("fk_product") : ''), 'fk_product', 1, 0, $projectstatic->thirdparty->price_level, 1, 2, '', 1, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth150', 0, '', null, 1);
 					print '</td>';
 				}
 			}
@@ -2415,7 +2415,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print '<td class="nowraponall">';
 				if ($action == 'editline' && GETPOSTINT('lineid') == $task_time->rowid) {
 					print img_picto('', 'service');
-					print $form->select_produits($task_time->fk_product, 'fk_product', '1', 0, $projectstatic->thirdparty->price_level, 1, 2, '', 1, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth500', 0, '', null, 1);
+					print $form->select_produits($task_time->fk_product, 'fk_product', 1, 0, $projectstatic->thirdparty->price_level, 1, 2, '', 1, array(), $projectstatic->thirdparty->id, 'None', 0, 'maxwidth500', 0, '', null, 1);
 				} elseif (!empty($task_time->fk_product)) {
 					$product = new Product($db);
 					$resultFetch = $product->fetch($task_time->fk_product);

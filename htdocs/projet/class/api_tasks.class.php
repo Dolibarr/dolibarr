@@ -120,7 +120,7 @@ class Tasks extends DolibarrApi
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
-		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : 0;
+		$socids = DolibarrApiAccess::$user->socid ?: 0;
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
