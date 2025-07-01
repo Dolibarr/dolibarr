@@ -3979,9 +3979,32 @@ if ($module == 'initmodule') {
 				}
 
 				$tmpcontent = file_get_contents($fileobj['fullname']);
-				if (preg_match('/class\s+([^\s]*)\s+extends\s+CommonObject/ims', $tmpcontent, $reg)) {
-					//$objectname = preg_replace('/\.txt$/', '', $fileobj['name']);
+				if (preg_match('/^\s*(?!abstract\s)class\s+([^\s]*)/ims', $tmpcontent, $reg)) {
 					$objectname = $reg[1];
+					try {
+						require_once $fileobj['fullname'];
+						$reflection = new ReflectionClass($objectname);
+					} catch (ReflectionException $e) {
+						continue;
+					}
+					$parameters = $reflection->getConstructor()->getParameters();
+					// Check for parameters, support for db as first mandatory parameter, or no mandatory parameter
+					foreach ($parameters as $key => $parameter) {
+						if (!$parameter->isOptional() && $parameter->getName() !== 'db' && $key !== 0) {
+							continue 2;
+						}
+					}
+
+					if (isset($parameters[0]) && $parameters[0]->getName() === 'db') {
+						$instance = new $objectname($db);
+					} else {
+						$instance = new $objectname();
+					}
+
+					if (!is_subclass_of($objectname, CommonObject::class)) {
+						continue;
+					}
+					
 					if (empty($firstobjectname)) {
 						$firstobjectname = $objectname;
 					}
