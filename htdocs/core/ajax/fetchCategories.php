@@ -102,7 +102,7 @@ if ($action == "getCategories") {
 	}
 	*/
 	foreach ($cate_arbo as $categ) {
-		$response[] = array('id' => $categ['id'], 'label' => $categ['label'], 'fulllabel' => $categ['fulllabel'], 'htmlforoption' => dolPrintHTML($categ['fulllabel']), 'htmlforattribute' => dolPrintHTMLForAttribute($categ['data-html']), 'color' => $categ['color']);
+		$response[] = array('id' => $categ['id'], 'label' => $categ['label'], 'fulllabel' => $categ['fulllabel'], 'htmlforoption' => dolPrintHTML((string) $categ['fulllabel']), 'htmlforattribute' => dolPrintHTMLForAttribute((string) $categ['data-html']), 'color' => $categ['color']);
 	}
 	$response =json_encode($response);
 	echo $response;
