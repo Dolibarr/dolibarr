@@ -93,18 +93,10 @@ if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneretedoc))) 
 		}
 
 		// To be sure vars is defined
-		if (empty($hidedetails)) {
-			$hidedetails = 0;
-		}
-		if (empty($hidedesc)) {
-			$hidedesc = 0;
-		}
-		if (empty($hideref)) {
-			$hideref = 0;
-		}
-		if (empty($moreparams)) {
-			$moreparams = null;
-		}
+		$hidedetails = isset($hidedetails) ? $hidedetails : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0);
+		$hidedesc = isset($hidedesc) ? $hidedesc : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0);
+		$hideref = isset($hideref) ? $hideref : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0);
+		$moreparams = isset($moreparams) ? $moreparams : null;
 
 		$result = $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		if ($result <= 0) {
