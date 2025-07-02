@@ -34,6 +34,7 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Prospect/Customer
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Nor prospect/Nor customer
 DATAPOLICY_CONTACT_FOURNISSEUR = Supplier
 DATAPOLICY_ADHERENT = Member
+DATAPOLICY_RECRUITMENT_CANDIDATURE = Application
 DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
 SendAgreementText = You can send a GDPR email to all your relevant contacts (who have not yet received an email and for which you have not registered anything about their GDPR agreement). To do this, use the following button.
 SendAgreement = Send emails
