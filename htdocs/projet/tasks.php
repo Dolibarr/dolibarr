@@ -527,7 +527,7 @@ if ($id > 0 || !empty($ref)) {
 		$param .= '&search_date_start_startday='.urlencode((string) ($search_date_start_startday));
 	}
 	if ($search_date_start_start) {
-		$param .= '&search_date_start_start='.urlencode($search_date_start_start);
+		$param .= '&search_date_start_start='.urlencode((string) $search_date_start_start);
 	}
 	if ($search_date_start_endmonth) {
 		$param .= '&search_date_start_endmonth='.urlencode((string) ($search_date_start_endmonth));
@@ -539,7 +539,7 @@ if ($id > 0 || !empty($ref)) {
 		$param .= '&search_date_start_endday='.urlencode((string) ($search_date_start_endday));
 	}
 	if ($search_date_start_end) {
-		$param .= '&search_date_start_end='.urlencode($search_date_start_end);
+		$param .= '&search_date_start_end='.urlencode((string) $search_date_start_end);
 	}
 	if ($search_date_end_startmonth) {
 		$param .= '&search_date_end_startmonth='.urlencode((string) ($search_date_end_startmonth));
@@ -551,7 +551,7 @@ if ($id > 0 || !empty($ref)) {
 		$param .= '&search_date_end_startday='.urlencode((string) ($search_date_end_startday));
 	}
 	if ($search_date_end_start) {
-		$param .= '&search_date_end_start='.urlencode($search_date_end_start);
+		$param .= '&search_date_end_start='.urlencode((string) $search_date_end_start);
 	}
 	if ($search_date_end_endmonth) {
 		$param .= '&search_date_end_endmonth='.urlencode((string) ($search_date_end_endmonth));
@@ -563,7 +563,7 @@ if ($id > 0 || !empty($ref)) {
 		$param .= '&search_date_end_endday='.urlencode((string) ($search_date_end_endday));
 	}
 	if ($search_date_end_end) {
-		$param .= '&search_date_end_end=' . urlencode($search_date_end_end);
+		$param .= '&search_date_end_end=' . urlencode((string) $search_date_end_end);
 	}
 	if ($search_planedworkload) {
 		$param .= '&search_planedworkload='.urlencode($search_planedworkload);

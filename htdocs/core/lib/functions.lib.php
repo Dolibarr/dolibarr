@@ -1996,7 +1996,7 @@ function dol_string_nounprintableascii($str, $removetabcrlf = 1)
 }
 
 /**
- *  Returns text slugified (no special char, separator is "-".
+ *  Returns text slugified (lowercase and no special char, separator is "-").
  *
  *  @param	string	$stringtoslugify		String to slugify
  *  @return string							Slugified string
