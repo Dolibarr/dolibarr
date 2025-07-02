@@ -1759,7 +1759,7 @@ class User extends CommonObject
 		}
 		dol_syslog(get_class($this)."::create login=".$this->login.", user=".(is_object($user) ? $user->id : ''), LOG_DEBUG);
 
-		$badCharUnauthorizedIntoLoginName = getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', ',@<>"\'');
+		$badCharUnauthorizedIntoLoginName = getDolGlobalString('MAIN_LOGIN_BADCHARUNAUTHORIZED', ',<>"\'');
 
 		// Check parameters
 		if (getDolGlobalString('USER_MAIL_REQUIRED') && !isValidEmail($this->email)) {
