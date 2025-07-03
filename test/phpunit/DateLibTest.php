@@ -313,6 +313,8 @@ class DateLibTest extends PHPUnit\Framework\TestCase
 		// Case 1: Weekend Boundary (Friday morning -> Saturday morning)
 		// Expected: 1 day. No half-day deduction for end date on a non-working day.
 		// $starthalfday = 'morning', $endhalfday = 'morning' -> $halfday = 1
+		$conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY = 1;
+		$conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY = 1;
 		$result = num_open_day($date_friday_4, $date_saturday_5, 0, 1, 1, 'FR');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals(1, $result, 'Case 1: Friday morning to Saturday morning should be 1 day');
