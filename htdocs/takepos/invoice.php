@@ -560,8 +560,7 @@ if (empty($reshook)) {
 		}*/
 
 		// Update stock for batch products
-		$res = 0;
-		if (!$error && $res >= 0) {
+		if (!$error) {
 			if (isModEnabled('stock') && isModEnabled('productbatch') && $allowstockchange) {
 				// Update stocks
 				dol_syslog("Now we record the stock movement for each qualified line");
