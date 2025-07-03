@@ -778,12 +778,12 @@ class ExternalModules
 			}
 		}
 
-		if (!empty($request['response']['curl_error_msg'])) {
-			$error_message .= ' - ' . $request['response']['curl_error_msg'];
+		if (!empty($request['curl_error_msg'])) {
+			$error_message .= ' - ' . $request['curl_error_msg'];
 		}
 
 		// Return the formatted error message
-		return sprintf('This call to the API failed and returned an HTTP status of %d. That means: %s.', $request['status_code'], $error_message);
+		return sprintf('This call to the API failed and returned an HTTP status of %d. That means: %s.', array($request['status_code'], $error_message));
 	}
 
 	/**
