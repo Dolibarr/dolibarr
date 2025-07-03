@@ -831,6 +831,7 @@ if ($nboftargetok) {
 			print "Compress $FILENAMETGZ2 into $FILENAMETGZ2.tgz...\n";
 			$ret=`tar --exclude-from "$SOURCE/build/tgz/tar_exclude.txt" --directory "$BUILDROOT" -czvf "$BUILDROOT/$FILENAMETGZ2.tgz" $FILENAMETGZ2`;
 
+			if (! -d $RPMDIR . '/SOURCES') { mkdir($RPMDIR . '/SOURCES'); }
 			print "Move $BUILDROOT/$FILENAMETGZ2.tgz to $RPMDIR/SOURCES/$FILENAMETGZ2.tgz\n";
 			$cmd="mv $BUILDROOT/$FILENAMETGZ2.tgz $RPMDIR/SOURCES/$FILENAMETGZ2.tgz";
 			$ret=`$cmd`;
