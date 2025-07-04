@@ -75,7 +75,7 @@ class Adherent extends CommonObject
 	public $login;
 
 	/**
-	 * @var string Clear password in memory
+	 * @var ?string Clear password in memory
 	 */
 	public $pass;
 
