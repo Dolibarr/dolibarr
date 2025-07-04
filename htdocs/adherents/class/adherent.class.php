@@ -960,9 +960,6 @@ class Adherent extends CommonObject
 					$result = $luser->fetch($this->user_id);
 
 					if ($result >= 0) {
-						//var_dump($this->user_login);exit;
-						//var_dump($this->login);exit;
-
 						// If option ADHERENT_LOGIN_NOT_REQUIRED is on, there is no login of member, so we do not overwrite user login to keep existing one.
 						if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 							$luser->login = $this->login;
@@ -2467,7 +2464,7 @@ class Adherent extends CommonObject
 				($morecss ? ' usertext'.$morecss : '').'">';
 			}
 			if ($mode == 'login') {
-				$result .= dol_trunc($this->login, $maxlen);
+				$result .= dol_trunc(isset($this->login) ? $this->login : '', $maxlen);
 			} elseif ($mode == 'ref') {
 				$result .= $this->ref;
 			} else {
