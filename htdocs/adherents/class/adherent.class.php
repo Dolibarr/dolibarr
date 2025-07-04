@@ -537,6 +537,7 @@ class Adherent extends CommonObject
 
 		$birthday = dol_print_date($this->birth, 'day');
 		$photo = isset($this->photo) ? $this->photo : '';
+		$login = isset($this->login) ? $this->login : '';
 
 		$msgishtml = 0;
 		if (dol_textishtml($text, 1)) {
@@ -561,7 +562,7 @@ class Adherent extends CommonObject
 		$infos .= $langs->transnoentities("PhonePerso").": ".$this->phone_perso."\n";
 		$infos .= $langs->transnoentities("PhoneMobile").": ".$this->phone_mobile."\n";
 		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
-			$infos .= $langs->transnoentities("Login").": ".$this->login."\n";
+			$infos .= $langs->transnoentities("Login").": ".$login."\n";
 			$infos .= $langs->transnoentities("Password").": ".$this->pass."\n";
 		}
 		$infos .= $langs->transnoentities("Birthday").": ".$birthday."\n";
@@ -585,7 +586,7 @@ class Adherent extends CommonObject
 			'__EMAIL__' => $msgishtml ? dol_htmlentitiesbr((string) $this->email) : ($this->email ? $this->email : ''),
 			'__BIRTH__' => $msgishtml ? dol_htmlentitiesbr($birthday) : ($birthday ? $birthday : ''),
 			'__PHOTO__' => $msgishtml ? dol_htmlentitiesbr($photo) : $photo,
-			'__LOGIN__' => $msgishtml ? dol_htmlentitiesbr($this->login) : ($this->login ? $this->login : ''),
+			'__LOGIN__' => $msgishtml ? dol_htmlentitiesbr($login) : $login,
 			'__PASSWORD__' => $msgishtml ? dol_htmlentitiesbr($this->pass) : ($this->pass ? $this->pass : ''),
 			'__PHONE__' => $msgishtml ? dol_htmlentitiesbr($this->phone) : ($this->phone ? $this->phone : ''),
 			'__PHONEPRO__' => $msgishtml ? dol_htmlentitiesbr($this->phone_perso) : ($this->phone_perso ? $this->phone_perso : ''),
