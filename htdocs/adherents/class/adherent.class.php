@@ -186,7 +186,7 @@ class Adherent extends CommonObject
 	public $default_lang;
 
 	/**
-	 * @var string photo of member
+	 * @var ?string photo of member
 	 */
 	public $photo;
 
