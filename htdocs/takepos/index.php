@@ -705,7 +705,11 @@ function New() {
  * return   void
  */
 function Search2(keyCodeForEnter, moreorless) {
-	var eventKeyCode = window.event.keyCode;
+	var eventKeyCode;
+
+	if (window.event && window.event.keyCode) {
+		eventKeyCode = window.event.keyCode;
+	}
 
 	console.log("Search2 Call ajax search to replace products keyCodeForEnter="+keyCodeForEnter+", eventKeyCode="+eventKeyCode);
 
