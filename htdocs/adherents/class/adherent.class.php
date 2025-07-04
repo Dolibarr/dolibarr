@@ -70,7 +70,7 @@ class Adherent extends CommonObject
 	public $mesgs;
 
 	/**
-	 * @var string login of member
+	 * @var ?string login of member
 	 */
 	public $login;
 
@@ -536,7 +536,7 @@ class Adherent extends CommonObject
 		global $langs;
 
 		$birthday = dol_print_date($this->birth, 'day');
-		$photo = (isset($this->photo) ? $this->photo : '');
+		$photo = isset($this->photo) ? $this->photo : '';
 
 		$msgishtml = 0;
 		if (dol_textishtml($text, 1)) {
