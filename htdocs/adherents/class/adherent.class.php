@@ -225,7 +225,7 @@ class Adherent extends CommonObject
 	public $typeid;
 
 	/**
-	 * @var string label type member
+	 * @var ?string label type member
 	 */
 	public $type;
 
@@ -538,6 +538,7 @@ class Adherent extends CommonObject
 		$birthday = dol_print_date($this->birth, 'day');
 		$photo = isset($this->photo) ? $this->photo : '';
 		$login = isset($this->login) ? $this->login : '';
+		$type = isset($this->type) ? $this->type : '';
 
 		$msgishtml = 0;
 		if (dol_textishtml($text, 1)) {
@@ -591,7 +592,7 @@ class Adherent extends CommonObject
 			'__PHONE__' => $msgishtml ? dol_htmlentitiesbr($this->phone) : ($this->phone ? $this->phone : ''),
 			'__PHONEPRO__' => $msgishtml ? dol_htmlentitiesbr($this->phone_perso) : ($this->phone_perso ? $this->phone_perso : ''),
 			'__PHONEMOBILE__' => $msgishtml ? dol_htmlentitiesbr($this->phone_mobile) : ($this->phone_mobile ? $this->phone_mobile : ''),
-			'__TYPE__' => $msgishtml ? dol_htmlentitiesbr($this->type) : ($this->type ? $this->type : '')
+			'__TYPE__' => $msgishtml ? dol_htmlentitiesbr($type) : $type,
 		);
 
 		complete_substitutions_array($substitutionarray, $langs, $this);
