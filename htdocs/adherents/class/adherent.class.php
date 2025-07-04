@@ -539,6 +539,7 @@ class Adherent extends CommonObject
 		$photo = isset($this->photo) ? $this->photo : '';
 		$login = isset($this->login) ? $this->login : '';
 		$type = isset($this->type) ? $this->type : '';
+		$pass = isset($this->pass) ? $this->pass : '';
 
 		$msgishtml = 0;
 		if (dol_textishtml($text, 1)) {
@@ -564,7 +565,7 @@ class Adherent extends CommonObject
 		$infos .= $langs->transnoentities("PhoneMobile").": ".$this->phone_mobile."\n";
 		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 			$infos .= $langs->transnoentities("Login").": ".$login."\n";
-			$infos .= $langs->transnoentities("Password").": ".$this->pass."\n";
+			$infos .= $langs->transnoentities("Password").": ".$pass."\n";
 		}
 		$infos .= $langs->transnoentities("Birthday").": ".$birthday."\n";
 		$infos .= $langs->transnoentities("Photo").": ".$photo."\n";
@@ -588,7 +589,7 @@ class Adherent extends CommonObject
 			'__BIRTH__' => $msgishtml ? dol_htmlentitiesbr($birthday) : ($birthday ? $birthday : ''),
 			'__PHOTO__' => $msgishtml ? dol_htmlentitiesbr($photo) : $photo,
 			'__LOGIN__' => $msgishtml ? dol_htmlentitiesbr($login) : $login,
-			'__PASSWORD__' => $msgishtml ? dol_htmlentitiesbr($this->pass) : ($this->pass ? $this->pass : ''),
+			'__PASSWORD__' => $msgishtml ? dol_htmlentitiesbr($pass) : $pass,
 			'__PHONE__' => $msgishtml ? dol_htmlentitiesbr($this->phone) : ($this->phone ? $this->phone : ''),
 			'__PHONEPRO__' => $msgishtml ? dol_htmlentitiesbr($this->phone_perso) : ($this->phone_perso ? $this->phone_perso : ''),
 			'__PHONEMOBILE__' => $msgishtml ? dol_htmlentitiesbr($this->phone_mobile) : ($this->phone_mobile ? $this->phone_mobile : ''),
@@ -972,7 +973,7 @@ class Adherent extends CommonObject
 						$luser->firstname = $this->firstname;
 						$luser->lastname = $this->lastname;
 						$luser->gender = $this->gender;
-						$luser->pass = $this->pass;
+						$luser->pass = isset($this->pass) ? $this->pass : '';
 						//$luser->socid=$this->fk_soc;		// We do not enable this. This may transform a user into an external user.
 
 						$luser->birth = $this->birth;
