@@ -330,7 +330,7 @@ class Inventory extends CommonObject
 					$inventoryline->fk_warehouse = $obj->fk_warehouse;
 					$inventoryline->fk_product = $obj->fk_product;
 					$inventoryline->batch = $obj->batch;
-					$inventoryline->datec = dol_now();
+					$inventoryline->datec = time();
 
 					if (isModEnabled('productbatch')) {
 						if ($obj->batch && empty($obj->tobatch)) {

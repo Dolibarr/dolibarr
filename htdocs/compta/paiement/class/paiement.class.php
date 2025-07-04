@@ -311,7 +311,7 @@ class Paiement extends CommonObject
 		$error = 0;
 		$way = $this->getWay();	// 'dolibarr' to use amount, 'customer' to use foreign multicurrency amount
 
-		$now = dol_now();
+		$now = time();
 
 		// Clean parameters
 		$totalamount = 0;
@@ -1357,7 +1357,7 @@ class Paiement extends CommonObject
 	{
 		global $user, $langs, $conf;
 
-		$now = dol_now();
+		$now = time();
 		$arraynow = dol_getdate($now);
 		$nownotime = dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
 

@@ -264,7 +264,7 @@ class Stripe extends CommonObject
 
 					// Create customer in Dolibarr
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_account (fk_soc, login, key_account, site, site_account, status, entity, date_creation, fk_user_creat)";
-					$sql .= " VALUES (".((int) $object->id).", '', '".$this->db->escape($customer->id)."', 'stripe', '".$this->db->escape($stripearrayofkeysbyenv[$status]['publishable_key'])."', ".((int) $status).", ".((int) $conf->entity).", '".$this->db->idate(dol_now())."', ".((int) $user->id).")";
+					$sql .= " VALUES (".((int) $object->id).", '', '".$this->db->escape($customer->id)."', 'stripe', '".$this->db->escape($stripearrayofkeysbyenv[$status]['publishable_key'])."', ".((int) $status).", ".((int) $conf->entity).", '".$this->db->idate(time())."', ".((int) $user->id).")";
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$this->error = $this->db->lasterror();
@@ -613,7 +613,7 @@ class Stripe extends CommonObject
 
 					// If not, we create it.
 					if (!$error && !$paymentintentalreadyexists) {
-						$now = dol_now();
+						$now = time();
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_demande (date_demande, fk_user_demande, ext_payment_id, fk_facture, sourcetype, entity, ext_payment_site, amount)";
 						$sql .= " VALUES ('".$this->db->idate($now)."', ".((int) $user->id).", '".$this->db->escape($paymentintent->id)."', ".((int) $object->id).", '".$this->db->escape($object->element)."', ".((int) $conf->entity).", '".$this->db->escape($service)."', ".((float) $amount).")";
 						$resql = $this->db->query($sql);
@@ -792,7 +792,7 @@ class Stripe extends CommonObject
 					// If not, we create it.
 					if (! $setupintentalreadyexists)
 					{
-						$now=dol_now();
+						$now=time();
 						$sql = "INSERT INTO " . MAIN_DB_PREFIX . "prelevement_demande (date_demande, fk_user_demande, ext_payment_id, fk_facture, sourcetype, entity, ext_payment_site)";
 						$sql .= " VALUES ('".$this->db->idate($now)."', ".((int) $user->id).", '".$this->db->escape($setupintent->id)."', ".((int) $object->id).", '".$this->db->escape($object->element)."', " . ((int) $conf->entity) . ", '" . $this->db->escape($service) . "', ".((float) $amount).")";
 						$resql = $this->db->query($sql);
@@ -1131,7 +1131,7 @@ class Stripe extends CommonObject
 										$sql .= ", rum = '".$this->db->escape($refmandate)."'";
 									}
 									$sql .= ", comment = '".$this->db->escape($cs->mandate)."'";
-									$sql .= ", date_rum = '".$this->db->idate(dol_now())."'";
+									$sql .= ", date_rum = '".$this->db->idate(time())."'";
 								}
 								$sql .= " WHERE rowid = ".((int) $object->id);
 								$sql .= " AND type = 'ban'";

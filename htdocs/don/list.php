@@ -205,7 +205,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$now = dol_now();
+$now = time();
 
 $donationstatic = new Don($db);
 if (isModEnabled('project')) {

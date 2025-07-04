@@ -767,7 +767,7 @@ class modSociete extends DolibarrModules
 			's.barcode' => '123456789',
 			's.default_lang' => 'en_US / es_ES etc...matches a language directory in htdocs/langs/',
 			's.canvas' => "empty / a custom canvas form layout url e.g. mycanvas@mymodule",
-			's.datec' => 'formatted as '.dol_print_date(dol_now(), '%Y-%m-%d'),
+			's.datec' => 'formatted as '.dol_print_date(time(), '%Y-%m-%d'),
 			's.fk_multicurrency' => '0 (use system default currency) / 1 (use local currency)',
 			's.multicurrency_code' => 'GBP/USD etc... matches field "code_iso" in table "'.MAIN_DB_PREFIX.'c_currencies"',
 			's.accountancy_code_sell' => '707',
@@ -904,7 +904,7 @@ class modSociete extends DolibarrModules
 		);
 		$this->import_examplevalues_array[$r] = array(//field order as per structure of table llx_socpeople
 			's.rowid' => '1',
-			's.datec' => 'formatted as '.dol_print_date(dol_now(), '%Y-%m-%d'),
+			's.datec' => 'formatted as '.dol_print_date(time(), '%Y-%m-%d'),
 			's.fk_soc' => 'Third Party name eg. TPBigCompany',
 			's.civility' => 'Title of civility eg: MR...matches field "code" in table "'.MAIN_DB_PREFIX.'c_civility"',
 			's.lastname' => "lastname or label",
@@ -914,7 +914,7 @@ class modSociete extends DolibarrModules
 			's.town' => 'Bigtown',
 			's.fk_departement' => 'matches field "code_departement" in table "'.MAIN_DB_PREFIX.'c_departements"',
 			's.fk_pays' => 'US/FR/DE etc. matches field "code" in table "'.MAIN_DB_PREFIX.'c_country"',
-			's.birthday' => 'formatted as '.dol_print_date(dol_now(), '%Y-%m-%d'),
+			's.birthday' => 'formatted as '.dol_print_date(time(), '%Y-%m-%d'),
 			's.poste' => "Director",
 			's.phone' => "5551122",
 			's.phone_perso' => "5551133",
@@ -982,7 +982,7 @@ class modSociete extends DolibarrModules
 			'sr.label' => 'eg. "account1"',
 			'sr.fk_soc' => 'eg. "TPBigCompany"',
 			'sr.datec' => 'date used for creating direct debit UMR formatted as '.dol_print_date(
-				dol_now(),
+				time(),
 				'%Y-%m-%d'
 			),
 			'sr.bank' => 'bank name eg: "ING-Direct"',

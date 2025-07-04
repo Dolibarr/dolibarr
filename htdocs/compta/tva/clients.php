@@ -159,7 +159,7 @@ if ($nextquarter < 4) {
 	$nextquarter = 1;
 	$nextyear++;
 }
-$builddate = dol_now();
+$builddate = time();
 
 if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice') {
 	$description = $langs->trans("RulesVATDueProducts");

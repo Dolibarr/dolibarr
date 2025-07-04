@@ -122,7 +122,7 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 				$shownb = 1;
 				$showtot = 1;
 			}
-			$nowarray = dol_getdate(dol_now(), true);
+			$nowarray = dol_getdate(time(), true);
 			if (empty($endyear)) {
 				$endyear = $nowarray['year'];
 			}

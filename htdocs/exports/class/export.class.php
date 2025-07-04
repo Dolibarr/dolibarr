@@ -736,7 +736,7 @@ class Export
 				$filename = "export_".$datatoexport;
 			}
 			if (getDolGlobalString('EXPORT_NAME_WITH_DT')) {
-				$filename .= dol_print_date(dol_now(), '%Y%m%d%_%H%M');
+				$filename .= dol_print_date(time(), '%Y%m%d%_%H%M');
 			}
 			$filename .= '.'.$objmodel->getDriverExtension();
 			$dirname = $conf->export->dir_temp.'/'.$user->id;

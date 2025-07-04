@@ -65,7 +65,7 @@ if ($in_bookkeeping == '') {
 	$in_bookkeeping = 'notyet';
 }
 
-$now = dol_now();
+$now = time();
 
 $hookmanager->initHooks(array('expensereportsjournal'));
 $parameters = array();
@@ -275,7 +275,7 @@ if (!empty($taber)) {
 
 // Bookkeeping Write
 if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'bind', 'write')) {
-	$now = dol_now();
+	$now = time();
 	$error = 0;
 
 	$userstatic = new User($db);
@@ -612,7 +612,7 @@ if (empty($action) || $action == 'view') {
 	$nomlink = '';
 	$periodlink = '';
 	$exportlink = '';
-	$builddate = dol_now();
+	$builddate = time();
 	$description = $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 
 	$listofchoices = array('notyet' => $langs->trans("NotYetInGeneralLedger"), 'already' => $langs->trans("AlreadyInGeneralLedger"));

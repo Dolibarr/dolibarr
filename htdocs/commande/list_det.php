@@ -367,7 +367,7 @@ if (empty($reshook)) {
  * View
  */
 
-$now = dol_now();
+$now = time();
 
 $form = new Form($db);
 $formother = new FormOther($db);

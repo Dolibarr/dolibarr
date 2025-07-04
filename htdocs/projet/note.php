@@ -91,7 +91,7 @@ llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-project page-card_no
 $form = new Form($db);
 $userstatic = new User($db);
 
-$now = dol_now();
+$now = time();
 
 if ($id > 0 || !empty($ref)) {
 	// To verify role of users

@@ -110,7 +110,7 @@ class Utils
 
 		$choicesarray = preg_split('/[\+,]/', $choices);
 		foreach ($choicesarray as $choice) {
-			$now = dol_now();
+			$now = time();
 			$filesarray = array();
 
 			if ($choice == 'tempfiles' || $choice == 'tempfilesold') {
@@ -285,7 +285,7 @@ class Utils
 			if (in_array($type, array('pgsql'))) {
 				$prefix = 'pg_dump';
 			}
-			$file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.dol_print_date(dol_now('gmt'), "dayhourlogsmall", 'tzuser').'.'.$ext;
+			$file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.dol_print_date(time(), "dayhourlogsmall", 'tzuser').'.'.$ext;
 		}
 
 		$outputdir = $conf->admin->dir_output.'/backup';
@@ -801,7 +801,7 @@ class Utils
 		$error = 0;
 
 		$modulelowercase = strtolower($module);
-		$now = dol_now();
+		$now = time();
 
 		// Dir for module
 		$dir = $dirins.'/'.$modulelowercase;

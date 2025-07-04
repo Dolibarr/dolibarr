@@ -203,17 +203,17 @@ class modEmailCollector extends DolibarrModules
 				$descriptionA1 = $langs->trans('EmailCollectorExampleToCollectTicketRequestsDesc');
 				$label = $langs->trans('EmailCollectorExampleToCollectTicketRequests');
 				$sqlforexampleA1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollector (entity, ref, label, description, source_directory, date_creation, fk_user_creat, status)";
-				$sqlforexampleA1 .= " VALUES (".$conf->entity.", 'Collect_Ticket_Requests', '".$this->db->escape($label)."', '".$this->db->escape($descriptionA1)."', 'INBOX', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 0)";
+				$sqlforexampleA1 .= " VALUES (".$conf->entity.", 'Collect_Ticket_Requests', '".$this->db->escape($label)."', '".$this->db->escape($descriptionA1)."', 'INBOX', '".$this->db->idate(time())."', ".((int) $user->id).", 0)";
 
 				$sqlforexampleFilterA1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
-				$sqlforexampleFilterA1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requests' and entity = ".$conf->entity."), 'isnotanswer', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
+				$sqlforexampleFilterA1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requests' and entity = ".$conf->entity."), 'isnotanswer', '".$this->db->idate(time())."', ".((int) $user->id).", 1)";
 				//$sqlforexampleFilterA2 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
-				//$sqlforexampleFilterA2 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requests' and entity = ".$conf->entity."), 'withouttrackingid', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
+				//$sqlforexampleFilterA2 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requests' and entity = ".$conf->entity."), 'withouttrackingid', '".$this->db->idate(time())."', ".((int) $user->id).", 1)";
 				$sqlforexampleFilterA3 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, rulevalue, date_creation, fk_user_creat, status)";
-				$sqlforexampleFilterA3 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requests' and entity = ".$conf->entity."), 'to', 'support@example.com', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
+				$sqlforexampleFilterA3 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requests' and entity = ".$conf->entity."), 'to', 'support@example.com', '".$this->db->idate(time())."', ".((int) $user->id).", 1)";
 
 				$sqlforexampleActionA1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectoraction (fk_emailcollector, type, date_creation, fk_user_creat, status)";
-				$sqlforexampleActionA1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requests' and entity = ".$conf->entity."), 'ticket', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
+				$sqlforexampleActionA1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Ticket_Requests' and entity = ".$conf->entity."), 'ticket', '".$this->db->idate(time())."', ".((int) $user->id).", 1)";
 
 				$sql[] = $sqlforexampleA1;
 
@@ -234,15 +234,15 @@ class modEmailCollector extends DolibarrModules
 				$descriptionA1 = $langs->trans('EmailCollectorExampleToCollectAnswersFromExternalEmailSoftware');
 				$label = $langs->trans('EmailCollectorExampleToCollectAnswersFromExternalEmailSoftware');
 				$sqlforexampleA1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollector (entity, ref, label, description, source_directory, date_creation, fk_user_creat, status)";
-				$sqlforexampleA1 .= " VALUES (".$conf->entity.", 'Collect_Responses_Out', '".$this->db->escape($label)."', '".$this->db->escape($descriptionA1)."', 'Sent', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 0)";
+				$sqlforexampleA1 .= " VALUES (".$conf->entity.", 'Collect_Responses_Out', '".$this->db->escape($label)."', '".$this->db->escape($descriptionA1)."', 'Sent', '".$this->db->idate(time())."', ".((int) $user->id).", 0)";
 
 				$sqlforexampleFilterA1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
-				$sqlforexampleFilterA1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_Out' and entity = ".((int) $conf->entity)."), 'isanswer', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
+				$sqlforexampleFilterA1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_Out' and entity = ".((int) $conf->entity)."), 'isanswer', '".$this->db->idate(time())."', ".((int) $user->id).", 1)";
 				$sqlforexampleFilterA2 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
-				$sqlforexampleFilterA2 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_Out' and entity = ".((int) $conf->entity)."), 'withouttrackingidinmsgid', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
+				$sqlforexampleFilterA2 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_Out' and entity = ".((int) $conf->entity)."), 'withouttrackingidinmsgid', '".$this->db->idate(time())."', ".((int) $user->id).", 1)";
 
 				$sqlforexampleActionA1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectoraction (fk_emailcollector, type, date_creation, fk_user_creat, status)";
-				$sqlforexampleActionA1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_Out' and entity = ".((int) $conf->entity)."), 'recordevent', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
+				$sqlforexampleActionA1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_Out' and entity = ".((int) $conf->entity)."), 'recordevent', '".$this->db->idate(time())."', ".((int) $user->id).", 1)";
 
 				$sql[] = $sqlforexampleA1;
 
@@ -260,13 +260,13 @@ class modEmailCollector extends DolibarrModules
 				$descriptionB1 = $langs->trans('EmailCollectorExampleToCollectDolibarrAnswersDesc');
 				$label = $langs->trans('EmailCollectorExampleToCollectDolibarrAnswers');
 				$sqlforexampleB1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollector (entity, ref, label, description, source_directory, date_creation, fk_user_creat, status)";
-				$sqlforexampleB1 .= " VALUES (".$conf->entity.", 'Collect_Responses_In', '".$this->db->escape($label)."', '".$this->db->escape($descriptionB1)."', 'INBOX', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 0)";
+				$sqlforexampleB1 .= " VALUES (".$conf->entity.", 'Collect_Responses_In', '".$this->db->escape($label)."', '".$this->db->escape($descriptionB1)."', 'INBOX', '".$this->db->idate(time())."', ".((int) $user->id).", 0)";
 
 				$sqlforexampleFilterB2 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
-				$sqlforexampleFilterB2 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_In' and entity = ".((int) $conf->entity)."), 'isanswer', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
+				$sqlforexampleFilterB2 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_In' and entity = ".((int) $conf->entity)."), 'isanswer', '".$this->db->idate(time())."', ".((int) $user->id).", 1)";
 
 				$sqlforexampleActionB3 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectoraction (fk_emailcollector, type, date_creation, fk_user_creat, status)";
-				$sqlforexampleActionB3 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_In' and entity = ".((int) $conf->entity)."), 'recordevent', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
+				$sqlforexampleActionB3 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Responses_In' and entity = ".((int) $conf->entity)."), 'recordevent', '".$this->db->idate(time())."', ".((int) $user->id).", 1)";
 
 				$sql[] = $sqlforexampleB1;
 
@@ -285,18 +285,18 @@ class modEmailCollector extends DolibarrModules
 				$descriptionC1 = $langs->trans("EmailCollectorExampleToCollectLeadsDesc");
 				$label = $langs->trans('EmailCollectorExampleToCollectLeads');
 				$sqlforexampleC1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollector (entity, ref, label, description, source_directory, date_creation, fk_user_creat, status)";
-				$sqlforexampleC1 .= " VALUES (".$conf->entity.", 'Collect_Leads', '".$this->db->escape($label)."', '".$this->db->escape($descriptionC1)."', 'INBOX', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 0)";
+				$sqlforexampleC1 .= " VALUES (".$conf->entity.", 'Collect_Leads', '".$this->db->escape($label)."', '".$this->db->escape($descriptionC1)."', 'INBOX', '".$this->db->idate(time())."', ".((int) $user->id).", 0)";
 
 				$sqlforexampleFilterC1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
-				$sqlforexampleFilterC1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Leads' and entity = ".((int) $conf->entity)."), 'isnotanswer', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
+				$sqlforexampleFilterC1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Leads' and entity = ".((int) $conf->entity)."), 'isnotanswer', '".$this->db->idate(time())."', ".((int) $user->id).", 1)";
 				//$sqlforexampleFilterC2 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
-				//$sqlforexampleFilterC2 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Leads' and entity = ".((int) $conf->entity)."), 'withouttrackingid', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
+				//$sqlforexampleFilterC2 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Leads' and entity = ".((int) $conf->entity)."), 'withouttrackingid', '".$this->db->idate(time())."', ".((int) $user->id).", 1)";
 				$sqlforexampleFilterC3 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, rulevalue, date_creation, fk_user_creat, status)";
-				$sqlforexampleFilterC3 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Leads' and entity = ".((int) $conf->entity)."), 'to', 'sales@example.com', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
+				$sqlforexampleFilterC3 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Leads' and entity = ".((int) $conf->entity)."), 'to', 'sales@example.com', '".$this->db->idate(time())."', ".((int) $user->id).", 1)";
 
 				$paramstring = 'tmp_from=EXTRACT:HEADER:^From:(.*)'."\n".'socid=SETIFEMPTY:1'."\n".'usage_opportunity=SET:1'."\n".'description=EXTRACT:BODY:(.*)'."\n".'title=SET:Lead or message from __tmp_from__ received by email';
 				$sqlforexampleActionC4 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectoraction (fk_emailcollector, type, actionparam, date_creation, fk_user_creat, status)";
-				$sqlforexampleActionC4 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Leads' and entity = ".((int) $conf->entity)."), 'project', '".$this->db->escape($paramstring)."', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
+				$sqlforexampleActionC4 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Leads' and entity = ".((int) $conf->entity)."), 'project', '".$this->db->escape($paramstring)."', '".$this->db->idate(time())."', ".((int) $user->id).", 1)";
 
 				$sql[] = $sqlforexampleC1;
 
@@ -317,18 +317,18 @@ class modEmailCollector extends DolibarrModules
 				$descriptionC1 = $langs->trans("EmailCollectorExampleToCollectJobCandidaturesDesc");
 				$label = $langs->trans('EmailCollectorExampleToCollectJobCandidatures');
 				$sqlforexampleC1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollector (entity, ref, label, description, source_directory, date_creation, fk_user_creat, status)";
-				$sqlforexampleC1 .= " VALUES (".$conf->entity.", 'Collect_Candidatures', '".$this->db->escape($label)."', '".$this->db->escape($descriptionC1)."', 'INBOX', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 0)";
+				$sqlforexampleC1 .= " VALUES (".$conf->entity.", 'Collect_Candidatures', '".$this->db->escape($label)."', '".$this->db->escape($descriptionC1)."', 'INBOX', '".$this->db->idate(time())."', ".((int) $user->id).", 0)";
 
 				$sqlforexampleFilterC1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
-				$sqlforexampleFilterC1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".((int) $conf->entity)."), 'isnotanswer', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
+				$sqlforexampleFilterC1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".((int) $conf->entity)."), 'isnotanswer', '".$this->db->idate(time())."', ".((int) $user->id).", 1)";
 				//$sqlforexampleFilterC2 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
-				//$sqlforexampleFilterC2 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".((int) $conf->entity)."), 'withouttrackingid', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
+				//$sqlforexampleFilterC2 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".((int) $conf->entity)."), 'withouttrackingid', '".$this->db->idate(time())."', ".((int) $user->id).", 1)";
 				$sqlforexampleFilterC3 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, rulevalue, date_creation, fk_user_creat, status)";
-				$sqlforexampleFilterC3 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".((int) $conf->entity)."), 'to', 'jobs@example.com', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
+				$sqlforexampleFilterC3 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".((int) $conf->entity)."), 'to', 'jobs@example.com', '".$this->db->idate(time())."', ".((int) $user->id).", 1)";
 
 				$paramstring = 'tmp_from=EXTRACT:HEADER:^From:(.*)(<.*>)?'."\n".'fk_recruitmentjobposition=EXTRACT:HEADER:^To:[^\n]*\+([^\n]*)'."\n".'description=EXTRACT:BODY:(.*)'."\n".'lastname=SET:__tmp_from__';
 				$sqlforexampleActionC4 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectoraction (fk_emailcollector, type, actionparam, date_creation, fk_user_creat, status)";
-				$sqlforexampleActionC4 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".((int) $conf->entity)."), 'candidature', '".$this->db->escape($paramstring)."', '".$this->db->idate(dol_now())."', ".((int) $user->id).", 1)";
+				$sqlforexampleActionC4 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".((int) $conf->entity)."), 'candidature', '".$this->db->escape($paramstring)."', '".$this->db->idate(time())."', ".((int) $user->id).", 1)";
 
 				$sql[] = $sqlforexampleC1;
 

@@ -604,7 +604,7 @@ class pdf_standard_supplierpayment extends ModelePDFSuppliersPayments
 		$pdf->SetTextColor(0, 0, 0);
 		$pdf->SetFont('', '', $default_font_size - 2);
 
-		/*$titre = strtoupper($mysoc->town).' - '.dol_print_date(dol_now(), 'day', 'tzserver', $outputlangs);
+		/*$titre = strtoupper($mysoc->town).' - '.dol_print_date(time(), 'day', 'tzserver', $outputlangs);
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3) - 60, $tab_top - 6);
 		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);*/
 

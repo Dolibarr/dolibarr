@@ -386,14 +386,14 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			$conforbooth->fk_action = $eventtype;
 			$conforbooth->datep = $datestart;
 			$conforbooth->datep2 = $dateend;
-			$conforbooth->datec = dol_now();
-			$conforbooth->tms = dol_now();
+			$conforbooth->datec = time();
+			$conforbooth->tms = time();
 			$conforbooth->firstname = $contact->firstname;
 			$conforbooth->lastname = $contact->lastname;
 			$conforbooth->ip = getUserRemoteIP();
 
 			$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
-			$now = dol_now();
+			$now = time();
 			$minmonthpost = dol_time_plus_duree($now, -1, "m");
 
 			// Calculate nb of post for IP

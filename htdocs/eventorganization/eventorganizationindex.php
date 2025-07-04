@@ -45,7 +45,7 @@ $action = GETPOST('action', 'aZ09');
 
 $NBMAX = getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
-$now = dol_now();
+$now = time();
 
 // Security check
 //$socid = 0;

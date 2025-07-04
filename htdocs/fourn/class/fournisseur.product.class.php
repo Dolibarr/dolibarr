@@ -476,7 +476,7 @@ class ProductFournisseur extends Product
 		$packaging = price2num((empty($this->product_fourn_packaging) ? $qty : $this->product_fourn_packaging), 'MS');
 
 		$error = 0;
-		$now = dol_now();
+		$now = time();
 
 		$newvat = $tva_tx;
 

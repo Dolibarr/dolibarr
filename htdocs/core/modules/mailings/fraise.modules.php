@@ -243,7 +243,7 @@ class mailing_fraise extends MailingTargets
 		$langs->loadLangs(array("members", "companies"));
 
 		$cibles = array();
-		$now = dol_now();
+		$now = time();
 
 		$dateendsubscriptionafter = dol_mktime(GETPOSTINT('subscriptionafterhour'), GETPOSTINT('subscriptionaftermin'), GETPOSTINT('subscriptionaftersec'), GETPOSTINT('subscriptionaftermonth'), GETPOSTINT('subscriptionafterday'), GETPOSTINT('subscriptionafteryear'));
 		$dateendsubscriptionbefore = dol_mktime(GETPOSTINT('subscriptionbeforehour'), GETPOSTINT('subscriptionbeforemin'), GETPOSTINT('subscriptionbeforesec'), GETPOSTINT('subscriptionbeforemonth'), GETPOSTINT('subscriptionbeforeday'), GETPOSTINT('subscriptionbeforeyear'));

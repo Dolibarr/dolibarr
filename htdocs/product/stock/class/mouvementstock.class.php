@@ -270,7 +270,7 @@ class MouvementStock extends CommonObject
 		if (empty($price)) {
 			$price = 0;
 		}
-		$now = (!empty($datem) ? $datem : dol_now());
+		$now = (!empty($datem) ? $datem : time());
 
 		// Check parameters
 		if (!($fk_product > 0)) {

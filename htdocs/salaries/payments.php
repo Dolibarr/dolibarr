@@ -237,7 +237,7 @@ $userstatic = new User($db);
 $accountstatic = new Account($db);
 $accountlinestatic = new AccountLine($db);
 
-$now = dol_now();
+$now = time();
 
 //$help_url="EN:Module_BillOfMaterials|FR:Module_BillOfMaterials_FR|ES:Módulo_BillOfMaterials";
 $help_url = '';

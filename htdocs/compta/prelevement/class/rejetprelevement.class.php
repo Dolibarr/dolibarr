@@ -127,7 +127,7 @@ class RejetPrelevement
 		$error = 0;
 		$this->id = $id;
 		$this->bon_id = $bonid;
-		$now = dol_now();
+		$now = time();
 
 		dol_syslog("RejetPrelevement::Create id ".$id);
 

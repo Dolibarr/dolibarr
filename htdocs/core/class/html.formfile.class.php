@@ -2326,7 +2326,7 @@ class FormFile
 				print '<td>';
 				print $langs->trans('Label').': <input type="text" name="label" value="'.dol_escape_htmltag($link->label).'">';
 				print '</td>';
-				print '<td class="center">'.dol_print_date(dol_now(), "dayhour", "tzuser").'</td>';
+				print '<td class="center">'.dol_print_date(time(), "dayhour", "tzuser").'</td>';
 				print '<td class="right">';
 				print '<label for="idshareenabled'.$key.'">'.$langs->trans("LinkSharedViaALink").'</label> ';
 				print '<input class="inline-block" type="checkbox" id="idshareenabled'.$key.'" name="shareenabled"'.($link->share ? ' checked="checked"' : '').' /> ';

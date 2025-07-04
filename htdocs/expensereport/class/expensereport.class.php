@@ -372,7 +372,7 @@ class ExpenseReport extends CommonObject
 	{
 		global $conf, $langs;
 
-		$now = dol_now();
+		$now = time();
 
 		$error = 0;
 
@@ -953,7 +953,7 @@ class ExpenseReport extends CommonObject
 	{
 		global $user, $langs;
 
-		$now = dol_now();
+		$now = time();
 
 		// Initialise parameters
 		$this->id = 0;
@@ -1335,7 +1335,7 @@ class ExpenseReport extends CommonObject
 		global $conf, $langs, $user;
 
 		$error = 0;
-		$now = dol_now();
+		$now = time();
 
 		// Protection
 		if ($this->status == self::STATUS_VALIDATED) {
@@ -1496,7 +1496,7 @@ class ExpenseReport extends CommonObject
 	 */
 	public function setApproved($fuser, $notrigger = 0)
 	{
-		$now = dol_now();
+		$now = time();
 		$error = 0;
 
 		// date approval
@@ -1549,7 +1549,7 @@ class ExpenseReport extends CommonObject
 	 */
 	public function setDeny($fuser, $details, $notrigger = 0)
 	{
-		$now = dol_now();
+		$now = time();
 		$error = 0;
 
 		// date de refus
@@ -1678,7 +1678,7 @@ class ExpenseReport extends CommonObject
 	{
 		// phpcs:enable
 		$error = 0;
-		$this->date_cancel = $this->db->idate(dol_now());
+		$this->date_cancel = $this->db->idate(time());
 		if ($this->status != self::STATUS_CANCELED) {
 			$this->db->begin();
 
@@ -2589,7 +2589,7 @@ class ExpenseReport extends CommonObject
 			return -1; // protection pour eviter appel par utilisateur externe
 		}
 
-		$now = dol_now();
+		$now = time();
 
 		$sql = "SELECT ex.rowid, ex.date_valid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport as ex";
@@ -2663,7 +2663,7 @@ class ExpenseReport extends CommonObject
 			return false;
 		}
 
-		$now = dol_now();
+		$now = time();
 		if ($option == 'toapprove') {
 			return (!empty($this->datevalid) ? $this->datevalid : $this->date_valid) < ($now - $conf->expensereport->approve->warning_delay);
 		} else {
@@ -2773,7 +2773,7 @@ class ExpenseReport extends CommonObject
 
 		if ($result) {
 			if ($conf->global->EXPENSEREPORT_CALCULATE_MILEAGE_EXPENSE_COEFFICIENT_ON_CURRENT_YEAR) {
-				$arrayDate = dol_getdate(dol_now());
+				$arrayDate = dol_getdate(time());
 				$sql = " SELECT count(n.qty) as cumul FROM ".MAIN_DB_PREFIX."expensereport_det n";
 				$sql .= " LEFT JOIN  ".MAIN_DB_PREFIX."expensereport e ON e.rowid = n.fk_expensereport";
 				$sql .= " LEFT JOIN  ".MAIN_DB_PREFIX."c_type_fees tf ON tf.id = n.fk_c_type_fees";

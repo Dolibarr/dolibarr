@@ -200,7 +200,7 @@ class DolibarrApiAccess implements iAuthenticate
 			// Check date validity
 			if ($fuser->isNotIntoValidityDateRange()) {
 				// User validity dates are no more valid
-				dol_syslog("functions_isallowed::check_user_api_key Authentication KO for '".$login."': The user login has a validity between [".$fuser->datestartvalidity." and ".$fuser->dateendvalidity."], current date is ".dol_now());
+				dol_syslog("functions_isallowed::check_user_api_key Authentication KO for '".$login."': The user login has a validity between [".$fuser->datestartvalidity." and ".$fuser->dateendvalidity."], current date is ".time());
 				sleep(1); // Anti brute force protection. Must be same delay when user and password are not valid.
 				throw new RestException(401, $genericmessageerroruser);
 			}

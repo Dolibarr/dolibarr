@@ -473,7 +473,7 @@ if (empty($reshook)) {
 									$desc .= '<br>';
 									$desc .= ' ('.$langs->trans('Quantity').': '.$lines[$i]->qty.')';
 
-									$timearray = dol_getdate(dol_now());
+									$timearray = dol_getdate(time());
 									$date_intervention = dol_mktime(0, 0, 0, $timearray['mon'], $timearray['mday'], $timearray['year']);
 
 									if ($product_type == Product::TYPE_PRODUCT) {
@@ -979,7 +979,7 @@ if ($action == 'create') {
 		exit;
 	}
 
-	$object->datec = dol_now();
+	$object->datec = time();
 
 	$obj = getDolGlobalString('FICHEINTER_ADDON');
 	$obj = "mod_".$obj;
@@ -1701,7 +1701,7 @@ if ($action == 'create') {
 
 				// Date intervention
 				print '<td class="center nowrap">';
-				$now = dol_now();
+				$now = time();
 				$timearray = dol_getdate($now);
 				if (!GETPOSTINT('diday')) {
 					if (getDolGlobalInt('FICHINTER_DATE_WITHOUT_HOUR')) {

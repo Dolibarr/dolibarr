@@ -128,7 +128,7 @@ function dolSessionWrite($sess_id, $val)
 
 	//$sessionlastvalueread='';
 	if ($sessionlastvalueread != $val) {
-		$time_stamp = dol_now();
+		$time_stamp = time();
 
 		if (empty($sessionidfound)) {
 			if ((int) ini_get('session.gc_probability') == 0) {
@@ -240,7 +240,7 @@ function dolSessionGC($max_lifetime)
 {
 	global $dbsession;
 
-	$time_stamp = dol_now();
+	$time_stamp = time();
 
 	$delete_query = "DELETE FROM ".MAIN_DB_PREFIX."session";
 	$delete_query .= " WHERE last_accessed < '".$dbsession->idate($time_stamp - $max_lifetime)."'";
@@ -275,7 +275,7 @@ function dolListSessions()
 	while ($resql && $obj = $dbsession->fetch_object($resql)) {
 		$arrayofsessions[$obj->session_id] = [
 			"login" => (string) $obj->login,
-			"age" => dol_now() - (int) $dbsession->jdate($obj->date_creation),
+			"age" => time() - (int) $dbsession->jdate($obj->date_creation),
 			"creation" => $dbsession->idate($obj->date_creation),
 			"modification" => $dbsession->idate($obj->last_accessed),
 			"remote_ip" => $obj->remote_ip,

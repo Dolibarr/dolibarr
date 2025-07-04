@@ -490,7 +490,7 @@ class AccountingJournal extends CommonObject
 		$journal = $this->code;
 		$journal_label = $this->label;
 		$journal_label_formatted = $langs->transnoentities($journal_label);
-		$now = dol_now();
+		$now = time();
 
 		$element_static = new Asset($this->db);
 

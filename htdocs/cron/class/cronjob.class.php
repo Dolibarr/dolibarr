@@ -237,7 +237,7 @@ class Cronjob extends CommonObject
 		global $conf, $langs;
 		$error = 0;
 
-		$now = dol_now();
+		$now = time();
 
 		// Clean parameters
 		if (isset($this->label)) {
@@ -769,7 +769,7 @@ class Cronjob extends CommonObject
 			$this->email_alert = '';
 		}
 		if (empty($this->datenextrun)) {
-			$this->datenextrun = dol_now();
+			$this->datenextrun = time();
 		}
 
 		// Check parameters
@@ -975,7 +975,7 @@ class Cronjob extends CommonObject
 		$this->id = 0;
 		$this->ref = '';
 		$this->entity = 0;
-		$this->date_modification = dol_now();
+		$this->date_modification = time();
 		$this->datec = '';
 		$this->label = '';
 		$this->jobtype = '';
@@ -1038,7 +1038,7 @@ class Cronjob extends CommonObject
 		}
 		$datas['space'] = '<br>';
 
-		if (!empty($this->datestart) && $this->datestart >= dol_now()) {
+		if (!empty($this->datestart) && $this->datestart >= time()) {
 			$datas['crondtstart'] = '<br><b>'.$langs->trans('CronDtStart').':</b> '.dol_print_date($this->datestart, 'dayhour', 'tzuserrel');
 		}
 		if (!empty($this->dateend)) {
@@ -1183,7 +1183,7 @@ class Cronjob extends CommonObject
 
 		$hookmanager->initHooks(array('cron'));
 
-		$now = dol_now();
+		$now = time();
 		$error = 0;
 
 		$langs->load('cron');
@@ -1432,7 +1432,7 @@ class Cronjob extends CommonObject
 
 		dol_syslog(get_class($this)."::run_jobs now we update job to track it is finished (with success or error)");
 
-		$this->datelastresult = dol_now();
+		$this->datelastresult = time();
 		$this->processing = 0;
 		$this->pid = null;
 		$result = $this->update($user); // This include begin/commit
@@ -1462,7 +1462,7 @@ class Cronjob extends CommonObject
 	 * Reprogram a job
 	 *
 	 * @param	string		$userlogin		User login
-	 * @param	integer		$now			Date returned by dol_now()
+	 * @param	integer		$now			Date returned by time()
 	 * @return	int							if KO: <0 || if OK: >0
 	 */
 	public function reprogram_jobs(string $userlogin, int $now)

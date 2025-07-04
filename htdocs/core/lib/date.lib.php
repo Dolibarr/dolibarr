@@ -87,7 +87,7 @@ function getServerTimeZoneInt($refgmtdate = 'now')
 {
 	if (method_exists('DateTimeZone', 'getOffset')) {
 		// Method 1 (include daylight)
-		$gmtnow = dol_now('gmt');
+		$gmtnow = time();
 		$yearref = dol_print_date($gmtnow, '%Y');
 		$monthref = dol_print_date($gmtnow, '%m');
 		$dayref = dol_print_date($gmtnow, '%d');

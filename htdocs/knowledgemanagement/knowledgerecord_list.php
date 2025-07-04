@@ -224,7 +224,7 @@ $form = new Form($db);
 $user_temp = new User($db);
 $formadmin = new FormAdmin($db);
 
-$now = dol_now();
+$now = time();
 
 //$help_url="EN:Module_KnowledgeRecord|FR:Module_KnowledgeRecord_FR|ES:Módulo_KnowledgeRecord";
 $help_url = '';

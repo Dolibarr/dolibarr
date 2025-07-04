@@ -164,7 +164,7 @@ if (GETPOSTISSET('template')) {
                                 <p style="margin: 10px 0; color: #555;">' . htmlentities(empty($post['description']) ? '' : $post['description']) . '</p>
                                 <span style="display: block; margin-bottom: 5px; color: #888;">Created By: <strong>' . htmlentities(empty($post['user_fullname']) ? '' : $post['user_fullname']) . '</strong></span>
                                 <br>
-                                <span style="display: block; color: #888;">' . dol_print_date((empty($post['date_creation']) ? dol_now() : $post['date_creation']), 'daytext', 'tzserver', $langs) . '</span>
+                                <span style="display: block; color: #888;">' . dol_print_date((empty($post['date_creation']) ? time() : $post['date_creation']), 'daytext', 'tzserver', $langs) . '</span>
                             </div>
                             <div style="flex-shrink: 0; margin-left: 100px; float: right;">
                                 ' . (!empty($post['image']) ? '<img alt="Image" width="130px" height="130px" style="border-radius: 10px;" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=medias&file=' . htmlentities($post['image']) . '">' : '<img alt="Gray rectangle" width="130px" height="130px" style="border-radius: 10px;" src="__GRAY_RECTANGLE__">') . '

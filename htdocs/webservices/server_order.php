@@ -683,7 +683,7 @@ function createOrder($authentication, $order)
 
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-	$now = dol_now();
+	$now = time();
 
 	// TODO: socid is not defined in '$order_fields' above used to define the web interface - verify.
 	dol_syslog("Function: createOrder login=".$authentication['login']." socid :".$order['socid']);

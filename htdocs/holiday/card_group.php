@@ -72,7 +72,7 @@ $langs->loadLangs(array("other", "holiday", "mails", "trips"));
 
 $error = 0;
 
-$now = dol_now();
+$now = time();
 
 $childids = $user->getAllChildIds(1);
 

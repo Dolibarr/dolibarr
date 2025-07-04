@@ -114,7 +114,7 @@ class box_graph_invoices_peryear extends ModeleBoxes
 			if (empty($showtot)) {
 				$showtot = 1;
 			}
-			$nowarray = dol_getdate(dol_now(), true);
+			$nowarray = dol_getdate(time(), true);
 			if (empty($endyear)) {
 				$endyear = $nowarray['year'];
 			}

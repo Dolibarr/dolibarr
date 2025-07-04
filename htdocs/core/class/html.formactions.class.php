@@ -213,7 +213,7 @@ class FormActions
 			$url = '';
 			$morehtmlright = '';
 			if (isModEnabled('agenda') && $usercanaddaction) {
-				$url = DOL_URL_ROOT.'/comm/action/card.php?action=create&token='.newToken().'&datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog', 'tzuser'));
+				$url = DOL_URL_ROOT.'/comm/action/card.php?action=create&token='.newToken().'&datep='.urlencode(dol_print_date(time(), 'dayhourlog', 'tzuser'));
 				$url .= '&origin='.urlencode($typeelement).'&originid='.((int) $object->id).((!empty($object->socid) && $object->socid > 0) ? '&socid='.((int) $object->socid) : ((!empty($socid) && $socid > 0) ? '&socid='.((int) $socid) : ''));
 				$url .= ($projectid > 0 ? '&projectid='.((int) $projectid) : '').($taskid > 0 ? '&taskid='.((int) $taskid) : '');
 				$url .= ($assignedtouser > 0 ? '&assignedtouser='.((int) $assignedtouser) : '');

@@ -201,7 +201,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 			return -1;
 		}
 
-		$now = dol_now();
+		$now = time();
 
 		if (getDolGlobalString('PRODUCT_ELEPHANT_ADD_WHERE')) {
 			$where = ' AND ('.dol_string_nospecial(dol_string_unaccent(getDolGlobalString('PRODUCT_ELEPHANT_ADD_WHERE')), '_', array(',', '@', '"', "|", ";", ":")).')';

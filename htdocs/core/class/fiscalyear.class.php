@@ -135,7 +135,7 @@ class Fiscalyear extends CommonObject
 
 		$error = 0;
 
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 

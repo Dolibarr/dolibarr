@@ -173,7 +173,7 @@ class PaymentDonation extends CommonObject
 	{
 		$error = 0;
 
-		$now = dol_now();
+		$now = time();
 
 		// Validate parameters
 		if (!$this->datep) {
@@ -589,8 +589,8 @@ class PaymentDonation extends CommonObject
 		$this->id = 0;
 
 		$this->fk_donation = 0;
-		$this->datec = dol_now();
-		$this->tms = dol_now();
+		$this->datec = time();
+		$this->tms = time();
 		$this->datep = '';
 		$this->amount = 1000.80;
 		$this->fk_typepayment = 0;

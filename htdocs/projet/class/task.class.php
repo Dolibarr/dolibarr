@@ -418,7 +418,7 @@ class Task extends CommonObjectLine
 		global $conf, $langs;
 
 		//For the date
-		$now = dol_now();
+		$now = time();
 
 		$error = 0;
 
@@ -1619,7 +1619,7 @@ class Task extends CommonObjectLine
 		dol_syslog(get_class($this)."::addTimeSpent", LOG_DEBUG);
 
 		$ret = 0;
-		$now = dol_now();
+		$now = time();
 
 		// Check parameters
 		if (!is_object($user)) {
@@ -1637,7 +1637,7 @@ class Task extends CommonObjectLine
 
 		if (getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-			$restrictBefore = dol_time_plus_duree(dol_now(), - getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'), 'm');
+			$restrictBefore = dol_time_plus_duree(time(), - getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'), 'm');
 
 			if ($this->timespent_date < $restrictBefore) {
 				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'));
@@ -2082,7 +2082,7 @@ class Task extends CommonObjectLine
 
 		if (getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
+			$restrictBefore = dol_time_plus_duree(time(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
 			if ($this->timespent_date < $restrictBefore) {
 				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'));
@@ -2186,7 +2186,7 @@ class Task extends CommonObjectLine
 
 		if (getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-			$restrictBefore = dol_time_plus_duree(dol_now(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
+			$restrictBefore = dol_time_plus_duree(time(), - $conf->global->PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS, 'm');
 
 			if ($this->timespent_date < $restrictBefore) {
 				$this->error = $langs->trans('TimeRecordingRestrictedToNMonthsBack', getDolGlobalString('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'));
@@ -2267,7 +2267,7 @@ class Task extends CommonObjectLine
 		$error = 0;
 
 		//Use 00:00 of today if time is use on task.
-		$now = dol_mktime(0, 0, 0, (int) dol_print_date(dol_now(), '%m'), (int) dol_print_date(dol_now(), '%d'), (int) dol_print_date(dol_now(), '%Y'));
+		$now = dol_mktime(0, 0, 0, (int) dol_print_date(time(), '%m'), (int) dol_print_date(time(), '%d'), (int) dol_print_date(time(), '%Y'));
 
 		$datec = $now;
 
@@ -2719,7 +2719,7 @@ class Task extends CommonObjectLine
 			return false;
 		}
 
-		$now = dol_now();
+		$now = time();
 
 		$datetouse = ($this->date_end > 0) ? $this->date_end : ((isset($this->datee) && $this->datee > 0) ? $this->datee : 0);
 

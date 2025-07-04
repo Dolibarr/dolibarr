@@ -149,7 +149,7 @@ class DoliStorage implements TokenStorageInterface
 			// save
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, token, entity, datec)";
 			$sql .= " VALUES ('".$this->db->escape($servicepluskeyforprovider)."', '".$this->db->escape(dolEncrypt($serializedToken))."', ".((int) $conf->entity).", ";
-			$sql .= "'".$this->db->idate(dol_now())."'";
+			$sql .= "'".$this->db->idate(time())."'";
 			$sql .= ")";
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -311,7 +311,7 @@ class DoliStorage implements TokenStorageInterface
 			// insert (should not happen)
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, state, entity, datec)";
 			$sql .= " VALUES ('".$this->db->escape($servicepluskeyforprovider)."', '".$this->db->escape($newstate)."', ".((int) $conf->entity).", ";
-			$sql .= "'".$this->db->idate(dol_now())."'";
+			$sql .= "'".$this->db->idate(time())."'";
 			$sql .= ")";
 			$resql = $this->db->query($sql);
 		}

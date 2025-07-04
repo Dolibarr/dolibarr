@@ -124,7 +124,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 $userstatic = new User($db);
 
-$now = dol_now();
+$now = time();
 
 $title = $object->ref . ' - ' . $langs->trans("Notes");
 if (!empty($withproject)) {

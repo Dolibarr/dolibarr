@@ -418,7 +418,7 @@ class Contrat extends CommonObject
 	public function activateAll($user, $date_start = '', $notrigger = 0, $comment = '', $date_end = '')
 	{
 		if (empty($date_start)) {
-			$date_start = dol_now();
+			$date_start = time();
 		}
 
 		$this->db->begin();
@@ -475,7 +475,7 @@ class Contrat extends CommonObject
 		// Load lines
 		$this->fetch_lines();
 
-		$now = dol_now();
+		$now = time();
 
 		$error = 0;
 
@@ -527,7 +527,7 @@ class Contrat extends CommonObject
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		global $conf;
 
-		$now = dol_now();
+		$now = time();
 
 		$error = 0;
 		dol_syslog(get_class($this).'::validate user='.$user->id.', force_number='.$force_number);
@@ -650,7 +650,7 @@ class Contrat extends CommonObject
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		$now = dol_now();
+		$now = time();
 
 		$error = 0;
 		dol_syslog(get_class($this).'::reopen user='.$user->id);
@@ -844,7 +844,7 @@ class Contrat extends CommonObject
 		$total_vat = 0;
 		$total_ht = 0;
 
-		$now = dol_now();
+		$now = time();
 
 		$this->lines = array();
 		$pos = 0;
@@ -1036,7 +1036,7 @@ class Contrat extends CommonObject
 
 		$this->db->begin();
 
-		$now = dol_now();
+		$now = time();
 
 		// Insert contract
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec, fk_soc, fk_user_author, date_contrat,";
@@ -2283,14 +2283,14 @@ class Contrat extends CommonObject
 			$sql .= " WHERE c.statut = 1";
 			$sql .= " AND c.rowid = cd.fk_contrat";
 			$sql .= " AND cd.statut = 4";
-			$sql .= " AND cd.date_fin_validite < '".$this->db->idate(dol_now())."'";
+			$sql .= " AND cd.date_fin_validite < '".$this->db->idate(time())."'";
 		} elseif ($mode == 'active') {
 			$sql = "SELECT cd.rowid, cd.date_fin_validite as datefin";
 			$sql .= $this->from;
 			$sql .= " WHERE c.statut = 1";
 			$sql .= " AND c.rowid = cd.fk_contrat";
 			$sql .= " AND cd.statut = 4";
-			//$datetouse = dol_now();
+			//$datetouse = time();
 			//$sql.= " AND cd.date_fin_validite < '".$this->db->idate($datetouse)."'";
 		}
 		$sql .= " AND c.fk_soc = s.rowid";
@@ -2305,7 +2305,7 @@ class Contrat extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$langs->load("contracts");
-			$now = dol_now();
+			$now = time();
 
 			if ($mode == 'inactive') {
 				$warning_delay = $conf->contract->services->inactifs->warning_delay;
@@ -2451,8 +2451,8 @@ class Contrat extends CommonObject
 		$this->ref_supplier = 'SPECIMENSUPP';
 		$this->socid = 1;
 		$this->status = 0;
-		$this->date_creation = (dol_now() - 3600 * 24 * 7);
-		$this->date_contrat = dol_now();
+		$this->date_creation = (time() - 3600 * 24 * 7);
+		$this->date_contrat = time();
 		$this->commercial_signature_id = 1;
 		$this->commercial_suivi_id = 1;
 		$this->note_private = 'This is a comment (private)';
@@ -2470,10 +2470,10 @@ class Contrat extends CommonObject
 			$line->total_ht = 90;
 			$line->total_ttc = 107.64; // 90 * 1.196
 			$line->total_tva = 17.64;
-			$line->date_start = dol_now() - 500000;
-			$line->date_start_real = dol_now() - 200000;
-			$line->date_end = dol_now() + 500000;
-			$line->date_end_real = dol_now() - 100000;
+			$line->date_start = time() - 500000;
+			$line->date_start_real = time() - 200000;
+			$line->date_end = time() + 500000;
+			$line->date_end_real = time() - 100000;
 			if ($num_prods > 0) {
 				$prodid = mt_rand(1, $num_prods);
 				$line->fk_product = $prodids[$prodid];
@@ -2713,7 +2713,7 @@ class Contrat extends CommonObject
 
 		$langs->load("agenda");
 
-		$now = dol_now();
+		$now = time();
 
 		$enddatetoscan = dol_time_plus_duree($now, -1 * abs($delayindaysshort), 'd');
 
@@ -2825,7 +2825,7 @@ class Contrat extends CommonObject
 								$contractlineprocessed[$obj->lid] = $object->ref;
 
 								$actioncode = 'RENEW_CONTRACT';
-								$now = dol_now();
+								$now = time();
 
 								// Create an event
 								$actioncomm = new ActionComm($this->db);

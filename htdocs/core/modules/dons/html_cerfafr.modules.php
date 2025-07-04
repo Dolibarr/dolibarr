@@ -79,7 +79,7 @@ class html_cerfafr extends ModeleDon
 		// phpcs:enable
 		global $user, $conf, $langs, $mysoc;
 
-		$now = dol_now();
+		$now = time();
 		$id = (!is_object($don) ? $don : '');
 
 		if (!is_object($outputlangs)) {

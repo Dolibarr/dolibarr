@@ -1306,7 +1306,7 @@ abstract class CommonObject
 			return 0;
 		}
 
-		$datecreate = dol_now();
+		$datecreate = time();
 
 		// Socpeople must have already been added by some trigger, then we have to check it to avoid DB_ERROR_RECORD_ALREADY_EXISTS error
 		$TListeContacts = $this->liste_contact(-1, $source);
@@ -4826,10 +4826,10 @@ abstract class CommonObject
 			$sql .= ", fk_user_valid = ".((int) $user->id);
 		}
 		if ($status == 1 && in_array($elementTable, array('expensereport'))) {
-			$sql .= ", date_valid = '".$this->db->idate(dol_now())."'";
+			$sql .= ", date_valid = '".$this->db->idate(time())."'";
 		}
 		if ($status == 1 && in_array($elementTable, array('inventory'))) {
-			$sql .= ", date_validation = '".$this->db->idate(dol_now())."'";
+			$sql .= ", date_validation = '".$this->db->idate(time())."'";
 		}
 		$sql .= " WHERE rowid = ".((int) $elementId);
 		$sql .= " AND ".$fieldstatus." <> ".((int) $status);	// We avoid update if status already correct
@@ -10459,7 +10459,7 @@ abstract class CommonObject
 
 		$error = 0;
 
-		$now = dol_now();
+		$now = time();
 
 		$fieldvalues = $this->setSaveQuery();
 
@@ -10775,7 +10775,7 @@ abstract class CommonObject
 
 		$error = 0;
 
-		$now = dol_now();
+		$now = time();
 
 		// $this->oldcopy should have been set by the caller of update
 		//if (empty($this->oldcopy)) {
@@ -11248,11 +11248,11 @@ abstract class CommonObject
 			'qty' => 123.12,
 			'note_public' => 'Public note',
 			'note_private' => 'Private note',
-			'date_creation' => (dol_now() - 3600 * 48),
-			'date_modification' => (dol_now() - 3600 * 24),
+			'date_creation' => (time() - 3600 * 48),
+			'date_modification' => (time() - 3600 * 24),
 			'fk_user_creat' => $user->id,
 			'fk_user_modif' => $user->id,
-			'date' => dol_now(),
+			'date' => time(),
 		);
 		foreach ($fields as $key => $value) {
 			if (array_key_exists($key, $this->fields)) {

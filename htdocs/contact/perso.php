@@ -127,7 +127,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'con
  *	View
  */
 
-$now = dol_now();
+$now = time();
 
 $title = $langs->trans("ContactPersonalData");
 if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contactnameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->lastname) {

@@ -607,7 +607,7 @@ class StockTransfer extends CommonObject
 		 return -1;
 		 }*/
 
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 
@@ -1111,7 +1111,7 @@ class StockTransfer extends CommonObject
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 

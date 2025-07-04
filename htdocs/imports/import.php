@@ -236,7 +236,7 @@ if ($action == 'add_import_model' && $user->hasRight('import', 'run')) {
 if ($step == 3 && $datatoimport) {
 	if (GETPOST('sendit') && getDolGlobalString('MAIN_UPLOAD_DOC')) {
 		dol_mkdir($conf->import->dir_temp);
-		$nowyearmonth = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		$nowyearmonth = dol_print_date(time(), '%Y%m%d%H%M%S');
 
 		$fullpath = $conf->import->dir_temp."/".$nowyearmonth.'-'.dol_string_nohtmltag(dol_sanitizeFileName($_FILES['userfile']['name']));
 		if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $fullpath, 1) > 0) {
@@ -1487,7 +1487,7 @@ if ($step == 4 && $datatoimport) {
 		print '<td></td>';
 		print '</tr>';
 
-		$nameofimportprofile = str_replace(' ', '-', $langs->trans("ImportProfile").' '.$titleofmodule.' '.dol_print_date(dol_now('gmt'), 'dayxcard'));
+		$nameofimportprofile = str_replace(' ', '-', $langs->trans("ImportProfile").' '.$titleofmodule.' '.dol_print_date(time(), 'dayxcard'));
 		if (GETPOST('import_name')) {	// If we have submitted a form, we take value used for the update try
 			$nameofimportprofile = $import_name;
 		}
@@ -1859,7 +1859,7 @@ if ($step == 5 && $datatoimport) {
 		$nboferrors = 0;
 		$nbofwarnings = 0;
 
-		$importid = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		$importid = dol_print_date(time(), '%Y%m%d%H%M%S');
 
 		//var_dump($array_match_file_to_database);
 
@@ -2019,7 +2019,7 @@ if ($step == 5 && $datatoimport) {
 		}
 
 		// Show import id
-		$importid = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		$importid = dol_print_date(time(), '%Y%m%d%H%M%S');
 
 		print '<div class="center">';
 		print '<span class="opacitymedium">'.$langs->trans("NowClickToRunTheImport", $langs->transnoentitiesnoconv("RunImportFile")).'</span><br>';
@@ -2285,7 +2285,7 @@ if ($step == 6 && $datatoimport) {
 	$nboferrors = 0;
 	$nbofwarnings = 0;
 
-	$importid = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+	$importid = dol_print_date(time(), '%Y%m%d%H%M%S');
 
 	//var_dump($array_match_file_to_database);
 

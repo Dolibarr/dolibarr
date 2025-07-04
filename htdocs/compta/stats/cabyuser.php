@@ -81,12 +81,12 @@ $date_endyear = GETPOSTINT("date_endyear");
 $date_endmonth = GETPOSTINT("date_endmonth");
 $date_endday = GETPOSTINT("date_endday");
 if (empty($year)) {
-	$year_current = dol_print_date(dol_now(), '%Y');
-	$month_current = dol_print_date(dol_now(), '%m');
+	$year_current = dol_print_date(time(), '%Y');
+	$month_current = dol_print_date(time(), '%m');
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
-	$month_current = dol_print_date(dol_now(), '%m');
+	$month_current = dol_print_date(time(), '%m');
 	$year_start = $year;
 }
 $date_start = dol_mktime(0, 0, 0, GETPOSTINT("date_startmonth"), GETPOSTINT("date_startday"), GETPOSTINT("date_startyear"), 'tzserver');	// We use timezone of server so report is same from everywhere
@@ -213,7 +213,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	} else {
 		$description .= $langs->trans("DepositsAreIncluded");
 	}
-	$builddate = dol_now();
+	$builddate = time();
 	//$exportlink=$langs->trans("NotYetAvailable");
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	$name = $langs->trans("TurnoverCollected").', '.$langs->trans("ByUserAuthorOfInvoice");
@@ -221,7 +221,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 	$description = $langs->trans("RulesCAIn");
 	$description .= $langs->trans("DepositsAreIncluded");
-	$builddate = dol_now();
+	$builddate = time();
 	//$exportlink=$langs->trans("NotYetAvailable");
 } elseif ($modecompta == "BOOKKEEPING") {
 	// TODO

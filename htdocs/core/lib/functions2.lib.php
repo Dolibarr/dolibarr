@@ -904,7 +904,7 @@ function array2table($data, $tableMarkup = 1, $tableoptions = '', $troptions = '
  * @param   string			$field			Field containing already used values of counter
  * @param   string			$where			To add a filter on selection (for example to filter on invoice types)
  * @param   null|Societe|''	$objsoc			The company that own the object we need a counter for
- * @param   int|''			$date			Date to use for the {y},{m},{d} tags. is timestamp or '' to use dol_now()
+ * @param   int|''			$date			Date to use for the {y},{m},{d} tags. is timestamp or '' to use time()
  * @param   string			$mode			'next' for next value or 'last' for last value
  * @param   bool			$bentityon		Activate the entity filter. Default is true (for modules not compatible with multicompany)
  * @param	?User			$objuser		Object user we need data from.
@@ -931,7 +931,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 
 	// Clean parameters
 	if ($date == '') {
-		$date = dol_now(); // We use local year and month of PHP server to search numbers
+		$date = time(); // We use local year and month of PHP server to search numbers
 	}
 	// but we should use local year and month of user
 

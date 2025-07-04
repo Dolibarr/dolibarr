@@ -55,7 +55,7 @@ if (!empty($user->socid) && $user->socid > 0) {
 }
 
 $max = 5;
-$now = dol_now();
+$now = time();
 
 
 /*

@@ -174,7 +174,7 @@ function displayBox($selectedDate, $month, $year)
 	//print "$selectedDate,$month,$year";
 	$thedate = dol_mktime(12, 0, 0, $month, 1, $year);
 	//print "thedate=$thedate";
-	$today = dol_now();
+	$today = time();
 	$todayArray = dol_getdate($today);
 	if ($selectedDate != "00000000") {
 		$selDate = xyzToUnixTimestamp($selectedDate);

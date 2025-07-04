@@ -299,7 +299,7 @@ class Lettering extends BookKeeping
 	 */
 	public function updateLettering($ids = array(), $notrigger = 0, $partial = false)
 	{
-		$now = dol_now();
+		$now = time();
 		$error = 0;
 		$affected_rows = 0;
 

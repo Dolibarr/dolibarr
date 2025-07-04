@@ -308,7 +308,7 @@ $formpropal = new FormPropal($db);
 $companystatic = new Societe($db);
 $formcompany = new FormCompany($db);
 
-$now = dol_now();
+$now = time();
 
 if ($socid > 0) {
 	$soc = new Societe($db);
@@ -1036,7 +1036,7 @@ if ($resql) {
 	}
 	print '</tr>'."\n";
 
-	$now = dol_now();
+	$now = time();
 	$i = 0;
 	$total = 0;
 	$subtotal = 0;

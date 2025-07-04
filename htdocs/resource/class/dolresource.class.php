@@ -155,7 +155,7 @@ class Dolresource extends CommonObject
 	public function create(User $user, int $no_trigger = 0)
 	{
 		$error = 0;
-		$this->date_creation = dol_now();
+		$this->date_creation = time();
 
 		// Clean parameters
 		$new_resource_values = [
@@ -343,7 +343,7 @@ class Dolresource extends CommonObject
 	{
 		global $conf, $langs;
 		$error = 0;
-		$this->date_modification = dol_now();
+		$this->date_modification = time();
 
 		// Clean parameters
 		if (isset($this->ref)) {
@@ -717,7 +717,7 @@ class Dolresource extends CommonObject
 	public function updateElementResource($user = null, int $notrigger = 0)
 	{
 		$error = 0;
-		$this->date_modification = dol_now();
+		$this->date_modification = time();
 
 		// Clean parameters
 		if (!is_numeric($this->resource_id)) {

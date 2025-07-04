@@ -559,7 +559,7 @@ if (!$error && $massaction === 'setbilled' && $permissiontoclose && $objectclass
  * View
  */
 
-$now = dol_now();
+$now = time();
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -842,7 +842,7 @@ if (!empty($searchCategoryProductList)) {
 	}
 }
 if ($search_option == 'late') {
-	$sql .= " AND p.fin_validite < '".$db->idate(dol_now() - $conf->propal->cloture->warning_delay)."'";
+	$sql .= " AND p.fin_validite < '".$db->idate(time() - $conf->propal->cloture->warning_delay)."'";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -1750,7 +1750,7 @@ print '</tr>'."\n";
 // Loop on record
 // --------------------------------------------------------------------
 $typenArray = null;
-$now = dol_now();
+$now = time();
 
 $with_margin_info = false;
 if (isModEnabled('margin') && (

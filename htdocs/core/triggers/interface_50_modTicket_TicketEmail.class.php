@@ -527,7 +527,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 			if ($result) {
 				// update last_msg_sent date
 				$object->fetch($object->id);
-				$object->date_last_msg_sent = dol_now();
+				$object->date_last_msg_sent = time();
 				$object->update($user);
 			}
 		}
@@ -595,7 +595,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 			if ($result) {
 				// update last_msg_sent date
 				$object->fetch($object->id);
-				$object->date_last_msg_sent = dol_now();
+				$object->date_last_msg_sent = time();
 				$object->update($user);
 			}
 		}

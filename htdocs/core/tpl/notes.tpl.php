@@ -56,7 +56,7 @@ $moreparam = (isset($moreparam) ? $moreparam : '');
 $value_public = $object->note_public;
 $value_private = $object->note_private;
 if (getDolGlobalString('MAIN_AUTO_TIMESTAMP_IN_PUBLIC_NOTES')) {
-	$stringtoadd = dol_print_date(dol_now(), 'dayhour').' '.$user->getFullName($langs).' --';
+	$stringtoadd = dol_print_date(time(), 'dayhour').' '.$user->getFullName($langs).' --';
 	if (GETPOST('action', 'aZ09') == 'edit'.$note_public) {
 		$value_public = dol_concatdesc($value_public, ($value_public ? "\n" : "")."-- ".$stringtoadd);
 		if (dol_textishtml($value_public)) {
@@ -67,7 +67,7 @@ if (getDolGlobalString('MAIN_AUTO_TIMESTAMP_IN_PUBLIC_NOTES')) {
 	}
 }
 if (getDolGlobalString('MAIN_AUTO_TIMESTAMP_IN_PRIVATE_NOTES')) {
-	$stringtoadd = dol_print_date(dol_now(), 'dayhour').' '.$user->getFullName($langs).' --';
+	$stringtoadd = dol_print_date(time(), 'dayhour').' '.$user->getFullName($langs).' --';
 	if (GETPOST('action', 'aZ09') == 'edit'.$note_private) {
 		$value_private = dol_concatdesc($value_private, ($value_private ? "\n" : "")."-- ".$stringtoadd);
 		if (dol_textishtml($value_private)) {

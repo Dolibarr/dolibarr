@@ -1564,7 +1564,7 @@ class CMailFile
 
 			// Move dolibarr_mail.log into a dolibarr_mail.err or dolibarr_mail.date.err
 			if (getDolGlobalString('MAIN_MAIL_DEBUG_ERR_WITH_DATE')) {
-				$destfile = $dolibarr_main_data_root."/dolibarr_mail.".dol_print_date(dol_now(), 'dayhourlog', 'gmt').".err";
+				$destfile = $dolibarr_main_data_root."/dolibarr_mail.".dol_print_date(time(), 'dayhourlog', 'gmt').".err";
 			} else {
 				$destfile = $dolibarr_main_data_root."/dolibarr_mail.err";
 			}

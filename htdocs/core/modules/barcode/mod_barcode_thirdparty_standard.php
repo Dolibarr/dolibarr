@@ -227,7 +227,7 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 		$field = 'barcode';
 		$where = '';
 
-		$now = dol_now();
+		$now = time();
 
 		$numFinal = get_next_value($db, $mask, 'societe', $field, $where, '', $now);
 		//Begin barcode with key: for barcode with key (EAN13...) calculate and substitute the last  character (* or ?) used in the mask by the key

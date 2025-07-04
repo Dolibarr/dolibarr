@@ -232,7 +232,7 @@ class Mailing extends CommonObject
 		}
 
 		$error = 0;
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 
@@ -456,7 +456,7 @@ class Mailing extends CommonObject
 		$object->statut = 0;
 
 		// Clear fields
-		$object->title = $langs->trans("CopyOf").' '.$object->title.' '.dol_print_date(dol_now());
+		$object->title = $langs->trans("CopyOf").' '.$object->title.' '.dol_print_date(time());
 
 		// If no option copy content
 		if (empty($option1)) {
@@ -556,7 +556,7 @@ class Mailing extends CommonObject
 	 */
 	public function valid($user)
 	{
-		$now = dol_now();
+		$now = time();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
 		$sql .= " SET statut = 1, date_valid = '".$this->db->idate($now)."', fk_user_valid=".$user->id;

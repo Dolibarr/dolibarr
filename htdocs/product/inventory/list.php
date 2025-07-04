@@ -209,7 +209,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$now = dol_now();
+$now = time();
 
 $title = $langs->trans('Inventories');
 //$help_url="EN:Module_Inventory|FR:Module_Inventory_FR|ES:Módulo_Inventory";

@@ -220,7 +220,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$now = dol_now();
+$now = time();
 
 $help_url = '';
 $title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("Assets"));

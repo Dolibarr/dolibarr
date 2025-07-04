@@ -223,7 +223,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			}
 			$i++;
 		}
-		$sql .= ", 1, '".$db->idate(dol_now())."')";
+		$sql .= ", 1, '".$db->idate(time())."')";
 
 		dol_syslog("actionadd", LOG_DEBUG);
 		$result = $db->query($sql);

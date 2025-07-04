@@ -1769,7 +1769,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 				if ($nbCustomerPrices > 0) {
 					$productCustomerPrice = null;
 					if (count($productCustomerPriceStatic->lines) > 0) {
-						$date_now = (int) floor(dol_now() / 86400) * 86400; // date without hours
+						$date_now = (int) floor(time() / 86400) * 86400; // date without hours
 						foreach ($productCustomerPriceStatic->lines as $k => $custprice_line) {
 							if ($custprice_line->date_begin <= $date_now && (empty($custprice_line->date_end) || $date_now <= $custprice_line->date_end)) {
 								$productCustomerPrice = $custprice_line;

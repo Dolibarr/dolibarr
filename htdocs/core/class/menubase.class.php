@@ -509,7 +509,7 @@ class Menubase
 		$this->perms = '';
 		$this->enabled = '';
 		$this->user = 0;
-		$this->tms = dol_now();
+		$this->tms = time();
 
 		return 1;
 	}

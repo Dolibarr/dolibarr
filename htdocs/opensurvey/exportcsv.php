@@ -68,7 +68,7 @@ if (!$user->hasRight('opensurvey', 'read')) {
  * View
  */
 
-$now = dol_now();
+$now = time();
 
 $nbcolonnes = substr_count($object->sujet, ',') + 1;
 $toutsujet = explode(",", $object->sujet);

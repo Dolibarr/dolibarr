@@ -208,7 +208,7 @@ $pagenext = $page + 1;
 
 $diroutputmassaction = $conf->invoice->dir_output.'/temp/massgeneration/'.$user->id;
 
-$now = dol_now();
+$now = time();
 $error = 0;
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
@@ -980,7 +980,7 @@ if ($search_datem_end) {
 	$sql .= " AND f.tms <= '".$db->idate($search_datem_end)."'";
 }
 if ($search_option == 'late') {
-	$sql .= " AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->invoice->client->warning_delay)."'";
+	$sql .= " AND f.date_lim_reglement < '".$db->idate(time() - $conf->invoice->client->warning_delay)."'";
 }
 /*if ($search_sale > 0) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);

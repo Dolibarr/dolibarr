@@ -133,7 +133,7 @@ class modHoliday extends DolibarrModules
 
 
 		// Cronjobs
-		$arraydate = dol_getdate(dol_now());
+		$arraydate = dol_getdate(time());
 		$datestart = dol_mktime(4, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
 		$this->cronjobs = array(
 			0 => array(

@@ -165,7 +165,7 @@ if (!in_array($action, array('delmouv', 'delmouvconfirm')) && !GETPOSTISSET('beg
 		if (getDolGlobalInt('ACCOUNTANCY_FISCALYEAR_DEFAULT')) {
 			$sql .= " WHERE rowid = " . getDolGlobalInt('ACCOUNTANCY_FISCALYEAR_DEFAULT');
 		} else {
-			$sql .= " WHERE date_start < '" . $db->idate(dol_now()) . "' and date_end > '" . $db->idate(dol_now()) . "'";
+			$sql .= " WHERE date_start < '" . $db->idate(time()) . "' and date_end > '" . $db->idate(time()) . "'";
 		}
 		$sql .= $db->plimit(1);
 		$res = $db->query($sql);
@@ -176,8 +176,8 @@ if (!in_array($action, array('delmouv', 'delmouvconfirm')) && !GETPOSTISSET('beg
 			$search_date_end = strtotime($fiscalYear->date_end);
 		} else {
 			$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
-			$year_start = (int) dol_print_date(dol_now(), '%Y');
-			if (dol_print_date(dol_now(), '%m') < $month_start) {
+			$year_start = (int) dol_print_date(time(), '%Y');
+			if (dol_print_date(time(), '%m') < $month_start) {
 				$year_start--; // If current month is lower that starting fiscal month, we start last year
 			}
 			$year_end = $year_start + 1;

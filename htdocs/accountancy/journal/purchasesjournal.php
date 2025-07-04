@@ -66,7 +66,7 @@ if ($in_bookkeeping == '') {
 	$in_bookkeeping = 'notyet';
 }
 
-$now = dol_now();
+$now = time();
 
 $hookmanager->initHooks(array('purchasesjournal'));
 $parameters = array();
@@ -430,7 +430,7 @@ if (!empty($tabfac)) {
 
 // Bookkeeping Write
 if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'bind', 'write')) {
-	$now = dol_now();
+	$now = time();
 	$error = 0;
 
 	$companystatic = new Societe($db);
@@ -981,7 +981,7 @@ if (empty($action) || $action == 'view') {
 	$nomlink = '';
 	$periodlink = '';
 	$exportlink = '';
-	$builddate = dol_now();
+	$builddate = time();
 	$description = $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 	if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$description .= $langs->trans("DepositsAreNotIncluded");

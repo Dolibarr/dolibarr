@@ -941,7 +941,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_valid' && $confirm == 'yes' && $usercanvalidate) {
 		$db->begin();
 
-		$object->date_commande = dol_now();
+		$object->date_commande = time();
 		$result = $object->valid($user);
 		if ($result >= 0) {
 			// Define output language
@@ -1582,7 +1582,7 @@ if ($action == 'create') {
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-supplier-order page-card');
 
-$now = dol_now();
+$now = time();
 
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans('NewOrderSupplier'), '', 'supplier_order');
@@ -2013,7 +2013,7 @@ if ($action == 'create') {
 
 	// Confirmation de la validation
 	if ($action == 'valid') {
-		$object->date_commande = dol_now();
+		$object->date_commande = time();
 
 		// We check if number is temporary number
 		if (preg_match('/^[\(]?PROV/i', $object->ref) || empty($object->ref)) { // empty should not happened, but when it occurs, the test save life
@@ -2851,7 +2851,7 @@ if ($action == 'create') {
 					print '<table class="noborder centpercent">';
 					//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
 					print '<tr><td>'.$langs->trans("DeliveryDate").'</td><td>';
-					$datepreselected = dol_now();
+					$datepreselected = time();
 					print $form->selectDate($datepreselected, '', 1, 1, 0, "commande", 1, 1);
 					print "</td></tr>\n";
 

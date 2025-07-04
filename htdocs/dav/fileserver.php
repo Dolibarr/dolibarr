@@ -172,7 +172,7 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(
 		// Check date validity
 		if ($user->isNotIntoValidityDateRange()) {
 			// User validity dates are no more valid
-			dol_syslog("The user login has a validity between [".$user->datestartvalidity." and ".$user->dateendvalidity."], current date is ".dol_now());
+			dol_syslog("The user login has a validity between [".$user->datestartvalidity." and ".$user->dateendvalidity."], current date is ".time());
 			return false;
 		}
 

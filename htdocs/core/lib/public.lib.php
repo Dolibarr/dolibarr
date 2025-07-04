@@ -41,7 +41,7 @@ function checkNbPostsForASpeceificIp($object, $nb_post_max)
 	global $db, $langs;
 
 	$nb_post_ip = 0;
-	$now = dol_now();
+	$now = time();
 	$minmonthpost = dol_time_plus_duree($now, -1, "w");
 
 	if (empty($object->ip)) {

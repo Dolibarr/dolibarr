@@ -579,7 +579,7 @@ if (empty($reshook)) {
 					$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 					if ($result) {
 						if (count($prodcustprice->lines) > 0) {
-							$date_now = (int) floor(dol_now() / 86400) * 86400; // date without hours
+							$date_now = (int) floor(time() / 86400) * 86400; // date without hours
 							foreach ($prodcustprice->lines as $k => $custprice_line) {
 								if ($custprice_line->date_begin <= $date_now && (empty($custprice_line->date_end) || $date_now <= $custprice_line->date_end)) {
 									$price_min = price($custprice_line->price_min);
@@ -1217,7 +1217,7 @@ if ($action == 'create') {
 		$note_public = GETPOST("note_public", "alpha");
 	}
 
-	$object->date_contrat = dol_now();
+	$object->date_contrat = time();
 
 	print '<form name="form_contract" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1352,7 +1352,7 @@ if ($action == 'create') {
 	print "</form>\n";
 } else {
 	// View and edit mode
-	$now = dol_now();
+	$now = time();
 
 	if ($object->id > 0) {
 		$object->fetch_thirdparty();
@@ -1401,7 +1401,7 @@ if ($action == 'create') {
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".$object->id, $langs->trans("CloseAContract"), $langs->trans("ConfirmCloseContract"), "confirm_close", '', 0, 1);
 		} elseif ($action == 'activate') {
 			$formquestion = array(
-				array('type' => 'date', 'name' => 'd_start', 'label' => $langs->trans("DateServiceActivate"), 'value' => dol_now()),
+				array('type' => 'date', 'name' => 'd_start', 'label' => $langs->trans("DateServiceActivate"), 'value' => time()),
 				array('type' => 'date', 'name' => 'd_end', 'label' => $langs->trans("DateEndPlanned"), /*'value' => $form->selectDate('', "end", $usehm, $usehm, '', "active", 1, 0),*/ 0 => '', 1 => ''),
 				array('type' => 'text', 'name' => 'comment', 'label' => $langs->trans("Comment"), 'value' => '', 0 => '', 1 => '', 'class' => 'minwidth300', 'moreattr' => 'autofocus')
 			);
@@ -2145,7 +2145,7 @@ if ($action == 'create') {
 							$dateactend = dol_time_plus_duree(time(), $product->duration_value, $product->duration_unit);
 						}
 					}
-					$now = dol_now();
+					$now = time();
 					if ($dateactend > $now) {
 						$dateactend = $now;
 					}

@@ -158,7 +158,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$now = dol_now();
+$now = time();
 
 $help_url = 'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing';
 $title = $langs->trans("Mailing");

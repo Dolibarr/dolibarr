@@ -363,7 +363,7 @@ class ProductStockEntrepot extends CommonObject
 		// Update request
 		$sql = 'UPDATE '.$this->db->prefix().$this->table_element.' SET';
 
-		$sql .= ' tms = '.(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'").',';
+		$sql .= ' tms = '.(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(time())."'").',';
 		$sql .= ' fk_product = '.(isset($this->fk_product) ? $this->fk_product : "null").',';
 		$sql .= ' fk_entrepot = '.(isset($this->fk_entrepot) ? $this->fk_entrepot : "null").',';
 		$sql .= ' seuil_stock_alerte = '.(isset($this->seuil_stock_alerte) ? $this->seuil_stock_alerte : "null").',';
@@ -615,7 +615,7 @@ class ProductStockEntrepot extends CommonObject
 	{
 		$this->id = 0;
 
-		$this->tms = dol_now();
+		$this->tms = time();
 		$this->fk_product = 0;
 		$this->fk_entrepot = 0;
 		$this->seuil_stock_alerte = '';

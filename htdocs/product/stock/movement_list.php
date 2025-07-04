@@ -315,7 +315,7 @@ if (empty($reshook)) {
 		 $filename .= '_'.$month;
 		 }
 		 */
-		$now = dol_now();
+		$now = time();
 		$file = $diroutputmassaction.'/'.$filename.'_'.dol_print_date($now, 'dayhourlog').'.pdf';
 
 
@@ -678,7 +678,7 @@ $warehousestatic = new Entrepot($db);
 
 $userstatic = new User($db);
 
-$now = dol_now();
+$now = time();
 
 // Build and execute select
 // --------------------------------------------------------------------

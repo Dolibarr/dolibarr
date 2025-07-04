@@ -352,7 +352,7 @@ class pdf_ban extends ModeleBankAccountDoc
 		$posy += 6;
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : ".dol_print_date(dol_now(), 'day', false, $outputlangs, true), '', 'R');
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Date")." : ".dol_print_date(time(), 'day', false, $outputlangs, true), '', 'R');
 		/*$posy+=6;
 		$pdf->SetXY($posx,$posy);
 		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateEnd")." : " . dol_print_date($object->date_end,'day',false,$outputlangs,true), '', 'R');

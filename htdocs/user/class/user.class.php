@@ -1777,7 +1777,7 @@ class User extends CommonObject
 			return -1;
 		}
 
-		$this->datec = dol_now();
+		$this->datec = time();
 
 		$error = 0;
 		$this->db->begin();
@@ -2472,7 +2472,7 @@ class User extends CommonObject
 	public function update_last_login_date()
 	{
 		// phpcs:enable
-		$now = dol_now();
+		$now = time();
 
 		$userremoteip = getUserRemoteIP();
 
@@ -2560,13 +2560,13 @@ class User extends CommonObject
 				$this->oldcopy = clone $this;
 			}
 
-			$now = dol_now();
+			$now = time();
 
 			$this->db->begin();
 
 			$sql = "UPDATE ".$this->db->prefix()."user";
 			$sql .= " SET pass_crypted = '".$this->db->escape($password_crypted)."',";
-			$sql .= " datelastpassvalidation = '".$this->db->idate(dol_now())."',";
+			$sql .= " datelastpassvalidation = '".$this->db->idate(time())."',";
 			$sql .= " pass_temp = null";
 			if (!empty($flagdelsessionsbefore)) {
 				$sql .= ", flagdelsessionsbefore = '".$this->db->idate($now - 5, 'gmt')."'";
@@ -2974,7 +2974,7 @@ class User extends CommonObject
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-		$now = dol_now();
+		$now = time();
 
 		//dol_syslog("isNotIntoValidityDateRange ".$this->datestartvalidity);
 
@@ -3341,7 +3341,7 @@ class User extends CommonObject
 		$label = $this->labelStatus[$status];
 		$labelshort = $this->labelStatusShort[$status];
 
-		$now = dol_now();
+		$now = time();
 		if (!empty($this->datestartvalidity) && $now < $this->datestartvalidity) {
 			$statusType = 'status3';
 			$label .= ' ('.$langs->trans("UserNotYetValid").')';
@@ -3613,7 +3613,7 @@ class User extends CommonObject
 	{
 		global $user, $langs;
 
-		$now = dol_now();
+		$now = time();
 
 		// Initialise parameters
 		$this->id = 0;

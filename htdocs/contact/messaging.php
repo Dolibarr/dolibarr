@@ -275,7 +275,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				$out .= '&amp;originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&amp;socid='.$objthirdparty->id : '').'&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].($objthirdparty->id > 0 ? '?socid='.$objthirdparty->id : ''));
 			}
 			$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '');
-			$out .= '&amp;datep='.dol_print_date(dol_now(), 'dayhourlog', 'tzuserrel');
+			$out .= '&amp;datep='.dol_print_date(time(), 'dayhourlog', 'tzuserrel');
 		}
 
 		$morehtmlright = '';

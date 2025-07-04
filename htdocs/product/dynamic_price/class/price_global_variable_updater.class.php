@@ -440,7 +440,7 @@ class PriceGlobalVariableUpdater
 	{
 		$sql = "SELECT rowid, type, description, parameters, fk_variable, update_interval, next_update, last_status";
 		$sql .= " FROM ".$this->db->prefix().$this->table_element;
-		$sql .= " WHERE next_update < ".dol_now();
+		$sql .= " WHERE next_update < ".time();
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);

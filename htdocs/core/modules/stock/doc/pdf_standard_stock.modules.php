@@ -831,7 +831,7 @@ class pdf_standard_stock extends ModelePDFStock
 			$nexY = $pdf->GetY();
 
 			// Value
-			$pdf->writeHTMLCell(190, 2, $this->marge_gauche, $nexY, '<b>'.$outputlangs->transnoentities("Date").' : </b>'.dol_print_date(dol_now(), 'dayhour'), 0, 1);
+			$pdf->writeHTMLCell(190, 2, $this->marge_gauche, $nexY, '<b>'.$outputlangs->transnoentities("Date").' : </b>'.dol_print_date(time(), 'dayhour'), 0, 1);
 			$nexY = $pdf->GetY();
 
 			// Last movement

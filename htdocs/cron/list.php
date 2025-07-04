@@ -168,7 +168,7 @@ if (empty($reshook)) {
 			$object = new Cronjob($db);
 			$job = $object->fetch($id);
 
-			$now = dol_now(); // Date we start
+			$now = time(); // Date we start
 
 			$resrunjob = $object->run_jobs($user->login); // Return -1 if KO, 1 if OK
 			if ($resrunjob < 0) {
@@ -376,7 +376,7 @@ if ($optioncss != '') {
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
-$stringcurrentdate = $langs->trans("CurrentHour").': '.dol_print_date(dol_now(), 'dayhour');
+$stringcurrentdate = $langs->trans("CurrentHour").': '.dol_print_date(time(), 'dayhour');
 
 if ($action == 'execute') {
 	print $form->formconfirm($_SERVER['PHP_SELF']."?id=".$id.'&securitykey='.$securitykey.$param, $langs->trans("CronExecute"), $langs->trans("CronConfirmExecute"), "confirm_execute", '', '', 1);
@@ -524,7 +524,7 @@ print "</tr>\n";
 
 if ($num > 0) {
 	// Loop on each job
-	$now = dol_now();
+	$now = time();
 	$i = 0;
 
 	while ($i < min($num, $limit)) {

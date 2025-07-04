@@ -80,7 +80,7 @@ $productstatic = new Product($db);
  * View
  */
 
-$now = dol_now();
+$now = time();
 
 $title = $langs->trans("ContractsArea");
 $help_url = 'EN:Module_Contracts|FR:Module_Contrat|ES:Contratos_de_servicio';

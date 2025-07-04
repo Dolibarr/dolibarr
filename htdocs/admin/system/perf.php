@@ -53,7 +53,7 @@ if (GETPOST('action', 'aZ09') == 'donothing') {
  */
 
 $form = new Form($db);
-$nowstring = dol_print_date(dol_now(), 'dayhourlog');
+$nowstring = dol_print_date(time(), 'dayhourlog');
 
 llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_perf');
 

@@ -70,7 +70,7 @@ $socid = 0;
 // if ($user->socid > 0) $socid=$user->socid;
 $result = restrictedArea($user, 'projet', $projectid);
 
-$now = dol_now();
+$now = time();
 
 $year = GETPOSTINT('reyear') ? GETPOSTINT('reyear') : (GETPOSTINT("year") ? GETPOSTINT("year") : date("Y"));
 $month = GETPOSTINT('remonth') ? GETPOSTINT('remonth') : (GETPOSTINT("month") ? GETPOSTINT("month") : date("m"));

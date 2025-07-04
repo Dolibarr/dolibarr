@@ -157,7 +157,7 @@ class mod_project_universal extends ModeleNumRefProjects
 		// Get entities
 		$entity = getEntity('projectnumber', 1, $project);
 
-		$date = (empty($project->date_c) ? dol_now() : $project->date_c);
+		$date = (empty($project->date_c) ? time() : $project->date_c);
 		$numFinal = get_next_value($db, $mask, 'projet', 'ref', '', (is_object($objsoc) ? $objsoc : ''), $date, 'next', false, null, $entity);
 
 		return  $numFinal;

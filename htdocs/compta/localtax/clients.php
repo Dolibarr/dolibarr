@@ -49,7 +49,7 @@ $local = GETPOSTINT('localTaxType');
 // Date range
 $year = GETPOSTINT("year");
 if (empty($year)) {
-	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+	$year_current = dol_print_date(time(), "%Y", 'gmt');
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
@@ -125,7 +125,7 @@ if (empty($local)) {
 	accessforbidden('Parameter localTaxType is missing');
 }
 
-$builddate = dol_now();
+$builddate = time();
 $calc = 0;
 $calcmode = "Unknown";
 $find = '';
@@ -170,7 +170,7 @@ if ($calc == 0 || $calc == 1) {	// Calculate on invoice for goods and services
 	}
 	$description .= $fsearch;
 	$description .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRulesLT", DOL_URL_ROOT.'/admin/company.php').')</span>';
-	$builddate = dol_now();
+	$builddate = time();
 
 	$elementcust = $langs->trans("CustomersInvoices");
 	$productcust = $langs->trans("Description");
@@ -188,7 +188,7 @@ if ($calc == 2) { 	// Invoice for goods, payment for services
 	}
 	$description .= $fsearch;
 	$description .= '<span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRulesLT", DOL_URL_ROOT.'/admin/company.php').')</span>';
-	$builddate = dol_now();
+	$builddate = time();
 
 	$elementcust = $langs->trans("CustomersInvoices");
 	$productcust = $langs->trans("Description");

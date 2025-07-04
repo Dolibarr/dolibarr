@@ -314,7 +314,7 @@ $pagetitle = $langs->trans('ResourceElementPage');
 $help_url = '';
 llxHeader('', $pagetitle, $help_url, '', 0, 0, '', '', '', 'mod-resource page-element_resource');
 
-$now = dol_now();
+$now = time();
 $delay_warning = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO') * 24 * 60 * 60;
 
 // Load available resource, declared by modules

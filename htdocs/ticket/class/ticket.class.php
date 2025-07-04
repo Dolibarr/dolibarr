@@ -495,7 +495,7 @@ class Ticket extends CommonObject
 
 		// Clean parameters
 		if (empty($this->datec)) {
-			$this->datec = dol_now();
+			$this->datec = time();
 		}
 		if (empty($this->track_id)) {
 			$this->track_id = generate_random_id(16);
@@ -1312,11 +1312,11 @@ class Ticket extends CommonObject
 		$this->type_code = 'TYPECODE';
 		$this->category_code = 'CATEGORYCODE';
 		$this->severity_code = 'SEVERITYCODE';
-		$this->datec = dol_now();
-		$this->date_read = dol_now();
-		$this->date_last_msg_sent = dol_now();
-		$this->date_close = dol_now();
-		$this->tms = dol_now();
+		$this->datec = time();
+		$this->date_read = time();
+		$this->date_last_msg_sent = time();
+		$this->date_close = time();
+		$this->tms = time();
 
 		return 1;
 	}
@@ -1703,7 +1703,7 @@ class Ticket extends CommonObject
 			$this->status = Ticket::STATUS_READ;
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
-			$sql .= " SET fk_statut = ".Ticket::STATUS_READ.", date_read = '".$this->db->idate(dol_now())."'";
+			$sql .= " SET fk_statut = ".Ticket::STATUS_READ.", date_read = '".$this->db->idate(time())."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::markAsRead");
@@ -1817,7 +1817,7 @@ class Ticket extends CommonObject
 		global $conf;
 		$error = 0;
 
-		$now = dol_now();
+		$now = time();
 
 		// Clean parameters
 		if (isset($this->fk_track_id)) {
@@ -1995,7 +1995,7 @@ class Ticket extends CommonObject
 			$this->db->begin();
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
-			$sql .= " SET fk_statut=".($mode ? Ticket::STATUS_CANCELED : Ticket::STATUS_CLOSED).", progress=100, date_close='".$this->db->idate(dol_now())."'";
+			$sql .= " SET fk_statut=".($mode ? Ticket::STATUS_CANCELED : Ticket::STATUS_CLOSED).", progress=100, date_close='".$this->db->idate(time())."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::close mode=".$mode);
@@ -2574,7 +2574,7 @@ class Ticket extends CommonObject
 			// If destination file already exists, we add a suffix to avoid to overwrite
 			if (is_file($destfile)) {
 				$pathinfo = pathinfo($filename[$i]);
-				$now = dol_now();
+				$now = time();
 				$destfile = $destdir.'/'.$pathinfo['filename'].' - '.dol_print_date($now, 'dayhourlog').'.'.$pathinfo['extension'];
 			}
 
@@ -3018,7 +3018,7 @@ class Ticket extends CommonObject
 									$result = $this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames, $sendtocc, $from);
 									if ($result) {
 										// update last_msg_sent date of ticket (for last message sent to external users)
-										$this->date_last_msg_sent = dol_now();
+										$this->date_last_msg_sent = time();
 										$this->update($user, 1);	// disable trigger when updating date_last_msg_sent. sendTicketMessageByEmail already create an event in actioncomm table.
 
 										// update event actioncomm $id
@@ -3209,7 +3209,7 @@ class Ticket extends CommonObject
 		// phpcs:enable
 		global $user, $langs;
 
-		$now = dol_now();
+		$now = time();
 		$delay_warning = 0;
 
 		$clause = " WHERE";

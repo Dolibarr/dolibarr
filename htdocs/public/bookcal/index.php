@@ -89,7 +89,7 @@ if ($id_availability > 0) {
 	$result = $availability->fetch($id_availability);
 }
 
-$now = dol_now();
+$now = time();
 $nowarray = dol_getdate($now);
 $nowyear = $nowarray['year'];
 $nowmonth = $nowarray['mon'];

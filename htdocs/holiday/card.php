@@ -70,7 +70,7 @@ $langs->loadLangs(array("other", "holiday", "mails", "trips"));
 $error = 0;
 $errors = [];
 
-$now = dol_now();
+$now = time();
 
 $childids = $user->getAllChildIds(1);
 
@@ -625,7 +625,7 @@ if (empty($reshook)) {
 		if ($object->status == Holiday::STATUS_VALIDATED && ($user->id == $object->fk_validator || $permissiontoaddall) && $user->hasRight('holiday', 'approve')) {
 			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
-			$object->date_approval = dol_now();
+			$object->date_approval = time();
 			$object->fk_user_approve = $user->id;
 			$object->statut = Holiday::STATUS_APPROVED;
 			$object->status = Holiday::STATUS_APPROVED;
@@ -732,7 +732,7 @@ if (empty($reshook)) {
 
 			// If status pending validation and validator = user
 			if ($object->status == Holiday::STATUS_VALIDATED && ($user->id == $object->fk_validator || $permissiontoaddall) && $user->hasRight('holiday', 'approve')) {
-				$object->date_refuse = dol_now();
+				$object->date_refuse = time();
 				$object->fk_user_refuse = $user->id;
 				$object->statut = Holiday::STATUS_REFUSED;
 				$object->status = Holiday::STATUS_REFUSED;
@@ -856,7 +856,7 @@ if (empty($reshook)) {
 			$db->begin();
 
 			$oldstatus = $object->status;
-			$object->date_cancel = dol_now();
+			$object->date_cancel = time();
 			$object->fk_user_cancel = $user->id;
 			$object->statut = Holiday::STATUS_CANCELED;
 			$object->status = Holiday::STATUS_CANCELED;
@@ -876,7 +876,7 @@ if (empty($reshook)) {
 				$endDate = $object->date_fin_gmt;
 
 				if (!empty($decrease)) {
-					$lastUpdate = strtotime($object->getConfCP('lastUpdate', dol_print_date(dol_now(), '%Y%m%d%H%M%S')));
+					$lastUpdate = strtotime($object->getConfCP('lastUpdate', dol_print_date(time(), '%Y%m%d%H%M%S')));
 					$date = strtotime('-1 month', $lastUpdate);
 					$endOfMonthBeforeLastUpdate = dol_mktime(0, 0, 0, (int) date('m', $date), (int) date('t', $date), (int) date('Y', $date), 1);
 					if ($object->date_debut_gmt < $endOfMonthBeforeLastUpdate && $object->date_fin_gmt > $endOfMonthBeforeLastUpdate) {
@@ -1615,7 +1615,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 							// Button Cancel (because we can't approve)
 							if ($permissiontoadd || $permissiontoaddall) {
-								if (($object->date_fin > dol_now()) || !empty($user->admin)) {
+								if (($object->date_fin > time()) || !empty($user->admin)) {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
 								} else {
 									print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("HolidayStarted").'-'.$langs->trans("NotAllowed").'">'.$langs->trans("ActionCancelCP").'</a>';
@@ -1625,7 +1625,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					}
 					if ($object->status == Holiday::STATUS_APPROVED) { // If validated and approved
 						if ($user->id == $object->fk_validator || $user->id == $object->fk_user_approve || $permissiontoadd || $permissiontoaddall) {
-							if (($object->date_fin > dol_now()) || !empty($user->admin) || $user->id == $object->fk_user_approve) {
+							if (($object->date_fin > time()) || !empty($user->admin) || $user->id == $object->fk_user_approve) {
 								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
 							} else {
 								print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("HolidayStarted").'-'.$langs->trans("NotAllowed").'">'.$langs->trans("ActionCancelCP").'</a>';

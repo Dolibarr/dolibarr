@@ -370,7 +370,7 @@ class Projects extends DolibarrApi
 			}
 
 			if (empty($defaultref)) {
-				$defaultref = 'PJ' . dol_print_date(dol_now(), 'dayrfc');
+				$defaultref = 'PJ' . dol_print_date(time(), 'dayrfc');
 			}
 
 			$this->project->ref = $defaultref;

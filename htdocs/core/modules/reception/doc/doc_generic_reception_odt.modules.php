@@ -265,7 +265,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 				$newfiletmp = preg_replace('/template_/i', '', $newfiletmp);
 				$newfiletmp = preg_replace('/modele_/i', '', $newfiletmp);
 				$newfiletmp = $objectref . '_' . $newfiletmp;
-				//$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
+				//$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(time(),'%Y%m%d%H%M%S').'.odt';
 				// Get extension (ods or odt)
 				$newfileformat = substr($newfile, strrpos($newfile, '.') + 1);
 				if (getDolGlobalString('MAIN_DOC_USE_TIMING')) {
@@ -273,7 +273,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
-					$filename = $newfiletmp . '-' . dol_print_date(dol_now(), $format) . '.' . $newfileformat;
+					$filename = $newfiletmp . '-' . dol_print_date(time(), $format) . '.' . $newfileformat;
 				} else {
 					$filename = $newfiletmp . '.' . $newfileformat;
 				}

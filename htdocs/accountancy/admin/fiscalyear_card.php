@@ -113,7 +113,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontoadd) {
 		$object->date_end = $date_end;
 		$object->label = GETPOST('label', 'alpha');
 		$object->status = GETPOSTINT('status');
-		$object->datec = dol_now();
+		$object->datec = time();
 
 		if (empty($object->date_start) && empty($object->date_end)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');

@@ -426,11 +426,11 @@ function getNumberInvoicesPieChart($mode)
 		global $badgeStatus1, $badgeStatus3, $badgeStatus4, $badgeStatus8, $badgeStatus11;
 		include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
-		$now = date_create(date('Y-m-d', dol_now()));
-		$datenowsub30 = date_create(date('Y-m-d', dol_now()));
-		$datenowsub15 = date_create(date('Y-m-d', dol_now()));
-		$datenowadd30 = date_create(date('Y-m-d', dol_now()));
-		$datenowadd15 = date_create(date('Y-m-d', dol_now()));
+		$now = date_create(date('Y-m-d', time()));
+		$datenowsub30 = date_create(date('Y-m-d', time()));
+		$datenowsub15 = date_create(date('Y-m-d', time()));
+		$datenowadd30 = date_create(date('Y-m-d', time()));
+		$datenowadd15 = date_create(date('Y-m-d', time()));
 		$interval30days = date_interval_create_from_date_string('30 days');
 		$interval15days = date_interval_create_from_date_string('15 days');
 		date_sub($datenowsub30, $interval30days);

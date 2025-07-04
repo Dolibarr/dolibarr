@@ -104,7 +104,7 @@ class box_services_contracts extends ModeleBoxes
 			$result = $this->db->query($sql);
 			if ($result) {
 				$num = $this->db->num_rows($result);
-				$now = dol_now();
+				$now = time();
 
 				$i = 0;
 

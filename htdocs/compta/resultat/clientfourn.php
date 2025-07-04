@@ -82,12 +82,12 @@ if (!$sortorder) {
 // Date range
 $year = GETPOSTINT('year');		// this is used for navigation previous/next. It is the last year to show in filter
 if (empty($year)) {
-	$year_current = dol_print_date(dol_now(), "%Y");
-	$month_current = dol_print_date(dol_now(), "%m");
+	$year_current = dol_print_date(time(), "%Y");
+	$month_current = dol_print_date(time(), "%m");
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
-	$month_current = dol_print_date(dol_now(), "%m");
+	$month_current = dol_print_date(time(), "%m");
 	$year_start = $year;
 }
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
@@ -204,14 +204,14 @@ if ($modecompta == "CREANCES-DETTES") {
 	if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$description .= $langs->trans("SupplierDepositsAreNotIncluded");
 	}
-	$builddate = dol_now();
+	$builddate = time();
 	//$exportlink=$langs->trans("NotYetAvailable");
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByPredefinedAccountGroups");
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year'] - 1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year'] + 1)."&modecompta=".$modecompta."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesResultInOut");
-	$builddate = dol_now();
+	$builddate = time();
 	//$exportlink=$langs->trans("NotYetAvailable");
 } elseif ($modecompta == "BOOKKEEPING") {
 	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByPredefinedAccountGroups");
@@ -221,7 +221,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$periodlink = ($year_start ? "<a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year'] - 1)."&modecompta=".$modecompta."&showaccountdetail=".$showaccountdetail."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($tmps['year'] + 1)."&modecompta=".$modecompta."&showaccountdetail=".$showaccountdetail."'>".img_next()."</a>" : "");
 	$description = $langs->trans("RulesResultBookkeepingPredefined");
 	$description .= ' ('.$langs->trans("SeePageForSetup", DOL_URL_ROOT.'/accountancy/admin/account.php?mainmenu=accountancy&leftmenu=accountancy_admin', $langs->transnoentitiesnoconv("Accountancy").' / '.$langs->transnoentitiesnoconv("Setup").' / '.$langs->transnoentitiesnoconv("Chartofaccounts")).')';
-	$builddate = dol_now();
+	$builddate = time();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
 

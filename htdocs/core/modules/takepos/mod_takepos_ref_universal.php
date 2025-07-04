@@ -146,7 +146,7 @@ class mod_takepos_ref_universal extends ModeleNumRefTakepos
 		// Get entities
 		$entity = getEntity('invoicenumber', 1, $invoice);
 
-		$date = (empty($invoice->date) ? dol_now() : $invoice->date);
+		$date = (empty($invoice->date) ? time() : $invoice->date);
 		$pos_source = is_object($invoice) && $invoice->pos_source > 0 ? $invoice->pos_source : 0;
 		$mask = str_replace('{TN}', (string) $pos_source, $mask);
 		$numFinal = get_next_value($db, $mask, 'facture', 'ref', '', $objsoc, $date, $mode, false, null, $entity);

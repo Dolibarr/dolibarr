@@ -446,7 +446,7 @@ class Productlot extends CommonObject
 			//$sql .= ' '.(!isset($this->commissionning_date) || dol_strlen($this->commissionning_date) == 0 ? 'NULL' : "'".$this->db->idate($this->commissionning_date)."'").',';
 			$sql .= ' '.(empty($this->qc_frequency) ? 'NULL' : $this->qc_frequency).',';
 			$sql .= ' '.(empty($this->lifetime) ? 'NULL' : $this->lifetime).',';
-			$sql .= ' ' . "'" . $this->db->idate(dol_now()) . "'" . ',';
+			$sql .= ' ' . "'" . $this->db->idate(time()) . "'" . ',';
 			$sql .= ' ' . (!isset($this->fk_user_creat) ? 'NULL' : $this->fk_user_creat) . ',';
 			$sql .= ' ' . (!isset($this->fk_user_modif) ? 'NULL' : $this->fk_user_modif) . ',';
 			$sql .= ' ' . (!isset($this->import_key) ? 'NULL' : $this->import_key);
@@ -652,7 +652,7 @@ class Productlot extends CommonObject
 			$sql .= ' qc_frequency = '.(!empty($this->qc_frequency) ? (int) $this->qc_frequency : 'null').',';
 			$sql .= ' lifetime = '.(!empty($this->lifetime) ? (int) $this->lifetime : 'null').',';
 			$sql .= ' datec = ' . (dol_strlen((string) $this->datec) != 0 ? "'" . $this->db->idate($this->datec) . "'" : 'null') . ',';
-			$sql .= ' tms = ' . (dol_strlen((string) $this->tms) != 0 ? "'" . $this->db->idate($this->tms) . "'" : "'" . $this->db->idate(dol_now()) . "'") . ',';
+			$sql .= ' tms = ' . (dol_strlen((string) $this->tms) != 0 ? "'" . $this->db->idate($this->tms) . "'" : "'" . $this->db->idate(time()) . "'") . ',';
 			$sql .= ' fk_user_creat = ' . (isset($this->fk_user_creat) ? $this->fk_user_creat : "null") . ',';
 			$sql .= ' fk_user_modif = ' . (isset($this->fk_user_modif) ? $this->fk_user_modif : "null") . ',';
 			$sql .= ' import_key = ' . (isset($this->import_key) ? $this->import_key : "null");
@@ -1281,7 +1281,7 @@ class Productlot extends CommonObject
 	{
 		global $conf;
 
-		$now = dol_now();
+		$now = time();
 
 		// Initialise parameters
 		$this->id = 0;

@@ -327,7 +327,7 @@ class modAdherent extends DolibarrModules
 		//--------
 		$r = 0;
 
-		$now = dol_now();
+		$now = time();
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 		$r++;
@@ -400,7 +400,7 @@ class modAdherent extends DolibarrModules
 		$this->import_updatekeys_array[$r] = array('a.ref'=>'MemberRef', 'a.login'=>'Login');
 
 		// Cronjobs
-		$arraydate = dol_getdate(dol_now());
+		$arraydate = dol_getdate(time());
 		$datestart = dol_mktime(22, 0, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
 		$this->cronjobs = array(
 			0=>array(

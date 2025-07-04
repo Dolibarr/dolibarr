@@ -181,7 +181,7 @@ function show_array_actions_to_do($max = 5)
 {
 	global $langs, $conf, $user, $db, $socid;
 
-	$now = dol_now();
+	$now = time();
 
 	include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
@@ -301,7 +301,7 @@ function show_array_last_actions_done($max = 5)
 {
 	global $langs, $conf, $user, $db, $socid;
 
-	$now = dol_now();
+	$now = time();
 
 	$sql = "SELECT a.id, a.percent, a.datep as da, a.datep2 as da2, a.fk_user_author, a.label";
 	$sql .= ", c.code, c.libelle";

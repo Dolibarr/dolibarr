@@ -57,7 +57,7 @@ $result = restrictedArea($user, 'supplier_proposal');
 /*
  * View
  */
-$now = dol_now();
+$now = time();
 $supplier_proposalstatic = new SupplierProposal($db);
 $companystatic = new Societe($db);
 $form = new Form($db);
@@ -311,7 +311,7 @@ if ($resql) {
 if (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire')) {
 	$langs->load("supplier_proposal");
 
-	$now = dol_now();
+	$now = time();
 
 	$sql = "SELECT s.nom as socname, s.rowid as socid, s.canvas, s.client, p.rowid as supplier_proposalid, p.total_ttc, p.total_tva, p.total_ht, p.ref, p.fk_statut, p.datec as dp";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";

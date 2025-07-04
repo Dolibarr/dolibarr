@@ -71,7 +71,7 @@ class WebservicesProductsTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$datestring = dol_print_date(dol_now(), 'dayhourlog');
+		$datestring = dol_print_date(time(), 'dayhourlog');
 
 		$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_productorservice.php';
 		$WS_METHOD  = 'createProductOrService';

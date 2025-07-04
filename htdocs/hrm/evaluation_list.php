@@ -220,7 +220,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$now = dol_now();
+$now = time();
 
 //$help_url="EN:Module_Evaluation|FR:Module_Evaluation_FR|ES:Módulo_Evaluation";
 $help_url = '';

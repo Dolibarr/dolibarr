@@ -152,7 +152,7 @@ class Website extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
-		$now = dol_now();
+		$now = time();
 
 		// Clean parameters
 		if (isset($this->entity)) {
@@ -548,7 +548,7 @@ class Website extends CommonObject
 		$sql .= ' virtualhost = '.(($this->virtualhost != '') ? "'".$this->db->escape($this->virtualhost)."'" : "null").',';
 		$sql .= ' fk_user_modif = '.(!isset($this->fk_user_modif) ? $user->id : $this->fk_user_modif).',';
 		$sql .= ' date_creation = '.(!isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').',';
-		$sql .= ' tms = '.(dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : "'".$this->db->idate(dol_now())."'");
+		$sql .= ' tms = '.(dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : "'".$this->db->idate(time())."'");
 		$sql .= ' WHERE rowid='.((int) $this->id);
 
 		$this->db->begin();
@@ -735,7 +735,7 @@ class Website extends CommonObject
 		global $conf, $langs;
 		global $dolibarr_main_data_root;
 
-		$now = dol_now();
+		$now = time();
 		$error = 0;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -999,8 +999,8 @@ class Website extends CommonObject
 		$this->virtualhost = 'http://myvirtualhost';
 		$this->fk_user_creat = $user->id;
 		$this->fk_user_modif = $user->id;
-		$this->date_creation = dol_now();
-		$this->tms = dol_now();
+		$this->date_creation = time();
+		$this->tms = time();
 
 		return 1;
 	}
@@ -1253,7 +1253,7 @@ class Website extends CommonObject
 		// Build zip file
 		$filedir  = $conf->website->dir_temp.'/'.$website->ref.'/.';
 		$fileglob = $conf->website->dir_temp.'/'.$website->ref.'/website_'.$website->ref.'-*.zip';
-		$filename = $conf->website->dir_temp.'/'.$website->ref.'/website_'.$website->ref.'-'.dol_print_date(dol_now(), 'dayhourlog').'-V'.((float) DOL_VERSION).'.zip';
+		$filename = $conf->website->dir_temp.'/'.$website->ref.'/website_'.$website->ref.'-'.dol_print_date(time(), 'dayhourlog').'-V'.((float) DOL_VERSION).'.zip';
 
 		dol_delete_file($fileglob, 0);
 

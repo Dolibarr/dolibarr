@@ -245,7 +245,7 @@ if (empty($reshook)) {
 		foreach ($toselect as $checked) {
 			if ($objecttmp->fetch($checked)) {
 				if ($objecttmp->status == $objecttmp::STATUS_DRAFT) {
-					//$objecttmp->date = dol_now();
+					//$objecttmp->date = time();
 					$result = $objecttmp->validate($user);
 				}
 
@@ -316,7 +316,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 $companystatic = new Societe($db);
 
-$now = dol_now();
+$now = time();
 
 //$help_url="EN:Module_Partnership|FR:Module_Partnership_FR|ES:Módulo_Partnership";
 $help_url = '';

@@ -148,7 +148,7 @@ class PaymentExpenseReport extends CommonObject
 	{
 		$error = 0;
 
-		$now = dol_now();
+		$now = time();
 		// Validate parameters
 		if (!$this->datep) {
 			$this->error = 'ErrorBadValueForParameterCreatePaymentExpenseReport';
@@ -515,9 +515,9 @@ class PaymentExpenseReport extends CommonObject
 		$this->id = 0;
 
 		$this->fk_expensereport = 0;
-		$this->datec = dol_now();
-		$this->tms = dol_now();
-		$this->datep = dol_now();
+		$this->datec = time();
+		$this->tms = time();
+		$this->datep = time();
 		$this->amount = 100;
 		$this->fk_typepayment = 0;
 		$this->num_payment = '123456';

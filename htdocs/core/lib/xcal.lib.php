@@ -52,7 +52,7 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
 	if ($calfileh) {
 		include_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
 
-		$now      = dol_now();
+		$now      = time();
 		$encoding = "";
 
 		if ($format === "vcal") {

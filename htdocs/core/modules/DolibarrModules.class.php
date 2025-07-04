@@ -1628,7 +1628,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			dol_syslog(get_class($this) . "::insert_cronjobs", LOG_DEBUG);
 
 			foreach ($this->cronjobs as $key => $value) {
-				$now = dol_now();
+				$now = time();
 
 				$entity = isset($value['entity']) ? $value['entity'] : $conf->entity;
 				$label = isset($value['label']) ? $value['label'] : '';

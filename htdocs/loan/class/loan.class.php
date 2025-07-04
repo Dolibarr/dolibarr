@@ -241,7 +241,7 @@ class Loan extends CommonObject
 
 		$error = 0;
 
-		$now = dol_now();
+		$now = time();
 
 		// clean parameters
 		$newcapital = price2num($this->capital, 'MT');
@@ -673,7 +673,7 @@ class Loan extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		$now = dol_now();
+		$now = time();
 
 		// Initialise parameters
 		$this->id = 0;

@@ -276,7 +276,7 @@ $companystatic = new Societe($db);
 $supplierinvoicerectmp = new FactureFournisseurRec($db);
 $tmpuser = new User($db);
 
-$now = dol_now();
+$now = time();
 
 $help_url = '';
 $title = $langs->trans("RepeatableSupplierInvoices");

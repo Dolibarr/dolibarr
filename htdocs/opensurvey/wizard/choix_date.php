@@ -358,7 +358,7 @@ $premierjourmois = (int) dol_print_date(dol_get_first_day((int) $_SESSION["annee
 if (is_int($_SESSION["mois"]) && $_SESSION["mois"] > 0 && $_SESSION["mois"] < 13) {
 	$motmois = dol_print_date(mktime(0, 0, 0, (int) $_SESSION["mois"], 10), '%B');
 } else {
-	$motmois = dol_print_date(dol_now(), '%B');
+	$motmois = dol_print_date(time(), '%B');
 }
 
 

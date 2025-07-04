@@ -518,7 +518,7 @@ class Facture extends CommonInvoice
 			return -2;
 		}
 
-		$now = dol_now();
+		$now = time();
 		$this->date_creation = $now;
 
 		$this->db->begin();
@@ -1289,7 +1289,7 @@ class Facture extends CommonInvoice
 		$object->status = self::STATUS_DRAFT;
 
 		// Clear fields
-		$object->date               = (empty($this->date) ? dol_now() : $this->date);
+		$object->date               = (empty($this->date) ? time() : $this->date);
 		$object->user_creation_id   = $user->id;
 		$object->user_validation_id = null;
 		$object->fk_user_author     = $user->id;
@@ -1404,7 +1404,7 @@ class Facture extends CommonInvoice
 		$error = 0;
 
 		// Closed order
-		$this->date = dol_now();
+		$this->date = time();
 		$this->source = 0;
 
 		$num = count($object->lines);
@@ -1540,7 +1540,7 @@ class Facture extends CommonInvoice
 		$error = 0;
 
 		// Closed order
-		$this->date = dol_now();
+		$this->date = time();
 		$this->source = 0;
 
 		$use_all_lines = empty($lines);
@@ -3276,7 +3276,7 @@ class Facture extends CommonInvoice
 		if ($this->paye != 1 || $this->status != self::STATUS_CLOSED) {
 			$this->db->begin();
 
-			$now = dol_now();
+			$now = time();
 
 			dol_syslog(get_class($this)."::setPaid rowid=".((int) $this->id), LOG_DEBUG);
 
@@ -3421,7 +3421,7 @@ class Facture extends CommonInvoice
 		dol_syslog(get_class($this)."::setCanceled rowid=".((int) $this->id), LOG_DEBUG);
 
 		$this->db->begin();
-		$now = dol_now();
+		$now = time();
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET';
 		$sql .= ' fk_statut='.self::STATUS_ABANDONED;
@@ -3496,7 +3496,7 @@ class Facture extends CommonInvoice
 			$productbatch = new Productbatch($this->db);
 		}
 
-		$now = dol_now();
+		$now = time();
 
 		$error = 0;
 		dol_syslog(get_class($this).'::validate user='.$user->id.', force_number='.$force_number.', idwarehouse='.$idwarehouse);
@@ -3524,7 +3524,7 @@ class Facture extends CommonInvoice
 		if ((preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) &&	// empty should not happened, but when it occurs, the test save life
 			getDolGlobalString('FAC_FORCE_DATE_VALIDATION')						// If option enabled, we force invoice date
 		) {
-			$this->date = dol_now();
+			$this->date = time();
 			$this->date_lim_reglement = $this->calculate_date_lim_reglement();
 		}
 		if (getDolGlobalString('INVOICE_CHECK_POSTERIOR_DATE')) {
@@ -3656,7 +3656,7 @@ class Facture extends CommonInvoice
 			$num = $force_number;
 		} elseif (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 			if (getDolGlobalString('FAC_FORCE_DATE_VALIDATION')) {	// If option enabled, we force invoice date
-				$this->date = dol_now();
+				$this->date = time();
 				$this->date_lim_reglement = $this->calculate_date_lim_reglement();
 			}
 			$num = $this->getNextNumRef($this->thirdparty);
@@ -5431,7 +5431,7 @@ class Facture extends CommonInvoice
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$langs->load("bills");
-			$now = dol_now();
+			$now = time();
 			$response = new WorkboardResponse();
 			$response->warning_delay = $conf->facture->client->warning_delay / 60 / 60 / 24;
 			$response->label = $langs->trans("CustomerBillsUnpaid");
@@ -5500,7 +5500,7 @@ class Facture extends CommonInvoice
 	{
 		global $conf, $langs, $user;
 
-		$now = dol_now();
+		$now = time();
 		$arraynow = dol_getdate($now);
 		$nownotime = dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
 
@@ -5931,7 +5931,7 @@ class Facture extends CommonInvoice
 	{
 		global $conf;
 
-		$now = dol_now();
+		$now = time();
 
 		// Paid invoices have status STATUS_CLOSED
 		if ($this->status != Facture::STATUS_VALIDATED) {
@@ -6170,7 +6170,7 @@ class Facture extends CommonInvoice
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$formmail = new FormMail($this->db);
 
-		$now = dol_now();
+		$now = time();
 		$tmpidate = dol_get_first_hour(dol_time_plus_duree($now, $nbdays, 'd'), 'gmt');
 
 		$tmpinvoice = new Facture($this->db);
@@ -6352,7 +6352,7 @@ class Facture extends CommonInvoice
 							$actioncomm->label = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays='.$nbdays.' paymentmode='.$paymentmode.' template='.$template.' datetouse='.$datetouse.' forcerecipient='.$forcerecipient.')';
 							$actioncomm->note_private = $sendContent;
 							$actioncomm->fk_project = $tmpinvoice->fk_project;
-							$actioncomm->datep = dol_now();
+							$actioncomm->datep = time();
 							$actioncomm->datef = $actioncomm->datep;
 							$actioncomm->percentage = -1; // Not applicable
 							$actioncomm->authorid = $user->id; // User saving action
@@ -6392,7 +6392,7 @@ class Facture extends CommonInvoice
 							$actioncomm->label = 'sendEmailsRemindersOnInvoiceDueDateKO';
 							$actioncomm->note_private = $errormesg;
 							$actioncomm->fk_project = $tmpinvoice->fk_project;
-							$actioncomm->datep = dol_now();
+							$actioncomm->datep = time();
 							$actioncomm->datef = $actioncomm->datep;
 							$actioncomm->percentage = -1; // Not applicable
 							$actioncomm->authorid = $user->id; // User saving action

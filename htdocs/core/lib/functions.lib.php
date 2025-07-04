@@ -1061,35 +1061,35 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			$newout = '';
 
 			if ($reg[1] == 'DAY') {
-				$tmp = dol_getdate(dol_now(), true);
+				$tmp = dol_getdate(time(), true);
 				$newout = $tmp['mday'];
 			} elseif ($reg[1] == 'MONTH') {
-				$tmp = dol_getdate(dol_now(), true);
+				$tmp = dol_getdate(time(), true);
 				$newout = $tmp['mon'];
 			} elseif ($reg[1] == 'YEAR') {
-				$tmp = dol_getdate(dol_now(), true);
+				$tmp = dol_getdate(time(), true);
 				$newout = $tmp['year'];
 			} elseif ($reg[1] == 'PREVIOUS_DAY') {
-				$tmp = dol_getdate(dol_now(), true);
+				$tmp = dol_getdate(time(), true);
 				$tmp2 = dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']);
 				$newout = $tmp2['day'];
 			} elseif ($reg[1] == 'PREVIOUS_MONTH') {
-				$tmp = dol_getdate(dol_now(), true);
+				$tmp = dol_getdate(time(), true);
 				$tmp2 = dol_get_prev_month($tmp['mon'], $tmp['year']);
 				$newout = $tmp2['month'];
 			} elseif ($reg[1] == 'PREVIOUS_YEAR') {
-				$tmp = dol_getdate(dol_now(), true);
+				$tmp = dol_getdate(time(), true);
 				$newout = ($tmp['year'] - 1);
 			} elseif ($reg[1] == 'NEXT_DAY') {
-				$tmp = dol_getdate(dol_now(), true);
+				$tmp = dol_getdate(time(), true);
 				$tmp2 = dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']);
 				$newout = $tmp2['day'];
 			} elseif ($reg[1] == 'NEXT_MONTH') {
-				$tmp = dol_getdate(dol_now(), true);
+				$tmp = dol_getdate(time(), true);
 				$tmp2 = dol_get_next_month($tmp['mon'], $tmp['year']);
 				$newout = $tmp2['month'];
 			} elseif ($reg[1] == 'NEXT_YEAR') {
-				$tmp = dol_getdate(dol_now(), true);
+				$tmp = dol_getdate(time(), true);
 				$newout = ($tmp['year'] + 1);
 			} elseif ($reg[1] == 'MYCOMPANY_COUNTRY_ID' || $reg[1] == 'MYCOUNTRY_ID' || $reg[1] == 'MYCOUNTRYID') {
 				$newout = $mysoc->country_id;
@@ -3640,7 +3640,7 @@ function dol_print_date($time, $format = '', $tzoutput = 'auto', $outputlangs = 
 					$user_date_tz = new DateTimeZone($offsettzstring);
 					$user_dt = new DateTime();
 					$user_dt->setTimezone($user_date_tz);
-					$user_dt->setTimestamp($tzoutput == 'tzuser' ? dol_now() : (int) $time);
+					$user_dt->setTimestamp($tzoutput == 'tzuser' ? time() : (int) $time);
 					$offsettz = $user_dt->getOffset();	// should include dst ?
 				} else {	// with old method (The 'tzuser' was processed like the 'tzuserrel')
 					$offsettz = (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) * 60 * 60; // Will not be used anymore
@@ -4008,18 +4008,18 @@ function dol_now($mode = 'auto')
 	} elseif ($mode == 'tzserver') {		// Time for now with PHP server timezone added
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		$tzsecond = getServerTimeZoneInt('now'); // Contains tz+dayling saving time
-		$ret = (int) (dol_now('gmt') + ($tzsecond * 3600));
+		$ret = (int) (time() + ($tzsecond * 3600));
 		//} elseif ($mode == 'tzref') {// Time for now with parent company timezone is added
 		//	require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		//	$tzsecond=getParentCompanyTimeZoneInt();    // Contains tz+dayling saving time
-		//	$ret=dol_now('gmt')+($tzsecond*3600);
+		//	$ret=time()+($tzsecond*3600);
 		//}
 	} elseif ($mode == 'tzuser' || $mode == 'tzuserrel') {
 		// Time for now with user timezone added
 		//print 'time: '.time();
 		$offsettz = (empty($_SESSION['dol_tz']) ? 0 : $_SESSION['dol_tz']) * 60 * 60;
 		$offsetdst = (empty($_SESSION['dol_dst']) ? 0 : $_SESSION['dol_dst']) * 60 * 60;
-		$ret = (int) (dol_now('gmt') + ($offsettz + $offsetdst));
+		$ret = (int) (time() + ($offsettz + $offsetdst));
 	}
 
 	return $ret;
@@ -6441,7 +6441,7 @@ function dol_print_error($db = null, $error = '', $errors = null)
 		}
 		$langs->loadLangs(array("main", "errors")); // Reload main because language may have been set only on previous line so we have to reload files we need.
 		// This should not happen, except if there is a bug somewhere. Enabled and check log in such case.
-		print 'This website or feature is currently temporarily not available or failed after a technical error.<br><br>This may be due to a maintenance operation. Current status of operation ('.dol_print_date(dol_now(), 'dayhourrfc').') are on next line...<br><br>'."\n";
+		print 'This website or feature is currently temporarily not available or failed after a technical error.<br><br>This may be due to a maintenance operation. Current status of operation ('.dol_print_date(time(), 'dayhourrfc').') are on next line...<br><br>'."\n";
 		print $langs->trans("DolibarrHasDetectedError").'. ';
 		print $langs->trans("YouCanSetOptionDolibarrMainProdToZero");
 		if (!defined("MAIN_CORE_ERROR")) {
@@ -6471,7 +6471,7 @@ function dol_print_error_email($prefixcode, $errormessage = '', $errormessages =
 	}
 
 	$langs->load("errors");
-	$now = dol_now();
+	$now = time();
 
 	print '<br><div class="center login_main_message"><div class="'.$morecss.'">';
 	print $langs->trans("ErrorContactEMail", $email, $prefixcode.'-'.dol_print_date($now, '%Y%m%d%H%M%S'));
@@ -9904,7 +9904,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 	if ((empty($exclude) || !in_array('date', $exclude)) && (empty($include) || in_array('date', $include))) {
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-		$now = dol_now();
+		$now = time();
 
 		$tmp = dol_getdate($now, true);
 		$tmp2 = dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']);
@@ -14545,7 +14545,7 @@ function forgeSQLFromUniversalSearchCriteria($filter, &$errorstr = '', $noand = 
 	$ret = ($noand ? "" : " AND ").($nopar ? "" : '(').preg_replace_callback('/'.$regexstring.'/i', 'dolForgeSQLCriteriaCallback', $filter).($nopar ? "" : ')');
 
 	if (is_object($db)) {
-		$ret = str_replace('__NOW__', "'".$db->idate(dol_now())."'", $ret);
+		$ret = str_replace('__NOW__', "'".$db->idate(time())."'", $ret);
 	}
 	if (is_object($user)) {
 		$ret = str_replace('__USER_ID__', (string) $user->id, $ret);
@@ -14928,7 +14928,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 	'@phan-var-force array<int,array{type:string,tododone:string,id:string,datestart:int|string,dateend:int|string,note:string,message:string,percent:string,userid:string,login:string,userfirstname:string,userlastname:string,userphoto:string,msg_from?:string,contact_id?:string,socpeopleassigned?:int[],lastname?:string,firstname?:string,fk_element?:int,elementtype?:string,acode:string,alabel?:string,libelle?:string,apicto?:string}> $histo';
 
 	$numaction = 0;
-	$now = dol_now();
+	$now = time();
 
 	$sortfield_list = explode(',', $sortfield);
 	$sortfield_label_list = array('a.id' => 'id', 'a.datep' => 'dp', 'a.percent' => 'percent');

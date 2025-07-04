@@ -171,7 +171,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$now = dol_now();
+$now = time();
 
 $title = $langs->trans("UserGroups");
 $help_url = '';

@@ -232,7 +232,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$now = dol_now();
+$now = time();
 
 $title = $langs->trans("ListOfServices");
 if ($search_status == "0") {
@@ -317,11 +317,11 @@ if ($search_status == "5") {
 	$sql .= " AND cd.statut = 5";
 }
 if ($search_option == 'late' && $search_status != '0') {
-	$warning_date = $db->idate(dol_now() - $conf->contract->services->expires->warning_delay);
+	$warning_date = $db->idate(time() - $conf->contract->services->expires->warning_delay);
 	$sql .= " AND cd.date_fin_validite < '".addslashes($warning_date)."'";
 }
 if ($search_option == 'late' && $search_status == '0') {
-	$warning_date = $db->idate(dol_now() - $conf->contract->services->expires->warning_delay);
+	$warning_date = $db->idate(time() - $conf->contract->services->expires->warning_delay);
 	$sql .= " AND (cd.date_ouverture_prevue < '".addslashes($warning_date)."' OR cd.date_fin_validite < '".addslashes($warning_date)."')";
 }
 if ($search_subprice) {

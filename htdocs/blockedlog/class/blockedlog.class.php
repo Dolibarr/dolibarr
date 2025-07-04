@@ -946,7 +946,7 @@ class BlockedLog
 			$this->user_fullname = '(Anonymous)';
 		}
 
-		$this->date_creation = dol_now();
+		$this->date_creation = time();
 
 		$this->object_version = DOL_VERSION;
 

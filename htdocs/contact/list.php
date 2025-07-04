@@ -311,7 +311,7 @@ if ($action == "change" && $user->hasRight('takepos', 'run')) {	// Change custom
 		$invoice = new Facture($db);
 		$constforthirdpartyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
 		$invoice->socid = getDolGlobalInt($constforthirdpartyid);
-		$invoice->date = dol_now();
+		$invoice->date = time();
 		$invoice->module_source = 'takepos';
 		$invoice->pos_source = $_SESSION["takeposterminal"];
 		$placeid = $invoice->create($user);
@@ -446,7 +446,7 @@ $formother = new FormOther($db);
 $formcompany = new FormCompany($db);
 $contactstatic = new Contact($db);
 
-$now = dol_now();
+$now = time();
 
 $title = $langs->trans("Contacts")." - ".$langs->trans("List");
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas';

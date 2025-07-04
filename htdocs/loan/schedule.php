@@ -94,8 +94,8 @@ if ($action == 'createecheancier' && empty($pay_without_schedule) && $permission
 		$new_echeance = new LoanSchedule($db);
 
 		$new_echeance->fk_loan = $object->id;
-		$new_echeance->datec = dol_now();
-		$new_echeance->tms = dol_now();
+		$new_echeance->datec = time();
+		$new_echeance->tms = time();
 		$new_echeance->datep = $date;
 		$new_echeance->amount_capital = (float) $mens - (float) $int;
 		$new_echeance->amount_insurance = $insurance;
@@ -130,7 +130,7 @@ if ($action == 'updateecheancier' && empty($pay_without_schedule) && $permission
 
 		$new_echeance = new LoanSchedule($db);
 		$new_echeance->fetch($id);
-		$new_echeance->tms = dol_now();
+		$new_echeance->tms = time();
 		$new_echeance->amount_capital = (float) $mens - (float) $int;
 		$new_echeance->amount_insurance = $insurance;
 		$new_echeance->amount_interest = $int;

@@ -69,7 +69,7 @@ class box_actions_future extends ModeleBoxes
 
 		$this->max = $max;
 
-		$now = dol_now();
+		$now = time();
 
 		include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -109,7 +109,7 @@ class box_actions_future extends ModeleBoxes
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result) {
-				$now = dol_now();
+				$now = time();
 				$delay_warning = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO') * 24 * 60 * 60;
 
 				$num = $this->db->num_rows($result);

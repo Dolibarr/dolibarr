@@ -2140,7 +2140,7 @@ if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
-$now = dol_now();
+$now = time();
 
 $title = $object->ref." - ".$langs->trans('Card');
 if ($action == 'create') {
@@ -2828,7 +2828,7 @@ if ($action == 'create') {
 		if ($fac_recid > 0) {
 			$dateexample = $dateinvoice;
 			if (empty($dateexample)) {
-				$dateexample = dol_now();
+				$dateexample = time();
 			}
 			$substitutionarray = array(
 				'__TOTAL_HT__' => $langs->trans("AmountHT").' ('.$langs->trans("Example").': '.price($exampletemplateinvoice->total_ht).')',
@@ -2975,7 +2975,7 @@ if ($action == 'create') {
 		//
 		// View or edit mode
 		//
-		$now = dol_now();
+		$now = time();
 
 		$productstatic = new Product($db);
 
@@ -3068,7 +3068,7 @@ if ($action == 'create') {
 			// Create an array for form
 			$formquestion = array(
 				array('type' => 'text', 'name' => 'newsupplierref', 'label' => $langs->trans("RefSupplierBill"), 'value' => $langs->trans("CopyOf").' '.$object->ref_supplier),
-				array('type' => 'date', 'name' => 'newdate', 'label' => $langs->trans("Date"), 'value' => dol_now())
+				array('type' => 'date', 'name' => 'newdate', 'label' => $langs->trans("Date"), 'value' => time())
 			);
 			// Ask confirmation to clone
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 250);

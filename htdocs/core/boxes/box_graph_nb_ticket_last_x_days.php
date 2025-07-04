@@ -101,7 +101,7 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 			'text' => $text,
 			'limit' => dol_strlen($text)
 		);
-		$today = dol_now();
+		$today = time();
 		$intervaltoadd = 1;
 		$minimumdatec = dol_time_plus_duree($today, -1 * ($days - 1), 'd');
 		$minimumdatecformated = dol_print_date($minimumdatec, 'dayrfc');

@@ -2051,7 +2051,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		// Applied Prices From
 		$date_begin = dol_mktime(0, 0, 0, GETPOSTINT('date_beginmonth'), GETPOSTINT('date_beginday'), GETPOSTINT('date_beginyear'), 'tzserver');	// If we enter the 02 january, we need to save the 02 january for server;
 		print '<tr><td>'.$langs->trans("AppliedPricesFrom").'</td><td>';
-		print $form->selectDate(!empty($date_begin) ? $date_begin : dol_now(), "date_begin", 0, 0, 1, "date_begin");
+		print $form->selectDate(!empty($date_begin) ? $date_begin : time(), "date_begin", 0, 0, 1, "date_begin");
 		print '</td></tr>';
 
 		// Applied Prices To
@@ -3008,7 +3008,7 @@ if ((!getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || $action == 'showlog_defau
 					}
 
 					print '<td class="right">';
-					if ($candelete || ($db->jdate($objp->dp) >= dol_now())) {		// Test on date is to be able to delete a corrupted record with a date in future
+					if ($candelete || ($db->jdate($objp->dp) >= time())) {		// Test on date is to be able to delete a corrupted record with a date in future
 						print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&token='.newToken().'&id='.$object->id.'&lineid='.$objp->rowid.'">';
 						print img_delete();
 						print '</a>';

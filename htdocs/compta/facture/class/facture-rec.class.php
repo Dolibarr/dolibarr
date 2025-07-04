@@ -325,7 +325,7 @@ class FactureRec extends CommonInvoice
 		global $conf;
 
 		$error = 0;
-		$now = dol_now();
+		$now = time();
 
 		// Clean parameters
 		$this->titre = trim(isset($this->titre) ? $this->titre : $this->title); // deprecated
@@ -1391,7 +1391,7 @@ class FactureRec extends CommonInvoice
 		// Load translation files required by the page
 		$langs->loadLangs(array("main", "bills"));
 
-		$now = dol_now();
+		$now = time();
 		$tmparray = dol_getdate($now);
 		$today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year']); // Today is last second of current day
 
@@ -1827,7 +1827,7 @@ class FactureRec extends CommonInvoice
 	{
 		global $langs;
 
-		$now = dol_now();
+		$now = time();
 		$arraynow = dol_getdate($now);
 		$nownotime = dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
 

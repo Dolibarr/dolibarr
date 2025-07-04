@@ -133,7 +133,7 @@ if ($id || $track_id || $ref) {
 	}
 }
 
-$now = dol_now();
+$now = time();
 
 $actionobject = new ActionsTicket($db);
 

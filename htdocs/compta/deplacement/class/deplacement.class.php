@@ -158,7 +158,7 @@ class Deplacement extends CommonObject
 			return -1;
 		}
 
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 

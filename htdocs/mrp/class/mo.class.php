@@ -971,9 +971,9 @@ class Mo extends CommonObject
 				$codemovementCancel = $langs->trans("StockIncrease");
 
 				if (($qtytoprocess >= 0)) {
-					$idstockmove = $stockmove->reception($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, '', '', $movement->batch, dol_now(), 0, $codemovementCancel);
+					$idstockmove = $stockmove->reception($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, '', '', $movement->batch, time(), 0, $codemovementCancel);
 				} else {
-					$idstockmove = $stockmove->livraison($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $movement->batch, 0, $codemovementCancel);
+					$idstockmove = $stockmove->livraison($user, $movement->product_id, $movement->warehouse_id, $qtytoprocess, 0, $labelmovementCancel, time(), '', '', $movement->batch, 0, $codemovementCancel);
 				}
 				if ($idstockmove < 0) {
 					$this->error++;
@@ -994,9 +994,9 @@ class Mo extends CommonObject
 
 
 					if ($qtytoprocess >= 0) {
-						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
+						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], time(), 0, $codemovementCancel);
 					} else {
-						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
+						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, time(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
 					}
 					if ($idstockmove < 0) {
 						$this->error++;
@@ -1110,7 +1110,7 @@ class Mo extends CommonObject
 		 return -1;
 		 }*/
 
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 
@@ -1344,9 +1344,9 @@ class Mo extends CommonObject
 					$stockmove = new MouvementStock($this->db);
 					$stockmove->setOrigin($this->element, $this->id);
 					if ($qtytoprocess >= 0) {
-						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
+						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], time(), 0, $codemovementCancel);
 					} else {
-						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
+						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, time(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
 					}
 					if ($idstockmove < 0) {
 						$this->error = $stockmove->error;
@@ -1382,9 +1382,9 @@ class Mo extends CommonObject
 					$stockmove = new MouvementStock($this->db);
 					$stockmove->setOrigin($this->element, $this->id);
 					if ($qtytoprocess >= 0) {
-						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, dol_now(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
+						$idstockmove = $stockmove->livraison($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, time(), '', '', $lineDetails['batch'], 0, $codemovementCancel);
 					} else {
-						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], dol_now(), 0, $codemovementCancel);
+						$idstockmove = $stockmove->reception($user, $lineDetails['fk_product'], $lineDetails['fk_warehouse'], $qtytoprocess, 0, $labelmovementCancel, '', '', $lineDetails['batch'], time(), 0, $codemovementCancel);
 					}
 					if ($idstockmove < 0) {
 						$this->error = $stockmove->error;
@@ -1995,7 +1995,7 @@ class Mo extends CommonObject
 			return -1; // Protection pour éviter appel par utilisateur externe
 		}
 
-		$now = dol_now();
+		$now = time();
 
 		$sql = "SELECT rowid, date_end_planned FROM ".$this->db->prefix()."mrp_mo";
 		$sql .= " WHERE status IN (" . self::STATUS_VALIDATED . ", " . self::STATUS_INPROGRESS .")"; // 1 = Ouvert, 2 = En cours
@@ -2045,7 +2045,7 @@ class Mo extends CommonObject
 		if ($this->status != Mo::STATUS_VALIDATED && $this->status != Mo::STATUS_INPROGRESS) {
 			return false;
 		}
-		return (dol_now() > ($this->date_end_planned + $conf->mrp->progress->warning_delay));
+		return (time() > ($this->date_end_planned + $conf->mrp->progress->warning_delay));
 	}
 
 

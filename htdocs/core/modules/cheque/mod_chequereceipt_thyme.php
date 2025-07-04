@@ -140,7 +140,7 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 			return 0;
 		}
 
-		$date = (empty($object) ? dol_now() : $object->date_bordereau);
+		$date = (empty($object) ? time() : $object->date_bordereau);
 
 		$numFinal = get_next_value($db, $mask, 'bordereau_cheque', 'ref', '', $objsoc, $date);
 

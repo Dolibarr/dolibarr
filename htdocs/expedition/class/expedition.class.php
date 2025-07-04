@@ -410,7 +410,7 @@ class Expedition extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		$now = dol_now();
+		$now = time();
 
 		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 		$error = 0;
@@ -996,7 +996,7 @@ class Expedition extends CommonObject
 		}
 		$this->newref = dol_sanitizeFileName($numref);
 
-		$now = dol_now();
+		$now = time();
 
 		// Validate
 		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET";
@@ -2391,7 +2391,7 @@ class Expedition extends CommonObject
 	{
 		global $langs;
 
-		$now = dol_now();
+		$now = time();
 
 		dol_syslog(get_class($this)."::initAsSpecimen");
 
@@ -2627,7 +2627,7 @@ class Expedition extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET fk_statut = ".self::STATUS_CLOSED.", date_expedition = '".$this->db->escape($this->db->idate(dol_now()))."'";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET fk_statut = ".self::STATUS_CLOSED.", date_expedition = '".$this->db->escape($this->db->idate(time()))."'";
 		$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut > 0";
 
 		$resql = $this->db->query($sql);

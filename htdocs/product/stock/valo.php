@@ -61,7 +61,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-$year = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+$year = dol_print_date(time(), "%Y", 'gmt');
 
 // Security check
 $result = restrictedArea($user, 'stock');

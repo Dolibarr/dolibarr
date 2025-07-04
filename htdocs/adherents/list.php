@@ -361,7 +361,7 @@ if (empty($reshook)) {
 		$tmpmember = new Adherent($db);
 		$adht = new AdherentType($db);
 		$nbcreated = 0;
-		$now = dol_now();
+		$now = time();
 		$amount = price2num(GETPOST('amount', 'alpha'));
 		$db->begin();
 		foreach ($toselect as $id) {
@@ -403,7 +403,7 @@ $formother = new FormOther($db);
 $membertypestatic = new AdherentType($db);
 $memberstatic = new Adherent($db);
 
-$now = dol_now();
+$now = time();
 
 // Page Header
 $title = $langs->trans("Members")." - ".$langs->trans("List");
@@ -795,7 +795,7 @@ if ($massaction == 'createsubscription') {
 	$adht = new AdherentType($db);
 	$amount = 0;
 	foreach ($toselect as $id) {
-		$now = dol_now();
+		$now = time();
 		$tmpmember->fetch($id);
 		$res = $adht->fetch($tmpmember->typeid);
 		if ($res > 0) {
@@ -809,7 +809,7 @@ if ($massaction == 'createsubscription') {
 		}
 	}
 
-	$date = dol_print_date(dol_now(), "%d/%m/%Y");
+	$date = dol_print_date(time(), "%d/%m/%Y");
 	$formquestion = array(
 		array('label' => $langs->trans("DateSubscription"), 'type' => 'other', 'value' => $date),
 		array('label' => $langs->trans("Amount"), 'type' => 'text', 'value' => price($amount, 0, '', 0), 'name' => 'amount'),

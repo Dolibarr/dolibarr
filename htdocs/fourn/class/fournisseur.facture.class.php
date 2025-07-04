@@ -399,7 +399,7 @@ class FactureFournisseur extends CommonInvoice
 		global $langs, $conf, $hookmanager;
 
 		$error = 0;
-		$now = dol_now();
+		$now = time();
 
 		// Clean parameters
 		if (isset($this->ref_supplier)) {
@@ -1620,7 +1620,7 @@ class FactureFournisseur extends CommonInvoice
 		if ($this->paid != 1) {
 			$this->db->begin();
 
-			$now = dol_now();
+			$now = time();
 
 			dol_syslog("FactureFournisseur::setPaid", LOG_DEBUG);
 
@@ -1800,7 +1800,7 @@ class FactureFournisseur extends CommonInvoice
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		$now = dol_now();
+		$now = time();
 
 		$error = 0;
 		dol_syslog(get_class($this).'::validate user='.$user->id.', force_number='.$force_number.', idwarehouse='.$idwarehouse);
@@ -2751,7 +2751,7 @@ class FactureFournisseur extends CommonInvoice
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$langs->load("bills");
-			$now = dol_now();
+			$now = time();
 
 			$response = new WorkboardResponse();
 			$response->warning_delay = $conf->facture->fournisseur->warning_delay / 60 / 60 / 24;
@@ -3070,7 +3070,7 @@ class FactureFournisseur extends CommonInvoice
 		global $langs, $conf;
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-		$now = dol_now();
+		$now = time();
 
 		// Load array of products prodids
 		$num_prods = 0;
@@ -3228,7 +3228,7 @@ class FactureFournisseur extends CommonInvoice
 		$object->fk_facture_source  = 0;
 		$object->date_creation      = '';
 		$object->date_validation    = '';
-		$object->date               = (empty($this->date) ? dol_now() : $this->date);
+		$object->date               = (empty($this->date) ? time() : $this->date);
 		$object->ref_client         = '';
 		$object->close_code         = '';
 		$object->close_note         = '';
@@ -3364,7 +3364,7 @@ class FactureFournisseur extends CommonInvoice
 	{
 		global $conf;
 
-		$now = dol_now();
+		$now = time();
 
 		if (!$this->date_echeance) {
 			return false;
@@ -3517,7 +3517,7 @@ class FactureFournisseur extends CommonInvoice
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$formmail = new FormMail($this->db);
 
-		$now = dol_now();
+		$now = time();
 		$tmpidate = dol_get_first_hour(dol_time_plus_duree($now, $nbdays, 'd'), 'gmt');
 
 		$tmpinvoice = new FactureFournisseur($this->db);
@@ -3696,7 +3696,7 @@ class FactureFournisseur extends CommonInvoice
 								$actioncomm->label = 'sendEmailsRemindersOnInvoiceDueDateOK (nbdays='.$nbdays.' paymentmode='.$paymentmode.' template='.$template.' datetouse='.$datetouse.' forcerecipient='.$forcerecipient.')';
 								$actioncomm->note_private = $sendContent;
 								$actioncomm->fk_project = $tmpinvoice->fk_project;
-								$actioncomm->datep = dol_now();
+								$actioncomm->datep = time();
 								$actioncomm->datef = $actioncomm->datep;
 								$actioncomm->percentage = -1; // Not applicable
 								$actioncomm->authorid = $user->id; // User saving action
@@ -3737,7 +3737,7 @@ class FactureFournisseur extends CommonInvoice
 								$actioncomm->label = 'sendEmailsRemindersOnInvoiceDueDateKO';
 								$actioncomm->note_private = $errormesg;
 								$actioncomm->fk_project = $tmpinvoice->fk_project;
-								$actioncomm->datep = dol_now();
+								$actioncomm->datep = time();
 								$actioncomm->datef = $actioncomm->datep;
 								$actioncomm->percentage = -1; // Not applicable
 								$actioncomm->authorid = $user->id; // User saving action

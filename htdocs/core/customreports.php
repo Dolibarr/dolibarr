@@ -594,7 +594,7 @@ if (count($search_groupby)) {
 //var_dump($arrayofvaluesforgroupby);exit;
 
 
-$tmparray = dol_getdate(dol_now());
+$tmparray = dol_getdate(time());
 $endyear = $tmparray['year'];
 $endmonth = $tmparray['mon'];
 $datelastday = dol_get_last_day($endyear, $endmonth, 1);

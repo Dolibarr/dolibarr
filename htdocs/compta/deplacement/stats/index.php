@@ -73,7 +73,7 @@ if ($userid > 0) {
 	}
 }
 
-$nowyear = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+$nowyear = (int) dol_print_date(time(), "%Y", 'gmt');
 $year = GETPOSTINT('year') > 0 ? GETPOSTINT('year') : $nowyear;
 $startyear = $year - (!getDolGlobalInt('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalInt('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;

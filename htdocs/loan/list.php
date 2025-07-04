@@ -152,7 +152,7 @@ if (empty($reshook)) {
  *	View
  */
 $form = new Form($db);
-$now = dol_now();
+$now = time();
 
 $title = $langs->trans('Loans');
 $help_url = "EN:Module_Loan|FR:Module_Emprunt";

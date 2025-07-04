@@ -486,7 +486,7 @@ class AssetDepreciationOptions extends CommonObject
 			$this->fk_asset_model = $asset_model_id;
 			$class_type = 1;
 		}
-		$this->tms = dol_now();
+		$this->tms = time();
 		$this->fk_user_modif = $user->id;
 
 		foreach ($this->deprecation_options_fields as $mode_key => $mode_info) {

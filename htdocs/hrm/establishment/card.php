@@ -111,7 +111,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $permissiontodelete) {
 			$object->country_id = GETPOSTINT("country_id");
 			$object->status = GETPOSTINT('status');
 			$object->fk_user_author	= $user->id;
-			$object->datec = dol_now();
+			$object->datec = time();
 			$object->entity = GETPOSTINT('entity') > 0 ? GETPOSTINT('entity') : $conf->entity;
 
 			$id = $object->create($user);

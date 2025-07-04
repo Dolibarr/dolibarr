@@ -621,7 +621,7 @@ class Account extends CommonObject
 		$banque = trim($banque);
 		$label = trim($label);
 
-		$now = dol_now();
+		$now = time();
 
 		if (is_numeric($oper)) {    // Clean operation to have a code instead of a rowid
 			$sql = "SELECT code FROM ".MAIN_DB_PREFIX."c_paiement";
@@ -774,7 +774,7 @@ class Account extends CommonObject
 		// Load the library to validate/check a BAN account
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 
@@ -1359,7 +1359,7 @@ class Account extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
 		$sql .= " WHERE fk_account = ".((int) $this->id);
 		if ($option == 1) {
-			$sql .= " AND ".$this->db->escape($field)." <= '".(!empty($date_end) ? $this->db->idate($date_end) : $this->db->idate(dol_now()))."'";
+			$sql .= " AND ".$this->db->escape($field)." <= '".(!empty($date_end) ? $this->db->idate($date_end) : $this->db->idate(time()))."'";
 		}
 
 		$resql = $this->db->query($sql);
@@ -1409,7 +1409,7 @@ class Account extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$langs->load("banks");
-			$now = dol_now();
+			$now = time();
 
 			require_once DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
 

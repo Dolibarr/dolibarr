@@ -268,7 +268,7 @@ class AssetAccountancyCodes extends CommonObject
 		}
 
 		$this->db->begin();
-		$now = dol_now();
+		$now = time();
 
 		foreach ($this->accountancy_codes_fields as $mode_key => $mode_info) {
 			// Delete old accountancy codes

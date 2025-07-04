@@ -59,7 +59,7 @@ $local = GETPOSTINT('localTaxType');
 // Date range
 $year = GETPOSTINT("year");
 if (empty($year)) {
-	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+	$year_current = dol_print_date(time(), "%Y", 'gmt');
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
@@ -195,7 +195,7 @@ if ($nextquarter < 4) {
 	$nextyear++;
 }
 $description = $fsearch;
-$builddate = dol_now();
+$builddate = time();
 
 /*if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice') $description.=$langs->trans("RulesVATDueProducts");
 if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'payment') $description.=$langs->trans("RulesVATInProducts");

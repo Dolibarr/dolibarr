@@ -152,7 +152,7 @@ if ($user->socid > 0) {
 
 $diroutputmassaction = $conf->fournisseur->facture->dir_output.'/temp/massgeneration/'.$user->id;
 
-$now = dol_now();
+$now = time();
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new FactureFournisseur($db);
@@ -485,7 +485,7 @@ $facturestatic = new FactureFournisseur($db);
 $formcompany = new FormCompany($db);
 $thirdparty = new Societe($db);
 $subtypearray = $object->getArrayOfInvoiceSubtypes(0);
-$now = dol_now();
+$now = time();
 
 $soc = null;
 if ($socid > 0) {
@@ -684,7 +684,7 @@ if ($search_datelimit_end) {
 	$sql .= " AND f.date_lim_reglement <= '" . $db->idate($search_datelimit_end) . "'";
 }
 if ($option == 'late') {
-	$sql .= " AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->fournisseur->warning_delay)."'";
+	$sql .= " AND f.date_lim_reglement < '".$db->idate(time() - $conf->facture->fournisseur->warning_delay)."'";
 }
 if ($search_label) {
 	$sql .= natural_search('f.libelle', $search_label);

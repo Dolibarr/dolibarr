@@ -62,7 +62,7 @@ if ($user->socid) {
 }
 $userid = $user->id;
 
-$nowarray = dol_getdate(dol_now(), true);
+$nowarray = dol_getdate(time(), true);
 $nowyear = $nowarray['year'];
 $year = GETPOSTINT('year') > 0 ? GETPOSTINT('year') : $nowyear;
 $startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));

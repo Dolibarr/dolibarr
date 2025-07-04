@@ -127,7 +127,7 @@ function print_paybox_redirect($PRICE, $CURRENCY, $EMAIL, $urlok, $urlko, $TAG)
 	$PBX_SOURCE = 'HTML';
 	$PBX_TYPEPAIEMENT = 'CARTE';
 	$PBX_HASH = getDolGlobalString('PAYBOX_HASH');
-	$PBX_TIME = dol_print_date(dol_now(), 'dayhourrfc', 'gmt');
+	$PBX_TIME = dol_print_date(time(), 'dayhourrfc', 'gmt');
 
 	$msg = "PBX_IDENTIFIANT=".$PBX_IDENTIFIANT.
 		   "&PBX_MODE=".$IBS_MODE.

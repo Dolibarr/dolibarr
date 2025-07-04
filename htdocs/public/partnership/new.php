@@ -208,8 +208,8 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 
 		$partnership->status                 = 0;
 		$partnership->note_private           = GETPOST('note_private');
-		$partnership->date_creation 		 = dol_now();
-		$partnership->date_partnership_start = dol_now();
+		$partnership->date_creation 		 = time();
+		$partnership->date_partnership_start = time();
 		$partnership->fk_user_creat          = 0;
 		$partnership->fk_type                = GETPOSTINT('partnershiptype');
 		$partnership->url                    = GETPOST('url');
@@ -217,7 +217,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		$partnership->ip = getUserRemoteIP();
 
 		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
-		$now = dol_now();
+		$now = time();
 		$minmonthpost = dol_time_plus_duree($now, -1, "m");
 		// Calculate nb of post for IP
 		$nb_post_ip = 0;

@@ -123,7 +123,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 
 		$product = $this->arrayofproducts[$key];
 
-		$now = dol_now();
+		$now = time();
 
 		// La requete doit retourner: id, email, name
 		$sql = "SELECT s.rowid as id, s.email, s.nom as name, cd.rowid as cdid, cd.date_ouverture as date_start_real, cd.date_fin_validite as date_end, cd.fk_contrat";
@@ -212,7 +212,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 	{
 		global $conf;
 
-		$now = dol_now();
+		$now = time();
 
 		// Example: return parent::getNbOfRecipients("SELECT count(*) as nb from dolibarr_table");
 		// Example: return 500;

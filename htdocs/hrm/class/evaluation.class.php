@@ -228,7 +228,7 @@ class Evaluation extends CommonObject
 			$this->fields['fk_user']['type'] .= ':t.rowid:IN:'.$this->db->sanitize(implode(",", $user->getAllChildIds(1)));
 		}
 
-		$this->date_eval = dol_now();
+		$this->date_eval = time();
 
 		// Unset fields that are disabled
 		foreach ($this->fields as $key => $val) {
@@ -331,7 +331,7 @@ class Evaluation extends CommonObject
 			$object->status = self::STATUS_DRAFT;
 		}
 		if (property_exists($object, 'date_creation')) {
-			$object->date_creation = dol_now();
+			$object->date_creation = time();
 		}
 		if (property_exists($object, 'date_modification')) {
 			$object->date_modification = null;
@@ -550,7 +550,7 @@ class Evaluation extends CommonObject
 
 
 
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 

@@ -342,7 +342,7 @@ class FactureFournisseurRec extends CommonInvoice
 		global $conf;
 
 		$error = 0;
-		$now = dol_now();
+		$now = time();
 
 		// Clean parameters
 		$this->titre = empty($this->titre) ? '' : $this->titre;	// deprecated
@@ -1362,7 +1362,7 @@ class FactureFournisseurRec extends CommonInvoice
 		// Load translation files required by the page
 		$langs->loadLangs(array('main', 'bills'));
 
-		$now = dol_now();
+		$now = time();
 		$tmparray = dol_getdate($now);
 		$today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year']); // Today is last second of current day
 
@@ -1475,7 +1475,7 @@ class FactureFournisseurRec extends CommonInvoice
 
 				if (!$error && $invoiceidgenerated >= 0) {
 					$facturerec->nb_gen_done++;
-					$facturerec->date_last_gen = dol_now();
+					$facturerec->date_last_gen = time();
 					$nextDate = $facturerec->getNextDate();
 					$facturerec->date_when = (($nextDate === false) ? null : $nextDate);
 					$facturerec->update($user);
@@ -1749,7 +1749,7 @@ class FactureFournisseurRec extends CommonInvoice
 	{
 		global $user, $langs, $conf;
 
-		$now = dol_now();
+		$now = time();
 		$arraynow = dol_getdate($now);
 		$nownotime = dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
 

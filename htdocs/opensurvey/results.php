@@ -102,7 +102,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 			$error++;
 		} else {
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_user_studs (nom, id_sondage, reponses, date_creation)';
-			$sql .= " VALUES ('".$db->escape($nom)."', '".$db->escape($numsondage)."', '".$db->escape($nouveauchoix)."', '".$db->idate(dol_now())."')";
+			$sql .= " VALUES ('".$db->escape($nom)."', '".$db->escape($numsondage)."', '".$db->escape($nouveauchoix)."', '".$db->idate(time())."')";
 			$resql = $db->query($sql);
 			if (!$resql) {
 				dol_print_error($db);
@@ -532,7 +532,7 @@ if ($action == 'edit') {
 	print $form->selectDate($expiredate ? $expiredate : $object->date_fin, 'expire', 0, 0, 0, '', 1, 0);
 } else {
 	print dol_print_date($object->date_fin, 'day');
-	if ($object->date_fin && $object->date_fin < dol_now() && $object->status == Opensurveysondage::STATUS_VALIDATED) {
+	if ($object->date_fin && $object->date_fin < time() && $object->status == Opensurveysondage::STATUS_VALIDATED) {
 		print img_warning($langs->trans("Expired"));
 	}
 }

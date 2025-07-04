@@ -458,7 +458,7 @@ class Project extends CommonObject
 		$error = 0;
 		$ret = 0;
 
-		$now = dol_now();
+		$now = time();
 
 		// Clean parameters
 		$this->note_private = dol_substr($this->note_private, 0, 65535);
@@ -1279,7 +1279,7 @@ class Project extends CommonObject
 	 */
 	public function setClose($user)
 	{
-		$now = dol_now();
+		$now = time();
 
 		$error = 0;
 
@@ -1536,7 +1536,7 @@ class Project extends CommonObject
 	{
 		global $user, $langs, $conf;
 
-		$now = dol_now();
+		$now = time();
 
 		// Initialise parameters
 		$this->id = 0;
@@ -1761,7 +1761,7 @@ class Project extends CommonObject
 
 		dol_syslog("createFromClone clone_contact=".json_encode($clone_contact)." clone_task=".json_encode($clone_task)." clone_project_file=".json_encode($clone_project_file)." clone_note=".json_encode($clone_note)." move_date=".json_encode($move_date), LOG_DEBUG);
 
-		$now = dol_mktime(0, 0, 0, idate('m', dol_now()), idate('d', dol_now()), idate('Y', dol_now()));
+		$now = dol_mktime(0, 0, 0, idate('m', time()), idate('d', time()), idate('Y', time()));
 
 		$clone_project = new Project($this->db);
 
@@ -2414,7 +2414,7 @@ class Project extends CommonObject
 			return false;
 		}
 
-		$now = dol_now();
+		$now = time();
 
 		return ($this->date_end) < ($now - $conf->project->warning_delay);
 	}
@@ -2646,7 +2646,7 @@ class Project extends CommonObject
 	{
 		global $mysoc, $user;
 
-		$now = dol_now();
+		$now = time();
 		$nowDate = dol_getdate($now, true);
 
 		$errormesg = '';
@@ -2742,7 +2742,7 @@ class Project extends CommonObject
 					$actioncomm->code = 'AC_EMAIL';
 					$actioncomm->label = 'createWeeklyReportOK()';
 					$actioncomm->fk_project = $this->id;
-					$actioncomm->datep = dol_now();
+					$actioncomm->datep = time();
 					$actioncomm->datef = $actioncomm->datep;
 					$actioncomm->percentage = -1; // Not applicable
 					$actioncomm->authorid = $user->id; // User saving action
@@ -2778,7 +2778,7 @@ class Project extends CommonObject
 					$actioncomm->label = 'createWeeklyReportKO()';
 					$actioncomm->note_private = $errormesg;
 					$actioncomm->fk_project = $this->id;
-					$actioncomm->datep = dol_now();
+					$actioncomm->datep = time();
 					$actioncomm->datef = $actioncomm->datep;
 					$actioncomm->authorid = $user->id; // User saving action
 					$actioncomm->userownerid = $user->id; // Owner of action

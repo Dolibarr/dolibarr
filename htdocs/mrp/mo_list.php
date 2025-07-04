@@ -296,7 +296,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$now = dol_now();
+$now = time();
 
 $help_url = 'EN:Module_Manufacturing_Orders|FR:Module_Ordres_de_Fabrication|DE:Modul_Fertigungsauftrag';
 $title = $langs->trans('ListOfManufacturingOrders');
@@ -347,7 +347,7 @@ foreach ($search as $key => $val) {
 		if ($key == 'status' && $search[$key] == -2) {
 			$sql .= " AND (t.status IN (".$db->sanitize($object::STATUS_VALIDATED.",".$object::STATUS_INPROGRESS)."))";
 			if ($search_option == 'late') {
-				$sql .= " AND (t.date_end_planned < '".$db->idate(dol_now() - $conf->mrp->progress->warning_delay)."')";
+				$sql .= " AND (t.date_end_planned < '".$db->idate(time() - $conf->mrp->progress->warning_delay)."')";
 			}
 			continue;
 		}

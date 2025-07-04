@@ -141,7 +141,7 @@ class EcmDirectory extends CommonObject
 		global $conf, $langs;
 
 		$error = 0;
-		$now = dol_now();
+		$now = time();
 
 		// Clean parameters
 		$this->label = dol_sanitizeFileName(trim($this->label));

@@ -65,7 +65,7 @@ $hookmanager->initHooks(array('cli'));
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 dol_syslog($script_file." launched with arg ".implode(',', $argv));
 
-$datetimeprev = dol_now();
+$datetimeprev = time();
 
 $month = dol_print_date($datetimeprev, "%m");
 $year = dol_print_date($datetimeprev, "%Y");

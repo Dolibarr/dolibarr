@@ -303,8 +303,8 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			$confattendee = array_shift($resultfetchconfattendee);
 		} else {
 			// Need to create a confattendee
-			$confattendee->date_creation = dol_now();
-			$confattendee->date_subscription = dol_now();
+			$confattendee->date_creation = time();
+			$confattendee->date_subscription = time();
 			$confattendee->email = $email;
 			$confattendee->fk_project = $project->id;
 			$confattendee->fk_actioncomm = $id;
@@ -323,7 +323,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			// Count recent already posted event
 			$confattendee->ip = getUserRemoteIP();
 			$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
-			$now = dol_now();
+			$now = time();
 			$minmonthpost = dol_time_plus_duree($now, -1, "m");
 			// Calculate nb of post for IP
 			$nb_post_ip = 0;
@@ -565,7 +565,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 					$facture->type = Facture::TYPE_STANDARD;
 					$facture->socid = $thirdparty->id;
 					$facture->paye = 0;
-					$facture->date = dol_now();
+					$facture->date = time();
 					$facture->cond_reglement_id = $confattendee->cond_reglement_id;
 					$facture->fk_project = $project->id;
 					$facture->status = Facture::STATUS_DRAFT;

@@ -84,7 +84,7 @@ if (empty($reshook)) {
  *	View
  */
 
-$now = dol_now();
+$now = time();
 
 $title = $langs->trans("ContactNotes");
 

@@ -241,7 +241,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 $htmlother = new FormOther($db);
 
-$now = dol_now();
+$now = time();
 
 $helpurl = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 $title = $langs->trans("ProductsAndServices");

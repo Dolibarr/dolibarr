@@ -1176,7 +1176,7 @@ if (empty($reshook)) {
 				$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 				if ($result) {
 					if (count($prodcustprice->lines) > 0) {
-						$date_now = (int) floor(dol_now() / 86400) * 86400; // date without hours
+						$date_now = (int) floor(time() / 86400) * 86400; // date without hours
 						foreach ($prodcustprice->lines as $k => $custprice_line) {
 							if ($custprice_line->date_begin <= $date_now && (empty($custprice_line->date_end) || $date_now <= $custprice_line->date_end)) {
 								$pu_ht = price($custprice_line->price);

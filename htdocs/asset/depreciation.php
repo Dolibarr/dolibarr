@@ -139,7 +139,7 @@ if ($id > 0 || !empty($ref)) {
 	} elseif (empty($reshook)) {
 		$bookkeeping_icon = '<i class="fas fa-save" title="'.$langs->trans('AssetDispatchedInBookkeeping').'"></i>';
 		$future_icon = '<i class="fas fa-clock" title="'.$langs->trans('AssetFutureDepreciationLine').'"></i>';
-		$now = dol_now();
+		$now = time();
 
 		foreach ($assetdepreciationoptions->deprecation_options_fields as $mode_key => $fields) {
 			$lines = $object->depreciation_lines[$mode_key];

@@ -86,12 +86,12 @@ $nbofyear = 1;
 $year = GETPOSTINT("year");
 $month = GETPOSTINT("month");
 if (empty($year)) {
-	$year_current = (int) dol_print_date(dol_now(), "%Y");
-	$month_current = (int) dol_print_date(dol_now(), "%m");
+	$year_current = (int) dol_print_date(time(), "%Y");
+	$month_current = (int) dol_print_date(time(), "%m");
 	$year_start = $year_current - ($nbofyear - 1);
 } else {
 	$year_current = $year;
-	$month_current = (int) dol_print_date(dol_now(), "%m");
+	$month_current = (int) dol_print_date(time(), "%m");
 	$year_start = $year - $nbofyear + (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1 ? 0 : 1);
 }
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear, 'tzserver');	// We use timezone of server so report is same from everywhere
@@ -236,7 +236,7 @@ if ($modecompta == "BOOKKEEPINGCOLLECTED") {
 	$modecompta = "RECETTES-DEPENSES";
 }
 
-$builddate = dol_now();
+$builddate = time();
 $periodlink = '';
 $name = '';
 $calcmode = '';

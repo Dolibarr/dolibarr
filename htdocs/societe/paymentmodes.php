@@ -332,7 +332,7 @@ if (empty($reshook)) {
 			$companybankaccount->frstrecur       = GETPOST('frstrecur', 'alpha');
 			$companybankaccount->rum             = GETPOST('rum', 'alpha');
 			$companybankaccount->date_rum        = GETPOSTDATE('date_rum', '00:00:00');
-			$companybankaccount->datec           = dol_now();
+			$companybankaccount->datec           = time();
 
 			//$companybankaccount->clos          = GETPOSTINT('clos');
 			$companybankaccount->status          = GETPOSTINT('clos');
@@ -428,7 +428,7 @@ if (empty($reshook)) {
 			$companypaymentmode->exp_date_month  = GETPOSTINT('exp_date_month');
 			$companypaymentmode->exp_date_year   = GETPOSTINT('exp_date_year');
 			$companypaymentmode->cvn             = GETPOST('cvn', 'alpha');
-			$companypaymentmode->datec           = dol_now();
+			$companypaymentmode->datec           = time();
 			$companypaymentmode->default_rib     = 0;
 			$companypaymentmode->type            = 'card';
 			$companypaymentmode->country_code    = $object->country_code;

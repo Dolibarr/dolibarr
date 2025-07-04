@@ -157,7 +157,7 @@ class Delivery extends CommonObject
 
 		$error = 0;
 
-		$now = dol_now();
+		$now = time();
 
 		/* Delivery note as draft On positionne en mode draft le bon de livraison */
 		$this->draft = 1;
@@ -416,7 +416,7 @@ class Delivery extends CommonObject
 				if (is_readable(DOL_DOCUMENT_ROOT.'/core/modules/delivery/'.$modName.'.php')) {
 					require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/'.$modName.'.php';
 
-					$now = dol_now();
+					$now = time();
 
 					// Retrieving the new reference
 					$objMod = new $modName($this->db);
@@ -968,7 +968,7 @@ class Delivery extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		$now = dol_now();
+		$now = time();
 
 		// Load array of products prodids
 		$num_prods = 0;

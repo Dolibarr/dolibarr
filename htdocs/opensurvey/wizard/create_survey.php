@@ -96,7 +96,7 @@ if (!empty($creation_sondage_date) || !empty($creation_sondage_autre)) {
 
 	if ($champdatefin > 0) {	// A date was provided
 		// Expire date is not before today
-		if ($champdatefin >= dol_now()) {
+		if ($champdatefin >= time()) {
 			$testdate = true;
 			$_SESSION['champdatefin'] = dol_print_date($champdatefin, 'dayrfc');
 		} else {

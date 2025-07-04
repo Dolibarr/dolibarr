@@ -619,7 +619,7 @@ if ($action != "create" && $action != "edit") {
 
 	$form = new Form($db);
 
-	$now = dol_now();
+	$now = time();
 
 	$help_url = '';
 	$title = $langs->transnoentitiesnoconv("Skilldets");

@@ -228,7 +228,7 @@ class Salary extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."salary SET";
-		$sql .= " tms='".$this->db->idate(dol_now())."',";
+		$sql .= " tms='".$this->db->idate(time())."',";
 		$sql .= " fk_user=".((int) $this->fk_user).",";
 		/*$sql .= " datep='".$this->db->idate($this->datep)."',";
 		$sql .= " datev='".$this->db->idate($this->datev)."',";*/
@@ -381,7 +381,7 @@ class Salary extends CommonObject
 	{
 		$this->id = 0;
 
-		$this->tms = dol_now();
+		$this->tms = time();
 		$this->fk_user = 0;
 		$this->datep = '';
 		$this->datev = '';
@@ -408,7 +408,7 @@ class Salary extends CommonObject
 		global $conf, $langs;
 
 		$error = 0;
-		$now = dol_now();
+		$now = time();
 
 		// Clean parameters
 		$this->amount = price2num(trim($this->amount));
@@ -946,7 +946,7 @@ class Salary extends CommonObject
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
 				if ($obj && $obj->nb == 0) {	// If no request found yet
-					$now = dol_now();
+					$now = time();
 
 					$totalpaid = $this->getSommePaiement();
 					// $totalcreditnotes = $this->getSumCreditNotesUsed();

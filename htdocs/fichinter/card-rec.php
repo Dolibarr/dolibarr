@@ -289,7 +289,7 @@ if (isModEnabled('project')) {
 	$projectstatic = new Project($db);
 }
 
-$now = dol_now();
+$now = time();
 $tmparray = dol_getdate($now);
 $today = dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year']); // Today is last second of current day
 

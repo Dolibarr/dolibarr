@@ -166,7 +166,7 @@ class mod_sn_advanced extends ModeleNumRefBatch
 			return 0;
 		}
 
-		$date = dol_now();
+		$date = time();
 
 		$numFinal = get_next_value($db, $mask, 'product_lot', 'batch', $filter, null, $date);
 

@@ -217,7 +217,7 @@ $nom = $title;
 $nomlink = '';
 $periodlink = '';
 $exportlink = '';
-$builddate = dol_now();
+$builddate = time();
 $description = $langs->trans("DescJournalOnlyBindedVisible") . '<br>';
 if ($object->nature == 2 || $object->nature == 3) {
 	if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {

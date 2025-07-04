@@ -107,7 +107,7 @@ class box_graph_product_distribution extends ModeleBoxes
 			$showordernb = 0;
 		}
 
-		$nowarray = dol_getdate(dol_now(), true);
+		$nowarray = dol_getdate(time(), true);
 		if (empty($year)) {
 			$year = $nowarray['year'];
 		}

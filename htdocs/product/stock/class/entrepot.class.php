@@ -260,7 +260,7 @@ class Entrepot extends CommonObject
 			$this->country_id = is_int($country_id) ? $country_id : 0;
 		}
 
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 
@@ -900,7 +900,7 @@ class Entrepot extends CommonObject
 	{
 		global $user, $langs, $conf, $mysoc;
 
-		$now = dol_now();
+		$now = time();
 
 		// Initialize parameters
 		$this->id = 0;

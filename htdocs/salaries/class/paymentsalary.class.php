@@ -207,7 +207,7 @@ class PaymentSalary extends CommonObject
 
 		$error = 0;
 
-		$now = dol_now();
+		$now = time();
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 
@@ -589,8 +589,8 @@ class PaymentSalary extends CommonObject
 		$this->id = 0;
 		$this->fk_salary = 0;
 		$this->datec = '';
-		$this->tms = dol_now();
-		$this->datepaye = dol_now();
+		$this->tms = time();
+		$this->datepaye = time();
 		$this->amount = 0.0;
 		$this->fk_typepayment = 0;
 		$this->num_payment = '';

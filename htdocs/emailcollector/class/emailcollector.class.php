@@ -1166,7 +1166,7 @@ class EmailCollector extends CommonObject
 		$connection = false;
 		$arrayofemail = array();
 
-		$now = dol_now();
+		$now = time();
 		$datelastok = $now;
 
 		if (empty($this->host)) {
@@ -3343,7 +3343,7 @@ class EmailCollector extends CommonObject
 								$tickettocreate->origin_replyto = (!empty($replyto) ? $replyto : null);
 								$tickettocreate->origin_references = (!empty($headers['References']) ? $headers['References'] : null);
 								$tickettocreate->fk_user_create = $user->id;
-								$tickettocreate->datec = dol_now();
+								$tickettocreate->datec = time();
 								$tickettocreate->fk_project = $projectstatic->id;
 								$tickettocreate->notify_tiers_at_create = getDolGlobalInt('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION');
 								$tickettocreate->note_private = $descriptionfull;
@@ -3481,7 +3481,7 @@ class EmailCollector extends CommonObject
 								$candidaturetocreate->email = $from;
 								//$candidaturetocreate->lastname = $langs->trans("Anonymous").' - '.$from;
 								$candidaturetocreate->fk_user_creat = $user->id;
-								$candidaturetocreate->date_creation = dol_now();
+								$candidaturetocreate->date_creation = time();
 								$candidaturetocreate->fk_project = $projectstatic->id;
 								$candidaturetocreate->description = $description;
 								$candidaturetocreate->note_private = $descriptionfull;

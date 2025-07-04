@@ -141,7 +141,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 			}
 		}
 		if (empty($dateinput)) {
-			$dateinput = dol_now();
+			$dateinput = time();
 		}
 		$isEnabled = getDolGlobalString('COMPANY_ELEPHANT_DATE_START_ENABLE');
 		$texte .= '<tr><td>';
@@ -266,7 +266,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 			return -1;
 		}
 
-		$now = dol_now();
+		$now = time();
 
 		$numFinal = get_next_value($db, $mask, 'societe', $field, $where, '', $now);
 

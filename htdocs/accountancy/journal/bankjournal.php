@@ -91,7 +91,7 @@ if ($only_rappro == 0) {
 	$only_rappro = getDolGlobalInt('ACCOUNTING_BANK_CONCILIATED');
 }
 
-$now = dol_now();
+$now = time();
 
 $action = GETPOST('action', 'aZ09');
 
@@ -661,7 +661,7 @@ if ($result) {
 
 // Write bookkeeping
 if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'bind', 'write')) {
-	$now = dol_now();
+	$now = time();
 
 	$accountingaccountcustomer = new AccountingAccount($db);
 	$accountingaccountcustomer->fetch(0, getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER'), true);
@@ -1130,7 +1130,7 @@ if (empty($action) || $action == 'view') {
 	llxHeader('', dol_string_nohtmltag($title), $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-generation page-bankjournal');
 
 	$nom = $title;
-	$builddate = dol_now();
+	$builddate = time();
 	//$description = $langs->trans("DescFinanceJournal") . '<br>';
 	$description = $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 

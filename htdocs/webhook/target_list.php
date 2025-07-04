@@ -224,7 +224,7 @@ $form = new Form($db);
 
 $object->initListOfTriggers();
 
-$now = dol_now();
+$now = time();
 //$help_url = "EN:Module_Target|FR:Module_Target_FR|ES:Módulo_Target";
 $help_url = '';
 $title = $langs->trans("Targets");

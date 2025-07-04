@@ -178,7 +178,7 @@ if ($id > 0) {
 	$cssclass = "titlefield";
 
 	// Help of substitution key
-	$dateexample = dol_now();
+	$dateexample = time();
 	if (!empty($object->frequency) && !empty($object->date_when)) {
 		$dateexample = $object->date_when;
 	}
@@ -195,8 +195,8 @@ if ($id > 0) {
 	$substitutionarray['__INVOICE_YEAR__'] = $langs->trans("YearOfInvoice") . ' (' . $langs->trans("Example") . ': ' . dol_print_date($dateexample, '%Y') . ')';
 	$substitutionarray['__INVOICE_NEXT_YEAR__'] = $langs->trans("NextYearOfInvoice") . ' (' . $langs->trans("Example") . ': ' . dol_print_date(dol_time_plus_duree((int) $dateexample, 1, 'y'), '%Y') . ')';
 	// Only on template invoices
-	$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__'] = $langs->trans("DateNextInvoiceBeforeGen") . ' (' . $langs->trans("Example") . ': ' . dol_print_date(($object->date_when ? (int) $object->date_when : dol_now()), 'dayhour') . ')';
-	$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_AFTER_GEN__'] = $langs->trans("DateNextInvoiceAfterGen") . ' (' . $langs->trans("Example") . ': ' . dol_print_date(dol_time_plus_duree(($object->date_when ? (int) $object->date_when : dol_now()), $object->frequency, $object->unit_frequency), 'dayhour') . ')';
+	$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__'] = $langs->trans("DateNextInvoiceBeforeGen") . ' (' . $langs->trans("Example") . ': ' . dol_print_date(($object->date_when ? (int) $object->date_when : time()), 'dayhour') . ')';
+	$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_AFTER_GEN__'] = $langs->trans("DateNextInvoiceAfterGen") . ' (' . $langs->trans("Example") . ': ' . dol_print_date(dol_time_plus_duree(($object->date_when ? (int) $object->date_when : time()), $object->frequency, $object->unit_frequency), 'dayhour') . ')';
 	$substitutionarray['__INVOICE_COUNTER_CURRENT__'] = $object->nb_gen_done;
 	$substitutionarray['__INVOICE_COUNTER_MAX__'] = $object->nb_gen_max;
 

@@ -458,7 +458,7 @@ $bankstatic = new Account($db);
 $banklinestatic = new AccountLine($db);
 $bordereaustatic = new RemiseCheque($db);
 
-$now = dol_now();
+$now = time();
 
 // Must be before button action
 $param = '';

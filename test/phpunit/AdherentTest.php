@@ -201,7 +201,7 @@ class AdherentTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$timestamp = dol_now();
+		$timestamp = time();
 
 		$localobject->civility_id = 0;
 		$localobject->login = 'newlogin';

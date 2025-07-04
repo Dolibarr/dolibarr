@@ -78,12 +78,12 @@ $nbofyear = 1;
 // Date range
 $year = GETPOSTINT('year');		// year with current month, is the month of the period we must show
 if (empty($year)) {
-	$year_current = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-	$month_current = (int) dol_print_date(dol_now(), "%m");
+	$year_current = (int) dol_print_date(time(), "%Y", 'gmt');
+	$month_current = (int) dol_print_date(time(), "%m");
 	$year_start = $year_current - ($nbofyear - 1);
 } else {
 	$year_current = $year;
-	$month_current = (int) dol_print_date(dol_now(), "%m");
+	$month_current = (int) dol_print_date(time(), "%m");
 	$year_start = $year - ($nbofyear - 1);
 }
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
@@ -233,7 +233,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 		$description .= $langs->trans("SupplierDepositsAreNotIncluded");
 	}
-	$builddate = dol_now();
+	$builddate = time();
 	//$exportlink=$langs->trans("NotYetAvailable");
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	$name = $langs->trans("AnnualByAccountInputOutputMode");
@@ -245,7 +245,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 	//$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
 	$description = $langs->trans("RulesResultInOut");
-	$builddate = dol_now();
+	$builddate = time();
 	//$exportlink=$langs->trans("NotYetAvailable");
 } elseif ($modecompta == "BOOKKEEPING") {
 	$accountingreportstatic = new AccountancyReport($db);
@@ -264,7 +264,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$exportlink = '';
 	$description = $langs->trans("RulesResultBookkeepingPersonalized");
 	$description .= ' ('.$langs->trans("SeePageForSetup", DOL_URL_ROOT.'/accountancy/admin/categories_list.php?search_country_id='.$mysoc->country_id.'&mainmenu=accountancy&leftmenu=accountancy_admin', $langs->transnoentitiesnoconv("Accountancy").' / '.$langs->transnoentitiesnoconv("Setup").' / '.$langs->transnoentitiesnoconv("AccountingCategory")).')';
-	$builddate = dol_now();
+	$builddate = time();
 }
 
 report_header($name, '', $period, $periodlink ?? '', $description, $builddate, $exportlink ?? '', array('modecompta' => $modecompta, 'action' => ''), $calcmode);

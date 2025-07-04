@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/printsheet/modules_labels.php';
 $langs->loadLangs(array("members", "errors"));
 
 // Choice of printing year or current year.
-$now = dol_now();
+$now = time();
 $year = dol_print_date($now, '%Y');
 $month = dol_print_date($now, '%m');
 $day = dol_print_date($now, '%d');

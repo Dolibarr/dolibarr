@@ -175,7 +175,7 @@ if (!in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && !GE
 		if (getDolGlobalInt('ACCOUNTANCY_FISCALYEAR_DEFAULT')) {
 			$sql .= " WHERE rowid = " . getDolGlobalInt('ACCOUNTANCY_FISCALYEAR_DEFAULT');
 		} else {
-			$sql .= " WHERE date_start < '" . $db->idate(dol_now()) . "' and date_end > '" . $db->idate(dol_now()) . "'";
+			$sql .= " WHERE date_start < '" . $db->idate(time()) . "' and date_end > '" . $db->idate(time()) . "'";
 		}
 		$sql .= $db->plimit(1);
 		$res = $db->query($sql);
@@ -186,8 +186,8 @@ if (!in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && !GE
 			$search_date_end = strtotime($fiscalYear->date_end);
 		} else {
 			$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
-			$year_start = (int) dol_print_date(dol_now(), '%Y');
-			if (dol_print_date(dol_now(), '%m') < $month_start) {
+			$year_start = (int) dol_print_date(time(), '%Y');
+			if (dol_print_date(time(), '%m') < $month_start) {
 				$year_start--; // If current month is lower that starting fiscal month, we start last year
 			}
 			$year_end = $year_start + 1;
@@ -676,7 +676,7 @@ if ($action == 'export_fileconfirm' && $user->hasRight('accounting', 'mouvements
 					// TODO Merge update for each line into one global using rowid IN (list of movement ids)
 					foreach ($object->lines as $movement) {
 						// Update the line to set date_export and/or date_validated (if not already set !)
-						$now = dol_now();
+						$now = time();
 
 						$setfields = '';
 						if (!empty($notifiedexportdate) && empty($movement->date_export)) {

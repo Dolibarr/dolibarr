@@ -313,7 +313,7 @@ class Fichinter extends CommonObject
 		$soc = new Societe($this->db);
 		$result = $soc->fetch($this->socid);
 
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 
@@ -631,7 +631,7 @@ class Fichinter extends CommonObject
 		if ($this->status != self::STATUS_VALIDATED) {
 			$this->db->begin();
 
-			$now = dol_now();
+			$now = time();
 
 			// Define new ref
 			if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
@@ -750,7 +750,7 @@ class Fichinter extends CommonObject
 		} else {
 			$this->db->begin();
 
-			$now = dol_now();
+			$now = time();
 
 			$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element;
 			$sql .= ' SET fk_statut = ' . self::STATUS_CLOSED . ',';
@@ -1492,7 +1492,7 @@ class Fichinter extends CommonObject
 	{
 		global $langs;
 
-		$now = dol_now();
+		$now = time();
 
 		// Initialise parameters
 		$this->id = 0;

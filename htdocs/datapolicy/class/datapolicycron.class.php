@@ -80,9 +80,9 @@ class DataPolicyCron
                     WHERE s.entity = %d
                     AND s.client = 1
                     AND s.fournisseur = 0
-                    AND s.tms < DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
+                    AND s.tms < DATE_SUB('".$this->db->idate(time())."', INTERVAL %d MONTH)
 					AND NOT EXISTS (
-                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = s.rowid AND a.tms > DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = s.rowid AND a.tms > DATE_SUB('".$this->db->idate(time())."', INTERVAL %d MONTH)
                     )
 					AND NOT EXISTS (
                         SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
@@ -114,9 +114,9 @@ class DataPolicyCron
                     WHERE s.entity = %d
                     AND s.client = 2
                     AND s.fournisseur = 0
-                    AND s.tms < DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
+                    AND s.tms < DATE_SUB('".$this->db->idate(time())."', INTERVAL %d MONTH)
 					AND NOT EXISTS (
-                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = s.rowid AND a.tms > DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = s.rowid AND a.tms > DATE_SUB('".$this->db->idate(time())."', INTERVAL %d MONTH)
                     )
 					AND NOT EXISTS (
                         SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
@@ -148,9 +148,9 @@ class DataPolicyCron
                     WHERE s.entity = %d
                     AND s.client = 3
                     AND s.fournisseur = 0
-                    AND s.tms < DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
+                    AND s.tms < DATE_SUB('".$this->db->idate(time())."', INTERVAL %d MONTH)
 					AND NOT EXISTS (
-                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = s.rowid AND a.tms > DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = s.rowid AND a.tms > DATE_SUB('".$this->db->idate(time())."', INTERVAL %d MONTH)
                     )
 					AND NOT EXISTS (
                         SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
@@ -182,9 +182,9 @@ class DataPolicyCron
                     WHERE s.entity = %d
                     AND s.client = 0
                     AND s.fournisseur = 0
-                    AND s.tms < DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
+                    AND s.tms < DATE_SUB('".$this->db->idate(time())."', INTERVAL %d MONTH)
 					AND NOT EXISTS (
-                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = s.rowid AND a.tms > DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = s.rowid AND a.tms > DATE_SUB('".$this->db->idate(time())."', INTERVAL %d MONTH)
                     )
 					AND NOT EXISTS (
                         SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
@@ -215,9 +215,9 @@ class DataPolicyCron
                     SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s
                     WHERE s.entity = %d
                     AND s.fournisseur = 1
-                    AND s.tms < DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
+                    AND s.tms < DATE_SUB('".$this->db->idate(time())."', INTERVAL %d MONTH)
 					AND NOT EXISTS (
-                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = s.rowid AND a.tms > DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = s.rowid AND a.tms > DATE_SUB('".$this->db->idate(time())."', INTERVAL %d MONTH)
                     )
 					AND NOT EXISTS (
                         SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
@@ -248,11 +248,11 @@ class DataPolicyCron
                     SELECT c.rowid FROM ".MAIN_DB_PREFIX."socpeople as c
                     INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc
                     WHERE c.entity = %d
-                    AND c.tms < DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
+                    AND c.tms < DATE_SUB('".$this->db->idate(time())."', INTERVAL %d MONTH)
                     AND s.client = 1
                     AND s.fournisseur = 0
 					AND NOT EXISTS (
-                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB('".$this->db->idate(time())."', INTERVAL %d MONTH)
                     )
 					AND NOT EXISTS (
                         SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
@@ -286,11 +286,11 @@ class DataPolicyCron
                     SELECT c.rowid FROM ".MAIN_DB_PREFIX."socpeople as c
                     INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc
                     WHERE c.entity = %d
-                    AND c.tms < DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
+                    AND c.tms < DATE_SUB('".$this->db->idate(time())."', INTERVAL %d MONTH)
                     AND s.client = 2
                     AND s.fournisseur = 0
 					AND NOT EXISTS (
-                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB('".$this->db->idate(time())."', INTERVAL %d MONTH)
                     )
 					AND NOT EXISTS (
                         SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
@@ -324,11 +324,11 @@ class DataPolicyCron
                     SELECT c.rowid FROM ".MAIN_DB_PREFIX."socpeople as c
                     INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc
                     WHERE c.entity = %d
-                    AND c.tms < DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
+                    AND c.tms < DATE_SUB('".$this->db->idate(time())."', INTERVAL %d MONTH)
                     AND s.client = 3
                     AND s.fournisseur = 0
 					AND NOT EXISTS (
-                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB('".$this->db->idate(time())."', INTERVAL %d MONTH)
                     )
 					AND NOT EXISTS (
                         SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
@@ -362,11 +362,11 @@ class DataPolicyCron
                     SELECT c.rowid FROM ".MAIN_DB_PREFIX."socpeople as c
                     INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc
                     WHERE c.entity = %d
-                    AND c.tms < DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
+                    AND c.tms < DATE_SUB('".$this->db->idate(time())."', INTERVAL %d MONTH)
                     AND s.client = 0
                     AND s.fournisseur = 0
 					AND NOT EXISTS (
-                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB('".$this->db->idate(time())."', INTERVAL %d MONTH)
                     )
 					AND NOT EXISTS (
                         SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
@@ -400,10 +400,10 @@ class DataPolicyCron
                     SELECT c.rowid FROM ".MAIN_DB_PREFIX."socpeople as c
                     INNER JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc
                     WHERE c.entity = %d
-                    AND c.tms < DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
+                    AND c.tms < DATE_SUB('".$this->db->idate(time())."', INTERVAL %d MONTH)
                     AND s.fournisseur = 1
 					AND NOT EXISTS (
-                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_contact = c.rowid AND a.tms > DATE_SUB('".$this->db->idate(time())."', INTERVAL %d MONTH)
                     )
 					AND NOT EXISTS (
                         SELECT rowid FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid
@@ -436,9 +436,9 @@ class DataPolicyCron
 				'sql' => "
                     SELECT a.rowid FROM ".MAIN_DB_PREFIX."adherent as a
                     WHERE a.entity = %d
-                    AND a.tms < DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH)
+                    AND a.tms < DATE_SUB('".$this->db->idate(time())."', INTERVAL %d MONTH)
 					AND NOT EXISTS (
-                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_element = a.rowid AND a.tms > DATE_SUB('".$this->db->idate(dol_now())."', INTERVAL %d MONTH) AND a.elementtype LIKE 'member'
+                        SELECT id FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_element = a.rowid AND a.tms > DATE_SUB('".$this->db->idate(time())."', INTERVAL %d MONTH) AND a.elementtype LIKE 'member'
                     )
                 ",
 				"class" => "Adherent",

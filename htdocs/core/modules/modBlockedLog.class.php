@@ -176,7 +176,7 @@ class modBlockedLog extends DolibarrModules
 		$object->element = 'module';
 		$object->ref = 'systemevent';
 		$object->entity = $conf->entity;
-		$object->date = dol_now();
+		$object->date = time();
 
 		$b = new BlockedLog($this->db);
 
@@ -221,7 +221,7 @@ class modBlockedLog extends DolibarrModules
 		$object->element = 'module';
 		$object->ref = 'systemevent';
 		$object->entity = $conf->entity;
-		$object->date = dol_now();
+		$object->date = time();
 
 		$b = new BlockedLog($this->db);
 		$result = $b->setObjectData($object, 'MODULE_RESET', 0);

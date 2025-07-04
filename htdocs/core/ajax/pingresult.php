@@ -73,7 +73,7 @@ $hash_algo = GETPOST('hash_algo', 'alpha');
  * View
  */
 
-$now = dol_now();
+$now = time();
 
 top_httphead();
 

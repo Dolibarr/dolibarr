@@ -537,7 +537,7 @@ class StockTransferLine extends CommonObjectLine
 		 return -1;
 		 }*/
 
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 
@@ -1015,7 +1015,7 @@ class StockTransferLine extends CommonObjectLine
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 

@@ -139,7 +139,7 @@ class modMultiCurrency extends DolibarrModules
 		// Cronjobs (List of cron jobs entries to add when module is enabled)
 		// unit_frequency must be 60 for minute, 3600 for hour, 86400 for day, 604800 for week
 		$statusatinstall=1;
-		$arraydate=dol_getdate(dol_now());
+		$arraydate=dol_getdate(time());
 		$datestart=dol_mktime(21, 15, 0, $arraydate['mon'], $arraydate['mday'], $arraydate['year']);
 		$langs->load('multicurrency');
 

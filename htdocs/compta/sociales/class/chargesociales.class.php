@@ -282,7 +282,7 @@ class ChargeSociales extends CommonObject
 		global $conf;
 		$error = 0;
 
-		$now = dol_now();
+		$now = time();
 
 		// Nettoyage parameters
 		$newamount = price2num($this->amount, 'MT');
@@ -817,7 +817,7 @@ class ChargeSociales extends CommonObject
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
 		$this->paye = 0;
-		$this->date_creation = dol_now();
+		$this->date_creation = time();
 		$this->date_ech = $this->date_creation + 3600 * 24 * 30;
 		$this->periode = $this->date_creation + 3600 * 24 * 30;
 		$this->period = $this->date_creation + 3600 * 24 * 30;

@@ -269,7 +269,7 @@ class Reception extends CommonObject
 	{
 		global $conf;
 
-		$now = dol_now();
+		$now = time();
 
 		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 		$error = 0;
@@ -586,7 +586,7 @@ class Reception extends CommonObject
 
 		$this->newref = dol_sanitizeFileName($numref);
 
-		$now = dol_now();
+		$now = time();
 
 		// Validate
 		$sql = "UPDATE ".MAIN_DB_PREFIX."reception SET";
@@ -680,7 +680,7 @@ class Reception extends CommonObject
 			} else {
 				$trigger_key = '';
 				if ($this->origin_object instanceof CommandeFournisseur && $status == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) {
-					$ret = $this->origin_object->Livraison($user, dol_now(), 'tot', '');
+					$ret = $this->origin_object->Livraison($user, time(), 'tot', '');
 					if ($ret < 0) {
 						$error++;
 						$this->errors = array_merge($this->errors, $this->origin_object->errors);
@@ -1494,7 +1494,7 @@ class Reception extends CommonObject
 
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
-		$now = dol_now();
+		$now = time();
 
 		dol_syslog(get_class($this)."::initAsSpecimen");
 
@@ -1711,7 +1711,7 @@ class Reception extends CommonObject
 				}
 				if ($receptions_match_order) {
 					dol_syslog("Qty for the ".count($order->lines)." lines of order have same value for receptions with status Reception::STATUS_CLOSED=".self::STATUS_CLOSED.', so we close order');
-					$order->Livraison($user, dol_now(), 'tot', 'Reception '.$this->ref);
+					$order->Livraison($user, time(), 'tot', 'Reception '.$this->ref);
 				}
 			}
 

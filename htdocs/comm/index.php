@@ -77,7 +77,7 @@ $total = 0;
 
 $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 $maxofloop = (!getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
-$now = dol_now();
+$now = time();
 
 //restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', 0);
 if (!$user->hasRight('propal', 'read') && !$user->hasRight('supplier_proposal', 'read') && !$user->hasRight('commande', 'read') && !$user->hasRight('fournisseur', 'commande', 'read')

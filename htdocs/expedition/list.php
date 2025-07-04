@@ -290,7 +290,7 @@ if (empty($reshook)) {
 
 				$datefacture = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 				if (empty($datefacture)) {
-					$datefacture = dol_now();
+					$datefacture = time();
 				}
 
 				$objecttmp->date = $datefacture;
@@ -656,7 +656,7 @@ if (empty($reshook)) {
  * View
  */
 
-$now = dol_now();
+$now = time();
 
 $form = new Form($db);
 $formother = new FormOther($db);

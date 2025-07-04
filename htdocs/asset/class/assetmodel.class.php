@@ -283,7 +283,7 @@ class AssetModel extends CommonObject
 			$object->status = self::STATUS_DRAFT;
 		}
 		if (property_exists($object, 'date_creation')) {
-			$object->date_creation = dol_now();
+			$object->date_creation = time();
 		}
 		if (property_exists($object, 'date_modification')) {
 			$object->date_modification = null;
@@ -477,7 +477,7 @@ class AssetModel extends CommonObject
 			return 0;
 		}
 
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 

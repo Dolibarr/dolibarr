@@ -338,7 +338,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formTicket = new FormTicket($db);
 
-$now = dol_now();
+$now = time();
 
 $user_temp = new User($db);
 $socstatic = new Societe($db);

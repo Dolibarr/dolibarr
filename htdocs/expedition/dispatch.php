@@ -327,8 +327,8 @@ if (empty($reshook)) {
 							$qtymouv = price2num(GETPOST($qty, 'alpha'), 'MS') - $qtystart;
 							$price = price2num(GETPOST($pu), 'MU');
 							$comment = GETPOST('comment');
-							$inventorycode = dol_print_date(dol_now(), 'dayhourlog');
-							$now = dol_now();
+							$inventorycode = dol_print_date(time(), 'dayhourlog');
+							$now = time();
 							$eatby = '';
 							$sellby = '';
 							$batch = '';
@@ -387,7 +387,7 @@ if (empty($reshook)) {
  * View
  */
 
-$now = dol_now();
+$now = time();
 
 $form = new Form($db);
 $formproduct = new FormProduct($db);

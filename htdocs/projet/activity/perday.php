@@ -70,7 +70,7 @@ $socid = 0;
 //if ($user->socid > 0) $socid=$user->socid;
 $result = restrictedArea($user, 'projet', $projectid);
 
-$now = dol_now();
+$now = time();
 
 $year = GETPOSTINT('reyear') ? GETPOSTINT('reyear') : (GETPOSTINT("year") ? GETPOSTINT("year") : (GETPOSTINT("addtimeyear") ? GETPOSTINT("addtimeyear") : date("Y")));
 $month = GETPOSTINT('remonth') ? GETPOSTINT('remonth') : (GETPOSTINT("month") ? GETPOSTINT("month") : (GETPOSTINT("addtimemonth") ? GETPOSTINT("addtimemonth") : date("m")));
@@ -105,7 +105,7 @@ if ($year && $month && $day) {
 	$daytoparse = dol_mktime(0, 0, 0, $monthofday, $dayofday, $yearofday); // xxxofday is value of day after submit action 'addtime'
 }
 
-$daytoparsegmt = dol_now('gmt');
+$daytoparsegmt = time();
 if ($yearofday && $monthofday && $dayofday) {
 	$daytoparsegmt = dol_mktime(0, 0, 0, $monthofday, $dayofday, $yearofday, 'gmt');
 } elseif ($year && $month && $day) { // xxxofday is value of day after submit action 'addtime'

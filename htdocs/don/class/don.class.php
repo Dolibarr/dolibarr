@@ -250,7 +250,7 @@ class Don extends CommonObject
 	{
 		global $conf;
 
-		$now = dol_now();
+		$now = time();
 
 		// Charge tableau des id de societe socids
 		$socids = array();
@@ -390,7 +390,7 @@ class Don extends CommonObject
 
 		$error = 0;
 		$ret = 0;
-		$now = dol_now();
+		$now = time();
 
 		// Clean parameters
 		// $this->address = ($this->address > 0 ? $this->address : $this->address);

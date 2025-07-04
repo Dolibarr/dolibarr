@@ -1072,7 +1072,7 @@ $( document ).ready(function() {
 		$sql = "SELECT rowid, status FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
 		$sql .= " entity = ".((int) $conf->entity)." AND ";
 		$sql .= " posnumber = ".((int) $_SESSION["takeposterminal"])." AND ";
-		$sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
+		$sql .= " date_creation > '".$db->idate(dol_get_first_hour(time()))."'";
 		$sql .= " AND status = 0 ";
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -1171,7 +1171,7 @@ if (!getDolGlobalString('TAKEPOS_HIDE_HEAD_BAR')) {
 				?>
 				</span>
 				<?php
-				echo '<span class="hideonsmartphone"> - '.dol_print_date(dol_now(), "day").'</span>'; ?>
+				echo '<span class="hideonsmartphone"> - '.dol_print_date(time(), "day").'</span>'; ?>
 				</a>
 				<?php
 				if (isModEnabled('multicurrency')) {
@@ -1453,7 +1453,7 @@ if (getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0 || getDolGlobalString('T
 $sql = "SELECT rowid, status, entity FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE";
 $sql .= " entity = ".((int) $conf->entity)." AND ";
 $sql .= " posnumber = ".((int) empty($_SESSION["takeposterminal"]) ? 0 : $_SESSION["takeposterminal"])." AND ";
-$sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
+$sql .= " date_creation > '".$db->idate(dol_get_first_hour(time()))."'";
 $sql .= " AND status = 0";
 
 $resql = $db->query($sql);

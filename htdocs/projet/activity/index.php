@@ -92,7 +92,7 @@ if (empty($reshook)) {
  * View
  */
 
-$now = dol_now();
+$now = time();
 $tmp = dol_getdate($now);
 $day = $tmp['mday'];
 $month = $tmp['mon'];

@@ -284,7 +284,7 @@ class pdf_standard_member extends CommonStickerGenerator
 				$object->country = '';
 			}
 
-			$now = dol_now();
+			$now = time();
 			$year = dol_print_date($now, '%Y');
 			$month = dol_print_date($now, '%m');
 			$day = dol_print_date($now, '%d');

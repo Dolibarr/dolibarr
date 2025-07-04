@@ -1331,7 +1331,7 @@ if (empty($reshook)) {
 					if ($result) {
 						// If there is some prices specific to the customer
 						if (count($prodcustprice->lines) > 0) {
-							$date_now = (int) floor(dol_now() / 86400) * 86400; // date without hours
+							$date_now = (int) floor(time() / 86400) * 86400; // date without hours
 							foreach ($prodcustprice->lines as $k => $custprice_line) {
 								if ($custprice_line->date_begin <= $date_now && (empty($custprice_line->date_end) || $date_now <= $custprice_line->date_end)) {
 									$pricebycustomerexist = true;
@@ -1395,7 +1395,7 @@ if (empty($reshook)) {
 					if ($result) {
 						// If there is some prices specific to the customer
 						if (count($prodcustprice->lines) > 0) {
-							$date_now = (int) floor(dol_now() / 86400) * 86400; // date without hours
+							$date_now = (int) floor(time() / 86400) * 86400; // date without hours
 							foreach ($prodcustprice->lines as $k => $custprice_line) {
 								if ($custprice_line->date_begin <= $date_now && (empty($custprice_line->date_end) || $date_now <= $custprice_line->date_end)) {
 									$pu_ht = price($custprice_line->price);
@@ -2178,7 +2178,7 @@ $help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos|
 
 llxHeader('', $title, $help_url);
 
-$now = dol_now();
+$now = time();
 
 // Add new proposal
 if ($action == 'create') {
@@ -2782,7 +2782,7 @@ if ($action == 'create') {
 						'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
 						'name' => 'datef',
 						'label' => $langs->trans('DateInvoice'),
-						'value' => dol_now(),
+						'value' => time(),
 						'datenow' => true
 					);
 
@@ -2792,7 +2792,7 @@ if ($action == 'create') {
 							'tdclass' => 'fieldrequired showonlyifgeneratedeposit',
 							'name' => 'date_pointoftax',
 							'label' => $langs->trans('DatePointOfTax'),
-							'value' => dol_now(),
+							'value' => time(),
 							'datenow' => true
 						);
 					}

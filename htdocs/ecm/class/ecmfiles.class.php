@@ -269,10 +269,10 @@ class EcmFiles extends CommonObject
 			$this->src_object_type = trim($this->src_object_type);
 		}
 		if (empty($this->date_c)) {
-			$this->date_c = dol_now();
+			$this->date_c = time();
 		}
 		if (empty($this->date_m)) {
-			$this->date_m = dol_now();
+			$this->date_m = time();
 		}
 
 		// If ref not defined
@@ -1141,7 +1141,7 @@ class EcmFiles extends CommonObject
 		$this->position = 5;
 		$this->gen_or_uploaded = 'uploaded';
 		$this->extraparams = '';
-		$this->date_c = (dol_now() - 3600 * 24 * 10);
+		$this->date_c = (time() - 3600 * 24 * 10);
 		$this->date_m = '';
 		$this->fk_user_c = $user->id;
 		$this->fk_user_m = $user->id;

@@ -294,7 +294,7 @@ class SkillRank extends CommonObject
 			$object->status = self::STATUS_DRAFT;
 		}
 		if (property_exists($object, 'date_creation')) {
-			$object->date_creation = dol_now();
+			$object->date_creation = time();
 		}
 		if (property_exists($object, 'date_modification')) {
 			$object->date_modification = null;
@@ -397,7 +397,7 @@ class SkillRank extends CommonObject
 		$this->fk_skill 		= $currentSkill->fk_skill;
 		$this->rankorder 			= $currentSkill->rankorder;
 		$this->fk_object		= $fk_user;
-		$this->date_creation 	= dol_now();
+		$this->date_creation 	= time();
 		$this->fk_user_creat 	= $user->id;
 		$this->fk_user_modif 	= $user->id;
 		$this->objecttype	 	= self::SKILLRANK_TYPE_USER;
@@ -547,7 +547,7 @@ class SkillRank extends CommonObject
 		 return -1;
 		 }*/
 
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 

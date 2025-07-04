@@ -142,7 +142,7 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 			return -1;
 		}
 
-		$date = (empty($object) ? dol_now() : $object->date_bordereau);
+		$date = (empty($object) ? time() : $object->date_bordereau);
 
 		$yymm = dol_print_date($date, "%y%m");
 

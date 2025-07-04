@@ -53,7 +53,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 		dol_syslog("functions_dolibarr::check_user_password_dolibarr usertotest=".$usertotest." passwordtotest=".preg_replace('/./', '*', $passwordtotest)." entitytotest=".$entitytotest);
 
 		// Verification number of USER_LOGIN_FAILED
-		$dateverificationauth = dol_time_plus_duree(dol_now(), -1, 'd');
+		$dateverificationauth = dol_time_plus_duree(time(), -1, 'd');
 		$userremoteip = getUserRemoteIP();
 		$nbevents = 0;
 

@@ -195,7 +195,7 @@ class AdherentStats extends Stats
 	{
 		global $user;
 
-		$now = dol_now();
+		$now = time();
 		$endYear = (int) date('Y');
 		$startYear = $endYear - $numberYears;
 
@@ -270,7 +270,7 @@ class AdherentStats extends Stats
 	{
 		global $user;
 
-		$now = dol_now();
+		$now = time();
 		$endYear = (int) date('Y');
 		$startYear = $endYear - $numberYears;
 		$MembersCountArray = [];

@@ -52,7 +52,7 @@ if ($action == 'addcomment') {
 	$description = GETPOST('comment_description', 'restricthtml');
 	if (!empty($description)) {
 		$comment->description = $description;
-		$comment->datec = dol_now();
+		$comment->datec = time();
 		$comment->fk_element = GETPOSTINT('id');
 		$comment->element_type = GETPOST('comment_element_type', 'alpha');
 		$comment->fk_user_author = $user->id;

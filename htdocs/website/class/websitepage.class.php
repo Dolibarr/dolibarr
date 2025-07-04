@@ -755,7 +755,7 @@ class WebsitePage extends CommonObject
 	{
 		global $hookmanager, $langs;
 
-		$now = dol_now();
+		$now = time();
 		$error = 0;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -988,7 +988,7 @@ class WebsitePage extends CommonObject
 
 		$this->id = 0;
 
-		$now = dol_now();
+		$now = time();
 
 		$this->fk_website = 0;
 		$this->type_container = 'page';

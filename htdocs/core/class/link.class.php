@@ -108,7 +108,7 @@ class Link extends CommonObject
 			$this->label = trim(basename($this->url));
 		}
 		if (empty($this->datea)) {
-			$this->datea = dol_now();
+			$this->datea = time();
 		}
 		$this->url = trim($this->url);
 
@@ -204,7 +204,7 @@ class Link extends CommonObject
 
 		$sql  = "UPDATE ".$this->db->prefix()."links SET ";
 		$sql .= "entity = ".((int) $conf->entity);
-		$sql .= ", datea = '".$this->db->idate(dol_now())."'";
+		$sql .= ", datea = '".$this->db->idate(time())."'";
 		$sql .= ", url = '".$this->db->escape($this->url)."'";
 		$sql .= ", label = '".$this->db->escape($this->label)."'";
 		$sql .= ", objecttype = '".$this->db->escape($this->objecttype)."'";

@@ -55,12 +55,12 @@ $modecompta = (GETPOST('modecompta', 'alpha') ? GETPOST('modecompta', 'alpha') :
 $year = GETPOSTINT("year");
 $month = GETPOSTINT("month");
 if (empty($year)) {
-	$year_current = dol_print_date(dol_now(), '%Y');
-	$month_current = dol_print_date(dol_now(), '%m');
+	$year_current = dol_print_date(time(), '%Y');
+	$month_current = dol_print_date(time(), '%m');
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
-	$month_current = dol_print_date(dol_now(), '%m');
+	$month_current = dol_print_date(time(), '%m');
 	$year_start = $year;
 }
 $date_start = dol_mktime(0, 0, 0, GETPOSTINT("date_startmonth"), GETPOSTINT("date_startday"), GETPOSTINT("date_startyear"), 'tzserver');	// We use timezone of server so report is same from everywhere
@@ -214,7 +214,7 @@ if ($nextquarter < 4) {
 	$nextyear++;
 }
 $description = $fsearch;
-$builddate = dol_now();
+$builddate = time();
 
 if (isModEnabled('comptabilite')) {
 	$description .= '<br>'.$langs->trans("ThisIsAnEstimatedValue");
@@ -271,7 +271,7 @@ if ($modecompta == "CREANCES-DETTES") {
 		$description .= $langs->trans("SupplierDepositsAreNotIncluded");
 	}
 
-	$builddate = dol_now();
+	$builddate = time();
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	$name = $langs->trans("TurnoverCollected").', '.$langs->trans("ByVatRate");
 	$calcmode = $langs->trans("CalcModePayment");
@@ -280,7 +280,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	$description .= $langs->trans("RulesCAIn");
 	$description .= $langs->trans("DepositsAreIncluded");
 
-	$builddate = dol_now();
+	$builddate = time();
 } //elseif ($modecompta == "BOOKKEEPING") {
 //} elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
 //}

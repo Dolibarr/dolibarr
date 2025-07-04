@@ -51,7 +51,7 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
-$now = dol_now();
+$now = time();
 
 $object = new Propal($db);
 if ($id > 0 || !empty($ref)) {

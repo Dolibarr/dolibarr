@@ -206,7 +206,7 @@ if ($action == 'add_payment' && $permissiontoadd) {
 						}
 						$ls->lines[$k - 1]->amount_capital = ((float) price2num($v['mens'])) - $v['interet'];
 						$ls->lines[$k - 1]->amount_interest = $v['interet'];
-						$ls->lines[$k - 1]->tms = dol_now();
+						$ls->lines[$k - 1]->tms = time();
 						$ls->lines[$k - 1]->fk_user_modif = $user->id;
 						$result = $ls->lines[$k - 1]->update($user, 0);
 						if ($result < 1) {
@@ -303,7 +303,7 @@ if ($action == 'create') {
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
 	if (empty($datepaid)) {
 		if (empty($ts_temppaid)) {
-			$datepayment = !getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : dol_now();
+			$datepayment = !getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : time();
 		} else {
 			$datepayment = $ts_temppaid;
 		}

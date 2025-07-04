@@ -709,7 +709,7 @@ if (!defined('NOLOGIN')) {
 				$dol_dst_second = empty($_POST["dst_second"]) ? (empty($_SESSION["dst_second"]) ? '' : $_SESSION["dst_second"]) : $_POST["dst_second"];
 				if ($dol_dst_first && $dol_dst_second) {
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-					$datenow = dol_now();
+					$datenow = time();
 					$datefirst = dol_stringtotime($dol_dst_first);
 					$datesecond = dol_stringtotime($dol_dst_second);
 					if ($datenow >= $datefirst && $datenow < $datesecond) {
@@ -865,7 +865,7 @@ if (!defined('NOLOGIN')) {
 				dol_syslog("The user login is disabled");
 			} else {
 				// User validity dates are no more valid
-				dol_syslog("The user login has a validity between [".$user->datestartvalidity." and ".$user->dateendvalidity."], current date is ".dol_now());
+				dol_syslog("The user login has a validity between [".$user->datestartvalidity." and ".$user->dateendvalidity."], current date is ".time());
 			}
 			session_destroy();
 			session_set_cookie_params(0, '/', null, !empty($dolibarr_main_force_https), true); // Add tag secure and httponly on session cookie
@@ -987,7 +987,7 @@ if (!defined('NOLOGIN')) {
 
 		// Store value into session (values always stored)
 		$_SESSION["dol_login"] = $user->login;
-		$_SESSION["dol_logindate"] = dol_now('gmt');
+		$_SESSION["dol_logindate"] = time();
 		$_SESSION["dol_authmode"] = isset($dol_authmode) ? $dol_authmode : '';
 		$_SESSION["dol_tz"] = isset($dol_tz) ? $dol_tz : '';
 		$_SESSION["dol_tz_string"] = isset($dol_tz_string) ? $dol_tz_string : '';
@@ -3782,7 +3782,7 @@ if (!function_exists("llxFooter")) {
 				} elseif (empty($_COOKIE['DOLINSTALLNOPING_'.$hash_unique_id]) || $forceping) {	// Cookie is set when we uncheck the checkbox in the installation wizard.
 					// MAIN_LAST_PING_KO_DATE
 					// Disable ping if MAIN_LAST_PING_KO_DATE is set and is recent (this month)
-					if (getDolGlobalString('MAIN_LAST_PING_KO_DATE') && substr(getDolGlobalString('MAIN_LAST_PING_KO_DATE'), 0, 6) == dol_print_date(dol_now(), '%Y%m') && !$forceping) {
+					if (getDolGlobalString('MAIN_LAST_PING_KO_DATE') && substr(getDolGlobalString('MAIN_LAST_PING_KO_DATE'), 0, 6) == dol_print_date(time(), '%Y%m') && !$forceping) {
 						print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. An error already occurred this month, we will try later. -->\n";
 					} else {
 						include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -3847,7 +3847,7 @@ if (!function_exists("llxFooter")) {
 						<?php
 					}
 				} else {
-					$now = dol_now();
+					$now = time();
 					print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. It was disabled -->\n";
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_DATE', dol_print_date($now, 'dayhourlog', 'gmt'), 'chaine', 0, '', $conf->entity);

@@ -54,7 +54,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 $langs->loadLangs(array('admin', 'members', 'errors'));
 
 // Choice of print year or current year.
-$now = dol_now();
+$now = time();
 $year = dol_print_date($now, '%Y');
 $month = dol_print_date($now, '%m');
 $day = dol_print_date($now, '%d');
@@ -285,7 +285,7 @@ if (empty($reshook)) {
 					$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DescADHERENT_ETIQUETTE_TYPE"));
 				}
 
-				$outfile = $langs->trans("BarCode").'_sheets_'.dol_print_date(dol_now(), 'dayhourlog').'.pdf';
+				$outfile = $langs->trans("BarCode").'_sheets_'.dol_print_date(time(), 'dayhourlog').'.pdf';
 
 				if (!$mesg) {
 					$outputlangs = $langs;

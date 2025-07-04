@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 $langs->loadLangs(array('admin', 'members', 'errors', 'other'));
 
 // Choice of print year or current year.
-$now = dol_now();
+$now = time();
 $year = dol_print_date($now, '%Y');
 $month = dol_print_date($now, '%m');
 $day = dol_print_date($now, '%d');

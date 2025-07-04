@@ -522,7 +522,7 @@ class Commande extends CommonOrder
 			return -1;
 		}
 
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 
@@ -821,7 +821,7 @@ class Commande extends CommonOrder
 			}
 			$this->db->begin();
 
-			$now = dol_now();
+			$now = time();
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
 			$sql .= ' SET fk_statut = '.self::STATUS_CLOSED.',';
@@ -1009,7 +1009,7 @@ class Commande extends CommonOrder
 			return -1;
 		}
 
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 
@@ -1303,8 +1303,8 @@ class Commande extends CommonOrder
 		// Clear fields
 		$this->user_author_id = $user->id;
 		$this->user_validation_id = 0;
-		$this->date = dol_now();
-		$this->date_commande = dol_now();
+		$this->date = time();
+		$this->date_commande = time();
 		$this->date_creation = '';
 		$this->date_validation = '';
 		if (!getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING')) {
@@ -1383,8 +1383,8 @@ class Commande extends CommonOrder
 
 		$error = 0;
 
-		$this->date_commande = dol_now();
-		$this->date = dol_now();
+		$this->date_commande = time();
+		$this->date = time();
 		$this->source = 0;
 
 		$num = count($object->lines);
@@ -4249,7 +4249,7 @@ class Commande extends CommonOrder
 			return false; // Never late if not inside this status range
 		}
 
-		$now = dol_now();
+		$now = time();
 
 		return max($this->date, $this->delivery_date) < ($now - $conf->commande->client->warning_delay);
 	}

@@ -81,7 +81,7 @@ class ActionCommTest extends CommonClassTest
 		$langs = $this->savlangs;
 		$db = $this->savdb;
 
-		$now = dol_now();
+		$now = time();
 
 		$localobject = new ActionComm($db);
 

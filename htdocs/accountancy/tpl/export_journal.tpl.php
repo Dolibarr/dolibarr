@@ -51,8 +51,8 @@ $format = getDolGlobalString('ACCOUNTING_EXPORT_FORMAT');
 $nodateexport = getDolGlobalInt('ACCOUNTING_EXPORT_NO_DATE_IN_FILENAME');
 $siren = getDolGlobalString('MAIN_INFO_SIREN');
 
-$date_export = "_".dol_print_date(dol_now(), '%Y%m%d%H%M%S');
-$endaccountingperiod = dol_print_date(dol_now(), '%Y%m%d');
+$date_export = "_".dol_print_date(time(), '%Y%m%d%H%M%S');
+$endaccountingperiod = dol_print_date(time(), '%Y%m%d');
 
 
 if (empty($downloadMode)) {
@@ -67,7 +67,7 @@ if ((substr($accountancyexport->getFormatCode($formatexportset), 0, 3) == 'fec')
 	// FEC format is defined here: https://www.legifrance.gouv.fr/affichCodeArticle.do?idArticle=LEGIARTI000027804775&cidTexte=LEGITEXT000006069583&dateTexte=20130802&oldAction=rechCodeArticle
 	if (empty($search_date_end)) {
 		// TODO Get the max date into bookkeeping table
-		$search_date_end = dol_now();
+		$search_date_end = time();
 	}
 	$datetouseforfilename = $search_date_end;
 	$tmparray = dol_getdate($datetouseforfilename);

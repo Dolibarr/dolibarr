@@ -146,7 +146,7 @@ print "\n";
 print '<!-- Form to view survey -->'."\n";
 
 $results = $object->fetchAll($sortorder, $sortfield, 0, 0, '(status:=:1)');
-$now = dol_now();
+$now = time();
 
 if (is_array($results)) {
 	if (empty($results)) {

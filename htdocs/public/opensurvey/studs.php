@@ -65,7 +65,7 @@ $result = $object->fetch('', $numsondage);
 $nblines = $object->fetch_lines();
 
 //If the survey has not yet finished, then it can be modified
-$canbemodified = ((empty($object->date_fin) || dol_get_last_hour($object->date_fin) > dol_now()) && $object->status != Opensurveysondage::STATUS_CLOSED);
+$canbemodified = ((empty($object->date_fin) || dol_get_last_hour($object->date_fin) > time()) && $object->status != Opensurveysondage::STATUS_CLOSED);
 
 // Security check
 if (!isModEnabled('opensurvey')) {
@@ -108,7 +108,7 @@ if (GETPOST('ajoutcomment', 'alpha')) {
 
 	$user_ip = getUserRemoteIP();
 	$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
-	$now = dol_now();
+	$now = time();
 	$minmonthpost = dol_time_plus_duree($now, -1, "m");
 	// Calculate nb of post for IP
 	$nb_post_ip = 0;
@@ -164,7 +164,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 
 		$user_ip = getUserRemoteIP();
 		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
-		$now = dol_now();
+		$now = time();
 		$minmonthpost = dol_time_plus_duree($now, -1, "m");
 		// Calculate nb of post for IP
 		$nb_post_ip = 0;
@@ -206,7 +206,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 			setEventMessages($langs->trans("AlreadyTooMuchPostOnThisIPAdress"), null, 'errors');
 			$error++;
 		} else {
-			$now = dol_now();
+			$now = time();
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_user_studs (nom, id_sondage, reponses, ip, date_creation)';
 			$sql .= " VALUES ('".$db->escape($nom)."', '".$db->escape($numsondage)."','".$db->escape($nouveauchoix)."', '".$db->escape($user_ip)."', '".$db->idate($now)."')";
 			$resql = $db->query($sql);

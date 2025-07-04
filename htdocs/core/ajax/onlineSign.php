@@ -128,7 +128,7 @@ if ($action == "importSignature") {
 			$default_font = pdf_getPDFFont($langs);    // Must be after pdf_getInstance
 			$langs->loadLangs(array("main", "companies"));
 
-			$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
+			$date = dol_print_date(time(), "%Y%m%d%H%M%S");
 			$filename = "signatures/" . $date . "_signature.png";
 			if (!is_dir($upload_dir . "signatures/")) {
 				if (!dol_mkdir($upload_dir . "signatures/")) {
@@ -281,7 +281,7 @@ if ($action == "importSignature") {
 
 				$sql = "UPDATE " . MAIN_DB_PREFIX . "propal";
 				$sql .= " SET fk_statut = " . ((int) $object::STATUS_SIGNED) . ", note_private = '" . $db->escape($object->note_private) . "',";
-				$sql .= " date_signature = '" . $db->idate(dol_now()) . "',";
+				$sql .= " date_signature = '" . $db->idate(time()) . "',";
 				$sql .= " online_sign_ip = '" . $db->escape($online_sign_ip) . "'";
 				if ($online_sign_name) {
 					$sql .= ", online_sign_name = '" . $db->escape($online_sign_name) . "'";
@@ -342,7 +342,7 @@ if ($action == "importSignature") {
 			$upload_dir = !empty($conf->contrat->multidir_output[$object->entity]) ? $conf->contrat->multidir_output[$object->entity] : $conf->contrat->dir_output;
 			$upload_dir .= '/' . dol_sanitizeFileName($object->ref) . '/';
 
-			$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
+			$date = dol_print_date(time(), "%Y%m%d%H%M%S");
 			$filename = "signatures/" . $date . "_signature.png";
 			if (!is_dir($upload_dir . "signatures/")) {
 				if (!dol_mkdir($upload_dir . "signatures/")) {
@@ -479,7 +479,7 @@ if ($action == "importSignature") {
 			$default_font_size = pdf_getPDFFontSize($langs);	// Must be after pdf_getInstance
 			$default_font = pdf_getPDFFont($langs);	// Must be
 
-			$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
+			$date = dol_print_date(time(), "%Y%m%d%H%M%S");
 			$filename = "signatures/" . $date . "_signature.png";
 			if (!is_dir($upload_dir . "signatures/")) {
 				if (!dol_mkdir($upload_dir . "signatures/")) {
@@ -618,7 +618,7 @@ if ($action == "importSignature") {
 				$default_font = pdf_getPDFFont($langs);    // Must be after pdf_getInstance
 				$langs->loadLangs(array("main", "companies"));
 
-				$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
+				$date = dol_print_date(time(), "%Y%m%d%H%M%S");
 				$filename = "signatures/" . $date . "_signature.png";
 				if (!dol_is_dir($upload_dir . "signatures/")) {
 					if (!dol_mkdir($upload_dir . "signatures/")) {
@@ -730,7 +730,7 @@ if ($action == "importSignature") {
 									$xForDate = $objPDF->marge_gauche;
 									$yForDate = $objPDF->page_hauteur - $objPDF->heightforinfotot - $objPDF->heightforfreetext - $objPDF->heightforfooter + 10;
 									$pdf->SetXY($xForDate, $yForDate);
-									$pdf->MultiCell(100, 4, dol_print_date(dol_now(), "daytext", false, $langs, true), 0, 'L');
+									$pdf->MultiCell(100, 4, dol_print_date(time(), "daytext", false, $langs, true), 0, 'L');
 
 									$xforimgstart = $objPDF->xPosSignArea;
 									$yforimgstart = $yForDate - 5;
@@ -776,7 +776,7 @@ if ($action == "importSignature") {
 
 				$sql = "UPDATE " . MAIN_DB_PREFIX . $object->table_element;
 				$sql .= " SET ";
-				$sql .= " date_signature = '" . $db->idate(dol_now()) . "',";
+				$sql .= " date_signature = '" . $db->idate(time()) . "',";
 				$sql .= " online_sign_ip = '" . $db->escape($online_sign_ip) . "'";
 				if ($online_sign_name) {
 					$sql .= ", online_sign_name = '" . $db->escape($online_sign_name) . "'";
@@ -823,7 +823,7 @@ if ($action == "importSignature") {
 			$default_font_size = pdf_getPDFFontSize($langs);	// Must be after pdf_getInstance
 			$default_font = pdf_getPDFFont($langs);	// Must be
 
-			$date = dol_print_date(dol_now(), "%Y%m%d%H%M%S");
+			$date = dol_print_date(time(), "%Y%m%d%H%M%S");
 			$filename = "signatures/" . $date . "_signature.png";
 			if (!is_dir($upload_dir . "signatures/")) {
 				if (!dol_mkdir($upload_dir . "signatures/")) {
@@ -974,7 +974,7 @@ function dolPrintSignatureImage(TCPDF $pdf, $langs, $params)
 	$pdf->SetXY($xforimgstart, $yforimgstart + round($wforimg / 4) - 4);
 	$pdf->SetFont($default_font, '', $default_font_size - 1);
 	$pdf->SetTextColor(80, 80, 80);
-	$pdf->MultiCell($wforimg, 4, $langs->trans("Signature") . ': ' . dol_print_date(dol_now(), "day", false, $langs, true). ' - '.$params['online_sign_name'], 0, 'L');
+	$pdf->MultiCell($wforimg, 4, $langs->trans("Signature") . ': ' . dol_print_date(time(), "day", false, $langs, true). ' - '.$params['online_sign_name'], 0, 'L');
 	//$pdf->SetXY($xforimgstart, $yforimgstart + round($wforimg / 4));
 	//$pdf->MultiCell($wforimg, 4, $langs->trans("Lastname") . ': ' . $online_sign_name, 0, 'L');
 

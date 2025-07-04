@@ -302,7 +302,7 @@ class Holiday extends CommonObject
 		global $conf;
 		$error = 0;
 
-		$now = dol_now();
+		$now = time();
 
 		// Check parameters
 		if (empty($this->fk_user) || !is_numeric($this->fk_user) || $this->fk_user < 0) {
@@ -792,7 +792,7 @@ class Holiday extends CommonObject
 		// Update status
 		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday SET";
 		$sql .= " fk_user_valid = ".((int) $user->id).",";
-		$sql .= " date_valid = '".$this->db->idate(dol_now())."',";
+		$sql .= " date_valid = '".$this->db->idate(time())."',";
 		if (!empty($this->status) && is_numeric($this->status)) {
 			$sql .= " statut = ".((int) $this->status).",";
 		} else {
@@ -1531,7 +1531,7 @@ class Holiday extends CommonObject
 
 		$params = array();
 		$statusType = 'status6';
-		if (!empty($startdate) && $startdate >= dol_now()) {		// If not yet passed, we use a green "in live" color
+		if (!empty($startdate) && $startdate >= time()) {		// If not yet passed, we use a green "in live" color
 			$statusType = 'status4';
 			$params = array('tooltip' => $this->labelStatus[$status].' - '.$langs->trans("Forthcoming"));
 		}
@@ -1675,7 +1675,7 @@ class Holiday extends CommonObject
 			$decrease = getDolGlobalInt('HOLIDAY_DECREASE_AT_END_OF_MONTH');
 
 			// Si mise à jour pour tout le monde en début de mois
-			$now = dol_now();
+			$now = time();
 
 			// Get month of last update
 			$stringInDBForLastUpdate = $this->getConfCP('lastUpdate', dol_print_date($now, '%Y%m%d%H%M%S'));	// Example '20200101120000'
@@ -2248,7 +2248,7 @@ class Holiday extends CommonObject
 		$sql .= "new_solde,";
 		$sql .= "fk_type";
 		$sql .= ") VALUES (";
-		$sql .= " '".$this->db->idate(dol_now())."',";
+		$sql .= " '".$this->db->idate(time())."',";
 		$sql .= " ".((int) $fk_user_action).",";
 		$sql .= " ".((int) $fk_user_update).",";
 		$sql .= " '".$this->db->escape($label)."',";
@@ -2467,9 +2467,9 @@ class Holiday extends CommonObject
 
 		$this->fk_user = $user->id;
 		$this->description = 'SPECIMEN description';
-		$this->date_debut = dol_now();
-		$this->date_fin = dol_now() + (24 * 3600);
-		$this->date_valid = dol_now();
+		$this->date_debut = time();
+		$this->date_fin = time() + (24 * 3600);
+		$this->date_valid = time();
 		$this->fk_validator = $user->id;
 		$this->halfday = 0;
 		$this->fk_type = 1;
@@ -2529,7 +2529,7 @@ class Holiday extends CommonObject
 			return -1; // protection pour eviter appel par utilisateur externe
 		}
 
-		$now = dol_now();
+		$now = time();
 
 		$sql = "SELECT h.rowid, h.date_debut";
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as h";

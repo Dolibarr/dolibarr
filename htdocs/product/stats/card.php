@@ -78,7 +78,7 @@ $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productstatscard', 'globalcard'));
 
-$tmp = dol_getdate(dol_now());
+$tmp = dol_getdate(time());
 $currentyear = $tmp['year'];
 if (empty($search_year)) {
 	$search_year = $currentyear;
@@ -528,7 +528,7 @@ if ($result || !($id > 0)) {
 				if (file_exists($dir."/".$graphfiles[$key]['file']) && filemtime($dir."/".$graphfiles[$key]['file'])) {
 					$dategenerated = $langs->trans("GeneratedOn", dol_print_date(filemtime($dir."/".$graphfiles[$key]['file']), "dayhour"));
 				} else {
-					$dategenerated = $langs->trans("GeneratedOn", dol_print_date(dol_now(), "dayhour"));
+					$dategenerated = $langs->trans("GeneratedOn", dol_print_date(time(), "dayhour"));
 				}
 			} else {
 				$dategenerated = ($mesg ? '<span class="error">'.$mesg.'</span>' : $langs->trans("ChartNotGenerated"));

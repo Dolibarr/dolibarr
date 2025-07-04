@@ -233,7 +233,7 @@ class CashControl extends CommonObject
 		$sql .= ((int) $conf->entity);
 		$sql .= ", ".(is_numeric($this->opening) ? price2num($this->opening, 'MT') : 0);
 		$sql .= ", 0"; // Draft by default
-		$sql .= ", '".$this->db->idate(dol_now())."'";
+		$sql .= ", '".$this->db->idate(time())."'";
 		$sql .= ", '".$this->db->escape($this->posmodule)."'";
 		$sql .= ", '".$this->db->escape($this->posnumber)."'";
 		$sql .= ", ".($this->day_close > 0 ? $this->day_close : "null");
@@ -294,7 +294,7 @@ class CashControl extends CommonObject
 			return 0;
 		}
 
-		$now = dol_now();
+		$now = time();
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."pos_cash_fence";

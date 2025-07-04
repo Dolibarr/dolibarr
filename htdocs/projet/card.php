@@ -229,7 +229,7 @@ if (empty($reshook)) {
 			$object->public               = GETPOSTINT('public') ? 1 : 0;
 			$object->opp_amount           = GETPOSTFLOAT('opp_amount');
 			$object->budget_amount        = GETPOSTFLOAT('budget_amount');
-			$object->date_c               = dol_now();
+			$object->date_c               = time();
 			$object->date_start           = $date_start;
 			$object->date_end             = $date_end;
 			$object->date_start_event     = $date_start_event;

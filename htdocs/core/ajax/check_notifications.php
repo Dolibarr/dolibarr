@@ -51,7 +51,7 @@ require '../../main.inc.php';
 //$time = (int) GETPOST('time', 'int'); // Use the time parameter that is always increased by time_update, even if call is late
 $action = GETPOST('action', 'aZ09');
 
-$time = dol_now();
+$time = time();
 $listofreminderids = GETPOST('listofreminderids', 'aZ09');
 
 // Security check
@@ -79,7 +79,7 @@ if ($action == 'stopreminder') {	// Test on permission not required here. Endpoi
 
 	// Clean database
 	$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'actioncomm_reminder';
-	$sql .= " WHERE dateremind < '".$db->idate(dol_time_plus_duree(dol_now(), -1, 'm'))."'";
+	$sql .= " WHERE dateremind < '".$db->idate(dol_time_plus_duree(time(), -1, 'm'))."'";
 	$sql .= " AND fk_user = ".((int) $user->id).' AND entity = '.((int) $conf->entity);
 	$resql = $db->query($sql);
 	if (!$resql) {
@@ -136,7 +136,7 @@ if (empty($_SESSION['auto_check_events_not_before']) || $time >= $_SESSION['auto
 	$sql = 'SELECT a.id as id_agenda, a.code, a.datep, a.label, a.location, ar.rowid as id_reminder, ar.dateremind, ar.fk_user as id_user_reminder';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
 	$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'actioncomm_reminder as ar ON a.id = ar.fk_actioncomm AND ar.fk_user = '.((int) $user->id);
-	$sql .= " AND ar.typeremind = 'browser' AND ar.dateremind < '".$db->idate(dol_now())."'";
+	$sql .= " AND ar.typeremind = 'browser' AND ar.dateremind < '".$db->idate(time())."'";
 	$sql .= " AND ar.status = 0";
 	$sql .= " AND ar.entity = ".((int) $conf->entity);	// No sharing of entity for alerts
 	$sql .= $db->order('datep', 'ASC');

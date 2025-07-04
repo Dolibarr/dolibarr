@@ -385,7 +385,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 		// Applied Prices From
 		$date_begin = dol_mktime(0, 0, 0, GETPOSTINT('date_beginmonth'), GETPOSTINT('date_beginday'), GETPOSTINT('date_beginyear'), 'tzserver');	// If we enter the 02 january, we need to save the 02 january for server;
 		print '<tr><td>'.$langs->trans("AppliedPricesFrom").'</td><td>';
-		print $form->selectDate(!empty($date_begin) ? $date_begin : dol_now(), "date_begin", 0, 0, 1, "date_begin");
+		print $form->selectDate(!empty($date_begin) ? $date_begin : time(), "date_begin", 0, 0, 1, "date_begin");
 		print '</td></tr>';
 
 		// Applied Prices To

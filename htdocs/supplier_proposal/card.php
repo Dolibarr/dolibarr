@@ -1204,7 +1204,7 @@ if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
-$now = dol_now();
+$now = time();
 
 // Add new askprice
 if ($action == 'create') {

@@ -320,7 +320,7 @@ $salstatic = new Salary($db);
 $userstatic = new User($db);
 $accountstatic = new Account($db);
 
-$now = dol_now();
+$now = time();
 
 $title = $langs->trans('Salaries');
 //$help_url="EN:Module_BillOfMaterials|FR:Module_BillOfMaterials_FR|ES:Módulo_BillOfMaterials";

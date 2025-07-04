@@ -100,7 +100,7 @@ class MastodonHandler
 		// Check cache
 		if ($cacheDelay > 0 && $cacheDir && dol_is_file($cacheFile)) {
 			$fileDate = dol_filemtime($cacheFile);
-			if ($fileDate >= (dol_now() - $cacheDelay)) {
+			if ($fileDate >= (time() - $cacheDelay)) {
 				$foundInCache = true;
 				// Read file into cache  (false should not happen)
 				$data = (string) file_get_contents($cacheFile);

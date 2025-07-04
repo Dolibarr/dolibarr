@@ -85,7 +85,7 @@ $search_amount = GETPOST('search_amount', 'alpha');
 $search_signature = GETPOST('search_signature', 'alpha');
 
 if (($search_start == -1 || empty($search_start)) && !GETPOSTISSET('search_startmonth') && !GETPOSTISSET('begin')) {
-	$search_start = dol_time_plus_duree(dol_now(), -1, 'w');
+	$search_start = dol_time_plus_duree(time(), -1, 'w');
 	$tmparray = dol_getdate($search_start);
 	$search_startday = $tmparray['mday'];
 	$search_startmonth = $tmparray['mon'];
@@ -214,7 +214,7 @@ if ($action === 'downloadblockchain') {
 		$object->element = 'module';
 		$object->ref = 'systemevent';
 		$object->entity = $conf->entity;
-		$object->date = dol_now();
+		$object->date = time();
 
 		$object->label = 'Export unalterable logs - Period: year='.GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') ? ' month='.GETPOSTINT('monthtoexport') : '');
 
@@ -249,7 +249,7 @@ if ($action === 'downloadblockchain') {
 
 		$resql = $db->query($sql);
 		if ($resql) {
-			$nameofdownoadedfile = "unalterable-log-archive-".$dolibarr_main_db_name."-".(GETPOSTINT('yeartoexport') > 0 ? GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') > 0 ? sprintf("%02d", GETPOSTINT('monthtoexport')) : '').'-' : '').dol_print_date(dol_now(), 'dayhourlog', 'gmt').'UTC-DONOTMODIFY';
+			$nameofdownoadedfile = "unalterable-log-archive-".$dolibarr_main_db_name."-".(GETPOSTINT('yeartoexport') > 0 ? GETPOSTINT('yeartoexport').(GETPOSTINT('monthtoexport') > 0 ? sprintf("%02d", GETPOSTINT('monthtoexport')) : '').'-' : '').dol_print_date(time(), 'dayhourlog', 'gmt').'UTC-DONOTMODIFY';
 
 			$tmpfile = $conf->admin->dir_temp.'/unalterable-log-archive-tmp-'.$user->id.'.csv';
 

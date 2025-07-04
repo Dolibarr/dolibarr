@@ -209,7 +209,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 $warehouse = new Entrepot($db);
 
-$now = dol_now();
+$now = time();
 $totalarray = array();
 
 $title = $langs->trans("Warehouses");

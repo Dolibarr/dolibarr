@@ -160,7 +160,7 @@ class mod_delivery_jade extends ModeleNumRefDeliveryOrder
 
 		$date = $object->date_delivery;
 		if (empty($date)) {
-			$date = dol_now();
+			$date = time();
 		}
 		$yymm = dol_print_date($date, "%y%m");
 

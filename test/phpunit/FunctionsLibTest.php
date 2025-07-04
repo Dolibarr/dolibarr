@@ -1787,7 +1787,7 @@ class FunctionsLibTest extends CommonClassTest
 		$chaine = 'This is a string with theme constant __[MAIN_THEME]__ and __(DIRECTION)__ and __CCC__ and DDD and __MYCOMPANY_NAME__ and __YEAR__';
 		$newstring = make_substitutions($chaine, $substit);
 		print __METHOD__." ".$newstring."\n";
-		$this->assertEquals($newstring, 'This is a string with theme constant eldy and ltr and C instead and D instead and '.$mysoc->name.' and '.dol_print_date(dol_now(), '%Y', 'gmt'));
+		$this->assertEquals($newstring, 'This is a string with theme constant eldy and ltr and C instead and D instead and '.$mysoc->name.' and '.dol_print_date(time(), '%Y', 'gmt'));
 
 		// Try mix HTML not HTML, no change on initial text
 		$substit = array("__NOHTML__" => 'No html', "__HTML__" => '<b>HTML</b>');

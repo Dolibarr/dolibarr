@@ -379,7 +379,7 @@ if ($action == 'createtask' && $user->hasRight('projet', 'creer')) {
 			$task->description = $description;
 			$task->planned_workload = $planned_workload;
 			$task->fk_task_parent = $task_parent;
-			$task->date_c = dol_now();
+			$task->date_c = time();
 			$task->date_start = $date_start;
 			$task->date_end = $date_end;
 			$task->progress = $progress;
@@ -433,7 +433,7 @@ if ($action == 'createtask' && $user->hasRight('projet', 'creer')) {
  * View
  */
 
-$now = dol_now();
+$now = time();
 $form = new Form($db);
 $formother = new FormOther($db);
 $socstatic = new Societe($db);

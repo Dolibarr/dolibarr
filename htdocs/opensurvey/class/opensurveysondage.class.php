@@ -529,7 +529,7 @@ class Opensurveysondage extends CommonObject
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (!empty($this->date_fin)) {
 			$datas['expire_date'] = '<br><b>'.$langs->trans('ExpireDate').':</b> '.dol_print_date($this->date_fin, 'day');
-			if ($this->date_fin && $this->date_fin < dol_now() && $this->status == Opensurveysondage::STATUS_VALIDATED) {
+			if ($this->date_fin && $this->date_fin < time() && $this->status == Opensurveysondage::STATUS_VALIDATED) {
 				$datas['expire_date'] .= img_warning($langs->trans("Expired"));
 			}
 		}
@@ -671,7 +671,7 @@ class Opensurveysondage extends CommonObject
 		$this->mail_admin = 'email@email.com';
 		$this->nom_admin = 'surveyadmin';
 		$this->title = 'This is a specimen survey';
-		$this->date_fin = dol_now() + 3600 * 24 * 10;
+		$this->date_fin = time() + 3600 * 24 * 10;
 		$this->status = 1;
 		$this->format = 'classic';
 		$this->mailsonde = 0;
@@ -717,7 +717,7 @@ class Opensurveysondage extends CommonObject
 	 */
 	public function addComment($comment, $comment_user, $user_ip = '')
 	{
-		$now = dol_now();
+		$now = time();
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."opensurvey_comments (id_sondage, comment, usercomment, date_creation, ip)";
 		$sql .= " VALUES ('".$this->db->escape($this->id_sondage)."','".$this->db->escape($comment)."','".$this->db->escape($comment_user)."','".$this->db->idate($now)."'".($user_ip ? ",'".$this->db->escape($user_ip)."'" : '').")";
 		$resql = $this->db->query($sql);

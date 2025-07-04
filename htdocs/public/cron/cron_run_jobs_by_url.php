@@ -92,7 +92,7 @@ if (empty($conf->cron->enabled)) {
  */
 
 // current date
-$now = dol_now();
+$now = time();
 
 // Check the key, avoid that a stranger starts cron
 $key = GETPOST('securitykey', 'alpha');

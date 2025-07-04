@@ -183,7 +183,7 @@ $adherent = new Adherent($db);
 $adht = new AdherentType($db);
 $accountstatic = new Account($db);
 
-$now = dol_now();
+$now = time();
 
 // List of subscriptions
 $sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, d.photo, d.statut as status,";

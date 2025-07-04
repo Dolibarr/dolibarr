@@ -78,7 +78,7 @@ class box_members_by_tags extends ModeleBoxes
 		include_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
 		$staticmember = new Adherent($this->db);
 
-		$now = dol_now();
+		$now = time();
 		$year = idate('Y');
 		$numberyears = getDolGlobalInt("MAIN_NB_OF_YEAR_IN_MEMBERSHIP_WIDGET_GRAPH", 0);
 

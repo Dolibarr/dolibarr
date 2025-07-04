@@ -101,7 +101,7 @@ class box_contracts extends ModeleBoxes
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$num = $this->db->num_rows($resql);
-				$now = dol_now();
+				$now = time();
 
 				$line = 0;
 

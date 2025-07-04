@@ -296,7 +296,7 @@ class RssParser
 		$newmask = '0644';
 
 		//dol_syslog("RssParser::parser parse url=".$urlRSS." => cache file=".$newpathofdestfile);
-		$nowgmt = dol_now();
+		$nowgmt = time();
 
 		// Search into cache
 		$foundintocache = 0;

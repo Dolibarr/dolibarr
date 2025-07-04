@@ -1080,7 +1080,7 @@ class Product extends CommonObject
 
 		dol_syslog(get_class($this)."::create ref=".$this->ref." price=".$this->price." price_ttc=".$this->price_ttc." tva_tx=".$this->tva_tx." price_base_type=".$this->price_base_type, LOG_DEBUG);
 
-		$now = dol_now();
+		$now = time();
 
 		if (empty($this->date_creation)) {
 			$this->date_creation = $now;
@@ -1683,7 +1683,7 @@ class Product extends CommonObject
 
 					$resql = $this->db->query($sql);
 					if ($resql) {
-						$inventorycode = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+						$inventorycode = dol_print_date(time(), '%Y%m%d%H%M%S');
 
 						while ($obj = $this->db->fetch_object($resql)) {
 							$value = $obj->qty;
@@ -2280,7 +2280,7 @@ class Product extends CommonObject
 		// phpcs:enable
 		global $conf;
 
-		$now = dol_now();
+		$now = time();
 
 		// Clean parameters
 		if (empty($this->price_by_qty)) {
@@ -2382,7 +2382,7 @@ class Product extends CommonObject
 			$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 			if ($result) {
 				if (count($prodcustprice->lines) > 0) {
-					$date_now = (int) floor(dol_now() / 86400) * 86400; // date without hours
+					$date_now = (int) floor(time() / 86400) * 86400; // date without hours
 					foreach ($prodcustprice->lines as $k => $custprice_line) {
 						if ($custprice_line->date_begin <= $date_now && (empty($custprice_line->date_end) || $date_now <= $custprice_line->date_end)) {
 							$pricebycustomerexist = true;
@@ -2452,7 +2452,7 @@ class Product extends CommonObject
 			$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 			if ($result) {
 				if (count($prodcustprice->lines) > 0) {
-					$date_now = (int) floor(dol_now() / 86400) * 86400; // date without hours
+					$date_now = (int) floor(time() / 86400) * 86400; // date without hours
 					foreach ($prodcustprice->lines as $k => $custprice_line) {
 						if ($custprice_line->date_begin <= $date_now && (empty($custprice_line->date_end) || $date_now <= $custprice_line->date_end)) {
 							$pu_ht = price($custprice_line->price);
@@ -5100,7 +5100,7 @@ class Product extends CommonObject
 		// phpcs:enable
 		global $conf;
 
-		$now = dol_now();
+		$now = time();
 
 		dol_syslog(get_class($this)."::add_fournisseur id_fourn = ".$id_fourn." ref_fourn=".$ref_fourn." quantity=".$quantity, LOG_DEBUG);
 
@@ -5229,7 +5229,7 @@ class Product extends CommonObject
 	{
 		global $user;
 
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 
@@ -5345,7 +5345,7 @@ class Product extends CommonObject
 		// phpcs:enable
 		$this->db->begin();
 
-		$now = dol_now();
+		$now = time();
 
 		// les fournisseurs
 		/*$sql = "INSERT ".$this->db->prefix()."product_fournisseur ("
@@ -6897,7 +6897,7 @@ class Product extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		$now = dol_now();
+		$now = time();
 
 		// Initialize parameters
 		$this->specimen = 1;

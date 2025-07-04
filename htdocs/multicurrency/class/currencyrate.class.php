@@ -105,7 +105,7 @@ class CurrencyRate extends CommonObjectLine
 		if (empty($this->entity) || $this->entity <= 0) {
 			$this->entity = $conf->entity;
 		}
-		$now = empty($this->date_sync) ? dol_now() : $this->date_sync;
+		$now = empty($this->date_sync) ? time() : $this->date_sync;
 
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";

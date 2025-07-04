@@ -616,7 +616,7 @@ abstract class CommonDocGenerator
 		// phpcs:enable
 		global $conf;
 
-		$now = dol_now('gmt'); // gmt
+		$now = time(); // gmt
 		$array_other = array(
 			// Date in default language
 			'current_date' => dol_print_date($now, 'day', 'tzuser'),

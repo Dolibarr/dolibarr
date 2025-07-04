@@ -408,9 +408,9 @@ class PaymentVarious extends CommonObject
 	public function initAsSpecimen()
 	{
 		$this->id = 0;
-		$this->tms = dol_now();
-		$this->datep = dol_now();
-		$this->datev = dol_now();
+		$this->tms = time();
+		$this->datep = time();
+		$this->datev = time();
 		$this->sens = 0;
 		$this->amount = 100;
 		$this->label = 'Specimen payment';
@@ -452,7 +452,7 @@ class PaymentVarious extends CommonObject
 		global $conf, $langs;
 
 		$error = 0;
-		$now = dol_now();
+		$now = time();
 
 		// Clean parameters
 		$this->amount = (float) price2num($this->amount);

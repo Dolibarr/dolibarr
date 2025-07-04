@@ -331,7 +331,7 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 
 if ($action == 'importCSV' && $user->hasRight('stock', 'mouvement', 'creer')) {
 	dol_mkdir($conf->stock->dir_temp);
-	$nowyearmonth = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+	$nowyearmonth = dol_print_date(time(), '%Y%m%d%H%M%S');
 
 	$fullpath = $conf->stock->dir_temp."/".$user->id.'-csvfiletotimport.csv';
 	$resultupload = dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $fullpath, 1);
@@ -549,7 +549,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes') {
  * View
  */
 
-$now = dol_now();
+$now = time();
 $error = 0;
 
 $form = new Form($db);
@@ -789,7 +789,7 @@ if (count($listofdata)) {
 	print '<input type="hidden" name="action" value="createmovements">';
 
 	// Button to record mass movement
-	$codemove = (GETPOSTISSET("codemove") ? GETPOST("codemove", 'alpha') : dol_print_date(dol_now(), '%Y%m%d%H%M%S'));
+	$codemove = (GETPOSTISSET("codemove") ? GETPOST("codemove", 'alpha') : dol_print_date(time(), '%Y%m%d%H%M%S'));
 	$labelmovement = GETPOST("label") ? GETPOST('label') : $langs->trans("MassStockTransferShort").' '.dol_print_date($now, '%Y-%m-%d %H:%M');
 
 	print '<div class="center">';

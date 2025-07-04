@@ -389,7 +389,7 @@ function createContact($authentication, $contact)
 {
 	global $db, $conf;
 
-	$now = dol_now();
+	$now = time();
 
 	dol_syslog("Function: createContact login=".$authentication['login']);
 
@@ -627,7 +627,7 @@ function updateContact($authentication, $contact)
 {
 	global $db, $conf;
 
-	$now = dol_now();
+	$now = time();
 
 	dol_syslog("Function: updateContact login=".$authentication['login']);
 

@@ -143,7 +143,7 @@ class mod_member_advanced extends ModeleNumRefMembers
 			return -1;
 		}
 
-		$date = empty($object->datec) ? dol_now() : $object->datec;
+		$date = empty($object->datec) ? time() : $object->datec;
 
 		$yymm = dol_print_date($date, '%y%m', 'gmt');
 

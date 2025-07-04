@@ -71,7 +71,7 @@ $error = 0;
  */
 $form = new Form($db);
 
-$datetime = dol_now();
+$datetime = time();
 $year = dol_print_date($datetime, "%Y");
 $month = dol_print_date($datetime, "%m");
 $day = dol_print_date($datetime, "%d");
@@ -129,7 +129,7 @@ if ($result < 0) {
 		dol_print_error($db);
 	}
 	if (empty($min)) {
-		$min = dol_now() - 3600 * 24;
+		$min = time() - 3600 * 24;
 	}
 
 	$log = "graph.php: min=".$min." max=".$max;

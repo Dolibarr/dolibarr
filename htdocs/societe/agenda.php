@@ -174,7 +174,7 @@ if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
 		$out .= '&originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&socid='.$objthirdparty->id : '').'&backtopage='.urlencode($_SERVER['PHP_SELF'].($objthirdparty->id > 0 ? '?socid='.$objthirdparty->id : ''));
 	}
 	$out .= (!empty($objcon->id) ? '&contactid='.$objcon->id : '');
-	$out .= '&datep='.dol_print_date(dol_now(), 'dayhourlog', 'tzuserrel');
+	$out .= '&datep='.dol_print_date(time(), 'dayhourlog', 'tzuserrel');
 }
 
 $morehtmlright = '';

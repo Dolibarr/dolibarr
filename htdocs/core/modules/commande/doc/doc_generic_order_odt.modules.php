@@ -284,7 +284,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
-					$filename = $newfiletmp . '-' . dol_print_date(dol_now(), $format) . '.' . $newfileformat;
+					$filename = $newfiletmp . '-' . dol_print_date(time(), $format) . '.' . $newfileformat;
 				} else {
 					$filename = $newfiletmp . '.' . $newfileformat;
 				}

@@ -53,7 +53,7 @@ if ($user->socid > 0) {
 }
 $result = restrictedArea($user, 'adherent', '', '', 'cotisation');
 
-$year = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+$year = (int) dol_print_date(time(), "%Y", 'gmt');
 $startyear = $year - (!getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS') ? 2 : max(1, min(10, getDolGlobalString('MAIN_STATS_GRAPHS_SHOW_N_YEARS'))));
 $endyear = $year;
 

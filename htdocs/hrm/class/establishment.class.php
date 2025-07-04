@@ -169,7 +169,7 @@ class Establishment extends CommonObject
 		global $conf, $langs;
 
 		$error = 0;
-		$now = dol_now();
+		$now = time();
 
 		// Clean parameters
 		$this->label = trim($this->label);

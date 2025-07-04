@@ -51,7 +51,7 @@ $action = GETPOST('action', 'aZ09');
 $categid = GETPOST('categid');
 $label = GETPOST("label");
 
-$now = dol_now();
+$now = time();
 $syear = (GETPOSTISSET('closeyear') ? GETPOSTINT('closeyear') : dol_print_date($now, "%Y"));
 $smonth = (GETPOSTISSET('closemonth') ? GETPOSTINT('closemonth') : dol_print_date($now, "%m"));
 $sday = (GETPOSTISSET('closeday') ? GETPOSTINT('closeday') : dol_print_date($now, "%d"));

@@ -459,7 +459,7 @@ if (empty($reshook)) {
 
 				$datefacture = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 				if (empty($datefacture)) {
-					$datefacture = dol_now();
+					$datefacture = time();
 				}
 
 				$objecttmp->date = $datefacture;
@@ -914,7 +914,7 @@ $company_url_list = array();
 $formcompany = new FormCompany($db);
 $projectstatic = new Project($db);
 
-$now = dol_now();
+$now = time();
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
@@ -1026,7 +1026,7 @@ if ($search_status != '') {
 	}
 }
 if ($search_option == 'late') {
-	$sql .= " AND c.date_commande < '".$db->idate(dol_now() - $conf->order->client->warning_delay)."'";
+	$sql .= " AND c.date_commande < '".$db->idate(time() - $conf->order->client->warning_delay)."'";
 }
 if ($search_datecloture_start) {
 	$sql .= " AND c.date_cloture >= '".$db->idate($search_datecloture_start)."'";

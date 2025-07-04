@@ -74,7 +74,7 @@ $search_ua   = GETPOST("search_ua", "restricthtml");
 $search_prefix_session = GETPOST("search_prefix_session", "restricthtml");
 $search_entity = ($user->entity > 0 ? $user->entity : GETPOSTINT('search_entity'));
 
-$now = dol_now();
+$now = time();
 $nowarray = dol_getdate($now);
 
 if (GETPOSTINT("date_startmonth") > 0) {
@@ -148,7 +148,7 @@ if (!$user->admin) {
  * Actions
  */
 
-$now = dol_now();
+$now = time();
 
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers

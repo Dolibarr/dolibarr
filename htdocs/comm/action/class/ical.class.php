@@ -161,7 +161,7 @@ class ICal
 		if ($usecachefile) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			$datefile = dol_filemtime($usecachefile);
-			$now = dol_now('gmt');
+			$now = time();
 			//print $datefile.' '.$now.' ...';
 			if ($datefile && $datefile > ($now - $delaycache)) {
 				// We reuse the cache file

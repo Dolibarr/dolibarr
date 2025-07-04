@@ -404,7 +404,7 @@ if (empty($reshook)) {
 		if ((preg_match('/^[\(]?PROV/i', $object->ref) || empty($object->ref)) &&	// empty should not happened, but when it occurs, the test save life
 			getDolGlobalString('FAC_FORCE_DATE_VALIDATION')								// If option enabled, we force invoice date
 		) {
-			$object->date = dol_now();
+			$object->date = time();
 		}
 
 		if (getDolGlobalString('INVOICE_CHECK_POSTERIOR_DATE')) {
@@ -3587,7 +3587,7 @@ if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
-$now = dol_now();
+$now = time();
 
 $title = $object->ref." - ".$langs->trans('Card');
 if ($action == 'create') {
@@ -4529,7 +4529,7 @@ if ($action == 'create') {
 		if (GETPOSTINT('fac_rec') > 0) {
 			$dateexample = ($newdateinvoice ? $newdateinvoice : $dateinvoice);
 			if (empty($dateexample)) {
-				$dateexample = dol_now();
+				$dateexample = time();
 			}
 			$substitutionarray = array(
 				'__TOTAL_HT__' => $langs->trans("AmountHT").' ('.$langs->trans("Example").': '.price($exampletemplateinvoice->total_ht).')',
@@ -4822,7 +4822,7 @@ if ($action == 'create') {
 		if ($objectref == 'PROV') {
 			$savdate = $object->date;
 			if (getDolGlobalString('FAC_FORCE_DATE_VALIDATION')) {
-				$object->date = dol_now();
+				$object->date = time();
 				$object->date_lim_reglement = $object->calculate_date_lim_reglement();
 			}
 			$numref = $object->getNextNumRef($soc);
@@ -5068,7 +5068,7 @@ if ($action == 'create') {
 		// Create an array for form
 		$formquestion = array(
 			array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company($object->socid, 'socid', $filter, 1)),
-			array('type' => 'date', 'name' => 'newdate', 'label' => $langs->trans("Date"), 'value' => dol_now())
+			array('type' => 'date', 'name' => 'newdate', 'label' => $langs->trans("Date"), 'value' => time())
 		);
 		// Request confirmation to clone
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 250);

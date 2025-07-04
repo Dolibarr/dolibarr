@@ -117,7 +117,7 @@ class html_generic extends ModeleDon
 	{
 		global $user, $conf, $langs, $mysoc;
 
-		$now = dol_now();
+		$now = time();
 
 		$currency = !empty($currency) ? $currency : $conf->currency;
 

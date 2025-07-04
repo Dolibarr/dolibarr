@@ -312,7 +312,7 @@ $socstatic = new Societe($db);
 $formcompany = new FormCompany($db);
 $contracttmp = new Contrat($db);
 
-$now = dol_now();
+$now = time();
 
 $title = "";
 

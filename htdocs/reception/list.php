@@ -352,12 +352,12 @@ if (empty($reshook)) {
 					$objecttmp->ref_supplier = $rcp->ref;
 				} else {
 					// Set a unique value for the invoice for the n reception
-					$objecttmp->ref_supplier = $langs->trans("Reception").' '.dol_print_date(dol_now(), 'dayhourlog').'-'.$rcp->socid;
+					$objecttmp->ref_supplier = $langs->trans("Reception").' '.dol_print_date(time(), 'dayhourlog').'-'.$rcp->socid;
 				}
 
 				$datefacture = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 				if (empty($datefacture)) {
-					$datefacture = dol_now();
+					$datefacture = time();
 				}
 
 				$objecttmp->date = $datefacture;
@@ -600,7 +600,7 @@ if (empty($reshook)) {
  * View
  */
 
-$now = dol_now();
+$now = time();
 
 $form = new Form($db);
 $companystatic = new Societe($db);

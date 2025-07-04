@@ -353,7 +353,7 @@ class Invoices extends DolibarrApi
 			$this->invoice->$field = $this->_checkValForAPI($field, $value, $this->invoice);
 		}
 		if (!array_key_exists('date', $request_data)) {
-			$this->invoice->date = dol_now();
+			$this->invoice->date = time();
 		}
 		/* We keep lines as an array
 		 if (isset($request_data["lines"])) {

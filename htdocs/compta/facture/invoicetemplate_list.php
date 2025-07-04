@@ -277,7 +277,7 @@ $companystatic = new Societe($db);
 $invoicerectmp = new FactureRec($db);
 $tmpuser = new User($db);
 
-$now = dol_now();
+$now = time();
 
 $help_url = '';
 $title = $langs->trans("RepeatableInvoices");

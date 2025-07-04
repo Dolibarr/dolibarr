@@ -199,7 +199,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$now = dol_now();
+$now = time();
 
 //$help_url="EN:Module_pos_cash_fence|FR:Module_pos_cash_fence_FR|ES:Módulo_pos_cash_fence";
 $help_url = '';

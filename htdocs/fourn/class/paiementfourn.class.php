@@ -174,7 +174,7 @@ class PaiementFourn extends Paiement
 		$error = 0;
 		$way = $this->getWay();
 
-		$now = dol_now();
+		$now = time();
 
 		// Clean parameters
 		$totalamount = 0;
@@ -753,7 +753,7 @@ class PaiementFourn extends Paiement
 	 */
 	public function initAsSpecimen($option = '')
 	{
-		$now = dol_now();
+		$now = time();
 		$arraynow = dol_getdate($now);
 		$nownotime = dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
 

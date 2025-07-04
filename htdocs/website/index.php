@@ -2931,7 +2931,7 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 
 				// URL of sitemaps must end with trailing slash if page is ''
 				$loc = $domtree->createElement('loc', $domainname.'/'.$pageurl);
-				$lastmod = $domtree->createElement('lastmod', dol_print_date(dol_now(), 'dayrfc', 'gmt'));
+				$lastmod = $domtree->createElement('lastmod', dol_print_date(time(), 'dayrfc', 'gmt'));
 
 				$url->appendChild($loc);
 				$url->appendChild($lastmod);
@@ -3913,7 +3913,7 @@ if (!GETPOST('hide_websitemenu')) {
 			//$htmltext = str_replace('{s1}', DOL_DATA_ROOT.'/medias', $htmltext);
 
 			print '<div class="websiteinputurl inline-block paddingright">';
-			print '<a class="websitebuttonsitepreview inline-block" id="previewpage" href="'.$realpage.'&nocache='.dol_now().'" class="button" target="tab'.$websitekey.'" alt="'.dol_escape_htmltag($htmltext).'">';
+			print '<a class="websitebuttonsitepreview inline-block" id="previewpage" href="'.$realpage.'&nocache='.time().'" class="button" target="tab'.$websitekey.'" alt="'.dol_escape_htmltag($htmltext).'">';
 			print $form->textwithpicto('', $htmltext, 1, 'preview');
 			print '</a>'; // View page in new Tab
 			print '</div>';
@@ -4776,7 +4776,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		$pagelang = '';
 		$pageallowedinframes = 0;
 		$pagehtmlheader = '';
-		$pagedatecreation = dol_now();
+		$pagedatecreation = time();
 		$pagedatemodification = '';
 		$pageauthorid = $user->id;
 		$pageusermodifid = 0;

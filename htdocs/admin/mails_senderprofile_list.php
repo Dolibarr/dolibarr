@@ -220,7 +220,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$now = dol_now();
+$now = time();
 
 //$help_url="EN:Module_EmailSenderProfile|FR:Module_EmailSenderProfile_FR|ES:Módulo_EmailSenderProfile";
 $help_url = '';

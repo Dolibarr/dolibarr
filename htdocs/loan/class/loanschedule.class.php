@@ -159,7 +159,7 @@ class LoanSchedule extends CommonObject
 
 		$error = 0;
 
-		$now = dol_now();
+		$now = time();
 
 		// Validate parameters
 		if (!$this->datep) {
@@ -604,7 +604,7 @@ class LoanSchedule extends CommonObject
 		if (!empty($datemax)) {
 			$sql .= " AND p.datep > '".$this->db->idate($datemax)."'";
 		}
-		$sql .= " AND p.datep <= '".$this->db->idate(dol_now())."'";
+		$sql .= " AND p.datep <= '".$this->db->idate(time())."'";
 
 		$resql = $this->db->query($sql);
 

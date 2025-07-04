@@ -313,7 +313,7 @@ class Workstation extends CommonObject
 			$object->status = self::STATUS_DISABLED;
 		}
 		if (property_exists($object, 'date_creation')) {
-			$object->date_creation = dol_now();
+			$object->date_creation = time();
 		}
 		if (property_exists($object, 'date_modification')) {
 			$object->date_modification = null;

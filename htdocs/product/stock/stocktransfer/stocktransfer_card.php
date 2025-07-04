@@ -308,7 +308,7 @@ if (empty($reshook)) {
 			if (empty($error)) {
 				$object->setStatut($object::STATUS_TRANSFERED, $id);
 				$object->status = $object::STATUS_TRANSFERED;
-				$object->date_reelle_depart = dol_now();
+				$object->date_reelle_depart = time();
 				$object->update($user);
 				setEventMessage('StockStransferDecremented');
 			}
@@ -362,7 +362,7 @@ if (empty($reshook)) {
 			if (empty($error)) {
 				$object->setStatut($object::STATUS_CLOSED, $id);
 				$object->status = $object::STATUS_CLOSED;
-				$object->date_reelle_arrivee = dol_now();
+				$object->date_reelle_arrivee = time();
 				$object->update($user);
 				setEventMessage('StockStransferIncrementedShort');
 			}
@@ -567,28 +567,28 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Create an array for form
 		$formquestion = array(	'text' => '',
 			0 => array('type' => 'text', 'name' => 'label', 'label' => $langs->trans("Label"), 'value' => $langs->trans('ConfirmDestock', $object->ref), 'size' => 40),
-			1 => array('type' => 'text', 'name' => 'inventorycode', 'label' => $langs->trans("InventoryCode"), 'value' => dol_print_date(dol_now(), '%y%m%d%H%M%S'), 'size' => 25)
+			1 => array('type' => 'text', 'name' => 'inventorycode', 'label' => $langs->trans("InventoryCode"), 'value' => dol_print_date(time(), '%y%m%d%H%M%S'), 'size' => 25)
 		);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DestockAllProduct'), '', 'confirm_destock', $formquestion, 'yes', 1);
 	} elseif ($action == 'destockcancel') { // Destock confirmation cancel
 		// Create an array for form
 		$formquestion = array(	'text' => '',
 			0 => array('type' => 'text', 'name' => 'label', 'label' => $langs->trans("Label"), 'value' => $langs->trans('ConfirmDestockCancel', $object->ref), 'size' => 40),
-			1 => array('type' => 'text', 'name' => 'inventorycode', 'label' => $langs->trans("InventoryCode"), 'value' => dol_print_date(dol_now(), '%y%m%d%H%M%S'), 'size' => 25)
+			1 => array('type' => 'text', 'name' => 'inventorycode', 'label' => $langs->trans("InventoryCode"), 'value' => dol_print_date(time(), '%y%m%d%H%M%S'), 'size' => 25)
 		);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DestockAllProductCancel'), '', 'confirm_destockcancel', $formquestion, 'yes', 1);
 	} elseif ($action == 'addstock') { // Addstock confirmation
 		// Create an array for form
 		$formquestion = array(	'text' => '',
 			0 => array('type' => 'text', 'name' => 'label', 'label' => $langs->trans("Label").'&nbsp;:', 'value' => $langs->trans('ConfirmAddStock', $object->ref), 'size' => 40),
-			1 => array('type' => 'text', 'name' => 'inventorycode', 'label' => $langs->trans("InventoryCode"), 'value' => dol_print_date(dol_now(), '%y%m%d%H%M%S'), 'size' => 25)
+			1 => array('type' => 'text', 'name' => 'inventorycode', 'label' => $langs->trans("InventoryCode"), 'value' => dol_print_date(time(), '%y%m%d%H%M%S'), 'size' => 25)
 		);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('AddStockAllProduct'), '', 'confirm_addstock', $formquestion, 'yes', 1);
 	} elseif ($action == 'addstockcancel') { // Addstock confirmation cancel
 		// Create an array for form
 		$formquestion = array(	'text' => '',
 			0 => array('type' => 'text', 'name' => 'label', 'label' => $langs->trans("Label").'&nbsp;:', 'value' => $langs->trans('ConfirmAddStockCancel', $object->ref), 'size' => 40),
-			1 => array('type' => 'text', 'name' => 'inventorycode', 'label' => $langs->trans("InventoryCode"), 'value' => dol_print_date(dol_now(), '%y%m%d%H%M%S'), 'size' => 25)
+			1 => array('type' => 'text', 'name' => 'inventorycode', 'label' => $langs->trans("InventoryCode"), 'value' => dol_print_date(time(), '%y%m%d%H%M%S'), 'size' => 25)
 		);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('AddStockAllProductCancel'), '', 'confirm_addstockcancel', $formquestion, 'yes', 1);
 	}

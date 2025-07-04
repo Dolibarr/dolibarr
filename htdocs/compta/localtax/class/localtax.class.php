@@ -345,7 +345,7 @@ class Localtax extends CommonObject
 
 		$this->id = 0;
 
-		$this->tms = dol_now();
+		$this->tms = time();
 		$this->ltt = 0;
 		$this->datep = '';
 		$this->datev = '';

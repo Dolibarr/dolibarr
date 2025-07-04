@@ -216,7 +216,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		$now = dol_now();
+		$now = time();
 		$res = 0;
 
 		$invoice = new Facture($db);
@@ -361,7 +361,7 @@ if (empty($reshook)) {
 				// The case !isModEnabled('productbatch') was processed few lines before.
 				require_once DOL_DOCUMENT_ROOT . "/product/stock/class/mouvementstock.class.php";
 				$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
-				$inventorycode = dol_print_date(dol_now(), 'dayhourlog');
+				$inventorycode = dol_print_date(time(), 'dayhourlog');
 				// Label of stock movement will be "TakePOS - Invoice XXXX"
 				$labeltakeposmovement = 'TakePOS - '.$langs->trans("Invoice").' '.$invoice->ref;
 
@@ -408,7 +408,7 @@ if (empty($reshook)) {
 
 		$creditnote = new Facture($db);
 		$creditnote->socid = $invoice->socid;
-		$creditnote->date = dol_now();
+		$creditnote->date = time();
 		$creditnote->module_source = 'takepos';
 		$creditnote->pos_source =  isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '' ;
 		$creditnote->type = Facture::TYPE_CREDIT_NOTE;
@@ -567,7 +567,7 @@ if (empty($reshook)) {
 				// The case !isModEnabled('productbatch') was processed few lines before.
 				require_once DOL_DOCUMENT_ROOT . "/product/stock/class/mouvementstock.class.php";
 				$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
-				$inventorycode = dol_print_date(dol_now(), 'dayhourlog');
+				$inventorycode = dol_print_date(time(), 'dayhourlog');
 				// Label of stock movement will be "TakePOS - Invoice XXXX"
 				$labeltakeposmovement = 'TakePOS - '.$langs->trans("CreditNote").' '.$creditnote->ref;
 
@@ -639,7 +639,7 @@ if (empty($reshook)) {
 		print '---<br>';
 		print 'TZSERVER: '.dol_print_date(dol_now('tzserver'), 'dayhour', 'gmt').'<br>';
 		print 'TZUSER: '.dol_print_date(dol_now('tzuserrel'), 'dayhour', 'gmt').'<br>';
-		print 'GMT: '.dol_print_date(dol_now('gmt'), 'dayhour', 'gmt').'<br>';	// Hour in greenwich
+		print 'GMT: '.dol_print_date(time(), 'dayhour', 'gmt').'<br>';	// Hour in greenwich
 		print '---<br>';
 		print dol_print_date($invoice->date, 'dayhour', 'gmt').'<br>';
 		print "IN SQL, we will got: ".dol_print_date($db->idate($invoice->date), 'dayhour', 'gmt').'<br>';
@@ -990,7 +990,7 @@ if (empty($reshook)) {
 				$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
 				$varforconst = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
 				$sql .= " SET fk_soc = ".((int) getDolGlobalString($varforconst)).", ";
-				$sql .= " datec = '".$db->idate(dol_now())."'";
+				$sql .= " datec = '".$db->idate(time())."'";
 				$sql .= " WHERE entity IN (".getEntity('invoice').")";
 				$sql .= " AND ref = '(PROV-POS".$db->escape($_SESSION["takeposterminal"]."-".$place).")'";
 				$resql1 = $db->query($sql);
@@ -1164,7 +1164,7 @@ if (empty($reshook)) {
 		$resql = $db->query($sql);
 		$row = $db->fetch_object($resql);
 		$headerorder = '<html><br><b>'.$langs->trans('Place').' '.$row->label.'<br><table width="65%"><thead><tr><th class="left">'.$langs->trans("Label").'</th><th class="right">'.$langs->trans("Qty").'</th></tr></thead><tbody>';
-		$footerorder = '</tbody></table>'.dol_print_date(dol_now(), 'dayhour').'<br></html>';
+		$footerorder = '</tbody></table>'.dol_print_date(time(), 'dayhour').'<br></html>';
 		$order_receipt_printer1 = "";
 		$order_receipt_printer2 = "";
 		$order_receipt_printer3 = "";

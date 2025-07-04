@@ -174,7 +174,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 			$file = "{$dir}/SPECIMEN_{$this->name}.pdf";
 		} else {
 			$expref = dol_sanitizeFileName($object->ref);
-			$date = date('YmdHis', dol_now());
+			$date = date('YmdHis', time());
 			$file = "{$dir}/{$this->name}_{$date}.pdf";
 		}
 
@@ -656,7 +656,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 		$pdf->SetXY($this->marge_gauche + 2, $nexY);
 		$pdf->SetTextColor(0, 0, 60);
 		$textDateNow = $outputlangs->transnoentities("PrintDate");
-		$pdf->MultiCell($w / 3, 3, $textDateNow . " : " . date('d/m/Y', dol_now()), '', 'L');
+		$pdf->MultiCell($w / 3, 3, $textDateNow . " : " . date('d/m/Y', time()), '', 'L');
 		$nexY = max($pdf->GetY(), $nexY);
 
 		// Page title

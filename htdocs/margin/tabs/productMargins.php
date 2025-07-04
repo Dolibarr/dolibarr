@@ -98,7 +98,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 if (empty($search_invoice_date_start) && empty($search_invoice_date_end) && !GETPOSTISSET('restore_lastsearch_values')) {
 	$query = "SELECT date_start, date_end";
 	$query .= " FROM ".MAIN_DB_PREFIX."accounting_fiscalyear";
-	$query .= " WHERE date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."' limit 1";
+	$query .= " WHERE date_start < '".$db->idate(time())."' and date_end > '".$db->idate(time())."' limit 1";
 	$res = $db->query($query);
 
 	if ($res && $db->num_rows($res) > 0) {
@@ -107,8 +107,8 @@ if (empty($search_invoice_date_start) && empty($search_invoice_date_end) && !GET
 		$search_invoice_date_end = strtotime($fiscalYear->date_end);
 	} else {
 		$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
-		$year_start = (int) dol_print_date(dol_now(), '%Y');
-		if (dol_print_date(dol_now(), '%m') < $month_start) {
+		$year_start = (int) dol_print_date(time(), '%Y');
+		if (dol_print_date(time(), '%m') < $month_start) {
 			$year_start--; // If current month is lower that starting fiscal month, we start last year
 		}
 		$year_end = $year_start + 1;

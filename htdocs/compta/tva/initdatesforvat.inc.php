@@ -27,7 +27,7 @@
  */
 
 
-$now = dol_now();
+$now = time();
 $current_date = dol_getdate($now);
 if (!getDolGlobalInt('SOCIETE_FISCAL_MONTH_START')) {
 	$conf->global->SOCIETE_FISCAL_MONTH_START = 1;

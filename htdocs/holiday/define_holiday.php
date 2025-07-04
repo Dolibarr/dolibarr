@@ -197,7 +197,7 @@ if (empty($reshook)) {
 
 				// If it first update of balance, we set date to avoid to have sold incremented by new month
 				/*
-				$now=dol_now();
+				$now=time();
 				$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
 				$sql.= " value = '".dol_print_date($now,'%Y%m%d%H%M%S')."'";
 				$sql.= " WHERE name = 'lastUpdate' and value IS NULL";	// Add value IS NULL to be sure to update only at init.

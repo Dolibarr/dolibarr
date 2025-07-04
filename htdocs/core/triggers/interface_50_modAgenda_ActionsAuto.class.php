@@ -1553,7 +1553,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__.". id=".$object->id);
 
 		// Add entry in event table
-		$now = dol_now();
+		$now = time();
 
 		if (isset($_SESSION['listofnames-'.$object->trackid])) {
 			$attachments = $_SESSION['listofnames-'.$object->trackid];

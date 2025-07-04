@@ -95,7 +95,7 @@ class DiasporaHandler
 		// Check cache
 		if ($cacheDelay > 0 && $cacheDir && dol_is_file($cacheFile)) {
 			$fileDate = dol_filemtime($cacheFile);
-			if ($fileDate >= (dol_now() - $cacheDelay)) {
+			if ($fileDate >= (time() - $cacheDelay)) {
 				$foundInCache = true;
 				$data = file_get_contents($cacheFile);
 			}

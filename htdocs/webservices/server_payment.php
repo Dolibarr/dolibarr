@@ -166,7 +166,7 @@ function createPayment($authentication, $payment)
 {
 	global $db, $conf;
 
-	$now = dol_now();
+	$now = time();
 
 	// TODO: Verify 'ref' and 'ref_ext', not defined in the WS Payment object.
 	dol_syslog("Function: createPayment login=".$authentication['login']." id=".$payment['id'].

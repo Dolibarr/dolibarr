@@ -153,7 +153,7 @@ if ($action == 'setref' && $user->hasRight('banque', 'cheque')) {
 if ($action == 'create' && GETPOSTINT("accountid") > 0 && $user->hasRight('banque', 'cheque')) {
 	if (GETPOSTISARRAY('toRemise')) {
 		$object->type = $type;
-		$object->date_bordereau = dol_now();
+		$object->date_bordereau = time();
 		$arrayofid = GETPOST('toRemise', 'array:int');
 
 		$result = $object->create($user, GETPOSTINT("accountid"), 0, $arrayofid);
@@ -375,7 +375,7 @@ if ($action == 'new') {
 	if ($action == 'reject_check') {
 		$formquestion = array(
 			array('type' => 'hidden', 'name' => 'bankid', 'value' => GETPOSTINT('lineid')),
-			array('type' => 'date', 'name' => 'rejectdate_', 'label' => $langs->trans("RejectCheckDate"), 'value' => dol_now())
+			array('type' => 'date', 'name' => 'rejectdate_', 'label' => $langs->trans("RejectCheckDate"), 'value' => time())
 		);
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans("RejectCheck"), $langs->trans("ConfirmRejectCheck"), 'confirm_reject_check', $formquestion, '', 1);
 	}
@@ -389,7 +389,7 @@ if ($action == 'new') {
 
 	$lines = array();
 
-	$now = dol_now();
+	$now = time();
 
 	$labeltype = ($langs->trans("PaymentType".$type) != "PaymentType".$type ? $langs->trans("PaymentType".$type) : $type);
 	if ($type == 'CHQ') {

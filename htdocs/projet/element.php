@@ -166,7 +166,7 @@ if (empty($datee) && !empty($dateerfc)) {	// deprecated
 	$datee = dol_stringtotime($dateerfc);
 }
 if (!GETPOSTISSET('datesrfc') && !GETPOSTISSET('datesday') && getDolGlobalString('PROJECT_LINKED_ELEMENT_DEFAULT_FILTER_YEAR')) {
-	$new = dol_now();
+	$new = time();
 	$tmp = dol_getdate($new);
 	//$datee=$now
 	//$dates=dol_time_plus_duree($datee, -1, 'y');
@@ -915,7 +915,7 @@ foreach ($listofreferent as $key => $value) {
 								 * @var LoanSchedule $loanSchedule
 								 */
 								if (($loanSchedule->datep >= $dates && $loanSchedule->datep <= $datee) // dates filter is defined
-									|| !empty($dates) && empty($datee) && $loanSchedule->datep >= $dates && $loanSchedule->datep <= dol_now()
+									|| !empty($dates) && empty($datee) && $loanSchedule->datep >= $dates && $loanSchedule->datep <= time()
 									|| empty($dates) && !empty($datee) && $loanSchedule->datep <= $datee
 								) {
 									$total_ht_by_line -= $loanSchedule->amount_capital;

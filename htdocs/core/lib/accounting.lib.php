@@ -292,7 +292,7 @@ function getDefaultDatesForTransfer()
 	$periodbydefaultontransfer = getDolGlobalInt('ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER', 0);
 	if ($periodbydefaultontransfer == 2) {	// fiscal year
 		$sql = "SELECT date_start, date_end FROM ".MAIN_DB_PREFIX."accounting_fiscalyear";
-		$sql .= " WHERE date_start < '".$db->idate(dol_now())."' AND date_end > '".$db->idate(dol_now())."'";
+		$sql .= " WHERE date_start < '".$db->idate(time())."' AND date_end > '".$db->idate(time())."'";
 		$sql .= $db->plimit(1);
 		$res = $db->query($sql);
 		if ($db->num_rows($res) > 0) {
@@ -302,8 +302,8 @@ function getDefaultDatesForTransfer()
 			$date_end = $db->jdate($obj->date_end);
 		} else {
 			$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
-			$year_start = (int) dol_print_date(dol_now(), '%Y');
-			if ($month_start > (int) dol_print_date(dol_now(), '%m')) {
+			$year_start = (int) dol_print_date(time(), '%Y');
+			if ($month_start > (int) dol_print_date(time(), '%m')) {
 				$year_start -= 1;
 			}
 			$year_end = $year_start + 1;
@@ -316,16 +316,16 @@ function getDefaultDatesForTransfer()
 			$date_end = dol_get_last_day($year_end, $month_end);
 		}
 	} elseif ($periodbydefaultontransfer == 1) {	// current month
-		$year_current = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-		$pastmonth = (int) dol_print_date(dol_now('gmt'), '%m', 'gmt');
+		$year_current = (int) dol_print_date(time(), "%Y", 'gmt');
+		$pastmonth = (int) dol_print_date(time(), '%m', 'gmt');
 		$pastmonthyear = $year_current;
 		if ($pastmonth == 0) {
 			$pastmonth = 12;
 			$pastmonthyear--;
 		}
 	} else {	// previous month
-		$year_current = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-		$pastmonth = (int) dol_print_date(dol_now('gmt'), '%m', 'gmt') - 1;
+		$year_current = (int) dol_print_date(time(), "%Y", 'gmt');
+		$pastmonth = (int) dol_print_date(time(), '%m', 'gmt') - 1;
 		$pastmonthyear = $year_current;
 		if ($pastmonth == 0) {
 			$pastmonth = 12;
@@ -352,7 +352,7 @@ function getDefaultDatesForTransfer()
  */
 function getCurrentPeriodOfFiscalYear($db, $conf, $from_time = null, $gm = 'tzserver', $withenddateonly = 1)
 {
-	$now = dol_now();
+	$now = time();
 	$now_arr = dol_getdate($now);
 	if ($from_time === null) {
 		$from_time = $now;

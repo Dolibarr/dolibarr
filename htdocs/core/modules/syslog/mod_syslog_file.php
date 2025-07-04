@@ -178,7 +178,7 @@ class mod_syslog_file extends LogHandler
 			$delay = " ".sprintf("%05.3f", $this->lastTime != 0 ? $now - $this->lastTime : 0);
 			$this->lastTime = $now;
 		}
-		$message = dol_print_date(dol_now('gmt'), 'standard', 'gmt').$delay." ".sprintf("%-7s", self::DOL_LOG_LEVELS[$content['level']])." ".sprintf("%-15s", $content['ip']);
+		$message = dol_print_date(time(), 'standard', 'gmt').$delay." ".sprintf("%-7s", self::DOL_LOG_LEVELS[$content['level']])." ".sprintf("%-15s", $content['ip']);
 		$message .= " ".sprintf("%7s", dol_trunc($content['ospid'], 7, 'right', 'UTF-8', 1));
 		$message .= " ".sprintf("%6s", dol_trunc($content['osuser'], 6, 'right', 'UTF-8', 1));
 		// @phan-suppress-next-line PhanParamSuspiciousOrder

@@ -631,7 +631,7 @@ class modService extends DolibarrModules
 		// field order as per structure of table llx_product
 		$import_sample = array(
 			'p.ref' => "ref:PREF123456",
-			'p.datec' => dol_print_date(dol_now(), '%Y-%m-%d'),
+			'p.datec' => dol_print_date(time(), '%Y-%m-%d'),
 			'p.label' => "Product name in default language",
 			'p.description' => "Product description in default language",
 			'p.note_public' => "a public note (free text)",

@@ -67,8 +67,8 @@ class ODFTest extends CommonClassTest
 		$localobject = new Commande($db);
 		$localobject->fetch(1);
 
-		$localobject->lines[0]->date_start = dol_now();
-		$localobject->lines[0]->date_end = dol_now() + 84600;
+		$localobject->lines[0]->date_start = time();
+		$localobject->lines[0]->date_end = time() + 84600;
 
 		$result = $localobject->generateDocument('generic_order_odt', $langs);
 		print __METHOD__." result=".$result."\n";

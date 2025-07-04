@@ -224,7 +224,7 @@ class ProductCustomerPrice extends CommonObject
 	{
 		global $conf, $langs;
 		$error = 0;
-		$now = dol_now();
+		$now = time();
 
 		// Clean parameters
 
@@ -763,7 +763,7 @@ class ProductCustomerPrice extends CommonObject
 	{
 		global $conf, $langs;
 		$error = 0;
-		$now = dol_now();
+		$now = time();
 
 		// Clean parameters
 
@@ -1203,7 +1203,7 @@ class ProductCustomerPrice extends CommonObject
 
 		$this->entity = 0;
 		$this->datec = '';
-		$this->tms = dol_now();
+		$this->tms = time();
 		$this->fk_product = 0;
 		$this->fk_soc = 0;
 		$this->ref_customer = '';

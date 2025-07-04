@@ -194,7 +194,7 @@ if ($ws) {
  * View
  */
 
-$now = dol_now();
+$now = time();
 
 dol_syslog("Callback url when a payment was done. doactionsthenredirect=".$doactionsthenredirect." query_string=".(empty($_SERVER["QUERY_STRING"]) ? '' : dol_escape_htmltag($_SERVER["QUERY_STRING"]))." script_uri=".(empty($_SERVER["SCRIPT_URI"]) ? '' : dol_escape_htmltag($_SERVER["SCRIPT_URI"])), LOG_DEBUG, 0, '_payment');
 dol_syslog("_SERVER[SERVER_NAME] = ".(empty($_SERVER["SERVER_NAME"]) ? '' : dol_escape_htmltag($_SERVER["SERVER_NAME"])), LOG_DEBUG, 0, '_payment');
@@ -767,7 +767,7 @@ if ($ispaymentok) {
 										}
 									} else {
 										$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_account (fk_soc, login, key_account, site, site_account, status, entity, date_creation, fk_user_creat)";
-										$sql .= " VALUES (".((int) $thirdparty_id).", '', '".$db->escape($stripecu)."', 'stripe', '".$db->escape($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])."', ".((int) $servicestatus).", ".((int) $conf->entity).", '".$db->idate(dol_now())."', 0)";
+										$sql .= " VALUES (".((int) $thirdparty_id).", '', '".$db->escape($stripecu)."', 'stripe', '".$db->escape($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])."', ".((int) $servicestatus).", ".((int) $conf->entity).", '".$db->idate(time())."', 0)";
 										$resql = $db->query($sql);
 										if (!$resql) {	// should not happen
 											$error++;
@@ -1455,7 +1455,7 @@ if ($ispaymentok) {
 							$attendeetovalidate->validate($user);
 
 							$attendeetovalidate->amount = $FinalPaymentAmt;
-							$attendeetovalidate->date_subscription = dol_now();
+							$attendeetovalidate->date_subscription = time();
 							$attendeetovalidate->update($user);
 						}
 					}

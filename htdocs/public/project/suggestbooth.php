@@ -386,12 +386,12 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			$conforbooth->fk_action = $eventtype;
 			$conforbooth->datep = $datestart;
 			$conforbooth->datep2 = $dateend;
-			$conforbooth->datec = dol_now();
-			$conforbooth->tms = dol_now();
+			$conforbooth->datec = time();
+			$conforbooth->tms = time();
 			$conforbooth->ip = getUserRemoteIP();
 
 			$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
-			$now = dol_now();
+			$now = time();
 			$minmonthpost = dol_time_plus_duree($now, -1, "m");
 
 			// Calculate nb of post for IP
@@ -446,7 +446,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 							$facture->type = Facture::TYPE_STANDARD;
 							$facture->socid = $thirdparty->id;
 							$facture->paye = 0;
-							$facture->date = dol_now();
+							$facture->date = time();
 							$facture->cond_reglement_id = $contact->cond_reglement_id;
 							$facture->fk_project = $project->id;
 
@@ -473,7 +473,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 						if (!$error && is_object($facture)) {
 							// Add line to draft invoice
 							$vattouse = get_default_tva($mysoc, $thirdparty, $productforinvoicerow->id);
-							$result = $facture->addline($langs->trans("BoothLocationFee", $conforbooth->label, dol_print_date($conforbooth->datep, '%d/%m/%y %H:%M:%S'), dol_print_date($conforbooth->datep2, '%d/%m/%y %H:%M:%S')), (float) $project->price_booth, 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, dol_now(), '', 0, 0, 0, 'HT', 0, 1);
+							$result = $facture->addline($langs->trans("BoothLocationFee", $conforbooth->label, dol_print_date($conforbooth->datep, '%d/%m/%y %H:%M:%S'), dol_print_date($conforbooth->datep2, '%d/%m/%y %H:%M:%S')), (float) $project->price_booth, 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, time(), '', 0, 0, 0, 'HT', 0, 1);
 							if ($result <= 0) {
 								$contact->error = $facture->error;
 								$contact->errors = $facture->errors;

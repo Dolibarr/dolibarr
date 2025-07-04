@@ -146,7 +146,7 @@ class InterfaceLogevents extends DolibarrTriggers
 	 */
 	private function initEventData($key_text, $object)
 	{
-		$this->event_date = dol_now();
+		$this->event_date = time();
 
 		$this->event_label = $this->event_desc = $key_text;
 		if (property_exists($object, 'login')) {

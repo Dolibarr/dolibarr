@@ -254,7 +254,7 @@ class CTicketCategory extends CommonObject
 			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
 		}
 		if (property_exists($object, 'date_creation')) {
-			$object->date_creation = dol_now();
+			$object->date_creation = time();
 		}
 		if (property_exists($object, 'date_modification')) {
 			$object->date_modification = null;

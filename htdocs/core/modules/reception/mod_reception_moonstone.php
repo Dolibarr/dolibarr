@@ -127,7 +127,7 @@ class mod_reception_moonstone extends ModelNumRefReception
 		if (!empty($reception)) {
 			$date = $reception->date_reception;
 		} else {
-			$date = dol_now();
+			$date = time();
 		}
 
 		$numFinal = get_next_value($db, $mask, 'reception', 'ref', '', $objsoc, $date);

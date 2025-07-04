@@ -218,7 +218,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$now = dol_now();
+$now = time();
 
 $title = $langs->trans("JobsProfiles");
 //$help_url="EN:Module_Job|FR:Module_Job_FR|ES:Módulo_Job";

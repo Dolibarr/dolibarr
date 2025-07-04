@@ -407,7 +407,7 @@ class BookKeeping extends CommonObject
 					$this->piece_num = 1;
 				}
 
-				$now = dol_now();
+				$now = time();
 
 				$sql = "INSERT INTO ".$this->db->prefix().$this->table_element." (";
 				$sql .= "doc_date";
@@ -741,7 +741,7 @@ class BookKeeping extends CommonObject
 		$this->credit = (float) price2num($this->credit, 'MT');
 		$this->montant = (float) price2num($this->montant, 'MT');
 
-		$now = dol_now();
+		$now = time();
 
 		// Check parameters
 		$this->journal_label = $langs->trans($this->journal_label);
@@ -1928,7 +1928,7 @@ class BookKeeping extends CommonObject
 	{
 		global $user;
 
-		$now = dol_now();
+		$now = time();
 
 		$this->id = 0;
 		$this->doc_date = $now;
@@ -2255,7 +2255,7 @@ class BookKeeping extends CommonObject
 		$ref = $tmpData->ref ?: $tmpBookkeeping->getNextNumRef();
 		if ($direction == 0) {
 			$next_piecenum = $this->getNextNumMvt();
-			$now = dol_now();
+			$now = time();
 
 			if ($next_piecenum < 0) {
 				$error++;
@@ -2881,7 +2881,7 @@ class BookKeeping extends CommonObject
 	{
 		global $conf;
 
-		$now = dol_now();
+		$now = time();
 
 		// Specify as export : update field date_validated on selected month/year
 		$sql = " UPDATE " . $this->db->prefix() . $this->table_element;
@@ -3079,7 +3079,7 @@ class BookKeeping extends CommonObject
 
 					$error++;
 				} else {
-					$now = dol_now();
+					$now = time();
 					$income_statement_amount = 0;
 					while ($obj = $this->db->fetch_object($resql)) {
 						if (in_array($obj->pcg_type, $accounting_groups_used_for_income_statement)) {
@@ -3308,7 +3308,7 @@ class BookKeeping extends CommonObject
 
 			$error++;
 		} else {
-			$now = dol_now();
+			$now = time();
 			while ($obj = $this->db->fetch_object($resql)) {
 				$bookkeeping = new BookKeeping($this->db);
 				$result = $bookkeeping->fetch($obj->rowid);
@@ -3552,7 +3552,7 @@ class BookKeeping extends CommonObject
 		$error = 0;
 		$this->db->begin();
 
-		$now = dol_now();
+		$now = time();
 		if (empty($docdate)) {
 			$docdate = $now;
 		}
@@ -3659,7 +3659,7 @@ class BookKeeping extends CommonObject
 
 		$error = 0;
 
-		$now = dol_now();
+		$now = time();
 		if (empty($docdate)) {
 			$docdate = $now;
 		}
@@ -3716,7 +3716,7 @@ class BookKeeping extends CommonObject
 									$newBookKeeping->sens = 'D';
 								}
 
-								$newBookKeeping->label_operation = "Extourne " . $bookKeeping->piece_num . " - " . $bookKeeping->numero_compte . " - " . date('d/m/Y', dol_now()) . " - " . $i;
+								$newBookKeeping->label_operation = "Extourne " . $bookKeeping->piece_num . " - " . $bookKeeping->numero_compte . " - " . date('d/m/Y', time()) . " - " . $i;
 
 								$newBookKeeping->numero_compte = $bookKeeping->numero_compte;
 								$newBookKeeping->label_compte = $bookKeeping->label_compte;

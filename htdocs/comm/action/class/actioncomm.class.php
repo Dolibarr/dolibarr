@@ -432,7 +432,7 @@ class ActionComm extends CommonObject
 		global $langs, $conf;
 
 		$error = 0;
-		$now = dol_now();
+		$now = time();
 
 		// Check parameters
 		if (!isset($this->userownerid) || (string) $this->userownerid === '') {	// $this->userownerid may be 0 (anonymous event) or > 0
@@ -2045,10 +2045,10 @@ class ActionComm extends CommonObject
 		$logint = '';
 		$eventorganization = '';
 
-		$now = dol_now();
+		$now = time();
 
 		if ($cachedelay) {
-			$nowgmt = dol_now();
+			$nowgmt = time();
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			if (dol_filemtime($outputfile) > ($nowgmt - $cachedelay)) {
 				dol_syslog(get_class($this)."::build_exportfile file ".$outputfile." is not older than now - cachedelay (".$nowgmt." - ".$cachedelay."). Build is canceled");
@@ -2503,7 +2503,7 @@ class ActionComm extends CommonObject
 	{
 		global $user;
 
-		$now = dol_now();
+		$now = time();
 
 		// Initialise parameters
 		$this->id = 0;
@@ -2576,7 +2576,7 @@ class ActionComm extends CommonObject
 	{
 		global $conf;
 
-		$now = dol_now();
+		$now = time();
 
 		return $this->datep && ($this->datep < ($now - $conf->agenda->warning_delay));
 	}
@@ -2601,7 +2601,7 @@ class ActionComm extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
 		$sql .= " WHERE fk_actioncomm = ".((int) $this->id);
 		if ($onlypast) {
-			$sql .= " AND dateremind <= '".$this->db->idate(dol_now())."'";
+			$sql .= " AND dateremind <= '".$this->db->idate(time())."'";
 		}
 		if ($type) {
 			$sql .= " AND typeremind = '".$this->db->escape($type)."'";
@@ -2670,7 +2670,7 @@ class ActionComm extends CommonObject
 			return 0;
 		}
 
-		$now = dol_now();
+		$now = time();
 		$actionCommReminder = new ActionCommReminder($this->db);
 
 		dol_syslog(__METHOD__." start", LOG_INFO);

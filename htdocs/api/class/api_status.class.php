@@ -60,9 +60,9 @@ class Status extends DolibarrApi
 
 		if (empty($dolibarr_main_prod)) {
 			$response['success']['environment']       = 'non-production';
-			$response['success']['timestamp_now_utc'] = dol_now();
+			$response['success']['timestamp_now_utc'] = time();
 			$response['success']['timestamp_php_tz']  = date_default_timezone_get();
-			$response['success']['date_tz']           = dol_print_date(dol_now('gmt'), 'standard');
+			$response['success']['date_tz']           = dol_print_date(time(), 'standard');
 		}
 
 		return $response;

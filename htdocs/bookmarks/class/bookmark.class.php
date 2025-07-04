@@ -160,7 +160,7 @@ class Bookmark extends CommonObject
 			$this->position = 0;
 		}
 
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 

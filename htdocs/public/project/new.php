@@ -271,7 +271,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		}
 
 		if (empty($defaultref)) {
-			$defaultref = 'PJ'.dol_print_date(dol_now(), 'dayrfc');
+			$defaultref = 'PJ'.dol_print_date(time(), 'dayrfc');
 		}
 
 		if ($visibility === "1") {
@@ -293,7 +293,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 
 		$proj->ip = getUserRemoteIP();
 		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
-		$now = dol_now();
+		$now = time();
 		$minmonthpost = dol_time_plus_duree($now, -1, "m");
 		$nb_post_ip = 0;
 		if ($nb_post_max > 0) {	// Calculate only if there is a limit to check

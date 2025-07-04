@@ -102,7 +102,7 @@ class box_ficheinter extends ModeleBoxes
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$num = $this->db->num_rows($resql);
-				$now = dol_now();
+				$now = time();
 
 				$i = 0;
 

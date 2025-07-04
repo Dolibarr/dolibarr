@@ -127,7 +127,7 @@ if ($action == 'add' && $permissiontoadd) {
 	$array_options = array();
 	$db->begin();
 
-	$object->date_delivery = dol_now();
+	$object->date_delivery = time();
 	$object->note          = GETPOST("note", 'restricthtml');
 	$object->note_private  = GETPOST("note", 'restricthtml');
 	$object->commande_id   = GETPOSTINT("commande_id");

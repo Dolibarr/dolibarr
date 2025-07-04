@@ -229,7 +229,7 @@ class ReceptionLineBatch extends CommonObjectLine
 			$this->batch = trim($this->batch);
 		}
 		if (empty($this->datec)) {
-			$this->datec = dol_now();
+			$this->datec = time();
 		}
 
 		// Check parameters
@@ -690,7 +690,7 @@ class ReceptionLineBatch extends CommonObjectLine
 		$this->datec = '';
 		$this->comment = '';
 		$this->status = 0;
-		$this->tms = dol_now();
+		$this->tms = time();
 		$this->batch = '';
 		$this->eatby = null;
 		$this->sellby = null;

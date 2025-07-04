@@ -270,7 +270,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$now = dol_now();
+$now = time();
 
 if ($type == 'bank-transfer') {
 	$title = $langs->trans('SupplierInvoice')." - ".$langs->trans('CreditTransfer');

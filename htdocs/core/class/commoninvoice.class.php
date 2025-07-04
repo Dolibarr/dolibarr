@@ -1212,7 +1212,7 @@ abstract class CommonInvoice extends CommonObject
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
 				if ($obj && $obj->nb == 0) {	// If no request found yet
-					$now = dol_now();
+					$now = time();
 
 					$totalpaid = $this->getSommePaiement();
 					$totalcreditnotes = $this->getSumCreditNotesUsed();
@@ -1398,7 +1398,7 @@ abstract class CommonInvoice extends CommonObject
 					$this->stripechargedone = 0;
 					$this->stripechargeerror = 0;
 
-					$now = dol_now();
+					$now = time();
 
 					$currency = $conf->currency;
 

@@ -152,7 +152,7 @@ if (empty($fp)) {
 }
 
 fputs($fp, '<?xml version="1.0" encoding="UTF-8" ?>'."\n");
-fputs($fp, '<checksum_list version="'.$release.'" date="'.dol_print_date(dol_now(), 'dayhourrfc').'" generator="'.$script_file.'">'."\n");
+fputs($fp, '<checksum_list version="'.$release.'" date="'.dol_print_date(time(), 'dayhourrfc').'" generator="'.$script_file.'">'."\n");
 
 foreach ($includeconstants as $countrycode => $tmp) {
 	fputs($fp, '<dolibarr_constants country="'.$countrycode.'">'."\n");

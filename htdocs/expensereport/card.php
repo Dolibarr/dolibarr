@@ -85,12 +85,12 @@ $childids = $user->getAllChildIds(1);
 
 if (getDolGlobalString('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH')) {
 	if (empty($date_start)) {
-		$date_start = dol_mktime(0, 0, 0, (int) dol_print_date(dol_now(), '%m'), 1, (int) dol_print_date(dol_now(), '%Y'));
+		$date_start = dol_mktime(0, 0, 0, (int) dol_print_date(time(), '%m'), 1, (int) dol_print_date(time(), '%Y'));
 	}
 
 	if (empty($date_end)) {
 		// date('t') => number of days in the month, so last day of the month too
-		$date_end = dol_mktime(0, 0, 0, (int) dol_print_date(dol_now(), '%m'), (int) date('t'), (int) dol_print_date(dol_now(), '%Y'));
+		$date_end = dol_mktime(0, 0, 0, (int) dol_print_date(time(), '%m'), (int) date('t'), (int) dol_print_date(time(), '%Y'));
 	}
 }
 

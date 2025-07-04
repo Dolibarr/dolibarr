@@ -726,7 +726,7 @@ if ($rowid > 0) {
 
 		$membertypestatic = new AdherentType($db);
 
-		$now = dol_now();
+		$now = time();
 
 		$sql = "SELECT d.rowid, d.ref, d.entity, d.login, d.firstname, d.lastname, d.societe as company, d.fk_soc,";
 		$sql .= " d.datefin,";
@@ -998,7 +998,7 @@ if ($rowid > 0) {
 				// Date end subscription
 				if ($datefin) {
 					print '<td class="nowrap center">';
-					if ($datefin < dol_now() && $objp->status > 0) {
+					if ($datefin < time() && $objp->status > 0) {
 						print dol_print_date($datefin, 'day')." ".img_warning($langs->trans("SubscriptionLate"));
 					} else {
 						print dol_print_date($datefin, 'day');

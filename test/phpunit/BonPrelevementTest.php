@@ -76,7 +76,7 @@ class BonPrelevementTest extends CommonClassTest
 
 		// Create withdraw record and generate SEPA file
 		$localobject = new BonPrelevement($db);
-		//$localobject->date_solde=dol_now();
+		//$localobject->date_solde=time();
 		$result = $localobject->Create(0, 0, 'simu');
 
 		print __METHOD__." result=".$result."\n";

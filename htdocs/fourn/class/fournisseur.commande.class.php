@@ -805,7 +805,7 @@ class CommandeFournisseur extends CommonOrder
 			$sql = 'UPDATE '.$this->db->prefix()."commande_fournisseur";
 			$sql .= " SET ref='".$this->db->escape($num)."',";
 			$sql .= " fk_statut = ".((int) self::STATUS_VALIDATED).",";
-			$sql .= " date_valid='".$this->db->idate(dol_now())."',";
+			$sql .= " date_valid='".$this->db->idate(time())."',";
 			$sql .= " fk_user_valid = ".((int) $user->id);
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			$sql .= " AND fk_statut = ".((int) self::STATUS_DRAFT);
@@ -1281,7 +1281,7 @@ class CommandeFournisseur extends CommonOrder
 		dol_syslog(get_class($this)."::approve");
 
 		if ($user->hasRight("fournisseur", "commande", "approuver")) {
-			$now = dol_now();
+			$now = time();
 
 			$this->db->begin();
 
@@ -1585,7 +1585,7 @@ class CommandeFournisseur extends CommonOrder
 		$this->db->begin();
 
 		$error = 0;
-		$now = dol_now();
+		$now = time();
 
 		// set tmp vars
 		$date = ($this->date_commande ? $this->date_commande : $this->date); // in case of date is set
@@ -1938,7 +1938,7 @@ class CommandeFournisseur extends CommonOrder
 		$this->user_author_id     = $user->id;
 		$this->user_validation_id = 0;
 
-		$this->date               = dol_now();
+		$this->date               = time();
 		$this->date_creation      = 0;
 		$this->date_validation    = 0;
 		$this->date_commande      = 0;
@@ -2323,9 +2323,9 @@ class CommandeFournisseur extends CommonOrder
 			$dispatchstatus = 0; // Setting dispatch status (a validation step after receiving products) will be done manually to 1 or 2 if this option is on
 		}
 
-		$now = dol_now();
+		$now = time();
 
-		$inventorycode = dol_print_date(dol_now(), 'dayhourlog');
+		$inventorycode = dol_print_date(time(), 'dayhourlog');
 
 		if (($this->status == self::STATUS_ORDERSENT || $this->status == self::STATUS_RECEIVED_PARTIALLY || $this->status == self::STATUS_RECEIVED_COMPLETELY)) {
 			$this->db->begin();
@@ -3286,7 +3286,7 @@ class CommandeFournisseur extends CommonOrder
 
 		dol_syslog(get_class($this)."::initAsSpecimen");
 
-		$now = dol_now();
+		$now = time();
 
 		// Find first product
 		$prodid = 0;
@@ -3665,7 +3665,7 @@ class CommandeFournisseur extends CommonOrder
 		global $conf;
 
 		if ($this->status == self::STATUS_ORDERSENT || $this->status == self::STATUS_RECEIVED_PARTIALLY) {
-			$now = dol_now();
+			$now = time();
 			if (!empty($this->delivery_date)) {
 				$date_to_test = $this->delivery_date;
 				return $date_to_test && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
@@ -3675,7 +3675,7 @@ class CommandeFournisseur extends CommonOrder
 				return false;
 			}
 		} else {
-			$now = dol_now();
+			$now = time();
 			$date_to_test = $this->date_commande;
 
 			return ($this->status > 0 && $this->status < 5) && $date_to_test && $date_to_test < ($now - $conf->commande->fournisseur->warning_delay);
@@ -3745,7 +3745,7 @@ class CommandeFournisseur extends CommonOrder
 			} else {
 				if (is_array($supplierorderdispatch->lines) && count($supplierorderdispatch->lines) > 0) {
 					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-					$date_liv = dol_now();
+					$date_liv = time();
 
 					// Build array with quantity deliverd by product
 					foreach ($supplierorderdispatch->lines as $line) {

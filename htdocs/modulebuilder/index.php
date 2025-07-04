@@ -125,7 +125,7 @@ if (GETPOST('dirins', 'alpha')) {
 
 $FILEFLAG = 'modulebuilder.txt';
 
-$now = dol_now();
+$now = time();
 $newmask = 0;
 if (empty($newmask) && getDolGlobalString('MAIN_UMASK')) {
 	$newmask = getDolGlobalString('MAIN_UMASK');

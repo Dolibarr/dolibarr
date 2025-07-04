@@ -170,7 +170,7 @@ if ($nextquarter < 4) {
 	$nextyear++;
 }
 $description = $fsearch;
-$builddate = dol_now();
+$builddate = time();
 
 if (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice') {
 	$description .= $langs->trans("RulesVATDueProducts");

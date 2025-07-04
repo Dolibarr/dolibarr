@@ -227,7 +227,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
  */
 
 $form = new Form($db);
-$now = dol_now();
+$now = time();
 
 $head = '';
 if (getDolGlobalString('MAIN_RECRUITMENT_CSS_URL')) {

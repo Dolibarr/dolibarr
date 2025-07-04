@@ -1465,7 +1465,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 
 	if (getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-		$restrictBefore = dol_time_plus_duree(dol_now(), -1 * getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'), 'm');
+		$restrictBefore = dol_time_plus_duree(time(), -1 * getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'), 'm');
 	}
 
 	//dol_syslog('projectLinesPerDay inc='.$inc.' preselectedday='.$preselectedday.' task parent id='.$parent.' level='.$level." count(lines)=".$numlines." count(lineswithoutlevel0)=".count($lineswithoutlevel0));
@@ -1870,7 +1870,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 
 	if (getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-		$restrictBefore = dol_time_plus_duree(dol_now(), -1 * getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'), 'm');
+		$restrictBefore = dol_time_plus_duree(time(), -1 * getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'), 'm');
 	}
 
 	for ($i = 0; $i < $numlines; $i++) {
@@ -2277,7 +2277,7 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 
 	if (getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-		$restrictBefore = dol_time_plus_duree(dol_now(), -1 * getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'), 'm');
+		$restrictBefore = dol_time_plus_duree(time(), -1 * getDolGlobalInt('PROJECT_TIMESHEET_PREVENT_AFTER_MONTHS'), 'm');
 	}
 
 	for ($i = 0; $i < $numlines; $i++) {

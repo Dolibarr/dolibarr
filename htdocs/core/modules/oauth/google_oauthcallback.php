@@ -308,7 +308,7 @@ if (!GETPOST('code')) {
 				}
 
 				// Verify that the expiry time (exp claim) of the ID token has not passed.
-				if ($userinfo['exp'] <= dol_now()) {
+				if ($userinfo['exp'] <= time()) {
 					setEventMessages($langs->trans('Bad value for returned userinfo[exp]. Token expired.'), null, 'errors');
 					$errorincheck++;
 				}

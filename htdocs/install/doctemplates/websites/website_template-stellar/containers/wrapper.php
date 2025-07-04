@@ -141,7 +141,7 @@ if ($rss) {
 	$buildfile = true;
 
 	if ($cachedelay) {
-		$nowgmt = dol_now();
+		$nowgmt = time();
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		if (dol_filemtime($outputfile) > ($nowgmt - $cachedelay)) {
 			dol_syslog("build_exportfile file ".$outputfile." is not older than now - cachedelay (".$nowgmt." - ".$cachedelay."). Build is canceled");

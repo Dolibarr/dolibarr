@@ -327,7 +327,7 @@ class ContratLigne extends CommonObjectLine
 	 */
 	public function getLibStatut($mode)
 	{
-		return $this->LibStatut($this->statut, $mode, ((!empty($this->date_end)) ? ($this->date_end < dol_now() ? 1 : 0) : -1));
+		return $this->LibStatut($this->statut, $mode, ((!empty($this->date_end)) ? ($this->date_end < time() ? 1 : 0) : -1));
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

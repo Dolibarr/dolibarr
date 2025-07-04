@@ -50,7 +50,7 @@ $localTaxType = GETPOSTINT('localTaxType');
 // Date range
 $year = GETPOSTINT("year");
 if (empty($year)) {
-	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+	$year_current = dol_print_date(time(), "%Y", 'gmt');
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
@@ -257,7 +257,7 @@ $calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToMod
 
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 
-$builddate = dol_now();
+$builddate = time();
 
 
 llxHeader('', $name);

@@ -440,7 +440,7 @@ function createActionComm($authentication, $actioncomm)
 {
 	global $db, $conf;
 
-	$now = dol_now();
+	$now = time();
 
 	dol_syslog("Function: createActionComm login=".$authentication['login']);
 
@@ -524,7 +524,7 @@ function updateActionComm($authentication, $actioncomm)
 {
 	global $db, $conf;
 
-	$now = dol_now();
+	$now = time();
 
 	dol_syslog("Function: updateActionComm login=".$authentication['login']);
 

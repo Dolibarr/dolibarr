@@ -226,7 +226,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formresource = new FormResource($db);
 
-$now = dol_now();
+$now = time();
 
 $title = $langs->trans("Workstations");
 $help_url = 'EN:Module_Workstation';

@@ -899,7 +899,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		}
 
 		if (count($files) > 0) {
-			$now = dol_now();
+			$now = time();
 			$file = $diroutputmassaction.'/'.$filename.'_'.dol_print_date($now, 'dayhourlog').'.pdf';
 
 			$input_files = '';
@@ -977,7 +977,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 			$filename .= '_'.$month;
 		}
 		if ($pagecount) {
-			$now = dol_now();
+			$now = time();
 			$file = $diroutputmassaction.'/'.$filename.'_'.dol_print_date($now, 'dayhourlog').'.pdf';
 			$pdf->Output($file, 'F');
 			dolChmod($file);
@@ -1712,9 +1712,9 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 			if ($user->id == $objecttmp->fk_validator) {
 				$objecttmp->oldcopy = dol_clone($objecttmp, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
-				$objecttmp->date_valid = dol_now();
+				$objecttmp->date_valid = time();
 				$objecttmp->fk_user_valid = $user->id;
-				$objecttmp->date_approval = dol_now();
+				$objecttmp->date_approval = time();
 				$objecttmp->fk_user_approve = $user->id;
 				$objecttmp->status = Holiday::STATUS_APPROVED;
 				$objecttmp->statut = $objecttmp->status;	// deprecated
@@ -1918,7 +1918,7 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 				$clone_task->description = $origin_task->description;
 				$clone_task->planned_workload = $origin_task->planned_workload;
 				$clone_task->fk_task_parent = $origin_task->fk_task_parent;
-				$clone_task->date_c = dol_now();
+				$clone_task->date_c = time();
 				$clone_task->date_start = $origin_task->date_start;
 				$clone_task->date_end = $origin_task->date_end;
 				$clone_task->progress = $origin_task->progress;

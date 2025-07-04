@@ -484,7 +484,7 @@ class Contact extends CommonObject
 		global $conf;
 
 		$error = 0;
-		$now = dol_now();
+		$now = time();
 
 		if (empty($this->date_creation)) {
 			$this->date_creation = $now;
@@ -1992,7 +1992,7 @@ class Contact extends CommonObject
 						$sql .= "fk_c_type_contact,";
 						$sql .= "fk_socpeople) ";
 						$sql .= " VALUES (".$conf->entity.",";
-						$sql .= "'".$this->db->idate(dol_now())."',";
+						$sql .= "'".$this->db->idate(time())."',";
 						$sql .= $socid.", ";
 						$sql .= $idrole." , ";
 						$sql .= $this->id;
@@ -2184,7 +2184,7 @@ class Contact extends CommonObject
 					$obj = $this->db->fetch_object($resql);
 					$noemail = $obj->nb;
 					if (empty($noemail)) {
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creat) VALUES ('".$this->db->escape($this->email)."', ".getEntity('mailing', 0).", '".$this->db->idate(dol_now())."')";
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creat) VALUES ('".$this->db->escape($this->email)."', ".getEntity('mailing', 0).", '".$this->db->idate(time())."')";
 						$resql = $this->db->query($sql);
 						if (!$resql) {
 							$error++;

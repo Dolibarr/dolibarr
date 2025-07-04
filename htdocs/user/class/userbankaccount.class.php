@@ -93,7 +93,7 @@ class UserBankAccount extends Account
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		$now = dol_now();
+		$now = time();
 
 		$sql = "INSERT INTO ".$this->db->prefix()."user_rib (fk_user, datec)";
 		$sql .= " VALUES (".$this->userid.", '".$this->db->idate($now)."')";

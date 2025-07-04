@@ -249,7 +249,7 @@ $nbofmonth = 2;
 $delay = (3600 * 24 * 30 * $nbofmonth);
 
 // Get stats on nb of commits
-$commandcheck = "git log --all --shortstat --no-renames --no-merges --use-mailmap --pretty=".escapeshellarg('format:%cI;%H;%aN;%aE;%ce;%s')." --since=".dol_print_date(dol_now() - $delay, '%Y-%m-%d'); // --since=  --until=...
+$commandcheck = "git log --all --shortstat --no-renames --no-merges --use-mailmap --pretty=".escapeshellarg('format:%cI;%H;%aN;%aE;%ce;%s')." --since=".dol_print_date(time() - $delay, '%Y-%m-%d'); // --since=  --until=...
 print 'Execute git log to get list of commits: '.$commandcheck."\n";
 $output_arrglpu = array();
 $resexecglpu = 0;
@@ -261,7 +261,7 @@ $nbofmonth = 3;
 $delay = (3600 * 24 * 30 * $nbofmonth);
 $arrayofalerts = array();
 
-$commandcheck = "git log --all --shortstat --no-renames --use-mailmap --pretty=".escapeshellarg('format:%cI;%H;%aN;%aE;%ce;%s')." --since=".escapeshellarg(dol_print_date(dol_now() - $delay, '%Y-%m-%d'))." | grep -i -E ".escapeshellarg("(#yogosha|CVE|Sec:|Sec |Sec$)");
+$commandcheck = "git log --all --shortstat --no-renames --use-mailmap --pretty=".escapeshellarg('format:%cI;%H;%aN;%aE;%ce;%s')." --since=".escapeshellarg(dol_print_date(time() - $delay, '%Y-%m-%d'))." | grep -i -E ".escapeshellarg("(#yogosha|CVE|Sec:|Sec |Sec$)");
 print 'Execute git log to get commits related to security: '.$commandcheck."\n";
 $output_arrglpu = array();
 $resexecglpu = 0;
@@ -346,8 +346,8 @@ foreach ($output_arrglpu as $val) {
 
 
 /*
-//$urlgit = 'https://api.github.com/search/issues?q=is:pr+repo:Dolibarr/dolibarr+created:>'.dol_print_date(dol_now() - $delay, "%Y-%m");
-$urlgit = 'https://api.github.com/search/commits?q=repo:Dolibarr/dolibarr+yogosha+created:>'.dol_print_date(dol_now() - $delay, "%Y-%m");
+//$urlgit = 'https://api.github.com/search/issues?q=is:pr+repo:Dolibarr/dolibarr+created:>'.dol_print_date(time() - $delay, "%Y-%m");
+$urlgit = 'https://api.github.com/search/commits?q=repo:Dolibarr/dolibarr+yogosha+created:>'.dol_print_date(time() - $delay, "%Y-%m");
 
 // Count lines of code of application
 $newurl = $urlgit.'+CVE';

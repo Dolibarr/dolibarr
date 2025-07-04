@@ -613,7 +613,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
-$now = dol_now();
+$now = time();
 
 //$help_url = "EN:Module_MyObject|FR:Module_MyObject_FR|ES:Módulo_MyObject";
 $help_url = '';

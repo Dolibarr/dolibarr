@@ -76,7 +76,7 @@ if ($action == "split" && $user->hasRight('takepos', 'run')) {
 		} else {
 			$constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
 			$invoice->socid = getDolGlobalInt($constforcompanyid);
-			$invoice->date = dol_now();
+			$invoice->date = time();
 			$invoice->module_source = 'takepos';
 			$invoice->pos_source = $_SESSION["takeposterminal"];
 			$invoice->entity = !empty($_SESSION["takeposinvoiceentity"]) ? $_SESSION["takeposinvoiceentity"] : $conf->entity;
@@ -106,7 +106,7 @@ if ($action == "split" && $user->hasRight('takepos', 'run')) {
 		} else {
 			$constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
 			$invoice->socid = getDolGlobalInt($constforcompanyid);
-			$invoice->date = dol_now();
+			$invoice->date = time();
 			$invoice->module_source = 'takepos';
 			$invoice->pos_source = $_SESSION["takeposterminal"];
 			$invoice->entity = !empty($_SESSION["takeposinvoiceentity"]) ? $_SESSION["takeposinvoiceentity"] : $conf->entity;

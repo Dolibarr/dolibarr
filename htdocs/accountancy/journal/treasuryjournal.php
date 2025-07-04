@@ -67,7 +67,7 @@ if ($only_rappro == 0) {
 	$only_rappro = getDolGlobalInt('ACCOUNTING_BANK_CONCILIATED');
 }
 
-$now = dol_now();
+$now = time();
 
 $action = GETPOST('action', 'aZ09');
 
@@ -1365,7 +1365,7 @@ if (empty($action) || $action == 'view') {
 
 	$nom = $langs->trans("FinanceJournal").' | '.$accountingjournalstatic->getNomUrl(0, 1, 1, '', 1);
 	$nomlink = '';
-	$builddate = dol_now();
+	$builddate = time();
 	$description = $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 
 	$listofchoices = array(

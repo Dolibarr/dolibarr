@@ -290,7 +290,7 @@ class BonPrelevement extends CommonObject
 
 		$this->filename = '';
 
-		$this->date_echeance = dol_now();
+		$this->date_echeance = time();
 		$this->raison_sociale = "";
 		$this->reference_remise = "";
 
@@ -1126,7 +1126,7 @@ class BonPrelevement extends CommonObject
 			$this->db->free($resql);
 		}
 
-		$datetimeprev = dol_now('gmt');
+		$datetimeprev = time();
 		// Choice of the date of the execution direct debit
 		if (!empty($executiondate)) {
 			$datetimeprev = $executiondate;
@@ -1334,7 +1334,7 @@ class BonPrelevement extends CommonObject
 			 */
 			$this->db->begin();
 
-			$now = dol_now();
+			$now = time();
 			$ref = '';
 
 			/*
@@ -1766,7 +1766,7 @@ class BonPrelevement extends CommonObject
 		}
 
 		if ($this->deleteNotification($user, $action) == 0) {
-			$now = dol_now();
+			$now = time();
 
 			$sql = "INSERT INTO " . MAIN_DB_PREFIX . "notify_def (datec,fk_user, fk_soc, fk_contact, fk_action)";
 			$sql .= " VALUES ('" . $this->db->idate($now) . "', " . ((int) $userid) . ", 'NULL', 'NULL', '" . $this->db->escape($action) . "')";
@@ -1834,7 +1834,7 @@ class BonPrelevement extends CommonObject
 				// SEPA Initialisation
 				$CrLf = "\n";
 
-				$now = dol_now();
+				$now = time();
 
 				$dateTime_ECMA = dol_print_date($now, '%Y-%m-%dT%H:%M:%S');
 
@@ -1962,7 +1962,7 @@ class BonPrelevement extends CommonObject
 				// SEPA Initialisation
 				$CrLf = "\n";
 
-				$now = dol_now();
+				$now = time();
 
 				$dateTime_ECMA = dol_print_date($now, '%Y-%m-%dT%H:%M:%S');
 
@@ -2867,7 +2867,7 @@ class BonPrelevement extends CommonObject
 		 $resql = $this->db->query($sql);
 		 if ($resql) {
 		 $langs->load("banks");
-		 $now = dol_now();
+		 $now = time();
 
 		 $response = new WorkboardResponse();
 		 if ($mode == 'direct_debit') {

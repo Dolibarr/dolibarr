@@ -315,7 +315,7 @@ class RecruitmentCandidature extends CommonObject
 		}
 
 		$object->status = self::STATUS_DRAFT;
-		$object->date_creation = dol_now();
+		$object->date_creation = time();
 		$object->date_modification = null;
 
 		// Clear extrafields that are unique
@@ -544,7 +544,7 @@ class RecruitmentCandidature extends CommonObject
 		 return -1;
 		 }*/
 
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 
@@ -1089,7 +1089,7 @@ class RecruitmentCandidature extends CommonObject
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 

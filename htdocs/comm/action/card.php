@@ -102,13 +102,13 @@ if ($fulldayevent) {
 $reg = array();
 if (GETPOST('datep')) {
 	if (GETPOST('datep') == 'now') {
-		$datep = dol_now();
+		$datep = time();
 	} elseif (preg_match('/^([0-9][0-9][0-9][0-9])([0-9][0-9])([0-9][0-9])$/', GETPOST("datep"), $reg)) {		// Try to not use this. Use instead '&datep=now'
 		$datep = dol_mktime(0, 0, 0, (int) $reg[2], (int) $reg[3], (int) $reg[1], 'tzuserrel');
 	}
 }
 
-$currentyear = (int) dol_print_date(dol_now(), '%Y');
+$currentyear = (int) dol_print_date(time(), '%Y');
 
 if (GETPOSTISSET("limityear") && GETPOSTINT("limityear") < 2100) {
 	$repeateventlimitdate = dol_mktime(23, 59, 59, GETPOSTISSET("limitmonth") ? GETPOSTINT("limitmonth") : 1, GETPOSTISSET("limitday") ? GETPOSTINT("limitday") : 1, GETPOSTINT("limityear"), $tzforfullday ? $tzforfullday : 'tzuserrel');
@@ -353,7 +353,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 		$datef = dol_mktime(GETPOSTINT("p2hour"), GETPOSTINT("p2min"), GETPOSTINT("apsec"), GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), 'tzuserrel');
 	}
 	//set end date to now if percentage is set to 100 and end date not set
-	$datef = (!$datef && $percentage == 100) ? dol_now() : $datef;
+	$datef = (!$datef && $percentage == 100) ? time() : $datef;
 
 	// Check parameters
 	if (!$datef && $percentage == 100) {
@@ -546,7 +546,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 		$userepeatevent = (getDolGlobalInt('MAIN_DISABLE_RECURRING_EVENTS') ? 0 : 1);
 		if ($userepeatevent && !empty($selectedrecurrulefreq) && $selectedrecurrulefreq != 'no') {
 			$eventisrecurring = 1;
-			$object->recurid = dol_print_date(dol_now('gmt'), 'dayhourlog', 'gmt');
+			$object->recurid = dol_print_date(time(), 'dayhourlog', 'gmt');
 			$object->recurdateend = dol_mktime(0, 0, 0, GETPOSTINT('limitmonth'), GETPOSTINT('limitday'), GETPOSTINT('limityear'));
 		} else {
 			unset($object->recurid);
@@ -897,7 +897,7 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 			}
 		}
 		//set end date to now if percentage is set to 100 and end date not set
-		$datef = (!$datef && $percentage == 100) ? dol_now() : $datef;
+		$datef = (!$datef && $percentage == 100) ? time() : $datef;
 
 		if ($object->elementtype == 'ticket') {	// code should be TICKET_MSG, TICKET_MSG_PRIVATE, TICKET_MSG_SENTBYMAIL, TICKET_MSG_PRIVATE_SENTBYMAIL
 			if ($private) {
@@ -1524,7 +1524,7 @@ if ($action == 'create') {
 		*/
 
 		// limit date
-		$repeateventlimitdate = empty($repeateventlimitdate) ?  (dol_now() + ((24 * 3600 * 365) + 1)) : $repeateventlimitdate;
+		$repeateventlimitdate = empty($repeateventlimitdate) ?  (time() + ((24 * 3600 * 365) + 1)) : $repeateventlimitdate;
 
 		print '<div class="hidden marginrightonly inline-block repeateventlimitdate">';
 		print $langs->trans("Until")." ";
@@ -1980,7 +1980,7 @@ if ($id > 0 && $action != 'create') {
 
 	$head = actions_prepare_head($object);
 
-	$now = dol_now();
+	$now = time();
 	$delay_warning = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO') * 24 * 60 * 60;
 
 
@@ -2407,7 +2407,7 @@ if ($id > 0 && $action != 'create') {
 			}
 			$disabled = '';
 			/*
-			if ($object->datep < dol_now()) {
+			if ($object->datep < time()) {
 				//$disabled = 'disabled title="'.dol_escape_htmltag($langs->trans("EventExpired")).'"';
 			}
 			*/

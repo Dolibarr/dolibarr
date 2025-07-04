@@ -102,7 +102,7 @@ if ($action == 'redirect') {	// Test on permission not required here. Test will 
 if (empty($dolibarr_nocache) && GETPOSTINT('cache')) {
 	header('Cache-Control: max-age='.GETPOSTINT('cache').', public');
 	// For a .php, we must set an Expires to avoid to have it forced to an expired value by the web server
-	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + GETPOSTINT('cache')).' GMT');
+	header('Expires: '.gmdate('D, d M Y H:i:s', time() + GETPOSTINT('cache')).' GMT');
 	// HTTP/1.0
 	header('Pragma: token=public');
 } else {

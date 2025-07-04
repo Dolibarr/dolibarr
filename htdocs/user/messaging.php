@@ -191,7 +191,7 @@ if ((!empty($objUser->id) || !empty($objcon->id)) && $permok) {
 		$out .= '&amp;originid='.$objUser->id.($objUser->id > 0 ? '&amp;userid='.$objUser->id : '').'&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].($objUser->id > 0 ? '?userid='.$objUser->id : ''));
 	}
 	$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '');
-	$out .= '&amp;datep='.dol_print_date(dol_now(), 'dayhourlog', 'tzuserrel');
+	$out .= '&amp;datep='.dol_print_date(time(), 'dayhourlog', 'tzuserrel');
 }
 
 $morehtmlright = '';

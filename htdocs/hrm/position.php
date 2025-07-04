@@ -253,7 +253,7 @@ $help_url = '';
 
 llxHeader('', $title, $help_url);
 
-$now = dol_now();
+$now = time();
 
 // Part to create
 if ($action == 'create') {

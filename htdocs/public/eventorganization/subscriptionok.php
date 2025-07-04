@@ -162,7 +162,7 @@ function llxHeaderSubscriptionOk($title, $head = "", $disablejs = 0, $disablehea
  * View
  */
 
-$now = dol_now();
+$now = time();
 
 dol_syslog("Callback url when a payment was done. query_string=".(dol_escape_htmltag($_SERVER["QUERY_STRING"]) ? dol_escape_htmltag($_SERVER["QUERY_STRING"]) : '')." script_uri=".(dol_escape_htmltag($_SERVER["SCRIPT_URI"]) ? dol_escape_htmltag($_SERVER["SCRIPT_URI"]) : ''), LOG_DEBUG, 0, '_payment');
 

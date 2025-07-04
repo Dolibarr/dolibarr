@@ -109,7 +109,7 @@ class box_actions extends ModeleBoxes
 			dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if ($result) {
-				$now = dol_now();
+				$now = time();
 				$delay_warning = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO') * 24 * 60 * 60;
 
 				$num = $this->db->num_rows($result);

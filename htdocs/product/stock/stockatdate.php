@@ -69,7 +69,7 @@ if (GETPOSTISSET('dateday') && GETPOSTISSET('datemonth') && GETPOSTISSET('dateye
 $search_ref = GETPOST('search_ref', 'alphanohtml');
 $search_nom = GETPOST('search_nom', 'alphanohtml');
 
-$now = dol_now();
+$now = time();
 
 $productid = GETPOSTINT('productid');
 if (GETPOSTISARRAY('search_fk_warehouse')) {

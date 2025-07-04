@@ -138,7 +138,7 @@ if ($action == "addnewlineproduct" && $user->hasRight('stock', 'creer')) {
 		if (!empty($batch)) {
 			$inventoryline->batch = $batch;
 		}
-		$inventoryline->datec = dol_now();
+		$inventoryline->datec = time();
 
 		$result = $inventoryline->create($user);
 		if ($result > 0) {

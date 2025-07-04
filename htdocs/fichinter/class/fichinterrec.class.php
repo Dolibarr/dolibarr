@@ -161,7 +161,7 @@ class FichinterRec extends Fichinter
 		global $conf;
 
 		$error = 0;
-		$now = dol_now();
+		$now = time();
 
 		// Clean parameters
 		$this->title = trim($this->title);
@@ -688,7 +688,7 @@ class FichinterRec extends Fichinter
 	 */
 	public function initAsSpecimen()
 	{
-		//$now = dol_now();
+		//$now = time();
 		//$arraynow = dol_getdate($now);
 		//$nownotime = dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
 
@@ -886,7 +886,7 @@ class FichinterRec extends Fichinter
 		dol_syslog(get_class($this)."::setAutoValidate", LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			$this->nb_gen_done++;
-			$this->date_last_gen = dol_now();
+			$this->date_last_gen = time();
 			//$this->date_when = ...
 			return 1;
 		} else {

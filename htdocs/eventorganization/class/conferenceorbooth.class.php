@@ -447,7 +447,7 @@ class ConferenceOrBooth extends ActionComm
 			return 0;
 		}
 
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 
@@ -863,7 +863,7 @@ class ConferenceOrBooth extends ActionComm
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 

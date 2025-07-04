@@ -527,7 +527,7 @@ class doc_generic_task_odt extends ModelePDFTask
 				$newfiletmp = preg_replace('/template_/i', '', $newfiletmp);
 				$newfiletmp = preg_replace('/modele_/i', '', $newfiletmp);
 				$newfiletmp = $objectref . '_' . $newfiletmp;
-				//$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
+				//$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(time(),'%Y%m%d%H%M%S').'.odt';
 				$file = $dir . '/' . $newfiletmp . '.odt';
 				//print "newdir=".$dir;
 				//print "newfile=".$newfile;

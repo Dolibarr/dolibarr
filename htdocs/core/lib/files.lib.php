@@ -97,7 +97,7 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 	$loadsize = ($mode == 1 || $mode == 3 || $sortcriteria == 'size');
 	$loadperm = ($mode == 1 || $mode == 4 || $sortcriteria == 'perm');
 
-	$now = dol_now();
+	$now = time();
 	$reshook = 0;
 	$file_list = array();
 
@@ -3715,7 +3715,7 @@ function dol_filecache($directory, $filename, $object)
  */
 function dol_cache_refresh($directory, $filename, $cachetime)
 {
-	$now = dol_now();
+	$now = time();
 	$cachefile = $directory.$filename;
 	$refresh = !file_exists($cachefile) || ($now - $cachetime) > dol_filemtime($cachefile);
 	return $refresh;
@@ -3961,7 +3961,7 @@ function archiveOrBackupFile($srcfile, $max_versions = 5, $archivedir = '', $suf
 		}
 	}
 
-	$timestamp = dol_now('gmt');
+	$timestamp = time();
 	$new_backup = $srcfile . ".v" . $timestamp;
 
 	// Move or copy the original file to the new backup with the timestamp

@@ -300,7 +300,7 @@ $nav = '';
 $nav .= $form->selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0);
 $nav .= ' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
 
-$now = dol_now();
+$now = time();
 
 $help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&oacute;dulo_Agenda|DE:Modul_Terminplanung';
 $title = $langs->trans("Agenda");
@@ -947,7 +947,7 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print "</tr>\n";
 
-$now = dol_now();
+$now = time();
 $delay_warning = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO') * 24 * 60 * 60;
 $today_start_time = dol_mktime(0, 0, 0, (int) date('m', $now), (int) date('d', $now), (int) date('Y', $now));
 

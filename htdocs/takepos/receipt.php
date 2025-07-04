@@ -191,7 +191,7 @@ if (getDolGlobalString('TAKEPOS_SHOW_CUSTOMER')) {
 	}
 }
 if (getDolGlobalString('TAKEPOS_SHOW_DATE_OF_PRINING')) {
-	print "<br>".$langs->trans("DateOfPrinting").': '.dol_print_date(dol_now(), 'dayhour', 'tzuserrel').'<br>';
+	print "<br>".$langs->trans("DateOfPrinting").': '.dol_print_date(time(), 'dayhour', 'tzuserrel').'<br>';
 }
 ?>
 </p>

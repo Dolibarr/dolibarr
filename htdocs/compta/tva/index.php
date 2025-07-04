@@ -46,7 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
 
-$now = dol_now();
+$now = time();
 
 $refresh = GETPOSTISSET('submit') ? true : false;
 $year_current = GETPOSTISSET('year') ? GETPOSTINT('year') : dol_print_date($now, '%Y', 'tzserver');
@@ -241,7 +241,7 @@ if (isModEnabled('accounting')) {
 
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 
-$builddate = dol_now();
+$builddate = time();
 
 
 llxHeader('', $name);

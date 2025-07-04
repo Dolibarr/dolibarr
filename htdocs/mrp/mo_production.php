@@ -297,9 +297,9 @@ if (empty($reshook)) {
 							$stockmove->context['mrp_role'] = 'toconsume';
 
 							if ($qtytoprocess >= 0) {
-								$idstockmove = $stockmove->livraison($user, $line->fk_product, GETPOSTINT('idwarehouse-'.$line->id.'-'.$i), $qtytoprocess, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
+								$idstockmove = $stockmove->livraison($user, $line->fk_product, GETPOSTINT('idwarehouse-'.$line->id.'-'.$i), $qtytoprocess, 0, $labelmovement, time(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
 							} else {
-								$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOSTINT('idwarehouse-'.$line->id.'-'.$i), $qtytoprocess * -1, 0, $labelmovement, dol_now(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
+								$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOSTINT('idwarehouse-'.$line->id.'-'.$i), $qtytoprocess * -1, 0, $labelmovement, time(), '', '', GETPOST('batch-'.$line->id.'-'.$i), $id_product_batch, $codemovement);
 							}
 							if ($idstockmove < 0) {
 								$error++;
@@ -372,7 +372,7 @@ if (empty($reshook)) {
 							$stockmove->origin_id = $object->id;
 							$stockmove->context['mrp_role'] = 'toproduce';
 
-							$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOSTINT('idwarehousetoproduce-'.$line->id.'-'.$i), $qtytoprocess, $pricetoprocess, $labelmovement, '', '', GETPOST('batchtoproduce-'.$line->id.'-'.$i), dol_now(), $id_product_batch, $codemovement);
+							$idstockmove = $stockmove->reception($user, $line->fk_product, GETPOSTINT('idwarehousetoproduce-'.$line->id.'-'.$i), $qtytoprocess, $pricetoprocess, $labelmovement, '', '', GETPOST('batchtoproduce-'.$line->id.'-'.$i), time(), $id_product_batch, $codemovement);
 							if ($idstockmove < 0) {
 								$error++;
 								setEventMessages($stockmove->error, $stockmove->errors, 'errors');
@@ -810,7 +810,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
 			$defaultstockmovementlabel = GETPOST('inventorylabel', 'alphanohtml') ? GETPOST('inventorylabel', 'alphanohtml') : $langs->trans("ProductionForRef", $object->ref);
-			$defaultstockmovementcode = GETPOST('inventorycode', 'alphanohtml') ? GETPOST('inventorycode', 'alphanohtml') : dol_print_date(dol_now(), 'dayhourlog');
+			$defaultstockmovementcode = GETPOST('inventorycode', 'alphanohtml') ? GETPOST('inventorycode', 'alphanohtml') : dol_print_date(time(), 'dayhourlog');
 
 			print '<div class="center'.(in_array($action, array('consumeorproduce', 'consumeandproduceall')) ? ' formconsumeproduce' : '').'">';
 			print '<div class="opacitymedium hideonsmartphone paddingbottom">'.$langs->trans("ConfirmProductionDesc", $langs->transnoentitiesnoconv("Confirm")).'<br></div>';

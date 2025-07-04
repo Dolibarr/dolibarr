@@ -178,7 +178,7 @@ class PaymentVAT extends CommonObject
 	{
 		$error = 0;
 
-		$now = dol_now();
+		$now = time();
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 
@@ -550,9 +550,9 @@ class PaymentVAT extends CommonObject
 	{
 		$this->id = 0;
 		$this->fk_tva = 0;
-		$this->datec = dol_now();
-		$this->tms = dol_now();
-		$this->datep = dol_now();
+		$this->datec = time();
+		$this->tms = time();
+		$this->datep = time();
 		$this->amount = 100;
 		$this->fk_typepaiement = 0;
 		$this->num_payment = '123456';

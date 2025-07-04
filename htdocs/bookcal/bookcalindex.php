@@ -53,7 +53,7 @@ if (!empty($user->socid) && $user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$now = dol_now();
+$now = time();
 $NBMAX = getDolGlobalString('MAIN_SIZE_SHORTLIST_LIMIT');
 $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 

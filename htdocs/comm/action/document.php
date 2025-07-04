@@ -122,7 +122,7 @@ $help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda|DE:Mod
 
 llxHeader('', $langs->trans("Agenda"), $help_url);
 
-$now = dol_now();
+$now = time();
 $delay_warning = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO') * 24 * 60 * 60;
 
 if ($object->id > 0) {

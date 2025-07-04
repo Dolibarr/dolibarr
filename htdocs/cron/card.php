@@ -108,7 +108,7 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $permissiontoexecute) {
 	if (getDolGlobalString('CRON_KEY') && $conf->global->CRON_KEY != $securitykey) {
 		setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
 	} else {
-		$now = dol_now(); // Date we start
+		$now = time(); // Date we start
 
 		$result = $object->run_jobs($user->login);
 
@@ -569,7 +569,7 @@ if (($action == "create") || ($action == "edit")) {
 	print "</form>\n";
 } else {
 	// view card
-	$now = dol_now();
+	$now = time();
 
 	print dol_get_fiche_head($head, 'card', $langs->trans("CronTask"), -1, 'cron');
 

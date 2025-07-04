@@ -154,7 +154,7 @@ class mod_project_simple extends ModeleNumRefProjects
 			return -1;
 		}
 
-		$date = (empty($project->date_c) ? dol_now() : $project->date_c);
+		$date = (empty($project->date_c) ? time() : $project->date_c);
 
 		//$yymm = strftime("%y%m",time());
 		//$yymm = strftime("%y%m", $date);

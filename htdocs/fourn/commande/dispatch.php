@@ -523,7 +523,7 @@ if ($action == 'updateline' && $permissiontoreceive && empty($cancel)) {
  * View
  */
 
-$now = dol_now();
+$now = time();
 
 $form = new Form($db);
 $formproduct = new FormProduct($db);

@@ -445,7 +445,7 @@ function createThirdParty($authentication, $thirdparty)
 {
 	global $db, $conf;
 
-	$now = dol_now();
+	$now = time();
 
 	dol_syslog("Function: createThirdParty login=".$authentication['login']);
 
@@ -578,7 +578,7 @@ function updateThirdParty($authentication, $thirdparty)
 {
 	global $db, $conf;
 
-	$now = dol_now();
+	$now = time();
 
 	dol_syslog("Function: updateThirdParty login=".$authentication['login']);
 

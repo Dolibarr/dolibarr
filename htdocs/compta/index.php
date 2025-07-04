@@ -99,7 +99,7 @@ $maxofloop = (!getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global
  * View
  */
 
-$now = dol_now();
+$now = time();
 
 $form = new Form($db);
 $formfile = new FormFile($db);

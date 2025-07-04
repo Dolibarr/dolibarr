@@ -79,7 +79,7 @@ class box_birthdays extends ModeleBoxes
 		if ($user->hasRight('user', 'user', 'lire')) {
 			$data = array();
 
-			$tmparray = dol_getdate(dol_now(), true);
+			$tmparray = dol_getdate(time(), true);
 
 			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.birth as datea, date_format(u.birth, '%d') as daya, 'birth' as typea, u.email, u.statut as status";
 			$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
@@ -122,7 +122,7 @@ class box_birthdays extends ModeleBoxes
 					$userstatic->status = $data[$j]->status;
 
 					$dateb = $this->db->jdate($data[$j]->datea);
-					$age = idate('Y', dol_now()) - idate('Y', $dateb);
+					$age = idate('Y', time()) - idate('Y', $dateb);
 
 					$picb = '<i class="fas fa-birthday-cake inline-block"></i>';
 					$pice = '<i class="fas fa-briefcase inline-block"></i>';

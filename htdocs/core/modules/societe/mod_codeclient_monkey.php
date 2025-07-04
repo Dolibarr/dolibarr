@@ -137,7 +137,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 			return -1;
 		}
 
-		$date	= dol_now();
+		$date	= time();
 		$yymm	= dol_print_date($date, "%y%m", 'tzuserrel');
 
 		if ($max >= (pow(10, 5) - 1)) {

@@ -219,7 +219,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$now = dol_now();
+$now = time();
 
 //$help_url="EN:Module_RecruitmentCandidature|FR:Module_RecruitmentCandidature_FR|ES:Módulo_RecruitmentCandidature";
 $help_url = '';

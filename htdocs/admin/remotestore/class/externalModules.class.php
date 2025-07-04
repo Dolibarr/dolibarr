@@ -320,7 +320,7 @@ class ExternalModules
 		global $langs;
 
 		$html       = "";
-		$last_month = dol_now() - (30 * 24 * 60 * 60);
+		$last_month = time() - (30 * 24 * 60 * 60);
 		$dolibarrversiontouse = DOL_VERSION;	// full string with version
 
 		$this->products = array();
@@ -804,7 +804,7 @@ class ExternalModules
 			dol_mkdir($cache_folder, DOL_DATA_ROOT);
 		}
 
-		if (!file_exists($cache_file) || filemtime($cache_file) < (dol_now() - $cache_time)) {
+		if (!file_exists($cache_file) || filemtime($cache_file) < (time() - $cache_time)) {
 			// We get remote url
 			$addheaders = array();
 			$result = getURLContent($file_source_url, 'GET', '', 1, $addheaders);	// TODO Force timeout to 5 s on both connect and response.

@@ -144,7 +144,7 @@ class AccountancySystem extends CommonObject
 	 */
 	public function create($user)
 	{
-		$now = dol_now();
+		$now = time();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."accounting_system";
 		$sql .= " (date_creation, fk_user_author, label, pcg_version, active)";

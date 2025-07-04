@@ -379,7 +379,7 @@ if ($action == "change" && $user->hasRight('takepos', 'run')) {	// Change custom
 		$invoice = new Facture($db);
 		$constforthirdpartyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
 		$invoice->socid = getDolGlobalInt($constforthirdpartyid);
-		$invoice->date = dol_now();
+		$invoice->date = time();
 		$invoice->module_source = 'takepos';
 		$invoice->pos_source = $_SESSION["takeposterminal"];
 		$placeid = $invoice->create($user);
@@ -544,7 +544,7 @@ $prospectstatic = new Client($db);
 $prospectstatic->client = 2;
 $prospectstatic->loadCacheOfProspStatus();
 
-$now = dol_now();
+$now = time();
 
 $title = $langs->trans("ThirdParties");
 if ($type == 'c' && (empty($search_type) || ($search_type == '1,3'))) {

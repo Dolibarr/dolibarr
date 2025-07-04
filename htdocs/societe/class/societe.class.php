@@ -1018,7 +1018,7 @@ class Societe extends CommonObject
 
 		dol_syslog(get_class($this)."::create ".$this->name);
 
-		$now = dol_now();
+		$now = time();
 
 		if (empty($this->date_creation)) {
 			$this->date_creation = $now;
@@ -1452,7 +1452,7 @@ class Societe extends CommonObject
 
 		dol_syslog(get_class($this)."::Update id=".$id." call_trigger=".$call_trigger." allowmodcodeclient=".$allowmodcodeclient." allowmodcodefournisseur=".$allowmodcodefournisseur);
 
-		$now = dol_now();
+		$now = time();
 
 		// Clean parameters
 		$this->id 			= $id;
@@ -2591,7 +2591,7 @@ class Societe extends CommonObject
 		if ($this->id) {
 			$this->db->begin();
 
-			$now = dol_now();
+			$now = time();
 
 			// Position current discount
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
@@ -2652,7 +2652,7 @@ class Societe extends CommonObject
 		if ($this->id) {
 			$this->db->begin();
 
-			$now = dol_now();
+			$now = time();
 
 			// Position current discount
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
@@ -2876,7 +2876,7 @@ class Societe extends CommonObject
 	public function setPriceLevel($price_level, User $user)
 	{
 		if ($this->id) {
-			$now = dol_now();
+			$now = time();
 
 			$sql  = "UPDATE ".MAIN_DB_PREFIX."societe";
 			$sql .= " SET price_level = ".((int) $price_level);
@@ -4515,7 +4515,7 @@ class Societe extends CommonObject
 					$noemail = $obj->nb;
 					if (empty($noemail)) {
 						// TODO Add $unsubscribegroup
-						$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creat) VALUES ('".$this->db->escape($this->email)."', ".getEntity('mailing', 0).", '".$this->db->idate(dol_now())."')";
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creat) VALUES ('".$this->db->escape($this->email)."', ".getEntity('mailing', 0).", '".$this->db->idate(time())."')";
 						$resql = $this->db->query($sql);
 						if (!$resql) {
 							$error++;
@@ -4833,7 +4833,7 @@ class Societe extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		$now = dol_now();
+		$now = time();
 
 		// Initialize parameters
 		$this->id = 0;
@@ -5184,7 +5184,7 @@ class Societe extends CommonObject
 		$sql = "SELECT rowid, ref, total_ht, total_ttc, paye, type, fk_statut as status, close_code FROM ".MAIN_DB_PREFIX.$table." as f";
 		$sql .= " WHERE fk_soc = ".((int) $this->id);
 		if (!empty($late)) {
-			$sql .= " AND date_lim_reglement < '".$this->db->idate(dol_now())."'";
+			$sql .= " AND date_lim_reglement < '".$this->db->idate(time())."'";
 		}
 		if ($mode == 'supplier') {
 			$sql .= " AND entity IN (".getEntity('facture_fourn').")";

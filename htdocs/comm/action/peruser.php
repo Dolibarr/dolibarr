@@ -241,7 +241,7 @@ $companystatic = new Societe($db);
 $help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&oacute;dulo_Agenda|DE:Modul_Terminplanung';
 llxHeader('', $langs->trans("Agenda"), $help_url);
 
-$now = dol_now();
+$now = time();
 $nowarray = dol_getdate($now);
 $nowyear = $nowarray['year'];
 $nowmonth = $nowarray['mon'];

@@ -251,7 +251,7 @@ if (isModEnabled('contract')) {
 	$contratstatic = new Contrat($db);
 }
 
-$now = dol_now();
+$now = time();
 
 $title = $langs->trans("Interventions");
 $help_url = '';

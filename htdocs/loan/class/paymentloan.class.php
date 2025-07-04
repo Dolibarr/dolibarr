@@ -162,7 +162,7 @@ class PaymentLoan extends CommonObject
 	{
 		$error = 0;
 
-		$now = dol_now();
+		$now = time();
 
 		// Validate parameters
 		if (!$this->datep) {

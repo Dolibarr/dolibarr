@@ -558,7 +558,7 @@ class Categorie extends CommonObject
 		}
 
 		$this->db->begin();
-		$now = dol_now();
+		$now = time();
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (";
 		$sql .= "fk_parent,";
 		$sql .= " label,";

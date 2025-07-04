@@ -136,7 +136,7 @@ if ($id > 0 || !empty($ref)) {
 
 		print dol_get_fiche_end();
 
-		$now = dol_now();
+		$now = time();
 
 		//Calcul total qty and amount for global if full scan list
 		$total_qty_toconsume = 0;

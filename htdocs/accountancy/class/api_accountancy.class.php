@@ -139,7 +139,7 @@ class Accountancy extends DolibarrApi
 		$filter = array();
 		$doc_date_start = null;
 		$doc_date_end = null;
-		$now = dol_now();
+		$now = time();
 		$now_arr = dol_getdate($now);
 		$now_month = $now_arr['mon'];
 		$now_year = $now_arr['year'];
@@ -242,7 +242,7 @@ class Accountancy extends DolibarrApi
 			if (empty($notnotifiedasexport)) {
 				if (is_array($bookkeeping->lines)) {
 					foreach ($bookkeeping->lines as $movement) {
-						$now = dol_now();
+						$now = time();
 
 						$sql = " UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping";
 						$sql .= " SET date_export = '" . $this->db->idate($now) . "'";

@@ -1000,7 +1000,7 @@ function addObjectsToApiFile($srcfile, $file, $objects, $modulename)
 		return -1;
 	}
 
-	$now = dol_now();
+	$now = time();
 	$content = file($file);	// $content is an array
 
 	$includeClass = "dol_include_once\(\'\/\w+\/class\/\w+\.class\.php\'\);";

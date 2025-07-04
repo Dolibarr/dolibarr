@@ -65,7 +65,7 @@ $hookmanager->initHooks(array('accountancyclosure'));
 
 $object = new BookKeeping($db);
 
-$now = dol_now();
+$now = time();
 $fiscal_periods = $object->getFiscalPeriods();
 if (!is_array($fiscal_periods)) {
 	setEventMessages($object->error, $object->errors, 'errors');

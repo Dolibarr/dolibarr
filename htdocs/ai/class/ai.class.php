@@ -215,7 +215,7 @@ class Ai
 			// Add a system message
 			$addDateTimeContext = false;
 			if ($addDateTimeContext) {		// @phpstan-ignore-line
-				$prePrompt = ($prePrompt ? $prePrompt.(preg_match('/[\.\!\?]$/', $prePrompt) ? '' : '.').' ' : '').'Today we are '.dol_print_date(dol_now(), 'dayhourtext');
+				$prePrompt = ($prePrompt ? $prePrompt.(preg_match('/[\.\!\?]$/', $prePrompt) ? '' : '.').' ' : '').'Today we are '.dol_print_date(time(), 'dayhourtext');
 			}
 			if ($prePrompt) {
 				$arrayforpayload['messages'][] = array('role' => 'system', 'content' => $prePrompt);

@@ -70,7 +70,7 @@ $com = new Commande($db);
 
 $com->ref            = 'ABCDE';
 $com->socid          = 4;	// Put id of third party (rowid in llx_societe table)
-$com->date           = dol_now();
+$com->date           = time();
 $com->note_public    = 'A public comment';
 $com->note_private   = 'A private comment';
 $com->source         = 1;

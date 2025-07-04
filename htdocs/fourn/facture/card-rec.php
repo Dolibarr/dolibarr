@@ -143,7 +143,7 @@ $usercancreatemargin = $user->hasRight("margins", "creer");
 $usercanreadallmargin = $user->hasRight("margins", "liretous");
 $usercancreatewithdrarequest = $user->hasRight("prelevement", "bons", "creer");
 
-$now = dol_now();
+$now = time();
 
 $error = 0;
 $predef = '';  // Legacy?  Used in several cards, always ''
@@ -907,7 +907,7 @@ if (isModEnabled('project')) {
 $companystatic = new Societe($db);
 $invoicerectmp = new FactureFournisseurRec($db);
 
-$now = dol_now();
+$now = time();
 $nowlasthour = dol_get_last_hour($now);
 
 // Create mode

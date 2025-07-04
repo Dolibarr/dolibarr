@@ -94,7 +94,7 @@ if ($id > 0 || !empty($ref)) {
 		print $mesg;
 	}
 
-	$now = dol_now();
+	$now = time();
 
 	if ($object->fetch($id, $ref)) {
 		$object->fetch_thirdparty();

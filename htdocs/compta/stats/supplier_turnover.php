@@ -50,12 +50,12 @@ $nbofyear = 4;
 // Date range
 $year = GETPOSTINT('year');
 if (empty($year)) {
-	$year_current = (int) dol_print_date(dol_now(), "%Y");
-	$month_current = (int) dol_print_date(dol_now(), "%m");
+	$year_current = (int) dol_print_date(time(), "%Y");
+	$month_current = (int) dol_print_date(time(), "%m");
 	$year_start = $year_current - ($nbofyear - 1);
 } else {
 	$year_current = $year;
-	$month_current = (int) dol_print_date(dol_now(), "%m");
+	$month_current = (int) dol_print_date(time(), "%m");
 	$year_start = $year - $nbofyear + (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1 ? 0 : 1);
 }
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear, 'tzserver');	// We use timezone of server so report is same from everywhere
@@ -143,7 +143,7 @@ $form = new Form($db);
 
 $exportlink = '';
 $namelink = '';
-$builddate = dol_now();
+$builddate = time();
 $periodlink = '';
 $name = '';
 
@@ -365,10 +365,10 @@ print '</tr>';
 $now_show_delta = 0;
 $minyear = substr($minyearmonth, 0, 4);
 $maxyear = substr($maxyearmonth, 0, 4);
-$nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-$nowyearmonth = dol_print_date(dol_now(), "%Y-%m");
+$nowyear = dol_print_date(time(), "%Y", 'gmt');
+$nowyearmonth = dol_print_date(time(), "%Y-%m");
 $maxyearmonth = max($maxyearmonth, $nowyearmonth);
-$now = dol_now();
+$now = time();
 $casenow = dol_print_date($now, "%Y-%m");
 
 // Loop on each month

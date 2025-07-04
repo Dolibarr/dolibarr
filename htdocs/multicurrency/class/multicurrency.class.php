@@ -142,7 +142,7 @@ class MultiCurrency extends CommonObject
 		if (empty($this->entity) || $this->entity <= 0) {
 			$this->entity = $conf->entity;
 		}
-		$now = dol_now();
+		$now = time();
 
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";

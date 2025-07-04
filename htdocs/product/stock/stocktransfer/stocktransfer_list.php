@@ -207,7 +207,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$now = dol_now();
+$now = time();
 
 $title = $langs->trans('StockTransferList');
 //$help_url="EN:Module_StockTransfer|FR:Module_StockTransfer_FR|ES:Módulo_StockTransfer";

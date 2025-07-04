@@ -535,7 +535,7 @@ class ExtraFields
 			$sql .= " ".($computed ? "'".$this->db->escape($computed)."'" : "null").",";
 			$sql .= " ".(is_object($user) ? $user->id : 0).",";
 			$sql .= " ".(is_object($user) ? $user->id : 0).",";
-			$sql .= "'".$this->db->idate(dol_now())."',";
+			$sql .= "'".$this->db->idate(time())."',";
 			$sql .= " ".($enabled ? "'".$this->db->escape($enabled)."'" : "1").",";
 			$sql .= " ".($help ? "'".$this->db->escape($help)."'" : "null").",";
 			$sql .= " ".($totalizable ? 'TRUE' : 'FALSE').",";
@@ -974,7 +974,7 @@ class ExtraFields
 			$sql .= " ".($computed ? "'".$this->db->escape($computed)."'" : "null").",";
 			$sql .= " ".((int) $user->id).",";
 			$sql .= " ".((int) $user->id).",";
-			$sql .= "'".$this->db->idate(dol_now())."',";
+			$sql .= "'".$this->db->idate(time())."',";
 			$sql .= "'".$this->db->escape($enabled)."',";
 			$sql .= " ".($help ? "'".$this->db->escape($help)."'" : "null").",";
 			$sql .= " ".($css ? "'".$this->db->escape($css)."'" : "null").",";

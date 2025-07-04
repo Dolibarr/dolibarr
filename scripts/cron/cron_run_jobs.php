@@ -100,7 +100,7 @@ $hookmanager->initHooks(array('cli'));
  */
 
 // current date
-$now = dol_now();
+$now = time();
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - userlogin=".$userlogin." - ".dol_print_date($now, 'dayhourrfc', 'gmt')." - ".gethostname()." *****\n";
@@ -195,7 +195,7 @@ if (!empty($id)) {
 // Update old jobs that were not closed correctly so processing is moved from 1 to 0 (otherwise task stopped with fatal error are always in status "in progress")
 $sql = "UPDATE ".MAIN_DB_PREFIX."cronjob set processing = 0";
 $sql .= " WHERE processing = 1";
-$sql .= " AND datelastrun <= '".$db->idate(dol_now() - getDolGlobalInt('CRON_MAX_DELAY_FOR_JOBS', 24) * 3600, 'gmt')."'";
+$sql .= " AND datelastrun <= '".$db->idate(time() - getDolGlobalInt('CRON_MAX_DELAY_FOR_JOBS', 24) * 3600, 'gmt')."'";
 $sql .= " AND datelastresult IS NULL";
 $db->query($sql);
 

@@ -223,7 +223,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 $jobstatic = new Job($db);
 
-$now = dol_now();
+$now = time();
 
 $title = $langs->trans('EmployeePositions');
 //$help_url="EN:Module_Position|FR:Module_Position_FR|ES:Módulo_Position";

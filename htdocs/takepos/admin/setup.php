@@ -149,7 +149,7 @@ $head = takepos_admin_prepare_head();
 print dol_get_fiche_head($head, 'setup', 'TakePOS', -1, 'cash-register');
 
 // Numbering modules
-$now = dol_now();
+$now = time();
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 print load_fiche_titre($langs->trans('CashDeskRefNumberingModules'), '', '');

@@ -183,7 +183,7 @@ if ($resql) {
 				print "Nb of targets = ".$num2."\n";
 
 				if ($num2) {
-					$now = dol_now();
+					$now = time();
 
 					// Positionne date debut envoi
 					$sqlstartdate = "UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi='".$db->idate($now)."' WHERE rowid=".((int) $id);
@@ -200,7 +200,7 @@ if ($resql) {
 					while ($i < $num2) {
 						// Here code is common with same loop ino card.php
 						$res = 1;
-						$now = dol_now();
+						$now = time();
 
 						$obj = $db->fetch_object($resql2);
 						$max--;

@@ -234,7 +234,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$now = dol_now();
+$now = time();
 
 $title = $langs->trans("Availabilities");
 //$help_url = "EN:Module_Availabilities|FR:Module_Availabilities_FR|ES:Módulo_Availabilities";

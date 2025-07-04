@@ -214,7 +214,7 @@ if (empty($reshook)) {
 				if ($num) {
 					dol_syslog("comm/mailing/card.php: nb of targets = ".$num, LOG_DEBUG);
 
-					$now = dol_now();
+					$now = time();
 
 					// Positioning date of start sending
 					$sql = "UPDATE ".MAIN_DB_PREFIX."mailing SET date_envoi='".$db->idate($now)."' WHERE rowid=".((int) $object->id);
@@ -230,7 +230,7 @@ if (empty($reshook)) {
 					while ($iforemailloop < $num && $iforemailloop < $conf->global->MAILING_LIMIT_SENDBYWEB) {
 						// Here code is common with same loop ino mailing-send.php
 						$res = 1;
-						$now = dol_now();
+						$now = time();
 
 						$obj = $db->fetch_object($resql);
 

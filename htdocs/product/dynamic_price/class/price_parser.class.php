@@ -184,7 +184,7 @@ class PriceParser
 		$price_updaters = new PriceGlobalVariableUpdater($this->db);
 		foreach ($price_updaters->listPendingUpdaters() as $entry) {
 			//Schedule the next update by adding current timestamp (secs) + interval (mins)
-			$entry->update_next_update(dol_now() + ($entry->update_interval * 60), $user);
+			$entry->update_next_update(time() + ($entry->update_interval * 60), $user);
 			//Do processing
 			$res = $entry->process();
 			//Store any error or clear status if OK

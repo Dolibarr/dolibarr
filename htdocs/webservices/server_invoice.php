@@ -560,7 +560,7 @@ function createInvoice($authentication, $invoice)
 {
 	global $db, $conf;
 
-	$now = dol_now();
+	$now = time();
 
 	dol_syslog("Function: createInvoice login=".$authentication['login']." id=".$invoice['id'].", ref=".$invoice['ref'].", ref_ext=".$invoice['ref_ext']);
 	if ($authentication['entity']) {

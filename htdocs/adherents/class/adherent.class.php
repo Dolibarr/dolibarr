@@ -662,7 +662,7 @@ class Adherent extends CommonObject
 
 		$error = 0;
 
-		$now = dol_now();
+		$now = time();
 
 		// Clean parameters
 		if (isset($this->import_key)) {
@@ -1739,7 +1739,7 @@ class Adherent extends CommonObject
 			$result = $this->update_end_date($user);
 			if ($result > 0) {
 				// Change properties of object (used by triggers)
-				$this->last_subscription_date = dol_now();
+				$this->last_subscription_date = time();
 				$this->last_subscription_date_start = $date;
 				$this->last_subscription_date_end = $datefin;
 				$this->last_subscription_amount = $amount;
@@ -1902,7 +1902,7 @@ class Adherent extends CommonObject
 					$invoice->mode_reglement_id = $customer->mode_reglement_id;
 				}
 				//$invoice->date = $datesubscription;
-				$invoice->date = dol_now();
+				$invoice->date = time();
 
 				// Possibility to add external linked objects with hooks
 				$invoice->linked_objects['subscription'] = $subscriptionid;
@@ -2052,7 +2052,7 @@ class Adherent extends CommonObject
 		global $langs, $conf;
 
 		$error = 0;
-		$now = dol_now();
+		$now = time();
 
 		// Check parameters
 		if ($this->statut == self::STATUS_VALIDATED) {
@@ -2542,7 +2542,7 @@ class Adherent extends CommonObject
 				$statusType = 'status1';
 				$labelStatus = $langs->trans("Validated").' - '.$langs->trans("WaitingSubscription");
 				$labelStatusShort = $langs->trans("WaitingSubscriptionShort");
-			} elseif ($date_end_subscription < dol_now()) {	// expired
+			} elseif ($date_end_subscription < time()) {	// expired
 				$statusType = 'status8';
 				$labelStatus = $langs->trans("Validated").' - '.$langs->trans("MemberStatusActiveLate");
 				$labelStatusShort = $langs->trans("MemberStatusActiveLateShort");
@@ -2612,7 +2612,7 @@ class Adherent extends CommonObject
 			return -1; // protection pour eviter appel par utilisateur externe
 		}
 
-		$now = dol_now();
+		$now = time();
 
 		$sql = "SELECT a.rowid, a.datefin, a.statut";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
@@ -2721,7 +2721,7 @@ class Adherent extends CommonObject
 	public function initAsSpecimen()
 	{
 		global $user, $langs;
-		$now = dol_now();
+		$now = time();
 
 		// Initialise parameters
 		$this->id = 0;
@@ -3072,7 +3072,7 @@ class Adherent extends CommonObject
 			return false;
 		}
 
-		$now = dol_now();
+		$now = time();
 
 		return $this->datefin < ($now - $conf->adherent->subscription->warning_delay);
 	}
@@ -3107,7 +3107,7 @@ class Adherent extends CommonObject
 			return 0;
 		}
 
-		$now = dol_now();
+		$now = time();
 		$nbok = 0;
 		$nbko = 0;
 

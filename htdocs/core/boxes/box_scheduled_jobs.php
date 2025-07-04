@@ -122,7 +122,7 @@ class box_scheduled_jobs extends ModeleBoxes
 							$line++;
 						}
 
-						if ($objp->processing && $this->db->jdate($objp->datelastrun) < (dol_now() - 3600 * 24)) {
+						if ($objp->processing && $this->db->jdate($objp->datelastrun) < (time() - 3600 * 24)) {
 							$nbjobsnotfinished++;
 						}
 						if (!empty($objp->lastresult)) {

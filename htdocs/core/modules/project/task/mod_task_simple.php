@@ -154,7 +154,7 @@ class mod_task_simple extends ModeleNumRefTask
 			return -1;
 		}
 
-		$date = empty($object->date_c) ? dol_now() : $object->date_c;
+		$date = empty($object->date_c) ? time() : $object->date_c;
 		$yymm = dol_print_date($date, "%y%m");
 
 		if ($max >= (pow(10, 4) - 1)) {

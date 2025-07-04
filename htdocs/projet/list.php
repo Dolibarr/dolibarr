@@ -529,7 +529,7 @@ $formother = new FormOther($db);
 $formproject = new FormProjets($db);
 $userstatic = new User($db);
 
-$now = dol_now();
+$now = time();
 
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 $title = $langs->trans("LeadsOrProjects");
@@ -698,7 +698,7 @@ if ($search_status != '' && $search_status != '-1') {
 	}
 }
 if ($search_option == 'late') {
-	$sql .= " AND p.datee < '".$db->idate(dol_now() - $conf->project->warning_delay)."'";
+	$sql .= " AND p.datee < '".$db->idate(time() - $conf->project->warning_delay)."'";
 }
 if ($search_opp_status) {
 	if (is_numeric($search_opp_status) && $search_opp_status > 0) {

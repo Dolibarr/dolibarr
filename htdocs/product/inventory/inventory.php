@@ -134,7 +134,7 @@ if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 	$permissiontoupdatestock = $user->hasRight('stock', 'inventory_advance', 'write');
 }
 
-$now = dol_now();
+$now = time();
 
 
 

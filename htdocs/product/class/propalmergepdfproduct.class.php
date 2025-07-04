@@ -144,7 +144,7 @@ class Propalmergepdfproduct extends CommonObject
 		}
 		$sql .= " ".((int) $user->id).",";
 		$sql .= " ".((int) $user->id).",";
-		$sql .= " '".$this->db->idate(dol_now())."'";
+		$sql .= " '".$this->db->idate(time())."'";
 		$sql .= ")";
 
 		$this->db->begin();
@@ -563,7 +563,7 @@ class Propalmergepdfproduct extends CommonObject
 		$this->fk_user_author = 0;
 		$this->fk_user_mod = 0;
 		$this->datec = '';
-		$this->tms = dol_now();
+		$this->tms = time();
 		$this->import_key = '';
 
 		return 1;

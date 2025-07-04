@@ -250,7 +250,7 @@ class AccountingAccount extends CommonObject
 	{
 		global $conf;
 		$error = 0;
-		$now = dol_now();
+		$now = time();
 
 		// Clean parameters
 		if (isset($this->fk_pcg_version)) {

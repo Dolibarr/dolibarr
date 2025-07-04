@@ -67,7 +67,7 @@ class box_services_expired extends ModeleBoxes
 
 		include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
-		$now = dol_now();
+		$now = time();
 
 		$this->info_box_head = array('text' => $langs->trans("BoxLastExpiredServices", $max));
 

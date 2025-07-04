@@ -324,7 +324,7 @@ if ($nb) {
 				$delayindays = getDolGlobalInt('PAYMENTBYBANKTRANSFER_ADDDAYS');
 			}
 
-			$executiondate = dol_time_plus_duree(dol_now(), $delayindays, 'd');
+			$executiondate = dol_time_plus_duree(time(), $delayindays, 'd');
 		}
 
 		print $langs->trans('ExecutionDate').' ';

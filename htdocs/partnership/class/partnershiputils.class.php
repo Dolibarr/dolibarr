@@ -104,7 +104,7 @@ class PartnershipUtils
 
 		dol_syslog(get_class($this)."::doCancelStatusOfMemberPartnership cancel expired partnerships with grace delay of ".$gracedelay);
 
-		$now = dol_now();
+		$now = time();
 		$datetotest = dol_time_plus_duree($now, -1 * abs((float) $gracedelay), 'd');
 
 		$this->db->begin();
@@ -320,7 +320,7 @@ class PartnershipUtils
 
 		dol_syslog(get_class($this)."::doWarningOfPartnershipIfDolibarrBacklinkNotfound Warning of partnership");
 
-		$now = dol_now();
+		$now = time();
 		//$datetotest = dol_time_plus_duree($now, -1 * abs($gracedelay), 'd');
 
 		$this->db->begin();

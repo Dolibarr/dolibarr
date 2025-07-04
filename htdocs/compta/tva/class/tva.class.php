@@ -160,7 +160,7 @@ class Tva extends CommonObject
 		global $conf, $langs;
 
 		$error = 0;
-		$now = dol_now();
+		$now = time();
 
 		// Clean parameters
 		$this->amount = (float) price2num($this->amount);
@@ -437,9 +437,9 @@ class Tva extends CommonObject
 	{
 		$this->id = 0;
 
-		$this->tms = dol_now();
-		$this->datep = dol_now();
-		$this->datev = dol_now();
+		$this->tms = time();
+		$this->datep = time();
+		$this->datev = time();
 		$this->amount = 100.0;
 		$this->label = '';
 		$this->note = '';
@@ -595,7 +595,7 @@ class Tva extends CommonObject
 		$this->fk_user_creat = (int) $this->fk_user_creat;
 		$this->fk_user_modif = (int) $this->fk_user_modif;
 		if (empty($this->datec)) {
-			$this->datec = dol_now();
+			$this->datec = time();
 		}
 
 		// Check parameters

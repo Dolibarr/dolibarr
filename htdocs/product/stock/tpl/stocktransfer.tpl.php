@@ -154,7 +154,7 @@ print '<input type="text" name="label" class="minwidth300" value="'.dol_escape_h
 print '</td>';
 print '<td>'.$langs->trans("InventoryCode").'</td>';
 print '<td>';
-print '<input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(GETPOSTISSET("inventorycode") ? GETPOST("inventorycode", 'alpha') : dol_print_date(dol_now(), '%Y%m%d%H%M%S')).'">';
+print '<input class="maxwidth100onsmartphone" name="inventorycode" id="inventorycode" value="'.(GETPOSTISSET("inventorycode") ? GETPOST("inventorycode", 'alpha') : dol_print_date(time(), '%Y%m%d%H%M%S')).'">';
 print '</td>';
 print '</tr>';
 

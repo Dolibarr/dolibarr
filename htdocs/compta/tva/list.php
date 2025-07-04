@@ -172,7 +172,7 @@ $bankstatic = new Account($db);
 $accountingjournal = new AccountingJournal($db);
 $bankline = new AccountLine($db);
 
-$now = dol_now();
+$now = time();
 
 $title = $langs->trans("VATDeclarations");
 //$help_url = "EN:Module_MyObject|FR:Module_MyObject_FR|ES:Módulo_MyObject";

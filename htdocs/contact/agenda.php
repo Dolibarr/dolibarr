@@ -285,7 +285,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					$out .= '&originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&socid='.$objthirdparty->id : '');
 				}
 				$out .= (!empty($objcon->id) ? '&contactid='.$objcon->id : '').'&origin=contact&originid='.$object->id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].($objcon->id > 0 ? '?id='.$objcon->id : ''));
-				$out .= '&datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog'));
+				$out .= '&datep='.urlencode(dol_print_date(time(), 'dayhourlog'));
 			}
 
 			if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {

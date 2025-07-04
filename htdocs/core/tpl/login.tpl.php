@@ -319,9 +319,9 @@ if (!empty($captcha)) {
 	// Add a variable param to force not using cache (jmobile)
 	$php_self = preg_replace('/[&\?]time=(\d+)/', '', $php_self); // Remove param time
 	if (preg_match('/\?/', $php_self)) {
-		$php_self .= '&time='.dol_print_date(dol_now(), 'dayhourlog');
+		$php_self .= '&time='.dol_print_date(time(), 'dayhourlog');
 	} else {
-		$php_self .= '?time='.dol_print_date(dol_now(), 'dayhourlog');
+		$php_self .= '?time='.dol_print_date(time(), 'dayhourlog');
 	}
 
 	// List of directories where we can find captcha handlers

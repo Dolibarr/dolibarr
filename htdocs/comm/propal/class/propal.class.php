@@ -1174,7 +1174,7 @@ class Propal extends CommonObject
 		global $conf, $hookmanager, $mysoc;
 		$error = 0;
 
-		$now = dol_now();
+		$now = time();
 
 		// Clean parameters
 		if (empty($this->date)) {
@@ -1497,7 +1497,7 @@ class Propal extends CommonObject
 		dol_include_once('/projet/class/project.class.php');
 
 		$error = 0;
-		$now = dol_now();
+		$now = time();
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -1577,7 +1577,7 @@ class Propal extends CommonObject
 									if ($result) {
 										// If there is some prices specific to the customer
 										if (count($prodcustprice->lines) > 0) {
-											$date_now = (int) floor(dol_now() / 86400) * 86400; // date without hours
+											$date_now = (int) floor(time() / 86400) * 86400; // date without hours
 											foreach ($prodcustprice->lines as $k => $custprice_line) {
 												if ($custprice_line->date_begin <= $date_now && (empty($custprice_line->date_end) || $date_now <= $custprice_line->date_end)) {
 													$pu_ht = price($custprice_line->price);
@@ -2119,7 +2119,7 @@ class Propal extends CommonObject
 			return -1;
 		}
 
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 
@@ -2674,7 +2674,7 @@ class Propal extends CommonObject
 		global $langs,$conf;
 
 		$error = 0;
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 
@@ -2792,7 +2792,7 @@ class Propal extends CommonObject
 
 		$error = 0;
 
-		$now = dol_now();
+		$now = time();
 		$num = 0;
 
 		$triggerName = 'PROPAL_CLASSIFY_BILLED';
@@ -3548,7 +3548,7 @@ class Propal extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$langs->load("propal");
-			$now = dol_now();
+			$now = time();
 
 			$delay_warning = 0;
 			$status = 0;

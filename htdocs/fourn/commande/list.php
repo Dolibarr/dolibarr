@@ -361,7 +361,7 @@ if (empty($reshook)) {
 			foreach ($toselect as $checked) {
 				if ($objecttmp->fetch($checked)) {
 					if ($objecttmp->statut == 0) {
-						$objecttmp->date_commande = dol_now();
+						$objecttmp->date_commande = time();
 						$result = $objecttmp->valid($user);
 						if ($result >= 0) {
 							// If we have permission, and if we don't need to provide the idwarehouse, we go directly on approved step
@@ -403,7 +403,7 @@ if (empty($reshook)) {
 
 		$db->begin();
 
-		$default_ref_supplier = dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		$default_ref_supplier = dol_print_date(time(), '%Y%m%d%H%M%S');
 		$currentIndex = 0;
 		foreach ($orders as $id_order) {
 			$cmd = new CommandeFournisseur($db);
@@ -434,7 +434,7 @@ if (empty($reshook)) {
 
 				$datefacture = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 				if (empty($datefacture)) {
-					$datefacture = dol_now();
+					$datefacture = time();
 				}
 
 				$objecttmp->date = $datefacture;
@@ -787,7 +787,7 @@ if (empty($reshook)) {
  *	View
  */
 
-$now = dol_now();
+$now = time();
 
 $form = new Form($db);
 $thirdpartytmp = new Fournisseur($db);
@@ -895,7 +895,7 @@ if ($search_status != '' && $search_status != '-1') {
 	$sql .= " AND cf.fk_statut IN (".$db->sanitize($db->escape($search_status)).")";
 }
 if ($search_option == 'late') {
-	$sql .= " AND cf.date_commande < '".$db->idate(dol_now() - $conf->order->fournisseur->warning_delay)."'";
+	$sql .= " AND cf.date_commande < '".$db->idate(time() - $conf->order->fournisseur->warning_delay)."'";
 }
 if ($search_date_order_start) {
 	$sql .= " AND cf.date_commande >= '".$db->idate($search_date_order_start)."'";

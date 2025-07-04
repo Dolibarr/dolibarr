@@ -76,7 +76,7 @@ if (empty($confirm)) {
 }
 
 
-$tmp = dol_getdate(dol_now());
+$tmp = dol_getdate(time());
 
 
 $tables = array(

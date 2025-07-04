@@ -47,7 +47,7 @@ $hookmanager->initHooks(array('proposalindex'));
 // Load translation files required by the page
 $langs->loadLangs(array('propal', 'companies'));
 
-$now = dol_now();
+$now = time();
 $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 // Security check

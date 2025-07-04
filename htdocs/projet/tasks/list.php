@@ -287,7 +287,7 @@ $projectstatic = new Project($db);
 $puser = new User($db);
 $tuser = new User($db);
 
-$now = dol_now();
+$now = time();
 
 $title = $langs->trans("Activities");
 $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";

@@ -701,7 +701,7 @@ class UserGroup extends CommonObject
 	{
 		global $user, $conf;
 
-		$this->datec = dol_now();
+		$this->datec = time();
 		if (!empty($this->name)) {
 			$this->nom = $this->name; // Field for 'name' is called 'nom' in database
 		}

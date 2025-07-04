@@ -87,9 +87,9 @@ llxHeader('', $langs->trans("PurchasesJournal"), '', '', 0, 0, '', '', $morequer
 
 $form = new Form($db);
 
-$year_current = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-//$pastmonth = strftime("%m", dol_now()) - 1;
-$pastmonth = (int) dol_print_date(dol_now(), "%m") - 1;
+$year_current = (int) dol_print_date(time(), "%Y", 'gmt');
+//$pastmonth = strftime("%m", time()) - 1;
+$pastmonth = (int) dol_print_date(time(), "%m") - 1;
 $pastmonthyear = $year_current;
 if ($pastmonth == 0) {
 	$pastmonth = 12;
@@ -107,7 +107,7 @@ if (empty($date_start) || empty($date_end)) { // We define date_start and date_e
 $name = $langs->trans("PurchasesJournal");
 $periodlink = '';
 $exportlink = '';
-$builddate = dol_now();
+$builddate = time();
 $description = $langs->trans("DescPurchasesJournal").'<br>';
 if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 	$description .= $langs->trans("DepositsAreNotIncluded");

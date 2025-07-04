@@ -122,7 +122,7 @@ abstract class Stats
 		$newpathofdestfile = $conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix) ? '' : $this->cachefilesuffix.'_').$langs->defaultlang.'_entity.'.$conf->entity.'_user'.$user->id.'.cache';
 		$newmask = '0644';
 
-		$nowgmt = dol_now();
+		$nowgmt = time();
 
 		$foundintocache = 0;
 		$filedate = -1;
@@ -224,7 +224,7 @@ abstract class Stats
 		$newpathofdestfile = $conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix) ? '' : $this->cachefilesuffix.'_').$langs->defaultlang.'_entity.'.$conf->entity.'_user'.$user->id.'.cache';
 		$newmask = '0644';
 
-		$nowgmt = dol_now();
+		$nowgmt = time();
 
 		$foundintocache = 0;
 		$filedate = -1;
@@ -349,7 +349,7 @@ abstract class Stats
 		$newpathofdestfile = $conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix) ? '' : $this->cachefilesuffix.'_').$langs->defaultlang.'_entity.'.$conf->entity.'_user'.$user->id.'.cache';
 		$newmask = '0644';
 
-		$nowgmt = dol_now();
+		$nowgmt = time();
 
 		$foundintocache = 0;
 		$filedate = -1;

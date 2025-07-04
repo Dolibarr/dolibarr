@@ -510,7 +510,7 @@ function createProductOrService($authentication, $product)
 {
 	global $db, $conf;
 
-	$now = dol_now();
+	$now = time();
 
 	dol_syslog("Function: createProductOrService login=".$authentication['login']);
 
@@ -676,7 +676,7 @@ function updateProductOrService($authentication, $product)
 {
 	global $db, $conf;
 
-	$now = dol_now();
+	$now = time();
 
 	dol_syslog("Function: updateProductOrService login=".$authentication['login']);
 

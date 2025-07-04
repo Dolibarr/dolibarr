@@ -138,7 +138,7 @@ function dol_setcache($memoryid, $data, $expire = 0, $filecache = 0, $replace = 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-		$now = dol_now();
+		$now = time();
 		$memoryid = session_name().'_'.$memoryid;
 		$dircache = 'dolcache';
 		$pathcache = DOL_DATA_ROOT.'/'.$dircache;
@@ -243,7 +243,7 @@ function dol_getcache($memoryid, $filecache = 0)
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-		$now = dol_now();
+		$now = time();
 		$memoryid = session_name().'_'.$memoryid;
 		$dircache = 'dolcache';
 		$pathcache = DOL_DATA_ROOT.'/'.$dircache;

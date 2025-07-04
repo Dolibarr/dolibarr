@@ -279,12 +279,12 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 					if ($format == '1') {
 						$format = '%Y%m%d%H%M%S';
 					}
-					$filename = $newfiletmp . '-' . dol_print_date(dol_now(), $format) . '.' . $newfileformat;
+					$filename = $newfiletmp . '-' . dol_print_date(time(), $format) . '.' . $newfileformat;
 				} else {
 					$filename = $newfiletmp . '.' . $newfileformat;
 				}
 				$file = $dir . '/' . $filename;
-				//$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.odt';
+				//$file=$dir.'/'.$newfiletmp.'.'.dol_print_date(time(),'%Y%m%d%H%M%S').'.odt';
 				//print "newdir=".$dir;
 				//print "newfile=".$newfile;
 				//print "file=".$file;

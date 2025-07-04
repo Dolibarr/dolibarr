@@ -103,7 +103,7 @@ if (getDolGlobalString('STRIPE_USER_ACCOUNT_FOR_ACTIONS')) {
 	httponly_accessforbidden('Error: Setup of module Stripe not complete for mode '.dol_escape_htmltag($service).'. The STRIPE_USER_ACCOUNT_FOR_ACTIONS is not defined.', 400, 1);
 }
 
-$now = dol_now();
+$now = time();
 
 // Security
 // The test on security key is done later into constructEvent() method.
@@ -120,7 +120,7 @@ $event = null;
 if (getDolGlobalString('STRIPE_DEBUG')) {
 	$fh = fopen(DOL_DATA_ROOT.'/dolibarr_stripeipn_payload.log', 'w+');
 	if ($fh) {
-		fwrite($fh, dol_print_date(dol_now('gmt'), 'standard').' IPN Called. service='.$service.' HTTP_STRIPE_SIGNATURE='.$sig_header."\n");
+		fwrite($fh, dol_print_date(time(), 'standard').' IPN Called. service='.$service.' HTTP_STRIPE_SIGNATURE='.$sig_header."\n");
 		fwrite($fh, $payload);
 		fclose($fh);
 		dolChmod(DOL_DATA_ROOT.'/dolibarr_stripeipn_payload.log');
@@ -240,7 +240,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	if ($result) {
 		$langs->load("errors");
 
-		$dateo = dol_now();
+		$dateo = time();
 		$label = $event->data->object->description;
 		$amount = $event->data->object->amount / 100;
 		$amount_to = $event->data->object->amount / 100;
@@ -362,7 +362,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	$object = $event->data->object;
 	$TRANSACTIONID = $object->id;	// Example pi_123456789...
 	$ipaddress = $object->metadata->ipaddress;
-	$now = dol_now();
+	$now = time();
 	$currencyCodeType = strtoupper($object->currency);
 	$paymentmethodstripeid = $object->payment_method;
 	$customer_id = $object->customer;
@@ -867,7 +867,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	$object = $event->data->object;
 	$TRANSACTIONID = $object->payment_intent;
 	$ipaddress = $object->metadata->ipaddress;
-	$now = dol_now();
+	$now = time();
 	$currencyCodeType = strtoupper($object->currency);
 	$paymentmethodstripeid = $object->payment_method;
 	$customer_id = $object->customer;
@@ -952,7 +952,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	$amounts = array();
 	$amounts[$tmpinvoice->id] = -1 * $payment_amountInDolibarr;
 
-	$paiement->datepaye = dol_now();
+	$paiement->datepaye = time();
 	$paiement->amounts = $amounts; // Array with all payments dispatching with invoice id
 	/*$paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
 	$paiement->multicurrency_code = $multicurrency_code; // Array with all currency of payments dispatching

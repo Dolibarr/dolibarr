@@ -120,7 +120,7 @@ class modAgenda extends DolibarrModules
 
 		// Cronjobs
 		//------------
-		$datestart = dol_now();
+		$datestart = time();
 		$this->cronjobs = array(
 			0 => array('label' => 'SendEmailsReminders', 'jobtype' => 'method', 'class' => 'comm/action/class/actioncomm.class.php', 'objectname' => 'ActionComm', 'method' => 'sendEmailsReminder', 'parameters' => '', 'comment' => 'SendEMailsReminder', 'frequency' => 5, 'unitfrequency' => 60, 'priority' => 10, 'status' => 1, 'test' => 'isModEnabled("agenda")', 'datestart' => $datestart),
 		);

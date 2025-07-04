@@ -152,7 +152,7 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 		if (is_object($object)) {
 			$date = ($object->date_commande ? $object->date_commande : $object->date);
 		} else {
-			$date = dol_now();
+			$date = time();
 		}
 
 		$numFinal = get_next_value($db, $mask, 'commande', 'ref', '', $objsoc, (int) $date, 'next', false, null, $entity);

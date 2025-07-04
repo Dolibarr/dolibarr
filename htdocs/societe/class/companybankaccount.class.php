@@ -362,7 +362,7 @@ class CompanyBankAccount extends Account
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		$now = dol_now();
+		$now = time();
 
 		$error = 0;
 
@@ -739,7 +739,7 @@ class CompanyBankAccount extends Account
 		$this->owner_country_id = 1;
 
 		$this->rum             = 'UMR-CU1212-0007-5-1475405262';
-		$this->date_rum        = dol_now() - 10000;
+		$this->date_rum        = time() - 10000;
 		$this->frstrecur       = 'FRST';
 
 		$this->socid           = 1;

@@ -238,7 +238,7 @@ if (empty($reshook)) {
 
 $form = new Form($db);
 
-$now = dol_now();
+$now = time();
 
 $title = $langs->trans("ProductAttributes");
 $help_url = '';

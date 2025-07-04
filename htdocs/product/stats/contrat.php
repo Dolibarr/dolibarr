@@ -137,7 +137,7 @@ if ($id > 0 || !empty($ref)) {
 		print dol_get_fiche_end();
 
 
-		$now = dol_now();
+		$now = time();
 
 		$sql = "SELECT";
 		$sql .= " sum(".$db->ifsql("cd.statut=0", '1', '0').') as nb_initial,';

@@ -929,7 +929,7 @@ class SupplierProposal extends CommonObject
 		global $langs, $conf, $mysoc, $hookmanager;
 		$error = 0;
 
-		$now = dol_now();
+		$now = time();
 
 		dol_syslog(get_class($this)."::create");
 
@@ -1156,7 +1156,7 @@ class SupplierProposal extends CommonObject
 		global $conf, $hookmanager;
 
 		$error = 0;
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 
@@ -1450,7 +1450,7 @@ class SupplierProposal extends CommonObject
 		global $conf, $langs;
 
 		$error = 0;
-		$now = dol_now();
+		$now = time();
 
 		if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('supplier_proposal', 'creer'))
 		   || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('supplier_proposal', 'validate_advance'))) {
@@ -1750,7 +1750,7 @@ class SupplierProposal extends CommonObject
 		$hideref = 0;
 		$this->statut = $status;
 		$error = 0;
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 
@@ -1887,7 +1887,7 @@ class SupplierProposal extends CommonObject
 		$qty = price2num($product->qty);
 		$unitPrice = price2num($product->subprice, 'MU');
 
-		$now = dol_now();
+		$now = time();
 
 		$values = array(
 			"'".$this->db->idate($now)."'",
@@ -2279,7 +2279,7 @@ class SupplierProposal extends CommonObject
 		// phpcs:enable
 		global $conf, $langs;
 
-		$now = dol_now();
+		$now = time();
 
 		$clause = " WHERE";
 

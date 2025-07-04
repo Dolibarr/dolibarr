@@ -149,7 +149,7 @@ class BuildDocTest extends CommonClassTest
 
 		$localobject = new Facture($db);
 		$localobject->createFromOrder($localobjectcom, $user);
-		$localobject->date_lim_reglement = dol_now() + 3600 * 24 * 30;
+		$localobject->date_lim_reglement = time() + 3600 * 24 * 30;
 		$localobject->status = Facture::STATUS_DRAFT;
 
 		// To be sure we are not using the Swiss QR Code addition

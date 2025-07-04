@@ -67,7 +67,7 @@ class BankAccountTest extends CommonClassTest
 
 		$localobject = new Account($db);
 		$localobject->initAsSpecimen();
-		$localobject->date_solde = dol_now();
+		$localobject->date_solde = time();
 		$result = $localobject->create($user);
 
 		print __METHOD__." result=".$result."\n";

@@ -1488,7 +1488,7 @@ if ($source == 'contractline') {
 	if (GETPOST('fulltag', 'alpha')) {
 		$fulltag = GETPOST('fulltag', 'alpha');
 	} else {
-		$fulltag = 'COL='.$contractline->id.'.CON='.$contract->id.'.CUS='.$contract->thirdparty->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		$fulltag = 'COL='.$contractline->id.'.CON='.$contract->id.'.CUS='.$contract->thirdparty->id.'.DAT='.dol_print_date(time(), '%Y%m%d%H%M%S');
 		if (!empty($TAG)) {
 			$tag = $TAG;
 			$fulltag .= '.TAG='.$TAG;
@@ -1663,7 +1663,7 @@ if ($source == 'member' || $source == 'membersubscription') {
 	if (GETPOST('fulltag', 'alpha')) {
 		$fulltag = GETPOST('fulltag', 'alpha');
 	} else {
-		$fulltag = 'MEM='.$member->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		$fulltag = 'MEM='.$member->id.'.DAT='.dol_print_date(time(), '%Y%m%d%H%M%S');
 		if (!empty($TAG)) {
 			$tag = $TAG;
 			$fulltag .= '.TAG='.$TAG;
@@ -1894,7 +1894,7 @@ if ($source == 'donation') {
 	if (GETPOST('fulltag', 'alpha')) {
 		$fulltag = GETPOST('fulltag', 'alpha');
 	} else {
-		$fulltag = 'DON='.$don->ref.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		$fulltag = 'DON='.$don->ref.'.DAT='.dol_print_date(time(), '%Y%m%d%H%M%S');
 		if (!empty($TAG)) {
 			$tag = $TAG;
 			$fulltag .= '.TAG='.$TAG;
@@ -2029,7 +2029,7 @@ if ($source == 'organizedeventregistration' && is_object($thirdparty)) {
 	if (GETPOST('fulltag', 'alpha')) {
 		$fulltag = GETPOST('fulltag', 'alpha');
 	} else {
-		$fulltag = 'ATT='.$attendee->id.'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		$fulltag = 'ATT='.$attendee->id.'.DAT='.dol_print_date(time(), '%Y%m%d%H%M%S');
 		if (!empty($TAG)) {
 			$tag = $TAG;
 			$fulltag .= '.TAG='.$TAG;
@@ -2119,7 +2119,7 @@ if ($source == 'boothlocation') {
 	if (GETPOST('fulltag', 'alpha')) {
 		$fulltag = GETPOST('fulltag', 'alpha');
 	} else {
-		$fulltag = 'BOO='.GETPOST("booth").'.DAT='.dol_print_date(dol_now(), '%Y%m%d%H%M%S');
+		$fulltag = 'BOO='.GETPOST("booth").'.DAT='.dol_print_date(time(), '%Y%m%d%H%M%S');
 		if (!empty($TAG)) {
 			$tag = $TAG;
 			$fulltag .= '.TAG='.$TAG;
@@ -2232,7 +2232,7 @@ if ($action != 'dopayment') {
 			print '<br><br><div class="amountpaymentcomplete size12x wrapimp">'.$langs->trans("DonationPaid").'</div>';
 		} else {
 			// Membership can be paid and we still allow to make renewal
-			if (($source == 'member' || $source == 'membersubscription') && $object->datefin > dol_now()) {
+			if (($source == 'member' || $source == 'membersubscription') && $object->datefin > time()) {
 				$langs->load("members");
 				print '<br><div class="amountpaymentcomplete size12x wrapimp">';
 				$s = $langs->trans("MembershipPaid", '{s1}');

@@ -119,7 +119,7 @@ class box_factures extends ModeleBoxes
 			$result = $this->db->query($sql);
 			if ($result) {
 				$num = $this->db->num_rows($result);
-				$now = dol_now();
+				$now = time();
 
 				$line = 0;
 				$l_due_date = $langs->trans('Late').' ('.$langs->trans('DateDue').': %s)';

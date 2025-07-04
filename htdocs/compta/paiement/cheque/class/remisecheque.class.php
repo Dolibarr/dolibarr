@@ -183,7 +183,7 @@ class RemiseCheque extends CommonObject
 		$this->errno = 0;
 		$this->id = 0;
 
-		$now = dol_now();
+		$now = time();
 
 		dol_syslog("RemiseCheque::Create start", LOG_DEBUG);
 
@@ -534,7 +534,7 @@ class RemiseCheque extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$langs->load("banks");
-			$now = dol_now();
+			$now = time();
 
 			$response = new WorkboardResponse();
 			$response->warning_delay = $conf->bank->cheque->warning_delay / 60 / 60 / 24;
@@ -915,7 +915,7 @@ class RemiseCheque extends CommonObject
 	{
 		global $user, $langs, $conf;
 
-		$now = dol_now();
+		$now = time();
 		$arraynow = dol_getdate($now);
 		$nownotime = dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
 

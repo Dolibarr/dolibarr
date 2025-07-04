@@ -75,7 +75,7 @@ class box_activity extends ModeleBoxes
 
 		$totalnb = 0;
 		$line = 0;
-		$now = dol_now();
+		$now = time();
 		$nbofperiod = 3;
 
 		// Force use of cache for this box as it has very bad performances
@@ -93,7 +93,7 @@ class box_activity extends ModeleBoxes
 		);
 
 		// compute the year limit to show
-		$tmpdate = dol_time_plus_duree(dol_now(), -1 * $nbofperiod, "m");
+		$tmpdate = dol_time_plus_duree(time(), -1 * $nbofperiod, "m");
 
 
 		// list the summary of the propals

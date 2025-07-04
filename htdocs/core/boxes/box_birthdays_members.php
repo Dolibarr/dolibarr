@@ -78,7 +78,7 @@ class box_birthdays_members extends ModeleBoxes
 		if ($user->hasRight('adherent', 'lire')) {
 			$data = array();
 
-			$tmparray = dol_getdate(dol_now(), true);
+			$tmparray = dol_getdate(time(), true);
 
 			$sql = "SELECT u.rowid, u.firstname, u.lastname, u.societe, u.birth, date_format(u.birth, '%d') as daya, u.email, u.statut as status, u.datefin";
 			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as u";
@@ -116,7 +116,7 @@ class box_birthdays_members extends ModeleBoxes
 					$memberstatic->datefin = $this->db->jdate($data[$j]->datefin);
 
 					$dateb = $this->db->jdate($data[$j]->birth);
-					$age = idate('Y', dol_now()) - idate('Y', $dateb);
+					$age = idate('Y', time()) - idate('Y', $dateb);
 
 					$typea = '<i class="fas fa-birthday-cake inline-block"></i>';
 

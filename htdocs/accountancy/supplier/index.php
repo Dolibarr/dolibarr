@@ -55,8 +55,8 @@ $month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 if (GETPOSTINT("year")) {
 	$year_start = GETPOSTINT("year");
 } else {
-	$year_start = dol_print_date(dol_now(), '%Y');
-	if (dol_print_date(dol_now(), '%m') < $month_start) {
+	$year_start = dol_print_date(time(), '%Y');
+	if (dol_print_date(time(), '%m') < $month_start) {
 		$year_start--; // If current month is lower that starting fiscal month, we start last year
 	}
 }

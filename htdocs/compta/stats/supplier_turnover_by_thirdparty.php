@@ -109,12 +109,12 @@ $nbofyear = 1;
 $year = GETPOSTINT("year");
 $month = GETPOSTINT("month");
 if (empty($year)) {
-	$year_current = (int) dol_print_date(dol_now(), "%Y");
-	$month_current = (int) dol_print_date(dol_now(), "%m");
+	$year_current = (int) dol_print_date(time(), "%Y");
+	$month_current = (int) dol_print_date(time(), "%m");
 	$year_start = $year_current - ($nbofyear - 1);
 } else {
 	$year_current = $year;
-	$month_current = (int) dol_print_date(dol_now(), "%m");
+	$month_current = (int) dol_print_date(time(), "%m");
 	$year_start = $year - $nbofyear + (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1 ? 0 : 1);
 }
 $date_start = dol_mktime(0, 0, 0, (int) $date_startmonth, (int) $date_startday, (int) $date_startyear, 'tzserver');	// We use timezone of server so report is same from everywhere
@@ -235,7 +235,7 @@ if ($modecompta == "BOOKKEEPINGCOLLECTED") {
 $calcmode = '';
 $name = '';
 $namelink = '';
-$builddate = dol_now();
+$builddate = time();
 
 // Show report header
 if ($modecompta == "CREANCES-DETTES") {
@@ -243,14 +243,14 @@ if ($modecompta == "CREANCES-DETTES") {
 	$calcmode = $langs->trans("CalcModeDebt");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$description = $langs->trans("RulesPurchaseTurnoverDue");
-	$builddate = dol_now();
+	$builddate = time();
 } elseif ($modecompta == "RECETTES-DEPENSES") {
 	$name = $langs->trans("PurchaseTurnoverCollected").', '.$langs->trans("ByThirdParties");
 	$calcmode = $langs->trans("CalcModePayment");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 	$description = $langs->trans("RulesPurchaseTurnoverIn");
 
-	$builddate = dol_now();
+	$builddate = time();
 } elseif ($modecompta == "BOOKKEEPING") {
 	// TODO
 } elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {

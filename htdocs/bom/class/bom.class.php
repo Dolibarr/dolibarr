@@ -925,7 +925,7 @@ class BOM extends CommonObject
 			return 0;
 		}
 
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 
@@ -1370,7 +1370,7 @@ class BOM extends CommonObject
 	{
 		$this->initAsSpecimenCommon();
 		$this->ref = 'BOM-123';
-		$this->date_creation = dol_now() - 20000;
+		$this->date_creation = time() - 20000;
 
 		return 1;
 	}
@@ -1394,7 +1394,7 @@ class BOM extends CommonObject
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		$now = dol_now();
+		$now = time();
 
 		$this->db->begin();
 

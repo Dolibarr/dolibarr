@@ -142,7 +142,7 @@ class Subscription extends CommonObject
 
 		$error = 0;
 
-		$now = dol_now();
+		$now = time();
 
 		// Check parameters
 		if ($this->datef <= $this->dateh) {

@@ -151,7 +151,7 @@ class mod_ticket_simple extends ModeleNumRefTicket
 			return -1;
 		}
 
-		$date = empty($ticket->datec) ? dol_now() : $ticket->datec;
+		$date = empty($ticket->datec) ? time() : $ticket->datec;
 
 		//$yymm = strftime("%y%m",time());
 		$yymm = dol_print_date($date, "%y%m");

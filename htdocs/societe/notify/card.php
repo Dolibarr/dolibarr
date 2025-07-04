@@ -76,7 +76,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$now = dol_now();
+$now = time();
 
 // Security check
 $object = new Societe($db);

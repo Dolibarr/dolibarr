@@ -3140,7 +3140,7 @@ class Form
 
 		//Price by customer
 		if ((getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($socid)) {
-			$now = dol_now();
+			$now = time();
 			$sql .= " LEFT JOIN (";
 			$sql .= "   SELECT pcp1.*";
 			$sql .= "   FROM " . $this->db->prefix() . "product_customer_price AS pcp1";
@@ -7648,7 +7648,7 @@ class Form
 			$smin = '';
 		}
 
-		$nowgmt = dol_now('gmt');
+		$nowgmt = time();
 		//var_dump(dol_print_date($nowgmt, 'dayhourinputnoreduce', 'tzuserrel'));
 
 		// You can set MAIN_POPUP_CALENDAR to 'eldy' or 'jquery'

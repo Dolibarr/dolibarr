@@ -102,7 +102,7 @@ class WebservicesInvoicesTest extends CommonClassTest
 	{
 		global $conf,$user,$langs,$db;
 
-		$now = dol_now();
+		$now = time();
 
 		// create a third_party, needed to create an invoice
 		//
