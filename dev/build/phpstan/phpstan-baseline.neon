@@ -13401,7 +13401,7 @@ parameters:
 		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
-			count: 2
+			count: 3
 			path: ../../../htdocs/expensereport/card.php
 
 		-
