@@ -376,7 +376,7 @@ if ($mode == 'overwrite') {
 
 	// If a cache for translation is on, show a warning.
 	if (isModEnabled('memcached') || getDolGlobalInt('MAIN_USE_CACHE_FOR_TRANSLATION')) {
-		$infoOnTransProcess .= info_admin($langs->trans("CacheForTranslationIsUsed"), 0, 0, 1, 'warning');
+		$infoOnTransProcess .= info_admin($langs->trans("CacheForTranslationIsUsed"), 0, 0, '1', 'warning');
 	}
 
 	print $infoOnTransProcess;

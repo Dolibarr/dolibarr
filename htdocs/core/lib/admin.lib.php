@@ -1575,7 +1575,7 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
  */
 function activateModulesRequiredByCountry($country_code)
 {
-	global $db, $conf, $langs;
+	global $db;
 
 	$modulesdir = dolGetModulesDirs();
 
