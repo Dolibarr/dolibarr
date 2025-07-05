@@ -363,14 +363,21 @@ if ($mode == 'overwrite') {
 		$disablededit = ' disabled';
 	}
 
-	$infoOnTransProcess = '<div class="justify"><span class="opacitymedium">';
-	$infoOnTransProcess .= img_info().' '.$langs->trans("SomeTranslationAreUncomplete");
+	$text = $langs->trans("SomeTranslationAreUncomplete");
 	$urlwikitranslatordoc = 'https://wiki.dolibarr.org/index.php/Translator_documentation';
-	$infoOnTransProcess .= ' ('.str_replace('{s1}', '<a href="'.$urlwikitranslatordoc.'" target="_blank" rel="noopener noreferrer external">'.$langs->trans("Here").'</a>', $langs->trans("SeeAlso", '{s1}')).')<br>';
-	$infoOnTransProcess .= '<br>';
+	$text .= ' - <a href="'.$urlwikitranslatordoc.'" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeAlso", $langs->transnoentitiesnoconv("Here")).' '.img_picto('', 'url').'</a>.<br>';
+	$infoOnTransProcess = info_admin($text);
+
+	$infoOnTransProcess .= '<div class="justify">';
+	$infoOnTransProcess .= '<span class="opacitymedium">';
 	$infoOnTransProcess .= $langs->trans("TranslationOverwriteDesc", $langs->transnoentitiesnoconv("Language"), $langs->transnoentitiesnoconv("TranslationKey"), $langs->transnoentitiesnoconv("NewTranslationStringToShow"))."\n";
 	$infoOnTransProcess .= ' ('.$langs->trans("TranslationOverwriteDesc2").').'."<br>\n";
 	$infoOnTransProcess .= '</span></div>';
+
+	// If a cache for translation is on, show a warning.
+	if (isModEnabled('memcached') || getDolGlobalInt('MAIN_USE_CACHE_FOR_TRANSLATION')) {
+		$infoOnTransProcess .= info_admin($langs->trans("CacheForTranslationIsUsed"), 0, 0, 1, 'warning');
+	}
 
 	print $infoOnTransProcess;
 
