@@ -471,7 +471,7 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 						(float) $nbpiece,
 						1,
 						GETPOST("label", 'alphanohtml'),
-						$pricesrc,
+						(float) $pricesrc,
 						GETPOST('inventorycode', 'alphanohtml')
 					);
 					if ($result1 < 0) {
