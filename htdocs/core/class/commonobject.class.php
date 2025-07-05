@@ -9773,7 +9773,7 @@ abstract class CommonObject
 	 * @param float		$unitPrice			Product unit price
 	 * @param float		$discountPercent	Line discount percent
 	 * @param int		$fk_product			Product id
-	 * @return float|int<-1,-1>				Return buy price if OK, integer <0 if KO
+	 * @return float|int<-2,-1>				Return buy price if OK, integer <0 if KO
 	 */
 	public function defineBuyPrice($unitPrice = 0.0, $discountPercent = 0.0, $fk_product = 0)
 	{
@@ -9826,7 +9826,8 @@ abstract class CommonObject
 				}
 			}
 		}
-		return $buyPrice;
+
+		return (float) $buyPrice;
 	}
 
 	/**

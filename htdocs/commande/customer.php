@@ -73,7 +73,8 @@ if (!$sortfield) {
 	$sortfield = "nom";
 }
 
-
+$addu = GETPOST("addu");
+$maxlen = GETPOSTISSET("maxlensocname") ? GETPOSTINT("maxlensocname") : 40;
 /*
  * View
  */
@@ -86,7 +87,7 @@ $thirdpartystatic = new Societe($db);
  * Mode List
  */
 
-$sql = "SELECT s.rowid, s.nom as name, s.client, s.town, s.datec, s.datea,";
+$sql = "SELECT s.rowid, s.nom as name, s.client, s.town, s.datec,";
 $sql .= " st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta as code_compta_client";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st, ".MAIN_DB_PREFIX."commande as c";
 $sql .= " WHERE s.fk_stcomm = st.id AND c.fk_soc = s.rowid";
@@ -100,9 +101,9 @@ if (GETPOST("search_compta")) {
 if (GETPOST("search_code_client")) {
 	$sql .= natural_search("s.code_client", GETPOST("search_code_client"));
 }
-if (dol_strlen($begin)) {
+/*if (dol_strlen($begin)) { // Useless already done line 97
 	$sql .= " AND s.nom LIKE '".$db->escape($begin)."'";
-}
+}*/
 // If the internal user must only see his customers, force searching by him
 $search_sale = 0;
 if (!$user->hasRight('societe', 'client', 'voir')) {
@@ -121,7 +122,7 @@ if ($socid) {
 	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
 $sql .= " AND c.fk_statut in (1, 2) AND c.facture = 0";
-$sql .= " GROUP BY s.nom";
+$sql .= " GROUP BY s.nom, s.rowid";
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records

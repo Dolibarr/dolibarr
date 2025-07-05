@@ -5251,7 +5251,7 @@ if ($action == 'create') {
 			print '<table class="nobordernopadding centpercent"><tr><td>';
 			print $form->textwithpicto($langs->trans('PointOfSale'), $langs->trans('POSInfo'));
 			print '</td>';
-			if ($action != 'editposinfo' && $object->status == $object::STATUS_DRAFT && $usercancreate) {
+			if ($action != 'editposinfo' && $usercancreate) {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editposinfo&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetPOSInfo'), 1).'</a></td>';
 			}
 			print '</tr></table>';
