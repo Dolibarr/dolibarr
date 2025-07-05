@@ -1443,7 +1443,7 @@ class BOM extends CommonObject
 							return -1;
 						}
 
-						$unit_cost = is_null($tmpproduct->cost_price) ? $tmpproduct->pmp : $tmpproduct->cost_price;
+						$unit_cost = (float) (is_null($tmpproduct->cost_price) ? $tmpproduct->pmp : $tmpproduct->cost_price);
 						if (empty($unit_cost)) {
 							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
 								if ($productFournisseur->fourn_remise_percent != "0") {
