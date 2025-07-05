@@ -213,7 +213,7 @@ class Facture extends CommonInvoice
 	public $situation_cycle_ref;
 
 	/**
-	 * @var int Situation counter inside the cycle
+	 * @var ?int Situation counter inside the cycle
 	 */
 	public $situation_counter;
 
@@ -1080,7 +1080,7 @@ class Facture extends CommonInvoice
 						0,
 						$fk_parent_line,
 						$fk_product_fournisseur_price,
-						$buyprice,
+						is_null($buyprice) ? '' : $buyprice,	// do not use (float) here, it may be ''
 						$_facrec->lines[$i]->label,
 						empty($_facrec->lines[$i]->array_options) ? null : $_facrec->lines[$i]->array_options,
 						100,	// situation percent is undefined on recurring invoice lines

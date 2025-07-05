@@ -9391,54 +9391,6 @@ parameters:
 			path: ../../../htdocs/core/lib/files.lib.php
 
 		-
-			message: '#^Parameter \#1 \$ftp of function ftp_cdup expects FTP\\Connection, resource given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/lib/ftp.lib.php
-
-		-
-			message: '#^Parameter \#1 \$ftp of function ftp_chdir expects FTP\\Connection, resource given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/lib/ftp.lib.php
-
-		-
-			message: '#^Parameter \#1 \$ftp of function ftp_close expects FTP\\Connection, resource given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/lib/ftp.lib.php
-
-		-
-			message: '#^Parameter \#1 \$ftp of function ftp_delete expects FTP\\Connection, resource given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/lib/ftp.lib.php
-
-		-
-			message: '#^Parameter \#1 \$ftp of function ftp_get expects FTP\\Connection, resource given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/lib/ftp.lib.php
-
-		-
-			message: '#^Parameter \#1 \$ftp of function ftp_mkdir expects FTP\\Connection, resource given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/lib/ftp.lib.php
-
-		-
-			message: '#^Parameter \#1 \$ftp of function ftp_put expects FTP\\Connection, resource given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/lib/ftp.lib.php
-
-		-
-			message: '#^Parameter \#1 \$ftp of function ftp_rmdir expects FTP\\Connection, resource given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/lib/ftp.lib.php
-
-		-
 			message: '#^Call to function is_array\(\) with array\<string, mixed\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -13449,7 +13401,7 @@ parameters:
 		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
-			count: 2
+			count: 3
 			path: ../../../htdocs/expensereport/card.php
 
 		-

@@ -178,7 +178,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	do {
 		if ($maxRedirection < 1) {
-			break;
+			return array('http_code' => 400, 'content' => 'Maximum number of redirections reached', 'curl_error_no' => 1, 'curl_error_msg' => 'Maximum number of redirections reached');
 		}
 
 		curl_setopt($ch, CURLOPT_URL, $newUrl);
@@ -192,7 +192,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		if (in_array($hosttocheck, array('metadata.google.internal'))) {
 			$info['http_code'] = 400;
 			$info['content'] = 'Error bad hostname '.$hosttocheck.' (Used by Google metadata). This value for hostname is not allowed.';
-			break;
+			return array('http_code' => 400, 'content' => $info['content'], 'curl_error_no' => 1, 'curl_error_msg' => $info['content']);
 		}
 
 		// Clean host name $hosttocheck to convert it into an IP $iptocheck
@@ -220,7 +220,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			if ($tmpresult) {
 				$info['http_code'] = 400;
 				$info['content'] = $tmpresult;
-				break;
+				return array('http_code' => 400, 'content' => $tmpresult, 'curl_error_no' => 1, 'curl_error_msg' => $tmpresult);
 			}
 		}
 
