@@ -1444,7 +1444,7 @@ class BOM extends CommonObject
 						}
 
 						$unit_cost = is_null($tmpproduct->cost_price) ? $tmpproduct->pmp : $tmpproduct->cost_price;
-						if (is_null($unit_cost)) {
+						if (empty($unit_cost)) {
 							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
 								if ($productFournisseur->fourn_remise_percent != "0") {
 									$line->unit_cost = $productFournisseur->fourn_unitprice_with_discount;
