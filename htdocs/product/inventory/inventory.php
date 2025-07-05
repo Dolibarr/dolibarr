@@ -1149,7 +1149,7 @@ if ($resql) {
 				}
 				$pmp_valuation = $pmp_expected * $valuetoshow;
 				print '<td class="right">';
-				print price($pmp_expected);
+				print is_null($pmp_expected) ? '' : price($pmp_expected);
 				print '<input type="hidden" name="expectedpmp_'.$obj->rowid.'" value="'.$pmp_expected.'"/>';
 				print '</td>';
 				print '<td class="right">';
@@ -1171,7 +1171,7 @@ if ($resql) {
 					$pmp_real = $product_static->pmp;
 				}
 				$pmp_valuation_real = $pmp_real * $qty_view;
-				print '<input type="text" class="maxwidth75 right realpmp'.$obj->fk_product.'" name="realpmp_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input_pmp" value="'.price2num($pmp_real).'">';
+				print '<input type="text" class="maxwidth75 right realpmp'.$obj->fk_product.'" name="realpmp_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input_pmp" value="'.(is_null($pmp_real) ? '' : price2num($pmp_real)).'">';
 				print '</td>';
 				print '<td class="right">';
 				print '<input type="text" class="maxwidth75 right realvaluation'.$obj->fk_product.'" name="realvaluation_'.$obj->rowid.'" id="id_'.$obj->rowid.'_input_real_valuation" value="'.$pmp_valuation_real.'">';
