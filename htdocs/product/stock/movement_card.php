@@ -66,6 +66,7 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'movementlist';
 $optioncss = GETPOST('optioncss', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 $idproduct = GETPOSTINT('idproduct');
 $year = GETPOSTINT("year");
@@ -339,8 +340,8 @@ if ($action == "transfert_stock" && !$cancel && $usercancreate) {
 				} else {
 					$srcwarehouseid = $id;
 					$batch = (string) GETPOST('batch_number', 'alpha');
-					$eatby = $d_eatby;
-					$sellby = $d_sellby;
+					$eatby = GETPOSTDATE('eatby');
+					$sellby = GETPOSTDATE('sellby');
 				}
 
 				if (!$error) {
@@ -351,7 +352,7 @@ if ($action == "transfert_stock" && !$cancel && $usercancreate) {
 						GETPOSTFLOAT("nbpiece"),
 						1,
 						GETPOST("label", 'san_alpha'),
-						$pricesrc,
+						(float) $pricesrc,
 						$eatby,
 						$sellby,
 						$batch,
@@ -364,7 +365,7 @@ if ($action == "transfert_stock" && !$cancel && $usercancreate) {
 						GETPOSTFLOAT("nbpiece"),
 						0,
 						GETPOST("label", 'san_alpha'),
-						$pricedest,
+						(float) $pricedest,
 						$eatby,
 						$sellby,
 						$batch,
@@ -379,7 +380,7 @@ if ($action == "transfert_stock" && !$cancel && $usercancreate) {
 					GETPOSTFLOAT("nbpiece"),
 					1,
 					GETPOST("label", 'alpha'),
-					$pricesrc,
+					(float) $pricesrc,
 					GETPOST('inventorycode', 'alpha')
 				);
 
@@ -390,7 +391,7 @@ if ($action == "transfert_stock" && !$cancel && $usercancreate) {
 					GETPOSTFLOAT("nbpiece"),
 					0,
 					GETPOST("label", 'alpha'),
-					$pricedest,
+					(float) $pricedest,
 					GETPOST('inventorycode', 'alpha')
 				);
 			}

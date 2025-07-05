@@ -6172,7 +6172,7 @@ class Product extends CommonObject
 	 * @param	float		$nbpiece        nb of units (should be always positive, use $movement to decide if we add or remove)
 	 * @param	int<0,1>	$movement       0 = add, 1 = remove
 	 * @param	string		$label          Label of stock movement
-	 * @param	float		$price          Price to use for stock eval
+	 * @param	int|float	$price          Price to use for stock eval
 	 * @param	int|string	$dlc            eat-by date
 	 * @param	int|string	$dluo           sell-by date
 	 * @param	string		$lot            Lot number
