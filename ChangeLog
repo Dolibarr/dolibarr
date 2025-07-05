@@ -116,6 +116,7 @@ NEW: Can edit the module_source and pos_source field.
 NEW: Accountancy - Add actions on entries (Cloning, assigning, returning)
 NEW: Add conf PDF_HIDE_LINKED_OBJECT_IN_PUBLIC_NOTE to hide linked object in public note of pdf.
 NEW: Add MULTICURRENCY_SHOW_ALSO_MAIN_CURRENCY_ON_PDF for legal requirement that need both currencies on PDF
+NEW: Add note public and private on order export
 
 For developers:
 ----------
@@ -1271,7 +1272,6 @@ SEC: Add a protection against installation of external module bypassing
 SEC: A user with export permission can export module data without permissions on module.
 
 ***** ChangeLog for 19.0.1 compared to 19.0.0 *****
-
 FIX: 16.0 - parent company gets emptied when updating a third party from the card in edit mode (#28269)
 FIX: 17.0: $num doesn't take trigger-modified newref into account, leading to inconsistencies if BILL_SUPPLIER_VALIDATE changes the invoice's ref (#28684)
 FIX: #22948
@@ -1601,7 +1601,6 @@ The following changes may create regressions for some external modules, but were
 * booking.class.php was removed, please have a look at calendar.class.php
 
 ***** ChangeLog for 18.0.7 compared to 18.0.6 *****
-FIX: 17.0 API endpoints "PUT": prevent overwriting all extrafields if only some are supplied in the request
 FIX: 17.0 API endpoints "PUT": prevent overwriting all extrafields if only some are supplied in the request cf. PR #29237
 FIX: 17.0 - collisions in cache for dol_getIdFromCode
 FIX: 17.0 - missing error handling for FactureRec::fetch in card-rec.php

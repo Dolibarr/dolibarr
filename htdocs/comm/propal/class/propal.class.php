@@ -197,6 +197,7 @@ class Propal extends CommonObject
 
 	/**
 	 * @var User user identified by user_author_id
+	 * @deprecated Set only $user_author_id
 	 */
 	public $author;
 

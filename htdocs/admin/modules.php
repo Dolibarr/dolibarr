@@ -93,12 +93,6 @@ $options['search_source_dolistore']	= getDolGlobalInt('MAIN_ENABLE_EXTERNALMODUL
 // MAIN_ENABLE_EXTERNALMODULES_COMMUNITY is 1 if we enabled the community modules
 $options['search_source_github']	= getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY');
 
-//$remotestore = new Dolistore(false);
-$remotestore = new ExternalModules();
-if ($mode == 'marketplace') {
-	$remotestore->loadRemoteSources();
-}
-
 if (!$user->admin) {
 	accessforbidden();
 }
@@ -163,6 +157,15 @@ $allowfromweb = 1;
 if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) {
 	$allowonlineinstall = false;
 }
+
+//$remotestore = new Dolistore(false);
+$remotestore = new ExternalModules();
+if ($mode == 'marketplace') {
+	// Make remote calls
+	$remotestore->loadRemoteSources();
+}
+
+$object = new stdClass();
 
 
 /*
@@ -358,30 +361,6 @@ if ($action == 'install' && $allowonlineinstall) {
 		}
 	}
 
-	/*
-	if (!$error) {
-		if (GETPOST('checkforcompliance')) {
-			$dir = $dirins;
-			$file = $modulenameval;
-			// $installedmodule
-			try {
-				$res = include_once $dir.$file; // A class already exists in a different file will send a non catchable fatal error.
-				$modName = substr($file, 0, dol_strlen($file) - 10);
-				if ($modName) {
-					if (class_exists($modName)) {
-						$objMod = new $modName($db);
-						'@phan-var-force DolibarrModules $objMod';
-
-						//var_dump($objMod);
-					}
-				}
-			} catch(Exception $e) {
-				// Nothing done
-			}
-		}
-	}
-	*/
-
 	if (!$error) {
 		$searchParams = array(
 			'search_keyword' => $modulenameval,
@@ -512,6 +491,8 @@ $i = 0; // is a sequencer of modules found
 $j = 0; // j is module number. Automatically affected if module number not defined.
 $modNameLoaded = array();
 
+//if ($mode == 'common' || $mode == 'commonkanban') {
+// Load $modules (required for the badge count)
 foreach ($modulesdir as $dir) {
 	// Load modules attributes in arrays (name, numero, orders) from dir directory
 	//print $dir."\n<br>";
@@ -1266,9 +1247,10 @@ if ($mode == 'marketplace') {
 	print '<td></td>';
 	print '</tr>';
 
+	$url = 'https://www.dolistore.com';
+
 	// Marketplace
 	print '<tr class="oddeven">'."\n";
-	$url = 'https://www.dolistore.com';
 	print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth100" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.svg"></a></td>';
 	print '<td><span class="opacitymedium">'.$langs->trans("DoliStoreDesc").'</span><br>';
 	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
@@ -1298,9 +1280,10 @@ if ($mode == 'marketplace') {
 	print '</td>';
 	print '</tr>';
 
+	$url = 'https://github.com/Dolibarr/dolibarr-community-modules';
+
 	// Community
 	print '<tr class="oddeven">'."\n";
-	$url = 'https://github.com/Dolibarr/dolibarr-community-modules';
 	print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth100" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg"></a></td>';
 	print '<td><span class="opacitymedium">'.$langs->trans("CommunityModulesDesc").'</span><br>';
 	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';

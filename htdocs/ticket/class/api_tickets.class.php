@@ -213,7 +213,7 @@ class Tickets extends DolibarrApi
 
 		$obj_ret = array();
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $socid;
+		$socid = DolibarrApiAccess::$user->socid ?: $socid;
 
 		$search_sale = null;
 		// If the internal user must only see his customers, force searching by him

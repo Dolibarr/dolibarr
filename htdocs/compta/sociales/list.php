@@ -209,7 +209,7 @@ llxHeader('', $title, '', '', 0, 0, '', '', '', 'bodyforlist');
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $sql = "SELECT cs.rowid, cs.fk_type as type, cs.fk_user,";
-$sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode as period, cs.fk_account,";
+$sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode as period, cs.fk_account, cs.note_public, cs.note_private,";
 if (isModEnabled('project')) {
 	$sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
 }
@@ -664,6 +664,8 @@ while ($i < $imaxinloop) {
 	$chargesociale_static->date_ech = $db->idate($obj->date_ech);		// Date of contribution
 	$chargesociale_static->period = $db->idate($obj->period, 'gmt');	// End date of period
 	$chargesociale_static->type_accountancy_code = $obj->type_accountancy_code;
+	$chargesociale_static->note_private = $obj->note_private;
+	$chargesociale_static->note_public = $obj->note_public;
 
 	if (isModEnabled('project')) {
 		$projectstatic->id = $obj->project_id;
@@ -712,7 +714,9 @@ while ($i < $imaxinloop) {
 
 		// Ref
 		if (!empty($arrayfields['cs.rowid']['checked'])) {
-			print '<td>'.$chargesociale_static->getNomUrl(1, '20').'</td>';
+			print '<td class="tdoverflowmax125">';
+			print $chargesociale_static->getNomUrl(1, '', 0, 0, -1, 1);
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

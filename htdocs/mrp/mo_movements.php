@@ -966,7 +966,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Inventory code
 		if (!empty($arrayfields['m.inventorycode']['checked'])) {
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($objp->inventorycode).'">';
-			//print '<a href="' . DOL_URL_ROOT . '/product/stock/movement_card.php' . '?id=' . $objp->entrepot_id . '&amp;search_inventorycode=' . $objp->inventorycode . '&amp;search_type_mouvement=' . $objp->type_mouvement . '">';
+			//print '<a href="' . DOL_URL_ROOT . '/product/stock/movement_list.php' . '?id=' . ((int) $objp->entrepot_id) . '&search_inventorycode=' . urlencode($objp->inventorycode) . '&search_type_mouvement=' . urlencode($objp->type_mouvement) . '">';
 			print dol_escape_htmltag($objp->inventorycode);
 			//print '</a>';
 			print '</td>';
