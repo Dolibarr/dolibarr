@@ -549,8 +549,8 @@ if ($resql) {
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td></td>';
 		}
-		print '<td class="nowrap">';
-		print $product->getNomUrl(1, '', 16);
+		print '<td class="tdoverflowmax250">';
+		print $product->getNomUrl(1);
 		//if ($objp->stock_theorique < $objp->seuil_stock_alerte) print ' '.img_warning($langs->trans("StockTooLow"));
 		print '</td>';
 		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($product->label).'">'.dol_escape_htmltag($product->label).'</td>';

@@ -332,7 +332,7 @@ class ConferenceOrBooth extends ActionComm
 
 		// Manage filter
 		if (is_array($filter)) {	// deprecated, use $filter = USF syntax
-			dol_syslog("You are using a deprecated use of fetchAll. filter parameter mus be an USF string now.", LOG_WARNING);
+			dol_syslog("You are using a deprecated use of fetchAll. filter parameter must be an USF string now.", LOG_WARNING);
 			$sqlwhere = array();
 			if (count($filter) > 0) {
 				foreach ($filter as $key => $value) {

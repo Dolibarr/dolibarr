@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (c) 2002-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
@@ -3796,19 +3795,20 @@ class Form
 	/**
 	 * Return list of products for customer (in Ajax if Ajax activated or go to select_produits_fournisseurs_list)
 	 *
-	 * @param int 		$socid 			Id third party
-	 * @param string 	$selected 		Preselected product
-	 * @param string 	$htmlname 		Name of HTML Select
-	 * @param string 	$filtertype 	Filter on product type (''=nofilter, 0=product, 1=service)
-	 * @param string 	$filtre 		For a SQL filter
-	 * @param array<string,string|string[]>	$ajaxoptions 	Options for ajax_autocompleter
-	 * @param int<0,1>	$hidelabel 		Hide label (0=no, 1=yes)
-	 * @param int<0,1>	$alsoproductwithnosupplierprice 1=Add also product without supplier prices
-	 * @param string 	$morecss 		More CSS
-	 * @param string 	$placeholder 	Placeholder
-	 * @return    void
+	 * @param 	int 		$socid 							Id third party
+	 * @param 	string|int	$selected 						Preselected product
+	 * @param 	string 		$htmlname 						Name of HTML Select
+	 * @param 	string 		$filtertype 					Filter on product type (''=nofilter, 0=product, 1=service)
+	 * @param 	string 		$filtre 						For a SQL filter
+	 * @param 	array<string,string|string[]>	$ajaxoptions 	Options for ajax_autocompleter
+	 * @param 	int<0,1>	$hidelabel 						Hide label (0=no, 1=yes)
+	 * @param 	int<0,1>	$alsoproductwithnosupplierprice 1=Add also product without supplier prices
+	 * @param 	string 		$morecss 						More CSS
+	 * @param 	string 		$placeholder 					Placeholder
+	 * @param	int			$nooutput						1=do not output but return string instead
+	 * @return  string|void									HTML select or nothing
 	 */
-	public function select_produits_fournisseurs($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $ajaxoptions = array(), $hidelabel = 0, $alsoproductwithnosupplierprice = 0, $morecss = '', $placeholder = '')
+	public function select_produits_fournisseurs($socid, $selected = '', $htmlname = 'productid', $filtertype = '', $filtre = '', $ajaxoptions = array(), $hidelabel = 0, $alsoproductwithnosupplierprice = 0, $morecss = '', $placeholder = '', $nooutput = 0)
 	{
 		// phpcs:enable
 		global $langs, $conf;
@@ -3820,7 +3820,7 @@ class Form
 
 		$selected_input_value = '';
 		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('PRODUIT_USE_SEARCH_TO_SELECT')) {
-			if ($selected > 0) {
+			if ((int) $selected > 0) {
 				require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 				$producttmpselect = new Product($this->db);
 				$producttmpselect->fetch((int) $selected);
@@ -3830,11 +3830,18 @@ class Form
 
 			// mode=2 means suppliers products
 			$urloption = ($socid > 0 ? 'socid=' . $socid . '&' : '') . 'htmlname=' . $htmlname . '&outjson=1&price_level=' . $price_level . '&type=' . $filtertype . '&mode=2&status=' . $status . '&finished=' . $finished . '&alsoproductwithnosupplierprice=' . $alsoproductwithnosupplierprice;
-			print ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, getDolGlobalInt('PRODUIT_USE_SEARCH_TO_SELECT'), 0, $ajaxoptions);
 
-			print($hidelabel ? '' : $langs->trans("RefOrLabel") . ' : ') . '<input type="text" class="'.$morecss.'" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . $placeholder . '"' : '') . '>';
+			$s = ajax_autocompleter($selected, $htmlname, DOL_URL_ROOT . '/product/ajax/products.php', $urloption, getDolGlobalInt('PRODUIT_USE_SEARCH_TO_SELECT'), 0, $ajaxoptions);
+
+			$s .= ($hidelabel ? '' : $langs->trans("RefOrLabel") . ' : ') . '<input type="text" class="'.$morecss.'" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . $placeholder . '"' : '') . '>';
 		} else {
-			print $this->select_produits_fournisseurs_list($socid, $selected, $htmlname, $filtertype, $filtre, '', $status, 0, 0, $alsoproductwithnosupplierprice, $morecss, getDolGlobalInt('SUPPLIER_SHOW_STOCK_IN_PRODUCTS_COMBO'), $placeholder);
+			$s = $this->select_produits_fournisseurs_list($socid, $selected, $htmlname, $filtertype, $filtre, '', $status, 0, 0, $alsoproductwithnosupplierprice, $morecss, getDolGlobalInt('SUPPLIER_SHOW_STOCK_IN_PRODUCTS_COMBO'), $placeholder);
+		}
+
+		if ($nooutput) {
+			return $s;
+		} else {
+			print $s;
 		}
 	}
 
@@ -5815,7 +5822,7 @@ class Form
 	 * @param 	int<0,1>			$include 		[=0] Removed or 1=Keep only
 	 * @param 	string 				$morecss 		More CSS
 	 * @param	int<0,2>			$useempty		0=No empty value, 1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries. Default is 1.
-	 * @return	string|array<int,string>|array<int,array{id:int,fulllabel:string,color:string,picto:string}>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}>		String list or Array of categories
+	 * @return	string|array<int,string>|array<int,array{id:int,fulllabel:string,data-html?:string,color:string,picto:string}>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string,data-html?:string}>		String list or Array of categories
 	 * @see select_categories()
 	 */
 	public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $fromid = 0, $outputmode = 0, $include = 0, $morecss = '', $useempty = 1)
@@ -5945,8 +5952,9 @@ class Form
 	{
 		global $langs, $conf;
 
-		$more = '<!-- formconfirm - before call, page=' . dol_escape_htmltag($page) . ' -->';
-		$formconfirm = '';
+		$more = '';
+		$formconfirm = '<!-- formconfirm - before call, page=' . dol_escape_htmltag($page) . ' -->';
+
 		$inputok = array();
 		$inputko = array();
 
@@ -5958,7 +5966,7 @@ class Form
 
 		// Set height automatically if not defined
 		if (empty($height)) {
-			$height = 220;
+			$height = 240;
 			if (is_array($formquestion) && count($formquestion) > 2) {
 				$height += ((count($formquestion) - 2) * 24);
 			}
@@ -5991,11 +5999,6 @@ class Form
 					} elseif ($input['type'] == 'password') {
 						$more .= '<div class="tagtr"><div class="tagtd' . (empty($input['tdclass']) ? '' : (' ' . $input['tdclass'])) . '">' . $input['label'] . '</div><div class="tagtd"><input type="password" class="flat' . $morecss . '" id="' . dol_escape_htmltag($input['name']) . '" name="' . dol_escape_htmltag($input['name']) . '"' . $size . ' value="' . (empty($input['value']) ? '' : $input['value']) . '"' . $moreattr . ' /></div></div>' . "\n";
 					} elseif ($input['type'] == 'textarea') {
-						/*$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">'.$input['label'].'</div><div class="tagtd">';
-						$more .= '<textarea name="'.$input['name'].'" class="'.$morecss.'"'.$moreattr.'>';
-						$more .= $input['value'];
-						$more .= '</textarea>';
-						$more .= '</div></div>'."\n";*/
 						$moreonecolumn .= '<div class="margintoponly">';
 						$moreonecolumn .= $input['label'] . '<br>';
 						$moreonecolumn .= '<textarea name="' . dol_escape_htmltag($input['name']) . '" id="' . dol_escape_htmltag($input['name']) . '" class="' . $morecss . '"' . $moreattr . '>';
@@ -6184,8 +6187,8 @@ class Form
 
 			$formconfirm .= '
                     resizable: false,
-                    height: \'' . ((int) $height) . '\',
-                    width: \'' . ((int) $width) . '\',
+					height: \'' . dol_escape_js($height) . '\',
+                    width: \'' . dol_escape_js($width) . '\',
                     modal: true,
                     closeOnEscape: false,
                     buttons: {
@@ -9093,22 +9096,20 @@ class Form
 		if (!empty($objecttmp->isextrafieldmanaged)) {
 			$sql .= " LEFT JOIN " . $this->db->prefix() . $this->db->sanitize($objecttmp->table_element) . "_extrafields as e ON t.rowid = e.fk_object";
 		}
-		if (!empty($objecttmp->parent_element)) {
+		if (!empty($objecttmp->parent_element)) {	// If parent_element is defined
 			$parent_properties = getElementProperties($objecttmp->parent_element);
 			$sql .= " INNER JOIN " . $this->db->prefix() . $this->db->sanitize($parent_properties['table_element']) . " as o ON o.rowid = t.".$objecttmp->fk_parent_attribute;
 		}
 		if (in_array($objecttmp->parent_element, ['commande', 'propal', 'facture', 'expedition'])) {
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "product as p ON p.rowid = t.fk_product";
 		}
-		if (isset($objecttmp->ismultientitymanaged)) {
+		if (!empty($objecttmp->ismultientitymanaged)) {
+			if ($objecttmp->ismultientitymanaged == 1) {	// @phan-suppress-current-line PhanPluginEmptyStatementIf
+				// No need to join/link another table
+			}
 			if (!is_numeric($objecttmp->ismultientitymanaged)) {
 				$tmparray = explode('@', $objecttmp->ismultientitymanaged);
 				$sql .= " INNER JOIN " . $this->db->prefix() . $this->db->sanitize($tmparray[1]) . " as parenttable ON parenttable.rowid = t." . $this->db->sanitize($tmparray[0]);
-			}
-			if ($objecttmp->ismultientitymanaged === 'fk_soc@societe') {
-				if (!$user->hasRight('societe', 'client', 'voir')) {
-					$sql .= ", " . $this->db->prefix() . "societe_commerciaux as sc";
-				}
 			}
 		}
 
@@ -9125,26 +9126,34 @@ class Form
 			$sql .= $hookmanager->resPrint;
 		} else {
 			$sql .= " WHERE 1=1";
-			if (isset($objecttmp->ismultientitymanaged)) {
+
+			// If table need a multientity restriction
+			if (!empty($objecttmp->ismultientitymanaged)) {
 				if ($objecttmp->ismultientitymanaged == 1) {
 					$sql .= " AND t.entity IN (" . getEntity($objecttmp->table_element) . ")";
 				}
 				if (!is_numeric($objecttmp->ismultientitymanaged)) {
 					$sql .= " AND parenttable.entity = t." . $this->db->sanitize($tmparray[0]);
 				}
-				if ($objecttmp->ismultientitymanaged == 1 && !empty($user->socid)) {
-					if ($objecttmp->element == 'societe') {
-						$sql .= " AND t.rowid = " . ((int) $user->socid);
-					} else {
-						$sql .= " AND t.fk_soc = " . ((int) $user->socid);
-					}
-				}
+				// If the parent table is llx_societe and user is not an external user (a more robust test done later for external users),
+				// then we must also check that user has permissions
 				if ($objecttmp->ismultientitymanaged === 'fk_soc@societe') {
-					if (!$user->hasRight('societe', 'client', 'voir')) {
-						$sql .= " AND t.rowid = sc.fk_soc AND sc.fk_user = " . ((int) $user->id);
+					if (!$user->hasRight('societe', 'client', 'voir') && empty($user->socid)) {
+						$sql .= " AND EXISTS (SELECT sc.rowid FROM ".$this->db->prefix() . "societe_commerciaux as sc";
+						$sql .= " WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 					}
 				}
 			}
+
+			// If user is external user, we must also make a test on llx_societe_commerciaux
+			if (!empty($user->socid)) {
+				if ($objecttmp->element == 'societe') {
+					$sql .= " AND t.rowid = " . ((int) $user->socid);
+				} elseif (!empty($objecttmp->fields['fk_soc']) || !empty($objecttmp->fields['t.fk_soc']) || property_exists($objecttmp, 'fk_soc') || property_exists($objecttmp, 'socid')) {
+					$sql .= " AND t.fk_soc = " . ((int) $user->socid);
+				}
+			}
+
 			$splittedfieldstoshow = explode(',', $fieldstoshow);
 			foreach ($splittedfieldstoshow as &$field2) {
 				if (is_numeric($pos = strpos($field2, ' '))) {
@@ -10025,12 +10034,21 @@ class Form
 				}
 
 				$regs = array();
+
 				if ($objecttype != 'supplier_proposal' && preg_match('/^([^_]+)_([^_]+)/i', $objecttype, $regs)) {
 					$element = $regs[1];
 					$subelement = $regs[2];
 					$tplpath = $element . '/' . $subelement;
 				}
 				$tplname = 'linkedobjectblock';
+
+				// If we ask a resource form external module (instead of default path)
+				if (preg_match('/^([^@]+)@([^@]+)$/i', $objecttype, $regs)) {	// 'myobject@mymodule'
+					$element = $regs[1];
+					$module = $regs[2];
+					$tplpath = $module. '/' . $element;
+					$tplname = $tplname.'_'.$element;
+				}
 
 				// To work with non standard path
 				if ($objecttype == 'facture') {
@@ -10099,6 +10117,7 @@ class Form
 
 				// Output template part (modules that overwrite templates must declare this into descriptor)
 				$dirtpls = array_merge($conf->modules_parts['tpl'], array('/' . $tplpath . '/tpl'));
+
 				foreach ($dirtpls as $reldir) {
 					$reldir = rtrim($reldir, '/');
 					if ($nboftypesoutput == ($nbofdifferenttypes - 1)) {    // No more type to show after
@@ -10295,6 +10314,14 @@ class Form
 				continue;
 			}
 
+
+			// If we ask a resource form external module (instead of default path)
+			$module='';
+			if (preg_match('/^([^@]+)@([^@]+)$/i', $key, $regs)) {	// 'myobject@mymodule'
+				$key = $regs[1];
+				$module=$regs[2];
+			}
+
 			if (!empty($possiblelink['perms']) && (empty($restrictlinksto) || in_array($key, $restrictlinksto)) && (empty($excludelinksto) || !in_array($key, $excludelinksto))) {
 				$htmltoenteralink .= '<div id="' . $key . 'list"' . (empty($conf->use_javascript_ajax) ? '' : ' style="display:none"') . '>';
 
@@ -10306,7 +10333,7 @@ class Form
 					$htmltoenteralink .= '<input type="hidden" name="token" value="' . newToken() . '">';
 					$htmltoenteralink .= '<input type="hidden" name="action" value="addlinkbyref">';
 					$htmltoenteralink .= '<input type="hidden" name="id" value="' . $object->id . '">';
-					$htmltoenteralink .= '<input type="hidden" name="addlink" value="' . $key . '">';
+					$htmltoenteralink .= '<input type="hidden" name="addlink" value="' . $key .(!empty($module)?'@'.$module:''). '">';
 					$htmltoenteralink .= '<table class="noborder">';
 					$htmltoenteralink .= '<tr class="liste_titre">';
 					//print '<td>' . $langs->trans("Ref") . '</td>';
@@ -10335,7 +10362,7 @@ class Form
 						$htmltoenteralink .= '<input type="hidden" name="token" value="' . newToken() . '">';
 						$htmltoenteralink .= '<input type="hidden" name="action" value="addlink">';
 						$htmltoenteralink .= '<input type="hidden" name="id" value="' . $object->id . '">';
-						$htmltoenteralink .= '<input type="hidden" name="addlink" value="' . $key . '">';
+						$htmltoenteralink .= '<input type="hidden" name="addlink" value="' . $key . (!empty($module)?'@'.$module:''). '">';
 						$htmltoenteralink .= '<table class="noborder">';
 						$htmltoenteralink .= '<tr class="liste_titre">';
 						$htmltoenteralink .= '<td class="nowrap"></td>';
@@ -10793,18 +10820,18 @@ class Form
 	/**
 	 * Return HTML code to output a photo
 	 *
-	 * @param string 	$modulepart 				Key to define module concerned ('societe', 'userphoto', 'memberphoto')
+	 * @param string 	$modulepart 						Key to define module concerned ('societe', 'userphoto', 'memberphoto')
 	 * @param Societe|Adherent|Contact|User|CommonObject	$object	Object containing data to retrieve file name
-	 * @param int 		$width 						Width of photo
-	 * @param int 		$height 					Height of photo (auto if 0)
-	 * @param int<0,1>	$caneditfield 				Add edit fields
-	 * @param string 	$cssclass 					CSS name to use on img for photo
-	 * @param string 	$imagesize 					'mini', 'small' or '' (original)
-	 * @param int<0,1>	$addlinktofullsize 			Add link to fullsize image
-	 * @param int<0,1>	$cache 						1=Accept to use image in cache
-	 * @param ''|'user'|'environment' 	$forcecapture 	'', 'user' or 'environment'. Force parameter capture on HTML input file element to ask a smartphone to allow to open camera to take photo. Auto if ''.
-	 * @param int<0,1>	$noexternsourceoverwrite 	No overwrite image with extern source (like 'gravatar' or other module)
-	 * @return string                            	HTML code to output photo
+	 * @param int 		$width 								Width of photo
+	 * @param int 		$height 							Height of photo (auto if 0)
+	 * @param int<0,1>	$caneditfield 						Add edit fields
+	 * @param string 	$cssclass 							CSS name to use on img for photo
+	 * @param string 	$imagesize 							'mini', 'small' or '' (original)
+	 * @param int<0,1>	$addlinktofullsize 					Add link to fullsize image
+	 * @param int<0,1>	$cache 								1=Accept to use image in cache
+	 * @param ''|'user'|'environment' 	$forcecapture 		'', 'user' (user-facing camera) or 'environment' ('outward-facing camera'). Force the parameter capture on HTML input file element to ask a smartphone to allow to open camera to take photo. Auto if ''.
+	 * @param int<0,1>	$noexternsourceoverwrite 			No overwrite image with extern source (like 'gravatar' or other module)
+	 * @return string                            			HTML code to output photo
 	 * @see getImagePublicURLOfObject()
 	 */
 	public static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '', $noexternsourceoverwrite = 0)
@@ -10982,7 +11009,7 @@ class Form
 				if ($maxmin > 0) {
 					$ret .= '<input type="hidden" name="MAX_FILE_SIZE" value="' . ($maxmin * 1024) . '">';    // MAX_FILE_SIZE must precede the field type=file
 				}
-				$ret .= '<input type="file" class="flat maxwidth200onsmartphone" name="photo" id="photoinput" accept="image/*"' . ($capture ? ' capture="' . $capture . '"' : '') . '>';
+				$ret .= '<input type="file" class="flat maxwidth200onsmartphone" name="photo" id="photoinput" accept="image/*"' . ($capture ? ' capture="' . dolPrintHTMLForAttribute($capture) . '"' : '') . '>';
 				$ret .= '</td></tr>';
 				$ret .= '</table>';
 			}

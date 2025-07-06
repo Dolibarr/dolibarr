@@ -8,6 +8,8 @@
 // TODO: Note, supposing $arrayfields is already set
 
 /**
+ * @var Conf	$conf
+ *
  * @var string 	$extrafieldsobjectkey
  * @var string 	$extrafieldsobjectprefix
  * @var int		$extrafieldspositionoffset

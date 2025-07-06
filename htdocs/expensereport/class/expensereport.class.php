@@ -815,7 +815,7 @@ class ExpenseReport extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."expensereport";
-		$sql .= " SET fk_statut = ".self::STATUS_CLOSED.", paid=1";
+		$sql .= " SET fk_statut = ".self::STATUS_CLOSED.", paid = 1";
 		$sql .= " WHERE rowid = ".((int) $id)." AND fk_statut = ".self::STATUS_APPROVED;
 
 		dol_syslog(get_class($this)."::setPaid", LOG_DEBUG);
@@ -834,6 +834,10 @@ class ExpenseReport extends CommonObject
 
 				if (empty($error)) {
 					$this->db->commit();
+
+					$this->status = self::STATUS_CLOSED;
+					$this->paid = 1;
+
 					return 1;
 				} else {
 					$this->db->rollback();

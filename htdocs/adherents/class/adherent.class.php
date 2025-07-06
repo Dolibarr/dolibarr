@@ -70,12 +70,12 @@ class Adherent extends CommonObject
 	public $mesgs;
 
 	/**
-	 * @var string login of member
+	 * @var ?string login of member
 	 */
 	public $login;
 
 	/**
-	 * @var string Clear password in memory
+	 * @var ?string Clear password in memory
 	 */
 	public $pass;
 
@@ -186,7 +186,7 @@ class Adherent extends CommonObject
 	public $default_lang;
 
 	/**
-	 * @var string photo of member
+	 * @var ?string photo of member
 	 */
 	public $photo;
 
@@ -225,7 +225,7 @@ class Adherent extends CommonObject
 	public $typeid;
 
 	/**
-	 * @var string label type member
+	 * @var ?string label type member
 	 */
 	public $type;
 
@@ -536,6 +536,10 @@ class Adherent extends CommonObject
 		global $langs;
 
 		$birthday = dol_print_date($this->birth, 'day');
+		$photo = isset($this->photo) ? $this->photo : '';
+		$login = isset($this->login) ? $this->login : '';
+		$type = isset($this->type) ? $this->type : '';
+		$pass = isset($this->pass) ? $this->pass : '';
 
 		$msgishtml = 0;
 		if (dol_textishtml($text, 1)) {
@@ -560,11 +564,11 @@ class Adherent extends CommonObject
 		$infos .= $langs->transnoentities("PhonePerso").": ".$this->phone_perso."\n";
 		$infos .= $langs->transnoentities("PhoneMobile").": ".$this->phone_mobile."\n";
 		if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
-			$infos .= $langs->transnoentities("Login").": ".$this->login."\n";
-			$infos .= $langs->transnoentities("Password").": ".$this->pass."\n";
+			$infos .= $langs->transnoentities("Login").": ".$login."\n";
+			$infos .= $langs->transnoentities("Password").": ".$pass."\n";
 		}
 		$infos .= $langs->transnoentities("Birthday").": ".$birthday."\n";
-		$infos .= $langs->transnoentities("Photo").": ".$this->photo."\n";
+		$infos .= $langs->transnoentities("Photo").": ".$photo."\n";
 		$infos .= $langs->transnoentities("Public").": ".yn($this->public);
 
 		// Substitutions
@@ -583,13 +587,13 @@ class Adherent extends CommonObject
 			'__COUNTRY__' => $msgishtml ? dol_htmlentitiesbr($this->country) : ($this->country ? $this->country : ''),
 			'__EMAIL__' => $msgishtml ? dol_htmlentitiesbr((string) $this->email) : ($this->email ? $this->email : ''),
 			'__BIRTH__' => $msgishtml ? dol_htmlentitiesbr($birthday) : ($birthday ? $birthday : ''),
-			'__PHOTO__' => $msgishtml ? dol_htmlentitiesbr($this->photo) : ($this->photo ? $this->photo : ''),
-			'__LOGIN__' => $msgishtml ? dol_htmlentitiesbr($this->login) : ($this->login ? $this->login : ''),
-			'__PASSWORD__' => $msgishtml ? dol_htmlentitiesbr($this->pass) : ($this->pass ? $this->pass : ''),
+			'__PHOTO__' => $msgishtml ? dol_htmlentitiesbr($photo) : $photo,
+			'__LOGIN__' => $msgishtml ? dol_htmlentitiesbr($login) : $login,
+			'__PASSWORD__' => $msgishtml ? dol_htmlentitiesbr($pass) : $pass,
 			'__PHONE__' => $msgishtml ? dol_htmlentitiesbr($this->phone) : ($this->phone ? $this->phone : ''),
 			'__PHONEPRO__' => $msgishtml ? dol_htmlentitiesbr($this->phone_perso) : ($this->phone_perso ? $this->phone_perso : ''),
 			'__PHONEMOBILE__' => $msgishtml ? dol_htmlentitiesbr($this->phone_mobile) : ($this->phone_mobile ? $this->phone_mobile : ''),
-			'__TYPE__' => $msgishtml ? dol_htmlentitiesbr($this->type) : ($this->type ? $this->type : '')
+			'__TYPE__' => $msgishtml ? dol_htmlentitiesbr($type) : $type,
 		);
 
 		complete_substitutions_array($substitutionarray, $langs, $this);
@@ -956,9 +960,6 @@ class Adherent extends CommonObject
 					$result = $luser->fetch($this->user_id);
 
 					if ($result >= 0) {
-						//var_dump($this->user_login);exit;
-						//var_dump($this->login);exit;
-
 						// If option ADHERENT_LOGIN_NOT_REQUIRED is on, there is no login of member, so we do not overwrite user login to keep existing one.
 						if (!getDolGlobalString('ADHERENT_LOGIN_NOT_REQUIRED')) {
 							$luser->login = $this->login;
@@ -969,7 +970,7 @@ class Adherent extends CommonObject
 						$luser->firstname = $this->firstname;
 						$luser->lastname = $this->lastname;
 						$luser->gender = $this->gender;
-						$luser->pass = $this->pass;
+						$luser->pass = isset($this->pass) ? $this->pass : '';
 						//$luser->socid=$this->fk_soc;		// We do not enable this. This may transform a user into an external user.
 
 						$luser->birth = $this->birth;
@@ -2463,7 +2464,7 @@ class Adherent extends CommonObject
 				($morecss ? ' usertext'.$morecss : '').'">';
 			}
 			if ($mode == 'login') {
-				$result .= dol_trunc($this->login, $maxlen);
+				$result .= dol_trunc(isset($this->login) ? $this->login : '', $maxlen);
 			} elseif ($mode == 'ref') {
 				$result .= $this->ref;
 			} else {

@@ -1996,7 +1996,7 @@ function dol_string_nounprintableascii($str, $removetabcrlf = 1)
 }
 
 /**
- *  Returns text slugified (no special char, separator is "-".
+ *  Returns text slugified (lowercase and no special char, separator is "-").
  *
  *  @param	string	$stringtoslugify		String to slugify
  *  @return string							Slugified string
@@ -2185,19 +2185,24 @@ function dolPrintHTML($s, $allowiframe = 0)
  * Return a string ready to be output into an HTML attribute (alt, title, data-html, ...)
  * With dolPrintHTMLForAttribute(), the content is HTML encode, even if it is already HTML content.
  *
- * @param	string	$s						String to print
- * @param	int		$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
- * @return	string							String ready for HTML output
+ * @param	string		$s						String to print
+ * @param	int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
+ * @param	string[]	$allowothertags			List of other tags allowed
+ * @return	string								String ready for HTML output
  * @see dolPrintHTML(), dolPrintHTMLFortextArea()
  */
-function dolPrintHTMLForAttribute($s, $escapeonlyhtmltags = 0)
+function dolPrintHTMLForAttribute($s, $escapeonlyhtmltags = 0, $allowothertags = array())
 {
+	$allowedtags = array('br', 'b', 'font', 'hr', 'span');
+	if (!empty($allowothertags) && is_array($allowothertags)) {
+		$allowedtags = array_merge($allowedtags, $allowothertags);
+	}
 	// The dol_htmlentitiesbr will convert simple text into html, including switching accent into HTML entities
 	// The dol_escape_htmltag will escape html tags.
 	if ($escapeonlyhtmltags) {
-		return dol_escape_htmltag(dol_string_onlythesehtmltags($s, 1, 0, 0, 0, array('br', 'b', 'font', 'hr', 'span')), 1, -1, '', 1, 1);
+		return dol_escape_htmltag(dol_string_onlythesehtmltags($s, 1, 0, 0, 0, $allowedtags), 1, -1, '', 1, 1);
 	} else {
-		return dol_escape_htmltag(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 0, 0, 0, array('br', 'b', 'font', 'hr', 'span')), 1, -1, '', 0, 1);
+		return dol_escape_htmltag(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 0, 0, 0, $allowedtags), 1, -1, '', 0, 1);
 	}
 }
 
@@ -2777,24 +2782,6 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 
 	$out = '';
 
-	/* canceled
-	$backtopagejsfieldsid = '';
-	$backtopagejsfieldslabel = '';
-	$backtopagejsfieldshtml = '';
-	if ($backtopagejsfields) {
-		$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
-		if (empty($tmpbacktopagejsfields[1])) {	// If the part 'keyforpopupid:' is missing, we add $name for it.
-			$tmp2backtopagejsfields = explode(',', $tmpbacktopagejsfields[0]);
-		} else {
-			$tmp2backtopagejsfields = explode(',', $tmpbacktopagejsfields[1]);
-		}
-		$backtopagejsfieldsid = empty($tmp2backtopagejsfields[0]) ? '' : $tmp2backtopagejsfields[0];
-		$backtopagejsfieldslabel = empty($tmp2backtopagejsfields[1]) ? '' : $tmp2backtopagejsfields[1];
-		$backtopagejsfieldshtml = empty($tmp2backtopagejsfields[2]) ? '' : $tmp2backtopagejsfields[2];
-		$url .= '&backtopagejsfields='.urlencode($backtopagejsfields);
-	}
-	*/
-
 	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
 	$out .= '<!-- a link for button to open url into a dialog popup -->';
 	$out .= '<a '.($accesskey ? ' accesskey="'.$accesskey.'"' : '').' class="cursorpointer reposition button_'.$name.($morecss ? ' '.$morecss : '').'"'.$disabled.' title="'.dol_escape_htmltag($label).'"';
@@ -2811,12 +2798,7 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 		// Add code to open url using the popup.
 		$out .= '<!-- code to open popup and variables to retrieve returned variables -->';
 		$out .= '<div id="idfordialog'.$name.'" class="hidden">'.(getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2 ? 'div for dialog' : '').'</div>';
-		/* canceled
-		// Add also hidden field to retrieve the returned variables
-		$out .= '<div id="varforreturndialogid'.$name.'" class="hidden">'.(getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2 ? 'div for returned id' : '').'</div>';
-		$out .= '<div id="varforreturndialoglabel'.$name.'" class="hidden">'.(getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2 ? 'div for returned label' : '').'</div>';
-		$out .= '<div id="varforreturndialoghtml'.$name.'" class="hidden">'.(getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2 ? 'div for returned html' : '').'</div>';
-		*/
+
 		$out .= '<!-- Add js code to open dialog popup on dialog -->';
 		$out .= '<script nonce="'.getNonce().'" type="text/javascript">
 					jQuery(document).ready(function () {
@@ -3922,7 +3904,7 @@ function dol_getdate($timestamp, $fast = false, $forcetimezone = '')
  *										'tzuserrel' = local to user TZ taking dst into account at the given date. Use this one to convert date input from user into a GMT date.
  *										'tz,TimeZone' = use specified timezone
  *	@param	int			$check			0=No check on parameters (Can use day 32, etc...)
- *	@return	int|string					Date as a timestamp, '' if error
+ *	@return	int|''						Date as a timestamp, '' if error
  * 	@see 								dol_print_date(), dol_stringtotime(), dol_getdate()
  */
 function dol_mktime($hour, $minute, $second, $month, $day, $year, $gm = 'auto', $check = 1)
@@ -5286,10 +5268,11 @@ function getPictoForType($key, $morecss = '')
  *  @param		string		$alt					Force alt for blind people
  *  @param		string		$morecss				Add more class css on img tag (For example 'myclascss').
  *  @param		int 		$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No margin left. Works for fontawesome picto only.
+ *  @param		string[]	$allowothertags			List of other tags allowed in title and alt attribute
  *  @return     string       				    	Return img tag
  *  @see        img_object(), img_picto_common()
  */
-function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srconly = 0, $notitle = 0, $alt = '', $morecss = '', $marginleftonlyshort = 2)
+function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srconly = 0, $notitle = 0, $alt = '', $morecss = '', $marginleftonlyshort = 2, $allowothertags = array())
 {
 	global $conf;
 
@@ -5552,7 +5535,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 	}
 
 	// tag title is used for tooltip on <a>, tag alt can be used with very simple text on image for blind people
-	return '<img src="'.$fullpathpicto.'"'.($notitle ? '' : ' alt="'.dol_escape_htmltag($alt).'"').(($notitle || empty($titlealt)) ? '' : ' title="'.dol_escape_htmltag($titlealt).'"').($moreatt ? ' '.$moreatt.($morecss ? ' class="'.$morecss.'"' : '') : ' class="inline-block'.($morecss ? ' '.$morecss : '').'"').'>'; // Alt is used for accessibility, title for popup
+	return '<img src="'.$fullpathpicto.'"'.($notitle ? '' : ' alt="'.dolPrintHTMLForAttribute($alt, 0, $allowothertags).'"').(($notitle || empty($titlealt)) ? '' : ' title="'.dolPrintHTMLForAttribute($titlealt, 0, $allowothertags).'"').($moreatt ? ' '.$moreatt.($morecss ? ' class="'.$morecss.'"' : '') : ' class="inline-block'.($morecss ? ' '.$morecss : '').'"').'>'; // Alt is used for accessibility, title for popup
 }
 
 /**
@@ -5583,7 +5566,7 @@ function getImgPictoNameList()
 		'margin', 'map-marker-alt', 'member', 'meeting', 'minus', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
 		'off', 'on', 'order',
 		'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'proposal', 'puce',
-		'stock', 'resize', 'service', 'stats',
+		'resize', 'search', 'service', 'stats', 'stock',
 		'security', 'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'switch_on_grey', 'switch_on_warning', 'switch_on_red', 'tools', 'unlink', 'uparrow', 'user', 'user-tie', 'vcard', 'wrench',
 		'discord', 'facebook', 'flickr', 'instagram','linkedin', 'github', 'google', 'jabber', 'meetup', 'microsoft', 'skype', 'slack', 'twitter', 'pinterest', 'reddit', 'snapchat', 'tumblr', 'youtube', 'viadeo', 'google-plus-g', 'whatsapp',
 		'generic', 'home', 'hrm', 'members', 'products', 'invoicing',
@@ -5594,7 +5577,7 @@ function getImgPictoNameList()
 		'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'replacement', 'resource', 'recurring', 'rss',
 		'search-plus', 'shapes', 'skill', 'square', 'sort-numeric-down', 'status', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 		'terminal', 'tick', 'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda', 'trip',
-		'uncheck', 'undo', 'url', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
+		'uncheck', 'undo', 'url', 'user-cog', 'user-injured', 'user-md', 'upload', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
 		'conferenceorbooth', 'eventorganization',
 		'stamp', 'signature',
 		'webportal'
@@ -5675,22 +5658,23 @@ function getImgPictoConv($mode = 'fa')
 /**
  *	Show a picto called object_picto (generic function)
  *
- *	@param	string	$titlealt			Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
- *	@param	string	$picto				Name of image to show object_picto (example: user, group, action, bill, contract, propal, product, ...)
- *										For external modules use imagename@mymodule to search into directory "img" of module.
- *	@param	string	$moreatt			Add more attribute on img tag (ie: class="datecallink")
- *	@param	int		$pictoisfullpath	If 1, image path is a full path
- *	@param	int		$srconly			Return only content of the src attribute of img.
- *  @param	int		$notitle			1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
- *	@return	string						Return img tag
+ *	@param	string		$titlealt			Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
+ *	@param	string		$picto				Name of image to show object_picto (example: user, group, action, bill, contract, propal, product, ...)
+ *											For external modules use imagename@mymodule to search into directory "img" of module.
+ *	@param	string		$moreatt			Add more attribute on img tag (ie: class="datecallink")
+ *	@param	int			$pictoisfullpath	If 1, image path is a full path
+ *	@param	int			$srconly			Return only content of the src attribute of img.
+ *  @param	int			$notitle			1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
+ *  @param	string[]	$allowothertags		List of other tags allowed in title attribute
+ *	@return	string							Return img tag
  *	@see	img_picto(), img_picto_common()
  */
-function img_object($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srconly = 0, $notitle = 0)
+function img_object($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srconly = 0, $notitle = 0, $allowothertags = array())
 {
 	if (strpos($picto, '^') === 0) {
-		return img_picto($titlealt, str_replace('^', '', $picto), $moreatt, $pictoisfullpath, $srconly, $notitle);
+		return img_picto($titlealt, str_replace('^', '', $picto), $moreatt, $pictoisfullpath, $srconly, $notitle, '', '', 2, $allowothertags);
 	} else {
-		return img_picto($titlealt, 'object_'.$picto, $moreatt, $pictoisfullpath, $srconly, $notitle);
+		return img_picto($titlealt, 'object_'.$picto, $moreatt, $pictoisfullpath, $srconly, $notitle, '', '', 2, $allowothertags);
 	}
 }
 
@@ -6214,7 +6198,7 @@ function img_mime($file, $titlealt = '', $morecss = '')
 	}
 
 	//return img_picto_common($titlealt, 'mime/'.$mimeimg, 'class="'.$morecss.'"');
-	return '<i class="fa fa-'.$mimefa.' paddingright'.($morecss ? ' '.$morecss : '').'"'.($titlealt ? ' title="'.dolPrintHTMLForAttribute($titlealt).'"' : '').'></i>';
+	return '<i class="fa fa-'.$mimefa.' '.(preg_match('/pictofixedwidth/', $morecss) ? '' : 'paddingright ').($morecss ? ' '.$morecss : '').'"'.($titlealt ? ' title="'.dolPrintHTMLForAttribute($titlealt).'"' : '').'></i>';
 }
 
 
@@ -6530,7 +6514,7 @@ function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $m
  *	@param	int<0,2>	$thead	 		0=To use with standard table format, 1=To use inside <thead><tr>, 2=To use with <div>
  *	@param	string		$file			Url used when we click on sort picto
  *	@param	string		$field			Field to use for new sorting. Empty if this field is not sortable. Example "t.abc" or "t.abc,t.def"
- *	@param	string		$begin       		("" by default)
+ *	@param	string		$begin       	("" by default)
  *	@param	string		$moreparam		Add more parameters on sort url links ("" by default)
  *	@param  string		$moreattrib		Add more attributes on th ("" by default). To add more css class, use param $prefix.
  *	@param  ?string		$sortfield	 	Current field used to sort (Ex: 'd.datep,d.id')
@@ -6578,7 +6562,7 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 
 	$tagstart = '<'.$tag.' class="'.$prefix.$liste_titre.'" '.$moreattrib;
 	//$out .= (($field && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && preg_match('/^[a-zA-Z_0-9\s\.\-:&;]*$/', $name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
-	$tagstart .= ($name && !getDolGlobalString('MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE') && empty($forcenowrapcolumntitle) && !dol_textishtml($name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '';
+	$tagstart .= ($name && !getDolGlobalString('MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE') && empty($forcenowrapcolumntitle) && !dol_textishtml($name)) ? ' title="'.dolPrintHTMLForAttribute($langs->trans($name)).'"' : '';
 	$tagstart .= '>';
 
 	if (empty($thead) && $field && empty($disablesortlink)) {    // If this is a sort field
@@ -6604,8 +6588,8 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 			}
 		}
 		$sortordertouseinlink = preg_replace('/,$/', '', $sortordertouseinlink);
-		$out .= '<a class="reposition" href="'.$file.'?sortfield='.$field.'&sortorder='.$sortordertouseinlink.'&begin='.$begin.$options.'"';
-		//$out .= (empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
+		$out .= '<a class="reposition" href="'.$file.'?sortfield='.urlencode($field).'&sortorder='.urlencode($sortordertouseinlink).'&begin='.urlencode($begin).$options.'"';
+		//$out .= (getDolGlobalString('MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE') ? '' : ' title="'.dol_escape_htmltag($langs->trans($name)).'"');
 		$out .= '>';
 	}
 	if ($tooltip) {
@@ -6633,17 +6617,12 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 		}
 
 		if (!$sortorder || ($field1 != $sortfield1)) {
-			//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
-			//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
+			// Nothing
 		} else {
 			if (preg_match('/^DESC/', $sortorder)) {
-				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
-				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
 				$sortimg .= '<span class="nowrap">'.img_up("Z-A", 0, 'paddingright').'</span>';
 			}
 			if (preg_match('/^ASC/', $sortorder)) {
-				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
-				//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
 				$sortimg .= '<span class="nowrap">'.img_down("A-Z", 0, 'paddingright').'</span>';
 			}
 		}
@@ -7074,7 +7053,7 @@ function vatrate($rate, $addpercent = false, $info_bits = 0, $usestarfornpr = 0,
  *		Function to format a value into an amount for visual output
  *		Function used into PDF and HTML pages
  *
- *		@param	string|float			$amount			Amount value to format
+ *		@param	int|float|string|null	$amount			Amount value to format
  *		@param	int<0,1>				$form			Type of formatting: 1=HTML, 0=no formatting (no by default)
  *		@param	Translate|string|null	$outlangs		Object langs for output. '' use default lang. 'none' use international separators.
  *		@param	int						$trunc			1=Truncate if there is more decimals than MAIN_MAX_DECIMALS_SHOWN (default), 0=Does not truncate. Deprecated because amount are rounded (to unit or total amount accuracy) before being inserted into database or after a computation, so this parameter should be useless.
@@ -7194,7 +7173,7 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
  *	Function to use on each input amount before any numeric test or database insert. A better name for this function
  *  should be roundtext2num().
  *
- *	@param	string|float	$amount			Amount to convert/clean or round
+ *	@param	int|float|string|null	$amount		Amount to convert/clean or round
  *	@param	''|'MU'|'MT'|'MS'|'CU'|'CT'|int<0,max>	$rounding		''=No rounding
  *                                                                  'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
  *                                                                  'MT'=Round to Max for totals with Tax (MAIN_MAX_DECIMALS_TOT)
@@ -9444,6 +9423,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			}
 		} else {
 			'@phan-var-force Adherent|Delivery $object';
+			/** @var Adherent|Delivery $object */
 			$substitutionarray['__ID__'] = $object->id;
 			$substitutionarray['__REF__'] = $object->ref;
 			$substitutionarray['__NEWREF__'] = $object->newref;
@@ -9484,6 +9464,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 			if (is_object($object) && ($object->element == 'adherent' || $object->element == 'member') && $object->id > 0) {
 				'@phan-var-force Adherent $object';
+				/** @var Adherent $object */
 				$birthday = (empty($object->birth) ? '' : dol_print_date($object->birth, 'day'));
 
 				$substitutionarray['__MEMBER_ID__'] = (isset($object->id) ? $object->id : '');
@@ -9582,12 +9563,14 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 			if (is_object($object) && $object->element == 'recruitmentcandidature') {
 				'@phan-var-force RecruitmentCandidature $object';
+				/** @var RecruitmentCandidature $object */
 				$substitutionarray['__CANDIDATE_FULLNAME__'] = $object->getFullName($outputlangs);
 				$substitutionarray['__CANDIDATE_FIRSTNAME__'] = isset($object->firstname) ? $object->firstname : '';
 				$substitutionarray['__CANDIDATE_LASTNAME__'] = isset($object->lastname) ? $object->lastname : '';
 			}
 			if (is_object($object) && $object->element == 'conferenceorboothattendee') {
 				'@phan-var-force ConferenceOrBoothAttendee $object';
+				/** ConferenceOrBoothAttendee $object */
 				$substitutionarray['__ATTENDEE_FULLNAME__'] = $object->getFullName($outputlangs);
 				$substitutionarray['__ATTENDEE_FIRSTNAME__'] = isset($object->firstname) ? $object->firstname : '';
 				$substitutionarray['__ATTENDEE_LASTNAME__'] = isset($object->lastname) ? $object->lastname : '';
@@ -9595,6 +9578,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 			if (is_object($object) && $object->element == 'project') {
 				'@phan-var-force Project $object';
+				/** @var Project $object */
 				$substitutionarray['__PROJECT_ID__'] = $object->id;
 				$substitutionarray['__PROJECT_REF__'] = $object->ref;
 				$substitutionarray['__PROJECT_NAME__'] = $object->title;
@@ -9628,22 +9612,26 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 			if (is_object($object) && $object->element == 'facture') {
 				'@phan-var-force Facture $object';
+				/** @var Facture $object */
 				$substitutionarray['__INVOICE_SITUATION_NUMBER__'] = isset($object->situation_counter) ? $object->situation_counter : '';
 			}
 			if (is_object($object) && $object->element == 'shipping') {
 				'@phan-var-force Expedition $object';
+				/** @var Expedition $object */
 				$substitutionarray['__SHIPPINGTRACKNUM__'] = $object->tracking_number;
 				$substitutionarray['__SHIPPINGTRACKNUMURL__'] = $object->tracking_url;
 				$substitutionarray['__SHIPPINGMETHOD__'] = $object->shipping_method;
 			}
 			if (is_object($object) && $object->element == 'reception') {
 				'@phan-var-force Reception $object';
+				/** @var Reception $object */
 				$substitutionarray['__RECEPTIONTRACKNUM__'] = $object->tracking_number;
 				$substitutionarray['__RECEPTIONTRACKNUMURL__'] = $object->tracking_url;
 			}
 
 			if (is_object($object) && $object->element == 'contrat' && $object->id > 0 && is_array($object->lines)) {
 				'@phan-var-force Contrat $object';
+				/** @var Contrat $object */
 				$dateplannedstart = '';
 				$datenextexpiration = '';
 				foreach ($object->lines as $line) {
@@ -9665,6 +9653,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			// add substitution variables for ticket
 			if (is_object($object) && $object->element == 'ticket') {
 				'@phan-var-force Ticket $object';
+				/** @var Ticket $object */
 				$substitutionarray['__TICKET_TRACKID__'] = $object->track_id;
 				$substitutionarray['__TICKET_SUBJECT__'] = $object->subject;
 				$substitutionarray['__TICKET_TYPE__'] = $object->type_code;
@@ -9795,46 +9784,55 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 				if (is_object($object) && $object->element == 'propal') {
 					'@phan-var-force Propal $object';
+					/** @var Propal $object */
 					$substitutionarray['__URL_PROPOSAL__'] = DOL_MAIN_URL_ROOT."/comm/propal/card.php?id=".$object->id;
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 					$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'proposal', $object->ref, 1, $object);
 				}
 				if (is_object($object) && $object->element == 'commande') {
 					'@phan-var-force Commande $object';
+					/** @var Commande $object */
 					$substitutionarray['__URL_ORDER__'] = DOL_MAIN_URL_ROOT."/commande/card.php?id=".$object->id;
 				}
 				if (is_object($object) && $object->element == 'facture') {
 					'@phan-var-force Facture $object';
+					/** @var Facture $object */
 					$substitutionarray['__URL_INVOICE__'] = DOL_MAIN_URL_ROOT."/compta/facture/card.php?id=".$object->id;
 				}
 				if (is_object($object) && $object->element == 'contrat') {
 					'@phan-var-force Contrat $object';
+					/** @var Contrat $object */
 					$substitutionarray['__URL_CONTRACT__'] = DOL_MAIN_URL_ROOT."/contrat/card.php?id=".$object->id;
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 					$substitutionarray['__ONLINE_SIGN_URL__'] = getOnlineSignatureUrl(0, 'contract', $object->ref, 1, $object);
 				}
 				if (is_object($object) && $object->element == 'fichinter') {
 					'@phan-var-force Fichinter $object';
+					/** @var Fichinter $object */
 					$substitutionarray['__URL_FICHINTER__'] = DOL_MAIN_URL_ROOT."/fichinter/card.php?id=".$object->id;
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 					$substitutionarray['__ONLINE_SIGN_FICHINTER_URL__'] = getOnlineSignatureUrl(0, 'fichinter', $object->ref, 1, $object);
 				}
 				if (is_object($object) && $object->element == 'supplier_proposal') {
 					'@phan-var-force SupplierProposal $object';
+					/** @var SupplierProposal $object */
 					$substitutionarray['__URL_SUPPLIER_PROPOSAL__'] = DOL_MAIN_URL_ROOT."/supplier_proposal/card.php?id=".$object->id;
 				}
 				if (is_object($object) && $object->element == 'invoice_supplier') {
 					'@phan-var-force FactureFournisseur $object';
+					/** @var FactureFournisseur $object */
 					$substitutionarray['__URL_SUPPLIER_INVOICE__'] = DOL_MAIN_URL_ROOT."/fourn/facture/card.php?id=".$object->id;
 				}
 				if (is_object($object) && $object->element == 'shipping') {
 					'@phan-var-force Expedition $object';
+					/** @var Expedition $object */
 					$substitutionarray['__URL_SHIPMENT__'] = DOL_MAIN_URL_ROOT."/expedition/card.php?id=".$object->id;
 				}
 			}
 
 			if (is_object($object) && $object->element == 'action') {
 				'@phan-var-force ActionComm $object';
+				/** @var ActionComm $object */
 				$substitutionarray['__EVENT_LABEL__'] = $object->label;
 				$substitutionarray['__EVENT_TYPE__'] = $outputlangs->trans("Action".$object->type_code);
 				$substitutionarray['__EVENT_DATE__'] = dol_print_date($object->datep, 'day', 'auto', $outputlangs);
@@ -9844,6 +9842,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 	}
 	if ((empty($exclude) || !in_array('objectamount', $exclude)) && (empty($include) || in_array('objectamount', $include))) {
 		'@phan-var-force Facture|FactureRec $object';
+		/** @var Facture|FactureRec|null $object */
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functionsnumtoword.lib.php';
 
 		$substitutionarray['__DATE_YMD__']          = is_object($object) ? (isset($object->date) ? dol_print_date($object->date, 'day', false, $outputlangs) : null) : '';
@@ -9942,6 +9941,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__MONTH_TEXT_SHORT__' => $outputlangs->trans('MonthShort'.sprintf("%02d", $tmp['mon'])),
 			'__MONTH_TEXT_MIN__' => $outputlangs->trans('MonthVeryShort'.sprintf("%02d", $tmp['mon'])),
 			'__YEAR__' => (string) $tmp['year'],
+			'__YEAR_PREVIOUS_MONTH__' => (string) $tmp3['year'],
+			'__YEAR_NEXT_MONTH__' => (string) $tmp5['year'],
 			'__PREVIOUS_DAY__' => (string) $tmp2['day'],
 			'__PREVIOUS_MONTH__' => (string) $tmp3['month'],
 			'__PREVIOUS_MONTH_TEXT__' => $outputlangs->trans('Month'.sprintf("%02d", $tmp3['month'])),
@@ -15455,6 +15456,10 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				$out .= img_warning($langs->trans("Late")).' ';
 			}
 			$out .= "</span></span>\n";
+
+			$out .= '<span class="time">';
+			$out .= $actionstatic->getLibStatut(2);
+			$out .= '</span>';
 
 			// Ref
 			$out .= '<h3 class="timeline-header">';

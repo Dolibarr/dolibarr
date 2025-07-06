@@ -1129,7 +1129,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 				$objectpage->grabbed_from = $urltograb;
 			}
 		}
-	} else {
+	} else {	// add website from scratch
 		$newaliasnames = '';
 		if (!$error && GETPOST('WEBSITE_ALIASALT', 'alpha')) {
 			$arrayofaliastotest = explode(',', str_replace(array('<', '>'), '', GETPOST('WEBSITE_ALIASALT', 'alpha')));
@@ -1395,7 +1395,7 @@ if ($action == 'addcontainer' && $usercanedit) {
 		}
 
 		if (!dol_is_file($filelicense)) {
-			$licensecontent = "MIT License";
+			$licensecontent = "LICENSE\n-------\nThis website template content (HTML and PHP code) is published under the license CC-BY-SA - https://creativecommons.org/licenses/by/4.0/";
 			$result = dolSaveLicense($filelicense, $licensecontent);
 		}
 
@@ -4902,7 +4902,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_DESCRIPTION" value="'.dol_escape_htmltag($pagedescription).'">';
 	print '</td></tr>';
 
-	// Deprecated. Image for RSS or Thumbs must be taken from the content.
+	// Deprecated. Image for RSS or Thumbs are now taken from the content.
 	if (getDolGlobalInt('WEBSITE_MANAGE_IMAGE_FOR_PAGES')) {
 		print '<tr class="trimageforpage hidden"><td>';
 		$htmlhelp = $langs->trans("WEBSITE_IMAGEDesc");

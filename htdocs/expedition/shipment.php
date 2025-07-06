@@ -209,7 +209,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$result = $object->updateExtraField($attribute_name, 'SHIPMENT_MODIFY');
+			$result = $object->updateExtraField($attribute_name, 'SHIPPING_MODIFY');
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;

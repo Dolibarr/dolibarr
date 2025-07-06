@@ -345,22 +345,22 @@ class Stripe extends CommonObject
 	 * Note: This is used when option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is on when making a payment from the public/payment/newpayment.php page
 	 * but not when using the STRIPE_USE_NEW_CHECKOUT.
 	 *
-	 * @param   float		$amount                             Amount
-	 * @param   string		$currency_code                      Currency code
-	 * @param   string		$tag                                Tag
-	 * @param   string		$description                        Description
-	 * @param	?CommonObject	$object						    Object to pay with Stripe
-	 * @param	?string		$customer							Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
-	 * @param	?string		$key							    ''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
-	 * @param	int<0,1>	$status							    Status (0=test, 1=live)
-	 * @param	int<0,1>	$usethirdpartyemailforreceiptemail	1=use thirdparty email for receipt
-	 * @param	'automatic'|'manual'	$mode		                        automatic=automatic confirmation/payment when conditions are ok, manual=need to call confirm() on intent
-	 * @param   bool		$confirmnow                         false=default, true=try to confirm immediately after create (if conditions are ok)
-	 * @param   ?string		$payment_method                     'pm_....' (if known)
-	 * @param   int<0,1>	$off_session                        If we use an already known payment method to pay when customer is not available during the checkout flow.
-	 * @param	int<0,1>	$noidempotency_key					Do not use the idempotency_key when creating the PaymentIntent
-	 * @param	int			$did								ID of an existing line into llx_prelevement_demande (Dolibarr intent). If provided, no new line will be created.
-	 * @return 	?\Stripe\PaymentIntent				        Stripe PaymentIntent or null if not found and failed to create
+	 * @param   float			$amount                             Amount
+	 * @param   string			$currency_code                      Currency code
+	 * @param   string			$tag                                Tag
+	 * @param   string			$description                        Description
+	 * @param	?CommonObject	$object						    	Object to pay with Stripe
+	 * @param	?string			$customer							Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
+	 * @param	?string			$key							    ''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
+	 * @param	int<0,1>		$status							    Status (0=test, 1=live)
+	 * @param	int<0,1>		$usethirdpartyemailforreceiptemail	1=use thirdparty email for receipt
+	 * @param	'automatic'|'manual'|'terminal'		$mode			Automatic=automatic confirmation/payment when conditions are ok, manual=need to call confirm() on intent, terminal=manual
+	 * @param   bool			$confirmnow                     	False=default, true=try to confirm immediately after create (if conditions are ok)
+	 * @param   ?string			$payment_method                 	'pm_....' (if known)
+	 * @param   int<0,1>		$off_session                    	If we use an already known payment method to pay when customer is not available during the checkout flow.
+	 * @param	int<0,1>		$noidempotency_key					Do not use the idempotency_key when creating the PaymentIntent
+	 * @param	int				$did								ID of an existing line into llx_prelevement_demande (Dolibarr intent). If provided, no new line will be created.
+	 * @return 	?\Stripe\PaymentIntent				        		Stripe PaymentIntent or null if not found and failed to create
 	 */
 	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false, $payment_method = null, $off_session = 0, $noidempotency_key = 1, $did = 0)
 	{
@@ -454,6 +454,8 @@ class Stripe extends CommonObject
 				}
 			}
 
+			$stripemode = $mode;
+
 			// list of payment method types
 			$paymentmethodtypes = array("card");
 			$descriptor = dol_trunc($tag, 10, 'right', 'UTF-8', 1);
@@ -476,8 +478,11 @@ class Stripe extends CommonObject
 			if (getDolGlobalInt('STRIPE_SOFORT')) {
 				$paymentmethodtypes[] = "sofort";
 			}
-			if (getDolGlobalInt('STRIPE_CARD_PRESENT') && $mode == 'terminal') {
-				$paymentmethodtypes = array("card_present");
+			if ($mode == 'terminal') {
+				if (getDolGlobalInt('STRIPE_CARD_PRESENT')) {
+					$paymentmethodtypes = array("card_present");
+				}
+				$stripemode = 'manual';
 			}
 
 			global $dolibarr_main_url_root;
@@ -486,7 +491,7 @@ class Stripe extends CommonObject
 
 			$dataforintent = array(
 				"confirm" => $confirmnow, // try to confirm immediately after create (if conditions are ok)
-				"confirmation_method" => $mode,
+				"confirmation_method" => $stripemode,
 				"amount" => $stripeamount,
 				"currency" => $currency_code,
 				"payment_method_types" => $paymentmethodtypes,	// When payment_method_types is set, return_url is not required but payment mode can't be managed from dashboard

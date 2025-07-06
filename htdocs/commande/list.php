@@ -769,6 +769,9 @@ if (empty($reshook)) {
 			if ($search_project_ref >= 0) {
 				$param .= "&search_project_ref=".urlencode($search_project_ref);
 			}
+			if ($search_project != '') {
+				$param .= "&search_project=".urlencode($search_project);
+			}
 			if ($search_billed != '') {
 				$param .= '&search_billed='.urlencode($search_billed);
 			}
@@ -1182,7 +1185,7 @@ if (!empty($searchCategoryOrderList)) {
 }
 
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
-$searchCategoryCustomerOperator = -1;
+$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
 $searchCategoryCustomerList = array($search_categ_cus);
 if (!empty($searchCategoryCustomerList)) {
 	$searchCategoryCustomerSqlList = array();
@@ -1212,7 +1215,7 @@ if (!empty($searchCategoryCustomerList)) {
 	}
 }
 // Search for tag/category ($searchCategoryProductList is an array of ID)
-$searchCategoryProductOperator = -1;
+$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
 $searchCategoryProductList = array($search_product_category);
 if (!empty($searchCategoryProductList)) {
 	$searchCategoryProductSqlList = array();
@@ -1450,6 +1453,9 @@ if ($search_multicurrency_montant_ttc != '') {
 }
 if ($search_project_ref >= 0) {
 	$param .= "&search_project_ref=".urlencode($search_project_ref);
+}
+if ($search_project != '') {
+	$param .= "&search_project=".urlencode($search_project);
 }
 if ($search_town != '') {
 	$param .= '&search_town='.urlencode($search_town);
@@ -2216,11 +2222,11 @@ if (!empty($arrayfields['c.date_cloture']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.note_public']['checked'])) {
-	print_liste_field_titre($arrayfields['c.note_public']['label'], $_SERVER["PHP_SELF"], "c.note_public", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['c.note_public']['label'], $_SERVER["PHP_SELF"], "c.note_public", "", $param, '', $sortfield, $sortorder, '');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.note_private']['checked'])) {
-	print_liste_field_titre($arrayfields['c.note_private']['label'], $_SERVER["PHP_SELF"], "c.note_private", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['c.note_private']['label'], $_SERVER["PHP_SELF"], "c.note_private", "", $param, '', $sortfield, $sortorder, '');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['shippable']['checked'])) {
