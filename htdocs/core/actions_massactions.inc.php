@@ -844,7 +844,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		'listofobjectref' => $listofobjectref,
 		'arrayofinclusion' => &$arrayofinclusion,
 	);
-	$reshook = $hookmanager->executeHooks('mergePdf', $parameters, $object, $action);
+	$reshook = $hookmanager->executeHooks('updateSearchRegexToMergeDoc', $parameters, $object, $action);
 
 	if (empty($reshook)) {
 		foreach ($listofobjectref as $tmppdf) {
