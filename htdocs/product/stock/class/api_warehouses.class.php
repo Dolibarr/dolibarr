@@ -288,7 +288,7 @@ class Warehouses extends DolibarrApi
 	 * @url GET /{id}/products
 	 * @throws RestException
 	 */
-	public function list_products($id = "0", $limit = 100)
+	public function listProducts($id = "0", $limit = 100)
 	{
 		global $db;
 
@@ -303,7 +303,7 @@ class Warehouses extends DolibarrApi
 		$sql.= " WHERE ps.reel <> 0 AND ps.fk_entrepot =".$id;
 		$sql.= " ORDER BY p.ref DESC";
 		$sql .= $db->plimit($limit);
-	
+
 		$result = $db->query($sql);
 		$line = array();
 		if ($result) {
