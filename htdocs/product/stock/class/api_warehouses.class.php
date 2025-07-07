@@ -284,6 +284,8 @@ class Warehouses extends DolibarrApi
 	 * @param string	$id	warehouse ID
 	 * @param int		$limit		Limit for list
 	 * @return array    Array of product in warehouse
+  	 * @phan-return array<array{rowid:int,ref:string,fk_product_type:int,label:string,price:float,price_ttc:float,entity:int,pmp:float,reel:float,reelpmp:float,reelprice:pmp}>
+	 * @phpstan-return array<array{rowid:int,ref:string,fk_product_type:int,label:string,price:float,price_ttc:float,entity:int,pmp:float,reel:float,reelpmp:float,reelprice:pmp}>
 	 *
 	 * @url GET /{id}/products
 	 * @throws RestException
@@ -300,7 +302,7 @@ class Warehouses extends DolibarrApi
 		$sql.= " p.price, p.price_ttc, p.entity, p.pmp, ps.reel, (ps.reel * p.pmp) as reelpmp, (ps.reel * p.price) as reelprice";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
-		$sql.= " WHERE ps.reel <> 0 AND ps.fk_entrepot =".$id;
+		$sql.= " WHERE ps.reel <> 0 AND ps.fk_entrepot =".((int) $id);
 		$sql.= " ORDER BY p.ref DESC";
 		$sql .= $db->plimit($limit);
 
@@ -311,6 +313,7 @@ class Warehouses extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			while ($i < $num) {
 				$obj = $db->fetch_object($result);
+				$line[$i] = array();
 				$line[$i]['rowid'] =  $obj->rowid;
 				$line[$i]['ref'] =  $obj->ref;
 				$line[$i]['label'] = $obj->label;
