@@ -114,7 +114,7 @@ class DataPolicyCron
 	 * @param array $policy The policy definition array.
 	 * @param string $action The action to perform: 'delete' or 'anonymize'.
 	 * @param object $object The instantiated Dolibarr object.
-	 * @param array &$processedIds Reference to the array of processed IDs.
+	 * @param array $processedIds Reference to the array of processed IDs.
 	 * @param object $conf The global conf object.
 	 * @param User $user The user object for history tracking.
 	 * @return void
