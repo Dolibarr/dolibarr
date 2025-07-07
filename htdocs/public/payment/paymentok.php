@@ -378,18 +378,6 @@ if (isModEnabled('paybox')) {
 	}
 }
 
-// For Stripe
-if (isModEnabled('stripe')) {
-	if ($paymentmethod === 'stripe') {
-		// Check we are coming from the newpaymentpage
-		if (GETPOST('paymentoksessionkey') == $_SESSION['paymentoksessionkey']) {
-			// We can also request Stripe with payment_intent and payment_intent_client_secret the sameway we do in newpayment after comment "// Get here amount and currency used for payment".
-			$ispaymentok = true; // We call this page only if payment is ok on payment system
-		} else {
-			$ispaymentok = false; // We call this page only if payment is ok on payment system
-		}
-	}
-}
 
 // For other payment modules
 if (!in_array($paymentmethod, array('paypal', 'paybox', 'stripe'))) {
@@ -434,6 +422,98 @@ $tmptag = dolExplodeIntoArray($fulltag, '.', '=');
 
 
 dol_syslog("ispaymentok=".$ispaymentok." tmptag=".var_export($tmptag, true), LOG_DEBUG, 0, '_payment');
+
+// --- Check payment data via APIs ---
+// For Stripe payments
+if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
+	// Check we are coming from the newpayment page
+	if (GETPOST('paymentoksessioncode') !== $_SESSION['paymentoksessioncode']) {
+		$error++;
+		$errmsg = 'Attempted direct access to the paymentOk page without a valid session.';
+		$postactionmessages[] = $errmsg;
+		$ispostactionok = -1;
+		dol_syslog($errmsg, LOG_ERR, 0, '_payment');
+	}
+
+	if (!$error && $TRANSACTIONID) {
+		// Stripe payment verification via Stripe API
+		try {
+			$service = 'StripeTest';
+			$servicestatus = 0;
+			if (getDolGlobalString('STRIPE_LIVE') && !GETPOSTINT('forcesandbox')) {
+				$service = 'StripeLive';
+				$servicestatus = 1;
+			}
+			include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+			$stripe = new Stripe($db);
+			$stripeacc = $stripe->getStripeAccount($service);
+
+			// Use the correct Stripe API key
+			global $stripearrayofkeysbyenv;
+			\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$servicestatus]['secret_key']);
+
+			try {
+				if (empty($stripeacc)) {
+					$paymentIntent = \Stripe\PaymentIntent::retrieve($TRANSACTIONID);
+				} else {
+					$paymentIntent = \Stripe\PaymentIntent::retrieve($TRANSACTIONID, array("stripe_account" => $stripeacc));
+				}
+
+				// Check amount and currency
+				$expectedAmount = (int) round($FinalPaymentAmt * 100); // Stripe uses cents
+				$expectedCurrency = strtolower($currencyCodeType);
+
+				if ((int) $paymentIntent->amount !== $expectedAmount || strtolower($paymentIntent->currency) !== $expectedCurrency) {
+					$error++;
+					$errmsg = 'Stripe payment information mismatch: expected amount ' . $expectedAmount . ' and currency ' . $expectedCurrency . ', got amount ' . $paymentIntent->amount . ' and currency ' . $paymentIntent->currency;
+					$postactionmessages[] = $errmsg;
+					$ispostactionok = -1;
+					dol_syslog($errmsg, LOG_ERR, 0, '_payment');
+				}
+				if ($paymentIntent->status !== 'succeeded') {
+					$error++;
+					$errmsg = 'Stripe payment not succeeded. Status: ' . $paymentIntent->status;
+					$postactionmessages[] = $errmsg;
+					$ispostactionok = -1;
+					dol_syslog($errmsg, LOG_ERR, 0, '_payment');
+				}
+			} catch (\Stripe\Exception\ApiErrorException $e) {
+				$error++;
+				$errormessage = "Stripe API error: ".$e->getMessage();
+				$postactionmessages[] = $errormessage;
+				$ispostactionok = -1;
+				dol_syslog($errormessage, LOG_ERR, 0, '_payment');
+				setEventMessages($e->getMessage(), null, 'errors');
+			} catch (Exception $e) {
+				$error++;
+				$errormessage = "CantRetrievePaymentIntent: ".$e->getMessage();
+				$postactionmessages[] = $errormessage;
+				$ispostactionok = -1;
+				dol_syslog($errormessage, LOG_ERR, 0, '_payment');
+				setEventMessages($e->getMessage(), null, 'errors');
+			}
+		} catch (Exception $e) {
+			$error++;
+			$errmsg = 'Stripe API error: ' . $e->getMessage();
+			$postactionmessages[] = $errmsg;
+			$ispostactionok = -1;
+			dol_syslog($errmsg, LOG_ERR, 0, '_payment');
+		}
+	} else {
+		$error++;
+		$errmsg = 'Stripe payment verification failed: TRANSACTIONID is not set or session key does not match.';
+		$postactionmessages[] = $errmsg;
+		$ispostactionok = -1;
+		dol_syslog($errmsg, LOG_ERR, 0, '_payment');
+		setEventMessages($errmsg, null, 'errors');
+	}
+
+	if (!$error) {
+		$ispaymentok = true; // We call this page only if payment is ok on payment system
+	} else {
+		$ispaymentok = false; // We call this page only if payment is ok on payment system
+	}
+}
 
 
 // Set $appli for emails title
