@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025	Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -275,6 +276,59 @@ class Warehouses extends DolibarrApi
 		);
 	}
 
+	/**
+	 * List Product in warehouses
+	 *
+	 * Get a list of product in a warehouse
+	 *
+	 * @param string	$id	warehouse ID
+	 * @param int		$limit		Limit for list
+	 * @return array    Array of product in warehouse
+	 *
+	 * @url GET /{id}/products
+	 * @throws RestException
+	 */
+	public function list_products($id = "0", $limit = 100)
+	{
+		global $db;
+
+		if (!DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$sql = "SELECT p.rowid, p.ref, p.label, p.fk_product_type,";
+		$sql.= " p.price, p.price_ttc, p.entity, p.pmp, ps.reel, (ps.reel * p.pmp) as reelpmp";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
+		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
+		$sql.= " WHERE ps.reel <> 0 AND ps.fk_entrepot =".$id;
+		$sql.= " ORDER BY p.ref DESC";
+		$sql .= $db->plimit($limit);
+	
+		$result = $db->query($sql);
+		$line = array();
+		if ($result) {
+			$i = 0;
+			$num = $this->db->num_rows($result);
+			while ($i < $num) {
+				$obj = $db->fetch_object($result);
+				$line[$i]['rowid'] =  $obj->rowid;
+				$line[$i]['ref'] =  $obj->ref;
+				$line[$i]['label'] = $obj->label;
+				$line[$i]['fk_product_type'] = $obj->fk_product_type;
+				$line[$i]['price'] = $obj->price;
+				$line[$i]['price_ttc'] = $obj->price_ttc;
+				$line[$i]['entity'] = $obj->entity;
+				$line[$i]['pmp'] = $obj->pmp;
+				$line[$i]['reel'] = $obj->reel;
+				$line[$i]['reelpmp'] = $obj->reelpmp;
+
+				$i++;
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieve warehouse product list : '.$db->lasterror());
+		}
+		return $this->_cleanObjectDatas($line);
+	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
