@@ -423,6 +423,11 @@ $tmptag = dolExplodeIntoArray($fulltag, '.', '=');
 
 dol_syslog("ispaymentok=".$ispaymentok." tmptag=".var_export($tmptag, true), LOG_DEBUG, 0, '_payment');
 
+// Make complementary actions (post payment actions if payment is ok)
+$ispostactionok = 0;
+$paymentTypeId = 0;
+$postactionmessages = array();
+
 // --- Check payment data via APIs ---
 // For Stripe payments
 if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
@@ -520,10 +525,6 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 $appli = $mysoc->name;
 
 
-// Make complementary actions (post payment actions if payment is ok)
-$ispostactionok = 0;
-$paymentTypeId = 0;
-$postactionmessages = array();
 if ($ispaymentok) {
 	// Set permission for the anonymous user
 	if (empty($user->rights->societe)) {
