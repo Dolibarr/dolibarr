@@ -297,7 +297,7 @@ class Warehouses extends DolibarrApi
 		}
 
 		$sql = "SELECT p.rowid, p.ref, p.label, p.fk_product_type,";
-		$sql.= " p.price, p.price_ttc, p.entity, p.pmp, ps.reel, (ps.reel * p.pmp) as reelpmp";
+		$sql.= " p.price, p.price_ttc, p.entity, p.pmp, ps.reel, (ps.reel * p.pmp) as reelpmp, (ps.reel * p.price) as reelprice";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."product as p ON ps.fk_product = p.rowid";
 		$sql.= " WHERE ps.reel <> 0 AND ps.fk_entrepot =".$id;
@@ -321,6 +321,7 @@ class Warehouses extends DolibarrApi
 				$line[$i]['pmp'] = $obj->pmp;
 				$line[$i]['reel'] = $obj->reel;
 				$line[$i]['reelpmp'] = $obj->reelpmp;
+				$line[$i]['reelprice'] = $obj->reelprice;
 
 				$i++;
 			}
