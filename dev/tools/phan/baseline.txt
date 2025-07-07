@@ -9,24 +9,24 @@
  */
 return [
     // # Issue statistics:
-    // PhanUndeclaredProperty : 450+ occurrences
+    // PhanUndeclaredProperty : 440+ occurrences
     // PhanTypeMismatchProperty : 100+ occurrences
-    // PhanTypeMismatchArgument : 90+ occurrences
     // PhanUndeclaredGlobalVariable : 90+ occurrences
+    // PhanTypeMismatchArgument : 85+ occurrences
     // PhanTypeMismatchArgumentNullable : 30+ occurrences
     // PhanTypeExpectedObjectPropAccess : 20+ occurrences
     // PhanTypeInvalidDimOffset : 20+ occurrences
     // PhanTypeMismatchDimFetch : 15+ occurrences
     // PhanUndeclaredConstant : 15+ occurrences
-    // PhanTypeMismatchArgumentProbablyReal : 10+ occurrences
+    // PhanTypeMismatchArgumentProbablyReal : 9 occurrences
     // PhanUndeclaredMethod : 9 occurrences
     // PhanPossiblyUndeclaredGlobalVariable : 6 occurrences
     // PhanTypeArraySuspiciousNull : 6 occurrences
     // PhanTypeComparisonFromArray : 6 occurrences
-    // PhanPluginDuplicateExpressionBinaryOp : 5 occurrences
     // PhanPluginUndeclaredVariableIsset : 5 occurrences
     // PhanParamTooMany : 4 occurrences
     // PhanPluginDuplicateArrayKey : 4 occurrences
+    // PhanPluginDuplicateExpressionBinaryOp : 4 occurrences
     // PhanTypeMismatchDimAssignment : 2 occurrences
     // PhanTypeMismatchReturn : 2 occurrences
     // PhanTypeSuspiciousStringExpression : 2 occurrences
@@ -36,12 +36,7 @@ return [
 
     // Currently, file_suppressions and directory_suppressions are the only supported suppressions
     'file_suppressions' => [
-        'htdocs/accountancy/class/accountancyexport.class.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
-        'htdocs/adherents/list.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/admin/agenda_other.php' => ['PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/admin/bom.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/admin/defaultvalues.php' => ['PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/api/class/api_documents.class.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
+        'htdocs/accountancy/class/accountancyexport.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/api/class/api_setup.class.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchReturn'],
         'htdocs/asset/class/asset.class.php' => ['PhanPluginUndeclaredVariableIsset', 'PhanTypeInvalidDimOffset'],
         'htdocs/asset/class/assetdepreciationoptions.class.php' => ['PhanTypeInvalidDimOffset'],
@@ -336,9 +331,6 @@ return [
         'htdocs/webservices/server_thirdparty.php' => ['PhanUndeclaredProperty'],
         'htdocs/webservices/server_user.php' => ['PhanUndeclaredProperty'],
         'htdocs/website/websiteaccount_card.php' => ['PhanUndeclaredProperty'],
-        'htdocs/workstation/class/workstation.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/workstation/workstation_card.php' => ['PhanUndeclaredProperty'],
-        'htdocs/zapier/class/hook.class.php' => ['PhanUndeclaredProperty'],
         'internal' => ['PhanUndeclaredConstant'],
     ],
     // 'directory_suppressions' => ['src/directory_name' => ['PhanIssueName1', 'PhanIssueName2']] can be manually added if needed.

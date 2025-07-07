@@ -171,11 +171,6 @@ class Paiement extends CommonObject
 	public $num_payment;
 
 	/**
-	 * @var string Id of external payment mode
-	 */
-	public $ext_payment_id;
-
-	/**
 	 * @var int Id of prelevement
 	 */
 	public $id_prelevement;
@@ -186,7 +181,12 @@ class Paiement extends CommonObject
 	public $num_prelevement;
 
 	/**
-	 * @var string Name of external payment mode
+	 * @var string Id of external payment mode (With Stripe: 'pi_xxx:cus_ccc@pk_ppp', ...)
+	 */
+	public $ext_payment_id;
+
+	/**
+	 * @var string Name of external payment mode ('StripeLive', 'StripeTest', 'stripe' on old version, 'paypal', ...)
 	 */
 	public $ext_payment_site;
 

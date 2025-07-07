@@ -213,7 +213,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 
-		$result = $object->setValueFrom('ref_customer', GETPOST('ref_customer', 'alpha'), '', null, 'text', '', $user, 'SHIPMENT_MODIFY');
+		$result = $object->setValueFrom('ref_customer', GETPOST('ref_customer', 'alpha'), '', null, 'text', '', $user, 'SHIPPING_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'editref_customer';
@@ -236,7 +236,7 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			// Actions on extra fields
-			$result = $object->updateExtraField($attribute_name, 'SHIPMENT_MODIFY');
+			$result = $object->updateExtraField($attribute_name, 'SHIPPING_MODIFY');
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;

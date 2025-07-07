@@ -2676,3 +2676,5 @@ NewWindow=New window / New tab
 Synchronize=Synchronize
 ByDefault=By default
 Sources=Sources
+XYearSupport=%s-year support
+CacheForTranslationIsUsed=Warning, translation files seems loaded into a cache system. If you force some translations from here, think to reset the cache to have the change effective.

@@ -174,6 +174,7 @@ $permissiontoadd = $user->hasRight('expensereport', 'creer');	// Used by the inc
 /*
  * Actions
  */
+
 $error = 0;
 
 $value_unit_ht = price2num(GETPOST('value_unit_ht', 'alpha'), 'MU');
@@ -410,9 +411,9 @@ if (empty($reshook)) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$user = new User($db);
-					$user->fetch($object->fk_user_author);
-					$newlang = $user->lang;
+					$tmpuser = new User($db);
+					$tmpuser->fetch($object->fk_user_author);
+					$newlang = $tmpuser->lang;
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -529,9 +530,9 @@ if (empty($reshook)) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$user = new User($db);
-					$user->fetch($object->fk_user_author);
-					$newlang = $user->lang;
+					$tmpuser = new User($db);
+					$tmpuser->fetch($object->fk_user_author);
+					$newlang = $tmpuser->lang;
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -643,9 +644,9 @@ if (empty($reshook)) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$user = new User($db);
-					$user->fetch($object->fk_user_author);
-					$newlang = $user->lang;
+					$tmpuser = new User($db);
+					$tmpuser->fetch($object->fk_user_author);
+					$newlang = $tmpuser->lang;
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -761,9 +762,9 @@ if (empty($reshook)) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$user = new User($db);
-					$user->fetch($object->fk_user_author);
-					$newlang = $user->lang;
+					$tmpuser = new User($db);
+					$tmpuser->fetch($object->fk_user_author);
+					$newlang = $tmpuser->lang;
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -879,9 +880,9 @@ if (empty($reshook)) {
 							$newlang = GETPOST('lang_id', 'aZ09');
 						}
 						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-							$user = new User($db);
-							$user->fetch($object->fk_user_author);
-							$newlang = $user->lang;
+							$tmpuser = new User($db);
+							$tmpuser->fetch($object->fk_user_author);
+							$newlang = $tmpuser->lang;
 						}
 						if (!empty($newlang)) {
 							$outputlangs = new Translate("", $conf);
@@ -995,9 +996,9 @@ if (empty($reshook)) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-						$user = new User($db);
-						$user->fetch($object->fk_user_author);
-						$newlang = $user->lang;
+						$tmpuser = new User($db);
+						$tmpuser->fetch($object->fk_user_author);
+						$newlang = $tmpuser->lang;
 					}
 					if (!empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
@@ -1036,9 +1037,9 @@ if (empty($reshook)) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$user = new User($db);
-					$user->fetch($object->fk_user_author);
-					$newlang = $user->lang;
+					$tmpuser = new User($db);
+					$tmpuser->fetch($object->fk_user_author);
+					$newlang = $tmpuser->lang;
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -1049,8 +1050,12 @@ if (empty($reshook)) {
 
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
+
+			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+			exit;
 		}
 	}
+
 
 	if ($action == 'set_paid' && $id > 0 && $user->hasRight('expensereport', 'to_paid')) {
 		$object = new ExpenseReport($db);
@@ -1067,9 +1072,9 @@ if (empty($reshook)) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-					$user = new User($db);
-					$user->fetch($object->fk_user_author);
-					$newlang = $user->lang;
+					$tmpuser = new User($db);
+					$tmpuser->fetch($object->fk_user_author);
+					$newlang = $tmpuser->lang;
 				}
 				if (!empty($newlang)) {
 					$outputlangs = new Translate("", $conf);
@@ -1083,74 +1088,78 @@ if (empty($reshook)) {
 		}
 
 		if ($result > 0) {
-			// Send mail
+			// TODO We must never send an email without a setup or confirm option to choose if email is
+			// sent or not. So we add a hidden constant to avoid this for the moment.
+			if (getDolGlobalString('EXPENSEREPORT_SEND_EMAIL_ON_STATUS_PAID')) {
+				// Send mail
 
-			// TO
-			$destinataire = new User($db);
-			$destinataire->fetch($object->fk_user_author);
-			$emailTo = $destinataire->email;
+				// TO
+				$destinataire = new User($db);
+				$destinataire->fetch($object->fk_user_author);
+				$emailTo = $destinataire->email;
 
-			// FROM
-			$expediteur = new User($db);
-			$expediteur->fetch($user->id);
-			$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+				// FROM
+				$expediteur = new User($db);
+				$expediteur->fetch($user->id);
+				$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 
-			if ($emailFrom && $emailTo) {
-				$filename = array();
-				$filedir = array();
-				$mimetype = array();
+				if ($emailFrom && $emailTo) {
+					$filename = array();
+					$filedir = array();
+					$mimetype = array();
 
-				// SUBJECT
-				$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
-				if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-					$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
-				}
+					// SUBJECT
+					$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
+					if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
+						$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
+					}
 
-				$subject = $societeName." - ".$langs->transnoentities("ExpenseReportPaid");
+					$subject = $societeName." - ".$langs->transnoentities("ExpenseReportPaid");
 
-				// CONTENT
-				$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
-				$link = '<a href="'.$link.'">'.$link.'</a>';
-				$message = $langs->transnoentities("ExpenseReportPaidMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $link);
+					// CONTENT
+					$link = $urlwithroot.'/expensereport/card.php?id='.$object->id;
+					$link = '<a href="'.$link.'">'.$link.'</a>';
+					$message = $langs->transnoentities("ExpenseReportPaidMessage", $object->ref, $destinataire->getFullName($langs), $expediteur->getFullName($langs), $link);
 
-				// Generate pdf before attachment
-				$object->setDocModel($user, "");
-				$resultPDF = expensereport_pdf_create($db, $object, '', "", $langs);
+					// Generate pdf before attachment
+					$object->setDocModel($user, "");
+					$resultPDF = expensereport_pdf_create($db, $object, '', "", $langs);
 
-				// PREPARE SEND
-				$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
+					// PREPARE SEND
+					$mailfile = new CMailFile($subject, $emailTo, $emailFrom, $message, $filedir, $mimetype, $filename, '', '', 0, -1);
 
-				if (empty($mailfile->error)) {
-					// SEND
-					$result = $mailfile->sendfile();
-					if ($result) {
-						$mesg = $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($emailFrom, 2), $mailfile->getValidAddress($emailTo, 2));
-						setEventMessages($mesg, null, 'mesgs');
-						header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-						exit;
-					} else {
-						$langs->load("other");
-						if ($mailfile->error) {
-							$mesg = '';
-							$mesg .= $langs->trans('ErrorFailedToSendMail', $emailFrom, $emailTo);
-							$mesg .= '<br>'.$mailfile->error;
-							setEventMessages($mesg, null, 'errors');
+					if (empty($mailfile->error)) {
+						// SEND
+						$result = $mailfile->sendfile();
+						if ($result) {
+							$mesg = $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($emailFrom, 2), $mailfile->getValidAddress($emailTo, 2));
+							setEventMessages($mesg, null, 'mesgs');
+
+							header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+							exit;
 						} else {
-							setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
+							$langs->load("other");
+							if ($mailfile->error) {
+								$mesg = '';
+								$mesg .= $langs->trans('ErrorFailedToSendMail', $emailFrom, $emailTo);
+								$mesg .= '<br>'.$mailfile->error;
+								setEventMessages($mesg, null, 'errors');
+							} else {
+								setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
+							}
 						}
+					} else {
+						setEventMessages($mailfile->error, $mailfile->errors, 'errors');
 					}
 				} else {
-					setEventMessages($mailfile->error, $mailfile->errors, 'errors');
-					$action = '';
+					setEventMessages($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), null, 'warnings');
 				}
-			} else {
-				setEventMessages($langs->trans("NoEmailSentBadSenderOrRecipientEmail"), null, 'warnings');
-				$action = '';
 			}
 		} else {
 			setEventMessages($langs->trans("FailedToSetPaid"), null, 'warnings');
-			$action = '';
 		}
+
+		$action = '';
 	}
 
 	if ($action == "addline" && $user->hasRight('expensereport', 'creer')) {
@@ -1245,12 +1254,12 @@ if (empty($reshook)) {
 					$outputlangs = $langs;
 					$newlang = GETPOST('lang_id', 'alpha');
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-						$user = new User($db);
-						$user->fetch($object->fk_user_author);
-						$newlang = $user->lang;
+						$tmpuser = new User($db);
+						$tmpuser->fetch($object->fk_user_author);
+						$newlang = $tmpuser->lang;
 					}
 					if (empty($newlang)) {
-						$newlang = $langs;
+						$newlang = $langs->defaultlang;
 					}
 					if (!empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
@@ -1303,9 +1312,9 @@ if (empty($reshook)) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-						$user = new User($db);
-						$user->fetch($object->fk_user_author);
-						$newlang = $user->lang;
+						$tmpuser = new User($db);
+						$tmpuser->fetch($object->fk_user_author);
+						$newlang = $tmpuser->lang;
 					}
 					if (!empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
@@ -1402,9 +1411,9 @@ if (empty($reshook)) {
 							$newlang = GETPOST('lang_id', 'aZ09');
 						}
 						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-							$user = new User($db);
-							$user->fetch($object->fk_user_author);
-							$newlang = $user->lang;
+							$tmpuser = new User($db);
+							$tmpuser->fetch($object->fk_user_author);
+							$newlang = $tmpuser->lang;
 						}
 						if (!empty($newlang)) {
 							$outputlangs = new Translate("", $conf);
@@ -1425,9 +1434,6 @@ if (empty($reshook)) {
 					unset($fk_project);
 					unset($date);
 				}
-
-				//header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-				//exit;
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
@@ -1603,6 +1609,7 @@ if ($action == 'create') {
 
 				// End of page
 				llxFooter();
+
 				$db->close();
 
 				exit;
@@ -1611,7 +1618,7 @@ if ($action == 'create') {
 
 		$head = expensereport_prepare_head($object);
 
-		if ($action == 'edit' && ($object->status < 3 || $object->status == ExpenseReport::STATUS_REFUSED)) {
+		if ($action == 'edit' && ($object->status <= ExpenseReport::STATUS_VALIDATED || $object->status == ExpenseReport::STATUS_REFUSED)) {
 			print "<form name='update' action=\"".$_SERVER['PHP_SELF']."\" method=\"post\">\n";
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
@@ -2067,13 +2074,16 @@ if ($action == 'create') {
 				$remaintopay = price2num($object->total_ttc - (float) $totalpaid);
 				$resteapayeraffiche = $remaintopay;
 
-				$cssforamountpaymentcomplete = 'amountpaymentcomplete';
+				if ($remaintopay > 0) {
+					$cssforamountpaymentcomplete = 'amountremaintopay';
+				} else {
+					$cssforamountpaymentcomplete = 'amountpaymentcomplete';
+				}
 
 				if ($object->status == ExpenseReport::STATUS_REFUSED) {
-					$cssforamountpaymentcomplete = 'amountpaymentneutral';
-					$resteapayeraffiche = 0;
-				} elseif ($object->paid == 0) {
-					$cssforamountpaymentcomplete = 'amountpaymentneutral';
+					$cssforamountpaymentcomplete = 'amountpaymentneutral strikefordisabled';
+				} elseif ($object->paid == 1 && $remaintopay > 0) {
+					$cssforamountpaymentcomplete = 'amountpaymentneutral strikefordisabled';
 				}
 				print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid").':</td><td class="right">'.price($totalpaid).'</td><td></td></tr>';
 				print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected").':</td><td class="right">'.price($object->total_ttc).'</td><td></td></tr>';
@@ -2803,11 +2813,11 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 		}
 	}
 
-	/* Si l'état est "Brouillon"
+	/* If status is "Draft"
 	 *	ET user à droit "creer/supprimer"
-	*	ET fk_user_author == user courant
-	* 	Afficher : "Enregistrer" / "Modifier" / "Supprimer"
-	*/
+	 *	ET fk_user_author == user courant
+	 * 	Afficher : "Enregistrer" / "Modifier" / "Supprimer"
+	 */
 	if ($user->hasRight('expensereport', 'creer') && $object->status == ExpenseReport::STATUS_DRAFT) {
 		if (in_array($object->fk_user_author, $childids) || $user->hasRight('expensereport', 'writeall_advance')) {
 			// Modify
@@ -2820,7 +2830,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 		}
 	}
 
-	/* Si l'état est "Refusée"
+	/* If status if "Refused"
 	 *	ET user à droit "creer/supprimer"
 	 *	ET fk_user_author == user courant
 	 * 	Afficher : "Enregistrer" / "Modifier" / "Supprimer"
@@ -2901,6 +2911,9 @@ if ($action != 'create' && $action != 'edit' && $action != 'editline') {
 		// Cancel
 		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=cancel&token='.newToken().'&id='.$object->id.'">'.$langs->trans("Cancel").'</a></div>';
 	}
+
+	// If status is Closed
+	// ---------------------
 
 	// TODO Replace this. It should be SetUnpaid and should go back to status unpaid not canceled.
 	if (($user->hasRight('expensereport', 'approve') || $user->hasRight('expensereport', 'to_paid')) && $object->status == ExpenseReport::STATUS_CLOSED) {

@@ -1399,10 +1399,10 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		$param .= '&search_note_private='.urlencode($search_note_private);
 	}
 	if ($search_birthday_dtstart != '') {
-		$param .= '&search_birthday_dtstart='.urlencode($search_birthday_dtstart);
+		$param .= '&search_birthday_dtstart='.urlencode((string) $search_birthday_dtstart);
 	}
 	if ($search_birthday_dtend != '') {
-		$param .= '&search_birthday_dtend='.urlencode($search_birthday_dtend);
+		$param .= '&search_birthday_dtend='.urlencode((string) $search_birthday_dtend);
 	}
 	if ($optioncss != '') {
 		$param .= '&optioncss='.urlencode($optioncss);
@@ -1657,7 +1657,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			// Photo - Name
 			if (!empty($arrayfields['t.name']['checked'])) {
 				print '<td class="tdoverflowmax150">';
-				print $form->showphoto('contact', $contactstatic, 0, 0, 0, 'photorefnoborder valignmiddle marginrightonly', 'small', 1, 0, '1');
+				print $form->showphoto('contact', $contactstatic, 0, 0, 0, 'photorefnoborder valignmiddle marginrightonly', 'small', 1, 0, 'user');
 				print $contactstatic->getNomUrl(0, '', 0, '&backtopage='.urlencode($backtopage));
 				print '</td>';
 			}

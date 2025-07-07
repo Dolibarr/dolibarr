@@ -548,7 +548,7 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'knowledgemanagement') {
 			require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class.php';
 
-			if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read') && !DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
+			if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
 				throw new RestException(403);
 			}
 

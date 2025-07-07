@@ -1449,8 +1449,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			// Prospect/Customer/Supplier
 			$selected = $object->client;
-			$selectedcustomer = 0;
-			$selectedprospect = 0;
+			$selectedcustomer = (getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')==1 || getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')==3 ? 1 : 0);
+			$selectedprospect = (getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')==2 || getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')==3 ? 1 : 0);
 			switch ($selected) {
 				case 1:
 					$selectedcustomer = 1;
