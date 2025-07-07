@@ -39,6 +39,10 @@ require_once DOL_DOCUMENT_ROOT.'/datapolicy/lib/datapolicy.lib.php';
  * @var User $user
  */
 
+if (!$langs instanceof Translate) {
+	trigger_error("Langs object was not initialized correctly.", E_USER_ERROR);
+}
+
 // Translations
 $langs->loadLangs(array('admin', 'companies', 'members', 'datapolicy', 'recruitment'));
 
@@ -274,7 +278,7 @@ if ($action == 'edit') {
 	// ==============================================================================
 
 	// Helper function to generate the select dropdown HTML, promoting the DRY principle.
-	$generateSelectHtml = function ($constKey, $valTab) use ($langs) {
+	$generateSelectHtml = function ($constKey, $valTab) {
 		$output = '<select name="'.$constKey.'" id="'.$constKey.'" class="flat minwidth200">';
 		foreach ($valTab as $key1 => $val1) {
 			$output .= '<option value="'.$key1.'" '.(getDolGlobalString($constKey) == $key1 ? 'selected="selected"' : '').'>';
@@ -305,7 +309,7 @@ if ($action == 'edit') {
 			// Column 1: Anonymization
 			print '<td>';
 			// Display the dropdown only if a constant key is defined for the 'anonymize' action.
-			if (!empty($val['config_keys']['anonymize'])) {
+			if (isset($val['config_keys']['anonymize'])) {
 				print $generateSelectHtml($val['config_keys']['anonymize'], $valTab);
 			}
 			print '</td>';
@@ -314,7 +318,7 @@ if ($action == 'edit') {
 			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 				print '<td>';
 				// Display the dropdown only if a constant key is defined for the 'delete' action.
-				if (!empty($val['config_keys']['delete'])) {
+				if (isset($val['config_keys']['delete'])) {
 					print $generateSelectHtml($val['config_keys']['delete'], $valTab);
 				}
 				print '</td>';

@@ -42,7 +42,7 @@ class DataPolicyCron
 	private $nbdeleted = 0;
 	/** @var int Counter for errors. */
 	private $errorCount = 0;
-	/** @var array Array to store detailed error messages. */
+	/** @var string[] Array to store detailed error messages. */
 	private $errorMessages = array();
 
 	/**
@@ -61,8 +61,7 @@ class DataPolicyCron
 	 */
 	public function cleanDataForDataPolicy()
 	{
-		global $conf, $langs, $user;
-		$langs->load('datapolicy@datapolicy');
+		global $conf, $user;
 
 		// Reset state properties for this specific execution run.
 		$this->nbupdated = 0;
@@ -111,10 +110,10 @@ class DataPolicyCron
 	 * Processes a specific action (delete or anonymize) for a given policy.
 	 * This method orchestrates the process by delegating to specialized handlers.
 	 *
-	 * @param array $policy The policy definition array.
+	 * @param array<string, mixed> $policy The policy definition array.
 	 * @param string $action The action to perform: 'delete' or 'anonymize'.
 	 * @param object $object The instantiated Dolibarr object.
-	 * @param array $processedIds Reference to the array of processed IDs.
+	 * @param int[] $processedIds Reference to the array of processed IDs.
 	 * @param object $conf The global conf object.
 	 * @param User $user The user object for history tracking.
 	 * @return void
@@ -130,8 +129,8 @@ class DataPolicyCron
 
 		// Prepare SQL query
 		$sqlPlaceholders = array(
-			'__ENTITY__' => (int) $conf->entity,
-			'__DELAY__' => (int) $delay,
+			'__ENTITY__' => (string) $conf->entity,
+			'__DELAY__' => (string) $delay,
 			'__NOW__' => "'" . $this->db->idate(dol_now()) . "'"
 		);
 		$sql = str_replace(array_keys($sqlPlaceholders), array_values($sqlPlaceholders), $policy['sql_template']);
@@ -174,7 +173,7 @@ class DataPolicyCron
 	 *
 	 * @param object $object The object to delete.
 	 * @param User $user The user performing the action.
-	 * @param array $policy The policy configuration.
+	 * @param array<string, mixed> $policy The policy configuration.
 	 * @return int   The result of the delete operation.
 	 */
 	private function _handleDelete($object, $user, $policy)
@@ -189,7 +188,7 @@ class DataPolicyCron
 	 *
 	 * @param object $object The object to anonymize.
 	 * @param User $user The user performing the action.
-	 * @param array $policy The policy configuration.
+	 * @param array<string, mixed> $policy The policy configuration.
 	 * @return int   The result of the update operation, or 0 if skipped.
 	 */
 	private function _handleAnonymize($object, $user, $policy)
@@ -208,9 +207,9 @@ class DataPolicyCron
 	 *
 	 * @param object $object The target object.
 	 * @param User $user The user object.
-	 * @param array $policy The policy configuration.
+	 * @param array<string, mixed> $policy The policy configuration.
 	 * @param string $method The method key ('delete' or 'update').
-	 * @return array The list of arguments for the call.
+	 * @return mixed[] The list of arguments for the call.
 	 */
 	private function _buildCallArguments($object, $user, $policy, $method)
 	{
@@ -252,7 +251,7 @@ class DataPolicyCron
 	/**
 	 * Defines and returns the centralized data policy configuration.
 	 * Separating this makes the main method cleaner.
-	 * @return array The array of all data policies.
+	 * @return array<string, array<string, mixed>> The array of all data policies.
 	 */
 	private function _getDataPolicies()
 	{
