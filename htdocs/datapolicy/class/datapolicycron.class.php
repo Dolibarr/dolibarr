@@ -49,7 +49,8 @@ class DataPolicyCron
 	 * Constructor
 	 * @param DoliDB $db Database handler
 	 */
-	public function __construct(DoliDB $db) {
+	public function __construct(DoliDB $db)
+	{
 		$this->db = $db;
 	}
 
@@ -58,7 +59,8 @@ class DataPolicyCron
 	 * Orchestrates the data cleaning process by iterating through all defined policies.
 	 * @return int Returns 0 for success, 1 for failure, as required for cron jobs.
 	 */
-	public function cleanDataForDataPolicy() {
+	public function cleanDataForDataPolicy()
+	{
 		global $conf, $langs, $user;
 		$langs->load('datapolicy@datapolicy');
 
@@ -112,11 +114,13 @@ class DataPolicyCron
 	 * @param array $policy The policy definition array.
 	 * @param string $action The action to perform: 'delete' or 'anonymize'.
 	 * @param object $object The instantiated Dolibarr object.
-	 * @param array    &$processedIds Reference to the array of processed IDs.
+	 * @param array &$processedIds Reference to the array of processed IDs.
 	 * @param object $conf The global conf object.
 	 * @param User $user The user object for history tracking.
+	 * @return void
 	 */
-	private function _processPolicyAction($policy, $action, $object, &$processedIds, $conf, $user) {
+	private function _processPolicyAction($policy, $action, $object, &$processedIds, $conf, $user)
+	{
 		$constName = $policy['const_' . $action] ?? null;
 		$delay = $constName ? getDolGlobalInt($constName) : 0;
 
@@ -173,7 +177,8 @@ class DataPolicyCron
 	 * @param array $policy The policy configuration.
 	 * @return int   The result of the delete operation.
 	 */
-	private function _handleDelete($object, $user, $policy) {
+	private function _handleDelete($object, $user, $policy)
+	{
 		$callArgs = $this->_buildCallArguments($object, $user, $policy, 'delete');
 
 		return $object->delete(...$callArgs);
@@ -187,7 +192,8 @@ class DataPolicyCron
 	 * @param array $policy The policy configuration.
 	 * @return int   The result of the update operation, or 0 if skipped.
 	 */
-	private function _handleAnonymize($object, $user, $policy) {
+	private function _handleAnonymize($object, $user, $policy)
+	{
 		foreach ($policy['anonymize_fields'] as $field => $val) {
 			$object->$field = ($val == 'MAKEANONYMOUS') ? $field . '-anonymous-' . $object->id : $val;
 		}
@@ -206,7 +212,8 @@ class DataPolicyCron
 	 * @param string $method The method key ('delete' or 'update').
 	 * @return array The list of arguments for the call.
 	 */
-	private function _buildCallArguments($object, $user, $policy, $method) {
+	private function _buildCallArguments($object, $user, $policy, $method)
+	{
 		$availableArgs = array(
 			'id' => $object->id,
 			'user' => $user
@@ -227,7 +234,8 @@ class DataPolicyCron
 	 * @param string $action The action that was performed ('delete' or 'anonymize').
 	 * @return void
 	 */
-	private function _recordActionResult($result, $object, $action) {
+	private function _recordActionResult($result, $object, $action)
+	{
 		if ($result <= 0) {
 			$this->errorCount++;
 			$this->errorMessages[] = 'Failed to ' . $action . ' record ID ' . $object->id . ' from class ' . get_class($object) . '. Error: ' . $object->errorsToString();
@@ -246,7 +254,8 @@ class DataPolicyCron
 	 * Separating this makes the main method cleaner.
 	 * @return array The array of all data policies.
 	 */
-	private function _getDataPolicies() {
+	private function _getDataPolicies()
+	{
 		$prefix = $this->db->prefix();
 
 		return array(
