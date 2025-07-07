@@ -3817,24 +3817,6 @@ parameters:
 			path: ../../../htdocs/commande/contact.php
 
 		-
-			message: '#^Variable \$addu might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/commande/customer.php
-
-		-
-			message: '#^Variable \$begin might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/commande/customer.php
-
-		-
-			message: '#^Variable \$maxlen might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/commande/customer.php
-
-		-
 			message: '#^Variable \$socid might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -9487,36 +9469,6 @@ parameters:
 			path: ../../../htdocs/core/lib/functions.lib.php
 
 		-
-			message: '#^Property CommonObject\:\:\$firstname \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/core/lib/functions.lib.php
-
-		-
-			message: '#^Property CommonObject\:\:\$id \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/core/lib/functions.lib.php
-
-		-
-			message: '#^Property CommonObject\:\:\$lastname \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/core/lib/functions.lib.php
-
-		-
-			message: '#^Property CommonObject\:\:\$multicurrency_code \(array\<string\>\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/core/lib/functions.lib.php
-
-		-
-			message: '#^Property CommonObject\:\:\$multicurrency_total_ttc \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/core/lib/functions.lib.php
-
-		-
 			message: '#^Result of && is always true\.$#'
 			identifier: booleanAnd.alwaysTrue
 			count: 1
@@ -10642,12 +10594,6 @@ parameters:
 			message: '#^Comparison operation "\>" between 1 and 0 is always true\.$#'
 			identifier: greater.alwaysTrue
 			count: 2
-			path: ../../../htdocs/core/modules/member/doc/pdf_standard_member.class.php
-
-		-
-			message: '#^Property Adherent\:\:\$photo \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
 			path: ../../../htdocs/core/modules/member/doc/pdf_standard_member.class.php
 
 		-
@@ -13401,7 +13347,7 @@ parameters:
 		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
-			count: 3
+			count: 2
 			path: ../../../htdocs/expensereport/card.php
 
 		-
@@ -18589,78 +18535,6 @@ parameters:
 			path: ../../../htdocs/product/stock/massstockmove.php
 
 		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
-			message: '#^Property Product\:\:\$pmp \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
-			message: '#^Variable \$backtopage might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
-			message: '#^Variable \$comref might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
-			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
-			message: '#^Variable \$d_eatby might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
-			message: '#^Variable \$d_sellby might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
-			message: '#^Variable \$massaction might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
-			message: '#^Variable \$obj might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
-			message: '#^Variable \$sall might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
-			message: '#^Variable \$toselect might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
-			message: '#^Variable \$totalarray might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
 			message: '#^Loose comparison using \=\= between 1 and 2 will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
 			count: 1
@@ -18679,12 +18553,6 @@ parameters:
 			path: ../../../htdocs/product/stock/movement_list.php
 
 		-
-			message: '#^Property Product\:\:\$pmp \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/product/stock/movement_list.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 1
@@ -18693,18 +18561,6 @@ parameters:
 		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
-			count: 1
-			path: ../../../htdocs/product/stock/movement_list.php
-
-		-
-			message: '#^Variable \$d_eatby might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/movement_list.php
-
-		-
-			message: '#^Variable \$d_sellby might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/product/stock/movement_list.php
 
@@ -18747,12 +18603,6 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/product/stock/product.php
-
-		-
-			message: '#^Property Product\:\:\$pmp \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/product/stock/product.php
 
@@ -19985,12 +19835,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/public/members/new.php
-
-		-
-			message: '#^Property Adherent\:\:\$photo \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/public/members/public_card.php
 
 		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
