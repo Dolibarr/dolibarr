@@ -295,6 +295,7 @@ $service = $paymentmethod;	// to have a default value. We may change it later fo
 // For Paypal: validate the payment (Paypal need another step after the callback return to validate the payment).
 if (isModEnabled('paypal') && $paymentmethod === 'paypal') {	// We call this page only if payment is ok on payment system
 	if (!empty($PAYPALTOKEN)) {
+		// TODO: Move this block to the top to ensure all session variables (e.g., TRANSACTIONID, FinalPaymentAmt, currencyCodeType, etc.) are loaded before executing checks for any payment module.
 		// Get on url call
 		$onlinetoken        = $PAYPALTOKEN;
 		$fulltag            = $FULLTAG;
@@ -378,6 +379,17 @@ if (isModEnabled('paybox') && $paymentmethod === 'paybox') {
 
 // For Stripe
 if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
+	// TODO: Move this block to the top to ensure all session variables (e.g., TRANSACTIONID, FinalPaymentAmt, currencyCodeType, etc.) are loaded before executing checks for any payment module.
+	if (empty($TRANSACTIONID)) {
+		$TRANSACTIONID = empty($_SESSION['TRANSACTIONID']) ? '' : $_SESSION['TRANSACTIONID'];	// pi_... or ch_...
+		if (empty($TRANSACTIONID) && GETPOST('payment_intent', 'alphanohtml')) {
+			// For the case we use STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 2
+			$TRANSACTIONID = GETPOST('payment_intent', 'alphanohtml');
+		}
+	}
+	$FinalPaymentAmt = empty($_SESSION["FinalPaymentAmt"]) ? '' : $_SESSION["FinalPaymentAmt"];
+	$currencyCodeType = empty($_SESSION['currencyCodeType']) ? '' : $_SESSION['currencyCodeType'];
+
 	$service = 'StripeTest';
 	$servicestatus = 0;
 	if (getDolGlobalString('STRIPE_LIVE') && !GETPOSTINT('forcesandbox')) {
@@ -471,6 +483,7 @@ if (!in_array($paymentmethod, array('paypal', 'paybox', 'stripe'))) {
 	}
 }
 
+// TODO: Move this block to the top to ensure all session variables (e.g., TRANSACTIONID, FinalPaymentAmt, currencyCodeType, etc.) are loaded before executing checks for any payment module.
 // Get variable into the session env
 if (empty($ipaddress)) {
 	$ipaddress = $_SESSION['ipaddress'];
