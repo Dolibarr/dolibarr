@@ -141,8 +141,8 @@ try {
 	dol_syslog("***** Stripe IPN was called with SignatureVerificationException service=".$service, LOG_DEBUG, 0, '_payment');
 	httponly_accessforbidden('Invalid signature. May be a hook for an event created by another Stripe env or a hack attempt ? Check setup of your keys whsec_...', 400);
 } catch (Exception $e) {
-	dol_syslog("***** Stripe IPN was called with Exception ('.$e->getMessage().') service=".$service);
-	dol_syslog("***** Stripe IPN was called with Exception ('.$e->getMessage().') service=".$service, LOG_DEBUG, 0, '_payment');
+	dol_syslog("***** Stripe IPN was called with Exception (".$e->getMessage().") service=".$service);
+	dol_syslog("***** Stripe IPN was called with Exception (".$e->getMessage().") service=".$service, LOG_DEBUG, 0, '_payment');
 	httponly_accessforbidden('Error '.$e->getMessage(), 400);
 }
 

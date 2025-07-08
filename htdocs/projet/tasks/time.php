@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2023	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
@@ -2290,7 +2289,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					if (!empty($arrayfields['p.project_ref']['checked'])) {
 						print dolPrintHTML($tmpproject->title);
 					} else {
-						print $tmpproject->getNomUrl(1, 0, -1);
+						print $tmpproject->getNomUrl(1, '', -1);
 					}
 					print '</td>';
 					if (!$i) {
