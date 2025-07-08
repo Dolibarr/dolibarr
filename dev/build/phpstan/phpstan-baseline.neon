@@ -19987,12 +19987,6 @@ parameters:
 			path: ../../../htdocs/public/payment/paymentok.php
 
 		-
-			message: '#^Variable \$service might not be defined\.$#'
-			identifier: variable.undefined
-			count: 7
-			path: ../../../htdocs/public/payment/paymentok.php
-
-		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
