@@ -186,8 +186,8 @@ abstract class DoliDB implements Database
 	 */
 	public function sanitize($stringtosanitize, $allowsimplequote = 0, $allowsequals = 0, $allowsspace = 0, $allowschars = 1)
 	{
-		//$result = preg_replace('/[^0-9_\-\.,'.($allowschars ? '\p{L}' : '').($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').($allowsspace ? ' ' : '').']/ui', '', $stringtosanitize);
-		$result = preg_replace('/[^0-9_\-\.,'.($allowschars ? 'a-z' : '').($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').($allowsspace ? ' ' : '').']/i', '', $stringtosanitize);
+		$result = preg_replace('/[^0-9_\-\.,'.($allowschars ? '\p{L}' : '').($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').($allowsspace ? ' ' : '').']/ui', '', $stringtosanitize);
+		//$result = preg_replace('/[^0-9_\-\.,'.($allowschars ? 'a-z' : '').($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').($allowsspace ? ' ' : '').']/i', '', $stringtosanitize);
 
 		if ($allowsimplequote == 1) {
 			// Remove all quotes that are inside a string and not around

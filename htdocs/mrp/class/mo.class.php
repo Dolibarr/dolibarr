@@ -2,7 +2,7 @@
 /* Copyright (C) 2017  		Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2020  		Lenin Rivas		   	<lenin@leninrivas.com>
  * Copyright (C) 2023-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,7 +82,7 @@ class Mo extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => "Id",),
@@ -266,7 +266,7 @@ class Mo extends CommonObject
 	public $fk_parent_line;
 
 	/**
-	 @ var array{id:int,label:string,qty_bom:int|float,stock:float,seuil_stock_alerte:float,virtual_stock:float,qty:float,fk_unit:int,qty_frozen:float,disable_stock_change:int<0,1>,efficiency:float}	tpl
+	 * @ var array{id:int,label:string,qty_bom:int|float,stock:float,seuil_stock_alerte:float,virtual_stock:float,qty:float,fk_unit:int,qty_frozen:float,disable_stock_change:int<0,1>,efficiency:float}	tpl
 	 */
 	public $tpl = array();
 
@@ -312,9 +312,9 @@ class Mo extends CommonObject
 	/**
 	 * Create object into database
 	 *
-	 * @param  User		$user      User that creates
-	 * @param  int<0,1>	$notrigger 0=launch triggers after, 1=disable triggers
-	 * @return int             Return integer <=0 if KO, Id of created object if OK
+	 * @param  User		$user      	User that creates
+	 * @param  int<0,1>	$notrigger 	0=launch triggers after, 1=disable triggers
+	 * @return int             		Return integer <=0 if KO, Id of created object if OK
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
@@ -329,7 +329,7 @@ class Mo extends CommonObject
 			if ($tmpproduct->hasFatherOrChild(1) > 0) {
 				$this->error = 'ErrorAVirtualProductCantBeUsedIntoABomOrMo';
 				$this->errors[] = $this->error;
-				return -1;
+				return -2;
 			}
 		}
 
@@ -537,7 +537,7 @@ class Mo extends CommonObject
 					if ($key == 't.rowid') {
 						$sqlwhere[] = $this->db->sanitize($key)." = ".((int) $value);
 					} elseif (strpos($key, 'date') !== false) {
-						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate($value)."'";
+						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate((int) $value)."'";
 					} else {
 						$sqlwhere[] = $this->db->sanitize($key)." LIKE '%".$this->db->escape($this->db->escapeforlike($value))."%'";
 					}
@@ -725,6 +725,8 @@ class Mo extends CommonObject
 		$role = "";
 
 		if ($this->status != self::STATUS_DRAFT) {
+			dol_syslog("Bad status for MO object. Can't add production lines. Check that MO has status DRAFT.");
+			$this->error = "Bad status for MO object. Can't add production lines. Check that MO has status DRAFT.";
 			return -1;
 		}
 
@@ -768,7 +770,7 @@ class Mo extends CommonObject
 				}
 			}
 
-			$resultline = $moline->create($user, false); // Never use triggers here
+			$resultline = $moline->create($user, 0); // Never use triggers here
 			if ($resultline <= 0) {
 				$error++;
 				$this->error = $moline->error;
@@ -808,7 +810,7 @@ class Mo extends CommonObject
 									$moline->fk_default_workstation = $line->fk_default_workstation;
 								}
 
-								$resultline = $moline->create($user, false); // Never use triggers here
+								$resultline = $moline->create($user, 0); // Never use triggers here
 								if ($resultline <= 0) {
 									$error++;
 									$this->error = $moline->error;
@@ -1747,9 +1749,9 @@ class Mo extends CommonObject
 		// Qty
 		print '<td class="right">'.$langs->trans('Qty');
 		if ($this->bom->bomtype == 0) {
-			print ' <span class="opacitymedium">('.$langs->trans("ForAQuantityOf", $this->bom->qty).')</span>';
+			print ' <span class="opacitymedium">('.$langs->trans("ForAQuantityOf", (string) $this->bom->qty).')</span>';
 		} else {
-			print ' <span class="opacitymedium">('.$langs->trans("ForAQuantityToConsumeOf", $this->bom->qty).')</span>';
+			print ' <span class="opacitymedium">('.$langs->trans("ForAQuantityToConsumeOf", (string) $this->bom->qty).')</span>';
 		}
 		// Unit
 		print '<td class="right">'.$langs->trans('Unit');
@@ -1978,12 +1980,81 @@ class Mo extends CommonObject
 		}
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
+	 *
+	 *      @param	User	$user   		Object user
+	 *      @return WorkboardResponse|int 	Return integer <0 if KO, WorkboardResponse if OK
+	 */
+	public function load_board($user)
+	{
+		// phpcs:enable
+		global $conf, $langs;
+		if ($user->socid) {
+			return -1; // Protection pour éviter appel par utilisateur externe
+		}
+
+		$now = dol_now();
+
+		$sql = "SELECT rowid, date_end_planned FROM ".$this->db->prefix()."mrp_mo";
+		$sql .= " WHERE status IN (" . self::STATUS_VALIDATED . ", " . self::STATUS_INPROGRESS .")"; // 1 = Ouvert, 2 = En cours
+		$sql .= " AND entity IN (".getEntity('mrp_mo').")";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$langs->load("mrp");
+			$response = new WorkboardResponse();
+			$warning_delay = $conf->mrp->progress->warning_delay ;
+			$response->warning_delay = $warning_delay / 86400;
+			$response->label = $langs->trans("MOProgress");
+			$response->labelShort = $langs->trans("MOProgress");
+			$response->url = DOL_URL_ROOT.'/mrp/mo_list.php?search_status=-2';
+			$response->img = img_object('', "mrp");
+
+
+			while ($obj = $this->db->fetch_object($resql)) {
+				$response->nbtodo++;
+
+				if (!empty($obj->date_end_planned)) {
+					$date_end_planned = $this->db->jdate($obj->date_end_planned);
+					if ($now > ($date_end_planned + $warning_delay)) {
+						$response->nbtodolate++;
+						$response->url_late = DOL_URL_ROOT.'/mrp/mo_list.php?search_status=-2&search_option=late';
+					}
+				}
+			}
+
+			return $response;
+		} else {
+			dol_print_error($this->db);
+			$this->error = $this->db->error();
+			return -1;
+		}
+	}
+
+	/**
+	 * Is the manufactured delayed?
+	 *
+	 * @return bool
+	 */
+	public function hasDelay()
+	{
+		global $conf;
+
+		if ($this->status != Mo::STATUS_VALIDATED && $this->status != Mo::STATUS_INPROGRESS) {
+			return false;
+		}
+		return (dol_now() > ($this->date_end_planned + $conf->mrp->progress->warning_delay));
+	}
+
+
 	/**
 	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		?array{string,mixed}		$arraydata			Array of data
-	 *  @return		string											HTML Code for Kanban thumb.
+	 *	@param	string	    			$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param	?array<string,mixed>	$arraydata	Array of data
+	 *  @return	string								HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

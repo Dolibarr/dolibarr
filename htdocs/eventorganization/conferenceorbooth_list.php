@@ -3,6 +3,7 @@
  * Copyright (C) 2021		Florian Henry				<florian.henry@scopen.fr>
  * Copyright (C) 2023-2024	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -416,11 +417,6 @@ if ($projectid > 0) {
 	}
 	print '</td></tr>';
 
-	// Location event
-	print '<tr><td>'.$langs->trans("Location").'</td><td>';
-	print $project->location;
-	print '</td></tr>';
-
 	// Visibility
 	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 	if ($project->public == 0) {
@@ -430,6 +426,11 @@ if ($projectid > 0) {
 		print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 		print $langs->trans("SharedProject");
 	}
+	print '</td></tr>';
+
+	// Location event
+	print '<tr><td>'.$langs->trans("Location").'</td><td>';
+	print $project->location;
 	print '</td></tr>';
 
 	// Other attributes
@@ -469,7 +470,7 @@ if ($projectid > 0) {
 	$htmltext = $langs->trans("AllowUnknownPeopleSuggestConfHelp");
 	print $form->editfieldkey('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', ($project->accept_conference_suggestions ? 1 : 0), $project, $permissiontoadd, $typeofdata, '', 0, 0, 'projectid', $htmltext);
 	print '</td><td class="valuefield">';
-	print $form->editfieldval('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', ($project->accept_conference_suggestions ? 1 : 0), $project, $permissiontoadd, $typeofdata, '', null, 0, '', 0, '', 'projectid');
+	print $form->editfieldval('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', ($project->accept_conference_suggestions ? 1 : 0), $project, $permissiontoadd, $typeofdata, '', null, null, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	print '<tr><td class="titlefield">';
@@ -477,25 +478,25 @@ if ($projectid > 0) {
 	$htmltext = $langs->trans("AllowUnknownPeopleSuggestBoothHelp");
 	print $form->editfieldkey('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', ($project->accept_booth_suggestions ? 1 : 0), $project, $permissiontoadd, $typeofdata, '', 0, 0, 'projectid', $htmltext);
 	print '</td><td class="valuefield">';
-	print $form->editfieldval('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', ($project->accept_booth_suggestions ? 1 : 0), $project, $permissiontoadd, $typeofdata, '', null, 0, '', 0, '', 'projectid');
+	print $form->editfieldval('AllowUnknownPeopleSuggestBooth', 'accept_booth_suggestions', ($project->accept_booth_suggestions ? 1 : 0), $project, $permissiontoadd, $typeofdata, '', null, null, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	print '<tr><td class="titlefield">';
 	print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', '', $project, $permissiontoadd, 'amount', '', 0, 0, 'projectid');
 	print '</td><td class="valuefield">';
-	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', $project->price_booth, $project, $permissiontoadd, 'amount', '', null, 0, '', 0, '', 'projectid');
+	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfBooth'), $langs->trans("PriceOfBoothHelp")), 'price_booth', $project->price_booth, $project, $permissiontoadd, 'amount', '', null, null, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	print '<tr><td class="titlefield">';
 	print $form->editfieldkey($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', '', $project, $permissiontoadd, 'amount', '', 0, 0, 'projectid');
 	print '</td><td class="valuefield">';
-	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', $project->price_registration, $project, $permissiontoadd, 'amount', '', null, 0, '', 0, '', 'projectid');
+	print $form->editfieldval($form->textwithpicto($langs->trans('PriceOfRegistration'), $langs->trans("PriceOfRegistrationHelp")), 'price_registration', $project->price_registration, $project, $permissiontoadd, 'amount', '', null, null, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	print '<tr><td class="titlefield">';
 	print $form->editfieldkey($form->textwithpicto($langs->trans('MaxNbOfAttendees'), ''), 'max_attendees', '', $project, $permissiontoadd, 'integer:3', '', 0, 0, 'projectid');
 	print '</td><td class="valuefield">';
-	print $form->editfieldval($form->textwithpicto($langs->trans('MaxNbOfAttendees'), ''), 'max_attendees', $project->max_attendees, $project, $permissiontoadd, 'integer:3', '', null, 0, '', 0, '', 'projectid');
+	print $form->editfieldval($form->textwithpicto($langs->trans('MaxNbOfAttendees'), ''), 'max_attendees', $project->max_attendees, $project, $permissiontoadd, 'integer:3', '', null, null, '', 0, '', 'projectid');
 	print "</td></tr>";
 
 	// Link to ICS for the event
@@ -885,7 +886,7 @@ foreach ($object->fields as $key => $val) {
 		} elseif ($key == 'lang') {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 			$formadmin = new FormAdmin($db);
-			print $formadmin->select_language($search[$key], 'search_lang', 0, null, 1, 0, 0, 'minwidth100imp maxwidth125', 2);
+			print $formadmin->select_language($search[$key], 'search_lang', 0, array(), 1, 0, 0, 'minwidth100imp maxwidth125', 2);
 		} else {
 			print '<input type="text" class="flat maxwidth'.($val['type'] == 'integer' ? '50' : '75').'" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
 		}
@@ -1037,7 +1038,7 @@ while ($i < $imaxinloop) {
 			if (!empty($arrayfields['t.'.$key]['checked'])) {
 				print '<td'.($cssforfield ? ' class="'.$cssforfield.(preg_match('/tdoverflow/', $cssforfield) ? ' classfortooltip' : '').'"' : '');
 				if (preg_match('/tdoverflow/', $cssforfield) && !is_numeric($object->$key)) {
-					print ' title="'.dol_escape_htmltag($object->$key).'"';
+					print ' title="'.dol_escape_htmltag((string) $object->$key).'"';
 				}
 				print '>';
 				if ($key == 'status') {
@@ -1045,7 +1046,7 @@ while ($i < $imaxinloop) {
 				} elseif ($key == 'ref') {
 					print $object->getNomUrl(1, 0, '', (($projectid > 0) ? 'withproject' : ''));
 				} else {
-					print $object->showOutputField($val, $key, $object->$key, '');
+					print $object->showOutputField($val, $key, (string) $object->$key, '');
 				}
 				print '</td>';
 				if (!$i) {

@@ -102,14 +102,13 @@ $boxlist .= '</div>';
 if (isModEnabled('accounting')) {
 	$step = 0;
 
-	$helpisexpanded = false;
-	//$helpisexpanded = empty($resultboxes['boxactivated']) || (empty($resultboxes['boxlista']) && empty($resultboxes['boxlistb'])); // If there is no widget, the tooltip help is expanded by default.
+	$helpisexpanded = GETPOSTINT('showtuto');
 	$showtutorial = '';
 
 	if (!$helpisexpanded) {
 		$showtutorial  = '<div class="right"><a href="#" id="show_hide">';
-		$showtutorial .= img_picto('', 'chevron-down');
-		$showtutorial .= ' '.$langs->trans("ShowTutorial");
+		$showtutorial .= img_picto('', 'chevron-down', 'class="show_hide_picto pictofixedwidth"');
+		$showtutorial .= $langs->trans("ShowTutorial");
 		$showtutorial .= '</a></div>';
 
 		$showtutorial .= '<script type="text/javascript">
@@ -118,8 +117,10 @@ if (isModEnabled('accounting')) {
 				console.log("We click on show-hide");
 				if ($(".idfaq2").is(":hidden")) {
 					jQuery( ".idfaq2" ).show();
+					jQuery( ".show_hide_picto" ).removeClass("fa-chevron-up").addClass("fa-chevron-down");
 				} else {
 					jQuery( ".idfaq2" ).hide();
+					jQuery( ".show_hide_picto" ).removeClass("fa-chevron-down").addClass("fa-chevron-up");
 				}
 	            jQuery( ".idfaq" ).toggle({
 	                duration: 400,

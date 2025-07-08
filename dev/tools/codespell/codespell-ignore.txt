@@ -33,6 +33,7 @@ doubleclick
 errorstring
 exten
 falsy
+focusin
 master
 medias
 projet

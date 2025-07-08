@@ -43,7 +43,7 @@ ConfirmCancelSending=Biztosan törölni szeretné ezt a szállítmányt?
 DocumentModelMerou=Merou A5 modell
 WarningNoQtyLeftToSend=Figyelem, nincsenek szállításra váró termékek.
 StatsOnShipmentsOnlyValidated=A statisztikák csak az érvényesített szállítmányokra vonatkoznak. A felhasznált dátum a szállítmány érvényesítésének dátuma (a tervezett szállítási dátum nem mindig ismert)
-DateShipping=Sending date
+DateShipping=Küldési dátum
 DateDeliveryPlanned=A szállítás tervezett dátuma
 RefDeliveryReceipt=Szállítási visszaigazolás
 StatusReceipt=Kézbesítési nyugta állapota
@@ -63,10 +63,12 @@ NoProductToShipFoundIntoStock=Nem található szállítandó termék a(z) <b>%s<
 WeightVolShort=Súly/térfogat.
 ValidateOrderFirstBeforeShipment=Elõször érvényesítenie kell a rendelést, mielõtt kiszállítást végezhet.
 NoLineGoOnTabToAddSome=Nincs sor, lépjen a „%s” lapra a hozzáadáshoz
-CreateInvoiceForThisCustomerFromSendings=Create Bills
+CreateInvoiceForThisCustomerFromSendings=Számlák létrehozása
 IfValidateInvoiceIsNoSendingStayUnbilled=Ha a számla ellenőrzése „Nem”, akkor a küldés „Nem számlázva” állapotú marad mindaddig, amíg a számla nem érvényesül.
 OptionToSetSendingBilledNotEnabled=A Munkafolyamat modul opciója, hogy a küldést automatikusan "Számlázva" értékre állítsa, amikor a számla érvényesítve van, nincs engedélyezve, ezért manuálisan kell a küldések állapotát "Számlázva"-ra állítania. a számla létrejött.
-ShipmentUpdated=Shipment successfully updated
+NoWarehouseInBase=Nincs raktár a bázison
+ShipmentUpdated=Szállítmány sikeresen frissítve
+ShipmentIncrementStockOnDelete = Készletnövelés törléskor
 
 # Sending methods
 # ModelDocument
@@ -78,6 +80,7 @@ SumOfProductWeights=Terméksúlyok összege
 # warehouse details
 DetailWarehouseNumber= Raktár adatai
 DetailWarehouseFormat= W:%s (Menny.: %d)
+DetailChildrenFormat=%s : %s (Qty: %s)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Jelenítse meg a készletezés utolsó dátumát a szállítmány létrehozásakor a sorozatszám vagy a tétel esetében
 CreationOptions=Rendelkezésre álló lehetőségek a szállítmány létrehozása során
 ShipmentDistribution=Szállítmány elosztása
@@ -87,8 +90,9 @@ ErrorTooMuchShipped=A kiszállított mennyiség nem lehet nagyobb, mint a %s sor
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Képviselő nyomon követi a szállítást
 TypeContact_shipping_external_BILLING=Az ügyfélszámla kapcsolattartója
-TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
-TypeContact_shipping_external_SHIPPING=Customer contact for shipping
+TypeContact_shipping_external_CUSTOMER=vevő kapcsolatfelvétel a szállítással kapcsolatban
+TypeContact_shipping_external_SHIPPING=vevő szállítási kapcsolatfelvétel
 TypeContact_shipping_external_DELIVERY=Ügyfélkapcsolat a szállításhoz
-CloseShipment=Close shipment
-ConfirmCloseShipment=Confirm close shipment
+CloseShipment=Szállítás lezárása
+ConfirmCloseShipment=Szállítás lezárásának megerősítése
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=Szállítmány létrehozásakor előre válassza ki a legkorábbi lejárati/fogyasztási dátummal rendelkező tételszámot/sorozatszámot.

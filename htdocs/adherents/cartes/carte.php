@@ -3,7 +3,7 @@
  * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
  * Copyright (C) 2006-2013	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/printsheet/modules_labels.php';
  * @var Translate $langs
  * @var User $user
  *
- * @var array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:float,custom_x:float,custom_y:float}> $_Avery_Labels
+ * @var array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:int,custom_x:float,custom_y:float}> $_Avery_Labels
  */
 
 $langs->loadLangs(array("members", "errors"));
@@ -180,24 +180,24 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 
 					for ($j = 0; $j < $nb; $j++) {
 						$arrayofmembers[] = array(
-							'textleft'=>$textleft,
-							'textheader'=>$textheader,
-							'textfooter'=>$textfooter,
-							'textright'=>$textright,
-							'id'=>$objp->rowid,
-							'ref'=>$objp->ref,
-							'photo'=>$objp->photo
+							'textleft' => $textleft,
+							'textheader' => $textheader,
+							'textfooter' => $textfooter,
+							'textright' => $textright,
+							'id' => $objp->rowid,
+							'ref' => $objp->ref,
+							'photo' => $objp->photo
 						);
 					}
 				} else {
 					$arrayofmembers[] = array(
-						'textleft'=>$textleft,
-						'textheader'=>$textheader,
-						'textfooter'=>$textfooter,
-						'textright'=>$textright,
-						'id'=>$objp->rowid,
-						'ref'=>$objp->ref,
-						'photo'=>$objp->photo
+						'textleft' => $textleft,
+						'textheader' => $textheader,
+						'textfooter' => $textfooter,
+						'textright' => $textright,
+						'id' => $objp->rowid,
+						'ref' => $objp->ref,
+						'photo' => $objp->photo
 					);
 				}
 			}
@@ -213,13 +213,13 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 				$textright = '';
 
 				$arrayofmembers[] = array(
-					'textleft'=>$textleft,
-					'textheader'=>$textheader,
-					'textfooter'=>$textfooter,
-					'textright'=>$textright,
-					'id'=>$objp->rowid,
-					'ref'=>$objp->ref,
-					'photo'=>$objp->photo,
+					'textleft' => $textleft,
+					'textheader' => $textheader,
+					'textfooter' => $textfooter,
+					'textright' => $textright,
+					'id' => $objp->rowid,
+					'ref' => $objp->ref,
+					'photo' => $objp->photo,
 				);
 			}
 

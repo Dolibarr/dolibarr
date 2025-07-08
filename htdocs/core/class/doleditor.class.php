@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021 Gaëtan MAISON <gm@ilad.org>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -133,7 +133,7 @@ class DolEditor
 
 		// Name of extended editor to use (FCKEDITOR_EDITORNAME can be 'ckeditor' or 'fckeditor')
 		$defaulteditor = 'ckeditor';
-		$this->tool = !getDolGlobalString('FCKEDITOR_EDITORNAME') ? $defaulteditor : $conf->global->FCKEDITOR_EDITORNAME;
+		$this->tool = getDolGlobalString('FCKEDITOR_EDITORNAME', $defaulteditor);
 		$this->uselocalbrowser = $uselocalbrowser;
 		$this->readonly = $readonly;
 
@@ -207,7 +207,7 @@ class DolEditor
 
 		$fullpage = false;
 
-		$extraAllowedContent = 'a[target];section[contenteditable,id];div{float,display}';
+		$extraAllowedContent = 'a[target];section[contenteditable,id];div{background-color,color,display,float,height,margin,margin-top,margin-bottom,padding,width,border-top-left-radius,border-top-right-radius,border-bottom-left-radius,border-bottom-right-radius,box-shadow}';
 		if (is_string($restrictContent)) {
 			$extraAllowedContent = $restrictContent;
 		}
@@ -218,17 +218,20 @@ class DolEditor
 		$found = 0;
 		$out = '';
 
-		$this->content = ($this->content ?? ''); // to avoid htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated
+		$this->content = (string) $this->content; // to avoid htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated
 
 		if (in_array($this->tool, array('textarea', 'ckeditor'))) {
 			$found = 1;
+
+			$out .= "\n".'<!-- Output CKeditor '.dol_string_nohtmltag($this->htmlname).' toolbarname = '.dol_string_nohtmltag($this->toolbarname).' -->'."\n";
+
 			// Note: We do not put the attribute 'disabled' tag because on a read form, it change style with grey.
 			$out .= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'"';
 			$out .= ' rows="'.$this->rows.'"';
 			//$out .= ' style="height: 700px; min-height: 700px;"';
 			$out .= (preg_match('/%/', $this->cols) ? ' style="margin-top: 5px; width: '.$this->cols.'"' : ' cols="'.$this->cols.'"');
 			$out .= ' '.($moreparam ? $moreparam : '');
-			$out .= ' class="flat '.$morecss.'">';
+			$out .= ' class="flat '.dol_string_nohtmltag($this->toolbarname).' '.$morecss.'">';
 			$out .= htmlspecialchars($this->content);
 			$out .= '</textarea>';
 

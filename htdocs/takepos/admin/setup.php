@@ -3,7 +3,7 @@
  * Copyright (C) 2011-2017  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2021       Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2022       Alexandre Spangaro  <aspangaro@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -210,7 +210,7 @@ foreach ($dirmodels as $reldir) {
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if (getDolGlobalString('TAKEPOS_REF_ADDON') == "$file") {
+						if (getDolGlobalString('TAKEPOS_REF_ADDON', 'mod_takepos_ref_simple') == $file) {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
 							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setrefmod&token='.newToken().'&value='.urlencode($file).'">';
@@ -242,7 +242,7 @@ foreach ($dirmodels as $reldir) {
 						}
 
 						print '<td align="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 0);
+						print $form->textwithpicto('', $htmltooltip, 1, 'info');
 						print '</td>';
 
 						print "</tr>\n";
@@ -295,6 +295,7 @@ if (isModEnabled("service")) {
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("RootCategoryForProductsToSell"), $langs->trans("RootCategoryForProductsToSellDesc"));
 print '<td>';
+//print $form->selectCategories(Categorie::TYPE_PRODUCT, 'TAKEPOS_ROOT_CATEGORY_ID', null);
 print img_object('', 'category', 'class="paddingright"').$form->select_all_categories(Categorie::TYPE_PRODUCT, getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID'), 'TAKEPOS_ROOT_CATEGORY_ID', 64, 0, 0, 0, 'maxwidth500 widthcentpercentminusx');
 print ajax_combobox('TAKEPOS_ROOT_CATEGORY_ID');
 print "</td></tr>\n";

@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2013-2018  Jean-François FERRY 	<hello@librethic.io>
- * Copyright (C) 2016       Christophe Battarel 	<christophe@altairis.fr>
- * Copyright (C) 2022-2023  Udo Tamm            	<dev@dolibit.de>
- * Copyright (C) 2023       Alexandre Spangaro  	<aspangaro@easya.solutions>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
+/* Copyright (C) 2013-2018  	Jean-François FERRY 	<hello@librethic.io>
+ * Copyright (C) 2016       	Christophe Battarel 	<christophe@altairis.fr>
+ * Copyright (C) 2022-2023  	Udo Tamm            	<dev@dolibit.de>
+ * Copyright (C) 2023       	Alexandre Spangaro  	<aspangaro@easya.solutions>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -202,7 +202,7 @@ if ($action == 'updateMask') {
 	if (!empty($notification_email)) {
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_FROM', $notification_email, 'chaine', 0, $notification_email_description, $conf->entity);
 	} else { // If an empty e-mail address is providen, use the global "FROM" since an empty field will cause other issues
-		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_FROM', $conf->global->MAIN_MAIL_EMAIL_FROM, 'chaine', 0, $notification_email_description, $conf->entity);
+		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_FROM', getDolGlobalString('MAIN_MAIL_EMAIL_FROM'), 'chaine', 0, $notification_email_description, $conf->entity);
 	}
 	if (!($res > 0)) {
 		$error++;
@@ -241,6 +241,11 @@ if ($action == 'updateMask') {
 	if (!($res > 0)) {
 		$error++;
 	}
+
+	$res = dolibarr_set_const($db, "TICKET_SEND_INTERNAL_CC", GETPOST("TICKET_SEND_INTERNAL_CC"), 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
 }
 
 
@@ -251,6 +256,7 @@ if ($action == 'updateMask') {
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 $formcategory = new FormCategory($db);
+$form = new Form($db);
 
 // Page Header
 $help_url = 'EN:Module_Ticket|FR:Module_Ticket_FR';
@@ -359,7 +365,7 @@ foreach ($dirmodels as $reldir) {
 						}
 
 						print '<td class="center">';
-						print $formcategory->textwithpicto('', $htmltooltip, 1, 0);
+						print $formcategory->textwithpicto('', $htmltooltip, 1, '0');
 						print '</td>';
 
 						print '</tr>';
@@ -510,7 +516,7 @@ foreach ($dirmodels as $reldir) {
 
 
 								print '<td class="center">';
-								print $formcategory->textwithpicto('', $htmltooltip, 1, 0);
+								print $formcategory->textwithpicto('', $htmltooltip, 1, '0');
 								print '</td>';
 
 								print "</tr>\n";
@@ -541,9 +547,9 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td>'.$langs->trans("Status")."</td>\n";
-print '<td class="center" width="40">'.$langs->trans("ShortInfo").'</td>';
+print '<td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td>';
+print '<td></td>'."\n";
+print '<td class="center" width="40"></td>';
 print "</tr>\n";
 
 // Auto mark ticket as read when created from backoffice
@@ -563,12 +569,126 @@ print '</tr>';
 
 // Auto assign ticket to user who created it
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("TicketsAutoAssignTicket").'</td>';
+print '<td><label for="TICKET_AUTO_ASSIGN_USER_CREATE" class="block">'.$langs->trans("TicketsAutoAssignTicket").'</label></td>';
 print '<td class="left">';
-print '<input class="minwidth100" type="text" id="TICKET_AUTO_ASSIGN_USER_CREATE" name="TICKET_AUTO_ASSIGN_USER_CREATE" value="'.getDolGlobalString('TICKET_AUTO_ASSIGN_USER_CREATE').'">';
+print '<input class="maxwidth50" type="text" id="TICKET_AUTO_ASSIGN_USER_CREATE" name="TICKET_AUTO_ASSIGN_USER_CREATE" value="'.getDolGlobalInt('TICKET_AUTO_ASSIGN_USER_CREATE').'">';
 print '</td>';
 print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketsAutoAssignTicketHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+// Automatically define status on answering a ticket
+print '<tr class="oddeven"><td>'.$langs->trans("TicketAutoChangeStatusOnAnswer").'</td>';
+print '<td class="left">';
+print $formcategory->selectarray("TICKET_SET_STATUS_ON_ANSWER", $statuslist, getDolGlobalString('TICKET_SET_STATUS_ON_ANSWER'), 1);
+print '</td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketAutoChangeStatusOnAnswerHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td><label for="delay_first_response" class="block">'.$langs->trans("TicketsDelayBeforeFirstAnswer")."</label></td>";
+print '<td class="left">
+	<input type="number" value="'.getDolGlobalString('TICKET_DELAY_BEFORE_FIRST_RESPONSE').'" id="delay_first_response" name="delay_first_response" class="width50">
+	</td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketsDelayBeforeFirstAnswerHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td><label for="delay_between_responses" class="block">'.$langs->trans("TicketsDelayBetweenAnswers")."</label></td>";
+print '<td class="left">
+	<input type="number" value="'.getDolGlobalString('TICKET_DELAY_SINCE_LAST_RESPONSE').'" id="delay_between_responses" name="delay_between_responses" class="width50">
+	</td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketsDelayBetweenAnswersHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+print '</table>';
+
+print $formcategory->buttonsSaveCancel("Save", '', array(), 0, 'reposition');
+
+print '</form>';
+
+print '<br>';
+
+
+// TODO Use the notification module
+
+/*
+ * Notifications
+ */
+
+print load_fiche_titre($langs->trans("Notifications"), '', '');
+
+print '<table class="noborder centpercent">';
+
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="setvar">';
+print '<input type="hidden" name="page_y" value="">';
+
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td></td>';
+print '<td class="center" width="40"></td>';
+print "</tr>\n";
+
+if (!getDolGlobalString('FCKEDITOR_ENABLE_MAIL')) {
+	print '<tr>';
+	print '<td colspan="2"><div class="info">'.$langs->trans("TicketCkEditorEmailNotActivated").'</div></td>';
+	print '<td class="center" width="40"></td>';
+	print "</tr>\n";
+}
+
+// Email to send notifications
+print '<tr class="oddeven"><td><label for="TICKET_NOTIFICATION_EMAIL_FROM" class="block">'.$langs->trans("TicketEmailNotificationFrom").'</label></td>';
+print '<td class="left">';
+print img_picto('', 'email', 'class="pictofixedwidth"');
+print '<input type="text" class="minwidth200" id="TICKET_NOTIFICATION_EMAIL_FROM" name="TICKET_NOTIFICATION_EMAIL_FROM" value="' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'"></td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationFromHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+print '<tr class="oddeven"><td class="titlefieldmiddle"><label for="TICKET_SEND_INTERNAL_CC" class="block">';
+print $form->textwithpicto($langs->trans("TicketSendToInternalCC"), $langs->trans("TicketSendToInternalCCHelp")).'</label></td>';
+print '<td>';
+print img_picto('', 'email', 'class="pictofixedwidth"');
+print '<input class="flat width300" name="TICKET_SEND_INTERNAL_CC" value="'.getDolGlobalString('TICKET_SEND_INTERNAL_CC').'">';
+print '</td>';
+print '<td></td>';
+print '</tr>';
+
+
+// TODO Use module notification instead...
+
+// Email for notification of TICKET_CREATE
+print '<tr class="oddeven"><td><label for="TICKET_NOTIFICATION_EMAIL_TO" class="block">'.$langs->trans("TicketEmailNotificationTo").'</label></td>';
+print '<td class="left">';
+print img_picto('', 'email', 'class="pictofixedwidth"');
+print '<input type="text" class="minwidth200" id="TICKET_NOTIFICATION_EMAIL_TO" name="TICKET_NOTIFICATION_EMAIL_TO" value="'.getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO').'"></td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationToHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+// Check "Notify thirdparty" by default on ticket creation
+print '<tr class="oddeven"><td>'.$langs->trans("TicketAutoCheckNotifyThirdParty").'</td>';
+print '<td class="left">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $formcategory->selectarray("TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION", $arrval, getDolGlobalString('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION'));
+}
+print '</td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketAutoCheckNotifyThirdPartyHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 
@@ -584,106 +704,6 @@ if ($conf->use_javascript_ajax) {
 print '</td>';
 print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketsAutoNotifyCloseHelp"), 1, 'help');
-print '</td>';
-print '</tr>';
-
-// Automatically define status on answering a ticket
-print '<tr class="oddeven"><td>'.$langs->trans("TicketAutoChangeStatusOnAnswer").'</td>';
-print '<td class="left">';
-print $formcategory->selectarray("TICKET_SET_STATUS_ON_ANSWER", $statuslist, getDolGlobalString('TICKET_SET_STATUS_ON_ANSWER'));
-print '</td>';
-print '<td class="center">';
-print $formcategory->textwithpicto('', $langs->trans("TicketAutoChangeStatusOnAnswerHelp"), 1, 'help');
-print '</td>';
-print '</tr>';
-
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("TicketsDelayBeforeFirstAnswer")."</td>";
-print '<td class="left">
-	<input type="number" value="'.getDolGlobalString('TICKET_DELAY_BEFORE_FIRST_RESPONSE').'" name="delay_first_response" class="width50">
-	</td>';
-print '<td class="center">';
-print $formcategory->textwithpicto('', $langs->trans("TicketsDelayBeforeFirstAnswerHelp"), 1, 'help');
-print '</td>';
-print '</tr>';
-
-print '<tr class="oddeven">';
-print '<td>'.$langs->trans("TicketsDelayBetweenAnswers")."</td>";
-print '<td class="left">
-	<input type="number" value="'.getDolGlobalString('TICKET_DELAY_SINCE_LAST_RESPONSE').'" name="delay_between_responses" class="width50">
-	</td>';
-print '<td class="center">';
-print $formcategory->textwithpicto('', $langs->trans("TicketsDelayBetweenAnswersHelp"), 1, 'help');
-print '</td>';
-print '</tr>';
-
-print '</table>';
-
-print $formcategory->buttonsSaveCancel("Save", '', array(), 0, 'reposition');
-
-print '</form>';
-
-print '<br>';
-
-/*
- * Emails
- */
-
-// Admin var of module
-print load_fiche_titre($langs->trans("Emails"), '', '');
-
-print '<table class="noborder centpercent">';
-
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'" enctype="multipart/form-data" >';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="setvar">';
-print '<input type="hidden" name="page_y" value="">';
-
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td></td>';
-print '<td class="center" width="40">'.$langs->trans("ShortInfo").'</td>';
-print "</tr>\n";
-
-if (!getDolGlobalString('FCKEDITOR_ENABLE_MAIL')) {
-	print '<tr>';
-	print '<td colspan="2"><div class="info">'.$langs->trans("TicketCkEditorEmailNotActivated").'</div></td>';
-	print '<td class="center" width="40">'.$langs->trans("ShortInfo").'</td>';
-	print "</tr>\n";
-}
-
-// TODO Use module notification instead...
-
-// Email to send notifications
-print '<tr class="oddeven"><td>'.$langs->trans("TicketEmailNotificationFrom").'</td>';
-print '<td class="left">';
-print '<input type="text" class="minwidth200" name="TICKET_NOTIFICATION_EMAIL_FROM" value="' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'"></td>';
-print '<td class="center">';
-print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationFromHelp"), 1, 'help');
-print '</td>';
-print '</tr>';
-
-// Email for notification of TICKET_CREATE
-print '<tr class="oddeven"><td>'.$langs->trans("TicketEmailNotificationTo").'</td>';
-print '<td class="left">';
-print '<input type="text" class="minwidth200" name="TICKET_NOTIFICATION_EMAIL_TO" value="'.getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO').'"></td>';
-print '<td class="center">';
-print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationToHelp"), 1, 'help');
-print '</td>';
-print '</tr>';
-
-// Check "Notify thirdparty" on ticket creation
-print '<tr class="oddeven"><td>'.$langs->trans("TicketAutoCheckNotifyThirdParty").'</td>';
-print '<td class="left">';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $formcategory->selectarray("TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION", $arrval, getDolGlobalString('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION'));
-}
-print '</td>';
-print '<td class="center">';
-print $formcategory->textwithpicto('', $langs->trans("TicketAutoCheckNotifyThirdPartyHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 

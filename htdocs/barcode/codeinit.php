@@ -45,20 +45,15 @@ $now = dol_now();
 $year = dol_print_date($now, '%Y');
 $month = dol_print_date($now, '%m');
 $day = dol_print_date($now, '%d');
-$forbarcode = GETPOST('forbarcode');
-$fk_barcode_type = GETPOST('fk_barcode_type');
 $eraseallproductbarcode = GETPOST('eraseallproductbarcode');
 $eraseallthirdpartybarcode = GETPOST('eraseallthirdpartybarcode');
 
 $action = GETPOST('action', 'aZ09');
 
-$producttmp = new Product($db);
-$thirdpartytmp = new Societe($db);
-
 $modBarCodeProduct = '';
 $modBarCodeThirdparty = '';
 
-$maxperinit = !getDolGlobalString('BARCODE_INIT_MAX') ? 1000 : $conf->global->BARCODE_INIT_MAX;
+$maxperinit = getDolGlobalInt('BARCODE_INIT_MAX', 1000);
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();
@@ -75,6 +70,7 @@ if (empty($user->admin)) {
 /*
  * Actions
  */
+
 $error = 0;
 
 // Define barcode template for third-party
@@ -120,8 +116,9 @@ if ($action == 'initbarcodethirdparties' && $user->hasRight('societe', 'lire')) 
 		$nbok = 0;
 		if (!empty($eraseallthirdpartybarcode)) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
-			$sql .= " AND entity IN (".getEntity('societe').")";
 			$sql .= " SET barcode = NULL";
+			$sql .= " WHERE barcode IS NOT NULL";
+			$sql .= " AND entity IN (".getEntity('societe').")";
 			$resql = $db->query($sql);
 			if ($resql) {
 				setEventMessages($langs->trans("AllBarcodeReset"), null, 'mesgs');
@@ -227,7 +224,7 @@ if ($action == 'initbarcodeproducts' && $user->hasRight('produit', 'lire')) {
 		if (!empty($eraseallproductbarcode)) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."product";
 			$sql .= " SET barcode = NULL";
-			$sql .= " WHERE entity IN (".getEntity('product').")";
+			$sql .= " WHERE barcode IS NOT NULL AND entity IN (".getEntity('product').")";
 			$resql = $db->query($sql);
 			if ($resql) {
 				setEventMessages($langs->trans("AllBarcodeReset"), null, 'mesgs');

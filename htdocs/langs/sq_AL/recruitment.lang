@@ -64,3 +64,7 @@ NoPositionOpen=Asnjë pozicion i hapur për momentin
 ConfirmClose=Konfirmo anulimin
 ConfirmCloseAsk=Jeni i sigurt që dëshironi ta anuloni këtë kandidaturë rekrutimi
 Recruitment=Rekrutimi
+ApplyJobCandidature=Aplikoni për këtë punë
+ErrorRecruitmmentCandidatureAlreadyExists= Kandidatura për rekrutim ekziston tashmë me email %s
+RecruitmentCandidatureSaved=Kandidatura për rekrutim u ruajt me sukses
+NoOpenJobOffer=Nuk ka oferta pune të hapura për momentin

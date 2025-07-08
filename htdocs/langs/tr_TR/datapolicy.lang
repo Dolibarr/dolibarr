@@ -18,8 +18,8 @@ Module4100Desc = Veri Gizliliğini yönetme modülü (GDPR'ye uygunluk)
 # Administration page
 datapolicySetup = Modül Veri Gizliliği Politikası Kurulumu
 DataDeletion=Verilerin silinmesi
-DataAnonymization=Anonymization of data
-datapolicySetupPage = Depending on the laws of your country (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
+DataAnonymization=Verilerin anonimleştirilmesi
+datapolicySetupPage = Ülkenizin yasalarına bağlı olarak (Örnek <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">GDPR'nin 5. Maddesi</a>), Çalışanveriler, arşivleme amaçları hariç, toplandıkları amaç için ihtiyaç duyulan süreyi aşmayan bir süre boyunca saklanmalıdır.<br>Bu modül, anonimleştirmeyi yapacaktır otomatikman, nesnenin mevcut bir iş nesnesi çocuğu yoksa, belirli bir süre boyunca olay olmadan (aşağıda belirteceğiniz süre) ve.
 NB_MONTHS = %s ay
 ONE_YEAR = 1 yıl
 NB_YEARS = %s yıl

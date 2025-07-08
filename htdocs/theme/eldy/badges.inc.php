@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
@@ -254,6 +254,8 @@ _createStatusBadgeCss('4b', '', "STATUS4b");
  * @param string $commentLabel 			a comment label
  * @param string $cssPrefix 			a css prefix
  * @return void
+ *
+ * @phan-suppress PhanRedefineFunction
  */
 function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentLabel = '', $cssPrefix = '')
 {
@@ -272,8 +274,8 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 		}
 
 		if (in_array((string) $statusName, $TBadgeBorderOnly)) {
-			$thisBadgeTextColor = '#212529';
-			$thisBadgeBackgroundColor = "";
+			$thisBadgeTextColor = '#9c850b';
+			$thisBadgeBackgroundColor = "hsl(0, 0%, 0%, 0)";
 		}
 
 		if (in_array((string) $statusName, array('0', '5', '9'))) {

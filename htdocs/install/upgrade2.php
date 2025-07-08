@@ -126,9 +126,9 @@ pHeader('', 'step5', GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'up
 
 if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ09'))) {
 	print '<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="Database"> ';
-	print '<span class="inline-block">'.$langs->trans('DataMigration').'</span></h3>';
+	print '<span class="inline-block valignmiddle">'.$langs->trans('DataMigration').'</span></h3>';
 
-	print '<table border="0" width="100%">';
+	print '<table class="centpercent">';
 
 	// If password is encoded, we decode it
 	if ((!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) || !empty($dolibarr_main_db_encrypted_pass)) {
@@ -530,6 +530,13 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
 				migrate_productlot_path();
 			}
+
+			// Scripts for 22.0
+			$afterversionarray = explode('.', '21.0.9');
+			$beforeversionarray = explode('.', '22.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_accountingbookkeeping($entity);
+			}
 		}
 
 
@@ -863,8 +870,8 @@ function migrate_paiements_orphelins_1($db, $langs, $conf)
 	$result = $db->DDLDescTable(MAIN_DB_PREFIX."paiement", "fk_facture");
 	$obj = $db->fetch_object($result);
 	if ($obj) {
-		// Tous les enregistrements qui sortent de cette requete devrait avoir un pere dans llx_paiement_facture
-		$sql = "SELECT distinct p.rowid, p.datec, p.amount as pamount, bu.fk_bank, b.amount as bamount,";
+		// All answer of this requests should have a parent into llx_paiement_facture
+		$sql = "SELECT DISTINCT p.rowid, p.datec, p.amount as pamount, bu.fk_bank, b.amount as bamount,";
 		$sql .= " bu2.url_id as socid";
 		$sql .= " FROM (".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."bank_url as bu, ".MAIN_DB_PREFIX."bank as b)";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON pf.fk_paiement = p.rowid";
@@ -910,7 +917,7 @@ function migrate_paiements_orphelins_1($db, $langs, $conf)
 				}
 
 				// Look for invoices without payment relations with the same amount and same comppany
-				$sql = " SELECT distinct f.rowid from ".MAIN_DB_PREFIX."facture as f";
+				$sql = " SELECT DISTINCT f.rowid from ".MAIN_DB_PREFIX."facture as f";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
 				$sql .= " WHERE f.fk_statut in (2,3) AND fk_soc = ".((int) $row[$i]['socid'])." AND total_ttc = ".((float) $row[$i]['pamount']);
 				$sql .= " AND pf.fk_facture IS NULL";
@@ -974,7 +981,7 @@ function migrate_paiements_orphelins_2($db, $langs, $conf)
 	$obj = $db->fetch_object($result);
 	if ($obj) {
 		// Tous les enregistrements qui sortent de cette requete devrait avoir un pere dans llx_paiement_facture
-		$sql = "SELECT distinct p.rowid, p.datec, p.amount as pamount, bu.fk_bank, b.amount as bamount,";
+		$sql = "SELECT DISTINCT p.rowid, p.datec, p.amount as pamount, bu.fk_bank, b.amount as bamount,";
 		$sql .= " bu2.url_id as socid";
 		$sql .= " FROM (".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."bank_url as bu, ".MAIN_DB_PREFIX."bank as b)";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON pf.fk_paiement = p.rowid";
@@ -1021,7 +1028,7 @@ function migrate_paiements_orphelins_2($db, $langs, $conf)
 				}
 
 				// Look for invoices without payment relations with the same amount and same comppany
-				$sql = " SELECT distinct f.rowid from ".MAIN_DB_PREFIX."facture as f";
+				$sql = " SELECT DISTINCT f.rowid from ".MAIN_DB_PREFIX."facture as f";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
 				$sql .= " WHERE f.fk_statut in (2,3) AND fk_soc = ".((int) $row[$i]['socid'])." AND total_ttc = ".((float) $row[$i]['pamount']);
 				$sql .= " AND pf.fk_facture IS NULL";
@@ -5206,4 +5213,72 @@ function migrate_invoice_export_models()
 	dolibarr_set_const($db, 'MIGRATION_FLAG_INVOICE_MODELS_V20', 1, 'chaine', 0, 'To flag the upgrade of invoice template has been set', 0);
 
 	echo '</td></tr>';
+}
+
+/**
+ * Migrate Ref in bookkeeping lines
+ *
+ * @param int $entity Entity id
+ * @return  void
+ */
+function migrate_accountingbookkeeping(int $entity)
+{
+	global $db, $langs;
+
+	$error = 0;
+	$resultstring = '';
+	$bookKeepingAddon = '';
+
+	// For the moment we set the numbering rule to neon (the rule argon has a lot of critical bugs to fix first).
+	if (getDolGlobalString('BOOKKEEPING_ADDON') == '') {
+		dolibarr_set_const($db, 'BOOKKEEPING_ADDON', 'mod_bookkeeping_neon', 'chaine', 0, '', $entity);
+		$bookKeepingAddon = 'mod_bookkeeping_neon';
+	}
+
+	print '<tr class="trforrunsql"><td colspan="4">';
+	print '<b>'.$langs->trans('MigrationAccountancyBookkeeping')."</b><br>\n";
+
+	// TODO
+	if ($bookKeepingAddon === 'mod_bookkeeping_argon') {
+		$db->begin();
+
+		$sql = "SELECT DISTINCT YEAR(doc_date) as doc_year, MONTH(doc_date) as doc_month, code_journal, piece_num FROM ".$db->prefix()."accounting_bookkeeping";
+		$sql .= " WHERE ref IS NULL AND entity = ".((int) $entity);
+		$sql .= " ORDER BY doc_year, doc_month, code_journal, piece_num";
+
+		$resql = $db->query($sql);
+
+		require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
+		$bookkeeping = new BookKeeping($db);
+		if ($resql) {
+			while ($obj = $db->fetch_object($resql)) {
+				$bookkeeping->doc_date = dol_mktime(0, 0, 0, $obj->doc_month, 1, $obj->doc_year);
+				$bookkeeping->code_journal = $obj->code_journal;
+				$ref = $bookkeeping->getNextNumRef();
+
+				$sqlUpd = "UPDATE ".$db->prefix()."accounting_bookkeeping SET ref = '".$db->escape($ref)."' WHERE piece_num = '".$db->escape($obj->piece_num)."' AND entity = ".((int) $entity);
+				$resultstring = '.';
+				print $resultstring;
+				$resqlUpd = $db->query($sqlUpd);
+				if (!$resqlUpd) {
+					dol_print_error($db);
+					$error++;
+				}
+			}
+		} else {
+			$error++;
+		}
+
+		if (!$error) {
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
+	}
+
+	print '</td></tr>';
+
+	if (!$resultstring) {
+		print '<tr class="trforrunsql" style=""><td class="wordbreak" colspan="4">'.$langs->trans("NothingToDo")."</td></tr>\n";
+	}
 }

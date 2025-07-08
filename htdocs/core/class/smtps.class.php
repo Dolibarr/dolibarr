@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2011 Regis Houssin
  * Copyright (C) 2016      Jonathan TISSEAU     <jonathan.tisseau@86dev.fr>
- * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW                  <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -326,6 +326,27 @@ class SMTPs
 	}
 
 	/**
+	 * Set socket timeout. May be increase when email sent after a long time and with a large file for the wake up of SMTP server.
+	 *
+	 * @param	int		$timeout	Delay in second for socket timeout (default is 10s)
+	 * @return	void
+	 */
+	public function setSMTPTimeout($timeout)
+	{
+		$this->_smtpTimeout = $timeout;
+	}
+
+	/**
+	 * Get socket timeout
+	 *
+	 * @return	int		Delay in second for socket timeout
+	 */
+	public function getSMTPTimeout()
+	{
+		return $this->_smtpTimeout;
+	}
+
+	/**
 	 * Set trackid
 	 *
 	 * @param	string		$_val		Value
@@ -489,7 +510,7 @@ class SMTPs
 				// This connection attempt failed.
 				// @CHANGE LDR
 				if (empty($this->errstr)) {
-					$this->errstr = 'Failed to connect with fsockopen host='.$this->getHost().' port='.$this->getPort();
+					$this->errstr = 'Failed to connect with stream_context_create or fsockopen host='.$this->getHost().' port='.$this->getPort();
 				}
 				$this->_setErr($this->errno, $this->errstr);
 				$_retVal = false;
@@ -890,7 +911,6 @@ class SMTPs
 	 *
 	 * @param string $_path Path to the sendmail executable
 	 * @return boolean
-	 *
 	 */
 	public function setMailPath($_path)
 	{
@@ -1086,7 +1106,6 @@ class SMTPs
 	 *
 	 * @param string $_strTransEncodeType Content-Transfer-Encoding
 	 * @return void
-	 *
 	 */
 	public function setTransEncodeType($_strTransEncodeType)
 	{
@@ -1230,7 +1249,6 @@ class SMTPs
 	 * @param 	string 	$_type 			TO, CC, or BCC lists to add addrresses into
 	 * @param 	mixed 	$_addrList 		Array or COMMA delimited string of addresses
 	 * @return void
-	 *
 	 */
 	private function _buildAddrList($_type, $_addrList)
 	{
@@ -1574,8 +1592,11 @@ class SMTPs
 		if ($this->getInReplyTo()) {
 			$_header .= "In-Reply-To: ".$this->getInReplyTo()."\r\n";
 		}
-		if ($this->getReferences()) {
-			$_header .= "References: ".$this->getReferences()."\r\n";
+		$references = $this->getReferences();
+		if ($references) {
+			// List of message ids:
+			// Example "References: <id1@domain2.com> <id2@domain.com>
+			$_header .= "References: ".implode(' ', $references)."\r\n";
 		}
 
 		return $_header;
@@ -2297,5 +2318,4 @@ class SMTPs
  * Revision 1.1  2005/03/01 19:22:49  walter
  *  - initial commit
  *  - basic shell with some comments
- *
  */

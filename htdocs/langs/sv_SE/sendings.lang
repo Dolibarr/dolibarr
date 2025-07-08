@@ -43,7 +43,7 @@ ConfirmCancelSending=Är du säker på att du vill avbryta denna leverans?
 DocumentModelMerou=Merou A5-modellen
 WarningNoQtyLeftToSend=Varning, att inga produkter väntar sändas.
 StatsOnShipmentsOnlyValidated=Statistik gäller endast för validerade försändelser. Datum som används är datumet för validering av leveransen (planerat leveransdatum är inte alltid känt)
-DateShipping=Sending date
+DateShipping=Sändningsdatum
 DateDeliveryPlanned=Planerat leveransdatum
 RefDeliveryReceipt=Ref leverans kvitto
 StatusReceipt=Status leverans kvitto
@@ -63,10 +63,12 @@ NoProductToShipFoundIntoStock=Ingen produkt skickas i frakt <b> %s </b>. Rätt l
 WeightVolShort=Vikt / vol.
 ValidateOrderFirstBeforeShipment=Du måste först validera ordern innan du kan göra sändningar.
 NoLineGoOnTabToAddSome=Ingen rad, gå till fliken "%s" för att lägga till
-CreateInvoiceForThisCustomerFromSendings=Create Bills
-IfValidateInvoiceIsNoSendingStayUnbilled=If invoice validation is 'No', the sending will remain to status 'Unbilled' until the invoice is validated.
-OptionToSetSendingBilledNotEnabled=Option from module Workflow, to set sending to 'Billed' automatically when invoice is validated, is not enabled, so you will have to set the status of sendings to 'Billed' manually after the invoice has been generated.
-ShipmentUpdated=Shipment successfully updated
+CreateInvoiceForThisCustomerFromSendings=Skapa fakturor
+IfValidateInvoiceIsNoSendingStayUnbilled=Om fakturavalideringen är 'Nej' kommer sändningen att ha statusen 'Ej fakturerad' tills fakturan har validerats.
+OptionToSetSendingBilledNotEnabled=Alternativet från modulen Arbetsflöde, att ställa in sändning till "Fakturerad" automatiskt när fakturan valideras, är inte aktiverat, så du måste ställa in statusen för sändningar till "Fakturerad" manuellt efter att fakturan har genererats.
+NoWarehouseInBase=Inget lager i basen
+ShipmentUpdated=Leveransen har uppdaterats
+ShipmentIncrementStockOnDelete = Öka lagret vid radering
 
 # Sending methods
 # ModelDocument
@@ -78,6 +80,7 @@ SumOfProductWeights=Summan av produktvikter
 # warehouse details
 DetailWarehouseNumber= Lagerinformation
 DetailWarehouseFormat= W: %s (Antal: %d)
+DetailChildrenFormat=%s : %s (Antal: %s)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Visa sista datum för inträde i lager under skapandet av försändelsen för serienummer eller batch
 CreationOptions=Tillgängliga alternativ när försändelsen skapas
 ShipmentDistribution=Försändelsedistribution
@@ -87,8 +90,9 @@ ErrorTooMuchShipped=Kvantiteten som skickas bör inte vara större än den best�
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Representanten uppföljning sjöfart
 TypeContact_shipping_external_BILLING=Kundfaktura kontakt
-TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
-TypeContact_shipping_external_SHIPPING=Customer contact for shipping
-TypeContact_shipping_external_DELIVERY=Customer contact for delivery
-CloseShipment=Close shipment
-ConfirmCloseShipment=Confirm close shipment
+TypeContact_shipping_external_CUSTOMER=Kundkontakt för uppföljning av leverans
+TypeContact_shipping_external_SHIPPING=Kundkontakt för frakt
+TypeContact_shipping_external_DELIVERY=Kundkontakt för leverans
+CloseShipment=Stäng leverans
+ConfirmCloseShipment=Bekräfta avslutad leverans
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=Förvälj batch-/serienummer med tidigaste bäst före-datum när du skapar en leverans

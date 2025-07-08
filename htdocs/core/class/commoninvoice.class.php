@@ -3,8 +3,8 @@
  * Copyright (C) 2012		Cédric Salvador				<csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024		Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -114,6 +114,26 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 * @var float
 	 */
+	public $total_ht;
+	/**
+	 * @var float
+	 */
+	public $total_tva;
+	/**
+	 * @var float
+	 */
+	public $total_localtax1;
+	/**
+	 * @var float
+	 */
+	public $total_localtax2;
+	/**
+	 * @var float
+	 */
+	public $total_ttc;
+	/**
+	 * @var float|null
+	 */
 	public $revenuestamp;
 
 	/**
@@ -163,6 +183,11 @@ abstract class CommonInvoice extends CommonObject
 	public $nbofopendirectdebitorcredittransfer;
 
 	/**
+	 * @var int[] return of getListIdAvoirFromInvoice()
+	 */
+	public $creditnote_ids;
+
+	/**
 	 * @var int
 	 */
 	public $stripechargedone;
@@ -191,8 +216,8 @@ abstract class CommonInvoice extends CommonObject
 	public $situation_cycle_ref;
 
 	/**
-	 * ! Closing after partial payment: discount_vat, badsupplier, abandon
-	 * ! Closing when no payment: replaced, abandoned
+	 * ! Closing after partial payment: CLOSECODE_DISCOUNTVAT, CLOSECODE_BADDEBT, CLOSECODE_BANKCHARGE, CLOSECODE_OTHER
+	 * ! Closing when no payment: CLOSECODE_ABANDONED, CLOSECODE_REPLACED
 	 * @var string Close code
 	 */
 	public $close_code;
@@ -271,6 +296,15 @@ abstract class CommonInvoice extends CommonObject
 	const STATUS_ABANDONED = 3;
 
 
+	const CLOSECODE_DISCOUNTVAT = 'discount_vat'; // Abandoned remain - escompte
+	const CLOSECODE_BADDEBT = 'badcustomer'; // Abandoned remain - bad customer
+	const CLOSECODE_BANKCHARGE = 'bankcharge'; // Abandoned remain - bank charge
+	const CLOSECODE_WITHHOLDINGTAX = 'withholdingtax';	// Abandoned remain - source tax
+	const CLOSECODE_OTHER = 'other'; // Abandoned remain - other
+
+	const CLOSECODE_ABANDONED = 'abandon'; // Abandoned - other
+	const CLOSECODE_REPLACED = 'replaced'; // Closed after doing a replacement invoice
+
 
 	/**
 	 * 	Return remain amount to pay. Property ->id and ->total_ttc must be set.
@@ -301,6 +335,7 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 * 	Return amount of payments already done. This must include ONLY the record into the payment table.
 	 *  Payments done using discounts, credit notes, etc are not included.
+	 *  This also set ->sumpayed and ->sumpayed_multicurrency
 	 *
 	 *  @param 		int<-1,1>		$multicurrency 		Return multicurrency_amount instead of amount. -1=Return both.
 	 *	@return		float|int|array{alreadypaid:float,alreadypaid_multicurrency:float}	Amount of payment already done, <0 and set ->error if KO
@@ -387,7 +422,7 @@ abstract class CommonInvoice extends CommonObject
 	 *  Return amount (with tax) of all credit notes invoices + excess received used by invoice
 	 *
 	 * 	@param 		int 	$multicurrency 		Return multicurrency_amount instead of amount
-	 *	@return		float						Return integer <0 and set ->error if KO, Sum of credit notes and deposits amount otherwise
+	 *	@return		float|string				Return string 'Error...' and set ->error if KO, Sum of credit notes and deposits amount otherwise
 	 *	@see getSommePaiement(), getSumDepositsUsed()
 	 */
 	public function getSumCreditNotesUsed($multicurrency = 0)
@@ -396,7 +431,7 @@ abstract class CommonInvoice extends CommonObject
 
 		$discountstatic = new DiscountAbsolute($this->db);
 		$result = $discountstatic->getSumCreditNotesUsed($this, $multicurrency);
-		if ($result >= 0) {
+		if (is_numeric($result)) {
 			if ($multicurrency) {
 				$this->sumcreditnote_multicurrency = $result;
 			} else {
@@ -406,7 +441,7 @@ abstract class CommonInvoice extends CommonObject
 			return $result;
 		} else {
 			$this->error = $discountstatic->error;
-			return -1;
+			return $result;
 		}
 	}
 
@@ -455,6 +490,9 @@ abstract class CommonInvoice extends CommonObject
 		} else {
 			dol_print_error($this->db);
 		}
+
+		$this->creditnote_ids = $idarray;
+
 		return $idarray;
 	}
 
@@ -737,9 +775,10 @@ abstract class CommonInvoice extends CommonObject
 	 *	Return if an invoice was transferred into accountnancy.
 	 *  This is true if at least on line was transferred into table accounting_bookkeeping
 	 *
-	 *	@return     int         Return integer <0 if KO, 0=no, 1=yes
+	 *	@param		int		$mode		0=Return nb of record, 1=return the transaction ID (piece_num)
+	 *	@return     int         		Return integer <0 if KO, 0=no, nb transaction=yes or ID transaction
 	 */
-	public function getVentilExportCompta()
+	public function getVentilExportCompta($mode = 0)
 	{
 		$alreadydispatched = 0;
 
@@ -748,8 +787,9 @@ abstract class CommonInvoice extends CommonObject
 			$type = 'supplier_invoice';
 		}
 
-		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".$this->db->prefix()."accounting_bookkeeping as ab";
-		$sql .= " WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $this->id);
+		$sql = " SELECT ".($mode ? 'DISTINCT piece_num' : 'COUNT(ab.rowid)')." as nb";
+		$sql .= " FROM ".$this->db->prefix()."accounting_bookkeeping as ab";
+		$sql .= " WHERE ab.doc_type = '".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -763,7 +803,7 @@ abstract class CommonInvoice extends CommonObject
 		}
 
 		if ($alreadydispatched) {
-			return 1;
+			return $alreadydispatched;
 		}
 		return 0;
 	}
@@ -902,28 +942,34 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 *  Return label of object status
 	 *
-	 *  @param      int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
-	 *  @param      integer	$alreadypaid    0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, 1 otherwise)
-	 *  @return     string			        Label of status
+	 *  @param      int			$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
+	 *  @param      int|float	$alreadypaid    0=No payment already done, >0=Some payments were already done (we recommend to put here float amount paid if you have it, 1 otherwise)
+	 *  @return     string			        	Label of status
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
 	{
-		return $this->LibStatut($this->paye, $this->status, $mode, $alreadypaid, $this->type, $this->nbofopendirectdebitorcredittransfer);
+		$moreparams = array(
+			'nbofopendirectdebitorcredittransfer' => $this->nbofopendirectdebitorcredittransfer,
+			'close_code' => $this->close_code,
+			'close_note' => $this->close_note,
+		);
+
+		return $this->LibStatut($this->paye, $this->status, $mode, $alreadypaid, $this->type, $moreparams);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return label of a status
 	 *
-	 *	@param    	int			$paye          	Status field paye (or $recur)
-	 *	@param      int			$status        	Id status
+	 *	@param    	int			$paye          	Field to 1 if invoice is closed (TODO Detect this using $status instead of using this param).
+	 *	@param      int			$status        	ID status
 	 *	@param      int<0,6>	$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
-	 *	@param		int			$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, -1 otherwise)
+	 *	@param		int|float	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here float amount paid if you have it, -1 otherwise)
 	 *	@param		int			$type			Type invoice. If -1, we use $this->type
-	 *  @param		int			$nbofopendirectdebitorcredittransfer	Nb of open direct debit or credit transfer
+	 *  @param		int|array<string,int|string>	$moreparams		More params. Example: array('nbofopendirectdebitorcredittransfer' => x) for nb of open direct debit or credit transfer
 	 *	@return     string						Label of status
 	 */
-	public function LibStatut($paye, $status, $mode = 0, $alreadypaid = -1, $type = -1, $nbofopendirectdebitorcredittransfer = 0)
+	public function LibStatut($paye, $status, $mode = 0, $alreadypaid = -1, $type = -1, $moreparams = array())
 	{
 		// phpcs:enable
 		global $langs, $hookmanager;
@@ -931,6 +977,18 @@ abstract class CommonInvoice extends CommonObject
 
 		if ($type == -1) {
 			$type = $this->type;
+		}
+
+		// For backward compatibility
+		if (is_int($moreparams)) {
+			$moreparams = array('nbofopendirectdebitorcredittransfer' => (int) $moreparams);
+		}
+
+		$nbofopendirectdebitorcredittransfer = 0;
+		foreach ($moreparams as $moreparamkey => $moreparamvalue) {
+			if ($moreparamkey == 'nbofopendirectdebitorcredittransfer') {
+				$nbofopendirectdebitorcredittransfer = $moreparamvalue;
+			}
 		}
 
 		$statusType = 'status0';
@@ -989,7 +1047,28 @@ abstract class CommonInvoice extends CommonObject
 			return $hookmanager->resPrint;
 		}
 
-		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
+		if (!empty($moreparams['close_code'])) {
+			$titlestringtoshow = '';
+
+			if ($moreparams['close_code'] == self::CLOSECODE_DISCOUNTVAT) {
+				$titlestringtoshow = $langs->trans("HelpEscompte");
+			} elseif ($moreparams['close_code'] == self::CLOSECODE_BADDEBT) {
+				$titlestringtoshow = $langs->trans("ConfirmClassifyPaidPartiallyReasonBadCustomer");
+			} elseif ($moreparams['close_code'] == self::CLOSECODE_BANKCHARGE) {
+				$titlestringtoshow = $langs->trans("ConfirmClassifyPaidPartiallyReasonBankCharge");
+			} elseif ($moreparams['close_code'] == self::CLOSECODE_WITHHOLDINGTAX) {
+				$titlestringtoshow = $langs->trans("ConfirmClassifyPaidPartiallyReasonWithholdingTax");
+			} elseif ($moreparams['close_code'] == self::CLOSECODE_OTHER) {
+				$titlestringtoshow = $langs->trans("Other");
+			}
+
+			//$paramsbutton = array('badgeParams' => array('attr' => array('title' => 'rrrr')));
+			$paramsbutton = array('badgeParams' => array('attr' => array('title' => $titlestringtoshow)));
+		} else {
+			$paramsbutton = array();
+		}
+
+		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $paramsbutton);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1173,7 +1252,7 @@ abstract class CommonInvoice extends CommonObject
 						$sql .= ", 'ban'";
 						$sql .= ", ".((int) $conf->entity);
 						if (!empty($bac->id)) {
-							$sql .= ", '".$this->db->escape($bac->id)."'";
+							$sql .= ", '".$this->db->escape((string) $bac->id)."'";
 						}
 						$sql .= ")";
 
@@ -1359,7 +1438,7 @@ abstract class CommonInvoice extends CommonObject
 					if (!$error) {
 						if (empty($obj->fk_prelevement_bons)) {
 							// This creates a record into llx_prelevement_bons and updates link with llx_prelevement_demande
-							$nbinvoices = $bon->create(0, 0, 'real', 'ALL', 0, 0, $type, $did, $fk_bank_account);
+							$nbinvoices = $bon->create('0', '0', 'real', 'ALL', 0, 0, $type, $did, $fk_bank_account);
 							if ($nbinvoices <= 0) {
 								$error++;
 								$errorforinvoice++;
@@ -1608,7 +1687,7 @@ abstract class CommonInvoice extends CommonObject
 												$extraparams .= (($extraparams && $stripefailuredeclinecode) ? ' - ' : '') . $stripefailuredeclinecode;
 											} else {
 												$actioncode = 'PAYMENT_STRIPE_OK';
-												$extraparams = '';
+												$extraparams = array();
 											}
 										} else {
 											$error++;
@@ -1626,7 +1705,7 @@ abstract class CommonInvoice extends CommonObject
 											$object = $this;
 
 											$actioncode = 'PAYMENT_STRIPE_KO';
-											$extraparams = '';
+											$extraparams = array();
 										}
 									} else {
 										// If error because payment was canceled for a logical reason, we do nothing (no event added)
@@ -1637,7 +1716,7 @@ abstract class CommonInvoice extends CommonObject
 										$object = $this;
 
 										$actioncode = '';
-										$extraparams = '';
+										$extraparams = array();
 									}
 								} else {	// Else of the   if ($resultthirdparty > 0 && ! empty($customer)) {
 									if ($resultthirdparty <= 0) {
@@ -1660,7 +1739,7 @@ abstract class CommonInvoice extends CommonObject
 									$object = $this;
 
 									$actioncode = 'PAYMENT_STRIPE_KO';
-									$extraparams = '';
+									$extraparams = array();
 								}
 
 								if ($description) {
@@ -1692,8 +1771,9 @@ abstract class CommonInvoice extends CommonObject
 									 $actioncomm->email_subject = $object->email_subject;
 									 $actioncomm->errors_to   = $object->errors_to;*/
 									$actioncomm->fk_element = $this->id;
+									$actioncomm->elementid = $this->id;
 									$actioncomm->elementtype = $this->element;
-									$actioncomm->extraparams = dol_trunc($extraparams, 250);
+									$actioncomm->extraparams = $extraparams;		// Can be null, empty string or array()
 
 									$actioncomm->create($user);
 								}
@@ -1896,9 +1976,10 @@ abstract class CommonInvoice extends CommonObject
 		$s .= '';					// ecda signature of public key stamp
 		*/
 		$mysocname = $mysoc->name ?? '';
+		$mysoctva_intra = $mysoc->tva_intra ?? '';
 		// Using TLV format
 		$s = pack('C1', 1).pack('C1', strlen($mysocname)).$mysocname;
-		$s .= pack('C1', 2).pack('C1', strlen($mysoc->tva_intra)).$mysoc->tva_intra;
+		$s .= pack('C1', 2).pack('C1', strlen($mysoctva_intra)).$mysoctva_intra;
 		$s .= pack('C1', 3).pack('C1', strlen($datestring)).$datestring;
 		$s .= pack('C1', 4).pack('C1', strlen($pricewithtaxstring)).$pricewithtaxstring;
 		$s .= pack('C1', 5).pack('C1', strlen($pricetaxstring)).$pricetaxstring;
@@ -1980,7 +2061,7 @@ abstract class CommonInvoice extends CommonObject
 			$s .= dol_trunc($mysoc->country_code, 2, 'right', 'UTF-8', 1)."\n";*/
 		} else {
 			$s .= "S\n";
-			$s .= dol_trunc($mysoc->name, 70, 'right', 'UTF-8', 1)."\n";
+			$s .= dol_trunc((string) $mysoc->name, 70, 'right', 'UTF-8', 1)."\n";
 			$addresslinearray = explode("\n", $mysoc->address);
 			$s .= dol_trunc(empty($addresslinearray[1]) ? '' : $addresslinearray[1], 70, 'right', 'UTF-8', 1)."\n";		// address line 1
 			$s .= dol_trunc(empty($addresslinearray[2]) ? '' : $addresslinearray[2], 70, 'right', 'UTF-8', 1)."\n";		// address line 2
@@ -2001,7 +2082,7 @@ abstract class CommonInvoice extends CommonObject
 		$s .= ($this->multicurrency_code ? $this->multicurrency_code : $conf->currency)."\n";
 		// Buyer
 		$s .= "S\n";
-		$s .= dol_trunc($this->thirdparty->name, 70, 'right', 'UTF-8', 1)."\n";
+		$s .= dol_trunc((string) $this->thirdparty->name, 70, 'right', 'UTF-8', 1)."\n";
 		$addresslinearray = explode("\n", $this->thirdparty->address);
 		$s .= dol_trunc(empty($addresslinearray[1]) ? '' : $addresslinearray[1], 70, 'right', 'UTF-8', 1)."\n";		// address line 1
 		$s .= dol_trunc(empty($addresslinearray[2]) ? '' : $addresslinearray[2], 70, 'right', 'UTF-8', 1)."\n";		// address line 2
@@ -2186,6 +2267,12 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 	 * @var float
 	 */
 	public $total_ttc;
+
+	/**
+	 * @var float|null
+	 */
+	public $revenuestamp;
+
 
 	/**
 	 * @var int<0,1>

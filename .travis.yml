@@ -37,7 +37,7 @@ cache:
 jobs:
   fast_finish: true
   allow_failures:
-  - php: '8.4'
+  - php: 'latest'
   include:
     - stage: PHP min and max
       if: type = push
@@ -47,16 +47,16 @@ jobs:
       - TRAVIS_PHP_VERSION=7.1
     - stage: PHP min and max
       if: type = pull_request OR type = push
-      php: '8.3'
-      env:
-      - DB=mysql
-      - TRAVIS_PHP_VERSION=8.3
-    - stage: PHP 8.4
-      if: type = push AND branch = develop
       php: '8.4'
       env:
       - DB=mysql
       - TRAVIS_PHP_VERSION=8.4
+    - stage: PHP latest
+      if: type = push AND branch = develop
+      php: 'latest'
+      env:
+      - DB=mysql
+      - TRAVIS_PHP_VERSION=latest
 
 notifications:
   email:
@@ -95,6 +95,9 @@ before_install:
   	sudo apt install unzip apache2 php8.3 php8.3-cli php8.3-curl php8.3-mysql php8.3-pgsql php8.3-gd php8.3-imap php8.3-intl php8.3-ldap php8.3-xml php8.3-mbstring php8.3-xml php8.3-zip libapache2-mod-php8.3
   fi
   if [ "$TRAVIS_PHP_VERSION" = '8.4' ]; then
+    sudo apt install unzip apache2 php8.4 php8.4-cli php8.4-curl php8.4-mysql php8.4-pgsql php8.4-gd php8.4-imap php8.4-intl php8.4-ldap php8.4-xml php8.4-mbstring php8.4-xml php8.4-zip libapache2-mod-php8.4
+  fi
+  if [ "$TRAVIS_PHP_VERSION" = 'latest' ]; then
     sudo apt install unzip apache2 php8.4 php8.4-cli php8.4-curl php8.4-mysql php8.4-pgsql php8.4-gd php8.4-imap php8.4-intl php8.4-ldap php8.4-xml php8.4-mbstring php8.4-xml php8.4-zip libapache2-mod-php8.4
   fi
 
@@ -168,7 +171,7 @@ install:
                         squizlabs/php_codesniffer ^3
   fi
   # phpunit 9 is required for php 8
-  if [ "$TRAVIS_PHP_VERSION" = '8.0' ] || [ "$TRAVIS_PHP_VERSION" = '8.1' ] || [ "$TRAVIS_PHP_VERSION" = '8.2' ] || [ "$TRAVIS_PHP_VERSION" = '8.3' ] || [ "$TRAVIS_PHP_VERSION" = '8.4' ] || [ "$TRAVIS_PHP_VERSION" = 'nightly' ]; then
+  if [ "$TRAVIS_PHP_VERSION" = '8.0' ] || [ "$TRAVIS_PHP_VERSION" = '8.1' ] || [ "$TRAVIS_PHP_VERSION" = '8.2' ] || [ "$TRAVIS_PHP_VERSION" = '8.3' ] || [ "$TRAVIS_PHP_VERSION" = '8.4' ] || [ "$TRAVIS_PHP_VERSION" = 'latest' ]; then
       sudo composer self-update 2.4.4
       composer -n require --ignore-platform-reqs phpunit/phpunit ^8 \
                                                  php-parallel-lint/php-parallel-lint ^1.2 \
@@ -271,6 +274,7 @@ before_script:
       #echo '\d llx_c_country' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
 
       # Create pgsql compatibility functions
+      echo "Load functions.sql (may generated errors for tables that does not exists yet)"
       psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis' < htdocs/install/pgsql/functions/functions.sql
     fi
     echo
@@ -314,7 +318,7 @@ before_script:
   - |
     echo "Setting up Apache"
     sudo sed -i -e "s,www-data,travis,g" /etc/apache2/envvars
-    sudo cp -f build/travis-ci/apache.conf /etc/apache2/sites-available/000-default.conf
+    sudo cp -f dev/build/travis-ci/apache.conf /etc/apache2/sites-available/000-default.conf
     sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/000-default.conf
     sudo cat /etc/apache2/sites-available/000-default.conf
     sudo service apache2 restart
@@ -512,6 +516,9 @@ script:
     php upgrade.php 20.0.0 21.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade20002100.log || cat $TRAVIS_BUILD_DIR/upgrade20002100.log
     php upgrade2.php 20.0.0 21.0.0 > $TRAVIS_BUILD_DIR/upgrade20002100-2.log || cat $TRAVIS_BUILD_DIR/upgrade20002100-2.log
     php step5.php 20.0.0 21.0.0 > $TRAVIS_BUILD_DIR/upgrade20002100-3.log || cat $TRAVIS_BUILD_DIR/upgrade20002100-3.log
+    php upgrade.php 21.0.0 22.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade21002200.log || cat $TRAVIS_BUILD_DIR/upgrade21002200.log
+    php upgrade2.php 21.0.0 22.0.0 > $TRAVIS_BUILD_DIR/upgrade21002200-2.log || cat $TRAVIS_BUILD_DIR/upgrade21002200-2.log
+    php step5.php 21.0.0 22.0.0 > $TRAVIS_BUILD_DIR/upgrade21002200-3.log || cat $TRAVIS_BUILD_DIR/upgrade21002200-3.log
     set +e
     echo
 

@@ -602,6 +602,10 @@ DELETE FROM llx_rights_def WHERE module = 'hrm' AND perms = 'employee';
 -- UPDATE llx_bank as b SET b.amount_main_currency = -b.amount_main_currency WHERE b.amount IS NOT NULL AND b.amount_main_currency IS NOT NULL AND SIGN(b.amount_main_currency) <> SIGN(b.amount);
 
 
+-- Sequence to fix the table llx_paiement_facture and llx_paiement for payment record on a bank account that does not exists anymore.
+-- delete from llx_paiement_facture where fk_paiement in (select rowid from llx_paiement WHERE fk_bank is not null AND fk_bank not in (select rowid from llx_bank));
+-- delete from llx_paiement WHERE fk_bank is not null AND fk_bank not in (select rowid from llx_bank);
+
 
 -- Delete duplicate entries into llx_c_transport_mode
 -- VMYSQL4.1 DELETE T1 FROM llx_c_transport_mode as T1, llx_c_transport_mode as T2 where T1.entity = T2.entity AND T1.code = T2.code and T1.rowid > T2.rowid;
