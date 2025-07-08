@@ -278,7 +278,7 @@ if ($action == 'edit') {
 	// ==============================================================================
 
 	// Helper function to generate the select dropdown HTML, promoting the DRY principle.
-	$generateSelectHtml = function ($constKey, $valTab) {
+	$generateSelectHtml = function (string $constKey, array $valTab) {
 		$output = '<select name="'.$constKey.'" id="'.$constKey.'" class="flat minwidth200">';
 		foreach ($valTab as $key1 => $val1) {
 			$output .= '<option value="'.$key1.'" '.(getDolGlobalString($constKey) == $key1 ? 'selected="selected"' : '').'>';
@@ -318,9 +318,8 @@ if ($action == 'edit') {
 			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 				print '<td>';
 				// Display the dropdown only if a constant key is defined for the 'delete' action.
-				if (isset($val['config_keys']['delete'])) {
-					print $generateSelectHtml($val['config_keys']['delete'], $valTab);
-				}
+				print $generateSelectHtml($val['config_keys']['delete'], $valTab);
+
 				print '</td>';
 			}
 			print '</tr>';

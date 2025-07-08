@@ -152,6 +152,7 @@ class DataPolicyCron
 			if (in_array($obj->rowid, $processedIds) || ! method_exists($this, $handlerMethod)) {
 				continue;
 			}
+			/** @var CommonObject $object */
 			$object = clone $object;
 			$object->fetch($obj->rowid);
 
@@ -220,7 +221,7 @@ class DataPolicyCron
 
 		$paramConfig = $policy['call_params'][$method] ?? [];
 
-		return array_map(function ($paramName) use ($availableArgs) {
+		return array_map(function (string $paramName) use ($availableArgs) {
 			return $availableArgs[$paramName];
 		}, $paramConfig);
 	}
