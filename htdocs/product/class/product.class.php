@@ -363,12 +363,14 @@ class Product extends CommonObject
 	/**
 	 * Cost price
 	 *
-	 * @var float
+	 * @var ?float
 	 */
 	public $cost_price;
 
 	/**
-	 * @var float Average price value for product entry in stock (PMP)
+	 * Average price value for product entry into stock (PMP)
+	 *
+	 * @var ?float
 	 */
 	public $pmp;
 
@@ -3056,7 +3058,7 @@ class Product extends CommonObject
 				$this->price_min = $obj->price_min;
 				$this->price_min_ttc = $obj->price_min_ttc;
 				$this->price_base_type = $obj->price_base_type;
-				$this->cost_price = $obj->cost_price;
+				$this->cost_price = isset($obj->cost_price) ? (float) $obj->cost_price : null;
 				$this->default_vat_code = $obj->default_vat_code;
 				$this->tva_tx = $obj->tva_tx;
 				//! French VAT NPR
@@ -6109,7 +6111,7 @@ class Product extends CommonObject
 	 * @param	float			$nbpiece		nb of units (should be always positive, use $movement to decide if we add or remove)
 	 * @param	int<0,1>		$movement		0 = add, 1 = remove
 	 * @param	string			$label			Label of stock movement
-	 * @param	float			$price			Unit price HT of product, used to calculate average weighted price (PMP in french). If 0, average weighted price is not changed.
+	 * @param	int|float		$price			Unit price HT of product, used to calculate average weighted price (PMP in french). If 0, average weighted price is not changed.
 	 * @param	string			$inventorycode	Inventory code
 	 * @param	string			$origin_element	Origin element type
 	 * @param	?int			$origin_id		Origin id of element
@@ -6165,22 +6167,22 @@ class Product extends CommonObject
 	/**
 	 *  Adjust stock in a warehouse for product with batch number
 	 *
-	 * @param	User		$user           user asking change
-	 * @param	int			$id_entrepot    id of warehouse
-	 * @param	float		$nbpiece        nb of units (should be always positive, use $movement to decide if we add or remove)
-	 * @param	int<0,1>	$movement       0 = add, 1 = remove
-	 * @param	string		$label          Label of stock movement
-	 * @param	float		$price          Price to use for stock eval
-	 * @param	int|string	$dlc            eat-by date
-	 * @param	int|string	$dluo           sell-by date
-	 * @param	string		$lot            Lot number
-	 * @param	string		$inventorycode  Inventory code
-	 * @param	string		$origin_element Origin element type
-	 * @param	?int		$origin_id      Origin id of element
-	 * @param	int			$disablestockchangeforsubproduct	Disable stock change for sub-products of kit (useful only if product is a subproduct)
-	 * @param	?ExtraFields	$extrafields	Array of extrafields
-	 * @param	boolean		$force_update_batch   Force update batch
-	 * @return int                      Return integer <0 if KO, >0 if OK
+	 * @param	User			$user           	User asking change
+	 * @param	int				$id_entrepot    	Id of warehouse
+	 * @param	float			$nbpiece        	Nb of units (should be always positive, use $movement to decide if we add or remove)
+	 * @param	int<0,1>		$movement       	0 = add, 1 = remove
+	 * @param	string			$label          	Label of stock movement
+	 * @param	int|float		$price          	Price to use for stock eval
+	 * @param	int|string		$dlc            	eat-by date
+	 * @param	int|string		$dluo           	sell-by date
+	 * @param	string			$lot            	Lot number
+	 * @param	string			$inventorycode  	Inventory code
+	 * @param	string			$origin_element 	Origin element type
+	 * @param	?int			$origin_id      	Origin id of element
+	 * @param	int				$disablestockchangeforsubproduct	Disable stock change for sub-products of kit (useful only if product is a subproduct)
+	 * @param	?ExtraFields	$extrafields		Array of extrafields
+	 * @param	boolean			$force_update_batch Force update batch
+	 * @return int              		        	Return integer <0 if KO, >0 if OK
 	 */
 	public function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label = '', $price = 0, $dlc = '', $dluo = '', $lot = '', $inventorycode = '', $origin_element = '', $origin_id = null, $disablestockchangeforsubproduct = 0, $extrafields = null, $force_update_batch = false)
 	{

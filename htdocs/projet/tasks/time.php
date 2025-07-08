@@ -2065,11 +2065,11 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		}
 		if (!empty($allprojectforuser)) {
 			if (!empty($arrayfields['p.project_ref']['checked'])) {
-				print_liste_field_titre("Project", $_SERVER['PHP_SELF'], 'p.ref', '', $param, '', $sortfield, $sortorder);
+				print_liste_field_titre($arrayfields['p.project_ref']['label'], $_SERVER['PHP_SELF'], 'p.ref', '', $param, '', $sortfield, $sortorder);
 				$totalarray['nbfield']++;
 			}
 			if (!empty($arrayfields['p.project_label']['checked'])) {
-				print_liste_field_titre("ProjectLabel", $_SERVER['PHP_SELF'], 'p.title', '', $param, '', $sortfield, $sortorder);
+				print_liste_field_titre($arrayfields['p.project_label']['label'], $_SERVER['PHP_SELF'], 'p.title', '', $param, '', $sortfield, $sortorder);
 				$totalarray['nbfield']++;
 			}
 		}
@@ -2260,10 +2260,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				}
 			}
 
-			// Project ref & label
 			if (!empty($allprojectforuser)) {
+				// Project ref
 				if (!empty($arrayfields['p.project_ref']['checked'])) {
-					print '<td class="nowraponall">';
 					if (empty($conf->cache['project'][$task_time->fk_projet])) {
 						$tmpproject = new Project($db);
 						$tmpproject->fetch($task_time->fk_projet);
@@ -2271,12 +2270,14 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					} else {
 						$tmpproject = $conf->cache['project'][$task_time->fk_projet];
 					}
+					print '<td class="nowraponall">';
 					print $tmpproject->getNomUrl(1);
 					print '</td>';
 					if (!$i) {
 						$totalarray['nbfield']++;
 					}
 				}
+				// Project label
 				if (!empty($arrayfields['p.project_label']['checked'])) {
 					if (empty($conf->cache['project'][$task_time->fk_projet])) {
 						$tmpproject = new Project($db);
@@ -2285,8 +2286,12 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					} else {
 						$tmpproject = $conf->cache['project'][$task_time->fk_projet];
 					}
-					print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag($tmpproject->title).'">';
-					print dol_escape_htmltag($tmpproject->title);
+					print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($tmpproject->title).'">';
+					if (!empty($arrayfields['p.project_ref']['checked'])) {
+						print dolPrintHTML($tmpproject->title);
+					} else {
+						print $tmpproject->getNomUrl(1, 0, -1);
+					}
 					print '</td>';
 					if (!$i) {
 						$totalarray['nbfield']++;
@@ -2318,8 +2323,15 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			// Task label
 			if (!empty($arrayfields['t.element_label']['checked'])) {
 				if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
-					print '<td class="tdoverflowmax250" title="'.dol_escape_htmltag($task_time->label).'">';
-					print dol_escape_htmltag($task_time->label);
+					print '<td class="tdoverflowmax250" title="'.dolPrintHTMLForAttribute($task_time->label).'">';
+					if (!empty($arrayfields['t.element_ref']['checked'])) {
+						print dolPrintHTML($task_time->label);
+					} else {
+						$tasktmp->id = $task_time->fk_element;
+						$tasktmp->ref = $task_time->ref;
+						$tasktmp->label = $task_time->label;
+						print $tasktmp->getNomUrl(1, 'withproject', 'time', -1);
+					}
 					print '</td>';
 					if (!$i) {
 						$totalarray['nbfield']++;
@@ -2327,9 +2339,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				}
 			}
 
-			// By User
+			// User
 			if (!empty($arrayfields['author']['checked'])) {
-				print '<td class="minwidth100 tdoverflowmax125">';
+				print '<td class="tdoverflowmax100">';
 				if ($action == 'editline' && GETPOSTINT('lineid') == $task_time->rowid) {
 					// Here $object is task. TODO Add a cache
 					if (empty($object->id)) {
@@ -2744,7 +2756,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 				// Date
 				if (!empty($arrayfields['t.element_date']['checked'])) {
-					print '<td class="nowrap">';
+					print '<td class="nowraponall">';
 					if ($action == 'splitline' && GETPOSTINT('lineid') == $task_time->rowid) {
 						if (empty($task_time->element_date_withhour)) {
 							print $form->selectDate(($date2 ? $date2 : $date1), 'timeline_2', 3, 3, 2, "timespent_date", 1, 0);
@@ -2759,20 +2771,20 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 				// Thirdparty
 				if (!empty($arrayfields['p.fk_soc']['checked'])) {
-					print '<td class="nowrap">';
+					print '<td>';
 					print '</td>';
 				}
 
 				// Thirdparty alias
 				if (!empty($arrayfields['s.name_alias']['checked'])) {
-					print '<td class="nowrap">';
+					print '<td>';
 					print '</td>';
 				}
 
 				// Project ref
 				if (!empty($allprojectforuser)) {
 					if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {    // Not a dedicated task
-						print '<td class="nowrap">';
+						print '<td>';
 						print '</td>';
 					}
 				}
@@ -2780,7 +2792,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				// Task ref
 				if (!empty($arrayfields['t.element_ref']['checked'])) {
 					if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
-						print '<td class="nowrap">';
+						print '<td class="nowraponall">';
 						$tasktmp->id = $task_time->fk_element;
 						$tasktmp->ref = $task_time->ref;
 						$tasktmp->label = $task_time->label;
@@ -2792,7 +2804,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				// Task label
 				if (!empty($arrayfields['t.element_label']['checked'])) {
 					if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
-						print '<td class="nowrap">';
+						print '<td class="tdoverflowmax125" title="'.dol_escape_htmltag($task_time->label).'">';
 						print dol_escape_htmltag($task_time->label);
 						print '</td>';
 					}
@@ -2861,7 +2873,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				// Value spent
 				if (!empty($arrayfields['value']['checked'])) {
 					print '<td class="right">';
-					print '<span class="amount">';
+					print '<span class="amount nowraponall">';
 					$value = 0;
 					print price($value, 1, $langs, 1, -1, -1, $conf->currency);
 					print '</span>';
@@ -2873,7 +2885,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print '<td class="right">';
 					$valuebilled = price2num($task_time->total_ht, '', 1);
 					if (isset($task_time->total_ht)) {
-						print '<span class="amount">';
+						print '<span class="amount nowraponall">';
 						print price($valuebilled, 1, $langs, 1, -1, -1, $conf->currency);
 						print '</span>';
 					}

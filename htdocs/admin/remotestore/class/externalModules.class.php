@@ -778,8 +778,8 @@ class ExternalModules
 			}
 		}
 
-		if (!empty($request['response']['curl_error_msg'])) {
-			$error_message .= ' - ' . $request['response']['curl_error_msg'];
+		if (!empty($request['curl_error_msg'])) {
+			$error_message .= ' - ' . $request['curl_error_msg'];
 		}
 
 		// Return the formatted error message

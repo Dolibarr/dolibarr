@@ -434,7 +434,7 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 						(float) $nbpiece,
 						1,
 						GETPOST("label", 'alphanohtml'),
-						$pricesrc,
+						(float) $pricesrc,
 						$eatby,
 						$sellby,
 						$batch,
@@ -452,7 +452,7 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 						(float) $nbpiece,
 						0,
 						GETPOST("label", 'alphanohtml'),
-						$pricedest,
+						(float) $pricedest,
 						$eatby,
 						$sellby,
 						(string) $batch,
@@ -471,7 +471,7 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 						(float) $nbpiece,
 						1,
 						GETPOST("label", 'alphanohtml'),
-						$pricesrc,
+						(float) $pricesrc,
 						GETPOST('inventorycode', 'alphanohtml')
 					);
 					if ($result1 < 0) {
@@ -486,7 +486,7 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 						(float) $nbpiece,
 						0,
 						GETPOST("label", 'alphanohtml'),
-						$pricedest,
+						(float) $pricedest,
 						GETPOST('inventorycode', 'alphanohtml')
 					);
 					if ($result2 < 0) {

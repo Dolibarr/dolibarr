@@ -44,7 +44,7 @@ if (!$langs instanceof Translate) {
 }
 
 // Translations
-$langs->loadLangs(array('admin', 'companies', 'members', 'datapolicy', 'recruitment'));
+$langs->loadLangs(array('admin', 'companies', 'members', 'cron', 'datapolicy', 'recruitment'));
 
 // Parameters
 $action = GETPOST('action', 'aZ09');
