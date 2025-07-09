@@ -78,6 +78,17 @@ if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->la
 	}
 }
 
+// REDIRECT TO TERMINAL SELECT IF NO TERMINAL SELECTED
+if (empty($_SESSION["takeposterminal"])) {
+	print <<<SCRIPT
+<script language="javascript">
+	$( document ).ready(function() {
+		ModalBox('ModalTerminal');
+	});
+</script>
+SCRIPT;
+	exit;
+}
 
 /**
  * Abort invoice creationg with a given error message
