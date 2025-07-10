@@ -290,11 +290,12 @@ if (empty($doactionsthenredirect)) {
 
 
 // Add steps to validate payment is complete when we enter this page
-
+$service = $paymentmethod;	// to have a default value. We may change it later for 'StripeLive' or 'StripeTest'...
 
 // For Paypal: validate the payment (Paypal need another step after the callback return to validate the payment).
 if (isModEnabled('paypal') && $paymentmethod === 'paypal') {	// We call this page only if payment is ok on payment system
 	if (!empty($PAYPALTOKEN)) {
+		// TODO: Move this block to the top to ensure all session variables (e.g., TRANSACTIONID, FinalPaymentAmt, currencyCodeType, etc.) are loaded before executing checks for any payment module.
 		// Get on url call
 		$onlinetoken        = $PAYPALTOKEN;
 		$fulltag            = $FULLTAG;
@@ -371,23 +372,98 @@ if (isModEnabled('paypal') && $paymentmethod === 'paypal') {	// We call this pag
 }
 
 // For Paybox
-if (isModEnabled('paybox')) {
-	if ($paymentmethod === 'paybox') {
-		// TODO Add a check to validate that payment is ok.
-		$ispaymentok = true; // We call this page only if payment is ok on payment system
-	}
+if (isModEnabled('paybox') && $paymentmethod === 'paybox') {
+	// TODO Add a check to validate that payment is ok.
+	$ispaymentok = true; // We will do the rest of code
 }
 
 // For Stripe
-if (isModEnabled('stripe')) {
-	if ($paymentmethod === 'stripe') {
-		// Check we are coming from the newpaymentpage
-		if (GETPOST('paymentoksessionkey') == $_SESSION['paymentoksessionkey']) {
-			// We can also request Stripe with payment_intent and payment_intent_client_secret the sameway we do in newpayment after comment "// Get here amount and currency used for payment".
-			$ispaymentok = true; // We call this page only if payment is ok on payment system
-		} else {
-			$ispaymentok = false; // We call this page only if payment is ok on payment system
+if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
+	// TODO: Move this block to the top to ensure all session variables (e.g., TRANSACTIONID, FinalPaymentAmt, currencyCodeType, etc.) are loaded before executing checks for any payment module.
+	if (empty($TRANSACTIONID)) {
+		$TRANSACTIONID = empty($_SESSION['TRANSACTIONID']) ? '' : $_SESSION['TRANSACTIONID'];	// pi_... or ch_...
+		if (empty($TRANSACTIONID) && GETPOST('payment_intent', 'alphanohtml')) {
+			// For the case we use STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 2
+			$TRANSACTIONID = GETPOST('payment_intent', 'alphanohtml');
 		}
+	}
+	$FinalPaymentAmt = empty($_SESSION["FinalPaymentAmt"]) ? '' : $_SESSION["FinalPaymentAmt"];
+	$currencyCodeType = empty($_SESSION['currencyCodeType']) ? '' : $_SESSION['currencyCodeType'];
+
+	$service = 'StripeTest';
+	$servicestatus = 0;
+	if (getDolGlobalString('STRIPE_LIVE') && !GETPOSTINT('forcesandbox')) {
+		$service = 'StripeLive';
+		$servicestatus = 1;
+	}
+
+	// Check we are coming from the newpaymentpage
+	if (GETPOST('paymentoksessioncode') !== $_SESSION['paymentoksessioncode']) {
+		$error++;
+		$errmsg = 'Attempted direct access to the paymentok page without a valid session.';
+		dol_syslog($errmsg, LOG_ERR, 0, '_payment');
+	}
+
+	// Check on payment platform that the payment has been really validated
+	if (!$error && $TRANSACTIONID) {
+		// Stripe payment verification via Stripe API
+		try {
+			include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+			$stripe = new Stripe($db);
+			$stripeacc = $stripe->getStripeAccount($service);
+
+			// Use the correct Stripe API key
+			global $stripearrayofkeysbyenv;
+			\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$servicestatus]['secret_key']);
+
+			try {
+				if (empty($stripeacc)) {
+					$paymentIntent = \Stripe\PaymentIntent::retrieve($TRANSACTIONID);
+				} else {
+					$paymentIntent = \Stripe\PaymentIntent::retrieve($TRANSACTIONID, array("stripe_account" => $stripeacc));
+				}
+
+				// Check amount and currency
+				$expectedAmount = (int) round($FinalPaymentAmt * 100); // Stripe uses cents
+				$expectedCurrency = strtolower($currencyCodeType);
+
+				if ((int) $paymentIntent->amount !== $expectedAmount || strtolower($paymentIntent->currency) !== $expectedCurrency) {
+					$error++;
+					$errmsg = 'Stripe payment information mismatch: expected amount ' . $expectedAmount . ' and currency ' . $expectedCurrency . ', got amount ' . $paymentIntent->amount . ' and currency ' . $paymentIntent->currency;
+					dol_syslog($errmsg, LOG_ERR, 0, '_payment');
+				}
+				if ($paymentIntent->status !== 'succeeded') {
+					$error++;
+					$errmsg = 'Stripe payment not succeeded. Status: ' . $paymentIntent->status;
+					dol_syslog($errmsg, LOG_ERR, 0, '_payment');
+				}
+			} catch (\Stripe\Exception\ApiErrorException $e) {
+				$error++;
+				$errormessage = "Stripe API error: ".$e->getMessage();
+				dol_syslog($errormessage, LOG_ERR, 0, '_payment');
+				setEventMessages($e->getMessage(), null, 'errors');
+			} catch (Exception $e) {
+				$error++;
+				$errormessage = "CantRetrievePaymentIntent: ".$e->getMessage();
+				dol_syslog($errormessage, LOG_ERR, 0, '_payment');
+				setEventMessages($e->getMessage(), null, 'errors');
+			}
+		} catch (Exception $e) {
+			$error++;
+			$errmsg = 'Stripe API error: ' . $e->getMessage();
+			dol_syslog($errmsg, LOG_ERR, 0, '_payment');
+		}
+	} else {
+		$error++;
+		$errmsg = 'Stripe payment verification failed: TRANSACTIONID is not set or session key does not match.';
+		dol_syslog($errmsg, LOG_ERR, 0, '_payment');
+		setEventMessages($errmsg, null, 'errors');
+	}
+
+	if (!$error) {
+		$ispaymentok = true; // We will do the rest of code
+	} else {
+		$ispaymentok = false; // We won't do the rest of code
 	}
 }
 
@@ -407,6 +483,7 @@ if (!in_array($paymentmethod, array('paypal', 'paybox', 'stripe'))) {
 	}
 }
 
+// TODO: Move this block to the top to ensure all session variables (e.g., TRANSACTIONID, FinalPaymentAmt, currencyCodeType, etc.) are loaded before executing checks for any payment module.
 // Get variable into the session env
 if (empty($ipaddress)) {
 	$ipaddress = $_SESSION['ipaddress'];
@@ -716,7 +793,7 @@ if ($ispaymentok) {
 				}
 
 				if (!$error) {
-					// If payment using Strip, save the Stripe payment info into societe_account
+					// If payment using Stripe, save the Stripe payment info into societe_account
 					if ($paymentmethod == 'stripe' && $autocreatethirdparty && $option == 'bankviainvoice') {
 						$thirdparty_id = ($object->socid ? $object->socid : $object->fk_soc);
 
@@ -1117,7 +1194,7 @@ if ($ispaymentok) {
 						$paiement->paiementid = $paymentTypeId;
 						$paiement->num_payment = '';
 						$paiement->note_public = 'Online payment ' . dol_print_date($now, 'standard') . ' from ' . $ipaddress;
-						$paiement->ext_payment_id = $TRANSACTIONID;		// pi_... for Stripe, ...
+						$paiement->ext_payment_id = $TRANSACTIONID;		// 'pi_...' for Stripe, ... TODO Use 'pi_...:cus_...@pk_...'
 						$paiement->ext_payment_site = $service;			// 'StripeLive' or 'Stripe', or ...
 
 						if (!$error) {
@@ -1251,8 +1328,8 @@ if ($ispaymentok) {
 				$paiement->paymenttype = $paymentTypeId;
 				$paiement->num_payment = '';
 				$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
-				$paiement->ext_payment_id = $TRANSACTIONID;
-				$paiement->ext_payment_site = $service;
+				$paiement->ext_payment_id = $TRANSACTIONID;		// 'pi_...' for Stripe, ... TODO Use 'pi_...:cus_...@pk_...'
+				$paiement->ext_payment_site = $service;			// 'StripeLive' or 'Stripe', or ...
 
 				if (!$error) {
 					$paiement_id = $paiement->create($user, 1);
@@ -1386,8 +1463,8 @@ if ($ispaymentok) {
 					$paiement->paiementid   = $paymentTypeId;
 					$paiement->num_payment = '';
 					$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress.' for event registration';
-					$paiement->ext_payment_id = $TRANSACTIONID;
-					$paiement->ext_payment_site = $service;
+					$paiement->ext_payment_id = $TRANSACTIONID;		// 'pi_...' for Stripe, ... TODO Use 'pi_...:cus_...@pk_...'
+					$paiement->ext_payment_site = $service;			// 'StripeLive' or 'Stripe', or ...
 
 					if (!$error) {
 						$paiement_id = $paiement->create($user, 1); // This include closing invoices and regenerating documents

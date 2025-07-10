@@ -4817,7 +4817,7 @@ function getUserRemoteIP($trusted = 0)
 	if ($trusted) {	// Return only IP we can rely on (not spoofable by the client)
 		$ip = (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']);	// value may be the IP of a proxy
 		// Note that if apache module remoteip has been enabled, REMOTE_ADDR can contain the real client (the value from cloudFlare HTTP_CF_CONNECTING_IP for example)
-		// if the proxy were added in the list of trusted proxy.
+		// This can happen if the proxy were added in the list of trusted proxy.
 		return $ip;
 	}
 
