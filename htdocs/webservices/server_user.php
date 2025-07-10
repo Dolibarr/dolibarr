@@ -575,13 +575,12 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 					$thirdparty->fax = $thirdpartywithuser['fax'];
 					$thirdparty->email = $thirdpartywithuser['email'];
 					$thirdparty->url = $thirdpartywithuser['url'];
-					$thirdparty->ape = $thirdpartywithuser['ape'];
-					$thirdparty->idprof1 = $thirdpartywithuser['prof1'];
-					$thirdparty->idprof2 = $thirdpartywithuser['prof2'];
-					$thirdparty->idprof3 = $thirdpartywithuser['prof3'];
-					$thirdparty->idprof4 = $thirdpartywithuser['prof4'];
-					$thirdparty->idprof5 = $thirdpartywithuser['prof5'];
-					$thirdparty->idprof6 = $thirdpartywithuser['prof6'];
+					$thirdparty->idprof1 = $thirdpartywithuser['profid1'];
+					$thirdparty->idprof2 = $thirdpartywithuser['profid2'];
+					$thirdparty->idprof3 = $thirdpartywithuser['profid3'];
+					$thirdparty->idprof4 = $thirdpartywithuser['profid4'];
+					$thirdparty->idprof5 = $thirdpartywithuser['profid5'];
+					$thirdparty->idprof6 = $thirdpartywithuser['profid6'];
 
 					$thirdparty->client = (int) $thirdpartywithuser['client'];
 					$thirdparty->fournisseur = (int) $thirdpartywithuser['fournisseur'];
