@@ -1035,7 +1035,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			if (getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')) {
 				$object->client = getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT');
 			} else {
-				$object->client = 1;
+				$object->client = 3;
 			}
 		}
 		if (GETPOST("type", 'aZ') == 'p') {
