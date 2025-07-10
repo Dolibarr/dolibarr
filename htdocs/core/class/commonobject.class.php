@@ -9249,9 +9249,9 @@ abstract class CommonObject
 			return (int) $value;
 		} elseif ($fieldsentry['type'] == 'boolean') {
 			if ($value) {
-				return 'true';
+				return '1';
 			} else {
-				return 'false';
+				return '0';
 			}
 		} else {
 			return "'".$this->db->escape($value)."'";
