@@ -461,7 +461,7 @@ class Stripe extends CommonObject
 			$descriptor = dol_trunc($tag, 10, 'right', 'UTF-8', 1);
 			if (getDolGlobalInt('STRIPE_SEPA_DIRECT_DEBIT')) {
 				$paymentmethodtypes[] = "sepa_debit"; //&& ($object->thirdparty->isInEEC())
-				//$descriptor = preg_replace('/ref=[^:=]+/', '', $descriptor);	// Clean ref
+				if (is_object($object) && $object->ref) { $descriptor = $object->ref; }	// Expose ref in descriptor statement
 			}
 			if (getDolGlobalInt('STRIPE_KLARNA')) {
 				$paymentmethodtypes[] = "klarna";
