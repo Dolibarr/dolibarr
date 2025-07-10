@@ -206,21 +206,6 @@ if ($action == "setaccountancycodecustomerinvoicemandatory") {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
-/* This code is not needed anymore as we can use the setprofid functions instead with key = 'VAT_INTRA'
-//Activate Set vat id unique
-if ($action == "setvatintraunique") {
-	$setvatintraunique = GETPOSTINT('value');
-	$res = dolibarr_set_const($db, "SOCIETE_VAT_INTRA_UNIQUE", $setvatintraunique, 'yesno', 0, '', $conf->entity);
-	if (!($res > 0)) {
-		$error++;
-	}
-	if (!$error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
-}
-*/
 
 //Activate Set ref in list
 if ($action == "setaddrefinlist") {
@@ -627,22 +612,15 @@ foreach ($dirsociete as $dirroot) {
 
 					// Activate / Disable
 					if (in_array($name, $def)) {
-						print "<td class=\"center\">\n";
-						//if ($conf->global->COMPANY_ADDON_PDF != "$name")
-						//{
+						print '<td class="center">'."\n";
 						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.urlencode($name).'&token='.newToken().'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">';
 						print img_picto($langs->trans("Enabled"), 'switch_on');
 						print '</a>';
-						//}
-						//else
-						//{
-						//	print img_picto($langs->trans("Enabled"),'on');
-						//}
 						print "</td>";
 					} else {
 						if (versioncompare($module->phpmin, versionphparray()) > 0) {
 							print '<td class="center">'."\n";
-							print img_picto(dol_escape_htmltag($langs->trans("ErrorModuleRequirePHPVersion", implode('.', $module->phpmin))), 'switch_off');
+							print img_picto(dol_escape_htmltag($langs->trans("ErrorModuleRequirePHPVersion", implode('.', $module->phpmin))), 'switch_off', 'class="opacitymedium"');
 							print "</td>";
 						} else {
 							print '<td class="center">'."\n";
