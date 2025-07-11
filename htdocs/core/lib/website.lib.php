@@ -1512,9 +1512,14 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					dol_mkdir(dirname($filetosave));
 
 					$fp = fopen($filetosave, "w");
-					fwrite($fp, $tmpgeturl['content']);
-					fclose($fp);
-					dolChmod($filetosave);
+					if ($fp) {
+						fwrite($fp, $tmpgeturl['content']);
+						fclose($fp);
+						dolChmod($filetosave);
+					} else {
+						setEventMessages('Error failed to open file '.$filetosave.' for writing', null, 'errors');
+						//print 'Failed to open file '.$filetosave.' for writing.';
+					}
 				}
 			}
 		}

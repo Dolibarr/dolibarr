@@ -1657,6 +1657,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			}
 		}
 
+		$actioncomm->ip = getUserRemoteIP(1);
+
 		$ret = $actioncomm->create($user); // User creating action
 
 		if ($ret > 0 && getDolGlobalString('MAIN_COPY_FILE_IN_EVENT_AUTO')) {
