@@ -196,15 +196,13 @@ class Products extends DolibarrApi
 	 */
 	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false, $variant_filter = 0, $pagination_data = false, $includestockdata = 0, $properties = '')
 	{
-		global $db, $conf;
-
 		if (!DolibarrApiAccess::$user->hasRight('produit', 'lire')) {
 			throw new RestException(403);
 		}
 
 		$obj_ret = array();
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+		$socid = DolibarrApiAccess::$user->socid ?: '';
 
 		$sql = "SELECT t.rowid, t.ref, t.ref_ext";
 		$sql .= " FROM ".$this->db->prefix()."product as t";
@@ -798,7 +796,7 @@ class Products extends DolibarrApi
 			throw new RestException(400, 'API not available: this mode of pricing is not enabled by setup');
 		}
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+		$socid = DolibarrApiAccess::$user->socid ?: '';
 		if ($socid > 0 && $socid != $thirdparty_id) {
 			throw new RestException(403, 'Getting prices for all customers or for the customer ID '.$thirdparty_id.' is not allowed for login '.DolibarrApiAccess::$user->login);
 		}
@@ -918,7 +916,7 @@ class Products extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+		$socid = DolibarrApiAccess::$user->socid ?: '';
 		if ($socid > 0 && $socid != $fourn_id) {
 			throw new RestException(403, 'Adding purchase price for the supplier ID '.$fourn_id.' is not allowed for login '.DolibarrApiAccess::$user->login);
 		}
@@ -1016,7 +1014,7 @@ class Products extends DolibarrApi
 		$obj_ret = array();
 
 		// Force id of company for external users
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+		$socid = DolibarrApiAccess::$user->socid ?: '';
 		if ($socid > 0) {
 			if ($supplier != $socid || empty($supplier)) {
 				throw new RestException(403, 'As an external user, you can request only for your supplier id = '.$socid);
@@ -1129,7 +1127,7 @@ class Products extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+		$socid = DolibarrApiAccess::$user->socid ?: '';
 
 		$result = $this->product->fetch($id, $ref, $ref_ext, $barcode);
 		if (!$result) {

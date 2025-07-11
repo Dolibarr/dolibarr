@@ -39,7 +39,10 @@
  * @var Translate $langs
  * @var User $user
  *
- * @var ?int[]	$toselect  Items selected on page, only used to see if not empty here
+ * @var ?int[]	$toselect  			Items selected on page, only used to see if not empty here
+ * @var ?int	$SHOWLEGEND			Show legend or not
+ * @var	string	$customreportkey	Custom report key
+ * @var string	$customsql			Custom SQL
  */
 '
 @phan-var-force ?int[] $toselect
@@ -89,8 +92,6 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	$pageprev = $page - 1;
 	$pagenext = $page + 1;
 
-	$diroutputmassaction = $conf->user->dir_temp.'/'.$user->id.'/customreport';
-
 	$object = null;
 } else {
 	// When included into a main page
@@ -128,7 +129,7 @@ if (!isset($search_graph)) {
 if (!empty($object)) {
 	$objecttype = $object->element.($object->module ? '@'.$object->module : '');
 }
-if (!is_string($objecttype) || empty($objecttype)) {
+if ((!is_string($objecttype) || empty($objecttype)) && isModEnabled('societe')) {
 	$objecttype = 'thirdparty';
 }
 '@phan-var-force string $objecttype';  // Help phan that suggests $objecttype can be null
@@ -356,8 +357,6 @@ if (!empty($object->element_for_permission)) {
 
 restrictedArea($user, $features, 0, '');
 
-$error = 0;
-
 
 /*
  * Actions
@@ -384,6 +383,7 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 	}
 }
 
+// Define $newarrayoftype that is array of object available for report
 $newarrayoftype = array();
 foreach ($arrayoftype as $key => $val) {
 	if (dol_eval((string) $val['enabled'], 1, 1, '1')) {
@@ -635,6 +635,7 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	// Select object
 	print '<div class="divadvancedsearchfield center floatnone">';
 	print '<div class="inline-block"><span class="opacitymedium">'.$langs->trans("StatisticsOn").'</span></div> ';
+
 	print $form->selectarray('objecttype', $newarrayoftype, $objecttype, 0, 0, 0, '', 1, 0, 0, '', 'minwidth200', 1, '', 0, 1);
 	if (empty($conf->use_javascript_ajax)) {
 		print '<input type="submit" class="button buttongen button-save nomargintop" name="changeobjecttype" value="'.$langs->trans("Refresh").'">';
@@ -651,40 +652,41 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	}
 	print '</div><div class="clearboth"></div>';
 
-	// Filter (you can use param &show_search_component_params_hidden=1 for debug)
-	if (!empty($object)) {
+	if (!empty($newarrayoftype)) {
+		// Filter (you can use param &show_search_component_params_hidden=1 for debug)
+		if (!empty($object)) {
+			print '<div class="divadvancedsearchfield">';
+			print $form->searchComponent(array($object->element => $object->fields), $search_component_params, array(), $search_component_params_hidden, $arrayoffilterfields);
+			print '</div>';
+		}
+
+		// YAxis (add measures into array)
+		$count = 0;
+		//var_dump($arrayofmesures);
+		print '<div class="divadvancedsearchfield clearboth">';
+		print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span><span class="fas fa-caret-left caretleftaxis" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span></div>';
+		$simplearrayofmesures = array();
+		foreach ($arrayofmesures as $key => $val) {
+			$simplearrayofmesures[$key] = $arrayofmesures[$key]['label'];
+		}
+		print $form->multiselectarray('search_measures', $simplearrayofmesures, $search_measures, 0, 0, 'minwidth300 widthcentpercentminusx', 1, 0, '', '', $langs->transnoentitiesnoconv("Measures"));	// Fill the array $arrayofmeasures with possible fields
+		print '</div>';
+
+		// XAxis
+		$count = 0;
 		print '<div class="divadvancedsearchfield">';
-		print $form->searchComponent(array($object->element => $object->fields), $search_component_params, array(), $search_component_params_hidden, $arrayoffilterfields);
+		print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span><span class="fas fa-caret-down caretdownaxis" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span></div>';
+		//var_dump($arrayofxaxis);
+		print $formother->selectXAxisField($object, $search_xaxis, $arrayofxaxis, $langs->trans("XAxis"), 'minwidth300 maxwidth400 widthcentpercentminusx');	// Fill the array $arrayofxaxis with possible fields
+		print '</div>';
+
+		// Group by
+		$count = 0;
+		print '<div class="divadvancedsearchfield">';
+		print '<div class="inline-block opacitymedium"><span class="fas fa-ruler-horizontal paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("GroupBy")).'"></span></div>';
+		print $formother->selectGroupByField($object, $search_groupby, $arrayofgroupby, 'minwidth250 maxwidth300 widthcentpercentminusx', $langs->trans("GroupBy"));	// Fill the array $arrayofgroupby with possible fields
 		print '</div>';
 	}
-
-	// YAxis (add measures into array)
-	$count = 0;
-	//var_dump($arrayofmesures);
-	print '<div class="divadvancedsearchfield clearboth">';
-	print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span><span class="fas fa-caret-left caretleftaxis" title="'.dol_escape_htmltag($langs->trans("Measures")).'"></span></div>';
-	$simplearrayofmesures = array();
-	foreach ($arrayofmesures as $key => $val) {
-		$simplearrayofmesures[$key] = $arrayofmesures[$key]['label'];
-	}
-	print $form->multiselectarray('search_measures', $simplearrayofmesures, $search_measures, 0, 0, 'minwidth300 widthcentpercentminusx', 1, 0, '', '', $langs->transnoentitiesnoconv("Measures"));	// Fill the array $arrayofmeasures with possible fields
-	print '</div>';
-
-	// XAxis
-	$count = 0;
-	print '<div class="divadvancedsearchfield">';
-	print '<div class="inline-block"><span class="fas fa-ruler-combined paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span><span class="fas fa-caret-down caretdownaxis" title="'.dol_escape_htmltag($langs->trans("XAxis")).'"></span></div>';
-	//var_dump($arrayofxaxis);
-	print $formother->selectXAxisField($object, $search_xaxis, $arrayofxaxis, $langs->trans("XAxis"), 'minwidth300 maxwidth400 widthcentpercentminusx');	// Fill the array $arrayofxaxis with possible fields
-	print '</div>';
-
-	// Group by
-	$count = 0;
-	print '<div class="divadvancedsearchfield">';
-	print '<div class="inline-block opacitymedium"><span class="fas fa-ruler-horizontal paddingright pictofixedwidth" title="'.dol_escape_htmltag($langs->trans("GroupBy")).'"></span></div>';
-	print $formother->selectGroupByField($object, $search_groupby, $arrayofgroupby, 'minwidth250 maxwidth300 widthcentpercentminusx', $langs->trans("GroupBy"));	// Fill the array $arrayofgroupby with possible fields
-	print '</div>';
-
 
 	if ($mode == 'grid') {
 		// YAxis
@@ -747,13 +749,12 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 		print '</div>';
 	}
 
-	//if ($mode == 'graph') {
-	//
-	//}
+	if (!empty($newarrayoftype)) {
+		print '<div class="divadvancedsearchfield">';
+		print '<input type="submit" class="button buttongen button-save nomargintop" value="'.$langs->trans("Refresh").'">';
+		print '</div>';
+	}
 
-	print '<div class="divadvancedsearchfield">';
-	print '<input type="submit" class="button buttongen button-save nomargintop" value="'.$langs->trans("Refresh").'">';
-	print '</div>';
 	print '</div>';
 	print '</form>';
 }
@@ -1217,6 +1218,10 @@ if ($sql) {
 print '<!-- Section to show the result -->'."\n";
 print '<div class="customreportsoutput'.($totalnbofrecord ? '' : ' customreportsoutputnotdata').'">';
 
+if (empty($newarrayoftype)) {
+	$langs->load("admin");
+	print info_admin($langs->trans("NoSupportedModulesHaveBeenActivated"), 0, 0, 'warning');
+}
 
 if ($mode == 'grid') {
 	// TODO

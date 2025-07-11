@@ -310,14 +310,13 @@ if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($object->usage_opp
 	if ($code) {
 		print $langs->trans("OppStatus".$code);
 	}
-	print '</td></tr>';
 
 	// Opportunity percent
-	print '<tr><td>'.$langs->trans("OpportunityProbability").'</td><td>';
-	if (!is_null($object->opp_percent) && strcmp($object->opp_percent, '')) {
+	print ' <span title="'.$langs->trans("OpportunityProbability").'"> / ';
+	if (strcmp($object->opp_percent, '')) {
 		print price($object->opp_percent, 0, $langs, 1, 0).' %';
 	}
-	print '</td></tr>';
+	print '</span></td></tr>';
 
 	// Opportunity Amount
 	print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
@@ -602,7 +601,7 @@ $listofreferent = array(
 		'name' => "Loan",
 		'title' => "ListLoanAssociatedProject",
 		'class' => 'Loan',
-		'margin' => 'add',
+		'margin' => '',
 		'table' => 'loan',
 		'datefieldname' => 'datestart',
 		'disableamount' => 0,

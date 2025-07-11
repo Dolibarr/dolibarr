@@ -590,21 +590,25 @@ class User extends CommonObject
 		$sql .= " LEFT JOIN ".$this->db->prefix()."c_departements as d ON u.fk_state = d.rowid";
 		$sql .= " LEFT JOIN ".$this->db->prefix()."establishment as s ON u.fk_establishment = s.rowid";
 
-		if ($entity < 0) {
-			if ((!isModEnabled('multicompany') || !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) && (!empty($user->entity))) {
-				$sql .= " WHERE u.entity IN (0, ".((int) $conf->entity).")";
-			} else {
-				$sql .= " WHERE u.entity IS NOT NULL"; // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
-			}
+		if ($id > 0) {
+			$sql .= " WHERE u.rowid = ".((int) $id);
 		} else {
-			// The fetch was forced on an entity
-			if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
-				$sql .= " WHERE u.entity IS NOT NULL"; // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
+			if ($entity < 0) {
+				if ((! isModEnabled('multicompany') || ! getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) && (! empty($user->entity))) {
+					$sql .= " WHERE u.entity IN (0, " . ((int) $conf->entity) . ")";
+				} else {
+					$sql .= " WHERE u.entity IS NOT NULL"; // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
+				}
 			} else {
-				if ($entity != '' && $entity == 0) {	// If $entity = 0
-					$sql .= " WHERE u.entity = 0";
-				} else {								// if $entity is -1 or > 0
-					$sql .= " WHERE u.entity IN (0, ".((int) ($entity > 0 ? $entity : $conf->entity)).")";
+				// The fetch was forced on an entity
+				if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
+					$sql .= " WHERE u.entity IS NOT NULL"; // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
+				} else {
+					if ($entity != '' && $entity == 0) {    // If $entity = 0
+						$sql .= " WHERE u.entity = 0";
+					} else {                                // if $entity is -1 or > 0
+						$sql .= " WHERE u.entity IN (0, " . ((int) ($entity > 0 ? $entity : $conf->entity)) . ")";
+					}
 				}
 			}
 		}
@@ -622,9 +626,8 @@ class User extends CommonObject
 			$sql .= ")";
 		} elseif ($fk_socpeople > 0) {
 			$sql .= " AND u.fk_socpeople = ".((int) $fk_socpeople);
-		} else {
-			$sql .= " AND u.rowid = ".((int) $id);
 		}
+
 		$sql .= " ORDER BY u.entity ASC"; // Avoid random result when there is 2 login in 2 different entities
 
 		if ($sid) {

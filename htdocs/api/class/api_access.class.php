@@ -124,7 +124,7 @@ class DolibarrApiAccess implements iAuthenticate
 			$api_key = preg_replace('/^Bearer\s+/i', '', empty($headers['Authorization']) ? '' : $headers['Authorization']);
 		};
 
-		$api_key = dol_string_nounprintableascii($api_key);
+		$api_key = dol_string_nounprintableascii($api_key, 1);
 
 		if (preg_match('/^dolcrypt:/i', $api_key)) {
 			throw new RestException(503, 'Bad value for the API key. An API key should not start with dolcrypt:');

@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (c) 2002-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
@@ -5823,7 +5822,7 @@ class Form
 	 * @param 	int<0,1>			$include 		[=0] Removed or 1=Keep only
 	 * @param 	string 				$morecss 		More CSS
 	 * @param	int<0,2>			$useempty		0=No empty value, 1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries. Default is 1.
-	 * @return	string|array<int,string>|array<int,array{id:int,fulllabel:string,color:string,picto:string}>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}>		String list or Array of categories
+	 * @return	string|array<int,string>|array<int,array{id:int,fulllabel:string,data-html?:string,color:string,picto:string}>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string,data-html?:string}>		String list or Array of categories
 	 * @see select_categories()
 	 */
 	public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $fromid = 0, $outputmode = 0, $include = 0, $morecss = '', $useempty = 1)
@@ -6188,8 +6187,8 @@ class Form
 
 			$formconfirm .= '
                     resizable: false,
-                    height: \'' . ((int) $height) . '\',
-                    width: \'' . ((int) $width) . '\',
+					height: \'' . dol_escape_js($height) . '\',
+                    width: \'' . dol_escape_js($width) . '\',
                     modal: true,
                     closeOnEscape: false,
                     buttons: {
@@ -9105,7 +9104,7 @@ class Form
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "product as p ON p.rowid = t.fk_product";
 		}
 		if (!empty($objecttmp->ismultientitymanaged)) {
-			if ($objecttmp->ismultientitymanaged == 1) {
+			if ($objecttmp->ismultientitymanaged == 1) {	// @phan-suppress-current-line PhanPluginEmptyStatementIf
 				// No need to join/link another table
 			}
 			if (!is_numeric($objecttmp->ismultientitymanaged)) {
@@ -9127,6 +9126,8 @@ class Form
 			$sql .= $hookmanager->resPrint;
 		} else {
 			$sql .= " WHERE 1=1";
+
+			// If table need a multientity restriction
 			if (!empty($objecttmp->ismultientitymanaged)) {
 				if ($objecttmp->ismultientitymanaged == 1) {
 					$sql .= " AND t.entity IN (" . getEntity($objecttmp->table_element) . ")";
@@ -9142,23 +9143,14 @@ class Form
 						$sql .= " WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 					}
 				}
-				// If user is external user, we also make a test on llx_societe_commerciaux
-				if (!empty($user->socid)) {
-					if ($objecttmp->ismultientitymanaged == 1) {
-						if ($objecttmp->element == 'societe') {
-							$sql .= " AND t.rowid = " . ((int) $user->socid);
-						} else {
-							$sql .= " AND t.fk_soc = " . ((int) $user->socid);
-						}
-					}
-					if (!is_numeric($objecttmp->ismultientitymanaged)) {
-						$sql .= " AND t." . $this->db->sanitize($tmparray[0])." = ".((int) $user->socid);
-					}
-					// If the parent table is llx_societe and user is an external user,
-					// then we must also check that user has permissions
-					if ($objecttmp->ismultientitymanaged === 'fk_soc@societe') {
-						$sql .= " AND t.fk_soc = ".((int) $user->socid);
-					}
+			}
+
+			// If user is external user, we must also make a test on llx_societe_commerciaux
+			if (!empty($user->socid)) {
+				if ($objecttmp->element == 'societe') {
+					$sql .= " AND t.rowid = " . ((int) $user->socid);
+				} elseif (!empty($objecttmp->fields['fk_soc']) || !empty($objecttmp->fields['t.fk_soc']) || property_exists($objecttmp, 'fk_soc') || property_exists($objecttmp, 'socid')) {
+					$sql .= " AND t.fk_soc = " . ((int) $user->socid);
 				}
 			}
 
@@ -10828,18 +10820,18 @@ class Form
 	/**
 	 * Return HTML code to output a photo
 	 *
-	 * @param string 	$modulepart 				Key to define module concerned ('societe', 'userphoto', 'memberphoto')
+	 * @param string 	$modulepart 						Key to define module concerned ('societe', 'userphoto', 'memberphoto')
 	 * @param Societe|Adherent|Contact|User|CommonObject	$object	Object containing data to retrieve file name
-	 * @param int 		$width 						Width of photo
-	 * @param int 		$height 					Height of photo (auto if 0)
-	 * @param int<0,1>	$caneditfield 				Add edit fields
-	 * @param string 	$cssclass 					CSS name to use on img for photo
-	 * @param string 	$imagesize 					'mini', 'small' or '' (original)
-	 * @param int<0,1>	$addlinktofullsize 			Add link to fullsize image
-	 * @param int<0,1>	$cache 						1=Accept to use image in cache
-	 * @param ''|'user'|'environment' 	$forcecapture 	'', 'user' or 'environment'. Force parameter capture on HTML input file element to ask a smartphone to allow to open camera to take photo. Auto if ''.
-	 * @param int<0,1>	$noexternsourceoverwrite 	No overwrite image with extern source (like 'gravatar' or other module)
-	 * @return string                            	HTML code to output photo
+	 * @param int 		$width 								Width of photo
+	 * @param int 		$height 							Height of photo (auto if 0)
+	 * @param int<0,1>	$caneditfield 						Add edit fields
+	 * @param string 	$cssclass 							CSS name to use on img for photo
+	 * @param string 	$imagesize 							'mini', 'small' or '' (original)
+	 * @param int<0,1>	$addlinktofullsize 					Add link to fullsize image
+	 * @param int<0,1>	$cache 								1=Accept to use image in cache
+	 * @param ''|'user'|'environment' 	$forcecapture 		'', 'user' (user-facing camera) or 'environment' ('outward-facing camera'). Force the parameter capture on HTML input file element to ask a smartphone to allow to open camera to take photo. Auto if ''.
+	 * @param int<0,1>	$noexternsourceoverwrite 			No overwrite image with extern source (like 'gravatar' or other module)
+	 * @return string                            			HTML code to output photo
 	 * @see getImagePublicURLOfObject()
 	 */
 	public static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '', $noexternsourceoverwrite = 0)
@@ -11017,7 +11009,7 @@ class Form
 				if ($maxmin > 0) {
 					$ret .= '<input type="hidden" name="MAX_FILE_SIZE" value="' . ($maxmin * 1024) . '">';    // MAX_FILE_SIZE must precede the field type=file
 				}
-				$ret .= '<input type="file" class="flat maxwidth200onsmartphone" name="photo" id="photoinput" accept="image/*"' . ($capture ? ' capture="' . $capture . '"' : '') . '>';
+				$ret .= '<input type="file" class="flat maxwidth200onsmartphone" name="photo" id="photoinput" accept="image/*"' . ($capture ? ' capture="' . dolPrintHTMLForAttribute($capture) . '"' : '') . '>';
 				$ret .= '</td></tr>';
 				$ret .= '</table>';
 			}

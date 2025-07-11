@@ -3638,7 +3638,7 @@ if ($action == 'create') {
 			if (GETPOST('calculationrule')) {
 				$calculationrule = GETPOST('calculationrule', 'alpha');
 			} else {
-				$calculationrule = (!getDolGlobalString('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND') ? 'totalofround' : 'roundoftotal');
+				$calculationrule = (!getDolGlobalString('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND_SUPPLIER') ? 'totalofround' : 'roundoftotal');
 			}
 			if ($calculationrule == 'totalofround') {
 				$calculationrulenum = 1;
