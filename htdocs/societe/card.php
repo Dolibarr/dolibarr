@@ -1032,11 +1032,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		}
 		// Prospect / Customer
 		if (GETPOST("type", 'aZ') == 'c') {
-			if (getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')) {
-				$object->client = getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT');
-			} else {
-				$object->client = 3;
-			}
+			$object->client = 1;
 		}
 		if (GETPOST("type", 'aZ') == 'p') {
 			$object->client = 2;
@@ -1449,8 +1445,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			// Prospect/Customer/Supplier
 			$selected = $object->client;
-			$selectedcustomer = (GETPOST("type", 'aZ') != 'p' && GETPOST("type", 'aZ') != 'f' && getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')==1 || getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')==3 && GETPOST("type", 'aZ') != 'p' && GETPOST("type", 'aZ') != 'f' ? 1 : 0);
-			$selectedprospect = (GETPOST("type", 'aZ') != 'c' && GETPOST("type", 'aZ') != 'f' && getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')==2 || getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')==3 && GETPOST("type", 'aZ') != 'c' && GETPOST("type", 'aZ') != 'f' ? 1 : 0);
+			$selectedcustomer = ((getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')==1 && GETPOST("type", 'aZ') != 'p' && GETPOST("type", 'aZ') != 'f') || (getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')==3 && GETPOST("type", 'aZ') != 'p' && GETPOST("type", 'aZ')) != 'f' ? 1 : 0);
+			$selectedprospect = ((getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')==2 && GETPOST("type", 'aZ') != 'c' && GETPOST("type", 'aZ') != 'f') || (getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')==3 && GETPOST("type", 'aZ') != 'c' && GETPOST("type", 'aZ')) != 'f' ? 1 : 0);
 			switch ($selected) {
 				case 1:
 					$selectedcustomer = 1;
