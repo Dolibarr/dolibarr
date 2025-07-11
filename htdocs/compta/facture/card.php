@@ -904,7 +904,7 @@ if (empty($reshook)) {
 			if (isModEnabled('tax') && $close_code == 'withholdingtax') {
 				require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 				$resteapayer = GETPOSTFLOAT("resteapayer");
-				$amount = (double) ($resteapayer > 0 ? $resteapayer * -1 : $resteapayer);				
+				$amount = (double) ($resteapayer > 0 ? $resteapayer * -1 : $resteapayer);
 				if ($amount < 0) {
 					$db->begin();
 					$tempTva = new Tva($db);
