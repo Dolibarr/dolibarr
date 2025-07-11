@@ -208,12 +208,12 @@ if (!$user->admin) {
  * Actions
  */
 // Handle form submission to update constants
-if ($action == 'update' && empty($_POST['cancel'])) {
+if ($action == 'update') {
 	$nbdone = 0;
 	$error = 0;
 
 	// Loop through the data structure to find all possible constants to save.
-	foreach ($arrayofparameters as $title => $tab) {
+	foreach ($arrayofparameters as $tab) {
 		foreach ($tab as $logicalKey => $val) {
 			// Iterate through defined actions ('anonymize', 'delete') for the entity.
 			foreach ($val['config_keys'] as $actionType => $constKey) {
@@ -329,7 +329,7 @@ if ($action == 'edit') {
 	print '</table>';
 	print '</div>';
 
-	print $form->buttonsSaveCancel("Save", 'cancel');
+	print $form->buttonsSaveCancel("Save", '');
 
 	print '</form>';
 	print '<br>';

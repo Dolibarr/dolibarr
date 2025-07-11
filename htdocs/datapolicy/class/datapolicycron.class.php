@@ -59,7 +59,7 @@ class DataPolicyCron
 	 * Orchestrates the data cleaning process by iterating through all defined policies.
 	 * @return int Returns 0 for success, 1 for failure, as required for cron jobs.
 	 */
-	public function cleanDataForDataPolicy()
+	public function cleanDataForDataPolicy() : int
 	{
 		global $conf, $user;
 
@@ -80,7 +80,7 @@ class DataPolicyCron
 		$this->db->begin();
 
 		// Iterate through each defined policy to apply its rules.
-		foreach ($dataPolicies as $policyKey => $policy) {
+		foreach ($dataPolicies as $policy) {
 			// Instantiate object only once per class type for efficiency.
 			if (! isset($objectInstances[$policy['class']])) {
 				require_once $policy['file'];
@@ -118,7 +118,7 @@ class DataPolicyCron
 	 * @param User $user The user object for history tracking.
 	 * @return void
 	 */
-	private function _processPolicyAction($policy, $action, $object, &$processedIds, $conf, $user)
+	private function _processPolicyAction($policy, $action, $object, &$processedIds, $conf, $user) : void
 	{
 		$constName = $policy['const_' . $action] ?? null;
 		$delay = $constName ? getDolGlobalInt($constName) : 0;
@@ -177,7 +177,7 @@ class DataPolicyCron
 	 * @param array<string, mixed> $policy The policy configuration.
 	 * @return int   The result of the delete operation.
 	 */
-	private function _handleDelete($object, $user, $policy)
+	private function _handleDelete($object, $user, $policy): int
 	{
 		$callArgs = $this->_buildCallArguments($object, $user, $policy, 'delete');
 
@@ -192,7 +192,7 @@ class DataPolicyCron
 	 * @param array<string, mixed> $policy The policy configuration.
 	 * @return int   The result of the update operation, or 0 if skipped.
 	 */
-	private function _handleAnonymize($object, $user, $policy)
+	private function _handleAnonymize($object, $user, $policy) : int
 	{
 		foreach ($policy['anonymize_fields'] as $field => $val) {
 			$object->$field = ($val == 'MAKEANONYMOUS') ? $field . '-anonymous-' . $object->id : $val;
@@ -234,7 +234,7 @@ class DataPolicyCron
 	 * @param string $action The action that was performed ('delete' or 'anonymize').
 	 * @return void
 	 */
-	private function _recordActionResult($result, $object, $action)
+	private function _recordActionResult($result, $object, $action) : void
 	{
 		if ($result <= 0) {
 			$this->errorCount++;
@@ -254,7 +254,7 @@ class DataPolicyCron
 	 * Separating this makes the main method cleaner.
 	 * @return array<string, array<string, mixed>> The array of all data policies.
 	 */
-	private function _getDataPolicies()
+	private function _getDataPolicies() : array
 	{
 		$prefix = $this->db->prefix();
 
