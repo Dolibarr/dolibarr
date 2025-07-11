@@ -6,6 +6,7 @@
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -984,7 +985,7 @@ class Tva extends CommonObject
 		$id = 0;
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
-		$sql .= " WHERE t.label = '".$label."'";
+		$sql .= " WHERE t.label = '".$this->db->escape($label)."'";
 
 		dol_syslog(get_class($this)."::getIdForLabel", LOG_DEBUG);
 		$result = $this->db->query($sql);
