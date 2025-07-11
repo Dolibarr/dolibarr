@@ -370,7 +370,11 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 	<?php echo dol_escape_htmltag((string) $enabled); ?>
 <?php } ?>
 </td></tr>
-
+<?php
+$parameters = [];
+$hookmanager->executeHooks('formObjectOptions', $parameters, $extrafields, $action); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+?>
 </table>
 
 <?php print dol_get_fiche_end(); ?>

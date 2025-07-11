@@ -1011,7 +1011,8 @@ class ExtraFields
 	public function fetch_name_optionals_label($elementtype, $forceload = false, $attrname = '')
 	{
 		// phpcs:enable
-		global $conf;
+		global $conf, $hookmanager;
+		$hookmanager->initHooks(array('extrafieldsdao'));
 
 		if (empty($elementtype)) {
 			return array();
@@ -1036,7 +1037,12 @@ class ExtraFields
 		// We should not have several time this request. If we have, there is some optimization to do by calling a simple $extrafields->fetch_optionals() in top of code and not into subcode
 		$sql = "SELECT rowid, name, label, type, size, elementtype, fieldunique, fieldrequired, param, pos, alwayseditable, perms, langs, list, printable, totalizable, fielddefault, fieldcomputed, entity, enabled, help, aiprompt,";
 		$sql .= " css, cssview, csslist";
+		$parameters = ['elementtype' => $elementtype, 'forceload' => $forceload, 'attrname' => $attrname];
+		$hookmanager->executeHooks('printExtrafieldsSelect', $parameters, $this, $action);
+		$sql .= $hookmanager->resPrint;
 		$sql .= " FROM ".$this->db->prefix()."extrafields";
+		$hookmanager->executeHooks('printExtrafieldsFrom', $parameters, $this, $action);
+		$sql .= $hookmanager->resPrint;
 		//$sql.= " WHERE entity IN (0,".$conf->entity.")";    // Filter is done later
 		if ($elementtype && $elementtype != 'all') {
 			$sql .= " WHERE elementtype = '".$this->db->escape($elementtype)."'"; // Filed with object->table_element
@@ -1044,6 +1050,8 @@ class ExtraFields
 		if ($attrname && $elementtype && $elementtype != 'all') {
 			$sql .= " AND name = '".$this->db->escape($attrname)."'";
 		}
+		$hookmanager->executeHooks('printExtrafieldsWhere', $parameters, $this, $action);
+		$sql .= $hookmanager->resPrint;
 		$sql .= " ORDER BY pos";
 
 		$resql = $this->db->query($sql);
@@ -1088,7 +1096,11 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['css'][$tab->name] = $tab->css;
 					$this->attributes[$tab->elementtype]['cssview'][$tab->name] = $tab->cssview;
 					$this->attributes[$tab->elementtype]['csslist'][$tab->name] = $tab->csslist;
-
+					$parameters = array('tab' => $tab);
+					$reshook = $hookmanager->executeHooks('loadExtrafieldsAttributes', $parameters, $this, $action);
+					if ($reshook > 0) {
+						$this->attributes[$tab->elementtype] = $hookmanager->resArray[$tab->elementtype];
+					}
 					$this->attributes[$tab->elementtype]['loaded'] = 1;
 					$count++;
 				}

@@ -103,6 +103,9 @@ print '<td class="center">'.$form->textwithpicto($langs->trans("CssOnList"), $la
 if (isModEnabled('multicompany')) {
 	print '<td class="center">'.$langs->trans("Entity").'</td>';
 }
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td width="80">&nbsp;</td>';
@@ -196,6 +199,10 @@ if (isset($extrafields->attributes[$elementtype]['type']) && is_array($extrafiel
 			}
 			print '</td>';
 		}
+
+		$parameters = array('key' => $key, 'value' => $value);
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $extrafields, $action); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
 		// Actions
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="right nowraponall">';

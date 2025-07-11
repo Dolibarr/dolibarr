@@ -282,6 +282,12 @@ print $formadmin->selectTypeOfFields('type', GETPOST('type', 'alpha'));
 	<!-- Multicompany entity -->
 	<tr><td><?php echo $langs->trans("AllEntities"); ?></td><td class="valeur"><input id="entitycurrentorall" type="checkbox" name="entitycurrentorall"<?php echo(GETPOST('entitycurrentorall', 'alpha') ? ' checked' : ''); ?>></td></tr>
 <?php } ?>
+
+<?php
+$parameters = [];
+$hookmanager->executeHooks('formObjectOptions', $parameters, $extrafields, $action); // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+?>
 </table>
 
 <?php print dol_get_fiche_end(); ?>
