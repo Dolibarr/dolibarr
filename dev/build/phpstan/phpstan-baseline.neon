@@ -9061,12 +9061,6 @@ parameters:
 			path: ../../../htdocs/core/customreports.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/core/customreports.php
-
-		-
 			message: '#^Variable \$page might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
