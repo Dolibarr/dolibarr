@@ -14,15 +14,19 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- Table of 'analytic axis' for accountancy module
+-- Table of 'analytic account' for accountancy module
 -- ============================================================================
 
-CREATE TABLE llx_c_accounting_analytic_axis (
+CREATE TABLE llx_c_accounting_analytic_account (
     rowid               integer         AUTO_INCREMENT PRIMARY KEY,
     label               varchar(255)    NOT NULL,
     code                varchar(32)     NOT NULL UNIQUE,
+    description			text,
+    fk_axis				integer			NOT NULL,
     active              integer         DEFAULT 1,
     entity              integer         DEFAULT 1 NOT NULL,
+    date_start			date,
+    date_end			date,
     datec               datetime,
     tms                 timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     fk_user_author      integer         NOT NULL,

@@ -14,18 +14,20 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- Table of 'analytic axis' for accountancy module
+-- Table of 'analytic distribution' for accountancy module
 -- ============================================================================
 
-CREATE TABLE llx_c_accounting_analytic_axis (
-    rowid               integer         AUTO_INCREMENT PRIMARY KEY,
-    label               varchar(255)    NOT NULL,
-    code                varchar(32)     NOT NULL UNIQUE,
-    active              integer         DEFAULT 1,
-    entity              integer         DEFAULT 1 NOT NULL,
-    datec               datetime,
-    tms                 timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    fk_user_author      integer         NOT NULL,
-    fk_user_modif       integer,
-    import_key          varchar(14)
+CREATE TABLE llx_accounting_analytic_distribution (
+	rowid				integer			AUTO_INCREMENT PRIMARY KEY,
+	fk_source_line		integer			NOT NULL,		-- id de la ligne source (facture, écriture, etc.)
+	sourcetype			varchar(32)		NOT NULL,		-- ex: 'facturedet', 'accounting_line'
+	fk_analytic_account integer			NOT NULL,
+	percentage			real			DEFAULT 100,	-- ex: 50.0 pour 50%
+	amount				double(24,8),					-- optional, if you prefer to work on the amount
+	entity				integer			DEFAULT 1,
+	datec               datetime,
+	tms                 timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_user_author      integer         NOT NULL,
+	fk_user_modif       integer,
+	import_key          varchar(14)
 )ENGINE=innodb;
