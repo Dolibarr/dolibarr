@@ -198,7 +198,10 @@ $sql .= " ORDER BY b.datev";
 
 // Preload payment account codes by payment type from c_paiement
 $accountancy_code_by_payment = array();
-$sql2 = "SELECT code, accountancy_code FROM ".MAIN_DB_PREFIX."c_paiement";
+$sql2 = "SELECT code, accountancy_code";
+$sql2 .= " FROM ".MAIN_DB_PREFIX."c_paiement";
+$sql2 .= " WHERE entity IN (".getEntity('c_paiement').")";
+$sql2 .= " AND active = 1";
 $resql = $db->query($sql2);
 if ($resql) {
 	while ($objp = $db->fetch_object($resql)) {
