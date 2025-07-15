@@ -66,7 +66,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	 print $nvpStr;
 	 exit;*/
 	curl_setopt($ch, CURLOPT_VERBOSE, 1);
-	curl_setopt($ch, CURLOPT_USERAGENT, 'Dolibarr geturl function');
+	curl_setopt($ch, CURLOPT_USERAGENT, 'Dolibarr geturl function');	// set the Dolibarr user agent name
 
 	// We use @ here because this may return warning if safe mode is on or open_basedir is on (following location is forbidden when safe mode is on).
 	// We force value to false so we will manage redirection ourself later.
