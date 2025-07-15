@@ -42,6 +42,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
 class doc_generic_bom_odt extends ModelePDFBom
 {
 	/**
+	 * @var array{0:int,1:int} Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 7.0 = array(7, 0)
+	 */
+	public $phpmin = array(7, 0);
+
+	/**
 	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental' Dolibarr version of the loaded document
 	 */
 	public $version = 'dolibarr';
@@ -54,7 +60,7 @@ class doc_generic_bom_odt extends ModelePDFBom
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("main", "companies"));
@@ -74,7 +80,7 @@ class doc_generic_bom_odt extends ModelePDFBom
 		$this->marge_haute = 0;
 		$this->marge_basse = 0;
 
-		$this->option_multilang = 1; // Dispo en plusieurs langues
+		$this->option_multilang = 1; // Available in several languages
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 0; // Support add of a watermark on drafts
 
@@ -98,12 +104,14 @@ class doc_generic_bom_odt extends ModelePDFBom
 	 */
 	public function info($langs)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("errors", "companies"));
 
 		$form = new Form($this->db);
+
+		$odtPath = trim(getDolGlobalString('BOM_ADDON_PDF_ODT_PATH'));
 
 		$texte = $this->description.".<br>\n";
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
@@ -111,12 +119,13 @@ class doc_generic_bom_odt extends ModelePDFBom
 		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="BOM_ADDON_PDF_ODT_PATH">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		// List of directories area
 		$texte .= '<tr><td>';
 		$texttitle = $langs->trans("ListOfDirectories");
-		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim($conf->global->BOM_ADDON_PDF_ODT_PATH)));
+		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', $odtPath));
 		$listoffiles = array();
 		foreach ($listofdir as $key => $tmpdir) {
 			$tmpdir = trim($tmpdir);
@@ -140,18 +149,9 @@ class doc_generic_bom_odt extends ModelePDFBom
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
 
-		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
-		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
-		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
-		$texte .= getDolGlobalString('BOM_ADDON_PDF_ODT_PATH');
-		$texte .= '</textarea>';
-		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.$langs->trans("Modify").'">';
-		$texte .= '<br></div></div>';
-
 		// Scan directories
 		$nbofiles = count($listoffiles);
-		if (getDolGlobalString('BOM_ADDON_PDF_ODT_PATH')) {
+		if ($odtPath) {
 			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= count($listoffiles);
@@ -169,6 +169,22 @@ class doc_generic_bom_odt extends ModelePDFBom
 			}
 			$texte .= '</div>';
 		}
+
+		if (!getDolGlobalString('MAIN_NO_MULTIDIR_FOR_ODT')) {
+			$texte .= '<br>';
+			$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
+			$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
+			$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
+			$texte .= $odtPath;
+			$texte .= '</textarea>';
+			$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
+			$texte .= '<input type="submit" class="button button-edit smallpaddingimp reposition" name="modify" value="'.dolPrintHTMLForAttribute($langs->trans("Modify")).'">';
+			$texte .= '<br></div></div>';
+		} else {
+			$texte .= '<br>';
+			$texte .= '<input type="hidden" name="value1" value="MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH">';
+		}
+
 		// Add input to upload a new template file.
 		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
 		$maxfilesizearray = getMaxFileSizeArray();
@@ -178,7 +194,7 @@ class doc_generic_bom_odt extends ModelePDFBom
 		}
 		$texte .= ' <input type="file" name="uploadfile">';
 		$texte .= '<input type="hidden" value="BOM_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
-		$texte .= '<input type="submit" class="button reposition smallpaddingimp" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+		$texte .= '<input type="submit" class="button smallpaddingimp reposition" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
 		$texte .= '</div>';
 
 		$texte .= '</td>';
@@ -195,7 +211,7 @@ class doc_generic_bom_odt extends ModelePDFBom
 	/**
 	 *  Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param		BOM			$object				Object source to build document
+	 *	@param		BOM			$object				Source object to generate document from
 	 *	@param		Translate	$outputlangs		Lang output object
 	 * 	@param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int<0,1>	$hidedetails		Do not show line details
@@ -207,6 +223,7 @@ class doc_generic_bom_odt extends ModelePDFBom
 	{
 		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $hookmanager;
+		global $action;
 
 		if (empty($srctemplatepath)) {
 			dol_syslog("doc_generic_odt::write_file parameter srctemplatepath empty", LOG_WARNING);
@@ -227,7 +244,6 @@ class doc_generic_bom_odt extends ModelePDFBom
 		$sav_charset_output = $outputlangs->charset_output;
 		$outputlangs->charset_output = 'UTF-8';
 
-		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
 		if ($conf->bom->dir_output) {
@@ -288,7 +304,7 @@ class doc_generic_bom_odt extends ModelePDFBom
 					return -1;
 				}
 
-				// If CUSTOMER contact defined on order, we use it
+				// If CUSTOMER contact defined on object, we use it
 				$usecontact = false;
 				$arrayidcontact = $object->getIdContact('external', 'CUSTOMER');
 				if (count($arrayidcontact) > 0) {
@@ -387,13 +403,15 @@ class doc_generic_bom_odt extends ModelePDFBom
 
 				foreach ($tmparray as $key => $value) {
 					try {
-						if (preg_match('/logo$/', $key)) { // Image
+						if (preg_match('/logo$/', $key)) {
+							// Image
 							if (file_exists($value)) {
 								$odfHandler->setImage($key, $value, $ratio);
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
-						} else { // Text
+						} else {
+							// Text
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					} catch (OdfException $e) {

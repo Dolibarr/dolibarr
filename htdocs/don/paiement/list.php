@@ -87,6 +87,8 @@ if (!$sortfield) {
 
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
+$object = new Don($db);
+
 $morejs = array();
 $morecss = array();
 
@@ -163,7 +165,6 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
-$donationstatic = new Don($db);
 $companystatic = new Societe($db);
 $bankline = new AccountLine($db);
 $accountstatic = new Account($db);
@@ -471,7 +472,7 @@ if (!empty($arrayfields['c.code']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['pd.num_paiement']['checked'])) {
-	print_liste_field_titre($arrayfields['pd.num_paiement']['label'], $_SERVER["PHP_SELF"], "pd.num_payment", '', $param, '', $sortfield, $sortorder, '', $arrayfields['p.num_paiement']['tooltip']);
+	print_liste_field_titre($arrayfields['pd.num_paiement']['label'], $_SERVER["PHP_SELF"], "pd.num_payment", '', $param, '', $sortfield, $sortorder, '', $arrayfields['pd.num_paiement']['tooltip']);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['transaction']['checked'])) {
@@ -565,7 +566,7 @@ while ($i < $imaxinloop) {
 		if ($obj->soc_id > 0) {
 			print $companystatic->getNomUrl(1, '', 24);
 		} else {
-			print $donationstatic->societe = $obj->societe;
+			print $object->societe = $obj->societe;
 		}
 		print '</td>';
 		if (!$i) {

@@ -9,6 +9,7 @@
  * Copyright (C) 2020		Ahmad Jamaly Rabub		<rabib@metroworks.co.jp>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025  		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -207,7 +208,7 @@ class modCommande extends DolibarrModules
 			'co.code' => "CountryCode", 's.phone' => 'Phone', 's.siren' => 'ProfId1', 's.siret' => 'ProfId2', 's.ape' => 'ProfId3', 's.idprof4' => 'ProfId4', 'c.rowid' => "Id",
 			'c.ref' => "Ref", 'c.ref_client' => "RefCustomer", 'c.fk_soc' => "IdCompany", 'c.date_creation' => "DateCreation", 'c.date_commande' => "OrderDate",
 			'c.date_livraison' => "DateDeliveryPlanned", 'c.amount_ht' => "Amount", 'c.total_ht' => "TotalHT",
-			'c.total_ttc' => "TotalTTC", 'c.facture' => "Billed", 'c.fk_statut' => 'Status', 'c.note_public' => "Note", 'sm.code' => 'SendingMethod',
+			'c.total_ttc' => "TotalTTC", 'c.facture' => "Billed", 'c.fk_statut' => 'Status', 'c.note_public' => "NotePublic", 'c.note_private' => "NotePrivate", 'sm.code' => 'SendingMethod',
 			'c.fk_user_author' => 'CreatedById', 'uc.login' => 'CreatedByLogin', 'c.fk_user_valid' => 'ValidatedById', 'uv.login' => 'ValidatedByLogin',
 			'pj.ref' => 'ProjectRef', 'cd.rowid' => 'LineId', 'cd.description' => "LineDescription", 'cd.product_type' => 'TypeOfLineServiceOrProduct',
 			'cd.tva_tx' => "LineVATRate", 'cd.qty' => "LineQty", 'cd.total_ht' => "LineTotalHT", 'cd.total_tva' => "LineTotalVAT", 'cd.total_ttc' => "LineTotalTTC",
@@ -240,7 +241,7 @@ class modCommande extends DolibarrModules
 			's.nom' => 'Text', 'ps.nom' => 'Text', 's.name_alias' => 'Text', 's.code_client' => 'Text', 's.address' => 'Text', 's.zip' => 'Text', 's.town' => 'Text', 'co.label' => 'List:c_country:label:label', 'co.code' => 'Text', 's.phone' => 'Text',
 			's.siren' => 'Text', 's.siret' => 'Text', 's.ape' => 'Text', 's.idprof4' => 'Text', 'c.ref' => "Text", 'c.ref_client' => "Text", 'c.date_creation' => "Date",
 			'c.date_commande' => "Date", 'c.date_livraison' => "Date", 'sm.code' => "Text", 'c.amount_ht' => "Numeric", 'c.total_ht' => "Numeric",
-			'c.total_ttc' => "Numeric", 'c.facture' => "Boolean", 'c.fk_statut' => 'Status', 'c.note_public' => "Text", 'pj.ref' => 'Text',
+			'c.total_ttc' => "Numeric", 'c.facture' => "Boolean", 'c.fk_statut' => 'Status', 'c.note_public' => "Text", 'c.note_private' => "Text", 'pj.ref' => 'Text',
 			'cd.description' => "Text", 'cd.product_type' => 'Boolean', 'cd.tva_tx' => "Numeric", 'cd.qty' => "Numeric", 'cd.total_ht' => "Numeric", 'cd.total_tva' => "Numeric",
 			'cd.total_ttc' => "Numeric", 'p.rowid' => 'List:product:ref::product', 'p.ref' => 'Text', 'p.label' => 'Text', 'd.nom' => 'Text',
 			'c.entity' => 'List:entity:label:rowid',

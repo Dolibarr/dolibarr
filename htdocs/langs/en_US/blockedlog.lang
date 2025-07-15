@@ -60,3 +60,4 @@ logPAYMENT_VARIOUS_CREATE=Payment (not assigned to an invoice) created
 logPAYMENT_VARIOUS_DELETE=Payment (not assigned to an invoice) logical deletion
 logPAYMENT_VARIOUS_MODIFY=Payment (not assigned to an invoice) modified
 logBLOCKEDLOG_EXPORT=Export of unalterable logs into a file
+DebugInfo=Debug info

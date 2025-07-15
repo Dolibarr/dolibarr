@@ -90,7 +90,7 @@ if (!$sortorder) {
 	$sortorder = "DESC";
 }
 if (!$sortfield) {
-	$sortfield = "cp.ref";
+	$sortfield = "cp.date_debut";
 }
 
 $search_all          = trim(GETPOST('search_all', 'alphanohtml'));

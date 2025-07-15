@@ -5962,6 +5962,13 @@ div#ui-datepicker-div {
 	background: unset;
 }
 
+/* the button Previous / Next month */
+.ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next {
+	width: 2.5em;
+	height: 2.7em;
+}
+
+
 img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 
 select.ui-datepicker-year {
@@ -7793,6 +7800,9 @@ dd.dropdowndd ul li {
 	white-space: nowrap;
 }
 
+div.kanban.column div.ui-sortable-helper {
+	transform: rotate(4deg);
+}
 
 /* ============================================================================== */
 /*  Markdown rendering                                                             */

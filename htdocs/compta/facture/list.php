@@ -2334,7 +2334,7 @@ if ($num > 0) {
 
 				print '<td class="nobordernopadding nowraponall">';
 				if ($contextpage == 'poslist') {
-					print dol_escape_htmltag($obj->ref);
+					print dolPrintHTML($obj->ref);
 				} else {
 					print $facturestatic->getNomUrl(1, '', 200, 0, '', 0, 1);
 				}
