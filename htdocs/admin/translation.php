@@ -649,7 +649,7 @@ if ($mode == 'searchkey') {
 			$titleforvalue .= '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 		}
 		print '<span title="'.dolPrintHTMLForAttribute($titleforvalue).'" class="classfortooltip">';
-		print dolPrintHTML($val);
+		print dol_escape_htmltag($val);
 		if (substr_count($langsenfileonly->tab_translate[$key], '%s') > 4) {
 			print '<br><div class="warning">Error, more than 4 %s in the source</div>';
 		}
