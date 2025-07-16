@@ -115,7 +115,7 @@ $enablepermissioncheck = getDolGlobalInt('WEBHOOK_ENABLE_PERMISSION_CHECK');
 if ($enablepermissioncheck) {
 	$permissiontoread = $user->hasRight('webhook', 'triggerhistory', 'read');
 	$permissiontoadd = $user->hasRight('webhook', 'triggerhistory', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-	$permissiontodelete = $user->hasRight('webhook', 'triggerhistory', 'delete') || ($permissiontoadd && isset($object->status));
+	$permissiontodelete = $user->hasRight('webhook', 'triggerhistory', 'delete') || $permissiontoadd;
 	$permissionnote = $user->hasRight('webhook', 'triggerhistory', 'write'); // Used by the include of actions_setnotes.inc.php
 	$permissiondellink = $user->hasRight('webhook', 'triggerhistory', 'write'); // Used by the include of actions_dellink.inc.php
 } else {
@@ -126,7 +126,7 @@ if ($enablepermissioncheck) {
 	$permissiondellink = 1;
 }
 
-$upload_dir = $conf->webhook->multidir_output[isset($object->entity) ? $object->entity : 1].'/triggerhistory';
+$upload_dir = $conf->webhook->multidir_output[!empty($object->entity) ? $object->entity : 1].'/triggerhistory';
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();
@@ -570,17 +570,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$includedocgeneration = 0;
 
-		// Documents
-		if ($includedocgeneration) {
-			$objref = dol_sanitizeFileName($object->ref);
-			$relativepath = $objref.'/'.$objref.'.pdf';
-			$filedir = $conf->webhook->dir_output.'/'.$object->element.'/'.$objref;
-			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-			$genallowed = $permissiontoread; // If you can read, you can build the PDF to read content
-			$delallowed = $permissiontoadd; // If you can create/edit, you can remove a file on card
-			print $formfile->showdocuments('webhook:', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
-		}
-
 		// Show links to link elements
 		$tmparray = $form->showLinkToObjectBlock($object, array(), array('triggerhistory'), 1);
 		if (is_array($tmparray)) {
@@ -609,11 +598,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		print '</div></div>';
-	}
-
-	//Select mail models is same action as presend
-	if (GETPOST('modelselected')) {
-		$action = 'presend';
 	}
 
 	// Presend form
