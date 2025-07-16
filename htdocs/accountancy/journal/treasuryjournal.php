@@ -367,7 +367,7 @@ if ($resql) {
 						// Add object in payment
 						if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
 							$tabpay[$obj->fk_bank]['objects'][$object_key] = array(
-								'amount' => $obj->amount_payment,
+								'amount' => -$obj->amount_payment,
 								'bu_url_id' => $obj->bu_url_id,
 							);
 						}
@@ -1005,7 +1005,7 @@ if ($resql) {
 						// Add object in payment
 						if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
 							$tabpay[$obj->fk_bank]['objects'][$object_key] = array(
-								'amount' => -$obj->amount_payment,
+								'amount' => $obj->amount_payment,
 								'bu_url_id' => $obj->bu_url_id,
 							);
 						}
