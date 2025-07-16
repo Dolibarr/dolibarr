@@ -30,6 +30,8 @@
  * - you can set MAIN_SECURITY_ANTI_SSRF_SERVER_IP to set static ip of server
  * - common local lookup ips like 127.*.*.* are automatically added
  *
+ * You can enable constant MAIN_CURL_DEBUG to get detail of output/input into dolibarr_curl.logfile.
+ *
  * @param	string	  	$url 			    URL to call.
  * @param	'POST'|'GET'|'HEAD'|'PUT'|'PUTALREADYFORMATED'|'POSTALREADYFORMATED'|'DELETE'	$postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'DELETE'
  * @param	string    	$param			    Parameters of URL (x=value1&y=value2) or may be a formatted content with $postorget='PUTALREADYFORMATED'
@@ -44,13 +46,12 @@
  */
 function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array(), $allowedschemes = array('http', 'https'), $localurl = 0, $ssl_verifypeer = -1, $timeoutconnect = 0, $timeoutresponse = 0)
 {
-	//declaring of global variables
-	global $conf;
-	$USE_PROXY = !getDolGlobalString('MAIN_PROXY_USE') ? 0 : $conf->global->MAIN_PROXY_USE;
-	$PROXY_HOST = !getDolGlobalString('MAIN_PROXY_HOST') ? 0 : $conf->global->MAIN_PROXY_HOST;
-	$PROXY_PORT = !getDolGlobalString('MAIN_PROXY_PORT') ? 0 : $conf->global->MAIN_PROXY_PORT;
-	$PROXY_USER = !getDolGlobalString('MAIN_PROXY_USER') ? 0 : $conf->global->MAIN_PROXY_USER;
-	$PROXY_PASS = !getDolGlobalString('MAIN_PROXY_PASS') ? 0 : $conf->global->MAIN_PROXY_PASS;
+	// Get global variables for proxy use
+	$USE_PROXY = getDolGlobalInt('MAIN_PROXY_USE');
+	$PROXY_HOST = getDolGlobalString('MAIN_PROXY_HOST');
+	$PROXY_PORT = getDolGlobalInt('MAIN_PROXY_PORT');
+	$PROXY_USER = getDolGlobalString('MAIN_PROXY_USER');
+	$PROXY_PASS = getDolGlobalString('MAIN_PROXY_PASS');
 
 	dol_syslog("getURLContent postorget=".$postorget." URL=".$url." param=".$param);
 
