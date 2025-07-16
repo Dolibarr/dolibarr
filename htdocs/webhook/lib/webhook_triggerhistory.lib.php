@@ -46,12 +46,12 @@ function triggerhistoryPrepareHead($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	if ($showtabofpagecontact) {
+	/*if ($showtabofpagecontact) {
 		$head[$h][0] = dol_buildpath("/webhook/history_contact.php", 1).'?id='.$object->id;
 		$head[$h][1] = $langs->trans("Contacts");
 		$head[$h][2] = 'contact';
 		$h++;
-	}
+	}*/
 
 	if ($showtabofpagenote) {
 		if (isset($object->fields['note_public']) || isset($object->fields['note_private'])) {
@@ -72,7 +72,7 @@ function triggerhistoryPrepareHead($object)
 		}
 	}
 
-	if ($showtabofpagedocument) {
+	/*if ($showtabofpagedocument) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 		$upload_dir = $conf->webhook->dir_output."/triggerhistory/".dol_sanitizeFileName($object->ref);
@@ -92,7 +92,7 @@ function triggerhistoryPrepareHead($object)
 		$head[$h][1] = $langs->trans("Events");
 		$head[$h][2] = 'agenda';
 		$h++;
-	}
+	}*/
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line

@@ -676,9 +676,7 @@ class TriggerHistory extends CommonObject
 			$return .= '<br>';
 			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
 		}*/
-		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
-		}
+		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
@@ -831,45 +829,6 @@ class TriggerHistory extends CommonObject
 			$this->lines = $result;
 			return $this->lines;
 		}
-	}
-
-	/**
-	 *  Create a document onto disk according to template module.
-	 *
-	 *  @param	string		$modele			Force template to use ('' to not force)
-	 *  @param	Translate	$outputlangs	object lang a utiliser pour traduction
-	 *  @param	int<0,1>	$hidedetails    Hide details of lines
-	 *  @param	int<0,1>	$hidedesc       Hide description
-	 *  @param	int<0,1>	$hideref        Hide ref
-	 *  @param	?array<string,string>  $moreparams     Array to provide more information
-	 *  @return	int         				0 if KO, 1 if OK
-	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
-	{
-		global $langs;
-
-		$result = 0;
-		$includedocgeneration = 0;
-
-		$langs->load("webhook@webhook");
-
-		if (!dol_strlen($modele)) {
-			$modele = 'standard_history';
-
-			if (!empty($this->model_pdf)) {
-				$modele = $this->model_pdf;
-			} elseif (getDolGlobalString('MYOBJECT_ADDON_PDF')) {
-				$modele = getDolGlobalString('MYOBJECT_ADDON_PDF');
-			}
-		}
-
-		$modelpath = "core/modules/webhook/doc/";
-
-		if ($includedocgeneration && !empty($modele)) {
-			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
-		}
-
-		return $result;
 	}
 
 	/**
