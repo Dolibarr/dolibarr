@@ -1610,6 +1610,7 @@ if (empty($reshook)) {
 			$res = $product->fetch($productid);
 
 			$type = $product->type;
+			$price_base_type = $product->price_base_type;
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
 			$price_min = $product->price_min;
@@ -1624,18 +1625,26 @@ if (empty($reshook)) {
 			//var_dump(price2num($price_min)); var_dump(price2num($pu_ht)); var_dump($remise_percent);
 			//var_dump(price2num($price_min_ttc)); var_dump(price2num($pu_ttc)); var_dump($remise_percent);exit;
 
+			if ($pu_equivalent_ttc && !$pu_equivalent) {
+					$price_base_type = 'TTC';
+				}
+				
 			// Check price is not lower than minimum
 			if ($usermustrespectpricemin) {
-				if ($pu_equivalent && $price_min && (((float) price2num($pu_equivalent) * (1 - (float) $remise_percent / 100)) < (float) price2num($price_min)) && $price_base_type == 'HT') {
+			    
+				if ($pu_equivalent && $price_min && (( price2num($pu_equivalent) * (1 -  $remise_percent / 100)) <  price2num($price_min)) && $price_base_type == 'HT') {
 					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
 					$action = 'editline';
-				} elseif ($pu_equivalent_ttc && $price_min_ttc && (((float) price2num($pu_equivalent_ttc) * (1 - (float) $remise_percent / 100)) < (float) price2num($price_min_ttc)) && $price_base_type == 'TTC') {
+				} elseif ($pu_equivalent_ttc && $price_min_ttc && (( price2num($pu_equivalent_ttc) * (1 -  $remise_percent / 100)) <  price2num($price_min_ttc)) && $price_base_type == 'TTC') {
 					$mesg = $langs->trans("CantBeLessThanMinPriceInclTax", price(price2num($price_min_ttc, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
 					$error++;
 					$action = 'editline';
+				} else{
+				    setEventMessages($langs->trans("ErrorMinPriceCheck", $langs->transnoentitiesnoconv("Type")), null, 'errors');
+				    $error++;
 				}
 			}
 		} else {
