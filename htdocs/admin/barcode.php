@@ -441,6 +441,47 @@ print "<br>";
  * Other options
  */
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
+// Init barcode for thirdparty (manual trigger)
+if (isModEnabled('societe')) {
+    print '<div style="color:red;">DEBUG: Barcode Thirdparty Init Section Loaded</div>';
+	print load_fiche_titre($langs->trans("InitThirdpartyBarcodes"), '', '');
+
+    if (GETPOST('action', 'aZ09') == 'init_barcode_empty_thirdparty') {
+    $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE barcode IS NULL OR barcode = ''";
+    $resql = $db->query($sql);
+
+    if ($resql) {
+        require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
+        // ✅ Load the barcode module configured in admin panel
+        $barcode_module_name = $conf->global->BARCODE_THIRDPARTY_ADDON_NUM;
+        $module = null;
+
+        if ($barcode_module_name) {
+            dol_include_once('/core/modules/barcode/'.$barcode_module_name.'.php');
+            $module = new $barcode_module_name($db);
+        }
+
+        // ✅ Loop over third parties and assign barcodes
+        while ($obj = $db->fetch_object($resql)) {
+            $soc = new Societe($db);
+            if ($soc->fetch($obj->rowid) > 0 && $module && method_exists($module, 'getNextValue')) {
+                $soc->barcode = $module->getNextValue($soc);
+                $soc->update($soc->id, $user);
+            }
+        }
+
+        setEventMessages("Barcodes initialized for third parties", null, 'mesgs');
+    }
+}
+
+
+    print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
+    print '<input type="hidden" name="action" value="init_barcode_empty_thirdparty">';
+    print '<input type="submit" class="button" value="Init value for third parties with empty barcodes">';
+    print '</form>';
+}
 
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print '<input type="hidden" name="token" value="'.newToken().'">';
