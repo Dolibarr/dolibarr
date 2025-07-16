@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
- * Class for 
+ * Class for
  */
 class TriggerHistory extends CommonObject
 {
@@ -717,7 +717,7 @@ class TriggerHistory extends CommonObject
 		$datas = [];
 
 		if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-			return ['optimize' => $langs->trans("ShowHistory")];
+			return ['optimize' => $langs->trans("ShowTriggerHistory")];
 		}
 		$datas['picto'] = img_picto('', $this->picto).' <u>'.$langs->trans("").'</u>';
 		if (isset($this->status)) {
@@ -783,7 +783,7 @@ class TriggerHistory extends CommonObject
 		$linkclose = '';
 		if (empty($notooltip)) {
 			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-				$label = $langs->trans("ShowHistory");
+				$label = $langs->trans("ShowTriggerHistory");
 				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
 			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
@@ -945,9 +945,9 @@ class TriggerHistory extends CommonObject
 		}
 
 		$statusType = 'status'.$status;
-		if ($status == self::STATUS_SUCCESS){
+		if ($status == self::STATUS_SUCCESS) {
 			$statusType = 'status4';
-		} 
+		}
 		if ($status == self::STATUS_ERROR) {
 			$statusType = 'status8';
 		}

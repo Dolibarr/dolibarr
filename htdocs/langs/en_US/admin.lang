@@ -2682,3 +2682,5 @@ CacheForTranslationIsUsed=Warning, translation files seems loaded into a cache s
 TriggerData=Data sent to URL
 ErrorMessage=Error message received
 TriggerHistory=Trigger history
+ShowTriggerHistory=Show trigger history
+DeleteTriggereHistoryRecord=Delete trigger history record
