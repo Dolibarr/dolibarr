@@ -20,7 +20,7 @@
 /**
  *  \file       webhook/history_note.php
  *  \ingroup    webhook
- *  \brief      Tab for notes on 
+ *  \brief      Tab for notes on
  */
 
 
