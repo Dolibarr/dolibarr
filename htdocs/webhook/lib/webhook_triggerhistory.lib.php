@@ -24,7 +24,7 @@
 /**
  * Prepare array of tabs for
  *
- * @param	TriggerHistory	$object
+ * @param	TriggerHistory	$object 	TriggerHistory
  * @return 	array<array{string,string,string}>	Array of tabs
  */
 function triggerhistoryPrepareHead($object)
