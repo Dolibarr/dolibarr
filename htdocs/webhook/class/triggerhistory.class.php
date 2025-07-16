@@ -117,7 +117,7 @@ class TriggerHistory extends CommonObject
 		"tms" => array("type" => "timestamp", "label" => "DateModification", "enabled" => "1", 'position' => 501, 'notnull' => 0, "visible" => "-2",),
 		"fk_user_creat" => array("type" => "integer:User:user/class/user.class.php", "label" => "UserAuthor", "picto" => "user", "enabled" => "1", 'position' => 510, 'notnull' => 1, "visible" => "-2", "csslist" => "tdoverflowmax150",),
 		"import_key" => array("type" => "varchar(14)", "label" => "ImportId", "enabled" => "1", 'position' => 1000, 'notnull' => -1, "visible" => "-2",),
-		"status" => array("type" => "integer", "label" => "Status", "enabled" => "1", "position" => 2000, "notnull" => 1, "default" => 1, "visible" => "1", "index" => "1", "arrayofkeyval" => array("1" => "Success", "-1" => "Error"), "validate" => "1",),
+		"status" => array("type" => "integer", "label" => "Status", "enabled" => "1", "position" => 2000, "notnull" => 1, "default" => "1", "visible" => "1", "index" => "1", "arrayofkeyval" => array("1" => "Success", "-1" => "Error"), "validate" => "1",),
 		"trigger_data" => array("type" => "text", "label" => "TriggerData", "enabled" => "1", 'position' => 10, 'notnull' => 1, "visible" => "1",),
 		"fk_target" => array("type" => "integer:target:webhook/class/target.class.php:0:(status:=:1)", "label" => "Target", "enabled" => "1", 'position' => 20, 'notnull' => 1, "visible" => "1",),
 		"url" => array("type" => "varchar(255)", "label" => "Url", "enabled" => "1", 'position' => 30, 'notnull' => 1, "visible" => "1",),
@@ -334,10 +334,10 @@ class TriggerHistory extends CommonObject
 		$sql = "SELECT ";
 		$sql .= $this->getFieldList('t');
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
-		if (isset($this->isextrafieldmanaged) && $this->isextrafieldmanaged == 1) {
+		if ($this->isextrafieldmanaged == 1) {
 			$sql .= " LEFT JOIN ".$this->db->prefix().$this->table_element."_extrafields as te ON te.fk_object = t.rowid";
 		}
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
+		if ($this->ismultientitymanaged == 1) {
 			$sql .= " WHERE t.entity IN (".getEntity($this->element).")";
 		} else {
 			$sql .= " WHERE 1 = 1";
@@ -566,7 +566,7 @@ class TriggerHistory extends CommonObject
 			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
-			if ($url && $add_save_lastsearch_values) {
+			if ($add_save_lastsearch_values) {
 				$url .= '&save_lastsearch_values=1';
 			}
 		}
@@ -583,13 +583,13 @@ class TriggerHistory extends CommonObject
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
 
-		if ($option == 'nolink' || empty($url)) {
+		if ($option == 'nolink') {
 			$linkstart = '<span';
 		} else {
 			$linkstart = '<a href="'.$url.'"';
 		}
 		$linkstart .= $linkclose.'>';
-		if ($option == 'nolink' || empty($url)) {
+		if ($option == 'nolink') {
 			$linkend = '</span>';
 		} else {
 			$linkend = '</a>';
@@ -665,11 +665,11 @@ class TriggerHistory extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.$this->getNomUrl().'</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
+		if (is_object($this->thirdparty)) {
 			$return .= '<br><div class="info-box-ref tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
 		}
 		/*if (property_exists($this, 'amount')) {
