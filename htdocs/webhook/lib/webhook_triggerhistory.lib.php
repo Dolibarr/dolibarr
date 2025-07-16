@@ -16,9 +16,9 @@
  */
 
 /**
- * \file    lib/webhook_history.lib.php
+ * \file    lib/webhook_triggerhistory.lib.php
  * \ingroup webhook
- * \brief   Library files with common functions for 
+ * \brief   Library files with common functions for
  */
 
 /**
