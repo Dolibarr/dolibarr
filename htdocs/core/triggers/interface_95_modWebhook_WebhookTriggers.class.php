@@ -135,6 +135,7 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 				// warning; the test page use its own call
 				$response = getURLContent($tmpobject->url, $method, $jsonstr, 1, $headers, array('http', 'https'), 2, -1);
 
+				$errormsg = "";
 				if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {
 					$nbPosts++;
 				} else {
@@ -163,8 +164,8 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 				$triggerhistory->status = ($errorforhistory == 0 ? 1 : -1);
 				$resql = $triggerhistory->create($user);
 				if (!$resql) {
-					$error++;
-					$this->errors[] = $triggerhistory->error;
+					$errors++;
+					$this->errors[] = array_merge($this->errors, $triggerhistory->errors);
 				}
 			}
 		}
