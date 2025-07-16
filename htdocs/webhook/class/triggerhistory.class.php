@@ -157,7 +157,7 @@ class TriggerHistory extends CommonObject
 	 */
 	public $trigger_data;
 	/**
-	 * @var Target
+	 * @var int
 	 */
 	public $fk_target;
 	/**
@@ -925,62 +925,6 @@ class TriggerHistory extends CommonObject
 		} else {
 			$this->lines = $result;
 			return $this->lines;
-		}
-	}
-
-	/**
-	 *  Returns the reference to the following non used object depending on the active numbering module.
-	 *
-	 *  @return	string      		Object free reference
-	 */
-	public function getNextNumRef()
-	{
-		global $langs, $conf;
-		$langs->load("webhook@webhook");
-
-		if (!getDolGlobalString('WEBHOOK_MYOBJECT_ADDON')) {
-			$conf->global->WEBHOOK_MYOBJECT_ADDON = 'mod_history_standard';
-		}
-
-		if (getDolGlobalString('WEBHOOK_MYOBJECT_ADDON')) {
-			$mybool = false;
-
-			$file = getDolGlobalString('WEBHOOK_MYOBJECT_ADDON').".php";
-			$classname = getDolGlobalString('WEBHOOK_MYOBJECT_ADDON');
-
-			// Include file with class
-			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-			foreach ($dirmodels as $reldir) {
-				$dir = dol_buildpath($reldir."core/modules/webhook/");
-
-				// Load file with numbering class (if found)
-				$mybool = $mybool || @include_once $dir.$file;
-			}
-
-			if (!$mybool) {
-				dol_print_error(null, "Failed to include file ".$file);
-				return '';
-			}
-
-			if (class_exists($classname)) {
-				$obj = new $classname();
-				'@phan-var-force ModeleNumRefHistory $obj';
-				$numref = $obj->getNextValue($this);
-
-				if ($numref != '' && $numref != '-1') {
-					return $numref;
-				} else {
-					$this->error = $obj->error;
-					//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
-					return "";
-				}
-			} else {
-				print $langs->trans("Error")." ".$langs->trans("ClassNotFound").' '.$classname;
-				return "";
-			}
-		} else {
-			print $langs->trans("ErrorNumberingModuleNotSetup", $this->element);
-			return "";
 		}
 	}
 
