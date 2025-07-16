@@ -124,17 +124,53 @@ class TriggerHistory extends CommonObject
 		"trigger_code" => array("type" => "varchar(128)", "label" => "TriggerCode", "enabled" => "1", 'position' => 11, 'notnull' => 1, "visible" => "1",),
 		"error_message" => array("type" => "text", "label" => "ErrorMessage", "enabled" => "1", 'position' => 50, 'notnull' => 0, "visible" => "1",),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var string
+	 */
 	public $note_private;
+	/**
+	 * @var int
+	 */
 	public $date_creation;
+	/**
+	 * @var int
+	 */
 	public $tms;
+	/**
+	 * @var int
+	 */
 	public $fk_user_creat;
+	/**
+	 * @var string
+	 */
 	public $import_key;
+	/**
+	 * @var int
+	 */
 	public $status;
+	/**
+	 * @var string
+	 */
 	public $trigger_data;
+	/**
+	 * @var Target
+	 */
 	public $fk_target;
+	/**
+	 * @var string
+	 */
 	public $url;
+	/**
+	 * @var string
+	 */
 	public $trigger_code;
+	/**
+	 * @var string
+	 */
 	public $error_messsage;
 	// END MODULEBUILDER PROPERTIES
 
