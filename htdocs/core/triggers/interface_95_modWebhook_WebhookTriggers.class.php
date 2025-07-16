@@ -165,7 +165,7 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 				$resql = $triggerhistory->create($user);
 				if (!$resql) {
 					$errors++;
-					$this->errors[] = array_merge($this->errors, $triggerhistory->errors);
+					$this->errors = array_merge($this->errors, $triggerhistory->errors);
 				}
 			}
 		}
