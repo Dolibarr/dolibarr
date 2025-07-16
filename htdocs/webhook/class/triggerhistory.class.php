@@ -312,12 +312,6 @@ class TriggerHistory extends CommonObject
 		unset($object->import_key);
 
 		// Clear fields
-		if (property_exists($object, 'ref')) {
-			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
-		}
-		if (property_exists($object, 'label')) {
-			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
-		}
 		if (property_exists($object, 'status')) {
 			$object->status = self::STATUS_SUCCESS;
 		}
@@ -356,14 +350,14 @@ class TriggerHistory extends CommonObject
 			}
 		}
 
-		if (!$error) {
+		/*if (!$error) {
 			// copy external contacts if same company
 			if (!empty($object->socid) && property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
 				if ($this->copy_linked_contact($object, 'external') < 0) {
 					$error++;
 				}
 			}
-		}
+		}*/
 
 		unset($object->context['createfromclone']);
 
@@ -530,143 +524,6 @@ class TriggerHistory extends CommonObject
 		return $this->deleteLineCommon($user, $idline, $notrigger);
 	}
 
-
-	/**
-	 *	Validate object
-	 *
-	 *	@param	User		$user		User making status change
-	 *  @param	int<0,1>	$notrigger	1=Does not execute triggers, 0= execute triggers
-	 *	@return	int<-1,1>				Return integer <=0 if OK, 0=Nothing done, >0 if KO
-	 */
-	public function validate($user, $notrigger = 0)
-	{
-		global $conf;
-
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-		$error = 0;
-
-		// Protection
-		if ($this->status == self::STATUS_SUCCESS) {
-			dol_syslog(get_class($this)."::validate action abandoned: already validated", LOG_WARNING);
-			return 0;
-		}
-
-		/* if (! ((!getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('webhook', 'triggerhistory', 'write'))
-		 || (getDolGlobalInt('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('webhook', 'history_advance', 'validate')))
-		 {
-		 $this->error='NotEnoughPermissions';
-		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
-		 return -1;
-		 }*/
-
-		$now = dol_now();
-
-		$this->db->begin();
-
-		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
-			$num = $this->getNextNumRef();
-		} else {
-			$num = $this->ref;
-		}
-		$this->newref = $num;
-
-		if (!empty($num)) {
-			// Validate
-			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
-			$sql .= " SET ";
-			if (!empty($this->fields['ref'])) {
-				$sql .= " ref = '".$this->db->escape($num)."',";
-			}
-			$sql .= " status = ".self::STATUS_SUCCESS;
-			if (!empty($this->fields['date_validation'])) {
-				$sql .= ", date_validation = '".$this->db->idate($now)."'";
-			}
-			if (!empty($this->fields['fk_user_valid'])) {
-				$sql .= ", fk_user_valid = ".((int) $user->id);
-			}
-			$sql .= " WHERE rowid = ".((int) $this->id);
-
-			dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				dol_print_error($this->db);
-				$this->error = $this->db->lasterror();
-				$error++;
-			}
-
-			if (!$error && !$notrigger) {
-				// Call trigger
-				$result = $this->call_trigger('MYOBJECT_VALIDATE', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
-			}
-		}
-
-		if (!$error) {
-			$this->oldref = $this->ref;
-
-			// Rename directory if dir was a temporary ref
-			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
-				// Now we rename also files into index
-				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'triggerhistory/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'triggerhistory/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
-				$resql = $this->db->query($sql);
-				if (!$resql) {
-					$error++;
-					$this->error = $this->db->lasterror();
-				}
-				$sql = 'UPDATE '.$this->db->prefix()."ecm_files set filepath = 'triggerhistory/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filepath = 'triggerhistory/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
-				$resql = $this->db->query($sql);
-				if (!$resql) {
-					$error++;
-					$this->error = $this->db->lasterror();
-				}
-
-				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
-				$oldref = dol_sanitizeFileName($this->ref);
-				$newref = dol_sanitizeFileName($num);
-				$dirsource = $conf->webhook->dir_output.'/triggerhistory/'.$oldref;
-				$dirdest = $conf->webhook->dir_output.'/triggerhistory/'.$newref;
-				if (!$error && file_exists($dirsource)) {
-					dol_syslog(get_class($this)."::validate() rename dir ".$dirsource." into ".$dirdest);
-
-					if (@rename($dirsource, $dirdest)) {
-						dol_syslog("Rename ok");
-						// Rename docs starting with $oldref with $newref
-						$listoffiles = dol_dir_list($conf->webhook->dir_output.'/triggerhistory/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
-						foreach ($listoffiles as $fileentry) {
-							$dirsource = $fileentry['name'];
-							$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
-							$dirsource = $fileentry['path'].'/'.$dirsource;
-							$dirdest = $fileentry['path'].'/'.$dirdest;
-							@rename($dirsource, $dirdest);
-						}
-					}
-				}
-			}
-		}
-
-		// Set new ref and current status
-		if (!$error) {
-			$this->ref = $num;
-			$this->status = self::STATUS_SUCCESS;
-		}
-
-		if (!$error) {
-			$this->db->commit();
-			return 1;
-		} else {
-			$this->db->rollback();
-			return -1;
-		}
-	}
-
-
 	/**
 	 *	Set draft status
 	 *
@@ -759,13 +616,6 @@ class TriggerHistory extends CommonObject
 		if (isset($this->status)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
 		}
-		if (property_exists($this, 'ref')) {
-			$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		}
-		if (property_exists($this, 'label')) {
-			$datas['ref'] = '<br>'.$langs->trans('Label').':</b> '.$this->label;
-		}
-
 		return $datas;
 	}
 
@@ -914,16 +764,13 @@ class TriggerHistory extends CommonObject
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'label')) {
-			$return .= ' <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
-		}
 		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
 			$return .= '<br><div class="info-box-ref tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
 		}
-		if (property_exists($this, 'amount')) {
+		/*if (property_exists($this, 'amount')) {
 			$return .= '<br>';
 			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
-		}
+		}*/
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
