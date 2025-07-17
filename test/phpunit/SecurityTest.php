@@ -387,7 +387,8 @@ class SecurityTest extends CommonClassTest
 	{
 		$stringtotest = 'eée';
 		$decodedstring = dol_string_onlythesehtmlattributes($stringtotest);
-		$this->assertEquals('e&eacute;e', $decodedstring, 'Function did not sanitize correctly with test 1');
+		//$this->assertEquals('e&eacute;e', $decodedstring, 'Function did not sanitize correctly with test 1');
+		$this->assertEquals('eée', $decodedstring, 'Function did not sanitize correctly with test 1');
 
 		$stringtotest = '<div onload="ee"><a href="123"><span class="abc">abc</span></a></div>';
 		$decodedstring = dol_string_onlythesehtmlattributes($stringtotest);
@@ -1295,6 +1296,30 @@ class SecurityTest extends CommonClassTest
 	public function testDolHtmlWithNoJs()
 	{
 		global $conf;
+
+		// Test on a string in hindi with MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES because
+		// in past this case was losing the UTF8.
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
+
+		$result = dol_htmlwithnojs('String in Hindi लेखाकर्म', 0, 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('String in Hindi लेखाकर्म', $result, 'Test js sanitizing a Hindi string is ko');
+
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;
+
+		$result = dol_htmlwithnojs('String in Hindi लेखाकर्म', 0, 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('String in Hindi लेखाकर्म', $result, 'Test js sanitizing a Hindi string is ko');
+
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
+
+		$result = dol_htmlwithnojs('String in Hindi लेखाकर्म', 0, 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('String in Hindi लेखाकर्म', $result, 'Test js sanitizing a Hindi string is ko');
+
+
 
 		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
 		// If we set this to 1, it will also convert emoticon in htmlentities, so tests must be modified.
