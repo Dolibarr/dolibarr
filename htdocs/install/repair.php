@@ -29,9 +29,7 @@
  */
 
 include_once 'inc.php';
-if (file_exists($conffile)) {
-	include_once $conffile;
-}
+
 /**
  * @var Conf $conf
  * @var Translate $langs
@@ -42,7 +40,13 @@ if (file_exists($conffile)) {
  * @var string $dolibarr_main_db_name
  * @var string $dolibarr_main_db_user
  * @var string $dolibarr_main_db_pass
+ * @var string $dolibarr_main_db_type
+ * @var string $conffile
  */
+
+if (file_exists($conffile)) {
+	include_once $conffile;
+}
 
 '
 @phan-var-force ?string $dolibarr_main_db_encryption
@@ -54,7 +58,6 @@ include_once $dolibarr_main_document_root.'/core/lib/images.lib.php';
 require_once $dolibarr_main_document_root.'/core/class/extrafields.class.php';
 require_once 'lib/repair.lib.php';
 
-$step = 2;
 $ok = 0;
 
 
@@ -96,18 +99,88 @@ pHeader($langs->trans("Repair"), "upgrade2", GETPOST('action', 'aZ09'));
 // Action to launch the repair script
 $actiondone = 1;
 
+
+print '<table cellspacing="0" cellpadding="1" class="centpercent">';
+$error = 0;
+
+// If password is encoded, we decode it
+if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass)) {
+	require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
+	if (preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
+		$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
+		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
+		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially encrypted
+	} else {
+		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
+	}
+}
+
+// $conf is already instancied inside inc.php
+$conf->db->type = $dolibarr_main_db_type;
+$conf->db->host = $dolibarr_main_db_host;
+$conf->db->port = $dolibarr_main_db_port;
+$conf->db->name = $dolibarr_main_db_name;
+$conf->db->user = $dolibarr_main_db_user;
+$conf->db->pass = $dolibarr_main_db_pass;
+
+// For encryption
+$conf->db->dolibarr_main_db_encryption = isset($dolibarr_main_db_encryption) ? $dolibarr_main_db_encryption : 0;
+$conf->db->dolibarr_main_db_cryptkey = isset($dolibarr_main_db_cryptkey) ? $dolibarr_main_db_cryptkey : '';
+
+$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
+
+if ($db->connected) {
+	print '<tr><td class="nowrap">';
+	print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td class=\"right\">".$langs->trans("OK")."</td></tr>";
+	dolibarr_install_syslog("repair: ".$langs->transnoentities("ServerConnection").": ".$dolibarr_main_db_host.$langs->transnoentities("OK"));
+	$ok = 1;
+} else {
+	print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td class=\"right\">".$langs->transnoentities("Error")."</td></tr>";
+	dolibarr_install_syslog("repair: ".$langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
+	$ok = 0;
+}
+
+if ($ok) {
+	if ($db->database_selected) {
+		print '<tr><td class="nowrap">';
+		print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td class=\"right\">".$langs->trans("OK")."</td></tr>";
+		dolibarr_install_syslog("repair: database connection successful: ".$dolibarr_main_db_name);
+		$ok = 1;
+	} else {
+		print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td class=\"right\">".$langs->trans("Error")."</td></tr>";
+		dolibarr_install_syslog("repair: ".$langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
+		$ok = 0;
+	}
+}
+
+// Show database version
+if ($ok) {
+	$version = $db->getVersion();
+	$versionarray = $db->getVersionArray();
+	print '<tr><td>'.$langs->trans("ServerVersion").'</td>';
+	print '<td class="right">'.$version.'</td></tr>';
+	dolibarr_install_syslog("repair: ".$langs->transnoentities("ServerVersion").": ".$version);
+	//print '<td class="right">'.join('.',$versionarray).'</td></tr>';
+}
+
+print '</table>';
+
+
+print '<br>';
+
+
 print '<div class="warning" style="padding-top: 10px">';
-print 'Select a link "test" or "confirmed" to launch a reparation on the chosen option';
+print 'Select a link "test" or "confirmed" to launch a reparation on the chosen option...';
 print '</div>';
 print '<br>';
 
-print '<table class="liste centpercent">';
+
+print '<table class="liste centpercent" style="border: 1px solid #ccc">';
 print '<tr>';
 print '<th>Option</th>';
 print '<th>Information</th>';
 print '<th>Launch test</th>';
 print '<th>Launch confirmed</th>';
-print '<th>Actual value</th>';
 print '</tr>';
 
 $warning_using_utf8mb4 = '';
@@ -212,78 +285,18 @@ foreach ($sections as $section => $options) {
 		print '<tr>';
 		print '<td>' . $option . '</td>';
 		print '<td>' . $info . '</td>';
-		print '<td class="center"><a href="'.$url_test.'" title="Launch test on option '.$option.'">test</a></td>';
-		print '<td class="center"><a href="'.$url_confirmed.'" title="Launch confirmed on option '.$option.'">confirmed</a></td>';
-		print '<td class="center">' . $value . '</td>';
+		print '<td class="center"><a href="'.$url_test.'" title="Launch test on option '.$option.'">test</a>'.($value == 'test' ? ' (X)' : '').'</td>';
+		print '<td class="center"><a href="'.$url_confirmed.'" title="Launch confirmed on option '.$option.'">confirmed</a>'.($value == 'confirmed' ? ' (X)' : '').'</td>';
 		print '</tr>';
 	}
 }
 print '</table>';
 
-print '<hr>';
+
+print '<br id="sectionresult">';
 
 print '<table cellspacing="0" cellpadding="1" class="centpercent">';
-$error = 0;
 
-// If password is encoded, we decode it
-if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass)) {
-	require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
-	if (preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
-		$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
-		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
-		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially encrypted
-	} else {
-		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
-	}
-}
-
-// $conf is already instancied inside inc.php
-$conf->db->type = $dolibarr_main_db_type;
-$conf->db->host = $dolibarr_main_db_host;
-$conf->db->port = $dolibarr_main_db_port;
-$conf->db->name = $dolibarr_main_db_name;
-$conf->db->user = $dolibarr_main_db_user;
-$conf->db->pass = $dolibarr_main_db_pass;
-
-// For encryption
-$conf->db->dolibarr_main_db_encryption = isset($dolibarr_main_db_encryption) ? $dolibarr_main_db_encryption : 0;
-$conf->db->dolibarr_main_db_cryptkey = isset($dolibarr_main_db_cryptkey) ? $dolibarr_main_db_cryptkey : '';
-
-$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
-
-if ($db->connected) {
-	print '<tr><td class="nowrap">';
-	print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td class=\"right\">".$langs->trans("OK")."</td></tr>";
-	dolibarr_install_syslog("repair: ".$langs->transnoentities("ServerConnection").": ".$dolibarr_main_db_host.$langs->transnoentities("OK"));
-	$ok = 1;
-} else {
-	print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td class=\"right\">".$langs->transnoentities("Error")."</td></tr>";
-	dolibarr_install_syslog("repair: ".$langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
-	$ok = 0;
-}
-
-if ($ok) {
-	if ($db->database_selected) {
-		print '<tr><td class="nowrap">';
-		print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td class=\"right\">".$langs->trans("OK")."</td></tr>";
-		dolibarr_install_syslog("repair: database connection successful: ".$dolibarr_main_db_name);
-		$ok = 1;
-	} else {
-		print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td class=\"right\">".$langs->trans("Error")."</td></tr>";
-		dolibarr_install_syslog("repair: ".$langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
-		$ok = 0;
-	}
-}
-
-// Show database version
-if ($ok) {
-	$version = $db->getVersion();
-	$versionarray = $db->getVersionArray();
-	print '<tr><td>'.$langs->trans("ServerVersion").'</td>';
-	print '<td class="right">'.$version.'</td></tr>';
-	dolibarr_install_syslog("repair: ".$langs->transnoentities("ServerVersion").": ".$version);
-	//print '<td class="right">'.join('.',$versionarray).'</td></tr>';
-}
 
 $conf->setValues($db);
 // Reset forced setup after the setValues
