@@ -249,36 +249,6 @@ class Paiements extends DolibarrApi
 	}
 
 
-	/**
-	 * Validate fields before creating or updating object
-	 *
-	 * @param	array		$data   Array of data to validate
-	 * @phan-param		?array<string,null|int|float|string> $data
-	 * @phpstan-param	?array<string,null|int|float|string> $data
-	 * @return	array
-	 * @phan-return		array<string,null|int|float|string>|array{}
-	 * @phpstan-return	array<string,null|int|float|string>|array{}
-	 *
-	 * @throws	RestException
-	 */
-	private function _validateMyObject($data)
-	{
-		if (!is_array($data)) {
-			$data = array();
-		}
-		$paiement = array();
-		foreach ($this->paiement->fields as $field => $propfield) {
-			if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat')) || $propfield['notnull'] != 1) {
-				continue; // Not a mandatory field
-			}
-			if (!isset($data[$field])) {
-				throw new RestException(400, "$field field missing");
-			}
-			$paiement[$field] = $data[$field];
-		}
-		return $paiement;
-	}
-
 	/* END MODULEBUILDER API PAIEMENT */
 
 
