@@ -1694,14 +1694,14 @@ class Invoices extends DolibarrApi
 			$totalpaid = $this->invoice->getSommePaiement($is_multicurrency);
 			$totalcreditnotes = $this->invoice->getSumCreditNotesUsed($is_multicurrency);
 			$totaldeposits = $this->invoice->getSumDepositsUsed($is_multicurrency);
-			$remainstopay = $amount = price2num($total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
+			$remainstopay = $amount = (float) price2num($total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
 			if (!$is_multicurrency && $amountarray["amount"] != 'remain') {
-				$amount = price2num($amountarray["amount"], 'MT');
+				$amount = (float) price2num($amountarray["amount"], 'MT');
 			}
 
 			if ($is_multicurrency && $amountarray["multicurrency_amount"] != 'remain') {
-				$amount = price2num($amountarray["multicurrency_amount"], 'MT');
+				$amount = (float) price2num($amountarray["multicurrency_amount"], 'MT');
 			}
 
 			if (abs($amount) > abs($remainstopay) && !$accepthigherpayment) {
@@ -1710,7 +1710,7 @@ class Invoices extends DolibarrApi
 			}
 
 			if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
-				$amount = price2num(-1 * abs((float) $amount), 'MT');
+				$amount = (float) price2num(-1 * abs((float) $amount), 'MT');
 			}
 
 			if ($is_multicurrency) {
