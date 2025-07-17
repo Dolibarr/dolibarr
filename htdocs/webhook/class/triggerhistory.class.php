@@ -111,7 +111,7 @@ class TriggerHistory extends CommonObject
 	 * Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		"rowid" => array("type" => "integer", "label" => "TechnicalID", "enabled" => 1, 'position' => 1, 'notnull' => 1, "visible" => 1, "noteditable" => "1", "index" => 1, "css" => "left", "comment" => "Id"),
+		"rowid" => array("type" => "integer", "label" => "TechnicalID", "enabled" => 1, 'position' => 1, 'notnull' => 1, "visible" => 1, "noteditable" => 1, "index" => 1, "css" => "left", "comment" => "Id"),
 		"note_private" => array("type" => "text", "label" => "NotePrivate", "enabled" => 1, 'position' => 62, 'notnull' => 0, "visible" => 0, "cssview" => "wordbreak", "validate" => 1),
 		"date_creation" => array("type" => "datetime", "label" => "DateCreation", "enabled" => 1, 'position' => 500, 'notnull' => 1, "visible" => -2),
 		"tms" => array("type" => "timestamp", "label" => "DateModification", "enabled" => 1, 'position' => 501, 'notnull' => 0, "visible" => -2),
