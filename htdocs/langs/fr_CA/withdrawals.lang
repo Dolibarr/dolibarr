@@ -103,7 +103,6 @@ CreditorName=Nom du créancier
 SEPAFillForm=(B) Veuillez compléter tous les champs marqués *
 SEPAFormYourBAN=Votre nom de compte bancaire (IBAN)
 SEPAFormYourBIC=Votre code d'identification de banque (BIC)
-ModeRECUR=Paiement récurrent
 ModeFRST=Paiement unique
 PleaseCheckOne=Veuillez cocher un seul
 CreditTransferOrderCreated=Ordre de virement bancaire %s créé

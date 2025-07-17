@@ -381,3 +381,4 @@ TLS/STARTTLS=TLS/STARTTLS
 FillExtrafieldWithAi=Fill extrafield with AI content
 ExtrafieldFiller=Extrafield filler
 OurProductSelection=Our selection of new products
+NoSupportedModulesHaveBeenActivated=The reporting tool can generated dynamic report for some modules only. There is no supported module enabled yet.
