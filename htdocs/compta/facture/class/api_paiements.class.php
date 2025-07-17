@@ -98,9 +98,9 @@ class Paiements extends DolibarrApi
 	 * @param int			   $page				Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @return  array                               Array of MyObject objects
-	 * @phan-return array<int,MyObject>
-	 * @phpstan-return array<int,MyObject>
+	 * @return  array                               Array of paiements objects
+	 * @phan-return array<int,Paiement>
+	 * @phpstan-return array<int,Paiement>
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 503 System error
@@ -152,7 +152,7 @@ class Paiements extends DolibarrApi
 				$i++;
 			}
 		} else {
-			throw new RestException(503, 'Error when retrieving myobject list: '.$this->db->lasterror());
+			throw new RestException(503, 'Error when retrieving Paiement list: '.$this->db->lasterror());
 		}
 
 		return $obj_ret;
@@ -162,13 +162,13 @@ class Paiements extends DolibarrApi
 	/**
 	 * Update paiement
 	 *
-	 * @param 	int   		$id             Id of myobject to update
+	 * @param 	int   		$id             Id of paiement to update
 	 * @param 	array 		$request_data   Data
 	 * @phan-param ?array<string,mixed>	$request_data
 	 * @phpstan-param ?array<string,mixed>	$request_data
 	 * @return 	Object						Object after update
-	 * @phan-return MyObject
-	 * @phpstan-return MyObject
+	 * @phan-return Paiement
+	 * @phpstan-return Paiement
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found
@@ -192,34 +192,20 @@ class Paiements extends DolibarrApi
 			}
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
-				$this->myobject->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				$this->paiement->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			if ($field == 'array_options' && is_array($value)) {
-				foreach ($value as $index => $val) {
-					$this->myobject->array_options[$index] = $this->_checkValForAPI('extrafields', $val, $this->myobject);
-				}
-				continue;
-			}
-
-			if ($field == 'array_options' && is_array($value)) {
-				foreach ($value as $index => $val) {
-					$this->myobject->array_options[$index] = $this->_checkValForAPI($field, $val, $this->myobject);
-				}
-				continue;
-			}
-
-			$this->myobject->$field = $this->_checkValForAPI($field, $value, $this->myobject);
+			$this->paiement->$field = $this->_checkValForAPI($field, $value, $this->paiement);
 		}
 
 		// Clean data
-		// $this->myobject->abc = sanitizeVal($this->myobject->abc, 'alphanohtml');
+		// $this->paiement->abc = sanitizeVal($this->paiement->abc, 'alphanohtml');
 
-		if ($this->myobject->update(DolibarrApiAccess::$user, 0) > 0) {
+		if ($this->paiement->update(DolibarrApiAccess::$user, 0) > 0) {
 			return $this->get($id);
 		} else {
-			throw new RestException(500, $this->myobject->error);
+			throw new RestException(500, $this->paiement->error);
 		}
 	}
 
