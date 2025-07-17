@@ -1,12 +1,13 @@
 <?php
-/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2021-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2023		Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Vincent de Grandpré	    <vincent@de-grandpre.quebec>
+ * Copyright (C) 2024		Vincent de Grandpré		<vincent@de-grandpre.quebec>
+ * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +29,7 @@
  */
 
 include_once 'inc.php';
-if (file_exists($conffile)) {
-	include_once $conffile;
-}
+
 /**
  * @var Conf $conf
  * @var Translate $langs
@@ -41,7 +40,13 @@ if (file_exists($conffile)) {
  * @var string $dolibarr_main_db_name
  * @var string $dolibarr_main_db_user
  * @var string $dolibarr_main_db_pass
+ * @var string $dolibarr_main_db_type
+ * @var string $conffile
  */
+
+if (file_exists($conffile)) {
+	include_once $conffile;
+}
 
 '
 @phan-var-force ?string $dolibarr_main_db_encryption
@@ -53,7 +58,6 @@ include_once $dolibarr_main_document_root.'/core/lib/images.lib.php';
 require_once $dolibarr_main_document_root.'/core/class/extrafields.class.php';
 require_once 'lib/repair.lib.php';
 
-$step = 2;
 $ok = 0;
 
 
@@ -95,46 +99,6 @@ pHeader($langs->trans("Repair"), "upgrade2", GETPOST('action', 'aZ09'));
 // Action to launch the repair script
 $actiondone = 1;
 
-print '<div class="warning" style="padding-top: 10px">';
-print $langs->trans("SetAtLeastOneOptionAsUrlParameter");
-print '</div>';
-
-//print 'You must set one of the following option with a parameter value that is "test" or "confirmed" on the URL<br>';
-//print $langs->trans("Example").': '.DOL_MAIN_URL_ROOT.'/install/repair.php?standard=confirmed<br>'."\n";
-print '<br>';
-
-print 'Option standard is '.(GETPOST('standard', 'alpha') ? GETPOST('standard', 'alpha') : 'undefined').'<br>'."\n";
-// Disable modules
-print 'Option force_disable_of_modules_not_found is '.(GETPOST('force_disable_of_modules_not_found', 'alpha') ? GETPOST('force_disable_of_modules_not_found', 'alpha') : 'undefined').'<br>'."\n";
-// Files
-print 'Option restore_thirdparties_logos is '.(GETPOST('restore_thirdparties_logos', 'alpha') ? GETPOST('restore_thirdparties_logos', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option restore_user_pictures is '.(GETPOST('restore_user_pictures', 'alpha') ? GETPOST('restore_user_pictures', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option rebuild_product_thumbs is '.(GETPOST('rebuild_product_thumbs', 'alpha') ? GETPOST('rebuild_product_thumbs', 'alpha') : 'undefined').'<br>'."\n";
-// Clean tables and data
-print 'Option clean_linked_elements is '.(GETPOST('clean_linked_elements', 'alpha') ? GETPOST('clean_linked_elements', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option clean_menus is '.(GETPOST('clean_menus', 'alpha') ? GETPOST('clean_menus', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option clean_orphelin_dir is '.(GETPOST('clean_orphelin_dir', 'alpha') ? GETPOST('clean_orphelin_dir', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option clean_product_stock_batch is '.(GETPOST('clean_product_stock_batch', 'alpha') ? GETPOST('clean_product_stock_batch', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option clean_perm_table is '.(GETPOST('clean_perm_table', 'alpha') ? GETPOST('clean_perm_table', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option clean_ecm_files_table is '.(GETPOST('clean_ecm_files_table', 'alpha') ? GETPOST('clean_ecm_files_table', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option repair_link_dispatch_lines_supplier_order_lines, is '.(GETPOST('repair_link_dispatch_lines_supplier_order_lines', 'alpha') ? GETPOST('repair_link_dispatch_lines_supplier_order_lines', 'alpha') : 'undefined').'<br>'."\n";
-// Init data
-print 'Option set_empty_time_spent_amount is '.(GETPOST('set_empty_time_spent_amount', 'alpha') ? GETPOST('set_empty_time_spent_amount', 'alpha') : 'undefined').'<br>'."\n";
-// Structure
-print 'Option force_utf8_on_tables (force utf8 + row=dynamic), for mysql/mariadb only, is '.(GETPOST('force_utf8_on_tables', 'alpha') ? GETPOST('force_utf8_on_tables', 'alpha') : 'undefined').'<br>'."\n";
-print '<span class="valignmiddle">'."Option force_utf8mb4_on_tables (force utf8mb4 + row=dynamic), for mysql/mariadb only, is ".(GETPOST('force_utf8mb4_on_tables', 'alpha') ? GETPOST('force_utf8mb4_on_tables', 'alpha') : 'undefined');
-print '</span>';
-if ($dolibarr_main_db_character_set != 'utf8mb4') {
-	print '<img src="../theme/eldy/img/warning.png" class="pictofortooltip valignmiddle" title="If you switch to utf8mb4, you must also check the value for $dolibarr_main_db_character_set and $dolibarr_main_db_collation into conf/conf.php file.">';
-}
-print "<br>\n";
-print "Option force_collation_from_conf_on_tables (force ".$conf->db->character_set."/".$conf->db->dolibarr_main_db_collation." + row=dynamic), for mysql/mariadb only is ".(GETPOST('force_collation_from_conf_on_tables', 'alpha') ? GETPOST('force_collation_from_conf_on_tables', 'alpha') : 'undefined')."<br>\n";
-
-// Rebuild sequence
-print 'Option rebuild_sequences, for postgresql only, is '.(GETPOST('rebuild_sequences', 'alpha') ? GETPOST('rebuild_sequences', 'alpha') : 'undefined').'<br>'."\n";
-print '<br>';
-
-print '<hr>';
 
 print '<table cellspacing="0" cellpadding="1" class="centpercent">';
 $error = 0;
@@ -198,6 +162,141 @@ if ($ok) {
 	dolibarr_install_syslog("repair: ".$langs->transnoentities("ServerVersion").": ".$version);
 	//print '<td class="right">'.join('.',$versionarray).'</td></tr>';
 }
+
+print '</table>';
+
+
+print '<br>';
+
+
+print '<div class="warning" style="padding-top: 10px">';
+print 'Select a link "test" or "confirmed" to launch a reparation on the chosen option...';
+print '</div>';
+print '<br>';
+
+
+print '<table class="liste centpercent" style="border: 1px solid #ccc">';
+print '<tr>';
+print '<th>Option</th>';
+print '<th>Information</th>';
+print '<th>Launch test</th>';
+print '<th>Launch confirmed</th>';
+print '</tr>';
+
+$warning_using_utf8mb4 = '';
+if ($dolibarr_main_db_character_set != 'utf8mb4') {
+	$warning_using_utf8mb4 = '<img src="../theme/eldy/img/warning.png" class="pictofortooltip valignmiddle" title="If you switch to utf8mb4, you must also check the value for $dolibarr_main_db_character_set and $dolibarr_main_db_collation into conf/conf.php file.">';
+}
+
+$sections = [
+	'Standard' => [
+		[
+			'name' => 'standard',
+			'info' => ''
+		]
+	],
+	'Modules' => [
+		[
+			'name' => 'force_disable_of_modules_not_found',
+			'info' => 'Disable modules not found'
+		]
+	],
+	'Files' => [
+		[
+			'name' => 'restore_thirdparties_logos',
+			'info' => 'Restore logos for thirdparties'
+		],
+		[
+			'name' => 'restore_user_pictures',
+			'info' => 'Restore user pictures'
+		],
+		[
+			'name' => 'rebuild_product_thumbs',
+			'info' => 'Rebuild product thumbnails'
+		]
+	],
+	'Clean tables and data' => [
+		[
+			'name' => 'clean_linked_elements',
+			'info' => 'Clean linked elements'
+		],
+		[
+			'name' => 'clean_menus',
+			'info' => 'Clean menus'
+		],
+		[
+			'name' => 'clean_orphelin_dir',
+			'info' => 'Clean orphan directories'
+		],
+		[
+			'name' => 'clean_product_stock_batch',
+			'info' => 'Clean product stock batch'
+		],
+		[
+			'name' => 'clean_perm_table',
+			'info' => 'Clean permissions table'
+		],
+		[
+			'name' => 'clean_ecm_files_table',
+			'info' => 'Clean ECM files table'
+		],
+		[
+			'name' => 'repair_link_dispatch_lines_supplier_order_lines',
+			'info' => 'Repair link between dispatch lines and supplier order lines'
+		]
+	],
+	'Init data' => [
+		[
+			'name' => 'set_empty_time_spent_amount',
+			'info' => 'Init empty time spent amount'
+		]
+	],
+	'Structure' => [
+		[
+			'name' => 'force_utf8_on_tables',
+			'info' => 'Force utf8 + row=dynamic, for mysql/mariadb only'
+		],
+		[
+			'name' => 'force_utf8mb4_on_tables',
+			'info' => 'Force utf8mb4 + row=dynamic, for mysql/mariadb only' . $warning_using_utf8mb4
+		],
+		[
+			'name' => 'force_collation_from_conf_on_tables',
+			'info' => 'Force '.$conf->db->character_set.'/'.$conf->db->dolibarr_main_db_collation.' + row=dynamic, for mysql/mariadb only'
+		]
+	],
+	'Rebuild sequence' => [
+		[
+			'name' => 'rebuild_sequences',
+			'info' => 'For postgresql only'
+		]
+	]
+];
+
+foreach ($sections as $section => $options) {
+	print '<tr style="background:#f4f4f4;font-weight:bold"><td colspan="5">'.$section.'</td></tr>';
+	foreach ($options as $opt) {
+		$option = $opt['name'];
+		$info = $opt['info'];
+		$value = GETPOST($option, 'alpha') ? GETPOST($option, 'alpha') : 'undefined';
+		// Generate links with the right option and value
+		$url_test = $_SERVER['PHP_SELF'].'?'.$option.'=test';
+		$url_confirmed = $_SERVER['PHP_SELF'].'?'.$option.'=confirmed';
+		print '<tr>';
+		print '<td>' . $option . '</td>';
+		print '<td>' . $info . '</td>';
+		print '<td class="center"><a href="'.$url_test.'" title="Launch test on option '.$option.'">test</a>'.($value == 'test' ? ' (X)' : '').'</td>';
+		print '<td class="center"><a href="'.$url_confirmed.'" title="Launch confirmed on option '.$option.'">confirmed</a>'.($value == 'confirmed' ? ' (X)' : '').'</td>';
+		print '</tr>';
+	}
+}
+print '</table>';
+
+
+print '<br id="sectionresult">';
+
+print '<table cellspacing="0" cellpadding="1" class="centpercent">';
+
 
 $conf->setValues($db);
 // Reset forced setup after the setValues
