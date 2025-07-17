@@ -243,6 +243,7 @@ class BookKeeping extends CommonObject
 		}
 		if (isset($this->doc_ref)) {
 			$this->doc_ref = trim($this->doc_ref);
+			$this->doc_ref = dol_trunc($this->doc_ref, 300); // We limit to 300 chars to avoid problems with too long ref in DB
 		}
 		if (isset($this->fk_doc)) {
 			$this->fk_doc = (int) $this->fk_doc;
@@ -1107,7 +1108,7 @@ class BookKeeping extends CommonObject
 					$line->multicurrency_amount = $obj->multicurrency_amount;
 					$line->multicurrency_code = $obj->multicurrency_code;
 					$line->lettering_code = $obj->lettering_code;
-					$line->date_lettering = $obj->date_lettering;
+					$line->date_lettering = $this->db->jdate($obj->date_lettering);
 					$line->fk_user_author = $obj->fk_user_author;
 					$line->import_key = $obj->import_key;
 					$line->code_journal = $obj->code_journal;
@@ -1185,7 +1186,6 @@ class BookKeeping extends CommonObject
 		$sql .= " t.date_export,";
 		$sql .= " t.date_validated as date_validation";
 		$sql .= ' FROM '.$this->db->prefix().$this->table_element.' as t';
-
 		$sql .= ' WHERE t.entity = ' . ((int) $conf->entity); // Do not use getEntity for accounting features
 		if ($showAlreadyExportMovements == 0) {
 			$sql .= " AND t.date_export IS NULL";
@@ -1193,7 +1193,7 @@ class BookKeeping extends CommonObject
 
 		// Manage filter
 		if (is_array($filter)) {	// deprecated, use $filter = USF syntax
-			dol_syslog("You are using a deprecated use of fetchAll. filter parameter mus be an USF string now.", LOG_WARNING);
+			dol_syslog("You are using a deprecated use of fetchAll. filter parameter must be an USF string now.", LOG_WARNING);
 			$sqlwhere = array();
 			if (count($filter) > 0) {
 				foreach ($filter as $key => $value) {
@@ -1301,7 +1301,7 @@ class BookKeeping extends CommonObject
 				$line->amount = $obj->amount;
 				$line->sens = $obj->sens;
 				$line->lettering_code = $obj->lettering_code;
-				$line->date_lettering = $obj->date_lettering;
+				$line->date_lettering = $this->db->jdate($obj->date_lettering);
 				$line->fk_user_author = $obj->fk_user_author;
 				$line->import_key = $obj->import_key;
 				$line->code_journal = $obj->code_journal;
@@ -1614,6 +1614,7 @@ class BookKeeping extends CommonObject
 	 */
 	public function updateByMvt($piece_num = '', $field = '', $value = '', $mode = '')
 	{
+		global $conf;
 		$error = 0;
 
 		$sql_filter = $this->getCanModifyBookkeepingSQL();
@@ -1626,6 +1627,7 @@ class BookKeeping extends CommonObject
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element.$mode;
 		$sql .= " SET ".$this->db->sanitize($field)." = ".(is_numeric($value) ? ((float) $value) : "'".$this->db->escape($value)."'");
 		$sql .= " WHERE piece_num = ".((int) $piece_num);
+		$sql .= " AND entity = " . ((int) $conf->entity);
 		$sql .= $sql_filter;
 
 		$resql = $this->db->query($sql);
@@ -3176,7 +3178,7 @@ class BookKeeping extends CommonObject
 								$error++;
 							}
 							$objtmp = $this->db->fetch_object($result);
-							$bookkeeping->subledger_label = $objtmp->subledger_label; // latest subledger label used
+							$bookkeeping->subledger_label = $objtmp->subledger_label ?? null; // latest subledger label used
 						} else {
 							$bookkeeping->subledger_account = null;
 							$bookkeeping->subledger_label = null;
@@ -3605,11 +3607,17 @@ class BookKeeping extends CommonObject
 							$resql = $this->db->query($sql);
 							if ($resql) {
 								while ($obj = $this->db->fetch_object($resql)) {
-									$docRef = "Duplicata de " . $obj->doc_ref;
+									$docRef = $langs->trans("CloneOf", $obj->doc_ref);
 
-									$sql_insert = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_bookkeeping (piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, doc_date, fk_user_author, doc_ref, fk_doc, fk_docdet, debit, credit, date_creation, journal_label, sens, montant)";
-									$sql_insert .=	" VALUES (" . ((int) $pieceNumNext) . ", '" . $this->db->escape($obj->label_operation) . "', '" . $this->db->escape($obj->numero_compte) . "', '" . $this->db->escape($obj->label_compte) . "', '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($docdate)."'";
-									$sql_insert .= 'Bug here !!! code to forge sql_insert is not finished';
+									$sql_insert = "INSERT INTO ".$this->db->prefix()."accounting_bookkeeping";
+									$sql_insert .= " (piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, doc_date,";
+									$sql_insert .= " fk_user_author, doc_ref, fk_doc, fk_docdet, debit, credit, journal_label, sens, montant";
+									$sql_insert .= ")";
+									$sql_insert .= " VALUES (" . ((int) $pieceNumNext) . ", '" . $this->db->escape($obj->label_operation) . "', '" . $this->db->escape($obj->numero_compte) . "',";
+									$sql_insert .= " '" . $this->db->escape($obj->label_compte) . "', '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($docdate)."',";
+									$sql_insert .= " '" . $this->db->escape($obj->fk_user_author) . "', '" . $this->db->escape($docRef) . "', " . ((int) $obj->fk_doc) . ", " . ((int) $obj->fk_docdet) . ",";
+									$sql_insert .= " " . (float) $obj->debit . ", " . (float) $obj->credit . ", '" . $this->db->escape($journal_label) . "', '" . $this->db->escape($obj->sens) . "', " . (float) $obj->montant;
+									$sql_insert .= ")";
 
 									$resqlInsert = $this->db->query($sql_insert);
 
@@ -3896,4 +3904,9 @@ class BookKeepingLine extends CommonObjectLine
 	 * @var int|string
 	 */
 	public $date_lim_reglement;
+
+	/**
+	 * @var string
+	 */
+	public $code_tiers;
 }

@@ -553,12 +553,6 @@ parameters:
 			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
 
 		-
-			message: '#^Call to function is_array\(\) with non\-empty\-array will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/accountancy/class/lettering.class.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -671,18 +665,6 @@ parameters:
 			identifier: ternary.alwaysFalse
 			count: 1
 			path: ../../../htdocs/accountancy/expensereport/list.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 2
-			path: ../../../htdocs/accountancy/index.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../../htdocs/accountancy/index.php
 
 		-
 			message: '#^Call to function is_array\(\) with non\-empty\-array will always evaluate to true\.$#'
@@ -987,12 +969,6 @@ parameters:
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/adherents/list.php
-
-		-
-			message: '#^Variable \$diroutputmassaction might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/adherents/list.php
 
@@ -1657,18 +1633,6 @@ parameters:
 			path: ../../../htdocs/admin/system/security.php
 
 		-
-			message: '#^Variable \$dolibarr_main_document_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/admin/system/security.php
-
-		-
-			message: '#^Variable \$dolibarr_main_prod might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/admin/system/security.php
-
-		-
 			message: '#^Call to function is_bool\(\) with true will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -1887,18 +1851,6 @@ parameters:
 		-
 			message: '#^Call to function is_object\(\) with ActionComm\|Adherent\|Commande\|CommandeFournisseur\|Contact\|Contrat\|ExpenseReport\|Facture\|FactureFournisseur\|Fichinter\|Mo\|Product\|Project\|Propal\|Task will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 2
-			path: ../../../htdocs/api/class/api_documents.class.php
-
-		-
-			message: '#^Loose comparison using \!\= between ''adherent''\|''agenda''\|''commande''\|''contact''\|''contrat''\|''expensereport''\|''facture''\|''fichinter''\|''mrp''\|''product''\|''produit''\|''produit\|service''\|''project''\|''project_task''\|''projet''\|''propale''\|''service''\|''supplier_invoice''\|''supplier_order'' and ''ecm'' will always evaluate to true\.$#'
-			identifier: notEqual.alwaysTrue
-			count: 1
-			path: ../../../htdocs/api/class/api_documents.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
 			count: 2
 			path: ../../../htdocs/api/class/api_documents.class.php
 
@@ -3115,12 +3067,6 @@ parameters:
 			path: ../../../htdocs/comm/action/info.php
 
 		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/comm/action/info.php
-
-		-
 			message: '#^Variable \$socid might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -3309,7 +3255,7 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 6
+			count: 4
 			path: ../../../htdocs/comm/action/peruser.php
 
 		-
@@ -3657,7 +3603,7 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 3
+			count: 2
 			path: ../../../htdocs/comm/propal/class/propaleligne.class.php
 
 		-
@@ -3685,18 +3631,6 @@ parameters:
 			path: ../../../htdocs/comm/propal/document.php
 
 		-
-			message: '#^Loose comparison using \=\= between \-1 and 0 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/comm/propal/list.php
-
-		-
-			message: '#^Loose comparison using \=\= between \-1 and 1 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/comm/propal/list.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 1
@@ -3712,12 +3646,6 @@ parameters:
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 2
-			path: ../../../htdocs/comm/propal/list.php
-
-		-
-			message: '#^Variable \$searchCategoryCustomerList in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
 			path: ../../../htdocs/comm/propal/list.php
 
 		-
@@ -3889,24 +3817,6 @@ parameters:
 			path: ../../../htdocs/commande/contact.php
 
 		-
-			message: '#^Variable \$addu might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/commande/customer.php
-
-		-
-			message: '#^Variable \$begin might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/commande/customer.php
-
-		-
-			message: '#^Variable \$maxlen might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/commande/customer.php
-
-		-
 			message: '#^Variable \$socid might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -3931,21 +3841,9 @@ parameters:
 			path: ../../../htdocs/commande/list.php
 
 		-
-			message: '#^Loose comparison using \=\= between \-1 and 0 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/commande/list.php
-
-		-
-			message: '#^Loose comparison using \=\= between \-1 and 1 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/commande/list.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 3
+			count: 1
 			path: ../../../htdocs/commande/list.php
 
 		-
@@ -4723,42 +4621,6 @@ parameters:
 			path: ../../../htdocs/compta/facture/class/facture.class.php
 
 		-
-			message: '#^Property Facture\:\:\$revenuestamp \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property Facture\:\:\$total_ht \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property Facture\:\:\$total_localtax1 \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property Facture\:\:\$total_localtax2 \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property Facture\:\:\$total_ttc \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property Facture\:\:\$total_tva \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 3
@@ -4906,12 +4768,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
-			path: ../../../htdocs/compta/facture/prelevement.php
-
-		-
-			message: '#^Variable \$num might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/compta/facture/prelevement.php
 
 		-
@@ -5693,18 +5549,6 @@ parameters:
 			identifier: notIdentical.alwaysTrue
 			count: 1
 			path: ../../../htdocs/compta/sociales/payments.php
-
-		-
-			message: '#^Loose comparison using \=\= between \-1 and 0 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/compta/stats/cabyprodserv.php
-
-		-
-			message: '#^Loose comparison using \=\= between \-1 and 1 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/compta/stats/cabyprodserv.php
 
 		-
 			message: '#^Ternary operator condition is always false\.$#'
@@ -6499,18 +6343,6 @@ parameters:
 			path: ../../../htdocs/contrat/index.php
 
 		-
-			message: '#^Loose comparison using \=\= between \-1 and 0 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/contrat/list.php
-
-		-
-			message: '#^Loose comparison using \=\= between \-1 and 1 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/contrat/list.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -6691,12 +6523,6 @@ parameters:
 			path: ../../../htdocs/core/actions_linkedfiles.inc.php
 
 		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
-			path: ../../../htdocs/core/actions_linkedfiles.inc.php
-
-		-
 			message: '#^Call to function is_object\(\) with Adherent\|ConferenceOrBoothAttendee\|Contact\|Societe\|User will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -6817,12 +6643,6 @@ parameters:
 			path: ../../../htdocs/core/actions_setmoduleoptions.inc.php
 
 		-
-			message: '#^Variable \$modulepart might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/actions_setmoduleoptions.inc.php
-
-		-
 			message: '#^Variable \$result might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -6911,12 +6731,6 @@ parameters:
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
 			path: ../../../htdocs/core/ajax/editinline.php
-
-		-
-			message: '#^Variable \$upload_dir in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/core/ajax/flowjs-server.php
 
 		-
 			message: '#^If condition is always true\.$#'
@@ -7813,12 +7627,6 @@ parameters:
 			path: ../../../htdocs/core/class/commonobject.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$cond_reglement \(int\|string\) is never assigned string so it can be removed from the property type\.$#'
-			identifier: property.unusedType
-			count: 1
-			path: ../../../htdocs/core/class/commonobject.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$fields \(array\<string, array\<string, array\<int\|string, string\>\|int\|string\>\>\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -8427,7 +8235,7 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 2
+			count: 1
 			path: ../../../htdocs/core/class/html.form.class.php
 
 		-
@@ -8456,12 +8264,6 @@ parameters:
 
 		-
 			message: '#^Parameter \#3 \$optJson of method Form\:\:constructProjectListOption\(\) expects array\{key\: string, value\: string, type\: string\}, array\{\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Parameter \#3 \$selected of method Form\:\:multiselectarray\(\) expects array\<string\>, list\<int\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/class/html.form.class.php
@@ -8539,28 +8341,10 @@ parameters:
 			path: ../../../htdocs/core/class/html.form.class.php
 
 		-
-			message: '#^Variable \$more in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
 			message: '#^Variable \$pageyes in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''formai''\|''formaiforlines''\|''formaiwithlines'' and ''formforlines'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/class/html.formai.class.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''formai''\|''formaiforlines''\|''formaiwithlines'' and ''formwithlines'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/class/html.formai.class.php
 
 		-
 			message: '#^Variable \$select_encoder might not be defined\.$#'
@@ -9277,12 +9061,6 @@ parameters:
 			path: ../../../htdocs/core/customreports.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/core/customreports.php
-
-		-
 			message: '#^Variable \$page might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -9589,54 +9367,6 @@ parameters:
 			path: ../../../htdocs/core/lib/files.lib.php
 
 		-
-			message: '#^Parameter \#1 \$ftp of function ftp_cdup expects FTP\\Connection, resource given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/lib/ftp.lib.php
-
-		-
-			message: '#^Parameter \#1 \$ftp of function ftp_chdir expects FTP\\Connection, resource given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/lib/ftp.lib.php
-
-		-
-			message: '#^Parameter \#1 \$ftp of function ftp_close expects FTP\\Connection, resource given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/lib/ftp.lib.php
-
-		-
-			message: '#^Parameter \#1 \$ftp of function ftp_delete expects FTP\\Connection, resource given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/lib/ftp.lib.php
-
-		-
-			message: '#^Parameter \#1 \$ftp of function ftp_get expects FTP\\Connection, resource given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/lib/ftp.lib.php
-
-		-
-			message: '#^Parameter \#1 \$ftp of function ftp_mkdir expects FTP\\Connection, resource given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/lib/ftp.lib.php
-
-		-
-			message: '#^Parameter \#1 \$ftp of function ftp_put expects FTP\\Connection, resource given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/lib/ftp.lib.php
-
-		-
-			message: '#^Parameter \#1 \$ftp of function ftp_rmdir expects FTP\\Connection, resource given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/lib/ftp.lib.php
-
-		-
 			message: '#^Call to function is_array\(\) with array\<string, mixed\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -9730,36 +9460,6 @@ parameters:
 			message: '#^Property CommonObject\:\:\$country \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/core/lib/functions.lib.php
-
-		-
-			message: '#^Property CommonObject\:\:\$firstname \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/core/lib/functions.lib.php
-
-		-
-			message: '#^Property CommonObject\:\:\$id \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/core/lib/functions.lib.php
-
-		-
-			message: '#^Property CommonObject\:\:\$lastname \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/core/lib/functions.lib.php
-
-		-
-			message: '#^Property CommonObject\:\:\$multicurrency_code \(array\<string\>\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/core/lib/functions.lib.php
-
-		-
-			message: '#^Property CommonObject\:\:\$multicurrency_total_ttc \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
 			path: ../../../htdocs/core/lib/functions.lib.php
 
 		-
@@ -10891,12 +10591,6 @@ parameters:
 			path: ../../../htdocs/core/modules/member/doc/pdf_standard_member.class.php
 
 		-
-			message: '#^Property Adherent\:\:\$photo \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/core/modules/member/doc/pdf_standard_member.class.php
-
-		-
 			message: '#^Property DolibarrModules\:\:\$import_convertvalue_array \(array\<array\<array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\) does not accept non\-empty\-array\<array\<array\{rule\: ''accountingaccount''\}\|array\{rule\: ''compute'', type\: ''double'', classfile\: ''/accountancy/class…'', class\: ''AccountancyImport'', method\: ''cleanAmount''\|''computeAmount'', element\: ''Accountancy''\}\|array\{rule\: ''compute'', type\: ''int'', classfile\: ''/accountancy/class…'', class\: ''AccountancyImport'', method\: ''computePieceNum'', element\: ''Accountancy''\}\|array\{rule\: ''compute'', type\: ''varchar'', classfile\: ''/accountancy/class…'', class\: ''AccountancyImport'', method\: ''computeDirection'', element\: ''Accountancy''\}\|array\{rule\: string, file\: string, class\: string, method\: string\}\>\>\.$#'
 			identifier: assign.propertyType
 			count: 1
@@ -11963,24 +11657,6 @@ parameters:
 			identifier: variable.undefined
 			count: 2
 			path: ../../../htdocs/core/tpl/extrafields_list_print_fields.tpl.php
-
-		-
-			message: '#^Variable \$extrafields might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/tpl/extrafields_list_search_param.tpl.php
-
-		-
-			message: '#^Variable \$extrafieldsobjectkey might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/tpl/extrafields_list_search_param.tpl.php
-
-		-
-			message: '#^Variable \$param might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
-			path: ../../../htdocs/core/tpl/extrafields_list_search_param.tpl.php
 
 		-
 			message: '#^Variable \$db might not be defined\.$#'
@@ -13579,18 +13255,6 @@ parameters:
 			path: ../../../htdocs/expedition/list.php
 
 		-
-			message: '#^Loose comparison using \=\= between \-1 and 0 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/expedition/list.php
-
-		-
-			message: '#^Loose comparison using \=\= between \-1 and 1 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/expedition/list.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 2
@@ -13666,12 +13330,6 @@ parameters:
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
-			path: ../../../htdocs/expensereport/card.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 5
 			path: ../../../htdocs/expensereport/card.php
 
 		-
@@ -13851,12 +13509,6 @@ parameters:
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/expensereport/payment/list.php
-
-		-
-			message: '#^Variable \$toselect might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/expensereport/payment/list.php
 
@@ -14105,12 +13757,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/fichinter/tpl/linkedobjectblock.tpl.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_encrypted_pass might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/filefunc.inc.php
 
 		-
 			message: '#^If condition is always true\.$#'
@@ -14697,18 +14343,6 @@ parameters:
 		-
 			message: '#^Call to function method_exists\(\) with CommandeFournisseur and ''fetch_lines'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/fourn/commande/list.php
-
-		-
-			message: '#^Loose comparison using \=\= between \-1 and 0 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/fourn/commande/list.php
-
-		-
-			message: '#^Loose comparison using \=\= between \-1 and 1 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
 			count: 1
 			path: ../../../htdocs/fourn/commande/list.php
 
@@ -15743,12 +15377,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/hrm/job_document.php
-
-		-
-			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/hrm/job_list.php
 
 		-
 			message: '#^Comparison operation "\<" between int\<0, max\> and 0 is always false\.$#'
@@ -17341,12 +16969,6 @@ parameters:
 			path: ../../../htdocs/mrp/mo_agenda.php
 
 		-
-			message: '#^Variable \$socid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/mrp/mo_agenda.php
-
-		-
 			message: '#^Property Mo\:\:\$entity \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -18319,12 +17941,6 @@ parameters:
 			path: ../../../htdocs/product/dynamic_price/editor.php
 
 		-
-			message: '#^Variable \$lastmodified might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/index.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -18913,78 +18529,6 @@ parameters:
 			path: ../../../htdocs/product/stock/massstockmove.php
 
 		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
-			message: '#^Property Product\:\:\$pmp \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
-			message: '#^Variable \$backtopage might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
-			message: '#^Variable \$comref might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
-			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
-			message: '#^Variable \$d_eatby might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
-			message: '#^Variable \$d_sellby might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
-			message: '#^Variable \$massaction might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
-			message: '#^Variable \$obj might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
-			message: '#^Variable \$sall might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
-			message: '#^Variable \$toselect might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
-			message: '#^Variable \$totalarray might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/movement_card.php
-
-		-
 			message: '#^Loose comparison using \=\= between 1 and 2 will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
 			count: 1
@@ -19003,12 +18547,6 @@ parameters:
 			path: ../../../htdocs/product/stock/movement_list.php
 
 		-
-			message: '#^Property Product\:\:\$pmp \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/product/stock/movement_list.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 1
@@ -19017,18 +18555,6 @@ parameters:
 		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
-			count: 1
-			path: ../../../htdocs/product/stock/movement_list.php
-
-		-
-			message: '#^Variable \$d_eatby might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/movement_list.php
-
-		-
-			message: '#^Variable \$d_sellby might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/product/stock/movement_list.php
 
@@ -19071,12 +18597,6 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/product/stock/product.php
-
-		-
-			message: '#^Property Product\:\:\$pmp \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/product/stock/product.php
 
@@ -19618,12 +19138,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
-			path: ../../../htdocs/projet/element.php
-
-		-
-			message: '#^Variable \$margin in isset\(\) always exists and is not nullable\.$#'
-			identifier: isset.variable
-			count: 2
 			path: ../../../htdocs/projet/element.php
 
 		-
@@ -20317,12 +19831,6 @@ parameters:
 			path: ../../../htdocs/public/members/new.php
 
 		-
-			message: '#^Property Adherent\:\:\$photo \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/public/members/public_card.php
-
-		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -20470,12 +19978,6 @@ parameters:
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
 			count: 1
-			path: ../../../htdocs/public/payment/paymentok.php
-
-		-
-			message: '#^Variable \$service might not be defined\.$#'
-			identifier: variable.undefined
-			count: 7
 			path: ../../../htdocs/public/payment/paymentok.php
 
 		-
@@ -21760,12 +21262,6 @@ parameters:
 			message: '#^Variable \$maxlength might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/recruitment/recruitmentjobposition_card.php
-
-		-
-			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/recruitment/recruitmentjobposition_document.php
 
 		-
@@ -22771,18 +22267,6 @@ parameters:
 			path: ../../../htdocs/supplier_proposal/list.php
 
 		-
-			message: '#^Loose comparison using \=\= between \-1 and 0 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/supplier_proposal/list.php
-
-		-
-			message: '#^Loose comparison using \=\= between \-1 and 1 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/supplier_proposal/list.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 2
@@ -23375,12 +22859,6 @@ parameters:
 			identifier: variable.undefined
 			count: 3
 			path: ../../../htdocs/user/card.php
-
-		-
-			message: '#^PHPDoc tag @phpstan\-return has invalid value \(Object\[\)\: Unexpected token "\[", expected TOKEN_HORIZONTAL_WS at offset 346 on line 8$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: ../../../htdocs/user/class/api_users.class.php
 
 		-
 			message: '#^Call to function method_exists\(\) with \$this\(User\) and ''getLibStatut'' will always evaluate to true\.$#'

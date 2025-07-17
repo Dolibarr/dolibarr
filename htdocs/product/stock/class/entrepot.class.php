@@ -211,7 +211,7 @@ class Entrepot extends CommonObject
 	/**
 	 * Warehouse that must be excluded for stock calculation (scrapping stock, virtual warehouses, ...)
 	 */
-	const USAGE_EXTTERNAL = 2;
+	const USAGE_EXTERNAL = 2;
 
 
 

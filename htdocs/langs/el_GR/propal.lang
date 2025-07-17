@@ -23,7 +23,10 @@ AllPropals=Όλες οι Προσφορές
 SearchAProposal=Εύρεση Προσφοράς
 NoProposal=Δεν υπάρχει προσφορά
 ProposalsStatistics=Στατιστικά Προσφορών
+NumberOfProposals=Αριθμός προσφορών
 NumberOfProposalsByMonth=Αριθμός ανά μήνα
+AmountOfProposals=Ποσό προσφορών
+AmountOfProposalsHT=Ποσό προσφορών (χωρίς Φ.Π.Α.)
 AmountOfProposalsByMonthHT=Ποσό ανά μήνα (χωρίς Φ.Π.Α.)
 NbOfProposals=Αριθμός Προσφορών
 ShowPropal=Εμφάνιση Προσφοράς
@@ -77,7 +80,7 @@ AvailabilityTypeAV_1W=1 εβδομάδα
 AvailabilityTypeAV_2W=2 εβδομάδες
 AvailabilityTypeAV_3W=3 εβδομάδες
 AvailabilityTypeAV_1M=1 μήνας
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Εκπρόσωπος επικοινωνίας μετά την προσφορά
 TypeContact_propal_external_BILLING=Επαφή λογιστηρίου πελάτη
 TypeContact_propal_external_CUSTOMER=Επαφή επικοινωνίας πελάτη μετά την προσφορά
@@ -85,7 +88,7 @@ TypeContact_propal_external_SHIPPING=Επαφή επικοινωνίας πελ�
 # Document models
 CantBeNoSign=δεν μπορεί να οριστεί ως μη υπογεγραμμένη
 CaseFollowedBy=Περίπτωση που ακολουθείται από
-ConfirmMassNoSignature=Επιβεβαίωση μαζικού ορισμού ως Μη υπογεγραμμένη 
+ConfirmMassNoSignature=Επιβεβαίωση μαζικού ορισμού ως Μη υπογεγραμμένη
 ConfirmMassNoSignatureQuestion=Είστε σίγουροι ότι θέλετε να ορίσετε ως μη υπογεγραμμένες τις επιλεγμένες εγγραφές;
 ConfirmMassSignature=Επιβεβαίωση μαζικής υπογραφής
 ConfirmMassSignatureQuestion=Είστε σίγουροι ότι θέλετε να υπογράψετε τις επιλεγμένες εγγραφές;
@@ -110,7 +113,7 @@ PropalAlreadyRefused=Η προσφορά έχει ήδη απορριφθεί
 PropalAlreadySigned=Η πρόσφορα ειναι ήδη αποδεκτή
 PropalRefused=Η προσφορά απορρίφθηκε
 PropalSigned=Πρόσφορα αποδεκτή
-ProposalCustomerSignature=Για αποδοχή: σφραγίδα εταιρείας, ημερομηνία και υπογραφή 
+ProposalCustomerSignature=Για αποδοχή: σφραγίδα εταιρείας, ημερομηνία και υπογραφή
 ProposalsStatisticsSuppliers=Στατιστικά στοιχεία προσφορών προμηθευτών
 RefusePropal=Απόρριψη προσφοράς
 Sign=Υπογραφή

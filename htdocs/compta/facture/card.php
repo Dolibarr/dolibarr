@@ -110,7 +110,7 @@ $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOSTINT('originid') ? GETPOSTINT('originid') : GETPOSTINT('origin_id')); // For backward compatibility
 $fac_rec = GETPOSTINT('fac_rec');
 $facid = GETPOSTINT('facid');
-$ref_client = GETPOSTINT('ref_client');
+$ref_client = GETPOST('ref_client', 'alpha');
 $inputReasonId = GETPOSTINT('input_reason_id');
 $rank = (GETPOSTINT('rank') > 0) ? GETPOSTINT('rank') : -1;
 $projectid = (GETPOSTINT('projectid') ? GETPOSTINT('projectid') : 0);
@@ -739,7 +739,7 @@ if (empty($reshook)) {
 		$object->setValueFrom('ref', GETPOST('ref'), '', 0, '', '', $user, 'BILL_MODIFY');
 	} elseif ($action == 'setref_client' && $usercancreate) {
 		$object->fetch($id);
-		$object->set_ref_client(GETPOST('ref_client'));
+		$object->set_ref_client(GETPOST('ref_client', 'alpha'));
 	} elseif ($action == 'setdemandreason' && $usercancreate) {
 		$result = $object->setInputReason($inputReasonId);
 		if ($result < 0) {
@@ -1067,18 +1067,34 @@ if (empty($reshook)) {
 			}
 			if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT) {
 				foreach ($amount_ht as $tva_tx => $xxx) {
-					$discount->amount_ht = abs((float) $amount_ht[$tva_tx]);
-					$discount->amount_tva = abs((float) $amount_tva[$tva_tx]);
-					$discount->amount_ttc = abs((float) $amount_ttc[$tva_tx]);
-					$discount->total_ht = abs((float) $amount_ht[$tva_tx]);
-					$discount->total_tva = abs((float) $amount_tva[$tva_tx]);
-					$discount->total_ttc = abs((float) $amount_ttc[$tva_tx]);
-					$discount->multicurrency_amount_ht = abs((float) $multicurrency_amount_ht[$tva_tx]);
-					$discount->multicurrency_amount_tva = abs((float) $multicurrency_amount_tva[$tva_tx]);
-					$discount->multicurrency_amount_ttc = abs((float) $multicurrency_amount_ttc[$tva_tx]);
-					$discount->multicurrency_total_ht = abs((float) $multicurrency_amount_ht[$tva_tx]);
-					$discount->multicurrency_total_tva = abs((float) $multicurrency_amount_tva[$tva_tx]);
-					$discount->multicurrency_total_ttc = abs((float) $multicurrency_amount_ttc[$tva_tx]);
+					if ($object->type == Facture::TYPE_CREDIT_NOTE) {
+						$discount->amount_ht = -((float) $amount_ht[$tva_tx]);
+						$discount->amount_tva = -((float) $amount_tva[$tva_tx]);
+						$discount->amount_ttc = -((float) $amount_ttc[$tva_tx]);
+						$discount->total_ht = -((float) $amount_ht[$tva_tx]);
+						$discount->total_tva = -((float) $amount_tva[$tva_tx]);
+						$discount->total_ttc = -((float) $amount_ttc[$tva_tx]);
+						$discount->multicurrency_amount_ht = -((float) $multicurrency_amount_ht[$tva_tx]);
+						$discount->multicurrency_amount_tva = -((float) $multicurrency_amount_tva[$tva_tx]);
+						$discount->multicurrency_amount_ttc = -((float) $multicurrency_amount_ttc[$tva_tx]);
+						$discount->multicurrency_total_ht = -((float) $multicurrency_amount_ht[$tva_tx]);
+						$discount->multicurrency_total_tva = -((float) $multicurrency_amount_tva[$tva_tx]);
+						$discount->multicurrency_total_ttc = -((float) $multicurrency_amount_ttc[$tva_tx]);
+					} else {
+						//We keep the absolute value to be consistent with the function used to create the discount in case of deposit in the “create” function of the Payment class
+						$discount->amount_ht = abs((float) $amount_ht[$tva_tx]);
+						$discount->amount_tva = abs((float) $amount_tva[$tva_tx]);
+						$discount->amount_ttc = abs((float) $amount_ttc[$tva_tx]);
+						$discount->total_ht = abs((float) $amount_ht[$tva_tx]);
+						$discount->total_tva = abs((float) $amount_tva[$tva_tx]);
+						$discount->total_ttc = abs((float) $amount_ttc[$tva_tx]);
+						$discount->multicurrency_amount_ht = abs((float) $multicurrency_amount_ht[$tva_tx]);
+						$discount->multicurrency_amount_tva = abs((float) $multicurrency_amount_tva[$tva_tx]);
+						$discount->multicurrency_amount_ttc = abs((float) $multicurrency_amount_ttc[$tva_tx]);
+						$discount->multicurrency_total_ht = abs((float) $multicurrency_amount_ht[$tva_tx]);
+						$discount->multicurrency_total_tva = abs((float) $multicurrency_amount_tva[$tva_tx]);
+						$discount->multicurrency_total_ttc = abs((float) $multicurrency_amount_ttc[$tva_tx]);
+					}
 
 					// Clean vat code
 					$reg = array();
@@ -3464,6 +3480,12 @@ if (empty($reshook)) {
 	if (empty($id)) {
 		$id = $facid;
 	}
+	if (!empty($object->id) && $action == 'send') {
+		// load sumpayed, sumdeposit, sumcreditnote that can be used in email templates
+		$object->getSommePaiement(-1);
+		$object->getSumCreditNotesUsed(-1);
+		$object->getSumDepositsUsed(-1);
+	}
 	$triggersendname = 'BILL_SENTBYMAIL';
 	$paramname = 'id';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_INVOICE_TO';
@@ -3778,7 +3800,7 @@ if ($action == 'create') {
 		if (!getDolGlobalString('INVOICE_DISABLE_AUTOMATIC_RECURRING_INVOICE')) {
 			$text .= ' '.$langs->trans("ToCreateARecurringInvoiceGeneAuto", $langs->transnoentitiesnoconv('Module2300Name'));
 		}
-		print info_admin($text, 0, 0, '0', 'opacitymedium').'<br>';
+		print info_admin($text, 0, 0, 'info', '').'<br>';
 	}
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST" id="formtocreate" name="formtocreate">';
@@ -3826,8 +3848,8 @@ if ($action == 'create') {
 			// Outstanding Bill
 			$arrayoutstandingbills = $soc->getOutstandingBills();
 			$outstandingBills = $arrayoutstandingbills['opened'];
-			print ' - <span class="opacitymedium">'.$langs->trans('CurrentOutstandingBill').':</span> ';
-			print '<span class="amount">'.price($outstandingBills, 0, $langs, 0, 0, -1, $conf->currency).'</span>';
+			print ' - <span class="opacitymedium valignmiddle">'.$langs->trans('CurrentOutstandingBill').':</span> ';
+			print '<span class="amount valignmiddle">'.price($outstandingBills, 0, $langs, 0, 0, -1, $conf->currency).'</span>';
 			if ($soc->outstanding_limit != '') {
 				if ($outstandingBills > $soc->outstanding_limit) {
 					print img_warning($langs->trans("OutstandingBillReached"));
@@ -3864,7 +3886,7 @@ if ($action == 'create') {
 				</script>';
 			}
 			if (!GETPOSTINT('fac_rec')) {
-				print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
+				print ' <a class="valignmiddle" href="'.DOL_URL_ROOT.'/societe/card.php?action=create&customer=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 			}
 			print '</td>';
 			print '</tr>'."\n";
@@ -4272,7 +4294,7 @@ if ($action == 'create') {
 		print $desc;
 		print '</div></div>'."\n";
 
-		print '</div>';
+		print '</div><br>';
 
 
 		if (getDolGlobalString('INVOICE_USE_DEFAULT_DOCUMENT')) { // Hidden conf
@@ -4454,9 +4476,7 @@ if ($action == 'create') {
 		if (isModEnabled('category')) {
 			// Categories
 			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_INVOICE, '', 'parent', 64, 0, 1);
-			$arrayselected = GETPOST('categories', 'array');
-			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, '0');
+			print $form->selectCategories(Categorie::TYPE_INVOICE, 'categories', $object);
 			print "</td></tr>";
 		}
 
@@ -5226,11 +5246,12 @@ if ($action == 'create') {
 
 		// POS
 		if (isModEnabled('takepos') || $object->module_source || getDolGlobalString('INVOICE_ALLOW_POS_SOURCE_EDIT')) {
+			$langs->load("cashdesk");
 			print '<tr><td class="fieldname_type">';
 			print '<table class="nobordernopadding centpercent"><tr><td>';
 			print $form->textwithpicto($langs->trans('PointOfSale'), $langs->trans('POSInfo'));
 			print '</td>';
-			if ($action != 'editposinfo' && $object->status == $object::STATUS_DRAFT && $usercancreate) {
+			if ($action != 'editposinfo' && $usercancreate) {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editposinfo&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetPOSInfo'), 1).'</a></td>';
 			}
 			print '</tr></table>';
@@ -5426,19 +5447,12 @@ if ($action == 'create') {
 			print '</td></tr></table>';
 			print '</td>';
 			print '<td>';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_INVOICE, '', 'parent', 64, 0, 1);
 			if ($action == 'edittags') {
 				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
 				print '<input type="hidden" name="action" value="settags">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
-				$c = new Categorie($db);
-				$cats = $c->containing($object->id, Categorie::TYPE_INVOICE);
-				$arrayselected = [];
-				foreach ($cats as $cat) {
-					$arrayselected[] = $cat->id;
-				}
-				print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, '0');
-				print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				print $form->selectCategories(Categorie::TYPE_INVOICE, 'categories', $object);
+				print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
 				print '</form>';
 			} else {
 				print $form->showCategories($object->id, Categorie::TYPE_INVOICE, 1);

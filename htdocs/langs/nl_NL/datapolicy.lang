@@ -19,7 +19,7 @@ Module4100Desc = Module om gegevensprivacy te beheren (conformiteit met de AVG)
 datapolicySetup = Module Gegevensprivacybeleid instellen
 DataDeletion=Verwijdering van gegevens
 DataAnonymization=Anonimisering van gegevens
-datapolicySetupPage = Depending on the laws of your country (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
+datapolicySetupPage = Afhankelijk van de wetten van uw land (bijvoorbeeld <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Artikel 5</a> van de AVG) moeten persoonsgegevens worden bewaard gedurende een periode die niet langer is dan de periode waarin de gegevens nodig zijn voor het doeleinde waarvoor ze zijn verzameld, met uitzondering van archiveringsdoeleinden.<br>Deze module voert automatisch een anonimisering uit na een bepaalde periode zonder gebeurtenissen (de duur die u hieronder hebt aangegeven) en als het object geen bestaande onderliggende bedrijfsobjecten heeft.
 NB_MONTHS = %s maanden
 ONE_YEAR = 1 jaar
 NB_YEARS = %s jaar

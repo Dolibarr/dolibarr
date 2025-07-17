@@ -406,6 +406,7 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 			$showlinktoailabel = $langs->trans("ToTest");
 			$htmlname = $confkey;
 			$onlyenhancements = $confkey;
+			$showlinktolayout = 0;
 
 			// Fill $out
 			include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';

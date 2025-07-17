@@ -511,7 +511,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 			$curY,
 			$nexY,
 			$default_font_size,
-			$langs->trans('GrandTotals'),
+			$langs->transnoentities('GrandTotals'),
 			$tab_top_newpage,
 			$totalDebit,
 			$totalCredit,

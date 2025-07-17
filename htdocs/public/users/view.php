@@ -302,6 +302,7 @@ if (getDolGlobalString('USER_IMAGE_PUBLIC_INTERFACE')) {
 	print '</div>';
 }
 
+// url for the download .vcf file link
 $urlforqrcode = $object->getOnlineVirtualCardUrl('vcard');
 
 $socialnetworksdict = getArrayOfSocialNetworks();
@@ -314,10 +315,17 @@ if ($showbarcode) {
 
 	$filename = $v->buildVCardString($object, $company, $langs, '', $outdir);
 
+	$encodedsecurekey = dol_hash($conf->file->instance_unique_id.'uservirtualcard'.$object->id.'-'.$object->login, 'md5');
+	if (isModEnabled('multicompany')) {
+		$entity_qr = '&entity='.((int) $conf->entity);
+	} else {
+		$entity_qr = '';
+	}
+
 	print '<br>';
 	print '<div class="floatleft inline-block valignmiddle paddingleft paddingright">';
 	//print '<!-- filename = '.dol_escape_htmltag($filename).' -->';
-	print '<img style="max-width: 100%" src="'.$dolibarr_main_url_root.'/viewimage.php?modulepart=barcode&entity='.((int) $conf->entity).'&generator=tcpdfbarcode&encoding=QRCODE&code='.urlencode(basename($filename)).'">';
+	print '<img style="max-width: 100%" src="'.$dolibarr_main_url_root.'/viewimage.php?modulepart=barcode'.$entity_qr.'&generator=tcpdfbarcode&encoding=QRCODE&code='.urlencode(basename($filename)).'&securekey='.$encodedsecurekey.'">';
 	print '</div>';
 	print '<br>';
 }

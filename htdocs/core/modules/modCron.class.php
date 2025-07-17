@@ -39,8 +39,6 @@ class modCron extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
-
 		$this->db = $db;
 		$this->numero = 2300;
 
@@ -141,8 +139,8 @@ class modCron extends DolibarrModules
 								'url'=>'/cron/list.php?leftmenu=admintools',
 								'langs'=>'cron', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>500,
-								'enabled'=>'$conf->cron->enabled && preg_match(\'/^(admintools|all)/\', $leftmenu)', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-								'perms'=>'$user->rights->cron->read', // Use 'perms'=>'$user->hasRight("mymodule","level1","level2")' if you want your menu with a permission rules
+								'enabled'=>'isModEnabled("cron") && preg_match(\'/^(admintools|all)/\', $leftmenu)', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+								'perms'=>'$user->hasRight("cron", "read")', // Use 'perms'=>'$user->hasRight("mymodule","level1","level2")' if you want your menu with a permission rules
 								'target'=>'',
 								'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
 		$r++;

@@ -33,9 +33,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 
 /* IDE Hack <style type="text/css"> */
 
-/*
- Badge style is based on bootstrap framework
- */
+/* Badge style is based on bootstrap framework */
 
 .badge {
 	display: inline-block;
@@ -265,7 +263,7 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 	global ${$statusVarNamePrefix.'badgeStatus'.$statusName}, ${$statusVarNamePrefix.'badgeStatus_textColor'.$statusName};
 
 	if (!empty(${$statusVarNamePrefix.'badgeStatus'.$statusName})) {
-		print "\n/* ".strtoupper($commentLabel)." */\n";
+		print "\n/* ".strtoupper($commentLabel)." - ".$statusName." */\n";
 
 		$thisBadgeBackgroundColor = $thisBadgeBorderColor = ${$statusVarNamePrefix.'badgeStatus'.$statusName};
 
@@ -278,10 +276,16 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 		}
 
 		if (in_array((string) $statusName, $TBadgeBorderOnly)) {
-			$thisBadgeTextColor = '#212529';
+			$thisBadgeTextColor = '#9c850b';
 			$thisBadgeBackgroundColor = "#fff";
 		}
 
+		if (in_array((string) $statusName, array('4b'))) {
+			$thisBadgeTextColor = '#25a580';
+		}
+		if (in_array((string) $statusName, array('7'))) {
+			$thisBadgeTextColor = '#277d1e';
+		}
 		if (in_array((string) $statusName, array('0', '5', '9'))) {
 			$thisBadgeTextColor = '#999999';
 		}
@@ -307,6 +311,7 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 		print "}\n";
 
 		// badge-statusX:focus
+
 		print $cssPrefix.".badge-status".$statusName.".focus, ".$cssPrefix.".badge-status".$statusName.":focus {\n";
 		print "    outline: 0;\n";
 		print "    box-shadow: 0 0 0 0.2rem ".colorHexToRgb($thisBadgeBackgroundColor, 0.5)." !important;\n";
@@ -314,7 +319,6 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 
 		print $cssPrefix.".badge-status".$statusName.":focus, ".$cssPrefix.".badge-status".$statusName.":hover {\n";
 		print "    color: ".$thisBadgeTextColor." !important;\n";
-		//print "    background-color: ".colorDarker($thisBadgeBackgroundColor, 10).";\n";
 		if (in_array((string) $statusName, $TBadgeBorderOnly)) {
 			print "        border-color: ".colorDarker($thisBadgeBorderColor, 10)." !important;\n";
 		}

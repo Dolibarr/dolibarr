@@ -47,8 +47,8 @@ function dol_basename($pathfile)
  * @param	string			$utf8_path     	Starting path from which to search. This is a full path.
  * @param	string			$types        	Can be "directories", "files", or "all"
  * @param	int				$recursive		Determines whether subdirectories are searched
- * @param	string			$filter        	Regex filter to restrict list. This regex value must be escaped for '/' by doing preg_quote($var,'/'), since this char is used for preg_match function,
- *                  	                    but must not contains the start and end '/'. Filter is checked into basename only.
+ * @param	string|string[]	$filter        	Regex or Array of Regex filter to restrict list. The regex value must be escaped for '/' by doing preg_quote($var,'/'), since this char is used for preg_match function,
+ *                  	                    but must NOT contains the start and end '/'. Filter is checked into basename only.
  * @param	string|string[]	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.')). Exclude is checked both into fullpath and into basename (So '^xxx' may exclude 'xxx/dirscanned/...' and dirscanned/xxx').
  * @param	string			$sortcriteria	Sort criteria ('','fullname','relativename','name','date','size')
  * @param	int 			$sortorder		Sort order (SORT_ASC, SORT_DESC)
@@ -66,22 +66,38 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 	global $object;
 
 	if ($recursive <= 1) {	// Avoid too verbose log
-		// Verify filters (only on first call to function)
-		$filters_ok = true;
+		// Verify filters (only on the first call of the function)
+		$filter_ok = true;
+		if (!is_array($filter)) {
+			if (strlen($filter) > 25000) {	// Note that limit depends on syntax of filter
+				dol_syslog("Value for filter is too large", LOG_ERR);
+				$filter_ok = false;
+			} else {
+				// Check that all '/' are escaped.
+				if ((int) preg_match('/(?:^|[^\\\\])\//', $filter) > 0) {
+					$excludefilter_ok = false;
+					$error_info .= " error='filter_has_unescaped_slash'";
+					dol_syslog("'$filter' has unescaped '/'", LOG_ERR);
+				}
+			}
+		}
+
+		$excludefilter_ok = true;
 		$error_info = "";
 		// Ensure we have an array for the exclusions
 		$exclude_array = ($excludefilter === null || $excludefilter === '') ? array() : (is_array($excludefilter) ? $excludefilter : array($excludefilter));
-		foreach ((array($filter) + $exclude_array) as $f) {
+		foreach ($exclude_array as $f) {
 			// Check that all '/' are escaped.
 			if ((int) preg_match('/(?:^|[^\\\\])\//', $f) > 0) {
-				$filters_ok = false;
-				$error_info .= " error='$f unescaped_slash'";
+				$excludefilter_ok = false;
+				$error_info .= " error='excludefilter_has_unescaped_slash'";
 				dol_syslog("'$f' has unescaped '/'", LOG_ERR);
 			}
 		}
-		dol_syslog("files.lib.php::dol_dir_list path=".$utf8_path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($excludefilter).$error_info);
-		// print 'xxx'."files.lib.php::dol_dir_list path=".$utf8_path." types=".$types." recursive=".$recursive." filter=".$filter." excludefilter=".json_encode($exclude_array);
-		if (!$filters_ok) {
+
+		dol_syslog("files.lib.php::dol_dir_list path=".$utf8_path." types=".$types." recursive=".$recursive." filter=".json_encode($filter)." excludefilter=".json_encode($excludefilter).$error_info);
+		// print 'xxx'."files.lib.php::dol_dir_list path=".$utf8_path." types=".$types." recursive=".$recursive." filter=".json_encode($filter)." excludefilter=".json_encode($exclude_array);
+		if (!$filter_ok || !$excludefilter_ok) {
 			// Return empty array when filters are invalid
 			return array();
 		}
@@ -156,11 +172,10 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 					$utf8_file = $os_file;
 				}
 
-				$qualified = 1;
-
 				$utf8_fullpathfile = $utf8_path_cursor."/".$utf8_file;  // Temp variable for speed
 
 				// Check if file is qualified
+				$qualified = 1;
 				foreach ($excludefilterarray as $filt) {
 					if (preg_match('/'.$filt.'/i', $utf8_file) || preg_match('/'.$filt.'/i', $utf8_fullpathfile)) {
 						$qualified = 0;
@@ -185,7 +200,28 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 								$fileperm = dol_fileperm($utf8_fullpathfile);
 							}
 
-							if (!$filter || preg_match('/'.$filter.'/i', $utf8_file)) {	// We do not search key $filter into all $path, only into $file part
+							$qualifiedforfilter = 0;
+							if (empty($filter)) {
+								$qualifiedforfilter = 1;
+							} else {
+								$testpregmatch = false;
+								if (is_array($filter)) {
+									$chunks = array_chunk($filter, 500);
+									foreach ($chunks as $chunk) {
+										$testpregmatch = preg_match('/'.implode('|', $chunk).'/i', $utf8_file);	// May failed if $filter too large
+										if ($testpregmatch) {
+											break;
+										}
+									}
+								} else {
+									$testpregmatch = preg_match('/'.$filter.'/i', $utf8_file);		// May failed if $filter too large
+								}
+								if ($testpregmatch) {
+									$qualifiedforfilter = 1;
+								}
+							}
+
+							if ($qualifiedforfilter) {	// We do not search key $filter into all $path, only into $file part
 								$reg = array();
 								preg_match('/([^\/]+)\/[^\/]+$/', $utf8_fullpathfile, $reg);
 								$level1name = (isset($reg[1]) ? $reg[1] : '');
@@ -219,7 +255,28 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 							$filesize = dol_filesize($utf8_fullpathfile);
 						}
 
-						if (!$filter || preg_match('/'.$filter.'/i', $utf8_file)) {	// We do not search key $filter into $utf8_path, only into $utf8_file
+						$qualifiedforfilter = 0;
+						if (empty($filter)) {
+							$qualifiedforfilter = 1;
+						} else {
+							$testpregmatch = false;
+							if (is_array($filter)) {
+								$chunks = array_chunk($filter, 500);
+								foreach ($chunks as $chunk) {
+									$testpregmatch = preg_match('/'.implode('|', $chunk).'/i', $utf8_file);	// May failed if $filter too large
+									if ($testpregmatch) {
+										break;
+									}
+								}
+							} else {
+								$testpregmatch = preg_match('/'.$filter.'/i', $utf8_file);		// May failed if $filter too large
+							}
+							if ($testpregmatch) {
+								$qualifiedforfilter = 1;
+							}
+						}
+
+						if ($qualifiedforfilter) {	// We do not search key $filter into all $path, only into $file part
 							if (empty($nbsecondsold) || $filedate <= ($now - $nbsecondsold)) {
 								preg_match('/([^\/]+)\/[^\/]+$/', $utf8_fullpathfile, $reg);
 								$level1name = (isset($reg[1]) ? $reg[1] : '');
@@ -259,7 +316,7 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
  * Scan a directory and return a list of files/directories.
  * Content for string is UTF8 and dir separator is "/".
  *
- * @param	string		$path        	Starting path from which to search. Example: 'produit/MYPROD' or 'produit/%'
+ * @param	string		$path        	Starting path from which to search. Example: 'produit/MYPROD' or 'produit/%'. Must not end with "/".
  * @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
  * @param	string[]|null	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.'))
  * @param	string		$sortcriteria	Sort criteria ("","fullname","name","date","size")
@@ -374,11 +431,11 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 		$object = new stdClass();
 	}
 
-	$filearrayindatabase = dol_dir_list_in_database(preg_replace('/[\\/]$/', '', $relativedir), '', null, 'name', SORT_ASC, 0, '', $object);
+	$filearrayindatabase = dol_dir_list_in_database(rtrim($relativedir, "/\\"), '', null, 'name', SORT_ASC, 0, '', $object);
 
-	// TODO Remove this when PRODUCT_USE_OLD_PATH_FOR_PHOTO will be removed
 	global $modulepart;
 	if ($modulepart == 'produit' && getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
+		// TODO Remove this when PRODUCT_USE_OLD_PATH_FOR_PHOTO will be removed
 		global $object;
 		if (!empty($object->id)) {
 			if (isModEnabled("product")) {
@@ -388,15 +445,14 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 			}
 
 			$relativedirold = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $upload_dirold);
-			$relativedirold = preg_replace('/^[\\/]/', '', $relativedirold);
+			$relativedirold = ltrim($relativedirold, "/\\");
 
 			$filearrayindatabase = array_merge($filearrayindatabase, dol_dir_list_in_database($relativedirold, '', null, 'name', SORT_ASC));
 		}
 	} elseif ($modulepart == 'ticket') {
 		foreach ($filearray as $key => $val) {
 			$rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filearray[$key]['path']);
-			$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
-			$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+			$rel_dir = trim($rel_dir, "/\\");
 			if ($rel_dir != $relativedir) {
 				$filearrayindatabase = array_merge($filearrayindatabase, dol_dir_list_in_database($rel_dir, '', null, 'name', SORT_ASC));
 			}
@@ -1514,15 +1570,15 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
  *  Remove a file or several files with a mask.
  *  This delete file physically but also database indexes.
  *
- *  @param	string	$file           File to delete or mask of files to delete
- *  @param  int		$disableglob    Disable usage of glob like * so function is an exact delete function that will return error if no file found
- *  @param  int		$nophperrors    Disable all PHP output errors
- *  @param	int		$nohook			Disable all hooks
+ *  @param	string	$file           	File to delete or mask of files to delete
+ *  @param  int		$disableglob    	Disable usage of glob like * so function is an exact delete function that will return error if no file found
+ *  @param  int		$nophperrors    	Disable all PHP output errors
+ *  @param	int		$nohook				Disable all hooks
  *  @param	object|null	$object			Current object in use
- *  @param	boolean	$allowdotdot	Allow to delete file path with .. inside. Never use this, it is reserved for migration purpose.
- *  @param	int		$indexdatabase	Try to remove also index entries.
- *  @param	int		$nolog			Disable log file
- *  @return boolean         		True if no error (file is deleted or if glob is used and there's nothing to delete), False if error
+ *  @param	boolean	$allowdotdot		Allow to delete file path with .. inside. Never use this, it is reserved for migration purpose.
+ *  @param	int		$indexdatabase		Try to remove also index entries.
+ *  @param	int		$nolog				Disable log file
+ *  @return boolean         			True if no error (file is deleted or if glob is used and there's nothing to delete), False if error
  *  @see dol_delete_dir()
  */
 function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0, $object = null, $allowdotdot = false, $indexdatabase = 1, $nolog = 0)
@@ -3238,7 +3294,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->fckeditor->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'user' && !empty($conf->user->dir_output)) {
 		// Wrapping for users
-		$canreaduser = (!empty($fuser->admin) || $fuser->hasRight('user', 'user', 'lire'));
+		$canreaduser = (!empty($fuser->admin) || $fuser->hasRight('user', 'user', $lire));
 		if ($fuser->id == (int) $refname) {
 			$canreaduser = 1;
 		} // A user can always read its own card
@@ -3633,7 +3689,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 				exit;
 			}
 
-			// Check fuser->rights->modulepart->myobject->read and fuser->rights->modulepart->read
+			// Check fuser->hasRight('modulepart', 'myobject', 'read') and fuser->hasRight('modulepart', 'read')
 			$partsofdirinoriginalfile = explode('/', $original_file);
 			if (!empty($partsofdirinoriginalfile[1])) {	// If original_file is xxx/filename (xxx is a part we will use)
 				$partofdirinoriginalfile = $partsofdirinoriginalfile[0];

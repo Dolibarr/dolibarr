@@ -706,7 +706,7 @@ textarea {
 	border-bottom:solid 1px var(--inputbordercolor);
 
 	background-color: #FFF;
-	padding:4px;
+	padding:8px;
 	margin-left:1px;
 	margin-bottom:1px;
 	margin-top:1px;
@@ -2198,7 +2198,7 @@ tr.nobottom td {
 .minheight30 { min-height: 30px; }
 .minheight40 { min-height: 40px; }
 .titlefieldcreate { width: 20%; }
-.titlefield       { /* width: 25%; */ min-width: 150px; width: 25%; }
+.titlefield       { width: 25%; min-width: 150px; }
 .titlefieldmiddle { width: 50%; }
 .titlefieldmax45 { max-width: 45%; min-width: 180px; }
 .imgmaxwidth100 { max-width: 100px; }
@@ -2927,11 +2927,11 @@ img.hideonsmartphone.pictoactionview {
 
 .pictofixedwidth {
 	text-align: start;
-	width: 20px;
+	width: 20px;	/* do not use em unit here */
 	/* padding-right: 0; */
 }
 img.pictofixedwidth {
-	width: 18px;
+	width: 18px;	/* Do not use em unit here */
 	padding-right: 2px;
 }
 
@@ -5671,7 +5671,7 @@ div.backgreypublicpayment {
 .poweredbypublicpayment {
 	float: right;
 	top: 8px;
-	right: 8px;
+	right: 12px;
 	position: absolute;
 	font-size: 0.8em;
 	color: #222;
@@ -5760,6 +5760,7 @@ div#card-errors {
 .ui-dialog-titlebar {
 }
 .ui-dialog-content {
+	maring-bottom: 10px;	/* same than .ui-widget-header */
 	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize; ?> !important;
 }
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
@@ -5776,6 +5777,10 @@ div#card-errors {
 
 div#dialogforpopup {
 	background-color: #f8f8f8 !important;
+}
+
+.ui-dialog .ui-dialog-buttonpane {
+	padding: .5em 1em .3em .4em;
 }
 
 
@@ -5827,7 +5832,7 @@ div.ui-tooltip {
 }
 
 div.ui-tooltip.mytooltip {
-	padding: 10px 20px;
+	padding: 20px 20px;
 	border-radius: 4px;
 	box-shadow: 0 0 4px #888;
 	margin: 2px;
@@ -5882,6 +5887,12 @@ div#ui-datepicker-div {
 .ui-datepicker .ui-widget-header {
 	border: unset;
 	background: unset;
+}
+
+/* the button Previous / Next month */
+.ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next {
+	width: 2.5em;
+	height: 2.7em;
 }
 
 img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
@@ -7506,7 +7517,7 @@ div.multi-select-menu[role="menu"] {
 
 .multi-select-menu input {
   margin-right: 0.3em;
-  vertical-align: 0.1em;
+  /* vertical-align: 0.1em; */
 }
 
 .multi-select-button {
@@ -7522,8 +7533,13 @@ div.multi-select-menu[role="menu"] {
   border: none;
   border-bottom: solid 1px rgba(0,0,0,.2);
   padding: 5px;
-  padding-left: 2px;
+  padding-left: 6px;
   height: 17px;
+  <?php if ($right == 'left') { ?>
+	  padding-right: 22px;
+  <?php } ?>
+
+  text-align: start;
 }
 .multi-select-button:focus {
   outline: none;
@@ -7536,9 +7552,12 @@ div.multi-select-menu[role="menu"] {
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 0.5em 0.23em 0em 0.23em;
+  border-width: 0.4em 0.3em 0em 0.3em;
   border-color: #888 transparent transparent transparent;
   margin-left: 0.4em;
+  position: absolute;
+  right: 10px;
+  top: 12px;
 }
 
 .multi-select-container--open .multi-select-menu { display: block; }
@@ -7551,10 +7570,10 @@ div.multi-select-menu[role="menu"] {
 .multi-select-menuitem {
 	clear: both;
 	float: left;
-	padding-left: 5px
+	padding-left: 10px
 }
 label.multi-select-menuitem {
-	line-height: 24px;
+	line-height: 32px;
 	text-align: start;
 }
 
@@ -7659,6 +7678,10 @@ dd.dropdowndd ul li {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+}
+
+div.kanban.column div.ui-sortable-helper {
+	transform: rotate(4deg);
 }
 
 
@@ -8465,12 +8488,13 @@ div.clipboardCPValue.hidewithsize {
 }
 
 #virtualcard-iframe {
-	border: 40px solid #aaa;
+	border: 1px solid #aaa;
 	vertical-align: top;
 	width: 10%;
 	min-width: 100px;
 	border-radius: 10px;
 	aspect-ratio: 0.6;
+	box-shadow: 0 0 5px #bbb;
 }
 .nopointervent {
 	pointer-events: none;

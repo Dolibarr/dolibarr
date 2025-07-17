@@ -215,14 +215,12 @@ if ($nolinesbefore) {
 			print '<span class="prod_entry_mode_free nowraponall">';
 			// Show radio for the non predefined product
 			if ($forceall >= 0 && (isModEnabled("product") || isModEnabled("service"))) {
-				print '<label for="prod_entry_mode_free">';
 				print '<input type="radio" class="prod_entry_mode_free" name="prod_entry_mode" id="prod_entry_mode_free" value="free"';
 				//echo (GETPOST('prod_entry_mode')=='free' ? ' checked' : ((empty($forceall) && (!isModEnabled('product') || !isModEnabled('service')))?' checked':'') );
 				print((GETPOST('prod_entry_mode', 'alpha') == 'free' || getDolGlobalString('MAIN_FREE_PRODUCT_CHECKED_BY_DEFAULT')) ? ' checked' : '');
 				print '> ';
 				// Show type selector
 				$labelforempty = $langs->trans("FreeLineOfType").'...';
-				print '</label>';
 			} else {
 				echo '<input type="hidden" id="prod_entry_mode_free" name="prod_entry_mode" value="free">';
 				// Show type selector
@@ -235,7 +233,14 @@ if ($nolinesbefore) {
 				}
 			}
 
+			if ($forceall >= 0 && (isModEnabled("product") || isModEnabled("service"))) {
+				print '<label for="prod_entry_mode_free">';
+			}
 			$form->select_type_of_lines(GETPOSTISSET("type") ? GETPOST("type", 'alpha', 2) : -1, 'type', $labelforempty, 1, $forceall, 'minwidth200', 0);
+			if ($forceall >= 0 && (isModEnabled("product") || isModEnabled("service"))) {
+				print '</label>';
+			}
+
 			print '</span>';
 		}
 		// Predefined product/service

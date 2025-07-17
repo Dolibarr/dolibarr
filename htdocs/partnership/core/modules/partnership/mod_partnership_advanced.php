@@ -74,6 +74,7 @@ class mod_partnership_advanced extends ModeleNumRefPartnership
 		$text .= '<table class="nobordernopadding" width="100%">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Partnership"), $langs->transnoentities("Partnership"));
+		$tooltip .= $langs->trans("GenericMaskCodes1");
 		$tooltip .= $langs->trans("GenericMaskCodes2");
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Partnership"), $langs->transnoentities("Partnership"));

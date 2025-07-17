@@ -539,9 +539,9 @@ if (empty($reshook)) {
 			$action = "create";
 			$error++;
 		}
-		$stockable_product = (int) ($type == 0 || ($type == 1 && !empty($conf->global->STOCK_SUPPORTS_SERVICES)));
+		$stockable_product = (int) ($type == 0 || ($type == 1 && getDolGlobalInt('STOCK_SUPPORTS_SERVICES')));
 		if (GETPOST('status_batch') && $stockable_product == 0 && isModEnabled('stock') && isModEnabled('productbatch')) {
-			setEventMessages($langs->trans('ErrorBatchesNeedStockManagement', $langs->transnoentities('Unit')), null, 'errors');
+			setEventMessages($langs->trans('ErrorBatchesNeedStockManagement'), null, 'errors');
 			$action = "create";
 			$error++;
 		}
@@ -855,6 +855,10 @@ if (empty($reshook)) {
 
 				// managed_in_stock
 				$object->stockable_product   = (int) GETPOSTISSET('stockable_product');
+				if ($object->status_batch > 0  && $object->stockable_product == 0 && isModEnabled('stock') && isModEnabled('productbatch')) {
+					$object->stockable_product = 1;
+					setEventMessages($langs->trans('ForceBatchesNeedStockManagement'), null, 'warnings');
+				}
 
 				$units = GETPOSTINT('units');
 				if ($units > 0) {
@@ -919,7 +923,6 @@ if (empty($reshook)) {
 				if ($object->isService()) {
 					$object->mandatory_period =  (!empty($checkmandatory)) ? 1 : 0 ;
 				}
-
 
 
 				// Fill array 'array_options' with data from add form
@@ -1524,6 +1527,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if ($status_batch !== '0') {
 					$langs->load("admin");
 					$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
+					$tooltip .= $langs->trans("GenericMaskCodes1");
 					$tooltip .= '<br>'.$langs->trans("GenericMaskCodes2");
 					$tooltip .= '<br>'.$langs->trans("GenericMaskCodes3");
 					$tooltip .= '<br>'.$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
@@ -1801,8 +1805,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			if (isModEnabled('category')) {
 				// Categories
 				print '<tr><td>'.$langs->trans("Categories").'</td><td>';
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 3);
-				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+				print $form->selectCategories(Categorie::TYPE_PRODUCT, 'categories', $object);
 				print "</td></tr>";
 			}
 
@@ -2438,21 +2441,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Tags-Categories
 				if (isModEnabled('category')) {
 					print '<tr><td>'.$langs->trans("Categories").'</td><td>';
-					$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 3);
-					$c = new Categorie($db);
-					$cats = $c->containing($object->id, Categorie::TYPE_PRODUCT);
-					$arrayselected = array();
-					if (is_array($cats)) {
-						foreach ($cats as $cat) {
-							$arrayselected[] = $cat->id;
-						}
-					}
-					if (GETPOSTISARRAY('categories')) {
-						foreach (GETPOST('categories', 'array') as $cat) {
-							$arrayselected[] = $cat;
-						}
-					}
-					print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+					print $form->selectCategories(Categorie::TYPE_PRODUCT, 'categories', $object);
 					print "</td></tr>";
 				}
 

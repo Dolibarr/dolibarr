@@ -30,7 +30,8 @@ InvoiceReplacementShort=متبادل
 InvoiceReplacementAsk=انوائس کے بدلے انوائس
 InvoiceReplacementDesc= <b> تبدیلی کی رسید </b> کو مکمل طور پر انوائس کو تبدیل کرنے کے لیے استعمال کیا جاتا ہے جس میں پہلے سے کوئی ادائیگی موصول نہیں ہوئی ہے۔ <br> <br> نوٹ: صرف ان انوائسز کو تبدیل کیا جا سکتا ہے جن پر کوئی ادائیگی نہ ہو۔ اگر آپ جو انوائس تبدیل کرتے ہیں وہ ابھی تک بند نہیں ہوا ہے، تو یہ خود بخود 'متروک' پر بند ہو جائے گا۔
 InvoiceAvoir=کریڈٹ نوٹ
-InvoiceAvoirAsk=انوائس درست کرنے کے لیے کریڈٹ نوٹ
+InvoiceAvoirAsk=تصحیح کے لیے کریڈٹ نوٹ
+InvoiceAvoirAskCombo=درست کرنے کے لیے رسید
 InvoiceAvoirDesc=<b> کریڈٹ نوٹ </b> ایک منفی انوائس ہے جس کا استعمال اس حقیقت کو درست کرنے کے لیے کیا جاتا ہے کہ انوائس ایک ایسی رقم دکھاتی ہے جو اصل میں ادا کی گئی رقم سے مختلف ہوتی ہے (مثلاً صارف نے غلطی سے بہت زیادہ ادائیگی کی، یا مکمل رقم ادا نہیں کرے گا کیونکہ کچھ مصنوعات واپس کردی گئی ہیں) .
 invoiceAvoirWithLines=اصل انوائس سے لائنوں کے ساتھ کریڈٹ نوٹ بنائیں
 invoiceAvoirWithPaymentRestAmount=اصل انوائس کے بقایا بغیر ادائیگی کے ساتھ کریڈٹ نوٹ بنائیں
@@ -51,7 +52,7 @@ CardBill=انوائس کارڈ
 PredefinedInvoices=پہلے سے طے شدہ رسیدیں
 Invoice=رسید
 PdfInvoiceTitle=رسید
-PdfInvoiceSituationTitle=Invoice situation
+PdfInvoiceSituationTitle=انوائس کی صورتحال
 Invoices=رسیدیں
 InvoiceLine=انوائس لائن
 InvoiceCustomer=گاہک کی رسید
@@ -94,9 +95,9 @@ CodePaymentMode=ادائیگی کا طریقہ (کوڈ)
 LabelPaymentMode=ادائیگی کا طریقہ (لیبل)
 PaymentModeShort=ادائیگی کا طریقہ
 PaymentTerm=ادائیگی کی شرط
-IdPaymentTerm=Payment term (id)
-CodePaymentTerm=Payment term (code)
-LabelPaymentTerm=Payment term (label)
+IdPaymentTerm=ادائیگی کی مدت (id)
+CodePaymentTerm=ادائیگی کی مدت (کوڈ)
+LabelPaymentTerm=ادائیگی کی مدت (لیبل)
 PaymentConditions=ادائیگی کی شرائط
 PaymentConditionsShort=ادائیگی کی شرائط
 PaymentAmount=ادائیگی کی رقم
@@ -169,6 +170,7 @@ BillTo=کو
 ShippingTo=بھیجنا
 ActionsOnBill=انوائس پر کارروائیاں
 ActionsOnBillRec=اعادی انوائس پر کارروائیاں
+InvoicesGeneratedFromRec=تیار کردہ رسیدیں
 RecurringInvoiceTemplate=ٹیمپلیٹ / بار بار چلنے والی رسید
 NoQualifiedRecurringInvoiceTemplateFound=کوئی اعادی ٹیمپلیٹ انوائس جنریشن کے لیے اہل نہیں ہے۔
 FoundXQualifiedRecurringInvoiceTemplate=%s اعادی ٹیمپلیٹ انوائس جنریشن کے لیے اہل ہیں۔
@@ -182,6 +184,7 @@ LastCustomersBills=تازہ ترین %s کسٹمر انوائسز
 LastSuppliersBills=تازہ ترین %s وینڈر انوائسز
 AllBills=تمام رسیدیں
 AllCustomerTemplateInvoices=تمام ٹیمپلیٹ رسیدیں
+AllSupplierTemplateInvoices=تمام ٹیمپلیٹ رسیدیں
 OtherBills=دیگر رسیدیں
 DraftBills=رسیدوں کا مسودہ
 CustomersDraftInvoices=کسٹمر ڈرافٹ انوائس
@@ -229,19 +232,19 @@ AmountOfBillsHT=رسیدوں کی رقم (ٹیکس کا خالص)
 AmountOfBillsByMonthHT=ماہ کے حساب سے رسیدوں کی رقم (ٹیکس کا خالص)
 UseSituationInvoices=صورتحال کی رسید کی اجازت دیں۔
 UseSituationInvoicesCreditNote=صورتحال انوائس کریڈٹ نوٹ کی اجازت دیں۔
-RetainedWarranty=Retained warranty
-RetainedWarrantyShort=Ret. warranty
+RetainedWarranty=برقرار رکھی وارنٹی
+RetainedWarrantyShort=ریٹ۔ وارنٹی
 AllowedInvoiceForRetainedWarranty=درج ذیل قسم کی رسیدوں پر قابل استعمال وارنٹی برقرار رکھی گئی ہے۔
-RetainedWarrantyDefaultPercent=Retained warranty default percent
-RetainedWarrantyOnlyForSituation=Make "retained warranty" available only for situation invoices
-RetainedWarrantyOnlyForSituationFinal=On situation invoices the global "retained warranty" deduction is applied only on the final situation
+RetainedWarrantyDefaultPercent=وارنٹی ڈیفالٹ فیصد برقرار رکھا
+RetainedWarrantyOnlyForSituation="برقرار وارنٹی" صرف صورت حال کی رسیدوں کے لیے دستیاب کرائیں۔
+RetainedWarrantyOnlyForSituationFinal=صورتحال کی رسیدوں پر عالمی "برقرار وارنٹی" کی کٹوتی صرف حتمی صورت حال پر لاگو ہوتی ہے۔
 ToPayOn=%s پر ادائیگی کرنے کے لیے
 toPayOn=%s پر ادائیگی کریں۔
 PaymentConditionsShortRetainedWarranty=وارنٹی ادائیگی کی شرائط کو برقرار رکھا
 DefaultPaymentConditionsRetainedWarranty=پہلے سے طے شدہ وارنٹی ادائیگی کی شرائط
 setPaymentConditionsShortRetainedWarranty=برقرار رکھی گئی وارنٹی ادائیگی کی شرائط طے کریں۔
-setRetainedWarranty=Set retained warranty
-setRetainedWarrantyDateLimit=Set retained warranty date limit
+setRetainedWarranty=برقرار رکھی وارنٹی مقرر کریں
+setRetainedWarrantyDateLimit=برقرار رکھنے والی وارنٹی کی تاریخ کی حد مقرر کریں۔
 RetainedWarrantyDateLimit=وارنٹی کی تاریخ کی حد برقرار ہے۔
 RetainedWarrantyNeed100Percent=پی ڈی ایف پر ظاہر کرنے کے لیے صورتحال کی رسید 100%% پر ہونی چاہیے۔
 AlreadyPaid=پہلے ہی ادا کر دیا ہے۔
@@ -272,8 +275,8 @@ NoDraftBills=کوئی مسودہ رسید نہیں ہے۔
 NoOtherDraftBills=کوئی دوسرا مسودہ رسید نہیں ہے۔
 NoDraftInvoices=کوئی مسودہ رسید نہیں ہے۔
 RefBill=انوائس کا حوالہ
-RefSupplierBill=Supplier invoice ref
-SupplierOrderCreateBill=Create invoice
+RefSupplierBill=سپلائر انوائس ریف
+SupplierOrderCreateBill=انوائس بنائیں
 ToBill=بل کرنا
 RemainderToBill=بل کے لیے باقی ہے۔
 SendBillByMail=ای میل کے ذریعے رسید بھیجیں۔
@@ -327,7 +330,7 @@ ShowDiscount=رعایت دکھائیں۔
 ShowReduc=رعایت دکھائیں۔
 ShowSourceInvoice=سورس انوائس دکھائیں۔
 RelativeDiscount=متعلقہ رعایت
-AbsoluteDiscount=Absolute discount
+AbsoluteDiscount=مطلق رعایت
 GlobalDiscount=عالمی رعایت
 CreditNote=کریڈٹ نوٹ
 CreditNotes=قرضے کی پرچیان
@@ -359,7 +362,7 @@ HelpAbandonOther=اس رقم کو چھوڑ دیا گیا ہے کیونکہ یہ 
 IdSocialContribution=سماجی/مالیاتی ٹیکس ادائیگی کی شناخت
 PaymentId=ادائیگی کی شناخت
 PaymentRef=ادائیگی کا حوالہ
-SourceInvoiceId=Source invoice id
+SourceInvoiceId=ماخذ انوائس آئی ڈی
 InvoiceId=انوائس آئی ڈی
 InvoiceRef=انوائس کا حوالہ
 InvoiceDateCreation=انوائس بنانے کی تاریخ
@@ -389,6 +392,7 @@ RelatedCustomerInvoices=متعلقہ کسٹمر انوائس
 RelatedSupplierInvoices=متعلقہ وینڈر انوائسز
 LatestRelatedBill=تازہ ترین متعلقہ رسید
 WarningBillExist=انتباہ، ایک یا زیادہ رسیدیں پہلے سے موجود ہیں۔
+WarningInvoiceCanNeverBeEdited=وارننگ، ایک بار توثیق ہونے کے بعد، آپ اس رسید میں مزید ترمیم نہیں کر سکیں گے۔
 MergingPDFTool=پی ڈی ایف ٹول کو ضم کرنا
 AmountPaymentDistributedOnInvoice=ادائیگی کی رقم انوائس پر تقسیم کی جاتی ہے۔
 PaymentOnDifferentThirdBills=مختلف فریق ثالث کے بلوں پر ادائیگی کی اجازت دیں لیکن ایک ہی پیرنٹ کمپنی
@@ -419,6 +423,7 @@ InvoiceAutoValidate=انوائسز کی خود بخود توثیق کریں۔
 GeneratedFromRecurringInvoice=ٹیمپلیٹ ریکرنگ انوائس %s سے تیار کردہ
 DateIsNotEnough=ابھی تک تاریخ نہیں پہنچی۔
 InvoiceGeneratedFromTemplate=انوائس %s بار بار چلنے والی ٹیمپلیٹ انوائس %s سے تیار کیا گیا
+InvoiceGeneratedFromTemplateError=خرابی کی رسید %s بار بار چلنے والی ٹیمپلیٹ انوائس سے بنائی گئی %s : b0ecb2ec87fz0
 GeneratedFromTemplate=ٹیمپلیٹ انوائس %s سے تیار کردہ
 WarningInvoiceDateInFuture=وارننگ، انوائس کی تاریخ موجودہ تاریخ سے زیادہ ہے۔
 WarningInvoiceDateTooFarInFuture=وارننگ، انوائس کی تاریخ موجودہ تاریخ سے بہت دور ہے۔
@@ -463,6 +468,11 @@ ValidateGeneratedDeposit=پیدا شدہ ڈپازٹ کی توثیق کریں۔
 DepositGenerated=جمع کرایا
 ErrorCanOnlyAutomaticallyGenerateADepositFromProposalOrOrder=آپ کسی تجویز یا آرڈر سے صرف خود بخود جمع کر سکتے ہیں۔
 ErrorPaymentConditionsNotEligibleToDepositCreation=ادائیگی کی منتخب کردہ شرائط خودکار ڈپازٹ جنریشن کے لیے اہل نہیں ہیں۔
+# Paiement page
+DisplayOtherInvoicesToo = Display other invoices too
+DisplayCreditNotesToo = Display credit notes too
+HideOtherInvoices = Hide other invoices
+HideCreditNotes = Hide credit notes
 # PaymentType
 PaymentTypeVIR=بینک ٹرانسفر
 PaymentTypeShortVIR=بینک ٹرانسفر
@@ -495,6 +505,8 @@ IBANNumber=IBAN اکاؤنٹ نمبر
 IBAN=IBAN
 CustomerIBAN=گاہک کا IBAN
 SupplierIBAN=وینڈر کا IBAN
+DebitBankAccount = براہ راست ڈیبٹ بینک اکاؤنٹ
+SetDebitBankAccount = براہ راست ڈیبٹ بینک اکاؤنٹ کی وضاحت کریں۔
 BIC=BIC/SWIFT
 BICNumber=BIC/SWIFT کوڈ
 ExtraInfos=اضافی معلومات
@@ -513,10 +525,12 @@ PrettyLittleSentence=مالیاتی انتظامیہ کی طرف سے منظور
 IntracommunityVATNumber=انٹرا کمیونٹی VAT ID
 PaymentByChequeOrderedTo=چیک کی ادائیگیاں (بشمول ٹیکس) %s کو قابل ادائیگی ہیں، بھیجیں
 PaymentByChequeOrderedToShort=چیک کی ادائیگیاں (ٹیکس سمیت) قابل ادائیگی ہیں۔
+StructuredCommunication=ساختہ مواصلات
 SendTo=کو بھیجا
 PaymentByTransferOnThisBankAccount=درج ذیل بینک اکاؤنٹ میں ٹرانسفر کے ذریعے ادائیگی
 VATIsNotUsedForInvoice=* CGI کا غیر قابل اطلاق VAT آرٹ-293B
 VATIsNotUsedForInvoiceAsso=* CGI کا غیر قابل اطلاق VAT آرٹ-261-7
+VATIsNotUsedReverseChargeProcedure=* CGI کا غیر قابل اطلاق VAT آرٹ-259-1
 LawApplicationPart1=قانون 80.335 از 12/05/80 کے اطلاق سے
 LawApplicationPart2=سامان کی ملکیت رہتی ہے
 LawApplicationPart3=کی مکمل ادائیگی تک بیچنے والے
@@ -537,7 +551,7 @@ ChequeDeposits=ڈپازٹ سلپس
 Cheques=چیک کرتا ہے۔
 DepositId=آئی ڈی ڈپازٹ
 NbCheque=چیکوں کی تعداد
-CreditNoteConvertedIntoDiscount=%s converted into %s
+CreditNoteConvertedIntoDiscount=%s کو %s میں تبدیل کیا گیا
 UsBillingContactAsIncoiveRecipientIfExist=انوائس کے وصول کنندہ کے طور پر فریق ثالث کے پتے کی بجائے 'بلنگ رابطہ' ٹائپ کے ساتھ رابطہ/پتہ استعمال کریں
 ShowUnpaidAll=تمام غیر ادا شدہ رسیدیں دکھائیں۔
 ShowUnpaidLateOnly=صرف تاخیر سے ادا شدہ رسیدیں دکھائیں۔
@@ -569,7 +583,7 @@ YouMustCreateInvoiceFromSupplierThird=یہ اختیار صرف اس وقت دس�
 YouMustCreateStandardInvoiceFirstDesc=آپ کو سب سے پہلے ایک معیاری انوائس بنانا ہوگی اور اسے "ٹیمپلیٹ" میں تبدیل کرکے ایک نیا ٹیمپلیٹ انوائس بنانا ہوگا۔
 PDFCrabeDescription=انوائس پی ڈی ایف ٹیمپلیٹ کریب۔ ایک مکمل انوائس ٹیمپلیٹ (سپنج ٹیمپلیٹ کا پرانا نفاذ)
 PDFSpongeDescription=انوائس پی ڈی ایف ٹیمپلیٹ سپنج۔ ایک مکمل انوائس ٹیمپلیٹ
-PDFOctopusDescription=Invoice PDF template Octopus. A complete invoice template for situation invoices
+PDFOctopusDescription=انوائس پی ڈی ایف ٹیمپلیٹ آکٹپس۔ صورت حال کی رسیدوں کے لیے ایک مکمل انوائس ٹیمپلیٹ
 TerreNumRefModelDesc1=فارمیٹ میں واپسی نمبر %sمعیاری رسیدوں کے لیے yymm-nnnn اور %sکریڈٹ نوٹس کے لیے yymm-nnnn جہاں yy سال ہے، mm مہینہ ہے اور nnnn ایک ترتیب وار خود بخود بڑھنے والا نمبر ہے جس میں کوئی وقفہ نہیں اور 0 پر واپسی نہیں
 MarsNumRefModelDesc1=فارمیٹ میں واپسی نمبر %sمعیاری رسیدوں کے لیے yymm-nnnn، %sمتبادل انوائسز کے لیے yymm-nnnn، %sڈاؤن پیمنٹ انوائسز کے لیے yymm-nnnn اور %sکریڈٹ نوٹس کے لیے yymm-nnnn جہاں yy سال ہے، mm مہینہ ہے اور nnnn ایک ترتیب وار خودکار ہے۔ بغیر کسی وقفے کے اور 0 پر واپسی کے بغیر بڑھتی ہوئی تعداد
 TerreNumRefModelError=$syymm سے شروع ہونے والا بل پہلے سے موجود ہے اور ترتیب کے اس ماڈل کے ساتھ مطابقت نہیں رکھتا ہے۔ اس ماڈیول کو فعال کرنے کے لیے اسے ہٹا دیں یا اس کا نام تبدیل کریں۔
@@ -586,7 +600,7 @@ TypeContact_invoice_supplier_external_BILLING=وینڈر انوائس رابطہ
 TypeContact_invoice_supplier_external_SHIPPING=وینڈر شپنگ رابطہ
 TypeContact_invoice_supplier_external_SERVICE=وینڈر سروس سے رابطہ کریں۔
 # Situation invoices
-WarningsObjectIsNotASituation=Warning, this invoice is not a situation
+WarningsObjectIsNotASituation=انتباہ، یہ رسید ایک صورت حال نہیں ہے
 InvoiceFirstSituationAsk=پہلی صورت حال کی رسید
 InvoiceFirstSituationDesc=<b> صورتحال کی رسیدیں </b> کسی پیشرفت سے متعلق حالات سے منسلک ہیں، مثال کے طور پر تعمیر کی ترقی۔ ہر صورت حال ایک انوائس سے منسلک ہے.
 InvoiceSituation=صورتحال رسید
@@ -605,23 +619,24 @@ DisabledBecauseNotLastInCycle=اگلی صورتحال پہلے سے موجود �
 DisabledBecauseFinal=یہ صورتحال حتمی ہے۔
 situationInvoiceShortcode_AS=AS
 situationInvoiceShortcode_S=ایس
+CantBeNullOrPositive=کریڈٹ نوٹ انوائس کی پیشرفت کالعدم یا مثبت نہیں ہو سکتی
 CantBeLessThanMinPercent=ترقی پچھلی صورت حال میں اس کی قدر سے کم نہیں ہو سکتی۔
 NoSituations=کھلے حالات نہیں۔
 InvoiceSituationLast=حتمی اور عام رسید
-SituationInvoiceAmountColTitle=Amount(net)
-SituationInvoiceProgressColTitle=Progress
-SituationInvoiceDate=Date invoice situation
-SituationInvoiceTotalProposal=Proposal of invoice situation
-SituationInvoiceOldCumulation=Old cumulation
-SituationInvoiceNewCumulation=New cumulation
-SituationInvoiceMainTask=Main task
-SituationInvoiceAdditionalTask=Additional task
-PDFOctopusSituationNumber=Situation N°%s
-PDFOctopusSituationInvoiceLineDecompte=Situation invoice - COUNT
-PDFOctopusSituationInvoiceTitle=Situation invoice
-PDFOctopusSituationInvoiceLine=Situation N°%s: Inv. N°%s on %s
+SituationInvoiceAmountColTitle=رقم (خالص)
+SituationInvoiceProgressColTitle=پیش رفت
+SituationInvoiceDate=انوائس کی تاریخ کی صورتحال
+SituationInvoiceTotalProposal=انوائس کی صورتحال کی تجویز
+SituationInvoiceOldCumulation=پرانا مجموعہ
+SituationInvoiceNewCumulation=نیا مجموعہ
+SituationInvoiceMainTask=اہم کام
+SituationInvoiceAdditionalTask=اضافی کام
+PDFOctopusSituationNumber=صورتحال N°%s
+PDFOctopusSituationInvoiceLineDecompte=صورتحال رسید - COUNT
+PDFOctopusSituationInvoiceTitle=صورتحال رسید
+PDFOctopusSituationInvoiceLine=صورتحال N°%s: Inv. N°%s پر %s
 TotalSituationInvoice=کل صورتحال
-TotalSituationInvoiceWithRetainedWarranty=Total (incl. tax) with retained warranty
+TotalSituationInvoiceWithRetainedWarranty=برقرار رکھی وارنٹی کے ساتھ کل (بشمول ٹیکس)
 invoiceLineProgressError=انوائس لائن کی پیشرفت اگلی انوائس لائن سے زیادہ یا اس کے برابر نہیں ہو سکتی
 updatePriceNextInvoiceErrorUpdateline=خرابی: انوائس لائن پر قیمت کو اپ ڈیٹ کریں: %s
 ToCreateARecurringInvoice=اس معاہدے کے لیے بار بار چلنے والی انوائس بنانے کے لیے، پہلے یہ ڈرافٹ انوائس بنائیں، پھر اسے انوائس ٹیمپلیٹ میں تبدیل کریں اور مستقبل کے انوائسز کی نسل کے لیے تعدد کی وضاحت کریں۔
@@ -645,7 +660,7 @@ BILL_SUPPLIER_DELETEInDolibarr=فراہم کنندہ کی رسید حذف کر �
 UnitPriceXQtyLessDiscount=یونٹ کی قیمت x مقدار - ڈسکاؤنٹ
 CustomersInvoicesArea=کسٹمر بلنگ ایریا
 SupplierInvoicesArea=سپلائر بلنگ ایریا
-SituationTotalRayToRest=Remainder to pay without tax
+SituationTotalRayToRest=ٹیکس کے بغیر ادا کرنے کے لیے باقی ہے۔
 PDFSituationTitle=صورتحال n° %d
 SituationTotalProgress=کل پیش رفت %d %%
 SearchUnpaidInvoicesWithDueDate=مقررہ تاریخ = %s کے ساتھ بلا معاوضہ رسیدیں تلاش کریں۔
@@ -661,12 +676,19 @@ MentionCategoryOfOperations0=سامان کی ترسیل
 MentionCategoryOfOperations1=خدمات کی فراہمی
 MentionCategoryOfOperations2=مخلوط - سامان کی ترسیل اور خدمات کی فراہمی
 Salaries=تنخواہیں
+InvoiceSubtype=انوائس ذیلی قسم
 SalaryInvoice=تنخواہ
 BillsAndSalaries=بل اور تنخواہ
 CreateCreditNoteWhenClientInvoiceExists=یہ اختیار صرف اس وقت فعال ہوتا ہے جب کسی گاہک کے لیے تصدیق شدہ انوائس موجود ہوں یا جب مستقل INVOICE_CREDIT_NOTE_STANDALONE استعمال کیا جائے (کچھ ممالک کے لیے مفید)
-SearchUnpaidSupplierInvoicesWithDueDate=Search unpaid supplier invoices with a due date = %s
-SearchValidatedSupplierInvoicesWithDate=Search unpaid supplier invoices with a validation date = %s
-SendEmailsRemindersOnSupplierInvoiceDueDate=Send reminder by email for validated and unpaid supplier invoices
-PaymentMadeForSeveralInvoices=Payment made for several invoices
-SituationInvoiceProgressCurrent=Invoice progress
-INVOICE_ADD_EPC_QR_CODEPay=Scan this QR code to pay with a smartphone supporting payment with EPC QR code.
+SearchUnpaidSupplierInvoicesWithDueDate=مقررہ تاریخ = %s کے ساتھ بلا معاوضہ سپلائر انوائس تلاش کریں۔
+SearchValidatedSupplierInvoicesWithDate=توثیق کی تاریخ = %s کے ساتھ بلا معاوضہ سپلائر انوائس تلاش کریں۔
+SendEmailsRemindersOnSupplierInvoiceDueDate=تصدیق شدہ اور بلا معاوضہ سپلائر انوائسز کے لیے ای میل کے ذریعے یاد دہانی بھیجیں۔
+PaymentMadeForSeveralInvoices=کئی رسیدوں کے لیے ادائیگی کی گئی۔
+SituationInvoiceProgressCurrent=انوائس کی پیشرفت
+CumulativeProgression=مجموعی پیشرفت
+INVOICE_ADD_EPC_QR_CODEPay=EPC QR کوڈ کے ساتھ ادائیگی کی حمایت کرنے والے اسمارٹ فون سے ادائیگی کرنے کے لیے اس QR کوڈ کو اسکین کریں۔
+InputValueIsNotAnNumber=ان پٹ ویلیو نمبر نہیں ہے۔
+LimitDepositInvoicePossibilityForConsistency=لائنوں کے درمیان مستقل مزاجی رکھنے کے لیے ڈپازٹ انوائس کی قسم کو محدود کریں (تجویز یا آرڈر سے)
+ExtPaymentID=External payment ID
+ExtPaymentSite=External payment Site
+CantConvertToReducAnInvoiceOfThisType=Cant convert to discount an invoice of this type

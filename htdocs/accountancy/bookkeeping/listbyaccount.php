@@ -53,7 +53,7 @@ $langs->loadLangs(array("accountancy", "compta"));
 
 $journal_code = GETPOST('code_journal', 'alpha');
 $account = GETPOST("account", 'int');
-$massdate = (int) GETPOSTINT('massdate');
+$massdate = dol_mktime(0, 0, 0, GETPOSTINT('massdatemonth'), GETPOSTINT('massdateday'), GETPOSTINT('massdateyear'));
 
 $action = GETPOST('action', 'aZ09');
 $socid = GETPOSTINT('socid');
@@ -200,19 +200,19 @@ if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('searc
 
 $arrayfields = array(
 	// 't.subledger_account'=>array('label'=>$langs->trans("SubledgerAccount"), 'checked'=>1),
-	't.piece_num' => array('label' => $langs->trans("TransactionNumShort"), 'checked' => '1'),
-	't.code_journal' => array('label' => $langs->trans("Codejournal"), 'checked' => '1'),
-	't.doc_date' => array('label' => $langs->trans("Docdate"), 'checked' => '1'),
-	't.doc_ref' => array('label' => $langs->trans("Piece"), 'checked' => '1'),
-	't.label_operation' => array('label' => $langs->trans("Label"), 'checked' => '1'),
-	't.lettering_code' => array('label' => $langs->trans("Lettering"), 'checked' => '1'),
-	't.debit' => array('label' => $langs->trans("AccountingDebit"), 'checked' => '1'),
-	't.credit' => array('label' => $langs->trans("AccountingCredit"), 'checked' => '1'),
-	't.balance' => array('label' => $langs->trans("Balance"), 'checked' => '1'),
-	't.date_export' => array('label' => $langs->trans("DateExport"), 'checked' => '-1'),
-	't.date_validated' => array('label' => $langs->trans("DateValidation"), 'checked' => '-1', 'enabled' => (string) (int) !getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")),
-	't.date_lim_reglement' => array('label' => $langs->trans("DateDue"), 'checked' => '0'),
-	't.import_key' => array('label' => $langs->trans("ImportId"), 'checked' => '-1', 'position' => 1100),
+	't.piece_num' => array('label' => "TransactionNumShort", 'checked' => '1'),
+	't.code_journal' => array('label' => "Codejournal", 'checked' => '1'),
+	't.doc_date' => array('label' => "Docdate", 'checked' => '1'),
+	't.doc_ref' => array('label' => "Piece", 'checked' => '1'),
+	't.label_operation' => array('label' => "Label", 'checked' => '1'),
+	't.lettering_code' => array('label' => "Lettering", 'checked' => '1'),
+	't.debit' => array('label' => "AccountingDebit", 'checked' => '1'),
+	't.credit' => array('label' => "AccountingCredit", 'checked' => '1'),
+	't.balance' => array('label' => "Balance", 'checked' => '1'),
+	't.date_export' => array('label' => "DateExport", 'checked' => '-1'),
+	't.date_validated' => array('label' => "DateValidation", 'checked' => '-1', 'enabled' => (string) (int) !getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")),
+	't.date_lim_reglement' => array('label' => "DateDue", 'checked' => '0'),
+	't.import_key' => array('label' => "ImportId", 'checked' => '-1', 'position' => 1100),
 );
 
 if (!getDolGlobalString('ACCOUNTING_ENABLE_LETTERING')) {
@@ -356,7 +356,7 @@ if (empty($reshook)) {
 		$listofaccountsforgroup2 = array();
 		if (is_array($listofaccountsforgroup)) {
 			foreach ($listofaccountsforgroup as $tmpval) {
-				$listofaccountsforgroup2[] = "'".$db->escape((string) $tmpval['id'])."'";
+				$listofaccountsforgroup2[] = "'".$db->escape((string) $tmpval['account_number'])."'";
 			}
 		}
 		$filter['t.search_accounting_code_in'] = implode(',', $listofaccountsforgroup2);
@@ -884,7 +884,7 @@ if ($reshook < 0) {
 $newcardbutton = empty($hookmanager->resPrint) ? '' : $hookmanager->resPrint;
 
 if (empty($reshook)) {
-	// Remove button navigation if in thirdparty tab mode
+	// Remove navigation buttons if in thirdparty tab mode, except for PDF printing
 	if (empty($socid)) {
 		$newcardbutton = dolGetButtonTitle($langs->trans('ViewFlatList'), '', 'fa fa-list paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/list.php?' . $param);
 		if ($type == 'sub') {
@@ -894,11 +894,11 @@ if (empty($reshook)) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?' . $url_param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
 			$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?type=sub&' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
 		}
-
-		$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'] . '?action=exporttopdf&' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
-
-		$newcardbutton .= dolGetButtonTitleSeparator();
 	}
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'] . '?action=exporttopdf&' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
+
+	$newcardbutton .= dolGetButtonTitleSeparator();
+
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=create'.(!empty($type) ? '&type=sub' : '').'&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 }
 
@@ -926,7 +926,7 @@ if ($massaction == 'preunletteringauto') {
 	$input2 = $formaccounting->select_journal($journal_code, 'code_journal', 0, 0, 1, 1).'</td>';
 	$formquestion = array(
 		array(
-			'type' => 'date',
+			'type' => 'other',
 			'name' => 'massdate',
 			'label' => '<span class="fieldrequired">' . $langs->trans("Docdate") . '</span>',
 			'value' => $input1
@@ -984,13 +984,21 @@ $moreforfilter .= '<div class="divsearchfield">';
 $moreforfilter .= $langs->trans('AccountAccounting').': ';
 $moreforfilter .= '<div class="nowrap inline-block">';
 if ($type == 'sub') {
-	$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), 'maxwidth200');
+	if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
+		$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), 'maxwidth200');
+	} else {
+		$moreforfilter .= '<input type="text" class="maxwidth150" name="search_accountancy_code_start" value="'.dol_escape_htmltag($search_accountancy_code_start).'" placeholder="'.$langs->trans('From').'">';
+	}
 } else {
 	$moreforfilter .= $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', $langs->trans('From'), array(), 1, 1, 'maxwidth200');
 }
 $moreforfilter .= ' ';
 if ($type == 'sub') {
-	$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), 'maxwidth200');
+	if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
+		$moreforfilter .= $formaccounting->select_auxaccount($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), 'maxwidth200');
+	} else {
+		$moreforfilter .= '<input type="text" class="maxwidth150" name="search_accountancy_code_end" value="'.dol_escape_htmltag($search_accountancy_code_end).'" placeholder="'.$langs->trans('to').'">';
+	}
 } else {
 	$moreforfilter .= $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', $langs->trans('to'), array(), 1, 1, 'maxwidth200');
 }
@@ -1245,6 +1253,21 @@ $colspan = 0;			// colspan before field 'label of operation'
 $colspanend = 0;		// colspan after debit/credit
 $accountg = '-';
 
+$colspan = 0;			// colspan before field 'label of operation'
+$colspanend = 3;		// colspan after debit/credit
+if (!empty($arrayfields['t.piece_num']['checked'])) { $colspan++; }
+if (!empty($arrayfields['t.code_journal']['checked'])) { $colspan++; }
+if (!empty($arrayfields['t.doc_date']['checked'])) { $colspan++; }
+if (!empty($arrayfields['t.doc_ref']['checked'])) { $colspan++; }
+if (!empty($arrayfields['t.label_operation']['checked'])) { $colspan++; }
+if (!empty($arrayfields['t.date_export']['checked'])) { $colspanend++; }
+if (!empty($arrayfields['t.date_validated']['checked'])) { $colspanend++; }
+if (!empty($arrayfields['t.lettering_code']['checked'])) { $colspanend++; }
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	$colspan++;
+	$colspanend--;
+}
+
 while ($i < min($num, $limit)) {
 	$line = $object->lines[$i];
 
@@ -1374,8 +1397,6 @@ while ($i < min($num, $limit)) {
 		//if (empty($displayed_account_number)) $displayed_account_number='-';
 		$sous_total_debit = 0;
 		$sous_total_credit = 0;
-
-		$colspan = 0;
 	}
 
 	print '<tr class="oddeven">';

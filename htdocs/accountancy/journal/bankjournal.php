@@ -5,7 +5,7 @@
  * Copyright (C) 2012		Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Christophe Battarel			<christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2022	Open-DSI					<support@open-dsi.fr>
- * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2013-2014	Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014	Olivier Geffroy				<jeff@jeffinfo.com>
  * Copyright (C) 2017-2025  Frédéric France				<frederic.france@free.fr>
@@ -605,9 +605,9 @@ if ($result) {
 					$resultmid = $db->query($sqlmid);
 					if ($resultmid) {
 						$objmid = $db->fetch_object($resultmid);
-						$tabtp[$obj->rowid][$objmid->accountancy_account_capital] = isset($objmid->amount_capital) ? $tabtp[$obj->rowid][$objmid->accountancy_account_capital] - $objmid->amount_capital : 0;
-						$tabtp[$obj->rowid][$objmid->accountancy_account_insurance] = isset($objmid->amount_insurance) ? $tabtp[$obj->rowid][$objmid->accountancy_account_insurance] - $objmid->amount_insurance : 0;
-						$tabtp[$obj->rowid][$objmid->accountancy_account_interest] = isset($objmid->amount_interest) ? $tabtp[$obj->rowid][$objmid->accountancy_account_interest] - $objmid->amount_interest : 0;
+						$tabtp[$obj->rowid][$objmid->accountancy_account_capital] = isset($objmid->amount_capital) ? ($tabtp[$obj->rowid][$objmid->accountancy_account_capital] ?? 0) - $objmid->amount_capital : 0;
+						$tabtp[$obj->rowid][$objmid->accountancy_account_insurance] = isset($objmid->amount_insurance) ? ($tabtp[$obj->rowid][$objmid->accountancy_account_insurance] ?? 0) - $objmid->amount_insurance : 0;
+						$tabtp[$obj->rowid][$objmid->accountancy_account_interest] = isset($objmid->amount_interest) ? ($tabtp[$obj->rowid][$objmid->accountancy_account_interest] ?? 0) - $objmid->amount_interest : 0;
 					}
 				} elseif ($links[$key]['type'] == 'banktransfert') {
 					$accountLinestatic->fetch($links[$key]['url_id']);
@@ -673,7 +673,7 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 	$accountingaccountpayment->fetch(0, getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT'), true);
 
 	$accountingaccountexpensereport = new AccountingAccount($db);
-	$accountingaccountexpensereport->fetch(0, $conf->global->ACCOUNTING_ACCOUNT_EXPENSEREPORT, true);
+	$accountingaccountexpensereport->fetch(0, getDolGlobalString('ACCOUNTING_ACCOUNT_EXPENSEREPORT'), true);
 
 	$accountingaccountsuspense = new AccountingAccount($db);
 	$accountingaccountsuspense->fetch(0, getDolGlobalString('ACCOUNTING_ACCOUNT_SUSPENSE'), true);
@@ -771,12 +771,12 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 
 						$reflabel = '';
 						if (!empty($val['lib'])) {
-							$reflabel .= dol_string_nohtmltag($val['lib']).($val['soclib'] ? " / " : "");
+							$reflabel .= dol_string_nohtmltag($val['lib']).(!empty($val['soclib']) ? " / " : "");
 						}
 						if ($tabtype[$key] == 'banktransfert') {
 							$reflabel .= dol_string_nohtmltag($langs->transnoentitiesnoconv('TransitionalAccount').' '.$account_transfer);
 						} else {
-							$reflabel .= dol_string_nohtmltag($val['soclib']);
+							$reflabel .= dol_string_nohtmltag($val['soclib'] ?? '');
 						}
 
 						$bookkeeping = new BookKeeping($db);
@@ -1048,12 +1048,12 @@ if ($action == 'exportcsv' && $user->hasRight('accounting', 'bind', 'write')) {	
 				if ($mt) {
 					$reflabel = '';
 					if (!empty($val['lib'])) {
-						$reflabel .= dol_string_nohtmltag($val['lib']).($val['soclib'] ? " / " : "");
+						$reflabel .= dol_string_nohtmltag($val['lib']).(!empty($val['soclib']) ? " / " : "");
 					}
 					if ($tabtype[$key] == 'banktransfert') {
 						$reflabel .= dol_string_nohtmltag($langs->transnoentitiesnoconv('TransitionalAccount').' '.$account_transfer);
 					} else {
-						$reflabel .= dol_string_nohtmltag($val['soclib']);
+						$reflabel .= dol_string_nohtmltag($val['soclib'] ?? '');
 					}
 
 					print '"'.$key.'"'.$sep;
@@ -1327,7 +1327,7 @@ if (empty($action) || $action == 'view') {
 				if ($mt) {
 					$reflabel = '';
 					if (!empty($val['lib'])) {
-						$reflabel .= $val['lib'].(isset($val['soclib']) ? " / " : "");
+						$reflabel .= $val['lib'].(!empty($val['soclib']) ? " / " : "");
 					}
 					if ($tabtype[$key] == 'banktransfert') {
 						$reflabel .= $langs->trans('TransitionalAccount').' '.$account_transfer;

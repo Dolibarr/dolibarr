@@ -234,6 +234,7 @@ if (empty($reshook)) {
 	}
 }
 
+
 /*
  * View
  */
@@ -403,16 +404,16 @@ if ($search_label) {
 	$param .= '&search_label='.urlencode($search_label);
 }
 if ($search_datep_start) {
-	$param .= '&search_datep_start='.urlencode($search_datep_start);
+	$param .= '&search_datep_start='.urlencode((string) $search_datep_start);
 }
 if ($search_datep_end) {
-	$param .= '&search_datep_end='.urlencode($search_datep_end);
+	$param .= '&search_datep_end='.urlencode((string) $search_datep_end);
 }
 if ($search_datev_start) {
-	$param .= '&search_datev_start='.urlencode($search_datev_start);
+	$param .= '&search_datev_start='.urlencode((string) $search_datev_start);
 }
 if ($search_datev_end) {
-	$param .= '&search_datev_end='.urlencode($search_datev_end);
+	$param .= '&search_datev_end='.urlencode((string) $search_datev_end);
 }
 if ($search_type_id > 0) {
 	$param .= '&search_type_id='.urlencode((string) ($search_type_id));

@@ -50,3 +50,4 @@ ToReplace=Csere
 CantMoveNonExistantSerial=Hiba. Mozgást kérsz egy lemezen egy olyan szériához, amely már nem létezik. Előfordulhat, hogy ugyanazt a szériát többször is ugyanabban a raktárban viszi ugyanabban a szállítmányban, vagy egy másik szállítmány használta. Távolítsa el ezt a szállítmányt, és készítsen egy másikat.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=A tételtábla hiányos futtatásának javítása a '...repair.php?standard=confirmed' paraméterrel
 IlligalQtyForSerialNumbers= Készletkorrekció szükséges az egyedi sorozatszám miatt.
+ErrorBatchesNeedStockManagement=Hiba. A köteg/tételkezeléssel rendelkező terméket raktáron kell kezelni.

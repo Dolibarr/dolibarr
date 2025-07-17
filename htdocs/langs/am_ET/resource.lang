@@ -9,33 +9,30 @@ ActionsOnResource=ስለዚህ ሀብት ክስተቶች
 ResourcePageIndex=የመርጃዎች ዝርዝር
 ResourceSingular=ምንጭ
 ResourceCard=የንብረት ካርድ
+NewResource=New resource
 AddResource=ምንጭ ይፍጠሩ
 ResourceFormLabel_ref=የንብረት ስም
-ResourceType=የንብረት አይነት
 ResourceFormLabel_description=የንብረት መግለጫ
-
+ResourceType=የንብረት አይነት
+ResourceTypeID=Resource type ID
+ResourceTypeLabel=Resource type label
 ResourcesLinkedToElement=ከኤለመንት ጋር የተገናኙ መርጃዎች
 
 ShowResource=ምንጭ አሳይ
-
 ResourceElementPage=የንጥረ ነገሮች ሀብቶች
 ResourceCreatedWithSuccess=ሃብት በተሳካ ሁኔታ ተፈጥሯል።
 RessourceLineSuccessfullyDeleted=የመርጃ መስመር በተሳካ ሁኔታ ተሰርዟል።
 RessourceLineSuccessfullyUpdated=የመርጃ መስመር በተሳካ ሁኔታ ዘምኗል
 ResourceLinkedWithSuccess=ምንጭ ከስኬት ጋር የተገናኘ
-
 ConfirmDeleteResource=ይህንን ግብዓት ለመሰረዝ ያረጋግጡ
 RessourceSuccessfullyDeleted=ሃብት በተሳካ ሁኔታ ተሰርዟል።
 DictionaryResourceType=የንብረቶች አይነት
-
 SelectResource=መርጃ ይምረጡ
-
 IdResource=የመታወቂያ ምንጭ
 AssetNumber=ተከታታይ ቁጥር
 ResourceTypeCode=የንብረት አይነት ኮድ
 ImportDataset_resource_1=መርጃዎች
-
 ErrorResourcesAlreadyInUse=አንዳንድ ሀብቶች ጥቅም ላይ ይውላሉ
 ErrorResourceUseInEvent=%s በ%s ክስተት ውስጥ ጥቅም ላይ ውሏል
-
 MaxUsers=Maximum users (places, seats, etc.)
+MaxUsersLabel=Maximum users
