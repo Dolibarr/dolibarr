@@ -31,12 +31,20 @@
 -- To rebuild sequence for postgresql after insert, by forcing id autoincrement fields:
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
-
 -- V22 forgotten
 
 
 
 -- V23 migration
+
+CREATE TABLE llx_paiement_extrafields (
+	rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+	tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_object                 integer NOT NULL,
+	import_key                varchar(14)                                 -- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_paiement_extrafields ADD UNIQUE INDEX uk_paiement_extrafields (fk_object);
 
 CREATE TABLE llx_c_accounting_analytic_axis (
 	rowid               integer         AUTO_INCREMENT PRIMARY KEY,
@@ -49,7 +57,7 @@ CREATE TABLE llx_c_accounting_analytic_axis (
 	fk_user_author      integer         NOT NULL,
 	fk_user_modif       integer,
 	import_key          varchar(14)
-)ENGINE=innodb;
+) ENGINE=innodb;
 
 CREATE TABLE llx_c_accounting_analytic_account (
 	rowid               integer         AUTO_INCREMENT PRIMARY KEY,
@@ -66,7 +74,7 @@ CREATE TABLE llx_c_accounting_analytic_account (
 	fk_user_author      integer         NOT NULL,
 	fk_user_modif       integer,
 	import_key          varchar(14)
-)ENGINE=innodb;
+) ENGINE=innodb;
 
 ALTER TABLE llx_c_accounting_analytic_account ADD CONSTRAINT fk_accounting_analytic_account_fk_axis FOREIGN KEY (fk_axis) REFERENCES llx_c_accounting_analytic_axis (rowid);
 
@@ -84,6 +92,8 @@ CREATE TABLE llx_accounting_analytic_distribution (
 	fk_user_author      integer         NOT NULL,
 	fk_user_modif       integer,
 	import_key          varchar(14)
-)ENGINE=innodb;
+) ENGINE=innodb;
 
 ALTER TABLE llx_accounting_analytic_distribution ADD CONSTRAINT fk_accounting_analytic_distribution_fk_analytic_account FOREIGN KEY (fk_analytic_account) REFERENCES llx_accounting_analytic_distribution (rowid);
+
+-- end of migration

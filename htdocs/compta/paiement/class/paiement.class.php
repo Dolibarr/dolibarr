@@ -171,11 +171,6 @@ class Paiement extends CommonObject
 	public $num_payment;
 
 	/**
-	 * @var string Id of external payment mode
-	 */
-	public $ext_payment_id;
-
-	/**
 	 * @var int Id of prelevement
 	 */
 	public $id_prelevement;
@@ -186,7 +181,12 @@ class Paiement extends CommonObject
 	public $num_prelevement;
 
 	/**
-	 * @var string Name of external payment mode
+	 * @var string Id of external payment mode (With Stripe: 'pi_xxx:cus_ccc@pk_ppp', ...)
+	 */
+	public $ext_payment_id;
+
+	/**
+	 * @var string Name of external payment mode ('StripeLive', 'StripeTest', 'stripe' on old version, 'paypal', ...)
 	 */
 	public $ext_payment_site;
 
@@ -296,7 +296,8 @@ class Paiement extends CommonObject
 	/**
 	 *  Create payment of invoices into database.
 	 *  It uses this->amounts and ->multicurrency_amounts to get the list of detail of payment for each invoices for the payment.
-	 *  For payment of a customer invoice, amounts are positive, for payment of credit note, amounts are negative
+	 *  For payment of a customer invoice, amounts are positive, for payment of credit note, amounts are negative.
+	 *  Can also close the invoice if remain to pay is 0.
 	 *  This will set also ->amount and ->multicurrency_amount at end.
 	 *
 	 *  @param	User	  $user                	Object user

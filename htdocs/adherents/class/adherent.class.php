@@ -1777,7 +1777,7 @@ class Adherent extends CommonObject
 	 *	@param	string		$emetteur_banque		Name of bank of cheque
 	 *  @param	int			$autocreatethirdparty	Auto create new thirdparty if member not yet linked to a thirdparty and we request an option that generate invoice.
 	 *  @param  string      $ext_payment_id         External id of payment (for example Stripe charge id)
-	 *  @param  string      $ext_payment_site       Name of external paymentmode (for example 'stripe')
+	 *  @param  string      $ext_payment_site       Name of external paymentmode (for example 'StripeLive', 'StripeTest', 'paypal', ...)
 	 *	@return int									Return integer <0 if KO, >0 if OK
 	 */
 	public function subscriptionComplementaryActions($subscriptionid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom = '', $emetteur_banque = '', $autocreatethirdparty = 0, $ext_payment_id = '', $ext_payment_site = '')
