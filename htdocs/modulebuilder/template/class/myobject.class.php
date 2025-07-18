@@ -401,7 +401,7 @@ class MyObject extends CommonObject
 	 * @param	int    		$id   			Id object
 	 * @param	string 		$ref  			Ref
 	 * @param	int<0,1>	$noextrafields	0=Default to load extrafields, 1=No extrafields
-	 * @param	int<0,1>	$nolines		0=Default to load extrafields, 1=No extrafields
+	 * @param	int<0,1>	$nolines		0=Default to load lines, 1=No lines
 	 * @return	int<-1,1>					Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null, $noextrafields = 0, $nolines = 0)

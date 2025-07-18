@@ -42,7 +42,6 @@ NoTicketsFound=No se encontró Ticket
 NoUnreadTicketsFound=No se encontraron entradas sin leer
 TicketViewAllTickets=Ver todos los Ticket
 TicketStatByStatus=Entradas por estado
-MessageListViewType=Mostrar como lista de tablas
 TicketCard=Tarjeta de Tickets
 CreateTicket=Crear boleto
 TicketsManagement=Gestión de Tickets

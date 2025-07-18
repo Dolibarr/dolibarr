@@ -296,7 +296,8 @@ class Paiement extends CommonObject
 	/**
 	 *  Create payment of invoices into database.
 	 *  It uses this->amounts and ->multicurrency_amounts to get the list of detail of payment for each invoices for the payment.
-	 *  For payment of a customer invoice, amounts are positive, for payment of credit note, amounts are negative
+	 *  For payment of a customer invoice, amounts are positive, for payment of credit note, amounts are negative.
+	 *  Can also close the invoice if remain to pay is 0.
 	 *  This will set also ->amount and ->multicurrency_amount at end.
 	 *
 	 *  @param	User	  $user                	Object user
