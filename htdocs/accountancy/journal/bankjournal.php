@@ -298,9 +298,6 @@ if ($result) {
 		// Set accountancy code for thirdparty (example: '411CU...' or '411' if no subledger account defined on customer)
 		$compta_soc = 'NotDefined';
 		$accountancy_code_general = 'NotDefined';
-
-		$socid = $obj->socid;	// the socid concerned by the current row
-
 		if ($lineisapurchase > 0) {
 			$accountancy_code_general = (!empty($obj->accountancy_code_supplier_general) && $obj->accountancy_code_supplier_general != '-1') ? $obj->accountancy_code_supplier_general : $account_supplier;
 			$compta_soc = (($obj->code_compta_fournisseur != "") ? $obj->code_compta_fournisseur : $account_supplier);
@@ -363,30 +360,6 @@ if ($result) {
 		if (!empty($obj->amount_main_currency)) {
 			// If $obj->amount_main_currency is set, it means that $obj->amount is not in same currency, we must use $obj->amount_main_currency
 			$amounttouse = $obj->amount_main_currency;
-		}
-
-		// in case of paiement multi-third parties ( one payments for different third parties bills with same parent company)
-		// because in this case $obj-amount = the total of the paiement and not the paiement for each company part
-		if ($lineisapurchase == 1) {
-			$sqlamount = "SELECT SUM(pf.amount) as amount";
-			$sqlamount .= " FROM ".MAIN_DB_PREFIX."paiementfounr_facturefourn AS pf";
-			$sqlamount .= " INNER JOIN ".MAIN_DB_PREFIX."paiementfourn AS p ON pf.fk_paiementfourn = p.rowid";
-			$sqlamount .= " RIGHT JOIN ".MAIN_DB_PREFIX."facture AS f ON pf.fk_facturefourn = f.rowid";
-			$sqlamount .= " WHERE p.fk_bank = '" . $obj->rowid . "'";
-			$sqlamount .= " AND f.fk_soc ='" . $obj->socid . "'";
-		}
-		if ($lineisasale == 1 ) {
-			$sqlamount = "SELECT SUM(pf.amount) as amount";
-			$sqlamount .= " FROM ".MAIN_DB_PREFIX."paiement_facture AS pf";
-			$sqlamount .= " INNER JOIN ".MAIN_DB_PREFIX."paiement AS p ON pf.fk_paiement = p.rowid";
-			$sqlamount .= " RIGHT JOIN ".MAIN_DB_PREFIX."facture AS f ON pf.fk_facture = f.rowid";
-			$sqlamount .= " WHERE p.fk_bank = '" . $obj->rowid . "'";
-			$sqlamount .= " AND f.fk_soc ='" . $obj->socid . "'";
-		}
-		if ($lineisapurchase == 1 || $lineisasale == 1) {
-			$resultamount = $db->query($sqlamount);
-			$objamount = $db->fetch_object($resultamount);
-			if (!empty($objamount->amount)) $amounttouse = $objamount->amount;
 		}
 
 		// get_url may return -1 which is not traversable
@@ -453,7 +426,7 @@ if ($result) {
 					$societestatic->name = $links[$key]['label'];
 					$societestatic->email = $tabcompany[$obj->rowid]['email'];
 					$tabpay[$obj->rowid]["soclib"] = $societestatic->getNomUrl(1, '', 30);
-					if ($compta_soc && $socid == $links[$key]['url_id']) {	// we have to add $amoutouse only if the line $links[$key] correspond to socid
+					if ($compta_soc) {
 						if (empty($tabtp[$obj->rowid][$compta_soc])) {
 							$tabtp[$obj->rowid][$compta_soc] = $amounttouse;
 						} else {
