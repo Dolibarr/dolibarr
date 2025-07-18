@@ -277,18 +277,6 @@ if ($action == 'edit') {
 	// == DYNAMIC VIEW RENDERING
 	// ==============================================================================
 
-	// Helper function to generate the select dropdown HTML, promoting the DRY principle.
-	$generateSelectHtml = function (string $constKey, array $valTab) {
-		$output = '<select name="'.$constKey.'" id="'.$constKey.'" class="flat minwidth200">';
-		foreach ($valTab as $key1 => $val1) {
-			$output .= '<option value="'.$key1.'" '.(getDolGlobalString($constKey) == $key1 ? 'selected="selected"' : '').'>';
-			$output .= $val1;
-			$output .= '</option>';
-		}
-		$output .= '</select>';
-		$output .= ajax_combobox($constKey);
-		return $output;
-	};
 
 	// Loop through each configuration group (e.g., ThirdParty, Member).
 	foreach ($arrayofparameters as $title => $tab) {
@@ -310,7 +298,7 @@ if ($action == 'edit') {
 			print '<td>';
 			// Display the dropdown only if a constant key is defined for the 'anonymize' action.
 			if (isset($val['config_keys']['anonymize'])) {
-				print $generateSelectHtml($val['config_keys']['anonymize'], $valTab);
+				print Form::selectarray($val['config_keys']['anonymize'], $valTab, getDolGlobalString($val['config_keys']['anonymize']));
 			}
 			print '</td>';
 
@@ -318,8 +306,7 @@ if ($action == 'edit') {
 			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 				print '<td>';
 				// Display the dropdown only if a constant key is defined for the 'delete' action.
-				print $generateSelectHtml($val['config_keys']['delete'], $valTab);
-
+				print Form::selectarray($val['config_keys']['delete'], $valTab, getDolGlobalString($val['config_keys']['delete']));
 				print '</td>';
 			}
 			print '</tr>';
