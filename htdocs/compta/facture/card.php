@@ -911,7 +911,7 @@ if (empty($reshook)) {
 					$tempTva->datev = $object->date;
 					$tempTva->datep = $object->date;
 					$tempTva->amount = $amount;
-					$tempTva->label = $langs->trans('Withholding') . ' - ' . $object->ref;
+					$tempTva->label = $langs->trans('WithholdingTax') . ' - ' . $object->ref;
 					//$tempTva->paye = 1;
 					$valid = $tempTva->getIdForLabel($tempTva->label);
 					if (!$valid) {
