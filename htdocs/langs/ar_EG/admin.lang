@@ -116,7 +116,6 @@ OtherSetup=إعدادات أخرى
 CurrentValueSeparatorDecimal=فاصل الأعداد العشرية
 CurrentValueSeparatorThousand=فاصل الآلاف
 Destination=الوجهة
-IdModule=معرّف الوحدة
 IdPermissions=معرّف الصلاحيات
 LanguageBrowserParameter=المُعامل %s
 LocalisationDolibarrParameters=إعدادات التوطين
