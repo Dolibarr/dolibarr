@@ -1693,9 +1693,13 @@ class Commande extends CommonOrder
 				if (!empty($fk_parent_line)) {
 					$this->line_order(true, 'DESC');
 				} elseif ($ranktouse > 0 && $ranktouse <= count($this->lines)) { // Update all rank of all other lines
-					$linecount = count($this->lines);
-					for ($ii = $ranktouse; $ii <= $linecount; $ii++) {
-						$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
+					//TODO Réordonner le tableau this->lines en fonction du rang, il faut q'uen indice
+					foreach ($this->lines as $line) {
+						if ($line->rang >= $ranktouse) {
+							if (!empty($line->id)) {
+								$this->updateRangOfLine($line->id, $line->rang + 1);
+							}
+						}
 					}
 				}
 
