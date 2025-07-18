@@ -375,8 +375,7 @@ if ($result) {
 				$sqlamount .= " RIGHT JOIN ".MAIN_DB_PREFIX."facture AS f ON pf.fk_facturefourn = f.rowid";
 				$sqlamount .= " WHERE p.fk_bank = '" . $obj->rowid . "'";
 				$sqlamount .= " AND f.fk_soc ='" . $obj->socid . "'";
-			}
-			if ($lineisasale == 1 ) {
+			} else {
 				$sqlamount = "SELECT SUM(pf.amount) as amount";
 				$sqlamount .= " FROM ".MAIN_DB_PREFIX."paiement_facture AS pf";
 				$sqlamount .= " INNER JOIN ".MAIN_DB_PREFIX."paiement AS p ON pf.fk_paiement = p.rowid";
