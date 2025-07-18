@@ -4,7 +4,9 @@ This documentation describe steps to build a BETA or RELEASE versions of Dolibar
 There is a chapter for BETA version and a chapter for a RELEASE version.
 
 
-## Prerequisites on Linux
+## Prerequisites
+
+### On Linux
 
 Prerequisites to build the tgz, debian and rpm packages:
 
@@ -35,7 +37,7 @@ See file dev/build/exe/doliwamp.iss to know the doliwamp version currently setup
   The .exe file will be build into directory build.
 
 
-## Prerequisites on Windows
+### On Windows
 
 Prerequisites to build autoexe DoliWamp package from Windows:
 
@@ -103,6 +105,8 @@ git log x.y.z-1.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //
 
 ## Actions to do a RELEASE
 
+### On Linux
+
 This files describe steps made by Dolibarr packaging team to make a complete release of Dolibarr, step by step.
 We suppose the branch x.y has already been created during the beta (see previous step) and we want to release a version x.y.z (with z >= 0)
 
@@ -152,3 +156,10 @@ git log x.y.(z-1)..   | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u
 - Run makepack-dolibarr.pl again with option 99 to publish files on sourceforge. This will also add the official tag x.y.z.
 
 - Post a news message in dolibarr.org web site by cloning a past news + relay the news url on social networks
+
+
+### On Windows
+
+Windows must be used to build the DoliWamp package. And only when the build of packages on Linux has been generated.
+
+Once prerequisites are solved, just run the script *makepack-dolibarr.pl* with option to build the .EXE. You should get the Dolibarr.exe DoliWamp package.

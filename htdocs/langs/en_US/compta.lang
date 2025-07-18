@@ -3,10 +3,10 @@ MenuFinancial=Billing | Payment
 TaxModuleSetupToModifyRules=Go to <a href="%s">Taxes module setup</a> to modify rules for calculation
 TaxModuleSetupToModifyRulesLT=Go to <a href="%s">Company setup</a> to modify rules for calculation
 OptionMode=Option for accountancy
-OptionModeTrue=Accrual accounting
-OptionModeVirtual=Cash accounting
-OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=In this context, the turnover is calculated over invoices (date of validation). When these invoices are due, whether they have been paid or not, they are listed in the turnover output.
+OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
 FeatureIsSupportedInInOutModeOnly=Feature only available in CREDITS-DEBTS accountancy mode (See Accountancy module configuration)
 VATReportBuildWithOptionDefinedInModule=Amounts shown here are calculated using rules defined by Tax module setup.
 LTReportBuildWithOptionDefinedInModule=Amounts shown here are calculated using rules defined by Company setup.
