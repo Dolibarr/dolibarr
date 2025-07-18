@@ -66,6 +66,8 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 	global $object;
 
 	if ($recursive <= 1) {	// Avoid too verbose log
+		$error_info = "";
+
 		// Verify filters (only on the first call of the function)
 		$filter_ok = true;
 		if (!is_array($filter)) {
@@ -82,9 +84,8 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 			}
 		}
 
-		$excludefilter_ok = true;
-		$error_info = "";
 		// Ensure we have an array for the exclusions
+		$excludefilter_ok = true;
 		$exclude_array = ($excludefilter === null || $excludefilter === '') ? array() : (is_array($excludefilter) ? $excludefilter : array($excludefilter));
 		foreach ($exclude_array as $f) {
 			// Check that all '/' are escaped.
@@ -342,7 +343,7 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 		$sql .= ", description";
 	}
 	$sql .= " FROM ".MAIN_DB_PREFIX."ecm_files";
-	if (!empty($object->entity) && $object->entity != $conf->entity) {
+	if (!empty($object->entity)) {
 		$sql .= " WHERE entity = ".((int) $object->entity);
 	} else {
 		$sql .= " WHERE entity = ".((int) $conf->entity);
@@ -389,6 +390,7 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 					"acl" => $obj->acl,
 					"share" => $obj->share,
 					"description" => ($mode ? $obj->description : '')
+					// TODO Add 'content' with $mode == 2 ?
 				);
 			}
 			$i++;
@@ -462,6 +464,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 	//var_dump($relativedir);
 	//var_dump($filearray);
 	//var_dump($filearrayindatabase);
+	//var_dump($object->entity);
 
 	// Complete filearray with properties found into $filearrayindatabase
 	foreach ($filearray as $key => $val) {
@@ -493,6 +496,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 
 			if (!preg_match('/([\\/]temp[\\/]|[\\/]thumbs|\.meta$)/', $rel_filename)) {     // If not a tmp file
 				dol_syslog("list_of_documents We found a file called '".$filearray[$key]['name']."' not indexed into database. We add it");
+
 				include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 				$ecmfile = new EcmFiles($db);
 
@@ -509,6 +513,10 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 				$ecmfile->gen_or_uploaded = 'unknown';
 				$ecmfile->description = ''; // indexed content
 				$ecmfile->keywords = ''; // keyword content
+				// When you scan file with dol_dir_list_in_database, you scan for files in entity of object (like with projects), even if you
+				// are connected into another entity. So we must also create record that was not found into the entity scan, so the one of the object).
+				$ecmfile->entity = empty($object->entity) ? $conf->entity : $object->entity;
+
 				$result = $ecmfile->create($user);
 				if ($result < 0) {
 					setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');

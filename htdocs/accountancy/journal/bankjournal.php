@@ -196,6 +196,21 @@ if ($only_rappro == 2) {
 $sql .= " ORDER BY b.datev";
 //print $sql;
 
+// Preload payment account codes by payment type from c_paiement
+$accountancy_code_by_payment = array();
+$sql2 = "SELECT code, accountancy_code";
+$sql2 .= " FROM ".MAIN_DB_PREFIX."c_paiement";
+$sql2 .= " WHERE entity IN (".getEntity('c_paiement').")";
+$sql2 .= " AND active = 1";
+$resql = $db->query($sql2);
+if ($resql) {
+	while ($objp = $db->fetch_object($resql)) {
+		if (!empty($objp->code) && !empty($objp->accountancy_code)) {
+			$accountancy_code_by_payment[$objp->code] = $objp->accountancy_code;
+		}
+	}
+}
+
 $object = new Account($db);
 $paymentstatic = new Paiement($db);
 $paymentsupplierstatic = new PaiementFourn($db);
@@ -294,6 +309,11 @@ if ($result) {
 
 		// Set accountancy code for bank
 		$compta_bank = $obj->account_number;
+
+		// Determining the bank account by payment method
+		if (!empty($obj->fk_type) && !empty($accountancy_code_by_payment[$obj->fk_type])) {
+			$compta_bank = $accountancy_code_by_payment[$obj->fk_type];
+		}
 
 		// Set accountancy code for thirdparty (example: '411CU...' or '411' if no subledger account defined on customer)
 		$compta_soc = 'NotDefined';
@@ -626,7 +646,7 @@ if ($result) {
 		}
 
 		// If no links were found to know the amount on thirdparty, we try to guess it.
-		// This may happens on bank entries without the links lines to 'company'.
+		// This may happen on bank entries without the links lines to 'company'.
 		if (empty($tabtp[$obj->rowid]) && !empty($tabmoreinfo[$obj->rowid]['withdraw'])) {	// If we don't find 'company' link because it is an old 'withdraw' record
 			foreach ($links as $key => $val) {
 				if ($links[$key]['type'] == 'payment') {
