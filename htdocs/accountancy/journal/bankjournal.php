@@ -373,8 +373,8 @@ if ($result) {
 				$sqlamount .= " FROM ".MAIN_DB_PREFIX."paiementfounr_facturefourn AS pf";
 				$sqlamount .= " INNER JOIN ".MAIN_DB_PREFIX."paiementfourn AS p ON pf.fk_paiementfourn = p.rowid";
 				$sqlamount .= " RIGHT JOIN ".MAIN_DB_PREFIX."facture AS f ON pf.fk_facturefourn = f.rowid";
-				$sqlamount .= " WHERE p.fk_bank = " . ((int) $obj->rowid);
-				$sqlamount .= " AND f.fk_soc = " . ((int) $obj->socid);
+				$sqlamount .= " WHERE p.fk_bank = ".((int) $obj->rowid);
+				$sqlamount .= " AND f.fk_soc = ".((int) $obj->socid);
 			} else {
 				$sqlamount = "SELECT SUM(pf.amount) as amount";
 				$sqlamount .= " FROM ".MAIN_DB_PREFIX."paiement_facture AS pf";
@@ -384,8 +384,10 @@ if ($result) {
 				$sqlamount .= " AND f.fk_soc = ".((int) $obj->socid);
 			}
 			$resultamount = $db->query($sqlamount);
-			$objamount = $db->fetch_object($resultamount);
-			if (!empty($objamount->amount)) $amounttouse = $objamount->amount;
+			if ($resultamount) {
+				$objamount = $db->fetch_object($resultamount);
+				if (!empty($objamount->amount)) $amounttouse = $objamount->amount;
+			}
 		}
 
 		// get_url may return -1 which is not traversable
