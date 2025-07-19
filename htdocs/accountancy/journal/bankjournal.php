@@ -452,7 +452,7 @@ if ($result) {
 					$societestatic->name = $links[$key]['label'];
 					$societestatic->email = $tabcompany[$obj->rowid]['email'];
 					$tabpay[$obj->rowid]["soclib"] = $societestatic->getNomUrl(1, '', 30);
-					if ($compta_soc) {	
+					if ($compta_soc) {
 						// because we are in 2 loop (loop on the line from the sql queries and loop on $links)
 						// and in case of option FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS is on,
 						// we will pass here n times for each payment line
