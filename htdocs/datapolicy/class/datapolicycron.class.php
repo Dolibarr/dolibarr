@@ -234,7 +234,7 @@ class DataPolicyCron
 	 * @param string $action The action that was performed ('delete' or 'anonymize').
 	 * @return void
 	 */
-	private function _recordActionResult($result, $object, $action) : void
+	private function _recordActionResult($result, $object, $action)
 	{
 		if ($result <= 0) {
 			$this->errorCount++;
