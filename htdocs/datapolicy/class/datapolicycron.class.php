@@ -110,12 +110,12 @@ class DataPolicyCron
 	 * Processes a specific action (delete or anonymize) for a given policy.
 	 * This method orchestrates the process by delegating to specialized handlers.
 	 *
-	 * @param array<string, mixed> $policy The policy definition array.
-	 * @param string $action The action to perform: 'delete' or 'anonymize'.
-	 * @param object $object The instantiated Dolibarr object.
-	 * @param int[] $processedIds Reference to the array of processed IDs.
-	 * @param object $conf The global conf object.
-	 * @param User $user The user object for history tracking.
+	 * @param array<string, mixed> 	$policy 		The policy definition array.
+	 * @param string 				$action 		The action to perform: 'delete' or 'anonymize'.
+	 * @param CommonObject 			$object 		The instantiated Dolibarr object.
+	 * @param int[] 				$processedIds 	Reference to the array of processed IDs.
+	 * @param object 				$conf 			The global conf object.
+	 * @param User 					$user 			The user object for history tracking.
 	 * @return void
 	 */
 	private function _processPolicyAction($policy, $action, $object, &$processedIds, $conf, $user)
@@ -172,7 +172,7 @@ class DataPolicyCron
 	/**
 	 * Handles the specific logic for deleting an object.
 	 *
-	 * @param object $object The object to delete.
+	 * @param CommonObject $object The object to delete.
 	 * @param User $user The user performing the action.
 	 * @param array<string, mixed> $policy The policy configuration.
 	 * @return int   The result of the delete operation.
@@ -187,7 +187,7 @@ class DataPolicyCron
 	/**
 	 * Handles the specific logic for anonymizing an object.
 	 *
-	 * @param object $object The object to anonymize.
+	 * @param CommonObject $object The object to anonymize.
 	 * @param User $user The user performing the action.
 	 * @param array<string, mixed> $policy The policy configuration.
 	 * @return int   The result of the update operation, or 0 if skipped.
@@ -206,7 +206,7 @@ class DataPolicyCron
 	/**
 	 * Builds the dynamic argument list for method calls based on policy configuration.
 	 *
-	 * @param object $object The target object.
+	 * @param CommonObject $object The target object.
 	 * @param User $user The user object.
 	 * @param array<string, mixed> $policy The policy configuration.
 	 * @param string $method The method key ('delete' or 'update').
@@ -230,7 +230,7 @@ class DataPolicyCron
 	 * Records the result of an action, updating counters and error messages.
 	 *
 	 * @param int $result The result code from the action (<0 for error).
-	 * @param object $object The processed object.
+	 * @param CommonObject $object The processed object.
 	 * @param string $action The action that was performed ('delete' or 'anonymize').
 	 * @return void
 	 */
