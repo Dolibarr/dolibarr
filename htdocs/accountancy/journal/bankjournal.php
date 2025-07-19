@@ -363,7 +363,7 @@ if ($result) {
 		}
 
 		// in case option FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS is on, payment could be for more than one third-partie
-		// so we have to find wich part of the payment is affected to each third-parties
+		// so we have to find which part of the payment is affected to each third-parties
 		// (because in this case $obj-amount = the total of the paiement and not the paiement for each third-parties)
 		if (getDolGlobalString('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS') && ($lineisapurchase == 1 || $lineisasale == 1) ) {
 			if ($lineisapurchase == 1) {
