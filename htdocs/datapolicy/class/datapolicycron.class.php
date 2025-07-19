@@ -118,7 +118,7 @@ class DataPolicyCron
 	 * @param User $user The user object for history tracking.
 	 * @return void
 	 */
-	private function _processPolicyAction($policy, $action, $object, &$processedIds, $conf, $user) : void
+	private function _processPolicyAction($policy, $action, $object, &$processedIds, $conf, $user)
 	{
 		$constName = $policy['const_' . $action] ?? null;
 		$delay = $constName ? getDolGlobalInt($constName) : 0;
