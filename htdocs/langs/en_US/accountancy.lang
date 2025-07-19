@@ -538,8 +538,6 @@ ExpenseReportJournal=Expense Report Journal
 DocsAlreadyExportedAreIncluded=Docs already exported are included
 ClickToShowAlreadyExportedLines=Click to show already exported lines
 NAccounts=%s accounts
-OptionModeTrueDesc=This is the mode for cash accountancy. We are using the payments only and their date for doing the accountancy.
-OptionModeVirtualDesc=This is the mode for accrual accountancy. We are using the invoices (date of validation) for doing the accountancy.
 PieceDesc=The reference of the source document that generates this bank transaction (Invoice Ref, Expense report ref, ...)
 BankTransactionRef=A reference for the bank transaction (Optional, an automatic ID is already generated)
 ## Mass Actions
