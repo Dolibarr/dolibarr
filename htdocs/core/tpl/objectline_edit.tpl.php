@@ -413,7 +413,7 @@ $coldisplay++;
 			}
 		}
 	}
-	$hourmin = getDolGlobalString('MAIN_USE_HOURMIN_IN_DATE_RANGE');
+	$hourmin = getDolGlobalInt('MAIN_USE_HOURMIN_IN_DATE_RANGE');
 	print $form->selectDate($line->date_start, 'date_start', $hourmin, $hourmin, $line->date_start ? 0 : 1, "updateline", 1, 0);
 	print ' '.$langs->trans('to').' ';
 	print $form->selectDate($line->date_end, 'date_end', $hourmin, $hourmin, $line->date_end ? 0 : 1, "updateline", 1, 0);
