@@ -1442,16 +1442,20 @@ class BOM extends CommonObject
 							$this->error = $tmpproduct->error;
 							return -1;
 						}
-						$unit_cost = (!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp;
-						$line->unit_cost = (float) price2num($unit_cost);
-						if (empty($line->unit_cost)) {
+
+						$unit_cost = (float) (is_null($tmpproduct->cost_price) ? $tmpproduct->pmp : $tmpproduct->cost_price);
+						if (empty($unit_cost)) {	// @phpstan-ignore-line phpstan thinks this is always false. No,if unit_cost is 0, it is not.
 							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
 								if ($productFournisseur->fourn_remise_percent != "0") {
 									$line->unit_cost = $productFournisseur->fourn_unitprice_with_discount;
 								} else {
 									$line->unit_cost = $productFournisseur->fourn_unitprice;
 								}
+							} else {
+								$line->unit_cost = 0;
 							}
+						} else {
+							$line->unit_cost = (float) price2num($unit_cost);
 						}
 
 						$line->total_cost = (float) price2num($line->qty * $line->unit_cost, 'MT');

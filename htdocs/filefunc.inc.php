@@ -63,7 +63,7 @@ if (!defined('DOL_APPLICATION_TITLE')) {
 	define('DOL_APPLICATION_TITLE', 'Dolibarr');
 }
 if (!defined('DOL_VERSION')) {
-	define('DOL_VERSION', '22.0.0-beta'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
+	define('DOL_VERSION', '23.0.0-alpha'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
 }
 
 if (!defined('EURO')) {
@@ -165,6 +165,23 @@ $conffiletoshow = "htdocs/conf/conf.php";
 // Include configuration
 // @phpstan-ignore-next-line
 $result = @include_once $conffile; // Keep @ because with some error reporting mode, this breaks the redirect done when file is not found
+
+/**
+ * @var ?string $dolibarr_main_stream_to_disable
+ * @var ?string $dolibarr_main_instance_unique_id
+ * @var ?string $dolibarr_strict_mode
+ * @var ?string $dolibarr_main_data_root
+ * @var ?string $dolibarr_main_db_prefix
+ * @var ?string $dolibarr_main_db_root
+ * @var ?string $dolibarr_main_db_user
+ * @var ?string $dolibarr_main_db_pass
+ * @var ?string $dolibarr_main_db_port
+ * @var ?string $dolibarr_main_db_type
+ * @var ?string $dolibarr_main_db_encryption
+ * @var ?string $dolibarr_main_db_encrypted_pass
+ * @var ?string $dolibarr_main_prod
+ * @var ?string $dolibarr_main_dolcrypt_key
+ */
 
 // Disable some not used PHP stream
 $listofwrappers = stream_get_wrappers();
@@ -468,10 +485,13 @@ if (!defined('DOL_DEFAULT_TTF_BOLD')) {
  */
 
 // If password is encoded, we decode it. Note: When page is called for install, $dolibarr_main_db_pass may not be defined yet.
-if ((!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) || !empty($dolibarr_main_db_encrypted_pass)) {
+if ((!empty($dolibarr_main_db_pass) && preg_match('/(dolcrypt|crypted):/i', $dolibarr_main_db_pass)) || !empty($dolibarr_main_db_encrypted_pass)) {
 	if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
 		$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
 		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
+		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this so we can use it later to know the password was initially encrypted
+	} elseif (!empty($dolibarr_main_db_pass) && preg_match('/dolcrypt:/i', $dolibarr_main_db_pass)) {
+		$dolibarr_main_db_pass = dolDecrypt($dolibarr_main_db_pass, (empty($dolibarr_main_dolcrypt_key) ? (empty($dolibarr_main_instance_unique_id) ? '' : $dolibarr_main_instance_unique_id) : $dolibarr_main_dolcrypt_key));
 		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this so we can use it later to know the password was initially encrypted
 	} else {
 		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);

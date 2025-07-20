@@ -1419,13 +1419,14 @@ class ProductFournisseur extends Product
 			}
 		}
 
+		$allowothertags = array('table', 'tr', 'td');
 		$linkclose = '';
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("SupplierRef");
-				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label, 0, $allowothertags).'"';
 			}
-			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label, 0, $allowothertags).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1437,7 +1438,7 @@ class ProductFournisseur extends Product
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1, $allowothertags);
 		}
 		if ($withpicto != 2) {
 			$result .= $newref.($this->ref_supplier ? ' ('.$this->ref_supplier.')' : '');

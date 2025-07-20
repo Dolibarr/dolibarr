@@ -1067,18 +1067,34 @@ if (empty($reshook)) {
 			}
 			if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT) {
 				foreach ($amount_ht as $tva_tx => $xxx) {
-					$discount->amount_ht = abs((float) $amount_ht[$tva_tx]);
-					$discount->amount_tva = abs((float) $amount_tva[$tva_tx]);
-					$discount->amount_ttc = abs((float) $amount_ttc[$tva_tx]);
-					$discount->total_ht = abs((float) $amount_ht[$tva_tx]);
-					$discount->total_tva = abs((float) $amount_tva[$tva_tx]);
-					$discount->total_ttc = abs((float) $amount_ttc[$tva_tx]);
-					$discount->multicurrency_amount_ht = abs((float) $multicurrency_amount_ht[$tva_tx]);
-					$discount->multicurrency_amount_tva = abs((float) $multicurrency_amount_tva[$tva_tx]);
-					$discount->multicurrency_amount_ttc = abs((float) $multicurrency_amount_ttc[$tva_tx]);
-					$discount->multicurrency_total_ht = abs((float) $multicurrency_amount_ht[$tva_tx]);
-					$discount->multicurrency_total_tva = abs((float) $multicurrency_amount_tva[$tva_tx]);
-					$discount->multicurrency_total_ttc = abs((float) $multicurrency_amount_ttc[$tva_tx]);
+					if ($object->type == Facture::TYPE_CREDIT_NOTE) {
+						$discount->amount_ht = -((float) $amount_ht[$tva_tx]);
+						$discount->amount_tva = -((float) $amount_tva[$tva_tx]);
+						$discount->amount_ttc = -((float) $amount_ttc[$tva_tx]);
+						$discount->total_ht = -((float) $amount_ht[$tva_tx]);
+						$discount->total_tva = -((float) $amount_tva[$tva_tx]);
+						$discount->total_ttc = -((float) $amount_ttc[$tva_tx]);
+						$discount->multicurrency_amount_ht = -((float) $multicurrency_amount_ht[$tva_tx]);
+						$discount->multicurrency_amount_tva = -((float) $multicurrency_amount_tva[$tva_tx]);
+						$discount->multicurrency_amount_ttc = -((float) $multicurrency_amount_ttc[$tva_tx]);
+						$discount->multicurrency_total_ht = -((float) $multicurrency_amount_ht[$tva_tx]);
+						$discount->multicurrency_total_tva = -((float) $multicurrency_amount_tva[$tva_tx]);
+						$discount->multicurrency_total_ttc = -((float) $multicurrency_amount_ttc[$tva_tx]);
+					} else {
+						//We keep the absolute value to be consistent with the function used to create the discount in case of deposit in the “create” function of the Payment class
+						$discount->amount_ht = abs((float) $amount_ht[$tva_tx]);
+						$discount->amount_tva = abs((float) $amount_tva[$tva_tx]);
+						$discount->amount_ttc = abs((float) $amount_ttc[$tva_tx]);
+						$discount->total_ht = abs((float) $amount_ht[$tva_tx]);
+						$discount->total_tva = abs((float) $amount_tva[$tva_tx]);
+						$discount->total_ttc = abs((float) $amount_ttc[$tva_tx]);
+						$discount->multicurrency_amount_ht = abs((float) $multicurrency_amount_ht[$tva_tx]);
+						$discount->multicurrency_amount_tva = abs((float) $multicurrency_amount_tva[$tva_tx]);
+						$discount->multicurrency_amount_ttc = abs((float) $multicurrency_amount_ttc[$tva_tx]);
+						$discount->multicurrency_total_ht = abs((float) $multicurrency_amount_ht[$tva_tx]);
+						$discount->multicurrency_total_tva = abs((float) $multicurrency_amount_tva[$tva_tx]);
+						$discount->multicurrency_total_ttc = abs((float) $multicurrency_amount_ttc[$tva_tx]);
+					}
 
 					// Clean vat code
 					$reg = array();
@@ -3870,7 +3886,7 @@ if ($action == 'create') {
 				</script>';
 			}
 			if (!GETPOSTINT('fac_rec')) {
-				print ' <a class="valignmiddle" href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
+				print ' <a class="valignmiddle" href="'.DOL_URL_ROOT.'/societe/card.php?action=create&customer=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 			}
 			print '</td>';
 			print '</tr>'."\n";
@@ -5230,11 +5246,12 @@ if ($action == 'create') {
 
 		// POS
 		if (isModEnabled('takepos') || $object->module_source || getDolGlobalString('INVOICE_ALLOW_POS_SOURCE_EDIT')) {
+			$langs->load("cashdesk");
 			print '<tr><td class="fieldname_type">';
 			print '<table class="nobordernopadding centpercent"><tr><td>';
 			print $form->textwithpicto($langs->trans('PointOfSale'), $langs->trans('POSInfo'));
 			print '</td>';
-			if ($action != 'editposinfo' && $object->status == $object::STATUS_DRAFT && $usercancreate) {
+			if ($action != 'editposinfo' && $usercancreate) {
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editposinfo&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetPOSInfo'), 1).'</a></td>';
 			}
 			print '</tr></table>';

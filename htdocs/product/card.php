@@ -539,9 +539,9 @@ if (empty($reshook)) {
 			$action = "create";
 			$error++;
 		}
-		$stockable_product = (int) ($type == 0 || ($type == 1 && !empty($conf->global->STOCK_SUPPORTS_SERVICES)));
+		$stockable_product = (int) ($type == 0 || ($type == 1 && getDolGlobalInt('STOCK_SUPPORTS_SERVICES')));
 		if (GETPOST('status_batch') && $stockable_product == 0 && isModEnabled('stock') && isModEnabled('productbatch')) {
-			setEventMessages($langs->trans('ErrorBatchesNeedStockManagement', $langs->transnoentities('Unit')), null, 'errors');
+			setEventMessages($langs->trans('ErrorBatchesNeedStockManagement'), null, 'errors');
 			$action = "create";
 			$error++;
 		}
@@ -855,6 +855,10 @@ if (empty($reshook)) {
 
 				// managed_in_stock
 				$object->stockable_product   = (int) GETPOSTISSET('stockable_product');
+				if ($object->status_batch > 0  && $object->stockable_product == 0 && isModEnabled('stock') && isModEnabled('productbatch')) {
+					$object->stockable_product = 1;
+					setEventMessages($langs->trans('ForceBatchesNeedStockManagement'), null, 'warnings');
+				}
 
 				$units = GETPOSTINT('units');
 				if ($units > 0) {
@@ -919,7 +923,6 @@ if (empty($reshook)) {
 				if ($object->isService()) {
 					$object->mandatory_period =  (!empty($checkmandatory)) ? 1 : 0 ;
 				}
-
 
 
 				// Fill array 'array_options' with data from add form

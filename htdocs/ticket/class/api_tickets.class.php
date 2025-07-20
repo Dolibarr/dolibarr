@@ -213,7 +213,7 @@ class Tickets extends DolibarrApi
 
 		$obj_ret = array();
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $socid;
+		$socid = DolibarrApiAccess::$user->socid ?: $socid;
 
 		$search_sale = null;
 		// If the internal user must only see his customers, force searching by him
@@ -224,6 +224,7 @@ class Tickets extends DolibarrApi
 
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket AS t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe AS s ON (s.rowid = t.fk_soc)";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."ticket_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= ' WHERE t.entity IN ('.getEntity('ticket', 1).')';
 		if ($socid > 0) {

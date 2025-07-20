@@ -31,7 +31,7 @@
  * The HTML field must be an input text with id=search_$htmlname.
  * This use the jQuery "autocomplete" function. If we want to use the select2, we must instead use input select into functions that call this method.
  *
- * @param string		$selected 			Preselected value
+ * @param string|int	$selected 			Preselected value
  * @param string|int	$htmlname 			HTML name of input field
  * @param string		$url 				Ajax Url to call for request: /path/page.php. Must return a json array ('key'=>id, 'value'=>String shown into input field once selected, 'label'=>String shown into combo list)
  * @param string		$urloption			More parameters on URL request
