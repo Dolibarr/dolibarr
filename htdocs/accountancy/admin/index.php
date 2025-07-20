@@ -447,7 +447,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
 	print '<td><span class="opacitymedium">'.nl2br($langs->trans('ACCOUNTING_USE_NON_TREASURY_Desc')).'</span>';
 	print "</td></tr>\n";
 	print '<tr class="oddeven"><td class="nowraponall"><input type="radio" id="accounting_mode_2" name="accounting_mode" value="RECETTES-DEPENSES"'.($accounting_mode == 'RECETTES-DEPENSES' ? ' checked' : '').'><label for="accounting_mode_2"> '.$langs->trans('OptionModeTrue').'</label></td>';
-	print '<td><span class="opacitymedium">'.nl2br($langs->trans('OptionModeTrueDesc'))."</span>";
+	print '<td><span class="opacitymedium">'.nl2br($langs->trans('ACCOUNTING_USE_TREASURY_Desc'))."</span>";
 	print "</td></tr>\n";
 
 	print "</table>\n";
