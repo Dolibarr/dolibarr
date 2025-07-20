@@ -631,7 +631,7 @@ class Reception extends CommonObject
 					if ($qty == 0 || ($qty < 0 && !getDolGlobalInt('RECEPTION_ALLOW_NEGATIVE_QTY'))) {
 						continue;
 					}
-					dol_syslog(get_class($this)."::valid movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
+					dol_syslog(get_class($this)."::valid movement index ".$i." ed.rowid=".$obj->rowid);
 
 					//var_dump($this->lines[$i]);
 					$mouvS = new MouvementStock($this->db);
@@ -1691,6 +1691,8 @@ class Reception extends CommonObject
 		if ($resql) {
 			// Set order billed if 100% of order is received (qty in reception lines match qty in order lines)
 			if ($this->origin == 'order_supplier' && $this->origin_id > 0) {
+				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+
 				$order = new CommandeFournisseur($this->db);
 				$order->fetch($this->origin_id);
 
@@ -1953,6 +1955,8 @@ class Reception extends CommonObject
 			}
 
 			if (!$error && $this->origin == 'order_supplier') {
+				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+
 				$commande = new CommandeFournisseur($this->db);
 				$commande->fetch($this->origin_id);
 				$result = $commande->setStatus($user, 4);
@@ -2034,11 +2038,7 @@ class Reception extends CommonObject
 
 						$qty = $obj->qty;
 
-
-						if ($qty <= 0) {
-							continue;
-						}
-						dol_syslog(get_class($this)."::reopen reception movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
+						dol_syslog(get_class($this)."::reopen reception movement index ".$i." ed.rowid=".$obj->rowid);
 
 						//var_dump($this->lines[$i]);
 						$mouvS = new MouvementStock($this->db);

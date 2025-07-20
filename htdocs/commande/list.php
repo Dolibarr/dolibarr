@@ -769,6 +769,9 @@ if (empty($reshook)) {
 			if ($search_project_ref >= 0) {
 				$param .= "&search_project_ref=".urlencode($search_project_ref);
 			}
+			if ($search_project != '') {
+				$param .= "&search_project=".urlencode($search_project);
+			}
 			if ($search_billed != '') {
 				$param .= '&search_billed='.urlencode($search_billed);
 			}
@@ -1450,6 +1453,9 @@ if ($search_multicurrency_montant_ttc != '') {
 }
 if ($search_project_ref >= 0) {
 	$param .= "&search_project_ref=".urlencode($search_project_ref);
+}
+if ($search_project != '') {
+	$param .= "&search_project=".urlencode($search_project);
 }
 if ($search_town != '') {
 	$param .= '&search_town='.urlencode($search_town);
@@ -2902,8 +2908,8 @@ while ($i < $imaxinloop) {
 
 		// Note public
 		if (!empty($arrayfields['c.note_public']['checked'])) {
-			print '<td class="flat maxwidth250imp">';
-			print '<div class="small lineheightsmall">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public), 5).'</div>';
+			print '<td class="sensiblehtmlcontent maxwidth250imp">';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2912,8 +2918,8 @@ while ($i < $imaxinloop) {
 
 		// Note private
 		if (!empty($arrayfields['c.note_private']['checked'])) {
-			print '<td class="flat maxwidth250imp">';
-			print '<div class="small lineheightsmall">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private), 5).'</div>';
+			print '<td class="sensiblehtmlcontent maxwidth250imp">';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

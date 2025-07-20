@@ -2978,7 +2978,7 @@ if ($action == 'create' && $usercancreate) {
 				print '<table class="nobordernopadding centpercent"><tr><td>';
 				print $form->textwithpicto($langs->trans('PointOfSale'), $langs->trans('POSInfo'));
 				print '</td>';
-				if ($action != 'editposinfo' && $object->status == $object::STATUS_DRAFT && $usercancreate) {
+				if ($action != 'editposinfo' && $usercancreate) {
 					print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editposinfo&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetPOSInfo'), 1).'</a></td>';
 				}
 				print '</tr></table>';
@@ -3511,21 +3511,9 @@ if ($action == 'create' && $usercancreate) {
 						'enabled' => (isModEnabled("intervention") && $object->status > Commande::STATUS_DRAFT && $object->status < Commande::STATUS_CLOSED && $object->getNbOfServicesLines() > 0),
 						'perm' => ($user->hasRight('ficheinter', 'creer') == 1),
 						'label' => 'AddIntervention',
-						'url' => '/fichinter/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid,
+						'url' => '/fichinter/card.php?action=create&origin=' . urlencode($object->element) . '&originid=' . ((int) $object->id) . '&socid=' . ((int) $object->socid),
 					);
 				}
-
-				/*if (isModEnabled('ficheinter')) {
-					$langs->load("interventions");
-
-					if ($object->status > Commande::STATUS_DRAFT && $object->status < Commande::STATUS_CLOSED && $object->getNbOfServicesLines() > 0) {
-						if ($user->hasRight('ficheinter', 'creer')) {
-							print dolGetButtonAction('', $langs->trans('AddIntervention'), 'default', DOL_URL_ROOT.'/fichinter/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid, '');
-						} else {
-							print dolGetButtonAction($langs->trans('NotAllowed'), $langs->trans('AddIntervention'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
-						}
-					}
-				}*/
 
 				// Create contract
 				$arrayforbutaction[] = array(

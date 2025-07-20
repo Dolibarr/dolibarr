@@ -64,7 +64,7 @@ abstract class CommonDocGenerator
 	protected $db;
 
 	/**
-	 * @var ?Extrafields object
+	 * @var ?ExtraFields object
 	 */
 	public $extrafieldsCache;
 
@@ -1177,7 +1177,7 @@ abstract class CommonDocGenerator
 	 *
 	 *	@param  CommonObject	$object				Object with extrafields (must have $object->array_options filled)
 	 *	@param  array<string,float|string>	$array_to_fill      Substitution array
-	 *  @param  Extrafields		$extrafields        Extrafields object
+	 *  @param  ExtraFields		$extrafields        ExtraFields object
 	 *  @param  string			$array_key	        Prefix for name of the keys into returned array
 	 *  @param  Translate		$outputlangs        Lang object to use for output
 	 *	@return	array<string,float|string>				Substitution array

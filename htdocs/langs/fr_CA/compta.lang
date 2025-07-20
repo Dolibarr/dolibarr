@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - compta
-OptionModeTrue=Comptabilité d'exercice
 OptionModeVirtual=Comptabilité de caisse
+OptionModeTrue=Comptabilité d'exercice
 RemainingAmountPayment=Montant restant à payer :
 Accountparent=Compte Parent
 Accountsparent=Comptes parents

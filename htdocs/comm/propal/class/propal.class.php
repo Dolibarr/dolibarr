@@ -197,6 +197,7 @@ class Propal extends CommonObject
 
 	/**
 	 * @var User user identified by user_author_id
+	 * @deprecated Set only $user_author_id
 	 */
 	public $author;
 
@@ -3845,6 +3846,9 @@ class Propal extends CommonObject
 			}
 			if (!empty($this->date)) {
 				$datas['date'] = '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->date, 'day');
+			}
+			if (!empty($this->date_signature)) {
+				$datas['datesignature'] = '<br><b>'.$langs->trans('DateSigning').':</b> '.dol_print_date($this->date_signature, 'day');
 			}
 			if (!empty($this->delivery_date)) {
 				$datas['deliverydate'] = '<br><b>'.$langs->trans('DeliveryDate').':</b> '.dol_print_date($this->delivery_date, 'dayhour');

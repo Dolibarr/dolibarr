@@ -36,15 +36,20 @@
  */
 
 /**
- * @var CommonObject $this
- * @var CommonObject $object
- * @var CommonObjectLine $line
+ * @var Conf $conf
  * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ * @var ExtraFields $extrafields
+ * @var CommonObject $this
+ * @var CommonObject $object
+ * @var CommonObjectLine $line
  * @var Societe $seller
  * @var Societe $buyer
+ *
+ * @var string $action
+ * @var int	$dateSelector
  */
 
 // Protection to avoid direct call of template
@@ -408,7 +413,7 @@ $coldisplay++;
 			}
 		}
 	}
-	$hourmin = (isset($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE : '');
+	$hourmin = getDolGlobalInt('MAIN_USE_HOURMIN_IN_DATE_RANGE');
 	print $form->selectDate($line->date_start, 'date_start', $hourmin, $hourmin, $line->date_start ? 0 : 1, "updateline", 1, 0);
 	print ' '.$langs->trans('to').' ';
 	print $form->selectDate($line->date_end, 'date_end', $hourmin, $hourmin, $line->date_end ? 0 : 1, "updateline", 1, 0);
@@ -435,12 +440,10 @@ $coldisplay++;
 		<?php
 	}
 	if (!$line->date_start) {
-		if (isset($conf->global->MAIN_DEFAULT_DATE_START_HOUR)) {
+		if (getDolGlobalString('MAIN_DEFAULT_DATE_START_HOUR') != '') {
 			print 'jQuery("#date_starthour").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_START_HOUR').'");';
 		}
-
-
-		if (isset($conf->global->MAIN_DEFAULT_DATE_START_MIN)) {
+		if (getDolGlobalString('MAIN_DEFAULT_DATE_START_MIN') != '') {
 			print 'jQuery("#date_startmin").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_START_MIN').'");';
 		}
 
@@ -455,10 +458,10 @@ $coldisplay++;
 		}
 	}
 	if (!$line->date_end) {
-		if (isset($conf->global->MAIN_DEFAULT_DATE_END_HOUR)) {
+		if (getDolGlobalString('MAIN_DEFAULT_DATE_END_HOUR') != '') {
 			print 'jQuery("#date_endhour").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_END_HOUR').'");';
 		}
-		if (isset($conf->global->MAIN_DEFAULT_DATE_END_MIN)) {
+		if (getDolGlobalString('MAIN_DEFAULT_DATE_END_MIN') != '') {
 			print 'jQuery("#date_endmin").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_END_MIN').'");';
 		}
 

@@ -1117,7 +1117,7 @@ if ($search_date_creation_startday) {
 	$param .= '&search_date_creation_startday='.urlencode((string) ($search_date_creation_startday));
 }
 if ($search_date_creation_start) {
-	$param .= '&search_date_creation_start='.urlencode($search_date_creation_start);
+	$param .= '&search_date_creation_start='.urlencode((string) $search_date_creation_start);
 }
 if ($search_date_creation_endmonth) {
 	$param .= '&search_date_creation_endmonth='.urlencode((string) ($search_date_creation_endmonth));
@@ -1129,7 +1129,7 @@ if ($search_date_creation_endday) {
 	$param .= '&search_date_creation_endday='.urlencode((string) ($search_date_creation_endday));
 }
 if ($search_date_creation_end) {
-	$param .= '&search_date_creation_end='.urlencode($search_date_creation_end);
+	$param .= '&search_date_creation_end='.urlencode((string) $search_date_creation_end);
 }
 if ($search_date_modif_startmonth) {
 	$param .= '&search_date_modif_startmonth='.urlencode((string) ($search_date_modif_startmonth));
@@ -1141,7 +1141,7 @@ if ($search_date_modif_startday) {
 	$param .= '&search_date_modif_startday='.urlencode((string) ($search_date_modif_startday));
 }
 if ($search_date_modif_start) {
-	$param .= '&search_date_modif_start='.urlencode($search_date_modif_start);
+	$param .= '&search_date_modif_start='.urlencode((string) $search_date_modif_start);
 }
 if ($search_date_modif_endmonth) {
 	$param .= '&search_date_modif_endmonth='.urlencode((string) ($search_date_modif_endmonth));
@@ -1153,7 +1153,7 @@ if ($search_date_modif_endday) {
 	$param .= '&search_date_modif_endday='.urlencode((string) ($search_date_modif_endday));
 }
 if ($search_date_modif_end) {
-	$param .= '&search_date_modif_end=' . urlencode($search_date_modif_end);
+	$param .= '&search_date_modif_end=' . urlencode((string) $search_date_modif_end);
 }
 
 // Add $param from extra fields
@@ -2325,7 +2325,7 @@ while ($i < $imaxinloop) {
 		// Note public
 		if (!empty($arrayfields['s.note_public']['checked'])) {
 			print '<td class="flat maxwidth250imp">';
-			print '<div class="small lineheightsmall">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public), 5).'</div>';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2334,7 +2334,7 @@ while ($i < $imaxinloop) {
 		// Note private
 		if (!empty($arrayfields['s.note_private']['checked'])) {
 			print '<td class="flat maxwidth250imp">';
-			print '<div class="small lineheightsmall">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private), 5).'</div>';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

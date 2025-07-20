@@ -2334,7 +2334,7 @@ if ($num > 0) {
 
 				print '<td class="nobordernopadding nowraponall">';
 				if ($contextpage == 'poslist') {
-					print dol_escape_htmltag($obj->ref);
+					print dolPrintHTML($obj->ref);
 				} else {
 					print $facturestatic->getNomUrl(1, '', 200, 0, '', 0, 1);
 				}
@@ -2581,7 +2581,7 @@ if ($num > 0) {
 				}
 			}
 
-			// Channel
+			// Input channel
 			if (!empty($arrayfields['f.fk_input_reason']['checked'])) {
 				print '<td>';
 				$form->formInputReason($_SERVER['PHP_SELF'], (string) $obj->fk_input_reason, 'none');
@@ -2774,12 +2774,15 @@ if ($num > 0) {
 
 			// Currency
 			if (!empty($arrayfields['f.multicurrency_code']['checked'])) {
-				print '<td class="nowraponall tdoverflowmax125" title="'.dol_escape_htmltag($obj->multicurrency_code.' - '.$langs->transnoentitiesnoconv('Currency'.$obj->multicurrency_code)).'">';
-				if (!getDolGlobalString('MAIN_SHOW_ONLY_CODE_MULTICURRENCY')) {
-					print $langs->transnoentitiesnoconv('Currency'.$obj->multicurrency_code);
+				if (!getDolGlobalString('MAIN_SHOW_ONLY_CODE_MULTICURRENCY') && !empty($obj->multicurrency_code)) {
+					$title = $obj->multicurrency_code.' - '.$langs->transnoentitiesnoconv('Currency'.$obj->multicurrency_code);
+					$label = $langs->transnoentitiesnoconv('Currency'.$obj->multicurrency_code);
 				} else {
-					print dol_escape_htmltag($obj->multicurrency_code);
+					$title = $obj->multicurrency_code;
+					$label = $obj->multicurrency_code;
 				}
+				print '<td class="nowraponall tdoverflowmax125" title="'.dolPrintHTMLForAttribute($title).'">';
+				print dolPrintHTML($label);
 				print "</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2917,7 +2920,7 @@ if ($num > 0) {
 			// Note public
 			if (!empty($arrayfields['f.note_public']['checked'])) {
 				print '<td class="sensiblehtmlcontent center">';
-				print dolPrintHTML($obj->note_public);
+				print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2925,8 +2928,8 @@ if ($num > 0) {
 			}
 			// Note private
 			if (!empty($arrayfields['f.note_private']['checked'])) {
-				print '<td class="center">';
-				print dolPrintHTML($obj->note_private);
+				print '<td class="sensiblehtmlcontent center">';
+				print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
