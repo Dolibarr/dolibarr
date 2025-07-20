@@ -548,7 +548,7 @@ class Documents extends DolibarrApi
 		} elseif ($modulepart == 'knowledgemanagement') {
 			require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class.php';
 
-			if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read') && !DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
+			if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
 				throw new RestException(403);
 			}
 
@@ -823,6 +823,9 @@ class Documents extends DolibarrApi
 			} elseif ($modulepart == 'ficheinter' || $modulepart == 'intervention') {
 				require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 				$object = new Fichinter($this->db);
+			} elseif ($modulepart == 'shipment' || $modulepart == 'expedition') {
+				require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+				$object = new Expedition($this->db);
 			} elseif ($modulepart == 'adherent' || $modulepart == 'member') {
 				$modulepart = 'adherent';
 				require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';

@@ -677,6 +677,11 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 		});
 		if (forcereload) {
 			var url = window.location.href;
+
+			/* reset action param */
+			url = url.replace(/action=\w+/g, '');
+
+			/* reset dol_resetcache param */
 			if (url.indexOf('dol_resetcache') < 0) {
 				if (url.indexOf('?') > -1) {
 					url = url + "&dol_resetcache=1";
@@ -684,6 +689,8 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 					url = url + "?dol_resetcache=1";
 				}
 			}
+
+			/* reset page_y param */
 			var page_y = $(document).scrollTop();
 			url = url.replace(/page_y=\d+/g, '');
 			if (page_y > 0) {

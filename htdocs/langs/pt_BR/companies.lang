@@ -150,7 +150,6 @@ VATIntraShort=ID do IVA
 VATIntraSyntaxIsValid=Sintaxe é válida
 VATPaymentFrequency=Frequência de pagamento do imposto
 ProspectCustomer=Possível cliente / Cliente
-Prospect=Prospecto de cliente
 CustomerRelativeDiscount=Desconto relativo do cliente
 CustomerRelativeDiscountShort=Desconto relativo
 CompanyHasRelativeDiscount=Esse cliente tem um desconto padrão de <b>%s%%</b>

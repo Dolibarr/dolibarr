@@ -1068,10 +1068,15 @@ class Commande extends CommonOrder
 				for ($i = 0; $i < $num; $i++) {
 					$line = $this->lines[$i];
 
-					// Test and convert into object this->lines[$i]. When coming from REST API, we may still have an array
+					// Test and convert into OrderLine object this->lines[$i]. When coming from REST API, we may still have an array
 					//if (! is_object($line)) $line=json_decode(json_encode($line), false);  // convert recursively array into object.
 					if (!is_object($line)) {
-						$line = (object) $line;
+						$lineobj = new OrderLine($this->db);
+						foreach ($line as $key => $val) {
+							$lineobj->$key = $val;
+						}
+						$line = $lineobj;
+						$this->lines[$i] = $line;
 					}
 
 					// Reset fk_parent_line for no child products and special product

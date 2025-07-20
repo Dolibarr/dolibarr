@@ -206,7 +206,7 @@ foreach ($dirbarcode as $reldir) {
 
 // Select barcode numbering module
 if (isModEnabled('product')) {
-	print load_fiche_titre($langs->trans("BarCodeNumberManager")." (".$langs->trans("Product").")", '', '');
+	print load_fiche_titre($langs->trans("BarCodeNumberManager")." (".$langs->trans("Product").")", '', 'product');
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
@@ -264,12 +264,16 @@ if (isModEnabled('product')) {
 		}
 	}
 	print "</table>\n";
+
+	print dolButtonToOpenUrlInDialogPopup('barcodeinitproduct', $langs->trans("MassBarcodeInit"), $langs->trans("GoOnThisPageToInitBarCode").' '.img_picto('', 'url'), '/barcode/codeinit.php', '', 'small');
+	print '<br><br><br>';
+
 	print '</div>';
 }
 
 // Select barcode numbering module
 if (isModEnabled('societe')) {
-	print load_fiche_titre($langs->trans("BarCodeNumberManager")." (".$langs->trans("ThirdParty").")", '', '');
+	print load_fiche_titre($langs->trans("BarCodeNumberManager")." (".$langs->trans("ThirdParty").")", '', 'company');
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
@@ -308,7 +312,7 @@ if (isModEnabled('societe')) {
 					print '</td>';
 					print '<td class="nowrap">'.$modBarCode->getExample($langs)."</td>\n";
 
-					if (getDolGlobalString('BARCODE_THIRDPARTY_ADDON_NUM') && $conf->global->BARCODE_THIRDPARTY_ADDON_NUM == "$file") {
+					if (getDolGlobalString('BARCODE_THIRDPARTY_ADDON_NUM') && getDolGlobalString('BARCODE_THIRDPARTY_ADDON_NUM') == "$file") {
 						print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodethirdpartyoff&token='.newToken().'&amp;value='.urlencode($file).'">';
 						print img_picto($langs->trans("Activated"), 'switch_on');
 						print '</a></td>';
@@ -328,14 +332,17 @@ if (isModEnabled('societe')) {
 		}
 	}
 	print "</table>\n";
+
+	print dolButtonToOpenUrlInDialogPopup('barcodeinitthirdparty', $langs->trans("MassBarcodeInit"), $langs->trans("GoOnThisPageToInitBarCode").' '.img_picto('', 'url'), '/barcode/codeinit.php', '', 'small');
+	print '<br><br><br>';
+
 	print '</div>';
 }
 
 /*
- *  CHOIX ENCODAGE
+ *  CHOOSE ENCODING
  */
 
-print '<br>';
 print load_fiche_titre($langs->trans("BarcodeEncodeModule"), '', '');
 
 if (empty($conf->use_javascript_ajax)) {
@@ -472,7 +479,7 @@ if (!isset($_SERVER['WINDIR'])) {
 // Module products
 if (isModEnabled('product')) {
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("SetDefaultBarcodeTypeProducts").'</td>';
+	print '<td>'.img_picto('', 'product', 'class="pictofixedwidth"').$langs->trans("SetDefaultBarcodeTypeProducts").'</td>';
 	print '<td width="60" class="right">';
 	print $formbarcode->selectBarcodeType(getDolGlobalInt('PRODUIT_DEFAULT_BARCODE_TYPE'), "PRODUIT_DEFAULT_BARCODE_TYPE", 1);
 	print '</td>';
@@ -483,7 +490,7 @@ if (isModEnabled('product')) {
 // Module thirdparty
 if (isModEnabled('societe')) {
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("SetDefaultBarcodeTypeThirdParties").'</td>';
+	print '<td>'.img_picto('', 'company', 'class="pictofixedwidth"').$langs->trans("SetDefaultBarcodeTypeThirdParties").'</td>';
 	print '<td width="60" class="right">';
 	print $formbarcode->selectBarcodeType(getDolGlobalInt('GENBARCODE_BARCODETYPE_THIRDPARTY'), "GENBARCODE_BARCODETYPE_THIRDPARTY", 1);
 	print '</td>';

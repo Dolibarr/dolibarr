@@ -1292,14 +1292,14 @@ while ($i < $imaxinloop) {
 		}
 		// Technical ID
 		if (!empty($arrayfields['d.rowid']['checked'])) {
-			print '<td class="center" data-key="id">'.$obj->rowid.'</td>';
+			print '<td class="center" data-key="id">'.dolPrintHTML($obj->rowid).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Ref
 		if (!empty($arrayfields['d.ref']['checked'])) {
-			print "<td>";
+			print '<td class="tdoverflowmax150">';
 			print $memberstatic->getNomUrl(-1, 0, 'card', 'ref', '', -1, 0, 1);
 			print "</td>\n";
 			if (!$i) {
@@ -1309,7 +1309,7 @@ while ($i < $imaxinloop) {
 		// Title/Civility
 		if (!empty($arrayfields['d.civility']['checked'])) {
 			print "<td>";
-			print dol_escape_htmltag($obj->civility);
+			print dolPrintHTML($obj->civility);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1348,13 +1348,13 @@ while ($i < $imaxinloop) {
 		}
 		// Company
 		if (!empty($arrayfields['d.company']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag((string) $companyname).'">';
+			print '<td class="tdoverflowmax125" title="'.dolPrintHTMLForAttribute((string) $companyname).'">';
 			print $companynametoshow;
 			print "</td>\n";
 		}
 		// Login
 		if (!empty($arrayfields['d.login']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->login).'">'.$obj->login."</td>\n";
+			print '<td class="tdoverflowmax125" title="'.dolPrintHTMLForAttribute($obj->login).'">'.dolPrintHTML($obj->login)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1382,7 +1382,7 @@ while ($i < $imaxinloop) {
 		// Address
 		if (!empty($arrayfields['d.address']['checked'])) {
 			print '<td class="nocellnopadd tdoverflowmax200" title="'.dol_escape_htmltag($obj->address).'">';
-			print dol_escape_htmltag($obj->address);
+			print dolPrintHTML($obj->address);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1391,7 +1391,7 @@ while ($i < $imaxinloop) {
 		// Zip
 		if (!empty($arrayfields['d.zip']['checked'])) {
 			print '<td class="nocellnopadd">';
-			print dol_escape_htmltag($obj->zip);
+			print dolPrintHTML($obj->zip);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1400,7 +1400,7 @@ while ($i < $imaxinloop) {
 		// Town
 		if (!empty($arrayfields['d.town']['checked'])) {
 			print '<td class="nocellnopadd">';
-			print dol_escape_htmltag($obj->town);
+			print dolPrintHTML($obj->town);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1409,7 +1409,7 @@ while ($i < $imaxinloop) {
 		// State / County / Departement
 		if (!empty($arrayfields['state.nom']['checked'])) {
 			print "<td>";
-			print dol_escape_htmltag($obj->state_name);
+			print dolPrintHTML($obj->state_name);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1418,8 +1418,8 @@ while ($i < $imaxinloop) {
 		// Country
 		if (!empty($arrayfields['country.code_iso']['checked'])) {
 			$tmparray = getCountry($obj->country, 'all');
-			print '<td class="center tdoverflowmax100" title="'.dol_escape_htmltag($tmparray['label']).'">';
-			print dol_escape_htmltag($tmparray['label']);
+			print '<td class="center tdoverflowmax100" title="'.dolPrintHTMLForAttribute($tmparray['label']).'">';
+			print dolPrintHTML($tmparray['label']);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1523,8 +1523,8 @@ while ($i < $imaxinloop) {
 		}
 		// Import key
 		if (!empty($arrayfields['d.import_key']['checked'])) {
-			print '<td class="tdoverflowmax100 center" title="'.dol_escape_htmltag($obj->import_key).'">';
-			print dol_escape_htmltag($obj->import_key);
+			print '<td class="tdoverflowmax100 center" title="'.dolPrintHTMLForAttribute($obj->import_key).'">';
+			print dolPrintHTML($obj->import_key);
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;

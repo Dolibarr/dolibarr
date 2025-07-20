@@ -389,6 +389,7 @@ Modelcsv_Gestinumv5=Export for Gestinum (v5)
 Modelcsv_charlemagne=Export for Aplim Charlemagne
 ChartofaccountsId=Chart of accounts Id
 ExportToPdf = Export to PDF
+ExportToCsv = Export to CSV
 PdfLedgerTitle = Ledger accounts
 PdfBalanceTitle = Ledger Balance
 PdfBookkeepingTitle = Journals

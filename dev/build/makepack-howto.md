@@ -4,7 +4,9 @@ This documentation describe steps to build a BETA or RELEASE versions of Dolibar
 There is a chapter for BETA version and a chapter for a RELEASE version.
 
 
-## Prerequisites on Linux
+## Prerequisites
+
+### On Linux
 
 Prerequisites to build the tgz, debian and rpm packages:
 
@@ -35,7 +37,7 @@ See file dev/build/exe/doliwamp.iss to know the doliwamp version currently setup
   The .exe file will be build into directory build.
 
 
-## Prerequisites on Windows
+### On Windows
 
 Prerequisites to build autoexe DoliWamp package from Windows:
 
@@ -60,7 +62,7 @@ Prerequisites to build autoexe DoliWamp package from Windows:
 
 ## Actions to do a BETA
 
-This files describe steps made by Dolibarr packaging team to make a beta version of Dolibarr, step by step.
+This section describes steps made by Dolibarr packaging team to make a beta version of Dolibarr, step by step.
 
 - Check all files are committed.
 - Update version/info in ChangeLog, for this you can:
@@ -86,9 +88,12 @@ cd ~/git/dolibarr_x.y
 git log x.y.z-1.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/changelogtocopy
 ```
 
-Recopy the content of the output file into the file ChangeLog.
-- Note: To know number of lines changes: git diff --shortstat A B
+- Recopy the content of the output file into the file ChangeLog.
+  
+  Note: To know number of lines changes: git diff --shortstat A B
+  
 - Update version number with x.y.z-w in file htdocs/filefunc.inc.php
+
 - Commit all changes.
 
 - Run `makepack-dolibarr.pl` to check the generation of all packages. No need to publish them.
@@ -99,6 +104,8 @@ Recopy the content of the output file into the file ChangeLog.
 
 
 ## Actions to do a RELEASE
+
+### On Linux
 
 This files describe steps made by Dolibarr packaging team to make a complete release of Dolibarr, step by step.
 We suppose the branch x.y has already been created during the beta (see previous step) and we want to release a version x.y.z (with z >= 0)
@@ -140,12 +147,19 @@ git log x.y.(z-1)..   | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u
 
 - Commit all changes and push the changes (direct commit or PR) and check that CI is green after the push.
 
-- Run makepack-dolibarr.pl to generate all packages.
+- Run makepack-dolibarr.pl with option 0 to generate the signature file and all the packages (or run the option 1 alone and then option of each packages you want to build).
 
-- Check content of built packages.
+- Check content of built packages (the files must have a relative dir "dolibarr-x.y.z/..." and the filelist-x.y.z.xml should be inside the packages too.
 
-- Run makepack-dolibarr.pl again with option to publish files on dolibarr foundation server (Dir /home/dolibarr/wwwroot/files/stable on www.dolibarr.org).
+- Run makepack-dolibarr.pl again with option 98 to publish files on dolibarr foundation server (Dir /home/dolibarr/wwwroot/files/stable on www.dolibarr.org).
 
-- Run makepack-dolibarr.pl again with option to publish files on sourceforge. This will also add the official tag x.y.z.
+- Run makepack-dolibarr.pl again with option 99 to publish files on sourceforge. This will also add the official tag x.y.z.
 
 - Post a news message in dolibarr.org web site by cloning a past news + relay the news url on social networks
+
+
+### On Windows
+
+Windows must be used to build the DoliWamp package. And only when the build of packages on Linux has been generated.
+
+Once prerequisites are solved, just run the script *makepack-dolibarr.pl* with option to build the .EXE. You should get the Dolibarr.exe DoliWamp package.
