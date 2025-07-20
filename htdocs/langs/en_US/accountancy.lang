@@ -538,6 +538,8 @@ ExpenseReportJournal=Expense Report Journal
 DocsAlreadyExportedAreIncluded=Docs already exported are included
 ClickToShowAlreadyExportedLines=Click to show already exported lines
 NAccounts=%s accounts
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
+ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
 PieceDesc=The reference of the source document that generates this bank transaction (Invoice Ref, Expense report ref, ...)
 BankTransactionRef=A reference for the bank transaction (Optional, an automatic ID is already generated)
 ## Mass Actions
