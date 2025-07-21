@@ -1263,7 +1263,7 @@ if (empty($reshook)) {
 					}
 					if (!empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
-						$outputlangs->setDefaultLang($newlang);
+						$outputlangs->setDefaultLang($newlang->defaultlang);
 					}
 
 					$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
