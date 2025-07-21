@@ -423,14 +423,12 @@ function getWarningDelay($module, $parmlevel1, $parmlevel2 = '')
 	}
 
 	if ($parmlevel2) {
-		if (!empty($conf->$module->$warningDelayPath->warning_delay)) {
-			if (!empty($conf->$module->$warningDelayPath->$parmlevel2->warning_delay)) {
-				return (int) $conf->$module->$warningDelayPath->$parmlevel2->warning_delay;
-			}
+		if (!empty($conf->$module) && !empty($conf->$module->$warningDelayPath) && !empty($conf->$module->$warningDelayPath->$parmlevel2) && !empty($conf->$module->$warningDelayPath->$parmlevel2->warning_delay)) {
+			return (int) $conf->$module->$warningDelayPath->$parmlevel2->warning_delay;
 		}
 	} else {
-		if (!empty($conf->$module->$warningDelayPath->warning_delay)) {
-			return (int) $conf->$module->$warningDelayPath->$parmlevel1->warning_delay;
+		if (!empty($conf->$module) && !empty($conf->$module->$warningDelayPath) && !empty($conf->$module->$warningDelayPath->warning_delay)) {
+			return (int) $conf->$module->$warningDelayPath->warning_delay;
 		}
 	}
 

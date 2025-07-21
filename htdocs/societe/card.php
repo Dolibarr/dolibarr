@@ -994,7 +994,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$private = 0;
 		}
 
-		// Load object modCodeTiers
+		// Load object modCodeClient
 		$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON', 'mod_codeclient_leopard');
 		if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
 			$module = substr($module, 0, dol_strlen($module) - 4);
@@ -1008,6 +1008,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		}
 		$modCodeClient = new $module($db);
 		'@phan-var-force ModeleThirdPartyCode $modCodeClient';
+
 		// Load object modCodeFournisseur
 		$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON', 'mod_codeclient_leopard');
 		if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
@@ -1586,8 +1587,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</td></tr>';
 			}
 
-			$colspan = ($conf->browser->layout == 'phone' ? 2 : 4);
-			print '<tr><td'.($colspan ? ' colspan="'.$colspan.'"' : '').'>&nbsp;</td></tr>';
+			print '<tr><td colspan="4">&nbsp;</td></tr>';
 
 			// Address
 			print '<tr><td class="tdtop">';

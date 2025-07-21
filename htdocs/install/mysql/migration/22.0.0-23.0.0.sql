@@ -43,4 +43,8 @@ create table llx_paiement_extrafields
 
 ALTER TABLE llx_paiement_extrafields ADD UNIQUE INDEX uk_paiement_extrafields (fk_object);
 
+ALTER TABLE llx_commande ADD COLUMN ip varchar(250);
+ALTER TABLE llx_commande ADD COLUMN user_agent varchar(255);
+
+
 -- end of migration

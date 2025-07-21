@@ -1965,8 +1965,9 @@ function version_webserver()
  */
 function getListOfModels($db, $type, $maxfilenamelength = 0)
 {
-	global $conf, $langs;
-	$liste = array();
+	global $conf, $hookmanager, $langs;
+
+	$docmodels = array();
 	$found = 0;
 	$dirtoscan = '';
 
@@ -2017,21 +2018,21 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 				if (count($listoffiles)) {
 					foreach ($listoffiles as $record) {
 						$max = ($maxfilenamelength ? $maxfilenamelength : 28);
-						$liste[$obj->id.':'.$record['fullname']] = dol_trunc($record['name'], $max, 'middle');
+						$docmodels[$obj->id.':'.$record['fullname']] = dol_trunc($record['name'], $max, 'middle');
 					}
 				} else {
-					$liste[0] = $obj->label.': '.$langs->trans("None");
+					$docmodels[0] = $obj->label.': '.$langs->trans("None");
 				}
 			} else {
 				if ($type == 'member' && $obj->doc_template_name == 'standard') {   // Special case, if member template, we add variant per format
 					global $_Avery_Labels;
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
 					foreach ($_Avery_Labels as $key => $val) {
-						$liste[$obj->id.':'.$key] = ($obj->label ? $obj->label : $obj->doc_template_name).' '.$val['name'];
+						$docmodels[$obj->id.':'.$key] = ($obj->label ? $obj->label : $obj->doc_template_name).' '.$val['name'];
 					}
 				} else {
 					// Common usage
-					$liste[$obj->id] = $obj->label ? $obj->label : $obj->doc_template_name;
+					$docmodels[$obj->id] = $obj->label ? $obj->label : $obj->doc_template_name;
 				}
 			}
 			$i++;
@@ -2040,9 +2041,18 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 		dol_print_error($db);
 		return -1;
 	}
-
+	$parameters = array(
+		'list' => &$docmodels,
+		'found' => &$found,
+		'type' => $type,
+		'maxfilenamelength' => $maxfilenamelength,
+	);
+	$reshook = $hookmanager->executeHooks('getListOfModels', $parameters);
+	if ($reshook < 0) {
+		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	}
 	if ($found) {
-		return $liste;
+		return $docmodels;
 	} else {
 		return 0;
 	}
