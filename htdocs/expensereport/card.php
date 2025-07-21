@@ -1249,24 +1249,38 @@ if (empty($reshook)) {
 			if ($result > 0) {
 				$ret = $object->fetch($object->id); // Reload to get new records
 
-				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
-					// Define output language
+				if (! getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+					// Langue de sortie par défaut : objet $langs (instance de Translate)
 					$outputlangs = $langs;
-					$newlang = GETPOST('lang_id', 'alpha');
+
+					// Récupère un code langue via GETPOST ou profil utilisateur
+					$newlang = GETPOST('lang_id', 'alpha'); // ex. "fr_FR"
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-						$tmpuser = new User($db);
-						$tmpuser->fetch($object->fk_user_author);
-						$newlang = $tmpuser->lang;
-					}
-					if (empty($newlang)) {
-						$newlang = $langs->defaultlang;
-					}
-					if (!empty($newlang)) {
-						$outputlangs = new Translate("", $conf);
-						$outputlangs->setDefaultLang($newlang->defaultlang);
+						$user = new User($db);
+						if ($user->fetch($object->fk_user_author) > 0) {
+							$newlang = $user->lang;         // ex. "en_US"
+						}
 					}
 
-					$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					// Si toujours vide, on prend la langue par défaut de la conf
+					if (empty($newlang)) {
+						$newlang = $conf->global->MAIN_LANG_DEFAULT; // chaîne, ex. "fr_FR"
+					}
+
+					// Enfin, on force la langue de $outputlangs
+					if (! empty($newlang) && is_string($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+					}
+
+					// Génération du PDF
+					$object->generateDocument(
+						$object->model_pdf,
+						$outputlangs,
+						$hidedetails,
+						$hidedesc,
+						$hideref
+					);
 				}
 
 				unset($qty);
