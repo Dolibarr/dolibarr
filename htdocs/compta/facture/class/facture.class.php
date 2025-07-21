@@ -1238,7 +1238,7 @@ class Facture extends CommonInvoice
 				$object->socid = $objsoc->id;
 				$object->cond_reglement_id	= (!empty($objsoc->cond_reglement_id) ? $objsoc->cond_reglement_id : 0);
 				$object->mode_reglement_id	= (!empty($objsoc->mode_reglement_id) ? $objsoc->mode_reglement_id : 0);
-				$object->fk_project = '';
+				$object->fk_project = null;
 				$object->fk_delivery_address = '';
 			}
 
@@ -1255,7 +1255,7 @@ class Facture extends CommonInvoice
 		$object->user_valid         = null; // deprecated
 		$object->fk_user_author     = $user->id;
 		$object->fk_user_valid      = null;
-		$object->fk_facture_source  = 0;
+		$object->fk_facture_source  = null;
 		$object->date_creation      = '';
 		$object->date_modification = '';
 		$object->date_validation    = '';
