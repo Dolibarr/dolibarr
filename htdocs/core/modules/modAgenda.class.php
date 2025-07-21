@@ -426,7 +426,7 @@ class modAgenda extends DolibarrModules
 			'langs' => 'agenda',
 			'position' => 170,
 			'perms' => '$user->hasRight("agenda", "allactions", "read")',
-			'enabled' => 'isModEnabled("category")',
+			'enabled' => 'isModEnabled("category") && getDolGlobalString("CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP")',
 			'target' => '',
 			'user' => 2
 		);

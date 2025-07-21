@@ -526,7 +526,8 @@ if ($action == 'create') {
 
 	print '<div class="center">';
 	print '<div class="hide_if_no_auto_create_payment paddingbottom">';
-	print '<input type="checkbox" checked value="1" name="closepaidtva"> <span class="">'.$langs->trans("ClosePaidVATAutomatically").'</span>';
+	print '<input type="checkbox" checked value="1" id="closepaidtva" name="closepaidtva" class="marginrightonly">';
+	print '<label for="closepaidtva">'.$langs->trans("ClosePaidVATAutomatically").'</label>';
 	print '<br>';
 	print '</div>';
 

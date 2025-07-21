@@ -158,3 +158,4 @@ NumberDayAddMass=Number of day to add to the selection
 ConfirmMassIncreaseHolidayQuestion=Are you sure you want to increase holiday of the %s selected record(s)?
 HolidayQtyNotModified=Balance of remaining days for %s has not been changed
 ConsumeHolidaysAtTheEndOfTheMonthTheyAreTakenAt=Consume holidays at the end of the month they are taken at
+PleaseDefineSomeTypeOfHolidayFirst=Please define first some types of holiday into the dictionary (Menu Home - Setup - dictionaries)

@@ -102,19 +102,20 @@ class printing_printgcp extends PrintingDriver
 
 		$this->db = $db;
 
-		if (!$conf->oauth->enabled) {
+		if (!isModEnabled('oauth')) {
 			$this->conf[] = array(
 				'varname' => 'PRINTGCP_INFO',
 				'info' => $langs->transnoentitiesnoconv("WarningModuleNotActive", "OAuth"),
 				'type' => 'info',
 			);
 		} else {
-			$keyforprovider = '';	// @FIXME
+			$keyforprovider = 'googleprint';
 
 			$this->google_id = getDolGlobalString('OAUTH_GOOGLE_ID');
 			$this->google_secret = getDolGlobalString('OAUTH_GOOGLE_SECRET');
 			// Token storage
 			$storage = new DoliStorage($this->db, $conf, $keyforprovider);
+
 			//$storage->clearToken($this->OAUTH_SERVICENAME_GOOGLE);
 			// Setup the credentials for the requests
 			$credentials = new Credentials(
@@ -123,11 +124,15 @@ class printing_printgcp extends PrintingDriver
 				$urlwithroot.'/core/modules/oauth/google_oauthcallback.php'
 			);
 			$access = ($storage->hasAccessToken($this->OAUTH_SERVICENAME_GOOGLE) ? 'HasAccessToken' : 'NoAccessToken');
+
 			$serviceFactory = new \OAuth\ServiceFactory();
+			// Call $serviceFactory->buildV2Service() that do a construct with "new OAuth/OAuth2/Service/Google()" to build the $apiService object
 			$apiService = $serviceFactory->createService($this->OAUTH_SERVICENAME_GOOGLE, $credentials, $storage, array());
 			'@phan-var-force OAuth\OAuth2\Service\Google $apiService'; // createService is only ServiceInterface
+
 			$token_ok = true;
 			try {
+				// Do a select into oauth_token to get existing token
 				$token = $storage->retrieveAccessToken($this->OAUTH_SERVICENAME_GOOGLE);
 			} catch (Exception $e) {
 				$this->errors[] = $e->getMessage();
@@ -153,7 +158,11 @@ class printing_printgcp extends PrintingDriver
 				}
 			}
 			if ($this->google_id != '' && $this->google_secret != '') {
-				$this->conf[] = array('varname' => 'PRINTGCP_INFO', 'info' => 'GoogleAuthConfigured', 'type' => 'info');
+				$this->conf[] = array(
+					'varname' => 'PRINTGCP_INFO',
+					'info' => 'GoogleAuthConfigured',
+					'type' => 'info'
+				);
 				$this->conf[] = array(
 					'varname' => 'PRINTGCP_TOKEN_ACCESS',
 					'info' => $access,
@@ -188,7 +197,11 @@ class printing_printgcp extends PrintingDriver
 					$this->conf[] = array('varname'=>'PRINTGCP_AUTHLINK', 'link'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'type'=>'authlink');
 				}*/
 			} else {
-				$this->conf[] = array('varname' => 'PRINTGCP_INFO', 'info' => 'GoogleAuthNotConfigured', 'type' => 'info');
+				$this->conf[] = array(
+					'varname' => 'PRINTGCP_INFO',
+					'info' => 'GoogleAuthNotConfigured',
+					'type' => 'info'
+				);
 			}
 		}
 		// do not display submit button
@@ -264,7 +277,7 @@ class printing_printgcp extends PrintingDriver
 		global $conf;
 		$ret = array();
 
-		$keyforprovider = '';	// @FIXME
+		$keyforprovider = 'googleprint';
 
 		// Token storage
 		$storage = new DoliStorage($this->db, $conf, $keyforprovider);
@@ -407,7 +420,7 @@ class printing_printgcp extends PrintingDriver
 			'contentType' => $contenttype,
 		);
 
-		$keyforprovider = '';	// @FIXME
+		$keyforprovider = 'googleprint';
 
 		// Dolibarr Token storage
 		$storage = new DoliStorage($this->db, $conf, $keyforprovider);
@@ -462,7 +475,7 @@ class printing_printgcp extends PrintingDriver
 		$error = 0;
 		$html = '';
 
-		$keyforprovider = '';	// @FIXME
+		$keyforprovider = 'googleprint';
 
 		// Token storage
 		$storage = new DoliStorage($this->db, $conf, $keyforprovider);

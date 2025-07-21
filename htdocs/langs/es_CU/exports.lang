@@ -22,7 +22,6 @@ FormatedExportDesc2=El primer paso es elegir un conjunto de datos predefinido, l
 FormatedExportDesc3=Cuando se seleccionan los datos para exportar, puede elegir el formato del archivo de salida.
 NoImportableData=Sin datos importables (sin módulo con definiciones para permitir la importación de datos)
 SQLUsedForExport=Solicitud SQL utilizada para extraer datos
-LineId=identificación de la línea
 LineLabel=etiqueta de linea
 LineDescription=Descripción de la línea
 LineVATRate=Tasa de IVA de línea

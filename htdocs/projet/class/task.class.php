@@ -1010,7 +1010,7 @@ class Task extends CommonObjectLine
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param	string	$option			'withproject' or ''
 	 *  @param	string	$mode			Mode 'task', 'time', 'contact', 'note', document' define page to link to.
-	 * 	@param	int		$addlabel		0=Default, 1=Add label into string, >1=Add first chars into string
+	 * 	@param	int		$addlabel		0=Default, 1=Add label into string, >1=Add first chars into string, -1=Label replace the ref
 	 *  @param	string	$sep			Separator between ref and label if option addlabel is set
 	 *  @param	int   	$notooltip		1=Disable tooltip
 	 *  @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
@@ -1072,11 +1072,15 @@ class Task extends CommonObjectLine
 			$result .= img_object(($notooltip ? '' : $label), $picto, 'class="paddingright"', 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
-			$result .= $this->ref;
+			if ($addlabel >= 0) {
+				$result .= $this->ref;
+			} else {
+				$result .= $this->label;
+			}
 		}
 		$result .= $linkend;
 		if ($withpicto != 2) {
-			$result .= (($addlabel && $this->label) ? $sep.dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
+			$result .= (($addlabel > 0 && $this->label) ? '<span class="opacitymedium">'.$sep.dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)).'</span>' : '');
 		}
 
 		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
