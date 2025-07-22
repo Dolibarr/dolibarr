@@ -70,6 +70,7 @@ AvailabilityPeriod=Délai de livraison
 SetAvailability=Définir le délai de livraison
 AfterOrder=après commande
 OtherProposals=Autres propositions
+ErrorMinPriceCheck=Une erreur est survenue lors de la vérification du prix de vente par rapport au prix de vente minimum. Si le problème persiste, veuillez contacter votre administrateur.
 
 ##### Availability #####
 AvailabilityTypeAV_NOW=Immédiate
