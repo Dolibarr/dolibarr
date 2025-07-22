@@ -1627,11 +1627,10 @@ if (empty($reshook)) {
 
 			if ($pu_equivalent_ttc && !$pu_equivalent) {
 					$price_base_type = 'TTC';
-				}
-				
+			}
+			
 			// Check price is not lower than minimum
 			if ($usermustrespectpricemin) {
-			    
 				if ($pu_equivalent && $price_min && (( price2num($pu_equivalent) * (1 -  $remise_percent / 100)) <  price2num($price_min)) && $price_base_type == 'HT') {
 					$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 					setEventMessages($mesg, null, 'errors');
@@ -1642,9 +1641,9 @@ if (empty($reshook)) {
 					setEventMessages($mesg, null, 'errors');
 					$error++;
 					$action = 'editline';
-				} else{
+				} else {
 				    setEventMessages($langs->trans("ErrorMinPriceCheck", $langs->transnoentitiesnoconv("Type")), null, 'errors');
-				    $error++;
+					$error++;
 				}
 			}
 		} else {
