@@ -208,8 +208,8 @@ before_script:
     phpcs -i | head -
     # Check PHP Vardump check version
     echo "PHP Vardump check version"
-	which var-dump-check
-	var-dump-check --version
+    which var-dump-check
+    var-dump-check --version
     # Check PHPUnit version
     echo "PHPUnit version"
     which phpunit
