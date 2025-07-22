@@ -340,9 +340,10 @@ if (!empty($object->element_for_permission)) {
 	$features .= (empty($object->module) ? '' : '@'.$object->module);
 }
 
+// Security check
 restrictedArea($user, $features, 0, '');
 
-$error = 0;
+//$error = 0;
 
 
 /*
