@@ -96,4 +96,7 @@ CREATE TABLE llx_accounting_analytic_distribution (
 
 ALTER TABLE llx_accounting_analytic_distribution ADD CONSTRAINT fk_accounting_analytic_distribution_fk_analytic_account FOREIGN KEY (fk_analytic_account) REFERENCES llx_accounting_analytic_distribution (rowid);
 
+ALTER TABLE llx_commande ADD COLUMN ip varchar(250);
+ALTER TABLE llx_commande ADD COLUMN user_agent varchar(255);
+
 -- end of migration

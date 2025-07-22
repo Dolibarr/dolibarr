@@ -162,11 +162,12 @@ $arrayoftype = array(
 	'thirdparty' => array('langs' => 'companies', 'label' => 'ThirdParties', 'picto' => 'company', 'ObjectClassName' => 'Societe', 'enabled' => isModEnabled('societe'), 'ClassPath' => "/societe/class/societe.class.php"),
 	'contact' => array('label' => 'Contacts', 'picto' => 'contact', 'ObjectClassName' => 'Contact', 'enabled' => isModEnabled('societe'), 'ClassPath' => "/contact/class/contact.class.php"),
 	'proposal' => array('label' => 'Proposals', 'picto' => 'proposal', 'ObjectClassName' => 'Propal', 'enabled' => isModEnabled('propal'), 'ClassPath' => "/comm/propal/class/propal.class.php"),
-	'order' => array('label' => 'Orders', 'picto' => 'order', 'ObjectClassName' => 'Commande', 'enabled' => isModEnabled('order'), 'ClassPath' => "/commande/class/commande.class.php"),
+	'order' => array('langs' => 'orders', 'label' => 'Orders', 'picto' => 'order', 'ObjectClassName' => 'Commande', 'enabled' => isModEnabled('order'), 'ClassPath' => "/commande/class/commande.class.php"),
+	'orderdet' => array('langs' => 'orders', 'label' => 'SaleOrderLines', 'picto' => 'order', 'ObjectClassName' => 'OrderLine', 'enabled' => isModEnabled('order'), 'ClassPath' => "/commande/class/orderline.class.php"),
 	'invoice' => array('langs' => 'facture', 'label' => 'Invoices', 'picto' => 'bill', 'ObjectClassName' => 'Facture', 'enabled' => isModEnabled('invoice'), 'ClassPath' => "/compta/facture/class/facture.class.php"),
 	'invoice_template' => array('label' => 'PredefinedInvoices', 'picto' => 'bill', 'ObjectClassName' => 'FactureRec', 'enabled' => isModEnabled('invoice'), 'ClassPath' => "/compta/class/facturerec.class.php", 'langs' => 'bills'),
-	'contract' => array('label' => 'Contracts', 'picto' => 'contract', 'ObjectClassName' => 'Contrat', 'enabled' => isModEnabled('contract'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs' => 'contracts'),
-	'contractdet' => array('label' => 'ContractLines', 'picto' => 'contract', 'ObjectClassName' => 'ContratLigne', 'enabled' => isModEnabled('contract'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs' => 'contracts'),
+	'contract' => array('langs' => 'contracts', 'label' => 'Contracts', 'picto' => 'contract', 'ObjectClassName' => 'Contrat', 'enabled' => isModEnabled('contract'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs' => 'contracts'),
+	'contractdet' => array('langs' => 'contracts', 'label' => 'ContractLines', 'picto' => 'contract', 'ObjectClassName' => 'ContratLigne', 'enabled' => isModEnabled('contract'), 'ClassPath' => "/contrat/class/contrat.class.php", 'langs' => 'contracts'),
 	'bom' => array('label' => 'BOM', 'picto' => 'bom', 'ObjectClassName' => 'Bom', 'enabled' => isModEnabled('bom')),
 	'mrp' => array('label' => 'MO', 'picto' => 'mrp', 'ObjectClassName' => 'Mo', 'enabled' => isModEnabled('mrp'), 'ClassPath' => "/mrp/class/mo.class.php"),
 	'ticket' => array('label' => 'Ticket', 'picto' => 'ticket', 'ObjectClassName' => 'Ticket', 'enabled' => isModEnabled('ticket')),
@@ -210,6 +211,7 @@ if ($objecttype) {
 
 		if ($fileforclass !== null) {
 			dol_include_once($fileforclass);
+
 			$ObjectClassName = $arrayoftype[$objecttype]['ObjectClassName'];
 		}
 		if (!empty($ObjectClassName)) {
@@ -636,7 +638,7 @@ if (!defined('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY')) {
 	print '<div class="divadvancedsearchfield center floatnone">';
 	print '<div class="inline-block"><span class="opacitymedium">'.$langs->trans("StatisticsOn").'</span></div> ';
 
-	print $form->selectarray('objecttype', $newarrayoftype, $objecttype, 0, 0, 0, '', 1, 0, 0, '', 'minwidth200', 1, '', 0, 1);
+	print $form->selectarray('objecttype', $newarrayoftype, $objecttype, 0, 0, 0, '', 1, 0, 0, '', 'minwidth250', 1, '', 0, 1);
 	if (empty($conf->use_javascript_ajax)) {
 		print '<input type="submit" class="button buttongen button-save nomargintop" name="changeobjecttype" value="'.$langs->trans("Refresh").'">';
 	} else {

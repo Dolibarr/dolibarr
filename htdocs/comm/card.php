@@ -971,7 +971,7 @@ if ($object->id > 0) {
 				// $filedir = $conf->propal->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				// $urlsource = '/comm/propal/card.php?id='.$objp->cid;
 				// print $formfile->getDocumentsLink($propal_static->element, $filename, $filedir);
-				if (($db->jdate($objp->date_limit) < ($now - $conf->propal->cloture->warning_delay)) && $objp->fk_statut == $propal_static::STATUS_VALIDATED) {
+				if (($db->jdate($objp->date_limit) < ($now - getWarningDelay('propal', 'cloture'))) && $objp->fk_statut == $propal_static::STATUS_VALIDATED) {
 					print " ".img_warning();
 				}
 				print '</td><td class="right" width="80px">'.dol_print_date($db->jdate($objp->dp), 'day')."</td>\n";
@@ -1260,7 +1260,7 @@ if ($object->id > 0) {
 				$late = '';
 				foreach ($contrat->lines as $line) {
 					if ($contrat->status == Contrat::STATUS_VALIDATED && $line->statut == ContratLigne::STATUS_OPEN) {
-						if (((!empty($line->date_end) ? $line->date_end : 0) + $conf->contract->services->expires->warning_delay) < $now) {
+						if (((!empty($line->date_end) ? $line->date_end : 0) + getWarningDelay('contract', 'service', 'expires')) < $now) {
 							$late = img_warning($langs->trans("Late"));
 						}
 					}

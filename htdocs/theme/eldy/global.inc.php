@@ -542,6 +542,9 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 input.short {
 	width: 40px;
 }
+input.shortbis {
+	width: 48px;
+}
 .nofocusvisible:focus-visible {
 	outline: none;
 }
@@ -3690,6 +3693,9 @@ div.vmenu, td.vmenu {
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
 	<?php } ?>
+}
+.vmenudisabled {
+	margin-left: 8px !important;
 }
 
 /* Force vmenusearchselectcombo with type=text differently than without because beautify with select2 affect vmenusearchselectcombo differently */

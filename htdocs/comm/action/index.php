@@ -52,6 +52,13 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 $MAXAGENDA = getDolGlobalString('AGENDA_EXT_NB', 5);
 $DELAYFORCACHE = 300;	// 300 seconds
 
+$action = GETPOST('action', 'aZ09');
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$mode = GETPOST('mode', 'aZ09');
+if (empty($mode) && preg_match('/show_/', $action)) {
+	$mode = $action;	// For backward compatibility
+}
+
 $disabledefaultvalues = GETPOSTINT('disabledefaultvalues');
 
 $check_holiday = GETPOSTINT('check_holiday');
@@ -68,13 +75,15 @@ if (empty($filtert) && !getDolGlobalString('AGENDA_ALL_CALENDARS')) {
 
 $newparam = '';
 
+// Pagination parameters
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page == -1) {
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
-$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+}
 $offset = $limit * $page;
 if (!$sortorder) {
 	$sortorder = "ASC";
@@ -103,12 +112,6 @@ if (!$user->hasRight('agenda', 'allactions', 'read') || $filter == 'mine') {  //
 	$filtert = (string) $user->id;
 }
 
-$action = GETPOST('action', 'aZ09');
-
-$mode = GETPOST('mode', 'aZ09');
-if (empty($mode) && preg_match('/show_/', $action)) {
-	$mode = $action;	// For backward compatibility
-}
 $resourceid = GETPOSTINT("search_resourceid");
 $year = GETPOSTINT("year") ? GETPOSTINT("year") : date("Y");
 $month = GETPOSTINT("month") ? GETPOSTINT("month") : date("m");
@@ -118,7 +121,6 @@ $pid = GETPOSTISSET("search_projectid") ? GETPOSTINT("search_projectid", 3) : GE
 $status = GETPOSTISSET("search_status") ? GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09'); // status may be 0, 50, 100, 'todo', 'na' or -1
 $type = GETPOSTISSET("search_type") ? GETPOST("search_type", 'aZ09') : GETPOST("type", 'aZ09');
 $maxprint = GETPOSTISSET("maxprint") ? GETPOSTINT("maxprint") : getDolGlobalInt('AGENDA_MAX_EVENTS_DAY_VIEW', 3);
-$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $dateselect = dol_mktime(0, 0, 0, GETPOSTINT('dateselectmonth'), GETPOSTINT('dateselectday'), GETPOSTINT('dateselectyear'));
 if ($dateselect > 0) {
@@ -191,7 +193,7 @@ if (GETPOST("viewlist", 'alpha') || $mode == 'show_list') {
 			if ($key == 'token') {
 				continue;
 			}
-			$param .= '&'.$key.'='.urlencode($val);
+			$param .= '&'.urlencode($key).'='.urlencode($val);
 		}
 	}
 	if (!preg_match('/action=/', $param)) {
@@ -209,7 +211,7 @@ if (GETPOST("viewperuser", 'alpha') || $mode == 'show_peruser') {
 			if ($key == 'token') {
 				continue;
 			}
-			$param .= '&'.$key.'='.urlencode($val);
+			$param .= '&'.urlencode($key).'='.urlencode($val);
 		}
 	}
 	//print $param;
@@ -755,29 +757,41 @@ $sql .= ' a.fk_soc, a.fk_contact, a.fk_project, a.fk_bookcal_calendar,';
 $sql .= ' a.fk_element, a.elementtype,';
 $sql .= ' ca.code as type_code, ca.libelle as type_label, ca.color as type_color, ca.type as type_type, ca.picto as type_picto';
 
+// Add fields from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-$sql .= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
+$sqlfields = $sql; // $sql fields to remove for count total
+
+$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm as ca, ".MAIN_DB_PREFIX."actioncomm as a";
 
 // We must filter on assignment table
-if ($filtert > 0 || $usergroup > 0) {
-	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as ar";
-	$sql .= " ON ar.fk_actioncomm = a.id AND ar.element_type='user'";
-	if ($filtert > 0) {
-		$sql .= " AND ar.fk_element = ".((int) $filtert);
+if (($filtert != '-1' && $filtert != '-2') || $usergroup > 0) {
+	// TODO Replace with a AND EXISTS
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as ar ON ar.fk_actioncomm = a.id AND ar.element_type = 'user'";
+	if ($filtert != '-1' && $filtert != '-2'  && $filtert != '-3') {
+		$sql .= " AND (ar.fk_element IN (".$db->sanitize($filtert).") OR (ar.fk_element IS NULL AND a.fk_user_action = ".((int) $filtert)."))"; // The OR is for backward compatibility
+	} elseif ($filtert == '-3') {
+		$sql .= " AND ar.fk_element IN (".$db->sanitize(implode(',', $user->getAllChildIds('hierarchyme'))).")";
 	}
 	if ($usergroup > 0) {
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element AND ugu.fk_usergroup = ".((int) $usergroup);
 	}
 }
+
 // We must filter on resource table
 if ($resourceid > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_resources as r";
 }
-$sql .= ' WHERE a.fk_action = ca.id';
-$sql .= ' AND a.entity IN ('.getEntity('agenda').')';	// bookcal is a "virtual view" of agenda
+
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
+$sql .= " WHERE a.fk_action = ca.id";
+$sql .= " AND a.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual view" of agenda
 // Condition on actioncode
 if (!empty($actioncode)) {
 	if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
@@ -794,14 +808,27 @@ if (!empty($actioncode)) {
 			}
 		}
 	} else {
-		if ($actioncode == 'AC_NON_AUTO') {
+		if ($actioncode === 'AC_NON_AUTO') {
 			$sql .= " AND ca.type != 'systemauto'";
-		} elseif ($actioncode == 'AC_ALL_AUTO') {
+		} elseif ($actioncode === 'AC_ALL_AUTO') {
 			$sql .= " AND ca.type = 'systemauto'";
-		} elseif (/* !empty($actioncode) && */ $actioncode !== '-1') {
+		} else {
 			if (is_array($actioncode)) {
-				$sql .= " AND ca.code IN (".$db->sanitize("'".implode("','", $actioncode)."'", 1).")";
-			} else {
+				// Remove all -1 values
+				$actioncode = array_filter(
+					$actioncode,
+					/**
+					 * @param string $value
+					 * @return	bool
+					 */
+					function ($value) {
+						return ((string) $value !== '-1');
+					}
+				);
+				if (count($actioncode)) {
+					$sql .= " AND ca.code IN (".$db->sanitize("'".implode("','", $actioncode)."'", 1).")";
+				}
+			} elseif ($actioncode !== '-1') {
 				$sql .= " AND ca.code IN (".$db->sanitize("'".implode("','", explode(',', $actioncode))."'", 1).")";
 			}
 		}
@@ -827,7 +854,7 @@ if ($search_sale && $search_sale != '-1') {
 	}
 }
 // Search on socid
-if ($socid) {
+if ($socid > 0) {
 	$sql .= " AND a.fk_soc = ".((int) $socid);
 }
 //var_dump($day.' '.$month.' '.$year);
@@ -875,17 +902,6 @@ if ($status == 'done' || $status == '100') {
 }
 if ($status == 'todo') {
 	$sql .= " AND (a.percent >= 0 AND a.percent < 100)";
-}
-// We must filter on assignment table
-if ($filtert > 0 || $usergroup > 0) {
-	$sql .= " AND (";
-	if ($filtert > 0) {
-		$sql .= "ar.fk_element = ".((int) $filtert);
-	}
-	if ($usergroup > 0) {
-		$sql .= ($filtert > 0 ? " OR " : "")." ugu.fk_usergroup = ".((int) $usergroup);
-	}
-	$sql .= ")";
 }
 
 // Search in categories, -1 is all and -2 is no categories
