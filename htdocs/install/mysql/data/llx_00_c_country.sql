@@ -49,7 +49,7 @@ INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUE
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (18, 'HU', 'HUN', 'Hungary', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (19, 'RU', 'RUS', 'Russia', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (20, 'SE', 'SWE', 'Sweden', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (21, 'CI', 'CIV', 'Côte d''Ivoire', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (21, 'CI', 'CIV', 'Ivory Cost', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (22, 'SN', 'SEN', 'Senegal', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (23, 'AR', 'ARG', 'Argentina', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (24, 'CM', 'CMR', 'Cameroun', 1, 0);
@@ -91,12 +91,12 @@ INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUE
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (61, 'BI', 'BDI', 'Burundi', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (62, 'KH', 'KHM', 'Cambodge / Cambodia', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (63, 'CV', 'CPV', 'Cap-Vert', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (64, 'KY', 'CYM', 'Iles Cayman', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (64, 'KY', 'CYM', 'Cayman Island', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (65, 'CF', 'CAF', 'Central African Republic (CAR/RCA)', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (66, 'TD', 'TCD', 'Tchad', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (67, 'CL', 'CHL', 'Chile', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (68, 'CX', 'CXR', 'Ile Christmas', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (69, 'CC', 'CCK', 'Iles des Cocos (Keeling)', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (68, 'CX', 'CXR', 'Christmas Island', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (69, 'CC', 'CCK', 'Cocos Islands (Keeling)', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (70, 'CO', 'COL', 'Colombie', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (71, 'KM', 'COM', 'Comores', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (72, 'CG', 'COG', 'Congo', 1, 0);
@@ -137,7 +137,7 @@ INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUE
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (108, 'GN', 'GIN', 'Guinea', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (109, 'GW', 'GNB', 'Guinea-Bissao', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (111, 'HT', 'HTI', 'Haiti', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (112, 'HM', 'HMD', 'Iles Heard et McDonald', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (112, 'HM', 'HMD', 'Heard Island and McDonald Islands', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (113, 'VA', 'VAT', 'Vatican City (Saint-Siège)', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (114, 'HN', 'HND', 'Honduras', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (115, 'HK', 'HKG', 'Hong Kong', 1, 0);
@@ -536,4 +536,3 @@ UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','D
 
 -- Set field sepa
 UPDATE llx_c_country SET sepa = 1 WHERE code IN ('AD','AT','BE','BG','CH','CY','CZ','DE','DK','EE','ES','FI','FR','GR','HR','HU','IE','IT','LT','LU','LV','MC','MT','NL','PL','PT','RO','SE','SI','SK','SM','VA');
-

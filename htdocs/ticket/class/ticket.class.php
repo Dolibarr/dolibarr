@@ -2823,8 +2823,10 @@ class Ticket extends CommonObject
 
 							$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
 
+							$replyto = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_REPLYTO');
+
 							// don't try to send email if no recipient
-							$this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames, array(), $from);
+							$this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames, array(), $from, $replyto);
 						}
 					}
 				} else {
@@ -2902,9 +2904,11 @@ class Ticket extends CommonObject
 
 							$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
 
+							$replyto = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_REPLYTO');
+
 							// don't try to send email if no recipient
 							if (!empty($sendto)) {
-								$this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames, $sendtocc, $from);
+								$this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames, $sendtocc, $from, $replyto);
 							}
 						}
 
@@ -2975,7 +2979,7 @@ class Ticket extends CommonObject
 								$url_public_ticket = (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE') ?
 										(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') !== '' ? getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') . '/view.php' : dol_buildpath('/public/ticket/view.php', 2)) : dol_buildpath('/ticket/card.php', 2)).'?track_id='.urlencode($object->track_id);
 
-								if (!getDolGlobalInt('TICKET_DO_NOT_INCLUDE_LINK_TO_CUSTOMER')) {
+								if (getDolGlobalInt('TICKET_INCLUDE_LINK_TO_PUBLIC_INTERFACE_IN_MESSAGE')) {
 									$message .= '<br>' . $langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer') . ' : <a href="' . $url_public_ticket . '">' . $object->track_id . '</a><br>';
 								}
 
@@ -3015,7 +3019,9 @@ class Ticket extends CommonObject
 								if (!empty($sendto)) {
 									$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
 
-									$result = $this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames, $sendtocc, $from);
+									$replyto = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_REPLYTO');
+
+									$result = $this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames, $sendtocc, $from, $replyto);
 									if ($result) {
 										// update last_msg_sent date of ticket (for last message sent to external users)
 										$this->date_last_msg_sent = dol_now();
@@ -3028,7 +3034,8 @@ class Ticket extends CommonObject
 										$sql .= " email_subject = '".$this->db->escape($subject)."',";
 										$sql .= " email_from = '".$this->db->escape($from)."',";
 										$sql .= " email_to = '".$this->db->escape(implode(',', $sendto))."',";
-										$sql .= " email_tocc = '".$this->db->escape(implode(',', $sendtocc))."'";
+										$sql .= " email_tocc = '".$this->db->escape(implode(',', $sendtocc))."',";
+										$sql .= " reply_to = '".$this->db->escape($replyto)."'";
 										$sql .= " WHERE id = ".((int) $id);
 
 										$resql = $this->db->query($sql);
@@ -3075,9 +3082,10 @@ class Ticket extends CommonObject
 	 * @param string[]		$mimefilename_list  List of attached file name in message
 	 * @param array<string>	$array_receiver_cc	Array of receiver in CC. Example array('john@doe.com')
 	 * @param string		$from				Email from
+	 * @param string		$replyto			Reply to
 	 * @return boolean     						True if mail sent to at least one receiver, false otherwise
 	 */
-	public function sendTicketMessageByEmail($subject, $message, $send_internal_cc = 0, $array_receiver = array(), $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $array_receiver_cc = array(), $from = '')
+	public function sendTicketMessageByEmail($subject, $message, $send_internal_cc = 0, $array_receiver = array(), $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $array_receiver_cc = array(), $from = '', $replyto = '')
 	{
 		global $conf, $langs, $user;
 
@@ -3117,34 +3125,34 @@ class Ticket extends CommonObject
 
 		if (is_array($array_receiver) && count($array_receiver) > 0) {
 			//foreach ($array_receiver as $key => $receiver) {
-				$deliveryreceipt = 0;
-				$filepath = $filename_list;
-				$filename = $mimefilename_list;
-				$mimetype = $mimetype_list;
+			$deliveryreceipt = 0;
+			$filepath = $filename_list;
+			$filename = $mimefilename_list;
+			$mimetype = $mimetype_list;
 
-				// Send email
+			// Send email
 
-				$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
+			$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
 			if (getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
 				$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 			}
 
-				$upload_dir_tmp = $conf->user->dir_output."/".$user->id.'/temp';
+			$upload_dir_tmp = $conf->user->dir_output."/".$user->id.'/temp';
 
-				include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-				$trackid = "tic".$this->id;
+			include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+			$trackid = "tic".$this->id;
 
-				$moreinheader = 'X-Dolibarr-Info: sendTicketMessageByEmail'."\r\n";
+			$moreinheader = 'X-Dolibarr-Info: sendTicketMessageByEmail'."\r\n";
 			if (!empty($this->email_msgid)) {
 				// We must also add 1 entry In-Reply-To: <$this->email_msgid> with Message-ID we respond from (See RFC5322).
 				$moreinheader .= 'In-Reply-To: <'.$this->email_msgid.'>'."\r\n";
 				// TODO We should now be able to give the in_reply_to as a dedicated parameter of new CMailFile() instead of into $moreinheader.
 			}
 
-				// We should add here also a header 'References:'
-				// According to RFC5322, we should add here all the References fields of the initial message concatenated with
-				// the Message-ID of the message we respond from (but each ID must be once).
-				$references = '';
+			// We should add here also a header 'References:'
+			// According to RFC5322, we should add here all the References fields of the initial message concatenated with
+			// the Message-ID of the message we respond from (but each ID must be once).
+			$references = '';
 			if (!empty($this->origin_references)) {		// $this->origin_references should be '<'.$this->origin_references.'>'
 				$references .= (empty($references) ? '' : ' ').$this->origin_references;
 			}
@@ -3156,11 +3164,15 @@ class Ticket extends CommonObject
 				// TODO We should now be able to give the references as a dedicated parameter of new CMailFile() instead of into $moreinheader.
 			}
 
-				$receiverstring = '';
+			$receiverstring = '';
 			foreach ($array_receiver as $key => $receiver) {
 				$receiverstring .= ($receiverstring ? ',' : '').$receiver;
 			}
-				$mailfile = new CMailFile($subject, $receiverstring, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', $trackid, $moreinheader, 'ticket', '', $upload_dir_tmp);
+
+			$sendcontext = 'ticket';
+
+			// Send email
+			$mailfile = new CMailFile($subject, $receiverstring, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', $trackid, $moreinheader, $sendcontext, $replyto, $upload_dir_tmp);
 
 
 			if ($mailfile->error) {

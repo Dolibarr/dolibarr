@@ -1528,7 +1528,6 @@ function dol_include_once($relpath, $classname = '')
 		dol_syslog('functions::dol_include_once Tried to load unexisting file: '.$relpath, LOG_WARNING);
 		return false;
 	}
-
 	if (!empty($classname) && !class_exists($classname)) {
 		return include $fullpath;
 	} else {
