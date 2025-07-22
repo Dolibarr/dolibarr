@@ -651,10 +651,7 @@ if ($socid > 0) {
 			print '</div>';
 
 			if (count($showconfirminfo)) {
-				if (getDolGlobalInt('DISCOUNT_SPLIT_MORE_THAN_TWO_PARTS')) {
-					// Todo: Ne pas afficher ce comportement si pas de js (MAIN_DISABLE_JAVASCRIPT)
-					print '<br><br>';
-
+				if (getDolGlobalInt('DISCOUNT_SPLIT_MORE_THAN_TWO_PARTS') && !getDolGlobalInt('MAIN_DISABLE_JAVASCRIPT')) {
 					print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'].'" id="formsplit" data-totaltosplit="'.$showconfirminfo['amount_ttc'].'" data-remaintosplit="0">';
 
 					//
@@ -948,10 +945,7 @@ if ($socid > 0) {
 			print '</div>';
 
 			if (count($showconfirminfo)) {
-				if (getDolGlobalInt('DISCOUNT_SPLIT_MORE_THAN_TWO_PARTS')) {
-					// Todo: Ne pas afficher ce comportement si pas de js (MAIN_DISABLE_JAVASCRIPT)
-					print '<br><br>';
-
+				if (getDolGlobalInt('DISCOUNT_SPLIT_MORE_THAN_TWO_PARTS') && !getDolGlobalInt('MAIN_DISABLE_JAVASCRIPT')) {
 					print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'].'" id="formsplit" data-totaltosplit="'.$showconfirminfo['amount_ttc'].'" data-remaintosplit="0">';
 
 					//
