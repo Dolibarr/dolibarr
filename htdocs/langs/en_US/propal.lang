@@ -70,6 +70,7 @@ AvailabilityPeriod=Availability delay
 SetAvailability=Set availability delay
 AfterOrder=after order
 OtherProposals=Other proposals
+ErrorMinPriceCheck=An error occurred while checking the sale price against the minimum sale price. If the problem persists, please contact your administrator.
 
 ##### Availability #####
 AvailabilityTypeAV_NOW=Immediate
