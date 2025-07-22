@@ -80,7 +80,6 @@ if (GETPOST('cancel', 'alpha') && !empty($backtopage)) {
 }
 
 if ($action == 'confirm_split_more' && $permissiontocreate) {
-
 	$error = 0;
 	$remid = (GETPOSTINT("remid") ? GETPOSTINT("remid") : 0);
 	$discount = new DiscountAbsolute($db);
@@ -105,7 +104,6 @@ if ($action == 'confirm_split_more' && $permissiontocreate) {
 	}
 
 	if (!$error) {
-
 		$db->begin();
 
 		foreach ($splitamounts as $key => $value) {
@@ -140,7 +138,7 @@ if ($action == 'confirm_split_more' && $permissiontocreate) {
 			$newdiscount->multicurrency_amount_tva = price2num($newdiscount->multicurrency_amount_ttc - $newdiscount->multicurrency_amount_ht);
 
 			$newdiscountID = $newdiscount->create($user);
-			if(!$newdiscountID) {
+			if (!$newdiscountID) {
 				$error++;
 			}
 		}
@@ -700,7 +698,6 @@ if ($socid > 0) {
 						print '<td class="right delsplitline"></td>';
 						print '<td class="right"></td>';
 						print '</tr>';
-
 					} else {
 						$nbSplitLines = count($splitamounts);
 						$remaintosplit = $showconfirminfo['amount_ttc'];
@@ -713,7 +710,6 @@ if ($socid > 0) {
 							print '<td class="right"></td>';
 							print '</tr>';
 						}
-						var_dump($remaintosplit);
 					}
 
 					print '<tr class="valid">';
@@ -744,7 +740,6 @@ if ($socid > 0) {
 					print '</div>';
 					print '</form>';
 					print '<br>';
-
 					?>
 					<script nonce="<?php print getNonce(); ?>" type="text/javascript">
 						$(document).ready(function () {
@@ -958,7 +953,6 @@ if ($socid > 0) {
 			print '</div>';
 
 			if (count($showconfirminfo)) {
-
 				if (getDolGlobalInt('DISCOUNT_SPLIT_MORE_THAN_TWO_PARTS')) {
 					// Todo: Ne pas afficher ce comportement si pas de js (MAIN_DISABLE_JAVASCRIPT)
 					print '<br><br>';
@@ -1001,7 +995,6 @@ if ($socid > 0) {
 						print '<td class="right delsplitline"></td>';
 						print '<td class="right"></td>';
 						print '</tr>';
-
 					} else {
 						$nbSplitLines = count($splitamounts);
 						$remaintosplit = $showconfirminfo['amount_ttc'];
@@ -1014,7 +1007,6 @@ if ($socid > 0) {
 							print '<td class="right"></td>';
 							print '</tr>';
 						}
-						var_dump($remaintosplit);
 					}
 
 					print '<tr class="valid">';
@@ -1045,7 +1037,6 @@ if ($socid > 0) {
 					print '</div>';
 					print '</form>';
 					print '<br>';
-
 					?>
 					<script nonce="<?php print getNonce(); ?>" type="text/javascript">
 						$(document).ready(function () {
