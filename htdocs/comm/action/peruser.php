@@ -54,18 +54,13 @@ $DELAYFORCACHE = 300;	// 300 seconds
 
 $disabledefaultvalues = GETPOSTINT('disabledefaultvalues');
 
+$action = GETPOST('action', 'aZ09');
+
 $check_holiday = GETPOSTINT('check_holiday');
 $filter = GETPOST("search_filter", 'alpha', 3) ? GETPOST("search_filter", 'alpha', 3) : GETPOST("filter", 'alpha', 3);
-$filtert = GETPOSTINT("search_filtert", 3) ? GETPOSTINT("search_filtert", 3) : GETPOSTINT("filtert", 3);
+$filtert = GETPOST("search_filtert", "intcomma", 3) ? GETPOST("search_filtert", "intcomma", 3) : GETPOST("filtert", "intcomma", 3);
 $usergroup = GETPOSTINT("search_usergroup", 3) ? GETPOSTINT("search_usergroup", 3) : GETPOSTINT("usergroup", 3);
-//if (! ($usergroup > 0) && ! ($filtert > 0)) $filtert = $user->id;
-//$showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
 $showbirthday = getDolGlobalInt('AGENDA_ENABLE_SHOW_BIRTHDAY_PER_USER'); // disabled by default
-
-// If no choice done on calendar owner (like on left menu link "Agenda"), we filter on current user by default.
-/*if (empty($filtert) && !getDolGlobalString('AGENDA_ALL_CALENDARS')) {
-	$filtert = (string) $user->id;
-}*/
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
@@ -91,7 +86,7 @@ if ($socid < 0) {
 	$socid = '';
 }
 
-$canedit = 1;
+$canedit = 1;	// can read events of others
 if (!$user->hasRight('agenda', 'myactions', 'read')) {
 	accessforbidden();
 }
@@ -101,8 +96,6 @@ if (!$user->hasRight('agenda', 'allactions', 'read')) {
 if (!$user->hasRight('agenda', 'allactions', 'read') || $filter == 'mine') {  // If no permission to see all, we show only affected to me
 	$filtert = (string) $user->id;
 }
-
-$action = GETPOST('action', 'aZ09');
 
 $mode = 'show_peruser';
 $resourceid = GETPOSTINT("search_resourceid") ? GETPOSTINT("search_resourceid") : GETPOSTINT("resourceid");
@@ -133,6 +126,7 @@ if ($dateselect > 0) {
 	$year = GETPOSTINT('dateselectyear');
 }
 
+// working hours
 $tmp = getDolGlobalString('MAIN_DEFAULT_WORKING_HOURS', '9-18');
 $tmp = str_replace(' ', '', $tmp); // FIX 7533
 $tmparray = explode('-', $tmp);
@@ -148,6 +142,7 @@ if ($end_h <= $begin_h) {
 	$end_h = $begin_h + 1;
 }
 
+// working days
 $tmp = getDolGlobalString('MAIN_DEFAULT_WORKING_DAYS', '1-5');
 $tmp = str_replace(' ', '', $tmp); // FIX 7533
 $tmparray = explode('-', $tmp);
@@ -171,19 +166,22 @@ if (empty($mode) && !GETPOSTISSET('mode')) {
 	$mode = getDolGlobalString('AGENDA_DEFAULT_VIEW', 'show_peruser');
 }
 
+// View by month
 if (GETPOST('viewcal', 'alpha') && $mode != 'show_day' && $mode != 'show_week' && $mode != 'show_peruser') {
 	$mode = 'show_month';
 	$day = '';
-} // View by month
+}
+// View by week
 if (GETPOST('viewweek', 'alpha') || $mode == 'show_week') {
 	$mode = 'show_week';
 	$week = ($week ? $week : date("W"));
 	$day = ($day ? $day : date("d"));
-} // View by week
+}
+// View by day
 if (GETPOST('viewday', 'alpha') || $mode == 'show_day') {
 	$mode = 'show_day';
 	$day = ($day ? $day : date("d"));
-} // View by day
+}
 
 $object = new ActionComm($db);
 
@@ -335,10 +333,12 @@ if ($status == 'todo') {
 }
 
 $param = '';
-if ($actioncode || GETPOSTISSET('search_actioncode')) {
+if (($actioncode && $actioncode !== '-1') || GETPOSTISSET('search_actioncode')) {
 	if (is_array($actioncode)) {
 		foreach ($actioncode as $str_action) {
-			$param .= "&search_actioncode[]=".urlencode($str_action);
+			if ($str_action != '-1') {
+				$param .= "&search_actioncode[]=".urlencode($str_action);
+			}
 		}
 	} else {
 		$param .= "&search_actioncode=".urlencode($actioncode);
@@ -531,16 +531,16 @@ if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda'
 
 	$urltocreateaction = DOL_URL_ROOT.'/comm/action/card.php?action=create';
 	$urltocreateaction .= '&apyear='.$tmpforcreatebutton['year'].'&apmonth='.$tmpforcreatebutton['mon'].'&apday='.$tmpforcreatebutton['mday'].'&aphour='.$tmpforcreatebutton['hours'].'&apmin='.$tmpforcreatebutton['minutes'];
-	$urltocreateaction .= '&backtopage='.urlencode($_SERVER["PHP_SELF"] . $newparam);
+	$urltocreateaction .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
 
 	$newcardbutton .= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', $urltocreateaction);
 }
 
 
-// Define the legend/list of calendard to show
-$s = '';
 $link = '';
 
+// Define the legend/list of calendard to show
+$s = '';
 
 $showextcals = $listofextcals;
 $bookcalcalendars = array();
@@ -554,7 +554,7 @@ if (isModEnabled("bookcal")) {
 	$sql .= " WHERE bc.status = 1";
 	$sql .= " AND ba.status = 1";
 	$sql .= " AND bc.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual view" of agenda
-	if (!empty($filtert) && $filtert != '-1') {
+	if (!empty($filtert) && $filtert != '-1' && $filtert != '-2') {
 		$sql .= " AND bc.visibility IN (".$db->sanitize($filtert, 0, 0, 0, 0).")";
 	}
 	$resql = $db->query($sql);
@@ -677,7 +677,7 @@ $sql .= " a.id, a.label,";
 $sql .= " a.datep,";
 $sql .= " a.datep2,";
 $sql .= " a.percent,";
-$sql .= " a.fk_user_author,a.fk_user_action,";
+$sql .= " a.fk_user_author, a.fk_user_action,";
 $sql .= " a.transparency, a.priority, a.fulldayevent, a.location,";
 $sql .= " a.fk_soc, a.fk_contact, a.fk_project, a.fk_bookcal_calendar,";
 $sql .= " a.fk_element, a.elementtype,";
@@ -692,12 +692,16 @@ $sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm as ca, ".MAIN_DB_PREFIX."actioncom
 if ($resourceid > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_resources as r";
 }
+
 // We must filter on assignment table
-if ($filtert > 0 || $usergroup > 0) {
+if (($filtert != '-1' && $filtert != '-2') || $usergroup > 0) {
+	// TODO Replace with a AND EXISTS
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as ar";
-	$sql .= " ON ar.fk_actioncomm = a.id AND ar.element_type='user'";
-	if ($filtert > 0) {
-		$sql .= " AND ar.fk_element = ".((int) $filtert);
+	$sql .= " ON ar.fk_actioncomm = a.id AND ar.element_type = 'user'";
+	if ($filtert != '' && $filtert != '-1' && $filtert != '-2'  && $filtert != '-3') {
+		$sql .= " AND ar.fk_element IN (".$db->sanitize($filtert).")";
+	} elseif ($filtert == '-3') {
+		$sql .= " AND ar.fk_element IN (".$db->sanitize(implode(',', $user->getAllChildIds('hierarchyme'))).")";
 	}
 	if ($usergroup > 0) {
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element AND ugu.fk_usergroup = ".((int) $usergroup);
@@ -706,6 +710,7 @@ if ($filtert > 0 || $usergroup > 0) {
 
 $sql .= " WHERE a.fk_action = ca.id";
 $sql .= " AND a.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual view" of agenda
+
 // Condition on actioncode
 if (!empty($actioncode)) {
 	if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
@@ -726,9 +731,16 @@ if (!empty($actioncode)) {
 			$sql .= " AND ca.type != 'systemauto'";
 		} elseif ($actioncode == 'AC_ALL_AUTO') {
 			$sql .= " AND ca.type = 'systemauto'";
-		} elseif (/* !empty($actioncode) && */ $actioncode !== '-1') {
+		} elseif ($actioncode !== '-1' && $actioncode !== '-3') {
 			if (is_array($actioncode)) {
-				$sql .= " AND ca.code IN (".$db->sanitize("'".implode("','", $actioncode)."'", 1).")";
+				foreach ($actioncode as $key => $val) {
+					if ($val == '-1' || $val == '-2') {
+						unset($actioncode[$key]);
+					}
+				}
+				if (!empty($actioncode)) {
+					$sql .= " AND ca.code IN (".$db->sanitize("'".implode("','", $actioncode)."'", 1).")";
+				}
 			} else {
 				$sql .= " AND ca.code IN (".$db->sanitize("'".implode("','", explode(',', $actioncode))."'", 1).")";
 			}
@@ -805,10 +817,13 @@ if ($status == 'todo') {
 	$sql .= " AND (a.percent >= 0 AND a.percent < 100)";
 }
 // We must filter on assignment table
-if ($filtert > 0 || $usergroup > 0) {
+if (($filtert > 0 || $filtert == -3) || $usergroup > 0) {
+	// TODO Replace with a AND EXISTS
 	$sql .= " AND (";
 	if ($filtert > 0) {
 		$sql .= "ar.fk_element = ".((int) $filtert);
+	} elseif ($filtert == -3) {
+		$sql .= "ar.fk_element IN (".$db->sanitize(implode(',', $user->getAllChildIds('hierarchyme'))).")";
 	}
 	if ($usergroup > 0) {
 		$sql .= ($filtert > 0 ? " OR " : "")." ugu.fk_usergroup = ".((int) $usergroup);
@@ -1056,8 +1071,8 @@ if ($showbirthday) {  // always false @phpstan-ignore-line
 	}
 }
 
+// LEAVE-HOLIDAY CALENDAR
 if ($user->hasRight("holiday", "read")) {
-	// LEAVE-HOLIDAY CALENDAR
 	$sql = "SELECT u.rowid as uid, u.lastname, u.firstname, u.statut, x.rowid, x.date_debut as date_start, x.date_fin as date_end, x.halfday, x.statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."holiday as x, ".MAIN_DB_PREFIX."user as u";
 	$sql .= " WHERE u.rowid = x.fk_user";
@@ -1499,6 +1514,7 @@ $link = '';
 // Show div with list of calendars
 print $s;
 
+// Top filters
 print '<div class="liste_titre liste_titre_bydiv centpercent">';
 print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, '', (string) $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid, $search_categ_cus);
 print '</div>';
@@ -1543,13 +1559,13 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		print $langs->trans("DaysOfWeek").'</span>';
 		print "\n";
 		print '<div class="ui-grid-a  inline-block"><div class="ui-block-a nowraponall">';
-		print '<input type="number" class="short" name="begin_d" value="'.$begin_d.'" min="1" max="7">';
+		print '<input type="number" class="shortbis" name="begin_d" value="'.$begin_d.'" min="1" max="7">';
 		if (empty($conf->dol_use_jmobile)) {
 			print ' - ';
 		} else {
 			print '</div><div class="ui-block-b">';
 		}
-		print '<input type="number" class="short" name="end_d" value="'.$end_d.'" min="1" max="7">';
+		print '<input type="number" class="shortbis" name="end_d" value="'.$end_d.'" min="1" max="7">';
 		print '</div></div>';
 	}
 
@@ -1582,13 +1598,13 @@ while ($currentdaytoshow < $lastdaytoshow) {
 	print $langs->trans("Hours").'</span>';
 	print "\n";
 	print '<div class="ui-grid-a inline-block"><div class="ui-block-a nowraponall">';
-	print '<input type="number" class="short" name="begin_h" value="'.$begin_h.'" min="0" max="23">';
+	print '<input type="number" class="shortbis" name="begin_h" value="'.$begin_h.'" min="0" max="23">';
 	if (empty($conf->dol_use_jmobile)) {
 		print ' - ';
 	} else {
 		print '</div><div class="ui-block-b">';
 	}
-	print '<input type="number" class="short" name="end_h" value="'.$end_h.'" min="1" max="24">';
+	print '<input type="number" class="shortbis" name="end_h" value="'.$end_h.'" min="1" max="24">';
 	if (empty($conf->dol_use_jmobile)) {
 		print ' '.$langs->trans("HourShort");
 	}
@@ -1630,7 +1646,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 			}
 		}
 	} else {
-		/* Use this list to have lines for all users */
+		/* Use this list to have lines of all users to show */
 		$sql = "SELECT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
 		$sql .= " FROM ".$db->prefix()."user as u";
 		if (isModEnabled('multicompany') && getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE')) {
@@ -1660,6 +1676,13 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		if ($user->socid > 0) {
 			// External users should see only contacts of their company
 			$sql .= " AND u.fk_soc = ".((int) $user->socid);
+		}
+		// Filter on users in hierarchy
+		if (!$canedit || $filtert == '-3') {	// If we can't read event of others
+			if (!$user->hasRight('user', 'user', 'lire') || $filtert == '-3') {
+				$usersInHierarchy = $user->getAllChildIds(1);
+				$sql .= " AND u.rowid IN (".$db->sanitize(implode(',', $usersInHierarchy)).")";
+			}
 		}
 
 		//print $sql;

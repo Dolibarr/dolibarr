@@ -205,7 +205,7 @@ $enabledtypetiers = 0;
 $arrayfields = array(
 	'u.login' => array('label' => "AuthorRequest", 'enabled' => '1', 'position' => 41),
 	's.name_alias' => array('label' => "AliasNameShort", 'position' => 51, 'checked' => '0'),
-	's.town' => array('label' => "Town", 'enabled' => '1', 'position' => 55, 'checked' => '1'),
+	's.town' => array('label' => "Town", 'enabled' => '1', 'position' => 55, 'checked' => '0'),
 	's.zip' => array('label' => "Zip", 'enabled' => '1', 'position' => 56, 'checked' => '1'),
 	'state.nom' => array('label' => "StateShort", 'enabled' => '1', 'position' => 57),
 	'country.code_iso' => array('label' => "Country", 'enabled' => '1', 'position' => 58),
@@ -2103,7 +2103,7 @@ if ($resql) {
 			// Note public
 			if (!empty($arrayfields['cf.note_public']['checked'])) {
 				print '<td class="sensiblehtmlcontent center">';
-				print dolPrintHTML($obj->note_public);
+				print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2113,7 +2113,7 @@ if ($resql) {
 			// Note private
 			if (!empty($arrayfields['cf.note_private']['checked'])) {
 				print '<td class="sensiblehtmlcontent center">';
-				print dolPrintHTML($obj->note_private);
+				print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

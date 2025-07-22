@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - stocks
-Stock=المخزون
-Stocks=المخزون
-Movements=الحركات
-Location=الموقع
-Unit=الوحدة
 AverageUnitPricePMPShort=متوسط السعر المرجح
 inventoryCreatePermission=إنشاء جرد جديد
 inventoryReadPermission=عرض الجرد

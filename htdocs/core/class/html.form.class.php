@@ -2140,13 +2140,13 @@ class Form
 	 * @param int<0,1>|string 	$show_empty 	0=list with no empty value, 1=add also an empty value into list
 	 * @param int[]|null		$exclude 		Array list of users id to exclude
 	 * @param int 				$disabled 		If select list must be disabled
-	 * @param int[]|''|'hierarchy'|'hierarchyme'	$include	Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
+	 * @param int[]|''|'hierarchy'|'hierarchyme'	$include	Array list of users id to include. Use '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
 	 * @param int[]|''			$enableonly 	Array list of users id to be enabled. If defined, it means that others will be disabled
 	 * @param string 			$force_entity 	'0' or list of Ids of environment to force, separated by a comma, or 'default' = do no extend to all entities allowed to superadmin.
 	 * @param int 				$maxlength 		Maximum length of string into list (0=no limit)
 	 * @param int<-1,1>			$showstatus 	0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
 	 * @param string 			$morefilter 	Add more filters into sql request (Example: '(employee:=:1)'). This value must not come from user input.
-	 * @param int<0,1> 			$show_every 	0=default list, 1=add also a value "Everybody" at beginning of list
+	 * @param int<0,3> 			$showalso 		0=default list, 1=add also a value "Everybody" at beginning of list, 2=add also a value "My team" at beginning of list (if user has at least 1 people), 3=add also "Everybody" + "My Team"
 	 * @param string 			$enableonlytext If option $enableonlytext is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
 	 * @param string 			$morecss 		More css
 	 * @param int<0,1> 			$notdisabled 	Show only active users (note: this will also happen, whatever is this option, if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
@@ -2156,14 +2156,14 @@ class Form
 	 * @return string|array<int,string|array{id:int,label:string,labelhtml:string,color:string,picto:string}>	HTML select string
 	 * @see select_dolgroups()
 	 */
-	public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '', $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $notdisabled = 0, $outputmode = 0, $multiple = false, $forcecombo = 0)
+	public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '', $maxlength = 0, $showstatus = 0, $morefilter = '', $showalso = 0, $enableonlytext = '', $morecss = '', $notdisabled = 0, $outputmode = 0, $multiple = false, $forcecombo = 0)
 	{
 		// phpcs:enable
 		global $conf, $user, $langs, $hookmanager;
 		global $action;
 
 		// If no preselected user defined, we take current user
-		if ((is_numeric($selected) && ($selected < -2 || empty($selected))) && !getDolGlobalString('SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE')) {
+		if ((is_numeric($selected) && ($selected < -3 || empty($selected))) && !getDolGlobalString('SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE')) {
 			$selected = $user->id;
 		}
 
@@ -2173,23 +2173,38 @@ class Form
 			$selected = array($selected);
 		}
 
+		// Exclude some users in $excludeUsers string
 		$excludeUsers = null;
-		$includeUsers = null;
-
-		// Exclude some users
 		if (is_array($exclude)) {
 			$excludeUsers = implode(",", $exclude);
 		}
-		// Include some uses
+
+		// Include some users in $includeUsers string
+		$includeUsers = null;
+		$includeUsersArray = array();
 		if (is_array($include)) {
-			$includeUsers = implode(",", $include);
+			$includeUsersArray = $include;
 		} elseif ($include == 'hierarchy') {
-			// Build list includeUsers to have only hierarchy
-			$includeUsers = implode(",", $user->getAllChildIds(0));
+			// Build list includeUsersArray to have only hierarchy
+			$includeUsersArray = $user->getAllChildIds(0);
 		} elseif ($include == 'hierarchyme') {
-			// Build list includeUsers to have only hierarchy and current user
-			$includeUsers = implode(",", $user->getAllChildIds(1));
+			// Build list includeUsersArray to have only hierarchy and current user
+			$includeUsersArray = $user->getAllChildIds(1);
 		}
+		// Get list of allowed users
+		/* We do not limit list of users. Because we should limit this only for combo list into HR features where we may be allowed to
+		 * see all other users and element in other. For example in agenda, we can have permission to read all event of otherusers.
+		 * So we disable this.
+		if (!$user->hasRight('user', 'user', 'lire')) {
+			if (empty($includeUsersArray)) {
+				$includeUsers = implode(",", $user->getAllChildIds(1));
+			} else {
+				$includeUsers = implode(",", array_intersect($includeUsersArray, $user->getAllChildIds(1)));
+			}
+		} else {
+			$includeUsers = implode(",", $includeUsersArray);
+		} */
+		$includeUsers = implode(",", $includeUsersArray);
 
 		$num = 0;
 
@@ -2297,7 +2312,23 @@ class Form
 						'picto' => ''
 					);
 				}
-				if ($show_every) {
+				if ($showalso == 2 || $showalso == 3) {
+					$out .= '<option value="-3"' . ((in_array(-3, $selected)) ? ' selected' : '') . '>-- ' . $langs->trans("MyTeam") . ' --</option>' . "\n";
+
+					$hasAtLeastOneSubordinate = (count($user->getAllChildIds(1)) > 1);
+					if ($hasAtLeastOneSubordinate) {
+						//$sql = "SELECT rowid FROM".MAIN_DB_PREFIX."user "
+						$outarray[-3] = '-- ' . $langs->trans("MyTeam") . ' --';
+						$outarray2[-3] = array(
+							'id' => -3,
+							'label' => '-- ' . $langs->trans("MyTeam") . ' --',
+							'labelhtml' => '-- ' . $langs->trans("MyTeam") . ' --',
+							'color' => '',
+							'picto' => ''
+						);
+					}
+				}
+				if ($showalso == 1 || $showalso == 3) {
 					$out .= '<option value="-2"' . ((in_array(-2, $selected)) ? ' selected' : '') . '>-- ' . $langs->trans("Everybody") . ' --</option>' . "\n";
 
 					$outarray[-2] = '-- ' . $langs->trans("Everybody") . ' --';
