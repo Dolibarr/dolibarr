@@ -158,11 +158,6 @@ if ($action == 'confirm_split_more' && $permissiontocreate) {
 			$db->rollback();
 		}
 	}
-
-
-
-
-	$action = 'split';
 }
 
 if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permissiontocreate) {
@@ -683,7 +678,7 @@ if ($socid > 0) {
 					if (empty($splitamounts)) {
 						$amount1 = price2num($showconfirminfo['amount_ttc'] / 2, 'MT');
 						$amount2 = ($showconfirminfo['amount_ttc'] - (float) $amount1);
-						$remaintosplit = $showconfirminfo['amount_ttc'] - ($amount1 + $amount2);
+						$remaintosplit = (float) $showconfirminfo['amount_ttc'] - ((float) $amount1 + (float) $amount2);
 
 						print '<tr class="valid splitline" id="splitline-1">';
 						print '<td class="right bold">'.$langs->trans('AmountTTC').' 1:</td>';
@@ -980,7 +975,7 @@ if ($socid > 0) {
 					if (empty($splitamounts)) {
 						$amount1 = price2num($showconfirminfo['amount_ttc'] / 2, 'MT');
 						$amount2 = ($showconfirminfo['amount_ttc'] - (float) $amount1);
-						$remaintosplit = $showconfirminfo['amount_ttc'] - ($amount1 + $amount2);
+						$remaintosplit = (float) $showconfirminfo['amount_ttc'] - ((float) $amount1 + (float) $amount2);
 
 						print '<tr class="valid splitline" id="splitline-1">';
 						print '<td class="right bold">'.$langs->trans('AmountTTC').' 1:</td>';
