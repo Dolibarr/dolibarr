@@ -1330,6 +1330,18 @@ if (isModEnabled('accounting')) {
 $sellOrEatByMandatoryList = null;
 if (isModEnabled('productbatch')) {
 	$sellOrEatByMandatoryList = Product::getSellOrEatByMandatoryList();
+	foreach ($sellOrEatByMandatoryList as $key => $label) {
+		$remove = false;
+		if (getDolGlobalString('PRODUCT_DISABLE_SELLBY') && (stripos($label, $langs->trans('SellByDate')) !== false)) {
+			$remove = true;
+		}
+		if (getDolGlobalString('PRODUCT_DISABLE_EATBY') && (stripos($label, $langs->trans('EatByDate')) !== false )) {
+			$remove = true;
+		}
+		if ($remove) {
+			unset($sellOrEatByMandatoryList[$key]);
+		}
+	}
 }
 
 $title = $langs->trans('ProductServiceCard');
