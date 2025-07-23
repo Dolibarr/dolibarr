@@ -81,7 +81,10 @@ class mod_task_universal extends ModeleNumRefTask
 		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Task"), $langs->transnoentities("Task"));
+		$tooltip .= $langs->trans("GenericMaskCodes1");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes2");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Task"), $langs->transnoentities("Task"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");

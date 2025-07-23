@@ -58,14 +58,13 @@ $cancel     = GETPOST('cancel', 'alpha');
 $toselect 	= GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'actioncommlist'; // To manage different context of search
 $optioncss 	= GETPOST('optioncss', 'alpha');
-
-
-$disabledefaultvalues = GETPOSTINT('disabledefaultvalues');
-
 $mode = GETPOST('mode', 'aZ09');
 if (empty($mode) && preg_match('/show_/', $action)) {
 	$mode = $action;	// For backward compatibility
 }
+
+$disabledefaultvalues = GETPOSTINT('disabledefaultvalues');
+
 $resourceid = GETPOSTINT("search_resourceid") ? GETPOSTINT("search_resourceid") : GETPOSTINT("resourceid");
 $pid = GETPOSTINT("search_projectid", 3) ? GETPOSTINT("search_projectid", 3) : GETPOSTINT("projectid", 3);
 $search_status = (GETPOST("search_status", 'aZ09') != '') ? GETPOST("search_status", 'aZ09') : GETPOST("status", 'aZ09');
@@ -120,7 +119,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 // If not choice done on calendar owner, we filter on user.
 if (empty($filtert) && !getDolGlobalString('AGENDA_ALL_CALENDARS')) {
-	$filtert = $user->id;
+	$filtert = (string) $user->id;
 }
 
 // Pagination parameters
@@ -163,7 +162,7 @@ if (!$user->hasRight('agenda', 'allactions', 'read')) {
 	$canedit = 0;
 }
 if (!$user->hasRight('agenda', 'allactions', 'read') || $filter == 'mine') {	// If no permission to see all, we show only affected to me
-	$filtert = $user->id;
+	$filtert = (string) $user->id;
 }
 
 $arrayfields = array(
@@ -206,7 +205,7 @@ if (GETPOST("viewcal") || GETPOST("viewweek") || GETPOST("viewday")) {
 	$param = '';
 	if (is_array($_POST)) {
 		foreach ($_POST as $key => $val) {
-			$param .= '&'.$key.'='.urlencode($val);
+			$param .= '&'.urlencode($key).'='.urlencode($val);
 		}
 	}
 	//print $param;
@@ -332,10 +331,10 @@ if ($search_status != '') {
 	$param .= "&search_status=".urlencode($search_status);
 }
 if ($filter) {
-	$param .= "&search_filter=".urlencode($filter);
+	$param .= "&search_filter=".urlencode((string) $filter);
 }
 if ($filtert) {
-	$param .= "&search_filtert=".urlencode($filtert);
+	$param .= "&search_filtert=".urlencode((string) $filtert);
 }
 if ($usergroup > 0) {
 	$param .= "&search_usergroup=".urlencode((string) ($usergroup));
@@ -463,11 +462,17 @@ if ($resourceid > 0) {
 	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_resources as r ON r.element_type = 'action' AND r.element_id = a.id";
 }
 // We must filter on assignment table
-if ($filtert > 0 || $usergroup > 0) {
-	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as ar ON ar.fk_actioncomm = a.id AND ar.element_type='user'";
-}
-if ($usergroup > 0) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element";
+if (($filtert != '-1' && $filtert != '-2') || $usergroup > 0) {
+	// TODO Replace with a AND EXISTS
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as ar ON ar.fk_actioncomm = a.id AND ar.element_type = 'user'";
+	if ($filtert != '' && $filtert != '-1' && $filtert != '-2'  && $filtert != '-3') {
+		$sql .= " AND (ar.fk_element IN (".$db->sanitize($filtert).") OR (ar.fk_element IS NULL AND a.fk_user_action = ".((int) $filtert)."))"; // The OR is for backward compatibility
+	} elseif ($filtert == '-3') {
+		$sql .= " AND ar.fk_element IN (".$db->sanitize(implode(',', $user->getAllChildIds('hierarchyme'))).")";
+	}
+	if ($usergroup > 0) {
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element AND ugu.fk_usergroup = ".((int) $usergroup);
+	}
 }
 
 // Add table from hooks
@@ -475,7 +480,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
+$sql .= " WHERE a.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual view" of agenda
 // Condition on actioncode
 if (!empty($actioncode)) {
 	if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
@@ -546,18 +551,18 @@ if ($type) {
 	$sql .= " AND c.id = ".((int) $type);
 }
 if ($search_status == '0') {
+	// To do (not started)
 	$sql .= " AND a.percent = 0";
 }
 if ($search_status == 'na') {
+	// Not applicable
 	$sql .= " AND a.percent = -1";
-}	// Not applicable
-if ($search_status == '50') {
-	$sql .= " AND (a.percent > 0 AND a.percent < 100)";
-}	// Running already started
-if ($search_status == '100') {
-	$sql .= " AND a.percent = 100";
 }
-if ($search_status == 'done') {
+if ($search_status == '50') {
+	// Running already started
+	$sql .= " AND (a.percent > 0 AND a.percent < 100)";
+}
+if ($search_status == 'done' || $search_status == '100') {
 	$sql .= " AND (a.percent = 100)";
 }
 if ($search_status == 'todo') {
@@ -571,17 +576,6 @@ if ($search_title) {
 }
 if ($search_note) {
 	$sql .= natural_search('a.note', $search_note);
-}
-// We must filter on assignment table
-if ($filtert > 0 || $usergroup > 0) {
-	$sql .= " AND (";
-	if ($filtert > 0) {
-		$sql .= "(ar.fk_element = ".((int) $filtert)." OR (ar.fk_element IS NULL AND a.fk_user_action = ".((int) $filtert)."))"; // The OR is for backward compatibility
-	}
-	if ($usergroup > 0) {
-		$sql .= ($filtert > 0 ? " OR " : "")." ugu.fk_usergroup = ".((int) $usergroup);
-	}
-	$sql .= ")";
 }
 
 // The second or of next test is to take event with no end date (we suppose duration is 1 hour in such case)

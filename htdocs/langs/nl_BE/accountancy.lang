@@ -54,7 +54,6 @@ ACCOUNTING_PRODUCT_BUY_ACCOUNT=Rekening (uit het rekeningstelsel) dat moet worde
 Docdate=Datum
 Docref=Referentie
 DelYear=Jaar om te verwijderen
-CustomerInvoicePayment=Betaling factuur klant
 NewAccountingMvt=Nieuwe transactie
 ListAccounts=Lijst van de boekhoudrekeningen
 TotalVente=Totaal omzet voor belastingen

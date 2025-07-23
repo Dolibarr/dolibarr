@@ -503,7 +503,7 @@ textarea {
 	border-right: solid 1px var(--inputbordercolor);
 	border-bottom: solid 1px var(--inputbordercolor);
 
-	padding:4px;
+	padding:8px;
 	margin-left:0px;
 	margin-bottom:1px;
 	margin-top:1px;
@@ -541,6 +541,9 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 }
 input.short {
 	width: 40px;
+}
+input.shortbis {
+	width: 48px;
 }
 .nofocusvisible:focus-visible {
 	outline: none;
@@ -2843,11 +2846,11 @@ span.widthpictotitle.pictotitle {
 }
 .pictofixedwidth {
 	text-align: start;
-	width: 20px;
+	width: 20px;	/* Do not use em unit here */
 	/* padding-right: 0; */
 }
 img.pictofixedwidth {
-	width: 18px;
+	width: 18px;	/* Do not use em unit here */
 	padding-right: 2px;
 }
 
@@ -3690,6 +3693,9 @@ div.vmenu, td.vmenu {
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
 	<?php } ?>
+}
+.vmenudisabled {
+	margin-left: 8px !important;
 }
 
 /* Force vmenusearchselectcombo with type=text differently than without because beautify with select2 affect vmenusearchselectcombo differently */
@@ -5705,7 +5711,7 @@ div.backgreypublicpayment {
 .poweredbypublicpayment {
 	float: right;
 	top: 8px;
-	right: 8px;
+	right: 12px;
 	position: absolute;
 	font-size: 0.8em;
 	color: #222;
@@ -5799,6 +5805,7 @@ div#card-errors {
 .ui-dialog-titlebar {
 }
 .ui-dialog-content {
+	margin-bottom: 10px;	/* same than .ui-widget-header */
 }
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
 	z-index: 1005 !important;		/* Default 101 with ui-jquery, top menu have a z-index of 1000 */
@@ -5829,6 +5836,9 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 }
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-dialog-buttons.ui-draggable {
 	box-shadow: 5px 5px 20px #AAA;
+}
+.ui-dialog .ui-dialog-buttonpane {
+	padding: .5em 1em .3em .4em;
 }
 
 
@@ -5880,7 +5890,7 @@ div.ui-tooltip {
 }
 div.ui-tooltip.mytooltip {
 	border: none !important;
-	padding: 10px 15px;
+	padding: 20px 20px;
 	border-radius: 4px;
 	margin: 2px;
 	font-stretch: condensed;
@@ -5931,8 +5941,6 @@ if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 
 
 
-
-
 /* ============================================================================== */
 /* Calendar date picker                                                           */
 /* ============================================================================== */
@@ -5959,6 +5967,13 @@ div#ui-datepicker-div {
 	border: unset;
 	background: unset;
 }
+
+/* the button Previous / Next month */
+.ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next {
+	width: 2.5em;
+	height: 2.7em;
+}
+
 
 img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 
@@ -6277,6 +6292,7 @@ td.peruser_holiday_imp {
 
 .cal_available { background: #0060d450; }
 .cal_chosen { background: #0060d4; }
+
 
 /* ============================================================================== */
 /*  Ajax - Combo list for autocompletion                                          */
@@ -7627,7 +7643,7 @@ div.multi-select-menu[role="menu"] {
 
 .multi-select-menu input {
   margin-right: 0.3em;
-  vertical-align: 0.1em;
+  /* vertical-align: 0.1em; */
 }
 
 .multi-select-button {
@@ -7643,9 +7659,11 @@ div.multi-select-menu[role="menu"] {
   border: none;
   border-bottom: solid 1px var(--inputbordercolor);
   padding: 5px;
-  padding-left: 2px;
+  padding-left: 6px;
   height: 17px;
   border-radius: 3px;
+
+  text-align: start;
 }
 .multi-select-button:focus {
   outline: none;
@@ -7660,9 +7678,12 @@ div.multi-select-menu[role="menu"] {
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 0.5em 0.23em 0em 0.23em;
+  border-width: 0.4em 0.3em 0em 0.3em;
   border-color: #888 transparent transparent transparent;
   margin-left: 0.4em;
+  position: absolute;
+  right: 10px;
+  top: 12px;
 }
 
 .multi-select-container--open .multi-select-menu { display: block; }
@@ -7675,10 +7696,10 @@ div.multi-select-menu[role="menu"] {
 .multi-select-menuitem {
 	clear: both;
 	float: left;
-	padding-left: 5px;
+	padding-left: 10px;
 }
 label.multi-select-menuitem {
-	line-height: 24px;
+	line-height: 32px;
 	text-align: start;
 }
 
@@ -7785,6 +7806,9 @@ dd.dropdowndd ul li {
 	white-space: nowrap;
 }
 
+div.kanban.column div.ui-sortable-helper {
+	transform: rotate(4deg);
+}
 
 /* ============================================================================== */
 /*  Markdown rendering                                                             */
@@ -8554,7 +8578,7 @@ div.clipboardCPValue.hidewithsize {
 
 
 /* ============================================================================== */
-/* CSS style used for hrm skill/rank (may be we can remove this)                  */
+/* CSS style used for HRM skill/rank (may be we can remove this)                  */
 /* ============================================================================== */
 
 .radio_js_bloc_number {
@@ -8867,9 +8891,12 @@ table.jPicker {
 	.loginbuttonexternal {
 		width: 260px;
 	}
-	.side-nav-vert .user-menu .dropdown-menu {
-		width: 278px !important;	/* must be width of menu + padding + padding of sidenav */
+
+	.side-nav-vert .user-menu .dropdown-menu, #topmenu-bookmark-dropdown .dropdown-menu, #topmenu-quickadd-dropdown .dropdown-menu {
+		width: 285px !important;	/* must be width of menu + padding + padding of sidenav */
+		min-width: unset !important;
 	}
+
 	div.login_block_other {
 		margin-right: unset;
 	}
@@ -8994,6 +9021,12 @@ table.jPicker {
 
 @media only screen and (max-width: 768px)
 {
+	.pictofixedwidth {
+		text-align: start;
+		width: 1.5em;
+		/* padding-right: 0; */
+	}
+
 	.ai_dropdown{
 		min-width : 280px !important;
 		width: calc(100% - 50px);

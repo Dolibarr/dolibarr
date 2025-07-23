@@ -811,7 +811,7 @@ if ($search_sale && $search_sale != '-1') {
 	}
 }
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
-$searchCategoryCustomerOperator = -1;
+$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
 $searchCategoryCustomerList = array($search_categ_cus);
 if (!empty($searchCategoryCustomerList)) {
 	$searchCategoryCustomerSqlList = array();
@@ -841,7 +841,7 @@ if (!empty($searchCategoryCustomerList)) {
 	}
 }
 // Search for tag/category ($searchCategoryProductList is an array of ID)
-$searchCategoryProductOperator = -1;
+$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
 $searchCategoryProductList = array($search_product_category);
 if (!empty($searchCategoryProductList)) {
 	$searchCategoryProductSqlList = array();
@@ -1688,7 +1688,7 @@ while ($i < $imaxinloop) {
 		// Note public
 		if (!empty($arrayfields['e.note_public']['checked'])) {
 			print '<td class="sensiblehtmlcontent center">';
-			print dolPrintHTML($obj->note_public);
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1697,7 +1697,7 @@ while ($i < $imaxinloop) {
 		// Note private
 		if (!empty($arrayfields['e.note_private']['checked'])) {
 			print '<td class="sensiblehtmlcontent center">';
-			print dolPrintHTML($obj->note_private);
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

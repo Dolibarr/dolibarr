@@ -56,7 +56,7 @@ class Ai
 
 	const AI_DEFAULT_PROMPT_FOR_EMAIL = 'You are an email editor. Return all HTML content inside a section tag. Do not add explanation.';
 	const AI_DEFAULT_PROMPT_FOR_WEBPAGE = 'You are a website editor. Return all HTML content inside a section tag. Do not add explanation.';
-	const AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION = 'You are a translator, give only the translation with no comment and explanation.';
+	const AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION = 'You are a translator, answer with one and only one translation with no comment and explanation.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_SUMMARIZE = 'You are a writer, make the answer in the same language than the original text to summarize.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER = 'You are a writer, give only one answer with no comment and explanation and give the answer in the same language than the original text to rephrase.';
 	const AI_DEFAULT_PROMPT_FOR_EXTRAFIELD_FILLER = 'Give only one answer with no comment and explanation, I want the text to be ready to copy and paste.';
@@ -138,7 +138,7 @@ class Ai
 			}
 		}
 
-		dol_syslog("Call API for apiKey=".substr($this->apiKey, 0, 3).'***********, apiEndpoint='.$this->apiEndpoint.", model=".$model);
+		dol_syslog("Call API for apiKey=".substr($this->apiKey, 0, 5).'***********, apiEndpoint='.$this->apiEndpoint.", model=".$model);
 
 		try {
 			if (empty($this->apiEndpoint)) {
@@ -160,11 +160,16 @@ class Ai
 					$postPrompt = $configurations[$function]['postPrompt'];
 				}
 			}
+
+			// Get the default value of prePrompt if not defined
 			if (empty($prePrompt) && $function == 'textgenerationemail') {
 				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_EMAIL;
 			}
 			if (empty($prePrompt) && $function == 'textgenerationwebpage') {
 				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_WEBPAGE;
+			}
+			if (empty($prePrompt) && $function == 'textgenerationextrafield') {
+				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_EXTRAFIELD_FILLER;
 			}
 			if (empty($prePrompt) && $function == 'texttranslation') {
 				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION;
@@ -251,7 +256,7 @@ class Ai
 				throw new Exception('API request failed. No http received');
 			}
 			if (!empty($response['http_code']) && $response['http_code'] != 200) {
-				if ($response['http_code'] == 400 && !empty($response['content'])) {
+				if (in_array($response['http_code'], array(400, 401, 403, 429)) && !empty($response['content'])) {
 					$tmp = json_decode($response['content'], true);
 					if (!empty($tmp['message'])) {
 						return array(

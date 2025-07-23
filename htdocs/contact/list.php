@@ -845,7 +845,7 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
-$param .= '&begin='.urlencode((string) ($begin)).'&userid='.urlencode((string) ($userid)).'&contactname='.urlencode((string) ($search_all));
+$param .= '&userid='.urlencode((string) $userid).'&contactname='.urlencode((string) $search_all);
 $param .= '&type='.urlencode($type).'&view='.urlencode($view);
 if (!empty($search_sale) && $search_sale != '-1') {
 	$param .= '&search_sale='.urlencode($search_sale);

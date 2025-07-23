@@ -118,9 +118,9 @@ class WebsitePage extends CommonObject
 	public $allowed_in_frames;
 
 	/**
-	 * @var int<0,1>	Disable WAF
+	 * @var string		Disable WAF ('all', 'NOSCANAUDIOFORINJECTION,NOSCANIFRAMEFORINJECTION,NOSCANOBJECTFORINJECTION')
 	 */
-	public $disable_waf = 0;
+	public $disable_waf = 'NOSCANAUDIOFORINJECTION,NOSCANIFRAMEFORINJECTION,NOSCANOBJECTFORINJECTION';	// TODO Manage field in page setup
 
 	/**
 	 * @var string 		Page html header

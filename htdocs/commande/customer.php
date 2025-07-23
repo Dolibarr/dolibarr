@@ -80,13 +80,9 @@ if (!$sortfield) {
 
 llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-commande page-customer');
 
-$thirdpartystatic = new Societe($db);
+// Mode List
 
-/*
- * Mode List
- */
-
-$sql = "SELECT s.rowid, s.nom as name, s.client, s.town, s.datec, s.datea,";
+$sql = "SELECT s.rowid, s.nom as name, s.client, s.town, s.datec,";
 $sql .= " st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta as code_compta_client";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st, ".MAIN_DB_PREFIX."commande as c";
 $sql .= " WHERE s.fk_stcomm = st.id AND c.fk_soc = s.rowid";
@@ -99,9 +95,6 @@ if (GETPOST("search_compta")) {
 }
 if (GETPOST("search_code_client")) {
 	$sql .= natural_search("s.code_client", GETPOST("search_code_client"));
-}
-if (dol_strlen($begin)) {
-	$sql .= " AND s.nom LIKE '".$db->escape($begin)."'";
 }
 // If the internal user must only see his customers, force searching by him
 $search_sale = 0;
@@ -121,7 +114,7 @@ if ($socid) {
 	$sql .= " AND c.fk_soc = ".((int) $socid);
 }
 $sql .= " AND c.fk_statut in (1, 2) AND c.facture = 0";
-$sql .= " GROUP BY s.nom";
+$sql .= " GROUP BY s.nom, s.rowid";
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
@@ -155,7 +148,7 @@ if ($resql) {
 	print_liste_field_titre("Town", $_SERVER["PHP_SELF"], "s.town", "", "", 'valign="center"', $sortfield, $sortorder);
 	print_liste_field_titre("CustomerCode", $_SERVER["PHP_SELF"], "s.code_client", "", "", 'align="left"', $sortfield, $sortorder);
 	print_liste_field_titre("AccountancyCode", $_SERVER["PHP_SELF"], "s.code_compta", "", "", 'align="left"', $sortfield, $sortorder);
-	print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "datec", $addu, "", 'class="right"', $sortfield, $sortorder);
+	print_liste_field_titre("DateCreation", $_SERVER["PHP_SELF"], "datec", "", "", 'class="right"', $sortfield, $sortorder);
 	print "</tr>\n";
 
 	// Fields title search
@@ -184,7 +177,7 @@ if ($resql) {
 		$obj = $db->fetch_object($resql);
 
 		print '<tr class="oddeven">';
-		print '<td>';
+		print '<td class="tdoverflowmax150">';
 
 		$result = '';
 		$link = $linkend = '';
@@ -192,7 +185,7 @@ if ($resql) {
 		$linkend = '</a>';
 		$name = $obj->name;
 		$result .= ($link.img_object($langs->trans("ShowCompany").': '.$name, 'company').$linkend);
-		$result .= $link.(dol_trunc($name, $maxlen)).$linkend;
+		$result .= $link.$name.$linkend;
 
 		print $result;
 		print '</td>';

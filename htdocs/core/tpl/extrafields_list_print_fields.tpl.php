@@ -20,6 +20,9 @@
 /**
  * @var Conf $conf
  * @var CommonObject $object
+ * @var ExtraFields $extrafields
+ *
+ * @var string	$extrafieldsobjectkey
  */
 
 '

@@ -1156,9 +1156,13 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')' : '');
 			$arraytypeleaves[$val['rowid']] = $labeltoshow;
 		}
-		print $form->selectarray('type', $arraytypeleaves, (GETPOST('type', 'alpha') ? GETPOST('type', 'alpha') : ''), 1, 0, 0, '', 0, 0, 0, '', '', 1);
-		if ($user->admin) {
-			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		if (empty($typeleaves)) {
+			print $langs->trans("PleaseDefineSomeTypeOfHolidayFirst");
+		} else {
+			print $form->selectarray('type', $arraytypeleaves, (GETPOST('type', 'alpha') ? GETPOST('type', 'alpha') : ''), 1, 0, 0, '', 0, 0, 0, '', '', 1);
+			if ($user->admin) {
+				print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+			}
 		}
 		print '</td>';
 		print '</tr>';
@@ -1247,7 +1251,6 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 } else {
 	if ($error && $action != 'edit') {
 		print '<div class="tabBar">';
-		print $error;
 		print '<br><br><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
 		print '</div>';
 	} else {

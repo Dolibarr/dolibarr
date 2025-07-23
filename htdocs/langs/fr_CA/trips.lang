@@ -116,3 +116,4 @@ EX_TOL_VP=PV à péage
 TF_BUS=Autobus
 TF_HOTEL=Un hôtel
 TF_LUNCH=Le déjeuner
+FailedToSetToCancel=Impossible d'annuler

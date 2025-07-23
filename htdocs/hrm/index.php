@@ -274,7 +274,7 @@ if (isModEnabled('holiday') && $user->hasRight('holiday', 'read')) {
 				print '<td class="tdoverflowmax100">'.$userstatic->getNomUrl(-1, 'leave').'</td>';
 
 				$leavecode = empty($typeleaves[$obj->fk_type]) ? 'Undefined' : $typeleaves[$obj->fk_type]['code'];
-				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($langs->trans($leavecode)).'">'.dol_escape_htmltag($langs->trans($leavecode)).'</td>';
+				print '<td class="tdoverflowmax80" title="'.dol_escape_htmltag($langs->trans($leavecode)).'">'.dol_escape_htmltag($langs->trans($leavecode)).'</td>';
 
 				$starthalfday = ($obj->halfday == -1 || $obj->halfday == 2) ? 'afternoon' : 'morning';
 				$endhalfday = ($obj->halfday == 1 || $obj->halfday == 2) ? 'morning' : 'afternoon';

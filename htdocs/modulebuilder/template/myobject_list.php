@@ -162,8 +162,8 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 
-$fieldstosearchall = array();
 // List of fields to search into when doing a "search in all"
+$fieldstosearchall = array();
 // foreach ($object->fields as $key => $val) {
 // 	if (!empty($val['searchall'])) {
 // 		$fieldstosearchall['t.'.$key] = $val['label'];
@@ -186,8 +186,8 @@ foreach ($object->fields as $key => $val) {
 		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields[$tableprefix.'.'.$key] = array(
 			'label' => $val['label'],
-			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+			'checked' => (($visible < 0) ? '0' : '1'),
+			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -567,9 +567,10 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
-//$newcardbutton .= dolGetButtonTitle($langs->trans('HierarchicView'), '', 'fa fa-stream paddingleft imgforviewmode', $_SERVER["PHP_SELF"].'?mode=hierarchy'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', (($mode == 'hierarchy') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+//$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanbanGroupBy'), '', 'fa fa-grip-vertical imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanbangroupby&groupby=p.fk_opp_status'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'kanbangroupby' ? 2 : 1), array('morecss' => 'reposition'));
+//$newcardbutton .= dolGetButtonTitle($langs->trans('HierarchicView'), '', 'fa fa-stream paddingleft imgforviewmode', $_SERVER["PHP_SELF"].'?mode=hierarchy'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', (($mode == 'hierarchy') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/mymodule/myobject_card.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 
@@ -617,7 +618,7 @@ if (!empty($moreforfilter)) {
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
-$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
+$selectedfields = (($mode != 'kanban' && $mode != 'kanbangroupby') ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -728,7 +729,7 @@ $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 /*if (!empty($arrayfields['anotherfield']['checked'])) {
-	print '<th class="liste_titre right">'.$langs->trans("AnotherField").'</th>';
+	print '<th class="liste_titre">'.$langs->trans("AnotherField").'</th>';
 	$totalarray['nbfield']++;
 }*/
 // Action column
@@ -779,7 +780,7 @@ while ($i < $imaxinloop) {
 		$object->thirdparty = $companyobj;
 	}*/
 
-	if ($mode == 'kanban') {
+	if ($mode == 'kanban' || $mode == 'kanbangroupby') {
 		if ($i == 0) {
 			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
@@ -849,7 +850,13 @@ while ($i < $imaxinloop) {
 				} elseif ($key == 'rowid') {
 					print $object->showOutputField($val, $key, (string) $object->id, '');
 				} else {
+					if ($val['type'] == 'html') {
+						print '<div class="small lineheightsmall twolinesmax-normallineheight">';
+					}
 					print $object->showOutputField($val, $key, (string) $object->$key, '');
+					if ($val['type'] == 'html') {
+						print '</div>';
+					}
 				}
 				print '</td>';
 				if (!$i) {

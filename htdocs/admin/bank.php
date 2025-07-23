@@ -478,7 +478,7 @@ if (getDolGlobalInt('BANK_COLORIZE_MOVEMENT')) {
 		print '<td colspan="4" width="180" class="nowrap">'.$langs->trans("BankColorizeMovementName".$key)."</td>";
 		// Color
 		print '<td class="nowrap right">';
-		print $formother->selectColor((GETPOST("BANK_COLORIZE_MOVEMENT_COLOR".$key) ? GETPOST("BANK_COLORIZE_MOVEMENT_COLOR".$key) : getDolGlobalString($color)), "BANK_COLORIZE_MOVEMENT_COLOR".$key, 'bankmovementcolorconfig', 1, array(), 'right hideifnotset');
+		print $formother->selectColor((GETPOST("BANK_COLORIZE_MOVEMENT_COLOR".$key) ? GETPOST("BANK_COLORIZE_MOVEMENT_COLOR".$key) : getDolGlobalString($color)), "BANK_COLORIZE_MOVEMENT_COLOR".$key, '', 1, array(), 'right hideifnotset');
 		print '</td>';
 		print "</tr>";
 		$i++;

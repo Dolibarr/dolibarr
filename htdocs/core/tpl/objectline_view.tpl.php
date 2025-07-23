@@ -26,10 +26,7 @@
  *
  * Need to have the following variables defined:
  * $object (invoice, order, ...)
- * $conf
- * $langs
  * $dateSelector
- * $forceall (0 by default, 1 for supplier invoices/orders)
  * $element     (used to test $user->rights->$element->creer)
  * $permtoedit  (used to replace test $user->rights->$element->creer)
  * $senderissupplier (0 by default, 1 for supplier invoices/orders)
@@ -54,9 +51,9 @@
  *
  * @var string $action
  * @var int $i
- * @var 0|1 $forceall
+ * @var int $forceall
  * @var int $num
- * @var 0|1 $senderissupplier
+ * @var int $senderissupplier
  * @var string $text
  * @var string $description
  */
@@ -395,10 +392,10 @@ $positiverates = '';
 if (price2num($line->tva_tx)) {
 	$positiverates .= ($positiverates ? '/' : '').price2num($line->tva_tx);
 }
-if (price2num($line->total_localtax1)) {
+if (price2num($line->localtax1_tx)) {
 	$positiverates .= ($positiverates ? '/' : '').price2num($line->localtax1_tx);
 }
-if (price2num($line->total_localtax2)) {
+if (price2num($line->localtax2_tx)) {
 	$positiverates .= ($positiverates ? '/' : '').price2num($line->localtax2_tx);
 }
 if (empty($positiverates)) {

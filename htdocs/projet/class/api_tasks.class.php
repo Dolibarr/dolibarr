@@ -120,7 +120,7 @@ class Tasks extends DolibarrApi
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
-		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : 0;
+		$socids = DolibarrApiAccess::$user->socid ?: 0;
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
@@ -500,6 +500,7 @@ class Tasks extends DolibarrApi
 	 * @return  array
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
+	 * @throws RestException
 	 */
 	public function delete($id)
 	{
@@ -515,7 +516,7 @@ class Tasks extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!$this->task->delete(DolibarrApiAccess::$user)) {
+		if ($this->task->delete(DolibarrApiAccess::$user) <= 0) {
 			throw new RestException(500, 'Error when delete task : '.$this->task->error);
 		}
 

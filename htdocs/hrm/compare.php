@@ -222,7 +222,7 @@ $fk_usergroup1 = GETPOSTINT('fk_usergroup1');
 					<table width="100%">
 						<tr>
 							<th></th>
-							<th><?php print $langs->trans('skill'); ?></th>
+							<th><?php print $langs->trans('Skill'); ?></th>
 							<th><?php print $langs->trans('rank'); ?></th>
 							<th><?php print $langs->trans('difference'); ?></th>
 							<th><?php print $langs->trans('rank'); ?></th>

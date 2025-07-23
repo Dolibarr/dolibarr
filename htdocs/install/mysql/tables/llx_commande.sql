@@ -86,5 +86,8 @@ create table llx_commande
   multicurrency_tx			double(24,8) DEFAULT 1,
   multicurrency_total_ht	double(24,8) DEFAULT 0,
   multicurrency_total_tva	double(24,8) DEFAULT 0,
-  multicurrency_total_ttc	double(24,8) DEFAULT 0
+  multicurrency_total_ttc	double(24,8) DEFAULT 0,
+
+  ip 						varchar(250),
+  user_agent				varchar(255)
 )ENGINE=innodb;

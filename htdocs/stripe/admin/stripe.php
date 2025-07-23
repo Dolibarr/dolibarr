@@ -35,7 +35,16 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
 $servicename = 'Stripe';
-$listofsupportedhooks = array('charge.dispute.closed', 'charge.dispute.created', 'charge.dispute.funds_withdrawn', 'payment_intent.payment_failed', 'payment_intent.succeeded');
+$listofsupportedhooks = array('payment_intent.payment_failed', 'payment_intent.succeeded');
+// Add IPN for dispute (used mostly by SEPA)
+$listofsupportedhooks[] = 'charge.dispute.closed';
+$listofsupportedhooks[] = 'charge.dispute.created';
+$listofsupportedhooks[] = 'charge.dispute.funds_withdrawn';
+// Add IPN for Payout
+if (getDolGlobalString('STRIPE_AUTO_RECORD_PAYOUT')) {
+	$listofsupportedhooks[] = 'payout.create';
+	$listofsupportedhooks[] = 'payout.paid';
+}
 
 /**
  * @var Conf $conf
@@ -211,7 +220,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("AccountParameter").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td></td>';
 print '<td></td>';
 print "</tr>\n";
 
@@ -373,7 +382,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("UsageParameter").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td></td>';
 print "</tr>\n";
 
 print '<tr class="oddeven"><td>';
@@ -434,7 +443,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current c
 	print $langs->trans("TERMINAL_LOCATION").'</td><td>';
 	$service = 'StripeTest';
 	$servicestatus = 0;
-	if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
+	if (getDolGlobalString('STRIPE_LIVE')/* && !GETPOST('forcesandbox', 'alpha') */) {
 		$service = 'StripeLive';
 		$servicestatus = 1;
 	}
@@ -445,7 +454,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current c
 		if (!empty($site_account)) {
 			\Stripe\Stripe::setApiKey($site_account);
 		}
-		if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
+		if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */)) {
 			$service = 'StripeTest';
 			$servicestatus = '0';
 			dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning');

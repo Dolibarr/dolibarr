@@ -43,7 +43,7 @@ ConfirmCancelSending=Bạn có chắc chắn muốn hủy lô hàng này?
 DocumentModelMerou=Mô hình Merou A5
 WarningNoQtyLeftToSend=Cảnh báo, không có sản phẩm chờ đợi để được vận chuyển.
 StatsOnShipmentsOnlyValidated=Số liệu thống kê chỉ dành cho các lô hàng đã được xác nhận. Ngày được sử dụng là ngày xác nhận lô hàng (ngày giao hàng dự kiến không phải lúc nào cũng được biết)
-DateShipping=Sending date
+DateShipping=Ngày gửi
 DateDeliveryPlanned=Ngày giao hàng theo kế hoạch
 RefDeliveryReceipt=Tham chiếu biên nhận giao hàng
 StatusReceipt=Trạng thái biên nhận giao hàng
@@ -63,10 +63,12 @@ NoProductToShipFoundIntoStock=Không có sản phẩm nào được tìm thấy 
 WeightVolShort=Trọng lượng / Khối lượng.
 ValidateOrderFirstBeforeShipment=Trước tiên, bạn phải xác nhận đơn đặt hàng trước khi có thể thực hiện chuyển hàng.
 NoLineGoOnTabToAddSome=Không có dòng nào, vào tab "%s" để thêm
-CreateInvoiceForThisCustomerFromSendings=Create Bills
-IfValidateInvoiceIsNoSendingStayUnbilled=If invoice validation is 'No', the sending will remain to status 'Unbilled' until the invoice is validated.
-OptionToSetSendingBilledNotEnabled=Option from module Workflow, to set sending to 'Billed' automatically when invoice is validated, is not enabled, so you will have to set the status of sendings to 'Billed' manually after the invoice has been generated.
-ShipmentUpdated=Shipment successfully updated
+CreateInvoiceForThisCustomerFromSendings=Tạo hóa đơn
+IfValidateInvoiceIsNoSendingStayUnbilled=Nếu xác thực hóa đơn là 'Không', lệnh gửi sẽ vẫn ở trạng thái 'Chưa xuất hóa đơn' cho đến khi hóa đơn được xác thực.
+OptionToSetSendingBilledNotEnabled=Tùy chọn từ mô-đun Workflow để tự động đặt trạng thái gửi thành 'Đã thanh toán' khi hóa đơn được xác thực không được bật, do đó, bạn sẽ phải đặt trạng thái gửi thành 'Đã thanh toán' theo cách thủ công sau khi hóa đơn được tạo.
+NoWarehouseInBase=Không có kho trong căn cứ
+ShipmentUpdated=Đã cập nhật lô hàng thành công
+ShipmentIncrementStockOnDelete = Tăng lượng hàng tồn kho khi xóa
 
 # Sending methods
 # ModelDocument
@@ -78,6 +80,7 @@ SumOfProductWeights=Tổng trọng lượng sản phẩm
 # warehouse details
 DetailWarehouseNumber= Chi tiết kho
 DetailWarehouseFormat= W: %s (Số lượng: %d)
+DetailChildrenFormat=%s : %s (Số lượng: %s)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Hiển thị ngày nhập kho cuối cùng trong quá trình tạo lô hàng cho số sê-ri hoặc lô
 CreationOptions=Các tùy chọn có sẵn trong quá trình tạo lô hàng
 ShipmentDistribution=Phân phối lô hàng
@@ -87,8 +90,9 @@ ErrorTooMuchShipped=Số lượng vận chuyển không được lớn hơn số
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Đại diện theo dõi việc vận chuyển
 TypeContact_shipping_external_BILLING=Liên lạc hóa đơn khách hàng
-TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
-TypeContact_shipping_external_SHIPPING=Customer contact for shipping
+TypeContact_shipping_external_CUSTOMER=Liên hệ khách hàng theo dõi việc vận chuyển
+TypeContact_shipping_external_SHIPPING=Liên hệ khách hàng để vận chuyển
 TypeContact_shipping_external_DELIVERY=Liên lạc khách hàng để giao hàng
-CloseShipment=Close shipment
-ConfirmCloseShipment=Confirm close shipment
+CloseShipment=Đóng lô hàng
+ConfirmCloseShipment=Xác nhận đóng lô hàng
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=Chọn trước số lô/số sê-ri có ngày bán/ngày sử dụng sớm nhất khi tạo lô hàng

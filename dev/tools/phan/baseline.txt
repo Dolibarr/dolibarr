@@ -9,24 +9,24 @@
  */
 return [
     // # Issue statistics:
-    // PhanUndeclaredProperty : 460+ occurrences
+    // PhanUndeclaredProperty : 440+ occurrences
     // PhanTypeMismatchProperty : 100+ occurrences
-    // PhanTypeMismatchArgument : 90+ occurrences
     // PhanUndeclaredGlobalVariable : 90+ occurrences
+    // PhanTypeMismatchArgument : 85+ occurrences
     // PhanTypeMismatchArgumentNullable : 30+ occurrences
     // PhanTypeExpectedObjectPropAccess : 20+ occurrences
     // PhanTypeInvalidDimOffset : 20+ occurrences
     // PhanTypeMismatchDimFetch : 15+ occurrences
     // PhanUndeclaredConstant : 15+ occurrences
-    // PhanTypeMismatchArgumentProbablyReal : 10+ occurrences
+    // PhanTypeMismatchArgumentProbablyReal : 9 occurrences
     // PhanUndeclaredMethod : 9 occurrences
-    // PhanPluginDuplicateExpressionBinaryOp : 6 occurrences
     // PhanPossiblyUndeclaredGlobalVariable : 6 occurrences
     // PhanTypeArraySuspiciousNull : 6 occurrences
     // PhanTypeComparisonFromArray : 6 occurrences
     // PhanPluginUndeclaredVariableIsset : 5 occurrences
     // PhanParamTooMany : 4 occurrences
     // PhanPluginDuplicateArrayKey : 4 occurrences
+    // PhanPluginDuplicateExpressionBinaryOp : 4 occurrences
     // PhanTypeMismatchDimAssignment : 2 occurrences
     // PhanTypeMismatchReturn : 2 occurrences
     // PhanTypeSuspiciousStringExpression : 2 occurrences
@@ -36,12 +36,7 @@ return [
 
     // Currently, file_suppressions and directory_suppressions are the only supported suppressions
     'file_suppressions' => [
-        'htdocs/accountancy/class/accountancyexport.class.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
-        'htdocs/adherents/list.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/admin/agenda_other.php' => ['PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/admin/bom.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/admin/defaultvalues.php' => ['PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/api/class/api_documents.class.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
+        'htdocs/accountancy/class/accountancyexport.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/api/class/api_setup.class.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchReturn'],
         'htdocs/asset/class/asset.class.php' => ['PhanPluginUndeclaredVariableIsset', 'PhanTypeInvalidDimOffset'],
         'htdocs/asset/class/assetdepreciationoptions.class.php' => ['PhanTypeInvalidDimOffset'],
@@ -60,7 +55,6 @@ return [
         'htdocs/categories/viewcat.php' => ['PhanUndeclaredProperty'],
         'htdocs/collab/index.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/action/index.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchProperty'],
-        'htdocs/comm/action/info.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/action/pertype.php' => ['PhanTypeComparisonFromArray', 'PhanTypeExpectedObjectPropAccess', 'PhanTypeMismatchDimFetch'],
         'htdocs/comm/action/peruser.php' => ['PhanTypeComparisonFromArray', 'PhanTypeMismatchArgument'],
         'htdocs/comm/card.php' => ['PhanTypeMismatchArgument'],
@@ -156,9 +150,7 @@ return [
         'htdocs/core/modules/expedition/doc/pdf_merou.modules.php' => ['PhanTypeMismatchArgumentNullable'],
         'htdocs/core/modules/expedition/doc/pdf_rouget.modules.php' => ['PhanTypeMismatchArgumentNullable'],
         'htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/modules/facture/doc/pdf_crabe.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/facture/doc/pdf_octopus.modules.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
-        'htdocs/core/modules/facture/doc/pdf_sponge.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/fichinter/doc/pdf_soleil.modules.php' => ['PhanTypeMismatchArgumentNullable'],
         'htdocs/core/modules/holiday/mod_holiday_immaculate.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/hrm/doc/pdf_standard_evaluation.modules.php' => ['PhanUndeclaredProperty'],
@@ -241,7 +233,6 @@ return [
         'htdocs/imports/import.php' => ['PhanTypeMismatchArgument'],
         'htdocs/intracommreport/card.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/knowledgemanagement/class/knowledgerecord.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/knowledgemanagement/knowledgerecord_card.php' => ['PhanTypeMismatchArgument'],
         'htdocs/loan/class/paymentloan.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/loan/document.php' => ['PhanUndeclaredProperty'],
         'htdocs/loan/note.php' => ['PhanUndeclaredProperty'],
@@ -299,7 +290,7 @@ return [
         'htdocs/recruitment/recruitmentcandidature_list.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/recruitment/recruitmentjobposition_agenda.php' => ['PhanUndeclaredProperty'],
         'htdocs/recruitment/recruitmentjobposition_applications.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
-        'htdocs/recruitment/recruitmentjobposition_card.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
+        'htdocs/recruitment/recruitmentjobposition_card.php' => ['PhanUndeclaredProperty'],
         'htdocs/recruitment/recruitmentjobposition_document.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/recruitment/recruitmentjobposition_note.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/salaries/paiement_salary.php' => ['PhanUndeclaredProperty'],
@@ -340,9 +331,6 @@ return [
         'htdocs/webservices/server_thirdparty.php' => ['PhanUndeclaredProperty'],
         'htdocs/webservices/server_user.php' => ['PhanUndeclaredProperty'],
         'htdocs/website/websiteaccount_card.php' => ['PhanUndeclaredProperty'],
-        'htdocs/workstation/class/workstation.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/workstation/workstation_card.php' => ['PhanUndeclaredProperty'],
-        'htdocs/zapier/class/hook.class.php' => ['PhanUndeclaredProperty'],
         'internal' => ['PhanUndeclaredConstant'],
     ],
     // 'directory_suppressions' => ['src/directory_name' => ['PhanIssueName1', 'PhanIssueName2']] can be manually added if needed.

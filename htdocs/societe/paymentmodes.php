@@ -107,7 +107,7 @@ $site_account = 'UnknownSiteAccount';
 // Init Stripe objects
 if (isModEnabled('stripe')) {
 	$service = 'StripeTest';
-	if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
+	if (getDolGlobalString('STRIPE_LIVE')/* && !GETPOST('forcesandbox', 'alpha') */) {
 		$service = 'StripeLive';
 		$servicestatus = 1;
 	}
@@ -906,11 +906,10 @@ llxHeader('', $title, $help_url);
 $head = societe_prepare_head($object);
 
 // Show sandbox warning
-/*if (isModEnabled('paypal') && (!empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox','alpha')))		// We can force sand box with param 'forcesandbox'
-{
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Paypal'), [], 'warning');
-}*/
-if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
+//if (isModEnabled('paypal') && (getDolGlobalString('PAYPAL_API_SANDBOX')/* || GETPOST('forcesandbox','alpha') */))	{
+//	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Paypal'), [], 'warning');
+//}
+if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */)) {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning');
 }
 
@@ -1167,7 +1166,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				} else {
 					$service = 'StripeTest';
 					$servicestatus = 0;
-					if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
+					if (getDolGlobalString('STRIPE_LIVE')/* && !GETPOST('forcesandbox', 'alpha') */) {
 						$service = 'StripeLive';
 						$servicestatus = 1;
 					}

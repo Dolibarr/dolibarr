@@ -72,7 +72,7 @@ AccountancyAreaDescActionOnce=The following actions are usually executed one tim
 AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you automatically the correct default accounting account when transferring data in accounting
 AccountancyAreaDescActionFreq=The following actions are usually executed every month, week or day for very large companies...
 AccountancyAreaDescJournalSetup=STEP %s: Check content of your journal list from menu %s
-AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists for your country or create one from menu %s
 AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
 AccountancyAreaDescFiscalPeriod=STEP %s: Define the fiscal period which determines the range of dates accepted for creating accounting entries. For this, use the menu entry %s.
 AccountancyAreaDescVat=STEP %s: Define accounting accounts for each VAT Rates. For this, use the menu entry %s.
@@ -275,7 +275,7 @@ HideOpeningBalance=Hide opening balance
 ShowSubtotalByGroup=Show subtotal by level
 Pcgtype=Group of account
 PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
-AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease filter use or building of custom reports.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Reconcilable
 Centralized=Centralized account
 ErrorAccountNotCentralized=The selected general account is not a centralizing account and does not allow the use of a subsidiary account
@@ -321,7 +321,7 @@ NotReconciled=Not reconciled
 WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger account defined are filtered and excluded from this view
 AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=Warning, this page only contains entries transferred to the accounting system.
-BookkeepingNumRefModelDesc = Returns the reference number in the format yyyyjjnnnn where yyyy is the year and jj the journal code, nnnn is a sequential auto-incrementing number depending on the year and journal code.
+BookkeepingNumRefModelDesc = Returns the reference number in the format yymmjjnnnnn where yy is the year, mm is the month and jj the journal code, nnnnn is a sequential auto-incrementing number depending on the year, the month and the journal code.
 BookkeepingNumberingModules = Bookkeeping numbering models
 ## Admin
 BindingOptions=Options for the transfer in accountancy
@@ -391,6 +391,7 @@ Modelcsv_Gestinumv5=Export for Gestinum (v5)
 Modelcsv_charlemagne=Export for Aplim Charlemagne
 ChartofaccountsId=Chart of accounts Id
 ExportToPdf = Export to PDF
+ExportToCsv = Export to CSV
 PdfLedgerTitle = Ledger accounts
 PdfBalanceTitle = Ledger Balance
 PdfBookkeepingTitle = Journals
@@ -442,7 +443,7 @@ AccountRemovedFromGroup=Account removed from group
 SaleLocal=Local sale
 SaleExport=Export sale
 SaleEEC=Sale in EEC
-SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intracommunautary sale and the suggested account is the standard product account.
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=Sale is in EEC with no VAT but the VAT ID of third party is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the third party, or change the product account suggested for binding if needed.
 AnySale=Any sale
 ForbiddenTransactionAlreadyExported=Forbidden: The transaction has been validated and/or exported.
@@ -487,7 +488,7 @@ AccountancyClosureConfirmClose=Are you sure you want to close the current fiscal
 AccountancyClosureConfirmAccountingReversal=Are you sure you want to record entries for the "Retained earnings" ?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) were already recorded
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Some mandatory steps of setup was not done, please complete them
@@ -510,7 +511,7 @@ ErrorNoFiscalPeriodActiveFound=No active fiscal period (with a start and end dat
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=The bookkeeping doc date is not inside the active fiscal period
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=The bookkeeping doc date is inside a closed fiscal period
 Error_BOOKKEEPING_ADDON_NotDefined=Error, the rule for bookkeeping numbering ref is not defined into general setup of Accountancy module
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Try to insert a non balanced transaction in book for %s (Payment ID: %s). Canceled. Surely a bug.
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
 ProductUsage=Product or service usage
 ## Import
 ImportAccountingEntries=Accounting entries
@@ -539,15 +540,15 @@ ExpenseReportJournal=Expense Report Journal
 DocsAlreadyExportedAreIncluded=Docs already exported are included
 ClickToShowAlreadyExportedLines=Click to show already exported lines
 NAccounts=%s accounts
-ACCOUNTING_USE_TREASURY_Desc=This is the mode for treasury accountancy. We are using the payments only and their date for doing the accountancy.
-ACCOUNTING_USE_NON_TREASURY_Desc=This is the mode for real accountancy. We are using both the invoices and payments for doing the accountancy.
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
+ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
 PieceDesc=The reference of the source document that generates this bank transaction (Invoice Ref, Expense report ref, ...)
 BankTransactionRef=A reference for the bank transaction (Optional, an automatic ID is already generated)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=This will clone the bookkeeping entry (all lines linked to this bookkeeping entry will be cloned). Are you sure you want to clone the selected %s records?
 ConfirmMassCloneBookkeepingWriting=Confirm mass cloning
-ConfirmMassReturnAccountBookkeepingWriting=Confirm mass extinction
-ConfirmMassReturnAccountBookkeepingWritingQuestion=This will extinguish the bookkeeping entry (all lines linked to this bookkeeping entry will be extinguished). Are you sure you want to bypass the %s selected records?
+ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
+ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=This will change the account of all selected lines.
 confirmMassAssignAccountBookkeepingWritingConfirm=Confirm mass account change
 CloningSuccess=Successful transaction cloning : %s
@@ -562,6 +563,6 @@ NoAccountsChangedWithAccountNumber=Transactions not updated with account numbers
 HasAlreadyBeenReversed=has already been reversed
 ErrorWhileCreating=Error during creation %s
 ReturnAccount=Return
-Clone=Cloner
+Clone=Clone
 AlreadyReturnedAccount=Entry n°%s has already been reversed
 SuccessReturnedAccount=Entry n°%s has been reversed
