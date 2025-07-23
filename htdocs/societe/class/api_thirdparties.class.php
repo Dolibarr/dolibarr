@@ -1263,9 +1263,9 @@ class Thirdparties extends DolibarrApi
 		$discount->fk_facture_source = 0; // This is to delete only the require record (that we will recreate with two records) and not all family with same fk_facture_source
 		// This is to delete only the require record (that we will recreate with two records) and not all family with same fk_invoice_supplier_source
 		$discount->fk_invoice_supplier_source = 0;
-		$res = $discount->delete($user);
-		$newid1 = $newdiscount1->create($user);
-		$newid2 = $newdiscount2->create($user);
+		$res = $discount->delete(DolibarrApiAccess::$user);
+		$newid1 = $newdiscount1->create(DolibarrApiAccess::$user);
+		$newid2 = $newdiscount2->create(DolibarrApiAccess::$user);
 		if ($res > 0 && $newid1 > 0 && $newid2 > 0) {
 			$this->db->commit();
 
@@ -1290,6 +1290,7 @@ class Thirdparties extends DolibarrApi
 			$this->db->rollback();
 			throw new RestException(500, 'Operation fail');
 		}
+		return [];
 	}
 
 
