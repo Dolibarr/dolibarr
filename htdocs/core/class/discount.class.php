@@ -532,7 +532,7 @@ class DiscountAbsolute extends CommonObject
 			'discount_type' => $discount_type,
 			'multicurrency' => $multicurrency
 		);
-		
+
 		$reshook = $hookmanager->executeHooks('getAvailableDiscounts', $parameters);
 		if (empty($reshook)) {
 			$sql = "SELECT SUM(rc.amount_ttc) as amount, SUM(rc.multicurrency_amount_ttc) as multicurrency_amount";
