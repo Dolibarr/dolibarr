@@ -30,4 +30,4 @@ CREATE TABLE llx_accounting_analytic_distribution (
 	fk_user_author      integer         NOT NULL,
 	fk_user_modif       integer,
 	import_key          varchar(14)
-)ENGINE=innodb;
+) ENGINE=innodb;

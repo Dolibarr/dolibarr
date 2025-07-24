@@ -59,6 +59,8 @@ CREATE TABLE llx_c_accounting_analytic_axis (
 	import_key          varchar(14)
 ) ENGINE=innodb;
 
+ALTER TABLE llx_c_accounting_analytic_axis ADD UNIQUE INDEX uk_c_accounting_analytic_axis(code, entity);
+
 CREATE TABLE llx_c_accounting_analytic_account (
 	rowid               integer         AUTO_INCREMENT PRIMARY KEY,
 	label               varchar(255)    NOT NULL,
@@ -76,6 +78,7 @@ CREATE TABLE llx_c_accounting_analytic_account (
 	import_key          varchar(14)
 ) ENGINE=innodb;
 
+ALTER TABLE llx_c_accounting_analytic_account ADD UNIQUE INDEX uk_c_accounting_analytic_account(code, entity);
 ALTER TABLE llx_c_accounting_analytic_account ADD CONSTRAINT fk_accounting_analytic_account_fk_axis FOREIGN KEY (fk_axis) REFERENCES llx_c_accounting_analytic_axis (rowid);
 
 

@@ -16,5 +16,4 @@
 --
 -- ========================================================================
 
-ALTER TABLE llx_c_accounting_analytic_account ADD UNIQUE INDEX uk_c_accounting_analytic_account(code, entity);
-ALTER TABLE llx_c_accounting_analytic_account ADD CONSTRAINT fk_accounting_analytic_account_fk_axis FOREIGN KEY (fk_axis) REFERENCES llx_c_accounting_analytic_axis (rowid);
+ALTER TABLE llx_c_accounting_analytic_axis ADD UNIQUE INDEX uk_c_accounting_analytic_axis(code, entity);

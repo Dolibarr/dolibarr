@@ -32,4 +32,4 @@ CREATE TABLE llx_c_accounting_analytic_account (
     fk_user_author      integer         NOT NULL,
     fk_user_modif       integer,
     import_key          varchar(14)
-)ENGINE=innodb;
+) ENGINE=innodb;
