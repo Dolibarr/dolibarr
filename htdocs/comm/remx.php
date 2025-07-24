@@ -147,7 +147,7 @@ if ($action == 'confirm_split_more' && $permissiontocreate) {
 			$discount->fk_facture_source = 0;
 			$discount->fk_invoice_supplier_source = 0;
 			$res = $discount->delete($user);
-			if ($res > 0 && !$error) {
+			if ($res > 0) {
 				$db->commit();
 				header("Location: ".$_SERVER["PHP_SELF"].'?id='.$id.($backtopage ? '&backtopage='.urlencode($backtopage) : '')); // To avoid pb with back
 				exit;
