@@ -5406,7 +5406,7 @@ function migrate_apiresttokens()
 			while ($obj = $db->fetch_object($result)) {
 				if (!in_array(dolDecrypt($obj->token), $allexistingtokens)) {
 					$sqlforinsert = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, token, fk_user, datec, entity)";
-					$sqlforinsert .= " VALUES ('".$obj->service."', '".$obj->token."', ".$obj->fk_user.", '".$obj->datec."', ".$obj->entity.")";
+					$sqlforinsert .= " VALUES ('".$db->escape($obj->service)."', '".$db->escape($obj->token)."', ".((int) $obj->fk_user).", '".$db->escape($obj->datec)."', ".((int) $obj->entity).")";
 
 					$insertresult = $db->query($sqlforinsert);
 					if (!$insertresult) {
