@@ -901,7 +901,7 @@ if (empty($reshook)) {
 		$close_note = GETPOST("close_note", 'restricthtml');
 		if ($close_code) {
 			// if VatRefund
-			if (isModEnabled('tax') && $close_code == 'withholdingtax') {
+			if (isModEnabled('tax') && $close_code == $object::CLOSECODE_WITHHOLDINGTAX) {
 				require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 				$resteapayer = GETPOSTFLOAT("resteapayer");
 				$amount = (double) ($resteapayer > 0 ? $resteapayer * -1 : $resteapayer);
