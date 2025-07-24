@@ -3920,21 +3920,21 @@ if ($action == 'create') {
 
 			// loading object_discounts.tpl.php from module core/tpl if exists
 			$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
-			foreach ($dirtpls as $module => $reldir) { 
-				$res = 0; 
-				if (!empty($module)) { 
-					$tpl = dol_buildpath($reldir.'/object_discounts.tpl.php'); 
-				} else { 
-					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/object_discounts.tpl.php'; 
-				} 
-				if (file_exists($tpl)) { 
-					if (empty($conf->file->strict_mode)) { 
-						$res = @include $tpl; 
-					} else { 
-						$res = include $tpl; 
-					} 
-				} 
-				if ($res) { break; } 
+			foreach ($dirtpls as $module => $reldir) {
+				$res = 0;
+				if (!empty($module)) {
+					$tpl = dol_buildpath($reldir.'/object_discounts.tpl.php');
+				} else {
+					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/object_discounts.tpl.php';
+				}
+				if (file_exists($tpl)) {
+					if (empty($conf->file->strict_mode)) {
+						$res = @include $tpl;
+					} else {
+						$res = include $tpl;
+					}
+				}
+				if ($res) { break; }
 			}
 
 			print '</td></tr>';
@@ -4789,21 +4789,21 @@ if ($action == 'create') {
 		$backtopage = $_SERVER["PHP_SELF"].'?facid='.$object->id;
 		// loading object_discounts.tpl.php from module core/tpl if exists
 		$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
-		foreach ($dirtpls as $module => $reldir) { 
-			$res = 0; 
-			if (!empty($module)) { 
-				$tpl = dol_buildpath($reldir.'/object_discounts.tpl.php'); 
-			} else { 
-				$tpl = DOL_DOCUMENT_ROOT.$reldir.'/object_discounts.tpl.php'; 
-			} 
-			if (file_exists($tpl)) { 
-				if (empty($conf->file->strict_mode)) { 
-					$res = @include $tpl; 
-				} else { 
-					$res = include $tpl; 
-				} 
-			} 
-			if ($res) { break; } 
+		foreach ($dirtpls as $module => $reldir) {
+			$res = 0;
+			if (!empty($module)) {
+				$tpl = dol_buildpath($reldir.'/object_discounts.tpl.php');
+			} else {
+				$tpl = DOL_DOCUMENT_ROOT.$reldir.'/object_discounts.tpl.php';
+			}
+			if (file_exists($tpl)) {
+				if (empty($conf->file->strict_mode)) {
+					$res = @include $tpl;
+				} else {
+					$res = include $tpl;
+				}
+			}
+			if ($res) { break; }
 		}
 
 		print '</td></tr>';
