@@ -219,7 +219,7 @@ function societe_prepare_head(Societe $object)
 
 		$servicestatus = 0;
 		if (isModEnabled('stripe')) {
-			if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
+			if (getDolGlobalString('STRIPE_LIVE')/* && !GETPOST('forcesandbox', 'alpha')*/) {
 				$servicestatus = 1;
 			}
 

@@ -119,6 +119,7 @@ class modDataPolicy extends DolibarrModules
 			array('DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
 			array('DATAPOLICY_CONTACT_FOURNISSEUR', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
 			array('DATAPOLICY_ADHERENT', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
+			array('DATAPOLICY_RECRUITMENT_CANDIDATURE', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
 		);
 
 		//$country = explode(":", getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY'));
