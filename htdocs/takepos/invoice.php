@@ -533,6 +533,8 @@ if (empty($reshook)) {
 
 		$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '');
 		$allowstockchange = getDolGlobalString($constantforkey) != "1";
+		$res = 0;
+		
 		/*
 		if (isModEnabled('stock') && !isModEnabled('productbatch') && $allowstockchange) {
 			// If module stock is enabled and we do not setup takepo to disable stock decrease
