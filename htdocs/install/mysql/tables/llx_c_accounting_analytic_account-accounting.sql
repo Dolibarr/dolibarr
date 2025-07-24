@@ -20,7 +20,7 @@
 CREATE TABLE llx_c_accounting_analytic_account (
     rowid               integer         AUTO_INCREMENT PRIMARY KEY,
     label               varchar(255)    NOT NULL,
-    code                varchar(32)     NOT NULL UNIQUE,
+    code                varchar(32)     NOT NULL,
     description			text,
     fk_axis				integer			NOT NULL,
     active              integer         DEFAULT 1,
