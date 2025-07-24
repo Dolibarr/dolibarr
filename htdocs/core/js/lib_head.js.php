@@ -1054,61 +1054,67 @@ function document_preview(file, type, title)
 
 	if ($.inArray(type, ValidImageTypes) < 0) {
 		/* Not an image */
-		var width='85%';
-		var object_width='100%';
+		var width = '85%';
+		var object_width = '100%';
 		var height = ($( window ).height() - 60) * 0.90;
-		var object_height='98%';
+		var object_height = '98%';
 
 		show_preview('notimage');
 
 	} else {
 		/* This is an image */
-		var object_width=0;
-		var object_height=0;
+		var object_width = 0;
+		var object_height = 0;
 
 		var img = new Image();
 
+		img.src = file;
 		img.onload = function() {
-			object_width = this.width;
-			object_height = this.height;
+			object_width = this.width;		/* the real width of image */
+			object_height = this.height;	/* the real height of image */
 
-			width = $( window ).width()*0.90;
-			console.log("object_width="+object_width+" window width="+width);
-			if(object_width < width){
+			/* Complete title with size of image */
+			title = title + ' (' + object_width + ' x ' + object_height + ')';
+
+			popupWidth = $( window ).width() * 0.9 - 50;
+			console.log("object_width="+object_width+" popup window width="+popupWidth);
+			if (object_width < popupWidth) {
 				console.log("Object width is small, we set width of popup according to image width.");
-				width = object_width + 30
+				popupWidth = object_width + 50
 			}
-			height = $( window ).height()*0.85;
-			console.log("object_height="+object_height+" window height="+height);
-			if(object_height < height){
+			popupHeight = $( window ).height() * 0.85 - 100;
+			console.log("object_height="+object_height+" popup window height="+popupHeight);
+			if (object_height < (popupHeight - 100)) {
 				console.log("Object height is small, we set height of popup according to image height.");
-				height = object_height + 100
-			}
-			else
-			{
+				popupHeight = object_height + 100
+			} else {
 				showOriginalSizeButton = true;
 			}
 
 			show_preview('image');
 
 		};
-		img.src = file;
 	}
 
 	/* This function is local to document_preview. Variables like file, type, title, object_width and object_height are global inside this function */
 	function show_preview(mode) {
-		/* console.log("mode="+mode+" file="+file+" type="+type+" title=title+" width="+width+" height="+height); */
+		/* console.log("mode="+mode+" file="+file+" type="+type+" title=title+" width="+popupWidth+" height="+popupHeight); */
 		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam"></object>';
 
 		optionsbuttons = {}
-		if (mode == 'image' && showOriginalSizeButton)
-		{
+		if (mode == 'image') {
 			var curRot = 0;
+			var savMaxHeight = 0;
 			optionsbuttons = {
-				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("OriginalSize")); ?>": function() { console.log("Click on original size"); jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": "none" }); },
-				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("RotateImage")); ?>": function() { curRot += 90; jQuery(".ui-dialog-content.ui-widget-content > object").css("transform","rotate(" + curRot + "deg)"); },
-				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("CloseWindow")); ?>": function() { $( this ).dialog( "close" ); }
+				'<?php echo dol_escape_js($langs->transnoentitiesnoconv("RotateImage")); ?>': function() { curRot += 90; jQuery(".ui-dialog-content.ui-widget-content > object").css("transform","rotate(" + curRot + "deg)"); },
+				'<?php echo dol_escape_js($langs->transnoentitiesnoconv("CloseWindow")); ?>': function() { $( this ).dialog( "close" ); }
 				};
+			if (showOriginalSizeButton) {
+				optionsbuttons = {
+					'<?php echo dol_escape_js($langs->transnoentitiesnoconv("OriginalSize")); ?>': function() { console.log("Click on original size button"); savMaxHeight = jQuery(".ui-dialog-content.ui-widget-content > object").css("max-height"); console.log("savMaxHeight="+savMaxHeight); jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": (savMaxHeight == "none" ? "100%" : "none") }); },
+					  ...optionsbuttons
+				};
+			}
 		}
 
 		$("#dialogforpopup").addClass("center");
@@ -1117,15 +1123,14 @@ function document_preview(file, type, title)
 		$("#dialogforpopup").dialog({
 			closeOnEscape: true,
 			resizable: true,
-			width: width,
-			height: height,
+			width: popupWidth,
+			height: popupHeight,
 			modal: true,
 			title: title,
 			buttons: optionsbuttons
 		});
 
-		if (showOriginalSizeButton)
-		{
+		if (showOriginalSizeButton) {
 			jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": "100%", "width": "auto", "margin-left": "auto", "margin-right": "auto", "display": "block" });
 		}
 	}
