@@ -1341,7 +1341,7 @@ abstract class CommonInvoice extends CommonObject
 		// Set a default value for service if not provided
 		if (empty($service)) {
 			$service = 'StripeTest';
-			if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
+			if (getDolGlobalString('STRIPE_LIVE')/* && !GETPOST('forcesandbox', 'alpha')*/) {
 				$service = 'StripeLive';
 			}
 		}

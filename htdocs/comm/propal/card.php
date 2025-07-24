@@ -3085,7 +3085,7 @@ if ($action == 'create') {
 		} else {
 			if (!empty($object->fin_validite)) {
 				print dol_print_date($object->fin_validite, 'day');
-				if ($object->status == Propal::STATUS_VALIDATED && $object->fin_validite < ($now - $conf->propal->cloture->warning_delay)) {
+				if ($object->status == Propal::STATUS_VALIDATED && $object->fin_validite < ($now - getWarningDelay('propal', 'cloture'))) {
 					print img_warning($langs->trans("Late"));
 				}
 			} else {

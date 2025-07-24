@@ -162,8 +162,8 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 
-$fieldstosearchall = array();
 // List of fields to search into when doing a "search in all"
+$fieldstosearchall = array();
 // foreach ($object->fields as $key => $val) {
 // 	if (!empty($val['searchall'])) {
 // 		$fieldstosearchall['t.'.$key] = $val['label'];
@@ -850,7 +850,13 @@ while ($i < $imaxinloop) {
 				} elseif ($key == 'rowid') {
 					print $object->showOutputField($val, $key, (string) $object->id, '');
 				} else {
+					if ($val['type'] == 'html') {
+						print '<div class="small lineheightsmall twolinesmax-normallineheight">';
+					}
 					print $object->showOutputField($val, $key, (string) $object->$key, '');
+					if ($val['type'] == 'html') {
+						print '</div>';
+					}
 				}
 				print '</td>';
 				if (!$i) {

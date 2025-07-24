@@ -198,11 +198,22 @@ if ($action == 'updateMask') {
 	include_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 
 	$notification_email = GETPOST('TICKET_NOTIFICATION_EMAIL_FROM', 'alpha');
-	$notification_email_description = "Sender of ticket replies sent from Dolibarr";
+	$notification_email_description = "Email of user allowed to send ticket replies from Dolibarr";
 	if (!empty($notification_email)) {
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_FROM', $notification_email, 'chaine', 0, $notification_email_description, $conf->entity);
 	} else { // If an empty e-mail address is providen, use the global "FROM" since an empty field will cause other issues
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_FROM', getDolGlobalString('MAIN_MAIL_EMAIL_FROM'), 'chaine', 0, $notification_email_description, $conf->entity);
+	}
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	$notification_email_replyto = GETPOST('TICKET_NOTIFICATION_EMAIL_REPLYTO', 'alpha');
+	$notification_email_replyto_description = "Email that must appears as the sender of ticket replies sent from Dolibarr";
+	if (!empty($notification_email)) {
+		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_REPLYTO', $notification_email_replyto, 'chaine', 0, $notification_email_replyto_description, $conf->entity);
+	} else {
+		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_REPLYTO', getDolGlobalString('MAIN_MAIL_EMAIL_FROM'), 'chaine', 0, $notification_email_replyto_description, $conf->entity);
 	}
 	if (!($res > 0)) {
 		$error++;
@@ -645,13 +656,23 @@ if (!getDolGlobalString('FCKEDITOR_ENABLE_MAIL')) {
 	print "</tr>\n";
 }
 
-// Email to send notifications
+// Email of sender allowed to send technical notifications
 print '<tr class="oddeven"><td><label for="TICKET_NOTIFICATION_EMAIL_FROM" class="block">'.$langs->trans("TicketEmailNotificationFrom").'</label></td>';
 print '<td class="left">';
 print img_picto('', 'email', 'class="pictofixedwidth"');
 print '<input type="text" class="minwidth200" id="TICKET_NOTIFICATION_EMAIL_FROM" name="TICKET_NOTIFICATION_EMAIL_FROM" value="' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'"></td>';
 print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationFromHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+// Email that must appears as the sender of email notifications
+print '<tr class="oddeven"><td><label for="TICKET_NOTIFICATION_EMAIL_REPLYTO" class="block">'.$langs->trans("TicketEmailNotificationReplyTo").'</label></td>';
+print '<td class="left">';
+print img_picto('', 'email', 'class="pictofixedwidth"');
+print '<input type="text" class="minwidth200" id="TICKET_NOTIFICATION_EMAIL_REPLYTO" name="TICKET_NOTIFICATION_EMAIL_REPLYTO" value="' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_REPLYTO').'"></td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationReplyToHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 

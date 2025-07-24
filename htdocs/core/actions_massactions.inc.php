@@ -1,6 +1,5 @@
 <?php
-
-/* Copyright (C) 2015-2017  Laurent Destailleur  	<eldy@users.sourceforge.net>
+/* Copyright (C) 2015-2025  Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2018-2021  Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018 	    Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2019 	    Ferran Marcet           <fmarcet@2byte.es>
@@ -48,25 +47,27 @@
  * @var User $user
  *
  * @var string $dolibarr_main_url_root
+ * @var string $action
+ * @var string $massaction
+ * @var string $confirm
+ * @var ?int[] $toselect
+ * @var ?string $diroutputmassaction
+ * @var string $uploaddir
+ * @var string $objectclass
+ * @var ?string $objectlabel
+ *
+ * @var int $error
+ *
  * @var ?string $permissiontoadd
  * @var ?string $permissiontoread
  * @var ?string $permissiontodelete
  * @var ?string $permissiontoclose
  * @var ?string $permissiontoapprove
- * @var ?int[] $toselect
- * @var ?string $diroutputmassaction
- * @var ?string $objectlabel
  * @var ?string $option
  * @var int $deliveryreceipt
- * @var string $action
- * @var string $massaction
- * @var string $objectclass
- * @var string $uploaddir
- * @var string $confirm
  * @var string $month
  * @var string $year
- * @var int $error
- *
+ * @var ?string $search_status
  * @var ?int $hidedetails
  * @var ?int $hidedesc
  * @var ?int $hideref
@@ -94,7 +95,6 @@ if (empty($objectclass) || empty($uploaddir)) {
 if (empty($massaction)) {
 	$massaction = '';
 }
-$error = 0;
 
 // Note: list of strings for objectclass could be extended to accepted/expected classes
 '
@@ -840,13 +840,24 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 	}
 
 	$arrayofinclusion = array();
-	foreach ($listofobjectref as $tmppdf) {
-		$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'\.pdf$';
+	$parameters = array(
+		'listofobjectref' => $listofobjectref,
+		'arrayofinclusion' => &$arrayofinclusion,
+	);
+	$reshook = $hookmanager->executeHooks('updateSearchRegexToMergeDoc', $parameters, $object, $action);
+
+	if (empty($reshook)) {
+		foreach ($listofobjectref as $tmppdf) {
+			$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'\.pdf$';
+		}
+		foreach ($listofobjectref as $tmppdf) {
+			$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'_[\w\-\'\&\.]+\.pdf$'; // To include PDF generated from ODX files
+		}
 	}
-	foreach ($listofobjectref as $tmppdf) {
-		$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'_[a-zA-Z0-9\-\_\'\&\.]+\.pdf$'; // To include PDF generated from ODX files
-	}
-	$listoffiles = dol_dir_list($uploaddir, 'all', 1, implode('|', $arrayofinclusion), '\.meta$|\.png', 'date', SORT_DESC, 0, 1);
+
+	$listoffiles = dol_dir_list($uploaddir, 'all', 1, $arrayofinclusion, '\.meta$|\.png$', 'date', SORT_DESC, 0, 1);
+
+	dol_syslog("Found ".count($listoffiles)." files");
 
 	// build list of files with full path
 	$files = array();

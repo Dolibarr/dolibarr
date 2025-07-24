@@ -828,7 +828,7 @@ if ($result >= 0) {
 							if (!empty($conf->use_javascript_ajax)) {
 								print '<button class="btn-low-emphasis --btn-icon AutoFillAmount" data-rowname="'.$namef.'" data-value="'.($sign * (float) $multicurrency_remaintopay).'">'.img_picto("Auto fill", 'rightarrow');
 							}
-							print '<input '.$min.' '.$max.' type="number" step="any" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.GETPOST($namef).'">';
+							print '<input '.$min.' '.$max.' type="text" class="multicurrency_amount" name="'.$namef.'" value="'.GETPOST($namef).'">';
 							print '<input type="hidden" class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
 						} else {
 							print '<input type="text" class="maxwidth75" name="'.$namef.'_disabled" value="'.(GETPOST($namef) != '0' ? GETPOST($namef) : '').'" disabled>';
@@ -899,7 +899,7 @@ if ($result >= 0) {
 					if (!empty($conf->use_javascript_ajax)) {
 						print '<button  class="btn-low-emphasis --btn-icon AutoFillAmount" data-rowname="'.$namef.'" data-value="'.($sign * (float) $remaintopay).'">'.img_picto("Auto fill", 'rightarrow').'</button>';
 					}
-					print '<input '.$max.' '.$min.' type="number" step="any" size="8" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">'; // class is required to be used by javascript callForResult();
+					print '<input '.$max.' '.$min.' type="text" size="8" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">'; // class is required to be used by javascript callForResult();
 					print '<input type="hidden" class="remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
 				} else {
 					print '<input type="text" class="maxwidth75" name="'.$namef.'_disabled" value="'.dol_escape_htmltag(GETPOST($namef)).'" disabled>';

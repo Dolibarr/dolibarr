@@ -423,14 +423,12 @@ function getWarningDelay($module, $parmlevel1, $parmlevel2 = '')
 	}
 
 	if ($parmlevel2) {
-		if (!empty($conf->$module->$warningDelayPath->warning_delay)) {
-			if (!empty($conf->$module->$warningDelayPath->$parmlevel2->warning_delay)) {
-				return (int) $conf->$module->$warningDelayPath->$parmlevel2->warning_delay;
-			}
+		if (!empty($conf->$module) && !empty($conf->$module->$warningDelayPath) && !empty($conf->$module->$warningDelayPath->$parmlevel2) && !empty($conf->$module->$warningDelayPath->$parmlevel2->warning_delay)) {
+			return (int) $conf->$module->$warningDelayPath->$parmlevel2->warning_delay;
 		}
 	} else {
-		if (!empty($conf->$module->$warningDelayPath->warning_delay)) {
-			return (int) $conf->$module->$warningDelayPath->$parmlevel1->warning_delay;
+		if (!empty($conf->$module) && !empty($conf->$module->$warningDelayPath) && !empty($conf->$module->$warningDelayPath->warning_delay)) {
+			return (int) $conf->$module->$warningDelayPath->warning_delay;
 		}
 	}
 
@@ -836,7 +834,7 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *                               'alphawithlgt'=alpha with lgt
  *                               'alphanohtml'=check there is no html content and no " and no ../
  *                               'aZ'=check it's a-z only
- *                               'aZ09'=check it's simple alpha string (recommended for keys)
+ *                               'aZ09'=check it's simple alpha string (recommended for keys, it includes a-z0-9_\-\.)
  *                               'aZ09arobase'=check it's a string for an element type ('myobject@mymodule')
  *                               'aZ09comma'=check it's a string for a sortfield or sortorder
  *                               'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
@@ -1530,7 +1528,6 @@ function dol_include_once($relpath, $classname = '')
 		dol_syslog('functions::dol_include_once Tried to load unexisting file: '.$relpath, LOG_WARNING);
 		return false;
 	}
-
 	if (!empty($classname) && !class_exists($classname)) {
 		return include $fullpath;
 	} else {
@@ -8530,14 +8527,21 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 {
 	if (is_null($allowed_attributes)) {
 		$allowed_attributes = array(
-			"allow", "allowfullscreen", "alt", "async", "class", "content", "contenteditable", "crossorigin", "data-html", "frameborder", "height", "href", "id", "name", "property", "rel", "src", "style", "target", "title", "type", "width",
+			"allow", "allowfullscreen", "alt", "async", "class", "contenteditable", "crossorigin", "data-html", "frameborder", "height", "href", "id", "name", "property", "rel", "src", "style", "target", "title", "type", "width",
 			// HTML5
 			"header", "footer", "nav", "section", "menu", "menuitem"
 		);
 	}
+	// Always add content and http-equiv for meta tags, required to force encoding and keep html content in utf8 by load/saveHTML functions.
+	if (!in_array("content", $allowed_attributes)) {
+		$allowed_attributes[] = "content";
+	}
+	if (!in_array("http-equiv", $allowed_attributes)) {
+		$allowed_attributes[] = "http-equiv";
+	}
 
 	if (class_exists('DOMDocument') && !empty($stringtoclean)) {
-		$stringtoclean = '<?xml encoding="UTF-8"><html><body>'.$stringtoclean.'</body></html>';
+		$stringtoclean = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body>'.$stringtoclean.'</body></html>';
 
 		// Warning: loadHTML does not support HTML5 on old libxml versions.
 		$dom = new DOMDocument('', 'UTF-8');
@@ -8588,12 +8592,15 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 			}
 		}
 
+		$dom->encoding = 'UTF-8';
+
 		$return = $dom->saveHTML();	// This may add a LF at end of lines, so we will trim later
 		//$return = '<html><body>aaaa</p>bb<p>ssdd</p>'."\n<p>aaa</p>aa<p>bb</p>";
 
 		$return = preg_replace('/^'.preg_quote('<?xml encoding="UTF-8">', '/').'/', '', $return);
-		$return = preg_replace('/^'.preg_quote('<html><body>', '/').'/', '', $return);
-		$return = preg_replace('/'.preg_quote('</body></html>', '/').'$/', '', $return);
+		$return = preg_replace('/^'.preg_quote('<html><head><', '/').'[^<>]*'.preg_quote('></head><body>', '/').'/', '', $return);
+		$return = preg_replace('/'.preg_quote('</body></html>', '/').'$/', '', trim($return));
+
 		return trim($return);
 	} else {
 		return $stringtoclean;
@@ -8765,17 +8772,24 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					// like 'abc' that wrongly ends up, without the trick, with '<p>abc</p>'
 
 					if (dol_textishtml($out)) {
-						$out = '<?xml encoding="UTF-8"><div class="tricktoremove">'.$out.'</div>';
+						$out = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.$out.'</div></body></html>';
 					} else {
-						$out = '<?xml encoding="UTF-8"><div class="tricktoremove">'.dol_nl2br($out).'</div>';
+						$out = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.dol_nl2br($out).'</div></body></html>';
 					}
 
 					$dom->loadHTML($out, LIBXML_HTML_NODEFDTD | LIBXML_ERR_NONE | LIBXML_HTML_NOIMPLIED | LIBXML_NONET | LIBXML_NOWARNING | LIBXML_NOERROR | LIBXML_NOXMLDECL);
+
+					$dom->encoding = 'UTF-8';
+
 					$out = trim($dom->saveHTML());
 
-					// Remove the trick added to solve pb with text without parent tag
-					$out = preg_replace('/^<\?xml encoding="UTF-8"><div class="tricktoremove">/', '', $out);
-					$out = preg_replace('/<\/div>$/', '', $out);
+					// Remove the trick added to solve pb with text in utf8 and text without parent tag
+					$out = preg_replace('/^'.preg_quote('<?xml encoding="UTF-8">', '/').'/', '', $out);
+					$out = preg_replace('/^'.preg_quote('<html><head><', '/').'[^<>]+'.preg_quote('></head><body><div class="tricktoremove">', '/').'/', '', $out);
+					$out = preg_replace('/'.preg_quote('</div></body></html>', '/').'$/', '', trim($out));
+					//                  $out = preg_replace('/^<\?xml encoding="UTF-8"><div class="tricktoremove">/', '', $out);
+					//                  $out = preg_replace('/<\/div>$/', '', $out);
+					//                  var_dump('rrrrrrrrrrrrrrrrrrrrrrrrrrrrr'.$out);
 				} catch (Exception $e) {
 					// If error, invalid HTML string with no way to clean it
 					//print $e->getMessage();
@@ -8828,6 +8842,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			}
 
 			// Clear ZERO WIDTH NO-BREAK SPACE, ZERO WIDTH SPACE, ZERO WIDTH JOINER
+			// TODO $out = preg_replace('/[\x{2000}-\x{200D}\x{FEFF}]/u', ' ', $out);
 			$out = preg_replace('/[\x{200B}-\x{200D}\x{FEFF}]/u', ' ', $out);
 
 			// Clean some html entities that are useless so text is cleaner
@@ -8889,7 +8904,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			$out = preg_replace('/on(repeat|begin|finish|beforeinput)[a-z]*\s*=/i', '', $out);
 		} while ($oldstringtoclean != $out);
 
-		// Check the limit of external links that are automatically executed in a Rich text content. We count:
+				// Check the limit of external links that are automatically executed in a Rich text content. We count:
 		// '<img' to avoid <img src="http...">,  we can only accept "<img src="data:..."
 		// 'url(' to avoid inline style like background: url(http...
 		// '<link' to avoid <link href="http...">
@@ -9287,7 +9302,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		$substitutionarray = array_merge($substitutionarray, array(
 			'__MYCOMPANY_NAME__'    => $mysoc->name,
 			'__MYCOMPANY_EMAIL__'   => $mysoc->email,
+			'__MYCOMPANY_URL__'     => $mysoc->url,
 			'__MYCOMPANY_PHONE__'   => dol_print_phone($mysoc->phone, '', 0, 0, '', " ", '', '', -1),
+			'__MYCOMPANY_PHONEMOBILE__' => dol_print_phone($mysoc->phone_mobile, '', 0, 0, '', " ", '', '', -1),
 			'__MYCOMPANY_FAX__'     => dol_print_phone($mysoc->fax, '', 0, 0, '', " ", '', '', -1),
 			'__MYCOMPANY_PROFID1__' => $mysoc->idprof1,
 			'__MYCOMPANY_PROFID2__' => $mysoc->idprof2,
@@ -10889,14 +10906,14 @@ function verifCond($strToEvaluate, $onlysimplestring = '1')
 
 /**
  * Replace eval function to add more security.
- * This function is called by verifCond() or trans() and transnoentitiesnoconv().
+ * This function is called by verifCond() for example.
  *
  * @param 	string		$s					String to evaluate
  * @param	int<0,1>	$returnvalue		0=No return (deprecated, used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
  * @param   int<0,1>	$hideerrors     	1=Hide errors
- * @param	string		$onlysimplestring	'0' (deprecated, do not use it anymore)=Accept all chars,
- *                                          '1' (most common use)=Accept only simple string with char 'a-z0-9\s^$_+-.*>&|=!?():"\',/@';',
- *                                          '2' (used for example for the compute property of extrafields)=Accept also '<[]'
+ * @param	string		$onlysimplestring	'0' (deprecated, do not use it anymore) = Accept all chars,
+ *                                          '1' (most common use) = Accept only simple string with char 'a-z0-9\s^$_+-.*>&|=!?():"\',/@';',
+ *                                          '2' (used for example for the compute property of extrafields) = Accept also '<[]'
  * @return	string							Return result of eval (even if type can be int, it is safer to assume string and find all potential typing issues as abs(dol_eval(...)).
  * @see verifCond(), checkPHPCode() to see sanitizing rules that should be very close.
  * @phan-suppress PhanPluginUnsafeEval
@@ -11263,14 +11280,26 @@ function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestr
 		$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_GLOBAL', '_POST', '_REQUEST', 'ReflectionFunction'));
 
 		// We list all forbidden function as keywords we don't want to see (we don't mind it if is "kewyord(" or just "keyword", we don't want "keyword" at all)
+		// We must exclude all functions that allow to execute another function. This includes all function that has a parameter with type "callable" to avoid things
+		// like we can do with array_map and its callable parameter:  dol_eval('json_encode(array_map(implode("",["ex","ec"]), ["id"]))', 1, 1, '0')
 		$forbiddenphpfunctions = array();
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("override_function", "session_id", "session_create_id", "session_regenerate_id"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("get_defined_functions", "get_defined_vars", "get_defined_constants", "get_declared_classes"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function", "call_user_func", "call_user_func_array"));
+
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("array_all", "array_any", "array_diff_ukey", "array_filter", "array_find", "array_find_key", "array_map", "array_reduce", "array_intersect_uassoc", "array_intersect_ukey", "array_walk", "array_walk_recursive"));
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("usort", "uasort", "uksort", "preg_replace_callback", "preg_replace_callback_array", "header_register_callback"));
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("set_error_handler", "set_exception_handler", "libxml_set_external_entity_loader", "register_shutdown_function", "register_tick_function", "unregister_tick_function"));
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("spl_autoload_register", "spl_autoload_unregister", "iterator_apply", "session_set_save_handler"));
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("forward_static_call", "forward_static_call_array", "register_postsend_function"));
+
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("ob_start"));
+
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include", "require_once", "include_once"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("exec", "passthru", "shell_exec", "system", "proc_open", "popen"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_eval", "dol_eval_new", "dol_eval_standard", "dol_concatdesc", "executeCLI", "verifCond", "GETPOST"));	// native dolibarr functions
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("eval", "create_function", "assert", "mb_ereg_replace")); // function with eval capabilities
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("readline_completion_function", "readline_callback_handler_install"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_compress_dir", "dol_decode", "dol_delete_file", "dol_delete_dir", "dol_delete_dir_recursive", "dol_copy", "archiveOrBackupFile")); // more dolibarr functions
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "mkdir", "rmdir", "symlink", "touch", "unlink", "umask"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include"));

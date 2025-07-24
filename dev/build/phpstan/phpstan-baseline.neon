@@ -1849,7 +1849,7 @@ parameters:
 			path: ../../../htdocs/ai/admin/setup.php
 
 		-
-			message: '#^Call to function is_object\(\) with ActionComm\|Adherent\|Commande\|CommandeFournisseur\|Contact\|Contrat\|ExpenseReport\|Facture\|FactureFournisseur\|Fichinter\|Mo\|Product\|Project\|Propal\|Task will always evaluate to true\.$#'
+			message: '#^Call to function is_object\(\) with ActionComm\|Adherent\|Commande\|CommandeFournisseur\|Contact\|Contrat\|Expedition\|ExpenseReport\|Facture\|FactureFournisseur\|Fichinter\|Mo\|Product\|Project\|Propal\|Task will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 2
 			path: ../../../htdocs/api/class/api_documents.class.php
@@ -6583,12 +6583,6 @@ parameters:
 			path: ../../../htdocs/core/actions_massactions.inc.php
 
 		-
-			message: '#^Variable \$search_status might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/actions_massactions.inc.php
-
-		-
 			message: '#^Variable \$triggername in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -6845,12 +6839,6 @@ parameters:
 			identifier: constructor.unusedParameter
 			count: 1
 			path: ../../../htdocs/core/boxes/box_clients.php
-
-		-
-			message: '#^Comparison operation "\<" between 0 and 0 is always false\.$#'
-			identifier: smaller.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/boxes/box_commandes.php
 
 		-
 			message: '#^Constructor of class box_commandes has an unused parameter \$param\.$#'
@@ -9058,12 +9046,6 @@ parameters:
 			message: '#^Comparison operation "\>" between 1 and 1 is always false\.$#'
 			identifier: greater.alwaysFalse
 			count: 2
-			path: ../../../htdocs/core/customreports.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
 			path: ../../../htdocs/core/customreports.php
 
 		-
@@ -11807,36 +11789,6 @@ parameters:
 			identifier: booleanOr.leftAlwaysTrue
 			count: 1
 			path: ../../../htdocs/core/tpl/objectline_create.tpl.php
-
-		-
-			message: '#^Variable \$buyer might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
-			path: ../../../htdocs/core/tpl/objectline_create.tpl.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/core/tpl/objectline_create.tpl.php
-
-		-
-			message: '#^Variable \$seller might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/core/tpl/objectline_create.tpl.php
-
-		-
-			message: '#^Variable \$usehm might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/core/tpl/objectline_create.tpl.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/core/tpl/objectline_edit.tpl.php
 
 		-
 			message: '#^Variable \$i might not be defined\.$#'
@@ -21741,7 +21693,7 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 3
+			count: 2
 			path: ../../../htdocs/societe/card.php
 
 		-
