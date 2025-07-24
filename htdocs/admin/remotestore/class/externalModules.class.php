@@ -460,8 +460,8 @@ class ExternalModules
 
 			// Set and check version
 			$version = '';
-			if ($this->version_compare($product["dolibarr_min"], $dolibarrversiontouse) <= 0) {
-				if (!empty($product["dolibarr_max"]) && $product["dolibarr_max"] != 'auto' && $product["dolibarr_max"] != 'unknown' && $this->version_compare($product["dolibarr_max"], $dolibarrversiontouse) >= 0) {
+			if ($this->versionCompare($product["dolibarr_min"], $dolibarrversiontouse) <= 0) {
+				if (!empty($product["dolibarr_max"]) && $product["dolibarr_max"] != 'auto' && $product["dolibarr_max"] != 'unknown' && $this->versionCompare($product["dolibarr_max"], $dolibarrversiontouse) >= 0) {
 					//compatible
 					$version = '<span class="compatible">'.$langs->trans(
 						'CompatibleUpTo',
@@ -508,7 +508,7 @@ class ExternalModules
 			$html .= $newapp.$images;	// No dol_escape_htmltag, it is already escape html
 			$html .= '</div></td>';
 			$html .= '<td class="margeCote"><h2 class="appTitle">';
-			$html .= dol_escape_htmltag(dol_string_nohtmltag($product["label"]));
+			$html .= dolPrintHTML(dol_string_nohtmltag($product["label"]));
 			$html .= '<br><small>';
 			$html .= $version;			// No dol_escape_htmltag, it is already escape html
 			$html .= '</small></h2>';
@@ -518,11 +518,11 @@ class ExternalModules
 			} else {
 				$html .= '<span class="opacitymedium">'.dol_print_date(dol_stringtotime($product['tms']), 'day').'</span>';
 			}
-			$html .= ' - '.$langs->trans('Ref').' '.dol_escape_htmltag($product["ref"]);
+			$html .= ' - '.$langs->trans('Ref').' '.dolPrintHTML($product["ref"]);
 			//$html .= ' - '.dol_escape_htmltag($langs->trans('Id')).': '.((int) $product["id"]);
 			$html .= '</small><br>';
 			$html .= '<small>'.$langs->trans('Source').': '.$product["source"].'</small><br>';
-			$html .= '<br>'.dol_escape_htmltag(dol_string_nohtmltag($product["description"]));
+			$html .= '<br>'.dolPrintHTML(dol_string_nohtmltag($product["description"]));
 			$html .= '</td>';
 			// do not load if display none
 			$html .= '<td class="margeCote center amount">';
@@ -568,7 +568,6 @@ class ExternalModules
 		};
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * version compare
 	 *
@@ -576,9 +575,12 @@ class ExternalModules
 	 * @param   string  $v2     version 2
 	 * @return int              result of compare
 	 */
-	public function version_compare($v1, $v2)
+	public function versionCompare($v1, $v2)
 	{
-		// phpcs:enable
+		// Clean v1 and v2
+		$v1 = str_replace(array('v', 'V'), '', $v1);
+		$v2 = str_replace(array('v', 'V'), '', $v2);
+
 		$v1       = explode('.', $v1);
 		$v2       = explode('.', $v2);
 		$ret      = 0;

@@ -382,6 +382,32 @@ if ($result) {
 			$amounttouse = $obj->amount_main_currency;
 		}
 
+		// in case option FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS is on, payment could be for more than one third-partie
+		// so we have to find which part of the payment is affected to each third-parties
+		// (because in this case $obj-amount = the total of the paiement and not the paiement for each third-parties)
+		if (getDolGlobalString('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS') && ($lineisapurchase == 1 || $lineisasale == 1) ) {
+			if ($lineisapurchase == 1) {
+				$sqlamount = "SELECT SUM(pf.amount) as amount";
+				$sqlamount .= " FROM ".MAIN_DB_PREFIX."paiementfounr_facturefourn AS pf";
+				$sqlamount .= " INNER JOIN ".MAIN_DB_PREFIX."paiementfourn AS p ON pf.fk_paiementfourn = p.rowid";
+				$sqlamount .= " RIGHT JOIN ".MAIN_DB_PREFIX."facture AS f ON pf.fk_facturefourn = f.rowid";
+				$sqlamount .= " WHERE p.fk_bank = ".((int) $obj->rowid);
+				$sqlamount .= " AND f.fk_soc = ".((int) $obj->socid);
+			} else {
+				$sqlamount = "SELECT SUM(pf.amount) as amount";
+				$sqlamount .= " FROM ".MAIN_DB_PREFIX."paiement_facture AS pf";
+				$sqlamount .= " INNER JOIN ".MAIN_DB_PREFIX."paiement AS p ON pf.fk_paiement = p.rowid";
+				$sqlamount .= " RIGHT JOIN ".MAIN_DB_PREFIX."facture AS f ON pf.fk_facture = f.rowid";
+				$sqlamount .= " WHERE p.fk_bank = ".((int) $obj->rowid);
+				$sqlamount .= " AND f.fk_soc = ".((int) $obj->socid);
+			}
+			$resultamount = $db->query($sqlamount);
+			if ($resultamount) {
+				$objamount = $db->fetch_object($resultamount);
+				if (!empty($objamount->amount)) $amounttouse = $objamount->amount;
+			}
+		}
+
 		// get_url may return -1 which is not traversable
 		if (is_array($links) && count($links) > 0) {
 			// Test if entry is for a social contribution, salary or expense report.
@@ -447,10 +473,17 @@ if ($result) {
 					$societestatic->email = $tabcompany[$obj->rowid]['email'];
 					$tabpay[$obj->rowid]["soclib"] = $societestatic->getNomUrl(1, '', 30);
 					if ($compta_soc) {
-						if (empty($tabtp[$obj->rowid][$compta_soc])) {
-							$tabtp[$obj->rowid][$compta_soc] = $amounttouse;
-						} else {
-							$tabtp[$obj->rowid][$compta_soc] += $amounttouse;
+						// because we are in 2 loop (loop on the line from the sql queries and loop on $links)
+						// and in case of option FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS is on,
+						// we will pass here n times for each payment line
+						// so we have to add $amoutouse only if the line $links[$key] correspond to the payment line we are in used ( socid correspondinf at the payment line $links)
+						// if FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS is off we add $amounttouse
+						if (!getDolGlobalString('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS') || $obj->socid == $links[$key]['url_id']){
+							if (empty($tabtp[$obj->rowid][$compta_soc])) {
+								$tabtp[$obj->rowid][$compta_soc] = $amounttouse;
+							} else {
+								$tabtp[$obj->rowid][$compta_soc] += $amounttouse;
+							}
 						}
 					}
 				} elseif ($links[$key]['type'] == 'user') {
