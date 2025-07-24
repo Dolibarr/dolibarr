@@ -11,8 +11,8 @@ return [
     // # Issue statistics:
     // PhanUndeclaredProperty : 440+ occurrences
     // PhanTypeMismatchProperty : 100+ occurrences
-    // PhanUndeclaredGlobalVariable : 90+ occurrences
     // PhanTypeMismatchArgument : 85+ occurrences
+    // PhanUndeclaredGlobalVariable : 75+ occurrences
     // PhanTypeMismatchArgumentNullable : 30+ occurrences
     // PhanTypeExpectedObjectPropAccess : 20+ occurrences
     // PhanTypeInvalidDimOffset : 20+ occurrences
@@ -23,10 +23,10 @@ return [
     // PhanPossiblyUndeclaredGlobalVariable : 6 occurrences
     // PhanTypeArraySuspiciousNull : 6 occurrences
     // PhanTypeComparisonFromArray : 6 occurrences
-    // PhanPluginUndeclaredVariableIsset : 5 occurrences
     // PhanParamTooMany : 4 occurrences
     // PhanPluginDuplicateArrayKey : 4 occurrences
     // PhanPluginDuplicateExpressionBinaryOp : 4 occurrences
+    // PhanPluginUndeclaredVariableIsset : 4 occurrences
     // PhanTypeMismatchDimAssignment : 2 occurrences
     // PhanTypeMismatchReturn : 2 occurrences
     // PhanTypeSuspiciousStringExpression : 2 occurrences
@@ -60,12 +60,10 @@ return [
         'htdocs/comm/card.php' => ['PhanTypeMismatchArgument'],
         'htdocs/comm/mailing/index.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/mailing/targetemailing.php' => ['PhanUndeclaredProperty'],
-        'htdocs/comm/propal/card.php' => ['PhanTypeMismatchProperty'],
         'htdocs/comm/propal/list.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/propal/tpl/linkedobjectblock.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/commande/class/api_orders.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/commande/class/commande.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/commande/customer.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/commande/list.php' => ['PhanUndeclaredProperty'],
         'htdocs/commande/list_det.php' => ['PhanTypeInvalidDimOffset'],
         'htdocs/commande/tpl/linkedobjectblock.tpl.php' => ['PhanUndeclaredProperty'],
@@ -254,7 +252,6 @@ return [
         'htdocs/product/reassort.php' => ['PhanTypeExpectedObjectPropAccessButGotNull'],
         'htdocs/product/stock/info.php' => ['PhanUndeclaredProperty'],
         'htdocs/product/stock/list.php' => ['PhanUndeclaredProperty'],
-        'htdocs/product/stock/movement_card.php' => ['PhanPluginUndeclaredVariableIsset', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/product/stock/movement_list.php' => ['PhanPluginUndeclaredVariableIsset', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/product/stock/productlot_card.php' => ['PhanUndeclaredProperty'],
         'htdocs/product/stock/stats/commande_fournisseur.php' => ['PhanUndeclaredProperty'],
@@ -263,7 +260,6 @@ return [
         'htdocs/product/stock/stats/reception.php' => ['PhanUndeclaredProperty'],
         'htdocs/product/stock/stocktransfer/class/stocktransferline.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/product/stock/tpl/stockcorrection.tpl.php' => ['PhanUndeclaredProperty'],
-        'htdocs/product/stock/tpl/stocktransfer.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/projet/admin/project.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/projet/card.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/projet/tasks.php' => ['PhanTypeMismatchArgument'],
@@ -272,7 +268,7 @@ return [
         'htdocs/public/eventorganization/subscriptionok.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/public/members/new.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/public/payment/newpayment.php' => ['PhanUndeclaredProperty'],
-        'htdocs/public/payment/paymentok.php' => ['PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredGlobalVariable'],
+        'htdocs/public/payment/paymentok.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/public/project/suggestbooth.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/public/project/suggestconference.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/public/project/viewandvote.php' => ['PhanUndeclaredGlobalVariable'],
