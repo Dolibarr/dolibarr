@@ -1150,7 +1150,9 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url     POST {id}/splitdiscount/{discountid}
 	 *
-	 * @return array  List of discount ID
+	 * @return	array					List of fixed discount of the third party
+	 * @phan-return stdClass[]
+	 * @phpstan-return stdClass[]
 	 *
 	 * @throws RestException 400
 	 * @throws RestException 401
@@ -1200,7 +1202,7 @@ class Thirdparties extends DolibarrApi
 		}
 		dol_syslog("spliddiscount LOG #4 ", LOG_WARNING);
 
-		if ( price2num((float) $amount_ttc_1) + price2num((float) $amount_ttc_2) != $discount->amount_ttc) {
+		if ( price2num((float) $amount_ttc_1 + (float) $amount_ttc_2) != $discount->amount_ttc) {
 			throw new RestException(405, 'Sum of the 2 discounts is different that the original discount');
 		}
 		if ($discount->fk_facture_line) {
@@ -1257,6 +1259,21 @@ class Thirdparties extends DolibarrApi
 		$newdiscount2->multicurrency_amount_ht = price2num($newdiscount2->multicurrency_amount_ttc / (1 + $newdiscount2->tva_tx / 100), 'MT');
 		$newdiscount1->multicurrency_amount_tva = price2num($newdiscount1->multicurrency_amount_ttc - $newdiscount1->multicurrency_amount_ht);
 		$newdiscount2->multicurrency_amount_tva = price2num($newdiscount2->multicurrency_amount_ttc - $newdiscount2->multicurrency_amount_ht);
+
+		// DiscountAbsolute->amount_ttc  ->amount_ht  ->amount_tva    are marked as @deprecated  but seems to yet be in use so we fill ->amout_xxx and ->total_xxx
+		// the same for multicurrency_amount_xxx and multicurrency_total_xxx
+		$newdiscount1->total_ttc = $newdiscount1->amount_ttc;
+		$newdiscount1->total_ht = $newdiscount1->amount_ht;
+		$newdiscount1->total_tva = $newdiscount1->amount_tva;
+		$newdiscount2->total_ttc = $newdiscount2->amount_ttc;
+		$newdiscount2->total_ht = $newdiscount2->amount_ht;
+		$newdiscount2->total_tva = $newdiscount2->amount_tva;
+		$newdiscount1->multicurrency_total_ttc = $newdiscount1->multicurrency_amount_ttc;
+		$newdiscount1->multicurrency_total_ht = $newdiscount1->multicurrency_amount_ht;
+		$newdiscount1->multicurrency_total_tva = $newdiscount1->multicurrency_amount_tva;
+		$newdiscount2->multicurrency_total_ttc = $newdiscount2->multicurrency_amount_ttc;
+		$newdiscount2->multicurrency_total_ht = $newdiscount2->multicurrency_amount_ht;
+		$newdiscount2->multicurrency_total_tva = $newdiscount2->multicurrency_amount_tva;
 
 		$this->db->begin();
 
