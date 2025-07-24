@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ if (!defined('NOBROWSERNOTIF')) {
 }
 
 if (!defined('XFRAMEOPTIONS_ALLOWALL')) {
-		define('XFRAMEOPTIONS_ALLOWALL', '1');
+	define('XFRAMEOPTIONS_ALLOWALL', '1');
 }
 
 // For MultiCompany module.
@@ -58,7 +58,7 @@ if (is_numeric($entity)) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 if (isModEnabled('paypal')) {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
@@ -70,6 +70,7 @@ if (isModEnabled('paypal')) {
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
+ * @var User $user 		User object is initialized but empty as it is a public page
  *
  * @var string $dolibarr_main_url_root
  */
@@ -93,10 +94,12 @@ if (isModEnabled('paypal')) {
 		$PAYPALPAYERID = GETPOST('PayerID');
 	}
 }
+/*
 if (isModEnabled('paybox')) {
 }
 if (isModEnabled('stripe')) {
 }
+*/
 
 $FULLTAG = GETPOST('FULLTAG');
 if (empty($FULLTAG)) {
@@ -163,7 +166,6 @@ if ($ws) {
 // None
 
 
-
 /*
  * View
  */
@@ -178,10 +180,12 @@ foreach ($_POST as $k => $v) {
 }
 dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_payment');
 
+dol_syslog("paymentkosessioncode=".GETPOST('paymentkosessioncode')." SESSION['paymentkosessioncode']=".$_SESSION['paymentkosessioncode'], LOG_DEBUG, 0, '_payment');
 
 // Set $appli for emails title
 $appli = $mysoc->name;
 $error = 0;
+$FinalPaymentAmt = 0;
 
 
 if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
@@ -197,6 +201,7 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 	$ipaddress          = $_SESSION['ipaddress'];
 	$errormessage       = $_SESSION['errormessage'];
 
+	// @phpstan-ignore-next-line
 	if (is_object($object) && method_exists($object, 'call_trigger')) {
 		// Call trigger @phan-suppress-next-line PhanUndeclaredMethod
 		$result = $object->call_trigger('PAYMENTONLINE_PAYMENT_KO', $user);
@@ -212,11 +217,11 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 	// Send warning of error to administrator
 	if ($sendemail) {
 		// Get default language to use for the company for supervision emails
-		$myCompanyDefaultLang = $mysoc->default_lang;
+		$myCompanyDefaultLang = (string) $mysoc->default_lang;
 		if (empty($myCompanyDefaultLang) || $myCompanyDefaultLang === 'auto') {
 			// We must guess the language from the company country. We must not use the language of the visitor. This is a technical email for supervision
 			// so it must always be into the same language.
-			$myCompanyDefaultLang = getLanguageCodeFromCountryCode($mysoc->country_code);
+			$myCompanyDefaultLang = (string) getLanguageCodeFromCountryCode($mysoc->country_code);
 		}
 
 		$companylangs = new Translate('', $conf);
@@ -349,22 +354,17 @@ $db->close();
 // If option to do a redirect somewhere else is defined.
 if (!empty($doactionsthenredirect)) {
 	// Redirect to an error page
+	$randomseckey = getRandomPassword(true, null, 20);
+	$_SESSION['paymentkosessionkey'] = $randomseckey;		// key between paymentok.php to another page like a paymentko of the website.
+
 	// Paymentko page must be created for the specific website
 	if (!defined('USEDOLIBARRSERVER') && !empty($ws_virtuelhost)) {
-		$ext_urlko = $ws_virtuelhost . '/paymentko.php?fulltag='.$FULLTAG;
+		$ext_urlko = $ws_virtuelhost . '/paymentko.php?paymentkosessioncode='.urlencode($randomseckey).'&fulltag='.$FULLTAG;
 	} else {
-		$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?website='.urlencode($ws).'&pageref=paymentko&fulltag='.$FULLTAG;
+		$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?paymentkosessioncode='.urlencode($randomseckey).'&website='.urlencode($ws).'&pageref=paymentko&fulltag='.$FULLTAG;
 	}
 
-	if (getDolGlobalInt('MARKETPLACE_PAYMENT_IN_FRAME') == 1) {	// TODO Use a property in website module
-		dol_syslog("Now do a redirect in iframe mode in js to ".$ext_urlko, LOG_DEBUG, 0, '_payment');
-
-		// Redirect in js is not reliable
-		print "<!DOCTYPE html><html><head></head><script>window.top.location.href = '".dol_escape_js($ext_urlko)."';</script></html>";
-	} else {
-		dol_syslog("Now do a redirect using Location : ".$ext_urlko, LOG_DEBUG, 0, '_payment');
-
-		header("Location: ".$ext_urlko);
-		exit;
-	}
+	dol_syslog("Now do a redirect using Location : ".$ext_urlko, LOG_DEBUG, 0, '_payment');
+	header("Location: ".$ext_urlko);
+	exit;
 }

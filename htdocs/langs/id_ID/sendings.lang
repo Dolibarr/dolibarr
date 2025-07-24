@@ -8,13 +8,12 @@ Shipments=Pengiriman
 ShowSending=Tampilkan Pengiriman
 Receivings=Tanda terima pengiriman
 SendingsArea=Area pengiriman
-ListOfSendings=Daftar pengiriman
 SendingMethod=Metode pengiriman
 LastSendings=Pengiriman %s terbaru
 StatisticsOfSendings=Statistik untuk pengiriman
 NbOfSendings=Jumlah pengiriman
 NumberOfShipmentsByMonth=Jumlah pengiriman berdasarkan bulan
-SendingCard=Kartu pengiriman
+SendingCard=Pengiriman
 NewSending=Pengiriman baru
 CreateShipment=Buat pengiriman
 QtyShipped=Qty dikirim
@@ -44,6 +43,7 @@ ConfirmCancelSending=Anda yakin ingin membatalkan pengiriman ini?
 DocumentModelMerou=Model Merou A5
 WarningNoQtyLeftToSend=Peringatan, tidak ada produk yang menunggu untuk dikirim.
 StatsOnShipmentsOnlyValidated=Statistik hanya untuk pengiriman yang divalidasi. Tanggal yang digunakan adalah tanggal validasi pengiriman (tanggal pengiriman yang direncanakan tidak selalu diketahui)
+DateShipping=Tanggal pengiriman
 DateDeliveryPlanned=Tanggal pengiriman yang direncanakan
 RefDeliveryReceipt=Kwitansi pengiriman Ref
 StatusReceipt=Tanda terima pengiriman status
@@ -63,9 +63,12 @@ NoProductToShipFoundIntoStock=Tidak ada produk untuk dikirim ditemukan di gudang
 WeightVolShort=Berat / Vol.
 ValidateOrderFirstBeforeShipment=Anda harus terlebih dahulu memvalidasi pesanan sebelum dapat melakukan pengiriman.
 NoLineGoOnTabToAddSome=Tidak ada baris, buka tab "%s" untuk menambahkan
-CreateInvoiceForThisCustomerFromSendings=Create Bills
+CreateInvoiceForThisCustomerFromSendings=Buat Tagihan
 IfValidateInvoiceIsNoSendingStayUnbilled=Jika validasi invoice 'Tidak', pengiriman akan tetap berstatus 'Tidak Ditagih' hingga invoice divalidasi.
 OptionToSetSendingBilledNotEnabled=Opsi dari modul Alur Kerja, untuk menyetel pengiriman ke 'Ditagih' secara otomatis saat faktur divalidasi, tidak diaktifkan, jadi Anda harus menyetel status pengiriman ke 'Ditagih' secara manual setelah faktur dibuat.
+NoWarehouseInBase=Tidak ada gudang di pangkalan
+ShipmentUpdated=Pengiriman berhasil diperbarui
+ShipmentIncrementStockOnDelete = Meningkatkan stok saat penghapusan
 
 # Sending methods
 # ModelDocument
@@ -77,9 +80,19 @@ SumOfProductWeights=Jumlah bobot produk
 # warehouse details
 DetailWarehouseNumber= Detail gudang
 DetailWarehouseFormat= W: %s (Jumlah: %d)
+DetailChildrenFormat=%s : %s (Jumlah: %s)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Menampilkan tanggal terakhir pemasukan stok selama pembuatan pengiriman untuk nomor seri atau batch
 CreationOptions=Opsi yang tersedia selama pembuatan pengiriman
 ShipmentDistribution=Distribusi pengiriman
 ErrorTooManyCombinationBatchcode=Tidak ada pengiriman untuk baris %s karena terlalu banyak kombinasi gudang, produk, kode batch yang ditemukan (%s).
 ErrorNoCombinationBatchcode=Tidak dapat menyimpan baris %s sebagai kombinasi warehouse-product-lot/serial (%s, %s, %s) tidak ditemukan dalam stok.
 ErrorTooMuchShipped=Jumlah yang dikirim tidak boleh lebih besar dari jumlah yang dipesan untuk baris %s
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=Perwakilan tindak lanjut pengiriman
+TypeContact_shipping_external_BILLING=Kontak faktur pelanggan
+TypeContact_shipping_external_CUSTOMER=Kontak pelanggan menindaklanjuti pengiriman
+TypeContact_shipping_external_SHIPPING=Kontak pelanggan untuk pengiriman
+TypeContact_shipping_external_DELIVERY=Kontak pelanggan untuk pengiriman
+CloseShipment=Tutup pengiriman
+ConfirmCloseShipment=Konfirmasi pengiriman dekat
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=Pilih terlebih dahulu nomor batch/seri dengan tanggal penjualan/penggunaan paling awal saat membuat pengiriman

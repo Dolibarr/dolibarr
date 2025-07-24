@@ -4,6 +4,7 @@
  * Copyright (C) 2004       Sebastien DiCintio      <sdicintio@ressource-toi.org>
  * Copyright (C) 2004-2008  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2025		Charlene Benke      	<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,9 +83,9 @@ if ($db->ok) {
 	print '<tr><td><label for="login">'.$langs->trans("Login").' :</label></td><td>';
 	print '<input id="login" name="login" type="text" value="'.(GETPOSTISSET("login") ? GETPOST("login", 'alpha') : (isset($force_install_dolibarrlogin) ? $force_install_dolibarrlogin : '')).'"'.(@$force_install_noedit == 2 && $force_install_dolibarrlogin !== null ? ' disabled' : '').' autofocus></td></tr>';
 	print '<tr><td><label for="pass">'.$langs->trans("Password").' :</label></td><td>';
-	print '<input type="password" id="pass" name="pass" autocomplete="new-password" minlength="8"></td></tr>';
+	print '<input type="password" id="pass" name="pass" autocomplete="new-password" minlength="8" value="'. (isset($force_install_dolibarrpassword) ? $force_install_dolibarrpassword : '').'"'.(@$force_install_noedit == 2 && $force_install_dolibarrpassword !== null ? ' disabled' : '').'></td></tr>';
 	print '<tr><td><label for="pass_verif">'.$langs->trans("PasswordRetype").' :</label></td><td>';
-	print '<input type="password" id="pass_verif" name="pass_verif" autocomplete="new-password" minlength="8"></td></tr>';
+	print '<input type="password" id="pass_verif" name="pass_verif" autocomplete="new-password" minlength="8" value="'.(isset($force_install_dolibarrpassword) ? $force_install_dolibarrpassword : '').'"'.(@$force_install_noedit == 2 && $force_install_dolibarrpassword !== null ? ' disabled' : '').'></td></tr>';
 	print '</table>';
 
 	if (GETPOSTINT("error") == 1) {

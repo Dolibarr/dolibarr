@@ -4,18 +4,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModulePartnershipName=Партнерське управління
 PartnershipDescription=Модуль Управління партнерством
 PartnershipDescriptionLong= Модуль Управління партнерством
@@ -24,17 +20,11 @@ Partnerships=Партнерські відносини
 AddPartnership=Додати партнерство
 CancelPartnershipForExpiredMembers=Партнерство: скасувати партнерство учасників із простроченими підписками
 PartnershipCheckBacklink=Партнерство: перевірте зворотне посилання
-
-#
 # Menu
-#
 NewPartnership=Нове партнерство
 NewPartnershipbyWeb=Ваш запит на партнерство успішно додано. Ми можемо незабаром зв'язатися з вами...
 ListOfPartnerships=Список партнерства
-
-#
 # Admin page
-#
 PartnershipSetup=Налаштування партнерства
 PartnershipAbout=Про партнерство
 PartnershipAboutPage=Партнерство про сторінку
@@ -45,10 +35,7 @@ PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Кількість дн
 ReferingWebsiteCheck=Перевірка посилання на сайт
 ReferingWebsiteCheckDesc=Ви можете ввімкнути функцію, щоб перевірити, чи ваші партнери додали зворотне посилання на домени вашого веб-сайту на своєму власному веб-сайті.
 PublicFormRegistrationPartnerDesc=Dolibarr може надати вам загальнодоступну URL-адресу/веб-сайт, щоб зовнішні відвідувачі могли подати запит на участь у партнерській програмі.
-
-#
 # Object
-#
 DeletePartnership=Видалити партнерство
 PartnershipDedicatedToThisThirdParty=Партнерство, присвячене цій третьій стороні
 PartnershipDedicatedToThisMember=Партнерство, присвячене цьому учаснику
@@ -68,31 +55,24 @@ PartnershipAccepted=Прийнято
 PartnershipRefused=Відмовився
 PartnershipCanceled=Скасовано
 PartnershipManagedFor=Партнери є
-
-#
 # Template Mail
-#
 SendingEmailOnPartnershipWillSoonBeCanceled=Партнерство скоро буде скасовано
 SendingEmailOnPartnershipRefused=Від партнерства відмовили
 SendingEmailOnPartnershipAccepted=Партнерство прийнято
 SendingEmailOnPartnershipCanceled=Партнерство скасовано
-
 YourPartnershipWillSoonBeCanceledTopic=Партнерство скоро буде скасовано
 YourPartnershipRefusedTopic=Від партнерства відмовили
 YourPartnershipAcceptedTopic=Партнерство прийнято
 YourPartnershipCanceledTopic=Партнерство скасовано
-
 YourPartnershipWillSoonBeCanceledContent=Ми хотіли б повідомити вам, що наше партнерство незабаром буде скасовано (ми не отримали поновлення або передумови для нашого партнерства не були виконані). Зв’яжіться з нами, якщо ви отримали це через помилку.
 YourPartnershipRefusedContent=Повідомляємо, що ваш запит на партнерство відхилено. Передумови не виконано. Будь ласка, зв'яжіться з нами, якщо вам потрібна додаткова інформація.
 YourPartnershipAcceptedContent=Повідомляємо, що ваш запит на партнерство прийнято.
 YourPartnershipCanceledContent=Повідомляємо вам, що наше партнерство припинено. Будь ласка, зв'яжіться з нами, якщо вам потрібна додаткова інформація.
-
 CountLastUrlCheckError=Кількість помилок для останньої перевірки URL-адреси
 LastCheckBacklink=Дата останньої перевірки URL-адреси
-
 NewPartnershipRequest=Новий запит на партнерство
 NewPartnershipRequestDesc=Ця форма дозволяє подати запит на участь в одній із наших партнерських програм. Якщо вам потрібна допомога із заповненням цієї форми, зв’яжіться з нами електронною поштою <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Ця сторінка має містити принаймні одне посилання на один із таких доменів: %s
-
 IPOfApplicant=IP заявника
-
+PartnershipToReopen=Щоб знову відкрити
+PartnershipConfirmReOpenAsk=Ви впевнені, що хочете відновити це партнерство <b> %s</b>?

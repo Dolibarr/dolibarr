@@ -101,7 +101,7 @@ class TimeSpent extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
@@ -114,7 +114,7 @@ class TimeSpent extends CommonObject
 		'element_date_withhour' => array('type' => 'integer', 'label' => 'element_date_withhour', 'enabled' => 1, 'position' => 6, 'notnull' => 0, 'visible' => -1,),
 		'element_duration' => array('type' => 'double', 'label' => 'element_duration', 'enabled' => 1, 'position' => 7, 'notnull' => 0, 'visible' => -1,),
 		'fk_product' => array('type' => 'integer', 'label' => 'fk_product', 'enabled' => 1, 'position' => 8, 'notnull' => 0, 'visible' => -1,),
-		'fk_user' => array('type' => 'integer', 'label' => 'fk_user', 'enabled' => 1, 'position' => 9, 'notnull' => 0, 'visible' => -1,),
+		'fk_user' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'fk_user', 'enabled' => 1, 'position' => 9, 'notnull' => 0, 'visible' => -1,),
 		'thm' => array('type' => 'double(24,8)', 'label' => 'thm', 'enabled' => 1, 'position' => 10, 'notnull' => 0, 'visible' => -1,),
 		'invoice_id' => array('type' => 'integer', 'label' => 'invoice_id', 'enabled' => 1, 'position' => 11, 'notnull' => 0, 'visible' => -1, 'default' => 'NULL',),
 		'invoice_line_id' => array('type' => 'integer', 'label' => 'invoice_line_id', 'enabled' => 1, 'position' => 12, 'notnull' => 0, 'visible' => -1, 'default' => 'NULL',),
@@ -123,70 +123,87 @@ class TimeSpent extends CommonObject
 		'datec' => array('type' => 'datetime', 'label' => 'datec', 'enabled' => 1, 'position' => 16, 'notnull' => 0, 'visible' => -1,),
 		'note' => array('type' => 'text', 'label' => 'note', 'enabled' => 1, 'position' => 18, 'notnull' => 0, 'visible' => -1,),
 	);
+
 	/**
 	 * @var int
 	 */
 	public $rowid;
+
 	/**
 	 * @var string
 	 */
 	public $import_key;
+
 	/**
 	 * @var int
 	 */
 	public $fk_element;
+
 	/**
 	 * @var string
 	 */
 	public $elementtype;
+
 	/**
 	 * @var int|string
 	 */
 	public $element_date;
+
 	/**
 	 * @var int
 	 */
 	public $element_datehour;
+
 	/**
 	 * @var int
 	 */
 	public $element_date_withhour;
+
 	/**
 	 * @var int Note seems to be int (seconds) even if declared as double in DB.
 	 */
 	public $element_duration;
+
 	/**
 	 * @var int
 	 */
 	public $fk_product;
+
 	/**
 	 * @var int
 	 */
 	public $fk_user;
+
 	/**
 	 * @var float
 	 */
 	public $thm;
+
 	/**
 	 * @var int
 	 */
 	public $invoice_id;
+
 	/**
 	 * @var int
 	 */
 	public $invoice_line_id;
+
 	/**
 	 * @var int
 	 */
 	public $intervention_id;
+
 	/**
 	 * @var int
 	 */
 	public $intervention_line_id;
+
 	/**
-	 * @var int
+	 * @var ?int	Date creation
 	 */
 	public $datec;
+
 	/**
 	 * @var string
 	 */
@@ -264,7 +281,8 @@ class TimeSpent extends CommonObject
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
-		global $langs, $extrafields;
+		global $extrafields;
+
 		$error = 0;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -279,15 +297,12 @@ class TimeSpent extends CommonObject
 		// Reset some properties
 		unset($object->id);
 		unset($object->fk_user_creat);
+		unset($object->user_creation_id);
 		unset($object->import_key);
 
 		// Clear fields
 		if (property_exists($object, 'ref')) {
 			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
-		}
-		if (property_exists($object, 'label')) {
-			// @phan-suppress-next-line PhanUndeclaredProperty
-			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
 		}
 		if (property_exists($object, 'status')) {
 			$object->status = self::STATUS_DRAFT;
@@ -701,7 +716,7 @@ class TimeSpent extends CommonObject
 		if (isset($this->status)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
 		}
-		$datas['ref'] .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
 		return $datas;
 	}

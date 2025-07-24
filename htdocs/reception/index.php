@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin            <regis.houssin@capnetworks.com>
  * Copyright (C) 2018	   Quentin Vial-Gouteyron   <quentin.vial-gouteyron@atm-consulting.fr>
  * Copyright (C) 2019      Nicolas ZABOURI          <info@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -244,7 +244,8 @@ if ($resql) {
 			$orderstatic->id = $obj->rowid;
 			$orderstatic->ref = $obj->ref;
 			$orderstatic->ref_supplier = $obj->ref_supplier;
-			$orderstatic->statut = $obj->status;
+			$orderstatic->statut = $obj->status;	// deprecated
+			$orderstatic->status = $obj->status;
 			$orderstatic->facturee = $obj->billed;
 
 			$companystatic->name = $obj->name;

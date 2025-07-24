@@ -2,7 +2,7 @@
 /* Copyright (C) 2018-2018  Andre Schild        	<a.schild@aarboard.ch>
  * Copyright (C) 2005-2010  Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin       	<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This file is an example to follow to add your own email selector inside
@@ -204,7 +204,7 @@ class mailing_eventorganization extends MailingTargets
 		$formproject = new FormProjets($this->db);
 
 		$s = img_picto($langs->trans("OrganizedEvent"), 'project', 'class="pictofixedwidth"');
-		$s .= $formproject->select_projects(-1, 0, "filter_eventorganization", 0, 0, $langs->trans("OrganizedEvent"), 1, 0, 0, 0, '', 1, 0, '', '', 'usage_organize_event=1');
+		$s .= $formproject->select_projects(-1, '0', "filter_eventorganization", 0, 0, $langs->trans("OrganizedEvent"), 1, 0, 0, 0, '', 1, 0, '', '', 'usage_organize_event=1');
 
 		return $s;
 	}

@@ -57,7 +57,7 @@ Assigned=Assigned
 NeedMoreInformation=Waiting for reporter feedback
 NeedMoreInformationShort=Waiting for feedback
 Waiting=Waiting
-SolvedClosed=Solved
+SolvedClosed=Closed
 Deleted=Deleted
 # Dict
 Severity=Severity
@@ -72,8 +72,10 @@ TicketPublicAccess=A public interface requiring no identification is available a
 TicketSetupDictionaries=The type of ticket, severity and analytic codes are configurable from dictionaries
 TicketParamModule=Module variable setup
 TicketParamMail=Email setup
-TicketEmailNotificationFrom=Sender e-mail for notification on tickets
-TicketEmailNotificationFromHelp=Sender e-mail to use to send the notification emails for tickets creation or messages. For example noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Notify ticket creation to this e-mail address
 TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation (in addition to any other default recipients)
 TicketNewEmailBodyLabel=Text message sent after creating a ticket
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=Only tickets assigned to the current user will 
 TicketsActivatePublicInterface=Activate public interface
 TicketsActivatePublicInterfaceHelp=Public interface allow any visitors to create tickets.
 TicketsAutoAssignTicket=Automatically assign the user who created the ticket
-TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket(Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined).
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
 TicketAutoChangeStatusOnAnswer=Automatically assign a status when answering a ticket
 TicketAutoChangeStatusOnAnswerHelp=When a user answers to a ticket, the status will automatically be applied to the ticket
 TicketNumberingModules=Tickets numbering module
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=View only open tickets
 TicketStatByStatus=Tickets by status
 OrderByDateAsc=Sort by ascending date
 OrderByDateDesc=Sort by descending date
-ShowAsConversation=Show as conversation list
-MessageListViewType=Show as table list
 ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
 ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
 # Ticket card
@@ -340,3 +340,5 @@ TicketCreatedToday=Ticket created today
 TicketClosedToday=Ticket closed today
 KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket
 SetTitle=Set title
+TicketSendToInternalCC=Force an email as CC recipient to all messages send from ticket page.
+TicketSendToInternalCCHelp=Enter the email you want to use automatically as a Carbon Copy recipient when sending an email from ticket page.

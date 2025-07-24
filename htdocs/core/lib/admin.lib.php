@@ -4,8 +4,8 @@
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,7 +152,7 @@ function versiondolibarrarray()
  *  - Running specific Sql by a module init
  *  - Loading sql file of website import package
  *  Install process however does not use it.
- *  Note that Sql files must have all comments at start of line. Also this function take ';' as the char to detect end of sql request
+ *  Note that SQL files must have all comments at start of line. Also this function take ';' as the char to detect end of sql request
  *
  *	@param		string		$sqlfile					Full path to sql file
  * 	@param		int			$silent						1=Do not output anything, 0=Output line for update page
@@ -164,13 +164,13 @@ function versiondolibarrarray()
  *  @param		int			$nocommentremoval			Do no try to remove comments (in such a case, we consider that each line is a request, so use also $linelengthlimit=0)
  *  @param		int			$offsetforchartofaccount	Offset to use to load chart of account table to update sql on the fly to add offset to rowid and account_parent value
  *  @param		int			$colspan					2=Add a colspan=2 on td
- *  @param		int			$onlysqltoimportwebsite		Only sql requests used to import a website template are allowed
+ *  @param		int			$onlysqltoimportwebsite		Only sql requests used to import a website template are allowed. This is a security feature to disallow SQL injection when loading a template.
  *  @param		string		$database					Database (replace __DATABASE__ with this value)
  * 	@return		int										Return integer <=0 if KO, >0 if OK
  */
 function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler = '', $okerror = 'default', $linelengthlimit = 32768, $nocommentremoval = 0, $offsetforchartofaccount = 0, $colspan = 0, $onlysqltoimportwebsite = 0, $database = '')
 {
-	global $db, $conf, $langs, $user;
+	global $db, $conf, $langs;
 
 	dol_syslog("Admin.lib::run_sql run sql file ".$sqlfile." silent=".$silent." entity=".$entity." usesavepoint=".$usesavepoint." handler=".$handler." okerror=".$okerror, LOG_DEBUG);
 
@@ -187,6 +187,8 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 
 	// Get version of database
 	$versionarray = $db->getVersionArray();
+
+	// TODO Restore all sequences "/* new line */\n" into "" in $sqlfile.
 
 	$fp = fopen($sqlfile, "r");
 	if ($fp) {
@@ -242,7 +244,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 			// Add line buf to buffer if not a comment
 			if ($nocommentremoval || !preg_match('/^\s*--/', $buf)) {
 				if (empty($nocommentremoval)) {
-					$buf = preg_replace('/([,;ERLT\)])\s*--.*$/i', '\1', $buf); //remove comment from a line that not start with -- before add it to the buffer
+					$buf = preg_replace('/([,;ERLT0\)])\s+--.*$/i', '\1', $buf); //remove comment on lines that does not start with --, before adding it to the buffer
 				}
 				if ($buffer) {
 					$buffer .= ' ';
@@ -252,7 +254,8 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 
 			//print $buf.'<br>';exit;
 
-			if (preg_match('/;/', $buffer)) {	// If string contains ';', it's end of a request string, we save it in arraysql.
+			if (preg_match('/;\s*$/', $buffer)) {
+				// If string contains the end of request string (';'), we save it into $arraysql.
 				// Found new request
 				if ($buffer) {
 					$arraysql[$i] = $buffer;
@@ -807,7 +810,7 @@ function modules_prepare_head($nbofactivatedmodules, $nboftotalmodules, $nbmodul
  */
 function ihm_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf;
 	$h = 0;
 	$head = array();
 
@@ -836,6 +839,11 @@ function ihm_prepare_head()
 	$head[$h][2] = 'css';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT."/admin/tools/ui/index.php";
+	$head[$h][1] = $langs->trans("UxComponentsDoc").' '.img_picto('', 'external-link-square-alt');
+	$head[$h][2] = 'css';
+	$h++;
+
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'ihm_admin');
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'ihm_admin', 'remove');
@@ -852,7 +860,7 @@ function ihm_prepare_head()
  */
 function security_prepare_head()
 {
-	global $db, $langs, $conf, $user;
+	global $db, $langs, $conf;
 	$h = 0;
 	$head = array();
 
@@ -872,7 +880,7 @@ function security_prepare_head()
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/security_file.php";
-	$head[$h][1] = $langs->trans("Files").' ('.$langs->trans("Upload").')';
+	$head[$h][1] = $langs->trans("Files").' ('.$langs->trans("UploadName").' | '.$langs->trans("Download").')';
 	$head[$h][2] = 'file';
 	$h++;
 
@@ -891,6 +899,11 @@ function security_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT."/admin/events.php";
 	$head[$h][1] = $langs->trans("Audit");
 	$head[$h][2] = 'audit';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/openid_connect.php";
+	$head[$h][1] = $langs->trans("OpenIDconnectSetup");
+	$head[$h][2] = 'openid';
 	$h++;
 
 
@@ -1003,7 +1016,7 @@ function translation_prepare_head()
  */
 function defaultvalues_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf;
 	$h = 0;
 	$head = array();
 
@@ -1051,13 +1064,18 @@ function defaultvalues_prepare_head()
 /**
  * 	Return list of session
  *
- *  @return array<string,array{login:string,age:int,creation:int,modification:int,raw:string}>	Array list of sessions
+ *  @return array<string,array{login:string,age:int,creation:null|int|false,modification:int|false,raw:string,remote_ip:?string,user_agent:?string}>	Array list of sessions
  */
 function listOfSessions()
 {
-	global $conf;
+	global $conf, $php_session_save_handler;
 
 	$arrayofSessions = array();
+	// Set the handler of session
+	if (!empty($php_session_save_handler) && $php_session_save_handler == 'db') {
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/phpsessionin'.$php_session_save_handler.'.lib.php';
+		return dolListSessions();
+	}
 	// session.save_path can be returned empty so we set a default location and work from there
 	$sessPath = '/tmp';
 	$iniPath = ini_get("session.save_path");
@@ -1085,13 +1103,16 @@ function listOfSessions()
 						$tmp = explode('_', $file);
 						$idsess = $tmp[1];
 						$regs = array();
+						$arrayofSessions[$idsess]["login"] = '';
 						$loginfound = preg_match('/dol_login\|s:[0-9]+:"([A-Za-z0-9]+)"/i', $sessValues, $regs);
 						if ($loginfound) {
-							$arrayofSessions[$idsess]["login"] = $regs[1];
+							$arrayofSessions[$idsess]["login"] = (string) $regs[1];
 						}
 						$arrayofSessions[$idsess]["age"] = time() - filectime($fullpath);
 						$arrayofSessions[$idsess]["creation"] = filectime($fullpath);
 						$arrayofSessions[$idsess]["modification"] = filemtime($fullpath);
+						$arrayofSessions[$idsess]["user_agent"] = null;
+						$arrayofSessions[$idsess]["remote_ip"] = null;
 						$arrayofSessions[$idsess]["raw"] = $sessValues;
 					}
 				}
@@ -1380,7 +1401,7 @@ function unActivateModule($value, $requiredby = 1)
  * 	@param		string[]	$tabrowid			Tabrowid
  * 	@param		bool[]		$tabcond			Tabcond
  * 	@param		array<array<string,string>>	$tabhelp	Tabhelp
- *  @param		array<string,array<string,array<string,string>>>	$tabcomplete   		Tab complete (will replace all other in future). Key is table name.
+ *  @param		array<string|int,array<int|string,string|array<string,string>>>	$tabcomplete   		Tab complete (will replace all other in future). Key is table name.
  * 	@return		int			1
  */
 function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tabsql, &$tabsqlsort, &$tabfield, &$tabfieldvalue, &$tabfieldinsert, &$tabrowid, &$tabcond, &$tabhelp, &$tabcomplete)
@@ -1559,7 +1580,7 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
  */
 function activateModulesRequiredByCountry($country_code)
 {
-	global $db, $conf, $langs;
+	global $db;
 
 	$modulesdir = dolGetModulesDirs();
 
@@ -1720,8 +1741,8 @@ function complete_elementList_with_modules(&$elementList)
 /**
  *	Show array with constants to edit
  *
- *	@param	array<string,array{type:string,label:string}>|array<int,string>	$tableau		Array of constants array('key'=>array('type'=>type, 'label'=>label)
- *                                                                                          where type can be 'string', 'text', 'textarea', 'html', 'yesno', 'emailtemplate:xxx', ...
+ *	@param	array<string,array{type:string,label:string,tooltip?:string}>|array<int,string>	$tableau		Array of constants array('key'=>array('type'=>type, 'label'=>label, 'tooltip'=>tooltip)
+ *                                                                                          				where type can be 'string', 'text', 'textarea', 'html', 'yesno', 'emailtemplate:xxx', ...
  *	@param	int<2,3>	$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (deprecated), 2=No form nor button at all, 3=No form nor button at all and each field has a unique name (form is output by caller, recommended)  (typed as int<2,3> to highlight the deprecated values)
  *  @param  string  	$helptext       Tooltip help to use for the column name of values
  *  @param	string		$text			Text to use for the column name of values

@@ -23,7 +23,10 @@ AllPropals=Ҳама пешниҳодҳо
 SearchAProposal=Пешниҳодро ҷустуҷӯ кунед
 NoProposal=Пешниҳод нест
 ProposalsStatistics=Омори пешниҳоди тиҷоратӣ
+NumberOfProposals=Шумораи пешниҳодҳо
 NumberOfProposalsByMonth=Шумора аз рӯи моҳ
+AmountOfProposals=Миқдори пешниҳодҳо
+AmountOfProposalsHT=Маблағи пешниҳодҳо (ба истиснои андоз)
 AmountOfProposalsByMonthHT=Маблағ аз рӯи моҳ (ба истиснои андоз)
 NbOfProposals=Шумораи пешниҳодҳои тиҷоратӣ
 ShowPropal=Нишон додани пешниҳод
@@ -77,7 +80,7 @@ AvailabilityTypeAV_1W=1 ҳафта
 AvailabilityTypeAV_2W=2 ҳафта
 AvailabilityTypeAV_3W=3 ҳафта
 AvailabilityTypeAV_1M=1 моҳ
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Пешниҳоди пайгирии пайгирӣ
 TypeContact_propal_external_BILLING=Тамос бо фактураи муштарӣ
 TypeContact_propal_external_CUSTOMER=Пешниҳоди пайгирии тамос бо муштариён
@@ -120,5 +123,5 @@ SignSociete_rib=Имзои мандат
 SignPropal=Пешниҳодро қабул кунед
 Signed=имзо карданд
 SignedOnly=Фақат имзо
-ExpeditionSigned=Shipment signed
-SignExpedition=Sign shipment
+ExpeditionSigned=Интиқол ба имзо расид
+SignExpedition=Имзои интиқол

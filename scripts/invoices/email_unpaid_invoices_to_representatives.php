@@ -4,7 +4,7 @@
  * Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2013       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -76,7 +76,7 @@ $hookmanager->initHooks(array('cli'));
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',', $argv));
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
 
 $now = dol_now('tzserver');
 $duration_value = isset($argv[2]) ? $argv[2] : 'none';
@@ -118,10 +118,10 @@ if ($resql) {
 	$total = 0;
 	$foundtoprocess = 0;
 
-	print "We found ".$num." couples (unpayed validated invoice - sale representative) qualified\n";
-	dol_syslog("We found ".$num." couples (unpayed validated invoice - sale representative) qualified");
+	print "We found ".$num." couples (unpaid validated invoice - sale representative) qualified\n";
+	dol_syslog("We found ".$num." couples (unpaid validated invoice - sale representative) qualified");
 	$message = '';
-	$oldsalerepresentative = 0;
+	$oldsalerepresentative = '';
 
 	if ($num) {
 		while ($i < $num) {
@@ -130,7 +130,7 @@ if ($resql) {
 			if (($obj->email != $oldemail || $obj->uid != $olduid) || $oldemail == 'none') {
 				// Break onto sales representative (new email or uid)
 				if (dol_strlen($oldemail) && $oldemail != 'none') {
-					envoi_mail($mode, $oldemail, $message, price2num($total), $oldlang, $oldsalerepresentative);
+					sendMailRepresentativeUnpaid($mode, $oldemail, $message, price2num($total), $oldlang, $oldsalerepresentative);
 				} else {
 					if ($oldemail != 'none') {
 						print "- No email sent for ".$oldsalerepresentative.", total: ".$total."\n";
@@ -178,7 +178,7 @@ if ($resql) {
 		// If there are remaining messages to send in the buffer
 		if ($foundtoprocess) {
 			if (dol_strlen($oldemail) && $oldemail != 'none') { // Break onto email (new email)
-				envoi_mail($mode, $oldemail, $message, price2num($total), $oldlang, $oldsalerepresentative);
+				sendMailRepresentativeUnpaid($mode, $oldemail, $message, price2num($total), $oldlang, $oldsalerepresentative);
 			} else {
 				if ($oldemail != 'none') {
 					print "- No email sent for ".$oldsalerepresentative.", total: ".$total."\n";
@@ -203,12 +203,12 @@ if ($resql) {
  * @param string $mode						Mode (test | confirm)
  * @param string $oldemail					Target email
  * @param string $message					Message to send
- * @param string $total						Total amount of unpayed invoices
+ * @param string $total						Total amount of unpaid invoices
  * @param string $userlang					Code lang to use for email output.
  * @param string $oldtarget					Target name of sale representative
  * @return int 								Int <0 if KO, >0 if OK
  */
-function envoi_mail($mode, $oldemail, $message, $total, $userlang, $oldtarget)
+function sendMailRepresentativeUnpaid($mode, $oldemail, $message, $total, $userlang, $oldtarget)
 {
 	global $conf, $langs;
 

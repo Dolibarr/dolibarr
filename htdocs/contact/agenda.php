@@ -30,7 +30,6 @@
  *       \brief      Card agenda of a contact
  */
 
-
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -66,6 +65,8 @@ $errors = array();
 $action		= (GETPOST('action', 'alpha') ? GETPOST('action', 'alpha') : 'view');
 $confirm	= GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$contextpage = GETPOST('contextpage', 'aZ09');
+
 $id = GETPOSTINT('id');
 $socid		= GETPOSTINT('socid');
 
@@ -281,10 +282,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$permok = $user->hasRight('agenda', 'myactions', 'create');
 			if ((!empty($objthirdparty->id) || !empty($objcon->id)) && $permok) {
 				if (is_object($objthirdparty) && get_class($objthirdparty) == 'Societe') {
-					$out .= '&amp;originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&amp;socid='.$objthirdparty->id : '');
+					$out .= '&originid='.$objthirdparty->id.($objthirdparty->id > 0 ? '&socid='.$objthirdparty->id : '');
 				}
-				$out .= (!empty($objcon->id) ? '&amp;contactid='.$objcon->id : '').'&amp;origin=contact&amp;originid='.$object->id.'&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].($objcon->id > 0 ? '?id='.$objcon->id : ''));
-				$out .= '&amp;datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog'));
+				$out .= (!empty($objcon->id) ? '&contactid='.$objcon->id : '').'&origin=contact&originid='.$object->id.'&backtopage='.urlencode($_SERVER['PHP_SELF'].($objcon->id > 0 ? '?id='.$objcon->id : ''));
+				$out .= '&datep='.urlencode(dol_print_date(dol_now(), 'dayhourlog'));
 			}
 
 			if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {

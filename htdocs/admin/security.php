@@ -131,7 +131,7 @@ if ($action == 'activate_encryptdbpassconf') {
 		header("Location: security.php");
 		exit;
 	} else {
-		setEventMessages($langs->trans('InstrucToEncodePass', dol_encode($dolibarr_main_db_pass)), null, 'warnings');
+		setEventMessages($langs->trans('InstrucToEncodePass', dolEncrypt($dolibarr_main_db_pass)), null, 'warnings');
 	}
 } elseif ($action == 'disable_encryptdbpassconf') {
 	$result = encodedecode_dbpassconf(0);

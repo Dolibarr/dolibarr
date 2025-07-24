@@ -172,6 +172,11 @@ function propal_admin_prepare_head()
 	$head[$h][2] = 'general';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT.'/admin/propal_pdf.php';
+	$head[$h][1] = $langs->trans("PDF");
+	$head[$h][2] = 'pdf';
+	$h++;
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab

@@ -10,7 +10,7 @@
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2020-2024  Frédéric France      		<frederic.france@free.fr>
  * Copyright (C) 2023		Waël Almoman				<info@almoman.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
  * @var Translate $langs
  * @var User $user
  *
- * @var array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:float,custom_x:float,custom_y:float}> $_Avery_Labels
+ * @var array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:int,custom_x:float,custom_y:float}> $_Avery_Labels
  */
 
 // Load translation files required by the page
@@ -461,7 +461,7 @@ foreach ($dirmodels as $reldir) {
 
 
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								// Preview
@@ -540,7 +540,7 @@ print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED', (getDolGlobalString('ADH
 print "</td></tr>\n";
 
 // Create an external user login after an online payment of a membership subscription
-// TODO Move this into the validate() method of the member.
+// TODO Move this into a checkbox into the validate process of the memberinstead of a global option.
 print '<tr class="oddeven"><td>'.$langs->trans("MemberCreateAnExternalUserForSubscriptionValidated").'</td><td>';
 print $form->selectyesno('ADHERENT_CREATE_EXTERNAL_USER_LOGIN', getDolGlobalInt('ADHERENT_CREATE_EXTERNAL_USER_LOGIN'), 1, false, 0, 1);
 print "</td></tr>\n";
@@ -604,7 +604,7 @@ if (isModEnabled('invoice')) {
 		print '<td>';
 		$selected = getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS');
 		print img_picto('', 'product', 'class="pictofixedwidth"');
-		$form->select_produits($selected, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', '', 0, 0, 1, 2, '', 0, [], 0, 1, 0, 'minwidth100 maxwidth500 widthcentpercentminusx');
+		$form->select_produits((int) $selected, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', '', 0, 0, 1, 2, '', 0, [], 0, 1, 0, 'minwidth100 maxwidth500 widthcentpercentminusx');
 		print '</td>';
 	}
 	print "</tr>\n";

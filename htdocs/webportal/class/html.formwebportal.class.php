@@ -2,7 +2,7 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	Patrice Andreani		<pandreani@easya.solutions>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -627,17 +627,21 @@ class FormWebPortal extends Form
 	 * Return HTML string to put an input field into a page
 	 * Code very similar with showInputField for common object
 	 *
+	 * @param Object			$object			Common object
 	 * @param array{type:string,label:string,enabled:int|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val Array of properties for field to show
-	 * @param string 		$key 			Key of attribute
+	 * @param string 			$key 			Key of attribute
 	 * @param string|mixed[]	$value 			Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value, for array type must be array)
-	 * @param string 		$moreparam 		To add more parameters on html input tag
-	 * @param string 		$keysuffix 		Prefix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param string 		$keyprefix 		Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param string 		$morecss 		Value for css to define style/length of field. May also be a numeric.
+	 * @param string 			$moreparam 		To add more parameters on html input tag
+	 * @param string 			$keysuffix 		Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param string 			$keyprefix 		Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param string 			$morecss 		Value for css to define style/length of field. May also be a numeric.
 	 * @return string
 	 */
-	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
+	public function showInputFieldForObject($object, $val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
 	{
+		// TODO Replace code with
+		//return $object->showInputField($val, $key, $value, '', '', '', 0);
+
 		global $conf, $langs;
 
 		$out = '';
@@ -962,7 +966,7 @@ class FormWebPortal extends Form
 				$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'
 				$showempty = (($required && $default != '') ? '0' : '1');
 
-				$out = $this->selectForForms($param_list[0], $htmlName, $value, $showempty, '', '', $morecss, $moreparam, 0, empty($val['disabled']) ? 0 : 1);
+				$out = $this->selectForForms($param_list[0], $htmlName, (int) $value, $showempty, '', '', $morecss, $moreparam, 0, empty($val['disabled']) ? 0 : 1);
 
 				break;
 
@@ -979,18 +983,22 @@ class FormWebPortal extends Form
 	/**
 	 * Return HTML string to show a field into a page
 	 *
-	 * @param CommonObject $object Common object
+	 * @param CommonObject 		$object 		Common object
 	 * @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val	Array of properties of field to show
-	 * @param string $key Key of attribute
-	 * @param string|string[] $value Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
-	 * @param string $moreparam To add more parameters on html input tag
-	 * @param string $keysuffix Prefix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param string $keyprefix Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param mixed $morecss Value for css to define size. May also be a numeric.
+	 * @param string 			$key 			Key of attribute
+	 * @param string|string[] 	$value 			Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
+	 * @param string 			$moreparam 		To add more parameters on html input tag
+	 * @param string 			$keysuffix 		Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param string 			$keyprefix 		Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param mixed 			$morecss 		Value for css to define size. May also be a numeric.
 	 * @return string
 	 */
 	public function showOutputFieldForObject($object, $val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
 	{
+		// TODO Replace code with
+		//return $object->showOutputField($val, $key, $value, '', '', '', 0);
+		// We must just implement different case like output a ref that must not include the link into backoffice
+
 		global $conf, $langs;
 
 		$label = empty($val['label']) ? '' : $val['label'];

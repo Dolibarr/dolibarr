@@ -9,7 +9,7 @@
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2024		Vincent Maury			<vmaury@timgroup.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,9 +146,9 @@ if (isModEnabled("product") || isModEnabled("service")) {
 	$statustoshow = -1;
 	if (getDolGlobalString('ENTREPOT_EXTRA_STATUS')) {
 		// hide products in closed warehouse, but show products for internal transfer
-		print $form->select_produits(GETPOSTINT('idprod'), (($filtertype == 1) ? 'idprodservice' : 'idprod'), $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), 0, $statustoshow, 2, '', 1, array(), 0, '1', 0, 'maxwidth500 widthcentpercentminusx', 0, 'warehouseopen,warehouseinternal', GETPOSTINT('combinations'), 1);
+		print $form->select_produits(GETPOSTINT('idprod'), (($filtertype == 1) ? 'idprodservice' : 'idprod'), $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), 0, $statustoshow, 2, '', 1, array(), 0, '1', 0, 'maxwidth500 widthcentpercentminusx', 0, 'warehouseopen,warehouseinternal', (string) GETPOSTINT('combinations'), 1);
 	} else {
-		print $form->select_produits(GETPOSTINT('idprod'), (($filtertype == 1) ? 'idprodservice' : 'idprod'), $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), 0, $statustoshow, 2, '', 1, array(), 0, '1', 0, 'maxwidth500 widthcentpercentminusx', 0, '', GETPOSTINT('combinations'), 1);
+		print $form->select_produits(GETPOSTINT('idprod'), (($filtertype == 1) ? 'idprodservice' : 'idprod'), $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), 0, $statustoshow, 2, '', 1, array(), 0, '1', 0, 'maxwidth500 widthcentpercentminusx', 0, '', (string) GETPOSTINT('combinations'), 1);
 	}
 	$urltocreateproduct = DOL_URL_ROOT.'/product/card.php?action=create'.(($filtertype == 1) ? '&leftmenu=service&type=1' : '&leftmenu=product&type=0').'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
 	print '<a href="'.$urltocreateproduct.'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProduct").'"></span></a>';
@@ -157,11 +157,11 @@ if (isModEnabled("product") || isModEnabled("service")) {
 }
 if (getDolGlobalString('BOM_SUB_BOM') && $filtertype != 1) {
 	print '<br><span class="opacitymedium">'.$langs->trans("or").'</span><br>'.$langs->trans("BOM");
-	print $form->select_bom('', 'bom_id', 0, 1, 0, '1', '', 1);
+	print $form->select_bom('', 'bom_id', 0, 1, 0, '1', '', '1');
 }
 
 if (is_object($objectline)) {
-	$temps = $objectline->showOptionals($extrafields, 'create', array(), '', '', 1, 'line');
+	$temps = $objectline->showOptionals($extrafields, 'create', array(), '', '', '1', 'line');
 
 	if (!empty($temps)) {
 		print '<div style="padding-top: 10px" id="extrafield_lines_area_create" name="extrafield_lines_area_create">';

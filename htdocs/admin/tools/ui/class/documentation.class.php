@@ -53,6 +53,10 @@ class Documentation
 	 */
 	public $db;
 
+	/**
+	 * @var string
+	 */
+	public $baseUrl = 'admin/tools/ui';
 
 	/**
 	 *    Constructor
@@ -79,33 +83,30 @@ class Documentation
 	{
 		global $hookmanager;
 
-
 		$hookmanager->initHooks(array('uidocumentation'));
-
-		$baseUrl = 'admin/tools/ui';
 
 		// Go back to Dolibarr
 		$this->menu['BackToDolibarr'] = array(
 			'url' => DOL_URL_ROOT,
-			'icon' => 'fas fa-arrow-left pictofixedwidth',
+			'icon' => 'fas fa-arrow-left',
 			'submenu' => array(),
 		);
 
 		// Home for Ui documentation
 		$this->menu['DocumentationHome'] = array(
-			'url' => dol_buildpath($baseUrl.'/index.php', 1),
+			'url' => dol_buildpath($this->baseUrl.'/index.php', 1),
 			'icon' => 'fas fa-book',
 			'submenu' => array(),
 		);
 
 		// Components
 		$this->menu['Components'] = array(
-			'url' => dol_buildpath($baseUrl.'/components/index.php', 1),
+			'url' => dol_buildpath($this->baseUrl.'/components/index.php', 1),
 			'icon' => 'fas fa-th-large',
 			'submenu' => array(
 				'Badges' => array(
-					'url' => dol_buildpath($baseUrl.'/components/badges.php', 1),
-					'icon' => 'fas fa-certificate pictofixedwidth',
+					'url' => dol_buildpath($this->baseUrl.'/components/badges.php', 1),
+					'icon' => 'fas fa-certificate',
 					'submenu' => array(),
 					'summary' => array(
 						'DocBasicUsage' => '#badgesection-basicusage',
@@ -118,8 +119,8 @@ class Documentation
 					),
 				),
 				'Buttons' => array(
-					'url' => dol_buildpath($baseUrl.'/components/buttons.php', 1),
-					'icon' => 'fas fa-mouse pictofixedwidth',
+					'url' => dol_buildpath($this->baseUrl.'/components/buttons.php', 1),
+					'icon' => 'fas fa-mouse',
 					'submenu' => array(),
 					'summary' => array(
 						'DocBasicUsage' => '#buttonsection-basicusage',
@@ -127,9 +128,18 @@ class Documentation
 						'DocButtonSubmenu' => '#buttonsection-submenu',
 					),
 				),
+				'Icons' => array(
+					'url' => dol_buildpath($this->baseUrl.'/components/icons.php', 1),
+					'icon' => 'far fa-flag',
+					'submenu' => array(),
+					'summary' => array(
+						'DocIconsList' => '#img-picto-section-list',
+						'DocIconsFontAwesomeList' => '#icon-section-list',
+					),
+				),
 				'Progress' => array(
-					'url' => dol_buildpath($baseUrl.'/components/progress-bars.php', 1),
-					'icon' => 'fas fa-battery-half pictofixedwidth',
+					'url' => dol_buildpath($this->baseUrl.'/components/progress-bars.php', 1),
+					'icon' => 'fas fa-battery-half',
 					'submenu' => array(),
 					'summary' => array(
 						'DocBasicUsage' => '#progresse-section-basic-usage',
@@ -138,39 +148,107 @@ class Documentation
 					),
 				),
 				'Event Message' => array(
-					'url' => dol_buildpath($baseUrl.'/components/event-message.php', 1),
-					'icon' => 'fas fa-comments pictofixedwidth',
+					'url' => dol_buildpath($this->baseUrl.'/components/event-message.php', 1),
+					'icon' => 'fas fa-comments',
 					'submenu' => array(),
 					'summary' => array(
 						'DocBasicUsage' => '#seteventmessagesection-basicusage',
 						'DocSetEventMessageContextualVariations' => '#seteventmessagesection-contextvariations',
 					)
 				),
+				'Inputs' => array(
+					'url' => dol_buildpath($this->baseUrl.'/components/inputs.php', 1),
+					'icon' => 'fas fa-comments',
+					'submenu' => array(),
+					'summary' => array(
+						'DocBasicUsage' => '#setinputssection-basicusage',
+						'DocHelperFunctionsInputUsage' => '#setinputssection-helperfunctions',
+						'DocHelperFunctionsGetSearchFilterToolInput' => '#setinputssection-getSearchFilterToolInput',
+					)
+				),
 			),
-			'summary' => array(
-				'keySum' => '#keySum'
-			)
 		);
 
 		// Elements
 		$this->menu['Content'] = array(
-			'url' => dol_buildpath($baseUrl.'/content/index.php', 1),
-			'icon' => 'fas fa-th-large',
+			'url' => dol_buildpath($this->baseUrl.'/content/index.php', 1),
+			'icon' => 'far fa-file-alt',
 			'submenu' => array(
 				'Tables' => array(
 					'url' => dol_buildpath('admin/tools/ui/content/tables.php', 1),
-					'icon' => 'fas fa-table pictofixedwidth',
+					'icon' => 'fas fa-table',
 					'submenu' => array(),
 					'summary' => array(
 						'DocBasicUsage' => '#tablesection-basicusage',
-						'DocTableWithFilters' => '#tablesection-withfilters'
+						'DocTableWithFilters' => '#tablesection-withfilters',
+						'DocTableBeforeFilters' => '#tablesection-beforefilters',
+						'DocTableCSSClass' => '#tablesection-cssclasses',
 					),
 				),
 			)
 		);
 
+		// Elements
+		$this->menu['Resources'] = array(
+			'url' => dol_buildpath($this->baseUrl.'/resources/index.php', 1),
+			'icon' => 'fas fa-wrench',
+			'submenu' => array(
+				'Contributing' => array(
+					'url' => dol_buildpath($this->baseUrl.'/resources/contributing.php', 1),
+					'icon' => 'fas fa-code',
+					'submenu' => array(),
+					'summary' => array(
+						'DocContributeStep1' => '#contributesection-step1',
+						'DocContributeStep2' => '#contributesection-step2',
+						'DocContributeStep3' => '#contributesection-step3',
+					),
+				),
+			)
+		);
+
+
+
+		// Elements
+		$this->menu['ExperimentalUx'] = array(
+			'url' => dol_buildpath($this->baseUrl.'/experimental/index.php', 1),
+			'icon' => 'fas fa-flask',
+			'submenu' => array(
+				'ExperimentalUxIntroductionMenu' => array(
+					'url' => dol_buildpath($this->baseUrl.'/experimental/index.php', 1),
+					'icon' => 'fas fa-flask',
+					'submenu' => array(),
+					'summary' => array(
+						'Index' => '#top',
+						'ExperimentalUxIntroductionTitle' => '#experimental-ux-introduction',
+						'ExperimentalUxContributionTitle' => '#experimental-ux-contribution',
+					),
+				),
+
+				'ExperimentalUxFreezeTooltip' => array(
+					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/freeze-tooltip/index.php', 1),
+					'icon' => 'fas fa-flask',
+					'submenu' => array(),
+					'summary' => array(),
+				),
+
+				'ExperimentalUxInputAjaxFeedback' => array(
+					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/input-feedback/index.php', 1),
+					'icon' => 'fas fa-flask',
+					'submenu' => array(),
+					'summary' => array(),
+				),
+
+				'ExperimentalUxIntuitiveSelect' => array(
+					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/intuitive-select/index.php', 1),
+					'icon' => 'fas fa-flask',
+					'submenu' => array(),
+					'summary' => array(),
+				),
+			)
+		);
+
 		$parameters = array(
-			'baseUrl' => $baseUrl,
+			'baseUrl' => $this->baseUrl,
 		);
 		$action = '';
 
@@ -226,7 +304,7 @@ class Documentation
 	/**
 	 * Output sidebar
 	 *
-	 * @return void
+	 * @return 	void
 	 */
 	public function showSidebar()
 	{
@@ -266,10 +344,11 @@ class Documentation
 		foreach ($menu as $key => $item) {
 			$levelclass = (!empty($item['submenu'])) ? 'li-withsubmenu' : '';
 			$levelclass .= (in_array($key, $this->view)) ? ' active' : '';
+			$levelclass .= ($key == 'BackToDolibarr') ? ' li-withseparator' : '';
 
-			print '<li class="'.$levelclass.' level-'.$level.'">';
+			print '<li class="'.trim($levelclass).' level-'.$level.'">';
 			print '<a href="'.$item['url'].'" class="'.((!empty($item['submenu'])) ? 'link-withsubmenu' : '').'">';
-			print ((!empty($item['icon'])) ? '<i class="menu-icon '.$item['icon'].'" aria-hidden="true"></i>' : '');
+			print ((!empty($item['icon'])) ? '<i class="menu-icon '.$item['icon'].' pictofixedwidth" aria-hidden="true"></i>' : '');
 			print '<span class="label">'.$langs->transnoentities($key).'</span>';
 			print ((!empty($item['submenu'])) ? '<i class="submenu-toggle fas fa-chevron-right" aria-hidden="true"></i>' : '');
 			print '</a>';
@@ -324,7 +403,7 @@ class Documentation
 	{
 		$i = 0;
 		$menu_entry = [];
-		if (!empty($this->view)) :
+		if (!empty($this->view)) {
 			// On se place au bon niveau
 			foreach ($this->view as $view) {
 				$i++;
@@ -334,11 +413,11 @@ class Documentation
 					$menu_entry = $menu_entry['submenu'][$view];
 				}
 			}
-		endif;
+		}
 
-		if (!empty($menu_entry['summary']) || !empty($menu_entry['submenu'] && $showsubmenu)) {
+		if (!empty($menu_entry['summary']) || (!empty($menu_entry['submenu']) && $showsubmenu)) {
 			print '<div class="summary-wrapper">';
-				$this->displaySummary($menu_entry);
+			$this->displaySummary($menu_entry);
 			print '</div>';
 		}
 	}
@@ -355,26 +434,34 @@ class Documentation
 	 */
 	public function displaySummary($menu, $level = 0, $showsubmenu = 1, $showsubmenu_summary = 1)
 	{
-
 		global $langs;
 
 		$level++;
 		print '<ul class="documentation-summary level-'.$level.'"">';
 
-		if (!empty($menu['summary'])) :
+		if (!empty($menu['summary'])) {
 			foreach ($menu['summary'] as $summary_label => $summary_link) {
+				/*
 				if ($summary_link[0] == '#') {
-					$summary_link = $menu['url'].$summary_link;
+					$tmp_summary_link = $menu['url'];
+					if (GETPOSTINT('hidenavmenu')) {
+						$tmp_summary_link .= (strpos($tmp_summary_link, '?') === false ? '?' : '&').'hidenavmenu=1';
+					}
+					if (GETPOSTINT('displayMode')) {
+						$tmp_summary_link .= (strpos($tmp_summary_link, '?') === false ? '?' : '&').'displayMode=1';
+					}
+					$summary_link = $tmp_summary_link;
 				}
+				*/
 
 				print '<li><a href="'.$summary_link.'">'.$langs->trans($summary_label).'</a></li>';
 			}
-		endif;
+		}
 
 		if ($showsubmenu && !empty($menu['submenu'])) {
 			foreach ($menu['submenu'] as $key => $item) {
 				print '<li class="summary-title ">';
-					print '<h3 class="level-'.$level.'">'.$key.'</h3>';
+					print '<h3 class="level-'.$level.'">'.$langs->trans($key).'</h3>';
 				if ($showsubmenu_summary) {
 					$this->displaySummary($item, $level);
 				}
@@ -395,6 +482,13 @@ class Documentation
 	{
 		require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 		print '<div class="documentation-code">';
+
+		if (isset($lines[0])) {
+			if ($option === 'html' && strpos(strtolower($lines[0]), '<!doctype') === false) {
+				array_unshift($lines, '<!DOCTYPE html>', '');
+			}
+		}
+
 		$content = implode("\n", $lines) . "\n";
 		$doleditor = new DolEditor(md5($content), $content, '', 0, 'Basic', 'In', true, false, 'ace', 0, '99%', 1);
 		print $doleditor->Create(1, '', false, '', $option);

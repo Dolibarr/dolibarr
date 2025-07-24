@@ -510,6 +510,7 @@ FridayMin=Vie
 SaturdayMin=Sab
 SundayMin=Dom
 ShortWednesday=M
+centimes=centavos
 SelectMailModel=Seleccione una plantilla de correo electrónico
 SetRef=Establecer referencia
 Select2ResultFoundUseArrows=Se han encontrado algunos resultados. Utilice las flechas para seleccionar.

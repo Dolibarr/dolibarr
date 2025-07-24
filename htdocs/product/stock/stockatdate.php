@@ -5,7 +5,7 @@
  * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		ATM Consulting		<support@atm-consulting.fr>
  * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -544,7 +544,7 @@ if ($ext == 'csv') {
 	} else {
 		print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
 		$tooltiptext = $langs->trans("QtyAtDate").' x '.$langs->trans("AverageUnitPricePMPShort").' ('.$langs->trans("Currently").')';
-		print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "estimatedvalue", '', $param, '', $sortfield, $sortorder, 'right ', $tooltiptext, 1);
+		print_liste_field_titre("EstimatedStockValue", $_SERVER["PHP_SELF"], "currentvalue", '', $param, '', $sortfield, $sortorder, 'right ', $tooltiptext, 1);
 		$tooltiptext = $langs->trans("QtyAtDate").' x '.$langs->trans("SellingPrice").' ('.$langs->trans("Currently").')';
 		print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ', $tooltiptext, 1);
 		$tooltiptext = $langs->trans("MovementsSinceDate");
@@ -612,6 +612,8 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			//}
 		}
 
+		$nbofmovement = 0;
+		$virtualstock = 0;
 		if ($mode == 'future') {
 			$prod->load_stock('warehouseopen,warehouseinternal,nobatch', 0, $dateendofday);
 			$stock = $prod->stock_theorique;		// virtual stock at a date
@@ -619,7 +621,6 @@ while ($i < ($limit ? min($num, $limit) : $num)) {
 			$virtualstock = $prod->stock_theorique;	// virtual stock in infinite future
 		} else {
 			$stock = $currentstock;
-			$nbofmovement = 0;
 			if (!empty($search_fk_warehouse)) {
 				foreach ($search_fk_warehouse as $val) {
 					$stock -= empty($movements_prod_warehouse[$objp->rowid][$val]) ? 0 : $movements_prod_warehouse[$objp->rowid][$val];
