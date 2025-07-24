@@ -61,7 +61,6 @@ MinPriceTTC=Prix de vente minimum (taxes incluses)
 EditSellingPriceLabel=Modifier l'étiquette de prix de vente
 CantBeLessThanMinPrice=Le prix de vente ne peut pas être inférieur au minimum autorisé pour ce produit (%s hors taxes). Ce message peut également apparaître si vous saisissez une remise importante.
 CantBeLessThanMinPriceInclTax=Le prix de vente ne peut être inférieur au minimum autorisé pour ce produit (%s taxes comprises). Ce message peut également apparaître si vous saisissez une remise trop importante.
-ContractStatusClosed=Fermées
 ErrorProductBadRefOrLabel=Valeur incorrecte pour référence ou étiquette.
 ErrorProductClone=Il y a eu un problème en essayant de cloner le produit ou le service.
 SupplierRef=Référence du fournisseur

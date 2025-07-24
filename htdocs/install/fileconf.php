@@ -80,7 +80,7 @@ $err = 0;
 $setuplang = GETPOST("selectlang", 'alpha', 3) ? GETPOST("selectlang", 'alpha', 3) : (GETPOST('lang', 'alpha', 1) ? GETPOST('lang', 'alpha', 1) : 'auto');
 $langs->setDefaultLang($setuplang);
 
-$langs->loadLangs(array("install", "errors"));
+$langs->loadLangs(array("install", "errors", "admin"));
 
 dolibarr_install_syslog("- fileconf: entering fileconf.php page");
 

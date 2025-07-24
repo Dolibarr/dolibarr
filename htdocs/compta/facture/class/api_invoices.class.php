@@ -213,6 +213,7 @@ class Invoices extends DolibarrApi
 
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture AS t";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe AS s ON (s.rowid = t.fk_soc)";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= ' WHERE t.entity IN ('.getEntity('invoice').')';
 		if ($socids) {
@@ -1616,10 +1617,10 @@ class Invoices extends DolibarrApi
 	 * Warning: Take care that all invoices are owned by the same customer.
 	 * Example of value for parameter arrayofamounts: {"1": {"amount": "99.99", "multicurrency_amount": ""}, "2": {"amount": "", "multicurrency_amount": "10"}}
 	 *
-	 * @param array   $arrayofamounts     {@from body}  Array with id of invoices with amount to pay for each invoice
+	 * @param array   $arrayofamounts      {@from body}  Array with id of invoices with amount to pay for each invoice
 	 * @phan-param array<string,array{amount:string,multicurrency_amount:string}> $arrayofamounts
 	 * @phpstan-param array<string,array{amount:string,multicurrency_amount:string}> $arrayofamounts
-	 * @param string  $datepaye           {@from body}  Payment date
+	 * @param string  $datepaye            {@from body}  Payment date
 	 * @param int     $paymentid           {@from body}  Payment mode Id {@min 1}
 	 * @param string  $closepaidinvoices   {@from body}  Close paid invoices {@choice yes,no}
 	 * @param int     $accountid           {@from body}  Account Id {@min 1}
@@ -1694,23 +1695,23 @@ class Invoices extends DolibarrApi
 			$totalpaid = $this->invoice->getSommePaiement($is_multicurrency);
 			$totalcreditnotes = $this->invoice->getSumCreditNotesUsed($is_multicurrency);
 			$totaldeposits = $this->invoice->getSumDepositsUsed($is_multicurrency);
-			$remainstopay = $amount = price2num($total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
+			$remainstopay = $amount = (float) price2num($total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
 			if (!$is_multicurrency && $amountarray["amount"] != 'remain') {
-				$amount = price2num($amountarray["amount"], 'MT');
+				$amount = (float) price2num($amountarray["amount"], 'MT');
 			}
 
 			if ($is_multicurrency && $amountarray["multicurrency_amount"] != 'remain') {
-				$amount = price2num($amountarray["multicurrency_amount"], 'MT');
+				$amount = (float) price2num($amountarray["multicurrency_amount"], 'MT');
 			}
 
-			if ($amount > $remainstopay && !$accepthigherpayment) {
+			if (abs($amount) > abs($remainstopay) && !$accepthigherpayment) {
 				$this->db->rollback();
 				throw new RestException(400, 'Payment amount on invoice ID '.$id.' ('.$amount.') is higher than remain to pay ('.$remainstopay.')');
 			}
 
 			if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
-				$amount = price2num(-1 * (float) $amount, 'MT');
+				$amount = (float) price2num(-1 * abs((float) $amount), 'MT');
 			}
 
 			if ($is_multicurrency) {

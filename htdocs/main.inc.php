@@ -597,7 +597,7 @@ if (!defined('NOLOGIN')) {
 
 			// Process error of captcha validation
 			if (!$ok) {
-				dol_syslog('Bad value for code, connection refused', LOG_NOTICE);
+				dol_syslog('--- Security warning: Bad value for code, connection refused', LOG_NOTICE);
 				// Load translation files required by page
 				$langs->loadLangs(array('main', 'errors'));
 
@@ -665,6 +665,13 @@ if (!defined('NOLOGIN')) {
 				$langcode = constant('MAIN_LANG_DEFAULT');
 			}
 			$langs->setDefaultLang($langcode);
+		}
+
+		// Test HTTP header
+		if (!empty($_SERVER['HTTP_EXPOSED_CREDENTIAL_CHECK'])) {
+			// TODO Read option $dolibarr_main_no_leaked_credentials with value 1, 2, ... and return
+			//dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"].' refused by option $dolibarr_main_no_leaked_credentials='.$dolibarr_main_no_leaked_credentials, LOG_NOTICE);
+			dol_syslog('--- Security warning: credentials reported as leaked were used to try to login. HTTP_EXPOSED_CREDENTIAL_CHECK='.((int) $_SERVER['HTTP_EXPOSED_CREDENTIAL_CHECK']), LOG_NOTICE);
 		}
 
 		// Validation of login/pass/entity

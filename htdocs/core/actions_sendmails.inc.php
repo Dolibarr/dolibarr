@@ -145,7 +145,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 		$result = $object->fetch($id);
 
 		if (method_exists($object, "fetch_thirdparty") && !in_array($object->element, array('member', 'user', 'expensereport', 'societe', 'contact'))) {
-			$resultthirdparty = $object->fetch_thirdparty();
+			$object->fetch_thirdparty();
 			$thirdparty = $object->thirdparty;
 			if (is_object($thirdparty)) {
 				$sendtosocid = $thirdparty->id;

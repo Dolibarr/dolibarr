@@ -400,7 +400,7 @@ class FormProjets extends Form
 			}
 
 			if (empty($option_only)) {
-				$out .= '<select class="valignmiddle flat' . ($morecss ? ' ' . $morecss : '') . '"' . ($disabled ? ' disabled="disabled"' : '') . ' id="' . $htmlname . '" name="' . $htmlname . '">';
+				$out .= '<select class="valignmiddle flat' . ($morecss ? ' ' . $morecss : '') . '"' . ($disabled ? ' disabled="disabled"' : '') . ' id="' . $htmlname . '" name="' . $htmlname . '">'."\n";
 			}
 			if (!empty($show_empty)) {
 				$out .= '<option value="0" class="optiongrey">';
@@ -411,7 +411,7 @@ class FormProjets extends Form
 				} else {
 					$out .= '&nbsp;';
 				}
-				$out .= '</option>';
+				$out .= '</option>'."\n";
 			}
 
 			$num = $this->db->num_rows($resql);
@@ -486,7 +486,7 @@ class FormProjets extends Form
 							$out .= '<option value="' . $obj->rowid . '" selected';
 							$out .= ' data-html="' . dol_escape_htmltag($labeltoshowhtml) . '"';
 							//if ($disabled) $out.=' disabled';						// with select2, field can't be preselected if disabled
-							$out .= '>' . $labeltoshow . '</option>';
+							$out .= '>' . $labeltoshow . '</option>'."\n";
 						} else {
 							if ($hideunselectables && $disabled && ($selected != $obj->rowid)) {
 								$resultat = '';
@@ -500,7 +500,7 @@ class FormProjets extends Form
 								$resultat .= ' data-html="' . dol_escape_htmltag($labeltoshowhtml) . '"';
 								$resultat .= '>';
 								$resultat .= $labeltoshow;
-								$resultat .= '</option>';
+								$resultat .= '</option>'."\n";
 							}
 							$out .= $resultat;
 						}
@@ -509,7 +509,7 @@ class FormProjets extends Form
 				}
 			}
 			if (empty($option_only)) {
-				$out .= '</select>';
+				$out .= '</select>'."\n";
 			}
 
 			$this->nboftasks = $num;

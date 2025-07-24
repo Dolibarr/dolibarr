@@ -668,8 +668,12 @@ input, select {
 input.button.massactionconfirmed {
 	margin: 4px;
 }
+
 input.short {
 	width: 40px;
+}
+input.shortbis {
+	width: 48px;
 }
 
 input:invalid, select:invalid, input.--error , select.--error {
@@ -3780,6 +3784,9 @@ div.vmenu, td.vmenu {
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
 	<?php } ?>
+}
+.vmenudisabled {
+	margin-<?php print $left; ?>: 8px !important
 }
 
 .vmenusearchselectcombo {
@@ -7678,6 +7685,10 @@ dd.dropdowndd ul li {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+}
+
+div.kanban.column div.ui-sortable-helper {
+	transform: rotate(4deg);
 }
 
 

@@ -205,7 +205,7 @@ class MouvementStock extends CommonObject
 	 *													0=input (stock increase by a stock transfer), 1=output (stock decrease by a stock transfer),
 	 *													2=output (stock decrease), 3=input (stock increase)
 	 *                          		            	Note that qty should be > 0 with 0 or 3, < 0 with 1 or 2.
-	 *	@param		float			$price				Unit price HT of product, used to calculate average weighted price (AWP or PMP in french). If 0, average weighted price is not changed.
+	 *	@param		int|float		$price				Unit price HT of product, used to calculate average weighted price (AWP or PMP in french). If 0, average weighted price is not changed.
 	 *	@param		string			$label				Label of stock movement
 	 *	@param		string			$inventorycode		Inventory code
 	 *	@param		int|string		$datem				Force date of movement

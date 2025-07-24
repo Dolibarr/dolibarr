@@ -901,6 +901,11 @@ function security_prepare_head()
 	$head[$h][2] = 'audit';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT."/admin/openid_connect.php";
+	$head[$h][1] = $langs->trans("OpenIDconnectSetup");
+	$head[$h][2] = 'openid';
+	$h++;
+
 
 	// Show permissions lines
 	$nbPerms = 0;
@@ -1575,7 +1580,7 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
  */
 function activateModulesRequiredByCountry($country_code)
 {
-	global $db, $conf, $langs;
+	global $db;
 
 	$modulesdir = dolGetModulesDirs();
 

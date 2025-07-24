@@ -205,26 +205,26 @@ class CMailFile
 	/**
 	 *	CMailFile
 	 *
-	 *	@param 	string	$subject             Topic/Subject of mail
-	 *	@param 	string	$to                  Recipients emails (RFC 2822: "Name firstname <email>[, ...]" or "email[, ...]" or "<email>[, ...]"). Note: the keyword '__SUPERVISOREMAIL__' is not allowed here and must be replaced by caller.
-	 *	@param 	string	$from                Sender email      (RFC 2822: "Name firstname <email>[, ...]" or "email[, ...]" or "<email>[, ...]")
-	 *	@param 	string	$msg                 Message
-	 *	@param 	?string[]	$filename_list       List of files to attach (full path of filename on file system)
-	 *	@param 	?string[]	$mimetype_list       List of MIME type of attached files
-	 *	@param 	?string[]	$mimefilename_list   List of attached file name in message
-	 *	@param 	string	$addr_cc             Email cc (Example: 'abc@def.com, ghk@lmn.com')
-	 *	@param 	string	$addr_bcc            Email bcc (Note: This is autocompleted with MAIN_MAIL_AUTOCOPY_TO if defined)
-	 *	@param 	int<0,1>	$deliveryreceipt     Ask a delivery receipt
-	 *	@param 	int<-1,1>	$msgishtml           1=String IS already html, 0=String IS NOT html, -1=Unknown make autodetection (with fast mode, not reliable)
-	 *	@param 	string	$errors_to      	 Email for errors-to
-	 *	@param	string|array<string,string>	$css                 Css option (should be array, legacy: empty string if none)
-	 *	@param	string	$trackid             Tracking string (contains type and id of related element)
-	 *  @param  string  $moreinheader        More in header. $moreinheader must contains the "\r\n" at end of each line
-	 *  @param  string  $sendcontext      	 'standard', 'emailing', 'ticket', 'password', ... (used to define which sending mode and parameters to use)
-	 *  @param	string	$replyto			 Reply-to email (will be set to the same value than From by default if not provided)
-	 *  @param	string	$upload_dir_tmp		 Temporary directory (used to convert images embedded as img src=data:image)
-	 *  @param	string	$in_reply_to		 Message-ID of the message we reply to
-	 *  @param	string	$references			 String with list of Message-ID of the thread ('<123> <456> ...')
+	 *	@param 	string		$subject             	Topic/Subject of mail
+	 *	@param 	string		$to                  	Recipients emails (RFC 2822: "Name firstname <email>[, ...]" or "email[, ...]" or "<email>[, ...]"). Note: the keyword '__SUPERVISOREMAIL__' is not allowed here and must be replaced by caller.
+	 *	@param 	string		$from                	Sender email      (RFC 2822: "Name firstname <email>[, ...]" or "email[, ...]" or "<email>[, ...]")
+	 *	@param 	string		$msg                 	Message
+	 *	@param 	?string[]	$filename_list       	List of files to attach (full path of filename on file system)
+	 *	@param 	?string[]	$mimetype_list       	List of MIME type of attached files
+	 *	@param 	?string[]	$mimefilename_list   	List of attached file name in message
+	 *	@param 	string		$addr_cc             	Email cc (Example: 'abc@def.com, ghk@lmn.com')
+	 *	@param 	string		$addr_bcc            	Email bcc (Note: This is autocompleted with MAIN_MAIL_AUTOCOPY_TO if defined)
+	 *	@param 	int<0,1>	$deliveryreceipt     	Ask a delivery receipt
+	 *	@param 	int<-1,1>	$msgishtml           	1=String IS already html, 0=String IS NOT html, -1=Unknown make autodetection (with fast mode, not reliable)
+	 *	@param 	string		$errors_to      	 	Email for errors-to
+	 *	@param	string|array<string,string>	$css	Css option (should be array, legacy: empty string if none)
+	 *	@param	string		$trackid             	Tracking string (contains type and id of related element)
+	 *  @param  string  	$moreinheader        	More in header. $moreinheader must contains the "\r\n" at end of each line
+	 *  @param  string  	$sendcontext      	 	'standard', 'emailing', 'ticket', 'password', ... (used to define which sending mode and parameters to use)
+	 *  @param	string		$replyto			 	Reply-to email (will be set to the same value than From by default if not provided)
+	 *  @param	string		$upload_dir_tmp		 	Temporary directory (used to convert images embedded as img src=data:image)
+	 *  @param	string		$in_reply_to		 	Message-ID of the message we reply to
+	 *  @param	string		$references			 	String with list of Message-ID of the thread ('<123> <456> ...')
 	 */
 	public function __construct($subject, $to, $from, $msg, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $addr_cc = "", $addr_bcc = "", $deliveryreceipt = 0, $msgishtml = 0, $errors_to = '', $css = '', $trackid = '', $moreinheader = '', $sendcontext = 'standard', $replyto = '', $upload_dir_tmp = '', $in_reply_to = '', $references = '')
 	{
@@ -651,7 +651,9 @@ class CMailFile
 				$smtps->setOptions($options);
 			}
 
-			$this->msgid = time().'.'.mt_rand(100, 999).'.SMTPs-dolibarr-'.$this->trackid.'@'.$host;
+			$this->msgid = uniqid('', true).'.SMTPs-dolibarr-'.$this->trackid.'@'.$host;
+
+			$smtps->setMessageID($this->msgid);
 
 			$this->smtps = $smtps;
 		} elseif ($this->sendmode == 'swiftmailer') {
@@ -674,7 +676,7 @@ class CMailFile
 			$headers = $this->message->getHeaders();
 
 			$headers->addTextHeader('X-Dolibarr-TRACKID', $this->trackid.'@'.$host);
-			$this->msgid = time().'.'.mt_rand(100, 999).'.swiftmailer-dolibarr-'.$this->trackid.'@'.$host;
+			$this->msgid = uniqid('', true).'.swiftmailer-dolibarr-'.$this->trackid.'@'.$host;
 			$headerID = $this->msgid;
 			$msgid = $headers->get('Message-ID');
 			if ($msgid instanceof Swift_Mime_Headers_IdentificationHeader) {
@@ -1677,11 +1679,11 @@ class CMailFile
 
 		$trackid = $this->trackid;
 		if ($trackid) {
-			$this->msgid = time().'.'.mt_rand(100, 999).'.phpmail-dolibarr-'.$trackid.'@'.$host;
+			$this->msgid = uniqid('', true).'.phpmail-dolibarr-'.$trackid.'@'.$host;
 			$out .= 'Message-ID: <'.$this->msgid.">".$this->eol2; // Uppercase seems replaced by phpmail
 			$out .= 'X-Dolibarr-TRACKID: '.$trackid.'@'.$host.$this->eol2;
 		} else {
-			$this->msgid = time().'.'.mt_rand(100, 999).'.phpmail@'.$host;
+			$this->msgid = uniqid('', true).'.phpmail@'.$host;
 			$out .= 'Message-ID: <'.$this->msgid.">".$this->eol2;
 		}
 

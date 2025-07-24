@@ -55,6 +55,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'compta', 'admin', 'other'));
 
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
+
 $action     = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
@@ -64,6 +66,7 @@ $toselect   = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'invoicetemplatelist'; // To manage different context of search
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
+$groupby    = GETPOST('groupby', 'aZ09');
 
 $socid = GETPOSTINT('socid');
 
@@ -122,6 +125,14 @@ $pagenext = $page + 1;
 // Initialize a technical objects
 $object = new FactureRec($db);
 $extrafields = new ExtraFields($db);
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+	'f.titre' => "Ref",
+	's.nom' => "ThirdParty",
+	's.code_client' => "CustomerCodeShort",
+	'fdc.description' => 'Description',
+);
 
 if (($id > 0 || $ref) && $action != 'create' && $action != 'add') {
 	$ret = $object->fetch($id, $ref);
@@ -182,9 +193,13 @@ if ($socid > 0) {
 
 $objecttype = 'facture_rec';
 
+$permissiontoread = $user->hasRight("facture", "read");
 $permissionnote = $user->hasRight('facture', 'creer'); // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('facture', 'creer'); // Used by the include of actions_dellink.inc.php
 $permissiontoedit = $user->hasRight('facture', 'creer'); // Used by the include of actions_lineupdonw.inc.php
+$permissiontodelete = $user->hasRight("facture", "delete");
+
+$uploaddir = $conf->facture->dir_output;
 
 // Security check
 $result = restrictedArea($user, 'facture', $object->id, $objecttype);
@@ -202,7 +217,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array('socid' => $socid);
+$parameters = array('arrayfields' => &$arrayfields, 'socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -246,6 +261,7 @@ if (empty($reshook)) {
 		$search_unit_frequency = '';
 		$search_nb_gen_done = '';
 		$search_status = '';
+		$search_all = '';
 		$toselect = array();
 		$search_array_options = array();
 	}
@@ -255,11 +271,8 @@ if (empty($reshook)) {
 	}
 
 	// Mass actions
-	/*$objectclass='MyObject';
-	$objectlabel='MyObject';
-	$permissiontoread = $user->hasRight("mymodule", "read");
-	$permissiontodelete = $user->hasRight("mymodule", "delete");
-	$uploaddir = $conf->mymodule->dir_output;
+	/*$objectclass = 'MyObject';
+	$objectlabel = 'MyObject';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';*/
 }
 
@@ -389,6 +402,10 @@ if ($search_date_when_end) {
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
+if ($search_all) {
+	$sql .= " AND EXISTS (SELECT fdc.rowid FROM ".MAIN_DB_PREFIX."facturedet_rec as fdc WHERE f.rowid = fdc.fk_facture ".natural_search(array_keys($fieldstosearchall), $search_all).")";
+}
+
 // Count total nb of records
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
@@ -403,7 +420,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -429,6 +446,12 @@ if (!$resql) {
 
 $num = $db->num_rows($resql);
 
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all) {
+	$obj = $db->fetch_object($resql);
+	$id = $obj->facid;
+	header("Location: ".DOL_URL_ROOT.'/compta/facture/card-rec.php?facid='.$id);
+	exit;
+}
 
 // Output page
 // --------------------------------------------------------------------
@@ -446,6 +469,15 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
+}
+if ($optioncss != '') {
+	$param .= '&optioncss='.urlencode($optioncss);
+}
+if ($groupby != '') {
+	$param .= '&groupby='.urlencode($groupby);
+}
+if ($search_all) {
+	$param .= '&search_all='.urlencode($search_all);
 }
 if ($socid > 0) {
 	$param .= '&socid='.urlencode((string) ($socid));
@@ -522,14 +554,11 @@ if ($search_nb_gen_done != '') {
 if ($search_status != '') {
 	$param .= '&search_status='.urlencode($search_status);
 }
-if ($optioncss != '') {
-	$param .= '&optioncss='.urlencode($optioncss);
-}
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // Add $param from hooks
 $parameters = array('param' => &$param);
-$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $param .= $hookmanager->resPrint;
 
 // List of mass actions available
@@ -566,6 +595,13 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 
 print '<span class="opacitymedium">'.$langs->trans("ToCreateAPredefinedInvoice", $langs->transnoentitiesnoconv("ChangeIntoRepeatableInvoice")).'</span><br><br>';
 
+if ($search_all) {
+	foreach ($fieldstosearchall as $key => $val) {
+		$fieldstosearchall[$key] = $langs->trans($val);
+	}
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
+}
+
 $i = 0;
 
 $moreforfilter = '';
@@ -597,7 +633,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 print '<tr class="liste_titre_filter">';
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre maxwidthsearch center">';
+	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
 	print '</td>';
@@ -729,7 +765,7 @@ if (!empty($arrayfields['status']['checked'])) {
 }
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre maxwidthsearch center">';
+	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';

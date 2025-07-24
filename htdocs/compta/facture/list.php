@@ -2920,7 +2920,7 @@ if ($num > 0) {
 			// Note public
 			if (!empty($arrayfields['f.note_public']['checked'])) {
 				print '<td class="sensiblehtmlcontent center">';
-				print dolPrintHTML($obj->note_public);
+				print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2928,8 +2928,8 @@ if ($num > 0) {
 			}
 			// Note private
 			if (!empty($arrayfields['f.note_private']['checked'])) {
-				print '<td class="center">';
-				print dolPrintHTML($obj->note_private);
+				print '<td class="sensiblehtmlcontent center">';
+				print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
