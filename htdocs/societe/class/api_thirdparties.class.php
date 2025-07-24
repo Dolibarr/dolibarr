@@ -1188,19 +1188,15 @@ class Thirdparties extends DolibarrApi
 		if (!$result) {
 			throw new RestException(404, 'Thirdparty not found');
 		}
-		dol_syslog("spliddiscount LOG #1 ", LOG_WARNING);
 		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 		$discount = new DiscountAbsolute($this->db);
-		dol_syslog("spliddiscount LOG #2 ", LOG_WARNING);
 		$res = $discount->fetch($discountid);
-		dol_syslog("spliddiscount LOG #3 ", LOG_WARNING);
 		if (!($res > 0)) {
 			throw new RestException(404, 'Discount not found');
 		}
 		if ($discount->socid != $id) {
 			throw new RestException(405, 'Discount not owned by this thirdpartie');
 		}
-		dol_syslog("spliddiscount LOG #4 ", LOG_WARNING);
 
 		if ( price2num((float) $amount_ttc_1 + (float) $amount_ttc_2) != $discount->amount_ttc) {
 			throw new RestException(405, 'Sum of the 2 discounts is different that the original discount');
@@ -1208,7 +1204,6 @@ class Thirdparties extends DolibarrApi
 		if ($discount->fk_facture_line) {
 			throw new RestException(409, 'Discount is already used');
 		}
-		dol_syslog("spliddiscount LOG #5 ", LOG_WARNING);
 
 		$newdiscount1 = new DiscountAbsolute($this->db);
 		$newdiscount2 = new DiscountAbsolute($this->db);
@@ -1262,18 +1257,18 @@ class Thirdparties extends DolibarrApi
 
 		// DiscountAbsolute->amount_ttc  ->amount_ht  ->amount_tva    are marked as @deprecated  but seems to yet be in use so we fill ->amout_xxx and ->total_xxx
 		// the same for multicurrency_amount_xxx and multicurrency_total_xxx
-		$newdiscount1->total_ttc = $newdiscount1->amount_ttc;
-		$newdiscount1->total_ht = $newdiscount1->amount_ht;
-		$newdiscount1->total_tva = $newdiscount1->amount_tva;
-		$newdiscount2->total_ttc = $newdiscount2->amount_ttc;
-		$newdiscount2->total_ht = $newdiscount2->amount_ht;
-		$newdiscount2->total_tva = $newdiscount2->amount_tva;
-		$newdiscount1->multicurrency_total_ttc = $newdiscount1->multicurrency_amount_ttc;
-		$newdiscount1->multicurrency_total_ht = $newdiscount1->multicurrency_amount_ht;
-		$newdiscount1->multicurrency_total_tva = $newdiscount1->multicurrency_amount_tva;
-		$newdiscount2->multicurrency_total_ttc = $newdiscount2->multicurrency_amount_ttc;
-		$newdiscount2->multicurrency_total_ht = $newdiscount2->multicurrency_amount_ht;
-		$newdiscount2->multicurrency_total_tva = $newdiscount2->multicurrency_amount_tva;
+		$newdiscount1->total_ttc = price2num($newdiscount1->amount_ttc);
+		$newdiscount1->total_ht = price2num($newdiscount1->amount_ht);
+		$newdiscount1->total_tva = price2num($newdiscount1->amount_tva);
+		$newdiscount2->total_ttc = price2num($newdiscount2->amount_ttc);
+		$newdiscount2->total_ht = price2num($newdiscount2->amount_ht);
+		$newdiscount2->total_tva = price2num($newdiscount2->amount_tva);
+		$newdiscount1->multicurrency_total_ttc = price2num($newdiscount1->multicurrency_amount_ttc);
+		$newdiscount1->multicurrency_total_ht = price2num($newdiscount1->multicurrency_amount_ht);
+		$newdiscount1->multicurrency_total_tva = price2num($newdiscount1->multicurrency_amount_tva);
+		$newdiscount2->multicurrency_total_ttc = price2num($newdiscount2->multicurrency_amount_ttc);
+		$newdiscount2->multicurrency_total_ht = price2num($newdiscount2->multicurrency_amount_ht);
+		$newdiscount2->multicurrency_total_tva = price2num($newdiscount2->multicurrency_amount_tva);
 
 		$this->db->begin();
 
@@ -1296,7 +1291,7 @@ class Thirdparties extends DolibarrApi
 			if (!$result) {
 				throw new RestException(503, $this->db->lasterror());
 			} else {
-				$num = $this->db->num_rows($result);
+				// $num = $this->db->num_rows($result);
 				while ($obj = $this->db->fetch_object($result)) {
 					$obj_ret[] = $obj;
 				}
@@ -1309,7 +1304,6 @@ class Thirdparties extends DolibarrApi
 		}
 		return [];
 	}
-
 
 
 	/**
