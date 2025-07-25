@@ -1244,16 +1244,16 @@ class pdf_crabe extends ModelePDFFactures
 		// Show previous and new balance
 		if ($object->status > Facture::STATUS_DRAFT && getDolGlobalInt('PDF_INVOICE_SHOW_BALANCE_SUMMARY')) {
     		// All customer previous invoices
-    		$sql = "SELECT f.rowid, f.datef, f.total_ttc";
-    		$sql.= " FROM " . MAIN_DB_PREFIX . "facture as f";
-    		$sql.= " WHERE f.fk_soc = " . ((int) $object->socid);
-    		$sql.= " AND f.entity IN (" . getEntity('invoice') . ")";
-    		$sql.= " AND f.datef <= '" . $db->idate($object->date) . "'";
-    		$sql.= " AND f.rowid < " . ((int) $object->id);
-    		$sql.= " AND f.fk_statut > 0";
-    		$sql.= " ORDER BY f.datef ASC";
+			$sql = "SELECT f.rowid, f.datef, f.total_ttc";
+			$sql.= " FROM " . MAIN_DB_PREFIX . "facture as f";
+			$sql.= " WHERE f.fk_soc = " . ((int) $object->socid);
+			$sql.= " AND f.entity IN (" . getEntity('invoice') . ")";
+			$sql.= " AND f.datef <= '" . $db->idate($object->date) . "'";
+			$sql.= " AND f.rowid < " . ((int) $object->id);
+			$sql.= " AND f.fk_statut > 0";
+			$sql.= " ORDER BY f.datef ASC";
 
-    		$old_balance = 0;
+			$old_balance = 0;
     		$invoices = array();
     		$resql = $db->query($sql);
     		if ($resql) {
