@@ -1418,16 +1418,16 @@ class pdf_octopus extends ModelePDFFactures
 			$sql.= " FROM " . MAIN_DB_PREFIX . "facture as f";
 			$sql.= " WHERE f.fk_soc = " . ((int) $object->socid);
 			$sql.= " AND f.entity IN (" . getEntity('invoice') . ")";
-			$sql.= " AND f.datef <= '" . $db->idate($object->date) . "'";
+			$sql.= " AND f.datef <= '" . $this->db->idate($object->date) . "'";
 			$sql.= " AND f.rowid < " . ((int) $object->id);
 			$sql.= " AND f.fk_statut > 0";
 			$sql.= " ORDER BY f.datef ASC";
 
 			$old_balance = 0;
 			$invoices = array();
-			$resql = $db->query($sql);
+			$resql = $this->db->query($sql);
 			if ($resql) {
-				while ($obj = $db->fetch_object($resql)) {
+				while ($obj = $this->db->fetch_object($resql)) {
 					$invoices[] = $obj;
 					$old_balance += $obj->total_ttc;
 				}
@@ -1440,13 +1440,13 @@ class pdf_octopus extends ModelePDFFactures
 			$sql_payments.= " INNER JOIN " . MAIN_DB_PREFIX . "paiement as p ON p.rowid = pf.fk_paiement";
 			$sql_payments.= " INNER JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = pf.fk_facture";
 			$sql_payments.= " WHERE f.fk_soc = " . ((int) $object->socid);
-			$sql_payments.= " AND p.datep < '" . $db->idate($object->date) . "'";
+			$sql_payments.= " AND p.datep < '" . $this->db->idate($object->date) . "'";
 			$sql_payments.= " ORDER BY p.datep ASC";
 
 			$total_payments = 0;
-			$resql_payments = $db->query($sql_payments);
+			$resql_payments = $this->db->query($sql_payments);
 			if ($resql_payments) {
-				while ($obj_payment = $db->fetch_object($resql_payments)) {
+				while ($obj_payment = $this->db->fetch_object($resql_payments)) {
 					$total_payments += $obj_payment->amount;
 				}
 				$db->free($resql_payments);
@@ -1458,12 +1458,12 @@ class pdf_octopus extends ModelePDFFactures
 			$sql_current_date_payments.= " INNER JOIN " . MAIN_DB_PREFIX . "paiement as p ON p.rowid = pf.fk_paiement";
 			$sql_current_date_payments.= " INNER JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = pf.fk_facture";
 			$sql_current_date_payments.= " WHERE f.fk_soc = " . ((int) $object->socid);
-			$sql_current_date_payments.= " AND DATE(p.datep) = DATE('" . $db->idate($object->date) . "')";
+			$sql_current_date_payments.= " AND DATE(p.datep) = DATE('" . $this->db->idate($object->date) . "')";
 
 			$current_date_payments = 0;
-			$resql_current_date = $db->query($sql_current_date_payments);
+			$resql_current_date = $this->db->query($sql_current_date_payments);
 			if ($resql_current_date) {
-				while ($obj_current = $db->fetch_object($resql_current_date)) {
+				while ($obj_current = $this->db->fetch_object($resql_current_date)) {
 					$current_date_payments += $obj_current->amount;
 				}
 				$db->free($resql_current_date);
