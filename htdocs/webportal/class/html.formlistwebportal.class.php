@@ -593,7 +593,7 @@ class FormListWebPortal
 		}
 
 		// Hook fields
-		$parameters = array('arrayfields' => $arrayfields, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
+		$parameters = array('arrayfields' => $arrayfields, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'sortList' => $sortList, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		$html .= $hookmanager->resPrint;
 		$html .= '</tr>';
