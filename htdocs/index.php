@@ -94,11 +94,16 @@ if (!isset($form) || !is_object($form)) {
 	$form = new Form($db);
 }
 
-// Title
-$title = $langs->trans("HomeArea").' - Dolibarr '.DOL_VERSION;
-if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-	$title = $langs->trans("HomeArea").' - ' . getDolGlobalString('MAIN_APPLICATION_TITLE');
+$appli = constant('DOL_APPLICATION_TITLE');
+$applicustom = getDolGlobalString('MAIN_APPLICATION_TITLE');
+if ($applicustom) {
+	$appli = (preg_match('/^\+/', $applicustom) ? $appli : '').$applicustom;
+} else {
+	$appli .= " ".DOL_VERSION;
 }
+
+// Title
+$title = $langs->trans("HomeArea").' - '.$appli;
 
 llxHeader('', $title);
 
@@ -574,8 +579,32 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 					$groupElement['globalStats'] = array();
 				}
 
+				// Links
+				$arrayLinks = array(
+					'action' => dol_buildpath('/comm/action/card.php?action=create', 1),
+					'project' => dol_buildpath('/projet/card.php?action=create', 1),
+					'propal' => dol_buildpath('/comm/propal/card.php?action=create', 1),
+					'commande' => dol_buildpath('/commande/card.php?action=create', 1),
+					'facture' => dol_buildpath('/compta/facture/card.php?action=create', 1),
+					'supplier_proposal' => dol_buildpath('/supplier_proposal/card.php?action=create', 1),
+					'order_supplier' => dol_buildpath('/fourn/commande/card.php?action=create', 1),
+					'invoice_supplier' => dol_buildpath('/fourn/facture/card.php?action=create', 1),
+					'contrat' => dol_buildpath('/contrat/card.php?action=create', 1),
+					'ticket' => dol_buildpath('/ticket/card.php?action=create', 1),
+					'bank_account' => dol_buildpath('/compta/bank/card.php?action=create', 1),
+					'member' => dol_buildpath('/adherents/card.php?action=create', 1),
+					'expensereport' => dol_buildpath('/expensereport/card.php?action=create', 1),
+					'holiday' => dol_buildpath('/holiday/card.php?action=create', 1),
+					'cubes' => dol_buildpath('/mrp/mo_card.php?action=create', 1),
+
+				);
+				$infoboxMoreCss = '';
+				if (array_key_exists($groupKey, $arrayLinks)) {
+					$infoboxMoreCss = 'infobox-haslink';
+				}
+
 				$openedDashBoard .= '<div class="box-flex-item"><div class="box-flex-item-with-margin">'."\n";
-				$openedDashBoard .= '	<div class="info-box '.$openedDashBoardSize.'">'."\n";
+				$openedDashBoard .= '	<div class="info-box '.$openedDashBoardSize.' '.$infoboxMoreCss.'">'."\n";
 				$openedDashBoard .= '		<span class="info-box-icon bg-infobox-'.$groupKeyLowerCase.'">'."\n";
 				$openedDashBoard .= '		<i class="fa fa-dol-'.$groupKeyLowerCase.'"></i>'."\n";
 
@@ -583,6 +612,10 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 				if (!empty($groupElement['globalStats'])) {
 					$globalStatInTopOpenedDashBoard[] = $globalStatsKey;
 					$openedDashBoard .= '<span class="info-box-icon-text" title="'.$groupElement['globalStats']['text'].'">'.$groupElement['globalStats']['nbTotal'].'</span>';
+				}
+
+				if (array_key_exists($groupKey, $arrayLinks)) {
+					$openedDashBoard .= '		<a href="'.$arrayLinks[$groupKey].'" class="info-box-createlink"><span class="fas fa-plus-circle"></span></a>'."\n";
 				}
 
 				$openedDashBoard .= '</span>'."\n";
