@@ -756,8 +756,8 @@ class ExpenseReport extends CommonObject
 				}
 				$this->user_validator_infos = dolGetFirstLastname($user_approver->firstname, $user_approver->lastname);
 
-				$this->fk_statut                = $obj->status; // deprecated
-				$this->status                   = $obj->status;
+				$this->fk_statut                = (int) $obj->status; // deprecated
+				$this->status                   = (int) $obj->status;
 				$this->fk_c_paiement            = $obj->fk_c_paiement;
 				$this->paid                     = $obj->paid;
 

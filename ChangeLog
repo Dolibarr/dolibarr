@@ -161,6 +161,115 @@ The following changes may create regressions for some external modules, but were
 * Debug v22 - Invert option TICKET_DO_NOT_INCLUDE_LINK_TO_CUSTOMER (that add link to backoffice interface link when it should remain private)
   into TICKET_INCLUDE_LINK_TO_PUBLIC_INTERFACE_IN_MESSAGE. It also avoid often emails marked as SPAM due to suspicious link.
 
+
+***** ChangeLog for 21.0.2 compared to 21.0.1 *****
+
+FIX: 21.0: $height and $width can be ints, but also 'auto' (#34636)
+FIX: #33030 (#34460)
+FIX: #33727 Sec
+FIX: #33774 #34214
+FIX: #33854
+FIX: #34313 Accountancy - Export with sources no longer works (#34324)
+FIX: (#34448)
+FIX: #34541 (#34597)
+FIX: #34564 (#34590)
+FIX: #34591 FIX: #34692
+FIX: #34618 (#34621)
+FIX: #34654
+FIX: accountancy: bad filter on custom account groups (#34205)
+FIX: accountancy balance: keep subtotals when sorting (#34001)
+FIX: accountancy closure: if subledger_label is not found, PHP8.2 throws an error. (#34736)
+FIX: accountancy: create new french PCG25-DEV accounting system in upgrade (#34036)
+FIX: accountancy expensereport journal: php 8.1 warning (#34457)
+FIX: accountancy fec export: remove dol_print_date warning (#34363)
+FIX: accountancy general ledger: last total not shown if last account group shown has only one entry (#34251)
+FIX: accountancy lettering: php8.1 warning (#34469)
+FIX: Accountancy - Problem with constant ACCOUNTANCY_COMBO_FOR_AUX (#34414)
+FIX: accountancy sales/purchases journal: sql error logged when no invoice in journal (#34339)
+FIX: accountancy: warning when account not found in plan (#34030)
+FIX: a comment without after a comma create a sql error (#33752)
+FIX: Add others allowed tags (table, tr, td) for the prices history table displayed in the link url of the supplier product in supplier product prices list (#34532)
+FIX: add payment to bank (#34263)
+FIX: allow double colon and string obfuscation in dol eval for computed extra fields (#34015)
+FIX: API expense report line comments (v18+) (#34297)
+FIX: Approver must be able to approve even if user not in hierarchy.
+FIX: asset depreciation: division by zero (#34218)
+FIX: asset depreciation: php warnings (#34219)
+FIX: avoid sql error when a comment is after without comma (#33758)
+FIX: Backport fix of substitution of thirdparty info in notification
+FIX: backport of replaceement of thirdparty information on notification
+FIX: bad value for company ref crashes canvas feature (#34331)
+FIX: bank payment rejection on SEPA (backport commit 100a657) (#33838)
+FIX: BankTransfer information in line.php (#34425)
+FIX: BankTransfer link in list.php (#34513)
+FIX: BankTransfer link in rejets.php (#34424)
+FIX: Bug filters (#34546)
+FIX: Can set default value of the nature of member
+FIX: Can set the default value of nature of thirdparty
+FIX: cash control report: php warning (#34358)
+FIX: common fields: php warning with select input field (#34495)
+FIX: constant PAYMENTBYBANKTRANSFER_ADDDAYS was never saved (#33799)
+FIX: creating acredit note from the remain to pay was always 0
+FIX: DetecHTML on upload file from filemanager fails due to need to lock
+FIX: Disallow special char in name of oauth entries
+FIX: do not add a filter on status when doing a global search on project
+FIX: Do not allow to force amount for online payment of order
+FIX: do not forget extrafields for BOM in export lines (#34020)
+FIX: Edition of target of menu entries
+FIX: element must be visible to set focus on select input when using default values (#34406)
+FIX: email collector: php 8 warning (#34496)
+FIX: encoding issues with underscores in mb_convert_encoding functionality (#34411)
+FIX: ensure dir exists before trying to move something in it (#34211)
+FIX: event info tab: php 8.1 warning (#34458)
+FIX: expense report card: mail notifications not sent (#34556)
+FIX: expensereport payment list: php warning (#34453)
+FIX: expensereport: php warning when generating pdf with multilangs (#34492)
+FIX: files lib: multiple php 8.1 warnings (#34462)
+FIX: filter agenda on user and resource SQL error (#34580)
+FIX: HTML broken by the trunc.
+FIX: html title when using custom value
+FIX: if filter is set on export for Duree type filed, then there is SQL error (#34616)
+FIX: interventions: sql error when signed_status not set (#34515)
+FIX: js warning (Backport commit 84d982c) (#34555)
+FIX: local taxes text in object line view mode (#34103)
+FIX: local taxes text in PDF (#34343)
+FIX: mandatory extrafelds on lines are not checked (#34228)
+FIX: manufacturing orders: php 8.1 warnings on agenda tab (#34475)
+FIX: mass assignment of sale representative
+FIX: Missing ol in no escape tags (#34261)
+FIX: modification de dates de pièces comptables sur plusieurs entités différentes (#34226)
+FIX: oauth: php 8 warnings (#34027)
+FIX: online propal sign: double header with logo when custom logo set (#34504)
+FIX: Order error translation (#33834)
+FIX: page of bom when only bom module is on
+FIX: partial result on timespent list (#33855)
+FIX: pgsql: boolean fields correctly defined in creation but not in migration (#34215)
+FIX: pgsql: case sensitivity in select queries (#34028)
+FIX: pgsql: error when creating sequences in migration scripts (#34021)
+FIX: PHP 8 Error 500 (#34545)
+FIX: prelevement order list: handle case of use by banktransfer module (#33801)
+FIX: pre-send mail mass action: keep __EMAIL__ substitution (#34522)
+FIX: prevent log warning with online signature url (#34361)
+FIX: Product batch series - Title, help url et picto (#34560)
+FIX: product multiprices: fatal error on vat update on php 8.2 (#34444)
+FIX: product suplier tab: last modif date column was wrongly dependent of module barcode (#34170)
+FIX: product translation: redirect after successful action (#34403)
+FIX: projects: go back to edit view after cloning (#34221)
+FIX: receptions: crash from api because of classes not found (#34523)
+FIX: Remove useless amp; after & (#34288)
+FIX: select supplier when creating object from project (#33766)
+FIX: social contribution payment: correct error reporting (#34002)
+FIX: stock control condition in reception delete (#33952)
+FIX: Tmparray string not array (#34287)
+FIX: Too heavy sql query (#34371)
+FIX: try to fix v18 github action workflow (#34439)
+FIX: Various payment - List - Can't see payment with subledger account (#34101)
+FIX: warehouse list: broken status filter (#33667)
+FIX: warnings when printing start/end date on line tpl (#34359)
+FIX: wrong multicompany filter (#34714)
+FIX: ws detection
+
+
 ***** ChangeLog for 21.0.1 compared to 21.0.0 *****
 
 FIX: #33360
