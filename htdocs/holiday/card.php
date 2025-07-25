@@ -676,8 +676,14 @@ if (empty($reshook)) {
 					$expediteur = new User($db);
 					$expediteur->fetch($object->fk_validator);
 					//$emailFrom = $expediteur->email;		Email of user can be an email into another company. Sending will fails, we must use the generic email.
-					$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
-
+					
+					// You can specify a special address from for holiday
+					if(!empty(getDolGlobalString('MAIN_MAIL_EMAIL_HOLIDAY_FROM'))){
+						$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_HOLIDAY_FROM');
+					}else{
+						$emailFrom = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+					}
+					
 					// Subject
 					$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 					if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
