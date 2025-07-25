@@ -155,7 +155,10 @@ if ($action == 'updateMask') {
 	$draft = GETPOST('HOLIDAY_DRAFT_WATERMARK', 'alpha');
 	$res2 = dolibarr_set_const($db, "HOLIDAY_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
 
-	if (!($res1 > 0) || !($res2 > 0)) {
+	$main_mail_email_holiday_from = GETPOST('MAIN_MAIL_EMAIL_HOLIDAY_FROM', 'alpha');
+	$res3 = dolibarr_set_const($db, "MAIN_MAIL_EMAIL_HOLIDAY_FROM", trim($main_mail_email_holiday_from), 'chaine', 0, '', $conf->entity);
+	
+	if (!($res1 > 0) || !($res2 > 0) || !($res3 > 0)) {
 		$error++;
 	}
 
@@ -567,13 +570,19 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	print '</td></tr>'."\n";
 
 	//Use draft Watermark
-
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("WatermarkOnDraftHolidayCards"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 	print '</td><td>';
 	print '<input class="flat minwidth200" type="text" name="HOLIDAY_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('HOLIDAY_DRAFT_WATERMARK')).'">';
 	print '</td></tr>'."\n";
 }
+
+	//Use a specific sender's address mail
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("HolidayMailSenderAdress"), $langs->trans("HolidayMailSenderAdressHelp"), 1, 'help', '', 0, 2, 'holidaymailsenderadresstooltip').'<br>';
+	print '</td><td>';
+	print '<input class="flat minwidth200" type="text" name="MAIN_MAIL_EMAIL_HOLIDAY_FROM" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_MAIL_EMAIL_HOLIDAY_FROM')).'">';
+	print '</td></tr>'."\n";
 
 print '</table>';
 print '</div>';
