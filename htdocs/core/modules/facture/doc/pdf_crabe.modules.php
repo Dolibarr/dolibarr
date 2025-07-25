@@ -1243,7 +1243,7 @@ class pdf_crabe extends ModelePDFFactures
 
 		// Show previous and new balance
 		if ($object->status > Facture::STATUS_DRAFT && getDolGlobalInt('PDF_INVOICE_SHOW_BALANCE_SUMMARY')) {
-    		// All customer previous invoices
+			// All customer previous invoices
 			$sql = "SELECT f.rowid, f.datef, f.total_ttc";
 			$sql.= " FROM " . MAIN_DB_PREFIX . "facture as f";
 			$sql.= " WHERE f.fk_soc = " . ((int) $object->socid);
@@ -1254,56 +1254,56 @@ class pdf_crabe extends ModelePDFFactures
 			$sql.= " ORDER BY f.datef ASC";
 
 			$old_balance = 0;
-    		$invoices = array();
-    		$resql = $db->query($sql);
-    		if ($resql) {
-        		while ($obj = $db->fetch_object($resql)) {
-            		$invoices[] = $obj;
-            		$old_balance += $obj->total_ttc;
-        		}
-        		$db->free($resql);
-    		}
+			$invoices = array();
+			$resql = $db->query($sql);
+			if ($resql) {
+				while ($obj = $db->fetch_object($resql)) {
+					$invoices[] = $obj;
+					$old_balance += $obj->total_ttc;
+				}
+				$db->free($resql);
+			}
 
     		// All payments before current date
-    		$sql_payments = "SELECT p.datep, pf.fk_facture, pf.amount";
-    		$sql_payments.= " FROM " . MAIN_DB_PREFIX . "paiement_facture as pf";
-    		$sql_payments.= " INNER JOIN " . MAIN_DB_PREFIX . "paiement as p ON p.rowid = pf.fk_paiement";
-    		$sql_payments.= " INNER JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = pf.fk_facture";
-    		$sql_payments.= " WHERE f.fk_soc = " . ((int) $object->socid);
-    		$sql_payments.= " AND p.datep < '" . $db->idate($object->date) . "'";
-    		$sql_payments.= " ORDER BY p.datep ASC";
+			$sql_payments = "SELECT p.datep, pf.fk_facture, pf.amount";
+			$sql_payments.= " FROM " . MAIN_DB_PREFIX . "paiement_facture as pf";
+			$sql_payments.= " INNER JOIN " . MAIN_DB_PREFIX . "paiement as p ON p.rowid = pf.fk_paiement";
+			$sql_payments.= " INNER JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = pf.fk_facture";
+			$sql_payments.= " WHERE f.fk_soc = " . ((int) $object->socid);
+			$sql_payments.= " AND p.datep < '" . $db->idate($object->date) . "'";
+			$sql_payments.= " ORDER BY p.datep ASC";
 
-    		$total_payments = 0;
-    		$resql_payments = $db->query($sql_payments);
-    		if ($resql_payments) {
-        		while ($obj_payment = $db->fetch_object($resql_payments)) {
-            		$total_payments += $obj_payment->amount;
-        		}
-        		$db->free($resql_payments);
-    		}
+			$total_payments = 0;
+			$resql_payments = $db->query($sql_payments);
+			if ($resql_payments) {
+				while ($obj_payment = $db->fetch_object($resql_payments)) {
+					$total_payments += $obj_payment->amount;
+				}
+				$db->free($resql_payments);
+			}
 
-    		// Payments made on current invoice date (including current invoice)
-    		$sql_current_date_payments = "SELECT p.datep, pf.fk_facture, pf.amount";
-    		$sql_current_date_payments.= " FROM " . MAIN_DB_PREFIX . "paiement_facture as pf";
-    		$sql_current_date_payments.= " INNER JOIN " . MAIN_DB_PREFIX . "paiement as p ON p.rowid = pf.fk_paiement";
-    		$sql_current_date_payments.= " INNER JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = pf.fk_facture";
-    		$sql_current_date_payments.= " WHERE f.fk_soc = " . ((int) $object->socid);
-    		$sql_current_date_payments.= " AND DATE(p.datep) = DATE('" . $db->idate($object->date) . "')";
+			// Payments made on current invoice date (including current invoice)
+			$sql_current_date_payments = "SELECT p.datep, pf.fk_facture, pf.amount";
+			$sql_current_date_payments.= " FROM " . MAIN_DB_PREFIX . "paiement_facture as pf";
+			$sql_current_date_payments.= " INNER JOIN " . MAIN_DB_PREFIX . "paiement as p ON p.rowid = pf.fk_paiement";
+			$sql_current_date_payments.= " INNER JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = pf.fk_facture";
+			$sql_current_date_payments.= " WHERE f.fk_soc = " . ((int) $object->socid);
+			$sql_current_date_payments.= " AND DATE(p.datep) = DATE('" . $db->idate($object->date) . "')";
 
-    		$current_date_payments = 0;
-    		$resql_current_date = $db->query($sql_current_date_payments);
-    		if ($resql_current_date) {
-        		while ($obj_current = $db->fetch_object($resql_current_date)) {
-            		$current_date_payments += $obj_current->amount;
-        		}
-        		$db->free($resql_current_date);
-    		}
+			$current_date_payments = 0;
+			$resql_current_date = $db->query($sql_current_date_payments);
+			if ($resql_current_date) {
+				while ($obj_current = $db->fetch_object($resql_current_date)) {
+					$current_date_payments += $obj_current->amount;
+				}
+				$db->free($resql_current_date);
+			}
 
-    		// Previous balance
-    		$old_balance = $old_balance - $total_payments;
+			// Previous balance
+			$old_balance = $old_balance - $total_payments;
 
-    		// New balance
-    		$new_balance = $old_balance + $object->total_ttc - $current_date_payments;
+			// New balance
+			$new_balance = $old_balance + $object->total_ttc - $current_date_payments;
 
 			$pdf->SetFillColor(224, 224, 224);
 			$pdf->SetFont('', '', $default_font_size - 2);
