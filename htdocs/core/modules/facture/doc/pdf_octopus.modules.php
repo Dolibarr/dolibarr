@@ -1431,7 +1431,7 @@ class pdf_octopus extends ModelePDFFactures
 					$invoices[] = $obj;
 					$old_balance += $obj->total_ttc;
 				}
-				$db->free($resql);
+				$this->db->free($resql);
 			}
 
 			// All payments before current date
@@ -1449,7 +1449,7 @@ class pdf_octopus extends ModelePDFFactures
 				while ($obj_payment = $this->db->fetch_object($resql_payments)) {
 					$total_payments += $obj_payment->amount;
 				}
-				$db->free($resql_payments);
+				$this->db->free($resql_payments);
 			}
 
 			// Payments made on current invoice date (including current invoice)
@@ -1466,7 +1466,7 @@ class pdf_octopus extends ModelePDFFactures
 				while ($obj_current = $this->db->fetch_object($resql_current_date)) {
 					$current_date_payments += $obj_current->amount;
 				}
-				$db->free($resql_current_date);
+				$this->db->free($resql_current_date);
 			}
 
 			// Previous balance
