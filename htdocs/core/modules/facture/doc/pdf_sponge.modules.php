@@ -1463,7 +1463,7 @@ class pdf_sponge extends ModelePDFFactures
 			}
 
 			// Previous balance
-			$old_balance = $old_balance - $total_payments;
+			$old_balance -= $total_payments;
 
 			// New balance
 			$new_balance = $old_balance + $object->total_ttc - $current_date_payments;
