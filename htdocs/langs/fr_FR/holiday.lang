@@ -158,4 +158,6 @@ NumberDayAddMass=Nombre de jours à ajouter à la sélection
 ConfirmMassIncreaseHolidayQuestion=Êtes-vous sûr de vouloir augmenter les vacances du ou des enregistrement(s) sélectionnés %s ?
 HolidayQtyNotModified=Le solde des jours restants pour %s n'a pas été modifié
 ConsumeHolidaysAtTheEndOfTheMonthTheyAreTakenAt=Décompte les congés à la fin du mois où ils sont pris
-PleaseDefineSomeTypeOfHolidayFirst=Please define first some types of holiday into the dictionary (Menu Home - Setup - dictionaries)
+PleaseDefineSomeTypeOfHolidayFirst=Veuillez d'abord définir quelques types de congés dans le dictionnaire (Menu Accueil - Configuration - Dictionnaires).
+HolidayMailSenderAdress=Adresse mail d'envoi pour les messages liés aux demandes de congés
+HolidayMailSenderAdressHelp=Si vous laissez ce champ vide, l'adresse mail d'envoi par défaut sera utilisée
