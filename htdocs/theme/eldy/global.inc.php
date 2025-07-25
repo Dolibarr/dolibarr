@@ -7025,6 +7025,7 @@ div#ecm-layout-center {
 	padding-right: 10px !important;
 	padding-top: 10px !important;
 	word-wrap: break-word;
+	max-height: 320px;
 }
 .jnotify-container .jnotify-notification .jnotify-message {
 	font-weight: normal;

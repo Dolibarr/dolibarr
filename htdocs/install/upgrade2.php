@@ -593,6 +593,13 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 
 				migrate_accountingbookkeeping($entity);
 			}
+
+			// Scripts for 23.0
+			$afterversionarray = explode('.', '22.0.9');
+			$beforeversionarray = explode('.', '23.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_apiresttokens();
+			}
 		}
 
 		// Code executed only if migration is LAST ONE. Must always be done.
@@ -5351,5 +5358,82 @@ function migrate_accountingbookkeeping(int $entity)
 
 	if (!$resultstring) {
 		print '<tr class="trforrunsql" style=""><td class="wordbreak" colspan="4">'.$langs->trans("NothingToDo")."</td></tr>\n";
+	}
+}
+
+/**
+ * Migrate API key in oauth_token table
+ *
+ * @return  void
+ */
+function migrate_apiresttokens()
+{
+	global $db, $langs;
+
+	print '<tr class="trforrunsql"><td colspan="4">';
+	print '<b>'.$langs->trans('MigrationApiRestTokens')."</b><br>\n";
+
+	$error = 0;
+	$nbofmigration = 0;
+	$allexistingtokens = array();
+
+	$db->begin();
+
+	$sqlforalltokens = "SELECT oat.token";
+	$sqlforalltokens .= " FROM ".$db->prefix()."oauth_token AS oat";
+	$sqlforalltokens .= " WHERE oat.service = 'dolibarr_rest_api'";
+
+	$resalltoken = $db->query($sqlforalltokens);
+
+	if ($resalltoken) {
+		while ($tokenobj = $db->fetch_object($resalltoken)) {
+			$allexistingtokens[] = dolDecrypt($tokenobj->token);
+		}
+	} else {
+		$error++;
+		dol_print_error($db);
+		$db->rollback();
+	}
+
+	if (!$error) {
+		$sql = "SELECT 'dolibarr_rest_api' AS service, u.api_key AS token, u.rowid AS fk_user, CURRENT_TIMESTAMP AS datec, u.entity";
+		$sql .= " FROM llx_user AS u";
+		$sql .= " WHERE u.api_key IS NOT NULL";
+
+		$result = $db->query($sql);
+
+		if ($result) {
+			while ($obj = $db->fetch_object($result)) {
+				if (!in_array(dolDecrypt($obj->token), $allexistingtokens)) {
+					$sqlforinsert = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, token, fk_user, datec, entity)";
+					$sqlforinsert .= " VALUES ('".$db->escape($obj->service)."', '".$db->escape($obj->token)."', ".((int) $obj->fk_user).", '".$db->escape($obj->datec)."', ".((int) $obj->entity).")";
+
+					$insertresult = $db->query($sqlforinsert);
+					if (!$insertresult) {
+						$error++;
+						dol_print_error($db);
+					} else {
+						$nbofmigration++;
+					}
+				}
+			}
+
+			if (!$error) {
+				$db->commit();
+			} else {
+				$db->rollback();
+			}
+		} else {
+			dol_print_error($db);
+			$db->rollback();
+		}
+	}
+
+	if (!$nbofmigration) {
+		print '</td></tr>';
+		print '<tr class="trforrunsql" style=""><td class="wordbreak" colspan="4">'.$langs->trans("NothingToDo")."</td></tr>\n";
+	} else {
+		print $langs->trans('MigratedTokens', $nbofmigration);
+		print '</td></tr>';
 	}
 }

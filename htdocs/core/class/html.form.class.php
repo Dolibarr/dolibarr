@@ -6198,8 +6198,7 @@ class Form
 			$formconfirm .= "/* Code for the jQuery('#dialogforpopup').dialog() */\n";
 			$formconfirm .= 'jQuery(document).ready(function() {
             $(function() {
-            	$( "#' . $dialogconfirm . '" ).dialog(
-            	{
+            	$( "#' . $dialogconfirm . '" ).dialog({
                     autoOpen: ' . ($autoOpen ? "true" : "false") . ',';
 			if ($newselectedchoice == 'no') {
 				$formconfirm .= '
