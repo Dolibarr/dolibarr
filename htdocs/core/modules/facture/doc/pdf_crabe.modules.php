@@ -1264,7 +1264,7 @@ class pdf_crabe extends ModelePDFFactures
 				$db->free($resql);
 			}
 
-    		// All payments before current date
+			// All payments before current date
 			$sql_payments = "SELECT p.datep, pf.fk_facture, pf.amount";
 			$sql_payments.= " FROM " . MAIN_DB_PREFIX . "paiement_facture as pf";
 			$sql_payments.= " INNER JOIN " . MAIN_DB_PREFIX . "paiement as p ON p.rowid = pf.fk_paiement";
