@@ -1883,7 +1883,7 @@ if ($action == 'create') {
 				if (GETPOST('endmonth')) {
 					$dateactend = dol_mktime(12, 0, 0, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
 				} elseif (!$dateactend) {
-					if ($objp->fk_product > 0) {
+					if ($objp->fk_product > 0 && !empty($product->duration_value) && !empty($product->duration_unit)) {
 						$product = new Product($db);
 						$product->fetch($objp->fk_product);
 						$dateactend = dol_time_plus_duree(time(), $product->duration_value, $product->duration_unit);
