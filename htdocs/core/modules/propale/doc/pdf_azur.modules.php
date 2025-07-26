@@ -1134,16 +1134,19 @@ class pdf_azur extends ModelePDFPropales
 
 		// Total discount
 		$total_discount_on_lines = 0;
+		$multicurrency_total_discount_on_lines = 0;
 		foreach ($object->lines as $i => $line) {
 			$resdiscount = pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, 2);
+			$multicurrency_resdiscount = pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, 2, 1);
 
 			$total_discount_on_lines += (is_numeric($resdiscount) ? $resdiscount : 0);
+			$multicurrency_total_discount_on_lines += (is_numeric($multicurrency_resdiscount) ? $multicurrency_resdiscount : 0);
 			// If line was a negative line, we do not count the discount as a discount
 			if ($line->total_ht < 0) {
 				$total_discount_on_lines += -$line->total_ht;
+				$multicurrency_total_discount_on_lines += -$line->multicurrency_total_ht;
 			}
 		}
-		$multicurrency_total_discount_on_lines = price2num($total_discount_on_lines * $object->multicurrency_tx, 'CT');
 
 		if ($total_discount_on_lines > 0) {
 			// Show total NET before discount

@@ -7258,6 +7258,7 @@ function price2num($amount, $rounding = '', $option = 0)
 			//   - `[^,]*,`: Any sequence of characters that is not ',' with ',' accepted as the decimal point (from start of string because of earlier `^`);
 			//   - `[^.]*\.`: Any sequence of characters that is not a '.' with '.' accepted as the decimal point (from start of string.
 			// - `(?<dec>[^.,]*)`: The sequence after the character accepted as the decimal point, not including it.
+			$matches = array();
 			if (preg_match('/^(?<int>[^,]*,|[^.]*\.)(?<dec>[^.,]*)$/u', $amount, $matches)) {
 				$intPart = $matches['int'];
 				$decPart = $matches['dec'];
@@ -7282,15 +7283,15 @@ function price2num($amount, $rounding = '', $option = 0)
 	if ($rounding) {
 		$nbofdectoround = '';
 		if ($rounding == 'MU') {
-			$nbofdectoround = getDolGlobalString('MAIN_MAX_DECIMALS_UNIT');
+			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT');	// usually 5
 		} elseif ($rounding == 'MT') {
-			$nbofdectoround = getDolGlobalString('MAIN_MAX_DECIMALS_TOT');
+			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT');		// usually 2 or 3
 		} elseif ($rounding == 'MS') {
-			$nbofdectoround = isset($conf->global->MAIN_MAX_DECIMALS_STOCK) ? $conf->global->MAIN_MAX_DECIMALS_STOCK : 5;
+			$nbofdectoround = isset($conf->global->MAIN_MAX_DECIMALS_STOCK) ? getDolGlobalInt('MAIN_MAX_DECIMALS_STOCK') : 5;
 		} elseif ($rounding == 'CU') {
-			$nbofdectoround = max(getDolGlobalString('MAIN_MAX_DECIMALS_UNIT'), 8);	// TODO Use param of currency
+			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_CURRENCY_UNIT', getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'));	// TODO Use param of currency
 		} elseif ($rounding == 'CT') {
-			$nbofdectoround = max(getDolGlobalString('MAIN_MAX_DECIMALS_TOT'), 8);		// TODO Use param of currency
+			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_CURRENCY_TOT', getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'));		// TODO Use param of currency
 		} elseif (is_numeric($rounding)) {
 			$nbofdectoround = (int) $rounding;
 		}
