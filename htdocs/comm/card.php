@@ -64,7 +64,7 @@ if (!empty($conf->ficheinter->enabled)) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'banks'));
+$langs->loadLangs(array('companies', 'banks', 'commercial'));
 
 if (!empty($conf->contrat->enabled)) {
 	$langs->load("contracts");
