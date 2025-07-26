@@ -89,7 +89,6 @@ SetupShort=Configuración
 OtherSetup=Otra configuración
 CurrentValueSeparatorThousand=separador de mil
 Destination=Destino
-IdModule=Identificación del módulo
 IdPermissions=Id. de permisos
 LanguageBrowserParameter=Parámetro %s
 ClientHour=Hora del cliente (usuario)
@@ -778,18 +777,15 @@ LabelOnDocuments=Etiqueta en documentos
 LabelOrTranslationKey=Etiqueta o clave de traducción
 AtEndOfMonth=Al final del mes
 Offset=Compensar
-Upgrade=Mejora
 MenuUpgrade=Actualizar / Ampliar
 AddExtensionThemeModuleOrOther=Implementar/instalar aplicación/módulo externo
 DocumentRootServer=Directorio raíz del servidor web
 DataRootServer=directorio de archivos de datos
 OS=sistema operativo
 PhpWebLink=Enlace web-php
-DatabaseServer=anfitrión de la base de datos
 DatabasePort=puerto de base de datos
 DatabaseUser=usuario de la base de datos
 Tables=Mesas
-DriverType=Tipo de conductor
 SummarySystem=Resumen de información del sistema
 SummaryConst=Lista de todos los parámetros de configuración de Dolibarr
 DefaultMenuManager=Administrador de menú estándar
@@ -833,7 +829,6 @@ SetupDescription1=Antes de comenzar a utilizar Dolibarr, se deben definir alguno
 SetupDescription3=<a href="%s"> %s -> %s </a> <br> <br> Parámetros básicos utilizados para personalizar el comportamiento predeterminado de su aplicación (por ejemplo, para funciones relacionadas con el país).
 SetupDescription4=<a href="%s"> %s -> %s </a> <br> <br> Este software es un conjunto de muchos módulos/aplicaciones. Los módulos relacionados con sus necesidades deben estar habilitados y configurados. Las entradas del menú aparecerán con la activación de estos módulos.
 SetupDescription5=Otras entradas del menú de configuración administran parámetros opcionales.
-SetupDescriptionLink=<a href="%s"> %s - %s </a>
 InfoBrowser=Acerca del navegador
 InfoOS=Acerca del sistema operativo
 InfoWebServer=Acerca del servidor web

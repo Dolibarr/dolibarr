@@ -8,13 +8,12 @@ Shipments=Envios
 ShowSending=Mostrar Despachos
 Receivings=Receção de encomendas
 SendingsArea=Área de Envios
-ListOfSendings=Lista de Envios
 SendingMethod=Método de Envio
 LastSendings=Últimas %s expedições
 StatisticsOfSendings=Estatísticas de Envios
 NbOfSendings=Número de Envios
 NumberOfShipmentsByMonth=Número de envios por mês
-SendingCard=Ficha da expedição
+SendingCard=Expedição
 NewSending=Nova expedição
 CreateShipment=Criar Envio
 QtyShipped=Quant. Enviada
@@ -44,6 +43,7 @@ ConfirmCancelSending=Tem a certeza que deseja cancelar esta expedição?
 DocumentModelMerou=Mérou modelo A5
 WarningNoQtyLeftToSend=Atenção, não existe qualquer produto à espera de ser enviado.
 StatsOnShipmentsOnlyValidated=As estatísticas são apenas para remessas validadas. data usado é o data de validação de validação de Expedição (a entrega planejada data nem sempre é conhecida)
+DateShipping=Enviando data
 DateDeliveryPlanned=Data prevista de entrega
 RefDeliveryReceipt=Ref. do recibo de entrega
 StatusReceipt=Estado do recibo de entrega
@@ -63,6 +63,12 @@ NoProductToShipFoundIntoStock=Nenhum produto para envio foi encontrado no armaz�
 WeightVolShort=Peso/Volume
 ValidateOrderFirstBeforeShipment=Deve validar a encomenda antes de poder efetuar expedições.
 NoLineGoOnTabToAddSome=Sem linha, vá na aba "%s" para adicionar
+CreateInvoiceForThisCustomerFromSendings=Criar contas
+IfValidateInvoiceIsNoSendingStayUnbilled=Se fatura validação for 'Não', o envio permanecerá com o status 'Não faturado' até que fatura seja validado.
+OptionToSetSendingBilledNotEnabled=A opção do fluxo de trabalho módulo para definir o envio para 'faturado' automaticamente quando fatura for validado não está habilitada, portanto, você terá que definir o status dos envios para 'faturado' manualmente após fatura foi gerado.
+NoWarehouseInBase=Nenhum armazém na base
+ShipmentUpdated=Expedição atualizado com sucesso
+ShipmentIncrementStockOnDelete = Aumentar o estoque na exclusão
 
 # Sending methods
 # ModelDocument
@@ -71,16 +77,22 @@ DocumentModelStorm=Modelo de documento mais completo para recibos de entrega e c
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER constante não definida
 SumOfProductVolumes=Soma dos volumes dos produtos
 SumOfProductWeights=Soma dos pesos dos produtos
-
 # warehouse details
 DetailWarehouseNumber= Detalhes do armazém
 DetailWarehouseFormat= W:%s (Qtd: %d)
+DetailChildrenFormat=%s : %s (Qtd: %s)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Exibir o último data da entrada em estoque durante a criação de Expedição para número de série ou lote
 CreationOptions=Opções disponíveis durante a criação de Expedição
-
 ShipmentDistribution=Distribuição Expedição
-
 ErrorTooManyCombinationBatchcode=Nenhum envio para a linha %s porque muitas combinações de armazém, produto, lote Código foram encontradas (%s).
 ErrorNoCombinationBatchcode=Não foi possível salvar a linha %s como a combinação de armazém-produto-lote/serial (%s, %s,  '>%s, %s) não foi encontrado em estoque.
-
 ErrorTooMuchShipped=A quantidade enviada não deve ser maior que a quantidade solicitada para a linha %s
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=Representante transporte seguimento
+TypeContact_shipping_external_BILLING=Contacto da fatura do cliente
+TypeContact_shipping_external_CUSTOMER=cliente entre em contato para acompanhar o envio
+TypeContact_shipping_external_SHIPPING=cliente contato para envio
+TypeContact_shipping_external_DELIVERY=cliente contato para entrega
+CloseShipment=Fechar Expedição
+ConfirmCloseShipment=Confirmar fechamento Expedição
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=Pré-selecione o número de lote/série com a data de validade/consumo mais antiga data ao criar um Expedição

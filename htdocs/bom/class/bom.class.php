@@ -3,7 +3,7 @@
  * Copyright (C) 2023	Benjamin Falière	<benjamin.faliere@altairis.fr>
  * Copyright (C) 2023	Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -293,7 +293,7 @@ class BOM extends CommonObject
 	 * @param  int 	$notrigger false=launch triggers after, true=disable triggers
 	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = 1)
+	public function create(User $user, $notrigger = 0)
 	{
 		if ($this->efficiency <= 0 || $this->efficiency > 1) {
 			$this->efficiency = 1;
@@ -432,7 +432,6 @@ class BOM extends CommonObject
 	 * Load object lines in memory from the database by type of product
 	 *
 	 * @param int<0,1>	$typeproduct	0 type product, 1 type service
-
 	 * @return int<-1,1>				Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLinesbytypeproduct($typeproduct = 0)
@@ -468,6 +467,11 @@ class BOM extends CommonObject
 					$newline = new $objectlineclassname($this->db);
 					'@phan-var-force BOMLine $newline';
 					$newline->setVarsFromFetchObj($obj);
+
+					// Load also extrafields for the line
+					//if (empty($noextrafields)) {
+					$newline->fetch_optionals();
+					//}
 
 					$this->lines[] = $newline;
 				}
@@ -553,7 +557,7 @@ class BOM extends CommonObject
 	 * @param  int<0,1> 	$notrigger	0=launch triggers after, 1=disable triggers
 	 * @return int<-1,-1>|int<1,1>		Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = 1)
+	public function update(User $user, $notrigger = 0)
 	{
 		if ($this->efficiency <= 0 || $this->efficiency > 1) {
 			$this->efficiency = 1;
@@ -580,7 +584,7 @@ class BOM extends CommonObject
 	 *
 	 * @param	int			$fk_product				Id of product
 	 * @param	float		$qty					Quantity
-	 * @param	int<0,1> 	$qty_frozen			If the qty is Frozen
+	 * @param	int<0,1> 	$qty_frozen				If the qty is Frozen
 	 * @param 	int			$disable_stock_change	Disable stock change on using in MO
 	 * @param	float		$efficiency				Efficiency in MO
 	 * @param	int<-1,max>	$position				Position of BOM-Line in BOM-Lines
@@ -1438,16 +1442,20 @@ class BOM extends CommonObject
 							$this->error = $tmpproduct->error;
 							return -1;
 						}
-						$unit_cost = (!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp;
-						$line->unit_cost = (float) price2num($unit_cost);
-						if (empty($line->unit_cost)) {
+
+						$unit_cost = (float) (is_null($tmpproduct->cost_price) ? $tmpproduct->pmp : $tmpproduct->cost_price);
+						if (empty($unit_cost)) {	// @phpstan-ignore-line phpstan thinks this is always false. No,if unit_cost is 0, it is not.
 							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
 								if ($productFournisseur->fourn_remise_percent != "0") {
 									$line->unit_cost = $productFournisseur->fourn_unitprice_with_discount;
 								} else {
 									$line->unit_cost = $productFournisseur->fourn_unitprice;
 								}
+							} else {
+								$line->unit_cost = 0;
 							}
+						} else {
+							$line->unit_cost = (float) price2num($unit_cost);
 						}
 
 						$line->total_cost = (float) price2num($line->qty * $line->unit_cost, 'MT');
@@ -1455,7 +1463,7 @@ class BOM extends CommonObject
 						$this->total_cost += $line->total_cost;
 					} else {
 						$bom_child = new BOM($this->db);
-						$res = $bom_child->fetch($line->fk_bom_child);
+						$res = $bom_child->fetch((int) $line->fk_bom_child);
 						if ($res > 0) {
 							$bom_child->calculateCosts();
 							$line->childBom[] = $bom_child;

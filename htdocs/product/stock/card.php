@@ -106,6 +106,11 @@ if ($id > 0 || !empty($ref)) {
 $usercanread = $user->hasRight('stock', 'lire');
 $usercancreate = $user->hasRight('stock', 'creer');
 $usercandelete = $user->hasRight('stock', 'supprimer');
+$permissiontoeditextra = $usercancreate;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 
 /*
@@ -248,21 +253,25 @@ if (empty($reshook)) {
 			$action = 'edit';
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} elseif ($action == 'update_extras' && $user->hasRight('stock', 'creer')) {
-		$object->oldcopy = dol_clone($object, 2);
+	} elseif ($action == 'update_extras' && $permissiontoeditextra) {
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+
+		$attribute_name = GETPOST('attribute', 'aZ09');
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 		if ($ret < 0) {
 			$error++;
 		}
+
 		if (!$error) {
-			$result = $object->insertExtraFields();
+			$result = $object->updateExtraField($attribute_name, 'PRODUCT_MODIFY');
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
 			}
 		}
+
 		if ($error) {
 			$action = 'edit_extras';
 		}
@@ -402,8 +411,7 @@ if ($action == 'create') {
 	if (isModEnabled('category')) {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 3);
-		print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+		print $form->selectCategories(Categorie::TYPE_WAREHOUSE, 'categories', $object);
 		print "</td></tr>";
 	}
 	print '</table>';
@@ -727,6 +735,12 @@ if ($action == 'create') {
 			if ($separatedPMP) {
 				$sql .= ", ".MAIN_DB_PREFIX."product_perentity as pa";
 			}
+			$parameters = array('context' => 'warehousecard');
+			$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters); // Note that $action and $object may have been modified by hook
+			if ($reshook > 0) {			//Note that $sql is replaced if reshook > 0
+				$sql = "";
+			}
+			$sql .= $hookmanager->resPrint;
 
 			$sql .= " WHERE ps.fk_product = p.rowid";
 			$sql .= " AND ps.reel <> 0"; // We do not show if stock is 0 (no product in this warehouse)
@@ -735,6 +749,12 @@ if ($action == 'create') {
 			if ($separatedPMP) {
 				$sql .= " AND pa.fk_product = p.rowid AND pa.entity = ".(int) $conf->entity;
 			}
+			$parameters = array('context' => 'warehousecard');
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+			if ($reshook > 0) {			//Note that $sql is replaced if reshook > 0
+				$sql = "";
+			}
+			$sql .= $hookmanager->resPrint;
 
 			$sql .= $db->order($sortfield, $sortorder);
 
@@ -989,14 +1009,7 @@ if ($action == 'create') {
 			// Tags-Categories
 			if (isModEnabled('category')) {
 				print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td colspan="3">';
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 3);
-				$c = new Categorie($db);
-				$cats = $c->containing($object->id, Categorie::TYPE_WAREHOUSE);
-				$arrayselected = array();
-				foreach ($cats as $cat) {
-					$arrayselected[] = $cat->id;
-				}
-				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+				print $form->selectCategories(Categorie::TYPE_WAREHOUSE, 'categories', $object);
 				print "</td></tr>";
 			}
 

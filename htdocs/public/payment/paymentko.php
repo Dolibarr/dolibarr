@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ if (is_numeric($entity)) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 if (isModEnabled('paypal')) {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
@@ -70,6 +70,7 @@ if (isModEnabled('paypal')) {
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
+ * @var User $user 		User object is initialized but empty as it is a public page
  *
  * @var string $dolibarr_main_url_root
  */
@@ -93,10 +94,12 @@ if (isModEnabled('paypal')) {
 		$PAYPALPAYERID = GETPOST('PayerID');
 	}
 }
+/*
 if (isModEnabled('paybox')) {
 }
 if (isModEnabled('stripe')) {
 }
+*/
 
 $FULLTAG = GETPOST('FULLTAG');
 if (empty($FULLTAG)) {
@@ -116,14 +119,14 @@ if (empty($paymentmethod)) {
 	dol_print_error(null, 'The back url does not contain a parameter fulltag that should help us to find the payment method used');
 	exit;
 } else {
-	dol_syslog("paymentmethod=".$paymentmethod);
+	dol_syslog("paymentko.php: paymentmethod=".$paymentmethod, LOG_DEBUG, 0, '_payment');
 }
 
 // Detect $ws
 $reg_ws = array();
 $ws = preg_match('/WS=([^\.]+)/', $FULLTAG, $reg_ws) ? $reg_ws[1] : 0;
 if ($ws) {
-	dol_syslog("Paymentko.php page is invoked from a website with ref ".$ws.". It performs actions and then redirects back to this website. A page with ref paymentko must be created for this website.", LOG_DEBUG, 0, '_payment');
+	dol_syslog("paymentko.php: page is invoked from a website with ref ".$ws.". It performs actions and then redirects back to this website. A page with ref paymentko must be created for this website.", LOG_DEBUG, 0, '_payment');
 }
 
 
@@ -142,6 +145,7 @@ $error = 0;
 
 // Check if we have redirtodomain to do.
 $ws_virtuelhost = null;
+$ws_id = 0;
 $doactionsthenredirect = 0;
 if ($ws) {
 	$doactionsthenredirect = 1;
@@ -150,6 +154,7 @@ if ($ws) {
 	$result = $website->fetch(0, $ws);
 	if ($result > 0) {
 		$ws_virtuelhost = $website->virtualhost;
+		$ws_id = $website->id;
 	}
 }
 
@@ -159,7 +164,6 @@ if ($ws) {
  */
 
 // None
-
 
 
 /*
@@ -176,10 +180,12 @@ foreach ($_POST as $k => $v) {
 }
 dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_payment');
 
+dol_syslog("paymentkosessioncode=".GETPOST('paymentkosessioncode')." SESSION['paymentkosessioncode']=".$_SESSION['paymentkosessioncode'], LOG_DEBUG, 0, '_payment');
 
 // Set $appli for emails title
 $appli = $mysoc->name;
 $error = 0;
+$FinalPaymentAmt = 0;
 
 
 if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
@@ -195,6 +201,7 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 	$ipaddress          = $_SESSION['ipaddress'];
 	$errormessage       = $_SESSION['errormessage'];
 
+	// @phpstan-ignore-next-line
 	if (is_object($object) && method_exists($object, 'call_trigger')) {
 		// Call trigger @phan-suppress-next-line PhanUndeclaredMethod
 		$result = $object->call_trigger('PAYMENTONLINE_PAYMENT_KO', $user);
@@ -214,7 +221,7 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 		if (empty($myCompanyDefaultLang) || $myCompanyDefaultLang === 'auto') {
 			// We must guess the language from the company country. We must not use the language of the visitor. This is a technical email for supervision
 			// so it must always be into the same language.
-			$myCompanyDefaultLang = getLanguageCodeFromCountryCode($mysoc->country_code);
+			$myCompanyDefaultLang = (string) getLanguageCodeFromCountryCode($mysoc->country_code);
 		}
 
 		$companylangs = new Translate('', $conf);
@@ -347,12 +354,17 @@ $db->close();
 // If option to do a redirect somewhere else is defined.
 if (!empty($doactionsthenredirect)) {
 	// Redirect to an error page
+	$randomseckey = getRandomPassword(true, null, 20);
+	$_SESSION['paymentkosessionkey'] = $randomseckey;		// key between paymentok.php to another page like a paymentko of the website.
+
 	// Paymentko page must be created for the specific website
 	if (!defined('USEDOLIBARRSERVER') && !empty($ws_virtuelhost)) {
-		$ext_urlko = $ws_virtuelhost . '/paymentko.php?fulltag='.$FULLTAG;
+		$ext_urlko = $ws_virtuelhost . '/paymentko.php?paymentkosessioncode='.urlencode($randomseckey).'&fulltag='.$FULLTAG;
 	} else {
-		$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?website='.urlencode($ws).'&pageref=paymentko&fulltag='.$FULLTAG;
+		$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?paymentkosessioncode='.urlencode($randomseckey).'&website='.urlencode($ws).'&pageref=paymentko&fulltag='.$FULLTAG;
 	}
 
-	print "<script>window.top.location.href = '".dol_escape_js($ext_urlko)."';</script>";
+	dol_syslog("Now do a redirect using Location : ".$ext_urlko, LOG_DEBUG, 0, '_payment');
+	header("Location: ".$ext_urlko);
+	exit;
 }

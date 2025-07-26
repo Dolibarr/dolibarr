@@ -2,7 +2,7 @@
 /* Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2014		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -373,6 +373,7 @@ if ($result) {
 				$invoicestatic->id = $objp->facid;
 				$invoicestatic->ref = $objp->ref;
 				$invoicestatic->statut = $objp->statut;
+				$invoicestatic->status = $objp->statut;
 				$invoicestatic->type = $objp->type;
 
 				print '<td>';

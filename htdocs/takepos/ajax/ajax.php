@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2004	Andreu Bisquerra	<jove@bisquerra.com>
  * Copyright (C) 2020		Thibault FOUCART	<support@ptibogxiv.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,12 +111,20 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 		// Removed properties we don't need
 		$res = array();
 		if (is_array($prods) && count($prods) > 0) {
+			$productChildrenNb = 0;
 			foreach ($prods as $prod) {
+				'@phan-var-force Product $prod';
 				if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
-					// remove products without stock
-					$prod->load_stock('nobatch,novirtual');
-					if ($prod->stock_warehouse[getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])]->real <= 0) {
-						continue;
+					if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+						$productChildrenNb = $prod->hasFatherOrChild(1);
+					}
+					// always show virtual products (don't manage stock)
+					if ($productChildrenNb == 0) {
+						// remove products without stock
+						$prod->load_stock('nobatch,novirtual');
+						if ($prod->stock_warehouse[getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])]->real <= 0) {
+							continue;
+						}
 					}
 				}
 				unset($prod->fields);
@@ -134,8 +143,8 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 } elseif ($action == 'search' && $search_term != '' && $user->hasRight('takepos', 'run')) {
 	top_httphead('application/json');
 
-	// Search barcode into thirdparties. If found, it means we want to change thirdparties.
-	$result = $thirdparty->fetch('', '', '', $search_term);
+	// Search barcode into third parties. If found, it means we want to change third parties.
+	$result = $thirdparty->fetch(0, '', '', $search_term);
 
 	if ($result && $thirdparty->id > 0) {
 		$rows = array();
@@ -338,7 +347,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 	}
 
 	// load only one page of products
-	$sql.= $db->plimit($search_limit, $search_start);
+	$sql .= $db->plimit($search_limit, $search_start);
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -379,7 +388,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 				'price_ttc_formated' => price(price2num(empty($objProd->multiprices_ttc[$pricelevel]) ? $obj->price_ttc : $objProd->multiprices_ttc[$pricelevel], 'MT'), 1, $langs, 1, -1, -1, $conf->currency)
 			);
 			// Add entries to row from hooks
-			$parameters=array();
+			$parameters = array();
 			$parameters['row'] = $row;
 			$parameters['obj'] = $obj;
 			$reshook = $hookmanager->executeHooks('completeAjaxReturnArray', $parameters);
@@ -429,7 +438,7 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 	if ((getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0 || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") && getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term) > 0) {
 		$object = new Facture($db);
 		$object->fetch($id);
-		$ret = $printer->sendToPrinter($object, getDolGlobalString('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term), getDolGlobalString('TAKEPOS_PRINTER_TO_USE'.$term));
+		$ret = $printer->sendToPrinter($object, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term), getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term));
 	}
 } elseif ($action == 'getInvoice' && $user->hasRight('takepos', 'run')) {
 	top_httphead('application/json');
@@ -452,5 +461,5 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 	$object = new Facture($db);
 
 	$printer = new dolReceiptPrinter($db);
-	$printer->sendToPrinter($object, getDolGlobalString('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term), getDolGlobalString('TAKEPOS_PRINTER_TO_USE'.$term));
+	$printer->sendToPrinter($object, getDolGlobalInt('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term), getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term));
 }

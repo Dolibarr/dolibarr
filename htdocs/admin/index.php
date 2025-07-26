@@ -32,6 +32,7 @@ require '../main.inc.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ * @var	Societe	$mysoc
  */
 
 // Load translation files required by the page
@@ -59,7 +60,7 @@ llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admi
 
 print load_fiche_titre($langs->trans("SetupArea"), '', 'tools');
 
-
+// Show
 if (getDolGlobalString('MAIN_MOTD_SETUPPAGE')) {
 	$conf->global->MAIN_MOTD_SETUPPAGE = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', getDolGlobalString('MAIN_MOTD_SETUPPAGE'));
 	if (getDolGlobalString('MAIN_MOTD_SETUPPAGE')) {
@@ -75,8 +76,8 @@ if (getDolGlobalString('MAIN_MOTD_SETUPPAGE')) {
 		}
 
 		print "\n<!-- Start of welcome text for setup page -->\n";
-		print '<table width="100%" class="notopnoleftnoright"><tr><td>';
-		print dol_htmlentitiesbr($conf->global->MAIN_MOTD_SETUPPAGE);
+		print '<table class="centpercent notopnoleftnoright"><tr><td>';
+		print dol_htmlentitiesbr(getDolGlobalString('MAIN_MOTD_SETUPPAGE'));
 		print '</td></tr></table><br>';
 		print "\n<!-- End of welcome text for setup page -->\n";
 	}
@@ -89,16 +90,31 @@ print $langs->trans("SetupDescription2", $langs->transnoentities("MenuCompanySet
 print "<br><br>";
 print '</span>';
 
+
+// Show info depending on country if defined
+$constkey = 'MAIN_INFO_SETUP_FOR_COUNTRY_'.$mysoc->country_code;
+//$conf->global->$constkey = 'rrr';
+if (getDolGlobalString($constkey)) {
+	$langs->load("errors");
+	$warnpicto = img_warning('', 'style="padding-right: 6px;"');
+	print '<div class="warning">'.$warnpicto.$langs->trans(getDolGlobalString($constkey)).'</div>';
+}
+
+
 print '<br>';
 
+
 // Show info setup company
+
 if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY') || getDolGlobalString('MAIN_INFO_SOCIETE_SETUP_TODO_WARNING')) {
 	$setupcompanynotcomplete = 1;
 }
 
-print '<section class="setupsection">';
+print '<section class="setupsection setupcompany cursorpointer">';
 
-print img_picto('', 'company', 'class="paddingright valignmiddle double"').' '.$langs->trans("SetupDescriptionLink", DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit&token='.newToken()), $langs->transnoentities("Setup"), $langs->transnoentities("MenuCompanySetup"));
+print img_picto('', 'company', 'class="paddingright valignmiddle double"');
+print ' ';
+print '<a class="nounderlineimp" href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit&token='.newToken()).'">'.$langs->transnoentities("Setup").' - '.$langs->transnoentities("MenuCompanySetup").'</a>';
 print '<br><br>';
 print $langs->trans("SetupDescription3b");
 if (!empty($setupcompanynotcomplete)) {
@@ -107,12 +123,16 @@ if (!empty($setupcompanynotcomplete)) {
 	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit').'">'.$warnpicto.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
 }
 
+print '</a>';
 print '</section>';
 
 print '<br>';
 print '<br>';
 
-print '<section class="setupsection">';
+
+// Show info setup modules
+
+print '<section class="setupsection setupmodules cursorpointer">';
 
 // Define $nbmodulesnotautoenabled - TODO This code is at different places
 $nbmodulesnotautoenabled = count($conf->modules);
@@ -124,7 +144,9 @@ foreach ($listofmodulesautoenabled as $moduleautoenable) {
 }
 
 // Show info setup module
-print img_picto('', 'cog', 'class="paddingright valignmiddle double"').' '.$langs->trans("SetupDescriptionLink", DOL_URL_ROOT.'/admin/modules.php?mainmenu=home', $langs->transnoentities("Setup"), $langs->transnoentities("Modules"));
+print img_picto('', 'cog', 'class="paddingright valignmiddle double"');
+print ' ';
+print '<a class="nounderlineimp" href="'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home">'.$langs->transnoentities("Setup").' - '.$langs->transnoentities("Modules").'</a>';
 print '<br><br>'.$langs->trans("SetupDescription4b");
 if ($nbmodulesnotautoenabled <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
 	$langs->load("errors");
@@ -137,6 +159,22 @@ print '</section>';
 print '<br>';
 print '<br>';
 print '<br>';
+
+
+print '<script>
+	$(document).ready(function(){
+            $(".setupcompany").click(function() {
+				event.preventDefault();
+				console.log("we click on setupcompany");
+                window.location.href = "'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit').'";
+            });
+            $(".setupmodules").click(function() {
+				event.preventDefault();
+				console.log("we click on setupmodules");
+                window.location.href = "'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home";
+            });
+        });
+</script>';
 
 // Add hook to add information
 $parameters = array();

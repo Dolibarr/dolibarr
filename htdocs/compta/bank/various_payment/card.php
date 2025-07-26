@@ -105,8 +105,8 @@ if (empty($reshook)) {
 			header("Location: ".$urltogo);
 			exit;
 		}
-		if ($id > 0 || !empty($ref)) {
-			$ret = $object->fetch($id, $ref);
+		if ($id > 0) {
+			$ret = $object->fetch($id);
 		}
 		$action = '';
 	}
@@ -221,14 +221,13 @@ if (empty($reshook)) {
 
 			$ret = $object->delete($user);
 			if ($ret > 0) {
+				$accountline = null;
 				if ($object->fk_bank) {
 					$accountline = new AccountLine($db);
 					$result = $accountline->fetch($object->fk_bank);
 					if ($result > 0) {
 						$result = $accountline->delete($user); // $result may be 0 if not found (when bank entry was deleted manually and fk_bank point to nothing)
 					}
-				} else {
-					$account_line = null;
 				}
 
 				if ($result >= 0) {
@@ -630,7 +629,7 @@ if ($id) {
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (property_exists($object, 'socid') ? $object->socid : 0), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (property_exists($object, 'socid') ? $object->socid : 0), (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			}
 		} else {
 			if (!empty($object->fk_project)) {
@@ -685,7 +684,7 @@ if ($id) {
 	if (isModEnabled('accounting')) {
 		/** @var FormAccounting $formaccounting */
 		print '<tr><td class="nowrap">';
-		print $form->editfieldkey('AccountAccounting', 'accountancy_code', $object->accountancy_code, $object, (!$alreadyaccounted && $permissiontoadd), 'string', '', 0);
+		print $form->editfieldkey('AccountAccounting', 'accountancy_code', $object->accountancy_code, $object, (int) (!$alreadyaccounted && $permissiontoadd), 'string', '', 0);
 		print '</td><td>';
 		if ($action == 'editaccountancy_code' && (!$alreadyaccounted && $permissiontoadd)) {
 			//print $form->editfieldval('AccountAccounting', 'accountancy_code', $object->accountancy_code, $object, (!$alreadyaccounted && $user->hasRight('banque', 'modifier')), 'string', '', 0);
@@ -707,7 +706,7 @@ if ($id) {
 
 	// Subledger account
 	print '<tr><td class="nowrap">';
-	print $form->editfieldkey('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (!$alreadyaccounted && $permissiontoadd), 'string', '', 0);
+	print $form->editfieldkey('SubledgerAccount', 'subledger_account', $object->subledger_account, $object, (int) (!$alreadyaccounted && $permissiontoadd), 'string', '', 0);
 	print '</td><td>';
 	if ($action == 'editsubledger_account' && (!$alreadyaccounted && $permissiontoadd)) {
 		if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {

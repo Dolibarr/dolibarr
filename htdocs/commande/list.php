@@ -6,17 +6,18 @@
  * Copyright (C) 2012		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Christophe Battarel			<christophe.battarel@altairis.fr>
  * Copyright (C) 2013		Cédric Salvado				<csalvador@gpcsolutions.fr>
- * Copyright (C) 2015-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2016-2023	Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2018-2023	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2021-2024	Anthony Berton				<anthony.berton@bb2a.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Noé Cendrier				<noe.cendrier@altairis.fr>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024		William Mead			    <william.mead@manchenumerique.fr>
+ * Copyright (C) 2025		Lenin Rivas			    	<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,6 +56,11 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+if (isModEnabled('category')) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+}
+
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -74,7 +80,7 @@ $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'orderlist';
 $optioncss = GETPOST('optioncss', 'alpha');
-$mode        = GETPOST('mode', 'alpha');
+$mode        = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
 if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
 	$userschilds = $user->getAllChildIds();
@@ -99,6 +105,13 @@ $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datedeliver
 $socid = GETPOSTINT('socid');
 
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
+$searchCategoryOrderOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategoryOrderOperator = GETPOSTINT('search_category_order_operator');
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
+	$searchCategoryOrderOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
+}
+$searchCategoryOrderList = GETPOST('search_category_order_list', 'array');
 $search_product_category = GETPOST('search_product_category', 'intcomma');
 $search_id = GETPOST('search_id', 'int');
 $search_ref = GETPOST('search_ref', 'alpha') != '' ? GETPOST('search_ref', 'alpha') : GETPOST('sref', 'alpha');
@@ -118,6 +131,11 @@ $search_total_ht  = GETPOST('search_total_ht', 'alpha');
 $search_total_vat = GETPOST('search_total_vat', 'alpha');
 $search_total_ttc = GETPOST('search_total_ttc', 'alpha');
 $search_warehouse = GETPOST('search_warehouse', 'intcomma');
+$search_note_public = GETPOST('search_note_public', 'alphanohtml');
+$search_note_private = GETPOST('search_note_private', 'alphanohtml');
+
+$search_module_source = GETPOST('search_module_source', 'alphanohtml');
+$search_pos_source = GETPOST('search_pos_source', 'alphanohtml');
 
 $search_multicurrency_code = GETPOST('search_multicurrency_code', 'alpha');
 $search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
@@ -198,51 +216,53 @@ if (empty($user->socid)) {
 	$fieldstosearchall["c.note_private"] = "NotePrivate";
 }
 
-$checkedtypetiers = 0;
+$checkedtypetiers = '0';
 $arrayfields = array(
-	'c.rowid' => array('label' => "ID", 'checked' => 1, 'enabled' => getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'position' => 1),
-	'c.ref' => array('label' => "Ref", 'checked' => 1, 'position' => 5, 'searchall' => 1),
-	'c.ref_ext' => array('label' => "RefExt", 'checked' => 1, 'position' => 5, 'visible' => 0, 'searchall' => 1),
-	'c.ref_client' => array('label' => "RefCustomerOrder", 'checked' => -1, 'position' => 10, 'searchall' => 1),
-	'p.ref' => array('label' => "ProjectRef", 'checked' => -1, 'enabled' => (!isModEnabled('project') ? 0 : 1), 'position' => 20),
-	'p.title' => array('label' => "ProjectLabel", 'checked' => 0, 'enabled' => (!isModEnabled('project') ? 0 : 1), 'position' => 25),
-	's.nom' => array('label' => "ThirdParty", 'checked' => 1, 'position' => 30, 'searchall' => 1),
-	's.name_alias' => array('label' => "AliasNameShort", 'checked' => -1, 'position' => 31, 'searchall' => 1),
-	's2.nom' => array('label' => 'ParentCompany', 'position' => 32, 'checked' => 0),
-	's.town' => array('label' => "Town", 'checked' => -1, 'position' => 35, 'searchall' => 1),
-	's.zip' => array('label' => "Zip", 'checked' => -1, 'position' => 40, 'searchall' => 1),
-	'state.nom' => array('label' => "StateShort", 'checked' => 0, 'position' => 45),
-	'country.code_iso' => array('label' => "Country", 'checked' => 0, 'position' => 50),
-	'typent.code' => array('label' => "ThirdPartyType", 'checked' => $checkedtypetiers, 'position' => 55),
-	'c.date_commande' => array('label' => "OrderDateShort", 'checked' => 1, 'position' => 60, 'csslist' => 'nowraponall'),
-	'c.delivery_date' => array('label' => "DateDeliveryPlanned", 'checked' => 1, 'enabled' => !getDolGlobalString('ORDER_DISABLE_DELIVERY_DATE'), 'position' => 65, 'csslist' => 'nowraponall'),
-	'c.fk_shipping_method' => array('label' => "SendingMethod", 'checked' => -1, 'position' => 66 , 'enabled' => isModEnabled("shipping")),
-	'c.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => -1, 'position' => 67),
-	'c.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => -1, 'position' => 68),
-	'c.fk_input_reason' => array('label' => "Origin", 'checked' => -1, 'position' => 69),
-	'c.total_ht' => array('label' => "AmountHT", 'checked' => 1, 'position' => 75),
-	'c.total_vat' => array('label' => "AmountVAT", 'checked' => 0, 'position' => 80),
-	'c.total_ttc' => array('label' => "AmountTTC", 'checked' => 0, 'position' => 85),
-	'c.multicurrency_code' => array('label' => 'Currency', 'checked' => 0, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1), 'position' => 90),
-	'c.multicurrency_tx' => array('label' => 'CurrencyRate', 'checked' => 0, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1), 'position' => 95),
-	'c.multicurrency_total_ht' => array('label' => 'MulticurrencyAmountHT', 'checked' => 0, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1), 'position' => 100),
-	'c.multicurrency_total_vat' => array('label' => 'MulticurrencyAmountVAT', 'checked' => 0, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1), 'position' => 105),
-	'c.multicurrency_total_ttc' => array('label' => 'MulticurrencyAmountTTC', 'checked' => 0, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1), 'position' => 110),
-	'u.login' => array('label' => "Author", 'checked' => -1, 'position' => 115),
-	'sale_representative' => array('label' => "SaleRepresentativesOfThirdParty", 'checked' => 0, 'position' => 116),
-	'total_pa' => array('label' => (getDolGlobalString('MARGIN_TYPE') == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (!isModEnabled('margin') || !$user->hasRight("margins", "liretous") ? 0 : 1)),
-	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (!isModEnabled('margin') || !$user->hasRight("margins", "liretous") ? 0 : 1)),
-	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (!isModEnabled('margin') || !$user->hasRight("margins", "liretous") || !getDolGlobalString('DISPLAY_MARGIN_RATES') ? 0 : 1)),
-	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (!isModEnabled('margin') || !$user->hasRight("margins", "liretous") || !getDolGlobalString('DISPLAY_MARK_RATES') ? 0 : 1)),
-	'c.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 120),
-	'c.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 125),
-	'c.date_cloture' => array('label' => "DateClosing", 'checked' => 0, 'position' => 130),
-	'c.note_public' => array('label' => 'NotePublic', 'checked' => 0, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES')), 'position' => 135, 'searchall' => 1),
-	'c.note_private' => array('label' => 'NotePrivate', 'checked' => 0, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'position' => 140),
-	'shippable' => array('label' => "Shippable", 'checked' => 1,'enabled' => (isModEnabled("shipping")), 'position' => 990),
-	'c.facture' => array('label' => "Billed", 'checked' => 1, 'enabled' => (!getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT')), 'position' => 995),
-	'c.import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 999),
-	'c.fk_statut' => array('label' => "Status", 'checked' => 1, 'position' => 1000)
+	'c.rowid' => array('label' => "ID", 'checked' => '1', 'enabled' => (string) getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'position' => 1),
+	'c.ref' => array('label' => "Ref", 'checked' => '1', 'position' => 5, 'searchall' => 1),
+	'c.ref_ext' => array('label' => "RefExt", 'checked' => '1', 'position' => 5, 'visible' => 0, 'searchall' => 1),
+	'c.ref_client' => array('label' => "RefCustomerOrder", 'checked' => '-1', 'position' => 10, 'searchall' => 1),
+	'p.ref' => array('label' => "ProjectRef", 'langfile' => 'projects', 'checked' => '-1', 'enabled' => (!isModEnabled('project') ? '0' : '1'), 'position' => 20),
+	'p.title' => array('label' => "ProjectLabel", 'langfile' => 'projects', 'checked' => '0', 'enabled' => (!isModEnabled('project') ? '0' : '1'), 'position' => 25),
+	's.nom' => array('label' => "ThirdParty", 'checked' => '1', 'position' => 30, 'searchall' => 1),
+	's.name_alias' => array('label' => "AliasNameShort", 'checked' => '-1', 'position' => 31, 'searchall' => 1),
+	's2.nom' => array('label' => 'ParentCompany', 'position' => 32, 'checked' => '0'),
+	's.town' => array('label' => "Town", 'checked' => '-1', 'position' => 35, 'searchall' => 1),
+	's.zip' => array('label' => "Zip", 'checked' => '-1', 'position' => 40, 'searchall' => 1),
+	'state.nom' => array('label' => "StateShort", 'checked' => '0', 'position' => 45),
+	'country.code_iso' => array('label' => "Country", 'checked' => '0', 'position' => 50),
+	'typent.code' => array('label' => "ThirdPartyType", 'checked' => (string) $checkedtypetiers, 'position' => 55),
+	'c.date_commande' => array('label' => "OrderDateShort", 'checked' => '1', 'position' => 60, 'csslist' => 'nowraponall'),
+	'c.delivery_date' => array('label' => "DateDeliveryPlanned", 'checked' => '1', 'enabled' => (string) (int) !getDolGlobalString('ORDER_DISABLE_DELIVERY_DATE'), 'position' => 65, 'csslist' => 'nowraponall'),
+	'c.fk_shipping_method' => array('label' => "SendingMethod", 'checked' => '-1', 'position' => 66 , 'enabled' => (string) (int) isModEnabled("shipping")),
+	'c.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => '-1', 'position' => 67),
+	'c.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => '-1', 'position' => 68),
+	'c.fk_input_reason' => array('label' => "Origin", 'checked' => '-1', 'position' => 69),
+	'c.module_source' => array('label' => "POSModule", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('ORDER_SHOW_POS'))", 'position' => 90),
+	'c.pos_source' => array('label' => "POSTerminal", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('ORDER_SHOW_POS'))", 'position' => 91),
+	'c.total_ht' => array('label' => "AmountHT", 'checked' => '1', 'position' => 75),
+	'c.total_vat' => array('label' => "AmountVAT", 'checked' => '0', 'position' => 80),
+	'c.total_ttc' => array('label' => "AmountTTC", 'checked' => '0', 'position' => 85),
+	'c.multicurrency_code' => array('label' => 'Currency', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1'), 'position' => 92),
+	'c.multicurrency_tx' => array('label' => 'CurrencyRate', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1'), 'position' => 95),
+	'c.multicurrency_total_ht' => array('label' => 'MulticurrencyAmountHT', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1'), 'position' => 100),
+	'c.multicurrency_total_vat' => array('label' => 'MulticurrencyAmountVAT', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1'), 'position' => 105),
+	'c.multicurrency_total_ttc' => array('label' => 'MulticurrencyAmountTTC', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1'), 'position' => 110),
+	'u.login' => array('label' => "Author", 'checked' => '-1', 'position' => 115),
+	'sale_representative' => array('label' => "SaleRepresentativesOfThirdParty", 'checked' => '0', 'position' => 116),
+	'total_pa' => array('label' => (getDolGlobalString('MARGIN_TYPE') == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => '0', 'position' => 300, 'enabled' => (string) (int) (!isModEnabled('margin') || !$user->hasRight("margins", "liretous") ? 0 : 1)),
+	'total_margin' => array('label' => 'Margin', 'checked' => '0', 'position' => 301, 'enabled' => (string) (int) (!isModEnabled('margin') || !$user->hasRight("margins", "liretous") ? 0 : 1)),
+	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => '0', 'position' => 302, 'enabled' => (string) (int) (!isModEnabled('margin') || !$user->hasRight("margins", "liretous") || !getDolGlobalString('DISPLAY_MARGIN_RATES') ? 0 : 1)),
+	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => '0', 'position' => 303, 'enabled' => (string) (int) (!isModEnabled('margin') || !$user->hasRight("margins", "liretous") || !getDolGlobalString('DISPLAY_MARK_RATES') ? 0 : 1)),
+	'c.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 120),
+	'c.tms' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 125),
+	'c.date_cloture' => array('label' => "DateClosing", 'checked' => '0', 'position' => 130),
+	'c.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES')), 'position' => 135, 'searchall' => 1),
+	'c.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'position' => 140),
+	'shippable' => array('label' => "Shippable", 'checked' => '1','enabled' => (string) (int) (isModEnabled("shipping")), 'position' => 990),
+	'c.facture' => array('label' => "Billed", 'checked' => '1', 'enabled' => (string) (int) (!getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT')), 'position' => 995),
+	'c.import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => '1', 'visible' => -2, 'position' => 999),
+	'c.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000)
 );
 
 $parameters = array('fieldstosearchall' => $fieldstosearchall);
@@ -259,7 +279,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 
 // Security check
@@ -309,6 +328,7 @@ if (empty($reshook)) {
 		$search_user = '';
 		$search_sale = '';
 		$search_product_category = '';
+		$searchCategoryOrderList = array();
 		$search_id = '';
 		$search_ref = '';
 		$search_ref_ext = '';
@@ -316,6 +336,8 @@ if (empty($reshook)) {
 		$search_company = '';
 		$search_company_alias = '';
 		$search_parent_name = '';
+		$search_module_source = '';
+		$search_pos_source = '';
 		$search_town = '';
 		$search_zip = "";
 		$search_state = "";
@@ -326,6 +348,8 @@ if (empty($reshook)) {
 		$search_total_vat = '';
 		$search_total_ttc = '';
 		$search_warehouse = '';
+		$search_note_public = '';
+		$search_note_private = '';
 		$search_multicurrency_code = '';
 		$search_multicurrency_tx = '';
 		$search_multicurrency_montant_ht = '';
@@ -422,6 +446,7 @@ if (empty($reshook)) {
 				$objecttmp->type = $objecttmp::TYPE_STANDARD;
 				$objecttmp->cond_reglement_id = !empty($cmd->cond_reglement_id) ? $cmd->cond_reglement_id : $cmd->thirdparty->cond_reglement_id;
 				$objecttmp->mode_reglement_id = !empty($cmd->mode_reglement_id) ? $cmd->mode_reglement_id : $cmd->thirdparty->mode_reglement_id;
+				$objecttmp->demand_reason_id = !empty($cmd->demand_reason_id) ? $cmd->demand_reason_id : $cmd->thirdparty->demand_reason_id;
 
 				$objecttmp->fk_project = $cmd->fk_project;
 				$objecttmp->multicurrency_code = $cmd->multicurrency_code;
@@ -466,6 +491,36 @@ if (empty($reshook)) {
 				if ($res == 0) {
 					$errors[] = $cmd->ref.' : '.$langs->trans($objecttmp->errors[0]);
 					$error++;
+				}
+
+				// Linked Expeditions
+				if (getDolGlobalString('ORDER_MASS_ACTION_BILLED_LINK_EXPEDITIONS')) {
+					$cmd->fetchObjectLinked();
+					// Add object linked
+					if (!$error && $cmd->id && !empty($cmd->linkedObjectsIds['shipping']) && is_array($cmd->linkedObjectsIds['shipping'])) {
+						$cmd->linked_objects = $cmd->linkedObjectsIds;
+						foreach ($cmd->linked_objects as $origin_type => $tmp_origin_id) {
+							// IF more of same type
+							if ($origin_type == 'shipping') {
+								if (is_array($tmp_origin_id)) {       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
+									foreach ($tmp_origin_id as $origin_id) {
+										$res = $objecttmp->add_object_linked($origin_type, $origin_id);
+										if (!$res) {
+											$errors[] = $cmd->ref.' : '.$langs->trans($objecttmp->errors[0]);
+											$error++;
+										}
+									}
+								} else { // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
+									$origin_id = $tmp_origin_id;
+									$res = $objecttmp->add_object_linked($origin_type, $origin_id);
+									if (!$res) {
+										$errors[] = $cmd->ref.' : '.$langs->trans($objecttmp->errors[0]);
+										$error++;
+									}
+								}
+							}
+						}
+					}
 				}
 
 				if (!$error) {
@@ -598,7 +653,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			if ($currentIndex <= (getDolGlobalInt("MAXREFONDOC") ? getDolGlobalInt("MAXREFONDOC") : 10)) {
+			if ($currentIndex <= getDolGlobalInt("MAXREFONDOC", 10)) {
 				$objecttmp->note_public = dol_concatdesc($objecttmp->note_public, $langs->transnoentities($cmd->ref).(empty($cmd->ref_client) ? '' : ' ('.$cmd->ref_client.')'));
 				$objecttmp->update($user);
 			}
@@ -744,6 +799,9 @@ if (empty($reshook)) {
 			}
 			if ($search_project_ref >= 0) {
 				$param .= "&search_project_ref=".urlencode($search_project_ref);
+			}
+			if ($search_project != '') {
+				$param .= "&search_project=".urlencode($search_project);
 			}
 			if ($search_billed != '') {
 				$param .= '&search_billed='.urlencode($search_billed);
@@ -911,10 +969,11 @@ $sql .= ' c.rowid, c.ref, c.ref_ext, c.total_ht, c.total_tva, c.total_ttc, c.ref
 $sql .= ' c.fk_multicurrency, c.multicurrency_code, c.multicurrency_tx, c.multicurrency_total_ht, c.multicurrency_total_tva as multicurrency_total_vat, c.multicurrency_total_ttc,';
 $sql .= ' c.date_valid, c.date_commande, c.note_public, c.note_private, c.date_livraison as delivery_date, c.fk_statut, c.facture as billed,';
 $sql .= ' c.date_creation as date_creation, c.tms as date_modification, c.date_cloture as date_cloture,';
-$sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,';
-$sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender,';
 $sql .= ' c.fk_cond_reglement,c.deposit_percent,c.fk_mode_reglement,c.fk_shipping_method,';
-$sql .= ' c.fk_input_reason, c.import_key';
+$sql .= ' c.fk_input_reason, c.import_key,';
+$sql .= " c.module_source, c.pos_source,";
+$sql .= ' p.rowid as project_id, p.ref as project_ref, p.title as project_label,';
+$sql .= ' u.login, u.lastname, u.firstname, u.email as user_email, u.statut as user_statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender';
 
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -975,9 +1034,6 @@ if ($search_ref_ext) {
 }
 if ($search_ref_customer) {
 	$sql .= natural_search('c.ref_client', $search_ref_customer);
-}
-if ($search_all) {
-	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 if ($search_billed != '' && $search_billed >= 0) {
 	$sql .= ' AND c.facture = '.((int) $search_billed);
@@ -1061,6 +1117,12 @@ if ($search_total_ttc != '') {
 if ($search_warehouse != '' && $search_warehouse > 0) {
 	$sql .= natural_search('c.fk_warehouse', $search_warehouse, 1);
 }
+if ($search_note_public != '') {
+	$sql .= natural_search('c.note_public', $search_note_public);
+}
+if ($search_note_private != '') {
+	$sql .= natural_search('c.note_private', $search_note_private);
+}
 if ($search_multicurrency_code != '') {
 	$sql .= " AND c.multicurrency_code = '".$db->escape($search_multicurrency_code)."'";
 }
@@ -1097,6 +1159,12 @@ if ($search_fk_mode_reglement > 0) {
 if ($search_fk_input_reason > 0) {
 	$sql .= " AND c.fk_input_reason = ".((int) $search_fk_input_reason);
 }
+if ($search_module_source) {
+	$sql .= natural_search("c.module_source", $search_module_source);
+}
+if ($search_pos_source) {
+	$sql .= natural_search("c.pos_source", $search_pos_source);
+}
 if ($search_import_key) {
 	$sql .= natural_search("s.import_key", $search_import_key);
 }
@@ -1106,7 +1174,7 @@ if ($search_user > 0) {
 	$sql .= " SELECT ec.fk_c_type_contact, ec.element_id, ec.fk_socpeople";
 	$sql .= " FROM ".MAIN_DB_PREFIX."element_contact as ec";
 	$sql .= " INNER JOIN  ".MAIN_DB_PREFIX."c_type_contact as tc";
-	$sql .= " ON ec.fk_c_type_contact = tc.rowid AND tc.element='commande' AND tc.source='internal'";
+	$sql .= " ON ec.fk_c_type_contact = tc.rowid AND tc.element = 'commande' AND tc.source = 'internal'";
 	$sql .= " WHERE ec.element_id = c.rowid AND ec.fk_socpeople = ".((int) $search_user).")";
 }
 // Search on sale representative
@@ -1117,8 +1185,38 @@ if ($search_sale && $search_sale != '-1') {
 		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
 	}
 }
+
+// Search for tag/category ($searchCategoryOrderList is an array of ID)
+if (!empty($searchCategoryOrderList)) {
+	$searchCategoryOrderSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryOrderList as $searchCategoryOrder) {
+		if (intval($searchCategoryOrder) == -2) {
+			$searchCategoryOrderSqlList[] = "NOT EXISTS (SELECT ck.fk_order FROM ".MAIN_DB_PREFIX."categorie_order as ck WHERE c.rowid = ck.fk_order)";
+		} elseif (intval($searchCategoryOrder) > 0) {
+			if ($searchCategoryOrderOperator == 0) {
+				$searchCategoryOrderSqlList[] = " EXISTS (SELECT ck.fk_order FROM ".MAIN_DB_PREFIX."categorie_order as ck WHERE c.rowid = ck.fk_order AND ck.fk_categorie = ".((int) $searchCategoryOrder).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryOrder);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryOrderSqlList[] = " EXISTS (SELECT ck.fk_order FROM ".MAIN_DB_PREFIX."categorie_order as ck WHERE c.rowid = ck.fk_order AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryOrderOperator == 1) {
+		if (!empty($searchCategoryOrderSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryOrderSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryOrderSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryOrderSqlList).")";
+		}
+	}
+}
+
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
-$searchCategoryCustomerOperator = -1;
+$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
 $searchCategoryCustomerList = array($search_categ_cus);
 if (!empty($searchCategoryCustomerList)) {
 	$searchCategoryCustomerSqlList = array();
@@ -1148,7 +1246,7 @@ if (!empty($searchCategoryCustomerList)) {
 	}
 }
 // Search for tag/category ($searchCategoryProductList is an array of ID)
-$searchCategoryProductOperator = -1;
+$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
 $searchCategoryProductList = array($search_product_category);
 if (!empty($searchCategoryProductList)) {
 	$searchCategoryProductSqlList = array();
@@ -1184,6 +1282,10 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
+if ($search_all) {
+	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
+}
+
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -1204,13 +1306,14 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than paging size (filtering), goto and load page 0
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
 	$db->free($resql);
 }
 
+// Complete request and execute it with limit
 $sql .= $db->order($sortfield, $sortorder);
 if ($limit) {
 	$sql .= $db->plimit($limit + 1, $offset);
@@ -1382,6 +1485,9 @@ if ($search_multicurrency_montant_ttc != '') {
 if ($search_project_ref >= 0) {
 	$param .= "&search_project_ref=".urlencode($search_project_ref);
 }
+if ($search_project != '') {
+	$param .= "&search_project=".urlencode($search_project);
+}
 if ($search_town != '') {
 	$param .= '&search_town='.urlencode($search_town);
 }
@@ -1396,6 +1502,12 @@ if ($search_country != '') {
 }
 if ($search_type_thirdparty && $search_type_thirdparty != '-1') {
 	$param .= '&search_type_thirdparty='.urlencode((string) ($search_type_thirdparty));
+}
+if ($searchCategoryOrderOperator == 1) {
+	$param .= "&search_category_order_operator=".urlencode((string) ($searchCategoryOrderOperator));
+}
+foreach ($searchCategoryOrderList as $searchCategoryOrder) {
+	$param .= "&search_category_order_list[]=".urlencode($searchCategoryOrder);
 }
 if ($search_product_category != '') {
 	$param .= '&search_product_category='.urlencode((string) ($search_product_category));
@@ -1417,6 +1529,12 @@ if ($search_fk_mode_reglement > 0) {
 }
 if ($search_fk_input_reason > 0) {
 	$param .= '&search_fk_input_reason='.urlencode((string) ($search_fk_input_reason));
+}
+if ($search_module_source) {
+	$param .= '&search_module_source='.urlencode($search_module_source);
+}
+if ($search_pos_source) {
+	$param .= '&search_pos_source='.urlencode($search_pos_source);
 }
 if ($search_import_key != '') {
 	$param .= '&search_import_key='.urlencode($search_import_key);
@@ -1472,7 +1590,7 @@ $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewOrder'), '', 'fa fa-plus-circle', $url, '', (int) (($contextpage == 'orderlist' || $contextpage == 'billableorders') && $permissiontoadd));
 
 // Lines of title fields
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+print '<form method="POST" id="searchFormList" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -1563,6 +1681,11 @@ if ($search_all) {
 
 $moreforfilter = '';
 
+if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
+	$formcategory = new FormCategory($db);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_ORDER, $searchCategoryOrderList, 'minwidth300', $searchCategoryOrderOperator ? $searchCategoryOrderOperator : 0);
+}
+
 // If the user can view prospects? sales other than his own
 if ($user->hasRight("user", "user", "lire")) {
 	$langs->load("commercial");
@@ -1575,7 +1698,7 @@ if ($user->hasRight("user", "user", "lire")) {
 if ($user->hasRight("user", "user", "lire")) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('LinkedToSpecificUsers');
-	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
+	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
 	$moreforfilter .= '</div>';
 }
 
@@ -1585,7 +1708,7 @@ if (isModEnabled('category') && $user->hasRight("categorie", "lire") && ($user->
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
 	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 0, array(), 1);
-	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300 widthcentpercentminusx', 1);
+	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, '', 'maxwidth300 widthcentpercentminusx', 1);
 	$moreforfilter .= '</div>';
 }
 // If Categories are enabled & user has rights to see
@@ -1643,7 +1766,7 @@ print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwit
 print '<tr class="liste_titre_filter">';
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre center maxwidthsearch">';
+	print '<td class="liste_titre center maxwidthsearch actioncolumn">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
 	print '</td>';
@@ -1659,13 +1782,13 @@ if (!empty($arrayfields['c.rowid']['checked'])) {
 // Ref
 if (!empty($arrayfields['c.ref']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+	print '<input class="flat maxwidth50imp" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 	print '</td>';
 }
 // Ref ext
 if (!empty($arrayfields['c.ref_ext']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input class="flat" size="6" type="text" name="search_ref_ext" value="'.dol_escape_htmltag($search_ref_ext).'">';
+	print '<input class="flat maxwidth50imp" type="text" name="search_ref_ext" value="'.dol_escape_htmltag($search_ref_ext).'">';
 	print '</td>';
 }
 // Ref customer
@@ -1678,20 +1801,20 @@ if (!empty($arrayfields['c.ref_client']['checked'])) {
 if (!empty($arrayfields['p.ref']['checked'])) {
 	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
 }
-// Project title
+// Project label
 if (!empty($arrayfields['p.title']['checked'])) {
 	print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_project" value="'.dol_escape_htmltag($search_project).'"></td>';
 }
-// Thirpdarty
+// Thirdparty
 if (!empty($arrayfields['s.nom']['checked'])) {
-	print '<td class="liste_titre" align="left">';
-	print '<input class="flat maxwidth100" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'"'.(!empty($user->socid) ? " disabled" : "").'>';
+	print '<td class="liste_titre">';
+	print '<input class="flat maxwidth75imp" type="text" name="search_company" value="'.dol_escape_htmltag((string) $search_company).'"'.(!empty($user->socid) ? " disabled" : "").'>';
 	print '</td>';
 }
 // Alias
 if (!empty($arrayfields['s.name_alias']['checked'])) {
-	print '<td class="liste_titre" align="left">';
-	print '<input class="flat maxwidth100" type="text" name="search_company_alias" value="'.dol_escape_htmltag($search_company_alias).'">';
+	print '<td class="liste_titre">';
+	print '<input class="flat maxwidth75imp" type="text" name="search_company_alias" value="'.dol_escape_htmltag($search_company_alias).'">';
 	print '</td>';
 }
 // Parent company
@@ -1702,16 +1825,16 @@ if (!empty($arrayfields['s2.nom']['checked'])) {
 }
 // Town
 if (!empty($arrayfields['s.town']['checked'])) {
-	print '<td class="liste_titre"><input class="flat width50" type="text" name="search_town" value="'.dol_escape_htmltag($search_town).'"></td>';
+	print '<td class="liste_titre"><input class="flat maxwidth75imp" type="text" name="search_town" value="'.dol_escape_htmltag($search_town).'"></td>';
 }
 // Zip
 if (!empty($arrayfields['s.zip']['checked'])) {
-	print '<td class="liste_titre"><input class="flat width50" type="text" name="search_zip" value="'.dol_escape_htmltag($search_zip).'"></td>';
+	print '<td class="liste_titre"><input class="flat maxwidth50imp" type="text" name="search_zip" value="'.dol_escape_htmltag($search_zip).'"></td>';
 }
 // State
 if (!empty($arrayfields['state.nom']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input class="flat width50" type="text" name="search_state" value="'.dol_escape_htmltag($search_state).'">';
+	print '<input class="flat maxwidth50imp" type="text" name="search_state" value="'.dol_escape_htmltag($search_state).'">';
 	print '</td>';
 }
 // Country
@@ -1756,7 +1879,7 @@ if (!empty($arrayfields['c.fk_shipping_method']['checked'])) {
 // Payment term
 if (!empty($arrayfields['c.fk_cond_reglement']['checked'])) {
 	print '<td class="liste_titre">';
-	print $form->getSelectConditionsPaiements($search_fk_cond_reglement, 'search_fk_cond_reglement', 1, 1, 1);
+	print $form->getSelectConditionsPaiements((int) $search_fk_cond_reglement, 'search_fk_cond_reglement', 1, 1, 1);
 	print '</td>';
 }
 // Payment mode
@@ -1769,6 +1892,18 @@ if (!empty($arrayfields['c.fk_mode_reglement']['checked'])) {
 if (!empty($arrayfields['c.fk_input_reason']['checked'])) {
 	print '<td class="liste_titre">';
 	$form->selectInputReason($search_fk_input_reason, 'search_fk_input_reason', '', 1, '', 1);
+	print '</td>';
+}
+// Module source
+if (!empty($arrayfields['c.module_source']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat maxwidth75" type="text" name="search_module_source" value="'.dol_escape_htmltag($search_module_source).'">';
+	print '</td>';
+}
+// POS Terminal
+if (!empty($arrayfields['c.pos_source']['checked'])) {
+	print '<td class="liste_titre">';
+	print '<input class="flat maxwidth50" type="text" name="search_pos_source" value="'.dol_escape_htmltag($search_pos_source).'">';
 	print '</td>';
 }
 // Amount HT / net
@@ -1856,7 +1991,7 @@ if (!empty($arrayfields['c.tms']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
-// Date cloture
+// Date closing
 if (!empty($arrayfields['c.date_cloture']['checked'])) {
 	print '<td class="liste_titre center">';
 	print '<div class="nowrapfordate">';
@@ -1870,11 +2005,13 @@ if (!empty($arrayfields['c.date_cloture']['checked'])) {
 // Note public
 if (!empty($arrayfields['c.note_public']['checked'])) {
 	print '<td class="liste_titre">';
+	print '<input class="flat width75" type="text" name="search_note_public" value="'.dolPrintHTMLForAttribute($search_note_public).'">';
 	print '</td>';
 }
 // Note private
 if (!empty($arrayfields['c.note_private']['checked'])) {
 	print '<td class="liste_titre">';
+	print '<input class="flat width75" type="text" name="search_note_private" value="'.dolPrintHTMLForAttribute($search_note_private).'">';
 	print '</td>';
 }
 // Shippable
@@ -2038,6 +2175,14 @@ if (!empty($arrayfields['c.fk_input_reason']['checked'])) {
 	print_liste_field_titre($arrayfields['c.fk_input_reason']['label'], $_SERVER["PHP_SELF"], "c.fk_input_reason", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['c.module_source']['checked'])) {
+	print_liste_field_titre($arrayfields['c.module_source']['label'], $_SERVER["PHP_SELF"], "f.module_source", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['c.pos_source']['checked'])) {
+	print_liste_field_titre($arrayfields['c.pos_source']['label'], $_SERVER["PHP_SELF"], "f.pos_source", "", $param, "", $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['c.total_ht']['checked'])) {
 	print_liste_field_titre($arrayfields['c.total_ht']['label'], $_SERVER["PHP_SELF"], 'c.total_ht', '', $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
@@ -2108,11 +2253,11 @@ if (!empty($arrayfields['c.date_cloture']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.note_public']['checked'])) {
-	print_liste_field_titre($arrayfields['c.note_public']['label'], $_SERVER["PHP_SELF"], "c.note_public", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['c.note_public']['label'], $_SERVER["PHP_SELF"], "c.note_public", "", $param, '', $sortfield, $sortorder, '');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.note_private']['checked'])) {
-	print_liste_field_titre($arrayfields['c.note_private']['label'], $_SERVER["PHP_SELF"], "c.note_private", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['c.note_private']['label'], $_SERVER["PHP_SELF"], "c.note_private", "", $param, '', $sortfield, $sortorder, '');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['shippable']['checked'])) {
@@ -2186,6 +2331,8 @@ while ($i < $imaxinloop) {
 		break; // Should not happen
 	}
 
+	$typenArray = $formcompany->typent_array(1);
+
 	$notshippable = 0;
 	$warning = 0;
 	$text_info = '';
@@ -2210,7 +2357,9 @@ while ($i < $imaxinloop) {
 
 	$generic_commande->id = $obj->rowid;
 	$generic_commande->ref = $obj->ref;
+	$generic_commande->status = $obj->fk_statut;
 	$generic_commande->statut = $obj->fk_statut;
+	$generic_commande->status = $obj->fk_statut;
 	$generic_commande->billed = $obj->billed;
 	$generic_commande->date = $db->jdate($obj->date_commande);
 	$generic_commande->delivery_date = $db->jdate($obj->delivery_date);
@@ -2258,7 +2407,7 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->billed == 1) ? 'opacitymedium' : '').'">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven status'.$generic_commande->status.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? ' opacitymedium' : '').'">';
 
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -2330,7 +2479,7 @@ while ($i < $imaxinloop) {
 
 		// Project ref
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			print '<td class="nowrap">';
+			print '<td class="nocellnopadd nowraponall">';
 			if ($obj->project_id > 0) {
 				print $projectstatic->getNomUrl(1);
 			}
@@ -2342,7 +2491,7 @@ while ($i < $imaxinloop) {
 
 		// Project label
 		if (!empty($arrayfields['p.title']['checked'])) {
-			print '<td class="nowrap">';
+			print '<td class="nowraponall">';
 			if ($obj->project_id > 0) {
 				print $projectstatic->title;
 			}
@@ -2448,11 +2597,13 @@ while ($i < $imaxinloop) {
 
 		// Type ent
 		if (!empty($arrayfields['typent.code']['checked'])) {
-			print '<td class="center">';
-			if (empty($typenArray)) {
+			if (!is_array($typenArray) || count($typenArray) == 0) {
 				$typenArray = $formcompany->typent_array(1);
 			}
-			print $typenArray[$obj->typent_code] ?? '';
+			print '<td class="center tdoverflowmax100" title="'.dolPrintHTMLForAttribute($typenArray[$obj->typent_code]).'">';
+			if (!empty($obj->typent_code)) {
+				print $typenArray[$obj->typent_code];
+			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2523,9 +2674,28 @@ while ($i < $imaxinloop) {
 			}
 		}
 
+		// Module Source
+		if (!empty($arrayfields['c.module_source']['checked'])) {
+			print '<td>';
+			print dol_escape_htmltag($obj->module_source);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// POS Terminal
+		if (!empty($arrayfields['c.pos_source']['checked'])) {
+			print '<td>';
+			print dol_escape_htmltag($obj->pos_source);
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
 		// Amount HT/net
 		if (!empty($arrayfields['c.total_ht']['checked'])) {
-			print '<td class="nowrap right"><span class="amount">'.price($obj->total_ht)."</span></td>\n";
+			print '<td class="nowraponall right"><span class="amount">'.price($obj->total_ht)."</span></td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2740,7 +2910,7 @@ while ($i < $imaxinloop) {
 		// Date creation
 		if (!empty($arrayfields['c.datec']['checked'])) {
 			print '<td class="center nowraponall">';
-			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
+			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuserrel');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2750,7 +2920,7 @@ while ($i < $imaxinloop) {
 		// Date modification
 		if (!empty($arrayfields['c.tms']['checked'])) {
 			print '<td class="center nowraponall">';
-			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
+			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuserrel');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2760,7 +2930,7 @@ while ($i < $imaxinloop) {
 		// Date cloture
 		if (!empty($arrayfields['c.date_cloture']['checked'])) {
 			print '<td class="center nowraponall">';
-			print dol_print_date($db->jdate($obj->date_cloture), 'dayhour', 'tzuser');
+			print dol_print_date($db->jdate($obj->date_cloture), 'dayhour', 'tzuserrel');
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2769,8 +2939,8 @@ while ($i < $imaxinloop) {
 
 		// Note public
 		if (!empty($arrayfields['c.note_public']['checked'])) {
-			print '<td class="sensiblehtmlcontent center">';
-			print dolPrintHTML($obj->note_public);
+			print '<td class="sensiblehtmlcontent maxwidth250imp classfortooltip" title="'.dolPrintHTMLForAttribute(dolGetFirstLineOfText($obj->note_public, 20)).'">';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2779,8 +2949,8 @@ while ($i < $imaxinloop) {
 
 		// Note private
 		if (!empty($arrayfields['c.note_private']['checked'])) {
-			print '<td class="sensiblehtmlcontent center">';
-			print dolPrintHTML($obj->note_private);
+			print '<td class="sensiblehtmlcontent maxwidth250imp classfortooltip" title="'.dolPrintHTMLForAttribute(dolGetFirstLineOfText($obj->note_private, 20)).'">';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

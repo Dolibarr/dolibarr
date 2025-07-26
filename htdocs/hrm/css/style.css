@@ -41,7 +41,7 @@
 
 #compare li.disabled {
   color:#999;
-  border-bottom: 2px solid #ff0000;
+  border-bottom: 2pt dashed #aaa !important;
 }
 
 #compare li.disabled img,#compare li.disabled p {

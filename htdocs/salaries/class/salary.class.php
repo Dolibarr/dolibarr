@@ -457,7 +457,7 @@ class Salary extends CommonObject
 		$sql .= ", entity";
 		$sql .= ") ";
 		$sql .= " VALUES (";
-		$sql .= "'".$this->db->escape($this->fk_user)."'";
+		$sql .= "'".((int) $this->fk_user)."'";
 		//$sql .= ", '".$this->db->idate($this->datep)."'";
 		//$sql .= ", '".$this->db->idate($this->datev)."'";
 		$sql .= ", ".((float) $this->amount);
@@ -471,7 +471,7 @@ class Salary extends CommonObject
 		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", '".$this->db->idate($this->datesp)."'";
 		$sql .= ", '".$this->db->idate($this->dateep)."'";
-		$sql .= ", '".$this->db->escape($user->id)."'";
+		$sql .= ", '".((int) $user->id)."'";
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", NULL";
 		$sql .= ", ".((int) $conf->entity);
@@ -997,7 +997,7 @@ class Salary extends CommonObject
 
 					if (!$error) {
 						// Force payment mode of invoice to withdraw
-						$payment_mode_id = dol_getIdFromCode($this->db, ($type == 'bank-transfer' ? 'VIR' : 'PRE'), 'c_paiement', 'code', 'id', 1);
+						$payment_mode_id = dol_getIdFromCode($this->db, (($type == 'bank-transfer' || $type == 'salaire') ? 'VIR' : 'PRE'), 'c_paiement', 'code', 'id', 1);
 						if ($payment_mode_id > 0) {
 							$result = $this->setPaymentMethods($payment_mode_id);
 						}

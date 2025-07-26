@@ -64,7 +64,7 @@ abstract class CommonDocGenerator
 	protected $db;
 
 	/**
-	 * @var ?Extrafields object
+	 * @var ?ExtraFields object
 	 */
 	public $extrafieldsCache;
 
@@ -219,7 +219,7 @@ abstract class CommonDocGenerator
 	public $phpmin = array(7, 1);
 
 	/**
-	 * @var array<string,array{rank:int,width:float|int,status:bool,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of columns
+	 * @var array<string,array{rank:int,width:float|false,status:bool|int<0,1>,border-left?:bool,title:array{textkey:string,label?:string,align?:string,padding?:array{0:float,1:float,2:float,3:float}},content?:array{align?:string,padding?:array{0:float,1:float,2:float,3:float}}}>	Array of document table columns
 	 */
 	public $cols;
 
@@ -707,7 +707,7 @@ abstract class CommonDocGenerator
 			$array_key.'_payment_mode_code' => $object->mode_reglement_code,
 			$array_key.'_payment_mode' => ($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code) != 'PaymentType'.$object->mode_reglement_code ? $outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code) : $object->mode_reglement),
 			$array_key.'_payment_term_code' => $object->cond_reglement_code,
-			$array_key.'_payment_term' => ($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) != 'PaymentCondition'.$object->cond_reglement_code ? $outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) : ($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement)),
+			$array_key.'_payment_term' => ($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) != 'PaymentCondition'.$object->cond_reglement_code ? $outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) : $object->cond_reglement_doc),
 
 			$array_key.'_incoterms' => (method_exists($object, 'display_incoterms') ? $object->display_incoterms() : ''),
 
@@ -914,9 +914,10 @@ abstract class CommonDocGenerator
 			'line_localtax1_rate' => 'localtax1_tx',
 			'line_localtax2_rate' => 'localtax2_tx',
 		);
-		foreach ($vat_specs as $vat_spec) {
-			if (property_exists($line, $vat_spec[1])) {
-				$resarray[$vat_spec[0]] = vatrate($line->${$vat_spec[1]});
+		foreach ($vat_specs as $vat_key => $vat_spec) {
+			if (property_exists($line, $vat_spec)) {
+				// @phan-suppress-next-line PhanUndeclaredProperty
+				$resarray[$vat_key] = vatrate($line->$vat_spec);
 			}
 		}
 
@@ -1176,7 +1177,7 @@ abstract class CommonDocGenerator
 	 *
 	 *	@param  CommonObject	$object				Object with extrafields (must have $object->array_options filled)
 	 *	@param  array<string,float|string>	$array_to_fill      Substitution array
-	 *  @param  Extrafields		$extrafields        Extrafields object
+	 *  @param  ExtraFields		$extrafields        ExtraFields object
 	 *  @param  string			$array_key	        Prefix for name of the keys into returned array
 	 *  @param  Translate		$outputlangs        Lang object to use for output
 	 *	@return	array<string,float|string>				Substitution array
@@ -1586,7 +1587,7 @@ abstract class CommonDocGenerator
 			$curentCellPaddinds = $pdf->getCellPaddings();
 			// set cell padding with column content definition
 			$pdf->setCellPaddings(isset($colDef['content']['padding'][3]) ? $colDef['content']['padding'][3] : 0, isset($colDef['content']['padding'][0]) ? $colDef['content']['padding'][0] : 0, isset($colDef['content']['padding'][1]) ? $colDef['content']['padding'][1] : 0, isset($colDef['content']['padding'][2]) ? $colDef['content']['padding'][2] : 0);
-			$pdf->writeHTMLCell($colDef['width'], 2, isset($colDef['xStartPos']) ? $colDef['xStartPos'] : 0, $curY, $columnText, 0, 1, 0, true, $colDef['content']['align']);
+			$pdf->writeHTMLCell($colDef['width'], 2, isset($colDef['xStartPos']) ? $colDef['xStartPos'] : 0, $curY, $columnText, 0, 1, false, true, $colDef['content']['align']);
 			$this->setAfterColsLinePositionsData($colKey, $pdf->GetY(), $pdf->getPage());
 
 			// restore cell padding

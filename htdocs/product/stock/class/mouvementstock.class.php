@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011      Jean Heimburger      <jean@tiaris.info>
  * Copyright (C) 2014	   Cedric GROSS	        <c.gross@kreiz-it.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -201,11 +201,11 @@ class MouvementStock extends CommonObject
 	 *	@param		int				$fk_product			Id of product
 	 *	@param		int				$entrepot_id		Id of warehouse
 	 *	@param		float			$qty				Qty of movement (can be <0 or >0 depending on parameter type)
-	 *	@param		int				$type				Direction of movement:
+	 *	@param		int<0,3>		$type				Direction of movement:
 	 *													0=input (stock increase by a stock transfer), 1=output (stock decrease by a stock transfer),
 	 *													2=output (stock decrease), 3=input (stock increase)
 	 *                          		            	Note that qty should be > 0 with 0 or 3, < 0 with 1 or 2.
-	 *	@param		int				$price				Unit price HT of product, used to calculate average weighted price (AWP or PMP in french). If 0, average weighted price is not changed.
+	 *	@param		int|float		$price				Unit price HT of product, used to calculate average weighted price (AWP or PMP in french). If 0, average weighted price is not changed.
 	 *	@param		string			$label				Label of stock movement
 	 *	@param		string			$inventorycode		Inventory code
 	 *	@param		int|string		$datem				Force date of movement
@@ -321,7 +321,11 @@ class MouvementStock extends CommonObject
 		// Define if we must make the stock change (If product type is a service or if stock is used also for services)
 		// Only record into stock tables will be disabled by this (the rest like writing into lot table or movement of subproucts are done)
 		$movestock = 0;
-		if ($product->type != Product::TYPE_SERVICE || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
+		$productChildrenNb = 0;
+		if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+			$productChildrenNb = $product->hasFatherOrChild(1);
+		}
+		if (($product->type != Product::TYPE_SERVICE || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) && $productChildrenNb == 0) {
 			$movestock = 1;
 		}
 
@@ -449,7 +453,7 @@ class MouvementStock extends CommonObject
 		// Check if stock is enough when qty is < 0.
 		// THIS MUST BE DONE AT END OF MOVEMENTS
 		// Note that qty should be > 0 with type 0 or 3, < 0 with type 1 or 2.
-		if ($movestock && $qty < 0 && !getDolGlobalInt('STOCK_ALLOW_NEGATIVE_TRANSFER')) {
+		if ($movestock && $qty < 0 && getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
 			if (isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 				$foundforbatch = 0;
 				$qtyisnotenough = 0;
@@ -478,7 +482,7 @@ class MouvementStock extends CommonObject
 					return -8;
 				}
 			} else {
-				if (empty($product->stock_warehouse[$entrepot_id]) || empty($product->stock_warehouse[$entrepot_id]->real) || $product->stock_warehouse[$entrepot_id]->real < abs($qty)) {
+				if ($product->stockable_product == Product::ENABLED_STOCK && (empty($product->stock_warehouse[$entrepot_id]) || empty($product->stock_warehouse[$entrepot_id]->real) || $product->stock_warehouse[$entrepot_id]->real < abs($qty))) {
 					$langs->load("stocks");
 					$this->error = $langs->trans('qtyToTranferIsNotEnough').' : '.$product->ref;
 					$this->errors[] = $langs->trans('qtyToTranferIsNotEnough').' : '.$product->ref;
@@ -488,7 +492,7 @@ class MouvementStock extends CommonObject
 			}
 		}
 
-		if ($movestock) {	// Change stock for current product, change for subproduct is done after
+		if ($movestock && $product->stockable_product == Product::ENABLED_STOCK) {	// Change stock for current product, change for subproduct is done after
 			// Set $origin_type, origin_id and fk_project
 			$fk_project = $this->fk_project;
 			if (!empty($this->origin_type)) {			// This is set by caller for tracking reason
@@ -665,9 +669,11 @@ class MouvementStock extends CommonObject
 
 		if ($movestock && !$error) {
 			// Call trigger
-			$result = $this->call_trigger('STOCK_MOVEMENT', $user);
-			if ($result < 0) {
-				$error++;
+			if ($product->stockable_product != Product::DISABLED_STOCK ) {
+				$result = $this->call_trigger('STOCK_MOVEMENT', $user);
+				if ($result < 0) {
+					$error++;
+				}
 			}
 			// End call triggers
 			// Check unicity for serial numbered equipment once all movement were done.
@@ -785,10 +791,10 @@ class MouvementStock extends CommonObject
 	 * 	@param		int				$entrepot_id	Warehouse id
 	 * 	@param		float			$qty			Quantity
 	 * 	@param		int				$type			Type
-	 * 	@param		int				$price			Price
+	 * 	@param		float			$price			Price
 	 * 	@param		string			$label			Label of movement
 	 *  @param		string			$inventorycode	Inventory code
-	 *  @param		integer|string	$datem			Force date of movement
+	 *  @param		int|''			$datem			Force date of movement
 	 * 	@return 	int     		Return integer <0 if KO, 0 if OK
 	 */
 	private function _createSubProduct($user, $idProduct, $entrepot_id, $qty, $type, $price = 0, $label = '', $inventorycode = '', $datem = '')
@@ -796,44 +802,35 @@ class MouvementStock extends CommonObject
 		global $langs;
 
 		$error = 0;
-		$pids = array();
-		$pqtys = array();
 
 		$sql = "SELECT fk_product_pere, fk_product_fils, qty";
 		$sql .= " FROM ".$this->db->prefix()."product_association";
 		$sql .= " WHERE fk_product_pere = ".((int) $idProduct);
 		$sql .= " AND incdec = 1";
 
-		dol_syslog(get_class($this)."::_createSubProduct for parent product ".$idProduct, LOG_DEBUG);
+		dol_syslog(__METHOD__.' for parent product '.$idProduct, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$i = 0;
+			// Create movement for each sub-product
 			while ($obj = $this->db->fetch_object($resql)) {
-				$pids[$i] = $obj->fk_product_fils;
-				$pqtys[$i] = $obj->qty;
-				$i++;
-			}
-			$this->db->free($resql);
-		} else {
-			$error = -2;
-		}
-
-		// Create movement for each subproduct
-		foreach ($pids as $key => $value) {
-			if (!$error) {
 				$tmpmove = dol_clone($this, 1);
-
-				$result = $tmpmove->_create($user, $pids[$key], $entrepot_id, ($qty * $pqtys[$key]), $type, 0, $label, $inventorycode, $datem); // This will also call _createSubProduct making this recursive
+				$result = $tmpmove->_create($user, $obj->fk_product_fils, $entrepot_id, ($qty * $obj->qty), $type, 0, $label, $inventorycode, $datem); // This will also call _createSubProduct making this recursive
 				if ($result < 0) {
 					$this->error = $tmpmove->error;
 					$this->errors = array_merge($this->errors, $tmpmove->errors);
 					if ($result == -2) {
-						$this->errors[] = $langs->trans("ErrorNoteAlsoThatSubProductCantBeFollowedByLot");
+						$this->errors[] = $langs->trans('ErrorNoteAlsoThatSubProductCantBeFollowedByLot');
 					}
 					$error = $result;
+					dol_syslog(__METHOD__ . ' Error : ' . $this->errorsToString(), LOG_ERR);
+					break;
 				}
 				unset($tmpmove);
 			}
+
+			$this->db->free($resql);
+		} else {
+			$error = -2;
 		}
 
 		return $error;
@@ -847,15 +844,15 @@ class MouvementStock extends CommonObject
 	 * 	@param		int				$fk_product		    	Id product
 	 * 	@param		int				$entrepot_id	    	Warehouse id
 	 * 	@param		float			$qty			    	Quantity
-	 * 	@param		int				$price			    	Price
+	 * 	@param		float			$price			    	Price
 	 * 	@param		string			$label			    	Label of stock movement
-	 * 	@param		int|string		$datem			    	Force date of movement
-	 *	@param		int|string		$eatby			    	eat-by date
-	 *	@param		int|string		$sellby			    	sell-by date
+	 * 	@param		int|''			$datem			    	Force date of movement
+	 *	@param		int|''			$eatby			    	eat-by date
+	 *	@param		int|''			$sellby			    	sell-by date
 	 *	@param		string			$batch			    	batch number
 	 * 	@param		int				$id_product_batch		Id product_batch
 	 *  @param      string  		$inventorycode      	Inventory code
-	 *  @param		int				$donotcleanemptylines	Do not clean lines that remains in stock table with qty=0 (because we want to have this done by the caller)
+	 *  @param		int<0,1>		$donotcleanemptylines	Do not clean lines that remains in stock table with qty=0 (because we want to have this done by the caller)
 	 * 	@return		int								    	Return integer <0 if KO, >0 if OK
 	 */
 	public function livraison($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $datem = '', $eatby = '', $sellby = '', $batch = '', $id_product_batch = 0, $inventorycode = '', $donotcleanemptylines = 0)
@@ -870,28 +867,29 @@ class MouvementStock extends CommonObject
 	/**
 	 *	Increase stock for product and subproducts
 	 *
-	 * 	@param 		User			$user			     	Object user
-	 * 	@param		int				$fk_product		     	Id product
-	 * 	@param		int				$entrepot_id	     	Warehouse id
-	 * 	@param		float			$qty			     	Quantity
-	 * 	@param		int				$price			     	Price
-	 * 	@param		string			$label			     	Label of stock movement
-	 *	@param		integer|string	$eatby			     	eat-by date
-	 *	@param		integer|string	$sellby			     	sell-by date
-	 *	@param		string			$batch			     	batch number
-	 * 	@param		integer|string	$datem			     	Force date of movement
-	 * 	@param		int				$id_product_batch    	Id product_batch
-	 *  @param      string			$inventorycode       	Inventory code
-	 *  @param		int				$donotcleanemptylines	Do not clean lines that remains in stock table with qty=0 (because we want to have this done by the caller)
-	 *	@return		int								     	Return integer <0 if KO, >0 if OK
+	 * 	@param 		User			$user			     				Object user
+	 * 	@param		int				$fk_product		     				Id product
+	 * 	@param		int				$entrepot_id	     				Warehouse id
+	 * 	@param		float			$qty			     				Quantity
+	 * 	@param		float			$price			     				Price
+	 * 	@param		string			$label			     				Label of stock movement
+	 *	@param		int|''			$eatby			     				eat-by date
+	 *	@param		int|''			$sellby			     				sell-by date
+	 *	@param		string			$batch			     				batch number
+	 * 	@param		int|''			$datem			     				Force date of movement
+	 * 	@param		int				$id_product_batch    				Id product_batch
+	 *  @param      string			$inventorycode       				Inventory code
+	 *  @param		int<0,1>		$donotcleanemptylines				Do not clean lines that remains in stock table with qty=0 (because we want to have this done by the caller)
+	 *	@param		int				$disablestockchangeforsubproduct	Disable stock change for sub-products of kit (useful only if product is a subproduct)
+	 *	@return		int								     				Return integer <0 if KO, >0 if OK
 	 */
-	public function reception($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $eatby = '', $sellby = '', $batch = '', $datem = '', $id_product_batch = 0, $inventorycode = '', $donotcleanemptylines = 0)
+	public function reception($user, $fk_product, $entrepot_id, $qty, $price = 0, $label = '', $eatby = '', $sellby = '', $batch = '', $datem = '', $id_product_batch = 0, $inventorycode = '', $donotcleanemptylines = 0, $disablestockchangeforsubproduct = 0)
 	{
 		global $conf;
 
 		$skip_batch = empty($conf->productbatch->enabled);
 
-		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label, $inventorycode, $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch, 0, $donotcleanemptylines);
+		return $this->_create($user, $fk_product, $entrepot_id, $qty, 3, $price, $label, $inventorycode, $datem, $eatby, $sellby, $batch, $skip_batch, $id_product_batch, $disablestockchangeforsubproduct, $donotcleanemptylines);
 	}
 
 	/**

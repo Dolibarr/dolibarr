@@ -40,6 +40,11 @@
 
 define('ALLOWED_IF_UPGRADE_UNLOCK_FOUND', 1);
 include_once 'inc.php';
+
+/**
+ * @var string	$conffile
+ */
+
 if (!file_exists($conffile)) {
 	print 'Error: Dolibarr config file was not found. This may means that Dolibarr is not installed yet. Please call the page "/install/index.php" instead of "/install/upgrade.php").';
 }
@@ -47,6 +52,11 @@ require_once $conffile;
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 
 global $langs;
+
+/**
+ * @var Conf $conf
+ * @var Translate $langs
+ */
 
 $grant_query = '';
 $step = 2;
@@ -114,9 +124,9 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	$actiondone = 1;
 
 	print '<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="Database"> ';
-	print '<span class="inline-block">'.$langs->trans("DatabaseMigration").'</span></h3>';
+	print '<span class="inline-block valignmiddle">'.$langs->trans("DatabaseMigration").'</span></h3>';
 
-	print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
+	print '<table cellspacing="0" cellpadding="1" class="centpercent">';
 	$error = 0;
 
 	// If password is encoded, we decode it

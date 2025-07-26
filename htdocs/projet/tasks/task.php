@@ -54,7 +54,6 @@ $confirm = GETPOST('confirm', 'alpha');
 //$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 //$backtopage = GETPOST('backtopage', 'alpha');					// if not set, a default page will be used
 //$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
-//$backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 
 $id = GETPOSTINT('id');
 $ref = GETPOST("ref", 'alpha', 1); // task ref
@@ -109,7 +108,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('projet', 'cree
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	}
 	if (!$error) {
-		$object->oldcopy = clone $object;
+		$object->oldcopy = clone $object;  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		$tmparray = explode('_', GETPOST('task_parent'));
 		$task_parent = $tmparray[1];

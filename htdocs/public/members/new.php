@@ -8,7 +8,7 @@
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  * Copyright (C) 2022       Udo Tamm                <dev@dolibit.de>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,6 +91,10 @@ $error = 0;
 // Load translation files
 $langs->loadLangs(array("main", "members", "companies", "install", "other", "errors"));
 
+if (isModEnabled('multicompany')) {
+	force_switch_entity($entity);
+}
+
 // Security check
 if (!isModEnabled('member')) {
 	httponly_accessforbidden('Module Membership not enabled');
@@ -109,9 +113,27 @@ $object = new Adherent($db);
 
 $user->loadDefaultValues();
 
+/**
+ * Force switching conf of entity, even if user is connected
+ * Fox example when trying to go on public form of an other entity
+ *
+ * @param 	int		$newEntity		New entity
+ * @return	void
+ */
+function force_switch_entity($newEntity)
+{
+	global $db, $conf;
+
+	if ($newEntity != $conf->entity) {
+		$conf->entity = $newEntity;
+		$conf->setValues($db);
+	}
+}
 
 /**
  * Show header for new member
+ *
+ * Note: also called by functions.lib:recordNotFound
  *
  * @param 	string		$title				Title
  * @param 	string		$head				Head array
@@ -121,7 +143,7 @@ $user->loadDefaultValues();
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs, $mysoc;
 
@@ -129,38 +151,8 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	print '<body id="mainbody" class="publicnewmemberform">';
 
-	// Define urllogo
-	$urllogo = DOL_URL_ROOT.'/theme/common/login_logo.png';
-
-	if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
-		$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
-	} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
-		$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo);
-	} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')) {
-		$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
-	}
-
-	print '<header class="center">';
-
-	// Output html code for logo
-	if ($urllogo) {
-		print '<div class="backgreypublicpayment">';
-		print '<div class="logopublicpayment">';
-		print '<img id="dolpaymentlogo" src="'.$urllogo.'">';
-		print '</div>';
-		if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
-			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
-		}
-		print '</div>';
-	}
-
-	if (getDolGlobalString('MEMBER_IMAGE_PUBLIC_REGISTRATION')) {
-		print '<div class="backimagepublicregistration">';
-		print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('MEMBER_IMAGE_PUBLIC_REGISTRATION').'">';
-		print '</div>';
-	}
-
-	print '</header>';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+	htmlPrintOnlineHeader($mysoc, $langs, 1, getDolGlobalString('MEMBER_PUBLIC_INTERFACE'), 'MEMBER_IMAGE_PUBLIC_REGISTRATION');
 
 	print '<div class="divmainbodylarge">';
 }
@@ -168,9 +160,11 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 /**
  * Show footer for new member
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @return	void
  */
-function llxFooterVierge()
+function llxFooterVierge()  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs;
 
@@ -271,7 +265,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 	}
 
 	// Check Captcha code if is enabled
-	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
+	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_MEMBER')) {
 		$sessionkey = 'dol_antispam_value';
 		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
 		if (!$ok) {
@@ -697,7 +691,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		print '<tr><td>'.$langs->trans('State').'</td><td>';
 		if ($country_code) {
 			print img_picto('', 'state', 'class="pictofixedwidth paddingright"');
-			print $formcompany->select_state(GETPOST("state_id"), $country_code);
+			print $formcompany->select_state(GETPOSTINT("state_id"), $country_code);
 		}
 		print '</td></tr>';
 	}
@@ -823,7 +817,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	}
 
 	// Display Captcha code if is enabled
-	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
+	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_MEMBER')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 		print '<tr><td class="titlefield"><label><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td>';
 		print '<span class="span-icon-security inline-block">';
@@ -978,7 +972,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	}
 }
 
-
+//htmlPrintOnlineFooter($mysoc, $langs);
 llxFooterVierge();
 
 $db->close();

@@ -208,13 +208,15 @@ class Task extends CommonObjectLine
 	 * @var int|string
 	 */
 	public $timespent_datehour; // More accurate start date (same than timespent_date but includes hours, minutes and seconds)
+
 	/**
 	 * @var int
 	 */
-	public $timespent_withhour; // 1 = we entered also start hours for timesheet line
+	public $timespent_withhour; // 0 or 1 = we have entered also start hours for timesheet line
 	/**
 	 * @var int
 	 */
+
 	public $timespent_fk_user;
 	/**
 	 * @var float
@@ -1008,7 +1010,7 @@ class Task extends CommonObjectLine
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param	string	$option			'withproject' or ''
 	 *  @param	string	$mode			Mode 'task', 'time', 'contact', 'note', document' define page to link to.
-	 * 	@param	int		$addlabel		0=Default, 1=Add label into string, >1=Add first chars into string
+	 * 	@param	int		$addlabel		0=Default, 1=Add label into string, >1=Add first chars into string, -1=Label replace the ref
 	 *  @param	string	$sep			Separator between ref and label if option addlabel is set
 	 *  @param	int   	$notooltip		1=Disable tooltip
 	 *  @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
@@ -1070,11 +1072,15 @@ class Task extends CommonObjectLine
 			$result .= img_object(($notooltip ? '' : $label), $picto, 'class="paddingright"', 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
-			$result .= $this->ref;
+			if ($addlabel >= 0) {
+				$result .= $this->ref;
+			} else {
+				$result .= $this->label;
+			}
 		}
 		$result .= $linkend;
 		if ($withpicto != 2) {
-			$result .= (($addlabel && $this->label) ? $sep.dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
+			$result .= (($addlabel > 0 && $this->label) ? '<span class="opacitymedium">'.$sep.dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)).'</span>' : '');
 		}
 
 		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
@@ -1656,10 +1662,9 @@ class Task extends CommonObjectLine
 		$timespent->fk_user = $this->timespent_fk_user;
 		$timespent->fk_product = $this->timespent_fk_product;
 		$timespent->note = $this->timespent_note;
-		$timespent->datec = $this->db->idate($now);
+		$timespent->datec = $now;
 
 		$result = $timespent->create($user);
-
 		if ($result > 0) {
 			$ret = $result;
 			$this->timespent_id = $result;
@@ -2053,7 +2058,7 @@ class Task extends CommonObjectLine
 	}
 
 	/**
-	 *	Update time spent
+	 *	Update time spent line with id $this->timespent_id. New values are into ->timespent_xxx fields.
 	 *
 	 *  @param	User	$user           User id
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
@@ -2068,10 +2073,6 @@ class Task extends CommonObjectLine
 		// Check parameters
 		if ($this->timespent_date == '') {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Date"));
-			return -1;
-		}
-		if (!($this->timespent_fk_user > 0)) {
-			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("User"));
 			return -1;
 		}
 
@@ -2098,11 +2099,14 @@ class Task extends CommonObjectLine
 
 		$timespent = new TimeSpent($this->db);
 		$timespent->fetch($this->timespent_id);
+
 		$timespent->element_date = $this->timespent_date;
 		$timespent->element_datehour = $this->timespent_datehour;
 		$timespent->element_date_withhour = $this->timespent_withhour;
 		$timespent->element_duration = $this->timespent_duration;
-		$timespent->fk_user = $this->timespent_fk_user;
+		if ($this->timespent_fk_user > 0) {
+			$timespent->fk_user = $this->timespent_fk_user;
+		}
 		$timespent->fk_product = $this->timespent_fk_product;
 		$timespent->note = $this->timespent_note;
 		$timespent->invoice_id = $this->timespent_invoiceid;

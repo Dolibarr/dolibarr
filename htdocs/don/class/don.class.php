@@ -6,7 +6,7 @@
  * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2019      Thibault FOUCART     <support@ptibogxiv.net>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Maxime DEMAREST         <maxime@indelog.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -98,22 +98,22 @@ class Don extends CommonObject
 	public $societe;
 
 	/**
-	 * @var string Address
+	 * @var ?string Address
 	 */
 	public $address;
 
 	/**
-	 * @var string Zipcode
+	 * @var ?string Zipcode
 	 */
 	public $zip;
 
 	/**
-	 * @var string Town
+	 * @var ?string Town
 	 */
 	public $town;
 
 	/**
-	 * @var string Email
+	 * @var ?string Email
 	 */
 	public $email;
 
@@ -167,6 +167,11 @@ class Don extends CommonObject
 	 * @var int<0,1> paid
 	 */
 	public $paid;
+
+	/**
+	 * @var string IP address
+	 */
+	public $ip;
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -426,6 +431,7 @@ class Don extends CommonObject
 		$sql .= ", email";
 		$sql .= ", phone";
 		$sql .= ", phone_mobile";
+		$sql .= ", ip";
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->idate($this->date ? $this->date : $now)."'";
 		$sql .= ", ".((int) $conf->entity);
@@ -449,6 +455,7 @@ class Don extends CommonObject
 		$sql .= ", '".(!empty($this->email) ? $this->db->escape(trim($this->email)) : "")."'";
 		$sql .= ", '".(!empty($this->phone) ? $this->db->escape(trim($this->phone)) : "")."'";
 		$sql .= ", '".(!empty($this->phone_mobile) ? $this->db->escape(trim($this->phone_mobile)) : "")."'";
+		$sql .= ", '".(!empty($this->ip) ? $this->db->escape($this->ip) : "null")."'";
 		$sql .= ")";
 
 		$resql = $this->db->query($sql);
@@ -1110,7 +1117,7 @@ class Don extends CommonObject
 
 			$classname = $modele;
 			$obj = new $classname($this->db);
-
+			/** @var ModeleDon $obj */
 			'@phan-var-force ModeleDon $obj';
 
 			// We save charset_output to restore it because write_file can change it if needed for

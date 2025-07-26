@@ -26,10 +26,7 @@
  *
  * Need to have the following variables defined:
  * $object (invoice, order, ...)
- * $conf
- * $langs
  * $dateSelector
- * $forceall (0 by default, 1 for supplier invoices/orders)
  * $element     (used to test $user->rights->$element->creer)
  * $permtoedit  (used to replace test $user->rights->$element->creer)
  * $senderissupplier (0 by default, 1 for supplier invoices/orders)
@@ -54,9 +51,9 @@
  *
  * @var string $action
  * @var int $i
- * @var 0|1 $forceall
+ * @var int $forceall
  * @var int $num
- * @var 0|1 $senderissupplier
+ * @var int $senderissupplier
  * @var string $text
  * @var string $description
  */
@@ -77,6 +74,11 @@ if (empty($object) || !is_object($object)) {
 @phan-var-force string $description
 @phan-var-force Object $objp
 ';
+
+// Handle subtotals line view
+if (defined('SUBTOTALS_SPECIAL_CODE') && $line->special_code == SUBTOTALS_SPECIAL_CODE) {
+	return require DOL_DOCUMENT_ROOT.'/core/tpl/subtotal_view.tpl.php';
+}
 
 global $mysoc;
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax;
@@ -186,7 +188,7 @@ if (($line->info_bits & 2) == 2) {
 				print $form->textwithpicto('', $description);
 			}
 		} else {
-			print $form->textwithtooltip($text, $description, 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
+			print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
 		}
 	} else {
 		$type = (!empty($line->product_type) ? $line->product_type : $line->fk_product_type);
@@ -198,7 +200,7 @@ if (($line->info_bits & 2) == 2) {
 
 		if (!empty($line->label)) {
 			$text .= ' <strong>'.$line->label.'</strong>';
-			print $form->textwithtooltip($text, dol_htmlentitiesbr($line->description), 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
+			print $form->textwithtooltip($text, dol_htmlentitiesbr($line->description), 3, 0, '', (string) $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
 		} else {
 			if (!empty($line->fk_parent_line)) {
 				print img_picto('', 'rightarrow');
@@ -267,8 +269,6 @@ if (($line->info_bits & 2) == 2) {
 	if ($line->fk_product > 0 && getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
 		if ($line->element == 'facturedetrec') {
 			print (!empty($line->description) && $line->description != $line->product_label) ? (($line->date_start_fill || $line->date_end_fill) ? '' : '<br>').'<br>'.dol_htmlentitiesbr($line->description) : '';
-		} elseif ($line->element == 'invoice_supplier_det_rec') {
-			print (!empty($line->description) && $line->description != $line->label) ? (($line->date_start || $line->date_end) ? '' : '<br>').'<br>'.dol_htmlentitiesbr($line->description) : '';
 		} else {
 			print (!empty($line->description) && $line->description != $line->product_label) ? (($line->date_start || $line->date_end) ? '' : '<br>').'<br>'.dol_htmlentitiesbr($line->description) : '';
 		}
@@ -280,7 +280,7 @@ if (($line->info_bits & 2) == 2) {
 	print $hookmanager->resPrint;
 	// Line extrafield
 	if (!empty($extrafields) && empty($reshook)) {
-		$temps = $line->showOptionals($extrafields, 'view', array(), '', '', 1, 'line');
+		$temps = $line->showOptionals($extrafields, 'view', array(), '', '', '1', 'line');
 		if (!empty($temps)) {
 			print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
 			print $temps;
@@ -392,10 +392,10 @@ $positiverates = '';
 if (price2num($line->tva_tx)) {
 	$positiverates .= ($positiverates ? '/' : '').price2num($line->tva_tx);
 }
-if (price2num($line->total_localtax1)) {
+if (price2num($line->localtax1_tx)) {
 	$positiverates .= ($positiverates ? '/' : '').price2num($line->localtax1_tx);
 }
-if (price2num($line->total_localtax2)) {
+if (price2num($line->localtax2_tx)) {
 	$positiverates .= ($positiverates ? '/' : '').price2num($line->localtax2_tx);
 }
 if (empty($positiverates)) {
@@ -517,7 +517,7 @@ if ($line->special_code == 3) {
 
 // Price inc tax
 if ($outputalsopricetotalwithtax) {
-	print '<td class="linecolht nowrap right">'.price($sign * $line->total_ttc).'</td>';
+	print '<td class="linecolttc nowrap right">'.price($sign * $line->total_ttc).'</td>';
 	$coldisplay++;
 }
 

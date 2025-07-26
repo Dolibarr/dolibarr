@@ -78,6 +78,7 @@ class MyObject extends CommonObject
 	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'length' the length of field. Example: 255, '24,8'
 	 *  'label' the translation key.
+	 *  'langfile' the key of the language file for translation.
 	 *  'alias' the alias used into some old hard coded SQL requests
 	 *  'picto' is code of a picto to show before value in forms
 	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalInt("MY_SETUP_PARAM")' or 'isModEnabled("multicurrency")' ...)
@@ -200,7 +201,7 @@ class MyObject extends CommonObject
 	// public $table_element_line = 'mymodule_myobjectline';
 
 	// /**
-	//  * @var string    Field with ID of parent key if this object has a parent
+	//  * @var string    Field name with ID of parent key if this object has a parent, Or Field name of in child tables to link to this record.
 	//  */
 	// public $fk_element = 'fk_myobject';
 
@@ -216,8 +217,9 @@ class MyObject extends CommonObject
 
 	// /**
 	//  * @var array    List of child tables. To know object to delete on cascade.
-	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
+	//  *               If name matches '@ClassName:FilePathClass:ParentFkFieldName' (the recommended mode) it will
+	//  *               call method ClassName->deleteByParentField(parentId, 'ParentFkFieldName') to fetch and delete child object.
+	//  *               Using an array like childtables should not be implemented because a child may have other child, so we must only use the method that call deleteByParentField().
 	//  */
 	// protected $childtablesoncascade = array('mymodule_myobjectdet');
 
@@ -282,13 +284,16 @@ class MyObject extends CommonObject
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
-		$resultcreate = $this->createCommon($user, $notrigger);
+		$result = $this->createCommon($user, $notrigger);
 
 		// uncomment lines below if you want to validate object after creation
+		// if ($result > 0) {
 		// $this->fetch($this->id); // needed to retrieve some fields (ie date_creation for masked ref)
-		// $resultcreate = $this->validate($user, $notrigger);
+		// $resultupdate = $this->validate($user, $notrigger);
+		// if ($resultupdate < 0) { return $resultupdate; }
+		// }
 
-		return $resultcreate;
+		return $result;
 	}
 
 	/**
@@ -396,7 +401,7 @@ class MyObject extends CommonObject
 	 * @param	int    		$id   			Id object
 	 * @param	string 		$ref  			Ref
 	 * @param	int<0,1>	$noextrafields	0=Default to load extrafields, 1=No extrafields
-	 * @param	int<0,1>	$nolines		0=Default to load extrafields, 1=No extrafields
+	 * @param	int<0,1>	$nolines		0=Default to load lines, 1=No lines
 	 * @return	int<-1,1>					Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null, $noextrafields = 0, $nolines = 0)

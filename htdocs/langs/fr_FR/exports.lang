@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - exports
+ImportExportArea=Importations / Exportations
 ExportsArea=Exports
 ImportArea=Imports
 NewExport=Nouvel export
@@ -31,10 +32,10 @@ ExportCsvSeparator=Séparateur de caractères CSV
 ImportCsvSeparator=Séparateur de caractères CSV
 Step=Étape
 FormatedImport=Assistant import
-FormatedImportDesc1=Cet espace permet de réaliser des imports personnalisés des données via un assistant qui ne nécessite pas d'avoir des connaissances techniques.
+FormatedImportDesc1=Cliquez ici pour utiliser l'assistant pour mettre à jour les données existantes ou ajouter de nouveaux objets dans la base de données à partir d'un fichier.
 FormatedImportDesc2=La première étape est de choisir le type de données à importer, puis le fichier, ensuite de choisir les champs que vous voulez importer.
 FormatedExport=Assistant export
-FormatedExportDesc1=Cet espace permet de réaliser des exports personnalisés des données via un assistant qui ne nécessite pas d'avoir des connaissances techniques.
+FormatedExportDesc1=Cliquez ici pour utiliser l'assistant pour exporter des données dans un format pris en charge
 FormatedExportDesc2=La première étape est de choisir un des lots de données prédéfinies, ensuite de choisir les champs que vous voulez dans votre fichier résultat, et dans quel ordre.
 FormatedExportDesc3=Une fois les données sélectionnées, il est possible de choisir le format du fichier export généré.
 Sheet=Feuille
@@ -83,7 +84,7 @@ RunSimulateImportFile=Lancer la simulation d'import
 FieldNeedSource=Ce champ en base requiert obligatoirement une donnée source
 SomeMandatoryFieldHaveNoSource=Certains champs obligatoires n'ont pas de champ source issus du fichier
 InformationOnSourceFile=Fichier source
-InformationOnTargetTables=Target fields
+InformationOnTargetTables=Champs cibles
 SelectAtLeastOneField=Basculez au moins un champ source dans la colonne des champs à exporter
 SelectFormat=Choisir ce format de fichier import
 RunImportFile=Importer les données

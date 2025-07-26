@@ -42,6 +42,7 @@
  * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
+ * @var Conf $conf
  * @var User $user
  */
 
@@ -121,7 +122,7 @@ print '<th class="linecoluht right nowraponall">'.$langs->trans('PriceUHT').'</t
 
 // Multicurrency
 if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
-	print '<th class="linecoluht_currency right" style="width: 80px">'.$langs->trans('PriceUHTCurrency', $this->multicurrency_code).'</th>';
+	print '<th class="linecoluht_currency right" style="width: 80px">'.$langs->trans('PriceUTTC').' ('.$langs->getCurrencySymbol($this->multicurrency_code).')</th>';
 }
 
 if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
@@ -159,7 +160,7 @@ print '</th>';
 
 // Fields for situation invoice
 if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
-	print '<th class="linecolcycleref right">'.$langs->trans('Progress').'</th>';
+	print '<th class="linecolcycleref right">'.$langs->trans('CumulativeProgression').'</th>';
 	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 		print '<th class="linecolcycleref2 right">' . $langs->trans('SituationInvoiceProgressCurrent') . '</th>';
 	}
@@ -191,7 +192,17 @@ if ($usemargins && isModEnabled('margin') && empty($user->socid)) {
 		print '</th>';
 	}
 	if (getDolGlobalString('DISPLAY_MARK_RATES') && $user->hasRight('margins', 'liretous')) {
-		print '<th class="linecolmark1 margininfos right width75">'.$langs->trans('MarkRate').'</th>';
+		print '<th class="linecolmargin2 margininfos right width75">'.$langs->trans('MarkRate');
+		if (in_array($object->element, array('propal', 'commande', 'facture')) && $object->status == get_class($object)::STATUS_DRAFT) {
+			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?mode=markforalllines&id='.$object->id.'">'.img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickmarkforalllines opacitymedium paddingleft cursorpointer"').'</a>';
+			if (GETPOST('mode', 'aZ09') == 'markforalllines') {
+				print '<div class="classmarkforalllines inline-block nowraponall">';
+				print '<input type="number" name="markforalllines" min="0" max="999.9" value="20.0" step="0.1" class="width50"><label>%</label>';
+				print '<input class="inline-block button smallpaddingimp" type="submit" name="submitforallmark" value="'.$langs->trans("Update").'">';
+				print '</div>';
+			}
+		}
+		print '</th>';
 	}
 }
 
@@ -200,11 +211,11 @@ print '<th class="linecolht right">'.$langs->trans('TotalHTShort').'</th>';
 
 // Multicurrency
 if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
-	print '<th class="linecoltotalht_currency right">'.$langs->trans('TotalHTShortCurrency', $this->multicurrency_code).'</th>';
+	print '<th class="linecoltotalht_currency right">'.$langs->trans('TotalHTShort').' ('.$langs->getCurrencySymbol($this->multicurrency_code).')</th>';
 }
 
 if ($outputalsopricetotalwithtax) {
-	print '<th class="right" style="width: 80px">'.$langs->trans('TotalTTCShort').'</th>';
+	print '<th class="linecolttc right" style="width: 80px">'.$langs->trans('TotalTTCShort').'</th>';
 }
 
 if (isModEnabled('asset') && $object->element == 'invoice_supplier') {

@@ -4,7 +4,7 @@
  * Copyright (C) 2010       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2019       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -154,7 +154,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 
 		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1);
 		$texte .= "<br>\n";
-		$texte .= '<textarea class="flat" cols="60" name="value5">';
+		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value5">';
 		if (getDolGlobalString('COMPANY_DIGITARIA_CLEAN_WORDS')) {
 			$texte .= $conf->global->COMPANY_DIGITARIA_CLEAN_WORDS;
 		}
@@ -201,10 +201,10 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 	/**
 	 *  Set accountancy account code for a third party into this->code
 	 *
-	 *  @param	DoliDB	$db				Database handler
-	 *  @param  Societe	$societe		Third party object
-	 *  @param  string	$type			'customer' or 'supplier'
-	 *  @return	int						>=0 if OK, <0 if KO
+	 *  @param	DoliDB		$db				Database handler
+	 *  @param  ?Societe	$societe		Third party object
+	 *  @param  'customer'|'supplier'|''	$type	'customer' or 'supplier'
+	 *  @return	int							>=0 if OK, <0 if KO
 	 */
 	public function get_code($db, $societe, $type = '')
 	{
@@ -293,8 +293,6 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 	 */
 	public function checkIfAccountancyCodeIsAlreadyUsed($db, $code, $type = '')
 	{
-		global $conf;
-
 		if ($type == 'supplier') {
 			if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 				$typethirdparty = 'accountancy_code_supplier';

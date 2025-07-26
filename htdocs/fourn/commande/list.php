@@ -10,7 +10,7 @@
  * Copyright (C) 2018-2022 Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2019      Nicolas Zabouri		<info@inovea-conseil.com>
  * Copyright (C) 2021-2023 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -149,6 +149,9 @@ $search_option = GETPOST('search_option', 'alpha');
 if ($search_option == 'late') {
 	$search_status = '1,2';
 }
+if ($search_option == 'recv_late') {
+	$search_status = '3,4';
+}
 
 $diroutputmassaction = $conf->fournisseur->commande->dir_output.'/temp/massgeneration/'.$user->id;
 
@@ -196,21 +199,21 @@ if (empty($user->socid)) {
 	$fieldstosearchall["cf.note_private"] = "NotePrivate";
 }
 
-$checkedtypetiers = 0;
+$enabledtypetiers = 0;
 
 // Definition of array of fields for columns
 $arrayfields = array(
-	'u.login' => array('label' => "AuthorRequest", 'enabled' => 1, 'position' => 41),
-	's.name_alias' => array('label' => "AliasNameShort", 'position' => 51, 'checked' => 0),
-	's.town' => array('label' => "Town", 'enabled' => 1, 'position' => 55, 'checked' => 1),
-	's.zip' => array('label' => "Zip", 'enabled' => 1, 'position' => 56, 'checked' => 1),
-	'state.nom' => array('label' => "StateShort", 'enabled' => 1, 'position' => 57),
-	'country.code_iso' => array('label' => "Country", 'enabled' => 1, 'position' => 58),
-	'typent.code' => array('label' => "ThirdPartyType", 'enabled' => $checkedtypetiers, 'position' => 59),
-	'cf.total_localtax1' => array('label' => $langs->transcountry("AmountLT1", $mysoc->country_code), 'checked' => 0, 'enabled' => ($mysoc->localtax1_assuj == "1"), 'position' => 140),
-	'cf.total_localtax2' => array('label' => $langs->transcountry("AmountLT2", $mysoc->country_code), 'checked' => 0, 'enabled' => ($mysoc->localtax2_assuj == "1"), 'position' => 145),
-	'cf.note_public' => array('label' => 'NotePublic', 'checked' => 0, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES')), 'position' => 750),
-	'cf.note_private' => array('label' => 'NotePrivate', 'checked' => 0, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'position' => 760),
+	'u.login' => array('label' => "AuthorRequest", 'enabled' => '1', 'position' => 41),
+	's.name_alias' => array('label' => "AliasNameShort", 'position' => 51, 'checked' => '0'),
+	's.town' => array('label' => "Town", 'enabled' => '1', 'position' => 55, 'checked' => '0'),
+	's.zip' => array('label' => "Zip", 'enabled' => '1', 'position' => 56, 'checked' => '1'),
+	'state.nom' => array('label' => "StateShort", 'enabled' => '1', 'position' => 57),
+	'country.code_iso' => array('label' => "Country", 'enabled' => '1', 'position' => 58),
+	'typent.code' => array('label' => "ThirdPartyType", 'enabled' => $enabledtypetiers, 'position' => 59),
+	'cf.total_localtax1' => array('label' => $langs->transcountry("AmountLT1", $mysoc->country_code), 'checked' => '0', 'enabled' => (string) (int) ($mysoc->localtax1_assuj == "1"), 'position' => 140),
+	'cf.total_localtax2' => array('label' => $langs->transcountry("AmountLT2", $mysoc->country_code), 'checked' => '0', 'enabled' => (string) (int) ($mysoc->localtax2_assuj == "1"), 'position' => 145),
+	'cf.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES')), 'position' => 750),
+	'cf.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'position' => 760),
 );
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
@@ -219,7 +222,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['cf.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? '0' : '1'),
-			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -230,7 +233,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:string,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $error = 0;
 
@@ -982,7 +984,7 @@ if ($search_sale && $search_sale != '-1') {
 	}
 }
 // Search for tag/category ($searchCategoryProductList is an array of ID)
-$searchCategoryProductOperator = -1;
+$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
 $searchCategoryProductList = array($search_product_category);
 if (!empty($searchCategoryProductList)) {
 	$searchCategoryProductSqlList = array();
@@ -1359,7 +1361,7 @@ if ($resql) {
 	}
 	// alert on late date
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('Alert').' <input type="checkbox" name="search_option" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
+	$moreforfilter .= $langs->trans('Alert').' <input type="checkbox" name="search_option" value="'.(($search_status == '3,4') ? 'recv_late' : 'late').'"'.((array_search($search_option, array('late','recv_late')) !== false) ? ' checked' : '').'>';
 	$moreforfilter .= '</div>';
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -1772,6 +1774,7 @@ if ($resql) {
 		$objectstatic->note_public = $obj->note_public;
 		$objectstatic->note_private = $obj->note_private;
 		$objectstatic->statut = $obj->fk_statut;
+		$objectstatic->status = $obj->fk_statut;
 
 		if ($mode == 'kanban') {
 			if ($i == 0) {
@@ -1795,7 +1798,7 @@ if ($resql) {
 			print '<tr class="oddeven '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->billed == 1) ? 'opacitymedium' : '').'">';
 			// Action column
 			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-				print '<td class="nowrap center">';
+				print '<td class="nowraponall center">';
 				if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 					$selected = 0;
 					if (in_array($obj->rowid, $arrayofselected)) {
@@ -1810,7 +1813,7 @@ if ($resql) {
 			}
 			// Ref
 			if (!empty($arrayfields['cf.ref']['checked'])) {
-				print '<td class="nowrap">';
+				print '<td class="nowraponall">';
 
 				// Picto + Ref
 				print $objectstatic->getNomUrl(1, '', 0, -1, 1);
@@ -1836,7 +1839,7 @@ if ($resql) {
 				$projectstatic->id = $obj->project_id;
 				$projectstatic->ref = $obj->project_ref;
 				$projectstatic->title = $obj->project_title;
-				print '<td>';
+				print '<td class="tdoverflowmax125">';
 				if ($obj->project_id > 0) {
 					print $projectstatic->getNomUrl(1);
 				}
@@ -2100,7 +2103,7 @@ if ($resql) {
 			// Note public
 			if (!empty($arrayfields['cf.note_public']['checked'])) {
 				print '<td class="sensiblehtmlcontent center">';
-				print dolPrintHTML($obj->note_public);
+				print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2110,7 +2113,7 @@ if ($resql) {
 			// Note private
 			if (!empty($arrayfields['cf.note_private']['checked'])) {
 				print '<td class="sensiblehtmlcontent center">';
-				print dolPrintHTML($obj->note_private);
+				print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

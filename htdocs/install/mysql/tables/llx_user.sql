@@ -54,10 +54,10 @@ create table llx_user
   birth               date,                                   -- birthday
   birth_place         varchar(64),                            -- birth place (town)
   job                 varchar(128),
-  office_phone        varchar(20),
-  office_fax          varchar(20),
-  user_mobile         varchar(20),
-  personal_mobile     varchar(20),
+  office_phone        varchar(30),
+  office_fax          varchar(30),
+  user_mobile         varchar(30),
+  personal_mobile     varchar(30),
   email               varchar(255),
   personal_email      varchar(255),
   email_oauth2        varchar(255),							  -- an email to validate OAuth2 authentication when email differs from the OAuth2 email

@@ -23,7 +23,10 @@ AllPropals=Kaikki tarjoukset
 SearchAProposal=Hae tarjousta
 NoProposal=Ei tarjousta
 ProposalsStatistics=Tarjoustilastot
+NumberOfProposals=Ehdotusten määrä
 NumberOfProposalsByMonth=Lukumäärä kuukausittain
+AmountOfProposals=Ehdotusten määrä
+AmountOfProposalsHT=Ehdotusten määrä (pl. vero)
 AmountOfProposalsByMonthHT=Summa kuukausittain (paitsi vero)
 NbOfProposals=Tarjouksen numero
 ShowPropal=Näytä tarjous
@@ -77,13 +80,11 @@ AvailabilityTypeAV_1W=1 viikko
 AvailabilityTypeAV_2W=2 viikkoa
 AvailabilityTypeAV_3W=3 viikkoa
 AvailabilityTypeAV_1M=1 kuukausi
-
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Edustaja seuraamaan tarjousta
 TypeContact_propal_external_BILLING=Asiakkaan lasku yhteystiedot
 TypeContact_propal_external_CUSTOMER=Asiakkaan yhteystiedot tarjouksen seurantaan
 TypeContact_propal_external_SHIPPING=Asiakkaan yhteyshenkilö toimitus
-
 # Document models
 CantBeNoSign=ei voi asettaa ei allekirjoitettu
 CaseFollowedBy=Tapaus perässä
@@ -110,7 +111,7 @@ NoSigned=sarjaa ei ole allekirjoitettu
 PassedInOpenStatus=on validoitu
 PropalAlreadyRefused=tarjous on jo hylätty
 PropalAlreadySigned=tarjous on jo hyväksytty
-PropalRefused=tarjous kieltäytyi
+PropalRefused=Tarjous hylätty
 PropalSigned=tarjous hyväksytty
 ProposalCustomerSignature=Kirjallinen hyväksyntä, päivämäärä ja allekirjoitus
 ProposalsStatisticsSuppliers=Toimittaja ehdotustilastot
@@ -122,3 +123,5 @@ SignSociete_rib=Allekirjoita mandaatti
 SignPropal=Hyväksy tarjous
 Signed=allekirjoitettu
 SignedOnly=Vain allekirjoitettu
+ExpeditionSigned=Lähetys allekirjoitettu
+SignExpedition=Allekirjoita lähetys

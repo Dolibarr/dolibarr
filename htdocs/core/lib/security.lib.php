@@ -34,7 +34,7 @@
  *
  *	@param   string		$chain		string to encode
  *	@param   string		$key		rule to use for delta ('0', '1' or 'myownkey')
- *	@return  string					encoded string
+ *	@return  string					encoded string with format 'passcrypted'
  *  @see dol_decode(), dolEncrypt()
  */
 function dol_encode($chain, $key = '1')
@@ -120,7 +120,7 @@ define('MAIN_SECURITY_REVERSIBLE_ALGO', 'AES-256-CTR');
  *	@param   string		$key		If '', we use $conf->file->instance_unique_id (so $dolibarr_main_instance_unique_id in conf.php)
  *  @param	 string		$ciphering	Default ciphering algorithm
  *  @param	 string		$forceseed	To force the seed
- *	@return  string					encoded string
+ *	@return  string					encoded string, with format 'dolcrypt:CIPHERING:seed:cryptedpass'
  *  @since v17
  *  @see dolDecrypt(), dol_hash()
  */
@@ -193,15 +193,14 @@ function dolDecrypt($chain, $key = '')
 
 	if (empty($key)) {
 		if (!empty($conf->file->dolcrypt_key)) {
-			// If dolcrypt_key is defined, we used it in priority
+			// If dolcrypt_key is defined, we used it in priority (coming from $dolibarr_main_instance_unique_id)
 			$key = $conf->file->dolcrypt_key;
 		} else {
-			// We fall back on the instance_unique_id
+			// We fall back on the instance_unique_id (coming from $dolibarr_main_instance_unique_id)
 			$key = !empty($conf->file->instance_unique_id) ? $conf->file->instance_unique_id : "";
 		}
 	}
 
-	//var_dump('key='.$key);
 	$reg = array();
 	if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $chain, $reg)) {
 		// Do not enable this log, except during debug
@@ -1187,12 +1186,12 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		}
 
 		// For events, check on users assigned to event
-		if ($feature === 'agenda' && $objectid > 0) {
+		if ($feature === 'agenda' && ((int) $objectid) > 0) {
 			// Also check owner or attendee for users without allactions->read
-			if ($objectid > 0 && !$user->hasRight('agenda', 'allactions', 'read')) {
+			if (/* $objectid > 0 && */ !$user->hasRight('agenda', 'allactions', 'read')) {
 				require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 				$action = new ActionComm($db);
-				$action->fetch($objectid);
+				$action->fetch((int) $objectid);
 				if ($action->authorid != $user->id && $action->userownerid != $user->id && !(array_key_exists($user->id, $action->userassigned))) {
 					return false;
 				}

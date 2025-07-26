@@ -2,7 +2,7 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,8 +158,6 @@ class WebPortalMember extends Adherent
 	//public $phone;
 	//public $phone_perso;
 	//public $phone_mobile;
-	//public $email;
-	//public $url;
 	//public $socialnetworks;
 	//public $login;
 	/**
@@ -235,7 +233,7 @@ class WebPortalMember extends Adherent
 		if (isset($this->status)) {
 			$datas['picto'] .= ' ' . $this->getLibStatut(5);
 		}
-		$datas['ref'] .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+		$datas['ref'] = '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
 		return $datas;
 	}

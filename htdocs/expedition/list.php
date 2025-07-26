@@ -6,7 +6,7 @@
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2020      Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2023      Christophe Battarel	<christophe@altairis.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Vincent Maury		<vmaury@timgroup.fr>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
@@ -135,30 +135,30 @@ if (empty($user->socid)) {
 	$fieldstosearchall["e.note_private"] = "NotePrivate";
 }
 
-$checkedtypetiers = 0;
+$checkedtypetiers = '0';
 $arrayfields = array(
-	'e.ref' => array('label' => $langs->trans("Ref"), 'checked' => 1, 'position' => 1),
-	'e.ref_customer' => array('label' => $langs->trans("RefCustomer"), 'checked' => 1, 'position' => 2),
-	's.nom' => array('label' => $langs->trans("ThirdParty"), 'checked' => 1, 'position' => 3),
-	's.town' => array('label' => $langs->trans("Town"), 'checked' => 1, 'position' => 4),
-	's.zip' => array('label' => $langs->trans("Zip"), 'checked' => -1, 'position' => 5),
-	'state.nom' => array('label' => $langs->trans("StateShort"), 'checked' => 0, 'position' => 6),
-	'country.code_iso' => array('label' => $langs->trans("Country"), 'checked' => 0, 'position' => 7),
+	'e.ref' => array('label' => $langs->trans("Ref"), 'checked' => '1', 'position' => 1),
+	'e.ref_customer' => array('label' => $langs->trans("RefCustomer"), 'checked' => '1', 'position' => 2),
+	's.nom' => array('label' => $langs->trans("ThirdParty"), 'checked' => '1', 'position' => 3),
+	's.town' => array('label' => $langs->trans("Town"), 'checked' => '1', 'position' => 4),
+	's.zip' => array('label' => $langs->trans("Zip"), 'checked' => '-1', 'position' => 5),
+	'state.nom' => array('label' => $langs->trans("StateShort"), 'checked' => '0', 'position' => 6),
+	'country.code_iso' => array('label' => $langs->trans("Country"), 'checked' => '0', 'position' => 7),
 	'typent.code' => array('label' => $langs->trans("ThirdPartyType"), 'checked' => $checkedtypetiers, 'position' => 8),
-	'e.date_delivery' => array('label' => $langs->trans("DateDeliveryPlanned"), 'checked' => 1, 'position' => 9),
-	'e.date_expedition' => array('label' => $langs->trans("DateShipping"), 'checked' => 1, 'position' => 10),
-	'e.fk_shipping_method' => array('label' => $langs->trans('SendingMethod'), 'checked' => 1, 'position' => 11),
-	'e.tracking_number' => array('label' => $langs->trans("TrackingNumber"), 'checked' => 1, 'position' => 12),
-	'e.weight' => array('label' => $langs->trans("Weight"), 'checked' => 0, 'position' => 13),
-	'e.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
-	'e.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 500),
-	'e.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => 1, 'position' => 1000),
-	'e.signed_status' => array('label' => 'Signed status', 'checked' => 0, 'position' => 1001),
-	'l.ref' => array('label' => $langs->trans("DeliveryRef"), 'checked' => 1, 'position' => 1010, 'enabled' => (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? 1 : 0)),
-	'l.date_delivery' => array('label' => $langs->trans("DateReceived"), 'position' => 1020, 'checked' => 1, 'enabled' => (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? 1 : 0)),
-	'e.billed' => array('label' => $langs->trans("Billed"), 'checked' => 1, 'position' => 1100, 'enabled' => 'getDolGlobalString("WORKFLOW_BILL_ON_SHIPMENT") !== "0"'),
-	'e.note_public' => array('label' => 'NotePublic', 'checked' => 0, 'enabled' => (empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES)), 'position' => 135),
-	'e.note_private' => array('label' => 'NotePrivate', 'checked' => 0, 'enabled' => (empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES)), 'position' => 140),
+	'e.date_delivery' => array('label' => $langs->trans("DateDeliveryPlanned"), 'checked' => '1', 'position' => 9),
+	'e.date_expedition' => array('label' => $langs->trans("DateShipping"), 'checked' => '1', 'position' => 10),
+	'e.fk_shipping_method' => array('label' => $langs->trans('SendingMethod'), 'checked' => '1', 'position' => 11),
+	'e.tracking_number' => array('label' => $langs->trans("TrackingNumber"), 'checked' => '1', 'position' => 12),
+	'e.weight' => array('label' => $langs->trans("Weight"), 'checked' => '0', 'position' => 13),
+	'e.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
+	'e.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => '0', 'position' => 500),
+	'e.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => '1', 'position' => 1000),
+	'e.signed_status' => array('label' => 'Signed status', 'checked' => '0', 'position' => 1001),
+	'l.ref' => array('label' => $langs->trans("DeliveryRef"), 'checked' => '1', 'position' => 1010, 'enabled' => (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? '1' : '0')),
+	'l.date_delivery' => array('label' => $langs->trans("DateReceived"), 'position' => 1020, 'checked' => '1', 'enabled' => (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') ? '1' : '0')),
+	'e.billed' => array('label' => $langs->trans("Billed"), 'checked' => '1', 'position' => 1100, 'enabled' => 'getDolGlobalString("WORKFLOW_BILL_ON_SHIPMENT") !== "0"'),
+	'e.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'enabled' => (string) (int) (empty($conf->global->MAIN_LIST_ALLOW_PUBLIC_NOTES)), 'position' => 135),
+	'e.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'enabled' => (string) (int) (empty($conf->global->MAIN_LIST_ALLOW_PRIVATE_NOTES)), 'position' => 140),
 );
 
 // Extra fields
@@ -166,7 +166,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Security check
 $expeditionid = GETPOSTINT('id');
@@ -669,8 +668,6 @@ $shipment = new Expedition($db);
 $title = $langs->trans('Shipments');
 $help_url = 'EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
 
-llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-expedition page-list');
-
 $sql = 'SELECT';
 if ($search_all || $search_user > 0) {
 	$sql = 'SELECT DISTINCT';
@@ -814,7 +811,7 @@ if ($search_sale && $search_sale != '-1') {
 	}
 }
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
-$searchCategoryCustomerOperator = -1;
+$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
 $searchCategoryCustomerList = array($search_categ_cus);
 if (!empty($searchCategoryCustomerList)) {
 	$searchCategoryCustomerSqlList = array();
@@ -844,7 +841,7 @@ if (!empty($searchCategoryCustomerList)) {
 	}
 }
 // Search for tag/category ($searchCategoryProductList is an array of ID)
-$searchCategoryProductOperator = -1;
+$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
 $searchCategoryProductList = array($search_product_category);
 if (!empty($searchCategoryProductList)) {
 	$searchCategoryProductSqlList = array();
@@ -921,10 +918,8 @@ if (!$resql) {
 
 $num = $db->num_rows($resql);
 
-$arrayofselected = is_array($toselect) ? $toselect : array();
-
 // Redirect to expedition card if there is only one result for global search
-if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $search_all) {
+if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
 	header("Location: ".DOL_URL_ROOT.'/expedition/card.php?id='.$id);
@@ -938,6 +933,13 @@ if ($socid > 0) {
 		$search_company = $soc->name;
 	}
 }
+
+// Output page
+// --------------------------------------------------------------------
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-expedition page-list');
+
+$arrayofselected = is_array($toselect) ? $toselect : array();
 
 $param = '';
 if ($socid > 0) {
@@ -1158,10 +1160,7 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire') && ($user->
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
-	//$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-	//$moreforfilter .= $form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
-	$moreforfilter .= $formother->select_categories(Categorie::TYPE_PRODUCT, $search_product_category, 'search_product_category', 1, $tmptitle);
-
+	$moreforfilter .= $formother->select_categories(Categorie::TYPE_PRODUCT, (int) $search_product_category, 'search_product_category', 1, $tmptitle);
 	$moreforfilter .= '</div>';
 }
 if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
@@ -1689,7 +1688,7 @@ while ($i < $imaxinloop) {
 		// Note public
 		if (!empty($arrayfields['e.note_public']['checked'])) {
 			print '<td class="sensiblehtmlcontent center">';
-			print dolPrintHTML($obj->note_public);
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1698,7 +1697,7 @@ while ($i < $imaxinloop) {
 		// Note private
 		if (!empty($arrayfields['e.note_private']['checked'])) {
 			print '<td class="sensiblehtmlcontent center">';
-			print dolPrintHTML($obj->note_private);
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

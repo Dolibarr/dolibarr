@@ -11,7 +11,7 @@
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2019      Nicolas ZABOURI 	           <info@inovea-conseil.com>
  * Copyright (C) 2020      Open-Dsi  	               <support@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -103,7 +103,7 @@ class Contact extends CommonObject
 		'town' => array('type' => 'varchar(50)', 'label' => 'Town', 'enabled' => 1, 'visible' => -1, 'position' => 65),
 		'fk_departement' => array('type' => 'integer', 'label' => 'Fk departement', 'enabled' => 1, 'visible' => 3, 'position' => 70),
 		'fk_pays' => array('type' => 'integer', 'label' => 'Fk pays', 'enabled' => 1, 'visible' => 3, 'position' => 75),
-		'fk_soc' => array('type' => 'integer', 'label' => 'ThirdParty', 'enabled' => 1, 'visible' => 1, 'position' => 77, 'searchall' => 1),
+		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 1, 'visible' => 1, 'position' => 77, 'searchall' => 1),
 		'birthday' => array('type' => 'date', 'label' => 'Birthday', 'enabled' => 1, 'visible' => -1, 'position' => 80),
 		'phone' => array('type' => 'varchar(30)', 'label' => 'Phone', 'enabled' => 1, 'visible' => 1, 'position' => 90, 'searchall' => 1),
 		'phone_perso' => array('type' => 'varchar(30)', 'label' => 'PhonePerso', 'enabled' => 1, 'visible' => -1, 'position' => 95, 'searchall' => 1),
@@ -123,8 +123,8 @@ class Contact extends CommonObject
 		'ip' => array('type' => 'ip', 'label' => 'IPAddress', 'enabled' => '1', 'position' => 700, 'notnull' => 0, 'visible' => '-2', 'comment' => 'ip used to create record (for public submission page)'),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 300),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 305),
-		'fk_user_creat' => array('type' => 'integer', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => 3, 'position' => 310),
-		'fk_user_modif' => array('type' => 'integer', 'label' => 'UserModif', 'enabled' => 1, 'visible' => 3, 'position' => 315),
+		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => 3, 'position' => 310),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => 3, 'position' => 315),
 		'statut' => array('type' => 'tinyint(4)', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 500),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -1, 'position' => 1000),
 	);
@@ -175,17 +175,17 @@ class Contact extends CommonObject
 	public $name_alias;
 
 	/**
-	 * @var string Address
+	 * @var ?string Address
 	 */
 	public $address;
 
 	/**
-	 * @var string zip code
+	 * @var ?string zip code
 	 */
 	public $zip;
 
 	/**
-	 * @var string Town
+	 * @var ?string Town
 	 */
 	public $town;
 
@@ -235,13 +235,13 @@ class Contact extends CommonObject
 
 	/**
 	 * Email
-	 * @var string
+	 * @var ?string
 	 */
 	public $email;
 
 	/**
 	 * Email
-	 * @var string
+	 * @var ?string
 	 * @deprecated Use $email
 	 * @see $email
 	 */
@@ -249,7 +249,7 @@ class Contact extends CommonObject
 
 	/**
 	 * URL
-	 * @var string
+	 * @var ?string
 	 */
 	public $url;
 
@@ -623,7 +623,7 @@ class Contact extends CommonObject
 		$this->name_alias = trim($this->name_alias);
 		$this->lastname = trim($this->lastname) ? trim($this->lastname) : trim($this->lastname);
 		$this->firstname = trim($this->firstname);
-		$this->email = trim($this->email);
+		$this->email = trim($this->email ?? '');
 		$this->phone_pro = trim($this->phone_pro);
 		$this->phone_perso = trim($this->phone_perso);
 		$this->phone_mobile = trim($this->phone_mobile);
@@ -652,7 +652,7 @@ class Contact extends CommonObject
 		$sql .= ", name_alias='".$this->db->escape($this->name_alias)."'";
 		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname='".$this->db->escape($this->firstname)."'";
-		$sql .= ", address='".$this->db->escape($this->address)."'";
+		$sql .= ", address='".$this->db->escape((string) $this->address)."'";
 		$sql .= ", zip='".$this->db->escape($this->zip)."'";
 		$sql .= ", town='".$this->db->escape($this->town)."'";
 		$sql .= ", ref_ext = ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "NULL");
@@ -675,7 +675,7 @@ class Contact extends CommonObject
 			$sql .= ", fk_stcommcontact = ".($this->stcomm_id > 0 || $this->stcomm_id == -1 ? $this->stcomm_id : "0");
 		}
 		$sql .= ", statut = ".((int) $this->statut);
-		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$this->db->escape($user->id)."'" : "NULL");
+		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$this->db->escape((string) $user->id)."'" : "NULL");
 		$sql .= ", default_lang=".($this->default_lang ? "'".$this->db->escape($this->default_lang)."'" : "NULL");
 		$sql .= ", entity = ".((int) $this->entity);
 		$sql .= " WHERE rowid = ".((int) $id);
@@ -923,8 +923,8 @@ class Contact extends CommonObject
 	 *  Update field alert birthday
 	 *
 	 *  @param      int			$id         Id of contact
-	 *  @param      User		$user		User asking to change alert or birthday
-	 *  @param      int		    $notrigger	0=no, 1=yes
+	 *  @param      ?User		$user		User asking to change alert or birthday
+	 *  @param      int<0,1>    $notrigger	0=no, 1=yes
 	 *  @return     int         			Return integer <0 if KO, >=0 if OK
 	 */
 	public function update_perso($id, $user = null, $notrigger = 0)
@@ -978,15 +978,15 @@ class Contact extends CommonObject
 					$this->error = $this->db->lasterror();
 				}
 			}
-		}
 
-		if (!$error && !$notrigger) {
-			// Call trigger
-			$result = $this->call_trigger('CONTACT_MODIFY', $user);
-			if ($result < 0) {
-				$error++;
+			if (!$error && !$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('CONTACT_MODIFY', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
 			}
-			// End call triggers
 		}
 
 		if (!$error) {
@@ -1189,9 +1189,10 @@ class Contact extends CommonObject
 					}
 				}
 
-				return 1;
+				return $this->id;
 			} else {
-				$this->error = $langs->trans("RecordNotFound");
+				$langs->load('errors');
+				$this->error = $langs->trans("ErrorRecordNotFound");
 				return 0;
 			}
 		} else {
@@ -1611,7 +1612,7 @@ class Contact extends CommonObject
 			}
 		}
 		if ($withpicto != 2 && $withpicto != -2) {
-			$result .= '<span class="valigmiddle">'.($maxlen ? dol_trunc($this->getFullName($langs), $maxlen) : $this->getFullName($langs)).'</span>';
+			$result .= '<span class="valignmiddle">'.($maxlen ? dol_trunc($this->getFullName($langs), $maxlen) : $this->getFullName($langs)).'</span>';
 		}
 
 		$result .= $linkend;

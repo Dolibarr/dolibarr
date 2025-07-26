@@ -3,10 +3,10 @@
  * Copyright (C) 2007-2010  Jean Heimburger         <jean@tiaris.info>
  * Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2012  Alexandre spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2011-2025  Alexandre spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,6 +133,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = fd.fk_product";
 $sql .= " JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON f.rowid = fd.fk_facture_fourn";
 $sql .= " JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
 $sql .= " WHERE f.fk_statut > 0 AND f.entity IN (".getEntity('invoice').")";
+$sql .= " AND ct.entity IN (".getEntity('invoice').")";
 if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
 	$sql .= " AND f.type IN (0,1,2)";
 } else {
@@ -259,8 +260,8 @@ foreach ($tabfac as $key => $val) {
 		foreach ($line['var'] as $k => $mt) {
 			if (isset($line['nomtcheck']) || $mt) {
 				print '<tr class="oddeven">';
-				print "<td>".dol_print_date($db->jdate($val["date"]))."</td>";
-				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
+				print '<td class="nowraponall">'.dol_print_date($db->jdate($val["date"]), 'day')."</td>";
+				print '<td class="tdoverflowmax150">'.$invoicestatic->getNomUrl(1)."</td>";
 				print "<td>".$k."</td>";
 				print "<td>".$line['label']."</td>";
 

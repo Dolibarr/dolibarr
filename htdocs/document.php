@@ -79,6 +79,8 @@ if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')) {
 /**
  * Header empty
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @param 	string 			$head				Optional head lines
  * @param 	string 			$title				HTML title
  * @param	string			$help_url			Url links to help page
@@ -102,6 +104,8 @@ function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disab
 }
 /**
  * Footer empty
+ *
+ * Note: also called by functions.lib:recordNotFound
  *
  * @ignore
  * @param	string	$comment    				A text to add as HTML comment into HTML generated page
@@ -132,7 +136,7 @@ $original_file = GETPOST('file', 'alphanohtml');
 $hashp = GETPOST('hashp', 'aZ09');
 $modulepart = GETPOST('modulepart', 'alpha');
 $urlsource = GETPOST('urlsource', 'alpha');
-$entity = GETPOSTINT('entity');
+$entity = GETPOSTISSET('entity') ? GETPOSTINT('entity') : $conf->entity;
 
 // Security check
 if (empty($modulepart) && empty($hashp)) {
@@ -173,37 +177,58 @@ if (in_array($modulepart, array('facture_paiement', 'unpaid'))) {
 // If we have a hash public (hashp), we guess the original_file.
 $ecmfile = '';
 if (!empty($hashp)) {
-	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
-	$ecmfile = new EcmFiles($db);
-	$result = $ecmfile->fetch(0, '', '', '', $hashp);
-	if ($result > 0) {
-		$tmp = explode('/', $ecmfile->filepath, 2); // $ecmfile->filepath is relative to document directory
-		// filepath can be 'users/X' or 'X/propale/PR11111'
-		if (is_numeric($tmp[0])) { // If first tmp is numeric, it is subdir of company for multicompany, we take next part.
-			$tmp = explode('/', $tmp[1], 2);
-		}
-		$moduleparttocheck = $tmp[0]; // moduleparttocheck is first part of path
-
-		if ($modulepart) {	// Not required, so often not defined, for link using public hashp parameter.
-			if ($moduleparttocheck == $modulepart) {
-				// We remove first level of directory
-				$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
-				//var_dump($original_file); exit;
-			} else {
-				httponly_accessforbidden('Bad link. File is from another module part.', 403);
-			}
+	if (GETPOST('type', 'alpha')=='link') {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+		$link = new Link($db);
+		$result = $link->fetch(0, $hashp);
+		if ($result > 0 && !empty($link->url)) {
+			header('Location: '.$link->url);
+			exit;
 		} else {
-			$modulepart = $moduleparttocheck;
-			$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
-		}
-		$entity = $ecmfile->entity;
-		if ($entity != $conf->entity) {
-			$conf->entity = $entity;
-			$conf->setValues($db);
+			$langs->load("errors");
+			httponly_accessforbidden($langs->trans("ErrorLinkNotFoundWithSharedLink"), 403, 1);
 		}
 	} else {
-		$langs->load("errors");
-		httponly_accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"), 403, 1);
+		include_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
+		$ecmfile = new EcmFiles($db);
+		$result = $ecmfile->fetch(0, '', '', '', $hashp);
+		if ($result > 0) {
+			$tmp = explode('/', $ecmfile->filepath, 2); // $ecmfile->filepath is relative to document directory
+			// filepath can be 'users/X' or 'X/propale/PR11111'
+			if (is_numeric($tmp[0])) { // If first tmp is numeric, it is subdir of company for multicompany, we take next part.
+				$tmp = explode('/', $tmp[1], 2);
+			}
+			$moduleparttocheck = $tmp[0]; // moduleparttocheck is first part of path
+
+			if ($modulepart) {    // Not required, so often not defined, for link using public hashp parameter.
+				if ($moduleparttocheck == $modulepart) {
+					// We remove first level of directory
+					$original_file = (($tmp[1] ? $tmp[1] . '/' : '') . $ecmfile->filename); // this is relative to module dir
+					//var_dump($original_file); exit;
+				} else {
+					httponly_accessforbidden('Bad link. File is from another module part.', 403);
+				}
+			} else {
+				$modulepart = $moduleparttocheck;
+				$original_file = (($tmp[1] ? $tmp[1] . '/' : '') . $ecmfile->filename); // this is relative to module dir
+			}
+
+			$entity = $ecmfile->entity;
+			if (isModEnabled('multicompany') && !empty($ecmfile->src_object_type) && $ecmfile->src_object_id > 0) {
+				$object = fetchObjectByElement($ecmfile->src_object_id, $ecmfile->src_object_type);
+				if (is_object($object) && $object->id > 0) {
+					$entity = $object->entity;
+				}
+			}
+
+			if ($entity != $conf->entity) {
+				$conf->entity = $entity;
+				$conf->setValues($db);
+			}
+		} else {
+			$langs->load("errors");
+			httponly_accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"), 403, 1);
+		}
 	}
 }
 
@@ -238,7 +263,6 @@ $original_file = preg_replace('/\.\.+/', '..', $original_file);	// Replace '... 
 $original_file = str_replace('../', '/', $original_file);
 $original_file = str_replace('..\\', '/', $original_file);
 
-
 // Security check
 if (empty($modulepart)) {
 	accessforbidden('Bad value for parameter modulepart');
@@ -249,7 +273,7 @@ $check_access = dol_check_secure_access_document($modulepart, $original_file, $e
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
-//var_dump($modulepart.' '.$fullpath_original_file.' '.$original_file.' '.$accessallowed);exit;
+//var_dump($modulepart.' '.$entity.' '.$fullpath_original_file.' '.$original_file.' '.$accessallowed);exit;
 
 if (!empty($hashp)) {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed

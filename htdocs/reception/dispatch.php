@@ -148,6 +148,7 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 		$reg = array();
 		if (preg_match('/^product_.*([0-9]+)_([0-9]+)$/i', $key, $reg)) {
 			$pos++;
+			$modebatch = '';
 			if (preg_match('/^product_([0-9]+)_([0-9]+)$/i', $key, $reg)) {
 				$modebatch = "barcode";
 			} elseif (preg_match('/^product_batch_([0-9]+)_([0-9]+)$/i', $key, $reg)) { // With batchmode enabled
@@ -164,7 +165,7 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 			$ent = "entrepot_".$reg[1].'_'.$reg[2];
 			$pu = "pu_".$reg[1].'_'.$reg[2]; // This is unit price including discount
 			$fk_commandefourndet = "fk_commandefourndet_".$reg[1].'_'.$reg[2];
-			$idline = GETPOST("idline_".$reg[1].'_'.$reg[2]);
+			$idline = GETPOSTINT("idline_".$reg[1].'_'.$reg[2]);
 			$lot = '';
 			$dDLUO = '';
 			$dDLC = '';
@@ -174,6 +175,7 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 				$dDLC = dol_mktime(12, 0, 0, GETPOSTINT('dlc_'.$reg[1].'_'.$reg[2].'month'), GETPOSTINT('dlc_'.$reg[1].'_'.$reg[2].'day'), GETPOSTINT('dlc_'.$reg[1].'_'.$reg[2].'year'));
 			}
 
+			$saveprice = '__invalidsavepricekey__';
 			if (getDolGlobalString('SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT')) {
 				if (!isModEnabled("multicurrency") && empty($conf->dynamicprices->enabled)) {
 					$dto = GETPOSTINT("dto_".$reg[1].'_'.$reg[2]);
@@ -254,7 +256,7 @@ if ($action == 'updatelines' && $permissiontoreceive) {
 							*/
 						}
 					} else {
-						$result = $objectsrc->dispatchProduct($user, GETPOSTINT($prod), GETPOST($qty), GETPOSTINT($ent), GETPOST($pu), GETPOST('comment'), $dDLUO, $dDLC, $lot, GETPOSTINT($fk_commandefourndet), 0, $object->id);
+						$result = $objectsrc->dispatchProduct($user, GETPOSTINT($prod), GETPOSTFLOAT($qty), GETPOSTINT($ent), GETPOSTFLOAT($pu), GETPOST('comment'), $dDLUO, $dDLC, $lot, GETPOSTINT($fk_commandefourndet), 0, $object->id);
 						if ($result < 0) {
 							setEventMessages($objectsrc->error, $objectsrc->errors, 'errors');
 							$error++;
@@ -318,6 +320,7 @@ $numline = 0;
 llxHeader('', $title, $help_url, '', 0, 0, $morejs, '', '', 'mod-reception page-card_dispatch');
 
 if ($id > 0 || !empty($ref)) {
+	$typeobject = '';
 	if (!empty($object->origin) && $object->origin_id > 0) {
 		$object->origin = 'CommandeFournisseur';
 		$typeobject = $object->origin;
@@ -376,7 +379,7 @@ if ($id > 0 || !empty($ref)) {
 			if ($action != 'classify' && $permissiontoadd) {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
 				$proj = new Project($db);
@@ -449,6 +452,8 @@ if ($id > 0 || !empty($ref)) {
 
 	print '<br>';
 	$disabled = 0;	// This is used to disable or not the bulk selection of target warehouse. No reason to have it disabled so forced to 0.
+
+	$nbproduct = 0; // Nb of predefined product lines to dispatch (already done or not) if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is off (default)
 
 	if ($object->statut == Reception::STATUS_DRAFT || ($object->statut == Reception::STATUS_VALIDATED && !getDolGlobalString('STOCK_CALCULATE_ON_RECEPTION'))) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
@@ -595,7 +600,6 @@ if ($id > 0 || !empty($ref)) {
 			}
 
 			$nbfreeproduct = 0; // Nb of lines of free products/services
-			$nbproduct = 0; // Nb of predefined product lines to dispatch (already done or not) if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is off (default)
 			// or nb of line that remain to dispatch if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is on.
 
 			$conf->cache['product'] = array();

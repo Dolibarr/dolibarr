@@ -7,7 +7,7 @@
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,16 +106,16 @@ if (!$sortorder) {
 $filtre = GETPOSTINT("filtre");
 
 $arrayfields = array(
-	'cs.rowid'		=> array('label' => "Ref", 'checked' => 1, 'position' => 10),
-	'cs.libelle'	=> array('label' => "Label", 'checked' => 1, 'position' => 20),
-	'cs.fk_type'	=> array('label' => "Type", 'checked' => 1, 'position' => 30),
-	'cs.date_ech'	=> array('label' => "Date", 'checked' => 1, 'position' => 40),
-	'cs.periode'	=> array('label' => "PeriodEndDate", 'checked' => 1, 'position' => 50),
-	'p.ref'			=> array('label' => "ProjectRef", 'checked' => 1, 'position' => 60, 'enabled' => (isModEnabled('project'))),
-	'cs.fk_user'	=> array('label' => "Employee", 'checked' => 1, 'position' => 70),
-	'cs.fk_mode_reglement'	=> array('checked' => -1, 'position' => 80, 'label' => "DefaultPaymentMode"),
-	'cs.amount'		=> array('label' => "Amount", 'checked' => 1, 'position' => 100),
-	'cs.paye'		=> array('label' => "Status", 'checked' => 1, 'position' => 110),
+	'cs.rowid'		=> array('label' => "Ref", 'checked' => '1', 'position' => 10),
+	'cs.libelle'	=> array('label' => "Label", 'checked' => '1', 'position' => 20),
+	'cs.fk_type'	=> array('label' => "Type", 'checked' => '1', 'position' => 30),
+	'cs.date_ech'	=> array('label' => "Date", 'checked' => '1', 'position' => 40),
+	'cs.periode'	=> array('label' => "PeriodEndDate", 'checked' => '1', 'position' => 50),
+	'p.ref'			=> array('label' => "ProjectRef", 'checked' => '1', 'position' => 60, 'enabled' => (string) (int) (isModEnabled('project'))),
+	'cs.fk_user'	=> array('label' => "Employee", 'checked' => '1', 'position' => 70),
+	'cs.fk_mode_reglement'	=> array('checked' => '-1', 'position' => 80, 'label' => "DefaultPaymentMode"),
+	'cs.amount'		=> array('label' => "Amount", 'checked' => '1', 'position' => 100),
+	'cs.paye'		=> array('label' => "Status", 'checked' => '1', 'position' => 110),
 );
 
 if (isModEnabled("bank")) {
@@ -123,7 +123,6 @@ if (isModEnabled("bank")) {
 }
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('sclist'));
@@ -210,12 +209,12 @@ llxHeader('', $title, '', '', 0, 0, '', '', '', 'bodyforlist');
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $sql = "SELECT cs.rowid, cs.fk_type as type, cs.fk_user,";
-$sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode as period, cs.fk_account,";
+$sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode as period, cs.fk_account, cs.note_public, cs.note_private,";
 if (isModEnabled('project')) {
 	$sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
 }
 $sql .= " c.libelle as type_label, c.accountancy_code as type_accountancy_code,";
-$sql .= " ba.label as blabel, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos,";
+$sql .= " ba.label as blabel, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos as status,";
 $sql .= " pay.code as payment_code";
 $sqlfields = $sql; // $sql fields to remove for count total
 
@@ -484,7 +483,7 @@ if (!empty($arrayfields['cs.rowid']['checked'])) {
 // Filter: Type
 if (!empty($arrayfields['cs.fk_type']['checked'])) {
 	print '<td class="liste_titre">';
-	$formsocialcontrib->select_type_socialcontrib($search_typeid, 'search_typeid', 1, 0, 0, 'maxwidth150', 1);
+	$formsocialcontrib->select_type_socialcontrib((int) $search_typeid, 'search_typeid', 1, 0, 0, 'maxwidth150', 1);
 	print '</td>';
 }
 
@@ -662,7 +661,11 @@ while ($i < $imaxinloop) {
 	$chargesociale_static->type_label = $obj->type_label;
 	$chargesociale_static->amount = $obj->amount;
 	$chargesociale_static->paye = $obj->paye;
-	$chargesociale_static->date_ech = $obj->date_ech;
+	$chargesociale_static->date_ech = $db->idate($obj->date_ech);		// Date of contribution
+	$chargesociale_static->period = $db->idate($obj->period, 'gmt');	// End date of period
+	$chargesociale_static->type_accountancy_code = $obj->type_accountancy_code;
+	$chargesociale_static->note_private = $obj->note_private;
+	$chargesociale_static->note_public = $obj->note_public;
 
 	if (isModEnabled('project')) {
 		$projectstatic->id = $obj->project_id;
@@ -711,7 +714,9 @@ while ($i < $imaxinloop) {
 
 		// Ref
 		if (!empty($arrayfields['cs.rowid']['checked'])) {
-			print '<td>'.$chargesociale_static->getNomUrl(1, '20').'</td>';
+			print '<td class="tdoverflowmax125">';
+			print $chargesociale_static->getNomUrl(1, '', 0, 0, -1, 1);
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -787,7 +792,7 @@ while ($i < $imaxinloop) {
 
 		// Type
 		if (!empty($arrayfields['cs.fk_mode_reglement']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($langs->trans("PaymentTypeShort".$obj->payment_code)).'">';
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($langs->trans("PaymentTypeShort".$obj->payment_code)).'">';
 			if (!empty($obj->payment_code)) {
 				print $langs->trans("PaymentTypeShort".$obj->payment_code);
 			}
@@ -808,12 +813,12 @@ while ($i < $imaxinloop) {
 				$bankstatic->bic = $obj->bic;
 				$bankstatic->currency_code = $langs->trans("Currency".$obj->currency_code);
 				$bankstatic->account_number = $obj->account_number;
-				$bankstatic->clos = $obj->clos;
+				$bankstatic->status = $obj->status;
+				$bankstatic->label = $obj->blabel;
 
 				//$accountingjournal->fetch($obj->fk_accountancy_journal);
 				//$bankstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
 
-				$bankstatic->label = $obj->blabel;
 				print $bankstatic->getNomUrl(1);
 			}
 			print '</td>';

@@ -456,6 +456,13 @@ print '<td>';
 print ajax_constantonoff('SHIPPING_DISPLAY_STOCK_ENTRY_DATE');
 print '</td></tr>';
 
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans('SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST');
+print '</td>';
+print '<td>';
+print ajax_constantonoff('SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST');
+print '</td></tr>';
+
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
@@ -487,7 +494,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowOnLineSign");
 print '</td>';
 print '<td>';
-print ajax_constantonoff('EXPEDITION_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, $langs->trans("WarningOnlineSignature"));
+print ajax_constantonoff('EXPEDITION_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, $langs->transnoentitiesnoconv("WarningOnlineSignature"));
 print '</td></tr>';
 
 // Pre fill shipment qty option

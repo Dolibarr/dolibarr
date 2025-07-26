@@ -1,10 +1,12 @@
 <?php
-/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
-	die('Must be call by steelsheet');
+	die('Must be called by steelsheet');
 }
+
+// From theme_vars.inc, must be included by steelsheet
 /**
  * @var string $badgePrimary
  * @var string $badgeSecondary
@@ -249,18 +251,20 @@ _createStatusBadgeCss('4b', '', "STATUS4b");
 /**
  * Create status badge
  *
- * @param string $statusName 			name of status
+ * @param string $statusName 			name of status ('1', '2', '4b', ...)
  * @param string $statusVarNamePrefix 	a prefix for var ${$statusVarNamePrefix.'badgeStatus'.$statusName}
  * @param string $commentLabel 			a comment label
  * @param string $cssPrefix 			a css prefix
  * @return void
+ *
+ * @phan-suppress PhanRedefineFunction
  */
 function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentLabel = '', $cssPrefix = '')
 {
 	global ${$statusVarNamePrefix.'badgeStatus'.$statusName}, ${$statusVarNamePrefix.'badgeStatus_textColor'.$statusName};
 
 	if (!empty(${$statusVarNamePrefix.'badgeStatus'.$statusName})) {
-		print "\n/* ".strtoupper($commentLabel)." */\n";
+		print "\n/* ".strtoupper($commentLabel)." - ".$statusName." */\n";
 
 		$thisBadgeBackgroundColor = $thisBadgeBorderColor = ${$statusVarNamePrefix.'badgeStatus'.$statusName};
 
@@ -272,10 +276,13 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 		}
 
 		if (in_array((string) $statusName, $TBadgeBorderOnly)) {
-			$thisBadgeTextColor = '#212529';
-			$thisBadgeBackgroundColor = "";
+			$thisBadgeTextColor = '#9c850b';
+			$thisBadgeBackgroundColor = "hsl(0, 0%, 0%, 0)";
 		}
 
+		if (in_array((string) $statusName, array('4b', '7'))) {
+			$thisBadgeTextColor = '#25a580';
+		}
 		if (in_array((string) $statusName, array('0', '5', '9'))) {
 			$thisBadgeTextColor = '#999999';
 		}
@@ -300,15 +307,15 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 		}
 		print "}\n";
 
+		// badge-statusX:focus
+
 		print $cssPrefix.".badge-status".$statusName.".focus, ".$cssPrefix.".badge-status".$statusName.":focus {\n";
 		print "    outline: 0;\n";
 		print "    box-shadow: 0 0 0 0.2rem ".colorHexToRgb($thisBadgeBackgroundColor, 0.5)." !important;\n";
 		print "}\n";
 
-		// badge-statusX:focus
 		print $cssPrefix.".badge-status".$statusName.":focus, ".$cssPrefix.".badge-status".$statusName.":hover {\n";
 		print "    color: ".$thisBadgeTextColor." !important;\n";
-		//print "    background-color: " . colorDarker($thisBadgeBackgroundColor, 10) . ";\n";
 		if (in_array((string) $statusName, $TBadgeBorderOnly)) {
 			print "        border-color: ".colorDarker($thisBadgeBorderColor, 10)." !important;\n";
 		}

@@ -1,11 +1,9 @@
 <?php
-
-/*
- * Copyright (C) 2014-2016  Jean-François Ferry	<hello@librethic.io>
+/* Copyright (C) 2014-2016  Jean-François Ferry	<hello@librethic.io>
  * Copyright (C) 2016       Christophe Battarel <christophe@altairis.fr>
- * Copyright (C) 2023		Benjamin Falière	<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2023-2025	Benjamin Falière	<benjamin@faliere.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +65,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 		$ok = 0;
 
-		if (empty($conf->ticket) || !isModEnabled('ticket')) {
+		if (!isModEnabled('ticket')) {
 			return 0; // Module not active, we do nothing
 		}
 
@@ -313,7 +311,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 									/**
 									 * Return if contact source is external or thirdparty
 									 *
-									 * @param array{source:string,id:int,rowid:int,email:string,civility:string,firstname:string,lastname:string,labeltype:string,libelle:string,socid:int,code:string,status:int,statuscontact:string,fk_c_typecontact:string,phone:string,phone_mobile:string,nom:string} $contact
+									 * @param array{source:string,id:int,rowid:int,email:string,civility:string,firstname:string,lastname:string,labeltype:string,libelle:string,socid:int,code:string,status:int,statuscontact:int,fk_c_typecontact:int,phone:string,phone_mobile:string,phone_perso?:string,nom:string} $contact
 									 * @return bool
 									 */
 									static function ($contact) {
@@ -502,10 +500,13 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		}
 		$message_customer .= '<p>'.$langs->trans('Message').' : <br><br>'.$message.'</p><br>';
 
-		$url_public_ticket = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 2)).'view.php?track_id='.$object->track_id;
-
-		$message_customer .= '<p>'.$langs->trans($see_ticket).' : <a href="'.$url_public_ticket.'">'.$url_public_ticket.'</a></p>';
-		$message_customer .= '<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmail').'</p>';
+		if (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE')) {
+			$url_public_ticket = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/', 2)).'view.php?track_id='.((int) $object->track_id);
+			$message_customer .= '<p>'.$langs->trans($see_ticket).' : <a href="'.$url_public_ticket.'">'.$url_public_ticket.'</a></p>';
+			$message_customer .= '<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmail').'</p>';
+		} else {
+			$message_customer .= '<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmailNoInterface').'</p>';
+		}
 
 		$from = (getDolGlobalString('MAIN_INFO_SOCIETE_NOM') ? getDolGlobalString('MAIN_INFO_SOCIETE_NOM') . ' ' : '').'<' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'>';
 

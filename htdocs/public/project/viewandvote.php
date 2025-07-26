@@ -178,6 +178,7 @@ $idvote = GETPOSTINT("vote");
 $hashedvote = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'vote'.$idvote);
 
 if ($idvote > 0) {
+	$votestatus = 'err';
 	if (in_array($hashedvote, $listofvotes)) {
 		// Has already voted
 		$votestatus = 'ko';
@@ -238,7 +239,7 @@ print '<input type="hidden" name="tag" value="'.GETPOST("tag", 'alpha').'">'."\n
 print '<input type="hidden" name="id" value="'.dol_escape_htmltag($id).'">'."\n";
 print '<input type="hidden" name="securekey" value="'.dol_escape_htmltag($securekeyreceived).'">'."\n";
 print '<input type="hidden" name="e" value="'.$entity.'" />';
-print '<input type="hidden" name="forcesandbox" value="'.GETPOSTINT('forcesandbox').'" />';
+//print '<input type="hidden" name="forcesandbox" value="'.GETPOSTINT('forcesandbox').'" />';
 print "\n";
 
 

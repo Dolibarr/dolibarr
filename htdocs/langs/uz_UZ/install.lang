@@ -69,6 +69,7 @@ CreateTableAndPrimaryKey=%s jadvalini yarating
 CreateOtherKeysForTable=%s jadvali uchun chet el kalitlari va indekslarini yarating
 OtherKeysCreation=Chet el kalitlari va indekslarini yaratish
 FunctionsCreation=Funktsiyalarni yaratish
+CreationOfUser=Foydalanuvchining yaratilishi
 AdminAccountCreation=Administratorning login yaratish
 PleaseTypePassword=Iltimos, parolni kiriting, bo'sh parollarga ruxsat berilmaydi!
 PleaseTypeALogin=Kirish yozing!
@@ -139,7 +140,7 @@ KeepDefaultValuesDeb=Siz Dolibarrni o'rnatish ustasini Linux paketidan ishlatdin
 KeepDefaultValuesMamp=Siz DoliMamp-dan Dolibarrni sozlash ustasini ishlatdingiz, shuning uchun bu erda tavsiya etilgan qiymatlar allaqachon optimallashtirilgan. Siz nima qilayotganingizni bilsangizgina ularni o'zgartiring.
 KeepDefaultValuesProxmox=Siz Dolibarrni sozlash ustasini Proxmox virtual uskunasidan foydalandingiz, shuning uchun bu erda tavsiya etilgan qiymatlar allaqachon optimallashtirilgan. Siz nima qilayotganingizni bilsangizgina ularni o'zgartiring.
 UpgradeExternalModule=Tashqi modulni maxsus yangilash jarayonini boshqaring
-SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=URLda kamida bitta parametr sifatida “test” yoki “tasdiqlangan” qiymatini belgilang. Masalan: '...repair.php?standard=confirmed'
 NothingToDelete=Tozalash / o'chirish uchun hech narsa yo'q
 NothingToDo=Qiladigan ish yo'q
 #########
@@ -211,9 +212,12 @@ YouTryInstallDisabledByFileLock=Ilova o'zini o'zi yangilashga harakat qildi, lek
 YouTryUpgradeDisabledByMissingFileUnLock=Ilova oʻz-oʻzini yangilashga urindi, lekin yangilash jarayoniga hozircha ruxsat berilmagan.<br>
 ClickHereToGoToApp=Arizangizga o'tish uchun shu erni bosing
 ClickOnLinkOrRemoveManualy=Agar yangilanish davom etayotgan bo'lsa, iltimos, kuting. Agar yo'q bo'lsa, quyidagi havolani bosing. Agar siz doimo shu sahifani ko'rsangiz, hujjatlar katalogidagi install.lock faylini olib tashlashingiz yoki nomini o'zgartirishingiz kerak.
-ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
+ClickOnLinkOrCreateUnlockFileManualy=Agar yangilanish davom etayotgan bo'lsa, kuting... Agar yo'q bo'lsa, Dolibarr hujjatlari katalogiga install.lock faylini olib tashlashingiz kerak (yoki yangilash uchun upgrade.unlock faylini yaratish).
 Loaded=Yuklandi
 FunctionTest=Funktsiya sinovi
 NodoUpgradeAfterDB=Ma'lumotlar bazasini yangilashdan keyin tashqi modullar tomonidan hech qanday harakat talab qilinmaydi
 NodoUpgradeAfterFiles=Fayllar yoki kataloglarni yangilashdan keyin tashqi modullar tomonidan hech qanday harakat talab qilinmaydi
 MigrationContractLineRank=Rankdan foydalanish uchun kontrakt liniyasini ko'chiring (va Qayta tartibni yoqing)
+MigrationProductLotPath=Mahsulot ommaviy ish fayllari yo'lini ko'chiring
+MigrationAccountancyBookkeeping=Refdan foydalanish uchun buxgalteriya hisobini ko'chiring
+InvoiceExportModelsMigration=Hisob-fakturani eksport qilish modellarini ko'chiring

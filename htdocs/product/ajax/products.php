@@ -184,7 +184,7 @@ if ($action == 'fetch' && !empty($id)) {
 			$sql .= " WHERE fk_product = ".((int) $id);
 			$sql .= " AND entity IN (".getEntity('productprice').")";
 			$sql .= " AND price_level = ".((int) $price_level);
-			$sql .= " ORDER BY date_price";
+			$sql .= " ORDER BY date_price DESC, rowid";
 			$sql .= " DESC LIMIT 1";
 
 			$result = $db->query($sql);
@@ -220,13 +220,20 @@ if ($action == 'fetch' && !empty($id)) {
 			$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 			if ($result) {
 				if (count($prodcustprice->lines) > 0) {
-					$found = true;
-					$outprice_ht = price($prodcustprice->lines[0]->price);
-					$outprice_ttc = price($prodcustprice->lines[0]->price_ttc);
-					$outpricebasetype = $prodcustprice->lines[0]->price_base_type;
-					$outtva_tx_formated = price($prodcustprice->lines[0]->tva_tx);
-					$outtva_tx = price2num($prodcustprice->lines[0]->tva_tx);
-					$outdefault_vat_code = $prodcustprice->lines[0]->default_vat_code;
+					$date_now = (int) floor(dol_now() / 86400) * 86400; // date without hours
+					foreach ($prodcustprice->lines as $k => $custprice_line) {
+						if ($custprice_line->date_begin <= $date_now && (empty($custprice_line->date_end) || $date_now <= $custprice_line->date_end)) {
+							$found = true;
+							$outprice_ht = price($custprice_line->price);
+							$outprice_ttc = price($custprice_line->price_ttc);
+							$outpricebasetype = $custprice_line->price_base_type;
+							$outtva_tx_formated = price($custprice_line->tva_tx);
+							$outtva_tx = price2num($custprice_line->tva_tx);
+							$outdefault_vat_code = $custprice_line->default_vat_code;
+							$outdiscount = $custprice_line->discount_percent;
+							break;
+						}
+					}
 				}
 			}
 		}
@@ -328,7 +335,7 @@ if ($action == 'fetch' && !empty($id)) {
 	if (empty($mode) || $mode == 1) {  // mode=1: customer
 		$arrayresult = $form->select_produits_list(0, $htmlname, $type, getDolGlobalInt('PRODUIT_LIMIT_SIZE', 1000), $price_level, $searchkey, $status, $finished, $outjson, $socid, '1', 0, '', $hidepriceinlabel, $warehouseStatus, $status_purchase, $warehouseId);
 	} elseif ($mode == 2) {            // mode=2: supplier
-		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson, getDolGlobalInt('PRODUIT_LIMIT_SIZE', 1000), $alsoproductwithnosupplierprice);
+		$arrayresult = $form->select_produits_fournisseurs_list($socid, "", $htmlname, $type, "", $searchkey, $status, $outjson, getDolGlobalInt('PRODUIT_LIMIT_SIZE', 1000), $alsoproductwithnosupplierprice, '', getDolGlobalInt('SUPPLIER_SHOW_STOCK_IN_PRODUCTS_COMBO'));
 	}
 
 	$db->close();

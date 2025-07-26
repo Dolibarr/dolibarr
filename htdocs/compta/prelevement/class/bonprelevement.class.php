@@ -235,7 +235,7 @@ class BonPrelevement extends CommonObject
 	 */
 	public $statut;
 	/**
-	 * @var int	Status
+	 * @var int|null	Status
 	 */
 	public $status;
 
@@ -1051,8 +1051,8 @@ class BonPrelevement extends CommonObject
 	 *  - Link the order with the prelevement_demande lines
 	 *  TODO delete params banque and agence when not necessary
 	 *
-	 *	@param 	int		$banque				dolibarr mysoc bank
-	 *	@param	int		$agence				dolibarr mysoc bank office (guichet)
+	 *	@param 	string	$banque				dolibarr mysoc bank
+	 *	@param	string	$agence				dolibarr mysoc bank office (guichet)
 	 *	@param	string	$mode				real=do action, simu=test only
 	 *  @param	string	$format				FRST, RCUR or ALL
 	 *  @param  int  	$executiondate		Date to execute the transfer
@@ -1063,7 +1063,7 @@ class BonPrelevement extends CommonObject
 	 *  @param	string	$sourcetype			'invoice' or 'salary'
 	 *	@return	int							Return integer <0 if KO, No of invoice included into file if OK
 	 */
-	public function create($banque = 0, $agence = 0, $mode = 'real', $format = 'ALL', $executiondate = 0, $notrigger = 0, $type = 'direct-debit', $did = 0, $fk_bank_account = 0, $sourcetype = 'invoice')
+	public function create($banque = '', $agence = '', $mode = 'real', $format = 'ALL', $executiondate = 0, $notrigger = 0, $type = 'direct-debit', $did = 0, $fk_bank_account = 0, $sourcetype = 'invoice')
 	{
 		// phpcs:enable
 		global $conf, $langs, $user;
@@ -1514,13 +1514,13 @@ class BonPrelevement extends CommonObject
 			}
 
 			if (!$error && !$notrigger) {
-				$triggername = 'DIRECT_DEBIT_ORDER_CREATE';
+				$triggerName = 'DIRECT_DEBIT_ORDER_CREATE';
 				if ($type != 'bank-transfer') {
-					$triggername = 'CREDIT_TRANSFER_ORDER_CREATE';
+					$triggerName = 'CREDIT_TRANSFER_ORDER_CREATE';
 				}
 
 				// Call trigger
-				$result = $this->call_trigger($triggername, $user);
+				$result = $this->call_trigger($triggerName, $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -1543,11 +1543,11 @@ class BonPrelevement extends CommonObject
 	/**
 	 *  Get object and lines from database
 	 *
-	 *  @param	?User	$user		Object user that delete
+	 *  @param	User	$user		Object user that delete
 	 *  @param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return	int					>0 if OK, <0 if KO
 	 */
-	public function delete($user = null, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
 		$this->db->begin();
 
@@ -1824,7 +1824,7 @@ class BonPrelevement extends CommonObject
 		$this->total = 0;
 
 		// Build file for European countries
-		if ($mysoc->isInEEC()) {
+		if ($mysoc->isInSEPA()) {
 			$found++;
 
 			if ($type != 'bank-transfer') {
@@ -2344,7 +2344,7 @@ class BonPrelevement extends CommonObject
 			$XML_DEBITOR .= '					<PstlAdr>' . $CrLf;
 			$XML_DEBITOR .= '						<Ctry>' . $row_country_code . '</Ctry>' . $CrLf;
 			$addressline1 = strtr($row_address, array(chr(13) => ", ", chr(10) => ""));
-			$addressline2 = strtr($row_zip . (($row_zip && $row_town) ? ' ' : (string) $row_town), array(chr(13) => ", ", chr(10) => ""));
+			$addressline2 = strtr($row_zip . (($row_zip && $row_town) ? ' ' : '') . (string) $row_town, array(chr(13) => ", ", chr(10) => ""));
 			if (trim($addressline1)) {
 				$XML_DEBITOR .= '						<AdrLine>' . dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline1), ' '), 70, 'right', 'UTF-8', 1)) . '</AdrLine>' . $CrLf;
 			}
@@ -2382,7 +2382,7 @@ class BonPrelevement extends CommonObject
 			$XML_CREDITOR .= '			<CdtTrfTxInf>' . $CrLf;
 			$XML_CREDITOR .= '				<PmtId>' . $CrLf;
 			// Add EndToEndId. Must be a unique ID for each payment (for example by including bank, buyer or seller, date, checksum)
-			$XML_CREDITOR .= '					<EndToEndId>' . ((getDolGlobalString('PRELEVEMENT_END_TO_END') != "") ? $conf->global->PRELEVEMENT_END_TO_END : ('CT-' . dol_trunc($row_idfac . '-' . $row_ref, 20, 'right', 'UTF-8', 1)) . '-' . $Rowing) . '</EndToEndId>' . $CrLf; // ISO20022 states that EndToEndId has a MaxLength of 35 characters
+			$XML_CREDITOR .= '					<EndToEndId>' . ((getDolGlobalString('PRELEVEMENT_END_TO_END') != "") ? getDolGlobalString("PRELEVEMENT_END_TO_END") : ('CT-' . dol_trunc($row_idfac . '-' . $row_ref, 20, 'right', 'UTF-8', 1)) . '-' . $Rowing) . '</EndToEndId>' . $CrLf; // ISO20022 states that EndToEndId has a MaxLength of 35 characters
 			$XML_CREDITOR .= '				</PmtId>' . $CrLf;
 			if (!empty($this->sepa_xml_pti_in_ctti)) {
 				$XML_CREDITOR .= '				<PmtTpInf>' . $CrLf;
@@ -2429,7 +2429,7 @@ class BonPrelevement extends CommonObject
 			$XML_CREDITOR .= '					<PstlAdr>' . $CrLf;
 			$XML_CREDITOR .= '						<Ctry>' . $row_country_code . '</Ctry>' . $CrLf;
 			$addressline1 = strtr($row_address, array(chr(13) => ", ", chr(10) => ""));
-			$addressline2 = strtr($row_zip . (($row_zip && $row_town) ? ' ' : (string) $row_town), array(chr(13) => ", ", chr(10) => ""));
+			$addressline2 = strtr($row_zip . (($row_zip && $row_town) ? ' ' : '') . (string) $row_town, array(chr(13) => ", ", chr(10) => ""));
 			if (trim($addressline1)) {
 				$XML_CREDITOR .= '						<AdrLine>' . dolEscapeXML(dol_trunc(dol_string_nospecial(dol_string_unaccent($addressline1), ' '), 70, 'right', 'UTF-8', 1)) . '</AdrLine>' . $CrLf;
 			}
@@ -2795,7 +2795,7 @@ class BonPrelevement extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut((isset($this->status) ? $this->status : $this->statut), $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

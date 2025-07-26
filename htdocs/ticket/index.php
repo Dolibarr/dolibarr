@@ -2,7 +2,8 @@
 /* Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021-2024	Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,6 +111,7 @@ $param_year = 'DOLUSERCOOKIE_ticket_by_status_year';
 $param_shownb = 'DOLUSERCOOKIE_ticket_by_status_shownb';
 $param_showtot = 'DOLUSERCOOKIE_ticket_by_status_showtot';
 $autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
+$showtot = 0;
 if (in_array('DOLUSERCOOKIE_ticket_by_status', $autosetarray)) {
 	$endyear = GETPOSTINT($param_year);
 	$shownb = GETPOST($param_shownb, 'alpha');
@@ -185,6 +187,7 @@ if ($user->socid > 0) {
 }
 $sql .= " GROUP BY t.fk_statut";
 
+$dataseries = array();
 $result = $db->query($sql);
 if ($result) {
 	while ($objp = $db->fetch_object($result)) {
@@ -217,7 +220,6 @@ if ($result) {
 
 	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';	// This define $badgeStatusX
 
-	$dataseries = array();
 	$colorseries = array();
 
 	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->labelStatusShort[Ticket::STATUS_NOT_READ]), 'data' => round($tick['unread']));
@@ -262,14 +264,14 @@ $stringtoshow .= '</div>';
 if ($user->hasRight('ticket', 'read')) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><th >'.$langs->trans("Statistics").' '.$endyear.' '.img_picto('', 'filter.png', 'id="idsubimgDOLUSERCOOKIE_ticket_by_status" class="linkobject"').'</th></tr>';
+	print '<tr class="liste_titre"><th  colspan=2>'.$langs->trans("Statistics").' '.$endyear.' '.img_picto('', 'filter.png', 'id="idsubimgDOLUSERCOOKIE_ticket_by_status" class="linkobject"').'</th></tr>';
 
-	print '<tr><td class="center">';
+	print '<tr><td class="center" colspan=2>';
 	print $stringtoshow;
 
 	// don't display graph if no series
+	$totalnb = 0;
 	if (!empty($dataseries) && count($dataseries) > 1) {
-		$totalnb = 0;
 		foreach ($dataseries as $key => $value) {
 			$totalnb += $value['data'];
 		}
@@ -309,7 +311,7 @@ if ($user->hasRight('ticket', 'read')) {
 		}
 	}
 	print '</td></tr>';
-
+	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$totalnb.'</td></tr>';
 	print '</table>';
 	print '</div>';
 }

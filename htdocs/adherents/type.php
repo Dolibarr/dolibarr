@@ -8,7 +8,7 @@
  * Copyright (C) 2019-2022	Thibault Foucart			<support@ptibogxiv.net>
  * Copyright (C) 2020		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2021		Waël Almoman				<info@almoman.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -118,14 +118,17 @@ foreach ($object->fields as $key => $val) {
 		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields[$tableprefix.'.'.$key] = array(
 			'label' => $val['label'],
-			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+			'checked' => (($visible < 0) ? '0' : '1'),
+			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
 	}
 }
 
+$object->fields = dol_sort_array($object->fields, 'position');
+//$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Security check
 $result = restrictedArea($user, 'adherent', $rowid, 'adherent_type');
@@ -225,7 +228,7 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 if ($action == 'update' && $user->hasRight('adherent', 'configurer')) {
 	$object->fetch($rowid);
 
-	$object->oldcopy = dol_clone($object, 2);
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 	$object->label = trim($label);
 	$object->morphy	= trim($morphy);
@@ -294,7 +297,9 @@ $totalarray = [
 if (!$rowid && $action != 'create' && $action != 'edit') {
 	//print dol_get_fiche_head([]);
 
-	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote, d.statut as status, d.morphy, d.duration";
+	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote,";
+	$sql .= " d.statut as status, d.morphy, d.duration,";
+	$sql .= " d.tms";
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 	$sql .= " WHERE d.entity IN (".getEntity('member_type').")";
 
@@ -340,9 +345,9 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-		$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
-		$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
-		// $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
+		$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+		$selectedfields = (($mode != 'kanban' && $mode != 'kanbangroupby') ? $htmlofselectarray : '');
+		//$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 		print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
@@ -352,7 +357,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		print '<table class="tagtable noborder liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 		print '<tr class="liste_titre">';
-		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if ($conf->main_checkbox_left_column) {
 			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
 			$totalarray['nbfield']++;
 		}
@@ -388,11 +393,15 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			print '<th class="center">'.$langs->trans("VoteAllowed").'</th>';
 			$totalarray['nbfield']++;
 		}
+		if (!empty($arrayfields['t.tms']['checked'])) {
+			print '<th class="center">'.$langs->trans("DateModification").'</th>';
+			$totalarray['nbfield']++;
+		}
 		if (!empty($arrayfields['t.statut']['checked'])) {
 			print '<th class="center">'.$langs->trans("Status").'</th>';
 			$totalarray['nbfield']++;
 		}
-		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		if (!$conf->main_checkbox_left_column) {
 			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
 			$totalarray['nbfield']++;
 		}
@@ -433,7 +442,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			} else {
 				print '<tr class="oddeven">';
 
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					if ($user->hasRight('adherent', 'configurer')) {
 						print '<td class="center"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 					}
@@ -484,10 +493,13 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 				if (!empty($arrayfields['t.vote']['checked'])) {
 					print '<td class="center">'.yn($objp->vote).'</td>';
 				}
+				if (!empty($arrayfields['t.tms']['checked'])) {
+					print '<td class="center">'.dol_print_date($db->jdate($objp->tms), 'dayhour').'</td>';
+				}
 				if (!empty($arrayfields['t.statut']['checked'])) {
 					print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
 				}
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					if ($user->hasRight('adherent', 'configurer')) {
 						print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 					}
@@ -505,7 +517,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			$colspan = 1;
 			foreach ($arrayfields as $key => $val) {
 				//if (!empty($val['checked'])) {
-					$colspan++;
+				$colspan++;
 				//}
 			}
 			print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
@@ -519,6 +531,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		dol_print_error($db);
 	}
 }
+
 
 // Creation
 if ($action == 'create') {
@@ -534,7 +547,7 @@ if ($action == 'create') {
 	print '<table class="border centpercent">';
 	print '<tbody>';
 
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth200" name="label" autofocus="autofocus"></td></tr>';
+	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth200" name="label" value= "'. $label. '" autofocus="autofocus"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
 	print $form->selectarray('status', array('0' => $langs->trans('ActivityCeased'), '1' => $langs->trans('InActivity')), 1, 0, 0, 0, '', 0, 0, 0, '', 'minwidth100');
@@ -566,7 +579,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
-	print '<input name="duration_value" size="5" value="'.GETPOST('duraction_unit', 'aZ09').'"> ';
+	print '<input name="duration_value" size="5" value="'. $duration_value .'"> ';
 	print $formproduct->selectMeasuringUnits("duration_unit", "time", GETPOSTISSET("duration_unit") ? GETPOST('duration_unit', 'aZ09') : 'y', 0, 1);
 	print '</td></tr>';
 
@@ -642,14 +655,18 @@ if ($rowid > 0) {
 		print yn($object->vote);
 		print '</tr>';
 
-		// Duration
-		print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td colspan="2">'.$object->duration_value.'&nbsp;';
+		$durationarray = array();
 		if ($object->duration_value > 1) {
-			$dur = array("i" => $langs->trans("Minutes"), "h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
-		} elseif ($object->duration_value > 0) {
-			$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hour"), "d" => $langs->trans("Day"), "w" => $langs->trans("Week"), "m" => $langs->trans("Month"), "y" => $langs->trans("Year"));
+			$durationarray = array("s" => $langs->trans("Seconds"), "mn" => $langs->trans("Minutes"), "i" => $langs->trans("Minutes"), "h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
+		} else {
+			$durationarray = array("s" => $langs->trans("Seconds"), "mn" => $langs->trans("Minutes"), "i" => $langs->trans("Minute"), "h" => $langs->trans("Hour"), "d" => $langs->trans("Day"), "w" => $langs->trans("Week"), "m" => $langs->trans("Month"), "y" => $langs->trans("Year"));
 		}
-		print(!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
+
+		// Duration
+		print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td colspan="2">';
+		print $object->duration_value > 0 ? $object->duration_value : '';
+		print '&nbsp;';
+		print(!empty($object->duration_unit) && isset($durationarray[$object->duration_unit]) ? $langs->trans($durationarray[$object->duration_unit]) : '');
 		print '</td></tr>';
 
 		// Description
@@ -807,7 +824,7 @@ if ($rowid > 0) {
 
 			if ($type > 0) {
 				$membertype = new AdherentType($db);
-				$result = $membertype->fetch($type);
+				$result = $membertype->fetch((int) $type);
 				$titre .= " (".$membertype->label.")";
 			}
 
@@ -859,7 +876,7 @@ if ($rowid > 0) {
 			// Fields title search
 			print '<tr class="liste_titre_filter">';
 
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($conf->main_checkbox_left_column) {
 				print '<td class="liste_titre center maxwidthsearch">';
 				$searchpicto = $form->showFilterButtons('left');
 				print $searchpicto;
@@ -884,7 +901,7 @@ if ($rowid > 0) {
 
 			print '<td class="liste_titre">&nbsp;</td>';
 
-			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if (!$conf->main_checkbox_left_column) {
 				print '<td class="liste_titre center nowraponall">';
 				print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 				print '&nbsp; ';
@@ -895,7 +912,7 @@ if ($rowid > 0) {
 			print "</tr>\n";
 
 			print '<tr class="liste_titre">';
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if ($conf->main_checkbox_left_column) {
 				print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
 			}
 			print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.ref", $param, "", "", $sortfield, $sortorder);
@@ -905,7 +922,7 @@ if ($rowid > 0) {
 			print_liste_field_titre("EMail", $_SERVER["PHP_SELF"], "d.email", $param, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "d.statut,d.datefin", $param, "", "", $sortfield, $sortorder);
 			print_liste_field_titre("EndSubscription", $_SERVER["PHP_SELF"], "d.datefin", $param, "", 'align="center"', $sortfield, $sortorder);
-			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+			if (!$conf->main_checkbox_left_column) {
 				print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
 			}
 			print "</tr>\n";
@@ -933,7 +950,7 @@ if ($rowid > 0) {
 				print '<tr class="oddeven">';
 
 				// Actions
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td class="center">';
 					if ($user->hasRight('adherent', 'creer')) {
 						print '<a class="editfielda marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=edit&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
@@ -1001,7 +1018,7 @@ if ($rowid > 0) {
 				}
 
 				// Actions
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="center">';
 					if ($user->hasRight('adherent', 'creer')) {
 						print '<a class="editfielda marginleftonly" href="card.php?rowid='.$objp->rowid.'&action=edit&token='.newToken().'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
@@ -1084,7 +1101,7 @@ if ($rowid > 0) {
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
-		print '<input name="duration_value" size="5" value="'.$object->duration_value.'"> ';
+		print '<input name="duration_value" size="5" value="'.($object->duration_value > 0 ? $object->duration_value : '').'"> ';
 		print $formproduct->selectMeasuringUnits("duration_unit", "time", ($object->duration_unit === '' ? 'y' : $object->duration_unit), 0, 1);
 		print '</td></tr>';
 

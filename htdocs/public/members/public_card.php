@@ -5,6 +5,7 @@
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,6 +149,8 @@ $db->close();
 /**
  * Show header for card member
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @param 	string		$title				Title
  * @param 	string		$head				Head array
  * @param 	int    		$disablejs			More content into html header
@@ -156,7 +159,7 @@ $db->close();
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
 {
 	top_htmlhead($head, $title);
 
@@ -164,11 +167,13 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 }
 
 /**
-* Show footer for card member
-*
-* @return	void
-*/
-function llxFooterVierge()
+ * Show footer for card member
+ *
+ * Note: also called by functions.lib:recordNotFound
+ *
+ * @return	void
+ */
+function llxFooterVierge()  // @phan-suppress-current-line PhanRedefineFunction
 {
 	printCommonFooter('public');
 

@@ -115,7 +115,7 @@ function getServerTimeZoneInt($refgmtdate = 'now')
 /**
  *  Add a delay to a date
  *
- *  @param      int|string	$time               Date timestamp (or string with format YYYY-MM-DD)
+ *  @param      int			$time               Date timestamp
  *  @param      float		$duration_value     Value of delay to add
  *  @param      string		$duration_unit      Unit of added delay (d, m, y, w, h, i)
  *  @param      int<0,1>    $ruleforendofmonth  Change the behavior of PHP over data-interval, 0 or 1
@@ -166,7 +166,7 @@ function dol_time_plus_duree($time, $duration_value, $duration_unit, $ruleforend
 	if (getDolGlobalString('MAIN_DATE_IN_MEMORY_ARE_GMT')) {
 		$date->setTimezone(new DateTimeZone('UTC'));
 	}
-	$date->setTimestamp($time);
+	$date->setTimestamp((int) $time);
 	$interval = new DateInterval($deltastring);
 
 	if ($sub) {
@@ -400,7 +400,7 @@ function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $exclu
 			$sqldate .= "' AND '".$db->idate(dol_mktime(23, 59, 59, $month_date, $day_date, $year_date, $gm))."'";
 		} else {
 			// This case is not reliable on TZ, but we should not need it.
-			$sqldate .= ($excludefirstand ? "" : " AND ")." date_format( ".$datefield.", '%c') = '".$db->escape($month_date)."'";
+			$sqldate .= ($excludefirstand ? "" : " AND ")." date_format( ".$datefield.", '%c') = '".$db->escape((string) $month_date)."'";
 		}
 	} elseif ($year_date > 0) {
 		$sqldate .= ($excludefirstand ? "" : " AND ").$datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, 1, $gm));
@@ -595,7 +595,7 @@ function dol_get_next_week($day, $week, $month, $year)
  *                                                                              True or 1 or 'gmt' to compare with GMT date.
  *                                                                              Example: dol_get_first_day(1970,1,false) will return -3600 with TZ+1, a dol_print_date on it will return 1970-01-01 00:00:00
  *                                                                              Example: dol_get_first_day(1970,1,true) will return 0 whatever is TZ, a dol_print_date on it will return 1970-01-01 00:00:00
- *  @return		int|string				Date as a timestamp, '' if error
+ *  @return		int|''				Date as a timestamp, '' if error
  */
 function dol_get_first_day($year, $month = 1, $gm = false)
 {
@@ -614,7 +614,7 @@ function dol_get_first_day($year, $month = 1, $gm = false)
  * 	@param		int			$month		Month
  * 	@param		bool|int<0,1>|'gmt'|'tzserver'|'tzref'|'tzuser'|'tzuserrel'	$gm		False or 0 or 'tzserver' = Return date to compare with server TZ,
  *                                                                                  True or 1 or 'gmt' to compare with GMT date.
- *	@return		int|string				Date as a timestamp, '' if error
+ *	@return		int|''					Date as a timestamp, '' if error
  */
 function dol_get_last_day($year, $month = 12, $gm = false)
 {
@@ -832,6 +832,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		$jour  = (int) gmdate("d", $timestampStart);
 		$mois  = (int) gmdate("m", $timestampStart);
 		$annee = (int) gmdate("Y", $timestampStart);
+		$jour_semaine = (int) gmdate("w", $timestampStart);		// sunday = 0, monday = 1, ...
 
 		//print "jour=".$jour." month=".$mois." year=".$annee." includesaturday=".$includesaturday." includesunday=".$includesunday."\n";
 		foreach ($arrayOfPublicHolidays as $entrypublicholiday) {
@@ -975,23 +976,19 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 
 		// If we have to include Friday, Saturday and Sunday
 		if (!$ferie) {
-			if ($includefriday || $includesaturday || $includesunday) {
-				$jour_julien = unixtojd($timestampStart);
-				$jour_semaine = jddayofweek($jour_julien, 0);
-				if ($includefriday) {					//Friday (5), Saturday (6) and Sunday (0)
-					if ($jour_semaine == 5) {
-						$ferie = true;
-					}
+			if ($includefriday || $includesaturday || $includesunday || $includemonday) {
+				//Monday (1), Friday (5), Saturday (6) and Sunday (0)
+				if ($includefriday && $jour_semaine == 5) {
+					$ferie = true;
 				}
-				if ($includesaturday) {					//Friday (5), Saturday (6) and Sunday (0)
-					if ($jour_semaine == 6) {
-						$ferie = true;
-					}
+				if ($includesaturday && $jour_semaine == 6) {
+					$ferie = true;
 				}
-				if ($includesunday) {					//Friday (5), Saturday (6) and Sunday (0)
-					if ($jour_semaine == 0) {
-						$ferie = true;
-					}
+				if ($includesunday && $jour_semaine == 0) {
+					$ferie = true;
+				}
+				if ($includemonday && $jour_semaine == 1) {
+					$ferie = true;
 				}
 			}
 		}
