@@ -1757,9 +1757,12 @@ class Commande extends CommonOrder
 							$this->line_order(true, 'DESC');
 						} elseif ($ranktouse > 0 && $ranktouse <= count($this->lines)) {
 							// Update all rank of all other lines starting from the same $ranktouse
-							$linecount = count($this->lines);
-							for ($ii = $ranktouse; $ii <= $linecount; $ii++) {
-								$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
+							foreach ($this->lines as $tmpline) {
+								if ($tmpline->rang >= $ranktouse) {
+									if (!empty($tmpline->id)) {
+										$this->updateRangOfLine($tmpline->id, $tmpline->rang + 1);
+									}
+								}
 							}
 						}
 

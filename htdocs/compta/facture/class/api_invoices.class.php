@@ -872,7 +872,6 @@ class Invoices extends DolibarrApi
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 * @throws RestException 500 System error
-	 *
 	 */
 	public function addContact($id, $fk_socpeople, $type_contact, $source, $notrigger = 0)
 	{
@@ -920,7 +919,6 @@ class Invoices extends DolibarrApi
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 * @throws RestException 500 System error
-	 *
 	 */
 	public function settodraft($id, $idwarehouse = -1)
 	{
@@ -947,10 +945,6 @@ class Invoices extends DolibarrApi
 		$result = $this->invoice->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Invoice not found');
-		}
-
-		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($this->invoice);
@@ -1458,7 +1452,7 @@ class Invoices extends DolibarrApi
 		}
 
 		$result = $this->invoice->getListOfPayments();
-		if ($result < 0) {
+		if (!is_array($result) && $result < 0) {
 			throw new RestException(405, $this->invoice->error);
 		}
 
@@ -1622,7 +1616,7 @@ class Invoices extends DolibarrApi
 			if (empty($id)) {
 				throw new RestException(400, 'Invoice ID is mandatory. Fill the invoice id and amount into arrayofamounts parameter. For example: {"1": "99.99", "2": "10"}');
 			}
-			if (!DolibarrApi::_checkAccessToResource('facture', $id)) {
+			if (!DolibarrApi::_checkAccessToResource('facture', (int) $id)) {
 				throw new RestException(403, 'Access not allowed on invoice ID '.$id.' for login '.DolibarrApiAccess::$user->login);
 			}
 		}
@@ -1643,7 +1637,7 @@ class Invoices extends DolibarrApi
 
 		// Loop on each invoice to pay
 		foreach ($arrayofamounts as $id => $amountarray) {
-			$result = $this->invoice->fetch($id);
+			$result = $this->invoice->fetch((int) $id);
 			if (!$result) {
 				$this->db->rollback();
 				throw new RestException(404, 'Invoice ID '.$id.' not found');
@@ -1666,14 +1660,14 @@ class Invoices extends DolibarrApi
 			$totalpaid = $this->invoice->getSommePaiement($is_multicurrency);
 			$totalcreditnotes = $this->invoice->getSumCreditNotesUsed($is_multicurrency);
 			$totaldeposits = $this->invoice->getSumDepositsUsed($is_multicurrency);
-			$remainstopay = $amount = price2num($total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
+			$remainstopay = $amount = (float) price2num($total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
 			if (!$is_multicurrency && $amountarray["amount"] != 'remain') {
-				$amount = price2num($amountarray["amount"], 'MT');
+				$amount = (float) price2num($amountarray["amount"], 'MT');
 			}
 
 			if ($is_multicurrency && $amountarray["multicurrency_amount"] != 'remain') {
-				$amount = price2num($amountarray["multicurrency_amount"], 'MT');
+				$amount = (float) price2num($amountarray["multicurrency_amount"], 'MT');
 			}
 
 			if (abs($amount) > abs($remainstopay) && !$accepthigherpayment) {
@@ -1682,7 +1676,7 @@ class Invoices extends DolibarrApi
 			}
 
 			if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
-				$amount = price2num(-1 * abs((float) $amount), 'MT');
+				$amount = (float) price2num(-1 * abs((float) $amount), 'MT');
 			}
 
 			if ($is_multicurrency) {
@@ -1815,6 +1809,9 @@ class Invoices extends DolibarrApi
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$invoice = array();
 		foreach (Invoices::$FIELDS as $field) {
 			if (!isset($data[$field])) {

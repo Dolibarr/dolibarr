@@ -255,7 +255,7 @@ class FormFile
 			$out .= '<label for="overwritefile" class="opacitylow paddingright">'.$langs->trans("OverwriteIfExists").'</label>';
 			$out .= '</span>';
 		}
-		$out .= '<input type="submit" class="button small reposition" name="sendit" value="'.$langs->trans("Upload").'"';
+		$out .= '<input type="submit" class="button smallpaddingimp reposition" name="sendit" value="'.$langs->trans("Upload").'"';
 		$out .= (!getDolGlobalString('MAIN_UPLOAD_DOC') || empty($perm) ? ' disabled' : '');
 		$out .= '>';
 
@@ -355,7 +355,7 @@ class FormFile
 			$out2 .= '<input type="hidden" name="objectid" value="'.$object->id.'">';
 			$out2 .= '</div>';
 			$out2 .= '<div class="inline-block" style="padding-right: 10px;">';
-			$out2 .= '<input type="submit" class="button small reposition" name="linkit" value="'.$langs->trans("ToLink").'"';
+			$out2 .= '<input type="submit" class="button smallpaddingimp reposition" name="linkit" value="'.$langs->trans("ToLink").'"';
 			$out2 .= (!getDolGlobalString('MAIN_UPLOAD_DOC') || empty($perm) ? ' disabled' : '');
 			$out2 .= '>';
 			$out2 .= '</div>';
