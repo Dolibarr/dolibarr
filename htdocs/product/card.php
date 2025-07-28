@@ -1330,17 +1330,19 @@ if (isModEnabled('accounting')) {
 $sellOrEatByMandatoryList = null;
 if (isModEnabled('productbatch')) {
 	$sellOrEatByMandatoryList = Product::getSellOrEatByMandatoryList();
-	foreach ($sellOrEatByMandatoryList as $key => $label) {
-		$remove = false;
-		if (getDolGlobalString('PRODUCT_DISABLE_SELLBY') && (stripos($label, $langs->trans('SellByDate')) !== false)) {
-			$remove = true;
-		}
-		if (getDolGlobalString('PRODUCT_DISABLE_EATBY') && (stripos($label, $langs->trans('EatByDate')) !== false )) {
-			$remove = true;
-		}
-		if ($remove) {
-			unset($sellOrEatByMandatoryList[$key]);
-		}
+
+	$disableSellBy = getDolGlobalString('PRODUCT_DISABLE_SELLBY');
+	$disableEatBy  = getDolGlobalString('PRODUCT_DISABLE_EATBY');
+
+	if ($disableSellBy) {
+		unset($sellOrEatByMandatoryList[Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_BY]);
+		unset($sellOrEatByMandatoryList[Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT]);
+
+	}
+	if ($disableEatBy) {
+		unset($sellOrEatByMandatoryList[Product::SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY]);
+		unset($sellOrEatByMandatoryList[Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT]);
+
 	}
 }
 
