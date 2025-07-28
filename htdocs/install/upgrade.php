@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,6 +40,11 @@
 
 define('ALLOWED_IF_UPGRADE_UNLOCK_FOUND', 1);
 include_once 'inc.php';
+
+/**
+ * @var string	$conffile
+ */
+
 if (!file_exists($conffile)) {
 	print 'Error: Dolibarr config file was not found. This may means that Dolibarr is not installed yet. Please call the page "/install/index.php" instead of "/install/upgrade.php").';
 }
@@ -47,6 +52,11 @@ require_once $conffile;
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 
 global $langs;
+
+/**
+ * @var Conf $conf
+ * @var Translate $langs
+ */
 
 $grant_query = '';
 $step = 2;
@@ -114,9 +124,9 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	$actiondone = 1;
 
 	print '<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="Database"> ';
-	print '<span class="inline-block">'.$langs->trans("DatabaseMigration").'</span></h3>';
+	print '<span class="inline-block valignmiddle">'.$langs->trans("DatabaseMigration").'</span></h3>';
 
-	print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
+	print '<table cellspacing="0" cellpadding="1" class="centpercent">';
 	$error = 0;
 
 	// If password is encoded, we decode it
@@ -180,6 +190,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	}
 
 	// Affiche version
+	$versionarray = array();
 	if ($ok) {
 		$version = $db->getVersion();
 		$versionarray = $db->getVersionArray();
@@ -210,8 +221,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 		// Test database version is not forbidden for migration
 		if (empty($ignoredbversion)) {
 			$dbversion_disallowed = array(
-				array('type'=>'mysql', 'version'=>array(5, 5, 40)),
-				array('type'=>'mysqli', 'version'=>array(5, 5, 40)) //,
+				array('type' => 'mysql', 'version' => array(5, 5, 40)),
+				array('type' => 'mysqli', 'version' => array(5, 5, 40)) //,
 				//array('type'=>'mysql','version'=>array(5,5,41)),
 				//array('type'=>'mysqli','version'=>array(5,5,41))
 			);

@@ -3,7 +3,7 @@
  * Copyright (C) 2023	Benjamin Falière	<benjamin.faliere@altairis.fr>
  * Copyright (C) 2023	Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,7 @@ class BOM extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => "Id",),
@@ -432,7 +432,6 @@ class BOM extends CommonObject
 	 * Load object lines in memory from the database by type of product
 	 *
 	 * @param int<0,1>	$typeproduct	0 type product, 1 type service
-
 	 * @return int<-1,1>				Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLinesbytypeproduct($typeproduct = 0)
@@ -468,6 +467,11 @@ class BOM extends CommonObject
 					$newline = new $objectlineclassname($this->db);
 					'@phan-var-force BOMLine $newline';
 					$newline->setVarsFromFetchObj($obj);
+
+					// Load also extrafields for the line
+					//if (empty($noextrafields)) {
+					$newline->fetch_optionals();
+					//}
 
 					$this->lines[] = $newline;
 				}
@@ -580,7 +584,7 @@ class BOM extends CommonObject
 	 *
 	 * @param	int			$fk_product				Id of product
 	 * @param	float		$qty					Quantity
-	 * @param	int<0,1> 	$qty_frozen			If the qty is Frozen
+	 * @param	int<0,1> 	$qty_frozen				If the qty is Frozen
 	 * @param 	int			$disable_stock_change	Disable stock change on using in MO
 	 * @param	float		$efficiency				Efficiency in MO
 	 * @param	int<-1,max>	$position				Position of BOM-Line in BOM-Lines
@@ -1439,8 +1443,8 @@ class BOM extends CommonObject
 							return -1;
 						}
 
-						$unit_cost = is_null($tmpproduct->cost_price) ? $tmpproduct->pmp : $tmpproduct->cost_price;
-						if (is_null($unit_cost)) {
+						$unit_cost = (float) (is_null($tmpproduct->cost_price) ? $tmpproduct->pmp : $tmpproduct->cost_price);
+						if (empty($unit_cost)) {	// @phpstan-ignore-line phpstan thinks this is always false. No,if unit_cost is 0, it is not.
 							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
 								if ($productFournisseur->fourn_remise_percent != "0") {
 									$line->unit_cost = $productFournisseur->fourn_unitprice_with_discount;
@@ -1459,7 +1463,7 @@ class BOM extends CommonObject
 						$this->total_cost += $line->total_cost;
 					} else {
 						$bom_child = new BOM($this->db);
-						$res = $bom_child->fetch($line->fk_bom_child);
+						$res = $bom_child->fetch((int) $line->fk_bom_child);
 						if ($res > 0) {
 							$bom_child->calculateCosts();
 							$line->childBom[] = $bom_child;

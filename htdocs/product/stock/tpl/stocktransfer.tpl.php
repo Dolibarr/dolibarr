@@ -15,20 +15,20 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * $object must be defined
- * $backtopage
  */
 
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var Form $form
- * @var Product|MouvementStock $object
  * @var FormProduct $formproduct
  * @var Translate $langs
+ * @var Product|Entrepot|MouvementStock $object
  *
- * @var string $backtopage
+ * @var string 	$backtopage
+ * @var ?int	$id
+ * @var int		$d_eatby
+ * @var int		$d_sellby
  */
 
 // Protection to avoid direct call of template
@@ -38,7 +38,7 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 '
-@phan-var-force Entrepot|MouvementStock $object
+@phan-var-force Entrepot|Product|MouvementStock $object
 @phan-var-force FormProduct $formproduct
 @phan-var-force string $backtopage
 ';
@@ -86,7 +86,7 @@ if ($pdluoid) {
 }
 print '<table class="border centpercent">';
 
-// Source warehouse or product
+// Source product or stock movement
 print '<tr>';
 if ($object->element == 'product') {
 	/** @var Product $object */

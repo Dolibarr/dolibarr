@@ -50,3 +50,4 @@ ToReplace=Zamijeniti
 CantMoveNonExistantSerial=Greška. Tražite pomak na zapisu za seriju koja više ne postoji. Može se desiti da u istoj pošiljci uzmete istu seriju na isto skladište nekoliko puta ili je korištena u drugoj pošiljci. Uklonite ovu pošiljku i pripremite drugu.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Lot tablica nepotpuno izvođenje popravka s parametrom '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Potrebna je korekcija zaliha zbog jedinstvenog serijskog broja.
+ErrorBatchesNeedStockManagement=Greška. Proizvod s upravljanjem serijama/lotovima mora se upravljati na zalihi.

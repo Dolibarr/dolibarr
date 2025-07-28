@@ -5,7 +5,8 @@
  * Copyright (C) 2018       Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,11 +195,11 @@ class Tva extends CommonObject
 		$sql .= " '".$this->db->idate($now)."',";
 		$sql .= " '".$this->db->idate($this->datep)."',";
 		$sql .= " '".$this->db->idate($this->datev)."',";
-		$sql .= " '".$this->db->escape($this->amount)."',";
+		$sql .= " '".$this->db->escape((string) $this->amount)."',";
 		$sql .= " '".$this->db->escape($this->label)."',";
 		$sql .= " '".$this->db->escape($this->note)."',";
-		$sql .= " '".$this->db->escape($this->fk_account)."',";
-		$sql .= " '".$this->db->escape($this->type_payment)."',";
+		$sql .= " '".$this->db->escape((string) $this->fk_account)."',";
+		$sql .= " '".$this->db->escape((string) $this->type_payment)."',";
 		$sql .= " ".($this->fk_user_creat > 0 ? (int) $this->fk_user_creat : (int) $user->id).",";
 		$sql .= " ".($this->fk_user_modif > 0 ? (int) $this->fk_user_modif : (int) $user->id);
 		$sql .= ")";
@@ -483,7 +484,7 @@ class Tva extends CommonObject
 		$sql = "SELECT sum(f.total_tva) as amount";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1";
 		if ($year) {
-			$sql .= " AND f.datef >= '".$this->db->escape($year)."-01-01' AND f.datef <= '".$this->db->escape($year)."-12-31' ";
+			$sql .= " AND f.datef >= '".((int) $year)."-01-01' AND f.datef <= '".((int) $year)."-12-31' ";
 		}
 
 		$result = $this->db->query($sql);
@@ -517,7 +518,7 @@ class Tva extends CommonObject
 		$sql = "SELECT sum(f.total_tva) as total_tva";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 		if ($year) {
-			$sql .= " WHERE f.datef >= '".$this->db->escape($year)."-01-01' AND f.datef <= '".$this->db->escape($year)."-12-31' ";
+			$sql .= " WHERE f.datef >= '".((int) $year)."-01-01' AND f.datef <= '".((int) $year)."-12-31' ";
 		}
 
 		$result = $this->db->query($sql);
@@ -553,7 +554,7 @@ class Tva extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."tva as f";
 
 		if ($year) {
-			$sql .= " WHERE f.datev >= '".$this->db->escape($year)."-01-01' AND f.datev <= '".$this->db->escape($year)."-12-31' ";
+			$sql .= " WHERE f.datev >= '".((int) $year)."-01-01' AND f.datev <= '".((int) $year)."-12-31' ";
 		}
 
 		$result = $this->db->query($sql);
@@ -639,7 +640,7 @@ class Tva extends CommonObject
 		$sql .= ", '".$this->db->idate($this->datep)."'";
 		$sql .= ", '".$this->db->idate($this->datev)."'";
 		$sql .= ", ".((float) $this->amount);
-		$sql .= ", '".$this->db->escape($this->type_payment)."'";
+		$sql .= ", '".$this->db->escape((string) $this->type_payment)."'";
 		$sql .= ", '".$this->db->escape($this->num_payment)."'";
 		if ($this->note) {
 			$sql .= ", '".$this->db->escape($this->note)."'";
@@ -647,7 +648,7 @@ class Tva extends CommonObject
 		if ($this->label) {
 			$sql .= ", '".$this->db->escape($this->label)."'";
 		}
-		$sql .= ", '".$this->db->escape($user->id)."'";
+		$sql .= ", '".$this->db->escape((string) $user->id)."'";
 		$sql .= ", NULL";
 		$sql .= ", ".((int) $conf->entity);
 		$sql .= ")";
@@ -679,9 +680,9 @@ class Tva extends CommonObject
 					}
 
 					if ($this->amount > 0) {
-						$bank_line_id = $acc->addline($this->datep, $this->type_payment, $this->label, -abs((float) $this->amount), $this->num_payment, 0, $user);
+						$bank_line_id = $acc->addline($this->datep, (string) $this->type_payment, $this->label, -abs((float) $this->amount), $this->num_payment, 0, $user);
 					} else {
-						$bank_line_id = $acc->addline($this->datep, $this->type_payment, $this->label, abs((float) $this->amount), $this->num_payment, 0, $user);
+						$bank_line_id = $acc->addline($this->datep, (string) $this->type_payment, $this->label, abs((float) $this->amount), $this->num_payment, 0, $user);
 					}
 
 					// Update fk_bank into llx_tva. So we know vat line used to generate bank transaction
@@ -935,7 +936,7 @@ class Tva extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
@@ -971,5 +972,32 @@ class Tva extends CommonObject
 		$return .= '</div>';
 		$return .= '</div>';
 		return $return;
+	}
+
+	/**
+	 *	Id of vat payment object
+	 *
+	 *	@param	string		$label     Label of vat payment
+	 *	@return	int
+	 */
+	public function getIdForLabel($label)
+	{
+		$id = 0;
+		$sql = "SELECT t.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
+		$sql .= " WHERE t.label = '".$this->db->escape($label)."'";
+
+		dol_syslog(get_class($this)."::getIdForLabel", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result) {
+			if ($this->db->num_rows($result)) {
+				$obj = $this->db->fetch_object($result);
+				$id = $obj->rowid;
+			}
+			$this->db->free($result);
+		} else {
+			dol_print_error($this->db);
+		}
+		return $id;
 	}
 }

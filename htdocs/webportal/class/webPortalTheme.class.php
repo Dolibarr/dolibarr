@@ -3,6 +3,7 @@
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	John Botella			<john.botella@atm-consulting.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,8 @@
  */
 
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php'; // used for color functions
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
 
 /**
  * Class WebPortalTheme
@@ -78,15 +81,18 @@ class WebPortalTheme
 	 */
 	public function __construct()
 	{
-		global $mysoc, $conf;
+		global $db, $conf;
+
+		$mysoc = new Societe($db);
+		$mysoc->setMysoc($conf);
 
 		$this->loadPrimaryColor();
 
 		$urllogo = DOL_URL_ROOT.'/theme/common/login_logo.png';
 		if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
-			$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
+			$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
 		} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
-			$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$mysoc->logo);
+			$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$mysoc->logo);
 		} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')) {
 			$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
 		}

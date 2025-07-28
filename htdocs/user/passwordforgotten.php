@@ -190,11 +190,16 @@ if (empty($reshook)) {
 
 $dol_url_root = DOL_URL_ROOT;
 
-// Title
-$title = 'Dolibarr '.DOL_VERSION;
-if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-	$title = getDolGlobalString('MAIN_APPLICATION_TITLE');
+$appli = constant('DOL_APPLICATION_TITLE');
+$applicustom = getDolGlobalString('MAIN_APPLICATION_TITLE');
+if ($applicustom) {
+	$appli = (preg_match('/^\+/', $applicustom) ? $appli : '').$applicustom;
+} else {
+	$appli .= " ".DOL_VERSION;
 }
+
+// Title
+$title = $appli;	// $title is used in .tpl file
 
 // Select templates dir
 $template_dir = '';

@@ -1,14 +1,14 @@
 <?php
-/* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2011-2017	Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
- * Copyright (C) 2023       Nick Fragoulis
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2001-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2017	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2014	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2011-2017	Philippe Grand				<philippe.grand@atoo-net.com>
+ * Copyright (C) 2015-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2017		Rui Strecht					<rui.strecht@aliartalentos.com>
+ * Copyright (C) 2023		Nick Fragoulis
+ * Copyright (C) 2024-2025	Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,6 +74,8 @@ $quality = $tmparraysize['quality'];
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('admincompany', 'globaladmin'));
 
+$object = new Societe($db);
+
 
 /*
  * Actions
@@ -137,7 +139,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	$arrayofimages = array('logo', 'logo_squarred');
 	//var_dump($_FILES); exit;
 	foreach ($arrayofimages as $varforimage) {
-		if ($_FILES[$varforimage]["name"] && !preg_match('/(\.jpeg|\.jpg|\.png)$/i', $_FILES[$varforimage]["name"])) {	// Logo can be used on a lot of different places. Only jpg and png can be supported.
+		if ($_FILES[$varforimage]["name"] && !image_format_supported($_FILES[$varforimage]["name"], 0)) {	// Logo can be used on a lot of different places. Recommend using jpg and png for better compatibility.
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
 			break;
@@ -451,11 +453,11 @@ print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="page_y" value="">';
 
 print '<table class="noborder centpercent editmode">';
-print '<tr class="liste_titre"><th class="titlefieldcreate wordbreak">'.$langs->trans("CompanyInfo").'</th><th></th></tr>'."\n";
+print '<tr class="liste_titre"><th class="titlefieldcreate wordbreak" colspan="2">'.$langs->trans("CompanyInfo").'</th></tr>'."\n";
 
 // Company name
 print '<tr class="oddeven"><td class="fieldrequired wordbreak"><label for="name">'.$langs->trans("CompanyName").'</label></td><td>';
-print '<input name="name" id="name" maxlength="'.$mysoc->fields['nom']['length'].'" class="minwidth250" value="'.dol_escape_htmltag((GETPOSTISSET('name') ? GETPOST('name', 'alphanohtml') : (getDolGlobalString('MAIN_INFO_SOCIETE_NOM')))).'"'.(!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') ? ' autofocus="autofocus"' : '').'></td></tr>'."\n";
+print '<input name="name" id="name" maxlength="'.$mysoc->fields['nom']['length'].'" class="minwidth250" value="'.dolPrintHTMLForAttribute((GETPOSTISSET('name') ? GETPOST('name', 'alphanohtml') : getDolGlobalString('MAIN_INFO_SOCIETE_NOM'))).'"'.(getDolGlobalString('MAIN_INFO_SOCIETE_NOM') ? '' : ' autofocus="autofocus"').'></td></tr>'."\n";
 
 // Main currency
 print '<tr class="oddeven"><td class="fieldrequired"><label for="currency">'.$langs->trans("CompanyCurrency").'</label></td><td>';
@@ -466,22 +468,20 @@ print '</td></tr>'."\n";
 // Country
 print '<tr class="oddeven"><td class="fieldrequired"><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td>';
 print img_picto('', 'globe-americas', 'class="pictofixedwidth"');
-print $form->select_country($mysoc->country_id, 'country_id', '', 0);
-if ($user->admin) {
-	print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-}
+print $form->select_country((string) $mysoc->country_id, 'country_id', '', 0);
+print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 print '</td></tr>'."\n";
 
 // Address
 print '<tr class="oddeven"><td><label for="MAIN_INFO_SOCIETE_ADDRESS">'.$langs->trans("CompanyAddress").'</label></td><td>';
-print '<textarea name="MAIN_INFO_SOCIETE_ADDRESS" id="MAIN_INFO_SOCIETE_ADDRESS" class="quatrevingtpercent" rows="'.ROWS_3.'">'.(GETPOSTISSET('MAIN_INFO_SOCIETE_ADDRESS') ? GETPOST('MAIN_INFO_SOCIETE_ADDRESS', 'alphanohtml') : (getDolGlobalString('MAIN_INFO_SOCIETE_ADDRESS'))).'</textarea></td></tr>'."\n";
+print '<textarea name="MAIN_INFO_SOCIETE_ADDRESS" id="MAIN_INFO_SOCIETE_ADDRESS" class="quatrevingtpercent" rows="'.ROWS_3.'">'.(GETPOSTISSET('MAIN_INFO_SOCIETE_ADDRESS') ? GETPOST('MAIN_INFO_SOCIETE_ADDRESS', 'alphanohtml') : getDolGlobalString('MAIN_INFO_SOCIETE_ADDRESS')).'</textarea></td></tr>'."\n";
 
 // Zip
 print '<tr class="oddeven"><td><label for="MAIN_INFO_SOCIETE_ZIP">'.$langs->trans("CompanyZip").'</label></td><td>';
-print '<input class="width100" name="MAIN_INFO_SOCIETE_ZIP" id="MAIN_INFO_SOCIETE_ZIP" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_INFO_SOCIETE_ZIP') ? GETPOST('MAIN_INFO_SOCIETE_ZIP', 'alphanohtml') : (getDolGlobalString('MAIN_INFO_SOCIETE_ZIP')))).'"></td></tr>'."\n";
+print '<input class="width100" name="MAIN_INFO_SOCIETE_ZIP" id="MAIN_INFO_SOCIETE_ZIP" value="'.dolPrintHTMLForAttribute((GETPOSTISSET('MAIN_INFO_SOCIETE_ZIP') ? GETPOST('MAIN_INFO_SOCIETE_ZIP', 'alphanohtml') : getDolGlobalString('MAIN_INFO_SOCIETE_ZIP'))).'"></td></tr>'."\n";
 
 print '<tr class="oddeven"><td><label for="MAIN_INFO_SOCIETE_TOWN">'.$langs->trans("CompanyTown").'</label></td><td>';
-print '<input name="MAIN_INFO_SOCIETE_TOWN" class="minwidth200" id="MAIN_INFO_SOCIETE_TOWN" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_INFO_SOCIETE_TOWN') ? GETPOST('MAIN_INFO_SOCIETE_TOWN', 'alphanohtml') : (getDolGlobalString('MAIN_INFO_SOCIETE_TOWN')))).'"></td></tr>'."\n";
+print '<input name="MAIN_INFO_SOCIETE_TOWN" class="minwidth200" id="MAIN_INFO_SOCIETE_TOWN" value="'.dolPrintHTMLForAttribute((GETPOSTISSET('MAIN_INFO_SOCIETE_TOWN') ? GETPOST('MAIN_INFO_SOCIETE_TOWN', 'alphanohtml') : getDolGlobalString('MAIN_INFO_SOCIETE_TOWN'))).'"></td></tr>'."\n";
 
 // State
 print '<tr class="oddeven"><td class="wordbreak"><label for="state_id">'.$langs->trans("State").'</label></td><td>';
@@ -497,31 +497,31 @@ print '</td></tr>'."\n";
 // Phone
 print '<tr class="oddeven"><td><label for="phone">'.$langs->trans("Phone").'</label></td><td>';
 print img_picto('', 'object_phoning', '', 0, 0, 0, '', 'pictofixedwidth');
-print '<input class="maxwidth150 widthcentpercentminusx" name="phone" id="phone" value="'.dol_escape_htmltag((GETPOSTISSET('phone') ? GETPOST('phone', 'alphanohtml') : (getDolGlobalString('MAIN_INFO_SOCIETE_TEL')))).'"></td></tr>';
+print '<input class="maxwidth150 widthcentpercentminusx" name="phone" id="phone" value="'.dolPrintHTMLForAttribute((GETPOSTISSET('phone') ? GETPOST('phone', 'alphanohtml') : getDolGlobalString('MAIN_INFO_SOCIETE_TEL'))).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Phone mobile
 print '<tr class="oddeven"><td><label for="phone">'.$langs->trans("PhoneMobile").'</label></td><td>';
 print img_picto('', 'object_phoning_mobile', '', 0, 0, 0, '', 'pictofixedwidth');
-print '<input class="maxwidth150 widthcentpercentminusx" name="phone_mobile" id="phone_mobile" value="'.dol_escape_htmltag((GETPOSTISSET('phone_mobile') ? GETPOST('phone_mobile', 'alphanohtml') : (getDolGlobalString('MAIN_INFO_SOCIETE_MOBILE')))).'"></td></tr>';
+print '<input class="maxwidth150 widthcentpercentminusx" name="phone_mobile" id="phone_mobile" value="'.dolPrintHTMLForAttribute((GETPOSTISSET('phone_mobile') ? GETPOST('phone_mobile', 'alphanohtml') : getDolGlobalString('MAIN_INFO_SOCIETE_MOBILE'))).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Fax
 print '<tr class="oddeven"><td><label for="fax">'.$langs->trans("Fax").'</label></td><td>';
 print img_picto('', 'object_phoning_fax', '', 0, 0, 0, '', 'pictofixedwidth');
-print '<input class="maxwidth150" name="fax" id="fax" value="'.dol_escape_htmltag((GETPOSTISSET('fax') ? GETPOST('fax', 'alphanohtml') : (getDolGlobalString('MAIN_INFO_SOCIETE_FAX')))).'"></td></tr>';
+print '<input class="maxwidth150" name="fax" id="fax" value="'.dolPrintHTMLForAttribute((GETPOSTISSET('fax') ? GETPOST('fax', 'alphanohtml') : getDolGlobalString('MAIN_INFO_SOCIETE_FAX'))).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Email
 print '<tr class="oddeven"><td><label for="email">'.$langs->trans("EMail").'</label></td><td>';
 print img_picto('', 'object_email', '', 0, 0, 0, '', 'pictofixedwidth');
-print '<input class="minwidth300 maxwidth500 widthcentpercentminusx" name="mail" id="email" value="'.dol_escape_htmltag((GETPOSTISSET('mail') ? GETPOST('mail', 'alphanohtml') : (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') ? $conf->global->MAIN_INFO_SOCIETE_MAIL : ''))).'"></td></tr>';
+print '<input class="minwidth300 maxwidth500 widthcentpercentminusx" name="mail" id="email" value="'.dolPrintHTMLForAttribute((GETPOSTISSET('mail') ? GETPOST('mail', 'alphanohtml') : getDolGlobalString('MAIN_INFO_SOCIETE_MAIL'))).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Web
 print '<tr class="oddeven"><td><label for="web">'.$langs->trans("Web").'</label></td><td>';
 print img_picto('', 'globe', '', 0, 0, 0, '', 'pictofixedwidth');
-print '<input class="maxwidth300 widthcentpercentminusx" name="web" id="web" value="'.dol_escape_htmltag((GETPOSTISSET('web') ? GETPOST('web', 'alphanohtml') : (getDolGlobalString('MAIN_INFO_SOCIETE_WEB') ? $conf->global->MAIN_INFO_SOCIETE_WEB : ''))).'"></td></tr>';
+print '<input class="maxwidth300 widthcentpercentminusx" name="web" id="web" value="'.dol_escape_htmltag((GETPOSTISSET('web') ? GETPOST('web', 'alphanohtml') : getDolGlobalString('MAIN_INFO_SOCIETE_WEB'))).'"></td></tr>';
 print '</td></tr>'."\n";
 
 // Barcode
@@ -529,7 +529,7 @@ if (isModEnabled('barcode')) {
 	print '<tr class="oddeven"><td>';
 	print '<label for="barcode">'.$langs->trans("Gencod").'</label></td><td>';
 	print '<span class="fa fa-barcode pictofixedwidth"></span>';
-	print '<input name="barcode" id="barcode" class="minwidth150 widthcentpercentminusx maxwidth300" value="'.dol_escape_htmltag(GETPOSTISSET('barcode') ? GETPOST('barcode', 'alphanohtml') : getDolGlobalString('MAIN_INFO_SOCIETE_GENCOD', '')).'"></td></tr>';
+	print '<input name="barcode" id="barcode" class="minwidth150 widthcentpercentminusx maxwidth300" value="'.dolPrintHTMLForAttribute(GETPOSTISSET('barcode') ? GETPOST('barcode', 'alphanohtml') : getDolGlobalString('MAIN_INFO_SOCIETE_GENCOD')).'"></td></tr>';
 	print '</td></tr>';
 }
 
@@ -565,7 +565,7 @@ print '</td></tr>';
 
 // Note
 print '<tr class="oddeven"><td class="tdtop"><label for="note">'.$langs->trans("Note").'</label></td><td>';
-print '<textarea class="flat quatrevingtpercent" name="note" id="note" rows="'.ROWS_5.'">'.(GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : (getDolGlobalString('MAIN_INFO_SOCIETE_NOTE') ? $conf->global->MAIN_INFO_SOCIETE_NOTE : '')).'</textarea></td></tr>';
+print '<textarea class="flat quatrevingtpercent" name="note" id="note" rows="'.ROWS_5.'">'.(GETPOSTISSET('note') ? GETPOST('note', 'restricthtml') : getDolGlobalString('MAIN_INFO_SOCIETE_NOTE')).'</textarea></td></tr>';
 print '</td></tr>';
 
 print '</table>';
@@ -578,28 +578,28 @@ print '<br><br>';
 // IDs of the company (country-specific)
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent editmode">';
-print '<tr class="liste_titre"><td class="titlefieldcreate wordbreak">'.$langs->trans("CompanyIds").'</td><td></td></tr>';
+print '<tr class="liste_titre"><td class="titlefieldcreate wordbreak" colspan="2">'.$langs->trans("CompanyIds").'</td></tr>';
 
 $langs->load("companies");
 
 // Managing Director(s)
 print '<tr class="oddeven"><td><label for="director">'.$langs->trans("ManagingDirectors").'</label></td><td>';
-print '<input name="MAIN_INFO_SOCIETE_MANAGERS" id="directors" class="minwidth300" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_INFO_SOCIETE_MANAGERS') ? GETPOST('MAIN_INFO_SOCIETE_MANAGERS', 'alphanohtml') : (getDolGlobalString('MAIN_INFO_SOCIETE_MANAGERS') ? $conf->global->MAIN_INFO_SOCIETE_MANAGERS : ''))).'"></td></tr>';
+print '<input name="MAIN_INFO_SOCIETE_MANAGERS" id="directors" class="minwidth300" value="'.dolPrintHTMLForAttribute((GETPOSTISSET('MAIN_INFO_SOCIETE_MANAGERS') ? GETPOST('MAIN_INFO_SOCIETE_MANAGERS', 'alphanohtml') : getDolGlobalString('MAIN_INFO_SOCIETE_MANAGERS'))).'"></td></tr>';
 
 // GDPR contact
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("GDPRContact"), $langs->trans("GDPRContactDesc"));
 print '</td><td>';
-print '<input name="MAIN_INFO_GDPR" id="infodirector" class="minwidth300" value="'.dol_escape_htmltag((GETPOSTISSET("MAIN_INFO_GDPR") ? GETPOST("MAIN_INFO_GDPR", 'alphanohtml') : (getDolGlobalString('MAIN_INFO_GDPR') ? $conf->global->MAIN_INFO_GDPR : ''))).'"></td></tr>';
+print '<input name="MAIN_INFO_GDPR" id="infodirector" class="minwidth300" value="'.dolPrintHTMLForAttribute((GETPOSTISSET("MAIN_INFO_GDPR") ? GETPOST("MAIN_INFO_GDPR", 'alphanohtml') : getDolGlobalString('MAIN_INFO_GDPR'))).'"></td></tr>';
 
 // Capital
 print '<tr class="oddeven"><td><label for="capital">'.$langs->trans("Capital").'</label></td><td>';
-print '<input name="capital" id="capital" class="maxwidth100" value="'.dol_escape_htmltag((GETPOSTISSET('capital') ? GETPOST('capital', 'alphanohtml') : (getDolGlobalString('MAIN_INFO_CAPITAL') ? $conf->global->MAIN_INFO_CAPITAL : ''))).'"></td></tr>';
+print '<input name="capital" id="capital" class="maxwidth100" value="'.dolPrintHTMLForAttribute((GETPOSTISSET('capital') ? GETPOST('capital', 'alphanohtml') : getDolGlobalString('MAIN_INFO_CAPITAL'))).'"></td></tr>';
 
 // Juridical Status
 print '<tr class="oddeven"><td><label for="forme_juridique_code">'.$langs->trans("JuridicalStatus").'</label></td><td>';
 if ($mysoc->country_code) {
-	print $formcompany->select_juridicalstatus(getDolGlobalString('MAIN_INFO_SOCIETE_FORME_JURIDIQUE'), $mysoc->country_code, '', 'forme_juridique_code');
+	print $formcompany->select_juridicalstatus(getDolGlobalInt('MAIN_INFO_SOCIETE_FORME_JURIDIQUE'), $mysoc->country_code, '', 'forme_juridique_code');
 } else {
 	print $countrynotdefined;
 }
@@ -607,19 +607,19 @@ print '</td></tr>';
 
 // Object of the company
 print '<tr class="oddeven"><td><label for="socialobject">'.$langs->trans("CompanyObject").'</label></td><td>';
-print '<textarea class="flat quatrevingtpercent" name="socialobject" id="socialobject" rows="'.ROWS_3.'">'.(getDolGlobalString('MAIN_INFO_SOCIETE_OBJECT')).'</textarea></td></tr>';
+print '<textarea class="flat quatrevingtpercent" name="socialobject" id="socialobject" rows="'.ROWS_3.'">'.getDolGlobalString('MAIN_INFO_SOCIETE_OBJECT').'</textarea></td></tr>';
 print '</td></tr>';
 
 // Tax ID Intra-community VAT number
 print '<tr class="oddeven"><td><label for="intra_vat">'.$langs->trans("VATIntra").'</label></td><td>';
-print '<input name="tva" id="intra_vat" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_TVAINTRA')).'">';
+print '<input name="tva" id="intra_vat" class="minwidth200" value="'.dolPrintHTMLForAttribute(getDolGlobalString('MAIN_INFO_TVAINTRA')).'">';
 print '</td></tr>';
 
 // ProfId1
 if ($langs->transcountry("ProfId1", $mysoc->country_code) != '-') {
 	print '<tr class="oddeven"><td><label for="profid1">'.$langs->transcountry("ProfId1", $mysoc->country_code).'</label></td><td>';
 	if (!empty($mysoc->country_code)) {
-		print '<input name="siren" id="profid1" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_SIREN')).'">';
+		print '<input name="siren" id="profid1" class="minwidth200" value="'.dolPrintHTMLForAttribute(getDolGlobalString('MAIN_INFO_SIREN')).'">';
 	} else {
 		print $countrynotdefined;
 	}
@@ -630,7 +630,7 @@ if ($langs->transcountry("ProfId1", $mysoc->country_code) != '-') {
 if ($langs->transcountry("ProfId2", $mysoc->country_code) != '-') {
 	print '<tr class="oddeven"><td><label for="profid2">'.$langs->transcountry("ProfId2", $mysoc->country_code).'</label></td><td>';
 	if (!empty($mysoc->country_code)) {
-		print '<input name="siret" id="profid2" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_SIRET')).'">';
+		print '<input name="siret" id="profid2" class="minwidth200" value="'.dolPrintHTMLForAttribute(getDolGlobalString('MAIN_INFO_SIRET')).'">';
 	} else {
 		print $countrynotdefined;
 	}
@@ -641,7 +641,7 @@ if ($langs->transcountry("ProfId2", $mysoc->country_code) != '-') {
 if ($langs->transcountry("ProfId3", $mysoc->country_code) != '-') {
 	print '<tr class="oddeven"><td><label for="profid3">'.$langs->transcountry("ProfId3", $mysoc->country_code).'</label></td><td>';
 	if (!empty($mysoc->country_code)) {
-		print '<input name="ape" id="profid3" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_APE')).'">';
+		print '<input name="ape" id="profid3" class="minwidth200" value="'.dolPrintHTMLForAttribute(getDolGlobalString('MAIN_INFO_APE')).'">';
 	} else {
 		print $countrynotdefined;
 	}
@@ -652,7 +652,7 @@ if ($langs->transcountry("ProfId3", $mysoc->country_code) != '-') {
 if ($langs->transcountry("ProfId4", $mysoc->country_code) != '-') {
 	print '<tr class="oddeven"><td><label for="profid4">'.$langs->transcountry("ProfId4", $mysoc->country_code).'</label></td><td>';
 	if (!empty($mysoc->country_code)) {
-		print '<input name="rcs" id="profid4" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_RCS')).'">';
+		print '<input name="rcs" id="profid4" class="minwidth200" value="'.dolPrintHTMLForAttribute(getDolGlobalString('MAIN_INFO_RCS')).'">';
 	} else {
 		print $countrynotdefined;
 	}
@@ -663,7 +663,7 @@ if ($langs->transcountry("ProfId4", $mysoc->country_code) != '-') {
 if ($langs->transcountry("ProfId5", $mysoc->country_code) != '-') {
 	print '<tr class="oddeven"><td><label for="profid5">'.$langs->transcountry("ProfId5", $mysoc->country_code).'</label></td><td>';
 	if (!empty($mysoc->country_code)) {
-		print '<input name="MAIN_INFO_PROFID5" id="profid5" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_PROFID5')).'">';
+		print '<input name="MAIN_INFO_PROFID5" id="profid5" class="minwidth200" value="'.dolPrintHTMLForAttribute(getDolGlobalString('MAIN_INFO_PROFID5')).'">';
 	} else {
 		print $countrynotdefined;
 	}
@@ -674,7 +674,7 @@ if ($langs->transcountry("ProfId5", $mysoc->country_code) != '-') {
 if ($langs->transcountry("ProfId6", $mysoc->country_code) != '-') {
 	print '<tr class="oddeven"><td><label for="profid6">'.$langs->transcountry("ProfId6", $mysoc->country_code).'</label></td><td>';
 	if (!empty($mysoc->country_code)) {
-		print '<input name="MAIN_INFO_PROFID6" id="profid6" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_PROFID6')).'">';
+		print '<input name="MAIN_INFO_PROFID6" id="profid6" class="minwidth200" value="'.dolPrintHTMLForAttribute(getDolGlobalString('MAIN_INFO_PROFID6')).'">';
 	} else {
 		print $countrynotdefined;
 	}
@@ -685,7 +685,7 @@ if ($langs->transcountry("ProfId6", $mysoc->country_code) != '-') {
 if ($langs->transcountry("ProfId7", $mysoc->country_code) != '-') {
 	print '<tr class="oddeven"><td><label for="profid7">'.$langs->transcountry("ProfId7", $mysoc->country_code).'</label></td><td>';
 	if (!empty($mysoc->country_code)) {
-		print '<input name="MAIN_INFO_PROFID7" id="profid7" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_PROFID7')).'">';
+		print '<input name="MAIN_INFO_PROFID7" id="profid7" class="minwidth200" value="'.dolPrintHTMLForAttribute(getDolGlobalString('MAIN_INFO_PROFID7')).'">';
 	} else {
 		print $countrynotdefined;
 	}
@@ -696,7 +696,7 @@ if ($langs->transcountry("ProfId7", $mysoc->country_code) != '-') {
 if ($langs->transcountry("ProfId8", $mysoc->country_code) != '-') {
 	print '<tr class="oddeven"><td><label for="profid8">'.$langs->transcountry("ProfId8", $mysoc->country_code).'</label></td><td>';
 	if (!empty($mysoc->country_code)) {
-		print '<input name="MAIN_INFO_PROFID8" id="profid8" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_PROFID8')).'">';
+		print '<input name="MAIN_INFO_PROFID8" id="profid8" class="minwidth200" value="'.dolPrintHTMLForAttribute(getDolGlobalString('MAIN_INFO_PROFID8')).'">';
 	} else {
 		print $countrynotdefined;
 	}
@@ -707,7 +707,7 @@ if ($langs->transcountry("ProfId8", $mysoc->country_code) != '-') {
 if ($langs->transcountry("ProfId9", $mysoc->country_code) != '-') {
 	print '<tr class="oddeven"><td><label for="profid9">'.$langs->transcountry("ProfId9", $mysoc->country_code).'</label></td><td>';
 	if (!empty($mysoc->country_code)) {
-		print '<input name="MAIN_INFO_PROFID9" id="profid9" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_PROFID9')).'">';
+		print '<input name="MAIN_INFO_PROFID9" id="profid9" class="minwidth200" value="'.dolPrintHTMLForAttribute(getDolGlobalString('MAIN_INFO_PROFID9')).'">';
 	} else {
 		print $countrynotdefined;
 	}
@@ -718,7 +718,7 @@ if ($langs->transcountry("ProfId9", $mysoc->country_code) != '-') {
 if ($langs->transcountry("ProfId10", $mysoc->country_code) != '-') {
 	print '<tr class="oddeven"><td><label for="profid10">'.$langs->transcountry("ProfId10", $mysoc->country_code).'</label></td><td>';
 	if (!empty($mysoc->country_code)) {
-		print '<input name="MAIN_INFO_PROFID10" id="profid10" class="minwidth200" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_INFO_PROFID10')).'">';
+		print '<input name="MAIN_INFO_PROFID10" id="profid10" class="minwidth200" value="'.dolPrintHTMLForAttribute(getDolGlobalString('MAIN_INFO_PROFID10')).'">';
 	} else {
 		print $countrynotdefined;
 	}
@@ -737,7 +737,7 @@ print '<td class="titlefieldcreate">'.$langs->trans("FiscalYearInformation").'</
 print "</tr>\n";
 
 print '<tr class="oddeven"><td><label for="SOCIETE_FISCAL_MONTH_START">'.$langs->trans("FiscalMonthStart").'</label></td><td>';
-print $formother->select_month(getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? $conf->global->SOCIETE_FISCAL_MONTH_START : '', 'SOCIETE_FISCAL_MONTH_START', 0, 1, 'maxwidth100').'</td></tr>';
+print $formother->select_month(getDolGlobalString('SOCIETE_FISCAL_MONTH_START'), 'SOCIETE_FISCAL_MONTH_START', 0, 1, 'maxwidth100').'</td></tr>';
 
 print "</table>";
 
@@ -839,7 +839,7 @@ if ($mysoc->useLocalTax(2)) {
 	$tooltiphelp = ($tooltiphelp != "LocalTax2IsUsedExample" ? "<i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax2IsUsedExample", $mysoc->country_code)."</i>\n" : "");
 	if (!isOnlyOneLocalTax(2)) {
 		print '<br><label for="lt2">'.$langs->trans("LTRate").'</label>: ';
-		$formcompany->select_localtax(2, getDolGlobalString('MAIN_INFO_VALUE_LOCALTAX2'), "lt2");
+		$formcompany->select_localtax(2, (float) getDolGlobalString('MAIN_INFO_VALUE_LOCALTAX2'), "lt2");
 	}
 
 	$options = array($langs->trans("CalcLocaltax1").' '.$langs->trans("CalcLocaltax1Desc"), $langs->trans("CalcLocaltax2").' - '.$langs->trans("CalcLocaltax2Desc"), $langs->trans("CalcLocaltax3").' - '.$langs->trans("CalcLocaltax3Desc"));
@@ -910,7 +910,7 @@ if ($mysoc->country_code == 'GR') {
 
 	print '<tr class="oddeven"><td>';
 	print '<span class="titlefield fieldrequired">'.$langs->trans("MYDATA_AADE_KEY").'</span></td><td>';
-	print '<input class="minwidth300" type="text" name="MYDATA_AADE_KEY" value="'.getDolGlobalString('MYDATA_AADE_KEY').'"';
+	print '<input class="minwidth300" type="password" name="MYDATA_AADE_KEY" value="'.getDolGlobalString('MYDATA_AADE_KEY').'"';
 	print '</td><td></td></tr>';
 
 	print '<tr class="oddeven"><td>';
@@ -920,7 +920,7 @@ if ($mysoc->country_code == 'GR') {
 
 	print '<tr class="oddeven"><td>';
 	print '<span class="titlefield fieldrequired">'.$langs->trans("AADE_WEBSERVICE_KEY").'</span></td><td>';
-	print '<input class="minwidth300" type="text" name="AADE_WEBSERVICE_KEY" value="'.getDolGlobalString('AADE_WEBSERVICE_KEY').'"';
+	print '<input class="minwidth300" type="password" name="AADE_WEBSERVICE_KEY" value="'.getDolGlobalString('AADE_WEBSERVICE_KEY').'"';
 	print '</td><td></td></tr>';
 
 	print '<br>';

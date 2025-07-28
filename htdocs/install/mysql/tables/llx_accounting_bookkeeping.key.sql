@@ -16,12 +16,14 @@
 --
 -- ============================================================================
 
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_ref (ref);
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_piece_num (piece_num, entity);
+
 ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_fk_doc (fk_doc);
 ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_fk_docdet (fk_docdet);
 ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_doc_date (doc_date);
 ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_numero_compte (numero_compte, entity);
 ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_code_journal (code_journal, entity);
-ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_piece_num (piece_num, entity);
 
--- Current unicity is tested by the journalize page on couple (fk_doc, doc_type) 
+-- Current unicity is tested by the "transfer in accountancy"" page on couple (fk_doc, doc_type)
 -- TODO Add a key for unicity (not so easy as fk_doc, doc_type may have several lines for one piece)

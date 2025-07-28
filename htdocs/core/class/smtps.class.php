@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2011 Regis Houssin
  * Copyright (C) 2016      Jonathan TISSEAU     <jonathan.tisseau@86dev.fr>
- * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW                  <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -76,6 +76,11 @@ class SMTPs
 	 * @var ?string Token in case we use OAUTH2
 	 */
 	private $_smtpsToken = null;
+
+	/**
+	 * @var ?string Message-ID to use
+	 */
+	private $_msgId = null;
 
 	/**
 	 * @var ?array{org:string,real?:string,addr:string,user:string,host:string} Who sends the Message
@@ -293,8 +298,20 @@ class SMTPs
 	 */
 	private $_options = array();
 
+
 	/**
-	 * Set delivery receipt
+	 * Set Message-ID
+	 *
+	 * @param	string	$_msgId		Message-ID to use
+	 * @return	void
+	 */
+	public function setMessageID($_msgId = '')
+	{
+		$this->_msgId = $_msgId;
+	}
+
+	/**
+	 * Set options
 	 *
 	 * @param	array<string,array<string,mixed>>	$_options	An array of options for stream_context_create()
 	 * @return	void
@@ -323,6 +340,27 @@ class SMTPs
 	public function getDeliveryReceipt()
 	{
 		return $this->_deliveryReceipt;
+	}
+
+	/**
+	 * Set socket timeout. May be increase when email sent after a long time and with a large file for the wake up of SMTP server.
+	 *
+	 * @param	int		$timeout	Delay in second for socket timeout (default is 10s)
+	 * @return	void
+	 */
+	public function setSMTPTimeout($timeout)
+	{
+		$this->_smtpTimeout = $timeout;
+	}
+
+	/**
+	 * Get socket timeout
+	 *
+	 * @return	int		Delay in second for socket timeout
+	 */
+	public function getSMTPTimeout()
+	{
+		return $this->_smtpTimeout;
 	}
 
 	/**
@@ -489,7 +527,7 @@ class SMTPs
 				// This connection attempt failed.
 				// @CHANGE LDR
 				if (empty($this->errstr)) {
-					$this->errstr = 'Failed to connect with fsockopen host='.$this->getHost().' port='.$this->getPort();
+					$this->errstr = 'Failed to connect with stream_context_create or fsockopen host='.$this->getHost().' port='.$this->getPort();
 				}
 				$this->_setErr($this->errno, $this->errstr);
 				$_retVal = false;
@@ -890,7 +928,6 @@ class SMTPs
 	 *
 	 * @param string $_path Path to the sendmail executable
 	 * @return boolean
-	 *
 	 */
 	public function setMailPath($_path)
 	{
@@ -1086,7 +1123,6 @@ class SMTPs
 	 *
 	 * @param string $_strTransEncodeType Content-Transfer-Encoding
 	 * @return void
-	 *
 	 */
 	public function setTransEncodeType($_strTransEncodeType)
 	{
@@ -1230,7 +1266,6 @@ class SMTPs
 	 * @param 	string 	$_type 			TO, CC, or BCC lists to add addrresses into
 	 * @param 	mixed 	$_addrList 		Array or COMMA delimited string of addresses
 	 * @return void
-	 *
 	 */
 	private function _buildAddrList($_type, $_addrList)
 	{
@@ -1528,16 +1563,15 @@ class SMTPs
 
 		$host = dol_getprefix('email');
 
-		//NOTE: Message-ID should probably contain the username of the user who sent the msg
 		$_header .= 'Subject: '.$this->getSubject()."\r\n";
 		$_header .= 'Date: '.date("r")."\r\n";
 
 		$trackid = $this->getTrackId();
 		if ($trackid) {
-			$_header .= 'Message-ID: <'.time().'.SMTPs-dolibarr-'.$trackid.'@'.$host.">\r\n";
+			$_header .= 'Message-ID: <'.(empty($this->_msgId) ? uniqid().'.SMTPs-dolibarr-'.$trackid.'@'.$host : $this->_msgId).">\r\n";
 			$_header .= 'X-Dolibarr-TRACKID: '.$trackid.'@'.$host."\r\n";
 		} else {
-			$_header .= 'Message-ID: <'.time().'.SMTPs@'.$host.">\r\n";
+			$_header .= 'Message-ID: <'.(empty($this->_msgId) ? uniqid().'.SMTPs@'.$host : $this->_msgId).">\r\n";
 		}
 		if (!empty($_SERVER['REMOTE_ADDR'])) {
 			$_header .= "X-RemoteAddr: ".$_SERVER['REMOTE_ADDR']."\r\n";
@@ -1574,8 +1608,11 @@ class SMTPs
 		if ($this->getInReplyTo()) {
 			$_header .= "In-Reply-To: ".$this->getInReplyTo()."\r\n";
 		}
-		if ($this->getReferences()) {
-			$_header .= "References: ".$this->getReferences()."\r\n";
+		$references = $this->getReferences();
+		if ($references) {
+			// List of message ids:
+			// Example "References: <id1@domain2.com> <id2@domain.com>
+			$_header .= "References: ".implode(' ', $references)."\r\n";
 		}
 
 		return $_header;
@@ -2297,5 +2334,4 @@ class SMTPs
  * Revision 1.1  2005/03/01 19:22:49  walter
  *  - initial commit
  *  - basic shell with some comments
- *
  */

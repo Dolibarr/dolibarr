@@ -165,7 +165,7 @@ jobs:
           for /f "tokens=2 delims==" %%A in ('doskey /m:err') do EXIT /B %%A
 
       - name: Convert Raw Log to Annotations
-        uses: mdeweerd/logToCheckStyle@v2024.3.5
+        uses: mdeweerd/logToCheckStyle@v2025.1.1
         if: ${{ failure() }}
         with:
           in: ${{ env.PHPUNIT_LOG }}
