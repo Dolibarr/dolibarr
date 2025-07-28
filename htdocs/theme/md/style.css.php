@@ -560,8 +560,17 @@ a.commonlink { color: var(--colortextlink) !important; text-decoration: none; }
 input {
 	font-size: unset;
 }
-.tableforfield input, .refidno input {
+.tableforfield input{
 	padding: 2px;
+}
+.refidno input {
+	margin-top: 0 !important;
+	padding: 0;
+}
+.refidno .button.smallpaddingimp {
+	padding: 3px !important;
+	padding-left: 6px !important;
+	padding-right: 6px !important;
 }
 
 /*
@@ -1049,9 +1058,6 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	border-bottom-color: #a2a2a2;
 	border-radius: 2px;
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-.refidno .button.smallpaddingimp {
-	font-size: 0.85em !important;
 }
 .button:focus, .buttonDelete:focus  {
 	box-shadow: 0px 0px 6px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
@@ -4686,7 +4692,7 @@ div.refidno  {
 	font-weight: normal;
 	color: var(--refidnocolor);
 	font-size: 92%;
-	line-height: 1.3em;
+	line-height: 1.5em;
 }
 div.refidno form {
 	display: inline-block;
