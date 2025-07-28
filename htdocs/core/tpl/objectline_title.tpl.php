@@ -42,6 +42,7 @@
  * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
+ * @var Conf $conf
  * @var User $user
  */
 
@@ -121,7 +122,7 @@ print '<th class="linecoluht right nowraponall">'.$langs->trans('PriceUHT').'</t
 
 // Multicurrency
 if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
-	print '<th class="linecoluht_currency right" style="width: 80px">'.$langs->trans('PriceUHTCurrency', $this->multicurrency_code).'</th>';
+	print '<th class="linecoluht_currency right" style="width: 80px">'.$langs->trans('PriceUTTC').' ('.$langs->getCurrencySymbol($this->multicurrency_code).')</th>';
 }
 
 if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
@@ -210,7 +211,7 @@ print '<th class="linecolht right">'.$langs->trans('TotalHTShort').'</th>';
 
 // Multicurrency
 if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
-	print '<th class="linecoltotalht_currency right">'.$langs->trans('TotalHTShortCurrency', $this->multicurrency_code).'</th>';
+	print '<th class="linecoltotalht_currency right">'.$langs->trans('TotalHTShort').' ('.$langs->getCurrencySymbol($this->multicurrency_code).')</th>';
 }
 
 if ($outputalsopricetotalwithtax) {

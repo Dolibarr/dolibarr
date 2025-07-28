@@ -900,11 +900,47 @@ if (empty($reshook)) {
 		$close_code = GETPOST("close_code", 'restricthtml');
 		$close_note = GETPOST("close_note", 'restricthtml');
 		if ($close_code) {
-			$result = $object->setPaid($user, $close_code, $close_note);
-			if ($result < 0) {
-				setEventMessages($object->error, $object->errors, 'errors');
-			} else {
-				$object->fetch($object->id);	// Reload properties
+			// if VatRefund
+			if (isModEnabled('tax') && $close_code == $object::CLOSECODE_WITHHOLDINGTAX) {
+				require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
+				$resteapayer = GETPOSTFLOAT("resteapayer");
+				$amount = (double) ($resteapayer > 0 ? $resteapayer * -1 : $resteapayer);
+				if ($amount < 0) {
+					$db->begin();
+					$tempTva = new Tva($db);
+					$tempTva->datev = $object->date;
+					$tempTva->datep = $object->date;
+					$tempTva->amount = $amount;
+					$tempTva->label = $langs->trans('WithholdingTax') . ' - ' . $object->ref;
+					//$tempTva->paye = 1;
+					$valid = $tempTva->getIdForLabel($tempTva->label);
+					if (!$valid) {
+						$ret = $tempTva->create($user);
+						if ($ret < 0) {
+							$error++;
+						} else {
+							$tempTva->setPaid($user);
+						}
+						if (empty($error)) {
+							$db->commit();
+						} else {
+							setEventMessages($tempTva->error, $tempTva->errors, 'errors');
+							$db->rollback();
+						}
+					} else {
+						$error++;
+						setEventMessages($langs->trans('LabelWithholdingExist'), $tempTva->errors, 'errors');
+						$db->rollback();
+					}
+				}
+			}
+			if (!$error) {
+				$result = $object->setPaid($user, $close_code, $close_note);
+				if ($result < 0) {
+					setEventMessages($object->error, $object->errors, 'errors');
+				} else {
+					$object->fetch($object->id);	// Reload properties
+				}
 			}
 		} else {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Reason")), null, 'errors');
@@ -5000,7 +5036,7 @@ if ($action == 'create') {
 			2 => array('type' => 'separator')
 		);
 		// Incomplete payment. We ask if reason = discount or other
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidPartially', $object->ref), 'confirm_paid_partially', $formquestion, "yes", 1, 400, 600);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id.'&resteapayer='.((float) $resteapayer), $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidPartially', $object->ref), 'confirm_paid_partially', $formquestion, "yes", 1, 400, 600);
 	}
 
 	// Confirmation of status abandoned

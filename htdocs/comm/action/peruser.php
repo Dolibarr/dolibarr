@@ -531,7 +531,7 @@ if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda'
 
 	$urltocreateaction = DOL_URL_ROOT.'/comm/action/card.php?action=create';
 	$urltocreateaction .= '&apyear='.$tmpforcreatebutton['year'].'&apmonth='.$tmpforcreatebutton['mon'].'&apday='.$tmpforcreatebutton['mday'].'&aphour='.$tmpforcreatebutton['hours'].'&apmin='.$tmpforcreatebutton['minutes'];
-	$urltocreateaction .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
+	$urltocreateaction .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$newparam);
 
 	$newcardbutton .= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', $urltocreateaction);
 }
@@ -701,7 +701,7 @@ if (($filtert != '-1' && $filtert != '-2') || $usergroup > 0) {
 	if ($filtert != '' && $filtert != '-1' && $filtert != '-2'  && $filtert != '-3') {
 		$sql .= " AND ar.fk_element IN (".$db->sanitize($filtert).")";
 	} elseif ($filtert == '-3') {
-		$sql .= " AND ar.fk_element IN (".$db->sanitize(implode(',', $user->getAllChildIds('hierarchyme'))).")";
+		$sql .= " AND ar.fk_element IN (".$db->sanitize(implode(',', $user->getAllChildIds(1))).")";
 	}
 	if ($usergroup > 0) {
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element AND ugu.fk_usergroup = ".((int) $usergroup);
@@ -823,7 +823,7 @@ if (($filtert > 0 || $filtert == -3) || $usergroup > 0) {
 	if ($filtert > 0) {
 		$sql .= "ar.fk_element = ".((int) $filtert);
 	} elseif ($filtert == -3) {
-		$sql .= "ar.fk_element IN (".$db->sanitize(implode(',', $user->getAllChildIds('hierarchyme'))).")";
+		$sql .= "ar.fk_element IN (".$db->sanitize(implode(',', $user->getAllChildIds(1))).")";
 	}
 	if ($usergroup > 0) {
 		$sql .= ($filtert > 0 ? " OR " : "")." ugu.fk_usergroup = ".((int) $usergroup);
@@ -2295,7 +2295,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			}
 			foreach ($cases1[$h] as $id => $ev) {
 				if ($ev['busy']) {
-					$style1 = 'onclickopenref peruser_busy';
+					$style1 .= 'peruser_busy ';
 				}
 				if ($ev['css']) {
 					$style1 .= ' '.$ev['css'];
@@ -2315,7 +2315,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			}
 			foreach ($cases2[$h] as $id => $ev) {
 				if ($ev['busy']) {
-					$style2 = 'onclickopenref peruser_busy';
+					$style2 .= 'peruser_busy ';
 				}
 				if ($ev['css']) {
 					$style2 .= ' '.$ev['css'];
@@ -2335,7 +2335,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			}
 			foreach ($cases3[$h] as $id => $ev) {
 				if ($ev['busy']) {
-					$style3 = 'onclickopenref peruser_busy';
+					$style3 .= 'peruser_busy ';
 				}
 				if ($ev['css']) {
 					$style3 .= ' '.$ev['css'];
@@ -2355,7 +2355,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			}
 			foreach ($cases4[$h] as $id => $ev) {
 				if ($ev['busy']) {
-					$style4 = 'onclickopenref peruser_busy';
+					$style4 .= 'peruser_busy ';
 				}
 				if ($ev['css']) {
 					$style4 .= ' '.$ev['css'];
@@ -2473,13 +2473,13 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		print '<table class="nobordernopadding case centpercent">';
 		print '<tr>';
 		print '<td ';
-		if ($style1 == 'peruser_notbusy') {
+		if (preg_match('/peruser_notbusy/', $style1)) {
 			print 'style="border: 1px solid #'.($color1 ? $color1 : "888").' !important" ';
 		} elseif ($color1) {
 			print 'style="background: #'.$color1.'; "';
 		}
 		print 'class="';
-		print ($style1 ? $style1.' ' : '');
+		print $style1;
 		print 'center'.($title1 ? ' classfortooltip' : '').($title1 ? ' cursorpointer' : '').'"';
 		print 'ref="'.$ref1.'_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_00_'.($ids1 ? $ids1 : 'none').'"';
 		print ($title1 ? ' title="'.$title1.'"' : '').'>';
@@ -2487,13 +2487,13 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		print '</td>';
 
 		print '<td ';
-		if ($style2 == 'peruser_notbusy') {
+		if (preg_match('/peruser_notbusy/', $style2)) {
 			print 'style="border: 1px solid #'.($color2 ? $color2 : "888").' !important" ';
 		} elseif ($color2) {
 			print 'style="background: #'.$color2.'; "';
 		}
 		print 'class="';
-		print ($style2 ? $style2.' ' : '');
+		print $style2;
 		print 'center'.($title2 ? ' classfortooltip' : '').($title2 ? ' cursorpointer' : '').'"';
 		print ' ref="'.$ref2.'_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_15_'.($ids2 ? $ids2 : 'none').'"';
 		print ($title2 ? ' title="'.$title2.'"' : '').'>';
@@ -2501,13 +2501,13 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		print '</td>';
 
 		print '<td ';
-		if ($style3 == 'peruser_notbusy') {
+		if (preg_match('/peruser_notbusy/', $style3)) {
 			print 'style="border: 1px solid #'.($color3 ? $color3 : "888").' !important" ';
 		} elseif ($color3) {
 			print 'style="background: #'.$color3.'; "';
 		}
 		print 'class="';
-		print ($style3 ? $style3.' ' : '');
+		print $style3;
 		print 'center'.($title3 ? ' classfortooltip' : '').($title3 ? ' cursorpointer' : '').'"';
 		print ' ref="'.$ref3.'_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_30_'.($ids3 ? $ids3 : 'none').'"';
 		print ($title3 ? ' title="'.$title3.'"' : '').'>';
@@ -2515,13 +2515,13 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 		print '</td>';
 
 		print '<td ';
-		if ($style4 == 'peruser_notbusy') {
+		if (preg_match('/peruser_notbusy/', $style4)) {
 			print 'style="border: 1px solid #'.($color4 ? $color4 : "888").' !important" ';
 		} elseif ($color4) {
 			print 'style="background: #'.$color4.'; "';
 		}
 		print 'class="';
-		print ($style4 ? $style4.' ' : '');
+		print $style4;
 		print 'center'.($title4 ? ' classfortooltip' : '').($title4 ? ' cursorpointer' : '').'"';
 		print ' ref="'.$ref4.'_'.$username->id.'_'.sprintf("%04d", $year).'_'.sprintf("%02d", $month).'_'.sprintf("%02d", $day).'_'.sprintf("%02d", $h).'_45_'.($ids4 ? $ids4 : 'none').'"';
 		print ($title4 ? ' title="'.$title4.'"' : '').'>';

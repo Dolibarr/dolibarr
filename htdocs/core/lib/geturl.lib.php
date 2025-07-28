@@ -120,8 +120,13 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		}
 	}
 
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeoutconnect ? $timeoutconnect : getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5));
-	curl_setopt($ch, CURLOPT_TIMEOUT, $timeoutresponse ? $timeoutresponse : getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
+	$newtimeoutconnect = ($timeoutconnect ? $timeoutconnect : getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5));
+	$newtimeoutresponse = ($timeoutresponse ? $timeoutresponse : getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
+
+	dol_syslog("getURLContent newtimeoutconnect=".$newtimeoutconnect." newtimeoutresponse=".$newtimeoutresponse);
+
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $newtimeoutconnect);
+	curl_setopt($ch, CURLOPT_TIMEOUT, $newtimeoutresponse);
 
 	// limit size of downloaded files.
 	$maxsize = getDolGlobalInt('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED');

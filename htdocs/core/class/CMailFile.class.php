@@ -655,6 +655,8 @@ class CMailFile
 
 			$smtps->setMessageID($this->msgid);
 
+			$smtps->setMessageID($this->msgid);
+
 			$this->smtps = $smtps;
 		} elseif ($this->sendmode == 'swiftmailer') {
 			// Use Swift Mailer library

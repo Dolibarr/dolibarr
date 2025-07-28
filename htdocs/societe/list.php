@@ -367,42 +367,6 @@ $permissiontoadd = $user->hasRight('societe', 'lire');
  * Actions
  */
 
-if ($action == "change" && $user->hasRight('takepos', 'run')) {	// Change customer for TakePOS
-	$idcustomer = GETPOSTINT('idcustomer');
-
-	// Check if draft invoice already exists, if not create it
-	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' AND entity IN (".getEntity('invoice').")";
-	$result = $db->query($sql);
-	$num_lines = $db->num_rows($result);
-	if ($num_lines == 0) {
-		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-		$invoice = new Facture($db);
-		$constforthirdpartyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
-		$invoice->socid = getDolGlobalInt($constforthirdpartyid);
-		$invoice->date = dol_now();
-		$invoice->module_source = 'takepos';
-		$invoice->pos_source = $_SESSION["takeposterminal"];
-		$placeid = $invoice->create($user);
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid = ".((int) $placeid);
-		$db->query($sql);
-	}
-
-	$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".((int) $idcustomer)." where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
-	$resql = $db->query($sql); ?>
-		<script>
-		console.log("Reload page invoice.php with place=<?php print $place; ?>");
-		parent.$("#poslines").load("invoice.php?place=<?php print $place; ?>", function() {
-			//parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
-			<?php if (!$resql) { ?>
-				alert('Error failed to update customer on draft invoice.');
-			<?php } ?>
-			parent.$.colorbox.close(); /* Close the popup */
-		});
-		</script>
-	<?php
-	exit;
-}
-
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
@@ -418,6 +382,42 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	if ($action == "change" && $user->hasRight('takepos', 'run')) {	// Change customer for TakePOS
+		$idcustomer = GETPOSTINT('idcustomer');
+
+		// Check if draft invoice already exists, if not create it
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$db->escape($place).")' AND entity IN (".getEntity('invoice').")";
+		$result = $db->query($sql);
+		$num_lines = $db->num_rows($result);
+		if ($num_lines == 0) {
+			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			$invoice = new Facture($db);
+			$constforthirdpartyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
+			$invoice->socid = getDolGlobalInt($constforthirdpartyid);
+			$invoice->date = dol_now();
+			$invoice->module_source = 'takepos';
+			$invoice->pos_source = $_SESSION["takeposterminal"];
+			$placeid = $invoice->create($user);
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid = ".((int) $placeid);
+			$db->query($sql);
+		}
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".((int) $idcustomer)." where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$db->escape($place).")'";
+		$resql = $db->query($sql); ?>
+			<script>
+			console.log("Reload page invoice.php with place=<?php print $place; ?>");
+			parent.$("#poslines").load("invoice.php?place=<?php print $place; ?>", function() {
+				//parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
+				<?php if (!$resql) { ?>
+					alert('Error failed to update customer on draft invoice.');
+				<?php } ?>
+				parent.$.colorbox.close(); /* Close the popup */
+			});
+			</script>
+		<?php
+		exit;
+	}
+
 	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 

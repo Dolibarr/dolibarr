@@ -424,9 +424,19 @@ input {
 .liste_titre input {
 	line-height: 1.3em;
 }
-.tableforfield input, .refidno input {
-	padding: 2px;
+.tableforfield input {
+	padding-left: 2px;
 }
+.refidno input {
+	margin-top: 0 !important;
+	padding: 0;
+}
+.refidno .button.smallpaddingimp {
+	padding: 3px !important;
+	padding-left: 6px !important;
+	padding-right: 6px !important;
+}
+
 select {
 	padding-top: 4px;
 	padding-right: 4px;
@@ -4630,7 +4640,7 @@ div.refidno  {
 	font-weight: normal;
 	color: var(--refidnocolor);
 	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>;
-	line-height: 1.4em;
+	line-height: 1.5em;
 }
 div.refaddress div.address {
 	line-height: 1.2em;
@@ -7025,6 +7035,7 @@ div#ecm-layout-center {
 	padding-right: 10px !important;
 	padding-top: 10px !important;
 	word-wrap: break-word;
+	max-height: 320px;
 }
 .jnotify-container .jnotify-notification .jnotify-message {
 	font-weight: normal;
