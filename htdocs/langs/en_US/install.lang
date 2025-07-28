@@ -220,3 +220,5 @@ MigrationContractLineRank=Migrate Contract Line to use Rank (and enable Reorder)
 MigrationProductLotPath=Migrate Product Batch files path
 MigrationAccountancyBookkeeping=Migrate accountancy bookkeeping to use a ref
 InvoiceExportModelsMigration=Migrate invoice export models
+MigrationApiRestTokens=Migrate user's API keys to llx_oauth_token
+MigratedTokens=%s token(s) migrated

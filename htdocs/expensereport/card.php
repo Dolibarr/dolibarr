@@ -240,8 +240,7 @@ if (empty($reshook)) {
 
 	// Action clone object
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
-		// @phan-suppress-next-line PhanPluginBothLiteralsBinaryOp
-		if (1 == 0 && !GETPOST('clone_content', 'alpha') && !GETPOST('clone_receivers', 'alpha')) {
+		if (GETPOSTINT('fk_user_author') <= 0) {
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		} else {
 			if ($object->id > 0) {
@@ -1258,9 +1257,6 @@ if (empty($reshook)) {
 						$tmpuser->fetch($object->fk_user_author);
 						$newlang = $tmpuser->lang;
 					}
-					if (empty($newlang)) {
-						$newlang = $langs->defaultlang;
-					}
 					if (!empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
@@ -1434,6 +1430,8 @@ if (empty($reshook)) {
 					unset($fk_project);
 					unset($date);
 				}
+
+				$action = '';
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
@@ -2446,8 +2444,8 @@ if ($action == 'create') {
 
 						// Select project
 						if (isModEnabled('project')) {
-							print '<td>';
-							$formproject->select_projects(-1, (string) $line->fk_project, 'fk_project', 0, 0, $projectRequired ? 0 : 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
+							print '<td class="nowraponall">';
+							print $formproject->select_projects(-1, (string) $line->fk_project, 'fk_project', 0, 0, $projectRequired ? 0 : 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth300');
 							print '</td>';
 						}
 

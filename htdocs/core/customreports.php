@@ -165,7 +165,7 @@ $arrayoftype = array(
 	'order' => array('langs' => 'orders', 'label' => 'Orders', 'picto' => 'order', 'ObjectClassName' => 'Commande', 'enabled' => isModEnabled('order'), 'ClassPath' => "/commande/class/commande.class.php"),
 	'orderdet' => array('langs' => 'orders', 'label' => 'SaleOrderLines', 'picto' => 'order', 'ObjectClassName' => 'OrderLine', 'enabled' => isModEnabled('order'), 'ClassPath' => "/commande/class/orderline.class.php"),
 	'invoice' => array('langs' => 'facture', 'label' => 'Invoices', 'picto' => 'bill', 'ObjectClassName' => 'Facture', 'enabled' => isModEnabled('invoice'), 'ClassPath' => "/compta/facture/class/facture.class.php"),
-	'invoice_template' => array('langs' => 'bills', 'label' => 'PredefinedInvoices', 'picto' => 'bill', 'ObjectClassName' => 'FactureRec', 'enabled' => isModEnabled('invoice'), 'ClassPath' => "/compta/class/facturerec.class.php"),
+	'invoice_template' => array('langs' => 'bills', 'label' => 'PredefinedInvoices', 'picto' => 'bill', 'ObjectClassName' => 'FactureRec', 'enabled' => isModEnabled('invoice'), 'ClassPath' => "/compta/facture/class/facture-rec.class.php"),
 	'contract' => array('langs' => 'contracts', 'label' => 'Contracts', 'picto' => 'contract', 'ObjectClassName' => 'Contrat', 'enabled' => isModEnabled('contract'), 'ClassPath' => "/contrat/class/contrat.class.php"),
 	'contractdet' => array('langs' => 'contracts', 'label' => 'ContractLines', 'picto' => 'contract', 'ObjectClassName' => 'ContratLigne', 'enabled' => isModEnabled('contract'), 'ClassPath' => "/contrat/class/contrat.class.php"),
 	'bom' => array('label' => 'BOM', 'picto' => 'bom', 'ObjectClassName' => 'Bom', 'enabled' => isModEnabled('bom')),
@@ -357,6 +357,7 @@ if (!empty($object->element_for_permission)) {
 	$features .= (empty($object->module) ? '' : '@'.$object->module);
 }
 
+// Security check
 restrictedArea($user, $features, 0, '');
 
 

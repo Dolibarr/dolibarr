@@ -1958,9 +1958,9 @@ class Product extends CommonObject
 	}
 
 	/**
-	 * Get sell or eat by mandatory list
+	 * Get the array of labels of Sell by or Eat by all mandatory flags for each status
 	 *
-	 * @return 	array{0:string,1:string,2:string,3:string}	Sell or eat by mandatory list
+	 * @return 	array{0:string,1:string,2:string,3:string}	Array of labels of Sell by or Eat by all mandatory flags
 	 */
 	public static function getSellOrEatByMandatoryList()
 	{
@@ -1977,9 +1977,9 @@ class Product extends CommonObject
 	}
 
 	/**
-	 * Get sell or eat by mandatory label
+	 * Get the label for sell by or eat by mandatory flag of the current product
 	 *
-	 * @return 	string	Sell or eat by mandatory label
+	 * @return 	string		Sell or eat by mandatory label
 	 */
 	public function getSellOrEatByMandatoryLabel()
 	{
@@ -1996,8 +1996,8 @@ class Product extends CommonObject
 	/**
 	 *    Update or add a translation for a product
 	 *
-	 * @param  User $user Object user making update
-	 * @return int        Return integer <0 if KO, >0 if OK
+	 * @param  User $user 	Object user making update
+	 * @return int        	Return integer <0 if KO, >0 if OK
 	 */
 	public function setMultiLangs($user)
 	{

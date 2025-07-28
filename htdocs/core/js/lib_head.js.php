@@ -1054,10 +1054,11 @@ function document_preview(file, type, title)
 
 	if ($.inArray(type, ValidImageTypes) < 0) {
 		/* Not an image */
-		var width = '85%';
 		var object_width = '100%';
-		var height = ($( window ).height() - 60) * 0.90;
 		var object_height = '98%';
+
+		var popupWidth = '85%';
+		var popupHeight = $( window ).height() * 0.90 - 100;
 
 		show_preview('notimage');
 
@@ -1076,13 +1077,13 @@ function document_preview(file, type, title)
 			/* Complete title with size of image */
 			title = title + ' (' + object_width + ' x ' + object_height + ')';
 
-			popupWidth = $( window ).width() * 0.9 - 50;
+			popupWidth = $( window ).width() * 0.85 - 50;
 			console.log("object_width="+object_width+" popup window width="+popupWidth);
 			if (object_width < popupWidth) {
 				console.log("Object width is small, we set width of popup according to image width.");
 				popupWidth = object_width + 50
 			}
-			popupHeight = $( window ).height() * 0.85 - 100;
+			popupHeight = $( window ).height() * 0.90 - 100;
 			console.log("object_height="+object_height+" popup window height="+popupHeight);
 			if (object_height < (popupHeight - 100)) {
 				console.log("Object height is small, we set height of popup according to image height.");
@@ -1665,6 +1666,7 @@ $(document).ready(function() {
 
 /**
  * Function called when an item is moved to a different column
+ *
  * @param {jQuery} item - The dragged item
  * @param {jQuery} newColumn - The new column
  */
