@@ -305,7 +305,6 @@ if (empty($reshook)) {
 	$uploaddir = $conf->user->dir_output;
 
 	global $error;
-	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// Disable or Enable records
 	if (!$error && ($massaction == 'disable' || $massaction == 'reactivate') && $permissiontoadd) {
@@ -316,7 +315,7 @@ if (empty($reshook)) {
 		$nbok = 0;
 		foreach ($toselect as $toselectid) {
 			if ($toselectid == $user->id) {
-				setEventMessages($langs->trans($massaction == 0 ? 'CantDisableYourself' : 'CanEnableYourself'), null, 'errors');
+				setEventMessages($langs->trans($massaction == 'disable' ? 'CantDisableYourself' : 'CanEnableYourself'), null, 'errors');
 				$error++;
 				break;
 			}
@@ -324,7 +323,7 @@ if (empty($reshook)) {
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
 				if ($objecttmp->admin) {
-					setEventMessages($langs->trans($massaction == 0 ? 'CantDisableAnAdminUserWithMassActions' : 'CantEnableAnAdminUserWithMassActions', $objecttmp->login), null, 'errors');
+					setEventMessages($langs->trans($massaction == 'disable' ? 'CantDisableAnAdminUserWithMassActions' : 'CantEnableAnAdminUserWithMassActions', $objecttmp->login), null, 'errors');
 					$error++;
 					break;
 				}
@@ -360,7 +359,12 @@ if (empty($reshook)) {
 		} else {
 			$db->rollback();
 		}
+
+		$massaction = '';
 	}
+
+	// Generic mass actions
+	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 
