@@ -160,7 +160,7 @@ The following changes may create regressions for some external modules, but were
 * The API to create a website account /idthirdparty/accounts/site is now POST (instead of PUT) and to update is PUT (instead of PATCH).
 * Debug v22 - Invert option TICKET_DO_NOT_INCLUDE_LINK_TO_CUSTOMER (that add link to backoffice interface link when it should remain private)
   into TICKET_INCLUDE_LINK_TO_PUBLIC_INTERFACE_IN_MESSAGE. It also avoid often emails marked as SPAM due to suspicious link.
-
+* The property ->price_ht of an object line that was a duplicate of ->subprice has been standardized. Use ->subprice everywhere now.
 
 
 ***** ChangeLog for 21.0.3 compared to 21.0.2 *****
