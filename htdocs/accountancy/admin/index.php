@@ -579,7 +579,8 @@ print '</div>';
 
 print '<div class="center"><input type="submit" class="button reposition" value="'.dol_escape_htmltag($langs->trans('Save')).'" name="button"></div>';
 
-print '<br>';
+// Show numbering options
+print '<br><br>';
 
 // Accountancy Numbering model
 $dirmodels = array_merge(array('/'), $conf->modules_parts['models']);
