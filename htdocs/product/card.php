@@ -1337,12 +1337,10 @@ if (isModEnabled('productbatch')) {
 	if ($disableSellBy) {
 		unset($sellOrEatByMandatoryList[Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_BY]);
 		unset($sellOrEatByMandatoryList[Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT]);
-
 	}
 	if ($disableEatBy) {
 		unset($sellOrEatByMandatoryList[Product::SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY]);
 		unset($sellOrEatByMandatoryList[Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT]);
-
 	}
 }
 
