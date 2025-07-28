@@ -701,7 +701,7 @@ if (($filtert != '-1' && $filtert != '-2') || $usergroup > 0) {
 	if ($filtert != '' && $filtert != '-1' && $filtert != '-2'  && $filtert != '-3') {
 		$sql .= " AND ar.fk_element IN (".$db->sanitize($filtert).")";
 	} elseif ($filtert == '-3') {
-		$sql .= " AND ar.fk_element IN (".$db->sanitize(implode(',', $user->getAllChildIds('hierarchyme'))).")";
+		$sql .= " AND ar.fk_element IN (".$db->sanitize(implode(',', $user->getAllChildIds(1))).")";
 	}
 	if ($usergroup > 0) {
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element AND ugu.fk_usergroup = ".((int) $usergroup);
@@ -823,7 +823,7 @@ if (($filtert > 0 || $filtert == -3) || $usergroup > 0) {
 	if ($filtert > 0) {
 		$sql .= "ar.fk_element = ".((int) $filtert);
 	} elseif ($filtert == -3) {
-		$sql .= "ar.fk_element IN (".$db->sanitize(implode(',', $user->getAllChildIds('hierarchyme'))).")";
+		$sql .= "ar.fk_element IN (".$db->sanitize(implode(',', $user->getAllChildIds(1))).")";
 	}
 	if ($usergroup > 0) {
 		$sql .= ($filtert > 0 ? " OR " : "")." ugu.fk_usergroup = ".((int) $usergroup);
