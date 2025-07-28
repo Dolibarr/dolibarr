@@ -403,7 +403,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	<?php echo $prefix; ?>color: #6c6aa8 !important;
 }
 .bg-infobox-action{
-	<?php echo $prefix; ?>color: #b06080 !important;
+	<?php echo $prefix; ?>color: #906080 !important;
 }
 .bg-infobox-propal, .bg-infobox-facture, .bg-infobox-commande {
 	<?php echo $prefix; ?>color: #65953d !important;
@@ -443,7 +443,7 @@ a.vmenu span, span.vmenu, span.vmenu span {
 	color: #6c6aa8;
 }
 .infobox-action{
-	color: #b06080;
+	color: #906080;
 }
 /* Color for customer object */
 .infobox-propal:not(.error),

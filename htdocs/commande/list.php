@@ -2908,7 +2908,7 @@ while ($i < $imaxinloop) {
 
 		// Note public
 		if (!empty($arrayfields['c.note_public']['checked'])) {
-			print '<td class="sensiblehtmlcontent maxwidth250imp">';
+			print '<td class="sensiblehtmlcontent maxwidth250imp classfortooltip" title="'.dolPrintHTMLForAttribute(dolGetFirstLineOfText($obj->note_public, 20)).'">';
 			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
@@ -2918,7 +2918,7 @@ while ($i < $imaxinloop) {
 
 		// Note private
 		if (!empty($arrayfields['c.note_private']['checked'])) {
-			print '<td class="sensiblehtmlcontent maxwidth250imp">';
+			print '<td class="sensiblehtmlcontent maxwidth250imp classfortooltip" title="'.dolPrintHTMLForAttribute(dolGetFirstLineOfText($obj->note_private, 20)).'">';
 			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 			print '</td>';
 			if (!$i) {

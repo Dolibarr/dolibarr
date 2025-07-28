@@ -424,9 +424,19 @@ input {
 .liste_titre input {
 	line-height: 1.3em;
 }
-.tableforfield input, .refidno input {
-	padding: 2px;
+.tableforfield input {
+	padding-left: 2px;
 }
+.refidno input {
+	margin-top: 0 !important;
+	padding: 0;
+}
+.refidno .button.smallpaddingimp {
+	padding: 3px !important;
+	padding-left: 6px !important;
+	padding-right: 6px !important;
+}
+
 select {
 	padding-top: 4px;
 	padding-right: 4px;
@@ -541,6 +551,9 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 }
 input.short {
 	width: 40px;
+}
+input.shortbis {
+	width: 48px;
 }
 .nofocusvisible:focus-visible {
 	outline: none;
@@ -3691,6 +3704,9 @@ div.vmenu, td.vmenu {
 	display: none;
 	<?php } ?>
 }
+.vmenudisabled {
+	margin-left: 8px !important;
+}
 
 /* Force vmenusearchselectcombo with type=text differently than without because beautify with select2 affect vmenusearchselectcombo differently */
 input.vmenusearchselectcombo[type=text] {
@@ -4624,7 +4640,7 @@ div.refidno  {
 	font-weight: normal;
 	color: var(--refidnocolor);
 	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>;
-	line-height: 1.4em;
+	line-height: 1.5em;
 }
 div.refaddress div.address {
 	line-height: 1.2em;
