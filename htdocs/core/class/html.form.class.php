@@ -3209,10 +3209,10 @@ class Form
 
 		if (getDolGlobalString('PRODUIT_ATTRIBUTES_HIDECHILD')) {
 			if (getDolGlobalString('PRODUIT_ATTRIBUTES_HIDECHILD_BUT_ALLOW_SEARCH_IN_EAN13')){
-				if (strlen($filterkey)!=13){
+				if (strlen($filterkey)!=13) {
 					 $sql .= " LEFT JOIN " . $this->db->prefix() . "product_attribute_combination pac ON pac.fk_product_child = p.rowid";
 				}
-		    }else{
+		    } else {
 				$sql .= " LEFT JOIN " . $this->db->prefix() . "product_attribute_combination pac ON pac.fk_product_child = p.rowid";
 			}
 		}
@@ -3220,11 +3220,11 @@ class Form
 		$sql .= ' WHERE p.entity IN (' . getEntity('product') . ')';
 
 		if (getDolGlobalString('PRODUIT_ATTRIBUTES_HIDECHILD')) {
-			if (getDolGlobalString('PRODUIT_ATTRIBUTES_HIDECHILD_BUT_ALLOW_SEARCH_IN_EAN13')){
-				if (strlen($filterkey)!=13){
-					$sql .= " AND pac.rowid IS NULL";	
+			if (getDolGlobalString('PRODUIT_ATTRIBUTES_HIDECHILD_BUT_ALLOW_SEARCH_IN_EAN13')) {
+				if (strlen($filterkey)!=13) {
+					$sql .= " AND pac.rowid IS NULL";
 				}
-			}else{
+			} else {
 				$sql .= " AND pac.rowid IS NULL";
 			}
 		}
