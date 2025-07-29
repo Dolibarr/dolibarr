@@ -3208,11 +3208,11 @@ class Form
 		}
 
 		if (getDolGlobalString('PRODUIT_ATTRIBUTES_HIDECHILD')) {
-			if (getDolGlobalString('PRODUIT_ATTRIBUTES_HIDECHILD_BUT_ALLOW_SEARCH_IN_EAN13')){
+			if (getDolGlobalString('PRODUIT_ATTRIBUTES_HIDECHILD_BUT_ALLOW_SEARCH_IN_EAN13')) {
 				if (strlen($filterkey)!=13) {
 					 $sql .= " LEFT JOIN " . $this->db->prefix() . "product_attribute_combination pac ON pac.fk_product_child = p.rowid";
 				}
-		    } else {
+			} else {
 				$sql .= " LEFT JOIN " . $this->db->prefix() . "product_attribute_combination pac ON pac.fk_product_child = p.rowid";
 			}
 		}
