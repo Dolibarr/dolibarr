@@ -488,11 +488,11 @@ if (!defined('DOL_DEFAULT_TTF_BOLD')) {
 if ((!empty($dolibarr_main_db_pass) && preg_match('/(dolcrypt|crypted):/i', $dolibarr_main_db_pass)) || !empty($dolibarr_main_db_encrypted_pass)) {
 	if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
 		$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
+		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this so we can use it later to know the password was initially encrypted
 		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
-		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this so we can use it later to know the password was initially encrypted
 	} elseif (!empty($dolibarr_main_db_pass) && preg_match('/dolcrypt:/i', $dolibarr_main_db_pass)) {
-		$dolibarr_main_db_pass = dolDecrypt($dolibarr_main_db_pass, (empty($dolibarr_main_dolcrypt_key) ? (empty($dolibarr_main_instance_unique_id) ? '' : $dolibarr_main_instance_unique_id) : $dolibarr_main_dolcrypt_key));
 		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this so we can use it later to know the password was initially encrypted
+		$dolibarr_main_db_pass = dolDecrypt($dolibarr_main_db_pass, (empty($dolibarr_main_dolcrypt_key) ? (empty($dolibarr_main_instance_unique_id) ? '' : $dolibarr_main_instance_unique_id) : $dolibarr_main_dolcrypt_key));
 	} else {
 		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 	}
