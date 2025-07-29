@@ -160,6 +160,12 @@ The following changes may create regressions for some external modules, but were
 * The API to create a website account /idthirdparty/accounts/site is now POST (instead of PUT) and to update is PUT (instead of PATCH).
 * Debug v22 - Invert option TICKET_DO_NOT_INCLUDE_LINK_TO_CUSTOMER (that add link to backoffice interface link when it should remain private)
   into TICKET_INCLUDE_LINK_TO_PUBLIC_INTERFACE_IN_MESSAGE. It also avoid often emails marked as SPAM due to suspicious link.
+* The property ->price_ht of an object line that was a duplicate of ->subprice has been standardized. Use ->subprice everywhere now.
+
+
+***** ChangeLog for 21.0.3 compared to 21.0.2 *****
+SEC: Remove functions accepting callable params - Reported by phdwg1410
+TODO...
 
 
 ***** ChangeLog for 21.0.2 compared to 21.0.1 *****
@@ -601,7 +607,7 @@ FIX: product variants copy: also copy multiprice variations
 FIX: refactorize (maybe broken feature for not received completely)
 FIX: remove debug trace
 FIX: remove socid when cloning a project without third parties
-FIX: removes traces of <<<HEAD conflicts following the postponement of branch 13 modifications (#32014)
+FIX: removes traces of HEAD conflicts following the postponement of branch 13 modifications (#32014)
 FIX: remove unused code
 FIX: same broken feature for propal and invoice
 FIX: select 2 no record found translate

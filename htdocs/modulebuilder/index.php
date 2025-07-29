@@ -3472,7 +3472,11 @@ if ($module == 'initmodule') {
 	print '<input type="text" name="editorurl" value="'.(GETPOSTISSET('editorurl') ? GETPOST('editorurl') : getDolGlobalString('MODULEBUILDER_SPECIFIC_EDITOR_URL', $mysoc->url)).'" placeholder="'.dol_escape_htmltag($langs->trans("EditorUrl")).'"><br>';
 	print '</div></div>';
 
-	print '<br><input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Create")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
+	print '</div>';	// End div tagtable
+
+	print '<br><center>';
+	print '<input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Create")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
+	print '</center>';
 	print '</form>';
 } elseif ($module == 'deletemodule') {
 	print '<!-- Form to init a module -->'."\n";
