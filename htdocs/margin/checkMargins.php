@@ -232,8 +232,6 @@ if ($search_ref) {
 }
 $sql .= " AND d.buy_price_ht IS NOT NULL";
 
-global $hookmanager;
-
 $hookmanager->resPrint = '';
 $parameters = array();
 $hookmanager->executeHooks('checkMarginWhereAppend', $parameters, $object, $action);
