@@ -232,13 +232,12 @@ if ($search_ref) {
 }
 $sql .= " AND d.buy_price_ht IS NOT NULL";
 
-$hookmanager->resPrint = '';
-$parameters = array();
-$hookmanager->executeHooks('checkMarginWhereAppend', $parameters, $object, $action);
+//$hookmanager->resPrint = '';
 
-if (!empty($hookmanager->resPrint)) {
-	$sql .= ' ' . $hookmanager->resPrint;
-}
+$parameters = array();
+$hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action);
+$sql .= $hookmanager->resPrint;
+
 
 $sql .= $db->order($sortfield, $sortorder);
 
