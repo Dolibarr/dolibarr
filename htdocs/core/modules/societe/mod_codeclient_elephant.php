@@ -5,7 +5,9 @@
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2013-2018 Philippe Grand      	<philippe.grand@atoo-net.com>
  * Copyright (C) 2020-2024	Frédéric France		<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Eric Seigne 		<eric.seigne@cap-rel.fr>
+ * Copyright (C) 2025		Charlene Benke 		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,9 +95,12 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="COMPANY_ELEPHANT_MASK_CUSTOMER">';
 		$texte .= '<input type="hidden" name="param2" value="COMPANY_ELEPHANT_MASK_SUPPLIER">';
+		$texte .= '<input type="hidden" name="param3" value="COMPANY_ELEPHANT_DATE_START">';
+		$texte .= '<input type="hidden" name="param4" value="COMPANY_ELEPHANT_DATE_START_ENABLE">';
 		$texte .= '<table class="nobordernopadding" width="100%">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("ThirdParty"), $langs->transnoentities("ThirdParty"));
+		$tooltip .= $langs->trans("GenericMaskCodes1");
 		//$tooltip.=$langs->trans("GenericMaskCodes2");	Not required for third party numbering
 		$tooltip .= $langs->trans("GenericMaskCodes2b").'<br>';
 		$tooltip .= '<br>';
@@ -107,7 +112,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 		// Parametrage du prefix customers
 		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("CustomerCodeModel").'):</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value1" value="'.getDolGlobalString('COMPANY_ELEPHANT_MASK_CUSTOMER').'"'.$disabled.'>', $tooltip, 1, 1, '', 0, 3, 'tooltipelephantcutomer').'</td>';
+		$texte .= '<td class="right nowraponall">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value1" value="'.getDolGlobalString('COMPANY_ELEPHANT_MASK_CUSTOMER').'"'.$disabled.'>', $tooltip, 1, 'help', '', 0, 3, 'tooltipelephantcutomer').'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.$langs->trans("Modify").'"'.$disabled.'></td>';
 
@@ -115,7 +120,46 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 
 		// Parametrage du prefix suppliers
 		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("SupplierCodeModel").'):</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value2" value="'.getDolGlobalString('COMPANY_ELEPHANT_MASK_SUPPLIER').'"'.$disabled.'>', $tooltip, 1, 1, '', 0, 3, 'tooltipelephantsupplier').'</td>';
+		$texte .= '<td class="right nowraponall">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value2" value="'.getDolGlobalString('COMPANY_ELEPHANT_MASK_SUPPLIER').'"'.$disabled.'>', $tooltip, 1, 'help', '', 0, 3, 'tooltipelephantsupplier').'</td>';
+		$texte .= '</tr>';
+
+		// Date of switch to that numbering model
+		$datedb = getDolGlobalString('COMPANY_ELEPHANT_DATE_START');
+		// After save, default dolibarr store data like displayed : 20/05/2024 and we need a timestamp -> override data
+		if (!empty($datedb)) {
+			if (!is_numeric($datedb) && GETPOSTISSET('value3')) {
+				if (GETPOST('value4') == 1) {
+					$dateinput = GETPOSTDATE('value3');
+					$res = dolibarr_set_const($this->db, 'COMPANY_ELEPHANT_DATE_START', $dateinput, 'chaine', 0, '', $conf->entity);
+					$res = dolibarr_set_const($this->db, 'COMPANY_ELEPHANT_DATE_START_ENABLE', 1, 'chaine', 0, '', $conf->entity);
+				} else {
+					$res = dolibarr_set_const($this->db, 'COMPANY_ELEPHANT_DATE_START', '', 'chaine', 0, '', $conf->entity);
+					$res = dolibarr_set_const($this->db, 'COMPANY_ELEPHANT_DATE_START_ENABLE', 1, 'chaine', 0, '', $conf->entity);
+				}
+			} else {
+				$dateinput = $datedb;
+			}
+		}
+		if (empty($dateinput)) {
+			$dateinput = dol_now();
+		}
+		$isEnabled = getDolGlobalString('COMPANY_ELEPHANT_DATE_START_ENABLE');
+		$texte .= '<tr><td>';
+		$texte .= '<input type="checkbox"';
+		if ($isEnabled) {
+			$texte .= ' checked="checked"';
+		}
+		$texte .= ' onclick="if (this.checked) { jQuery(\'#elephantchoosedate\').show(); } else { jQuery(\'#elephantchoosedate\').hide(); }" id="elephantdisablebefore" name="value4" value="1" class="inline-block"/>';
+		$texte .= '<label for="elephantdisablebefore" class="small">';
+		$texte .= $form->textwithpicto($langs->trans("DateStartThatModel"), $langs->trans("DateStartThatModelHelp"));
+		$texte .= '</label>';
+		$texte .= '</td>';
+		$texte .= '<td class="nowraponall right">';
+		$texte .= '<div class="'.($isEnabled ? '' : 'hideobject ').' inline-block" id="elephantchoosedate">';
+		$texte .= $form->selectDate($dateinput, 'value3', 0, 0, 1, '', 1, 0, $disabled ? 1 : 0);
+		$texte .= '</div>';
+		$texte .= '</td>';
+
 		$texte .= '</tr>';
 
 		$texte .= '</table>';
@@ -128,13 +172,17 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Translate		$langs		Object langs
+	 * @param	?Translate		$langs		Object langs
 	 * @param	Societe|string	$objsoc		Object thirdparty
-	 * @param	int				$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @param	int<-1,2>		$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string						Return string example
 	 */
-	public function getExample($langs, $objsoc = '', $type = -1)
+	public function getExample($langs = null, $objsoc = '', $type = -1)
 	{
+		if (!$langs instanceof Translate) {
+			$langs = $GLOBALS['langs'];
+			'@phan-var-force Translate $langs';
+		}
 		$examplecust = '';
 		$examplesup = '';
 		$errmsg = array(
@@ -183,8 +231,8 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	/**
 	 * Return next value
 	 *
-	 * @param	Societe|string	$objsoc     Object third party
-	 * @param  	int		    	$type       Client ou fournisseur (0:customer, 1:supplier)
+	 * @param	Societe|string|null	$objsoc	Object third party
+	 * @param	int<-1,2>			$type	Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return 	string|-1      				Value if OK, '' if module not configured, -1 if KO
 	 */
 	public function getNextValue($objsoc = '', $type = -1)
@@ -257,8 +305,8 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 	 *	@param	DoliDB		$db		Database handler
 	 *	@param	string		$code	Code to check/correct
 	 *	@param	Societe		$soc	Object third party
-	 *  @param  int		  	$type   0 = customer/prospect , 1 = supplier
-	 *  @return int					0 if OK
+	 *  @param  int<0,1>  	$type   0 = customer/prospect , 1 = supplier
+	 *  @return int<-6,0>			0 if OK
 	 * 								-1 ErrorBadCustomerCodeSyntax
 	 * 								-2 ErrorCustomerCodeRequired
 	 * 								-3 ErrorCustomerCodeAlreadyUsed
@@ -275,6 +323,9 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 		$result = 0;
 		$code = strtoupper(trim($code));
 
+		if (getDolGlobalString('COMPANY_ELEPHANT_DATE_START_ENABLE') && $soc->date_creation < getDolGlobalString('COMPANY_ELEPHANT_DATE_START')) {
+			return -5;
+		}
 		if (empty($code) && $this->code_null && !getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED')) {
 			$result = 0;
 		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('MAIN_COMPANY_CODE_ALWAYS_REQUIRED'))) {
@@ -329,7 +380,7 @@ class mod_codeclient_elephant extends ModeleThirdPartyCode
 			$sql .= " WHERE code_client = '".$db->escape($code)."'";
 		}
 		if ($soc->id > 0) {
-			$sql .= " AND rowid <> ".$soc->id;
+			$sql .= " AND rowid <> ".((int) $soc->id);
 		}
 		$sql .= " AND entity IN (".getEntity('societe').")";
 

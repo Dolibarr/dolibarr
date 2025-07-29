@@ -5,8 +5,8 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,13 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 if (!isset($conf->global->AGENDA_MAX_EVENTS_DAY_VIEW)) {
 	$conf->global->AGENDA_MAX_EVENTS_DAY_VIEW = 3;
@@ -50,7 +57,7 @@ $action = GETPOST('action', 'aZ09');
 $disabledefaultvalues = GETPOSTINT('disabledefaultvalues');
 
 $filter = GETPOST("search_filter", 'alpha', 3) ? GETPOST("search_filter", 'alpha', 3) : GETPOST("filter", 'alpha', 3);
-$filtert = GETPOSTINT("search_filtert", 3) ? GETPOSTINT("search_filtert", 3) : GETPOSTINT("filtert", 3);
+$filtert = GETPOST("search_filtert", "intcomma", 3) ? GETPOST("search_filtert", "intcomma", 3) : GETPOST("filtert", "intcomma", 3);
 $usergroup = GETPOSTINT("search_usergroup", 3) ? GETPOSTINT("search_usergroup", 3) : GETPOSTINT("usergroup", 3);
 //if (! ($usergroup > 0) && ! ($filtert > 0)) $filtert = $user->id;
 
@@ -88,8 +95,7 @@ if ($socid < 0) {
 	$socid = '';
 }
 
-// Permissions
-$canedit = 1;
+$canedit = 1;	// can read events of others
 if (!$user->hasRight('agenda', 'myactions', 'read')) {
 	accessforbidden();
 }
@@ -97,7 +103,7 @@ if (!$user->hasRight('agenda', 'allactions', 'read')) {
 	$canedit = 0;
 }
 if (!$user->hasRight('agenda', 'allactions', 'read') || $filter == 'mine') {  // If no permission to see all, we show only affected to me
-	$filtert = $user->id;
+	$filtert = (string) $user->id;
 }
 
 $mode = 'show_pertype';
@@ -130,11 +136,11 @@ if ($dateselect > 0) {
 }
 
 // working hours
-$tmp = !getDolGlobalString('MAIN_DEFAULT_WORKING_HOURS') ? '9-18' : $conf->global->MAIN_DEFAULT_WORKING_HOURS;
+$tmp = getDolGlobalString('MAIN_DEFAULT_WORKING_HOURS', '9-18');
 $tmp = str_replace(' ', '', $tmp); // FIX 7533
 $tmparray = explode('-', $tmp);
-$begin_h = GETPOSTINT('begin_h') != '' ? GETPOSTINT('begin_h') : ($tmparray[0] != '' ? $tmparray[0] : 9);
-$end_h   = GETPOSTINT('end_h') ? GETPOSTINT('end_h') : ($tmparray[1] != '' ? $tmparray[1] : 18);
+$begin_h = GETPOSTISSET('begin_h') ? GETPOSTINT('begin_h') : ($tmparray[0] != '' ? $tmparray[0] : 9);
+$end_h   = GETPOSTISSET('end_h') ? GETPOSTINT('end_h') : ($tmparray[1] != '' ? $tmparray[1] : 18);
 if ($begin_h < 0 || $begin_h > 23) {
 	$begin_h = 9;
 }
@@ -146,14 +152,14 @@ if ($end_h <= $begin_h) {
 }
 
 // working days
-$tmp = !getDolGlobalString('MAIN_DEFAULT_WORKING_DAYS') ? '1-5' : $conf->global->MAIN_DEFAULT_WORKING_DAYS;
+$tmp = getDolGlobalString('MAIN_DEFAULT_WORKING_DAYS', '1-5');
 $tmp = str_replace(' ', '', $tmp); // FIX 7533
 $tmparray = explode('-', $tmp);
 $begin_d = 1;
 $end_d = 53;
 
 if ($status == '' && !GETPOSTISSET('search_status')) {
-	$status = ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_STATUS') || $disabledefaultvalues) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
+	$status = ((!getDolGlobalString('AGENDA_DEFAULT_FILTER_STATUS') || $disabledefaultvalues) ? '' : getDolGlobalString('AGENDA_DEFAULT_FILTER_STATUS'));
 }
 if (empty($mode) && !GETPOSTISSET('mode')) {
 	$mode = getDolGlobalString('AGENDA_DEFAULT_VIEW', 'show_pertype');
@@ -186,10 +192,10 @@ $object = new ActionComm($db);
 // Load translation files required by the page
 $langs->loadLangs(array('users', 'agenda', 'other', 'commercial'));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('agenda'));
 
-$result = restrictedArea($user, 'agenda', 0, '', 'myactions');
+$result = restrictedArea($user, 'agenda', 0, 'actioncomm&societe', 'myactions');
 if ($user->socid && $socid) {
 	$result = restrictedArea($user, 'societe', $socid);
 }
@@ -276,10 +282,12 @@ if ($status == 'todo') {
 }
 
 $param = '';
-if ($actioncode || GETPOSTISSET('search_actioncode')) {
+if (($actioncode && $actioncode !== '-1') || GETPOSTISSET('search_actioncode')) {
 	if (is_array($actioncode)) {
 		foreach ($actioncode as $str_action) {
-			$param .= "&search_actioncode[]=".urlencode($str_action);
+			if ($str_action != '-1') {
+				$param .= "&search_actioncode[]=".urlencode($str_action);
+			}
 		}
 	} else {
 		$param .= "&search_actioncode=".urlencode($actioncode);
@@ -292,10 +300,10 @@ if ($status || GETPOSTISSET('status') || GETPOSTISSET('search_status')) {
 	$param .= "&search_status=".urlencode($status);
 }
 if ($filter) {
-	$param .= "&search_filter=".urlencode($filter);
+	$param .= "&search_filter=".urlencode((string) $filter);
 }
 if ($filtert) {
-	$param .= "&search_filtert=".urlencode($filtert);
+	$param .= "&search_filtert=".urlencode((string) $filtert);
 }
 if ($usergroup > 0) {
 	$param .= "&search_usergroup=".urlencode((string) ($usergroup));
@@ -303,7 +311,7 @@ if ($usergroup > 0) {
 if ($socid > 0) {
 	$param .= "&search_socid=".urlencode((string) ($socid));
 }
-if ($showbirthday) {
+if ($showbirthday) {  // Always false @phpstan-suppress-current-line
 	$param .= "&search_showbirthday=1";
 }
 if ($pid) {
@@ -316,16 +324,16 @@ if ($mode != 'show_pertype') {
 	$param .= '&mode='.urlencode((string) $mode);
 }
 if ($begin_h != '') {
-	$param .= '&begin_h='.urlencode($begin_h);
+	$param .= '&begin_h='.((int) $begin_h);
 }
 if ($end_h != '') {
-	$param .= '&end_h='.urlencode($end_h);
+	$param .= '&end_h='.((int) $end_h);
 }
 if ($begin_d != '') {
-	$param .= '&begin_d='.urlencode((string) ($begin_d));
+	$param .= '&begin_d='.((int) $begin_d);
 }
 if ($end_d != '') {
-	$param .= '&end_d='.urlencode((string) ($end_d));
+	$param .= '&end_d='.((int) $end_d);
 }
 $param .= "&maxprint=".urlencode((string) ($maxprint));
 
@@ -480,9 +488,9 @@ $viewmode .= '<span class="marginrightonly"></span>';
 $newparam = '';
 $newcardbutton = '';
 if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
-	$tmpforcreatebutton = dol_getdate(dol_now(), true);
+	$tmpforcreatebutton = dol_getdate(dol_now('tzuserrel'), true);
 
-	$newparam .= '&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
+	$newparam .= '&month='.str_pad((string) $month, 2, "0", STR_PAD_LEFT).'&year='.((int) $tmpforcreatebutton['year']);
 
 	$urltocreateaction = DOL_URL_ROOT.'/comm/action/card.php?action=create';
 	$urltocreateaction .= '&apyear='.$tmpforcreatebutton['year'].'&apmonth='.$tmpforcreatebutton['mon'].'&apday='.$tmpforcreatebutton['mday'].'&aphour='.$tmpforcreatebutton['hours'].'&apmin='.$tmpforcreatebutton['minutes'];
@@ -508,7 +516,7 @@ $s = $newtitle;
 print $s;
 
 print '<div class="liste_titre liste_titre_bydiv centpercent">';
-print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
+print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, '', (string) $filtert, '', $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
 print '</div>';
 
 
@@ -517,7 +525,7 @@ $eventarray = array();
 
 
 // DEFAULT CALENDAR + AUTOEVENT CALENDAR + CONFERENCEBOOTH CALENDAR
-$sql = 'SELECT';
+$sql = "SELECT";
 if ($usergroup > 0) {
 	$sql .= " DISTINCT";
 }
@@ -529,20 +537,34 @@ $sql .= ' a.fk_user_author,a.fk_user_action,';
 $sql .= ' a.transparency, a.priority, a.fulldayevent, a.location,';
 $sql .= ' a.fk_soc, a.fk_contact, a.fk_element, a.elementtype, a.fk_project,';
 $sql .= ' ca.code, ca.libelle as type_label, ca.color, ca.type as type_type, ca.picto as type_picto';
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
 $sql .= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
 // We must filter on resource table
 if ($resourceid > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_resources as r";
 }
 // We must filter on assignment table
-if ($filtert > 0 || $usergroup > 0) {
-	$sql .= ", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
+if (($filtert != '-1' && $filtert != '-2') || $usergroup > 0) {
+	// TODO Replace with a AND EXISTS
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as ar";
+	$sql .= " ON ar.fk_actioncomm = a.id AND ar.element_type = 'user'";
+	if ($filtert != '-1' && $filtert != '-2'  && $filtert != '-3') {
+		$sql .= " AND ar.fk_element IN (".$db->sanitize($filtert).")";
+	} elseif ($filtert == -3) {
+		$sql .= " AND ar.fk_element IN (".$db->sanitize(implode(',', $user->getAllChildIds(1))).")";
+	}
+	if ($usergroup > 0) {
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element AND ugu.fk_usergroup = ".((int) $usergroup);
+	}
 }
-if ($usergroup > 0) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element";
-}
-$sql .= ' WHERE a.fk_action = ca.id';
-$sql .= ' AND a.entity IN ('.getEntity('agenda').')';
+
+$sql .= " WHERE a.fk_action = ca.id";
+$sql .= " AND a.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual view" of agenda
+
 // Condition on actioncode
 if (!empty($actioncode)) {
 	if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
@@ -563,9 +585,16 @@ if (!empty($actioncode)) {
 			$sql .= " AND ca.type != 'systemauto'";
 		} elseif ($actioncode == 'AC_ALL_AUTO') {
 			$sql .= " AND ca.type = 'systemauto'";
-		} else {
+		} elseif ($actioncode !== '-1' && $actioncode !== '-3') {
 			if (is_array($actioncode)) {
-				$sql .= " AND ca.code IN (".$db->sanitize("'".implode("','", $actioncode)."'", 1).")";
+				foreach ($actioncode as $key => $val) {
+					if ($val == '-1' || $val == '-2') {
+						unset($actioncode[$key]);
+					}
+				}
+				if (!empty($actioncode)) {
+					$sql .= " AND ca.code IN (".$db->sanitize("'".implode("','", $actioncode)."'", 1).")";
+				}
 			} else {
 				$sql .= " AND ca.code IN (".$db->sanitize("'".implode("','", explode(',', $actioncode))."'", 1).")";
 			}
@@ -580,7 +609,7 @@ if ($pid) {
 }
 // If the internal user must only see his customers, force searching by him
 $search_sale = 0;
-if (!$user->hasRight('societe', 'client', 'voir')) {
+if (isModEnabled("societe") && !$user->hasRight('societe', 'client', 'voir')) {
 	$search_sale = $user->id;
 }
 // Search on sale representative
@@ -595,10 +624,7 @@ if ($search_sale && $search_sale != '-1') {
 if ($socid) {
 	$sql .= " AND a.fk_soc = ".((int) $socid);
 }
-// We must filter on assignment table
-if ($filtert > 0 || $usergroup > 0) {
-	$sql .= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
-}
+
 if ($mode == 'show_day') {
 	$sql .= " AND (";
 	$sql .= " (a.datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year, 'tzuserrel'))."'";
@@ -609,7 +635,7 @@ if ($mode == 'show_day') {
 	$sql .= " OR ";
 	$sql .= " (a.datep < '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year, 'tzuserrel'))."'";
 	$sql .= " AND a.datep2 > '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year, 'tzuserrel'))."')";
-	$sql .= ')';
+	$sql .= ")";
 } else {
 	// To limit array
 	$sql .= " AND (";
@@ -627,6 +653,7 @@ if ($type) {
 	$sql .= " AND ca.id = ".((int) $type);
 }
 if ($status == '0') {
+	// To do (not started)
 	$sql .= " AND a.percent = 0";
 }
 if ($status === 'na') {
@@ -644,26 +671,33 @@ if ($status == 'todo') {
 	$sql .= " AND (a.percent >= 0 AND a.percent < 100)";
 }
 // We must filter on assignment table
-if ($filtert > 0 || $usergroup > 0) {
+if (($filtert > 0 || $filtert == -3) || $usergroup > 0) {
+	// TODO Replace with a AND EXISTS
 	$sql .= " AND (";
 	if ($filtert > 0) {
-		$sql .= "ar.fk_element = ".$filtert;
+		$sql .= "ar.fk_element = ".((int) $filtert);
+	} elseif ($filtert == -3) {
+		$sql .= "ar.fk_element IN (".$db->sanitize(implode(',', $user->getAllChildIds(1))).")";
 	}
 	if ($usergroup > 0) {
 		$sql .= ($filtert > 0 ? " OR " : "")." ugu.fk_usergroup = ".((int) $usergroup);
 	}
 	$sql .= ")";
 }
+
 // Sort on date
-$sql .= ' ORDER BY fk_user_action, datep'; //fk_user_action
+$sql .= $db->order("fk_user_action, datep");
+
 //print $sql;
 
 dol_syslog("comm/action/pertype.php", LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
+
+	$MAXONSAMEPAGE = 10000; // Useless to have more. Protection to avoid memory overload when high number of event (for example after a mass import)
 	$i = 0;
-	while ($i < $num) {
+	while ($i < $num && $i < $MAXONSAMEPAGE) {
 		$obj = $db->fetch_object($resql);
 
 		// Discard auto action if option is on
@@ -697,6 +731,7 @@ if ($resql) {
 		$event->contact_id = $obj->fk_contact;
 
 		$event->fk_element = $obj->fk_element;
+		$event->elementid = $obj->fk_element;
 		$event->elementtype = $obj->elementtype;
 
 		// Defined date_start_in_calendar and date_end_in_calendar property
@@ -726,9 +761,9 @@ if ($resql) {
 
 			// Add an entry in actionarray for each day
 			$daycursor = $event->date_start_in_calendar;
-			$annee = dol_print_date($daycursor, '%Y', 'tzuserrel');
-			$mois = dol_print_date($daycursor, '%m', 'tzuserrel');
-			$jour = dol_print_date($daycursor, '%d', 'tzuserrel');
+			$annee = (int) dol_print_date($daycursor, '%Y', 'tzuserrel');
+			$mois = (int) dol_print_date($daycursor, '%m', 'tzuserrel');
+			$jour = (int) dol_print_date($daycursor, '%d', 'tzuserrel');
 
 			// Loop on each day covered by action to prepare an index to show on calendar
 			$loop = true;
@@ -826,13 +861,13 @@ $labelbytype = array();
 $sql = "SELECT code, color, libelle as label FROM ".MAIN_DB_PREFIX."c_actioncomm ORDER BY position";
 $resql = $db->query($sql);
 while ($obj = $db->fetch_object($resql)) {
-	$typeofevents[$obj->code] = $obj->code;
-	$colorsbytype[$obj->code] = $obj->color;
-	$labelbytype[$obj->code] = $obj->label;
+	$typeofevents[(string) $obj->code] = (string) $obj->code;
+	$colorsbytype[(string) $obj->code] = (string) $obj->color;
+	$labelbytype[(string) $obj->code] = (string) $obj->label;
 }
 
 // Loop on each user to show calendar
-$todayarray = dol_getdate($now, 'fast');
+$todayarray = dol_getdate($now, true);
 $sav = $tmpday;
 $showheader = true;
 $var = false;
@@ -853,9 +888,9 @@ foreach ($typeofevents as $typeofevent) {
 		// Show days of the current week
 		$curtime = dol_time_plus_duree($firstdaytoshow, $iter_day, 'd');
 		// $curtime is a gmt time, but we want the day, month, year in user TZ
-		$tmpday = dol_print_date($curtime, "%d", "tzuserrel");
-		$tmpmonth = dol_print_date($curtime, "%m", "tzuserrel");
-		$tmpyear = dol_print_date($curtime, "%Y", "tzuserrel");
+		$tmpday = (int) dol_print_date($curtime, "%d", "tzuserrel");
+		$tmpmonth = (int) dol_print_date($curtime, "%m", "tzuserrel");
+		$tmpyear = (int) dol_print_date($curtime, "%Y", "tzuserrel");
 		//var_dump($curtime.' '.$tmpday.' '.$tmpmonth.' '.$tmpyear);
 
 		$style = 'cal_current_month';
@@ -953,20 +988,20 @@ $db->close();
 /**
  * Show event line of a particular day for a user
  *
- * @param	User    $username		Login
+ * @param	string  $username		Login
  * @param   int		$day            Day
  * @param   int		$month          Month
  * @param   int		$year           Year
  * @param   int		$monthshown     Current month shown in calendar view
  * @param   string	$style          Style to use for this day
- * @param   array	$eventarray    	Array of events
+ * @param   array<int,ActionComm[]>	$eventarray      Array of events
  * @param   int		$maxprint       Nb of actions to show each day on month view (0 means no limit)
  * @param   int		$maxnbofchar    Nb of characters to show for event line
  * @param   string	$newparam       Parameters on current URL
  * @param   int		$showinfo       Add extended information (used by day view)
  * @param   int		$minheight      Minimum height for each event. 60px by default.
- * @param	boolean	$showheader		Show header
- * @param	array	$colorsbytype	Array with colors by type
+ * @param	bool	$showheader		Show header
+ * @param	array<string,string>	$colorsbytype	Array with colors by type
  * @param	bool	$var			true or false for alternat style on tr/td
  * @return	void
  */
@@ -1018,8 +1053,6 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 				if ($reshook < 0) {
 					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				}
-
-				$ponct = ($event->date_start_in_calendar == $event->date_end_in_calendar);
 
 				// Define $color (Hex string like '0088FF') and $cssclass of event
 				$color = -1;

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/zapier/class/hook.class.php';
 class Zapier extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'url',
@@ -44,7 +45,7 @@ class Zapier extends DolibarrApi
 
 
 	/**
-	 * @var Hook $hook {@type Hook}
+	 * @var Hook {@type Hook}
 	 */
 	public $hook;
 
@@ -52,7 +53,6 @@ class Zapier extends DolibarrApi
 	 * Constructor
 	 *
 	 * @url     GET /
-	 *
 	 */
 	public function __construct()
 	{
@@ -97,6 +97,8 @@ class Zapier extends DolibarrApi
 	 * Return an array with hook information
 	 *
 	 * @return  array     data
+	 * @phan-return array<string,string>
+	 * @phpstan-return array<string,string>
 	 *
 	 * @url GET /getmoduleschoices/
 	 * @throws  RestException
@@ -110,7 +112,7 @@ class Zapier extends DolibarrApi
 		$arraychoices = array(
 			'invoices' => 'Invoices',
 			'orders' => 'Orders',
-			'thirdparties' => 'Thirparties',
+			'thirdparties' => 'ThirdParties',
 			'contacts' => 'Contacts',
 			'users' => 'Users',
 		);
@@ -138,6 +140,8 @@ class Zapier extends DolibarrApi
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
+	 * @phan-return Hook[]
+	 * @phpstan-return Hook[]
 	 *
 	 * @throws RestException
 	 *
@@ -151,7 +155,7 @@ class Zapier extends DolibarrApi
 
 		$obj_ret = array();
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : 0;
+		$socid = DolibarrApiAccess::$user->socid ?: 0;
 
 		// Set to 1 if there is a field socid in table of object
 		$restrictonsocid = 0;
@@ -220,8 +224,12 @@ class Zapier extends DolibarrApi
 	/**
 	 * Create hook object
 	 *
-	 * @param array $request_data   Request datas
+	 * @param array $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return array  ID of hook
+	 * @phan-return array{id:int}
+	 * @phpstan-return array{id:int}
 	 *
 	 * @url	POST /hook/
 	 */
@@ -237,7 +245,7 @@ class Zapier extends DolibarrApi
 		$fields = array(
 			'url',
 		);
-		$result = $this->validate($request_data, $fields);
+		$request_data = $this->validate($request_data, $fields);
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
@@ -264,6 +272,8 @@ class Zapier extends DolibarrApi
 	 *
 	 * @param   int     $id   Hook ID
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @url DELETE /hook/{id}
 	 */
@@ -312,9 +322,9 @@ class Zapier extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   array       $data       Array of data to validate
-	 * @param   array       $fields     Array of fields needed
-	 * @return  array
+	 * @param   ?array<string,mixed>	$data       Array of data to validate
+	 * @param   string[]				$fields     Array of fields needed
+	 * @return  array<string,mixed>
 	 *
 	 * @throws  RestException
 	 */

@@ -34,6 +34,14 @@ if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "salaries", "bills", "hrm"));
 
@@ -67,7 +75,7 @@ if (!$sortorder) {
 	$sortorder = "DESC,DESC";
 }
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new PaymentSalary($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->user->dir_output.'/temp/massgeneration/'.$user->id;
@@ -135,7 +143,7 @@ $arrayfields = array();
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1, 1, '1');
+		$visible = (int) dol_eval((string) $val['visible'], 1, 1, '1');
 		$arrayfields['t.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
@@ -161,6 +169,7 @@ restrictedArea($user, 'salaries', 0, 'salary', '');
 /*
  * Actions
  */
+$error = 0;
 
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
@@ -205,6 +214,8 @@ if (empty($reshook)) {
 	$objectclass = 'PaymentSalary';
 	$objectlabel = 'SalariesPayments';
 	$uploaddir = $conf->salaries->dir_output;
+
+	global $error;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// Validate records
@@ -475,7 +486,7 @@ print '<input class="flat" type="text" size="6" name="search_user" value="'.$db-
 print '</td>';
 // Type
 print '<td class="liste_titre">';
-print $form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16, 1, '', 1);
+print $form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16, 1, 'maxwidth150', 1);
 print '</td>';
 // Chq number
 print '<td class="liste_titre"><input name="search_chq_number" class="flat width50" type="text" value="'.$db->escape($search_chq_number).'"></td>';
@@ -603,7 +614,7 @@ while ($i < $imaxinloop) {
 	$salstatic->ref = $obj->id_salary;
 
 	$paymentsalstatic->id = $obj->rowid;
-	$paymentsalstatic->ref = $obj->rowid;
+	$paymentsalstatic->ref = (string) $obj->rowid;
 	$paymentsalstatic->amount = $obj->amount;
 	$paymentsalstatic->fk_typepayment = $obj->payment_code;
 	$paymentsalstatic->datec = $obj->dateep;

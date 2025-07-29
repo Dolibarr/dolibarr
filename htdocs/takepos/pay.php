@@ -2,6 +2,7 @@
 /* Copyright (C) 2018		Andreu Bisquerra	<jove@bisquerra.com>
  * Copyright (C) 2021-2022	Thibault FOUCART	<support@ptibogxiv.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +45,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("main", "bills", "cashdesk", "banks"));
 
@@ -82,12 +91,15 @@ top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 <?php
 
 $usestripeterminals = 0;
+$keyforstripeterminalbank = '';
+$stripe = null;
 $servicestatus = 0;
+$stripeacc = null;
 
 if (isModEnabled('stripe')) {
 	$service = 'StripeTest';
 
-	if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
+	if (getDolGlobalString('STRIPE_LIVE')/* && !GETPOST('forcesandbox', 'alpha') */) {
 		$service = 'StripeLive';
 		$servicestatus = 1;
 	}
@@ -146,8 +158,8 @@ function fetchConnectionToken() {
 	}
 }
 
-if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning', 1);
+if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */)) {
+	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning', 1);
 }
 
 $invoice = new Facture($db);
@@ -173,10 +185,10 @@ if ($invoiceid > 0) {
 <script>
 <?php
 if ($usestripeterminals && $invoice->type != $invoice::TYPE_CREDIT_NOTE) {
-	if (!getDolGlobalString($keyforstripeterminalbank)) { ?>
+	if (!getDolGlobalString((string) $keyforstripeterminalbank) || $stripeacc === null) { ?>
 		const config = {
 			simulated: <?php if (empty($servicestatus) && getDolGlobalString('STRIPE_TERMINAL_SIMULATED')) { ?> true <?php } else { ?> false <?php } ?>
-			<?php if (getDolGlobalString('STRIPE_LOCATION')) { ?>, location: '<?php echo $conf->global->STRIPE_LOCATION; ?>'<?php } ?>
+			<?php if (getDolGlobalString('STRIPE_LOCATION')) { ?>, location: '<?php echo dol_escape_js(getDolGlobalString('STRIPE_LOCATION')); ?>'<?php } ?>
 		}
 		terminal.discoverReaders(config).then(function(discoverResult) {
 		if (discoverResult.error) {
@@ -204,7 +216,7 @@ if ($usestripeterminals && $invoice->type != $invoice::TYPE_CREDIT_NOTE) {
 		}
 		});
 	<?php } else { ?>
-	terminal.connectReader(<?php echo json_encode($stripe->getSelectedReader(getDolGlobalString($keyforstripeterminalbank), $stripeacc, $servicestatus)); ?>).then(function(connectResult) {
+	terminal.connectReader(<?php echo json_encode($stripe->getSelectedReader(getDolGlobalString((string) $keyforstripeterminalbank), $stripeacc, $servicestatus)); ?>).then(function(connectResult) {
 	if (connectResult.error) {
 		document.getElementById("card-present-alert").innerHTML = '<div class="error clearboth">'+connectResult.error.message+'</div>';
 			  console.log('Failed to connect: ', connectResult.error);
@@ -222,8 +234,8 @@ if ($usestripeterminals && $invoice->type != $invoice::TYPE_CREDIT_NOTE) {
 </script>
 <?php
 
-	// Define list of possible payments
-	$arrayOfValidPaymentModes = array();
+			// Define list of possible payments
+			$arrayOfValidPaymentModes = array();
 $arrayOfValidBankAccount = array();
 
 $sql = "SELECT code, libelle as label FROM ".MAIN_DB_PREFIX."c_paiement";
@@ -290,10 +302,10 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 		$('.change1').val(parseFloat(received));
 		alreadypaydplusreceived=price2numjs(alreadypayed + parseFloat(received));
 		//console.log("already+received = "+alreadypaydplusreceived);
-		//console.log("total_ttc = "+<?php echo $invoice->total_ttc; ?>);
-		if (alreadypaydplusreceived > <?php echo $invoice->total_ttc; ?>)
+		//console.log("total_ttc = "+<?php echo (float) $invoice->total_ttc; ?>);
+		if (alreadypaydplusreceived > <?php echo (float) $invoice->total_ttc; ?>)
 		   {
-			var change=parseFloat(alreadypayed + parseFloat(received) - <?php echo $invoice->total_ttc; ?>);
+			var change=parseFloat(alreadypayed + parseFloat(received) - <?php echo (float) $invoice->total_ttc; ?>);
 			$('.change2').html(pricejs(change, 'MT'));
 			$('.change2').val(change);
 			$('.change1').removeClass('colorred');
@@ -352,6 +364,7 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 		parent.$("#poslines").load("invoice.php?place=<?php echo $place; ?>&action=valid&token=<?php echo newToken(); ?>&pay="+payment+"&amount="+amountpayed+"&excess="+excess+"&invoiceid="+invoiceid+"&accountid="+accountid, function() {
 			if (amountpayed > <?php echo $remaintopay; ?> || amountpayed == <?php echo $remaintopay; ?> || amountpayed==0 ) {
 				console.log("Close popup");
+				parent.$('#invoiceid').val("");
 				parent.$.colorbox.close();
 			}
 			else {
@@ -428,7 +441,7 @@ if (!getDolGlobalInt("TAKEPOS_NUMPAD")) {
 
 		fetchPaymentIntentClientSecret(amountpayed, invoiceid).then(function(client_secret) {
 			<?php if (empty($servicestatus) && getDolGlobalString('STRIPE_TERMINAL_SIMULATED')) { ?>
-	  terminal.setSimulatorConfiguration({testCardNumber: '<?php echo $conf->global->STRIPE_TERMINAL_SIMULATED; ?>'});
+	  terminal.setSimulatorConfiguration({testCardNumber: '<?php echo dol_escape_js(getDolGlobalString('STRIPE_TERMINAL_SIMULATED')); ?>'});
 			<?php } ?>
 		document.getElementById("card-present-alert").innerHTML = '<div class="warning clearboth"><?php echo $langs->trans('PaymentSendToStripeTerminal'); ?></div>';
 	  terminal.collectPaymentMethod(client_secret).then(function(result) {
@@ -526,11 +539,11 @@ if (getDolGlobalString('TAKEPOS_CUSTOMER_DISPLAY')) {
 </script>
 
 <?php
-$showothercurrency = 0;
 $sessioncurrency = $_SESSION["takeposcustomercurrency"] ?? '';
+print '<!-- conf->currency = '.$conf->currency.' - sessioncurrency = '.$sessioncurrency.' -->'."\n";
+$multicurrency = null;
 if (isModEnabled('multicurrency') && $sessioncurrency != "" && $conf->currency != $sessioncurrency) {
 	// Only show customer currency if multicurrency module is enabled, if currency selected and if this currency selected is not the same as main currency
-	$showothercurrency = 1;
 	include_once DOL_DOCUMENT_ROOT . '/multicurrency/class/multicurrency.class.php';
 	$multicurrency = new MultiCurrency($db);
 	$multicurrency->fetch(0, $sessioncurrency);
@@ -541,7 +554,7 @@ if (isModEnabled('multicurrency') && $sessioncurrency != "" && $conf->currency !
 	<div class="paymentbordline paymentbordlinetotal center">
 		<span class="takepospay colorwhite"><?php echo $langs->trans('TotalTTC'); ?>: <span id="totaldisplay" class="colorwhite"><?php
 		echo price($invoice->total_ttc, 1, '', 1, -1, -1, $conf->currency);
-		if ($showothercurrency) {
+		if ($multicurrency !== null) {
 			print ' &nbsp; <span id="linecolht-span-total opacitymedium" style="font-size:0.9em; font-style:italic;">(' . price($invoice->total_ht * $multicurrency->rate->rate) . ' ' . $sessioncurrency . ')</span>';
 		}
 		?></span></span>
@@ -549,8 +562,8 @@ if (isModEnabled('multicurrency') && $sessioncurrency != "" && $conf->currency !
 	<?php if ($remaintopay != $invoice->total_ttc) { ?>
 		<div class="paymentbordline paymentbordlineremain center">
 			<span class="takepospay colorwhite"><?php echo $langs->trans('RemainToPay'); ?>: <span id="remaintopaydisplay" class="colorwhite"><?php
-			echo price($remaintopay, 1, '', 1, -1, -1, $invoice->multicurrency_code);
-			if ($showothercurrency) {
+			echo price($remaintopay, 1, '', 1, -1, -1, $conf->currency);
+			if ($multicurrency !== null) {
 				print ' &nbsp; <span id="linecolht-span-total opacitymedium" style="font-size:0.9em; font-style:italic;">(' . price($remaintopay * $multicurrency->rate->rate) . ' ' . $sessioncurrency . ')</span>';
 			}
 			?></span></span>
@@ -558,16 +571,16 @@ if (isModEnabled('multicurrency') && $sessioncurrency != "" && $conf->currency !
 	<?php } ?>
 	<div class="paymentbordline paymentbordlinereceived center">
 		<span class="takepospay colorwhite"><?php echo $langs->trans("Received"); ?>: <span class="change1 colorred"><?php
-		echo price(0, 1, '', 1, -1, -1, $invoice->multicurrency_code);
-		if ($showothercurrency) {
+		echo price(0, 1, '', 1, -1, -1, $conf->currency);
+		if ($multicurrency !== null) {
 			print ' &nbsp; <span id="linecolht-span-total opacitymedium" style="font-size:0.9em; font-style:italic;">(' . price(0 * $multicurrency->rate->rate) . ' ' . $sessioncurrency . ')</span>';
 		}
 		?></span><input type="hidden" id="change1" class="change1" value="0"></span>
 	</div>
 	<div class="paymentbordline paymentbordlinechange center">
 		<span class="takepospay colorwhite"><?php echo $langs->trans("Change"); ?>: <span class="change2 colorwhite"><?php
-		echo price(0, 1, '', 1, -1, -1, $invoice->multicurrency_code);
-		if ($showothercurrency) {
+		echo price(0, 1, '', 1, -1, -1, $conf->currency);
+		if ($multicurrency !== null) {
 			print ' &nbsp; <span id="linecolht-span-total opacitymedium" style="font-size:0.9em; font-style:italic;">(' . price(0 * $multicurrency->rate->rate) . ' ' . $sessioncurrency . ')</span>';
 		}
 		?></span><input type="hidden" id="change2" class="change2" value="0"></span>
@@ -589,22 +602,22 @@ if (isModEnabled('multicurrency') && $sessioncurrency != "" && $conf->currency !
 <?php
 $action_buttons = array(
 array(
-	"function" => "reset()",
-	"span" => "style='font-size: 150%;'",
-	"text" => "C",
-	"class" => "poscolorblue"
+"function" => "reset()",
+"span" => "style='font-size: 150%;'",
+"text" => "C",
+"class" => "poscolorblue"
 ),
 array(
-	"function" => "parent.$.colorbox.close();",
-	"span" => "id='printtext' style='font-weight: bold; font-size: 18pt;'",
-	"text" => "X",
-	"class" => "poscolordelete"
+"function" => "parent.$.colorbox.close();",
+"span" => "id='printtext' style='font-weight: bold; font-size: 18pt;'",
+"text" => "X",
+"class" => "poscolordelete"
 ),
 );
 $numpad = getDolGlobalString('TAKEPOS_NUMPAD');
 if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && getDolGlobalString('STRIPE_CARD_PRESENT')) {
 	print '<span id="card-present-alert">';
-	dol_htmloutput_mesg($langs->trans('ConnectingToStripeTerminal', 'Stripe'), '', 'warning', 1);
+	dol_htmloutput_mesg($langs->trans('ConnectingToStripeTerminal', 'Stripe'), [], 'warning', 1);
 	print '</span>';
 }
 print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '7' : '10').')">'.($numpad == 0 ? '7' : '10').'</button>';
@@ -710,13 +723,13 @@ while ($i < count($arrayOfValidPaymentModes)) {
 	}
 
 	print '<button type="button" class="calcbutton2" onclick="Validate(\''.dol_escape_js($paycode).'\')">'.(!empty($payIcon) ? '<span class="fa fa-2x fa-'.$payIcon.' iconwithlabel"></span><br>'.$langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[$i]->code) : $langs->trans("PaymentTypeShort".$arrayOfValidPaymentModes[$i]->code)).'</button>';
-	$i = $i + 1;
+	$i += 1;
 }
 
 if (isModEnabled('stripe') && isset($keyforstripeterminalbank) && getDolGlobalString('STRIPE_CARD_PRESENT')) {
 	$keyforstripeterminalbank = "CASHDESK_ID_BANKACCOUNT_STRIPETERMINAL".$_SESSION["takeposterminal"];
 	print '<span id="StripeTerminal"></span>';
-	if (getDolGlobalString($keyforstripeterminalbank)) {
+	if (getDolGlobalString((string) $keyforstripeterminalbank)) {
 		// Nothing
 	} else {
 		$langs->loadLangs(array("errors", "admin"));

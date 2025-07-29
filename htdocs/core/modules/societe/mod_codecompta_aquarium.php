@@ -1,8 +1,9 @@
 <?php
+
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,14 +46,23 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
+	/**
+	 * @var string Prefix customer accountancy code
+	 */
 	public $prefixcustomeraccountancycode;
 
+	/**
+	 * @var string Prefix supplier accountancy code
+	 */
 	public $prefixsupplieraccountancycode;
 
+	/**
+	 * @var int
+	 */
 	public $position = 20;
 
 
@@ -87,7 +97,6 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 */
 	public function info($langs)
 	{
-		global $conf;
 		global $form;
 
 		$langs->load("companies");
@@ -100,8 +109,8 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		$texte .= '<input type="hidden" name="param1" value="COMPANY_AQUARIUM_MASK_SUPPLIER">';
 		$texte .= '<input type="hidden" name="param2" value="COMPANY_AQUARIUM_MASK_CUSTOMER">';
 		$texte .= '<table class="nobordernopadding" width="100%">';
-		$s1 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value1" value="' . getDolGlobalString('COMPANY_AQUARIUM_MASK_SUPPLIER').'">', $tooltip, 1, 1);
-		$s2 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value2" value="' . getDolGlobalString('COMPANY_AQUARIUM_MASK_CUSTOMER').'">', $tooltip, 1, 1);
+		$s1 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value1" value="' . getDolGlobalString('COMPANY_AQUARIUM_MASK_SUPPLIER').'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name);
+		$s2 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value2" value="' . getDolGlobalString('COMPANY_AQUARIUM_MASK_CUSTOMER').'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name);
 		$texte .= '<tr><td>';
 		// trans remove html entities
 		$texte .= $langs->trans("ModuleCompanyCodeCustomer".$this->name, '{s2}')."<br>\n";
@@ -111,7 +120,6 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		if (getDolGlobalInt('COMPANY_AQUARIUM_REMOVE_SPECIAL')) {
 			$texte .= $langs->trans('RemoveSpecialChars').' = '.yn(1)."<br>\n";
 		}
-		//if (!empty($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA)) $texte.=$langs->trans('COMPANY_AQUARIUM_REMOVE_ALPHA').' = '.yn($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA)."<br>\n";
 		if (getDolGlobalString('COMPANY_AQUARIUM_CLEAN_REGEX')) {
 			$texte .= $langs->trans('COMPANY_AQUARIUM_CLEAN_REGEX').' = ' . getDolGlobalString('COMPANY_AQUARIUM_CLEAN_REGEX')."<br>\n";
 		}
@@ -130,12 +138,12 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Translate		$langs		Object langs
+	 * @param	?Translate		$langs		Object langs
 	 * @param	Societe|string	$objsoc		Object thirdparty
-	 * @param	int				$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @param	int<-1,2>		$type		Type of third party (1:customer, 2:supplier, -1:autodetect)
 	 * @return	string						Return string example
 	 */
-	public function getExample($langs, $objsoc = '', $type = -1)
+	public function getExample($langs = null, $objsoc = '', $type = -1)
 	{
 		$s = '';
 		$s .= $this->prefixcustomeraccountancycode.'CUSTCODE';
@@ -150,8 +158,8 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 *  Set accountancy account code for a third party into this->code
 	 *
 	 *  @param	DoliDB		$db             Database handler
-	 *  @param  Societe		$societe        Third party object
-	 *  @param  string		$type			'customer' or 'supplier'
+	 *  @param  ?Societe	$societe		Third party object
+	 *  @param  'customer'|'supplier'|''	$type	'customer' or 'supplier'
 	 *  @return	int							>=0 if OK, <0 if KO
 	 */
 	public function get_code($db, $societe, $type = '')
@@ -180,18 +188,18 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 
 		// Remove special char if COMPANY_AQUARIUM_REMOVE_SPECIAL is set to 1 or not set (default)
 		if (!isset($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL) || getDolGlobalString('COMPANY_AQUARIUM_REMOVE_SPECIAL')) {
-			$codetouse = preg_replace('/([^a-z0-9])/i', '', $codetouse);
+			$codetouse = preg_replace('/([^a-z0-9])/i', '', (string) $codetouse);
 		}
 		// Remove special alpha if COMPANY_AQUARIUM_REMOVE_ALPHA is set to 1
 		if (getDolGlobalString('COMPANY_AQUARIUM_REMOVE_ALPHA')) {
-			$codetouse = preg_replace('/([a-z])/i', '', $codetouse);
+			$codetouse = preg_replace('/([a-z])/i', '', (string) $codetouse);
 		}
 		// Apply a regex replacement pattern on code if COMPANY_AQUARIUM_CLEAN_REGEX is set. Value must be a regex with parenthesis. The part into parenthesis is kept, the rest removed.
 		if (getDolGlobalString('COMPANY_AQUARIUM_CLEAN_REGEX')) {	// Example: $conf->global->COMPANY_AQUARIUM_CLEAN_REGEX='^..(..)..';
-			$codetouse = preg_replace('/' . getDolGlobalString('COMPANY_AQUARIUM_CLEAN_REGEX').'/', '\1\2\3', $codetouse);
+			$codetouse = preg_replace('/' . getDolGlobalString('COMPANY_AQUARIUM_CLEAN_REGEX').'/', '\1\2\3', (string) $codetouse);
 		}
 
-		$codetouse = $prefix.strtoupper($codetouse);
+		$codetouse = $prefix.strtoupper((string) $codetouse);
 
 		$is_dispo = $this->verif($db, $codetouse, $societe, $type);
 		$this->code = $codetouse;
@@ -205,7 +213,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 *
 	 *	@param	DoliDB		$db			Database handler
 	 * 	@param	string		$code		Code of third party
-	 * 	@param	Societe		$societe	Object third party
+	 * 	@param	?Societe	$societe	Object third party
 	 * 	@param	string		$type		'supplier' or 'customer'
 	 *	@return	int						0 if OK but not available, >0 if OK and available, <0 if KO
 	 */

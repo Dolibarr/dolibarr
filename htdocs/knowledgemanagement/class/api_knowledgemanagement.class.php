@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2021 SuperAdmin <test@dolibarr.com>
+ * Copyright (C) 2021 	SuperAdmin 				<test@dolibarr.com>
+ * Copyright (C) 2025 	Charlene Benke 			<charlent@patas-monkey.com>
+ * Copyright (C) 2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +40,7 @@ dol_include_once('/categories/class/categorie.class.php');
 class KnowledgeManagement extends DolibarrApi
 {
 	/**
-	 * @var KnowledgeRecord $knowledgerecord {@type KnowledgeRecord}
+	 * @var KnowledgeRecord {@type KnowledgeRecord}
 	 */
 	public $knowledgerecord;
 
@@ -46,7 +48,6 @@ class KnowledgeManagement extends DolibarrApi
 	 * Constructor
 	 *
 	 * @url     GET /
-	 *
 	 */
 	public function __construct()
 	{
@@ -128,13 +129,16 @@ class KnowledgeManagement extends DolibarrApi
 	 * @param int				$category			Use this param to filter list by category
 	 * @param string			$sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string			$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                               Array of order objects
+	 * @phan-return KnowledgeRecord[]|array{data:KnowledgeRecord[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return KnowledgeRecord[]|array{data:KnowledgeRecord[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
 	 * @throws RestException
 	 *
 	 * @url	GET /knowledgerecords/
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $category = 0, $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
 		$obj_ret = array();
 		$tmpobject = new KnowledgeRecord($this->db);
@@ -143,7 +147,7 @@ class KnowledgeManagement extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : 0;
+		$socid = DolibarrApiAccess::$user->socid ?: 0;
 
 		$restrictonsocid = 0; // Set to 1 if there is a field socid in table of object
 
@@ -187,6 +191,9 @@ class KnowledgeManagement extends DolibarrApi
 			}
 		}
 
+		//this query will return total orders with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
@@ -213,13 +220,32 @@ class KnowledgeManagement extends DolibarrApi
 			throw new RestException(503, 'Error when retrieving knowledgerecord list: '.$this->db->lasterror());
 		}
 
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
+		}
+
 		return $obj_ret;
 	}
 
 	/**
 	 * Create knowledgerecord object
 	 *
-	 * @param array $request_data   Request datas
+	 * @param array $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int  ID of knowledgerecord
 	 *
 	 * @throws RestException
@@ -248,7 +274,7 @@ class KnowledgeManagement extends DolibarrApi
 		// Clean data
 		// $this->knowledgerecord->abc = sanitizeVal($this->knowledgerecord->abc, 'alphanohtml');
 
-		if ($this->knowledgerecord->create(DolibarrApiAccess::$user)<0) {
+		if ($this->knowledgerecord->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating KnowledgeRecord", array_merge(array($this->knowledgerecord->error), $this->knowledgerecord->errors));
 		}
 		return $this->knowledgerecord->id;
@@ -258,7 +284,9 @@ class KnowledgeManagement extends DolibarrApi
 	 * Update knowledgerecord
 	 *
 	 * @param 	int   	$id             	Id of knowledgerecord to update
-	 * @param 	array 	$request_data  		Datas
+	 * @param 	array 	$request_data  		Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object						Updated object
 	 *
 	 * @throws RestException
@@ -303,7 +331,7 @@ class KnowledgeManagement extends DolibarrApi
 		// Clean data
 		// $this->knowledgerecord->abc = sanitizeVal($this->knowledgerecord->abc, 'alphanohtml');
 
-		if ($this->knowledgerecord->update(DolibarrApiAccess::$user, false) > 0) {
+		if ($this->knowledgerecord->update(DolibarrApiAccess::$user, 0) > 0) {
 			return $this->get($id);
 		} else {
 			throw new RestException(500, $this->knowledgerecord->error);
@@ -315,6 +343,8 @@ class KnowledgeManagement extends DolibarrApi
 	 *
 	 * @param   int     $id   KnowledgeRecord ID
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @throws RestException
 	 *
@@ -409,20 +439,96 @@ class KnowledgeManagement extends DolibarrApi
 
 		return $object;
 	}
+	/**
+	 * Validate a knowledge
+	 *
+	 * If you get a bad value for param notrigger check, provide this in body
+	 * {
+	 *   "notrigger": 0
+	 * }
+	 *
+	 * @param   int		$id             knowledge ID
+	 * @param   int		$notrigger      1=Does not execute triggers, 0= execute triggers
+	 *
+	 * @url POST    {id}/validate
+	 *
+	 * @return  Object
+	 */
+	public function validate($id, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'write')) {
+			throw new RestException(403, "Insuffisant rights");
+		}
+		$result = $this->knowledgerecord->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'knowledgerecord not found');
+		}
+
+
+		$result = $this->knowledgerecord->validate(DolibarrApiAccess::$user, $notrigger);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already validated');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when validating knowledgerecord: '.$this->knowledgerecord->error);
+		}
+
+		return $this->_cleanObjectDatas($this->knowledgerecord);
+	}
+
+	/**
+	 * Cancel a knowledge
+	 *
+	 * If you get a bad value for param notrigger check, provide this in body
+	 * {
+	 *   "notrigger": 0
+	 * }
+	 *
+	 * @param   int		$id             knowledge ID
+	 * @param   int		$notrigger      1=Does not execute triggers, 0= execute triggers
+	 *
+	 * @url POST    {id}/cancel
+	 *
+	 * @return  Object
+	 */
+	public function cancel($id, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'write')) {
+			throw new RestException(403, "Insuffisant rights");
+		}
+		$result = $this->knowledgerecord->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'knowledgerecord not found');
+		}
+
+
+		$result = $this->knowledgerecord->cancel(DolibarrApiAccess::$user, $notrigger);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already validated');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when validating knowledgerecord: '.$this->knowledgerecord->error);
+		}
+
+		return $this->_cleanObjectDatas($this->knowledgerecord);
+	}
 
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param	array		$data   Array of data to validate
-	 * @return	array
+	 * @param ?array<string,string> $data   Array of data to validate
+	 * @return array<string,string>
 	 *
 	 * @throws	RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$knowledgerecord = array();
 		foreach ($this->knowledgerecord->fields as $field => $propfield) {
-			if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat')) || $propfield['notnull'] != 1) {
+			if (in_array($field, array('rowid', 'entity', 'ref', 'date_creation', 'tms', 'fk_user_creat')) || empty($propfield['notnull']) || $propfield['notnull'] != 1) {
 				continue; // Not a mandatory field
 			}
 			if (!isset($data[$field])) {

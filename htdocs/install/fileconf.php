@@ -6,7 +6,9 @@
  * Copyright (C) 2004       Sebastien DiCintio      <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025  		Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,15 +31,56 @@
  */
 
 include_once 'inc.php';
-
-global $langs;
+/**
+ * @var Translate $langs
+ *
+ * @var string $dolibarr_main_db_host
+ * @var string $dolibarr_main_db_port
+ * @var string $dolibarr_main_db_name
+ * @var string $dolibarr_main_db_user
+ * @var string $dolibarr_main_db_pass
+ * @var string $dolibarr_main_db_encrypted_pass
+ * @var string $conffile
+ * @var string $conffiletoshow
+ */
+'
+@phan-var-force string $dolibarr_main_db_host
+@phan-var-force string $dolibarr_main_db_port
+@phan-var-force string $dolibarr_main_db_name
+@phan-var-force string $dolibarr_main_db_user
+@phan-var-force string $dolibarr_main_db_pass
+@phan-var-force string $dolibarr_main_db_encrypted_pass
+@phan-var-force string $conffile
+@phan-var-force string $conffiletoshow
+@phan-var-force ?bool $force_install_
+@phan-var-force ?string $force_install_packager
+@phan-var-force ?string $force_install_message
+@phan-var-force ?string $force_install_main_data_root
+@phan-var-force ?int<0,2> $force_install_noedit
+@phan-var-force ?string $force_install_type
+@phan-var-force ?string $force_install_dbserver
+@phan-var-force ?string $force_install_port
+@phan-var-force ?string $force_install_database
+@phan-var-force ?string $force_install_prefix
+@phan-var-force ?string $force_install_createdatabase
+@phan-var-force ?string $force_install_databaselogin
+@phan-var-force ?string $force_install_databasepass
+@phan-var-force ?string $force_install_databaserootlogin
+@phan-var-force ?string $force_install_databaserootpass
+@phan-var-force ?string $force_install_dolibarrlogin
+@phan-var-force ?string $force_install_nophpinfo
+@phan-var-force ?string $force_install_lockinstall
+@phan-var-force ?string $force_install_distrib
+@phan-var-force ?string $db_user_root
+@phan-var-force ?string $db_pass_root
+';
 
 $err = 0;
 
 $setuplang = GETPOST("selectlang", 'alpha', 3) ? GETPOST("selectlang", 'alpha', 3) : (GETPOST('lang', 'alpha', 1) ? GETPOST('lang', 'alpha', 1) : 'auto');
 $langs->setDefaultLang($setuplang);
 
-$langs->loadLangs(array("install", "errors"));
+$langs->loadLangs(array("install", "errors", "admin"));
 
 dolibarr_install_syslog("- fileconf: entering fileconf.php page");
 
@@ -46,7 +89,7 @@ dolibarr_install_syslog("- fileconf: entering fileconf.php page");
 // installer like DoliWamp, DoliMamp or DoliBuntu).
 // We first init "forced values" to nothing.
 if (!isset($force_install_noedit)) {
-	$force_install_noedit = ''; // 1=To block vars specific to distrib, 2 to block all technical parameters
+	$force_install_noedit = ''; // 1=To block vars specific to distrib, 2 to block all technical parameters, 3 to block all technical parameters excepted main_url
 }
 if (!isset($force_install_type)) {
 	$force_install_type = '';
@@ -148,9 +191,7 @@ if (empty($dolibarr_main_document_root)) {
 }
 ?>
 		<td class="label">
-			<input type="text"
-				   class="minwidth300"
-				   id="main_dir"
+			<input type="text" class="minwidth300" id="main_dir"
 				   name="main_dir"
 				   value="<?php print $dolibarr_main_document_root ?>"
 <?php
@@ -220,7 +261,7 @@ if (!empty($force_install_noedit)) {
 				   id="main_url"
 				   name="main_url"
 				   value="<?php print $dolibarr_main_url_root; ?> "
-<?php if (!empty($force_install_noedit)) {
+<?php if (!empty($force_install_noedit) && $force_install_noedit != 3) {
 	print ' disabled';
 }
 ?>
@@ -247,7 +288,7 @@ if (!empty($force_install_noedit)) {
 				<?php if (!empty($force_install_mainforcehttps)) {
 					print ' checked';
 				} ?>
-				<?php if ($force_install_noedit == 2 && $force_install_mainforcehttps !== null) {
+				<?php if (($force_install_noedit == 2 || $force_install_noedit == 3) && $force_install_mainforcehttps !== null) {
 					print ' disabled';
 				} ?>
 			>
@@ -275,7 +316,7 @@ if (!empty($force_install_noedit)) {
 				   id="db_name"
 				   name="db_name"
 				   value="<?php echo (!empty($dolibarr_main_db_name)) ? $dolibarr_main_db_name : ($force_install_database ? $force_install_database : 'dolibarr'); ?>"
-				<?php if ($force_install_noedit == 2 && $force_install_database !== null) {
+				<?php if (($force_install_noedit == 2 || $force_install_noedit == 3) && $force_install_database !== null) {
 					print ' disabled';
 				} ?>
 			>
@@ -288,6 +329,13 @@ if (!empty($force_install_noedit)) {
 	if (!isset($dolibarr_main_db_host)) {
 		$dolibarr_main_db_host = "localhost";
 	}
+	if (!isset($dolibarr_main_db_port)) {
+		$dolibarr_main_db_port = "";
+	}
+	if (!isset($dolibarr_main_db_user)) {
+		$dolibarr_main_db_user = "";
+	}
+
 	?>
 	<tr>
 		<!-- Driver type -->
@@ -330,6 +378,8 @@ if (!empty($force_install_noedit)) {
 						$defaultype = 'mysql';
 					}
 
+					$testclass = '';
+					$testfunction = null;
 					// Show line into list
 					if ($type == 'mysql') {
 						$testfunction = 'mysql_connect';
@@ -376,8 +426,8 @@ if (!empty($force_install_noedit)) {
 						$option .= ' '.$langs->trans("VersionExperimental");
 					} elseif ($type == 'sqlite3') {
 						$option .= ' '.$langs->trans("VersionExperimental");
-					} elseif (!function_exists($testfunction)) {
-						// No available
+					} elseif ($testfunction === null || !function_exists($testfunction)) {
+						// None available
 						$option .= ' - '.$langs->trans("FunctionNotAvailableInThisPHP");
 					}
 					$option .= '</option>';
@@ -387,7 +437,7 @@ if (!empty($force_install_noedit)) {
 		?>
 			<select id="db_type"
 					name="db_type"
-				<?php if ($force_install_noedit == 2 && $force_install_type !== null) {
+				<?php if (($force_install_noedit == 2 || $force_install_noedit == 3) && $force_install_type !== null) {
 					print ' disabled';
 				} ?>
 			>
@@ -406,7 +456,7 @@ if (!empty($force_install_noedit)) {
 				   id="db_host"
 				   name="db_host"
 				   value="<?php print(!empty($force_install_dbserver) ? $force_install_dbserver : (!empty($dolibarr_main_db_host) ? $dolibarr_main_db_host : 'localhost')); ?>"
-				<?php if ($force_install_noedit == 2 && $force_install_dbserver !== null) {
+				<?php if (($force_install_noedit == 2 || $force_install_noedit == 3) && $force_install_dbserver !== null) {
 					print ' disabled';
 				} ?>
 			>
@@ -423,7 +473,7 @@ if (!empty($force_install_noedit)) {
 				   name="db_port"
 				   id="db_port"
 				   value="<?php print (!empty($force_install_port)) ? $force_install_port : $dolibarr_main_db_port; ?>"
-				<?php if ($force_install_noedit == 2 && $force_install_port !== null) {
+				<?php if (($force_install_noedit == 2 || $force_install_noedit == 3) && $force_install_port !== null) {
 					print ' disabled';
 				} ?>
 			>
@@ -440,7 +490,7 @@ if (!empty($force_install_noedit)) {
 				   id="db_prefix"
 				   name="db_prefix"
 				   value="<?php echo(!empty($force_install_prefix) ? $force_install_prefix : (!empty($dolibarr_main_db_prefix) ? $dolibarr_main_db_prefix : 'llx_')); ?>"
-				<?php if ($force_install_noedit == 2 && $force_install_prefix !== null) {
+				<?php if (($force_install_noedit == 2 || $force_install_noedit == 3) && $force_install_prefix !== null) {
 					print ' disabled';
 				} ?>
 			>
@@ -461,7 +511,7 @@ if (!empty($force_install_noedit)) {
 					$checked = 1;
 					print ' checked';
 				} ?>
-				<?php if ($force_install_noedit == 2 && $force_install_createdatabase !== null) {
+				<?php if (($force_install_noedit == 2 || $force_install_noedit == 3) && $force_install_createdatabase !== null) {
 					print ' disabled';
 				} ?>
 			>
@@ -478,7 +528,7 @@ if (!empty($force_install_noedit)) {
 				   id="db_user"
 				   name="db_user"
 				   value="<?php print (!empty($force_install_databaselogin)) ? $force_install_databaselogin : $dolibarr_main_db_user; ?>"
-				<?php if ($force_install_noedit == 2 && $force_install_databaselogin !== null) {
+				<?php if (($force_install_noedit == 2 || $force_install_noedit == 3) && $force_install_databaselogin !== null) {
 					print ' disabled';
 				} ?>
 			>
@@ -501,7 +551,7 @@ if (!empty($force_install_noedit)) {
 					}
 					print dol_escape_htmltag($autofill);
 					?>"
-				<?php if ($force_install_noedit == 2 && $force_install_databasepass !== null) {
+				<?php if (($force_install_noedit == 2 || $force_install_noedit == 3) && $force_install_databasepass !== null) {
 					print ' disabled';
 				} ?>
 			>
@@ -522,7 +572,7 @@ if (!empty($force_install_noedit)) {
 					$checked = 1;
 					print ' checked';
 				} ?>
-				<?php if ($force_install_noedit == 2 && $force_install_createuser !== null) {
+				<?php if (($force_install_noedit == 2 || $force_install_noedit == 3) && $force_install_createuser !== null) {
 					print ' disabled';
 				} ?>
 			>
@@ -723,7 +773,7 @@ jQuery(document).ready(function() {	// TODO Test $( window ).load(function() to 
 		console.log("click on db_create_user");
 		init_needroot();
 	});
-	<?php if ($force_install_noedit == 2 && empty($force_install_databasepass)) { ?>
+	<?php if (($force_install_noedit == 2 || $force_install_noedit == 3) && empty($force_install_databasepass)) { ?>
 	jQuery("#db_pass").focus();
 	<?php } ?>
 

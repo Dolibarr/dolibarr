@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2014  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +51,10 @@ if (!defined('NOREQUIREAJAX')) {
 session_cache_limiter('public');
 
 require_once '../../main.inc.php';
-
+/**
+ * @var Conf $conf
+ * @var Translate $langs
+ */
 
 /*
  * View
@@ -144,6 +148,24 @@ if ($thousand == 'Space') {
 ?>
 // Javascript libraries for Dolibarr ERP CRM (https://www.dolibarr.org)
 
+
+// To start/stop Block UI
+function dolBlockUI(message = 'Loading...', indicatorUrl = '<?php echo DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif" ; ?>') {
+	const block = document.getElementById('dol-block-ui');
+	if (block != null) {
+		const msgDiv = block.querySelector('.message');
+		if (msgDiv != null) {
+			msgDiv.innerText = message;
+			msgDiv.style.backgroundImage = `url('${indicatorUrl}')`;
+			block.style.display = 'flex';
+		}
+	}
+}
+function dolUnblockUI() {
+	document.getElementById('dol-block-ui').style.display = 'none';
+}
+
+
 // For jQuery date picker
 var tradMonths = <?php echo json_encode($tradMonths) ?>;
 var tradMonthsShort = <?php echo json_encode($tradMonthsShort) ?>;
@@ -218,37 +240,58 @@ function getObjectFromID(id){
 	return theObject;
 }
 
-// Called after selection of a date to save details into detailed fields
+// Called after the selection or typing of a date to save details into detailed fields
 function dpChangeDay(dateFieldID, format)
 {
-	//showDP.datefieldID=dateFieldID;
 	console.log("Call dpChangeDay, we save date into detailed fields from format = "+format);
 
-	var thefield=getObjectFromID(dateFieldID);
-	var thefieldday=getObjectFromID(dateFieldID+"day");
-	var thefieldmonth=getObjectFromID(dateFieldID+"month");
-	var thefieldyear=getObjectFromID(dateFieldID+"year");
+	var thefield = getObjectFromID(dateFieldID);
+	var thefieldday = getObjectFromID(dateFieldID+"day");
+	var thefieldmonth = getObjectFromID(dateFieldID+"month");
+	var thefieldyear = getObjectFromID(dateFieldID+"year");
 
-	var date=getDateFromFormat(thefield.value, format);
+	var date = getDateFromFormat(thefield.value, format);
 	//console.log(date);
 	if (date)
 	{
-		thefieldday.value=date.getDate();
-		if(thefieldday.onchange) thefieldday.onchange.call(thefieldday);
-		thefieldmonth.value=date.getMonth()+1;
-		if(thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
-		thefieldyear.value=date.getFullYear();
-		if(thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+		thefieldday.value = date.getDate();
+		if (thefieldday.onchange) thefieldday.onchange.call(thefieldday);
+		thefieldmonth.value = date.getMonth()+1;
+		if (thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
+		thefieldyear.value = date.getFullYear();
+		if (thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+
+		return 1;
 	}
-	else
-	{
-		thefieldday.value='';
-		if(thefieldday.onchange) thefieldday.onchange.call(thefieldday);
-		thefieldmonth.value='';
-		if(thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
-		thefieldyear.value='';
-		if(thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+
+	// Replace yyyy into yy
+	newformat = format.replace(/yyyy/g, 'yy');
+	if (newformat != format) {
+		console.log("dpChangeDay, we try now from format = "+newformat);
+
+		var date = getDateFromFormat(thefield.value, newformat);
+		//console.log(date);
+		if (date)
+		{
+			thefieldday.value = date.getDate();
+			if (thefieldday.onchange) thefieldday.onchange.call(thefieldday);
+			thefieldmonth.value = date.getMonth()+1;
+			if (thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
+			thefieldyear.value = date.getFullYear();
+			if (thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+
+			return 2;
+		}
 	}
+
+	thefieldday.value = '';
+	if (thefieldday.onchange) thefieldday.onchange.call(thefieldday);
+	thefieldmonth.value = '';
+	if (thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
+	thefieldyear.value = '';
+	if (thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+
+	return 0;
 }
 
 /*
@@ -274,7 +317,7 @@ function formatDate(date,format)
 
 	var result="";
 
-	var year=date.getYear()+""; if (year.length < 4) { year=""+(year-0+2000); } /* #28334 */
+	var year=date.getFullYear();
 	var month=date.getMonth()+1;
 	var day=date.getDate();
 	var hour=date.getHours();
@@ -333,18 +376,18 @@ function formatDate(date,format)
  * Licence: GPL
  * ==================================================================
  */
-function getDateFromFormat(val,format)
+function getDateFromFormat(val, format)
 {
 	// alert('getDateFromFormat val='+val+' format='+format);
 
 	// Force parameters en chaine
-	val=val+"";
-	format=format+"";
+	val = val+"";
+	format = format+"";
 
 	if (val == '') return 0;
 
 	var now=new Date();
-	var year=now.getYear(); if (year.length < 4) { year=""+(year-0+2000); } /*  #28334 */
+	var year=now.getFullYear();
 	var month=now.getMonth()+1;
 	var day=now.getDate();
 	var hour=now.getHours();
@@ -352,17 +395,14 @@ function getDateFromFormat(val,format)
 	var seconde=now.getSeconds();
 
 	var i=0;
-	var d=0;    // -d- follows the date string while -i- follows the format
-				// string
+	var d=0;    // -d- follows the date string while -i- follows the format string
 
 	while (i < format.length)
 	{
 		c=format.charAt(i);	// Recupere char du format
 		substr="";
 		j=i;
-		while ((format.charAt(j)==c) && (j < format.length))	// Recupere char
-																// successif
-																// identiques
+		while ((format.charAt(j)==c) && (j < format.length))	// Get successive similar characters
 		{
 			substr += format.charAt(j++);
 		}
@@ -563,21 +603,24 @@ function hideMessage(fieldId,message) {
  * @param	string	code		Code
  * @param	string	input		Array of complementary actions to do if success
  * @param	int		entity		Entity
- * @param	int		strict		Strict
+ * @param	int		strict		Strict (0=?, 1=?)
  * @param   int     forcereload Force reload
  * @param   int     userid      User id
- * @param	int		value       Value to set
  * @param   string  token       Token
+ * @param	int		value       Value to set
+ * @param	int		userconst	1=On/Off of user constant instead of global const
  * @return   boolean
  */
-function setConstant(url, code, input, entity, strict, forcereload, userid, token, value) {
+function setConstant(url, code, input, entity, strict, forcereload, userid, token, value, userconst) {
 	var saved_url = url; /* avoid undefined url */
+
 	$.post( url, {
 		action: "set",
 		name: code,
 		entity: entity,
 		token: token,
-		value: value
+		value: value,
+		userconst: userconst
 	},
 	function() {	/* handler for success of post */
 		console.log("Ajax url request to set constant is a success. Make complementary actions and then forcereload="+forcereload+" value="+value);
@@ -634,6 +677,11 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 		});
 		if (forcereload) {
 			var url = window.location.href;
+
+			/* reset action param */
+			url = url.replace(/action=\w+/g, '');
+
+			/* reset dol_resetcache param */
 			if (url.indexOf('dol_resetcache') < 0) {
 				if (url.indexOf('?') > -1) {
 					url = url + "&dol_resetcache=1";
@@ -641,6 +689,8 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 					url = url + "?dol_resetcache=1";
 				}
 			}
+
+			/* reset page_y param */
 			var page_y = $(document).scrollTop();
 			url = url.replace(/page_y=\d+/g, '');
 			if (page_y > 0) {
@@ -666,23 +716,26 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
  * Used by button to set on/off
  * Call url then make complementary action (like show/hide, enable/disable or set another option).
  *
- * @param	{string}	url			Url (warning: as any url called in ajax mode, the url called here must not renew the token)
- * @param	{string}	code		Code
- * @param	{string}	input		Array of complementary actions to do if success
- * @param	{int}		entity		Entity
- * @param	{int}		strict		Strict
- * @param   {int}     forcereload Force reload
- * @param   {int}     userid      User id
- * @param   {string}  token       Token
+ * @param	string		url			Url (warning: as any url called in ajax mode, the url called here must not renew the token)
+ * @param	string		code		Code
+ * @param	string		input		Array of complementary actions to do if success
+ * @param	int			entity		Entity
+ * @param	int			strict		Strict
+ * @param   int     	forcereload Force reload
+ * @param   int     	userid      User id
+ * @param   string  	token       Token
+ * @param	int			userconst	1=On/Off of user constant instead of global const
  * @return  boolean
  */
-function delConstant(url, code, input, entity, strict, forcereload, userid, token) {
+function delConstant(url, code, input, entity, strict, forcereload, userid, token, userconst) {
 	var saved_url = url; /* avoid undefined url */
+
 	$.post( url, {
 		action: "del",
 		name: code,
 		entity: entity,
-		token: token
+		token: token,
+		userconst: userconst
 	},
 	function() {
 		console.log("Ajax url request to delete constant is success. Make complementary actions and then forcereload="+forcereload);
@@ -976,15 +1029,15 @@ function newpopup(url, title) {
 	var h = (argc > 3) ? argv[3] : 400;
 	var left = (screen.width - l)/2;
 	var top = (screen.height - h)/2;
-	var wfeatures = "directories=0,menubar=0,status=0,resizable=0,scrollbars=1,toolbar=0,width=" + l +",height=" + h + ",left=" + left + ",top=" + top;
-	fen=window.open(tmp,title,wfeatures);
+	var wfeatures = "directories=0,menubar=0,status=0,resizable=0,scrollbars=1,toolbar=0,location=0,width=" + l +",height=" + h + ",left=" + left + ",top=" + top;
+	fen = window.open(tmp, title, wfeatures);
 
 	return false;
 }
 
 /**
- * Function show document preview. It uses the "dialog" function.
- * The a tag around the img must have the src='', class='documentpreview', mime='image/xxx', target='_blank' from getAdvancedPreviewUrl().
+ * Function to show a document preview popup. It uses the "dialog" function.
+ * The "a" tag around the "img" must have the src='', class='documentpreview', mime='image/xxx', target='_blank' from getAdvancedPreviewUrl().
  *
  * @param 	file 		Url
  * @param 	type 		Mime file type ("image/jpeg", "application/pdf", "text/html")
@@ -1029,7 +1082,7 @@ function document_preview(file, type, title)
 			console.log("object_height="+object_height+" window height="+height);
 			if(object_height < height){
 				console.log("Object height is small, we set height of popup according to image height.");
-				height = object_height + 80
+				height = object_height + 100
 			}
 			else
 			{
@@ -1058,6 +1111,7 @@ function document_preview(file, type, title)
 				};
 		}
 
+		$("#dialogforpopup").addClass("center");
 		$("#dialogforpopup").html(newElem);
 
 		$("#dialogforpopup").dialog({
@@ -1092,6 +1146,147 @@ function getParameterByName(name, valueifnotfound)
 	return results === null ? valueifnotfound : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
+/**
+ * Get the list of possible operators for a given field type that we can use in the generic filter.
+ */
+function getOperatorsForFieldType(type, maybenull = 0) {
+	console.log('Get list of operators for type='+type);
+
+	// Define the list of operators for each general field category
+	const operatorList = {
+		selectlink: {
+			Is: '<?php print dol_escape_js($langs->trans('Is')); ?>',
+			IsNot: '<?php print dol_escape_js($langs->trans('IsNot')); ?>',
+		},
+		text: {
+			Contains: '<?php print dol_escape_js($langs->trans('Contains')); ?>',
+			DoesNotContain: '<?php print dol_escape_js($langs->trans('DoesNotContain')); ?>',
+			Is: '<?php print dol_escape_js($langs->trans('Is')); ?>',
+			IsNot: '<?php print dol_escape_js($langs->trans('IsNot')); ?>',
+			StartsWith: '<?php print dol_escape_js($langs->trans('StartsWith')); ?>',
+			EndsWith: '<?php print dol_escape_js($langs->trans('EndsWith')); ?>'
+		},
+		number: {
+			'=': '<?php print dol_escape_js($langs->trans('Is')); ?>',
+			'!=': '<?php print dol_escape_js($langs->trans('IsNot')); ?>',
+			'<': '<?php print dol_escape_js($langs->trans('IsLowerThan')); ?>',
+			'>': '<?php print dol_escape_js($langs->trans('IsHigherThan')); ?>',
+			'<=': '<?php print dol_escape_js($langs->trans('IsLowerThanOrEqual')); ?>',
+			'>=': '<?php print dol_escape_js($langs->trans('IsHigherThanOrEqual')); ?>',
+		},
+		date: {
+			Is: '<?php print dol_escape_js($langs->trans('Is')); ?>',
+			IsNot: '<?php print dol_escape_js($langs->trans('IsNot')); ?>',
+			IsBefore: '<?php print dol_escape_js($langs->trans('IsBefore')); ?>',
+			IsAfter: '<?php print dol_escape_js($langs->trans('IsAfter')); ?>',
+			IsOnOrBefore: '<?php print dol_escape_js($langs->trans('IsOnOrBefore')); ?>',
+			IsOnOrAfter: '<?php print dol_escape_js($langs->trans('IsOnOrAfter')); ?>'
+		},
+		html: {
+			Contains: '<?php print $langs->trans('Contains'); ?>'
+		}
+	};
+
+	// Determine the general category for the given type using regex
+	let generalType = "";
+
+	if (/^select$/i.test(type) || /^link$/i.test(type)) {
+		generalType = "selectlink";
+	} else if (/^(varchar|char|text|blob|nchar|mediumtext|longtext)\(\d+\)$/i.test(type) || /^(varchar|mail|phone|ip)$/i.test(type)) {
+		generalType = "text";
+	} else if (/^(int|integer|float|double|decimal|numeric)(\(\d+,\d+\))?$/i.test(type)) {
+		generalType = "number";
+	} else if (/^(date|datetime|timestamp)$/i.test(type)) {
+		generalType = "date";
+	} else if (/^(tinyint|smallint)\(\d+\)$/i.test(type)) {
+		generalType = "number";
+	} else if (/^html$/i.test(type)) {
+		generalType = "html";
+	} else {
+		// Handle unknown or unsupported types
+		console.log("The type of field "+type+" is not supported");
+		return [];
+	}
+
+	// If maybenull is true, then append the "IsDefined" and "IsNotDefined" operators
+	if (maybenull === 1) {
+		operatorList[generalType]["IsDefined"] = '<?php print dol_escape_js($langs->trans('IsDefined')); ?>';
+		operatorList[generalType]["IsNotDefined"] = '<?php print dol_escape_js($langs->trans('IsNotDefined')); ?>';
+	}
+
+	// Return the operators for the general type, or an empty array if not found
+	return operatorList[generalType] || [];
+}
+
+/**
+ * Generate a filter string based on the given column, operator, context and field type
+ */
+function generateFilterString(column, operator, context, fieldType) {
+	let filter = "";
+
+	console.log("generateFilterString column="+column+" operator="+operator+" context="+context+" fieldType="+fieldType);
+
+	switch (operator) {
+		case "Contains":
+			filter = column + " like \'%" + context + "%\'";
+			break;
+		case "DoesNotContain":
+			filter = column + " notlike \'%" + context + "%\'";
+			break;
+		case "Is":
+			filter = column + " = \'" + context + "\'";
+			break;
+		case "IsNot":
+			filter = column + " != \'" + context + "\'";
+			break;
+		case "StartsWith":
+			filter = column + " like \'" + context + "%\'";
+			break;
+		case "EndsWith":
+			filter = column + " like \'%" + context + "\'";
+			break;
+		case "IsDefined":
+			filter = column + ":isnot:null";
+			break;
+		case "IsNotDefined":
+			filter = column + ":is:null";
+			break;
+		case "=":
+			filter = column + " = \'" + context + "\'";
+			break;
+		case "!=":
+			filter = column + " != \'" + context + "\'";
+			break;
+		case "<":
+			filter = column + " < \'" + context + "\'";
+			break;
+		case ">":
+			filter = column + " > \'" + context + "\'";
+			break;
+		case "<=":
+			filter = column + " <= \'" + context + "\'";
+			break;
+		case ">=":
+			filter = column + " >= \'" + context + "\'";
+			break;
+		case "IsBefore":
+			filter = column + " < \'" + context + "\'";
+			break;
+		case "IsAfter":
+			filter = column + " > \'" + context + "\'";
+			break;
+		case "IsOnOrBefore":
+			filter = column + " <= \'" + context + "\'";
+			break;
+		case "IsOnOrAfter":
+			filter = column + " >= \'" + context + "\'";
+			break;
+		default:
+			filter = "";
+	}
+
+	return filter;
+}
 
 // Code in the public domain from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/round
 (function() {
@@ -1307,7 +1502,7 @@ $(document).ready(function() {
 
 jQuery(document).ready(function() {
 	// Force to hide menus when page is inside an iFrame so we can show any page into a dialog popup
-	if (window.location && window.location.pathname.indexOf("externalsite/frametop.php") == -1 && window.location !== window.parent.location ) {
+	if (window.location && window.location.pathname.indexOf("core/frames.php") == -1 && window.location.pathname.indexOf("externalsite/frametop.php") == -1 && window.location !== window.parent.location ) {
 		console.log("Page is detected to be into an iframe, we hide by CSS the menus");
 		// The page is in an iframe
 		jQuery(".side-nav-vert, .side-nav, .websitebar").hide();
@@ -1315,53 +1510,181 @@ jQuery(document).ready(function() {
 
 	}
 
+
 	// Code to set tooltip on search field
 	jQuery('table.liste tr.liste_titre_filter td.liste_titre input[name^="search"][type=text]:not(".maxwidthdate")').attr('title', '<?php echo dol_escape_js($langs->transnoentities("SearchSyntaxTooltipForStringOrNum")) ?>');
-});
 
 
-jQuery(document).ready(function() {
+	// Code to toggle dropdown components
 	jQuery(document).on("click", ".butAction.dropdown-toggle", function(event) {
 		console.log("Click on .butAction.dropdown-toggle");
-		var parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown");
-			 var offset = parentholder.offset();
-		var widthdocument = $(document).width();
-		var left = offset.left;
-		var right = widthdocument - offset.left - parentholder.width();
-		var widthpopup = parentholder.children(".dropdown-content").width();
-		console.log("left="+left+" right="+right+" width="+widthpopup+" widthdocument="+widthdocument);
-		if (widthpopup + right >= widthdocument) {
-			right = 10;
+		let parentHolder = jQuery(event.target).parent();
+		let dropDownContent = parentHolder.children(".dropdown-content");
+		let offset = parentHolder.offset();
+		let widthDocument = $(document).width();
+		let heightDocument = $(document).height();
+		let right = widthDocument - offset.left - parentHolder.width();
+		let widthPopup = parentHolder.children(".dropdown-content").width();
+		if (widthPopup + right >= widthDocument) {
+			//right = 10;
 		}
-		parentholder.toggleClass("open");
-		parentholder.children(".dropdown-content").css({"right": right+"px", "left": "auto"});
+
+		parentHolder.toggleClass("open");	/* If open, it closes, if closed, it opens */
+
+		// Check tooltip is in viewport
+		let dropDownContentTop = dropDownContent.offset().top;
+		let dropDownContentLeft = dropDownContent.offset().left;
+		let dropDownContentHeight = dropDownContent.outerHeight();
+		let dropDownContentBottom = dropDownContentTop + dropDownContentHeight;
+		let viewportBottom = $(window).scrollTop() + $(window).height();
+
+		// Change dropdown Up/Down orientation if dropdown is close to bottom viewport
+		if (parentHolder.hasClass('open')
+			&& dropDownContentBottom > viewportBottom // Check bottom of dropdown is behind viewport
+			&& dropDownContentTop - dropDownContentHeight > 0 // check if set dropdown to --up will not go over the top of document
+		) {
+			parentHolder.addClass("--up");
+		} else {
+			parentHolder.removeClass("--up");
+		}
+
+		// Change dropdown left/right offset if dropdown is close to left viewport
+		if (parentHolder.hasClass('open') && dropDownContentLeft < 0) {
+			parentHolder.addClass("--left");
+		} else {
+			parentHolder.removeClass("--left");
+		}
 	});
+
+
+	// Close drop down
+	jQuery(document).on("click", function(event) {
+		// search if click was outside drop down
+		if (!$(event.target).closest('.butAction.dropdown-toggle').length) {
+			/* console.log("click close butAction - we click outside"); */
+			let parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown.open");
+			if (parentholder){
+				// Hide the menus.
+				parentholder.removeClass("open --up --left");
+			}
+		}
+	});
+
+
 });
+
+
+// Code to manage the js for combo list with dependencies (called by extrafields_view.tpl.php)
+function showOptions(child_list, parent_list) {
+		   var val = $("select[name="+parent_list+"]").val();
+		   var parentVal = parent_list + ":" + val;
+		if(val > 0) {
+			$("select[name=\""+child_list+"\"] option[parent]").hide();
+			$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
+		} else {
+			$("select[name=\""+child_list+"\"] option").show();
+		}
+}
+function setListDependencies() {
+		console.log("setListDependencies");
+		jQuery("select option[parent]").parent().each(function() {
+			var child_list = $(this).attr("name");
+			var parent = $(this).find("option[parent]:first").attr("parent");
+			var infos = parent.split(":");
+			var parent_list = infos[0];
+			showOptions(child_list, parent_list);
+
+			/* Activate the handler to call showOptions on each future change */
+			$("select[name=\""+parent_list+"\"]").change(function() {
+				showOptions(child_list, parent_list);
+			});
+		});
+}
 
 
 <?php
 if (!getDolGlobalString('MAIN_DISABLE_SELECT2_FOCUS_PROTECTION') && !defined('DISABLE_SELECT2_FOCUS_PROTECTION')) {
 	?>
-/*
+/**
  * Hacky fix for a bug in select2 with jQuery 3.6.4's new nested-focus "protection"
- * This fix needs to click a second time when clicking into a combo with ajax (see Test4d and Test5a in test_forms.php
+ * This fix the need to click a second time when clicking into a combo with ajax (see Test4d and Test5a in test_forms.php
  * see: https://github.com/select2/select2/issues/5993
  * see: https://github.com/jquery/jquery/issues/4382
  *
  * TODO: Recheck with the select2 GH issue and remove once this is fixed on their side
  */
+
 $(document).on('select2:open', (e) => {
-	console.log("Execute the focus (click on combo or use space when on component");
+	console.log("Execute the focus (click on combo or use space when on component)");
 	const target = $(e.target);
 	if (target && target.length) {
 		let id = target[0].id || target[0].name;
-		if (id.substr(-2) == "[]") id = id.substr(0,id.length-2);
+		if (id.substr(-2) == '[]') {
+			id = id.substr(0,id.length-2);
+		}
 		document.querySelector('input[aria-controls*='+id+']').focus();
 	}
 });
 	<?php
 }
 ?>
+
+
+/**
+ * Code to manage drag and drop inside kanban group by view - handles sortable columns and item movement between status columns
+ */
+
+$(document).ready(function() {
+	if ($('.kanban .column').length > 0) {
+		$('.kanban .column').sortable({
+			items: '.kanban-draggable',
+			connectWith: '.kanban .column',
+			cursor: 'move',
+			opacity: 0.8,
+			tolerance: 'pointer',
+			start: function(_, ui) {
+				ui.item.data('original-column', ui.item.parent());
+				ui.placeholder.height(ui.item.outerHeight());
+			},
+			receive: function(_, ui) {
+				var originalColumn = ui.item.data('original-column');
+				var newColumn = $(this);
+
+				if (!originalColumn.is(newColumn)) {
+					onKanbanColumnChange(ui.item, newColumn);
+				}
+			}
+		});
+	}
+});
+
+/**
+ * Function called when an item is moved to a different column
+ * @param {jQuery} item - The dragged item
+ * @param {jQuery} newColumn - The new column
+ */
+function onKanbanColumnChange(item, newColumn) {
+	console.log("Call onKanbanColumnChange");
+	jQuery.ajax({
+		method: 'POST',
+		url: '<?php echo DOL_URL_ROOT; ?>/core/ajax/saveinplace.php',
+		data: {
+			field: 'editval_'+newColumn.data('groupbyfield'),
+			element: item.data('element'),
+			table_element: item.data('tableelement'),
+			fk_element: item.data('itemid'),
+			value: newColumn.data('groupbyid'),
+			token: '<?php echo currentToken() ?>'
+		},
+		context: document.body,
+		success: function() {
+			if (newColumn.hasClass('kanbancollapsed')) {
+				item.hide();
+			}
+		}
+	});
+	item.data('original-column', newColumn);
+}
 
 
 // End of lib_head.js.php

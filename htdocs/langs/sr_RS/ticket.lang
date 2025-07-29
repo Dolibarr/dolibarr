@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Tiketi
 Module56000Desc=Sistem tiketa za menadžment reklamacija ili zahteva
-
 Permission56001=Pregled tiketa
 Permission56002=Promeniti tikete
 Permission56003=Obrisati tikete
 Permission56004=Upravljanje tiketima
 Permission56005=Pregled tiketa svih Nezavisnih kompanija (nije primenjivo za spoljne korisnike, uvek će biti ograničeno na Nezavisnu kompaniju od koje zavise)
 Permission56006=Izvoz tiketa
-
 Tickets=Tiketi
 TicketDictType=Tiketi – Tipovi
 TicketDictCategory=Ticket - Groups
 TicketDictSeverity=Tiketi – Ozbiljnost
 TicketDictResolution=Tiketi – Rešavanje
-
 TicketTypeShortCOM=Komercijalna pitanja
 TicketTypeShortHELP=Request for functional help
 TicketTypeShortISSUE=Problem u funkcionisanju uređaja ili softvera
@@ -41,51 +33,39 @@ TicketTypeShortPROBLEM=Problem
 TicketTypeShortREQUEST=Promena ili unapređenje zahteva
 TicketTypeShortPROJET=Pomoć u projektovanju
 TicketTypeShortOTHER=Drugo
-
 TicketSeverityShortLOW=Nizak
 TicketSeverityShortNORMAL=Normal
 TicketSeverityShortHIGH=Visok
 TicketSeverityShortBLOCKING=Kritičan, blokiran rad
-
 TicketCategoryShortOTHER=Drugo
-
 ErrorBadEmailAddress=Field '%s' incorrect
 MenuTicketMyAssign=My tickets
 MenuTicketMyAssignNonClosed=My open tickets
 MenuListNonClosed=Open tickets
-
 TypeContact_ticket_internal_CONTRIBUTOR=Saradnik
 TypeContact_ticket_internal_SUPPORTTEC=Dodeljeni serviser
 TypeContact_ticket_external_SUPPORTCLI=Kontakt korisnika za praćenje reklamacije/zahteva
 TypeContact_ticket_external_CONTRIBUTOR=Spoljni saradnik
-
 OriginEmail=Email korisnika koji je prijavio reklamaciju/zahtev
+EmailReplyto=Reply to in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=Poslati tiket poruku preko email-a
-
 ExportDataset_ticket_1=Tiketi
-
 # Status
 Read=Pročitano
 Assigned=Dodeljen
 NeedMoreInformation=Čeka se povratna informacija korisnika
 NeedMoreInformationShort=Čeka se povratna informacija
-TicketAnswered=Odgovoreno
 Waiting=Na čekanju
 SolvedClosed=Rešeno
 Deleted=Obrisano
-
 # Dict
-Type=Tip
 Severity=Ozbiljnost
 TicketGroupIsPublic=Grupa je javna
 TicketGroupIsPublicDesc=Ako je javna grupa za tikete, biće vidljiva u formi kad je napravljena preko javnog interfejsa
-
 # Email templates
 MailToSendTicketMessage=Za slanje email-a sa tiket poruke
-
-#
 # Admin page
-#
 TicketSetup=Postavke tiket modula
 TicketSettings=Postavke tiketa
 TicketPublicAccess=A public interface requiring no identification is available at the following url
@@ -157,10 +137,7 @@ TicketUseCaptchaCode=Use graphical code (CAPTCHA) when creating a ticket
 TicketUseCaptchaCodeHelp=Adds CAPTCHA verification when creating a new ticket.
 TicketsAllowClassificationModificationIfClosed=Allow to modify classification of closed tickets
 TicketsAllowClassificationModificationIfClosedHelp=Allow to modify classification (type, ticket group, severity) even if tickets are closed.
-
-#
 # Index & list page
-#
 TicketsIndex=Indeks tiketa
 TicketList=Lista tiketa
 TicketAssignedToMeInfos=Ova strana prikazuje listu tiketa napravljenu ili dodeljenu trenutnom korisniku
@@ -175,10 +152,7 @@ ShowAsConversation=Prikazati kao listu razgovora
 MessageListViewType=Prikazati kao listu tabela
 ConfirmMassTicketClosingSendEmail=Automatski poslati email kada se zatvara tiket
 ConfirmMassTicketClosingSendEmailQuestion=Da li želite da obavestite Nezavisno preduzeće kada se zatvaraju ovi tiketi?
-
-#
 # Ticket card
-#
 Ticket=Tiket
 TicketCard=Tiket karta
 CreateTicket=Napraviti tiket
@@ -278,20 +252,14 @@ TicketsDelayFromLastResponseTooLong=Proteklo je previše vremena od poslednjeg o
 TicketNoContractFoundToLink=Nijedan ugovor nije automatski povezan za ovaj tiket. Molimo pronađite ručno ugovor.
 TicketManyContractsLinked=Više ugovora je automatski povezano sa ovim tiketom. Molimo proverite koji da bude odabran
 TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=Tiket %s je pročitan od strane %s
 NoLogForThisTicket=Ne postoji log za ovaj tiket
 TicketLogAssignedTo=Tiket %s dodeljen za %s
 TicketLogPropertyChanged=Tiket %s promenjen: klasifikovan iz %s u %s
 TicketLogClosedBy=Tiket %s zatvoren od %s
 TicketLogReopen=Tiket %s ponovo otvoren
-
-#
 # Public pages
-#
 TicketSystem=Sistem tiketa
 ShowListTicketWithTrackId=Prikaz liste tiketa preko ID za praćenje
 ShowTicketWithTrackId=Prikaz tiketa preko ID za praćenje
@@ -306,13 +274,13 @@ TicketNewEmailBodyCustomer=Ovo je automatska email potvrda da je novi tiket upra
 TicketNewEmailBodyInfosTicket=Informacija za monitoring tiketa
 TicketNewEmailBodyInfosTrackId=ID za praćenje tiketa: %s
 TicketNewEmailBodyInfosTrackUrl=Možete pratiti progres rešavanja Vašeg tiketa klikom priloženi link.
-TicketNewEmailBodyInfosTrackUrlCustomer=Možete pratiti progres rešavanja Vašeg tiketa u specifičnom interfejsu klikom na priloženi link.
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
 TicketCloseEmailBodyInfosTrackUrlCustomer=Možete proveriti istoriju ovog tiketa klikom na priloženi link.
 TicketEmailPleaseDoNotReplyToThisEmail=Molimo ne odgovarajte direktno na ovaj email! Koristite link za odgovor unutar interfejsa tiketa.
 TicketPublicInfoCreateTicket=Ova forma Vam omogućava da sačuvate tiket za podršku u našem sistemu.
 TicketPublicPleaseBeAccuratelyDescribe=Please accurately describe your request. Provide the most information possible to allow us to correctly identify your request.
 TicketPublicMsgViewLogIn=Unesite ID za praćenje tiketa
-TicketTrackId=Javni ID za praćenje
+TicketTrackId=Tracking ID
 OneOfTicketTrackId=Jedan od Vaših ID za praćenje
 ErrorTicketNotFound=Tiket sa ID za praćenje %s nije pronađen!
 Subject=Objekat/Naziv projekta
@@ -330,7 +298,6 @@ NumberOfTicketsByMonth=Broj tiketa po mesecu
 NbOfTickets=Broj tiketa
 ExternalContributors=External contributors
 AddContributor=Add external contributor
-
 # notifications
 TicketCloseEmailSubjectCustomer=Tiket zatvoren
 TicketCloseEmailBodyCustomer=Ovo je automatska poruka da je tiket %s upravo zatvoren.
@@ -342,12 +309,8 @@ TicketNotificationRecipient=Primalac obaveštenja
 TicketNotificationLogMessage=Log poruka
 TicketNotificationEmailBodyInfosTrackUrlinternal=Pregled tiket info interfejsa
 TicketNotificationNumberEmailSent=Poslat email sa obaveštenjem: %s
-
 ActionsOnTicket=Events on ticket
-
-#
 # Boxes
-#
 BoxLastTicket=Poslednji napravljen tiket
 BoxLastTicketDescription=Poslednjih %s napravljenih tiketa
 BoxLastTicketContent=

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,15 +30,14 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 class SupplierOrders extends DolibarrApi
 {
 	/**
-	 *
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'socid'
 	);
 
 	/**
-	 * @var CommandeFournisseur $order {@type CommandeFournisseur}
+	 * @var CommandeFournisseur {@type CommandeFournisseur}
 	 */
 	public $order;
 
@@ -95,11 +95,14 @@ class SupplierOrders extends DolibarrApi
 	 * @param string    $sqlfilters       Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
 	 * @param string    $sqlfilterlines   Other criteria to filter answers separated by a comma. Syntax example "(tl.fk_product:=:'17') and (tl.price:<:'250')"
 	 * @param string    $properties		  Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool      $pagination_data  If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return array                      Array of order objects
+	 * @phan-return CommandeFournisseur[]|array{data:CommandeFournisseur[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return CommandeFournisseur[]|array{data:CommandeFournisseur[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $product_ids = '', $status = '', $sqlfilters = '', $sqlfilterlines = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $product_ids = '', $status = '', $sqlfilters = '', $sqlfilterlines = '', $properties = '', $pagination_data = false)
 	{
 		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "lire")) {
 			throw new RestException(403);
@@ -108,7 +111,7 @@ class SupplierOrders extends DolibarrApi
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
-		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $thirdparty_ids;
+		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
@@ -181,6 +184,9 @@ class SupplierOrders extends DolibarrApi
 			}
 		}
 
+		//this query will return total supplier orders with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
@@ -208,6 +214,23 @@ class SupplierOrders extends DolibarrApi
 			throw new RestException(503, 'Error when retrieve supplier order list : '.$this->db->lasterror());
 		}
 
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => (int) ceil((int) $total / $limit),
+				'limit' => $limit
+			];
+		}
+
 		return $obj_ret;
 	}
 
@@ -216,7 +239,9 @@ class SupplierOrders extends DolibarrApi
 	 *
 	 * Example: {"ref": "auto", "ref_supplier": "1234", "socid": "1", "multicurrency_code": "SEK", "multicurrency_tx": 1, "tva_tx": 25, "note": "Imported via the REST API"}
 	 *
-	 * @param array $request_data   Request datas
+	 * @param array $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int  ID of supplier order
 	 */
 	public function post($request_data = null)
@@ -224,8 +249,13 @@ class SupplierOrders extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "creer") && !DolibarrApiAccess::$user->hasRight("supplier_order", "creer")) {
 			throw new RestException(403, "Insuffisant rights");
 		}
-		// Check mandatory fields
-		$result = $this->_validate($request_data);
+
+		if (!is_array($request_data)) {
+			$request_data = array();
+		}
+
+		// Check mandatory fields (not using output, only possible exception is important)
+		$this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
@@ -258,7 +288,9 @@ class SupplierOrders extends DolibarrApi
 	 * Update supplier order
 	 *
 	 * @param 	int   	$id             	Id of supplier order to update
-	 * @param 	array 	$request_data   	Datas
+	 * @param 	array 	$request_data   	Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object|false				Updated object
 	 */
 	public function put($id, $request_data = null)
@@ -353,6 +385,8 @@ class SupplierOrders extends DolibarrApi
 	 * @param string	$type			Type of the contact (BILLING, SHIPPING, CUSTOMER, SALESREPFOLL, ...)
 	 * @param string	$source			Source of the contact (external, internal)
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @url	POST {id}/contact/{contactid}/{type}/{source}
 	 *
@@ -403,6 +437,8 @@ class SupplierOrders extends DolibarrApi
 	 * @url	DELETE {id}/contact/{contactid}/{type}/{source}
 	 *
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
@@ -456,6 +492,8 @@ class SupplierOrders extends DolibarrApi
 	 *
 	 * @param int		$id		Supplier order ID
 	 * @return array			Array of result
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
@@ -494,6 +532,9 @@ class SupplierOrders extends DolibarrApi
 	 * @url POST    {id}/validate
 	 *
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
 	 * FIXME An error 403 is returned if the request has an empty body.
 	 * Error message: "Forbidden: Content type `text/plain` is not supported."
 	 * Workaround: send this in the body
@@ -542,6 +583,9 @@ class SupplierOrders extends DolibarrApi
 	 * @url POST    {id}/approve
 	 *
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
 	 * FIXME An error 403 is returned if the request has an empty body.
 	 * Error message: "Forbidden: Content type `text/plain` is not supported."
 	 * Workaround: send this in the body
@@ -592,6 +636,9 @@ class SupplierOrders extends DolibarrApi
 	 * @url POST    {id}/makeorder
 	 *
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
 	 * FIXME An error 403 is returned if the request has an empty body.
 	 * Error message: "Forbidden: Content type `text/plain` is not supported."
 	 * Workaround: send this in the body
@@ -656,13 +703,17 @@ class SupplierOrders extends DolibarrApi
 	 * @param   integer	$closeopenorder	Close order if everything is received {@required false}
 	 * @param   string	$comment	Comment {@required false}
 	 * @param   array	$lines		Array of product dispatches
+	 * @phan-param array<array{fk_product:string,qty:string,warehouse:string,price:string,comment:string,eatby:string,sellby:string,batch:string,id:string,notrigger:string}> $lines
+	 * @phpstan-param array<array{fk_product:string,qty:string,warehouse:string,price:string,comment:string,eatby:string,sellby:string,batch:string,id:string,notrigger:string}> $lines
 	 *
 	 * @url POST    {id}/receive
 	 *
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
 	 * FIXME An error 403 is returned if the request has an empty body.
 	 * Error message: "Forbidden: Content type `text/plain` is not supported."
-	 *
 	 */
 	public function receiveOrder($id, $closeopenorder, $comment, $lines)
 	{
@@ -679,9 +730,9 @@ class SupplierOrders extends DolibarrApi
 		}
 
 		foreach ($lines as $line) {
-			$lineObj =(object) $line;
+			$lineObj = (object) $line;
 
-			$result=$this->order->dispatchProduct(
+			$result = $this->order->dispatchProduct(
 				DolibarrApiAccess::$user,
 				$lineObj->fk_product,
 				$lineObj->qty,
@@ -691,12 +742,12 @@ class SupplierOrders extends DolibarrApi
 				$lineObj->eatby,
 				$lineObj->sellby,
 				$lineObj->batch,
-				$lineObj->id,
+				(int) $lineObj->id,
 				$lineObj->notrigger
 			);
 
 			if ($result < 0) {
-				throw new RestException(500, 'Error dispatch order line '.$line->id.': '.$this->order->error);
+				throw new RestException(500, 'Error dispatch order line '.$lineObj->id.': '.$this->order->error);
 			}
 		}
 
@@ -741,13 +792,16 @@ class SupplierOrders extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param array $data   Datas to validate
-	 * @return array
+	 * @param ?array<string,string> $data   Data to validate
+	 * @return array<string,string>
 	 *
 	 * @throws RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$order = array();
 		foreach (SupplierOrders::$FIELDS as $field) {
 			if (!isset($data[$field])) {

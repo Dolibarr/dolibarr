@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2013-2014  Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,14 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("resource", "companies", "other"));
 
@@ -52,7 +60,7 @@ $optioncss		= GETPOST('optioncss', 'alpha');
 // Initialize context for list
 $contextpage 	= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'resourcelist';
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Dolresource($db);
 $extrafields = new ExtraFields($db);
 
@@ -99,57 +107,57 @@ $pagenext = $page + 1;
 $arrayfields = array(
 	't.ref' => array(
 		'label' => $langs->trans("Ref"),
-		'checked' => 1,
+		'checked' => '1',
 		'position' => 1
 	),
 	'ty.label' => array(
 		'label' => $langs->trans("Type"),
-		'checked' => 1,
+		'checked' => '1',
 		'position' => 2
 	),
 	't.address' => array(
 		'label' => $langs->trans("Address"),
-		'checked' => 0,
+		'checked' => '0',
 		'position' => 3
 	),
 	't.zip' => array(
 		'label' => $langs->trans("Zip"),
-		'checked' => 0,
+		'checked' => '0',
 		'position' => 4
 	),
 	't.town' => array(
 		'label' => $langs->trans("Town"),
-		'checked' => 1,
+		'checked' => '1',
 		'position' => 5
 	),
 	'st.nom' => array(
 		'label' => $langs->trans("State"),
-		'checked' => 0,
+		'checked' => '0',
 		'position' => 6
 	),
 	'co.label' => array(
 		'label' => $langs->trans("Country"),
-		'checked' => 1,
+		'checked' => '1',
 		'position' => 7
 	),
 	't.phone' => array(
 		'label' => $langs->trans("Phone"),
-		'checked' => 0,
+		'checked' => '0',
 		'position' => 8
 	),
 	't.email' => array(
 		'label' => $langs->trans("Email"),
-		'checked' => 0,
+		'checked' => '0',
 		'position' => 9
 	),
 	't.max_users' => array(
 		'label' => $langs->trans("MaxUsersLabel"),
-		'checked' => 1,
+		'checked' => '1',
 		'position' => 10
 	),
 	't.url' => array(
 		'label' => $langs->trans("URL"),
-		'checked' => 0,
+		'checked' => '0',
 		'position' => 11
 	),
 );
@@ -158,7 +166,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
@@ -452,6 +459,12 @@ print '<table class="tagtable liste">'."\n";
 // Fields title search
 
 print '<tr class="liste_titre_filter">';
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print '<td class="liste_titre center maxwidthsearch">';
+	$searchpicto = $form->showFilterButtons();
+	print $searchpicto;
+	print '</td>';
+}
 if (!empty($arrayfields['t.ref']['checked'])) {
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" name="search_ref" value="'.$search_ref.'" size="8">';
@@ -525,7 +538,11 @@ $totalarray['nbfield'] = 0;
 // Fields title label
 
 print '<tr class="liste_titre">';
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
+}
 if (!empty($arrayfields['t.ref']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['t.ref']['label'], $_SERVER["PHP_SELF"], "t.ref", "", $param, "", $sortfield, $sortorder);
 }
 if (!empty($arrayfields['ty.label']['checked'])) {
@@ -589,6 +606,22 @@ while ($i < $imaxinloop) {
 	$objectstatic->url = $obj->url;
 
 	print '<tr class="oddeven">';
+
+	// Action column
+	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+		print '<td class="nowrap center">';
+		if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		print '</td>';
+		if (!$i) {
+			$totalarray['nbfield']++;
+		}
+	}
 
 	if (!empty($arrayfields['t.ref']['checked'])) {
 		print '<td>'.$objectstatic->getNomUrl(5).'</td>';

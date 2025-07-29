@@ -5,6 +5,7 @@
  * Copyright (C) 2004       Sebastien DiCintio      <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +45,12 @@ if (file_exists($conffile)) {
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 require_once $dolibarr_main_document_root.'/core/lib/security.lib.php'; // for dol_hash
 require_once $dolibarr_main_document_root.'/core/lib/functions2.lib.php';
+
+'
+@phan-var-force ?string $modulesdir
+@phan-var-force ?string $dolibarr_main_db_encryption
+@phan-var-force ?string $dolibarr_main_db_cryptkey
+';
 
 global $langs;
 
@@ -97,12 +104,13 @@ dolibarr_install_syslog("--- step5: entering step5.php page ".$versionfrom." ".$
 
 $error = 0;
 
+
 /*
  *	Actions
  */
 
 // If install, check password and password_verification used to create admin account
-if ($action == "set") {
+if ($action == "set") {		// Test on permissions not required here
 	if ($pass != $pass_verif) {
 		header("Location: step4.php?error=1&selectlang=$setuplang".(isset($login) ? '&login='.$login : ''));
 		exit;
@@ -145,12 +153,15 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 	$error = 0;
 
 	// If password is encoded, we decode it
-	if ((!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) || !empty($dolibarr_main_db_encrypted_pass)) {
+	if ((!empty($dolibarr_main_db_pass) && preg_match('/(crypted|dolcrypt):/i', $dolibarr_main_db_pass)) || !empty($dolibarr_main_db_encrypted_pass)) {
 		require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
 		if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
 			$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
-			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
 			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially encrypted
+			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
+		} elseif (preg_match('/dolcrypt:/i', $dolibarr_main_db_pass)) {
+			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially encrypted
+			$dolibarr_main_db_pass = dolDecrypt($dolibarr_main_db_pass);
 		} else {
 			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 		}
@@ -490,9 +501,9 @@ if ($action == "set") {
 	}
 } elseif (empty($action) || preg_match('/upgrade/i', $action)) {
 	// If upgrade
-	if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION)) {
+	if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') || getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') == DOL_VERSION) {
 		// Upgrade is finished (database is on the same version than files)
-		print '<img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/checklist.svg" width="20" alt="Configuration">';
+		print '<img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/checklist.svg" width="30" alt="Configuration">';
 		print ' <span class="valignmiddle">'.$langs->trans("SystemIsUpgraded")."</span><br>";
 
 		// Create install.lock file if it does not exists.

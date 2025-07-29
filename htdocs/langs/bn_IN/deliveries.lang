@@ -1,12 +1,13 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=ডেলিভারি
 DeliveryRef=রেফ ডেলিভারি
-DeliveryCard=স্টক রসিদ
+DeliveryCard=ডেলিভারি রসিদ
 DeliveryOrder=প্রসবের প্রাপ্তি
 DeliveryDate=প্রসবের তারিখ
 CreateDeliveryOrder=ডেলিভারি রসিদ তৈরি করুন
 DeliveryStateSaved=ডেলিভারি অবস্থা সংরক্ষিত
-SetDeliveryDate=শিপিং তারিখ সেট করুন
+SetDeliveryDate=আনুমানিক ডেলিভারির তারিখ সেট করুন
+SetShippingDate=শিপিংয়ের তারিখ সেট করুন
 ValidateDeliveryReceipt=ডেলিভারি রসিদ যাচাই করুন
 ValidateDeliveryReceiptConfirm=আপনি কি এই ডেলিভারি রসিদ যাচাই করার বিষয়ে নিশ্চিত?
 DeleteDeliveryReceipt=ডেলিভারি রসিদ মুছুন

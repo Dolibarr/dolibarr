@@ -1,12 +1,13 @@
 <?php
-/* Copyright (C) 2003-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
- * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2005       Simon TOSSER            <simon@kornog-computing.com>
- * Copyright (C) 2011-2012  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2003-2007  Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2010  Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Marc Barilley / Ocebo		<marc@ocebo.com>
+ * Copyright (C) 2005-2009  Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2005       Simon TOSSER				<simon@kornog-computing.com>
+ * Copyright (C) 2011-2012  Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2013       Cédric Salvador				<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2018-2024  Frédéric France         	<frederic.france@free.fr>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +25,8 @@
 
 /**
  *       \file       htdocs/holiday/document.php
- *       \ingroup    fichinter
- *       \brief      Page des documents joints sur les contrats
+ *       \ingroup    holiday
+ *       \brief      Page of linked files onto holiday
  */
 
 // Load Dolibarr environment
@@ -36,6 +37,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('other', 'holiday', 'companies'));
@@ -78,6 +87,8 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
+$permissiontoapprove = $user->hasRight('holiday', 'approve');
+
 if (($id > 0) || $ref) {
 	$object->fetch($id, $ref);
 
@@ -87,6 +98,9 @@ if (($id > 0) || $ref) {
 		$canread = 1;
 	}
 	if ($user->hasRight('holiday', 'read') && in_array($object->fk_user, $childids)) {
+		$canread = 1;
+	}
+	if ($permissiontoapprove && $object->fk_validator == $user->id && !getDolGlobalString('HOLIDAY_CAN_APPROVE_ONLY_THE_SUBORDINATES')) {	// TODO HOLIDAY_CAN_APPROVE_ONLY_THE_SUBORDINATES not completely implemented
 		$canread = 1;
 	}
 	if (!$canread) {
@@ -122,8 +136,9 @@ $form = new Form($db);
 
 $listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
 $title = $langs->trans("Leave").' - '.$langs->trans("Files");
+$help_url = 'EN:Module_Holiday';
 
-llxHeader('', $title);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-holiday page-card_documents');
 
 if ($object->id) {
 	$valideur = new User($db);

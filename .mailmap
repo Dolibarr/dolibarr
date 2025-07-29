@@ -1,11 +1,14 @@
 # This is mapping list between real user name/email and entry into sources files
 # If you don't want to have your real email appears here, just send a Pull Request to
 # replace the second field between <> with <secret>
+#
+# This files allows to have several profiles (the second part) matched to the same name/email (the first part).
+#
 Laurent Destailleur <eldy@destailleur.fr> Laurent Destailleur <eldy@users.sourceforge.net>
 Laurent Destailleur <eldy@destailleur.fr> eldy <eldy@destailleur.fr>
 Laurent Destailleur <eldy@destailleur.fr> Laurent Destailleur <ldestailleur@teclib.com>
 Laurent Destailleur <eldy@destailleur.fr> eldy10 <eldy10@master8.(none)>
-Laurent Destailleur <eldy@destailleur.fr> Laurent Destailleur <ephpcsdy@destailleur.fr>
+Laurent Destailleur <eldy@destailleur.fr> Laurent Destailleur <eldy@destailleur.fr>
 Regis Houssin <regis.houssin@inodbox.com> Regis Houssin <regis@dolibarr.fr>
 Regis Houssin <regis.houssin@inodbox.com> Régis Houssin <regishoussin@device5.home>
 Juanjo Menent <jmenent@2byte.es> simnandez <jmenent@2byte.es>

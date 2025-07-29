@@ -3,7 +3,8 @@
  * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2013	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,14 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->load("admin");
@@ -173,6 +182,8 @@ foreach ($dirbarcode as $reldir) {
 						$classname = "mod".ucfirst($filebis);
 						$module = new $classname($db);
 
+						'@phan-var-force ModeleBarCode $module';
+
 						// Show modules according to features level
 						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							continue;
@@ -190,12 +201,12 @@ foreach ($dirbarcode as $reldir) {
 		}
 	}
 }
-'@phan-var-force array<string,ModeleBarCode> $barcodelist';
+'@phan-var-force array<string,string> $barcodelist';
 
 
 // Select barcode numbering module
 if (isModEnabled('product')) {
-	print load_fiche_titre($langs->trans("BarCodeNumberManager")." (".$langs->trans("Product").")", '', '');
+	print load_fiche_titre($langs->trans("BarCodeNumberManager")." (".$langs->trans("Product").")", '', 'product');
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
@@ -253,12 +264,16 @@ if (isModEnabled('product')) {
 		}
 	}
 	print "</table>\n";
+
+	print dolButtonToOpenUrlInDialogPopup('barcodeinitproduct', $langs->trans("MassBarcodeInit"), $langs->trans("GoOnThisPageToInitBarCode").' '.img_picto('', 'url'), '/barcode/codeinit.php', '', 'small');
+	print '<br><br><br>';
+
 	print '</div>';
 }
 
 // Select barcode numbering module
 if (isModEnabled('societe')) {
-	print load_fiche_titre($langs->trans("BarCodeNumberManager")." (".$langs->trans("ThirdParty").")", '', '');
+	print load_fiche_titre($langs->trans("BarCodeNumberManager")." (".$langs->trans("ThirdParty").")", '', 'company');
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
@@ -288,13 +303,16 @@ if (isModEnabled('societe')) {
 					}
 
 					$modBarCode = new $file();
+
+					'@phan-var-force ModeleNumRefBarCode $modBarCode';
+
 					print '<tr class="oddeven">';
 					print '<td>'.(isset($modBarCode->name) ? $modBarCode->name : $modBarCode->nom)."</td><td>\n";
 					print $modBarCode->info($langs);
 					print '</td>';
 					print '<td class="nowrap">'.$modBarCode->getExample($langs)."</td>\n";
 
-					if (getDolGlobalString('BARCODE_THIRDPARTY_ADDON_NUM') && $conf->global->BARCODE_THIRDPARTY_ADDON_NUM == "$file") {
+					if (getDolGlobalString('BARCODE_THIRDPARTY_ADDON_NUM') && getDolGlobalString('BARCODE_THIRDPARTY_ADDON_NUM') == "$file") {
 						print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodethirdpartyoff&token='.newToken().'&amp;value='.urlencode($file).'">';
 						print img_picto($langs->trans("Activated"), 'switch_on');
 						print '</a></td>';
@@ -314,14 +332,17 @@ if (isModEnabled('societe')) {
 		}
 	}
 	print "</table>\n";
+
+	print dolButtonToOpenUrlInDialogPopup('barcodeinitthirdparty', $langs->trans("MassBarcodeInit"), $langs->trans("GoOnThisPageToInitBarCode").' '.img_picto('', 'url'), '/barcode/codeinit.php', '', 'small');
+	print '<br><br><br>';
+
 	print '</div>';
 }
 
 /*
- *  CHOIX ENCODAGE
+ *  CHOOSE ENCODING
  */
 
-print '<br>';
 print load_fiche_titre($langs->trans("BarcodeEncodeModule"), '', '');
 
 if (empty($conf->use_javascript_ajax)) {
@@ -386,6 +407,7 @@ if ($resql) {
 				$classname = "mod".ucfirst($obj->coder);
 				if (class_exists($classname)) {
 					$module = new $classname($db);
+					'@phan-var-force ModeleBarCode $module';
 					if ($module->encodingIsSupported($obj->encoding)) {
 						// Build barcode on disk (not used, this is done to make debug easier)
 						$result = $module->writeBarCode($obj->example, $obj->encoding, 'Y');
@@ -435,7 +457,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td width="60" class="center">'.$langs->trans("Value").'</td>';
+print '<td width="60" class="center"></td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
 
@@ -457,9 +479,9 @@ if (!isset($_SERVER['WINDIR'])) {
 // Module products
 if (isModEnabled('product')) {
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("SetDefaultBarcodeTypeProducts").'</td>';
+	print '<td>'.img_picto('', 'product', 'class="pictofixedwidth"').$langs->trans("SetDefaultBarcodeTypeProducts").'</td>';
 	print '<td width="60" class="right">';
-	print $formbarcode->selectBarcodeType(getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE'), "PRODUIT_DEFAULT_BARCODE_TYPE", 1);
+	print $formbarcode->selectBarcodeType(getDolGlobalInt('PRODUIT_DEFAULT_BARCODE_TYPE'), "PRODUIT_DEFAULT_BARCODE_TYPE", 1);
 	print '</td>';
 	print '<td>&nbsp;</td>';
 	print '</tr>';
@@ -468,9 +490,9 @@ if (isModEnabled('product')) {
 // Module thirdparty
 if (isModEnabled('societe')) {
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("SetDefaultBarcodeTypeThirdParties").'</td>';
+	print '<td>'.img_picto('', 'company', 'class="pictofixedwidth"').$langs->trans("SetDefaultBarcodeTypeThirdParties").'</td>';
 	print '<td width="60" class="right">';
-	print $formbarcode->selectBarcodeType(getDolGlobalString('GENBARCODE_BARCODETYPE_THIRDPARTY'), "GENBARCODE_BARCODETYPE_THIRDPARTY", 1);
+	print $formbarcode->selectBarcodeType(getDolGlobalInt('GENBARCODE_BARCODETYPE_THIRDPARTY'), "GENBARCODE_BARCODETYPE_THIRDPARTY", 1);
 	print '</td>';
 	print '<td>&nbsp;</td>';
 	print '</tr>';

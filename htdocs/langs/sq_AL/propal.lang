@@ -23,7 +23,10 @@ AllPropals=Të gjitha propozimet
 SearchAProposal=Kërkoni një propozim
 NoProposal=Asnjë propozim
 ProposalsStatistics=Statistikat e propozimit komercial
+NumberOfProposals=Numri i propozimeve
 NumberOfProposalsByMonth=Numri sipas muajit
+AmountOfProposals=Numri i propozimeve
+AmountOfProposalsHT=Shuma e propozimeve (pa taksa)
 AmountOfProposalsByMonthHT=Shuma sipas muajit (pa taksa)
 NbOfProposals=Numri i propozimeve tregtare
 ShowPropal=Trego propozimin
@@ -77,13 +80,11 @@ AvailabilityTypeAV_1W=1 javë
 AvailabilityTypeAV_2W=2 javë
 AvailabilityTypeAV_3W=3 jave
 AvailabilityTypeAV_1M=1 muaj
-
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Propozimi pasues i përfaqësuesit
 TypeContact_propal_external_BILLING=Kontakti i faturës së klientit
 TypeContact_propal_external_CUSTOMER=Propozimi vijues i kontaktit me klientin
 TypeContact_propal_external_SHIPPING=Kontakti i klientit për dorëzim
-
 # Document models
 CantBeNoSign=nuk mund të vendoset pa firmosur
 CaseFollowedBy=Rasti i ndjekur nga
@@ -122,3 +123,5 @@ SignSociete_rib=Nënshkruani mandatin
 SignPropal=Prano propozimin
 Signed=nënshkruar
 SignedOnly=E nënshkruar vetëm
+ExpeditionSigned=Dërgesa e nënshkruar
+SignExpedition=Nënshkruaj dërgesën

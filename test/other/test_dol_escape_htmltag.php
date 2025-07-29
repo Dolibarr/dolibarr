@@ -50,6 +50,8 @@ print "\n\n\n";
 //print dolGetFirstLineOfText($a, 7);
 print dol_escape_htmltag($a, 1, 1);
 
+print forgeSQLFromUniversalSearchCriteria("te.client:IN:1,2");
+
 print "\n";
 
 //print print_r(unserialize(serialize($object)));
