@@ -164,6 +164,7 @@ $arrayoftype = array(
 	'thirdparty' => array('label' => 'ThirdParties', 'picto' => 'company', 'ObjectClassName' => 'Societe', 'enabled' => isModEnabled('societe'), 'ClassPath' => "/societe/class/societe.class.php", 'langs' => 'companies'),
 	'contact' => array('label' => 'Contacts', 'picto' => 'contact', 'ObjectClassName' => 'Contact', 'enabled' => isModEnabled('societe'), 'ClassPath' => "/contact/class/contact.class.php"),
 	'proposal' => array('label' => 'Proposals', 'picto' => 'proposal', 'ObjectClassName' => 'Propal', 'enabled' => isModEnabled('propal'), 'ClassPath' => "/comm/propal/class/propal.class.php", 'langs' => 'propal'),
+	'proposaldet' => array('label' => 'ProposalLines', 'picto' => 'proposal', 'ObjectClassName' => 'PropaleLigne', 'enabled' => isModEnabled('propal'), 'ClassPath' => "/comm/propal/class/propaleligne.class.php", 'langs' => 'propal'),
 	'order' => array('label' => 'Orders', 'picto' => 'order', 'ObjectClassName' => 'Commande', 'enabled' => isModEnabled('order'), 'ClassPath' => "/commande/class/commande.class.php", 'langs' => 'orders'),
 	'orderdet' => array('label' => 'SaleOrderLines', 'picto' => 'order', 'ObjectClassName' => 'OrderLine', 'enabled' => isModEnabled('order'), 'ClassPath' => "/commande/class/orderline.class.php", 'langs' => 'orders'),
 	'invoice' => array('label' => 'Invoices', 'picto' => 'bill', 'ObjectClassName' => 'Facture', 'enabled' => isModEnabled('invoice'), 'ClassPath' => "/compta/facture/class/facture.class.php", 'langs' => 'bills'),

@@ -39,9 +39,31 @@
 
 define('ALLOWED_IF_UPGRADE_UNLOCK_FOUND', 1);
 include_once 'inc.php';
+
+/**
+ * @var string	$conffile
+ * @var string	$conffiletoshow
+ */
+
 if (file_exists($conffile)) {
 	include_once $conffile;
 }
+/**
+ * @var Conf $conf
+ * @var Translate $langs
+ *
+ * @var string	$dolibarr_main_db_type
+ * @var string	$dolibarr_main_db_host
+ * @var string	$dolibarr_main_db_port
+ * @var string	$dolibarr_main_db_name
+ * @var string	$dolibarr_main_db_user
+ * @var string	$dolibarr_main_db_pass
+ * @var string	$dolibarr_main_document_root
+ * @var string	$dolibarr_main_db_encryption
+ * @var string	$dolibarr_main_db_encrypted_pass
+ * @var string	$dolibarr_main_db_cryptkey
+ * @var string	$modulesdir
+ */
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 require_once $dolibarr_main_document_root.'/core/lib/security.lib.php'; // for dol_hash
 require_once $dolibarr_main_document_root.'/core/lib/functions2.lib.php';
