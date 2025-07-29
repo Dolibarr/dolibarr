@@ -55,6 +55,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'compta', 'admin', 'other'));
 
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
+
 $action     = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
@@ -123,6 +125,14 @@ $pagenext = $page + 1;
 // Initialize a technical objects
 $object = new FactureRec($db);
 $extrafields = new ExtraFields($db);
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+	'f.titre' => "Ref",
+	's.nom' => "ThirdParty",
+	's.code_client' => "CustomerCodeShort",
+	'fdc.description' => 'Description',
+);
 
 if (($id > 0 || $ref) && $action != 'create' && $action != 'add') {
 	$ret = $object->fetch($id, $ref);
@@ -251,6 +261,7 @@ if (empty($reshook)) {
 		$search_unit_frequency = '';
 		$search_nb_gen_done = '';
 		$search_status = '';
+		$search_all = '';
 		$toselect = array();
 		$search_array_options = array();
 	}
@@ -391,6 +402,10 @@ if ($search_date_when_end) {
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
+if ($search_all) {
+	$sql .= " AND EXISTS (SELECT fdc.rowid FROM ".MAIN_DB_PREFIX."facturedet_rec as fdc WHERE f.rowid = fdc.fk_facture ".natural_search(array_keys($fieldstosearchall), $search_all).")";
+}
+
 // Count total nb of records
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
@@ -431,6 +446,12 @@ if (!$resql) {
 
 $num = $db->num_rows($resql);
 
+if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all) {
+	$obj = $db->fetch_object($resql);
+	$id = $obj->facid;
+	header("Location: ".DOL_URL_ROOT.'/compta/facture/card-rec.php?facid='.$id);
+	exit;
+}
 
 // Output page
 // --------------------------------------------------------------------
@@ -454,6 +475,9 @@ if ($optioncss != '') {
 }
 if ($groupby != '') {
 	$param .= '&groupby='.urlencode($groupby);
+}
+if ($search_all) {
+	$param .= '&search_all='.urlencode($search_all);
 }
 if ($socid > 0) {
 	$param .= '&socid='.urlencode((string) ($socid));
@@ -570,6 +594,13 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bill', 0, '', '', $limit, 0, 0, 1);
 
 print '<span class="opacitymedium">'.$langs->trans("ToCreateAPredefinedInvoice", $langs->transnoentitiesnoconv("ChangeIntoRepeatableInvoice")).'</span><br><br>';
+
+if ($search_all) {
+	foreach ($fieldstosearchall as $key => $val) {
+		$fieldstosearchall[$key] = $langs->trans($val);
+	}
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
+}
 
 $i = 0;
 

@@ -3555,13 +3555,13 @@ class Propal extends CommonObject
 			$status = 0;
 			$label = $labelShort = '';
 			if ($mode == 'opened') {
-				$delay_warning = $conf->propal->cloture->warning_delay;
+				$delay_warning = getWarningDelay('propal', 'cloture');
 				$status = self::STATUS_VALIDATED;
 				$label = $langs->transnoentitiesnoconv("PropalsToClose");
 				$labelShort = $langs->transnoentitiesnoconv("ToAcceptRefuse");
 			}
 			if ($mode == 'signed') {
-				$delay_warning = $conf->propal->facturation->warning_delay;
+				$delay_warning = getWarningDelay('propal', 'facturation');
 				$status = self::STATUS_SIGNED;
 				$label = $langs->trans("PropalsToBill"); // We set here bill but may be billed or ordered
 				$labelShort = $langs->trans("ToBill");

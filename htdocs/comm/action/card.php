@@ -2640,7 +2640,7 @@ if ($id > 0 && $action != 'create') {
 		}
 
 		// Date start
-		print '<tr><td>'.$langs->trans("DateActionStart").'</td><td>';
+		print '<tr><td>'.$langs->trans("DateActionStart").'</td><td title="'.dol_print_date($object->datep, 'dayhoursec', 'tzuserrel').'">';
 		// Test a date before the 27 march and one after
 		//print dol_print_date($object->datep, 'dayhour', 'gmt');
 		//print dol_print_date($object->datep, 'dayhour', 'tzuser');
@@ -2658,7 +2658,7 @@ if ($id > 0 && $action != 'create') {
 		print '</tr>';
 
 		// Date end
-		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td>';
+		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td title="'.dol_print_date($object->datef, 'dayhoursec', 'tzuserrel').'">';
 		if (empty($object->fulldayevent)) {
 			print dol_print_date($object->datef, 'dayhour', 'tzuserrel');
 		} else {

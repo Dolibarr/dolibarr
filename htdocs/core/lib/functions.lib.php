@@ -423,14 +423,12 @@ function getWarningDelay($module, $parmlevel1, $parmlevel2 = '')
 	}
 
 	if ($parmlevel2) {
-		if (!empty($conf->$module->$warningDelayPath->warning_delay)) {
-			if (!empty($conf->$module->$warningDelayPath->$parmlevel2->warning_delay)) {
-				return (int) $conf->$module->$warningDelayPath->$parmlevel2->warning_delay;
-			}
+		if (!empty($conf->$module) && !empty($conf->$module->$warningDelayPath) && !empty($conf->$module->$warningDelayPath->$parmlevel2) && !empty($conf->$module->$warningDelayPath->$parmlevel2->warning_delay)) {
+			return (int) $conf->$module->$warningDelayPath->$parmlevel2->warning_delay;
 		}
 	} else {
-		if (!empty($conf->$module->$warningDelayPath->warning_delay)) {
-			return (int) $conf->$module->$warningDelayPath->$parmlevel1->warning_delay;
+		if (!empty($conf->$module) && !empty($conf->$module->$warningDelayPath) && !empty($conf->$module->$warningDelayPath->warning_delay)) {
+			return (int) $conf->$module->$warningDelayPath->warning_delay;
 		}
 	}
 
@@ -836,7 +834,7 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *                               'alphawithlgt'=alpha with lgt
  *                               'alphanohtml'=check there is no html content and no " and no ../
  *                               'aZ'=check it's a-z only
- *                               'aZ09'=check it's simple alpha string (recommended for keys)
+ *                               'aZ09'=check it's simple alpha string (recommended for keys, it includes a-z0-9_\-\.)
  *                               'aZ09arobase'=check it's a string for an element type ('myobject@mymodule')
  *                               'aZ09comma'=check it's a string for a sortfield or sortorder
  *                               'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
@@ -8845,6 +8843,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			}
 
 			// Clear ZERO WIDTH NO-BREAK SPACE, ZERO WIDTH SPACE, ZERO WIDTH JOINER
+			// TODO $out = preg_replace('/[\x{2000}-\x{200D}\x{FEFF}]/u', ' ', $out);
 			$out = preg_replace('/[\x{200B}-\x{200D}\x{FEFF}]/u', ' ', $out);
 
 			// Clean some html entities that are useless so text is cleaner

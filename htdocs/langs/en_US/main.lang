@@ -1091,6 +1091,7 @@ SearchIntoProjects=Projects
 SearchIntoMO=Manufacturing Orders
 SearchIntoTasks=Tasks
 SearchIntoCustomerInvoices=Customer invoices
+SearchIntoCustomerInvoicesRec=Template invoices
 SearchIntoSupplierInvoices=Vendor invoices
 SearchIntoCustomerOrders=Sales orders
 SearchIntoSupplierOrders=Purchase orders

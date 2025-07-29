@@ -1,7 +1,5 @@
 -- ========================================================================
--- Copyright (C) 2005	Laurent Destailleur	<eldy@users.sourceforge.net>
--- Copyright (C) 2012	Regis Houssin		<regis.houssin@inodbox.com>
--- Copyright (C) 2022 	Juanjo Menent       <jmenent@2byte.es>
+-- Copyright (C) 2025 Frédéric France <frederic.france@free.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,12 +16,10 @@
 --
 -- ========================================================================
 
-create table llx_c_currencies
+create table llx_paiement_extrafields
 (
-  code_iso			varchar(3)  PRIMARY KEY,
-  label				varchar(128) NOT NULL,
-  unicode			varchar(32) DEFAULT NULL,
-  active			tinyint		DEFAULT 1  NOT NULL,
-  max_decimal_unit 	tinyint 	NULL,	-- Number of decimal in this currency for unit prices
-  max_decimal_tot 	tinyint 	NULL	-- Number of decimal in this currency for total prices
-)ENGINE=innodb;
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;

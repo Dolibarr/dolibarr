@@ -164,9 +164,9 @@ class DoliStorage implements TokenStorageInterface
 
 	/**
 	 * 	Load token and other data from a $service
-	 *  Note: Token load are cumulated into array ->tokens when other properties are erased by last loaded token.
+	 *  Note: Token load is cumulated into array $this->tokens but other properties are just erased by the last loaded token.
 	 *
-	 *  @return void
+	 *  @return boolean		True if success and a token exists, false if not
 	 */
 	public function hasAccessToken($service)
 	{
@@ -184,14 +184,21 @@ class DoliStorage implements TokenStorageInterface
 		$sql = "SELECT token, datec, tms, state FROM ".MAIN_DB_PREFIX."oauth_token";
 		$sql .= " WHERE service = '".$this->db->escape($servicepluskeyforprovider)."'";
 		$sql .= " AND entity IN (".getEntity('oauth_token').")";
+
 		$resql = $this->db->query($sql);
 		if (! $resql) {
 			dol_print_error($this->db);
 		}
 		$result = $this->db->fetch_array($resql);
+
 		if ($result) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 			$tokenobj = unserialize(dolDecrypt($result['token']));
+			if ($result['token'] && empty($tokenobj)) {
+				dol_syslog("Error: We found a record for the OAuth token of '.$servicepluskeyforprovider.', we we failed to decrypt it. May be the crypt/decrypt key has been modifier ?", LOG_WARNING);
+				//print "Error: We found a record for the OAuth token of ".$servicepluskeyforprovider.", we we failed to decrypt it. May be the crypt/decrypt key has been modifier ?";
+				return false;
+			}
 			$this->token = dolDecrypt($result['token']);
 			$this->date_creation = $this->db->jdate($result['datec']);
 			$this->date_modification = $this->db->jdate($result['tms']);
