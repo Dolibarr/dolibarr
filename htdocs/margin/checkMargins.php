@@ -232,7 +232,6 @@ if ($search_ref) {
 }
 $sql .= " AND d.buy_price_ht IS NOT NULL";
 
-//$hookmanager->resPrint = '';
 
 $parameters = array();
 $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action);
