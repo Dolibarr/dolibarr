@@ -626,7 +626,7 @@ class FormMail extends Form
 				$out .= '</div>';
 			} elseif (!empty($this->param['models']) && in_array($this->param['models'], array(
 					'propal_send', 'order_send', 'facture_send',
-					'shipping_send', 'fichinter_send', 'supplier_proposal_send', 'order_supplier_send',
+					'shipping_send', 'reception_send', 'fichinter_send', 'supplier_proposal_send', 'order_supplier_send',
 					'invoice_supplier_send', 'thirdparty', 'contract', 'user', 'recruitmentcandidature_send', 'product_send', 'all'
 				))) {
 				// If list of template is empty
@@ -1818,6 +1818,8 @@ class FormMail extends Form
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierInvoice");
 					} elseif ($type_template == 'shipping_send') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendShipping");
+					} elseif ($type_template == 'reception_send') {
+						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendReception");
 					} elseif ($type_template == 'fichinter_send') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendFichInter");
 					} elseif ($type_template == 'actioncomm_send') {
