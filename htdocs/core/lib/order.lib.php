@@ -3,6 +3,7 @@
  * Copyright (C) 2007		Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2010-2012	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010		Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +30,7 @@
  * Prepare array with list of tabs
  *
  * @param   Commande	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function commande_prepare_head(Commande $object)
 {
@@ -131,7 +132,7 @@ function commande_prepare_head(Commande $object)
 
 	$head[$h][0] = DOL_URL_ROOT.'/commande/agenda.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Events");
-	if (isModEnabled('agenda')&& ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$nbEvent = 0;
 		// Enable caching of thirdparty count actioncomm
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
@@ -173,7 +174,7 @@ function commande_prepare_head(Commande $object)
 /**
  *  Return array head with list of tabs to view object information.
  *
- *  @return	array   	    		    head array with tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function order_admin_prepare_head()
 {
@@ -189,6 +190,11 @@ function order_admin_prepare_head()
 	$head[$h][0] = DOL_URL_ROOT.'/admin/order.php';
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'general';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/admin/order_pdf.php';
+	$head[$h][1] = $langs->trans("PDF");
+	$head[$h][2] = 'pdf';
 	$h++;
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'order_admin');
@@ -239,11 +245,11 @@ function getCustomerOrderPieChart($socid = 0)
 	/*
 	 * Statistics
 	 */
-
+	if ($user->socid > 0) $socid = $user->socid;
 	$sql = "SELECT count(c.rowid) as nb, c.fk_statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."commande as c";
-	if (!$user->hasRight('societe', 'client', 'voir')) {
+	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE c.fk_soc = s.rowid";
@@ -251,7 +257,7 @@ function getCustomerOrderPieChart($socid = 0)
 	if ($user->socid) {
 		$sql .= ' AND c.fk_soc = '.((int) $user->socid);
 	}
-	if (!$user->hasRight('societe', 'client', 'voir')) {
+	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " GROUP BY c.fk_statut";
@@ -316,7 +322,7 @@ function getCustomerOrderPieChart($socid = 0)
 			}
 		}
 		if (!empty($conf->use_javascript_ajax)) {
-			$result .= '<tr class="impair"><td align="center" colspan="2">';
+			$result .= '<tr class="oddeven"><td align="center" colspan="2">';
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			$dolgraph = new DolGraph();

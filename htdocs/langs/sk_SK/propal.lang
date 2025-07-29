@@ -23,7 +23,10 @@ AllPropals=Všetky návrhy
 SearchAProposal=Hľadať návrh
 NoProposal=Žiadna ponuka
 ProposalsStatistics=Obchodné Návrh si štatistiky
+NumberOfProposals=Počet návrhov
 NumberOfProposalsByMonth=Číslo podľa mesiaca
+AmountOfProposals=Množstvo návrhov
+AmountOfProposalsHT=Počet návrhov (bez dane)
 AmountOfProposalsByMonthHT=Suma podľa mesiaca (bez dane)
 NbOfProposals=Počet obchodných návrhov
 ShowPropal=Zobraziť návrhu
@@ -77,13 +80,11 @@ AvailabilityTypeAV_1W=1 týždeň
 AvailabilityTypeAV_2W=2 týždne
 AvailabilityTypeAV_3W=3 týždne
 AvailabilityTypeAV_1M=1 mesiac
-
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Zástupca nasledujúce vypracovaného návrhu
 TypeContact_propal_external_BILLING=Zákazník faktúra kontakt
 TypeContact_propal_external_CUSTOMER=Kontakt so zákazníkom nasledujúce vypracovaného návrhu
 TypeContact_propal_external_SHIPPING=Kontakt na zákazníka pre doručenie
-
 # Document models
 CantBeNoSign=nedá sa nastaviť nepodpísané
 CaseFollowedBy=Prípad nasleduje
@@ -122,3 +123,5 @@ SignSociete_rib=Podpísať mandát
 SignPropal=Prijať návrh
 Signed=podpísané
 SignedOnly=Iba podpísané
+ExpeditionSigned=Zásielka podpísaná
+SignExpedition=Podpísať zásielku

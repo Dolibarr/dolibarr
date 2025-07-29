@@ -69,6 +69,7 @@ CreateTableAndPrimaryKey=টেবিল তৈরি করুন %s
 CreateOtherKeysForTable=%s টেবিলের জন্য বিদেশী কী এবং সূচী তৈরি করুন
 OtherKeysCreation=বিদেশী কী এবং সূচী তৈরি
 FunctionsCreation=ফাংশন সৃষ্টি
+CreationOfUser=ব্যবহারকারীর সৃষ্টি
 AdminAccountCreation=প্রশাসক লগইন সৃষ্টি
 PleaseTypePassword=অনুগ্রহ করে একটি পাসওয়ার্ড টাইপ করুন, খালি পাসওয়ার্ড অনুমোদিত নয়!
 PleaseTypeALogin=একটি লগইন টাইপ করুন!
@@ -139,7 +140,7 @@ KeepDefaultValuesDeb=আপনি একটি লিনাক্স প্য�
 KeepDefaultValuesMamp=আপনি DoliMamp থেকে Dolibarr সেটআপ উইজার্ড ব্যবহার করেছেন, তাই এখানে প্রস্তাবিত মানগুলি ইতিমধ্যেই অপ্টিমাইজ করা হয়েছে৷ আপনি কি করছেন তা জানলে তবেই সেগুলি পরিবর্তন করুন।
 KeepDefaultValuesProxmox=আপনি একটি Proxmox ভার্চুয়াল অ্যাপ্লায়েন্স থেকে Dolibarr সেটআপ উইজার্ড ব্যবহার করেছেন, তাই এখানে প্রস্তাবিত মানগুলি ইতিমধ্যেই অপ্টিমাইজ করা হয়েছে৷ আপনি কি করছেন তা জানলে তবেই সেগুলি পরিবর্তন করুন।
 UpgradeExternalModule=এক্সটার্নাল মডিউলের ডেডিকেটেড আপগ্রেড প্রক্রিয়া চালান
-SetAtLeastOneOptionAsUrlParameter=URL-এ প্যারামিটার হিসেবে অন্তত একটি বিকল্প সেট করুন। যেমন: '...repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=URL-এ 'test' অথবা 'confirmed' মান সহ কমপক্ষে একটি বিকল্প প্যারামিটার হিসেবে সেট করুন। উদাহরণস্বরূপ: '...repair.php?standard=confirmed'
 NothingToDelete=পরিষ্কার/মুছে ফেলার কিছু নেই
 NothingToDo=কিছুই করার নাই
 #########
@@ -211,9 +212,12 @@ YouTryInstallDisabledByFileLock=অ্যাপ্লিকেশনটি স�
 YouTryUpgradeDisabledByMissingFileUnLock=অ্যাপ্লিকেশনটি স্ব-আপগ্রেড করার চেষ্টা করেছে, কিন্তু আপগ্রেড প্রক্রিয়াটি বর্তমানে অনুমোদিত নয়৷<br>
 ClickHereToGoToApp=আপনার আবেদনে যেতে এখানে ক্লিক করুন
 ClickOnLinkOrRemoveManualy=যদি একটি আপগ্রেড প্রক্রিয়াধীন থাকে, অনুগ্রহ করে অপেক্ষা করুন৷ না হলে নিচের লিঙ্কে ক্লিক করুন। আপনি যদি সর্বদা এই একই পৃষ্ঠাটি দেখতে পান, তাহলে আপনাকে অবশ্যই নথির ডিরেক্টরিতে install.lock ফাইলটি অপসারণ/পুনঃনামকরণ করতে হবে।
-ClickOnLinkOrCreateUnlockFileManualy=যদি একটি আপগ্রেড প্রক্রিয়াধীন থাকে, অনুগ্রহ করে অপেক্ষা করুন... না হলে, আপনাকে অবশ্যই install.lock ফাইলটি সরিয়ে ফেলতে হবে বা Dolibarr নথি ডিরেক্টরিতে একটি ফাইল upgrade.unlock তৈরি করতে হবে৷
+ClickOnLinkOrCreateUnlockFileManualy=যদি আপগ্রেডের কাজ চলছে, তাহলে অনুগ্রহ করে অপেক্ষা করুন... যদি না হয়, তাহলে আপনাকে Dolibarr ডকুমেন্টস ডিরেক্টরিতে install.lock ফাইলটি সরিয়ে ফেলতে হবে (অথবা আপগ্রেডের জন্য upgrade.unlock ফাইল তৈরি করতে হবে)।
 Loaded=লোড করা হয়েছে
 FunctionTest=ফাংশন পরীক্ষা
 NodoUpgradeAfterDB=ডাটাবেস আপগ্রেড করার পরে বাহ্যিক মডিউল দ্বারা কোন পদক্ষেপের অনুরোধ করা হয়নি
 NodoUpgradeAfterFiles=ফাইল বা ডিরেক্টরি আপগ্রেড করার পরে বহিরাগত মডিউল দ্বারা কোন পদক্ষেপের অনুরোধ করা হয়নি
 MigrationContractLineRank=র‌্যাঙ্ক ব্যবহার করতে চুক্তি লাইন মাইগ্রেট করুন (এবং পুনর্বিন্যাস সক্ষম করুন)
+MigrationProductLotPath=প্রোডাক্ট ব্যাচ ফাইলের পথ স্থানান্তর করুন
+MigrationAccountancyBookkeeping=একটি রেফারেন্স ব্যবহার করার জন্য অ্যাকাউন্টেন্সি বুককিপিং মাইগ্রেট করুন
+InvoiceExportModelsMigration=ইনভয়েস এক্সপোর্ট মডেল মাইগ্রেট করুন

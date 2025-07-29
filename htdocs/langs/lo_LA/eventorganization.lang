@@ -5,32 +5,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = ອົງການຈັດຕັ້ງເຫດການ
 EventOrganizationDescription = ການຈັດກິດຈະ ກຳ ຜ່ານໂຄງການໂມດູນ
 EventOrganizationDescriptionLong= ຈັດການການຈັດຕັ້ງຂອງເຫດການ (ການສະແດງ, ກອງປະຊຸມ, ຜູ້ເຂົ້າຮ່ວມຫຼືລໍາໂພງ, ມີຫນ້າສາທາລະນະສໍາລັບການແນະນໍາ, ການລົງຄະແນນສຽງຫຼືການລົງທະບຽນ)
-#
-# Menu
-#
 EventOrganizationMenuLeft = ຈັດກິດຈະກໍາ
 EventOrganizationConferenceOrBoothMenuLeft = ກອງປະຊຸມຫຼືບູດ
-
 PaymentEvent=ການຈ່າຍເງິນຂອງເຫດການ
-
-#
+EventFee=Event fee
 # Admin page
-#
 NewRegistration=ການລົງທະບຽນ
 EventOrganizationSetup=ການຕັ້ງອົງການຈັດຕັ້ງເຫດການ
 EventOrganization=ອົງການຈັດຕັ້ງເຫດການ
@@ -48,13 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = ແມ່ແບບຂອງອ�
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = ແມ່ແບບຂອງອີເມລ໌ທີ່ຈະໃຊ້ໃນເວລາທີ່ສົ່ງອີເມວຈາກການສັງຫານຫມູ່ "ສົ່ງອີເມວ" ໃນລາຍຊື່ຜູ້ເຂົ້າຮ່ວມ
 EVENTORGANIZATION_FILTERATTENDEES_CAT = ໃນຮູບແບບເພື່ອສ້າງ/ເພີ່ມຜູ້ເຂົ້າຮ່ວມ, ຈໍາກັດລາຍຊື່ຂອງພາກສ່ວນທີສາມໃຫ້ກັບພາກສ່ວນທີສາມໃນປະເພດ.
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = ໃນ​ຮູບ​ແບບ​ການ​ສ້າງ / ເພີ່ມ​ຜູ້​ເຂົ້າ​ຮ່ວມ, ຈໍາ​ກັດ​ບັນ​ຊີ​ລາຍ​ຊື່​ຂອງ​ບຸກ​ຄົນ​ທີ​ສາມ​ກັບ​ບຸກ​ຄົນ​ທີ​ສາມ​ທີ່​ມີ​ລັກ​ສະ​ນະ
-
-#
 # Object
-#
 OrganizedEvent=ການຈັດກິດຈະກຳ
 EventOrganizationConfOrBooth= ກອງປະຊຸມຫຼືບູດ
-EventOrganizationConfOrBoothes=ກອງ​ປະ​ຊຸມ​ຫຼື Boothes​
+EventOrganizationConfOrBoothes=Conferences or Booths
 ManageOrganizeEvent = ຈັດການການຈັດຕັ້ງຂອງເຫດການ
 ConferenceOrBooth = ກອງປະຊຸມຫຼືບູດ
 ConferenceOrBoothTab = ກອງປະຊຸມຫຼືບູດ
@@ -63,10 +50,7 @@ DateOfRegistration = ວັນທີລົງທະບຽນ
 ConferenceOrBoothAttendee = ຜູ້ເຂົ້າຮ່ວມກອງປະຊຸມຫຼືບູດ
 ApplicantOrVisitor=ຜູ້ສະຫມັກຫຼືຜູ້ເຂົ້າຊົມ
 Speaker=ລໍາໂພງ
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = ຄຳ ຮ້ອງຂໍການປະຊຸມຂອງເຈົ້າໄດ້ຮັບແລ້ວ
 YourOrganizationEventBoothRequestWasReceived = ຄຳ ຮ້ອງຂໍຂອງເຈົ້າ ສຳ ລັບບູດໄດ້ຮັບ
 EventOrganizationEmailAskConf = ຄໍາຮ້ອງສະຫມັກສໍາລັບກອງປະຊຸມ
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = ການລົງທະບຽນສ
 EventOrganizationMassEmailAttendees = ການສື່ສານກັບຜູ້ເຂົ້າຮ່ວມ
 EventOrganizationMassEmailSpeakers = ການສື່ສານກັບລໍາໂພງ
 ToSpeakers=ຕໍ່ກັບຜູ້ເວົ້າ
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=ອະນຸຍາດໃຫ້ປະຊາຊົນແນະນໍາກອງປະຊຸມ
 AllowUnknownPeopleSuggestConfHelp=ອະນຸຍາດໃຫ້ຄົນທີ່ບໍ່ຮູ້ຈັກແນະນໍາກອງປະຊຸມທີ່ພວກເຂົາຕ້ອງການເຮັດ
 AllowUnknownPeopleSuggestBooth=ອະນຸຍາດໃຫ້ຄົນມາສະໝັກບູດ
@@ -91,27 +72,26 @@ PriceOfBoothHelp=ລາຄາຈອງເພື່ອຢືນບູດ
 EventOrganizationICSLinkProject=Link ICS for the event
 EventOrganizationICSLink=ເຊື່ອມຕໍ່ ICS ສໍາລັບກອງປະຊຸມ
 ConferenceOrBoothInformation=ຂໍ້ມູນກອງປະຊຸມ ຫຼື Booth
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=ຜູ້ເຂົ້າຮ່ວມ
-ListOfAttendeesOfEvent=ລາຍຊື່ຜູ້ເຂົ້າຮ່ວມຂອງໂຄງການເຫດການ
-DownloadICSLink = ດາວໂຫຼດການເຊື່ອມຕໍ່ ICS
-EVENTORGANIZATION_SECUREKEY = ແກ່ນເພື່ອຮັບປະກັນກຸນແຈສໍາລັບຫນ້າລົງທະບຽນສາທາລະນະເພື່ອແນະນໍາກອງປະຊຸມ
-SERVICE_BOOTH_LOCATION = ການບໍລິການທີ່ໃຊ້ສໍາລັບແຖວໃບເກັບເງິນກ່ຽວກັບສະຖານທີ່ບູດ
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = ການບໍລິການທີ່ໃຊ້ສໍາລັບແຖວໃບແຈ້ງໜີ້ກ່ຽວກັບການສະໝັກສະມາຊິກເຂົ້າຮ່ວມງານໃດໜຶ່ງ
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
+DownloadICSLink=Download ICS file
+EVENTORGANIZATION_SECUREKEY=ແກ່ນເພື່ອຮັບປະກັນກຸນແຈສໍາລັບຫນ້າລົງທະບຽນສາທາລະນະເພື່ອແນະນໍາກອງປະຊຸມ
+SERVICE_BOOTH_LOCATION=ການບໍລິການທີ່ໃຊ້ສໍາລັບແຖວໃບເກັບເງິນກ່ຽວກັບສະຖານທີ່ບູດ
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=ການບໍລິການທີ່ໃຊ້ສໍາລັບແຖວໃບແຈ້ງໜີ້ກ່ຽວກັບການສະໝັກສະມາຊິກເຂົ້າຮ່ວມງານໃດໜຶ່ງ
 NbVotes=ຈໍານວນຄະແນນສຽງ
-
-#
 # Status
-#
 EvntOrgDraft = ຮ່າງ
 EvntOrgSuggested = ແນະນໍາ
 EvntOrgConfirmed = ຢືນຢັນ
 EvntOrgNotQualified = ບໍ່ມີຄຸນສົມບັດ
 EvntOrgDone = ແລ້ວ
 EvntOrgCancelled = ຍົກເລີກ
-
-#
 # Other
-#
 SuggestForm = ໜ້າ ທີ່ແນະ ນຳ
 SuggestOrVoteForConfOrBooth = ຫນ້າສໍາລັບຄໍາແນະນໍາຫຼືການລົງຄະແນນສຽງ
 EvntOrgRegistrationHelpMessage = ທີ່ນີ້, ທ່ານສາມາດລົງຄະແນນສຽງສໍາລັບກອງປະຊຸມຫຼືແນະນໍາໃຫມ່ສໍາລັບເຫດການ. ນອກນັ້ນທ່ານຍັງສາມາດສະຫມັກຂໍເອົາບູດໃນລະຫວ່າງເຫດການ.
@@ -134,6 +114,7 @@ EventType = ປະເພດເຫດການ
 LabelOfBooth=ປ້າຍປ້າຍ
 LabelOfconference=ປ້າຍປະຊຸມ
 ConferenceIsNotConfirmed=ການລົງທະບຽນບໍ່ສາມາດໃຊ້ໄດ້, ກອງປະຊຸມຍັງບໍ່ໄດ້ຢືນຢັນເທື່ອ
+EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=%s ຕ້ອງແມ່ນກ່ອນ %s
 DateMustBeAfterThan=%s ຕ້ອງເປັນຫຼັງຈາກ %s
 MaxNbOfAttendeesReached=ຮອດຈຳນວນຜູ້ເຂົ້າຮ່ວມສູງສຸດແລ້ວ
@@ -175,6 +156,11 @@ DateEndEvent=ວັນທີສິ້ນສຸດຂອງເຫດການ
 ModifyStatus=ແກ້ໄຂສະຖານະ
 ConfirmModifyStatus=ຢືນຢັນການດັດແກ້ສະຖານະພາບ
 ConfirmModifyStatusQuestion=ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການດັດແກ້ %s ບັນທຶກທີ່ເລືອກ?
-RecordsUpdated = %s ອັບເດດບັນທຶກແລ້ວ
-RecordUpdated = ອັບເດດບັນທຶກແລ້ວ
-NoRecordUpdated = ບໍ່ມີການອັບເດດບັນທຶກ
+RecordsUpdated=%s ອັບເດດບັນທຶກແລ້ວ
+RecordUpdated=ອັບເດດບັນທຶກແລ້ວ
+NoRecordUpdated=ບໍ່ມີການອັບເດດບັນທຶກ
+ProfitPerValidatedAttendee=Profit per attendee
+Confirmed=Confirmed
+NotSelected=Not selected
+TheLinkIsAvailableOnTheProjectEventCard=The links to suggest or vote for a conference or apply for a booth is provided into the page of the project/event
+ShowedUp=Showed up

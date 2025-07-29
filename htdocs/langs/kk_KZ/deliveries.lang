@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Жеткізу
 DeliveryRef=Ref жеткізу
-DeliveryCard=Қор түбіртегі
+DeliveryCard=Жеткізу түбіртегі
 DeliveryOrder=Жеткізу түбіртегі
 DeliveryDate=Жеткізіп беру күні
 CreateDeliveryOrder=Жеткізу түбіртегін жасаңыз

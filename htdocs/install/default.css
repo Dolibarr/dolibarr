@@ -52,15 +52,19 @@
 	font-size: 0.9em;
 }
 
+.size12x { font-size: 1.2em !important; }
+.size15x { font-size: 1.5em !important; }
+.size2x { font-size: 2em; }
+.size4x { font-size: 4em !important; }
+
 #divinstall {
 	overflow-x: auto;
 }
 
 body {
-	font-size:14px;
 	font-family: roboto,arial,tahoma,verdana,helvetica;
-	/* background: #fcfcfc; */
 	margin: 15px 30px 10px;
+	font-size: 0.95em;
 }
 
 table.main-inside {

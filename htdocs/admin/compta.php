@@ -6,6 +6,7 @@
  * Copyright (C) 2013-2017 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,12 +32,16 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'compta', 'accountancy'));
-
-if (!$user->admin) {
-	accessforbidden();
-}
 
 $action = GETPOST('action', 'aZ09');
 
@@ -52,11 +57,20 @@ $list = array(
 	'ACCOUNTING_ACCOUNT_SUPPLIER'
 );
 
+if (!$user->admin) {
+	accessforbidden();
+}
+
+if (!isModEnabled('comptabilite')) {
+	accessforbidden('Module not enabled');
+}
+
+
 /*
  * Actions
  */
 
-$accounting_mode = getDolGlobalString('ACCOUNTING_MODE', 'RECETTES-DEPENSES');
+$accounting_mode = getDolGlobalString('ACCOUNTING_MODE', 'CREANCES-DETTES');
 
 if ($action == 'update') {
 	$error = 0;
@@ -120,6 +134,7 @@ if ($action == 'update') {
 	}
 }
 
+
 /*
  * View
  */
@@ -142,13 +157,13 @@ print '<table class="noborder centpercent">';
 // case of the parameter ACCOUNTING_MODE
 
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans('OptionMode').'</td><td>'.$langs->trans('Description').'</td>';
+print '<td colspan="2">'.$langs->trans('OptionMode').'</td>';
 print "</tr>\n";
-print '<tr class="oddeven"><td width="200"><input type="radio" name="accounting_mode" value="RECETTES-DEPENSES"'.($accounting_mode != 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeTrue').'</td>';
-print '<td colspan="2">'.nl2br($langs->trans('OptionModeTrueDesc'));
+print '<tr class="oddeven"><td class="nowraponall"><input type="radio" id="accounting_mode_2" name="accounting_mode" value="CREANCES-DETTES"'.($accounting_mode != 'RECETTES-DEPENSES' ? ' checked' : '').'><label for="accounting_mode_2"> '.$langs->trans('OptionModeVirtual').'</label></td>';
+print '<td class="opacitymedium">'.nl2br($langs->trans('OptionModeVirtualDesc'))."</td></tr>\n";
+print '<tr class="oddeven"><td class="nowraponall"><input type="radio" id="accounting_mode_1" name="accounting_mode" value="RECETTES-DEPENSES"'.($accounting_mode == 'RECETTES-DEPENSES' ? ' checked' : '').'><label for="accounting_mode_1"> '.$langs->trans('OptionModeTrue').'</label></td>';
+print '<td class="opacitymedium">'.nl2br($langs->trans('OptionModeTrueDesc'));
 print "</td></tr>\n";
-print '<tr class="oddeven"><td width="200"><input type="radio" name="accounting_mode" value="CREANCES-DETTES"'.($accounting_mode == 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeVirtual').'</td>';
-print '<td colspan="2">'.nl2br($langs->trans('OptionModeVirtualDesc'))."</td></tr>\n";
 
 print "</table>\n";
 
@@ -159,7 +174,7 @@ print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans('OtherOptions').'</td>';
 print "</tr>\n";
 
-
+/*
 foreach ($list as $key) {
 	print '<tr class="oddeven value">';
 
@@ -172,6 +187,7 @@ foreach ($list as $key) {
 	print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 	print '</td></tr>';
 }
+*/
 
 // Option to include various payment in results
 print '<tr class="oddeven value">'."\n";
@@ -189,7 +205,7 @@ print '</td></tr>';
 
 print "</table>\n";
 
-print '<br><br><div style="text-align:center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Modify').'"></div>';
+print '<br><br><div class="center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Save').'"></div>';
 print '</form>';
 
 // End of page

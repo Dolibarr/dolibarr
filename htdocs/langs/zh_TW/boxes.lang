@@ -112,10 +112,10 @@ BoxTitleSuspenseAccount=未分配的行數
 NumberOfLinesInSuspenseAccount=暫記帳戶中的行數
 SuspenseAccountNotDefined=未定義暫記帳戶
 BoxLastCustomerShipments=上次客戶發貨
-BoxTitleLastCustomerShipments=最新%s筆客戶發貨
+BoxTitleLastCustomerShipments=Latest %s modified customer shipments
 BoxTitleLastLeaveRequests=最新%s筆已修改的休假申請
 NoRecordedShipments=沒有已記錄的客戶發貨
-BoxCustomersOutstandingBillReached=達到最大客戶數
+BoxCustomersOutstandingBillReached=Customers with outstanding limit reached
 # Pages
 UsersHome=使用者與群組首頁
 MembersHome=會員首頁

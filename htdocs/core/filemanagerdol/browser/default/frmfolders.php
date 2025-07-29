@@ -23,6 +23,9 @@ define('NOTOKENRENEWAL', 1); // Disables token renewal
 
 // Load Dolibarr environment
 require '../../../../main.inc.php';
+/**
+ * @var Conf $conf
+ */
 
 top_httphead();
 
@@ -184,6 +187,8 @@ function OpenFolder( folderPath )
 
 function LoadFolders( folderPath )
 {
+	console.log("LoadFolders folderPath="+folderPath);
+
 	// Clear the folders list.
 	oListManager.Clear();
 

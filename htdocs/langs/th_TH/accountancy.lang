@@ -56,6 +56,8 @@ ExportAccountancy=การบัญชีส่งออก
 WarningDataDisappearsWhenDataIsExported=คำเตือน รายการนี้มีเพียงรายการบัญชีที่ยังไม่ได้ส่งออก (วันที่ส่งออกว่างเปล่า) หากคุณต้องการรวมรายการบัญชีที่ส่งออกไปแล้ว ให้คลิกที่ปุ่มด้านบน
 VueByAccountAccounting=ดูตามบัญชีบัญชี
 VueBySubAccountAccounting=ดูตามบัญชีย่อยการบัญชี
+AccountingAccountByDefault=การบัญชีตามค่าเริ่มต้น
+AccountingAccountByDefaultShort=บัญชีตามค่าเริ่มต้น
 
 MainAccountForCustomersNotDefined=บัญชีหลัก (จากผังบัญชี) สำหรับลูกค้าที่ไม่ได้กำหนดไว้ในการตั้งค่า
 MainAccountForSuppliersNotDefined=บัญชีหลัก (จากผังบัญชี) สำหรับผู้จัดจำหน่ายที่ไม่ได้กำหนดไว้ในการตั้งค่า
@@ -64,18 +66,15 @@ MainAccountForVatPaymentNotDefined=บัญชี (จากผังบัญ�
 MainAccountForSubscriptionPaymentNotDefined=บัญชี (จากผังบัญชี) สำหรับการชำระค่าสมาชิกที่ไม่ได้กำหนดไว้ในการตั้งค่า
 MainAccountForRetainedWarrantyNotDefined=บัญชี (จากผังบัญชี) สำหรับการรับประกันคงเหลือที่ไม่ได้กำหนดไว้ในการตั้งค่า
 UserAccountNotDefined=บัญชีการบัญชีสำหรับผู้ใช้ไม่ได้กำหนดไว้ในการตั้งค่า
-
 AccountancyArea=พื้นที่การบัญชี
 AccountancyAreaDescIntro=การใช้งานโมดูลการบัญชีทำได้หลายขั้นตอน:
 AccountancyAreaDescActionOnce=โดยปกติการดำเนินการต่อไปนี้จะดำเนินการเพียงครั้งเดียวเท่านั้น หรือปีละครั้ง...
 AccountancyAreaDescActionOnceBis=ควรดำเนินการขั้นตอนต่อไปเพื่อประหยัดเวลาในอนาคตโดยแนะนำให้คุณใช้บัญชีเริ่มต้นที่ถูกต้องโดยอัตโนมัติเมื่อถ่ายโอนข้อมูลในการบัญชี
 AccountancyAreaDescActionFreq=การดำเนินการต่อไปนี้มักจะดำเนินการทุกเดือน สัปดาห์ หรือวันสำหรับบริษัทขนาดใหญ่มาก...
-
 AccountancyAreaDescJournalSetup=ขั้นตอน %s: ตรวจสอบเนื้อหาของรายการบันทึกประจำวันของคุณจากเมนู %s
 AccountancyAreaDescChartModel=ขั้นตอน %s: ตรวจสอบว่ามีโมเดลผังบัญชีอยู่หรือสร้างขึ้นจากเมนู %s
 AccountancyAreaDescChart=ขั้นตอน %s: เลือกและ|หรือกรอกผังบัญชีของคุณจากเมนู %s
-
-AccountancyAreaDescFiscalPeriod=ขั้นตอน %s: กำหนดปีบัญชีตามค่าเริ่มต้นที่จะรวมรายการบัญชีของคุณ สำหรับสิ่งนี้ ให้ใช้รายการเมนู %s
+AccountancyAreaDescFiscalPeriod=ขั้นตอน %s: กำหนดรอบระยะเวลาบัญชีซึ่งจะกำหนดช่วงวันที่ที่ยอมรับในการสร้างรายการบัญชี สำหรับขั้นตอนนี้ ให้ใช้รายการเมนู %s
 AccountancyAreaDescVat=ขั้นตอนที่ %s: กำหนดบัญชีทางบัญชีสำหรับอัตรา VAT แต่ละรายการ สำหรับสิ่งนี้ ให้ใช้รายการเมนู %s
 AccountancyAreaDescDefault=ขั้นตอน %s: กำหนดบัญชีการบัญชีเริ่มต้น สำหรับสิ่งนี้ ให้ใช้รายการเมนู %s
 AccountancyAreaDescExpenseReport=ขั้นตอน %s: กำหนดบัญชีการบัญชีเริ่มต้นสำหรับรายงานค่าใช้จ่ายแต่ละประเภท สำหรับสิ่งนี้ ให้ใช้รายการเมนู %s
@@ -87,22 +86,21 @@ AccountancyAreaDescMisc=ขั้นตอน %s: กำหนดบัญชี
 AccountancyAreaDescLoan=ขั้นตอน %s: กำหนดบัญชีเริ่มต้นสำหรับสินเชื่อ สำหรับสิ่งนี้ ให้ใช้รายการเมนู %s
 AccountancyAreaDescBank=ขั้นตอน %s: กำหนดบัญชีการบัญชีและรหัสสมุดรายวันสำหรับธนาคารและบัญชีการเงินแต่ละบัญชี สำหรับสิ่งนี้ ให้ใช้รายการเมนู %s
 AccountancyAreaDescProd=ขั้นตอน %s: กำหนดบัญชีการบัญชีในผลิตภัณฑ์/บริการของคุณ สำหรับสิ่งนี้ ให้ใช้รายการเมนู %s
-
 AccountancyAreaDescBind=ขั้นตอนที่ %s: ตรวจสอบการเชื่อมโยงระหว่างบรรทัด %s ที่มีอยู่และบัญชีการบัญชีเสร็จสิ้นแล้ว ดังนั้นแอปพลิเคชันจะสามารถบันทึกธุรกรรมในบัญชีแยกประเภทได้ ได้ในคลิกเดียว การผูกที่ขาดหายไปเสร็จสมบูรณ์ สำหรับสิ่งนี้ ให้ใช้รายการเมนู %s
 AccountancyAreaDescWriteRecords=ขั้นตอนที่ %s: เขียนธุรกรรมลงในบัญชีแยกประเภท โดยไปที่เมนู <strong>%s</strong> แล้วคลิกปุ่ม <strong>%s</strong>
-AccountancyAreaDescAnalyze=STEP %s: Read reportings or generate export files for other bookkeepers.
-AccountancyAreaDescClosePeriod=STEP %s: Close period so we can't transfer anymore data in the same period in a future.
-
+AccountancyAreaDescAnalyze=ขั้นตอน %s: อ่านรายงานหรือสร้างไฟล์ส่งออกสำหรับผู้ทำบัญชีอื่น
+AccountancyAreaDescClosePeriod=ขั้นตอน %s: ปิดช่วงเวลาเพื่อไม่ให้สามารถโอนข้อมูลอีกต่อไปในช่วงเวลาเดียวกันในอนาคต
 TheFiscalPeriodIsNotDefined=ขั้นตอนบังคับในการตั้งค่ายังไม่เสร็จสมบูรณ์ (ไม่ได้กำหนดรอบระยะเวลาทางบัญชี)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=ขั้นตอนบังคับในการตั้งค่ายังไม่เสร็จสมบูรณ์ (ไม่ได้กำหนดสมุดรายวันรหัสบัญชีสำหรับบัญชีธนาคารทั้งหมด)
 Selectchartofaccounts=เลือกผังบัญชีที่ใช้งานอยู่
-CurrentChartOfAccount=Current active chart of account
+CurrentChartOfAccount=แผนภูมิบัญชีที่ใช้งานปัจจุบัน
 ChangeAndLoad=เปลี่ยนและโหลด
 Addanaccount=เพิ่มบัญชีบัญชี
 AccountAccounting=บัญชีการบัญชี
 AccountAccountingShort=บัญชี
 SubledgerAccount=บัญชีแยกประเภทย่อย
 SubledgerAccountLabel=ป้ายกำกับบัญชีแยกประเภทย่อย
+LedgerAccount=บัญชีแยกประเภท
 ShowAccountingAccount=แสดงบัญชีการบัญชี
 ShowAccountingJournal=แสดงสมุดรายวันการบัญชี
 ShowAccountingAccountInLedger=แสดงบัญชีในบัญชีแยกประเภท
@@ -144,8 +142,6 @@ ExpenseReportLines=รายการรายงานค่าใช้จ่�
 ExpenseReportLinesDone=รายงานค่าใช้จ่ายแบบมีขอบเขต
 IntoAccount=ผูกสายกับบัญชีบัญชี
 TotalForAccount=บัญชีการบัญชีทั้งหมด
-
-
 Ventilate=ผูก
 LineId=ไอดีไลน์
 Processing=การประมวลผล
@@ -158,22 +154,23 @@ VentilatedinAccount=ผูกเข้ากับบัญชีบัญชี
 NotVentilatedinAccount=ไม่ผูกพันกับบัญชีบัญชี
 XLineSuccessfullyBinded=%s ผลิตภัณฑ์/บริการที่เชื่อมโยงกับบัญชีบัญชีสำเร็จแล้ว
 XLineFailedToBeBinded=%s ผลิตภัณฑ์/บริการไม่ได้ผูกไว้กับบัญชีบัญชีใดๆ
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=จำนวนบรรทัดสูงสุดในรายการและหน้าการเชื่อมโยง (แนะนำ: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=เริ่มต้นการเรียงลำดับหน้า "การเชื่อมโยงสิ่งที่ต้องทำ" ตามองค์ประกอบล่าสุด
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=เริ่มต้นการเรียงลำดับหน้า "การเชื่อมโยงเสร็จสิ้น" ตามองค์ประกอบล่าสุด
-
 ACCOUNTING_LENGTH_DESCRIPTION=ตัดทอนคำอธิบายผลิตภัณฑ์และบริการในรายการหลังตัวอักษร x (ดีที่สุด = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=ตัดทอนแบบฟอร์มคำอธิบายบัญชีผลิตภัณฑ์และบริการในรายการหลังตัวอักษร x (ดีที่สุด = 50)
 ACCOUNTING_LENGTH_GACCOUNT=ความยาวของบัญชีการบัญชีทั่วไป (หากคุณตั้งค่าเป็น 6 ที่นี่ บัญชี '706' จะปรากฏเป็น '706000' บนหน้าจอ)
 ACCOUNTING_LENGTH_AACCOUNT=ความยาวของบัญชีการบัญชีบุคคลที่สาม (หากคุณตั้งค่าเป็น 6 ที่นี่ บัญชี '401' จะปรากฏเป็น '401000' บนหน้าจอ)
-ACCOUNTING_MANAGE_ZERO=อนุญาตให้จัดการจำนวนศูนย์ที่แตกต่างกันที่ส่วนท้ายของบัญชีการบัญชี ต้องการโดยบางประเทศ (เช่น สวิตเซอร์แลนด์) หากตั้งค่าเป็นปิด (ค่าเริ่มต้น) คุณสามารถตั้งค่าพารามิเตอร์สองตัวต่อไปนี้เพื่อขอให้แอปพลิเคชันเพิ่มศูนย์เสมือนได้
+ACCOUNTING_MANAGE_ZERO=อนุญาตให้จัดการจำนวนศูนย์ที่แตกต่างกันที่ท้ายบัญชีแทนบัญชีที่มีความยาวคงที่
+ACCOUNTING_MANAGE_ZERO2=จำเป็นสำหรับบางประเทศ (เช่น สวิตเซอร์แลนด์) หากปิดใช้งาน (ค่าเริ่มต้น) คุณสามารถตั้งค่าพารามิเตอร์สองตัวต่อไปนี้เพื่อขอให้แอปพลิเคชันเพิ่มศูนย์เสมือน
+ACCOUNTING_BANK_CONCILIATED=โอนเข้าบัญชีเฉพาะรายการที่มีการกระทบยอดในใบแจ้งยอดธนาคารเท่านั้น (โดยค่าเริ่มต้นสามารถยกเลิกการเลือกได้ในแต่ละการโอน)
 BANK_DISABLE_DIRECT_INPUT=ปิดใช้งานการบันทึกธุรกรรมโดยตรงในบัญชีธนาคาร
+ACCOUNTANCY_ER_DATE_RECORD=ใช้วันที่สิ้นสุดรอบระยะเวลารายงานค่าใช้จ่ายเป็นวันที่โอนเข้าบัญชีแทนวันที่บันทึกค่าใช้จ่าย
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=เปิดใช้งานการส่งออกฉบับร่างในสมุดรายวัน
 ACCOUNTANCY_COMBO_FOR_AUX=เปิดใช้งานรายการคอมโบสำหรับบัญชีย่อย (อาจช้าหากคุณมีบุคคลที่สามจำนวนมาก ทำลายความสามารถในการค้นหาส่วนหนึ่งของมูลค่า)
 ACCOUNTING_DATE_START_BINDING=ปิดการใช้งานการผูกและการโอนในการบัญชีเมื่อวันที่อยู่ต่ำกว่าวันที่นี้ (ธุรกรรมก่อนวันที่นี้จะถูกยกเว้นตามค่าเริ่มต้น)
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=ในหน้าการถ่ายโอนข้อมูลเข้าบัญชี งวดใด ที่เลือกไว้ตามค่าเริ่มต้น
-
+ACCOUNTING_LABEL_OPERATION_ON_TRANSFER=เมื่อสร้างบัญชีแล้ว ป้ายการทำงานเริ่มต้น
 ACCOUNTING_SELL_JOURNAL=สมุดรายวันการขาย - การขายและการคืนสินค้า
 ACCOUNTING_PURCHASE_JOURNAL=สมุดรายวันการซื้อ - การซื้อและการคืนสินค้า
 ACCOUNTING_BANK_JOURNAL=สมุดรายวันเงินสด - ใบเสร็จรับเงินและการเบิกจ่าย
@@ -182,40 +179,35 @@ ACCOUNTING_MISCELLANEOUS_JOURNAL=วารสารทั่วไป
 ACCOUNTING_HAS_NEW_JOURNAL=มีวารสารใหม่
 ACCOUNTING_INVENTORY_JOURNAL=สมุดรายวันสินค้าคงคลัง
 ACCOUNTING_SOCIAL_JOURNAL=วารสารสังคม
-
 ACCOUNTING_RESULT_PROFIT=บัญชีผลการบัญชี (กำไร)
 ACCOUNTING_RESULT_LOSS=บัญชีผลการบัญชี(ขาดทุน)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=วารสารปิด
-ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=กลุ่มการบัญชีที่ใช้สำหรับบัญชีงบดุล (คั่นด้วยลูกน้ำ)
-ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=กลุ่มการบัญชีที่ใช้สำหรับงบกำไรขาดทุน (คั่นด้วยลูกน้ำ)
-
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=กลุ่มบัญชีที่ใช้ในการคำนวณงบดุล
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNTHelp=ตั้งค่ารายการกลุ่มบัญชี (ตามที่กำหนดไว้ในแผนภูมิบัญชี) ที่ต้องใช้ในการค้นหาบัญชีทั้งหมดเพื่อคำนวณงบดุล ใช้เครื่องหมายจุลภาคเพื่อคั่นแต่ละค่า<br>ตัวอย่าง: CAPIT,IMMO,STOCK,FINAN,THIRDPARTY
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=กลุ่มบัญชีที่ใช้ในการคำนวณงบกำไรขาดทุน
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENTHelp=ตั้งค่ารายการกลุ่มบัญชี (ตามที่กำหนดไว้ในแผนภูมิบัญชี) ที่ต้องใช้ในการค้นหาบัญชีทั้งหมดเพื่อคำนวณงบกำไรขาดทุน ใช้เครื่องหมายจุลภาคเพื่อคั่นแต่ละค่า<br>ตัวอย่าง: รายได้ ค่าใช้จ่าย
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=บัญชี (จากผังบัญชี) เพื่อใช้เป็นบัญชีสำหรับการโอนเงินผ่านธนาคารในช่วงเปลี่ยนผ่าน
 TransitionalAccount=บัญชีโอนเงินผ่านธนาคารชั่วคราว
-
 ACCOUNTING_ACCOUNT_SUSPENSE=บัญชี (จากผังบัญชี) ที่จะใช้เป็นบัญชีสำหรับเงินที่ไม่ได้ปันส่วนไม่ว่าจะรับหรือจ่าย เช่น เงินที่อยู่ใน "รอ [ing]"
 DONATION_ACCOUNTINGACCOUNT=บัญชี (จากผังบัญชี) เพื่อใช้ลงทะเบียนการบริจาค (โมดูลการบริจาค)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=บัญชี (จากผังบัญชี) ที่จะใช้ในการลงทะเบียนสมัครสมาชิก (โมดูลสมาชิก - หากบันทึกสมาชิกโดยไม่มีใบแจ้งหนี้)
-
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=บัญชี (จากผังบัญชี) เพื่อใช้เป็นบัญชีเริ่มต้นในการลงทะเบียนเงินฝากของลูกค้า
 UseAuxiliaryAccountOnCustomerDeposit=จัดเก็บบัญชีลูกค้าเป็นบัญชีแต่ละบัญชีในบัญชีแยกประเภทบริษัทในเครือสำหรับรายการการชำระเงินดาวน์ (ถ้าปิดใช้งาน บัญชีแต่ละบัญชีสำหรับรายการการชำระเงินดาวน์จะยังคงว่างเปล่า)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=บัญชี (จากผังบัญชี) เพื่อใช้เป็นค่าเริ่มต้น
 UseAuxiliaryAccountOnSupplierDeposit=บัญชีซัพพลายเออร์ของร้านค้าเป็นบัญชีแต่ละบัญชีในบัญชีแยกประเภทบริษัทในเครือสำหรับรายการการชำระเงินดาวน์ (ถ้าปิดใช้งาน บัญชีแต่ละบัญชีสำหรับรายการการชำระเงินดาวน์จะยังคงว่างเปล่า)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=บัญชีบัญชีตามค่าเริ่มต้นเพื่อลงทะเบียนการรับประกันที่ลูกค้าเก็บไว้
-
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=บัญชี (จากผังบัญชี) ที่จะใช้เป็นบัญชีเริ่มต้นสำหรับผลิตภัณฑ์ที่ซื้อภายในประเทศเดียวกัน (ใช้หากไม่ได้กำหนดไว้ในแผ่นผลิตภัณฑ์)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=บัญชี (จากผังบัญชี) ที่จะใช้เป็นบัญชีเริ่มต้นสำหรับผลิตภัณฑ์ที่ซื้อจาก EEC ไปยังประเทศ EEC อื่น (ใช้หากไม่ได้กำหนดไว้ในแผ่นผลิตภัณฑ์)
 ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=บัญชี (จากผังบัญชี) ที่จะใช้เป็นบัญชีเริ่มต้นสำหรับผลิตภัณฑ์ที่ซื้อและนำเข้าจากต่างประเทศอื่น ๆ (ใช้หากไม่ได้กำหนดไว้ในแผ่นผลิตภัณฑ์)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=บัญชี (จากผังบัญชี) ที่จะใช้เป็นบัญชีเริ่มต้นสำหรับผลิตภัณฑ์ที่ขาย (ใช้หากไม่ได้กำหนดไว้ในแผ่นผลิตภัณฑ์)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=บัญชี (จากผังบัญชี) ที่จะใช้เป็นบัญชีเริ่มต้นสำหรับผลิตภัณฑ์ที่ขายจาก EEC ไปยังประเทศ EEC อื่น (ใช้หากไม่ได้กำหนดไว้ในแผ่นผลิตภัณฑ์)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=บัญชี (จากผังบัญชี) ที่จะใช้เป็นบัญชีเริ่มต้นสำหรับผลิตภัณฑ์ที่ขายและส่งออกไปยังต่างประเทศอื่น ๆ (ใช้หากไม่ได้กำหนดไว้ในแผ่นผลิตภัณฑ์)
-
 ACCOUNTING_SERVICE_BUY_ACCOUNT=บัญชี (จากผังบัญชี) ที่จะใช้เป็นบัญชีเริ่มต้นสำหรับบริการที่ซื้อภายในประเทศเดียวกัน (ใช้หากไม่ได้กำหนดไว้ในใบบันทึกบริการ)
 ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=บัญชี (จากผังบัญชี) ที่จะใช้เป็นบัญชีเริ่มต้นสำหรับบริการที่ซื้อจาก EEC ไปยังประเทศ EEC อื่น (ใช้หากไม่ได้กำหนดไว้ในใบบันทึกบริการ)
 ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=บัญชี (จากผังบัญชี) ที่จะใช้เป็นบัญชีเริ่มต้นสำหรับบริการที่ซื้อและนำเข้าจากต่างประเทศอื่น (ใช้หากไม่ได้กำหนดไว้ในใบบันทึกบริการ)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=บัญชี (จากผังบัญชี) ที่จะใช้เป็นบัญชีเริ่มต้นสำหรับบริการที่ขาย (ใช้หากไม่ได้กำหนดไว้ในใบบันทึกบริการ)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=บัญชี (จากผังบัญชี) ที่จะใช้เป็นบัญชีเริ่มต้นสำหรับบริการที่ขายจาก EEC ไปยังประเทศ EEC อื่น (ใช้หากไม่ได้กำหนดไว้ในเอกสารบริการ)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=บัญชี (จากผังบัญชี) ที่จะใช้เป็นบัญชีเริ่มต้นสำหรับบริการที่ขายและส่งออกไปยังต่างประเทศอื่น ๆ (ใช้หากไม่ได้กำหนดไว้ในเอกสารบริการ)
-
 Doctype=ประเภทของเอกสาร
 Docdate=วันที่
 Docref=การอ้างอิง
@@ -229,15 +221,18 @@ Codejournal=วารสาร
 JournalLabel=ป้ายวารสาร
 NumPiece=หมายเลขชิ้นส่วน
 TransactionNumShort=หมายเลข ธุรกรรม
+AccountingReport=รายงานที่กำหนดเอง
 AccountingCategory=กลุ่มบัญชีที่กำหนดเอง
 AccountingCategories=กลุ่มบัญชีที่กำหนดเอง
 GroupByAccountAccounting=จัดกลุ่มตามบัญชีแยกประเภททั่วไป
 GroupBySubAccountAccounting=จัดกลุ่มตามบัญชีแยกประเภทย่อย
+AccountingAccountReportsDesc=คุณสามารถกำหนดรายงานบัญชีบางส่วนได้ที่นี่ รายงานเหล่านี้จะใช้สำหรับรายงานบัญชีส่วนบุคคล
 AccountingAccountGroupsDesc=คุณสามารถกำหนดกลุ่มบัญชีบัญชีบางกลุ่มได้ที่นี่ พวกเขาจะใช้สำหรับรายงานทางบัญชีส่วนบุคคล
 ByAccounts=ตามบัญชี
 ByPredefinedAccountGroups=ตามกลุ่มที่กำหนดไว้ล่วงหน้า
 ByPersonalizedAccountGroups=โดยกลุ่มส่วนบุคคล
-ByYear=โดยปี
+Personalized=ปรับแต่งตามความต้องการ
+NoReportDefined=ไม่มีรายงานส่วนบุคคลที่กำหนดไว้
 NotMatch=ไม่ได้ตั้งค่า
 DeleteMvt=ลบบางบรรทัดออกจากการบัญชี
 DelMonth=เดือนที่จะลบ
@@ -257,6 +252,7 @@ FeeAccountNotDefined=บัญชีค่าธรรมเนียมไม�
 BankAccountNotDefined=ไม่ได้กำหนดบัญชีสำหรับธนาคาร
 CustomerInvoicePayment=การชำระเงินของลูกค้าใบแจ้งหนี้
 ThirdPartyAccount=บัญชีบุคคลที่สาม
+AccountNotDefined=บัญชีไม่ได้ระบุ
 NewAccountingMvt=การทำธุรกรรมใหม่
 NumMvts=ตัวเลขของการทำธุรกรรม
 ListeMvts=รายการความเคลื่อนไหว
@@ -269,6 +265,7 @@ UnknownAccountForThirdparty=บัญชีบุคคลที่สามท�
 UnknownAccountForThirdpartyBlocking=บัญชีบุคคลที่สามที่ไม่รู้จัก ข้อผิดพลาดในการบล็อก
 ThirdpartyAccountNotDefinedOrThirdPartyUnknown=ไม่ได้กำหนดบัญชีแยกประเภทย่อยหรือไม่รู้จักบุคคลที่สามหรือผู้ใช้ เราจะใช้ %s
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=บุคคลที่สามที่ไม่รู้จักและบัญชีแยกประเภทย่อยไม่ได้กำหนดไว้ในการชำระเงิน เราจะคงมูลค่าบัญชีแยกประเภทย่อยให้ว่างเปล่า
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored2=บัญชีแยกประเภทย่อยไม่ได้ระบุหรือบุคคลที่สามหรือผู้ใช้ไม่ทราบ เราจะเก็บค่าบัญชีแยกประเภทย่อยไว้เป็นค่าว่าง
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=ไม่ได้กำหนดบัญชีแยกประเภทย่อยหรือไม่รู้จักบุคคลที่สามหรือผู้ใช้ ข้อผิดพลาดในการบล็อก
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=บัญชีบุคคลที่สามที่ไม่รู้จักและบัญชีรอไม่ได้กำหนดไว้ ข้อผิดพลาดในการบล็อก
 PaymentsNotLinkedToProduct=การชำระเงินไม่เชื่อมโยงกับสินค้า/บริการใดๆ
@@ -276,21 +273,18 @@ OpeningBalance=ยอดเปิด
 ShowOpeningBalance=แสดงยอดคงเหลือเปิด
 HideOpeningBalance=ซ่อนยอดคงเหลือเปิด
 ShowSubtotalByGroup=แสดงผลรวมย่อยตามระดับ
-
 Pcgtype=กลุ่มบัญชี
 PcgtypeDesc=กลุ่มบัญชีถูกใช้เป็นเกณฑ์ 'ตัวกรอง' และ 'การจัดกลุ่ม' ที่กำหนดไว้ล่วงหน้าสำหรับรายงานทางบัญชีบางรายงาน ตัวอย่างเช่น 'รายได้' หรือ 'ค่าใช้จ่าย' ถูกใช้เป็นกลุ่มสำหรับบัญชีการบัญชีของผลิตภัณฑ์เพื่อสร้างรายงานค่าใช้จ่าย/รายได้
 AccountingCategoriesDesc=กลุ่มบัญชีที่กำหนดเองสามารถใช้เพื่อจัดกลุ่มบัญชีบัญชีเป็นชื่อเดียวเพื่อความสะดวกในการใช้ตัวกรองหรือการสร้างรายงานที่กำหนดเอง
-
 Reconcilable=คืนดีกัน
-
+Centralized=บัญชีรวมศูนย์
 TotalVente=Total turnover before tax
 TotalMarge=อัตรากำไรขั้นต้นรวมยอดขาย
-
 DescVentilCustomer=ดูรายการบรรทัดใบแจ้งหนี้ของลูกค้าที่ผูก (หรือไม่) กับบัญชีผลิตภัณฑ์จากผังบัญชีได้ที่นี่
 DescVentilMore=ในกรณีส่วนใหญ่ หากคุณใช้ผลิตภัณฑ์หรือบริการที่กำหนดไว้ล่วงหน้า และคุณตั้งค่าบัญชี (จากผังบัญชี) บนบัตรผลิตภัณฑ์/บริการ แอปพลิเคชันจะสามารถสร้างการเชื่อมโยงทั้งหมดระหว่างบรรทัดใบแจ้งหนี้และบัญชีการบัญชีของแผนภูมิของคุณ ของบัญชีได้ในคลิกเดียวด้วยปุ่ม <strong>"%s"</strong>. หากไม่ได้ตั้งค่าบัญชีบนบัตรผลิตภัณฑ์/บริการ หรือหากคุณยังมีบรรทัดบางบรรทัดที่ไม่ผูกกับบัญชี คุณจะต้องทำการผูกด้วยตนเองจากเมนู "<strong>%s</strong>"
 DescVentilDoneCustomer=ดูรายชื่อบรรทัดใบแจ้งหนี้ของลูกค้าและบัญชีผลิตภัณฑ์จากผังบัญชีได้ที่นี่
 DescVentilTodoCustomer=ผูกบรรทัดใบแจ้งหนี้ที่ไม่ได้ผูกไว้กับบัญชีผลิตภัณฑ์จากผังบัญชี
-ChangeAccount=เปลี่ยนบัญชีผลิตภัณฑ์/บริการ (จากผังบัญชี) สำหรับบรรทัดที่เลือกด้วยบัญชีดังต่อไปนี้
+ChangeAccount=เปลี่ยนบัญชีสินค้า/บริการของบรรทัดที่เลือกด้วย:
 Vide=-
 DescVentilSupplier=ดูรายการบรรทัดใบแจ้งหนี้ของผู้ขายที่ผูกหรือยังไม่ได้ผูกกับบัญชีผลิตภัณฑ์จากผังบัญชี (มองเห็นได้เฉพาะบันทึกที่ยังไม่ได้โอนในการบัญชีเท่านั้น)
 DescVentilDoneSupplier=ดูรายการบรรทัดใบแจ้งหนี้ของผู้จัดจำหน่ายและบัญชีทางบัญชีได้ที่นี่
@@ -298,19 +292,16 @@ DescVentilTodoExpenseReport=ผูกรายการรายงานค่�
 DescVentilExpenseReport=ดูรายการบรรทัดรายงานค่าใช้จ่ายที่ผูก (หรือไม่) กับบัญชีการบัญชีค่าธรรมเนียมได้ที่นี่
 DescVentilExpenseReportMore=หากคุณตั้งค่าบัญชีการบัญชีตามประเภทของบรรทัดรายงานค่าใช้จ่าย แอปพลิเคชันจะสามารถสร้างการเชื่อมโยงทั้งหมดระหว่างบรรทัดรายงานค่าใช้จ่ายของคุณและบัญชีการบัญชีของผังบัญชีของคุณได้ เพียงคลิกเดียวด้วยปุ่ม <strong>"%s"</strong>. หากบัญชีไม่ได้ถูกตั้งค่าไว้ในพจนานุกรมค่าธรรมเนียม หรือหากคุณยังมีบางบรรทัดที่ไม่ได้ผูกกับบัญชีใดๆ คุณจะต้องทำการผูกด้วยตนเองจากเมนู "<strong>%s</strong>"
 DescVentilDoneExpenseReport=ดูรายการรายงานค่าใช้จ่ายและบัญชีการบัญชีค่าธรรมเนียมได้ที่นี่
-
 Closure=ปิดประจำปี
 AccountancyClosureStep1Desc=ดูจำนวนการเคลื่อนไหวต่อเดือนที่ยังไม่ผ่านการตรวจสอบและล็อคได้ที่นี่
-OverviewOfMovementsNotValidated=ภาพรวมการเคลื่อนไหวที่ไม่ผ่านการตรวจสอบและล็อค
+OverviewOfMovementsNotValidated=ภาพรวมของการเคลื่อนไหวที่ยังไม่ได้รับการตรวจสอบและล็อค
 AllMovementsWereRecordedAsValidated=การเคลื่อนไหวทั้งหมดถูกบันทึกว่าผ่านการตรวจสอบและล็อคแล้ว
 NotAllMovementsCouldBeRecordedAsValidated=ไม่สามารถบันทึกการเคลื่อนไหวทั้งหมดว่าผ่านการตรวจสอบและล็อคแล้ว
 ValidateMovements=ตรวจสอบและล็อคการเคลื่อนไหว
 DescValidateMovements=ห้ามแก้ไขหรือลบการเขียน ตัวอักษร และการลบใดๆ ทั้งสิ้น รายการทั้งหมดสำหรับการฝึกจะต้องได้รับการตรวจสอบ มิฉะนั้นจะไม่สามารถปิดได้
-
 ValidateHistory=ผูกโดยอัตโนมัติ
 AutomaticBindingDone=การเชื่อมโยงอัตโนมัติเสร็จสิ้น (%s) - ไม่สามารถเชื่อมโยงอัตโนมัติสำหรับบางบันทึกได้ (%s)
 DoManualBindingForFailedRecord=คุณต้องสร้างลิงก์ด้วยตนเองสำหรับแถว %s ที่ไม่ได้เชื่อมโยงโดยอัตโนมัติ
-
 ErrorAccountancyCodeIsAlreadyUse=เกิดข้อผิดพลาด คุณไม่สามารถลบหรือปิดใช้งานบัญชีนี้ของผังบัญชีได้เนื่องจากมีการใช้งาน
 MvtNotCorrectlyBalanced=การเคลื่อนไหวไม่สมดุลอย่างถูกต้อง เดบิต = %s & เครดิต = %s
 Balancing=การปรับสมดุล
@@ -323,19 +314,21 @@ ChangeBinding=เปลี่ยนการผูกมัด
 Accounted=ลงบัญชีในบัญชีแยกประเภท
 NotYetAccounted=ยังไม่ได้โอนเข้าบัญชี
 ShowTutorial=แสดงบทช่วยสอน
+ClickOnUseTutorialForHelp=ยินดีต้อนรับสู่ส่วนการสร้างบัญชีของคุณ คลิกที่ลิงก์ "%s" เพื่อรับคำแนะนำเกี่ยวกับวิธีการใช้งาน
 NotReconciled=ไม่คืนดีกัน
 WarningRecordWithoutSubledgerAreExcluded=คำเตือน บรรทัดทั้งหมดที่ไม่มีบัญชีแยกประเภทย่อยที่กำหนดไว้จะถูกกรองและแยกออกจากมุมมองนี้
 AccountRemovedFromCurrentChartOfAccount=บัญชีบัญชีที่ไม่มีอยู่ในผังบัญชีปัจจุบัน
-
+WarningThisPageContainsOnlyEntriesTransferredInAccounting=คำเตือน หน้านี้มีเฉพาะรายการที่ถูกโอนเข้าสู่ระบบบัญชีเท่านั้น
+BookkeepingNumRefModelDesc = ส่งคืนหมายเลขอ้างอิงในรูปแบบ yyyyjjnnnn โดยที่ yyyy คือปีและ jj คือรหัสวารสาร ส่วน nnnn คือหมายเลขที่เพิ่มขึ้นตามลำดับโดยอัตโนมัติขึ้นอยู่กับปีและรหัสวารสาร
+BookkeepingNumberingModules = แบบจำลองการนับเลขทางบัญชี
 ## Admin
-BindingOptions=ตัวเลือกการผูก
+BindingOptions=ตัวเลือกสำหรับการโอนย้ายเข้าบัญชี
 ApplyMassCategories=ใช้หมวดหมู่มวล
 AddAccountFromBookKeepingWithNoCategories=บัญชีที่มีอยู่ยังไม่อยู่ในกลุ่มส่วนบุคคล
 CategoryDeleted=หมวดหมู่สำหรับบัญชีการบัญชีถูกลบออกแล้ว
 AccountingJournals=วารสารการบัญชี
 AccountingJournal=สมุดรายวันการบัญชี
 NewAccountingJournal=สมุดรายวันการบัญชีใหม่
-ShowAccountingJournal=แสดงสมุดรายวันการบัญชี
 NatureOfJournal=ลักษณะของวารสาร
 AccountingJournalType1=การดำเนินงานเบ็ดเตล็ด
 AccountingJournalType2=ขาย
@@ -362,7 +355,8 @@ ACCOUNTING_LETTERING_NBLETTERS_DESC=ซอฟต์แวร์บัญชี�
 OptionsAdvanced=ตัวเลือกขั้นสูง
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=เปิดใช้งานการจัดการค่าธรรมเนียมย้อนกลับ VAT จากการซื้อของซัพพลายเออร์
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=เมื่อเปิดใช้งานตัวเลือกนี้ คุณสามารถกำหนดได้ว่าซัพพลายเออร์หรือใบแจ้งหนี้ของผู้จัดจำหน่ายที่กำหนดจะต้องถูกโอนไปยังการบัญชีด้วยวิธีอื่น: เดบิตและวงเงินเครดิตเพิ่มเติมจะถูกสร้างขึ้นในการบัญชีใน 2 บัญชีที่กำหนดจากผังบัญชีที่กำหนดไว้ใน "%s" หน้าการตั้งค่า
-
+ACCOUNTING_ENABLE_TABONTHIRDPARTY=เปิดใช้งานแท็บบนบัตรบุคคลที่สามเพื่อดูบัญชีแยกประเภทย่อย
+ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=เมื่อเปิดใช้งานตัวเลือกนี้ แท็บใหม่จะปรากฏในบัตรของบุคคลที่สามเพื่อดูและจัดการการบัญชีสำหรับบุคคลที่สาม เช่น การกระทบยอด การพิมพ์ และอื่นๆ
 ## Export
 NotExportLettering=อย่าส่งออกตัวอักษรเมื่อสร้างไฟล์
 NotifiedExportDate=ตั้งค่าสถานะบรรทัดที่ยังไม่ได้ส่งออกเป็นส่งออกแล้ว <span class="warning">(หากต้องการแก้ไขบรรทัดที่ตั้งค่าสถานะว่าส่งออกแล้ว คุณจะต้องลบธุรกรรมทั้งหมดและโอนไปยังบัญชีอีกครั้ง)</span>
@@ -372,7 +366,7 @@ DateValidationAndLock=การตรวจสอบวันที่และ�
 ConfirmExportFile=ยืนยันการสร้างไฟล์ส่งออกทางบัญชี ?
 ExportDraftJournal=ส่งออกสมุดรายวันฉบับร่าง
 Modelcsv=รูปแบบของการส่งออก
-Selectmodelcsv=เลือกรูปแบบของการส่งออก
+Selectmodelcsv=เลือกรูปแบบเริ่มต้นสำหรับการส่งออก
 Modelcsv_normal=การส่งออกคลาสสิก
 Modelcsv_CEGID=ส่งออกสำหรับ CEGID Expert Comptabilité
 Modelcsv_COALA=ส่งออกสำหรับ Sage Coala
@@ -394,7 +388,30 @@ Modelcsv_Gestinumv3=ส่งออกสำหรับ Gestinum (v3)
 Modelcsv_Gestinumv5=ส่งออกสำหรับ Gestinum (v5)
 Modelcsv_charlemagne=ส่งออกไปยัง Aplim Charlemagne
 ChartofaccountsId=รหัสผังบัญชี
-
+ExportToPdf = ส่งออกเป็น PDF
+PdfLedgerTitle = บัญชีแยกประเภท
+PdfBalanceTitle = ยอดคงเหลือในบัญชีแยกประเภท
+PdfBookkeepingTitle = วารสาร
+AccountancyBalance = การบัญชีและการเงิน
+AccountancyLedger = สมุดบัญชี
+AccountancyBookkeeping = การบัญชี การทำบัญชี
+PDFAccountancyBalanceDescription = แบบจำลอง PDF สำหรับงบดุลบัญชี
+PDFAccountancyBookkeepingDescription = แบบจำลอง PDF สำหรับการทำบัญชี
+PDFAccountancyLedgerDescription = แบบจำลอง PDF สำหรับสมุดบัญชีแยกประเภท
+PrintDate = พิมพ์วันที่
+PdfTitleAccountNb = บัญชี
+DebitMovement = การเคลื่อนตัวของเดบิต
+CreditMovement = การเคลื่อนตัวของสินเชื่อ
+BalanceAt = ยอดคงเหลือที่ %s
+AccountancyGroupTHIRDPARTY = บุคคลที่สาม
+AccountancyGroupFINAN = การเงิน
+AccountancyGroupSTOCK = สินค้าคงคลัง
+AccountancyGroupCAPIT = เมืองหลวง
+AccountancyGroupIMMO = สินทรัพย์ถาวร
+AccountancyGroupEXPENSE = ค่าใช้จ่าย
+AccountancyGroupINCOME = รายได้
+GrandTotals = ยอดรวมทั้งหมด
+ErrorAccountancyDirectoryNotDefined = ไดเรกทอรีการบัญชีไม่ได้ถูกกำหนด
 ## Tools - Init accounting account on product / service
 InitAccountancy=เริ่มต้นการบัญชี
 InitAccountancyDesc=หน้านี้สามารถใช้เพื่อเริ่มต้นบัญชีการบัญชีสำหรับผลิตภัณฑ์และบริการที่ไม่มีบัญชีการบัญชีที่กำหนดไว้สำหรับการขายและการซื้อ
@@ -423,18 +440,21 @@ AccountRemovedFromGroup=บัญชีถูกลบออกจากกล�
 SaleLocal=ขายในท้องถิ่น
 SaleExport=ขายส่งออก
 SaleEEC=ขายในอีอีซี
-SaleEECWithVAT=การขายใน EEC โดยมี VAT ไม่เป็นโมฆะ ดังนั้นเราจึงถือว่านี่ไม่ใช่การขายภายในชุมชน และบัญชีที่แนะนำคือบัญชีผลิตภัณฑ์มาตรฐาน
-SaleEECWithoutVATNumber=ขายใน EEC โดยไม่มีภาษีมูลค่าเพิ่ม แต่ไม่มีการระบุรหัสภาษีมูลค่าเพิ่มของบุคคลที่สาม เราถอยกลับไปอยู่ในบัญชีสำหรับยอดขายมาตรฐาน คุณสามารถแก้ไขรหัส VAT ของบุคคลที่สาม หรือเปลี่ยนบัญชีผลิตภัณฑ์ที่แนะนำสำหรับการผูกมัดได้ หากจำเป็น
+SaleEECWithVAT=การขายจะอยู่ใน EEC โดยที่ภาษีมูลค่าเพิ่มไม่เป็นค่าว่าง ดังนั้นเราจึงถือว่านี่ไม่ใช่การขายภายในชุมชน และบัญชีที่แนะนำคือบัญชีผลิตภัณฑ์มาตรฐาน
+SaleEECWithoutVATNumber=การขายอยู่ใน EEC โดยไม่มีภาษีมูลค่าเพิ่มแต่ไม่มีการระบุรหัสภาษีมูลค่าเพิ่มของบุคคลที่สาม เราใช้บัญชีสำหรับการขายมาตรฐาน คุณสามารถแก้ไขรหัสภาษีมูลค่าเพิ่มของบุคคลที่สามหรือเปลี่ยนบัญชีผลิตภัณฑ์ที่แนะนำให้ผูกมัดหากจำเป็น
+AnySale=ขายอะไรก็ได้
 ForbiddenTransactionAlreadyExported=ห้าม: ธุรกรรมได้รับการตรวจสอบและ/หรือส่งออกแล้ว
 ForbiddenTransactionAlreadyValidated=ห้าม: ธุรกรรมได้รับการตรวจสอบแล้ว
+DataMustHaveBeenTransferredInAccounting=การโอนข้อมูลในระบบบัญชีจะต้องดำเนินการแล้ว
+IfTransactionHasDueDate=สำหรับธุรกรรมที่เกี่ยวกับเอกสารที่ต้องชำระเงิน
 ## Dictionary
 Range=ช่วงของบัญชีการบัญชี
 Calculated=คำนวณแล้ว
 Formula=สูตร
-
 ## Reconcile
 LetteringAuto=กระทบยอดอัตโนมัติ
 LetteringManual=คู่มือการกระทบยอด
+LetteringPartial=ปรับยอดบางส่วน
 Unlettering=ไม่ประนีประนอม
 UnletteringAuto=ไม่กระทบยอดอัตโนมัติ
 UnletteringManual=คู่มือที่ไม่กระทบยอด
@@ -444,11 +464,10 @@ AccountancyLetteringModifiedSuccessfully=%s แก้ไขการกระท
 AccountancyNoUnletteringModified=ไม่มีการแก้ไขไม่กระทบยอด
 AccountancyOneUnletteringModifiedSuccessfully=แก้ไขการกระทบยอดที่ไม่กระทบยอดสำเร็จแล้ว 1 รายการ
 AccountancyUnletteringModifiedSuccessfully=%s แก้ไขการกระทบยอดสำเร็จแล้ว
-
 ## Closure
-AccountancyClosureStep1=Step 1 : Validate and lock the movements
-AccountancyClosureStep2=Step 2 : Close the fiscal period
-AccountancyClosureStep3=ขั้นตอนที่ 3 : แยกรายการ (ไม่บังคับ)
+AccountancyClosureStep1=ตรวจสอบและล็อคการเคลื่อนไหว
+AccountancyClosureStep2=ปิดรอบบัญชี
+AccountancyClosureStep3=การแยกรายการ (ทางเลือก)
 AccountancyClosureClose=ปิดงวดบัญชี
 AccountancyClosureAccountingReversal=แยกและบันทึกรายการ "กำไรสะสม"
 AccountancyClosureStep3NewFiscalPeriod=รอบระยะเวลาบัญชีถัดไป
@@ -456,7 +475,6 @@ AccountancyClosureGenerateClosureBookkeepingRecords=สร้างรายก�
 AccountancyClosureSeparateAuxiliaryAccounts=เมื่อสร้างรายการ "กำไรสะสม" ให้ระบุรายละเอียดบัญชีแยกประเภทย่อย
 AccountancyClosureCloseSuccessfully=ปิดรอบระยะเวลาบัญชีเรียบร้อยแล้ว
 AccountancyClosureInsertAccountingReversalSuccessfully=แทรกรายการการบัญชีสำหรับ "กำไรสะสม" สำเร็จแล้ว
-
 ## Confirm box
 ConfirmMassUnletteringAuto=การยืนยันการยกเลิกการกระทบยอดอัตโนมัติเป็นกลุ่ม
 ConfirmMassUnletteringManual=การยืนยันการกระทบยอดด้วยตนเองจำนวนมาก
@@ -465,6 +483,9 @@ ConfirmMassDeleteBookkeepingWriting=การยืนยันการลบ�
 ConfirmMassDeleteBookkeepingWritingQuestion=การดำเนินการนี้จะลบธุรกรรมออกจากการบัญชี (รายการบรรทัดทั้งหมดที่เกี่ยวข้องกับธุรกรรมเดียวกันจะถูกลบ) คุณแน่ใจหรือไม่ว่าต้องการลบรายการที่เลือก %s
 AccountancyClosureConfirmClose=คุณแน่ใจหรือไม่ว่าต้องการปิดรอบระยะเวลาบัญชีปัจจุบัน <span class="warning">คุณเข้าใจว่าการปิดรอบระยะเวลาบัญชีเป็นการดำเนินการที่ไม่สามารถย้อนกลับได้ และจะบล็อกการแก้ไขหรือการลบรายการใดๆ ในช่วงเวลานี้อย่างถาวร</span> .
 AccountancyClosureConfirmAccountingReversal=คุณแน่ใจหรือไม่ว่าต้องการบันทึกรายการสำหรับ "กำไรสะสม"
+
+## Warning
+WarningBookkeepingRecordAlreadyExists=ธุรกรรมสำหรับ (doc_type=%s, doc_id=%s, doc_det=%s) ได้รับการบันทึกแล้ว
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=ขั้นตอนการตั้งค่าบังคับบางขั้นตอนยังไม่เสร็จสิ้น โปรดดำเนินการให้เสร็จสิ้น
@@ -483,10 +504,12 @@ AccountancyErrorMismatchBalanceAmount=ยอดคงเหลือ (%s) ไม
 AccountancyErrorLetteringBookkeeping=เกิดข้อผิดพลาดเกี่ยวกับธุรกรรม: %s
 ErrorAccountNumberAlreadyExists=หมายเลขบัญชี %s มีอยู่แล้ว
 ErrorArchiveAddFile=ไม่สามารถใส่ไฟล์ "%s" ในไฟล์เก็บถาวร
-ErrorNoFiscalPeriodActiveFound=ไม่พบรอบระยะเวลาบัญชีที่ใช้งานอยู่
+ErrorNoFiscalPeriodActiveFound=ไม่พบรอบระยะเวลาบัญชีที่ใช้งานอยู่ (พร้อมวันที่เริ่มต้นและสิ้นสุดที่กำหนดไว้) คุณสามารถสร้างรอบระยะเวลาบัญชีได้จากเมนู %s - %s - %s
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=วันที่เอกสารการทำบัญชีไม่อยู่ภายในรอบระยะเวลาทางบัญชีที่ใช้งานอยู่
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=วันที่เอกสารการทำบัญชีอยู่ภายในรอบระยะเวลาบัญชีที่ปิด
-
+Error_BOOKKEEPING_ADDON_NotDefined=ข้อผิดพลาด กฎเกณฑ์สำหรับการอ้างอิงหมายเลขบัญชีทางบัญชีไม่ได้ถูกกำหนดไว้ในการตั้งค่าทั่วไปของโมดูลการบัญชี
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=พยายามแทรกธุรกรรมที่ไม่สมดุลในสมุดบัญชีสำหรับ %s (รหัสการชำระเงิน: %s) ยกเลิกแล้ว น่าจะเป็นข้อผิดพลาดอย่างแน่นอน
+ProductUsage=การใช้งานผลิตภัณฑ์หรือบริการ
 ## Import
 ImportAccountingEntries=รายการบัญชี
 ImportAccountingEntriesFECFormat=รายการบัญชี - รูปแบบ FEC
@@ -508,11 +531,35 @@ FECFormatReconcilableDate=วันที่กระทบยอดได้ (D
 FECFormatValidateDate=ตรวจสอบวันที่ของชิ้นส่วนแล้ว (ValidDate)
 FECFormatMulticurrencyAmount=จำนวนหลายสกุลเงิน (Montantdevise)
 FECFormatMulticurrencyCode=รหัสหลายสกุลเงิน (Idevise)
-
 DateExport=วันที่ส่งออก
 WarningReportNotReliable=คำเตือน รายงานนี้ไม่ยึดตามบัญชีแยกประเภท ดังนั้นจึงไม่มีธุรกรรมที่แก้ไขด้วยตนเองในบัญชีแยกประเภท หากการทำเจอร์นัลของคุณเป็นข้อมูลล่าสุด มุมมองการทำบัญชีจะมีความแม่นยำมากขึ้น
 ExpenseReportJournal=วารสารรายงานค่าใช้จ่าย
 DocsAlreadyExportedAreIncluded=รวมเอกสารที่ส่งออกไปแล้วด้วย
 ClickToShowAlreadyExportedLines=คลิกเพื่อแสดงบรรทัดที่ส่งออกแล้ว
-
 NAccounts=บัญชี %s
+ACCOUNTING_USE_TREASURY_Desc=นี่คือโหมดสำหรับการทำบัญชีของกระทรวงการคลัง เราใช้เฉพาะการชำระเงินและวันที่เท่านั้นในการทำบัญชี
+ACCOUNTING_USE_NON_TREASURY_Desc=นี่คือโหมดสำหรับการทำบัญชีจริง เราใช้ทั้งใบแจ้งหนี้และการชำระเงินในการทำบัญชี
+PieceDesc=การอ้างอิงเอกสารต้นทางที่สร้างธุรกรรมธนาคารนี้ (อ้างอิงใบแจ้งหนี้, อ้างอิงรายงานค่าใช้จ่าย, ...)
+BankTransactionRef=เอกสารอ้างอิงสำหรับการทำธุรกรรมทางธนาคาร (ไม่บังคับ เพราะระบบจะสร้าง ID อัตโนมัติแล้ว)
+## Mass Actions
+ConfirmMassCloneBookkeepingWritingQuestion=การดำเนินการนี้จะโคลนรายการบัญชี (บรรทัดทั้งหมดที่เชื่อมโยงกับรายการบัญชีนี้จะถูกโคลน) คุณแน่ใจหรือไม่ว่าต้องการโคลนระเบียน %s ที่เลือกไว้
+ConfirmMassCloneBookkeepingWriting=ยืนยันการโคลนจำนวนมาก
+ConfirmMassReturnAccountBookkeepingWriting=ยืนยันการสูญพันธุ์ครั้งใหญ่
+ConfirmMassReturnAccountBookkeepingWritingQuestion=การดำเนินการดังกล่าวจะยกเลิกรายการบัญชี (บรรทัดทั้งหมดที่เชื่อมโยงกับรายการบัญชีนี้จะถูกยกเลิก) คุณแน่ใจหรือไม่ว่าต้องการข้ามระเบียนที่เลือก %s
+ConfirmMassAssignAccountBookkeepingWritingQuestion=การกระทำนี้จะเปลี่ยนบัญชีของบรรทัดที่เลือกทั้งหมด
+confirmMassAssignAccountBookkeepingWritingConfirm=ยืนยันการเปลี่ยนแปลงบัญชีรวม
+CloningSuccess=การโคลนธุรกรรมสำเร็จ: %s
+CloningFailed=การโคลนไม่ประสบผลสำเร็จ
+CloneOf=โคลนของ %s
+AssignAccountsSuccess=อัพเดทรายการธุรกรรม
+AssignAccountSuccess=อัปเดตรายการธุรกรรม
+AssignAccount=เปลี่ยนบัญชี
+AssignAccountError=ไม่มีการเปลี่ยนแปลงบัญชี
+NoAccountChangedWithAccountNumber=ธุรกรรมไม่ได้รับการอัพเดตด้วยหมายเลขบัญชี: %s
+NoAccountsChangedWithAccountNumber=ธุรกรรมไม่ได้รับการอัปเดตด้วยหมายเลขบัญชี: %s
+HasAlreadyBeenReversed=ได้กลับทิศไปแล้ว
+ErrorWhileCreating=เกิดข้อผิดพลาดระหว่างการสร้าง %s
+ReturnAccount=กลับ
+Clone=โคลนเนอร์
+AlreadyReturnedAccount=รายการ n°%s ได้รับการย้อนกลับแล้ว
+SuccessReturnedAccount=รายการ n°%s ได้รับการย้อนกลับ

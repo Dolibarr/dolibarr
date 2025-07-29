@@ -2,6 +2,8 @@
 /* Copyright (C) 2013-2015 Jean-François FERRY <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2024      Destailleur Laurent <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +52,9 @@ class ActionsTicket extends CommonHookActions
 	 */
 	public $dao;
 
+	/**
+	 * @var string
+	 */
 	public $mesg;
 
 	/**
@@ -62,10 +67,18 @@ class ActionsTicket extends CommonHookActions
 	 */
 	public $errors = array();
 
-	//! Numero de l'erreur
+	/**
+	 * @var int Error number
+	 */
 	public $errno = 0;
 
+	/**
+	 * @var string
+	 */
 	public $template_dir;
+	/**
+	 * @var string
+	 */
 	public $template;
 
 	/**
@@ -156,10 +169,11 @@ class ActionsTicket extends CommonHookActions
 	/**
 	 * Get action title
 	 *
-	 * @param string 	$action    	Type of action
-	 * @return string			Title of action
+	 * @param 	string 			$action    	Type of action
+	 * @param	Ticket|null		$object		Object ticket
+	 * @return 	string						Title of action
 	 */
-	public function getTitle($action = '')
+	public function getTitle($action = '', $object = null)
 	{
 		global $langs;
 
@@ -168,11 +182,11 @@ class ActionsTicket extends CommonHookActions
 		} elseif ($action == 'edit') {
 			return $langs->trans("EditTicket");
 		} elseif ($action == 'view') {
-			return $langs->trans("TicketCard");
+			return $langs->trans("Ticket").(is_null($object) ? '' : ' '.$object->ref);
 		} elseif ($action == 'add_message') {
 			return $langs->trans("TicketAddMessage");
 		} else {
-			return $langs->trans("TicketsManagement");
+			return $langs->trans("Ticket");
 		}
 	}
 
@@ -199,19 +213,24 @@ class ActionsTicket extends CommonHookActions
 
 		// Initial message
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-		print '<table class="border centpercent margintable bordertopimp">';
+		print '<table class="border tableforfield centpercent margintable">';
 		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
 		print $langs->trans("InitialMessage");
 		print '</td><td>';
 		if ($user->hasRight("ticket", "manage")) {
-			print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_message_init&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a>';
+			if ($action != 'edit_message_init') {
+				print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=edit_message_init&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a>';
+			} else {
+				print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Modify').'">';
+				print ' <input type="submit" class="button button-cancel smallpaddingimp" name="cancel" value="'.$langs->trans("Cancel").'">';
+			}
 		}
 		print '</td></tr>';
 
 		print '<tr>';
 		print '<td colspan="2">';
 		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
-			// MESSAGE
+			// Message
 			$msg = GETPOSTISSET('message_initial') ? GETPOST('message_initial', 'restricthtml') : $object->message;
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 			$uselocalbrowser = true;
@@ -222,21 +241,14 @@ class ActionsTicket extends CommonHookActions
 			$doleditor = new DolEditor('message_initial', $msg, '100%', 250, 'dolibarr_details', 'In', true, $uselocalbrowser, $ckeditorenabledforticket, ROWS_9, '95%');
 			$doleditor->Create();
 		} else {
-			print '<div class="longmessagecut">';
-			//print dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->message), 1, 1, 1, 0)), 1, 1, 'common', 0, 1);
-			print nl2br($object->message);
+			print '<div class="longmessagecut small">';
+			print dolPrintHTML($object->message);
 			print '</div>';
 			/*print '<div class="clear center">';
 			print $langs->trans("More").'...';
 			print '</div>';*/
 
 			//print '<div>' . $object->message . '</div>';
-		}
-		if ($user->hasRight('ticket', 'manage') && $action == 'edit_message_init') {
-			print '<div class="center">';
-			print ' <input type="submit" class="button button-edit small" value="'.$langs->trans('Modify').'">';
-			print ' <input type="submit" class="button button-cancel small" name="cancel" value="'.$langs->trans("Cancel").'">';
-			print '</div>';
 		}
 		print '</td>';
 		print '</tr>';
@@ -252,9 +264,9 @@ class ActionsTicket extends CommonHookActions
 	/**
 	 * View html list of message for ticket
 	 *
-	 * @param 	boolean 	$show_private 	Show private messages
-	 * @param 	boolean 	$show_user    	Show user who make action
-	 * @param	Ticket		$object			Object ticket
+	 * @param 	bool 	$show_private 	Show private messages
+	 * @param 	bool 	$show_user    	Show user who make action
+	 * @param	Ticket	$object			Object ticket
 	 * @return 	void
 	 */
 	public function viewTicketMessages($show_private, $show_user, $object)
@@ -297,7 +309,7 @@ class ActionsTicket extends CommonHookActions
 					|| ($arraymsgs['private'] == "1" && $show_private)
 				) {
 					//print '<tr>';
-					print '<tr class="oddeven">';
+					print '<tr class="oddeven nohover">';
 					print '<td><strong>';
 					print img_picto('', 'object_action', 'class="paddingright"').dol_print_date($arraymsgs['datep'], 'dayhour');
 					print '<strong></td>';
@@ -318,13 +330,14 @@ class ActionsTicket extends CommonHookActions
 								print $arraymsgs['fk_contact_author'];
 							}
 						} else {
-							print $langs->trans('Customer');
+							print '<span class="opacitymedium">'.$langs->trans('Unknown').'</span>';
 						}
 						print '</td>';
 					}
-					print '</td>';
-					print '<tr class="oddeven">';
-					print '<td colspan="2">';
+					print '</tr>';
+
+					print '<tr class="oddeven nohover">';
+					print '<td'.($show_user ? ' colspan="2"' : '').'>';
 					print $arraymsgs['message'];
 
 					//attachment
@@ -334,7 +347,8 @@ class ActionsTicket extends CommonHookActions
 					$sql = 'SELECT ecm.rowid as id, ecm.src_object_type, ecm.src_object_id';
 					$sql .= ', ecm.filepath, ecm.filename, ecm.share';
 					$sql .= ' FROM '.MAIN_DB_PREFIX.'ecm_files ecm';
-					$sql .= " WHERE ecm.filepath = 'agenda/".$arraymsgs['id']."'";
+					$sql .= " WHERE ecm.filepath = 'agenda/".(int) $arraymsgs['id']."'";
+					$sql .= " OR (ecm.agenda_id = ".(int) $arraymsgs['id']." AND ecm.src_object_type = 'ticket' AND ecm.src_object_id = ".(int) $this->dao->id.")";
 					$sql .= ' ORDER BY ecm.position ASC';
 
 					$resql = $this->db->query($sql);
@@ -400,9 +414,9 @@ class ActionsTicket extends CommonHookActions
 	/**
 	 * View list of message for ticket with timeline display
 	 *
-	 * @param 	boolean 	$show_private Show private messages
-	 * @param 	boolean 	$show_user    Show user who make action
-	 * @param	Ticket	$object		 Object ticket
+	 * @param	bool	$show_private	Show private messages
+	 * @param	bool	$show_user		Show user who make action
+	 * @param	Ticket	$object			Object ticket
 	 * @return void
 	 */
 	public function viewTicketTimelineMessages($show_private, $show_user, Ticket $object)
@@ -491,7 +505,7 @@ class ActionsTicket extends CommonHookActions
 
 				print '<a class="butAction butStatus marginbottomonly" href="'.$urlforbutton.'">';
 				print $object->LibStatut($status, 3, 1).' ';
-				//print img_picto($langs->trans($object->labelStatusShort[$status]), 'statut'.$status.'.png@ticket', '', false, 0, 0, '', 'valignmiddle').' ';
+				//print img_picto($langs->trans($object->labelStatusShort[$status]), 'statut'.$status.'.png@ticket', '', 0, 0, 0, '', 'valignmiddle').' ';
 				print $langs->trans($object->labelStatusShort[$status]);
 				print '</a>';
 				print '</div>';
@@ -500,32 +514,5 @@ class ActionsTicket extends CommonHookActions
 		print '</div>';
 		print '</div>';
 		print '<br>';
-	}
-
-	/**
-	 * Hook to add email element template
-	 *
-	 * @param array 		$parameters   Parameters
-	 * @param Ticket		$object       Object for action
-	 * @param string 		$action       Action string
-	 * @param HookManager 	$hookmanager  Hookmanager object
-	 * @return int
-	 */
-	public function emailElementlist($parameters, &$object, &$action, $hookmanager)
-	{
-		global $langs;
-
-		$error = 0;
-
-		if (in_array('admin', explode(':', $parameters['context']))) {
-			$this->results = array('ticket_send' => $langs->trans('MailToSendTicketMessage'));
-		}
-
-		if (!$error) {
-			return 0; // or return 1 to replace standard code
-		} else {
-			$this->errors[] = 'Error message';
-			return -1;
-		}
 	}
 }

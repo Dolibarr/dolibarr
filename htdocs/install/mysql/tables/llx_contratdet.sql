@@ -45,9 +45,8 @@ create table llx_contratdet
   localtax2_type		varchar(10)	  	 NULL, 			   -- localtax2 type
   qty                   real          NOT NULL,            -- quantity
   remise_percent        real          DEFAULT 0,    	   -- pourcentage de remise
-  subprice              double(24,8)  DEFAULT 0,           -- prix unitaire
-  price_ht              real,              		           -- prix final (obsolete)
-  remise                real          DEFAULT 0,    		             -- montant de la remise (obsolete)
+  subprice              double(24,8)  DEFAULT 0,           -- unit price
+  subprice_ttc         	double(24,8)  DEFAULT 0,    	   -- unit price if price was entered including tax
   total_ht              double(24,8)  DEFAULT 0,     		   -- Total HT de la ligne toute quantite et incluant remise ligne et globale
   total_tva             double(24,8)  DEFAULT 0,	   		   -- Total TVA de la ligne toute quantite et incluant remise ligne et globale
   total_localtax1       double(24,8)  DEFAULT 0,	   		   -- Total Local tax 1 de la ligne
@@ -69,7 +68,9 @@ create table llx_contratdet
   fk_multicurrency		integer,
   multicurrency_code			varchar(3),
   multicurrency_subprice		double(24,8) DEFAULT 0,
+  multicurrency_subprice_ttc	double(24,8) DEFAULT 0,
   multicurrency_total_ht		double(24,8) DEFAULT 0,
   multicurrency_total_tva	double(24,8) DEFAULT 0,
-  multicurrency_total_ttc	double(24,8) DEFAULT 0  
+  multicurrency_total_ttc	double(24,8) DEFAULT 0,
+  extraparams				 varchar(255)				 -- to stock other parameters in json format
 )ENGINE=innodb;

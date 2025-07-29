@@ -2,6 +2,7 @@
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
  * Copyright (C) 2003-2010 Frederico Caldeira Knabben
+ * Copyright (C) 2024		MDW	<mdeweerd@users.noreply.github.com>
  *
  * == BEGIN LICENSE ==
  *
@@ -61,7 +62,8 @@ function DoResponse()
 	// File Upload doesn't have to Return XML, so it must be intercepted before anything.
 	if ($sCommand == 'FileUpload') {
 		FileUpload($sResourceType, $sCurrentFolder, $sCommand);
-		return;
+		// @phan-suppress-next-line PhanPluginUnreachableCode
+		return;  // FileUpload exits @phpstan-ignore-line
 	}
 
 	CreateXmlHeader($sCommand, $sResourceType, $sCurrentFolder);

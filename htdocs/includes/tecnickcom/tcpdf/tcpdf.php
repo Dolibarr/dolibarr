@@ -19060,6 +19060,7 @@ class TCPDF {
 					break;
 				}
 				$imgsrc = $tag['attribute']['src'];
+				$reg = array();	// @CHANGE Avoid warning
 				if ($imgsrc[0] === '@') {
 					// data stream
 					$imgsrc = '@'.base64_decode(substr($imgsrc, 1));

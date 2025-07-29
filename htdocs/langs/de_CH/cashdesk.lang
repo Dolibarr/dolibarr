@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - cashdesk
-CashDesk=Kasse
 CashDeskBankCheque=Bankkonto(Scheckzahlung)
 CashdeskShowServices=Verkauf von Dienstleistungen
 TotalTicket=Gesamtanzahl Ticket
