@@ -219,6 +219,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."facture as f ";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."facturedet as d ON d.fk_facture = f.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
 $sql .= " WHERE f.fk_statut NOT IN (".$db->sanitize(implode(', ', $invoice_status_except_list)).")";
+
 $sql .= " AND f.entity IN (".getEntity('invoice').") ";
 if (!empty($startdate)) {
 	$sql .= " AND f.datef >= '".$db->idate($startdate)."'";
@@ -230,6 +231,17 @@ if ($search_ref) {
 	$sql .= natural_search('f.ref', $search_ref);
 }
 $sql .= " AND d.buy_price_ht IS NOT NULL";
+
+global $hookmanager;
+
+$hookmanager->resPrint = '';
+$parameters = array();
+$hookmanager->executeHooks('checkMarginWhereAppend', $parameters, $object, $action);
+
+if (!empty($hookmanager->resPrint)) {
+	$sql .= ' ' . $hookmanager->resPrint;
+}
+
 $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
