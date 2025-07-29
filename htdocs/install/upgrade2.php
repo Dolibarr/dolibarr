@@ -52,6 +52,18 @@ if (!file_exists($conffile)) {
 	print 'Error: Dolibarr config file was not found. This may means that Dolibarr is not installed yet. Please call the page "/install/index.php" instead of "/install/upgrade.php").';
 }
 require_once $conffile;
+/**
+ * @var Conf $conf
+ * @var Translate $langs
+ *
+ * @var string	$dolibarr_main_db_type
+ * @var string	$dolibarr_main_db_host
+ * @var string	$dolibarr_main_db_port
+ * @var string	$dolibarr_main_db_name
+ * @var string	$dolibarr_main_db_user
+ * @var string	$dolibarr_main_db_pass
+ * @var string	$dolibarr_main_document_root
+ */
 require_once $dolibarr_main_document_root.'/compta/facture/class/facture.class.php';
 require_once $dolibarr_main_document_root.'/comm/propal/class/propal.class.php';
 require_once $dolibarr_main_document_root.'/contrat/class/contrat.class.php';
@@ -64,13 +76,7 @@ require_once $dolibarr_main_document_root.'/core/lib/files.lib.php';
 
 global $langs;
 
-/**
- * @var Conf $conf
- * @var Translate $langs
- */
 
-$grant_query = '';
-$step = 2;
 $error = 0;
 
 

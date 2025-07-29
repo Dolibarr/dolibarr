@@ -23,9 +23,10 @@
  * \brief      Page to make custom reports. Page can also be used alone or as a tab among other tabs of an object
  *
  * To include this tool into another PHP page:
+ *
  * define('USE_CUSTOM_REPORT_AS_INCLUDE', 1);
  * define('MAIN_DO_NOT_USE_JQUERY_MULTISELECT', 1);
- * define('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY', 1);	// TODO Use a variable
+ * define('MAIN_CUSTOM_REPORT_KEEP_GRAPH_ONLY', 1);		// TODO Use a variable
  * $SHOWLEGEND = 0;
  * $search_xaxis = array('t.column');
  * $customreportkey='abc';
@@ -39,10 +40,11 @@
  * @var Translate $langs
  * @var User $user
  *
- * @var ?int[]	$toselect  			Items selected on page, only used to see if not empty here
- * @var ?int	$SHOWLEGEND			Show legend or not
- * @var	string	$customreportkey	Custom report key
- * @var string	$customsql			Custom SQL
+ * @var ?int[]		$toselect  			Items selected on page, only used to see if not empty here
+ * @var ?int		$SHOWLEGEND			Show legend or not
+ * @var	string		$customreportkey	Custom report key
+ * @var string		$customsql			Custom SQL
+ * @var ?string[]	$search_groupby		Array with the third dimension
  */
 '
 @phan-var-force ?int[] $toselect
@@ -597,11 +599,11 @@ if (count($search_groupby)) {
 //var_dump($arrayofvaluesforgroupby);exit;
 
 
-$tmparray = dol_getdate(dol_now());
-$endyear = $tmparray['year'];
-$endmonth = $tmparray['mon'];
-$datelastday = dol_get_last_day($endyear, $endmonth, 1);
-$startyear = $endyear - 2;
+//$tmparray = dol_getdate(dol_now());
+//$endyear = $tmparray['year'];
+//$endmonth = $tmparray['mon'];
+//$datelastday = dol_get_last_day($endyear, $endmonth, 1);
+//$startyear = $endyear - 2;
 
 $param = '';
 
@@ -924,6 +926,7 @@ if (!empty($search_measures) && !empty($search_xaxis)) {
 	// Add LEFT JOIN for all tables mentioned into filter
 	if (!empty($search_component_params_hidden)) {
 		// Get all fields used into the filter
+		$matches = array();
 		preg_match_all('/\b(t[\w]*_[\w]*)\.(\w+(-\w+)?)/', $search_component_params_hidden, $matches);
 		$fieldsUsedInFilter = array_unique($matches[0]);
 

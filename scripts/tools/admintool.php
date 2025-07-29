@@ -73,6 +73,8 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
+ *
+ * @var string $dolibarr_main_db_pass
  */
 
 // Check parameters
