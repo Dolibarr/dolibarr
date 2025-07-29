@@ -43,7 +43,7 @@ function member_prepare_head(Adherent $object)
 	$head[$h][2] = 'general';
 	$h++;
 
-	if ((!empty($conf->ldap->enabled) && getDolGlobalString('LDAP_MEMBER_ACTIVE'))
+	if ((isModEnabled('ldap') && getDolGlobalString('LDAP_MEMBER_ACTIVE'))
 		&& (!getDolGlobalString('MAIN_DISABLE_LDAP_TAB') || !empty($user->admin))) {
 		$langs->load("ldap");
 
@@ -193,7 +193,7 @@ function member_type_prepare_head(AdherentType $object)
 		$h++;
 	}
 
-	if ((!empty($conf->ldap->enabled) && getDolGlobalString('LDAP_MEMBER_TYPE_ACTIVE'))
+	if ((isModEnabled('ldap') && getDolGlobalString('LDAP_MEMBER_TYPE_ACTIVE'))
 		&& (!getDolGlobalString('MAIN_DISABLE_LDAP_TAB') || !empty($user->admin))) {
 		$langs->load("ldap");
 

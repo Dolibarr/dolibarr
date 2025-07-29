@@ -4,38 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Recrutare personal
 # Module description 'ModuleRecruitmentDesc'
-ModuleRecruitmentDesc =  Gestionează și urmărește campaniile de recrutare pentru joburile noi 
-
-#
+ModuleRecruitmentDesc =  Gestionează și urmărește campaniile de recrutare pentru joburile noi
 # Admin page
-#
 RecruitmentSetup = Configurare modul Recrutare personal
 RecruitmentSetupPage = Introdu aici setările pentru opţiunile principale ale modulului Recrutare personal
 RecruitmentArea=Recrutare personal
 PublicInterfaceRecruitmentDesc=Paginile publice de locuri de muncă sunt adrese URL publice pentru a afișa și răspunde la joburile deschise. Există o legătură diferită pentru fiecare job deschis, găsit pe fiecare fișă de job.
 EnablePublicRecruitmentPages=Activați paginile publice cu joburile disponibile
 
-#
-# About page
-#
-RecruitmentAbout = Despre modulul Recrutare personal
-RecruitmentAboutPage = Despre modulul Recrutări personal
 NbOfEmployeesExpected=Necesar număr angajaţi
 JobLabel=Denumire job
 WorkPlace=Loc de muncă
@@ -47,7 +34,6 @@ PositionToBeFilled=Funcţie
 PositionsToBeFilled=Joburi disponibile
 ListOfPositionsToBeFilled=Lista posturilor disponibile
 NewPositionToBeFilled=Posturi disponibile noi
-
 JobOfferToBeFilled=Posturi rămase neocupate
 ThisIsInformationOnJobPosition=Informaţii despre oferta de job
 ContactForRecruitment=Contact pentru recrutare
@@ -77,4 +63,4 @@ WeAreRecruiting=Recrutăm. Aceasta este o listă de posturi vacante care trebuie
 NoPositionOpen=Niciun post vacant la acest moment
 ConfirmClose=Confirmare anulare
 ConfirmCloseAsk=Sigur vrei să anulezi această candidatură de recrutare
-recruitment=Recrutare personal
+Recruitment=Recrutare

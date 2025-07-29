@@ -2,6 +2,7 @@
 IdAgenda=Ereignis-ID
 Actions=Ereignisse
 Agenda=Agenda
+AgendaEvents=Agenda-Ereignisse
 TMenuAgenda=Agenda
 Agendas=Agenden
 LocalAgenda=Standard-Kalender
@@ -21,7 +22,6 @@ MenuDoneMyActions=Meine abgeschlossenen Termine
 ListOfEvents=Liste der Ereignisse (Standardkalender)
 ActionsAskedBy=Ereignisse eingetragen von
 ActionsToDoBy=Termin/Aufgabe zugewiesen an
-ActionsDoneBy=Termine erledigt von
 ActionAssignedTo=Ereignis zugewiesen an
 ViewCal=Monatsansicht
 ViewDay=Tagesansicht
@@ -45,6 +45,7 @@ PropalClosedRefusedInDolibarr=Angebot %s abgelehnt
 PropalValidatedInDolibarr=Angebot %s freigegeben
 PropalBackToDraftInDolibarr=Angebot %s zurück in den Entwurfsstatus
 PropalClassifiedBilledInDolibarr=Angebot %s als fakturiert markiert
+InvoiceCreatedInDolibarr=Rechnung %s erstellt
 InvoiceValidatedInDolibarr=Rechnung %s freigegeben
 InvoiceValidatedInDolibarrFromPos=Rechnung %s von POS validiert
 InvoiceBackToDraftInDolibarr=Rechnung %s in den Entwurf Status zurücksetzen
@@ -135,12 +136,14 @@ AgendaModelModule=Dokumentvorlagen für Ereignisse
 DateActionStart=Beginn
 DateActionEnd=Ende
 AgendaUrlOptions1=Sie können die Ausgabe über folgende Parameter filtern:
-AgendaUrlOptions3=<b>logina=%s</b> begrenzt die Ausgabe auf den Benutzer <b>%s</b> erstellte Ereignissen.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> begrenzt die Ausgabe auf dem Benutzer <b>%s</b> nicht als Eigentümer zugewiesene Aktionen.
+AgendaUrlOptions3=<b>logina=%s</b>, um die Ausgabe auf Aktionen zu beschränken, die einem Benutzer <b>%s</b> zugeordnet sind (verwenden Sie <b>logina=!%s</b> für Ereignisse, die dem Benutzer nicht zugeordnet sind).
 AgendaUrlOptions4=<b>logint=%s</b> begrenzt die Ausgabe auf den Benutzer <b>%s</b> (Eigentümer und andere) zugewiesene Aktionen.
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> um nur Aktionen zum Projekt <b> __PROJECT_ID__</b> auszugeben.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> um automatische Events auszuschliessen.
+AgendaUrlOptionsType=<b>actiontype=%s</b> um entweder automatische oder manuelle Ereignisse zu erhalten
+AgendaUrlOptionsCode=<b>actioncode=%s</b> um nur Ereignisse mit einem bestimmten Code abzurufen
 AgendaUrlOptionsIncludeHolidays=<b> includeholidays = 1 </b>, um Ereignisse von Feiertagen einzuschließen.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> zur Beschränkung auf Ereignisse in den letzten %s Tagen (Standard ist %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> zur Begrenzung auf die letzten 50 Ereignisse (Standard und Maximum ist %s).
 AgendaShowBirthdayEvents=Geburtstage der Kontakte
 AgendaHideBirthdayEvents=Geburtstage von Kontakten nicht anzeigen
 Busy=Beschäftigt
@@ -150,13 +153,13 @@ DefaultWorkingHours=Reguläre Arbeitszeit pro Tag (z.B. 9-17)
 # External Sites ical
 ExportCal=Kalender exportieren
 ExtSites=Importieren von externen Kalendern
-ExtSitesEnableThisTool=Zeige externe Kalender (im globalen Setup definiert) in der Agenda. \nBetrifft nicht benutzerdefinierte externe Kalender. 
+ExtSitesEnableThisTool=Zeige externe Kalender (im globalen Setup definiert) in der Agenda. \nBetrifft nicht benutzerdefinierte externe Kalender.
 ExtSitesNbOfAgenda=Anzahl der Kalender
 AgendaExtNb=Kalender Nr. %s
 ExtSiteUrlAgenda=URL Adresse um .ical Datei zu erreichen
 ExtSiteNoLabel=Keine Beschreibung
 VisibleTimeRange=Sichtbare Stunden Bereich
-VisibleDaysRange=Sichtbare Tage Bereich 
+VisibleDaysRange=Sichtbare Tage Bereich
 AddEvent=Ereignis erstellen
 MyAvailability=Meine Verfügbarkeit
 ActionType=Ereignistyp
@@ -202,3 +205,8 @@ BookingSuccessfullyBooked=Ihre Buchung wurde gespeichert
 BookingReservationHourAfter=Wir bestätigen die Terminvereinbarung an folgendem Datum: %s
 BookcalBookingTitle=Online-Terminvereinbarung
 Transparency = Transparenz
+ReadMore = Mehr anzeigen
+ReadLess = Weniger anzeigen
+RecurringEvent=Wiederkehrendes Ereignis
+EventPartOfARecurringSerie=Das Ereignis ist Teil einer wiederkehrenden Serie mit ID %s
+BookCalSystem=Online-Buchung

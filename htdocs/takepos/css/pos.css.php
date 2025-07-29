@@ -119,6 +119,10 @@ button.calcbutton {
 	border-radius: 3px;
 }
 
+div.wrapper, div.wrapper2 {
+	border-radius: 5px;
+}
+
 button.calcbutton2 {
 	color: #fff;
 	background-color: #5555AA;

@@ -62,7 +62,6 @@ if (empty($dolibarr_nocache)) {
 @import "pico.css.php";
 @import "mixin.css";
 @import "login.css";
-@import "./themes/custom.css.php";
 
 /**
 This file car overwrite default pico css
@@ -110,6 +109,10 @@ ul.menu-entries li {
 }
 ul.menu-entries-alt {
 	display: none;
+}
+
+.maxwidthdate {
+	max-width: 110px;
 }
 
 @media (max-width: 576px) {

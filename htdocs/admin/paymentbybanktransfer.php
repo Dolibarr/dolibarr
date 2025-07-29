@@ -4,6 +4,8 @@
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2019      Markus Welters       <markus@welters.de>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.p
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "withdrawals"));
 
@@ -46,6 +56,7 @@ $type = 'paymentorder';
 /*
  * Actions
  */
+$error = 0;
 
 if ($action == "set") {
 	$db->begin();
@@ -70,7 +81,7 @@ if ($action == "set") {
 		if (! $res > 0) $error++;
 		$res = dolibarr_set_const($db, "PRELEVEMENT_BIC", $account->bic,'chaine',0,'',$conf->entity);
 		if (! $res > 0) $error++;
-		$res = dolibarr_set_const($db, "PRELEVEMENT_RAISON_SOCIALE", $account->proprio,'chaine',0,'',$conf->entity);
+		$res = dolibarr_set_const($db, "PRELEVEMENT_RAISON_SOCIALE", $account->owner_address,'chaine',0,'',$conf->entity);
 		if (! $res > 0) $error++;
 		*/
 	} else {
@@ -104,7 +115,9 @@ if ($action == "set") {
 		if (!($res > 0)) {
 			$error++;
 		}
-	} elseif (!$error) {
+	}
+
+	if (!$error) {
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
@@ -152,7 +165,7 @@ print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td></td>';
 print "</tr>";
 
 // Bank account (from Banks module)
@@ -174,7 +187,7 @@ print '</td></tr>';
 print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("ResponsibleUser").'</td>';
 print '<td>';
 print img_picto('', 'user', 'class="pictofixedwidth"');
-print $form->select_dolusers($conf->global->PAYMENTBYBANKTRANSFER_USER, 'PAYMENTBYBANKTRANSFER_USER', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'minwidth200 maxwidth500');
+print $form->select_dolusers($conf->global->PAYMENTBYBANKTRANSFER_USER, 'PAYMENTBYBANKTRANSFER_USER', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'minwidth200 maxwidth500');
 print '</td>';
 print '</tr>';
 
@@ -352,7 +365,7 @@ foreach ($dirmodels as $reldir)
 								}
 								else
 								{
-									print img_object($langs->trans("PreviewNotAvailable"),'generic');
+									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"),'generic');
 								}
 								print '</td>';
 
@@ -435,7 +448,7 @@ if (isModEnabled('notification'))
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("User").'</td>';
-	print '<td>'.$langs->trans("Value").'</td>';
+	print '<td></td>';
 	print '<td class="right">'.$langs->trans("Action").'</td>';
 	print "</tr>\n";
 

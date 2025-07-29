@@ -1,6 +1,9 @@
 <?php
+
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +39,7 @@ $langs->load("dict");
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
@@ -44,9 +47,9 @@ $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 /**
  * Class for PHPUnit tests
  *
- * @backupGlobals disabled
+ * @backupGlobals          disabled
  * @backupStaticAttributes enabled
- * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
+ * @remarks                backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
 class SocieteTest extends CommonClassTest
 {
@@ -74,7 +77,7 @@ class SocieteTest extends CommonClassTest
 			die(1);
 		}
 
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
+		$db->begin();    // This is to have all actions inside a transaction even if test launched without suite.
 
 		print __METHOD__."\n";
 	}
@@ -94,6 +97,10 @@ class SocieteTest extends CommonClassTest
 
 		$localobject = new Societe($db);
 		$localobject->initAsSpecimen();
+
+		$localobject->country_id = 0;
+		$localobject->country_code = 'ES';
+
 		$result = $localobject->create($user);
 
 		print __METHOD__." result=".$result."\n";
@@ -105,10 +112,10 @@ class SocieteTest extends CommonClassTest
 	/**
 	 * testSocieteFetch
 	 *
-	 * @param   int     $id             Company id
-	 * @return  Societe $localobject    Company
+	 * @param  int $id Company id
+	 * @return Societe $localobject    Company
 	 *
-	 * @depends	testSocieteCreate
+	 * @depends testSocieteCreate
 	 * The depends says test is run only if previous is ok
 	 */
 	public function testSocieteFetch($id)
@@ -134,9 +141,9 @@ class SocieteTest extends CommonClassTest
 	/**
 	 * testSocieteUpdate
 	 *
-	 * @param   Societe $localobject    Company
-	 * @return  Societe $localobject    Company
-	*
+	 * @param  Societe $localobject Company
+	 * @return Societe $localobject    Company
+	 *
 	 * @depends testSocieteFetch
 	 * The depends says test is run only if previous is ok
 	 */
@@ -206,8 +213,8 @@ class SocieteTest extends CommonClassTest
 	/**
 	 * testIdProfCheck
 	 *
-	 * @param   Societe $localobject    Company
-	 * @return  Societe $localobject    Company
+	 * @param  Societe $localobject Company
+	 * @return Societe $localobject    Company
 	 *
 	 * @depends testSocieteUpdate
 	 * The depends says test is run only if previous is ok
@@ -261,8 +268,8 @@ class SocieteTest extends CommonClassTest
 	/**
 	 * testSocieteOther
 	 *
-	 * @param   Societe $localobject    Company
-	 * @return  int     $id             Id of company
+	 * @param  Societe $localobject Company
+	 * @return int     $id             Id of company
 	 *
 	 * @depends testIdProfCheck
 	 * The depends says test is run only if previous is ok
@@ -321,8 +328,8 @@ class SocieteTest extends CommonClassTest
 	/**
 	 * testGetOutstandingBills
 	 *
-	 * @param   int     $id     Id of company
-	 * @return  int
+	 * @param  int $id Id of company
+	 * @return int
 	 *
 	 * @depends testSocieteOther
 	 * The depends says test is run only if previous is ok
@@ -350,8 +357,8 @@ class SocieteTest extends CommonClassTest
 	/**
 	 * testSocieteDelete
 	 *
-	 * @param   int     $id     Id of company
-	 * @return  int
+	 * @param  int $id Id of company
+	 * @return int
 	 *
 	 * @depends testGetOutstandingBills
 	 * The depends says test is run only if previous is ok
@@ -378,7 +385,7 @@ class SocieteTest extends CommonClassTest
 	/**
 	 * testSocieteGetFullAddress
 	 *
-	 * @return  int     $id             Id of company
+	 * @return int     $id             Id of company
 	 */
 	public function testSocieteGetFullAddress()
 	{
@@ -470,8 +477,95 @@ class SocieteTest extends CommonClassTest
 		$result = $soc1->fetch($soc1_id);
 		$this->assertLessThanOrEqual($result, 0);
 
+		// Clean data for next tests
+		$soc1->delete($soc1_id);
+		$soc2->delete($soc2_id);
+
 		print __METHOD__." result=".$result."\n";
 
+		return $result;
+	}
+
+	/**
+	 * testFindNearest
+	 *
+	 * @return int
+	 */
+	public function testSocieteFindNearest()
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+		$localobject = new Societe($db);
+
+		$soc1 = new Societe($db);
+		$soc1->initAsSpecimen();
+		$soc1->name = "Thirdparty Name Specimen";
+		$soc1->barcode = "123456";
+		$soc1->name_alias = "Thirdparty Name Specimen Alias";
+		$soc1->code_client = -1;
+		$soc1->code_fournisseur = -1;
+		$soc1_id = $soc1->create($user);
+
+		$result = $localobject->findNearest($soc1_id);
+		$this->assertEquals($soc1_id, $result);
+
+		// Test on bad values
+		$result = $localobject->findNearest(0, 'Bad REF', 'Bad REF EXT', 'bad idprof1', 'bad idprof2', 'bad idprof3', 'bad idprof4', 'bad idprof5', 'bad idprof6', 'bad email', 'BAD REF ALIAS', 0, 0);
+		$this->assertEquals(0, $result);
+
+		// Test on good values
+		$result = $localobject->findNearest(0, $soc1->name, $soc1->ref_ext, $soc1->barcode, $soc1->idprof1, $soc1->idprof2, $soc1->idprof3, $soc1->idprof4, $soc1->idprof5, $soc1->idprof6, $soc1->email, $soc1->name_alias, $soc1->client, $soc1->fournisseur);
+		$this->assertEquals($soc1_id, $result);
+
+		// Test with Barcode
+		$result = $localobject->findNearest(0, '', '', $soc1->barcode);
+		$this->assertEquals($soc1_id, $result);
+
+		// Test with profids
+		$result = $localobject->findNearest(0, '', '', '', $soc1->idprof1, 'bad idprof2', 'bad idprof3', 'bad idprof4', 'bad idprof5', 'bad idprof6', '', '', $soc1->client, $soc1->fournisseur);
+		$this->assertEquals($soc1_id, $result);
+		$result = $localobject->findNearest(0, '', '', '', 'bad idprof1', $soc1->idprof2, 'bad idprof3', 'bad idprof4', 'bad idprof5', 'bad idprof6', '', '', $soc1->client, $soc1->fournisseur);
+		$this->assertEquals($soc1_id, $result);
+		$result = $localobject->findNearest(0, '', '', '', 'bad idprof1', 'bad idprof2', $soc1->idprof3, 'bad idprof4', 'bad idprof5', 'bad idprof6', '', '', $soc1->client, $soc1->fournisseur);
+		$this->assertEquals($soc1_id, $result);
+		$result = $localobject->findNearest(0, '', '', '', 'bad idprof1', 'bad idprof2', 'bad idprof3', $soc1->idprof4, 'bad idprof5', 'bad idprof6', '', '', $soc1->client, $soc1->fournisseur);
+		$this->assertEquals($soc1_id, $result);
+		$result = $localobject->findNearest(0, '', '', '', 'bad idprof1', 'bad idprof2', 'bad idprof3', 'bad idprof4', $soc1->idprof5, 'bad idprof6', '', '', $soc1->client, $soc1->fournisseur);
+		$this->assertEquals($soc1_id, $result);
+		$result = $localobject->findNearest(0, '', '', '', 'bad idprof1', 'bad idprof2', 'bad idprof3', 'bad idprof4', 'bad idprof5', $soc1->idprof6, '', '', $soc1->client, $soc1->fournisseur);
+		$this->assertEquals($soc1_id, $result);
+
+		// Test with email
+		$result = $localobject->findNearest(0, '', '', '', '', '', '', '', '', '', $soc1->email, '', $soc1->client, $soc1->fournisseur);
+		$this->assertEquals($soc1_id, $result);
+
+		// Test with refs
+		$result = $localobject->findNearest(0, $soc1->name, 'Bad REF EXT', '', '', '', '', '', '', '', '', 'BAD REF ALIAS', $soc1->client, $soc1->fournisseur);
+		$this->assertEquals($soc1_id, $result);
+		$result = $localobject->findNearest(0, 'Bad REF', $soc1->ref_ext, '', '', '', '', '', '', '', '', 'BAD REF ALIAS', $soc1->client, $soc1->fournisseur);
+		$this->assertEquals($soc1_id, $result);
+		$result = $localobject->findNearest(0, 'Bad REF', 'Bad REF EXT', '', '', '', '', '', '', '', '', $soc1->name_alias, $soc1->client, $soc1->fournisseur);
+		$this->assertEquals($soc1_id, $result);
+
+		$soc2 = new Societe($db);
+		$soc2->initAsSpecimen();
+		$soc2->name = "Thirdparty Name Specimen";
+		$soc2->code_client = -1;
+		$soc2->code_fournisseur = -1;
+		$soc2_id = $soc2->create($user);
+
+		// Test on values not precise enough
+		$result = $localobject->findNearest(0, 'Thirdparty Name Specimen', '', '', '', '', '', '', '', '', '', $soc1->client, $soc1->fournisseur);
+		$this->assertEquals(-2, $result);
+
+		// Clean data for next tests
+		$soc1->delete($soc1_id);
+		$soc2->delete($soc2_id);
+
+		print __METHOD__." result=".$result."\n";
 		return $result;
 	}
 }

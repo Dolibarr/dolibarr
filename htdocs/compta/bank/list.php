@@ -1,11 +1,13 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2018      Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2020      Tobias Sekan			<tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2001-2005	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2018		Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +46,14 @@ if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'accountancy', 'compta'));
 
@@ -77,10 +87,11 @@ $diroutputmassaction = $conf->bank->dir_output.'/temp/massgeneration/'.$user->id
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page == -1) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -91,7 +102,7 @@ if (!$sortorder) {
 	$sortorder = 'ASC';
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Account($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('bankaccountlist'));
@@ -108,25 +119,24 @@ $fieldstosearchall = array(
 
 $checkedtypetiers = 0;
 $arrayfields = array(
-	'b.ref' => array('label' => $langs->trans("BankAccounts"), 'checked' => 1, 'position' => 10),
-	'b.label' => array('label' => $langs->trans("Label"), 'checked' => 1, 'position' => 12),
-	'accountype' => array('label' => $langs->trans("Type"), 'checked' => 1, 'position' => 14),
-	'b.number' => array('label' => $langs->trans("AccountIdShort"), 'checked' => 1, 'position' => 16),
-	'b.account_number' => array('label' => $langs->trans("AccountAccounting"), 'checked' => (isModEnabled('accounting')), 'position' => 18),
-	'b.fk_accountancy_journal' => array('label' => $langs->trans("AccountancyJournal"), 'checked' => (isModEnabled('accounting')), 'position' => 20),
-	'toreconcile' => array('label' => $langs->trans("TransactionsToConciliate"), 'checked' => 1, 'position' => 50),
-	'b.currency_code' => array('label' => $langs->trans("Currency"), 'checked' => 0, 'position' => 22),
-	'b.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
-	'b.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 500),
-	'b.clos' => array('label' => $langs->trans("Status"), 'checked' => 1, 'position' => 1000),
-	'balance' => array('label' => $langs->trans("Balance"), 'checked' => 1, 'position' => 1010),
+	'b.ref' => array('label' => $langs->trans("BankAccounts"), 'checked' => '1', 'position' => 10),
+	'b.label' => array('label' => $langs->trans("Label"), 'checked' => '1', 'position' => 12),
+	'accountype' => array('label' => $langs->trans("Type"), 'checked' => '1', 'position' => 14),
+	'b.number' => array('label' => $langs->trans("AccountIdShort"), 'checked' => '1', 'position' => 16),
+	'b.account_number' => array('label' => $langs->trans("AccountAccounting"), 'checked' => (string) (int) (isModEnabled('accounting')), 'position' => 18),
+	'b.fk_accountancy_journal' => array('label' => $langs->trans("AccountancyJournal"), 'checked' => (string) (int) (isModEnabled('accounting')), 'position' => 20),
+	'toreconcile' => array('label' => $langs->trans("TransactionsToConciliate"), 'checked' => '1', 'position' => 50),
+	'b.currency_code' => array('label' => $langs->trans("Currency"), 'checked' => '0', 'position' => 22),
+	'b.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
+	'b.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => '0', 'position' => 500),
+	'b.clos' => array('label' => $langs->trans("Status"), 'checked' => '1', 'position' => 1000),
+	'balance' => array('label' => $langs->trans("Balance"), 'checked' => '1', 'position' => 1010),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $permissiontoadd = $user->hasRight('banque', 'modifier');
 $permissiontodelete = $user->hasRight('banque', 'configurer');
@@ -307,7 +317,7 @@ if ($resql) {
 
 
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
@@ -418,9 +428,6 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print '</div>';
 }
 
@@ -537,6 +544,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['b.ref']['checked'])) {
+	// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['b.ref']['label'], $_SERVER["PHP_SELF"], 'b.ref', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -706,7 +714,7 @@ foreach ($accounts as $key => $type) {
 			print '<td class="tdoverflowmax250">';
 			if (isModEnabled('accounting') && !empty($objecttmp->account_number)) {
 				$accountingaccount = new AccountingAccount($db);
-				$accountingaccount->fetch('', $objecttmp->account_number, 1);
+				$accountingaccount->fetch(0, $objecttmp->account_number, 1);
 				print '<span title="'.dol_escape_htmltag($accountingaccount->account_number.' - '.$accountingaccount->label).'">';
 				print $accountingaccount->getNomUrl(0, 1, 1, '', 0);
 				print '</span>';
@@ -799,6 +807,8 @@ foreach ($accounts as $key => $type) {
 			foreach ($objecttmp->array_options as $k => $v) {
 				$obj->$k = $v;
 			}
+		} else {
+			$obj = null;
 		}
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook

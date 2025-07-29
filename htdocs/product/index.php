@@ -2,11 +2,12 @@
 /* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2014-2016  Charlie BENKE           <charlie@patas-monkey.com>
+ * Copyright (C) 2014-2025  Charlene BENKE           <charlene@patas-monkey.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019       Pierre Ardoin           <mapiolca@me.com>
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $type = GETPOST("type", 'intcomma');
 if ($type == '' && !$user->hasRight('produit', 'lire') && $user->hasRight('service', 'lire')) {
 	$type = '1'; // Force global page on service page only
@@ -47,7 +56,7 @@ if ($type == '' && !$user->hasRight('service', 'lire') && $user->hasRight('produ
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks'));
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('productindex'));
 
 // Initialize objects
@@ -68,8 +77,8 @@ $resultboxes = FormOther::getBoxesArea($user, "4");
 if (GETPOST('addbox')) {
 	// Add box (when submit is done from a form when ajax disabled)
 	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-	$zone = GETPOST('areacode', 'int');
-	$userid = GETPOST('userid', 'int');
+	$zone = GETPOSTINT('areacode');
+	$userid = GETPOSTINT('userid');
 	$boxorder = GETPOST('boxorder', 'aZ09');
 	$boxorder .= GETPOST('boxcombo', 'aZ09');
 	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
@@ -110,7 +119,7 @@ print load_fiche_titre($transAreaType, $resultboxes['selectboxlist'], 'product')
 
 
 if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // This may be useless due to the global search combo
-	if (!isset($listofsearchfields) || !is_array($listofsearchfields)) {
+	if (!isset($listofsearchfields) || !is_array($listofsearchfields)) { // @phan-suppress-current-line PhanPluginUndeclaredVariableIsset
 		// Ensure $listofsearchfields is set and array
 		$listofsearchfields = array();
 	}
@@ -239,7 +248,7 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 }
 
 $graphcat = '';
-if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_PRODUCTS')) {
+if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_PRODUCTS') && $user->hasRight('categorie', 'read')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$graphcat .= '<br>';
 	$graphcat .= '<div class="div-table-responsive-no-min">';
@@ -308,6 +317,7 @@ if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_PRODU
 /*
  * Latest modified products
  */
+$lastmodified = "";
 if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("produit", "lire") || $user->hasRight("service", "lire"))) {
 	$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy, p.tobatch, p.fk_price_expression,";
 	$sql .= " p.entity,";
@@ -317,6 +327,13 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 	/*if ($type != '') {
 		$sql .= " AND p.fk_product_type = ".((int) $type);
 	}*/
+	if (!$user->hasRight("produit", "lire")) {
+		$sql .= " AND p.fk_product_type <> ".((int) Product::TYPE_PRODUCT);
+	}
+	if (!$user->hasRight("service", "lire")) {
+		$sql .= " AND p.fk_product_type <> ".((int) Product::TYPE_SERVICE);
+	}
+
 	// Add where from hooks
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $product_static); // Note that $action and $object may have been modified by hook
@@ -325,7 +342,6 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 	$sql .= $db->plimit($max, 0);
 
 	//print $sql;
-	$lastmodified="";
 	$result = $db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
@@ -457,8 +473,9 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 	}
 }
 
+// Latest modified warehouses
 $latestwarehouse = '';
-if (isModEnabled('stock')) {
+if (isModEnabled('stock') && $user->hasRight('stock', 'read')) {
 	$sql = "SELECT e.rowid, e.ref as label, e.lieu, e.statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 	$sql .= " WHERE e.statut in (".Entrepot::STATUS_CLOSED.",".Entrepot::STATUS_OPEN_ALL.")";
@@ -523,13 +540,14 @@ if (isModEnabled('stock')) {
 	}
 }
 
-
+// Latest movements
 $latestmovement = '';
-if (isModEnabled('stock')) {
-	// Latest movements
-	$sql = "SELECT p.rowid, p.label as produit, p.tobatch, p.tosell, p.tobuy,";
+if (isModEnabled('stock') && $user->hasRight('stock', 'mouvement', 'read')) {
+	include_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+
+	$sql = "SELECT p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.tobatch, p.tosell, p.tobuy,";
 	$sql .= " e.ref as warehouse_ref, e.rowid as warehouse_id, e.ref as warehouse_label, e.lieu, e.statut as warehouse_status,";
-	$sql .= " m.rowid as mid, m.value as qty, m.datem, m.batch, m.eatby, m.sellby";
+	$sql .= " m.rowid as mid, m.label as mlabel, m.inventorycode as mcode, m.value as qty, m.datem, m.batch, m.eatby, m.sellby";
 	$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 	$sql .= ", ".MAIN_DB_PREFIX."stock_mouvement as m";
 	$sql .= ", ".MAIN_DB_PREFIX."product as p";
@@ -551,13 +569,12 @@ if (isModEnabled('stock')) {
 		$latestmovement .= '<div class="div-table-responsive-no-min">';
 		$latestmovement .= '<table class="noborder centpercent">';
 		$latestmovement .= '<tr class="liste_titre">';
-		$latestmovement .= '<th>'.$langs->trans("LatestStockMovements", min($num, $max));
+		$latestmovement .= '<th colspan="3">'.$langs->trans("LatestStockMovements", min($num, $max));
 		$latestmovement .= '<a class="notasortlink" href="'.DOL_URL_ROOT.'/product/stock/movement_list.php">';
 		$latestmovement .= '<span class="badge marginleftonlyshort">...</span>';
 		//$latestmovement .= img_picto($langs->trans("FullList"), 'movement');
 		$latestmovement .= '</a>';
 		$latestmovement .= '</th>';
-		$latestmovement .= '<th></th>';
 		if (isModEnabled('productbatch')) {
 			$latestmovement .= '<th></th>';
 		}
@@ -567,13 +584,21 @@ if (isModEnabled('stock')) {
 		$latestmovement .= "</tr>\n";
 
 		$tmplotstatic = new Productlot($db);
+		$tmpstockmovement = new MouvementStock($db);
 
 		$i = 0;
 		while ($i < min($num, $max)) {
 			$objp = $db->fetch_object($resql);
 
-			$producttmp->id = $objp->rowid;
-			$producttmp->ref = $objp->produit;
+			$tmpstockmovement->id = $objp->mid;
+			$tmpstockmovement->date = $db->jdate($objp->datem);
+			$tmpstockmovement->label = $objp->mlabel;
+			$tmpstockmovement->inventorycode = $objp->mcode;
+			$tmpstockmovement->qty = $objp->qty;
+
+			$producttmp->id = $objp->product_id;
+			$producttmp->ref = $objp->product_ref;
+			$producttmp->label = $objp->product_label;
 			$producttmp->status_batch = $objp->tobatch;
 			$producttmp->status_sell = $objp->tosell;
 			$producttmp->status_buy = $objp->tobuy;
@@ -589,7 +614,13 @@ if (isModEnabled('stock')) {
 			$tmplotstatic->eatby = $objp->eatby;
 
 			$latestmovement .= '<tr class="oddeven">';
-			$latestmovement .= '<td class="nowraponall">'.img_picto($langs->trans("Ref").' '.$objp->mid, 'movement', 'class="pictofixedwidth"').dol_print_date($db->jdate($objp->datem), 'dayhour').'</td>';
+			$latestmovement .= '<td class="nowraponall">';
+			$latestmovement .= $tmpstockmovement->getNomUrl(1);
+			//$latestmovement .= img_picto($langs->trans("Ref").' '.$objp->mid, 'movement', 'class="pictofixedwidth"').dol_print_date($db->jdate($objp->datem), 'dayhour');
+			$latestmovement .= '</td>';
+			$latestmovement .= '<td class="nowraponall">';
+			$latestmovement .= dol_print_date($tmpstockmovement->date, 'dayhour', 'tzuserrel');
+			$latestmovement .= "</td>\n";
 			$latestmovement .= '<td class="tdoverflowmax150">';
 			$latestmovement .= $producttmp->getNomUrl(1);
 			$latestmovement .= "</td>\n";
@@ -624,7 +655,7 @@ if (isModEnabled('stock')) {
 		$db->free($resql);
 
 		if (empty($num)) {
-			$colspan = 4;
+			$colspan = 5;
 			if (isModEnabled('productbatch')) {
 				$colspan++;
 			}
@@ -701,10 +732,10 @@ function activitytrim($product_type)
 	global $conf, $langs, $db;
 
 	// We display the last 3 years
-	$yearofbegindate = date('Y', dol_time_plus_duree(time(), -3, "y"));
+	$yearofbegindate = (int) date('Y', dol_time_plus_duree(time(), -3, "y"));
 	$out = '';
 	// breakdown by quarter
-	$sql = "SELECT DATE_FORMAT(p.datep,'%Y') as annee, DATE_FORMAT(p.datep,'%m') as mois, SUM(fd.total_ht) as Mnttot";
+	$sql = "SELECT DATE_FORMAT(p.datep,'%Y') as annee, DATE_FORMAT(p.datep,'%m') as mois, SUM(fd.total_ht) as mnttot";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as fd";
 	$sql .= " , ".MAIN_DB_PREFIX."paiement as p,".MAIN_DB_PREFIX."paiement_facture as pf";
 	$sql .= " WHERE f.entity IN (".getEntity('invoice').")";
@@ -712,7 +743,7 @@ function activitytrim($product_type)
 	$sql .= " AND pf.fk_facture = f.rowid";
 	$sql .= " AND pf.fk_paiement = p.rowid";
 	$sql .= " AND fd.product_type = ".((int) $product_type);
-	$sql .= " AND p.datep >= '".$db->idate(dol_get_first_day($yearofbegindate), 1)."'";
+	$sql .= " AND p.datep >= '".$db->idate(dol_get_first_day($yearofbegindate, 1))."'";
 	$sql .= " GROUP BY annee, mois ";
 	$sql .= " ORDER BY annee, mois ";
 
@@ -766,19 +797,19 @@ function activitytrim($product_type)
 			}
 
 			if ($objp->mois == "01" || $objp->mois == "02" || $objp->mois == "03") {
-				$trim1 += $objp->Mnttot;
+				$trim1 += $objp->mnttot;
 			}
 
 			if ($objp->mois == "04" || $objp->mois == "05" || $objp->mois == "06") {
-				$trim2 += $objp->Mnttot;
+				$trim2 += $objp->mnttot;
 			}
 
 			if ($objp->mois == "07" || $objp->mois == "08" || $objp->mois == "09") {
-				$trim3 += $objp->Mnttot;
+				$trim3 += $objp->mnttot;
 			}
 
 			if ($objp->mois == "10" || $objp->mois == "11" || $objp->mois == "12") {
-				$trim4 += $objp->Mnttot;
+				$trim4 += $objp->mnttot;
 			}
 
 			$i++;

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018-2022  Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'salaries', 'bills', 'hrm', 'stripe'));
@@ -68,10 +77,10 @@ $stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripeChargeList"));
 
-if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
+if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */)) {
 	$service = 'StripeTest';
 	$servicestatus = '0';
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
+	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning');
 } else {
 	$service = 'StripeLive';
 	$servicestatus = '1';
@@ -122,7 +131,7 @@ if (!$rowid) {
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'left ');
 	print_liste_field_titre("Paid", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');
-	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", '', '', '', 'right ');
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", '', '', '', 'center ');
 	print "</tr>\n";
 
 	try {
@@ -132,6 +141,7 @@ if (!$rowid) {
 			$list = \Stripe\Charge::all($option);
 		}
 
+		'@phan-var-force \Stripe\Charge $list';  // TStripeObject suggested, but is a template
 		$num = count($list->data);
 
 
@@ -149,19 +159,25 @@ if (!$rowid) {
 	$i = 0;
 	if (!empty($list)) {
 		foreach ($list->data as $charge) {
+			'@phan-var-force \Stripe\Charge $charge';  // TStripeObject suggested, but is a template
 			if ($i >= $limit) {
 				break;
 			}
 
+			$label = '';
 			if ($charge->refunded == '1') {
 				$status = img_picto($langs->trans("refunded"), 'statut6');
 			} elseif ($charge->paid == '1') {
 				$status = img_picto($langs->trans((string) $charge->status), 'statut4');
-			} else {
-				$label = $langs->trans("Message").": ".$charge->failure_message."<br>";
+			} elseif (empty($charge->failure_message)) {
 				$label .= $langs->trans("Network").": ".$charge->outcome->network_status."<br>";
 				$label .= $langs->trans("Status").": ".$langs->trans((string) $charge->outcome->seller_message);
-				$status = $form->textwithpicto(img_picto($langs->trans((string) $charge->status), 'statut8'), $label, -1);
+				$status = $form->textwithpicto(img_picto($langs->trans((string) $charge->status), 'statut4'), $label, 1);
+			} else {
+				$label .= $langs->trans("Error").": ".$charge->failure_message."<br>";
+				$label .= $langs->trans("Network").": ".$charge->outcome->network_status."<br>";
+				$label .= $langs->trans("Status").": ".$langs->trans((string) $charge->outcome->seller_message);
+				$status = $form->textwithpicto(img_picto($langs->trans((string) $charge->status), 'statut8'), $label, 1);
 			}
 
 			if (isset($charge->payment_method_details->type) && $charge->payment_method_details->type == 'card') {
@@ -191,15 +207,15 @@ if (!$rowid) {
 			// Save into $tmparray all metadata
 			$tmparray = dolExplodeIntoArray($FULLTAG, '.', '=');
 			// Load origin object according to metadata
-			if (!empty($tmparray['CUS']) && $tmparray['CUS'] > 0) {
-				$societestatic->fetch($tmparray['CUS']);
+			if (!empty($tmparray['CUS']) && (int) $tmparray['CUS'] > 0) {
+				$societestatic->fetch((int) $tmparray['CUS']);
 			} elseif (!empty($charge->metadata->dol_thirdparty_id) && $charge->metadata->dol_thirdparty_id > 0) {
 				$societestatic->fetch($charge->metadata->dol_thirdparty_id);
 			} else {
 				$societestatic->id = 0;
 			}
-			if (!empty($tmparray['MEM']) && $tmparray['MEM'] > 0) {
-				$memberstatic->fetch($tmparray['MEM']);
+			if (!empty($tmparray['MEM']) && (int) $tmparray['MEM'] > 0) {
+				$memberstatic->fetch((int) $tmparray['MEM']);
 			} else {
 				$memberstatic->id = 0;
 			}
@@ -217,7 +233,7 @@ if (!$rowid) {
 			if ($servicestatus) {
 				$url = 'https://dashboard.stripe.com/'.$connect.'payments/'.$charge->id;
 			}
-			print "<td>";
+			print '<td class="tdoverflowmax150">';
 			print "<a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." ".$charge->id."</a>";
 			if ($charge->payment_intent) {
 				print '<br><span class="opacitymedium">'.$charge->payment_intent.'</span>';
@@ -225,7 +241,7 @@ if (!$rowid) {
 			print "</td>\n";
 
 			// Stripe customer
-			print "<td>";
+			print '<td class="tdoverflowmax150">';
 			if (isModEnabled('stripe') && !empty($stripeacc)) {
 				$connect = $stripeacc.'/';
 			}
@@ -239,7 +255,7 @@ if (!$rowid) {
 			print "</td>\n";
 
 			// Link
-			print "<td>";
+			print '<td class="tdoverflowmax200">';
 			if ($societestatic->id > 0) {
 				print $societestatic->getNomUrl(1);
 			} elseif ($memberstatic->id > 0) {
@@ -248,7 +264,7 @@ if (!$rowid) {
 			print "</td>\n";
 
 			// Origin
-			print "<td>";
+			print '<td class="nowraponall">';
 			if ($charge->metadata->dol_type == "order" || $charge->metadata->dol_type == "commande") {
 				$object = new Commande($db);
 				$object->fetch($charge->metadata->dol_id);
@@ -271,7 +287,7 @@ if (!$rowid) {
 			print "</td>\n";
 
 			// Date payment
-			print '<td class="center">'.dol_print_date($charge->created, 'dayhour')."</td>\n";
+			print '<td class="center nowraponall">'.dol_print_date($charge->created, 'dayhour')."</td>\n";
 			// Type
 			print '<td>';
 			print $type;
@@ -279,7 +295,7 @@ if (!$rowid) {
 			// Amount
 			print '<td class="right"><span class="amount">'.price(($charge->amount - $charge->amount_refunded) / 100, 0, '', 1, - 1, - 1, strtoupper($charge->currency))."</span></td>";
 			// Status
-			print '<td class="right">';
+			print '<td class="nowraponall center">';
 			print $status;
 			print "</td>\n";
 

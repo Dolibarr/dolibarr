@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  */
 
 /**
@@ -11,7 +12,7 @@
 /**
  * Get nav menu
  *
- * @param	array<string,array{id:string,rank:int,url:string,name:string,group:string,override?:int<0,1>,children?:array<array{id:string,rank:int,url:string,name:string,group:string,override?:int<0,1>}>}>	$Tmenu	Array of menu
+ * @param	array<string,array{id:string,rank:int,url:string,name:string,group:string,override?:int<0,1>,children?:array<array{id:string,rank:int,url:string,name:string,group:string,override?:int<0,1>}>}>|array<user_logout,array{id:string,rank:int,url:string,name:string}>	$Tmenu	Array of menu
  * @return  string
  */
 function getNav($Tmenu)

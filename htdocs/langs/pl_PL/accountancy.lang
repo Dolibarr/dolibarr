@@ -2,7 +2,7 @@
 Accountancy=Księgowość
 Accounting=Księgowość
 ACCOUNTING_EXPORT_SEPARATORCSV=Separator kolumn dla eksportowanego pliku
-ACCOUNTING_EXPORT_DATE=Format daty dla eksportowanego pliku 
+ACCOUNTING_EXPORT_DATE=Format daty dla eksportowanego pliku
 ACCOUNTING_EXPORT_PIECE=Exportuj ilość sztuk
 ACCOUNTING_EXPORT_GLOBAL_ACCOUNT=Export with global account
 ACCOUNTING_EXPORT_LABEL=Eksportuj etykiety
@@ -56,6 +56,8 @@ ExportAccountancy=Księgowość eksportu
 WarningDataDisappearsWhenDataIsExported=Uwaga, ta lista zawiera tylko zapisy księgowe, które nie zostały jeszcze wyeksportowane (data eksportu jest pusta). Jeśli chcesz uwzględnić już wyeksportowane zapisy księgowe, kliknij powyższy przycisk.
 VueByAccountAccounting=Wyświetl według konta księgowego
 VueBySubAccountAccounting=Wyświetl według subkonta księgowego
+AccountingAccountByDefault=Konto księgowe domyślne
+AccountingAccountByDefaultShort=Konto domyślne
 
 MainAccountForCustomersNotDefined=Konto główne (z Planu Kont) dla klientów niezdefiniowanych w konfiguracji
 MainAccountForSuppliersNotDefined=Konto główne (z Planu kont) dla dostawców niezdefiniowanych w konfiguracji
@@ -64,18 +66,15 @@ MainAccountForVatPaymentNotDefined=Konto (z Planu Kont) do płatności podatku V
 MainAccountForSubscriptionPaymentNotDefined=Konto (z Planu Kont) do opłacania składki niezdefiniowane w ustawieniach
 MainAccountForRetainedWarrantyNotDefined=Konto (z Planu Kont) dla zachowanej gwarancji niezdefiniowanej w konfiguracji
 UserAccountNotDefined=Kontro księgowe dla użytkownika nie zdefiniowane w ustawieniach
-
 AccountancyArea=Strefa księgowości
 AccountancyAreaDescIntro=Korzystanie z modułu księgowości odbywa się w kilku etapach:
 AccountancyAreaDescActionOnce=Następujące akcje są wykonywane zwykle tylko raz lub raz w roku...
 AccountancyAreaDescActionOnceBis=Należy wykonać kolejne kroki, aby zaoszczędzić czas w przyszłości, sugerując automatycznie prawidłowe domyślne konto księgowe podczas przesyłania danych w księgowości
 AccountancyAreaDescActionFreq=Następujące akcje są wykonywane zwykle każdego miesiąca, tygodnia lub dnia dla naprawdę wielkich firm...
-
 AccountancyAreaDescJournalSetup=KROK %s: Sprawdź zawartość listy czasopism z menu %s
 AccountancyAreaDescChartModel=KROK %s: Sprawdź, czy istnieje model planu kont lub utwórz go z menu %s
 AccountancyAreaDescChart=KROK %s: Wybierz i | lub uzupełnij swój plan kont z menu %s
-
-AccountancyAreaDescFiscalPeriod=KROK %s: Zdefiniuj domyślnie rok obrotowy, w którym chcesz zintegrować zapisy księgowe. W tym celu użyj pozycji menu %s.
+AccountancyAreaDescFiscalPeriod=KROK %s: Zdefiniuj okres fiskalny, który określa zakres dat akceptowanych do tworzenia wpisów księgowych. W tym celu użyj wpisu menu %s.
 AccountancyAreaDescVat=Krok %s: Zdefiniuj konta księgowe dla każdej stawki VAT. W tym celu użyj pozycji menu %s.
 AccountancyAreaDescDefault=KROK %s: Zdefiniuj domyślne konta księgowe. W tym celu użyj pozycji menu %s.
 AccountancyAreaDescExpenseReport=KROK %s: Zdefiniuj domyślne konta księgowe dla każdego typu raportu wydatków. W tym celu użyj pozycji menu %s.
@@ -87,22 +86,21 @@ AccountancyAreaDescMisc=KROK %s: Zdefiniuj obowiązkowe konta domyślne i domyś
 AccountancyAreaDescLoan=KROK %s: Zdefiniuj domyślne konta księgowe dla pożyczek. W tym celu użyj pozycji menu %s.
 AccountancyAreaDescBank=KROK %s: Zdefiniuj konta księgowe i kod arkusza dla każdego konta bankowego i finansowego. W tym celu użyj pozycji menu %s.
 AccountancyAreaDescProd=KROK %s: Zdefiniuj konta księgowe dla swoich produktów/usług. W tym celu użyj pozycji menu %s.
-
 AccountancyAreaDescBind=KROK %s: Sprawdź powiązanie między istniejącymi liniami %s a kontem księgowym, aby aplikacja mogła zapisywać transakcje w księdze jednym kliknięciem. Uzupełnij brakujące powiązania. W tym celu użyj pozycji menu %s.
 AccountancyAreaDescWriteRecords=Krok %s: Zapisz transakcje do głównej księgi. W tym celu idź do <strong>%s</strong> i kliknij na przycisk <strong>%s</strong>.
-AccountancyAreaDescAnalyze=STEP %s: Read reportings or generate export files for other bookkeepers.
-AccountancyAreaDescClosePeriod=STEP %s: Close period so we can't transfer anymore data in the same period in a future.
-
+AccountancyAreaDescAnalyze=KROK %s: Odczytaj raporty lub wygeneruj pliki eksportowe dla innych księgowych.
+AccountancyAreaDescClosePeriod=KROK %s: Zamknij okres, aby nie można było przesłać więcej danych w tym samym okresie w przyszłości.
 TheFiscalPeriodIsNotDefined=Nie wykonano obowiązkowego kroku konfiguracji (nie zdefiniowano okresu obrachunkowego)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=Nie ukończono obowiązkowego kroku konfiguracji (arkusz kodów księgowych nie został zdefiniowany dla wszystkich kont bankowych)
 Selectchartofaccounts=Wybierz aktywny wykres kont
-CurrentChartOfAccount=Current active chart of account
+CurrentChartOfAccount=Aktualny aktywny plan kont
 ChangeAndLoad=Zmień i załaduj
 Addanaccount=Dodaj konto księgowe
 AccountAccounting=Konto księgowe
 AccountAccountingShort=Konto
 SubledgerAccount=Konto księgi podrzędnej
 SubledgerAccountLabel=Etykieta konta księgi podrzędnej
+LedgerAccount=Konto księgowe
 ShowAccountingAccount=Wyświetl konta księgowe
 ShowAccountingJournal=Wyświetl dziennik konta księgowego
 ShowAccountingAccountInLedger=Pokaż konto księgowe w księdze
@@ -144,8 +142,6 @@ ExpenseReportLines=Linie raportów kosztów do dowiązania
 ExpenseReportLinesDone=Powiązane linie raportów wydatków
 IntoAccount=Powiąż linię z kontem księgowym
 TotalForAccount=Całkowite konto księgowe
-
-
 Ventilate=Powiąż
 LineId=Linia identyfikatora
 Processing=Przetwarzanie
@@ -158,22 +154,23 @@ VentilatedinAccount=Dowiązane z powodzeniem do konta księgowego
 NotVentilatedinAccount=Nie dowiązane do konta księgowego
 XLineSuccessfullyBinded=%sprodukty/usługi z powodzeniem dowiązane do konta księgowego
 XLineFailedToBeBinded=%s produkty/usługi nie dowiązane do żadnego konta księgowego
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=Maksymalna liczba wierszy na stronie listy i wiązania (zalecane: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Rozpocznij sortowanie strony "Dowiązania do zrobienia" po najnowszych elementach
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Rozpocznij sortowanie strony "Dowiązania ukończone" po najnowszych elementach
-
 ACCOUNTING_LENGTH_DESCRIPTION=Skróć opis produktów i usług w ofertach po x znakach (Best = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Skróć formularz opisu konta produktów i usług na aukcjach po x znakach (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Długość głównych kont księgowych (jeżeli ustawisz tutaj wartość na 6, konto '706' będzie miało wygląd '706000' na ekranie)
 ACCOUNTING_LENGTH_AACCOUNT=Długość kont księgowych innych firm (jeśli ustawisz tutaj wartość 6, na ekranie konto „401” będzie wyglądać jak „401000”)
-ACCOUNTING_MANAGE_ZERO=Pozwól zarządzać różną liczbą zer na końcu konta księgowego. Potrzebne w niektórych krajach (np. W Szwajcarii). Jeśli opcja jest wyłączona (domyślnie), możesz ustawić następujące dwa parametry, aby poprosić aplikację o dodanie wirtualnych zer.
+ACCOUNTING_MANAGE_ZERO=Umożliwia zarządzanie różną liczbą zer na końcu konta księgowego zamiast konta o stałej długości.
+ACCOUNTING_MANAGE_ZERO2=Potrzebne w niektórych krajach (np. w Szwajcarii). Jeśli wyłączone (domyślnie), możesz ustawić następujące dwa parametry, aby poprosić aplikację o dodanie wirtualnych zer.
+ACCOUNTING_BANK_CONCILIATED=Przenieś do księgowości tylko pozycje uzgodnione w wyciągach bankowych (domyślnie, można odznaczyć przy każdym przelewie)
 BANK_DISABLE_DIRECT_INPUT=Wyłącz bezpośrednią rejestrację transakcji na koncie bankowym
+ACCOUNTANCY_ER_DATE_RECORD=Jako datę przekazania do księgowości należy użyć daty końcowej okresu raportu wydatków, a nie daty wydatku
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Włącz eksport wersji roboczej w dzienniku
 ACCOUNTANCY_COMBO_FOR_AUX=Włącz listę kombi dla konta pomocniczego (może działać wolno, jeśli masz dużo stron trzecich, przerywa możliwość wyszukiwania części wartości)
 ACCOUNTING_DATE_START_BINDING=Wyłącz powiązanie i przelew w księgowości, gdy data jest niższa od tej daty (transakcje poprzedzające tę datę zostaną domyślnie wykluczone)
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=Na stronie przelewu danych do księgowości jaki jest domyślnie wybrany okres
-
+ACCOUNTING_LABEL_OPERATION_ON_TRANSFER=Podczas generowania księgowości domyślna etykieta operacji
 ACCOUNTING_SELL_JOURNAL=Dziennik sprzedaży - sprzedaż i zwroty
 ACCOUNTING_PURCHASE_JOURNAL=Dziennik zakupów - zakupy i zwroty
 ACCOUNTING_BANK_JOURNAL=Dziennik kasowy - wpływy i wypłaty
@@ -182,40 +179,35 @@ ACCOUNTING_MISCELLANEOUS_JOURNAL=Dziennik ogólny
 ACCOUNTING_HAS_NEW_JOURNAL=Ma nowy dziennik
 ACCOUNTING_INVENTORY_JOURNAL=Dziennik inwentaryzacji
 ACCOUNTING_SOCIAL_JOURNAL=Dziennik społecznościowy
-
 ACCOUNTING_RESULT_PROFIT=Rachunek wynikowy (zysk)
 ACCOUNTING_RESULT_LOSS=Rachunek wynikowy (strata)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Dziennik zamknięcia
-ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Grupy księgowe stosowane na koncie bilansowym (oddzielone przecinkiem)
-ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Grupy księgowe stosowane w rachunku zysków i strat (oddzielone przecinkami)
-
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Grupy księgowe stosowane do sporządzania bilansu
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNTHelp=Ustaw tutaj listę grup księgowych (zdefiniowanych w planie kont), które muszą zostać użyte do znalezienia wszystkich kont w celu obliczenia bilansu. Użyj przecinka, aby oddzielić każdą wartość.<br>Przykład: CAPIT,IMMO,STOCK,FINAN,THIRDPARTY
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Grupy księgowe stosowane do obliczania rachunku zysków i strat
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENTHelp=Ustaw tutaj listę grup księgowych (zdefiniowanych w planie kont), które muszą zostać użyte do znalezienia wszystkich kont w celu obliczenia rachunku zysków i strat. Użyj przecinka, aby oddzielić każdą wartość.<br>Przykład: DOCHÓD,KOSZT
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Konto (z Planu Kont) służące jako konto do przejściowych przelewów bankowych
 TransitionalAccount=Konto przejściowe do przelewów bankowych
-
 ACCOUNTING_ACCOUNT_SUSPENSE=Konto (z Planu Kont), które ma być używane jako konto dla nieprzydzielonych środków otrzymanych lub wypłaconych, tj. środków w „oczekującym”
 DONATION_ACCOUNTINGACCOUNT=Konto (z Planu Kont) na które będą rejestrowane darowizny (moduł Darowizny)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Konto (z Planu Kont) służące do rejestracji zapisów na członkostwo (moduł Członkostwo - w przypadku członkostwa rejestrowanego bez faktury)
-
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Konto (z Planu Kont), które będzie używane jako konto domyślne do rejestracji wpłaty klienta
 UseAuxiliaryAccountOnCustomerDeposit=Zapisz konto klienta jako konto indywidualne w księdze pomocniczej dla linii zaliczek (jeśli opcja jest wyłączona, konto indywidualne dla linii zaliczek pozostanie puste)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Konto (z Planu Kont), które ma być używane jako domyślne
 UseAuxiliaryAccountOnSupplierDeposit=Zapisz konto dostawcy jako konto indywidualne w księdze pomocniczej dla linii zaliczek (w przypadku wyłączenia indywidualne konto dla linii zaliczek pozostanie puste)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Domyślne konto księgowe do rejestracji zachowanej gwarancji klienta
-
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Konto (z Planu Kont), które będzie używane jako konto domyślne dla produktów zakupionych w tym samym kraju (używane, jeśli nie zostało to określone w karcie produktu)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Konto (z Planu Kont), które ma być używane jako konto domyślne dla produktów zakupionych z EEC do innego kraju EEC (używane, jeśli nie zostało to określone w karcie produktu)
 ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Konto (z Planu Kont), które będzie używane jako konto domyślne dla produktów zakupionych i importowanych z dowolnego innego kraju obcego (używane, jeśli nie zostało to określone w karcie produktu)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Konto (z Planu Kont), które będzie domyślnym kontem dla sprzedawanych produktów (używane, jeśli nie zostało to określone w karcie produktu)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Konto (z Planu Kont), które ma być używane jako konto domyślne dla produktów sprzedawanych z EWG do innego kraju EWG (używane, jeśli nie zostało to określone w karcie produktu)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Konto (z Planu Kont), które będzie używane jako konto domyślne dla produktów sprzedawanych i eksportowanych do dowolnego innego kraju obcego (używane, jeśli nie zostało to określone w karcie produktu)
-
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Konto (z Planu Kont), które będzie używane jako konto domyślne dla usług zakupionych w tym samym kraju (używane, jeśli nie zostało to określone w karcie usług)
 ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Konto (z Planu Kont), które ma być używane jako konto domyślne dla usług zakupionych od EEC do innego kraju EEC (używane, jeśli nie zostało to określone w karcie usług)
 ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Konto (z Planu Kont), które będzie używane jako konto domyślne dla usług zakupionych i importowanych z innego kraju (używane, jeśli nie zostało to określone w karcie usług)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Konto (z Planu Kont), które będzie domyślnym kontem dla sprzedawanych usług (używane, jeśli nie zostało to określone w karcie usługi)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Konto (z Planu Kont), które ma być używane jako konto domyślne dla usług sprzedawanych z EWG do innego kraju EWG (używane, jeśli nie zostało to określone w karcie usług)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Konto (z Planu Kont), które będzie używane jako konto domyślne dla usług sprzedawanych i eksportowanych do dowolnego innego kraju obcego (używane, jeśli nie zostało to określone w karcie usług)
-
 Doctype=Rodzaj dokumentu
 Docdate=Data
 Docref=Odniesienie
@@ -229,15 +221,18 @@ Codejournal=Dziennik
 JournalLabel=Etykieta czasopisma
 NumPiece=ilość sztuk
 TransactionNumShort=Numer transakcji
+AccountingReport=Raporty niestandardowe
 AccountingCategory=Niestandardowa grupa kont
 AccountingCategories=Niestandardowe grupy kont
 GroupByAccountAccounting=Grupuj według konta księgi głównej
 GroupBySubAccountAccounting=Grupuj według konta księgi podrzędnej
+AccountingAccountReportsDesc=Tutaj możesz zdefiniować niektóre raporty kont księgowych. Będą one używane do spersonalizowanych raportów księgowych.
 AccountingAccountGroupsDesc=Możesz tutaj zdefiniować kilka grup rachunków księgowych. Będą wykorzystywane do tworzenia spersonalizowanych raportów księgowych.
 ByAccounts=Według kont
 ByPredefinedAccountGroups=Według predefiniowanych grup
 ByPersonalizedAccountGroups=Według spersonalizowanych grup
-ByYear=Według roku
+Personalized=Spersonalizowany
+NoReportDefined=Brak zdefiniowanych raportów spersonalizowanych
 NotMatch=Nie ustawione
 DeleteMvt=Usuń niektóre linie z księgowości
 DelMonth=Miesiąc do usunięcia
@@ -257,6 +252,7 @@ FeeAccountNotDefined=Konto z opłatą nie zostało zdefiniowane
 BankAccountNotDefined=Konto dla banku nie zdefiniowane
 CustomerInvoicePayment=Płatność za fakturę klienta
 ThirdPartyAccount=Konto kontrahenta
+AccountNotDefined=Konto nie zostało zdefiniowane
 NewAccountingMvt=Nowa transakcja
 NumMvts=Ilość transakcji
 ListeMvts=Lista ruchów
@@ -269,6 +265,7 @@ UnknownAccountForThirdparty=Nieznane konto innej firmy. Użyjemy %s
 UnknownAccountForThirdpartyBlocking=Nieznane konto innej firmy. Błąd blokowania
 ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Nie zdefiniowano konta księgi pomocniczej lub nieznana jest osoba trzecia lub użytkownik. Użyjemy %s
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Nieznany podmiot zewnętrzny i księga podrzędna nie została zdefiniowana w płatności. Wartość konta księgi podrzędnej pozostanie pusta.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored2=Konto podksięgi nie jest zdefiniowane lub strona trzecia lub użytkownik jest nieznany. Pozostawimy wartość konta podksięgi pustej.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Nie zdefiniowano konta księgi pomocniczej lub nieznana jest osoba trzecia lub użytkownik. Błąd blokowania.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Nieznane konto innej firmy i konto oczekujące nie zostały zdefiniowane. Błąd blokowania
 PaymentsNotLinkedToProduct=Płatność nie jest powiązana z żadnym produktem / usługą
@@ -276,21 +273,18 @@ OpeningBalance=Bilans otwarcia
 ShowOpeningBalance=Pokaż bilans otwarcia
 HideOpeningBalance=Ukryj saldo otwarcia
 ShowSubtotalByGroup=Pokaż sumę częściową według poziomu
-
 Pcgtype=Grupa konta
 PcgtypeDesc=Grupa kont jest używana jako predefiniowane kryteria „filtru” i „grupowania” w niektórych raportach księgowych. Na przykład „DOCHÓD” lub „WYDATEK” są używane jako grupy dla kont księgowych produktów w celu utworzenia raportu kosztów / dochodów.
 AccountingCategoriesDesc=Niestandardowa grupa kont może służyć do grupowania kont księgowych w jedną nazwę, aby ułatwić korzystanie z filtrów lub tworzenie niestandardowych raportów.
-
 Reconcilable=Do pogodzenia
-
+Centralized=Konto scentralizowane
 TotalVente=Łączny obrót przed opodatkowaniem
 TotalMarge=Całkowita marża sprzedaży
-
 DescVentilCustomer=Tutaj możesz zapoznać się z listą wierszy faktury klienta powiązanych (lub nie) z kontem produktu z planu kont
 DescVentilMore=W większości przypadków, jeśli korzystasz z predefiniowanych produktów lub usług i ustawisz konto (z planu kont) na karcie produktu/usługi, aplikacja będzie w stanie dokonać wszelkich powiązań pomiędzy pozycjami faktury a kontem księgowym Twojego wykresu kont jednym kliknięciem za pomocą przycisku <strong>"%s"</strong>. Jeśli konto nie zostało ustawione na kartach produktów/usług lub jeśli nadal masz jakieś linie niezwiązane z kontem, będziesz musiał dokonać ręcznego powiązania z menu "<strong>%s</strong>".
 DescVentilDoneCustomer=Sprawdź tutaj listę wierszy faktur klientów i ich konto produktowe z planu kont
 DescVentilTodoCustomer=Powiąż wiersze faktury, które nie są jeszcze powiązane z kontem produktu z planu kont
-ChangeAccount=Zmień konto produktu/usługi (z planu kont) dla wybranych linii za pomocą następującego konta:
+ChangeAccount=Zmień konto księgowe produktu/usługi wybranych wierszy za pomocą:
 Vide=-
 DescVentilSupplier=Sprawdź tutaj listę wierszy faktury dostawcy powiązanych lub jeszcze niepowiązanych z kontem produktu z planu kont (widoczne są tylko rekordy, które nie zostały jeszcze przeniesione w księgowości)
 DescVentilDoneSupplier=Zapoznaj się z listą wierszy faktur od dostawców i ich kontami księgowymi
@@ -298,19 +292,16 @@ DescVentilTodoExpenseReport=Powiązanie wierszy raportu wydatków, które nie s�
 DescVentilExpenseReport=Zapoznaj się z listą pozycji raportu wydatków powiązanych (lub nie) z kontem rozliczania opłat
 DescVentilExpenseReportMore=Jeśli ustawisz konto księgowe na typ wierszy raportu z wydatków, aplikacja będzie w stanie powiązać wszystkie wiersze raportu z wydatków z kontem księgowym planu kont, jednym kliknięciem za pomocą przycisku <strong> "%s" </strong>. Jeśli konto nie zostało ustawione w słowniku opłat lub jeśli nadal masz jakieś linie niepowiązane z żadnym kontem, będziesz musiał wykonać ręczne powiązanie z menu "<strong> %s </strong>".
 DescVentilDoneExpenseReport=Zapoznaj się z listą pozycji raportów wydatków i ich kontem księgowym opłat
-
 Closure=Coroczne zamknięcie
 AccountancyClosureStep1Desc=Sprawdź tutaj liczbę ruchów według miesiąca, która nie została jeszcze zatwierdzona i zablokowana
-OverviewOfMovementsNotValidated=Przegląd ruchów niezatwierdzonych i zablokowanych
+OverviewOfMovementsNotValidated=Przegląd ruchów, które nie zostały jeszcze zatwierdzone i zablokowane
 AllMovementsWereRecordedAsValidated=Wszystkie ruchy zostały zarejestrowane jako zatwierdzone i zablokowane
 NotAllMovementsCouldBeRecordedAsValidated=Nie wszystkie ruchy mogły zostać zarejestrowane jako zatwierdzone i zablokowane
 ValidateMovements=Sprawdź i zablokuj ruchy
 DescValidateMovements=Jakakolwiek modyfikacja lub usunięcie pisma, napisów i usunięcia będzie zabronione. Wszystkie wpisy do ćwiczenia muszą zostać zatwierdzone, w przeciwnym razie zamknięcie nie będzie możliwe
-
 ValidateHistory=Dowiąż automatycznie
 AutomaticBindingDone=Wykonano automatyczne powiązania (%s) - Automatyczne powiązanie nie jest możliwe w przypadku niektórych rekordów (%s)
 DoManualBindingForFailedRecord=Musisz ręcznie połączyć wiersze %s, które nie są połączone automatycznie.
-
 ErrorAccountancyCodeIsAlreadyUse=Błąd, nie możesz usunąć ani wyłączyć tego konta w planie kont, ponieważ jest ono używane
 MvtNotCorrectlyBalanced=Ruch nie jest prawidłowo zrównoważony. Debet = %s i kredyt = %s
 Balancing=Balansowy
@@ -323,19 +314,21 @@ ChangeBinding=Zmień dowiązanie
 Accounted=Rozliczone w księdze
 NotYetAccounted=Jeszcze nie przeniesione do księgowości
 ShowTutorial=Pokaż Poradnik
+ClickOnUseTutorialForHelp=Witamy w sekcji, aby wygenerować swoje rozliczenie. Kliknij na link "%s", aby uzyskać porady, jak go używać.
 NotReconciled=Nie pogodzono się
 WarningRecordWithoutSubledgerAreExcluded=Uwaga, wszystkie wiersze bez zdefiniowanego konta księgi pomocniczej są filtrowane i wykluczane z tego widoku
 AccountRemovedFromCurrentChartOfAccount=Konto księgowe, które nie istnieje w bieżącym planie kont
-
+WarningThisPageContainsOnlyEntriesTransferredInAccounting=Uwaga, ta strona zawiera jedynie wpisy przeniesione do systemu księgowego.
+BookkeepingNumRefModelDesc = Zwraca numer referencyjny w formacie yyyyjjnnnn, gdzie yyyy to rok, a jj to kod dziennika, nnnn to sekwencyjny numer automatycznie zwiększający się w zależności od roku i kodu dziennika.
+BookkeepingNumberingModules = Modele numeracji księgowej
 ## Admin
-BindingOptions=Opcje wiązania
+BindingOptions=Opcje przelewu w księgowości
 ApplyMassCategories=Dodaj masowo kategorie
 AddAccountFromBookKeepingWithNoCategories=Dostępne konto nie jest jeszcze w spersonalizowanej grupie
 CategoryDeleted=Kategoria dla konta księgowego została usunięta
 AccountingJournals=Dzienniki kont księgowych
 AccountingJournal=Dziennik księgowy
 NewAccountingJournal=Nowy dziennik księgowy
-ShowAccountingJournal=Wyświetl dziennik konta księgowego
 NatureOfJournal=Charakter dziennika
 AccountingJournalType1=Różne operacje
 AccountingJournalType2=Sprzedaż
@@ -362,7 +355,8 @@ ACCOUNTING_LETTERING_NBLETTERS_DESC=Niektóre programy księgowe akceptują tylk
 OptionsAdvanced=Zaawansowane opcje
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Aktywuj zarządzanie odwrotnym obciążeniem VAT w przypadku zakupów u dostawców
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Gdy opcja jest włączona, można zdefiniować, że dostawca lub dana faktura dostawcy musi zostać przeniesiona do księgowości w inny sposób: Do rozliczenia zostanie wygenerowana dodatkowa linia debetowa i kredytowa na 2 danych rachunkach z planu kont zdefiniowanego w „%s” strona konfiguracji.
-
+ACCOUNTING_ENABLE_TABONTHIRDPARTY=Aktywuj kartę na kartach stron trzecich, aby wyświetlić rejestr pomocniczy
+ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=Po włączeniu tej opcji na kartach stron trzecich wyświetla się nowa karta umożliwiająca przeglądanie i zarządzanie księgowością strony trzeciej, w tym uzgadnianie, drukowanie i inne czynności
 ## Export
 NotExportLettering=Nie eksportuj napisów podczas generowania pliku
 NotifiedExportDate=Oznacz jeszcze nie wyeksportowane linie jako Wyeksportowane <span class="warning">(aby zmodyfikować linię oznaczoną jako wyeksportowaną, musisz usunąć całą transakcję i ponownie przenieść ją do księgowości)</span>
@@ -372,7 +366,7 @@ DateValidationAndLock=Weryfikacja daty i blokada
 ConfirmExportFile=Potwierdzenie wygenerowania pliku eksportu księgowości ?
 ExportDraftJournal=Export szkicu dziennika
 Modelcsv=Model eksportu
-Selectmodelcsv=Wybierz model eksportu
+Selectmodelcsv=Wybierz domyślny format eksportu
 Modelcsv_normal=Standardowy eksport
 Modelcsv_CEGID=Eksport dla CEGID Expert Comptabilité
 Modelcsv_COALA=Eksport dla Sage Coala
@@ -394,7 +388,30 @@ Modelcsv_Gestinumv3=Eksport do Gestinum (v3)
 Modelcsv_Gestinumv5=Eksport dla Gestinum (v5)
 Modelcsv_charlemagne=Eksport dla Aplim Charlemagne
 ChartofaccountsId=Id planu kont
-
+ExportToPdf = Eksportuj do PDF
+PdfLedgerTitle = Konta księgowe
+PdfBalanceTitle = Saldo księgi głównej
+PdfBookkeepingTitle = Dzienniki
+AccountancyBalance = Saldo księgowe
+AccountancyLedger = Księga rachunkowa
+AccountancyBookkeeping = Księgowość rachunkowa
+PDFAccountancyBalanceDescription = Model PDF dla bilansu księgowego
+PDFAccountancyBookkeepingDescription = Model PDF dla księgowości rachunkowej
+PDFAccountancyLedgerDescription = Model PDF dla księgi rachunkowej
+PrintDate = Data wydruku
+PdfTitleAccountNb = Konto
+DebitMovement = Ruch debetowy
+CreditMovement = Ruch kredytowy
+BalanceAt = Saldo w %s
+AccountancyGroupTHIRDPARTY = Kontrahenci
+AccountancyGroupFINAN = Budżetowy
+AccountancyGroupSTOCK = Inwentaryzacje
+AccountancyGroupCAPIT = Kapitał
+AccountancyGroupIMMO = Aktywa trwałe
+AccountancyGroupEXPENSE = Wydatki
+AccountancyGroupINCOME = Dochody
+GrandTotals = Sumy całkowite
+ErrorAccountancyDirectoryNotDefined = Katalog księgowości nie jest zdefiniowany
 ## Tools - Init accounting account on product / service
 InitAccountancy=Rozpocznij księgowość
 InitAccountancyDesc=Ta strona może służyć do inicjowania konta księgowego dla produktów i usług, które nie mają konta księgowego zdefiniowanego dla sprzedaży i zakupów.
@@ -423,18 +440,21 @@ AccountRemovedFromGroup=Konto zostało usunięte z grupy
 SaleLocal=Sprzedaż lokalna
 SaleExport=Sprzedaż eksportowa
 SaleEEC=Sprzedaż w EWG
-SaleEECWithVAT=Sprzedaż w EWG z podatkiem VAT niezerowym, więc przypuszczamy, że NIE jest to sprzedaż wewnątrzwspólnotowa, a sugerowane konto to standardowe konto produktu.
-SaleEECWithoutVATNumber=Sprzedaż na terenie EWG bez podatku VAT, ale identyfikator VAT osoby trzeciej nie jest zdefiniowany. Wracamy do konta w przypadku sprzedaży standardowej. W razie potrzeby możesz poprawić identyfikator VAT strony trzeciej lub zmienić sugerowane konto produktu do powiązania.
+SaleEECWithVAT=Sprzedaż odbywa się na terenie EWG z podatkiem VAT, więc zakładamy, że NIE jest to sprzedaż wewnątrzwspólnotowa, a sugerowanym rozliczeniem jest standardowe rozliczenie produktu.
+SaleEECWithoutVATNumber=Sprzedaż odbywa się w EEC bez VAT, ale identyfikator VAT strony trzeciej nie jest zdefiniowany. W przypadku sprzedaży standardowej korzystamy z konta. Możesz naprawić identyfikator VAT strony trzeciej lub zmienić sugerowane konto produktu do wiązania, jeśli to konieczne.
+AnySale=Jakakolwiek sprzedaż
 ForbiddenTransactionAlreadyExported=Zabronione: transakcja została zatwierdzona i/lub wyeksportowana.
 ForbiddenTransactionAlreadyValidated=Zabronione: transakcja została zatwierdzona.
+DataMustHaveBeenTransferredInAccounting=Przeniesienie danych do księgowości musi być wykonane
+IfTransactionHasDueDate=W przypadku transakcji związanych z dokumentami wymagającymi zapłaty
 ## Dictionary
 Range=Zakres konta księgowego
 Calculated=Przeliczone
 Formula=Formuła
-
 ## Reconcile
 LetteringAuto=Uzgodnij auto
 LetteringManual=Uzgodnij instrukcję
+LetteringPartial=Uzgodnij częściowe
 Unlettering=Nieporozumienie
 UnletteringAuto=Niepogodzony automat
 UnletteringManual=Niezgodna instrukcja
@@ -444,11 +464,10 @@ AccountancyLetteringModifiedSuccessfully=%s uzgadnianie zostało pomyślnie zmod
 AccountancyNoUnletteringModified=Nie zmodyfikowano żadnego nieuzgodnienia
 AccountancyOneUnletteringModifiedSuccessfully=Pomyślnie zmodyfikowano jedno nieuzgodnienie
 AccountancyUnletteringModifiedSuccessfully=%s nieuzgodnione pomyślnie zmodyfikowano
-
 ## Closure
-AccountancyClosureStep1=Step 1 : Validate and lock the movements
-AccountancyClosureStep2=Step 2 : Close the fiscal period
-AccountancyClosureStep3=Krok 3: Wyodrębnij wpisy (opcjonalnie)
+AccountancyClosureStep1=Zatwierdź i zablokuj ruchy
+AccountancyClosureStep2=Zamknięcie okresu fiskalnego
+AccountancyClosureStep3=Wyodrębnij wpisy (opcjonalnie)
 AccountancyClosureClose=Zamknięcie okresu fiskalnego
 AccountancyClosureAccountingReversal=Wyodrębnij i zapisz wpisy „Zyski zatrzymane”.
 AccountancyClosureStep3NewFiscalPeriod=Następny okres fiskalny
@@ -456,7 +475,6 @@ AccountancyClosureGenerateClosureBookkeepingRecords=Wygeneruj wpisy „Zyski zat
 AccountancyClosureSeparateAuxiliaryAccounts=Generując wpisy „Zyski zatrzymane”, należy szczegółowo opisać konta księgi pomocniczej
 AccountancyClosureCloseSuccessfully=Okres obrachunkowy został pomyślnie zamknięty
 AccountancyClosureInsertAccountingReversalSuccessfully=Wpisy księgowe dla „Zysków zatrzymanych” zostały pomyślnie wstawione
-
 ## Confirm box
 ConfirmMassUnletteringAuto=Zbiorcze potwierdzenie automatycznego nieuzgodnienia
 ConfirmMassUnletteringManual=Zbiorcze ręczne potwierdzenie nieuzgodnienia
@@ -465,6 +483,9 @@ ConfirmMassDeleteBookkeepingWriting=Potwierdzenie usuwania zbiorczego
 ConfirmMassDeleteBookkeepingWritingQuestion=Spowoduje to usunięcie transakcji z księgowości (wszystkie wpisy dotyczące tej samej transakcji zostaną usunięte). Czy na pewno chcesz usunąć %s wybrane wpisy?
 AccountancyClosureConfirmClose=Czy na pewno chcesz zamknąć bieżący okres fiskalny? <span class="warning">Rozumiesz, że zamknięcie okresu obrachunkowego jest działaniem nieodwracalnym i trwale zablokuje wszelkie modyfikacje lub usuwanie wpisów w tym okresie</span> .
 AccountancyClosureConfirmAccountingReversal=Czy na pewno chcesz rejestrować wpisy dla „Zysków zatrzymanych”?
+
+## Warning
+WarningBookkeepingRecordAlreadyExists=Transakcja dla (doc_type=%s, doc_id=%s, doc_det=%s) zostały już nagrane
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Niektóre obowiązkowe kroki konfiguracji nie zostały wykonane. Proszę je uzupełnić.
@@ -483,10 +504,12 @@ AccountancyErrorMismatchBalanceAmount=Saldo (%s) nie jest równe 0
 AccountancyErrorLetteringBookkeeping=Wystąpiły błędy dotyczące transakcji: %s
 ErrorAccountNumberAlreadyExists=Numer księgowy %s już istnieje
 ErrorArchiveAddFile=Nie można umieścić pliku „%s” w archiwum
-ErrorNoFiscalPeriodActiveFound=Nie znaleziono aktywnego okresu obrachunkowego
+ErrorNoFiscalPeriodActiveFound=Nie znaleziono aktywnego okresu fiskalnego (z określoną datą rozpoczęcia i zakończenia). Możesz utworzyć okres z menu %s - %s - %s.
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Data dokumentu księgowego nie mieści się w aktywnym okresie obrachunkowym
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Data dokumentu księgowego przypada w zamkniętym okresie obrachunkowym
-
+Error_BOOKKEEPING_ADDON_NotDefined=Błąd, reguła numeracji księgowej nie jest zdefiniowana w ogólnych ustawieniach modułu księgowości
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Spróbuj wstawić niezbilansowaną transakcję do księgi dla %s (ID płatności: %s). Anulowano. To na pewno błąd.
+ProductUsage=Wykorzystanie produktu lub usługi
 ## Import
 ImportAccountingEntries=Zapisy księgowe
 ImportAccountingEntriesFECFormat=Zapisy księgowe - format FEC
@@ -508,11 +531,35 @@ FECFormatReconcilableDate=Data uzgodnienia (DateLet)
 FECFormatValidateDate=Zatwierdzona data sztuki (ValidDate)
 FECFormatMulticurrencyAmount=Kwota w wielu walutach (Montantdevise)
 FECFormatMulticurrencyCode=Kod wielowalutowy (Idevise)
-
 DateExport=Eksport daty
 WarningReportNotReliable=Uwaga, raport ten nie jest oparty na księdze, więc nie zawiera transakcji modyfikowanych ręcznie w księdze. Jeśli Twoje dzienniki są aktualne, widok księgowy jest dokładniejszy.
 ExpenseReportJournal=Dziennik wydatków
 DocsAlreadyExportedAreIncluded=Uwzględnione są już wyeksportowane dokumenty
 ClickToShowAlreadyExportedLines=Kliknij, aby wyświetlić już wyeksportowane linie
-
 NAccounts=%s kont
+ACCOUNTING_USE_TREASURY_Desc=To jest tryb księgowości skarbowej. Do prowadzenia księgowości używamy tylko płatności i ich daty.
+ACCOUNTING_USE_NON_TREASURY_Desc=To jest tryb prawdziwej księgowości. Używamy zarówno faktur, jak i płatności do prowadzenia księgowości.
+PieceDesc=Numer referencyjny dokumentu źródłowego, który generuje daną transakcję bankową (numer referencyjny faktury, numer referencyjny raportu wydatków, ...)
+BankTransactionRef=Odniesienie do transakcji bankowej (Opcjonalne, automatyczne ID jest już generowane)
+## Mass Actions
+ConfirmMassCloneBookkeepingWritingQuestion=Spowoduje to sklonowanie wpisu księgowego (wszystkie wiersze połączone z tym wpisem księgowym zostaną sklonowane). Czy na pewno chcesz sklonować wybrane rekordy %s?
+ConfirmMassCloneBookkeepingWriting=Potwierdź klonowanie masowe
+ConfirmMassReturnAccountBookkeepingWriting=Potwierdź masowe wymieranie
+ConfirmMassReturnAccountBookkeepingWritingQuestion=Spowoduje to wygaszenie wpisu księgowego (wszystkie wiersze połączone z tym wpisem księgowym zostaną wygaszone). Czy na pewno chcesz pominąć wybrane rekordy %s?
+ConfirmMassAssignAccountBookkeepingWritingQuestion=Spowoduje to zmianę konta wszystkich wybranych linii.
+confirmMassAssignAccountBookkeepingWritingConfirm=Potwierdź masową zmianę konta
+CloningSuccess=Pomyślne klonowanie transakcji: %s
+CloningFailed=Klonowanie nieudane
+CloneOf=Klon %s
+AssignAccountsSuccess=zaktualizowane transakcje
+AssignAccountSuccess=zaktualizowana transakcja
+AssignAccount=Zmień konto
+AssignAccountError=Nie zmieniono konta
+NoAccountChangedWithAccountNumber=Transakcja nie została zaktualizowana o numer konta: %s
+NoAccountsChangedWithAccountNumber=Transakcje nie zostały zaktualizowane o numery kont: %s
+HasAlreadyBeenReversed=zostało już odwrócone
+ErrorWhileCreating=Błąd podczas tworzenia %s
+ReturnAccount=Powrót
+Clone=Klonowanie
+AlreadyReturnedAccount=Wpis nr %s został już cofnięty
+SuccessReturnedAccount=Wpis nr %s został cofnięty

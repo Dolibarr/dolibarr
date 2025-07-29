@@ -3,9 +3,9 @@ MenuFinancial=الفواتير | السداد
 TaxModuleSetupToModifyRules=إذهب إلى <a href="%s">إعدادات وحدة الضرائب</a> لتعديل قواعد الحساب
 TaxModuleSetupToModifyRulesLT=إذهب إلى <a href="%s">إعدادات الشركة</a> لتعديل قواعد الحساب
 OptionMode=خيار المحاسبة
-OptionModeTrue=خيار  الإيرادات والمصروفات
-OptionModeVirtual=الخيار بين اعتمادات الديون
-OptionModeTrueDesc=وفي هذا السياق ، ويحسب حجم المدفوعات (تاريخ المدفوعات). \\ nThe صحة الأرقام مضمونا إلا إذا مسك الدفاتر ومن خلال التدقيق في المدخلات والمخرجات على الحسابات عن طريق الفواتير.
+OptionModeTrue=الاستحقاق المحاسبة
+OptionModeVirtual=المحاسبة النقدية
+OptionModeTrueDesc=في هذا السياق، يُحسب التغيير بناءً على المدفوعات (تاريخ الدفع). ولا تُضمن صحة الأرقام إلا بتدقيق دفاتر الحسابات من خلال مدخلات/مخرجات المدفوعات.
 OptionModeVirtualDesc=وفي هذا السياق ، فإن أكثر من الدوران يحسب الفواتير (تاريخ التصديق). إذا كانت هذه الفواتير المستحقة ، وعما إذا كانت قد دفعت أم لا ، فهي مدرجة في حجم الانتاج.
 FeatureIsSupportedInInOutModeOnly=الميزة الوحيدة المتاحة في سداد ديون قروض المحاسبة طريقة (انظر التكوين وحدة المحاسبة)
 VATReportBuildWithOptionDefinedInModule=المبالغ المبينة هنا يتم حسابها باستخدام القواعد التي تحددها وحدة الإعداد الضرائب.
@@ -13,14 +13,14 @@ LTReportBuildWithOptionDefinedInModule=وتحسب المبالغ المبينة 
 Param=الإعدادات
 RemainingAmountPayment=المبلغ المتبقي:
 Account=الحساب
-Accountparent=Parent account
-Accountsparent=Parent accounts
+Accountparent=الحساب الرئيسي
+Accountsparent=الحسابات الرئيسية
 Income=الدخل
 Outcome=المصروف
 MenuReportInOut=دخل / مصروف
 ReportInOut=ميزان الايرادات والمصروفات
-ReportTurnover=Turnover invoiced
-ReportTurnoverCollected=Turnover collected
+ReportTurnover=فاتورة المبيعات
+ReportTurnoverCollected=المبيعات المجمعة
 PaymentsNotLinkedToInvoice=المدفوعات ليست مرتبطة بأي الفاتورة ، وذلك ليس مرتبطا بأي طرف ثالث
 PaymentsNotLinkedToUser=المدفوعات ليست مرتبطة بأي مستخدم
 Profit=الأرباح
@@ -32,8 +32,8 @@ Credit=الائتمان
 AccountingDebit=الخصم
 AccountingCredit=الائتمان
 Piece=تمثل الوثيقة.
-AmountHTVATRealReceived=جمعت HT
-AmountHTVATRealPaid=HT المدفوعة
+AmountHTVATRealReceived=صافي المبلغ المجمع
+AmountHTVATRealPaid=صافي المدفوع
 VATToPay=المبيعات الضريبية
 VATReceived=تم استلام الضريبة
 VATToCollect=المشتريات الضريبية
@@ -42,20 +42,20 @@ VATBalance=رصيد الضريبة
 VATPaid=الضريبة المدفوعة
 LT1Summary=ملخص الضريبة 2
 LT2Summary=ملخص الضريبة 3
-LT1SummaryES=RE الميزان
-LT2SummaryES=IRPF الرصيد
-LT1SummaryIN=ميزان CGST
-LT2SummaryIN=ميزان SGST
+LT1SummaryES=رصيد RE
+LT2SummaryES=رصيد IRPF
+LT1SummaryIN=رصيد CGST
+LT2SummaryIN=رصيد SGST
 LT1Paid=دفع الضريبة 2
 LT2Paid=دفع الضريبة 3
-LT1PaidES=RE المدفوعة
+LT1PaidES=مدفوع RE
 LT2PaidES=مدفوع IRPF
 LT1PaidIN=مدفوعة CGST
 LT2PaidIN=مدفوعة SGST
 LT1Customer=ضريبة المبيعات 2
 LT1Supplier=ضريبة مشتريات 2
-LT1CustomerES=RE المبيعات
-LT1SupplierES=RE المشتريات
+LT1CustomerES=مبيعات RE
+LT1SupplierES=مشتريات RE
 LT1CustomerIN=مبيعات CGST
 LT1SupplierIN=مشتريات CGST
 LT2Customer=ضريبة المبيعات 3
@@ -65,9 +65,8 @@ LT2SupplierES=مشتريات IRPF
 LT2CustomerIN=مبيعات SGST
 LT2SupplierIN=مشتريات SGST
 VATCollected=جمعت ضريبة القيمة المضافة
-StatusToPay=دفع
 SpecialExpensesArea=منطقة لجميع المدفوعات الخاصة
-VATExpensesArea=منطقة لجميع مدفوعات TVA
+VATExpensesArea=منطقة لجميع مدفوعات ضريبة القيمة المضافة
 SocialContribution=الضريبة الاجتماعية أو المالية
 SocialContributions=الضرائب الاجتماعية أو المالية
 SocialContributionsDeductibles=Deductible social or fiscal taxes
@@ -89,7 +88,7 @@ PaymentCustomerInvoice=الزبون تسديد الفاتورة
 PaymentSupplierInvoice=دفع فاتورة البائع
 PaymentSocialContribution=اجتماعي / دفع الضرائب المالية
 PaymentVat=دفع ضريبة القيمة المضافة
-AutomaticCreationPayment=سجل الدفع تلقائيًا
+AutomaticCreationPayment=أيضًا سجل الدفع
 ListPayment=قائمة المدفوعات
 ListOfCustomerPayments=قائمة مدفوعات العملاء
 ListOfSupplierPayments=قائمة مدفوعات البائعين
@@ -119,10 +118,14 @@ SocialContributionsPayments=الاجتماعية المدفوعات / الضرا
 ShowVatPayment=وتظهر دفع ضريبة القيمة المضافة
 TotalToPay=على دفع ما مجموعه
 BalanceVisibilityDependsOnSortAndFilters=يظهر الرصيد في هذه القائمة فقط إذا تم فرز الجدول على %s وتصفيته على حساب مصرفي واحد (بدون عوامل تصفية أخرى)
+CustomerAccountancyCodeGeneral=قانون المحاسبة العامة
 CustomerAccountancyCode=كود محاسبة العملاء
+SupplierAccountancyCodeGeneral=قانون المحاسبة العامة
 SupplierAccountancyCode=كود محاسبة البائع
+UserAccountancyCodeGeneral=قانون المحاسبة العامة
 CustomerAccountancyCodeShort=الزبون. حساب. رمز
 SupplierAccountancyCodeShort=سوب. حساب. رمز
+UserAccountancyCodeShort=حساب المستخدم. رمز
 AccountNumber=رقم الحساب
 NewAccountingAccount=حساب جديد
 Turnover=Turnover invoiced
@@ -130,7 +133,9 @@ TurnoverCollected=Turnover collected
 SalesTurnoverMinimum=الحد الأدنى من معدل الدوران
 ByExpenseIncome=By expenses & incomes
 ByThirdParties=بو أطراف ثالثة
+ByProjects=حسب المشاريع
 ByUserAuthorOfInvoice=فاتورة من قبل المؤلف
+DetailedListLowercase=قائمة مفصلة
 CheckReceipt=قسيمة الإيداع
 CheckReceiptShort=قسيمة الإيداع
 LastCheckReceiptShort=أحدث %s قسائم الإيداع
@@ -162,6 +167,7 @@ CalcModeVATDebt=<b>الوضع٪ SVAT بشأن المحاسبة الالتزام�
 CalcModeVATEngagement=وضع <b>SVAT٪ على مداخيل مصاريف٪ الصورة.</b>
 CalcModeDebt=تحليل الوثائق المسجلة المعروفة
 CalcModeEngagement=تحليل المدفوعات المسجلة المعروفة
+CalcModePayment=تحليل المدفوعات المسجلة المعروفة
 CalcModeBookkeeping=تحليل البيانات المسجلة في دفتر دفتر الأستاذ.
 CalcModeNoBookKeeping=حتى لو لم يتم حسابهم بعد في دفتر الأستاذ
 CalcModeLT1= <b>الوضع٪ زارة العلاقات الخارجية على فواتير العملاء - فواتير الموردين٪ الصورة</b>
@@ -274,9 +280,16 @@ SameCountryCustomersWithVAT=تقرير عملاء الوطني
 BasedOnTwoFirstLettersOfVATNumberBeingTheSameAsYourCompanyCountry=استنادا الى اثنين من الأحرف الأولى من رقم ضريبة القيمة المضافة هي نفس رمز البلد شركتك الخاصة لل
 LinkedFichinter=Link to an intervention
 ImportDataset_tax_contrib=الضرائب الاجتماعية / المالية
-ImportDataset_tax_vat=Vat payments
+ImportDataset_tax_vat=مدفوعات ضريبة القيمة المضافة
 ErrorBankAccountNotFound=Error: Bank account not found
 FiscalPeriod=Accounting period
+ErrorNoFiscalyearDefined=خطأ، لم يتم تحديد سنة مالية (انظر %s - %s - %s )
+FiscalYearSetAsDefault=السنة المالية (%s) تم تعريفها على أنها افتراضية
+FiscalYearFromTo=الفترة من %s إلى %s
+FiscalYearOpened=افتتاح السنة المالية
+FiscalYearClosed=إغلاق السنة المالية
+FiscalYearOpenedShort=Opened
+FiscalYearClosedShort=مغلق
 ListSocialContributionAssociatedProject=List of social contributions associated with the project
 DeleteFromCat=إزالة من مجموعة المحاسبة
 AccountingAffectation=مهمة المحاسبة
@@ -312,3 +325,7 @@ InvoiceToPay30Days=للدفع (> 30 يومًا)
 ConfirmPreselectAccount=حدد رمز المحاسبة مسبقًا
 ConfirmPreselectAccountQuestion=هل أنت متأكد أنك تريد التحديد المسبق للأسطر المحددة %s برمز الحساب هذا؟
 AmountPaidMustMatchAmountOfDownPayment=يجب أن يتطابق المبلغ المدفوع مع مبلغ الدفعة المقدمة
+RuleForLinesDates=قاعدة لتواريخ الخطوط
+Prepaid=الدفع المسبق
+Postpaid=الدفع الآجل
+SetRuleForLinesDates=تعيين قاعدة لتواريخ الخطوط

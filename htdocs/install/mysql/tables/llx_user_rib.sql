@@ -31,11 +31,12 @@ create table llx_user_rib
   cle_rib           varchar(5),    -- key of bank account
   bic               varchar(11),   -- 11 according to ISO 9362
   bic_intermediate  varchar(11),   -- 11 according to ISO 9362. Same as bic but for intermediate bank
-  iban_prefix       varchar(34),   -- full iban. 34 according to ISO 13616
+  iban_prefix       varchar(80),   -- full iban. 34 according to ISO 13616 but we set 80 to allow to store it with encryption information
   domiciliation     varchar(255),
   proprio           varchar(60),
   owner_address     varchar(255),
   state_id          integer,
   fk_country        integer,
-  currency_code     varchar(3)
+  currency_code     varchar(3),
+  default_rib       smallint DEFAULT 0 NOT NULL
 )ENGINE=innodb;

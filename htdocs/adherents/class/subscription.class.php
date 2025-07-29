@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -98,7 +98,7 @@ class Subscription extends CommonObject
 	public $fk_bank;
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -155,8 +155,6 @@ class Subscription extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."subscription (fk_adherent, fk_type, datec, dateadh, datef, subscription, note)";
-
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 		$member = new Adherent($this->db);
 		$result = $member->fetch($this->fk_adherent);
@@ -166,11 +164,15 @@ class Subscription extends CommonObject
 		} else {
 			$type = $this->fk_type;
 		}
-		$sql .= " VALUES (".((int) $this->fk_adherent).", '".$this->db->escape($type)."', '".$this->db->idate($now)."',";
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."subscription (fk_adherent, fk_type, datec, dateadh, datef, subscription, note, fk_user_creat)";
+		$sql .= " VALUES (".((int) $this->fk_adherent).", '".$this->db->escape((string) $type)."', '".$this->db->idate($now)."',";
 		$sql .= " '".$this->db->idate($this->dateh)."',";
 		$sql .= " '".$this->db->idate($this->datef)."',";
 		$sql .= " ".((float) $this->amount).",";
-		$sql .= " '".$this->db->escape($this->note_public ? $this->note_public : $this->note)."')";
+		$sql .= " '".$this->db->escape($this->note_public ? $this->note_public : $this->note)."',";
+		$sql .= " ".((int) ($this->user_creation_id > 0 ? $this->user_creation_id : $user->id));
+		$sql .= ")";
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
@@ -344,9 +346,9 @@ class Subscription extends CommonObject
 	/**
 	 *	Delete a subscription
 	 *
-	 *	@param	User	$user		User that delete
-	 *	@param 	int 	$notrigger  0=launch triggers after, 1=disable triggers
-	 *	@return	int					Return integer <0 if KO, 0 if not found, >0 if OK
+	 *	@param	User		$user		User that delete
+	 *	@param 	int<0,1>	$notrigger  0=launch triggers after, 1=disable triggers
+	 *	@return	int						Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -357,6 +359,8 @@ class Subscription extends CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$accountline = new AccountLine($this->db);
 			$result = $accountline->fetch($this->fk_bank);
+		} else {
+			$accountline = null;
 		}
 
 		$this->db->begin();
@@ -420,7 +424,7 @@ class Subscription extends CommonObject
 
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 *  @param	int  	$notooltip					1=Disable tooltip
@@ -514,8 +518,7 @@ class Subscription extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT c.rowid, c.datec,';
-		$sql .= ' c.tms as datem';
+		$sql = 'SELECT c.rowid, c.datec, c.tms as datem, c.fk_user_creat';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'subscription as c';
 		$sql .= ' WHERE c.rowid = '.((int) $id);
 
@@ -527,6 +530,8 @@ class Subscription extends CommonObject
 
 				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
+
+				$this->user_creation_id = $obj->fk_user_creat;
 			}
 
 			$this->db->free($resql);
@@ -536,11 +541,11 @@ class Subscription extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param	string					$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param	?array{selected?:int|bool,adherent_type?:AdherentType,member?:Adherent,bank?:Account}	$arraydata	Array of data
+	 *  @return	string								HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

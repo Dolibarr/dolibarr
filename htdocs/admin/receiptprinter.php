@@ -3,7 +3,7 @@
  * Copyright (C) 2015-2024  Frédéric France       <frederic.france@free.fr>
  * Copyright (C) 2016      Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2020      Andreu Bisquerra Gaya <jove@bisquerra.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Abbes Bahfir		 <contact@ab1consult.com><bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,6 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/receiptprinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "receiptprinter"));
@@ -307,6 +315,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_valu
 print load_fiche_titre($langs->trans("ReceiptPrinterSetup"), $linkback, 'title_setup');
 
 $head = receiptprinteradmin_prepare_head($mode);
+$line = -1;
 
 // mode = config
 if ($mode == 'config' && $user->admin) {
@@ -348,12 +357,12 @@ if ($mode == 'config' && $user->admin) {
 
 	if ($action != 'editprinter') {
 		print '<tr>';
-		print '<td><input class="minwidth200" type="text" name="printername"></td>';
+		print '<td><input class="minwidth100" type="text" name="printername"></td>';
 		$ret = $printer->selectTypePrinter();
 		print '<td>'.$printer->resprint.'</td>';
 		$ret = $printer->selectProfilePrinter();
 		print '<td>'.$printer->profileresprint.'</td>';
-		print '<td><input size="60" type="text" name="parameter"></td>';
+		print '<td><input class="minwidth150" type="text" name="parameter"></td>';
 		print '<td class="right">';
 		if ($action != 'editprinter') {
 			print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'"></div>';
@@ -370,11 +379,11 @@ if ($mode == 'config' && $user->admin) {
 			if ($action == 'editprinter' && $printer->listprinters[$line]['rowid'] == $printerid) {
 				print '<input type="hidden" name="printerid" value="'.$printer->listprinters[$line]['rowid'].'">';
 				print '<td><input type="text" class="minwidth200" name="printername" value="'.$printer->listprinters[$line]['name'].'"></td>';
-				$ret = $printer->selectTypePrinter($printer->listprinters[$line]['fk_type']);
+				$ret = $printer->selectTypePrinter((string) $printer->listprinters[$line]['fk_type']);
 				print '<td>'.$printer->resprint.'</td>';
-				$ret = $printer->selectProfilePrinter($printer->listprinters[$line]['fk_profile']);
+				$ret = $printer->selectProfilePrinter((string) $printer->listprinters[$line]['fk_profile']);
 				print '<td>'.$printer->profileresprint.'</td>';
-				print '<td><input size="60" type="text" name="parameter" value="'.$printer->listprinters[$line]['parameter'].'"></td>';
+				print '<td><input class="minwidth150" type="text" name="parameter" value="'.$printer->listprinters[$line]['parameter'].'"></td>';
 				print '<td>';
 				print $form->buttonsSaveCancel("Save", '');
 				print '</td>';
@@ -421,10 +430,10 @@ if ($mode == 'config' && $user->admin) {
 
 	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">'."\n";
-	print '<tr class="oddeven"><td>'.$langs->trans("CONNECTOR_DUMMY").'</td><td>'.$langs->trans("CONNECTOR_DUMMY_HELP").'</td></tr>';
-	print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("CONNECTOR_NETWORK_PRINT"), $langs->trans("FromServerPointOfView")).'</td><td>'.$langs->trans("CONNECTOR_NETWORK_PRINT_HELP").'</td></tr>';
+	print '<tr class="oddeven"><td class="minwidth100">'.$langs->trans("CONNECTOR_DUMMY").'</td><td>'.$langs->trans("CONNECTOR_DUMMY_HELP").'</td></tr>';
 	print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("CONNECTOR_FILE_PRINT"), $langs->trans("FromServerPointOfView")).'</td><td>'.$langs->trans("CONNECTOR_FILE_PRINT_HELP").'</td></tr>';
 	print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("CONNECTOR_WINDOWS_PRINT"), $langs->trans("FromServerPointOfView")).'</td><td>'.$langs->trans("CONNECTOR_WINDOWS_PRINT_HELP").'</td></tr>';
+	print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("CONNECTOR_NETWORK_PRINT"), $langs->trans("FromServerPointOfView")).'</td><td>'.$langs->trans("CONNECTOR_NETWORK_PRINT_HELP").'</td></tr>';
 	print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("CONNECTOR_CUPS_PRINT"), $langs->trans("FromServerPointOfView")).'</td><td>'.$langs->trans("CONNECTOR_CUPS_PRINT_HELP").'</td></tr>';
 	print '</table>';
 	print '</div>';

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018-2023  Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'salaries', 'bills', 'hrm', 'stripe'));
@@ -69,10 +78,10 @@ $stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripePayoutList"));
 
-if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
+if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */)) {
 	$service = 'StripeTest';
 	$servicestatus = '0';
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
+	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning');
 } else {
 	$service = 'StripeLive';
 	$servicestatus = '1';
@@ -105,27 +114,30 @@ if (!$rowid) {
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
 
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.(!empty($moreforfilter) ? " listwithfilterbefore" : "").'">'."\n";
+	print '<table class="tagtable noborder liste'.(!empty($moreforfilter) ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre("DatePayment", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("DateOperation", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'left ');
-	print_liste_field_titre("Paid", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');
-	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", '', '', '', 'right ');
+	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder, 'right ');	// For info links
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", '', '', '', 'center ');
 	print "</tr>\n";
 
 	print "</tr>\n";
 
 	try {
 		if ($stripeacc) {
-			$payout = \Stripe\Payout::all(array("limit" => $limit), array("stripe_account" => $stripeacc));
+			$payout_all = \Stripe\Payout::all(array("limit" => $limit), array("stripe_account" => $stripeacc));
 		} else {
-			$payout = \Stripe\Payout::all(array("limit" => $limit));
+			$payout_all = \Stripe\Payout::all(array("limit" => $limit));
 		}
+		'@phan-var-force \Stripe\Payout $payout_all';  // TStripeObject suggested, but is a template
 
-		foreach ($payout->data as $payout) {
+		foreach ($payout_all->data as $payout) {
+			'@phan-var-force \Stripe\Payout $payout';  // TStripeObject suggested, but is a template
 			print '<tr class="oddeven">';
 
 			// Ref
@@ -140,18 +152,24 @@ if (!$rowid) {
 				$url = 'https://dashboard.stripe.com/'.$connect.'payouts/'.$payout->id;
 			}
 
-			print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." ".$payout->id."</a></td>\n";
+			print '<td><a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'globe')." ".dolPrintHTML($payout->id)."</a></td>\n";
 
 			// Date payment
 			print '<td class="center">'.dol_print_date($payout->created, 'dayhour')."</td>\n";
 			// Date payment
 			print '<td class="center">'.dol_print_date($payout->arrival_date, 'dayhour')."</td>\n";
 			// Type
-			print '<td>'.$payout->description.'</td>';
+			print '<td>'.dolPrintHTML($payout->description).'</td>';
 			// Amount
 			print '<td class="right"><span class="amount">'.price(($payout->amount) / 100, 0, '', 1, -1, -1, strtoupper($payout->currency))."</span></td>";
+			// Info links
+			print '<td>';
+			print '<span class="small">';
+			// TODO Add missing link to bank transfer for the num_chq = $payout->id
+			print '</span>';
+			print "</td>";
 			// Status
-			print "<td class='right'>";
+			print '<td class="center">';
 			if ($payout->status == 'paid') {
 				print img_picto($langs->trans($payout->status), 'statut4');
 			} elseif ($payout->status == 'pending') {

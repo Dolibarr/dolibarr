@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=Registrerad av
 AUTHORPAIEMENT=Betalad av
 AddTrip=Skapa kostnadsrapport
@@ -13,6 +13,8 @@ byEX_EXP=för rad (begränsning till %s)
 byEX_MON=per månad (begränsning till %s)
 byEX_YEA=per år (begränsning till %s)
 CANCEL_USER=Släckt av
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Konto (från kontoplanen) används som standard för "användare" på utgiftsrapporter
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=Det dedikerade kontot som definierats på användarkortet kommer endast att användas för underreskontro. Detta kommer att användas för huvudboken och även som standardvärde för underreskontro om inget dedikerat redovisningskonto har definierats för användaren.
 CarCategory=Fordonskategori
 ClassifyRefunded=Märk 'Återbetalas'
 CompanyVisited=Företag / organisation som besökts
@@ -39,7 +41,7 @@ expenseReportCoef=Koefficient
 expenseReportCoefUndefined=(värde ej definierat)
 expenseReportOffset=Offset
 expenseReportPrintExample=offset + (dx coef) = %s
-expenseReportRangeDisabled=Område inaktiverat - se c_exp_tax_range dictionay
+expenseReportRangeDisabled=Range disabled - se c_exp_tax_range-ordboken
 expenseReportRangeFromTo=från %d till %d
 expenseReportRangeMoreThan=mer än %d
 expenseReportTotalForFive=Exempel med <u> d </u> = 5
@@ -70,7 +72,8 @@ ExpenseReportRulesDesc=Du kan definiera maxbeloppsregler för utgiftsrapporter. 
 ExpenseReportWaitingForApproval=En ny kostnadsrapport har skickats in för godkännande
 ExpenseReportWaitingForApprovalMessage=En ny kostnadsrapport har skickats in och väntar på godkännande. <br> - Användare: %s <br> - Period: %s <br> Klicka här för att bekräfta: %s
 ExpenseReportWaitingForReApproval=En kostnadsrapport har lämnats in för omprövning
-ExpenseReportWaitingForReApprovalMessage=En kostnadsrapport har skickats in och väntar på omprövning. <br> %s, du vägrade att godkänna kostnadsrapporten av den anledningen: %s. <br> En ny version har föreslagits och väntar på ditt godkännande. <br> - Användare: %s <br> - Period: %s <br> Klicka här för att godkänna: %s
+ExpenseReportWaitingForReApprovalMessage=En utgiftsrapport har skickats in och väntar på omgodkännande.<br>Du vägrade att godkänna utgiftsrapporten av följande anledning: %s.<br>En ny version har föreslagits och väntar på ditt godkännande.<br> - Användare: %s<br> - Period: %s<br>
+ExpenseReportWaitingForReApprovalMessage2=Klicka här för att validera: %s
 ExpenseReportsIk=Konfiguration av körsträcka
 ExpenseReportsRules=Kostnadsrapporteringsregler
 ExpenseReportsToApprove=Rapporter att godkänna
@@ -91,9 +94,9 @@ nolimitbyEX_EXP=efter rad (ingen begränsning)
 nolimitbyEX_MON=per månad (ingen begränsning)
 nolimitbyEX_YEA=per år (ingen begränsning)
 NoTripsToExportCSV=Ingen kostnadsrapport att exportera för denna period.
-NOT_AUTHOR=Du är inte författaren till denna kostnadsrapport. Drift avbruten.
+NOT_AUTHOR=Du är inte författaren till denna utgiftsrapport. Åtgärden avbröts.
 OnExpense=Utläggsrad
-PDFStandardExpenseReports=Standardmall för att skapa ett PDF-dokument för kostnadsrapport
+PDFStandardExpenseReports=Standardmall för att generera ett PDF-dokument för en utgiftsrapport
 PaidTrip=Betala en kostnadsrapport
 REFUSEUR=Nekad av
 RangeIk=Mileage range
@@ -103,10 +106,10 @@ ShowExpenseReport=Visa kostnadsrapport
 ShowTrip=Visa kostnadsrapport
 TripCard=Kostnadsrapport
 TripId=ID utgiftsrapport
-TripNDF=Informationsutgiftsrapport
+TripNDF=Informationskostnadsrapport
 TripSociete=Informationsföretag
 Trips=Räkningar
-TripsAndExpenses=Kostnadsrapporter
+TripsAndExpenses=Utgiftsrapporter
 TripsAndExpensesStatistics=Kostnadsrapporteringsstatistik
 TypeFees=Typer av avgifter
 UploadANewFileNow=Ladda upp ett nytt dokument nu
@@ -115,6 +118,10 @@ VALIDOR=Godkänd av
 ValidateAndSubmit=Bekräfta och lämna in för godkännande
 ValidatedWaitingApproval=Bekräftat (väntar på godkännande)
 ValideTrip=Godkänn kostnadsrapport
+ExpenseReportPayments=Betalningar för utgiftsrapporter
+TaxUndefinedForThisCategory = Skatt är odefinierad för denna kategori
+errorComputeTtcOnMileageExpense=Fel vid beräkning av körsträcka
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Endast element i utkaststatus kan tas bort i massåtgärden
 
 ## Dictionary
 EX_BRE=Frukost
@@ -150,3 +157,5 @@ TF_PEAGE=Vägtull
 TF_TAXI=Taxi
 TF_TRAIN=Tåg
 TF_TRIP=Transport
+FailedToSetPaid=Kunde inte ställa in som betald
+FailedToSetToCancel=Misslyckades med att avbryta
