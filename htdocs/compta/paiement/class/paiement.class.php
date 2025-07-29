@@ -742,6 +742,7 @@ class Paiement extends CommonObject
 			// End call triggers
 		}
 
+		$this->deleteExtraFields();
 		// Delete payment (into paiement_facture and paiement)
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiement_facture';
 		$sql .= ' WHERE fk_paiement = '.((int) $this->id);
