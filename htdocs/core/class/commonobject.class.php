@@ -16,7 +16,7 @@
  * Copyright (C) 2018       Josep Lluís Amador  <joseplluis@lliuretic.cat>
  * Copyright (C) 2023       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021       Grégory Blémand     <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2023       Lenin Rivas      	<lenin.rivas777@gmail.com>
+ * Copyright (C) 2023-2025  Lenin Rivas      	<lenin.rivas777@gmail.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2025		Alexandre Janniaux	<alexandre.janniaux@gmail.com>
@@ -10529,6 +10529,11 @@ abstract class CommonObject
 				$values[$key] = $this->quote($key_fields['default'], $key_fields);
 			}
 
+			// If field unique empty return quotes '' avoid error Duplicate entry ''
+			if (isset($key_fields['notnull']) && $key_fields['notnull'] == 0 && ($values[$key] == '\'\'')) {
+				$values[$key] = 'null';
+			}
+
 			// If field is an implicit foreign key field (so type = 'integer:...')
 			if (isset($key_fields['type']) && preg_match('/^integer:/i', $key_fields['type']) && empty($values[$key])) {
 				if (isset($key_fields['default'])) {
@@ -10830,7 +10835,12 @@ abstract class CommonObject
 				$v = preg_replace('/,+/', ',', $v);
 			}
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			$tmp[] = $k.'='.$this->quote($v, $this->fields[$k]);
+			// If fields unique empty return quotes '' avoid error Duplicate entry ''
+			if (isset($this->fields[$k]['notnull']) && $this->fields[$k]['notnull'] == 0 && ($values[$k] == '\'\'')) {
+				$tmp[] = $k.'=NULL';
+			} else {
+				$tmp[] = $k.'='.$this->quote($v, $this->fields[$k]);
+			}
 		}
 
 		// Clean and check mandatory fields
