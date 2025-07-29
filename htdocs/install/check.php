@@ -239,6 +239,7 @@ $memrequired = 64 * 1024 * 1024;
 $memmaxorig = @ini_get("memory_limit");
 $memmax = @ini_get("memory_limit");
 if ($memmaxorig != '') {
+	$reg = array();
 	preg_match('/([0-9]+)([a-zA-Z]*)/i', $memmax, $reg);
 	if ($reg[2]) {
 		if (strtoupper($reg[2]) == 'G') {
