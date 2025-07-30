@@ -4,6 +4,7 @@
  * Copyright (C) 2022   	Open-Dsi				<support@open-dsi.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025       William Mead            <william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -479,9 +480,15 @@ class ProductCombination
 	 */
 	public function deleteByFkProductParent($user, $fk_product_parent)
 	{
+		$combinations = $this->fetchAllByFkProductParent($fk_product_parent);
+
+		if (!is_array($combinations)) { // No combinations found, return success
+			return 1;
+		}
+
 		$this->db->begin();
 
-		foreach ($this->fetchAllByFkProductParent($fk_product_parent) as $prodcomb) {
+		foreach ($combinations as $prodcomb) {
 			$prodstatic = new Product($this->db);
 
 			$res = $prodstatic->fetch($prodcomb->fk_product_child);
