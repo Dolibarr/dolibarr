@@ -662,7 +662,7 @@ class DiscountAbsolute extends CommonObject
 			//print 'zz'.$obj->amount;
 			//$obj = $this->db->fetch_object($resql);
 			//}
-			if ($multicurrency) {
+			if ($multicurrency && floatval($obj->multicurrency_amount) > 0) {
 				return $obj->multicurrency_amount;
 			}
 
@@ -703,7 +703,7 @@ class DiscountAbsolute extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			if ($multicurrency == 1) {
+			if ($multicurrency == 1 && floatval($obj->multicurrency_amount) > 0) {
 				return $obj->multicurrency_amount;
 			} else {
 				return $obj->amount;
@@ -744,7 +744,7 @@ class DiscountAbsolute extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			if ($multicurrency == 1) {
+			if ($multicurrency == 1 && floatval($obj->multicurrency_amount) > 0) {
 				return $obj->multicurrency_amount;
 			} else {
 				return $obj->amount;
@@ -782,7 +782,7 @@ class DiscountAbsolute extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			if ($multicurrency) {
+			if ($multicurrency && floatval($obj->multicurrency_amount) > 0) {
 				return $obj->multicurrency_amount;
 			} else {
 				return $obj->amount;
