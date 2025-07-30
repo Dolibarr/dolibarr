@@ -692,9 +692,7 @@ if ($action == 'create') {
 						print dolGetButtonAction('', $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"].'?action=valid&amp;token='.newToken().'&amp;id='.$object->id, '');
 					}
 				}
-
 				if ($user->hasRight('expedition', 'delivery', 'supprimer') && $action != 'presend') {
-
 					if ($object->status == 1 && $action != 'presend' && $expedition->status == 1) {
 						print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?action=presend&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
 					}
@@ -754,8 +752,8 @@ if ($action == 'create') {
 	}
 
 	/*
- * Action presend
- */
+	* Action presend
+	*/
 	//Select mail models is same action as presend
 	if (GETPOST('modelselected')) {
 		$action = 'presend';

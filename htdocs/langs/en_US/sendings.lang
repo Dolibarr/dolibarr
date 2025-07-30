@@ -51,7 +51,6 @@ DateReceived=Date delivery received
 ClassifyReception=Classify Received
 SendShippingByEMail=Send shipment by email
 SendShippingRef=Submission of shipment %s
-SendReceptionRef=Submission of reception %s
 ActionsOnShipping=Events on shipment
 LinkToTrackYourPackage=Link to track your package
 ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the Sales Order record.
