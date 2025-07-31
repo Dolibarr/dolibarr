@@ -3169,12 +3169,6 @@ parameters:
 			path: ../../../htdocs/comm/action/pertype.php
 
 		-
-			message: '#^Parameter \#1 \$string of function urlencode expects string, int\<0, 23\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/comm/action/pertype.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 1
@@ -3250,12 +3244,6 @@ parameters:
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 2
-			path: ../../../htdocs/comm/action/peruser.php
-
-		-
-			message: '#^Ternary operator condition is always true\.$#'
-			identifier: ternary.alwaysTrue
-			count: 4
 			path: ../../../htdocs/comm/action/peruser.php
 
 		-
@@ -10041,7 +10029,7 @@ parameters:
 		-
 			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 5
+			count: 3
 			path: ../../../htdocs/core/modules/commande/doc/pdf_einstein.modules.php
 
 		-
@@ -10065,7 +10053,7 @@ parameters:
 		-
 			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 5
+			count: 4
 			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
 
 		-
@@ -10197,7 +10185,7 @@ parameters:
 		-
 			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 5
+			count: 4
 			path: ../../../htdocs/core/modules/facture/doc/pdf_crabe.modules.php
 
 		-
@@ -10263,7 +10251,7 @@ parameters:
 		-
 			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 5
+			count: 3
 			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
 
 		-
@@ -11271,7 +11259,7 @@ parameters:
 		-
 			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 5
+			count: 4
 			path: ../../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
 
 		-
@@ -11809,12 +11797,6 @@ parameters:
 			path: ../../../htdocs/core/tpl/objectline_title.tpl.php
 
 		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/tpl/objectline_title.tpl.php
-
-		-
 			message: '#^Variable \$outputalsopricetotalwithtax might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -12097,28 +12079,10 @@ parameters:
 			path: ../../../htdocs/cron/list.php
 
 		-
-			message: '#^Offset ''css'' on array\{css\: ''minwidth200'', picto\: mixed\} in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.offset
-			count: 1
-			path: ../../../htdocs/datapolicy/admin/setup.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 3
 			path: ../../../htdocs/datapolicy/class/datapolicy.class.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''anonymize'' and ''anonymize'' will always evaluate to true\.$#'
-			identifier: equal.alwaysTrue
-			count: 1
-			path: ../../../htdocs/datapolicy/class/datapolicycron.class.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''anonymize'' and ''delete'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/datapolicy/class/datapolicycron.class.php
 
 		-
 			message: '#^Method CdavLib\:\:getFullCalendarObjects\(\) should return array\<array\<string\>\> but returns list\<array\<string, int\|string\|false\>\>\.$#'
@@ -13288,18 +13252,6 @@ parameters:
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
-			path: ../../../htdocs/expensereport/card.php
-
-		-
-			message: '#^Loose comparison using \=\= between 1 and 0 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/expensereport/card.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 2
 			path: ../../../htdocs/expensereport/card.php
 
 		-
@@ -16078,12 +16030,6 @@ parameters:
 			message: '#^Call to function is_array\(\) with list\<string\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
-			path: ../../../htdocs/main.inc.php
-
-		-
-			message: '#^Call to preg_quote\(\) is missing delimiter / to be effective\.$#'
-			identifier: argument.invalidPregQuote
-			count: 3
 			path: ../../../htdocs/main.inc.php
 
 		-
