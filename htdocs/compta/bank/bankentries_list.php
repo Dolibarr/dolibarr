@@ -1676,7 +1676,7 @@ if ($resql) {
 			if ($labeltype == 'SOLD') {
 				print '&nbsp;'; //$langs->trans("InitialBankBalance");
 			} else {
-				print dolPrintHtml($labeltype);
+				print dolPrintHTML($labeltype);
 			}
 			print "</td>\n";
 			if (!$i) {
