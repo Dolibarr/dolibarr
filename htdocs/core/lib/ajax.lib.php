@@ -521,7 +521,6 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 					templateResult: function (data, container) {	/* Format visible output into combo list */
 	 					/* Code to add class of origin OPTION propagated to the new select2 <li> tag */
 						if (data.element) { $(container).addClass($(data.element).attr("class")); }
-						//console.log("data html is "+$(data.element).attr("data-html"));
 						if (data.id == '.((int) $idforemptyvalue).' && $(data.element).attr("data-html") == undefined) {
 							return \'&nbsp;\';
 						}
@@ -533,7 +532,7 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 						return data.text;
 					},
 					templateSelection: function (selection) {		/* Format visible output of selected value */
-						if (selection.id == '.((int) $idforemptyvalue).') return \'<span class="placeholder">\'+selection.text+\'</span>\';
+						if (selection.id == '.((int) $idforemptyvalue).') return "<span class=\"placeholder\">"+selection.text+"</span>";
 						return selection.text;
 					},
 					escapeMarkup: function(markup) {
