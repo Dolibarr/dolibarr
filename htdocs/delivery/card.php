@@ -282,16 +282,14 @@ include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
-if (empty($reshook)) {
-	// Actions to send emails
+// Actions to send emails
 
-	$triggersendname = 'RECEPTION_SENTBYMAIL';
-	$paramname = 'id';
-	$autocopy = 'MAIN_MAIL_AUTOCOPY_RECEPTION_TO';
-	$mode = 'emailfromreception';
-	$trackid = 'bl'.$object->id;
-	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
-}
+$triggersendname = 'RECEPTION_SENTBYMAIL';
+$paramname = 'id';
+$autocopy = 'MAIN_MAIL_AUTOCOPY_RECEPTION_TO';
+$mode = 'emailfromreception';
+$trackid = 'bl' . $object->id;
+include DOL_DOCUMENT_ROOT . '/core/actions_sendmails.inc.php';
 
 
 /*
@@ -693,7 +691,7 @@ if ($action == 'create') {
 					}
 				}
 				if ($user->hasRight('expedition', 'delivery', 'supprimer') && $action != 'presend') {
-					if ($object->status == 1 && $action != 'presend' && $expedition->status == 1) {
+					if ($object->status == Delivery::STATUS_VALIDATED && $action != 'presend' && $expedition->status == Expedition::STATUS_VALIDATED) {
 						print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?action=presend&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
 					}
 					if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION')) {
