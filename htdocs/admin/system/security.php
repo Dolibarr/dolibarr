@@ -527,7 +527,7 @@ print '<br>';
 /*
 $usepassinconfencrypted = 0;
 global $dolibarr_main_db_pass, $dolibarr_main_db_encrypted_pass;
-if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass)) {
+if (preg_match('/(crypted|dolcrypt):/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass)) {
 	$usepassinconfencrypted = 1;
 }
 print '<strong>'.$langs->trans("MainDbPasswordFileConfEncrypted").'</strong>: ';

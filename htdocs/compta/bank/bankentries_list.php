@@ -796,8 +796,8 @@ if ($resql) {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="'.($action != 'delete' ? $action : 'search').'">';
-	if (!empty($view)) {
-		print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
+	if (!empty($mode)) {
+		print '<input type="hidden" name="mode" value="'.dol_escape_htmltag($mode).'">';
 	}
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -845,7 +845,7 @@ if ($resql) {
 		print '</td>';
 		print '<td>&nbsp;</td>';
 		print '<td class="nowrap">';
-		$form->select_types_paiements((GETPOST('operation') ? GETPOST('operation') : ($object->type == Account::TYPE_CASH ? 'LIQ' : '')), 'operation', '1,2', 2, 1);
+		print $form->select_types_paiements((GETPOST('operation') ? GETPOST('operation') : ($object->type == Account::TYPE_CASH ? 'LIQ' : '')), 'operation', '1,2', 2, 1, 0, 0, 1, '', 1);
 		print '</td>';
 		print '<td>';
 		print '<input name="num_chq" class="flat" type="text" size="4" value="'.GETPOST("num_chq", "alpha").'">';
@@ -853,7 +853,7 @@ if ($resql) {
 		//if (! $search_account > 0)
 		//{
 		print '<td class=right>';
-		$form->select_comptes(GETPOSTINT('add_account') ? GETPOSTINT('add_account') : $search_account, 'add_account', 0, '', 1, ($id > 0 || !empty($ref) ? ' disabled="disabled"' : ''));
+		print $form->select_comptes(GETPOSTINT('add_account') ? GETPOSTINT('add_account') : $search_account, 'add_account', 0, '', 1, ($id > 0 || !empty($ref) ? ' disabled="disabled"' : ''), 0, '', 1);
 		print '</td>';
 		//}
 		print '<td class="right"><input name="adddebit" class="flat" type="text" size="4" value="'.GETPOST("adddebit", "alpha").'"></td>';
@@ -1138,7 +1138,7 @@ if ($resql) {
 	}
 	// Type
 	if (!empty($arrayfields['type']['checked'])) {
-		print '<td class="liste_titre center">';
+		print '<td class="liste_titre">';
 		print $form->select_types_paiements(empty($search_type) ? '' : $search_type, 'search_type', '', 2, 1, 1, 0, 1, 'maxwidth100', 1);
 		print '</td>';
 	}
@@ -1240,7 +1240,7 @@ if ($resql) {
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['type']['checked'])) {
-		print_liste_field_titre($arrayfields['type']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, 'center ');
+		print_liste_field_titre($arrayfields['type']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['b.num_chq']['checked'])) {
@@ -1670,13 +1670,13 @@ if ($resql) {
 		if (!empty($arrayfields['type']['checked'])) {
 			$labeltype = ($langs->transnoentitiesnoconv("PaymentTypeShort".$objp->fk_type) != "PaymentTypeShort".$objp->fk_type) ? $langs->transnoentitiesnoconv("PaymentTypeShort".$objp->fk_type) : $langs->getLabelFromKey($db, $objp->fk_type, 'c_paiement', 'code', 'libelle', '', 1);
 			if (empty($arrayfields['b.num_chq']['checked'])) {
-				$labeltype .= ($objp->num_chq ? ' - '.$objp->num_chq : '');
+				$labeltype .= ($objp->num_chq ? ' <span class="opacitymedium">- '.$objp->num_chq.'</span>' : '');
 			}
 			print '<td class="tdoverflowmax100" title="'.dolPrintLabel($labeltype).'">';
 			if ($labeltype == 'SOLD') {
 				print '&nbsp;'; //$langs->trans("InitialBankBalance");
 			} else {
-				print dolPrintLabel($labeltype);
+				print dolPrintHTML($labeltype);
 			}
 			print "</td>\n";
 			if (!$i) {

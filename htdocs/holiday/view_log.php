@@ -242,7 +242,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	//TODO: $nbtotalofrecords = $db->num_rows($result);
 	$nbtotalofrecords = is_array($object->logs) ? count($object->logs) : 0;
 
-	if (($page * $limit) > $nbtotalofrecords) { // if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) { // if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}

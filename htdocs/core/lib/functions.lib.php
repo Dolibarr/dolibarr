@@ -460,7 +460,7 @@ function isDolTms($timestamp)
  * @param   string	$type		Type of database (mysql, pgsql...)
  * @param	string	$host		Address of database server
  * @param	string	$user		Authorized username
- * @param	string	$pass		Password
+ * @param	string	$pass		Password (clear)
  * @param	string	$name		Name of database
  * @param	int		$port		Port of database server
  * @return	DoliDB				A DoliDB instance
