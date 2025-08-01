@@ -5038,10 +5038,11 @@ tr.liste_titre_topborder td {
 	background: transparent;
 }
 tr.liste_titre:last-child th.liste_titre, tr.liste_titre:last-child th.liste_titre_sel, tr.liste_titre td.liste_titre, tr.liste_titre td.liste_titre_sel, form.liste_titre div.tagtd {				/* For last line of table headers only */
-	/* border-bottom: 1px solid var(--colortopbordertitle1); */
 	border-bottom: none;
 }
-tr.liste_titre_filter th.liste_titre:not(.center) { text-align: unset; }
+tr.liste_titre_filter th.liste_titre:not(.center), tr.liste_titre_filter th.liste_titre_sel:not(.center) {
+	text-align: unset;
+}
 
 /*
 div.liste_titre {

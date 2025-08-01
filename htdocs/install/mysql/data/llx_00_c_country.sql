@@ -7,6 +7,7 @@
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
 -- Copyright (C) 2014 	   Alexandre Spangaro   <aspangaro@open-dsi.fr>
 -- Copyright (C) 2021-2022 Udo Tamm             <dev@dolibit.de>
+-- Copyright (C) 2025 	   Nick Fragoulis
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -59,7 +60,7 @@ INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUE
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (28, 'AU', 'AUS', 'Australia', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (29, 'SG', 'SGP', 'Singapore', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (30, 'AF', 'AFG', 'Afghanistan', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (31, 'AX', 'ALA', 'Åland Island', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (31, 'AX', 'ALA', 'Åland Islands', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (32, 'AL', 'ALB', 'Albania', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (33, 'AS', 'ASM', 'American Samoa', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (34, 'AD', 'AND', 'Andorra', 1, 0);
@@ -89,19 +90,19 @@ INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUE
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (59, 'BG', 'BGR', 'Bulgaria', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (60, 'BF', 'BFA', 'Burkina Faso', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (61, 'BI', 'BDI', 'Burundi', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (62, 'KH', 'KHM', 'Cambodge / Cambodia', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (63, 'CV', 'CPV', 'Cap-Vert', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (64, 'KY', 'CYM', 'Cayman Island', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (62, 'KH', 'KHM', 'Cambodia', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (63, 'CV', 'CPV', 'Cape Verde', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (64, 'KY', 'CYM', 'Cayman Islands', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (65, 'CF', 'CAF', 'Central African Republic (CAR/RCA)', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (66, 'TD', 'TCD', 'Tchad', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (66, 'TD', 'TCD', 'Chad', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (67, 'CL', 'CHL', 'Chile', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (68, 'CX', 'CXR', 'Christmas Island', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (69, 'CC', 'CCK', 'Cocos Islands (Keeling)', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (70, 'CO', 'COL', 'Colombie', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (71, 'KM', 'COM', 'Comores', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (70, 'CO', 'COL', 'Colombia', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (71, 'KM', 'COM', 'Comoros', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (72, 'CG', 'COG', 'Congo', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (73, 'CD', 'COD', 'DR Congo (RDC)', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (74, 'CK', 'COK', 'Iles Cook', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (74, 'CK', 'COK', 'Cook Islands‎‎', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (75, 'CR', 'CRI', 'Costa Rica', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (76, 'HR', 'HRV', 'Croatia', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (77, 'CU', 'CUB', 'Cuba', 1, 0);
@@ -124,13 +125,13 @@ INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUE
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (94, 'FI', 'FIN', 'Finland', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (95, 'GF', 'GUF', 'French Guiana', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (96, 'PF', 'PYF', 'French Polynesia', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (97, 'TF', 'ATF', 'Terres australes françaises', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (98, 'GM', 'GMB', 'Gambie', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (97, 'TF', 'ATF', 'French Southern and Antarctic Lands', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (98, 'GM', 'GMB', 'Gambia', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (99, 'GE', 'GEO', 'Georgia', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (100, 'GH', 'GHA', 'Ghana', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (101, 'GI', 'GIB', 'Gibraltar', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (102, 'GR', 'GRC', 'Greece', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (103, 'GL', 'GRL', 'Groenland', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (103, 'GL', 'GRL', 'Greenland', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (104, 'GD', 'GRD', 'Grenade', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (106, 'GU', 'GUM', 'Guam', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (107, 'GT', 'GTM', 'Guatemala', 1, 0);
@@ -141,15 +142,15 @@ INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUE
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (113, 'VA', 'VAT', 'Vatican City (Saint-Siège)', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (114, 'HN', 'HND', 'Honduras', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (115, 'HK', 'HKG', 'Hong Kong', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (116, 'IS', 'ISL', 'Islande', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (116, 'IS', 'ISL', 'Iceland', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (117, 'IN', 'IND', 'India', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (118, 'ID', 'IDN', 'Indonesia', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (119, 'IR', 'IRN', 'Iran', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (120, 'IQ', 'IRQ', 'Iraq', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (121, 'IL', 'ISR', 'Israel', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (122, 'JM', 'JAM', 'Jamaica', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (123, 'JP', 'JPN', 'Japan (Nippon)', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (124, 'JO', 'JOR', 'Jordanie', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (123, 'JP', 'JPN', 'Japan', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (124, 'JO', 'JOR', 'Jordan', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (125, 'KZ', 'KAZ', 'Kazakhstan', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (126, 'KE', 'KEN', 'Kenya', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (127, 'KI', 'KIR', 'Kiribati', 1, 0);
@@ -158,34 +159,34 @@ INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUE
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (130, 'KW', 'KWT', 'Koweït', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (131, 'KG', 'KGZ', 'Kirghizistan', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (132, 'LA', 'LAO', 'Laos', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (133, 'LV', 'LVA', 'Lettonie', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (134, 'LB', 'LBN', 'Liban', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (133, 'LV', 'LVA', 'Latvia', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (134, 'LB', 'LBN', 'Lebanon', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (135, 'LS', 'LSO', 'Lesotho', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (136, 'LR', 'LBR', 'Liberia', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (137, 'LY', 'LBY', 'Libye', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (137, 'LY', 'LBY', 'Libya', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (138, 'LI', 'LIE', 'Liechtenstein', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (139, 'LT', 'LTU', 'Lituanie', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (139, 'LT', 'LTU', 'Lithuania', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (140, 'LU', 'LUX', 'Luxembourg', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (141, 'MO', 'MAC', 'Macao', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (142, 'MK', 'MKD', 'North Macedonia', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (143, 'MG', 'MDG', 'Madagascar', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (144, 'MW', 'MWI', 'Malawi', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (145, 'MY', 'MYS', 'Malaisie', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (145, 'MY', 'MYS', 'Malaysia', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (146, 'MV', 'MDV', 'Maldives', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (147, 'ML', 'MLI', 'Mali', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (148, 'MT', 'MLT', 'Malte', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (149, 'MH', 'MHL', 'Iles Marshall', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (151, 'MR', 'MRT', 'Mauritanie', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (152, 'MU', 'MUS', 'Maurice', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (148, 'MT', 'MLT', 'Malta', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (149, 'MH', 'MHL', 'Marshall Islands', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (151, 'MR', 'MRT', 'Mauritania', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (152, 'MU', 'MUS', 'Mauritius', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (153, 'YT', 'MYT', 'Mayotte', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (154, 'MX', 'MEX', 'Mexique', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (155, 'FM', 'FSM', 'Micronésie', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (156, 'MD', 'MDA', 'Moldavie', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (157, 'MN', 'MNG', 'Mongolie', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (158, 'MS', 'MSR', 'Monserrat', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (154, 'MX', 'MEX', 'Mexico', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (155, 'FM', 'FSM', 'Micronesia', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (156, 'MD', 'MDA', 'Moldova', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (157, 'MN', 'MNG', 'Mongolia', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (158, 'MS', 'MSR', 'Montserrat', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (159, 'MZ', 'MOZ', 'Mozambique', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (160, 'MM', 'MMR', 'Birmanie (Myanmar)', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (161, 'NA', 'NAM', 'Namibie', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (160, 'MM', 'MMR', 'Myanmar', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (161, 'NA', 'NAM', 'Namibia', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (162, 'NR', 'NRU', 'Nauru', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (163, 'NP', 'NPL', 'Népal', 1, 0);
 --INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (164, 'AN', 'AWP', 'Antilles néerlandaises', 1, 0);
@@ -206,14 +207,14 @@ INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUE
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (174, 'OM', 'OMN', 'Oman', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (175, 'PK', 'PAK', 'Pakistan', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (176, 'PW', 'PLW', 'Palau', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (177, 'PS', 'PSE', 'Palestinian territories', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (177, 'PS', 'PSE', 'Palestine', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (178, 'PA', 'PAN', 'Panama', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (179, 'PG', 'PNG', 'Papua New Guinea', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (180, 'PY', 'PRY', 'Paraguay', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (181, 'PE', 'PER', 'Peru', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (182, 'PH', 'PHL', 'Philippines', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (183, 'PN', 'PCN', 'Pitcairn Islands', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (184, 'PL', 'POL', 'Pologne', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (184, 'PL', 'POL', 'Poland', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (185, 'PR', 'PRI', 'Puerto Rico', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (186, 'QA', 'QAT', 'Qatar', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (188, 'RO', 'ROU', 'Romania', 1, 0);
@@ -530,9 +531,10 @@ UPDATE llx_c_country SET numeric_code = '894' WHERE code_iso = 'ZMB';
 UPDATE llx_c_country SET numeric_code = '716' WHERE code_iso = 'ZWE';
 
 
-
 -- Set field eec
+-- 'MC' Monaco although not a member state is treated as territory of France for customs, VAT(Intra-community VAT rules apply) and excise purposes. https://taxation-customs.ec.europa.eu/taxation/vat/vat-directive/how-does-vat-work/territorial-scope_en
 UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','DK','EE','ES','FI','FR','GR','HR','HU','IE','IT','LT','LU','LV','MC','MT','NL','PL','PT','RO','SE','SI','SK');
 
+-- Source: https://www.europeanpaymentscouncil.eu/document-library/other/epc-list-sepa-scheme-countries
 -- Set field sepa
-UPDATE llx_c_country SET sepa = 1 WHERE code IN ('AD','AT','BE','BG','CH','CY','CZ','DE','DK','EE','ES','FI','FR','GR','HR','HU','IE','IT','LT','LU','LV','MC','MT','NL','PL','PT','RO','SE','SI','SK','SM','VA');
+UPDATE llx_c_country SET sepa = 1 WHERE code IN ('AL','AD','AT','BE','BG','CH','CY','CZ','DE','DK','EE','ES','FI','FR','GB','GG','GR','HR','HU','IE','IM','IS','IT','JE','LI','LT','LU','LV','MC','MD','ME','MK','MT','NL','NO','PL','PM','PT','RO','RS','SE','SI','SK','SM','VA');

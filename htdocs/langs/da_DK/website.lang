@@ -64,7 +64,7 @@ YouCanCreatePageOrImportTemplate=Du kan oprette en ny side eller importere en fu
 SyntaxHelp=Hjælp til specifikke syntax tips
 YouCanEditHtmlSourceckeditor=Du kan redigere HTML-kildekode ved hjælp af knappen "Kilde" i editoren.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> Du kan inkludere PHP-kode i denne kilde ved hjælp af tags <strong>&lt;?php ?&gt;</strong> Følgende globale variabler er tilgængelige: $conf, $db, $mysoc, $user, $websted, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> Du kan også inkludere indhold fra en anden side/container med følgende syntax:<br><strong>&lt;?php includeContainer('alias_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> Du kan lave en omdirigering til en anden side/beholder med følgende syntaks (Bemærk: udsend ikke noget indhold før en omdirigering):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>Du kan også lave en omdirigering med GET-parametre:<br><strong>&lt;?php redirectToContainer(_alias_of_container, 'alias_of_0,'0 $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> For at tilføje et link til en anden side skal du bruge syntaksen:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br>
-YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> Du kan dynamisk indstille <strong>SEO-titel og meta tags</strong> (titel, nøgleord, beskrivelse). Du skal blot definere følgende variable:<br> <code>$__PAGE_TITLE__ = "Titelværdi …"</code><br> <code>$__PAGE_KEYWORDS__ = "søgeord1, søgeord2, søgeord3 …"; // Kommasepareret</code><br> <code>$__PAGE_DESC__="DEscription ..."; </code><br>
+YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> Du kan dynamisk indstille <strong>SEO-titel og metatags</strong> (titel, søgeord, beskrivelse). Definer blot følgende variabler:<br> <code>define('__SEO_PAGE_TITLE__', "Titelværdi …");</code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'søgeord1, søgeord2, søgeord3 …');</code><br> <code>define('__SEO_PAGE_DESC__', "Beskrivelse …");\n</code><br>
 YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> At inkludere et <strong>link til download</strong> en fil, der er gemt i <strong>dokumenterne</strong>, brug biblioteket <strong>document.php</strong> wrapper:<br>Eksempel, for at blive logget ind i dokumentet/en akse-fil er:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>file dokumenter/medier (åben mappe for offentlig adgang), syntaks er:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=For en fil, der deles med et delingslink (åben adgang ved hjælp af fildelings-hash-nøglen), er syntaksen:<br><strong> &lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
 YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> At inkludere en  <strong>image</strong> gemt i <strong>medias</strong> Bibliotek (bibliotek åben for offentlig adgang), brug den relative sti, der starter med <strong>/medias</strong>, eksempel:<br><strong>&lt;img src="/medias/image/.myimagepath/filename.ext" &gt;</strong><br>
@@ -81,7 +81,7 @@ LanguageMustNotBeSameThanClonedPage=Du klon en side som en oversættelse. Sproge
 ParentPageId=Forældre side id
 WebsiteId=Website ID
 CreateByFetchingExternalPage=Opret side / container ved at hente side fra ekstern webadresse ...
-OrEnterPageInfoManually=Eller opret side fra bunden eller fra en sideskabelon ...
+OrEnterPageInfoManually=Opret en side fra bunden eller fra en sideskabelon...
 FetchAndCreate=Hent og Opret
 ExportSite=Eksporter hjemmeside
 ImportSite=Importer websider skabelon
@@ -99,7 +99,7 @@ SorryWebsiteIsCurrentlyOffLine=Beklager, dette websted er i øjeblikket offline.
 WEBSITE_USE_WEBSITE_ACCOUNTS=Aktiver tabellen over webstedskonto for tredjeparter
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Aktiver tabellen for at gemme webstedets konti (login/pass) for hver tredjepart
 YouMustDefineTheHomePage=Du skal først definere standard startside
-OnlyEditionOfSourceForGrabbedContentFuture=Advarsel: Oprettelse af en webside ved at importere en ekstern webside er forbeholdt erfarne brugere. Afhængigt af kildesidens kompleksitet kan resultatet af importen afvige fra originalen. Også hvis kildesiden bruger almindelige CSS-stile eller modstridende JavaScript, kan det ødelægge udseendet eller funktionerne i websted-editoren, når du arbejder på denne side. Denne metode er en hurtigere måde at oprette en side på, men det anbefales at oprette din nye side fra bunden eller fra en foreslået sideskabelon.<br>Bemærk også, at inline-editoren muligvis ikke virker korrekt, når det bruges på en grebet ekstern side.
+OnlyEditionOfSourceForGrabbedContentFuture=Advarsel: Oprettelse af en webside ved at importere en ekstern webside er forbeholdt erfarne brugere og kan kun fungere på sider gengivet med HTML og CSS. Import af sider gengivet af JS-frameworks understøttes IKKE. Afhængigt af kildesidens kompleksitet vil resultatet af importen sandsynligvis afvige fra den oprindelige side. Hvis kildesiden bruger almindelige CSS-stilarter eller modstridende JavaScript, kan det også forstyrre udseendet eller funktionerne i websted-editoren, når man arbejder på denne side. Denne metode er en hurtig måde at oprette en side for meget avancerede brugere, når kildesiden tillader det, men det anbefales at oprette din nye side fra bunden eller fra en foreslået sideskabelon. <br>Bemærk også, at den indbyggede editor muligvis ikke fungerer korrekt, når den bruges på en side, der er blevet hentet.
 OnlyEditionOfSourceForGrabbedContent=Kun HTML-kildeændring er mulig, når indhold hentes fra et eksternt websted
 GrabImagesInto=Grib også billeder fundet i css og side.
 ImagesShouldBeSavedInto=Billeder skal gemmes i biblioteket
@@ -455,3 +455,4 @@ SampleGoalOne=Fremme samarbejde og solidaritet blandt medlemmerne.
 SampleGoaltwo=Fremme ansvarlige og bæredygtige praksisser på tværs af alle aktiviteter.
 SampleGoalthree=Støt effektfulde projekter, der gavner samfundet som helhed.
 SHOW_LANG_SELECTOR=Rullemenu til valg af visningssprog
+ForAdvancedWebmastersOnly=Kun for tekniske webmastere
