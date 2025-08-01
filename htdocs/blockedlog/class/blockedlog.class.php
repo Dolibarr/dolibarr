@@ -400,7 +400,7 @@ class BlockedLog
 	}
 
 	/**
-	 *	Populate properties of log from object data
+	 *	Populate properties of an unalterable log entry from object data
 	 *
 	 *	@param	CommonObject|stdClass	$object		object to store
 	 *	@param	string					$action		action
@@ -955,18 +955,18 @@ class BlockedLog
 
 		$previoushash = $this->getPreviousHash(1, 0); // This get last record and lock database until insert is done and transaction closed
 
-		$keyforsignature = $this->buildKeyForSignature();	// All the information for the hash (meta data + data saved)
+		$concatenatedata = $this->buildKeyForSignature();	// All the information for the hash (meta data + data saved)
 
 		$this->debuginfo = $this->buildFirstPartOfKeyForSignature();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 
-		$this->signature_line = dol_hash($keyforsignature, '5'); // Not really useful
-		$this->signature = dol_hash($previoushash.$keyforsignature, '5');
+		$this->signature_line = dol_hash($concatenatedata, '5'); // Not really useful
+		$this->signature = dol_hash($previoushash.$concatenatedata, '5');
 		if ($forcesignature) {
 			$this->signature = $forcesignature;
 		}
-		//var_dump($keyforsignature);var_dump($previoushash);var_dump($this->signature_line);var_dump($this->signature);
+		//var_dump($concatenatedata);var_dump($previoushash);var_dump($this->signature_line);var_dump($this->signature);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."blockedlog (";
 		$sql .= " date_creation,";
@@ -1049,11 +1049,11 @@ class BlockedLog
 		}
 
 		// Build the string for the signature
-		$keyforsignature = $this->buildKeyForSignature();
+		$concatenatedata = $this->buildKeyForSignature();
 
-		//$signature_line = dol_hash($keyforsignature, '5'); // Not really useful
-		$signature = dol_hash($previoushash.$keyforsignature, 'sha256');
-		//var_dump($previoushash); var_dump($keyforsignature); var_dump($signature_line); var_dump($signature);
+		//$signature_line = dol_hash($concatenatedata, '5'); // Not really useful
+		$signature = dol_hash($previoushash.$concatenatedata, 'sha256');
+		//var_dump($previoushash); var_dump($concatenatedata); var_dump($signature_line); var_dump($signature);
 
 		$res = ($signature === $this->signature);
 
@@ -1063,13 +1063,13 @@ class BlockedLog
 
 		if ($returnarray) {
 			if ($returnarray == 1) {
-				unset($keyforsignature);
+				unset($concatenatedata);
 				return array('checkresult' => $res, 'calculatedsignature' => $signature, 'previoushash' => $previoushash);
-			} else {	// Consume much memory ($keyforsignature is a large var)
-				return array('checkresult' => $res, 'calculatedsignature' => $signature, 'previoushash' => $previoushash, 'keyforsignature' => $keyforsignature);
+			} else {	// Consume much memory ($concatenatedata is a large var)
+				return array('checkresult' => $res, 'calculatedsignature' => $signature, 'previoushash' => $previoushash, 'keyforsignature' => $concatenatedata);
 			}
 		} else {
-			unset($keyforsignature);
+			unset($concatenatedata);
 			return $res;
 		}
 	}
@@ -1312,7 +1312,7 @@ class BlockedLog
 		$result = false;
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog";
-		$sql .= " WHERE entity = ".$conf->entity;
+		$sql .= " WHERE entity = ".((int) $conf->entity);
 		if ($ignoresystem) {
 			$sql .= " AND action not in ('MODULE_SET','MODULE_RESET')";
 		}
