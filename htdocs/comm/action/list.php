@@ -758,6 +758,7 @@ $newcardbutton = dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-c
 
 $param .= '&mode='.urlencode($mode);
 
+// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'object_action', 0, $nav.$newcardbutton, '', $limit, 0, 0, 1, $viewmode);
 
 print $s;
