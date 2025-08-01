@@ -49,6 +49,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 		$this->description = "Triggers of this module allows to manage workflows";
 		$this->version = self::VERSIONS['prod'];
 		$this->picto = 'technic';
+		$this->errors = [];
 	}
 
 	/**

@@ -327,6 +327,11 @@ class ActionComm extends CommonObject
 	public $email_from;
 
 	/**
+	 * @var string Email reply to
+	 */
+	public $email_reply_to;
+
+	/**
 	 * @var string Email sender
 	 */
 	public $email_sender;
@@ -1598,7 +1603,9 @@ class ActionComm extends CommonObject
 			$statusType = 'status6';
 		}
 
-		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
+		$params = array('badgeParams' => array('attr' => array('title' => '<b>'.$langs->trans("Progression").'</b> : '.$labelStatus)));
+
+		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $params);
 	}
 
 	/**
@@ -1823,7 +1830,7 @@ class ActionComm extends CommonObject
 			if ($maxlength < 0) {
 				$labelshort = $this->ref;
 			} else {
-				$labelshort = dol_trunc($label, $maxlength);
+				$labelshort = dol_trunc(empty($this->label) ? $labeltype : $this->label, $maxlength);
 			}
 		}
 

@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/openid_connect.lib.php';
  * @var User $user
  */
 
-$langs->loadLangs(["admin", "openidconnect"]);
+$langs->loadLangs(array("users", "admin", "other"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -126,14 +126,17 @@ if ($action != '') {
  *	View
  */
 
-llxHeader();
+$wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
+llxHeader('', $langs->trans("Miscellaneous"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-security_other');
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print load_fiche_titre($langs->trans("OpenIDconnectSetup"), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
-$head = openid_connect_prepare_head();
+print '<span class="opacitymedium">'.$langs->trans("OpenIDDesc")."</span><br>\n";
+print "<br>\n";
 
-print dol_get_fiche_head($head, 'settings', $langs->trans("Parameters"), -1, 'action');
+$head = security_prepare_head();
+
+print dol_get_fiche_head($head, 'openid', '', -1);
 
 print $langs->trans("SeeWikiDocForHelpInSetupOpenIDCOnnect");
 print ' - ';

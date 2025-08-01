@@ -97,7 +97,7 @@ class mod_workstation_standard extends ModeleNumRefWorkstation
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."-%'";
 		if ($object->ismultientitymanaged == 1) {
 			$sql .= " AND entity = ".$conf->entity;
-		} elseif ($object->ismultientitymanaged == 2) {
+		} elseif (!is_numeric($object->ismultientitymanaged)) {
 			// TODO
 		}
 

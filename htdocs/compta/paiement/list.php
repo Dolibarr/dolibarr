@@ -10,7 +10,7 @@
  * Copyright (C) 2018		Charlene Benke				<charlie@patas-monkey.com>
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,6 +131,14 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('paymentlist'));
 $object = new Paiement($db);
+$extrafields = new ExtraFields($db);
+
+// Fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($object->table_element);
+
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$search_sale = $user->id;
@@ -224,7 +232,12 @@ if (GETPOST("orphelins", "alpha")) {
 	// We need an aggregate because we added a left join to get the thirdparty. In real world, it should be the same thirdparty if payment is same (but not in database structure)
 	// so SUM(pf.amount) should be equal to p.amount but if we filter on $socid, it may differ
 	$sql .= ", SUM(pf.amount) as totalamount, COUNT(f.rowid) as nbinvoices";
-
+	// Add fields from extrafields
+	if (!empty($extrafields->attributes[$object->table_element]['label'])) {
+		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+			$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
+		}
+	}
 	// Add fields from hooks
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
@@ -233,6 +246,9 @@ if (GETPOST("orphelins", "alpha")) {
 	$sqlfields = $sql; // $sql fields to remove for count total
 
 	$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
+	if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (p.rowid = ef.fk_object)";
+	}
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
@@ -297,6 +313,8 @@ if (GETPOST("orphelins", "alpha")) {
 	if ($search_all) {
 		$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 	}
+	// Add where from extra fields
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 
 	// Add where from hooks
 	$parameters = array();
@@ -323,7 +341,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -400,6 +418,8 @@ if ($search_payment_num) {
 if ($search_noteprivate) {
 	$param .= '&search_noteprivate='.urlencode($search_noteprivate);
 }
+// Add $param from extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') {
@@ -538,6 +558,9 @@ if (!empty($arrayfields['p.statut']['checked'])) {
 	print '</td>';
 }
 
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
 // Fields from hook
 $parameters = array('arrayfields' => $arrayfields);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -650,20 +673,20 @@ $totalarray = array();
 $totalarray['nbfield'] = 0;
 $imaxinloop = ($limit ? min($num, $limit) : $num);
 while ($i < $imaxinloop) {
-	$objp = $db->fetch_object($resql);
-	if (empty($objp)) {
+	$obj = $db->fetch_object($resql);
+	if (empty($obj)) {
 		break; // Should not happen
 	}
 
-	$object->id = $objp->rowid;
-	$object->ref = ($objp->ref ? $objp->ref : $objp->rowid);
-	$object->date = $db->jdate($objp->datep);
-	$object->amount = $objp->amount;
-	$object->note_private = $objp->note_private;
+	$object->id = $obj->rowid;
+	$object->ref = ($obj->ref ? $obj->ref : $obj->rowid);
+	$object->date = $db->jdate($obj->datep);
+	$object->amount = $obj->amount;
+	$object->note_private = $obj->note_private;
 
-	$companystatic->id = $objp->socid;
-	$companystatic->name = $objp->name;
-	$companystatic->email = $objp->email;
+	$companystatic->id = $obj->socid;
+	$companystatic->name = $obj->name;
+	$companystatic->email = $obj->email;
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
@@ -724,7 +747,7 @@ while ($i < $imaxinloop) {
 		// Date
 		if (!empty($arrayfields['p.datep']['checked'])) {
 			$dateformatforpayment = 'dayhour';
-			print '<td class="nowraponall center">'.dol_print_date($db->jdate($objp->datep), $dateformatforpayment, 'tzuser').'</td>';
+			print '<td class="nowraponall center">'.dol_print_date($db->jdate($obj->datep), $dateformatforpayment, 'tzuser').'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -733,7 +756,7 @@ while ($i < $imaxinloop) {
 		// Thirdparty
 		if (!empty($arrayfields['s.nom']['checked'])) {
 			print '<td class="tdoverflowmax125">';
-			if ($objp->socid > 0) {
+			if ($obj->socid > 0) {
 				print $companystatic->getNomUrl(1, '', 24);
 			}
 			print '</td>';
@@ -744,7 +767,7 @@ while ($i < $imaxinloop) {
 
 		// Payment type
 		if (!empty($arrayfields['c.libelle']['checked'])) {
-			print '<td class="tdoverflowmax100" title="'.dolPrintHTMLForAttribute($langs->trans("PaymentTypeShort".$objp->paiement_code)).'">'.dolPrintHTML($langs->trans("PaymentTypeShort".$objp->paiement_code)).'</td>';
+			print '<td class="tdoverflowmax100" title="'.dolPrintHTMLForAttribute($langs->trans("PaymentTypeShort".$obj->paiement_code)).'">'.dolPrintHTML($langs->trans("PaymentTypeShort".$obj->paiement_code)).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -752,7 +775,7 @@ while ($i < $imaxinloop) {
 
 		// Filter: Cheque number (fund transfer)
 		if (!empty($arrayfields['p.num_paiement']['checked'])) {
-			print '<td>'.$objp->num_payment.'</td>';
+			print '<td>'.$obj->num_payment.'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -761,8 +784,8 @@ while ($i < $imaxinloop) {
 		// Bank transaction
 		if (!empty($arrayfields['transaction']['checked'])) {
 			print '<td class="tdoverflowmax125">';
-			if ($objp->fk_bank > 0) {
-				$bankline->fetch($objp->fk_bank);
+			if ($obj->fk_bank > 0) {
+				$bankline->fetch($obj->fk_bank);
 				print $bankline->getNomUrl(1, 0);
 			}
 			print '</td>';
@@ -774,15 +797,15 @@ while ($i < $imaxinloop) {
 		// Bank account
 		if (!empty($arrayfields['ba.label']['checked'])) {
 			print '<td>';
-			if ($objp->bid > 0) {
-				$accountstatic->id = $objp->bid;
-				$accountstatic->ref = $objp->bref;
-				$accountstatic->label = $objp->blabel;
-				$accountstatic->number = $objp->number;
-				$accountstatic->account_number = $objp->account_number;
+			if ($obj->bid > 0) {
+				$accountstatic->id = $obj->bid;
+				$accountstatic->ref = $obj->bref;
+				$accountstatic->label = $obj->blabel;
+				$accountstatic->number = $obj->number;
+				$accountstatic->account_number = $obj->account_number;
 
 				$accountingjournal = new AccountingJournal($db);
-				$accountingjournal->fetch($objp->accountancy_journal);
+				$accountingjournal->fetch($obj->accountancy_journal);
 				$accountstatic->accountancy_journal = $accountingjournal->code;
 
 				print $accountstatic->getNomUrl(1);
@@ -796,25 +819,25 @@ while ($i < $imaxinloop) {
 		// Amount
 		if (!empty($arrayfields['p.amount']['checked'])) {
 			print '<td class="right">';
-			if ($objp->nbinvoices > 1 || ($objp->totalamount && $objp->amount != $objp->totalamount)) {
+			if ($obj->nbinvoices > 1 || ($obj->totalamount && $obj->amount != $obj->totalamount)) {
 				print $form->textwithpicto('', $langs->trans("PaymentMadeForSeveralInvoices"));
 			}
-			print '<span class="amount">'.price($objp->amount).'</span>';
+			print '<span class="amount">'.price($obj->amount).'</span>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 				$totalarray['pos'][$totalarray['nbfield']] = 'amount';
 			}
 			if (empty($totalarray['val']['amount'])) {
-				$totalarray['val']['amount'] = $objp->amount;
+				$totalarray['val']['amount'] = $obj->amount;
 			} else {
-				$totalarray['val']['amount'] += $objp->amount;
+				$totalarray['val']['amount'] += $obj->amount;
 			}
 		}
 
 		// Note
 		if (!empty($arrayfields['p.note']['checked'])) {
-			$firstline = dolGetFirstLineOfText($objp->note_private, 1);
+			$firstline = dolGetFirstLineOfText($obj->note_private, 1);
 			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($firstline).'">';
 			print dolPrintHTML($firstline).'</span>';
 			print '</td>';
@@ -825,8 +848,8 @@ while ($i < $imaxinloop) {
 
 		// ext_payment_id
 		if (!empty($arrayfields['p.ext_payment_id']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($objp->ext_payment_id).'">';
-			print dolPrintHTML($objp->ext_payment_id).'</span>';
+			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->ext_payment_id).'">';
+			print dolPrintHTML($obj->ext_payment_id).'</span>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -835,22 +858,24 @@ while ($i < $imaxinloop) {
 
 		// ext_payment_site
 		if (!empty($arrayfields['p.ext_payment_site']['checked'])) {
-			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($objp->ext_payment_site).'">';
-			print dolPrintHTML($objp->ext_payment_site).'</span>';
+			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($obj->ext_payment_site).'">';
+			print dolPrintHTML($obj->ext_payment_site).'</span>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 
+		// Extra fields
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Status
 		if (!empty($arrayfields['p.statut']['checked'])) {
 			print '<td class="right">';
-			if ($objp->statut == 0) {
-				print '<a href="card.php?id='.$objp->rowid.'&amp;action=valide">';
+			if ($obj->statut == 0) {
+				print '<a href="card.php?id='.$obj->rowid.'&amp;action=valide">';
 			}
-			print $object->LibStatut($objp->statut, 5);
-			if ($objp->statut == 0) {
+			print $object->LibStatut($obj->statut, 5);
+			if ($obj->statut == 0) {
 				print '</a>';
 			}
 			print '</td>';

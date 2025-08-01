@@ -152,8 +152,14 @@ if (!function_exists('dol_loginfunction')) {
 		// Title
 		$appli = constant('DOL_APPLICATION_TITLE');
 		$title = $appli.(getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '' : ' '.constant('DOL_VERSION'));
-		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-			$title = getDolGlobalString('MAIN_APPLICATION_TITLE');
+
+		$customapplication = getDolGlobalString('MAIN_APPLICATION_TITLE');
+		if ($customapplication) {
+			if (preg_match('/^\+/', $customapplication)) {
+				$title .= $customapplication;
+			} else {
+				$title = $customapplication;
+			}
 		}
 		$titletruedolibarrversion = constant('DOL_VERSION'); // $title used by login template after the @ to inform of true Dolibarr version
 
@@ -403,12 +409,12 @@ function encodedecode_dbpassconf($level = 0)
 					$passwd_crypted = $val;
 					$val = dol_decode($val);
 					$passwd = $val;
-				} elseif (preg_match('/^dolcrypt:([^:]+):(.*)$/i', $buffer, $reg)) {
+				} elseif (preg_match('/^dolcrypt:([^:]+):(.*)$/i', $val, $reg)) {
 					// method dolEncrypt/dolDecrypt
 					$mode = 'dolcrypt:';
-					$val = preg_replace('/crypted:([^:]+):/i', '', $val);
-					$passwd_crypted = $val;
-					$val = dolDecrypt($buffer);
+					//$val = preg_replace('/dolcrypt:/i', '', $val);
+					$passwd_crypted = $reg[1].':'.$reg[2];
+					$val = dolDecrypt($val);
 					$passwd = $val;
 				} else {
 					$passwd = $val;
@@ -417,7 +423,7 @@ function encodedecode_dbpassconf($level = 0)
 					$val = dol_encode($val);
 					*/
 					$mode = 'dolcrypt:';
-					$passwd_crypted = dolEncrypt($val);
+					$passwd_crypted = preg_replace('/^dolcrypt:/', '', dolEncrypt($val));
 				}
 				$lineofpass = 1;
 			}

@@ -115,7 +115,7 @@ TicketsLimitViewAssignedOnlyHelp=Kun opgaver tildelt den aktuelle bruger vil væ
 TicketsActivatePublicInterface=Aktivér den offentlige grænseflade
 TicketsActivatePublicInterfaceHelp=Offentlig grænseflade tillader alle besøgende at lave sager.
 TicketsAutoAssignTicket=Tildel automatisk brugeren, der oprettede sagen
-TicketsAutoAssignTicketHelp=Når du opretter en billet, kan brugeren automatisk tildeles billetten (Eksempler: 0=Aldrig automatisk tildelt til billetten, 1=Automatisk tildelt til billetten, hvis ingen er tildelt, 2=Automatisk tildelt til billetten, selvom nogen var defineret).
+TicketsAutoAssignTicketHelp=Når en billet oprettes, kan brugeren automatisk tildeles billetten.<br>Eksempler: 0=Aldrig automatisk tildelt billetten, 1=Automatisk tildelt billetten, hvis ingen er tildelt, 2=Automatisk tildelt billetten, selvom der er defineret en person.
 TicketAutoChangeStatusOnAnswer=Tildel automatisk en status, når du besvarer en billet
 TicketAutoChangeStatusOnAnswerHelp=Når en bruger svarer på en billet, vil status automatisk blive anvendt på billetten
 TicketNumberingModules=Sag nummererings modul
@@ -156,8 +156,6 @@ TicketViewNonClosedOnly=Se kun åbne sager
 TicketStatByStatus=Sager efter status
 OrderByDateAsc=Sorter efter stigende dato
 OrderByDateDesc=Sorter efter faldende dato
-ShowAsConversation=Vis som samtaleliste
-MessageListViewType=Vis som tabelliste
 ConfirmMassTicketClosingSendEmail=Send automatisk e-mails, når du lukker billetter
 ConfirmMassTicketClosingSendEmailQuestion=Vil du underrette tredjeparter, når du lukker disse billetter?
 # Ticket card

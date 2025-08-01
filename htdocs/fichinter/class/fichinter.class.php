@@ -347,7 +347,7 @@ class Fichinter extends CommonObject
 		$sql .= ", ".((int) $this->fk_project > 0 ? ((int) $this->fk_project) : 0);
 		$sql .= ", ".((int) $this->fk_contrat > 0 ? ((int) $this->fk_contrat) : 0);
 		$sql .= ", ".((int) $this->status);
-		$sql .= ", ".($this->signed_status);
+		$sql .= ", ".((int) $this->signed_status);
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= ")";

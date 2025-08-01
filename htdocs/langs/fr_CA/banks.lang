@@ -35,7 +35,6 @@ Conciliated=Reconcilié
 BankLineConciliated=Entrée reconciliée avec reçu bancaire
 BankLineReconciled=Reconcilié
 BankLineNotReconciled=Pas réconcilié
-CustomerInvoicePayment=Paiement client
 SubscriptionPayment=Paiement d'adhésion
 WithdrawalPayment=Paiement par prélèvement automatique
 BankTransferPayment=Paiement par virement bancaire

@@ -63,16 +63,6 @@ if (isModEnabled('accounting')) {
  * @var User $user
  */
 
-// $moreparam is used, but it is unclear how it is set, keeping the variable and ensuring it exists.
-// $countrynotdefined is used, but it is unclear how it is set.
-'
-@phan-var-force ?string $moreparam
-@phan-var-force ?string $countrynotdefined
-';
-if (!isset($moreparam)) {
-	$moreparam = null;
-}
-
 // Load translation files required by page
 $langs->loadLangs(array('accountancy', 'companies', 'commercial', 'banks', 'bills', 'trips', 'holiday', 'salaries'));
 
@@ -228,8 +218,8 @@ if ($action == 'delete_confirmed' && !$cancel && $permissiontoaddbankaccount) {
 	$action = '';
 }
 
-// update birth
-if ($action == 'setbirth' && $usercanadd && !$cancel) {
+// update birth (pure personal information)
+if ($action == 'setbirth' && $permissiontowritehr && !$cancel) {
 	$object->birth = dol_mktime(0, 0, 0, GETPOSTINT('birthmonth'), GETPOSTINT('birthday'), GETPOSTINT('birthyear'));
 	$result = $object->update($user);
 	if ($result < 0) {
@@ -283,8 +273,8 @@ if ($action == 'setref_employee' && $usercanadd && !$cancel) {
 	}
 }
 
-// update national_registration_number
-if ($action == 'setnational_registration_number' && $usercanadd && !$cancel) {
+// update national_registration_number (pure personal information)
+if ($action == 'setnational_registration_number' && $permissiontowritehr && !$cancel) {
 	$object->national_registration_number = (string) GETPOST('national_registration_number', 'alphanohtml');
 	$result = $object->update($user);
 	if ($result < 0) {
@@ -526,8 +516,8 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	print '</td>';
 	print "</tr>\n";
 
-	// Date of birth
-	if ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write')) {
+	// Date of birth (pure personal information)
+	if ($permissiontoreadhr) {
 		print '<tr>';
 		print '<td>';
 		print $form->editfieldkey("DateOfBirth", 'birth', $object->birth, $object, $user->hasRight('user', 'user', 'creer'));
@@ -538,23 +528,23 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	// Personal email
-	if ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write') || $permissiontosimpleedit) {
+	if ($permissiontoreadhr || $permissiontosimpleedit) {
 		print '<tr class="nowrap">';
 		print '<td>';
-		print $form->editfieldkey("UserPersonalEmail", 'personal_email', $object->personal_email, $object, (int) ($user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write')));
+		print $form->editfieldkey("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->hasRight('user', 'user', 'creer') || $permissiontowritehr);
 		print '</td><td>';
-		print $form->editfieldval("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write'), 'email', '', null, null, '', 0, '');
+		print $form->editfieldval("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->hasRight('user', 'user', 'creer') || $permissiontowritehr, 'email', '', null, null, '', 0, '');
 		print '</td>';
 		print '</tr>';
 	}
 
 	// Personal phone
-	if ($user->hasRight('hrm', 'read_personal_information', 'read') || $user->hasRight('hrm', 'write_personal_information', 'write') || $permissiontosimpleedit) {
+	if ($permissiontoreadhr || $permissiontosimpleedit) {
 		print '<tr class="nowrap">';
 		print '<td>';
-		print $form->editfieldkey("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, (int) ($user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write')));
+		print $form->editfieldkey("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->hasRight('user', 'user', 'creer') || $permissiontowritehr);
 		print '</td><td>';
-		print $form->editfieldval("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->hasRight('user', 'user', 'creer') || $user->hasRight('hrm', 'write_personal_information', 'write'), 'phone', '', null, null, '', 0, '');
+		print $form->editfieldval("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->hasRight('user', 'user', 'creer') || $permissiontowritehr, 'phone', '', null, null, '', 0, '');
 		print '</td>';
 		print '</tr>';
 	}
@@ -565,7 +555,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print $form->editfieldkey("DefaultCategoryCar", 'default_c_exp_tax_cat', (string) $object->default_c_exp_tax_cat, $object, $user->hasRight('user', 'user', 'creer'));
 		print '</td><td>';
 		if ($action == 'editdefault_c_exp_tax_cat') {
-			$ret = '<form method="post" action="'.$_SERVER["PHP_SELF"].($moreparam ? '?'.$moreparam : '').'">';
+			$ret = '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 			$ret .= '<input type="hidden" name="action" value="setdefault_c_exp_tax_cat">';
 			$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$ret .= '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -587,7 +577,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 		print $form->editfieldkey("DefaultRangeNumber", 'default_range', (string) $object->default_range, $object, $user->hasRight('user', 'user', 'creer'));
 		print '</td><td>';
 		if ($action == 'editdefault_range') {
-			$ret = '<form method="post" action="'.$_SERVER["PHP_SELF"].($moreparam ? '?'.$moreparam : '').'">';
+			$ret = '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 			$ret .= '<input type="hidden" name="action" value="setdefault_range">';
 			$ret .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$ret .= '<input type="hidden" name="id" value="'.$object->id.'">';
@@ -608,17 +598,17 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 	}
 
 	// Employee Number
-	if ($permissiontoreadhr) {
+	if ($permissiontoreadhr || $permissiontosimpleedit) {
 		print '<tr class="nowrap">';
 		print '<td>';
-		print $form->editfieldkey("RefEmployee", 'ref_employee', $object->ref_employee, $object, $permissiontowritehr);
+		print $form->editfieldkey("RefEmployee", 'ref_employee', $object->ref_employee, $object, $permissiontowritehr || $permissiontosimpleedit);
 		print '</td><td>';
-		print $form->editfieldval("RefEmployee", 'ref_employee', $object->ref_employee, $object, $permissiontowritehr, 'string', $object->ref_employee);
+		print $form->editfieldval("RefEmployee", 'ref_employee', $object->ref_employee, $object, $permissiontowritehr || $permissiontosimpleedit, 'string', $object->ref_employee);
 		print '</td>';
 		print '</tr>';
 	}
 
-	// National registration number
+	// National registration number (pure personal information)
 	if ($permissiontoreadhr) {
 		print '<tr class="nowrap">';
 		print '<td>';
@@ -732,7 +722,7 @@ if ($action != 'edit' && $action != 'create') {		// If not bank account yet, $ac
 			$db->free($resql);
 
 			if ($num <= 0) {
-				print '<td colspan="5"><span class="opacitymedium">'.$langs->trans("None").'</span></a>';
+				print '<td colspan="5"><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
 			}
 			print "</table>";
 			print "</div>";
@@ -1023,8 +1013,6 @@ if ($id && ($action == 'edit' || $action == 'create') && $permissiontoaddbankacc
 	if ($selectedcode) {
 		print img_picto('', 'state', 'class="pictofixedwidth"');
 		print $formcompany->select_state(GETPOSTISSET("account_state_id") ? GETPOST("account_state_id") : $account->state_id, $selectedcode, 'account_state_id');
-	} else {
-		print $countrynotdefined;
 	}
 	print '</td></tr>';
 

@@ -125,6 +125,9 @@ before_install:
 
 install:
 - |
+  if [ "$TRAVIS_PHP_VERSION" = '7.0' ]; then
+    sudo update-alternatives --set php /usr/bin/php7.0
+  fi
   if [ "$TRAVIS_PHP_VERSION" = '7.1' ]; then
     sudo update-alternatives --set php /usr/bin/php7.1
   fi

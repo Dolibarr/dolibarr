@@ -149,8 +149,8 @@ if ($action == 'add_currency') {			// Manual insertion of a rate
 
 		setEventMessages($langs->trans("SetupSaved"), null);
 	} else {
-		// Run the update
-		$result = $multicurrency->syncRates();
+		// Run the update o currency rate (this may updates database)
+		$result = $multicurrency->syncRates(0, 0, '');
 		if ($result > 0) {
 			setEventMessages($langs->trans("CurrencyRateSyncSucceed"), null, "mesgs");
 		} else {
@@ -224,7 +224,8 @@ print '</td></tr>';
 
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->transnoentitiesnoconv("multicurrency_useOriginTx").'</td>';
+$tooltip = $langs->trans("multicurrency_useOriginTxHelp");
+print '<td>'.$form->textwithpicto($langs->transnoentitiesnoconv("multicurrency_useOriginTx"), $tooltip).'</td>';
 print '<td class="center">';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MULTICURRENCY_USE_ORIGIN_TX', array(), null, 0, 0, 0, 2, 0, 1);
@@ -333,7 +334,7 @@ foreach ($TCurrency as &$currency) {
 	print '<input type="hidden" name="action" value="update_currency">';
 	print '<input type="hidden" name="fk_multicurrency" value="'.$currency->id.'">';
 	print '1 '.$conf->currency.' = ';
-	print '<input type="text" name="rate" class="width75 right" value="'.($currency->rate->rate ? $currency->rate->rate : '').'" size="13">&nbsp;'.$currency->code.'&nbsp;';
+	print '<input type="text" name="rate" class="width125 right" value="'.($currency->rate->rate ? $currency->rate->rate : '').'">&nbsp;'.$currency->code.'&nbsp;';
 	print '<input type="submit" name="updatecurrency" class="button button-edit smallpaddingimp" value="'.$langs->trans("Modify").'">&nbsp;';
 	print '<input type="submit" name="deletecurrency" class="button smallpaddingimp" value="'.$langs->trans("Delete").'">';
 	print '</form>';

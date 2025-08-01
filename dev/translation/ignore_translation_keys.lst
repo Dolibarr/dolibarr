@@ -216,7 +216,6 @@ Control
 Convert
 Core
 Count
-CreateRemoteOrder
 CreateRepeatableIntervention
 Created
 CronCannotLoadLib
@@ -308,7 +307,6 @@ ErrorBadSocialNetworkValue
 ErrorBadStatus
 ErrorBadValue
 ErrorBadValueForBatch
-ErrorBadValueForDate
 ErrorCanNotDeleteDir
 ErrorCantSplitAUsedDiscount
 ErrorChartOfAccountSystemNotSelected
@@ -472,7 +470,6 @@ Lifetime
 LinkedElementsInvalidDeleted
 LinkedToAConcialitedTransaction
 ListOfAttendeesPerConference
-ListOfBookmark
 ListTicketsLinkToContract
 Load
 LocalTaxReport
@@ -512,7 +509,6 @@ Modulebuilder
 ModulebuilderSetup
 MonthShort
 MonthVeryShort
-Morphy
 Movement
 MultiCompanyMode
 Multicompanies
@@ -571,7 +567,6 @@ NoType
 NoTypeOfPagePleaseEditDictionary
 NoURL
 No_record_on_multicurrency_rate
-NobodyHasPermissionToValidateExpenseReport
 NotAllExportedMovementsCouldBeRecordedAsExportedOrValidated
 NotEnoughForAllOrders
 NotFound

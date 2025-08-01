@@ -125,18 +125,21 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 
 		$form = new Form($this->db);
 
+		$odtPath = trim(getDolGlobalString('MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH'));
+
 		$texte = $this->description.".<br>\n";
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="page_y" value="">';
 		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
 		$texte .= '<input type="hidden" name="param1" value="MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH">';
+
 		$texte .= '<table class="nobordernopadding centpercent">';
 
 		// List of directories area
 		$texte .= '<tr><td>';
 		$texttitle = $langs->trans("ListOfDirectories");
-		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim(getDolGlobalString('MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH'))));
+		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', $odtPath));
 		$listoffiles = array();
 		foreach ($listofdir as $key => $tmpdir) {
 			$tmpdir = trim($tmpdir);
@@ -162,7 +165,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 
 		// Scan directories
 		$nbofiles = count($listoffiles);
-		if (getDolGlobalString('MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH')) {
+		if ($odtPath) {
 			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= count($listoffiles);
@@ -182,11 +185,11 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 		}
 
 		if (!getDolGlobalString('MAIN_NO_MULTIDIR_FOR_ODT')) {
-			$texte .= '<br><br>';
+			$texte .= '<br>';
 			$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 			$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 			$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
-			$texte .= getDolGlobalString('MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH');
+			$texte .= $odtPath;
 			$texte .= '</textarea>';
 			$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
 			$texte .= '<input type="submit" class="button button-edit smallpaddingimp reposition" name="modify" value="'.dolPrintHTMLForAttribute($langs->trans("Modify")).'">';
@@ -456,6 +459,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 					foreach ($object->lines as $line) {
 						/** @var CommonObjectLine $line */
 						$linenumber++;
+
 						$tmparray = $this->get_substitutionarray_lines($line, $outputlangs, $linenumber);
 						complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
 						// Call the ODTSubstitutionLine hook

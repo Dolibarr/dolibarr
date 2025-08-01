@@ -69,6 +69,10 @@ OptionToSetSendingBilledNotEnabled=Option from module Workflow, to set sending t
 NoWarehouseInBase=No warehouse in base
 ShipmentUpdated=Shipment successfully updated
 ShipmentIncrementStockOnDelete = Increase stock on deletion
+ConfirmSignShipping=Confirm Sign Shipping
+ConfirmUnsignShipping=Confirm Unsign Shipping
+SignShipping=Sign Shipping
+UnsignShipping=Unsign Shipping
 
 # Sending methods
 # ModelDocument
