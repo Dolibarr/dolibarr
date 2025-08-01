@@ -92,13 +92,15 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 		$max = '';
 
 		$posindice = strlen($this->prefix) + 6;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql .= " FROM ".$db->prefix()."mymodule_myobject";
-		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
+		$sql = "SELECT MAX(CAST(SUBSTRING(t.ref FROM ".$posindice.") AS SIGNED)) as max";
+		$sql .= " FROM ".$db->prefix()."mymodule_myobject as t";
+		$sql .= " WHERE t.ref LIKE '".$db->escape($this->prefix)."____-%'";
 		if ($object->ismultientitymanaged == 1) {
-			$sql .= " AND entity = ".$conf->entity;
-		} elseif (!is_numeric($object->ismultientitymanaged)) { // @phan-suppress-current-line PhanPluginEmptyStatementIf
-			// TODO
+			$sql .= " AND entity = ".((int) $conf->entity);
+		} elseif (preg_match('/^\w+@\w+$/', (string) $this->ismultientitymanaged)) {
+			$tmparray = explode('@', (string) $this->ismultientitymanaged);
+			$sql .= " LEFT JOIN ".$this->db->prefix().$tmparray[1]." as pt ON t.".$this->db->sanitize($tmparray[0])." = pt.rowid";
+			$sql .= " WHERE pt.entity IN (".getEntity($this->element).")";
 		}
 
 		$resql = $db->query($sql);

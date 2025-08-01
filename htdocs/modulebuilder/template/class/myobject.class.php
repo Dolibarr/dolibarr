@@ -64,8 +64,8 @@ class MyObject extends CommonObject
 	public $isextrafieldmanaged = 0;
 
 	/**
-	 * @var int<0,1>|string|null  	Does this object support multicompany module ?
-	 * 								0=No test on entity, 1=Test with field entity in local table, 'field@table'=Test entity into the field@table (example 'fk_soc@societe')
+	 * @var int<0,1>|string		Does this object support multicompany module ?
+	 * 							0=No test on entity, 1=Test with field entity in local table, 'field@table'=Test entity into the field@table (example 'fk_soc@societe')
 	 */
 	public $ismultientitymanaged = 0;
 
@@ -460,11 +460,15 @@ class MyObject extends CommonObject
 		$sql = "SELECT ";
 		$sql .= $this->getFieldList('t');
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
-		if (isset($this->isextrafieldmanaged) && $this->isextrafieldmanaged == 1) {
+		if (!empty($this->isextrafieldmanaged) && $this->isextrafieldmanaged == 1) {
 			$sql .= " LEFT JOIN ".$this->db->prefix().$this->table_element."_extrafields as te ON te.fk_object = t.rowid";
 		}
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
+		if (!empty($this->ismultientitymanaged) && (int) $this->ismultientitymanaged == 1) {
 			$sql .= " WHERE t.entity IN (".getEntity($this->element).")";
+		} elseif (preg_match('/^\w+@\w+$/', (string) $this->ismultientitymanaged)) {
+			$tmparray = explode('@', (string) $this->ismultientitymanaged);
+			$sql .= " LEFT JOIN ".$this->db->prefix().$tmparray[1]." as pt ON t.".$this->db->sanitize($tmparray[0])." = pt.rowid";
+			$sql .= " WHERE pt.entity IN (".getEntity($this->element).")";
 		} else {
 			$sql .= " WHERE 1 = 1";
 		}
