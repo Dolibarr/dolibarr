@@ -30,10 +30,9 @@ See file dev/build/exe/doliwamp.iss to know the doliwamp version currently setup
 
   Launch wine cmd, then regedit and add entry int `HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment\PATH`
 
-- To manually build the .exe from Windows
+- To manually build the .exe from Windows (Note: running from makepack-dolibarr.pl script is however recommended):
 
-  Note: running from makepack-dolibarr.pl script is however recommended
-  open file dev/build/exe/doliwamp.iss and click on button "Compile".
+  Open the file dev/build/exe/doliwamp.iss and click on button "Compile".
   The .exe file will be build into directory build.
 
 
@@ -64,7 +63,8 @@ Prerequisites to build autoexe DoliWamp package from Windows:
 
 This section describes steps made by Dolibarr packaging team to make a beta version of Dolibarr, step by step.
 
-- Check all files are committed.
+- Check that all files on local working repository are committed.
+
 - Update version/info in ChangeLog, for this you can:
 
 To generate a changelog of a **major new version** x.y.0 (from a repo on branch develop), you can do
@@ -98,7 +98,7 @@ git log x.y.z-1.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //
 
 - Run `makepack-dolibarr.pl` to check the generation of all packages. No need to publish them.
 
-- Post a news message on dolibarr.org about the freeze by cloning a past news + relay the news url on social networks
+- Post a news message on dolibarr.org about the freeze by cloning a past news + relay the news url on social networks. Include the content of the previously generated ChangeLog file into the news.
 
 - Create a branch x.y (but only when version seems stable enough).
 
@@ -114,7 +114,7 @@ We suppose the branch x.y has already been created during the beta (see previous
 
 - Check there is no pending open security issue: List can be found here: https://github.com/Dolibarr/dolibarr/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22Priority%20-%20Critical%20or%20Security%22
 
-- Check all files are committed.
+- Check that all files on local working repository are committed.
 
 - Update version/info in ChangeLog, for this:
 
