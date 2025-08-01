@@ -851,7 +851,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 			$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'\.pdf$';
 		}
 		foreach ($listofobjectref as $tmppdf) {
-			$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'_[\w\-\'\&\.]+\.pdf$'; // To include PDF generated from ODX files
+			$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'[\_\-][\w\-\'\&\.\s]+\.pdf$'; // To include PDF generated from ODX files
 		}
 	}
 
