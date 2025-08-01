@@ -15011,6 +15011,10 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		} elseif (is_object($filterobj) && in_array(get_class($filterobj), array('Commande', 'CommandeFournisseur', 'Product', 'Ticket', 'BOM', 'Contrat', 'Facture', 'FactureFournisseur'))) {
 			$sql .= ", o.ref";
 		}
+		//MODIF VAL
+		elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {
+            $sql .= ", s.ref"; // Ajout de la référence de l'expédition
+        }
 		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_action";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
@@ -15047,6 +15051,14 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'FactureFournisseur') {
 			$sql .= ", ".MAIN_DB_PREFIX."facture_fourn as o";
 		}
+		//MODIF VAL
+		elseif (is_object($filterobj) && get_class($filterobj) == 'Commande') {
+            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande as o ON a.fk_element = o.rowid AND a.elementtype = 'order'";
+        }
+		elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {
+            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expedition as s ON a.fk_element = s.rowid AND a.elementtype = 'shipping'"; // CHANGED: Table 'expedition' et alias 's', elementtype 'shipping'
+        }
+		//END MODIF VAL
 
 		$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 		if (!$force_filter_contact) {
@@ -15064,7 +15076,19 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
-			} elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') {
+			
+			} 
+
+			//MODIF VAL
+			elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {
+                $sql .= " AND a.fk_element = s.rowid AND a.elementtype = 'shipping'"; 
+                if ($filterobj->id) {
+                    $sql .= " AND a.fk_element = ".((int) $filterobj->id);
+                }
+            }
+			//END MODIF VAL
+			
+			elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
