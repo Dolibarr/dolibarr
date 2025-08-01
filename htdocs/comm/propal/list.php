@@ -867,7 +867,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
 		$objforcount = $db->fetch_object($resql);
-		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+		$nbtotalofrecords = (int) $objforcount->nbtotalofrecords;
 	} else {
 		dol_print_error($db);
 	}
