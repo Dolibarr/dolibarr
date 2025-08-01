@@ -1344,7 +1344,9 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 
 		// Check if start/end days are working days just ONCE to optimize performance
 		// by avoiding redundant calls to the potentially slow num_public_holiday() function.
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$isStartDayWorking = (num_public_holiday($timestampStart, $timestampStart, $country_code, 1) == 0);
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$isEndDayWorking   = (num_public_holiday($timestampEnd, $timestampEnd, $country_code, 1) == 0);
 
 		// Deduct 0.5 if the leave starts in the afternoon of a working day.
