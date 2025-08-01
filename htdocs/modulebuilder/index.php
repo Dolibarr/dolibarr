@@ -600,6 +600,7 @@ if ($dirins && $action == 'initsqlextrafields' && !empty($module) && $user->hasR
 	// Now we update the object file to set $this->isextrafieldmanaged to 1
 	$srcfile = $dirins.'/'.strtolower($module).'/class/'.strtolower($objectname).'.class.php';
 	$arrayreplacement = array('/\$this->isextrafieldmanaged = 0;/' => '$this->isextrafieldmanaged = 1;');
+	$arrayreplacement = array('/\$isextrafieldmanaged = 0;/' => '$isextrafieldmanaged = 1;');
 	dolReplaceInFile($srcfile, $arrayreplacement, '', '0', 0, 1);
 }
 
@@ -1224,10 +1225,10 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 				if ($fieldname == 'fk_soc') {
 					$label = 'ThirdParty';
 				}
-				if ($fieldname == 'tms') {
+				if (in_array($fieldname, array('tms', 'date_modification'))) {
 					$label = 'DateModification';
 				}
-				if ($fieldname == 'datec') {
+				if (in_array($fieldname, array('datec', 'date_creation'))) {
 					$label = 'DateCreation';
 				}
 				if ($fieldname == 'date_valid') {
@@ -1320,15 +1321,30 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 				}
 
 				// type
-				if (isset($obj->Picto)) {
+				$picto = '';
+				if (isset($obj->Picto)) {	// This should never exists
 					$picto = $obj->Picto;
 				}
-				if ($obj->Field == 'fk_soc') {
+				if (preg_match('/^fk_soc/', $obj->Field)) {
 					$picto = 'company';
-				}
-				if (preg_match('/^fk_proj/', $obj->Field)) {
+				} elseif (preg_match('/^fk_contact/', $obj->Field)) {
+					$picto = 'contact';
+				} elseif (preg_match('/^fk_bank/', $obj->Field)) {
+					$picto = 'bank';
+				} elseif (preg_match('/^fk_user/', $obj->Field)) {
+					$picto = 'user';
+				} elseif (preg_match('/^fk_warehouse/', $obj->Field)) {
+					$picto = 'warehouse';
+				} elseif (preg_match('/^fk_prod/', $obj->Field)) {
+					$picto = 'product';
+				} elseif (preg_match('/^fk_proj/', $obj->Field)) {
 					$picto = 'project';
+				} elseif (preg_match('/^fk_task/', $obj->Field)) {
+					$picto = 'task';
 				}
+
+				// lang
+				$lang = $module.'@'.$module;
 
 				// Build the property string
 				$stringforproperties .= "'".$obj->Field."' => array('type' => '".$type."', 'label' => '".$label."',";
@@ -1362,6 +1378,9 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 				if ($csslist) {
 					$stringforproperties .= ", 'csslist' => '".$csslist."'";
 				}
+
+				$stringforproperties .= ", 'lang' => '".$lang."'";
+
 				$stringforproperties .= "),\n";
 				$i += 5;
 			}
@@ -3455,7 +3474,7 @@ if ($module == 'initmodule') {
 
 	print '<span class="opacitymedium small">';
 	print ' &nbsp; &nbsp; ';
-	print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?hidenavmenu=1&displayMode=icon-only#img-picto-section-list', '', '');
+	print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?hidenavmenu=1&displayMode=icon-only&mode=no-btn#img-picto-section-list', '', '');
 	print '</span>';
 
 	print '</div></div>';
@@ -3472,7 +3491,11 @@ if ($module == 'initmodule') {
 	print '<input type="text" name="editorurl" value="'.(GETPOSTISSET('editorurl') ? GETPOST('editorurl') : getDolGlobalString('MODULEBUILDER_SPECIFIC_EDITOR_URL', $mysoc->url)).'" placeholder="'.dol_escape_htmltag($langs->trans("EditorUrl")).'"><br>';
 	print '</div></div>';
 
-	print '<br><input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Create")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
+	print '</div>';	// End div tagtable
+
+	print '<br><center>';
+	print '<input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Create")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
+	print '</center>';
 	print '</form>';
 } elseif ($module == 'deletemodule') {
 	print '<!-- Form to init a module -->'."\n";
@@ -3669,6 +3692,8 @@ if ($module == 'initmodule') {
 					print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
 					print '<input type="hidden" name="tab" value="'.dol_escape_htmltag($tab).'">';
 					print '<input type="hidden" name="keydescription" value="'.dol_escape_htmltag(GETPOST('keydescription', 'alpha')).'">';
+
+					print '<div class="div-table-responsive-no-min">';
 					print '<table class="border centpercent">';
 					print '<tr class="liste_titre"><td class="titlefield">';
 					print $langs->trans("Parameter");
@@ -3806,6 +3831,7 @@ if ($module == 'initmodule') {
 					print '</td></tr>';
 
 					print '</table>';
+					print '</div>';
 					print '</form>';
 				} else {
 					print $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module).'<br>';
@@ -4041,7 +4067,7 @@ if ($module == 'initmodule') {
 
 				print '<span class="opacitymedium small">';
 				print ' &nbsp; &nbsp; ';
-				print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?hidenavmenu=1&displayMode=icon-only#img-picto-section-list', '', '');
+				print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?hidenavmenu=1&displayMode=icon-only&mode=no-btn#img-picto-section-list', '', '');
 				print '</span>';
 
 				print '</div></div>';

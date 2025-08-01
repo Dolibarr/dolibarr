@@ -357,12 +357,12 @@ if ($mode == 'config' && $user->admin) {
 
 	if ($action != 'editprinter') {
 		print '<tr>';
-		print '<td><input class="minwidth200" type="text" name="printername"></td>';
+		print '<td><input class="minwidth100" type="text" name="printername"></td>';
 		$ret = $printer->selectTypePrinter();
 		print '<td>'.$printer->resprint.'</td>';
 		$ret = $printer->selectProfilePrinter();
 		print '<td>'.$printer->profileresprint.'</td>';
-		print '<td><input size="60" type="text" name="parameter"></td>';
+		print '<td><input class="minwidth150" type="text" name="parameter"></td>';
 		print '<td class="right">';
 		if ($action != 'editprinter') {
 			print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'"></div>';
@@ -383,7 +383,7 @@ if ($mode == 'config' && $user->admin) {
 				print '<td>'.$printer->resprint.'</td>';
 				$ret = $printer->selectProfilePrinter((string) $printer->listprinters[$line]['fk_profile']);
 				print '<td>'.$printer->profileresprint.'</td>';
-				print '<td><input size="60" type="text" name="parameter" value="'.$printer->listprinters[$line]['parameter'].'"></td>';
+				print '<td><input class="minwidth150" type="text" name="parameter" value="'.$printer->listprinters[$line]['parameter'].'"></td>';
 				print '<td>';
 				print $form->buttonsSaveCancel("Save", '');
 				print '</td>';
@@ -430,10 +430,10 @@ if ($mode == 'config' && $user->admin) {
 
 	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">'."\n";
-	print '<tr class="oddeven"><td>'.$langs->trans("CONNECTOR_DUMMY").'</td><td>'.$langs->trans("CONNECTOR_DUMMY_HELP").'</td></tr>';
-	print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("CONNECTOR_NETWORK_PRINT"), $langs->trans("FromServerPointOfView")).'</td><td>'.$langs->trans("CONNECTOR_NETWORK_PRINT_HELP").'</td></tr>';
+	print '<tr class="oddeven"><td class="minwidth100">'.$langs->trans("CONNECTOR_DUMMY").'</td><td>'.$langs->trans("CONNECTOR_DUMMY_HELP").'</td></tr>';
 	print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("CONNECTOR_FILE_PRINT"), $langs->trans("FromServerPointOfView")).'</td><td>'.$langs->trans("CONNECTOR_FILE_PRINT_HELP").'</td></tr>';
 	print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("CONNECTOR_WINDOWS_PRINT"), $langs->trans("FromServerPointOfView")).'</td><td>'.$langs->trans("CONNECTOR_WINDOWS_PRINT_HELP").'</td></tr>';
+	print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("CONNECTOR_NETWORK_PRINT"), $langs->trans("FromServerPointOfView")).'</td><td>'.$langs->trans("CONNECTOR_NETWORK_PRINT_HELP").'</td></tr>';
 	print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans("CONNECTOR_CUPS_PRINT"), $langs->trans("FromServerPointOfView")).'</td><td>'.$langs->trans("CONNECTOR_CUPS_PRINT_HELP").'</td></tr>';
 	print '</table>';
 	print '</div>';

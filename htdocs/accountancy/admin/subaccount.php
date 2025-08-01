@@ -298,7 +298,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -427,12 +427,12 @@ if ($resql) {
 		$obj = $db->fetch_object($resql);
 
 		if ($obj->type == 1) {
-			$companystatic->id = $obj->id;
+			$companystatic->id = $obj->rowid;
 			$companystatic->client = $obj->nature;
 			$companystatic->fournisseur = 0;
 		}
 		if ($obj->type == 2) {
-			$companystatic->id = $obj->id;
+			$companystatic->id = $obj->rowid;
 			$companystatic->client = 0;
 			$companystatic->fournisseur = $obj->nature2;
 		}

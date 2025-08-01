@@ -9,14 +9,13 @@ MailToSendTicketMessage=Para enviar un correo electrónico desde un ticket
 TicketSettings=Configuración
 TicketSetupDictionaries=El tipo de ticket, prioridad y códigos analíticos son configurables desde los diccionarios.
 TicketEmailNotificationTo=Notificación de creación de ticket a esta dirección de correo electrónico
-TicketEmailNotificationToHelp=Si está presente, esta dirección de correo electrónico será de una creación de ticket
 TicketsEmailMustExist=Requerir una dirección de correo electrónico existente para crear un Ticket
 TicketCreateThirdPartyWithContactIfNotExist=Pregunte por el nombre y el nombre de la empresa para los correos electrónicos desconocidos
 PublicInterface=Interfaz pública
 TicketsDisableEmail=No envíe correos electrónicos para la creación de tickets o la grabación de mensajes
 TicketsActivatePublicInterface=Activar la interfaz pública
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket(Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined).
 TicketNotifyTiersAtCreation=Notificar a un cliente/proveedor en la creación
-TicketChooseProductCategoryHelp=Seleccionar la categoría del producto de soporte de ticket. Esto será usado para automáticamente vincular un contacto a un ticket
 NoTicketsFound=No se encontró Ticket
 TicketViewAllTickets=Ver todos los Ticket
 TicketCard=Tarjeta de Tickets

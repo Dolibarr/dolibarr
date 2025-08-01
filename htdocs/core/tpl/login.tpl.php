@@ -148,12 +148,20 @@ $arrayofjs = array(
 	'/core/js/dst.js'.(empty($conf->dol_use_jmobile) ? '' : '?version='.urlencode(DOL_VERSION))
 );
 
-// We display application title instead Login term
-if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-	$titleofloginpage = getDolGlobalString('MAIN_APPLICATION_TITLE');
+// We display application title
+$application = constant('DOL_APPLICATION_TITLE');
+$applicationcustom = getDolGlobalString('MAIN_APPLICATION_TITLE');
+if ($applicationcustom) {
+	$application = (preg_match('/^\+/', $applicationcustom) ? $application : '').$applicationcustom;
+}
+
+// We define login title
+if ($applicationcustom) {
+	$titleofloginpage = $langs->trans('Login').' '.$application;
 } else {
 	$titleofloginpage = $langs->trans('Login');
 }
+// Title of HTML page must have pattern ' @ (?:Doli[a-zA-Z]+ |)(\\d+)\\.(\\d+)\\.([^\\s]+)' to be detected as THE login page by webviews.
 $titleofloginpage .= ' @ '.$titletruedolibarrversion; // $titletruedolibarrversion is defined by dol_loginfunction in security2.lib.php. We must keep the @, some tools use it to know it is login page and find true dolibarr version.
 
 $disablenofollow = 1;
@@ -256,12 +264,12 @@ if (!getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')) {
 
 
 <!-- Title with version -->
-<div class="login_table_title center" tabindex="-1" title="<?php echo dol_escape_htmltag($title); ?>">
+<div class="login_table_title center" tabindex="-1" title="<?php echo dolPrintHTMLForAttribute($title); ?>">
 <?php
 if ($disablenofollow) {
 	echo '<a class="login_table_title" tabindex="-1" href="https://www.dolibarr.org" target="_blank" rel="noopener noreferrer external">';
 }
-echo dol_escape_htmltag($title);
+echo dolPrintHTML($title);
 if ($disablenofollow) {
 	echo '</a>';
 }

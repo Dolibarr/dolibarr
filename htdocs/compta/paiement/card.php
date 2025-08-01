@@ -6,7 +6,7 @@
  * Copyright (C) 2013	   Marcos García		 <marcosgdf@gmail.com>
  * Copyright (C) 2015	   Juanjo Menent		 <jmenent@2byte.es>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,7 +92,7 @@ if (isModEnabled('stripe')) {
 
 	$service = 'StripeTest';
 	$servicestatus = 0;
-	if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
+	if (getDolGlobalString('STRIPE_LIVE')/* && !GETPOST('forcesandbox', 'alpha')*/) {
 		$service = 'StripeLive';
 		$servicestatus = 1;
 	}
@@ -435,7 +435,7 @@ if (isModEnabled("bank")) {
 }
 
 // Comments
-print '<tr><td class="tdtop">'.$form->editfieldkey("Comments", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement')).'</td><td class="wordbreak">';
+print '<tr><td class="'.($user->hasRight('facture', 'paiement') ? 'tdtop' : '').'">'.$form->editfieldkey("Comments", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement'), 'string', '', 0, 0).'</td><td class="wordbreak">';
 print $form->editfieldval("Note", 'note', $object->note_private, $object, $user->hasRight('facture', 'paiement'), 'textarea:'.ROWS_3.':90%');
 print '</td></tr>';
 
@@ -469,6 +469,10 @@ if (!empty($object->ext_payment_id)) {
 	}
 	print '</td></tr>';
 }
+
+// Other attributes
+$cols = 2;
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 // Other attributes
 $parameters = array();

@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2013-2016 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2021 Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2014-2015 Ari Elbaz (elarifr)	<github@accedinfo.com>
- * Copyright (C) 2014-2016 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2013-2016	Olivier Geffroy			<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2014-2015	Ari Elbaz (elarifr)		<github@accedinfo.com>
+ * Copyright (C) 2014-2016	Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -355,7 +355,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -474,9 +474,9 @@ if ($result) {
 		print '<input type="text" class="flat maxwidth50" name="search_invoice" value="'.dol_escape_htmltag($search_invoice).'">';
 		print '</td>';
 	}
-	// date
+	// Date
 	if (!empty($arrayfields['f.datef']['checked'])) {
-		print '<td class="liste_titre center nowraponall">';
+		print '<td class="liste_titre center">';
 		print '<div class="nowrapfordate">';
 		print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 		print '</div>';
@@ -492,13 +492,13 @@ if ($result) {
 		print '</td>';
 	}
 	//print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
-	// description
+	// Description
 	if (!empty($arrayfields['fd.description']['checked'])) {
 		print '<td class="liste_titre" data-key="desc">';
 		print '<input type="text" class="flat maxwidth50" name="search_desc" value="'.dol_escape_htmltag($search_desc).'">';
 		print '</td>';
 	}
-	// amount
+	// Amount
 	if (!empty($arrayfields['fd.total_ht']['checked'])) {
 		print '<td class="liste_titre" data-key="amount">';
 		print '<input type="text" class="right flat maxwidth50" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
@@ -519,7 +519,7 @@ if ($result) {
 	// Country
 	if (!empty($arrayfields['co.label']['checked'])) {
 		print '<td class="liste_titre" data-key="country">';
-		print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth150', 'code2', 1, 0, 1);
+		print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth125', 'code2', 1, 0, 1);
 		//print '<input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '">';
 		print '</td>';
 	}
@@ -570,7 +570,7 @@ if ($result) {
 		print_liste_field_titre($arrayfields['f.ref']['label'], $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
 		$totalarray['nbfield']++;
 	}
-	// date
+	// Date
 	if (!empty($arrayfields['f.datef']['checked'])) {
 		print_liste_field_titre($arrayfields['f.datef']['label'], $_SERVER["PHP_SELF"], "f.datef, f.ref, fd.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
 		$totalarray['nbfield']++;
@@ -763,7 +763,7 @@ if ($result) {
 		}
 		// Country
 		if (!empty($arrayfields['co.label']['checked'])) {
-			print '<td>';
+			print '<td class="tdoverflowmax125" title="'.dolPrintHTML($langs->trans("Country".$objp->country_code).' ('.$objp->country_code.')').'">';
 			if ($objp->country_code) {
 				print $langs->trans("Country".$objp->country_code).' ('.$objp->country_code.')';
 			}
@@ -806,7 +806,13 @@ if ($result) {
 		$i++;
 	}
 	if ($num_lines == 0) {
-		print '<tr><td colspan="'.$totalarray['nbfield'].'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+		$colspan = 1;
+		foreach ($arrayfields as $key => $val) {
+			if (!empty($val['checked'])) {
+				$colspan++;
+			}
+		}
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
 	$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);

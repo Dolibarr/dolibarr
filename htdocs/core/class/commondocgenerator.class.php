@@ -64,7 +64,7 @@ abstract class CommonDocGenerator
 	protected $db;
 
 	/**
-	 * @var ?Extrafields object
+	 * @var ?ExtraFields object
 	 */
 	public $extrafieldsCache;
 
@@ -707,7 +707,7 @@ abstract class CommonDocGenerator
 			$array_key.'_payment_mode_code' => $object->mode_reglement_code,
 			$array_key.'_payment_mode' => ($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code) != 'PaymentType'.$object->mode_reglement_code ? $outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code) : $object->mode_reglement),
 			$array_key.'_payment_term_code' => $object->cond_reglement_code,
-			$array_key.'_payment_term' => ($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) != 'PaymentCondition'.$object->cond_reglement_code ? $outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) : ($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement)),
+			$array_key.'_payment_term' => ($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) != 'PaymentCondition'.$object->cond_reglement_code ? $outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) : $object->cond_reglement_doc),
 
 			$array_key.'_incoterms' => (method_exists($object, 'display_incoterms') ? $object->display_incoterms() : ''),
 
@@ -1177,7 +1177,7 @@ abstract class CommonDocGenerator
 	 *
 	 *	@param  CommonObject	$object				Object with extrafields (must have $object->array_options filled)
 	 *	@param  array<string,float|string>	$array_to_fill      Substitution array
-	 *  @param  Extrafields		$extrafields        Extrafields object
+	 *  @param  ExtraFields		$extrafields        ExtraFields object
 	 *  @param  string			$array_key	        Prefix for name of the keys into returned array
 	 *  @param  Translate		$outputlangs        Lang object to use for output
 	 *	@return	array<string,float|string>				Substitution array

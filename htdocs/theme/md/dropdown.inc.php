@@ -4,6 +4,7 @@
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 }
+include_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
 
 // When no photo, we show the login name, so we need an offset to output picto at a fixed position.
 $atoploginusername = empty($user->photo) ? 52 : 0;
@@ -28,7 +29,7 @@ $atoploginusername = empty($user->photo) ? 52 : 0;
 ';
 
 $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0;
-
+$WIDTHMENUDROPDOWN = 370;
 ?>
 
 /* IDE Hack <style type="text/css"> */
@@ -76,8 +77,9 @@ div#topmenu-login-dropdown {
 }
 
 #topmenu-global-search-dropdown .dropdown-menu, #topmenu-quickadd-dropdown .dropdown-menu, #topmenu-bookmark-dropdown .dropdown-menu, #topmenu-login-dropdown .dropdown-menu {
-	min-width: 370px;
-	max-width: 400px;
+	min-width: <?php echo $WIDTHMENUDROPDOWN; ?>px;
+	max-width: <?php echo $WIDTHMENUDROPDOWN; ?>px;
+	width: <?php echo $WIDTHMENUDROPDOWN; ?>px;
 }
 
 button.dropdown-item.global-search-item {
@@ -272,8 +274,10 @@ a.top-menu-dropdown-link {
 }
 
 .dropdown-menu > .user-header{
-	background: var(--colorbackhmenu1);
-	color: var(--colortextbackhmenu);
+	/*background: var(--colorbackhmenu1);
+	color: var(--colortextbackhmenu);*/
+	background: #f9f9f9;
+	color: #000;
 }
 
 

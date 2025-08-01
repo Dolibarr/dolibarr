@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2021-2024  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
@@ -94,11 +94,16 @@ if (!isset($form) || !is_object($form)) {
 	$form = new Form($db);
 }
 
-// Title
-$title = $langs->trans("HomeArea").' - Dolibarr '.DOL_VERSION;
-if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-	$title = $langs->trans("HomeArea").' - ' . getDolGlobalString('MAIN_APPLICATION_TITLE');
+$appli = constant('DOL_APPLICATION_TITLE');
+$applicustom = getDolGlobalString('MAIN_APPLICATION_TITLE');
+if ($applicustom) {
+	$appli = (preg_match('/^\+/', $applicustom) ? $appli : '').$applicustom;
+} else {
+	$appli .= " ".DOL_VERSION;
 }
+
+// Title
+$title = $langs->trans("HomeArea").' - '.$appli;
 
 llxHeader('', $title);
 
@@ -108,17 +113,16 @@ $resultboxes = FormOther::getBoxesArea($user, "0"); // Load $resultboxes (select
 
 if (getDolGlobalString('MAIN_MOTD')) {
 	$conf->global->MAIN_MOTD = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', getDolGlobalString('MAIN_MOTD'));
-	if (getDolGlobalString('MAIN_MOTD')) {
-		$substitutionarray = getCommonSubstitutionArray($langs);
-		complete_substitutions_array($substitutionarray, $langs);
-		$texttoshow = make_substitutions(getDolGlobalString('MAIN_MOTD'), $substitutionarray, $langs);
 
-		print "\n<!-- Start of welcome text -->\n";
-		print '<table class="centpercent notopnoleftnoright"><tr><td>';
-		print dol_htmlentitiesbr($texttoshow);
-		print '</td></tr></table><br>';
-		print "\n<!-- End of welcome text -->\n";
-	}
+	$substitutionarray = getCommonSubstitutionArray($langs);
+	complete_substitutions_array($substitutionarray, $langs);
+	$texttoshow = make_substitutions(getDolGlobalString('MAIN_MOTD'), $substitutionarray, $langs);
+
+	print "\n<!-- Start of welcome text -->\n";
+	print '<table class="centpercent notopnoleftnoright"><tr><td>';
+	print dol_htmlentitiesbr($texttoshow);
+	print '</td></tr></table><br>';
+	print "\n<!-- End of welcome text -->\n";
 }
 
 /*
@@ -155,6 +159,8 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 		$newPerm = $currentPerm & ~0222;
 		//print $conffile.' '.decoct($currentPerm).' '.(string) decoct($newPerm).' '.substr(decoct($newPerm), -4);
 		dolChmod($conffile, decoct($newPerm));
+
+		//  @phpstan-ignore-next-line
 		if (is_writable($conffile)) {
 			$langs->load("errors");
 			$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
@@ -573,8 +579,32 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 					$groupElement['globalStats'] = array();
 				}
 
+				// Links
+				$arrayLinks = array(
+					'action' => dol_buildpath('/comm/action/card.php?action=create', 1),
+					'project' => dol_buildpath('/projet/card.php?action=create', 1),
+					'propal' => dol_buildpath('/comm/propal/card.php?action=create', 1),
+					'commande' => dol_buildpath('/commande/card.php?action=create', 1),
+					'facture' => dol_buildpath('/compta/facture/card.php?action=create', 1),
+					'supplier_proposal' => dol_buildpath('/supplier_proposal/card.php?action=create', 1),
+					'order_supplier' => dol_buildpath('/fourn/commande/card.php?action=create', 1),
+					'invoice_supplier' => dol_buildpath('/fourn/facture/card.php?action=create', 1),
+					'contrat' => dol_buildpath('/contrat/card.php?action=create', 1),
+					'ticket' => dol_buildpath('/ticket/card.php?action=create', 1),
+					'bank_account' => dol_buildpath('/compta/bank/card.php?action=create', 1),
+					'member' => dol_buildpath('/adherents/card.php?action=create', 1),
+					'expensereport' => dol_buildpath('/expensereport/card.php?action=create', 1),
+					'holiday' => dol_buildpath('/holiday/card.php?action=create', 1),
+					'cubes' => dol_buildpath('/mrp/mo_card.php?action=create', 1),
+
+				);
+				$infoboxMoreCss = '';
+				if (array_key_exists($groupKey, $arrayLinks)) {
+					$infoboxMoreCss = 'infobox-haslink';
+				}
+
 				$openedDashBoard .= '<div class="box-flex-item"><div class="box-flex-item-with-margin">'."\n";
-				$openedDashBoard .= '	<div class="info-box '.$openedDashBoardSize.'">'."\n";
+				$openedDashBoard .= '	<div class="info-box '.$openedDashBoardSize.' '.$infoboxMoreCss.'">'."\n";
 				$openedDashBoard .= '		<span class="info-box-icon bg-infobox-'.$groupKeyLowerCase.'">'."\n";
 				$openedDashBoard .= '		<i class="fa fa-dol-'.$groupKeyLowerCase.'"></i>'."\n";
 
@@ -582,6 +612,10 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 				if (!empty($groupElement['globalStats'])) {
 					$globalStatInTopOpenedDashBoard[] = $globalStatsKey;
 					$openedDashBoard .= '<span class="info-box-icon-text" title="'.$groupElement['globalStats']['text'].'">'.$groupElement['globalStats']['nbTotal'].'</span>';
+				}
+
+				if (array_key_exists($groupKey, $arrayLinks)) {
+					$openedDashBoard .= '		<a href="'.$arrayLinks[$groupKey].'" class="info-box-createlink"><span class="fas fa-plus-circle"></span></a>'."\n";
 				}
 
 				$openedDashBoard .= '</span>'."\n";

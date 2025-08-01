@@ -69,6 +69,7 @@ CreateTableAndPrimaryKey=Create table %s
 CreateOtherKeysForTable=Create foreign keys and indexes for table %s
 OtherKeysCreation=Foreign keys and indexes creation
 FunctionsCreation=Functions creation
+CreationOfUser=Kreiranje korisnika
 AdminAccountCreation=Administrator login creation
 PleaseTypePassword=Unesite lozinku, prazne lozinke nisu dozvoljene!
 PleaseTypeALogin=Molimo unesite prijavu!
@@ -139,7 +140,7 @@ KeepDefaultValuesDeb=Koristili ste Dolibarr čarobnjak za postavljanje iz Linux 
 KeepDefaultValuesMamp=Koristili ste Dolibarr čarobnjak za podešavanje iz DoliMamp-a, tako da su vrijednosti koje su ovdje predložene već optimizirane. Promijenite ih samo ako znate šta radite.
 KeepDefaultValuesProxmox=Koristili ste Dolibarr čarobnjak za podešavanje sa Proxmox virtuelnog uređaja, tako da su vrednosti koje su ovde predložene već optimizovane. Promijenite ih samo ako znate šta radite.
 UpgradeExternalModule=Pokrenite namjenski proces nadogradnje vanjskog modula
-SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=Postavite barem jednu opciju kao parametar u URL-u s vrijednošću 'test' ili 'confirmed'. Na primjer: '...repair.php?standard=confirmed'
 NothingToDelete=Ništa za čišćenje/brisanje
 NothingToDo=Ništa za raditi
 #########
@@ -211,9 +212,12 @@ YouTryInstallDisabledByFileLock=Aplikacija je pokušala samonadograditi, ali str
 YouTryUpgradeDisabledByMissingFileUnLock=Aplikacija je pokušala samostalno nadograditi, ali proces nadogradnje trenutno nije dozvoljen.<br>
 ClickHereToGoToApp=Kliknite ovdje da odete na svoju aplikaciju
 ClickOnLinkOrRemoveManualy=Ako je nadogradnja u toku, pričekajte. Ako ne, kliknite na sljedeću vezu. Ako uvijek vidite istu stranicu, morate ukloniti/preimenovati datoteku install.lock u direktoriju dokumenata.
-ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
+ClickOnLinkOrCreateUnlockFileManualy=Ako je nadogradnja u toku, molimo pričekajte... Ako nije, morate ukloniti datoteku install.lock (ili kreirati datoteku upgrade.unlock za nadogradnju) u direktorij dokumenata Dolibarr-a.
 Loaded=Napunjeno
 FunctionTest=Funkcionalni test
 NodoUpgradeAfterDB=Eksterni moduli ne zahtijevaju nikakvu radnju nakon nadogradnje baze podataka
 NodoUpgradeAfterFiles=Eksterni moduli ne zahtijevaju nikakvu radnju nakon nadogradnje datoteka ili direktorija
 MigrationContractLineRank=Premjesti liniju ugovora da koristi rang (i omogući promjenu redoslijeda)
+MigrationProductLotPath=Putanja za migraciju paketnih datoteka proizvoda
+MigrationAccountancyBookkeeping=Migrirajte računovodstveno knjigovodstvo da biste koristili referencu
+InvoiceExportModelsMigration=Migrirajte modele izvoza faktura

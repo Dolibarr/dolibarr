@@ -44,7 +44,7 @@ ALTER TABLE llx_societe_account ADD UNIQUE INDEX uk_societe_account_login_websit
 -- V22 migration
 
 ALTER TABLE llx_c_country ADD COLUMN sepa tinyint DEFAULT 0 NOT NULL;
-UPDATE llx_c_country SET sepa = 1 WHERE code IN ('AD','AT','BE','BG','CH','CY','CZ','DE','DK','EE','ES','FI','FR','GR','HR','HU','IE','IT','LT','LU','LV','MC','MT','NL','PL','PT','RO','SE','SI','SK','SM','VA');
+UPDATE llx_c_country SET sepa = 1 WHERE code IN ('AL','AD','AT','BE','BG','CH','CY','CZ','DE','DK','EE','ES','FI','FR','GB','GG','GR','HR','HU','IE','IM','IS','IT','JE','LI','LT','LU','LV','MC','MD','ME','MK','MT','NL','NO','PL','PM','PT','RO','RS','SE','SI','SK','SM','VA');
 
 -- fix element
 UPDATE llx_c_type_contact set element='shipping' WHERE element='expedition';
@@ -290,3 +290,13 @@ ALTER TABLE llx_don ADD COLUMN ip varchar(250);
 ALTER TABLE llx_expeditiondet ADD COLUMN description text AFTER fk_entrepot;
 
 INSERT INTO llx_c_type_container (code, label, active, module, position, typecontainer, entity) VALUES ('setup', 'Setup screen', 1, 'system', 500, 'library', __ENTITY__);
+
+ALTER TABLE llx_mrp_mo ADD COLUMN extraparams varchar(255) DEFAULT NULL;
+
+UPDATE llx_actioncomm set code = 'AC_PAYMENT_STRIPE_IPN_SEPA_KO' where code = 'AC_IPN' and label like 'Payment error (SEPA%';
+
+ALTER TABLE llx_blockedlog ADD COLUMN debuginfo mediumtext;
+
+ALTER TABLE llx_webhook_history ADD COLUMN trigger_code text NOT NULL;
+ALTER TABLE llx_webhook_history ADD COLUMN error_message text;
+ALTER TABLE llx_webhook_history MODIFY COLUMN url varchar(255);

@@ -127,7 +127,7 @@ print '<table class="border centpercent">';
 // Product
 print '<tr><td class="titlefield">'.$langs->trans('ProductOrService').'</td>';
 print '<td class="maxwidthonsmartphone" colspan="4">';
-print img_picto('', 'product', 'class="pictofixedwidth"').$form->select_produits(($id > 0 ? $id : ''), 'id', '', 20, 0, 1, 2, '', 1, array(), 0, '', 0, '', 0, '', null, 1);
+print img_picto('', 'product', 'class="pictofixedwidth"').$form->select_produits(($id > 0 ? $id : ''), 'id', '', 20, 0, 1, 2, '', 1, array(), 0, 1, 0, '', 0, '', null, 1);
 print '</td></tr>';
 
 // Categories

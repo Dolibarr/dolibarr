@@ -626,7 +626,7 @@ class FormMail extends Form
 				$out .= '</div>';
 			} elseif (!empty($this->param['models']) && in_array($this->param['models'], array(
 					'propal_send', 'order_send', 'facture_send',
-					'shipping_send', 'fichinter_send', 'supplier_proposal_send', 'order_supplier_send',
+					'shipping_send', 'reception_send', 'fichinter_send', 'supplier_proposal_send', 'order_supplier_send',
 					'invoice_supplier_send', 'thirdparty', 'contract', 'user', 'recruitmentcandidature_send', 'product_send', 'all'
 				))) {
 				// If list of template is empty
@@ -1102,10 +1102,12 @@ class FormMail extends Form
 				$showlinktoailabel = $langs->trans("AIEnhancements");
 				$formatforouput = '';
 				$htmlname = 'message';
+
 				$formai->substit = $this->substit;
 				$formai->substit_lines = $this->substit_lines;
 
 				// Fill $out
+				$db = $this->db;
 				include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
 
 				$out .= '</td>';
@@ -1498,12 +1500,13 @@ class FormMail extends Form
 	 * @param	string		$showlinktolayout	Show link to layout
 	 * @return  string                      	HTML for model email boxes
 	 */
-	public function getModelEmailTemplate($htmlContent = 'message', $showlinktolayout = 'email')
+	public function getEmailLayoutSelector($htmlContent = 'message', $showlinktolayout = 'email')
 	{
-		global $websitepage, $langs;
+		global $conf, $db, $websitepage, $langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/emaillayout.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 
 		$out = '<div id="template-selector" class="template-selector email-layout-container hidden" style="display:none;">';
@@ -1519,10 +1522,10 @@ class FormMail extends Form
 			$layoutname = preg_replace('/\.html$/i', '', $layouttemplatefile['name']);
 
 			// Exclude some layouts for some use cases
-			if ($layoutname == 'news' && !in_array($showlinktolayout, array('emailing', 'websitepage'))) {
+			if ($layoutname == 'news' && (!in_array($showlinktolayout, array('emailing', 'websitepage')) || !isModEnabled('website'))) {
 				continue;
 			}
-			if ($layoutname == 'products' && !in_array($showlinktolayout, array('emailing', 'websitepage'))) {
+			if ($layoutname == 'products' && (!in_array($showlinktolayout, array('emailing', 'websitepage')) || (!isModEnabled('product') && !isModEnabled('service')))) {
 				continue;
 			}
 
@@ -1544,19 +1547,39 @@ class FormMail extends Form
 		// Prepare the array for multiselect
 
 		// Fetch blogs
-		$websitepage = new WebsitePage($this->db);
-		$arrayofblogs = $websitepage->fetchAll('', 'DESC', 'date_creation', 0, 0, array('type_container' => 'blogpost'));
-
 		$blogArray = array();
-		if (!empty($arrayofblogs)) {
-			foreach ($arrayofblogs as $blog) {
-				$blogArray[$blog->id] = substr(htmlentities($blog->title), 0, 30);
+		if (isModEnabled('website')) {
+			$websitepage = new WebsitePage($this->db);
+			$arrayofblogs = $websitepage->fetchAll('', 'ASC,DESC', 'fk_website,date_creation', 0, 0, array('type_container' => 'blogpost'));
+
+			if (empty($conf->cache['websiteurl'])) {
+				$conf->cache['websiteurl'] = array();
+			}
+
+			if (!empty($arrayofblogs)) {
+				foreach ($arrayofblogs as $blog) {
+					if (!isset($conf->cache['websiteurl'][$blog->id])) {
+						$tmpwebsite = new Website($db);
+						$tmpwebsite->fetch($blog->fk_website);
+						$conf->cache['websiteurl'][$blog->fk_website] = (empty($tmpwebsite->virtualhost) ? $tmpwebsite->ref : $tmpwebsite->virtualhost);
+					}
+
+					$labelwebsite = $conf->cache['websiteurl'][$blog->fk_website];
+					//$blog->fk_website
+
+					$blogArray[$blog->id] = array(
+						'id' => $blog->id,
+						'label' => '['.$labelwebsite.' '.$blog->type_container.' '.$blog->id.'] '.dol_trunc($blog->title, 40),
+						'labelhtml' => '<span class="opacitymedium">['.$labelwebsite.' '.$blog->type_container.' '.$blog->id.']</span> '.dol_trunc($blog->title, 40),
+					);
+				}
 			}
 		}
 
 		// Use the multiselect array function to create the dropdown
 		$out .= '<div id="post-dropdown-container" class="email-layout-container hidden" style="display:none;">';
 		$out .= '<label for="blogpost-select">Select Posts: </label>';
+		$out .= '<!-- select component for selection of products -->'."\n";
 		$out .= self::multiselectarray('blogpost-select', $blogArray, array(), 0, 0, 'minwidth200');
 		$out .= '</div>';
 
@@ -1795,6 +1818,8 @@ class FormMail extends Form
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierInvoice");
 					} elseif ($type_template == 'shipping_send') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendShipping");
+					} elseif ($type_template == 'reception_send') {
+						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendReception");
 					} elseif ($type_template == 'fichinter_send') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendFichInter");
 					} elseif ($type_template == 'actioncomm_send') {
@@ -2006,7 +2031,6 @@ class FormMail extends Form
 
 			// For mass emailing, we have different keys specific to the data into tagerts list
 			$tmparray['__ID__'] = 'IdRecord';
-			$tmparray['__THIRDPARTY_CUSTOMER_CODE__'] = 'CustomerCode';
 			$tmparray['__EMAIL__'] = 'EMailRecipient';
 			$tmparray['__LASTNAME__'] = 'Lastname';
 			$tmparray['__FIRSTNAME__'] = 'Firstname';
@@ -2016,6 +2040,9 @@ class FormMail extends Form
 			$tmparray['__OTHER3__'] = 'Other3';
 			$tmparray['__OTHER4__'] = 'Other4';
 			$tmparray['__OTHER5__'] = 'Other5';
+
+			$tmparray['__THIRDPARTY_CUSTOMER_CODE__'] = 'CustomerCode';  // If source is a thirdparty
+
 			$tmparray['__CHECK_READ__'] = $langs->trans('TagCheckMail');
 			$tmparray['__UNSUBSCRIBE__'] = $langs->trans('TagUnsubscribe');
 			$tmparray['__UNSUBSCRIBE_URL__'] = $langs->trans('TagUnsubscribe').' (URL)';

@@ -117,14 +117,10 @@ $action		= (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
 $cancel		= GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 $confirm 	= GETPOST('confirm', 'alpha');
+$canvas		= GETPOST('canvas', 'alpha');
 
 $dol_openinpopup = '';
-if (!empty($backtopagejsfields)) {
-	$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
-	$dol_openinpopup = preg_replace('/[^a-z0-9_]/i', '', $tmpbacktopagejsfields[0]);
-}
 
 $socid = GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('id');
 if ($user->socid) {
@@ -205,7 +201,7 @@ if (empty($reshook)) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = DOL_URL_ROOT.'/societe/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+				$backtopage = DOL_URL_ROOT.'/societe/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__') . (!empty($canvas) ? "&canvas=" . $canvas : "");
 			}
 		}
 	}
@@ -639,24 +635,6 @@ if (empty($reshook)) {
 				if ($result >= 0 && !$error) {
 					$db->commit();
 
-					if ($backtopagejsfields) {
-						llxHeader('', '', '');
-
-						$retstring = '<script>';
-						$retstring .= 'jQuery(document).ready(function() {
-												console.log(\'We execute action to create. We save id and go back - '.$dol_openinpopup.'\');
-												console.log(\'id = '.$object->id.'\');
-												$(\'#varforreturndialogid'.$dol_openinpopup.'\', window.parent.document).text(\''.$object->id.'\');
-												$(\'#varforreturndialoglabel'.$dol_openinpopup.'\', window.parent.document).text(\''.$object->name.'\');
-												window.parent.jQuery(\'#idfordialog'.$dol_openinpopup.'\').dialog(\'close\');
-				 							});';
-						$retstring .= '</script>';
-						print $retstring;
-
-						llxFooter();
-						exit;
-					}
-
 					if (!empty($backtopage)) {
 						$backtopage = preg_replace('/--IDFORBACKTOPAGE--/', (string) $object->id, $backtopage); // New method to autoselect project after a New on another form object creation
 						if (preg_match('/\?/', $backtopage)) {
@@ -1016,7 +994,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			$private = 0;
 		}
 
-		// Load object modCodeTiers
+		// Load object modCodeClient
 		$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON', 'mod_codeclient_leopard');
 		if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
 			$module = substr($module, 0, dol_strlen($module) - 4);
@@ -1030,6 +1008,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		}
 		$modCodeClient = new $module($db);
 		'@phan-var-force ModeleThirdPartyCode $modCodeClient';
+
 		// Load object modCodeFournisseur
 		$module = getDolGlobalString('SOCIETE_CODECLIENT_ADDON', 'mod_codeclient_leopard');
 		if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php') {
@@ -1323,7 +1302,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
-		print '<input type="hidden" name="backtopagejsfields" value="'.$backtopagejsfields.'">';
 		print '<input type="hidden" name="dol_openinpopup" value="'.$dol_openinpopup.'">';
 		print '<input type="hidden" name="private" value='.$object->particulier.'>';
 		print '<input type="hidden" name="type" value='.GETPOST("type", 'alpha').'>';
@@ -1472,8 +1450,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			// Prospect/Customer/Supplier
 			$selected = $object->client;
-			$selectedcustomer = 0;
-			$selectedprospect = 0;
+			$selectedcustomer = ((getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')==1 && GETPOST("type", 'aZ') != 'p' && GETPOST("type", 'aZ') != 'f') || (getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')==3 && GETPOST("type", 'aZ') != 'p' && GETPOST("type", 'aZ') != 'f') ? 1 : 0);
+			$selectedprospect = ((getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')==2 && GETPOST("type", 'aZ') != 'c' && GETPOST("type", 'aZ') != 'f') || (getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT')==3 && GETPOST("type", 'aZ') != 'c' && GETPOST("type", 'aZ') != 'f') ? 1 : 0);
 			switch ($selected) {
 				case 1:
 					$selectedcustomer = 1;
@@ -1489,9 +1467,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					break;
 			}
 
-			$selectedprospect = ((GETPOSTISSET('prospect') || $action == 'create') ? GETPOSTINT('prospect') : $selectedprospect);
-			$selectedcustomer = ((GETPOSTISSET('customer') || $action == 'create') ? GETPOSTINT('customer') : $selectedcustomer);
-			$selectedsupplier = ((GETPOSTISSET('supplier') || $action == 'create') ? GETPOSTINT('supplier') : $object->fournisseur);
+			$selectedprospect = ((GETPOSTISSET('prospect') && $action == 'create') ? GETPOSTINT('prospect') : $selectedprospect);
+			$selectedcustomer = ((GETPOSTISSET('customer') && $action == 'create') ? GETPOSTINT('customer') : $selectedcustomer);
+			$selectedsupplier = ((GETPOSTISSET('supplier') && $action == 'create') ? GETPOSTINT('supplier') : $object->fournisseur);
 
 			print '<tr class="marginbottomlarge height50">';
 			if ($conf->browser->layout != 'phone') {
@@ -1609,8 +1587,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</td></tr>';
 			}
 
-			$colspan = ($conf->browser->layout == 'phone' ? 2 : 4);
-			print '<tr><td'.($colspan ? ' colspan="'.$colspan.'"' : '').'>&nbsp;</td></tr>';
+			print '<tr><td colspan="4">&nbsp;</td></tr>';
 
 			// Address
 			print '<tr><td class="tdtop">';
@@ -1867,7 +1844,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<tr><td>'.$form->editfieldkey('JuridicalStatus', 'forme_juridique_code', '', $object, 0).'</td>';
 			print '<td colspan="3" class="maxwidthonsmartphone">';
 			if ($object->country_id) {
-				print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_id, '', 'forme_juridique_code');
+				print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'forme_juridique_code');
 			} else {
 				print $countrynotdefined;
 			}
@@ -1923,22 +1900,19 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				// Customer
 				print '<tr class="visibleifcustomer"><td class="toptd">'.$form->editfieldkey('CustomersProspectsCategoriesShort', 'custcats', '', $object, 0).'</td><td colspan="3">';
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, '', 'parent', 64, 0, 3);
-				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+				print $form->selectCategories(Categorie::TYPE_CUSTOMER, 'custcats', $object);
 				print "</td></tr>";
 
 				if (getDolGlobalString('THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION')) {
 					print '<tr class="individualline"><td class="toptd">'.$form->editfieldkey('ContactCategoriesShort', 'contcats', '', $object, 0).'</td><td colspan="3">';
-					$cate_arbo = $form->select_all_categories(Categorie::TYPE_CONTACT, '', 'parent', 64, 0, 3);
-					print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('contcats', $cate_arbo, GETPOST('contcats', 'array'), 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+					print $form->selectCategories(Categorie::TYPE_CONTACT, 'contcats', $object);
 					print "</td></tr>";
 				}
 
 				// Supplier
 				if (isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) {
 					print '<tr class="visibleifsupplier"><td class="toptd">'.$form->editfieldkey('SuppliersCategoriesShort', 'suppcats', '', $object, 0).'</td><td colspan="3">';
-					$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, '', 'parent', 64, 0, 3);
-					print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('suppcats', $cate_arbo, GETPOST('suppcats', 'array'), 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+					print $form->selectCategories(Categorie::TYPE_SUPPLIER, 'suppcats', $object);
 					print "</td></tr>";
 				}
 			}
@@ -2291,7 +2265,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Ref/ID
 				if (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
 					print '<tr><td class="titlefieldcreate">'.$langs->trans("ID").'</td><td colspan="3">';
-					print $object->ref;
+					print $object->id;
 					print '</td></tr>';
 				}
 
@@ -2751,82 +2725,14 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					// Customer
 					print '<tr class="visibleifcustomer"><td>'.$form->editfieldkey('CustomersCategoriesShort', 'custcats', '', $object, 0).'</td>';
 					print '<td colspan="3">';
-					$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, '', '', 64, 0, 3);
-					$c = new Categorie($db);
-					$cats = $c->containing($object->id, Categorie::TYPE_CUSTOMER);
-					$arrayselected = array();
-					foreach ($cats as $cat) {
-						$arrayselected[] = $cat->id;
-					}
-					print img_picto('', 'category', 'class="pictofixedwidth"');
-					$categtype = Categorie::TYPE_CUSTOMER;
-					$htmlname = 'custcats';
-					print $form->multiselectarray($htmlname, $cate_arbo, $arrayselected, 0, 0, 'minwidth100 widthcentpercentminusxx', 0, 0);
-
-					if (getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
-						// Add html code to add the edit button and go back
-						$jsonclose = 'doJsCodeAfterPopupClose'.$htmlname.'()';
-						$urltoopen = '/categories/categorie_list.php?type='.$categtype;
-
-						$s = dolButtonToOpenUrlInDialogPopup($htmlname, $langs->transnoentitiesnoconv("Categories"), img_picto('', 'add', 'class="editfielda"'), $urltoopen, '', '', '', $jsonclose);
-						print $s;
-						// Add js code to add the edit button and go back
-						print '<!-- Add js code to open the popup for category/edit/add -->'."\n";
-						print '<script>function doJsCodeAfterPopupClose'.$htmlname.'() {
-							console.log("doJsCodeAfterPopupClose'.$htmlname.' has been called, we refresh the combo content + refresh select2...");
-
-							// Call an ajax to reload values and update the select
-							// $("#'.dol_escape_js($htmlname).'").append(new Option("Option 4", "4"));
-
-							// Refresh select2 to take account of new values (enough for small change)
-
-					        $.ajax({
-					            url: \''.DOL_URL_ROOT.'/core/ajax/fetchCategories.php\',
-								data: {
-									action: \'getCategories\',
-									type: \''.dol_escape_htmltag($categtype).'\'
-								},
-					            type: \'GET\',
-					            dataType: \'json\',
-					            success: function (data) {
-					                var $select = $(\'#'.dol_escape_js($htmlname).'\');
-									var selectedValues = $select.val(); // This is an array of selected values
-									console.log(selectedValues);
-					                $select.empty();
-					                $.each(data, function (index, item) {
-					                    $select.append(\'<option value="\' + item.id + \'" data-html="\' + item.htmlforattribute + \'">\' + item.htmlforoption + \'</option>\');
-					                });
-									$select.val(selectedValues);
-					            },
-					            error: function (xhr, status, error) {
-					                alert("Error when loading ajax page : " + error);
-					            }
-					        });
-
-							$("#'.dol_escape_js($htmlname).'").trigger("change");
-							// Alternative if change in select is complex
-							/*
-							$("#'.dol_escape_js($htmlname).'").select2("destroy");
-							$("#'.dol_escape_js($htmlname).'").select2();
-							*/
-						}</script>';
-					}
-
+					print $form->selectCategories(Categorie::TYPE_CUSTOMER, 'custcats', $object);
 					print "</td></tr>";
 
 					// Supplier
 					if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
 						print '<tr class="visibleifsupplier"><td>'.$form->editfieldkey('SuppliersCategoriesShort', 'suppcats', '', $object, 0).'</td>';
 						print '<td colspan="3">';
-						$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, '', '', 64, 0, 3);
-						$c = new Categorie($db);
-						$cats = $c->containing($object->id, Categorie::TYPE_SUPPLIER);
-						$arrayselected = array();
-						foreach ($cats as $cat) {
-							$arrayselected[] = $cat->id;
-						}
-						print img_picto('', 'category', 'class="pictofixedwidth"');
-						print $form->multiselectarray('suppcats', $cate_arbo, $arrayselected, 0, 0, 'minwidth100 widthcentpercentminusxx', 0, 0);
+						print $form->selectCategories(Categorie::TYPE_SUPPLIER, 'suppcats', $object);
 						print "</td></tr>";
 					}
 				}

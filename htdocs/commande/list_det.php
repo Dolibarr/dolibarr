@@ -64,7 +64,7 @@ if (isModEnabled('category')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("orders", 'sendings', 'deliveries', 'companies', 'compta', 'bills', 'stocks', 'products'));
+$langs->loadLangs(array("categories", "orders", 'sendings', 'deliveries', 'companies', 'compta', 'bills', 'stocks', 'products'));
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
@@ -191,14 +191,14 @@ if (empty($user->socid)) {
 $checkedtypetiers = 0;
 $arrayfields = array(
 	// Détail commande
-	'rowid' => array('label' => 'TechnicalID', 'checked' => '1', 'position' => 1, 'enabled' => (getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID') ? '1' : '0')),
-	'pr.ref' => array('label' => 'ProductRef', 'checked' => '1', 'position' => 1),
-	'pr.desc' => array('label' => 'ProductDescription', 'checked' => '-1', 'position' => 1),
-	'cdet.qty' => array('label' => 'QtyOrdered', 'checked' => '1', 'position' => 1),
-	'c.ref' => array('label' => "Ref", 'checked' => '1', 'position' => 5),
+	'rowid' => array('label' => 'LineID', 'checked' => '-1', 'position' => 1, 'enabled' => '1'),
+	'c.ref' => array('label' => "RefOrder", 'checked' => '1', 'position' => 5),
+	'pr.ref' => array('label' => 'ProductRef', 'checked' => '1', 'position' => 6),
+	'pr.desc' => array('label' => 'ProductDescription', 'checked' => '-1', 'position' => 7),
+	'cdet.qty' => array('label' => 'QtyOrdered', 'checked' => '1', 'position' => 8),
 	'c.ref_client' => array('label' => "RefCustomerOrder", 'checked' => '-1', 'position' => 10),
-	'p.ref' => array('label' => "ProjectRef", 'checked' => '-1', 'enabled' => (empty($conf->project->enabled) ? '0' : '1'), 'position' => 20),
-	'p.title' => array('label' => "ProjectLabel", 'checked' => '0', 'enabled' => (empty($conf->project->enabled) ? '0' : '1'), 'position' => 25),
+	'p.ref' => array('label' => "ProjectRef", 'checked' => '-1', 'enabled' => (string) (int) isModEnabled('project'), 'position' => 20),
+	'p.title' => array('label' => "ProjectLabel", 'checked' => '0', 'enabled' => (string) (int) isModEnabled('project'), 'position' => 25),
 	's.nom' => array('label' => "ThirdParty", 'checked' => '1', 'position' => 30),
 	's.name_alias' => array('label' => "AliasNameShort", 'checked' => '-1', 'position' => 31),
 	's.town' => array('label' => "Town", 'checked' => '-1', 'position' => 35),
@@ -322,7 +322,7 @@ if (empty($reshook)) {
 		$search_billed = '';
 		$toselect = array();
 		$search_array_options = array();
-		$search_categ_cus = 0;
+		$search_categ_cus = '';
 		$search_datecloture_start = '';
 		$search_datecloture_end = '';
 		$search_fk_cond_reglement = '';
@@ -404,10 +404,6 @@ $sql .= ' c.fk_input_reason, c.import_key,';
 // Lines or order
 $sql .= ' cdet.rowid, cdet.description, cdet.qty, cdet.product_type, cdet.fk_product, cdet.total_ht, cdet.total_tva, cdet.total_ttc,';
 $sql .= ' pr.rowid as product_rowid, pr.ref as product_ref, pr.label as product_label, pr.barcode as product_barcode, pr.tobatch as product_batch, pr.tosell as product_status, pr.tobuy as product_status_buy';
-
-if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
-	$sql .= ", cc.fk_categorie, cc.fk_soc";
-}
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
@@ -422,20 +418,16 @@ $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
-if (($search_categ_cus > 0) || ($search_categ_cus == -2)) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
-}
-
-// Détail commande
+// Order line
 $sql .= ', '.MAIN_DB_PREFIX.'commandedet as cdet';
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commande as c ON cdet.fk_commande=c.rowid';
-$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as pr ON pr.rowid=cdet.fk_product';
-
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'commande as c ON cdet.fk_commande = c.rowid';
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as pr ON pr.rowid = cdet.fk_product';
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_extrafields as ef on (c.rowid = ef.fk_object)";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = c.fk_projet";
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON c.fk_user_author = u.rowid';
+// TODO Remove following left join
 if ($search_user > 0) {
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
@@ -582,12 +574,6 @@ if ($search_project_ref != '') {
 if ($search_project != '') {
 	$sql .= natural_search("p.title", $search_project);
 }
-if ($search_categ_cus > 0) {
-	$sql .= " AND cc.fk_categorie = ".((int) $search_categ_cus);
-}
-if ($search_categ_cus == -2) {
-	$sql .= " AND cc.fk_categorie IS NULL";
-}
 if ($search_fk_cond_reglement > 0) {
 	$sql .= " AND c.fk_cond_reglement = ".((int) $search_fk_cond_reglement);
 }
@@ -606,6 +592,36 @@ if ($search_sale && $search_sale != '-1') {
 		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc)";
 	} elseif ($search_sale > 0) {
 		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
+	}
+}
+// Search for tag/category ($searchCategoryCustomerList is an array of ID)
+$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
+$searchCategoryCustomerList = ($search_categ_cus !== '-1' ? explode(',', $search_categ_cus) : array());
+if (!empty($searchCategoryCustomerList)) {
+	$searchCategoryCustomerSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryCustomerList as $searchCategoryCustomer) {
+		if (intval($searchCategoryCustomer) == -2) {
+			$searchCategoryCustomerSqlList[] = "NOT EXISTS (SELECT cs.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as cs WHERE s.rowid = cs.fk_soc)";
+		} elseif (intval($searchCategoryCustomer) > 0) {
+			if ($searchCategoryCustomerOperator == 0) {
+				$searchCategoryCustomerSqlList[] = " EXISTS (SELECT cs.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as cs WHERE s.rowid = cs.fk_soc AND cs.fk_categorie = ".((int) $searchCategoryCustomer).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryCustomer);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryCustomerSqlList[] = " EXISTS (SELECT cs.fk_soc FROM ".MAIN_DB_PREFIX."categorie_societe as cs WHERE s.rowid = cs.fk_soc AND cs.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryCustomerOperator == 1) {
+		if (!empty($searchCategoryCustomerSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryCustomerSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryCustomerSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryCustomerSqlList).")";
+		}
 	}
 }
 // Search for tag/category ($searchCategoryProductList is an array of ID)
@@ -659,7 +675,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -951,13 +967,13 @@ if ($resql) {
 	// Filter on categories
 	if (isModEnabled("category") && $user->hasRight('categorie', 'lire') && ($user->hasRight('produit', 'lire') || $user->hasRight('service', 'lire'))) {
 		$formcategory = new FormCategory($db);
-		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PRODUCT, $search_product_category_array, 'minwidth300imp minwidth300', $searchCategoryProductOperator ? $searchCategoryProductOperator : 0);
+		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PRODUCT, $search_product_category_array, 'minwidth300imp minwidth300', $searchCategoryProductOperator ? $searchCategoryProductOperator : 0, 1, 1, $langs->transnoentitiesnoconv("ProductsCategoryShort"));
 	}
 	if (isModEnabled("category") && $user->hasRight('categorie', 'lire')) {
 		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('CustomersProspectsCategoriesShort');
-		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $tmptitle, 'maxwidth300 widthcentpercentminusx');
+		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1, $tmptitle, 'minwidth300imp maxwidth300 widthcentpercentminusx');
 		$moreforfilter .= '</div>';
 	}
 	if (isModEnabled('stock') && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')) {
@@ -965,7 +981,7 @@ if ($resql) {
 		$formproduct = new FormProduct($db);
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('Warehouse');
-		$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', 1, 0, 0, $tmptitle, 0, 0, array(), 'maxwidth250 widthcentpercentminusx');
+		$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', 1, 0, 0, $tmptitle, 0, 0, array(), 'minwidth300imp maxwidth300 widthcentpercentminusx');
 		$moreforfilter .= '</div>';
 	}
 
@@ -1005,18 +1021,24 @@ if ($resql) {
 
 	// Action column
 	if (getDolGlobalInt('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print '<td class="liste_titre" align="middle">';
+		print '<td class="liste_titre center">';
 		$searchpicto = $form->showFilterButtons('left');
 		print $searchpicto;
 		print '</td>';
 	}
 	// ID
 	if (!empty($arrayfields['rowid']['checked'])) {
-		print '<td class="liste_titre" data-key="id">';
-		print '<input class="flat searchstring" type="text" name="search_id" size="1" value="'.dol_escape_htmltag($search_id).'">';
+		print '<td class="liste_titre right" data-key="id">';
+		print '<input class="flat searchstring width50" type="text" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
 		print '</td>';
 	}
-	// Détail commande
+	// Ref order
+	if (!empty($arrayfields['c.ref']['checked'])) {
+		print '<td class="liste_titre">';
+		print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+		print '</td>';
+	}
+	// Product ref
 	if (!empty($arrayfields['pr.ref']['checked'])) {
 		print '<td class="liste_titre">';
 		print '<input class="flat" size="6" type="text" name="search_refProduct" value="'.dol_escape_htmltag($search_refProduct).'">';
@@ -1033,12 +1055,6 @@ if ($resql) {
 		print '<td class="liste_titre"></td>';
 	}
 
-	// Ref
-	if (!empty($arrayfields['c.ref']['checked'])) {
-		print '<td class="liste_titre">';
-		print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
-		print '</td>';
-	}
 	// Ref customer
 	if (!empty($arrayfields['c.ref_client']['checked'])) {
 		print '<td class="liste_titre" align="left">';
@@ -1305,10 +1321,13 @@ if ($resql) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	}
 
-	// Détail commande
+	// Detail order
 	if (!empty($arrayfields['rowid']['checked'])) {
 		// @phan-suppress-next-line PhanTypeInvalidDimOffset
 		print_liste_field_titre($arrayfields['rowid']['label'], $_SERVER["PHP_SELF"], 'rowid', '', $param, '', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['c.ref']['checked'])) {
+		print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], 'c.ref', '', $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['pr.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['pr.ref']['label'], $_SERVER["PHP_SELF"], 'pr.ref', '', $param, '', $sortfield, $sortorder);
@@ -1320,9 +1339,6 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['cdet.qty']['label'], $_SERVER["PHP_SELF"], 'cdet.qty', '', $param, '', $sortfield, $sortorder);
 	}
 
-	if (!empty($arrayfields['c.ref']['checked'])) {
-		print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], 'c.ref', '', $param, '', $sortfield, $sortorder);
-	}
 	if (!empty($arrayfields['c.ref_client']['checked'])) {
 		print_liste_field_titre($arrayfields['c.ref_client']['label'], $_SERVER["PHP_SELF"], 'c.ref_client', '', $param, '', $sortfield, $sortorder);
 	}
@@ -1585,10 +1601,27 @@ if ($resql) {
 			}
 		}
 
-		// Détail commande
+		// Order line
+
 		// ID
 		if (!empty($arrayfields['rowid']['checked'])) {
 			print '<td class="nowrap right">'.$obj->rowid.'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Ref order
+		if (!empty($arrayfields['c.ref']['checked'])) {
+			print '<td class="nowraponall">';
+			print $generic_commande->getNomUrl(1, ($search_status != 2 ? 0 : $obj->fk_statut), 0, 0, 0, 1, 1);
+
+			$filename = dol_sanitizeFileName($obj->ref);
+			$filedir = $conf->commande->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($obj->ref);
+			$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+			print $formfile->getDocumentsLink($generic_commande->element, $filename, $filedir);
+
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1606,7 +1639,7 @@ if ($resql) {
 				$generic_product->barcode = $obj->product_barcode;
 				print '<td class="nowrap tdoverflowmax200">'.$generic_product->getNomUrl(1).'</td>';
 			} else {
-				print '<td class="nowrap tdoverflowmax200">Ligne libre</td>';
+				print '<td class="nowrap tdoverflowmax200"><span class="opacitymedium">'.$langs->trans("None").'</span></td>';
 			}
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -1640,22 +1673,6 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'cdet.qty';
 				$totalarray['pos'][$subtotalarray['nbfield']] = 'cdet.qty';
-			}
-		}
-
-		// Ref
-		if (!empty($arrayfields['c.ref']['checked'])) {
-			print '<td class="nowraponall">';
-			print $generic_commande->getNomUrl(1, ($search_status != 2 ? 0 : $obj->fk_statut), 0, 0, 0, 1, 1);
-
-			$filename = dol_sanitizeFileName($obj->ref);
-			$filedir = $conf->commande->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($obj->ref);
-			$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-			print $formfile->getDocumentsLink($generic_commande->element, $filename, $filedir);
-
-			print '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
 			}
 		}
 
