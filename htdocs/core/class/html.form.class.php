@@ -104,18 +104,18 @@ class Form
 	/**
 	 * Output key field for an editable field
 	 *
-	 * @param 	string		$text 			Text of label or key to translate
-	 * @param 	string		$htmlname 		Name of select field ('edit' prefix will be added)
-	 * @param 	string		$preselected 	Value to show/edit (not used in this function)
-	 * @param 	object		$object 		Object (on the page we show)
-	 * @param 	int<0,1>	$perm 			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
-	 * @param 	string	 	$typeofdata 	Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker' 'checkbox:ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
-	 * @param 	string		$moreparam		More param to add on a href URL.
-	 * @param 	int<0,1>	$fieldrequired	1 if we want to show field as mandatory using the "fieldrequired" CSS.
-	 * @param 	int<0,3>	$notabletag		1=Do not output table tags but output a ':', 2=Do not output table tags and no ':', 3=Do not output table tags but output a ' '
-	 * @param 	string		$paramid 		Key of parameter for id ('id', 'socid')
-	 * @param 	string		$help 			Tooltip help
-	 * @return  string						HTML edit field
+	 * @param 	string				$text 			Text of label or key to translate
+	 * @param 	string				$htmlname 		Name of select field ('edit' prefix will be added)
+	 * @param 	string				$preselected 	Value to show/edit (not used in this function)
+	 * @param 	object				$object 		Object (on the page we show)
+	 * @param 	int<0,1>|boolean	$perm 			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
+	 * @param 	string	 			$typeofdata 	Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker' 'checkbox:ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
+	 * @param 	string				$moreparam		More param to add on a href URL.
+	 * @param 	int<0,1>			$fieldrequired	1 if we want to show field as mandatory using the "fieldrequired" CSS.
+	 * @param 	int<0,3>			$notabletag		1=Do not output table tags but output a ':', 2=Do not output table tags and no ':', 3=Do not output table tags but output a ' '
+	 * @param 	string				$paramid 		Key of parameter for id ('id', 'socid')
+	 * @param 	string				$help 			Tooltip help
+	 * @return  string								HTML edit field
 	 */
 	public function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata = 'string', $moreparam = '', $fieldrequired = 0, $notabletag = 0, $paramid = 'id', $help = '')
 	{
@@ -125,7 +125,7 @@ class Form
 
 		// TODO change for compatibility
 		if (getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE') && !preg_match('/^select;/', $typeofdata)) {
-			if (!empty($perm)) {
+			if ($perm) {
 				$tmp = explode(':', $typeofdata);
 				$ret .= '<div class="editkey_' . $tmp[0] . (!empty($tmp[1]) ? ' ' . $tmp[1] : '') . '" id="' . $htmlname . '">';
 				if ($fieldrequired) {

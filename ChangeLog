@@ -117,6 +117,7 @@ NEW: Accountancy - Add actions on entries (Cloning, assigning, returning)
 NEW: Add conf PDF_HIDE_LINKED_OBJECT_IN_PUBLIC_NOTE to hide linked object in public note of pdf.
 NEW: Add MULTICURRENCY_SHOW_ALSO_MAIN_CURRENCY_ON_PDF for legal requirement that need both currencies on PDF
 NEW: Add note public and private on order export
+NEW: Finish dev for API_ENABLE_COUNT_CALLS (count of API use is visible on user API key field)
 
 For developers:
 ----------

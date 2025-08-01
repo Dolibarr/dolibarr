@@ -197,7 +197,7 @@ class Skill extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 
@@ -245,10 +245,7 @@ class Skill extends CommonObject
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
-		global $langs,$conf;
-
 		$resultcreate = $this->createCommon($user, $notrigger);
-
 
 		if ($resultcreate > 0) {
 			// skillDet create
@@ -266,9 +263,9 @@ class Skill extends CommonObject
 	 */
 	public function createSkills($i = 1)
 	{
-		global $conf, $user, $langs;
+		global $user, $langs;
 
-		$MaxNumberSkill = getDolGlobalInt('HRM_MAXRANK', self::DEFAULT_MAX_RANK_PER_SKILL);
+		$maxNumberSkill = getDolGlobalInt('HRM_MAXRANK', self::DEFAULT_MAX_RANK_PER_SKILL);
 		$defaultSkillDesc = getDolGlobalString('HRM_DEFAULT_SKILL_DESCRIPTION', $langs->trans("NoDescription"));
 
 		$error = 0;
@@ -278,8 +275,9 @@ class Skill extends CommonObject
 		$this->db->begin();
 
 		// Create level 0 of skills
+		/* Removed this. if a skill is not required for a job, the skill will just not be added to the job profile or will be added with expected level = N/A
 		$skilldet = new Skilldet($this->db);
-		$skilldet->description = $langs->trans('SkillNotRequired');
+		$skilldet->description = $langs->transnoentitiesnoconv('SkillNotRequired');
 		$skilldet->rankorder = 0;
 		$skilldet->fk_skill = $this->id;
 
@@ -287,15 +285,17 @@ class Skill extends CommonObject
 		if ($result <= 0) {
 			$error++;
 		}
+		*/
 
 		// Create level of skills
-		while ($i <= $MaxNumberSkill) {
+		while ($i <= $maxNumberSkill) {
 			$skilldet = new Skilldet($this->db);
 			$skilldet->description = $defaultSkillDesc . " " . $i;
 			$skilldet->rankorder = $i;
 			$skilldet->fk_skill = $this->id;
 
 			$result =  $skilldet->create($user);
+
 			if ($result <= 0) {
 				$error++;
 			}
@@ -914,11 +914,13 @@ class Skill extends CommonObject
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
+		// phpcs:enable
 		if (empty($status)) {
 			$status = 0;
 		}
 
-		// phpcs:enable
+		return '';
+		/*
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 			//$langs->load("hrm");
@@ -937,6 +939,7 @@ class Skill extends CommonObject
 		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
+		*/
 	}
 
 	/**

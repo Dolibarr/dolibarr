@@ -33,6 +33,9 @@ define('ALLOWED_IF_UPGRADE_UNLOCK_FOUND', 1);
 include_once 'inc.php';
 
 /**
+ * @var string $conffile
+ * @var string $conffiletoshow
+ *
  * @var Conf $conf already created in inc.php
  * @var Translate $langs
  *
@@ -42,8 +45,6 @@ include_once 'inc.php';
  * @var string $dolibarr_main_db_user
  * @var string $dolibarr_main_db_pass
  * @var string $dolibarr_main_db_encrypted_pass
- * @var string $conffile
- * @var string $conffiletoshow
  */
 
 $err = 0;
@@ -239,6 +240,7 @@ $memrequired = 64 * 1024 * 1024;
 $memmaxorig = @ini_get("memory_limit");
 $memmax = @ini_get("memory_limit");
 if ($memmaxorig != '') {
+	$reg = array();
 	preg_match('/([0-9]+)([a-zA-Z]*)/i', $memmax, $reg);
 	if ($reg[2]) {
 		if (strtoupper($reg[2]) == 'G') {
