@@ -115,7 +115,7 @@ function shipping_prepare_head($object)
 	$h++;
 
 
-	//MODIF VAL
+	//MODIF PICHINOV AGENDA
 	$head[$h][0] = DOL_URL_ROOT . '/expedition/agenda.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {

@@ -57,22 +57,22 @@ $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTI
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
 if (!$sortfield) {
-    $sortfield = "a.datep,a.id";
+	$sortfield = "a.datep,a.id";
 }
 if (!$sortorder) {
-    $sortorder = "DESC";
+	$sortorder = "DESC";
 }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 if (GETPOST('actioncode', 'array')) {
-    $actioncode = GETPOST('actioncode', 'array', 3);
-    if (!count($actioncode)) {
-        $actioncode = '0';
-    }
+	$actioncode = GETPOST('actioncode', 'array', 3);
+	if (!count($actioncode)) {
+		$actioncode = '0';
+	}
 } else {
-    $actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
+	$actioncode = GETPOST("actioncode", "alpha", 3) ? GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : getDolGlobalString('AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT'));
 }
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
@@ -86,7 +86,7 @@ $socid = 0;
 $result = restrictedArea($user, 'expedition', $id, 'expedition&shipping'); // Changed from commande and order
 
 if (!$user->hasRight('expedition', 'lire')) { // Changed from commande
-    accessforbidden();
+	accessforbidden();
 }
 
 
@@ -98,21 +98,21 @@ if (!$user->hasRight('expedition', 'lire')) { // Changed from commande
 $object = new Expedition($db); // Changed from Commande
 
 if ($id > 0 || !empty($ref)) {
-    $object->fetch($id, $ref);
-    $object->fetch_thirdparty();
-    $object->info($object->id);
+	$object->fetch($id, $ref);
+	$object->fetch_thirdparty();
+	$object->info($object->id);
 }
 
 $parameters = array('id' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
-    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All test are required to be compatible with all browsers
-    $actioncode = '';
-    $search_agenda_label = '';
+	$actioncode = '';
+	$search_agenda_label = '';
 }
 
 
@@ -126,7 +126,7 @@ $agenda = (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 're
 $title = $langs->trans('Events') . $agenda . ' - ' . $object->ref; // Shipping uses ref primarily
 
 if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/shippingrefonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->ref) { // New constant or fallback
-    $title = $object->ref . ' - ' . $langs->trans("Info");
+	$title = $object->ref . ' - ' . $langs->trans("Info");
 }
 $help_url = "EN:Module_Shippings|FR:Module_Expeditions|ES:M&oacute;dulo_Expediciones"; // Changed help URL
 llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-shipping page-card_messaging'); // Changed mod-order
@@ -139,11 +139,11 @@ print dol_get_fiche_head($head, 'agenda', $langs->trans("Shipping"), -1, 'shippi
 // Shipping card
 
 if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolist']['expedition'])) { // Changed from order
-    $tmpurl = $_SESSION['pageforbacktolist']['expedition']; // Changed from order
-    $tmpurl = preg_replace('/__SOCID__/', (string) $object->socid, $tmpurl);
-    $linkback = '<a href="' . $tmpurl . (preg_match('/\?/', $tmpurl) ? '&' : '?') . 'restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
+	$tmpurl = $_SESSION['pageforbacktolist']['expedition']; // Changed from order
+	$tmpurl = preg_replace('/__SOCID__/', (string) $object->socid, $tmpurl);
+	$linkback = '<a href="' . $tmpurl . (preg_match('/\?/', $tmpurl) ? '&' : '?') . 'restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 } else {
-    $linkback = '<a href="' . DOL_URL_ROOT . '/expedition/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>'; // Changed from commande
+	$linkback = '<a href="' . DOL_URL_ROOT . '/expedition/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>'; // Changed from commande
 }
 
 $morehtmlref = '<div class="refidno">';
@@ -151,7 +151,7 @@ $morehtmlref = '<div class="refidno">';
 $morehtmlref .= $object->ref;
 // Thirdparty
 if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
-    $morehtmlref .= '<br>' . $object->thirdparty->getNomUrl(1, 'shipping'); // Changed from order
+	$morehtmlref .= '<br>' . $object->thirdparty->getNomUrl(1, 'shipping'); // Changed from order
 }
 $morehtmlref .= '</div>';
 
@@ -178,57 +178,57 @@ print dol_get_fiche_end();
 $out = '';
 $permok = $user->hasRight('agenda', 'myactions', 'create');
 if ($permok) {
-    $out .= '&shippingid=' . $object->id; // Changed from orderid
+	$out .= '&shippingid=' . $object->id; // Changed from orderid
 }
 
 
 
 if (!empty($object->id)) {
-    print '<br>';
+	print '<br>';
 
-    $morehtmlright = '';
+	$morehtmlright = '';
 
-    // Show link to change view in message
-    $messagingUrl = DOL_URL_ROOT . '/expedition/messaging.php?id=' . $object->id; // Changed from commande
-    $morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 2); // Status 2 for "current page"
+	// Show link to change view in message
+	$messagingUrl = DOL_URL_ROOT . '/expedition/messaging.php?id=' . $object->id; // Changed from commande
+	$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 2); // Status 2 for "current page"
 
-    // Show link to change view in agenda
-    $messagingUrl = DOL_URL_ROOT . '/expedition/agenda.php?id=' . $object->id; // Changed from commande
-    $morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 1); // Status 1 for "not current page"
+	// Show link to change view in agenda
+	$messagingUrl = DOL_URL_ROOT . '/expedition/agenda.php?id=' . $object->id; // Changed from commande
+	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 1); // Status 1 for "not current page"
 
 
-    // Show link to add event
-    if (isModEnabled('agenda')) {
-        $addActionBtnRight = $user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create');
-        $morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT . '/comm/action/card.php?action=create' . $out . '&socid=' . $object->socid . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?id=' . $object->id), '', (int) $addActionBtnRight);
-    }
+	// Show link to add event
+	if (isModEnabled('agenda')) {
+		$addActionBtnRight = $user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create');
+		$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT . '/comm/action/card.php?action=create' . $out . '&socid=' . $object->socid . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?id=' . $object->id), '', (int) $addActionBtnRight);
+	}
 
-    $param = '&id=' . $object->id;
-    if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-        $param .= '&contextpage=' . urlencode($contextpage);
-    }
-    if ($limit > 0 && $limit != $conf->liste_limit) {
-        $param .= '&limit=' . ((int) $limit);
-    }
+	$param = '&id=' . $object->id;
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+		$param .= '&contextpage=' . urlencode($contextpage);
+	}
+	if ($limit > 0 && $limit != $conf->liste_limit) {
+		$param .= '&limit=' . ((int) $limit);
+	}
 
-    require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
-    $cachekey = 'count_events_expedition_' . $object->id; // Changed from commande
-    $nbEvent = dol_getcache($cachekey);
+	require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
+	$cachekey = 'count_events_expedition_' . $object->id; // Changed from commande
+	$nbEvent = dol_getcache($cachekey);
 
-    $titlelist = $langs->trans("ActionsOnShipping") . (is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">(' . $nbEvent . ')</span>' : ''); // Changed from ActionsOnOrder
-    if (!empty($conf->dol_optimize_smallscreen)) {
-        $titlelist = $langs->trans("Actions") . (is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">(' . $nbEvent . ')</span>' : '');
-    }
+	$titlelist = $langs->trans("ActionsOnShipping") . (is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">(' . $nbEvent . ')</span>' : ''); // Changed from ActionsOnOrder
+	if (!empty($conf->dol_optimize_smallscreen)) {
+		$titlelist = $langs->trans("Actions") . (is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">(' . $nbEvent . ')</span>' : '');
+	}
 
-    print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
+	print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
 
-    // List of all actions
-    $filters = array();
-    $filters['search_agenda_label'] = $search_agenda_label;
-    $filters['search_rowid'] = $search_rowid;
+	// List of all actions
+	$filters = array();
+	$filters['search_agenda_label'] = $search_agenda_label;
+	$filters['search_rowid'] = $search_rowid;
 
-    // This function needs to be able to handle an 'expedition' object. You might need to adapt it or create a new one.
-    show_actions_messaging($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
+	// This function needs to be able to handle an 'expedition' object. You might need to adapt it or create a new one.
+	show_actions_messaging($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
 }
 
 // End of page

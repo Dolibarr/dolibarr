@@ -893,7 +893,7 @@ function getCountriesInSEPA()
 		// Use of cache to reduce number of database requests
 		$country_code_in_SEPA = $conf->cache['country_code_in_SEPA'];
 	} else {
-		$sql = "SELECT cc.code FROM ".MAIN_DB_PREFIX."c_country as cc";
+		$sql = "SELECT cc.code FROM " . MAIN_DB_PREFIX . "c_country as cc";
 		$sql .= " WHERE cc.sepa = 1";
 
 		$resql = $db->query($sql);
@@ -1296,7 +1296,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		't.rowid' => array('label' => "TechnicalID", 'checked' => (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') ? '1' : '0'), 'enabled' => (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') ? '1' : '0'), 'position' => 1),
 		't.name' => array('label' => "Name", 'checked' => '1', 'position' => 10),
 		't.poste' => array('label' => "PostOrFunction", 'checked' => '1', 'position' => 20),
-		't.address' => array('label' => (empty($conf->dol_optimize_smallscreen) ? $langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email") : $langs->trans("Address")), 'checked' => '1', 'position' => 30),
+		't.address' => array('label' => (empty($conf->dol_optimize_smallscreen) ? $langs->trans("Address") . ' / ' . $langs->trans("Phone") . ' / ' . $langs->trans("Email") : $langs->trans("Address")), 'checked' => '1', 'position' => 30),
 		't.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'position' => 35),
 		'sc.role' => array('label' => "ContactByDefaultFor", 'checked' => '1', 'position' => 40),
 		't.birthday' => array('label' => "Birthday", 'checked' => '0', 'position' => 45),
@@ -1307,7 +1307,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$extrafieldsobjectkey = $contactstatic->table_element;
 	$extrafieldsobjectprefix = 'ef.';
 	$extrafieldspositionoffset = 1000;
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_array_fields.tpl.php';
 
 	// Initialize array of search criteria
 	$search = array();
@@ -1347,7 +1347,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	if (empty($reshook)) {
 		if ($user->hasRight('societe', 'contact', 'creer')) {
 			$addcontact = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
-			$newcardbutton .= dolGetButtonTitle($addcontact, '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&action=create&backtopage='.urlencode($backtopage));
+			$newcardbutton .= dolGetButtonTitle($addcontact, '', 'fa fa-plus-circle', DOL_URL_ROOT . '/contact/card.php?socid=' . $object->id . '&action=create&backtopage=' . urlencode($backtopage));
 		}
 	} else {
 		$newcardbutton = $hookmanager->resPrint;
@@ -1400,10 +1400,10 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		$param .= '&search_note_private=' . urlencode($search_note_private);
 	}
 	if ($search_birthday_dtstart != '') {
-		$param .= '&search_birthday_dtstart='.urlencode((string) $search_birthday_dtstart);
+		$param .= '&search_birthday_dtstart=' . urlencode((string) $search_birthday_dtstart);
 	}
 	if ($search_birthday_dtend != '') {
-		$param .= '&search_birthday_dtend='.urlencode((string) $search_birthday_dtend);
+		$param .= '&search_birthday_dtend=' . urlencode((string) $search_birthday_dtend);
 	}
 	if ($optioncss != '') {
 		$param .= '&optioncss=' . urlencode($optioncss);
@@ -1659,7 +1659,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			if (!empty($arrayfields['t.name']['checked'])) {
 				print '<td class="tdoverflowmax150">';
 				print $form->showphoto('contact', $contactstatic, 0, 0, 0, 'photorefnoborder valignmiddle marginrightonly', 'small', 1, 0, 'user');
-				print $contactstatic->getNomUrl(0, '', 0, '&backtopage='.urlencode($backtopage));
+				print $contactstatic->getNomUrl(0, '', 0, '&backtopage=' . urlencode($backtopage));
 				print '</td>';
 			}
 
@@ -1903,14 +1903,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			$sql .= ", o.ref";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 			$sql .= ", o.ref";
-		}
-		//MODIF VAL
-		elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {
-			$sql .= ", s.ref";
-		}
-		// END MODIF
-
-		elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && $filterobj->table_element && $filterobj->element) {
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {  //MODIF PICHINOV MESSAGING
+			$sql .= ", s.ref";  //END MODIF
+		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && $filterobj->table_element && $filterobj->element) {
 			if (!empty($filterobj->fields['ref'])) {
 				$sql .= ", o.ref";
 			} elseif (!empty($filterobj->fields['label'])) {
@@ -1969,13 +1964,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			$sql .= ", " . MAIN_DB_PREFIX . "bom_bom as o";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 			$sql .= ", " . MAIN_DB_PREFIX . "contrat as o";
-		}
-		//MODIF VAL
-		elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {  //MODIF PICHINOV MESSAGING
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "expedition as s ON a.fk_element = s.rowid AND a.elementtype = 'shipping'"; // Jointure sur la table des expéditions avec condition ON
-		}
-		//END MODIF VAL
-		elseif (
+		} elseif ( //END MODIF
 			is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid'])
 			&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))  // @phan-suppress-curren-line PhanTypeInvalidDimOffset
 			&& $filterobj->table_element && $filterobj->element
@@ -2036,16 +2027,12 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
-			}
-			//MODIF VAL
-			elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {
-				$sql .= " AND a.fk_element = s.rowid AND a.elementtype = 'shipping'"; // Filtre sur l'expédition
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {  //MODIF PICHINOV MESSAGING
+				$sql .= " AND a.fk_element = s.rowid AND a.elementtype = 'shipping'"; //expedition filter
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
-			}
-			//END MODIF VAL
-			elseif (
+			} elseif ( //END MODIF
 				is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid'])
 				&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))  // ref, titre, label do not exist on $fields - @phan-suppress-current-line PhanTypeInvalidDimOffset
 				&& $filterobj->table_element && $filterobj->element
@@ -2452,7 +2439,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 					$labelOfTypeToShow = $langs->trans("Emailing");
 				}
 				if ($actionstatic->type_code == 'AC_OTH_AUTO' && ($actionstatic->type_code != $actionstatic->code) && $labelOfTypeToShow && !empty($arraylist[$actionstatic->code])) {
-					$labelOfTypeToShow .= ' - '.$arraylist[$actionstatic->code]; // Show also detailed code
+					$labelOfTypeToShow .= ' - ' . $arraylist[$actionstatic->code]; // Show also detailed code
 				}
 			}
 
@@ -2461,7 +2448,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				$labelOfTypeToShowLong .= ' (auto)';
 			}
 
-			$out .= '<td class="tdoverflowmax125" title="'.$labelOfTypeToShowLong.'">';
+			$out .= '<td class="tdoverflowmax125" title="' . $labelOfTypeToShowLong . '">';
 			$out .= $actionstatic->getTypePicto();
 			//if (empty($conf->dol_optimize_smallscreen)) {
 			$out .= $labelOfTypeToShow;
@@ -2475,15 +2462,15 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				//$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : $histo[$key]['alabel']);
 				$label = $histo[$key]['note'];
 				$actionstatic->id = $histo[$key]['id'];
-				$out .= ' title="'.dol_escape_htmltag($label).'">';
+				$out .= ' title="' . dol_escape_htmltag($label) . '">';
 				$out .= dol_trunc($label, 120);
 			}
 			if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'mailing') {
-				$transcode = $langs->trans("Action".$histo[$key]['acode']);
-				$label = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : 'Send mass mailing');
-				$label .= ' - '.$histo[$key]['note'];
-				$out .= '<a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'"';
-				$out .= ' title="'.dol_escape_htmltag($label).'">';
+				$transcode = $langs->trans("Action" . $histo[$key]['acode']);
+				$label = ($transcode != "Action" . $histo[$key]['acode'] ? $transcode : 'Send mass mailing');
+				$label .= ' - ' . $histo[$key]['note'];
+				$out .= '<a href="' . DOL_URL_ROOT . '/comm/mailing/card.php?id=' . $histo[$key]['id'] . '"';
+				$out .= ' title="' . dol_escape_htmltag($label) . '">';
 				//$out .= img_object($langs->trans("EMailing").'<br>'.$histo[$key]['note'], "email").' ';
 				$out .= dol_trunc($label, 120);
 				$out .= '</a>';
@@ -2539,7 +2526,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			}
 
 			// Status / Progression
-			$out .= '<td class="nowrap center">'.$actionstatic->LibStatut($histo[$key]['percent'], 2, 0, $histo[$key]['datestart']).'</td>';
+			$out .= '<td class="nowrap center">' . $actionstatic->LibStatut($histo[$key]['percent'], 2, 0, $histo[$key]['datestart']) . '</td>';
 
 			// Action column
 			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -2795,15 +2782,15 @@ function htmlPrintOnlineHeader($mysoc, $langs, $showlogo = 1, $alttext = '', $su
 	//$urllogo = '';
 	$urllogopublic = '';
 	if ($showlogo) {
-		if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall)) {
+		if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output . '/logos/thumbs/' . $logosmall)) {
 			//$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$logosmall);
-			$urllogopublic = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
-		} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo)) {
+			$urllogopublic = $dolibarr_main_url_root . '/viewimage.php?modulepart=mycompany&entity=' . $conf->entity . '&file=' . urlencode('logos/thumbs/' . $logosmall);
+		} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output . '/logos/' . $logo)) {
 			//$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$logo);
-			$urllogopublic = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
-		} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')) {
+			$urllogopublic = $dolibarr_main_url_root . '/viewimage.php?modulepart=mycompany&entity=' . $conf->entity . '&file=' . urlencode('logos/' . $logo);
+		} elseif (is_readable(DOL_DOCUMENT_ROOT . '/theme/dolibarr_logo.svg')) {
 			//$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
-			$urllogopublic = $dolibarr_main_url_root.'/theme/dolibarr_logo.svg';
+			$urllogopublic = $dolibarr_main_url_root . '/theme/dolibarr_logo.svg';
 		}
 	}
 
@@ -2815,19 +2802,19 @@ function htmlPrintOnlineHeader($mysoc, $langs, $showlogo = 1, $alttext = '', $su
 		print '<div class="logopublicpayment">';
 		if ($urllogopublic) {
 			if (!is_numeric($showlogo)) {
-				print '<a href="'.$showlogo.'">';
+				print '<a href="' . $showlogo . '">';
 			}
-			print '<img id="dolpaymentlogo" src="'.$urllogopublic.'">';
+			print '<img id="dolpaymentlogo" src="' . $urllogopublic . '">';
 			if (!is_numeric($showlogo)) {
 				print '</a>';
 			}
 		}
 		if ($alttext) {
-				print '<div class="clearboth"></div><strong>'.$alttext.'</strong>';
+			print '<div class="clearboth"></div><strong>' . $alttext . '</strong>';
 		}
 		print '</div>';
 		if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
-			print '<div class="poweredbypublicpayment opacitymedium right hideonsmartphone"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+			print '<div class="poweredbypublicpayment opacitymedium right hideonsmartphone"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">' . $langs->trans("PoweredBy") . '<br><img class="poweredbyimg" src="' . DOL_URL_ROOT . '/theme/dolibarr_logo.svg" width="80px"></a></div>';
 		}
 		print '</div>';
 	}
@@ -2835,7 +2822,7 @@ function htmlPrintOnlineHeader($mysoc, $langs, $showlogo = 1, $alttext = '', $su
 	// Add an optional image under the ban with logo/title
 	if (getDolGlobalString($subimageconst)) {
 		print '<div class="backimagepublicsubimage">';
-		print '<img id="id'.$subimageconst.'" src="' . getDolGlobalString($subimageconst).'">';
+		print '<img id="id' . $subimageconst . '" src="' . getDolGlobalString($subimageconst) . '">';
 		print '</div>';
 	}
 
@@ -2866,7 +2853,7 @@ function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffi
 	}
 	// Capital
 	if ($fromcompany->capital) {
-		$line1 .= ($line1 ? " - " : "").$langs->transnoentities("CapitalOf", (string) $fromcompany->capital)." ".$langs->transnoentities("Currency".$conf->currency);
+		$line1 .= ($line1 ? " - " : "") . $langs->transnoentities("CapitalOf", (string) $fromcompany->capital) . " " . $langs->transnoentities("Currency" . $conf->currency);
 	}
 	// Prof Id 1
 	if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || !$fromcompany->idprof2)) {
