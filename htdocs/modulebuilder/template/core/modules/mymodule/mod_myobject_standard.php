@@ -99,7 +99,7 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 			$sql .= " AND t.entity = ".((int) $conf->entity);
 		} elseif (preg_match('/^\w+@\w+$/', (string) $object->ismultientitymanaged)) {
 			$tmparray = explode('@', (string) $object->ismultientitymanaged);
-			$sql .= " LEFT JOIN ".$this->db->prefix().$tmparray[1]." as pt ON t.".$this->db->sanitize($tmparray[0])." = pt.rowid";
+			$sql .= " LEFT JOIN ".$db->prefix().$tmparray[1]." as pt ON t.".$db->sanitize($tmparray[0])." = pt.rowid";
 			$sql .= " WHERE pt.entity IN (".getEntity($object->element).")";
 		}
 
@@ -139,7 +139,7 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 			$sql .= " AND t.entity = ".((int) $conf->entity);
 		} elseif (preg_match('/^\w+@\w+$/', (string) $object->ismultientitymanaged)) {
 			$tmparray = explode('@', (string) $object->ismultientitymanaged);
-			$sql .= " LEFT JOIN ".$this->db->prefix().$tmparray[1]." as pt ON t.".$this->db->sanitize($tmparray[0])." = pt.rowid";
+			$sql .= " LEFT JOIN ".$db->prefix().$tmparray[1]." as pt ON t.".$db->sanitize($tmparray[0])." = pt.rowid";
 			$sql .= " WHERE pt.entity IN (".getEntity($object->element).")";
 		}
 
