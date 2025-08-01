@@ -178,7 +178,7 @@ function dolEncrypt($chain, $key = '', $ciphering = '', $forceseed = '')
  *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
  *
  *	@param   string		$chain		string to decode
- *	@param   string		$key		If '', we use $conf->file->instance_unique_id
+ *	@param   string		$key		If '', we use $conf->file->dolcrypt_key else $conf->file->instance_unique_id
  *	@return  string					encoded string
  *  @since v17
  *  @see dolEncrypt(), dol_hash()

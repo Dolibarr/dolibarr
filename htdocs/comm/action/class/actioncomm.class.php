@@ -327,6 +327,11 @@ class ActionComm extends CommonObject
 	public $email_from;
 
 	/**
+	 * @var string Email reply to
+	 */
+	public $email_reply_to;
+
+	/**
 	 * @var string Email sender
 	 */
 	public $email_sender;

@@ -17,6 +17,7 @@
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024		William Mead			    <william.mead@manchenumerique.fr>
+ * Copyright (C) 2025		Lenin Rivas			    	<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -490,6 +491,36 @@ if (empty($reshook)) {
 				if ($res == 0) {
 					$errors[] = $cmd->ref.' : '.$langs->trans($objecttmp->errors[0]);
 					$error++;
+				}
+
+				// Linked Expeditions
+				if (getDolGlobalString('ORDER_MASS_ACTION_BILLED_LINK_EXPEDITIONS')) {
+					$cmd->fetchObjectLinked();
+					// Add object linked
+					if (!$error && $cmd->id && !empty($cmd->linkedObjectsIds['shipping']) && is_array($cmd->linkedObjectsIds['shipping'])) {
+						$cmd->linked_objects = $cmd->linkedObjectsIds;
+						foreach ($cmd->linked_objects as $origin_type => $tmp_origin_id) {
+							// IF more of same type
+							if ($origin_type == 'shipping') {
+								if (is_array($tmp_origin_id)) {       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
+									foreach ($tmp_origin_id as $origin_id) {
+										$res = $objecttmp->add_object_linked($origin_type, $origin_id);
+										if (!$res) {
+											$errors[] = $cmd->ref.' : '.$langs->trans($objecttmp->errors[0]);
+											$error++;
+										}
+									}
+								} else { // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
+									$origin_id = $tmp_origin_id;
+									$res = $objecttmp->add_object_linked($origin_type, $origin_id);
+									if (!$res) {
+										$errors[] = $cmd->ref.' : '.$langs->trans($objecttmp->errors[0]);
+										$error++;
+									}
+								}
+							}
+						}
+					}
 				}
 
 				if (!$error) {
@@ -1026,7 +1057,12 @@ if ($search_status != '') {
 	}
 }
 if ($search_option == 'late') {
-	$sql .= " AND c.date_commande < '".$db->idate(dol_now() - $conf->order->client->warning_delay)."'";
+	// Use delivery date if set and not disabled, otherwise use order date.
+	if (!getDolGlobalString('ORDER_DISABLE_DELIVERY_DATE')) {
+		$sql .= " AND ((c.date_livraison IS NOT NULL AND c.date_livraison < '".$db->idate(dol_now() - $conf->order->client->warning_delay)."') OR (c.date_livraison IS NULL AND c.date_commande < '".$db->idate(dol_now() - $conf->order->client->warning_delay)."'))";
+	} else {
+		$sql .= " AND c.date_commande < '".$db->idate(dol_now() - $conf->order->client->warning_delay)."'";
+	}
 }
 if ($search_datecloture_start) {
 	$sql .= " AND c.date_cloture >= '".$db->idate($search_datecloture_start)."'";
@@ -1275,7 +1311,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -2908,8 +2944,8 @@ while ($i < $imaxinloop) {
 
 		// Note public
 		if (!empty($arrayfields['c.note_public']['checked'])) {
-			print '<td class="flat maxwidth250imp">';
-			print '<div class="small lineheightsmall">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public), 5).'</div>';
+			print '<td class="sensiblehtmlcontent maxwidth250imp classfortooltip" title="'.dolPrintHTMLForAttribute(dolGetFirstLineOfText($obj->note_public, 20)).'">';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2918,8 +2954,8 @@ while ($i < $imaxinloop) {
 
 		// Note private
 		if (!empty($arrayfields['c.note_private']['checked'])) {
-			print '<td class="flat maxwidth250imp">';
-			print '<div class="small lineheightsmall">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private), 5).'</div>';
+			print '<td class="sensiblehtmlcontent maxwidth250imp classfortooltip" title="'.dolPrintHTMLForAttribute(dolGetFirstLineOfText($obj->note_private, 20)).'">';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

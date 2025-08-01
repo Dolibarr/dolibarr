@@ -42,7 +42,7 @@ $langs->load('uxdocumentation');
 $documentation = new Documentation($db);
 
 // Output html head + body - Param is Title
-$documentation->docHeader('Icons', [], ['admin/tools/ui/css/doc-icons.css']);
+$documentation->docHeader('Icons', [], ['admin/tools/ui/css/doc-icons.css'], GETPOST('hidenavmenu'));
 
 // Set view for menu and breadcrumb
 // Menu must be set in constructor of documentation class

@@ -151,8 +151,20 @@ if (empty($fp)) {
 	exit(6);
 }
 
+$gitcommit = 'seetag';
+$branchname = preg_replace('/^(\d+\.\d+)\..*$/', '\1', $release);	// Keep only x.y into x.y.z
+$fileforgit = dirname(dirname(dirname(__FILE__))).'/.git/refs/heads/'.$branchname;
+print "Try to get last commit ID from file ".$fileforgit."\n";
+$fileforgitcontent = file_get_contents($fileforgit);
+if (empty($fileforgitcontent)) {
+	print "Failed to get the last commit ID. Are you on the branch for the release (branch name '.$branchname.') ?\n";
+}
+$gitcommit = trim($fileforgitcontent);
+
 fputs($fp, '<?xml version="1.0" encoding="UTF-8" ?>'."\n");
-fputs($fp, '<checksum_list version="'.$release.'" date="'.dol_print_date(dol_now(), 'dayhourrfc').'" generator="'.$script_file.'">'."\n");
+fputs($fp, '<checksum_list version="'.$release.'" date="'.dol_print_date(dol_now(), 'dayhourrfc').'" generator="'.$script_file.'" gitcommit="'.$gitcommit.'">'."\n");
+
+$needtoclose = 0;
 
 foreach ($includeconstants as $countrycode => $tmp) {
 	fputs($fp, '<dolibarr_constants country="'.$countrycode.'">'."\n");
@@ -161,7 +173,7 @@ foreach ($includeconstants as $countrycode => $tmp) {
 		$checksumconcat[] = $valueforchecksum;
 		fputs($fp, '    <constant name="'.$constname.'">'.$valueforchecksum.'</constant>'."\n");
 	}
-	fputs($fp, '</dolibarr_constants>'."\n");
+	fputs($fp, '</dolibarr_constants>'."\n\n");
 }
 
 fputs($fp, '<dolibarr_htdocs_dir includecustom="'.$includecustom.'">'."\n");
@@ -172,7 +184,6 @@ $regextoexclude = '('.($includecustom ? '' : 'custom|').'documents|conf|install|
 $files = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
 
 $dir = '';
-$needtoclose = 0;
 foreach ($files as $filetmp) {
 	$file = $filetmp['fullname'];
 	//$newdir = str_replace(dirname(__FILE__).'/../htdocs', '', dirname($file));
@@ -180,6 +191,7 @@ foreach ($files as $filetmp) {
 	if ($newdir != $dir) {
 		if ($needtoclose) {
 			fputs($fp, '  </dir>'."\n");
+			$needtoclose = 0;
 		}
 		fputs($fp, '  <dir name="'.$newdir.'">'."\n");
 		$dir = $newdir;
@@ -193,6 +205,7 @@ foreach ($files as $filetmp) {
 }
 if ($needtoclose) {
 	fputs($fp, '  </dir>'."\n");
+	$needtoclose = 0;
 }
 fputs($fp, '</dolibarr_htdocs_dir>'."\n");
 
@@ -200,7 +213,7 @@ asort($checksumconcat); // Sort list of checksum
 
 fputs($fp, '<dolibarr_htdocs_dir_checksum>'."\n");
 fputs($fp, md5(join(',', $checksumconcat))."\n");
-fputs($fp, '</dolibarr_htdocs_dir_checksum>'."\n");
+fputs($fp, '</dolibarr_htdocs_dir_checksum>'."\n\n");
 
 
 // Add the checksum for the part in scripts
@@ -213,7 +226,6 @@ $regextoinclude = '\.(php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$';
 $regextoexclude = '(custom|documents|conf|install)$';  // Exclude dirs
 $files = dol_dir_list(dirname(__FILE__).'/../../scripts/', 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
 $dir = '';
-$needtoclose = 0;
 foreach ($files as $filetmp) {
 	$file = $filetmp['fullname'];
 	$newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
@@ -221,6 +233,7 @@ foreach ($files as $filetmp) {
 	if ($newdir != $dir) {
 		if ($needtoclose) {
 			fputs($fp, '  </dir>'."\n");
+			$needtoclose = 0;
 		}
 		fputs($fp, '  <dir name="'.$newdir.'">'."\n");
 		$dir = $newdir;
@@ -234,13 +247,14 @@ foreach ($files as $filetmp) {
 }
 if ($needtoclose) {
 	fputs($fp, '  </dir>'."\n");
+	$needtoclose = 0;
 }
 fputs($fp, '</dolibarr_script_dir>'."\n");
 
 asort($checksumconcat); // Sort list of checksum
 fputs($fp, '<dolibarr_script_dir_checksum>'."\n");
 fputs($fp, md5(join(',', $checksumconcat))."\n");
-fputs($fp, '</dolibarr_script_dir_checksum>'."\n");
+fputs($fp, '</dolibarr_script_dir_checksum>'."\n\n");
 
 
 // Add the checksum for the files into the scope of the unalterable system (record, read, export)
@@ -253,7 +267,6 @@ $regextoinclude = '(\.php|\.sql)$';
 $regextoexclude = '';  // Exclude dirs
 $files = dol_dir_list(dirname(__FILE__).'/../../htdocs/blockedlog', 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
 $dir = '';
-$needtoclose = 0;
 foreach ($files as $filetmp) {
 	$file = $filetmp['fullname'];
 	$newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
@@ -261,6 +274,7 @@ foreach ($files as $filetmp) {
 	if ($newdir != $dir) {
 		if ($needtoclose) {
 			fputs($fp, '  </dir>'."\n");
+			$needtoclose = 0;
 		}
 		fputs($fp, '  <dir name="'.$newdir.'">'."\n");
 		$dir = $newdir;
@@ -274,12 +288,12 @@ foreach ($files as $filetmp) {
 }
 if ($needtoclose) {
 	fputs($fp, '  </dir>'."\n");
+	$needtoclose = 0;
 }
 // Add the SQL file
 $regextoinclude = 'llx_blockedlog.*(\.php|\.sql)$';
 $regextoexclude = '';  // Exclude dirs
 $files = dol_dir_list(dirname(__FILE__).'/../../htdocs/install/mysql/tables', 'files', 0, $regextoinclude, $regextoexclude, 'fullname');
-$needtoclose = 0;
 foreach ($files as $filetmp) {
 	$file = $filetmp['fullname'];
 	$newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
@@ -287,6 +301,7 @@ foreach ($files as $filetmp) {
 	if ($newdir != $dir) {
 		if ($needtoclose) {
 			fputs($fp, '  </dir>'."\n");
+			$needtoclose = 0;
 		}
 		fputs($fp, '  <dir name="'.$newdir.'">'."\n");
 		$dir = $newdir;
@@ -297,21 +312,19 @@ foreach ($files as $filetmp) {
 		$checksumconcat[] = $md5;
 		fputs($fp, '    <md5file name="'.basename($file).'" size="'.filesize($file).'">'.$md5.'</md5file>'."\n");
 	}
-	if ($needtoclose) {
-		fputs($fp, '  </dir>'."\n");
-	}
 }
 if ($needtoclose) {
 	fputs($fp, '  </dir>'."\n");
+	$needtoclose = 0;
 }
 // Add the trigger file
 $file = dirname(__FILE__).'/../../htdocs/core/triggers/interface_50_modBlockedlog_ActionsBlockedLog.class.php';
-$needtoclose = 0;
 $newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
 $newdir = str_replace(dirname(__FILE__).'/../../htdocs', '', dirname($file));
 if ($newdir != $dir) {
 	if ($needtoclose) {
 		fputs($fp, '  </dir>'."\n");
+		$needtoclose = 0;
 	}
 	fputs($fp, '  <dir name="'.$newdir.'">'."\n");
 	$dir = $newdir;
@@ -324,13 +337,14 @@ if (filetype($file) == "file") {
 }
 if ($needtoclose) {
 	fputs($fp, '  </dir>'."\n");
+	$needtoclose = 0;
 }
 fputs($fp, '</dolibarr_unalterable_files>'."\n");
 
 asort($checksumconcat); // Sort list of checksum
 fputs($fp, '<dolibarr_unalterable_files_checksum>'."\n");
 fputs($fp, md5(join(',', $checksumconcat))."\n");
-fputs($fp, '</dolibarr_unalterable_files_checksum>'."\n");
+fputs($fp, '</dolibarr_unalterable_files_checksum>'."\n\n");
 
 
 

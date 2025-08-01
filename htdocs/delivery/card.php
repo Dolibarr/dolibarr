@@ -282,6 +282,15 @@ include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
+// Actions to send emails
+
+$triggersendname = 'RECEPTION_SENTBYMAIL';
+$paramname = 'id';
+$autocopy = 'MAIN_MAIL_AUTOCOPY_RECEPTION_TO';
+$mode = 'emailfromreception';
+$trackid = 'bl' . $object->id;
+include DOL_DOCUMENT_ROOT . '/core/actions_sendmails.inc.php';
+
 
 /*
  *	View
@@ -681,8 +690,10 @@ if ($action == 'create') {
 						print dolGetButtonAction('', $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"].'?action=valid&amp;token='.newToken().'&amp;id='.$object->id, '');
 					}
 				}
-
-				if ($user->hasRight('expedition', 'delivery', 'supprimer')) {
+				if ($user->hasRight('expedition', 'delivery', 'supprimer') && $action != 'presend') {
+					if ($object->status == Delivery::STATUS_VALIDATED && $action != 'presend' && $expedition->status == Expedition::STATUS_VALIDATED) {
+						print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"].'?action=presend&token='.newToken().'&id='.$object->id.'&mode=init#formmailbeforetitle', '');
+					}
 					if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION')) {
 						print dolGetButtonAction('', $langs->trans('Delete'), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;expid='.$object->origin_id.'&amp;action=delete&amp;token='.newToken().'&amp;backtopage='.urlencode(DOL_URL_ROOT.'/expedition/card.php?id='.$object->origin_id), '');
 					} else {
@@ -699,26 +710,28 @@ if ($action == 'create') {
 			/*
 			  * Documents generated
 			 */
+			if ($action != 'presend') {
+				$objectref = dol_sanitizeFileName($object->ref);
+				$filedir = $conf->expedition->dir_output."/receipt/".$objectref;
+				$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 
-			$objectref = dol_sanitizeFileName($object->ref);
-			$filedir = $conf->expedition->dir_output."/receipt/".$objectref;
-			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
+				$genallowed = $user->hasRight('expedition', 'delivery', 'lire');
+				$delallowed = $user->hasRight('expedition', 'delivery', 'creer');
 
-			$genallowed = $user->hasRight('expedition', 'delivery', 'lire');
-			$delallowed = $user->hasRight('expedition', 'delivery', 'creer');
+				print $formfile->showdocuments('delivery', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 
-			print $formfile->showdocuments('delivery', $objectref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+				/*
+				  * Linked object block (of linked shipment)
+				  */
 
-			/*
-			  * Linked object block (of linked shipment)
-			  */
-			if ($object->origin == 'expedition') {
-				$shipment = new Expedition($db);
-				$shipment->fetch($object->origin_id);
+					// Show links to link elements
+					print '</div><div class="fichehalfright">';
 
-				// Show links to link elements
-				//$tmparray = $form->showLinkToObjectBlock($object, null, array('order'), 1);
-				$somethingshown = $form->showLinkedObjectBlock($object, '');
+					// List of actions on element
+					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+
+					//$tmparray = $form->showLinkToObjectBlock($object, null, array('order'), 1);
+					$somethingshown = $form->showLinkedObjectBlock($object, '');
 			}
 
 
@@ -735,6 +748,22 @@ if ($action == 'create') {
 		/* Expedition non trouvee */
 		print "Expedition inexistante ou access refuse";
 	}
+
+	/*
+	* Action presend
+	*/
+	//Select mail models is same action as presend
+	if (GETPOST('modelselected')) {
+		$action = 'presend';
+	}
+
+	// Presend form
+	$modelmail = 'reception_send';
+	$defaulttopic = 'SendReceptionRef';
+	$diroutput = $conf->expedition->dir_output.'/receipt';
+	$trackid = 'bl'.$object->id;
+
+	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
 
 // End of page

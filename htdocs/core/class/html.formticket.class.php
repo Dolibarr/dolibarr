@@ -1685,10 +1685,19 @@ class FormTicket
 			}
 			*/
 
-			// From
+			// From (and Reply-To if defined)
 			$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
-			print '<tr class="email_line"><td class="width200"><span class="">'.$langs->trans("MailFrom").'</span></td>';
-			print '<td><span class="">'.img_picto('', 'email', 'class="pictofixedwidth"').$from.'</span></td></tr>';
+			$replyto = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_REPLYTO');
+			print '<tr class="email_line"><td class="width200"><span class="">'.$langs->trans("MailFrom");
+			if ($replyto) {
+				print ' <span class="opacitymedium">('.$langs->trans("MailReply").')</span>';
+			}
+			print '</span></td>';
+			print '<td><span class="">'.img_picto('', 'email', 'class="pictofixedwidth"').$from;
+			if ($replyto) {
+				print ' <span class="opacitymedium">('.$replyto.')</span>';
+			}
+			print '</span></td></tr>';
 
 			// Recipients / adressed-to
 			print '<tr class="email_line"><td>'.$langs->trans('MailRecipients');

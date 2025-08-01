@@ -175,6 +175,7 @@ class Facture extends CommonInvoice
 	 * @var int id of source invoice if replacement invoice or credit note
 	 */
 	public $fk_facture_source;
+
 	public $linked_objects = array();
 
 	/**
@@ -1295,6 +1296,7 @@ class Facture extends CommonInvoice
 		$object->fk_user_author     = $user->id;
 		$object->fk_user_valid      = null;
 		$object->fk_facture_source  = 0;
+		$object->fk_fac_rec_source  = 0;
 		$object->date_creation      = '';
 		$object->date_modification = '';
 		$object->date_validation    = '';

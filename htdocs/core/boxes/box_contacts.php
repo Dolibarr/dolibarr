@@ -56,6 +56,7 @@ class box_contacts extends ModeleBoxes
 		$this->hidden = !($user->hasRight('societe', 'lire') && $user->hasRight('societe', 'contact', 'lire'));
 
 		$this->urltoaddentry = DOL_URL_ROOT.'/contact/card.php?action=create';
+
 		$this->msgNoRecords = 'NoRecordedContacts';
 	}
 

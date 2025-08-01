@@ -294,17 +294,14 @@ if ($action == 'initbarcodeproducts' && $user->hasRight('produit', 'lire')) {
 
 llxHeader('', $langs->trans("MassBarcodeInit"), '', '', 0, 0, '', '', '', 'mod-barcode page-codeinit');
 
-print load_fiche_titre($langs->trans("MassBarcodeInit"), '', 'title_setup.png');
-print '<br>';
+if (!GETPOST('dol_openinpopup', 'aZ')) {
+	print load_fiche_titre($langs->trans("MassBarcodeInit"), '', 'title_setup.png');
+	print '<br>';
+}
 
 print '<span class="opacitymedium">'.$langs->trans("MassBarcodeInitDesc").'</span><br>';
 print '<br>';
-
-//print img_picto('','puce').' '.$langs->trans("PrintsheetForOneBarCode").'<br>';
-//print '<br>';
-
 print '<br>';
-
 
 
 // Example 1 : Adding jquery code
@@ -315,77 +312,13 @@ function confirm_erase() {
 </script>';
 
 
-// For thirdparty
-if (isModEnabled('societe')) {
-	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="mode" value="label">';
-	print '<input type="hidden" name="action" value="initbarcodethirdparties">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	$nbthirdpartyno = $nbthirdpartytotal = 0;
-
-	print '<div class="divsection">';
-
-	print load_fiche_titre($langs->trans("BarcodeInitForThirdparties"), '', 'company');
-
-	$sql = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."societe where barcode IS NULL or barcode = ''";
-	$resql = $db->query($sql);
-	if ($resql) {
-		$obj = $db->fetch_object($resql);
-		$nbthirdpartyno = $obj->nb;
-	} else {
-		dol_print_error($db);
-	}
-
-	$sql = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."societe";
-	$sql .= " WHERE entity IN (".getEntity('societe').")";
-	$resql = $db->query($sql);
-	if ($resql) {
-		$obj = $db->fetch_object($resql);
-		$nbthirdpartytotal = $obj->nb;
-	} else {
-		dol_print_error($db);
-	}
-
-	print $langs->trans("CurrentlyNWithoutBarCode", $nbthirdpartyno, $nbthirdpartytotal, $langs->transnoentitiesnoconv("ThirdParties"))."\n";
-
-	$disabledthirdparty = $disabledthirdparty1 = 0;
-	$titleno = '';
-
-	if (is_object($modBarCodeThirdparty)) {
-		print '<br>'.$langs->trans("BarCodeNumberManager").": ";
-		$objthirdparty = new Societe($db);
-		print '<b>'.(isset($modBarCodeThirdparty->name) ? $modBarCodeThirdparty->name : $modBarCodeThirdparty->nom).'</b> - '.$langs->trans("NextValue").': <b>'.$modBarCodeThirdparty->getNextValue($objthirdparty).'</b><br>';
-		$disabledthirdparty = 0;
-		print '<br>';
-	} else {
-		$disabledthirdparty = 1;
-		$titleno = $langs->trans("NoBarcodeNumberingTemplateDefined");
-		print '<div class="warning">'.$langs->trans("NoBarcodeNumberingTemplateDefined");
-		print '<br><a href="'.DOL_URL_ROOT.'/admin/barcode.php">'.$langs->trans("ToGenerateCodeDefineAutomaticRuleFirst").'</a>';
-		print '</div>';
-	}
-	if (empty($nbthirdpartyno)) {
-		$disabledthirdparty1 = 1;
-	}
-
-	$moretagsthirdparty1 = (($disabledthirdparty || $disabledthirdparty1) ? ' disabled title="'.dol_escape_htmltag($titleno).'"' : '');
-	print '<input class="button button-add" type="submit" id="submitformbarcodethirdpartygen" value="'.$langs->trans("InitEmptyBarCode", $nbthirdpartyno).'"'.$moretagsthirdparty1.'>';
-	$moretagsthirdparty2 = (($nbthirdpartyno == $nbthirdpartytotal) ? ' disabled' : '');
-	print ' &nbsp; ';
-	print '<input type="submit" class="button butActionDelete" name="eraseallthirdpartybarcode" id="eraseallthirdpartybarcode" value="'.$langs->trans("EraseAllCurrentBarCode").'"'.$moretagsthirdparty2.' onClick="return confirm_erase();">';
-	print '<br><br>';
-	print '</div>';
-	print '<br>';
-	print '</form>';
-}
-
-
 // For products
 if (isModEnabled('product') || isModEnabled('service')) {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="mode" value="label">';
 	print '<input type="hidden" name="action" value="initbarcodeproducts">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="dol_openinpopup" value="'.GETPOST('dol_openinpopup', 'aZ').'">';
 
 	$nbproductno = $nbproducttotal = 0;
 
@@ -452,6 +385,74 @@ if (isModEnabled('product') || isModEnabled('service')) {
 	$moretagsproduct2 = (($nbproductno == $nbproducttotal) ? ' disabled' : '');
 	print ' &nbsp; ';
 	print '<input type="submit" class="button butActionDelete" name="eraseallproductbarcode" id="eraseallproductbarcode" value="'.$langs->trans("EraseAllCurrentBarCode").'"'.$moretagsproduct2.' onClick="return confirm_erase();">';
+	print '<br><br>';
+	print '</div>';
+	print '<br>';
+	print '</form>';
+}
+
+
+
+// For thirdparty
+if (isModEnabled('societe')) {
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<input type="hidden" name="mode" value="label">';
+	print '<input type="hidden" name="action" value="initbarcodethirdparties">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="dol_openinpopup" value="'.GETPOST('dol_openinpopup', 'aZ').'">';
+
+	$nbthirdpartyno = $nbthirdpartytotal = 0;
+
+	print '<div class="divsection">';
+
+	print load_fiche_titre($langs->trans("BarcodeInitForThirdparties"), '', 'company');
+
+	$sql = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."societe where barcode IS NULL or barcode = ''";
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		$nbthirdpartyno = $obj->nb;
+	} else {
+		dol_print_error($db);
+	}
+
+	$sql = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."societe";
+	$sql .= " WHERE entity IN (".getEntity('societe').")";
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		$nbthirdpartytotal = $obj->nb;
+	} else {
+		dol_print_error($db);
+	}
+
+	print $langs->trans("CurrentlyNWithoutBarCode", $nbthirdpartyno, $nbthirdpartytotal, $langs->transnoentitiesnoconv("ThirdParties"))."\n";
+
+	$disabledthirdparty = $disabledthirdparty1 = 0;
+	$titleno = '';
+
+	if (is_object($modBarCodeThirdparty)) {
+		print '<br>'.$langs->trans("BarCodeNumberManager").": ";
+		$objthirdparty = new Societe($db);
+		print '<b>'.(isset($modBarCodeThirdparty->name) ? $modBarCodeThirdparty->name : $modBarCodeThirdparty->nom).'</b> - '.$langs->trans("NextValue").': <b>'.$modBarCodeThirdparty->getNextValue($objthirdparty).'</b><br>';
+		$disabledthirdparty = 0;
+		print '<br>';
+	} else {
+		$disabledthirdparty = 1;
+		$titleno = $langs->trans("NoBarcodeNumberingTemplateDefined");
+		print '<div class="warning">'.$langs->trans("NoBarcodeNumberingTemplateDefined");
+		print '<br><a href="'.DOL_URL_ROOT.'/admin/barcode.php">'.$langs->trans("ToGenerateCodeDefineAutomaticRuleFirst").'</a>';
+		print '</div>';
+	}
+	if (empty($nbthirdpartyno)) {
+		$disabledthirdparty1 = 1;
+	}
+
+	$moretagsthirdparty1 = (($disabledthirdparty || $disabledthirdparty1) ? ' disabled title="'.dol_escape_htmltag($titleno).'"' : '');
+	print '<input class="button button-add" type="submit" id="submitformbarcodethirdpartygen" value="'.$langs->trans("InitEmptyBarCode", $nbthirdpartyno).'"'.$moretagsthirdparty1.'>';
+	$moretagsthirdparty2 = (($nbthirdpartyno == $nbthirdpartytotal) ? ' disabled' : '');
+	print ' &nbsp; ';
+	print '<input type="submit" class="button butActionDelete" name="eraseallthirdpartybarcode" id="eraseallthirdpartybarcode" value="'.$langs->trans("EraseAllCurrentBarCode").'"'.$moretagsthirdparty2.' onClick="return confirm_erase();">';
 	print '<br><br>';
 	print '</div>';
 	print '<br>';
