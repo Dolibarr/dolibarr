@@ -51,3 +51,4 @@ CantMoveNonExistantSerial=Fejl. Du beder om et træk på en plade til en serial,
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Lottabel ufuldstændig kørselsreparation med parameteren '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Lagerkorrektion påkrævet, fordi unikt serienummer.
 ErrorBatchesNeedStockManagement=Fejl. Et produkt med batch/lot management skal administreres på lager.
+ForceBatchesNeedStockManagement=Et produkt med batch-/lotstyring skal administreres på lager (lagerstyring tvinges til ja)

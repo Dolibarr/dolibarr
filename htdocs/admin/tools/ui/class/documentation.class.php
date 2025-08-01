@@ -174,6 +174,15 @@ class Documentation
 			'url' => dol_buildpath($this->baseUrl.'/content/index.php', 1),
 			'icon' => 'far fa-file-alt',
 			'submenu' => array(
+				'Titles' => array(
+					'url' => dol_buildpath('admin/tools/ui/content/titles.php', 1),
+					'icon' => 'fas fa-heading',
+					'submenu' => array(),
+					'summary' => array(
+						'DocBasicUsage' => '#titlesection-basicusage',
+						'DocTitleWithFilters' => '#titlesection-withfilters',
+					),
+				),
 				'Tables' => array(
 					'url' => dol_buildpath('admin/tools/ui/content/tables.php', 1),
 					'icon' => 'fas fa-table',
@@ -259,14 +268,15 @@ class Documentation
 	}
 
 	/**
-	 *    Output header + body
+	 * Output header + body
 	 *
 	 * @param string $title Title of page
-	 * @param 	string[]	$arrayofjs		 Array of complementary js files
-	 * @param 	string[]	$arrayofcss		 Array of complementary css files
+	 * @param 	string[]	$arrayofjs		Array of complementary js files
+	 * @param 	string[]	$arrayofcss		Array of complementary css files
+	 * @param	string		$hidenavmenu	Hide nav menu
 	 * @return void
 	 */
-	public function docHeader($title = '', $arrayofjs = [], $arrayofcss = [])
+	public function docHeader($title = '', $arrayofjs = [], $arrayofcss = [], $hidenavmenu = '')
 	{
 		global $langs;
 		$title = (!empty($title)) ? dol_escape_htmltag($title) : $langs->trans('Documentation');
@@ -275,7 +285,7 @@ class Documentation
 
 		top_htmlhead('',  $title, 0, 0, $arrayofjs, $arrayofcss);
 
-		print '<body class="dolibarr-doc">';
+		print '<body class="dolibarr-doc'.($hidenavmenu ? "-bis" : "").'">';
 	}
 
 	/**

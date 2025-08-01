@@ -525,7 +525,7 @@ if (empty($reshook)) {
 					$object->contact_id = GETPOSTINT('contactid');
 					$object->fk_project = GETPOSTINT('projectid');
 					$object->model_pdf = GETPOST('model', 'alphanohtml');
-					$object->author = $user->id; // deprecated
+					$object->author = $user; // deprecated
 					$object->user_author_id = $user->id;
 					$object->note_private = GETPOST('note_private', 'restricthtml');
 					$object->note_public = GETPOST('note_public', 'restricthtml');
@@ -555,7 +555,8 @@ if (empty($reshook)) {
 				$object->contact_id = GETPOSTINT('contactid');
 				$object->fk_project = GETPOSTINT('projectid');
 				$object->model_pdf = GETPOST('model');
-				$object->author = $user->id; // deprecated
+				$object->author = $user; // deprecated
+				$object->user_author_id = $user->id;
 				$object->note_private = GETPOST('note_private', 'restricthtml');
 				$object->note_public = GETPOST('note_public', 'restricthtml');
 				$object->fk_incoterms = GETPOSTINT('incoterm_id');
@@ -3084,7 +3085,7 @@ if ($action == 'create') {
 		} else {
 			if (!empty($object->fin_validite)) {
 				print dol_print_date($object->fin_validite, 'day');
-				if ($object->status == Propal::STATUS_VALIDATED && $object->fin_validite < ($now - $conf->propal->cloture->warning_delay)) {
+				if ($object->status == Propal::STATUS_VALIDATED && $object->fin_validite < ($now - getWarningDelay('propal', 'cloture'))) {
 					print img_warning($langs->trans("Late"));
 				}
 			} else {

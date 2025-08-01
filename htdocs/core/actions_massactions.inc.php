@@ -1,6 +1,5 @@
 <?php
-
-/* Copyright (C) 2015-2017  Laurent Destailleur  	<eldy@users.sourceforge.net>
+/* Copyright (C) 2015-2025  Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2018-2021  Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018 	    Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2019 	    Ferran Marcet           <fmarcet@2byte.es>
@@ -34,6 +33,7 @@
 
 // $permissiontoread, $permissiontoadd, $permissiontodelete, $permissiontoclose may be defined
 // $uploaddir may be defined (example to $conf->project->dir_output."/";)
+// $hidedetails, $hidedesc, $hideref and $moreparams may have been set or not.
 // $toselect may be defined
 // $diroutputmassaction may be defined
 // $confirm
@@ -47,24 +47,31 @@
  * @var User $user
  *
  * @var string $dolibarr_main_url_root
+ * @var string $action
+ * @var string $massaction
+ * @var string $confirm
+ * @var ?int[] $toselect
+ * @var ?string $diroutputmassaction
+ * @var string $uploaddir
+ * @var string $objectclass
+ * @var ?string $objectlabel
+ *
+ * @var int $error
+ *
  * @var ?string $permissiontoadd
  * @var ?string $permissiontoread
  * @var ?string $permissiontodelete
  * @var ?string $permissiontoclose
  * @var ?string $permissiontoapprove
- * @var ?int[] $toselect
- * @var ?string $diroutputmassaction
- * @var ?string $objectlabel
  * @var ?string $option
  * @var int $deliveryreceipt
- * @var string $action
- * @var string $massaction
- * @var string $objectclass
- * @var string $uploaddir
- * @var string $confirm
  * @var string $month
  * @var string $year
- * @var int $error
+ * @var ?string $search_status
+ * @var ?int $hidedetails
+ * @var ?int $hidedesc
+ * @var ?int $hideref
+ * @var ?array<string,mixed> $moreparams
  */
 '
 @phan-var-force ?string $permissiontoread
@@ -76,6 +83,7 @@
 @phan-var-force ?string $objectlabel
 @phan-var-force ?string $option
 @phan-var-force int $deliveryreceipt
+@phan-var-force ?array<string,mixed> $moreparams
 ';
 
 
@@ -87,7 +95,6 @@ if (empty($objectclass) || empty($uploaddir)) {
 if (empty($massaction)) {
 	$massaction = '';
 }
-$error = 0;
 
 // Note: list of strings for objectclass could be extended to accepted/expected classes
 '
@@ -833,13 +840,24 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 	}
 
 	$arrayofinclusion = array();
-	foreach ($listofobjectref as $tmppdf) {
-		$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'\.pdf$';
+	$parameters = array(
+		'listofobjectref' => $listofobjectref,
+		'arrayofinclusion' => &$arrayofinclusion,
+	);
+	$reshook = $hookmanager->executeHooks('updateSearchRegexToMergeDoc', $parameters, $object, $action);
+
+	if (empty($reshook)) {
+		foreach ($listofobjectref as $tmppdf) {
+			$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'\.pdf$';
+		}
+		foreach ($listofobjectref as $tmppdf) {
+			$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'_[\w\-\'\&\.]+\.pdf$'; // To include PDF generated from ODX files
+		}
 	}
-	foreach ($listofobjectref as $tmppdf) {
-		$arrayofinclusion[] = '^'.preg_quote(dol_sanitizeFileName($tmppdf), '/').'_[a-zA-Z0-9\-\_\'\&\.]+\.pdf$'; // To include PDF generated from ODX files
-	}
-	$listoffiles = dol_dir_list($uploaddir, 'all', 1, implode('|', $arrayofinclusion), '\.meta$|\.png', 'date', SORT_DESC, 0, 1);
+
+	$listoffiles = dol_dir_list($uploaddir, 'all', 1, $arrayofinclusion, '\.meta$|\.png$', 'date', SORT_DESC, 0, 1);
+
+	dol_syslog("Found ".count($listoffiles)." files");
 
 	// build list of files with full path
 	$files = array();
@@ -1082,13 +1100,14 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 						}
 						$model = $objecttmp->model_pdf;
 						$ret = $objecttmp->fetch($objecttmp->id); // Reload to get new records
-						// To be sure vars is defined
-						$hidedetails = !empty($hidedetails) ? $hidedetails : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0);
-						$hidedesc = !empty($hidedesc) ? $hidedesc : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0);
-						$hideref = !empty($hideref) ? $hideref : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0);
-						$moreparams = !empty($moreparams) ? $moreparams : null;
 
-						$result = $objecttmp->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+						// To be sure vars is defined
+						$hidedetails = isset($hidedetails) ? $hidedetails : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0);
+						$hidedesc = isset($hidedesc) ? $hidedesc : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0);
+						$hideref = isset($hideref) ? $hideref : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0);
+						$moreparams = isset($moreparams) ? $moreparams : null;
+
+						$result = $objecttmp->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 						if ($result < 0) {
 							setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 						}
@@ -1246,18 +1265,10 @@ EOPHAN;
 			}
 
 			// To be sure vars is defined
-			if (empty($hidedetails)) {
-				$hidedetails = (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0);
-			}
-			if (empty($hidedesc)) {
-				$hidedesc = (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0);
-			}
-			if (empty($hideref)) {
-				$hideref = (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0);
-			}
-			if (empty($moreparams)) {
-				$moreparams = null;
-			}
+			$hidedetails = isset($hidedetails) ? $hidedetails : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0);
+			$hidedesc = isset($hidedesc) ? $hidedesc : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0);
+			$hideref = isset($hideref) ? $hideref : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0);
+			$moreparams = isset($moreparams) ? $moreparams : null;
 
 			$result = $objecttmp->generateDocument($objecttmp->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 

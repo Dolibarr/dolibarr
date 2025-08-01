@@ -129,7 +129,7 @@ print load_fiche_titre($langs->trans("PrintingSetup"), $linkback, 'title_setup')
 $head = printingAdminPrepareHead($mode);
 
 if ($mode == 'setup' && $user->admin) {
-	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=setup&amp;driver='.$driver.'" autocomplete="off">';
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=setup&driver='.urlencode($driver).'" autocomplete="off">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="setconst">';
 
@@ -140,7 +140,7 @@ if ($mode == 'setup' && $user->admin) {
 	print '<table class="noborder centpercent">'."\n";
 	print '<tr class="liste_titre">';
 	print '<th>'.$langs->trans("Parameters").'</th>';
-	print '<th>'.$langs->trans("Value").'</th>';
+	print '<th></th>';
 	print '<th>&nbsp;</th>';
 	print "</tr>\n";
 	$submit_enabled = 0;
@@ -160,8 +160,7 @@ if ($mode == 'setup' && $user->admin) {
 		}
 		require_once $classfile;
 		$classname = 'printing_'.$driver;
-		$printer = new $classname($db);
-		$langs->load('printing');
+		$printer = new $classname($db);		// Example: new printing_printgcp(). This run the construct that load the token. TODO Move this into another load function().
 
 		$i = 0;
 		$submit_enabled = 0;
@@ -195,7 +194,16 @@ if ($mode == 'setup' && $user->admin) {
 						print $langs->trans($key['varname']);
 					}
 					print '</td>';
-					print '<td>'.$langs->trans($key['info']).'</td>';
+					print '<td>';
+					// Example $key['info'] = $langs->trans("GoogleAuthNotConfigured");
+					if ($key['info'] == 'GoogleAuthNotConfigured') {
+						$keyforprovider = 'googleprint';
+						print $langs->trans($key['info']);
+						print '. You must use Label "'.$keyforprovider.'" with scope "cloud_print"';
+					} else {
+						print $langs->trans($key['info']);
+					}
+					print '</td>';
 					print '<td>';
 					//var_dump($key);
 					if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS') {
@@ -220,7 +228,7 @@ if ($mode == 'setup' && $user->admin) {
 			$i++;
 
 			if ($key['varname'] == 'PRINTGCP_TOKEN_ACCESS') {
-				$keyforprovider = '';	// @BUG This must be set
+				$keyforprovider = 'googleprint';
 
 				// Token
 				print '<tr class="oddeven">';

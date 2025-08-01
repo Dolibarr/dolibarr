@@ -426,7 +426,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -765,8 +765,8 @@ while ($i < $imaxinloop) {
 	}
 
 	// Ref
-	print '<td class="nowrap">';
-	print $product_static->getNomUrl(1, '', 16);
+	print '<td class="tdoverflowmax250">';
+	print $product_static->getNomUrl(1);
 	//if ($objp->stock_theorique < $objp->seuil_stock_alerte) print ' '.img_warning($langs->trans("StockTooLow"));
 	print '</td>';
 	if (!$i) {
@@ -774,7 +774,7 @@ while ($i < $imaxinloop) {
 	}
 
 	// Label
-	print '<td>'.$objp->label.'</td>';
+	print '<td class="tdoverflowmax150">'.$objp->label.'</td>';
 	if (!$i) {
 		$totalarray['nbfield']++;
 	}

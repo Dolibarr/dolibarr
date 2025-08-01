@@ -1873,7 +1873,9 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			if ($detail->batch) {
 				$dte[] = $outputlangs->transnoentitiesnoconv('printBatch', $detail->batch);
 			}
-			$dte[] = $outputlangs->transnoentitiesnoconv('printQty', (string) $detail->qty);
+			if ($detail->qty) {
+				$dte[] = $outputlangs->transnoentitiesnoconv('printQty', (string) $detail->qty);
+			}
 
 			// Add also info of planned warehouse for lot
 			if ($object->element == 'shipping' && $detail->fk_origin_stock > 0 && getDolGlobalInt('PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT')) {
@@ -2588,7 +2590,7 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DatePropal");
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date, 'day', '', $outputlangs);
 			}
-		} elseif ($objecttype == 'commande' || $objecttype == 'supplier_order') {
+		} elseif ($objecttype == 'commande' || $objecttype == 'supplier_order' || $objecttype == 'order_supplier') {
 			'@phan-var-force array<Commande|CommandeFournisseur> $objects';
 			$outputlangs->load('orders');
 
@@ -2747,15 +2749,17 @@ function pdf_getSizeForImage($realpath)
 }
 
 /**
- *	Return line total amount discount
+ *	Return line total amount discount.
+ *  Calculated by taking the unit price (subprice) * quantity - (total without tax)
  *
  *	@param	Commande|Facture|Propal			$object				Object
  *	@param	int								$i					Current line number
  *  @param  Translate						$outputlangs		Object langs for output
  *  @param	int<0,2>						$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *  @param	int<0,1>						$multicurrency		1=Get value in the foreign currency
  * 	@return	int|float|string									Return total of line excl tax
  */
-function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails = 0)
+function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails = 0, $multicurrency = 0)
 {
 	global $hookmanager;
 
@@ -2777,7 +2781,8 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 				'i' => $i,
 				'outputlangs' => $outputlangs,
 				'hidedetails' => $hidedetails,
-				'special_code' => $special_code
+				'special_code' => $special_code,
+				'multicurrency' => $multicurrency
 			);
 
 			$action = '';
@@ -2792,7 +2797,11 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 		}
 
 		if (empty($hidedetails) || $hidedetails > 1) {
-			return (float) price2num($sign * (($object->lines[$i]->subprice * (float) $object->lines[$i]->qty) - $object->lines[$i]->total_ht), 'MT', 1);
+			if (empty($multicurrency)) {
+				return (float) price2num($sign * (($object->lines[$i]->subprice * (float) $object->lines[$i]->qty) - $object->lines[$i]->total_ht), 'MT', 1);
+			} else {
+				return (float) price2num($sign * (($object->lines[$i]->multicurrency_subprice * (float) $object->lines[$i]->qty) - $object->lines[$i]->multicurrency_total_ht), 'MT', 1);
+			}
 		}
 	}
 	return 0;

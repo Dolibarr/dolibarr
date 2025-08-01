@@ -1,21 +1,22 @@
 <?php
 /* Copyright (C) 2003-2008	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005		Simon TOSSER			<simon@kornog-computing.com>
+ * Copyright (C) 2005		    Simon TOSSER			<simon@kornog-computing.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2017	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
+ * Copyright (C) 2014		    Cedric GROSS			<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2017	Francis Appels			<francis.appels@yahoo.com>
- * Copyright (C) 2015		Claudio Aschieri		<c.aschieri@19.coop>
+ * Copyright (C) 2015		    Claudio Aschieri		<c.aschieri@19.coop>
  * Copyright (C) 2016-2018	Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2016		Yasser Carreón			<yacasia@gmail.com>
+ * Copyright (C) 2016		    Yasser Carreón			<yacasia@gmail.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  * Copyright (C) 2022       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2025		Nick Fragoulis
+ * Copyright (C) 2025		    Nick Fragoulis
+ * Copyright (C) 2025       Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -255,7 +256,7 @@ if (empty($reshook)) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 
-		$result = $object->setValueFrom('ref_customer', GETPOST('ref_customer', 'alpha'), '', null, 'text', '', $user, 'SHIPMENT_MODIFY');
+		$result = $object->setValueFrom('ref_customer', GETPOST('ref_customer', 'alpha'), '', null, 'text', '', $user, 'SHIPPING_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'editref_customer';
@@ -278,7 +279,7 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			// Actions on extra fields
-			$result = $object->updateExtraField($attribute_name, 'SHIPMENT_MODIFY');
+			$result = $object->updateExtraField($attribute_name, 'SHIPPING_MODIFY');
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
@@ -1300,6 +1301,59 @@ if (empty($reshook)) {
 					exit();
 				}
 			}
+		}
+	} elseif ($action == 'updateline' && $permissiontoadd && GETPOST('cancel', 'alpha') == $langs->trans("Cancel")) {
+		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To redisplay the form being edited
+		exit();
+	} elseif ($action == 'confirm_sign' && $confirm == 'yes' && $permissiontoadd) {
+		$result = $object->setSignedStatus($user, GETPOSTINT('signed_status'), 0, 'SHIPPING_MODIFY');
+		if ($result >= 0) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+				// Define output language
+				$outputlangs = $langs;
+				$newlang = '';
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
+					$newlang = GETPOST('lang_id', 'aZ09');
+				}
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+					$newlang = $object->thirdparty->default_lang;
+				}
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
+
+			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
+			exit;
+		} else {
+			$mesg = $object->error;
+		}
+	} elseif ($action == 'confirm_unsign' && $confirm == 'yes' && $permissiontoadd) {
+		$result = $object->setSignedStatus($user, Expedition::$SIGNED_STATUSES['STATUS_NO_SIGNATURE'], 0, 'SHIPPING_MODIFY');
+		if ($result >= 0) {
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+				// Define output language
+				$outputlangs = $langs;
+				$newlang = '';
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
+					$newlang = GETPOST('lang_id', 'aZ09');
+				}
+				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+					$newlang = $object->thirdparty->default_lang;
+				}
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
+
+			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
+			exit;
+		} else {
+			$mesg = $object->error;
 		}
 	}
 
@@ -2605,6 +2659,38 @@ if ($action == 'create'&& $usercancreate) {
 		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('CancelSending'), $langs->trans("ConfirmCancelSending", $object->ref), 'confirm_cancel', '', 0, 1);
 	}
 
+	// Confirm sign
+	if ($action == 'sign') {
+		$text = $langs->trans('ConfirmSignShipping');
+		if (isModEnabled('notification')) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+			$notify = new Notify($db);
+			$text .= '<br>';
+			$text .= $notify->confirmMessage('SHIPPING_MODIFY', $object->socid, $object);
+		}
+		$formquestion = [];
+		$formquestion[] = [
+			'type' 		=> 'select',
+			'name' 		=> 'signed_status',
+			'select_show_empty' => 0,
+			'label'		=> '<span class="fieldrequired">'.$langs->trans('SignStatus').'</span>',
+			'values'	=> $object->getSignedStatusLocalisedArray()
+		];
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SignShipping'), $text, 'confirm_sign', $formquestion, 0, 1);
+	}
+
+	// Confirm unsign
+	if ($action == 'unsign') {
+		$text = $langs->trans('ConfirmUnsignShipping');
+		if (isModEnabled('notification')) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+			$notify = new Notify($db);
+			$text .= '<br>';
+			$text .= $notify->confirmMessage('SHIPPING_MODIFY', $object->socid, $object);
+		}
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('UnsignShipping'), $text, 'confirm_unsign', '', 0, 1);
+	}
+
 	// Call Hook formConfirm
 	$parameters = array('formConfirm' => $formconfirm);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -3632,6 +3718,15 @@ if ($action == 'create'&& $usercancreate) {
 						print dolGetButtonAction('', $langs->trans('ClassifyBilled'), 'default', $_SERVER["PHP_SELF"].'?action=classifybilled&token='.newToken().'&id='.$object->id, '');
 					}
 					print dolGetButtonAction('', $langs->trans("Close"), 'default', $_SERVER["PHP_SELF"].'?action=classifyclosed&token='.newToken().'&id='.$object->id, '');
+				}
+			}
+
+			// Sign
+			if ($object->status > Expedition::STATUS_DRAFT) {
+				if ($object->signed_status != Expedition::$SIGNED_STATUSES['STATUS_SIGNED_ALL']) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=sign&token='.newToken().'">'.$langs->trans("SignShipping").'</a></div>';
+				} else {
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=unsign&token='.newToken().'">'.$langs->trans("UnsignShipping").'</a></div>';
 				}
 			}
 

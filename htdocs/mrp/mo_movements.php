@@ -97,7 +97,7 @@ if (!$sortorder) {
 $object = new Mo($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->mrp->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('mocard', 'globalcard')); // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('mocard', 'globalcard', 'mocardmovelist' )); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -496,7 +496,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
-		if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+		if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 			$page = 0;
 			$offset = 0;
 		}
@@ -966,7 +966,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Inventory code
 		if (!empty($arrayfields['m.inventorycode']['checked'])) {
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($objp->inventorycode).'">';
-			//print '<a href="' . DOL_URL_ROOT . '/product/stock/movement_card.php' . '?id=' . $objp->entrepot_id . '&amp;search_inventorycode=' . $objp->inventorycode . '&amp;search_type_mouvement=' . $objp->type_mouvement . '">';
+			//print '<a href="' . DOL_URL_ROOT . '/product/stock/movement_list.php' . '?id=' . ((int) $objp->entrepot_id) . '&search_inventorycode=' . urlencode($objp->inventorycode) . '&search_type_mouvement=' . urlencode($objp->type_mouvement) . '">';
 			print dol_escape_htmltag($objp->inventorycode);
 			//print '</a>';
 			print '</td>';

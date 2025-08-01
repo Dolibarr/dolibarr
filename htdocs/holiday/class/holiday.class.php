@@ -2367,7 +2367,7 @@ class Holiday extends CommonObject
 		$sql = "SELECT rowid, code, label, affect, delay, newbymonth";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_holiday_types";
 		$sql .= " WHERE (fk_country IS NULL OR fk_country = ".((int) $mysoc->country_id).')';
-		$sql .= " AND entity IN (".getEntity('c_holiday_types').")";
+		$sql .= " AND entity IN (0, ".getEntity('c_holiday_types').")";		// Need entity 0 (holiday types common to all countries= + current entity).
 		if ($active >= 0) {
 			$sql .= " AND active = ".((int) $active);
 		}
