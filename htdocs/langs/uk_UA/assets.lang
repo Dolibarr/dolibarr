@@ -4,71 +4,52 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 NewAsset=Новий актив
 AccountancyCodeAsset=Код обліку (актив)
 AccountancyCodeDepreciationAsset=Код бухгалтерського обліку (рахунок амортизаційних активів)
 AccountancyCodeDepreciationExpense=Код бухгалтерського обліку (рахунок витрат амортизації)
 AssetsLines=Активи
+ConfirmValidateAsset=Ви впевнені, що хочете перевірити цей ресурс за допомогою посилання <b>%s</b>?
 DeleteType=Видалити
 DeleteAnAssetType=Видалити модель активу
 ConfirmDeleteAssetType=Ви впевнені, що хочете видалити цю модель об’єкта?
 ShowTypeCard=Показати модель '%s'
-
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=Активи
 # Module description 'ModuleAssetsDesc'
 ModuleAssetsDesc=Опис активів
-
-#
 # Admin page
-#
 AssetSetup=Налаштування активів
 AssetSetupPage=Сторінка налаштування активів
 ExtraFieldsAssetModel=Додаткові атрибути (модель активу)
-
 AssetsType=Модель активу
 AssetsTypeId=Ідентифікатор моделі активу
 AssetsTypeLabel=Етикетка моделі активу
 AssetsTypes=Моделі активів
 ASSET_ACCOUNTANCY_CATEGORY=Група обліку основних засобів
-
-#
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Пропорційний період у днях для розрахунку амортизації протягом одного року
 # Menu
-#
 MenuAssets=Активи
 MenuNewAsset=Новий актив
 MenuAssetModels=Модельні активи
 MenuListAssets=Список
 MenuNewAssetModel=Модель нового активу
 MenuListAssetModels=Список
-
-#
 # Module
-#
 ConfirmDeleteAsset=Ви дійсно хочете видалити цей об’єкт?
-
-#
 # Tab
-#
 AssetDepreciationOptions=Варіанти амортизації
 AssetAccountancyCodes=Accounting accounts
 AssetDepreciation=Знос
-
-#
 # Asset
-#
 Asset=Актив
 Assets=Активи
 AssetReversalAmountHT=Сума сторнування (без податків)
@@ -89,32 +70,21 @@ AssetNotDepreciated=Не амортизується
 AssetDisposal=Утилізація
 AssetConfirmDisposalAsk=Ви впевнені, що хочете позбутися активу <b> %s </b>?
 AssetConfirmReOpenAsk=Ви впевнені, що хочете знову відкрити актив <b> %s </b>?
-
-#
 # Asset status
-#
+AssetInDraft=Проект
 AssetInProgress=В процесі
 AssetDisposed=Утилізувати
 AssetRecorded=Обліковано
-
-#
 # Asset disposal
-#
 AssetDisposalDate=Дата утилізації
 AssetDisposalAmount=Вибуткова вартість
 AssetDisposalType=Тип утилізації
 AssetDisposalDepreciated=Знецінити рік передачі
 AssetDisposalSubjectToVat=Вибуття обкладається ПДВ
-
-#
 # Asset model
-#
 AssetModel=Модель активу
 AssetModels=Моделі активів
-
-#
 # Asset depreciation options
-#
 AssetDepreciationOptionEconomic=Економічна амортизація
 AssetDepreciationOptionAcceleratedDepreciation=Прискорена амортизація (податок)
 AssetDepreciationOptionDepreciationType=Вид амортизації
@@ -122,7 +92,6 @@ AssetDepreciationOptionDepreciationTypeLinear=Лінійний
 AssetDepreciationOptionDepreciationTypeDegressive=Дегресивний
 AssetDepreciationOptionDepreciationTypeExceptional=Винятковий
 AssetDepreciationOptionDegressiveRate=Дегресивна швидкість
-AssetDepreciationOptionAcceleratedDepreciation=Прискорена амортизація (податок)
 AssetDepreciationOptionDuration=Тривалість
 AssetDepreciationOptionDurationType=Тип тривалості
 AssetDepreciationOptionDurationTypeAnnual=Річний
@@ -132,10 +101,7 @@ AssetDepreciationOptionRate=Оцінка (%%)
 AssetDepreciationOptionAmountBaseDepreciationHT=База амортизації (без ПДВ)
 AssetDepreciationOptionAmountBaseDeductibleHT=База відрахування (без ПДВ)
 AssetDepreciationOptionTotalAmountLastDepreciationHT=Загальна сума останньої амортизації (без ПДВ)
-
-#
 # Asset accountancy codes
-#
 AssetAccountancyCodeDepreciationEconomic=Економічна амортизація
 AssetAccountancyCodeAsset=Актив
 AssetAccountancyCodeDepreciationAsset=Знос
@@ -149,10 +115,7 @@ AssetAccountancyCodeDepreciationAcceleratedDepreciation=Прискорена а�
 AssetAccountancyCodeAcceleratedDepreciation=Account
 AssetAccountancyCodeEndowmentAcceleratedDepreciation=Витрати на амортизацію
 AssetAccountancyCodeProvisionAcceleratedDepreciation=Повернення/забезпечення
-
-#
 # Asset depreciation
-#
 AssetBaseDepreciationHT=База амортизації (без ПДВ)
 AssetDepreciationBeginDate=Початок амортизації на
 AssetDepreciationDuration=Тривалість
@@ -164,11 +127,8 @@ AssetResidualHT=Залишкова вартість (без ПДВ)
 AssetDispatchedInBookkeeping=Зафіксовано амортизацію
 AssetFutureDepreciationLine=Майбутня амортизація
 AssetDepreciationReversal=Розворот
-
-#
 # Errors
-#
-AssetErrorAssetOrAssetModelIDNotProvide=Ідентифікатор активу або звук моделі не надано
+AssetErrorAssetOrAssetModelIDNotProvide=Ідентифікатор asset або знайдена модель не була надана
 AssetErrorFetchAccountancyCodesForMode=Помилка під час отримання облікових рахунків для режиму амортизації "%s"
 AssetErrorDeleteAccountancyCodesForMode=Помилка під час видалення рахунків бухгалтерського обліку з режиму амортизації «%s»
 AssetErrorInsertAccountancyCodesForMode=Помилка під час вставки облікових рахунків режиму амортизації '%s'

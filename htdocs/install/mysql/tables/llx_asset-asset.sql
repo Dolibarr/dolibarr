@@ -1,5 +1,6 @@
 -- ========================================================================
--- Copyright (C) 2018-2022  OpenDSI             <support@open-dsi.fr>
+-- Copyright (C) 2018-2022	OpenDSI					<support@open-dsi.fr>
+-- Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -43,21 +44,23 @@ CREATE TABLE llx_asset(
     acquisition_type        smallint        DEFAULT 0 NOT NULL,
     asset_type              smallint        DEFAULT 0 NOT NULL,
 
-    not_depreciated         integer         DEFAULT 0,
+    not_depreciated         boolean         DEFAULT false,
 
     disposal_date           date,
     disposal_amount_ht      double(24,8),
     fk_disposal_type        integer,
-    disposal_depreciated    integer         DEFAULT 0,
-    disposal_subject_to_vat integer         DEFAULT 0,
+    disposal_depreciated    boolean         DEFAULT false,
+    disposal_subject_to_vat boolean         DEFAULT false,
 
     note_public             text,
     note_private            text,
 
     date_creation           datetime        NOT NULL,
     tms                     timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    date_valid              datetime,
     fk_user_creat           integer         NOT NULL,
     fk_user_modif           integer,
+    fk_user_valid           integer,
     last_main_doc           varchar(255),
     import_key              varchar(14),
     model_pdf               varchar(255),

@@ -4,41 +4,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = Bază de cunoştinţe
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Gestiunea unei Baze de cunoştinţe(KB) sau a unei baze de suport Help-Desk
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = Configurare Sistem de management al bazei de cunoştinţe
-Settings = Configurări
 KnowledgeManagementSetupPage = Pagină configurare Sistem de management al bazei de cunoştinţe
-
-
-#
 # About page
-#
-About = Despre
 KnowledgeManagementAbout = Despre modulul Bază de cunoştinţe
 KnowledgeManagementAboutPage = Pagină despre Managementul bazei de cunoştinţe
-
 KnowledgeManagementArea = Bază de cunoştinţe
 MenuKnowledgeRecord = Bază de cunoştinţe
+MenuKnowledgeRecordShort = Bază de cunoştinţe
 ListKnowledgeRecord = Listă articole
 NewKnowledgeRecord = Articol nou
 ValidateReply = Validare soluţie
@@ -47,8 +33,13 @@ KnowledgeRecord = Articol
 KnowledgeRecordExtraFields = Extracâmpuri articole
 GroupOfTicket=Grup de tichete
 YouCanLinkArticleToATicketCategory=Poți lega articolul la un grup de tichete (deci articolul va fi evidențiat pe orice tichet din acest grup)
-SuggestedForTicketsInGroup=Sugerat pentru tichete atunci când grupul este
-
+SuggestedForTicketsInGroup=Sugerat la crearea tichetelor
 SetObsolete=Setează ca învechit
 ConfirmCloseKM=Confirmi închiderea acestui articol ca învechit ?
 ConfirmReopenKM=Sigur vrei să readuci acest articol la starea "Validat" ?
+BoxLastKnowledgerecordDescription=Ultimile %s articole
+BoxLastKnowledgerecord=Ultimile articole
+BoxLastKnowledgerecordContent=Ultimile articole
+BoxLastKnowledgerecordModifiedContent=Ultimile articole modificate
+BoxLastModifiedKnowledgerecordDescription=Ultimile %s articole modificate
+BoxLastModifiedKnowledgerecord=Ultimile articole modificate

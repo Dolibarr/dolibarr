@@ -4,6 +4,7 @@
  * Copyright (C) 2004       Sebastien DiCintio      <sdicintio@ressource-toi.org>
  * Copyright (C) 2004-2008  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2025		Charlene Benke      	<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,12 +28,23 @@
 
 
 include_once 'inc.php';
+
+/**
+ * @var string	$conffile
+ * @var string	$conffiletoshow
+ *
+ * @var Conf $conf
+ * @var Translate $langs
+ *
+ * @var string	$dolibarr_main_document_root
+ */
+
 require_once $dolibarr_main_document_root.'/core/class/conf.class.php';
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 
 global $langs;
 
-$setuplang = GETPOST('selectlang', 'aZ09', 3) ?GETPOST('selectlang', 'aZ09', 3) : (empty($argv[1]) ? 'auto' : $argv[1]);
+$setuplang = GETPOST('selectlang', 'aZ09', 3) ? GETPOST('selectlang', 'aZ09', 3) : (empty($argv[1]) ? 'auto' : $argv[1]);
 $langs->setDefaultLang($setuplang);
 
 $langs->loadLangs(array("admin", "install"));
@@ -59,7 +71,7 @@ $ok = 0;
  *	View
  */
 
-pHeader($langs->trans("AdminAccountCreation"), "step5");
+pHeader($langs->trans("DolibarrSetup").' - '.$langs->trans("AdminAccountCreation"), "step5");
 
 // Test if we can run a first install process
 if (!is_writable($conffile)) {
@@ -82,18 +94,18 @@ if ($db->ok) {
 	print '<tr><td><label for="login">'.$langs->trans("Login").' :</label></td><td>';
 	print '<input id="login" name="login" type="text" value="'.(GETPOSTISSET("login") ? GETPOST("login", 'alpha') : (isset($force_install_dolibarrlogin) ? $force_install_dolibarrlogin : '')).'"'.(@$force_install_noedit == 2 && $force_install_dolibarrlogin !== null ? ' disabled' : '').' autofocus></td></tr>';
 	print '<tr><td><label for="pass">'.$langs->trans("Password").' :</label></td><td>';
-	print '<input type="password" id="pass" name="pass" autocomplete="new-password" minlength="8"></td></tr>';
+	print '<input type="password" id="pass" name="pass" autocomplete="new-password" minlength="8" value="'. (isset($force_install_dolibarrpassword) ? $force_install_dolibarrpassword : '').'"'.(@$force_install_noedit == 2 && $force_install_dolibarrpassword !== null ? ' disabled' : '').'></td></tr>';
 	print '<tr><td><label for="pass_verif">'.$langs->trans("PasswordRetype").' :</label></td><td>';
-	print '<input type="password" id="pass_verif" name="pass_verif" autocomplete="new-password" minlength="8"></td></tr>';
+	print '<input type="password" id="pass_verif" name="pass_verif" autocomplete="new-password" minlength="8" value="'.(isset($force_install_dolibarrpassword) ? $force_install_dolibarrpassword : '').'"'.(@$force_install_noedit == 2 && $force_install_dolibarrpassword !== null ? ' disabled' : '').'></td></tr>';
 	print '</table>';
 
-	if (isset($_GET["error"]) && $_GET["error"] == 1) {
+	if (GETPOSTINT("error") == 1) {
 		print '<br>';
 		print '<div class="error">'.$langs->trans("PasswordsMismatch").'</div>';
 		$error = 0; // We show button
 	}
 
-	if (isset($_GET["error"]) && $_GET["error"] == 2) {
+	if (GETPOSTINT("error") == 2) {
 		print '<br>';
 		print '<div class="error">';
 		print $langs->trans("PleaseTypePassword");
@@ -101,7 +113,7 @@ if ($db->ok) {
 		$error = 0; // We show button
 	}
 
-	if (isset($_GET["error"]) && $_GET["error"] == 3) {
+	if (GETPOSTINT("error") == 3) {
 		print '<br>';
 		print '<div class="error">'.$langs->trans("PleaseTypeALogin").'</div>';
 		$error = 0; // We show button

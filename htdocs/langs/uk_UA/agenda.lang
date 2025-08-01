@@ -2,14 +2,13 @@
 IdAgenda=ID події
 Actions=Події
 Agenda=Повістка дня
+AgendaEvents=Порядок денний подій
 TMenuAgenda=Повістка дня
 Agendas=Повістки денні
 LocalAgenda=Календар за замовчуванням
 ActionsOwnedBy=Подія належить
 ActionsOwnedByShort=Власник
 AffectedTo=Призначено
-Event=Подія
-Events=Події
 EventsNb=Кількість подій
 ListOfActions=Список подій
 EventReports=Звіти про події
@@ -23,7 +22,6 @@ MenuDoneMyActions=Мої припинені події
 ListOfEvents=Список подій (календар за замовчуванням)
 ActionsAskedBy=Про події повідомляє
 ActionsToDoBy=Призначені події
-ActionsDoneBy=Події, здійснені
 ActionAssignedTo=Подія призначена
 ViewCal=Перегляд місяця
 ViewDay=Денний вид
@@ -47,6 +45,7 @@ PropalClosedRefusedInDolibarr=Пропозиція %s відхилена
 PropalValidatedInDolibarr=Пропозиція %s підтверджена
 PropalBackToDraftInDolibarr=Пропозиція %s повернутися до статусу чернетки
 PropalClassifiedBilledInDolibarr=Пропозиція %s засекречена
+InvoiceCreatedInDolibarr=Рахунок-фактура %s створено
 InvoiceValidatedInDolibarr=Рахунок-фактура %s підтверджено
 InvoiceValidatedInDolibarrFromPos=Рахунок-фактура %s підтверджено з POS
 InvoiceBackToDraftInDolibarr=Рахунок-фактура %s повертається до стану чернетки
@@ -57,18 +56,18 @@ MemberValidatedInDolibarr=Член %s підтверджено
 MemberModifiedInDolibarr=Член %s змінений
 MemberResiliatedInDolibarr=Член %s припинено
 MemberDeletedInDolibarr=Члена %s видалено
-MemberExcludedInDolibarr=Member %s excluded
+MemberExcludedInDolibarr=Учасника %s виключено
 MemberSubscriptionAddedInDolibarr=Додано підписку %s для члена %s
 MemberSubscriptionModifiedInDolibarr=Підписка %s для члена %s змінена
 MemberSubscriptionDeletedInDolibarr=Підписку %s для члена %s видалено
 ShipmentValidatedInDolibarr=Відправлення %s підтверджено
-ShipmentClassifyClosedInDolibarr=Shipment %s classified closed
+ShipmentClassifyClosedInDolibarr=Відвантаження %s закрито
 ShipmentUnClassifyCloseddInDolibarr=Відправлення %s з таємницею знову відкрито
 ShipmentBackToDraftInDolibarr=Відправлення %s повертається до статусу чернетки
 ShipmentDeletedInDolibarr=Відправлення %s видалено
 ShipmentCanceledInDolibarr=Відправлення %s скасовано
 ReceptionValidatedInDolibarr=Прийом %s підтверджено
-ReceptionDeletedInDolibarr=Reception %s deleted
+ReceptionDeletedInDolibarr=Прийом %s видалено
 ReceptionClassifyClosedInDolibarr=Приймальня %s закрита
 OrderCreatedInDolibarr=Замовлення %s створено
 OrderValidatedInDolibarr=Замовлення %s підтверджено
@@ -88,7 +87,9 @@ SupplierInvoiceSentByEMail=Рахунок-фактура постачальни�
 ShippingSentByEMail=Відправлення %s надіслано електронною поштою
 ShippingValidated= Відправлення %s підтверджено
 InterventionSentByEMail=Втручання %s надіслано електронною поштою
-ProjectSentByEMail=Project %s sent by email
+ProjectSentByEMail=Проект %s надіслано електронною поштою
+ProjectDeletedInDolibarr=Проект %s видалено
+ProjectClosedInDolibarr=Проект %s закрито
 ProposalDeleted=Пропозицію видалено
 OrderDeleted=Замовлення видалено
 InvoiceDeleted=Рахунок-фактура видалено
@@ -128,17 +129,21 @@ MRP_MO_PRODUCEDInDolibarr=МО вироблено
 MRP_MO_DELETEInDolibarr=МО видалено
 MRP_MO_CANCELInDolibarr=МО скасовано
 PAIDInDolibarr=%s оплачено
+ENABLEDISABLEInDolibarr=Користувач увімкнено або вимкнено
+CANCELInDolibarr=Скасовано
 ##### End agenda events #####
 AgendaModelModule=Шаблони документів для події
 DateActionStart=Дата початку
 DateActionEnd=Дата закінчення
 AgendaUrlOptions1=Ви також можете додати такі параметри до виводу фільтра:
-AgendaUrlOptions3= <b> logina=%s </b>, щоб обмежити вихід до дій, що належать користувачу <b> %s a09a17b7.
-AgendaUrlOptionsNotAdmin= <b> logina=!%s </b>, щоб обмежити вихід до дій, що не належать користувачу <b> %s a09f14f8.
+AgendaUrlOptions3=<b>logina=%s</b> для обмеження виводу діями, що належать користувачу <b>%s</b> (використовуйте <b>logina=!%s</b> для подій, що не належать користувачеві).
 AgendaUrlOptions4= <b> logint=%s </b>, щоб обмежити виведення діями, призначеними для користувача <b> %s a09a17b7 та інші.
 AgendaUrlOptionsProject= <b> project=__PROJECT_ID__ </b>, щоб обмежити вихід до дій, пов'язаних з проектом <b> __PROJECT_ID__ </b> .
-AgendaUrlOptionsNotAutoEvent= <b> notactiontype=systemauto </b>, щоб виключити автоматичні події.
+AgendaUrlOptionsType=<b>actiontype=%s</b> для отримання автоматичних або ручних подій
+AgendaUrlOptionsCode=<b>actioncode=%s</b> щоб отримати лише події з заданим кодом
 AgendaUrlOptionsIncludeHolidays= <b> includeholidays=1 </b>, щоб включити події свят.
+AgendaUrlOptionsLimitDays=<b>noolderthan=%s</b> для обмеження подіями за останні %s дні (за замовчуванням %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> для обмеження до 50 останніх подій (за замовчуванням і максимумом є %s).
 AgendaShowBirthdayEvents=Дні народження контактів
 AgendaHideBirthdayEvents=Приховати дні народження контактів
 Busy=Зайнятий
@@ -162,7 +167,7 @@ DateActionBegin=Дата початку події
 ConfirmCloneEvent=Ви впевнені, що хочете клонувати подію <b> %s </b>?
 RepeatEvent=Повторити подію
 OnceOnly=Тільки один раз
-EveryDay=Every day
+EveryDay=Кожен день
 EveryWeek=Кожного тижня
 EveryMonth=Щомісяця
 DayOfMonth=День місяця
@@ -177,7 +182,31 @@ ReminderType=Тип зворотного дзвінка
 AddReminder=Створіть автоматичне сповіщення про нагадування для цієї події
 ErrorReminderActionCommCreation=Помилка створення сповіщення про нагадування для цієї події
 BrowserPush=Спливаюче сповіщення браузера
-Reminders=Reminders
+Reminders=Нагадування
 ActiveByDefault=Увімкнено за замовчуванням
-Until=until
-DataFromWasMerged=Data from %s was merged
+Until=поки
+DataFromWasMerged=Дані з %s об'єднано
+AgendaShowBookcalCalendar=Календар бронювання: %s
+MenuBookcalIndex=Онлайн-запис
+BookcalLabelAvailabilityHelp=Позначка діапазону наявності. Наприклад:<br>Загальна доступність<br>Доступність під час різдвяних свят
+DurationOfRange=Тривалість діапазонів
+BookCalSetup = Налаштування онлайн-запису
+BookCalSetupPage = Сторінка онлайн-запису
+BOOKCAL_PUBLIC_INTERFACE_TOPIC = Назва інтерфейсу
+BookCalAbout = Про BookCal
+BookCalAboutPage = Сторінка про BookCal
+Calendars=Календарі
+Availabilities=Наявність
+NewAvailabilities=Нові можливості
+NewCalendar=Новий календар
+ThirdPartyBookCalHelp=Подія, заброньована в цьому календарі, буде автоматично пов’язана з цим контрагент.
+AppointmentDuration = Тривалість зустрічі: %s
+BookingSuccessfullyBooked=Ваше бронювання збережено
+BookingReservationHourAfter=Підтверджуємо бронювання нашої зустрічі на дату %s
+BookcalBookingTitle=Онлайн-запис
+Transparency = Прозорість
+ReadMore = Читати далі
+ReadLess = Читати менше
+RecurringEvent=Повторювана подія
+EventPartOfARecurringSerie=Подія є частиною повторюваної серії з ідентифікатором %s
+BookCalSystem=Онлайн-бронювання

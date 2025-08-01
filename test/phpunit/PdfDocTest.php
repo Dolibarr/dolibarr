@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +23,7 @@
  *		\ingroup    test
  *      \brief      PHPUnit test
  *		\remarks	To run this script as CLI:  phpunit filename.php
+ *      			See also BuildDocTest to PDF generation
  */
 
 global $conf,$user,$langs,$db;
@@ -32,13 +34,14 @@ require_once dirname(__FILE__).'/../../htdocs/compta/facture/class/facture.class
 require_once dirname(__FILE__).'/../../htdocs/product/class/product.class.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/pdf.lib.php';
 require_once dirname(__FILE__).'/../../htdocs/core/lib/doc.lib.php';
+require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
-$conf->global->MAIN_DISABLE_ALL_MAILS=1;
+$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
 /**
@@ -48,87 +51,8 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class PdfDocTest extends PHPUnit\Framework\TestCase
+class PdfDocTest extends CommonClassTest
 {
-	protected $savconf;
-	protected $savuser;
-	protected $savlangs;
-	protected $savdb;
-
-	/**
-	 * Constructor
-	 * We save global variables into local variables
-	 *
-	 * @param 	string	$name		Name
-	 * @return PdfDocTest
-	 */
-	public function __construct($name = '')
-	{
-		parent::__construct($name);
-
-		//$this->sharedFixture
-		global $conf,$user,$langs,$db;
-		$this->savconf=$conf;
-		$this->savuser=$user;
-		$this->savlangs=$langs;
-		$this->savdb=$db;
-
-		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
-		//print " - db ".$db->db;
-		print "\n";
-	}
-
-	/**
-	 * setUpBeforeClass
-	 *
-	 * @return void
-	 */
-	public static function setUpBeforeClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * tearDownAfterClass
-	 *
-	 * @return	void
-	 */
-	public static function tearDownAfterClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->rollback();
-
-		print __METHOD__."\n";
-	}
-
-	/**
-	 * Init phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function setUp(): void
-	{
-		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
-
-		print __METHOD__."\n";
-	}
-	/**
-	 * End phpunit tests
-	 *
-	 * @return	void
-	 */
-	protected function tearDown(): void
-	{
-		print __METHOD__."\n";
-	}
-
 	/**
 	 * testPdfDocGetLineDesc
 	 *
@@ -137,34 +61,36 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
 	public function testPdfDocGetLineDesc()
 	{
 		global $conf,$user,$langs,$db;
-		$conf=$this->savconf;
-		$user=$this->savuser;
-		$langs=$this->savlangs;
-		$db=$this->savdb;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
 
-		$localproduct=new Product($db);
+		$localproduct = new Product($db);
 		$result = $localproduct->fetch(0, 'PINKDRESS');
 		if ($result < 0) {
-			print "\n".__METHOD__." Failed to make the fetch of product PINKDRESS. ".$localproduct->error; die(1);
+			print "\n".__METHOD__." Failed to make the fetch of product PINKDRESS. ".$localproduct->error;
+			die(1);
 		}
 		$product_id = $localproduct->id;
 		if ($product_id <= 0) {
-			print "\n".__METHOD__." A product with ref PINKDRESS must exists into database. Create it manually before running the test"; die(1);
+			print "\n".__METHOD__." A product with ref PINKDRESS must exists into database. Create it manually before running the test";
+			die(1);
 		}
 
-		$localobject=new Facture($db);
+		$localobject = new Facture($db);
 		$localobject->initAsSpecimen();
-		$localobject->lines=array();
-		$localobject->lines[0]=new FactureLigne($db);
-		$localobject->lines[0]->fk_product=$product_id;
-		$localobject->lines[0]->label='Label 1';
-		$localobject->lines[0]->desc="This is a description with a é accent\n(Country of origin: France)";
+		$localobject->lines = array();
+		$localobject->lines[0] = new FactureLigne($db);
+		$localobject->lines[0]->fk_product = $product_id;
+		$localobject->lines[0]->label = 'Label 1';
+		$localobject->lines[0]->desc = "This is a description with a é accent\n(Country of origin: France)";
 
-		$result=pdf_getlinedesc($localobject, 0, $langs);
+		$result = pdf_getlinedesc($localobject, 0, $langs);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("PINKDRESS - Label 1<br>This is a description with a &eacute; accent<br>(Country of origin: France)", $result);
 
-		$result=doc_getlinedesc($localobject->lines[0], $langs);
+		$result = doc_getlinedesc($localobject->lines[0], $langs);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals("PINKDRESS - Label 1\nThis is a description with a é accent\n(Country of origin: France)", $result);
 	}
@@ -176,12 +102,12 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
 	*/
 	public function testPdfGetHeightForLogo()
 	{
-		$file=dirname(__FILE__).'/img250x50.jpg';
-		$result=pdf_getHeightForLogo($file);
+		$file = dirname(__FILE__).'/img250x50.jpg';
+		$result = pdf_getHeightForLogo($file);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, 20);
-		$file=dirname(__FILE__).'/img250x20.png';
-		$result=pdf_getHeightForLogo($file);
+		$file = dirname(__FILE__).'/img250x20.png';
+		$result = pdf_getHeightForLogo($file);
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals($result, 10.4);
 	}

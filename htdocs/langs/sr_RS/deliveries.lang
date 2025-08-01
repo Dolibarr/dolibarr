@@ -1,12 +1,13 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Isporuka
 DeliveryRef=Ref Delivery
-DeliveryCard=Receipt card
+DeliveryCard=Delivery receipt
 DeliveryOrder=Delivery receipt
 DeliveryDate=Datum isporuke
 CreateDeliveryOrder=Generate delivery receipt
 DeliveryStateSaved=Status isporuke sačuvan
-SetDeliveryDate=Zadaj datum isporuke
+SetDeliveryDate=Set estimated delivery date
+SetShippingDate=Zadaj datum isporuke
 ValidateDeliveryReceipt=Odobri prijemnicu isporuke
 ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
 DeleteDeliveryReceipt=Obriši prijemnicu isporuke

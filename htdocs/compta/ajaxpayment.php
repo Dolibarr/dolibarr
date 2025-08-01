@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2011 Auguria <anthony.poiret@auguria.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +38,14 @@ if (!defined('NOREQUIREHTML')) {
 // Load Dolibarr environment
 require '../main.inc.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $langs->load('compta');
 
 // No permission check. This is just a formatting data service.
@@ -46,7 +56,7 @@ $langs->load('compta');
  */
 
 //init var
-$invoice_type = GETPOST('invoice_type', 'int');
+$invoice_type = GETPOSTINT('invoice_type');
 $amountPayment = GETPOST('amountPayment');
 $amounts = GETPOST('amounts'); // from text inputs : invoice amount payment (check required)
 $remains = GETPOST('remains'); // from dolibarr's object (no need to check)
@@ -69,7 +79,7 @@ if (is_array($amounts)) {
 if (is_array($remains)) {
 	foreach ($remains as $key => $value) {
 		$value = price2num($value);
-		$remains[$key] = (($invoice_type) == 2 ?-1 : 1) * $value;
+		$remains[$key] = ($invoice_type == 2 ? -1 : 1) * (float) $value;
 		if (empty($value)) {
 			unset($remains[$key]);
 		}
@@ -81,7 +91,7 @@ if (is_array($remains)) {
 }
 
 // Treatment
-$result = ($amountPayment != '') ? ($amountPayment - array_sum($amounts)) : array_sum($amounts); // Remaining amountPayment
+$result = ($amountPayment != '') ? ((float) $amountPayment - array_sum($amounts)) : array_sum($amounts); // Remaining amountPayment
 $toJsonArray = array();
 $totalRemaining = price2num(array_sum($remains));
 $toJsonArray['label'] = $amountPayment == '' ? '' : $langs->transnoentities('RemainingAmountPayment');
@@ -103,7 +113,7 @@ if ($currentInvId) {																	// Here to breakdown
 			$result += $currentRemain;
 		}
 	} else {
-		// Reset the substraction for this amount
+		// Reset the subtraction for this amount
 		$result += price2num($currentAmount);
 		$currentAmount = 0;
 
@@ -112,13 +122,13 @@ if ($currentInvId) {																	// Here to breakdown
 										$currentRemain : // Remain can be fully paid
 										$currentRemain + ($result - $currentRemain)); // Remain can only partially be paid
 			$currentAmount = $amountToBreakdown; // In both cases, amount will take breakdown value
-			$result -= $amountToBreakdown; // And canceled substraction has been replaced by breakdown
+			$result -= $amountToBreakdown; // And canceled subtraction has been replaced by breakdown
 		}	// else there's no need to calc anything, just reset the field (result is still < 0)
 	}
 	$toJsonArray['amount_'.$currentInvId] = price2num($currentAmount); // Param will exist only if an img has been clicked
 }
 
-$toJsonArray['makeRed'] = ($totalRemaining < price2num($result) || price2num($result) < 0) ? true : false;
+$toJsonArray['makeRed'] = ($totalRemaining < price2num($result) || price2num($result) < 0);
 $toJsonArray['result'] = price($result); // Return value to user format
 $toJsonArray['resultnum'] = price2num($result); // Return value to numeric format
 

@@ -200,12 +200,6 @@ source_file = htdocs/langs/en_US/ldap.lang
 source_lang = en_US
 type        = MOZILLAPROPERTIES
 
-[o:dolibarr-association:p:dolibarr:r:link]
-file_filter = htdocs/langs/<lang>/link.lang
-source_file = htdocs/langs/en_US/link.lang
-source_lang = en_US
-type        = MOZILLAPROPERTIES
-
 [o:dolibarr-association:p:dolibarr:r:loan]
 file_filter = htdocs/langs/<lang>/loan.lang
 source_file = htdocs/langs/en_US/loan.lang
@@ -431,12 +425,6 @@ type        = MOZILLAPROPERTIES
 [o:dolibarr-association:p:dolibarr:r:workflow]
 file_filter = htdocs/langs/<lang>/workflow.lang
 source_file = htdocs/langs/en_US/workflow.lang
-source_lang = en_US
-type        = MOZILLAPROPERTIES
-
-[o:dolibarr-association:p:dolibarr:r:zapier]
-file_filter = htdocs/langs/<lang>/zapier.lang
-source_file = htdocs/langs/en_US/zapier.lang
 source_lang = en_US
 type        = MOZILLAPROPERTIES
 

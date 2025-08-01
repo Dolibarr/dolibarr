@@ -1,40 +1,38 @@
-Module68000Name = Intracomm report
-Module68000Desc = Intracomm report management (Support for French DEB/DES format)
-IntracommReportSetup = Intracommreport module setup
-IntracommReportAbout = About intracommreport
+IntraCommReport=Intracomm-rapport
+IntraCommReports=Intracomm rapporterer
+
+Module68000Name = Intracomm-rapport
+Module68000Desc = Intracomm rapportstyring (understøttelse af fransk DEB / DES-format)
+IntracommReportSetup = Opsætning af internt rapporteringsmodul
+IntracommReportAbout = Om intracommreport
 
 # Setup
-INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
-INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
-INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
-INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
-INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
-INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
-
-INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
-
+INTRACOMMREPORT_NUM_AGREMENT=Godkendelsesnummer (udstedt af vedhæftet fil CISD)
+INTRACOMMREPORT_TYPE_ACTEUR=Skuespiller type
+INTRACOMMREPORT_ROLE_ACTEUR=Rolle spillet af skuespiller
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Forpligtelses niveau ved introduktioner
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Forpligtelsesniveau ved forsendelser
+INTRACOMMREPORT_CATEG_FRAISDEPORT=Servicekategori af typen "Porto"
+INTRACOMMREPORT_NUM_DECLARATION=Erklæringsnummer
 # Menu
-MenuIntracommReport=Intracomm report
-MenuIntracommReportNew=New declaration
+MenuIntracommReport=Intracomm-rapport
+MenuIntracommReportNew=Ny erklæring
 MenuIntracommReportList=Liste
-
 # View
-NewDeclaration=New declaration
-Declaration=Declaration
-AnalysisPeriod=Analysis period
-TypeOfDeclaration=Type of declaration
-DEB=Goods exchange declaration (DEB)
-DES=Services exchange declaration (DES)
-
+NewDeclaration=Ny erklæring
+Declaration=Erklæring
+AnalysisPeriod=Analyseperiode
+TypeOfDeclaration=Type erklæring
+DEB=Godsudvekslingserklæring (DEB)
+DES=Erklæring om udveksling af tjenester (DES)
 # Export page
-IntracommReportTitle=Preparation of an XML file in ProDouane format
-
+IntracommReportTitle=Forberedelse af en XML-fil i ProDouane-format
 # List
-IntracommReportList=List of generated declarations
-IntracommReportNumber=Numero of declaration
-IntracommReportPeriod=Period of nalysis
-IntracommReportTypeDeclaration=Type of declaration
-IntracommReportDownload=download XML file
-
+IntracommReportList=Liste over genererede erklæringer
+IntracommReportNumber=Numero af erklæring
+IntracommReportPeriod=Analyseperiode
+IntracommReportTypeDeclaration=Type erklæring
+IntracommReportDownload=download XML-fil
 # Invoice
-IntracommReportTransportMode=Transport mode
+IntracommReportTransportMode=Transporttilstand
+DeleteIntraCommReport=Slet IntraComm-rapport

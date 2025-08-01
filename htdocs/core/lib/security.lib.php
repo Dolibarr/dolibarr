@@ -1,7 +1,9 @@
 <?php
+
 /* Copyright (C) 2008-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2021 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2020	   Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,8 +34,8 @@
  *
  *	@param   string		$chain		string to encode
  *	@param   string		$key		rule to use for delta ('0', '1' or 'myownkey')
- *	@return  string					encoded string
- *  @see dol_decode()
+ *	@return  string					encoded string with format 'passcrypted'
+ *  @see dol_decode(), dolEncrypt()
  */
 function dol_encode($chain, $key = '1')
 {
@@ -64,7 +66,7 @@ function dol_encode($chain, $key = '1')
  *	@param   string		$chain		string to decode
  *	@param   string		$key		rule to use for delta ('0', '1' or 'myownkey')
  *	@return  string					decoded string
- *  @see dol_encode()
+ *  @see dol_encode(), dolDecrypt
  */
 function dol_decode($chain, $key = '1')
 {
@@ -92,7 +94,7 @@ function dol_decode($chain, $key = '1')
 }
 
 /**
- * Return a string of random bytes (hexa string) with length = $length fro cryptographic purposes.
+ * Return a string of random bytes (hexa string) with length = $length for cryptographic purposes.
  *
  * @param 	int			$length		Length of random string
  * @return	string					Random string
@@ -106,20 +108,23 @@ function dolGetRandomBytes($length)
 	return bin2hex(openssl_random_pseudo_bytes((int) floor($length / 2)));		// the bin2hex will double the number of bytes so we take length / 2. May be very slow on Windows.
 }
 
+
+define('MAIN_SECURITY_REVERSIBLE_ALGO', 'AES-256-CTR');
+
 /**
- *	Encode a string with a symetric encryption. Used to encrypt sensitive data into database.
+ *	Encode a string with a symmetric encryption. Used to encrypt sensitive data into database.
  *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
- *  This function is called for example by dol_set_const() when saving a sensible data into database configuration table llx_const.
+ *  This function is called for example by dol_set_const() when saving a sensible data into database, like into configuration table llx_const, or societe_rib, ...
  *
- *	@param   string		$chain		string to encode
- *	@param   string		$key		If '', we use $conf->file->instance_unique_id
+ *	@param   string		$chain		String to encode
+ *	@param   string		$key		If '', we use $conf->file->instance_unique_id (so $dolibarr_main_instance_unique_id in conf.php)
  *  @param	 string		$ciphering	Default ciphering algorithm
  *  @param	 string		$forceseed	To force the seed
- *	@return  string					encoded string
+ *	@return  string					encoded string, with format 'dolcrypt:CIPHERING:seed:cryptedpass'
  *  @since v17
  *  @see dolDecrypt(), dol_hash()
  */
-function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = '')
+function dolEncrypt($chain, $key = '', $ciphering = '', $forceseed = '')
 {
 	global $conf;
 	global $dolibarr_disable_dolcrypt_for_debug;
@@ -130,7 +135,7 @@ function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = 
 
 	$reg = array();
 	if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $chain, $reg)) {
-		// The $chain is already a crypted string
+		// The $chain is already a encrypted string
 		return $chain;
 	}
 
@@ -138,7 +143,7 @@ function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = 
 		$key = $conf->file->instance_unique_id;
 	}
 	if (empty($ciphering)) {
-		$ciphering = 'AES-256-CTR';
+		$ciphering = constant('MAIN_SECURITY_REVERSIBLE_ALGO');
 	}
 
 	$newchain = $chain;
@@ -169,11 +174,11 @@ function dolEncrypt($chain, $key = '', $ciphering = 'AES-256-CTR', $forceseed = 
 }
 
 /**
- *	Decode a string with a symetric encryption. Used to decrypt sensitive data saved into database.
+ *	Decode a string with a symmetric encryption. Used to decrypt sensitive data saved into database.
  *  Note: If a backup is restored onto another instance with a different $conf->file->instance_unique_id, then decoded value will differ.
  *
  *	@param   string		$chain		string to decode
- *	@param   string		$key		If '', we use $conf->file->instance_unique_id
+ *	@param   string		$key		If '', we use $conf->file->dolcrypt_key else $conf->file->instance_unique_id
  *	@return  string					encoded string
  *  @since v17
  *  @see dolEncrypt(), dol_hash()
@@ -188,17 +193,19 @@ function dolDecrypt($chain, $key = '')
 
 	if (empty($key)) {
 		if (!empty($conf->file->dolcrypt_key)) {
-			// If dolcrypt_key is defined, we used it in priority
+			// If dolcrypt_key is defined, we used it in priority (coming from $dolibarr_main_instance_unique_id)
 			$key = $conf->file->dolcrypt_key;
 		} else {
-			// We fall back on the instance_unique_id
-			$key = $conf->file->instance_unique_id;
+			// We fall back on the instance_unique_id (coming from $dolibarr_main_instance_unique_id)
+			$key = !empty($conf->file->instance_unique_id) ? $conf->file->instance_unique_id : "";
 		}
 	}
 
-	//var_dump('key='.$key);
 	$reg = array();
 	if (preg_match('/^dolcrypt:([^:]+):(.+)$/', $chain, $reg)) {
+		// Do not enable this log, except during debug
+		//dol_syslog("We try to decrypt the chain: ".$chain, LOG_DEBUG);
+
 		$ciphering = $reg[1];
 		if (function_exists('openssl_decrypt')) {
 			if (empty($key)) {
@@ -209,7 +216,7 @@ function dolDecrypt($chain, $key = '')
 			if (!empty($tmpexplode[1]) && is_string($tmpexplode[0])) {
 				$newchain = openssl_decrypt($tmpexplode[1], $ciphering, $key, 0, $tmpexplode[0]);
 			} else {
-				$newchain = openssl_decrypt($tmpexplode[0], $ciphering, $key, 0, null);
+				$newchain = openssl_decrypt((string) $tmpexplode[0], $ciphering, $key, 0, '');
 			}
 		} else {
 			dol_syslog("Error dolDecrypt openssl_decrypt is not available", LOG_ERR);
@@ -223,48 +230,105 @@ function dolDecrypt($chain, $key = '')
 
 /**
  * 	Returns a hash (non reversible encryption) of a string.
- *  If constant MAIN_SECURITY_HASH_ALGO is defined, we use this function as hashing function (recommanded value is 'password_hash')
- *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt (used only if hashing algorightm is something else than 'password_hash').
+ *  If constant MAIN_SECURITY_HASH_ALGO is defined, we use this function as hashing function (recommended value is 'password_hash')
+ *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt (used only if hashing algorithm is something else than 'password_hash').
  *
  * 	@param 		string		$chain		String to hash
- * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO else md5, '1':sha1, '2':sha1+md5, '3':md5, '4': for OpenLdap, '5':sha256, '6':password_hash). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
- * 	@return		string					Hash of string
+ * 	@param		'auto'|'0'|'sha1'|'1'|'sha1md5'|'2'|'md5'|'3'|'openldap'|'4'|'sha256'|'5'|'password_hash'|'6'	$type		Type of hash:
+ *                                                                                                                          'auto' or '0': will use MAIN_SECURITY_HASH_ALGO else md5
+ *                                                                                                                          'sha1' or '1': sha1
+ *                                                                                                                          'sha1md5' or '2': sha1md5
+ *                                                                                                                          'md5' or '3': md5
+ *                                                                                                                          'openldapxxx' or '4': for OpenLdap
+ *                                                                                                                          'sha256' or '5': sha256
+ *                                                                                                                          'password_hash' or '6': password_hash
+ *                                                                                                                          Use 'md5' if hash is not needed for security purpose. For security need, prefer 'auto'.
+ * 	@param 		int 		$nosalt		Do not include any salt
+ *  @param		int			$mode		0=Return encoded password, 1=Return array with encoding password + encoding algorithm
+ * 	@return		string|array{pass_encrypted:string,pass_encoding:string}	Hash of string or array with pass_encrypted and pass_encoding
  *  @see getRandomPassword(), dol_verifyHash()
  */
-function dol_hash($chain, $type = '0')
+function dol_hash($chain, $type = '0', $nosalt = 0, $mode = 0)
 {
-	global $conf;
-
 	// No need to add salt for password_hash
-	if (($type == '0' || $type == 'auto') && !empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'password_hash' && function_exists('password_hash')) {
-		return password_hash($chain, PASSWORD_DEFAULT);
+	if (($type == '0' || $type == 'auto') && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_hash')) {
+		if (strpos($chain, "\0") !== false) {
+			// String contains a null character that can't be encoded. Return an error instead of fatal error.
+			if ($mode == 1) {
+				return array('pass_encrypted' => 'Invalid string to encrypt. Contains a null character', 'pass_encoding' => '');
+			} else {
+				return 'Invalid string to encrypt. Contains a null character.';
+			}
+		}
+
+		if ($mode == 1) {
+			return array('pass_encrypted' => password_hash($chain, PASSWORD_DEFAULT), 'pass_encoding' => 'password_hash');
+		} else {
+			return password_hash($chain, PASSWORD_DEFAULT);
+		}
 	}
 
 	// Salt value
-	if (!empty($conf->global->MAIN_SECURITY_SALT) && $type != '4' && $type !== 'openldap') {
-		$chain = $conf->global->MAIN_SECURITY_SALT.$chain;
+	if (getDolGlobalString('MAIN_SECURITY_SALT') && $type != '4' && $type !== 'openldap' && empty($nosalt)) {
+		$chain = getDolGlobalString('MAIN_SECURITY_SALT') . $chain;
 	}
 
 	if ($type == '1' || $type == 'sha1') {
-		return sha1($chain);
+		if ($mode == 1) {
+			return array('pass_encrypted' => sha1($chain), 'pass_encoding' => 'sha1');
+		} else {
+			return sha1($chain);
+		}
 	} elseif ($type == '2' || $type == 'sha1md5') {
-		return sha1(md5($chain));
-	} elseif ($type == '3' || $type == 'md5') {
-		return md5($chain);
+		if ($mode == 1) {
+			return array('pass_encrypted' => sha1(md5($chain)), 'pass_encoding' => 'sha1md5');
+		} else {
+			return sha1(md5($chain));
+		}
+	} elseif ($type == '3' || $type == 'md5') {		// For hashing with no need of security
+		if ($mode == 1) {
+			return array('pass_encrypted' => md5($chain), 'pass_encoding' => 'md5');
+		} else {
+			return md5($chain);
+		}
 	} elseif ($type == '4' || $type == 'openldap') {
-		return dolGetLdapPasswordHash($chain, getDolGlobalString('LDAP_PASSWORD_HASH_TYPE', 'md5'));
+		if ($mode == 1) {
+			return array('pass_encrypted' => dolGetLdapPasswordHash($chain, getDolGlobalString('LDAP_PASSWORD_HASH_TYPE', 'md5')), 'pass_encoding' => 'ldappasswordhash'.getDolGlobalString('LDAP_PASSWORD_HASH_TYPE', 'md5'));
+		} else {
+			return dolGetLdapPasswordHash($chain, getDolGlobalString('LDAP_PASSWORD_HASH_TYPE', 'md5'));
+		}
 	} elseif ($type == '5' || $type == 'sha256') {
-		return hash('sha256', $chain);
+		if ($mode == 1) {
+			return array('pass_encrypted' => hash('sha256', $chain), 'pass_encoding' => 'sha256');
+		} else {
+			return hash('sha256', $chain);
+		}
 	} elseif ($type == '6' || $type == 'password_hash') {
-		return password_hash($chain, PASSWORD_DEFAULT);
-	} elseif (!empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1') {
-		return sha1($chain);
-	} elseif (!empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'sha1md5') {
-		return sha1(md5($chain));
+		if ($mode == 1) {
+			return array('pass_encrypted' => password_hash($chain, PASSWORD_DEFAULT), 'pass_encoding' => 'password_hash');
+		} else {
+			return password_hash($chain, PASSWORD_DEFAULT);
+		}
+	} elseif (getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'sha1') {
+		if ($mode == 1) {
+			return array('pass_encrypted' => sha1($chain), 'pass_encoding' => 'sha1');
+		} else {
+			return sha1($chain);
+		}
+	} elseif (getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'sha1md5') {
+		if ($mode == 1) {
+			return array('pass_encrypted' => sha1(md5($chain)), 'pass_encoding' => 'sha1md5');
+		} else {
+			return sha1(md5($chain));
+		}
 	}
 
 	// No particular encoding defined, use default
-	return md5($chain);
+	if ($mode == 1) {
+		return array('pass_encrypted' => md5($chain), 'pass_encoding' => 'md5');
+	} else {
+		return md5($chain);
+	}
 }
 
 /**
@@ -281,9 +345,8 @@ function dol_hash($chain, $type = '0')
  */
 function dol_verifyHash($chain, $hash, $type = '0')
 {
-	global $conf;
-
-	if ($type == '0' && !empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'password_hash' && function_exists('password_verify')) {
+	if ($type == '0' && getDolGlobalString('MAIN_SECURITY_HASH_ALGO') == 'password_hash' && function_exists('password_verify')) {
+		// Try to autodetect which algo we used
 		if (! empty($hash[0]) && $hash[0] == '$') {
 			return password_verify($chain, $hash);
 		} elseif (dol_strlen($hash) == 32) {
@@ -311,7 +374,7 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
 		$type = 'md5';
 	}
 
-	$salt = substr(sha1(time()), 0, 8);
+	$salt = substr(sha1((string) time()), 0, 8);
 
 	if ($type === 'md5') {
 		return '{MD5}' . base64_encode(hash("md5", $password, true)); //For OpenLdap with md5 (based on an unencrypted password in base)
@@ -359,13 +422,12 @@ function dolGetLdapPasswordHash($password, $type = 'md5')
  *  @param  string				$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional). Can use '' if NA.
  *  @param  string				$dbt_select     Field rowid name, for select into tableandshare if not "rowid". Not used if objectid is null (optional)
  *  @param	int					$isdraft		1=The object with id=$objectid is a draft
- *  @param	int					$mode			Mode (0=default, 1=return without dieing)
+ *  @param	int					$mode			Mode (0=default, 1=return without dying)
  * 	@return	int									If mode = 0 (default): Always 1, die process if not allowed. If mode = 1: Return 0 if access not allowed.
  *  @see dol_check_secure_access_document(), checkUserAccessToObject()
  */
 function restrictedArea(User $user, $features, $object = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = 'fk_soc', $dbt_select = 'rowid', $isdraft = 0, $mode = 0)
 {
-	global $db, $conf;
 	global $hookmanager;
 
 	// Define $objectid
@@ -378,18 +440,19 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$objectid = 0;
 	}
 	if ($objectid) {
-		$objectid = preg_replace('/[^0-9\.\,]/', '', $objectid);	// For the case value is coming from a non sanitized user input
+		$objectid = preg_replace('/[^0-9\.\,]/', '', (string) $objectid);	// For the case value is coming from a non sanitized user input
 	}
 
 	//dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename, $feature2, $dbt_socfield, $dbt_select, $isdraft");
 	/*print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", objectid=".$objectid;
 	print ", dbtablename=".$tableandshare.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
-	print ", perm: user->right->".$features.($feature2 ? "->".$feature2 : "")."=".($user->hasRight($features, $feature2, 'lire'))."<br>";
+	print ", perm: user->hasRight(".$features.($feature2 ? ",".$feature2 : "").", lire) = ".($feature2 ? $user->hasRight($features, $feature2, 'lire') : $user->hasRight($features, 'lire'))."<br>";
 	*/
 
 	$parentfortableentity = '';
 
-	// Fix syntax of $features param
+	// Fix syntax of $features param to support non standard module names.
+	// @todo : use elseif ?
 	$originalfeatures = $features;
 	if ($features == 'agenda') {
 		$tableandshare = 'actioncomm&societe';
@@ -446,27 +509,47 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$tableandshare = 'paiementcharge';
 		$parentfortableentity = 'fk_charge@chargesociales';
 	}
+	// if commonObjectLine : Using many2one related commonObject
+	// @see commonObjectLine::parentElement
+	if (in_array($features, ['commandedet', 'propaldet', 'facturedet', 'supplier_proposaldet', 'evaluationdet', 'skilldet', 'deliverydet', 'contratdet'])) {
+		$features = substr($features, 0, -3);
+	} elseif (in_array($features, ['stocktransferline', 'inventoryline', 'bomline', 'expensereport_det', 'facture_fourn_det'])) {
+		$features = substr($features, 0, -4);
+	} elseif ($features == 'commandefournisseurdispatch') {
+		$features = 'commandefournisseur';
+	} elseif ($features == 'invoice_supplier_det_rec') {
+		$features = 'invoice_supplier_rec';
+	}
+	// @todo check : project_task
+	// @todo possible ?
+	// elseif (substr($features, -3, 3) == 'det') {
+	// 	$features = substr($features, 0, -3);
+	// } elseif (substr($features, -4, 4) == '_det' || substr($features, -4, 4) == 'line') {
+	// 	$features = substr($features, 0, -4);
+	// }
 
 	//print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
 
 	// Get more permissions checks from hooks
-	$parameters = array('features'=>$features, 'originalfeatures'=>$originalfeatures, 'objectid'=>$objectid, 'dbt_select'=>$dbt_select, 'idtype'=>$dbt_select, 'isdraft'=>$isdraft);
-	$reshook = $hookmanager->executeHooks('restrictedArea', $parameters);
+	$parameters = array('features' => $features, 'originalfeatures' => $originalfeatures, 'objectid' => $objectid, 'dbt_select' => $dbt_select, 'idtype' => $dbt_select, 'isdraft' => $isdraft);
+	if (!empty($hookmanager)) {
+		$reshook = $hookmanager->executeHooks('restrictedArea', $parameters);
 
-	if (isset($hookmanager->resArray['result'])) {
-		if ($hookmanager->resArray['result'] == 0) {
-			if ($mode) {
-				return 0;
-			} else {
-				accessforbidden(); // Module returns 0, so access forbidden
+		if (isset($hookmanager->resArray['result'])) {
+			if ($hookmanager->resArray['result'] == 0) {
+				if ($mode) {
+					return 0;
+				} else {
+					accessforbidden(); // Module returns 0, so access forbidden
+				}
 			}
 		}
-	}
-	if ($reshook > 0) {		// No other test done.
-		return 1;
+		if ($reshook > 0) {		// No other test done.
+			return 1;
+		}
 	}
 
-	// Features/modules to check
+	// Features/modules to check (to support the & and | operator)
 	$featuresarray = array($features);
 	if (preg_match('/&/', $features)) {
 		$featuresarray = explode("&", $features);
@@ -479,7 +562,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		$feature2 = explode("|", $feature2);
 	}
 
-	$listofmodules = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+	$listofmodules = explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL'));
 
 	// Check read permission from module
 	$readok = 1;
@@ -492,7 +575,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		if ($featureforlistofmodule == 'supplier_proposal') {
 			$featureforlistofmodule = 'supplierproposal';
 		}
-		if (!empty($user->socid) && !empty($conf->global->MAIN_MODULES_FOR_EXTERNAL) && !in_array($featureforlistofmodule, $listofmodules)) {	// If limits on modules for external users, module must be into list of modules for external users
+		if (!empty($user->socid) && getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL') && !in_array($featureforlistofmodule, $listofmodules)) {	// If limits on modules for external users, module must be into list of modules for external users
 			$readok = 0;
 			$nbko++;
 			continue;
@@ -504,27 +587,27 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				$nbko++;
 			}
 		} elseif (($feature == 'societe' && (!empty($feature2) && in_array('contact', $feature2))) || $feature == 'contact') {
-			if (empty($user->rights->societe->contact->lire)) {
+			if (!$user->hasRight('societe', 'contact', 'lire')) {
 				$readok = 0;
 				$nbko++;
 			}
 		} elseif ($feature == 'produit|service') {
-			if (empty($user->rights->produit->lire) && empty($user->rights->service->lire)) {
+			if (!$user->hasRight('produit', 'lire') && !$user->hasRight('service', 'lire')) {
 				$readok = 0;
 				$nbko++;
 			}
 		} elseif ($feature == 'prelevement') {
-			if (empty($user->rights->prelevement->bons->lire)) {
+			if (!$user->hasRight('prelevement', 'bons', 'lire')) {
 				$readok = 0;
 				$nbko++;
 			}
 		} elseif ($feature == 'cheque') {
-			if (empty($user->rights->banque->cheque)) {
+			if (!$user->hasRight('banque', 'cheque')) {
 				$readok = 0;
 				$nbko++;
 			}
 		} elseif ($feature == 'projet') {
-			if (empty($user->rights->projet->lire) && empty($user->rights->projet->all->lire)) {
+			if (!$user->hasRight('projet', 'lire') && !$user->hasRight('projet', 'all', 'lire')) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -534,12 +617,12 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				$nbko++;
 			}
 		} elseif ($feature == 'payment_supplier') {
-			if (empty($user->rights->fournisseur->facture->lire)) {
+			if (!$user->hasRight('fournisseur', 'facture', 'lire')) {
 				$readok = 0;
 				$nbko++;
 			}
 		} elseif ($feature == 'payment_sc') {
-			if (empty($user->rights->tax->charges->lire)) {
+			if (!$user->hasRight('tax', 'charges', 'lire')) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -554,9 +637,9 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 					$tmpreadok = 1;
 					continue;
 				}
-				if (!empty($subfeature) && empty($user->rights->$feature->$subfeature->lire) && empty($user->rights->$feature->$subfeature->read)) {
+				if (!empty($subfeature) && !$user->hasRight($feature, $subfeature, 'lire') && !$user->hasRight($feature, $subfeature, 'read')) {
 					$tmpreadok = 0;
-				} elseif (empty($subfeature) && empty($user->rights->$feature->lire) && empty($user->rights->$feature->read)) {
+				} elseif (empty($subfeature) && !$user->hasRight($feature, 'lire') && !$user->hasRight($feature, 'read')) {
 					$tmpreadok = 0;
 				} else {
 					$tmpreadok = 1;
@@ -568,9 +651,9 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				$nbko++;
 			}
 		} elseif (!empty($feature) && ($feature != 'user' && $feature != 'usergroup')) {		// This is permissions on 1 level (module->read)
-			if (empty($user->rights->$feature->lire)
-				&& empty($user->rights->$feature->read)
-				&& empty($user->rights->$feature->run)) {
+			if (!$user->hasRight($feature, 'lire')
+				&& !$user->hasRight($feature, 'read')
+				&& !$user->hasRight($feature, 'run')) {
 				$readok = 0;
 				$nbko++;
 			}
@@ -600,22 +683,22 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	if ($wemustcheckpermissionforcreate || $wemustcheckpermissionfordeletedraft) {
 		foreach ($featuresarray as $feature) {
 			if ($feature == 'contact') {
-				if (empty($user->rights->societe->contact->creer)) {
+				if (!$user->hasRight('societe', 'contact', 'creer')) {
 					$createok = 0;
 					$nbko++;
 				}
 			} elseif ($feature == 'produit|service') {
-				if (empty($user->rights->produit->creer) && empty($user->rights->service->creer)) {
+				if (!$user->hasRight('produit', 'creer') && !$user->hasRight('service', 'creer')) {
 					$createok = 0;
 					$nbko++;
 				}
 			} elseif ($feature == 'prelevement') {
-				if (!$user->rights->prelevement->bons->creer) {
+				if (!$user->hasRight('prelevement', 'bons', 'creer')) {
 					$createok = 0;
 					$nbko++;
 				}
 			} elseif ($feature == 'commande_fournisseur') {
-				if (empty($user->rights->fournisseur->commande->creer) || empty($user->rights->supplier_order->creer)) {
+				if (!$user->hasRight('fournisseur', 'commande', 'creer') || !$user->hasRight('supplier_order', 'creer')) {
 					$createok = 0;
 					$nbko++;
 				}
@@ -625,17 +708,22 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 					$nbko++;
 				}
 			} elseif ($feature == 'cheque') {
-				if (empty($user->rights->banque->cheque)) {
+				if (!$user->hasRight('banque', 'cheque')) {
 					$createok = 0;
 					$nbko++;
 				}
 			} elseif ($feature == 'import') {
-				if (empty($user->rights->import->run)) {
+				if (!$user->hasRight('import', 'run')) {
 					$createok = 0;
 					$nbko++;
 				}
 			} elseif ($feature == 'ecm') {
-				if (!$user->rights->ecm->upload) {
+				if (!$user->hasRight('ecm', 'upload')) {
+					$createok = 0;
+					$nbko++;
+				}
+			} elseif ($feature == 'modulebuilder') {
+				if (!$user->hasRight('modulebuilder', 'run')) {
 					$createok = 0;
 					$nbko++;
 				}
@@ -651,9 +739,9 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 						continue; // User can edit another user's password
 					}
 
-					if (empty($user->rights->$feature->$subfeature->creer)
-					&& empty($user->rights->$feature->$subfeature->write)
-					&& empty($user->rights->$feature->$subfeature->create)) {
+					if (!$user->hasRight($feature, $subfeature, 'creer')
+					&& !$user->hasRight($feature, $subfeature, 'write')
+					&& !$user->hasRight($feature, $subfeature, 'create')) {
 						$createok = 0;
 						$nbko++;
 					} else {
@@ -664,9 +752,9 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				}
 			} elseif (!empty($feature)) {												// This is for permissions on 1 levels (module->write)
 				//print '<br>feature='.$feature.' creer='.$user->rights->$feature->creer.' write='.$user->rights->$feature->write; exit;
-				if (empty($user->rights->$feature->creer)
-				&& empty($user->rights->$feature->write)
-				&& empty($user->rights->$feature->create)) {
+				if (!$user->hasRight($feature, 'creer')
+				&& !$user->hasRight($feature, 'write')
+				&& !$user->hasRight($feature, 'create')) {
 					$createok = 0;
 					$nbko++;
 				}
@@ -711,13 +799,13 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	if ((GETPOST("action", "aZ09") == 'confirm_delete' && GETPOST("confirm", "aZ09") == 'yes') || GETPOST("action", "aZ09") == 'delete') {
 		foreach ($featuresarray as $feature) {
 			if ($feature == 'bookmark') {
-				if (!$user->rights->bookmark->supprimer) {
-					if ($user->id != $object->fk_user || empty($user->rights->bookmark->creer)) {
+				if (!$user->hasRight('bookmark', 'supprimer')) {
+					if ($user->id != $object->fk_user || !$user->hasRight('bookmark', 'creer')) {
 						$deleteok = 0;
 					}
 				}
 			} elseif ($feature == 'contact') {
-				if (!$user->rights->societe->contact->supprimer) {
+				if (!$user->hasRight('societe', 'contact', 'supprimer')) {
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'produit|service') {
@@ -725,19 +813,19 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'commande_fournisseur') {
-				if (!$user->rights->fournisseur->commande->supprimer) {
+				if (!$user->hasRight('fournisseur', 'commande', 'supprimer')) {
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'payment_supplier') {	// Permission to delete a payment of an invoice is permission to edit an invoice.
-				if (!$user->rights->fournisseur->facture->creer) {
+				if (!$user->hasRight('fournisseur', 'facture', 'creer')) {
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'payment') {
-				if (!$user->rights->facture->paiement) {
-						$deleteok = 0;
+				if (!$user->hasRight('facture', 'paiement')) {
+					$deleteok = 0;
 				}
 			} elseif ($feature == 'payment_sc') {
-				if (!$user->rights->tax->charges->creer) {
+				if (!$user->hasRight('tax', 'charges', 'creer')) {
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'banque') {
@@ -745,36 +833,36 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'cheque') {
-				if (empty($user->rights->banque->cheque)) {
+				if (!$user->hasRight('banque', 'cheque')) {
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'ecm') {
-				if (!$user->rights->ecm->upload) {
+				if (!$user->hasRight('ecm', 'upload')) {
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'ftp') {
-				if (!$user->rights->ftp->write) {
+				if (!$user->hasRight('ftp', 'write')) {
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'salaries') {
-				if (!$user->rights->salaries->delete) {
+				if (!$user->hasRight('salaries', 'delete')) {
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'adherent') {
-				if (empty($user->rights->adherent->supprimer)) {
+				if (!$user->hasRight('adherent', 'supprimer')) {
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'paymentbybanktransfer') {
-				if (empty($user->rights->paymentbybanktransfer->create)) {	// There is no delete permission
+				if (!$user->hasRight('paymentbybanktransfer', 'create')) {	// There is no delete permission
 					$deleteok = 0;
 				}
 			} elseif ($feature == 'prelevement') {
-				if (empty($user->rights->prelevement->bons->creer)) {		// There is no delete permission
+				if (!$user->hasRight('prelevement', 'bons', 'creer')) {		// There is no delete permission
 					$deleteok = 0;
 				}
 			} elseif (!empty($feature2)) {							// This is for permissions on 2 levels
 				foreach ($feature2 as $subfeature) {
-					if (empty($user->rights->$feature->$subfeature->supprimer) && empty($user->rights->$feature->$subfeature->delete)) {
+					if (!$user->hasRight($feature, $subfeature, 'supprimer') && !$user->hasRight($feature, $subfeature, 'delete')) {
 						$deleteok = 0;
 					} else {
 						$deleteok = 1;
@@ -783,9 +871,9 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				}
 			} elseif (!empty($feature)) {							// This is used for permissions on 1 level
 				//print '<br>feature='.$feature.' creer='.$user->rights->$feature->supprimer.' write='.$user->rights->$feature->delete;
-				if (empty($user->rights->$feature->supprimer)
-					&& empty($user->rights->$feature->delete)
-					&& empty($user->rights->$feature->run)) {
+				if (!$user->hasRight($feature, 'supprimer')
+					&& !$user->hasRight($feature, 'delete')
+					&& !$user->hasRight($feature, 'run')) {
 					$deleteok = 0;
 				}
 			}
@@ -810,7 +898,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	// for this given object (link to company, is contact for project, ...)
 	if (!empty($objectid) && $objectid > 0) {
 		$ok = checkUserAccessToObject($user, $featuresarray, $object, $tableandshare, $feature2, $dbt_keyfield, $dbt_select, $parentfortableentity);
-		$params = array('objectid' => $objectid, 'features' => join(',', $featuresarray), 'features2' => $feature2);
+		$params = array('objectid' => $objectid, 'features' => implode(',', $featuresarray), 'features2' => $feature2);
 		//print 'checkUserAccessToObject ok='.$ok;
 		if ($mode) {
 			return $ok ? 1 : 0;
@@ -831,10 +919,10 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
  * This function is also called by restrictedArea() that check before if module is enabled and if permission of user for $action is ok.
  *
  * @param 	User				$user					User to check
- * @param 	array				$featuresarray			Features/modules to check. Example: ('user','service','member','project','task',...)
+ * @param 	string[]			$featuresarray			Features/modules to check. Example: ('user','service','member','project','task',...)
  * @param 	int|string|Object	$object					Full object or object ID or list of object id. For example if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
  * @param 	string				$tableandshare			'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity for multicompany modume. Param not used if objectid is null (optional).
- * @param 	array|string		$feature2				Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
+ * @param 	string[]|string		$feature2				Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
  * @param 	string				$dbt_keyfield			Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional). Can use '' if NA.
  * @param 	string				$dbt_select				Field name for select if not rowid. Not used if objectid is null (optional).
  * @param 	string				$parenttableforentity  	Parent table for entity. Example 'fk_website@website'
@@ -921,7 +1009,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 			if (($feature == 'user' || $feature == 'usergroup') && isModEnabled('multicompany')) {	// Special for multicompany
-				if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+				if (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 					if ($conf->entity == 1 && $user->admin && !$user->entity) {
 						$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
 						$sql .= " AND dbt.entity IS NOT NULL";
@@ -955,13 +1043,18 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				if ($user->socid != $objectid) {
 					return false;
 				}
-			} elseif (isModEnabled("societe") && ($user->hasRight('societe', 'lire') && empty($user->rights->societe->client->voir))) {
+			} elseif (isModEnabled("societe") && ($user->hasRight('societe', 'lire') && !$user->hasRight('societe', 'client', 'voir'))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(sc.fk_soc) as nb";
 				$sql .= " FROM (".MAIN_DB_PREFIX."societe_commerciaux as sc";
 				$sql .= ", ".MAIN_DB_PREFIX."societe as s)";
 				$sql .= " WHERE sc.fk_soc IN (".$db->sanitize($objectid, 1).")";
-				$sql .= " AND sc.fk_user = ".((int) $user->id);
+				$sql .= " AND (sc.fk_user = ".((int) $user->id);
+				if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
+					$userschilds = $user->getAllChildIds();
+					$sql .= " OR sc.fk_user IN (".$db->sanitize(implode(',', $userschilds)).")";
+				}
+				$sql .= ")";
 				$sql .= " AND sc.fk_soc = s.rowid";
 				$sql .= " AND s.entity IN (".getEntity($sharedelement, 1).")";
 			} elseif (isModEnabled('multicompany')) {
@@ -981,7 +1074,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.fk_soc = ".((int) $user->socid);
-			} elseif (isModEnabled("societe") && ($user->hasRight('societe', 'lire') && empty($user->rights->societe->client->voir))) {
+			} elseif (isModEnabled("societe") && ($user->hasRight('societe', 'lire') && !$user->hasRight('societe', 'client', 'voir'))) {
 				// If internal user: Check permission for internal users that are restricted on their objects
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
@@ -1000,7 +1093,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			$checkonentitydone = 1;
 		}
 		if (in_array($feature, $checkproject) && $objectid > 0) {
-			if (isModEnabled('project') && empty($user->rights->projet->all->lire)) {
+			if (isModEnabled('project') && !$user->hasRight('projet', 'all', 'lire')) {
 				$projectid = $objectid;
 
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -1019,10 +1112,10 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			}
 			$checkonentitydone = 1;
 		}
-		if (in_array($feature, $checktask) && $objectid > 0) {
-			if (isModEnabled('project') && empty($user->rights->projet->all->lire)) {
+		if (in_array($feature, $checktask) && (int) $objectid > 0) {
+			if (isModEnabled('project') && !$user->hasRight('projet', 'all', 'lire')) {
 				$task = new Task($db);
-				$task->fetch($objectid);
+				$task->fetch((int) $objectid);
 				$projectid = $task->fk_project;
 
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -1048,17 +1141,17 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			// If external user: Check permission for external users
 			if ($user->socid > 0) {
 				if (empty($dbt_keyfield)) {
-					dol_print_error('', 'Param dbt_keyfield is required but not defined');
+					dol_print_error(null, 'Param dbt_keyfield is required but not defined');
 				}
 				$sql = "SELECT COUNT(dbt.".$dbt_keyfield.") as nb";
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.rowid IN (".$db->sanitize($objectid, 1).")";
 				$sql .= " AND dbt.".$dbt_keyfield." = ".((int) $user->socid);
-			} elseif (isModEnabled("societe") && empty($user->rights->societe->client->voir)) {
+			} elseif (isModEnabled("societe") && !$user->hasRight('societe', 'client', 'voir')) {
 				// If internal user without permission to see all thirdparties: Check permission for internal users that are restricted on their objects
 				if ($feature != 'ticket') {
 					if (empty($dbt_keyfield)) {
-						dol_print_error('', 'Param dbt_keyfield is required but not defined');
+						dol_print_error(null, 'Param dbt_keyfield is required but not defined');
 					}
 					$sql = "SELECT COUNT(sc.fk_soc) as nb";
 					$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
@@ -1066,7 +1159,14 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 					$sql .= " WHERE dbt.".$dbt_select." IN (".$db->sanitize($objectid, 1).")";
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 					$sql .= " AND sc.fk_soc = dbt.".$dbt_keyfield;
-					$sql .= " AND sc.fk_user = ".((int) $user->id);
+					$sql .= " AND (sc.fk_user = ".((int) $user->id);
+					if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
+						$userschilds = $user->getAllChildIds();
+						foreach ($userschilds as $key => $value) {
+							$sql .= ' OR sc.fk_user = '.((int) $value);
+						}
+					}
+					$sql .= ')';
 				} else {
 					// On ticket, the thirdparty is not mandatory, so we need a special test to accept record with no thirdparties.
 					$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
@@ -1086,12 +1186,12 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		}
 
 		// For events, check on users assigned to event
-		if ($feature === 'agenda' && $objectid > 0) {
+		if ($feature === 'agenda' && ((int) $objectid) > 0) {
 			// Also check owner or attendee for users without allactions->read
-			if ($objectid > 0 && empty($user->rights->agenda->allactions->read)) {
+			if (/* $objectid > 0 && */ !$user->hasRight('agenda', 'allactions', 'read')) {
 				require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 				$action = new ActionComm($db);
-				$action->fetch($objectid);
+				$action->fetch((int) $objectid);
 				if ($action->authorid != $user->id && $action->userownerid != $user->id && !(array_key_exists($user->id, $action->userassigned))) {
 					return false;
 				}
@@ -1111,8 +1211,10 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			}
 			if ($feature == 'expensereport') {
 				$useridtocheck = $object->fk_user_author;
-				if (!$user->hasRight('expensereport', 'readall') && !in_array($useridtocheck, $childids)) {
-					return false;
+				if (!$user->hasRight('expensereport', 'readall')) {
+					if (!in_array($useridtocheck, $childids)) {
+						return false;
+					}
 				}
 			}
 		}
@@ -1151,11 +1253,11 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
  *
  *	@param	string		$message					Force error message
  *	@param	int			$http_response_code			HTTP response code
- *  @param	int			$stringalreadysanitized		1 if string is already sanitized with HTML entities
- *  @return	void
+ *  @param	int<0,1>	$stringalreadysanitized		1 if string is already sanitized with HTML entities
+ *  @return	never
  *  @see accessforbidden()
  */
-function httponly_accessforbidden($message = 1, $http_response_code = 403, $stringalreadysanitized = 0)
+function httponly_accessforbidden($message = '1', $http_response_code = 403, $stringalreadysanitized = 0)
 {
 	top_httphead();
 	http_response_code($http_response_code);
@@ -1175,11 +1277,11 @@ function httponly_accessforbidden($message = 1, $http_response_code = 403, $stri
  *	Calling this function terminate execution of PHP.
  *
  *	@param	string		$message			Force error message
- *	@param	int			$printheader		Show header before
- *  @param  int			$printfooter        Show footer after
- *  @param  int			$showonlymessage    Show only message parameter. Otherwise add more information.
- *  @param  array|null  $params         	More parameters provided to hook
- *  @return	void
+ *	@param	int<0,1>	$printheader		Show header before
+ *  @param  int<0,1>	$printfooter        Show footer after
+ *  @param  int<0,1>	$showonlymessage    Show only message parameter. Otherwise add more information.
+ *  @param  ?array<string,mixed>	$params More parameters provided to hook
+ *  @return	never
  *  @see httponly_accessforbidden()
  */
 function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $showonlymessage = 0, $params = null)
@@ -1193,14 +1295,15 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		$langs->setDefaultLang();
 	}
 
-	$langs->load("errors");
+	$langs->loadLangs(array("main", "errors"));
 
-	if ($printheader) {
+	if ($printheader && !defined('NOHEADERNOFOOTER')) {
 		if (function_exists("llxHeader")) {
 			llxHeader('');
 		} elseif (function_exists("llxHeaderVierge")) {
 			llxHeaderVierge('');
 		}
+		print '<div style="padding: 20px">';
 	}
 	print '<div class="error">';
 	if (empty($message)) {
@@ -1214,11 +1317,11 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 		if (empty($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
-			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+			// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 			$hookmanager->initHooks(array('main'));
 		}
 
-		$parameters = array('message'=>$message, 'params'=>$params);
+		$parameters = array('message' => $message, 'params' => $params);
 		$reshook = $hookmanager->executeHooks('getAccessForbiddenMessage', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		print $hookmanager->resPrint;
 		if (empty($reshook)) {
@@ -1232,7 +1335,8 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 			}
 		}
 	}
-	if ($printfooter && function_exists("llxFooter")) {
+	if ($printfooter && !defined('NOHEADERNOFOOTER') && function_exists("llxFooter")) {
+		print '</div>';
 		llxFooter();
 	}
 
@@ -1244,46 +1348,45 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
  *	Return the max allowed for file upload.
  *  Analyze among: upload_max_filesize, post_max_size, MAIN_UPLOAD_DOC
  *
- *  @return	array		Array with all max size for file upload
+ *	@return array{max:string,maxmin:mixed,maxphptoshow:int|string,maxphptoshowparam:''|'post_max_size'|'upload_max_filesize'}	Array with all max sizes for file upload
  */
 function getMaxFileSizeArray()
 {
-	global $conf;
+	$max = getDolGlobalString('MAIN_UPLOAD_DOC'); // In Kb
 
-	$max = $conf->global->MAIN_UPLOAD_DOC; // In Kb
 	$maxphp = @ini_get('upload_max_filesize'); // In unknown
 	if (preg_match('/k$/i', $maxphp)) {
 		$maxphp = preg_replace('/k$/i', '', $maxphp);
-		$maxphp = $maxphp * 1;
+		$maxphp = (int) ((float) $maxphp * 1);
 	}
 	if (preg_match('/m$/i', $maxphp)) {
 		$maxphp = preg_replace('/m$/i', '', $maxphp);
-		$maxphp = $maxphp * 1024;
+		$maxphp = (int) ((float) $maxphp * 1024);
 	}
 	if (preg_match('/g$/i', $maxphp)) {
 		$maxphp = preg_replace('/g$/i', '', $maxphp);
-		$maxphp = $maxphp * 1024 * 1024;
+		$maxphp = (int) ((float) $maxphp * 1024 * 1024);
 	}
 	if (preg_match('/t$/i', $maxphp)) {
 		$maxphp = preg_replace('/t$/i', '', $maxphp);
-		$maxphp = $maxphp * 1024 * 1024 * 1024;
+		$maxphp = (int) ((float) $maxphp * 1024 * 1024 * 1024);
 	}
 	$maxphp2 = @ini_get('post_max_size'); // In unknown
 	if (preg_match('/k$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/k$/i', '', $maxphp2);
-		$maxphp2 = $maxphp2 * 1;
+		$maxphp2 = (int) ((float) $maxphp2) * 1;
 	}
 	if (preg_match('/m$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/m$/i', '', $maxphp2);
-		$maxphp2 = $maxphp2 * 1024;
+		$maxphp2 = (int) ((float) $maxphp2 * 1024);
 	}
 	if (preg_match('/g$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/g$/i', '', $maxphp2);
-		$maxphp2 = $maxphp2 * 1024 * 1024;
+		$maxphp2 = (int) ((float) $maxphp2 * 1024 * 1024);
 	}
 	if (preg_match('/t$/i', $maxphp2)) {
 		$maxphp2 = preg_replace('/t$/i', '', $maxphp2);
-		$maxphp2 = $maxphp2 * 1024 * 1024 * 1024;
+		$maxphp2 = (int) ((float) $maxphp2 * 1024 * 1024 * 1024);
 	}
 	// Now $max and $maxphp and $maxphp2 are in Kb
 	$maxmin = $max;
@@ -1303,5 +1406,5 @@ function getMaxFileSizeArray()
 	//var_dump($maxphp.'-'.$maxphp2);
 	//var_dump($maxmin);
 
-	return array('max'=>$max, 'maxmin'=>$maxmin, 'maxphptoshow'=>$maxphptoshow, 'maxphptoshowparam'=>$maxphptoshowparam);
+	return array('max' => $max, 'maxmin' => $maxmin, 'maxphptoshow' => $maxphptoshow, 'maxphptoshowparam' => $maxphptoshowparam);
 }

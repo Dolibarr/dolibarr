@@ -4,6 +4,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,107 +23,36 @@
 
 /**
  *	\file       htdocs/core/modules/cheque/modules_chequereceipts.php
- *	\ingroup    facture
+ *	\ingroup    invoice
  *	\brief      File with parent class of check receipt document generators
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // Requis car utilise dans les classes qui heritent
 
 /**
- *  \class      ModeleNumRefChequeReceipts
- *  \brief      Cheque Receipts numbering references mother class
+ *  Class parent for cheque Receipts numbering references mother class
  */
-abstract class ModeleNumRefChequeReceipts
+abstract class ModeleNumRefChequeReceipts extends CommonNumRefGenerator
 {
+	// No overload code
 	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 *	Return if a module can be used or not
+	 * 	Return next free value
 	 *
-	 *	@return		boolean     true if module can be used
+	 *  @param	Societe			$objsoc		Object thirdparty
+	 *  @param	RemiseCheque	$object		Object we need next value for
+	 *  @return	string|int<-1,0>			Next value if OK, 0 if KO
 	 */
-	public function isEnabled()
-	{
-		return true;
-	}
+	abstract public function getNextValue($objsoc, $object);
 
 	/**
-	 *	Return the default description of numbering module
+	 *  Return an example of numbering
 	 *
-	 *	@return     string      Descriptive text
+	 *  @return     string      Example
 	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("bills");
-		return $langs->trans("NoDescription");
-	}
-
-	/**
-	 *	Return numbering example
-	 *
-	 *	@return     string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("bills");
-		return $langs->trans("NoExample");
-	}
-
-	/**
-	 *  Checks if the numbers already in the database do not
-	 *  cause conflicts that would prevent this numbering working.
-	 *
-	 *	@return     boolean     false if conflict, true if ok
-	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
-
-	/**
-	 *	Returns the next value
-	 *
-	 *	@param	Societe		$objsoc     Object thirdparty
-	 *	@param	Object		$object		Object we need next value for
-	 *	@return	string      Valeur
-	 */
-	public function getNextValue($objsoc, $object)
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
-
-	/**
-	 *	Returns the module numbering version
-	 *
-	 *	@return     string      Value
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("VersionDevelopment");
-		}
-		if ($this->version == 'experimental') {
-			return $langs->trans("VersionExperimental");
-		}
-		if ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		}
-		if ($this->version) {
-			return $this->version;
-		}
-		return $langs->trans("NotAvailable");
-	}
+	abstract public function getExample();
 }
 
 /**
@@ -130,6 +60,31 @@ abstract class ModeleNumRefChequeReceipts
  */
 abstract class ModeleChequeReceipts extends CommonDocGenerator
 {
+	/**
+	 * @var Account bank account
+	 */
+	public $account;
+
+	/**
+	 * @var string|float
+	 */
+	public $amount;
+	/**
+	 * @var string
+	 */
+	public $date;
+	/**
+	 * @var int
+	 */
+	public $nbcheque;
+	/**
+	 * @var string
+	 */
+	public $ref;
+	/**
+	 * @var stdClass[] lines
+	 */
+	public $lines;
 	/**
 	 * @var string Error code (or message)
 	 */
@@ -139,9 +94,9 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
 	/**
 	 *  Return list of active generation modules
 	 *
-	 *  @param	DoliDB	$db     			Database handler
-	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array						List of templates
+	 *  @param  DoliDB  	$db                 Database handler
+	 *  @param  int<0,max>	$maxfilenamelength  Max length of value to show
+	 *  @return string[]|int<-1,0>				List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
@@ -152,10 +107,24 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		$list = getListOfModels($db, $type, $maxfilenamelength);
 		// TODO Remove this to use getListOfModels only
-		$list = array('blochet'=>'blochet');
+		$list = array('blochet' => 'blochet');
 
 		return $list;
 	}
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Fonction to generate document on disk
+	 *
+	 *	@param	RemiseCheque	$object			Object RemiseCheque
+	 *	@param	string			$_dir			Directory
+	 *	@param	string			$number			Number
+	 *	@param	Translate		$outputlangs	Lang output object
+	 *	@return	int<-1,1>  						1=ok, 0=ko
+	 */
+	abstract public function write_file($object, $_dir, $number, $outputlangs);
+	// phpcs:enable
 }
 
 
@@ -167,7 +136,7 @@ abstract class ModeleChequeReceipts extends CommonDocGenerator
  *	@param	string		$message		Message
  *	@param	string		$modele			Force le modele a utiliser ('' to not force)
  *	@param	Translate	$outputlangs	Object lang a utiliser pour traduction
- *	@return int        					<0 if KO, >0 if OK
+ *	@return int        					Return integer <0 if KO, >0 if OK
  * 	TODO Use commonDocGenerator
  */
 function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
@@ -179,8 +148,8 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 
 	// Positionne modele sur le nom du modele a utiliser
 	if (!dol_strlen($modele)) {
-		if (!empty($conf->global->CHEQUERECEIPT_ADDON_PDF)) {
-			$modele = $conf->global->CHEQUERECEIPT_ADDON_PDF;
+		if (getDolGlobalString('CHEQUERECEIPT_ADDON_PDF')) {
+			$modele = getDolGlobalString('CHEQUERECEIPT_ADDON_PDF');
 		} else {
 			//print $langs->trans("Error")." ".$langs->trans("Error_FACTURE_ADDON_PDF_NotDefined");
 			//return 0;
@@ -195,11 +164,13 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 		require_once $dir.$file;
 
 		$obj = new $classname($db);
+		'@phan-var-force ModeleChequeReceipts $obj';
 
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
 		$sav_charset_output = $outputlangs->charset_output;
-		if ($obj->write_file($id, $outputlangs) > 0) {
+		// TODO: write_file seems invalid, function is likely no longer used - delete ?
+		if ($obj->write_file($id, $outputlangs) > 0) { // @phan-suppress-current-line PhanParamTooFew,PhanPluginSuspiciousParamPosition
 			$outputlangs->charset_output = $sav_charset_output;
 			return 1;
 		} else {
@@ -208,7 +179,7 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 			return -1;
 		}
 	} else {
-		dol_print_error('', $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $dir.$file));
+		dol_print_error(null, $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $dir.$file));
 		return -1;
 	}
 }

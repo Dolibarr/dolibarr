@@ -3,6 +3,8 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Cyrille de Lambert   <info@auguria.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,22 +21,41 @@
  */
 
 /**
- *       \file       htdocs/core/ajax/ajaxstatusprospect.php
- *       \brief      File to return Ajax response on third parties request
+ *       \file      htdocs/core/ajax/ajaxstatusprospect.php
+ *       \brief     File of service to update prospect status of a third party
+ *       			TODO Rename into updatestatusprospect.php
  */
 
-if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
-if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (!defined('NOREQUIREHTML'))  define('NOREQUIREHTML', '1');
-if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
-if (!defined('NOREQUIRESOC'))   define('NOREQUIRESOC', '1');
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', 1);
+} // Disables token renewal
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1');
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1');
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1');
+}
+if (!defined('NOREQUIRESOC')) {
+	define('NOREQUIRESOC', '1');
+}
 
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
-$idstatus = GETPOST('id', 'int');
-$idprospect = GETPOST('prospectid', 'int');
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
+$idstatus = GETPOSTINT('id');
+$idprospect = GETPOSTINT('prospectid');
 $action = GETPOST('action', 'aZ09');
 
 $prospectstatic = new Client($db);
@@ -67,8 +88,8 @@ if ($action === "updatestatusprospect" && $permisstiontoupdate) {
 	$response = '';
 
 	$sql  = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
-	$sql .= "fk_stcomm=".(int) $db->escape($idstatus);
-	$sql .= " WHERE rowid = ".(int) $db->escape($idprospect);
+	$sql .= "fk_stcomm = ".((int) $idstatus);
+	$sql .= " WHERE rowid = ".((int) $idprospect);
 
 	$resql = $db->query($sql);
 

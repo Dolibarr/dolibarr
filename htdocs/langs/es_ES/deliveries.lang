@@ -1,12 +1,13 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Envío
 DeliveryRef=Ref. envío
-DeliveryCard=Recibo de existencias
+DeliveryCard=Nota de entrega
 DeliveryOrder=Nota de entrega
 DeliveryDate=Fecha de entrega
 CreateDeliveryOrder=Generar nota de entrega
 DeliveryStateSaved=Estado de entrega guardado
-SetDeliveryDate=Indicar la fecha de entrega
+SetDeliveryDate=Establecer fecha de entrega estimada
+SetShippingDate=Indicar la fecha de entrega
 ValidateDeliveryReceipt=Validar la nota de entrega
 ValidateDeliveryReceiptConfirm=¿Está seguro de que desea validar esta entrega?
 DeleteDeliveryReceipt=Eliminar la nota de entrega

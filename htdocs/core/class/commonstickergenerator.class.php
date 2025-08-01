@@ -5,6 +5,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Francis Appels  <francis.appels@yahoo.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,11 +35,11 @@
 // 1.1  : +	: Added unit in the constructor
 //	  + : Now Positions start @ (1,1).. then the first image @top-left of a page is (1,1)
 //	  + : Added in the description of a label :
-//		font-size	: defaut char size (can be changed by calling Set_Char_Size(xx);
+//		font-size	: default char size (can be changed by calling Set_Char_Size(xx);
 //		paper-size	: Size of the paper for this sheet (thanx to Al Canton)
 //		metric		: type of unit used in this description
 //				  You can define your label properties in inches by setting metric to 'in'
-//				  and printing in millimiter by setting unit to 'mm' in constructor.
+//				  and printing in millimeter by setting unit to 'mm' in constructor.
 //	  Added some labels :
 //	        5160, 5161, 5162, 5163,5164 : thanx to Al Canton : acanton@adams-blake.com
 //		8600 						: thanx to Kunal Walia : kunal@u.washington.edu
@@ -54,59 +55,30 @@
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/format_cards.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 
 /**
  *	Class to generate stick sheet with format Avery or other personalised
  */
-abstract class CommonStickerGenerator
+abstract class CommonStickerGenerator extends CommonDocGenerator
 {
 	/**
 	 * @var DoliDB Database handler.
 	 */
 	public $db;
 
+	/**
+	 * @var string
+	 */
 	public $code; // Code of format
-
-	/**
-	 * @var int page_largeur
-	 */
-	public $page_largeur;
-
-	/**
-	 * @var int page_hauteur
-	 */
-	public $page_hauteur;
-
-	/**
-	 * @var array format
-	 */
-	public $format;
-
-	/**
-	 * @var int marge_gauche
-	 */
-	public $marge_gauche;
-
-	/**
-	 * @var int marge_droite
-	 */
-	public $marge_droite;
-
-	/**
-	 * @var int marge_haute
-	 */
-	public $marge_haute;
-
-	/**
-	 * @var int marge_basse
-	 */
-	public $marge_basse;
 
 	// phpcs:disable PEAR.NamingConventions.ValidVariableName.PublicUnderscore
 	// protected
-	// Nom du format de l'etiquette
+	// Name of stick
 	protected $_Avery_Name = '';
+	// Code of stick
+	protected $_Avery_Code = '';
 	// Marge de gauche de l'etiquette
 	protected $_Margin_Left = 0;
 	// marge en haut de la page avant la premiere etiquette
@@ -117,15 +89,15 @@ abstract class CommonStickerGenerator
 	protected $_Y_Space = 0;
 	// NX Nombre d'etiquettes sur la largeur de la page
 	protected $_X_Number = 0;
-	// NY Nombre d'etiquettes sur la hauteur de la page
+	// NY Number of labels on the height of a page
 	protected $_Y_Number = 0;
-	// Largeur de chaque etiquette
+	// width of label
 	protected $_Width = 0;
-	// Hauteur de chaque etiquette
+	// Height of label
 	protected $_Height = 0;
-	// Hauteur des caracteres
+	// Height of characters
 	protected $_Char_Size = 10;
-	// Hauteur par defaut d'une ligne
+	// Height by default of a line
 	protected $_Line_Height = 10;
 	// Type of metric.. Will help to calculate good values
 	protected $_Metric = 'mm';
@@ -134,10 +106,17 @@ abstract class CommonStickerGenerator
 	protected $_COUNTX = 1;
 	protected $_COUNTY = 1;
 	protected $_First = 1;
+	/**
+	 * @var ?array{name:string,paper-size:'custom'|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:int,custom_x:float,custom_y:float}
+	 */
 	public $Tformat;
 
-
+	/**
+	 * @var array<string,array{name:string,paper-size:'custom'|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:int,custom_x:float,custom_y:float}>
+	 */
+	public $_Avery_Labels;
 	// phpcs:enable
+
 	/**
 	 *	Constructor
 	 *
@@ -150,34 +129,35 @@ abstract class CommonStickerGenerator
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Function to build PDF on disk, then output on HTTP strem.
+	 *  Function to build PDF on disk, then output on HTTP stream.
 	 *
-	 *  @param	array		$arrayofrecords  	Array of record informations (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
+	 *  @param  Adherent|array<array{textleft:string,textheader:string,textfooter:string,textright:string,id:string,photo:string}>   $arrayofrecords     Array of record information (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
 	 *  @param  Translate	$outputlangs     	Lang object for output language
 	 *  @param	string		$srctemplatepath	Full path of source filename for generator using a template file
-	 *	@param	string		$outputdir			Output directory for pdf file
-	 *  @return int             				1=OK, 0=KO
+	 *  @param  string		$outputdir			Output directory for pdf file
+	 *  @param  string		$filename           Short file name of output file
+	 *  @return int<-1,1>                       1=OK, <=0=KO
 	 */
-	abstract public function write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir = '');
+	abstract public function write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir = '', $filename = '');
 	// phpcs:enable
 
 	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
 	 *
-	 * @param   TCPDF         $pdf            PDF reference
+	 * @param   TCPDF       $pdf            PDF reference
 	 * @param   Translate  	$outputlangs    Output langs
-	 * @param   array     	$param          Associative array containing label content and optional parameters
+	 * @param   array<string,mixed>		$param	Associative array containing label content and optional parameters
 	 * @return  void
 	 */
 	abstract public function addSticker(&$pdf, $outputlangs, $param);
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Methode qui permet de modifier la taille des caracteres
-	 * Cela modiera aussi l'espace entre chaque ligne
+	 * Method to modify the size of characters
+	 * This will also modify the space between lines
 	 *
-	 * @param    TCPDF        $pdf   PDF reference
-	 * @param    int        $pt    point
+	 * @param    TCPDF      $pdf   PDF reference
+	 * @param    int        $pt    Point
 	 * @return   void
 	 */
 	public function Set_Char_Size(&$pdf, $pt)
@@ -218,7 +198,9 @@ abstract class CommonStickerGenerator
 		for ($i = $x1; $i <= $x2; $i += $Pointilles + $Pointilles) {
 			for ($j = $i; $j <= ($i + $Pointilles); $j++) {
 				if ($j <= ($x2 - 1)) {
+					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					$pdf->Line($j, $y1, $j + 1, $y1); // on trace le pointill? du haut, point par point
+					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					$pdf->Line($j, $y2, $j + 1, $y2); // on trace le pointill? du bas, point par point
 				}
 			}
@@ -226,7 +208,9 @@ abstract class CommonStickerGenerator
 		for ($i = $y1; $i <= $y2; $i += $Pointilles + $Pointilles) {
 			for ($j = $i; $j <= ($i + $Pointilles); $j++) {
 				if ($j <= ($y2 - 1)) {
+					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					$pdf->Line($x1, $j, $x1, $j + 1); // on trace le pointill? du haut, point par point
+					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 					$pdf->Line($x2, $j, $x2, $j + 1); // on trace le pointill? du bas, point par point
 				}
 			}
@@ -243,9 +227,11 @@ abstract class CommonStickerGenerator
 	 * @param int	$y1					Y1
 	 * @param int	$x2					X2
 	 * @param int	$y2					Y2
-	 * @param int	$epaisseur			Epaisseur
+	 * @param float	$epaisseur			Epaisseur
 	 * @param int	$taille             Size
 	 * @return void
+	 *
+	 * @phan-suppress PhanPluginSuspiciousParamPosition
 	 */
 	protected function _Croix(&$pdf, $x1 = 0, $y1 = 0, $x2 = 210, $y2 = 297, $epaisseur = 1, $taille = 4)
 	{
@@ -274,7 +260,7 @@ abstract class CommonStickerGenerator
 	 * Convert units (in to mm, mm to in)
 	 * $src and $dest must be 'in' or 'mm'
 	 *
-	 * @param int       $value  value
+	 * @param float     $value  value
 	 * @param string    $src    from ('in' or 'mm')
 	 * @param string    $dest   to ('in' or 'mm')
 	 * @return float    value   value after conversion
@@ -283,8 +269,8 @@ abstract class CommonStickerGenerator
 	{
 		if ($src != $dest) {
 			$tab = array(
-				'in'=>39.37008,
-				'mm'=>1000
+				'in' => 39.37008,
+				'mm' => 1000
 			);
 			return $value * $tab[$dest] / $tab[$src];
 		}
@@ -304,7 +290,7 @@ abstract class CommonStickerGenerator
 	{
 		// phpcs:enable
 		// Array for link between height of characters and space between lines
-		$_Table_Hauteur_Chars = array(6=>2, 7=>2.5, 8=>3, 9=>3.5, 10=>4, 11=>6, 12=>7, 13=>8, 14=>9, 15=>10);
+		$_Table_Hauteur_Chars = array(6 => 2, 7 => 2.5, 8 => 3, 9 => 3.5, 10 => 4, 11 => 6, 12 => 7, 13 => 8, 14 => 9, 15 => 10);
 		if (in_array($pt, array_keys($_Table_Hauteur_Chars))) {
 			return $_Table_Hauteur_Chars[$pt];
 		} else {
@@ -318,7 +304,7 @@ abstract class CommonStickerGenerator
 	 * protected Set format
 	 *
 	 * @param    TCPDF     $pdf     PDF reference
-	 * @param    string    $format  Format
+	 * @param    array{metric:string,name:string,code?:string,marginLeft:float,marginTop:float,SpaceX:float,SpaceY:float,NX:int,NY:int,width:float,height:float,font-size:int}	$format  Format
 	 * @return   void
 	 */
 	protected function _Set_Format(&$pdf, $format)
@@ -326,7 +312,7 @@ abstract class CommonStickerGenerator
 		// phpcs:enable
 		$this->_Metric = $format['metric'];
 		$this->_Avery_Name = $format['name'];
-		$this->_Avery_Code = empty($format['code'])?'':$format['code'];
+		$this->_Avery_Code = empty($format['code']) ? '' : $format['code'];
 		$this->_Margin_Left = $this->convertMetric($format['marginLeft'], $this->_Metric, $this->_Metric_Doc);
 		$this->_Margin_Top = $this->convertMetric($format['marginTop'], $this->_Metric, $this->_Metric_Doc);
 		$this->_X_Space = $this->convertMetric($format['SpaceX'], $this->_Metric, $this->_Metric_Doc);

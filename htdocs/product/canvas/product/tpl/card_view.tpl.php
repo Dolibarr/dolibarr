@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010-2018 Regis Houssin <regis.houssin@inodbox.com>
+/* Copyright (C) 2010-2018  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,14 +16,20 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @var Conf $conf
+ * @var Translate $langs
+ * @var User $user
+ */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 
 $object = $GLOBALS['object'];
+/** @var Product $object */
 ?>
 
 <!-- BEGIN PHP TEMPLATE product/canvas/product/tpl/card_view.tpl.php -->
@@ -33,10 +40,10 @@ $titre = $langs->trans("CardProduct".$object->type);
 print dol_get_fiche_head($head, 'card', $titre, -1, 'product');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
+$object->next_prev_filter = "(te.fk_product_type:=:".((int) $object->type).")";
 
 $shownav = 1;
-if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) {
+if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
 	$shownav = 0;
 }
 
@@ -71,7 +78,7 @@ dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
 <tr>
 <td><?php echo $langs->trans("Nature"); ?></td>
-<td colspan="2"><?php echo dol_escape_htmltag($object->finished); ?></td>
+<td colspan="2"><?php echo dol_escape_htmltag((string) $object->finished); ?></td>
 </tr>
 
 <tr>

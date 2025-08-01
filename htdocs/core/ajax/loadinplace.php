@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2011-2014 Regis Houssin  <regis.houssin@inodbox.com>
+/* Copyright (C) 2011-2014  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,19 +39,33 @@ if (!defined('NOREQUIRESOC')) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $field = GETPOST('field', 'alpha');
 $element = GETPOST('element', 'alpha');
 $table_element = GETPOST('table_element', 'alpha');
 $fk_element = GETPOST('fk_element', 'alpha');
-$id = $fk_element;
 
 // Load object according to $id and $element
-$object = fetchObjectByElement($id, $element);
+$element_ref = '';
+if (is_numeric($fk_element)) {
+	$id = (int) $fk_element;
+} else {
+	$element_ref = $fk_element;
+	$id = 0;
+}
+$object = fetchObjectByElement($id, $element, $element_ref);
 
 $module = $object->module;
 $element = $object->element;
 $usesublevelpermission = ($module != $element ? $element : '');
-if ($usesublevelpermission && !isset($user->rights->$module->$element)) {	// There is no permission on object defined, we will check permission on module directly
+if ($usesublevelpermission && !$user->hasRight($module, $element)) {	// There is no permission on object defined, we will check permission on module directly
 	$usesublevelpermission = '';
 }
 
@@ -102,10 +118,10 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 		$subelement = 'facture';
 	}
 
-	if ($user->rights->$element->lire || $user->rights->$element->read
-	|| (isset($subelement) && ($user->rights->$element->$subelement->lire || $user->rights->$element->$subelement->read))
+	if ($user->hasRight($element, 'lire') || $user->hasRight($element, 'read')
+	|| (isset($subelement) && ($user->hasRight($element, $subelement, 'lire') || $user->hasRight($element, $subelement, 'read')))
 	|| ($element == 'payment' && $user->hasRight('facture', 'lire'))
-	|| ($element == 'payment_supplier' && $user->rights->fournisseur->facture->lire)) {
+	|| ($element == 'payment_supplier' && $user->hasRight('fournisseur', 'facture', 'lire'))) {
 		if ($type == 'select') {
 			$methodname = 'load_cache_'.$loadmethod;
 			$cachename = 'cache_'.GETPOST('loadmethod', 'alpha');
@@ -127,6 +143,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 				dol_include_once('/'.$module.'/class/actions_'.$subelement.'.class.php');
 				$classname = 'Actions'.ucfirst($subelement);
 				$object = new $classname($db);
+				'@phan-var-force ActionsMulticompany|ActionsAdherentCardCommon|ActionsContactCardCommon|CommonHookActions|ActionsCardProduct|ActionsCardService|ActionsCardCommon $object';
 				$ret = $object->$methodname($fk_element);
 				if ($ret > 0) {
 					echo json_encode($object->$cachename);
@@ -134,7 +151,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 			}
 		} else {
 			$object = new GenericObject($db);
-			$value = $object->$loadmethod($table_element, $fk_element, $field);
+			$value = $object->$loadmethod($table_element, (int) $fk_element, $field);
 			echo $value;
 		}
 	} else {

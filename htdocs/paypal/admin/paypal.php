@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2013	Laurent Destailleur		<eldy@users.sourceforge.org>
  * Copyright (C) 2011-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012  Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 $servicename = 'PayPal';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'other', 'paypal', 'paybox', 'stripe'));
 
@@ -41,6 +51,7 @@ if (!$user->admin) {
 }
 
 $action = GETPOST('action', 'aZ09');
+$error = 0;
 
 if ($action == 'setvalue' && $user->admin) {
 	$db->begin();
@@ -65,7 +76,7 @@ if ($action == 'setvalue' && $user->admin) {
 	if (!($result > 0)) {
 		$error++;
 	}
-	$result = dolibarr_set_const($db, "PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS", GETPOST('PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS', 'int'), 'chaine', 0, '', $conf->entity);
+	$result = dolibarr_set_const($db, "PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS", GETPOSTINT('PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS'), 'chaine', 0, '', $conf->entity);
 	if (!($result > 0)) {
 		$error++;
 	}
@@ -119,7 +130,7 @@ if ($action == 'setvalue' && $user->admin) {
 }
 
 if ($action == "setlive") {
-	$liveenable = GETPOST('value', 'int') ? 0 : 1;
+	$liveenable = GETPOSTINT('value') ? 0 : 1;
 	$res = dolibarr_set_const($db, "PAYPAL_API_SANDBOX", $liveenable, 'yesno', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
@@ -138,7 +149,7 @@ if ($action == "setlive") {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("PaypalSetup"));
+llxHeader('', $langs->trans("PaypalSetup"), '', '', 0, 0, '', '', '', 'mod-paypal page-admin_paypal');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
@@ -245,7 +256,7 @@ print '<input size="64" type="text" name="ONLINE_PAYMENT_CREDITOR" value="'.getD
 print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': '.$mysoc->name.'</span>';
 print '</td></tr>';
 
-if (isModEnabled("banque")) {
+if (isModEnabled("bank")) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("BankAccount").'</td><td>';
 	print img_picto('', 'bank_account').' ';
@@ -256,7 +267,7 @@ if (isModEnabled("banque")) {
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
 print '<input size="64" type="text" name="ONLINE_PAYMENT_CSS_URL" value="'.getDolGlobalString('ONLINE_PAYMENT_CSS_URL').'">';
-print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': http://mysite/mycss.css</span>';
+print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': https://mysite/mycss.css</span>';
 print '</td></tr>';
 
 
@@ -334,7 +345,7 @@ print '</div>';
 
 print dol_get_fiche_end();
 
-print $form->buttonsSaveCancel("Modify", '');
+print $form->buttonsSaveCancel("Save", '');
 
 print '</form>';
 
@@ -363,17 +374,19 @@ print 'Your API authentication information can be found with following steps. We
 print '</div>';
 
 if (!empty($conf->use_javascript_ajax)) {
-	print "\n".'<script type="text/javascript">';
-	print '$(document).ready(function () {
-	            $("#apidoc").hide();
-	            $("#apidoca").click(function() {
-					console.log("We click on apidoca so we show/hide");
-	                $("#apidoc").show();
-	            	$("#apidoca").hide();
-					return false;
-	            })
-			});';
-	print '</script>';
+	print '
+	<script type="text/javascript">
+		$(document).ready(function () {
+			$("#apidoc").hide();
+			$("#apidoca").click(function() {
+				console.log("We click on apidoca so we show/hide");
+				$("#apidoc").show();
+				$("#apidoca").hide();
+				return false;
+			})
+		});
+	</script>
+	';
 }
 
 print '<br><br>';
