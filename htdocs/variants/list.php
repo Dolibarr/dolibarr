@@ -372,7 +372,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 			$objforcount = $db->fetch_object($resql);
 			$nbtotalofrecords = $objforcount->nbtotalofrecords;
 		}
-		if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+		if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 			$page = 0;
 			$offset = 0;
 		}

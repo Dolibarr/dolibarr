@@ -1653,8 +1653,9 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 
 		// Displays title
 		$appli = constant('DOL_APPLICATION_TITLE');
-		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-			$appli = getDolGlobalString('MAIN_APPLICATION_TITLE');
+		$applicustom = getDolGlobalString('MAIN_APPLICATION_TITLE');
+		if ($applicustom) {
+			$appli = (preg_match('/^\+/', $applicustom) ? $appli : '').$applicustom;
 		}
 
 		print '<title>';
@@ -2058,15 +2059,9 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 
 		// Define link to login card
 		$appli = constant('DOL_APPLICATION_TITLE');
-		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-			$appli = getDolGlobalString('MAIN_APPLICATION_TITLE');
-			if (preg_match('/\d\.\d/', $appli)) {
-				if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
-					$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
-				}
-			} else {
-				$appli .= " ".DOL_VERSION;
-			}
+		$applicustom = getDolGlobalString('MAIN_APPLICATION_TITLE');
+		if ($applicustom) {
+			$appli = (preg_match('/^\+/', $applicustom) ? $appli : '').$applicustom;
 		} else {
 			$appli .= " ".DOL_VERSION;
 		}
@@ -2457,15 +2452,9 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 
 	// Define version to show
 	$appli = constant('DOL_APPLICATION_TITLE');
-	if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-		$appli = getDolGlobalString('MAIN_APPLICATION_TITLE');
-		if (preg_match('/\d\.\d/', $appli)) {
-			if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
-				$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
-			}
-		} else {
-			$appli .= " ".DOL_VERSION;
-		}
+	$applicustom = getDolGlobalString('MAIN_APPLICATION_TITLE');
+	if ($applicustom) {
+		$appli = (preg_match('/^\+/', $applicustom) ? $appli : '').$applicustom;
 	} else {
 		$appli .= " ".DOL_VERSION;
 	}
@@ -3326,19 +3315,18 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 			}
 
 			$appli = constant('DOL_APPLICATION_TITLE');
-			if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-				$appli = getDolGlobalString('MAIN_APPLICATION_TITLE');
-				$doliurl = '';
-				if (preg_match('/\d\.\d/', $appli)) {
-					if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
-						$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
-					}
-				} else {
-					$appli .= " ".DOL_VERSION;
-				}
+			$applicustom = getDolGlobalString('MAIN_APPLICATION_TITLE');
+			if ($applicustom) {
+				$appli = (preg_match('/^\+/', $applicustom) ? $appli : '').$applicustom;
 			} else {
 				$appli .= " ".DOL_VERSION;
 			}
+
+			// Clean doliurl if we use a custom application name
+			if ($applicustom) {
+				$doliurl = '';
+			}
+
 			print '<div id="blockvmenuhelpapp" class="blockvmenuhelp">';
 			if ($doliurl) {
 				print '<a class="help" target="_blank" rel="noopener noreferrer" href="'.$doliurl.'">';

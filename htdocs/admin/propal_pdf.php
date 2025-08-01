@@ -143,7 +143,7 @@ print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSOFSALE_PROPAL"), $langs->trans("PdfAddTermOfSaleHelp"));
 print '</td><td>';
 if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('MAIN_PDF_ADD_TERMSOFSALE_PROPAL');
+	print ajax_constantonoff('MAIN_PDF_ADD_TERMSOFSALE_PROPAL', array(), null, 0, 0, 1);
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 	print $form->selectarray("MAIN_PDF_ADD_TERMSOFSALE_PROPAL", $arrval, $conf->global->MAIN_PDF_ADD_TERMSOFSALE_PROPAL);
@@ -164,40 +164,48 @@ print '</td></tr>';
 print '</table>';
 print '</div>';
 
-print load_fiche_titre($langs->trans("FileToConcatToGeneratedPDF"), '', 'file');
-
-print '<div class="div-table-responsive-no-min">';
-print '<table summary="more" class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td width="200px"></td></tr>';
-
-// Terms of sale
-$tooltiptermsofsale = $langs->trans('AvailableFormats').' : pdf';
-$maxfilesizearray = getMaxFileSizeArray();
-$tooltiptermsofsale .= ($maxfilesizearray['maxmin'] > 0) ? '<br>'.$langs->trans('MaxSize').' : '.$maxfilesizearray['maxmin'].' '.$langs->trans('Kb') : '';
-$documenturl = DOL_URL_ROOT.'/document.php';
-if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) {
-	$documenturl = $conf->global->DOL_URL_ROOT_DOCUMENT_PHP;
+if (empty($conf->use_javascript_ajax)) {
+	print '<center><input type="submit" class="button button-edit reposition" value="'.$langs->trans("Save").'"></center>';
 }
-$modulepart = 'propal';
 
-print '<tr class="oddeven"><td><label for="logo">'.$form->textwithpicto($langs->trans("FileToConcatToGeneratedPDF"), $tooltiptermsofsale).'</label></td><td>';
-print '<div class="centpercent nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
-print '<input type="file" class="flat minwidth100 maxwidthinputfileonsmartphone" name="termsofsale" id="termsofsale" accept="application/pdf">';
-if (getDolGlobalString("MAIN_INFO_PROPAL_TERMSOFSALE")) {
-	$termofsale = getDolGlobalString("MAIN_INFO_PROPAL_TERMSOFSALE");
-	if (file_exists($conf->propal->dir_output.'/'.$termofsale)) {
-		$file = dol_dir_list($conf->propal->dir_output, 'files', 0, $termofsale);
-		print '<div class="inline-block valignmiddle marginrightonly"><a href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($termofsale).'">'.$termofsale.'</a>'.$formfile->showPreview($file[0], $modulepart, $termofsale, 0, '');
-		print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removetermsofsale&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
+
+if (getDolGlobalString('MAIN_PDF_ADD_TERMSOFSALE_PROPAL')) {
+	print '<br>';
+	print load_fiche_titre($langs->trans("FileToConcatToGeneratedPDF"), '', 'file');
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table summary="more" class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td width="200px"></td></tr>';
+
+	// Terms of sale
+	$tooltiptermsofsale = $langs->trans('AvailableFormats').' : pdf';
+	$maxfilesizearray = getMaxFileSizeArray();
+	$tooltiptermsofsale .= ($maxfilesizearray['maxmin'] > 0) ? '<br>'.$langs->trans('MaxSize').' : '.$maxfilesizearray['maxmin'].' '.$langs->trans('Kb') : '';
+	$documenturl = DOL_URL_ROOT.'/document.php';
+	if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) {
+		$documenturl = $conf->global->DOL_URL_ROOT_DOCUMENT_PHP;
 	}
+	$modulepart = 'propal';
+
+	print '<tr class="oddeven"><td><label for="logo">'.$form->textwithpicto($langs->trans("FileToConcatToGeneratedPDF"), $tooltiptermsofsale).'</label></td><td>';
+	print '<div class="centpercent nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
+	print '<input type="file" class="flat minwidth100 maxwidthinputfileonsmartphone" name="termsofsale" id="termsofsale" accept="application/pdf">';
+	if (getDolGlobalString("MAIN_INFO_PROPAL_TERMSOFSALE")) {
+		$termofsale = getDolGlobalString("MAIN_INFO_PROPAL_TERMSOFSALE");
+		if (file_exists($conf->propal->dir_output.'/'.$termofsale)) {
+			$file = dol_dir_list($conf->propal->dir_output, 'files', 0, $termofsale);
+			print '<div class="inline-block valignmiddle marginrightonly"><a href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($termofsale).'">'.$termofsale.'</a>'.$formfile->showPreview($file[0], $modulepart, $termofsale, 0, '');
+			print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removetermsofsale&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
+		}
+	}
+	print '</div>';
+	print '</td></tr>';
+	print '</table>';
+	print '</div>';
+
+	print '<center><input type="submit" class="button button-edit reposition" value="'.$langs->trans("Save").'"></center>';
 }
-print '</div>';
-print '</td></tr>';
-print '</table>';
-print '</div>';
 
-
-print '<center><input type="submit" class="button button-edit reposition" value="'.$langs->trans("Save").'"></center>';
 
 print '</form>';
 
