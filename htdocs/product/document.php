@@ -111,7 +111,7 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
-$modulepart = 'produit';
+$modulepart = 'product';
 
 
 if ($object->id > 0) {

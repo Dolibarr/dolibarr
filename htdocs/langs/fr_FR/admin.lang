@@ -1289,7 +1289,7 @@ Delays_MAIN_DELAY_MRP=Fabrication commande en cours
 Delays_MAIN_DELAY_SUPPLIER_PROPALS_TO_CLOSE=fournisseur devis non fermé
 Delays_MAIN_DELAY_SUPPLIER_PROPALS_TO_BILL=fournisseur devis pas facturé
 SetupDescription1=L'espace configuration permet de réaliser le paramétrage initial afin de pouvoir commencer à utiliser l'application.
-SetupDescription2=Les deux étapes obligatoires sont les deux premières entrées dans le menu de configuration, soit
+SetupDescription2=Les deux étapes obligatoires sont les deux premières entrées dans le menu de configuration, soit...
 SetupDescription3=<a href="%s">%s -> %s</a><br><br>Paramètres basiques pour personnaliser le comportement par défaut du logiciel (comportement lié au pays par exemple).
 SetupDescription4=<a href="%s"> %s -> %s </a><br> <br>Ce logiciel est un ensemble de plusieurs modules/applications. Les fonctionnalités en rapport avec vos besoins doivent être activées et configurées. Les entrées menus seront ajoutées avec l'activation de ces modules.
 SetupDescription5=Les autres entrées de configuration gèrent des paramètres facultatifs.

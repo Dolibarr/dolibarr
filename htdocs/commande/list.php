@@ -1057,7 +1057,12 @@ if ($search_status != '') {
 	}
 }
 if ($search_option == 'late') {
-	$sql .= " AND c.date_commande < '".$db->idate(dol_now() - $conf->order->client->warning_delay)."'";
+	// Use delivery date if set and not disabled, otherwise use order date.
+	if (!getDolGlobalString('ORDER_DISABLE_DELIVERY_DATE')) {
+		$sql .= " AND ((c.date_livraison IS NOT NULL AND c.date_livraison < '".$db->idate(dol_now() - $conf->order->client->warning_delay)."') OR (c.date_livraison IS NULL AND c.date_commande < '".$db->idate(dol_now() - $conf->order->client->warning_delay)."'))";
+	} else {
+		$sql .= " AND c.date_commande < '".$db->idate(dol_now() - $conf->order->client->warning_delay)."'";
+	}
 }
 if ($search_datecloture_start) {
 	$sql .= " AND c.date_cloture >= '".$db->idate($search_datecloture_start)."'";
@@ -1306,7 +1311,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -2939,7 +2944,7 @@ while ($i < $imaxinloop) {
 
 		// Note public
 		if (!empty($arrayfields['c.note_public']['checked'])) {
-			print '<td class="sensiblehtmlcontent maxwidth250imp">';
+			print '<td class="sensiblehtmlcontent maxwidth250imp classfortooltip" title="'.dolPrintHTMLForAttribute(dolGetFirstLineOfText($obj->note_public, 20)).'">';
 			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
@@ -2949,7 +2954,7 @@ while ($i < $imaxinloop) {
 
 		// Note private
 		if (!empty($arrayfields['c.note_private']['checked'])) {
-			print '<td class="sensiblehtmlcontent maxwidth250imp">';
+			print '<td class="sensiblehtmlcontent maxwidth250imp classfortooltip" title="'.dolPrintHTMLForAttribute(dolGetFirstLineOfText($obj->note_private, 20)).'">';
 			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 			print '</td>';
 			if (!$i) {

@@ -460,7 +460,7 @@ function isDolTms($timestamp)
  * @param   string	$type		Type of database (mysql, pgsql...)
  * @param	string	$host		Address of database server
  * @param	string	$user		Authorized username
- * @param	string	$pass		Password
+ * @param	string	$pass		Password (clear)
  * @param	string	$name		Name of database
  * @param	int		$port		Port of database server
  * @return	DoliDB				A DoliDB instance
@@ -834,7 +834,7 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *                               'alphawithlgt'=alpha with lgt
  *                               'alphanohtml'=check there is no html content and no " and no ../
  *                               'aZ'=check it's a-z only
- *                               'aZ09'=check it's simple alpha string (recommended for keys)
+ *                               'aZ09'=check it's simple alpha string (recommended for keys, it includes a-z0-9_\-\.)
  *                               'aZ09arobase'=check it's a string for an element type ('myobject@mymodule')
  *                               'aZ09comma'=check it's a string for a sortfield or sortorder
  *                               'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
@@ -1528,7 +1528,6 @@ function dol_include_once($relpath, $classname = '')
 		dol_syslog('functions::dol_include_once Tried to load unexisting file: '.$relpath, LOG_WARNING);
 		return false;
 	}
-
 	if (!empty($classname) && !class_exists($classname)) {
 		return include $fullpath;
 	} else {
@@ -7259,6 +7258,7 @@ function price2num($amount, $rounding = '', $option = 0)
 			//   - `[^,]*,`: Any sequence of characters that is not ',' with ',' accepted as the decimal point (from start of string because of earlier `^`);
 			//   - `[^.]*\.`: Any sequence of characters that is not a '.' with '.' accepted as the decimal point (from start of string.
 			// - `(?<dec>[^.,]*)`: The sequence after the character accepted as the decimal point, not including it.
+			$matches = array();
 			if (preg_match('/^(?<int>[^,]*,|[^.]*\.)(?<dec>[^.,]*)$/u', $amount, $matches)) {
 				$intPart = $matches['int'];
 				$decPart = $matches['dec'];
@@ -7283,15 +7283,15 @@ function price2num($amount, $rounding = '', $option = 0)
 	if ($rounding) {
 		$nbofdectoround = '';
 		if ($rounding == 'MU') {
-			$nbofdectoround = getDolGlobalString('MAIN_MAX_DECIMALS_UNIT');
+			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT');	// usually 5
 		} elseif ($rounding == 'MT') {
-			$nbofdectoround = getDolGlobalString('MAIN_MAX_DECIMALS_TOT');
+			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT');		// usually 2 or 3
 		} elseif ($rounding == 'MS') {
-			$nbofdectoround = isset($conf->global->MAIN_MAX_DECIMALS_STOCK) ? $conf->global->MAIN_MAX_DECIMALS_STOCK : 5;
+			$nbofdectoround = isset($conf->global->MAIN_MAX_DECIMALS_STOCK) ? getDolGlobalInt('MAIN_MAX_DECIMALS_STOCK') : 5;
 		} elseif ($rounding == 'CU') {
-			$nbofdectoround = max(getDolGlobalString('MAIN_MAX_DECIMALS_UNIT'), 8);	// TODO Use param of currency
+			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_CURRENCY_UNIT', getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'));	// TODO Use param of currency
 		} elseif ($rounding == 'CT') {
-			$nbofdectoround = max(getDolGlobalString('MAIN_MAX_DECIMALS_TOT'), 8);		// TODO Use param of currency
+			$nbofdectoround = getDolGlobalInt('MAIN_MAX_DECIMALS_CURRENCY_TOT', getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'));		// TODO Use param of currency
 		} elseif (is_numeric($rounding)) {
 			$nbofdectoround = (int) $rounding;
 		}
