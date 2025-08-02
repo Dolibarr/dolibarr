@@ -1378,9 +1378,9 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 				if ($csslist) {
 					$stringforproperties .= ", 'csslist' => '".$csslist."'";
 				}
-				if ($lang) {
-					$stringforproperties .= ", 'lang' => '".$lang."'";
-				}
+
+				$stringforproperties .= ", 'lang' => '".$lang."'";
+
 				$stringforproperties .= "),\n";
 				$i += 5;
 			}

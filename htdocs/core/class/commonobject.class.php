@@ -4381,6 +4381,22 @@ abstract class CommonObject
 		$this->linkedObjectsIds = array();
 		$this->linkedObjects = array();
 
+		// Hook for allowing modules to completely alter the behavior of the method
+		$parameters = array(
+			'sourceid' => $sourceid,
+			'sourcetype' => $sourcetype,
+			'targetid' => $targetid,
+			'targettype' => $targettype,
+			'clause' => $clause,
+			'alsosametype' => $alsosametype,
+			'orderby' => $orderby,
+			'loadalsoobjects' => $loadalsoobjects
+		);
+		$reshook = $hookmanager->executeHooks('fetchObjectLinked', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			return $reshook;
+		}
+
 		$justsource = false;
 		$justtarget = false;
 		$withtargettype = false;

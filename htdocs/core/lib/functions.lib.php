@@ -11709,6 +11709,18 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 
 			$reg = array();
 			if ($mode == 'add' && !preg_match('/^\-/', $values[1])) {
+				if (count($values) !== 6) {
+					dol_syslog('Tabs module_parts entries must be composed of 6 values separated by ":", but got "'.$value.'". Please check your module descriptor classes.', LOG_ERR);
+					continue;
+				}
+
+				// new declaration with permissions:
+				// $value='objecttype:+tabname1:Title1:langfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__'
+				// $value='objecttype:+tabname1:Title1,class,pathfile,method:langfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__'
+				if ($values[0] != $type) {
+					continue;
+				}
+
 				$newtab = array();
 				$postab = $h;
 				// detect if position set in $values[1] ie : +(2)mytab@mymodule (first tab is 0, second is one, ...)
@@ -11724,96 +11736,57 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 						}
 					}
 				}
-				if (count($values) == 6) {
-					// new declaration with permissions:
-					// $value='objecttype:+tabname1:Title1:langfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__'
-					// $value='objecttype:+tabname1:Title1,class,pathfile,method:langfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__'
-					if ($values[0] != $type) {
-						continue;
-					}
 
-					if (verifCond($values[4], '2')) {
-						if ($values[3]) {
-							if ($filterorigmodule) {	// If a filter of module origin has been requested
-								if (strpos($values[3], '@')) {	// This is an external module
-									if ($filterorigmodule != 'external') {
-										continue;
-									}
-								} else {	// This looks a core module
-									if ($filterorigmodule != 'core') {
-										continue;
-									}
-								}
-							}
-							$langs->load($values[3]);
-						}
-						if (preg_match('/SUBSTITUTION_([^_]+)/i', $values[2], $reg)) {
-							// If label is "SUBSTITUION_..."
-							$substitutionarray = array();
-							complete_substitutions_array($substitutionarray, $langs, $object, array('needforkey' => $values[2]));
-							$label = make_substitutions($reg[1], $substitutionarray);
-						} else {
-							// If label is "Label,Class,File,Method", we call the method to show content inside the badge
-							$labeltemp = explode(',', $values[2]);
-							$label = $langs->trans($labeltemp[0]);
-
-							if (!empty($labeltemp[1]) && is_object($object) && !empty($object->id)) {
-								dol_include_once($labeltemp[2]);
-								$classtoload = $labeltemp[1];
-								if (class_exists($classtoload)) {
-									$obj = new $classtoload($db);
-									$function = $labeltemp[3];
-									if ($obj && $function && method_exists($obj, $function)) {
-										// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
-										$nbrec = $obj->$function($object->id, $obj);
-										if (!empty($nbrec)) {
-											$label .= '<span class="badge marginleftonlyshort">'.$nbrec.'</span>';
-										}
-									}
-								}
-							}
-						}
-
-						$newtab[0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && !empty($object->id)) ? $object->id : ''), $values[5]), 1);
-						$newtab[1] = $label;
-						$newtab[2] = str_replace('+', '', $values[1]);
-						$h++;
-					} else {
-						continue;
-					}
-				} elseif (count($values) == 5) {       // case deprecated
-					dol_syslog('Passing 5 values in tabs module_parts is deprecated. Please update to 6 with permissions.', LOG_WARNING);
-
-					if ($values[0] != $type) {
-						continue;
-					}
-					if ($values[3]) {
-						if ($filterorigmodule) {	// If a filter of module origin has been requested
-							if (strpos($values[3], '@')) {	// This is an external module
-								if ($filterorigmodule != 'external') {
-									continue;
-								}
-							} else {	// This looks a core module
-								if ($filterorigmodule != 'core') {
-									continue;
-								}
-							}
-						}
-						$langs->load($values[3]);
-					}
-					if (preg_match('/SUBSTITUTION_([^_]+)/i', $values[2], $reg)) {
-						$substitutionarray = array();
-						complete_substitutions_array($substitutionarray, $langs, $object, array('needforkey' => $values[2]));
-						$label = make_substitutions($reg[1], $substitutionarray);
-					} else {
-						$label = $langs->trans($values[2]);
-					}
-
-					$newtab[0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && !empty($object->id)) ? $object->id : ''), $values[4]), 1);
-					$newtab[1] = $label;
-					$newtab[2] = str_replace('+', '', $values[1]);
-					$h++;
+				if (!verifCond($values[4], '2')) {
+					continue;
 				}
+
+				if ($values[3]) {
+					if ($filterorigmodule) {	// If a filter of module origin has been requested
+						if (strpos($values[3], '@')) {	// This is an external module
+							if ($filterorigmodule != 'external') {
+								continue;
+							}
+						} else {	// This looks a core module
+							if ($filterorigmodule != 'core') {
+								continue;
+							}
+						}
+					}
+					$langs->load($values[3]);
+				}
+				if (preg_match('/SUBSTITUTION_([^_]+)/i', $values[2], $reg)) {
+					// If label is "SUBSTITUION_..."
+					$substitutionarray = array();
+					complete_substitutions_array($substitutionarray, $langs, $object, array('needforkey' => $values[2]));
+					$label = make_substitutions($reg[1], $substitutionarray);
+				} else {
+					// If label is "Label,Class,File,Method", we call the method to show content inside the badge
+					$labeltemp = explode(',', $values[2]);
+					$label = $langs->trans($labeltemp[0]);
+
+					if (!empty($labeltemp[1]) && is_object($object) && !empty($object->id)) {
+						dol_include_once($labeltemp[2]);
+						$classtoload = $labeltemp[1];
+						if (class_exists($classtoload)) {
+							$obj = new $classtoload($db);
+							$function = $labeltemp[3];
+							if ($obj && $function && method_exists($obj, $function)) {
+								// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
+								$nbrec = $obj->$function($object->id, $obj);
+								if (!empty($nbrec)) {
+									$label .= '<span class="badge marginleftonlyshort">'.$nbrec.'</span>';
+								}
+							}
+						}
+					}
+				}
+
+				$newtab[0] = dol_buildpath(preg_replace('/__ID__/i', ((is_object($object) && !empty($object->id)) ? $object->id : ''), $values[5]), 1);
+				$newtab[1] = $label;
+				$newtab[2] = str_replace('+', '', $values[1]);
+				$h++;
+
 				// set tab at its position
 				$head = array_merge(array_slice($head, 0, $postab), array($newtab), array_slice($head, $postab));
 			} elseif ($mode == 'remove' && preg_match('/^\-/', $values[1])) {
