@@ -388,7 +388,7 @@ if (empty($reshook)) {
 			$object->localtax2_value		= GETPOST('lt2', 'alpha');
 
 			$object->forme_juridique_code	= GETPOSTINT('forme_juridique_code');
-			$object->date_birth				= dol_mktime(0, 0, 0, GETPOSTINT('birthmonth'), GETPOSTINT('birthday'), GETPOSTINT('birthyear'));
+			$object->birth				= dol_mktime(0, 0, 0, GETPOSTINT('birthmonth'), GETPOSTINT('birthday'), GETPOSTINT('birthyear'));
 
 			$object->effectif_id			= GETPOSTINT('effectif_id');
 			$object->typent_id				= GETPOSTINT('typent_id');
@@ -1853,7 +1853,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '</td></tr>';
 
 			// Date birth
-			print '<tr><td>'.$form->editfieldkey('CompnanyBirthDate', 'date_birth', '', $object, 0).'</td>';
+			print '<tr><td>'.$form->editfieldkey('CompnanyBirthDate', 'birth', '', $object, 0).'</td>';
 			print '<td colspan="3" class="maxwidthonsmartphone">';
 			print $form->selectDate('', 'birth', 0, 0, 1, "", 1);
 			print '</td></tr>';
@@ -2703,7 +2703,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</td></tr>';
 
 				// Date birth
-				print '<tr><td>'.$form->editfieldkey('CompnanyBirthDate', 'date_birth', '', $object, 0).'</td>';
+				print '<tr><td>'.$form->editfieldkey('CompnanyBirthDate', 'birth', '', $object, 0).'</td>';
 				print '<td class="maxwidthonsmartphone" colspan="3">';
 				print $form->selectDate('', 'birth', 0, 0, 1, "", 1);
 				print '</td></tr>';
@@ -3225,7 +3225,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td>'.dolPrintHTML($object->forme_juridique).'</td></tr>';
 
 			// Date birth
-			print '<tr><td>'.$langs->trans('CompnanyBirthDate').'</td><td>'.dol_print_date($object->date_birth).'</td></tr>';
+			print '<tr><td>'.$langs->trans('CompnanyBirthDate').'</td><td>'.dol_print_date($object->birth).'</td></tr>';
 
 			// Capital
 			print '<tr><td>'.$langs->trans('Capital').'</td><td>';
