@@ -134,6 +134,7 @@ if ($action == 'update') {
 	}
 }
 
+
 /*
  * View
  */
@@ -158,11 +159,11 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans('OptionMode').'</td>';
 print "</tr>\n";
-print '<tr class="oddeven"><td class="nowraponall"><input type="radio" id="accounting_mode_1" name="accounting_mode" value="RECETTES-DEPENSES"'.($accounting_mode != 'CREANCES-DETTES' ? ' checked' : '').'><label for="accounting_mode_1"> '.$langs->trans('OptionModeTrue').'</label></td>';
+print '<tr class="oddeven"><td class="nowraponall"><input type="radio" id="accounting_mode_2" name="accounting_mode" value="CREANCES-DETTES"'.($accounting_mode != 'RECETTES-DEPENSES' ? ' checked' : '').'><label for="accounting_mode_2"> '.$langs->trans('OptionModeVirtual').'</label></td>';
+print '<td class="opacitymedium">'.nl2br($langs->trans('OptionModeVirtualDesc'))."</td></tr>\n";
+print '<tr class="oddeven"><td class="nowraponall"><input type="radio" id="accounting_mode_1" name="accounting_mode" value="RECETTES-DEPENSES"'.($accounting_mode == 'RECETTES-DEPENSES' ? ' checked' : '').'><label for="accounting_mode_1"> '.$langs->trans('OptionModeTrue').'</label></td>';
 print '<td class="opacitymedium">'.nl2br($langs->trans('OptionModeTrueDesc'));
 print "</td></tr>\n";
-print '<tr class="oddeven"><td class="nowraponall"><input type="radio" id="accounting_mode_2" name="accounting_mode" value="CREANCES-DETTES"'.($accounting_mode == 'CREANCES-DETTES' ? ' checked' : '').'><label for="accounting_mode_2"> '.$langs->trans('OptionModeVirtual').'</label></td>';
-print '<td class="opacitymedium">'.nl2br($langs->trans('OptionModeVirtualDesc'))."</td></tr>\n";
 
 print "</table>\n";
 

@@ -560,8 +560,17 @@ a.commonlink { color: var(--colortextlink) !important; text-decoration: none; }
 input {
 	font-size: unset;
 }
-.tableforfield input, .refidno input {
+.tableforfield input{
 	padding: 2px;
+}
+.refidno input {
+	margin-top: 0 !important;
+	padding: 0;
+}
+.refidno .button.smallpaddingimp {
+	padding: 3px !important;
+	padding-left: 6px !important;
+	padding-right: 6px !important;
 }
 
 /*
@@ -668,8 +677,12 @@ input, select {
 input.button.massactionconfirmed {
 	margin: 4px;
 }
+
 input.short {
 	width: 40px;
+}
+input.shortbis {
+	width: 48px;
 }
 
 input:invalid, select:invalid, input.--error , select.--error {
@@ -1045,9 +1058,6 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	border-bottom-color: #a2a2a2;
 	border-radius: 2px;
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-.refidno .button.smallpaddingimp {
-	font-size: 0.85em !important;
 }
 .button:focus, .buttonDelete:focus  {
 	box-shadow: 0px 0px 6px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
@@ -3781,6 +3791,9 @@ div.vmenu, td.vmenu {
 	display: none;
 	<?php } ?>
 }
+.vmenudisabled {
+	margin-<?php print $left; ?>: 8px !important
+}
 
 .vmenusearchselectcombo {
 	width: <?php echo $leftmenuwidth - 20; ?>px;
@@ -4679,7 +4692,7 @@ div.refidno  {
 	font-weight: normal;
 	color: var(--refidnocolor);
 	font-size: 92%;
-	line-height: 1.3em;
+	line-height: 1.5em;
 }
 div.refidno form {
 	display: inline-block;
@@ -5025,10 +5038,11 @@ tr.liste_titre_topborder td {
 	background: transparent;
 }
 tr.liste_titre:last-child th.liste_titre, tr.liste_titre:last-child th.liste_titre_sel, tr.liste_titre td.liste_titre, tr.liste_titre td.liste_titre_sel, form.liste_titre div.tagtd {				/* For last line of table headers only */
-	/* border-bottom: 1px solid var(--colortopbordertitle1); */
 	border-bottom: none;
 }
-tr.liste_titre_filter th.liste_titre:not(.center) { text-align: unset; }
+tr.liste_titre_filter th.liste_titre:not(.center), tr.liste_titre_filter th.liste_titre_sel:not(.center) {
+	text-align: unset;
+}
 
 /*
 div.liste_titre {

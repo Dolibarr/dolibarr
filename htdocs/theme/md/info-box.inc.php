@@ -100,7 +100,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	<?php echo $prefix; ?>color: #6c6aa8 !important;
 }
 .bg-infobox-action{
-	<?php echo $prefix; ?>color: #a47080  !important;
+	<?php echo $prefix; ?>color: #906080  !important;
 }
 .bg-infobox-propal, .bg-infobox-facture, .bg-infobox-commande {
 	<?php echo $prefix; ?>color: #65953d !important;
@@ -143,7 +143,7 @@ div.login_block_other:not(.takepos) a {
 	color: #6c6aa8;
 }
 .infobox-action{
-	color: #a47080;
+	color: #906080;
 }
 /* Color for customer object */
 .infobox-propal:not(.pictotitle):not(.error),
@@ -480,7 +480,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	color: #605ca8 !important;
 }
 .bg-infobox-action i.fa{
-	color: #d84b80  !important;
+	color: #906080  !important;
 }
 .bg-infobox-propal i.fa,
 .bg-infobox-facture i.fa,

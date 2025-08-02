@@ -964,7 +964,7 @@ print '</tr>';
 if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS')) {
 	// Default Prospect/Customer thirdparty type on customer création
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("DefaultCustomerType").'</td>';
+	print '<td>'.$langs->trans("DefaultCustomerType", $langs->transnoentitiesnoconv("MenuNewThirdParty"), $langs->transnoentitiesnoconv("MenuNewCustomer")).'</td>';
 	print '<td>';
 	print $formcompany->selectProspectCustomerType(getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT'), 'defaultcustomertype', 'defaultcustomertype', 'admin');
 	print '</td>';

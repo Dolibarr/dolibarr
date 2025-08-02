@@ -334,7 +334,7 @@ foreach ($TCurrency as &$currency) {
 	print '<input type="hidden" name="action" value="update_currency">';
 	print '<input type="hidden" name="fk_multicurrency" value="'.$currency->id.'">';
 	print '1 '.$conf->currency.' = ';
-	print '<input type="text" name="rate" class="width75 right" value="'.($currency->rate->rate ? $currency->rate->rate : '').'" size="13">&nbsp;'.$currency->code.'&nbsp;';
+	print '<input type="text" name="rate" class="width125 right" value="'.($currency->rate->rate ? $currency->rate->rate : '').'">&nbsp;'.$currency->code.'&nbsp;';
 	print '<input type="submit" name="updatecurrency" class="button button-edit smallpaddingimp" value="'.$langs->trans("Modify").'">&nbsp;';
 	print '<input type="submit" name="deletecurrency" class="button smallpaddingimp" value="'.$langs->trans("Delete").'">';
 	print '</form>';

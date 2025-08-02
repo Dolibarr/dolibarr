@@ -85,6 +85,7 @@ Seniority=Seniority
 NoEval=No evaluation done for this employee
 HowManyUserWithThisMaxNote=Number of users with this rank
 HighestRank=Highest rank
+ExpectedRank=Expected rank
 SkillComparison=Skill comparison
 ActionsOnJob=Events on this job
 VacantPosition=job vacancy

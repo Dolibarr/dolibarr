@@ -4,7 +4,9 @@ This documentation describe steps to build a BETA or RELEASE versions of Dolibar
 There is a chapter for BETA version and a chapter for a RELEASE version.
 
 
-## Prerequisites on Linux
+## Prerequisites
+
+### On Linux
 
 Prerequisites to build the tgz, debian and rpm packages:
 
@@ -15,27 +17,21 @@ Prerequisites to build autoexe DoliWamp package from Linux (solution seems broke
 `apt-get install wine q4wine`
 
 - Launch "wine cmd" to check a drive Z: pointing to / exists.
-- Install InnoSetup
 
-  For example by running isetup-5.5.8.exe (https://www.jrsoftware.org)  https://files.jrsoftware.org/is/5/
+- Install InnoSetup (For example by running isetup-5.5.8.exe from https://www.jrsoftware.org or https://files.jrsoftware.org/is/5/)
 
-- Install WampServer into "C:\wamp64" to have Apache, PHP and MariaDB
+- Install WampServer into "C:\wamp64" to have Apache, PHP and MariaDB (For example by running wampserver3.2.6_x64.exe from https://www.wampserver.com, see file dev/build/exe/doliwamp.iss to know the version of Wampserver to install).
 
-  For example by running wampserver3.2.6_x64.exe (https://www.wampserver.com).
-See file dev/build/exe/doliwamp.iss to know the doliwamp version currently setup.
+- Add path to ISCC.exe into the PATH windows var (You can do this by launching wine cmd, then regedit and add entry int `HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment\PATH`)
 
-- Add path to ISCC into PATH windows var:
-
-  Launch wine cmd, then regedit and add entry int `HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment\PATH`
-
-- To manually build the .exe from Windows
+- To manually build the .exe from Windows :
 
   Note: running from makepack-dolibarr.pl script is however recommended
   open file dev/build/exe/doliwamp.iss and click on button "Compile".
   The .exe file will be build into directory build.
 
 
-## Prerequisites on Windows
+### On Windows
 
 Prerequisites to build autoexe DoliWamp package from Windows:
 
@@ -60,7 +56,7 @@ Prerequisites to build autoexe DoliWamp package from Windows:
 
 ## Actions to do a BETA
 
-This files describe steps made by Dolibarr packaging team to make a beta version of Dolibarr, step by step.
+This section describes steps made by Dolibarr packaging team to make a beta version of Dolibarr, step by step.
 
 - Check all files are committed.
 - Update version/info in ChangeLog, for this you can:
@@ -102,6 +98,8 @@ git log x.y.z-1.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //
 
 
 ## Actions to do a RELEASE
+
+### On Linux
 
 This files describe steps made by Dolibarr packaging team to make a complete release of Dolibarr, step by step.
 We suppose the branch x.y has already been created during the beta (see previous step) and we want to release a version x.y.z (with z >= 0)
@@ -152,3 +150,10 @@ git log x.y.(z-1)..   | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u
 - Run makepack-dolibarr.pl again with option 99 to publish files on sourceforge. This will also add the official tag x.y.z.
 
 - Post a news message in dolibarr.org web site by cloning a past news + relay the news url on social networks
+
+
+### On Windows
+
+Windows must be used to build the DoliWamp package. And only when the build of packages on Linux has been generated.
+
+Once prerequisites are solved, just run the script *makepack-dolibarr.pl* with option to build the .EXE. You should get the Dolibarr.exe DoliWamp package.

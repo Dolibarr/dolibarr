@@ -2317,7 +2317,7 @@ if ($id > 0) {
 						$canbedisabled = 0;
 					}
 				}
-				if ($id == DICT_TYPE_CONTAINER && in_array($obj->code, array('banner', 'blogpost', 'menu', 'page', 'other', 'service', 'library'))) {
+				if ($id == DICT_TYPE_CONTAINER && $obj->module == 'system') {
 					$iserasable = 0;
 					$canbedisabled = 0;
 					if (in_array($obj->code, array('banner'))) {

@@ -191,11 +191,11 @@ if (empty($user->socid)) {
 $checkedtypetiers = 0;
 $arrayfields = array(
 	// Détail commande
-	'rowid' => array('label' => 'TechnicalID', 'checked' => '-1', 'position' => 1, 'enabled' => '1'),
-	'pr.ref' => array('label' => 'ProductRef', 'checked' => '1', 'position' => 2),
-	'pr.desc' => array('label' => 'ProductDescription', 'checked' => '-1', 'position' => 3),
-	'cdet.qty' => array('label' => 'QtyOrdered', 'checked' => '1', 'position' => 4),
+	'rowid' => array('label' => 'LineID', 'checked' => '-1', 'position' => 1, 'enabled' => '1'),
 	'c.ref' => array('label' => "RefOrder", 'checked' => '1', 'position' => 5),
+	'pr.ref' => array('label' => 'ProductRef', 'checked' => '1', 'position' => 6),
+	'pr.desc' => array('label' => 'ProductDescription', 'checked' => '-1', 'position' => 7),
+	'cdet.qty' => array('label' => 'QtyOrdered', 'checked' => '1', 'position' => 8),
 	'c.ref_client' => array('label' => "RefCustomerOrder", 'checked' => '-1', 'position' => 10),
 	'p.ref' => array('label' => "ProjectRef", 'checked' => '-1', 'enabled' => (string) (int) isModEnabled('project'), 'position' => 20),
 	'p.title' => array('label' => "ProjectLabel", 'checked' => '0', 'enabled' => (string) (int) isModEnabled('project'), 'position' => 25),
@@ -1032,7 +1032,13 @@ if ($resql) {
 		print '<input class="flat searchstring width50" type="text" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
 		print '</td>';
 	}
-	// Détail commande
+	// Ref order
+	if (!empty($arrayfields['c.ref']['checked'])) {
+		print '<td class="liste_titre">';
+		print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+		print '</td>';
+	}
+	// Product ref
 	if (!empty($arrayfields['pr.ref']['checked'])) {
 		print '<td class="liste_titre">';
 		print '<input class="flat" size="6" type="text" name="search_refProduct" value="'.dol_escape_htmltag($search_refProduct).'">';
@@ -1049,12 +1055,6 @@ if ($resql) {
 		print '<td class="liste_titre"></td>';
 	}
 
-	// Ref
-	if (!empty($arrayfields['c.ref']['checked'])) {
-		print '<td class="liste_titre">';
-		print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
-		print '</td>';
-	}
 	// Ref customer
 	if (!empty($arrayfields['c.ref_client']['checked'])) {
 		print '<td class="liste_titre" align="left">';
@@ -1321,10 +1321,13 @@ if ($resql) {
 		print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	}
 
-	// Détail commande
+	// Detail order
 	if (!empty($arrayfields['rowid']['checked'])) {
 		// @phan-suppress-next-line PhanTypeInvalidDimOffset
 		print_liste_field_titre($arrayfields['rowid']['label'], $_SERVER["PHP_SELF"], 'rowid', '', $param, '', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['c.ref']['checked'])) {
+		print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], 'c.ref', '', $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['pr.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['pr.ref']['label'], $_SERVER["PHP_SELF"], 'pr.ref', '', $param, '', $sortfield, $sortorder);
@@ -1336,9 +1339,6 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['cdet.qty']['label'], $_SERVER["PHP_SELF"], 'cdet.qty', '', $param, '', $sortfield, $sortorder);
 	}
 
-	if (!empty($arrayfields['c.ref']['checked'])) {
-		print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], 'c.ref', '', $param, '', $sortfield, $sortorder);
-	}
 	if (!empty($arrayfields['c.ref_client']['checked'])) {
 		print_liste_field_titre($arrayfields['c.ref_client']['label'], $_SERVER["PHP_SELF"], 'c.ref_client', '', $param, '', $sortfield, $sortorder);
 	}
@@ -1611,6 +1611,22 @@ if ($resql) {
 			}
 		}
 
+		// Ref order
+		if (!empty($arrayfields['c.ref']['checked'])) {
+			print '<td class="nowraponall">';
+			print $generic_commande->getNomUrl(1, ($search_status != 2 ? 0 : $obj->fk_statut), 0, 0, 0, 1, 1);
+
+			$filename = dol_sanitizeFileName($obj->ref);
+			$filedir = $conf->commande->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($obj->ref);
+			$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+			print $formfile->getDocumentsLink($generic_commande->element, $filename, $filedir);
+
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
 		// Product Ref
 		if (!empty($arrayfields['pr.ref']['checked'])) {
 			if (!empty($obj->product_rowid)) {
@@ -1657,22 +1673,6 @@ if ($resql) {
 			if (!$i) {
 				$totalarray['pos'][$totalarray['nbfield']] = 'cdet.qty';
 				$totalarray['pos'][$subtotalarray['nbfield']] = 'cdet.qty';
-			}
-		}
-
-		// Ref
-		if (!empty($arrayfields['c.ref']['checked'])) {
-			print '<td class="nowraponall">';
-			print $generic_commande->getNomUrl(1, ($search_status != 2 ? 0 : $obj->fk_statut), 0, 0, 0, 1, 1);
-
-			$filename = dol_sanitizeFileName($obj->ref);
-			$filedir = $conf->commande->multidir_output[$conf->entity].'/'.dol_sanitizeFileName($obj->ref);
-			$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-			print $formfile->getDocumentsLink($generic_commande->element, $filename, $filedir);
-
-			print '</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
 			}
 		}
 

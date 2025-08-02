@@ -458,7 +458,6 @@ if ($action == 'set' && $user->admin) {
 }
 
 
-
 /*
  * View
  */
@@ -1341,8 +1340,11 @@ if ($mode == 'marketplace') {
 					</div>
 					<div class="divsearchfield">
 						<input name="buttonsubmit" class="button buttongen reposition" value="<?php echo $langs->trans('Search') ?>" type="submit">
-						<a class="buttonreset reposition" href="<?php echo $_SERVER["PHP_SELF"].'?mode=marketplace'; ?>"><?php echo $langs->trans('Reset') ?></a>
-
+		<?php
+		if ($search_keyword !== '') {
+			print '<a class="buttonreset reposition" href="'.$_SERVER["PHP_SELF"].'?mode=marketplace">'.$langs->trans('Reset').'</a>';
+		}
+		?>
 						&nbsp;
 					</div>
 		<?php
