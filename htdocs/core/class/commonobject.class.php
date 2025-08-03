@@ -6768,17 +6768,21 @@ abstract class CommonObject
 			$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$attributeKey];
 			$attributeUnique   = $extrafields->attributes[$this->table_element]['unique'][$attributeKey];
 			$attrfieldcomputed = $extrafields->attributes[$this->table_element]['computed'][$attributeKey];
+			$attributeEmptyOnClone = $extrafields->attributes[$this->table_element]['emptyonclone'][$attributeKey];
 
 			// If we clone, we have to clean unique extrafields to prevent duplicates.
+			// If we clone, we have to clean extrafields having "empty on clone" option on.
 			// This behaviour can be prevented by external code by changing $this->context['createfromclone'] value in createFrom hook
-			if (!empty($this->context['createfromclone']) && $this->context['createfromclone'] == 'createfromclone' && !empty($attributeUnique)) {
+			if (!empty($this->context['createfromclone']) && $this->context['createfromclone'] == 'createfromclone' && (!empty($attributeUnique) || !empty($attributeEmptyOnClone))) {
 				$new_array_options[$key] = null;
+				continue;
 			}
 
 			// If we create product combination, we have to clean unique extrafields to prevent duplicates.
 			// This behaviour can be prevented by external code by changing $this->context['createproductcombination'] value in hook
 			if (!empty($this->context['createproductcombination']) && $this->context['createproductcombination'] == 'createproductcombination' && !empty($attributeUnique)) {
 				$new_array_options[$key] = null;
+				continue;
 			}
 
 			// Similar code than into insertExtraFields
@@ -6800,6 +6804,7 @@ abstract class CommonObject
 				} else {
 					$new_array_options[$key] = null;
 				}
+				continue;
 			}
 
 			switch ($attributeType) {
