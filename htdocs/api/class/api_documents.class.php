@@ -634,9 +634,10 @@ class Documents extends DolibarrApi
 
 			$upload_dir = $conf->mrp->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'mrp');
 		} elseif ($modulepart == 'contact' || $modulepart == 'socpeople') {
-				$modulepart = 'contact';
-				require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-				$object = new Contact($this->db);
+			$modulepart = 'contact';
+			require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+
+			$object = new Contact($this->db);
 			$result = $object->fetch($id?$id:$ref);
 			if (!$result) {
 				throw new RestException(404, 'Contact not found');
