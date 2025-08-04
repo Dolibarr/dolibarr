@@ -1309,6 +1309,9 @@ class FormFile
 		// Define relative path used to store the file
 		if (empty($relativepath)) {
 			$relativepath = (!empty($object->ref) ? dol_sanitizeFileName($object->ref) : '').'/';
+			if(!empty($object->element) && $object->element == "societe") {
+				$relativepath = (!empty($object->id) ? dol_sanitizeFileName($object->id) : '').'/';
+			}
 			if (!empty($object->element) && $object->element == 'invoice_supplier') {
 				$relativepath = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$relativepath; // TODO Call using a defined value for $relativepath
 			}
@@ -1583,7 +1586,6 @@ class FormFile
 								$smallfile = getImageFileNameForSize($file['name'], ''); // This is in case no _small image exist
 							}
 							//print $file['path'].'/'.$smallfile.'<br>';
-
 
 							$urlforhref = getAdvancedPreviewUrl($modulepart, $relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(empty($object->entity) ? $conf->entity : $object->entity));
 							if (empty($urlforhref)) {
