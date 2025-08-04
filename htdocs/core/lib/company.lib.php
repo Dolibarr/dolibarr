@@ -1968,7 +1968,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "expedition as s ON a.fk_element = s.rowid AND a.elementtype = 'shipping'"; // Jointure sur la table des expéditions avec condition ON
 		} elseif ( //END MODIF
 			is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid'])
-			&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))  // @phan-suppress-curren-line PhanTypeInvalidDimOffset
+			&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))  // @phan-suppress-current-line PhanTypeInvalidDimOffset
 			&& $filterobj->table_element && $filterobj->element
 		) {
 			$sql .= ", " . MAIN_DB_PREFIX . $filterobj->table_element . " as o";
