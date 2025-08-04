@@ -539,7 +539,7 @@ UPDATE llx_c_country SET numeric_code = '716' WHERE code_iso = 'ZWE';
 
 -- Set field eec
 -- 'MC' Monaco although not a member state is treated as territory of France for customs, VAT(Intra-community VAT rules apply) and excise purposes. https://taxation-customs.ec.europa.eu/taxation/vat/vat-directive/how-does-vat-work/territorial-scope_en
-UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','DK','EE','ES','FI','FR','GR','HR','HU','IE','IT','LT','LU','LV','MC','MT','NL','PL','PT','RO','SE','SI','SK','GP','GY','MQ','RE','YT','MF');
+UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','DK','EE','ES','FI','FR','GR','HR','HU','IE','IT','LT','LU','LV','MC','MT','NL','PL','PT','RO','SE','SI','SK');
 
 -- Source: https://www.europeanpaymentscouncil.eu/document-library/other/epc-list-sepa-scheme-countries
 -- Set field sepa
