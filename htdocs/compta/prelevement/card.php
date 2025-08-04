@@ -80,8 +80,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 $hookmanager->initHooks(array('directdebitprevcard', 'globalcard', 'directdebitprevlist'));
 
 $type = $object->type;
-// check if salary pl
+
+// Check if salary or invoice
 $salaryBonPl = $object->checkIfSalaryBonPrelevement();
+
+// Security check
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
 
@@ -97,7 +100,6 @@ if ($type == 'bank-transfer') {
 	$permissiontocreditdebit = $user->hasRight('prelevement', 'bons', 'credit');
 	$permissiontodelete = $user->hasRight('prelevement', 'bons', 'read');
 }
-
 
 
 /*
@@ -195,7 +197,6 @@ if (empty($reshook)) {
 		}
 	}
 }
-
 
 
 /*
@@ -501,7 +502,7 @@ if ($id > 0 || $ref) {
 	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
-		if (($page * $limit) > $nbtotalofrecords) {
+		if (($page * $limit) > (int) $nbtotalofrecords) {
 			// if total resultset is smaller then paging size (filtering), goto and load page 0
 			$page = 0;
 			$offset = 0;

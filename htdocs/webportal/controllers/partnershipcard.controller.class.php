@@ -34,7 +34,7 @@ class PartnershipCardController extends Controller
 	/**
 	 * @var FormCardWebPortal Form for card
 	 */
-	protected $formCard;
+	public $formCard;
 
 
 	/**

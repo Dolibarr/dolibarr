@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (c) 2002-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
@@ -105,18 +104,18 @@ class Form
 	/**
 	 * Output key field for an editable field
 	 *
-	 * @param 	string		$text 			Text of label or key to translate
-	 * @param 	string		$htmlname 		Name of select field ('edit' prefix will be added)
-	 * @param 	string		$preselected 	Value to show/edit (not used in this function)
-	 * @param 	object		$object 		Object (on the page we show)
-	 * @param 	int<0,1>	$perm 			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
-	 * @param 	string	 	$typeofdata 	Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker' 'checkbox:ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
-	 * @param 	string		$moreparam		More param to add on a href URL.
-	 * @param 	int<0,1>	$fieldrequired	1 if we want to show field as mandatory using the "fieldrequired" CSS.
-	 * @param 	int<0,3>	$notabletag		1=Do not output table tags but output a ':', 2=Do not output table tags and no ':', 3=Do not output table tags but output a ' '
-	 * @param 	string		$paramid 		Key of parameter for id ('id', 'socid')
-	 * @param 	string		$help 			Tooltip help
-	 * @return  string						HTML edit field
+	 * @param 	string				$text 			Text of label or key to translate
+	 * @param 	string				$htmlname 		Name of select field ('edit' prefix will be added)
+	 * @param 	string				$preselected 	Value to show/edit (not used in this function)
+	 * @param 	object				$object 		Object (on the page we show)
+	 * @param 	int<0,1>|boolean	$perm 			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
+	 * @param 	string	 			$typeofdata 	Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker' 'checkbox:ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
+	 * @param 	string				$moreparam		More param to add on a href URL.
+	 * @param 	int<0,1>			$fieldrequired	1 if we want to show field as mandatory using the "fieldrequired" CSS.
+	 * @param 	int<0,3>			$notabletag		1=Do not output table tags but output a ':', 2=Do not output table tags and no ':', 3=Do not output table tags but output a ' '
+	 * @param 	string				$paramid 		Key of parameter for id ('id', 'socid')
+	 * @param 	string				$help 			Tooltip help
+	 * @return  string								HTML edit field
 	 */
 	public function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata = 'string', $moreparam = '', $fieldrequired = 0, $notabletag = 0, $paramid = 'id', $help = '')
 	{
@@ -126,7 +125,7 @@ class Form
 
 		// TODO change for compatibility
 		if (getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE') && !preg_match('/^select;/', $typeofdata)) {
-			if (!empty($perm)) {
+			if ($perm) {
 				$tmp = explode(':', $typeofdata);
 				$ret .= '<div class="editkey_' . $tmp[0] . (!empty($tmp[1]) ? ' ' . $tmp[1] : '') . '" id="' . $htmlname . '">';
 				if ($fieldrequired) {
@@ -2141,13 +2140,13 @@ class Form
 	 * @param int<0,1>|string 	$show_empty 	0=list with no empty value, 1=add also an empty value into list
 	 * @param int[]|null		$exclude 		Array list of users id to exclude
 	 * @param int 				$disabled 		If select list must be disabled
-	 * @param int[]|''|'hierarchy'|'hierarchyme'	$include	Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
+	 * @param int[]|''|'hierarchy'|'hierarchyme'	$include	Array list of users id to include. Use '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
 	 * @param int[]|''			$enableonly 	Array list of users id to be enabled. If defined, it means that others will be disabled
 	 * @param string 			$force_entity 	'0' or list of Ids of environment to force, separated by a comma, or 'default' = do no extend to all entities allowed to superadmin.
 	 * @param int 				$maxlength 		Maximum length of string into list (0=no limit)
 	 * @param int<-1,1>			$showstatus 	0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
 	 * @param string 			$morefilter 	Add more filters into sql request (Example: '(employee:=:1)'). This value must not come from user input.
-	 * @param int<0,1> 			$show_every 	0=default list, 1=add also a value "Everybody" at beginning of list
+	 * @param int<0,3> 			$showalso 		0=default list, 1=add also a value "Everybody" at beginning of list, 2=add also a value "My team" at beginning of list (if user has at least 1 people), 3=add also "Everybody" + "My Team"
 	 * @param string 			$enableonlytext If option $enableonlytext is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
 	 * @param string 			$morecss 		More css
 	 * @param int<0,1> 			$notdisabled 	Show only active users (note: this will also happen, whatever is this option, if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
@@ -2157,14 +2156,14 @@ class Form
 	 * @return string|array<int,string|array{id:int,label:string,labelhtml:string,color:string,picto:string}>	HTML select string
 	 * @see select_dolgroups()
 	 */
-	public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '', $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $notdisabled = 0, $outputmode = 0, $multiple = false, $forcecombo = 0)
+	public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '', $maxlength = 0, $showstatus = 0, $morefilter = '', $showalso = 0, $enableonlytext = '', $morecss = '', $notdisabled = 0, $outputmode = 0, $multiple = false, $forcecombo = 0)
 	{
 		// phpcs:enable
 		global $conf, $user, $langs, $hookmanager;
 		global $action;
 
 		// If no preselected user defined, we take current user
-		if ((is_numeric($selected) && ($selected < -2 || empty($selected))) && !getDolGlobalString('SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE')) {
+		if ((is_numeric($selected) && ($selected < -3 || empty($selected))) && !getDolGlobalString('SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE')) {
 			$selected = $user->id;
 		}
 
@@ -2174,23 +2173,38 @@ class Form
 			$selected = array($selected);
 		}
 
+		// Exclude some users in $excludeUsers string
 		$excludeUsers = null;
-		$includeUsers = null;
-
-		// Exclude some users
 		if (is_array($exclude)) {
 			$excludeUsers = implode(",", $exclude);
 		}
-		// Include some uses
+
+		// Include some users in $includeUsers string
+		$includeUsers = null;
+		$includeUsersArray = array();
 		if (is_array($include)) {
-			$includeUsers = implode(",", $include);
+			$includeUsersArray = $include;
 		} elseif ($include == 'hierarchy') {
-			// Build list includeUsers to have only hierarchy
-			$includeUsers = implode(",", $user->getAllChildIds(0));
+			// Build list includeUsersArray to have only hierarchy
+			$includeUsersArray = $user->getAllChildIds(0);
 		} elseif ($include == 'hierarchyme') {
-			// Build list includeUsers to have only hierarchy and current user
-			$includeUsers = implode(",", $user->getAllChildIds(1));
+			// Build list includeUsersArray to have only hierarchy and current user
+			$includeUsersArray = $user->getAllChildIds(1);
 		}
+		// Get list of allowed users
+		/* We do not limit list of users. Because we should limit this only for combo list into HR features where we may be allowed to
+		 * see all other users and element in other. For example in agenda, we can have permission to read all event of otherusers.
+		 * So we disable this.
+		if (!$user->hasRight('user', 'user', 'lire')) {
+			if (empty($includeUsersArray)) {
+				$includeUsers = implode(",", $user->getAllChildIds(1));
+			} else {
+				$includeUsers = implode(",", array_intersect($includeUsersArray, $user->getAllChildIds(1)));
+			}
+		} else {
+			$includeUsers = implode(",", $includeUsersArray);
+		} */
+		$includeUsers = implode(",", $includeUsersArray);
 
 		$num = 0;
 
@@ -2199,7 +2213,7 @@ class Form
 		$outarray2 = array();
 
 		// Do we want to show the label of entity into the combo list ?
-		$showlabelofentity = isModEnabled('multicompany') && !getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && !empty($user->admin) && empty($user->entity);
+		$showlabelofentity = isModEnabled('multicompany') && !getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && !empty($user->admin) && empty($user->entity) && !preg_match('/^search_/', $htmlname);
 		$userissuperadminentityone = isModEnabled('multicompany') && $conf->entity == 1 && $user->admin && empty($user->entity);
 
 		// Forge request to select users
@@ -2298,7 +2312,23 @@ class Form
 						'picto' => ''
 					);
 				}
-				if ($show_every) {
+				if ($showalso == 2 || $showalso == 3) {
+					$out .= '<option value="-3"' . ((in_array(-3, $selected)) ? ' selected' : '') . '>-- ' . $langs->trans("MyTeam") . ' --</option>' . "\n";
+
+					$hasAtLeastOneSubordinate = (count($user->getAllChildIds(1)) > 1);
+					if ($hasAtLeastOneSubordinate) {
+						//$sql = "SELECT rowid FROM".MAIN_DB_PREFIX."user "
+						$outarray[-3] = '-- ' . $langs->trans("MyTeam") . ' --';
+						$outarray2[-3] = array(
+							'id' => -3,
+							'label' => '-- ' . $langs->trans("MyTeam") . ' --',
+							'labelhtml' => '-- ' . $langs->trans("MyTeam") . ' --',
+							'color' => '',
+							'picto' => ''
+						);
+					}
+				}
+				if ($showalso == 1 || $showalso == 3) {
 					$out .= '<option value="-2"' . ((in_array(-2, $selected)) ? ' selected' : '') . '>-- ' . $langs->trans("Everybody") . ' --</option>' . "\n";
 
 					$outarray[-2] = '-- ' . $langs->trans("Everybody") . ' --';
@@ -5823,7 +5853,7 @@ class Form
 	 * @param 	int<0,1>			$include 		[=0] Removed or 1=Keep only
 	 * @param 	string 				$morecss 		More CSS
 	 * @param	int<0,2>			$useempty		0=No empty value, 1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries. Default is 1.
-	 * @return	string|array<int,string>|array<int,array{id:int,fulllabel:string,color:string,picto:string}>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string}>		String list or Array of categories
+	 * @return	string|array<int,string>|array<int,array{id:int,fulllabel:string,data-html?:string,color:string,picto:string}>|array<int,array{rowid:int,id:int,fk_parent:int,label:string,description:string,color:string,position:string,visible:int,ref_ext:string,picto:string,fullpath:string,fulllabel:string,data-html?:string}>		String list or Array of categories
 	 * @see select_categories()
 	 */
 	public function select_all_categories($type, $selected = '', $htmlname = "parent", $maxlength = 64, $fromid = 0, $outputmode = 0, $include = 0, $morecss = '', $useempty = 1)
@@ -5967,7 +5997,7 @@ class Form
 
 		// Set height automatically if not defined
 		if (empty($height)) {
-			$height = 220;
+			$height = 240;
 			if (is_array($formquestion) && count($formquestion) > 2) {
 				$height += ((count($formquestion) - 2) * 24);
 			}
@@ -6168,8 +6198,7 @@ class Form
 			$formconfirm .= "/* Code for the jQuery('#dialogforpopup').dialog() */\n";
 			$formconfirm .= 'jQuery(document).ready(function() {
             $(function() {
-            	$( "#' . $dialogconfirm . '" ).dialog(
-            	{
+            	$( "#' . $dialogconfirm . '" ).dialog({
                     autoOpen: ' . ($autoOpen ? "true" : "false") . ',';
 			if ($newselectedchoice == 'no') {
 				$formconfirm .= '
@@ -6188,8 +6217,8 @@ class Form
 
 			$formconfirm .= '
                     resizable: false,
-                    height: \'' . ((int) $height) . '\',
-                    width: \'' . ((int) $width) . '\',
+					height: \'' . dol_escape_js($height) . '\',
+                    width: \'' . dol_escape_js($width) . '\',
                     modal: true,
                     closeOnEscape: false,
                     buttons: {
@@ -8113,7 +8142,9 @@ class Form
 
 		if ($typehour == 'select' || $typehour == 'textselect') {
 			$retstring .= '<select class="flat" id="select_' . $prefix . 'min" name="' . $prefix . 'min"' . ($disabled ? ' disabled' : '') . '>';
-			for ($min = 0; $min <= 55; $min += 5) {
+			$step = getDolGlobalInt('MAIN_DURATION_STEP');
+			$duration_step = ($step > 0) ? $step : 5;
+			for ($min = 0; $min <= 59; $min += $duration_step) {
 				$retstring .= '<option value="' . $min . '"';
 				if (is_numeric($minSelected) && $minSelected == $min) {
 					$retstring .= ' selected';
@@ -9097,22 +9128,20 @@ class Form
 		if (!empty($objecttmp->isextrafieldmanaged)) {
 			$sql .= " LEFT JOIN " . $this->db->prefix() . $this->db->sanitize($objecttmp->table_element) . "_extrafields as e ON t.rowid = e.fk_object";
 		}
-		if (!empty($objecttmp->parent_element)) {
+		if (!empty($objecttmp->parent_element)) {	// If parent_element is defined
 			$parent_properties = getElementProperties($objecttmp->parent_element);
 			$sql .= " INNER JOIN " . $this->db->prefix() . $this->db->sanitize($parent_properties['table_element']) . " as o ON o.rowid = t.".$objecttmp->fk_parent_attribute;
 		}
 		if (in_array($objecttmp->parent_element, ['commande', 'propal', 'facture', 'expedition'])) {
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "product as p ON p.rowid = t.fk_product";
 		}
-		if (isset($objecttmp->ismultientitymanaged)) {
+		if (!empty($objecttmp->ismultientitymanaged)) {
+			if ($objecttmp->ismultientitymanaged == 1) {	// @phan-suppress-current-line PhanPluginEmptyStatementIf
+				// No need to join/link another table
+			}
 			if (!is_numeric($objecttmp->ismultientitymanaged)) {
 				$tmparray = explode('@', $objecttmp->ismultientitymanaged);
 				$sql .= " INNER JOIN " . $this->db->prefix() . $this->db->sanitize($tmparray[1]) . " as parenttable ON parenttable.rowid = t." . $this->db->sanitize($tmparray[0]);
-			}
-			if ($objecttmp->ismultientitymanaged === 'fk_soc@societe') {
-				if (!$user->hasRight('societe', 'client', 'voir')) {
-					$sql .= ", " . $this->db->prefix() . "societe_commerciaux as sc";
-				}
 			}
 		}
 
@@ -9129,26 +9158,34 @@ class Form
 			$sql .= $hookmanager->resPrint;
 		} else {
 			$sql .= " WHERE 1=1";
-			if (isset($objecttmp->ismultientitymanaged)) {
+
+			// If table need a multientity restriction
+			if (!empty($objecttmp->ismultientitymanaged)) {
 				if ($objecttmp->ismultientitymanaged == 1) {
 					$sql .= " AND t.entity IN (" . getEntity($objecttmp->table_element) . ")";
 				}
 				if (!is_numeric($objecttmp->ismultientitymanaged)) {
 					$sql .= " AND parenttable.entity = t." . $this->db->sanitize($tmparray[0]);
 				}
-				if ($objecttmp->ismultientitymanaged == 1 && !empty($user->socid)) {
-					if ($objecttmp->element == 'societe') {
-						$sql .= " AND t.rowid = " . ((int) $user->socid);
-					} else {
-						$sql .= " AND t.fk_soc = " . ((int) $user->socid);
-					}
-				}
+				// If the parent table is llx_societe and user is not an external user (a more robust test done later for external users),
+				// then we must also check that user has permissions
 				if ($objecttmp->ismultientitymanaged === 'fk_soc@societe') {
-					if (!$user->hasRight('societe', 'client', 'voir')) {
-						$sql .= " AND t.rowid = sc.fk_soc AND sc.fk_user = " . ((int) $user->id);
+					if (!$user->hasRight('societe', 'client', 'voir') && empty($user->socid)) {
+						$sql .= " AND EXISTS (SELECT sc.rowid FROM ".$this->db->prefix() . "societe_commerciaux as sc";
+						$sql .= " WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 					}
 				}
 			}
+
+			// If user is external user, we must also make a test on llx_societe_commerciaux
+			if (!empty($user->socid)) {
+				if ($objecttmp->element == 'societe') {
+					$sql .= " AND t.rowid = " . ((int) $user->socid);
+				} elseif (!empty($objecttmp->fields['fk_soc']) || !empty($objecttmp->fields['t.fk_soc']) || property_exists($objecttmp, 'fk_soc') || property_exists($objecttmp, 'socid')) {
+					$sql .= " AND t.fk_soc = " . ((int) $user->socid);
+				}
+			}
+
 			$splittedfieldstoshow = explode(',', $fieldstoshow);
 			foreach ($splittedfieldstoshow as &$field2) {
 				if (is_numeric($pos = strpos($field2, ' '))) {
@@ -10815,18 +10852,18 @@ class Form
 	/**
 	 * Return HTML code to output a photo
 	 *
-	 * @param string 	$modulepart 				Key to define module concerned ('societe', 'userphoto', 'memberphoto')
+	 * @param string 	$modulepart 						Key to define module concerned ('societe', 'userphoto', 'memberphoto')
 	 * @param Societe|Adherent|Contact|User|CommonObject	$object	Object containing data to retrieve file name
-	 * @param int 		$width 						Width of photo
-	 * @param int 		$height 					Height of photo (auto if 0)
-	 * @param int<0,1>	$caneditfield 				Add edit fields
-	 * @param string 	$cssclass 					CSS name to use on img for photo
-	 * @param string 	$imagesize 					'mini', 'small' or '' (original)
-	 * @param int<0,1>	$addlinktofullsize 			Add link to fullsize image
-	 * @param int<0,1>	$cache 						1=Accept to use image in cache
-	 * @param ''|'user'|'environment' 	$forcecapture 	'', 'user' or 'environment'. Force parameter capture on HTML input file element to ask a smartphone to allow to open camera to take photo. Auto if ''.
-	 * @param int<0,1>	$noexternsourceoverwrite 	No overwrite image with extern source (like 'gravatar' or other module)
-	 * @return string                            	HTML code to output photo
+	 * @param int 		$width 								Width of photo
+	 * @param int 		$height 							Height of photo (auto if 0)
+	 * @param int<0,1>	$caneditfield 						Add edit fields
+	 * @param string 	$cssclass 							CSS name to use on img for photo
+	 * @param string 	$imagesize 							'mini', 'small' or '' (original)
+	 * @param int<0,1>	$addlinktofullsize 					Add link to fullsize image
+	 * @param int<0,1>	$cache 								1=Accept to use image in cache
+	 * @param ''|'user'|'environment' 	$forcecapture 		'', 'user' (user-facing camera) or 'environment' ('outward-facing camera'). Force the parameter capture on HTML input file element to ask a smartphone to allow to open camera to take photo. Auto if ''.
+	 * @param int<0,1>	$noexternsourceoverwrite 			No overwrite image with extern source (like 'gravatar' or other module)
+	 * @return string                            			HTML code to output photo
 	 * @see getImagePublicURLOfObject()
 	 */
 	public static function showphoto($modulepart, $object, $width = 100, $height = 0, $caneditfield = 0, $cssclass = 'photowithmargin', $imagesize = '', $addlinktofullsize = 1, $cache = 0, $forcecapture = '', $noexternsourceoverwrite = 0)
@@ -11004,7 +11041,7 @@ class Form
 				if ($maxmin > 0) {
 					$ret .= '<input type="hidden" name="MAX_FILE_SIZE" value="' . ($maxmin * 1024) . '">';    // MAX_FILE_SIZE must precede the field type=file
 				}
-				$ret .= '<input type="file" class="flat maxwidth200onsmartphone" name="photo" id="photoinput" accept="image/*"' . ($capture ? ' capture="' . $capture . '"' : '') . '>';
+				$ret .= '<input type="file" class="flat maxwidth200onsmartphone" name="photo" id="photoinput" accept="image/*"' . ($capture ? ' capture="' . dolPrintHTMLForAttribute($capture) . '"' : '') . '>';
 				$ret .= '</td></tr>';
 				$ret .= '</table>';
 			}

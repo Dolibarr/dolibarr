@@ -3547,7 +3547,7 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		if (!dol_strlen($modele)) {
 			$modele = '';	// No doc template/generation by default

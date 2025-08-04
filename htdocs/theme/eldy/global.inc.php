@@ -319,8 +319,9 @@ a.commonlink { color: var(--colortextlink) !important; text-decoration: none; }
 th.liste_titre a div div:hover, th.liste_titre_sel a div div:hover { text-decoration: underline; }
 tr.liste_titre th.liste_titre_sel:not(.maxwidthsearch), tr.liste_titre td.liste_titre_sel:not(.maxwidthsearch),
 tr.liste_titre th.liste_titre:not(.maxwidthsearch), tr.liste_titre td.liste_titre:not(.maxwidthsearch) { opacity: 0.8; }
-/* th.liste_titre_sel a, th.liste_titre a, td.liste_titre_sel a, td.liste_titre a { color: #766; } */
-tr.liste_titre_filter th.liste_titre:not(.center) { text-align: unset; }
+tr.liste_titre_filter th.liste_titre:not(.center), tr.liste_titre_filter th.liste_titre_sel:not(.center) {
+	text-align: unset;
+}
 .liste_titre.trheight5em {
 	height: 4em !important;
 }
@@ -424,9 +425,19 @@ input {
 .liste_titre input {
 	line-height: 1.3em;
 }
-.tableforfield input, .refidno input {
-	padding: 2px;
+.tableforfield input {
+	padding-left: 2px;
 }
+.refidno input {
+	margin-top: 0 !important;
+	padding: 0;
+}
+.refidno .button.smallpaddingimp {
+	padding: 3px !important;
+	padding-left: 6px !important;
+	padding-right: 6px !important;
+}
+
 select {
 	padding-top: 4px;
 	padding-right: 4px;
@@ -541,6 +552,9 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 }
 input.short {
 	width: 40px;
+}
+input.shortbis {
+	width: 48px;
 }
 .nofocusvisible:focus-visible {
 	outline: none;
@@ -3691,6 +3705,9 @@ div.vmenu, td.vmenu {
 	display: none;
 	<?php } ?>
 }
+.vmenudisabled {
+	margin-left: 8px !important;
+}
 
 /* Force vmenusearchselectcombo with type=text differently than without because beautify with select2 affect vmenusearchselectcombo differently */
 input.vmenusearchselectcombo[type=text] {
@@ -4624,7 +4641,7 @@ div.refidno  {
 	font-weight: normal;
 	color: var(--refidnocolor);
 	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>;
-	line-height: 1.4em;
+	line-height: 1.5em;
 }
 div.refaddress div.address {
 	line-height: 1.2em;
@@ -5962,6 +5979,13 @@ div#ui-datepicker-div {
 	background: unset;
 }
 
+/* the button Previous / Next month */
+.ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next {
+	width: 2.5em;
+	height: 2.7em;
+}
+
+
 img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 
 select.ui-datepicker-year {
@@ -7012,6 +7036,7 @@ div#ecm-layout-center {
 	padding-right: 10px !important;
 	padding-top: 10px !important;
 	word-wrap: break-word;
+	max-height: 320px;
 }
 .jnotify-container .jnotify-notification .jnotify-message {
 	font-weight: normal;
@@ -7793,6 +7818,9 @@ dd.dropdowndd ul li {
 	white-space: nowrap;
 }
 
+div.kanban.column div.ui-sortable-helper {
+	transform: rotate(4deg);
+}
 
 /* ============================================================================== */
 /*  Markdown rendering                                                             */

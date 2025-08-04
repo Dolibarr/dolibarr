@@ -125,7 +125,7 @@ abstract class CommonObject
 
 	/**
 	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
+	 * 							0=No test on entity, 1=Test with field entity in local table, 'field@table'=Test entity into the field@table (example 'fk_soc@societe')
 	 */
 	public $ismultientitymanaged;
 
@@ -4380,6 +4380,22 @@ abstract class CommonObject
 
 		$this->linkedObjectsIds = array();
 		$this->linkedObjects = array();
+
+		// Hook for allowing modules to completely alter the behavior of the method
+		$parameters = array(
+			'sourceid' => $sourceid,
+			'sourcetype' => $sourcetype,
+			'targetid' => $targetid,
+			'targettype' => $targettype,
+			'clause' => $clause,
+			'alsosametype' => $alsosametype,
+			'orderby' => $orderby,
+			'loadalsoobjects' => $loadalsoobjects
+		);
+		$reshook = $hookmanager->executeHooks('fetchObjectLinked', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			return $reshook;
+		}
 
 		$justsource = false;
 		$justtarget = false;
@@ -9773,7 +9789,7 @@ abstract class CommonObject
 	 * @param float		$unitPrice			Product unit price
 	 * @param float		$discountPercent	Line discount percent
 	 * @param int		$fk_product			Product id
-	 * @return float|int<-1,-1>				Return buy price if OK, integer <0 if KO
+	 * @return float|int<-2,-1>				Return buy price if OK, integer <0 if KO
 	 */
 	public function defineBuyPrice($unitPrice = 0.0, $discountPercent = 0.0, $fk_product = 0)
 	{
@@ -9826,7 +9842,8 @@ abstract class CommonObject
 				}
 			}
 		}
-		return $buyPrice;
+
+		return (float) $buyPrice;
 	}
 
 	/**
@@ -10789,6 +10806,9 @@ abstract class CommonObject
 
 		if (array_key_exists('date_modification', $fieldvalues) && empty($fieldvalues['date_modification'])) {
 			$fieldvalues['date_modification'] = $this->db->idate($now);
+		}
+		if (getDolGlobalString('MAIN_DISABLE_AUTO_UPDATE_OF_TMS_FIELDS') && array_key_exists('tms', $fieldvalues)) {
+			$fieldvalues['tms'] = $this->db->idate($now);
 		}
 		if (array_key_exists('fk_user_modif', $fieldvalues) && !($fieldvalues['fk_user_modif'] > 0)) {
 			$fieldvalues['fk_user_modif'] = $user->id;

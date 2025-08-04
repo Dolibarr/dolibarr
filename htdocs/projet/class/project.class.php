@@ -1415,7 +1415,7 @@ class Project extends CommonObject
 	 *
 	 * 	@param	int<0,2>	$withpicto		          0=No picto, 1=Include picto into link, 2=Only picto
 	 * 	@param	string		$option			          Variant where the link point to ('', 'nolink')
-	 * 	@param	int			$addlabel		          0=Default, 1=Add label into string, >1=Add first chars into string
+	 * 	@param	int			$addlabel		          0=Default, 1=Add label into string, n>1=Add the n first chars of label in ref, -1=Label replace the ref
 	 *  @param	string		$moreinpopup	          Text to add into popup
 	 *  @param	string		$sep			          Separator between ref and label if option addlabel is set
 	 *  @param	int<0,1>   	$notooltip		          1=Disable tooltip
@@ -1505,11 +1505,15 @@ class Project extends CommonObject
 			$result .= img_object(($notooltip ? '' : $label), $picto, 'class="pictofixedwidth em088"', 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
-			$result .= $this->ref;
+			if ($addlabel >= 0) {
+				$result .= $this->ref;
+			} else {
+				$result .= $this->title;
+			}
 		}
 		$result .= $linkend;
 		if ($withpicto != 2) {
-			$result .= (($addlabel && $this->title) ? '<span class="opacitymedium">'.$sep.dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)).'</span>' : '');
+			$result .= (($addlabel > 0 && $this->title) ? '<span class="opacitymedium">'.$sep.dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)).'</span>' : '');
 		}
 
 		global $action;

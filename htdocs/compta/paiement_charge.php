@@ -323,7 +323,8 @@ if ($action == 'create') {
 	print '</div>';
 
 	// Save payment button
-	print '<br><div class="center"><input type="checkbox" checked name="closepaidcontrib"> '.$langs->trans("ClosePaidContributionsAutomatically");
+	print '<br><div class="center"><input type="checkbox" checked name="closepaidcontrib" id="closepaidcontrib" class="marginrightonly">';
+	print '<label for="closepaidcontrib">'.$langs->trans("ClosePaidContributionsAutomatically").'</span>';
 	print '<br><input type="submit" class="button" name="save" value="'.$langs->trans('ToMakePayment').'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';

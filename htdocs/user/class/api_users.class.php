@@ -90,7 +90,7 @@ class Users extends DolibarrApi
 		$obj_ret = array();
 
 		// case of external user, $societe param is ignored and replaced by user's socid
-		//$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $societe;
+		//$socid = DolibarrApiAccess::$user->socid ?: $societe;
 
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user AS t LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
@@ -275,7 +275,9 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * Get more properties of a user
+	 * Get more properties of the current user (so user of API token).
+	 *
+	 * This route could also ave been named "/users/me".
 	 *
 	 * @since	11.0.0	Initial implementation
 	 *
@@ -301,7 +303,7 @@ class Users extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed to current logged user');
 		}
 
 		if ($includepermissions) {
@@ -612,7 +614,7 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * List groups
+	 * List groups of the current user (so user of API token)
 	 *
 	 * Return an array with a list of Groups
 	 *
@@ -645,7 +647,7 @@ class Users extends DolibarrApi
 		}
 
 		// case of external user, $societe param is ignored and replaced by user's socid
-		//$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $societe;
+		//$socid = DolibarrApiAccess::$user->socid ?: $societe;
 
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."usergroup AS t LEFT JOIN ".MAIN_DB_PREFIX."usergroup_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields

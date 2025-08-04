@@ -1187,7 +1187,7 @@ if (isModEnabled("propal") && $user->hasRight("propal", "lire")) {
 				$filename = dol_sanitizeFileName($obj->ref);
 				$filedir = $conf->propal->multidir_output[$obj->entity].'/'.dol_sanitizeFileName($obj->ref);
 				//$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->propalid;
-				$warning = ($db->jdate($obj->dfv) < ($now - $conf->propal->cloture->warning_delay)) ? img_warning($langs->trans("Late")) : '';
+				$warning = ($db->jdate($obj->dfv) < ($now - getWarningDelay('propal', 'cloture'))) ? img_warning($langs->trans("Late")) : '';
 
 				print '<tr class="oddeven">';
 

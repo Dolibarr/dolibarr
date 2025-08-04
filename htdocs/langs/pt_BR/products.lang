@@ -45,7 +45,6 @@ SoldAmount=Total vendido
 PurchasedAmount=Total comprado
 MinPrice=Preço mínimo de venda
 MinPriceTTC=Preço mínimo de venda (incl. impostos)
-ContractStatusClosed=Encerrado
 ErrorProductBadRefOrLabel=O valor da referencia ou etiqueta é incorreto
 ErrorProductClone=Aconteceu um problema durante a clonação do produto ou serviço.
 SupplierRef=Código do produto (SKU) do fornecedor

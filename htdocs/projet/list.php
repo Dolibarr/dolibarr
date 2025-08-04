@@ -105,8 +105,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $search_all = GETPOST('search_all', 'alphanohtml');
-$search_entity = ($user->entity > 0 ? $user->entity : GETPOSTINT('search_entity'));
-
+$search_entity = GETPOSTINT('search_entity');
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_label = GETPOST("search_label", 'alpha');
 $search_societe = GETPOST("search_societe", 'alpha');
@@ -618,11 +617,10 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON p.fk_user_creat = u.rowid';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-
 if ($search_entity > 0) {
 	$sql .= " WHERE p.entity = ".((int) $search_entity);
 } else {
-	$sql .= " WHERE p.entity IN (".getEntity('project', (GETPOSTINT('search_current_entity') ? 0 : 1)).')';
+	$sql .= " WHERE p.entity IN (".getEntity('project').')';
 }
 if (!$user->hasRight('projet', 'all', 'lire')) {
 	$sql .= " AND p.rowid IN (".$db->sanitize($projectsListId).")"; // public and assigned to, or restricted to company for external users
@@ -874,7 +872,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -965,7 +963,7 @@ if ($search_date_start_startday) {
 	$param .= '&search_date_start_startday='.urlencode((string) ($search_date_start_startday));
 }
 if ($search_date_start_start) {
-	$param .= '&search_date_start_start='.urlencode($search_date_start_start);
+	$param .= '&search_date_start_start='.urlencode((string) $search_date_start_start);
 }
 if ($search_date_start_endmonth) {
 	$param .= '&search_date_start_endmonth='.urlencode((string) ($search_date_start_endmonth));
@@ -989,7 +987,7 @@ if ($search_date_end_startday) {
 	$param .= '&search_date_end_startday='.urlencode((string) ($search_date_end_startday));
 }
 if ($search_date_end_start) {
-	$param .= '&search_date_end_start='.urlencode($search_date_end_start);
+	$param .= '&search_date_end_start='.urlencode((string) $search_date_end_start);
 }
 if ($search_date_end_endmonth) {
 	$param .= '&search_date_end_endmonth='.urlencode((string) ($search_date_end_endmonth));
@@ -1001,7 +999,7 @@ if ($search_date_end_endday) {
 	$param .= '&search_date_end_endday='.urlencode((string) ($search_date_end_endday));
 }
 if ($search_date_end_end) {
-	$param .= '&search_date_end_end=' . urlencode($search_date_end_end);
+	$param .= '&search_date_end_end=' . urlencode((string) $search_date_end_end);
 }
 if ($search_date_creation_startmonth) {
 	$param .= '&search_date_creation_startmonth='.urlencode((string) ($search_date_creation_startmonth));
@@ -1013,7 +1011,7 @@ if ($search_date_creation_startday) {
 	$param .= '&search_date_creation_startday='.urlencode((string) ($search_date_creation_startday));
 }
 if ($search_date_creation_start) {
-	$param .= '&search_date_creation_start='.urlencode($search_date_creation_start);
+	$param .= '&search_date_creation_start='.urlencode((string) $search_date_creation_start);
 }
 if ($search_date_creation_endmonth) {
 	$param .= '&search_date_creation_endmonth='.urlencode((string) ($search_date_creation_endmonth));
@@ -1037,7 +1035,7 @@ if ($search_date_modif_startday) {
 	$param .= '&search_date_modif_startday='.urlencode((string) ($search_date_modif_startday));
 }
 if ($search_date_modif_start) {
-	$param .= '&search_date_modif_start='.urlencode($search_date_modif_start);
+	$param .= '&search_date_modif_start='.urlencode((string) $search_date_modif_start);
 }
 if ($search_date_modif_endmonth) {
 	$param .= '&search_date_modif_endmonth='.urlencode((string) ($search_date_modif_endmonth));
@@ -1049,7 +1047,7 @@ if ($search_date_modif_endday) {
 	$param .= '&search_date_modif_endday='.urlencode((string) ($search_date_modif_endday));
 }
 if ($search_date_modif_end) {
-	$param .= '&search_date_modif_end=' . urlencode($search_date_modif_end);
+	$param .= '&search_date_modif_end=' . urlencode((string) $search_date_modif_end);
 }
 if (!empty($search_category_array)) {
 	foreach ($search_category_array as $tmpval) {

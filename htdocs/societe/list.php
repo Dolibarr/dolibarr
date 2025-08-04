@@ -367,42 +367,6 @@ $permissiontoadd = $user->hasRight('societe', 'lire');
  * Actions
  */
 
-if ($action == "change" && $user->hasRight('takepos', 'run')) {	// Change customer for TakePOS
-	$idcustomer = GETPOSTINT('idcustomer');
-
-	// Check if draft invoice already exists, if not create it
-	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' AND entity IN (".getEntity('invoice').")";
-	$result = $db->query($sql);
-	$num_lines = $db->num_rows($result);
-	if ($num_lines == 0) {
-		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-		$invoice = new Facture($db);
-		$constforthirdpartyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
-		$invoice->socid = getDolGlobalInt($constforthirdpartyid);
-		$invoice->date = dol_now();
-		$invoice->module_source = 'takepos';
-		$invoice->pos_source = $_SESSION["takeposterminal"];
-		$placeid = $invoice->create($user);
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid = ".((int) $placeid);
-		$db->query($sql);
-	}
-
-	$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".((int) $idcustomer)." where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
-	$resql = $db->query($sql); ?>
-		<script>
-		console.log("Reload page invoice.php with place=<?php print $place; ?>");
-		parent.$("#poslines").load("invoice.php?place=<?php print $place; ?>", function() {
-			//parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
-			<?php if (!$resql) { ?>
-				alert('Error failed to update customer on draft invoice.');
-			<?php } ?>
-			parent.$.colorbox.close(); /* Close the popup */
-		});
-		</script>
-	<?php
-	exit;
-}
-
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
@@ -418,6 +382,42 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	if ($action == "change" && $user->hasRight('takepos', 'run')) {	// Change customer for TakePOS
+		$idcustomer = GETPOSTINT('idcustomer');
+
+		// Check if draft invoice already exists, if not create it
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$db->escape($place).")' AND entity IN (".getEntity('invoice').")";
+		$result = $db->query($sql);
+		$num_lines = $db->num_rows($result);
+		if ($num_lines == 0) {
+			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			$invoice = new Facture($db);
+			$constforthirdpartyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
+			$invoice->socid = getDolGlobalInt($constforthirdpartyid);
+			$invoice->date = dol_now();
+			$invoice->module_source = 'takepos';
+			$invoice->pos_source = $_SESSION["takeposterminal"];
+			$placeid = $invoice->create($user);
+			$sql = "UPDATE ".MAIN_DB_PREFIX."facture set ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")' where rowid = ".((int) $placeid);
+			$db->query($sql);
+		}
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_soc=".((int) $idcustomer)." where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$db->escape($place).")'";
+		$resql = $db->query($sql); ?>
+			<script>
+			console.log("Reload page invoice.php with place=<?php print $place; ?>");
+			parent.$("#poslines").load("invoice.php?place=<?php print $place; ?>", function() {
+				//parent.$("#poslines").scrollTop(parent.$("#poslines")[0].scrollHeight);
+				<?php if (!$resql) { ?>
+					alert('Error failed to update customer on draft invoice.');
+				<?php } ?>
+				parent.$.colorbox.close(); /* Close the popup */
+			});
+			</script>
+		<?php
+		exit;
+	}
+
 	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
@@ -897,7 +897,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -1117,7 +1117,7 @@ if ($search_date_creation_startday) {
 	$param .= '&search_date_creation_startday='.urlencode((string) ($search_date_creation_startday));
 }
 if ($search_date_creation_start) {
-	$param .= '&search_date_creation_start='.urlencode($search_date_creation_start);
+	$param .= '&search_date_creation_start='.urlencode((string) $search_date_creation_start);
 }
 if ($search_date_creation_endmonth) {
 	$param .= '&search_date_creation_endmonth='.urlencode((string) ($search_date_creation_endmonth));
@@ -1129,7 +1129,7 @@ if ($search_date_creation_endday) {
 	$param .= '&search_date_creation_endday='.urlencode((string) ($search_date_creation_endday));
 }
 if ($search_date_creation_end) {
-	$param .= '&search_date_creation_end='.urlencode($search_date_creation_end);
+	$param .= '&search_date_creation_end='.urlencode((string) $search_date_creation_end);
 }
 if ($search_date_modif_startmonth) {
 	$param .= '&search_date_modif_startmonth='.urlencode((string) ($search_date_modif_startmonth));
@@ -1141,7 +1141,7 @@ if ($search_date_modif_startday) {
 	$param .= '&search_date_modif_startday='.urlencode((string) ($search_date_modif_startday));
 }
 if ($search_date_modif_start) {
-	$param .= '&search_date_modif_start='.urlencode($search_date_modif_start);
+	$param .= '&search_date_modif_start='.urlencode((string) $search_date_modif_start);
 }
 if ($search_date_modif_endmonth) {
 	$param .= '&search_date_modif_endmonth='.urlencode((string) ($search_date_modif_endmonth));
@@ -1153,7 +1153,7 @@ if ($search_date_modif_endday) {
 	$param .= '&search_date_modif_endday='.urlencode((string) ($search_date_modif_endday));
 }
 if ($search_date_modif_end) {
-	$param .= '&search_date_modif_end=' . urlencode($search_date_modif_end);
+	$param .= '&search_date_modif_end=' . urlencode((string) $search_date_modif_end);
 }
 
 // Add $param from extra fields
@@ -2325,7 +2325,7 @@ while ($i < $imaxinloop) {
 		// Note public
 		if (!empty($arrayfields['s.note_public']['checked'])) {
 			print '<td class="flat maxwidth250imp">';
-			print '<div class="small lineheightsmall">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public), 5).'</div>';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2334,7 +2334,7 @@ while ($i < $imaxinloop) {
 		// Note private
 		if (!empty($arrayfields['s.note_private']['checked'])) {
 			print '<td class="flat maxwidth250imp">';
-			print '<div class="small lineheightsmall">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private), 5).'</div>';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

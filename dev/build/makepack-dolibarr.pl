@@ -515,6 +515,8 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.codeclimate.yml`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.externalToolBuilders`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.git*`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/.mailmap`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/.phpunit.result.cache`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.project`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.pydevproject`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/.settings`;
@@ -1049,7 +1051,7 @@ if ($nboftargetok) {
 			$ret=`cp -fr "$SOURCE/dev/build/debian/apache"         "$BUILDROOT/$PROJECT.tmp/debian/apache"`;
 			$ret=`cp -f  "$SOURCE/dev/build/debian/apache/.htaccess" "$BUILDROOT/$PROJECT.tmp/debian/apache"`;
 			$ret=`cp -fr "$SOURCE/dev/build/debian/lighttpd"       "$BUILDROOT/$PROJECT.tmp/debian/lighttpd"`;
-			# Add files also required to dev/build binary package
+			# Add files also required to build binary package
 			$ret=`cp -f  "$SOURCE/dev/build/debian/dolibarr.config"         "$BUILDROOT/$PROJECT.tmp/debian"`;
 			$ret=`cp -f  "$SOURCE/dev/build/debian/dolibarr.postinst"       "$BUILDROOT/$PROJECT.tmp/debian"`;
 			$ret=`cp -f  "$SOURCE/dev/build/debian/dolibarr.postrm"         "$BUILDROOT/$PROJECT.tmp/debian"`;

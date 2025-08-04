@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2019 Laurent Destailleur          <eldy@users.sourceforge.net>
+/* Copyright (C) 2019 		Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
@@ -266,11 +266,14 @@ foreach ($dirmodels as $reldir) {
 						$bom = new BOM($db);
 						$bom->initAsSpecimen();
 
+						$tmpprod = new Product($db);
+						$tmpprod->initAsSpecimen();
+
 						// Info
 						$htmltooltip = '';
 						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 						$bom->type = 0;
-						$nextval = $module->getNextValue($mysoc, $bom);
+						$nextval = $module->getNextValue($tmpprod, $bom);
 						if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
 							$htmltooltip .= ''.$langs->trans("NextValue").': ';
 							if ($nextval) {

@@ -26,13 +26,23 @@
  */
 
 include 'inc.php';
+
+/**
+ * @var string	$conffile
+ * @var string	$conffiletoshow
+ *
+ * @var Conf $conf
+ * @var Translate $langs
+ *
+ * @var string	$dolibarr_main_document_root
+ */
+
 require_once $dolibarr_main_document_root.'/core/class/conf.class.php';
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
 
 global $langs;
 
-$step = 2;
 $ok = 0;
 
 

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025       Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,7 +103,7 @@ if ($action == "getCategories") {
 	}
 	*/
 	foreach ($cate_arbo as $categ) {
-		$response[] = array('id' => $categ['id'], 'label' => $categ['label'], 'fulllabel' => $categ['fulllabel'], 'htmlforoption' => dolPrintHTML($categ['fulllabel']), 'htmlforattribute' => dolPrintHTMLForAttribute($categ['data-html']), 'color' => $categ['color']);
+		$response[] = array('id' => $categ['id'], 'label' => $categ['label'], 'fulllabel' => $categ['fulllabel'], 'htmlforoption' => dolPrintHTML((string) $categ['fulllabel']), 'htmlforattribute' => dolPrintHTMLForAttribute((string) $categ['data-html']), 'color' => $categ['color']);
 	}
 	$response =json_encode($response);
 	echo $response;

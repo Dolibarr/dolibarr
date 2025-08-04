@@ -6,7 +6,7 @@
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,10 +43,30 @@
 
 define('ALLOWED_IF_UPGRADE_UNLOCK_FOUND', 1);
 include_once 'inc.php';
+
+/**
+ * @var string	$conffile
+ */
+
 if (!file_exists($conffile)) {
 	print 'Error: Dolibarr config file was not found. This may means that Dolibarr is not installed yet. Please call the page "/install/index.php" instead of "/install/upgrade.php").';
 }
 require_once $conffile;
+/**
+ * @var Conf $conf
+ * @var Translate $langs
+ *
+ * @var string	$dolibarr_main_db_type
+ * @var string	$dolibarr_main_db_host
+ * @var string	$dolibarr_main_db_port
+ * @var string	$dolibarr_main_db_name
+ * @var string	$dolibarr_main_db_user
+ * @var string	$dolibarr_main_db_pass
+ * @var string	$dolibarr_main_document_root
+ * @var string	$dolibarr_main_db_encryption
+ * @var string	$dolibarr_main_db_encrypted_pass
+ * @var string	$dolibarr_main_db_cryptkey
+ */
 require_once $dolibarr_main_document_root.'/compta/facture/class/facture.class.php';
 require_once $dolibarr_main_document_root.'/comm/propal/class/propal.class.php';
 require_once $dolibarr_main_document_root.'/contrat/class/contrat.class.php';
@@ -59,13 +79,11 @@ require_once $dolibarr_main_document_root.'/core/lib/files.lib.php';
 
 global $langs;
 
-$grant_query = '';
-$step = 2;
+
 $error = 0;
 
 
-// Cette page peut etre longue. On augmente le delai autorise.
-// Ne fonctionne que si on est pas en safe_mode.
+// This page can be long. We increase the allowed delay, but this does not work when we are in safe_mode.
 $err = error_reporting();
 error_reporting(0);
 if (getDolGlobalString('MAIN_OVERRIDE_TIME_LIMIT')) {
@@ -131,14 +149,17 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	print '<table class="centpercent">';
 
 	// If password is encoded, we decode it
-	if ((!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) || !empty($dolibarr_main_db_encrypted_pass)) {
+	if ((!empty($dolibarr_main_db_pass) && preg_match('/(crypted|dolcrypt):/i', (string) $dolibarr_main_db_pass)) || !empty($dolibarr_main_db_encrypted_pass)) {
 		require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
 		if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
-			$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
-			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
+			$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', (string) $dolibarr_main_db_pass);
 			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially encrypted
+			$dolibarr_main_db_pass = dol_decode((string) $dolibarr_main_db_pass);
+		} elseif (preg_match('/dolcrypt:/i', (string) $dolibarr_main_db_pass)) {
+			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially encrypted
+			$dolibarr_main_db_pass = dolDecrypt((string) $dolibarr_main_db_pass);
 		} else {
-			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
+			$dolibarr_main_db_pass = dol_decode((string) $dolibarr_main_db_encrypted_pass);
 		}
 	}
 
@@ -230,16 +251,22 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	$db->begin();
 
 	foreach ($listofentities as $entity) {
+		dol_syslog("Process upgrade2 for entity ".$entity);
+
 		// Set $conf context for entity
 		$conf->setEntityValues($db, $entity);
+
 		// Reset forced setup after the setValues
 		if (defined('SYSLOG_FILE')) {
 			$conf->global->SYSLOG_FILE = constant('SYSLOG_FILE');
 		}
-		$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
+
+		$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;		// Add also log into conf->logbuffer.
 
 		$versiontoarray = array();
 		$versionranarray = array();
+
+		dol_syslog("Process upgrade2 d for entity ".$entity);
 
 		if (!$error) {
 			if (count($listofentities) > 1) {
@@ -257,10 +284,11 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$versiontoarray = explode('.', $versionto);
 			$versionranarray = explode('.', DOL_VERSION);
 
-
 			$afterversionarray = explode('.', '2.0.0');
 			$beforeversionarray = explode('.', '2.7.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
+
 				// Script pour V2 -> V2.1
 				migrate_paiements($db, $langs, $conf);
 
@@ -324,6 +352,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$beforeversionarray = explode('.', '2.8.9');
 			//print $versionto.' '.versioncompare($versiontoarray,$afterversionarray).' '.versioncompare($versiontoarray,$beforeversionarray);
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
+
 				migrate_price_facture($db, $langs, $conf); // Code of this function works for 2.8+ because need a field tva_tx
 
 				migrate_relationship_tables($db, $langs, $conf, 'co_exp', 'fk_commande', 'commande', 'fk_expedition', 'shipping');
@@ -349,6 +379,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$afterversionarray = explode('.', '2.8.9');
 			$beforeversionarray = explode('.', '2.9.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
+
 				migrate_element_time($db, $langs, $conf);
 
 				migrate_customerorder_shipping($db, $langs, $conf);
@@ -369,6 +401,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$afterversionarray = explode('.', '3.0.9');
 			$beforeversionarray = explode('.', '3.1.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
+
 				migrate_rename_directories($db, $langs, $conf, '/rss', '/externalrss');
 
 				migrate_actioncomm_element($db, $langs, $conf);
@@ -378,6 +412,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$afterversionarray = explode('.', '3.1.9');
 			$beforeversionarray = explode('.', '3.2.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
+
 				migrate_price_contrat($db, $langs, $conf);
 
 				migrate_mode_reglement($db, $langs, $conf);
@@ -389,6 +425,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$afterversionarray = explode('.', '3.2.9');
 			$beforeversionarray = explode('.', '3.3.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
+
 				migrate_categorie_association($db, $langs, $conf);
 			}
 
@@ -399,6 +437,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$afterversionarray = explode('.', '3.6.9'); // target is after this
 			$beforeversionarray = explode('.', '3.7.9'); // target is before this
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
+
 				migrate_event_assignement($db, $langs, $conf);
 			}
 
@@ -413,6 +453,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$afterversionarray = explode('.', '3.9.9');
 			$beforeversionarray = explode('.', '4.0.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
+
 				migrate_rename_directories($db, $langs, $conf, '/fckeditor', '/medias');
 			}
 
@@ -420,6 +462,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$afterversionarray = explode('.', '4.0.9');
 			$beforeversionarray = explode('.', '5.0.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
+
 				// Migrate to add entity value into llx_societe_remise
 				migrate_remise_entity($db, $langs, $conf);
 
@@ -436,6 +480,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 
 					// Only if the transverse mode is not used
 					if (empty($multicompany_transverse_mode)) {
+						dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
+
 						// Migrate to add entity value into llx_user_rights
 						migrate_user_rights_entity($db, $langs, $conf);
 
@@ -449,6 +495,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$afterversionarray = explode('.', '6.0.9');
 			$beforeversionarray = explode('.', '7.0.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
+
 				// Migrate contact association
 				migrate_event_assignement_contact($db, $langs, $conf);
 
@@ -459,6 +507,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$afterversionarray = explode('.', '7.0.9');
 			$beforeversionarray = explode('.', '8.0.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
+
 				migrate_rename_directories($db, $langs, $conf, '/contracts', '/contract');
 			}
 
@@ -473,6 +523,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$afterversionarray = explode('.', '10.0.9');
 			$beforeversionarray = explode('.', '11.0.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
+
 				migrate_users_socialnetworks();
 				migrate_members_socialnetworks();
 				migrate_contacts_socialnetworks();
@@ -483,6 +535,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$afterversionarray = explode('.', '13.0.9');
 			$beforeversionarray = explode('.', '14.0.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
+
 				migrate_export_import_profiles('export');
 				migrate_export_import_profiles('import');
 			}
@@ -491,6 +545,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$afterversionarray = explode('.', '15.0.9');
 			$beforeversionarray = explode('.', '16.0.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
+
 				migrate_user_photospath();
 				migrate_user_photospath2();
 			}
@@ -499,6 +555,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$afterversionarray = explode('.', '16.0.9');
 			$beforeversionarray = explode('.', '17.0.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
+
 				migrate_contractdet_rank();
 			}
 
@@ -506,6 +564,8 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$afterversionarray = explode('.', '17.0.9');
 			$beforeversionarray = explode('.', '18.0.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
+
 				migrate_contractdet_rank();
 			}
 
@@ -521,13 +581,19 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$afterversionarray = explode('.', '19.0.9');
 			$beforeversionarray = explode('.', '20.0.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
+
 				migrate_invoice_export_models();
 			}
 
 			// Scripts for 21.0
 			$afterversionarray = explode('.', '20.0.9');
 			$beforeversionarray = explode('.', '21.0.9');
+
+
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
+
 				migrate_productlot_path();
 			}
 
@@ -535,13 +601,23 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			$afterversionarray = explode('.', '21.0.9');
 			$beforeversionarray = explode('.', '22.0.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				dol_syslog("Run migrate_... versionto is between ".json_encode($afterversionarray)." and ".json_encode($beforeversionarray));
+
 				migrate_accountingbookkeeping($entity);
+			}
+
+			// Scripts for 23.0
+			$afterversionarray = explode('.', '22.0.9');
+			$beforeversionarray = explode('.', '23.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_apiresttokens();
 			}
 		}
 
-
 		// Code executed only if migration is LAST ONE. Must always be done.
 		if (versioncompare($versiontoarray, $versionranarray) >= 0 || versioncompare($versiontoarray, $versionranarray) <= -3) {
+			dol_syslog("Run migrate_... if migration is LAST ONE");
+
 			// Reload modules (this must be always done and only into last targeted version, because code to reload module may need table structure of last version)
 			$listofmodule = array(
 				'MAIN_MODULE_ACCOUNTING' => 'newboxdefonly',
@@ -586,6 +662,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			if ($result < 0) {
 				$error++;
 			}
+
 			// Reload menus (this must be always and only into last targeted version)
 			$result = migrate_reload_menu($db, $langs, $conf);
 			if ($result < 0) {
@@ -4407,7 +4484,7 @@ function migrate_reload_menu($db, $langs, $conf)
 /**
  * Migrate file from old path to new one for lot path
  *
- * @return    void
+ * @return	int						Return integer <0 if KO, >0 if OK
  */
 function migrate_productlot_path()
 {
@@ -4422,10 +4499,14 @@ function migrate_productlot_path()
 
 	print '<b>'.$langs->trans('MigrationProductLotPath')."</b><br>\n";
 
-	$sql = "SELECT rowid , entity, batch, fk_product from ".MAIN_DB_PREFIX."product_lot";
+	$sql = "SELECT rowid, entity, batch, fk_product from ".MAIN_DB_PREFIX."product_lot";
 	$resql = $db->query($sql);
+
 	if ($resql) {
 		$modulepart="product_batch";
+
+		$lot = new Productlot($db);
+
 		while ($obj = $db->fetch_object($resql)) {
 			$entity = (empty($obj->entity) ? 1 : $obj->entity);
 			if ($entity > 1) {
@@ -4434,15 +4515,22 @@ function migrate_productlot_path()
 				$dir = $conf->productbatch->multidir_output[$entity];
 			}
 
-			$lot = new Productlot($db);
-			$res = $lot->fetch($obj->rowid, $obj->fk_product, $obj->batch);
+			if ($dir) {
+				$lot->id = $obj->rowid;
+				$lot->ref = $obj->id;		// No ref for the moment
+				$lot->batch = $obj->batch;
+				$lot->entity = $obj->entity;
+				$lot->fk_product = $obj->fk_product;
 
-			if ($dir && $res > 0) {
+				$savref = $lot->ref;
+
 				$lot->ref = $obj->batch;
 				$origin = $dir . '/' . get_exdir(0, 0, 0, 1, $lot, $modulepart);
 
-				$lot->fetch($obj->rowid, $obj->fk_product, $obj->batch);
+				$lot->ref = $savref;		// So restore the id
 				$destin = $dir . '/' . get_exdir(0, 0, 0, 1, $lot, $modulepart);
+
+				//var_dump($origin.' -> '.$destin.' '.$lot->batch.' dir origin is '.dol_is_dir($origin));exit;
 
 				if (dol_is_dir($origin) && !dol_is_dir($destin)) {
 					dol_move_dir($origin, $destin, 0);
@@ -4451,6 +4539,8 @@ function migrate_productlot_path()
 		}
 	}
 	print '</td></tr>';
+
+	return 1;
 }
 
 /**
@@ -5280,5 +5370,82 @@ function migrate_accountingbookkeeping(int $entity)
 
 	if (!$resultstring) {
 		print '<tr class="trforrunsql" style=""><td class="wordbreak" colspan="4">'.$langs->trans("NothingToDo")."</td></tr>\n";
+	}
+}
+
+/**
+ * Migrate API key in oauth_token table
+ *
+ * @return  void
+ */
+function migrate_apiresttokens()
+{
+	global $db, $langs;
+
+	print '<tr class="trforrunsql"><td colspan="4">';
+	print '<b>'.$langs->trans('MigrationApiRestTokens')."</b><br>\n";
+
+	$error = 0;
+	$nbofmigration = 0;
+	$allexistingtokens = array();
+
+	$db->begin();
+
+	$sqlforalltokens = "SELECT oat.token";
+	$sqlforalltokens .= " FROM ".$db->prefix()."oauth_token AS oat";
+	$sqlforalltokens .= " WHERE oat.service = 'dolibarr_rest_api'";
+
+	$resalltoken = $db->query($sqlforalltokens);
+
+	if ($resalltoken) {
+		while ($tokenobj = $db->fetch_object($resalltoken)) {
+			$allexistingtokens[] = dolDecrypt($tokenobj->token);
+		}
+	} else {
+		$error++;
+		dol_print_error($db);
+		$db->rollback();
+	}
+
+	if (!$error) {
+		$sql = "SELECT 'dolibarr_rest_api' AS service, u.api_key AS token, u.rowid AS fk_user, CURRENT_TIMESTAMP AS datec, u.entity";
+		$sql .= " FROM llx_user AS u";
+		$sql .= " WHERE u.api_key IS NOT NULL";
+
+		$result = $db->query($sql);
+
+		if ($result) {
+			while ($obj = $db->fetch_object($result)) {
+				if (!in_array(dolDecrypt($obj->token), $allexistingtokens)) {
+					$sqlforinsert = "INSERT INTO ".MAIN_DB_PREFIX."oauth_token (service, token, fk_user, datec, entity)";
+					$sqlforinsert .= " VALUES ('".$db->escape($obj->service)."', '".$db->escape($obj->token)."', ".((int) $obj->fk_user).", '".$db->escape($obj->datec)."', ".((int) $obj->entity).")";
+
+					$insertresult = $db->query($sqlforinsert);
+					if (!$insertresult) {
+						$error++;
+						dol_print_error($db);
+					} else {
+						$nbofmigration++;
+					}
+				}
+			}
+
+			if (!$error) {
+				$db->commit();
+			} else {
+				$db->rollback();
+			}
+		} else {
+			dol_print_error($db);
+			$db->rollback();
+		}
+	}
+
+	if (!$nbofmigration) {
+		print '</td></tr>';
+		print '<tr class="trforrunsql" style=""><td class="wordbreak" colspan="4">'.$langs->trans("NothingToDo")."</td></tr>\n";
+	} else {
+		print $langs->trans('MigratedTokens', $nbofmigration);
+		print '</td></tr>';
 	}
 }
