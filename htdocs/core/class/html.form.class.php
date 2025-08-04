@@ -3484,7 +3484,7 @@ class Form
 		$outqty = 1;
 		$outdiscount = '0';
 
-		$maxlengtharticle = (!getDolGlobalString('PRODUCT_MAX_LENGTH_COMBO') ? 48 : $conf->global->PRODUCT_MAX_LENGTH_COMBO);
+		$maxlengtharticle = getDolGlobalInt('PRODUCT_MAX_LENGTH_COMBO', 48);
 
 		$label = $objp->label;
 		if (!empty($objp->label_translated)) {
@@ -3905,7 +3905,7 @@ class Form
 		$out = '';
 		$outarray = array();
 
-		$maxlengtharticle = (!getDolGlobalString('PRODUCT_MAX_LENGTH_COMBO') ? 48 : $conf->global->PRODUCT_MAX_LENGTH_COMBO);
+		$maxlengtharticle = getDolGlobalInt('PRODUCT_MAX_LENGTH_COMBO', 48);
 
 		$langs->load('stocks');
 		// Units

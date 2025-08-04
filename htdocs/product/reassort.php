@@ -307,18 +307,19 @@ if (!getDolGlobalString('PRODUCT_STOCK_LIST_SHOW_WITH_PRECALCULATED_DENORMALIZED
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
-if (!empty($hookmanager->resPrint)) {
-	if (!empty($sql_having)) {
-		$sql_having .= " AND";
-	} else {
-		$sql_having .= " HAVING";
+if (empty($reshook)) {
+	if (empty($sql_having)) {
+		$sql_having .= " HAVING 1=1";
 	}
 	$sql_having .= $hookmanager->resPrint;
+} else {
+	$sql_having = $hookmanager->resPrint;
 }
 
 if (!empty($sql_having)) {
 	$sql .= $sql_having;
 }
+
 $sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
