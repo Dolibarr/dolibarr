@@ -11241,7 +11241,7 @@ parameters:
 		-
 			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 4
+			count: 3
 			path: ../../../htdocs/core/modules/propale/doc/pdf_azur.modules.php
 
 		-
