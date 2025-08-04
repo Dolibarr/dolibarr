@@ -579,18 +579,16 @@ print '</div>';
 
 print '<div class="center"><input type="submit" class="button reposition" value="'.dol_escape_htmltag($langs->trans('Save')).'" name="button"></div>';
 
-print '<br>';
+// Show numbering options
+print '<br><br>';
 
 // Accountancy Numbering model
 $dirmodels = array_merge(array('/'), $conf->modules_parts['models']);
 
-print load_fiche_titre($langs->trans("BookkeepingNumberingModules"), '', '');
-
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Name").'</td>';
-print '<td></td>';
+print '<td colspan="2">'.$langs->trans("BookkeepingNumberingModules").'</td>';
 print '<td class="nowrap">'.$langs->trans("Example").'</td>';
 print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
 print '<td class="center" width="16">'.$langs->trans("ShortInfo").'</td>';

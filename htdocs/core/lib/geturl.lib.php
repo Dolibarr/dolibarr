@@ -371,9 +371,10 @@ function isIPAllowed($iptocheck, $localurl)
 
 /**
  * Function get second level domain name.
- * For example: https://www.abc.mydomain.com/dir/page.html return 'mydomain'
+ * For example: https://www.abc.mydomain.com/dir/page.html returns 'mydomain' with mode 0, 'mydomain.om' with mode 1, 'abc.mydomain.com' with mode 2.
+ * For example: part1@mydomain.com returns 'mydomain.com' with mode 1
  *
- * @param	string	  $url 				    Full URL.
+ * @param	string	  $url 				    Full URL or Email.
  * @param	int	 	  $mode					0=return 'mydomain', 1=return 'mydomain.com', 2=return 'abc.mydomain.com'
  * @return	string						    Returns domaine name
  */
@@ -398,8 +399,10 @@ function getDomainFromURL($url, $mode = 0)
 		$mode++;
 	}
 
-	$tmpdomain = preg_replace('/^https?:\/\//i', '', $url); // Remove http(s)://
-	$tmpdomain = preg_replace('/\/.*$/i', '', $tmpdomain); // Remove part after /
+	$tmpdomain = preg_replace('/^https?:\/\/[^:]+:[^@]+@/i', '', $url); 	// Remove http(s)://login@pass in https://login@pass:mydomain.com/path, so we now got mydomain.com/path
+	$tmpdomain = preg_replace('/^https?:\/\//i', '', $tmpdomain); 			// Remove http(s)://
+	$tmpdomain = preg_replace('/\/.*$/i', '', $tmpdomain); 					// Remove part after /
+	$tmpdomain = preg_replace('/^[^@]+@/i', '', $tmpdomain); 				// Remove part1@ in part1@part2 (for emails)
 	if ($mode == 3) {
 		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)\.([^\.]+)\.([^\.]+)$/', '\1.\2.\3.\4', $tmpdomain);
 	} elseif ($mode == 2) {

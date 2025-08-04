@@ -438,7 +438,7 @@ if (($action == "create") || ($action == "edit")) {
 	print '<tr><td class="fieldrequired">';
 	print $langs->trans('CronEvery')."</td>";
 	print "<td>";
-	print '<select name="nbfrequency">';
+	print '<select name="nbfrequency" id="nbfrequency" class="width50 maxwidth50imp">';
 	for ($i = 1; $i <= 60; $i++) {
 		if ($object->frequency == $i) {
 			print "<option value='".$i."' selected>".$i."</option>";
@@ -447,7 +447,8 @@ if (($action == "create") || ($action == "edit")) {
 		}
 	}
 	print "</select>";
-	$input = " <input type=\"radio\" name=\"unitfrequency\" value=\"60\" id=\"frequency_minute\" ";
+	print ajax_combobox('nbfrequency');
+	$input = " &nbsp;<input type=\"radio\" name=\"unitfrequency\" value=\"60\" id=\"frequency_minute\" ";
 	if ($object->unitfrequency == "60") {
 		$input .= ' checked />';
 	} else {
@@ -456,7 +457,7 @@ if (($action == "create") || ($action == "edit")) {
 	$input .= "<label for=\"frequency_minute\">".$langs->trans('Minutes')."</label>";
 	print $input;
 
-	$input = " <input type=\"radio\" name=\"unitfrequency\" value=\"3600\" id=\"frequency_heures\" ";
+	$input = " &nbsp;<input type=\"radio\" name=\"unitfrequency\" value=\"3600\" id=\"frequency_heures\" ";
 	if ($object->unitfrequency == "3600") {
 		$input .= ' checked />';
 	} else {
@@ -465,7 +466,7 @@ if (($action == "create") || ($action == "edit")) {
 	$input .= "<label for=\"frequency_heures\">".$langs->trans('Hours')."</label>";
 	print $input;
 
-	$input = " <input type=\"radio\" name=\"unitfrequency\" value=\"86400\" id=\"frequency_jours\" ";
+	$input = " &nbsp;<input type=\"radio\" name=\"unitfrequency\" value=\"86400\" id=\"frequency_jours\" ";
 	if ($object->unitfrequency == "86400") {
 		$input .= ' checked />';
 	} else {
@@ -474,7 +475,7 @@ if (($action == "create") || ($action == "edit")) {
 	$input .= "<label for=\"frequency_jours\">".$langs->trans('Days')."</label>";
 	print $input;
 
-	$input = " <input type=\"radio\" name=\"unitfrequency\" value=\"604800\" id=\"frequency_semaine\" ";
+	$input = " &nbsp;<input type=\"radio\" name=\"unitfrequency\" value=\"604800\" id=\"frequency_semaine\" ";
 	if ($object->unitfrequency == "604800") {
 		$input .= ' checked />';
 	} else {
@@ -483,7 +484,7 @@ if (($action == "create") || ($action == "edit")) {
 	$input .= "<label for=\"frequency_semaine\">".$langs->trans('Weeks')."</label>";
 	print $input;
 
-	$input = " <input type=\"radio\" name=\"unitfrequency\" value=\"2678400\" id=\"frequency_month\" ";
+	$input = " &nbsp;<input type=\"radio\" name=\"unitfrequency\" value=\"2678400\" id=\"frequency_month\" ";
 	if ($object->unitfrequency == "2678400") {
 		$input .= ' checked />';
 	} else {

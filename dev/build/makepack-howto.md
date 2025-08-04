@@ -17,20 +17,14 @@ Prerequisites to build autoexe DoliWamp package from Linux (solution seems broke
 `apt-get install wine q4wine`
 
 - Launch "wine cmd" to check a drive Z: pointing to / exists.
-- Install InnoSetup
 
-  For example by running isetup-5.5.8.exe (https://www.jrsoftware.org)  https://files.jrsoftware.org/is/5/
+- Install InnoSetup (For example by running isetup-5.5.8.exe from https://www.jrsoftware.org or https://files.jrsoftware.org/is/5/)
 
-- Install WampServer into "C:\wamp64" to have Apache, PHP and MariaDB
+- Install WampServer into "C:\wamp64" to have Apache, PHP and MariaDB (For example by running wampserver3.2.6_x64.exe from https://www.wampserver.com, see file dev/build/exe/doliwamp.iss to know the version of Wampserver to install).
 
-  For example by running wampserver3.2.6_x64.exe (https://www.wampserver.com).
-See file dev/build/exe/doliwamp.iss to know the doliwamp version currently setup.
+- Add path to ISCC.exe into the PATH windows var (You can do this by launching wine cmd, then regedit and add entry int `HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment\PATH`)
 
-- Add path to ISCC into PATH windows var:
-
-  Launch wine cmd, then regedit and add entry int `HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment\PATH`
-
-- To manually build the .exe from Windows
+- To manually build the .exe from Windows :
 
   Note: running from makepack-dolibarr.pl script is however recommended
   open file dev/build/exe/doliwamp.iss and click on button "Compile".

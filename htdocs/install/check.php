@@ -239,6 +239,7 @@ $memrequired = 64 * 1024 * 1024;
 $memmaxorig = @ini_get("memory_limit");
 $memmax = @ini_get("memory_limit");
 if ($memmaxorig != '') {
+	$reg = array();
 	preg_match('/([0-9]+)([a-zA-Z]*)/i', $memmax, $reg);
 	if ($reg[2]) {
 		if (strtoupper($reg[2]) == 'G') {
@@ -345,7 +346,7 @@ if (!file_exists($conffile)) {
 
 	// Requirements met/all ok: display the next step button
 	if ($checksok) {
-		$ok = 0;
+		$ok = false;
 
 		// Try to create db connection
 		if (file_exists($conffile)) {
@@ -358,11 +359,14 @@ if (!file_exists($conffile)) {
 					require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 
 					// If password is encoded, we decode it
-					if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass)) {
+					if (preg_match('/(crypted|dolcrypt):/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass)) {
 						require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
 						if (preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
 							$dolibarr_main_db_encrypted_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass); // We need to set this as it is used to know the password was initially encrypted
 							$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
+						} elseif (preg_match('/dolcrypt:/i', $dolibarr_main_db_pass)) {
+							$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially encrypted
+							$dolibarr_main_db_pass = dolDecrypt($dolibarr_main_db_pass);
 						} else {
 							$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 						}
@@ -375,6 +379,7 @@ if (!file_exists($conffile)) {
 					$conf->db->name = $dolibarr_main_db_name;
 					$conf->db->user = $dolibarr_main_db_user;
 					$conf->db->pass = $dolibarr_main_db_pass;
+
 					$db = getDoliDBInstance($conf->db->type, $conf->db->host, (string) $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 					if ($db->connected && $db->database_selected) {
 						$ok = true;

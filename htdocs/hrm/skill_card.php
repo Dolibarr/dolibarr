@@ -138,6 +138,7 @@ if (empty($reshook)) {
 
 	// action update on Skilldet must be done before real update action in core/actions_addupdatedelete.inc.php
 	$skilldetArray = GETPOST("descriptionline", "array:alphanohtml");
+
 	if (!$error) {
 		if (is_array($skilldetArray) && count($skilldetArray) > 0) {
 			if ($action == 'update' && $permissiontoadd) {
@@ -171,6 +172,7 @@ if (empty($reshook)) {
 				$arraySkill = $object->fetchLines();
 				'@phan-var-force Skilldet[] $arraySkill';
 				$index = 0;
+
 				foreach ($arraySkill as $skilldet) {
 					if ($skilldet->rankorder != 0) {
 						if (isset($skilldetArray[$index])) {
@@ -377,11 +379,12 @@ if (($id || $ref) && $action == 'edit') {
 				//                  $value = GETPOSTISSET($key) ? price2num(GETPOST($key, 'alphanohtml')) : $sk->$key;
 				//              } elseif (preg_match('/^(text|html)/', $val['type'])) {
 				//                  $tmparray = explode(':', $val['type']);
-				if (!empty($tmparray[1])) {
-					$check = $tmparray[1];
-				} else {
-					$check = 'restricthtml';
-				}
+				//if (!empty($tmparray[1])) {
+				//	$check = $tmparray[1];
+				//} else {
+				//	$check = 'restricthtml';
+				//}
+				$check = 'restricthtml';
 
 				$skilldetArray = GETPOST("descriptionline", "array");
 				if (empty($skilldetArray)) {

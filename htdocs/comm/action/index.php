@@ -773,7 +773,7 @@ if (($filtert != '-1' && $filtert != '-2') || $usergroup > 0) {
 	if ($filtert != '-1' && $filtert != '-2'  && $filtert != '-3') {
 		$sql .= " AND (ar.fk_element IN (".$db->sanitize($filtert).") OR (ar.fk_element IS NULL AND a.fk_user_action = ".((int) $filtert)."))"; // The OR is for backward compatibility
 	} elseif ($filtert == '-3') {
-		$sql .= " AND ar.fk_element IN (".$db->sanitize(implode(',', $user->getAllChildIds('hierarchyme'))).")";
+		$sql .= " AND ar.fk_element IN (".$db->sanitize(implode(',', $user->getAllChildIds(1))).")";
 	}
 	if ($usergroup > 0) {
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element AND ugu.fk_usergroup = ".((int) $usergroup);
@@ -2359,7 +2359,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 					print '<a href="'.DOL_URL_ROOT.'/comm/action/index.php?mode='.$mode.'&maxprint=0&month='.((int) $monthshown).'&year='.((int) $year);
 					print($status ? '&status='.$status : '').($filter ? '&filter='.urlencode($filter) : '');
 					print($filtert ? '&search_filtert='.urlencode((string) $filtert) : '');
-					print($usergroup ? '&search_usergroup='.urlencode($usergroup) : '');
+					print($usergroup ? '&search_usergroup='.urlencode((string) $usergroup) : '');
 					print($actioncode != '' ? '&search_actioncode='.urlencode($actioncode) : '');
 					print '">'.img_picto("all", "1downarrow_selected.png").' ...';
 					print ' +'.(count($eventarray[$daykey]) - $maxprint);

@@ -483,7 +483,6 @@ if (isModEnabled('invoice')) {
 	}
 	print '</td></tr>';
 
-	/* too late to have it enabled by default in v21
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("PDF_INVOICE_SHOW_VAT_ANALYSIS"), '');
 	print '</td><td>';
@@ -494,7 +493,7 @@ if (isModEnabled('invoice')) {
 		print $form->selectarray("PDF_INVOICE_SHOW_VAT_ANALYSIS", $arrval, $conf->global->PDF_INVOICE_SHOW_VAT_ANALYSIS);
 	}
 	print '</td></tr>';
-	*/
+
 
 	/* Keep this option hidden for the moment to avoid options inflation. We'll see later if it is used enough...
 	print '<tr class="oddeven"><td>';
