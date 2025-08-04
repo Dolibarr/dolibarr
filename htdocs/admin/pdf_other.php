@@ -7,7 +7,7 @@
  * Copyright (C) 2021-2024	Anthony Berton       	<anthony.berton@bb2a.fr>
  * Copyright (C) 2022		Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024       Nick Fragoulis
+ * Copyright (C) 2024-205   Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -150,6 +150,10 @@ if ($action == 'update') {
 	if (GETPOSTISSET('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
 		dolibarr_set_const($db, "PDF_INVOICE_SHOW_VAT_ANALYSIS", GETPOSTINT("PDF_INVOICE_SHOW_VAT_ANALYSIS"), 'chaine', 0, '', $conf->entity);
 		dolibarr_del_const($db, "PDF_INVOICE_SHOW_VAT_ANALYSIS", $conf->entity);
+	}
+	if (GETPOSTISSET('PDF_INVOICE_SHOW_BALANCE_SUMMARY')) {
+		dolibarr_set_const($db, "PDF_INVOICE_SHOW_BALANCE_SUMMARY", GETPOSTINT("PDF_INVOICE_SHOW_BALANCE_SUMMARY"), 'chaine', 0, '', $conf->entity);
+		dolibarr_del_const($db, "PDF_INVOICE_SHOW_BALANCE_SUMMARY", $conf->entity);
 	}
 	if (GETPOSTISSET('INVOICE_HIDE_LINKED_OBJECT')) {
 		dolibarr_set_const($db, "INVOICE_HIDE_LINKED_OBJECT", GETPOSTINT("INVOICE_HIDE_LINKED_OBJECT"), 'chaine', 0, '', $conf->entity);
@@ -503,6 +507,17 @@ if (isModEnabled('invoice')) {
 	}
 	print '</td></tr>';
 
+
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("PDF_INVOICE_SHOW_BALANCE_SUMMARY"), '');
+	print '</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('PDF_INVOICE_SHOW_BALANCE_SUMMARY');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("PDF_INVOICE_SHOW_BALANCE_SUMMARY", $arrval, $conf->global->PDF_INVOICE_SHOW_BALANCE_SUMMARY);
+	}
+	print '</td></tr>';
 
 	/* Keep this option hidden for the moment to avoid options inflation. We'll see later if it is used enough...
 	print '<tr class="oddeven"><td>';
