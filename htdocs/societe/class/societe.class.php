@@ -561,12 +561,12 @@ class Societe extends CommonObject
 	 */
 	public $forme_juridique_code = 0;
 	/**
-	 * @var string Label for Legal Form (of company)
+	 * @var string 	Label for Legal Form (of company)
 	 * @see CommonDocGenerator::get_substitutionarray_mysoc()
 	 */
 	public $forme_juridique;
 	/**
-	 * @var string ? Date of company creation
+	 * @var int|null 	Date of company creation
 	 */
 	public $birth;
 
