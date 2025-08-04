@@ -1855,7 +1855,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			// Date birth
 			print '<tr><td>'.$form->editfieldkey('CompnanyBirthDate', 'birth', '', $object, 0).'</td>';
 			print '<td colspan="3" class="maxwidthonsmartphone">';
-			print $form->selectDate('', 'birth', 0, 0, 1, "", 1);
+			print $form->selectDate($object->birth, 'birth', 0, 0, 1, "", 1);
 			print '</td></tr>';
 
 			// Capital
@@ -2705,7 +2705,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Date birth
 				print '<tr><td>'.$form->editfieldkey('CompnanyBirthDate', 'birth', '', $object, 0).'</td>';
 				print '<td class="maxwidthonsmartphone" colspan="3">';
-				print $form->selectDate('', 'birth', 0, 0, 1, "", 1);
+				print $form->selectDate($object->birth, 'birth', 0, 0, 1, "", 1);
 				print '</td></tr>';
 
 				// Capital
