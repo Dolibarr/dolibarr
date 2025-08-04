@@ -1309,7 +1309,7 @@ class FormFile
 		// Define relative path used to store the file
 		if (empty($relativepath)) {
 			$relativepath = (!empty($object->ref) ? dol_sanitizeFileName($object->ref) : '').'/';
-			if(!empty($object->element) && $object->element == "societe") {
+			if (!empty($object->element) && $object->element == "societe") {
 				$relativepath = (!empty($object->id) ? dol_sanitizeFileName($object->id) : '').'/';
 			}
 			if (!empty($object->element) && $object->element == 'invoice_supplier') {
