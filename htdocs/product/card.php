@@ -1330,6 +1330,18 @@ if (isModEnabled('accounting')) {
 $sellOrEatByMandatoryList = null;
 if (isModEnabled('productbatch')) {
 	$sellOrEatByMandatoryList = Product::getSellOrEatByMandatoryList();
+
+	$disableSellBy = getDolGlobalString('PRODUCT_DISABLE_SELLBY');
+	$disableEatBy  = getDolGlobalString('PRODUCT_DISABLE_EATBY');
+
+	if ($disableSellBy) {
+		unset($sellOrEatByMandatoryList[Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_BY]);
+		unset($sellOrEatByMandatoryList[Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT]);
+	}
+	if ($disableEatBy) {
+		unset($sellOrEatByMandatoryList[Product::SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY]);
+		unset($sellOrEatByMandatoryList[Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT]);
+	}
 }
 
 $title = $langs->trans('ProductServiceCard');

@@ -9710,6 +9710,7 @@ abstract class CommonObject
 				}
 			}
 		}
+
 		return (float) $buyPrice;
 	}
 

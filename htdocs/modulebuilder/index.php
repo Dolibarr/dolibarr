@@ -1318,6 +1318,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 				}
 
 				// type
+				$picto = '';
 				if (isset($obj->Picto)) {
 					$picto = $obj->Picto;
 				}

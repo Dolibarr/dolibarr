@@ -1,16 +1,16 @@
 <?php
-/* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
- * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2005 	   Simon Tosser         <simon@kornog-computing.com>
- * Copyright (C) 2006 	   Andre Cianfarani     <andre.cianfarani@acdeveloppement.net>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015      Bahfir Abbes         <bafbes@gmail.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2002-2007 	Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003      	Xavier Dutoit        <doli@sydesy.com>
+ * Copyright (C) 2004-2017 	Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      	Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      	Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2011 	Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2005 	   	Simon Tosser         <simon@kornog-computing.com>
+ * Copyright (C) 2006 	   	Andre Cianfarani     <andre.cianfarani@acdeveloppement.net>
+ * Copyright (C) 2010      	Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2015		Bahfir Abbes         <bafbes@gmail.com>
+ * Copyright (C) 2024		MDW					 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ if (!defined('DOL_APPLICATION_TITLE')) {
 	define('DOL_APPLICATION_TITLE', 'Dolibarr');
 }
 if (!defined('DOL_VERSION')) {
-	define('DOL_VERSION', '21.0.2'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
+	define('DOL_VERSION', '21.0.3'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
 }
 
 if (!defined('EURO')) {
