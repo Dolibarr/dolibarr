@@ -1257,18 +1257,18 @@ class Thirdparties extends DolibarrApi
 
 		// DiscountAbsolute->amount_ttc  ->amount_ht  ->amount_tva    are marked as @deprecated  but seems to yet be in use so we fill ->amout_xxx and ->total_xxx
 		// the same for multicurrency_amount_xxx and multicurrency_total_xxx
-		$newdiscount1->total_ttc = price2num($newdiscount1->amount_ttc);
-		$newdiscount1->total_ht = price2num($newdiscount1->amount_ht);
-		$newdiscount1->total_tva = price2num($newdiscount1->amount_tva);
-		$newdiscount2->total_ttc = price2num($newdiscount2->amount_ttc);
-		$newdiscount2->total_ht = price2num($newdiscount2->amount_ht);
-		$newdiscount2->total_tva = price2num($newdiscount2->amount_tva);
-		$newdiscount1->multicurrency_total_ttc = price2num($newdiscount1->multicurrency_amount_ttc);
-		$newdiscount1->multicurrency_total_ht = price2num($newdiscount1->multicurrency_amount_ht);
-		$newdiscount1->multicurrency_total_tva = price2num($newdiscount1->multicurrency_amount_tva);
-		$newdiscount2->multicurrency_total_ttc = price2num($newdiscount2->multicurrency_amount_ttc);
-		$newdiscount2->multicurrency_total_ht = price2num($newdiscount2->multicurrency_amount_ht);
-		$newdiscount2->multicurrency_total_tva = price2num($newdiscount2->multicurrency_amount_tva);
+		$newdiscount1->total_ttc = (float) price2num($newdiscount1->amount_ttc);
+		$newdiscount1->total_ht = (float) price2num($newdiscount1->amount_ht);
+		$newdiscount1->total_tva = (float) price2num($newdiscount1->amount_tva);
+		$newdiscount2->total_ttc = (float) price2num($newdiscount2->amount_ttc);
+		$newdiscount2->total_ht = (float) price2num($newdiscount2->amount_ht);
+		$newdiscount2->total_tva = (float) price2num($newdiscount2->amount_tva);
+		$newdiscount1->multicurrency_total_ttc = (float) price2num($newdiscount1->multicurrency_amount_ttc);
+		$newdiscount1->multicurrency_total_ht = (float) price2num($newdiscount1->multicurrency_amount_ht);
+		$newdiscount1->multicurrency_total_tva = (float) price2num($newdiscount1->multicurrency_amount_tva);
+		$newdiscount2->multicurrency_total_ttc = (float) price2num($newdiscount2->multicurrency_amount_ttc);
+		$newdiscount2->multicurrency_total_ht = (float) price2num($newdiscount2->multicurrency_amount_ht);
+		$newdiscount2->multicurrency_total_tva = (float) price2num($newdiscount2->multicurrency_amount_tva);
 
 		$this->db->begin();
 
