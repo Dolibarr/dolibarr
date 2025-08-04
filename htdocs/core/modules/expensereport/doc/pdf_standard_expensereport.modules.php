@@ -583,7 +583,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 
 		// Accountancy piece
 		$pdf->SetXY($this->posxpiece, $curY);
-		$pdf->writeHTMLCell($this->posxcomment - $this->posxpiece - 0.8, 4, $this->posxpiece - 1, $curY, $linenumber + 1, 0, 1);
+		$pdf->writeHTMLCell($this->posxcomment - $this->posxpiece - 0.8, 4, $this->posxpiece - 1, $curY, (string) ($linenumber + 1), 0, 1);
 
 		// Date
 		//$pdf->SetXY($this->posxdate -1, $curY);
@@ -631,7 +631,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 
 		// Quantity
 		$pdf->SetXY($this->posxqty, $curY);
-		$pdf->MultiCell($this->postotalht - $this->posxqty - 0.8, 4, $object->lines[$linenumber]->qty, 0, 'C');
+		$pdf->MultiCell($this->postotalht - $this->posxqty - 0.8, 4, (string) $object->lines[$linenumber]->qty, 0, 'C');
 
 		// Total without taxes
 		$pdf->SetXY($this->postotalht, $curY);
@@ -713,7 +713,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 		$pdf->SetFont('', 'B', $default_font_size + 4);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 6, $langs->trans("ExpenseReport"), 0, 'R');
+		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 6, $outputlangs->trans("ExpenseReport"), 0, 'R');
 
 		$pdf->SetFont('', '', $default_font_size - 1);
 

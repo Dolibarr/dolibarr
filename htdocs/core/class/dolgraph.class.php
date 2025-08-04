@@ -1668,7 +1668,7 @@ class DolGraph
 		global $langs;
 
 		if ($shownographyet) {
-			$s = '<div class="nographyet" style="width:' . (preg_match('/%/', $this->width) ? $this->width : $this->width . 'px') . '; height:' . (preg_match('/%/', $this->height) ? $this->height : $this->height . 'px') . ';"></div>';
+			$s = '<div class="nographyet" style="max-width: 400px; width:' . (preg_match('/%/', $this->width) ? $this->width : $this->width . 'px') . '; height:' . (preg_match('/%/', $this->height) ? $this->height : $this->height . 'px') . ';"></div>';
 			$s .= '<div class="nographyettext margintoponly">';
 			if (is_numeric($shownographyet)) {
 				$s .= $langs->trans("NotEnoughDataYet") . '...';

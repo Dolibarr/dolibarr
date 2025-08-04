@@ -259,7 +259,7 @@ class PaymentVarious extends CommonObject
 		$sql .= " note='".$this->db->escape($this->note)."',";
 		$sql .= " accountancy_code='".$this->db->escape($this->accountancy_code)."',";
 		$sql .= " subledger_account='".$this->db->escape($this->subledger_account)."',";
-		$sql .= " fk_projet='".$this->db->escape($this->fk_project)."',";
+		$sql .= " fk_projet='".$this->db->escape((string) $this->fk_project)."',";
 		$sql .= " fk_bank=".($this->fk_bank > 0 ? $this->fk_bank : "null").",";
 		$sql .= " fk_user_author=".(int) $this->fk_user_author.",";
 		$sql .= " fk_user_modif=".(int) $this->fk_user_modif;
@@ -509,9 +509,9 @@ class PaymentVarious extends CommonObject
 		$sql .= " VALUES (";
 		$sql .= "'".$this->db->idate($this->datep)."'";
 		$sql .= ", '".$this->db->idate($this->datev)."'";
-		$sql .= ", '".$this->db->escape($this->sens)."'";
+		$sql .= ", '".$this->db->escape((string) $this->sens)."'";
 		$sql .= ", ".price2num($this->amount);
-		$sql .= ", '".$this->db->escape($this->type_payment)."'";
+		$sql .= ", '".$this->db->escape((string) $this->type_payment)."'";
 		$sql .= ", '".$this->db->escape($this->num_payment)."'";
 		if ($this->note) {
 			$sql .= ", '".$this->db->escape($this->note)."'";
@@ -552,7 +552,7 @@ class PaymentVarious extends CommonObject
 
 					$bank_line_id = $acc->addline(
 						$this->datep,
-						$this->type_payment,
+						(string) $this->type_payment,
 						$this->label,
 						$sign * abs($this->amount),
 						$this->num_payment,
@@ -794,9 +794,10 @@ class PaymentVarious extends CommonObject
 	/**
 	 *	Return if a various payment linked to a bank line id was dispatched into bookkeeping
 	 *
-	 *	@return     int         Return integer <0 if KO, 0=no, 1=yes
+	 *	@param		int		$mode		0=Return nb of record, 1=return the transaction ID (piece_num)
+	 *	@return     int         		Return integer <0 if KO, 0=no, 1=yes or ID transaction
 	 */
-	public function getVentilExportCompta()
+	public function getVentilExportCompta($mode = 0)
 	{
 		$banklineid = $this->fk_bank;
 
@@ -804,7 +805,8 @@ class PaymentVarious extends CommonObject
 
 		$type = 'bank';
 
-		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $banklineid);
+		$sql = " SELECT ".($mode ? 'DISTINCT piece_num' : 'COUNT(ab.rowid)')." as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type = '".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $banklineid);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
@@ -817,7 +819,7 @@ class PaymentVarious extends CommonObject
 		}
 
 		if ($alreadydispatched) {
-			return 1;
+			return $alreadydispatched;
 		}
 		return 0;
 	}

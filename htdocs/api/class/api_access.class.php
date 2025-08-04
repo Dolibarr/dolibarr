@@ -2,7 +2,7 @@
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023	Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,6 @@ use Luracast\Restler\RestException;
 
 /**
  * Dolibarr API access class
- *
  */
 class DolibarrApiAccess implements iAuthenticate
 {
@@ -56,12 +55,12 @@ class DolibarrApiAccess implements iAuthenticate
 	public $db;
 
 	/**
-	 * @var array $requires	role required by API method		user / external / admin
+	 * @var string[]	role required by API method		user / external / admin
 	 */
 	public static $requires = array('user', 'external', 'admin');
 
 	/**
-	 * @var string $role		user role
+	 * @var string		user role
 	 */
 	public static $role = 'user';
 
@@ -125,7 +124,7 @@ class DolibarrApiAccess implements iAuthenticate
 			$api_key = preg_replace('/^Bearer\s+/i', '', empty($headers['Authorization']) ? '' : $headers['Authorization']);
 		};
 
-		$api_key = dol_string_nounprintableascii($api_key);
+		$api_key = dol_string_nounprintableascii($api_key, 1);
 
 		if (preg_match('/^dolcrypt:/i', $api_key)) {
 			throw new RestException(503, 'Bad value for the API key. An API key should not start with dolcrypt:');
@@ -158,7 +157,7 @@ class DolibarrApiAccess implements iAuthenticate
 					throw new RestException(503, 'Error when fetching user api_key : More than 1 user with this apikey');
 				}
 			} else {
-				throw new RestException(503, 'Error when fetching user api_key :'.$this->db->error_msg);
+				throw new RestException(503, 'Error when fetching user api_key :'.$this->db->error);
 			}
 
 			if ($login && $stored_key != $api_key) {		// This should not happen since we did a search on api_key
@@ -183,7 +182,7 @@ class DolibarrApiAccess implements iAuthenticate
 			}
 
 			// Check if user status is enabled
-			if ($fuser->statut != $fuser::STATUS_ENABLED) {
+			if ($fuser->status != $fuser::STATUS_ENABLED) {
 				// Status is disabled
 				dol_syslog("functions_isallowed::check_user_api_key Authentication KO for '".$login."': The user has been disabled", LOG_NOTICE);
 				sleep(1); // Anti brute force protection. Must be same delay when user and password are not valid.
@@ -204,6 +203,14 @@ class DolibarrApiAccess implements iAuthenticate
 				dol_syslog("functions_isallowed::check_user_api_key Authentication KO for '".$login."': The user login has a validity between [".$fuser->datestartvalidity." and ".$fuser->dateendvalidity."], current date is ".dol_now());
 				sleep(1); // Anti brute force protection. Must be same delay when user and password are not valid.
 				throw new RestException(401, $genericmessageerroruser);
+			}
+
+			// TODO
+			// Increase counter of API access
+			if (getDolGlobalString('API_COUNTER_ENABLED')) {
+				include DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+				dolibarr_set_const($this->db, 'API_COUNTER_COUNT', getDolGlobalInt('API_COUNTER_COUNT') + 1);
+				//var_dump('eeee');exit;
 			}
 
 			// User seems valid
@@ -248,7 +255,7 @@ class DolibarrApiAccess implements iAuthenticate
 	/**
 	 * Verify access
 	 *
-	 * @param   array $m Properties of method
+	 * @param   array{class:array{DolibarrApiAccess:array{properties:array{requires?:bool}}}} $m Properties of method
 	 *
 	 * @access private
 	 * @return bool

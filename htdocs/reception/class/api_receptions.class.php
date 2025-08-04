@@ -98,8 +98,8 @@ class Receptions extends DolibarrApi
 	 * @param string           $properties	        Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                               Array of reception objects
-	 * @phan-return array<array<string,mixed>>
-	 * @phpstan-return array<array<string,mixed>>
+	 * @phan-return Reception[]|array{data:Reception[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return Reception[]|array{data:Reception[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
 	 * @throws RestException
 	 */
@@ -112,7 +112,7 @@ class Receptions extends DolibarrApi
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
-		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $thirdparty_ids;
+		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
@@ -292,6 +292,8 @@ class Receptions extends DolibarrApi
 	//  *
 	//  * @param int   $id             Id of reception to update
 	//  * @param array $request_data   ShipmentLine data
+	//  * @phan-param ?array<string,string> $request_data
+	//  * @phpstan-param ?array<string,string> $request_data
 	//  *
 	//  * @url	POST {id}/lines
 	//  *
@@ -360,6 +362,8 @@ class Receptions extends DolibarrApi
 	//  * @param int   $id             Id of reception to update
 	//  * @param int   $lineid         Id of line to update
 	//  * @param array $request_data   ShipmentLine data
+	//  * @phan-param ?array<string,string> $request_data
+	//  * @phpstan-param ?array<string,string> $request_data
 	//  *
 	//  * @url	PUT {id}/lines/{lineid}
 	//  *
@@ -761,12 +765,15 @@ class Receptions extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   array<string,mixed|mixed[]>	$data   Array with data to verify
+	 * @param   ?array<string,mixed|mixed[]>	$data   Array with data to verify
 	 * @return  array<string,mixed|mixed[]>
 	 * @throws  RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$reception = array();
 		foreach (Receptions::$FIELDS as $field) {
 			if (!isset($data[$field])) {

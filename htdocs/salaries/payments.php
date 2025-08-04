@@ -312,7 +312,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total of record found is smaller than page * limit, goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -614,7 +614,7 @@ while ($i < $imaxinloop) {
 	$salstatic->ref = $obj->id_salary;
 
 	$paymentsalstatic->id = $obj->rowid;
-	$paymentsalstatic->ref = $obj->rowid;
+	$paymentsalstatic->ref = (string) $obj->rowid;
 	$paymentsalstatic->amount = $obj->amount;
 	$paymentsalstatic->fk_typepayment = $obj->payment_code;
 	$paymentsalstatic->datec = $obj->dateep;

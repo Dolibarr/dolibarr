@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -88,7 +88,7 @@ if (!$sortfield) {
 
 $ecmdir = new EcmDirectory($db);
 if (!empty($section)) {
-	$result = $ecmdir->fetch($section);
+	$result = $ecmdir->fetch((int) $section);
 	if (!($result > 0)) {
 		dol_print_error($db, $ecmdir->error);
 		exit;

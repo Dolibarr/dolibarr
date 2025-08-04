@@ -305,7 +305,6 @@ if (empty($reshook)) {
 	$uploaddir = $conf->user->dir_output;
 
 	global $error;
-	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// Disable or Enable records
 	if (!$error && ($massaction == 'disable' || $massaction == 'reactivate') && $permissiontoadd) {
@@ -316,7 +315,7 @@ if (empty($reshook)) {
 		$nbok = 0;
 		foreach ($toselect as $toselectid) {
 			if ($toselectid == $user->id) {
-				setEventMessages($langs->trans($massaction == 0 ? 'CantDisableYourself' : 'CanEnableYourself'), null, 'errors');
+				setEventMessages($langs->trans($massaction == 'disable' ? 'CantDisableYourself' : 'CanEnableYourself'), null, 'errors');
 				$error++;
 				break;
 			}
@@ -324,7 +323,7 @@ if (empty($reshook)) {
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
 				if ($objecttmp->admin) {
-					setEventMessages($langs->trans($massaction == 0 ? 'CantDisableAnAdminUserWithMassActions' : 'CantEnableAnAdminUserWithMassActions', $objecttmp->login), null, 'errors');
+					setEventMessages($langs->trans($massaction == 'disable' ? 'CantDisableAnAdminUserWithMassActions' : 'CantEnableAnAdminUserWithMassActions', $objecttmp->login), null, 'errors');
 					$error++;
 					break;
 				}
@@ -360,7 +359,12 @@ if (empty($reshook)) {
 		} else {
 			$db->rollback();
 		}
+
+		$massaction = '';
 	}
+
+	// Generic mass actions
+	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 
@@ -370,8 +374,6 @@ if (empty($reshook)) {
 
 $formother = new FormOther($db);
 $user2 = new User($db);
-
-$now = dol_now();
 
 $help_url = 'EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios|DE:Modul_Benutzer';
 if ($contextpage == 'employeelist' && $search_employee == 1) {
@@ -537,7 +539,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -1031,7 +1033,7 @@ while ($i < $imaxinloop) {
 
 	$object->id = $obj->rowid;
 	$object->admin = $obj->admin;
-	$object->ref = $obj->rowid;
+	$object->ref = (string) $obj->rowid;
 	$object->login = $obj->login;
 	$object->statut = $obj->status;
 	$object->status = $obj->status;
@@ -1103,7 +1105,7 @@ while ($i < $imaxinloop) {
 		}
 		// TechnicalID
 		if (!empty($arrayfields['u.rowid']['checked'])) {
-			print '<td class="nowraponall">'.dol_escape_htmltag($obj->rowid).'</td>';
+			print '<td class="nowraponall">'.dolPrintHTML((string) $obj->rowid).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1122,18 +1124,21 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Lastname
 		if (!empty($arrayfields['u.lastname']['checked'])) {
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->lastname).'">'.dol_escape_htmltag($obj->lastname).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Fistname
 		if (!empty($arrayfields['u.firstname']['checked'])) {
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->lastname).'">'.dol_escape_htmltag($obj->firstname).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Gender
 		if (!empty($arrayfields['u.gender']['checked'])) {
 			print '<td class="center">';
 			if ($obj->gender) {
@@ -1196,6 +1201,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 
+		// Accountancy code
 		if (!empty($arrayfields['u.accountancy_code']['checked'])) {
 			print '<td>'.$obj->accountancy_code.'</td>';
 			if (!$i) {
@@ -1219,7 +1225,7 @@ while ($i < $imaxinloop) {
 		}
 		// Email
 		if (!empty($arrayfields['u.email']['checked'])) {
-			print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->fk_soc, 1, 0, 0, 1)."</td>\n";
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($obj->email, $obj->rowid, $obj->fk_soc, 1, 0, 0, 1)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

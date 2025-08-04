@@ -74,3 +74,5 @@ NewPartnershipRequest=Yeni ortaklık talebi
 NewPartnershipRequestDesc=Bu form, ortaklık programımızın bir parçası olmayı talep etmenizi sağlar. Bu formu doldurmak için yardıma ihtiyacınız varsa lütfen e-postayla iletişime geçin <b>%s</b></b>%s</b></b>%s</b> açıklık >.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Bu sayfa şu alan adlarından birine giden en az bir bağlantı içermelidir: %s
 IPOfApplicant=Başvuru sahibinin IP'si
+PartnershipToReopen=Yeniden açmak için
+PartnershipConfirmReOpenAsk=Bu ortaklığı yeniden açmak istediğinizden emin misiniz <b> %s</b>?

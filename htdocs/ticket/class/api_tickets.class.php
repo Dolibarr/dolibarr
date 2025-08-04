@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 class Tickets extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'subject',
@@ -40,7 +40,7 @@ class Tickets extends DolibarrApi
 	);
 
 	/**
-	 * @var array   $FIELDS_MESSAGES     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS_MESSAGES = array(
 		'track_id',
@@ -48,7 +48,7 @@ class Tickets extends DolibarrApi
 	);
 
 	/**
-	 * @var Ticket $ticket {@type Ticket}
+	 * @var Ticket {@type Ticket}
 	 */
 	public $ticket;
 
@@ -202,7 +202,8 @@ class Tickets extends DolibarrApi
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 *
 	 * @return array Array of ticket objects
-	 *
+	 * @phan-return Ticket[]|array{data:Ticket[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return Ticket[]|array{data:Ticket[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 */
 	public function index($socid = 0, $sortfield = "t.rowid", $sortorder = "ASC", $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
@@ -212,7 +213,7 @@ class Tickets extends DolibarrApi
 
 		$obj_ret = array();
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $socid;
+		$socid = DolibarrApiAccess::$user->socid ?: $socid;
 
 		$search_sale = null;
 		// If the internal user must only see his customers, force searching by him
@@ -223,6 +224,7 @@ class Tickets extends DolibarrApi
 
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket AS t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe AS s ON (s.rowid = t.fk_soc)";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."ticket_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= ' WHERE t.entity IN ('.getEntity('ticket', 1).')';
 		if ($socid > 0) {
@@ -303,7 +305,9 @@ class Tickets extends DolibarrApi
 	/**
 	 * Create ticket object
 	 *
-	 * @param array $request_data   Request datas
+	 * @param array $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int  ID of ticket
 	 */
 	public function post($request_data = null)
@@ -341,9 +345,10 @@ class Tickets extends DolibarrApi
 	/**
 	 * Add a new message to an existing ticket identified by property ->track_id into request.
 	 *
-	 * @param array $request_data   Request datas
+	 * @param array $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int  ID of ticket
-	 *
 	 */
 	public function postNewMessage($request_data = null)
 	{
@@ -379,7 +384,9 @@ class Tickets extends DolibarrApi
 	 * Update ticket
 	 *
 	 * @param 	int   	$id             	Id of ticket to update
-	 * @param 	array 	$request_data   	Datas
+	 * @param 	array 	$request_data   	Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
@@ -429,7 +436,8 @@ class Tickets extends DolibarrApi
 	 *
 	 * @param   int     $id   Ticket ID
 	 * @return  array
-	 *
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
@@ -460,13 +468,16 @@ class Tickets extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param array $data   Data to validate
-	 * @return array
+	 * @param ?array<string,string> $data   Data to validate
+	 * @return array<string,string>
 	 *
 	 * @throws RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$ticket = array();
 		foreach (Tickets::$FIELDS as $field) {
 			if (!isset($data[$field])) {
@@ -480,13 +491,16 @@ class Tickets extends DolibarrApi
 	/**
 	 * Validate fields before create or update object message
 	 *
-	 * @param array $data   Data to validate
-	 * @return array
+	 * @param ?array<string,string> $data   Data to validate
+	 * @return array<string,string>
 	 *
 	 * @throws RestException
 	 */
 	private function _validateMessage($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$ticket = array();
 		foreach (Tickets::$FIELDS_MESSAGES as $field) {
 			if (!isset($data[$field])) {
@@ -505,7 +519,6 @@ class Tickets extends DolibarrApi
 	 * @return  Object              Object with cleaned properties
 	 *
 	 * @todo use an array for properties to clean
-	 *
 	 */
 	protected function _cleanObjectDatas($object)
 	{

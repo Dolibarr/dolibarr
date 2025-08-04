@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2017		Ferran Marcet       	<fmarcet@2byte.es>
- * Copyright (C) 2021-2024  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2023       Christian Foellmann  <christian@foellmann.de>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -275,7 +275,7 @@ if ($id > 0 || !empty($ref)) {
 		// Contacts lines
 		include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';
 	} else {
-		print "ErrorRecordNotFound";
+		recordNotFound('', 0);
 	}
 }
 

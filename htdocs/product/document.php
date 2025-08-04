@@ -111,7 +111,7 @@ if ($id > 0 || !empty($ref)) {
 	}
 }
 
-$modulepart = 'produit';
+$modulepart = 'product';
 
 
 if ($object->id > 0) {
@@ -313,9 +313,6 @@ if ($object->id > 0) {
 		} else {
 			$result = $filetomerge->fetch_by_product($object->id);
 		}
-
-		$form = new Form($db);
-
 
 		$filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$', 'name', SORT_ASC, 1);
 

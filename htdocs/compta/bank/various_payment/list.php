@@ -184,7 +184,6 @@ $arrayfields = array(
 );
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
-// '@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Security check
 $socid = GETPOSTINT("socid");
@@ -234,6 +233,7 @@ if (empty($reshook)) {
 		$massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
 	}
 }
+
 
 /*
  * View
@@ -312,7 +312,7 @@ if ($search_bank_entry > 0) {
 if ($search_accountancy_account > 0) {
 	$sql .= " AND v.accountancy_code = ".((int) $search_accountancy_account);
 }
-if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
+if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX') && ($search_accountancy_subledger > 0)) {
 	$sql .= " AND v.subledger_account = '".$db->escape($search_accountancy_subledger)."'";
 } else {
 	if ($search_accountancy_subledger != '' && $search_accountancy_subledger != '-1') {
@@ -348,7 +348,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -404,16 +404,16 @@ if ($search_label) {
 	$param .= '&search_label='.urlencode($search_label);
 }
 if ($search_datep_start) {
-	$param .= '&search_datep_start='.urlencode($search_datep_start);
+	$param .= '&search_datep_start='.urlencode((string) $search_datep_start);
 }
 if ($search_datep_end) {
-	$param .= '&search_datep_end='.urlencode($search_datep_end);
+	$param .= '&search_datep_end='.urlencode((string) $search_datep_end);
 }
 if ($search_datev_start) {
-	$param .= '&search_datev_start='.urlencode($search_datev_start);
+	$param .= '&search_datev_start='.urlencode((string) $search_datev_start);
 }
 if ($search_datev_end) {
-	$param .= '&search_datev_end='.urlencode($search_datev_end);
+	$param .= '&search_datev_end='.urlencode((string) $search_datev_end);
 }
 if ($search_type_id > 0) {
 	$param .= '&search_type_id='.urlencode((string) ($search_type_id));

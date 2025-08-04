@@ -42,9 +42,13 @@ $action = GETPOST('action', 'alpha');
 
 //
 $documentation = new Documentation($db);
-
+$morejs = [
+	'/includes/ace/src/ace.js',
+	'/includes/ace/src/ext-statusbar.js',
+	'/includes/ace/src/ext-language_tools.js',
+];
 // Output html head + body - Param is Title
-$documentation->docHeader('Inputs');
+$documentation->docHeader('Inputs', $morejs);
 
 // Set view for menu and breadcrumb
 // Menu must be set in constructor of documentation class
@@ -79,37 +83,39 @@ $documentation->showSidebar(); ?>
 			</div>
 			<?php
 			$lines = array(
-				'<td>Available Input</td>',
-				'<td><input id="label" name="label" class="minwidth200" maxlength="255" value=""></td>',
+				'Available Input',
+				'<input id="label" name="label" class="minwidth200" maxlength="255" value="">',
 				'',
-				'<td>Disabled Input</td>',
-				'<td><input id="label" name="label" class="minwidth200" maxlength="255" value="" disabled></td>',
+				'Disabled Input',
+				'<input id="label" name="label" class="minwidth200" maxlength="255" value="" disabled>',
 			);
 			echo $documentation->showCode($lines); ?>
 
 			<!-- Checkbox input -->
 			<p class="documentation-text"><?php echo $langs->trans('DocCheckboxInputsDescription'); ?></p>
 			<div class="documentation-example">
-				<span class="spannature paddinglarge marginrightonly nonature-back"><label for="prospectinput" class="valignmiddle">Prospect<input id="prospectinput2" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1" checked></label></span>
-				<span  class="spannature paddinglarge marginrightonly nonature-back"><label for="customerinput" class="valignmiddle">Customer<input id="customerinput2" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1" checked></label></span>
-				<span class="spannature paddinglarge marginrightonly nonature-back"><label for="supplierinput" class="valignmiddle">Supplier<input id="supplierinput2" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1" checked></label></span>
+				<span class="spannature paddinglarge marginrightonly nonature-back valignmiddle"><label for="prospectinput" class="valignmiddle"><span class="valignmiddle">Prospect</span><input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="prospect" value="1" checked></label></span>
+				<span  class="spannature paddinglarge marginrightonly nonature-back valignmiddle"><label for="customerinput" class="valignmiddle"><span class="valignmiddle">Customer</span><input id="customerinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1" checked></label></span>
+				<span class="spannature paddinglarge marginrightonly nonature-back valignmiddle"><label for="supplierinput" class="valignmiddle"><span class="valignmiddle">Supplier</span><input id="supplierinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="supplier" value="1" checked></label></span>
 			</div>
 			<?php
 			$lines = array(
-				'<span class="spannature paddinglarge marginrightonly nonature-back"><label for="prospectinput" class="valignmiddle">Prospect<input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1" checked></label></span>',
-				'<span class="spannature paddinglarge marginrightonly nonature-back"><label for="customerinput" class="valignmiddle">Customer<input id="customerinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1" checked></label></span>',
-				'<span class="spannature paddinglarge marginrightonly nonature-back"><label for="supplierinput" class="valignmiddle">Supplier<input id="supplierinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1" checked></label></span>',
+				'<span class="spannature paddinglarge marginrightonly nonature-back valignmiddle"><label for="prospectinput" class="valignmiddle"><span class="valignmiddle">Prospect</span><input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="prospect" value="1" checked></label></span>',
+				'<span class="spannature paddinglarge marginrightonly nonature-back valignmiddle"><label for="customerinput" class="valignmiddle"><span class="valignmiddle">Customer</span><input id="customerinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1" checked></label></span>',
+				'<span class="spannature paddinglarge marginrightonly nonature-back valignmiddle"><label for="supplierinput" class="valignmiddle"><span class="valignmiddle">Supplier</span><input id="supplierinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="supplier" value="1" checked></label></span>',
 			);
 			echo $documentation->showCode($lines); ?>
 
 			<!-- Radio input -->
 			<p class="documentation-text"><?php echo $langs->trans('DocRadioInputsDescription'); ?></p>
 			<div class="documentation-example">
-				<input type="radio" name="radioinput" value="radioinput"> Radio Input
+				<input type="radio" id="idforradioinput1" name="radioinput" value="value1"><label for="idforradioinput1" class="marginrightonly"> Radio Input 1</label>
+				<input type="radio" id="idforradioinput2" name="radioinput" value="value2"><label for="idforradioinput2" class="marginrightonly"> Radio Input 2</label>
 			</div>
 			<?php
 			$lines = array(
-				'<input type="radio" name="radioinput" value="radioinput"> Radio Input'
+				'<input type="radio" id="idforradioinput1" name="radioinput" value="value1"><label for="idforradioinput1" class="marginrightonly"> Radio Input 1</label>',
+				'<input type="radio" id="idforradioinput2" name="radioinput" value="value2"><label for="idforradioinput2" class="marginrightonly"> Radio Input 2</label>'
 			);
 			echo $documentation->showCode($lines); ?>
 		</div>
@@ -136,6 +142,7 @@ $documentation->showSidebar(); ?>
 			<?php
 			$lines = array(
 				'<?php',
+				'',
 				'/**',
 				' * Function selectarray',
 				' *',
@@ -158,14 +165,15 @@ $documentation->showSidebar(); ?>
 				' * @return string                                  HTML select string.,',
 				' */',
 				'',
-				'<td>Select with empty value</td>',
+
+				'// Select with empty value',
 				'print $form->selectarray(\'htmlnameselectwithemptyvalue\', $values, \'idselectwithemptyvalue\', 1, 0, 0, \'\', 0, 0, 0, \'\', \'minwidth200\');',
 				'',
-				'<td>Select within empty value</td>',
+				'// Select within empty value',
 				'print $form->selectarray(\'htmlnameselectwithinemptyvalue\', $values, \'idnameselectwithinemptyvalue\', 0,0, 0, \'\', 0, 0, 0, \'\', \'minwidth200\');',
 
 			);
-			echo $documentation->showCode($lines); ?>
+			echo $documentation->showCode($lines, 'php'); ?>
 
 			<!-- Multiselect input -->
 			<p class="documentation-text"><?php echo $langs->trans('DocMultiSelectInputsDescription'); ?></p>
@@ -180,6 +188,7 @@ $documentation->showSidebar(); ?>
 			<?php
 			$lines = array(
 				'<?php',
+				'',
 				'/**',
 				' * Show a multiselect form from an array. WARNING: Use this only for short lists.',
 				' *',
@@ -199,10 +208,10 @@ $documentation->showSidebar(); ?>
 				' * @see selectarray(), selectArrayAjax(), selectArrayFilter()',
 				' */',
 				'',
-				'<td>Multiselect</td>',
+				'// Multiselect',
 				'print $form->multiselectarray(\'categories\', $values, GETPOST(\'categories\', \'array\'), 0, 0, \'minwidth200\', 0, 0);'
 			);
-			echo $documentation->showCode($lines); ?>
+			echo $documentation->showCode($lines, 'php'); ?>
 
 			<!-- Date input -->
 			<p class="documentation-text"><?php echo $langs->trans('DocDateSelectInputsDescription'); ?></p>
@@ -223,6 +232,7 @@ $documentation->showSidebar(); ?>
 			</div>
 			<?php
 			$lines = array(
+				'<?php',
 				'/**',
 				' *  Show a HTML widget to input a date or combo list for day, month, years and optionally hours and minutes.,',
 				' *  Fields are preselected with :,',
@@ -252,13 +262,13 @@ $documentation->showSidebar(); ?>
 				' * @see    form_date(), select_month(), select_year(), select_dayofweek(),',
 				' */',
 				'',
-				'<td>Date Select</td>',
+				'// Date Select',
 				'print $form->selectDate();',
 				'',
-				'<td>Date Select with hours</td>',
+				'// Date Select with hours',
 				'print $form->selectDate(\'\', \'re2\', 1, 1, 1);'
 			);
-			echo $documentation->showCode($lines); ?>
+			echo $documentation->showCode($lines, 'php'); ?>
 
 
 			<!-- Editor input -->
@@ -295,7 +305,107 @@ $documentation->showSidebar(); ?>
 				'$doleditor = new DolEditor(\'desc\', GETPOST(\'desc\', \'restricthtml\'), \'\', 160, \'dolibarr_details\', \'\', false, true, getDolGlobalString(\'FCKEDITOR_ENABLE_DETAILS\'), ROWS_4, \'90%\');',
 				'print $form->multiselectarray(\'categories\', $values, GETPOST(\'categories\', \'array\'), 0, 0, \'minwidth200\', 0, 0);'
 			);
-			echo $documentation->showCode($lines); ?>
+			echo $documentation->showCode($lines, 'php'); ?>
+		</div>
+
+		<!-- Search Filter Tool Input -->
+		<div class="documentation-section" id="setinputssection-getSearchFilterToolInput">
+			<h2 class="documentation-title"><?php echo $langs->trans('DocSearchInputUsage'); ?></h2>
+			<p class="documentation-text"><?php echo $langs->trans('DocSearchInputUsageDescription'); ?></p>
+			<div class="documentation-example">
+				<?php
+				$containerCssSelector = '#demo-search-filter-tool-container-01';
+				print $form->getSearchFilterToolInput(
+					$containerCssSelector. ' .search-item',
+					'',
+					'',
+					['attr' => [
+							'data-counter-target' => $containerCssSelector. ' .counter',
+							'data-no-item-target' => $containerCssSelector. ' .search-tool-no-results',
+						],
+					]
+				);
+				?>
+
+				<div id="demo-search-filter-tool-container-01">
+					<p>Counter : <strong class="counter">12</strong></p>
+					<ul>
+						<li class="search-item">France</li>
+						<li class="search-item">Italy</li>
+						<li class="search-item">Germany</li>
+						<li class="search-item">Spain</li>
+						<li class="search-item">Canada</li>
+						<li class="search-item">Brazil</li>
+						<li class="search-item">Argentina</li>
+						<li class="search-item">Japan</li>
+						<li class="search-item">Australia</li>
+						<li class="search-item">India</li>
+						<li class="search-item">Egypt</li>
+						<li class="search-item">South Africa</li>
+					</ul>
+					<div class="search-tool-no-results hidden-search-result" ><?php print $langs->trans('NoResults') ?></div>
+				</div>
+
+			</div>
+			<?php
+			$lines = array(
+				'<div class="search-tool-container">',
+				'	<input ',
+				'	 type="search"',
+				'	 name=""',
+				'	 autofocus="" <?php // To use only if search is in top of page ?> ',
+				'	 value=""',
+				'	 class="search-tool-input"  <?php // optional for js filter you can use custom class ?> ',
+				'	 placeholder="Search"',
+				'	 autocomplete="off"',
+				'	 data-search-tool-target="#demo-filter .search-item" <?php // required for js filter ?> ',
+				'	 data-counter-target="#demo-filter .counter" <?php // optional for js filter ?> ',
+				'	 data-no-item-target="#demo-filter .search-tool-no-results" <?php // optional for js filter  ?> ',
+				'	>',
+				'</div>',
+				'<div id="demo-filter">',
+				'	<p>Counter : <strong class="counter">4</strong></p>',
+				'	<ul>',
+				'		<li class="search-item">France</li>',
+				'		<li class="search-item">Italy</li>',
+				'		<li class="search-item">Germany</li>',
+				'		<li class="search-item">Spain</li>',
+				'	</ul>',
+				'	<div class="search-tool-no-results hidden-search-result" >No results</div>',
+				'</div>',
+
+			);
+			echo $documentation->showCode($lines, 'php');
+
+			$lines = array(
+				'<?php',
+				'print $form->getSearchFilterToolInput(',
+				'	\'#demo-filter .search-item\',',
+				'	\'search-tools-input\',',
+				'	[\'attr\' => [',
+				'			\'data-no-item-target\' => \'#demo-filter .search-tool-no-results\', ',
+				'			\'data-counter-target\' => \'#demo-filter .counter\', ',
+				'		],',
+				'	]',
+				'); ',
+				'?>',
+				'',
+				'<div id="demo-filter">',
+				'	<p>Counter : <strong class="counter">4</strong></p>',
+				'	<ul>',
+				'		<li class="search-item">France</li>',
+				'		<li class="search-item">Italy</li>',
+				'		<li class="search-item">Germany</li>',
+				'		<li class="search-item">Spain</li>',
+				'	</ul>',
+				'	<div class="search-tool-no-results hidden-search-result" >No results</div>',
+				'</div>',
+
+			);
+			echo $documentation->showCode($lines, 'php');
+
+			?>
+
 		</div>
 	</div>
 

@@ -146,18 +146,19 @@ class Salary extends CommonObject
 	public $user;
 
 	/**
-	 * @var int<0,1> 1 if salary paid COMPLETELY, 0 otherwise (do not use it anymore, use statut and close_code)
-	 * @deprecated Use $status and $close_code
+	 * @var		int<0,1> 	1 if salary paid COMPLETELY, 0 otherwise (Note ->paye is still used for salary, the couple statut/close_code that replace it is for invoices only)
 	 */
 	public $paye;
-
-	const STATUS_UNPAID = 0;
-	const STATUS_PAID = 1;
 
 	/**
 	 * @var float amount remain to pay
 	 */
 	public $resteapayer;
+
+
+	const STATUS_UNPAID = 0;
+	const STATUS_PAID = 1;
+
 
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
@@ -997,7 +998,7 @@ class Salary extends CommonObject
 
 					if (!$error) {
 						// Force payment mode of invoice to withdraw
-						$payment_mode_id = dol_getIdFromCode($this->db, ($type == 'bank-transfer' ? 'VIR' : 'PRE'), 'c_paiement', 'code', 'id', 1);
+						$payment_mode_id = dol_getIdFromCode($this->db, (($type == 'bank-transfer' || $type == 'salaire') ? 'VIR' : 'PRE'), 'c_paiement', 'code', 'id', 1);
 						if ($payment_mode_id > 0) {
 							$result = $this->setPaymentMethods($payment_mode_id);
 						}

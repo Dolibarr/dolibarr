@@ -49,11 +49,6 @@ class FormCardWebPortal
 	public $backtopageforcancel = '';
 
 	/**
-	 * @var string Back to page for JS fields
-	 */
-	public $backtopagejsfields = '';
-
-	/**
 	 * @var string Cancel
 	 */
 	public $cancel = '';
@@ -173,7 +168,6 @@ class FormCardWebPortal
 		$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'webportal' . $elementEn . 'card'; // To manage different context of search
 		$backtopage = GETPOST('backtopage', 'alpha');                    // if not set, a default page will be used
 		$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');    // if not set, $backtopage will be used
-		$backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 
 		// Initialize a technical objects
 		$object = new $objectclass($this->db);
@@ -203,7 +197,6 @@ class FormCardWebPortal
 		$this->action = $action;
 		$this->backtopage = $backtopage;
 		$this->backtopageforcancel = $backtopageforcancel;
-		$this->backtopagejsfields = $backtopagejsfields;
 		$this->cancel = $cancel;
 		$this->elementEn = $elementEn;
 		$this->id = (int) $id;
@@ -711,8 +704,10 @@ class FormCardWebPortal
 
 			if (!empty($val['noteditable'])) {
 				$html .= $this->form->showOutputFieldForObject($object, $val, $key, $value, '', '', '', 0);
+				//$html .= $object->showOutputFieldForObject($object, $val, $key, $value, '', '', '', 0);
 			} else {
-				$html .= $this->form->showInputField($val, $key, $value, '', '', '', '');
+				$html .= $this->form->showInputFieldForObject($object, $val, $key, $value, '', '', '', '');
+				//$html .= $object->showInputField($val, $key, $value, '', '', '', '');
 			}
 			$html .= '</div>';
 			$html .= '</div>';
@@ -751,7 +746,6 @@ class FormCardWebPortal
 		$action = $this->action;
 		$backtopage = $this->backtopage;
 		$backtopageforcancel = $this->backtopageforcancel;
-		//$backtopagejsfields = $this->backtopagejsfields;
 		//$elementEn = $this->elementEn;
 		$id = $this->id;
 		$object = $this->object;

@@ -168,7 +168,7 @@ print '</td></tr>';
 print '</table>';
 print '</div>';
 
-print load_fiche_titre($langs->trans("Files"), '', 'file');
+print load_fiche_titre($langs->trans("FileToConcatToGeneratedPDF"), '', 'file');
 print '<div class="div-table-responsive-no-min">';
 print '<table summary="more" class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td width="200px"></td></tr>';
@@ -183,7 +183,7 @@ if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) {
 }
 $modulepart = 'order';
 
-print '<tr class="oddeven"><td><label for="logo">'.$form->textwithpicto($langs->trans("TERMSOFSALE"), $tooltiptermsofsale).'</label></td><td>';
+print '<tr class="oddeven"><td><label for="logo">'.$form->textwithpicto($langs->trans("FileToConcatToGeneratedPDF"), $tooltiptermsofsale).'</label></td><td>';
 print '<div class="centpercent nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
 print '<input type="file" class="flat minwidth100 maxwidthinputfileonsmartphone" name="termsofsale" id="termsofsale" accept="application/pdf">';
 
@@ -201,7 +201,7 @@ print '</table>';
 print '</div>';
 
 
-print '<center><input type="submit" class="button button-edit reposition" value="'.$langs->trans("Modify").'"></center>';
+print '<center><input type="submit" class="button button-edit reposition" value="'.$langs->trans("Save").'"></center>';
 
 print '</form>';
 

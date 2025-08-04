@@ -23,7 +23,10 @@ AllPropals=Tất cả đơn hàng đề xuất
 SearchAProposal=Tìm kiếm đơn hàng đề xuất
 NoProposal=Không có đề xuất
 ProposalsStatistics=Thống kê đơn hàng đề xuất
+NumberOfProposals=Số lượng đề xuất
 NumberOfProposalsByMonth=Số lượng theo tháng
+AmountOfProposals=Số lượng đề xuất
+AmountOfProposalsHT=Số lượng đề xuất (chưa bao gồm thuế)
 AmountOfProposalsByMonthHT=Số tiền theo tháng (chưa thuế)
 NbOfProposals=Số lượng đơn hàng đề xuất
 ShowPropal=Hiện đơn hàng đề xuất
@@ -77,13 +80,11 @@ AvailabilityTypeAV_1W=1 tuần
 AvailabilityTypeAV_2W=2 tuần
 AvailabilityTypeAV_3W=3 tuần
 AvailabilityTypeAV_1M=1 tháng
-
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Đại diện kinh doanh theo dõi đơn hàng đề xuất
 TypeContact_propal_external_BILLING=Liên lạc khách hàng về hóa đơn
 TypeContact_propal_external_CUSTOMER=Liên hệ với khách hàng sau-up đề nghị
 TypeContact_propal_external_SHIPPING=Liên lạc khách hàng để giao hàng
-
 # Document models
 CantBeNoSign=không thể thiết lập không được ký
 CaseFollowedBy=Theo bởi trường hợp
@@ -122,3 +123,5 @@ SignSociete_rib=Ký ủy quyền
 SignPropal=Chấp nhận đề xuất
 Signed=đã ký
 SignedOnly=Chỉ có chữ ký
+ExpeditionSigned=Đã ký lô hàng
+SignExpedition=Ký hiệu lô hàng

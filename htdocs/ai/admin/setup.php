@@ -67,16 +67,17 @@ if (!class_exists('FormSetup')) {
 $formSetup = new FormSetup($db);
 
 // List all available IA
-$arrayofia = getListOfAIServices();
+$arrayofai = getListOfAIServices();
 
 // List all available features
 $arrayofaifeatures = getListOfAIFeatures();
 
 $item = $formSetup->newItem('AI_API_SERVICE');	// Name of constant must end with _KEY so it is encrypted when saved into database.
-$item->setAsSelect($arrayofia);
+$item->setAsSelect($arrayofai);
 $item->cssClass = 'minwidth150';
 
-foreach ($arrayofia as $ia => $ialabel) {
+foreach ($arrayofai as $ia => $iarecord) {
+	$ialabel = $iarecord['label'];
 	// Setup conf AI_PUBLIC_INTERFACE_TOPIC
 	/*$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_ENDPOINT');	// Name of constant must end with _KEY so it is encrypted when saved into database.
 	$item->defaultFieldValue = '';
@@ -92,8 +93,11 @@ foreach ($arrayofia as $ia => $ialabel) {
 	$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_URL');	// Name of constant must end with _KEY so it is encrypted when saved into database.
 	$item->nameText = $langs->trans("AI_API_URL").' ('.$ialabel.')';
 	$item->defaultFieldValue = '';
-	$item->fieldParams['trClass'] = 'iaservice '.$ia;
+	$item->fieldParams['trClass'] = 'iaservice iaurl '.$ia;
 	$item->cssClass = 'minwidth500 input'.$ia;
+	if ($ia == 'custom') {
+		$item->fieldAttr['placeholder'] = 'https://domainofapi.com/v1/';
+	}
 }
 
 $setupnotempty = + count($formSetup->items);
@@ -123,8 +127,6 @@ $action = 'edit';
  * View
  */
 
-$form = new Form($db);
-
 $help_url = '';
 $title = "AiSetup";
 
@@ -142,7 +144,6 @@ print dol_get_fiche_head($head, 'settings', $langs->trans($title), -1, "ai");
 
 if ($action == 'edit') {
 	print $formSetup->generateOutput(true);
-	print '<br>';
 } elseif (!empty($formSetup->items)) {
 	print $formSetup->generateOutput();
 	print '<div class="tabsAction">';
@@ -160,11 +161,29 @@ if (empty($setupnotempty)) {
 print '<script type="text/javascript">
     jQuery(document).ready(function() {
 		function showHideAIService(aiservice) {
-			console.log("We select the AI service "+aiservice);
+			console.log("showHideAIService: We select the AI service "+aiservice);
 			jQuery(".iaservice").hide();
 
 			if (aiservice != "-1") {
 				jQuery(".iaservice."+aiservice).show();
+				const arrayofia = {';
+$i = 0;
+foreach ($arrayofai as $key => $airecord) {
+	if ($key == -1) {
+		continue;
+	}
+	if ($i) {
+		print ', ';
+	}
+	$i++;
+	print dol_escape_js($key).': \''.dol_escape_js($airecord['url']).'\'';
+}
+print '};
+				console.log("Check URL for .iaurl."+aiservice+" .input"+aiservice);
+				if (jQuery(".iaurl."+aiservice+" .input"+aiservice).val() == \'\') {
+					console.log("URL is empty, we fill with default value of IA selected");
+					jQuery(".iaurl."+aiservice+" .input"+aiservice).val(arrayofia[aiservice]);
+				}
 			}
 		}
 
@@ -182,58 +201,60 @@ print '<script type="text/javascript">
 print dol_get_fiche_end();
 
 
+// The section for test
+
 if (getDolGlobalString("AI_API_SERVICE")) {
+	print '<br>';
+
 	// Section to test
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	$functioncode = GETPOST('functioncode');
-	$out = '';
 
-	if ($functioncode) {
-		$labeloffeature = empty($arrayofaifeatures[GETPOST('functioncode')]['label']) ? 'Undefined' : $arrayofaifeatures[GETPOST('functioncode')]['label'];
+	$key = 'textgenerationother';	// The HTML ID of field to fill
 
-		//$out .= $langs->trans("Test").' '.$labeloffeature.'...<br><br>';
+	//if (GETPOST('functioncode') == 'textgenerationemail') {
 
-		if (GETPOST('functioncode') == 'textgenerationemail') {
-			$key = 'textgenerationemail';	// The HTML ID of field to fill
+	print '<br>';
+	//print '<hr>';
 
-			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-			$showlinktoai = $key;		// 'textgeneration', 'imagegeneration', ...
-			$showlinktoailabel = $langs->trans("Test").' '.$labeloffeature;
-			$showlinktolayout = 0;
-			$formmail = new FormMail($db);
-			$htmlname = $key;
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+	include_once DOL_DOCUMENT_ROOT."/core/class/html.formai.class.php";
+	$formai = new FormAI($db);
+	$formmail = new FormMail($db);
 
-			// Fill $out
-			include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+	$showlinktoai = $key;		// 'textgeneration', 'imagegeneration', ...
+	$showlinktoailabel = $langs->trans("AITestText");
+	$showlinktolayout = 0;
+	$htmlname = $key;
+	$formmail->withaiprompt = '';
 
-			$out .= '<div id="'.$key.'"></div>';
-		} else {
-			$out .= $langs->trans("FeatureNotYetAvailable").'<br><br>';
-			$functioncode = '';
-		}
-	}
+	// Fill $out
 
-	if (!$functioncode) {
-		// Combo list of AI features
-		$out .= '<select name="functioncode" id="functioncode" class="flat minwidth300" placeholder="Test feature">';
-		$out .= '<option value="-1">'.$langs->trans("SelectFeatureToTest").'</option>';
-		foreach ($arrayofaifeatures as $key => $val) {
-			$labelhtml = $langs->trans($arrayofaifeatures[$key]['label']).($arrayofaifeatures[$key]['status'] == 'notused' ? ' <span class="opacitymedium">('.$langs->trans("NotYetAvailable").')</span>' : "");
-			$labeltext = $langs->trans($arrayofaifeatures[$key]['label']);
-			$out .= '<option value="'.$key.'" data-html="'.dol_escape_htmltag($labelhtml).'"';
-			$out .= (GETPOST('functioncode') == $key ? ' selected="selected"' : '');
-			$out .= '>'.dol_escape_htmltag($labeltext).'</option>';
-		}
-		$out .= '</select>';
-		$out .= ajax_combobox("functioncode");
-
-		$out .= '<input class="button small" type="submit" name="testmode" value="'.$langs->trans("Test").'">';
-	}
+	$out = $langs->trans("Test").': &nbsp; ';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
 	print $out;
+
+	print '<br><textarea id="'.$htmlname.'" placeholder="Lore ipsum..." class="quatrevingtpercent" rows="4"></textarea>';	// The div
+
+	print '<br><br>';
+
+
+	$showlinktoai .= 'html';
+	$htmlname .= 'html';
+	$formmail->withaiprompt = 'html';
+
+	// Fill $out
+	$out = $langs->trans("Test").': &nbsp; ';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+	print $out;
+
+	print '<br>';
+	$doleditor = new DolEditor($htmlname, '', '', 100, 'dolibarr_details');
+	print $doleditor->Create(1);
+
 
 	print '</form>';
 }

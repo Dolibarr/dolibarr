@@ -4,8 +4,10 @@
  * Copyright (C) 2019		Cedric Ancelin			<icedo.anc@gmail.com>
  * Copyright (C) 2020-2024  Frédéric France     	<frederic.france@free.fr>
  * Copyright (C) 2023       Alexandre Janniaux  	<alexandre.janniaux@gmail.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Jon Bendtsen             <jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2025		William Mead			<william@m34d.com>
+ * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,22 +28,22 @@ use Luracast\Restler\RestException;
 /**
  * API class for thirdparties
  *
+ * @since	3.8.0	Initial implementation
+ *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
- *
  */
 class Thirdparties extends DolibarrApi
 {
 	/**
-	 *
-	 * @var array   $FIELDS     Mandatory fields, checked when we create and update the object
+	 * @var string[]       Mandatory fields, checked when we create and update the object
 	 */
 	public static $FIELDS = array(
 		'name'
 	);
 
 	/**
-	 * @var Societe $company {@type Societe}
+	 * @var Societe {@type Societe}
 	 */
 	public $company;
 
@@ -67,12 +69,14 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of a thirdparty object
+	 * Get a third party
 	 *
-	 * Return an array with thirdparty information
+	 * Return the third party object
 	 *
-	 * @param	int		$id				Id of third party to load
-	 * @return  Object					Object with cleaned properties
+	 * @since	3.8.0	Initial implementation
+	 *
+	 * @param	int		$id				ID of the third party to load
+	 * @return	Object					Object with cleaned properties
 	 *
 	 * @throws	RestException
 	 */
@@ -82,14 +86,18 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of a thirdparty object by email.
+	 * Get properties of a third party by email.
 	 *
-	 * Return an array with thirdparty information
+	 * Return an array with third party information
 	 *
-	 * @param string    $email  Email of third party to load
-	 * @return array|mixed Cleaned Societe object
+	 * @since	11.0.0		Initial implementation
 	 *
-	 * @url     GET email/{email}
+	 * @param	string		$email		Email of the third party to load
+	 * @return	array|mixed				Cleaned Societe object
+	 * @phan-return Societe
+	 * @phpstan-return Societe
+	 *
+	 * @url		GET			email/{email}
 	 *
 	 * @throws RestException
 	 */
@@ -99,14 +107,16 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of a thirdparty object by barcode.
+	 * Get a third party by barcode.
 	 *
-	 * Return an array with thirdparty information
+	 * Return an array with third party information
 	 *
-	 * @param string    $barcode  Barcode of third party to load
-	 * @return array|mixed Cleaned Societe object
+	 * @since	13.0.0			Initial implementation
 	 *
-	 * @url     GET barcode/{barcode}
+	 * @param	string		$barcode	Barcode of the third party
+	 * @return	array|mixed				Cleaned Societe object
+	 *
+	 * @url		GET			barcode/{barcode}
 	 *
 	 * @throws RestException
 	 */
@@ -116,23 +126,26 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * List thirdparties
+	 * List third parties
 	 *
-	 * Get a list of thirdparties
+	 * Get a list of third parties
 	 *
-	 * @param   string  $sortfield  Sort field
-	 * @param   string  $sortorder  Sort order
-	 * @param   int     $limit      Limit for list
-	 * @param   int     $page       Page number
-	 * @param   int     $mode       Set to 1 to show only customers
-	 *                              Set to 2 to show only prospects
-	 *                              Set to 3 to show only those are not customer neither prospect
-	 *								Set to 4 to show only suppliers
-	 * @param	int		$category   Use this param to filter list by category
-	 * @param   string  $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "((t.nom:like:'TheCompany%') or (t.name_alias:like:'TheCompany%')) and (t.datec:<:'20160101')"
-	 * @param   string  $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @param bool $pagination_data If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
-	 * @return  array               Array of thirdparty objects
+	 * @since	3.8.0	Initial implementation
+	 *
+	 * @param	string	$sortfield		S	ort field
+	 * @param	string	$sortorder			Sort order
+	 * @param	int		$limit				List limit
+	 * @param	int		$page				Page number
+	 * @param	int		$mode				Set to 0 to show all third parties, Set to 1 to show only customers, 2 for prospects, 3 for neither customer or prospect, 4 for suppliers
+	 * @param	int		$category			Use this param to filter the list by category
+	 * @param	string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "((t.nom:like:'TheCompany%') or (t.name_alias:like:'TheCompany%')) and (t.datec:<:'20160101')"
+	 * @param	string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param	bool	$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @return	array						Array of thirdparty objects
+	 * @phan-return Societe[]|array{data:Societe[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return Societe[]|array{data:Societe[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 *
+	 * @throws RestException
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
@@ -237,7 +250,24 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(503, 'Error when retrieve thirdparties : '.$this->db->lasterror());
 		}
 		if (!count($obj_ret)) {
-			throw new RestException(404, 'Thirdparties not found');
+			$message = '';
+			switch ($mode) {
+				case 0:
+					$message = 'No third parties found';
+					break;
+				case 1:
+					$message = 'No customers found';
+					break;
+				case 2:
+					$message = 'No prospects found';
+					break;
+				case 3:
+					$message = 'No other third parties found';
+					break;
+				case 4:
+					$message = 'No suppliers found';
+			}
+			throw new RestException(404, $message);
 		}
 
 		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
@@ -261,10 +291,16 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Create thirdparty object
+	 * Create a third party
 	 *
-	 * @param array $request_data   Request datas
-	 * @return int  ID of thirdparty
+	 * @since	3.8.0	Initial implementation
+	 *
+	 * @param	array	$request_data	Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 * @return	int		ID of third party
+	 *
+	 * @throws RestException
 	 */
 	public function post($request_data = null)
 	{
@@ -295,11 +331,17 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Update thirdparty
+	 * Update third party
 	 *
-	 * @param 	int   			$id             Id of thirdparty to update
-	 * @param 	array 			$request_data   Datas
-	 * @return 	Object|false					Updated object
+	 * @since	3.8.0	Initial implementation
+	 *
+	 * @param	int				$id				ID of thirdparty to update
+	 * @param	array 			$request_data	Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 * @return	Object							Updated object
+	 * @phan-return Societe
+	 * @phpstan-return Societe
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
@@ -350,18 +392,25 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Merge a third party into another one.
+	 * Merge a third party into another third party
 	 *
-	 * Merge content (properties, notes) and objects (like invoices, events, orders, proposals, ...) of a thirdparty into a target third party,
+	 * Merge content (properties, notes) and objects (like invoices, events, orders, proposals, ...) of a third party into a target third party,
 	 * then delete the merged third party.
-	 * If a property has a defined value both in third party to delete and third party to keep, the value into the third party to
-	 * delete will be ignored, the value of target thirdparty will remain, except for notes (content is concatenated).
+	 * If a property has a defined value both in the third party to delete and the third party to keep, the value of the third party to
+	 * delete will be ignored, the value of the target third party will remain, except for notes (content is concatenated).
 	 *
-	 * @param int   $id             ID of thirdparty to keep (the target third party)
-	 * @param int   $idtodelete     ID of thirdparty to remove (the thirdparty to delete), once data has been merged into the target third party.
-	 * @return Object				Return the resulted third party.
+	 * @since	7.0.0	Initial implementation
 	 *
-	 * @url PUT {id}/merge/{idtodelete}
+	 * @param 	int   	$id             ID of thirdparty to keep (the target third party)
+	 * @param 	int   	$idtodelete     ID of thirdparty to remove (the third party to delete), once data has been merged into the target third party.
+	 * @return 	Object					Return the resulted third party.
+	 *
+	 * @phan-return Societe
+	 * @phpstan-return Societe
+	 *
+	 * @url		PUT		{id}/merge/{idtodelete}
+	 *
+	 * @throws RestException
 	 */
 	public function merge($id, $idtodelete)
 	{
@@ -402,10 +451,16 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Delete thirdparty
+	 * Delete a third party
 	 *
-	 * @param int $id   Thirdparty ID
-	 * @return array
+	 * @since	3.8.0	Initial implementation
+	 *
+	 * @param	int		$id		ID of the third party
+	 * @return	array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @throws RestException
 	 */
 	public function delete($id)
 	{
@@ -419,7 +474,7 @@ class Thirdparties extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('societe', $this->company->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-		$this->company->oldcopy = clone $this->company;
+		$this->company->oldcopy = clone $this->company;  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		$res = $this->company->delete($id);
 		if ($res < 0) {
@@ -437,17 +492,19 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Set new price level for the given thirdparty
+	 * Set a new price level for the given third party
+	 *
+	 * @since	13.0.0	Initial implementation
 	 *
 	 * @param	int		$id				ID of thirdparty
 	 * @param	int		$priceLevel		Price level to apply to thirdparty
 	 * @return	Object					Thirdparty data without useless information
 	 *
-	 * @url PUT {id}/setpricelevel/{priceLevel}
+	 * @url		PUT		{id}/setpricelevel/{priceLevel}
 	 *
 	 * @throws RestException 400 Price level out of bounds
 	 * @throws RestException 401 Access not allowed for your login
-	 * @throws RestException 404 Thirdparty not found
+	 * @throws RestException 404 Third party not found
 	 * @throws RestException 500 Error fetching/setting price level
 	 * @throws RestException 501 Request needs modules "Thirdparties" and "Products" and setting Multiprices activated
 	 */
@@ -497,16 +554,18 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Add a customer representative to a thirdparty
+	 * Add a customer representative to a third party
 	 *
-	 * @param int		$id					Id of thirdparty
-	 * @param int       $representative_id	Id of representative
-	 * @return int							Return integer <=0 if KO, >0 if OK
+	 * @since	20.0.0	Initial implementation
 	 *
-	 * @url POST {id}/representative/{representative_id}
+	 * @param	int		$id					ID of the third party
+	 * @param	int		$representative_id	ID of representative
+	 * @return	int							Return integer <=0 if KO, >0 if OK
+	 *
+	 * @url		POST	{id}/representative/{representative_id}
 	 *
 	 * @throws RestException 401 Access not allowed for your login
-	 * @throws RestException 404 User or Thirdparty not found
+	 * @throws RestException 404 User or Third party not found
 	 */
 	public function addRepresentative($id, $representative_id)
 	{
@@ -531,16 +590,18 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Delete a customer representative to a thirdparty
+	 * Remove the link between a customer representative and a third party
 	 *
-	 * @param int		$id					Id of thirdparty
-	 * @param int       $representative_id	Id of representative
-	 * @return int							Return integer <=0 if KO, >0 if OK
+	 * @since	20.0.0	Initial implementation
 	 *
-	 * @url DELETE {id}/representative/{representative_id}
+	 * @param	int		$id					ID of the third party
+	 * @param	int		$representative_id	ID of representative
+	 * @return	int							Return integer <=0 if KO, >0 if OK
+	 *
+	 * @url		DELETE	{id}/representative/{representative_id}
 	 *
 	 * @throws RestException 401 Access not allowed for your login
-	 * @throws RestException 404 User or Thirdparty not found
+	 * @throws RestException 404 User or Third party not found
 	 */
 	public function deleteRepresentative($id, $representative_id)
 	{
@@ -565,16 +626,22 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Get customer categories for a thirdparty
+	 * Get customer categories for a third party
 	 *
-	 * @param int		$id         ID of thirdparty
-	 * @param string	$sortfield	Sort field
-	 * @param string	$sortorder	Sort order
-	 * @param int		$limit		Limit for list
-	 * @param int		$page		Page number
-	 * @return array|void
+	 * @since	5.0.0	Initial implementation
 	 *
-	 * @url GET {id}/categories
+	 * @param	int		$id			ID of the third party
+	 * @param	string	$sortfield	Sort field
+	 * @param	string	$sortorder	Sort order
+	 * @param	int		$limit		List limit
+	 * @param	int		$page		Page number
+	 * @return	array
+	 * @phan-return array<int,array{id:int,fk_parent:int,label:string,description:string,color:string,position:int,socid:int,type:string,entity:int,array_options:array<string,mixed>,visible:int,ref_ext:string,multilangs?:array<string,array{label:string,description:string,note?:string}>}>
+	 * @phpstan-return array<int,array{id:int,fk_parent:int,label:string,description:string,color:string,position:int,socid:int,type:string,entity:int,array_options:array<string,mixed>,visible:int,ref_ext:string,multilangs?:array<string,array{label:string,description:string,note?:string}>}>
+	 *
+	 * @url		GET		{id}/categories
+	 *
+	 * @throws RestException
 	 */
 	public function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
@@ -603,13 +670,20 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Add a customer category to a thirdparty
+	 * Add a customer category to a third party
 	 *
-	 * @param int		$id				Id of thirdparty
-	 * @param int       $category_id	Id of category
-	 * @return Object|void
+	 * @since	5.0.0	Initial implementation
 	 *
-	 * @url PUT {id}/categories/{category_id}
+	 * @param	int		$id				ID of the third party
+	 * @param	int		$category_id	ID of category
+	 * @return	Object
+	 *
+	 * @phan-return Societe
+	 * @phpstan-return Societe
+	 *
+	 * @url		PUT		{id}/categories/{category_id}
+	 *
+	 * @throws RestException
 	 */
 	public function addCategory($id, $category_id)
 	{
@@ -640,14 +714,20 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Remove the link between a customer category and the thirdparty
+	 * Remove the link between a customer category and the third party
 	 *
-	 * @param int		$id				Id of thirdparty
-	 * @param int		$category_id	Id of category
+	 * @since	7.0.0	Initial implementation
 	 *
-	 * @return Object|void
+	 * @param	int		$id				ID of the third party
+	 * @param	int		$category_id	ID of category
 	 *
-	 * @url DELETE {id}/categories/{category_id}
+	 * @return	Object
+	 * @phan-return Societe
+	 * @phpstan-return Societe
+	 *
+	 * @url		DELETE	{id}/categories/{category_id}
+	 *
+	 * @throws RestException
 	 */
 	public function deleteCategory($id, $category_id)
 	{
@@ -678,17 +758,23 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Get supplier categories for a thirdparty
+	 * Get supplier categories for a third party
 	 *
-	 * @param int		$id         ID of thirdparty
-	 * @param string	$sortfield	Sort field
-	 * @param string	$sortorder	Sort order
-	 * @param int		$limit		Limit for list
-	 * @param int		$page		Page number
+	 * @since	7.0.0	Initial implementation
 	 *
-	 * @return mixed
+	 * @param	int		$id			ID of the third party
+	 * @param	string	$sortfield	Sort field
+	 * @param	string	$sortorder	Sort order
+	 * @param	int		$limit		List limit
+	 * @param	int		$page		Page number
 	 *
-	 * @url GET {id}/supplier_categories
+	 * @return	array
+	 * @phan-return array<int,array{id:int,fk_parent:int,label:string,description:string,color:string,position:int,socid:int,type:string,entity:int,array_options:array<string,mixed>,visible:int,ref_ext:string,multilangs?:array<string,array{label:string,description:string,note?:string}>}>
+	 * @phpstan-return array<int,array{id:int,fk_parent:int,label:string,description:string,color:string,position:int,socid:int,type:string,entity:int,array_options:array<string,mixed>,visible:int,ref_ext:string,multilangs?:array<string,array{label:string,description:string,note?:string}>}>
+	 *
+	 * @url		GET		{id}/supplier_categories
+	 *
+	 * @throws RestException
 	 */
 	public function getSupplierCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
@@ -717,14 +803,20 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Add a supplier category to a thirdparty
+	 * Add a supplier category to a third party
 	 *
-	 * @param int		$id				Id of thirdparty
-	 * @param int       $category_id	Id of category
+	 * @since	7.0.0	Initial implementation
 	 *
-	 * @return mixed
+	 * @param	int		$id				ID of the third party
+	 * @param	int		$category_id	ID of category
+	 * @return	mixed
 	 *
-	 * @url PUT {id}/supplier_categories/{category_id}
+	 * @phan-return Societe
+	 * @phpstan-return Societe
+	 *
+	 * @url		PUT		{id}/supplier_categories/{category_id}
+	 *
+	 * @throws RestException
 	 */
 	public function addSupplierCategory($id, $category_id)
 	{
@@ -755,14 +847,20 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Remove the link between a category and the thirdparty
+	 * Remove the link between a category and the third party
 	 *
-	 * @param int		$id				Id of thirdparty
-	 * @param int		$category_id	Id of category
+	 * @since	7.0.0	Initial implementation
 	 *
-	 * @return mixed
+	 * @param	int		$id				ID of the third party
+	 * @param	int		$category_id	ID of category
 	 *
-	 * @url DELETE {id}/supplier_categories/{category_id}
+	 * @return	mixed
+	 * @phan-return Societe
+	 * @phpstan-return Societe
+	 *
+	 * @url		DELETE	{id}/supplier_categories/{category_id}
+	 *
+	 * @throws RestException
 	 */
 	public function deleteSupplierCategory($id, $category_id)
 	{
@@ -794,14 +892,18 @@ class Thirdparties extends DolibarrApi
 
 
 	/**
-	 * Get outstanding proposals of thirdparty
+	 * Get outstanding proposals for a third party
 	 *
-	 * @param	int		$id			ID of the thirdparty
+	 * @since	7.0.0	Initial implementation
+	 *
+	 * @param	int		$id			ID of the third party
 	 * @param	string	$mode		'customer' or 'supplier'
 	 *
-	 * @url     GET {id}/outstandingproposals
+	 * @url		GET		{id}/outstandingproposals
 	 *
-	 * @return array				List of outstandings proposals of thirdparty
+	 * @return	array				List of outstandings proposals of thirdparty
+	 * @phan-return array{opened?:float}
+	 * @phpstan-return array{opened?:float}
 	 *
 	 * @throws RestException 400
 	 * @throws RestException 401
@@ -836,14 +938,18 @@ class Thirdparties extends DolibarrApi
 
 
 	/**
-	 * Get outstanding orders of thirdparty
+	 * Get outstanding orders for a third party
 	 *
-	 * @param	int		$id			ID of the thirdparty
+	 * @since	7.0.0	Initial implementation
+	 *
+	 * @param	int		$id			ID of the third party
 	 * @param	string	$mode		'customer' or 'supplier'
 	 *
-	 * @url     GET {id}/outstandingorders
+	 * @url		GET		{id}/outstandingorders
 	 *
-	 * @return array				List of outstandings orders of thirdparty
+	 * @return	array				List of outstandings orders of the third party
+	 * @phan-return array{opened?:float}
+	 * @phpstan-return array{opened?:float}
 	 *
 	 * @throws RestException 400
 	 * @throws RestException 401
@@ -877,14 +983,18 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Get outstanding invoices of thirdparty
+	 * Get outstanding invoices for a third party
 	 *
-	 * @param	int		$id			ID of the thirdparty
+	 * @since	7.0.0	Initial implementation
+	 *
+	 * @param	int		$id			ID of the third party
 	 * @param	string	$mode		'customer' or 'supplier'
 	 *
-	 * @url     GET {id}/outstandinginvoices
+	 * @url		GET		{id}/outstandinginvoices
 	 *
-	 * @return array				List of outstandings invoices of thirdparty
+	 * @return	array				List of outstanding invoices of the third party
+	 * @phan-return array{opened?:float}
+	 * @phpstan-return array{opened?:float}
 	 *
 	 * @throws RestException 400
 	 * @throws RestException 401
@@ -918,14 +1028,18 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Get representatives of thirdparty
+	 * Get representatives of a third party
 	 *
-	 * @param	int		$id			ID of the thirdparty
+	 * @since	11.0.0	Initial implementation
+	 *
+	 * @param	int		$id			ID of the third party
 	 * @param	int 	$mode		0=Array with properties, 1=Array of id.
 	 *
-	 * @url     GET {id}/representatives
+	 * @url		GET		{id}/representatives
 	 *
-	 * @return array				List of representatives of thirdparty
+	 * @return	array				List of representatives of the third party
+	 * @phan-return int[]|array<array{id:int,lastname:string,firstname:string,email:string,phone:string,office_phone:string,office_fax:string,user_mobile:string,personal_mobile:string,job:string,statut:int,status:int,entity:int,login:string,photo:string,gender:string}>
+	 * @phpstan-return int[]|array<array{id:int,lastname:string,firstname:string,email:string,phone:string,office_phone:string,office_fax:string,user_mobile:string,personal_mobile:string,job:string,statut:int,status:int,entity:int,login:string,photo:string,gender:string}>
 	 *
 	 * @throws RestException 400
 	 * @throws RestException 401
@@ -946,7 +1060,7 @@ class Thirdparties extends DolibarrApi
 		}
 
 		$result = $this->company->fetch($id);
-		if (!$result) {
+		if (!is_array($result)) {
 			throw new RestException(404, 'Thirdparty not found');
 		}
 
@@ -956,16 +1070,22 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Get fixed amount discount of a thirdparty (all sources: deposit, credit note, commercial offers...)
+	 * Get fixed amount discount of a third party
 	 *
-	 * @param	int		$id             ID of the thirdparty
-	 * @param	string	$filter		Filter exceptional discount. "none" will return every discount, "available" returns unapplied discounts, "used" returns applied discounts   {@choice none,available,used}
-	 * @param   string  $sortfield		Sort field
-	 * @param   string  $sortorder		Sort order
+	 * all sources: deposit, credit note, commercial offers, etc.
 	 *
-	 * @url     GET {id}/fixedamountdiscounts
+	 * @since	7.0.0	Initial implementation
 	 *
-	 * @return array  List of fixed discount of thirdparty
+	 * @param	int		$id				ID of the third party
+	 * @param	string	$filter			Filter exceptional discount. "none" will return every discount, "available" returns unapplied discounts, "used" returns applied discounts   {@choice none,available,used}
+	 * @param	string	$sortfield		Sort field
+	 * @param	string	$sortorder		Sort order
+	 *
+	 * @url		GET		{id}/fixedamountdiscounts
+	 *
+	 * @return	array					List of fixed discount of the third party
+	 * @phan-return stdClass[]
+	 * @phpstan-return stdClass[]
 	 *
 	 * @throws RestException 400
 	 * @throws RestException 401
@@ -1022,13 +1142,17 @@ class Thirdparties extends DolibarrApi
 
 
 	/**
-	 * Return list of invoices qualified to be replaced by another invoice.
+	 * Return invoices qualified to be replaced by another invoice
 	 *
-	 * @param int   $id             Id of thirdparty
+	 * @since	7.0.0	Initial implementation
 	 *
-	 * @url     GET {id}/getinvoicesqualifiedforreplacement
+	 * @param	int		$id		ID of a third party
 	 *
-	 * @return array
+	 * @url		GET		{id}/getinvoicesqualifiedforreplacement
+	 *
+	 * @return	array
+	 * @phan-return array<int,array{id:int,ref:string,status:int,paid:int,alreadypaid:int}>|int
+	 * @phpstan-return array<int,array{id:int,ref:string,status:int,paid:int,alreadypaid:int}>|int
 	 * @throws RestException 400
 	 * @throws RestException 401
 	 * @throws RestException 404
@@ -1063,15 +1187,20 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Return list of invoices qualified to be corrected by a credit note.
+	 * Return invoices qualified to be corrected by a credit note
+	 *
 	 * Invoices matching the following rules are returned
 	 * (validated + payment on process) or classified (paid completely or paid partially) + not already replaced + not already a credit note
 	 *
-	 * @param int   $id             Id of thirdparty
+	 * @since	7.0.0	Initial implementation
 	 *
-	 * @url     GET {id}/getinvoicesqualifiedforcreditnote
+	 * @param	int		$id		ID of a third party
 	 *
-	 * @return array
+	 * @url		GET		{id}/getinvoicesqualifiedforcreditnote
+	 *
+	 * @return	array
+	 * @phan-return array<int,array{ref:string,status:int,type:int,paye:int,paymentornot:int}>|int
+	 * @phpstan-return array<int,array{ref:string,status:int,type:int,paye:int,paymentornot:int}>|int
 	 *
 	 * @throws RestException 400
 	 * @throws RestException 401
@@ -1099,7 +1228,7 @@ class Thirdparties extends DolibarrApi
 		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$invoice = new Facture($this->db);
 		$result = $invoice->list_qualified_avoir_invoices($id);
-		if ($result < 0) {
+		if (!is_array($result) && $result < 0) {
 			throw new RestException(405, $invoice->error);
 		}
 
@@ -1107,13 +1236,19 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Get CompanyNotification objects for thirdparty
+	 * Get company notifications for a third party
 	 *
-	 * @param int $id ID of thirdparty
+	 * @since	20.0.0	Initial implementation
 	 *
-	 * @return array
+	 * @param	int		$id		ID of the third party
 	 *
-	 * @url GET {id}/notifications
+	 * @return	array
+	 * @phan-return array<array{id:int,socid:int,event:string,contact_id:int,datec:int,tms:string,type:string}>
+	 * @phpstan-return array<array{id:int,socid:int,event:string,contact_id:int,datec:int,tms:string,type:string}>
+	 *
+	 * @url		GET		{id}/notifications
+	 *
+	 * @throws RestException
 	 */
 	public function getCompanyNotification($id)
 	{
@@ -1171,17 +1306,25 @@ class Thirdparties extends DolibarrApi
 			$returnNotifications[] = $object;
 		}
 
+		// Too complex for phan ?: @phan-suppress-next-line PhanTypeMismatchReturn
 		return $returnNotifications;
 	}
 
 	/**
-	 * Create CompanyNotification object for thirdparty
-	 * @param int  $id ID of thirdparty
-	 * @param array $request_data Request data
+	 * Create a company notification for a third party
 	 *
-	 * @return array|mixed  Notification of thirdparty
+	 * @since	20.0.0	Initial implementation
 	 *
-	 * @url POST {id}/notifications
+	 * @param	int		$id				ID of the third party
+	 * @param	array	$request_data	Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 *
+	 * @return	array|mixed				Notification of the third party
+	 *
+	 * @url		POST	{id}/notifications
+	 *
+	 * @throws RestException
 	 */
 	public function createCompanyNotification($id, $request_data = null)
 	{
@@ -1208,9 +1351,9 @@ class Thirdparties extends DolibarrApi
 
 		$exists_sql = "SELECT rowid, fk_action as event, fk_soc as socid, fk_contact as contact_id, type, datec, tms as datem";
 		$exists_sql .= " FROM ".MAIN_DB_PREFIX."notify_def";
-		$exists_sql .= " WHERE fk_action = '".$this->db->escape($event)."'";
-		$exists_sql .= " AND fk_soc = '".$this->db->escape($socid)."'";
-		$exists_sql .= " AND fk_contact = '".$this->db->escape($contact_id)."'";
+		$exists_sql .= " WHERE fk_action = '".$this->db->escape((string) $event)."'";
+		$exists_sql .= " AND fk_soc = '".$this->db->escape((string) $socid)."'";
+		$exists_sql .= " AND fk_contact = '".$this->db->escape((string) $contact_id)."'";
 
 		$exists_result = $this->db->query($exists_sql);
 		if ($this->db->num_rows($exists_result) > 0) {
@@ -1229,15 +1372,22 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Create CompanyNotification object for thirdparty using action trigger code
-	 * @param int  $id ID of thirdparty
-	 * @param string  $code Action Trigger code
-	 * @param array $request_data Request data
+	 * Create a company notification for a third party using action trigger code
 	 *
-	 * @return array|mixed  Notification of thirdparty
+	 * @since	21.0.0	Initial implementation
+	 *
+	 * @param	int		$id				ID of the third party
+	 * @param	string	$code			Action Trigger code
+	 * @param	array	$request_data	Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 *
+	 * @return	array|mixed				Notification for the third party
 	 * @phan-return Notify
 	 *
-	 * @url POST {id}/notificationsbycode/{code}
+	 * @url		POST	{id}/notificationsbycode/{code}
+	 *
+	 * @throws RestException
 	 */
 	public function createCompanyNotificationByCode($id, $code, $request_data = null)
 	{
@@ -1275,9 +1425,9 @@ class Thirdparties extends DolibarrApi
 
 		$exists_sql = "SELECT rowid, fk_action as event, fk_soc as socid, fk_contact as contact_id, type, datec, tms as datem";
 		$exists_sql .= " FROM ".MAIN_DB_PREFIX."notify_def";
-		$exists_sql .= " WHERE fk_action = '".$this->db->escape($event)."'";
-		$exists_sql .= " AND fk_soc = '".$this->db->escape($socid)."'";
-		$exists_sql .= " AND fk_contact = '".$this->db->escape($contact_id)."'";
+		$exists_sql .= " WHERE fk_action = '".$this->db->escape((string) $event)."'";
+		$exists_sql .= " AND fk_soc = '".$this->db->escape((string) $socid)."'";
+		$exists_sql .= " AND fk_contact = '".$this->db->escape((string) $contact_id)."'";
 
 		$exists_result = $this->db->query($exists_sql);
 		if ($this->db->num_rows($exists_result) > 0) {
@@ -1296,14 +1446,18 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Delete a CompanyNotification attached to a thirdparty
+	 * Delete a company notification attached to a third party
 	 *
-	 * @param int $id ID of thirdparty
-	 * @param int $notification_id ID of CompanyNotification
+	 * @since	20.0.0	Initial implementation
 	 *
-	 * @return int -1 if error 1 if correct deletion
+	 * @param	int		$id					ID of the third party
+	 * @param	int		$notification_id	ID of CompanyNotification
 	 *
-	 * @url DELETE {id}/notifications/{notification_id}
+	 * @return	int							-1 if error, 1 if correct deletion
+	 *
+	 * @url		DELETE	{id}/notifications/{notification_id}
+	 *
+	 * @throws RestException
 	 */
 	public function deleteCompanyNotification($id, $notification_id)
 	{
@@ -1325,15 +1479,21 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Update CompanyNotification object for thirdparty
+	 * Update a company notification for a third party
 	 *
-	 * @param int $id ID of thirdparty
-	 * @param int  $notification_id ID of CompanyNotification
-	 * @param array $request_data Request data
+	 * @since	20.0.0	Initial implementation
 	 *
-	 * @return array|mixed  Notification of thirdparty
+	 * @param	int		$id					ID of the third party
+	 * @param	int		$notification_id	ID of CompanyNotification
+	 * @param	array	$request_data		Request data
+	 * @return	array|mixed					Notification for the third party
 	 *
-	 * @url PUT {id}/notifications/{notification_id}
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 *
+	 * @url		PUT		{id}/notifications/{notification_id}
+	 *
+	 * @throws RestException
 	 */
 	public function updateCompanyNotification($id, $notification_id, $request_data = null)
 	{
@@ -1364,13 +1524,19 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Get CompanyBankAccount objects for thirdparty
+	 * Get company bank accounts of a third party
 	 *
-	 * @param int $id ID of thirdparty
+	 * @since	9.0.0	Initial implementation
 	 *
-	 * @return array
+	 * @param	int		$id		ID of the third party
 	 *
-	 * @url GET {id}/bankaccounts
+	 * @return	array
+	 * @phan-return array<array{socid?:int,default_rib?:string,frstrecur?:string,1000110000001?:string,datec:string,datem:string,label:string,bank:string,bic:string,iban:string,id:int,rum:string}>
+	 * @phpstan-return array<array{socid?:int,default_rib?:string,frstrecur?:string,1000110000001?:string,datec:string,datem:string,label:string,bank:string,bic:string,iban:string,id:int,rum:string}>
+	 *
+	 * @url		GET		{id}/bankaccounts
+	 *
+	 * @throws RestException
 	 */
 	public function getCompanyBankAccount($id)
 	{
@@ -1444,13 +1610,20 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Create CompanyBankAccount object for thirdparty
-	 * @param int  $id ID of thirdparty
-	 * @param array $request_data Request data
+	 * Create a company bank account for a third party
 	 *
-	 * @return array|mixed  BankAccount of thirdparty
+	 * @since	9.0.0	Initial implementation
+	 *
+	 * @param	int		$id				ID of the third party
+	 * @param	array	$request_data	Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 *
+	 * @return	array|mixed				BankAccount of the third party
 	 *
 	 * @url POST {id}/bankaccounts
+	 *
+	 * @throws RestException
 	 */
 	public function createCompanyBankAccount($id, $request_data = null)
 	{
@@ -1481,7 +1654,7 @@ class Thirdparties extends DolibarrApi
 		if (empty($account->rum)) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 			$prelevement = new BonPrelevement($this->db);
-			$account->rum = $prelevement->buildRumNumber($this->company->code_client, $account->datec, $account->id);
+			$account->rum = $prelevement->buildRumNumber($this->company->code_client, $account->datec, (string) $account->id);
 			$account->date_rum = dol_now();
 		}
 
@@ -1493,15 +1666,21 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Update CompanyBankAccount object for thirdparty
+	 * Update a company bank account of a third party
 	 *
-	 * @param int $id ID of thirdparty
-	 * @param int  $bankaccount_id ID of CompanyBankAccount
-	 * @param array $request_data Request data
+	 * @since	9.0.0	Initial implementation
 	 *
-	 * @return array|mixed  BankAccount of thirdparty
+	 * @param	int		$id					ID of the third party
+	 * @param	int		$bankaccount_id		ID of CompanyBankAccount
+	 * @param	array	$request_data		Request data
+	 * @return	array|mixed					BankAccount of the third party
 	 *
-	 * @url PUT {id}/bankaccounts/{bankaccount_id}
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 *
+	 * @url		PUT		{id}/bankaccounts/{bankaccount_id}
+	 *
+	 * @throws RestException
 	 */
 	public function updateCompanyBankAccount($id, $bankaccount_id, $request_data = null)
 	{
@@ -1534,7 +1713,7 @@ class Thirdparties extends DolibarrApi
 		if (empty($account->rum)) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 			$prelevement = new BonPrelevement($this->db);
-			$account->rum = $prelevement->buildRumNumber($this->company->code_client, $account->datec, $account->id);
+			$account->rum = $prelevement->buildRumNumber($this->company->code_client, $account->datec, (string) $account->id);
 			$account->date_rum = dol_now();
 		}
 
@@ -1546,14 +1725,18 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Delete a bank account attached to a thirdparty
+	 * Delete a bank account attached to a third party
 	 *
-	 * @param int $id ID of thirdparty
-	 * @param int $bankaccount_id ID of CompanyBankAccount
+	 * @since	9.0.0	Initial implementation
 	 *
-	 * @return int -1 if error 1 if correct deletion
+	 * @param	int		$id					ID of the third party
+	 * @param	int		$bankaccount_id		ID of CompanyBankAccount
 	 *
-	 * @url DELETE {id}/bankaccounts/{bankaccount_id}
+	 * @return	int							-1 if error, 1 if correct deletion
+	 *
+	 * @url		DELETE	{id}/bankaccounts/{bankaccount_id}
+	 *
+	 * @throws RestException
 	 */
 	public function deleteCompanyBankAccount($id, $bankaccount_id)
 	{
@@ -1575,14 +1758,22 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Generate a Document from a bank account record (like SEPA mandate)
+	 * Generate a document from a bank account record
 	 *
-	 * @param int		$id				Thirdparty id
-	 * @param int		$companybankid	Companybank id
-	 * @param string	$model			Model of document to generate
-	 * @return array
+	 * Like SEPA mandate
 	 *
-	 * @url GET {id}/generateBankAccountDocument/{companybankid}/{model}
+	 * @since	9.0.0	Initial implementation
+	 *
+	 * @param	int		$id				ID of the third party
+	 * @param	int		$companybankid	ID of company bank
+	 * @param	string	$model			Model of document to generate
+	 * @return	array
+	 * @phan-return array{success:int<0,1>}
+	 * @phpstan-return array{success:int<0,1>}
+	 *
+	 * @url		GET		{id}/generateBankAccountDocument/{companybankid}/{model}
+	 *
+	 * @throws RestException
 	 */
 	public function generateBankAccountDocument($id, $companybankid = null, $model = 'sepamandate')
 	{
@@ -1666,16 +1857,21 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Get a specific account attached to a thirdparty (by specifying the site key)
+	 * Get a specific account attached to a third party
 	 *
-	 * @param int $id ID of thirdparty
-	 * @param string $site Site key
+	 * Specify the site key
 	 *
-	 * @return array|mixed
+	 * @since	9.0.0	Initial implementation
+	 *
+	 * @param	int		$id		ID of the third party
+	 * @param	string	$site	Site key
+	 *
+	 * @return	array|mixed
+	 *
 	 * @throws RestException 401 Unauthorized: User does not have permission to read thirdparties
 	 * @throws RestException 404 Not Found: Specified thirdparty ID does not belongs to an existing thirdparty
 	 *
-	 * @url GET {id}/accounts/
+	 * @url		GET		{id}/accounts/
 	 */
 	public function getSocieteAccounts($id, $site = null)
 	{
@@ -1735,16 +1931,21 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Get a specific thirdparty by account
+	 * Get a specific third party by account
 	 *
-	 * @param string $site Site key
-	 * @param string $key_account Key of account
+	 * @since	21.0.0	Initial implementation
 	 *
-	 * @return array|mixed
+	 * @param	string	$site			Site key
+	 * @param	string	$key_account	Key of the account
+	 *
+	 * @return	array|mixed
+	 *
 	 * @throws RestException 401 Unauthorized: User does not have permission to read thirdparties
 	 * @throws RestException 404 Not Found: Specified thirdparty ID does not belongs to an existing thirdparty
 	 *
-	 * @url GET /accounts/{site}/{key_account}
+	 * @url		GET		/accounts/{site}/{key_account}
+	 *
+	 * @throws RestException
 	 */
 	public function getSocieteByAccounts($site, $key_account)
 	{
@@ -1759,10 +1960,10 @@ class Thirdparties extends DolibarrApi
 		$result = $this->db->query($sql);
 
 		if ($result && $this->db->num_rows($result) == 1) {
-				$obj = $this->db->fetch_object($result);
-				$returnThirdparty = $this->_fetch($obj->fk_soc);
+			$obj = $this->db->fetch_object($result);
+			$returnThirdparty = $this->_fetch($obj->fk_soc);
 		} else {
-				throw new RestException(404, 'This account have many thirdparties attached or does not exist.');
+			throw new RestException(404, 'This account have many thirdparties attached or does not exist.');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('societe', $returnThirdparty->id)) {
@@ -1773,23 +1974,27 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Create and attach a new account to an existing thirdparty
+	 * Create and attach a new account to an existing third party
 	 *
 	 * Possible fields for request_data (request body) are specified in <code>llx_societe_account</code> table.<br>
 	 * See <a href="https://wiki.dolibarr.org/index.php/Table_llx_societe_account">Table llx_societe_account</a> wiki page for more information<br><br>
 	 * <u>Example body payload :</u> <pre>{"key_account": "cus_DAVkLSs1LYyYI", "site": "stripe"}</pre>
 	 *
-	 * @param int $id ID of thirdparty
-	 * @param array $request_data Request data
+	 * @since	9.0.0	Initial implementation
 	 *
-	 * @return array|mixed
+	 * @param	int		$id				ID of the third party
+	 * @param	array	$request_data	Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 *
+	 * @return	array|mixed
 	 *
 	 * @throws RestException 401 Unauthorized: User does not have permission to read thirdparties
 	 * @throws RestException 409 Conflict: An Account already exists for this company and site.
 	 * @throws RestException 422 Unprocessable Entity: You must pass the site attribute in your request data !
 	 * @throws RestException 500 Internal Server Error: Error creating SocieteAccount account
 	 *
-	 * @url POST {id}/accounts
+	 * @url		POST	{id}/accounts
 	 */
 	public function createSocieteAccount($id, $request_data = null)
 	{
@@ -1834,28 +2039,32 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Create and attach a new (or replace an existing) specific site account to a thirdparty
+	 * Create and attach a new (or replace an existing) specific site account for a third party
 	 *
 	 * You <strong>MUST</strong> pass all values to keep (otherwise, they will be deleted) !<br>
-	 * If you just need to update specific fields prefer <code>PATCH /thirdparties/{id}/accounts/{site}</code> endpoint.<br><br>
+	 * If you just need to update specific fields prefer <code>PUT /thirdparties/{id}/accounts/{site}</code> endpoint.<br><br>
 	 * When a <strong>SocieteAccount</strong> entity does not exist for the <code>id</code> and <code>site</code>
 	 * supplied, a new one will be created. In that case <code>fk_soc</code> and <code>site</code> members form
 	 * request body payload will be ignored and <code>id</code> and <code>site</code> query strings parameters
 	 * will be used instead.
 	 *
-	 * @param int $id ID of thirdparty
-	 * @param string $site Site key
-	 * @param array $request_data Request data
+	 * @since	9.0.0	Initial implementation
 	 *
-	 * @return array|mixed
+	 * @param	int		$id				ID of the third party
+	 * @param	string	$site			Site key
+	 * @param	array	$request_data	Request data
+	 * @return	array|mixed
+	 *
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @throws RestException 401 Unauthorized: User does not have permission to read thirdparties
 	 * @throws RestException 422 Unprocessable Entity: You must pass the site attribute in your request data !
 	 * @throws RestException 500 Internal Server Error: Error updating SocieteAccount entity
 	 *
-	 * @url PUT {id}/accounts/{site}
+	 * @url		PUT		{id}/accounts/{site}
 	 */
-	public function putSocieteAccount($id, $site, $request_data = null)
+	public function postSocieteAccount($id, $site, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'creer')) {
 			throw new RestException(403);
@@ -1934,22 +2143,26 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Update specified values of a specific account attached to a thirdparty
+	 * Update specified values of a specific account attached to a third party
 	 *
-	 * @param int		$id				Id of thirdparty
-	 * @param string	$site			Site key
-	 * @param array		$request_data	Request data
+	 * @since	9.0.0	Initial implementation
 	 *
-	 * @return array|mixed
+	 * @param	int		$id				ID of the third party
+	 * @param	string	$site			Site key
+	 * @param	array	$request_data	Request data
+	 * @return	array|mixed
+	 *
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @throws RestException 401 Unauthorized: User does not have permission to read thirdparties
 	 * @throws RestException 404 Not Found: Specified thirdparty ID does not belongs to an existing thirdparty
 	 * @throws RestException 409 Conflict: Another SocieteAccount entity already exists for this thirdparty with this site key.
 	 * @throws RestException 500 Internal Server Error: Error updating SocieteAccount entity
 	 *
-	 * @url PATCH {id}/accounts/{site}
+	 * @url 	PUT 	{id}/accounts/{site}
 	 */
-	public function patchSocieteAccount($id, $site, $request_data = null)
+	public function putSocieteAccount($id, $site, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('societe', 'creer')) {
 			throw new RestException(403);
@@ -1996,17 +2209,22 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Delete a specific site account attached to a thirdparty (by account id)
+	 * Delete a specific site account attached to a third party
 	 *
-	 * @param int $id ID of thirdparty
-	 * @param int $site Site key
+	 * by account id
 	 *
-	 * @return void
+	 * @since	9.0.0	Initial implementation
+	 *
+	 * @param	int		$id		ID of the third party
+	 * @param	string	$site	Site key
+	 *
+	 * @return	void
+	 *
 	 * @throws RestException 401 Unauthorized: User does not have permission to delete thirdparties accounts
 	 * @throws RestException 404 Not Found: Specified thirdparty ID does not belongs to an existing thirdparty
 	 * @throws RestException 500 Internal Server Error: Error deleting SocieteAccount entity
 	 *
-	 * @url DELETE {id}/accounts/{site}
+	 * @url		DELETE	{id}/accounts/{site}
 	 */
 	public function deleteSocieteAccount($id, $site)
 	{
@@ -2031,16 +2249,19 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Delete all accounts attached to a thirdparty
+	 * Delete all accounts attached to a third party
 	 *
-	 * @param int $id ID of thirdparty
+	 * @since	9.0.0	Initial implementation
 	 *
-	 * @return void
+	 * @param	int		$id		ID of the third party
+	 *
+	 * @return	void
+	 *
 	 * @throws RestException 401 Unauthorized: User does not have permission to delete thirdparties accounts
 	 * @throws RestException 404 Not Found: Specified thirdparty ID does not belongs to an existing thirdparty
 	 * @throws RestException 500 Internal Server Error: Error deleting SocieteAccount entity
 	 *
-	 * @url DELETE {id}/accounts
+	 * @url		DELETE	{id}/accounts
 	 */
 	public function deleteSocieteAccounts($id)
 	{
@@ -2120,13 +2341,16 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param array $data   Datas to validate
-	 * @return array
+	 * @param ?array<string,string> $data   Data to validate
+	 * @return array<string,string>
 	 *
 	 * @throws RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$thirdparty = array();
 		foreach (Thirdparties::$FIELDS as $field) {
 			if (!isset($data[$field])) {
@@ -2155,6 +2379,8 @@ class Thirdparties extends DolibarrApi
 	 * @param    string	$email			Email of third party (Warning, this can return several records)
 	 * @param    string	$ref_alias  Name_alias of third party (Warning, this can return several records)
 	 * @return object cleaned Societe object
+	 * @phan-return Societe
+	 * @phpstan-return Societe
 	 *
 	 * @throws RestException
 	 */
@@ -2167,7 +2393,7 @@ class Thirdparties extends DolibarrApi
 		if ($rowid === 0) {
 			$result = $this->company->initAsSpecimen();
 		} else {
-			$result = $this->company->fetch($rowid, $ref, $ref_ext, $barcode, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email, $ref_alias);
+			$result = $this->company->fetch((int) $rowid, $ref, $ref_ext, $barcode, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email, $ref_alias);
 		}
 		if (!$result) {
 			throw new RestException(404, 'Thirdparty not found');
@@ -2188,8 +2414,8 @@ class Thirdparties extends DolibarrApi
 			$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
 		}
 
-		$absolute_discount = $this->company->getAvailableDiscounts('', $filterabsolutediscount);
-		$absolute_creditnote = $this->company->getAvailableDiscounts('', $filtercreditnote);
+		$absolute_discount = $this->company->getAvailableDiscounts(null, $filterabsolutediscount);
+		$absolute_creditnote = $this->company->getAvailableDiscounts(null, $filtercreditnote);
 		$this->company->absolute_discount = price2num($absolute_discount, 'MT');
 		$this->company->absolute_creditnote = price2num($absolute_creditnote, 'MT');
 

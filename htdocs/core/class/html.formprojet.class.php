@@ -67,23 +67,23 @@ class FormProjets extends Form
 	/**
 	 * Output a combo list with projects qualified for a third party / user
 	 *
-	 * @param int 		$socid 			Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
-	 * @param string|Project $selected Id of preselected project or Project (or ''). Note: If you know the ref, you can also provide it into $selected_input_value to save one request in some cases.
-	 * @param string 	$htmlname 		Name of HTML field
-	 * @param int 		$maxlength 		Maximum length of label
-	 * @param int 		$option_only 	Return only html options lines without the select tag
+	 * @param int 		$socid 				Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
+	 * @param int|string|Project $selected 	Id of preselected project or Project (or ''). Note: If you know the ref, you can also provide it into $selected_input_value to save one request in some cases.
+	 * @param string 	$htmlname 			Name of HTML field
+	 * @param int 		$maxlength 			Maximum length of label
+	 * @param int 		$option_only 		Return only html options lines without the select tag
 	 * @param int|string	$show_empty 	Add an empty line
-	 * @param int 		$discard_closed Discard closed projects (0=Keep, 1=hide completely, 2=Disable). Use a negative value to not show the "discarded" tooltip.
-	 * @param int 		$forcefocus 	Force focus on field (works with javascript only)
-	 * @param int 		$disabled 		Disabled
-	 * @param int 		$mode 			0 for HTML mode and 1 for JSON mode
-	 * @param string 	$filterkey 		Key to filter on ref or title
-	 * @param int 		$nooutput 		No print output. Return it only.
-	 * @param int 		$forceaddid 	Force to add project id in list, event if not qualified
-	 * @param string 	$morecss 		More css
-	 * @param string	$htmlid 		Html id to use instead of htmlname, by example id="htmlid"
-	 * @param string 	$morefilter 	More filters (Must be a sql sanitized string)
-	 * @return string                   Return html content
+	 * @param int 		$discard_closed 	Discard closed projects (0=Keep, 1=hide completely, 2=Disable). Use a negative value to not show the "discarded" tooltip.
+	 * @param int 		$forcefocus 		Force focus on field (works with javascript only)
+	 * @param int 		$disabled 			Disabled
+	 * @param int 		$mode 				0 for HTML mode and 1 for JSON mode
+	 * @param string 	$filterkey 			Key to filter on ref or title
+	 * @param int 		$nooutput 			No print output. Return it only.
+	 * @param int 		$forceaddid 		Force to add project id in list, event if not qualified
+	 * @param string 	$morecss 			More css
+	 * @param string	$htmlid 			Html id to use instead of htmlname, by example id="htmlid"
+	 * @param string 	$morefilter 		More filters (Must be a sql sanitized string)
+	 * @return string                   	Return html content
 	 */
 	public function select_projects($socid = -1, $selected = '', $htmlname = 'projectid', $maxlength = 16, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $morecss = '', $htmlid = '', $morefilter = '')
 	{
@@ -104,7 +104,7 @@ class FormProjets extends Form
 			if ($selected && empty($selected_input_value)) {
 				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$project = new Project($this->db);
-				$project->fetch($selected);
+				$project->fetch((int) $selected);
 				$selected_input_value = $project->ref;
 			}
 			$urloption = 'socid=' . ((int) $socid) . '&htmlname=' . urlencode($htmlname) . '&discardclosed=' . ((int) $discard_closed);
@@ -400,7 +400,7 @@ class FormProjets extends Form
 			}
 
 			if (empty($option_only)) {
-				$out .= '<select class="valignmiddle flat' . ($morecss ? ' ' . $morecss : '') . '"' . ($disabled ? ' disabled="disabled"' : '') . ' id="' . $htmlname . '" name="' . $htmlname . '">';
+				$out .= '<select class="valignmiddle flat' . ($morecss ? ' ' . $morecss : '') . '"' . ($disabled ? ' disabled="disabled"' : '') . ' id="' . $htmlname . '" name="' . $htmlname . '">'."\n";
 			}
 			if (!empty($show_empty)) {
 				$out .= '<option value="0" class="optiongrey">';
@@ -411,7 +411,7 @@ class FormProjets extends Form
 				} else {
 					$out .= '&nbsp;';
 				}
-				$out .= '</option>';
+				$out .= '</option>'."\n";
 			}
 
 			$num = $this->db->num_rows($resql);
@@ -486,7 +486,7 @@ class FormProjets extends Form
 							$out .= '<option value="' . $obj->rowid . '" selected';
 							$out .= ' data-html="' . dol_escape_htmltag($labeltoshowhtml) . '"';
 							//if ($disabled) $out.=' disabled';						// with select2, field can't be preselected if disabled
-							$out .= '>' . $labeltoshow . '</option>';
+							$out .= '>' . $labeltoshow . '</option>'."\n";
 						} else {
 							if ($hideunselectables && $disabled && ($selected != $obj->rowid)) {
 								$resultat = '';
@@ -500,7 +500,7 @@ class FormProjets extends Form
 								$resultat .= ' data-html="' . dol_escape_htmltag($labeltoshowhtml) . '"';
 								$resultat .= '>';
 								$resultat .= $labeltoshow;
-								$resultat .= '</option>';
+								$resultat .= '</option>'."\n";
 							}
 							$out .= $resultat;
 						}
@@ -509,7 +509,7 @@ class FormProjets extends Form
 				}
 			}
 			if (empty($option_only)) {
-				$out .= '</select>';
+				$out .= '</select>'."\n";
 			}
 
 			$this->nboftasks = $num;

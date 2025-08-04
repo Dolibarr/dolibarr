@@ -540,7 +540,7 @@ class modFournisseur extends DolibarrModules
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'Purchase Orders and lines of purchase orders';
-		$this->export_icon[$r] = 'order';
+		$this->export_icon[$r] = 'supplier_order';
 		$this->export_permission[$r] = array(array("fournisseur", "commande", "export"));
 		$this->export_fields_array[$r] = array(
 			's.rowid' => "IdCompany", 's.nom' => 'CompanyName', 'ps.nom' => 'ParentCompany', 's.address' => 'Address', 's.zip' => 'Zip', 's.town' => 'Town', 'c.code' => 'CountryCode', 's.phone' => 'Phone',

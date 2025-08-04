@@ -24,7 +24,7 @@
 /**
  * \file        class/position.class.php
  * \ingroup     hrm
- * \brief       This file is a CRUD class file for Position (Create/Read/Update/Delete)
+ * \brief       This file is a CRUD class file for Position (Create/Read/Update/Delete) = Link job - employee
  */
 
 // Put here all includes required by your class file
@@ -293,14 +293,12 @@ class Position extends CommonObject
 		// Reset some properties
 		unset($object->id);
 		unset($object->fk_user_creat);
+		unset($object->user_ceation_id);
 		unset($object->import_key);
 
 		// Clear fields
 		if (property_exists($object, 'ref')) {
 			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_" . $object->ref : $this->fields['ref']['default'];
-		}
-		if (property_exists($object, 'label')) {
-			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf") . " " . $object->label : $this->fields['label']['default'];
 		}
 		if (property_exists($object, 'status')) {
 			$object->status = self::STATUS_DRAFT;

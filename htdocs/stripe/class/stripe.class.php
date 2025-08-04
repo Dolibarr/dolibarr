@@ -63,12 +63,6 @@ class Stripe extends CommonObject
 
 	/**
 	 * @var string
-	 * @deprecated Was used by createPaymentStripe only that is deprecated
-	 */
-	public $result;
-
-	/**
-	 * @var string
 	 */
 	public $type;
 
@@ -263,14 +257,14 @@ class Stripe extends CommonObject
 							$isineec = isInEEC($object);
 							if ($object->country_code && $isineec) {
 								//$taxids = $customer->allTaxIds($customer);
-								$customer->createTaxId($customer, array('type' => 'eu_vat', 'value' => $vatcleaned));
+								$customer->createTaxId($customer->id, array('type' => 'eu_vat', 'value' => $vatcleaned));
 							}
 						}
 					}
 
 					// Create customer in Dolibarr
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_account (fk_soc, login, key_account, site, site_account, status, entity, date_creation, fk_user_creat)";
-					$sql .= " VALUES (".((int) $object->id).", '', '".$this->db->escape($customer)."', 'stripe', '".$this->db->escape($stripearrayofkeysbyenv[$status]['publishable_key'])."', ".((int) $status).", ".((int) $conf->entity).", '".$this->db->idate(dol_now())."', ".((int) $user->id).")";
+					$sql .= " VALUES (".((int) $object->id).", '', '".$this->db->escape($customer->id)."', 'stripe', '".$this->db->escape($stripearrayofkeysbyenv[$status]['publishable_key'])."', ".((int) $status).", ".((int) $conf->entity).", '".$this->db->idate(dol_now())."', ".((int) $user->id).")";
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$this->error = $this->db->lasterror();
@@ -351,22 +345,22 @@ class Stripe extends CommonObject
 	 * Note: This is used when option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is on when making a payment from the public/payment/newpayment.php page
 	 * but not when using the STRIPE_USE_NEW_CHECKOUT.
 	 *
-	 * @param   float		$amount                             Amount
-	 * @param   string		$currency_code                      Currency code
-	 * @param   string		$tag                                Tag
-	 * @param   string		$description                        Description
-	 * @param	?CommonObject	$object						    Object to pay with Stripe
-	 * @param	?string		$customer							Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
-	 * @param	?string		$key							    ''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
-	 * @param	int<0,1>	$status							    Status (0=test, 1=live)
-	 * @param	int<0,1>	$usethirdpartyemailforreceiptemail	1=use thirdparty email for receipt
-	 * @param	'automatic'|'manual'	$mode		                        automatic=automatic confirmation/payment when conditions are ok, manual=need to call confirm() on intent
-	 * @param   bool		$confirmnow                         false=default, true=try to confirm immediately after create (if conditions are ok)
-	 * @param   ?string		$payment_method                     'pm_....' (if known)
-	 * @param   int<0,1>	$off_session                        If we use an already known payment method to pay when customer is not available during the checkout flow.
-	 * @param	int<0,1>	$noidempotency_key					Do not use the idempotency_key when creating the PaymentIntent
-	 * @param	int			$did								ID of an existing line into llx_prelevement_demande (Dolibarr intent). If provided, no new line will be created.
-	 * @return 	?\Stripe\PaymentIntent				        Stripe PaymentIntent or null if not found and failed to create
+	 * @param   float			$amount                             Amount
+	 * @param   string			$currency_code                      Currency code
+	 * @param   string			$tag                                Tag
+	 * @param   string			$description                        Description
+	 * @param	?CommonObject	$object						    	Object to pay with Stripe
+	 * @param	?string			$customer							Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
+	 * @param	?string			$key							    ''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
+	 * @param	int<0,1>		$status							    Status (0=test, 1=live)
+	 * @param	int<0,1>		$usethirdpartyemailforreceiptemail	1=use thirdparty email for receipt
+	 * @param	'automatic'|'manual'|'terminal'		$mode			Automatic=automatic confirmation/payment when conditions are ok, manual=need to call confirm() on intent, terminal=manual
+	 * @param   bool			$confirmnow                     	False=default, true=try to confirm immediately after create (if conditions are ok)
+	 * @param   ?string			$payment_method                 	'pm_....' (if known)
+	 * @param   int<0,1>		$off_session                    	If we use an already known payment method to pay when customer is not available during the checkout flow.
+	 * @param	int<0,1>		$noidempotency_key					Do not use the idempotency_key when creating the PaymentIntent
+	 * @param	int				$did								ID of an existing line into llx_prelevement_demande (Dolibarr intent). If provided, no new line will be created.
+	 * @return 	?\Stripe\PaymentIntent				        		Stripe PaymentIntent or null if not found and failed to create
 	 */
 	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false, $payment_method = null, $off_session = 0, $noidempotency_key = 1, $did = 0)
 	{
@@ -460,6 +454,8 @@ class Stripe extends CommonObject
 				}
 			}
 
+			$stripemode = $mode;
+
 			// list of payment method types
 			$paymentmethodtypes = array("card");
 			$descriptor = dol_trunc($tag, 10, 'right', 'UTF-8', 1);
@@ -482,8 +478,11 @@ class Stripe extends CommonObject
 			if (getDolGlobalInt('STRIPE_SOFORT')) {
 				$paymentmethodtypes[] = "sofort";
 			}
-			if (getDolGlobalInt('STRIPE_CARD_PRESENT') && $mode == 'terminal') {
-				$paymentmethodtypes = array("card_present");
+			if ($mode == 'terminal') {
+				if (getDolGlobalInt('STRIPE_CARD_PRESENT')) {
+					$paymentmethodtypes = array("card_present");
+				}
+				$stripemode = 'manual';
 			}
 
 			global $dolibarr_main_url_root;
@@ -492,7 +491,7 @@ class Stripe extends CommonObject
 
 			$dataforintent = array(
 				"confirm" => $confirmnow, // try to confirm immediately after create (if conditions are ok)
-				"confirmation_method" => $mode,
+				"confirmation_method" => $stripemode,
 				"amount" => $stripeamount,
 				"currency" => $currency_code,
 				"payment_method_types" => $paymentmethodtypes,	// When payment_method_types is set, return_url is not required but payment mode can't be managed from dashboard
@@ -1081,7 +1080,7 @@ class Stripe extends CommonObject
 
 						$service = 'StripeTest';
 						$servicestatus = 0;
-						if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
+						if (getDolGlobalString('STRIPE_LIVE')/* && !GETPOST('forcesandbox', 'alpha') */) {
 							$service = 'StripeLive';
 							$servicestatus = 1;
 						}
@@ -1154,290 +1153,5 @@ class Stripe extends CommonObject
 		}
 
 		return $sepa;
-	}
-
-
-	/**
-	 * Create charge.
-	 * This was called by page htdocs/stripe/payment.php and may be deprecated.
-	 *
-	 * @param	float		$amount									Amount to pay
-	 * @param	string		$currency								EUR, GPB...
-	 * @param	string		$origin									Object type to pay (order, invoice, contract...)
-	 * @param	int			$item									Object id to pay
-	 * @param	string		$source									src_xxxxx or card_xxxxx or pm_xxxxx
-	 * @param	string		$customer								Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
-	 * @param	string		$account								Stripe account ref 'acc_xxxxxxxxxxxxx' via  getStripeAccount()
-	 * @param	int<0,1>	$status									Status (0=test, 1=live)
-	 * @param	int<0,1>	$usethirdpartyemailforreceiptemail		Use thirdparty email as receipt email
-	 * @param	bool		$capture								Set capture flag to true (take payment) or false (wait)
-	 * @return Stripe
-	 * @deprecated
-	 */
-	public function createPaymentStripe($amount, $currency, $origin, $item, $source, $customer, $account, $status = 0, $usethirdpartyemailforreceiptemail = 0, $capture = true)
-	{
-		global $conf;
-
-		$error = 0;
-
-		if (empty($status)) {
-			$service = 'StripeTest';
-		} else {
-			$service = 'StripeLive';
-		}
-
-		$sql = "SELECT sa.key_account as key_account, sa.fk_soc, sa.entity";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe_account as sa";
-		$sql .= " WHERE sa.key_account = '".$this->db->escape($customer)."'";
-		//$sql.= " AND sa.entity IN (".getEntity('societe').")";
-		$sql .= " AND sa.site = 'stripe' AND sa.status = ".((int) $status);
-		$sql .= " ORDER BY sa.site_account DESC, sa.rowid DESC"; // To get the entry with a site_account defined in priority
-
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result) {
-			if ($this->db->num_rows($result)) {
-				$obj = $this->db->fetch_object($result);
-				$key = $obj->fk_soc;
-			} else {
-				$key = null;
-			}
-		} else {
-			$key = null;
-		}
-
-		$arrayzerounitcurrency = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
-		if (!in_array($currency, $arrayzerounitcurrency)) {
-			$stripeamount = $amount * 100;
-		} else {
-			$stripeamount = $amount;
-		}
-
-		$societe = new Societe($this->db);
-		if ($key > 0) {
-			$societe->fetch($key);
-		}
-
-		$description = "";
-		$ref = "";
-		$invoice = null;
-		if ($origin == 'order') {
-			$order = new Commande($this->db);
-			$order->fetch($item);
-			$ref = $order->ref;
-			$description = "ORD=".$ref.".CUS=".$societe->id.".PM=stripe";
-		} elseif ($origin == 'invoice') {
-			$invoice = new Facture($this->db);
-			$invoice->fetch($item);
-			$ref = $invoice->ref;
-			$description = "INV=".$ref.".CUS=".$societe->id.".PM=stripe";
-		}
-
-		$ipaddress = getUserRemoteIP();
-
-		$metadata = array(
-			"dol_id" => (string) $item,
-			"dol_type" => (string) $origin,
-			"dol_thirdparty_id" => (string) $societe->id,
-			'dol_thirdparty_name' => $societe->name,
-			'dol_version' => DOL_VERSION,
-			'dol_entity' => $conf->entity,
-			'ipaddress' => $ipaddress
-		);
-		$return = new Stripe($this->db);
-		try {
-			// Force to use the correct API key
-			global $stripearrayofkeysbyenv;
-			\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
-
-			if (empty($conf->stripeconnect->enabled)) {	// With a common Stripe account
-				if (preg_match('/pm_/i', $source)) {
-					$stripecard = $source;
-					$amountstripe = $stripeamount;
-					$FULLTAG = 'PFBO'; // Payment From Back Office
-					$stripe = $return;
-					$amounttopay = $amount;
-					$servicestatus = $status;
-
-					dol_syslog("* createPaymentStripe get stripeacc", LOG_DEBUG);
-					$stripeacc = $stripe->getStripeAccount($service); // Get Stripe OAuth connect account if it exists (no network access here)
-
-					dol_syslog("* createPaymentStripe Create payment for customer ".$customer." on source card ".$stripecard.", amounttopay=".$amounttopay.", amountstripe=".$amountstripe.", FULLTAG=".$FULLTAG, LOG_DEBUG);
-
-					// Create payment intent and charge payment (confirmnow = true)
-					$paymentintent = $stripe->getPaymentIntent($amounttopay, $currency, $FULLTAG, $description, $invoice, $customer, $stripeacc, $servicestatus, 0, 'automatic', true, $stripecard, 1);
-
-					$charge = new stdClass();
-					if ($paymentintent->status == 'succeeded') {
-						$charge->status = 'ok';
-					} else {
-						$charge->status = 'failed';
-						$charge->failure_code = $stripe->code;
-						$charge->failure_message = $stripe->error;
-						$charge->failure_declinecode = $stripe->declinecode;
-						$stripefailurecode = $stripe->code;
-						$stripefailuremessage = $stripe->error;
-						$stripefailuredeclinecode = $stripe->declinecode;
-					}
-				} elseif (preg_match('/acct_/i', $source)) {
-					$charge = \Stripe\Charge::create(array(
-						"amount" => "$stripeamount",
-						"currency" => "$currency",
-						"statement_descriptor_suffix" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
-						"description" => "Stripe payment: ".$description,
-						"capture"  => $capture,
-						"metadata" => $metadata,
-						"source" => "$source"
-					));
-				} else {
-					$paymentarray = array(
-						"amount" => "$stripeamount",
-						"currency" => "$currency",
-						"statement_descriptor_suffix" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
-						"description" => "Stripe payment: ".$description,
-						"capture"  => $capture,
-						"metadata" => $metadata,
-						"source" => (string) $source,
-						"customer" => (string) $customer
-					);
-
-					if ($societe->email && $usethirdpartyemailforreceiptemail) {
-						$paymentarray["receipt_email"] = $societe->email;
-					}
-
-					$charge = \Stripe\Charge::create($paymentarray, array("idempotency_key" => "$description"));
-				}
-			} else {
-				// With Stripe Connect
-				$fee = $amount * ($conf->global->STRIPE_APPLICATION_FEE_PERCENT / 100) + $conf->global->STRIPE_APPLICATION_FEE;
-				if ($fee >= $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL && $conf->global->STRIPE_APPLICATION_FEE_MAXIMAL > $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
-					$fee = getDolGlobalString('STRIPE_APPLICATION_FEE_MAXIMAL');
-				} elseif ($fee < $conf->global->STRIPE_APPLICATION_FEE_MINIMAL) {
-					$fee = getDolGlobalString('STRIPE_APPLICATION_FEE_MINIMAL');
-				}
-
-				if (!in_array($currency, $arrayzerounitcurrency)) {
-					$stripefee = round($fee * 100);
-				} else {
-					$stripefee = round($fee);
-				}
-
-				$paymentarray = array(
-					"amount" => "$stripeamount",
-					"currency" => "$currency",
-				"statement_descriptor_suffix" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
-					"description" => "Stripe payment: ".$description,
-					"capture"  => $capture,
-					"metadata" => $metadata,
-					"source" => (string) $source,
-					"customer" => (string) $customer
-				);
-				if ($conf->entity != $conf->global->STRIPECONNECT_PRINCIPAL && $stripefee > 0) {
-					$paymentarray["application_fee_amount"] = $stripefee;
-				}
-				if ($societe->email && $usethirdpartyemailforreceiptemail) {
-					$paymentarray["receipt_email"] = $societe->email;
-				}
-
-				if (preg_match('/pm_/i', $source)) {
-					$stripecard = $source;
-					$amountstripe = $stripeamount;
-					$FULLTAG = 'PFBO'; // Payment From Back Office
-					$stripe = $return;
-					$amounttopay = $amount;
-					$servicestatus = $status;
-
-					dol_syslog("* createPaymentStripe get stripeacc", LOG_DEBUG);
-					$stripeacc = $stripe->getStripeAccount($service); // Get Stripe OAuth connect account if it exists (no network access here)
-
-					dol_syslog("* createPaymentStripe Create payment on card ".$stripecard.", amounttopay=".$amounttopay.", amountstripe=".$amountstripe.", FULLTAG=".$FULLTAG, LOG_DEBUG);
-
-					// Create payment intent and charge payment (confirmnow = true)
-					$paymentintent = $stripe->getPaymentIntent($amounttopay, $currency, $FULLTAG, $description, $invoice, $customer, $stripeacc, $servicestatus, 0, 'automatic', true, $stripecard, 1);
-
-					$charge = new stdClass();
-					if ($paymentintent->status == 'succeeded') {
-						$charge->status = 'ok';
-						$charge->id = $paymentintent->id;
-					} else {
-						$charge->status = 'failed';
-						$charge->failure_code = $stripe->code;
-						$charge->failure_message = $stripe->error;
-						$charge->failure_declinecode = $stripe->declinecode;
-					}
-				} else {
-					$charge = \Stripe\Charge::create($paymentarray, array("idempotency_key" => "$description", "stripe_account" => "$account"));
-				}
-			}
-			'@phan-var-force stdClass|\Stripe\Charge $charge';
-			/*
-			if (isset($charge->id)) {
-			}
-			*/
-
-			$return->result = 'success';
-			$return->id = $charge->id;
-
-			if (preg_match('/pm_/i', $source)) {
-				$return->message = 'Payment retrieved by card status = '.$charge->status;
-			} else {
-				if ($charge->source->type == 'card') {
-					$return->message = $charge->source->card->brand." ....".$charge->source->card->last4;
-				} elseif ($charge->source->type == 'three_d_secure') {
-					$stripe = new Stripe($this->db);
-					$src = \Stripe\Source::retrieve((string) $charge->source->three_d_secure->card, array(
-						"stripe_account" => $stripe->getStripeAccount($service)
-					));
-					$return->message = $src->card->brand." ....".$src->card->last4;
-				} else {
-					$return->message = $charge->id;
-				}
-			}
-		} catch (\Stripe\Exception\CardException $e) {
-			include DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-			// Since it's a decline, \Stripe\Exception\Card will be caught
-			$body = $e->getJsonBody();
-			$err = $body['error'];
-
-			$return->result = 'error';
-			$return->id = $err['charge'];
-			$return->type = $err['type'];
-			$return->code = $err['code'];
-			$return->message = $err['message'];
-			$body = "Error: <br>".$return->id." ".$return->message." ";
-			$subject = '[Alert] Payment error using Stripe';
-			$cmailfile = new CMailFile($subject, $conf->global->ONLINE_PAYMENT_SENDEMAIL, $conf->global->MAIN_INFO_SOCIETE_MAIL, $body);
-			$cmailfile->sendfile();
-
-			$error++;
-			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
-		} catch (\Stripe\Exception\RateLimitException $e) {
-			// Too many requests made to the API too quickly
-			$error++;
-			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
-		} catch (\Stripe\Exception\InvalidRequestException $e) {
-			// Invalid parameters were supplied to Stripe's API
-			$error++;
-			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
-		} catch (\Stripe\Exception\AuthenticationException $e) {
-			// Authentication with Stripe's API failed
-			// (maybe you changed API keys recently)
-			$error++;
-			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
-		} catch (\Stripe\Exception\ApiConnectionException $e) {
-			// Network communication with Stripe failed
-			$error++;
-			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
-		} catch (\Stripe\Exception\ExceptionInterface $e) {
-			// Display a very generic error to the user, and maybe send
-			// yourself an email
-			$error++;
-			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
-		} catch (Exception $e) {
-			// Something else happened, completely unrelated to Stripe
-			$error++;
-			dol_syslog($e->getMessage(), LOG_WARNING, 0, '_stripe');
-		}
-		return $return;
 	}
 }

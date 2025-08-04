@@ -4,7 +4,7 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2023-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2023-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -138,6 +138,7 @@ if (empty($reshook)) {
 
 	// action update on Skilldet must be done before real update action in core/actions_addupdatedelete.inc.php
 	$skilldetArray = GETPOST("descriptionline", "array:alphanohtml");
+
 	if (!$error) {
 		if (is_array($skilldetArray) && count($skilldetArray) > 0) {
 			if ($action == 'update' && $permissiontoadd) {
@@ -171,6 +172,7 @@ if (empty($reshook)) {
 				$arraySkill = $object->fetchLines();
 				'@phan-var-force Skilldet[] $arraySkill';
 				$index = 0;
+
 				foreach ($arraySkill as $skilldet) {
 					if ($skilldet->rankorder != 0) {
 						if (isset($skilldetArray[$index])) {
@@ -377,11 +379,12 @@ if (($id || $ref) && $action == 'edit') {
 				//                  $value = GETPOSTISSET($key) ? price2num(GETPOST($key, 'alphanohtml')) : $sk->$key;
 				//              } elseif (preg_match('/^(text|html)/', $val['type'])) {
 				//                  $tmparray = explode(':', $val['type']);
-				if (!empty($tmparray[1])) {
-					$check = $tmparray[1];
-				} else {
-					$check = 'restricthtml';
-				}
+				//if (!empty($tmparray[1])) {
+				//	$check = $tmparray[1];
+				//} else {
+				//	$check = 'restricthtml';
+				//}
+				$check = 'restricthtml';
 
 				$skilldetArray = GETPOST("descriptionline", "array");
 				if (empty($skilldetArray)) {
@@ -443,22 +446,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			array('type' => 'text', 'name' => 'clone_label', 'label' => $langs->trans("Label"), 'value' => $langs->trans("CopyOf").' '.$object->label),
 		);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->label), 'confirm_clone', $formquestion, 'yes', 1, 280);
-	}
-
-	// Confirmation of action xxxx
-	if ($action == 'xxx') {
-		$formquestion = array();
-		/*
-		$forcecombo=0;
-		if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
-		$formquestion = array(
-			// 'text' => $langs->trans("ConfirmClone"),
-			// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
-			// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-			// array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
-		);
-		*/
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
 	}
 
 	// Call Hook formConfirm

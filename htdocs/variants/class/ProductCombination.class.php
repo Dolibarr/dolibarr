@@ -3,7 +3,8 @@
  * Copyright (C) 2018		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2022   	Open-Dsi				<support@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025       William Mead            <william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -306,8 +307,6 @@ class ProductCombination
 	 */
 	public function fetchAllByFkProductParent($fk_product_parent, $sort_by_ref = false)
 	{
-		global $conf;
-
 		$sql = "SELECT pac.rowid, pac.fk_product_parent, pac.fk_product_child, pac.variation_price, pac.variation_price_percentage, pac.variation_ref_ext, pac.variation_weight";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_attribute_combination AS pac";
 		if ($sort_by_ref) {
@@ -376,8 +375,6 @@ class ProductCombination
 	 */
 	public function create($user)
 	{
-		global $conf;
-
 		/* $this->fk_product_child may be empty and will be filled later after subproduct has been created */
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_attribute_combination";
@@ -412,8 +409,6 @@ class ProductCombination
 	 */
 	public function update(User $user)
 	{
-		global $conf;
-
 		$sql = "UPDATE ".MAIN_DB_PREFIX."product_attribute_combination";
 		$sql .= " SET fk_product_parent = ".(int) $this->fk_product_parent.", fk_product_child = ".(int) $this->fk_product_child.",";
 		$sql .= " variation_price = ".(float) $this->variation_price.", variation_price_percentage = ".(int) $this->variation_price_percentage.",";
@@ -473,15 +468,21 @@ class ProductCombination
 	/**
 	 * Deletes all product combinations of a parent product
 	 *
-	 * @param User		$user Object user
-	 * @param int 		$fk_product_parent Rowid of parent product
-	 * @return int Return integer <0 KO >0 OK
+	 * @param User		$user 				Object user
+	 * @param int 		$fk_product_parent 	Rowid of parent product
+	 * @return int 							Return integer <0 if KO, >0 if OK
 	 */
 	public function deleteByFkProductParent($user, $fk_product_parent)
 	{
+		$arrayofparent = $this->fetchAllByFkProductParent($fk_product_parent);
+
+		if (!is_array($arrayofparent)) { // No combinations found, return success
+			return 1;
+		}
+
 		$this->db->begin();
 
-		foreach ($this->fetchAllByFkProductParent($fk_product_parent) as $prodcomb) {
+		foreach ($arrayofparent as $prodcomb) {
 			$prodstatic = new Product($this->db);
 
 			$res = $prodstatic->fetch($prodcomb->fk_product_child);
@@ -514,8 +515,6 @@ class ProductCombination
 	 */
 	public function updateProperties(Product $parent, User $user)
 	{
-		global $conf;
-
 		$this->db->begin();
 
 		$child = new Product($this->db);
@@ -577,7 +576,6 @@ class ProductCombination
 						} else {
 							$new_price += $variation_price;
 						}
-
 						$ret = $child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, $i, $new_npr, $new_psq, 0, array(), $parent->default_vat_code);
 
 						if ($ret < 0) {
@@ -607,7 +605,7 @@ class ProductCombination
 					$new_price += $this->variation_price;
 				}
 
-				$ret = $child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, 1, $new_npr, $new_psq);
+				$ret = $child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, 1, $new_npr, $new_psq, 0, [], $parent->default_vat_code);
 
 				if ($ret < 0) {
 					$this->db->rollback();
@@ -856,11 +854,7 @@ class ProductCombination
 			}
 
 			if ($forced_refvar === false) {
-				if (isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
-					$newproduct->ref .= getDolGlobalString('PRODUIT_ATTRIBUTES_SEPARATOR') . $prodattrval->ref;
-				} else {
-					$newproduct->ref .= '_'.$prodattrval->ref;
-				}
+				$newproduct->ref .= getDolGlobalString('PRODUIT_ATTRIBUTES_SEPARATOR', '_') . $prodattrval->ref;
 			}
 
 			//The first one should not contain a linebreak

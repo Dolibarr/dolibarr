@@ -116,8 +116,8 @@ class SocieteAccount extends CommonObject
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'visible' => -1, 'enabled' => 1, 'position' => 46, 'notnull' => -1,),
 		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'visible' => -2, 'enabled' => 1, 'position' => 500, 'notnull' => 1,),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'visible' => -2, 'enabled' => 1, 'position' => 500, 'notnull' => 1,),
-		'fk_user_creat' => array('type' => 'integer', 'label' => 'UserAuthor', 'visible' => -2, 'enabled' => 1, 'position' => 500, 'notnull' => 1,),
-		'fk_user_modif' => array('type' => 'integer', 'label' => 'UserModif', 'visible' => -2, 'enabled' => 1, 'position' => 500, 'notnull' => -1,),
+		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'visible' => -2, 'enabled' => 1, 'position' => 500, 'notnull' => 1,),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'visible' => -2, 'enabled' => 1, 'position' => 500, 'notnull' => -1,),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'visible' => -2, 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'index' => 1,),
 		'status' => array('type' => 'integer', 'label' => 'Status', 'visible' => 1, 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'index' => 1, 'default' => '1', 'arrayofkeyval' => array(1 => 'Active', 0 => 'Disabled')),
 	);
@@ -274,6 +274,24 @@ class SocieteAccount extends CommonObject
 			if ((int) $this->fk_website <= 0) {
 				$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Website"));
 				return -1;
+			}
+		}
+
+		if ($this->site == 'dolibarr_portal') {
+			// Check that entry does not already exists
+			$sql = "SELECT sa.rowid, sa.entity";
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe_account as sa";
+			$sql .= " WHERE sa.login = '".$this->db->escape($this->login)."'";
+			$sql .= " AND sa.entity IN (".getEntity('societe').")";
+			$sql .= " AND sa.site = 'dolibarr_portal'";
+			$sql .= " ORDER BY sa.rowid DESC"; // To always get the same order
+
+			$result = $this->db->query($sql);
+			if ($result) {
+				if ($this->db->num_rows($result)) {
+					$this->error = 'ErrorLoginAlreadyExists';
+					return -2;
+				}
 			}
 		}
 

@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2002-2006	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2021	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne					<eric.seigne@ryxeo.com>
@@ -85,7 +84,7 @@ class Societe extends CommonObject
 	public $fieldsforcombobox = 'nom,name_alias';
 
 	/**
-	 * @var array<string, array<string>>	List of child tables. To test if we can delete object.
+	 * @var array<string,array{name:string}>	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array(
 		'supplier_proposal' => array('name' => 'SupplierProposal'),
@@ -203,6 +202,7 @@ class Societe extends CommonObject
 		'fk_effectif' => array('type' => 'integer', 'label' => 'Workforce', 'enabled' => 1, 'visible' => -1, 'position' => 170),
 		'fk_typent' => array('type' => 'integer', 'label' => 'TypeOfCompany', 'enabled' => 1, 'visible' => -1, 'position' => 175, 'csslist' => 'minwidth200'),
 		'fk_forme_juridique' => array('type' => 'integer', 'label' => 'JuridicalStatus', 'enabled' => 1, 'visible' => -1, 'position' => 180),
+		'birth' => array('type' => 'date', 'label' => 'CompnanyBirthDate', 'enabled' => 1, 'visible' => -1, 'position' => 182),
 		'fk_currency' => array('type' => 'varchar(3)', 'label' => 'Currency', 'enabled' => 1, 'visible' => -1, 'position' => 185),
 		'siren' => array('type' => 'varchar(128)', 'label' => 'Idprof1', 'enabled' => 1, 'visible' => -1, 'position' => 190),
 		'siret' => array('type' => 'varchar(128)', 'label' => 'Idprof2', 'enabled' => 1, 'visible' => -1, 'position' => 195),
@@ -561,10 +561,14 @@ class Societe extends CommonObject
 	 */
 	public $forme_juridique_code = 0;
 	/**
-	 * @var string Label for Legal Form (of company)
+	 * @var string 	Label for Legal Form (of company)
 	 * @see CommonDocGenerator::get_substitutionarray_mysoc()
 	 */
 	public $forme_juridique;
+	/**
+	 * @var int|null 	Date of company creation
+	 */
+	public $birth;
 
 	/**
 	 * @var string
@@ -1188,8 +1192,6 @@ class Societe extends CommonObject
 	 */
 	public function create_individual(User $user, $no_email = 0, $tags = array(), $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 
 		$this->db->begin();
@@ -1261,7 +1263,7 @@ class Societe extends CommonObject
 	 */
 	public function verify()
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		$error = 0;
 		$this->errors = array();
@@ -1687,6 +1689,7 @@ class Societe extends CommonObject
 			}
 
 			$sql .= ",fk_forme_juridique = ".(!empty($this->forme_juridique_code) ? "'".$this->db->escape((string) $this->forme_juridique_code)."'" : "null");
+			$sql .= ",birth = ".(!empty($this->birth) ? "'".$this->db->idate($this->birth)."'" : "null");
 
 			$sql .= ",mode_reglement = ".(!empty($this->mode_reglement_id) ? "'".$this->db->escape((string) $this->mode_reglement_id)."'" : "null");
 			$sql .= ",cond_reglement = ".(!empty($this->cond_reglement_id) ? "'".$this->db->escape((string) $this->cond_reglement_id)."'" : "null");
@@ -1923,6 +1926,7 @@ class Societe extends CommonObject
 		$sql .= ', s.fk_typent as typent_id';
 		$sql .= ', s.fk_effectif as effectif_id';
 		$sql .= ', s.fk_forme_juridique as forme_juridique_code';
+		$sql .= ', s.birth';
 		$sql .= ', s.webservices_url, s.webservices_key, s.model_pdf, s.last_main_doc';
 		if (!getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 			$sql .= ', s.accountancy_code_customer_general, s.code_compta';
@@ -2036,7 +2040,7 @@ class Societe extends CommonObject
 				$this->entity       = $obj->entity;
 				$this->canvas = $obj->canvas;
 
-				$this->ref          = $obj->rowid;
+				$this->ref          = $obj->name;
 				$this->name = $obj->name;
 				$this->nom          = $obj->name; // deprecated
 				$this->name_alias = $obj->name_alias;
@@ -2124,6 +2128,7 @@ class Societe extends CommonObject
 
 				$this->forme_juridique_code = $obj->forme_juridique_code;
 				$this->forme_juridique = $obj->forme_juridique_code ? $obj->forme_juridique : '';
+				$this->birth = $this->db->jdate($obj->birth);
 
 				$this->fk_prospectlevel = $obj->fk_prospectlevel;
 
@@ -2234,15 +2239,144 @@ class Societe extends CommonObject
 			return $rowid;
 		}
 
-		// We try to find the thirdparty with exact matching on all fields
-		// TODO Replace this with step by step search
-		// Then search on barcode if we have it (+ restriction on is_client and is_supplier)
-		// Then search on profids with a OR (+ restriction on is_client and is_supplier)
-		// Then search on email (+ restriction on is_client and is_supplier)
-		// Then search ref, ref_ext or alias with a OR (+ restriction on is_client and is_supplier)
+		dol_syslog(get_class($this)."::findNearest", LOG_DEBUG);
 		$tmpthirdparty = new Societe($this->db);
-		$result = $tmpthirdparty->fetch($rowid, $ref, $ref_ext, $barcode, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email, $ref_alias, $is_client, $is_supplier);
 
+		// We try to find the thirdparty with exact matching on all fields
+		$result = $tmpthirdparty->fetch($rowid, $ref, $ref_ext, $barcode, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email, $ref_alias, $is_client, $is_supplier);
+		if ($result != 0) {
+			return $result;
+		}
+
+		// Then search on barcode if we have it (+ restriction on is_client and is_supplier)
+		dol_syslog("Thirdparty not found with exact match so we try barcode search", LOG_DEBUG);
+		if ($barcode) {
+			$result = $tmpthirdparty->fetch(0, '', '', $barcode, '', '', '', '', '', '', '', '', $is_client, $is_supplier);
+			if ($result != 0) {
+				return $result;
+			}
+		}
+
+		$sqlstart = "SELECT s.rowid as id FROM ".MAIN_DB_PREFIX."societe as s";
+		$sqlstart .= ' WHERE s.entity IN ('.getEntity($this->element).')';
+		if ($is_client) {
+			$sqlstart .= ' AND s.client > 0';
+		}
+		if ($is_supplier) {
+			$sqlstart .= ' AND s.fournisseur > 0';
+		} // if both false, no test (the thirdparty can be client and/or supplier)
+
+		// Then search on profids with a OR (+ restriction on is_client and is_supplier)
+		dol_syslog("Thirdparty not found with barcode search so we try profids search", LOG_DEBUG);
+		$sqlprof = "";
+		if ($idprof1) {
+			$sqlprof .= " s.siren = '".$this->db->escape($idprof1)."'";
+		}
+		if ($idprof2) {
+			if ($sqlprof) {
+				$sqlprof .= " OR";
+			}
+			$sqlprof .= " s.siret = '".$this->db->escape($idprof2)."'";
+		}
+		if ($idprof3) {
+			if ($sqlprof) {
+				$sqlprof .= " OR";
+			}
+			$sqlprof .= " s.ape = '".$this->db->escape($idprof3)."'";
+		}
+		if ($idprof4) {
+			if ($sqlprof) {
+				$sqlprof .= " OR";
+			}
+			$sqlprof .= " s.idprof4 = '".$this->db->escape($idprof4)."'";
+		}
+		if ($idprof5) {
+			if ($sqlprof) {
+				$sqlprof .= " OR";
+			}
+			$sqlprof .= " s.idprof5 = '".$this->db->escape($idprof5)."'";
+		}
+		if ($idprof6) {
+			if ($sqlprof) {
+				$sqlprof .= " OR";
+			}
+			$sqlprof .= " s.idprof6 = '".$this->db->escape($idprof6)."'";
+		}
+
+		if ($sqlprof) {
+			$sqlprofquery = $sqlstart . " AND (".$sqlprof." )";
+			$resql = $this->db->query($sqlprofquery);
+			if ($resql) {
+				$num = $this->db->num_rows($resql);
+				if ($num > 1) {
+					$this->error = 'Fetch found several records. Rename one of thirdparties to avoid duplicate.';
+					dol_syslog($this->error, LOG_ERR);
+					$result = -2;
+				} elseif ($num) {
+					$obj = $this->db->fetch_object($resql);
+					$result = $obj->id;
+				} else {
+					$result = 0;
+				}
+			} else {
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->db->lasterror();
+				$result = -3;
+			}
+			if ($result != 0) {
+				return $result;
+			}
+		}
+
+		// Then search on email (+ restriction on is_client and is_supplier)
+		dol_syslog("Thirdparty not found with profids search so we try email search", LOG_DEBUG);
+		if ($email) {
+			$result = $tmpthirdparty->fetch(0, '', '', '', '', '', '', '', '', '', $email, '', $is_client, $is_supplier);
+			if ($result != 0) {
+				return $result;
+			}
+		}
+
+		// Then search ref, ref_ext or alias with a OR (+ restriction on is_client and is_supplier)
+		dol_syslog("Thirdparty not found with profids search so we try ref, ref_ext or ref_alias search", LOG_DEBUG);
+		$sqlref = "";
+		if ($ref) {
+			$sqlref .= " s.nom = '".$this->db->escape($ref)."'";
+		}
+		if ($ref_alias) {
+			if ($sqlref) {
+				$sqlref .= " OR";
+			}
+			$sqlref .= " s.name_alias = '".$this->db->escape($ref_alias)."'";
+		}
+		if ($ref_ext) {
+			if ($sqlref) {
+				$sqlref .= " OR";
+			}
+			$sqlref .= " s.ref_ext = '".$this->db->escape($ref_ext)."'";
+		}
+
+		if ($sqlref) {
+			$sqlrefquery = $sqlstart . " AND (".$sqlref." )";
+			$resql = $this->db->query($sqlrefquery);
+			if ($resql) {
+				$num = $this->db->num_rows($resql);
+				if ($num > 1) {
+					$this->error = 'Fetch found several records. Rename one of thirdparties to avoid duplicate.';
+					dol_syslog($this->error, LOG_ERR);
+					$result = -2;
+				} elseif ($num) {
+					$obj = $this->db->fetch_object($resql);
+					$result = $obj->id;
+				} else {
+					$result = 0;
+				}
+			} else {
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->db->lasterror();
+				$result = -3;
+			}
+		}
 		return $result;
 	}
 
@@ -2674,10 +2808,10 @@ class Societe extends CommonObject
 	 *  Return array of sales representatives
 	 *
 	 *  @param	User		$user			Object user (not used)
-	 *  @param	int			$mode			0=Array with properties, 1=Array of IDs.
+	 *  @param	int<0,1>	$mode			0=Array with properties, 1=Array of IDs.
 	 *  @param	?string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
 	 *  @param	?string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC';
-	 *  @return array|int      				Array of sales representatives of the current third party or <0 if KO
+	 *	@return	int<-1,-1>|int[]|array<array{id:int,lastname:string,firstname:string,email:string,phone:string,office_phone:string,office_fax:string,user_mobile:string,personal_mobile:string,job:string,statut:int,status:int,entity:int,login:string,photo:string,gender:string}>	Array of sales representatives of the current third party or <0 if KO
 	 */
 	public function getSalesRepresentatives(User $user, $mode = 0, $sortfield = null, $sortorder = null)
 	{
@@ -2712,7 +2846,7 @@ class Societe extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				if (empty($mode)) {
-					$reparray[$i]['id'] = $obj->rowid;
+					$reparray[$i]['id'] = (int) $obj->rowid;
 					$reparray[$i]['lastname'] = $obj->lastname;
 					$reparray[$i]['firstname'] = $obj->firstname;
 					$reparray[$i]['email'] = $obj->email;
@@ -2729,7 +2863,7 @@ class Societe extends CommonObject
 					$reparray[$i]['photo'] = $obj->photo;
 					$reparray[$i]['gender'] = $obj->gender;
 				} else {
-					$reparray[] = $obj->rowid;
+					$reparray[] = (int) $obj->rowid;
 				}
 				$i++;
 			}
@@ -2952,7 +3086,7 @@ class Societe extends CommonObject
 			}
 			// deliberately not making new list because fax uses same list as phone
 			if ($this->phone_mobile) {
-				$phonelist[] = dol_print_phone($this->phone_mobile, $this->country_code, $this->id, 0, '', '&nbsp', 'phone_mobile');
+				$phonelist[] = dol_print_phone($this->phone_mobile, $this->country_code, $this->id, 0, '', '&nbsp', 'mobile');
 			}
 			if ($this->fax) {
 				$phonelist[] = dol_print_phone($this->fax, $this->country_code, $this->id, 0, '', '&nbsp', 'fax');
@@ -2961,7 +3095,7 @@ class Societe extends CommonObject
 		}
 
 		if (!empty($this->address)) {
-			$datas['address'] = '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ' ', $langs); // Address + country
+			$datas['address'] = '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ', ', $langs); // Address + country
 		} elseif (!empty($this->country_code)) {
 			$datas['address'] = '<br><b>'.$langs->trans('Country').':</b> '.$this->country_code;
 		}
@@ -3095,8 +3229,7 @@ class Societe extends CommonObject
 		} else {
 			$label = implode($this->getTooltipContentArray($params));
 		}
-		print "\n";
-		//var_dump($label);exit;
+
 		$linkstart = '';
 		$linkend = '';
 
@@ -4369,10 +4502,11 @@ class Societe extends CommonObject
 	/**
 	 *  Set "blacklist" mailing status
 	 *
-	 *  @param	int		$no_email	1=Do not send mailing, 0=Ok to receive mailing
-	 *  @return int					Return integer <0 if KO, >0 if OK
+	 *  @param	int		$no_email			1=Do not send mailing, 0=Ok to receive mailing
+	 *  @param	string	$unsubscribegroup	Emailing code ('' by default)
+	 *  @return int							Return integer <0 if KO, >0 if OK
 	 */
-	public function setNoEmail($no_email)
+	public function setNoEmail($no_email, $unsubscribegroup = '')
 	{
 		$error = 0;
 
@@ -4381,12 +4515,14 @@ class Societe extends CommonObject
 			$this->db->begin();
 
 			if ($no_email) {
+				// TODO Add $unsubscribegroup
 				$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing', 0).") AND email = '".$this->db->escape($this->email)."'";
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
 					$noemail = $obj->nb;
 					if (empty($noemail)) {
+						// TODO Add $unsubscribegroup
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creat) VALUES ('".$this->db->escape($this->email)."', ".getEntity('mailing', 0).", '".$this->db->idate(dol_now())."')";
 						$resql = $this->db->query($sql);
 						if (!$resql) {
@@ -4401,6 +4537,7 @@ class Societe extends CommonObject
 					$this->errors[] = $this->error;
 				}
 			} else {
+				// TODO Add $unsubscribegroup
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = '".$this->db->escape($this->email)."' AND entity IN (".getEntity('mailing', 0).")";
 				$resql = $this->db->query($sql);
 				if (!$resql) {
@@ -4668,6 +4805,10 @@ class Societe extends CommonObject
 		$this->idprof4 = getDolGlobalString('MAIN_INFO_RCS');
 		$this->idprof5 = getDolGlobalString('MAIN_INFO_PROFID5');
 		$this->idprof6 = getDolGlobalString('MAIN_INFO_PROFID6');
+		$this->idprof7 = getDolGlobalString('MAIN_INFO_PROFID7');
+		$this->idprof8 = getDolGlobalString('MAIN_INFO_PROFID8');
+		$this->idprof9 = getDolGlobalString('MAIN_INFO_PROFID9');
+		$this->idprof10 = getDolGlobalString('MAIN_INFO_PROFID10');
 		$this->tva_intra = getDolGlobalString('MAIN_INFO_TVAINTRA'); // VAT number, not necessarily INTRA.
 		$this->managers = getDolGlobalString('MAIN_INFO_SOCIETE_MANAGERS');
 		$this->capital = is_numeric(getDolGlobalString('MAIN_INFO_CAPITAL')) ? (float) price2num(getDolGlobalString('MAIN_INFO_CAPITAL')) : 0;
@@ -4687,6 +4828,8 @@ class Societe extends CommonObject
 		// Define if company use local taxes
 		$this->localtax1_assuj = ((isset($conf->global->FACTURE_LOCAL_TAX1_OPTION) && (getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == '1' || getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == 'localtax1on')) ? 1 : 0);
 		$this->localtax2_assuj = ((isset($conf->global->FACTURE_LOCAL_TAX2_OPTION) && (getDolGlobalString('FACTURE_LOCAL_TAX2_OPTION') == '1' || getDolGlobalString('FACTURE_LOCAL_TAX2_OPTION') == 'localtax2on')) ? 1 : 0);
+
+		$this->termsofsale = getDolGlobalString('MAIN_INFO_SOCIETE_TERMSOFSALE');
 	}
 
 	/**
@@ -4704,7 +4847,6 @@ class Societe extends CommonObject
 		$this->id = 0;
 		$this->entity = 1;
 		$this->name = 'THIRDPARTY SPECIMEN '.dol_print_date($now, 'dayhourlog');
-		$this->nom = $this->name; // For backward compatibility
 		$this->ref_ext = 'Ref ext';
 		$this->specimen = 1;
 		$this->address = '21 jump street';
@@ -4802,7 +4944,7 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *  Check if we must use revenue stamps feature or not according to country (country of $mysocin most cases).
+	 *  Check if we must use revenue stamps feature or not according to country (country of $mysoc in most cases).
 	 *  Table c_revenuestamp contains the country and value of stamp per invoice.
 	 *
 	 *  @return		boolean			true or false

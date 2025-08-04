@@ -56,7 +56,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "modulebuilder", "exports", "other", "cron", "errors"));
+$langs->loadLangs(array("admin", "modulebuilder", "exports", "other", "cron", "errors", "uxdocumentation"));
 
 // GET Parameters
 $action  = GETPOST('action', 'aZ09');
@@ -600,6 +600,7 @@ if ($dirins && $action == 'initsqlextrafields' && !empty($module) && $user->hasR
 	// Now we update the object file to set $this->isextrafieldmanaged to 1
 	$srcfile = $dirins.'/'.strtolower($module).'/class/'.strtolower($objectname).'.class.php';
 	$arrayreplacement = array('/\$this->isextrafieldmanaged = 0;/' => '$this->isextrafieldmanaged = 1;');
+	$arrayreplacement = array('/\$isextrafieldmanaged = 0;/' => '$isextrafieldmanaged = 1;');
 	dolReplaceInFile($srcfile, $arrayreplacement, '', '0', 0, 1);
 }
 
@@ -970,7 +971,7 @@ if ($dirins && $action == 'addlanguage' && !empty($module) && $user->hasRight("m
 			$destdir = $diroflang.'/langs/'.$newlangcode;
 
 			$arrayofreplacement = array();
-			if (!dol_is_dir($srcfile) || !dol_is_file($srcfile)) {
+			if (!dol_is_dir($srcdir) || !dol_is_file($srcfile)) {
 				$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template/langs/en_US';
 				$arrayofreplacement = array('mymodule' => $modulelowercase);
 			}
@@ -1224,10 +1225,10 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 				if ($fieldname == 'fk_soc') {
 					$label = 'ThirdParty';
 				}
-				if ($fieldname == 'tms') {
+				if (in_array($fieldname, array('tms', 'date_modification'))) {
 					$label = 'DateModification';
 				}
-				if ($fieldname == 'datec') {
+				if (in_array($fieldname, array('datec', 'date_creation'))) {
 					$label = 'DateCreation';
 				}
 				if ($fieldname == 'date_valid') {
@@ -1320,15 +1321,30 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 				}
 
 				// type
-				if (isset($obj->Picto)) {
+				$picto = '';
+				if (isset($obj->Picto)) {	// This should never exists
 					$picto = $obj->Picto;
 				}
-				if ($obj->Field == 'fk_soc') {
+				if (preg_match('/^fk_soc/', $obj->Field)) {
 					$picto = 'company';
-				}
-				if (preg_match('/^fk_proj/', $obj->Field)) {
+				} elseif (preg_match('/^fk_contact/', $obj->Field)) {
+					$picto = 'contact';
+				} elseif (preg_match('/^fk_bank/', $obj->Field)) {
+					$picto = 'bank';
+				} elseif (preg_match('/^fk_user/', $obj->Field)) {
+					$picto = 'user';
+				} elseif (preg_match('/^fk_warehouse/', $obj->Field)) {
+					$picto = 'warehouse';
+				} elseif (preg_match('/^fk_prod/', $obj->Field)) {
+					$picto = 'product';
+				} elseif (preg_match('/^fk_proj/', $obj->Field)) {
 					$picto = 'project';
+				} elseif (preg_match('/^fk_task/', $obj->Field)) {
+					$picto = 'task';
 				}
+
+				// lang
+				$lang = $module.'@'.$module;
 
 				// Build the property string
 				$stringforproperties .= "'".$obj->Field."' => array('type' => '".$type."', 'label' => '".$label."',";
@@ -1362,6 +1378,9 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 				if ($csslist) {
 					$stringforproperties .= ", 'csslist' => '".$csslist."'";
 				}
+
+				$stringforproperties .= ", 'lang' => '".$lang."'";
+
 				$stringforproperties .= "),\n";
 				$i += 5;
 			}
@@ -3185,7 +3204,7 @@ $text = $langs->trans("ModuleBuilder");
 
 print load_fiche_titre($text, '', 'title_setup');
 
-print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModuleBuilderDesc", 'https://wiki.dolibarr.org/index.php/Module_development#Create_your_module').'</span>';
+print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModuleBuilderDesc", 'https://wiki.dolibarr.org/index.php/Module_development').'</span>';
 print '<br class="hideonsmartphone">';
 
 //print $textforlistofdirs;
@@ -3380,6 +3399,7 @@ print dol_get_fiche_head($head, $module, '', -1, '', 0, $infomodulesfound, '', 8
 
 if ($module == 'initmodule') {
 	// New module
+	print '<!-- section init module -->'."\n";
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="initmodule">';
@@ -3393,13 +3413,12 @@ if ($module == 'initmodule') {
 	print '<div class="tagtr"><div class="tagtd paddingright">';
 	print '<span class="opacitymedium">'.$langs->trans("IdModule").'</span>';
 	print '</div><div class="tagtd">';
-	print '<input type="text" name="idmodule" class="width75" value="500000" placeholder="'.dol_escape_htmltag($langs->trans("IdModule")).'">';
-	print '<span class="opacitymedium">';
-	print ' &nbsp; (';
-	print dolButtonToOpenUrlInDialogPopup('popup_modules_id', $langs->transnoentitiesnoconv("SeeIDsInUse"), $langs->transnoentitiesnoconv("SeeIDsInUse"), '/admin/system/modules.php?mainmenu=home&leftmenu=admintools_info', '', '');
+	print '<input type="number" min="100000" name="idmodule" class="width75" value="500000">';
+	print '<span class="opacitymedium small">';
+	print ' &nbsp; &nbsp; ';
+	print dolButtonToOpenUrlInDialogPopup('popup_modules_id', $langs->transnoentitiesnoconv("SeeIDsInUse"), $langs->transnoentitiesnoconv("SeeIDsInUse"), '/admin/system/modules.php?mainmenu=home&leftmenu=admintools_info&hidetitle=1', '', '');
 	print ' - ';
 	print '<a href="https://wiki.dolibarr.org/index.php/List_of_modules_id" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeReservedIDsRangeHere").'</a>';
-	print ')';
 	print '</span>';
 	print '</div></div>';
 
@@ -3452,6 +3471,12 @@ if ($module == 'initmodule') {
 	print '</div><div class="tagtd">';
 	print '<input type="text" name="idpicto" value="'.(GETPOSTISSET('idpicto') ? GETPOST('idpicto') : getDolGlobalString('MODULEBUILDER_DEFAULTPICTO', 'fa-file')).'" placeholder="'.dol_escape_htmltag($langs->trans("Picto")).'">';
 	print $form->textwithpicto('', $langs->trans("Example").': fa-file, fa-globe, ... any font awesome code.<br>Advanced syntax is fa-fakey[_faprefix[_facolor[_fasize]]]');
+
+	print '<span class="opacitymedium small">';
+	print ' &nbsp; &nbsp; ';
+	print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?hidenavmenu=1&displayMode=icon-only&mode=no-btn#img-picto-section-list', '', '');
+	print '</span>';
+
 	print '</div></div>';
 
 	print '<div class="tagtr"><div class="tagtd paddingright">';
@@ -3466,7 +3491,11 @@ if ($module == 'initmodule') {
 	print '<input type="text" name="editorurl" value="'.(GETPOSTISSET('editorurl') ? GETPOST('editorurl') : getDolGlobalString('MODULEBUILDER_SPECIFIC_EDITOR_URL', $mysoc->url)).'" placeholder="'.dol_escape_htmltag($langs->trans("EditorUrl")).'"><br>';
 	print '</div></div>';
 
-	print '<br><input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Create")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
+	print '</div>';	// End div tagtable
+
+	print '<br><center>';
+	print '<input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Create")).'"'.($dirins ? '' : ' disabled="disabled"').'>';
+	print '</center>';
 	print '</form>';
 } elseif ($module == 'deletemodule') {
 	print '<!-- Form to init a module -->'."\n";
@@ -3663,6 +3692,8 @@ if ($module == 'initmodule') {
 					print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module).'">';
 					print '<input type="hidden" name="tab" value="'.dol_escape_htmltag($tab).'">';
 					print '<input type="hidden" name="keydescription" value="'.dol_escape_htmltag(GETPOST('keydescription', 'alpha')).'">';
+
+					print '<div class="div-table-responsive-no-min">';
 					print '<table class="border centpercent">';
 					print '<tr class="liste_titre"><td class="titlefield">';
 					print $langs->trans("Parameter");
@@ -3800,6 +3831,7 @@ if ($module == 'initmodule') {
 					print '</td></tr>';
 
 					print '</table>';
+					print '</div>';
 					print '</form>';
 				} else {
 					print $langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module).'<br>';
@@ -4030,7 +4062,14 @@ if ($module == 'initmodule') {
 				print '<span class="opacitymedium">'.$langs->trans("Picto").'</span> &nbsp; ';
 				print '</div><div class="tagtd">';
 				print '<input type="text" name="idpicto" value="fa-file" placeholder="'.dol_escape_htmltag($langs->trans("Picto")).'">';
+
 				print $form->textwithpicto('', $langs->trans("Example").': fa-file, fa-globe, ... any font awesome code.<br>Advanced syntax is fa-fakey[_faprefix[_facolor[_fasize]]]');
+
+				print '<span class="opacitymedium small">';
+				print ' &nbsp; &nbsp; ';
+				print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?hidenavmenu=1&displayMode=icon-only&mode=no-btn#img-picto-section-list', '', '');
+				print '</span>';
+
 				print '</div></div>';
 
 				print '<div class="tagtr"><div class="tagtd">';

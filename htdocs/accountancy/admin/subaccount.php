@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2016-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,10 +75,10 @@ if (!$sortorder) {
 }
 
 $arrayfields = array(
-	'subaccount'=>array('label'=>$langs->trans("AccountNumber"), 'checked'=>1),
-	'label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
-	'type'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
-	'reconcilable'=>array('label'=>$langs->trans("Reconcilable"), 'checked'=>1)
+	'subaccount' => array('label' => $langs->trans("AccountNumber"), 'checked' => '1'),
+	'label' => array('label' => $langs->trans("Label"), 'checked' => '1'),
+	'type' => array('label' => $langs->trans("Type"), 'checked' => '1'),
+	'reconcilable' => array('label' => $langs->trans("Reconcilable"), 'checked' => '1')
 );
 
 if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -297,7 +298,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -345,7 +346,7 @@ if ($resql) {
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit, 0, 0, 1);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'accounting_account', 0, '', '', $limit, 0, 0, 1);
 
 	print '<div class="info">'.$langs->trans("WarningCreateSubAccounts").'</div>';
 
@@ -376,7 +377,7 @@ if ($resql) {
 		print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="'.$search_label.'"></td>';
 	}
 	if (!empty($arrayfields['type']['checked'])) {
-		print '<td class="liste_titre center">'.$form->selectarray('search_type', array('1'=>$langs->trans('Customer').' / '.$langs->trans("Prospect"), '2'=>$langs->trans('Supplier'), '3'=>$langs->trans('Employee')), $search_type, 1).'</td>';
+		print '<td class="liste_titre center">'.$form->selectarray('search_type', array('1' => $langs->trans('Customer').' / '.$langs->trans("Prospect"), '2' => $langs->trans('Supplier'), '3' => $langs->trans('Employee')), $search_type, 1).'</td>';
 	}
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		if (!empty($arrayfields['reconcilable']['checked'])) {
@@ -426,12 +427,12 @@ if ($resql) {
 		$obj = $db->fetch_object($resql);
 
 		if ($obj->type == 1) {
-			$companystatic->id = $obj->id;
+			$companystatic->id = $obj->rowid;
 			$companystatic->client = $obj->nature;
 			$companystatic->fournisseur = 0;
 		}
 		if ($obj->type == 2) {
-			$companystatic->id = $obj->id;
+			$companystatic->id = $obj->rowid;
 			$companystatic->client = 0;
 			$companystatic->fournisseur = $obj->nature2;
 		}
@@ -566,7 +567,7 @@ if ($resql) {
 
 	$db->free($resql);
 
-	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+	$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 

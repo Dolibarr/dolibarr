@@ -23,7 +23,10 @@ AllPropals=所有提案/建議書
 SearchAProposal=搜尋提案/建議書
 NoProposal=沒有提案/建議書
 ProposalsStatistics=商業提案/建議書的統計
+NumberOfProposals=提案/建議書的數量
 NumberOfProposalsByMonth=依月份數量
+AmountOfProposals=Amount of proposals
+AmountOfProposalsHT=Amount of proposals (excl. tax)
 AmountOfProposalsByMonthHT=每月金額（不含稅）
 NbOfProposals=商業提案/建議書數量
 ShowPropal=顯示提案/建議書
@@ -77,13 +80,11 @@ AvailabilityTypeAV_1W=1個星期
 AvailabilityTypeAV_2W=2個星期
 AvailabilityTypeAV_3W=3個星期
 AvailabilityTypeAV_1M=1個月
-
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=提案/建議書聯絡人
 TypeContact_propal_external_BILLING=客戶發票聯絡人
 TypeContact_propal_external_CUSTOMER=提案/建議書客戶聯絡人
 TypeContact_propal_external_SHIPPING=客戶交貨聯絡人
-
 # Document models
 CantBeNoSign=無法設定為未簽名
 CaseFollowedBy=案件追蹤者
@@ -122,3 +123,5 @@ SignSociete_rib=Sign mandate
 SignPropal=接受提案/建議書
 Signed=已簽名
 SignedOnly=僅簽名
+ExpeditionSigned=Shipment signed
+SignExpedition=Sign shipment

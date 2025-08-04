@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - exports
+ImportExportArea=Uvoz / Izvoz
 ExportsArea=Exports
 ImportArea=Uvoz
 NewExport=Novo vađenje podataka
@@ -31,10 +32,10 @@ ExportCsvSeparator=Csv razdjelnik znakova
 ImportCsvSeparator=Csv razdjelnik znakova
 Step=Korak
 FormatedImport=Čarobnjak za unos podataka
-FormatedImportDesc1=Ovaj modul omogućuje ažuriranje postojećih podataka ili dodavanje novih objekata u bazu podataka iz datoteke bez tehničkog znanja, uz pomoć pomoćnika.
+FormatedImportDesc1=Kliknite ovdje da biste pomoću pomoćnika ažurirali postojeće podatke ili dodali nove objekte u bazu podataka iz datoteke.
 FormatedImportDesc2=Prvi korak je odabir vrste podataka koje želite uvesti, zatim format izvorne datoteke, zatim polja koja želite uvesti.
 FormatedExport=Čarobnjak za vađenje podataka
-FormatedExportDesc1=Ovi alati omogućuju izvoz personaliziranih podataka pomoću pomoćnika, kako bi vam pomogli u procesu bez zahtijevanja tehničkog znanja.
+FormatedExportDesc1=Kliknite ovdje da biste pomoću pomoćnika izvezli podatke u podržanom formatu
 FormatedExportDesc2=Prvi korak je odabir unaprijed definiranog skupa podataka, zatim polja koja želite izvesti i kojim redoslijedom.
 FormatedExportDesc3=Kada su odabrani podaci za izvoz, možete odabrati format izlazne datoteke.
 Sheet=List

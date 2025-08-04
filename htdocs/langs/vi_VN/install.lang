@@ -69,6 +69,7 @@ CreateTableAndPrimaryKey=Tạo bảng %s
 CreateOtherKeysForTable=Tạo các phím nước ngoài và các chỉ số cho bảng %s
 OtherKeysCreation=Phím và chỉ số nước ngoài tạo
 FunctionsCreation=Chức năng sáng tạo
+CreationOfUser=Tạo người dùng
 AdminAccountCreation=Tạo đăng nhập quản trị
 PleaseTypePassword=Vui lòng nhập mật khẩu, mật khẩu trống không được phép!
 PleaseTypeALogin=Vui lòng nhập thông tin đăng nhập!
@@ -139,7 +140,7 @@ KeepDefaultValuesDeb=Bạn đã sử dụng trình hướng dẫn thiết lập 
 KeepDefaultValuesMamp=Bạn đã sử dụng trình hướng dẫn thiết lập Dolibarr từ DoliMamp, vì vậy các giá trị được đề xuất ở đây đã được tối ưu hóa. Thay đổi chúng chỉ khi bạn biết những gì bạn đang làm.
 KeepDefaultValuesProxmox=Bạn đã sử dụng trình hướng dẫn thiết lập Dolibarr từ thiết bị ảo Proxmox, vì vậy các giá trị được đề xuất ở đây đã được tối ưu hóa. Thay đổi chúng chỉ khi bạn biết những gì bạn đang làm.
 UpgradeExternalModule=Chạy quy trình nâng cấp chuyên dụng của mô-đun bên ngoài
-SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=Đặt ít nhất một tùy chọn làm tham số trong URL với giá trị 'test' hoặc 'confirmed'. Ví dụ: '...repair.php?standard=confirmed'
 NothingToDelete=Không có gì để làm sạch / xóa
 NothingToDo=Không có gì làm
 #########
@@ -211,9 +212,12 @@ YouTryInstallDisabledByFileLock=Ứng dụng đã cố gắng tự nâng cấp, 
 YouTryUpgradeDisabledByMissingFileUnLock=Ứng dụng đã cố gắng tự nâng cấp nhưng quá trình nâng cấp hiện không được phép.<br>
 ClickHereToGoToApp=Nhấn vào đây để đi đến ứng dụng của bạn
 ClickOnLinkOrRemoveManualy=Nếu quá trình nâng cấp đang diễn ra, vui lòng đợi. Nếu không, hãy nhấp vào liên kết sau. Nếu bạn luôn nhìn thấy cùng một trang này, bạn phải xóa/đổi tên tệp install.lock trong thư mục tài liệu.
-ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
+ClickOnLinkOrCreateUnlockFileManualy=Nếu quá trình nâng cấp đang diễn ra, vui lòng đợi... Nếu không, bạn phải xóa tệp install.lock (hoặc tạo tệp upgrade.unlock để nâng cấp) vào thư mục tài liệu Dolibarr.
 Loaded=Đã tải
 FunctionTest=Thử nghiệm chức năng
 NodoUpgradeAfterDB=Không có hành động nào được yêu cầu bởi các mô-đun bên ngoài sau khi nâng cấp cơ sở dữ liệu
 NodoUpgradeAfterFiles=Không có hành động nào được mô-đun bên ngoài yêu cầu sau khi nâng cấp tệp hoặc thư mục
 MigrationContractLineRank=Di chuyển Dòng hợp đồng để sử dụng Xếp hạng (và bật Sắp xếp lại)
+MigrationProductLotPath=Di chuyển đường dẫn tệp hàng loạt sản phẩm
+MigrationAccountancyBookkeeping=Di chuyển sổ kế toán để sử dụng một tham chiếu
+InvoiceExportModelsMigration=Di chuyển mô hình xuất hóa đơn
