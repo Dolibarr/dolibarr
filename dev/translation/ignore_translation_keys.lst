@@ -307,7 +307,6 @@ ErrorBadSocialNetworkValue
 ErrorBadStatus
 ErrorBadValue
 ErrorBadValueForBatch
-ErrorBadValueForDate
 ErrorCanNotDeleteDir
 ErrorCantSplitAUsedDiscount
 ErrorChartOfAccountSystemNotSelected

@@ -117,6 +117,7 @@ PredefinedMailContentLink=Du kan klikke på linket herunder for at foretage din 
 PredefinedMailContentGeneric=__(Hej)__\n\n\n__(Med venlig hilsen)__\n\n__SENDEREMAIL_SIGNATURE__
 PredefinedMailContentSendActionComm=Begivenhedspåmindelse "__EVENT_LABEL__" den __EVENT_DATE__ kl. __EVENT_TIME__ <br> <br> Dette er en automatisk besked, bedes du ikke svare.
 DemoDesc=Dolibarr er en kompakt ERP / CRM, der understøtter flere forretningsmoduler. En demo, der viser alle moduler, giver ingen mening, da dette scenario aldrig forekommer (flere hundrede tilgængelige). Så flere demo profiler er tilgængelige.
+DemoDesc2=Dette er en begrænset delt demo. Du foretrækker måske at teste på din egen dedikerede instans med fuld administratoradgang. For at gøre det, <a href="%s" target="_blank">gå hertil <span class="fas fa-external-link-alt"></span></a>.
 ChooseYourDemoProfil=Vælg den demoprofil, der passer bedst til dine behov ...
 ChooseYourDemoProfilMore=... eller bygg din egen profil <br> (manuel modulvalg)
 DemoFundation=Administrer medlemmer af en fond
@@ -380,3 +381,4 @@ TLS/STARTTLS=TLS/STARTTLS
 FillExtrafieldWithAi=Udfyld ekstrafeltet med AI-indhold
 ExtrafieldFiller=Ekstrafeltfyldstof
 OurProductSelection=Vores udvalg af nye produkter
+NoSupportedModulesHaveBeenActivated=Rapporteringsværktøjet kan kun generere dynamiske rapporter for visse moduler. Der er endnu ikke aktiveret noget understøttet modul.

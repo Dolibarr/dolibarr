@@ -76,7 +76,7 @@ if (!$sortfield) {
 // Initialize a technical objects
 $object = new BOM($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction = $conf->bom->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = getMultidirOutput($object) . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('bomdocument', 'globalcard')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);

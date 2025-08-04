@@ -158,3 +158,4 @@ NumberDayAddMass=Antal dage, der skal føjes til udvalget
 ConfirmMassIncreaseHolidayQuestion=Er du sikker på, at du vil øge ferien for de(n) valgte post(er) %s?
 HolidayQtyNotModified=Saldo af resterende dage for %s er ikke blevet ændret
 ConsumeHolidaysAtTheEndOfTheMonthTheyAreTakenAt=Forbrug ferie i slutningen af den måned, de holdes kl
+PleaseDefineSomeTypeOfHolidayFirst=Definer venligst først nogle typer ferie i ordbogen (Menu Forside - Opsætning - ordbøger)
