@@ -1310,7 +1310,7 @@ class FormFile
 		if (empty($relativepath)) {
 			$relativepath = (!empty($object->ref) ? dol_sanitizeFileName($object->ref) : '').'/';
 			if (!empty($object->element) && $object->element == "societe") {
-				$relativepath = (!empty($object->id) ? dol_sanitizeFileName($object->id) : '').'/';
+				$relativepath = (!empty($object->id) ? $object->id : 0).'/';
 			}
 			if (!empty($object->element) && $object->element == 'invoice_supplier') {
 				$relativepath = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$relativepath; // TODO Call using a defined value for $relativepath
