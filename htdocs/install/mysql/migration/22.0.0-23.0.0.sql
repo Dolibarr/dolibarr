@@ -54,5 +54,6 @@ ALTER TABLE llx_oauth_token ADD COLUMN apicount_previous_month BIGINT UNSIGNED D
 ALTER TABLE llx_oauth_token ADD COLUMN apicount_month BIGINT UNSIGNED DEFAULT 0;			-- increased by 1 at each page access, saved into pageviews_previous_month when on different month than lastaccess
 ALTER TABLE llx_oauth_token ADD COLUMN apicount_total BIGINT UNSIGNED DEFAULT 0;			-- increased by 1 at each page access, no reset
 
+ALTER TABLE llx_societe ADD COLUMN birth date DEFAULT NULL after fk_forme_juridique;
 
 -- end of migration

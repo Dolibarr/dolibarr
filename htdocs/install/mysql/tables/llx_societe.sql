@@ -68,6 +68,7 @@ create table llx_societe
   fk_effectif              integer        DEFAULT 0,            		--
   fk_typent                integer        DEFAULT NULL,                 -- type ent
   fk_forme_juridique       integer        DEFAULT 0,            		-- juridical status
+  birth                    date,				            			-- date of company creation
   fk_currency			   varchar(3),									-- default currency
   siren	                   varchar(128),                         		-- IDProf1: depends on country (example: siren or RCS for france, ...)
   siret                    varchar(128),                         		-- IDProf2: depends on country (example: siret for france, ...)
