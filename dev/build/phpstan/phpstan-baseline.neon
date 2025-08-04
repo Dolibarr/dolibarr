@@ -6403,24 +6403,6 @@ parameters:
 			path: ../../../htdocs/core/actions_addupdatedelete.inc.php
 
 		-
-			message: '#^Variable \$confirm might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
-			path: ../../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
-			message: '#^Variable \$id might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
-			message: '#^Variable \$lineid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/actions_addupdatedelete.inc.php
-
-		-
 			message: '#^Comparison operation "\>" between false and 0 is always false\.$#'
 			identifier: greater.alwaysFalse
 			count: 1
@@ -16465,18 +16447,6 @@ parameters:
 			path: ../../../htdocs/modulebuilder/template/class/myobject.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$isextrafieldmanaged \(int\<0, 1\>\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/class/myobject.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$ismultientitymanaged \(int\<0, 1\>\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/class/myobject.class.php
-
-		-
 			message: '#^Property MyObject\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -22731,12 +22701,6 @@ parameters:
 		-
 			message: '#^Call to function property_exists\(\) with User and ''admin'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/user/bank.php
-
-		-
-			message: '#^Variable \$countrynotdefined might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/user/bank.php
 
