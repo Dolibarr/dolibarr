@@ -278,10 +278,10 @@ INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUE
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (246, 'MF', 'MAF', 'Saint-Martin', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (247, 'XK', 'XKX', 'Kosovo', 1, 0);
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (248, 'BQ', 'BES', 'Bonaire, Sint Eustatius and Saba', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (249, 'GP', 'GLP', 'Guadeloupe', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (250, 'GY', 'GUY', 'Guyana', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (251, 'MQ', 'MTQ', 'Martinique', 1, 0);
-INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (252, 'RE', 'REU', 'Réunion', 1, 0);
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (249, 'GP', 'GLP', 'Guadeloupe', 0, 0);	-- Not active by default, already set as region
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (250, 'GY', 'GUY', 'Guyana', 0, 0);		-- Not active by default, already set as region
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (251, 'MQ', 'MTQ', 'Martinique', 0, 0);	-- Not active by default, already set as region
+INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (252, 'RE', 'REU', 'Réunion', 0, 0);		-- Not active by default, already set as region
 INSERT INTO llx_c_country (rowid, code, code_iso, label, active, favorite) VALUES (253, 'SS', 'SSD', 'South Sudan', 1, 0);
 
 
