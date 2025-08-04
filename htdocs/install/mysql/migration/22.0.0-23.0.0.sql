@@ -59,5 +59,6 @@ ALTER TABLE llx_adherent ADD COLUMN birth_place varchar(64) after birth;
 
 ALTER TABLE llx_societe ADD COLUMN birth date DEFAULT NULL after fk_forme_juridique;
 
+ALTER TABLE llx_extrafields ADD COLUMN cloneable tinyint DEFAULT 1 AFTER fieldrequired;
 
 -- end of migration

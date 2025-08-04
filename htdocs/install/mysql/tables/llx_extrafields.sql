@@ -30,6 +30,7 @@ create table llx_extrafields
 	fielddefault    text,
 	fieldunique     integer DEFAULT 0,
 	fieldrequired   integer DEFAULT 0,
+	cloneable       tinyint DEFAULT 1,							-- set to 0 if attribute must be not cloned
 	perms			varchar(255),								-- not used yet
 	enabled         varchar(255),
 	module          varchar(64),
