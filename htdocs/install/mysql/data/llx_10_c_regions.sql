@@ -41,53 +41,53 @@
 
 
 -- CONTENT -------------------------------------------------------------------
--- 
--- Algeria     -> only for Departmements
--- Andorra     -> only for Departmements
--- Angola      -> only for Departmements
+--
+-- Algeria     -> only for Departments/Counties
+-- Andorra     -> only for Departments/Counties
+-- Angola      -> only for Departments/Counties
 -- Argentina
--- Australia   -> only for Departmements
--- Austria     -> only for Departmements
--- Barbados    -> only for Departmements
+-- Australia   -> only for Departments/Counties
+-- Austria     -> only for Departments/Counties
+-- Barbados    -> only for Departments/Counties
 -- Belgium
 -- Bolivia
--- Brazil      -> only for Departmements
+-- Brazil      -> only for Departments/Counties
 -- Burundi
--- Canada      -> only for Departmements
+-- Canada      -> only for Departments/Counties
 -- Chile
 -- China
--- Colombie    -> only for Departmements
+-- Colombie    -> only for Departments/Counties
 -- Croatia
 -- Denmark
 -- France
--- Germany     -> only for Departmements
+-- Germany     -> only for Departments/Counties
 -- Greece
--- Honduras    -> only for Departmements
+-- Honduras    -> only for Departments/Counties
 -- Hungary
--- India       -> only for Departmements
--- Indonesia   -> only for Departmements
+-- India       -> only for Departments/Counties
+-- Indonesia   -> only for Departments/Counties
 -- Italy
--- Japan       -> only for Departmements
+-- Japan       -> only for Departments/Counties
 -- Luxembourg
 -- Mauritius
--- Mexique     -> only for Departmements
+-- Mexique     -> only for Departments/Counties
 -- Morocco
--- Netherlands -> only for Departmements
--- Panama      -> only for Departmements
+-- Netherlands -> only for Departments/Counties
+-- Panama      -> only for Departments/Counties
 -- Peru
 -- Portugal
--- Romania     -> only for Departmements
+-- Romania     -> only for Departments/Counties
 -- San Salvador
 -- Slovakia
 -- Slovenia
 -- Spain
--- Switzerland/Suisse    -> only for Departmements/Cantons
--- Taiwan      -> only for Departmements
+-- Switzerland/Suisse    -> only for Departments/Cantons
+-- Taiwan      -> only for Departments/Counties
 -- Tunesia
 -- Turkey
--- United Arab Emirates  -> only for Departmements
+-- United Arab Emirates  -> only for Departments/Counties
 -- United Kingdom
--- USA         -> only for Departmements
+-- USA         -> only for Departments/Counties
 -- Venezuela
 
 
@@ -255,6 +255,8 @@ insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1
 insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1,  3, '97302', 3, 'Guyane');
 insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1,  4, '97411', 3, 'Réunion');
 insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1,  6, '97601', 3, 'Mayotte');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1,  7, '97133', 3, 'Saint Barthelemy');
+insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1,  8, '97150', 3, 'Saint Martin');
 
 insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1, 11, '75056', 1, 'Île-de-France');
 insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1, 24, '45234', 2, 'Centre-Val de Loire');
@@ -368,7 +370,7 @@ insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 1
 -- Morocco / Maroc - Regions since 2015 (id country=12)
 -- INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 12, 1201, '', 0, 'Tanger-Tétouan-Al Hoceima');
 -- INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 12, 1202, '', 0, 'Oriental');
--- INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 12, 1203, '', 0, 'Fès-Meknès');                                                                
+-- INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 12, 1203, '', 0, 'Fès-Meknès');
 -- INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 12, 1204, '', 0, 'Rabat-Salé-Kénitra');
 -- INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 12, 1205, '', 0, 'Béni Mellal-Khénifra');
 -- INSERT INTO  llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 12, 1206, '', 0, 'Casablanca-Settat');
@@ -442,7 +444,7 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 2
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ( 25, 15002, 'PT9', NULL, 'Azores-Madeira');
 
 
--- Romania Regions (id country=188) 
+-- Romania Regions (id country=188)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 188, 18801, '', 0, 'Romania');
 
 
@@ -487,8 +489,8 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 4
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 4, 420, '', 0, 'Otros');
 
 
--- Switzerland Regions (id country=6) 
-INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 6, 601, '', 1, 'Cantons'); 
+-- Switzerland Regions (id country=6)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 6, 601, '', 1, 'Cantons');
 
 
 -- Taiwan Region (rowid country=213)
@@ -558,3 +560,8 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 2
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 232, 23208, '', 0, 'Nor-Oriental');
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 232, 23209, '', 0, 'Zuliana');
 
+-- Cuba Regions (id_country=77)
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 77, 7700, '', 0, 'Cuba');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 77, 7701, '', 0, 'Occidente');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 77, 7702, '', 0, 'Centro');
+INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) values ( 77, 7703, '', 0, 'Occidente');

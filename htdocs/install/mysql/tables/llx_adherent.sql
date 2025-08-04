@@ -20,7 +20,7 @@
 -- ===================================================================
 --
 -- state / statut
--- -2 : excluded / exclu 
+-- -2 : excluded / exclu
 -- -1 : draft / brouillon
 --  0 : canceled / resilie
 --  1 : valid / valide
@@ -53,20 +53,12 @@ create table llx_adherent
   url              varchar(255) NULL,
 
   socialnetworks   text DEFAULT NULL,           -- json with socialnetworks
-  --skype            varchar(255),                -- deprecated
-  --twitter          varchar(255),                -- deprecated
-  --facebook         varchar(255),                -- deprecated
-  --linkedin         varchar(255),                -- deprecated
-  --instagram        varchar(255),                -- deprecated
-  --snapchat         varchar(255),                -- deprecated
-  --googleplus       varchar(255),                -- deprecated
-  --youtube          varchar(255),                -- deprecated
-  --whatsapp         varchar(255),                -- deprecated
 
   phone            varchar(30),
   phone_perso      varchar(30),
   phone_mobile     varchar(30),
-  birth            date,                          -- birthday
+  birth            date,                          -- birth date
+  birth_place      varchar(64),                   -- birth place (town)
   photo            varchar(255),                  -- filename or url of photo
   statut           smallint NOT NULL DEFAULT 0,
   public           smallint NOT NULL DEFAULT 0,   -- certain champ de la fiche sont ils public ou pas ?

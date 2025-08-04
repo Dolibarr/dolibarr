@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2010	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2011	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modDon extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -59,7 +59,7 @@ class modDon extends DolibarrModules
 		// Data directories to create when module is enabled
 		$this->dirs = array("/don/temp");
 
-		// Dependancies
+		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array();
 
@@ -67,49 +67,50 @@ class modDon extends DolibarrModules
 		$this->config_page_url = array("donation.php@don");
 
 		// Constants
-		$this->const = array();
-		$r = 0;
-
-		$this->const[$r][0] = "DON_ADDON_MODEL";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "html_cerfafr";
-		$this->const[$r][3] = 'Nom du gestionnaire de generation de recu de dons';
-		$this->const[$r][4] = 0;
-
-		$r++;
-		$this->const[$r][0] = "DONATION_ART200";
-		$this->const[$r][1] = "yesno";
-		$this->const[$r][2] = "0";
-		$this->const[$r][3] = 'Option Française - Eligibilité Art200 du CGI';
-		$this->const[$r][4] = 0;
-
-		$r++;
-		$this->const[$r][0] = "DONATION_ART238";
-		$this->const[$r][1] = "yesno";
-		$this->const[$r][2] = "0";
-		$this->const[$r][3] = 'Option Française - Eligibilité Art238 bis du CGI';
-		$this->const[$r][4] = 0;
-
-		$r++;
-		$this->const[$r][0] = "DONATION_ART978";
-		$this->const[$r][1] = "yesno";
-		$this->const[$r][2] = "0";
-		$this->const[$r][3] = 'Option Française - Eligibilité Art978 du CGI';
-		$this->const[$r][4] = 0;
-
-		$r++;
-		$this->const[$r][0] = "DONATION_MESSAGE";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "Thank you";
-		$this->const[$r][3] = 'Message affiché sur le récépissé de versements ou dons';
-		$this->const[$r][4] = 0;
-
-		$r++;
-		$this->const[$r][0] = "DONATION_ACCOUNTINGACCOUNT";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "758";
-		$this->const[$r][3] = 'Compte comptable de remise des versements ou dons';
-		$this->const[$r][4] = 0;
+		$this->const = [
+			[
+				"DON_ADDON_MODEL",
+				"chaine",
+				"html_cerfafr",
+				'Nom du gestionnaire de generation de recu de dons',
+				0,
+			],
+			[
+				"DONATION_ART200",
+				"yesno",
+				"0",
+				'Option Française - Eligibilité Art200 du CGI',
+				0,
+			],
+			[
+				"DONATION_ART238",
+				"yesno",
+				"0",
+				'Option Française - Eligibilité Art238 bis du CGI',
+				0,
+			],
+			[
+				"DONATION_ART978",
+				"yesno",
+				"0",
+				'Option Française - Eligibilité Art978 du CGI',
+				0,
+			],
+			[
+				"DONATION_MESSAGE",
+				"chaine",
+				"Thank you",
+				'Message affiché sur le récépissé de versements ou dons',
+				0,
+			],
+			[
+				"DONATION_ACCOUNTINGACCOUNT",
+				"chaine",
+				"758",
+				'Compte comptable de remise des versements ou dons',
+				0,
+			],
+		];
 
 		// Boxes
 		$this->boxes = array();

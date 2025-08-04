@@ -16,5 +16,4 @@ CurrenciesUsed_help_to_add=Añadir las diferentes monedas y tipos de cambio que 
 rate=tipo de cambio
 MulticurrencyReceived=Recibido, moneda original
 MulticurrencyRemainderToTake=Monto pendiente, moneda original
-MulticurrencyPaymentAmount=Monto pagado, moneda original
 AmountToOthercurrency=Monto (en moneda de la cuenta receptora)

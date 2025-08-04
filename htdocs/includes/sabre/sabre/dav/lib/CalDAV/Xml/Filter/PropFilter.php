@@ -53,7 +53,7 @@ class PropFilter implements XmlDeserializable
             'is-not-defined' => false,
             'param-filters' => [],
             'text-match' => null,
-            'time-range' => false,
+            'time-range' => [],
         ];
 
         $att = $reader->parseAttributes();

@@ -104,7 +104,7 @@ class InstallTest extends PHPUnit_Extensions_Selenium2TestCase
 	public function testInstallRedirect()
 	{
 		$this->url('/');
-		$this->assertContains('/install/index.php', $this->url());
+		$this->assertStringContainsString('/install/index.php', $this->url());
 	}
 
 	/**
@@ -114,7 +114,7 @@ class InstallTest extends PHPUnit_Extensions_Selenium2TestCase
 	 */
 	public function testInstallPageTitle()
 	{
-		$this->assertContains('Dolibarr', $this->title());
+		$this->assertStringContainsString('Dolibarr', $this->title());
 	}
 
 	/**
@@ -126,7 +126,7 @@ class InstallTest extends PHPUnit_Extensions_Selenium2TestCase
 	{
 		// FIXME: the button itself should have an ID
 		$this->byId('nextbutton')->byTag('input')->click();
-		$this->assertContains('/install/check.php', $this->url());
+		$this->assertStringContainsString('/install/check.php', $this->url());
 	}
 
 	/**
@@ -145,7 +145,7 @@ class InstallTest extends PHPUnit_Extensions_Selenium2TestCase
 		$show_hide_choices->click();
 		$this->assertFalse($unavailable_choices->displayed());
 		$this->byClassName('button')->click();
-		$this->assertContains('/install/fileconf.php', $this->url());
+		$this->assertStringContainsString('/install/fileconf.php', $this->url());
 	}
 
 	/**
@@ -205,7 +205,7 @@ class InstallTest extends PHPUnit_Extensions_Selenium2TestCase
 	public function testFormSubmit()
 	{
 		$this->byName('forminstall')->submit();
-		$this->assertContains('/install/step1.php', $this->url());
+		$this->assertStringContainsString('/install/step1.php', $this->url());
 	}
 
 	/**
@@ -221,7 +221,7 @@ class InstallTest extends PHPUnit_Extensions_Selenium2TestCase
 		$this->byId('nextbutton')->byTag('input')->click();
 		$time = $start->diff(new DateTimeImmutable());
 		echo "\nPopulating the database took " . $time->format("%s seconds.\n");
-		$this->assertContains('/install/step2.php', $this->url());
+		$this->assertStringContainsString('/install/step2.php', $this->url());
 	}
 
 	/**
@@ -232,7 +232,7 @@ class InstallTest extends PHPUnit_Extensions_Selenium2TestCase
 	public function testStep2()
 	{
 		$this->byName('forminstall')->submit();
-		$this->assertContains('/install/step4.php', $this->url());
+		$this->assertStringContainsString('/install/step4.php', $this->url());
 	}
 
 	// There is no step 3
@@ -252,7 +252,7 @@ class InstallTest extends PHPUnit_Extensions_Selenium2TestCase
 		$this->byName('pass_verif')->value(self::$dol_admin_pass);
 		// FIXME: the button itself should have an ID
 		$this->byId('nextbutton')->byTag('input')->click();
-		$this->assertContains('/install/step5.php', $this->url());
+		$this->assertStringContainsString('/install/step5.php', $this->url());
 	}
 
 	/**
@@ -264,7 +264,7 @@ class InstallTest extends PHPUnit_Extensions_Selenium2TestCase
 	{
 		// FIXME: this button should have an ID
 		$this->byTag('a')->click();
-		$this->assertContains('/admin/index.php', $this->url());
+		$this->assertStringContainsString('/admin/index.php', $this->url());
 	}
 
 	/**

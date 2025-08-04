@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2014	Maxime Kohlhaas		<support@atm-consulting.fr>
- * Copyright (C) 2014	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2021	Frédéric France		<frederic.france@netlogic.fr>
+/* Copyright (C) 2014	    Maxime Kohlhaas		<support@atm-consulting.fr>
+ * Copyright (C) 2014	    Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2021-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,27 +16,33 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/**
+ * @var CommonObject $object 	Object (invoice, order, ...)
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var Form $form
+ * @var Translate $langs
+ * @var User $user
  *
- * Show extrafields. It also show fields from hook formObjectOptions. Need to have following variables defined:
- * $object (invoice, order, ...)
- * $action
- * $conf
- * $langs
- *
- * $parameters
- * $cols
+ * @var string	$action
+ * @var	array<string,mixed>	$parameters		Array of parameters
+ * @var int 	$cols
+ * @var string	$forcefieldid
+ * @var string	$forceobjectid
  */
 
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 if (!is_object($form)) {
 	$form = new Form($db);
 }
-
 
 ?>
 <!-- BEGIN PHP TEMPLATE extrafields_view.tpl.php -->
@@ -60,7 +67,7 @@ if ($reshook < 0) {
 
 
 //var_dump($extrafields->attributes[$object->table_element]);
-if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label'])) {
+if (empty($reshook) && !empty($object->table_element) && isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label'])) {
 	$lastseparatorkeyfound = '';
 	$extrafields_collapse_num = '';
 	$extrafields_collapse_num_old = '';
@@ -71,18 +78,17 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 		$i++;
 
 		// Discard if extrafield is a hidden field on form
-
 		$enabled = 1;
 		if ($enabled && isset($extrafields->attributes[$object->table_element]['enabled'][$tmpkeyextra])) {
-			$enabled = dol_eval($extrafields->attributes[$object->table_element]['enabled'][$tmpkeyextra], 1, 1, '2');
+			$enabled = (int) dol_eval((string) $extrafields->attributes[$object->table_element]['enabled'][$tmpkeyextra], 1, 1, '2');
 		}
 		if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$tmpkeyextra])) {
-			$enabled = dol_eval($extrafields->attributes[$object->table_element]['list'][$tmpkeyextra], 1, 1, '2');
+			$enabled = (int) dol_eval($extrafields->attributes[$object->table_element]['list'][$tmpkeyextra], 1, 1, '2');
 		}
 
 		$perms = 1;
 		if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra])) {
-			$perms = dol_eval($extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra], 1, 1, '2');
+			$perms = (int) dol_eval($extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra], 1, 1, '1');
 		}
 		//print $tmpkeyextra.'-'.$enabled.'-'.$perms.'<br>'."\n";
 
@@ -92,9 +98,11 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 		if (abs($enabled) != 1 && abs($enabled) != 3 && abs($enabled) != 5 && abs($enabled) != 4) {
 			continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list <> 4 = not visible at the creation
 		}
+		/* No perm means we can't edit, but we should be able to see according to visibility field.
 		if (empty($perms)) {
 			continue; // 0 = Not visible
 		}
+		*/
 
 		// Load language if required
 		if (!empty($extrafields->attributes[$object->table_element]['langfile'][$tmpkeyextra])) {
@@ -130,7 +138,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 			}
 			print '>';
 			$extrafields_collapse_num_old = $extrafields_collapse_num;
-			print '<td class="titlefield">';
+			print '<td>';
 			print '<table class="nobordernopadding centpercent">';
 			print '<tr>';
 
@@ -150,7 +158,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 
 			//TODO Improve element and rights detection
 			//var_dump($user->rights);
-			$permok = false;
+			$permwriteobject = false;
 			$keyforperm = $object->element;
 
 			if ($object->element == 'fichinter') {
@@ -159,48 +167,61 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 			if ($object->element == 'product') {
 				$keyforperm = 'produit';
 			}
+			if ($object->element == 'project') {
+				$keyforperm = 'projet';
+			}
 			if (isset($user->rights->$keyforperm)) {
-				$permok = $user->hasRight($keyforperm, 'creer') || $user->hasRight($keyforperm, 'create') || $user->hasRight($keyforperm, 'write');
+				$permwriteobject = $user->hasRight($keyforperm, 'creer') || $user->hasRight($keyforperm, 'create') || $user->hasRight($keyforperm, 'write');
 			}
 			if ($object->element == 'order_supplier') {
-				if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
-					$permok = $user->hasRight('fournisseur', 'commande', 'creer');
+				if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+					$permwriteobject = $user->hasRight('fournisseur', 'commande', 'creer');
 				} else {
-					$permok = $user->hasRight('supplier_order', 'creer');
+					$permwriteobject = $user->hasRight('supplier_order', 'creer');
 				}
 			}
 			if ($object->element == 'invoice_supplier') {
-				if (empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) {
-					$permok = $user->hasRight('fournisseur', 'facture', 'creer');
+				if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+					$permwriteobject = $user->hasRight('fournisseur', 'facture', 'creer');
 				} else {
-					$permok = $user->hasRight('supplier_invoice', 'creer');
+					$permwriteobject = $user->hasRight('supplier_invoice', 'creer');
 				}
 			}
 			if ($object->element == 'shipping') {
-				$permok = $user->hasRight('expedition', 'creer');
+				$permwriteobject = $user->hasRight('expedition', 'creer');
 			}
 			if ($object->element == 'delivery') {
-				$permok = $user->hasRight('expedition', 'delivery', 'creer');
+				$permwriteobject = $user->hasRight('expedition', 'delivery', 'creer');
 			}
 			if ($object->element == 'productlot') {
-				$permok = $user->hasRight('stock', 'creer');
+				$permwriteobject = $user->hasRight('stock', 'creer');
 			}
 			if ($object->element == 'facturerec') {
-				$permok = $user->hasRight('facture', 'creer');
+				$permwriteobject = $user->hasRight('facture', 'creer');
 			}
 			if ($object->element == 'mo') {
-				$permok = $user->hasRight('mrp', 'write');
+				$permwriteobject = $user->hasRight('mrp', 'write');
 			}
 			if ($object->element == 'contact') {
-				$permok = $user->hasRight('societe', 'contact', 'creer');
+				$permwriteobject = $user->hasRight('societe', 'contact', 'creer');
 			}
 			if ($object->element == 'salary') {
-				$permok = $user->hasRight('salaries', 'read');
+				$permwriteobject = $user->hasRight('salaries', 'write');
+			}
+			if ($object->element == 'member') {
+				$permwriteobject = $user->hasRight('adherent', 'creer');
+			}
+
+			// Set permission to edit/write extrafield.
+			//print "permwriteobject=".$permwriteobject." perms=".$perms;
+			$permtoeditextrafield = $perms;
+			if (!isset($extrafields->attributes[$object->table_element]['perms'][$tmpkeyextra])) {
+				$permtoeditextrafield = $permwriteobject;
 			}
 
 			$isdraft = ((isset($object->statut) && $object->statut == 0) || (isset($object->status) && $object->status == 0));
 			if (($isdraft || !empty($extrafields->attributes[$object->table_element]['alwayseditable'][$tmpkeyextra]))
-				&& $permok && $enabled != 5 && ($action != 'edit_extras' || GETPOST('attribute') != $tmpkeyextra)
+				&& $permtoeditextrafield && $enabled != 5 && ($action != 'edit_extras' || GETPOST('attribute') != $tmpkeyextra)
 				&& empty($extrafields->attributes[$object->table_element]['computed'][$tmpkeyextra])) {
 				$fieldid = empty($forcefieldid) ? 'id' : $forcefieldid;
 				$valueid = empty($forceobjectid) ? $object->id : $forceobjectid;
@@ -208,14 +229,46 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 					$fieldid = 'socid';
 				}
 
-				print '<td class="right"><a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?'.$fieldid.'='.$valueid.'&action=edit_extras&token='.newToken().'&attribute='.$tmpkeyextra.'&ignorecollapsesetup=1">'.img_edit().'</a></td>';
+				print '<td class="right">';
+				if (isModEnabled("ai") && !empty($extrafields->attributes[$object->table_element]["aiprompt"][$tmpkeyextra])) {
+					$showlinktoai = "extrafieldfiller_".$tmpkeyextra;
+					$showlinktoailabel = $langs->trans("FillExtrafieldWithAi");
+					$htmlname = !empty($object->id) ? $object->element.'_extras_'.$tmpkeyextra.'_'.$object->id : "options_".$tmpkeyextra;
+					$onlyenhancements = "textgenerationextrafield";
+					$morecss = "editfielda";
+					$aiprompt = $extrafields->attributes[$object->table_element]["aiprompt"][$tmpkeyextra];
+					$out = "";
+
+					// Fill $out
+					include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+					print $out;
+					print '<script>
+						$(document).ready(function() {
+							$("#'.$htmlname.'").on("change", function () {
+								value = $(this).html();
+								$.ajax({
+									method: "POST",
+									dataType: "json",
+									url: "'. DOL_URL_ROOT.'/core/ajax/updateextrafield.php",
+									data: {"token": "'.currentToken().'", "objectType": "'.$object->element.'", "objectId": "'.$object->id.'", "field": "'.$tmpkeyextra.'", "value": value},
+									success: function(response) {
+										console.log("Extrafield "+'.$tmpkeyextra.'+" successfully updated");
+									},
+								});
+							});
+						});
+					</script>';
+				}
+				print '<a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?'.$fieldid.'='.$valueid.'&action=edit_extras&token='.newToken().'&attribute='.$tmpkeyextra.'&ignorecollapsesetup=1">'.img_edit().'</a>';
+				print'</td>';
 			}
 			print '</tr></table>';
 			print '</td>';
 
+			$cssview = !empty($extrafields->attributes[$object->table_element]['cssview'][$tmpkeyextra]) ? ($extrafields->attributes[$object->table_element]['cssview'][$tmpkeyextra] . ' ') : '';
 			$html_id = !empty($object->id) ? $object->element.'_extras_'.$tmpkeyextra.'_'.$object->id : '';
 
-			print '<td id="' . $html_id . '" class="valuefield ' . $object->element . '_extras_' . $tmpkeyextra . ' wordbreakimp"' . (!empty($cols) ? ' colspan="' . $cols . '"' : '') . '>';
+			print '<td id="' . $html_id . '" class="valuefield ' . $cssview . $object->element . '_extras_' . $tmpkeyextra . ' wordbreakimp"' . (!empty($cols) ? ' colspan="' . $cols . '"' : '') . '>';
 
 			// Convert date into timestamp format
 			if (in_array($extrafields->attributes[$object->table_element]['type'][$tmpkeyextra], array('date'))) {
@@ -225,7 +278,7 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 					$datenotinstring = $db->jdate($datenotinstring);
 				}
 				//print 'x'.$object->array_options['options_' . $tmpkeyextra].'-'.$datenotinstring.' - '.dol_print_date($datenotinstring, 'dayhour');
-				$value = GETPOSTISSET("options_".$tmpkeyextra) ? dol_mktime(12, 0, 0, GETPOST("options_".$tmpkeyextra."month", 'int'), GETPOST("options_".$tmpkeyextra."day", 'int'), GETPOST("options_".$tmpkeyextra."year", 'int')) : $datenotinstring;
+				$value = GETPOSTISSET("options_".$tmpkeyextra) ? dol_mktime(12, 0, 0, GETPOSTINT("options_".$tmpkeyextra."month"), GETPOSTINT("options_".$tmpkeyextra."day"), GETPOSTINT("options_".$tmpkeyextra."year")) : $datenotinstring;
 			}
 			if (in_array($extrafields->attributes[$object->table_element]['type'][$tmpkeyextra], array('datetime'))) {
 				$datenotinstring = empty($object->array_options['options_'.$tmpkeyextra]) ? '' : $object->array_options['options_'.$tmpkeyextra];
@@ -234,11 +287,12 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 					$datenotinstring = $db->jdate($datenotinstring);
 				}
 				//print 'x'.$object->array_options['options_' . $tmpkeyextra].'-'.$datenotinstring.' - '.dol_print_date($datenotinstring, 'dayhour');
-				$value = GETPOSTISSET("options_".$tmpkeyextra) ? dol_mktime(GETPOST("options_".$tmpkeyextra."hour", 'int'), GETPOST("options_".$tmpkeyextra."min", 'int'), GETPOST("options_".$tmpkeyextra."sec", 'int'), GETPOST("options_".$tmpkeyextra."month", 'int'), GETPOST("options_".$tmpkeyextra."day", 'int'), GETPOST("options_".$tmpkeyextra."year", 'int'), 'tzuserrel') : $datenotinstring;
+				$value = GETPOSTISSET("options_".$tmpkeyextra) ? dol_mktime(GETPOSTINT("options_".$tmpkeyextra."hour"), GETPOSTINT("options_".$tmpkeyextra."min"), GETPOSTINT("options_".$tmpkeyextra."sec"), GETPOSTINT("options_".$tmpkeyextra."month"), GETPOSTINT("options_".$tmpkeyextra."day"), GETPOSTINT("options_".$tmpkeyextra."year"), 'tzuserrel') : $datenotinstring;
 			}
 
 			//TODO Improve element and rights detection
-			if ($action == 'edit_extras' && $permok && GETPOST('attribute', 'restricthtml') == $tmpkeyextra) {
+			if ($action == 'edit_extras' && $permtoeditextrafield && GETPOST('attribute', 'restricthtml') == $tmpkeyextra) {
+				// Show the extrafield in create or edit mode
 				$fieldid = 'id';
 				if ($object->table_element == 'societe') {
 					$fieldid = 'socid';
@@ -248,14 +302,22 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 				print '<input type="hidden" name="attribute" value="'.$tmpkeyextra.'">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="'.$fieldid.'" value="'.$object->id.'">';
-				print $extrafields->showInputField($tmpkeyextra, $value, '', '', '', 0, $object->id, $object->table_element);
+				print $extrafields->showInputField($tmpkeyextra, $value, '', '', '', '', $object, $object->table_element);
 
 				print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Modify')).'">';
 
 				print '</form>';
+
+				if (empty($formai) || $formai instanceof FormAI) {
+					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formai.class.php';
+					$formai = new FormAI($db);
+				}
+				print $formai->getAjaxAICallFunction();
 			} else {
+				// Show the extrafield in view mode
+
 				//var_dump($tmpkeyextra.'-'.$value.'-'.$object->table_element);
-				print $extrafields->showOutputField($tmpkeyextra, $value, '', $object->table_element);
+				print $extrafields->showOutputField($tmpkeyextra, $value, '', $object->table_element, null, $object);
 			}
 
 			print '</td>';
@@ -270,31 +332,6 @@ if (empty($reshook) && isset($extrafields->attributes[$object->table_element]['l
 		print '
 				<script>
 				    jQuery(document).ready(function() {
-				    	function showOptions(child_list, parent_list)
-				    	{
-				    		var val = $("select[name="+parent_list+"]").val();
-				    		var parentVal = parent_list + ":" + val;
-							if(val > 0) {
-					    		$("select[name=\""+child_list+"\"] option[parent]").hide();
-					    		$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
-							} else {
-								$("select[name=\""+child_list+"\"] option").show();
-							}
-				    	}
-						function setListDependencies() {
-					    	jQuery("select option[parent]").parent().each(function() {
-					    		var child_list = $(this).attr("name");
-								var parent = $(this).find("option[parent]:first").attr("parent");
-								var infos = parent.split(":");
-								var parent_list = infos[0];
-								showOptions(child_list, parent_list);
-
-								/* Activate the handler to call showOptions on each future change */
-								$("select[name=\""+parent_list+"\"]").change(function() {
-									showOptions(child_list, parent_list);
-								});
-					    	});
-						}
 						setListDependencies();
 				    });
 				</script>'."\n";

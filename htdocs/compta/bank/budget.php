@@ -3,6 +3,8 @@
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +29,14 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories'));
@@ -61,8 +71,8 @@ print '<td class="right">'.$langs->trans("Average").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT sum(d.amount) as somme, count(*) as nombre, c.label, c.rowid ";
-$sql .= " FROM ".MAIN_DB_PREFIX."bank_categ as c";
-$sql .= ", ".MAIN_DB_PREFIX."bank_class as l";
+$sql .= " FROM ".MAIN_DB_PREFIX."categorie as c";
+$sql .= ", ".MAIN_DB_PREFIX."category_bankline as l";
 $sql .= ", ".MAIN_DB_PREFIX."bank as d";
 $sql .= " WHERE c.entity = ".$conf->entity;
 $sql .= " AND c.rowid = l.fk_categ";
@@ -84,7 +94,7 @@ if ($result) {
 		print "<td><a href=\"".DOL_URL_ROOT."/compta/bank/bankentries_list.php?bid=$objp->rowid\">$objp->label</a></td>";
 		print '<td class="right">'.$objp->nombre.'</td>';
 		print '<td class="right"><span class="amount">'.price(abs($objp->somme))."</span></td>";
-		print '<td class="right"><span class="amount">'.price(abs(price2num($objp->somme / $objp->nombre, 'MT')))."</span></td>";
+		print '<td class="right"><span class="amount">'.price(price2num(abs($objp->somme / $objp->nombre), 'MT'))."</span></td>";
 		print "</tr>";
 		$i++;
 		$total += abs($objp->somme);
@@ -94,7 +104,7 @@ if ($result) {
 
 	print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").'</td>';
 	print '<td class="liste_total right">'.price($total).'</td>';
-	print '<td colspan="2" class="liste_total right">'.price($totalnb ?price2num($total / $totalnb, 'MT') : 0).'</td></tr>';
+	print '<td colspan="2" class="liste_total right">'.price($totalnb ? price2num($total / $totalnb, 'MT') : 0).'</td></tr>';
 } else {
 	dol_print_error($db);
 }

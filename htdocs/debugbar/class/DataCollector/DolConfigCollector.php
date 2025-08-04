@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2023	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,7 @@ class DolConfigCollector extends ConfigCollector
 	/**
 	 *	Return widget settings
 	 *
-	 *  @return array      Array
+	 *  @return array<string,array{icon?:string,widget?:string,tooltip?:string,map:string,default:string}>      Array
 	 */
 	public function getWidgets()
 	{
@@ -51,7 +52,7 @@ class DolConfigCollector extends ConfigCollector
 	/**
 	 *	Return collected data
 	 *
-	 *  @return    array   Array
+	 *  @return    array{count:int,messages:string[]}   Array of collected data
 	 */
 	public function collect()
 	{
@@ -63,7 +64,7 @@ class DolConfigCollector extends ConfigCollector
 	/**
 	 * Returns an array with config data
 	 *
-	 * @return array       Array of config
+	 * @return array<string,array<string,string|mixed[]>>       Array of config
 	 */
 	protected function getConfig()
 	{
@@ -93,7 +94,7 @@ class DolConfigCollector extends ConfigCollector
 	 * Convert an object to array
 	 *
 	 * @param  mixed   $obj        Object
-	 * @return array               Array
+	 * @return array<string,mixed> Array
 	 */
 	protected function objectToArray($obj)
 	{

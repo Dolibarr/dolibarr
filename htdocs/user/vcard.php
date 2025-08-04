@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
  * Copyright (C) 2021-2022 	Anthony Berton		<anthony.berton@bb2a.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +31,15 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/vcard.class.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 
 // Security check
 $socid = 0;
@@ -44,7 +52,7 @@ $result = restrictedArea($user, 'user', $id, 'user', $feature2);
 $object = new User($db);
 $result = $object->fetch($id);
 if ($result <= 0) {
-	dol_print_error($object->error);
+	dol_print_error($db, $object->error);
 	exit;
 }
 
@@ -58,6 +66,44 @@ if ($object->socid > 0) {
 /*
  * View
  */
+
+if (GETPOST('mode') == 'virtualcard') {
+	// Clean the data to show according to options
+	if (getDolUserInt('USER_PUBLIC_HIDE_PHOTO', 0, $object)) {
+		$object->photo = '';
+	}
+	if (getDolUserInt('USER_PUBLIC_HIDE_EMAIL', 0, $object)) {
+		$object->email = '';
+	}
+	if (getDolUserInt('USER_PUBLIC_HIDE_URL', 0, $object)) {
+		$object->url = '';
+	}
+	if (getDolUserInt('USER_PUBLIC_HIDE_OFFICE_PHONE', 0, $object)) {
+		$object->office_phone = '';
+	}
+	if (getDolUserInt('USER_PUBLIC_HIDE_OFFICE_FAX', 0, $object)) {
+		$object->office_fax = '';
+	}
+	if (getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $object)) {
+		$object->user_mobile = '';
+	}
+	if (!getDolUserInt('USER_PUBLIC_SHOW_BIRTH', 0, $object)) {
+		$object->birth = '';
+	}
+	if (!getDolUserInt('USER_PUBLIC_SHOW_ADDRESS', 0, $object)) {
+		$object->country_code = '';
+		$object->zip = '';
+		$object->address = '';
+	}
+	if (getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object)) {
+		$object->socialnetworks = array();
+	}
+
+	// Business section
+	if (getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object) || getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS', 0, $object)) {
+		$company->socialnetworks = array();
+	}
+}
 
 // We create VCard
 $v = new vCard();

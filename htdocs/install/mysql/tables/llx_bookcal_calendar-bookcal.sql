@@ -17,6 +17,7 @@
 CREATE TABLE llx_bookcal_calendar(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	entity integer DEFAULT 1 NOT NULL,
 	ref varchar(128) NOT NULL, 
 	label varchar(255), 
 	fk_soc integer, 
@@ -29,6 +30,8 @@ CREATE TABLE llx_bookcal_calendar(
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
 	import_key varchar(14), 
-	status integer NOT NULL
+	status integer NOT NULL DEFAULT 0, 
+	type integer NOT NULL, 
+	visibility integer NOT NULL DEFAULT 1
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

@@ -3,6 +3,8 @@
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,14 +47,21 @@ if (!defined('NOREQUIREHTML')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $htmlname = GETPOST('htmlname', 'aZ09');
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 $mode = GETPOST('mode', 'aZ09');
-$discard_closed = GETPOST('discardclosed', 'int');
+$discard_closed = GETPOSTINT('discardclosed');
 
 // Security check
 restrictedArea($user, 'projet', 0, 'projet&project');
-
 
 /*
  * View
@@ -62,29 +71,32 @@ dol_syslog("Call ajax projet/ajax/projects.php");
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
-top_httphead('application/json');
-
-if (empty($htmlname) && !GETPOST('mode', 'aZ09')) {
-	return;
-}
-
 // Mode to get list of projects
 if (empty($mode) || $mode != 'gettasks') {
+	top_httphead('application/json');
+
 	// When used from jQuery, the search term is added as GET param "term".
 	$searchkey = (GETPOSTISSET($htmlname) ? GETPOST($htmlname, 'aZ09') : '');
 
 	$formproject = new FormProjets($db);
-	$arrayresult = $formproject->select_projects_list($socid, '', $htmlname, 0, 0, 1, $discard_closed, 0, 0, 1, $searchkey);
-}
+	$arrayresult = $formproject->select_projects_list($socid, 0, '', 0, 0, 1, $discard_closed, 0, 0, 1, $searchkey);
 
-// Mode to get list of tasks
-if ($mode == 'gettasks') {
-	$formproject = new FormProjets($db);
-	$formproject->selectTasks((!empty($socid) ? $socid : -1), 0, 'taskid', 24, 1, '1', 1, 0, 0, 'maxwidth500', GETPOST('projectid', 'int'), '');
+	$db->close();
+
+	print json_encode($arrayresult);
+
 	return;
 }
 
+// Mode to get list of tasks
+// THIS MODE RETURNS HTML NOT JSON - THE CALL SHOULD BE UPDATE IN THE FUTURE
+if ($mode == 'gettasks') {
+	top_httphead();
 
-$db->close();
+	$formproject = new FormProjets($db);
+	$formproject->selectTasks((!empty($socid) ? $socid : -1), 0, 'taskid', 24, 1, '1', 1, 0, 0, 'maxwidth500', (string) GETPOSTINT('projectid'), '');
 
-print json_encode($arrayresult);
+	$db->close();
+
+	return;
+}

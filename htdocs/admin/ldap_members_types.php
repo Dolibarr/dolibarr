@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2017	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2006-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2011-2013	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'errors'));
 
@@ -48,7 +57,7 @@ $action = GETPOST('action', 'aZ09');
  * Actions
  */
 
-if ($action == 'setvalue' && $user->admin) {
+if ($action == 'setvalue' /* && $user->admin */) {
 	$error = 0;
 	$db->begin();
 
@@ -73,7 +82,7 @@ if ($action == 'setvalue' && $user->admin) {
 	$valkey = '';
 	$key = GETPOST("key");
 	if ($key) {
-		$valkey = $conf->global->$key;
+		$valkey = getDolGlobalString($key);
 	}
 	if (!dolibarr_set_const($db, 'LDAP_KEY_MEMBERS_TYPES', $valkey, 'chaine', 0, '', $conf->entity)) {
 		$error++;
@@ -94,14 +103,14 @@ if ($action == 'setvalue' && $user->admin) {
  * View
  */
 
-llxHeader('', $langs->trans("LDAPSetup"), 'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP');
+llxHeader('', $langs->trans("LDAPSetup"), 'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP', '', 0, 0, '', '', '', 'mod-admin page-ldap_members_types');
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
 print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
 
 $head = ldap_prepare_head();
 
-// Test si fonction LDAP actives
+// Test if the LDAP functions are enabled
 if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
@@ -127,7 +136,7 @@ print "</tr>\n";
 // DN pour les types de membres
 print '<!-- LDAP_MEMBER_TYPE_DN -->';
 print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPMemberTypeDn").'</span></td><td>';
-print '<input size="48" type="text" name="membertype" value="'.$conf->global->LDAP_MEMBER_TYPE_DN.'">';
+print '<input size="48" type="text" name="membertype" value="' . getDolGlobalString('LDAP_MEMBER_TYPE_DN').'">';
 print '</td><td>'.$langs->trans("LDAPMemberTypepDnExample").'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
@@ -135,7 +144,7 @@ print '</tr>';
 // List of object class used to define attributes in structure
 print '<!-- LDAP_MEMBER_TYPE_OBJECT_CLASS -->';
 print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPMemberTypeObjectClassList").'</span></td><td>';
-print '<input size="48" type="text" name="objectclass" value="'.$conf->global->LDAP_MEMBER_TYPE_OBJECT_CLASS.'">';
+print '<input size="48" type="text" name="objectclass" value="' . getDolGlobalString('LDAP_MEMBER_TYPE_OBJECT_CLASS').'">';
 print '</td><td>'.$langs->trans("LDAPMemberTypeObjectClassListExample").'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
@@ -156,21 +165,21 @@ print "</tr>\n";
 
 // Common name
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldName").'</td><td>';
-print '<input size="25" type="text" name="fieldfullname" value="'.$conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME.'">';
+print '<input size="25" type="text" name="fieldfullname" value="' . getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_FULLNAME').'">';
 print '</td><td>'.$langs->trans("LDAPFieldCommonNameExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_MEMBER_TYPE_FIELD_FULLNAME"'.(($conf->global->LDAP_KEY_MEMBERS_TYPES && $conf->global->LDAP_KEY_MEMBERS_TYPES == $conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME) ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Description
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldDescription").'</td><td>';
-print '<input size="25" type="text" name="fielddescription" value="'.$conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION.'">';
+print '<input size="25" type="text" name="fielddescription" value="' . getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_DESCRIPTION').'">';
 print '</td><td>'.$langs->trans("LDAPFieldDescriptionExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_MEMBER_TYPE_FIELD_DESCRIPTION"'.(($conf->global->LDAP_KEY_MEMBERS_TYPES && $conf->global->LDAP_KEY_MEMBER_TYPES == $conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION) ? ' checked' : '')."></td>";
 print '</tr>';
 
 // User group
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldGroupMembers").'</td><td>';
-print '<input size="25" type="text" name="fieldmembertypemembers" value="'.$conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS.'">';
+print '<input size="25" type="text" name="fieldmembertypemembers" value="' . getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS').'">';
 print '</td><td>'.$langs->trans("LDAPFieldGroupMembersExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS"'.(($conf->global->LDAP_KEY_MEMBERS_TYPES && $conf->global->LDAP_KEY_MEMBERS_TYPES == $conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS) ? ' checked' : '')."></td>";
 print '</tr>';
@@ -187,27 +196,27 @@ print '</form>';
 
 
 /*
- * Test de la connexion
+ * Test de la connection
  */
 if (getDolGlobalInt('LDAP_MEMBER_TYPE_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 	$butlabel = $langs->trans("LDAPTestSynchroMemberType");
 	$testlabel = 'testmembertype';
-	$key = $conf->global->LDAP_KEY_MEMBERS_TYPES;
-	$dn = $conf->global->LDAP_MEMBER_TYPE_DN;
-	$objectclass = $conf->global->LDAP_MEMBER_TYPE_OBJECT_CLASS;
+	$key = getDolGlobalString('LDAP_KEY_MEMBERS_TYPES');
+	$dn = getDolGlobalString('LDAP_MEMBER_TYPE_DN');
+	$objectclass = getDolGlobalString('LDAP_MEMBER_TYPE_OBJECT_CLASS');
 
 	show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
 }
 
 if (function_exists("ldap_connect")) {
-	if ($_GET["action"] == 'testmembertype') {
-		// Creation objet
+	if ($action == 'testmembertype') {
+		// Create object
 		$object = new AdherentType($db);
 		$object->initAsSpecimen();
 
 		// Test synchro
 		$ldap = new Ldap();
-		$result = $ldap->connect_bind();
+		$result = $ldap->connectBind();
 
 		if ($result > 0) {
 			$info = $object->_load_ldap_info();
@@ -235,7 +244,7 @@ if (function_exists("ldap_connect")) {
 
 			print "<br>\n";
 			print "LDAP input file used for test:<br><br>\n";
-			print nl2br($ldap->dump_content($dn, $info));
+			print nl2br($ldap->dumpContent($dn, $info));
 			print "\n<br>";
 		} else {
 			print img_picto('', 'error').' ';

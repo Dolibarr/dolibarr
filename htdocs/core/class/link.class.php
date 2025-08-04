@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2013 Cédric Salvador <csalvador@gpcsolutions.fr>
+/* Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +45,14 @@ class Link extends CommonObject
 	 */
 	public $entity;
 
+	/**
+	 * @var int|'' date add
+	 */
 	public $datea;
+
+	/**
+	 * @var string Object url
+	 */
 	public $url;
 
 	/**
@@ -51,9 +60,25 @@ class Link extends CommonObject
 	 */
 	public $label;
 
+	/**
+	 * @var string Object type
+	 */
 	public $objecttype;
+
+	/**
+	 * @var int Object ID
+	 */
 	public $objectid;
 
+	/**
+	 * @var string share hash
+	 */
+	public $share;
+
+	/**
+	 * @var string share pass hash
+	 */
+	public $share_pass;
 
 	/**
 	 *    Constructor
@@ -72,7 +97,7 @@ class Link extends CommonObject
 	 *    @param	User	$user       Object of user that ask creation
 	 *    @return   int         		>= 0 if OK, < 0 if KO
 	 */
-	public function create($user = '')
+	public function create(User $user)
 	{
 		global $langs, $conf;
 
@@ -91,18 +116,20 @@ class Link extends CommonObject
 
 		// Check parameters
 		if (empty($this->url)) {
-			$this->error = $langs->trans("NoUrl");
+			$this->error = $langs->trans("NoURL");
 			return -1;
 		}
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".$this->db->prefix()."links (entity, datea, url, label, objecttype, objectid)";
+		$sql = "INSERT INTO ".$this->db->prefix()."links (entity, datea, url, label, objecttype, objectid, share,share_pass)";
 		$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($this->datea)."'";
 		$sql .= ", '".$this->db->escape($this->url)."'";
 		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", '".$this->db->escape($this->objecttype)."'";
-		$sql .= ", ".((int) $this->objectid).")";
+		$sql .= ", ".((int) $this->objectid);
+		$sql .= ', '.(!empty($this->share) ? "'".$this->db->escape($this->share)."'" : "null");
+		$sql .= ', '.(!empty($this->share_pass) ? "'".$this->db->escape($this->share_pass)."'" : "null").")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -131,7 +158,7 @@ class Link extends CommonObject
 			}
 		} else {
 			if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-				$this->error = $langs->trans("ErrorCompanyNameAlreadyExists", $this->name);
+				$this->error = $langs->trans("ErrorCompanyNameAlreadyExists", (string) $this->name);
 				$result = -1;
 			} else {
 				$this->error = $this->db->lasterror();
@@ -147,9 +174,9 @@ class Link extends CommonObject
 	 *
 	 *  @param  User	$user            			User executing update
 	 *  @param  int		$call_trigger    			0=no, 1=yes
-	 *  @return int  			           			<0 if KO, >=0 if OK
+	 *  @return int  			           			Return integer <0 if KO, >=0 if OK
 	 */
-	public function update($user = '', $call_trigger = 1)
+	public function update(User $user, $call_trigger = 1)
 	{
 		global $langs, $conf;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -166,22 +193,24 @@ class Link extends CommonObject
 		}
 
 		// Clean parameters
-		$this->url       = clean_url($this->url, 1);
+		$this->url = clean_url($this->url, 1);
 		if (empty($this->label)) {
 			$this->label = basename($this->url);
 		}
-		$this->label     = trim($this->label);
+		$this->label = trim($this->label);
 
 
 		$this->db->begin();
 
 		$sql  = "UPDATE ".$this->db->prefix()."links SET ";
-		$sql .= "entity = ".$conf->entity;
+		$sql .= "entity = ".((int) $conf->entity);
 		$sql .= ", datea = '".$this->db->idate(dol_now())."'";
 		$sql .= ", url = '".$this->db->escape($this->url)."'";
 		$sql .= ", label = '".$this->db->escape($this->label)."'";
 		$sql .= ", objecttype = '".$this->db->escape($this->objecttype)."'";
 		$sql .= ", objectid = ".$this->objectid;
+		$sql .= ', share = '.(!empty($this->share) ? "'".$this->db->escape($this->share)."'" : "null");
+		$sql .= ', share_pass = '.(!empty($this->share_pass) ? "'".$this->db->escape($this->share_pass)."'" : "null");
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update sql = ".$sql);
@@ -207,11 +236,11 @@ class Link extends CommonObject
 			}
 		} else {
 			if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-				// Doublon
+				// Duplicate
 				$this->error = $langs->trans("ErrorDuplicateField");
 				$result = -1;
 			} else {
-				$this->error = $langs->trans("Error sql = ".$sql);
+				$this->error = $langs->trans("Error sql")."= $sql";
 				$result = -2;
 			}
 			$this->db->rollback();
@@ -222,21 +251,21 @@ class Link extends CommonObject
 	/**
 	 *  Loads all links from database
 	 *
-	 *  @param  array   $links      array of Link objects to fill
+	 *  @param  Link[]	$links      array of Link objects to fill
 	 *  @param  string  $objecttype type of the associated object in dolibarr
 	 *  @param  int     $objectid   id of the associated object in dolibarr
-	 *  @param  string  $sortfield  field used to sort
-	 *  @param  string  $sortorder  sort order
-	 *  @return int                 1 if ok, 0 if no records, -1 if error
-	 **/
+	 *  @param  ?string	$sortfield  field used to sort
+	 *  @param  ?string	$sortorder  sort order
+	 *  @return int<-1,1>           1 if ok, 0 if no records, -1 if error
+	 */
 	public function fetchAll(&$links, $objecttype, $objectid, $sortfield = null, $sortorder = null)
 	{
 		global $conf;
 
-		$sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid FROM ".$this->db->prefix()."links";
+		$sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid, share,share_pass  FROM ".$this->db->prefix()."links";
 		$sql .= " WHERE objecttype = '".$this->db->escape($objecttype)."' AND objectid = ".((int) $objectid);
 		if ($conf->entity != 0) {
-			$sql .= " AND entity = ".$conf->entity;
+			$sql .= " AND entity = ".((int) $conf->entity);
 		}
 		if ($sortfield) {
 			if (empty($sortorder)) {
@@ -253,13 +282,15 @@ class Link extends CommonObject
 			if ($num > 0) {
 				while ($obj = $this->db->fetch_object($resql)) {
 					$link = new Link($this->db);
-					$link->id = $obj->rowid;
+					$link->id = (int) $obj->rowid;
 					$link->entity = $obj->entity;
 					$link->datea = $this->db->jdate($obj->datea);
 					$link->url = $obj->url;
 					$link->label = $obj->label;
 					$link->objecttype = $obj->objecttype;
 					$link->objectid = $obj->objectid;
+					$link->share = $obj->share;
+					$link->share_pass = $obj->share_pass;
 					$links[] = $link;
 				}
 				return 1;
@@ -274,7 +305,7 @@ class Link extends CommonObject
 	/**
 	 *  Return nb of links
 	 *
-	 *  @param  DoliDb  $dbs		Database handler
+	 *  @param  DoliDB  $dbs		Database handler
 	 *  @param  string  $objecttype Type of the associated object in dolibarr
 	 *  @param  int     $objectid   Id of the associated object in dolibarr
 	 *  @return int                 Nb of links, -1 if error
@@ -303,9 +334,10 @@ class Link extends CommonObject
 	 *  Loads a link from database
 	 *
 	 *  @param 	int		$rowid 		Id of link to load
+	 *  @param string $hashforshare Hash of file sharing, or 'shared'
 	 *  @return int 				1 if ok, 0 if no record found, -1 if error
 	 **/
-	public function fetch($rowid = null)
+	public function fetch($rowid = null, $hashforshare = '')
 	{
 		global $conf;
 
@@ -313,10 +345,21 @@ class Link extends CommonObject
 			$rowid = $this->id;
 		}
 
-		$sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid FROM ".$this->db->prefix()."links";
-		$sql .= " WHERE rowid = ".((int) $rowid);
+		$sqlwhere=[];
+
+		$sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid, share, share_pass FROM ".$this->db->prefix()."links";
+		if (!empty((int) $rowid)) {
+			$sqlwhere[] = " rowid = ".((int) $rowid);
+		}
+		if (!empty($hashforshare)) {
+			$sqlwhere[] = " share = '".$this->db->escape($hashforshare)."'";
+		}
+
 		if ($conf->entity != 0) {
-			$sql .= " AND entity = ".$conf->entity;
+			$sqlwhere[] = " entity = ".$conf->entity;
+		}
+		if (count($sqlwhere)>0) {
+			$sql .=' WHERE '.implode(' AND ', $sqlwhere);
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -332,6 +375,8 @@ class Link extends CommonObject
 				$this->label = $obj->label;
 				$this->objecttype = $obj->objecttype;
 				$this->objectid = $obj->objectid;
+				$this->share = $obj->share;
+				$this->share_pass = $obj->share_pass;
 				return 1;
 			} else {
 				return 0;
@@ -346,7 +391,7 @@ class Link extends CommonObject
 	 *    Delete a link from database
 	 *
 	 *	  @param	User		$user		Object suer
-	 *    @return	int						<0 if KO, 0 if nothing done, >0 if OK
+	 *    @return	int						Return integer <0 if KO, 0 if nothing done, >0 if OK
 	 */
 	public function delete($user)
 	{

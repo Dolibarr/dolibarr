@@ -5,6 +5,7 @@
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "errors"));
 
@@ -46,7 +55,7 @@ $action = GETPOST('action', 'aZ09');
  * Actions
  */
 
-if ($action == 'setvalue' && $user->admin) {
+if ($action == 'setvalue' /* && $user->admin */) {
 	$error = 0;
 
 	$db->begin();
@@ -102,7 +111,7 @@ if ($action == 'setvalue' && $user->admin) {
 	$valkey = '';
 	$key = GETPOST("key");
 	if ($key) {
-		$valkey = $conf->global->$key;
+		$valkey = getDolGlobalString($key);
 	}
 	if (!dolibarr_set_const($db, 'LDAP_KEY_CONTACTS', $valkey, 'chaine', 0, '', $conf->entity)) {
 		$error++;
@@ -125,14 +134,14 @@ if ($action == 'setvalue' && $user->admin) {
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("LDAPSetup"), 'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP');
+llxHeader('', $langs->trans("LDAPSetup"), 'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP', '', 0, 0, '', '', '', 'mod-admin page-ldap_contacts');
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
 print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
 
 $head = ldap_prepare_head();
 
-// Test si fonction LDAP actives
+// Test si function LDAP actives
 if (!function_exists("ldap_connect")) {
 	setEventMessages($langs->trans("LDAPFunctionsNotAvailableOnPHP"), null, 'errors');
 }
@@ -155,7 +164,7 @@ print "</tr>\n";
 // DN Pour les contacts
 print '<!-- LDAP_CONTACT_DN -->';
 print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPContactDn").'</span></td><td>';
-print '<input size="48" type="text" name="contactdn" value="'.$conf->global->LDAP_CONTACT_DN.'">';
+print '<input size="48" type="text" name="contactdn" value="' . getDolGlobalString('LDAP_CONTACT_DN').'">';
 print '</td><td>'.$langs->trans("LDAPContactDnExample").'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
@@ -163,7 +172,7 @@ print '</tr>';
 // List of object class used to define attributes in structure
 print '<!-- LDAP_CONTACT_OBJECT_CLASS -->';
 print '<tr class="oddeven"><td><span class="fieldrequired">'.$langs->trans("LDAPContactObjectClassList").'</span></td><td>';
-print '<input size="48" type="text" name="objectclass" value="'.$conf->global->LDAP_CONTACT_OBJECT_CLASS.'">';
+print '<input size="48" type="text" name="objectclass" value="' . getDolGlobalString('LDAP_CONTACT_OBJECT_CLASS').'">';
 print '</td><td>'.$langs->trans("LDAPContactObjectClassListExample").'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
@@ -180,91 +189,91 @@ print "</tr>\n";
 
 // Common name
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldFullname").'</td><td>';
-print '<input size="25" type="text" name="fieldfullname" value="'.$conf->global->LDAP_CONTACT_FIELD_FULLNAME.'">';
+print '<input size="25" type="text" name="fieldfullname" value="' . getDolGlobalString('LDAP_CONTACT_FIELD_FULLNAME').'">';
 print '</td><td>'.$langs->trans("LDAPFieldFullnameExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_FULLNAME"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_FULLNAME ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Name
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldName").'</td><td>';
-print '<input size="25" type="text" name="fieldname" value="'.$conf->global->LDAP_CONTACT_FIELD_NAME.'">';
+print '<input size="25" type="text" name="fieldname" value="' . getDolGlobalString('LDAP_CONTACT_FIELD_NAME').'">';
 print '</td><td>'.$langs->trans("LDAPFieldNameExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_NAME"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_NAME ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Firstname
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldFirstName").'</td><td>';
-print '<input size="25" type="text" name="fieldfirstname" value="'.$conf->global->LDAP_CONTACT_FIELD_FIRSTNAME.'">';
+print '<input size="25" type="text" name="fieldfirstname" value="' . getDolGlobalString('LDAP_CONTACT_FIELD_FIRSTNAME').'">';
 print '</td><td>'.$langs->trans("LDAPFieldFirstNameExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_FIRSTNAME"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_FIRSTNAME ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Company
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldCompany").'</td><td>';
-print '<input size="25" type="text" name="fieldcompany" value="'.$conf->global->LDAP_CONTACT_FIELD_COMPANY.'">';
+print '<input size="25" type="text" name="fieldcompany" value="' . getDolGlobalString('LDAP_CONTACT_FIELD_COMPANY').'">';
 print '</td><td>'.$langs->trans("LDAPFieldCompanyExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_COMPANY"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_COMPANY ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Mail
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldMail").'</td><td>';
-print '<input size="25" type="text" name="fieldmail" value="'.$conf->global->LDAP_CONTACT_FIELD_MAIL.'">';
+print '<input size="25" type="text" name="fieldmail" value="' . getDolGlobalString('LDAP_CONTACT_FIELD_MAIL').'">';
 print '</td><td>'.$langs->trans("LDAPFieldMailExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value=">LDAP_CONTACT_FIELD_MAIL"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_MAIL ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Phone pro
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldPhone").'</td><td>';
-print '<input size="25" type="text" name="fieldphone" value="'.$conf->global->LDAP_CONTACT_FIELD_PHONE.'">';
+print '<input size="25" type="text" name="fieldphone" value="' . getDolGlobalString('LDAP_CONTACT_FIELD_PHONE').'">';
 print '</td><td>'.$langs->trans("LDAPFieldPhoneExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_PHONE"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_PHONE ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Phone home
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldHomePhone").'</td><td>';
-print '<input size="25" type="text" name="fieldhomephone" value="'.$conf->global->LDAP_CONTACT_FIELD_HOMEPHONE.'">';
+print '<input size="25" type="text" name="fieldhomephone" value="' . getDolGlobalString('LDAP_CONTACT_FIELD_HOMEPHONE').'">';
 print '</td><td>'.$langs->trans("LDAPFieldHomePhoneExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_HOMEPHONE"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_HOMEPHONE ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Mobile
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldMobile").'</td><td>';
-print '<input size="25" type="text" name="fieldmobile" value="'.$conf->global->LDAP_CONTACT_FIELD_MOBILE.'">';
+print '<input size="25" type="text" name="fieldmobile" value="' . getDolGlobalString('LDAP_CONTACT_FIELD_MOBILE').'">';
 print '</td><td>'.$langs->trans("LDAPFieldMobileExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_MOBILE"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_MOBILE ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Fax
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldFax").'</td><td>';
-print '<input size="25" type="text" name="fieldfax" value="'.$conf->global->LDAP_CONTACT_FIELD_FAX.'">';
+print '<input size="25" type="text" name="fieldfax" value="' . getDolGlobalString('LDAP_CONTACT_FIELD_FAX').'">';
 print '</td><td>'.$langs->trans("LDAPFieldFaxExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_FAX"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_FAX ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Address
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldAddress").'</td><td>';
-print '<input size="25" type="text" name="fieldaddress" value="'.$conf->global->LDAP_CONTACT_FIELD_ADDRESS.'">';
+print '<input size="25" type="text" name="fieldaddress" value="' . getDolGlobalString('LDAP_CONTACT_FIELD_ADDRESS').'">';
 print '</td><td>'.$langs->trans("LDAPFieldAddressExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_ADDRESS"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_ADDRESS ? ' checked' : '')."></td>";
 print '</tr>';
 
 // ZIP
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldZip").'</td><td>';
-print '<input size="25" type="text" name="fieldzip" value="'.$conf->global->LDAP_CONTACT_FIELD_ZIP.'">';
+print '<input size="25" type="text" name="fieldzip" value="' . getDolGlobalString('LDAP_CONTACT_FIELD_ZIP').'">';
 print '</td><td>'.$langs->trans("LDAPFieldZipExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_ZIP"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_ZIP ? ' checked' : '')."></td>";
 print '</tr>';
 
 // TOWN
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldTown").'</td><td>';
-print '<input size="25" type="text" name="fieldtown" value="'.$conf->global->LDAP_CONTACT_FIELD_TOWN.'">';
+print '<input size="25" type="text" name="fieldtown" value="' . getDolGlobalString('LDAP_CONTACT_FIELD_TOWN').'">';
 print '</td><td>'.$langs->trans("LDAPFieldTownExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_TOWN"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_TOWN ? ' checked' : '')."></td>";
 print '</tr>';
 
 // COUNTRY
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldCountry").'</td><td>';
-print '<input size="25" type="text" name="fieldcountry" value="'.$conf->global->LDAP_CONTACT_FIELD_COUNTRY.'">';
+print '<input size="25" type="text" name="fieldcountry" value="' . getDolGlobalString('LDAP_CONTACT_FIELD_COUNTRY').'">';
 print '</td><td>&nbsp;</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_CONTACT_FIELD_COUNTRY"'.($conf->global->LDAP_KEY_CONTACTS && $conf->global->LDAP_KEY_CONTACTS == $conf->global->LDAP_CONTACT_FIELD_COUNTRY ? ' checked' : '')."></td>";
 print '</tr>';
@@ -281,26 +290,26 @@ print '</form>';
 
 
 /*
- * Test de la connexion
+ * Test the connection
  */
 $butlabel = $langs->trans("LDAPTestSynchroContact");
 $testlabel = 'test';
-$key = $conf->global->LDAP_KEY_CONTACTS;
-$dn = $conf->global->LDAP_CONTACT_DN;
-$objectclass = $conf->global->LDAP_CONTACT_OBJECT_CLASS;
+$key = getDolGlobalString('LDAP_KEY_CONTACTS');
+$dn = getDolGlobalString('LDAP_CONTACT_DN');
+$objectclass = getDolGlobalString('LDAP_CONTACT_OBJECT_CLASS');
 
 show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass);
 
 
 if (function_exists("ldap_connect")) {
-	if ($_GET["action"] == 'test') {
-		// Creation objet
+	if ($action == 'test') {
+		// Create object
 		$object = new Contact($db);
 		$object->initAsSpecimen();
 
 		// Test synchro
 		$ldap = new Ldap();
-		$result = $ldap->connect_bind();
+		$result = $ldap->connectBind();
 
 		if ($result > 0) {
 			$info = $object->_load_ldap_info();
@@ -323,7 +332,7 @@ if (function_exists("ldap_connect")) {
 
 			print "<br>\n";
 			print "LDAP input file used for test:<br><br>\n";
-			print nl2br($ldap->dump_content($dn, $info));
+			print nl2br($ldap->dumpContent($dn, $info));
 			print "\n<br>";
 		} else {
 			print img_picto('', 'error').' ';

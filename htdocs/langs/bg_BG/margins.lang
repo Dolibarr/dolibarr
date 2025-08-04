@@ -6,6 +6,7 @@ TotalMargin=Общ марж
 MarginOnProducts=Марж / Продукти
 MarginOnServices=Марж / Услуги
 MarginRate=Брутен марж
+ModifyMarginRates=промени маржин проценти
 MarkRate=Нетен марж
 DisplayMarginRates=Показване на брутни маржове
 DisplayMarkRates=Показване на нетни маржове
@@ -22,7 +23,7 @@ ProductService=Продукт или услуга
 AllProducts=Всички продукти и услуги
 ChooseProduct/Service=Избиране на продукт или услуга
 ForceBuyingPriceIfNull=Форсиране на покупна цена / себестойност да бъде равна на продажната цена, ако не е дефинирана първата
-ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
+ForceBuyingPriceIfNullDetails=Ако покупната/себестойността не е предоставена, когато добавим нов ред и тази опция е „ВКЛЮЧЕНА“, маржът ще бъде 0%% на новия ред (покупна/себестойност = продажна цена). Ако тази опция е „ИЗКЛЮЧЕНА“ (препоръчително), маржът ще бъде равен на стойността, предложена по подразбиране (и може да бъде 100%%, ако не може да бъде намерена стойност по подразбиране).
 MARGIN_METHODE_FOR_DISCOUNT=Маржов метод за глобални отстъпки
 UseDiscountAsProduct=Като продукт
 UseDiscountAsService=Като услуга
@@ -37,7 +38,7 @@ CostPrice=Себестойност
 UnitCharges=Единични такси
 Charges=Такси
 AgentContactType=Тип контакт с търговски представител
-AgentContactTypeDetails=Определя какъв тип контакт (свързан с фактури) ще се използва за отчет на маржа за контакт / адрес. Обърнете внимание, че преглеждането на статистически данни за контакт не е надеждно, тъй като в повечето случаи контактът може да не е дефиниран изрично във фактурите.
+AgentContactTypeDetails=Определете какъв тип контакт (свързан във фактурите) ще се използва за отчет за марж за всеки контакт/адрес. Имайте предвид, че четенето на статистика за контакт не е надеждно, тъй като в повечето случаи контактът може да не е дефиниран изрично във фактурите.
 rateMustBeNumeric=Процента трябва да е числова стойност
 markRateShouldBeLesserThan100=Нетния марж трябва да бъде по-малък от 100
 ShowMarginInfos=Показване на информация за марж

@@ -7,30 +7,33 @@ descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Secara otomatis membuat pesanan penjualan s
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Secara otomatis membuat faktur pelanggan setelah proposal komersial ditandatangani (faktur baru akan memiliki jumlah yang sama dengan proposal)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Secara otomatis membuat faktur pelanggan setelah kontrak divalidasi
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Secara otomatis membuat faktur pelanggan setelah pesanan penjualan ditutup (faktur baru akan memiliki jumlah yang sama dengan pesanan)
-descWORKFLOW_TICKET_CREATE_INTERVENTION=On ticket creation, automatically create an intervention.
+descWORKFLOW_TICKET_CREATE_INTERVENTION=Pada pembuatan tiket, secara otomatis membuat intervensi.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Klasifikasi sumber proposal tautan sebagai tertagih saat pesanan penjualan ditetapkan ke tagihan (dan jika jumlah pesanan sama dengan jumlah total proposal tautan yang ditandatangani)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Klasifikasi sumber proposal tautan sebagai tertagih saat faktur pelanggan divalidasi (dan jika jumlah faktur sama dengan jumlah total proposal tautan yang ditandatangani)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Klasifikasi sumber pesanan penjualan tautan sebagai tertagih saat faktur pelanggan divalidasi (dan jika jumlah faktur sama dengan jumlah total pesanan tautan)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Klasifikasi sumber pesanan penjualan tautan sebagai tertagih saat faktur pelanggan ditetapkan untuk dibayar (dan jika jumlah faktur sama dengan jumlah total pesanan tautan)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Klasifikasi sumber pesanan penjualan sumber tautan sebagai terkirim saat pengiriman divalidasi (dan jika jumlah yang dikirim oleh semua pengiriman sama dengan yang ada dalam pemesanan yan diperbaharui)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Klasifikasikan pesanan penjualan sumber tertaut sebagai dikirim saat pengiriman ditutup (dan jika jumlah yang dikirim oleh semua pengiriman sama dengan pesanan untuk diperbarui)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Ketika pesanan penjualan diatur ke ditagih, klasifikasikan proposal sumber tertaut sebagai ditagih (dan jika jumlah pesanan sama dengan jumlah total proposal tertaut yang ditandatangani)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Ketika faktur pelanggan divalidasi, klasifikasikan proposal sumber tertaut sebagai ditagih (dan jika jumlah faktur sama dengan jumlah total proposal tertaut yang ditandatangani)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Ketika faktur pelanggan diatur ke dibayar, klasifikasikan pesanan penjualan sumber tertaut sebagai ditagih (dan jika jumlah faktur sama dengan jumlah total pesanan penjualan tertaut). Jika Anda membuat 1 faktur untuk n pesanan, ini mungkin membuat semua pesanan menjadi ditagih juga.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Ketika faktur pelanggan divalidasi, klasifikasikan semua pesanan penjualan sumber tertaut sebagai ditagih (dan jika jumlah faktur sama dengan jumlah total pesanan penjualan sumber tertaut). Jika Anda membuat 1 faktur umum untuk n pesanan, ini mungkin membuat semua pesanan sumber menjadi ditagih.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=Ketika faktur pelanggan divalidasi, klasifikasikan pesanan penjualan tertaut (jika hanya ada satu) sebagai ditagih, jika jumlah total pesanan penjualan tertaut sama dengan jumlah total seluruh faktur yang diterbitkan darinya. Jika Anda membuat n faktur untuk 1 pesanan, ini memungkinkan untuk mengatur pesanan agar ditagih segera setelah semua faktur divalidasi.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Ketika pengiriman divalidasi, klasifikasikan pesanan penjualan sumber tertaut sebagai terkirim (dan jika kuantitas yang dikirimkan oleh semua pengiriman sama dengan pesanan yang diperbarui)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Ketika pengiriman ditutup, klasifikasikan pesanan penjualan sumber tertaut sebagai terkirim (dan jika kuantitas yang dikirimkan oleh semua pengiriman sama dengan pesanan yang diperbarui)
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Klasifikasi sumber proposal vendor tautan sebagai tertagih ketika faktur vendor divalidasi (dan jika jumlah faktur sama dengan jumlah total proposal tautan)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Ketika faktur vendor divalidasi, klasifikasikan proposal vendor sumber tertaut sebagai yang ditagih (dan jika jumlah faktur sama dengan jumlah total proposal tertaut)
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Klasifikasi sumber pesanan pembelian tautan sebagai tertagih saat faktur vendor divalidasi (dan jika jumlah faktur sama dengan jumlah total pesanan tautan)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Classify linked source purchase order as received when a reception is validated (and if the quantity received by all receptions is the same as in the purchase order to update)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Classify linked source purchase order as received when a reception is closed (and if the quantity received by all rceptions is the same as in the purchase order to update)
-# Autoclassify purchase invoice
-descWORKFLOW_EXPEDITION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Ketika faktur vendor divalidasi, klasifikasikan pesanan pembelian sumber tertaut sebagai ditagih (dan jika jumlah faktur sama dengan jumlah total pesanan tertaut)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Ketika penerimaan divalidasi, klasifikasikan pesanan pembelian sumber tertaut sebagai diterima (dan jika kuantitas yang diterima oleh semua penerimaan sama dengan pesanan pembelian yang akan diperbarui)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Ketika penerimaan ditutup, klasifikasikan pesanan pembelian sumber tertaut sebagai diterima (dan jika kuantitas yang diterima oleh semua penerimaan yang dikeluarkan dari pesanan pembelian sama dengan pesanan pembelian yang akan diperbarui)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Ketika faktur pelanggan divalidasi, klasifikasikan pengiriman sumber tertaut sebagai sudah ditutup (dan jika jumlah faktur sama dengan jumlah total pengiriman tertaut)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Ketika faktur pelanggan divalidasi, klasifikasikan pengiriman sumber tertaut sebagai ditagih (dan jika jumlah faktur sama dengan jumlah total pengiriman tertaut)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Ketika faktur pembelian divalidasi, klasifikasikan penerimaan sumber tertaut sebagai tertutup (dan jika jumlah faktur sama dengan jumlah total penerimaan tertaut)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Ketika faktur pembelian divalidasi, klasifikasikan penerimaan sumber tertaut sebagai yang ditagih (dan jika jumlah faktur sama dengan jumlah total penerimaan tertaut)
 # Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=When creating a ticket, link available contracts of matching thirdparty
-descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=When linking contracts, search among those of parents companies
+descWORKFLOW_TICKET_LINK_CONTRACT=Saat tiket dibuat, tautkan dengan kontrak yang tersedia, cocokkan dengan pihak ketiga yang sama dengan tiket tersebut
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Saat menghubungkan tiket dengan kontrak secara otomatis, cari kontrak di antara perusahaan induk
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Tutup semua intervensi yang terkait dengan tiket saat tiket ditutup
 AutomaticCreation=Pembuatan Otomatis
 AutomaticClassification=Pengklasifikasian Otomatis
-# Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
-AutomaticClosing=Automatic closing
-AutomaticLinking=Automatic linking
+AutomaticClosing=Penutupan otomatis
+AutomaticLinking=Tautan otomatis

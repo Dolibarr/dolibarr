@@ -17,26 +17,22 @@
  */
 
 /**
- * 	\defgroup   datapolicy     Module datapolicy
- *  \brief      datapolicy module descriptor.
+ * 	\defgroup   datapolicy     Module data policy
+ *  \brief      Data policy module descriptor.
  *
  *  \file       htdocs/core/modules/modDataPolicy.class.php
  *  \ingroup    datapolicy
  *  \brief      Description and activation file for the module datapolicy
  */
+
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
-
-// The class name should start with a lower case mod for Dolibarr to pick it up
-// so we ignore the Squiz.Classes.ValidClassName.NotCamelCaps rule.
-// @codingStandardsIgnoreStart
 /**
  *  Description and activation class for module datapolicy
  */
-class modDataPolicy extends DolibarrModules {
-
-	// @codingStandardsIgnoreEnd
+class modDataPolicy extends DolibarrModules
+{
 	/**
 	 * Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -69,29 +65,19 @@ class modDataPolicy extends DolibarrModules {
 		$this->descriptionlong = "";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'experimental';
+		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where datapolicy is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto = 'generic';
+		$this->picto = 'lock';
 
 		// Defined all module parts (triggers, login, substitutions, menus, css, etc...)
 		// for default path (eg: /datapolicy/core/xxxxx) (0=disable, 1=enable)
 		// for specific path of parts (eg: /datapolicy/core/modules/barcode)
 		// for specific css file (eg: /datapolicy/css/datapolicy.css.php)
-		$this->module_parts = array(
-			'triggers' => 0, // Set this to 1 if module has its own trigger directory (core/triggers)
-			'login' => 0, // Set this to 1 if module has its own login method file (core/login)
-			'substitutions' => 0, // Set this to 1 if module has its own substitution function file (core/substitutions)
-			'menus' => 0, // Set this to 1 if module has its own menus handler directory (core/menus)
-			'theme' => 0, // Set this to 1 if module has its own theme directory (theme)
-			'tpl' => 0, // Set this to 1 if module overwrite template dir (core/tpl)
-			'barcode' => 0, // Set this to 1 if module has its own barcode directory (core/modules/barcode)
-			'models' => 0, // Set this to 1 if module has its own models directory (core/modules/xxx)
-			'hooks' => array('data' => array('membercard', 'contactcard', 'thirdpartycard'), 'entity' => $conf->entity)  // Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
-		);
+		$this->module_parts = array();
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/datapolicy/temp","/datapolicy/subdir");
@@ -102,12 +88,11 @@ class modDataPolicy extends DolibarrModules {
 
 		// Dependencies
 		$this->hidden = false; // A condition to hide module
-		$this->depends = array('always'=>'modCron'); // List of module class names as string that must be enabled if this module is enabled
+		$this->depends = array('always' => 'modCron'); // List of module class names as string that must be enabled if this module is enabled
 		$this->requiredby = array(); // List of module ids to disable if this one is disabled
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->langfiles = array("datapolicy");
-		$this->phpmin = array(5, 3); // Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(7, 0); // Minimum version of Dolibarr required by module
+		$this->phpmin = array(7, 1); // Minimum version of PHP required by module
 		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		//$this->automatic_activation = array('FR'=>'datapolicyWasAutomaticallyActivatedBecauseOfYourCountryChoice');
@@ -129,9 +114,10 @@ class modDataPolicy extends DolibarrModules {
 			array('DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
 			array('DATAPOLICY_CONTACT_FOURNISSEUR', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
 			array('DATAPOLICY_ADHERENT', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
+			array('DATAPOLICY_RECRUITMENT_CANDIDATURE', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
 		);
 
-		$country = explode(":", empty($conf->global->MAIN_INFO_SOCIETE_COUNTRY) ? '' : $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
+		//$country = explode(":", getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY'));
 
 		// Some keys to add into the overwriting translation tables
 		/* $this->overwrite_translation = array(
@@ -139,7 +125,7 @@ class modDataPolicy extends DolibarrModules {
 		  'fr_FR:ParentCompany'=>'Maison mère ou revendeur'
 		  ) */
 
-		if (!isset($conf->datapolicy) || !isset($conf->datapolicy->enabled)) {
+		if (!isModEnabled('datapolicy')) {
 			$conf->datapolicy = new stdClass();
 			$conf->datapolicy->enabled = 0;
 		}
@@ -160,7 +146,7 @@ class modDataPolicy extends DolibarrModules {
 		// 'intervention'     to add a tab in intervention view
 		// 'invoice'          to add a tab in customer invoice view
 		// 'invoice_supplier' to add a tab in supplier invoice view
-		// 'member'           to add a tab in fundation member view
+		// 'member'           to add a tab in foundation member view
 		// 'opensurveypoll'	  to add a tab in opensurvey poll view
 		// 'order'            to add a tab in sales order view
 		// 'order_supplier'   to add a tab in supplier order view
@@ -186,16 +172,17 @@ class modDataPolicy extends DolibarrModules {
 		// Cronjobs (List of cron jobs entries to add when module is enabled)
 		// unit_frequency must be 60 for minute, 3600 for hour, 86400 for day, 604800 for week
 		$this->cronjobs = array(
-			0 => array('label' => 'DATAPOLICYJob', 'jobtype' => 'method', 'class' => 'datapolicy/class/datapolicycron.class.php', 'objectname' => 'DataPolicyCron', 'method' => 'cleanDataForDataPolicy', 'parameters' => '', 'comment' => 'Clean data', 'frequency' => 1, 'unitfrequency' => 86400, 'status' => 1, 'test' => '$conf->datapolicy->enabled'),
+			0 => array('label' => 'DATAPOLICYJob', 'jobtype' => 'method', 'class' => 'datapolicy/class/datapolicycron.class.php', 'objectname' => 'DataPolicyCron', 'method' => 'cleanDataForDataPolicy', 'parameters' => '', 'comment' => 'Clean data', 'frequency' => 1, 'unitfrequency' => 86400, 'status' => 1, 'test' => 'isModEnabled("datapolicy")'),
 		);
+
 		// Example: $this->cronjobs=array(0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'/dir/class/file.class.php', 'objectname'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>true),
 		//                                1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24, 'status'=>0, 'test'=>true)
 		// );
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
+
 		// Main menu entries
 		$this->menu = array(); // List of menus to add
-		$r = 0;
 	}
 
 	/**
@@ -208,13 +195,13 @@ class modDataPolicy extends DolibarrModules {
 	 */
 	public function init($options = '')
 	{
+		/*
 		global $langs;
 
 		// Create extrafields
 		include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
 
-		/*
 		// Extrafield contact
 		$result1 = $extrafields->addExtraField('datapolicy_consentement', $langs->trans("DATAPOLICY_consentement"), 'boolean', 101, 3, 'thirdparty', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicy', '$conf->datapolicy->enabled');
 		$result1 = $extrafields->addExtraField('datapolicy_opposition_traitement', $langs->trans("DATAPOLICY_opposition_traitement"), 'boolean', 102, 3, 'thirdparty', 0, 0, '', '', 1, '', '3', 0, '', '', 'datapolicy', '$conf->datapolicy->enabled');

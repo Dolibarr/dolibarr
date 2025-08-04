@@ -9,31 +9,30 @@ ActionsOnResource=Ενέργειες σχετικά με αυτόν τον πό�
 ResourcePageIndex=Λίστα Πόρων
 ResourceSingular=Πόρος
 ResourceCard=Καρτέλα πόρου
+NewResource=Νέος πόρος
 AddResource=Δημιουργήστε έναν πόρο
 ResourceFormLabel_ref=Όνομα πόρου
-ResourceType=Τύπος πόρου
 ResourceFormLabel_description=Περιγραφή πόρου
-
+ResourceType=Τύπος πόρου
+ResourceTypeID=Αναγνωριστικό τύπου πόρου
+ResourceTypeLabel=Ετικέτα τύπου πόρου
 ResourcesLinkedToElement=Πόροι που συνδέονται με το στοιχείο
 
 ShowResource=Εμφάνιση πόρου
-
 ResourceElementPage=Πόροι στοιχείων
 ResourceCreatedWithSuccess=Ο Πόρος δημιουργήθηκε με επιτυχία
 RessourceLineSuccessfullyDeleted=Η γραμμή πόρου διαγράφηκε με επιτυχία
 RessourceLineSuccessfullyUpdated=Η γραμμή πόρου ενημερώθηκε με επιτυχία
 ResourceLinkedWithSuccess=Ο πόρος συνδέθηκε με επιτυχία
-
 ConfirmDeleteResource=Επιβεβαιώστε την διαγραφή αυτού του πόρου
 RessourceSuccessfullyDeleted=Ο Πόρος διαγράφηκε με επιτυχία
 DictionaryResourceType=Τύποι πόρων
-
 SelectResource=Επιλέξτε πόρο
-
 IdResource=Αναγνωριστικό πόρου
 AssetNumber=Σειριακός αριθμός
 ResourceTypeCode=Κωδικός τύπου πόρου
 ImportDataset_resource_1=Πόροι
-
 ErrorResourcesAlreadyInUse=Ορισμένοι πόροι χρησιμοποιούνται 
 ErrorResourceUseInEvent=%s που χρησιμοποιήθηκε στο συμβάν %s
+MaxUsers=Μέγιστος αριθμός χρηστών (μέρη, θέσεις, κ.λπ.)
+MaxUsersLabel=Μέγιστος αριθμός χρηστών

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2020       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
 // - create table ll_session from the llx_session-disabled.sql file
 // - uncomment the include DOL_DOCUMENT_ROOT.'/core/lib/phpsessionindb.inc.php into main.inc.php
 // - in your PHP.ini, set:  session.save_handler = user
-// The session_set_save_handler() at end of this fille will replace default session management.
+// The session_set_save_handler() at end of this file will replace default session management.
 
 
 /**
@@ -48,12 +49,24 @@ function dolSessionOpen($save_path, $session_name)
 	global $dolibarr_session_db_type, $dolibarr_session_db_host;
 	global $dolibarr_session_db_user, $dolibarr_session_db_pass, $dolibarr_session_db_name, $dolibarr_session_db_port;
 
-	if (empty($dolibarr_session_db_type)) {	$dolibarr_session_db_type = $dolibarr_main_db_type; }
-	if (empty($dolibarr_session_db_host)) {	$dolibarr_session_db_host = $dolibarr_main_db_host; }
-	if (empty($dolibarr_session_db_user)) {	$dolibarr_session_db_user = $dolibarr_main_db_user; }
-	if (empty($dolibarr_session_db_pass)) {	$dolibarr_session_db_pass = $dolibarr_main_db_pass; }
-	if (empty($dolibarr_session_db_name)) {	$dolibarr_session_db_name = $dolibarr_main_db_name; }
-	if (empty($dolibarr_session_db_port)) {	$dolibarr_session_db_port = $dolibarr_main_db_port; }
+	if (empty($dolibarr_session_db_type)) {
+		$dolibarr_session_db_type = $dolibarr_main_db_type;
+	}
+	if (empty($dolibarr_session_db_host)) {
+		$dolibarr_session_db_host = $dolibarr_main_db_host;
+	}
+	if (empty($dolibarr_session_db_user)) {
+		$dolibarr_session_db_user = $dolibarr_main_db_user;
+	}
+	if (empty($dolibarr_session_db_pass)) {
+		$dolibarr_session_db_pass = $dolibarr_main_db_pass;
+	}
+	if (empty($dolibarr_session_db_name)) {
+		$dolibarr_session_db_name = $dolibarr_main_db_name;
+	}
+	if (empty($dolibarr_session_db_port)) {
+		$dolibarr_session_db_port = $dolibarr_main_db_port;
+	}
 	//var_dump('open '.$database_name.' '.$table_name);
 
 	$dbsession = getDoliDBInstance($dolibarr_session_db_type, $dolibarr_session_db_host, $dolibarr_session_db_user, $dolibarr_session_db_pass, $dolibarr_session_db_name, (int) $dolibarr_session_db_port);
@@ -105,7 +118,7 @@ function dolSessionRead($sess_id)
  */
 function dolSessionWrite($sess_id, $val)
 {
-	global $dbsession;
+	global $dbsession, $user;
 	global $sessionlastvalueread;
 	global $sessionidfound;
 
@@ -118,10 +131,18 @@ function dolSessionWrite($sess_id, $val)
 		$time_stamp = dol_now();
 
 		if (empty($sessionidfound)) {
+			if ((int) ini_get('session.gc_probability') == 0) {
+				// dolSessionGC will be never called
+				$max_lifetime = max(getDolGlobalInt('MAIN_SESSION_TIMEOUT'), (int) ini_get('session.gc_maxlifetime'));
+				$delete_query = "DELETE FROM ".MAIN_DB_PREFIX."session";
+				$delete_query .= " WHERE last_accessed < '".$dbsession->idate($time_stamp - $max_lifetime)."'";
+				$dbsession->query($delete_query);
+			}
+
 			// No session found, insert a new one
 			$insert_query = "INSERT INTO ".MAIN_DB_PREFIX."session";
-			$insert_query .= "(session_id, session_variable, last_accessed, fk_user, remote_ip, user_agent)";
-			$insert_query .= " VALUES ('".$dbsession->escape($sess_id)."', '".$dbsession->escape($val)."', '".$dbsession->idate($time_stamp)."', 0, '".$dbsession->escape(getUserRemoteIP())."', '".$dbsession->escape(substr($_SERVER['HTTP_USER_AGENT'], 0, 255))."')";
+			$insert_query .= "(session_id, session_variable, date_creation, last_accessed, fk_user, remote_ip, user_agent)";
+			$insert_query .= " VALUES ('".$dbsession->escape($sess_id)."', '".$dbsession->escape($val)."', '".$dbsession->idate($time_stamp)."', '".$dbsession->idate($time_stamp)."', 0, '".$dbsession->escape(getUserRemoteIP())."', '".$dbsession->escape(substr($_SERVER['HTTP_USER_AGENT'], 0, 255))."')";
 
 			$result = $dbsession->query($insert_query);
 			if (!$result) {
@@ -157,6 +178,7 @@ function dolSessionWrite($sess_id, $val)
 			$update_query = "UPDATE ".MAIN_DB_PREFIX."session";
 			$update_query .= " SET session_variable = '".$dbsession->escape($val)."',";
 			$update_query .= " last_accessed = '".$dbsession->idate($time_stamp)."',";
+			$update_query .= " fk_user = ".(int) $user->id.",";
 			$update_query .= " remote_ip = '".$dbsession->escape(getUserRemoteIP())."',";
 			$update_query .= " user_agent = '".$dbsession->escape($_SERVER['HTTP_USER_AGENT'])."'";
 			$update_query .= " WHERE session_id = '".$dbsession->escape($sess_id)."'";
@@ -232,4 +254,35 @@ function dolSessionGC($max_lifetime)
 }
 
 // Call to register user call back functions.
-session_set_save_handler("dolSessionOpen", "dolSessionClose", "dolSessionRead", "dolSessionWrite", "dolSessionDestroy", "dolSessionGC");
+session_set_save_handler("dolSessionOpen", "dolSessionClose", "dolSessionRead", "dolSessionWrite", "dolSessionDestroy", "dolSessionGC"); // @phpstan-ignore-line
+
+/**
+ * List sessions in db
+ *
+ * @return array<mixed,array{login:string,age:int,creation:int|false,modification:int,raw:string,remote_ip:string,user_agent:string}>
+ */
+function dolListSessions()
+{
+	global $dbsession;
+
+	$arrayofsessions = [];
+	$sql = "SELECT s.session_id, s.session_variable, s.fk_user, s.date_creation, s.last_accessed, s.remote_ip, s.user_agent";
+	$sql .= ", u.login";
+	$sql .= " FROM ".MAIN_DB_PREFIX."session as s";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=s.fk_user";
+	$sql .= " LIMIT 500";
+	$resql = $dbsession->query($sql);
+	while ($resql && $obj = $dbsession->fetch_object($resql)) {
+		$arrayofsessions[$obj->session_id] = [
+			"login" => (string) $obj->login,
+			"age" => dol_now() - (int) $dbsession->jdate($obj->date_creation),
+			"creation" => $dbsession->idate($obj->date_creation),
+			"modification" => $dbsession->idate($obj->last_accessed),
+			"remote_ip" => $obj->remote_ip,
+			"user_agent" => $obj->user_agent,
+			"raw" => "",
+		];
+	}
+
+	return $arrayofsessions;
+}

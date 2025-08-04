@@ -1,8 +1,11 @@
 <?php
+
 /* Copyright (C)    2013      Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C)    2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C)	2015	  Marcos García		  <marcosgdf@gmail.com>
  * Copyright (C) 	2019	  Nicolas ZABOURI     <info@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +23,6 @@
  */
 
 // Following var can be set
-// $permissiontoadd = permission or not to add a file (can use also $permission) and permission or not to edit file name or crop file (can use also $permtoedit)
 // $modulepart  = for download
 // $param       = param to add to download links
 // $moreparam   = param to add to download link for the form_attach_new_file function
@@ -29,11 +31,30 @@
 // $filearray
 // $savingdocmask = dol_sanitizeFileName($object->ref).'-__file__';
 
+/**
+ * @var CommonObject $object
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ *
+ * @var string 	$relativepathwithnofile
+ * @var	int		$permisstiontoadd			Permission or not to add a file (can use also $permission) and permission or not to edit file name or crop file (can use also $permtoedit)
+ */
+
 // Protection to avoid direct call of template
 if (empty($langs) || !is_object($langs)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
+'
+@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $filearray
+@phan-var-force ?int<0,1> $permtoedit
+@phan-var-force ?int<0,1> $permission
+@phan-var-force int<0,1> $permissiontoadd
+@phan-var-force ?string $savingdocmask
+@phan-var-force ?string $param
+@phan-var-force CommonObject $object
+';
 
 
 $langs->load("link");
@@ -60,8 +81,11 @@ $disablemove = 1;
 if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticket', 'holiday', 'expensereport'))) {
 	$disablemove = 0;
 }
-
-
+$parameters = array();
+$reshook = $hookmanager->executeHooks('isLinkedDocumentObjectNotMovable', $parameters, $object);  // @phan-suppress-current-line PhanTypeMismatchArgumentNullable
+if ($reshook) {
+	$disablemove = $hookmanager->resArray['disablemove'];
+}
 
 /*
  * Confirm form to delete a file
@@ -70,7 +94,7 @@ if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticket
 if ($action == 'deletefile' || $action == 'deletelink') {
 	$langs->load("companies"); // Need for string DeleteFile+ConfirmDeleteFiles
 	print $form->formconfirm(
-		$_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode(GETPOST("urlfile")).'&linkid='.GETPOST('linkid', 'int').(empty($param) ? '' : $param),
+		$_SERVER["PHP_SELF"].'?id='.$object->id.'&urlfile='.urlencode(GETPOST("urlfile")).'&linkid='.GETPOSTINT('linkid').(empty($param) ? '' : $param),
 		$langs->trans('DeleteFile'),
 		$langs->trans('ConfirmDeleteFile'),
 		'confirm_deletefile',
@@ -83,9 +107,9 @@ if ($action == 'deletefile' || $action == 'deletelink') {
 // We define var to enable the feature to add prefix of uploaded files.
 // Caller of this include can make
 // $savingdocmask=dol_sanitizeFileName($object->ref).'-__file__';
-if (!isset($savingdocmask) || !empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX)) {
+if (!isset($savingdocmask) || getDolGlobalString('MAIN_DISABLE_SUGGEST_REF_AS_PREFIX')) {
 	$savingdocmask = '';
-	if (empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX)) {
+	if (!getDolGlobalString('MAIN_DISABLE_SUGGEST_REF_AS_PREFIX')) {
 		//var_dump($modulepart);
 		if (in_array($modulepart, array(
 			'facture_fournisseur',
@@ -93,6 +117,7 @@ if (!isset($savingdocmask) || !empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_
 			'facture',
 			'commande',
 			'propal',
+			'payment',
 			'supplier_proposal',
 			'ficheinter',
 			'contract',
@@ -120,8 +145,8 @@ if (empty($formfile) || !is_object($formfile)) {
 	$formfile = new FormFile($db);
 }
 
-// Show upload form (document and links)
-$formfile->form_attach_new_file(
+// Get the form to add files (upload and links)
+$tmparray = $formfile->form_attach_new_file(
 	$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($withproject) ? '' : '&withproject=1').(empty($moreparam) ? '' : $moreparam),
 	'',
 	0,
@@ -131,8 +156,25 @@ $formfile->form_attach_new_file(
 	$object,
 	'',
 	1,
-	$savingdocmask
+	$savingdocmask,
+	1,
+	'formuserfile',
+	'',
+	'',
+	0,
+	0,
+	0,
+	2
 );
+
+$formToUploadAFile = '';
+$formToAddALink = '';
+
+if (is_array($tmparray) && !empty($tmparray)) {
+	$formToUploadAFile = $tmparray['formToUploadAFile'];
+	$formToAddALink = $tmparray['formToAddALink'];
+}
+
 
 // List of document
 $formfile->list_of_documents(
@@ -153,11 +195,26 @@ $formfile->list_of_documents(
 	$upload_dir,
 	$sortfield,
 	$sortorder,
-	$disablemove
+	$disablemove,
+	0,
+	-1,
+	'',
+	array('afteruploadtitle' => $formToUploadAFile, 'showhideaddbutton' => 1)
 );
+
 
 print "<br>";
 
+
 //List of links
-$formfile->listOfLinks($object, $permission, $action, GETPOST('linkid', 'int'), $param);
+$formfile->listOfLinks(
+	$object,
+	$permission,
+	$action,
+	(string) GETPOSTINT('linkid'),
+	$param,
+	'formaddlink',
+	array('afterlinktitle' => $formToAddALink, 'showhideaddbutton' => 1)
+);
+
 print "<br>";

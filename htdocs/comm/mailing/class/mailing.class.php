@@ -2,6 +2,8 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +49,11 @@ class Mailing extends CommonObject
 	public $picto = 'email';
 
 	/**
+	 * @var string Type of message ('email', 'sms')
+	 */
+	public $messtype;
+
+	/**
 	 * @var string title
 	 */
 	public $title;
@@ -67,6 +74,16 @@ class Mailing extends CommonObject
 	public $evenunsubscribe;
 
 	/**
+	 * @var	string Text content for public notes
+	 */
+	public $note_public;
+
+	/**
+	 * @var	string Text content for private notes
+	 */
+	public $note_private;
+
+	/**
 	 * @var int number of email
 	 */
 	public $nbemail;
@@ -83,8 +100,14 @@ class Mailing extends CommonObject
 
 	/**
 	 * @var int status
+	 * @deprecated Use $status
 	 */
 	public $statut; // Status 0=Draft, 1=Validated, 2=Sent partially, 3=Sent completely
+
+	/**
+	 * @var int status
+	 */
+	public $status; // Status 0=Draft, 1=Validated, 2=Sent partially, 3=Sent completely
 
 	/**
 	 * @var string email from
@@ -127,76 +150,27 @@ class Mailing extends CommonObject
 	public $joined_file4;
 
 	/**
-	 * @var int id of user create
-	 */
-	public $user_creation;
-
-	/**
-	 * @var int id of user create
-	 * @deprecated
-	 */
-	public $user_creat;
-
-	/**
-	 * @var int id of user validate
-	 */
-	public $user_validation;
-
-	/**
-	 * @var int id of user validate
-	 * @deprecated
-	 */
-	public $user_valid;
-
-	/**
-	 * @var integer|string date_creation
-	 * @deprecated
-	 */
-	public $date_creat;
-
-	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var int date validate
-	 * @deprecated
-	 */
-	public $date_valid;
-
-	/**
-	 * @var int date validate
-	 */
-	public $date_validation;
-
-	/**
-	 * @var int date sending
+	 * @var int|null date sending
 	 */
 	public $date_envoi;
 
 	/**
-	 * @var array extraparams
+	 * @var array<string,string>  (Encoded as JSON in database)
 	 */
 	public $extraparams = array();
 
 	/**
-	 * @var array statut dest
+	 * @var array<int,string> statut dest
 	 */
 	public $statut_dest = array();
 
 	/**
-	 * @var array statuts
-	 */
-	public $statuts = array();
-
-	/**
-	 * @var array substitutionarray
+	 * @var array<string,string> substitutionarray
 	 */
 	public $substitutionarray;
 
 	/**
-	 * @var array substitutionarrayfortest
+	 * @var array<string,string> substitutionarrayfortest
 	 */
 	public $substitutionarrayfortest;
 
@@ -209,25 +183,23 @@ class Mailing extends CommonObject
 	/**
 	 *  Constructor
 	 *
-	 *  @param      DoliDb      $db      Database handler
+	 *  @param      DoliDB      $db      Database handler
 	 */
 	public function __construct($db)
 	{
-		global $langs;
-
 		$this->db = $db;
 
 		// List of language codes for status
-		$this->statuts[0] = 'MailingStatusDraft';
-		$this->statuts[1] = 'MailingStatusValidated';
-		$this->statuts[2] = 'MailingStatusSentPartialy';
-		$this->statuts[3] = 'MailingStatusSentCompletely';
+		$this->labelStatus[0] = 'MailingStatusDraft';
+		$this->labelStatus[1] = 'MailingStatusValidated';
+		$this->labelStatus[2] = 'MailingStatusSentPartialy';
+		$this->labelStatus[3] = 'MailingStatusSentCompletely';
 
-		$this->statut_dest[-1] = 'MailingStatusError';
 		$this->statut_dest[0] = 'MailingStatusNotSent';
 		$this->statut_dest[1] = 'MailingStatusSent';
 		$this->statut_dest[2] = 'MailingStatusRead';
 		$this->statut_dest[3] = 'MailingStatusReadAndUnsubscribe'; // Read but ask to not be contacted anymore
+		$this->statut_dest[-1] = 'MailingStatusError';
 	}
 
 	/**
@@ -235,14 +207,14 @@ class Mailing extends CommonObject
 	 *
 	 *  @param	User	$user 		Object of user making creation
 	 * 	@param	int		$notrigger	Disable triggers
-	 *  @return int				    <0 if KO, Id of created object if OK
+	 *  @return int				    Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 
 		// Check properties
-		if ($this->body === 'InvalidHTMLStringCantBeCleaned') {
+		if (preg_match('/^InvalidHTMLStringCantBeCleaned/', $this->body)) {
 			$this->error = 'InvalidHTMLStringCantBeCleaned';
 			return -1;
 		}
@@ -251,12 +223,17 @@ class Mailing extends CommonObject
 		$this->email_from = trim($this->email_from);
 
 		if (!$this->email_from) {
-			$this->error = $langs->trans("ErrorMailFromRequired");
+			if ($this->messtype !== 'sms') {
+				$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("MailFrom"));
+			} else {
+				$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PhoneFrom"));
+			}
 			return -1;
 		}
 
 		$error = 0;
 		$now = dol_now();
+
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing";
@@ -268,6 +245,7 @@ class Mailing extends CommonObject
 		}
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."mailing");
@@ -306,12 +284,14 @@ class Mailing extends CommonObject
 	 *
 	 *  @param  User	$user 		Object of user making change
 	 * 	@param	int		$notrigger	Disable triggers
-	 *  @return int				    < 0 if KO, > 0 if OK
+	 *  @return int				    Return integer < 0 if KO, > 0 if OK
 	 */
 	public function update($user, $notrigger = 0)
 	{
+		global $langs;
+
 		// Check properties
-		if ($this->body === 'InvalidHTMLStringCantBeCleaned') {
+		if (preg_match('/^InvalidHTMLStringCantBeCleaned/', $this->body)) {
 			$this->error = 'InvalidHTMLStringCantBeCleaned';
 			return -1;
 		}
@@ -321,6 +301,7 @@ class Mailing extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
 		$sql .= " SET titre = '".$this->db->escape($this->title)."'";
+		$sql .= ", messtype = '".$this->db->escape($this->messtype)."'";
 		$sql .= ", sujet = '".$this->db->escape($this->sujet)."'";
 		$sql .= ", body = '".$this->db->escape($this->body)."'";
 		$sql .= ", email_from = '".$this->db->escape($this->email_from)."'";
@@ -329,6 +310,8 @@ class Mailing extends CommonObject
 		$sql .= ", bgcolor = '".($this->bgcolor ? $this->db->escape($this->bgcolor) : null)."'";
 		$sql .= ", bgimage = '".($this->bgimage ? $this->db->escape($this->bgimage) : null)."'";
 		$sql .= ", evenunsubscribe = ".((int) $this->evenunsubscribe);
+		$sql .= ", note_public = '".$this->db->escape($this->note_public)."'";
+		$sql .= ", note_private = '".$this->db->escape($this->note_private)."'";
 		$sql .= " WHERE rowid = ".(int) $this->id;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -353,7 +336,11 @@ class Mailing extends CommonObject
 				return -2;
 			}
 		} else {
-			$this->error = $this->db->lasterror();
+			if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$this->error = $langs->trans("ErrorTitleAlreadyExists", $this->title);
+			} else {
+				$this->error = $this->db->lasterror();
+			}
 			$this->db->rollback();
 			return -1;
 		}
@@ -364,15 +351,14 @@ class Mailing extends CommonObject
 	 *
 	 *	@param	int		$rowid      Id of emailing
 	 *	@param	string	$ref		Title to search from title
-	 *	@return	int					<0 if KO, >0 if OK
+	 *	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($rowid, $ref = '')
 	{
-		global $conf;
-
-		$sql = "SELECT m.rowid, m.titre as title, m.sujet, m.body, m.bgcolor, m.bgimage, m.evenunsubscribe";
+		$sql = "SELECT m.rowid, m.messtype, m.titre as title, m.sujet, m.body, m.bgcolor, m.bgimage, m.evenunsubscribe";
+		$sql .= ", m.note_public, m.note_private";
 		$sql .= ", m.email_from, m.email_replyto, m.email_errorsto";
-		$sql .= ", m.statut, m.nbemail";
+		$sql .= ", m.statut as status, m.nbemail";
 		$sql .= ", m.fk_user_creat, m.fk_user_valid";
 		$sql .= ", m.date_creat";
 		$sql .= ", m.date_valid";
@@ -394,12 +380,16 @@ class Mailing extends CommonObject
 
 				$this->id = $obj->rowid;
 				$this->ref = $obj->rowid;
-				$this->statut = $obj->statut;
-				$this->nbemail = $obj->nbemail;
 				$this->title = $obj->title;
+				$this->messtype = $obj->messtype;
+
+				$this->statut = $obj->status;	// deprecated
+				$this->status = $obj->status;
+
+				$this->nbemail = $obj->nbemail;
 
 				$this->sujet = $obj->sujet;
-				if (!empty($conf->global->FCKEDITOR_ENABLE_MAILING) && dol_textishtml(dol_html_entity_decode($obj->body, ENT_COMPAT | ENT_HTML5))) {
+				if (getDolGlobalString('FCKEDITOR_ENABLE_MAILING') && dol_textishtml(dol_html_entity_decode($obj->body, ENT_COMPAT | ENT_HTML5))) {
 					$this->body = dol_html_entity_decode($obj->body, ENT_COMPAT | ENT_HTML5);
 				} else {
 					$this->body = $obj->body;
@@ -408,23 +398,25 @@ class Mailing extends CommonObject
 				$this->bgcolor = $obj->bgcolor;
 				$this->bgimage = $obj->bgimage;
 				$this->evenunsubscribe = $obj->evenunsubscribe;
+				$this->note_public = $obj->note_public;
+				$this->note_private = $obj->note_private;
 
 				$this->email_from = $obj->email_from;
 				$this->email_replyto = $obj->email_replyto;
 				$this->email_errorsto = $obj->email_errorsto;
 
-				$this->user_creat = $obj->fk_user_creat;
-				$this->user_creation = $obj->fk_user_creat;
-				$this->user_valid = $obj->fk_user_valid;
-				$this->user_validation = $obj->fk_user_valid;
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_validation_id = $obj->fk_user_valid;
 
-				$this->date_creat = $this->db->jdate($obj->date_creat);
 				$this->date_creation = $this->db->jdate($obj->date_creat);
-				$this->date_valid = $this->db->jdate($obj->date_valid);
 				$this->date_validation = $this->db->jdate($obj->date_valid);
 				$this->date_envoi = $this->db->jdate($obj->date_envoi);
 
 				$this->extraparams = (array) json_decode($obj->extraparams, true);
+
+				if ($this->messtype == 'sms') {
+					$this->picto = 'phone';
+				}
 
 				return 1;
 			} else {
@@ -460,6 +452,7 @@ class Mailing extends CommonObject
 		// Load source object
 		$object->fetch($fromid);
 		$object->id = 0;
+		$object->status = 0;
 		$object->statut = 0;
 
 		// Clear fields
@@ -474,17 +467,17 @@ class Mailing extends CommonObject
 			$object->bgcolor            = '';
 			$object->bgimage            = '';
 			$object->evenunsubscribe    = 0;
+			$object->note_public        = '';
+			$object->note_private       = '';
 
 			//$object->email_from         = '';		// We do not reset from email because it is a mandatory value
 			$object->email_replyto      = '';
 			$object->email_errorsto     = '';
 
-			$object->user_creat         = $user->id;
-			$object->user_valid         = '';
+			$object->user_creation_id = $user->id;
+			$object->user_validation_id = null;
 
-			$object->date_creat         = '';
-			$object->date_valid         = '';
-			$object->date_envoi         = '';
+			$object->date_envoi         = null;
 		}
 
 		// Create clone
@@ -523,14 +516,14 @@ class Mailing extends CommonObject
 					if ($this->db->num_rows($result)) {
 						while ($obj = $this->db->fetch_object($result)) {
 							$target_array[] = array(
-								'fk_contact'=>$obj->fk_contact,
-								'lastname'=>$obj->lastname,
-								'firstname'=>$obj->firstname,
-								'email'=>$obj->email,
-								'other'=>$obj->other,
-								'source_url'=>$obj->source_url,
-								'source_id'=>$obj->source_id,
-								'source_type'=>$obj->source_type
+								'fk_contact' => $obj->fk_contact,
+								'lastname' => $obj->lastname,
+								'firstname' => $obj->firstname,
+								'email' => $obj->email,
+								'other' => $obj->other,
+								'source_url' => $obj->source_url,
+								'source_id' => $obj->source_id,
+								'source_type' => $obj->source_type
 							);
 						}
 					}
@@ -558,8 +551,8 @@ class Mailing extends CommonObject
 	/**
 	 *  Validate emailing
 	 *
-	 *  @param	User	$user      	Objet user qui valide
-	 * 	@return	int					<0 if KO, >0 if OK
+	 *  @param	User	$user      	Object user qui valide
+	 * 	@return	int					Return integer <0 if KO, >0 if OK
 	 */
 	public function valid($user)
 	{
@@ -660,8 +653,8 @@ class Mailing extends CommonObject
 	/**
 	 *  Change status of each recipient
 	 *
-	 *	@param	User	$user      	Objet user qui valide
-	 *  @return int         		<0 if KO, >0 if OK
+	 *	@param	User	$user      	Object user qui valide
+	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function reset_targets_status($user)
 	{
@@ -680,6 +673,49 @@ class Mailing extends CommonObject
 		}
 	}
 
+	/**
+	 *  Reset status of a specific recipient in error
+	 *
+	 *	@param	User	$user      	Object user qui valide
+	 *	@param	int	$id      		Recipient id to reset
+	 *  @return int         		Return integer <0 if KO, >0 if OK
+	 */
+	public function resetTargetErrorStatus($user, $id)
+	{
+		// phpcs:enable
+		global $langs;
+
+		$sql = "SELECT email, statut FROM ".MAIN_DB_PREFIX."mailing_cibles";
+		$sql .= " WHERE fk_mailing = ".((int) $this->id);
+		$sql .= " AND rowid = ".((int) $id);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$nb = $this->db->num_rows($resql);
+			$obj = $this->db->fetch_object($resql);
+			if ($obj->statut != -1) {
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorIsNotInError', $obj->email);
+				return 0;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+		}
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
+		$sql .= " SET statut = 0";
+		$sql .= " WHERE fk_mailing = ".((int) $this->id);
+		$sql .= " AND rowid = ".((int) $id);
+		$sql .= " AND statut = -1";
+
+		dol_syslog("Mailing::reset_targets_status", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			return 1;
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+	}
 
 	/**
 	 *  Count number of target with status
@@ -719,11 +755,12 @@ class Mailing extends CommonObject
 	 *  Refresh denormalized value ->nbemail into emailing record
 	 *  Note: There is also the method update_nb into modules_mailings that is used for this.
 	 *
-	 *  @return int        		<0 if KO, >0 if OK
+	 *  @return int        		Return integer <0 if KO, >0 if OK
 	 */
 	public function refreshNbOfTargets()
 	{
-		$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."mailing_cibles";
+		$sql = "SELECT COUNT(rowid) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles";
 		$sql .= " WHERE fk_mailing = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
@@ -753,29 +790,28 @@ class Mailing extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array $params ex option, infologin
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs;
+		global $langs;
 
-		$nofetch = !empty($params['nofetch']);
+		//$nofetch = !empty($params['nofetch']);
 		$langs->load('mails');
 
 		$datas = array();
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ShowEMailing").'</u>';
-		if (isset($this->statut)) {
+		if (isset($this->status)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
 		}
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (isset($this->title)) {
-			$datas['title'] .= '<br><b>'.$langs->trans('MailTitle').':</b> '.$this->title;
+			$datas['title'] = '<br><b>'.$langs->trans('MailTitle').':</b> '.$this->title;
 		}
 		if (isset($this->sujet)) {
-			$datas['subject'] .= '<br><b>'.$langs->trans('MailTopic').':</b> '.$this->sujet;
+			$datas['subject'] = '<br><b>'.$langs->trans('MailTopic').':</b> '.$this->sujet;
 		}
 
 		return $datas;
@@ -793,9 +829,7 @@ class Mailing extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
-		global $db, $conf, $langs, $hookmanager;
-		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager;
+		global $conf, $langs, $hookmanager;
 
 		if (!empty($conf->dol_no_mouse_hover)) {
 			$notooltip = 1; // Force disable tooltips
@@ -823,7 +857,7 @@ class Mailing extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -833,11 +867,11 @@ class Mailing extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowEMailing");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' :  ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -849,7 +883,7 @@ class Mailing extends CommonObject
 
 		$result .= $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : $dataparams.' class="'.(($withpicto != 2) ? 'paddingright ' : '').$classfortooltip.'"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), (($withpicto != 2) ? 'class="paddingright"' : ''), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->ref;
@@ -859,7 +893,7 @@ class Mailing extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('emailingdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -878,7 +912,7 @@ class Mailing extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -895,8 +929,8 @@ class Mailing extends CommonObject
 		global $langs;
 		$langs->load("mailing");
 
-		$labelStatus = $langs->transnoentitiesnoconv($this->statuts[$status]);
-		$labelStatusShort = $langs->transnoentitiesnoconv($this->statuts[$status]);
+		$labelStatus = $langs->transnoentitiesnoconv($this->labelStatus[$status]);
+		$labelStatusShort = $langs->transnoentitiesnoconv($this->labelStatus[$status]);
 
 		$statusType = 'status'.$status;
 		if ($status == 2) {
@@ -916,7 +950,7 @@ class Mailing extends CommonObject
 	 *
 	 *  @param	int		$status        	Id status
 	 *  @param  int		$mode           0=Long label, 1=Short label, 2=Picto+Short label, 3=Picto, 4=Picto+Short label, 5=Short label+Picto, 6=Picto+Long label, 7=Very short label+Picto
-	 *  @param	string	$desc			Desc error
+	 *  @param	string	$desc			Description of error to show as tooltip
 	 *  @return string        			Label
 	 */
 	public static function libStatutDest($status, $mode = 0, $desc = '')
@@ -950,9 +984,10 @@ class Mailing extends CommonObject
 		}
 
 		$param = array();
-		if ($status == - 1) {
-			$param = array('badgeParams'=>array('attr'=>array('title'=>$desc)));
+		if ($status == -1) {
+			$param = array('badgeParams' => array('attr' => array('title' => $desc)));
 		}
+
 		return dolGetStatus($labelStatus[$status], $labelStatusShort[$status], '', $statusType, $mode, '', $param);
 	}
 }

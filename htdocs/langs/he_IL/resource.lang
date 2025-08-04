@@ -1,36 +1,39 @@
 # Dolibarr language file - Source file is en_US - resource
-MenuResourceIndex=Resources
-MenuResourceAdd=New resource
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+MenuResourceIndex=אֶמְצָעִי
+MenuResourceAdd=משאב חדש
+DeleteResource=מחק משאב
+ConfirmDeleteResourceElement=אשר את מחיקת המשאב עבור רכיב זה
+NoResourceInDatabase=אין משאב במסד הנתונים.
+NoResourceLinked=לא מקושר משאב
+ActionsOnResource=אירועים על משאב זה
+ResourcePageIndex=רשימת משאבים
+ResourceSingular=מַשׁאָב
+ResourceCard=כרטיס משאבים
+AddResource=צור משאב
+ResourceFormLabel_ref=שם המשאב
+ResourceType=סוג משאב
+ResourceFormLabel_description=תיאור המשאב
 
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+ResourcesLinkedToElement=משאבים המקושרים לאלמנט
 
-ResourcesLinkedToElement=Resources linked to element
+ShowResource=הצג משאב
 
-ShowResource=Show resource
+ResourceElementPage=משאבי אלמנט
+ResourceCreatedWithSuccess=משאב נוצר בהצלחה
+RessourceLineSuccessfullyDeleted=שורת המשאב נמחקה בהצלחה
+RessourceLineSuccessfullyUpdated=שורת המשאבים עודכנה בהצלחה
+ResourceLinkedWithSuccess=משאב מקושר להצלחה
 
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
+ConfirmDeleteResource=אשר למחיקת משאב זה
+RessourceSuccessfullyDeleted=המשאב נמחק בהצלחה
+DictionaryResourceType=סוג משאבים
 
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
+SelectResource=בחר משאב
 
-SelectResource=Select resource
+IdResource=משאב זיהוי
+AssetNumber=מספר סידורי
+ResourceTypeCode=קוד סוג משאב
+ImportDataset_resource_1=אֶמְצָעִי
 
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
-ImportDataset_resource_1=Resources
+ErrorResourcesAlreadyInUse=חלק מהמשאבים נמצאים בשימוש
+ErrorResourceUseInEvent=%s בשימוש באירוע %s

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012 Regis Houssin  <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,15 @@
 
 
 /**
- *      Superclass for incoterm classes
+ *      Trait for incoterm classes
+ *
+ * Properties expected on the host class:
+ *
+ * @property DoliDB $db
+ * @property int $id
+ * @property string[] $errors
+ * @property string $table_element
+ *
  */
 trait CommonIncoterm
 {
@@ -48,7 +57,7 @@ trait CommonIncoterm
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    Return incoterms informations
+	 *    Return incoterms information
 	 *    TODO Use a cache for label get
 	 *
 	 *    @return	string	incoterms info
@@ -76,12 +85,14 @@ trait CommonIncoterm
 	}
 
 	/**
-	 *    Return incoterms informations for pdf display
+	 *    Return incoterms information for pdf display
 	 *
 	 *    @return	string|boolean			Incoterms info or false
 	 */
 	public function getIncotermsForPDF()
 	{
+		global $langs;
+
 		$sql = "SELECT code FROM ".$this->db->prefix()."c_incoterms WHERE rowid = ".(int) $this->fk_incoterms;
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -89,7 +100,7 @@ trait CommonIncoterm
 			if ($num > 0) {
 				$res = $this->db->fetch_object($resql);
 				if ($res) {
-					return 'Incoterm : '.$res->code.' - '.$this->location_incoterms;
+					return $langs->trans("IncotermLabel").': '.$res->code.' - '.$this->location_incoterms;
 				} else {
 					return $res;
 				}
@@ -107,7 +118,7 @@ trait CommonIncoterm
 	 *
 	 *    @param	int		$id_incoterm     Id of incoterm to set or '' to remove
 	 * 	  @param 	string  $location		 location of incoterm
-	 *    @return	int     				<0 if KO, >0 if OK
+	 *    @return	int     				Return integer <0 if KO, >0 if OK
 	 */
 	public function setIncoterms($id_incoterm, $location)
 	{

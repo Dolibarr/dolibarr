@@ -25,10 +25,7 @@
 }
 
 .corps {
-font-family: "Lucida Grande",Verdana,Arial,sans-serif;
-font-size: 14px;
 margin: auto;
-padding: 20px;
 overflow-x: auto;
 border: 2px solid #999999;
 background-color: #fff;
@@ -248,15 +245,12 @@ span.sousbandeaulangue {
 	margin-right:6px;
 	float:right;
 }
-/*corps de la page index.php*/
+/* main part of the survey online vote page */
 div.corps{
-	font-size:12px;
-	font-family:arial, sans-serif;
 	position:static;
 	padding:15px;
 }
-div.corps  table{
-	font-family:arial, sans-serif;
+div.corps table {
 	font-size:12px;
 	font-weight:bold;
 }
@@ -281,7 +275,7 @@ div.jourschoisis {
 	font-size:12px;
 	width:100%;
 }
-/*presenation des pages*/
+/*presentation des pages*/
 div.bodydate {
 	padding:10px;
 	font-family:arial, sans-serif;
@@ -347,6 +341,10 @@ td.nom {
 	td.nom {
 		min-width: 100px;
 	}
+
+	button[name=choix_sondage] {
+	   height: 100px;
+	}
 }
 
 td.vide {
@@ -363,7 +361,7 @@ div.cadre td.ok {
 }
 /*Case de tableau NON dans affichage de sondage*/
 div.cadre td.non {
-	background-color: #FF7777;
+	background-color: #FFBBBB;
 	min-width: 60px;
 }
 /*Case de tableau VIDE dans affichage de sondage*/
@@ -377,6 +375,9 @@ div.cadre td.nom {
 	background-color: #DDDDDD;
 	text-align:center;
 	padding: 8px;
+}
+div.cadre td.sujet, div.cadre td.annee, div.cadre td.mois, div.cadre td.jour {
+	padding: 8px !important;
 }
 div.cadre td.casevide {
 	background-color: white;
