@@ -10809,16 +10809,16 @@ abstract class CommonObject
 
 		// Note: Here, $fieldvalues contains same keys (or less) that are inside ->fields
 
-		if (array_key_exists('date_modification', $fieldvalues) && empty($fieldvalues['date_modification'])) {
+		if (array_key_exists('date_modification', $fieldvalues)) {
 			$fieldvalues['date_modification'] = $this->db->idate($now);
 		}
-		if (getDolGlobalString('MAIN_DISABLE_AUTO_UPDATE_OF_TMS_FIELDS') && array_key_exists('tms', $fieldvalues)) {
+		if (getDolGlobalString('MAIN_DISABLE_AUTO_UPDATE_OF_TMS_FIELDS') && array_key_exists('tms', $fieldvalues)) {	// If we want the auto update of tms fields by database (deprecated, prefer by PHP code)
 			$fieldvalues['tms'] = $this->db->idate($now);
 		}
-		if (array_key_exists('fk_user_modif', $fieldvalues) && !($fieldvalues['fk_user_modif'] > 0)) {
+		if (array_key_exists('fk_user_modif', $fieldvalues)) {
 			$fieldvalues['fk_user_modif'] = $user->id;
 		}
-		if (array_key_exists('user_modification_id', $fieldvalues) && !($fieldvalues['user_modification_id'] > 0)) {
+		if (array_key_exists('user_modification_id', $fieldvalues)) {
 			$fieldvalues['user_modification_id'] = $user->id;
 		}
 		// @phan-suppress-next-line PhanUndeclaredProperty
