@@ -1309,13 +1309,13 @@ class FormFile
 		// Define relative path used to store the file
 		if (empty($relativepath)) {
 			$relativepath = (!empty($object->ref) ? dol_sanitizeFileName($object->ref) : '').'/';
-			if (!empty($object->element) && $object->element == "societe") {
-				$relativepath = (!empty($object->id) ? $object->id : 0).'/';
+			if (!empty($object->element) && $object->element == "societe" && !empty($object->element)) {
+				$relativepath = ($object->id).'/';
 			}
-			if (!empty($object->element) && $object->element == 'invoice_supplier') {
+			elseif (!empty($object->element) && $object->element == 'invoice_supplier') {
 				$relativepath = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$relativepath; // TODO Call using a defined value for $relativepath
 			}
-			if (!empty($object->element) && $object->element == 'project_task') {
+			elseif (!empty($object->element) && $object->element == 'project_task') {
 				$relativepath = 'Call_not_supported_._Call_function_using_a_defined_relative_path_.';
 			}
 		}
