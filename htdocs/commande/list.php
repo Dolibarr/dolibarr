@@ -17,6 +17,7 @@
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024		William Mead			    <william.mead@manchenumerique.fr>
+ * Copyright (C) 2025		Lenin Rivas			    	<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -490,6 +491,36 @@ if (empty($reshook)) {
 				if ($res == 0) {
 					$errors[] = $cmd->ref.' : '.$langs->trans($objecttmp->errors[0]);
 					$error++;
+				}
+
+				// Linked Expeditions
+				if (getDolGlobalString('ORDER_MASS_ACTION_BILLED_LINK_EXPEDITIONS')) {
+					$cmd->fetchObjectLinked();
+					// Add object linked
+					if (!$error && $cmd->id && !empty($cmd->linkedObjectsIds['shipping']) && is_array($cmd->linkedObjectsIds['shipping'])) {
+						$cmd->linked_objects = $cmd->linkedObjectsIds;
+						foreach ($cmd->linked_objects as $origin_type => $tmp_origin_id) {
+							// IF more of same type
+							if ($origin_type == 'shipping') {
+								if (is_array($tmp_origin_id)) {       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
+									foreach ($tmp_origin_id as $origin_id) {
+										$res = $objecttmp->add_object_linked($origin_type, $origin_id);
+										if (!$res) {
+											$errors[] = $cmd->ref.' : '.$langs->trans($objecttmp->errors[0]);
+											$error++;
+										}
+									}
+								} else { // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
+									$origin_id = $tmp_origin_id;
+									$res = $objecttmp->add_object_linked($origin_type, $origin_id);
+									if (!$res) {
+										$errors[] = $cmd->ref.' : '.$langs->trans($objecttmp->errors[0]);
+										$error++;
+									}
+								}
+							}
+						}
+					}
 				}
 
 				if (!$error) {
@@ -1263,7 +1294,11 @@ if ($search_all) {
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+if (empty($reshook)) {
+	$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+} else {
+	$sql = $hookmanager->resPrint;
+}
 //print $sql;
 
 // Count total nb of records
@@ -1280,7 +1315,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}

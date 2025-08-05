@@ -23,9 +23,9 @@
  *	\ingroup    expedition
  *	\brief      Library for expedition module
  */
-require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
+require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
 
 
 /**
@@ -44,13 +44,13 @@ function shipping_prepare_head($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT."/expedition/card.php?id=".$object->id;
+	$head[$h][0] = DOL_URL_ROOT . "/expedition/card.php?id=" . $object->id;
 	$head[$h][1] = $langs->trans("SendingCard");
 	$head[$h][2] = 'shipping';
 	$h++;
 
 	if ($object->status == Expedition::STATUS_DRAFT) {
-		$head[$h][0] = DOL_URL_ROOT."/expedition/dispatch.php?id=".$object->id;
+		$head[$h][0] = DOL_URL_ROOT . "/expedition/dispatch.php?id=" . $object->id;
 		$head[$h][1] = $langs->trans("ShipmentDistribution");
 		$head[$h][2] = 'dispatch';
 		$h++;
@@ -63,7 +63,7 @@ function shipping_prepare_head($object)
 			// Take first element of array
 			$tmp = reset($object->linkedObjectsIds['delivery']);
 
-			$head[$h][0] = DOL_URL_ROOT."/delivery/card.php?id=".((int) $tmp);
+			$head[$h][0] = DOL_URL_ROOT . "/delivery/card.php?id=" . ((int) $tmp);
 			$head[$h][1] = $langs->trans("DeliveryCard");
 			$head[$h][2] = 'delivery';
 			$h++;
@@ -77,24 +77,24 @@ function shipping_prepare_head($object)
 			$objectsrc->fetch($object->origin_id);
 		}
 		$nbContact = count($objectsrc->liste_contact(-1, 'internal')) + count($objectsrc->liste_contact(-1, 'external'));
-		$head[$h][0] = DOL_URL_ROOT."/expedition/contact.php?id=".((int) $object->id);
+		$head[$h][0] = DOL_URL_ROOT . "/expedition/contact.php?id=" . ((int) $object->id);
 		$head[$h][1] = $langs->trans("ContactsAddresses");
 		if ($nbContact > 0) {
-			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbContact . '</span>';
 		}
 		$head[$h][2] = 'contact';
 		$h++;
 	}
 
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->expedition->dir_output."/sending/".dol_sanitizeFileName($object->ref);
+	require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+	require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
+	$upload_dir = $conf->expedition->dir_output . "/sending/" . dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
-	$head[$h][0] = DOL_URL_ROOT.'/expedition/document.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT . '/expedition/document.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans('Documents');
 	if (($nbFiles + $nbLinks) > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . ($nbFiles + $nbLinks) . '</span>';
 	}
 	$head[$h][2] = 'documents';
 	$h++;
@@ -106,12 +106,48 @@ function shipping_prepare_head($object)
 	if (!empty($object->note_public)) {
 		$nbNote++;
 	}
-	$head[$h][0] = DOL_URL_ROOT."/expedition/note.php?id=".$object->id;
+	$head[$h][0] = DOL_URL_ROOT . "/expedition/note.php?id=" . $object->id;
 	$head[$h][1] = $langs->trans("Notes");
 	if ($nbNote > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbNote . '</span>';
 	}
 	$head[$h][2] = 'note';
+	$h++;
+
+
+	//MODIF PICHINOV AGENDA
+	$head[$h][0] = DOL_URL_ROOT . '/expedition/agenda.php?id=' . $object->id;
+	$head[$h][1] = $langs->trans("Events");
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
+		$nbEvent = 0;
+		// Enable caching of thirdparty count actioncomm
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
+		$cachekey = 'count_events_expedition_' . $object->id; // CHANGED: 'propal' to 'expedition'
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbEvent = $dataretrieved;
+		} else {
+			$sql = "SELECT COUNT(id) as nb";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "actioncomm";
+			$sql .= " WHERE fk_element = " . ((int) $object->id);
+			$sql .= " AND elementtype = 'shipping'"; // CHANGED: 'order' to 'shipping'
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$nbEvent = $obj->nb;
+			} else {
+				dol_syslog('Failed to count actioncomm ' . $db->lasterror(), LOG_ERR);
+			}
+			dol_setcache($cachekey, $nbEvent, 120);    // If setting cache fails, this is not a problem, so we do not test result.
+		}
+
+		$head[$h][1] .= '/';
+		$head[$h][1] .= $langs->trans("Agenda");
+		if ($nbEvent > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbEvent . '</span>';
+		}
+	}
+	$head[$h][2] = 'agenda';
 	$h++;
 
 	// Show more tabs from modules
@@ -143,13 +179,13 @@ function delivery_prepare_head($object)
 	$head = array();
 
 	if (getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && $user->hasRight('expedition', 'lire')) {
-		$head[$h][0] = DOL_URL_ROOT."/expedition/card.php?id=".$object->origin_id;
+		$head[$h][0] = DOL_URL_ROOT . "/expedition/card.php?id=" . $object->origin_id;
 		$head[$h][1] = $langs->trans("SendingCard");
 		$head[$h][2] = 'shipping';
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT."/delivery/card.php?id=".$object->id;
+	$head[$h][0] = DOL_URL_ROOT . "/delivery/card.php?id=" . $object->id;
 	$head[$h][1] = $langs->trans("DeliveryCard");
 	$head[$h][2] = 'delivery';
 	$h++;
@@ -178,24 +214,24 @@ function delivery_prepare_head($object)
 			$objectsrc->fetch($tmpobject->origin_id);
 		}
 		$nbContact = count($objectsrc->liste_contact(-1, 'internal')) + count($objectsrc->liste_contact(-1, 'external'));
-		$head[$h][0] = DOL_URL_ROOT."/expedition/contact.php?id=".$tmpobject->id;
+		$head[$h][0] = DOL_URL_ROOT . "/expedition/contact.php?id=" . $tmpobject->id;
 		$head[$h][1] = $langs->trans("ContactsAddresses");
 		if ($nbContact > 0) {
-			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbContact . '</span>';
 		}
 		$head[$h][2] = 'contact';
 		$h++;
 	}
 
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->expedition->dir_output."/sending/".dol_sanitizeFileName($tmpobject->ref);
+	require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+	require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
+	$upload_dir = $conf->expedition->dir_output . "/sending/" . dol_sanitizeFileName($tmpobject->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $tmpobject->element, $tmpobject->id);
-	$head[$h][0] = DOL_URL_ROOT.'/expedition/document.php?id='.$tmpobject->id;
+	$head[$h][0] = DOL_URL_ROOT . '/expedition/document.php?id=' . $tmpobject->id;
 	$head[$h][1] = $langs->trans('Documents');
 	if (($nbFiles + $nbLinks) > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . ($nbFiles + $nbLinks) . '</span>';
 	}
 	$head[$h][2] = 'documents';
 	$h++;
@@ -207,10 +243,10 @@ function delivery_prepare_head($object)
 	if (!empty($tmpobject->note_public)) {
 		$nbNote++;
 	}
-	$head[$h][0] = DOL_URL_ROOT."/expedition/note.php?id=".$tmpobject->id;
+	$head[$h][0] = DOL_URL_ROOT . "/expedition/note.php?id=" . $tmpobject->id;
 	$head[$h][1] = $langs->trans("Notes");
 	if ($nbNote > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbNote . '</span>';
 	}
 	$head[$h][2] = 'note';
 	$h++;
@@ -247,16 +283,16 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 	$sql .= " e.rowid as sendingid, e.ref as exp_ref, e.date_creation, e.date_delivery, e.date_expedition, e.billed, e.fk_statut as status, e.signed_status,";
 	$sql .= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid, p.tobatch as product_tobatch,';
 	$sql .= ' p.description as product_desc';
-	$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed,";
-	$sql .= " ".MAIN_DB_PREFIX."expedition as e,";
-	$sql .= " ".MAIN_DB_PREFIX.$origin."det as obj";	// for example llx_commandedet
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON obj.fk_product = p.rowid";
+	$sql .= " FROM " . MAIN_DB_PREFIX . "expeditiondet as ed,";
+	$sql .= " " . MAIN_DB_PREFIX . "expedition as e,";
+	$sql .= " " . MAIN_DB_PREFIX . $origin . "det as obj";	// for example llx_commandedet
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON obj.fk_product = p.rowid";
 	//TODO Add link to expeditiondet_batch
-	$sql .= " WHERE e.entity IN (".getEntity('expedition').")";
-	$sql .= " AND obj.fk_".$origin." = ".((int) $origin_id);
+	$sql .= " WHERE e.entity IN (" . getEntity('expedition') . ")";
+	$sql .= " AND obj.fk_" . $origin . " = " . ((int) $origin_id);
 	$sql .= " AND obj.rowid = ed.fk_elementdet";
 	if (isModEnabled('subtotals')) {
-		$sql .= " AND obj.special_code <> ".SUBTOTALS_SPECIAL_CODE;
+		$sql .= " AND obj.special_code <> " . SUBTOTALS_SPECIAL_CODE;
 	}
 	$sql .= " AND ed.fk_expedition = e.rowid";
 	if ($filter) {
@@ -281,13 +317,13 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 			print '<table class="liste centpercent">';
 			print '<tr class="liste_titre">';
 			//print '<td class="left">'.$langs->trans("QtyOrdered").'</td>';
-			print '<td>'.$langs->trans("SendingSheet").'</td>';
-			print '<td>'.$langs->trans("Description").'</td>';
-			print '<td class="center">'.$langs->trans("DateCreation").'</td>';
-			print '<td class="center">'.$langs->trans("DateDeliveryPlanned").'</td>';
-			print '<td class="center">'.$langs->trans("QtyPreparedOrShipped").'</td>';
+			print '<td>' . $langs->trans("SendingSheet") . '</td>';
+			print '<td>' . $langs->trans("Description") . '</td>';
+			print '<td class="center">' . $langs->trans("DateCreation") . '</td>';
+			print '<td class="center">' . $langs->trans("DateDeliveryPlanned") . '</td>';
+			print '<td class="center">' . $langs->trans("QtyPreparedOrShipped") . '</td>';
 			if (isModEnabled('stock')) {
-				print '<td>'.$langs->trans("Warehouse").'</td>';
+				print '<td>' . $langs->trans("Warehouse") . '</td>';
 			}
 			/*TODO Add link to expeditiondet_batch
 			if (isModEnabled('productbatch'))
@@ -296,9 +332,9 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 				print '</td>';
 			}*/
 			if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
-				print '<td>'.$langs->trans("DeliveryOrder").'</td>';
+				print '<td>' . $langs->trans("DeliveryOrder") . '</td>';
 				//print '<td class="center">'.$langs->trans("QtyReceived").'</td>';
-				print '<td class="right">'.$langs->trans("DeliveryDate").'</td>';
+				print '<td class="right">' . $langs->trans("DeliveryDate") . '</td>';
 			}
 			print "</tr>\n";
 
@@ -360,7 +396,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					$product_static->status_batch = $objp->product_tobatch;
 
 					$text = $product_static->getNomUrl(1);
-					$text .= ' - '.$label;
+					$text .= ' - ' . $label;
 					$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($objp->description));
 					print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i);
 
@@ -369,7 +405,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 
 					// Add description in form
 					if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
-						print(!empty($objp->description) ? ((empty($objp->product) || $objp->description != $objp->product) ? '<br>'.dol_htmlentitiesbr($objp->description) : '') : '');
+						print(!empty($objp->description) ? ((empty($objp->product) || $objp->description != $objp->product) ? '<br>' . dol_htmlentitiesbr($objp->description) : '') : '');
 					}
 
 					print '</td>';
@@ -382,10 +418,10 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					}
 
 					if (!empty($objp->label)) {
-						$text .= ' <strong>'.$objp->label.'</strong>';
+						$text .= ' <strong>' . $objp->label . '</strong>';
 						print $form->textwithtooltip($text, $objp->description, 3, 0, '', (string) $i);
 					} else {
-						print $text.' '.nl2br($objp->description);
+						print $text . ' ' . nl2br($objp->description);
 					}
 
 					// Show range
@@ -396,13 +432,13 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 				//print '<td class="center">'.$objp->qty_asked.'</td>';
 
 				// Date creation
-				print '<td class="nowrap center">'.dol_print_date($db->jdate($objp->date_creation), 'day').'</td>';
+				print '<td class="nowrap center">' . dol_print_date($db->jdate($objp->date_creation), 'day') . '</td>';
 
 				// Date shipping creation
-				print '<td class="nowrap center">'.dol_print_date($db->jdate($objp->date_delivery), 'day').'</td>';
+				print '<td class="nowrap center">' . dol_print_date($db->jdate($objp->date_delivery), 'day') . '</td>';
 
 				// Qty shipped
-				print '<td class="center">'.$objp->qty_shipped.'</td>';
+				print '<td class="center">' . $objp->qty_shipped . '</td>';
 
 				// Warehouse
 				if (isModEnabled('stock')) {
@@ -448,7 +484,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 
 				// Information on receipt
 				if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
-					include_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
+					include_once DOL_DOCUMENT_ROOT . '/delivery/class/delivery.class.php';
 					$expedition->fetchObjectLinked($expedition->id, $expedition->element, null, 'delivery');
 					//var_dump($expedition->linkedObjects);
 

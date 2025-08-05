@@ -166,3 +166,14 @@ ExperimentalUxFreezeTooltip = Tooltip freeze
 ExperimentalUxInputAjaxFeedback = Input feedback
 ExperimentalUxIntuitiveSelect = Intuitive table lines selection
 # End experiements manu tyile
+
+# Title section
+DocTitleTitle=Page title
+DocTitleMainDescription=Documentation and examples for page titles.
+DocTitleBasicDescription=Use load_fiche_titre() function if you need to display a title with an icon. There are 3 ways to define your icon:
+DocTitleIconUsageMethod1=Use a dolibarr icon shortcut. <a href="%s">See icons list</a>
+DocTitleIconUsageMethod2=Use a icon from FontAwesome (use like this: fa-rocket_fas_#b0bb39). <a href="%s">See icons list</a>
+DocTitleIconUsageMethod3=Use your image. You must set the 4th parameter to 1.
+DocTitleMoreContentDescription=You can further customize the headings by adding an ID or CSS class(es), or adding content. See the examples below.
+DocTitleWithFilters=Display title with filters, buttons or navigation
+DocTitleWithFiltersDescription=If you want to display a title with many navigation options like on list pages, you can use the print_barre_liste() function which is a bit more complex. See code below or core/lib/functions.lib.php file to see how it works.

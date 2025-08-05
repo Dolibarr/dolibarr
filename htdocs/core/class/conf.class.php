@@ -1088,7 +1088,7 @@ class Conf extends stdClass
 				$this->global->MAIN_MAX_DECIMALS_SHOWN = 8;
 			}
 
-			// Non working days
+			// Non working days by default if not set in setup
 			if (!isset($this->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY)) {
 				$this->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY = 1;
 			}

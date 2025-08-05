@@ -37,9 +37,10 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	min-height: 94px;	/* must be same height than info-box-icon */
 	background: var(--colorbacklineimpair2);
 	width: 100%;
-	box-shadow: 1px 1px 12px rgba(192, 192, 192, 0.2);
+	box-shadow: 1px 1px 20px rgba(192, 192, 192, 0.2);
 	border-radius: 2px;
-	border: 1px solid #e9e9e9;
+	/* border: 1px solid #e9e9e9; */
+	border: 1px solid var(--colorbacktitle1);
 	margin-bottom: 15px;
 }
 .info-box.info-box-sm {
@@ -317,7 +318,33 @@ a.info-box-text{ text-decoration: none;}
 }
 
 
-
+/* customize section for home box link */
+.infobox-haslink .info-box-icon i {
+	transition: opacity 0.2s ease-in-out;
+}
+.infobox-haslink .info-box-icon:hover i {
+	opacity: 0.2;
+}
+.infobox-haslink .info-box-icon .info-box-createlink {
+	height:100%;
+	width:100%;
+	display:block;
+	position:absolute;
+	top:0;
+	left:0;
+	font-size:0.6em;
+	display: flex;
+	opacity: 0;
+	transition: opacity 0.2s ease-in-out;
+	color:inherit;
+	text-decoration: none;
+}
+.infobox-haslink .info-box-icon:hover .info-box-createlink {
+	opacity: 1;
+}
+.infobox-haslink .info-box-icon .info-box-createlink span.fas {
+	margin:auto;
+}
 
 
 /* ICONS INFO BOX */

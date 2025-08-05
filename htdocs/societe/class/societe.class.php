@@ -202,6 +202,7 @@ class Societe extends CommonObject
 		'fk_effectif' => array('type' => 'integer', 'label' => 'Workforce', 'enabled' => 1, 'visible' => -1, 'position' => 170),
 		'fk_typent' => array('type' => 'integer', 'label' => 'TypeOfCompany', 'enabled' => 1, 'visible' => -1, 'position' => 175, 'csslist' => 'minwidth200'),
 		'fk_forme_juridique' => array('type' => 'integer', 'label' => 'JuridicalStatus', 'enabled' => 1, 'visible' => -1, 'position' => 180),
+		'birth' => array('type' => 'date', 'label' => 'CompnanyBirthDate', 'enabled' => 1, 'visible' => -1, 'position' => 182),
 		'fk_currency' => array('type' => 'varchar(3)', 'label' => 'Currency', 'enabled' => 1, 'visible' => -1, 'position' => 185),
 		'siren' => array('type' => 'varchar(128)', 'label' => 'Idprof1', 'enabled' => 1, 'visible' => -1, 'position' => 190),
 		'siret' => array('type' => 'varchar(128)', 'label' => 'Idprof2', 'enabled' => 1, 'visible' => -1, 'position' => 195),
@@ -560,10 +561,14 @@ class Societe extends CommonObject
 	 */
 	public $forme_juridique_code = 0;
 	/**
-	 * @var string Label for Legal Form (of company)
+	 * @var string 	Label for Legal Form (of company)
 	 * @see CommonDocGenerator::get_substitutionarray_mysoc()
 	 */
 	public $forme_juridique;
+	/**
+	 * @var int|null 	Date of company creation
+	 */
+	public $birth;
 
 	/**
 	 * @var string
@@ -1684,6 +1689,7 @@ class Societe extends CommonObject
 			}
 
 			$sql .= ",fk_forme_juridique = ".(!empty($this->forme_juridique_code) ? "'".$this->db->escape((string) $this->forme_juridique_code)."'" : "null");
+			$sql .= ",birth = ".(!empty($this->birth) ? "'".$this->db->idate($this->birth)."'" : "null");
 
 			$sql .= ",mode_reglement = ".(!empty($this->mode_reglement_id) ? "'".$this->db->escape((string) $this->mode_reglement_id)."'" : "null");
 			$sql .= ",cond_reglement = ".(!empty($this->cond_reglement_id) ? "'".$this->db->escape((string) $this->cond_reglement_id)."'" : "null");
@@ -1920,6 +1926,7 @@ class Societe extends CommonObject
 		$sql .= ', s.fk_typent as typent_id';
 		$sql .= ', s.fk_effectif as effectif_id';
 		$sql .= ', s.fk_forme_juridique as forme_juridique_code';
+		$sql .= ', s.birth';
 		$sql .= ', s.webservices_url, s.webservices_key, s.model_pdf, s.last_main_doc';
 		if (!getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 			$sql .= ', s.accountancy_code_customer_general, s.code_compta';
@@ -2121,6 +2128,7 @@ class Societe extends CommonObject
 
 				$this->forme_juridique_code = $obj->forme_juridique_code;
 				$this->forme_juridique = $obj->forme_juridique_code ? $obj->forme_juridique : '';
+				$this->birth = $this->db->jdate($obj->birth);
 
 				$this->fk_prospectlevel = $obj->fk_prospectlevel;
 
