@@ -71,7 +71,7 @@ class TimeSpent extends CommonObject
 	 *   	'double(24,8)', 'real', 'price',
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
-	 *  	'mail', 'phone', 'url', 'password', 'ip'
+	 *  	'email', 'phone', 'url', 'password', 'ip'
 	 *		Note: Filter must be a Dolibarr filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms

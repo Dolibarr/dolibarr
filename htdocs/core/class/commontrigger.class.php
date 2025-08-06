@@ -43,6 +43,23 @@
  */
 trait CommonTrigger
 {
+	/**
+	 * @var DoliDB		Database handler (result of a new DoliDB)
+	 */
+	public $db;
+
+	/**
+	 * @var string 		Error string
+	 * @see             $errors
+	 */
+	public $error;
+
+	/**
+	 * @var string[]	Array of error strings
+	 */
+	public $errors = array();
+
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Call trigger based on this instance.
@@ -59,8 +76,9 @@ trait CommonTrigger
 		// phpcs:enable
 		global $langs, $conf;
 
-		if (!empty(self::TRIGGER_PREFIX) && strpos($triggerName, self::TRIGGER_PREFIX . '_') !== 0) {
-			dol_print_error(null, 'The trigger "' . $triggerName . '" does not start with "' . self::TRIGGER_PREFIX . '_" as required.');
+		// @phan-suppress-next-line PhanUndeclaredConstantOfClass Phan thinks that parent static::CONSTANT must be declared locally (even if PHP does not allow this on Traits)
+		if (!empty(static::TRIGGER_PREFIX) && strpos($triggerName, static::TRIGGER_PREFIX . '_') !== 0) {
+			dol_print_error(null, 'The trigger "' . $triggerName . '" does not start with "' . static::TRIGGER_PREFIX . '_" as required.');
 			exit;
 		}
 		if (!is_object($langs)) {	// If lang was not defined, we set it. It is required by run_triggers().
