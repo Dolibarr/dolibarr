@@ -188,7 +188,7 @@ class ObjectLink extends CommonObject
 
 		if (!$notrigger) {
 			// Call trigger
-			$result = $this->call_trigger(self::TRIGGER_PREFIX.'_DELETE', $user);
+			$result = $this->call_trigger($this->TRIGGER_PREFIX.'_DELETE', $user);
 			if ($result < 0) {
 				$error++;
 			}
@@ -266,7 +266,7 @@ class ObjectLink extends CommonObject
 
 		if (!$notrigger) {
 			// Call trigger
-			$result = $this->call_trigger(self::TRIGGER_PREFIX.'_CREATE', $user);
+			$result = $this->call_trigger($this->TRIGGER_PREFIX.'_CREATE', $user);
 			if ($result < 0) {
 				$error++;
 			}
