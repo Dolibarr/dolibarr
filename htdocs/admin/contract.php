@@ -2,7 +2,7 @@
 /* Copyright (C) 2011-2013      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2011-2018      Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,7 +127,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->CONTRACT_ADDON_PDF == "$value") {
+		if (getDolGlobalString('CONTRACT_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'CONTRACT_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -255,9 +255,8 @@ foreach ($dirmodels as $reldir) {
 					$file = substr($file, 0, dol_strlen($file) - 4);
 
 					require_once $dir.$file.'.php';
-					/** @var ModelNumRefContracts $module */
 					$module = new $file($db);
-
+					/** @var ModelNumRefContracts $module */
 					'@phan-var-force ModelNumRefContracts $module';
 
 					// Show modules according to features level
@@ -287,7 +286,7 @@ foreach ($dirmodels as $reldir) {
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->CONTRACT_ADDON == "$file") {
+						if (getDolGlobalString('CONTRACT_ADDON') == "$file") {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'">';
