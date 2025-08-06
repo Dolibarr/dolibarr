@@ -59,8 +59,13 @@ trait CommonTrigger
 	 */
 	public $errors = array();
 
-	// We do not use a constant because PHP does not support constant in Trait and does not allow overriding of constant without using "override" key that is not
-	// available on all PHP versions
+	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 *
+	 * We do not use a constant because PHP does not support constant in Trait and does not allow overriding a constant without using "override" key
+	 * that is not available on all PHP versions
+	 */
 	public $TRIGGER_PREFIX = ''; // to be overridden in child class implementations, i.e. 'BILL', 'TASK', 'PROPAL', etc. It is used to check that trigger code matches object name.
 
 

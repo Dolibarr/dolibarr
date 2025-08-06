@@ -36,6 +36,12 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 class CompanyBankAccount extends Account
 {
 	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'COMPANY_RIB';
+
+	/**
 	 * @var string ID to identify managed object.
 	 */
 	public $element = 'societe_rib';
@@ -328,12 +334,6 @@ class CompanyBankAccount extends Account
 	 * @var integer
 	 */
 	public $datem;
-
-	/**
-	 * @var string TRIGGER_PREFIX  Dolibarr 16.0 and above use the prefix to prevent the creation of inconsistently named triggers
-	 * @see CommonObject::call_trigger()
-	 */
-	public $TRIGGER_PREFIX = 'COMPANY_RIB';
 
 	/**
 	 *  Constructor
