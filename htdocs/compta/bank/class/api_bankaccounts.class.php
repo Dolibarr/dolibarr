@@ -505,6 +505,34 @@ class BankAccounts extends DolibarrApi
 	}
 
 	/**
+	 * Get the detail of lines of the account.
+	 *
+	 * @param int $id ID of the account line
+	 * @return  Object						Object with cleaned properties
+	 * @phan-return AccountLine[]
+	 * @phpstan-return AccountLine[]
+	 *
+	 * @throws RestException
+	 *
+	 * @url GET /accountlines/lines/{id}
+	 */
+	public function getDetailAccountLine($id)
+	{
+
+		if (!DolibarrApiAccess::$user->hasRight('banque', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$accountLine = new AccountLine($this->db);
+		$result = $accountLine->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'account Line not found');
+		}
+
+		return $this->_cleanObjectDatas($accountLine);
+	}
+	
+	/**
 	 * Add a line to an account
 	 *
 	 * @param int    $id               ID of account
