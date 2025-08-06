@@ -2010,6 +2010,8 @@ ShowFiscalYear=Show accounting period
 ##### Assets #####
 AssetNumberingModules=Assets numbering module
 AlwaysEditable=Editable for any status
+EmptyOnClone=Empty on clone
+EmptyOnCloneDesc=Value will be emptied after cloning an object
 PermissionOnField=Permission on the field
 MAIN_APPLICATION_TITLE=Force visible name of application (warning: setting your own name here may break autofill login feature when using DoliDroid mobile application)
 NbMajMin=Minimum number of uppercase characters

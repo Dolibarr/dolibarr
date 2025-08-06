@@ -47,7 +47,7 @@ class ExtraFields
 	public $db;
 
 	/**
-	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed>,list:array<string,int|string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,cssview:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>,alwayseditable:array<string,int<0,1>>,loaded?:int,count:int,aiprompt:array<string,string>}> New array to store extrafields definition  Note: count set as present to avoid static analysis notices
+	 * @var array<string,array{label:array<string,string>,type:array<string,string>,size:array<string,string>,default:array<string,string>,computed:array<string,string>,unique:array<string,int>,required:array<string,int>,param:array<string,mixed>,perms:array<string,mixed>,list:array<string,int|string>,pos:array<string,int>,totalizable:array<string,int>,help:array<string,string>,printable:array<string,int>,enabled:array<string,int>,langfile:array<string,string>,css:array<string,string>,csslist:array<string,string>,cssview:array<string,string>,hidden:array<string,int>,mandatoryfieldsofotherentities:array<string,string>,alwayseditable:array<string,int<0,1>>,emptyonclone:array<string,int<0,1>>,loaded?:int,count:int,aiprompt:array<string,string>}> New array to store extrafields definition  Note: count set as present to avoid static analysis notices
 	 */
 	public $attributes = array();
 
@@ -162,9 +162,10 @@ class ExtraFields
 	 *  @param  int<0,1>        $printable          Is extrafield displayed on PDF
 	 *  @param	array<string,mixed>	$moreparams		More parameters. Example: array('css'=>, 'csslist'=>Css on list, 'cssview'=>...)
 	 *  @param	string			$aiprompt			Ai prompt value
+	 *  @param	int<0,1>		$emptyonclone		Is attribute to be emptied after object clone
 	 *  @return int      							Return integer <=0 if KO, >0 if OK
 	 */
-	public function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $aiprompt = "")
+	public function addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $aiprompt = "", $emptyonclone = 0)
 	{
 		if (empty($attrname)) {
 			return -1;
@@ -200,7 +201,7 @@ class ExtraFields
 		$err1 = $this->errno;
 		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate') {
 			// Add declaration of field into table
-			$result2 = $this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams, $aiprompt);
+			$result2 = $this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams, $aiprompt, $emptyonclone);
 			$err2 = $this->errno;
 			if ($result2 > 0
 				|| ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS')
@@ -240,9 +241,10 @@ class ExtraFields
 	 *  @param  int<0,1>		$totalizable		Is a measure. Must show a total on lists
 	 *  @param  int<0,1>        $printable          Is extrafield displayed on PDF
 	 *  @param  array<string,mixed>	$moreparams		More parameters. Example: array('css'=>, 'csslist'=>Css on list, 'cssview'=>...)
+	 *	@param	int<0,1>		$emptyonclone		Is attribute to be emptied after object clone
 	 *  @return int      							Return integer <=0 if KO, >0 if OK
 	 */
-	public function updateExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array())
+	public function updateExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique = 0, $required = 0, $default_value = '', $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $emptyonclone = 0)
 	{
 		if (empty($attrname)) {
 			return -1;
@@ -268,13 +270,13 @@ class ExtraFields
 		// Create field into database except for separator type which is not stored in database
 		if ($type != 'separate') {
 			dol_syslog(get_class($this).'::thisupdate', LOG_DEBUG);
-			$result = $this->update($attrname, $label, $type, $size, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
+			$result = $this->update($attrname, $label, $type, $size, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams, '', $emptyonclone);
 		}
 		$err1 = $this->errno;
 		if ($result > 0 || $err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' || $type == 'separate') {
 			// Add declaration of field into table
 			dol_syslog(get_class($this).'::thislabel', LOG_DEBUG);
-			$result2 = $this->update_label($attrname, $label, $type, $size, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
+			$result2 = $this->update_label($attrname, $label, $type, $size, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams, '', $emptyonclone);
 			$err2 = $this->errno;
 			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS')) {
 				$this->error = '';
@@ -427,10 +429,11 @@ class ExtraFields
 	 *  @param  int<0,1>        $printable      Is extrafield displayed on PDF
 	 *  @param	array<string,mixed>	$moreparams		More parameters. Example: array('css'=>, 'csslist'=>, 'cssview'=>...)
 	 *  @param  string          $aiprompt     	Ai prompt value
+	 *	@param	int<0,1>		$emptyonclone	Is attribute to be emptied after object clone
 	 *  @return	int								Return integer <=0 if KO, >0 if OK
 	 *  @throws Exception
 	 */
-	private function create_label($attrname, $label = '', $type = '', $pos = 0, $size = '', $elementtype = '', $unique = 0, $required = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $aiprompt = "")
+	private function create_label($attrname, $label = '', $type = '', $pos = 0, $size = '', $elementtype = '', $unique = 0, $required = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $aiprompt = "", $emptyonclone = 0)
 	{
 		// phpcs:enable
 		global $conf, $user;
@@ -460,6 +463,9 @@ class ExtraFields
 		}
 		if (empty($alwayseditable)) {
 			$alwayseditable = 0;
+		}
+		if (empty($emptyonclone)) {
+			$emptyonclone = 0;
 		}
 		if (empty($totalizable)) {
 			$totalizable = 0;
@@ -514,7 +520,8 @@ class ExtraFields
 			$sql .= " css,";
 			$sql .= " csslist,";
 			$sql .= " cssview,";
-			$sql .= " aiprompt";
+			$sql .= " aiprompt,";
+			$sql .= " emptyonclone";
 			$sql .= " )";
 			$sql .= " VALUES('".$this->db->escape($attrname)."',";
 			$sql .= " '".$this->db->escape($label)."',";
@@ -542,7 +549,8 @@ class ExtraFields
 			$sql .= " ".($css ? "'".$this->db->escape($css)."'" : "null").",";
 			$sql .= " ".($csslist ? "'".$this->db->escape($csslist)."'" : "null").",";
 			$sql .= " ".($cssview ? "'".$this->db->escape($cssview)."'" : "null").",";
-			$sql .= " '".$this->db->escape($aiprompt)."'";
+			$sql .= " '".$this->db->escape($aiprompt)."',";
+			$sql .= " ".((int) $emptyonclone);
 			$sql .= ')';
 
 			if ($this->db->query($sql)) {
@@ -688,10 +696,11 @@ class ExtraFields
 	 *  @param  int<0,1>	$printable    	Is extrafield displayed on PDF
 	 *  @param	array<string,mixed>	$moreparams			More parameters. Example: array('css'=>, 'csslist'=>, 'cssview'=>...)
 	 *  @param	string	$aiprompt			Ai prompt value
+	 *	@param	int<0,1>	$emptyonclone		Is attribute to be emptied after object clone
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 *  @throws Exception
 	 */
-	public function update($attrname, $label, $type, $length, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = array(), $alwayseditable = 0, $perms = '', $list = '', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $aiprompt = "")
+	public function update($attrname, $label, $type, $length, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = array(), $alwayseditable = 0, $perms = '', $list = '', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $aiprompt = "", $emptyonclone = 0)
 	{
 		global $action, $hookmanager;
 
@@ -773,7 +782,7 @@ class ExtraFields
 
 			if (is_object($hookmanager)) {
 				$hookmanager->initHooks(array('extrafieldsdao'));
-				$parameters = array('field_desc' => &$field_desc, 'table' => $table, 'attr_name' => $attrname, 'label' => $label, 'type' => $type, 'length' => $length, 'unique' => $unique, 'required' => $required, 'pos' => $pos, 'param' => $param, 'alwayseditable' => $alwayseditable, 'perms' => $perms, 'list' => $list, 'help' => $help, 'default' => $default, 'computed' => $computed, 'entity' => $entity, 'langfile' => $langfile, 'enabled' => $enabled, 'totalizable' => $totalizable, 'printable' => $printable);
+				$parameters = array('field_desc' => &$field_desc, 'table' => $table, 'attr_name' => $attrname, 'label' => $label, 'type' => $type, 'length' => $length, 'unique' => $unique, 'required' => $required, 'pos' => $pos, 'param' => $param, 'alwayseditable' => $alwayseditable, 'emptyonclone' => $emptyonclone, 'perms' => $perms, 'list' => $list, 'help' => $help, 'default' => $default, 'computed' => $computed, 'entity' => $entity, 'langfile' => $langfile, 'enabled' => $enabled, 'totalizable' => $totalizable, 'printable' => $printable);
 				$reshook = $hookmanager->executeHooks('updateExtrafields', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
 				if ($reshook < 0) {
@@ -790,7 +799,7 @@ class ExtraFields
 			if ($result > 0 || $type == 'separate') {
 				if ($label) {
 					dol_syslog(get_class($this).'::update_label', LOG_DEBUG);
-					$result = $this->update_label($attrname, $label, $type, $length, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams, $aiprompt);
+					$result = $this->update_label($attrname, $label, $type, $length, $elementtype, $unique, $required, $pos, $param, $alwayseditable, $perms, $list, $help, $default, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams, $aiprompt, $emptyonclone);
 				}
 				if ($result > 0) {
 					$sql = '';
@@ -848,10 +857,11 @@ class ExtraFields
 	 *  @param  int<0,1>     $printable    	Is extrafield displayed on PDF
 	 *  @param	array<string,mixed>	$moreparams		More parameters. Example: array('css'=>, 'csslist'=>, 'cssview'=>...)
 	 *  @param	string	$aiprompt			Ai prompt value
+	 *	@param	int<0,1>	$emptyonclone	Is attribute to be emptied after object clone
 	 *  @return	int							Return integer <=0 if KO, >0 if OK
 	 *  @throws Exception
 	 */
-	private function update_label($attrname, $label, $type, $size, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = array(), $alwayseditable = 0, $perms = '', $list = '0', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $aiprompt = "")
+	private function update_label($attrname, $label, $type, $size, $elementtype, $unique = 0, $required = 0, $pos = 0, $param = array(), $alwayseditable = 0, $perms = '', $list = '0', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $aiprompt = "", $emptyonclone = 0)
 	{
 		// phpcs:enable
 		global $conf, $user;
@@ -882,6 +892,9 @@ class ExtraFields
 		}
 		if (empty($alwayseditable)) {
 			$alwayseditable = 0;
+		}
+		if (empty($emptyonclone)) {
+			$emptyonclone = 0;
 		}
 
 		$css = '';
@@ -952,7 +965,8 @@ class ExtraFields
 			$sql .= " css,";
 			$sql .= " csslist,";
 			$sql .= " cssview,";
-			$sql .= " aiprompt";
+			$sql .= " aiprompt,";
+			$sql .= " emptyonclone";
 			$sql .= ") VALUES (";
 			$sql .= "'".$this->db->escape($attrname)."',";
 			$sql .= " ".($entity === '' ? $conf->entity : $entity).",";
@@ -965,7 +979,7 @@ class ExtraFields
 			$sql .= " ".($perms ? "'".$this->db->escape($perms)."'" : "null").",";
 			$sql .= " ".($langfile ? "'".$this->db->escape($langfile)."'" : "null").",";
 			$sql .= " ".((int) $pos).",";
-			$sql .= " '".$this->db->escape((string) $alwayseditable)."',";
+			$sql .= " ".((int) $alwayseditable).",";
 			$sql .= " '".$this->db->escape($params)."',";
 			$sql .= " '".$this->db->escape($list)."',";
 			$sql .= " ".((int) $printable).",";
@@ -980,7 +994,8 @@ class ExtraFields
 			$sql .= " ".($css ? "'".$this->db->escape($css)."'" : "null").",";
 			$sql .= " ".($csslist ? "'".$this->db->escape($csslist)."'" : "null").",";
 			$sql .= " ".($cssview ? "'".$this->db->escape($cssview)."'" : "null").",";
-			$sql .= " '".$this->db->escape($aiprompt)."'";
+			$sql .= " '".$this->db->escape($aiprompt)."',";
+			$sql .= " ".((int) $emptyonclone);
 			$sql .= ")";
 
 			$resql2 = $this->db->query($sql);
@@ -1034,7 +1049,7 @@ class ExtraFields
 		$array_name_label = array();
 
 		// We should not have several time this request. If we have, there is some optimization to do by calling a simple $extrafields->fetch_optionals() in top of code and not into subcode
-		$sql = "SELECT rowid, name, label, type, size, elementtype, fieldunique, fieldrequired, param, pos, alwayseditable, perms, langs, list, printable, totalizable, fielddefault, fieldcomputed, entity, enabled, help, aiprompt,";
+		$sql = "SELECT rowid, name, label, type, size, elementtype, fieldunique, fieldrequired, param, pos, alwayseditable, emptyonclone, perms, langs, list, printable, totalizable, fielddefault, fieldcomputed, entity, enabled, help, aiprompt,";
 		$sql .= " css, cssview, csslist";
 		$sql .= " FROM ".$this->db->prefix()."extrafields";
 		//$sql.= " WHERE entity IN (0,".$conf->entity.")";    // Filter is done later
@@ -1076,6 +1091,7 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['param'][$tab->name] = ($tab->param ? jsonOrUnserialize($tab->param) : '');
 					$this->attributes[$tab->elementtype]['pos'][$tab->name] = $tab->pos;
 					$this->attributes[$tab->elementtype]['alwayseditable'][$tab->name] = $tab->alwayseditable;
+					$this->attributes[$tab->elementtype]['emptyonclone'][$tab->name] = $tab->emptyonclone;
 					$this->attributes[$tab->elementtype]['perms'][$tab->name] = $tab->perms;
 					$this->attributes[$tab->elementtype]['langfile'][$tab->name] = $tab->langs;
 					$this->attributes[$tab->elementtype]['list'][$tab->name] = $tab->list;
