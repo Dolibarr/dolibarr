@@ -1083,7 +1083,7 @@ class FormOther
 	 *      @param  string      $selected          	Preselected value
 	 *      @param  string      $htmlname          	Name of HTML select object
 	 *      @param  int         $useempty          	Show empty in list
-	 *      @param  int         $longlabel         	Show long label
+	 *      @param  int         $longlabel         	Show long label (1) or short label (0)
 	 *      @param	string		$morecss			More Css
 	 *  	@param  bool		$addjscombo			Add js combo
 	 *      @return string
