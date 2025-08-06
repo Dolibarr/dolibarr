@@ -2644,11 +2644,12 @@ class Project extends CommonObject
 
 	/**
 	 * Method for calculating weekly hours worked and generating a report
+	 *
 	 * @return int   0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
 	public function createWeeklyReport()
 	{
-		global $mysoc, $user;
+		global $mysoc, $user, $langs;
 
 		$now = dol_now();
 		$nowDate = dol_getdate($now, true);
@@ -2689,19 +2690,32 @@ class Project extends CommonObject
 		} else {
 			$reportContent = "<span>Weekly time report from $startDate to $endDate </span><br><br>";
 			$reportContent .= '<table border="1" style="border-collapse: collapse;">';
-			$reportContent .= '<tr><th>Nom d\'utilisateur</th><th>Temps saisi (heures)</th><th>Temps travaillé par semaine (heures)</th></tr>';
+			$reportContent .= '<tr><th>'.$langs->trans("User").'</th><th>Temps saisi (heures)</th><th>Temps travaillé par semaine (heures)</th></tr>';
 
-			$weekendEnabled = 0;
 			$to = '';
 			$nbMailSend = 0;
 			$error = 0;
 			$errors_to = '';
 			while ($obj = $this->db->fetch_object($resql)) {
 				$to = $obj->email;
+
+				$weekendEnabled = 0;
 				$numHolidays = num_public_holiday($lastWeekStartTS, $lastWeekEndTS, $mysoc->country_code, 1);
-				if (getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY') && getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY')) {
-					$numHolidays -= 2;
-					$weekendEnabled = 2;
+				if (getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY')) {
+					$numHolidays -= 1;
+					$weekendEnabled += 1;
+				}
+				if (getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_TUESDAY')) {
+					$numHolidays -= 1;
+					$weekendEnabled += 1;
+				}
+				if (getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY')) {
+					$numHolidays -= 1;
+					$weekendEnabled += 1;
+				}
+				if (getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY')) {
+					$numHolidays -= 1;
+					$weekendEnabled += 1;
 				}
 
 				$dailyHours = $obj->weeklyhours / (7 - $weekendEnabled);

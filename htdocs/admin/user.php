@@ -77,7 +77,7 @@ if ($action == 'set_default') {
 } elseif ($action == 'del_default') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->USER_ADDON_PDF_ODT == "$value") {
+		if (getDolGlobalString("USER_ADDON_PDF_ODT") == "$value") {
 			dolibarr_del_const($db, 'USER_ADDON_PDF_ODT', $conf->entity);
 		}
 	}

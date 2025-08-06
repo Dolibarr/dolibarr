@@ -42,7 +42,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class FactureFournisseurRec extends CommonInvoice
 {
-	const TRIGGER_PREFIX = 'SUPPLIERBILLREC';
+	public $TRIGGER_PREFIX = 'SUPPLIERBILLREC';
+
 	/**
 	 * @var string ID to identify managed object
 	 */

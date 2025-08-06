@@ -330,11 +330,10 @@ class CompanyBankAccount extends Account
 	public $datem;
 
 	/**
-	 * @var string TRIGGER_PREFIX  Dolibarr 16.0 and above use the prefix to prevent the creation of inconsistently
-	 *                             named triggers
+	 * @var string TRIGGER_PREFIX  Dolibarr 16.0 and above use the prefix to prevent the creation of inconsistently named triggers
 	 * @see CommonObject::call_trigger()
 	 */
-	const TRIGGER_PREFIX = 'COMPANY_RIB';
+	public $TRIGGER_PREFIX = 'COMPANY_RIB';
 
 	/**
 	 *  Constructor

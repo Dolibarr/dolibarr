@@ -680,7 +680,12 @@ class Form
 			$htmltext = str_replace('"', '&quot;', $htmltext);
 		} else {
 			$classfortooltip = 'classfortooltiponclick';
-			$textfordialog .= '<div style="display: none;" id="idfortooltiponclick_' . $tooltiptrigger . '" class="classfortooltiponclicktext">' . $htmltext . '</div>';
+			$textfordialog .= '<div style="display: none;" id="idfortooltiponclick_' . $tooltiptrigger . '" class="classfortooltiponclicktext"';
+			global $langs;
+			if ($langs instanceof Translate) {
+				$textfordialog .= ' title="'.$langs->trans("Help").'"';
+			}
+			$textfordialog .= '>' . $htmltext . '</div>';
 		}
 		if ($tooltipon == 2 || $tooltipon == 3) {
 			$paramfortooltipimg = ' class="' . $classfortooltip . ($notabs != 3 ? ' inline-block' : '') . ($extracss ? ' ' . $extracss : '') . '" style="padding: 0px;' . ($extrastyle ? ' ' . $extrastyle : '') . '"';
@@ -3484,7 +3489,7 @@ class Form
 		$outqty = 1;
 		$outdiscount = '0';
 
-		$maxlengtharticle = (!getDolGlobalString('PRODUCT_MAX_LENGTH_COMBO') ? 48 : $conf->global->PRODUCT_MAX_LENGTH_COMBO);
+		$maxlengtharticle = getDolGlobalInt('PRODUCT_MAX_LENGTH_COMBO', 48);
 
 		$label = $objp->label;
 		if (!empty($objp->label_translated)) {
@@ -3905,7 +3910,7 @@ class Form
 		$out = '';
 		$outarray = array();
 
-		$maxlengtharticle = (!getDolGlobalString('PRODUCT_MAX_LENGTH_COMBO') ? 48 : $conf->global->PRODUCT_MAX_LENGTH_COMBO);
+		$maxlengtharticle = getDolGlobalInt('PRODUCT_MAX_LENGTH_COMBO', 48);
 
 		$langs->load('stocks');
 		// Units

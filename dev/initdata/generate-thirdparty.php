@@ -49,15 +49,29 @@ include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 $listoftown = array("Auray","Baden","Vannes","Pirouville","Haguenau","Souffelweiersheim","Illkirch-Graffenstaden","Lauterbourg","Picauville","Sainte-Mère Eglise","Le Bono");
 $listoflastname = array("Joe","Marc","Steve","Laurent","Nico","Isabelle","Dorothee","Saby","Brigitte","Karine","Jose-Anne","Celine","Virginie");
 
+// Global variables
+$version = DOL_VERSION;
+
 
 /*
- * Parameter
+ * Main
  */
 
-define('GEN_NUMBER_SOCIETE', $argv[1] ?? 10);
+@set_time_limit(0);
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
+
+if (empty($argv[1])) {
+	print "Usage:  $script_file  nbofrecord\n";
+	print "Usage:  $script_file  100\n";
+	print "\n";
+	exit(-1);
+}
+
+define('GEN_NUMBER_SOCIETE', ((int) $argv[1]) ?? 10);
 
 
-$ret=$user->fetch('', 'admin');
+$ret = $user->fetch('', 'admin');
 if (! $ret > 0) {
 	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
 	exit;

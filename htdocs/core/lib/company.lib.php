@@ -48,7 +48,7 @@ function societe_prepare_head(Societe $object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/societe/card.php?socid='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT . '/societe/card.php?socid=' . $object->id;
 	$head[$h][1] = $langs->trans("ThirdParty");
 	$head[$h][2] = 'card';
 	$h++;
@@ -58,21 +58,21 @@ function societe_prepare_head(Societe $object)
 		//$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
 		$nbContact = 0;
 		// Enable caching of thirdrparty count Contacts
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-		$cachekey = 'count_contacts_thirdparty_'.$object->id;
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
+		$cachekey = 'count_contacts_thirdparty_' . $object->id;
 		$dataretrieved = dol_getcache($cachekey);
 
 		if (!is_null($dataretrieved)) {
 			$nbContact = $dataretrieved;
 		} else {
 			$sql = "SELECT COUNT(p.rowid) as nb";
-			$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "socpeople as p";
 			// Add table from hooks
 			$parameters = array('contacttab' => true);
 			$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
 			$sql .= $hookmanager->resPrint;
-			$sql .= " WHERE p.fk_soc = ".((int) $object->id);
-			$sql .= " AND p.entity IN (".getEntity($object->element).")";
+			$sql .= " WHERE p.fk_soc = " . ((int) $object->id);
+			$sql .= " AND p.entity IN (" . getEntity($object->element) . ")";
 			// Add where from hooks
 			$parameters = array('contacttab' => true);
 			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -86,28 +86,28 @@ function societe_prepare_head(Societe $object)
 			dol_setcache($cachekey, $nbContact, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 		}
 
-		$head[$h][0] = DOL_URL_ROOT.'/societe/contact.php?socid='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT . '/societe/contact.php?socid=' . $object->id;
 		$head[$h][1] = $langs->trans('ContactsAddresses');
 		if ($nbContact > 0) {
-			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbContact . '</span>';
 		}
 		$head[$h][2] = 'contact';
 		$h++;
 	}
 	if (getDolGlobalString('MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES')) {
 		// Some features may be unstable with this option, like permissions rules, import contact, ...
-		$head[$h][0] = DOL_URL_ROOT.'/societe/societecontact.php?socid='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT . '/societe/societecontact.php?socid=' . $object->id;
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 		$head[$h][1] = $langs->trans("ContactsAddressesExt");
 		if ($nbContact > 0) {
-			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbContact . '</span>';
 		}
 		$head[$h][2] = 'contactext';
 		$h++;
 	}
 
 	if ($object->client == 1 || $object->client == 2 || $object->client == 3) {
-		$head[$h][0] = DOL_URL_ROOT.'/comm/card.php?socid='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT . '/comm/card.php?socid=' . $object->id;
 		$head[$h][1] = '';
 		if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTS') && ($object->client == 2 || $object->client == 3)) {
 			$head[$h][1] .= $langs->trans("Prospect");
@@ -124,7 +124,7 @@ function societe_prepare_head(Societe $object)
 		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			$langs->load("products");
 			// price
-			$head[$h][0] = DOL_URL_ROOT.'/societe/price.php?socid='.$object->id;
+			$head[$h][0] = DOL_URL_ROOT . '/societe/price.php?socid=' . $object->id;
 			$head[$h][1] = $langs->trans("CustomerPrices");
 			$head[$h][2] = 'price';
 			$h++;
@@ -135,7 +135,7 @@ function societe_prepare_head(Societe $object)
 		$supplier_module_enabled = 1;
 	}
 	if ($supplier_module_enabled == 1 && $object->fournisseur && $user->hasRight('fournisseur', 'lire')) {
-		$head[$h][0] = DOL_URL_ROOT.'/fourn/card.php?socid='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT . '/fourn/card.php?socid=' . $object->id;
 		$head[$h][1] = $langs->trans("Supplier");
 		$head[$h][2] = 'supplier';
 		$h++;
@@ -154,7 +154,7 @@ function societe_prepare_head(Societe $object)
 			$mode = 'customer';
 		}
 
-		$head[$h][0] = DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?socid='.$object->id.'&mode='.$mode.'&type=sub&search_accountancy_code_start='.$subledger_start_account.'&search_accountancy_code_end='.$subledger_end_account;
+		$head[$h][0] = DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?socid=' . $object->id . '&mode=' . $mode . '&type=sub&search_accountancy_code_start=' . $subledger_start_account . '&search_accountancy_code_end=' . $subledger_end_account;
 		$head[$h][1] = $langs->trans("Accounting");
 		$head[$h][2] = 'accounting';
 		$h++;
@@ -163,17 +163,17 @@ function societe_prepare_head(Societe $object)
 	if (isModEnabled('project') && ($user->hasRight('projet', 'lire'))) {
 		$nbProject = 0;
 		// Enable caching of thirdrparty count projects
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-		$cachekey = 'count_projects_thirdparty_'.$object->id;
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
+		$cachekey = 'count_projects_thirdparty_' . $object->id;
 		$dataretrieved = dol_getcache($cachekey);
 
 		if (!is_null($dataretrieved)) {
 			$nbProject = $dataretrieved;
 		} else {
 			$sql = "SELECT COUNT(n.rowid) as nb";
-			$sql .= " FROM ".MAIN_DB_PREFIX."projet as n";
-			$sql .= " WHERE fk_soc = ".((int) $object->id);
-			$sql .= " AND entity IN (".getEntity('project').")";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "projet as n";
+			$sql .= " WHERE fk_soc = " . ((int) $object->id);
+			$sql .= " AND entity IN (" . getEntity('project') . ")";
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
@@ -183,10 +183,10 @@ function societe_prepare_head(Societe $object)
 			}
 			dol_setcache($cachekey, $nbProject, 120);	// If setting cache fails, this is not a problem, so we do not test result.
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/societe/project.php?socid='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT . '/societe/project.php?socid=' . $object->id;
 		$head[$h][1] = $langs->trans("Projects");
 		if ($nbProject > 0) {
-			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbProject.'</span>';
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbProject . '</span>';
 		}
 		$head[$h][2] = 'project';
 		$h++;
@@ -194,7 +194,7 @@ function societe_prepare_head(Societe $object)
 
 	// Tab to link resources
 	if (isModEnabled('resource') && getDolGlobalString('RESOURCE_ON_THIRDPARTIES')) {
-		$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=societe&element_id='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT . '/resource/element_resource.php?element=societe&element_id=' . $object->id;
 		$head[$h][1] = $langs->trans("Resources");
 		$head[$h][2] = 'resources';
 		$h++;
@@ -202,8 +202,9 @@ function societe_prepare_head(Societe $object)
 
 	// Related items
 	if ((isModEnabled('order') || isModEnabled('propal') || isModEnabled('invoice') || isModEnabled('intervention') || isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice"))
-		&& !getDolGlobalString('THIRDPARTIES_DISABLE_RELATED_OBJECT_TAB')) {
-		$head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
+		&& !getDolGlobalString('THIRDPARTIES_DISABLE_RELATED_OBJECT_TAB')
+	) {
+		$head[$h][0] = DOL_URL_ROOT . '/societe/consumption.php?socid=' . $object->id;
 		$head[$h][1] = $langs->trans("Referers");
 		$head[$h][2] = 'consumption';
 		$h++;
@@ -223,7 +224,7 @@ function societe_prepare_head(Societe $object)
 				$servicestatus = 1;
 			}
 
-			include_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
+			include_once DOL_DOCUMENT_ROOT . '/societe/class/societeaccount.class.php';
 			$societeaccount = new SocieteAccount($db);
 			$stripecu = $societeaccount->getCustomerAccount($object->id, 'stripe', $servicestatus); // Get thirdparty cu_...
 			if ($stripecu) {
@@ -232,12 +233,12 @@ function societe_prepare_head(Societe $object)
 		}
 
 		$sql = "SELECT COUNT(n.rowid) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib as n";
-		$sql .= " WHERE n.fk_soc = ".((int) $object->id);
+		$sql .= " FROM " . MAIN_DB_PREFIX . "societe_rib as n";
+		$sql .= " WHERE n.fk_soc = " . ((int) $object->id);
 		if (!isModEnabled('stripe')) {
 			$sql .= " AND n.stripe_card_ref IS NULL";
 		} else {
-			$sql .= " AND (n.stripe_card_ref IS NULL OR (n.stripe_card_ref IS NOT NULL AND n.status = ".((int) $servicestatus)."))";
+			$sql .= " AND (n.stripe_card_ref IS NULL OR (n.stripe_card_ref IS NOT NULL AND n.status = " . ((int) $servicestatus) . "))";
 		}
 
 		$resql = $db->query($sql);
@@ -250,12 +251,12 @@ function societe_prepare_head(Societe $object)
 
 		//if (isModEnabled('stripe') && $nbBankAccount > 0) $nbBankAccount = '...';	// No way to know exact number
 
-		$head[$h][0] = DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.urlencode((string) ($object->id));
+		$head[$h][0] = DOL_URL_ROOT . '/societe/paymentmodes.php?socid=' . urlencode((string) ($object->id));
 		$head[$h][1] = $title;
 		if ($foundonexternalonlinesystem) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">...</span>';
 		} elseif ($nbBankAccount > 0) {
-			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbBankAccount.'</span>';
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbBankAccount . '</span>';
 		}
 		$head[$h][2] = 'rib';
 		$h++;
@@ -270,15 +271,15 @@ function societe_prepare_head(Societe $object)
 			$site_filter_list[] = 'dolibarr_portal';
 		}
 
-		$head[$h][0] = DOL_URL_ROOT.'/societe/website.php?id='.urlencode((string) ($object->id));
+		$head[$h][0] = DOL_URL_ROOT . '/societe/website.php?id=' . urlencode((string) ($object->id));
 		$head[$h][1] = $langs->trans("WebSiteAccounts");
 		$nbNote = 0;
 		$sql = "SELECT COUNT(n.rowid) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe_account as n";
-		$sql .= " WHERE fk_soc = ".((int) $object->id);
-		$sql .= " AND entity IN (".getEntity('thirdpartyaccount').")";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "societe_account as n";
+		$sql .= " WHERE fk_soc = " . ((int) $object->id);
+		$sql .= " AND entity IN (" . getEntity('thirdpartyaccount') . ")";
 		if (!empty($site_filter_list)) {
-			$sql .= " AND n.site IN (".$db->sanitize("'".implode("','", $site_filter_list)."'", 1).")";
+			$sql .= " AND n.site IN (" . $db->sanitize("'" . implode("','", $site_filter_list) . "'", 1) . ")";
 		}
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -288,7 +289,7 @@ function societe_prepare_head(Societe $object)
 			dol_print_error($db);
 		}
 		if ($nbNote > 0) {
-			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbNote . '</span>';
 		}
 		$head[$h][2] = 'website';
 		$h++;
@@ -298,13 +299,13 @@ function societe_prepare_head(Societe $object)
 		if ($user->hasRight('partnership', 'read')) {
 			$langs->load("partnership");
 			$nbPartnership = is_array($object->partnerships) ? count($object->partnerships) : 0;
-			$head[$h][0] = DOL_URL_ROOT.'/partnership/partnership_list.php?socid='.$object->id;
+			$head[$h][0] = DOL_URL_ROOT . '/partnership/partnership_list.php?socid=' . $object->id;
 			$head[$h][1] = $langs->trans("Partnerships");
 			$nbNote = 0;
 			$sql = "SELECT COUNT(n.rowid) as nb";
-			$sql .= " FROM ".MAIN_DB_PREFIX."partnership as n";
-			$sql .= " WHERE fk_soc = ".((int) $object->id);
-			$sql .= " AND entity IN (".getEntity('partnership').")";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "partnership as n";
+			$sql .= " WHERE fk_soc = " . ((int) $object->id);
+			$sql .= " AND entity IN (" . getEntity('partnership') . ")";
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
@@ -313,11 +314,11 @@ function societe_prepare_head(Societe $object)
 				dol_print_error($db);
 			}
 			if ($nbNote > 0) {
-				$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+				$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbNote . '</span>';
 			}
 			$head[$h][2] = 'partnerships';
 			if ($nbPartnership > 0) {
-				$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbPartnership.'</span>';
+				$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbPartnership . '</span>';
 			}
 			$h++;
 		}
@@ -328,16 +329,16 @@ function societe_prepare_head(Societe $object)
 		//$langs->load('ticket');
 		$nbTicket = 0;
 		// Enable caching of thirdparty count notifications
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-		$cachekey = 'count_ticket_thirdparty_'.$object->id;
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
+		$cachekey = 'count_ticket_thirdparty_' . $object->id;
 		$nbticketretreived = dol_getcache($cachekey);
 		if (!is_null($nbticketretreived)) {
 			$nbTicket = $nbticketretreived;
 		} else {
 			// List of notifications enabled for contacts of the third party
 			$sql = "SELECT COUNT(t.rowid) as nb";
-			$sql .= " FROM ".MAIN_DB_PREFIX."ticket as t";
-			$sql .= " WHERE t.fk_soc = ".((int) $object->id);
+			$sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
+			$sql .= " WHERE t.fk_soc = " . ((int) $object->id);
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
@@ -348,10 +349,10 @@ function societe_prepare_head(Societe $object)
 			dol_setcache($cachekey, $nbTicket, 120);		// If setting cache fails, this is not a problem, so we do not test result.
 		}
 
-		$head[$h][0] = DOL_URL_ROOT.'/ticket/list.php?socid='.urlencode((string) ($object->id));
+		$head[$h][0] = DOL_URL_ROOT . '/ticket/list.php?socid=' . urlencode((string) ($object->id));
 		$head[$h][1] = $langs->trans("Tickets");
 		if ($nbTicket > 0) {
-			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbTicket.'</span>';
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbTicket . '</span>';
 		}
 		$head[$h][2] = 'ticket';
 		$h++;
@@ -370,20 +371,20 @@ function societe_prepare_head(Societe $object)
 			$langs->load('mails');
 			$nbNotif = 0;
 			// Enable caching of thirdparty count notifications
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-			$cachekey = 'count_notifications_thirdparty_'.$object->id;
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
+			$cachekey = 'count_notifications_thirdparty_' . $object->id;
 			$dataretrieved = dol_getcache($cachekey);
 			if (!is_null($dataretrieved)) {
 				$nbNotif = $dataretrieved;
 			} else {
 				// List of notifications enabled for contacts of the third party
 				$sql = "SELECT COUNT(n.rowid) as nb";
-				$sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger as a,";
-				$sql .= " ".MAIN_DB_PREFIX."notify_def as n,";
-				$sql .= " ".MAIN_DB_PREFIX."socpeople as c";
+				$sql .= " FROM " . MAIN_DB_PREFIX . "c_action_trigger as a,";
+				$sql .= " " . MAIN_DB_PREFIX . "notify_def as n,";
+				$sql .= " " . MAIN_DB_PREFIX . "socpeople as c";
 				$sql .= " WHERE a.rowid = n.fk_action";
 				$sql .= " AND c.rowid = n.fk_contact";
-				$sql .= " AND c.fk_soc = ".((int) $object->id);
+				$sql .= " AND c.fk_soc = " . ((int) $object->id);
 				$resql = $db->query($sql);
 				if ($resql) {
 					$obj = $db->fetch_object($resql);
@@ -394,10 +395,10 @@ function societe_prepare_head(Societe $object)
 				dol_setcache($cachekey, $nbNotif, 120);		// If setting cache fails, this is not a problem, so we do not test result.
 			}
 
-			$head[$h][0] = DOL_URL_ROOT.'/societe/notify/card.php?socid='.urlencode((string) ($object->id));
+			$head[$h][0] = DOL_URL_ROOT . '/societe/notify/card.php?socid=' . urlencode((string) ($object->id));
 			$head[$h][1] = $langs->trans("Notifications");
 			if ($nbNotif > 0) {
-				$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNotif.'</span>';
+				$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbNotif . '</span>';
 			}
 			$head[$h][2] = 'notify';
 			$h++;
@@ -411,10 +412,10 @@ function societe_prepare_head(Societe $object)
 		if (!empty($object->note_public)) {
 			$nbNote++;
 		}
-		$head[$h][0] = DOL_URL_ROOT.'/societe/note.php?id='.urlencode((string) ($object->id));
+		$head[$h][0] = DOL_URL_ROOT . '/societe/note.php?id=' . urlencode((string) ($object->id));
 		$head[$h][1] = $langs->trans("Notes");
 		if ($nbNote > 0) {
-			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbNote . '</span>';
 		}
 		$head[$h][2] = 'note';
 		$h++;
@@ -422,51 +423,51 @@ function societe_prepare_head(Societe $object)
 		// Attached files and Links
 		$totalAttached = 0;
 		// Enable caching of thirdrparty count attached files and links
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-		$cachekey = 'count_attached_thirdparty_'.$object->id;
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
+		$cachekey = 'count_attached_thirdparty_' . $object->id;
 		$dataretrieved = dol_getcache($cachekey);
 		if (!is_null($dataretrieved)) {
 			$totalAttached = $dataretrieved;
 		} else {
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-			$upload_dir = $conf->societe->multidir_output[$object->entity]."/".$object->id;
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+			require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
+			$upload_dir = $conf->societe->multidir_output[$object->entity] . "/" . $object->id;
 			$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 			$nbLinks = Link::count($db, $object->element, $object->id);
 			$totalAttached = $nbFiles + $nbLinks;
 			dol_setcache($cachekey, $totalAttached, 120);		// If setting cache fails, this is not a problem, so we do not test result.
 		}
 
-		$head[$h][0] = DOL_URL_ROOT.'/societe/document.php?socid='.$object->id;
+		$head[$h][0] = DOL_URL_ROOT . '/societe/document.php?socid=' . $object->id;
 		$head[$h][1] = $langs->trans("Documents");
 		if (($totalAttached) > 0) {
-			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.($totalAttached).'</span>';
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . ($totalAttached) . '</span>';
 		}
 		$head[$h][2] = 'document';
 		$h++;
 	}
 
-	$head[$h][0] = DOL_URL_ROOT.'/societe/messaging.php?socid='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT . '/societe/messaging.php?socid=' . $object->id;
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$nbEvent = 0;
 		// Enable caching of thirdparty count actioncomm
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/memory.lib.php';
-		$cachekey = 'count_events_thirdparty_'.$object->id;
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
+		$cachekey = 'count_events_thirdparty_' . $object->id;
 		$dataretrieved = dol_getcache($cachekey);
 		if (!is_null($dataretrieved)) {
 			$nbEvent = $dataretrieved;
 		} else {
 			$sql = "SELECT COUNT(id) as nb";
-			$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm";
-			$sql .= " WHERE fk_soc = ".((int) $object->id);
-			$sql .= " AND entity IN (".getEntity('agenda').")";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "actioncomm";
+			$sql .= " WHERE fk_soc = " . ((int) $object->id);
+			$sql .= " AND entity IN (" . getEntity('agenda') . ")";
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);
 				$nbEvent = $obj->nb;
 			} else {
-				dol_syslog('Failed to count actioncomm '.$db->lasterror(), LOG_ERR);
+				dol_syslog('Failed to count actioncomm ' . $db->lasterror(), LOG_ERR);
 			}
 			dol_setcache($cachekey, $nbEvent, 120);		// If setting cache fails, this is not a problem, so we do not test result.
 		}
@@ -474,7 +475,7 @@ function societe_prepare_head(Societe $object)
 		$head[$h][1] .= '/';
 		$head[$h][1] .= $langs->trans("Agenda");
 		if ($nbEvent > 0) {
-			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbEvent.'</span>';
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbEvent . '</span>';
 		}
 	}
 	$head[$h][2] = 'agenda';
@@ -504,12 +505,12 @@ function societe_prepare_head2($object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/societe/card.php?socid='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT . '/societe/card.php?socid=' . $object->id;
 	$head[$h][1] = $langs->trans("ThirdParty");
 	$head[$h][2] = 'company';
 	$h++;
 
-	$head[$h][0] = 'commerciaux.php?socid='.$object->id;
+	$head[$h][0] = 'commerciaux.php?socid=' . $object->id;
 	$head[$h][1] = $langs->trans("SalesRepresentative");
 	$head[$h][2] = 'salesrepresentative';
 	$h++;
@@ -535,7 +536,7 @@ function societe_admin_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/societe/admin/societe.php';
+	$head[$h][0] = DOL_URL_ROOT . '/societe/admin/societe.php';
 	$head[$h][1] = $langs->trans("Miscellaneous");
 	$head[$h][2] = 'general';
 	$h++;
@@ -546,20 +547,20 @@ function societe_admin_prepare_head()
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'company_admin');
 
-	$head[$h][0] = DOL_URL_ROOT.'/societe/admin/societe_extrafields.php';
+	$head[$h][0] = DOL_URL_ROOT . '/societe/admin/societe_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsThirdParties");
 	$nbExtrafields = $extrafields->attributes['societe']['count'];
 	if ($nbExtrafields > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbExtrafields . '</span>';
 	}
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/societe/admin/contact_extrafields.php';
+	$head[$h][0] = DOL_URL_ROOT . '/societe/admin/contact_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsContacts");
 	$nbExtrafields = $extrafields->attributes['socpeople']['count'];
 	if ($nbExtrafields > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbExtrafields . '</span>';
 	}
 	$head[$h][2] = 'attributes_contacts';
 	$h++;
@@ -607,13 +608,13 @@ function getCountry($searchkey, $withcode = '', $dbtouse = null, $outputlangs = 
 		$outputlangs = $langs;
 	}
 
-	$sql = "SELECT rowid, code, label FROM ".MAIN_DB_PREFIX."c_country";
+	$sql = "SELECT rowid, code, label FROM " . MAIN_DB_PREFIX . "c_country";
 	if (is_numeric($searchkey)) {
-		$sql .= " WHERE rowid = ".((int) $searchkey);
+		$sql .= " WHERE rowid = " . ((int) $searchkey);
 	} elseif (!empty($searchkey)) {
-		$sql .= " WHERE code = '".$db->escape($searchkey)."'";
+		$sql .= " WHERE code = '" . $db->escape($searchkey) . "'";
 	} else {
-		$sql .= " WHERE label = '".$db->escape($searchlabel)."'";
+		$sql .= " WHERE label = '" . $db->escape($searchlabel) . "'";
 	}
 
 	$resql = $dbtouse->query($sql);
@@ -624,9 +625,9 @@ function getCountry($searchkey, $withcode = '', $dbtouse = null, $outputlangs = 
 			if (is_object($outputlangs)) {
 				$outputlangs->load("dict");
 				if ($entconv) {
-					$label = ($obj->code && ($outputlangs->trans("Country".$obj->code) != "Country".$obj->code)) ? $outputlangs->trans("Country".$obj->code) : $label;
+					$label = ($obj->code && ($outputlangs->trans("Country" . $obj->code) != "Country" . $obj->code)) ? $outputlangs->trans("Country" . $obj->code) : $label;
 				} else {
-					$label = ($obj->code && ($outputlangs->transnoentitiesnoconv("Country".$obj->code) != "Country".$obj->code)) ? $outputlangs->transnoentitiesnoconv("Country".$obj->code) : $label;
+					$label = ($obj->code && ($outputlangs->transnoentitiesnoconv("Country" . $obj->code) != "Country" . $obj->code)) ? $outputlangs->transnoentitiesnoconv("Country" . $obj->code) : $label;
 				}
 			}
 			if ($withcode == '1') {
@@ -675,8 +676,8 @@ function getState($id, $withcode = '0', $dbtouse = null, $withregion = 0, $outpu
 	}
 
 	$sql = "SELECT d.rowid as id, d.code_departement as code, d.nom as name, d.active, c.label as country, c.code as country_code, r.code_region as region_code, r.nom as region_name FROM";
-	$sql .= " ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_country as c";
-	$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid and d.rowid=".((int) $id);
+	$sql .= " " . MAIN_DB_PREFIX . "c_departements as d, " . MAIN_DB_PREFIX . "c_regions as r," . MAIN_DB_PREFIX . "c_country as c";
+	$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid and d.rowid=" . ((int) $id);
 	$sql .= " AND d.active = 1 AND r.active = 1 AND c.active = 1";
 	$sql .= " ORDER BY c.code, d.code_departement";
 
@@ -689,21 +690,21 @@ function getState($id, $withcode = '0', $dbtouse = null, $withregion = 0, $outpu
 			if (is_object($outputlangs)) {
 				$outputlangs->load("dict");
 				if ($entconv) {
-					$label = ($obj->code && ($outputlangs->trans("State".$obj->code) != "State".$obj->code)) ? $outputlangs->trans("State".$obj->code) : $label;
+					$label = ($obj->code && ($outputlangs->trans("State" . $obj->code) != "State" . $obj->code)) ? $outputlangs->trans("State" . $obj->code) : $label;
 				} else {
-					$label = ($obj->code && ($outputlangs->transnoentitiesnoconv("State".$obj->code) != "State".$obj->code)) ? $outputlangs->transnoentitiesnoconv("State".$obj->code) : $label;
+					$label = ($obj->code && ($outputlangs->transnoentitiesnoconv("State" . $obj->code) != "State" . $obj->code)) ? $outputlangs->transnoentitiesnoconv("State" . $obj->code) : $label;
 				}
 			}
 
 			if ($withcode == 1) {
 				if ($withregion == 1) {
-					return $label = $obj->region_name.' - '.$obj->code.' - '.($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
+					return $label = $obj->region_name . ' - ' . $obj->code . ' - ' . ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
 				} else {
-					return $label = $obj->code.' - '.($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
+					return $label = $obj->code . ' - ' . ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
 				}
 			} elseif ($withcode == 2) {
 				if ($withregion == 1) {
-					return $label = $obj->region_name.' - '.($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
+					return $label = $obj->region_name . ' - ' . ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
 				} else {
 					return $label = ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
 				}
@@ -715,7 +716,7 @@ function getState($id, $withcode = '0', $dbtouse = null, $withregion = 0, $outpu
 				}
 			} else {
 				if ($withregion == 1) {
-					return $label = $obj->region_name.' - '.$label;
+					return $label = $obj->region_name . ' - ' . $label;
 				} else {
 					return $label;
 				}
@@ -749,13 +750,13 @@ function currency_name($code_iso, $withcode = 0, $outputlangs = null)
 	$outputlangs->load("dict");
 
 	// If there is a translation, we can send immediately the label
-	if ($outputlangs->trans("Currency".$code_iso) != "Currency".$code_iso) {
-		return ($withcode ? $code_iso.' - ' : '').$outputlangs->trans("Currency".$code_iso);
+	if ($outputlangs->trans("Currency" . $code_iso) != "Currency" . $code_iso) {
+		return ($withcode ? $code_iso . ' - ' : '') . $outputlangs->trans("Currency" . $code_iso);
 	}
 
 	// If no translation, we read table to get label by default
-	$sql = "SELECT label FROM ".MAIN_DB_PREFIX."c_currencies";
-	$sql .= " WHERE code_iso='".$db->escape($code_iso)."'";
+	$sql = "SELECT label FROM " . MAIN_DB_PREFIX . "c_currencies";
+	$sql .= " WHERE code_iso='" . $db->escape($code_iso) . "'";
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -791,12 +792,12 @@ function getFormeJuridiqueLabel($code)
 		return '';
 	}
 
-	if (!empty($conf->cache["legalform_".$langs->defaultlang.'_'.$code])) {
-		return $conf->cache["legalform_".$langs->defaultlang.'_'.$code];
+	if (!empty($conf->cache["legalform_" . $langs->defaultlang . '_' . $code])) {
+		return $conf->cache["legalform_" . $langs->defaultlang . '_' . $code];
 	}
 
-	$sql = "SELECT libelle as label FROM ".MAIN_DB_PREFIX."c_forme_juridique";
-	$sql .= " WHERE code = '".$db->escape($code)."'";
+	$sql = "SELECT libelle as label FROM " . MAIN_DB_PREFIX . "c_forme_juridique";
+	$sql .= " WHERE code = '" . $db->escape($code) . "'";
 
 	dol_syslog("Company.lib::getFormeJuridiqueLabel", LOG_DEBUG);
 
@@ -808,14 +809,14 @@ function getFormeJuridiqueLabel($code)
 
 			$label = ($obj->label != '-' ? $obj->label : '');
 
-			$conf->cache["legalform_".$langs->defaultlang.'_'.$code] = $label;
+			$conf->cache["legalform_" . $langs->defaultlang . '_' . $code] = $label;
 
 			return $langs->trans($label);
 		} else {
 			return $langs->trans("NotDefined");
 		}
 	} else {
-		return 'Error '.$db->lasterror();
+		return 'Error ' . $db->lasterror();
 	}
 }
 
@@ -837,7 +838,7 @@ function getCountriesInEEC()
 		// Use of cache to reduce number of database requests
 		$country_code_in_EEC = $conf->cache['country_code_in_EEC'];
 	} else {
-		$sql = "SELECT cc.code FROM ".MAIN_DB_PREFIX."c_country as cc";
+		$sql = "SELECT cc.code FROM " . MAIN_DB_PREFIX . "c_country as cc";
 		$sql .= " WHERE cc.eec = 1";
 
 		$resql = $db->query($sql);
@@ -892,7 +893,7 @@ function getCountriesInSEPA()
 		// Use of cache to reduce number of database requests
 		$country_code_in_SEPA = $conf->cache['country_code_in_SEPA'];
 	} else {
-		$sql = "SELECT cc.code FROM ".MAIN_DB_PREFIX."c_country as cc";
+		$sql = "SELECT cc.code FROM " . MAIN_DB_PREFIX . "c_country as cc";
 		$sql .= " WHERE cc.sepa = 1";
 
 		$resql = $db->query($sql);
@@ -954,21 +955,21 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 
 		$newcardbutton = '';
 		if (isModEnabled('project') && $user->hasRight('projet', 'creer') && empty($nocreatelink)) {
-			$newcardbutton .= dolGetButtonTitle($langs->trans('AddProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&action=create&backtopage='.urlencode($backtopage));
+			$newcardbutton .= dolGetButtonTitle($langs->trans('AddProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT . '/projet/card.php?socid=' . $object->id . '&action=create&backtopage=' . urlencode($backtopage));
 		}
 
 		print "\n";
-		print load_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"), $newcardbutton.$morehtmlright, '');
+		print load_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"), $newcardbutton . $morehtmlright, '');
 
-		print '<div class="div-table-responsive">'."\n";
+		print '<div class="div-table-responsive">' . "\n";
 		print '<table class="noborder centpercent">';
 
 		$sql  = "SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_modification, p.budget_amount";
 		$sql .= ", cls.code as opp_status_code";
-		$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = cls.rowid";
-		$sql .= " WHERE p.fk_soc = ".((int) $object->id);
-		$sql .= " AND p.entity IN (".getEntity('project').")";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "projet as p";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_lead_status as cls on p.fk_opp_status = cls.rowid";
+		$sql .= " WHERE p.fk_soc = " . ((int) $object->id);
+		$sql .= " AND p.entity IN (" . getEntity('project') . ")";
 		$sql .= " ORDER BY p.dateo DESC";
 
 		$result = $db->query($sql);
@@ -982,14 +983,14 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 				print $selectedfields;
 				print '</td>';
 			}
-			print '<td>'.$langs->trans("Ref").'</td>';
-			print '<td>'.$langs->trans("Name").'</td>';
-			print '<td class="center">'.$langs->trans("DateStart").'</td>';
-			print '<td class="center">'.$langs->trans("DateEnd").'</td>';
-			print '<td class="right">'.$langs->trans("OpportunityAmountShort").'</td>';
-			print '<td class="center">'.$langs->trans("OpportunityStatusShort").'</td>';
-			print '<td class="right">'.$langs->trans("OpportunityProbabilityShort").'</td>';
-			print '<td class="right">'.$langs->trans("Status").'</td>';
+			print '<td>' . $langs->trans("Ref") . '</td>';
+			print '<td>' . $langs->trans("Name") . '</td>';
+			print '<td class="center">' . $langs->trans("DateStart") . '</td>';
+			print '<td class="center">' . $langs->trans("DateEnd") . '</td>';
+			print '<td class="right">' . $langs->trans("OpportunityAmountShort") . '</td>';
+			print '<td class="center">' . $langs->trans("OpportunityStatusShort") . '</td>';
+			print '<td class="right">' . $langs->trans("OpportunityProbabilityShort") . '</td>';
+			print '<td class="right">' . $langs->trans("Status") . '</td>';
 			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 				print '<td class="center">';
 				$selectedfields = (is_array($arrayofmassactions) && count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
@@ -999,7 +1000,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 			print '</tr>';
 
 			if ($num > 0) {
-				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+				require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 
 				$projecttmp = new Project($db);
 
@@ -1022,41 +1023,41 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 								if (in_array($obj->id, $arrayofselected)) {
 									$selected = 1;
 								}
-								print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
+								print '<input id="cb' . $obj->id . '" class="flat checkforselect" type="checkbox" name="toselect[]" value="' . $obj->id . '"' . ($selected ? ' checked="checked"' : '') . '>';
 							}
 							print '</td>';
 						}
 						// Ref
 						print '<td class="nowraponall">';
-						print $projecttmp->getNomUrl(1, '', 0, '', '-', 0, 1, '', 'project:'.$_SERVER["PHP_SELF"].'?socid=__SOCID__');
+						print $projecttmp->getNomUrl(1, '', 0, '', '-', 0, 1, '', 'project:' . $_SERVER["PHP_SELF"] . '?socid=__SOCID__');
 						print '</td>';
 
 						// Label
-						print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->title).'">'.dol_escape_htmltag($obj->title).'</td>';
+						print '<td class="tdoverflowmax200" title="' . dol_escape_htmltag($obj->title) . '">' . dol_escape_htmltag($obj->title) . '</td>';
 						// Date start
-						print '<td class="center">'.dol_print_date($db->jdate($obj->do), "day").'</td>';
+						print '<td class="center">' . dol_print_date($db->jdate($obj->do), "day") . '</td>';
 						// Date end
-						print '<td class="center">'.dol_print_date($db->jdate($obj->de), "day").'</td>';
+						print '<td class="center">' . dol_print_date($db->jdate($obj->de), "day") . '</td>';
 						// Opp amount
 						print '<td class="right">';
 						if ($obj->opp_status_code) {
-							print '<span class="amount">'.price($obj->opp_amount, 1, '', 1, -1, -1, '').'</span>';
+							print '<span class="amount">' . price($obj->opp_amount, 1, '', 1, -1, -1, '') . '</span>';
 						}
 						print '</td>';
 						// Opp status
 						print '<td class="center">';
 						if ($obj->opp_status_code) {
-							print $langs->trans("OppStatus".$obj->opp_status_code);
+							print $langs->trans("OppStatus" . $obj->opp_status_code);
 						}
 						print '</td>';
 						// Opp percent
 						print '<td class="right">';
 						if ($obj->opp_percent) {
-							print price($obj->opp_percent, 1, '', 1, 0).'%';
+							print price($obj->opp_percent, 1, '', 1, 0) . '%';
 						}
 						print '</td>';
 						// Status
-						print '<td class="right">'.$projecttmp->getLibStatut(5).'</td>';
+						print '<td class="right">' . $projecttmp->getLibStatut(5) . '</td>';
 
 						// Action column
 						if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -1066,7 +1067,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 								if (in_array($obj->id, $arrayofselected)) {
 									$selected = 1;
 								}
-								print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
+								print '<input id="cb' . $obj->id . '" class="flat checkforselect" type="checkbox" name="toselect[]" value="' . $obj->id . '"' . ($selected ? ' checked="checked"' : '') . '>';
 							}
 							print '</td>';
 						}
@@ -1075,7 +1076,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 					$i++;
 				}
 			} else {
-				print '<tr class="oddeven"><td colspan="9"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+				print '<tr class="oddeven"><td colspan="9"><span class="opacitymedium">' . $langs->trans("None") . '</span></td></tr>';
 			}
 			$db->free($result);
 		} else {
@@ -1088,18 +1089,18 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 			print load_fiche_titre($langs->trans("ProjectsLinkedToThisThirdParty"), '', '');
 
 
-			print '<div class="div-table-responsive">'."\n";
+			print '<div class="div-table-responsive">' . "\n";
 			print '<table class="noborder centpercent">';
 
 			$sql  = "SELECT p.rowid as id, p.entity, p.title, p.ref, p.public, p.dateo as do, p.datee as de, p.fk_statut as status, p.fk_opp_status, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount";
 			$sql .= ", cls.code as opp_status_code";
-			$sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = cls.rowid";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact as ec on p.rowid = ec.element_id";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sc on ec.fk_socpeople = sc.rowid";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact as tc on ec.fk_c_type_contact = tc.rowid";
-			$sql .= " WHERE sc.fk_soc = ".((int) $object->id);
-			$sql .= " AND p.entity IN (".getEntity('project').")";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "projet as p";
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_lead_status as cls on p.fk_opp_status = cls.rowid";
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "element_contact as ec on p.rowid = ec.element_id";
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "socpeople as sc on ec.fk_socpeople = sc.rowid";
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_type_contact as tc on ec.fk_c_type_contact = tc.rowid";
+			$sql .= " WHERE sc.fk_soc = " . ((int) $object->id);
+			$sql .= " AND p.entity IN (" . getEntity('project') . ")";
 			$sql .= " AND tc.element = 'project' AND tc.source = 'external'";
 			$sql .= " ORDER BY p.dateo DESC";
 
@@ -1108,18 +1109,18 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 				$num = $db->num_rows($result);
 
 				print '<tr class="liste_titre">';
-				print '<td>'.$langs->trans("Ref").'</td>';
-				print '<td>'.$langs->trans("Name").'</td>';
-				print '<td class="center">'.$langs->trans("DateStart").'</td>';
-				print '<td class="center">'.$langs->trans("DateEnd").'</td>';
-				print '<td class="right">'.$langs->trans("OpportunityAmountShort").'</td>';
-				print '<td class="center">'.$langs->trans("OpportunityStatusShort").'</td>';
-				print '<td class="right">'.$langs->trans("OpportunityProbabilityShort").'</td>';
-				print '<td class="right">'.$langs->trans("Status").'</td>';
+				print '<td>' . $langs->trans("Ref") . '</td>';
+				print '<td>' . $langs->trans("Name") . '</td>';
+				print '<td class="center">' . $langs->trans("DateStart") . '</td>';
+				print '<td class="center">' . $langs->trans("DateEnd") . '</td>';
+				print '<td class="right">' . $langs->trans("OpportunityAmountShort") . '</td>';
+				print '<td class="center">' . $langs->trans("OpportunityStatusShort") . '</td>';
+				print '<td class="right">' . $langs->trans("OpportunityProbabilityShort") . '</td>';
+				print '<td class="right">' . $langs->trans("Status") . '</td>';
 				print '</tr>';
 
 				if ($num > 0) {
-					require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+					require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 
 					$projecttmp = new Project($db);
 
@@ -1137,42 +1138,42 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 
 							// Ref
 							print '<td class="nowraponall">';
-							print $projecttmp->getNomUrl(1, '', 0, '', '-', 0, 1, '', 'project:'.$_SERVER["PHP_SELF"].'?socid=__SOCID__');
+							print $projecttmp->getNomUrl(1, '', 0, '', '-', 0, 1, '', 'project:' . $_SERVER["PHP_SELF"] . '?socid=__SOCID__');
 							print '</td>';
 
 							// Label
-							print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->title).'">'.dol_escape_htmltag($obj->title).'</td>';
+							print '<td class="tdoverflowmax200" title="' . dol_escape_htmltag($obj->title) . '">' . dol_escape_htmltag($obj->title) . '</td>';
 							// Date start
-							print '<td class="center">'.dol_print_date($db->jdate($obj->do), "day").'</td>';
+							print '<td class="center">' . dol_print_date($db->jdate($obj->do), "day") . '</td>';
 							// Date end
-							print '<td class="center">'.dol_print_date($db->jdate($obj->de), "day").'</td>';
+							print '<td class="center">' . dol_print_date($db->jdate($obj->de), "day") . '</td>';
 							// Opp amount
 							print '<td class="right">';
 							if ($obj->opp_status_code) {
-								print '<span class="amount">'.price($obj->opp_amount, 1, '', 1, -1, -1, '').'</span>';
+								print '<span class="amount">' . price($obj->opp_amount, 1, '', 1, -1, -1, '') . '</span>';
 							}
 							print '</td>';
 							// Opp status
 							print '<td class="center">';
 							if ($obj->opp_status_code) {
-								print $langs->trans("OppStatus".$obj->opp_status_code);
+								print $langs->trans("OppStatus" . $obj->opp_status_code);
 							}
 							print '</td>';
 							// Opp percent
 							print '<td class="right">';
 							if ($obj->opp_percent) {
-								print price($obj->opp_percent, 1, '', 1, 0).'%';
+								print price($obj->opp_percent, 1, '', 1, 0) . '%';
 							}
 							print '</td>';
 							// Status
-							print '<td class="right">'.$projecttmp->getLibStatut(5).'</td>';
+							print '<td class="right">' . $projecttmp->getLibStatut(5) . '</td>';
 
 							print '</tr>';
 						}
 						$i++;
 					}
 				} else {
-					print '<tr class="oddeven"><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+					print '<tr class="oddeven"><td colspan="8"><span class="opacitymedium">' . $langs->trans("None") . '</span></td></tr>';
 				}
 				$db->free($result);
 			} else {
@@ -1210,7 +1211,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	global $user, $conf, $extrafields, $hookmanager;
 	global $contextpage;
 
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 	$formcompany = new FormCompany($db);
 	$form = new Form($db);
 
@@ -1295,7 +1296,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		't.rowid' => array('label' => "TechnicalID", 'checked' => (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') ? '1' : '0'), 'enabled' => (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') ? '1' : '0'), 'position' => 1),
 		't.name' => array('label' => "Name", 'checked' => '1', 'position' => 10),
 		't.poste' => array('label' => "PostOrFunction", 'checked' => '1', 'position' => 20),
-		't.address' => array('label' => (empty($conf->dol_optimize_smallscreen) ? $langs->trans("Address").' / '.$langs->trans("Phone").' / '.$langs->trans("Email") : $langs->trans("Address")), 'checked' => '1', 'position' => 30),
+		't.address' => array('label' => (empty($conf->dol_optimize_smallscreen) ? $langs->trans("Address") . ' / ' . $langs->trans("Phone") . ' / ' . $langs->trans("Email") : $langs->trans("Address")), 'checked' => '1', 'position' => 30),
 		't.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'position' => 35),
 		'sc.role' => array('label' => "ContactByDefaultFor", 'checked' => '1', 'position' => 40),
 		't.birthday' => array('label' => "Birthday", 'checked' => '0', 'position' => 45),
@@ -1306,12 +1307,12 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$extrafieldsobjectkey = $contactstatic->table_element;
 	$extrafieldsobjectprefix = 'ef.';
 	$extrafieldspositionoffset = 1000;
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_array_fields.tpl.php';
 
 	// Initialize array of search criteria
 	$search = array();
 	foreach ($arrayfields as $key => $val) {
-		$queryName = 'search_'.substr($key, 2);
+		$queryName = 'search_' . substr($key, 2);
 		if (GETPOST($queryName, 'alpha')) {
 			$search[substr($key, 2)] = GETPOST($queryName, 'alpha');
 		}
@@ -1346,7 +1347,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	if (empty($reshook)) {
 		if ($user->hasRight('societe', 'contact', 'creer')) {
 			$addcontact = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
-			$newcardbutton .= dolGetButtonTitle($addcontact, '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&action=create&backtopage='.urlencode($backtopage));
+			$newcardbutton .= dolGetButtonTitle($addcontact, '', 'fa fa-plus-circle', DOL_URL_ROOT . '/contact/card.php?socid=' . $object->id . '&action=create&backtopage=' . urlencode($backtopage));
 		}
 	} else {
 		$newcardbutton = $hookmanager->resPrint;
@@ -1357,13 +1358,13 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("ContactsForCompany") : $langs->trans("ContactsAddressesForCompany"));
 	print load_fiche_titre($title, $newcardbutton, 'contact');
 
-	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<form method="POST" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '" name="formfilter">';
+	print '<input type="hidden" name="token" value="' . newToken() . '">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-	print '<input type="hidden" name="socid" value="'.$object->id.'">';
-	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
+	print '<input type="hidden" name="socid" value="' . $object->id . '">';
+	print '<input type="hidden" name="sortorder" value="' . $sortorder . '">';
+	print '<input type="hidden" name="sortfield" value="' . $sortfield . '">';
+	print '<input type="hidden" name="page" value="' . $page . '">';
 
 	$arrayofmassactions = array();
 	$mode = 'view';
@@ -1374,58 +1375,58 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-	print "\n".'<table class="tagtable liste noborder">'."\n";
+	print "\n" . '<table class="tagtable liste noborder">' . "\n";
 
-	$param = "socid=".urlencode((string) ($object->id));
+	$param = "socid=" . urlencode((string) ($object->id));
 	if ($search_rowid != '') {
-		$param .= '&search_rowid='.urlencode((string) ($search_rowid));
+		$param .= '&search_rowid=' . urlencode((string) ($search_rowid));
 	}
 	if ($search_status != '') {
-		$param .= '&search_status='.urlencode((string) ($search_status));
+		$param .= '&search_status=' . urlencode((string) ($search_status));
 	}
 	if (count($search_roles) > 0) {
 		$param .= implode('&search_roles[]=', $search_roles);
 	}
 	if ($search_name != '') {
-		$param .= '&search_name='.urlencode($search_name);
+		$param .= '&search_name=' . urlencode($search_name);
 	}
 	if ($search_poste != '') {
-		$param .= '&search_poste='.urlencode($search_poste);
+		$param .= '&search_poste=' . urlencode($search_poste);
 	}
 	if ($search_address != '') {
-		$param .= '&search_address='.urlencode($search_address);
+		$param .= '&search_address=' . urlencode($search_address);
 	}
 	if ($search_note_private != '') {
-		$param .= '&search_note_private='.urlencode($search_note_private);
+		$param .= '&search_note_private=' . urlencode($search_note_private);
 	}
 	if ($search_birthday_dtstart != '') {
-		$param .= '&search_birthday_dtstart='.urlencode((string) $search_birthday_dtstart);
+		$param .= '&search_birthday_dtstart=' . urlencode((string) $search_birthday_dtstart);
 	}
 	if ($search_birthday_dtend != '') {
-		$param .= '&search_birthday_dtend='.urlencode((string) $search_birthday_dtend);
+		$param .= '&search_birthday_dtend=' . urlencode((string) $search_birthday_dtend);
 	}
 	if ($optioncss != '') {
-		$param .= '&optioncss='.urlencode($optioncss);
+		$param .= '&optioncss=' . urlencode($optioncss);
 	}
 
 	// Add $param from extra fields
 	$extrafieldsobjectkey = $contactstatic->table_element;
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_search_param.tpl.php';
 
 	$sql = "SELECT t.rowid, t.entity, t.lastname, t.firstname, t.fk_pays as country_id, t.civility, t.poste,";
 	$sql .= " t.phone as phone_pro, t.phone_mobile, t.phone_perso, t.fax, t.email, t.socialnetworks, t.statut, t.photo, t.fk_soc,";
 	$sql .= " t.civility as civility_id, t.address, t.zip, t.town, t.birthday,";
 	$sql .= " t.note_private";
-	$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as ef on (t.rowid = ef.fk_object)";
-	$sql .= " WHERE t.fk_soc = ".((int) $object->id);
-	$sql .= " AND t.entity IN (" .getEntity('socpeople') .")";
-	$sql .= " AND ((t.fk_user_creat = ".((int) $user->id)." AND t.priv = 1) OR t.priv = 0)";
+	$sql .= " FROM " . MAIN_DB_PREFIX . "socpeople as t";
+	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "socpeople_extrafields as ef on (t.rowid = ef.fk_object)";
+	$sql .= " WHERE t.fk_soc = " . ((int) $object->id);
+	$sql .= " AND t.entity IN (" . getEntity('socpeople') . ")";
+	$sql .= " AND ((t.fk_user_creat = " . ((int) $user->id) . " AND t.priv = 1) OR t.priv = 0)";
 	if ($search_rowid) {
 		$sql .= natural_search('t.rowid', $search_rowid);
 	}
 	if ($search_status != '' && $search_status != '-1') {
-		$sql .= " AND t.statut = ".((int) $search_status);
+		$sql .= " AND t.statut = " . ((int) $search_status);
 	}
 	if ($search_name) {
 		$sql .= natural_search(array('t.lastname', 't.firstname'), $search_name);
@@ -1440,17 +1441,17 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		$sql .= natural_search('t.note_private', $search_note_private);
 	}
 	if ($search_birthday_dtstart != '') {
-		$sql .= " AND t.birthday >= '".$db->idate($search_birthday_dtstart)."'";
+		$sql .= " AND t.birthday >= '" . $db->idate($search_birthday_dtstart) . "'";
 	}
 	if ($search_birthday_dtend != '') {
-		$sql .= " AND t.birthday <= '".$db->idate($search_birthday_dtend)."'";
+		$sql .= " AND t.birthday <= '" . $db->idate($search_birthday_dtend) . "'";
 	}
 	if (count($search_roles) > 0) {
-		$sql .= " AND t.rowid IN (SELECT sc.fk_socpeople FROM ".MAIN_DB_PREFIX."societe_contacts as sc WHERE sc.fk_c_type_contact IN (".$db->sanitize(implode(',', $search_roles))."))";
+		$sql .= " AND t.rowid IN (SELECT sc.fk_socpeople FROM " . MAIN_DB_PREFIX . "societe_contacts as sc WHERE sc.fk_c_type_contact IN (" . $db->sanitize(implode(',', $search_roles)) . "))";
 	}
 	// Add where from extra fields
 	$extrafieldsobjectkey = $contactstatic->table_element;
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_search_sql.tpl.php';
 	// Add where from hooks
 	$parameters = array('socid' => $object->id);
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -1481,16 +1482,16 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	foreach ($contactstatic->fields as $key => $val) {
 		$align = '';
 		if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
-			$align .= ($align ? ' ' : '').'center';
+			$align .= ($align ? ' ' : '') . 'center';
 		}
 		if (in_array($val['type'], array('timestamp'))) {
-			$align .= ($align ? ' ' : '').'nowrap';
+			$align .= ($align ? ' ' : '') . 'nowrap';
 		}
 		if ($key == 'status' || $key == 'statut') {
-			$align .= ($align ? ' ' : '').'center';
+			$align .= ($align ? ' ' : '') . 'center';
 		}
-		if (!empty($arrayfields['t.'.$key]['checked']) || !empty($arrayfields['sc.'.$key]['checked'])) {
-			print '<td class="liste_titre'.($align ? ' '.$align : '').'">';
+		if (!empty($arrayfields['t.' . $key]['checked']) || !empty($arrayfields['sc.' . $key]['checked'])) {
+			print '<td class="liste_titre' . ($align ? ' ' . $align : '') . '">';
 			if (in_array($key, array('statut'))) {
 				print $form->selectarray('search_status', array('-1' => '', '0' => $contactstatic->LibStatut(0, 1), '1' => $contactstatic->LibStatut(1, 1)), $search_status, 0, 0, 0, '', 0, 0, 0, '', 'onrightofpage');
 			} elseif (in_array($key, array('role'))) {
@@ -1503,7 +1504,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 				print $form->selectDate($search_birthday_dtend ? $search_birthday_dtend : '', "search_birthday_dtend", 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
 				print '</div>';
 			} else {
-				print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.(!empty($search[$key]) ? dol_escape_htmltag($search[$key]) : '').'">';
+				print '<input type="text" class="flat maxwidth75" name="search_' . $key . '" value="' . (!empty($search[$key]) ? dol_escape_htmltag($search[$key]) : '') . '">';
 			}
 			print '</td>';
 		}
@@ -1513,7 +1514,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	}
 	// Extra fields
 	$extrafieldsobjectkey = $contactstatic->table_element;
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_search_input.tpl.php';
 
 	// Fields from hook
 	$parameters = array('arrayfields' => $arrayfields);
@@ -1525,7 +1526,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		print $form->showFilterButtons();
 		print '</td>';
 	}
-	print '</tr>'."\n";
+	print '</tr>' . "\n";
 
 
 	// Fields title label
@@ -1533,44 +1534,44 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	print '<tr class="liste_titre">';
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ')."\n";
+		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ') . "\n";
 	}
 	foreach ($contactstatic->fields as $key => $val) {
 		$align = '';
 		if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) {
-			$align .= ($align ? ' ' : '').'center';
+			$align .= ($align ? ' ' : '') . 'center';
 		}
 		if (in_array($val['type'], array('timestamp'))) {
-			$align .= ($align ? ' ' : '').'nowrap';
+			$align .= ($align ? ' ' : '') . 'nowrap';
 		}
 		if ($key == 'status' || $key == 'statut') {
-			$align .= ($align ? ' ' : '').'center';
+			$align .= ($align ? ' ' : '') . 'center';
 		}
-		if (!empty($arrayfields['t.'.$key]['checked'])) {
-			print getTitleFieldOfList($val['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($align ? 'class="'.$align.'"' : ''), $sortfield, $sortorder, $align.' ')."\n";
+		if (!empty($arrayfields['t.' . $key]['checked'])) {
+			print getTitleFieldOfList($val['label'], 0, $_SERVER['PHP_SELF'], 't.' . $key, '', $param, ($align ? 'class="' . $align . '"' : ''), $sortfield, $sortorder, $align . ' ') . "\n";
 		}
 		if ($key == 'role') {
-			$align .= ($align ? ' ' : '').'left';
+			$align .= ($align ? ' ' : '') . 'left';
 		}
-		if (!empty($arrayfields['sc.'.$key]['checked'])) {
-			print getTitleFieldOfList($arrayfields['sc.'.$key]['label'], 0, $_SERVER['PHP_SELF'], '', '', $param, ($align ? 'class="'.$align.'"' : ''), $sortfield, $sortorder, $align.' ')."\n";
+		if (!empty($arrayfields['sc.' . $key]['checked'])) {
+			print getTitleFieldOfList($arrayfields['sc.' . $key]['label'], 0, $_SERVER['PHP_SELF'], '', '', $param, ($align ? 'class="' . $align . '"' : ''), $sortfield, $sortorder, $align . ' ') . "\n";
 		}
 	}
 	if ($showuserlogin) {
-		print '<th class="wrapcolumntitle liste_titre">'.$langs->trans("DolibarrLogin").'</th>';
+		print '<th class="wrapcolumntitle liste_titre">' . $langs->trans("DolibarrLogin") . '</th>';
 	}
 	// Extra fields
 	$extrafieldsobjectkey = $contactstatic->table_element;
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
 	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ')."\n";
+		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ') . "\n";
 	}
-	print '</tr>'."\n";
+	print '</tr>' . "\n";
 
 	$i = -1;
 
@@ -1625,21 +1626,21 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 				// Add to agenda
 				if (isModEnabled('agenda') && $user->hasRight('agenda', 'myactions', 'create')) {
-					print '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&actioncode=&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
+					print '<a href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&actioncode=&contactid=' . $obj->rowid . '&socid=' . $object->id . '&backtopage=' . urlencode($backtopage) . '">';
 					print img_object($langs->trans("Event"), "action");
 					print '</a> &nbsp; ';
 				}
 
 				// Edit
 				if ($user->hasRight('societe', 'contact', 'creer')) {
-					print '<a class="editfielda paddingleft" href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
+					print '<a class="editfielda paddingleft" href="' . DOL_URL_ROOT . '/contact/card.php?action=edit&token=' . newToken() . '&id=' . $obj->rowid . '&backtopage=' . urlencode($backtopage) . '">';
 					print img_edit();
 					print '</a>';
 				}
 
 				// Delete
 				if ($user->hasRight('societe', 'contact', 'delete')) {
-					print '<a class="marginleftonly right" href="'.DOL_URL_ROOT.'/societe/contact.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
+					print '<a class="marginleftonly right" href="' . DOL_URL_ROOT . '/societe/contact.php?action=delete&token=' . newToken() . '&id=' . $obj->rowid . '&socid=' . $object->id . '&backtopage=' . urlencode($backtopage) . '">';
 					print img_delete();
 					print '</a>';
 				}
@@ -1658,13 +1659,13 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			if (!empty($arrayfields['t.name']['checked'])) {
 				print '<td class="tdoverflowmax150">';
 				print $form->showphoto('contact', $contactstatic, 0, 0, 0, 'photorefnoborder valignmiddle marginrightonly', 'small', 1, 0, 'user');
-				print $contactstatic->getNomUrl(0, '', 0, '&backtopage='.urlencode($backtopage));
+				print $contactstatic->getNomUrl(0, '', 0, '&backtopage=' . urlencode($backtopage));
 				print '</td>';
 			}
 
 			// Job position
 			if (!empty($arrayfields['t.poste']['checked'])) {
-				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->poste).'">';
+				print '<td class="tdoverflowmax100" title="' . dol_escape_htmltag($obj->poste) . '">';
 				if ($obj->poste) {
 					print dol_escape_htmltag($obj->poste);
 				}
@@ -1674,7 +1675,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 			// Address - Phone - Email
 			if (!empty($arrayfields['t.address']['checked'])) {
 				$addresstoshow = $contactstatic->getBannerAddress('contact', $object);
-				print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($addresstoshow).'">';
+				print '<td class="tdoverflowmax150" title="' . dolPrintHTMLForAttribute($addresstoshow) . '">';
 				print $addresstoshow;
 				print '</td>';
 			}
@@ -1702,7 +1703,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 			// Status
 			if (!empty($arrayfields['t.statut']['checked'])) {
-				print '<td class="center">'.$contactstatic->getLibStatut(5).'</td>';
+				print '<td class="center">' . $contactstatic->getLibStatut(5) . '</td>';
 			}
 
 			if ($showuserlogin) {
@@ -1718,7 +1719,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 			// Extra fields
 			$extrafieldsobjectkey = $contactstatic->table_element;
-			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
+			include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_print_fields.tpl.php';
 
 			// Actions
 			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -1726,21 +1727,21 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 				// Add to agenda
 				if (isModEnabled('agenda') && $user->hasRight('agenda', 'myactions', 'create')) {
-					print '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&actioncode=&contactid='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
+					print '<a href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&actioncode=&contactid=' . $obj->rowid . '&socid=' . $object->id . '&backtopage=' . urlencode($backtopage) . '">';
 					print img_object($langs->trans("Event"), "action");
 					print '</a> &nbsp; ';
 				}
 
 				// Edit
 				if ($user->hasRight('societe', 'contact', 'creer')) {
-					print '<a class="editfielda paddingleft" href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
+					print '<a class="editfielda paddingleft" href="' . DOL_URL_ROOT . '/contact/card.php?action=edit&token=' . newToken() . '&id=' . $obj->rowid . '&backtopage=' . urlencode($backtopage) . '">';
 					print img_edit();
 					print '</a>';
 				}
 
 				// Delete
 				if ($user->hasRight('societe', 'contact', 'delete')) {
-					print '<a class="marginleftonly right" href="'.DOL_URL_ROOT.'/societe/contact.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&socid='.$object->id.'&backtopage='.urlencode($backtopage).'">';
+					print '<a class="marginleftonly right" href="' . DOL_URL_ROOT . '/societe/contact.php?action=delete&token=' . newToken() . '&id=' . $obj->rowid . '&socid=' . $object->id . '&backtopage=' . urlencode($backtopage) . '">';
 					print img_delete();
 					print '</a>';
 				}
@@ -1759,7 +1760,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 					$colspan++;
 				}
 			}
-			print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+			print '<tr><td colspan="' . $colspan . '"><span class="opacitymedium">' . $langs->trans("NoRecordFound") . '</span></td></tr>';
 		}
 	} else {
 		$colspan = 1 + ($showuserlogin ? 1 : 0);
@@ -1768,12 +1769,12 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 				$colspan++;
 			}
 		}
-		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+		print '<tr><td colspan="' . $colspan . '"><span class="opacitymedium">' . $langs->trans("None") . '</span></td></tr>';
 	}
 	print "\n</table>\n";
 	print '</div>';
 
-	print '</form>'."\n";
+	print '</form>' . "\n";
 
 	return $i;
 }
@@ -1902,6 +1903,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			$sql .= ", o.ref";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 			$sql .= ", o.ref";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {  //MODIF PICHINOV MESSAGING
+			$sql .= ", s.ref";  //END MODIF
 		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && $filterobj->table_element && $filterobj->element) {
 			if (!empty($filterobj->fields['ref'])) {
 				$sql .= ", o.ref";
@@ -1917,11 +1920,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			$sql .= $hookmanager->resPrint;
 		}
 
-		$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "actioncomm as a";
 		// Link to the owner of action
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_action";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as u on u.rowid = a.fk_user_action";
 		// Link to action types
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON a.fk_action = c.id";
+		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_actioncomm as c ON a.fk_action = c.id";
 
 		// Set $force_filter_contact:
 		// - true for a filter on a user or a contact, so a link on table llx_actioncomm_resources or llx_actioncomm.fk_user_action
@@ -1941,115 +1944,126 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			$sql .= $hookmanager->resPrint;
 		}
 		if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur'))) {
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "socpeople as sp ON a.fk_contact = sp.rowid";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') {
-			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_resources as er";
+			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "element_resources as er";
 			$sql .= " ON er.resource_type = 'dolresource'";
 			$sql .= " AND er.element_id = a.id";
-			$sql .= " AND er.resource_id = ".((int) $filterobj->id);
+			$sql .= " AND er.resource_id = " . ((int) $filterobj->id);
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Project') {
 			/* Nothing */
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') {
-			$sql .= ", ".MAIN_DB_PREFIX."adherent as m";
+			$sql .= ", " . MAIN_DB_PREFIX . "adherent as m";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') {
-			$sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as o";
+			$sql .= ", " . MAIN_DB_PREFIX . "commande_fournisseur as o";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Product') {
-			$sql .= ", ".MAIN_DB_PREFIX."product as o";
+			$sql .= ", " . MAIN_DB_PREFIX . "product as o";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') {
-			$sql .= ", ".MAIN_DB_PREFIX."ticket as o";
+			$sql .= ", " . MAIN_DB_PREFIX . "ticket as o";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'BOM') {
-			$sql .= ", ".MAIN_DB_PREFIX."bom_bom as o";
+			$sql .= ", " . MAIN_DB_PREFIX . "bom_bom as o";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
-			$sql .= ", ".MAIN_DB_PREFIX."contrat as o";
-		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid'])
-		&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))  // @phan-suppress-current-line PhanTypeInvalidDimOffset
-		&& $filterobj->table_element && $filterobj->element) {
-			$sql .= ", ".MAIN_DB_PREFIX.$filterobj->table_element." as o";
+			$sql .= ", " . MAIN_DB_PREFIX . "contrat as o";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {  //MODIF PICHINOV MESSAGING
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "expedition as s ON a.fk_element = s.rowid AND a.elementtype = 'shipping'"; // Jointure sur la table des expéditions avec condition ON
+		} elseif ( //END MODIF
+			is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid'])
+			&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))  // @phan-suppress-current-line PhanTypeInvalidDimOffset
+			&& $filterobj->table_element && $filterobj->element
+		) {
+			$sql .= ", " . MAIN_DB_PREFIX . $filterobj->table_element . " as o";
 		}
 
-		$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
+		$sql .= " WHERE a.entity IN (" . getEntity('agenda') . ")";
 		if (!$force_filter_contact) {
 			if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')) && $filterobj->id) {
-				$sql .= " AND a.fk_soc = ".((int) $filterobj->id);
+				$sql .= " AND a.fk_soc = " . ((int) $filterobj->id);
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') {
 				/* Nothing */
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) {
-				$sql .= " AND a.fk_project = ".((int) $filterobj->id);
+				$sql .= " AND a.fk_project = " . ((int) $filterobj->id);
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') {
 				$sql .= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
+					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Commande') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'order'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
+					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
+					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Facture') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'invoice'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
+					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'FactureFournisseur') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'invoice_supplier'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
+					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Product') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'product'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
+					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'ticket'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
+					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'BOM') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'bom'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
+					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'contract'";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
+					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
-			} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid'])
-				&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))  // ref, titre, label do not exist on $fields - @phan-suppress-current-line PhanTypeInvalidDimOffset
-				&& $filterobj->table_element && $filterobj->element) {
-				// Generic case (if there is a $filterobj and a field rowid and (ref or label) exists.
-				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '".$db->escape($filterobj->element).($module ? "@".$module : "")."'";
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {  //MODIF PICHINOV MESSAGING
+				$sql .= " AND a.fk_element = s.rowid AND a.elementtype = 'shipping'"; //expedition filter
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
+					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
+				}
+			} elseif ( //END MODIF
+				is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid'])
+				&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))  // ref, titre, label do not exist on $fields - @phan-suppress-current-line PhanTypeInvalidDimOffset
+				&& $filterobj->table_element && $filterobj->element
+			) {
+				// Generic case (if there is a $filterobj and a field rowid and (ref or label) exists.
+				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '" . $db->escape($filterobj->element) . ($module ? "@" . $module : "") . "'";
+				if ($filterobj->id) {
+					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj)) {
 				return 'Bad value for $filterobj';
 			}
 		} else {
 			if (is_object($filterobj) && $filterobj->id > 0 && get_class($filterobj) == 'User') {
-				$sql .= " AND (u.rowid = ". ((int) $filterobj->id).' OR ';
-				$sql .= " EXISTS (SELECT r.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as r WHERE a.id = r.fk_actioncomm";
-				$sql .= " AND r.element_type = '".$db->escape($filterobj->table_element)."' AND r.fk_element = ".((int) $filterobj->id).')';
+				$sql .= " AND (u.rowid = " . ((int) $filterobj->id) . ' OR ';
+				$sql .= " EXISTS (SELECT r.rowid FROM " . MAIN_DB_PREFIX . "actioncomm_resources as r WHERE a.id = r.fk_actioncomm";
+				$sql .= " AND r.element_type = '" . $db->escape($filterobj->table_element) . "' AND r.fk_element = " . ((int) $filterobj->id) . ')';
 				$sql .= ")";
 			}
 			if (is_object($objcon) && $objcon->id > 0) {
-				$sql .= " AND EXISTS (SELECT r.rowid FROM ".MAIN_DB_PREFIX."actioncomm_resources as r WHERE a.id = r.fk_actioncomm";
-				$sql .= " AND r.element_type = '".$db->escape($objcon->table_element)."' AND r.fk_element = ".((int) $objcon->id).')';
+				$sql .= " AND EXISTS (SELECT r.rowid FROM " . MAIN_DB_PREFIX . "actioncomm_resources as r WHERE a.id = r.fk_actioncomm";
+				$sql .= " AND r.element_type = '" . $db->escape($objcon->table_element) . "' AND r.fk_element = " . ((int) $objcon->id) . ')';
 			}
 		}
 
 		if (!empty($tms_start) && !empty($tms_end)) {
-			$sql .= " AND ((a.datep BETWEEN '".$db->idate($tms_start)."' AND '".$db->idate($tms_end)."') OR (a.datep2 BETWEEN '".$db->idate($tms_start)."' AND '".$db->idate($tms_end)."'))";
+			$sql .= " AND ((a.datep BETWEEN '" . $db->idate($tms_start) . "' AND '" . $db->idate($tms_end) . "') OR (a.datep2 BETWEEN '" . $db->idate($tms_start) . "' AND '" . $db->idate($tms_end) . "'))";
 		} elseif (empty($tms_start) && !empty($tms_end)) {
-			$sql .= " AND ((a.datep <= '".$db->idate($tms_end)."') OR (a.datep2 <= '".$db->idate($tms_end)."'))";
+			$sql .= " AND ((a.datep <= '" . $db->idate($tms_end) . "') OR (a.datep2 <= '" . $db->idate($tms_end) . "'))";
 		} elseif (!empty($tms_start) && empty($tms_end)) {
-			$sql .= " AND ((a.datep >= '".$db->idate($tms_start)."') OR (a.datep2 >= '".$db->idate($tms_start)."'))";
+			$sql .= " AND ((a.datep >= '" . $db->idate($tms_start) . "') OR (a.datep2 >= '" . $db->idate($tms_start) . "'))";
 		}
 
 		if (is_array($actioncode) && !empty($actioncode)) {
@@ -2090,7 +2104,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				$sql2 = addMailingEventTypeSQL($code, $objcon, $filterobj);
 				if (!empty($sql2)) {
 					if (!empty($sql)) {
-						$sql = $sql." UNION ".$sql2;
+						$sql = $sql . " UNION " . $sql2;
 					} elseif (empty($sql)) {
 						$sql = $sql2;
 					}
@@ -2100,7 +2114,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		} else {
 			$sql2 = addMailingEventTypeSQL($actioncode, $objcon, $filterobj);
 			if (!empty($sql) && !empty($sql2)) {
-				$sql = $sql." UNION ".$sql2;
+				$sql = $sql . " UNION " . $sql2;
 			} elseif (empty($sql) && !empty($sql2)) {
 				$sql = $sql2;
 			}
@@ -2211,10 +2225,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 	if (isModEnabled('agenda') || (isModEnabled('mailing') && !empty($objcon->email))) {
 		$delay_warning = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO') * 24 * 60 * 60;
 
-		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
+		include_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
+		require_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 
 		$formactions = new FormActions($db);
 
@@ -2224,18 +2238,20 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		$contactstatic = new Contact($db);
 		$elementlinkcache = array();
 
-		$out .= '<form name="listactionsfilter" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$out .= '<input type="hidden" name="token" value="'.newToken().'">';
-		if ($objcon && get_class($objcon) == 'Contact' &&
-			(is_null($filterobj) || get_class($filterobj) == 'Societe')) {
-			$out .= '<input type="hidden" name="id" value="'.$objcon->id.'" />';
+		$out .= '<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
+		$out .= '<input type="hidden" name="token" value="' . newToken() . '">';
+		if (
+			$objcon && get_class($objcon) == 'Contact' &&
+			(is_null($filterobj) || get_class($filterobj) == 'Societe')
+		) {
+			$out .= '<input type="hidden" name="id" value="' . $objcon->id . '" />';
 		} else {
-			$out .= '<input type="hidden" name="id" value="'.$filterobj->id.'" />';
+			$out .= '<input type="hidden" name="id" value="' . $filterobj->id . '" />';
 		}
 		if ($filterobj && get_class($filterobj) == 'Societe') {
-			$out .= '<input type="hidden" name="socid" value="'.$filterobj->id.'" />';
+			$out .= '<input type="hidden" name="socid" value="' . $filterobj->id . '" />';
 		} else {
-			$out .= '<input type="hidden" name="userid" value="'.$filterobj->id.'" />';
+			$out .= '<input type="hidden" name="userid" value="' . $filterobj->id . '" />';
 		}
 
 		$out .= "\n";
@@ -2258,7 +2274,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		}
 
 		// ID
-		$out .= '<td class="liste_titre"><input type="text" class="width50" name="search_rowid" value="'.(isset($filters['search_rowid']) ? $filters['search_rowid'] : '').'"></td>';
+		$out .= '<td class="liste_titre"><input type="text" class="width50" name="search_rowid" value="' . (isset($filters['search_rowid']) ? $filters['search_rowid'] : '') . '"></td>';
 		// Date
 		$out .= '<td class="liste_titre center">';
 		$out .= $form->selectDateToDate($tms_start, $tms_end, 'dateevent', 1);
@@ -2270,7 +2286,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		$out .= $formactions->select_type_actions($actioncode, "actioncode", '', getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? -1 : 1, 0, (getDolGlobalString('AGENDA_USE_MULTISELECT_TYPE') ? 1 : 0), 1, 'selecttype combolargeelem minwidth100 maxwidth150', 1);
 		$out .= '</td>';
 		// Label
-		$out .= '<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
+		$out .= '<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="' . $filters['search_agenda_label'] . '"></td>';
 		$out .= '<td class="liste_titre"></td>';
 		$out .= '<td class="liste_titre"></td>';
 		$out .= '<td class="liste_titre"></td>';
@@ -2291,10 +2307,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		if ($donetodo && $filterobj !== null) {
 			$tmp = '';
 			if (get_class($filterobj) == 'Societe') {
-				$tmp .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&socid='.$filterobj->id.'&status=done">';
+				$tmp .= '<a href="' . DOL_URL_ROOT . '/comm/action/list.php?mode=show_list&socid=' . $filterobj->id . '&status=done">';
 			}
 			if (get_class($filterobj) == 'User') {
-				$tmp .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?mode=show_list&userid='.$filterobj->id.'&status=done">';
+				$tmp .= '<a href="' . DOL_URL_ROOT . '/comm/action/list.php?mode=show_list&userid=' . $filterobj->id . '&status=done">';
 			}
 			$tmp .= ($donetodo != 'done' ? $langs->trans("ActionsToDoShort") : '');
 			$tmp .= ($donetodo != 'done' && $donetodo != 'todo' ? ' / ' : '');
@@ -2322,7 +2338,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		}
 		$out .= '</tr>';
 
-		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/comm/action/class/cactioncomm.class.php';
 		$caction = new CActionComm($db);
 		$arraylist = $caction->liste_array(1, 'code', '', (getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 0 : 1), '', 1);
 
@@ -2351,7 +2367,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			// Ref
 			$out .= '<td class="nowraponall">';
 			if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'mailing') {
-				$out .= '<a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"), "email").' ';
+				$out .= '<a href="' . DOL_URL_ROOT . '/comm/mailing/card.php?id=' . $histo[$key]['id'] . '">' . img_object($langs->trans("ShowEMailing"), "email") . ' ';
 				$out .= $histo[$key]['id'];
 				$out .= '</a>';
 			} else {
@@ -2366,9 +2382,9 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				$tmpa = dol_getdate($histo[$key]['datestart'], true);
 				$tmpb = dol_getdate($histo[$key]['dateend'], true);
 				if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
-					$out .= '-'.dol_print_date($histo[$key]['dateend'], 'hour', 'tzuserrel');
+					$out .= '-' . dol_print_date($histo[$key]['dateend'], 'hour', 'tzuserrel');
 				} else {
-					$out .= '-'.dol_print_date($histo[$key]['dateend'], 'dayhour', 'tzuserrel');
+					$out .= '-' . dol_print_date($histo[$key]['dateend'], 'dayhour', 'tzuserrel');
 				}
 			}
 			$late = 0;
@@ -2385,7 +2401,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				$late = 1;
 			}
 			if ($late) {
-				$out .= img_warning($langs->trans("Late")).' ';
+				$out .= img_warning($langs->trans("Late")) . ' ';
 			}
 			$out .= "</td>\n";
 
@@ -2423,7 +2439,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 					$labelOfTypeToShow = $langs->trans("Emailing");
 				}
 				if ($actionstatic->type_code == 'AC_OTH_AUTO' && ($actionstatic->type_code != $actionstatic->code) && $labelOfTypeToShow && !empty($arraylist[$actionstatic->code])) {
-					$labelOfTypeToShow .= ' - '.$arraylist[$actionstatic->code]; // Show also detailed code
+					$labelOfTypeToShow .= ' - ' . $arraylist[$actionstatic->code]; // Show also detailed code
 				}
 			}
 
@@ -2432,7 +2448,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				$labelOfTypeToShowLong .= ' (auto)';
 			}
 
-			$out .= '<td class="tdoverflowmax125" title="'.$labelOfTypeToShowLong.'">';
+			$out .= '<td class="tdoverflowmax125" title="' . $labelOfTypeToShowLong . '">';
 			$out .= $actionstatic->getTypePicto();
 			//if (empty($conf->dol_optimize_smallscreen)) {
 			$out .= $labelOfTypeToShow;
@@ -2442,19 +2458,19 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			// Title/Label of event
 			$out .= '<td class="tdoverflowmax300"';
 			if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'action') {
-				$transcode = $langs->trans("Action".$histo[$key]['acode']);
+				$transcode = $langs->trans("Action" . $histo[$key]['acode']);
 				//$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : $histo[$key]['alabel']);
 				$label = $histo[$key]['note'];
 				$actionstatic->id = $histo[$key]['id'];
-				$out .= ' title="'.dol_escape_htmltag($label).'">';
+				$out .= ' title="' . dol_escape_htmltag($label) . '">';
 				$out .= dol_trunc($label, 120);
 			}
 			if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'mailing') {
-				$transcode = $langs->trans("Action".$histo[$key]['acode']);
-				$label = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : 'Send mass mailing');
-				$label .= ' - '.$histo[$key]['note'];
-				$out .= '<a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'"';
-				$out .= ' title="'.dol_escape_htmltag($label).'">';
+				$transcode = $langs->trans("Action" . $histo[$key]['acode']);
+				$label = ($transcode != "Action" . $histo[$key]['acode'] ? $transcode : 'Send mass mailing');
+				$label .= ' - ' . $histo[$key]['note'];
+				$out .= '<a href="' . DOL_URL_ROOT . '/comm/mailing/card.php?id=' . $histo[$key]['id'] . '"';
+				$out .= ' title="' . dol_escape_htmltag($label) . '">';
 				//$out .= img_object($langs->trans("EMailing").'<br>'.$histo[$key]['note'], "email").' ';
 				$out .= dol_trunc($label, 120);
 				$out .= '</a>';
@@ -2492,7 +2508,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 						$out .= $contact->getNomUrl(-3, '', 10, '', -1, 0, 'paddingright');
 						if (isset($histo[$key]['acode']) && $histo[$key]['acode'] == 'AC_TEL') {
 							if (!empty($contact->phone_pro)) {
-								$out .= '('.dol_print_phone($contact->phone_pro).')';
+								$out .= '(' . dol_print_phone($contact->phone_pro) . ')';
 							}
 						}
 						$out .= '<div class="paddingright"></div>';
@@ -2504,13 +2520,13 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				$contactstatic->firstname = $histo[$key]['firstname'];
 				$contactstatic->id = $histo[$key]['contact_id'];
 				$contactstatic->photo = $histo[$key]['contact_photo'];
-				$out .= '<td width="120">'.$contactstatic->getNomUrl(-1, '', 10).'</td>';
+				$out .= '<td width="120">' . $contactstatic->getNomUrl(-1, '', 10) . '</td>';
 			} else {
 				$out .= '<td>&nbsp;</td>';
 			}
 
 			// Status / Progression
-			$out .= '<td class="nowrap center">'.$actionstatic->LibStatut($histo[$key]['percent'], 2, 0, $histo[$key]['datestart']).'</td>';
+			$out .= '<td class="nowrap center">' . $actionstatic->LibStatut($histo[$key]['percent'], 2, 0, $histo[$key]['datestart']) . '</td>';
 
 			// Action column
 			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -2521,7 +2537,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		}
 		if (empty($histo)) {
 			$colspan = 9;
-			$out .= '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+			$out .= '<tr><td colspan="' . $colspan . '"><span class="opacitymedium">' . $langs->trans("NoRecordFound") . '</span></td></tr>';
 		}
 
 		$out .= "</table>\n";
@@ -2554,9 +2570,9 @@ function show_subsidiaries($conf, $langs, $db, $object)
 	$i = -1;
 
 	$sql = "SELECT s.rowid, s.client, s.fournisseur, s.nom as name, s.name_alias, s.email, s.address, s.zip, s.town, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.canvas, s.status";
-	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-	$sql .= " WHERE s.parent = ".((int) $object->id);
-	$sql .= " AND s.entity IN (".getEntity('societe').")";
+	$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
+	$sql .= " WHERE s.parent = " . ((int) $object->id);
+	$sql .= " AND s.entity IN (" . getEntity('societe') . ")";
 	$sql .= " ORDER BY s.nom";
 
 	$result = $db->query($sql);
@@ -2567,12 +2583,12 @@ function show_subsidiaries($conf, $langs, $db, $object)
 
 		print load_fiche_titre($langs->trans("Subsidiaries"), '', '');
 
-		print "\n".'<div class="div-table-responsive-no-min">'."\n";
-		print '<table class="noborder centpercent">'."\n";
+		print "\n" . '<div class="div-table-responsive-no-min">' . "\n";
+		print '<table class="noborder centpercent">' . "\n";
 
-		print '<tr class="liste_titre"><td>'.$langs->trans("Company").'</td>';
-		print '<td>'.$langs->trans("Address").'</td><td>'.$langs->trans("Zip").'</td>';
-		print '<td>'.$langs->trans("Town").'</td><td>'.$langs->trans("CustomerCode").'</td>';
+		print '<tr class="liste_titre"><td>' . $langs->trans("Company") . '</td>';
+		print '<td>' . $langs->trans("Address") . '</td><td>' . $langs->trans("Zip") . '</td>';
+		print '<td>' . $langs->trans("Town") . '</td><td>' . $langs->trans("CustomerCode") . '</td>';
 		print "<td>&nbsp;</td>";
 		print "</tr>";
 
@@ -2602,13 +2618,13 @@ function show_subsidiaries($conf, $langs, $db, $object)
 			print $socstatic->getNomUrl(1);
 			print '</td>';
 
-			print '<td class="tdoverflowmax400" title="'.dol_escape_htmltag($obj->address).'">'.dol_escape_htmltag($obj->address).'</td>';
-			print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($obj->zip).'">'.$obj->zip.'</td>';
-			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->town).'">'.$obj->town.'</td>';
-			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($obj->code_client).'">'.$obj->code_client.'</td>';
+			print '<td class="tdoverflowmax400" title="' . dol_escape_htmltag($obj->address) . '">' . dol_escape_htmltag($obj->address) . '</td>';
+			print '<td class="tdoverflowmax100" title="' . dol_escape_htmltag($obj->zip) . '">' . $obj->zip . '</td>';
+			print '<td class="tdoverflowmax200" title="' . dol_escape_htmltag($obj->town) . '">' . $obj->town . '</td>';
+			print '<td class="tdoverflowmax200" title="' . dol_escape_htmltag($obj->code_client) . '">' . $obj->code_client . '</td>';
 
 			print '<td class="center">';
-			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/societe/card.php?socid='.((int) $obj->rowid).'&action=edit&token='.newToken().'">';
+			print '<a class="editfielda" href="' . DOL_URL_ROOT . '/societe/card.php?socid=' . ((int) $obj->rowid) . '&action=edit&token=' . newToken() . '">';
 			print img_edit();
 			print '</a></td>';
 
@@ -2616,7 +2632,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
 			$i++;
 		}
 		print "\n</table>\n";
-		print '</div>'."\n";
+		print '</div>' . "\n";
 	}
 
 	print "<br>\n";
@@ -2659,7 +2675,7 @@ function addEventTypeSQL(&$sql, $actioncode, $sqlANDOR = "AND")
 		} elseif ($actioncode == 'AC_ALL_AUTO') {
 			$sql .= " $sqlANDOR c.type = 'systemauto'";
 		} else {
-			$sql .= " $sqlANDOR c.code = '".$db->escape($actioncode)."'";
+			$sql .= " $sqlANDOR c.code = '" . $db->escape($actioncode) . "'";
 		}
 	}
 
@@ -2680,9 +2696,9 @@ function addOtherFilterSQL(&$sql, $donetodo, $now, $filters)
 	global $db;
 
 	if ($donetodo == 'todo') {
-		$sql .= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
+		$sql .= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '" . $db->idate($now) . "'))";
 	} elseif ($donetodo == 'done') {
-		$sql .= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
+		$sql .= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '" . $db->idate($now) . "'))";
 	}
 	if (is_array($filters) && !empty($filters['search_agenda_label'])) {
 		$sql .= natural_search('a.label', $filters['search_agenda_label']);
@@ -2723,8 +2739,8 @@ function addMailingEventTypeSQL($actioncode, $objcon, $filterobj)
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') {
 			$sql2 .= ", '' as ref";
 		}
-		$sql2 .= " FROM ".MAIN_DB_PREFIX."mailing as m, ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."user as u";
-		$sql2 .= " WHERE mc.email = '".$db->escape($objcon->email)."'"; // Search is done on email.
+		$sql2 .= " FROM " . MAIN_DB_PREFIX . "mailing as m, " . MAIN_DB_PREFIX . "mailing_cibles as mc, " . MAIN_DB_PREFIX . "user as u";
+		$sql2 .= " WHERE mc.email = '" . $db->escape($objcon->email) . "'"; // Search is done on email.
 		$sql2 .= " AND mc.statut = 1";
 		$sql2 .= " AND u.rowid = m.fk_user_valid";
 		$sql2 .= " AND mc.fk_mailing=m.rowid";
@@ -2766,15 +2782,15 @@ function htmlPrintOnlineHeader($mysoc, $langs, $showlogo = 1, $alttext = '', $su
 	//$urllogo = '';
 	$urllogopublic = '';
 	if ($showlogo) {
-		if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall)) {
+		if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output . '/logos/thumbs/' . $logosmall)) {
 			//$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$logosmall);
-			$urllogopublic = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
-		} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo)) {
+			$urllogopublic = $dolibarr_main_url_root . '/viewimage.php?modulepart=mycompany&entity=' . $conf->entity . '&file=' . urlencode('logos/thumbs/' . $logosmall);
+		} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output . '/logos/' . $logo)) {
 			//$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$logo);
-			$urllogopublic = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
-		} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')) {
+			$urllogopublic = $dolibarr_main_url_root . '/viewimage.php?modulepart=mycompany&entity=' . $conf->entity . '&file=' . urlencode('logos/' . $logo);
+		} elseif (is_readable(DOL_DOCUMENT_ROOT . '/theme/dolibarr_logo.svg')) {
 			//$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
-			$urllogopublic = $dolibarr_main_url_root.'/theme/dolibarr_logo.svg';
+			$urllogopublic = $dolibarr_main_url_root . '/theme/dolibarr_logo.svg';
 		}
 	}
 
@@ -2786,19 +2802,19 @@ function htmlPrintOnlineHeader($mysoc, $langs, $showlogo = 1, $alttext = '', $su
 		print '<div class="logopublicpayment">';
 		if ($urllogopublic) {
 			if (!is_numeric($showlogo)) {
-				print '<a href="'.$showlogo.'">';
+				print '<a href="' . $showlogo . '">';
 			}
-			print '<img id="dolpaymentlogo" src="'.$urllogopublic.'">';
+			print '<img id="dolpaymentlogo" src="' . $urllogopublic . '">';
 			if (!is_numeric($showlogo)) {
 				print '</a>';
 			}
 		}
 		if ($alttext) {
-				print '<div class="clearboth"></div><strong>'.$alttext.'</strong>';
+			print '<div class="clearboth"></div><strong>' . $alttext . '</strong>';
 		}
 		print '</div>';
 		if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
-			print '<div class="poweredbypublicpayment opacitymedium right hideonsmartphone"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+			print '<div class="poweredbypublicpayment opacitymedium right hideonsmartphone"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">' . $langs->trans("PoweredBy") . '<br><img class="poweredbyimg" src="' . DOL_URL_ROOT . '/theme/dolibarr_logo.svg" width="80px"></a></div>';
 		}
 		print '</div>';
 	}
@@ -2806,7 +2822,7 @@ function htmlPrintOnlineHeader($mysoc, $langs, $showlogo = 1, $alttext = '', $su
 	// Add an optional image under the ban with logo/title
 	if (getDolGlobalString($subimageconst)) {
 		print '<div class="backimagepublicsubimage">';
-		print '<img id="id'.$subimageconst.'" src="' . getDolGlobalString($subimageconst).'">';
+		print '<img id="id' . $subimageconst . '" src="' . getDolGlobalString($subimageconst) . '">';
 		print '</div>';
 	}
 
@@ -2833,11 +2849,11 @@ function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffi
 	// Juridical status
 	$line1 = "";
 	if ($fromcompany->forme_juridique_code) {
-		$line1 .= ($line1 ? " - " : "").getFormeJuridiqueLabel((string) $fromcompany->forme_juridique_code);
+		$line1 .= ($line1 ? " - " : "") . getFormeJuridiqueLabel((string) $fromcompany->forme_juridique_code);
 	}
 	// Capital
 	if ($fromcompany->capital) {
-		$line1 .= ($line1 ? " - " : "").$langs->transnoentities("CapitalOf", (string) $fromcompany->capital)." ".$langs->transnoentities("Currency".$conf->currency);
+		$line1 .= ($line1 ? " - " : "") . $langs->transnoentities("CapitalOf", (string) $fromcompany->capital) . " " . $langs->transnoentities("Currency" . $conf->currency);
 	}
 	// Prof Id 1
 	if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || !$fromcompany->idprof2)) {
@@ -2845,7 +2861,7 @@ function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffi
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
 		}
-		$line1 .= ($line1 ? " - " : "").$field.": ".$fromcompany->idprof1;
+		$line1 .= ($line1 ? " - " : "") . $field . ": " . $fromcompany->idprof1;
 	}
 	// Prof Id 2
 	if ($fromcompany->idprof2) {
@@ -2853,7 +2869,7 @@ function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffi
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
 		}
-		$line1 .= ($line1 ? " - " : "").$field.": ".$fromcompany->idprof2;
+		$line1 .= ($line1 ? " - " : "") . $field . ": " . $fromcompany->idprof2;
 	}
 
 	// Second line of company infos
@@ -2864,7 +2880,7 @@ function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffi
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
 		}
-		$line2 .= ($line2 ? " - " : "").$field.": ".$fromcompany->idprof3;
+		$line2 .= ($line2 ? " - " : "") . $field . ": " . $fromcompany->idprof3;
 	}
 	// Prof Id 4
 	if ($fromcompany->idprof4) {
@@ -2872,23 +2888,23 @@ function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffi
 		if (preg_match('/\((.*)\)/i', $field, $reg)) {
 			$field = $reg[1];
 		}
-		$line2 .= ($line2 ? " - " : "").$field.": ".$fromcompany->idprof4;
+		$line2 .= ($line2 ? " - " : "") . $field . ": " . $fromcompany->idprof4;
 	}
 	// IntraCommunautary VAT
 	if ($fromcompany->tva_intra != '') {
-		$line2 .= ($line2 ? " - " : "").$langs->transnoentities("VATIntraShort").": ".$fromcompany->tva_intra;
+		$line2 .= ($line2 ? " - " : "") . $langs->transnoentities("VATIntraShort") . ": " . $fromcompany->tva_intra;
 	}
 
-	print '<!-- htmlPrintOnlineFooter -->'."\n";
+	print '<!-- htmlPrintOnlineFooter -->' . "\n";
 
 	// css centpercent has been removed from class="..." because not compatible with paddingleft/right and there is an horizontal scroll appearring on payment page for example.
-	print '<footer class="center centpercent opacitymedium">'."\n";
+	print '<footer class="center centpercent opacitymedium">' . "\n";
 	print '<br>';
 	if ($addformmessage) {
-		print '<!-- object = '.(empty($object) ? 'undefined' : $object->element).' -->';
+		print '<!-- object = ' . (empty($object) ? 'undefined' : $object->element) . ' -->';
 		print '<br>';
 
-		$parammessageform = 'ONLINE_PAYMENT_MESSAGE_FORM_'.$suffix;
+		$parammessageform = 'ONLINE_PAYMENT_MESSAGE_FORM_' . $suffix;
 		if (getDolGlobalString($parammessageform) !== '') {
 			print $langs->transnoentities(getDolGlobalString($parammessageform));
 		} elseif (getDolGlobalString('ONLINE_PAYMENT_MESSAGE_FORM')  !== '') {
@@ -2897,7 +2913,7 @@ function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffi
 
 		// Add other message if VAT exists
 		if (!empty($object->total_vat) || !empty($object->total_tva)) {
-			$parammessageform = 'ONLINE_PAYMENT_MESSAGE_FORMIFVAT_'.$suffix;
+			$parammessageform = 'ONLINE_PAYMENT_MESSAGE_FORMIFVAT_' . $suffix;
 			if (getDolGlobalString($parammessageform)  !== '') {
 				print $langs->transnoentities(getDolGlobalString($parammessageform));
 			} elseif (getDolGlobalString('ONLINE_PAYMENT_MESSAGE_FORMIFVAT') !== '') {
@@ -2906,15 +2922,15 @@ function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffi
 		}
 	}
 
-	print '<span style="font-size: 10px;"><br><hr>'."\n";
-	print $fromcompany->name.'<br>';
+	print '<span style="font-size: 10px;"><br><hr>' . "\n";
+	print $fromcompany->name . '<br>';
 	print $line1;
-	if (strlen($line1.$line2) > 50) {
+	if (strlen($line1 . $line2) > 50) {
 		print '<br>';
 	} else {
 		print ' - ';
 	}
 	print $line2;
 	print '</span>';
-	print '</footer>'."\n";
+	print '</footer>' . "\n";
 }

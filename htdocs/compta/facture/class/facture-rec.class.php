@@ -46,7 +46,7 @@ class FactureRec extends CommonInvoice
 {
 	use CommonSubtotal;
 
-	const TRIGGER_PREFIX = 'BILLREC';
+	public $TRIGGER_PREFIX = 'BILLREC';
 
 	/**
 	 * @var string ID to identify managed object
