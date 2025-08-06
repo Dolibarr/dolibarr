@@ -1283,7 +1283,7 @@ class Thirdparties extends DolibarrApi
 			$this->db->rollback();
 			throw new RestException(500, 'Operation fail');
 		}
-			
+
 		$this->db->commit();
 
 		$sql = "SELECT f.ref, f.type as factype, re.fk_facture_source, re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc, re.description, re.fk_facture, re.fk_facture_line";
