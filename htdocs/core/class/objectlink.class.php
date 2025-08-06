@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2025  Jon Bendtsen         <jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -188,7 +189,7 @@ class ObjectLink extends CommonObject
 
 		if (!$notrigger) {
 			// Call trigger
-			$result = $this->call_trigger(self::TRIGGER_PREFIX.'_DELETE', $user);
+			$result = $this->call_trigger($this->TRIGGER_PREFIX.'_DELETE', $user);
 			if ($result < 0) {
 				$error++;
 			}
@@ -266,7 +267,7 @@ class ObjectLink extends CommonObject
 
 		if (!$notrigger) {
 			// Call trigger
-			$result = $this->call_trigger(self::TRIGGER_PREFIX.'_CREATE', $user);
+			$result = $this->call_trigger($this->TRIGGER_PREFIX.'_CREATE', $user);
 			if ($result < 0) {
 				$error++;
 			}
