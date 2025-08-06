@@ -2469,22 +2469,23 @@ if ($dirins && $action == 'addright' && !empty($module) && empty($cancel) && $us
 			}
 			setEventMessages($langs->trans('WarningModuleNeedRefresh', $langs->transnoentities($module)), null, 'warnings');
 		}
-	}
-	$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
-	//rewriting all permissions after add a right
-	$rewrite = checkExistComment($moduledescriptorfile, 1);
-	if ($rewrite < 0) {
-		setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
-	} else {
-		reWriteAllPermissions($moduledescriptorfile, $permissions, $key, $rightToAdd, '', '', 1);
-		setEventMessages($langs->trans('PermissionAddedSuccesfuly'), null);
 
-		clearstatcache(true);
-		if (function_exists('opcache_invalidate')) {
-			opcache_reset();	// remove the include cache hell !
+		$moduledescriptorfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+		// Rewriting all permissions section in the descriptor file
+		$rewrite = checkExistComment($moduledescriptorfile, 1);
+		if ($rewrite < 0) {
+			setEventMessages($langs->trans("WarningCommentNotFound", $langs->trans("Permissions"), "mod".$module."class.php"), null, 'warnings');
+		} else {
+			reWriteAllPermissions($moduledescriptorfile, $permissions, $key, $rightToAdd, '', '', 1);
+			setEventMessages($langs->trans('PermissionAddedSuccesfuly'), null);
+
+			clearstatcache(true);
+			if (function_exists('opcache_invalidate')) {
+				opcache_reset();	// remove the include cache hell !
+			}
+			header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
+			exit;
 		}
-		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=permissions&module='.$module);
-		exit;
 	}
 }
 

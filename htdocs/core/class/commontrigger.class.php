@@ -59,8 +59,8 @@ trait CommonTrigger
 		// phpcs:enable
 		global $langs, $conf;
 
-		if (!empty(self::TRIGGER_PREFIX) && strpos($triggerName, self::TRIGGER_PREFIX . '_') !== 0) {
-			dol_print_error(null, 'The trigger "' . $triggerName . '" does not start with "' . self::TRIGGER_PREFIX . '_" as required.');
+		if (!empty(static::TRIGGER_PREFIX) && strpos($triggerName, static::TRIGGER_PREFIX . '_') !== 0) {
+			dol_print_error(null, 'The trigger "' . $triggerName . '" does not start with "' . static::TRIGGER_PREFIX . '_" as required.');
 			exit;
 		}
 		if (!is_object($langs)) {	// If lang was not defined, we set it. It is required by run_triggers().
