@@ -58,6 +58,8 @@ class Societe extends CommonObject
 	use CommonSocialNetworks;
 	use CommonPeople;
 
+	public $TRIGGER_PREFIX = 'COMPANY'; 	// to be overridden in child class implementations, i.e. 'BILL', 'TASK', 'PROPAL', etc.
+
 	/**
 	 * @var string ID of module.
 	 */

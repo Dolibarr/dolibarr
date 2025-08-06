@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017	    Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -139,7 +139,7 @@ if ($action == 'set') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->ACTION_EVENT_ADDON_PDF == "$value") {
+		if (getDolGlobalString('ACTION_EVENT_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'ACTION_EVENT_ADDON_PDF', $conf->entity);
 		}
 	}

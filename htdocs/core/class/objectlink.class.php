@@ -30,7 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doldeprecationhandler.class.php';
  */
 class ObjectLink extends CommonObject
 {
-	const TRIGGER_PREFIX = 'OBJECTLINK';
+	public $TRIGGER_PREFIX = 'OBJECTLINK';
+
 	/**
 	 * @var string ID to identify managed object
 	 */
