@@ -1886,7 +1886,7 @@ if ($action == 'create') {
 					if ($objp->fk_product > 0) {
 						$product = new Product($db);
 						$product->fetch($objp->fk_product);
-						if(!empty($product->duration_value) && !empty($product->duration_unit)) {
+						if (!empty($product->duration_value) && !empty($product->duration_unit)) {
 							$dateactend = dol_time_plus_duree(time(), $product->duration_value, $product->duration_unit);
 						}
 					}
