@@ -617,7 +617,7 @@ function createInvoice($authentication, $invoice)
 		foreach ($arrayoflines as $line) {
 			// $key can be 'line' or '0','1',...
 			$newline = new FactureLigne($db);
-			$newline->product_type = (int) $line['type'];
+			$newline->product_type = $line['type'];
 			$newline->desc = $line['desc'];
 			$newline->fk_product = $line['product_id'];
 			$newline->tva_tx = isset($line['vat_rate']) ? $line['vat_rate'] : 0;
