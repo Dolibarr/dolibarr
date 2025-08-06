@@ -654,7 +654,7 @@ if ($result < 0) {
 		}
 		$px4 = new DolGraph();
 		$px4->SetData($graph_datas);
-		$px4->SetLegend(array($langs->transnoentities("Credit").' ('.$langs->trans("Input").')', $langs->transnoentities("Debit").' ('.$langs->trans("Output").')'));
+		$px4->SetLegend(array($langs->transnoentities("Credit").' ('.$langs->transnoentities("Input").')', $langs->transnoentities("Debit").' ('.$langs->transnoentities("Output").')'));
 		$px4->SetLegendWidthMin(180);
 		$px4->SetMaxValue($px4->GetCeilMaxValue() < 0 ? 0 : $px4->GetCeilMaxValue());
 		$px4->SetMinValue($px4->GetFloorMinValue() > 0 ? 0 : $px4->GetFloorMinValue());
@@ -755,7 +755,7 @@ if ($result < 0) {
 		}
 		$px5 = new DolGraph();
 		$px5->SetData($graph_datas);
-		$px5->SetLegend(array($langs->transnoentities("Credit").' ('.$langs->trans("Input").')', $langs->transnoentities("Debit").' ('.$langs->trans("Output").')'));
+		$px5->SetLegend(array($langs->transnoentities("Credit").' ('.$langs->transnoentities("Input").')', $langs->transnoentities("Debit").' ('.$langs->transnoentities("Output").')'));
 		$px5->SetLegendWidthMin(180);
 		$px5->SetMaxValue($px5->GetCeilMaxValue() < 0 ? 0 : $px5->GetCeilMaxValue());
 		$px5->SetMinValue($px5->GetFloorMinValue() > 0 ? 0 : $px5->GetFloorMinValue());
