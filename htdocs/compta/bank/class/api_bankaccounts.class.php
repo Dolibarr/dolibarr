@@ -518,7 +518,6 @@ class BankAccounts extends DolibarrApi
 	 */
 	public function getDetailAccountLine($id)
 	{
-
 		if (!DolibarrApiAccess::$user->hasRight('banque', 'lire')) {
 			throw new RestException(403);
 		}
