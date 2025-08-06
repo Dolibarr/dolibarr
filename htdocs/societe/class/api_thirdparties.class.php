@@ -1207,6 +1207,7 @@ class Thirdparties extends DolibarrApi
 
 		$newdiscount1 = new DiscountAbsolute($this->db);
 		$newdiscount2 = new DiscountAbsolute($this->db);
+
 		$newdiscount1->fk_facture_source = $discount->fk_facture_source;
 		$newdiscount2->fk_facture_source = $discount->fk_facture_source;
 		$newdiscount1->fk_facture = $discount->fk_facture;
@@ -1278,31 +1279,30 @@ class Thirdparties extends DolibarrApi
 		$res = $discount->delete(DolibarrApiAccess::$user);
 		$newid1 = $newdiscount1->create(DolibarrApiAccess::$user);
 		$newid2 = $newdiscount2->create(DolibarrApiAccess::$user);
-		if ($res > 0 && $newid1 > 0 && $newid2 > 0) {
-			$this->db->commit();
-
-			$sql = "SELECT f.ref, f.type as factype, re.fk_facture_source, re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc, re.description, re.fk_facture, re.fk_facture_line";
-			$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re, ".MAIN_DB_PREFIX."facture as f";
-			$sql .= " WHERE re.rowid IN ( $newid1, $newid2 ) AND f.rowid = re.fk_facture_source AND re.fk_soc = ".((int) $id);
-
-			$sql .= $this->db->order("f.type", "ASC");
-
-			$result = $this->db->query($sql);
-			if (!$result) {
-				throw new RestException(503, $this->db->lasterror());
-			} else {
-				// $num = $this->db->num_rows($result);
-				while ($obj = $this->db->fetch_object($result)) {
-					$obj_ret[] = $obj;
-				}
-			}
-
-			return $obj_ret;
-		} else {
+		if ($res <= 0 || $newid1 <= 0 || $newid2 <= 0) {
 			$this->db->rollback();
 			throw new RestException(500, 'Operation fail');
 		}
-		return [];
+			
+		$this->db->commit();
+
+		$sql = "SELECT f.ref, f.type as factype, re.fk_facture_source, re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc, re.description, re.fk_facture, re.fk_facture_line";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re, ".MAIN_DB_PREFIX."facture as f";
+		$sql .= " WHERE re.rowid IN ( $newid1, $newid2 ) AND f.rowid = re.fk_facture_source AND re.fk_soc = ".((int) $id);
+
+		$sql .= $this->db->order("f.type", "ASC");
+
+		$result = $this->db->query($sql);
+		if (!$result) {
+			throw new RestException(503, $this->db->lasterror());
+		} else {
+			// $num = $this->db->num_rows($result);
+			while ($obj = $this->db->fetch_object($result)) {
+				$obj_ret[] = $obj;
+			}
+		}
+
+		return $obj_ret;
 	}
 
 
