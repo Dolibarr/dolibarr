@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -515,7 +515,7 @@ foreach ($arrayofmodules as $file => $modCodeCompta) {
 	print '</td>';
 	print '<td class="nowrap">'.$modCodeCompta->getExample($langs)."</td>\n";
 
-	if ($conf->global->SOCIETE_CODECOMPTA_ADDON == "$file") {
+	if (getDolGlobalString('SOCIETE_CODECOMPTA_ADDON') == "$file") {
 		print '<td class="center">';
 		print img_picto($langs->trans("Activated"), 'switch_on');
 		print '</td>';

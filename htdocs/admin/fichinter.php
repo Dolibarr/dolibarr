@@ -8,7 +8,7 @@
  * Copyright (C) 2011-2013 Juanjo Menent			    <jmenent@2byte.es>
  * Copyright (C) 2011-2018 Philippe Grand			    <philippe.grand@atoo-net.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,7 +129,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->FICHEINTER_ADDON_PDF == "$value") {
+		if (getDolGlobalString('FICHEINTER_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'FICHEINTER_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -483,7 +483,7 @@ foreach ($dirmodels as $reldir) {
 
 							// Default
 							print "<td align=\"center\">";
-							if ($conf->global->FICHEINTER_ADDON_PDF == "$name") {
+							if (getDolGlobalString('FICHEINTER_ADDON_PDF') == "$name") {
 								print img_picto($langs->trans("Default"), 'on');
 							} else {
 								print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
