@@ -531,7 +531,7 @@ class BankAccounts extends DolibarrApi
 
 		return $this->_cleanObjectDatas($accountLine);
 	}
-	
+
 	/**
 	 * Add a line to an account
 	 *
