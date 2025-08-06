@@ -3681,7 +3681,6 @@ if ($action == 'create' && $usercancreate) {
 
 			$MAXEVENT = 10;
 
-			//MODIF PICHINOV MESSAGING
 			//button to go to messaging from the events box
 			$morehtmlcenter = dolGetButtonTitle($langs->trans('FullConversation'), '', 'fa fa-comments imgforviewmode', DOL_URL_ROOT . '/commande/messaging.php?id=' . $object->id);
 			$morehtmlcenter .= dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT . '/commande/agenda.php?id=' . $object->id);

@@ -8509,8 +8509,8 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 
 	// If the (seller country = buyer country) then the default VAT = VAT of the product sold. End of rule.
 	if (($seller_country_code == $buyer_country_code)
-	|| (in_array($seller_country_code, array('FR', 'MC')) && in_array($buyer_country_code, array('FR', 'MC')))
-	|| (in_array($seller_country_code, array('MQ', 'GP')) && in_array($buyer_country_code, array('MQ', 'GP')))	// We should be able to manage the case of MQ, GP, ... with a deicated vat rate at previous step.
+		|| (in_array($seller_country_code, array('FR', 'MC')) && in_array($buyer_country_code, array('FR', 'MC')))
+		|| (in_array($seller_country_code, array('MQ', 'GP')) && in_array($buyer_country_code, array('MQ', 'GP')))	// We should be able to manage the case of MQ, GP, ... with a deicated vat rate at previous step.
 	) { // Warning ->country_code not always defined
 		//print 'VATRULE 3';
 		$tmpvat = get_product_vat_for_country($idprod, $thirdparty_seller, $idprodfournprice);
@@ -12425,7 +12425,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 			$reg = array();
 			if ($mode == 'add' && !preg_match('/^\-/', $values[1])) {
 				if (count($values) !== 6) {
-					dol_syslog('Tabs module_parts entries must be composed of 6 values separated by ":", but got "'.$value.'". Please check your module descriptor classes.', LOG_ERR);
+					dol_syslog('Tabs module_parts entries must be composed of 6 values separated by ":", but got "' . $value . '". Please check your module descriptor classes.', LOG_ERR);
 					continue;
 				}
 
@@ -12491,7 +12491,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 								// @phan-suppress-next-line PhanPluginUnknownObjectMethodCall
 								$nbrec = $obj->$function($object->id, $obj);
 								if (!empty($nbrec)) {
-									$label .= '<span class="badge marginleftonlyshort">'.$nbrec.'</span>';
+									$label .= '<span class="badge marginleftonlyshort">' . $nbrec . '</span>';
 								}
 							}
 						}
@@ -15720,10 +15720,8 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			$sql .= ", sp.lastname, sp.firstname";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') {
 			$sql .= ", m.lastname, m.firstname";
-		} elseif (is_object($filterobj) && in_array(get_class($filterobj), array('Commande', 'CommandeFournisseur', 'Product', 'Ticket', 'BOM', 'Contrat', 'Facture', 'FactureFournisseur'))) {
+		} elseif (is_object($filterobj) && in_array(get_class($filterobj), array('Commande', 'CommandeFournisseur', 'Product', 'Ticket', 'BOM', 'Contrat', 'Facture', 'FactureFournisseur', 'Propal', 'Expedition'))) {
 			$sql .= ", o.ref";
-		} elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') { //MODIF PICHINOV MESSAGING
-			$sql .= ", s.ref"; // Add expedition ref
 		}
 		$sql .= " FROM " . MAIN_DB_PREFIX . "actioncomm as a";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as u on u.rowid = a.fk_user_action";
@@ -15760,11 +15758,13 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			$sql .= ", " . MAIN_DB_PREFIX . "facture as o";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'FactureFournisseur') {
 			$sql .= ", " . MAIN_DB_PREFIX . "facture_fourn as o";
-		} elseif (is_object($filterobj) && get_class($filterobj) == 'Commande') {  //MODIF PICHINOV MESSAGING
-			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "commande as o ON a.fk_element = o.rowid AND a.elementtype = 'order'";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Commande') {
+			$sql .= ", " . MAIN_DB_PREFIX . "commande as o";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {
-			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "expedition as s ON a.fk_element = s.rowid AND a.elementtype = 'shipping'"; // CHANGED: Table 'expedition' et alias 's', elementtype 'shipping'
-		} //END MODIF
+			$sql .= ", " . MAIN_DB_PREFIX . "expedition as o";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Propal') {
+			$sql .= ", " . MAIN_DB_PREFIX . "propal as o";
+		}
 		$sql .= " WHERE a.entity IN (" . getEntity('agenda') . ")";
 		if (!$force_filter_contact) {
 			if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')) && $filterobj->id) {
@@ -15781,11 +15781,16 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
-			} elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {  //MODIF PICHINOV MESSAGING
-				$sql .= " AND a.fk_element = s.rowid AND a.elementtype = 'shipping'";
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {
+				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'shipping'";
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
-				} //END MODIF
+				}
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'Propal') {
+				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'propal'";
+				if ($filterobj->id) {
+					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
+				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
 				if ($filterobj->id) {
@@ -16449,6 +16454,8 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			$out .= '<span class="opacitymedium">' . $langs->trans("NoRecordFound") . '</span>';
 		}
 	}
+
+	print_r($sql);
 
 	if ($noprint) {
 		return $out;

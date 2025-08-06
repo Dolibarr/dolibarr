@@ -26,7 +26,6 @@
  */
 
 // Load Dolibarr environment
-//MODIF VAL
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php'; // Added for contact object
@@ -219,7 +218,6 @@ if (!empty($object->id)) {
 	//print '<div class="tabsAction">';
 	$morehtmlright = '';
 
-	//MODIF PICHINOV MESSAGING
 	// Show link to change view in message
 	$messagingUrl = DOL_URL_ROOT . '/commande/messaging.php?id=' . $object->id; // Changed from projet
 	$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1); // Status 1 for "not current page"
@@ -228,8 +226,6 @@ if (!empty($object->id)) {
 	// Show link to change view in agenda
 	$messagingUrl = DOL_URL_ROOT . '/commande/agenda.php?id=' . $object->id; // Changed from projet
 	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2); // Status 2 for "current page"
-
-	//END MODIF
 
 	// Show link to add event
 	if (isModEnabled('agenda')) {

@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025       Grimal Valentin         <valentin.grimal@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,7 +153,7 @@ $morehtmlref = '<div class="refidno">';
 $morehtmlref .= $object->ref; // Changed from $object->title as orders typically use ref for main identification
 // Thirdparty
 if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
-	$morehtmlref .= '<br>' . $object->thirdparty->getNomUrl(1, 'order'); // Changed from project
+	$morehtmlref .= '<br>' . $object->thirdparty->getNomUrl(1, 'order');
 }
 $morehtmlref .= '</div>';
 

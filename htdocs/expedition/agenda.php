@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024       MDW                 <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025       Grimal Valentin         <valentin.grimal@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php'; // Added for
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("deliveries", "other")); // Changed from "order" to "deliveries" (common for shipping)
+$langs->loadLangs(array("deliveries", "other"));
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
@@ -203,11 +204,11 @@ if (!empty($object->id)) {
 
 	// Show link to change view in message
 	$messagingUrl = DOL_URL_ROOT . '/expedition/messaging.php?id=' . $object->id; // Changed from commande
-	$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1); // Status 1 for "not current page"
+	$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
 
 	// Show link to change view in agenda
 	$messagingUrl = DOL_URL_ROOT . '/expedition/agenda.php?id=' . $object->id; // Changed from commande
-	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2); // Status 2 for "current page"
+	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
 
 
 	// Show link to add event
