@@ -295,7 +295,7 @@ print '</tr>';
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldMail").'</td><td>';
 print '<input size="25" type="text" name="fieldmail" value="' . getDolGlobalString('LDAP_MEMBER_FIELD_MAIL').'">';
 print '</td><td>'.$langs->trans("LDAPFieldMailExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_MEMBER_FIELD_MAIL"'.((getDolGlobalString('LDAP_KEY_MEMBERS && getDolGlobalString('LDAP_KEY_MEMBERS')') == $conf->global->LDAP_MEMBER_FIELD_MAIL) ? ' checked' : '')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_MEMBER_FIELD_MAIL"'.(($conf->global->LDAP_KEY_MEMBERS && $conf->global->LDAP_KEY_MEMBERS == $conf->global->LDAP_MEMBER_FIELD_MAIL) ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Phone pro
