@@ -477,8 +477,8 @@ if ($nboftargetok) {
 			{
 				print 'Run git tag -a -f -m "'.$MAJOR.'.'.$MINOR.'.'.$BUILD.'" "'.$MAJOR.'.'.$MINOR.'.'.$BUILD.'"'."\n";
 				$ret=`git tag -a -f -m "$MAJOR.$MINOR.$BUILD" "$MAJOR.$MINOR.$BUILD"`;
-				print 'Run git push $GITREMOTENAME -f --tags'."\n";
-				$ret=`git push $GITREMOTENAME -f --tags`;
+				print 'Run git push $GITREMOTENAME -f "$MAJOR.$MINOR.$BUILD"'."\n";
+				$ret=`git push $GITREMOTENAME -f -"$MAJOR.$MINOR.$BUILD"`;
 				#$ret=`git push -f origin "$MAJOR.$MINOR.$BUILD"`;
 			}
 		}
@@ -952,7 +952,7 @@ if ($nboftargetok) {
 			print "Copy $BUILDROOT/$PROJECT to $BUILDROOT/$PROJECT.tmp\n";
 			$cmd="cp -pr \"$BUILDROOT/$PROJECT\" \"$BUILDROOT/$PROJECT.tmp\"";
 			$ret=`$cmd`;
-			$cmd="cp -pr \"$BUILDROOT/$PROJECT/build/debian/apache/.htaccess\" \"$BUILDROOT/$PROJECT.tmp/build/debian/apache/.htaccess\"";
+			$cmd="cp -pr \"$BUILDROOT/$PROJECT/dev/build/debian/apache/.htaccess\" \"$BUILDROOT/$PROJECT.tmp/dev/build/debian/apache/.htaccess\"";
 			$ret=`$cmd`;
 
 			print "Remove other files\n";
@@ -1066,11 +1066,11 @@ if ($nboftargetok) {
 			$ret=`chmod -R 755 $BUILDROOT/$PROJECT.tmp`;
 			$cmd="find $BUILDROOT/$PROJECT.tmp -type f -exec chmod 644 {} \\; ";
 			$ret=`$cmd`;
-			$cmd="find $BUILDROOT/$PROJECT.tmp/build -name '*.php' -type f -exec chmod 755 {} \\; ";
+			$cmd="find $BUILDROOT/$PROJECT.tmp/dev/build -name '*.php' -type f -exec chmod 755 {} \\; ";
 			$ret=`$cmd`;
-			$cmd="find $BUILDROOT/$PROJECT.tmp/build -name '*.dpatch' -type f -exec chmod 755 {} \\; ";
+			$cmd="find $BUILDROOT/$PROJECT.tmp/dev/build -name '*.dpatch' -type f -exec chmod 755 {} \\; ";
 			$ret=`$cmd`;
-			$cmd="find $BUILDROOT/$PROJECT.tmp/build -name '*.pl' -type f -exec chmod 755 {} \\; ";
+			$cmd="find $BUILDROOT/$PROJECT.tmp/dev/build -name '*.pl' -type f -exec chmod 755 {} \\; ";
 			$ret=`$cmd`;
 			$cmd="find $BUILDROOT/$PROJECT.tmp/dev -name '*.php' -type f -exec chmod 755 {} \\; ";
 			$ret=`$cmd`;

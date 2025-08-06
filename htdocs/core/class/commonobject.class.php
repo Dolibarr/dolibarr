@@ -9153,7 +9153,7 @@ abstract class CommonObject
 			} else {
 				return true;
 			}
-		} elseif ($type == 'mail') {
+		} elseif ($type == 'mail' || $type == 'email') {
 			if (!$validate->isEmail($fieldValue)) {
 				$this->setFieldError($fieldKey, $validate->error);
 				return false;
