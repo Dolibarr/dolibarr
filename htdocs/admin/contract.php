@@ -127,7 +127,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->CONTRACT_ADDON_PDF == "$value") {
+		if (getDolGlobalString('CONTRACT_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'CONTRACT_ADDON_PDF', $conf->entity);
 		}
 	}
