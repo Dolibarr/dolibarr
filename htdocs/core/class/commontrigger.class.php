@@ -78,6 +78,7 @@ trait CommonTrigger
 
 		// @phan-suppress-next-line PhanUndeclaredConstantOfClass Phan thinks that parent static::CONSTANT must be declared locally (even if PHP does not allow this on Traits)
 		if (!empty(static::TRIGGER_PREFIX) && strpos($triggerName, static::TRIGGER_PREFIX . '_') !== 0) {
+			// @phan-suppress-next-line PhanUndeclaredConstantOfClass Phan thinks that parent static::CONSTANT must be declared locally (even if PHP does not allow this on Traits)
 			dol_print_error(null, 'The trigger "' . $triggerName . '" does not start with "' . static::TRIGGER_PREFIX . '_" as required.');
 			exit;
 		}

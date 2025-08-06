@@ -4140,7 +4140,7 @@ if ($module == 'initmodule') {
 						print '<td class="titlefieldcreate fieldrequired">'.$attribute.'</td><td class="valuefieldcreate maxwidth50"><input class="maxwidth200" id="'.$key.'" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'"></td>';
 					} elseif ($key == 'proptype') {
 						print '<td class="titlefieldcreate fieldrequired">'.$attribute.'</td><td class="valuefieldcreate maxwidth50">';
-						print '<input class="maxwidth200" id="'.$key.'" list="datalist'.$key.'" type="text" name="'.$key.'" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'">';
+						print '<input class="maxwidth200" name="'.$key.'" id="'.$key.'" list="datalist'.$key.'" type="text" value="'.dol_escape_htmltag(GETPOST($key, 'alpha')).'">';
 						//print '<div id="suggestions"></div>';
 						print '<datalist id="datalist'.$key.'">';
 						print '<option>varchar(128)</option>';
@@ -4666,9 +4666,9 @@ if ($module == 'initmodule') {
 										print '<input name="proplabel" class="maxwidth125" value="'.dol_escape_htmltag($proplabel).'">';
 										print '</td>';
 										print '<td class="tdoverflowmax150">';
-										print '<input name="proptype" class="maxwidth125" value="'.dol_escape_htmltag($proptype).'" list="datalist'.$key.'"></input>';
+										print '<input name="proptype" id="proptype" class="maxwidth125" value="'.dol_escape_htmltag($proptype).'" list="datalistproptype"></input>';
 										// Use the samedatalist than for create
-										print '<datalist id="datalist'.$key.'">';
+										print '<datalist id="datalistproptype">';
 										print '<option>varchar(128)</option>';
 										print '<option>email</option>';
 										print '<option>phone</option>';
