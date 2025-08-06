@@ -54,6 +54,10 @@ abstract class CommonObject
 	use DolDeprecationHandler;
 	use CommonTrigger;
 
+	// Should be in Commontrigger but Traits can not have constant.
+	const TRIGGER_PREFIX = ''; // to be overridden in child class implementations, i.e. 'BILL', 'TASK', 'PROPAL', etc.
+
+
 	/**
 	 * @var string		ID of module.
 	 */
