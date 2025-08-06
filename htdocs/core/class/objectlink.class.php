@@ -30,40 +30,44 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doldeprecationhandler.class.php';
  */
 class ObjectLink extends CommonObject
 {
+	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
 	public $TRIGGER_PREFIX = 'OBJECTLINK';
 
 	/**
-	 * @var string ID to identify managed object
+	 * @var string 		ID to identify managed object
 	 */
 	public $element = 'objectlink';
 
 	/**
-	 * @var string Name of table without prefix where object is stored
+	 * @var string 		Name of table without prefix where object is stored
 	 */
 	public $table_element = 'element_element';
 
 	/**
-	 * @var int source id is a foreign key
+	 * @var int 		Source id is a foreign key
 	 */
 	public $fk_source;
 
 	/**
-	 * @var string source type
+	 * @var string 		Source type
 	 */
 	public $sourcetype;
 
 	/**
-	 * @var int target id is a foreign key
+	 * @var int 		Target id is a foreign key
 	 */
 	public $fk_target;
 
 	/**
-	 * @var string source type
+	 * @var string 		Target type
 	 */
 	public $targettype;
 
 	/**
-	 * @var  null|string relation type, not sure if ever used, but it is in the database
+	 * @var  null|string 	Relation type, not sure if ever used, but it is in the database
 	 */
 	public $relationtype;
 

@@ -58,6 +58,10 @@ class Societe extends CommonObject
 	use CommonSocialNetworks;
 	use CommonPeople;
 
+	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
 	public $TRIGGER_PREFIX = 'COMPANY'; 	// to be overridden in child class implementations, i.e. 'BILL', 'TASK', 'PROPAL', etc.
 
 	/**
