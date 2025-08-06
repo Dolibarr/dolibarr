@@ -2041,7 +2041,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 							deleteFilesIntoDatabaseIndex($upload_dir, basename($destfile).($resupload == 2 ? '.noexe' : ''), '');
 						}
 
-						$result = addFileIntoDatabaseIndex($upload_dir, basename($destfile).($resupload == 2 ? '.noexe' : ''), $TFile['name'][$i], 'uploaded', $sharefile, $object);
+						$result = addFileIntoDatabaseIndex($upload_dir, basename($destfile).($resupload == 2 ? '.noexe' : ''), $TFile['name'][$i], 'uploaded', $sharefile, $object, $forceFullTextIndexation);
 						if ($result < 0) {
 							if ($allowoverwrite) {
 								// Do not show error message. We can have an error due to DB_ERROR_RECORD_ALREADY_EXISTS
