@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -348,19 +348,19 @@ function getInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
 					$linesresp[] = array(
 						'id' => $line->id,
 						'type' => $line->product_type,
-												'desc' => dol_htmlcleanlastbr($line->desc),
-												'total_net' => $line->total_ht,
-												'total_vat' => $line->total_tva,
-												'total' => $line->total_ttc,
-												'vat_rate' => $line->tva_tx,
-												'qty' => $line->qty,
-												'unitprice' => $line->subprice,
-												'date_start' => $line->date_start ? dol_print_date($line->date_start, 'dayrfc') : '',
-												'date_end' => $line->date_end ? dol_print_date($line->date_end, 'dayrfc') : '',
-												'product_id' => $line->fk_product,
-												'product_ref' => $line->product_ref,
-												'product_label' => $line->product_label,
-												'product_desc' => $line->product_desc,
+						'desc' => dol_htmlcleanlastbr($line->desc),
+						'total_net' => $line->total_ht,
+						'total_vat' => $line->total_tva,
+						'total' => $line->total_ttc,
+						'vat_rate' => $line->tva_tx,
+						'qty' => $line->qty,
+						'unitprice' => $line->subprice,
+						'date_start' => $line->date_start ? dol_print_date($line->date_start, 'dayrfc') : '',
+						'date_end' => $line->date_end ? dol_print_date($line->date_end, 'dayrfc') : '',
+						'product_id' => $line->fk_product,
+						'product_ref' => $line->product_ref,
+						'product_label' => $line->product_label,
+						'product_desc' => $line->product_desc,
 					);
 					$i++;
 				}
@@ -589,7 +589,7 @@ function createInvoice($authentication, $invoice)
 		$new_invoice->date = dol_stringtotime($invoice['date'], 'dayrfc');
 		$new_invoice->note_private = $invoice['note_private'];
 		$new_invoice->note_public = $invoice['note_public'];
-		$new_invoice->statut = Facture::STATUS_DRAFT; // We start with status draft
+		$new_invoice->status = Facture::STATUS_DRAFT; // We start with status draft
 		$new_invoice->fk_project = (int) $invoice['project_id'];
 		$new_invoice->date_creation = $now;
 
@@ -617,7 +617,7 @@ function createInvoice($authentication, $invoice)
 		foreach ($arrayoflines as $line) {
 			// $key can be 'line' or '0','1',...
 			$newline = new FactureLigne($db);
-			$newline->product_type = $line['type'];
+			$newline->product_type = (int) $line['type'];
 			$newline->desc = $line['desc'];
 			$newline->fk_product = $line['product_id'];
 			$newline->tva_tx = isset($line['vat_rate']) ? $line['vat_rate'] : 0;
