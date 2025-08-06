@@ -164,11 +164,6 @@ The following changes may create regressions for some external modules, but were
 * The property ->price_ht of an object line that was a duplicate of ->subprice has been standardized. Use ->subprice everywhere now.
 
 
-***** ChangeLog for 21.0.3 compared to 21.0.2 *****
-SEC: Remove functions accepting callable params - Reported by phdwg1410
-TODO...
-
-
 ***** ChangeLog for 21.0.2 compared to 21.0.1 *****
 
 FIX: 21.0: $height and $width can be ints, but also 'auto' (#34636)
