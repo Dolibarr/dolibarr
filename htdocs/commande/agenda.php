@@ -78,13 +78,22 @@ if (GETPOST('actioncode', 'array')) {
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
-$hookmanager->initHooks(array('orderagenda', 'globalcard')); // Changed from projectcardinfo
+// Initialize a technical objects
+$object = new Commande($db);
+$hookmanager->initHooks(array('orderagenda', 'globalcard'));
+
+// Load object
+include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
+if ($id > 0 || !empty($ref)) {
+	$upload_dir = $conf->order->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity] . "/" . $object->id;
+}
 
 // Security check
-$id = GETPOSTINT("id");
-$socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
-$result = restrictedArea($user, 'commande', $id, 'commande&order'); // Changed from projet and project
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
+$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+restrictedArea($user, 'commande', $id, '', '', 'fk_soc', 'rowid', $isdraft);
 
 if (!$user->hasRight('commande', 'lire')) { // Changed from projet
 	accessforbidden();
@@ -161,7 +170,7 @@ $morehtmlref .= '<br>' . $object->thirdparty->getNomUrl(1);
 if (isModEnabled('project')) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>';
-	if (0) {
+	if (0) {	// @phpstan-ignore-line
 		$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 		if ($action != 'classify') {
 			$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';

@@ -78,11 +78,22 @@ $search_agenda_label = GETPOST('search_agenda_label');
 
 $hookmanager->initHooks(array('orderagenda', 'globalcard'));
 
+// Initialize a technical objects
+$object = new Commande($db);
+$hookmanager->initHooks(array('orderagenda', 'globalcard'));
+
+// Load object
+include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
+if ($id > 0 || !empty($ref)) {
+	$upload_dir = $conf->order->multidir_output[!empty($object->entity) ? $object->entity : $conf->entity] . "/" . $object->id;
+}
+
 // Security check
-$id = GETPOSTINT("id");
-$socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of order and assignment.
-$result = restrictedArea($user, 'commande', $id, 'commande&order'); // Changed from projet and project
+if ($user->socid > 0) {
+	$socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of order and assignment.
+}
+$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+restrictedArea($user, 'commande', $id, '', '', 'fk_soc', 'rowid', $isdraft);
 
 if (!$user->hasRight('commande', 'lire')) { // Changed from projet
 	accessforbidden();

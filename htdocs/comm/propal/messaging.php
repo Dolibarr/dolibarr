@@ -77,17 +77,16 @@ if (GETPOST('actioncode', 'array')) {
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
+// Initialize a technical objects
+$object = new Propal($db);
 $hookmanager->initHooks(array('propalagenda', 'globalcard'));
 
 // Security check
-$id = GETPOSTINT("id");
-$socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of order and assignment.
-$result = restrictedArea($user, 'propal', $id, 'propal&propal'); // Changed from projet and project
-
-if (!$user->hasRight('propal', 'lire')) { // Changed from projet
-	accessforbidden();
+if ($user->socid > 0) {
+	$socid = $user->socid;
 }
+$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+restrictedArea($user, 'propal', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
 
 
@@ -153,7 +152,7 @@ $morehtmlref .= '<br>' . $object->thirdparty->getNomUrl(1);
 if (isModEnabled('project')) {
 	$langs->load("projects");
 	$morehtmlref .= '<br>';
-	if (0) {
+	if (0) {	// @phpstan-ignore-line
 		$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 		if ($action != 'classify') {
 			$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
