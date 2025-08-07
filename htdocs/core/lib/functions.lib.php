@@ -6899,12 +6899,12 @@ function dol_print_error($db = null, $error = '', $errors = null)
 		}
 		$out .= "<b>" . $langs->trans("UserAgent") . ":</b> " . (isset($_SERVER["HTTP_USER_AGENT"]) ? dol_htmlentities($_SERVER["HTTP_USER_AGENT"], ENT_COMPAT) : '') . "<br>\n";
 		$out .= "<br>\n";
-		$out .= "<b>" . $langs->trans("RequestedUrl") . ":</b> " . dol_htmlentities($_SERVER["REQUEST_URI"], ENT_COMPAT) . "<br>\n";
+		$out .= "<b>" . $langs->trans("RequestedUrl") . ":</b> " . (isset($_SERVER["REQUEST_URI"]) ? dol_htmlentities($_SERVER["REQUEST_URI"], ENT_COMPAT) : '') . "<br>\n";
 		$out .= "<b>" . $langs->trans("Referer") . ":</b> " . (isset($_SERVER["HTTP_REFERER"]) ? dol_htmlentities($_SERVER["HTTP_REFERER"], ENT_COMPAT) : '') . "<br>\n";
 		$out .= "<b>" . $langs->trans("MenuManager") . ":</b> " . (isset($conf->standard_menu) ? dol_htmlentities($conf->standard_menu, ENT_COMPAT) : '') . "<br>\n";
 		$out .= "<br>\n";
-		$syslog .= "url=" . dol_escape_htmltag($_SERVER["REQUEST_URI"]);
-		$syslog .= ", query_string=" . dol_escape_htmltag($_SERVER["QUERY_STRING"]);
+		$syslog .= "url=" . (isset($_SERVER["REQUEST_URI"]) ? dol_escape_htmltag($_SERVER["REQUEST_URI"]) : '');
+		$syslog .= ", query_string=" . (isset($_SERVER["QUERY_STRING"]) ? dol_escape_htmltag($_SERVER["QUERY_STRING"]) : '');
 	} else { // Mode CLI
 		$out .= '> ' . $langs->transnoentities("ErrorInternalErrorDetected") . ":\n" . $argv[0] . "\n";
 		$syslog .= "pid=" . dol_getmypid();
