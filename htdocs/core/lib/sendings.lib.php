@@ -114,15 +114,13 @@ function shipping_prepare_head($object)
 	$head[$h][2] = 'note';
 	$h++;
 
-
-	//MODIF PICHINOV AGENDA
 	$head[$h][0] = DOL_URL_ROOT . '/expedition/agenda.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Events");
 	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
 		$nbEvent = 0;
 		// Enable caching of thirdparty count actioncomm
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
-		$cachekey = 'count_events_expedition_' . $object->id; // CHANGED: 'propal' to 'expedition'
+		$cachekey = 'count_events_expedition_' . $object->id;
 		$dataretrieved = dol_getcache($cachekey);
 		if (!is_null($dataretrieved)) {
 			$nbEvent = $dataretrieved;
@@ -130,7 +128,7 @@ function shipping_prepare_head($object)
 			$sql = "SELECT COUNT(id) as nb";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "actioncomm";
 			$sql .= " WHERE fk_element = " . ((int) $object->id);
-			$sql .= " AND elementtype = 'shipping'"; // CHANGED: 'order' to 'shipping'
+			$sql .= " AND elementtype = 'shipping'";
 			$resql = $db->query($sql);
 			if ($resql) {
 				$obj = $db->fetch_object($resql);

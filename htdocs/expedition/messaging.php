@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024       MDW                 <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025       Grimal Valentin         <valentin.grimal@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,7 +134,7 @@ llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-shipping page-card_m
 
 $head = shipping_prepare_head($object); // Changed from commande_prepare_head (This function might need to be defined in expedition.lib.php if it doesn't exist)
 
-print dol_get_fiche_head($head, 'agenda', $langs->trans("Shipping"), -1, 'shipping'); // Changed "Order" and "order"
+print dol_get_fiche_head($head, 'agenda', $langs->trans("Shipment"), -1, $object->picto);
 
 
 // Shipping card

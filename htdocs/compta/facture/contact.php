@@ -148,7 +148,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$totalpaid = $object->getSommePaiement();
 
-		print dol_get_fiche_head($head, 'contact', $langs->trans('InvoiceCustomer'), -1, 'bill');
+		print dol_get_fiche_head($head, 'contact', $langs->trans('InvoiceCustomer'), -1, $object->picto);
 
 		// Invoice content
 

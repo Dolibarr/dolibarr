@@ -111,7 +111,7 @@ llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-fourn-facture page-ca
 
 if ($object->id > 0) {
 	$head = facturefourn_prepare_head($object);
-	print dol_get_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'), -1, 'supplier_invoice');
+	print dol_get_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'), -1, $object->picto);
 
 	$totalpaid = $object->getSommePaiement();
 

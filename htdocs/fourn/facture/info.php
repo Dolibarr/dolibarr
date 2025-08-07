@@ -79,7 +79,7 @@ llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-fourn-facture page-ca
 
 $head = facturefourn_prepare_head($object);
 $titre = $langs->trans('SupplierInvoice');
-print dol_get_fiche_head($head, 'info', $langs->trans('SupplierInvoice'), -1, 'supplier_invoice');
+print dol_get_fiche_head($head, 'info', $langs->trans('SupplierInvoice'), -1, $object->picto);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 

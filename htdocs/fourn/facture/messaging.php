@@ -161,7 +161,7 @@ if ($object->id > 0) {
 	$head = facturefourn_prepare_head($object);
 	$titre = $langs->trans('SupplierInvoice');
 
-	print dol_get_fiche_head($head, 'agenda', $titre, -1, 'supplier_invoice', 0, '', '', 0, '', 1);
+	print dol_get_fiche_head($head, 'agenda', $titre, -1, $object->picto, 0, '', '', 0, '', 1);
 
 	// Object card
 	// ------------------------------------------------------------

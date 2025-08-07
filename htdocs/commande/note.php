@@ -102,7 +102,7 @@ if ($id > 0 || !empty($ref)) {
 
 	$head = commande_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'note', $langs->trans("CustomerOrder"), -1, 'order');
+	print dol_get_fiche_head($head, 'note', $langs->trans("CustomerOrder"), -1, $object->picto);
 
 	// Order card
 

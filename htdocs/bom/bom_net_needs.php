@@ -152,7 +152,7 @@ if ($action == 'treeview') {
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$head = bomPrepareHead($object);
-	print dol_get_fiche_head($head, 'net_needs', $langs->trans("BillOfMaterials"), -1, 'bom');
+	print dol_get_fiche_head($head, 'net_needs', $langs->trans("BillOfMaterials"), -1, $object->picto);
 
 	$formconfirm = '';
 

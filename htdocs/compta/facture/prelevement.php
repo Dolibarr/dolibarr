@@ -350,7 +350,7 @@ if ($object->id > 0) {
 	$listofopendirectdebitorcredittransfer = $object->getListOfOpenDirectDebitOrCreditTransfer($type);
 	$numopen = count($listofopendirectdebitorcredittransfer);
 
-	print dol_get_fiche_head($head, 'standingorders', $title, -1, ($type == 'bank-transfer' ? 'supplier_invoice' : 'bill'));
+	print dol_get_fiche_head($head, 'standingorders', $title, -1, ($type == 'bank-transfer' ? 'supplier_invoice' : $object->picto));
 
 	// Invoice content
 	if ($type == 'bank-transfer') {

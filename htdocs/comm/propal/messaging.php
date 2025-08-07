@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005-2016 Laurent Destailleur      <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009 Regis Houssin            <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Grimal Valentin         <valentin.grimal@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,19 +20,18 @@
  */
 
 /**
- * \file       htdocs/commande/agenda.php
+ * \file       htdocs/comm/propal/messaging.php
  * \ingroup    order
- * \brief      Tab of events on Sale Orders
+ *		\brief      Page with events on order
  */
 
 // Load Dolibarr environment
-require '../main.inc.php';
+require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php'; // Added for contact object
-require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
-require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php'; // Keep if you use project linking in order
-require_once DOL_DOCUMENT_ROOT . '/core/lib/order.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/propal.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 
 /**
  * @var Conf $conf
@@ -43,11 +42,11 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("order", "other")); // Changed from "projects" to "order"
+$langs->load("orders"); // Changed from projects
 
-$id = GETPOSTINT('id');
-$ref = GETPOST('ref', 'alpha');
-$socid = GETPOSTINT('socid');
+$id     = GETPOSTINT('id');
+$ref    = GETPOST('ref', 'alpha');
+$socid  = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ09');
 
@@ -78,15 +77,15 @@ if (GETPOST('actioncode', 'array')) {
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
-$hookmanager->initHooks(array('orderagenda', 'globalcard')); // Changed from projectcardinfo
+$hookmanager->initHooks(array('propalagenda', 'globalcard'));
 
 // Security check
 $id = GETPOSTINT("id");
 $socid = 0;
-//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
-$result = restrictedArea($user, 'commande', $id, 'commande&order'); // Changed from projet and project
+//if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of order and assignment.
+$result = restrictedArea($user, 'propal', $id, 'propal&propal'); // Changed from projet and project
 
-if (!$user->hasRight('commande', 'lire')) { // Changed from projet
+if (!$user->hasRight('propal', 'lire')) { // Changed from projet
 	accessforbidden();
 }
 
@@ -96,12 +95,11 @@ if (!$user->hasRight('commande', 'lire')) { // Changed from projet
  * Actions
  */
 
-$object = new Commande($db); // Changed from Project
+$object = new Propal($db); // Changed from Project
 
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
 	$object->fetch_thirdparty();
-	// Orders typically don't have fetchComments
 	// if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($object, 'fetchComments') && empty($object->comments)) {
 	// 	$object->fetchComments();
 	// }
@@ -127,34 +125,28 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
  */
 
 $form = new Form($db);
-$agenda = (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) ? '/' . $langs->trans("Agenda") : '';
-$title = $langs->trans('Events') . $agenda . ' - ' . $object->ref; // Changed from $object->ref.' '.$object->name;
 
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/ordernamonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->ref) { // Changed from projectnameonly
+$agenda = (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) ? '/' . $langs->trans("Agenda") : '';
+$title = $langs->trans('Events') . $agenda . ' - ' . $object->ref; // Removed $object->name as orders typically don't have it
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/ordernamonly/', getDolGlobalString('MAIN_HTML_TITLE'))) { // Changed from projectnameonly
 	$title = $object->ref . ' - ' . $langs->trans("Info"); // Simplified title
 }
-$help_url = "EN:Module_Orders|FR:Module_Commandes|ES:M&oacute;dulo_Pedidos"; // Changed help URL
-llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-order page-card_agenda'); // Changed mod-project
+$help_url = "EN:Module_Orders|FR:Module_Propals|ES:M&oacute;dulo_Pedidos"; // Changed help URL
 
-$head = commande_prepare_head($object); // Changed from project_prepare_head
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-propal page-card_messaging'); // Changed mod-project
 
-print dol_get_fiche_head($head, 'agenda', $langs->trans("Order"), -1, $object->picto);
+$head = propal_prepare_head($object); // Changed from project_prepare_head
 
+print dol_get_fiche_head($head, 'agenda', $title, -1, $object->picto);
 
-// Order card
-
-if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolist']['order'])) { // Changed from project
-	$tmpurl = $_SESSION['pageforbacktolist']['order']; // Changed from project
-	$tmpurl = preg_replace('/__SOCID__/', (string) $object->socid, $tmpurl);
-	$linkback = '<a href="' . $tmpurl . (preg_match('/\?/', $tmpurl) ? '&' : '?') . 'restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
-} else {
-	$linkback = '<a href="' . DOL_URL_ROOT . '/commande/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>'; // Changed from projet
-}
+// Object card
+// ------------------------------------------------------------
+$linkback = '<a href="' . DOL_URL_ROOT . '/comm/propal/list.php?restore_lastsearch_values=1' . (!empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 $morehtmlref = '<div class="refidno">';
 // Ref customer
-$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
-$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
+$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_customer, $object, 0, 'string', '', 0, 1);
+$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_customer, $object, 0, 'string', '', null, null, '', 1);
 // Thirdparty
 $morehtmlref .= '<br>' . $object->thirdparty->getNomUrl(1);
 // Project
@@ -178,12 +170,7 @@ if (isModEnabled('project')) {
 		}
 	}
 }
-
 $morehtmlref .= '</div>';
-
-// Define a complementary filter for search of next/prev ref.
-// Orders usually don't have a specific next/prev filter like projects unless custom logic is added.
-$object->next_prev_filter = ''; // Placeholder as getProjectsAuthorizedForUser is not applicable for orders
 
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
@@ -218,14 +205,25 @@ if (!empty($object->id)) {
 	//print '<div class="tabsAction">';
 	$morehtmlright = '';
 
-	// Show link to change view in message
-	$messagingUrl = DOL_URL_ROOT . '/commande/messaging.php?id=' . $object->id; // Changed from projet
-	$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1); // Status 1 for "not current page"
 
+	// Show link to change view in message
+	$messagingUrl = DOL_URL_ROOT . '/comm/propal/messaging.php?id=' . $object->id; // Changed from projet
+	$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 2);
 
 	// Show link to change view in agenda
-	$messagingUrl = DOL_URL_ROOT . '/commande/agenda.php?id=' . $object->id; // Changed from projet
-	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2); // Status 2 for "current page"
+	$messagingUrl = DOL_URL_ROOT . '/comm/propal/agenda.php?id=' . $object->id; // Changed from projet
+	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 1);
+
+
+	// // Show link to send an email (if read and not closed)
+	// $btnstatus = $object->status < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
+	// $url = 'card.php?track_id='.$object->track_id.'&action=presend_addmessage&mode=init&private_message=0&send_email=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?track_id='.$object->track_id).'#formmailbeforetitle';
+	// $morehtmlright .= dolGetButtonTitle($langs->trans('SendMail'), '', 'fa fa-paper-plane', $url, 'email-title-button', $btnstatus);
+
+	// // Show link to add a private message (if read and not closed)
+	// $btnstatus = $object->status < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage";
+	// $url = 'card.php?track_id='.$object->track_id.'&action=presend_addmessage&mode=init&backtopage='.urlencode($_SERVER["PHP_SELF"].'?track_id='.$object->track_id).'#formmailbeforetitle';
+	// $morehtmlright .= dolGetButtonTitle($langs->trans('TicketAddMessage'), '', 'fa fa-comment-dots', $url, 'add-new-ticket-title-button', $btnstatus);
 
 	// Show link to add event
 	if (isModEnabled('agenda')) {
@@ -242,10 +240,10 @@ if (!empty($object->id)) {
 	}
 
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
-	$cachekey = 'count_events_commande_' . $object->id; // Changed from project
+	$cachekey = 'count_events_order_' . $object->id; // Changed from project
 	$nbEvent = dol_getcache($cachekey);
 
-	$titlelist = $langs->trans("ActionsOnOrder") . (is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">(' . $nbEvent . ')</span>' : ''); // Changed from ActionsOnProject
+	$titlelist = $langs->trans("ActionsOnPropal") . (is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">(' . $nbEvent . ')</span>' : ''); // Changed from ActionsOnProject
 	if (!empty($conf->dol_optimize_smallscreen)) {
 		$titlelist = $langs->trans("Actions") . (is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">(' . $nbEvent . ')</span>' : '');
 	}
@@ -257,7 +255,8 @@ if (!empty($object->id)) {
 	$filters['search_agenda_label'] = $search_agenda_label;
 	$filters['search_rowid'] = $search_rowid;
 
-	show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
+	// This function needs to be able to handle an 'order' object. You might need to adapt it or create a new one.
+	show_actions_messaging($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
 }
 
 // End of page

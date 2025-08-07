@@ -856,7 +856,7 @@ if ($search_fk_fac_rec_source) {
 	$object->fetch((int) $search_fk_fac_rec_source);
 
 	$head = supplier_invoice_rec_prepare_head($object);
-	print dol_get_fiche_head($head, 'generated', $langs->trans('InvoicesGeneratedFromRec'), -1, 'bill'); // Add a div
+	print dol_get_fiche_head($head, 'generated', $langs->trans('InvoicesGeneratedFromRec'), -1, $object->picto); // Add a div
 }
 
 if ($socid) {

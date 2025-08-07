@@ -3182,13 +3182,12 @@ if ($action == 'create') {
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
 
-		//MODIF PICHINOV MESSAGING
 		//button to go to messaging from the events box
 		$MAXEVENT = 10;
 		$morehtmlcenter = dolGetButtonTitle($langs->trans('FullConversation'), '', 'fa fa-comments imgforviewmode', DOL_URL_ROOT . '/expedition/messaging.php?id=' . $object->id);
+		$morehtmlcenter .= dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT . '/expedition/agenda.php?id=' . $object->id);
 
 		$somethingshown = $formactions->showactions($object, 'shipping', $socid, 1, '', $MAXEVENT, '', $morehtmlcenter);
-		//END MODIF
 
 		print '</div></div>';
 	}

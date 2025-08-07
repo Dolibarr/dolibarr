@@ -103,7 +103,7 @@ llxHeader('', $title, $help_url);
 if ($object->id > 0) {
 	if ($object->fetch_thirdparty() > 0) {
 		$head = propal_prepare_head($object);
-		print dol_get_fiche_head($head, 'note', $langs->trans('Proposal'), -1, 'propal');
+		print dol_get_fiche_head($head, 'note', $langs->trans('Proposal'), -1, $object->picto);
 
 		$cssclass = 'titlefield';
 		//if ($action == 'editnote_public') $cssclass='titlefieldcreate';

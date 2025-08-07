@@ -1903,8 +1903,8 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			$sql .= ", o.ref";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 			$sql .= ", o.ref";
-		} elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {  //MODIF PICHINOV MESSAGING
-			$sql .= ", s.ref";  //END MODIF
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {
+			$sql .= ", s.ref";
 		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && $filterobj->table_element && $filterobj->element) {
 			if (!empty($filterobj->fields['ref'])) {
 				$sql .= ", o.ref";
@@ -1964,9 +1964,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			$sql .= ", " . MAIN_DB_PREFIX . "bom_bom as o";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 			$sql .= ", " . MAIN_DB_PREFIX . "contrat as o";
-		} elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {  //MODIF PICHINOV MESSAGING
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "expedition as s ON a.fk_element = s.rowid AND a.elementtype = 'shipping'"; // Jointure sur la table des expéditions avec condition ON
-		} elseif ( //END MODIF
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Propal') {
+			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "propal as o ON a.fk_element = o.rowid AND a.elementtype = 'propal'";
+		} elseif (
 			is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid'])
 			&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))  // @phan-suppress-current-line PhanTypeInvalidDimOffset
 			&& $filterobj->table_element && $filterobj->element
@@ -2027,12 +2029,12 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
-			} elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {  //MODIF PICHINOV MESSAGING
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {
 				$sql .= " AND a.fk_element = s.rowid AND a.elementtype = 'shipping'"; //expedition filter
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
-			} elseif ( //END MODIF
+			} elseif (
 				is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid'])
 				&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))  // ref, titre, label do not exist on $fields - @phan-suppress-current-line PhanTypeInvalidDimOffset
 				&& $filterobj->table_element && $filterobj->element

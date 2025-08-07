@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025       Grimal Valentin         <valentin.grimal@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +76,7 @@ if (GETPOST('actioncode', 'array')) {
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
-$hookmanager->initHooks(array('ordercardinfo')); // Changed from projectcardinfo
+$hookmanager->initHooks(array('orderagenda', 'globalcard'));
 
 // Security check
 $id = GETPOSTINT("id");
@@ -124,6 +125,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
  */
 
 $form = new Form($db);
+
 $agenda = (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) ? '/' . $langs->trans("Agenda") : '';
 $title = $langs->trans('Events') . $agenda . ' - ' . $object->ref; // Removed $object->name as orders typically don't have it
 if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/ordernamonly/', getDolGlobalString('MAIN_HTML_TITLE'))) { // Changed from projectnameonly
@@ -134,7 +136,7 @@ llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-order page-card_mess
 
 $head = commande_prepare_head($object); // Changed from project_prepare_head
 
-print dol_get_fiche_head($head, 'agenda', $langs->trans("Order"), -1, 'order'); // Changed "Project" and "projectpub"
+print dol_get_fiche_head($head, 'agenda', $langs->trans("Order"), -1, $object->picto);
 
 
 // Order card
@@ -152,7 +154,7 @@ $morehtmlref = '<div class="refidno">';
 $morehtmlref .= $object->ref; // Changed from $object->title as orders typically use ref for main identification
 // Thirdparty
 if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
-	$morehtmlref .= '<br>' . $object->thirdparty->getNomUrl(1, 'order'); // Changed from project
+	$morehtmlref .= '<br>' . $object->thirdparty->getNomUrl(1, 'order');
 }
 $morehtmlref .= '</div>';
 
