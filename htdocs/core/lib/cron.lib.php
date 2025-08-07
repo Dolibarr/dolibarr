@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2012 Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013 Florian Henry <florian.henry@opn-concept.pro>
+ * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@
 /**
  * Return array of tabs to used on pages to setup cron module.
  *
- * @return 	array				Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function cronadmin_prepare_head()
 {
@@ -56,7 +57,7 @@ function cronadmin_prepare_head()
  * Return array of tabs to used on a cron job
  *
  * @param 	Cronjob	$object		Object cron
- * @return 	array				Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function cron_prepare_head(Cronjob $object)
 {
@@ -99,13 +100,13 @@ function dol_print_cron_urls()
 	// Cron launch
 	print '<div class="div-table-responsive-no-min">';
 	print $langs->trans("URLToLaunchCronJobs").':<br>';
-	$url = $urlwithroot.'/public/cron/cron_run_jobs_by_url.php?'.(empty($conf->global->CRON_KEY) ? '' : 'securitykey='.$conf->global->CRON_KEY.'&').'userlogin='.$user->login;
+	$url = $urlwithroot.'/public/cron/cron_run_jobs_by_url.php?'.(!getDolGlobalString('CRON_KEY') ? '' : 'securitykey=' . getDolGlobalString('CRON_KEY').'&').'userlogin='.$user->login;
 	print '<div class="urllink">';
 	print '<input type="text" id="publicurlmember" class="quatrevingtpercentminusx" value="'.$url.'">';
 	print ' <a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe')."</a>\n";
 	print '</div>';
 	print '<br> '.$langs->trans("OrToLaunchASpecificJob").'<br>';
-	$url = $urlwithroot.'/public/cron/cron_run_jobs_by_url.php?'.(empty($conf->global->CRON_KEY) ? '' : 'securitykey='.$conf->global->CRON_KEY.'&').'userlogin='.$user->login.'&id=cronjobid';
+	$url = $urlwithroot.'/public/cron/cron_run_jobs_by_url.php?'.(!getDolGlobalString('CRON_KEY') ? '' : 'securitykey=' . getDolGlobalString('CRON_KEY').'&').'userlogin='.$user->login.'&id=cronjobid';
 	print '<div class="urllink">';
 	print '<input type="text" id="publicurlmemberall" class="quatrevingtpercentminusx" value="'.$url.'">';
 	print ' <a href="'.$url.'" target="_blank" rel="noopener noreferrer">'.img_picto('', 'globe')."</a>\n";
@@ -124,16 +125,16 @@ function dol_print_cron_urls()
 	print '<u>'.$langs->trans("FileToLaunchCronJobs").':</u><br>';
 
 	$pathtoscript = '/pathtoscript';
-	if (!empty($conf->global->MAIN_DOL_SCRIPTS_ROOT)) {
-		$pathtoscript = $conf->global->MAIN_DOL_SCRIPTS_ROOT;
+	if (getDolGlobalString('MAIN_DOL_SCRIPTS_ROOT')) {
+		$pathtoscript = getDolGlobalString('MAIN_DOL_SCRIPTS_ROOT');
 	}
 
-	$file = $pathtoscript.'/scripts/cron/cron_run_jobs.php '.(empty($conf->global->CRON_KEY) ? 'securitykey' : ''.$conf->global->CRON_KEY).' '.$logintouse.' [cronjobid]';
+	$file = $pathtoscript.'/scripts/cron/cron_run_jobs.php '.(!getDolGlobalString('CRON_KEY') ? 'securitykey' : '' . getDolGlobalString('CRON_KEY')).' '.$logintouse.' [cronjobid]';
 	print '<textarea class="quatrevingtpercent">'.$file."</textarea><br>\n";
 	print '<br>';
 
 	// Add note
-	if (empty($conf->global->CRON_DISABLE_TUTORIAL_CRON)) {
+	if (!getDolGlobalString('CRON_DISABLE_TUTORIAL_CRON')) {
 		$linuxlike = 1;
 		if (preg_match('/^win/i', PHP_OS)) {
 			$linuxlike = 0;
@@ -145,7 +146,7 @@ function dol_print_cron_urls()
 		if ($linuxlike) {
 			print $langs->trans("CronExplainHowToRunUnix");
 			print '<br>';
-			print '<textarea class="quatrevingtpercent">*/5 * * * * '.$pathtoscript.'/scripts/cron/cron_run_jobs.php '.(empty($conf->global->CRON_KEY) ? 'securitykey' : ''.$conf->global->CRON_KEY).' '.$logintouse.' &gt; '.DOL_DATA_ROOT.'/cron_run_jobs.php.log</textarea><br>';
+			print '<textarea class="quatrevingtpercent">*/5 * * * * '.$pathtoscript.'/scripts/cron/cron_run_jobs.php '.(!getDolGlobalString('CRON_KEY') ? 'securitykey' : '' . getDolGlobalString('CRON_KEY')).' '.$logintouse.' &gt; '.DOL_DATA_ROOT.'/cron_run_jobs.php.log</textarea><br>';
 		} else {
 			print $langs->trans("CronExplainHowToRunWin");
 		}

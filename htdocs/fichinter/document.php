@@ -7,6 +7,8 @@
  * Copyright (C) 2011-2012 Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,10 +41,18 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('other', 'fichinter', 'companies', 'interventions'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -55,10 +65,10 @@ $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 
 // Get parameters
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -79,7 +89,7 @@ $object->fetch($id, $ref);
 $upload_dir = $conf->ficheinter->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'fichinter';
 
-$permissiontoadd = $user->rights->ficheinter->creer; // Used by the include of actions_setnotes.inc.php
+$permissiontoadd = $user->hasRight('ficheinter', 'creer'); // Used by the include of actions_setnotes.inc.php
 
 
 /*
@@ -95,18 +105,18 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("Intervention"));
+llxHeader('', $langs->trans("Intervention"), '', '', 0, 0, '', '', '', 'mod-fichinter page-card_document');
 
 if ($object->id) {
 	$object->fetch_thirdparty();
 
 	$head = fichinter_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'documents', $langs->trans("InterventionCard"), -1, 'intervention');
+	print dol_get_fiche_head($head, 'documents', $langs->trans("InterventionCard"), -1, $object->picto);
 
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];
@@ -121,20 +131,20 @@ if ($object->id) {
 	// Ref customer
 	//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->ficheinter->creer, 'string', '', 0, 1);
 	//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->ficheinter->creer, 'string', '', null, null, '', 1);
-	$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
 	// Project
 	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>';
-		if ($usercancreate && 0) {
+		if ($permissiontoadd && 0) {
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -164,8 +174,7 @@ if ($object->id) {
 	print dol_get_fiche_end();
 
 	$modulepart = 'ficheinter';
-	$permissiontoadd = $user->rights->ficheinter->creer;
-	$permtoedit = $user->rights->ficheinter->creer;
+	$permtoedit = $user->hasRight('ficheinter', 'creer');
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {

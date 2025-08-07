@@ -1,12 +1,13 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Расонидани
 DeliveryRef=Интиқоли Ref
-DeliveryCard=Stock receipt
+DeliveryCard=Квитансияи таҳвил
 DeliveryOrder=Хати расонидани
 DeliveryDate=Санаи расондан
 CreateDeliveryOrder=Эҷоди квитансияи интиқол
 DeliveryStateSaved=Ҳолати расонидани захира карда шуд
-SetDeliveryDate=Санаи интиқолро таъин кунед
+SetDeliveryDate=Санаи тахминии таҳвилро таъин кунед
+SetShippingDate=Санаи интиқолро таъин кунед
 ValidateDeliveryReceipt=Тасдиқи расонидани расонидани
 ValidateDeliveryReceiptConfirm=Шумо мутмаин ҳастед, ки ин квитансияи интиқолро тасдиқ кардан мехоҳед?
 DeleteDeliveryReceipt=Нусхаи квитансияро расонед

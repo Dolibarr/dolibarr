@@ -3,6 +3,9 @@
  * Copyright (C) 2005-2016 Destailleur Laurent  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2022 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2023      Christian Foellmann  <christian@foellmann.de>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +24,7 @@
 /**
  *       \file       htdocs/comm/propal/contact.php
  *       \ingroup    propal
- *       \brief      Tab to manage contacts/adresses of proposal
+ *       \brief      Tab to manage contacts/addresses of proposal
  */
 
 // Load Dolibarr environment
@@ -33,15 +36,24 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('facture', 'propal', 'orders', 'sendings', 'companies'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$lineid = GETPOST('lineid', 'int');
+$lineid = GETPOSTINT('lineid');
 $action = GETPOST('action', 'aZ09');
 
 $object = new Propal($db);
+$error = 0;
 
 // Load object
 if ($id > 0 || !empty($ref)) {
@@ -68,49 +80,59 @@ if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 $hookmanager->initHooks(array('proposalcontactcard', 'globalcard'));
+$result = restrictedArea($user, 'propal', $object->id);
+
 restrictedArea($user, 'propal', $object->id);
 
 $usercancreate = $user->hasRight("propal", "creer");
 
 /*
- * Add a new contact
+ * Actions
  */
 
-if ($action == 'addcontact' && $user->hasRight('propal', 'creer')) {
-	if ($object->id > 0) {
-		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
-		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
-		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
-	}
-
-	if ($result >= 0) {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	} else {
-		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
-		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
-		}
-	}
-} elseif ($action == 'swapstatut' && $user->hasRight('propal', 'creer')) {
-	// Toggle the status of a contact
-	if ($object->id > 0) {
-		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
-	}
-} elseif ($action == 'deletecontact' && $user->hasRight('propal', 'creer')) {
-	// Deletes a contact
-	$result = $object->delete_contact($lineid);
-
-	if ($result >= 0) {
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	} else {
-		dol_print_error($db);
-	}
+$parameters = array('id' => $id);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+if (empty($reshook)) {
+	// Add new contact
+	if ($action == 'addcontact' && $user->hasRight('propal', 'creer')) {
+		if ($object->id > 0) {
+			$contactid = (GETPOSTINT('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
+			$typeid    = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+			$result    = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
+		}
+
+		if ($result >= 0) {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		} else {
+			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
+	} elseif ($action == 'swapstatut' && $user->hasRight('propal', 'creer')) {
+		// Toggle the status of a contact
+		if ($object->id > 0) {
+			$result = $object->swapContactStatus(GETPOSTINT('ligne'));
+		}
+	} elseif ($action == 'deletecontact' && $user->hasRight('propal', 'creer')) {
+		// Delete contact
+		$result = $object->delete_contact($lineid);
+
+		if ($result >= 0) {
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			exit;
+		} else {
+			dol_print_error($db);
+		}
+	}
+}
 
 /*
  * View
@@ -126,7 +148,7 @@ $formother = new FormOther($db);
 
 if ($object->id > 0) {
 	$head = propal_prepare_head($object);
-	print dol_get_fiche_head($head, 'contact', $langs->trans("Proposal"), -1, 'propal');
+	print dol_get_fiche_head($head, 'contact', $langs->trans("Proposal"), -1, $object->picto);
 
 
 	// Proposal card
@@ -144,12 +166,12 @@ if ($object->id > 0) {
 	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>';
-		if (0) {
+		if (0) {	// @phpstan-ignore-line
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);

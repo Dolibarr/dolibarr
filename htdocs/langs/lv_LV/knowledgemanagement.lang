@@ -4,41 +4,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = Zināšanu pārvaldības sistēma
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Pārvaldiet zināšanu pārvaldības (KM) vai palīdzības dienesta bāzi
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = Zināšanu pārvaldības sistēmas iestatīšana
-Settings = Iestatījumi
 KnowledgeManagementSetupPage = Zināšanu pārvaldības sistēmas iestatīšanas lapa
-
-
-#
 # About page
-#
-About = Par
 KnowledgeManagementAbout = Par zināšanu pārvaldību
 KnowledgeManagementAboutPage = Zināšanu pārvaldība par lapu
-
 KnowledgeManagementArea = Zināšanu pārvaldība
 MenuKnowledgeRecord = Zināšanu bāze
+MenuKnowledgeRecordShort = Zināšanu bāze
 ListKnowledgeRecord = Rakstu saraksts
 NewKnowledgeRecord = Jauns raksts
 ValidateReply = Apstipriniet šķīdumu
@@ -48,7 +34,6 @@ KnowledgeRecordExtraFields = Raksta paplašinājumi
 GroupOfTicket=Biļešu grupa
 YouCanLinkArticleToATicketCategory=Varat saistīt rakstu ar biļešu grupu (tāpēc raksts tiks izcelts uz visām šīs grupas biļetēm)
 SuggestedForTicketsInGroup=Ieteikts biļešu izveidē
-
 SetObsolete=Iestatīt kā novecojušu
 ConfirmCloseKM=Vai apstiprināt, ka šī raksta slēgšana ir novecojusi?
 ConfirmReopenKM=Vai vēlaties atjaunot šī raksta statusu "Apstiprināts"?

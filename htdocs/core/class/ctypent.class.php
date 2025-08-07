@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,49 +22,33 @@
  *      \brief      This file is CRUD class file (Create/Read/Update/Delete) for c_typent dictionary
  */
 
+// Put here all includes required by your class file
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
+
 
 /**
  *	Class of dictionary type of thirdparty (used by imports)
  */
-class Ctypent // extends CommonObject
+class Ctypent extends CommonDict
 {
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * @var string[] Error codes (or messages)
-	 */
-	public $errors = array();
-
-	// public $element = 'ctypent';			//!< Id that identify managed objects
-	// public $table_element = 'ctypent';	//!< Name of table without prefix where object is stored
-
-	/**
-	 * @var int ID
-	 */
-	public $id;
-
 	/**
 	 * @var int ID of country
 	 */
 	public $country_id;
 
-	public $code;
+	/**
+	 * @var string
+	 */
 	public $libelle;
-	public $active;
+	/**
+	 * @var string
+	 */
 	public $module;
 
 	/**
 	 *  Constructor
 	 *
-	 *  @param      DoliDb		$db      Database handler
+	 *  @param      DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -76,7 +61,7 @@ class Ctypent // extends CommonObject
 	 *
 	 *  @param      User	$user        User that create
 	 *  @param      int		$notrigger   0=launch triggers after, 1=disable triggers
-	 *  @return     int      		   	 <0 if KO, Id of created object if OK
+	 *  @return     int      		   	 Return integer <0 if KO, Id of created object if OK
 	 */
 	public function create($user, $notrigger = 0)
 	{
@@ -86,7 +71,7 @@ class Ctypent // extends CommonObject
 		// Clean parameters
 
 		if (isset($this->id)) {
-			$this->id = trim($this->id);
+			$this->id = (int) $this->id;
 		}
 		if (isset($this->code)) {
 			$this->code = trim($this->code);
@@ -95,7 +80,7 @@ class Ctypent // extends CommonObject
 			$this->libelle = trim($this->libelle);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 		if (isset($this->module)) {
 			$this->module = trim($this->module);
@@ -112,10 +97,10 @@ class Ctypent // extends CommonObject
 		$sql .= "active,";
 		$sql .= "module";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->id) ? 'NULL' : "'".$this->db->escape($this->id)."'").",";
+		$sql .= " ".(!isset($this->id) ? 'NULL' : "'".$this->db->escape((string) $this->id)."'").",";
 		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
 		$sql .= " ".(!isset($this->libelle) ? 'NULL' : "'".$this->db->escape($this->libelle)."'").",";
-		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape($this->active)."'").",";
+		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape((string) $this->active)."'").",";
 		$sql .= " ".(!isset($this->module) ? 'NULL' : "'".$this->db->escape($this->module)."'");
 		$sql .= ")";
 
@@ -153,7 +138,7 @@ class Ctypent // extends CommonObject
 	 *  @param      int		$id    	Id object
 	 *  @param		string	$code	Code
 	 *  @param		string	$label	Label
-	 *  @return     int          	<0 if KO, >0 if OK
+	 *  @return     int          	Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $code = '', $label = '')
 	{
@@ -200,7 +185,7 @@ class Ctypent // extends CommonObject
 	 *
 	 *  @param      User	$user        User that modify
 	 *  @param      int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return     int     		   	 <0 if KO, >0 if OK
+	 *  @return     int     		   	 Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
@@ -215,7 +200,7 @@ class Ctypent // extends CommonObject
 			$this->libelle = trim($this->libelle);
 		}
 		if (isset($this->active)) {
-			$this->active = trim($this->active);
+			$this->active = (int) $this->active;
 		}
 		if (isset($this->module)) {
 			$this->module = trim($this->module);
@@ -262,7 +247,7 @@ class Ctypent // extends CommonObject
 	 *
 	 *	@param  User	$user        User that delete
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 <0 if KO, >0 if OK
+	 *  @return	int					 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{

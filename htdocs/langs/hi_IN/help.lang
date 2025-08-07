@@ -1,23 +1,23 @@
 # Dolibarr language file - Source file is en_US - help
-CommunitySupport=Forum/Wiki support
-EMailSupport=Emails support
-RemoteControlSupport=Online real-time / remote support
-OtherSupport=Other support
-ToSeeListOfAvailableRessources=To contact/see available resources:
-HelpCenter=Help Center
-DolibarrHelpCenter=Dolibarr Help and Support Center
-ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
-TypeOfSupport=Type of support
-TypeSupportCommunauty=Community (free)
-TypeSupportCommercial=Commercial
-TypeOfHelp=Type
-NeedHelpCenter=Need help or support?
-Efficiency=Efficiency
-TypeHelpOnly=Help only
-TypeHelpDev=Help+Development
-TypeHelpDevForm=Help+Development+Training
-BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
-LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
-PossibleLanguages=Supported languages
-SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
-SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+CommunitySupport=फोरम/विकी समर्थन
+EMailSupport=ईमेल समर्थन
+RemoteControlSupport=ऑनलाइन वास्तविक समय / दूरस्थ समर्थन
+OtherSupport=अन्य सहायता
+ToSeeListOfAvailableRessources=संपर्क करने/उपलब्ध संसाधन देखने के लिए:
+HelpCenter=सहायता केंद्र
+DolibarrHelpCenter=डोलिबार सहायता और समर्थन केंद्र
+ToGoBackToDolibarr=अन्यथा, <a href="%s">Dolibarr का उपयोग जारी रखने के लिए यहां क्लिक करें</a>.
+TypeOfSupport=सहायता का प्रकार
+TypeSupportCommunauty=समुदाय (निःशुल्क)
+TypeSupportCommercial=व्यावसायिक
+TypeOfHelp=प्रकार
+NeedHelpCenter=सहायता की आवश्यकता है?
+Efficiency=क्षमता
+TypeHelpOnly=केवल सहायता
+TypeHelpDev=सहायता+विकास
+TypeHelpDevForm=सहायता+विकास+प्रशिक्षण
+BackToHelpCenter=अन्यथा, <a href="%s">सहायता केंद्र होम पेज पर वापस जाएं</a>.
+LinkToGoldMember=आप अपनी भाषा के लिए डॉलीबार द्वारा पूर्व-चयनित प्रशिक्षकों में से किसी एक को (%s) उनके विजेट पर क्लिक करके कॉल कर सकते हैं (स्थिति और अधिकतम मूल्य स्वचालित रूप से अपडेट हो जाते हैं):
+PossibleLanguages=समर्थित भाषाएँ
+SubscribeToFoundation=डोलिबार परियोजना की सहायता करें, फाउंडेशन की सदस्यता लें
+SeeOfficalSupport=आपकी भाषा में आधिकारिक Dolibarr समर्थन के लिए: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>

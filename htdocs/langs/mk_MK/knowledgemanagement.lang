@@ -4,51 +4,42 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = Систем за управување со знаење
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
-
-#
+ModuleKnowledgeManagementDesc=Управувајте со базата за управување со знаење (KM) или Help-Desk
 # Admin page
-#
-KnowledgeManagementSetup = Knowledge Management System setup
-Settings = Подесувања
-KnowledgeManagementSetupPage = Knowledge Management System setup page
-
-
-#
+KnowledgeManagementSetup = Поставување систем за управување со знаење
+KnowledgeManagementSetupPage = Страница за поставување на системот за управување со знаење
 # About page
-#
-About = About
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
-
-KnowledgeManagementArea = Knowledge Management
-MenuKnowledgeRecord = Knowledge base
-ListKnowledgeRecord = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
+KnowledgeManagementAbout = За управување со знаење
+KnowledgeManagementAboutPage = Управување со знаење за страницата
+KnowledgeManagementArea = Управување со знаење
+MenuKnowledgeRecord = База на знаење
+MenuKnowledgeRecordShort = База на знаење
+ListKnowledgeRecord = Список на статии
+NewKnowledgeRecord = Нова статија
+ValidateReply = Потврдете го решението
+KnowledgeRecords = Статии
 KnowledgeRecord = Article
-KnowledgeRecordExtraFields = Extrafields for Article
-GroupOfTicket=Group of tickets
-YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
-
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+KnowledgeRecordExtraFields = Екстраполиња за член
+GroupOfTicket=Група билети
+YouCanLinkArticleToATicketCategory=Можете да ја поврзете статијата со група билети (така што статијата ќе биде означена на сите билети во оваа група)
+SuggestedForTicketsInGroup=Се предлага при креирање билети
+SetObsolete=Поставете како застарен
+ConfirmCloseKM=Дали го потврдувате затворањето на овој напис како застарен?
+ConfirmReopenKM=Дали сакате да ја вратите оваа статија во статус „Потврдена“?
+BoxLastKnowledgerecordDescription=Последни %s статии
+BoxLastKnowledgerecord=Последни статии
+BoxLastKnowledgerecordContent=Последни статии
+BoxLastKnowledgerecordModifiedContent=Последно изменети статии
+BoxLastModifiedKnowledgerecordDescription=Последните %s изменети статии
+BoxLastModifiedKnowledgerecord=Последно изменети статии

@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=發貨
 DeliveryRef=發貨參考
-DeliveryCard=Stock receipt
+DeliveryCard=交貨單
 DeliveryOrder=交貨單
 DeliveryDate=發貨日期
 CreateDeliveryOrder=產生交貨單

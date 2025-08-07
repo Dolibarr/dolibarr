@@ -1,8 +1,10 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+/* Copyright (C) 2001-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,9 +33,13 @@ if (!$res && !empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) {
 	$res = @include $_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php";
 }
 // Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
-$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME']; $tmp2 = realpath(__FILE__); $i = strlen($tmp) - 1; $j = strlen($tmp2) - 1;
+$tmp = empty($_SERVER['SCRIPT_FILENAME']) ? '' : $_SERVER['SCRIPT_FILENAME'];
+$tmp2 = realpath(__FILE__);
+$i = strlen($tmp) - 1;
+$j = strlen($tmp2) - 1;
 while ($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i] == $tmp2[$j]) {
-	$i--; $j--;
+	$i--;
+	$j--;
 }
 if (!$res && $i > 0 && file_exists(substr($tmp, 0, ($i + 1))."/main.inc.php")) {
 	$res = @include substr($tmp, 0, ($i + 1))."/main.inc.php";
@@ -57,20 +63,31 @@ if (!$res) {
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("mymodule@mymodule"));
 
 $action = GETPOST('action', 'aZ09');
 
-$max = 5;
 $now = dol_now();
+$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
 
 // Security check - Protection if external user
-$socid = GETPOST('socid', 'int');
-if (isset($user->socid) && $user->socid > 0) {
+$socid = GETPOSTINT('socid');
+if (!empty($user->socid) && $user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
+
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
+//$hookmanager->initHooks(array($object->element.'index'));
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();
@@ -101,7 +118,7 @@ if (isset($user->socid) && $user->socid > 0) {
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-llxHeader("", $langs->trans("MyModuleArea"));
+llxHeader("", $langs->trans("MyModuleArea"), '', '', 0, 0, '', '', '', 'mod-mymodule page-index');
 
 print load_fiche_titre($langs->trans("MyModuleArea"), '', 'mymodule.png@mymodule');
 
@@ -110,19 +127,16 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 /* BEGIN MODULEBUILDER DRAFT MYOBJECT
 // Draft MyObject
-if (isModEnabled('mymodule') && $user->rights->mymodule->read)
-{
+if (isModEnabled('mymodule') && $user->hasRight('mymodule', 'read')) {
 	$langs->load("orders");
 
 	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.tva as total_tva, c.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
 	$sql.= ", s.code_client";
-	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
-	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
-	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= " FROM ".$db->prefix()."commande as c";
+	$sql.= ", ".$db->prefix()."societe as s";
 	$sql.= " WHERE c.fk_soc = s.rowid";
 	$sql.= " AND c.fk_statut = 0";
 	$sql.= " AND c.entity IN (".getEntity('commande').")";
-	if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	if ($socid)	$sql.= " AND c.fk_soc = ".((int) $socid);
 
 	$resql = $db->query($sql);
@@ -186,18 +200,12 @@ END MODULEBUILDER DRAFT MYOBJECT */
 print '</div><div class="fichetwothirdright">';
 
 
-$NBMAX = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
-$max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT');
-
 /* BEGIN MODULEBUILDER LASTMODIFIED MYOBJECT
 // Last modified myobject
-if (isModEnabled('mymodule') && $user->rights->mymodule->read)
-{
+if (isModEnabled('mymodule') && $user->hasRight('mymodule', 'read')) {
 	$sql = "SELECT s.rowid, s.ref, s.label, s.date_creation, s.tms";
-	$sql.= " FROM ".MAIN_DB_PREFIX."mymodule_myobject as s";
-	//if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= " FROM ".$db->prefix()."mymodule_myobject as s";
 	$sql.= " WHERE s.entity IN (".getEntity($myobjectstatic->element).")";
-	//if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	//if ($socid)	$sql.= " AND s.rowid = $socid";
 	$sql .= " ORDER BY s.tms DESC";
 	$sql .= $db->plimit($max, 0);

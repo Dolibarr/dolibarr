@@ -2,6 +2,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
-$path=dirname(__FILE__).'/';
+$path = dirname(__FILE__).'/';
 
 // Test si mode batch
 $sapi_type = php_sapi_name();
@@ -46,14 +47,30 @@ include_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT."/commande/class/commande.class.php";
 
+// Global variables
+$version = DOL_VERSION;
+
 
 /*
- * Parametre
+ * Main
  */
 
-define(GEN_NUMBER_COMMANDE, 10);
+
+@set_time_limit(0);
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
+
+if (empty($argv[1])) {
+	print "Usage:  $script_file  nbofrecord\n";
+	print "Usage:  $script_file  100\n";
+	print "\n";
+	exit(-1);
+}
+
+define('GEN_NUMBER_COMMANDE', ((int) $argv[1]) ?? 10);
+
 $year = 2016;
-$dates = array (mktime(12, 0, 0, 1, 3, $year),
+$dates = array(mktime(12, 0, 0, 1, 3, $year),
 	mktime(12, 0, 0, 1, 9, $year),
 	mktime(12, 0, 0, 2, 13, $year),
 	mktime(12, 0, 0, 2, 23, $year),
@@ -105,12 +122,12 @@ $dates = array (mktime(12, 0, 0, 1, 3, $year),
 	mktime(12, 0, 0, 12, 13, $year),
 );
 
-$ret=$user->fetch('', 'admin');
+$ret = $user->fetch('', 'admin');
 if ($ret <= 0) {
 	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
 	exit;
 }
-$user->getrights();
+$user->loadRights();
 
 $societesid = array();
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe where client in (1, 3)";
@@ -179,7 +196,7 @@ for ($s = 0; $s < GEN_NUMBER_COMMANDE; $s++) {
 
 	$fuser = new User($db);
 	$fuser->fetch($listofuserid[mt_rand(0, 2)]);
-	$fuser->getRights();
+	$fuser->loadRights();
 
 	$db->begin();
 

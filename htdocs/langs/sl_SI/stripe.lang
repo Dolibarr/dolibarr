@@ -22,7 +22,8 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL za ponudbo %s spletne plačilne s
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL za ponudbo %s strani za spletno plačilo poljubnega zneska brez obstoječega predmeta
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL za ponudbo %s strani za spletno plačilo za člansko naročnino
 ToOfferALinkForOnlinePaymentOnDonation=URL za ponudbo %s spletne plačilne strani za plačilo donacije
-YouCanAddTagOnUrl=Parameter URL-ja <b> &tag= <i> vrednost </i> </b> lahko dodate tudi kateremu koli od teh URL-jev (obvezno samo za plačilo, ki ni povezano s predmetom), da dodate lastno oznako komentarja o plačilu. <br> Za URL plačil brez obstoječega predmeta lahko dodate tudi parameter <strong> &noidempotency=1 </strong>, tako da je mogoče isto povezavo z isto oznako uporabiti večkrat (nekateri načini plačila lahko omejijo plačilo na 1 za vsako različno povezavo brez tega parameter)
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Nastavite svoj Stripe z url <b> %s </b>, da se plačilo samodejno ustvari, ko ga potrdi Stripe.
 AccountParameter=Parametri računa
 UsageParameter=Parametri uporabe
@@ -41,8 +42,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Ključ v živo Webhook
 ONLINE_PAYMENT_WAREHOUSE=Zaloga, ki se uporabi za zmanjšanje zaloge, ko je opravljeno spletno plačilo <br> (TODO Ko se izvede možnost zmanjšanja zaloge za dejanje na računu in spletno plačilo samo ustvari račun?)
 StripeLiveEnabled=Stripe v živo omogočen (sicer preskusni/peskovniški način)
 StripeImportPayment=Uvozite plačila Stripe
-ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
-ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
+ExampleOfTestCreditCard=Primer kreditne kartice za testno plačilo: %s => veljavna, %s => napaka CVC, %s => potekel, %s => polnjenje ni uspelo
+ExampleOfTestBankAcountForSEPA=Primer BAN bančnega računa za preizkus neposredne bremenitve: %s
 StripeGateways=Stripe prehodi
 OAUTH_STRIPE_TEST_ID=ID odjemalca Stripe Connect (ca_...)
 OAUTH_STRIPE_LIVE_ID=ID odjemalca Stripe Connect (ca_...)
@@ -51,6 +52,7 @@ StripeAccount=Stripe račun
 StripeChargeList=Seznam stroškov Stripe
 StripeTransactionList=Seznam transakcij Stripe
 StripeCustomerId=ID stranke Stripe
+StripePaymentId=Stripe ID plačila
 StripePaymentModes=Načini plačila Stripe
 LocalID=Lokalni ID
 StripeID=Stripe ID
@@ -70,9 +72,19 @@ ToOfferALinkForTestWebhook=Povezava do nastavitve Stripe WebHook za klic IPN (te
 ToOfferALinkForLiveWebhook=Povezava za nastavitev Stripe WebHook za klic IPN (način v živo)
 PaymentWillBeRecordedForNextPeriod=Plačilo bo evidentirano za naslednje obdobje.
 ClickHereToTryAgain= <a href="%s"> Kliknite tukaj, če želite poskusiti znova ... </a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Zaradi pravil stroge avtentikacije strank je treba kartico ustvariti v zaledni pisarni Stripe. Tukaj lahko kliknete, da vklopite evidenco strank Stripe: %s
-STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
-TERMINAL_LOCATION=Location (address) for Stripe Terminals
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Zaradi pravil stroge avtentikacije strank je treba kartico ustvariti v zaledni pisarni Stripe. Za vklop evidence strank Stripe lahko kliknete tukaj: %s
+STRIPE_CARD_PRESENT=Prisotna kartica za terminale Stripe
+TERMINAL_LOCATION=Lokacija (naslov) za terminale Stripe
 RequestDirectDebitWithStripe=Zahtevajte direktno bremenitev s Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
-
+RequesCreditTransferWithStripe=Request Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Omogočite plačila z direktno obremenitvijo prek Stripe
+STRIPE_KLARNA=Enable the payments using Klarna
+STRIPE_BANCONTACT=Enable the payments using BANCONTACT
+STRIPE_IDEAL=Enable the payments using IDEAL
+STRIPE_GIROPAY=Enable the payments using GIROPAY
+STRIPE_SOFORT=Enable the payments using SOFORT
+StripeConnect_Mode=Način Stripe Connect
+ExampleOnlyForBECustomers=Only for belgium customers
+ExampleOnlyForDECustomers=Only for german customers
+ExampleOnlyForNLCustomers=Only for dutch customers
+ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain

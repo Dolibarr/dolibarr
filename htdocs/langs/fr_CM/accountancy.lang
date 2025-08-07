@@ -1,0 +1,7 @@
+# Dolibarr language file - Source file is en_US - accountancy
+AccountingJournalType9=Has-new
+AccountancyClosureAccountingReversal=Extract entries
+AccountancyClosureGenerateClosureBookkeepingRecords=Generate "has-new" entry on the next fiscal period
+AccountancyClosureSeparateAuxiliaryAccounts=When generating the "has-new" entry, detail the sub-ledger accounts
+AccountancyClosureInsertAccountingReversalSuccessfully=Bookkeeping records has been inserted successfully
+AccountancyClosureConfirmAccountingReversal=Are you sure you want to accounting reversal ?

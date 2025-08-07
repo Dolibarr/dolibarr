@@ -7,30 +7,33 @@ descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Пас аз имзои пешниҳоди �
 descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Пас аз имзои пешниҳоди тиҷоратӣ ба таври худкор ҳисобнома -фактураи муштарӣ эҷод кунед (фактураи нав ҳамон миқдоре, ки пешниҳод дорад)
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Пас аз тасдиқи шартнома ба таври худкор ҳисобнома -фактураи муштарӣ эҷод кунед
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Ба таври худкор ҳисобнома -фактураи муштариро пас аз бастани фармоиши фурӯш эҷод кунед (фактураи нав ҳамон миқдорро бо фармоиш хоҳад дошт)
-descWORKFLOW_TICKET_CREATE_INTERVENTION=On ticket creation, automatically create an intervention.
+descWORKFLOW_TICKET_CREATE_INTERVENTION=Ҳангоми сохтани чипта, ба таври худкор дахолат эҷод кунед.
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Пешниҳоди манбаи алоқамандро ҳамчун ҳисобшуда тасниф кунед, вақте ки фармоиши фурӯш ба суратҳисоб таъин карда мешавад (ва агар маблағи фармоиш бо маблағи умумии пешниҳоди пайванди имзошуда якхела бошад)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Пешниҳоди манбаи пайвандшударо ҳамчун тасдиқи ҳисобнома -фактураи муштарӣ тасниф кунед (ва агар маблағи фактура бо маблағи умумии пешниҳоди пайванди имзошуда якхела бошад)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Фармоиши фурӯши манбаъҳои пайвандшударо ҳамчун тасдиқи ҳисобнома -фактураи муштарӣ тасниф кунед (ва агар маблағи фактура бо маблағи умумии фармоиши алоқаманд бошад)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Ҳангоми пардохти ҳисобнома -фактураи муштарӣ фармоиши фурӯши сарчашмаҳои пайвандшударо ҳамчун ҳисобшуда гурӯҳбандӣ кунед (ва агар маблағи фактура бо маблағи умумии фармоиши алоқаманд якхела бошад)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Фармоиши фурӯши сарчашмаҳои пайвандшударо ҳамчун тасдиқи бор тасниф кунед (ва агар миқдори фиристодаи ҳамаи интиқолҳо бо фармони навсозӣ якхела бошад)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Фармоиши фурӯши сарчашмаҳои пайвандшударо ҳамчун бастаи интиқол тасниф кунед (ва агар миқдори фиристодаи ҳамаи интиқолҳо бо фармони навсозӣ якхела бошад)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Вақте ки фармоиши фурӯш ба ҳисоб гирифта мешавад, пешниҳодҳои манбаи алоқамандро ҳамчун ҳисоббаробаркунӣ тасниф кунед (ва агар маблағи фармоиш бо маблағи умумии пешниҳодҳои алоқаманди имзошуда яксон бошад)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Ҳангоме ки ҳисобнома-фактураи муштарӣ тасдиқ карда мешавад, пешниҳодҳои манбаи алоқамандро ҳамчун ҳисоббаробаркунӣ тасниф кунед (ва агар маблағи ҳисобнома-фактура бо маблағи умумии пешниҳодҳои алоқаманди имзошуда яксон бошад)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Вақте, ки ҳисобнома-фактураи муштарӣ барои пардохт таъин карда мешавад, фармоишҳои фурӯши манбаи алоқамандро ҳамчун ҳисоббаробаркунӣ тасниф кунед (ва агар маблағи ҳисобнома-фактура бо маблағи умумии фармоишҳои марбут ба фурӯш баробар бошад). Агар шумо барои n фармоиш 1 ҳисобнома-фактура тавлид кунед, ин метавонад ҳамаи фармоишҳоро низ ҳисоб карда шавад.
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Вақте, ки ҳисобнома-фактураи муштарӣ тасдиқ карда мешавад, ҳамаи фармоишҳои фурӯши сарчашмаҳои алоқамандро ҳамчун ҳисоббаробаркунӣ тасниф кунед (ва агар маблағи ҳисобнома-фактура бо маблағи умумии фармоишҳои фурӯши сарчашмаи алоқаманд яксон бошад). Агар шумо барои n фармоиш 1 ҳисобнома-фактураи умумӣ тавлид кунед, ин метавонад ҳамаи фармоишҳои манбаъро ба ҳисоб гирифта шавад.
+descWORKFLOW_SUM_INVOICES_AMOUNT_CLASSIFY_BILLED_ORDER=Вақте ки ҳисобнома-фактураи муштарӣ тасдиқ карда мешавад, фармоиши фурўши алоқамандро (агар танҳо як бошад) ҳамчун ҳисобдор тасниф кунед, агар маблағи умумии фармоиши фурӯши алоқаманд ба маблағи умумии ҳамаи ҳисобнома-фактураҳои аз он додашуда баробар бошад. Агар шумо барои 1 фармоиш n ҳисобнома-фактура тавлид кунед, ин имкон медиҳад, ки пас аз тасдиқи ҳама ҳисобнома-фактураҳо фармоишро ба ҳисоб гирифта шаванд.
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Вақте ки интиқол тасдиқ карда мешавад, фармоишҳои фурӯши манбаи алоқамандро ҳамчун фиристодашуда тасниф кунед (ва агар миқдори интиқоли ҳама интиқолҳо бо тартиби навсозӣ якхела бошад)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING_CLOSED=Вақте ки интиқол баста мешавад, фармоиши фурӯши сарчашмаи алоқамандро ҳамчун фиристодашуда тасниф кунед (ва агар миқдори интиқоли ҳама интиқолҳо бо тартиби навсозӣ якхела бошад)
 # Autoclassify purchase proposal
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Пешниҳоди фурӯшандаи манбаи алоқамандро ҳангоми тасдиқи ҳисобнома -фактураи фурӯшанда тасниф кунед (ва агар маблағи фактура бо маблағи умумии пешниҳоди алоқаманд бошад)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Вақте ки ҳисобнома-фактураи фурӯшанда тасдиқ карда мешавад, пешниҳоди фурӯшандаи манбаи алоқамандро ҳамчун ҳисоббаробаркунӣ тасниф кунед (ва агар маблағи ҳисобнома-фактура бо маблағи умумии пешниҳодҳои алоқаманд яксон бошад)
 # Autoclassify purchase order
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Фармоиши хариди сарчашмаи пайвандшударо ҳамчун тасдиқи ҳисобнома -фактураи фурӯшанда тасниф кунед (ва агар маблағи фактура бо маблағи умумии фармоиши алоқаманд бошад)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Classify linked source purchase order as received when a reception is validated (and if the quantity received by all receptions is the same as in the purchase order to update)
-descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Classify linked source purchase order as received when a reception is closed (and if the quantity received by all rceptions is the same as in the purchase order to update)
-# Autoclassify purchase invoice
-descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Classify receptions to "billed" when a linked purchase invoice is validated (and if the amount of the invoice is the same as the total amount of the linked receptions)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Вақте ки ҳисобнома-фактураи фурӯшанда тасдиқ карда мешавад, фармоиши хариди манбаи алоқамандро ҳамчун ҳисобдор тасниф кунед (ва агар маблағи ҳисобнома-фактура бо маблағи умумии фармоишҳои алоқаманд яксон бошад)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION=Вақте ки қабул тасдиқ карда мешавад, фармоиши хариди манбаи алоқамандро ҳамчун гирифта тасниф кунед (ва агар миқдори қабулшуда аз ҷониби ҳама қабулҳо ҳамон тавре бошад, ки дар фармоиши харид барои навсозӣ)
+descWORKFLOW_ORDER_CLASSIFY_RECEIVED_RECEPTION_CLOSED=Вақте ки қабулгоҳ баста мешавад, фармоишҳои хариди манбаи алоқамандро ҳамчун қабулшуда тасниф кунед (ва агар миқдори қабули ҳама қабулҳо аз фармоиши харид ба ҳамон фармоиши харид барои навсозӣ баробар бошад)
+# Autoclassify shipment
+descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Вақте ки ҳисобнома-фактураи муштарӣ тасдиқ карда мешавад, интиқоли манбаи алоқамандро баста тасниф кунед (ва агар маблағи ҳисобнома-фактура бо маблағи умумии интиқолҳои алоқаманд баробар бошад)
+descWORKFLOW_SHIPPING_CLASSIFY_BILLED_INVOICE=Вақте, ки ҳисобнома-фактураи муштарӣ тасдиқ карда мешавад, интиқоли манбаи алоқамандро ҳамчун ҳисоббаробаркунӣ тасниф кунед (ва агар маблағи ҳисобнома-фактура бо маблағи умумии интиқолҳои алоқаманд яксон бошад)
+# Autoclassify receptions
+descWORKFLOW_RECEPTION_CLASSIFY_CLOSED_INVOICE=Вақте ки ҳисобнома-фактураи харид тасдиқ карда мешавад, қабули манбаъҳои алоқамандро баста гурӯҳбандӣ кунед (ва агар маблағи ҳисобнома-фактура бо маблағи умумии қабулҳои алоқаманд яксон бошад)
+descWORKFLOW_RECEPTION_CLASSIFY_BILLED_INVOICE=Вақте ки ҳисобнома-фактураи харид тасдиқ карда мешавад, қабули манбаи алоқамандро ҳамчун ҳисоббаробаркунӣ тасниф кунед (ва агар маблағи ҳисобнома-фактура бо маблағи умумии қабулҳои алоқаманд яксон бошад)
 # Automatically link ticket to contract
-descWORKFLOW_TICKET_LINK_CONTRACT=When creating a ticket, link available contracts of matching thirdparty
-descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=When linking contracts, search among those of parents companies
+descWORKFLOW_TICKET_LINK_CONTRACT=Вақте ки чипта сохта мешавад, онро бо шартномаҳои мавҷуда, ки ба ҳамон тарафи сеюм нисбат ба чипта мувофиқат мекунад, пайваст кунед
+descWORKFLOW_TICKET_USE_PARENT_COMPANY_CONTRACTS=Ҳангоми ба таври худкор пайваст кардани чипта бо шартномаҳо, шартномаҳои ширкатҳои волидайнро ҷустуҷӯ кунед
 # Autoclose intervention
 descWORKFLOW_TICKET_CLOSE_INTERVENTION=Ҳангоми пӯшидани чипта ҳама дахолатҳои марбут ба чиптаро пӯшед
 AutomaticCreation=Эҷоди автоматӣ
 AutomaticClassification=Таснифоти автоматӣ
-# Autoclassify shipment
-descWORKFLOW_SHIPPING_CLASSIFY_CLOSED_INVOICE=Classify linked source shipment as closed when customer invoice is validated (and if the amount of the invoice is the same as the total amount of the linked shipments)
-AutomaticClosing=Automatic closing
-AutomaticLinking=Automatic linking
+AutomaticClosing=Пӯшидани худкор
+AutomaticLinking=Пайвастшавӣ ба таври худкор

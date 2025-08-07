@@ -16,20 +16,29 @@
 --
 -- ===================================================================
 
+-- This table contains the detail of status and bank information on direct debit or credit transfer.
+-- This is the real value used to generated the SEPA file for example when llx_prelevement_demande contains the intent.
 create table llx_prelevement_lignes
 (
   rowid               integer AUTO_INCREMENT PRIMARY KEY,
   fk_prelevement_bons integer,
   fk_soc              integer NOT NULL,
+  fk_user             integer NULL,
+
   statut              smallint DEFAULT 0,
 
   client_nom          varchar(255),
   amount              double(24,8) DEFAULT 0,
-  code_banque         varchar(128),
-  code_guichet        varchar(6),
-  number              varchar(255),
-  cle_rib             varchar(5),
 
-  note                text
+  code_banque         varchar(128), -- deprecated
+  code_guichet        varchar(6), 	-- deprecated
+  number              varchar(255), -- deprecated
+  cle_rib             varchar(5),	-- deprecated
 
+  bic                 varchar(11),   -- 11 according to ISO 9362
+  iban			      varchar(80),   -- full iban. 34 according to ISO 13616 but we set 80 to allow to store it with encryption information
+  rum			      varchar(32),   -- RUM used for the direct debit
+
+  note                text,
+  tms             	  timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 )ENGINE=innodb;

@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - exports
 FileSuccessfullyBuilt=Filter generiert
 ExampleAnyCodeOrIdFoundIntoDictionary=Ein Code (oder eine ID) wurde im Dictionnary <b>%s</b> gefunden
+ExportStringFilter=%% erlaubt die Ersetzung eines oder mehrerer Zeichen im Text
 ImportFromLine=Import ab Zeile Nummer
 EndAtLineNb=Bis zu Zeile Nummer

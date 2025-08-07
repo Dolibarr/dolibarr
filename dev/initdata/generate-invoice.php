@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
-$path=dirname(__FILE__).'/';
+$path = dirname(__FILE__).'/';
 
 // Test si mode batch
 $sapi_type = php_sapi_name();
@@ -40,14 +41,28 @@ require __DIR__. '/../../htdocs/master.inc.php';
 require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
 require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
 
+// Global variables
+$version = DOL_VERSION;
+
 
 /*
- * Parameters
+ * Main
  */
 
-define(GEN_NUMBER_FACTURE, 1);
+@set_time_limit(0);
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
+
+if (empty($argv[1])) {
+	print "Usage:  $script_file  nbofrecord\n";
+	print "Usage:  $script_file  100\n";
+	print "\n";
+	exit(-1);
+}
+
+define('GEN_NUMBER_FACTURE', ((int) $argv[1]) ?? 1);
 $year = 2016;
-$dates = array (mktime(12, 0, 0, 1, 3, $year),
+$dates = array(mktime(12, 0, 0, 1, 3, $year),
 	mktime(12, 0, 0, 1, 9, $year),
 	mktime(12, 0, 0, 2, 13, $year),
 	mktime(12, 0, 0, 2, 23, $year),
@@ -99,12 +114,12 @@ $dates = array (mktime(12, 0, 0, 1, 3, $year),
 	mktime(12, 0, 0, 12, 13, $year),
 );
 
-$ret=$user->fetch('', 'admin');
+$ret = $user->fetch('', 'admin');
 if (! $ret > 0) {
 	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
 	exit;
 }
-$user->getrights();
+$user->loadRights();
 
 
 $socids = array();
@@ -149,7 +164,7 @@ while ($i < GEN_NUMBER_FACTURE && $result >= 0) {
 
 	$fuser = new User($db);
 	$fuser->fetch(mt_rand(1, 2));
-	$fuser->getRights();
+	$fuser->loadRights();
 
 	$result=$object->create($fuser);
 	if ($result >= 0) {
@@ -168,7 +183,8 @@ while ($i < GEN_NUMBER_FACTURE && $result >= 0) {
 
 		$result=$object->validate($fuser);
 		if ($result) {
-			print " OK with ref ".$object->ref."\n";;
+			print " OK with ref ".$object->ref."\n";
+			;
 		} else {
 			dol_print_error($db, $object->error);
 		}

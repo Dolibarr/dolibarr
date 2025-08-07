@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,7 @@
  *		\brief      File of class to manage donation document generation
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 
@@ -34,18 +36,13 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
  */
 abstract class ModeleDon extends CommonDocGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
-	 *  @param	DoliDB  $db     			Database handler
-	 *  @param  integer $maxfilenamelength  Max length of value to show
-	 *  @return	array						List of templates
+	 *  @param  DoliDB  	$db                 Database handler
+	 *  @param  int<0,max>	$maxfilenamelength  Max length of value to show
+	 *  @return string[]|int<-1,0>				List of templates
 	 */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
@@ -58,97 +55,24 @@ abstract class ModeleDon extends CommonDocGenerator
 
 		return $list;
 	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Write the object to document file to disk
+	 *
+	 *  @param	Don			$don			Donation object
+	 *  @param	Translate	$outputlangs	Lang object for output language
+	 *  @param	string		$currency		Currency code
+	 *  @return	int<-1,1>					>0 if OK, <0 if KO
+	 */
+	abstract public function write_file($don, $outputlangs, $currency = '');
 }
 
 
 /**
  *	Parent class of donation numbering templates
  */
-abstract class ModeleNumRefDons
+abstract class ModeleNumRefDons extends CommonNumRefGenerator
 {
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error = '';
-
-	/**
-	 * 	Return if a module can be used or not
-	 *
-	 *  @return		boolean     true if module can be used
-	 */
-	public function isEnabled()
-	{
-		return true;
-	}
-
-	/**
-	 * 	Returns the default description of the numbering pattern
-	 *
-	 *  @return     string      Descriptive text
-	 */
-	public function info()
-	{
-		global $langs;
-		$langs->load("bills");
-		return $langs->trans("NoDescription");
-	}
-
-	/**
-	 *  Return an example of numbering
-	 *
-	 *  @return     string      Example
-	 */
-	public function getExample()
-	{
-		global $langs;
-		$langs->load("bills");
-		return $langs->trans("NoExample");
-	}
-
-	/**
-	 *  Checks if the numbers already in the database do not
-	 *  cause conflicts that would prevent this numbering working.
-	 *
-	 *  @return     boolean     false if conflict, true if ok
-	 */
-	public function canBeActivated()
-	{
-		return true;
-	}
-
-	/**
-	 *  Renvoi prochaine valeur attribuee
-	 *
-	 *  @return     string      Valeur
-	 */
-	public function getNextValue()
-	{
-		global $langs;
-		return $langs->trans("NotAvailable");
-	}
-
-	/**
-	 *  Renvoi version du module numerotation
-	 *
-	 *  @return     string      Valeur
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("VersionDevelopment");
-		}
-		if ($this->version == 'experimental') {
-			return $langs->trans("VersionExperimental");
-		}
-		if ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		}
-		if ($this->version) {
-			return $this->version;
-		}
-		return $langs->trans("NotAvailable");
-	}
+	// No overload code
 }

@@ -82,7 +82,7 @@ abstract class Node implements \IteratorAggregate, \ArrayAccess, \Countable, \Js
      *
      * @param Xml\Writer $writer XML writer
      */
-    abstract public function xmlSerialize(Xml\Writer $writer);
+    abstract public function xmlSerialize(Xml\Writer $writer): void;
 
     /**
      * Call this method on a document if you're done using it.

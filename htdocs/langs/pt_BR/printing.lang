@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - printing
+Module64000Desc=Habilitar sistema de impressão com um clique
+PrintingDesc=Este módulo adiciona um botão Imprimir a vários módulos para permitir que os documentos sejam impressos diretamente em uma impressora sem a necessidade de abrir o documento em outro aplicativo.
 PrintingDriverDesc=Configuração de variáveis para o driver de impressão.
 ListDrivers=Lista de drivers
 FileWasSentToPrinter=Arquivo %s enviado para impressora

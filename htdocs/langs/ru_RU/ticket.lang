@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Тикеты
 Module56000Desc=Система тикетов для создания или управления запросами
-
 Permission56001=Смотреть тикеты
 Permission56002=Изменить тикеты
 Permission56003=Удалить тикеты
 Permission56004=Управлять тикетами
 Permission56005=Просмотр тикетов всех третьих лиц (не действует для внешних пользователей, всегда ограничивается третьей стороной, от которой они зависят)
-Permission56006=Export tickets
-
+Permission56006=Экспортировать талоны
 Tickets=Тикеты
 TicketDictType=Тикет - Типы
-TicketDictCategory=Тикет - Группы
+TicketDictCategory=талон – Группы
 TicketDictSeverity=Тикет - Степени серьезности
 TicketDictResolution=Тикет - Решение
-
 TicketTypeShortCOM=Коммерческий вопрос
 TicketTypeShortHELP=Запрос на функциональную помощь
 TicketTypeShortISSUE=Ошибка
@@ -41,74 +33,59 @@ TicketTypeShortPROBLEM=Проблема
 TicketTypeShortREQUEST=Запрос на изменение или расширение
 TicketTypeShortPROJET=Проект
 TicketTypeShortOTHER=Другое
-
 TicketSeverityShortLOW=Низкий
 TicketSeverityShortNORMAL=Обычный
 TicketSeverityShortHIGH=Высокий
 TicketSeverityShortBLOCKING=Критический, Блокирующий
-
 TicketCategoryShortOTHER=Другое
-
 ErrorBadEmailAddress=Поле '%s' неверно
 MenuTicketMyAssign=Мои тикеты
 MenuTicketMyAssignNonClosed=Мои открытые тикеты
 MenuListNonClosed=Открытые тикеты
-
 TypeContact_ticket_internal_CONTRIBUTOR=Автор
 TypeContact_ticket_internal_SUPPORTTEC=Ответственный
 TypeContact_ticket_external_SUPPORTCLI=Контакты с клиентами / отслеживание инцидентов
 TypeContact_ticket_external_CONTRIBUTOR=Внешний участник
-
 OriginEmail=Электронная почта репортера
+EmailReplyto=Ответить по электронной почте
+EmailReferences=Ссылки в электронных письмах
 Notify_TICKET_SENTBYMAIL=Отправить сообщение тикета по электронной почте
-
 ExportDataset_ticket_1=Тикеты
-
 # Status
 Read=Читать
 Assigned=Ответственный
 NeedMoreInformation=Жду отзывов репортера
 NeedMoreInformationShort=Жду отзывов
-Answered=Ответил
 Waiting=Ожидание
 SolvedClosed=Решено
 Deleted=Удалено
-
 # Dict
-Type=Тип
 Severity=Строгость
 TicketGroupIsPublic=Группа публичная
 TicketGroupIsPublicDesc=Если группа тикетов является общедоступной, она будет видна в форме при создании заявки из общедоступного интерфейса.
-
 # Email templates
 MailToSendTicketMessage=Чтобы отправить электронное письмо из сообщения тикета
-
-#
 # Admin page
-#
 TicketSetup=Настройка модуля тикетов
 TicketSettings=Настройки
-TicketSetupPage=
 TicketPublicAccess=Публичный интерфейс, не требующий идентификации, доступен по следующему URL-адресу
 TicketSetupDictionaries=Тип тикета, серьезность и аналитические коды настраиваются из словарей.
 TicketParamModule=Настройка переменных модуля
 TicketParamMail=Настройка электронной почты
-TicketEmailNotificationFrom=Электронная почта отправителя для уведомления об ответах
-TicketEmailNotificationFromHelp=Электронная почта отправителя, используемая для отправки уведомления по электронной почте, когда ответ предоставляется в бэк-офисе. Например, noreply@example.com
+TicketEmailNotificationFrom=Отправитель электронного письма для уведомления о талоны (создание талон или обновлении сообщений)
+TicketEmailNotificationFromHelp=Адрес электронной почты отправителя, который будет использоваться для отправки уведомлений по электронной почте для создания талоны или добавления сообщения. Для Пример noreply@Пример.com
 TicketEmailNotificationTo=Уведомить о создании заявки на этот адрес электронной почты
-TicketEmailNotificationToHelp=Если он присутствует, этот адрес электронной почты будет уведомлен о создании заявки.
+TicketEmailNotificationToHelp=Если указан, этот адрес электронной почты будет уведомлен о создании талон (в дополнение к любым другим получателям по умолчанию)
 TicketNewEmailBodyLabel=Текстовое сообщение, отправленное после создания тикета
 TicketNewEmailBodyHelp=Указанный здесь текст будет вставлен в электронное письмо, подтверждающее создание нового тикета из общедоступного интерфейса. Информация о просмотре тикета добавляется автоматически.
 TicketParamPublicInterface=Настройка публичного интерфейса
 TicketsEmailMustExist=Требовать существующий адрес электронной почты для создания тикета
 TicketsEmailMustExistHelp=В публичном интерфейсе адрес электронной почты уже должен быть заполнен в базе данных для создания нового тикета.
-TicketsShowProgression=Display the ticket progress in the public interface
-TicketsShowProgressionHelp=Enable this option to hide the progress of the ticket in the public interface pages
+TicketsShowProgression=Отобразить прогресс талон в общедоступном интерфейсе.
+TicketsShowProgressionHelp=Включите эту опцию, чтобы скрыть ход выполнения талон на страницах общедоступного интерфейса.
 TicketCreateThirdPartyWithContactIfNotExist=Спросите имя и название компании для неизвестных электронных писем.
-TicketCreateThirdPartyWithContactIfNotExistHelp=Проверьте, существует ли третье лицо или контакт для введенного адреса электронной почты. Если нет, спросите имя и название компании, чтобы создать третью сторону с контактом.
+TicketCreateThirdPartyWithContactIfNotExistHelp=проверить, если существует третья сторона или контакт для введенного адреса электронной почты. Если нет, спросите имя и и имя компания у создать третьего вечеринка с контактом.
 PublicInterface=Публичный интерфейс
-TicketUrlPublicInterfaceLabelAdmin=Альтернативный URL для публичного интерфейса
-TicketUrlPublicInterfaceHelpAdmin=Можно определить псевдоним для веб-сервера и, таким образом, сделать доступным публичный интерфейс с другим URL-адресом (сервер должен действовать как прокси для этого нового URL-адреса)
 TicketPublicInterfaceTextHomeLabelAdmin=Приветственный текст публичного интерфейса
 TicketPublicInterfaceTextHome=Вы можете создать тикет в службу поддержки или просмотреть существующие по его идентификатору, отслеживающему тикет.
 TicketPublicInterfaceTextHomeHelpAdmin=Определенный здесь текст появится на домашней странице общедоступного интерфейса.
@@ -119,16 +96,18 @@ TicketPublicInterfaceTextHelpMessageHelpAdmin=Этот текст появитс
 ExtraFieldsTicket=Дополнительные атрибуты
 TicketCkEditorEmailNotActivated=Редактор HTML не активирован. Чтобы получить его, установите для содержимого FCKEDITOR_ENABLE_MAIL значение 1.
 TicketsDisableEmail=Не отправлять электронные письма для создания тикетов или записи сообщений.
-TicketsDisableEmailHelp=По умолчанию электронные письма отправляются при создании новых тикетов или сообщений. Включите эту опцию, чтобы отключить *все* уведомления по электронной почте
+TicketsDisableEmailHelp=По по умолчанию, уведомления по электронной почте на третий стороны отправляются, когда новый талоны или сообщения создаются для обоих публичных интерфейсов бэк-офиса и. Включите эту опцию, чтобы отключить уведомления по электронной почте третьим лицам, когда создание выполняется из бэк-офиса.
+TicketsNotifyThirdPartyFromBackOfficeByDefault=Уведомить третью сторону с помощью по умолчанию о создании талон из бэк-офиса
+TicketsNotifyThirdPartyFromBackOfficeByDefaultHelp=При создании талон из бэк-офиса опция «Уведомить третью сторону» будет проверена по умолчанию
 TicketsLogEnableEmail=Включить журнал по электронной почте
 TicketsLogEnableEmailHelp=При каждом изменении **каждому контакту**, связанному с тикетом, будет отправляться электронное письмо.
 TicketParams=Параметры
 TicketsShowModuleLogo=Отображение логотипа модуля в публичном интерфейсе
 TicketsShowModuleLogoHelp=Включите эту опцию, чтобы скрыть модуль логотипа на страницах публичного интерфейса.
 TicketsShowCompanyLogo=Отображение логотипа компании в публичном интерфейсе
-TicketsShowCompanyLogoHelp=Enable this option to show the logo of the main company in the pages of the public interface
-TicketsShowCompanyFooter=Display the footer of the company in the public interface
-TicketsShowCompanyFooterHelp=Enable this option to show the footer of the main company in the pages of the public interface
+TicketsShowCompanyLogoHelp=Включите эту опцию, чтобы Показать логотип основного компания на страницах публичного интерфейса
+TicketsShowCompanyFooter=Отобразить нижний колонтитул компания в общедоступном интерфейсе.
+TicketsShowCompanyFooterHelp=Включите эту опцию, чтобы Показать нижний колонтитул основного компания на страницах общедоступного интерфейса.
 TicketsEmailAlsoSendToMainAddress=Также отправьте уведомление на основной адрес электронной почты
 TicketsEmailAlsoSendToMainAddressHelp=Включите эту опцию, чтобы также отправлять электронную почту на адрес, указанный в настройках "%s" (см. Вкладку "%s")
 TicketsLimitViewAssignedOnly=Ограничить отображение тикетов, назначенных текущему пользователю (не действует для внешних пользователей, всегда ограничивается третьей стороной, от которой они зависят)
@@ -136,32 +115,37 @@ TicketsLimitViewAssignedOnlyHelp=Будут видны только тикеты
 TicketsActivatePublicInterface=Активировать публичный интерфейс
 TicketsActivatePublicInterfaceHelp=Публичный интерфейс позволяет любому посетителю создавать тикеты.
 TicketsAutoAssignTicket=Автоматически назначить пользователя, создавшего тикет
-TicketsAutoAssignTicketHelp=При создании тикета, пользователю может быть автоматически закреплен за ним
+TicketsAutoAssignTicketHelp=При создании талон, пользователь может быть автоматически назначен талон(Примеры: 0=Никогда автоматически не назначен талон, 1=автоматически назначается талон, если никто не назначен, 2=автоматически назначается талон, даже если кто-то был определен).
+TicketAutoChangeStatusOnAnswer=автоматически назначить статус при ответе на талон
+TicketAutoChangeStatusOnAnswerHelp=Когда пользователь отвечает на талон, статус будет автоматически применен к талон
 TicketNumberingModules=Модуль нумерации тикетов
 TicketsModelModule=Шаблоны документов для тикетов
 TicketNotifyTiersAtCreation=Уведомить третью сторону при создании
-TicketsDisableCustomerEmail=Всегда отключайте электронную почту, когда тикет создается из публичного интерфейса.
+TicketsDisableCustomerEmail=Всегда отключайте электронные письма на третий стороны, когда талон создается из бэк-офиса
 TicketsPublicNotificationNewMessage=Отправлять электронное письмо(а), когда в тикет добавляется новое сообщение/комментарий
 TicketsPublicNotificationNewMessageHelp=Отправлять электронное письмо(а), когда новое сообщение добавляется из публичного интерфейса (назначенному пользователю или электронное письмо с уведомлениями для (обновить) и/или электронное письмо с уведомлениями для)
 TicketPublicNotificationNewMessageDefaultEmail=Уведомления по электронной почте на (обновить)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Отправляйте электронное письмо на этот адрес для каждого уведомления о новом сообщении, если для тикета не назначен пользователь или если у пользователя нет известного адреса электронной почты.
-TicketsAutoReadTicket=Автоматически помечать тикет как прочитанный (при создании из бэк-офиса)
-TicketsAutoReadTicketHelp=Автоматически помечать тикет как прочитанный при создании из бэк-офиса. При создании тикета из публичного интерфейса тикет остается со статусом «Не прочитано».
+TicketsAutoReadTicket=автоматически Отметить талон как читать  (при создании из бэк-офиса)
+TicketsAutoReadTicketHelp=автоматически Отметить талон как читать  при создании из бэк-офиса. Когда талон равен создать из общедоступного интерфейса, талон остается с статус "Не читать".
 TicketsDelayBeforeFirstAnswer=Новый тикет должен получить первый ответ до (часов):
 TicketsDelayBeforeFirstAnswerHelp=Если новая заявка не получила ответа по истечении этого периода времени (в часах), в представлении списка будет отображаться значок важного предупреждения.
 TicketsDelayBetweenAnswers=Неразрешенный тикет не должен оставаться неактивным в течение (часов):
 TicketsDelayBetweenAnswersHelp=Если неразрешенная заявка, на которую уже получен ответ, не подвергалась дальнейшему взаимодействию по истечении этого периода времени (в часах), в представлении списка будет отображаться значок предупреждения.
-TicketsAutoNotifyClose=Автоматически уведомлять третье лицо при закрытии тикета
-TicketsAutoNotifyCloseHelp=При закрытии тикета вам будет предложено отправить сообщение одному из сторонних контактов. При массовом закрытии сообщение будет отправлено одному контакту третьей стороны, связанной с заявкой.
+TicketsAutoNotifyClose=автоматически уведомить третью сторону при закрытии талон
+TicketsAutoNotifyCloseHelp=При закрытии талон вам будет предложено отправить сообщение одному из сторонних контактов. При массовом закрытии сообщение будет отправлено одному контакту третьей стороны, связанному с талон.
 TicketWrongContact=Предоставленный контакт не является частью текущих контактов заявки. Электронная почта не отправлена.
 TicketChooseProductCategory=Категория продукта для тикет-поддержки
-TicketChooseProductCategoryHelp=Выберите категорию продукта поддержки билетов. Это будет использоваться для автоматической привязки контракта к тикету.
-TicketUseCaptchaCode=Use graphical code (CAPTCHA) when creating a ticket
-TicketUseCaptchaCodeHelp=Adds CAPTCHA verification when creating a new ticket.
-
-#
+TicketChooseProductCategoryHelp=Выберите продукт категория для поддержки. категория будет использоваться для поиска всех контрактов, которые включают продукт в этом категория. Все найденные контракты будут связаны с созданным талон.
+TicketUseCaptchaCode=Используйте графический код (CAPTCHA) при создании талон
+TicketUseCaptchaCodeHelp=Добавляет проверку CAPTCHA при создании нового талон.
+TicketsAllowClassificationModificationIfClosed=Разрешить изменить классификацию закрытых талоны
+TicketsAllowClassificationModificationIfClosedHelp=Разрешить изменить классификацию (тип, талон группа, серьезность), даже если талоны закрыты.
+TicketAutoCheckNotifyThirdParty=проверить от по умолчанию «Уведомить третью сторону» при создании талон
+TicketAutoCheckNotifyThirdPartyHelp=При создании талон будет отмечен параметр «Уведомить третью сторону» автоматически.
+TicketAssignContactToMessage=Назначить внешний контакт сообщению
+TicketAssignContactToMessageHelp=Когда известный контакт отвечает на сообщение, его имя отображается в сообщениях талон Список.
 # Index & list page
-#
 TicketsIndex=Тикеты
 TicketList=Список тикетов
 TicketAssignedToMeInfos=На этой странице отображается список тикетов, созданный или назначенный текущему пользователю.
@@ -176,10 +160,7 @@ ShowAsConversation=Показать как список бесед
 MessageListViewType=Показать как список таблиц
 ConfirmMassTicketClosingSendEmail=Автоматически отправлять электронные письма при закрытии заявок
 ConfirmMassTicketClosingSendEmailQuestion=Вы хотите уведомлять третьих лиц при закрытии этих билетов?
-
-#
 # Ticket card
-#
 Ticket=Тикет
 TicketCard=Тикет
 CreateTicket=Создать тикет
@@ -201,8 +182,8 @@ TicketAssigned=Тикет назначен
 TicketChangeType=Изменить тип
 TicketChangeCategory=Изменить аналитический код
 TicketChangeSeverity=Изменить серьезность
-TicketAddMessage=Add or send a message
-TicketAddPrivateMessage=Add a private message
+TicketAddMessage=Добавить или отправить сообщение
+TicketAddPrivateMessage=Добавить личное сообщение
 MessageSuccessfullyAdded=Тикет добавлен
 TicketMessageSuccessfullyAdded=Сообщение успешно добавлено
 TicketMessagesList=Список сообщений
@@ -214,15 +195,15 @@ ShowTicket=Посмотреть тикет
 RelatedTickets=Связанные тикеты
 TicketAddIntervention=СОздать посредничество
 CloseTicket=Закрыть|Решить
-AbandonTicket=Abandon
+AbandonTicket=Покидать
 CloseATicket=Закрыть|Решить тикет
 ConfirmCloseAticket=Подтвердить закрытие тикета
 ConfirmAbandonTicket=Подтверждаете ли вы закрытие тикета до статуса "Заброшенный"
 ConfirmDeleteTicket=Подтвердите удаление тикета
 TicketDeletedSuccess=Тикет успешно удален
 TicketMarkedAsClosed=Тикет отмечен как закрытый
-TicketDurationAuto=Расчетная продолжительность
-TicketDurationAutoInfos=Продолжительность рассчитывается автоматически на основе связанного посредничества
+TicketDurationAuto=Продолжительность вмешательств
+TicketDurationAutoInfos=Длительность рассчитана автоматически из Связанный вмешательств
 TicketUpdated=Тикет обновлен
 SendMessageByEmail=Отправить сообщение по электронной почте
 TicketNewMessage=Новое сообщение
@@ -232,13 +213,13 @@ TicketMessageMailIntro=Заголовок сообщения
 TicketMessageMailIntroHelp=Этот текст добавляется только в начале письма и не сохраняется.
 TicketMessageMailIntroText=Здравствуйте, <br> В заявку, на которую вы подписаны, добавлен новый ответ. Вот сообщение: <br>
 TicketMessageMailIntroHelpAdmin=Этот текст будет вставлен перед ответом при ответе на тикет от Долибарра.
-TicketMessageMailFooter=Message footer
-TicketMessageMailFooterHelp=This text is added only at the end of the message sent by email and will not be saved.
-TicketMessageMailFooterText=Message sent by <b>%s</b> via Dolibarr
-TicketMessageMailFooterHelpAdmin=This text will be inserted after the response message.
+TicketMessageMailFooter=Нижний колонтитул сообщения
+TicketMessageMailFooterHelp=Этот текст добавляется только в конце сообщения, отправленного по электронной почте. и не будет сохранен.
+TicketMessageMailFooterText=Сообщение отправлено пользователем <b>%s</b> через Dolibarr
+TicketMessageMailFooterHelpAdmin=Этот текст будет вставлен после ответного сообщения.
 TicketMessageHelp=Только этот текст будет сохранен в списке сообщений в карточке тикета.
 TicketMessageSubstitutionReplacedByGenericValues=Подстановки переменных заменяются общими значениями.
-ForEmailMessageWillBeCompletedWith=For email messages sent to external users, the message will be completed with
+ForEmailMessageWillBeCompletedWith=Для сообщений электронной почты, отправленных внешним пользователям, сообщение будет дополнено
 TimeElapsedSince=Прошло время с
 TicketTimeToRead=Время, прошедшее до прочтения
 TicketTimeElapsedBeforeSince=Время, прошедшее до / с
@@ -248,14 +229,14 @@ ConfirmReOpenTicket=Подтвердить повторное открытие �
 TicketMessageMailIntroAutoNewPublicMessage=В тикете появилось новое сообщение с темой %s:
 TicketAssignedToYou=Тикет назначен
 TicketAssignedEmailBody=Вам был присвоен тикет #%s пользователем %s
-TicketAssignedCustomerEmail=Your ticket has been assigned for processing.
-TicketAssignedCustomerBody=This is an automatic email to confirm your ticket has been assigned for processing.
+TicketAssignedCustomerEmail=Ваш талон передан на обработку.
+TicketAssignedCustomerBody=Это автоматическое электронное письмо с подтверждением того, что ваш талон назначен на обработку.
 MarkMessageAsPrivate=Отметить сообщение как личное
-TicketMessageSendEmailHelp=An email will be sent to all assigned contact
-TicketMessageSendEmailHelp2a=(internal contacts, but also external contacts except if the option "%s" is checked)
-TicketMessageSendEmailHelp2b=(internal contacts, but also external contacts)
-TicketMessagePrivateHelp=This message will not be visible to external users
-TicketMessageRecipientsHelp=Recipient field completed with active contacts linked to the ticket
+TicketMessageSendEmailHelp=Всем назначенным контактам будет отправлено электронное письмо.
+TicketMessageSendEmailHelp2a=(внутренние контакты, а также внешние контакты, за исключением случаев, когда отмечена опция «%s»)
+TicketMessageSendEmailHelp2b=(внутренние контакты, но также и внешние контакты)
+TicketMessagePrivateHelp=Это сообщение не будет видно внешним пользователям.
+TicketMessageRecipientsHelp=Поле получателя заполнено активными контактами, связанными с талон
 TicketEmailOriginIssuer=Издатель при оформлении тикетов
 InitialMessage=Начальное сообщение
 LinkToAContract=Ссылка на договор
@@ -278,21 +259,15 @@ TicketsDelayForFirstResponseTooLong=Слишком много времени п�
 TicketsDelayFromLastResponseTooLong=Прошло слишком много времени с момента последнего ответа на этот запрос.
 TicketNoContractFoundToLink=Не было найдено ни одного контракта, автоматически связанного с этим тикетом. Привяжите договор вручную.
 TicketManyContractsLinked=Многие контракты были автоматически привязаны к этому тикету. Обязательно проверьте, что следует выбрать.
-TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
-
-#
+TicketRefAlreadyUsed=Ссылка [%s] уже используется, ваша новая ссылка — [%s]
 # Logs
-#
 TicketLogMesgReadBy=Тикет %s, прочитан пользователем %s
 NoLogForThisTicket=Для этого тикета еще нет журнала
 TicketLogAssignedTo=Тикет %s назначен на %s
 TicketLogPropertyChanged=Тикет %s изменен: классификация с %s на %s
 TicketLogClosedBy=Тикет %s закрыт пользователем %s
 TicketLogReopen=Тикет %s открывается повторно
-
-#
 # Public pages
-#
 TicketSystem=Система тикетов
 ShowListTicketWithTrackId=Показать список тикетов из ID трека
 ShowTicketWithTrackId=Показать тикет по ID
@@ -307,13 +282,14 @@ TicketNewEmailBodyCustomer=Это автоматическое электрон�
 TicketNewEmailBodyInfosTicket=Информация для наблюдения за тикетом
 TicketNewEmailBodyInfosTrackId=Номер отслеживания тикетов: %s
 TicketNewEmailBodyInfosTrackUrl=Вы можете просмотреть ход выполнения заявки, нажав на следующую ссылку
-TicketNewEmailBodyInfosTrackUrlCustomer=Вы можете просмотреть ход выполнения тикета в определенном интерфейсе, щелкнув следующую ссылку
+TicketNewEmailBodyInfosTrackUrlCustomer=Вы можете просмотреть ход выполнения талон на публичном портале талон, нажав следующий ссылка
 TicketCloseEmailBodyInfosTrackUrlCustomer=Вы можете ознакомиться с историей этого билета, нажав на следующую ссылку
 TicketEmailPleaseDoNotReplyToThisEmail=Пожалуйста, не отвечайте на это письмо напрямую! Используйте ссылку, чтобы ответить в интерфейсе.
+TicketEmailPleaseDoNotReplyToThisEmailNoInterface=Пожалуйста, не отвечайте на это письмо напрямую!
 TicketPublicInfoCreateTicket=Эта форма позволяет вам записать тикет в службу поддержки в нашей системе управления.
-TicketPublicPleaseBeAccuratelyDescribe=Пожалуйста, точно опишите ваш вопрос. Предоставьте как можно больше информации, чтобы мы могли правильно идентифицировать ваш запрос.
+TicketPublicPleaseBeAccuratelyDescribe=Пожалуйста, точно опишите ваш запрос. Предоставьте как можно больше информации, чтобы мы могли правильно идентифицировать ваш запрос.
 TicketPublicMsgViewLogIn=Пожалуйста, введите ID отслеживания тикетов
-TicketTrackId=Публичный ID отслеживания
+TicketTrackId=Отслеживание ID
 OneOfTicketTrackId=Один из ваших ID отслеживания
 ErrorTicketNotFound=Тикет с ID отслеживания %s не найден!
 Subject=Тема
@@ -329,9 +305,8 @@ OldUser=Старый пользователь
 NewUser=Новый пользователь
 NumberOfTicketsByMonth=Количество тикетов в месяц
 NbOfTickets=Количество тикетов
-ExternalContributors=External contributors
-AddContributor=Add external contributor
-
+ExternalContributors=Внешние участники
+AddContributor=Добавить внешнего участника
 # notifications
 TicketCloseEmailSubjectCustomer=Билет закрыт
 TicketCloseEmailBodyCustomer=Это автоматическое сообщение, уведомляющее вас о том, что тикет %s только что был закрыт.
@@ -343,12 +318,8 @@ TicketNotificationRecipient=Получатель уведомления
 TicketNotificationLogMessage=Журнал сообщений
 TicketNotificationEmailBodyInfosTrackUrlinternal=Просмотр тикета в интерфейсе
 TicketNotificationNumberEmailSent=Уведомление отправлено по электронной почте: %s
-
 ActionsOnTicket=События в тикете
-
-#
 # Boxes
-#
 BoxLastTicket=Последние созданные тикеты
 BoxLastTicketDescription=Последние созданные тикеты %s
 BoxLastTicketContent=
@@ -368,3 +339,6 @@ BoxNewTicketVSClose=Количество тикетов по сравнению 
 TicketCreatedToday=Тикет создан сегодня
 TicketClosedToday=Тикет закрыт сегодня
 KMFoundForTicketGroup=Мы нашли темы и ответы на часто задаваемые вопросы, которые могут ответить на ваш вопрос, спасибо, что проверили их перед отправкой тикета.
+SetTitle=Установить заголовок
+TicketSendToInternalCC=Принудительно указывать адрес электронной почты в качестве получателя копии для всех сообщений, отправляемых со страницы талон.
+TicketSendToInternalCCHelp=входить - адрес электронной почты, который вы хотите использовать автоматически в качестве получателя копии при отправке электронного письма со страницы талон.

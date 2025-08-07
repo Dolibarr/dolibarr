@@ -21,6 +21,7 @@ create table llx_facture_fourn_rec
     titre                       varchar(200)        NOT NULL,
     ref_supplier			    varchar(180) NOT NULL,
     entity                      integer   DEFAULT 1 NOT NULL,                                    -- multi company id
+    subtype				        smallint DEFAULT NULL,					-- subtype of invoice (some countries need a subtype to classify invoices)
     fk_soc                      integer             NOT NULL,
 
     datec                       datetime,                                                        -- date de creation
@@ -64,6 +65,7 @@ create table llx_facture_fourn_rec
     -- Fields linked to the recurring behavior
 
     usenewprice                 integer DEFAULT 0,			-- update invoice with current price of product instead of recorded price
+	usenewcurrencyrate   		integer DEFAULT 0,			-- update invoice with last currency rate instead of recorded rate
     frequency                   integer,					-- frequency (for example: 3 for every 3 month)
     unit_frequency              varchar(2) DEFAULT 'm',		-- 'm' for month (date_when must be a day <= 28), 'y' for year, ...
 
@@ -73,5 +75,5 @@ create table llx_facture_fourn_rec
     nb_gen_max                  integer DEFAULT NULL,		-- maximum number of generation
     auto_validate               integer DEFAULT 0,		    -- 0 to create in draft, 1 to create and validate the new invoice
     generate_pdf                integer DEFAULT 1           -- 0 disable pdf, 1 to generate pdf
-    
+
 )ENGINE=innodb;

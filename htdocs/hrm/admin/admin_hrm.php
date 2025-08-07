@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2015 		Alexandre Spangaro <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +28,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'hrm'));
 
@@ -46,8 +56,12 @@ $permissiontoadd  = $user->admin;
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->element, $object->id, '', '', 'fk_soc', 'rowid', 0);
-if (!isModEnabled('hrm')) accessforbidden();
-if (empty($permissiontoread)) accessforbidden();
+if (!isModEnabled('hrm')) {
+	accessforbidden();
+}
+if (empty($permissiontoread)) {
+	accessforbidden();
+}
 
 
 /*
@@ -57,7 +71,7 @@ if (empty($permissiontoread)) accessforbidden();
 if ($action == 'update') {
 	$error = 0;
 
-	foreach ($list as $constname) {
+	foreach ($list as $constname) {  // @phan-suppress-current-line PhanEmptyForeach
 		$constvalue = GETPOST($constname, 'alpha');
 
 		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
@@ -104,7 +118,7 @@ print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans('Parameters').'</td>';
 print "</tr>\n";
 
-foreach ($list as $key) {
+foreach ($list as $key) {  // @phan-suppress-current-line PhanEmptyForeach
 	print '<tr class="oddeven value">';
 
 	// Param

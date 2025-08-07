@@ -3,6 +3,7 @@ ManageLotSerial=Usar el número de lote/serie
 ProductStatusOnBatch=Sí (lote/serie) requerido
 ProductStatusOnSerial=Sí (numero de serie único requerido)
 ProductStatusNotOnBatch=No (lote/serie no utilizado)
+BatchSellOrEatByMandatoryNone=Ninguno
 atleast1batchfield=Fecha de caducidad o Fecha de venta o número de Lote/serie
 batch_number=Número de Lote/Serie
 SellByDate=Fecha de venta

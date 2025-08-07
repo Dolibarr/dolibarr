@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2021		Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,40 +32,32 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/member/modules_member.class.php';
  */
 class mod_member_simple extends ModeleNumRefMembers
 {
-	/**
-	 * Dolibarr version of the loaded document
-	 * @var string
-	 */
+	// variables inherited from ModeleNumRefMembers class
+	public $name = 'Simple';
 	public $version = 'dolibarr';
 
+	// variables not inherited
+
 	/**
-	 * prefix
-	 *
 	 * @var string
 	 */
 	public $prefix = '';
 
 	/**
-	 * @var string Error code (or message)
+	 *	Constructor
 	 */
-	public $error = '';
-
-	/**
-	 * @var string model name
-	 */
-	public $name = 'Simple';
-
-	/**
-	 * @var int Automatic numbering
-	 */
-	public $code_auto = 1;
+	public function __construct()
+	{
+		$this->code_auto = 1;
+	}
 
 	/**
 	 *  Return description of numbering module
 	 *
-	 *  @return     string      Text with description
+	 *	@param	Translate	$langs      Lang object to use for output
+	 *  @return string      			Descriptive text
 	 */
-	public function info()
+	public function info($langs)
 	{
 		global $langs;
 		return $langs->trans("SimpleRefNumRefModelDesc");
@@ -86,9 +79,10 @@ class mod_member_simple extends ModeleNumRefMembers
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *   @return     boolean     false if conflict, true if ok
+	 *	@param	CommonObject	$object	Object we need next value for
+	 *  @return boolean     			false if KO (there is a conflict), true if OK
 	 */
-	public function canBeActivated()
+	public function canBeActivated($object)
 	{
 		global $conf, $langs, $db;
 
@@ -98,6 +92,7 @@ class mod_member_simple extends ModeleNumRefMembers
 		$sql = "SELECT MAX(CAST(ref AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent";
 		$sql .= " WHERE entity = ".$conf->entity;
+
 		$resql = $db->query($sql);
 		if ($resql) {
 			$row = $db->fetch_row($resql);
@@ -119,9 +114,9 @@ class mod_member_simple extends ModeleNumRefMembers
 	/**
 	 *  Return next value
 	 *
-	 *  @param  Societe		$objsoc		Object third party
-	 *  @param  Adherent	$object		Object we need next value for
-	 *  @return	string					Value if OK, 0 if KO
+	 *  @param  ?Societe	$objsoc		Object third party
+	 *  @param  ?Adherent	$object		Object we need next value for
+	 *  @return	string|int<-1,0>		Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{
@@ -131,6 +126,7 @@ class mod_member_simple extends ModeleNumRefMembers
 		$sql = "SELECT MAX(CAST(ref AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent";
 		$sql .= " WHERE entity = ".(int) $conf->entity;
+		$sql .= " AND ref <> '(PROV)'";
 
 		$resql = $db->query($sql);
 		if ($resql) {

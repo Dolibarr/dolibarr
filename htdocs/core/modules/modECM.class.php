@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,11 +17,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-/**     \defgroup   ecm		Module ecm
- *      \brief      Module for ECM (Electronic Content Management)
- *      \file       htdocs/core/modules/modECM.class.php
- *      \ingroup    ecm
- *      \brief      Description and activation file for the module ECM
+/**
+ *  \defgroup   ecm		Module ECM
+ *  \brief      Module ECM (Electronic Content Management) to manage Documents
+ *
+ *  \file       htdocs/core/modules/modECM.class.php
+ *  \ingroup    ecm
+ *  \brief      Description and activation file for the module ECM
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -31,7 +34,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modECM extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -118,82 +120,82 @@ class modECM extends DolibarrModules
 
 		// Top menu
 		$this->menu[$r] = array(
-			'fk_menu'=>0,
-			'type'=>'top',
-			'titre'=>'MenuECM',
-			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
-			'mainmenu'=>'ecm',
-			'url'=>'/ecm/index.php',
-			'langs'=>'ecm',
-			'position'=>82,
-			'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload || $user->rights->ecm->setup',
-			'enabled'=>'isModEnabled("ecm")',
-			'target'=>'',
-			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
+			'fk_menu' => 0,
+			'type' => 'top',
+			'titre' => 'MenuECM',
+			'prefix' => img_picto('', $this->picto, 'class="pictofixedwidth"'),
+			'mainmenu' => 'ecm',
+			'url' => '/ecm/index.php',
+			'langs' => 'ecm',
+			'position' => 82,
+			'perms' => '$user->rights->ecm->read || $user->rights->ecm->upload || $user->rights->ecm->setup',
+			'enabled' => 'isModEnabled("ecm")',
+			'target' => '',
+			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
 
 		// Left menu linked to top menu
 		$this->menu[$r] = array(
-			'fk_menu'=>'fk_mainmenu=ecm',
-			'type'=>'left',
-			'titre'=>'ECMArea',
+			'fk_menu' => 'fk_mainmenu=ecm',
+			'type' => 'left',
+			'titre' => 'ECMArea',
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth"'),
-			'mainmenu'=>'ecm',
-			'leftmenu'=>'ecm',
-			'url'=>'/ecm/index.php?mainmenu=ecm&leftmenu=ecm',
-			'langs'=>'ecm',
-			'position'=>101,
-			'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
-			'enabled'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
-			'target'=>'',
-			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
+			'mainmenu' => 'ecm',
+			'leftmenu' => 'ecm',
+			'url' => '/ecm/index.php?mainmenu=ecm&leftmenu=ecm',
+			'langs' => 'ecm',
+			'position' => 101,
+			'perms' => '$user->rights->ecm->read || $user->rights->ecm->upload',
+			'enabled' => '$user->rights->ecm->read || $user->rights->ecm->upload',
+			'target' => '',
+			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
 
 		$this->menu[$r] = array(
-			'fk_menu'=>'fk_mainmenu=ecm,fk_leftmenu=ecm',
-			'type'=>'left',
-			'titre'=>'ECMSectionsManual',
-			'mainmenu'=>'ecm',
-			'leftmenu'=>'ecm_manual',
-			'url'=>'/ecm/index.php?action=file_manager&mainmenu=ecm&leftmenu=ecm',
-			'langs'=>'ecm',
-			'position'=>102,
-			'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
-			'enabled'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
-			'target'=>'',
-			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
+			'fk_menu' => 'fk_mainmenu=ecm,fk_leftmenu=ecm',
+			'type' => 'left',
+			'titre' => 'ECMSectionsManual',
+			'mainmenu' => 'ecm',
+			'leftmenu' => 'ecm_manual',
+			'url' => '/ecm/index.php?action=file_manager&mainmenu=ecm&leftmenu=ecm',
+			'langs' => 'ecm',
+			'position' => 102,
+			'perms' => '$user->rights->ecm->read || $user->rights->ecm->upload',
+			'enabled' => '$user->rights->ecm->read || $user->rights->ecm->upload',
+			'target' => '',
+			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
 
 		$this->menu[$r] = array(
-			'fk_menu'=>'fk_mainmenu=ecm,fk_leftmenu=ecm',
-			'type'=>'left',
-			'titre'=>'ECMSectionsAuto',
-			'mainmenu'=>'ecm',
-			'url'=>'/ecm/index_auto.php?action=file_manager&mainmenu=ecm&leftmenu=ecm',
-			'langs'=>'ecm',
-			'position'=>103,
-			'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
-			'enabled'=>'($user->rights->ecm->read || $user->rights->ecm->upload) && !getDolGlobalInt("ECM_AUTO_TREE_HIDEN")',
-			'target'=>'',
-			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
+			'fk_menu' => 'fk_mainmenu=ecm,fk_leftmenu=ecm',
+			'type' => 'left',
+			'titre' => 'ECMSectionsAuto',
+			'mainmenu' => 'ecm',
+			'url' => '/ecm/index_auto.php?action=file_manager&mainmenu=ecm&leftmenu=ecm',
+			'langs' => 'ecm',
+			'position' => 103,
+			'perms' => '$user->rights->ecm->read || $user->rights->ecm->upload',
+			'enabled' => '($user->rights->ecm->read || $user->rights->ecm->upload) && !getDolGlobalInt("ECM_AUTO_TREE_HIDEN")',
+			'target' => '',
+			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
 
 		$this->menu[$r] = array(
-			'fk_menu'=>'fk_mainmenu=ecm,fk_leftmenu=ecm',
-			'type'=>'left',
-			'titre'=>'ECMSectionsMedias',
-			'mainmenu'=>'ecm',
-			'url'=>'/ecm/index_medias.php?action=file_manager&mainmenu=ecm&leftmenu=ecm',
-			'langs'=>'ecm',
-			'position'=>104,
-			'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
-			'enabled'=>'($user->rights->ecm->read || $user->rights->ecm->upload) && getDolGlobalInt("MAIN_FEATURES_LEVEL") == 2',
-			'target'=>'',
-			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
+			'fk_menu' => 'fk_mainmenu=ecm,fk_leftmenu=ecm',
+			'type' => 'left',
+			'titre' => 'ECMSectionsMedias',
+			'mainmenu' => 'ecm',
+			'url' => '/ecm/index_medias.php?action=file_manager&mainmenu=ecm&leftmenu=ecm',
+			'langs' => 'ecm',
+			'position' => 104,
+			'perms' => '$user->rights->ecm->read || $user->rights->ecm->upload',
+			'enabled' => '($user->rights->ecm->read || $user->rights->ecm->upload) && getDolGlobalInt("MAIN_FEATURES_LEVEL") == 2',
+			'target' => '',
+			'user' => 2, // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
 	}

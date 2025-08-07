@@ -1,12 +1,13 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Pengiriman
 DeliveryRef=Pengiriman Ref
-DeliveryCard=Stock receipt
+DeliveryCard=Resi pengiriman
 DeliveryOrder=Kwitansi pengiriman
 DeliveryDate=Tanggal pengiriman
 CreateDeliveryOrder=Hasilkan tanda terima pengiriman
 DeliveryStateSaved=Status pengiriman disimpan
-SetDeliveryDate=Tetapkan tanggal pengiriman
+SetDeliveryDate=Tetapkan perkiraan tanggal pengiriman
+SetShippingDate=Tetapkan tanggal pengiriman
 ValidateDeliveryReceipt=Validasi tanda terima pengiriman
 ValidateDeliveryReceiptConfirm=Anda yakin ingin memvalidasi tanda terima pengiriman ini?
 DeleteDeliveryReceipt=Hapus tanda terima pengiriman

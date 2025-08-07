@@ -1,12 +1,10 @@
 # Dolibarr language file - Source file is en_US - suppliers
-Suppliers=Vendedores
 SuppliersInvoice=Factura del proveedor
 SupplierInvoices=Facturas del vendedor
 ShowSupplierInvoice=Mostrar factura del vendedor
 NewSupplier=Nuevo vendedor
 ListOfSuppliers=Lista de proveedores
 ShowSupplier=Mostrar vendedor
-OrderDate=Fecha de orden
 TotalBuyingPriceMinShort=Total de subproductos de precios de compra
 TotalSellingPriceMinShort=Total de subproductos precios de venta
 AddSupplierPrice=Agregar precio de compra

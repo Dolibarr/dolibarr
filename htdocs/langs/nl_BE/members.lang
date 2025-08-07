@@ -7,7 +7,6 @@ MemberStatusDraft=Conceptfactuur (moet worden gevalideerd)
 NewSubscriptionDesc=Met dit formulier kunt u uw abonnement te nemen als nieuw lid van de stichting. Wilt u uw abonnement te verlengen (indien reeds lid is), dan kunt u in plaats daarvan contact op met stichtingsbestuur via e-mail %s.
 AddMember=Creeer lid
 NoTypeDefinedGoToSetup=Geen lidtypes ingesteld. Ga naar Home->Setup->Ledentypes
-PublicMemberCard=Publieke lidmaatschapskaart
 MembersStatisticsByState=Leden statistieken per staat / provincie
 MembersStatisticsDesc=Kies de statistieken die u wilt lezen ...
 TurnoverOrBudget=Omzet (voor een bedrijf) of Budget (voor een stichting)

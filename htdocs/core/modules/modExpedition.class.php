@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2013	   Philippe Grand	    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +21,12 @@
  */
 
 /**
- *	\defgroup   expedition     Module shipping
- *	\brief      Module pour gerer les expeditions de produits
- *	\file       htdocs/core/modules/modExpedition.class.php
- *	\ingroup    expedition
- *	\brief      Description and activation file for the module Expedition
+ *  \defgroup   expedition     Module Shipping
+ *  \brief      Module to manage product shipments
+ *
+ *  \file       htdocs/core/modules/modExpedition.class.php
+ *  \ingroup    expedition
+ *  \brief      Description and activation file for the module Expedition
  */
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
@@ -42,7 +44,7 @@ class modExpedition extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf, $user;
+		global $conf, $user;	// $conf is required by /core/extrafieldsinexport.inc.php
 
 		$this->db = $db;
 		$this->numero = 80;
@@ -60,14 +62,15 @@ class modExpedition extends DolibarrModules
 		$this->picto = "dolly";
 
 		// Data directories to create when module is enabled
-		$this->dirs = array("/expedition/temp",
-							"/expedition/sending",
-							"/expedition/sending/temp",
-							"/expedition/receipt",
-							"/expedition/receipt/temp",
-							"/doctemplates/shipments",
-							"/doctemplates/deliveries"
-							);
+		$this->dirs = array(
+			"/expedition/temp",
+			"/expedition/sending",
+			"/expedition/sending/temp",
+			"/expedition/receipt",
+			"/expedition/receipt/temp",
+			"/doctemplates/shipments",
+			"/doctemplates/deliveries",
+		);
 
 		// Config pages
 		$this->config_page_url = array("expedition.php");
@@ -79,85 +82,85 @@ class modExpedition extends DolibarrModules
 		$this->langfiles = array('deliveries', 'sendings');
 
 		// Constants
-		$this->const = array();
-		$r = 0;
-
-		$this->const[$r][0] = "EXPEDITION_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "espadon";
-		$this->const[$r][3] = 'Nom du gestionnaire de generation des bons expeditions en PDF';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "EXPEDITION_ADDON_NUMBER";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_expedition_safor";
-		$this->const[$r][3] = 'Name for numbering manager for shipments';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "EXPEDITION_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/shipments";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "DELIVERY_ADDON_PDF";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "storm";
-		$this->const[$r][3] = 'Nom du gestionnaire de generation des bons de reception en PDF';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "DELIVERY_ADDON_NUMBER";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "mod_delivery_jade";
-		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des bons de reception';
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "DELIVERY_ADDON_PDF_ODT_PATH";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/deliveries";
-		$this->const[$r][3] = "";
-		$this->const[$r][4] = 0;
-		$r++;
-
-		$this->const[$r][0] = "MAIN_SUBMODULE_EXPEDITION";
-		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "1";
-		$this->const[$r][3] = "Enable delivery receipts";
-		$this->const[$r][4] = 0;
-		$r++;
+		$this->const = [
+			[
+				"EXPEDITION_ADDON_PDF",
+				"chaine",
+				"espadon",
+				'Nom du gestionnaire de generation des bons expeditions en PDF',
+				0,
+			],
+			[
+				"EXPEDITION_ADDON_NUMBER",
+				"chaine",
+				"mod_expedition_safor",
+				'Name for numbering manager for shipments',
+				0,
+			],
+			[
+				"EXPEDITION_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/shipments",
+				"",
+				0,
+			],
+			[
+				"DELIVERY_ADDON_PDF",
+				"chaine",
+				"storm",
+				'Nom du gestionnaire de generation des bons de reception en PDF',
+				0,
+			],
+			[
+				"DELIVERY_ADDON_NUMBER",
+				"chaine",
+				"mod_delivery_jade",
+				'Nom du gestionnaire de numerotation des bons de reception',
+				0,
+			],
+			[
+				"DELIVERY_ADDON_PDF_ODT_PATH",
+				"chaine",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/deliveries",
+				"",
+				0,
+			],
+			[
+				"MAIN_SUBMODULE_EXPEDITION",
+				"chaine",
+				"1",
+				"Enable delivery receipts",
+				0,
+			],
+		];
 
 		// Boxes
 		$this->boxes = array(
-			0=>array('file'=>'box_shipments.php', 'enabledbydefaulton'=>'Home'),
+			0 => array('file'=>'box_shipments.php', 'enabledbydefaulton'=>'Home'),
 		);
 
 		// Permissions
-		$this->rights = array();
 		$this->rights_class = 'expedition';
+		$this->rights = array();
 		$r = 0;
 
 		$r++;
 		$this->rights[$r][0] = 101;
-		$this->rights[$r][1] = 'Lire les expeditions';
+		$this->rights[$r][1] = 'Read shipments';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'lire';
 
 		$r++;
 		$this->rights[$r][0] = 102;
-		$this->rights[$r][1] = 'Creer modifier les expeditions';
+		$this->rights[$r][1] = 'Create/modify shipments';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'creer';
 
 		$r++;
 		$this->rights[$r][0] = 104;
-		$this->rights[$r][1] = 'Valider les expeditions';
+		$this->rights[$r][1] = 'Validate shipments';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'shipping_advance';
@@ -165,15 +168,15 @@ class modExpedition extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 105; // id de la permission
-		$this->rights[$r][1] = 'Envoyer les expeditions aux clients'; // libelle de la permission
-		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
-		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
+		$this->rights[$r][1] = 'Send shipments by email to customers'; // libelle de la permission
+		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'shipping_advance';
 		$this->rights[$r][5] = 'send';
 
 		$r++;
 		$this->rights[$r][0] = 106;
-		$this->rights[$r][1] = 'Exporter les expeditions';
+		$this->rights[$r][1] = 'Export shipments';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'shipment';
@@ -181,7 +184,7 @@ class modExpedition extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 109;
-		$this->rights[$r][1] = 'Supprimer les expeditions';
+		$this->rights[$r][1] = 'Delete shipments';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'supprimer';
@@ -232,7 +235,7 @@ class modExpedition extends DolibarrModules
 		$shipment = new Commande($this->db);
 		$contact_arrays = $shipment->liste_type_contact('external', '', 0, 0, '');
 		if (is_array($contact_arrays) && count($contact_arrays) > 0) {
-			$idcontacts = join(',', array_keys($shipment->liste_type_contact('external', '', 0, 0, '')));
+			$idcontacts = implode(',', array_keys($shipment->liste_type_contact('external', '', 0, 0, '')));
 		} else {
 			$idcontacts = 0;
 		}
@@ -245,13 +248,13 @@ class modExpedition extends DolibarrModules
 		$this->export_fields_array[$r] = array(
 			's.rowid'=>"IdCompany", 's.nom'=>'ThirdParty', 's.address'=>'Address', 's.zip'=>'Zip', 's.town'=>'Town', 'd.nom'=>'State', 'co.label'=>'Country',
 			'co.code'=>'CountryCode', 's.phone'=>'Phone', 's.siren'=>'ProfId1', 's.siret'=>'ProfId2', 's.ape'=>'ProfId3', 's.idprof4'=>'ProfId4', 's.idprof5'=>'ProfId5',
-			's.idprof6'=>'ProfId6', 'c.rowid'=>"Id", 'c.ref'=>"Ref", 'c.ref_customer'=>"RefCustomer", 'c.fk_soc'=>"IdCompany", 'c.date_creation'=>"DateCreation",
+			's.idprof6'=>'ProfId6', 'c.rowid'=>"Id", 'c.ref'=>"Ref", 'c.ref_customer'=>"RefCustomer", 'c.fk_soc'=>"IdCompany", 'c.date_creation'=>"DateCreation",  'c.date_valid'=>"DateValidation",
 			'c.date_delivery'=>"DateDeliveryPlanned", 'c.tracking_number'=>"TrackingNumber", 'c.height'=>"Height", 'c.width'=>"Width", 'c.size'=>"Depth",
 			'c.size_units'=>'SizeUnits', 'c.weight'=>"Weight", 'c.weight_units'=>"WeightUnits", 'c.fk_statut'=>'Status', 'c.note_public'=>"NotePublic",
 			'ed.rowid'=>'LineId', 'cd.description'=>'Description', 'ed.qty'=>"Qty", 'p.rowid'=>'ProductId', 'p.ref'=>'ProductRef', 'p.label'=>'ProductLabel',
 			'p.weight'=>'ProductWeight', 'p.weight_units'=>'WeightUnits', 'p.volume'=>'ProductVolume', 'p.volume_units'=>'VolumeUnits'
 		);
-		if ($idcontacts && !empty($conf->global->SHIPMENT_ADD_CONTACTS_IN_EXPORT)) {
+		if ($idcontacts && getDolGlobalString('SHIPMENT_ADD_CONTACTS_IN_EXPORT')) {
 			$this->export_fields_array[$r] += array('sp.rowid'=>'IdContact', 'sp.lastname'=>'Lastname', 'sp.firstname'=>'Firstname', 'sp.note_public'=>'NotePublic');
 		}
 		//$this->export_TypeFields_array[$r]=array(
@@ -262,7 +265,7 @@ class modExpedition extends DolibarrModules
 		//);
 		$this->export_TypeFields_array[$r] = array(
 			's.nom'=>'Text', 's.address'=>'Text', 's.zip'=>'Text', 's.town'=>'Text', 'co.label'=>'List:c_country:label:label', 'co.code'=>'Text', 's.phone'=>'Text',
-			's.siren'=>'Text', 's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 'c.ref'=>"Text", 'c.ref_customer'=>"Text", 'c.date_creation'=>"Date",
+			's.siren'=>'Text', 's.siret'=>'Text', 's.ape'=>'Text', 's.idprof4'=>'Text', 'c.ref'=>"Text", 'c.ref_customer'=>"Text", 'c.date_creation'=>"Date", 'c.date_valid'=>"Date",
 			'c.date_delivery'=>"Date", 'c.tracking_number'=>"Numeric", 'c.height'=>"Numeric", 'c.width'=>"Numeric", 'c.weight'=>"Numeric", 'c.fk_statut'=>'Status',
 			'c.note_public'=>"Text", 'ed.qty'=>"Numeric", 'd.nom'=>'Text'
 		);
@@ -270,16 +273,16 @@ class modExpedition extends DolibarrModules
 			's.rowid'=>"company", 's.nom'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company', 'd.nom'=>'company', 'co.label'=>'company',
 			'co.code'=>'company', 's.fk_pays'=>'company', 's.phone'=>'company', 's.siren'=>'company', 's.ape'=>'company', 's.siret'=>'company', 's.idprof4'=>'company',
 			's.idprof5'=>'company', 's.idprof6'=>'company', 'c.rowid'=>"shipment", 'c.ref'=>"shipment", 'c.ref_customer'=>"shipment", 'c.fk_soc'=>"shipment",
-			'c.date_creation'=>"shipment", 'c.date_delivery'=>"shipment", 'c.tracking_number'=>'shipment', 'c.height'=>"shipment", 'c.width'=>"shipment",
+			'c.date_creation'=>"shipment", 'c.date_valid'=>"shipment", 'c.date_delivery'=>"shipment", 'c.tracking_number'=>'shipment', 'c.height'=>"shipment", 'c.width'=>"shipment",
 			'c.size'=>'shipment', 'c.size_units'=>'shipment', 'c.weight'=>"shipment", 'c.weight_units'=>'shipment', 'c.fk_statut'=>"shipment", 'c.note_public'=>"shipment",
 			'ed.rowid'=>'shipment_line', 'cd.description'=>'shipment_line', 'ed.qty'=>"shipment_line", 'p.rowid'=>'product', 'p.ref'=>'product', 'p.label'=>'product',
 			'p.weight'=>'product', 'p.weight_units'=>'product', 'p.volume'=>'product', 'p.volume_units'=>'product'
 		);
-		if ($idcontacts && !empty($conf->global->SHIPMENT_ADD_CONTACTS_IN_EXPORT)) {
+		if ($idcontacts && getDolGlobalString('SHIPMENT_ADD_CONTACTS_IN_EXPORT')) {
 			$this->export_entities_array[$r] += array('sp.rowid'=>'contact', 'sp.lastname'=>'contact', 'sp.firstname'=>'contact', 'sp.note_public'=>'contact');
 		}
 		$this->export_dependencies_array[$r] = array('shipment_line'=>'ed.rowid', 'product'=>'ed.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
-		if ($idcontacts && !empty($conf->global->SHIPMENT_ADD_CONTACTS_IN_EXPORT)) {
+		if ($idcontacts && getDolGlobalString('SHIPMENT_ADD_CONTACTS_IN_EXPORT')) {
 			$keyforselect = 'socpeople';
 			$keyforelement = 'contact';
 			$keyforaliasextra = 'extra3';
@@ -302,7 +305,7 @@ class modExpedition extends DolibarrModules
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'expedition as c';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'expedition_extrafields as extra ON c.rowid = extra.fk_object,';
 		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'societe as s';
-		if (empty($user->rights->societe->client->voir)) {
+		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		}
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
@@ -312,14 +315,14 @@ class modExpedition extends DolibarrModules
 		$this->export_sql_end[$r] .= ' , '.MAIN_DB_PREFIX.'commandedet as cd';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on cd.fk_product = p.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extraprod ON p.rowid = extraprod.fk_object';
-		if ($idcontacts && !empty($conf->global->SHIPMENT_ADD_CONTACTS_IN_EXPORT)) {
+		if ($idcontacts && getDolGlobalString('SHIPMENT_ADD_CONTACTS_IN_EXPORT')) {
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'element_contact as ee ON ee.element_id = cd.fk_commande AND ee.fk_c_type_contact IN ('.$this->db->sanitize($idcontacts).')';
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople as sp ON sp.rowid = ee.fk_socpeople';
 			$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra3 ON sp.rowid = extra3.fk_object';
 		}
-		$this->export_sql_end[$r] .= ' WHERE c.fk_soc = s.rowid AND c.rowid = ed.fk_expedition AND ed.fk_origin_line = cd.rowid';
+		$this->export_sql_end[$r] .= ' WHERE c.fk_soc = s.rowid AND c.rowid = ed.fk_expedition AND ed.fk_elementdet = cd.rowid';
 		$this->export_sql_end[$r] .= ' AND c.entity IN ('.getEntity('expedition').')';
-		if (empty($user->rights->societe->client->voir)) {
+		if (!empty($user) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->export_sql_end[$r] .= ' AND sc.fk_user = '.(empty($user) ? 0 : $user->id);
 		}
 	}
@@ -342,21 +345,19 @@ class modExpedition extends DolibarrModules
 
 		//ODT template
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/shipments/template_shipment.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/shipments';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/shipments';
 		$dest = $dirodt.'/template_shipment.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result = dol_copy($src, $dest, 0, 0);
+			$result = dol_copy($src, $dest, '0', 0);
 			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 				return 0;
 			}
 		}
-
-		$sql = array();
 
 		$sql = array(
 			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'shipping' AND entity = ".((int) $conf->entity),

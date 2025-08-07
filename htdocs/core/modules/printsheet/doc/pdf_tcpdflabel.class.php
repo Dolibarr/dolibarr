@@ -5,6 +5,8 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo	<jlb@j1b.org>
  * Copyright (C) 2006-2013 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2015 Francis Appels  <francis.appels@yahoo.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +25,7 @@
 /**
  *	\file		htdocs/core/modules/printsheet/doc/pdf_standardlabel.class.php
  *	\ingroup	core
- *	\brief		Fichier de la classe permettant d'editer au format PDF des etiquettes au format Avery ou personnalise
+ *	\brief		Fichier de la class permettant d'editer au format PDF des etiquettes au format Avery ou personnalise
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonstickergenerator.class.php';
@@ -34,36 +36,48 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonstickergenerator.class.php';
 class pdf_tcpdflabel extends CommonStickerGenerator
 {
 	// define 1d barcode style
+	/**
+	 * @var array{position: '', align: 'C', stretch: bool, fitwidth: bool, cellfitalign: '', border: bool, hpadding: 'auto', vpadding: 'auto', fgcolor: array{0: 0, 1: 0, 2: 0}, bgcolor: bool, text: bool, font: 'helvetica', fontsize: 8, stretchtext: 4}
+	 */
 	private $_style1d = array(
-					'position' => '',
-					'align' => 'C',
-					'stretch' => false,
-					'fitwidth' => true,
-					'cellfitalign' => '',
-					'border' => false,
-					'hpadding' => 'auto',
-					'vpadding' => 'auto',
-					'fgcolor' => array(0, 0, 0),
-					'bgcolor' => false,
-					'text' => true,
-					'font' => 'helvetica',
-					'fontsize' => 8,
-					'stretchtext' => 4
+		'position' => '',
+		'align' => 'C',
+		'stretch' => false,
+		'fitwidth' => true,
+		'cellfitalign' => '',
+		'border' => false,
+		'hpadding' => 'auto',
+		'vpadding' => 'auto',
+		'fgcolor' => array(0, 0, 0),
+		'bgcolor' => false,
+		'text' => true,
+		'font' => 'helvetica',
+		'fontsize' => 8,
+		'stretchtext' => 4
 	);
 
 	// set style for 2d barcode
+	/**
+	 * @var array{border: bool, vpadding: 'auto', hpadding: 'auto', fgcolor: array{0: 0, 1: 0, 2: 0}, bgcolor: bool, module_width: 1, module_height: 1}
+	 */
 	private $_style2d = array(
-					'border' => false,
-					'vpadding' => 'auto',
-					'hpadding' => 'auto',
-					'fgcolor' => array(0, 0, 0),
-					'bgcolor' => false,
-					'module_width' => 1, // width of a single module in points
-					'module_height' => 1 // height of a single module in points
+		'border' => false,
+		'vpadding' => 'auto',
+		'hpadding' => 'auto',
+		'fgcolor' => array(0, 0, 0),
+		'bgcolor' => false,
+		'module_width' => 1, // width of a single module in points
+		'module_height' => 1 // height of a single module in points
 	);
 
+	/**
+	 * @var string
+	 */
 	private $_align2d = 'N';
 
+	/**
+	 * @var float
+	 */
 	private $_xres = 0.4;
 
 	/**
@@ -73,10 +87,10 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 	 * @param string  $code		   code to print
 	 * @param string  $encoding	   type of barcode
 	 * @param boolean $is2d		   true if 2d barcode
-	 * @param int	  $x		   x position in user units
-	 * @param int	  $y		   y position in user units
-	 * @param int	  $w		   width in user units
-	 * @param int	  $h		   height in user units
+	 * @param float	  $x		   x position in user units
+	 * @param float	  $y		   y position in user units
+	 * @param float	  $w		   width in user units
+	 * @param float	  $h		   height in user units
 	 * @return void
 	 */
 	private function writeBarcode(&$pdf, $code, $encoding, $is2d, $x, $y, $w, $h)
@@ -93,7 +107,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 	 *
 	 * @param	TCPDF		$pdf			PDF reference
 	 * @param	Translate	$outputlangs	Output langs
-	 * @param	array		$param			Associative array containing label content and optional parameters
+	 * @param	array{textleft:string,textheader:string,textfooter:string,textright:string,code:string,encoding:string,is2d:int<0,1>|bool}		$param			Associative array containing label content and optional parameters
 	 * @return	void
 	 */
 	public function addSticker(&$pdf, $outputlangs, $param)
@@ -203,15 +217,13 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 					$pdf->SetXY($_PosX + $xleft, $_PosY + $ytop);
 					$pdf->MultiCell($widthtouse - $logoWidth - 1, $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
 				}
-			} else // text on halft left and text on half right
-			{
+			} else { // text on halft left and text on half right
 				$pdf->SetXY($_PosX + $xleft, $_PosY + $ytop);
 				$pdf->MultiCell(round($this->_Width / 2), $this->_Line_Height, $outputlangs->convToOutputCharset($textleft), 0, 'L');
 				$pdf->SetXY($_PosX + round($this->_Width / 2), $_PosY + $ytop);
 				$pdf->MultiCell(round($this->_Width / 2) - 2, $this->_Line_Height, $outputlangs->convToOutputCharset($textright), 0, 'R');
 			}
-		} else // Only a right part
-		{
+		} else { // Only a right part
 			// Output right area
 			if ($textright == '%LOGO%' && $logo) {
 				$pdf->Image($logo, $_PosX + $this->_Width - $widthtouse - $xleft, $_PosY + $ytop, 0, $logoHeight);
@@ -250,14 +262,14 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Function to build PDF on disk, then output on HTTP strem.
+	 *  Function to build PDF on disk, then output on HTTP stream.
 	 *
-	 *	@param	array		$arrayofrecords		Array of record informations (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
+	 *	@param	Adherent|array<array{textleft:string,textheader:string,textfooter:string,textright:string,code:string,encoding:string,is2d:int<0,1>|bool}>	$arrayofrecords		Array of record information (array('textleft'=>,'textheader'=>, ..., 'id'=>,'photo'=>)
 	 *	@param	Translate	$outputlangs		Lang object for output language
 	 *	@param	string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *	@param	string		$outputdir			Output directory for pdf file
 	 *  @param  string      $filename           Short file name of PDF output file
-	 *	@return int								1=OK, 0=KO
+	 *  @return int<-1,1>                       1=OK, <=0=KO
 	 */
 	public function write_file($arrayofrecords, $outputlangs, $srctemplatepath, $outputdir = '', $filename = 'tmp_address_sheet.pdf')
 	{
@@ -267,13 +279,14 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		$this->code = $srctemplatepath;
 		$this->Tformat = $_Avery_Labels[$this->code];
 		if (empty($this->Tformat)) {
-			dol_print_error('', 'ErrorBadTypeForCard'.$this->code);
+			dol_print_error(null, 'ErrorBadTypeForCard'.$this->code);
 			exit;
 		}
 		$this->type = 'pdf';
 		// standard format or custom
-		if ($this->Tformat['paper-size'] != 'custom') {
-			$this->format = $this->Tformat['paper-size'];
+		$paper_size = $this->Tformat['paper-size'];
+		if (!is_string($paper_size) || $paper_size != 'custom') {
+			$this->format = $paper_size;
 		} else {
 			//custom
 			$resolution = array($this->Tformat['custom_x'], $this->Tformat['custom_y']);
@@ -284,7 +297,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 			$outputlangs = $langs;
 		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
-		if (!empty($conf->global->MAIN_USE_FPDF)) {
+		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
@@ -322,10 +335,10 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 		}
 
 		$pdf->SetMargins(0, 0);
-		$pdf->SetAutoPageBreak(false);
+		$pdf->setAutoPageBreak(false);
 
 		$this->_Metric_Doc = $this->Tformat['metric'];
-		// Permet de commencer l'impression de l'etiquette desiree dans le cas ou la page a deja servie
+		// Permet de commencer l'impression de l'etiquette desiree dans le cas ou la page a deja service
 		$posX = 1;
 		$posY = 1;
 		if ($posX > 0) {
@@ -362,7 +375,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 
 		dolChmod($file);
 
-		$this->result = array('fullpath'=>$file);
+		$this->result = array('fullpath' => $file);
 
 		return 1;
 	}

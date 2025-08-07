@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2019   Cedric Ancelin          <icedo.anc@gmail.com>
- * Copyright (C) 2023   Lionel Vessiller     	<lvessiller@open-dsi.fr>
+/* Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2019		Cedric Ancelin			<icedo.anc@gmail.com>
+ * Copyright (C) 2023		Lionel Vessiller		<lvessiller@open-dsi.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,7 @@ class Accountancy extends DolibarrApi
 {
 	/**
 	 *
-	 * @var array $FIELDS Mandatory fields, checked when create and update object
+	 * @var string[] $FIELDS Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array();
 
@@ -40,7 +41,7 @@ class Accountancy extends DolibarrApi
 	public $bookkeeping;
 
 	/**
-	 * @var AccountancyExport $accountancy_export {@type AccountancyExport}
+	 * @var AccountancyExport $accountancyexport {@type AccountancyExport}
 	 */
 	public $accountancyexport;
 
@@ -64,18 +65,18 @@ class Accountancy extends DolibarrApi
 	/**
 	 * Accountancy export data
 	 *
-	 * @param       string 		$period					Period : 'lastmonth', 'currentmonth', 'last3months', 'last6months', 'currentyear', 'lastyear', 'fiscalyear', 'lastfiscalyear', 'actualandlastfiscalyear' or 'custom' (see above)
-	 * @param 		string		$date_min				[=''] Start date of period if 'custom' is set in period parameter
-	 * 													Date format is 'YYYY-MM-DD'
-	 * @param 		string		$date_max				[=''] End date of period if 'custom' is set in period parameter
-	 * 													Date format is 'YYYY-MM-DD'
-	 * @param 		string		$format					[=''] by default uses '1' for 'Configurable (CSV)' for format number
+	 * @param       string		$period					Period : 'lastmonth', 'currentmonth', 'last3months', 'last6months', 'currentyear', 'lastyear', 'fiscalyear', 'lastfiscalyear', 'actualandlastfiscalyear' or 'custom' (see above)
+	 * @param		string		$date_min				[=''] Start date of period if 'custom' is set in period parameter
+	 *													Date format is 'YYYY-MM-DD'
+	 * @param		string		$date_max				[=''] End date of period if 'custom' is set in period parameter
+	 *													Date format is 'YYYY-MM-DD'
+	 * @param		string		$format					[=''] by default uses '1' for 'Configurable (CSV)' for format number
 	 *													or '1000' for FEC
-	 * 													or '1010' for FEC2
-	 * 													(see AccountancyExport class)
+	 *													or '1010' for FEC2
+	 *													(see AccountancyExport class)
 	 * @param		int			$lettering				[=0] by default don't export or 1 to export lettering data (columns 'letterring_code' and 'date_lettering' returns empty or not)
-	 * @param 		int			$alreadyexport			[=0] by default export data only if it's not yet exported or 1 already exported (always export data even if 'date_export" is set)
-	 * @param 		int			$notnotifiedasexport	[=0] by default notified as exported or 1 not notified as exported (when the export is done, notified or not the column 'date_export')
+	 * @param		int			$alreadyexport			[=0] by default export data only if it's not yet exported or 1 already exported (always export data even if 'date_export" is set)
+	 * @param		int			$notnotifiedasexport	[=0] by default notified as exported or 1 not notified as exported (when the export is done, notified or not the column 'date_export')
 	 *
 	 * @return	string
 	 *
@@ -92,8 +93,8 @@ class Accountancy extends DolibarrApi
 		global $conf, $langs;
 
 		// check rights
-		if (!DolibarrApiAccess::$user->rights->accounting->mouvements->export) {
-			throw new RestException(401, 'No permission to export accounting');
+		if (!DolibarrApiAccess::$user->hasRight('accounting', 'mouvements', 'export')) {
+			throw new RestException(403, 'No permission to export accounting');
 		}
 
 		// check parameters
@@ -137,7 +138,7 @@ class Accountancy extends DolibarrApi
 		// set filter for each period available
 		$filter = array();
 		$doc_date_start = null;
-		$doc_date_end= null;
+		$doc_date_end = null;
 		$now = dol_now();
 		$now_arr = dol_getdate($now);
 		$now_month = $now_arr['mon'];
@@ -173,9 +174,9 @@ class Accountancy extends DolibarrApi
 			$prev_month_date_list = array();
 			$prev_month_date_list[] = dol_get_prev_month($now_month, $now_year); // get previous month for index = 0
 			for ($i = 1; $i < $nb_prev_month; $i++) {
-				$prev_month_date_list[] = dol_get_prev_month($prev_month_date_list[$i-1]['month'], $prev_month_date_list[$i-1]['year']); // get i+1 previous month for index=i
+				$prev_month_date_list[] = dol_get_prev_month($prev_month_date_list[$i - 1]['month'], $prev_month_date_list[$i - 1]['year']); // get i+1 previous month for index=i
 			}
-			$doc_date_start = dol_mktime(0, 0, 0, $prev_month_date_list[$nb_prev_month-1]['month'], 1, $prev_month_date_list[$nb_prev_month-1]['year']); // first day of n previous month for index=n-1
+			$doc_date_start = dol_mktime(0, 0, 0, $prev_month_date_list[$nb_prev_month - 1]['month'], 1, $prev_month_date_list[$nb_prev_month - 1]['year']); // first day of n previous month for index=n-1
 			$doc_date_end = dol_get_last_day($prev_month_date_list[0]['year'], $prev_month_date_list[0]['month']); // last day of previous month for index = 0
 		} elseif ($period == 'currentyear' || $period == 'lastyear') {
 			$period_year = $now_year;
@@ -219,6 +220,7 @@ class Accountancy extends DolibarrApi
 			$filter['t.doc_date<='] = $doc_date_end;
 		}
 
+		// @FIXME Critical bugged. Never use fetchAll without limit !
 		$result = $bookkeeping->fetchAll($sortorder, $sortfield, 0, 0, $filter, 'AND', $alreadyexport);
 
 		if ($result < 0) {

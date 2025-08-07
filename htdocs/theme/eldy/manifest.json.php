@@ -5,6 +5,7 @@
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
 
 /**
  *		\file       htdocs/theme/eldy/manifest.json.php
- *		\brief      File for The Web App
+ *		\brief      File for The Web App (PWA)
  */
 
 if (!defined('NOREQUIREUSER')) {
@@ -55,6 +56,9 @@ if (!defined('NOSESSION')) {
 
 require_once __DIR__.'/../../main.inc.php';
 
+/**
+ * @var Conf $conf
+ */
 
 top_httphead('text/json');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
@@ -69,10 +73,11 @@ if (empty($dolibarr_nocache)) {
 
 $manifest = new stdClass();
 
+$manifest->manifest_version = 3;
 
 $manifest->name = constant('DOL_APPLICATION_TITLE');
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-	$manifest->name = $conf->global->MAIN_APPLICATION_TITLE;
+if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
+	$manifest->name = getDolGlobalString('MAIN_APPLICATION_TITLE');
 }
 $manifest->short_name = $manifest->name;
 
@@ -87,25 +92,25 @@ if (!preg_match('/#[a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9][a-f0-9]$/', $manifes
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 	$manifest->background_color = '#'.colorArrayToHex(colorStringToArray($manifest->background_color));
 }
-$manifest->display = "standalone";
+$manifest->display = getDolGlobalString('MAIN_MANIFEST_DISPLAY', "minimal-ui");
 $manifest->splash_pages = null;
 $manifest->icons = array();
 $manifest->start_url = constant('DOL_MAIN_URL_ROOT');
 $manifest->id = constant('DOL_MAIN_URL_ROOT');
 
-if (!empty($conf->global->MAIN_MANIFEST_APPLI_LOGO_URL)) {
+if (getDolGlobalString('MAIN_MANIFEST_APPLI_LOGO_URL')) {
 	$icon = new stdClass();
-	$icon->src = $conf->global->MAIN_MANIFEST_APPLI_LOGO_URL;
+	$icon->src = getDolGlobalString('MAIN_MANIFEST_APPLI_LOGO_URL');
 	if ($conf->global->MAIN_MANIFEST_APPLI_LOGO_URL_SIZE) {
-		$icon->sizes = $conf->global->MAIN_MANIFEST_APPLI_LOGO_URL_SIZE."x".$conf->global->MAIN_MANIFEST_APPLI_LOGO_URL_SIZE;
+		$icon->sizes = getDolGlobalString('MAIN_MANIFEST_APPLI_LOGO_URL_SIZE') . "x" . getDolGlobalString('MAIN_MANIFEST_APPLI_LOGO_URL_SIZE');
 	} else {
 		$icon->sizes = "512x512";
 	}
 	$icon->type = "image/png";
 	$manifest->icons[] = $icon;
-} elseif (!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED)) {
-	if (!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI)) {
-		$iconRelativePath = 'logos/thumbs/'.$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI;
+} elseif (getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED')) {
+	if (getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI')) {
+		$iconRelativePath = 'logos/thumbs/' . getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI');
 		$iconPath = $conf->mycompany->dir_output.'/'.$iconRelativePath;
 		if (is_readable($iconPath)) {
 			$imgSize = getimagesize($iconPath);
@@ -119,8 +124,8 @@ if (!empty($conf->global->MAIN_MANIFEST_APPLI_LOGO_URL)) {
 		}
 	}
 
-	if (!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_SMALL)) {
-		$iconRelativePath = 'logos/thumbs/'.$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_SMALL;
+	if (getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_SMALL')) {
+		$iconRelativePath = 'logos/thumbs/' . getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_SMALL');
 		$iconPath = $conf->mycompany->dir_output.'/'.$iconRelativePath;
 		if (is_readable($iconPath)) {
 			$imgSize = getimagesize($iconPath);
@@ -134,8 +139,8 @@ if (!empty($conf->global->MAIN_MANIFEST_APPLI_LOGO_URL)) {
 		}
 	}
 
-	if (!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED)) {
-		$iconRelativePath = 'logos/'.$conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED;
+	if (getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED')) {
+		$iconRelativePath = 'logos/' . getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED');
 		$iconPath = $conf->mycompany->dir_output.'/'.$iconRelativePath;
 		if (is_readable($iconPath)) {
 			$imgSize = getimagesize($iconPath);
