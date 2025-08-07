@@ -85,11 +85,11 @@ trait CommonTrigger
 		// phpcs:enable
 		global $langs, $conf;
 
-		// @phan-suppress-next-line PhanUndeclaredConstantOfClass
 		if (!empty($this->TRIGGER_PREFIX) && strpos($triggerName, $this->TRIGGER_PREFIX . '_') !== 0) {
-			// @phan-suppress-next-line PhanUndeclaredConstantOfClass
-			dol_print_error(null, 'The trigger "' . $triggerName . '" does not start with "' . $this->TRIGGER_PREFIX . '_" as required.');
-			exit;
+			if (!preg_match('/^OBJECT_LINK/', $triggerName)) {	// We add this exception as we have some call_trigger with a triggeName that is not the business object (as in method inside the commonobjet.class.php to manage links)
+				dol_print_error(null, 'The trigger "' . $triggerName . '" does not start with "' . $this->TRIGGER_PREFIX . '_" as required.');
+				exit;
+			}
 		}
 		if (!is_object($langs)) {	// If lang was not defined, we set it. It is required by run_triggers().
 			dol_syslog("call_trigger was called with no langs variable defined".getCallerInfoString(), LOG_WARNING);

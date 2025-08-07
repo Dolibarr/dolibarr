@@ -2715,11 +2715,11 @@ abstract class CommonObject
 				// Triggers
 				if (!$error && !$notrigger) {
 					// Call triggers
+					$triggerName = (empty($this->TRIGGER_PREFIX) ? strtoupper(get_class($this)) : $this->TRIGGER_PREFIX);
 					if (get_class($this) == 'Commande') {
-						$result = $this->call_trigger('ORDER_MODIFY', $user);
-					} else {
-						$result = $this->call_trigger(strtoupper(get_class($this)).'_MODIFY', $user);
+						$triggerName = 'ORDER';	// TODO Remove this when TRIGGER_PREFI in order is implemented
 					}
+					$result = $this->call_trigger($triggerName.'_MODIFY', $user);
 					if ($result < 0) {
 						$error++;
 					}
@@ -3356,9 +3356,12 @@ abstract class CommonObject
 			if (!$notrigger) {
 				// Call trigger
 				$this->context['bankaccountupdate'] = 1;
-				$triggerName = strtoupper(get_class($this)).'_MODIFY';
-				// Special cases
-				if ($triggerName == 'FACTUREREC_MODIFY') {
+
+				$triggerName = (empty($this->TRIGGER_PREFIX) ? strtoupper(get_class($this)) : $this->TRIGGER_PREFIX);
+				if (get_class($this) == 'Commande') {
+					$triggerName = 'ORDER';	// TODO Remove this when TRIGGER_PREFI in order is implemented
+				}
+				if ($triggerName == 'FACTUREREC_MODIFY') {	// TODO Use the $this->TRIGGER_PREFIX when implemented
 					$triggerName = 'BILLREC_MODIFY';
 				}
 				$result = $this->call_trigger($triggerName, $userused);
@@ -3848,29 +3851,30 @@ abstract class CommonObject
 				$this->note_private = $note;
 			}
 			if (empty($notrigger)) {
+				// TODO Use the $this->TRIGGER_PREFIX when implemented
 				switch ($this->element) {
 					case 'societe':
-						$trigger_name = 'COMPANY_MODIFY';
+						$triggerName = 'COMPANY_MODIFY';
 						break;
 					case 'commande':
-						$trigger_name = 'ORDER_MODIFY';
+						$triggerName = 'ORDER_MODIFY';
 						break;
 					case 'facture':
-						$trigger_name = 'BILL_MODIFY';
+						$triggerName = 'BILL_MODIFY';
 						break;
 					case 'invoice_supplier':
-						$trigger_name = 'BILL_SUPPLIER_MODIFY';
+						$triggerName = 'BILL_SUPPLIER_MODIFY';
 						break;
 					case 'facturerec':
-						$trigger_name = 'BILLREC_MODIFIY';
+						$triggerName = 'BILLREC_MODIFIY';
 						break;
 					case 'expensereport':
-						$trigger_name = 'EXPENSE_REPORT_MODIFY';
+						$triggerName = 'EXPENSE_REPORT_MODIFY';
 						break;
 					default:
-						$trigger_name = strtoupper($this->element) . '_MODIFY';
+						$triggerName = strtoupper($this->element) . '_MODIFY';
 				}
-				$ret = $this->call_trigger($trigger_name, $user);
+				$ret = $this->call_trigger($triggerName, $user);
 				if ($ret < 0) {
 					return -1;
 				}
@@ -4310,7 +4314,8 @@ abstract class CommonObject
 				// Call trigger
 				$this->context['link_origin'] = $origin;
 				$this->context['link_origin_id'] = $origin_id;
-				$result = $this->call_trigger('OBJECT_LINK_INSERT', $f_user);
+
+				$result = $this->call_trigger('OBJECT_LINK_INSERT', $f_user);	// Note: We should have used here a hook. Not a business event
 				if ($result < 0) {
 					$error++;
 				}
@@ -4596,7 +4601,8 @@ abstract class CommonObject
 				$this->context['link_source_type'] = $sourcetype;
 				$this->context['link_target_id'] = $targetid;
 				$this->context['link_target_type'] = $targettype;
-				$result = $this->call_trigger('OBJECT_LINK_MODIFY', $f_user);
+
+				$result = $this->call_trigger('OBJECT_LINK_MODIFY', $f_user);	// Note: We should have used here a hook. Not a business event
 				if ($result < 0) {
 					$error++;
 				}
@@ -4657,7 +4663,8 @@ abstract class CommonObject
 			$this->context['link_source_type'] = $sourcetype;
 			$this->context['link_target_id'] = $targetid;
 			$this->context['link_target_type'] = $targettype;
-			$result = $this->call_trigger('OBJECT_LINK_DELETE', $f_user);
+
+			$result = $this->call_trigger('OBJECT_LINK_DELETE', $f_user);	// Note: We should have used here a hook. Not a business event
 			if ($result < 0) {
 				$error++;
 			}
