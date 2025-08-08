@@ -40,7 +40,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
@@ -131,7 +130,6 @@ include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'inc
 $usercanread    =  $user->hasRight("expedition", "lire");
 $usercancreate  =  $user->hasRight("expedition", "creer");
 $usercandelete  =  $user->hasRight("expedition", "supprimer");
-
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('expeditioncard', 'globalcard'));
@@ -602,7 +600,6 @@ if (empty($reshook)) {
 
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-
 	} elseif (
 		$action == 'confirm_valid' && $confirm == 'yes' && ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'creer'))
 			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'shipping_advance', 'validate')))
@@ -764,18 +761,20 @@ if (empty($reshook)) {
 			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
 		}
 
-		if ($object->update($user) >= 0) {
-			header("Location: card.php?id=" . $object->id);
-			exit;
+		if (!$error) {
+			if ($object->update($user) >= 0) {
+				header("Location: card.php?id=" . $object->id);
+				exit;
+			}
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
-		setEventMessages($object->error, $object->errors, 'errors');
 
 		$action = "";
 	} elseif ($action == 'classifybilled' && $permissiontoadd) {
 		$object->fetch($id);
 		$result = $object->setBilled();
 		if ($result >= 0) {
-			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
 			exit();
 		}
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -1404,8 +1403,9 @@ $warehousestatic = new Entrepot($db);
 if ($action == 'create' && !getDolGlobalString('SHIPMENT_STANDALONE')) {
 	print load_fiche_titre($langs->trans("CreateShipment"), '', 'dolly');
 
-	print '<br>'.$langs->trans("ShipmentCreationIsDoneFromOrder");
-	print '<br>'.$langs->trans("CreateSimpleShipment");
+	print '<br>'  .$langs->trans("ShipmentCreationIsDoneFromOrder");
+	print '<br>' . $langs->trans("CreateSimpleShipment");
+
 	$action = '';
 	$id = '';
 	$ref = '';
@@ -1856,7 +1856,8 @@ if ($action == 'create'&& $usercancreate) {
 				} else {
 					print '<br>';
 				}
-				print '<span id="autoreset" class="opacitymedium link cursor cursorpointer">' . img_picto($langs->trans("Reset"), 'eraser') . '</span>'
+
+				print '<span id="autoreset" class="opacitymedium link cursor cursorpointer">' . img_picto($langs->trans("Reset"), 'eraser') . '</span>';
 				print '</td>';
 				if (isModEnabled('stock')) {
 					if (empty($conf->productbatch->enabled)) {
@@ -2596,13 +2597,13 @@ if ($action == 'create'&& $usercancreate) {
 		$formquestion = array();
 		if ($object->status == Expedition::STATUS_CLOSED && getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE')) {
 			$formquestion = array(
-					array(
-						'label' => $langs->trans('ShipmentIncrementStockOnDelete'),
-						'name' => 'alsoUpdateStock',
-						'type' => 'checkbox',
-						'value' => 0
-					),
-				);
+				array(
+					'label' => $langs->trans('ShipmentIncrementStockOnDelete'),
+					'name' => 'alsoUpdateStock',
+					'type' => 'checkbox',
+					'value' => 0
+				),
+			);
 		}
 		$formconfirm = $form->formconfirm(
 			$_SERVER['PHP_SELF'] . '?id=' . $object->id,
@@ -3450,7 +3451,6 @@ if ($action == 'create'&& $usercancreate) {
 						print '<td></td>';
 						print '</tr>';
 					}
-
 					print '</table></td>';
 				} else {
 					// Qty to ship or shipped
@@ -3510,7 +3510,6 @@ if ($action == 'create'&& $usercancreate) {
 									} else {
 										$child_warehouse = $conf->cache['warehouse'][$warehouse_id];
 									}
-
 									$detail .= $langs->trans('DetailChildrenFormat', $child_product_label, $child_warehouse->label, price2num($total_qty, 'MS')) . '<br>';
 								}
 							}
@@ -3643,7 +3642,6 @@ if ($action == 'create'&& $usercancreate) {
 		}
 
 		// TODO Show also lines ordered but not delivered
-
 		if (empty($num_prod)) {
 			print '<tr><td colspan="8"><span class="opacitymedium">' . $langs->trans("NoLineGoOnTabToAddSome", $langs->transnoentitiesnoconv("ShipmentDistribution")) . '</span></td></tr>';
 		}
@@ -3790,6 +3788,7 @@ if ($action == 'create'&& $usercancreate) {
 		}
 
 		print '</div><div class="fichehalfright">';
+
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';

@@ -61,10 +61,12 @@ class Contracts extends DolibarrApi
 	 * Return an array with contract information
 	 *
 	 * @param   int         $id         ID of contract
+	 * @param 	string 		$properties Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param 	bool 		$withLines 	true or false to display or hide lines
 	 * @return  Object					Object with cleaned properties
 	 * @throws	RestException
 	 */
-	public function get($id)
+	public function get($id, $properties = '', $withLines = true)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('contrat', 'lire')) {
 			throw new RestException(403);
@@ -80,7 +82,12 @@ class Contracts extends DolibarrApi
 		}
 
 		$this->contract->fetchObjectLinked();
-		return $this->_cleanObjectDatas($this->contract);
+
+		if (!$withLines) {
+			unset($this->contract->lines);
+		}
+
+		return $this->_filterObjectProperties($this->_cleanObjectDatas($this->contract), $properties);
 	}
 
 	/**
@@ -96,6 +103,7 @@ class Contracts extends DolibarrApi
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @param bool 			   $withLines 			true or false to display or hide lines
 	 * @return  array                               Array of order objects
 	 * @phan-return Contrat[]|array{data:Contrat[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 * @phpstan-return Contrat[]|array{data:Contrat[],pagination:array{total:int,page:int,page_count:int,limit:int}}
@@ -103,7 +111,7 @@ class Contracts extends DolibarrApi
 	 * @throws RestException 404 Not found
 	 * @throws RestException 503 Error
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false, $withLines = true)
 	{
 		global $db, $conf;
 
@@ -171,6 +179,9 @@ class Contracts extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$contrat_static = new Contrat($this->db);
 				if ($contrat_static->fetch($obj->rowid)) {
+					if (!$withLines) {
+						unset($contrat_static->lines);
+					}
 					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($contrat_static), $properties);
 				}
 				$i++;

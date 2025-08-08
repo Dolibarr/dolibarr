@@ -7,7 +7,7 @@
  * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -181,17 +181,17 @@ if ($result) {
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
 		// les variables
-		$cptcli = ((getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') != "") ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : $langs->trans("CodeNotDef"));
+		$cptcli = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER', $langs->trans("CodeNotDef"));
 		$compta_soc = (!empty($obj->code_compta_client) ? $obj->code_compta_client : $cptcli);
 		$compta_prod = $obj->accountancy_code_sell;
 		if (empty($compta_prod)) {
 			if ($obj->product_type == 0) {
-				$compta_prod = (getDolGlobalString('ACCOUNTING_PRODUCT_SOLD_ACCOUNT') ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prod = getDolGlobalString('ACCOUNTING_PRODUCT_SOLD_ACCOUNT', $langs->trans("CodeNotDef"));
 			} else {
-				$compta_prod = (getDolGlobalString('ACCOUNTING_SERVICE_SOLD_ACCOUNT') ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prod = getDolGlobalString('ACCOUNTING_SERVICE_SOLD_ACCOUNT', $langs->trans("CodeNotDef"));
 			}
 		}
-		$cpttva = (getDolGlobalString('ACCOUNTING_VAT_SOLD_ACCOUNT') ? $conf->global->ACCOUNTING_VAT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
+		$cpttva = getDolGlobalString('ACCOUNTING_VAT_SOLD_ACCOUNT', $langs->trans("CodeNotDef"));
 		$compta_tva = (!empty($obj->account_tva) ? $obj->account_tva : $cpttva);
 
 		$account_localtax1 = getLocalTaxesFromRate($obj->tva_tx, 1, $obj->socid, $mysoc);

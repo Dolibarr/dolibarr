@@ -232,7 +232,7 @@ print '<input type="hidden" name="action" value="update">';
 $head = opensurvey_prepare_head($object);
 
 
-print dol_get_fiche_head($head, 'general', $langs->trans("Survey"), -1, 'poll');
+print dol_get_fiche_head($head, 'general', $langs->trans("Survey"), -1, $object->picto);
 
 $morehtmlref = '';
 

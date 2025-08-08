@@ -95,6 +95,7 @@ $error = 0;
 $option = "";
 $mesg = '';
 
+$object = new BonPrelevement($db);
 
 /*
  * Actions
@@ -216,6 +217,7 @@ if ($type != 'bank-transfer') {
 	$invoicestatic = new FactureFournisseur($db);
 }
 $bprev = new BonPrelevement($db);
+
 $arrayofselected = is_array($toselect) ? $toselect : array();
 // List of mass actions available
 $arrayofmassactions = array(
@@ -246,7 +248,7 @@ llxHeader('', $title);
 // @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 $head = bon_prelevement_prepare_head($bprev, $bprev->nbOfInvoiceToPay($type), $bprev->nbOfInvoiceToPay($type, 'salary'));
 if ($type) {
-	print dol_get_fiche_head($head, (!GETPOSTISSET('sourcetype') ? 'invoice' : 'salary'), $langs->trans("Invoices"), -1, $bprev->picto);
+	print dol_get_fiche_head($head, ((GETPOSTISSET('sourcetype') && GETPOST('sourcetype') != '') ? 'salary' : 'invoice'), $langs->trans("Invoices"), -1, $bprev->picto);
 } else {
 	print load_fiche_titre($title);
 	print dol_get_fiche_head(array(), '', '', -1);
@@ -632,6 +634,11 @@ if ($resql) {
 					print $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
 					if ($bac->verif() <= 0) {
 						print img_warning('Error on default bank number for IBAN : '.$langs->trans($bac->error));
+					}
+					if ($obj->soc_rib_id > 0) {
+						print $form->textwithpicto('', $langs->trans("BankAccountForcedOnRequest"));
+					} else {
+						print $form->textwithpicto('', $langs->trans("BankAccountUsedByDefault"), 1, 'help', 'valigmiddle warning');
 					}
 				} else {
 					print img_warning($langs->trans("IBANNotDefined"));

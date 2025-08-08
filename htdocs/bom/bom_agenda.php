@@ -85,7 +85,7 @@ if (!$sortorder) {
 // Initialize a technical objects
 $object = new BOM($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction = $conf->bom->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = getMultidirOutput($object) . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('bomagenda', 'globalcard')); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
@@ -149,7 +149,7 @@ if ($object->id > 0) {
 	$head = bomPrepareHead($object);
 
 
-	print dol_get_fiche_head($head, 'agenda', $langs->trans("BillOfMaterials"), -1, 'bom');
+	print dol_get_fiche_head($head, 'agenda', $langs->trans("BillOfMaterials"), -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------

@@ -805,11 +805,7 @@ class Opensurveysondage extends CommonObject
 
 		$statusType = 'status'.$status;
 		if ($status == self::STATUS_VALIDATED) {
-			if (0) {
-				$statusType = 'status1';
-			} else {
-				$statusType = 'status4';
-			}
+			$statusType = 'status4';
 		}
 		if ($status == self::STATUS_CLOSED) {
 			$statusType = 'status6';

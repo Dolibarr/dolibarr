@@ -75,6 +75,7 @@ CloneContent=Clone message
 CloneReceivers=Cloner recipients
 DateLastSend=Date of latest sending
 DateSending=Date sending
+LastSending=Last sending
 SentTo=Sent to <b>%s</b>
 MailingStatusRead=Read
 YourMailUnsubcribeOK=The email <b>%s</b>  is correctly unsubscribe from mailing list
