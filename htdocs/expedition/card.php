@@ -3207,14 +3207,14 @@ if ($action == 'create'&& $usercancreate) {
 					if ($obj) {
 						// $obj->rowid is rowid in $origin."det" table
 						$alreadysent[$obj->rowid][$obj->shipmentline_id] = array(
-							'shipment_ref' => $obj->shipment_ref, 
-							'shipment_id' => $obj->shipment_id, 
-							'warehouse' => $obj->fk_entrepot, 
+							'shipment_ref' => $obj->shipment_ref,
+							'shipment_id' => $obj->shipment_id,
+							'warehouse' => $obj->fk_entrepot,
 							'qty_shipped' => $obj->qty_shipped,
-							'product_tosell' => $obj->product_tosell, 
-							'product_tobuy' => $obj->product_tobuy, 
+							'product_tosell' => $obj->product_tosell,
+							'product_tobuy' => $obj->product_tobuy,
 							'product_tobatch' => $obj->product_tobatch,
-							'date_valid' => $db->jdate($obj->date_valid), 
+							'date_valid' => $db->jdate($obj->date_valid),
 							'date_delivery' => $db->jdate($obj->date_delivery));
 					}
 					$i++;
@@ -3824,4 +3824,3 @@ if ($action == 'create'&& $usercancreate) {
 // End of page
 llxFooter();
 $db->close();
-
