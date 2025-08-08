@@ -131,6 +131,15 @@ if (empty($reshook)) {
 				$result = $edituser->fetch('', '', '', 1, $conf->entity, $username);
 			}
 
+			// If the user does not have the right to change his own password
+			if ($result > 0) {
+				$edituser->getrights('user');
+				if (!$edituser->hasRight('user', 'self', 'password')) {
+					$result = 0;
+					$edituser->error = 'USERNOTFOUND';
+				}
+			}
+
 			// Set the message to show (must be the same if login/email exists or not
 			// to avoid to guess them.
 			$messagewarning = '<div class="warning paddingtopbottom'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent boxshadow').'">';
