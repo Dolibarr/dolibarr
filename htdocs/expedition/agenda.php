@@ -33,10 +33,10 @@ require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/modules/expedition/modules_expedition.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/sendings.lib.php';
 
-require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php'; // Keep if you use project linking in expedition
+require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/expedition.lib.php'; // Changed from order.lib.php
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php'; // Added for form->form_project
+require_once DOL_DOCUMENT_ROOT . '/core/lib/expedition.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
 
 /**
  * @var Conf $conf
@@ -82,16 +82,15 @@ if (GETPOST('actioncode', 'array')) {
 $search_rowid = GETPOST('search_rowid');
 $search_agenda_label = GETPOST('search_agenda_label');
 
-$hookmanager->initHooks(array('shippingagenda', 'globalcard')); // Changed from orderagenda
+$hookmanager->initHooks(array('shippingagenda', 'globalcard'));
 
 // Security check
 $id = GETPOSTINT("id");
 $socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;
-// Shipping module doesn't typically have a draft status like orders, so simplified restrictedArea
-$result = restrictedArea($user, 'expedition', $id, 'expedition&shipping'); // Changed from commande and order
+$result = restrictedArea($user, 'expedition', $id, 'expedition&shipping');
 
-if (!$user->hasRight('expedition', 'lire')) { // Changed from commande
+if (!$user->hasRight('expedition', 'lire')) {
 	accessforbidden();
 }
 
@@ -100,7 +99,7 @@ if (!$user->hasRight('expedition', 'lire')) { // Changed from commande
  * Actions
  */
 
-$object = new Expedition($db); // Changed from Commande
+$object = new Expedition($db);
 
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
@@ -132,8 +131,8 @@ $title = $langs->trans('Events') . $agenda . ' - ' . $object->ref; // Shipping u
 if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/shippingrefonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->ref) { // New constant or fallback
 	$title = $object->ref . ' - ' . $langs->trans("Info");
 }
-$help_url = "EN:Module_Shippings|FR:Module_Expeditions|ES:M&oacute;dulo_Expediciones"; // Changed help URL
-llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-shipping page-card_agenda'); // Changed mod-order
+$help_url = "EN:Module_Shippings|FR:Module_Expeditions|ES:M&oacute;dulo_Expediciones";
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-shipping page-card_agenda');
 
 $head = shipping_prepare_head($object);
 print dol_get_fiche_head($head, 'shipping', $langs->trans("Shipment"), -1, $object->picto);
@@ -141,8 +140,8 @@ print dol_get_fiche_head($head, 'shipping', $langs->trans("Shipment"), -1, $obje
 
 // Shipping card
 
-if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolist']['expedition'])) { // Changed from order
-	$tmpurl = $_SESSION['pageforbacktolist']['expedition']; // Changed from order
+if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolist']['expedition'])) {
+	$tmpurl = $_SESSION['pageforbacktolist']['expedition'];
 	$tmpurl = preg_replace('/__SOCID__/', (string) $object->socid, $tmpurl);
 	$linkback = '<a href="' . $tmpurl . (preg_match('/\?/', $tmpurl) ? '&' : '?') . 'restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 } else {
@@ -154,7 +153,7 @@ $morehtmlref = '<div class="refidno">';
 $morehtmlref .= $object->ref;
 // Thirdparty
 if (!empty($object->thirdparty->id) && $object->thirdparty->id > 0) {
-	$morehtmlref .= '<br>' . $object->thirdparty->getNomUrl(1, 'shipping'); // Changed from order
+	$morehtmlref .= '<br>' . $object->thirdparty->getNomUrl(1, 'shipping');
 }
 // Project - Keep as is if shipping can be linked to projects
 if (isModEnabled('project')) {
@@ -193,7 +192,7 @@ print dol_get_fiche_end();
 $out = '';
 $permok = $user->hasRight('agenda', 'myactions', 'create');
 if ($permok) {
-	$out .= '&shippingid=' . $object->id; // Changed from orderid
+	$out .= '&shippingid=' . $object->id;
 }
 
 
@@ -203,11 +202,11 @@ if (!empty($object->id)) {
 	$morehtmlright = '';
 
 	// Show link to change view in message
-	$messagingUrl = DOL_URL_ROOT . '/expedition/messaging.php?id=' . $object->id; // Changed from commande
+	$messagingUrl = DOL_URL_ROOT . '/expedition/messaging.php?id=' . $object->id;
 	$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1);
 
 	// Show link to change view in agenda
-	$messagingUrl = DOL_URL_ROOT . '/expedition/agenda.php?id=' . $object->id; // Changed from commande
+	$messagingUrl = DOL_URL_ROOT . '/expedition/agenda.php?id=' . $object->id;
 	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2);
 
 
@@ -226,10 +225,10 @@ if (!empty($object->id)) {
 	}
 
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
-	$cachekey = 'count_events_expedition_' . $object->id; // Changed from commande
+	$cachekey = 'count_events_expedition_' . $object->id;
 	$nbEvent = dol_getcache($cachekey);
 
-	$titlelist = $langs->trans("ActionsOnShipping") . (is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">(' . $nbEvent . ')</span>' : ''); // Changed from ActionsOnOrder
+	$titlelist = $langs->trans("ActionsOnShipping") . (is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">(' . $nbEvent . ')</span>' : '');
 	if (!empty($conf->dol_optimize_smallscreen)) {
 		$titlelist = $langs->trans("Actions") . (is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">(' . $nbEvent . ')</span>' : '');
 	}

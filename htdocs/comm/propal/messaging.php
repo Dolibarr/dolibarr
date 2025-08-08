@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2009 Regis Houssin            <regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025       Grimal Valentin         <valentin.grimal@pichinov.com>
+ * Copyright (C) 2025       Valentin Grimal         <valentin.grimal@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,8 @@
 
 /**
  * \file       htdocs/comm/propal/messaging.php
- * \ingroup    order
- *		\brief      Page with events on order
+ * \ingroup    propal
+ *		\brief      Page with events on propal
  */
 
 // Load Dolibarr environment
@@ -42,7 +42,7 @@ require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
  */
 
 // Load translation files required by the page
-$langs->load("orders"); // Changed from projects
+$langs->load("propal");
 
 $id     = GETPOSTINT('id');
 $ref    = GETPOST('ref', 'alpha');
@@ -130,7 +130,7 @@ $title = $langs->trans('Events') . $agenda . ' - ' . $object->ref; // Removed $o
 if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/ordernamonly/', getDolGlobalString('MAIN_HTML_TITLE'))) { // Changed from projectnameonly
 	$title = $object->ref . ' - ' . $langs->trans("Info"); // Simplified title
 }
-$help_url = "EN:Module_Orders|FR:Module_Propals|ES:M&oacute;dulo_Pedidos"; // Changed help URL
+$help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos|DE:Modul_Angebote';
 
 llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-propal page-card_messaging'); // Changed mod-project
 
@@ -191,7 +191,7 @@ print dol_get_fiche_end();
 $out = '';
 $permok = $user->hasRight('agenda', 'myactions', 'create');
 if ($permok) {
-	$out .= '&orderid=' . $object->id; // Changed from projectid
+	$out .= '&propalid=' . $object->id;
 }
 
 
@@ -239,7 +239,7 @@ if (!empty($object->id)) {
 	}
 
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
-	$cachekey = 'count_events_order_' . $object->id; // Changed from project
+	$cachekey = 'count_events_propal_' . $object->id;
 	$nbEvent = dol_getcache($cachekey);
 
 	$titlelist = $langs->trans("ActionsOnPropal") . (is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">(' . $nbEvent . ')</span>' : ''); // Changed from ActionsOnProject
