@@ -8,7 +8,7 @@
  * Copyright (C) 2011-2012	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2012		J. Fernando Lagrange		<fernando@demo-tic.org>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2020-2024  Frédéric France      		<frederic.france@free.fr>
+ * Copyright (C) 2020-2025  Frédéric France      		<frederic.france@free.fr>
  * Copyright (C) 2023		Waël Almoman				<info@almoman.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
@@ -91,11 +91,7 @@ if ($action == 'set_default') {
 	$res = true;
 } elseif ($action == 'setdoc') {
 	// Set default model
-	if (dolibarr_set_const($db, "MEMBER_ADDON_PDF_ODT", $value, 'chaine', 0, '', $conf->entity)) {
-		// The constant that was read ahead of the new set
-		// we therefore go through a variable to have a consistent display
-		$conf->global->MEMBER_ADDON_PDF_ODT = $value;
-	}
+	dolibarr_set_const($db, "MEMBER_ADDON_PDF_ODT", $value, 'chaine', 0, '', $conf->entity);
 
 	// We activate the model
 	$ret = delDocumentModel($value, $type);

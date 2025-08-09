@@ -470,9 +470,12 @@ class Contrat extends CommonObject
 	 */
 	public function closeAll(User $user, $notrigger = 0, $comment = '')
 	{
+		dol_syslog("closeAll begin", LOG_DEBUG, 1);
+
 		$this->db->begin();
 
 		// Load lines
+		// TODO Should be useless if object was fetched without the noline param.
 		$this->fetch_lines();
 
 		$now = dol_now();
@@ -498,7 +501,7 @@ class Contrat extends CommonObject
 			}
 		}
 
-		if (!$error && $this->statut == 0) {
+		if (!$error && $this->status == 0) {
 			$result = $this->validate($user, '', $notrigger);
 			if ($result < 0) {
 				$error++;
@@ -507,9 +510,15 @@ class Contrat extends CommonObject
 
 		if (!$error) {
 			$this->db->commit();
+
+			dol_syslog("closeAll end", LOG_DEBUG, -1);
+
 			return 1;
 		} else {
 			$this->db->rollback();
+
+			dol_syslog("closeAll end", LOG_DEBUG, -1);
+
 			return -1;
 		}
 	}
@@ -739,6 +748,7 @@ class Contrat extends CommonObject
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);

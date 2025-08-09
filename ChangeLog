@@ -2,6 +2,20 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 23.0.0 compared to 22.0 *****
+
+For users:
+----------
+
+For developers:
+---------------
+
+WARNING:
+--------
+The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* The deprecated column egroupware_id has been dropped
+
+
 
 ***** ChangeLog for 22.0.0 compared to 21.0 *****
 
@@ -120,7 +134,7 @@ NEW: Add note public and private on order export
 NEW: Finish dev for API_ENABLE_COUNT_CALLS (count of API use is visible on user API key field)
 
 For developers:
-----------
+---------------
 NEW: Add an API endpoint to get properties of a single line of an order (#34045)
 NEW: add const to not include default CSS in top_htmlhead with DISABLE_CSS_DEFAULT_THEME
 NEW: add const to not include default lib_head.js in top_htmlhead with DISABLE_LIB_HEAD_JS
@@ -147,7 +161,6 @@ NEW: expense report API deny
 
 WARNING:
 --------
-
 The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * The use of GETPOST function is not allowed inside extrafields conditions or any strings that contains dynamic code evaluated with dol_eval().
 * The deprecated variable $trigger_name (duplicate of variable $triggersendname) has been removed. You must use $triggersendname everywhere now.
