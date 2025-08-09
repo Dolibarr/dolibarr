@@ -1119,34 +1119,39 @@ if ($action == 'edit') {
 		}
 
 		// Test DNS entry for emails
-		foreach (array('SPF', 'DMARC') as $dnstype) {
-			foreach ($domainstotest as $domaintotest => $listofemails) {
-				$dnsinfo = false;
-				$foundforemail = 0;
-				if (!empty($domaintotest) && function_exists('dns_get_record') && !getDolGlobalString('MAIN_DISABLE_DNS_GET_RECORD')) {
-					$domain = $domaintotest;
-					if ($dnstype == 'DMARC') {
-						$domain = '_dmarc.'.$domain;
+		if ($action == 'testsetup') {
+			foreach (array('SPF', 'DMARC') as $dnstype) {
+				foreach ($domainstotest as $domaintotest => $listofemails) {
+					$dnsinfo = false;
+					$foundforemail = 0;
+					if (!empty($domaintotest) && function_exists('dns_get_record') && !getDolGlobalString('MAIN_DISABLE_DNS_GET_RECORD')) {
+						$domain = $domaintotest;
+						if ($dnstype == 'DMARC') {
+							$domain = '_dmarc.'.$domain;
+						}
+						$dnsinfo = dns_get_record($domain, DNS_TXT);
 					}
-					$dnsinfo = dns_get_record($domain, DNS_TXT);
-				}
-				if (!empty($dnsinfo) && is_array($dnsinfo)) {
-					foreach ($dnsinfo as $info) {
-						if (($dnstype == 'SPF' && stripos($info['txt'], 'v=spf') !== false)
-							|| ($dnstype == 'DMARC' && stripos($info['txt'], 'v=dmarc') !== false)) {
-							$foundforemail++;
-							$text .= ($text ? '<br>' : '').'- '.$langs->trans("ActualMailDNSRecordFound", '<b>'.$dnstype.'</b>', '<b>'.implode(', ', $listofemails).'</b>', '<span class="opacitylow">'.$info['txt'].'</span>');
+					if (!empty($dnsinfo) && is_array($dnsinfo)) {
+						foreach ($dnsinfo as $info) {
+							if (($dnstype == 'SPF' && stripos($info['txt'], 'v=spf') !== false)
+								|| ($dnstype == 'DMARC' && stripos($info['txt'], 'v=dmarc') !== false)) {
+								$foundforemail++;
+								$text .= ($text ? '<br>' : '').'- '.$langs->trans("ActualMailDNSRecordFound", '<b>'.$dnstype.'</b>', '<b>'.implode(', ', $listofemails).'</b>', '<span class="opacitylow">'.$info['txt'].'</span>');
+							}
 						}
 					}
-				}
-				if (!$foundforemail) {
-					$text .= ($text ? '<br>' : '').'- '.$langs->trans("ActualMailDNSRecordFound", '<b>'.$dnstype.'</b>', '<b>'.implode(', ', $listofemails).'</b>', '<span class="opacitymedium">'.$langs->transnoentitiesnoconv("None").'</span>');
+					if (!$foundforemail) {
+						$text .= ($text ? '<br>' : '').'- '.$langs->trans("ActualMailDNSRecordFound", '<b>'.$dnstype.'</b>', '<b>'.implode(', ', $listofemails).'</b>', '<span class="opacitymedium">'.$langs->transnoentitiesnoconv("None").'</span>');
+					}
 				}
 			}
-		}
 
-		if ($text) {
-			print info_admin($langs->trans("SPFAndDMARCInformation").' :<br>'.$text, 0, 0, '1', '');
+			if ($text) {
+				print info_admin($langs->trans("SPFAndDMARCInformation").' :<br>'.$text, 0, 0, '1', '');
+			}
+		} else {
+			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=testsetup">'.$langs->trans("ClickHereToCheckSPFDMARCForSetup").'</a>';
+			print '<br><br>';
 		}
 	}
 

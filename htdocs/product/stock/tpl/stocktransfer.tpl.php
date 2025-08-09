@@ -45,7 +45,7 @@ if (empty($conf) || !is_object($conf)) {
 
 ?>
 
-<!-- BEGIN PHP TEMPLATE STOCKTRANSFER.TPL.PHP -->
+<!-- BEGIN PHP TEMPLATE PRODUCT/STOCK/TPL/STOCKTRANSFER.TPL.PHP -->
 <?php
 $productref = '';
 if ($object->element == 'product') {
@@ -76,7 +76,7 @@ print load_fiche_titre($langs->trans("StockTransfer"), '', 'generic');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">'."\n";
 
-print dol_get_fiche_head();
+print dol_get_fiche_head(array(), '', '', 0, '', 0, '', '', 0, '', 0, 'marginbottomonly');
 
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="transfert_stock">';
@@ -167,6 +167,8 @@ print '<input type="submit" class="button button-save" value="'.dol_escape_htmlt
 print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 print '<input type="submit" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 print '</div>';
+
+print '<br>';
 
 print '</form>';
 ?>
