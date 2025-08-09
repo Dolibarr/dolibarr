@@ -136,7 +136,7 @@ if (empty($reshook)) {
 				$edituser->getrights('user');
 				if (!$edituser->hasRight('user', 'self', 'password')) {
 					$result = 0;
-					$edituser->error = 'USERNOTFOUND';
+					$edituser->error = 'USERNOTALLOWEDTOCHANGEPASS';
 				}
 			}
 
@@ -150,7 +150,7 @@ if (empty($reshook)) {
 			}
 			$messagewarning .= '</div>';
 
-			if ($result <= 0 && $edituser->error == 'USERNOTFOUND') {
+			if ($result <= 0 && ($edituser->error == 'USERNOTFOUND' || $edituser->error == 'USERNOTALLOWEDTOCHANGEPASS')) {
 				usleep(20000);	// add delay to simulate setPassword() and send_password() actions delay (0.02s)
 				$message .= $messagewarning;
 				$username = '';
