@@ -82,7 +82,7 @@ if (!$res) {
  * The main.inc.php has been included so the following variable are now defined:
  * @var Conf $conf
  * @var DoliDB $db
- * @var Hookmanager $hookmanager
+ * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */

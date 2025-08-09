@@ -142,6 +142,15 @@ if (!defined('NOSESSION')) {
 
 // Init the 6 global objects, this include will make the 'new Xxx()' and set properties for: $conf, $db, $langs, $user, $mysoc, $hookmanager
 require_once 'master.inc.php';
+/**
+ * The master.inc.php has been included so the following variable are now defined:
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ * @var Societe $mysoc
+ */
 
 // Uncomment this and set session.save_handler = user to use local session storing
 // include DOL_DOCUMENT_ROOT.'/core/lib/phpsessionindb.inc.php
