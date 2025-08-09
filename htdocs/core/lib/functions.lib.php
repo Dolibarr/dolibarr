@@ -9169,7 +9169,7 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 
 	if (class_exists('DOMDocument') && !empty($stringtoclean)) {
 		//$stringtoclean = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body>'.$stringtoclean.'</body></html>';
-		$stringtoclean = '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body>'.$stringtoclean.'</body></html>';
+		$stringtoclean = '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body>' . $stringtoclean . '</body></html>';
 
 		// Warning: loadHTML does not support HTML5 on old libxml versions.
 		$dom = new DOMDocument('', 'UTF-8');
@@ -9226,8 +9226,8 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 		//$return = '<html><body>aaaa</p>bb<p>ssdd</p>'."\n<p>aaa</p>aa<p>bb</p>";
 
 		//$return = preg_replace('/^'.preg_quote('<?xml encoding="UTF-8">', '/').'/', '', $return);
-		$return = preg_replace('/^'.preg_quote('<html><head><', '/').'[^<>]*'.preg_quote('></head><body>', '/').'/', '', $return);
-		$return = preg_replace('/'.preg_quote('</body></html>', '/').'$/', '', trim($return));
+		$return = preg_replace('/^' . preg_quote('<html><head><', '/') . '[^<>]*' . preg_quote('></head><body>', '/') . '/', '', $return);
+		$return = preg_replace('/' . preg_quote('</body></html>', '/') . '$/', '', trim($return));
 
 		return trim($return);
 	} else {
@@ -9402,11 +9402,11 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					// I don't know what the xml encoding is the trick for
 					if (dol_textishtml($out)) {
 						//$out = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.$out.'</div></body></html>';
-						$out = '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.$out.'</div></body></html>';
+						$out = '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">' . $out . '</div></body></html>';
 						//$out = '<html><head><meta charset="utf-8"></head><body><div class="tricktoremove">'.$out.'</div></body></html>';
 					} else {
 						//$out = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.dol_nl2br($out).'</div></body></html>';
-						$out = '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.dol_nl2br($out).'</div></body></html>';
+						$out = '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">' . dol_nl2br($out) . '</div></body></html>';
 						//$out = '<html><head><meta charset="utf-8"></head><body><div class="tricktoremove">'.dol_nl2br($out).'</div></body></html>';
 					}
 
@@ -9418,8 +9418,8 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 
 					// Remove the trick added to solve pb with text in utf8 and text without parent tag
 					//$out = preg_replace('/^'.preg_quote('<?xml encoding="UTF-8">', '/').'/', '', $out);
-					$out = preg_replace('/^'.preg_quote('<html><head><', '/').'[^<>]+'.preg_quote('></head><body><div class="tricktoremove">', '/').'/', '', $out);
-					$out = preg_replace('/'.preg_quote('</div></body></html>', '/').'$/', '', trim($out));
+					$out = preg_replace('/^' . preg_quote('<html><head><', '/') . '[^<>]+' . preg_quote('></head><body><div class="tricktoremove">', '/') . '/', '', $out);
+					$out = preg_replace('/' . preg_quote('</div></body></html>', '/') . '$/', '', trim($out));
 					//                  $out = preg_replace('/^<\?xml encoding="UTF-8"><div class="tricktoremove">/', '', $out);
 					//                  $out = preg_replace('/<\/div>$/', '', $out);
 					//                  var_dump('rrrrrrrrrrrrrrrrrrrrrrrrrrrrr'.$out);

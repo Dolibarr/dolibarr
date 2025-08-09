@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("order", "other")); // Changed from "projects" to "order"
+$langs->loadLangs(array("order", "other"));
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
@@ -95,7 +95,7 @@ if ($user->socid > 0) {
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, 'commande', $id, '', '', 'fk_soc', 'rowid', $isdraft);
 
-if (!$user->hasRight('commande', 'lire')) { // Changed from projet
+if (!$user->hasRight('commande', 'lire')) {
 	accessforbidden();
 }
 
@@ -105,7 +105,7 @@ if (!$user->hasRight('commande', 'lire')) { // Changed from projet
  * Actions
  */
 
-$object = new Commande($db); // Changed from Project
+$object = new Commande($db); //
 
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
@@ -137,27 +137,27 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 
 $form = new Form($db);
 $agenda = (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) ? '/' . $langs->trans("Agenda") : '';
-$title = $langs->trans('Events') . $agenda . ' - ' . $object->ref; // Changed from $object->ref.' '.$object->name;
+$title = $langs->trans('Events') . $agenda . ' - ' . $object->ref;
 
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/ordernamonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->ref) { // Changed from projectnameonly
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/ordernamonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->ref) {
 	$title = $object->ref . ' - ' . $langs->trans("Info"); // Simplified title
 }
-$help_url = "EN:Module_Orders|FR:Module_Commandes|ES:M&oacute;dulo_Pedidos"; // Changed help URL
-llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-order page-card_agenda'); // Changed mod-project
+$help_url = "EN:Module_Orders|FR:Module_Commandes|ES:M&oacute;dulo_Pedidos";
+llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-order page-card_agenda');
 
-$head = commande_prepare_head($object); // Changed from project_prepare_head
+$head = commande_prepare_head($object);
 
 print dol_get_fiche_head($head, 'agenda', $langs->trans("Order"), -1, $object->picto);
 
 
 // Order card
 
-if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolist']['order'])) { // Changed from project
-	$tmpurl = $_SESSION['pageforbacktolist']['order']; // Changed from project
+if (!empty($_SESSION['pageforbacktolist']) && !empty($_SESSION['pageforbacktolist']['order'])) {
+	$tmpurl = $_SESSION['pageforbacktolist']['order'];
 	$tmpurl = preg_replace('/__SOCID__/', (string) $object->socid, $tmpurl);
 	$linkback = '<a href="' . $tmpurl . (preg_match('/\?/', $tmpurl) ? '&' : '?') . 'restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 } else {
-	$linkback = '<a href="' . DOL_URL_ROOT . '/commande/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>'; // Changed from projet
+	$linkback = '<a href="' . DOL_URL_ROOT . '/commande/list.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 }
 
 $morehtmlref = '<div class="refidno">';
@@ -214,7 +214,7 @@ print dol_get_fiche_end();
 $out = '';
 $permok = $user->hasRight('agenda', 'myactions', 'create');
 if ($permok) {
-	$out .= '&orderid=' . $object->id; // Changed from projectid
+	$out .= '&orderid=' . $object->id;
 }
 
 
@@ -228,12 +228,12 @@ if (!empty($object->id)) {
 	$morehtmlright = '';
 
 	// Show link to change view in message
-	$messagingUrl = DOL_URL_ROOT . '/commande/messaging.php?id=' . $object->id; // Changed from projet
+	$messagingUrl = DOL_URL_ROOT . '/commande/messaging.php?id=' . $object->id;
 	$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1); // Status 1 for "not current page"
 
 
 	// Show link to change view in agenda
-	$messagingUrl = DOL_URL_ROOT . '/commande/agenda.php?id=' . $object->id; // Changed from projet
+	$messagingUrl = DOL_URL_ROOT . '/commande/agenda.php?id=' . $object->id;
 	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2); // Status 2 for "current page"
 
 	// Show link to add event
@@ -251,10 +251,10 @@ if (!empty($object->id)) {
 	}
 
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
-	$cachekey = 'count_events_commande_' . $object->id; // Changed from project
+	$cachekey = 'count_events_commande_' . $object->id;
 	$nbEvent = dol_getcache($cachekey);
 
-	$titlelist = $langs->trans("ActionsOnOrder") . (is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">(' . $nbEvent . ')</span>' : ''); // Changed from ActionsOnProject
+	$titlelist = $langs->trans("ActionsOnOrder") . (is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">(' . $nbEvent . ')</span>' : '');
 	if (!empty($conf->dol_optimize_smallscreen)) {
 		$titlelist = $langs->trans("Actions") . (is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">(' . $nbEvent . ')</span>' : '');
 	}

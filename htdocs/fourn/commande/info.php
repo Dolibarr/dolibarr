@@ -29,12 +29,12 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/fourn.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
 if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
 /**
@@ -131,9 +131,9 @@ if ($id > 0 || !empty($ref)) {
 	$object->info($object->id);
 }
 
-$title = $object->ref.' - '.$langs->trans('Info').' - '.$object->ref.' '.$object->name;
+$title = $object->ref . ' - ' . $langs->trans('Info') . ' - ' . $object->ref . ' ' . $object->name;
 if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->name) {
-	$title = $object->ref.' '.$object->name.' - '.$langs->trans("Info");
+	$title = $object->ref . ' ' . $object->name . ' - ' . $langs->trans("Info");
 }
 $help_url = 'EN:Module_Suppliers_Orders|FR:CommandeFournisseur|ES:Módulo_Pedidos_a_proveedores';
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-supplier-order page-info');
@@ -142,20 +142,18 @@ $now = dol_now();
 
 $head = ordersupplier_prepare_head($object);
 
-
 print dol_get_fiche_head($head, 'info', $langs->trans("SupplierOrder"), -1, 'order');
-
 
 // Supplier order card
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/commande/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="' . DOL_URL_ROOT . '/fourn/commande/list.php' . (!empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 $morehtmlref = '<div class="refidno">';
 // Ref supplier
 $morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
 $morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
 // Thirdparty
-$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
+$morehtmlref .= '<br>' . $object->thirdparty->getNomUrl(1);
 // Project
 if (isModEnabled('project')) {
 	$langs->load("projects");
@@ -163,16 +161,16 @@ if (isModEnabled('project')) {
 	if (0) {	// @phpstan-ignore-line
 		$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 		if ($action != 'classify' && $caneditproject) {  // Always false @phpstan-ignore-line
-			$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+			$morehtmlref .= '<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&token=' . newToken() . '&id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> ';
 		}
-		$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+		$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 	} else {
 		if (!empty($object->fk_project)) {
 			$proj = new Project($db);
 			$proj->fetch($object->fk_project);
 			$morehtmlref .= $proj->getNomUrl(1);
 			if ($proj->title) {
-				$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
+				$morehtmlref .= '<span class="opacitymedium"> - ' . dol_escape_htmltag($proj->title) . '</span>';
 			}
 		}
 	}
@@ -180,7 +178,6 @@ if (isModEnabled('project')) {
 $morehtmlref .= '</div>';
 
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
@@ -193,41 +190,53 @@ print '<div class="clearboth"></div>';
 
 print dol_get_fiche_end();
 
-
-
-
 // Actions buttons
 
 $out = '';
 $permok = $user->hasRight('agenda', 'myactions', 'create');
 if ($permok) {
-	$out .= '&originid='.$object->id.'&origin=order_supplier';
+	$out .= '&originid=' . $object->id . '&origin=order_supplier';
 }
 
+// print '<div class="tabsAction">';
 
-print '<div class="tabsAction">';
+// if (isModEnabled('agenda')) {
+// 	if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
+// 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("AddAction").'</a>';
+// 	} else {
+// 		print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddAction").'</a>';
+// 	}
+// }
 
-if (isModEnabled('agenda')) {
-	if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
-		print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("AddAction").'</a>';
-	} else {
-		print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddAction").'</a>';
-	}
-}
-
-print '</div>';
+// print '</div>';
 
 
 if (!empty($object->id)) {
-	$param = '&id='.$object->id;
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
-		$param .= '&contextpage='.$contextpage;
-	}
-	if ($limit > 0 && $limit != $conf->liste_limit) {
-		$param .= '&limit='.$limit;
+	$morehtmlright = '';
+
+	// Show link to change view in message
+	$messagingUrl = DOL_URL_ROOT . '/fourn/commande/messaging.php?id=' . $object->id;
+	$morehtmlright .= dolGetButtonTitle($langs->trans('ShowAsConversation'), '', 'fa fa-comments imgforviewmode', $messagingUrl, '', 1); // Status 1 for "not current page"
+
+	// Show link to change view in agenda
+	$messagingUrl = DOL_URL_ROOT . '/fourn/commande/info.php?id=' . $object->id;
+	$morehtmlright .= dolGetButtonTitle($langs->trans('MessageListViewType'), '', 'fa fa-bars imgforviewmode', $messagingUrl, '', 2); // Status 2 for "current page"
+
+	// Show link to add event
+	if (isModEnabled('agenda')) {
+		$addActionBtnRight = $user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create');
+		$morehtmlright .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT . '/comm/action/card.php?action=create' . $out . '&socid=' . $object->socid . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?id=' . $object->id), '', (int) $addActionBtnRight);
 	}
 
-	print load_fiche_titre($langs->trans("ActionsOnOrder"), '', '');
+	$param = '&id=' . $object->id;
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+		$param .= '&contextpage=' . $contextpage;
+	}
+	if ($limit > 0 && $limit != $conf->liste_limit) {
+		$param .= '&limit=' . $limit;
+	}
+
+	// print load_fiche_titre($langs->trans("ActionsOnOrder"), '', '');
 
 	// List of actions on element
 	/*include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
@@ -240,7 +249,18 @@ if (!empty($object->id)) {
 	// List of done actions
 	//show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
 
-	// List of all actions
+	require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
+	$cachekey = 'count_events_commande_' . $object->id;
+	$nbEvent = dol_getcache($cachekey);
+
+
+	$titlelist = $langs->trans("ActionsOnOrder") . (is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">(' . $nbEvent . ')</span>' : '');
+	if (!empty($conf->dol_optimize_smallscreen)) {
+		$titlelist = $langs->trans("Actions") . (is_numeric($nbEvent) ? '<span class="opacitymedium colorblack paddingleft">(' . $nbEvent . ')</span>' : '');
+	}
+
+	print_barre_liste($titlelist, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $morehtmlright, '', 0, 1, 0);
+
 	$filters = array();
 	$filters['search_agenda_label'] = $search_agenda_label;
 	$filters['search_rowid'] = $search_rowid;
