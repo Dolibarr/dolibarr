@@ -2682,3 +2682,4 @@ MAIN_ENABLE_AJAX_TOOLTIP=Use Ajax lazy load of tooltip content with Ajax
 MAIN_CACHE_COUNT=Keep the count of elements visible into badges in a cache (value may need several minutes to be up to date)
 MAIN_DO_FETCH_IN_ONE_SQL_REQUEST=Load content of object and lines into one request
 GoOnThisPageToInitBarCode=You can go on this page to initialize empty barcodes
+ClickHereToCheckSPFDMARCForSetup=Get a summary of the SPF and DMARC setup of all domains
