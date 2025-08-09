@@ -508,9 +508,7 @@ class BankAccounts extends DolibarrApi
 	 * Get the detail of lines of the account.
 	 *
 	 * @param int $id ID of the account line
-	 * @return  Object						Object with cleaned properties
-	 * @phan-return AccountLine[]
-	 * @phpstan-return AccountLine[]
+	 * @return  AccountLine			Object with cleaned properties
 	 *
 	 * @throws RestException
 	 *
