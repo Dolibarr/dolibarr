@@ -2311,6 +2311,7 @@ if ($action == 'create') {
 					print dolGetButtonAction('', $langs->trans("Create"), 'default', $arrayofcreatebutton, '', true, $params);
 				}
 
+				$arrayforbutaction = array();
 				$arrayforbutaction[] = array(
 					'url' => '/contrat/card.php?id='.$object->id.'&action=activate&token='.newToken(),
 					'label' => $langs->trans('ActivateAllContracts'),
