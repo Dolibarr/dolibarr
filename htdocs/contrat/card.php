@@ -2311,25 +2311,20 @@ if ($action == 'create') {
 					print dolGetButtonAction('', $langs->trans("Create"), 'default', $arrayofcreatebutton, '', true, $params);
 				}
 
-				$arrayforbutaction = array();
-				if ($object->nbofservicesclosed > 0 || $object->nbofserviceswait > 0) {
-					$arrayforbutaction[] = array(
-						'url' => '/contrat/card.php?id='.$object->id.'&action=activate&token='.newToken(),
-						'label' => $langs->trans('ActivateAllContracts'),
-						'lang' => 'bills',
-						'perm' => $permissiontoactivate,
-						'enabled' => true,
-					);
-				}
-				if ($object->nbofservicesclosed < $nbofservices) {
-					$arrayforbutaction[] = array(
-						'url' => '/contrat/card.php?id='.$object->id.'&action=close&token='.newToken(),
-						'label' => $langs->trans('CloseAllContracts'),
-						'lang' => 'bills',
-						'perm' => $permissiontodisable,
-						'enabled' => true,
-					);
-				}
+				$arrayforbutaction[] = array(
+					'url' => '/contrat/card.php?id='.$object->id.'&action=activate&token='.newToken(),
+					'label' => $langs->trans('ActivateAllContracts'),
+					'lang' => 'bills',
+					'perm' => ($object->nbofservicesclosed > 0 || $object->nbofserviceswait > 0) ? $permissiontoactivate : -1,
+					'enabled' => true,
+				);
+				$arrayforbutaction[] = array(
+					'url' => '/contrat/card.php?id='.$object->id.'&action=close&token='.newToken(),
+					'label' => $langs->trans('CloseAllContracts'),
+					'lang' => 'bills',
+					'perm' => ($object->nbofservicesclosed < $nbofservices) ? $permissiontodisable : -1,
+					'enabled' => true,
+				);
 
 				if (count($arrayforbutaction)) {
 					unset($params['attr']['title']);

@@ -2026,13 +2026,13 @@ class ExtraFields
 	/**
 	 * Return HTML string to put an output field into a page
 	 *
-	 * @param   string			$key            		Key of attribute
-	 * @param   string			$value          		Value to show
-	 * @param	string			$moreparam				To add more parameters on html input tag (only checkbox use html input for output rendering)
-	 * @param	string			$extrafieldsobjectkey	Required (for example $object->table_element).
-	 * @param 	Translate|null 	$outputlangs 			Output
-	 * @param	CommonObject	$object					The parent object of field to show
-	 * @return	string									Formatted value
+	 * @param   string				$key            		Key of attribute
+	 * @param   string				$value          		Value to show
+	 * @param	string				$moreparam				To add more parameters on html input tag (only checkbox use html input for output rendering)
+	 * @param	string				$extrafieldsobjectkey	Required (for example $object->table_element).
+	 * @param 	Translate|null 		$outputlangs 			Output
+	 * @param	CommonObject|null	$object					The parent object of field to show
+	 * @return	string										Formatted value
 	 */
 	public function showOutputField($key, $value, $moreparam = '', $extrafieldsobjectkey = '', $outputlangs = null, $object = null)
 	{
