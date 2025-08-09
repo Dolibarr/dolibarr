@@ -78,6 +78,10 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	}
 	curl_setopt($ch, CURLINFO_HEADER_OUT, true); // To be able to retrieve request header and log it
 
+	if (getDolGlobalInt('MAIN_CURL_GET_RESPONSE_HEADER')) {
+		curl_setopt($ch, CURLOPT_HEADER, true); // To be able to retrieve response header
+	}
+
 	// By default use the TLS version decided by PHP.
 	// You can force, if supported a version like TLSv1 or TLSv1.2
 	if (getDolGlobalString('MAIN_CURL_SSLVERSION')) {
@@ -120,8 +124,13 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		}
 	}
 
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeoutconnect ? $timeoutconnect : getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5));
-	curl_setopt($ch, CURLOPT_TIMEOUT, $timeoutresponse ? $timeoutresponse : getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
+	$newtimeoutconnect = ($timeoutconnect ? $timeoutconnect : getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5));
+	$newtimeoutresponse = ($timeoutresponse ? $timeoutresponse : getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
+
+	dol_syslog("getURLContent newtimeoutconnect=".$newtimeoutconnect." newtimeoutresponse=".$newtimeoutresponse);
+
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $newtimeoutconnect);
+	curl_setopt($ch, CURLOPT_TIMEOUT, $newtimeoutresponse);
 
 	// limit size of downloaded files.
 	$maxsize = getDolGlobalInt('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED');
@@ -299,6 +308,10 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		// Add more keys to $rep
 		if ($response) {
 			$rep['content'] = (string) $response;
+			if (getDolGlobalInt('MAIN_CURL_GET_RESPONSE_HEADER')) { // In this case, response contains header + body
+				$rep['header'] = substr($rep['content'], 0, intval($rep['header_size']));
+				$rep['content'] = substr($rep['content'], intval($rep['header_size']));
+			}
 		} else {
 			$rep['content'] = '';
 		}
@@ -372,9 +385,10 @@ function isIPAllowed($iptocheck, $localurl)
 
 /**
  * Function get second level domain name.
- * For example: https://www.abc.mydomain.com/dir/page.html return 'mydomain'
+ * For example: https://www.abc.mydomain.com/dir/page.html returns 'mydomain' with mode 0, 'mydomain.om' with mode 1, 'abc.mydomain.com' with mode 2.
+ * For example: part1@mydomain.com returns 'mydomain.com' with mode 1
  *
- * @param	string	  $url 				    Full URL.
+ * @param	string	  $url 				    Full URL or Email.
  * @param	int	 	  $mode					0=return 'mydomain', 1=return 'mydomain.com', 2=return 'abc.mydomain.com'
  * @return	string						    Returns domaine name
  */
@@ -399,8 +413,10 @@ function getDomainFromURL($url, $mode = 0)
 		$mode++;
 	}
 
-	$tmpdomain = preg_replace('/^https?:\/\//i', '', $url); // Remove http(s)://
-	$tmpdomain = preg_replace('/\/.*$/i', '', $tmpdomain); // Remove part after /
+	$tmpdomain = preg_replace('/^https?:\/\/[^:]+:[^@]+@/i', '', $url); 	// Remove http(s)://login@pass in https://login@pass:mydomain.com/path, so we now got mydomain.com/path
+	$tmpdomain = preg_replace('/^https?:\/\//i', '', $tmpdomain); 			// Remove http(s)://
+	$tmpdomain = preg_replace('/\/.*$/i', '', $tmpdomain); 					// Remove part after /
+	$tmpdomain = preg_replace('/^[^@]+@/i', '', $tmpdomain); 				// Remove part1@ in part1@part2 (for emails)
 	if ($mode == 3) {
 		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)\.([^\.]+)\.([^\.]+)$/', '\1.\2.\3.\4', $tmpdomain);
 	} elseif ($mode == 2) {

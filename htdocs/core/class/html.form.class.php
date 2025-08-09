@@ -104,18 +104,18 @@ class Form
 	/**
 	 * Output key field for an editable field
 	 *
-	 * @param 	string		$text 			Text of label or key to translate
-	 * @param 	string		$htmlname 		Name of select field ('edit' prefix will be added)
-	 * @param 	string		$preselected 	Value to show/edit (not used in this function)
-	 * @param 	object		$object 		Object (on the page we show)
-	 * @param 	int<0,1>	$perm 			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
-	 * @param 	string	 	$typeofdata 	Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker' 'checkbox:ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
-	 * @param 	string		$moreparam		More param to add on a href URL.
-	 * @param 	int<0,1>	$fieldrequired	1 if we want to show field as mandatory using the "fieldrequired" CSS.
-	 * @param 	int<0,3>	$notabletag		1=Do not output table tags but output a ':', 2=Do not output table tags and no ':', 3=Do not output table tags but output a ' '
-	 * @param 	string		$paramid 		Key of parameter for id ('id', 'socid')
-	 * @param 	string		$help 			Tooltip help
-	 * @return  string						HTML edit field
+	 * @param 	string				$text 			Text of label or key to translate
+	 * @param 	string				$htmlname 		Name of select field ('edit' prefix will be added)
+	 * @param 	string				$preselected 	Value to show/edit (not used in this function)
+	 * @param 	object				$object 		Object (on the page we show)
+	 * @param 	int<0,1>|boolean	$perm 			Permission to allow button to edit parameter. Set it to 0 to have a not edited field.
+	 * @param 	string	 			$typeofdata 	Type of data ('string' by default, 'email', 'amount:99', 'numeric:99', 'text' or 'textarea:rows:cols', 'datepicker' ('day' do not work, don't know why), 'dayhour' or 'datehourpicker' 'checkbox:ckeditor:dolibarr_zzz:width:height:savemethod:1:rows:cols', 'select;xxx[:class]'...)
+	 * @param 	string				$moreparam		More param to add on a href URL.
+	 * @param 	int<0,1>			$fieldrequired	1 if we want to show field as mandatory using the "fieldrequired" CSS.
+	 * @param 	int<0,3>			$notabletag		1=Do not output table tags but output a ':', 2=Do not output table tags and no ':', 3=Do not output table tags but output a ' '
+	 * @param 	string				$paramid 		Key of parameter for id ('id', 'socid')
+	 * @param 	string				$help 			Tooltip help
+	 * @return  string								HTML edit field
 	 */
 	public function editfieldkey($text, $htmlname, $preselected, $object, $perm, $typeofdata = 'string', $moreparam = '', $fieldrequired = 0, $notabletag = 0, $paramid = 'id', $help = '')
 	{
@@ -125,7 +125,7 @@ class Form
 
 		// TODO change for compatibility
 		if (getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE') && !preg_match('/^select;/', $typeofdata)) {
-			if (!empty($perm)) {
+			if ($perm) {
 				$tmp = explode(':', $typeofdata);
 				$ret .= '<div class="editkey_' . $tmp[0] . (!empty($tmp[1]) ? ' ' . $tmp[1] : '') . '" id="' . $htmlname . '">';
 				if ($fieldrequired) {
@@ -680,7 +680,12 @@ class Form
 			$htmltext = str_replace('"', '&quot;', $htmltext);
 		} else {
 			$classfortooltip = 'classfortooltiponclick';
-			$textfordialog .= '<div style="display: none;" id="idfortooltiponclick_' . $tooltiptrigger . '" class="classfortooltiponclicktext">' . $htmltext . '</div>';
+			$textfordialog .= '<div style="display: none;" id="idfortooltiponclick_' . $tooltiptrigger . '" class="classfortooltiponclicktext"';
+			global $langs;
+			if ($langs instanceof Translate) {
+				$textfordialog .= ' title="'.$langs->trans("Help").'"';
+			}
+			$textfordialog .= '>' . $htmltext . '</div>';
 		}
 		if ($tooltipon == 2 || $tooltipon == 3) {
 			$paramfortooltipimg = ' class="' . $classfortooltip . ($notabs != 3 ? ' inline-block' : '') . ($extracss ? ' ' . $extracss : '') . '" style="padding: 0px;' . ($extrastyle ? ' ' . $extrastyle : '') . '"';
@@ -2213,7 +2218,7 @@ class Form
 		$outarray2 = array();
 
 		// Do we want to show the label of entity into the combo list ?
-		$showlabelofentity = isModEnabled('multicompany') && !getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && !empty($user->admin) && empty($user->entity);
+		$showlabelofentity = isModEnabled('multicompany') && !getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1 && !empty($user->admin) && empty($user->entity) && !preg_match('/^search_/', $htmlname);
 		$userissuperadminentityone = isModEnabled('multicompany') && $conf->entity == 1 && $user->admin && empty($user->entity);
 
 		// Forge request to select users
@@ -3035,7 +3040,7 @@ class Form
 
 	/**
 	 * Return list of products for a customer.
-	 * Called by select_produits.
+	 * Not optimized for high number of product, use instead select_produits() for large databases (so select_produits will call this function with a $limit parameter).
 	 *
 	 * @param 	int 		$selected 				Preselected product
 	 * @param 	string 		$htmlname 				Name of select html
@@ -3087,9 +3092,9 @@ class Form
 			}
 		}
 
-		$selectFields = " p.rowid, p.ref, p.label, p.description, p.barcode, p.fk_country, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.default_vat_code, p.duration, p.fk_price_expression";
+		$selectFields = "p.rowid, p.ref, p.label, p.description, p.barcode, p.fk_country, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.default_vat_code, p.duration, p.fk_price_expression";
 		if (count($warehouseStatusArray)) {
-			$selectFieldsGrouped = ", sum(" . $this->db->ifsql("e.statut IS NULL", "0", "ps.reel") . ") as stock"; // e.statut is null if there is no record in stock
+			$selectFieldsGrouped = ", SUM(" . $this->db->ifsql("e.statut IS NULL", "0", "ps.reel") . ") as stock"; // e.statut is null if there is no record in a qualified stock
 		} else {
 			$selectFieldsGrouped = ", " . $this->db->ifsql("p.stock IS NULL", '0', "p.stock") . " AS stock";
 		}
@@ -3106,15 +3111,15 @@ class Form
 		}
 
 		if (getDolGlobalString('PRODUCT_SORT_BY_CATEGORY')) {
-			//Product category
+			// Take randomly the first category of product to allow a sort on it. Bugged feature !
 			$sql .= ", (SELECT " . $this->db->prefix() . "categorie_product.fk_categorie
 						FROM " . $this->db->prefix() . "categorie_product
-						WHERE " . $this->db->prefix() . "categorie_product.fk_product=p.rowid
+						WHERE " . $this->db->prefix() . "categorie_product.fk_product = p.rowid
 						LIMIT 1
-				) AS categorie_product_id ";
+				) AS categorie_product_id";
 		}
 
-		//Price by customer
+		// Price by customer
 		if ((getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($socid)) {
 			$sql .= ', pcp.rowid as idprodcustprice, pcp.price as custprice, pcp.price_ttc as custprice_ttc,';
 			$sql .= ' pcp.price_base_type as custprice_base_type, pcp.tva_tx as custtva_tx, pcp.default_vat_code as custdefault_vat_code, pcp.ref_customer as custref, pcp.discount_percent as custdiscount_percent';
@@ -3150,6 +3155,8 @@ class Form
 			$selectFields .= ", price_rowid, price_by_qty";
 		}
 
+		//$sqlfields = $sql; // $sql fields to remove for count total
+
 		$sql .= " FROM ".$this->db->prefix()."product as p";
 
 		if (getDolGlobalString('MAIN_SEARCH_PRODUCT_FORCE_INDEX')) {
@@ -3164,12 +3171,14 @@ class Form
 		$sql .= $hookmanager->resPrint;
 
 		if (count($warehouseStatusArray)) {
-			$sql .= " LEFT JOIN " . $this->db->prefix() . "product_stock as ps on ps.fk_product = p.rowid";
-			$sql .= " LEFT JOIN " . $this->db->prefix() . "entrepot as e on ps.fk_entrepot = e.rowid AND e.entity IN (" . getEntity('stock') . ")";
-			$sql .= ' AND e.statut IN (' . $this->db->sanitize($this->db->escape(implode(',', $warehouseStatusArray))) . ')'; // Return line if product is inside the selected stock. If not, an empty line will be returned so we will count 0.
+			// Return line if product is inside the selected stock. If not, e.* and p.* will be null so we will count 0.
+			// Replace this with a AND EXISTS ? Not possible as we need the ps.reel field for the SUM or 0 if no link.
+			$sql .= " LEFT JOIN " . $this->db->prefix() . "product_stock as ps ON ps.fk_product = p.rowid";
+			$sql .= " LEFT JOIN " . $this->db->prefix() . "entrepot as e ON ps.fk_entrepot = e.rowid AND e.entity IN (" . getEntity('stock') . ")";
+			$sql .= ' AND e.statut IN (' . $this->db->sanitize($this->db->escape(implode(',', $warehouseStatusArray))) . ')';
 		}
 
-		//Price by customer
+		// Price by customer (Add field pcp for the older price for couple product/thirdparty.
 		if ((getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !empty($socid)) {
 			$now = dol_now();
 			$sql .= " LEFT JOIN (";
@@ -3186,13 +3195,13 @@ class Form
 			$sql .= "   WHERE pcp2.fk_soc IS NOT NULL";
 			$sql .= " ) AS pcp ON pcp.fk_soc = " . ((int) $socid) . " AND pcp.fk_product = p.rowid";
 		}
-		// Units
+		// Units : we add unit properties with a link on the primary key of unit
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-			$sql .= " LEFT JOIN " . $this->db->prefix() . "c_units u ON u.rowid = p.fk_unit";
+			$sql .= " LEFT JOIN " . $this->db->prefix() . "c_units as u ON u.rowid = p.fk_unit";
 		}
-		// Multilang : we add translation
+		// Multilang : we add translation fields with a link on unique key fk_product/lang.
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
-			$sql .= " LEFT JOIN " . $this->db->prefix() . "product_lang as pl ON pl.fk_product = p.rowid ";
+			$sql .= " LEFT JOIN " . $this->db->prefix() . "product_lang as pl ON pl.fk_product = p.rowid";
 			if (getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE') && !empty($socid)) {
 				require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 				$soc = new Societe($this->db);
@@ -3207,28 +3216,17 @@ class Form
 			}
 		}
 
-		if (getDolGlobalString('PRODUIT_ATTRIBUTES_HIDECHILD')) {
-			if (getDolGlobalString('PRODUIT_ATTRIBUTES_HIDECHILD_BUT_ALLOW_SEARCH_IN_EAN13')) {
-				if (strlen($filterkey)!=13) {
-					 $sql .= " LEFT JOIN " . $this->db->prefix() . "product_attribute_combination pac ON pac.fk_product_child = p.rowid";
-				}
-			} else {
-				$sql .= " LEFT JOIN " . $this->db->prefix() . "product_attribute_combination pac ON pac.fk_product_child = p.rowid";
-			}
-		}
-
+		// Add WHERE conditions
 		$sql .= ' WHERE p.entity IN (' . getEntity('product') . ')';
-
 		if (getDolGlobalString('PRODUIT_ATTRIBUTES_HIDECHILD')) {
 			if (getDolGlobalString('PRODUIT_ATTRIBUTES_HIDECHILD_BUT_ALLOW_SEARCH_IN_EAN13')) {
 				if (strlen($filterkey)!=13) {
-					$sql .= " AND pac.rowid IS NULL";
-				}
-			} else {
-				$sql .= " AND pac.rowid IS NULL";
-			}
+    			$sql .= " AND NOT EXISTS (SELECT pac.rowid FROM ".$this->db->prefix()."product_attribute_combination as pac WHERE pac.fk_product_child = p.rowid)";
+        }
+      } else {
+        $sql .= " AND NOT EXISTS (SELECT pac.rowid FROM ".$this->db->prefix()."product_attribute_combination as pac WHERE pac.fk_product_child = p.rowid)";
+      }
 		}
-
 		if ($finished == 0) {
 			$sql .= " AND p.finished = " . ((int) $finished);
 		} elseif ($finished == 1) {
@@ -3250,7 +3248,7 @@ class Form
 		}
 
 		if ((int) $warehouseId > 0) {
-			$sql .= " AND EXISTS (SELECT psw.fk_product FROM " . $this->db->prefix() . "product_stock as psw WHERE psw.reel>0 AND psw.fk_entrepot=".(int) $warehouseId." AND psw.fk_product = p.rowid)";
+			$sql .= " AND EXISTS (SELECT psw.fk_product FROM " . $this->db->prefix() . "product_stock as psw WHERE psw.reel > 0 AND psw.fk_entrepot = ".(int) $warehouseId." AND psw.fk_product = p.rowid)";
 		}
 
 		// Add where from hooks
@@ -3265,7 +3263,7 @@ class Form
 			$sqlSupplierSearch = '';
 
 			$sql .= ' AND (';
-			$prefix = !getDolGlobalString('PRODUCT_DONOTSEARCH_ANYWHERE') ? '%' : ''; // Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
+			$prefix = getDolGlobalString('PRODUCT_DONOTSEARCH_ANYWHERE') ? '' : '%'; // Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
 			// For natural search
 			$search_crit = explode(' ', $filterkey);
 			$i = 0;
@@ -3316,23 +3314,40 @@ class Form
 			$sql .= ')';
 		}
 		if (count($warehouseStatusArray)) {
-			$sql .= " GROUP BY " . $selectFields;
+			$sql .= " GROUP BY " . $selectFields;	// To have the SUM on ps.reel working in the select.
 		}
 
-		//Sort by category
+		// Sort by category
 		if (getDolGlobalString('PRODUCT_SORT_BY_CATEGORY')) {
-			$sql .= " ORDER BY categorie_product_id ";
-			//ASC OR DESC order
-			(getDolGlobalInt('PRODUCT_SORT_BY_CATEGORY') == 1) ? $sql .= "ASC" : $sql .= "DESC";
+			$sql .= " ORDER BY categorie_product_id ".(getDolGlobalInt('PRODUCT_SORT_BY_CATEGORY') == 1 ? "ASC" : "DESC");
 		} else {
 			$sql .= $this->db->order("p.ref");
 		}
 
 		$sql .= $this->db->plimit($limit, 0);
 
+		/* The fast and low memory method to get and count full list converts the sql into a sql count */
+		/*
+		$nbtotalofrecords = 0;
+		$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+		$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+
+		$resql = $this->db->query($sqlforcount);
+		if ($resql) {
+			$objforcount = $this->db->fetch_object($resql);
+			$nbtotalofrecords = $objforcount->nbtotalofrecords;
+		} else {
+			dol_print_error($this->db);
+		}
+		*/
+
 		// Build output string
 		dol_syslog(get_class($this) . "::select_produits_list search products", LOG_DEBUG);
+
+		// If we have no $limit parameter, this request may hang dur to high number of lines returned.
+		// This should not happen because this method should not be called directly, iIt is called by select_produit() that always add a $limit parameter.
 		$result = $this->db->query($sql);
+
 		if ($result) {
 			require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 			require_once DOL_DOCUMENT_ROOT . '/product/dynamic_price/class/price_parser.class.php';
@@ -3496,7 +3511,7 @@ class Form
 		$outqty = 1;
 		$outdiscount = '0';
 
-		$maxlengtharticle = (!getDolGlobalString('PRODUCT_MAX_LENGTH_COMBO') ? 48 : $conf->global->PRODUCT_MAX_LENGTH_COMBO);
+		$maxlengtharticle = getDolGlobalInt('PRODUCT_MAX_LENGTH_COMBO', 48);
 
 		$label = $objp->label;
 		if (!empty($objp->label_translated)) {
@@ -3917,7 +3932,7 @@ class Form
 		$out = '';
 		$outarray = array();
 
-		$maxlengtharticle = (!getDolGlobalString('PRODUCT_MAX_LENGTH_COMBO') ? 48 : $conf->global->PRODUCT_MAX_LENGTH_COMBO);
+		$maxlengtharticle = getDolGlobalInt('PRODUCT_MAX_LENGTH_COMBO', 48);
 
 		$langs->load('stocks');
 		// Units
@@ -8270,7 +8285,7 @@ class Form
 	 */
 	public function selectTicketsList($selected = '', $htmlname = 'ticketid', $filtertype = '', $limit = 20, $filterkey = '', $status = 1, $outputmode = 0, $showempty = '1', $forcecombo = 0, $morecss = '')
 	{
-		global $langs, $conf;
+		global $langs;
 
 		$out = '';
 		$outarray = array();
@@ -8285,7 +8300,7 @@ class Form
 		// Add criteria on ref/label
 		if ($filterkey != '') {
 			$sql .= ' AND (';
-			$prefix = !getDolGlobalString('TICKET_DONOTSEARCH_ANYWHERE') ? '%' : ''; // Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
+			$prefix = getDolGlobalString('TICKET_DONOTSEARCH_ANYWHERE') ? '' : '%'; // Can use index if TICKET_DONOTSEARCH_ANYWHERE is on
 			// For natural search
 			$search_crit = explode(' ', $filterkey);
 			$i = 0;

@@ -472,11 +472,6 @@ class User extends CommonObject
 	public $label_establishment;
 
 	/**
-	 * @var int egroupware id
-	 */
-	//private $egroupware_id;
-
-	/**
 	 * @var array<int>		Entity in table llx_user_group
 	 * @deprecated			Seems not used.
 	 */
@@ -3564,12 +3559,6 @@ class User extends CommonObject
 			$info["phpgwContactCatId"] = 0;
 			$info["phpgwContactAccess"] = "public";
 
-			/*
-			if (dol_strlen($this->egroupware_id) == 0) {
-				$this->egroupware_id = 1;
-			}
-			$info["phpgwContactOwner"] = $this->egroupware_id;
-			*/
 			$info["phpgwContactOwner"] = 1;
 
 			if ($this->email) {

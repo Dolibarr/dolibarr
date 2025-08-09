@@ -32,6 +32,9 @@
 
 include_once 'inc.php';
 /**
+ * @var string $conffile
+ * @var string $conffiletoshow
+ *
  * @var Translate $langs
  *
  * @var string $dolibarr_main_db_host
@@ -40,8 +43,6 @@ include_once 'inc.php';
  * @var string $dolibarr_main_db_user
  * @var string $dolibarr_main_db_pass
  * @var string $dolibarr_main_db_encrypted_pass
- * @var string $conffile
- * @var string $conffiletoshow
  */
 '
 @phan-var-force string $dolibarr_main_db_host

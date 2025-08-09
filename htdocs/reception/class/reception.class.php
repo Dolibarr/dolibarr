@@ -11,8 +11,8 @@
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
  * Copyright (C) 2016-2022	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018		Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
- * Copyright (C) 2022-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +51,12 @@ if (isModEnabled('order')) {
 class Reception extends CommonObject
 {
 	use CommonIncoterm;
+
+	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'RECEPTION'; 	// to be overridden in child class implementations, i.e. 'BILL', 'TASK', 'PROPAL', etc.
 
 	/**
 	 * @var string code
@@ -243,6 +249,7 @@ class Reception extends CommonObject
 
 			$obj = new $classname();
 			'@phan-var-force ModelNumRefReception $obj';
+			/** @var ModelNumRefReception $obj */
 
 			$numref = $obj->getNextValue($soc, $this);
 
@@ -1188,7 +1195,8 @@ class Reception extends CommonObject
 							$this->fetch_origin();
 							$origin_object = $this->origin_object;
 							'@phan-var-force CommandeFournisseur $origin_object';
-							if ($origin_object->statut == 4) {     // If order source of reception is "partially received"
+							/** @var CommandeFournisseur $origin_object */
+							if ($origin_object->status == 4) {     // If order source of reception is "partially received"
 								// Check if there is no more reception. If not, we can move back status of order to "validated" instead of "reception in progress"
 								$origin_object->loadReceptions();
 								//var_dump($this->$origin->receptions);exit;

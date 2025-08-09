@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2016   	Marcos García   	<marcosgdf@gmail.com>
- * Copyright (C) 2018-2024	Frédéric France 	<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France 	<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,11 +95,9 @@ print '<tr class="oddeven"><td>'.$langs->trans('HideProductCombinations').'</td>
 print $form->selectyesno("PRODUIT_ATTRIBUTES_HIDECHILD", getDolGlobalString('PRODUIT_ATTRIBUTES_HIDECHILD'), 1).'</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans('CombinationsSeparator').'</td>';
-if (isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
-	$separator = getDolGlobalString('PRODUIT_ATTRIBUTES_SEPARATOR');
-} else {
-	$separator = "_";
-}
+
+$separator = getDolGlobalString('PRODUIT_ATTRIBUTES_SEPARATOR', '_');
+
 print '<td class="right"><input size="3" type="text" class="flat" name="PRODUIT_ATTRIBUTES_SEPARATOR" value="'.$separator.'"></td></tr>';
 
 print '<tr class="oddeven"><td>'.$form->textwithpicto($langs->trans('AllowStockMovementVariantParent'), $langs->trans('AllowStockMovementVariantParentHelp')).'</td><td>';
