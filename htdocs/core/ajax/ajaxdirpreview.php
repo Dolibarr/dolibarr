@@ -7,6 +7,7 @@
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025  Abbes Bahfir                 <contact@01consulting.eu>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -437,7 +438,8 @@ if ($type == 'directory') {
 		// When we show list of files for a directory, $filearray ciontains file list, and directory is defined with modulepart + $relativepath
 		//var_dump("section=".$section." title=".$title." modulepart=".$modulepart." useinecm=".$useinecm." perm(permtoeditline)=".$perm." relativepath=".$relativepath." upload_dir=".$upload_dir." param=".$param." url=".$url);
 
-		$formfile->list_of_documents($filearray, null, $modulepart, $param, 1, $relativepath, $perm, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm, $upload_dir, $sortfield, $sortorder);
+        $permissiontodelete = $user->hasRight('ecm', 'delete');
+		$formfile->list_of_documents($filearray, null, $modulepart, $param, 1, $relativepath, $permissiontodelete, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm, $upload_dir, $sortfield, $sortorder);
 	}
 }
 

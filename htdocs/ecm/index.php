@@ -3,6 +3,7 @@
  * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025  Abbes Bahfir                 <contact@01consulting.eu>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,7 +100,7 @@ $result = restrictedArea($user, 'ecm', 0);
 $permissiontoread = $user->hasRight('ecm', 'read');
 $permissiontocreate = $user->hasRight('ecm', 'upload');
 $permissiontocreatedir = $user->hasRight('ecm', 'setup');
-$permissiontodelete = $user->hasRight('ecm', 'upload');
+$permissiontodelete = $user->hasRight('ecm', 'delete');
 $permissiontodeletedir = $user->hasRight('ecm', 'setup');
 
 /*
