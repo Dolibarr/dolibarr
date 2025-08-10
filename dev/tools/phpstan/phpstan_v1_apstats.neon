@@ -71,10 +71,10 @@ parameters:
 	# or pattern to avoid false positive of some bugged or allowed phpstan checks
 	ignoreErrors:
 		- '#.*phan-var#'
-		- '#^Expression "''…" on a separate line does not do anything\.$#'
+		- '#^Expression "''…" on a separate line does not do anything#'
 		- '#Empty array passed to foreach#'
 		- '#Unable to resolve the template type T#'
-		- '#in empty\(\) always exists and is always falsy.#'
+		- '#in empty\(\) always exists and is always falsy#'
 		- '#is always#'
 	internalErrorsCountLimit: 50
 	cache:
