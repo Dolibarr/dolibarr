@@ -2808,13 +2808,7 @@ class FactureFournisseur extends CommonInvoice
 			$datas['picto'] .= '<u class="paddingrightonly">'.$langs->transnoentitiesnoconv("Deposit").'</u>';
 		}
 		if (isset($this->status)) {
-			$alreadypaid = 0;
-			if (!isset($this->nbofopendirectdebitorcredittransfer)) {
-				$this->nbofopendirectdebitorcredittransfer = 0;
-			}
-			if (isset($this->sumpayed)) {
-				$alreadypaid = $this->sumpayed;
-			}
+			$alreadypaid = $this->sumpayed;
 
 			$datas['picto'] .= ' '.$this->getLibStatut(5, $alreadypaid);
 		}
