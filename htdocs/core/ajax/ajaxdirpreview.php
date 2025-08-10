@@ -438,7 +438,7 @@ if ($type == 'directory') {
 		// When we show list of files for a directory, $filearray ciontains file list, and directory is defined with modulepart + $relativepath
 		//var_dump("section=".$section." title=".$title." modulepart=".$modulepart." useinecm=".$useinecm." perm(permtoeditline)=".$perm." relativepath=".$relativepath." upload_dir=".$upload_dir." param=".$param." url=".$url);
 
-        $permissiontodelete = $user->hasRight('ecm', 'delete');
+		$permissiontodelete = $user->hasRight('ecm', 'delete');
 		$formfile->list_of_documents($filearray, null, $modulepart, $param, 1, $relativepath, $permissiontodelete, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm, $upload_dir, $sortfield, $sortorder);
 	}
 }
