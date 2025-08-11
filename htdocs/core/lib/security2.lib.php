@@ -331,6 +331,19 @@ if (!function_exists('dol_loginfunction')) {
 		$dol_no_mouse_hover = GETPOSTINT('dol_no_mouse_hover');
 		$dol_use_jmobile = GETPOSTINT('dol_use_jmobile');
 
+		// add custom login template (this sepecial use that)
+		// module tempalte as first priority
+		// example: htdocs/custom/core/tpl/login.tpl.php
+		$path = 'core/tpl/';	
+		if (is_array($conf->file->dol_document_root)) {
+			foreach (array_reverse($conf->file->dol_document_root) as $key => $dirroot) {
+				if (@file_exists($dirroot . '/' . $path)) {
+					$template_dir = $dirroot . '/' . $path;
+					break;
+				}
+			}
+		}
+
 		// Include login page template
 		include $template_dir.'login.tpl.php';
 
