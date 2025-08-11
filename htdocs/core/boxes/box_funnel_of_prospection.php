@@ -201,8 +201,8 @@ class box_funnel_of_prospection extends ModeleBoxes
 
 				foreach ($listofstatus as $status) {
 					$customlabel = '';
-					$customlabelmore = '';
 					$labelStatus = '';
+					$customlabelmore = '';
 
 					$code = dol_getIdFromCode($this->db, $status, 'c_lead_status', 'rowid', 'code');
 					if ($code) {
