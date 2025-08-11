@@ -1568,7 +1568,7 @@ if ($mode == 'deploy') {
 		}
 	}
 
-	if (is_array($result) && !empty($result['return'])) {
+	if (!empty($result) && is_array($result) && !empty($result['return'])) {
 		print '<br>';
 
 		foreach ($result['return'] as $value) {
