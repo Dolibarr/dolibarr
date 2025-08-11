@@ -111,6 +111,7 @@ if (isModEnabled('stocktransfer')) {
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
@@ -220,6 +221,7 @@ if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->tabl
 
 // Quick edit for extrafields
 if ($action == 'update_extras' && $permissiontoeditextra) {
+	$error = 0;
 	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 	$attribute_name = GETPOST('attribute', 'aZ09');
