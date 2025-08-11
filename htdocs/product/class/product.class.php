@@ -3659,7 +3659,7 @@ class Product extends CommonObject
 			}
 
 			// If stock decrease is on invoice validation, the theoretical stock continue to
-			// count the orders lines in theoretical stock when some are already removed by invoice validation.
+			// count the orders lines containing product in theoretical stock when some are already removed by invoice validation.
 			if ($forVirtualStock && getDolGlobalString('STOCK_CALCULATE_ON_BILL')) {
 				if (getDolGlobalString('DECREASE_ONLY_UNINVOICEDPRODUCTS')) {
 					// If option DECREASE_ONLY_UNINVOICEDPRODUCTS is on, we make a compensation but only if order not yet invoice.
@@ -3668,6 +3668,7 @@ class Product extends CommonObject
 					$sql .= " JOIN ".$this->db->prefix()."facture as f ON fd.fk_facture = f.rowid";
 					$sql .= " JOIN ".$this->db->prefix()."element_element as el ON ((el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande') OR (el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture'))";
 					$sql .= " JOIN ".$this->db->prefix()."commande as c ON el.fk_source = c.rowid";
+					$sql .= " JOIN ".MAIN_DB_PREFIX."commandedet as cd ON cd.fk_product = fd.fk_product AND cd.fk_commande = c.rowid";
 					$sql .= " WHERE c.fk_statut IN (".$this->db->sanitize($filtrestatut).") AND c.facture = 0 AND fd.fk_product = ".((int) $this->id);
 
 					dol_syslog(__METHOD__.":: sql $sql", LOG_NOTICE);
@@ -3690,6 +3691,7 @@ class Product extends CommonObject
 					$sql .= " JOIN ".MAIN_DB_PREFIX."facture as f ON fd.fk_facture = f.rowid";
 					$sql .= " JOIN ".MAIN_DB_PREFIX."element_element as el ON ((el.fk_target = f.rowid AND el.targettype = 'facture' AND sourcetype = 'commande') OR (el.fk_source = f.rowid AND el.targettype = 'commande' AND sourcetype = 'facture'))";
 					$sql .= " JOIN ".MAIN_DB_PREFIX."commande as c ON el.fk_source = c.rowid";
+					$sql .= " JOIN ".MAIN_DB_PREFIX."commandedet as cd ON cd.fk_product = fd.fk_product AND cd.fk_commande = c.rowid";
 					$sql .= " WHERE c.fk_statut IN (".$this->db->sanitize($filtrestatut).") AND f.fk_statut > ".Facture::STATUS_DRAFT." AND fd.fk_product = ".((int) $this->id);
 
 					dol_syslog(__METHOD__.":: sql $sql", LOG_NOTICE);
