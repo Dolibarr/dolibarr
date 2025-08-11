@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2021		Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,7 +113,7 @@ if ($action == 'updateMaskLot') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->FACTURE_ADDON_PDF == "$value") {
+		if (getDolGlobalString('FACTURE_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'FACTURE_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -178,7 +178,7 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 llxHeader("", $langs->trans("ProductLotSetup"), '', '', 0, 0, '', '', '', 'mod-product page-admin_product_lot');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 print load_fiche_titre($langs->trans("ProductLotSetup"), $linkback, 'title_setup');
 
 $head = product_lot_admin_prepare_head();
@@ -251,7 +251,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							print '</td>'."\n";
 
 							print '<td class="center">';
-							if ($conf->global->PRODUCTBATCH_LOT_ADDON == $file) {
+							if (getDolGlobalString('PRODUCTBATCH_LOT_ADDON') == $file) {
 								print img_picto($langs->trans("Activated"), 'switch_on');
 							} else {
 								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodlot&token='.newToken().'&value='.urlencode($file).'">';
@@ -353,7 +353,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							print '</td>'."\n";
 
 							print '<td class="center">';
-							if ($conf->global->PRODUCTBATCH_SN_ADDON == $file) {
+							if (getDolGlobalString('PRODUCTBATCH_SN_ADDON') == $file) {
 								print img_picto($langs->trans("Activated"), 'switch_on');
 							} else {
 								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodsn&token='.newToken().'&value='.urlencode($file).'">';

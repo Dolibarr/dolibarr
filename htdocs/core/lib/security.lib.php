@@ -1252,7 +1252,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
  *	Calling this function terminate execution of PHP.
  *
  *	@param	string		$message					Force error message
- *	@param	int			$http_response_code			HTTP response code
+ *	@param	int			$http_response_code			HTTP response code (403 for forbidden access, 400 bad parameters or request)
  *  @param	int<0,1>	$stringalreadysanitized		1 if string is already sanitized with HTML entities
  *  @return	never
  *  @see accessforbidden()

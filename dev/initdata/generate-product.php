@@ -27,7 +27,7 @@
 
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
-$path=dirname(__FILE__).'/';
+$path = dirname(__FILE__).'/';
 
 // Test si mode batch
 $sapi_type = php_sapi_name();
@@ -46,15 +46,28 @@ include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 include_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
+// Global variables
+$version = DOL_VERSION;
+
 
 /*
- * Parameters
+ * Main
  */
 
-define('GEN_NUMBER_PRODUIT', $argv[1] ?? 100);
+@set_time_limit(0);
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
 
+if (empty($argv[1])) {
+	print "Usage:  $script_file  nbofrecord\n";
+	print "Usage:  $script_file  100\n";
+	print "\n";
+	exit(-1);
+}
 
-$ret=$user->fetch('', 'admin');
+define('GEN_NUMBER_PRODUIT', ((int) $argv[1]) ?? 100);
+
+$ret = $user->fetch('', 'admin');
 if (! $ret > 0) {
 	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
 	exit;
@@ -106,15 +119,22 @@ if ($resql) {
 print "Generates ".GEN_NUMBER_PRODUIT." products\n";
 for ($s = 0; $s < GEN_NUMBER_PRODUIT; $s++) {
 	print "Product ".$s;
+
 	$produit = new Product($db);
 	$produit->type = mt_rand(0, 1);
-	$produit->status = 1;
+	$produit->status = mt_rand(0, 1);
+	$produit->status_buy = mt_rand(0, 1);
+	$produit->finished = mt_rand(0, 1);
+	$produit->stockable_product = mt_rand(0, 1);
+
 	$produit->ref = ($produit->type ? 'S' : 'P').time().$s;
 	$produit->label = 'Label '.time().$s;
-	$produit->description = 'Description '.time().$s;
+	$produit->description = 'This is a long description of '.$produit->ref;
 	$produit->price = mt_rand(1, 999.99);
 	$produit->tva_tx = "20.0";
-	$ret=$produit->create($user);
+
+	$ret = $produit->create($user);
+
 	if ($ret < 0) {
 		print "Error $ret - ".$produit->error."\n";
 	} else {

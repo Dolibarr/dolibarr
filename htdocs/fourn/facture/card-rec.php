@@ -1171,7 +1171,7 @@ if ($action == 'create') {
 
 		$head = supplier_invoice_rec_prepare_head($object);
 
-		print dol_get_fiche_head($head, 'card', $langs->trans('RepeatableInvoice'), -1, 'bill'); // Add a div
+		print dol_get_fiche_head($head, 'card', $langs->trans('RepeatableInvoice'), -1, $object->picto); // Add a div
 
 		// Recurring invoice content
 

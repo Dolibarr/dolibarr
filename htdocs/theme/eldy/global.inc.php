@@ -5851,6 +5851,9 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 .ui-dialog .ui-dialog-buttonpane {
 	padding: .5em 1em .3em .4em;
 }
+.ui-dialog .ui-dialog-content, .ui-dialog .ui-dialog-titlebar.ui-widget-header {
+	padding-left: 1em !important;
+}
 
 
 /* ============================================================================== */

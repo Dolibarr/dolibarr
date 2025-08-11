@@ -85,7 +85,7 @@ class MyObject extends CommonObject
 	 *   	'double(24,8)', 'real', 'price', 'stock',
 	 *  	'date', 'datetime', 'timestamp', 'duration',
 	 *  	'boolean', 'checkbox', 'radio', 'array',
-	 *  	'mail', 'phone', 'url', 'password', 'ip'
+	 *  	'email', 'phone', 'url', 'password', 'ip'
 	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
 	 *  'length' the length of field. Example: 255, '24,8'
 	 *  'label' the translation key.
@@ -385,7 +385,7 @@ class MyObject extends CommonObject
 
 		if (!$error) {
 			// copy external contacts if same company
-			if (!empty($object->socid) && property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
+			if (!empty($object->socid) && ((property_exists($this, 'fk_soc') && ($this->fk_soc == $object->socid)) || (property_exists($this, 'socid') && ($this->socid == $object->socid)))) {	// @phpstan-ignore-line
 				if ($this->copy_linked_contact($object, 'external') < 0) {
 					$error++;
 				}
@@ -1281,6 +1281,18 @@ class MyObjectLine extends CommonObjectLine
 	public $fk_parent_attribute = '';	// Example: '' or 'fk_myobject'
 
 	/**
+	 * @var int<0,1>	Does object support extrafields ? 0=No, 1=Yes
+	 */
+	public $isextrafieldmanaged = 0;
+
+	/**
+	 * @var int<0,1>|string|null  	Does this object support multicompany module ?
+	 * 								0=No test on entity, 1=Test with field entity in local table, 'field@table'=Test entity into the field@table (example 'fk_soc@societe')
+	 */
+	public $ismultientitymanaged = 0;
+
+
+	/**
 	 * Constructor
 	 *
 	 * @param	DoliDB $db Database handler
@@ -1288,7 +1300,5 @@ class MyObjectLine extends CommonObjectLine
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
-
-		$this->isextrafieldmanaged = 0;
 	}
 }

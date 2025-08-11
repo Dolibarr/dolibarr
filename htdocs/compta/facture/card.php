@@ -4797,7 +4797,7 @@ if ($action == 'create') {
 
 	$head = facture_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'), -1, 'bill');
+	print dol_get_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'), -1, $object->picto);
 
 	$formconfirm = '';
 

@@ -222,7 +222,7 @@ if (isModEnabled("societe")) {
 // Project
 if (isModEnabled('project')) {
 	$langs->load("projects");
-	if (0) {
+	if (0) {	// @phpstan-ignore-line
 		$morehtmlref .= '<br>';
 		$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 		if ($action != 'classify') {

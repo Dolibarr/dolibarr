@@ -78,6 +78,10 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	}
 	curl_setopt($ch, CURLINFO_HEADER_OUT, true); // To be able to retrieve request header and log it
 
+	if (getDolGlobalInt('MAIN_CURL_GET_RESPONSE_HEADER')) {
+		curl_setopt($ch, CURLOPT_HEADER, true); // To be able to retrieve response header
+	}
+
 	// By default use the TLS version decided by PHP.
 	// You can force, if supported a version like TLSv1 or TLSv1.2
 	if (getDolGlobalString('MAIN_CURL_SSLVERSION')) {
@@ -304,6 +308,10 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		// Add more keys to $rep
 		if ($response) {
 			$rep['content'] = (string) $response;
+			if (getDolGlobalInt('MAIN_CURL_GET_RESPONSE_HEADER')) { // In this case, response contains header + body
+				$rep['header'] = substr($rep['content'], 0, intval($rep['header_size']));
+				$rep['content'] = substr($rep['content'], intval($rep['header_size']));
+			}
 		} else {
 			$rep['content'] = '';
 		}

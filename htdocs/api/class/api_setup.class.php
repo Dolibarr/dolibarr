@@ -2917,9 +2917,7 @@ class Setup extends DolibarrApi
 	 *
 	 * @url	GET /modules
 	 *
-	 * @return  array Data without useless information
-	 * @phan-return array<string,string>
-	 * @phpstan-return array<string,string>
+	 * @return  array<string,string>	Array of modules
 	 *
 	 * @throws RestException 403 Forbidden
 	 */
@@ -2934,6 +2932,7 @@ class Setup extends DolibarrApi
 
 		sort($conf->modules);
 
-		return $this->_cleanObjectDatas($conf->modules);
+		//return $this->_cleanObjectDatas($conf->modules);
+		return $conf->modules;
 	}
 }

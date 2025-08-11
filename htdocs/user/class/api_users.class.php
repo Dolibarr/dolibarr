@@ -275,7 +275,9 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * Get more properties of a user
+	 * Get more properties of the current user (so user of API token).
+	 *
+	 * This route could also ave been named "/users/me".
 	 *
 	 * @since	11.0.0	Initial implementation
 	 *
@@ -301,7 +303,7 @@ class Users extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed to current logged user');
 		}
 
 		if ($includepermissions) {
@@ -612,7 +614,7 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * List groups
+	 * List groups of the current user (so user of API token)
 	 *
 	 * Return an array with a list of Groups
 	 *

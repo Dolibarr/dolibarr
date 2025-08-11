@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/externalModules.class.php';
 
@@ -173,6 +174,8 @@ if ($mode == 'marketplace') {
 
 $object = new stdClass();
 
+$now = dol_now();
+
 
 /*
  * Actions
@@ -197,9 +200,10 @@ if ($action == 'install' && $allowonlineinstall) {
 	$error = 0;
 	$modulenameval = '';
 	// $original_file should match format module_modulename-x.y[.z].zip
+	$tmpfile = $_FILES['fileinstall']['tmp_name'];
 	$original_file = basename($_FILES["fileinstall"]["name"]);
 	$original_file = preg_replace('/\s*\(\d+\)\.zip$/i', '.zip', $original_file);
-	$newfile = $conf->admin->dir_temp.'/'.$original_file.'/'.$original_file;
+	$newfile = dol_sanitizePathName($conf->admin->dir_temp.'/'.$original_file.'/'.$original_file);
 
 	if (!$original_file) {
 		$langs->load("Error");
@@ -216,7 +220,7 @@ if ($action == 'install' && $allowonlineinstall) {
 			setEventMessages($langs->trans("ErrorFilenameDosNotMatchDolibarrPackageRules", $original_file, 'modulename-x[.y.z].zip'), null, 'errors');
 			$error++;
 		}
-		if (empty($_FILES['fileinstall']['tmp_name'])) {
+		if (empty($tmpfile)) {
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
 			$error++;
@@ -235,7 +239,7 @@ if ($action == 'install' && $allowonlineinstall) {
 			dol_mkdir($conf->admin->dir_temp.'/'.$tmpdir);
 		}
 
-		$result = dol_move_uploaded_file($_FILES['fileinstall']['tmp_name'], $newfile, 1, 0, $_FILES['fileinstall']['error']);
+		$result = dol_move_uploaded_file($tmpfile, $newfile, 1, 0, $_FILES['fileinstall']['error']);
 		if ($result > 0) {
 			$result = dol_uncompress($newfile, $conf->admin->dir_temp.'/'.$tmpdir);
 
@@ -362,10 +366,24 @@ if ($action == 'install' && $allowonlineinstall) {
 				}
 			}
 		} else {
-			setEventMessages($langs->trans("ErrorFailToRenameFile", $_FILES['fileinstall']['tmp_name'], $newfile), null, 'errors');
+			setEventMessages($langs->trans("ErrorFailToRenameFile", $tmpfile, $newfile), null, 'errors');
 			$error++;
 		}
 	}
+
+	// Add event purge
+	$securityevent = new Events($db);
+	if ($error) {
+		$text = $langs->trans("SecurityModuleDeploymentError", dol_sanitizePathName($_FILES["fileinstall"]["name"]));
+		$securityevent->type = 'MODULE_DEPLOYMENT_ERROR';
+	} else {
+		$text = $langs->trans("SecurityModuleDeploymentSuccess", dol_sanitizePathName($_FILES["fileinstall"]["name"]));
+		$securityevent->type = 'MODULE_DEPLOYMENT_SUCCESS';
+	}
+	$securityevent->dateevent = $now;
+	$securityevent->description = $text;
+
+	$result = $securityevent->create($user);
 
 	if (!$error) {
 		$searchParams = array(

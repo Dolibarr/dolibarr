@@ -2010,6 +2010,8 @@ ShowFiscalYear=Show accounting period
 ##### Assets #####
 AssetNumberingModules=Assets numbering module
 AlwaysEditable=Editable for any status
+EmptyOnClone=Empty on clone
+EmptyOnCloneDesc=Value will be emptied after cloning an object
 PermissionOnField=Permission on the field
 MAIN_APPLICATION_TITLE=Force visible name of application (warning: setting your own name here may break autofill login feature when using DoliDroid mobile application)
 NbMajMin=Minimum number of uppercase characters
@@ -2690,3 +2692,8 @@ MAIN_ENABLE_AJAX_TOOLTIP=Use Ajax lazy load of tooltip content with Ajax
 MAIN_CACHE_COUNT=Keep the count of elements visible into badges in a cache (value may need several minutes to be up to date)
 MAIN_DO_FETCH_IN_ONE_SQL_REQUEST=Load content of object and lines into one request
 GoOnThisPageToInitBarCode=You can go on this page to initialize empty barcodes
+ClickHereToCheckSPFDMARCForSetup=Get a summary of the SPF and DMARC setup of all domains
+PDF_INVOICE_SHOW_BALANCE_SUMMARY= Show customer's previous and new balance
+SecurityModuleDeploymentSuccess=An external module has been deployed: %s
+SecurityModuleDeploymentError=A deployment of an external module has been tried and failed: %s
+DownloadOfModuleFileDisallowed=Download of module files not allowed (param $dolibarr_allow_download_external_modules must be set in conf.php)

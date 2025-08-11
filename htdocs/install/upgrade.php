@@ -63,6 +63,7 @@ require_once $conffile;
  * @var string	$dolibarr_main_db_encryption
  * @var string	$dolibarr_main_db_encrypted_pass
  * @var string	$dolibarr_main_db_cryptkey
+ * @var string  $dolibarr_main_document_root
  */
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 
@@ -87,16 +88,6 @@ $dirmodule = ((GETPOST("dirmodule", 'alpha', 3) && GETPOST("dirmodule", 'alpha',
 $ignoredbversion = (GETPOST('ignoredbversion', 'alpha', 3) == 'ignoredbversion') ? GETPOST('ignoredbversion', 'alpha', 3) : ((empty($argv[3]) || $argv[3] != 'ignoredbversion') ? '' : $argv[3]);
 
 $langs->loadLangs(array("admin", "install", "other", "errors"));
-
-if ($dolibarr_main_db_type == "mysqli") {
-	$choix = 1;
-}
-if ($dolibarr_main_db_type == "pgsql") {
-	$choix = 2;
-}
-if ($dolibarr_main_db_type == "mssql") {
-	$choix = 3;
-}
 
 
 dolibarr_install_syslog("--- upgrade: entering upgrade.php page ".$versionfrom." ".$versionto);
@@ -135,12 +126,11 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	print '<span class="inline-block valignmiddle">'.$langs->trans("DatabaseMigration").'</span></h3>';
 
 	print '<table cellspacing="0" cellpadding="1" class="centpercent">';
-	$error = 0;
 
 	// If password is encoded, we decode it
 	if ((!empty($dolibarr_main_db_pass) && preg_match('/(crypted|dolcrypt):/i', (string) $dolibarr_main_db_pass)) || !empty($dolibarr_main_db_encrypted_pass)) {
 		require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
-		if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
+		if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', (string) $dolibarr_main_db_pass)) {
 			$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', (string) $dolibarr_main_db_pass);
 			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially encrypted
 			$dolibarr_main_db_pass = dol_decode((string) $dolibarr_main_db_pass);

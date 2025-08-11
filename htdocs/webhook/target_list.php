@@ -304,31 +304,6 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-/* If a group by is required
-$sql .= " GROUP BY ";
-foreach($object->fields as $key => $val) {
-	$sql .= "t.".$db->escape($key).", ";
-}
-// Add fields from extrafields
-if (!empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
-	}
-}
-// Add groupby from hooks
-$parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
-$sql .= $hookmanager->resPrint;
-$sql = preg_replace('/,\s*$/', '', $sql);
-*/
-
-// Add HAVING from hooks
-/*
-$parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
-*/
-
 // Count total nb of records
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
@@ -386,7 +361,7 @@ if ($mode == 'modulesetup') {
 	$help_url = '';
 	$page_name = "WebhookSetup";
 	// Subheader
-	$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
+	$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 	print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 	$head = webhookAdminPrepareHead();

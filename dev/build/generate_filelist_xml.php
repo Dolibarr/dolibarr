@@ -339,6 +339,52 @@ if ($needtoclose) {
 	fputs($fp, '  </dir>'."\n");
 	$needtoclose = 0;
 }
+// Add the interfaces.class.php file
+$file = dirname(__FILE__).'/../../htdocs/core/class/interfaces.class.php';
+$newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
+$newdir = str_replace(dirname(__FILE__).'/../../htdocs', '', dirname($file));
+if ($newdir != $dir) {
+	if ($needtoclose) {
+		fputs($fp, '  </dir>'."\n");
+		$needtoclose = 0;
+	}
+	fputs($fp, '  <dir name="'.$newdir.'">'."\n");
+	$dir = $newdir;
+	$needtoclose = 1;
+}
+if (filetype($file) == "file") {
+	$md5 = md5_file($file);
+	$checksumconcat[] = $md5;
+	fputs($fp, '    <md5file name="'.basename($file).'" size="'.filesize($file).'">'.$md5.'</md5file>'."\n");
+}
+if ($needtoclose) {
+	fputs($fp, '  </dir>'."\n");
+	$needtoclose = 0;
+}
+// Add the interfaces.class.php file
+$file = dirname(__FILE__).'/../../htdocs/core/class/commontrigger.class.php';
+$newdir = str_replace(DOL_DOCUMENT_ROOT, '', dirname($file));
+$newdir = str_replace(dirname(__FILE__).'/../../htdocs', '', dirname($file));
+if ($newdir != $dir) {
+	if ($needtoclose) {
+		fputs($fp, '  </dir>'."\n");
+		$needtoclose = 0;
+	}
+	fputs($fp, '  <dir name="'.$newdir.'">'."\n");
+	$dir = $newdir;
+	$needtoclose = 1;
+}
+if (filetype($file) == "file") {
+	$md5 = md5_file($file);
+	$checksumconcat[] = $md5;
+	fputs($fp, '    <md5file name="'.basename($file).'" size="'.filesize($file).'">'.$md5.'</md5file>'."\n");
+}
+if ($needtoclose) {
+	fputs($fp, '  </dir>'."\n");
+	$needtoclose = 0;
+}
+
+
 fputs($fp, '</dolibarr_unalterable_files>'."\n");
 
 asort($checksumconcat); // Sort list of checksum

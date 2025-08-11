@@ -414,6 +414,8 @@ if ($object->id > 0) {
 						print img_picto($langs->trans("Remove"), 'switch_on');
 						print '</a>';
 						print '</td>';
+					} else {
+						print '<td></td>';
 					}
 					print '<td class="center nowrap">';
 					print img_picto($langs->trans("Active"), 'tick');
@@ -427,6 +429,8 @@ if ($object->id > 0) {
 						print img_picto($langs->trans("Add"), 'switch_off');
 						print '</a>';
 						print '</td>';
+					} else {
+						print '<td></td>';
 					}
 					print '<td></td>';
 				}
