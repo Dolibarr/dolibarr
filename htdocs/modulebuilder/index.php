@@ -1130,7 +1130,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 			setEventMessages($langs->trans("ErrorTableNotFound", $tablename), null, 'errors');
 		} else {
 			/**
-			 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'ip', 'url', 'password')
+			 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:Sortfield]]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'email', 'phone', 'ip', 'url', 'password')
 			 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 			 *  'label' the translation key.
 			 *  'picto' is code of a picto to show before value in forms
@@ -1186,26 +1186,21 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 				$type = $obj->Type;
 				if ($type == 'int(11)') {
 					$type = 'integer';
-				}
-				if ($type == 'float') {
+				} elseif ($type == 'float') {
 					$type = 'real';
-				}
-				if (strstr($type, 'tinyint')) {
+				} elseif (strstr($type, 'tinyint')) {
 					$type = 'integer';
-				}
-				if ($obj->Field == 'fk_soc') {
+				} elseif (strstr($type, 'url')) {
+					$type = 'varchar(255)';
+				} elseif ($obj->Field == 'fk_soc') {
 					$type = 'integer:Societe:societe/class/societe.class.php';
-				}
-				if (preg_match('/^fk_proj/', $obj->Field)) {
+				} elseif (preg_match('/^fk_proj/', $obj->Field)) {
 					$type = 'integer:Project:projet/class/project.class.php:1:fk_statut=1';
-				}
-				if (preg_match('/^fk_prod/', $obj->Field)) {
+				} elseif (preg_match('/^fk_prod/', $obj->Field)) {
 					$type = 'integer:Product:product/class/product.class.php:1';
-				}
-				if ($obj->Field == 'fk_warehouse') {
+				} elseif ($obj->Field == 'fk_warehouse') {
 					$type = 'integer:Entrepot:product/stock/class/entrepot.class.php';
-				}
-				if (preg_match('/^(fk_user|fk_commercial)/', $obj->Field)) {
+				} elseif (preg_match('/^(fk_user|fk_commercial)/', $obj->Field)) {
 					$type = 'integer:User:user/class/user.class.php';
 				}
 
@@ -1861,7 +1856,7 @@ if ($dirins && $action == 'addproperty' && empty($cancel) && !empty($module) && 
 				'name' => GETPOST('propname', 'aZ09'),
 				'label' => GETPOST('proplabel', 'alpha'),
 				'type' => strtolower(GETPOST('proptype', 'alpha')),
-				'arrayofkeyval' => GETPOST('proparrayofkeyval', 'alphawithlgt'), // Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
+				'arrayofkeyval' => GETPOST('proparrayofkeyval', 'nohtml'), 	// Example json string '{"0":"Draft","1":"Active","-1":"Cancel"}'
 				'visible' => GETPOST('propvisible', 'alphanohtml'),
 				'enabled' => GETPOST('propenabled', 'alphanohtml'),
 				'position' => GETPOSTINT('propposition'),
@@ -3546,14 +3541,14 @@ if ($module == 'initmodule') {
 		$head2[$h][2] = 'languages';
 		$h++;
 
-		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=dictionaries&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = ($countDictionaries == 0 ? $langs->trans("Dictionaries") : $langs->trans('Dictionaries').'<span class="marginleftonlyshort badge">'.$countDictionaries."</span>");
-		$head2[$h][2] = 'dictionaries';
-		$h++;
-
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=permissions&module='.$module.($forceddirread ? '@'.$dirread : '');
 		$head2[$h][1] = ($countRights <= 0 ? $langs->trans("Permissions") : $langs->trans("Permissions").'<span class="marginleftonlyshort badge">'.$countRights."</span>");
 		$head2[$h][2] = 'permissions';
+		$h++;
+
+		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=dictionaries&module='.$module.($forceddirread ? '@'.$dirread : '');
+		$head2[$h][1] = ($countDictionaries == 0 ? $langs->trans("Dictionaries") : $langs->trans('Dictionaries').'<span class="marginleftonlyshort badge">'.$countDictionaries."</span>");
+		$head2[$h][2] = 'dictionaries';
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=tabs&module='.$module.($forceddirread ? '@'.$dirread : '');
@@ -3612,7 +3607,7 @@ if ($module == 'initmodule') {
 		$h++;
 
 		$head2[$h][0] = $_SERVER["PHP_SELF"].'?tab=specifications&module='.$module.($forceddirread ? '@'.$dirread : '');
-		$head2[$h][1] = ($hasDoc <= 0 ? $langs->trans("Documentation") : $langs->trans("Documentation").'<span class="paddingleft badge">'.$hasDoc."</span>");
+		$head2[$h][1] = ($hasDoc <= 0 ? $langs->trans("Documentation") : $langs->trans("Documentation").'<span class="marginleftonlyshort badge">'.$hasDoc."</span>");
 		$head2[$h][2] = 'specifications';
 		$h++;
 
@@ -3621,7 +3616,7 @@ if ($module == 'initmodule') {
 		$head2[$h][2] = 'buildpackage';
 		$h++;
 
-		$MAXTABFOROBJECT = 15;
+		$MAXTABFOROBJECT = 12;
 
 		print '<!-- Section for a given module -->';
 
@@ -4376,21 +4371,27 @@ if ($module == 'initmodule') {
 
 						$objs = array();
 
+						// Image
+						$htmltooltip = '';
+						if ($realpathtopicto && dol_is_file($realpathtopicto)) {
+							$htmltooltip .= '<span class="fa fa-file-image-o"></span> '.$langs->trans("Image").' : <strong>'.(dol_is_file($realpathtopicto) ? '' : '<strike>').preg_replace('/^'.strtolower($module).'\//', '', $pathtopicto).(dol_is_file($realpathtopicto) ? '' : '</strike>').'</strong>';
+							$htmltooltip .= '<br>';
+						} elseif (!empty($tmpobject)) {
+							$htmltooltip .= '<span class="fa fa-file-image-o"></span> '.$langs->trans("Image").' : '.img_picto('', $tmpobject->picto, 'class="pictofixedwidth valignmiddle"').$tmpobject->picto;
+							$htmltooltip .= '<br>';
+						}
+						$htmltooltip .= '<span class="fa fa-file-image-o"></span> '.$langs->trans("IsExtraFieldManaged").' : '.yn(empty($tmpobject->isextrafieldmanaged) ? 0 : 1, 1, 2);
+						$htmltooltip .= '<br>';
+						$htmltooltip .= '<span class="fa fa-file-image-o"></span> '.$langs->trans("IsMultiEntityManaged").' : '.yn(empty($tmpobject->ismultientitymanaged) ? 0 : 1, 1, 2);
+						$htmltooltip .= '<br>';
+
 						print '<!-- section for object -->';
 						print '<div class="fichehalfleft smallxxx">';
 						// Main DAO class file
 						print '<span class="fa fa-file"></span> '.$langs->trans("ClassFile").' : <strong>'.(dol_is_file($realpathtoclass) ? '' : '<strike>').preg_replace('/^'.strtolower($module).'\//', '', $pathtoclass).(dol_is_file($realpathtoclass) ? '' : '</strike>').'</strong>';
 						print ' <a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&token='.newToken().'&format=php&file='.urlencode($pathtoclass).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+						print $form->textwithpicto('', $htmltooltip, 1, 'help', 'valignmiddle', 1);
 						print '<br>';
-						// Image
-						if ($realpathtopicto && dol_is_file($realpathtopicto)) {
-							print '<span class="fa fa-file-image-o"></span> '.$langs->trans("Image").' : <strong>'.(dol_is_file($realpathtopicto) ? '' : '<strike>').preg_replace('/^'.strtolower($module).'\//', '', $pathtopicto).(dol_is_file($realpathtopicto) ? '' : '</strike>').'</strong>';
-							//print ' <a href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread?'@'.$dirread:'').'&action=editfile&token='.newToken().'&format=php&file='.urlencode($pathtopicto).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
-							print '<br>';
-						} elseif (!empty($tmpobject)) {
-							print '<span class="fa fa-file-image-o"></span> '.$langs->trans("Image").' : '.img_picto('', $tmpobject->picto, 'class="pictofixedwidth valignmiddle"').$tmpobject->picto;
-							print '<br>';
-						}
 
 						// API file
 						print '<br>';
@@ -4446,27 +4447,30 @@ if ($module == 'initmodule') {
 						print ' <a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&token='.newToken().'&format=sql&file='.urlencode($pathtosqlkey).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 						//print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
 						print '<br>';
-						print '<span class="fa fa-file"></span> '.$langs->trans("SqlFileExtraFields").' : <strong class="wordbreak">'.(dol_is_file($realpathtosqlextra) ? '' : '<strike><span class="opacitymedium">').preg_replace('/^'.strtolower($module).'\//', '', $pathtosqlextra).(dol_is_file($realpathtosqlextra) && dol_is_file($realpathtosqlextrakey) ? '' : '</span></strike>').'</strong>';
-						if (dol_is_file($realpathtosqlextra) && dol_is_file($realpathtosqlextrakey)) {
-							print ' <a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&token='.newToken().'&file='.urlencode($pathtosqlextra).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
-							print ' ';
-							print '<a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=confirm_removefile&token='.newToken().'&file='.urlencode($pathtosqlextra).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
-							print ' &nbsp; ';
-							print '<a class="reposition editfielda" href="'.$_SERVER["PHP_SELF"].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=droptableextrafields&token='.newToken().'">'.$langs->trans("DropTableIfEmpty").'</a>';
-						} else {
-							print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initsqlextrafields&token='.newToken().'&format=sql&file='.urlencode($pathtosqlextra).'">'.img_picto('Generate', 'generate', 'class="paddingleft"').'</a>';
+						if (!empty($tmpobject->isextrafieldmanaged)) {
+							print '<span class="fa fa-file"></span> '.$langs->trans("SqlFileExtraFields").' : <strong class="wordbreak">'.(dol_is_file($realpathtosqlextra) ? '' : '<strike><span class="opacitymedium">').preg_replace('/^'.strtolower($module).'\//', '', $pathtosqlextra).(dol_is_file($realpathtosqlextra) && dol_is_file($realpathtosqlextrakey) ? '' : '</span></strike>').'</strong>';
+							if (dol_is_file($realpathtosqlextra) && dol_is_file($realpathtosqlextrakey)) {
+								print ' <a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&token='.newToken().'&file='.urlencode($pathtosqlextra).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+								print ' ';
+								print '<a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=confirm_removefile&token='.newToken().'&file='.urlencode($pathtosqlextra).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
+								print ' &nbsp; ';
+								print '<a class="reposition editfielda" href="'.$_SERVER["PHP_SELF"].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=droptableextrafields&token='.newToken().'">'.$langs->trans("DropTableIfEmpty").'</a>';
+							} else {
+								print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initsqlextrafields&token='.newToken().'&format=sql&file='.urlencode($pathtosqlextra).'">'.img_picto('Generate', 'generate', 'class="paddingleft"').'</a>';
+							}
+
+							//print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
+							print '<br>';
+							print '<span class="fa fa-file"></span> '.$langs->trans("SqlFileKeyExtraFields").' : <strong class="wordbreak">'.(dol_is_file($realpathtosqlextrakey) ? '' : '<strike><span class="opacitymedium">').preg_replace('/^'.strtolower($module).'\//', '', $pathtosqlextrakey).(dol_is_file($realpathtosqlextra) && dol_is_file($realpathtosqlextrakey) ? '' : '</span></strike>').'</strong>';
+							if (dol_is_file($realpathtosqlextra) && dol_is_file($realpathtosqlextrakey)) {
+								print ' <a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&token='.newToken().'&format=sql&file='.urlencode($pathtosqlextrakey).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
+								print ' ';
+								print '<a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=confirm_removefile&token='.newToken().'&file='.urlencode($pathtosqlextrakey).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
+							} else {
+								print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initsqlextrafields&token='.newToken().'&format=sql&file='.urlencode($pathtosqlextra).'">'.img_picto('Generate', 'generate', 'class="paddingleft"').'</a>';
+							}
+							print '<br>';
 						}
-						//print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
-						print '<br>';
-						print '<span class="fa fa-file"></span> '.$langs->trans("SqlFileKeyExtraFields").' : <strong class="wordbreak">'.(dol_is_file($realpathtosqlextrakey) ? '' : '<strike><span class="opacitymedium">').preg_replace('/^'.strtolower($module).'\//', '', $pathtosqlextrakey).(dol_is_file($realpathtosqlextra) && dol_is_file($realpathtosqlextrakey) ? '' : '</span></strike>').'</strong>';
-						if (dol_is_file($realpathtosqlextra) && dol_is_file($realpathtosqlextrakey)) {
-							print ' <a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&token='.newToken().'&format=sql&file='.urlencode($pathtosqlextrakey).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
-							print ' ';
-							print '<a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=confirm_removefile&token='.newToken().'&file='.urlencode($pathtosqlextrakey).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
-						} else {
-							print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.urlencode($tab).'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initsqlextrafields&token='.newToken().'&format=sql&file='.urlencode($pathtosqlextra).'">'.img_picto('Generate', 'generate', 'class="paddingleft"').'</a>';
-						}
-						print '<br>';
 						print '</div>';
 
 						print '<div class="fichehalfleft smallxxxx">';
@@ -4553,6 +4557,9 @@ if ($module == 'initmodule') {
 							print '<div class="div-table-responsive">';
 							print '<table class="noborder small">';
 							print '<tr class="liste_titre">';
+							if (!empty($conf->main_checkbox_left_column)) {
+								print '<th class="tdstickyright tdstickyghostwhite"></th>';
+							}
 							print '<th class="tdsticky tdstickygray">';
 							$htmltext = $langs->trans("PropertyDesc").'<br><br><a class="" href="https://wiki.dolibarr.org/index.php/Language_and_development_rules#Table_and_fields_structures" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeExamples").'</a>';
 							print $form->textwithpicto($langs->trans("Code"), $htmltext, 1, 'help', 'extracss', 0, 3, 'propertyhelp');
@@ -4581,7 +4588,9 @@ if ($module == 'initmodule') {
 							//print '<th class="center">'.$langs->trans("Disabled").'</th>';
 							print '<th>'.$form->textwithpicto($langs->trans("Validate"), $langs->trans("ValidateModBuilderDesc")).'</th>';
 							print '<th>'.$langs->trans("Comment").'</th>';
-							print '<th class="tdstickyright tdstickyghostwhite"></th>';
+							if (empty($conf->main_checkbox_left_column)) {
+								print '<th class="tdstickyright tdstickyghostwhite"></th>';
+							}
 							print '</tr>';
 
 							// We must use $reflectorpropdefault['fields'] to get list of fields because $tmpobject->fields may have been
@@ -4632,6 +4641,21 @@ if ($module == 'initmodule') {
 									print '<!-- line for object property -->'."\n";
 									print '<tr class="oddeven">';
 
+									if (!empty($conf->main_checkbox_left_column)) {
+										if ($action == 'editproperty' && $propname == $propertykey) {
+											print '<td class="center minwidth75 tdstickyright tdstickyghostwhite">';
+											print '<input class="reposition button smallpaddingimp" type="submit" name="edit" value="'.$langs->trans("Save").'">';
+											print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+											print '</td>';
+										} else {
+											print '<td class="center minwidth75 tdstickyright tdstickyghostwhite">';
+											if ($propname != 'rowid') {
+												print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=editproperty&token='.newToken().'&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_edit().'</a>';
+												print '<a class="reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&token='.newToken().'&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
+											}
+											print '</td>';
+										}
+									}
 									print '<td class="tdsticky tdstickygray">';
 									print dol_escape_htmltag($propname);
 									print '</td>';
@@ -4641,7 +4665,34 @@ if ($module == 'initmodule') {
 										print '<input name="proplabel" class="maxwidth125" value="'.dol_escape_htmltag($proplabel).'">';
 										print '</td>';
 										print '<td class="tdoverflowmax150">';
-										print '<input name="proptype" class="maxwidth125" value="'.dol_escape_htmltag($proptype).'"></input>';
+										print '<input name="proptype" class="maxwidth125" value="'.dol_escape_htmltag($proptype).'" list="datalist'.$key.'"></input>';
+										// Use the samedatalist than for create
+										print '<datalist id="datalist'.$key.'">';
+										print '<option>varchar(128)</option>';
+										print '<option>email</option>';
+										print '<option>phone</option>';
+										print '<option>ip</option>';
+										print '<option>url</option>';
+										print '<option>password</option>';
+										print '<option>text</option>';
+										print '<option>html</option>';
+										print '<option>date</option>';
+										print '<option>datetime</option>';
+										print '<option>integer</option>';
+										print '<option>stars(5)</option>';
+										print '<option>double(28,4)</option>';
+										print '<option>real</option>';
+										print '<option>integer:ClassName:RelativePath/To/ClassFile.class.php[:1[:FILTER]]</option>';
+										// Combo with list of fields
+										/*
+										if (empty($formadmin)) {
+											include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+											$formadmin = new FormAdmin($db);
+										}
+										print $formadmin->selectTypeOfFields($key, GETPOST($key, 'alpha'));
+										*/
+										print '</datalist>';
+
 										print '</td>';
 										print '<td class="tdoverflowmax200">';
 										print '<textarea name="proparrayofkeyval">';
@@ -4706,10 +4757,12 @@ if ($module == 'initmodule') {
 										print '<td>';
 										print '<input class="maxwidth100" name="propcomment" value="'.dol_escape_htmltag($propcomment).'">';
 										print '</td>';
-										print '<td class="center minwidth75 tdstickyright tdstickyghostwhite">';
-										print '<input class="reposition button smallpaddingimp" type="submit" name="edit" value="'.$langs->trans("Save").'">';
-										print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
-										print '</td>';
+										if (empty($conf->main_checkbox_left_column)) {
+											print '<td class="center minwidth75 tdstickyright tdstickyghostwhite">';
+											print '<input class="reposition button smallpaddingimp" type="submit" name="edit" value="'.$langs->trans("Save").'">';
+											print '<input class="reposition button button-cancel smallpaddingimp" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+											print '</td>';
+										}
 									} else {
 										print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($proplabel).'">';
 										print dol_escape_htmltag($proplabel);
@@ -4801,12 +4854,14 @@ if ($module == 'initmodule') {
 										print dol_escape_htmltag($propcomment);
 										print '</span>';
 										print '</td>';
-										print '<td class="center minwidth75 tdstickyright tdstickyghostwhite">';
-										if ($propname != 'rowid') {
-											print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=editproperty&token='.newToken().'&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_edit().'</a>';
-											print '<a class="reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&token='.newToken().'&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
+										if (empty($conf->main_checkbox_left_column)) {
+											print '<td class="center minwidth75 tdstickyright tdstickyghostwhite">';
+											if ($propname != 'rowid') {
+												print '<a class="editfielda reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=editproperty&token='.newToken().'&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_edit().'</a>';
+												print '<a class="reposition marginleftonly marginrighttonly paddingright paddingleft" href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&token='.newToken().'&propertykey='.urlencode($propname).'&tab='.urlencode($tab).'&module='.urlencode($module).'&tabobj='.urlencode($tabobj).'">'.img_delete().'</a>';
+											}
+											print '</td>';
 										}
-										print '</td>';
 									}
 									print '</tr>';
 								}

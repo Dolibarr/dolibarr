@@ -88,7 +88,7 @@ class ExtraFields
 		'price' => 'ExtrafieldPrice',
 		'pricecy' => 'ExtrafieldPriceWithCurrency',
 		'phone' => 'ExtrafieldPhone',
-		'mail' => 'ExtrafieldMail',
+		'email' => 'ExtrafieldMail',
 		'url' => 'ExtrafieldUrl',
 		'ip' => 'ExtrafieldIP',
 		'icon' => 'Icon',
@@ -142,7 +142,7 @@ class ExtraFields
 	 *
 	 *  @param	string			$attrname           Code of attribute
 	 *  @param  string			$label              label of attribute
-	 *  @param  string			$type               Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datetime', 'duration', 'price', 'pricecy', 'phone', 'mail', 'password', 'url', 'select', 'checkbox', 'separate',...)
+	 *  @param  string			$type               Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datetime', 'duration', 'price', 'pricecy', 'phone', 'email', 'password', 'url', 'select', 'checkbox', 'separate',...)
 	 *  @param  int				$pos                Position of attribute
 	 *  @param  string			$size               Size/length definition of attribute ('5', '24,8', ...). For float, it contains 2 numeric separated with a comma.
 	 *  @param  string			$elementtype        Element type. Same value than object->table_element (Example 'member', 'product', 'thirdparty', ...)
@@ -221,7 +221,7 @@ class ExtraFields
 	 *
 	 *  @param  string			$attrname           Code of attribute
 	 *  @param  string			$label              label of attribute
-	 *  @param  string			$type               Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datetime', 'duration', 'price', 'pricecy', 'phone', 'mail', 'password', 'url', 'select', 'checkbox', 'separate',...)
+	 *  @param  string			$type               Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datetime', 'duration', 'price', 'pricecy', 'phone', 'email', 'password', 'url', 'select', 'checkbox', 'separate',...)
 	 *  @param  int				$pos                Position of attribute
 	 *  @param  string			$size               Size/length definition of attribute ('5', '24,8', ...). For float, it contains 2 numeric separated with a comma.
 	 *  @param  string			$elementtype        Element type. Same value than object->table_element (Example 'member', 'product', 'thirdparty', ...)
@@ -293,7 +293,7 @@ class ExtraFields
 	 *  This is a private method. For public method, use addExtraField.
 	 *
 	 *	@param	string	$attrname			code of attribute
-	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datetime', 'duration', 'price', 'pricecy', 'phone', 'mail', 'password', 'url', 'select', 'checkbox', ...)
+	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datetime', 'duration', 'price', 'pricecy', 'phone', 'email', 'password', 'url', 'select', 'checkbox', ...)
 	 *  @param	string	$length				Size/length of attribute ('5', '24,8', ...)
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @param	int<0,1>	$unique				Is field unique or not
@@ -668,7 +668,7 @@ class ExtraFields
 	 *
 	 *  @param	string	$attrname			Name of attribute
 	 *  @param	string	$label				Label of attribute
-	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datetime', 'duration', 'price', 'phone', 'mail', 'password', 'url', 'select', 'checkbox', ...)
+	 *  @param	string	$type				Type of attribute ('boolean', 'int', 'varchar', 'text', 'html', 'date', 'datetime', 'duration', 'price', 'phone', 'email', 'password', 'url', 'select', 'checkbox', ...)
 	 *  @param	string	$length				Size/length of attribute ('5', '24,8', ...)
 	 *  @param  string	$elementtype        Element type ('member', 'product', 'thirdparty', 'contact', ...)
 	 *  @param	int<0,1>	$unique			Is field unique or not
@@ -723,7 +723,7 @@ class ExtraFields
 			} elseif ($type == 'phone') {
 				$typedb = 'varchar';
 				$lengthdb = '20';
-			} elseif ($type == 'mail' || $type == 'ip' || $type == 'icon') {
+			} elseif ($type == 'mail' || $type == 'email' || $type == 'ip' || $type == 'icon') {
 				$typedb = 'varchar';
 				$lengthdb = '128';
 			} elseif ($type == 'url') {
@@ -1259,7 +1259,7 @@ class ExtraFields
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
 		} elseif (preg_match('/varchar/', $type)) {
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
-		} elseif (in_array($type, array('mail', 'ip', 'phone', 'url'))) {
+		} elseif (in_array($type, array('email', 'mail', 'ip', 'phone', 'url'))) {
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 		} elseif ($type == 'icon') {
 			/* External lib inclusion are not allowed in backoffice. Also lib is included several time if there is several icon file.
@@ -2117,7 +2117,7 @@ class ExtraFields
 			} else {
 				$value = yn($value ? 1 : 0);
 			}
-		} elseif ($type == 'mail') {
+		} elseif ($type == 'mail' || $type == 'email') {
 			$value = dol_print_email($value, 0, 0, 0, 64, 1, 1);
 		} elseif ($type == 'ip') {
 			$value = dol_print_ip($value, 0);

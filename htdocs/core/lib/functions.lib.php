@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2000-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
- * Copyright (C) 2004-2024	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2025	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio			<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier				<benoit.mortier@opensides.be>
  * Copyright (C) 2004		Christophe Combelles		<ccomb@free.fr>
@@ -828,13 +828,12 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *  @param  string  $check	     Type of check
  *                               '' or 'none'=no check (deprecated)
  *                               'password'=allow characters for a password
- *                               'email'=allow characters for an email
+ *                               'email'=allow characters for an email "email@domain.com"
  *                               'array', 'array:restricthtml' or 'array:aZ09' to check it's an array
  *                               'int'=check it's numeric (integer or float)
  *                               'intcomma'=check it's integer+comma ('1,2,3,4...')
- *                               'alpha'=Same than alphanohtml
- *                               'alphawithlgt'=alpha with lgt
- *                               'alphanohtml'=check there is no html content and no " and no ../
+ *                               'alphanohtml'=check there is no html content and no " and no ../    ('alpha' is an alias of 'alphanohtml')
+ *                               'alphawithlgt'=alpha with lgt and no " and no ../   (Can be used for email string like "Name <email@domain.com>")
  *                               'aZ'=check it's a-z only
  *                               'aZ09'=check it's simple alpha string (recommended for keys)
  *                               'aZ09arobase'=check it's a string for an element type ('myobject@mymodule')
@@ -1190,7 +1189,6 @@ function GETPOSTINT($paramname, $method = 0)
 	return (int) GETPOST($paramname, 'int', $method, null, null, 0);
 }
 
-
 /**
  *  Return the value of a $_GET or $_POST supervariable, converted into float.
  *
@@ -1204,7 +1202,6 @@ function GETPOSTFLOAT($paramname, $rounding = '')
 	// price2num() is used to sanitize any valid user input (such as "1 234.5", "1 234,5", "1'234,5", "1·234,5", "1,234.5", etc.)
 	return (float) price2num(GETPOST($paramname), $rounding, 2);
 }
-
 
 /**
  * Helper function that combines values of a dolibarr DatePicker (such as Form::selectDate) for year, month, day (and
@@ -1353,7 +1350,7 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 			}
 			break;
 		case 'alpha':		// No html and no ../ and "
-		case 'alphanohtml':	// Recommended for most scalar parameters and search parameters
+		case 'alphanohtml':	// Recommended for most scalar parameters and search parameters. Not valid for json string.
 			if (!is_array($out)) {
 				$out = trim($out);
 				do {
@@ -1392,7 +1389,7 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 				} while ($oldstringtoclean != $out);
 			}
 			break;
-		case 'nohtml':		// No html
+		case 'nohtml':		// No html. Valid for JSON strings.
 			$out = dol_string_nohtmltag($out, 0);
 			break;
 		case 'restricthtmlnolink':
@@ -6351,12 +6348,12 @@ function dol_print_error($db = null, $error = '', $errors = null)
 		}
 		$out .= "<b>".$langs->trans("UserAgent").":</b> ".(isset($_SERVER["HTTP_USER_AGENT"]) ? dol_htmlentities($_SERVER["HTTP_USER_AGENT"], ENT_COMPAT) : '')."<br>\n";
 		$out .= "<br>\n";
-		$out .= "<b>".$langs->trans("RequestedUrl").":</b> ".dol_htmlentities($_SERVER["REQUEST_URI"], ENT_COMPAT)."<br>\n";
-		$out .= "<b>".$langs->trans("Referer").":</b> ".(isset($_SERVER["HTTP_REFERER"]) ? dol_htmlentities($_SERVER["HTTP_REFERER"], ENT_COMPAT) : '')."<br>\n";
-		$out .= "<b>".$langs->trans("MenuManager").":</b> ".(isset($conf->standard_menu) ? dol_htmlentities($conf->standard_menu, ENT_COMPAT) : '')."<br>\n";
+		$out .= "<b>" . $langs->trans("RequestedUrl") . ":</b> " . (isset($_SERVER["REQUEST_URI"]) ? dol_htmlentities($_SERVER["REQUEST_URI"], ENT_COMPAT) : '') . "<br>\n";
+		$out .= "<b>" . $langs->trans("Referer") . ":</b> " . (isset($_SERVER["HTTP_REFERER"]) ? dol_htmlentities($_SERVER["HTTP_REFERER"], ENT_COMPAT) : '') . "<br>\n";
+		$out .= "<b>" . $langs->trans("MenuManager") . ":</b> " . (isset($conf->standard_menu) ? dol_htmlentities($conf->standard_menu, ENT_COMPAT) : '') . "<br>\n";
 		$out .= "<br>\n";
-		$syslog .= "url=".dol_escape_htmltag($_SERVER["REQUEST_URI"]);
-		$syslog .= ", query_string=".dol_escape_htmltag($_SERVER["QUERY_STRING"]);
+		$syslog .= "url=" . (isset($_SERVER["REQUEST_URI"]) ? dol_escape_htmltag($_SERVER["REQUEST_URI"]) : '');
+		$syslog .= ", query_string=" . (isset($_SERVER["QUERY_STRING"]) ? dol_escape_htmltag($_SERVER["QUERY_STRING"]) : '');
 	} else { // Mode CLI
 		$out .= '> '.$langs->transnoentities("ErrorInternalErrorDetected").":\n".$argv[0]."\n";
 		$syslog .= "pid=".dol_getmypid();
@@ -8112,7 +8109,7 @@ function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $id
  *	Return yes or no in current language
  *
  *	@param	int<0, 1>|'yes'|'true'|'no'|'false'	$yesno	Value to test (1, 'yes', 'true' or 0, 'no', 'false')
- *	@param	integer|string	$format						1=Yes/No, 0=yes/no, 2=Disabled checkbox, 3=Disabled checkbox + Yes/No, 4 or Text=Use picto
+ *	@param	integer|string	$format						1=Yes/No, 0=yes/no, 2=Disabled/enabled checkbox, 3=Disabled/enabled checkbox + Yes/No, 4 or Text=Use picto
  *	@param	int				$color						0=texte only, 1=Text is formatted with a color font style ('ok' or 'error'), 2=Text is formatted with 'ok' color.
  *	@return	string										HTML string
  */
@@ -8544,7 +8541,8 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 	}
 
 	if (class_exists('DOMDocument') && !empty($stringtoclean)) {
-		$stringtoclean = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body>'.$stringtoclean.'</body></html>';
+		//$stringtoclean = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body>'.$stringtoclean.'</body></html>';
+		$stringtoclean = '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body>'.$stringtoclean.'</body></html>';
 
 		// Warning: loadHTML does not support HTML5 on old libxml versions.
 		$dom = new DOMDocument('', 'UTF-8');
@@ -8600,7 +8598,7 @@ function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes 
 		$return = $dom->saveHTML();	// This may add a LF at end of lines, so we will trim later
 		//$return = '<html><body>aaaa</p>bb<p>ssdd</p>'."\n<p>aaa</p>aa<p>bb</p>";
 
-		$return = preg_replace('/^'.preg_quote('<?xml encoding="UTF-8">', '/').'/', '', $return);
+		//$return = preg_replace('/^'.preg_quote('<?xml encoding="UTF-8">', '/').'/', '', $return);
 		$return = preg_replace('/^'.preg_quote('<html><head><', '/').'[^<>]*'.preg_quote('></head><body>', '/').'/', '', $return);
 		$return = preg_replace('/'.preg_quote('</body></html>', '/').'$/', '', trim($return));
 
@@ -8770,14 +8768,19 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					}
 
 					$dom = new DOMDocument();
-					// Add a trick to solve pb with text without parent tag
-					// like '<h1>Foo</h1><p>bar</p>' that wrongly ends up, without the trick, with '<h1>Foo<p>bar</p></h1>'
-					// like 'abc' that wrongly ends up, without the trick, with '<p>abc</p>'
-
+					// Add a trick '<div class="tricktoremove">' to solve pb with text without parent tag
+					//  like '<h1>Foo</h1><p>bar</p>' that wrongly ends up, without the trick, with '<h1>Foo<p>bar</p></h1>'
+					//  like 'abc' that wrongly ends up, without the trick, with '<p>abc</p>'
+					// Add also a trick <html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> to solve utf8 lost.
+					// I don't know what the xml encoding is the trick for
 					if (dol_textishtml($out)) {
-						$out = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.$out.'</div></body></html>';
+						//$out = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.$out.'</div></body></html>';
+						$out = '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.$out.'</div></body></html>';
+						//$out = '<html><head><meta charset="utf-8"></head><body><div class="tricktoremove">'.$out.'</div></body></html>';
 					} else {
-						$out = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.dol_nl2br($out).'</div></body></html>';
+						//$out = '<?xml encoding="UTF-8"><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.dol_nl2br($out).'</div></body></html>';
+						$out = '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body><div class="tricktoremove">'.dol_nl2br($out).'</div></body></html>';
+						//$out = '<html><head><meta charset="utf-8"></head><body><div class="tricktoremove">'.dol_nl2br($out).'</div></body></html>';
 					}
 
 					$dom->loadHTML($out, LIBXML_HTML_NODEFDTD | LIBXML_ERR_NONE | LIBXML_HTML_NOIMPLIED | LIBXML_NONET | LIBXML_NOWARNING | LIBXML_NOERROR | LIBXML_NOXMLDECL);
@@ -8787,7 +8790,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 					$out = trim($dom->saveHTML());
 
 					// Remove the trick added to solve pb with text in utf8 and text without parent tag
-					$out = preg_replace('/^'.preg_quote('<?xml encoding="UTF-8">', '/').'/', '', $out);
+					//$out = preg_replace('/^'.preg_quote('<?xml encoding="UTF-8">', '/').'/', '', $out);
 					$out = preg_replace('/^'.preg_quote('<html><head><', '/').'[^<>]+'.preg_quote('></head><body><div class="tricktoremove">', '/').'/', '', $out);
 					$out = preg_replace('/'.preg_quote('</div></body></html>', '/').'$/', '', trim($out));
 					//                  $out = preg_replace('/^<\?xml encoding="UTF-8"><div class="tricktoremove">/', '', $out);

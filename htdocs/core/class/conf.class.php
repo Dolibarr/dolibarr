@@ -1015,11 +1015,6 @@ class Conf extends stdClass
 				}
 			}
 
-			// conf->main_checkbox_left_column = constant to set checkbox list to left
-			if (!isset($this->main_checkbox_left_column)) {
-				$this->main_checkbox_left_column = getDolGlobalInt("MAIN_CHECKBOX_LEFT_COLUMN");
-			}
-
 			// Set PRODUIT_LIMIT_SIZE if never defined
 			if (!isset($this->global->PRODUIT_LIMIT_SIZE)) {
 				$this->global->PRODUIT_LIMIT_SIZE = 1000;
@@ -1088,7 +1083,7 @@ class Conf extends stdClass
 				$this->global->MAIN_MAX_DECIMALS_SHOWN = 8;
 			}
 
-			// Non working days
+			// Non working days by default if not set in setup
 			if (!isset($this->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY)) {
 				$this->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY = 1;
 			}
@@ -1262,6 +1257,11 @@ class Conf extends stdClass
 
 			if (!isset($this->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 				$this->global->MAIN_CHECKBOX_LEFT_COLUMN = 1;
+			}
+
+			// conf->main_checkbox_left_column = constant to set checkbox list to left
+			if (!isset($this->main_checkbox_left_column)) {
+				$this->main_checkbox_left_column = getDolGlobalInt("MAIN_CHECKBOX_LEFT_COLUMN");
 			}
 
 			// For modules that want to disable top or left menu

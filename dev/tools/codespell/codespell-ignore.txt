@@ -10,6 +10,9 @@ postgresql
 # ZAR currency
 zar
 
+# Need as part of some PHP keys for some array variables
+referer
+
 # Name of contributores
 noe
 udo
