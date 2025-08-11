@@ -775,6 +775,7 @@ abstract class CommonObject
 	 */
 	public $sendtoid;
 
+
 	/**
 	 * @var	float		Amount already paid from getSommePaiement() + getSumCreditNotesUsed() + getSumDepositsUsed() (used to show correct status)
 	 * @see $totalpaid
@@ -783,9 +784,16 @@ abstract class CommonObject
 
 	/**
 	 * @var	float		Amount already paid from getSommePaiement()
-	 * @see $alreadpaid
+	 * @see $alreadpaid, $sumpayed_multicurrency
 	 */
 	public $totalpaid;
+
+	/**
+	 * @var int|float	Amount already paid from getSommePaiement(), like $totalpaid, but in the foreign currency
+	 * @see $totalpaid, $alreadypaid
+	 */
+	public $sumpayed_multicurrency;
+
 
 	/**
 	 * @var array<int,string>		Array with labels of status
