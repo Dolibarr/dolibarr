@@ -1275,7 +1275,7 @@ abstract class CommonObject
 			} elseif ($obj = $this->db->fetch_object($resql_allowed_contacts)) {
 				if ($obj->cnt == 0) {
 					$langs->load("companies");
-					$this->error = $langs->trans("ErrorCommercialNotAllowedForThirdparty", $user->admin);
+					$this->error = $langs->trans("ErrorCommercialNotAllowedForThirdparty", $user->id);
 					dol_syslog(get_class($this)."::add_contact ".$this->error, LOG_ERR);
 					return -3;
 				}

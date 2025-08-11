@@ -674,7 +674,7 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
  * Create order
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
- * @param array{id:string,ref:string,ref_client:string,ref_ext:string,thirdparty_id:int,status:int,billed:string,total_net:float,total_vat:float,total_localtax1:float,total_localtax2:float,total:float,date:string,date_creation:string,date_validation:string,date_modification:string,source:string,note_private:string,note_public:string,project_id:string,mode_reglement_id:string,mode_reglement_code:string,mode_reglement:string,cond_reglement_id:string,cond_reglement_code:string,cond_reglement:string,cond_reglement_doc:string,date_livraison:int,demand_reason_id:string,lines:array<array{id:string,type:int,fk_commande:int,fk_parent_line:int,desc:string,qty:float,price:float,unitprice:float,vat_rate:float,remise:float,remise_percent:float,total_net:float,total_vat:float,total:float,date_start:int,date_end:int,product_id:int,product_ref:string,product_label:string,product_desc:string}>}		$order		Order info
+ * @param array{id:string,ref:string,ref_client:string,ref_ext:string,thirdparty_id:int,status:int,billed:string,total_net:float,total_vat:float,total_localtax1:float,total_localtax2:float,total:float,date:string,date_creation:string,date_validation:string,date_modification:string,source:string,note_private:string,note_public:string,project_id:string,mode_reglement_id:string,mode_reglement_code:string,mode_reglement:string,cond_reglement_id:string,cond_reglement_code:string,cond_reglement:string,cond_reglement_doc:string,date_livraison:int,demand_reason_id:string,lines:array<array{id:string,type:int,fk_commande:int,fk_parent_line:int,desc:string,qty:float,price:float,unitprice:float,vat_rate:float,remise:float,remise_percent:float,total_net:float,total_vat:float,total:float,date_start:string,date_end:string,product_id:int,product_ref:string,product_label:string,product_desc:string}>}		$order		Order info
  * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function createOrder($authentication, $order)
@@ -715,6 +715,7 @@ function createOrder($authentication, $order)
 		$newobject->note_private = $order['note_private'];
 		$newobject->note_public = $order['note_public'];
 		$newobject->statut = Commande::STATUS_DRAFT; // We start with status draft
+		$newobject->status = Commande::STATUS_DRAFT; // We start with status draft
 		$newobject->billed = (int) $order['billed'];
 		$newobject->fk_project = (int) $order['project_id'];
 		$newobject->cond_reglement_id = (int) $order['cond_reglement_id'];

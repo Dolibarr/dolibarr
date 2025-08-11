@@ -3219,7 +3219,13 @@ class Form
 		// Add WHERE conditions
 		$sql .= ' WHERE p.entity IN (' . getEntity('product') . ')';
 		if (getDolGlobalString('PRODUIT_ATTRIBUTES_HIDECHILD')) {
-			$sql .= " AND NOT EXISTS (SELECT pac.rowid FROM ".$this->db->prefix()."product_attribute_combination as pac WHERE pac.fk_product_child = p.rowid)";
+			if (getDolGlobalString('PRODUIT_ATTRIBUTES_HIDECHILD_BUT_ALLOW_SEARCH_IN_EAN13')) {
+				if (strlen($filterkey) != 13) {
+					$sql .= " AND NOT EXISTS (SELECT pac.rowid FROM ".$this->db->prefix()."product_attribute_combination as pac WHERE pac.fk_product_child = p.rowid)";
+				}
+			} else {
+				$sql .= " AND NOT EXISTS (SELECT pac.rowid FROM ".$this->db->prefix()."product_attribute_combination as pac WHERE pac.fk_product_child = p.rowid)";
+			}
 		}
 		if ($finished == 0) {
 			$sql .= " AND p.finished = " . ((int) $finished);

@@ -466,7 +466,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 
-		print '<td class="tdoverflowmax125">';
+		print '<td class="tdoverflowmax200">';
 		print $object->getNomUrl(1);
 		if (isModEnabled('multicompany') && !$obj->entity) {
 			print img_picto($langs->trans("GlobalGroup"), 'redstar');
@@ -493,11 +493,11 @@ while ($i < $imaxinloop) {
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
-		print '<td class="center nowrap">'.dol_print_date($db->jdate($obj->datec), "dayhour").'</td>';
+		print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->datec), "dayhour").'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
-		print '<td class="center nowrap">'.dol_print_date($db->jdate($obj->tms), "dayhour").'</td>';
+		print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->tms), "dayhour").'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
