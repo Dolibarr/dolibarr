@@ -555,9 +555,7 @@ class TriggerHistory extends CommonObject
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans("TriggerHistory").'</u>';
-		if (isset($this->status)) {
-			$label .= ' '.$this->getLibStatut(5);
-		}
+		$label .= ' '.$this->getLibStatut(5);
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		$url = dol_buildpath('/webhook/triggerhistory_card.php', 1).'?id='.$this->id;
