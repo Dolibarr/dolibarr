@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011-2018	Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,7 +107,7 @@ print '</td></tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ExportCsvSeparator").'</td>';
-print '<td width="60" align="center"><input class="flat width50" maxlength="3" type="text" name="EXPORT_CSV_SEPARATOR_TO_USE" value="'.(!getDolGlobalString('EXPORT_CSV_SEPARATOR_TO_USE') ? ',' : $conf->global->EXPORT_CSV_SEPARATOR_TO_USE).'"></td>';
+print '<td width="60" align="center"><input class="flat width50" maxlength="3" type="text" name="EXPORT_CSV_SEPARATOR_TO_USE" value="'.getDolGlobalString('EXPORT_CSV_SEPARATOR_TO_USE', ',').'"></td>';
 print '<td class="right"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 print '</tr>';
 
