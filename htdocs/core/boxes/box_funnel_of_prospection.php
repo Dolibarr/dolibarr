@@ -194,7 +194,6 @@ class box_funnel_of_prospection extends ModeleBoxes
 				$liststatus = array();
 				$data = array('');
 				$customlabels = array();
-
 				// Set array $data that contains the length of the bar (not the real value)
 				// and the array $customlabels that contains the real value to show
 				$maxamount = 0;
@@ -202,6 +201,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 				foreach ($listofstatus as $status) {
 					$customlabel = '';
 					$labelStatus = '';
+					$customlabelmore = '';
 
 					$code = dol_getIdFromCode($this->db, $status, 'c_lead_status', 'rowid', 'code');
 					if ($code) {
