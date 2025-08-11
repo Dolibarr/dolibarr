@@ -169,7 +169,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // There is several ways to check permission.
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
-$permissiontoread = $permissiontoadd = $permissiontodelete = !empty($user->admin);
+$permissiontoread = $permissiontoadd = $permissiontodelete = (!empty($user->admin) ? 1 : 0);
 
 // Security check (enable the most restrictive one)
 if ($user->socid > 0) {

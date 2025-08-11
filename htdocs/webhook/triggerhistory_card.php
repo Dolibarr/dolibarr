@@ -111,7 +111,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 
 // There is several ways to check permission.
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
-$permissiontoread = $permissiontoadd = $permissiontodelete = $permissionnote = $permissiondellink = !empty($user->admin);
+$permissiontoread = $permissiontoadd = $permissiontodelete = $permissionnote = $permissiondellink = (!empty($user->admin) ? 1 : 0);
 
 $upload_dir = $conf->webhook->multidir_output[!empty($object->entity) ? $object->entity : 1].'/triggerhistory';
 
