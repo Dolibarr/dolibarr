@@ -140,16 +140,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // There is several ways to check permission.
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
-$enablepermissioncheck = 0;
-if ($enablepermissioncheck) {
-	$permissiontoread = $user->hasRight('webhook', 'target', 'read');
-	$permissiontoadd = $user->hasRight('webhook', 'target', 'write');
-	$permissiontodelete = $user->hasRight('webhook', 'target', 'delete');
-} else {
-	$permissiontoread = 1;
-	$permissiontoadd = 1;
-	$permissiontodelete = 1;
-}
+$permissiontoread = $permissiontoadd = $permissiontodelete = !empty($user->admin);
 
 // Security check (enable the most restrictive one)
 if ($user->socid > 0) {

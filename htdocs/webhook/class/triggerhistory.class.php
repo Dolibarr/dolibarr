@@ -554,14 +554,12 @@ class TriggerHistory extends CommonObject
 		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
-		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-			$classfortooltip = 'classforajaxtooltip';
-			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
-			$label = '';
-		} else {
-			$label = implode($this->getTooltipContentArray($params));
+		$label = img_picto('', $this->picto).' <u>'.$langs->trans("TriggerHistory").'</u>';
+		if (isset($this->status)) {
+			$label .= ' '.$this->getLibStatut(5);
 		}
-
+		$label .= '<br>';
+		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		$url = dol_buildpath('/webhook/triggerhistory_card.php', 1).'?id='.$this->id;
 
 		if ($option !== 'nolink') {

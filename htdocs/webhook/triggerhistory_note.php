@@ -85,16 +85,7 @@ if ($id > 0 || !empty($ref)) {
 
 // There is several ways to check permission.
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
-$enablepermissioncheck = getDolGlobalInt('WEBHOOK_ENABLE_PERMISSION_CHECK');
-if ($enablepermissioncheck) {
-	$permissiontoread = $user->hasRight('webhook', 'triggerhistory', 'read');
-	$permissiontoadd = $user->hasRight('webhook', 'triggerhistory', 'write');
-	$permissionnote = $user->hasRight('webhook', 'triggerhistory', 'write'); // Used by the include of actions_setnotes.inc.php
-} else {
-	$permissiontoread = 1;
-	$permissiontoadd = 1;
-	$permissionnote = 1;
-}
+$permissiontoread = $permissiontoadd = $permissiontodelete = !empty($user->admin);
 
 // Security check (enable the most restrictive one)
 //if ($user->socid > 0) accessforbidden();

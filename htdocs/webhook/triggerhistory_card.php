@@ -111,20 +111,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 
 // There is several ways to check permission.
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
-$enablepermissioncheck = getDolGlobalInt('WEBHOOK_ENABLE_PERMISSION_CHECK');
-if ($enablepermissioncheck) {
-	$permissiontoread = $user->hasRight('webhook', 'triggerhistory', 'read');
-	$permissiontoadd = $user->hasRight('webhook', 'triggerhistory', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-	$permissiontodelete = $user->hasRight('webhook', 'triggerhistory', 'delete') || $permissiontoadd;
-	$permissionnote = $user->hasRight('webhook', 'triggerhistory', 'write'); // Used by the include of actions_setnotes.inc.php
-	$permissiondellink = $user->hasRight('webhook', 'triggerhistory', 'write'); // Used by the include of actions_dellink.inc.php
-} else {
-	$permissiontoread = 1;
-	$permissiontoadd = 1; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-	$permissiontodelete = 1;
-	$permissionnote = 1;
-	$permissiondellink = 1;
-}
+$permissiontoread = $permissiontoadd = $permissiontodelete = $permissionnote = $permissiondellink = !empty($user->admin);
 
 $upload_dir = $conf->webhook->multidir_output[!empty($object->entity) ? $object->entity : 1].'/triggerhistory';
 
