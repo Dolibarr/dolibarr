@@ -206,7 +206,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$pagenb++;
 		$this->Header($pdf, $pagenb, $pages, $outputlangs);
 
-		$this->Body($pdf, $pagenb, $pages, $outputlangs);
+		$this->Body($pdf, $pagenb, $pages, $outputlangs, $object);
 
 		// Pied de page
 		$this->_pagefoot($pdf, null, $outputlangs);
@@ -357,9 +357,10 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *	@param	int			$pagenb			Page nb
 	 *	@param	int			$pages			Pages
 	 *	@param	Translate	$outputlangs	Object lang
+     * 	@param	RemiseCheque	$object			Object RemiseCheque
 	 *	@return	void
 	 */
-	public function Body(&$pdf, $pagenb, $pages, $outputlangs)
+	public function Body(&$pdf, $pagenb, $pages, $outputlangs, $object)
 	{
 		// phpcs:enable
 		// x=10 - Num
@@ -399,7 +400,24 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 				$pdf->SetTextColor(0, 0, 0);
 			}
 
-			$lineinpage += $nb_lines;
+			$lineinpage += $nb_lines;            
+			
+			//retrive invoices links
+            $invoices=[];
+            $sql   = "SELECT b.rowid,b.fk_bordereau, f.ref FROM `".MAIN_DB_PREFIX."bank` AS b
+                LEFT JOIN `".MAIN_DB_PREFIX."paiement` AS p ON b.rowid = p.fk_bank
+                LEFT JOIN `".MAIN_DB_PREFIX."paiement_facture` AS pf ON pf.fk_paiement = p.rowid
+                LEFT JOIN `".MAIN_DB_PREFIX."facture` AS f ON f.rowid = pf.fk_facture 
+                WHERE b.fk_bordereau = '" . $object->id . "'";
+            $resql = $this->db->query($sql);
+            if ($resql) {
+                while ($row = $this->db->fetch_object($resql)) {  
+                    if ($row->ref) {
+                        $invoices[] = $row->ref;
+                    }
+                }
+                $this->db->free($resql);
+            }
 
 			$pdf->SetXY(1, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(8, $this->line_height, (string) ($j + 1), 0, 'R', false);
@@ -411,7 +429,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 			$pdf->MultiCell(60, $this->line_height, $outputlangs->convToOutputCharset($this->lines[$j]->bank_chq, '44'), 0, 'L', false);
 
 			$pdf->SetXY(100, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell(80, $this->line_height, $outputlangs->convToOutputCharset($this->lines[$j]->emetteur_chq, '50'), 0, 'L', false);
+			$pdf->MultiCell(80, $this->line_height, $outputlangs->convToOutputCharset($this->lines[$j]->emetteur_chq.(count($invoices)?' : '.implode(', ',$invoices):''), '50'), 0, 'L', false);
 
 			$pdf->SetXY(180, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(20, $this->line_height, price($this->lines[$j]->amount_chq), 0, 'R', false);
