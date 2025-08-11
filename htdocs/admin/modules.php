@@ -240,12 +240,12 @@ if ($action == 'install' && $allowonlineinstall) {
 		}
 
 		$result = dol_move_uploaded_file($tmpfile, $newfile, 1, 0, $_FILES['fileinstall']['error']);
-		if ($result > 0) {
-			$result = dol_uncompress($newfile, $conf->admin->dir_temp.'/'.$tmpdir);
+		if ((int) $result > 0) {
+			$resultuncompress = dol_uncompress($newfile, $conf->admin->dir_temp.'/'.$tmpdir);
 
-			if (!empty($result['error'])) {
+			if (!empty($resultuncompress['error'])) {
 				$langs->load("errors");
-				setEventMessages($langs->trans($result['error'], $original_file), null, 'errors');
+				setEventMessages($langs->trans($resultuncompress['error'], $original_file), null, 'errors');
 				$error++;
 			} else {
 				// Now we move the dir of the module
@@ -354,9 +354,9 @@ if ($action == 'install' && $allowonlineinstall) {
 								$submodulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulenameval;
 							}
 							dol_syslog("We copy now directory ".$submodulenamedir." into target dir ".$dirins.'/'.$modulenameval);
-							$result = dolCopyDir($submodulenamedir, $dirins.'/'.$modulenameval, '0444', 1);
-							if ($result <= 0) {
-								dol_syslog('Failed to call dolCopyDir result='.$result." with param ".$submodulenamedir." and ".$dirins.'/'.$modulenameval, LOG_WARNING);
+							$resultcopy = dolCopyDir($submodulenamedir, $dirins.'/'.$modulenameval, '0444', 1);
+							if ($resultcopy <= 0) {
+								dol_syslog('Failed to call dolCopyDir result='.$resultcopy." with param ".$submodulenamedir." and ".$dirins.'/'.$modulenameval, LOG_WARNING);
 								$langs->load("errors");
 								setEventMessages($langs->trans("ErrorFailToCopyDir", $submodulenamedir, $dirins.'/'.$modulenameval), null, 'errors');
 								$error++;
@@ -383,7 +383,7 @@ if ($action == 'install' && $allowonlineinstall) {
 	$securityevent->dateevent = $now;
 	$securityevent->description = $text;
 
-	$result = $securityevent->create($user);
+	$resultcreateevent = $securityevent->create($user);
 
 	if (!$error) {
 		$searchParams = array(
@@ -1565,14 +1565,6 @@ if ($mode == 'deploy') {
 			print $langs->trans("UnpackPackageInModulesRoot", $dirins).'<br>';
 			print '<b>'.$langs->trans("StepNb", 4).'</b>: ';
 			print $langs->trans("SetupIsReadyForUse", DOL_URL_ROOT.'/admin/modules.php?mainmenu=home', $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Modules")).'<br>';
-		}
-	}
-
-	if (!empty($result['return'])) {
-		print '<br>';
-
-		foreach ($result['return'] as $value) {
-			echo $value.'<br>';
 		}
 	}
 
