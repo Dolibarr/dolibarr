@@ -560,6 +560,6 @@ NoAccountsChangedWithAccountNumber=Transactions non mises à jour avec les numé
 HasAlreadyBeenReversed=a déjà été inversé
 ErrorWhileCreating=Erreur lors de la création %s
 ReturnAccount=Retour
-Clone=Cloneur
+Clone=Cloner
 AlreadyReturnedAccount=L'entrée n°%s a déjà été annulée
 SuccessReturnedAccount=L'entrée n°%s a été inversée
