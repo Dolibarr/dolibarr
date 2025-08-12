@@ -164,6 +164,7 @@ $arrayfields = array(
 	'b.num_chq' => array('label' => $langs->trans("Numero"), 'checked' => '0','position' => 60),
 	'b.fk_bordereau' => array('label' => $langs->trans("ChequeNumber"), 'checked' => '0', 'position' => 65),
 	'bu.label' => array('label' => $langs->trans("ThirdParty").'/'.$langs->trans("User"), 'checked' => '1', 'position' => 70),
+	'invoices'=>array('label'=>$langs->trans("Invoices"), 'checked'=>1, 'position'=>70),
 	'ba.ref' => array('label' => $langs->trans("BankAccount"), 'checked' => (($id > 0 || !empty($ref)) ? '0' : '1'), 'position' => 80),
 	'b.debit' => array('label' => $langs->trans("Debit"), 'checked' => '1', 'position' => 90),
 	'b.credit' => array('label' => $langs->trans("Credit"), 'checked' => '1', 'position' => 100),
@@ -588,6 +589,11 @@ if (!empty($extrafields->attributes[$extrafieldsobjectkey]['label'])) {
 		$sql .= ($extrafields->attributes[$extrafieldsobjectkey]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
+
+// Add invoices list
+$sql.= " ,(SELECT GROUP_CONCAT(f.ref) FROM  `".MAIN_DB_PREFIX."paiement_facture` AS pf 
+LEFT JOIN `".MAIN_DB_PREFIX."facture` AS f ON f.rowid = pf.fk_facture WHERE pf.fk_paiement = p.rowid) AS 'invoices' ";
+
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -601,6 +607,7 @@ $sql .= " ".MAIN_DB_PREFIX."bank as b";
 if (!empty($extrafields->attributes[$extrafieldsobjectkey]['label']) && is_array($extrafields->attributes[$extrafieldsobjectkey]['label']) && count($extrafields->attributes[$extrafieldsobjectkey]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$extrafieldsobjectkey."_extrafields as ef on (b.rowid = ef.fk_object)";
 }
+$sql.=" LEFT JOIN `".MAIN_DB_PREFIX."paiement` AS p ON b.rowid = p.fk_bank";
 
 // Add fields from hooks
 $parameters = array();
@@ -1154,6 +1161,10 @@ if ($resql) {
 	if (!empty($arrayfields['bu.label']['checked'])) {
 		print '<td class="liste_titre"><input type="text" class="flat maxwidth75" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty_user).'"></td>';
 	}
+	// Invoices
+	if (!empty($arrayfields['invoices']['checked'])) {
+		print '<td class="liste_titre"></td>';
+	}
 	// Ref
 	if (!empty($arrayfields['ba.ref']['checked'])) {
 		print '<td class="liste_titre">';
@@ -1254,6 +1265,9 @@ if ($resql) {
 	if (!empty($arrayfields['bu.label']['checked'])) {
 		print_liste_field_titre($arrayfields['bu.label']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 		$totalarray['nbfield']++;
+	}
+	if (!empty($arrayfields['invoices']['checked'])) {
+		print_liste_field_titre($arrayfields['invoices']['label'], $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['ba.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['ba.ref']['label'], $_SERVER['PHP_SELF'], 'ba.ref', '', $param, '', $sortfield, $sortorder);
@@ -1771,6 +1785,26 @@ if ($resql) {
 				$totalarray['nbfield']++;
 			}
 		}
+		
+        // invoices
+        if (!empty($arrayfields['invoices']['checked'])) {
+            print '<td class="nowrap">';
+            if (!empty($objp->invoices)) {
+                $invoices = explode(',', $objp->invoices);
+                foreach ($invoices as $InvRef) {
+                    $tmpInv = new Facture($db);
+                    if ($tmpInv->fetch('', $InvRef) > 0)
+                        print $tmpInv->getNomUrl(1) . ' ';
+                    else
+                        print $InvRef;
+                }
+            } 
+            print "</td>\n";
+            if (!$i) {
+                $totalarray['nbfield']++;
+                $posconciliatecol = $totalarray['nbfield'];
+            }
+        }
 
 		// Bank account
 		if (!empty($arrayfields['ba.ref']['checked'])) {
