@@ -900,11 +900,47 @@ if (empty($reshook)) {
 		$close_code = GETPOST("close_code", 'restricthtml');
 		$close_note = GETPOST("close_note", 'restricthtml');
 		if ($close_code) {
-			$result = $object->setPaid($user, $close_code, $close_note);
-			if ($result < 0) {
-				setEventMessages($object->error, $object->errors, 'errors');
-			} else {
-				$object->fetch($object->id);	// Reload properties
+			// if VatRefund
+			if (isModEnabled('tax') && $close_code == $object::CLOSECODE_WITHHOLDINGTAX) {
+				require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
+				$resteapayer = GETPOSTFLOAT("resteapayer");
+				$amount = (double) ($resteapayer > 0 ? $resteapayer * -1 : $resteapayer);
+				if ($amount < 0) {
+					$db->begin();
+					$tempTva = new Tva($db);
+					$tempTva->datev = $object->date;
+					$tempTva->datep = $object->date;
+					$tempTva->amount = $amount;
+					$tempTva->label = $langs->trans('WithholdingTax') . ' - ' . $object->ref;
+					//$tempTva->paye = 1;
+					$valid = $tempTva->getIdForLabel($tempTva->label);
+					if (!$valid) {
+						$ret = $tempTva->create($user);
+						if ($ret < 0) {
+							$error++;
+						} else {
+							$tempTva->setPaid($user);
+						}
+						if (empty($error)) {
+							$db->commit();
+						} else {
+							setEventMessages($tempTva->error, $tempTva->errors, 'errors');
+							$db->rollback();
+						}
+					} else {
+						$error++;
+						setEventMessages($langs->trans('LabelWithholdingExist'), $tempTva->errors, 'errors');
+						$db->rollback();
+					}
+				}
+			}
+			if (!$error) {
+				$result = $object->setPaid($user, $close_code, $close_note);
+				if ($result < 0) {
+					setEventMessages($object->error, $object->errors, 'errors');
+				} else {
+					$object->fetch($object->id);	// Reload properties
+				}
 			}
 		} else {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Reason")), null, 'errors');
@@ -3481,7 +3517,7 @@ if (empty($reshook)) {
 		$id = $facid;
 	}
 	if (!empty($object->id) && $action == 'send') {
-		// load sumpayed, sumdeposit, sumcreditnote that can be used in email templates
+		// load totalpaid, totaldeposits, totalcreditnotes that can be used in email templates
 		$object->getSommePaiement(-1);
 		$object->getSumCreditNotesUsed(-1);
 		$object->getSumDepositsUsed(-1);
@@ -4345,7 +4381,26 @@ if ($action == 'create') {
 			$thirdparty = $soc;	// used by object_discounts.tpl.php
 			$discount_type = 0;	// used by object_discounts.tpl.php
 			$backtopage = $_SERVER["PHP_SELF"].'?socid='.$thirdparty->id.'&action='.$action.'&origin='.urlencode((string) (GETPOST('origin'))).'&originid='.urlencode((string) (GETPOSTINT('originid')));
-			include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
+
+			// loading object_discounts.tpl.php from module core/tpl if exists
+			$defaulttpldir = '/core/tpl';
+			$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
+			foreach ($dirtpls as $module => $reldir) {
+				$res = 0;
+				if (!empty($module)) {
+					$tpl = dol_buildpath($reldir.'/object_discounts.tpl.php');
+				} else {
+					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/object_discounts.tpl.php';
+				}
+				if (file_exists($tpl)) {
+					if (empty($conf->file->strict_mode)) {
+						$res = @include $tpl;
+					} else {
+						$res = include $tpl;
+					}
+				}
+				if ($res) { break; }
+			}
 
 			print '</td></tr>';
 		}
@@ -4742,7 +4797,7 @@ if ($action == 'create') {
 
 	$head = facture_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'), -1, 'bill');
+	print dol_get_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'), -1, $object->picto);
 
 	$formconfirm = '';
 
@@ -5000,7 +5055,7 @@ if ($action == 'create') {
 			2 => array('type' => 'separator')
 		);
 		// Incomplete payment. We ask if reason = discount or other
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidPartially', $object->ref), 'confirm_paid_partially', $formquestion, "yes", 1, 400, 600);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id.'&resteapayer='.((float) $resteapayer), $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidPartially', $object->ref), 'confirm_paid_partially', $formquestion, "yes", 1, 400, 600);
 	}
 
 	// Confirmation of status abandoned
@@ -5279,7 +5334,26 @@ if ($action == 'create') {
 		$thirdparty = $soc;
 		$discount_type = 0;
 		$backtopage = $_SERVER["PHP_SELF"].'?facid='.$object->id;
-		include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
+		$defaulttpldir = '/core/tpl';
+		// loading object_discounts.tpl.php from module core/tpl if exists
+		$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
+		foreach ($dirtpls as $module => $reldir) {
+			$res = 0;
+			if (!empty($module)) {
+				$tpl = dol_buildpath($reldir.'/object_discounts.tpl.php');
+			} else {
+				$tpl = DOL_DOCUMENT_ROOT.$reldir.'/object_discounts.tpl.php';
+			}
+			if (file_exists($tpl)) {
+				if (empty($conf->file->strict_mode)) {
+					$res = @include $tpl;
+				} else {
+					$res = include $tpl;
+				}
+			}
+			if ($res) { break; }
+		}
+
 		print '</td></tr>';
 
 		// Date invoice

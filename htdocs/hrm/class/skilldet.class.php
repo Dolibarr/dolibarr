@@ -179,7 +179,7 @@ class Skilldet extends CommonObjectLine
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 
@@ -192,12 +192,6 @@ class Skilldet extends CommonObjectLine
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
-
-		// Example to show how to set values of fields definition dynamically
-		/*if ($user->rights->hrm->skilldet->read) {
-			$this->fields['myfield']['visible'] = 1;
-			$this->fields['myfield']['noteditable'] = 0;
-		}*/
 
 		// Unset fields that are disabled
 		foreach ($this->fields as $key => $val) {
@@ -243,7 +237,8 @@ class Skilldet extends CommonObjectLine
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
-		global $langs, $extrafields;
+		global $extrafields;
+
 		$error = 0;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -481,7 +476,7 @@ class Skilldet extends CommonObjectLine
 	 */
 	public function validate($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
@@ -950,7 +945,7 @@ class Skilldet extends CommonObjectLine
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$result = 0;
 		$includedocgeneration = 0;

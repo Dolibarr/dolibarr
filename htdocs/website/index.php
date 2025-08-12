@@ -4543,7 +4543,7 @@ if ($action == 'createsite') {
 	   $head[$h][2] = 'card';
 	$h++;
 
-	print dol_get_fiche_head($head, 'card', '', -1, 'globe');
+	print dol_get_fiche_head($head, 'card', '', -1, 'website');
 	*/
 	if ($action == 'createcontainer') {
 		print load_fiche_titre($langs->trans("AddWebsite"));
@@ -4700,7 +4700,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 	   $head[$h][2] = 'card';
 	$h++;
 
-	print dol_get_fiche_head($head, 'card', '', -1, 'globe');
+	print dol_get_fiche_head($head, 'card', '', -1, 'website');
 	*/
 	if ($action == 'createcontainer') {
 		print load_fiche_titre($langs->trans("AddPage"));

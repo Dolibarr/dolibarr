@@ -6,6 +6,7 @@
  * Copyright (C) 2018-2025  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					 <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	    Nick Fragoulis
+ * Copyright (C) 2025       Joachim Küter        <git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -806,7 +807,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("EscompteOfferedShort"), $useborder, 'L', true);
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 0, $outputlangs), $useborder, 'R', true);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 0, $outputlangs), $useborder, 'R', true);
 
 				$resteapayer = 0;
 			}

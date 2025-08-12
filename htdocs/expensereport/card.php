@@ -1257,9 +1257,6 @@ if (empty($reshook)) {
 						$tmpuser->fetch($object->fk_user_author);
 						$newlang = $tmpuser->lang;
 					}
-					if (empty($newlang)) {
-						$newlang = $langs->defaultlang;
-					}
 					if (!empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
@@ -1433,6 +1430,8 @@ if (empty($reshook)) {
 					unset($fk_project);
 					unset($date);
 				}
+
+				$action = '';
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
@@ -2445,8 +2444,8 @@ if ($action == 'create') {
 
 						// Select project
 						if (isModEnabled('project')) {
-							print '<td>';
-							$formproject->select_projects(-1, (string) $line->fk_project, 'fk_project', 0, 0, $projectRequired ? 0 : 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
+							print '<td class="nowraponall">';
+							print $formproject->select_projects(-1, (string) $line->fk_project, 'fk_project', 0, 0, $projectRequired ? 0 : 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth300');
 							print '</td>';
 						}
 

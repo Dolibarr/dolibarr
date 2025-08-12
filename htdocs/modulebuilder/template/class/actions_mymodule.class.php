@@ -330,7 +330,7 @@ class ActionsMyModule extends CommonHookActions
 	 * @param	array<string,mixed>	$parameters		Array of parameters
 	 * @param	CommonObject		$object			The object to process (an invoice if you are in invoice module, a propale in propale's module, etc...)
 	 * @param	string				$action			'add', 'update', 'view'
-	 * @param	Hookmanager			$hookmanager	Hookmanager
+	 * @param	HookManager			$hookmanager	Hookmanager
 	 * @return	int									Return integer <0 if KO,
 	 *												=0 if OK but we want to process standard actions too,
 	 *												>0 if OK and we want to replace standard actions.

@@ -66,6 +66,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 		$this->db = $db;
 		$this->name = "ODT templates";
 		$this->description = $langs->trans("DocumentModelOdt");
+		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 		$this->scandir = 'COMMANDE_ADDON_PDF_ODT_PATH'; // Name of constant that is used to save list of directories to scan
 
 		// Page size for A4 format
@@ -116,6 +117,8 @@ class doc_generic_order_odt extends ModelePDFCommandes
 
 		$form = new Form($this->db);
 
+		$odtPath = trim(getDolGlobalString('COMMANDE_ADDON_PDF_ODT_PATH'));
+
 		$texte = $this->description.".<br>\n";
 		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">';
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
@@ -127,7 +130,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 		// List of directories area
 		$texte .= '<tr><td>';
 		$texttitle = $langs->trans("ListOfDirectories");
-		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', trim(getDolGlobalString('COMMANDE_ADDON_PDF_ODT_PATH'))));
+		$listofdir = explode(',', preg_replace('/[\r\n]+/', ',', $odtPath));
 		$listoffiles = array();
 		foreach ($listofdir as $key => $tmpdir) {
 			$tmpdir = trim($tmpdir);
@@ -151,35 +154,38 @@ class doc_generic_order_odt extends ModelePDFCommandes
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
 
-		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
-		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
-		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
-		$texte .= getDolGlobalString('COMMANDE_ADDON_PDF_ODT_PATH');
-		$texte .= '</textarea>';
-		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
-		$texte .= '<br></div></div>';
-
 		// Scan directories
 		$nbofiles = count($listoffiles);
-		if (getDolGlobalString('COMMANDE_ADDON_PDF_ODT_PATH')) {
+		if (!empty($odtPath)) {
 			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= count($listoffiles);
 			//$texte.=$nbofiles?'</a>':'';
-			$texte .= '</b>';
+			$texte .= '</b><br>';
 		}
 
 		if ($nbofiles) {
 			$texte .= '<div id="div_'.get_class($this).'" class="hiddenx">';
 			// Show list of found files
 			foreach ($listoffiles as $file) {
-				$texte .= '- '.$file['name'].' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=orders/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a>';
+				$texte .= '- '.$file['name'];
+				$texte .= ' <a href="'.DOL_URL_ROOT.'/document.php?modulepart=doctemplates&file=orders/'.urlencode(basename($file['name'])).'">'.img_picto('', 'listlight').'</a>';
 				$texte .= ' &nbsp; <a class="reposition" href="'.$_SERVER["PHP_SELF"].'?modulepart=doctemplates&keyforuploaddir=COMMANDE_ADDON_PDF_ODT_PATH&action=deletefile&token='.newToken().'&file='.urlencode(basename($file['name'])).'">'.img_picto('', 'delete').'</a>';
 				$texte .= '<br>';
 			}
 			$texte .= '</div>';
 		}
+
+		$texte .= '<br>';
+		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
+		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
+		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
+		$texte .= $odtPath;
+		$texte .= '</textarea>';
+		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
+		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
+		$texte .= '<br></div></div>';
+
 		// Add input to upload a new template file.
 		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
 		$maxfilesizearray = getMaxFileSizeArray();
@@ -189,7 +195,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 		}
 		$texte .= ' <input type="file" name="uploadfile">';
 		$texte .= '<input type="hidden" value="COMMANDE_ADDON_PDF_ODT_PATH" name="keyforuploaddir">';
-		$texte .= '<input type="submit" class="button reposition smallpaddingimp" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
+		$texte .= '<input type="submit" class="button smallpaddingimp reposition" value="'.dol_escape_htmltag($langs->trans("Upload")).'" name="upload">';
 		$texte .= '</div>';
 
 		$texte .= '</td>';
@@ -204,7 +210,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Function to build pdf onto disk
+	 *  Function to build a document on disk using the generic odt module.
 	 *
 	 *	@param		Commande	$object				Object source to build document
 	 *  @param		Translate	$outputlangs		Lang output object

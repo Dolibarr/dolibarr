@@ -1329,7 +1329,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
  */
 function unActivateModule($value, $requiredby = 1)
 {
-	global $db, $modules, $conf;
+	global $db;
 
 	// Check parameters
 	if (empty($value)) {

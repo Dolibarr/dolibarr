@@ -121,8 +121,8 @@ class box_commandes extends ModeleBoxes
 			$result = $this->db->query($sql);
 			if ($result) {
 				$num = $this->db->num_rows($result);
-				$line = 0;
 
+				$line = 0;
 				while ($line < $num) {
 					$objp = $this->db->fetch_object($result);
 					$date = $this->db->jdate($objp->date_commande);
