@@ -47,6 +47,8 @@ $note_public  = 'note_public';
 $note_private = 'note_private';
 
 if ($module == "product") {
+	'@phan-var-force Product $object';
+	/** @var Product $object */
 	$module = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
 }
 $colwidth = (isset($colwidth) ? $colwidth : (empty($cssclass) ? '25' : ''));
