@@ -803,7 +803,7 @@ if ($object->fetch($id) >= 0) {
 		}
 
 		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-		$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+		$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
 		$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 		$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -814,7 +814,7 @@ if ($object->fetch($id) >= 0) {
 		print '<tr class="liste_titre_filter">';
 
 		// Action column
-		if ($conf->main_checkbox_left_column) {
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="liste_titre maxwidthsearch">';
 			$searchpicto = $form->showFilterButtons('left');
 			print $searchpicto;
@@ -857,7 +857,7 @@ if ($object->fetch($id) >= 0) {
 		print '</td>';
 
 		// Action column
-		if (empty($conf->main_checkbox_left_column)) {
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="liste_titre maxwidthsearch">';
 			$searchpicto = $form->showFilterButtons();
 			print $searchpicto;
