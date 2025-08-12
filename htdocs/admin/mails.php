@@ -1150,7 +1150,7 @@ if ($action == 'edit') {
 				print info_admin($langs->trans("SPFAndDMARCInformation").' :<br>'.$text, 0, 0, '1', '');
 			}
 		} else {
-			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=testsetup">'.$langs->trans("ClickHereToCheckSPFDMARCForSetup").'</a>';
+			print img_picto('', 'info', 'class="pictofixedwidth"').'<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=testsetup">'.$langs->trans("ClickHereToCheckSPFDMARCForSetup").'...</a>';
 			print '<br><br>';
 		}
 	}

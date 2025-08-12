@@ -3517,7 +3517,7 @@ if (empty($reshook)) {
 		$id = $facid;
 	}
 	if (!empty($object->id) && $action == 'send') {
-		// load sumpayed, sumdeposit, sumcreditnote that can be used in email templates
+		// load totalpaid, totaldeposits, totalcreditnotes that can be used in email templates
 		$object->getSommePaiement(-1);
 		$object->getSumCreditNotesUsed(-1);
 		$object->getSumDepositsUsed(-1);

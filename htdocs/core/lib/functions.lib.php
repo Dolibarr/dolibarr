@@ -10502,7 +10502,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 		$already_payed_all = 0;
 		if (is_object($object) && ($object instanceof Facture)) {
-			$already_payed_all = $object->sumpayed + $object->sumdeposit + $object->sumcreditnote;
+			$already_payed_all = $object->totalpaid + $object->totaldeposits + $object->totalcreditnotes;
 		}
 
 		$substitutionarray['__AMOUNT_EXCL_TAX__'] = is_object($object) ? $object->total_ht : '';
