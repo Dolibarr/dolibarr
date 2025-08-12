@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,7 +138,7 @@ if ($line->qty > 0) { ?>
 	</td>
 	<?php
 	// Handling if situation invoices conf is enabled
-	if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
+	if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 		print '<td class="linecolcycleref nowrap right"></td>';
 		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 			print '<td  class="nowrap right"></td>';
