@@ -366,7 +366,7 @@ if ($action == 'install' && $allowonlineinstall) {
 				}
 			}
 		} else {
-			setEventMessages($langs->trans("ErrorFailToRenameFile", $tmpfile, $newfile), null, 'errors');
+			setEventMessages($langs->trans("ErrorFailToRenameFile", $tmpfile, $newfile).' - code = '.$result, null, 'errors');
 			$error++;
 		}
 	}
