@@ -2681,7 +2681,7 @@ class ExtraFields
 	 * @param	int			$todefaultifmissing 1=Set value to the default value in database if value is mandatory and missing
 	 * @return	int								1 if array_options set, 0 if no value, -1 if error (field required missing for example)
 	 */
-	public function setOptionalsFromPost($extralabels, &$object, $onlykey = '', $todefaultifmissing = 0)
+	public function setOptionalsFromPost($extralabels, $object, $onlykey = '', $todefaultifmissing = 0)
 	{
 		global $langs;
 
