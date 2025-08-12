@@ -176,6 +176,8 @@ class FormListWebPortal
 					$search[$key . '_dtend'] = dol_mktime(23, 59, 59, $dateEndMonth, $dateEndDay, $dateEndYear);
 				}
 				*/
+				$search[$key . '_dtstart'] = dol_mktime(0, 0, 0, GETPOSTINT('search_'.$key.'_dtstartmonth'), GETPOSTINT('search_'.$key.'_dtstartday'), GETPOSTINT('search_'.$key.'_dtstartyear'));
+				$search[$key . '_dtend'] = dol_mktime(23, 59, 59, GETPOSTINT('search_'.$key.'_dtendmonth'), GETPOSTINT('search_'.$key.'_dtendday'), GETPOSTINT('search_'.$key.'_dtendyear'));
 				$search[$key . '_dtstartmonth'] = GETPOSTINT('search_' . $key . '_dtstartmonth');
 				$search[$key . '_dtstartday'] = GETPOSTINT('search_' . $key . '_dtstartday');
 				$search[$key . '_dtstartyear'] = GETPOSTINT('search_' . $key . '_dtstartyear');
