@@ -139,40 +139,15 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 * @var float
 	 */
-	public $totalpaid;			// duplicate with sumpayed
+	public $totalpaid;
 	/**
 	 * @var int|float
 	 */
-	public $totaldeposits;		// duplicate with sumdeposit
+	public $totaldeposits;
 	/**
 	 * @var int|float
 	 */
-	public $totalcreditnotes;	// duplicate with sumcreditnote
-
-	/**
-	 * @var int|float
-	 */
-	public $sumpayed;
-	/**
-	 * @var int|float
-	 */
-	public $sumpayed_multicurrency;
-	/**
-	 * @var int|float
-	 */
-	public $sumdeposit;
-	/**
-	 * @var int|float
-	 */
-	public $sumdeposit_multicurrency;
-	/**
-	 * @var int|float
-	 */
-	public $sumcreditnote;
-	/**
-	 * @var int|float
-	 */
-	public $sumcreditnote_multicurrency;
+	public $totalcreditnotes;
 
 	/**
 	 * @var int|float|string	May be used for status
@@ -336,7 +311,7 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 * 	Return amount of payments already done. This must include ONLY the record into the payment table.
 	 *  Payments done using discounts, credit notes, etc are not included.
-	 *  This also set ->sumpayed and ->sumpayed_multicurrency
+	 *  This also set ->totalpaid and ->totalpaid_multicurrency
 	 *
 	 *  @param 		int<-1,1>		$multicurrency 		Return multicurrency_amount instead of amount. -1=Return both.
 	 *	@return		float|int|array{alreadypaid:float,alreadypaid_multicurrency:float}	Amount of payment already done, <0 and set ->error if KO
@@ -365,14 +340,14 @@ abstract class CommonInvoice extends CommonObject
 
 			if ($obj) {
 				if ($multicurrency < 0) {
-					$this->sumpayed = $obj->amount;
-					$this->sumpayed_multicurrency = $obj->multicurrency_amount;
+					$this->totalpaid = $obj->amount;
+					$this->totalpaid_multicurrency = $obj->multicurrency_amount;
 					return array('alreadypaid' => (float) $obj->amount, 'alreadypaid_multicurrency' => (float) $obj->multicurrency_amount);
 				} elseif ($multicurrency) {
-					$this->sumpayed_multicurrency = $obj->multicurrency_amount;
+					$this->totalpaid_multicurrency = $obj->multicurrency_amount;
 					return (float) $obj->multicurrency_amount;
 				} else {
-					$this->sumpayed = $obj->amount;
+					$this->totalpaid = $obj->amount;
 					return (float) $obj->amount;
 				}
 			} else {
@@ -407,9 +382,9 @@ abstract class CommonInvoice extends CommonObject
 
 		if ($result >= 0) {
 			if ($multicurrency) {
-				$this->sumdeposit_multicurrency = $result;
+				$this->totaldeposits_multicurrency = $result;
 			} else {
-				$this->sumdeposit = $result;
+				$this->totaldeposits = $result;
 			}
 
 			return $result;
@@ -434,9 +409,9 @@ abstract class CommonInvoice extends CommonObject
 		$result = $discountstatic->getSumCreditNotesUsed($this, $multicurrency);
 		if (is_numeric($result)) {
 			if ($multicurrency) {
-				$this->sumcreditnote_multicurrency = $result;
+				$this->totalcreditnotes_multicurrency = $result;
 			} else {
-				$this->sumcreditnote = $result;
+				$this->totalcreditnotes = $result;
 			}
 
 			return $result;

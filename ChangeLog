@@ -14,6 +14,8 @@ WARNING:
 --------
 The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * The deprecated column egroupware_id has been dropped
+* The property $sumpayed (duplicated of $totalpaid), $sumdeposit (duplicate of $totaldeposits) and $sumcreditnote (duplicate of $totalcreditnotes) has
+  been removed (there are replaced with the property that was a duplication of (same for $sumpayed_multicurrency, $sumdeposit_multicurrency, $sumcreditnote_multicurrency).
 
 
 
