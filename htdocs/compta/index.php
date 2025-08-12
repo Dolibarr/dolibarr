@@ -534,7 +534,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 
 		$sql = "SELECT c.rowid, c.amount, c.date_ech, c.paye,";
 		$sql .= " cc.libelle as label,";
-		$sql .= " SUM(pc.amount) as sumpaid";
+		$sql .= " SUM(pc.amount) as totalpaid";
 		$sql .= " FROM (".MAIN_DB_PREFIX."c_chargesociales as cc, ".MAIN_DB_PREFIX."chargesociales as c)";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = c.rowid";
 		$sql .= " WHERE c.fk_type = cc.id";
@@ -572,7 +572,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 					if ($i >= $max) {
 						$othernb += 1;
 						$tot_ttc += $obj->amount;
-						$tot_paid += $obj->sumpaid;
+						$tot_paid += $obj->totalpaid;
 						$i++;
 						continue;
 					}
@@ -587,7 +587,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 					print '<td class="nowraponall">'.$chargestatic->getNomUrl(1).'</td>';
 					print '<td class="center">'.dol_print_date($db->jdate($obj->date_ech), 'day').'</td>';
 					print '<td class="nowrap right"><span class="amount">'.price($obj->amount).'</span></td>';
-					print '<td class="nowrap right"><span class="amount">'.price($obj->sumpaid).'</span></td>';
+					print '<td class="nowrap right"><span class="amount">'.price($obj->totalpaid).'</span></td>';
 					print '<td class="center">'.$chargestatic->getLibStatut(3).'</td>';
 					print '</tr>';
 

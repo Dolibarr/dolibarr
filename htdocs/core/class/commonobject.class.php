@@ -784,7 +784,7 @@ abstract class CommonObject
 
 	/**
 	 * @var	float		Amount already paid from getSommePaiement()
-	 * @see $alreadpaid, $sumpayed_multicurrency
+	 * @see $alreadpaid, $totalpaid_multicurrency
 	 */
 	public $totalpaid;
 
@@ -792,7 +792,7 @@ abstract class CommonObject
 	 * @var int|float	Amount already paid from getSommePaiement(), like $totalpaid, but in the foreign currency
 	 * @see $totalpaid, $alreadypaid
 	 */
-	public $sumpayed_multicurrency;
+	public $totalpaid_multicurrency;
 
 
 	/**
