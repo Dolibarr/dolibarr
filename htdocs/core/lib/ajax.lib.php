@@ -488,6 +488,14 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 	$tmpplugin = 'select2';
 	$msg = "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->
 		<script>
+			// full lowercase and delete accents
+			function normalizeString(str) {
+				return str
+					.normalize("NFD")
+					.replace(/[\u0300-\u036f]/g, "")
+					.toLowerCase();
+			}
+
 			$(document).ready(function () {
 				$(\''.(dol_escape_js(preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname)).'\').'.$tmpplugin.'({
 					dir: \'ltr\',';
@@ -501,9 +509,11 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 						if ($.trim(params.term) === "") {
 							return data;
 						}
-						keywords = (params.term).split(" ");
+						var term = normalizeString(params.term);
+						var text = normalizeString(data.text || "");
+						var keywords = term.split(" ");
 						for (var i = 0; i < keywords.length; i++) {
-							if (((data.text).toUpperCase()).indexOf((keywords[i]).toUpperCase()) == -1) {
+							if (text.indexOf(keywords[i]) === -1) {
 								return null;
 							}
 						}
