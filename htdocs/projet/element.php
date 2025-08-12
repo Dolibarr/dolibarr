@@ -233,11 +233,11 @@ if ($action == 'update_extras' && $permissiontoeditextra) {
 	}
 
 	if (!$error) {
-		// 	$result = $object->updateExtraField($attribute_name, 'PROJECT_MODIFY');
-		// 	if ($result < 0) {
-		// 		setEventMessages($object->error, $object->errors, 'errors');
-		// 		$error++;
-		// 	}
+		$result = $object->updateExtraField($attribute_name, 'PROJECT_MODIFY');
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$error++;
+		}
 	}
 
 	if ($error) {
