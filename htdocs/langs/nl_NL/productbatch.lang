@@ -51,3 +51,4 @@ CantMoveNonExistantSerial=Fout. U vraagt een verplaatsing op een record voor een
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Lottabel onvolledige runreparatie met parameter '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= voorraad correctie vereist vanwege uniek serienummer.
 ErrorBatchesNeedStockManagement=Fout. Een product met batch-/lotbeheer moet worden beheerd in voorraad.
+ForceBatchesNeedStockManagement=Een product met batch-/lotbeheer moet worden beheerd in voorraad (voorraad beheer forceren op ja)

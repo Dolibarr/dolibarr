@@ -51,3 +51,4 @@ CantMoveNonExistantSerial=Erro. Solicita un movemento nun rexistro para unha ser
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Reparación de execución incompleta da táboa de lote co parámetro '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Requírese corrección de stock porque o número de serie é único.
 ErrorBatchesNeedStockManagement=Erro. Un produto con xestión de lote/lote debe xestionarse en stock.
+ForceBatchesNeedStockManagement=Un produto con xestión de lotes debe xestionarse en existencias (xestión de stock forzada a si)
