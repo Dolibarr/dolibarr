@@ -220,30 +220,30 @@ if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->tabl
  */
 
 // Quick edit for extrafields
-// if ($action == 'update_extras' && $permissiontoeditextra) {
-// 	$error = 0;
-// 	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+if ($action == 'update_extras' && $permissiontoeditextra) {
+	$error = 0;
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
-// 	$attribute_name = GETPOST('attribute', 'aZ09');
+	// $attribute_name = GETPOST('attribute', 'aZ09');
 
-// 	// Fill array 'array_options' with data from update form
-// 	$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
-// 	if ($ret < 0) {
-// 		$error++;
-// 	}
+	// Fill array 'array_options' with data from update form
+	// $ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
+	// if ($ret < 0) {
+	// 	$error++;
+	// }
 
-// 	if (!$error) {
-// 		$result = $object->updateExtraField($attribute_name, 'PROJECT_MODIFY');
-// 		if ($result < 0) {
-// 			setEventMessages($object->error, $object->errors, 'errors');
-// 			$error++;
-// 		}
-// 	}
+	// if (!$error) {
+	// 	$result = $object->updateExtraField($attribute_name, 'PROJECT_MODIFY');
+	// 	if ($result < 0) {
+	// 		setEventMessages($object->error, $object->errors, 'errors');
+	// 		$error++;
+	// 	}
+	// }
 
-// 	if ($error) {
-// 		$action = 'edit_extras';
-// 	}
-// }
+	if ($error) {
+		$action = 'edit_extras';
+	}
+}
 
 
 /*
