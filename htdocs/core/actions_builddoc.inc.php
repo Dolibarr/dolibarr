@@ -34,7 +34,7 @@
  * @var Conf $conf
  * @var Translate $langs
  * @var User $user
- * @var CommonObject $object
+ * @var CommonObject|Societe $object
  *
  * @var string $action
  * @var int $id
