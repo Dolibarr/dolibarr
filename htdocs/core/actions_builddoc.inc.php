@@ -50,6 +50,7 @@
  */
 '
 @phan-var-force ?array<string,mixed> $moreparams
+@phan-var-force CommonObject|Societe $object
 ';
 
 if (!empty($permissioncreate) && empty($permissiontoadd)) {
