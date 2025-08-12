@@ -19,9 +19,9 @@
  */
 
 /**
- * @var CommonObject $object
- * @var CommonObject $this
- * @var CommonObjectLine $line
+ * @var Propal|Contrat|Commande|Facture|Expedition|Delivery|CommandeFournisseur|FactureFournisseur|SupplierProposal $object
+ * @var Propal|Contrat|Commande|Facture|Expedition|Delivery|CommandeFournisseur|FactureFournisseur|SupplierProposal $this
+ * @var CommonObjectLine|CommonInvoiceLine|CommonOrderLine|ExpeditionLigne|PropaleLigne $line
  * @var Conf $conf
  * @var Form $form
  * @var Societe $mysoc
@@ -35,8 +35,8 @@
 
 '
 @phan-var-force CommonObjectLine|CommonInvoiceLine|CommonOrderLine|ExpeditionLigne|PropaleLigne $line
-@phan-var-force CommonObject $this
-@phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|FactureFournisseur|FactureFournisseur|SupplierProposal $object
+@phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|CommandeFournisseur|FactureFournisseur|SupplierProposal $this
+@phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|CommandeFournisseur|FactureFournisseur|SupplierProposal $object
 @phan-var-force int $num
 ';
 
@@ -167,7 +167,7 @@ if ($line->qty > 0) { ?>
 	// Base colspan if there is no module activated to display line correctly
 	$colspan = 3;
 
-	if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
+	if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 		$colspan += 2;
 		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 			$colspan += 1;
@@ -253,7 +253,7 @@ if ($this->status == 0) {
 	echo '</a> </td>';
 
 	// Move up-down picto
-	if ($num > 1 && $conf->browser->layout != 'phone' && ((property_exists($this, 'situation_counter') && $this->situation_counter == 1) || empty($this->situation_cycle_ref)) && empty($disablemove)) {
+	if ($num > 1 && $conf->browser->layout != 'phone' && ((property_exists($this, 'situation_counter') && $this->situation_counter == 1) || (property_exists($this, 'situation_cycle_ref') && empty($this->situation_cycle_ref))) && empty($disablemove)) {
 		echo '<td class="linecolmove tdlineupdown center"';
 		if (!colorIsLight($line_color)) {
 			echo 'data-gripimg="grip_title.png"';
