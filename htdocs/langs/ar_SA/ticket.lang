@@ -57,7 +57,7 @@ Assigned=مسند
 NeedMoreInformation=بإنتظار رد المبلغ
 NeedMoreInformationShort=بانتظار الرد
 Waiting=انتظار
-SolvedClosed=محلول
+SolvedClosed=مغلق
 Deleted=محذوفة
 # Dict
 Severity=الأولوية
@@ -72,8 +72,10 @@ TicketPublicAccess=واجهة عامة لا تتطلب توثيق متاحة ع�
 TicketSetupDictionaries=انواع التذاكر ، الأولويات و الوسوم التحليلية متاحة عن طريق القواميس
 TicketParamModule=إعداد متغيرات الوحدة
 TicketParamMail=إعدادات البريد الإلكتروني
-TicketEmailNotificationFrom=بريد إلكتروني للمرسل لإشعار التذاكر (إنشاء تذكرة أو تحديث الرسائل)
-TicketEmailNotificationFromHelp=بريد المُرسِل الإلكتروني المُستخدَم لإرسال رسائل الإشعارات لإنشاء التذاكر أو إضافة الرسائل. على سبيل المثال: noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=قم بإخطار إنشاء التذكرة إلى عنوان البريد الإلكتروني هذا
 TicketEmailNotificationToHelp=إذا كان موجودًا، فسيتم إشعار عنوان البريد الإلكتروني هذا بإنشاء تذكرة (بالإضافة إلى أي مستلمين افتراضيين آخرين)
 TicketNewEmailBodyLabel=النص المرسل بعد إنشاء التذكرة
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=فقط التذاكر المسندة للمست
 TicketsActivatePublicInterface=تفعيل الواجهة العامة
 TicketsActivatePublicInterfaceHelp=الواجهة العامة تسمح لأي زائر بإنشاء تذكرة
 TicketsAutoAssignTicket=إسناد تلقائي للمستخدم الذي قام بإنشاء التذكرة
-TicketsAutoAssignTicketHelp=عند إنشاء تذكرة، يمكن تعيين المستخدم تلقائيًا إلى التذكرة (أمثلة: 0=لا يتم تعيينه تلقائيًا إلى التذكرة أبدًا، 1=يتم تعيينه تلقائيًا إلى التذكرة إذا لم يتم تعيين أي شخص، 2=يتم تعيينه تلقائيًا إلى التذكرة حتى إذا تم تعريف شخص ما).
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
 TicketAutoChangeStatusOnAnswer=تعيين حالة تلقائيًا عند الرد على تذكرة
 TicketAutoChangeStatusOnAnswerHelp=عندما يجيب المستخدم على تذكرة، سيتم تطبيق الحالة على التذكرة تلقائيًا
 TicketNumberingModules=وحدة ترقيم التذاكر
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=عرض التذاكر المفتوحة فقط
 TicketStatByStatus=التذاكر حسب الحالة
 OrderByDateAsc=ترتيب تصاعديا حسب التاريخ
 OrderByDateDesc=ترتيب تنازليا حسب التاريخ
-ShowAsConversation=عرض كقائمة محادثات
-MessageListViewType=عرض كقائمة جداول
 ConfirmMassTicketClosingSendEmail=إرسال رسائل البريد الإلكتروني تلقائيًا عند إغلاق التذاكر
 ConfirmMassTicketClosingSendEmailQuestion=هل تريد إخطار الأطراف الثالثة عند إغلاق هذه التذاكر؟
 # Ticket card

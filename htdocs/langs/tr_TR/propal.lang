@@ -125,3 +125,5 @@ Signed=imzalanmış
 SignedOnly=Sadece imzalı
 ExpeditionSigned=Gönderi imzalandı
 SignExpedition=Gönderiyi imzala
+PROPOSAL_SHOW_SHIPPING_ADDRESS=Teslimat adresini göster
+PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Bazı ülkelerde zorunlu gösterge (Fransa, ...)

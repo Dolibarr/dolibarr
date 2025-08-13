@@ -72,7 +72,7 @@ AccountancyAreaDescActionOnce=Амалҳои зерин одатан танҳо 
 AccountancyAreaDescActionOnceBis=Қадамҳои навбатӣ бояд анҷом дода шаванд, то дар оянда вақти шуморо сарфа карда, ба шумо ба таври худкор ҳисоби дурусти пешфарзро ҳангоми интиқоли маълумот дар баҳисобгирӣ пешниҳод кунанд.
 AccountancyAreaDescActionFreq=Амалҳои зерин одатан барои ширкатҳои хеле калон ҳар моҳ, ҳафта ё рӯз иҷро карда мешаванд ...
 AccountancyAreaDescJournalSetup=ҚАДАМИ %s: Мӯҳтавои рӯйхати маҷаллаи худро аз менюи %s тафтиш кунед
-AccountancyAreaDescChartModel=ҚАДАМИ %s: мавҷуд будани модели диаграммаи ҳисобро тафтиш кунед ё аз менюи %s эҷод кунед
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists for your country or create one from menu %s
 AccountancyAreaDescChart=ҚАДАМИ %s: Диаграммаи ҳисоби худро аз менюи %s интихоб кунед ва | ё пур кунед.
 AccountancyAreaDescFiscalPeriod=ҚАДАМИ %s: Давраи молиявиро муайян кунед, ки диапазони санаҳои қабулшударо барои эҷоди сабтҳои баҳисобгирӣ муайян мекунад. Барои ин, вуруди менюи %s-ро истифода баред.
 AccountancyAreaDescVat=ҚАДАМИ %s: Ҳисобҳои баҳисобгирии ҳар як Меъёрҳои андоз аз арзиши иловашударо муайян кунед. Барои ин, вуруди менюи %s -ро истифода баред.
@@ -275,7 +275,7 @@ HideOpeningBalance=Пинҳон кардани тавозуни кушод
 ShowSubtotalByGroup=Нишон додани маҷмӯа аз рӯи сатҳ
 Pcgtype=Гурӯҳи ҳисоб
 PcgtypeDesc=Гурӯҳи ҳисобҳо ҳамчун меъёрҳои пешакӣ муайяншудаи 'филтр' ва 'гурӯҳбандӣ' барои баъзе ҳисоботҳои баҳисобгирӣ истифода мешаванд. Масалан, 'ДАРОМАД' ё 'ХАРОҶО' ҳамчун гурӯҳҳо барои ҳисобҳои баҳисобгирии маҳсулот барои таҳияи гузориши хароҷот/даромад истифода мешаванд.
-AccountingCategoriesDesc=Гурӯҳи фармоишии ҳисобҳо метавонанд барои гурӯҳбандии ҳисобҳои баҳисобгирӣ ба як ном истифода шаванд, то истифодаи филтр ё сохтани ҳисоботҳои фармоиширо осон кунанд.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Оштӣ
 Centralized=Ҳисоби мутамарказ
 TotalVente=Маблағи умумии гардиш пеш аз андоз
@@ -319,7 +319,7 @@ NotReconciled=Оштӣ нашудааст
 WarningRecordWithoutSubledgerAreExcluded=Огоҳӣ, ҳама сатрҳо бидуни ҳисоби зерҳисоби муайяншуда филтр карда мешаванд ва аз ин намуд хориҷ карда мешаванд
 AccountRemovedFromCurrentChartOfAccount=Ҳисоби баҳисобгирӣ, ки дар нақшаи ҳисобҳои ҷорӣ мавҷуд нест
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=Огоҳӣ, ин саҳифа танҳо сабтҳои ба системаи ҳисобдорӣ гузаронидашударо дар бар мегирад.
-BookkeepingNumRefModelDesc = Рақами истинодро дар формати yyyyjjnnnn бармегардонад, ки дар он yyyy сол ва jj коди маҷалла аст, nnnn рақами пайдарпайи худкор афзоишёбанда вобаста ба сол ва коди маҷалла мебошад.
+BookkeepingNumRefModelDesc = Returns the reference number in the format yymmjjnnnnn where yy is the year, mm is the month and jj the journal code, nnnnn is a sequential auto-incrementing number depending on the year, the month and the journal code.
 BookkeepingNumberingModules = Моделҳои рақамгузории ҳисобдорӣ
 ## Admin
 BindingOptions=Имкониятҳои интиқол дар муҳосибӣ
@@ -389,6 +389,7 @@ Modelcsv_Gestinumv5=Содирот барои Gestinum (v5)
 Modelcsv_charlemagne=Содирот барои Aplim Charlemagne
 ChartofaccountsId=Нақшаи ҳисобҳо Id
 ExportToPdf = Содирот ба PDF
+ExportToCsv = Export to CSV
 PdfLedgerTitle = Ҳисобҳои ҳисобдорӣ
 PdfBalanceTitle = Бақияи ҳисобдорӣ
 PdfBookkeepingTitle = Маҷаллаҳо
@@ -440,7 +441,7 @@ AccountRemovedFromGroup=Ҳисоб аз гурӯҳ хориҷ карда шуд
 SaleLocal=Фурӯши маҳаллӣ
 SaleExport=Фурӯши содирот
 SaleEEC=Фурӯш дар EEC
-SaleEECWithVAT=Фурӯш дар EEC бо андоз аз арзиши иловашуда беэътибор аст, бинобар ин мо фикр мекунем, ки ин фурӯши дохиликоммуналӣ НЕСТ ва ҳисоби пешниҳодшуда ҳисоби стандартии маҳсулот аст.
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=Фурӯш дар EEC бидуни андоз аз арзиши иловашуда сурат мегирад, аммо ID-и ААИ аз ҷониби сеюм муайян карда нашудааст. Мо ба ҳисоби фурӯши стандартӣ бармегардем. Шумо метавонед ID-и ААИ-и шахси сеюмро ислоҳ кунед ё агар лозим бошад, ҳисоби маҳсулоте, ки барои ҳатмӣ пешниҳод шудааст, тағир диҳед.
 AnySale=Ҳар гуна фурӯш
 ForbiddenTransactionAlreadyExported=Манъ: Муомилот тасдиқ ва/ё содирот шудааст.
@@ -485,7 +486,7 @@ AccountancyClosureConfirmClose=Оё мутмаин ҳастед, ки мехоҳ
 AccountancyClosureConfirmAccountingReversal=Шумо мутмаин ҳастед, ки мехоҳед сабтҳоро барои "Даромади тақсимнашуда" сабт кунед?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=Муомилот барои (doc_type=%s, doc_id=%s, doc_det=%s) аллакай сабт шудааст
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Баъзе қадамҳои ҳатмии насбкунӣ иҷро нашудаанд, лутфан онҳоро анҷом диҳед
@@ -508,7 +509,7 @@ ErrorNoFiscalPeriodActiveFound=Ягон давраи молиявии фаъол
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Санаи ҳуҷҷати ҳисобдорӣ дар давраи молиявии фаъол нест
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Санаи ҳуҷҷати баҳисобгирии муҳосибӣ дар давраи молиявии пӯшида аст
 Error_BOOKKEEPING_ADDON_NotDefined=Хатогӣ, қоидаи рақамгузории баҳисобгирии муҳосибӣ дар танзимоти умумии модули муҳосибӣ муайян карда нашудааст
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Кӯшиш кунед, ки дар китоб барои %s амалиёти ғайримувозинатӣ ворид кунед (Идентификатсияи пардохт: %s). Бекор карда шуд. Албатта хато.
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
 ProductUsage=Истифодаи маҳсулот ё хидмат
 ## Import
 ImportAccountingEntries=Сабтҳои баҳисобгирӣ
@@ -537,15 +538,15 @@ ExpenseReportJournal=Ҳисоботи хароҷоти рӯзнома
 DocsAlreadyExportedAreIncluded=Ҳуҷҷатҳои аллакай содиршуда дохил карда шудаанд
 ClickToShowAlreadyExportedLines=Барои нишон додани хатҳои аллакай содиршуда клик кунед
 NAccounts=ҳисобҳои %s
-ACCOUNTING_USE_TREASURY_Desc=Ин усули ҳисобдории хазинадорӣ мебошад. Мо танҳо пардохтҳо ва санаи онҳоро барои ҳисобдорӣ истифода мебарем.
-ACCOUNTING_USE_NON_TREASURY_Desc=Ин усули ҳисобдории воқеӣ аст. Мо барои баҳисобгирии муҳосибӣ ҳам ҳисобнома-фактураҳо ва ҳам пардохтҳоро истифода мебарем.
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
+ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
 PieceDesc=Истинод ба ҳуҷҷати ибтидоӣ, ки ин муомилоти бонкиро тавлид мекунад (Илномаи ҳисобнома, ҳисоботи хароҷот, ...)
 BankTransactionRef=Истинод барои амалиёти бонкӣ (Ихтиёрӣ, ID-и худкор аллакай тавлид шудааст)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=Ин сабти муҳосиботро клон мекунад (ҳама сатрҳои ба ин сабти муҳосибӣ алоқаманд клон карда мешаванд). Оё мутмаин ҳастед, ки мехоҳед сабтҳои интихобшудаи %s-ро клон кунед?
 ConfirmMassCloneBookkeepingWriting=Клонкунии оммавиро тасдиқ кунед
-ConfirmMassReturnAccountBookkeepingWriting=Тасдиқи нобудшавии оммавӣ
-ConfirmMassReturnAccountBookkeepingWritingQuestion=Ин сабти баҳисобгириро хомӯш мекунад (ҳамаи сатрҳои ба ин сабти муҳосибӣ алоқаманд хомӯш карда мешаванд). Оё мутмаин ҳастед, ки мехоҳед аз сабтҳои интихобшудаи %s гузаред?
+ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
+ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=Ин ҳисоби ҳамаи сатрҳои интихобшударо тағир медиҳад.
 confirmMassAssignAccountBookkeepingWritingConfirm=Тағироти ҳисоби оммавиро тасдиқ кунед
 CloningSuccess=Клонкунии бомуваффақияти транзаксия: %s
@@ -560,6 +561,6 @@ NoAccountsChangedWithAccountNumber=Муомилот бо рақамҳои ҳис
 HasAlreadyBeenReversed=аллакай баргардонида шудааст
 ErrorWhileCreating=Хатогӣ ҳангоми эҷод %s
 ReturnAccount=Бозгашт
-Clone=Cloner
+Clone=Clone
 AlreadyReturnedAccount=Вуруди n°%s аллакай баргардонида шудааст
 SuccessReturnedAccount=Вуруди n°%s баргардонида шуд

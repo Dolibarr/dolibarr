@@ -64,7 +64,7 @@ YouCanCreatePageOrImportTemplate=Saate luua uue lehe või importida täieliku ve
 SyntaxHelp=Abi konkreetsete süntaksinõuannete kohta
 YouCanEditHtmlSourceckeditor=HTML-i lähtekoodi saab muuta redaktoris nupu „Allikas” abil.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> Sellesse lähteteksti saab PHP-koodi lisada siltide <strong>&lt;?php ?&gt;</strong> abil. Saadaval on järgmised globaalsed muutujad: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> Saate lisada ka teise lehe/konteineri sisu järgmise süntaksiga:<br><strong>&lt;?php includeContainer('lisatava_konteineri_alias'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> Saate suunata ümber teisele lehele/konteinerile järgmise süntaksiga (märkus: ärge väljastage enne suunamist sisu):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>Ümbersuunamise saate teha ka GET-parameetritega:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> Teisele lehele lingi lisamiseks kasutage järgmist süntaksit:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;minu link&lt;a&gt;</strong><br><br>
-YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> You can dynamically set <strong>SEO title and meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>$__PAGE_TITLE__ = "Title value …";</code><br> <code>$__PAGE_KEYWORDS__ = "keyword1, keyword2, keyword3 …"; // Comma separated</code><br> <code>$__PAGE_DESC__ = "Description …";</code><br>
+YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> You can dynamically set <strong>SEO title and meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>define('__SEO_PAGE_TITLE__', "Title value …");</code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'keyword1, keyword2, keyword3 …');</code><br> <code>define('__SEO_PAGE_DESC__', "Description …");</code><br>
 YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> Kausta <strong> salvestatud faili </strong> allalaadimiseks lingi <strong> lisamiseks kasutage kausta <strong>document.php</strong> wrapper:<br>Näiteks faili jaoks, mis on lisatud kausta documents/ecm (vajab logimist), on süntaks järgmine:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]failinimi.ext"&gt;</strong><br>Dokumentidesse/meediatesse (avalik avatud kataloog) paigutatud faili süntaks on järgmine:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]failinimi.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=Jagamislingi kaudu jagatud faili puhul (avatud juurdepääs faili jagamisräsivõtme abil) on süntaks järgmine:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
 YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> <strong>pildi</strong> lisamiseks kataloogi <strong>meediafailid</strong> (avalikuks juurdepääsuks avatud kataloog), kasutage suhtelist teed, mis algab <strong>/medias</strong>-ga, näiteks:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
@@ -81,7 +81,7 @@ LanguageMustNotBeSameThanClonedPage=Sa kloonid lehe tõlkena. Uue lehe keel peab
 ParentPageId=Ülemlehe ID
 WebsiteId=Veebisaidi ID
 CreateByFetchingExternalPage=Loo leht/konteiner, laadides lehe väliselt URL-ilt...
-OrEnterPageInfoManually=Või loo leht nullist või lehe mallist...
+OrEnterPageInfoManually=Create page from scratch or from a page template...
 FetchAndCreate=Too ja loo
 ExportSite=Veebisaidi eksport
 ImportSite=Veebisaidi malli importimine
@@ -99,7 +99,7 @@ SorryWebsiteIsCurrentlyOffLine=Vabandust, see veebileht pole hetkel saadaval. Pa
 WEBSITE_USE_WEBSITE_ACCOUNTS=Luba kolmandate osapoolte veebisaidi kontode tabel
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Luba tabelil salvestada iga kolmanda osapoole veebisaidi kontod (sisselogimine/parool)
 YouMustDefineTheHomePage=Esmalt peate määrama vaikimisi avalehe
-OnlyEditionOfSourceForGrabbedContentFuture=Hoiatus: Veebilehe loomine välise veebilehe importimise teel on reserveeritud kogenud kasutajatele. Sõltuvalt lähtelehe keerukusest võib impordi tulemus algsest erineda. Samuti, kui lähteleht kasutab tavalisi CSS-stiile või vastuolulist JavaScripti, võib see sellel lehel töötades veebisaidi redaktori välimust või funktsioone rikkuda. See meetod on kiirem viis lehe loomiseks, kuid soovitatav on luua uus leht nullist või soovitatud lehemalli abil.<br>Pange tähele ka seda, et tekstisisene redaktor ei pruugi õigesti töötada, kui seda kasutatakse haaratud välisel lehel.
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users and can work only pages rendered with HTML and CSS only. Importing pages rendered by JS frameworks are NOT supported. Depending on the complexity of the source page, the result of importation will probably differ from the original page. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quick way to create a page for very advanced users when source page allows it, but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a page that was grabbed.
 OnlyEditionOfSourceForGrabbedContent=HTML-i lähtekoodi muutmine on võimalik ainult siis, kui sisu on hangitud väliselt saidilt.
 GrabImagesInto=Haara ka leitud pildid css-i ja lehele.
 ImagesShouldBeSavedInto=Pildid tuleks salvestada kataloogi
@@ -423,8 +423,8 @@ contactFormPhone = Telefon
 contactFormSubjectEntered = Teema sisestatud
 contactFormMessageLabel = Sõnum
 contactFormSuccessAlert = Täname teid sõnumi eest. Võtame teiega peagi ühendust.
-socials=Sotsiaaluuringud
-rgpd=RGPD
+socials=Sotsiaalvõrgud
+rgpd=GDPR
 joinUs=Liitu meiega
 home=Kodu
 anonymous=Anonüümne
@@ -455,3 +455,4 @@ SampleGoalOne=Edendada liikmete vahelist koostööd ja solidaarsust.
 SampleGoaltwo=Julgustada vastutustundlikke ja jätkusuutlikke tavasid kõigis tegevustes.
 SampleGoalthree=Toeta mõjukaid projekte, mis toovad kasu kogu ühiskonnale.
 SHOW_LANG_SELECTOR=Kuvakeele valiku rippmenüü
+ForAdvancedWebmastersOnly=For technical webmasters only

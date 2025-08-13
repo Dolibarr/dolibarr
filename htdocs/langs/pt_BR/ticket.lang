@@ -26,6 +26,7 @@ Notify_TICKET_SENTBYMAIL=Envio do ticket por e-mail
 NeedMoreInformation=Aguardando retorno do solicitante
 NeedMoreInformationShort=Aguardando retorno
 Waiting=Aguardando
+SolvedClosed=Encerrada
 Severity=Gravidade
 TicketGroupIsPublic=Grupo é público
 TicketGroupIsPublicDesc=Se um grupo de ticket é público, ele será visível no formulário quando criar um ticket a partir de uma interface pública
@@ -58,7 +59,6 @@ TicketsEmailAlsoSendToMainAddressHelp=Marque essa opção para enviar uma cópia
 TicketsLimitViewAssignedOnly=Restringir a exibição aos tickets atribuídos ao usuário atual (não é eficaz para usuários externos, sempre limitado ao terceiro do qual eles dependem)
 TicketsLimitViewAssignedOnlyHelp=Somente tickets atribuídos ao usuário atual serão visíveis. Não se aplica a um usuário com direitos de gerenciamento de tickets.
 TicketsAutoAssignTicket=Atribuir automaticamente ao usuário que criou o ticket
-TicketsAutoAssignTicketHelp=Ao criar um ticket, o usuário pode ser atribuído automaticamente ao ticket (Exemplos: 0 = Nunca atribuído automaticamente ao ticket, 1 = Atribuído automaticamente ao ticket se ninguém for atribuído, 2 = Atribuído automaticamente ao ticket mesmo se alguém tiver sido definido).
 TicketAutoChangeStatusOnAnswer=Atribuir automaticamente um status ao responder a um ticket
 TicketAutoChangeStatusOnAnswerHelp=Quando um usuário responde a um ticekt, o status será aplicado automaticamente ao ticket
 TicketNumberingModules=Módulo de numeração de tickets

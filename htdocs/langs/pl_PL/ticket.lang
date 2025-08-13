@@ -54,10 +54,10 @@ ExportDataset_ticket_1=Zgłoszenia
 # Status
 Read=Czytać
 Assigned=Przydzielony
-NeedMoreInformation=Czekam na opinię reportera
-NeedMoreInformationShort=Czekam na informację zwrotną
+NeedMoreInformation=Oczekiwanie na informację zwrotną
+NeedMoreInformationShort=Oczekiwanie na informację zwrotną
 Waiting=Czekanie
-SolvedClosed=Rozwiązana
+SolvedClosed=Closed
 Deleted=Usunięto
 # Dict
 Severity=Priorytet
@@ -72,8 +72,10 @@ TicketPublicAccess=Publiczny interfejs, który nie wymaga identyfikacji, jest do
 TicketSetupDictionaries=Typ zgłoszenia, ważność i kody analityczne można konfigurować ze słowników
 TicketParamModule=Konfiguracja zmiennej modułu
 TicketParamMail=Konfiguracja poczty e-mail
-TicketEmailNotificationFrom=Adres e-mail nadawcy do powiadomień o zgłoszeniach (tworzenie zgłoszeń lub wiadomości aktualizacyjne)
-TicketEmailNotificationFromHelp=E-mail nadawcy, którego należy użyć do wysyłania powiadomień e-mail o utworzeniu biletów lub dodaniu wiadomości. Na przykład noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Powiadom o utworzeniu zgłoszenia na ten adres e-mail
 TicketEmailNotificationToHelp=Jeśli jest dostępny, na ten adres e-mail zostanie wysłane powiadomienie o utworzeniu zgłoszenia (oprócz innych domyślnych odbiorców)
 TicketNewEmailBodyLabel=Wiadomość tekstowa wysyłana po utworzeniu biletu
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=Widoczne będą tylko bilety przypisane do bie�
 TicketsActivatePublicInterface=Aktywuj publiczny interfejs
 TicketsActivatePublicInterfaceHelp=Interfejs publiczny umożliwia każdemu odwiedzającemu tworzenie biletów.
 TicketsAutoAssignTicket=Automatycznie przypisz użytkownika, który utworzył bilet
-TicketsAutoAssignTicketHelp=Podczas tworzenia zgłoszenia użytkownik może zostać automatycznie przypisany do zgłoszenia (przykłady: 0=Nigdy nie jest automatycznie przypisywany do zgłoszenia, 1=Automatycznie przypisywany do zgłoszenia, jeśli nikt nie został przypisany, 2=Automatycznie przypisywany do zgłoszenia, nawet jeśli ktoś został zdefiniowany).
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
 TicketAutoChangeStatusOnAnswer=Automatyczne przypisywanie statusu podczas odpowiadania na zgłoszenie
 TicketAutoChangeStatusOnAnswerHelp=Gdy użytkownik odpowie na zgłoszenie, status zostanie automatycznie przypisany do zgłoszenia
 TicketNumberingModules=Model numeracji zgłoszeń
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=Wyświetl tylko otwarte bilety
 TicketStatByStatus=Bilety według statusu
 OrderByDateAsc=Sortuj według rosnącej daty
 OrderByDateDesc=Sortuj według malejącej daty
-ShowAsConversation=Pokaż jako listę rozmów
-MessageListViewType=Pokaż jako listę tabel
 ConfirmMassTicketClosingSendEmail=Automatycznie wysyłaj e-maile przy zamykaniu biletów
 ConfirmMassTicketClosingSendEmailQuestion=Czy chcesz powiadomić osoby trzecie o zamknięciu tych zgłoszeń?
 # Ticket card

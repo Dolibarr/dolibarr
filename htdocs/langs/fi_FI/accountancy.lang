@@ -72,7 +72,7 @@ AccountancyAreaDescActionOnce=Seuraavat toimenpiteet suoritetaan yleensä vain k
 AccountancyAreaDescActionOnceBis=Seuraavat vaiheet kannattaa tehdä, jotta säästät aikaasi tulevaisuudessa ehdottamalla sinulle automaattisesti oikeaa oletus Kirjanpito -tiliä, kun siirrät tietoja verkkotunnuksessa Kirjanpito
 AccountancyAreaDescActionFreq=Seuraavat toiminnot suoritetaan yleensä kuukausittain, Viikko tai joka päivä erittäin suurille yrityksille...
 AccountancyAreaDescJournalSetup=VAIHE %s: Tarkista päiväkirjaluettelosi sisältö osoitteesta valikko %s
-AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists for your country or create one from menu %s
 AccountancyAreaDescChart=VAIHE %s: Valitse ja|tai täydennä tilikarttasi osoitteessa valikko %s
 AccountancyAreaDescFiscalPeriod=VAIHE %s: Määritä tilikausi, joka määrittää päivämäärät-merkintöjen alueen, jotka hyväksytään Kirjanpito-merkintöjen luomiseen. Käytä tätä varten valikko-merkintää %s.
 AccountancyAreaDescVat=VAIHE %s: Määritä kirjanpitotilit kullekin ALV-hinnalle. Käytä tähän valikko-merkintää %s.
@@ -275,7 +275,7 @@ HideOpeningBalance=Piilota avaus saldo
 ShowSubtotalByGroup=Näytä välisumma tason mukaan
 Pcgtype=ryhmä tilistä
 PcgtypeDesc=ryhmä tiliä käytetään ennalta määritettyinä 'suodattimina' ja ryhmittelyehtoina joillekin b0c0d4305f0d43095f0d430.  raportoi. Esimerkiksi 'TULO' tai 'KULUT' käytetään ryhminä kirjanpitotilit / tuotteet kulu-/tuloraportin luomiseen.
-AccountingCategoriesDesc=Muokattuja ryhmä tilejä voidaan käyttää ryhmä kirjanpitotilit yhteen nimeen helpottaa suodattimen käyttöä tai mukautettujen raporttien luomista.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Sovittava
 Centralized=Keskitetty tili
 TotalVente=Total turnover before tax
@@ -319,7 +319,7 @@ NotReconciled=Täsmäyttämätön
 WarningRecordWithoutSubledgerAreExcluded=Varoitus, kaikki rivit, joissa ei ole määritetty alikirjatiliä, suodatetaan ja pois tästä näkymästä
 AccountRemovedFromCurrentChartOfAccount=Kirjanpito tili, jota ei ole nykyisessä tilikartassa
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=Varoitus, tämä sivu sisältää vain Kirjanpito-järjestelmään siirrettyjä merkintöjä.
-BookkeepingNumRefModelDesc = Palauttaa viitenumeron muodossa yyyyjjnnnn, jossa yyyy on vuosi ja jj lokikoodi, nnnn on peräkkäinen automaattisesti kasvava numero vuoden ja lokikoodin mukaan.
+BookkeepingNumRefModelDesc = Returns the reference number in the format yymmjjnnnnn where yy is the year, mm is the month and jj the journal code, nnnnn is a sequential auto-incrementing number depending on the year, the month and the journal code.
 BookkeepingNumberingModules = Kirjanpidon numerointimallit
 ## Admin
 BindingOptions=Siirtovaihtoehdot kirjanpidossa
@@ -389,6 +389,7 @@ Modelcsv_Gestinumv5=Vienti Gestinumille (v5)
 Modelcsv_charlemagne=Vienti Aplim Charlemagelle
 ChartofaccountsId=Tilikartta Id
 ExportToPdf = Vie PDF-tiedostoon
+ExportToCsv = Export to CSV
 PdfLedgerTitle = Kirjanpitotilit
 PdfBalanceTitle = Kirjanpito saldo
 PdfBookkeepingTitle = Päiväkirjat
@@ -440,7 +441,7 @@ AccountRemovedFromGroup=Tili poistettu kohteesta ryhmä
 SaleLocal=Paikallinen myynti
 SaleExport=Vientimyynti
 SaleEEC=Alennus ETA
-SaleEECWithVAT=Myynti tapahtuu kohteessa ETA, eikä ALV ole nolla, joten oletamme, että tämä EI ole yhteisön sisäinen myynti ja. Ehdotettu tili on tuotteen vakiotili.
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=Myynti on ETA ilman ALV:tä, mutta kolmannen osapuolen ALV-tunnusta ei ole määritetty. Käytämme vakiomyynnissä tiliä. Voit korjata kolmannen osapuolen ALV-tunnuksen tai muuttaa tarvittaessa sidottavaksi ehdotettua tuotetiliä.
 AnySale=Mikä tahansa myynti
 ForbiddenTransactionAlreadyExported=Kielletty: tapahtuma on vahvistettu ja/tai viety.
@@ -485,7 +486,7 @@ AccountancyClosureConfirmClose=Haluatko varmasti sulkea nykyisen tilikausi ? <sp
 AccountancyClosureConfirmAccountingReversal=Oletko varma, että haluat kirjata Kertyneet voittovarat -kohtaan?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=Tapahtuma kohteelle (doc_type=%s, doc_id=%s, doc_det=
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Joitakin pakollisia määritysvaiheita ei suoritettu, suorita ne
@@ -508,7 +509,7 @@ ErrorNoFiscalPeriodActiveFound=Aktiivista tilikausi-elementtiä (jolla on määr
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Kirjanpitoasiakirja päiväys ei ole aktiivisen tilikausi sisällä.
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Kirjanpitoasiakirja päiväys on suljetussa tilikausi
 Error_BOOKKEEPING_ADDON_NotDefined=Virhe, kirjanpidon numerointiviitteen sääntöä ei ole määritelty kirjanpitomoduulin yleisissä asetuksissa.
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Yritä lisätä epätasapainoinen tapahtuma kirjanpitoon kohteelle %s (maksu ID: %s). Peruutettu. Varmasti vika.
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
 ProductUsage=Tuotteen tai palvelun käyttö
 ## Import
 ImportAccountingEntries=Kirjanpito merkintää
@@ -537,15 +538,15 @@ ExpenseReportJournal=kuluraportti Päiväkirja
 DocsAlreadyExportedAreIncluded=Mukana ovat jo viedyt asiakirjat
 ClickToShowAlreadyExportedLines=Napsauta näyttääksesi jo viedyt rivit
 NAccounts=%s tiliä
-ACCOUNTING_USE_TREASURY_Desc=Tämä on treasury-kirjanpidon tila. Käytämme kirjanpitoon ainoastaan maksuja ja heidän päiväys.
-ACCOUNTING_USE_NON_TREASURY_Desc=Tämä on oikean kirjanpidon tapa. Käytämme sekä laskuja ja kirjanpidon suorittamiseen.
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
+ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
 PieceDesc=Tämän pankkitapahtuman luovan lähdeasiakirjan viite (laskun viite, kuluraportti viite, ...)
 BankTransactionRef=Pankkitapahtuman viite (valinnainen, automaattinen tunniste on jo luotu)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=Tämä kloonaa kirjanpitomerkinnän (kaikki tähän kirjanpitomerkintään linkitetyt rivit kloonataan). Haluatko varmasti kloonata valitut %s-tietueet?
 ConfirmMassCloneBookkeepingWriting=Vahvista massakloonaus
-ConfirmMassReturnAccountBookkeepingWriting=Vahvista massasukupuutto
-ConfirmMassReturnAccountBookkeepingWritingQuestion=Tämä sammuttaa kirjanpitomerkinnän (kaikki tähän kirjanpitomerkintään linkitetyt rivit sammutetaan). Haluatko varmasti ohittaa valitut %s-tietueet?
+ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
+ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=Tämä muuttaa kaikkien valittujen rivien tilin.
 confirmMassAssignAccountBookkeepingWritingConfirm=Vahvista joukkotilin muutos
 CloningSuccess=Transaktion kloonaus onnistui: %s
@@ -560,6 +561,6 @@ NoAccountsChangedWithAccountNumber=Tapahtumia ei päivitetty tilinumeroilla: %s
 HasAlreadyBeenReversed=on jo peruttu
 ErrorWhileCreating=Virhe luonnin aikana %s
 ReturnAccount=Return
-Clone=Kloonaaja
+Clone=Clone
 AlreadyReturnedAccount=Merkintä nro %s on jo peruutettu
 SuccessReturnedAccount=Merkintä nro %s on kumottu

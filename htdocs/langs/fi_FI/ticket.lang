@@ -57,7 +57,7 @@ Assigned=Määrätty
 NeedMoreInformation=Odottaa ilmoittajan palautetta
 NeedMoreInformationShort=Odottaa palautetta
 Waiting=Odottaa
-SolvedClosed=Ratkaistu
+SolvedClosed=Suljettu
 Deleted=Poistettu
 # Dict
 Severity=Vakavuus
@@ -72,8 +72,10 @@ TicketPublicAccess=Julkinen käyttöliittymä, joka ei vaadi tunnistamista, on s
 TicketSetupDictionaries=Tiketin tyyppi, vakavuus ja analyyttiset koodit ovat määriteltävissä sanakirjassa
 TicketParamModule=Moduulimuuttujien asetukset
 TicketParamMail=Sähköpostin asetukset
-TicketEmailNotificationFrom=Lähettäjän sähköpostiosoite tikettien ilmoituksia varten (tikettien luonti tai päivitysviestit)
-TicketEmailNotificationFromHelp=Lähettäjän sähköpostiosoite, jota käytetään ilmoitussähköpostien lähettämiseen tikettien luomiseksi tai viestien lisäämiseksi. Esimerkiksi noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Ilmoita tiketin luomisesta tähän sähköpostiosoitteeseen
 TicketEmailNotificationToHelp=Jos sähköpostiosoite on määritetty, se saa ilmoituksen tukkeuman luomisesta (muiden oletus-vastaanottajien lisäksi).
 TicketNewEmailBodyLabel=Tekstiviesti lähetetään tiketin luomisen jälkeen
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=Vain nykyiselle käyttäjälle määritetyt tik
 TicketsActivatePublicInterface=Aktivoi julkinen käyttöliittymä
 TicketsActivatePublicInterfaceHelp=Julkisen käyttöliittymän avulla kuka tahansa voi luoda tikettejä.
 TicketsAutoAssignTicket=Määritä automaattisesti tiketin luonut käyttäjä
-TicketsAutoAssignTicketHelp=Kun luot tikettiä, käyttäjä voidaan liittää tikettiin automaattisesti (Esimerkkejä: 0=Ei koskaan liitetään tikettiin automaattisesti, 1=Liitetään tikettiin automaattisesti, jos ketään ei ole liitetty, 2=Liitetään tikettiin automaattisesti, vaikka joku olisi määritetty).
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
 TicketAutoChangeStatusOnAnswer=Määritä tila automaattisesti vastattaessa tikettiin
 TicketAutoChangeStatusOnAnswerHelp=Kun käyttäjä vastaa tukipyyntöön, tila lisätään tukipyyntöön automaattisesti.
 TicketNumberingModules=Lippujen numerointimoduuli
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=Näytä vain avoimet tiketit
 TicketStatByStatus=Tiketit tilan mukaan
 OrderByDateAsc=Lajittele nousevaan järjestykseen päiväyksen mukaan
 OrderByDateDesc=Lajittele laskevaan järjestykseen päiväyksen mukaan.
-ShowAsConversation=Näytä keskusteluluettelona
-MessageListViewType=Näytä taulukkoluettelona
 ConfirmMassTicketClosingSendEmail=Lähetä sähköpostit automaattisesti, kun tiketti suljetaan
 ConfirmMassTicketClosingSendEmailQuestion=Haluatko ilmoittaa kolmansille osapuolille, kun suljet nämä tiketit?
 # Ticket card

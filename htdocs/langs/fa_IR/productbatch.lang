@@ -50,4 +50,5 @@ ToReplace=جایگزین کردن
 CantMoveNonExistantSerial=خطا. شما درخواست جابجایی رکوردی را برای سریالی دارید که دیگر وجود ندارد. ممکن است سریال یکسانی را چندین بار از یک انبار در یک محموله دریافت کرده باشید یا توسط محموله دیگری استفاده شده باشد. این محموله را حذف کرده و یک محموله دیگر آماده کنید.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=اجرای ناقص تعمیر جدول لات با پارامتر '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= اصلاح موجودی به دلیل منحصر به فرد بودن شماره سریال الزامی است.
-ErrorBatchesNeedStockManagement=خطا. محصولی که مدیریت دسته/انبار دارد، باید در انبار مدیریت شود.
+ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
+ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)
