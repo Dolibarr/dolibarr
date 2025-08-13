@@ -72,7 +72,7 @@ AccountancyAreaDescActionOnce=Sljedeće radnje se obično izvode samo jednom ili
 AccountancyAreaDescActionOnceBis=Sljedeće korake treba učiniti kako biste uštedjeli vrijeme u budućnosti tako što će vam automatski predložiti ispravan zadani računski račun prilikom prijenosa podataka u računovodstvo
 AccountancyAreaDescActionFreq=Sledeće radnje se obično izvršavaju svakog meseca, nedelje ili dana za veoma velike kompanije...
 AccountancyAreaDescJournalSetup=KORAK %s: Provjerite sadržaj svoje liste časopisa iz menija %s
-AccountancyAreaDescChartModel=KORAK %s: Provjerite postoji li model kontnog plana ili ga kreirajte iz menija %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists for your country or create one from menu %s
 AccountancyAreaDescChart=KORAK %s: Odaberite i|ili dovršite svoj kontni plan iz menija %s
 AccountancyAreaDescFiscalPeriod=KORAK %s: Definišite fiskalni period koji određuje raspon datuma prihvaćenih za kreiranje računovodstvenih unosa. Za ovo koristite stavku menija %s.
 AccountancyAreaDescVat=KORAK %s: Definirajte računovodstvene račune za svaku stopu PDV-a. Za ovo koristite unos menija %s.
@@ -275,7 +275,7 @@ HideOpeningBalance=Sakrij početno stanje
 ShowSubtotalByGroup=Prikaži međuzbroj po nivou
 Pcgtype=Grupa računa
 PcgtypeDesc=Grupe računa se koriste kao unaprijed definirani 'filter' i kriteriji 'grupiranja' za neke računovodstvene izvještaje. Na primjer, 'INCOME' ili 'EXPENSE' se koriste kao grupe za računovodstvene račune proizvoda za izradu izvještaja o troškovima/prihodima.
-AccountingCategoriesDesc=Prilagođena grupa računa može se koristiti za grupiranje računovodstvenih računa u jedno ime kako bi se olakšalo korištenje filtera ili pravljenje prilagođenih izvještaja.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Pomirljiv
 Centralized=Centralizirani račun
 TotalVente=Total turnover before tax
@@ -319,7 +319,7 @@ NotReconciled=Nije izmireno
 WarningRecordWithoutSubledgerAreExcluded=Upozorenje, svi redovi bez definiranog računa podknjige su filtrirani i isključeni iz ovog prikaza
 AccountRemovedFromCurrentChartOfAccount=Računovodstveni račun koji ne postoji u tekućem kontnom planu
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=Upozorenje, ova stranica sadrži samo unose prenesene u računovodstveni sistem.
-BookkeepingNumRefModelDesc = Vraća referentni broj u formatu yyyyjjnnnn gdje je yyyy godina i jj kod dnevnika, nnnn je sekvencijalni automatski povećavajući broj ovisno o godini i koda dnevnika.
+BookkeepingNumRefModelDesc = Returns the reference number in the format yymmjjnnnnn where yy is the year, mm is the month and jj the journal code, nnnnn is a sequential auto-incrementing number depending on the year, the month and the journal code.
 BookkeepingNumberingModules = Modeli numeriranja u knjigovodstvu
 ## Admin
 BindingOptions=Opcije za transfer u računovodstvu
@@ -389,6 +389,7 @@ Modelcsv_Gestinumv5=Izvoz za Gestinum (v5)
 Modelcsv_charlemagne=Izvoz za Aplim Karla Velikog
 ChartofaccountsId=Kontni plan Id
 ExportToPdf = Izvoz u PDF
+ExportToCsv = Export to CSV
 PdfLedgerTitle = Računi glavne knjige
 PdfBalanceTitle = Stanje glavne knjige
 PdfBookkeepingTitle = Dnevnici
@@ -440,7 +441,7 @@ AccountRemovedFromGroup=Račun je uklonjen iz grupe
 SaleLocal=Lokalna prodaja
 SaleExport=Izvozna prodaja
 SaleEEC=Prodaja u EEZ
-SaleEECWithVAT=Prodaja je u EEZ-u sa PDV-om koji nije null, tako da pretpostavljamo da ovo NIJE intrakomunitarna prodaja. i predloženi račun je standardni račun proizvoda.
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=Prodaja se vrši u EEZ-u bez PDV-a, ali PDV ID treće strane nije definisan. Za standardnu prodaju koristimo račun. Možete ispraviti PDV ID treće strane ili promijeniti predloženi račun proizvoda za povezivanje ako je potrebno.
 AnySale=Bilo koja prodaja
 ForbiddenTransactionAlreadyExported=Zabranjeno: Transakcija je potvrđena i/ili izvezena.
@@ -485,7 +486,7 @@ AccountancyClosureConfirmClose=Jeste li sigurni da želite zatvoriti trenutni fi
 AccountancyClosureConfirmAccountingReversal=Jeste li sigurni da želite snimiti unose za "Zadržana dobit"?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=Transakcija za (doc_type=%s, doc_id=%s, doc_det=>TXf9CT>TXf9CT were7)TXf9CT već snimljeno
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Neki obavezni koraci podešavanja nisu obavljeni, molimo dovršite ih
@@ -508,7 +509,7 @@ ErrorNoFiscalPeriodActiveFound=Nije pronađen nijedan aktivni fiskalni period (s
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Datum knjigovodstvenog dokumenta nije unutar aktivnog fiskalnog perioda
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Datum knjigovodstvene dokumentacije je unutar zatvorenog fiskalnog perioda
 Error_BOOKKEEPING_ADDON_NotDefined=Greška, pravilo za numeriranje knjigovodstva nije definirano u općim postavkama modula Računovodstvo
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Pokušajte umetnuti nebalansiranu transakciju u knjigu za %s (ID plaćanja: %s). Otkazano. Sigurno greška.
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
 ProductUsage=Korištenje proizvoda ili usluge
 ## Import
 ImportAccountingEntries=Računovodstveni zapisi
@@ -537,15 +538,15 @@ ExpenseReportJournal=Dnevnik izvještaja o troškovima
 DocsAlreadyExportedAreIncluded=Dokumenti koji su već izvezeni su uključeni
 ClickToShowAlreadyExportedLines=Kliknite da prikažete već izvezene linije
 NAccounts=%s računi
-ACCOUNTING_USE_TREASURY_Desc=Ovo je način rada za trezorsko računovodstvo. Koristimo samo plaćanja i i njihov datum za računovodstvo.
-ACCOUNTING_USE_NON_TREASURY_Desc=Ovo je način rada za stvarno računovodstvo. Koristimo obje fakture i za plaćanje za računovodstvo.
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
+ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
 PieceDesc=Referenca izvornog dokumenta koji generira ovu bankovnu transakciju (Referenca fakture, Referenca izvještaja o troškovima, ...)
 BankTransactionRef=Referenca za bankovnu transakciju (opciono, automatski ID je već generisan)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=Ovo će klonirati knjigovodstveni unos (svi redovi povezani s ovim knjigovodstvenim unosom bit će klonirani). Jeste li sigurni da želite klonirati odabrane zapise %s?
 ConfirmMassCloneBookkeepingWriting=Potvrdite masovno kloniranje
-ConfirmMassReturnAccountBookkeepingWriting=Potvrdite masovno izumiranje
-ConfirmMassReturnAccountBookkeepingWritingQuestion=Ovo će ukinuti knjigovodstveni unos (svi redovi povezani s ovim knjigovodstvenim unosom bit će ukinuti). Jeste li sigurni da želite zaobići odabrane zapise %s?
+ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
+ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=Ovo će promijeniti račun svih odabranih linija.
 confirmMassAssignAccountBookkeepingWritingConfirm=Potvrdite masovnu promjenu računa
 CloningSuccess=Uspješno kloniranje transakcije: %s
@@ -560,6 +561,6 @@ NoAccountsChangedWithAccountNumber=Transakcije nisu ažurirane s brojevima raču
 HasAlreadyBeenReversed=već je poništeno
 ErrorWhileCreating=Greška prilikom kreiranja %s
 ReturnAccount=Return
-Clone=Kloner
+Clone=Kloniraj
 AlreadyReturnedAccount=Zapis br. %s je već poništen
 SuccessReturnedAccount=Zapis br. %s je poništen
