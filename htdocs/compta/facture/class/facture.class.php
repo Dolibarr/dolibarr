@@ -6238,8 +6238,10 @@ class Facture extends CommonInvoice
 					$arraymessage = $formmail->getEMailTemplate($this->db, 'facture_send', $user, $outputlangs, (is_numeric($template) ? $template : 0), 1, (is_numeric($template) ? '' : $template));
 					if (is_numeric($arraymessage) && $arraymessage <= 0) {
 						$langs->load("errors");
-						$this->output .= $langs->trans('ErrorFailedToFindEmailTemplate', $template);
-						return 0;
+						$errormesg = $langs->trans('ErrorFailedToFindEmailTemplate', $template) . ' for invoice id=' . $tmpinvoice->id;
+						$errorsMsg[] = $errormesg;
+						$loopError++;
+						continue;
 					}
 
 					// PREPARE EMAIL
