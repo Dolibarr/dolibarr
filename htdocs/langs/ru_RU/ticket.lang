@@ -57,7 +57,7 @@ Assigned=Ответственный
 NeedMoreInformation=Жду отзывов репортера
 NeedMoreInformationShort=Жду отзывов
 Waiting=Ожидание
-SolvedClosed=Решено
+SolvedClosed=Закрыт
 Deleted=Удалено
 # Dict
 Severity=Строгость
@@ -72,8 +72,10 @@ TicketPublicAccess=Публичный интерфейс, не требующи�
 TicketSetupDictionaries=Тип тикета, серьезность и аналитические коды настраиваются из словарей.
 TicketParamModule=Настройка переменных модуля
 TicketParamMail=Настройка электронной почты
-TicketEmailNotificationFrom=Отправитель электронного письма для уведомления о талоны (создание талон или обновлении сообщений)
-TicketEmailNotificationFromHelp=Адрес электронной почты отправителя, который будет использоваться для отправки уведомлений по электронной почте для создания талоны или добавления сообщения. Для Пример noreply@Пример.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Уведомить о создании заявки на этот адрес электронной почты
 TicketEmailNotificationToHelp=Если указан, этот адрес электронной почты будет уведомлен о создании талон (в дополнение к любым другим получателям по умолчанию)
 TicketNewEmailBodyLabel=Текстовое сообщение, отправленное после создания тикета
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=Будут видны только тикеты
 TicketsActivatePublicInterface=Активировать публичный интерфейс
 TicketsActivatePublicInterfaceHelp=Публичный интерфейс позволяет любому посетителю создавать тикеты.
 TicketsAutoAssignTicket=Автоматически назначить пользователя, создавшего тикет
-TicketsAutoAssignTicketHelp=При создании талон, пользователь может быть автоматически назначен талон(Примеры: 0=Никогда автоматически не назначен талон, 1=автоматически назначается талон, если никто не назначен, 2=автоматически назначается талон, даже если кто-то был определен).
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
 TicketAutoChangeStatusOnAnswer=автоматически назначить статус при ответе на талон
 TicketAutoChangeStatusOnAnswerHelp=Когда пользователь отвечает на талон, статус будет автоматически применен к талон
 TicketNumberingModules=Модуль нумерации тикетов
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=Просмотреть только открытые т�
 TicketStatByStatus=Тикеты по статусу
 OrderByDateAsc=Сортировать по дате по возрастанию
 OrderByDateDesc=Сортировать по дате по убыванию
-ShowAsConversation=Показать как список бесед
-MessageListViewType=Показать как список таблиц
 ConfirmMassTicketClosingSendEmail=Автоматически отправлять электронные письма при закрытии заявок
 ConfirmMassTicketClosingSendEmailQuestion=Вы хотите уведомлять третьих лиц при закрытии этих билетов?
 # Ticket card

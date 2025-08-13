@@ -250,7 +250,6 @@ ConfirmDeleteObject=¿Está seguro de que desea eliminar este objeto?
 DeleteLine=Eliminar linea
 ConfirmDeleteLine=¿Estás seguro de que quieres eliminar esta línea?
 ErrorPDFTkOutputFileNotFound=Error: no se generó el archivo. Verifique que el comando 'pdftk' esté instalado en un directorio incluido en la variable de entorno $PATH (solo linux/unix) o comuníquese con el administrador del sistema.
-NoPDFAvailableForDocGenAmongChecked=No hay PDF disponibles para la generación de documentos entre el registro verificado
 TooManyRecordForMassAction=Demasiados registros seleccionados para la acción de masas. La acción está restringida a una lista de registros %s.
 NoRecordSelected=Sin registro seleccionado
 MassFilesArea=Área para archivos construidos por acciones masivas.

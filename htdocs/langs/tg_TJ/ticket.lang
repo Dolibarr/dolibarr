@@ -57,7 +57,7 @@ Assigned=Таъин карда шудааст
 NeedMoreInformation=Интизори шарҳи хабарнигорон
 NeedMoreInformationShort=Интизори фикру мулоҳизаҳо
 Waiting=Интизорӣ
-SolvedClosed=Ҳал шуд
+SolvedClosed=Closed
 Deleted=Ҳазф шуд
 # Dict
 Severity=Шиддатнокӣ
@@ -72,8 +72,10 @@ TicketPublicAccess=Интерфейси оммавӣ, ки бидуни шино
 TicketSetupDictionaries=Навъи чипта, вазнинӣ ва рамзҳои таҳлилӣ аз луғатҳо танзим карда мешаванд
 TicketParamModule=Танзими тағирёбандаи модул
 TicketParamMail=Танзимоти почтаи электронӣ
-TicketEmailNotificationFrom=Ирсолкунандаи почтаи электронӣ барои огоҳӣ дар бораи чиптаҳо (ташкили чипта ё паёмҳои навсозӣ)
-TicketEmailNotificationFromHelp=Почтаи электронии ирсолкунанда барои фиристодани паёмҳои огоҳинома барои эҷоди чиптаҳо ё илова кардани паём. Масалан noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Эҷоди чиптаҳоро ба ин суроғаи почтаи электронӣ огоҳ кунед
 TicketEmailNotificationToHelp=Агар мавҷуд бошад, ин суроғаи почтаи электронӣ дар бораи эҷоди чипта огоҳ карда мешавад (ба ғайр аз ҳама гирандаи пешфарз)
 TicketNewEmailBodyLabel=Паёми матнӣ пас аз сохтани чипта фиристода мешавад
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=Танҳо чиптаҳои ба корбари
 TicketsActivatePublicInterface=Интерфейси оммавиро фаъол созед
 TicketsActivatePublicInterfaceHelp=Интерфейси оммавӣ ба ҳама меҳмонон имкон медиҳад, ки чипта эҷод кунанд.
 TicketsAutoAssignTicket=Ба таври худкор ба корбаре, ки чипта офаридааст, таъин кунед
-TicketsAutoAssignTicketHelp=Ҳангоми сохтани чипта корбарро ба таври худкор ба чипта таъин кардан мумкин аст (Масалан: 0=Ҳеҷ гоҳ ба чипта ба таври худкор таъин карда намешавад, 1=Ба таври худкор ба чипта таъин карда мешавад, агар касе таъин нашуда бошад, 2=Ба таври худкор ба чипта таъин карда мешавад, ҳатто агар касе муайян шуда бошад).
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
 TicketAutoChangeStatusOnAnswer=Ҳангоми ҷавоб додан ба чипта ба таври худкор мақом таъин кунед
 TicketAutoChangeStatusOnAnswerHelp=Вақте ки корбар ба чипта ҷавоб медиҳад, вазъият ба таври худкор ба чипта татбиқ карда мешавад
 TicketNumberingModules=Модули рақамгузории чиптаҳо
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=Танҳо чиптаҳои кушодро бинед
 TicketStatByStatus=Чиптаҳо аз рӯи мақом
 OrderByDateAsc=Аз рӯи санаи болоравӣ мураттаб кунед
 OrderByDateDesc=Аз рӯи санаи камшаванда ҷудо кунед
-ShowAsConversation=Ҳамчун рӯйхати сӯҳбат нишон диҳед
-MessageListViewType=Ҳамчун рӯйхати ҷадвал нишон диҳед
 ConfirmMassTicketClosingSendEmail=Ҳангоми пӯшидани чиптаҳо ба таври худкор паёмҳои электронӣ фиристед
 ConfirmMassTicketClosingSendEmailQuestion=Оё шумо мехоҳед, ки шахсони сеюмро ҳангоми пӯшидани ин чиптаҳо огоҳ кунед?
 # Ticket card
