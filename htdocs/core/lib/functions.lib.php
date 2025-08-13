@@ -8044,7 +8044,6 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 	if (empty($level) && array_key_exists($modulepart, $arrayforoldpath)) {
 		$level = $arrayforoldpath[$modulepart];
 	}
-
 	if (!empty($level) && array_key_exists($modulepart, $arrayforoldpath)) {
 		// This part should be removed once all code is using "get_exdir" to forge path, with parameter $object and $modulepart provided.
 		if (empty($num) && is_object($object)) {
@@ -8069,8 +8068,12 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 		// We will enhance here a common way of forging path for document storage.
 		// In a future, we may distribute directories on several levels depending on setup and object.
 		// Here, $object->id, $object->ref and $modulepart are required.
-		//var_dump($modulepart);
-		$path = dol_sanitizeFileName(empty($object->ref) ? (string) ((is_object($object) && property_exists($object, 'id')) ? $object->id : '') : $object->ref);
+		if (in_array($modulepart, array('societe', 'thirdparty')) && $object instanceOf Societe) {
+			// Special case for thirdparty, where the ref is a company name that is not unique so path on disk is using the ID instead of the ref
+			$path = dol_sanitizeFileName($object->id);
+		} else {
+			$path = dol_sanitizeFileName(empty($object->ref) ? (string) ((is_object($object) && property_exists($object, 'id')) ? $object->id : '') : $object->ref);
+		}
 	}
 
 	if (empty($withoutslash) && !empty($path)) {
