@@ -250,7 +250,7 @@ OppStatusPENDING=Laukiantis
 OppStatusWON=Laimėjo
 OppStatusLOST=Pasiklydęs
 Budget=Biudžetas
-AllowToLinkFromOtherCompany=Leisti susieti elementą su kitos įmonės projektu<br><br><u>Palaikomos reikšmės:</u><br>- Palikti tuščią: galima susieti elementus su bet kokiais tos pačios įmonės projektais (numatytasis)<br>- „all“: galima susieti elementus su bet kokiais projektais, net ir kitų įmonių projektais<span> class='notranslate'><br> – trečiųjų šalių ID sąrašas, atskirtas kableliais: gali susieti elementus su bet kokiais šių trečiųjų šalių projektais (pavyzdys: 123,4795,53)<br>
+AllowToLinkFromOtherCompany=Leisti susieti elementą su kitos įmonės projektu<br><br><u>Palaikomos reikšmės:</u><br>- Palikti tuščią: galima susieti elementus su bet kokiais tos pačios įmonės projektais (numatytasis)<br>- „all“: galima susieti elementus su bet kokiais projektais, net ir kitų įmonių projektais<br> – trečiųjų šalių ID sąrašas, atskirtas kableliais: gali susieti elementus su bet kokiais šių trečiųjų šalių projektais (pavyzdys: 123,4795,53)<br>
 LatestProjects=Naujausi %s projektai
 LatestModifiedProjects=Naujausi modifikuoti %s projektai
 OtherFilteredTasks=Kitos filtruotos užduotys
