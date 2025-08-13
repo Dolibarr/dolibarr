@@ -57,7 +57,7 @@ Assigned=Atribuído
 NeedMoreInformation=Aguardando feedback do repórter
 NeedMoreInformationShort=Aguardando feedback
 Waiting=Em espera
-SolvedClosed=Resolvido
+SolvedClosed=Inativo
 Deleted=Excluído
 # Dict
 Severity=Severidade
@@ -72,8 +72,10 @@ TicketPublicAccess=Uma interface pública que não requer identificação está 
 TicketSetupDictionaries=O tipo de ticket e os códigos analíticos de gravidade e são configuráveis a partir de dicionários
 TicketParamModule=Configuração da variável do módulo
 TicketParamMail=Configuração de e-mail
-TicketEmailNotificationFrom=E-mail do remetente para notificação de tickets (criação de tickets ou mensagens de atualização)
-TicketEmailNotificationFromHelp=E-mail do remetente a ser usado para enviar e-mails de notificação para criação de tickets ou adição de mensagens. Por exemplo, noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Notificar a criação do ticket para este endereço de e-mail
 TicketEmailNotificationToHelp=Se presente, este endereço de e-mail será notificado sobre a criação de um tíquete (além de quaisquer outros destinatários padrão)
 TicketNewEmailBodyLabel=Mensagem de texto enviada após a criação de um ticket
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=Somente tickets atribuídos ao usuário atual f
 TicketsActivatePublicInterface=Ativar interface pública
 TicketsActivatePublicInterfaceHelp=A interface pública permite que qualquer visitante crie tickets.
 TicketsAutoAssignTicket=Atribuir automaticamente o usuário que criou o ticket
-TicketsAutoAssignTicketHelp=Ao criar um tíquete, o utilizador pode ser automaticamente atribuído ao tíquete (Exemplos: 0=Nunca automaticamente atribuído ao tíquete, 1=automaticamente atribuído ao tíquete se ninguém for atribuído, 2=automaticamente atribuído ao tíquete mesmo se alguém tiver sido definido).
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
 TicketAutoChangeStatusOnAnswer=automaticamente atribuir um status ao responder a um tíquete
 TicketAutoChangeStatusOnAnswerHelp=Quando um utilizador responde a um tíquete, o status será automaticamente aplicado ao tíquete
 TicketNumberingModules=Módulo de numeração de ingressos
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=Ver apenas bilhetes abertos
 TicketStatByStatus=Tickets por estado
 OrderByDateAsc=Classifique por ordem crescente data
 OrderByDateDesc=Classifique por ordem decrescente data
-ShowAsConversation=Mostrar como lista de conversas
-MessageListViewType=Mostrar como lista de tabelas
 ConfirmMassTicketClosingSendEmail=automaticamente envia e-mails ao fechar tickets
 ConfirmMassTicketClosingSendEmailQuestion=Deseja avisar terceiros ao fechar esses tickets?
 # Ticket card

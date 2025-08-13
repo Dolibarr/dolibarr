@@ -50,4 +50,5 @@ ToReplace=Korvata
 CantMoveNonExistantSerial=Virhe. Pyydät siirtymistä levylle sarjalle, jota ei enää ole. Saattaa olla, että otat saman sarjan samassa varastossa useita kertoja samassa lähetyksessä tai sitä käytettiin toisessa lähetyksessä. Poista tämä lähetys ja valmistele toinen.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Erätaulukon epätäydellinen suorituksen korjaus parametrilla '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Varastokorjaus vaaditaan, koska yksilöllinen Sarjanumero.
-ErrorBatchesNeedStockManagement=Virhe. Tuotetta, jolla on erähallinta, on hallittava varastossa.
+ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
+ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)

@@ -57,7 +57,7 @@ Assigned=Määratud
 NeedMoreInformation=Ootan reporteri tagasisidet
 NeedMoreInformationShort=Ootan tagasisidet
 Waiting=Ootel
-SolvedClosed=Lahendatud
+SolvedClosed=Suletud
 Deleted=Kustutatud
 # Dict
 Severity=Raskusaste
@@ -72,8 +72,10 @@ TicketPublicAccess=Avalik liides, mis ei vaja identifitseerimist, on saadaval j�
 TicketSetupDictionaries=Pileti tüüp, raskusaste ja analüütilised koodid on sõnastike abil konfigureeritavad.
 TicketParamModule=Mooduli muutujate seadistamine
 TicketParamMail=Meili seadistamine
-TicketEmailNotificationFrom=Saatja e-posti aadress piletite kohta teavituste saatmiseks (pileti loomine või värskendussõnumid)
-TicketEmailNotificationFromHelp=Saatja e-posti aadress, kuhu saata teavituskirjad piletite loomise või sõnumi lisamise kohta. Näiteks noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Teavita pileti loomist sellele e-posti aadressile
 TicketEmailNotificationToHelp=Kui see e-posti aadress on olemas, teavitatakse seda (lisaks kõigile teistele vaikimisi saajatele) pileti loomisest.
 TicketNewEmailBodyLabel=Pärast pileti loomist saadetud tekstisõnum
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=Nähtavad on ainult praegusele kasutajale mää
 TicketsActivatePublicInterface=Aktiveeri avalik liides
 TicketsActivatePublicInterfaceHelp=Avalik liides võimaldab kõigil külastajatel pileteid luua.
 TicketsAutoAssignTicket=Määra automaatselt kasutaja, kes pileti lõi
-TicketsAutoAssignTicketHelp=Pileti loomisel saab kasutaja automaatselt piletile määrata (näited: 0=Ei määrata kunagi automaatselt piletile, 1=Määratakse piletile automaatselt, kui kedagi pole määratud, 2=Määratakse piletile automaatselt, isegi kui keegi on määratletud).
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
 TicketAutoChangeStatusOnAnswer=Piletile vastamisel automaatselt staatuse määramine
 TicketAutoChangeStatusOnAnswerHelp=Kui kasutaja vastab piletile, rakendatakse staatust automaatselt piletile.
 TicketNumberingModules=Piletite nummerdamise moodul
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=Kuva ainult avatud piletid
 TicketStatByStatus=Piletid staatuse järgi
 OrderByDateAsc=Sorteeri kasvava kuupäeva järgi
 OrderByDateDesc=Sorteeri kahaneva kuupäeva järgi
-ShowAsConversation=Kuva vestluste loendina
-MessageListViewType=Näita tabeli loendina
 ConfirmMassTicketClosingSendEmail=Saada piletite sulgemisel automaatselt e-kirju
 ConfirmMassTicketClosingSendEmailQuestion=Kas soovite nende piletite sulgemisel kolmandaid osapooli teavitada?
 # Ticket card

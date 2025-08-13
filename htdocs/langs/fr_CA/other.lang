@@ -77,6 +77,7 @@ PredefinedMailContentLink=Vous pouvez cliquer sur le lien ci-dessous pour effect
 PredefinedMailContentGeneric=__(Bonjour)__\n\n__(Sincèrement)__\n\n__SENDEREMAIL_SIGNATURE__
 PredefinedMailContentSendActionComm=Rappel d'événement « __EVENT_LABEL__ » le __EVENT_DATE__ à __EVENT_TIME__<br><br>Ceci est un message automatique, veuillez ne pas répondre.
 DemoDesc=Dolibarr est un ERP / CRM compact prenant en charge plusieurs modules métier. Une démonstration montrant tous les modules n'a aucun sens car ce scénario ne se produit jamais (plusieurs centaines disponibles). Ainsi, plusieurs profils de démonstration sont disponibles.
+DemoDesc2=Il s'agit d'une démo partagée restreinte, vous préférerez peut-être tester sur votre propre instance dédiée avec un accès administrateur complet, pour ce faire, <a href="%s" target="_blank">allez ici <span class="fas fa-external-link-alt"></span></a>.
 ChooseYourDemoProfil=Choisissez le profil de démonstration qui correspond le mieux à vos besoins ...
 ChooseYourDemoProfilMore=... ou créez votre propre profil <br> (sélection du module manuel)
 DemoFundation=Gérer les membres d'une fondation
