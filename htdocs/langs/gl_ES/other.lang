@@ -117,6 +117,7 @@ PredefinedMailContentLink=Pode facer clic na seguinte ligazón para realizar o s
 PredefinedMailContentGeneric=__(Hello)__\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__
 PredefinedMailContentSendActionComm=Lembranza do evento "__EVENT_LABEL__" on __EVENT_DATE__ at __EVENT_TIME__<br><br>Está é uynha mensaxe automática, prégase non respostar.
 DemoDesc=Dolibarr é un ERP/CRM que suporta varios módulos de negocio. Non ten sentido unha demostración que amose xa que este escenario non sucede nunca (varios centos dispoñibles). Así, hai varios perfís dispoñibles de demostración.
+DemoDesc2=Esta é unha demostración compartida restrinxida. Pode que prefira probala na súa propia instancia dedicada con acceso completo de administrador. Para facelo, <a href="%s" target="_blank">vaia aquí <span class="fas fa-external-link-alt"></span></a>.
 ChooseYourDemoProfil=Escolla o perfil de demostración que mellor se adapte as súas necesidades ...
 ChooseYourDemoProfilMore=... ou constrúa seu perfil<br>(modo de selección manual)
 DemoFundation=Xestión de membros dunha asociación
@@ -380,3 +381,4 @@ TLS/STARTTLS=TLS/INICIOTLS
 FillExtrafieldWithAi=Encher o campo adicional con contido de IA
 ExtrafieldFiller=Recheo de campo extra
 OurProductSelection=A nosa selección de novos produtos
+NoSupportedModulesHaveBeenActivated=A ferramenta de informes só pode xerar informes dinámicos para algúns módulos. Aínda non hai ningún módulo compatible activado.

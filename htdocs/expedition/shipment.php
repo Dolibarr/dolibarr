@@ -899,36 +899,27 @@ if ($order_id > 0 || !empty($ref)) {
 				print '<input type="hidden" name="origin" value="commande">';
 				print '<input type="hidden" name="origin_id" value="'.$object->id.'">';
 				print '<input type="hidden" name="projectid" value="'.$object->fk_project.'">';
-				//print '<table class="border centpercent">';
 
 				$langs->load("stocks");
 
-				//print '<tr>';
+				print '<div class="center formconsumeproduce">';
 
 				if (isModEnabled('stock')) {
-					//print '<td>';
 					print $langs->trans("WarehouseSource");
-					//print '</td>';
-					//print '<td>';
-					print $formproduct->selectWarehouses(!empty($object->warehouse_id) ? $object->warehouse_id : 'ifone', 'entrepot_id', '', 1, 0, 0, '', 0, 0, array(), 'minwidth200');
+					print $formproduct->selectWarehouses(empty($object->warehouse_id) ? 'ifone' : $object->warehouse_id, 'entrepot_id', '', 1, 0, 0, $langs->trans("Any"), 0, 0, array(), 'minwidth200');
 					if (count($formproduct->cache_warehouses) <= 0) {
 						print ' &nbsp; '.$langs->trans("WarehouseSourceNotDefined").' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create">'.$langs->trans("AddOne").'</a>';
 					}
-					//print '</td>';
 				}
-				//print '<td class="center">';
-				print '<input type="submit" class="butAction" named="save" value="'.$langs->trans("CreateShipment").'">';
+				print '<input type="submit" class="butAction marginbottomonly margintoponly" name="save" value="'.$langs->trans("CreateShipment").'">';
 				if ($toBeShippedTotal <= 0) {
 					print ' '.img_warning($langs->trans("WarningNoQtyLeftToSend"));
 				}
-				//print '</td></tr>';
-
-				//print "</table>";
+				print '<br><br>';
+				print '</div>';
 				print "</form>\n";
 
 				print '</div>';
-
-				$somethingshown = 1;
 			} else {
 				print '<div class="tabsAction">';
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("CreateShipment").'</a>';

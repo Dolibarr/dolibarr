@@ -39,9 +39,32 @@
 
 define('ALLOWED_IF_UPGRADE_UNLOCK_FOUND', 1);
 include_once 'inc.php';
+
+/**
+ * @var string	$conffile
+ * @var string	$conffiletoshow
+ */
+
 if (file_exists($conffile)) {
 	include_once $conffile;
 }
+/**
+ * @var Conf $conf
+ * @var Translate $langs
+ *
+ * @var string	$dolibarr_main_db_type
+ * @var string	$dolibarr_main_db_host
+ * @var string	$dolibarr_main_db_port
+ * @var string	$dolibarr_main_db_name
+ * @var string	$dolibarr_main_db_user
+ * @var string	$dolibarr_main_db_pass
+ * @var string	$dolibarr_main_document_root
+ * @var string	$dolibarr_main_db_encryption
+ * @var string	$dolibarr_main_db_encrypted_pass
+ * @var string	$dolibarr_main_db_cryptkey
+ * @var string	$dolibarr_main_url_root
+ * @var string	$modulesdir
+ */
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 require_once $dolibarr_main_document_root.'/core/lib/security.lib.php'; // for dol_hash
 require_once $dolibarr_main_document_root.'/core/lib/functions2.lib.php';
@@ -92,6 +115,25 @@ if ($conffile == "/etc/dolibarr/conf.php") {
 if (@file_exists($forcedfile)) {
 	$useforcedwizard = true;
 	include_once $forcedfile;
+	/**
+	 * @var string	$force_install_noedit
+	 * @var string	$force_install_main_data_root
+	 * @var string	$force_install_databaserootlogin
+	 * @var string	$force_install_databaserootpass
+	 * @var string	$force_install_type
+	 * @var string	$force_install_dbserver
+	 * @var string	$force_install_database
+	 * @var string	$force_install_databaselogin
+	 * @var string	$force_install_databasepass
+	 * @var string	$force_install_port
+	 * @var string	$force_install_prefix
+	 * @var string	$force_install_createdatabase
+	 * @var string	$force_install_createuser
+	 * @var string	$force_install_mainforcehttps
+	 * @var string	$force_install_distrib
+	 * @var string	$force_install_dolibarrlogin
+	 * @var string	$force_install_module
+	 */
 	// If forced install is enabled, replace post values. These are empty because form fields are disabled.
 	if ($force_install_noedit == 2) {
 		if (!empty($force_install_dolibarrlogin)) {
@@ -153,15 +195,15 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 	$error = 0;
 
 	// If password is encoded, we decode it
-	if ((!empty($dolibarr_main_db_pass) && preg_match('/(crypted|dolcrypt):/i', $dolibarr_main_db_pass)) || !empty($dolibarr_main_db_encrypted_pass)) {
+	if ((!empty($dolibarr_main_db_pass) && preg_match('/(crypted|dolcrypt):/i', (string) $dolibarr_main_db_pass)) || !empty($dolibarr_main_db_encrypted_pass)) {
 		require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
-		if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
-			$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
+		if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', (string) $dolibarr_main_db_pass)) {
+			$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', (string) $dolibarr_main_db_pass);
 			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially encrypted
-			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
-		} elseif (preg_match('/dolcrypt:/i', $dolibarr_main_db_pass)) {
+			$dolibarr_main_db_pass = dol_decode((string) $dolibarr_main_db_pass);
+		} elseif (preg_match('/dolcrypt:/i', (string) $dolibarr_main_db_pass)) {
 			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially encrypted
-			$dolibarr_main_db_pass = dolDecrypt($dolibarr_main_db_pass);
+			$dolibarr_main_db_pass = dolDecrypt((string) $dolibarr_main_db_pass);
 		} else {
 			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 		}

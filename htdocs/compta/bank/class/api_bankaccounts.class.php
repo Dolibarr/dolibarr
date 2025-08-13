@@ -162,7 +162,7 @@ class BankAccounts extends DolibarrApi
 			throw new RestException(403);
 		}
 		// Check mandatory fields
-		$result = $this->_validate($request_data);
+		$this->_validate($request_data);
 
 		$account = new Account($this->db);
 		// Date of the initial balance (required to create an account).
@@ -178,7 +178,7 @@ class BankAccounts extends DolibarrApi
 		}
 		// courant and type are the same thing but the one used when
 		// creating an account is courant
-		$account->courant = $account->type; // deprecated
+		$account->courant = $account->type; // deprecated, kept for backward compatibility
 
 		if ($account->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, 'Error creating bank account', array_merge(array($account->error), $account->errors));
@@ -620,8 +620,6 @@ class BankAccounts extends DolibarrApi
 	 */
 	public function getLinks($id, $line_id)
 	{
-		$list = array();
-
 		if (!DolibarrApiAccess::$user->hasRight('banque', 'lire')) {
 			throw new RestException(403);
 		}

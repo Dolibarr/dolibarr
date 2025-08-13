@@ -646,26 +646,32 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 					}
 					$openedDashBoard .= '<a href="'.$board->url.'" class="info-box-text info-box-text-a">';
 					$openedDashBoard .= $infoName;
+					$openedDashBoard .= '</a>';
 					$openedDashBoard .= '<div class="inline-block nowraponall">';
+					$openedDashBoard .= '<a href="'.$board->url.'" class="info-box-text info-box-text-a">';
 					$openedDashBoard .= '<span class="classfortooltip'.($nbtodClass ? ' '.$nbtodClass : '').'" title="'.$labeltoshow.'">';
 					$openedDashBoard .= $board->nbtodo;
 					if ($board->total > 0 && getDolGlobalString('MAIN_WORKBOARD_SHOW_TOTAL_WO_TAX')) {
 						$openedDashBoard .= ' : '.price($board->total, 0, $langs, 1, -1, -1, $conf->currency);
 					}
 					$openedDashBoard .= '</span>';
+					$openedDashBoard .= '</a>';
 
 					if ($textLate) {
 						if ($board->url_late) {
-							$openedDashBoard .= '</div></a>';
+							$openedDashBoard .= '</div>';
 							$openedDashBoard .= ' <div class="inline-block"><a href="'.$board->url_late.'" class="info-box-text info-box-text-a paddingleft">';
 						} else {
 							$openedDashBoard .= ' ';
 						}
 						$openedDashBoard .= $textLate;
+						if ($board->url_late) {
+							$openedDashBoard .= '</a>';
+						}
 					}
-					$openedDashBoard .= '</a>'."\n";
-					$openedDashBoard .= '</div>';
 					$openedDashBoard .= '</div>'."\n";
+					//$openedDashBoard .= '</div>';
+					$openedDashBoard .= '</div>'."\n"; // info-box-line
 				}
 
 				// TODO Add hook here to add more "info-box-line"

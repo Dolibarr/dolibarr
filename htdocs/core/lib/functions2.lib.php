@@ -2474,8 +2474,8 @@ function colorStringToArray($stringcolor, $colorifnotfound = array(88, 88, 88))
 
 /**
  * @param string 	$color 			the color you need to valid
- * @param boolean 	$allow_white 	in case of white isn't valid
- * @return boolean
+ * @param bool	 	$allow_white 	in case of white isn't valid
+ * @return bool
  */
 function colorValidateHex($color, $allow_white = true)
 {

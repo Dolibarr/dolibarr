@@ -557,6 +557,7 @@ if ($resql) {
 
 		if (isModEnabled("service") && $type == 1) {
 			print '<td class="center">';
+			$regs = array();
 			if (preg_match('/([0-9]+)y/i', $objp->duration, $regs)) {
 				print $regs[1].' '.$langs->trans("DurationYear");
 			} elseif (preg_match('/([0-9]+)m/i', $objp->duration, $regs)) {
@@ -636,6 +637,9 @@ if ($resql) {
 
 		print "</tr>\n";
 		$i++;
+	}
+	if ($num == 0) {
+		print '<tr><td colspan="">'.$langs->trans("None").'</td></tr>';
 	}
 
 	print "</table>";

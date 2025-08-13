@@ -158,3 +158,4 @@ NumberDayAddMass=Aantal dagen om aan de selectie toe te voegen
 ConfirmMassIncreaseHolidayQuestion=Weet u zeker dat u vakantie van de %s geselecteerde record(s) wilt verhogen?
 HolidayQtyNotModified=Saldo van resterende dagen voor %s is niet gewijzigd
 ConsumeHolidaysAtTheEndOfTheMonthTheyAreTakenAt=Neem vakantiedagen op aan het einde van de maand waarin ze zijn opgenomen
+PleaseDefineSomeTypeOfHolidayFirst=Definieer eerst enkele soorten vakantie in het woordenboek (Menu Home - Instellingen - Woordenboeken)

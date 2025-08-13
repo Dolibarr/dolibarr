@@ -1325,6 +1325,5 @@ PdfAddTermOfSaleHelp=Vous pouvez télécharger le fichier au bas de cette page d
 WarningOnlineSignature=Veuillez noter que cette fonctionnalité permet à une personne (client, fournisseur…) d'insérer en ligne l'image de sa signature dans un document PDF. Comme pour une signature manuscrite, elle peut être apposée par n'importe qui et n'a pas forcément la même valeur juridique qu'une signature électronique légale, délivrée par un tiers de confiance autorisé. Si vous avez besoin de ce niveau de sécurité, vous pouvez contacter un intégrateur pour plus d'informations ou consulter les modules complémentaires disponibles sur %s.
 UploadExtensionRestriction=Liste des extensions de fichiers interdites à télécharger
 PDF_XXX_SHOW_PRICE_INCL_TAX=Afficher la colonne Prix TTC
-FileToConcatToGeneratedPDF=Fichier à concaténer avec le PDF généré
 WebhookTargetTypeHelp=Blocage : si une erreur survient, un message d’erreur s’affiche et l’action est annulée<br>Non bloquant : si une erreur survient, le message d’erreur est uniquement enregistré dans les journaux Dolibarr et l’action n’est pas annulée
 UploadName=Télécharger

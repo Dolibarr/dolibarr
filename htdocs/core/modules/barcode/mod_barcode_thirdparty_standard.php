@@ -266,7 +266,6 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 	 * 											-1 ErrorBadCustomerCodeSyntax
 	 * 											-2 ErrorCustomerCodeRequired
 	 * 											-3 ErrorCustomerCodeAlreadyUsed
-	 * 											-4 ErrorPrefixRequired
 	 * 											-7 ErrorBadClass
 	 */
 	public function verif($db, &$code, $thirdparty, $thirdparty_type, $type)
@@ -280,9 +279,9 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 		$result = 0;
 		$code = strtoupper(trim($code));
 
-		if (empty($code) && $this->code_null && !getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK')) {
+		if (empty($code) && $this->code_null) {
 			$result = 0;
-		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK'))) {
+		} elseif (empty($code) && !$this->code_null && getDolGlobalString('BARCODE_STANDARD_THIRDPARTY_MASK')) {
 			$result = -2;
 		} else {
 			if ($this->verif_syntax($code, $type) >= 0) {
@@ -365,6 +364,7 @@ class mod_barcode_thirdparty_standard extends ModeleNumRefBarCode
 
 		// Special case, if mask is on 12 digits instead of 13, we remove last char into code to test
 		if (in_array($typefortest, array('EAN13', 'ISBN'))) {	// We remove the CRC char not included into mask
+			$reg = array();
 			if (preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i', $mask, $reg)) {
 				if (strlen($reg[1]) == 12) {
 					$newcodefortest = substr($newcodefortest, 0, 12);

@@ -117,6 +117,7 @@ PredefinedMailContentLink=Indien u nog niet heeft betaald kunt u op de onderstaa
 PredefinedMailContentGeneric=__(Hallo)__\n\n\n__(Eerlijk)__\n\n__SENDEREMAIL_SIGNATURE__
 PredefinedMailContentSendActionComm=Herinnering "__EVENT_LABEL__" op __EVENT_DATE__ om __EVENT_TIME__ <br> <br> Dit is een automatisch bericht, gelieve niet te antwoorden.
 DemoDesc=Dolibarr is een compacte ERP / CRM die verschillende bedrijfsmodules ondersteunt. Een demo met alle modules heeft geen zin omdat dit scenario zich nooit voordoet (enkele honderden beschikbaar). Er zijn dus verschillende demoprofielen beschikbaar.
+DemoDesc2=Dit is een beperkte gedeelde demo. U kunt er de voorkeur aan geven om te testen op uw eigen speciale exemplaar met volledige beheerdersrechten. Ga hiervoor naar <a href="%s" target="_blank"> en klik hier <span class="fas fa-external-link-alt"></span></a>.
 ChooseYourDemoProfil=Kies het demoprofiel dat het beste bij u past ...
 ChooseYourDemoProfilMore=... of bouw je eigen profiel <br> (handmatige moduleselectie)
 DemoFundation=Ledenbeheer van een stichting
@@ -380,3 +381,4 @@ TLS/STARTTLS=TLS/STARTTLS
 FillExtrafieldWithAi=Vul extraveld met AI-inhoud
 ExtrafieldFiller=Extrafield-vuller
 OurProductSelection=Onze selectie van nieuwe producten
+NoSupportedModulesHaveBeenActivated=De rapportagetool kan alleen voor bepaalde modules dynamische rapporten genereren. Er is nog geen ondersteunde module ingeschakeld.

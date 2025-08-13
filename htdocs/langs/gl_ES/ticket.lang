@@ -115,7 +115,7 @@ TicketsLimitViewAssignedOnlyHelp=Só serán visibles os tickets asignados ao usu
 TicketsActivatePublicInterface=Activar a interface pública
 TicketsActivatePublicInterfaceHelp=A interface pública permite aos visitantes crear entradas.
 TicketsAutoAssignTicket=Asignar automaticamente ao usuario que creou o ticket
-TicketsAutoAssignTicketHelp=Ao crear un ticket, o usuario pódese asignarse automaticamente ao ticket (Exemplos: 0=Nunca asignado automaticamente ao ticket, 1=Asignado automaticamente ao ticket se non hai ninguén asignado, 2=Asignado automaticamente ao ticket aínda que alguén fose definido).
+TicketsAutoAssignTicketHelp=Ao crear un tícket, o usuario pode ser asignado automaticamente ao tícket<br>Exemplos: 0=Nunca asignado automaticamente ao tícket, 1=Asignado automaticamente ao tícket se non hai ninguén asignado, 2=Asignado automaticamente ao tícket mesmo se alguén foi definido
 TicketAutoChangeStatusOnAnswer=Asigne automaticamente un estado ao responder un ticket
 TicketAutoChangeStatusOnAnswerHelp=Cando un usuario responde a un ticket, o estado aplicarase automaticamente ao ticket
 TicketNumberingModules=Módulo de numeración de entradas
@@ -156,8 +156,6 @@ TicketViewNonClosedOnly=Ver só tickets abertos
 TicketStatByStatus=Tickets por estado
 OrderByDateAsc=Ordear por data ascendente
 OrderByDateDesc=Ordear por data descendente
-ShowAsConversation=Amosar a listaxe de conversa
-MessageListViewType=Amosar a listaxe de taboas
 ConfirmMassTicketClosingSendEmail=Notificar automaticamente a terceiros ao pechar un ticket
 ConfirmMassTicketClosingSendEmailQuestion=Está certo de querer notificar aos terceiros cando pecha este ticket?
 # Ticket card

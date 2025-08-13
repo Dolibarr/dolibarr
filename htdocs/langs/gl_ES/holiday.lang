@@ -158,3 +158,4 @@ NumberDayAddMass=Número de día para engadir á selección
 ConfirmMassIncreaseHolidayQuestion=Está certo de querer aumentar as vacacións do(s) rexistro(s) seleccionado(s) %s?
 HolidayQtyNotModified=O saldo dos días restantes para %s non se modificou
 ConsumeHolidaysAtTheEndOfTheMonthTheyAreTakenAt=Consumir días libres ao final do mes no que se toman
+PleaseDefineSomeTypeOfHolidayFirst=Defina primeiro algúns tipos de festivos no dicionario (Menú Inicio - Configuración - dicionarios)

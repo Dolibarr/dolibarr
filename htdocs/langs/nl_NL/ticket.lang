@@ -115,7 +115,7 @@ TicketsLimitViewAssignedOnlyHelp=Alleen tickets die zijn toegewezen aan de huidi
 TicketsActivatePublicInterface=Publieke interface activeren
 TicketsActivatePublicInterfaceHelp=Met de openbare interface kunnen bezoekers tickets aanmaken.
 TicketsAutoAssignTicket=Wijs automatisch de gebruiker toe die het ticket heeft aangemaakt
-TicketsAutoAssignTicketHelp=Bij het aanmaken van een ticket kan de gebruiker automatisch aan het ticket worden toegewezen (voorbeelden: 0 = Nooit automatisch toegewezen aan het ticket, 1 = Automatisch toegewezen aan het ticket als er niemand is toegewezen, 2 = Automatisch toegewezen aan het ticket, zelfs als er iemand is gedefinieerd).
+TicketsAutoAssignTicketHelp=Bij het aanmaken van een ticket kan de gebruiker automatisch worden toegewezen aan het ticket<br>Voorbeelden: 0=Nooit automatisch toegewezen aan het ticket, 1=Automatisch toegewezen aan het ticket als er niemand is toegewezen, 2=Automatisch toegewezen aan het ticket, zelfs als er iemand is gedefinieerd
 TicketAutoChangeStatusOnAnswer=Automatisch een status toewijzen bij het beantwoorden van een ticket
 TicketAutoChangeStatusOnAnswerHelp=Wanneer een gebruiker op een ticket reageert, wordt de status automatisch op het ticket toegepast
 TicketNumberingModules=Nummering module voor tickets
@@ -156,8 +156,6 @@ TicketViewNonClosedOnly=Bekijk alleen open tickets
 TicketStatByStatus=Tickets op status
 OrderByDateAsc=Sorteer op oplopende datum
 OrderByDateDesc=Sorteer op aflopende datum
-ShowAsConversation=Weergeven als conversatielijst
-MessageListViewType=Weergeven als tabellijst
 ConfirmMassTicketClosingSendEmail=Automatisch e-mails verzenden bij het sluiten van tickets
 ConfirmMassTicketClosingSendEmailQuestion=Wilt u derden verwittigen bij het afsluiten van deze tickets?
 # Ticket card
