@@ -156,6 +156,15 @@ if ($dirphpstan != 'disabled') {
 }
 
 // Get technical debt with Phan
+$output_arrtd = array();
+if ($dirphpstan != 'disabled') {
+	$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phan --version';
+	print 'Execute Phan to get the version: '.$commandcheck."\n";
+	$resexectd = 0;
+	exec($commandcheck, $output_arrtd, $resexectd);
+}
+$phpphanversion = $output_arrtd[0];
+
 $output_phan_json = array();
 $res_exec_phan = 0;
 if ($dir_phan != 'disabled') {
@@ -1082,7 +1091,7 @@ if ($dir_phan != 'disabled') {
     ]});
 ';
 	$html .= '<section class="chapter" id="technicaldebtphan">'."\n";
-	$html .= '<h2><span class="fas fa-book-dead pictofixedwidth"></span>Technical debt <span class="opacitymedium">(PHAN '.$phan_nblines.' warnings)</span></h2>'."\n";
+	$html .= '<h2><span class="fas fa-book-dead pictofixedwidth"></span>Technical debt <span class="opacitymedium">('.$phpphanversion.' -> '.$phan_nblines.' warnings)</span></h2>'."\n";
 
 	$html .= '<div class="boxallwidth">'."\n";
 	$html .= '<div class="div-table-responsive">'."\n";
