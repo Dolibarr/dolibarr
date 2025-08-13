@@ -1,0 +1,6 @@
+.gitignore     text eol=lf
+.gitattributes text eol=lf
+*.md       text eol=lf
+*.php      text eol=lf
+*.yml      text eol=lf
+*.xml      text eol=lf

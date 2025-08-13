@@ -1,0 +1,24 @@
+on:
+  push:
+    branches:
+      - "main"
+
+name: "Main Branch"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: "Test"
+
+    permissions:
+      contents: read
+      security-events: write
+
+    uses: ./.github/workflows/part_test.yml
+
+  docs:
+    name: "Docs"
+
+    uses: ./.github/workflows/part_docs.yml

@@ -1,0 +1,55 @@
+on:
+  push:
+    tags:
+      - "[0-9]+.[0-9]+.[0-9]+"
+
+name: "Stable Tag"
+
+permissions:
+  contents: read
+
+jobs:
+  docs:
+    name: "Docs"
+
+    uses: ./.github/workflows/part_docs.yml
+
+  release:
+    name: "Release"
+
+    needs: ["docs"]
+
+    permissions:
+      id-token: write
+      contents: write
+      attestations: write
+
+    uses: ./.github/workflows/part_release.yml
+    with:
+      releaseName: "${{ github.ref_name }}"
+      stable: true
+
+  deploy_pages:
+    name: "Deploy to GitHub Pages"
+
+    needs: ["release", "docs"]
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        with:
+          egress-policy: audit
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5

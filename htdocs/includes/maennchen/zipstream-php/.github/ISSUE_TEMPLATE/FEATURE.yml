@@ -1,0 +1,11 @@
+name: 🎉 Feature Request
+description: You have a neat idea that should be implemented?
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Provide a summary of the feature you would like to see implemented.
+    validations:
+      required: true

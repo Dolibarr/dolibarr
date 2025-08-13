@@ -135,8 +135,8 @@ class ImportXlsx extends ModeleImports
 		}
 
 		// If driver use an external library, put its name here
-		require_once DOL_DOCUMENT_ROOT.'/includes/phpoffice/phpspreadsheet/src/autoloader.php';
-		require_once DOL_DOCUMENT_ROOT.'/includes/Psr/autoloader.php';
+		require_once DOL_DOCUMENT_ROOT.'/includes/autoload.php';
+		//require_once DOL_DOCUMENT_ROOT.'/includes/Psr/autoloader.php';
 		require_once PHPEXCELNEW_PATH.'Spreadsheet.php';
 		$this->workbook = new Spreadsheet();
 

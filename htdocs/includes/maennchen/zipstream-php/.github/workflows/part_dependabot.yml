@@ -1,0 +1,30 @@
+on:
+  workflow_call: {}
+
+name: "Dependabot"
+
+permissions:
+  contents: read
+
+jobs:
+  automerge_dependabot:
+    name: "Automerge PRs"
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      pull-requests: write
+      contents: write
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@91182cccc01eb5e619899d80e4e971d6181294a7 # v2.10.1
+        with:
+          egress-policy: audit
+
+      - uses: fastify/github-action-merge-dependabot@3892334d1c649bb8119af3d22a3f3766bd5e593f # v3.10.2
+        with:
+          github-token: ${{ github.token }}
+          use-github-auto-merge: true
+          # Major Updates need to be merged manually
+          target: minor
