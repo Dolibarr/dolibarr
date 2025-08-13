@@ -115,7 +115,7 @@ OrphelinsPaymentsDetectedByMethod=Našlaičių mokėjimai, aptikti metodu %s
 RemoveItManuallyAndPressF5ToContinue=Pašalinti rankiniu būdu ir paspausti F5 tęsti toliau.
 FieldRenamed=Laukas pervadintas
 IfLoginDoesNotExistsCheckCreateUser=Jei vartotojo dar nėra, turite pažymėti parinktį „Sukurti vartotoją“.
-ErrorConnection=Serveris „<b>%s</b>“, duomenų bazės pavadinimas „ class='notranslate'><b>%s</b>“, prisijunkite „ class='notranslate'><b>%s</b>“, arba duomenų bazės slaptažodis gali būti neteisingas, arba PHP kliento versija gali būti per sena, palyginti su duomenų bazės versija.
+ErrorConnection=Server "<b>%s</b>", database name "<b>%s</b>", login "<b>%s</b>", or database password may be wrong or the PHP client version may be too old compared to the database version.
 InstallChoiceRecommanded=Rekomenduojama pasirinkti įdiegimui versiją <b>%s</b> iš Jūsų einamosios versijos <b>%s</b>
 InstallChoiceSuggested=<b>Instaliuoti diegėjo siūlomą pasirinkimą</b>.
 MigrateIsDoneStepByStep=Tikslinėje versijoje (%s) yra kelios versijos spraga. Diegimo vedlys pasiūlys tolesnį perkėlimą, kai šis bus baigtas.

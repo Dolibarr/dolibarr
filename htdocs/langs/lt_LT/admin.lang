@@ -231,7 +231,7 @@ SeeInMarkerPlace=Žiūrėti turgaus aikštėje
 SeeSetupOfModule=Žr. modulio %s sąranką
 SeeSetupPage=Žr. sąrankos puslapį adresu %s
 SeeReportPage=Žr. ataskaitos puslapį adresu %s
-SetOptionTo=Nustatyti parinktį <b>%s</b> class='notranslate'>%s
+SetOptionTo=Set option <b>%s</b> to %s
 Updated=Atnaujinta
 AchatTelechargement=Pirkti / Atsisiųsti
 GoModuleSetupArea=Norėdami įdiegti / diegti naują modulį, eikite į modulio nustatymų sritį: <a href="%s">%s</a>.
@@ -255,8 +255,8 @@ Security=Saugumas
 Passwords=Slaptažodžiai
 DoNotStoreClearPassword=Užšifruokite slaptažodžius, saugomus duomenų bazėje.
 MainDbPasswordFileConfEncrypted=Užmaskuoti duomenų bazės slaptažodį, saugomą faile conf.php. Rekomenduojama įjungti šią parinktį.
-InstrucToEncodePass=Norėdami, kad slaptažodis būtų užkoduotas faile <b>conf.php</b>, pakeiskite eilutę <br><b>$dolibarr_main_db_pass="...";</b><br>į <br><b>$dolibarr_main_db_pass="TXPROTECT-ecb2ec-87f4" class='notranslate'></b>
-InstrucToClearPass=Norėdami, kad slaptažodis būtų dekoduotas (išvalytas) ir įrašytas į failą <b>conf.php</b>, eilutę <br><b>$dolibarr_main_db_pass="crypted:...";</b><br>į <br><b>$dolibarr_main_db_pass="TXPROTECT-ecb2ec-87f4" class='notranslate'></b>
+InstrucToEncodePass=Norėdami, kad slaptažodis būtų užkoduotas faile <b>conf.php</b>, pakeiskite eilutę <br><b>$dolibarr_main_db_pass="...";</b><br>į <br><b>$dolibarr_main_db_pass="%s";</b>
+InstrucToClearPass=Norėdami, kad slaptažodis būtų dekoduotas (išvalytas) ir įrašytas į failą <b>conf.php</b>, eilutę <br><b>$dolibarr_main_db_pass="crypted:...";</b><br>į <br><b>$dolibarr_main_db_pass="%s"></b>
 ProtectAndEncryptPdfFiles=Apsaugokite sugeneruotus PDF failus. Tai NEREIŠKAMA, nes tai sutrikdo masinį PDF failų generavimą.
 ProtectAndEncryptPdfFilesDesc=PDF dokumento apsauga leidžia jį skaityti ir spausdinti naudojant bet kurią PDF naršyklę. Tačiau redagavimas ir kopijavimas nebeįmanomi. Atminkite, kad naudojant šią funkciją neveikia visuotiniai sujungti PDF failai.
 Feature=Savybė
@@ -367,7 +367,7 @@ LastActivationVersion=Naujausia aktyvinimo versija
 UpdateServerOffline=Atnaujinti serverį offline
 WithCounter=Tvarkyti skaitiklį
 GenericMaskCodes=Galite įvesti bet kokią numeravimo kaukę. Šioje kaukėje galima naudoti šias žymes:<br><b>{000000}</b> atitinka skaičių, kuris bus didinamas kiekvieną kartą %s. Įveskite tiek nulių, kiek norimas skaitiklio ilgis. Skaitiklis bus papildytas nuliais iš kairės, kad jame būtų tiek nulių, kiek yra kauke. <br><b>{000000+000}</b> tas pats, kas ankstesnis, bet nuo pirmojo %s taikomas poslinkis, atitinkantis skaičių dešinėje nuo pliuso ženklo. <br><b>{000000@x}</b> tas pats, kas ankstesnis, bet skaitiklis nustatomas į nulį, kai pasiekiamas x mėnuo (x nuo 1 iki 12, arba 0, kad būtų naudojami jūsų konfigūracijoje apibrėžti pirmieji finansinių metų mėnesiai, arba 99, kad kiekvieną mėnesį būtų nustatoma į nulį). Jei ši parinktis naudojama ir x yra 2 arba didesnė, taip pat reikalinga seka {yy}{mm} arba {yyyy}{mm}.<br>
-GenericMaskCodes1=<b>{yy}</b>, <span> class='notranslate'><b>{yyyy}</b> arba <span> class='notranslate'><b>{y}</b> metai virš 2, 4 arba 1 skaičiaus. <br><b>{mm}</b> mėnuo (01–12).<br><b> class='notranslate'>{dd}</b> diena (nuo 01 iki 31).<br>
+GenericMaskCodes1=<b>{yy}</b>, <b>{yyyy}</b> arba <b>{y}</b> metai virš 2, 4 arba 1 skaičiaus. <br><b>{mm}</b> mėnuo (01–12).<br><b> {dd}</b> diena (nuo 01 iki 31).<br>
 GenericMaskCodes2=<b>{cccc}</b> kliento kodas, sudarytas iš n simbolių<br><b>{cccc000}</b> po kliento kodo, sudaryto iš n simbolių, seka klientui skirtas skaitiklis. Šis klientui skirtas skaitiklis nustatomas iš naujo tuo pačiu metu, kaip ir bendras skaitiklis.<br><b>{tttt}</b> Trečiosios šalies tipo kodas, sudarytas iš n simbolių (žr. meniu Pradžia - Sąranka - Žodynas - Trečiųjų šalių tipai). Jei pridėsite šią žymę, kiekvieno trečiosios šalies tipo skaitiklis bus skirtingas.<br>
 GenericMaskCodes2b=<b>{uuuu}</b> – n pirmųjų objektą sukūrusio vartotojo pavardės simbolių (n yra „u“ skaičius).
 GenericMaskCodes3=Visi kiti simboliai maskuotėje išliks nepakitę.<br>Tarpai neleidžiami.<br>
@@ -375,8 +375,8 @@ GenericMaskCodes3EAN=Visi kiti kaukės simboliai liks nepakeisti (išskyrus * ar
 GenericMaskCodes4a=<u>Pavyzdys apie trečiosios šalies „TheCompany“ 99-ąjį %s, kurio data 2023-01-31:</u><br>
 GenericMaskCodes4b=<u>Pavyzdys apie trečiąją šalį, sukurtą 2023-01-31:</u><br>
 GenericMaskCodes4c=<u>Produkto, sukurto 2023-01-31, pavyzdys:</u><br>
-GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> suteiks <b>ABC2301-000099</b>TXPROTECT-342fccfENDTX1><span> class='notranslate'><b>{0000+100@1}-ZZZ/{dd}/XXX</b> suteiks <b>0199-ZZZ/31/XXX>TXPROTECT-9fEND14b7f8-9fEND14
-GenericMaskCodes5b=<b>IN{yy}{mm}-<span>- class='notranslate'>{0000}-{t}</b> class='notranslate'><b>IN2301-0099-A</b>, jei įmonės tipas yra „Responsable Inscripto“ su tipo kodu „A_RI“
+GenericMaskCodes5=<b>ABC{yy}{mm}-{000000}</b> suteiks <b>ABC2301-000099</b><br><b>{0000+100@1}-ZZZ/{dd}/XXX</b> suteiks <b>0199-ZZZ/31/XXX</b>
+GenericMaskCodes5b=<b>IN{yy}{mm}-{0000}-{t}</b> will give <b>IN2301-0099-A</b> if the type of company is 'Responsable Inscripto' with code for type that is 'A_RI'
 GenericNumRefModelDesc=Grąžina taikomą numerį pagal nustatytą numeravimo maskuotę.
 DateStartThatModel=Išjungti šios numeravimo taisyklės naudojimą visoms trečiosioms šalims, sukurtoms iki
 DateStartThatModelHelp=Galite išjungti numeravimo taisyklę trečiųjų šalių įrenginiams, sukurtiems iki tam tikros datos (pavyzdžiui, jei jie buvo importuoti migracijos metu iš kitos programinės įrangos, naudojant kitą taisyklę). Palikite tą lauką tuščią, kad taisyklė būtų taikoma visoms trečiosioms šalims.
@@ -489,7 +489,7 @@ ExtrafieldParamHelpsellist2=<br><br>Kad sąrašas priklausytų nuo kito papildom
 ExtrafieldParamHelplink=Parametrai turi būti ObjectName:Classpath<br>Sintaksė: ObjectName:Classpath[:AddCreateButtonOrNot[:Filter[:Sortfield]]]
 ExtrafieldParamHelpSeparator=Palikite tuščią, jei norite paprasto skirtuko<br>Nustatykite reikšmę 1, jei norite suskleisti skirtuką (pagal numatytuosius nustatymus atidaromas naujai sesijai, tada būsena išsaugoma kiekvienai vartotojo sesijai)<br>Nustatykite reikšmę 2, jei norite suskleisti skirtuką (pagal numatytuosius nustatymus suskleidžiamas naujai sesijai, tada būsena išsaugoma kiekvienai vartotojo sesijai)
 LibraryToBuildPDF=PDF generavimui naudojama biblioteka
-LocalTaxDesc=Kai kurios šalys kiekvienoje sąskaitos faktūros eilutėje gali taikyti du ar tris mokesčius. Tokiu atveju pasirinkite antrojo ir trečiojo mokesčių tipą ir jų tarifą. Galimi tipai:<br>1: vietinis mokestis taikomas produktams ir paslaugoms be PVM (vietinis mokestis skaičiuojamas nuo sumos be PVM)<br>2: vietinis mokestis taikomas produktams ir paslaugoms su PVM (vietinis mokestis skaičiuojamas nuo sumos + pagrindinio PVM)<br>3: vietinis mokestis taikomas produktams be PVM (vietinis mokestis skaičiuojamas nuo sumos be PVM)<br>4: vietinis mokestis taikomas produktams su PVM (vietinis mokestis skaičiuojamas nuo sumos + pagrindinio PVM)<span> class='notranslate'><br>5: vietinis mokestis taikomas paslaugoms be PVM (vietinis mokestis skaičiuojamas nuo sumos be PVM)<br>6: vietinis mokestis taikomas paslaugoms su PVM (vietinis mokestis skaičiuojamas nuo sumos + PVM)
+LocalTaxDesc=Kai kurios šalys kiekvienoje sąskaitos faktūros eilutėje gali taikyti du ar tris mokesčius. Tokiu atveju pasirinkite antrojo ir trečiojo mokesčių tipą ir jų tarifą. Galimi tipai:<br>1: vietinis mokestis taikomas produktams ir paslaugoms be PVM (vietinis mokestis skaičiuojamas nuo sumos be PVM)<br>2: vietinis mokestis taikomas produktams ir paslaugoms su PVM (vietinis mokestis skaičiuojamas nuo sumos + pagrindinio PVM)<br>3: vietinis mokestis taikomas produktams be PVM (vietinis mokestis skaičiuojamas nuo sumos be PVM)<br>4: vietinis mokestis taikomas produktams su PVM (vietinis mokestis skaičiuojamas nuo sumos + pagrindinio PVM)<br>5: vietinis mokestis taikomas paslaugoms be PVM (vietinis mokestis skaičiuojamas nuo sumos be PVM)<br>6: vietinis mokestis taikomas paslaugoms su PVM (vietinis mokestis skaičiuojamas nuo sumos + PVM)
 SMS=SMS
 LinkToTestClickToDial=Įveskite telefono numerį, kuriuo skambinsite norėdami parodyti vartotojui nuorodą ClickToDial URL testavimui <strong>%s</strong>
 RefreshPhoneLink=Atnaujinti nuorodą
@@ -1429,7 +1429,7 @@ NewTranslationStringToShow=Rodyti naują vertimo eilutę
 OriginalValueWas=Originalus vertimas yra perrašytas. Originali reikšmė buvo:<br><br>%s
 TransKeyWithoutOriginalValue=Privertėte atlikti naują vertimą vertimo raktui „<strong>%s</strong>“, kurio nėra jokiuose kalbos failuose.
 TitleNumberOfActivatedModules=Aktyvuoti moduliai
-TotalNumberOfActivatedModules=Suaktyvinti moduliai: <b>%sTXPROTECT-9a4b739f17f17-TXEND class='notranslate'><b>%s</b>
+TotalNumberOfActivatedModules=Suaktyvinti moduliai: <b>%s</b>/<b>%s</b>
 YouMustEnableOneModule=Jūs turite įjungti bent 1 modulį
 YouMustEnableTranslationOverwriteBefore=Pirmiausia turite įjungti vertimo perrašymą, kad būtų galima pakeisti vertimą
 ClassNotFoundIntoPathWarning=PHP kelyje nerasta klasė %s
@@ -2074,7 +2074,7 @@ EnterYesOrNo=Įveskite „Taip“ arba „Ne“
 UnicodeCurrency=Čia, skliausteliuose, įveskite baitų skaičių, atitinkančių valiutos simbolį, sąrašą. Pavyzdžiui: jei norite $, įveskite [36], jei norite Brazilijos realo, įveskite R$ [82,36], jei norite €, įveskite [8364].
 ColorFormat=RGB spalva yra HEX formatu, pvz.: FF0000
 NumberFormatForATotalPrice=Bendros kainos skaičių formatas %s
-PictoHelp=Piktogramos pavadinimas tokiu formatu:<br> – vaizdas.png vaizdo failui į dabartinį temos katalogą<br> – image.png@module, jei modulio /<g failas yra direktorijoje/ class='notranslate'><br> – fa-xxx, skirtas FontAwesome fa-xxx picto<br> – fontawesome_xxx_fa_color_A. priešdėlio, spalvos ir dydžio rinkinys)
+PictoHelp=Piktogramos pavadinimas tokiu formatu:<br> – vaizdas.png vaizdo failui į dabartinį temos katalogą<br> – image.png@module, jei modulio /<g failas yra direktorijoje/ <br> – fa-xxx, skirtas FontAwesome fa-xxx picto<br> – fontawesome_xxx_fa_color_A. priešdėlio, spalvos ir dydžio rinkinys)
 PositionIntoComboList=Eilutės pozicija kombinuotuose sąrašuose
 SellTaxRate=Pardavimo mokesčio tarifas
 RecuperableOnly=Taip, PVM „Nesuvokiamas, bet susigrąžinamas“ skirtas kai kurioms Prancūzijos valstijoms. Visais kitais atvejais palikite reikšmę „Ne“.
@@ -2508,8 +2508,8 @@ NotAvailableByDefaultEnabledOnModuleActivation=Nesukuriama pagal numatytuosius n
 CSSPage=CSS stilius
 Defaultfortype=Pagal nutylėjimą
 DefaultForTypeDesc=Šablonas, kuris pagal numatytuosius nustatymus naudojamas kuriant naują el. laišką pagal šablono tipą
-OptionXShouldBeEnabledInModuleY=Parinktis "<b>%sTXPROTECT-9a4b739f17f8 modulis" <span turėtų būti įjungtas į TXEND class='notranslate'><b>%s</b>
-OptionXIsCorrectlyEnabledInModuleY=Parinktis "<b>%sTXPROTECT-9a4b739f17f8 modulis" <span> įjungtas modulis class='notranslate'><b>%s</b>
+OptionXShouldBeEnabledInModuleY=Option "<b>%s</b>" should be enabled into module <b>%s</b>
+OptionXIsCorrectlyEnabledInModuleY=Option "<b>%s</b>" is enabled into module <b>%s</b>
 AllowOnLineSign=Leisti internetinį parašą
 AllowOnLineSignDesc=Nuoroda, leidžianti internetu pasirašyti banko dokumentą (pavyzdžiui, tiesioginio debeto įgaliojimą), yra trečiųjų šalių banko sąskaitų mokėjimo būdų sąraše.
 AtBottomOfPage=Puslapio apačioje

@@ -2062,7 +2062,7 @@ if ($action == 'create') {
 			$text .= $notify->confirmMessage('SHIPPING_VALIDATE', $object->socid, $object);
 		}
 
-		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('ValidateSending'), $text, 'confirm_valid', '', 0, 1, 250);
+		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('ValidateSending'), $text, 'confirm_valid', '', 0, 1, 260);
 	}
 	// Confirm cancellation
 	if ($action == 'cancel') {

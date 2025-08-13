@@ -48,7 +48,7 @@ ViewWebsiteInProduction=Peržiūrėti svetainę naudojant pagrindinius URL
 Virtualhost=Virtualus serveris arba domeno vardas
 VirtualhostDesc=Virtualiojo serverio arba domeno pavadinimas (pvz.: www.mywebsite.com, mybigcompany.net, ...)
 ToDeployYourWebsiteOnLiveYouHave3Solutions=Norėdami paleisti šią svetainę, turite 3 sprendimus...
-SetHereVirtualHost=<u>Naudokite su Apache/NGinx/...</u><br>Sukurkite savo žiniatinklio serveryje („Apache“, „Nginx“, ...) skirtą virtualų kompiuterį su įjungtu PHP ir šakniniu katalogu <br><strong>%s<span> class='notranslate'></strong>
+SetHereVirtualHost=<u>Naudokite su Apache/NGinx/...</u><br>Sukurkite savo žiniatinklio serveryje („Apache“, „Nginx“, ...) skirtą virtualų kompiuterį su įjungtu PHP ir šakniniu katalogu <br><strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=Pavyzdys, kurį galima naudoti „Apache“ virtualiojo serverio sąrankoje:
 YouCanAlsoTestWithPHPS=<u>Naudoti su įterptuoju PHP serveriu</u><br>Kūrimo aplinkoje galite išbandyti svetainę su įterptuoju PHP žiniatinklio serveriu paleisdami
 YouCanAlsoDeployToAnotherWHP=<u>Paleiskite savo svetainę „Dolibarr“ žiniatinklio prieglobos teikėjo aplinkoje</u><br>Jei neturite interneto serverio, pvz., „Apache“ ar „NGinx“, galite eksportuoti ir importuoti savo svetainę į kitą „Dolibarr“ egzempliorių, kurį teikia kitas „Dolibarr“ prieglobos teikėjas, užtikrinantis visišką integraciją su svetainės moduliu. Kai kurių „Dolibarr“ prieglobos paslaugų teikėjų sąrašą galite rasti adresu <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
@@ -313,7 +313,7 @@ yourBillingInformation=Jūsų atsiskaitymo informacija
 emailAlreadyRegistered=Šis el. pašto adresas jau užregistruotas.
 firstnameContainsLettersOnly=<b>Vardas</b> gali būti sudarytas tik iš raidžių ir tarpų
 lastnameContainsLettersOnly=<b>Pavardė</b> gali būti sudaryta tik iš raidžių ir tarpų
-passwordCriteria=<b>Slaptažodis</b> turi atitikti šiuos kriterijus:<br>- Bent 12 simbolių<br>- Bent 1 didžioji raidė<br>- Bent 1 skaitmuo<br>- Bent 1 specialusis simbolis<span> class='notranslate'><br>- Venkite simbolių kartojimo daugiau nei 3 kartus<br>
+passwordCriteria=<b>Slaptažodis</b> turi atitikti šiuos kriterijus:<br>- Bent 12 simbolių<br>- Bent 1 didžioji raidė<br>- Bent 1 skaitmuo<br>- Bent 1 specialusis simbolis<br>- Venkite simbolių kartojimo daugiau nei 3 kartus<br>
 errorOccurred=Įvyko klaida.
 accountCreation=Sukurti paskyrą
 errorsOccurred=Yra klaida %s %s
