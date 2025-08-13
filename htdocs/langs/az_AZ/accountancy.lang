@@ -72,7 +72,7 @@ AccountancyAreaDescActionOnce=Aşağıdakı hərəkətlər adətən yalnız bir 
 AccountancyAreaDescActionOnceBis=Mühasibat uçotunda məlumatların ötürülməsi zamanı avtomatik olaraq düzgün standart mühasibat hesabını təklif etməklə gələcəkdə vaxtınıza qənaət etmək üçün növbəti addımlar atılmalıdır.
 AccountancyAreaDescActionFreq=Aşağıdakı hərəkətlər adətən çox böyük şirkətlər üçün hər ay, həftə və ya gün yerinə yetirilir...
 AccountancyAreaDescJournalSetup=ADDIM %s: %s menyusundan jurnal siyahınızın məzmununu yoxlayın
-AccountancyAreaDescChartModel=ADDIM %s: Hesab planı modelinin mövcud olduğunu yoxlayın və ya %s menyusundan birini yaradın.
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists for your country or create one from menu %s
 AccountancyAreaDescChart=ADDIM %s: %s menyusundan hesab cədvəlinizi seçin və|və ya tamamlayın
 AccountancyAreaDescFiscalPeriod=ADDIM %s: Mühasibat qeydlərinin yaradılması üçün qəbul edilmiş tarixlər diapazonunu müəyyən edən maliyyə dövrünü müəyyənləşdirin. Bunun üçün %s menyu girişindən istifadə edin.
 AccountancyAreaDescVat=ADDIM %s: Hər ƏDV dərəcələri üçün mühasibat hesablarını müəyyənləşdirin. Bunun üçün %s menyu girişindən istifadə edin.
@@ -275,7 +275,7 @@ HideOpeningBalance=Açılış balansını gizlədin
 ShowSubtotalByGroup=Səviyyəyə görə ara cəmi göstərin
 Pcgtype=Hesab qrupu
 PcgtypeDesc=Hesab qrupu bəzi mühasibat hesabatları üçün əvvəlcədən müəyyən edilmiş “filtr” və “qruplaşdırma” meyarları kimi istifadə olunur. Məsələn, "GƏLİR" və ya "XƏRÇ" məsrəf/gəlir hesabatını yaratmaq üçün məhsulların mühasibat uçotu üçün qruplar kimi istifadə olunur.
-AccountingCategoriesDesc=Fərdi hesablar qrupu filtrdən istifadəni və ya xüsusi hesabatların qurulmasını asanlaşdırmaq üçün mühasibat hesablarını bir adda qruplaşdırmaq üçün istifadə edilə bilər.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Barışıq
 Centralized=Mərkəzləşdirilmiş hesab
 TotalVente=Vergidən əvvəl ümumi dövriyyə
@@ -319,7 +319,7 @@ NotReconciled=Barışmadı
 WarningRecordWithoutSubledgerAreExcluded=Xəbərdarlıq, subledger hesabı müəyyən edilməmiş bütün xətlər süzülür və bu görünüşdən xaric edilir
 AccountRemovedFromCurrentChartOfAccount=Cari hesablar planında olmayan mühasibat hesabı
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=Xəbərdarlıq, bu səhifədə yalnız mühasibat sisteminə köçürülmüş qeydlər var.
-BookkeepingNumRefModelDesc = İstinad nömrəsini yyyyjjnnnn formatında qaytarır, burada yyyy il və jj jurnal kodudur, nnnn ildən və jurnal kodundan asılı olaraq ardıcıl avtomatik artan nömrədir.
+BookkeepingNumRefModelDesc = Returns the reference number in the format yymmjjnnnnn where yy is the year, mm is the month and jj the journal code, nnnnn is a sequential auto-incrementing number depending on the year, the month and the journal code.
 BookkeepingNumberingModules = Mühasibat nömrələmə modelləri
 ## Admin
 BindingOptions=Mühasibatlıqda köçürmə variantları
@@ -389,6 +389,7 @@ Modelcsv_Gestinumv5=Gestinum üçün ixrac (v5)
 Modelcsv_charlemagne=Aplim Charlemagne üçün ixrac
 ChartofaccountsId=Hesablar planı İd
 ExportToPdf = PDF-ə ixrac edin
+ExportToCsv = Export to CSV
 PdfLedgerTitle = Mühasibat uçotu hesabları
 PdfBalanceTitle = Ledger balansı
 PdfBookkeepingTitle = Jurnallar
@@ -440,7 +441,7 @@ AccountRemovedFromGroup=Hesab qrupdan silindi
 SaleLocal=Yerli satış
 SaleExport=İxrac satışı
 SaleEEC=AET-də satış
-SaleEECWithVAT=Satış EEC-də ƏDV sıfır deyil, ona görə də güman edirik ki, bu, icmadaxili satış DEYİL və təklif olunan hesab standart məhsul hesabıdır.
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=EEC-də satış ƏDV-sizdir, lakin üçüncü tərəfin ƏDV ID-si müəyyən edilməyib. Biz standart satış hesabına geri düşürük. Siz üçüncü tərəfin ƏDV ID-sini düzəldə və ya lazım gələrsə, məcburi olaraq təklif olunan məhsul hesabını dəyişə bilərsiniz.
 AnySale=İstənilən satış
 ForbiddenTransactionAlreadyExported=Qadağan edilib: Əməliyyat təsdiq edilib və/yaxud ixrac edilib.
@@ -485,7 +486,7 @@ AccountancyClosureConfirmClose=Cari maliyyə dövrünü bağlamaq istədiyinizə
 AccountancyClosureConfirmAccountingReversal="Bölüşdürülməmiş mənfəət" üçün qeydləri qeyd etmək istədiyinizə əminsiniz?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) were already recorded
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Quraşdırmanın bəzi məcburi addımları yerinə yetirilmədi, lütfən, onları tamamlayın
@@ -508,7 +509,7 @@ ErrorNoFiscalPeriodActiveFound=Heç bir aktiv maliyyə dövrü (başlanğıc və
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Mühasibat sənədinin tarixi aktiv maliyyə dövründə deyil
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Mühasibat sənədinin tarixi qapalı maliyyə dövründədir
 Error_BOOKKEEPING_ADDON_NotDefined=Xəta, mühasibat uçotunun nömrələnməsi qaydası Mühasibat modulunun ümumi parametrlərində müəyyən edilməmişdir
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=%s (Ödəniş ID: %s) üçün balanslaşdırılmış olmayan əməliyyatı kitaba daxil etməyə çalışın. Ləğv edildi. Şübhəsiz ki, bir səhv.
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
 ProductUsage=Məhsul və ya xidmətdən istifadə
 ## Import
 ImportAccountingEntries=Mühasibat qeydləri
@@ -537,15 +538,15 @@ ExpenseReportJournal=Xərc Hesabatı Jurnalı
 DocsAlreadyExportedAreIncluded=Artıq ixrac edilmiş sənədlər daxil edilib
 ClickToShowAlreadyExportedLines=Artıq ixrac edilmiş xətləri göstərmək üçün klikləyin
 NAccounts=%s hesab
-ACCOUNTING_USE_TREASURY_Desc=Bu, xəzinədarlıq mühasibatlığı üçün rejimdir. Biz mühasibat uçotunu aparmaq üçün yalnız ödənişlərdən və onların tarixindən istifadə edirik.
-ACCOUNTING_USE_NON_TREASURY_Desc=Bu, real mühasibatlıq üçün rejimdir. Mühasibat uçotunu aparmaq üçün həm fakturalardan, həm də ödənişlərdən istifadə edirik.
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
+ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
 PieceDesc=Bu bank əməliyyatını yaradan mənbə sənədinin arayışı (Qaimə-faktura Ref, Xərc hesabatı, ...)
 BankTransactionRef=Bank əməliyyatı üçün arayış (İstəyə görə, avtomatik ID artıq yaradılıb)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=Bu, mühasibat qeydini klonlayacaq (bu mühasibat qeydi ilə əlaqəli bütün sətirlər klonlaşdırılacaq). Seçilmiş %s qeydlərini klonlaşdırmaq istədiyinizə əminsiniz?
 ConfirmMassCloneBookkeepingWriting=Kütləvi klonlaşdırmanı təsdiqləyin
-ConfirmMassReturnAccountBookkeepingWriting=Kütləvi məhvi təsdiqləyin
-ConfirmMassReturnAccountBookkeepingWritingQuestion=Bu, mühasibat qeydini söndürəcək (bu mühasibat qeydi ilə əlaqəli bütün sətirlər sönəcək). %s seçilmiş qeydləri keçmək istədiyinizə əminsiniz?
+ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
+ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=Bu, bütün seçilmiş xətlərin hesabını dəyişəcək.
 confirmMassAssignAccountBookkeepingWritingConfirm=Kütləvi hesab dəyişikliyini təsdiqləyin
 CloningSuccess=Uğurlu tranzaksiya klonlaması : %s
@@ -560,6 +561,6 @@ NoAccountsChangedWithAccountNumber=Hesab nömrələri ilə yenilənməmiş əmə
 HasAlreadyBeenReversed=artıq tərsinə çevrilmişdir
 ErrorWhileCreating=Yaratma zamanı xəta %s
 ReturnAccount=Qayıt
-Clone=Klonçu
+Clone=Clone
 AlreadyReturnedAccount=n°%s girişi artıq ləğv edilib
 SuccessReturnedAccount=n°%s girişi dəyişdirildi

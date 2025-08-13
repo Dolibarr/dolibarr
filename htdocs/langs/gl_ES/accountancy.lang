@@ -389,6 +389,7 @@ Modelcsv_Gestinumv5=Exportar para Gestinum (v5)
 Modelcsv_charlemagne=Exportar para Aplim Charlemagne
 ChartofaccountsId=Id do plan contable
 ExportToPdf = Exportar a PDF
+ExportToCsv = Export to CSV
 PdfLedgerTitle = Contas do libro maior
 PdfBalanceTitle = Saldo do libro maior
 PdfBookkeepingTitle = Diarios
@@ -440,7 +441,7 @@ AccountRemovedFromGroup=Conta eliminada do grupo
 SaleLocal=Venda local
 SaleExport=Venda de exportación
 SaleEEC=Venda na CEE
-SaleEECWithVAT=A venda é na CEE cun IVE non nulo, polo que supoñemos que NON é unha venda intracomunitaria e que a conta suxerida é a conta estándar do produto.
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=A venda realízase na CEE sen IVE, pero non se define o número de identificación intracomunitario do IVE do terceiro. Votamos á conta das vendas estándar. Pode corrixir o número de identificación intracomunitario de IVE do terceiro ou cambiar a conta do produto suxerida para a ligazónn se é preciso.
 AnySale=Calquera venda
 ForbiddenTransactionAlreadyExported=Prohibido: a transacción foi validada e/ou exportada.
@@ -485,7 +486,7 @@ AccountancyClosureConfirmClose=Está certo de querer pechar o período fiscal ac
 AccountancyClosureConfirmAccountingReversal=Está certo de querer rexistrar as entradas para as "Garantías retidas"?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=Xa se rexistrou a transacción para (doc_type=%s, doc_id=%s, doc_det=%s)
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Algúns pasos precisos da configuración non foron realizados, prégase completalos.
@@ -508,7 +509,7 @@ ErrorNoFiscalPeriodActiveFound=Non se atopou ningún período fiscal activo (cun
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=A data do documento de contabilidade non está dentro do período fiscal activo
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=A data do documento de contabilidade está dentro dun período fiscal pechado
 Error_BOOKKEEPING_ADDON_NotDefined=Erro, a regra para a referencia de numeración de contabilidade non está definida na configuración xeral do módulo de Contabilidade
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Tenta inserir unha transacción non equilibrada no libro para %s (ID de pago: %s). Cancelado. Seguramente un bug.
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
 ProductUsage=Uso do produto ou servizo
 ## Import
 ImportAccountingEntries=Entradas contables
@@ -537,15 +538,15 @@ ExpenseReportJournal=Informe de gastos diario
 DocsAlreadyExportedAreIncluded=Inclúense os documentos xa exportados
 ClickToShowAlreadyExportedLines=Prema para amosar as liñas xa exportadas
 NAccounts=%s contas
-ACCOUNTING_USE_TREASURY_Desc=Esta é a modalidade de contabilidade de tesourería. Estamos a usar só os pagamentos e a súa data para facer a contabilidade.
-ACCOUNTING_USE_NON_TREASURY_Desc=Este é o modo para a contabilidade real. Estamos utilizando tanto as facturas como os pagamentos para facer a contabilidade.
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
+ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
 PieceDesc=A referencia do documento de orixe que xera esta transacción bancaria (Referencia da factura, referencia do informe de gastos, ...)
 BankTransactionRef=Unha referencia para a transacción bancaria (opcional, xa se xera un ID automático)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=Isto clonará a entrada de contabilidade (clonaranse todas as liñas ligadas a esta entrada de contabilidade). Está certo de querer clonar os rexistros %s seleccionados?
 ConfirmMassCloneBookkeepingWriting=Confirmar a clonación masiva
-ConfirmMassReturnAccountBookkeepingWriting=Confirmar a eliminación masiva
-ConfirmMassReturnAccountBookkeepingWritingQuestion=Isto eliminará o asento de contabilidade (elimínanse todas as liñas ligadas a este asento contable). Está certo de querer omitir os rexistros seleccionados %s?
+ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
+ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=Isto cambiará a conta de todas as liñas seleccionadas.
 confirmMassAssignAccountBookkeepingWritingConfirm=Confirmar cambio masivo de conta
 CloningSuccess=Clonación da transacción correcta: %s
@@ -560,6 +561,6 @@ NoAccountsChangedWithAccountNumber=Transaccións non actualizadas cos números d
 HasAlreadyBeenReversed=xa foi revertido
 ErrorWhileCreating=Erro durante a creación %s
 ReturnAccount=Voltar
-Clone=Clonar
+Clone=Copiar
 AlreadyReturnedAccount=A entrada n°%s xa foi revertida
 SuccessReturnedAccount=A entrada n°%s foi revertida

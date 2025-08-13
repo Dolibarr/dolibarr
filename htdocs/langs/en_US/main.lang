@@ -718,6 +718,7 @@ SeeAll=See all
 Reason=Reason
 FeatureNotYetSupported=Feature not yet supported
 CloseWindow=Close window
+CloseWindowShort=Close
 Response=Response
 Priority=Priority
 SendByMail=Send by email

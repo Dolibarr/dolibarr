@@ -1,4 +1,6 @@
 # Dolibarr language file - Source file is en_US - install
+Server=Host
+DatabaseName=Datenbankname
 GoToDolibarr=Zu dolibarr
 GoToUpgradePage=Zur Aktualisierungsseite
 DBSortingCollation=Reihenfolge der Zeichensortierung (Collation)

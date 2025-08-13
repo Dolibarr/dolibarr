@@ -72,7 +72,7 @@ AccountancyAreaDescActionOnce=عادة ما يتم تنفيذ الإجراءات
 AccountancyAreaDescActionOnceBis=يجب تنفيذ الخطوات التالية لتوفير الوقت في المستقبل من خلال اقتراح حساب المحاسبة الافتراضي الصحيح تلقائيًا عند نقل البيانات في المحاسبة
 AccountancyAreaDescActionFreq=يتم تنفيذ الإجراءات التالية عادةً كل شهر أو أسبوع أو كل يوم للشركات الكبيرة جدًا .
 AccountancyAreaDescJournalSetup=الخطوة %s: تحقق من محتوى قائمة مجلاتك من القائمة %s
-AccountancyAreaDescChartModel=الخطوة %s: تحقق من وجود نموذج لمخطط الحساب أو قم بإنشاء نموذج من القائمة %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists for your country or create one from menu %s
 AccountancyAreaDescChart=الخطوة %s : حدد و / أو أكمل مخطط حسابك من القائمة %s
 AccountancyAreaDescFiscalPeriod=الخطوة %s: حدّد الفترة المالية التي تُحدّد نطاق التواريخ المقبولة لإنشاء القيود المحاسبية. للقيام بذلك، استخدم عنصر القائمة %s.
 AccountancyAreaDescVat=الخطوة %s: تحديد حسابات المحاسبة لكل معدلات ضريبة القيمة المضافة. لهذا ، استخدم إدخال القائمة %s.
@@ -275,7 +275,7 @@ HideOpeningBalance=إخفاء الرصيد الافتتاحي
 ShowSubtotalByGroup=عرض المجموع الفرعي حسب المستوى
 Pcgtype=مجموعة الحساب
 PcgtypeDesc=تُستخدم مجموعة الحسابات كمعايير "تصفية" و "تجميع" محددة مسبقًا لبعض التقارير المحاسبية. على سبيل المثال ، يتم استخدام "الدخل" أو "المصاريف" كمجموعات لحسابات المنتجات لإنشاء تقرير المصاريف / الدخل.
-AccountingCategoriesDesc=يمكن استخدام مجموعة حسابات مخصصة لتجميع حسابات المحاسبة في اسم واحد لتسهيل استخدام عامل التصفية أو إنشاء تقارير مخصصة.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=قابل للتسوية
 Centralized=حساب مركزي
 TotalVente=المبيعات الإجمالية قبل الضريبة
@@ -319,7 +319,7 @@ NotReconciled=لم يتم تسويتة
 WarningRecordWithoutSubledgerAreExcluded=تحذير ، كل الأسطر التي لم يتم تحديد حساب دفتر الأستاذ الفرعي تتم تصفيتها واستبعادها من طريقة العرض هذه
 AccountRemovedFromCurrentChartOfAccount=حساب محاسبي غير موجود في مخطط الحسابات الحالي
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=تحذير، هذه الصفحة تحتوي فقط على الإدخالات المحولة إلى نظام المحاسبة.
-BookkeepingNumRefModelDesc = إرجاع رقم المرجع بالتنسيق yyyyjjnnnn حيث yyyy هو العام و jj رمز المجلة، nnnn هو رقم متسلسل متزايد تلقائيًا وفقًا للعام و رمز المجلة.
+BookkeepingNumRefModelDesc = Returns the reference number in the format yymmjjnnnnn where yy is the year, mm is the month and jj the journal code, nnnnn is a sequential auto-incrementing number depending on the year, the month and the journal code.
 BookkeepingNumberingModules = نماذج ترقيم المحاسبة
 ## Admin
 BindingOptions=خيارات النقل في المحاسبة
@@ -389,6 +389,7 @@ Modelcsv_Gestinumv5=تصدير لـ Gestinum (v5)
 Modelcsv_charlemagne=تصدير لأبليم شارلمان
 ChartofaccountsId=معرف دليل الحسابات
 ExportToPdf = تصدير إلى PDF
+ExportToCsv = Export to CSV
 PdfLedgerTitle = حسابات دفتر الأستاذ
 PdfBalanceTitle = دفتر الأستاذ الرصيد
 PdfBookkeepingTitle = دفاتر اليومية
@@ -440,7 +441,7 @@ AccountRemovedFromGroup=تمت إزالة الحساب من المجموعة
 SaleLocal=بيع محلي
 SaleExport=بيع تصدير
 SaleEEC=بيع في الاتحاد الاوروبي
-SaleEECWithVAT=تتم عملية البيع في السوق الأوروبية المشتركة -EEC- مع ضريبة القيمة المضافة غير المعدومة، لذلك نفترض أن هذه ليست عملية بيع داخل الجماعة و أن الحساب المقترح هو حساب المنتج القياسي.
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=تتم عملية البيع في السوق الأوروبية المشتركة -ECC- بدون ضريبة القيمة المضافة ولكن معرف ضريبة القيمة المضافة للطرف الثالث غير محدد. نعتمد على الحساب الخاص بالمبيعات القياسية. يمكنك إصلاح معرف ضريبة القيمة المضافة للطرف الثالث، أو تغيير حساب المنتج المقترح للربط إذا لزم الأمر.
 AnySale=أي مبيعات
 ForbiddenTransactionAlreadyExported=ممنوع: تم التحقق من صحة المعاملة و / أو تصديرها.
@@ -485,7 +486,7 @@ AccountancyClosureConfirmClose=هل أنت متأكد أنك تريد إغلاق
 AccountancyClosureConfirmAccountingReversal=هل أنت متأكد أنك تريد تسجيل قيود "الأرباح المحتجزة"؟
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=تم تسجيل المعاملة الخاصة بـ (doc_type=%s، doc_id=%s، doc_det=%s) بالفعل
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=لم يتم تنفيذ بعض خطوات الإعداد الإلزامية ، يرجى إكمالها
@@ -508,7 +509,7 @@ ErrorNoFiscalPeriodActiveFound=لم يتم العثور على فترة مالي
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=تاريخ مستند مسك الدفاتر ليس داخل الفترة المالية النشطة
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=يقع تاريخ مستند مسك الدفاتر داخل فترة مالية مغلقة
 Error_BOOKKEEPING_ADDON_NotDefined=خطأ، لم يتم تعريف قاعدة ترقيم السجلات المحاسبية في الإعداد العام للمحاسبة نموذج
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=حاول إدراج معاملة غير متوازنة في دفتر %s (معرف الدفع: %s). تم الإلغاء. ربما هناك خطأ.
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
 ProductUsage=استخدام المنتج أو الخدمة
 ## Import
 ImportAccountingEntries=مداخيل حسابية
@@ -537,15 +538,15 @@ ExpenseReportJournal=تقرير دفتر المصاريف
 DocsAlreadyExportedAreIncluded=تم تضمين المستندات التي تم تصديرها بالفعل
 ClickToShowAlreadyExportedLines=انقر لإظهار الخطوط المصدرة بالفعل
 NAccounts=%s حساباً
-ACCOUNTING_USE_TREASURY_Desc=هذا هو أسلوب محاسبة الخزينة. نستخدم المدفوعات فقط و وتاريخها لإجراء المحاسبة.
-ACCOUNTING_USE_NON_TREASURY_Desc=هذا هو الوضع المُستخدم في المحاسبة الفعلية. نستخدم كلا الفاتورتين و لإجراء المحاسبة.
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
+ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
 PieceDesc=مرجع المستند المصدر الذي يُنشئ هذه المعاملة المصرفية (فاتورة Ref, تقرير المصروفات ref, ...)
 BankTransactionRef=مرجع للمعاملة المصرفية (اختياري، يتم إنشاء معرف تلقائي بالفعل)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=سيؤدي هذا إلى استنساخ مُدخل المحاسبة (سيتم استنساخ جميع الأسطر المرتبطة بهذا المُدخل). هل أنت متأكد من رغبتك في استنساخ سجلات %s المُحددة؟
 ConfirmMassCloneBookkeepingWriting=تأكيد الاستنساخ الشامل
-ConfirmMassReturnAccountBookkeepingWriting=تأكيد الانقراض الجماعي
-ConfirmMassReturnAccountBookkeepingWritingQuestion=سيؤدي هذا إلى حذف قيد المحاسبة (سيتم حذف جميع الأسطر المرتبطة بهذا القيد). هل أنت متأكد من رغبتك في تجاوز السجلات المحددة %s؟
+ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
+ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=سيؤدي هذا إلى تغيير حساب كافة الأسطر المحددة.
 confirmMassAssignAccountBookkeepingWritingConfirm=تأكيد تغيير الحساب الشامل
 CloningSuccess=تم استنساخ المعاملة بنجاح: %s
@@ -560,6 +561,6 @@ NoAccountsChangedWithAccountNumber=المعاملات غير المحدثة بأ
 HasAlreadyBeenReversed=لقد تم عكسه بالفعل
 ErrorWhileCreating=حدث خطأ أثناء إنشاء %s
 ReturnAccount=العودة
-Clone=مستنسخ
+Clone=استنساخ
 AlreadyReturnedAccount=تم بالفعل عكس الإدخال رقم%s
 SuccessReturnedAccount=تم عكس الإدخال رقم%s
