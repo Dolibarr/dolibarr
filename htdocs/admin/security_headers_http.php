@@ -51,6 +51,7 @@ $forceCSP = getDolGlobalString("MAIN_SECURITY_FORCECSP");
 $selectarrayCSPDirectives = GetContentPolicyDirectives();
 $selectarrayCSPSources = GetContentPolicySources();
 $forceCSPArr = GetContentPolicyToArray($forceCSP);
+$error = 0;
 
 /*
  * Actions
@@ -138,6 +139,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$directivecsp = GETPOST("select_identifier_MAIN_SECURITY_FORCECSP");
 	$sourcecsp = GETPOST("select_source_MAIN_SECURITY_FORCECSP");
 	$sourcedatacsp = GETPOST("input_data_MAIN_SECURITY_FORCECSP");
+	$sourcetype = "";
 
 	$forceCSPArr = GetContentPolicyToArray($forceCSP);
 	$directivesarray = GetContentPolicyDirectives();
