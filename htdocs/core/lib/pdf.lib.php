@@ -1848,7 +1848,9 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			if ($detail->batch) {
 				$dte[] = $outputlangs->transnoentitiesnoconv('printBatch', $detail->batch);
 			}
-			$dte[] = $outputlangs->transnoentitiesnoconv('printQty', $detail->qty);
+			if ($detail->qty) {
+				$dte[] = $outputlangs->transnoentitiesnoconv('printQty', $detail->qty);
+			}
 
 			// Add also info of planned warehouse for lot
 			if ($object->element == 'shipping' && $detail->fk_origin_stock > 0 && getDolGlobalInt('PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT')) {

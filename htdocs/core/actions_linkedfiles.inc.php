@@ -97,6 +97,7 @@ if (GETPOST('sendit', 'alpha') && getDolGlobalString('MAIN_UPLOAD_DOC') && !empt
 				$generatethumbs = 0;
 			}
 			$allowoverwrite = (GETPOSTINT('overwritefile') ? 1 : 0);
+			$forceFullTextIndexation = (!empty($forceFullTextIndexation) ? $forceFullTextIndexation : '');
 
 			if (!empty($upload_dirold) && getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 				$result = dol_add_file_process($upload_dirold, $allowoverwrite, 1, 'userfile', GETPOST('savingdocmask', 'alpha'), null, '', $generatethumbs, $object, $forceFullTextIndexation);

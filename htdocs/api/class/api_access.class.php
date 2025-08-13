@@ -176,7 +176,7 @@ class DolibarrApiAccess implements iAuthenticate
 			}
 
 			// Check if user status is enabled
-			if ($fuser->statut != $fuser::STATUS_ENABLED) {
+			if ($fuser->status != $fuser::STATUS_ENABLED) {
 				// Status is disabled
 				dol_syslog("functions_isallowed::check_user_api_key Authentication KO for '".$login."': The user has been disabled", LOG_NOTICE);
 				sleep(1); // Anti brute force protection. Must be same delay when user and password are not valid.
@@ -197,6 +197,14 @@ class DolibarrApiAccess implements iAuthenticate
 				dol_syslog("functions_isallowed::check_user_api_key Authentication KO for '".$login."': The user login has a validity between [".$fuser->datestartvalidity." and ".$fuser->dateendvalidity."], current date is ".dol_now());
 				sleep(1); // Anti brute force protection. Must be same delay when user and password are not valid.
 				throw new RestException(401, $genericmessageerroruser);
+			}
+
+			// TODO
+			// Increase counter of API access
+			if (getDolGlobalString('API_COUNTER_ENABLED')) {
+				include DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+				dolibarr_set_const($this->db, 'API_COUNTER_COUNT', getDolGlobalInt('API_COUNTER_COUNT') + 1);
+				//var_dump('eeee');exit;
 			}
 
 			// User seems valid

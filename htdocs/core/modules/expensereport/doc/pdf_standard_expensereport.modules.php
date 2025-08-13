@@ -686,7 +686,7 @@ class pdf_standard_expensereport extends ModeleExpenseReport
 		$pdf->SetFont('', 'B', $default_font_size + 4);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 6, $langs->trans("ExpenseReport"), 0, 'R');
+		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $posx, 6, $outputlangs->trans("ExpenseReport"), 0, 'R');
 
 		$pdf->SetFont('', '', $default_font_size - 1);
 

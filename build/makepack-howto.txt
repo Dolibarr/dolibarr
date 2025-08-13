@@ -6,7 +6,7 @@ of Dolibarr. There is a chapter for BETA version and a chapter for RELEASE versi
 ***** Prerequisites For Linux *****
 
 Prerequisites to build tgz, debian and rpm packages:
-> apt-get install perl tar dpkg dpatch p7zip-full rpm zip php-cli
+> apt-get install perl tar dpkg p7zip-full rpm zip php-cli debhelper po-debconf
 
 Prerequisites to build autoexe DoliWamp package from Linux (solution seems broken since Ubuntu 20.04):
 > apt-get install wine q4wine
@@ -45,7 +45,7 @@ Prerequisites to build autoexe DoliWamp package from Windows:
 
 ***** Actions to do a BETA *****
 
-This files describe steps made by Dolibarr packaging team to make a beta version of Dolibarr, step by step.
+This section describes steps made by Dolibarr packaging team to make a beta version of Dolibarr, step by step.
 
 - Check all files are committed.
 - Update version/info in ChangeLog, for this you can:
@@ -66,7 +66,7 @@ Recopy the content of the output file into the file ChangeLog.
 
 ***** Actions to do a RELEASE *****
 
-This files describe steps made by Dolibarr packaging team to make a complete release of Dolibarr, step by step.
+This section describes steps made by Dolibarr packaging team to make a complete release of Dolibarr, step by step.
 We suppose the branch x.y has already been created during the beta (see previous step).
 
 - Check all files are committed.

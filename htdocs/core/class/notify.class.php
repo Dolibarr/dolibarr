@@ -662,10 +662,12 @@ class Notify
 		//$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
 
 		// Define some vars
-		$application = 'Dolibarr';
-		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-			$application = getDolGlobalString('MAIN_APPLICATION_TITLE');
+		$application = constant('DOL_APPLICATION_TITLE');
+		$applicationcustom = getDolGlobalString('MAIN_APPLICATION_TITLE');
+		if ($applicationcustom) {
+			$application = (preg_match('/^\+/', $applicationcustom) ? $application : '').$applicationcustom;
 		}
+
 		$from = getDolGlobalString('NOTIFICATION_EMAIL_FROM');
 		$object_type = '';
 		$link = '';

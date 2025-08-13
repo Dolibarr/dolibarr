@@ -2502,7 +2502,7 @@ class Adherent extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $this->need_subscription, $this->datefin, $mode);
+		return $this->LibStatut($this->status, $this->need_subscription, $this->datefin, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

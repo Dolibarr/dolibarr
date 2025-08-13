@@ -591,8 +591,8 @@ if ($mode == 'searchkey') {
 		}
 		print '<span title="'.dolPrintHTMLForAttribute($titleforvalue).'" class="classfortooltip">';
 		print dolPrintHTML($val);
-		if (substr_count($langsenfileonly->tab_translate[$key], '%s') > 4) {
-			print '<br><div class="warning">Error, more than 4 %s in the source</div>';
+		if (substr_count($langsenfileonly->tab_translate[$key], '%s') > 5) {
+			print '<br><div class="warning">Error, more than 5 %s in the source</div>';
 		}
 		print '</span>';
 		print '</td>';

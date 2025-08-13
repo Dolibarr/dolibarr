@@ -1242,9 +1242,6 @@ if (empty($reshook)) {
 						$user->fetch($object->fk_user_author);
 						$newlang = $user->lang;
 					}
-					if (empty($newlang)) {
-						$newlang = $langs;
-					}
 					if (!empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
@@ -1395,9 +1392,9 @@ if (empty($reshook)) {
 							$newlang = GETPOST('lang_id', 'aZ09');
 						}
 						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-							$user = new User($db);
-							$user->fetch($object->fk_user_author);
-							$newlang = $user->lang;
+							$tmpuser = new User($db);
+							$tmpuser->fetch($object->fk_user_author);
+							$newlang = $tmpuser->lang;
 						}
 						if (!empty($newlang)) {
 							$outputlangs = new Translate("", $conf);
@@ -1419,8 +1416,7 @@ if (empty($reshook)) {
 					unset($date);
 				}
 
-				//header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-				//exit;
+				$action = '';
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
@@ -2427,8 +2423,8 @@ if ($action == 'create') {
 
 						// Select project
 						if (isModEnabled('project')) {
-							print '<td>';
-							$formproject->select_projects(-1, $line->fk_project, 'fk_project', 0, 0, $projectRequired ? 0 : 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
+							print '<td class="nowraponall">';
+							print $formproject->select_projects(-1, $line->fk_project, 'fk_project', 0, 0, $projectRequired ? 0 : 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth300');
 							print '</td>';
 						}
 
