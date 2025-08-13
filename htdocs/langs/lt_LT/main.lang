@@ -780,7 +780,7 @@ MenuMembers=Nariai
 MenuAgendaGoogle=Google operacijos
 MenuTaxesAndSpecialExpenses=Mokesčiai | Specialios išlaidos
 ThisLimitIsDefinedInSetup=Dolibarr apribojimas (Meniu Pagrindinis-Nustatymai-Saugumas): %s kb, PHP apribojimas: %s kb
-ThisLimitIsDefinedInSetupAt=Dolibarr limitas (meniu %s): %s Kb, PHP limitas (parametras span-protect8END-fb2> TXPROTECT7</49f-ecb2) class='notranslate'>%s Kb
+ThisLimitIsDefinedInSetupAt=Dolibarr limitas (meniu %s): %s Kb, PHP limitas (parametras %s):%s Kb
 NoFileFound=Nėra įkeltų dokumentų
 CurrentUserLanguage=Dabartinė vartojama kalba
 CurrentTheme=Dabartinė tema
@@ -1080,7 +1080,7 @@ Select2NotFound=Nerasta rezultatų
 Select2Enter=Įeiti
 Select2MoreCharacter=ar daugiau simbolių
 Select2MoreCharacters=ar daugiau simbolių
-Select2MoreCharactersMore=<strong>Paieškos sintaksė:</strong>TXPROTECT-342fccfda</span19b- class='notranslate'><kbd><strong> |</strong><span><span> class='notranslate'></kbd><kbd> ARBA</kbd> (a|b)<br> class='notranslate'><kbd><strong>*</strong></kbd><kbd> Bet koks simbolis</kbd> (a*b)<br> class='notranslate'><kbd><strong>^</strong></kbd><kbd> Pradėkite nuo</kbd> (^ab)<br> class='notranslate'><kbd><strong>$</strong><span><span> class='notranslate'></kbd><kbd> Baigiasi su </kbd> (ab$)<br>
+Select2MoreCharactersMore=<strong>Search syntax:</strong><br><kbd><strong> |</strong></kbd><kbd> OR</kbd> (a|b)<br><kbd><strong>*</strong></kbd><kbd> Any character</kbd> (a*b)<br><kbd><strong>^</strong></kbd><kbd> Start with</kbd> (^ab)<br><kbd><strong>$</strong></kbd><kbd> End with</kbd> (ab$)<br>
 Select2LoadingMoreResults=Įkeliama daugiau rezultatų...
 Select2SearchInProgress=Vykdoma paieška...
 SearchIntoThirdparties=Trečiosios šalys
