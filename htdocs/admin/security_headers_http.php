@@ -73,7 +73,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	} else {
 		dol_print_error($db);
 	}
-} else if ($action == 'removecspsource') {
+} elseif ($action == 'removecspsource') {
 	$db->begin();
 	$sourcetype = "";
 	$sourcecsp = explode("_", GETPOST("sourcecsp"));
@@ -126,15 +126,15 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 
 	if (!$error) {
 		$db->commit();
-		setEventMessages($langs->trans("SecurityPolicySucesfullyRemoved"), null, 'mesgs');
+		setEventMessages($langs->trans("MainSecurityPolicySucesfullyRemoved"), null, 'mesgs');
 	} else {
 		$db->rollback();
-		setEventMessages($langs->trans("ErrorRemovingSecurityPolicy"), null, 'errors');
+		setEventMessages($langs->trans("MainErrorRemovingSecurityPolicy"), null, 'errors');
 	}
 
 	header("Location: ".$_SERVER["PHP_SELF"]);
 	exit();
-} else if ($action == "updateform" && GETPOST("btn_MAIN_SECURITY_FORCECSP")) {
+} elseif ($action == "updateform" && GETPOST("btn_MAIN_SECURITY_FORCECSP")) {
 	$directivecsp = GETPOST("select_identifier_MAIN_SECURITY_FORCECSP");
 	$sourcecsp = GETPOST("select_source_MAIN_SECURITY_FORCECSP");
 	$sourcedatacsp = GETPOST("input_data_MAIN_SECURITY_FORCECSP");
@@ -194,14 +194,14 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 
 	if (!$error) {
 		$db->commit();
-		setEventMessages($langs->trans("SecurityPolicySucesfullyAdded"), null, 'mesgs');
+		setEventMessages($langs->trans("MainSecurityPolicySucesfullyAdded"), null, 'mesgs');
 	} else {
 		$db->rollback();
-		setEventMessages($langs->trans("ErrorAddingSecurityPolicy"), null, 'errors');
+		setEventMessages($langs->trans("MainErrorAddingSecurityPolicy"), null, 'errors');
 	}
 	header("Location: ".$_SERVER["PHP_SELF"]);
 	exit();
-} else if ($action == "updateform") {
+} elseif ($action == "updateform") {
 	$db->begin();
 	$res1 = $res2 = $res3 = $res4 = 0;
 	$securityrp = GETPOST('MAIN_SECURITY_FORCERP', 'alpha');
@@ -236,7 +236,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 $form = new Form($db);
 
 $wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
-llxHeader('', $langs->trans("HttpSecurityHeaders"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-security_other');
+llxHeader('', $langs->trans("MainHttpSecurityHeaders"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-security_other');
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 $head = security_prepare_head();
@@ -245,7 +245,7 @@ print dol_get_fiche_head($head, 'headers_http', '', -1);
 
 print '<br>';
 
-print '<span class="opacitymedium">'.$langs->trans("DolibarrHttpSecurityHeaders").'. '.$langs->trans("ReservedToAdvancedUsers").'.</span><br><br>';
+print '<span class="opacitymedium">'.$langs->trans("HTTPHeaderEditor").'. '.$langs->trans("ReservedToAdvancedUsers").'.</span><br><br>';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
