@@ -57,7 +57,7 @@ Assigned=ที่ได้รับมอบหมาย
 NeedMoreInformation=รอความเห็นจากนักข่าว
 NeedMoreInformationShort=รอคำติชม
 Waiting=ที่รอ
-SolvedClosed=แก้ไขแล้ว
+SolvedClosed=ปิด
 Deleted=ลบแล้ว
 # Dict
 Severity=ความรุนแรง
@@ -72,8 +72,10 @@ TicketPublicAccess=อินเทอร์เฟซสาธารณะที�
 TicketSetupDictionaries=ประเภทของตั๋ว ความเข้มงวด และรหัสการวิเคราะห์สามารถกำหนดค่าได้จากพจนานุกรม
 TicketParamModule=การตั้งค่าตัวแปรโมดูล
 TicketParamMail=การตั้งค่าอีเมล
-TicketEmailNotificationFrom=อีเมล์ผู้ส่งสำหรับการแจ้งเตือนตั๋ว (การสร้างตั๋วหรืออัปเดตข้อความ)
-TicketEmailNotificationFromHelp=อีเมลผู้ส่งที่จะใช้ส่งอีเมลแจ้งเตือนสำหรับการสร้างตั๋วหรือการเพิ่มข้อความ เช่น noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=แจ้งการสร้างตั๋วไปยังที่อยู่อีเมลนี้
 TicketEmailNotificationToHelp=หากมีที่อยู่อีเมลนี้จะได้รับการแจ้งเตือนเกี่ยวกับการสร้างตั๋ว (นอกเหนือจากผู้รับเริ่มต้นอื่น ๆ)
 TicketNewEmailBodyLabel=ข้อความที่ส่งหลังจากสร้างตั๋ว
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=เฉพาะตั๋วที่กำห�
 TicketsActivatePublicInterface=เปิดใช้งานอินเทอร์เฟซสาธารณะ
 TicketsActivatePublicInterfaceHelp=ส่วนต่อประสานสาธารณะอนุญาตให้ผู้เยี่ยมชมสร้างตั๋วได้
 TicketsAutoAssignTicket=กำหนดผู้ใช้ที่สร้างตั๋วโดยอัตโนมัติ
-TicketsAutoAssignTicketHelp=เมื่อสร้างตั๋ว ผู้ใช้สามารถได้รับการกำหนดให้กับตั๋วโดยอัตโนมัติ (ตัวอย่าง: 0=ไม่เคยได้รับการกำหนดให้กับตั๋วโดยอัตโนมัติ, 1=ได้รับการกำหนดให้กับตั๋วโดยอัตโนมัติถ้าไม่มีใครได้รับการกำหนด, 2=ได้รับการกำหนดให้กับตั๋วโดยอัตโนมัติแม้ว่าจะมีการกำหนดใครไว้แล้วก็ตาม)
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
 TicketAutoChangeStatusOnAnswer=กำหนดสถานะอัตโนมัติเมื่อตอบรับตั๋ว
 TicketAutoChangeStatusOnAnswerHelp=เมื่อผู้ใช้ตอบตั๋ว สถานะจะถูกนำไปใช้กับตั๋วโดยอัตโนมัติ
 TicketNumberingModules=โมดูลการนับตั๋ว
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=ดูเฉพาะตั๋วที่เปิด�
 TicketStatByStatus=ตั๋วตามสถานะ
 OrderByDateAsc=เรียงตามวันที่จากน้อยไปหามาก
 OrderByDateDesc=เรียงตามวันที่จากมากไปน้อย
-ShowAsConversation=แสดงเป็นรายการสนทนา
-MessageListViewType=แสดงเป็นรายการตาราง
 ConfirmMassTicketClosingSendEmail=ส่งอีเมลโดยอัตโนมัติเมื่อปิดตั๋ว
 ConfirmMassTicketClosingSendEmailQuestion=คุณต้องการแจ้งให้บุคคลที่สามทราบเมื่อปิดตั๋วเหล่านี้หรือไม่?
 # Ticket card

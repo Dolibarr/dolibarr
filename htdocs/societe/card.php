@@ -2263,6 +2263,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
 			print '<div class="fichecenter2">';
+
 			// Call Hook tabContentEditThirdparty
 			$parameters = array();
 			// Note that $action and $object may be modified by hook

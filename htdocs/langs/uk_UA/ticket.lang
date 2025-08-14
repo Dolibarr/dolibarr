@@ -57,7 +57,7 @@ Assigned=Призначений
 NeedMoreInformation=Чекаємо відгуку журналіста
 NeedMoreInformationShort=Чекаємо зворотного зв'язку
 Waiting=Очікування
-SolvedClosed=Вирішено
+SolvedClosed=Зачинено
 Deleted=Видалено
 # Dict
 Severity=Тяжкість
@@ -72,8 +72,10 @@ TicketPublicAccess=Загальнодоступний інтерфейс, яки
 TicketSetupDictionaries=Тип заявки, складність та аналітичні коди можна налаштувати із словників
 TicketParamModule=Налаштування змінної модуля
 TicketParamMail=Налаштування електронної пошти
-TicketEmailNotificationFrom=Електронна адреса відправника для сповіщень про заявки (створення заявки або повідомлення про оновлення)
-TicketEmailNotificationFromHelp=Електронна адреса відправника, яку потрібно використовувати для надсилання сповіщень про створення заявок або додавання повідомлень. Наприклад, noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Повідомте про створення заявки на цю адресу електронної пошти
 TicketEmailNotificationToHelp=Якщо ця адреса електронної пошти присутня, її буде повідомлено про створення заявки (на додаток до будь-яких інших одержувачів за замовчуванням)
 TicketNewEmailBodyLabel=Текстове повідомлення надіслано після створення квитка
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=Будуть видимі лише квитки
 TicketsActivatePublicInterface=Активувати загальнодоступний інтерфейс
 TicketsActivatePublicInterfaceHelp=Публічний інтерфейс дозволяє будь-яким відвідувачам створювати квитки.
 TicketsAutoAssignTicket=Автоматично призначати користувача, який створив квиток
-TicketsAutoAssignTicketHelp=Під час створення заявки користувач може бути автоматично призначений до заявки (Приклади: 0 = Ніколи не призначається автоматично до заявки, 1 = Автоматично призначається до заявки, якщо нікого не призначено, 2 = Автоматично призначається до заявки, навіть якщо когось було визначено).
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
 TicketAutoChangeStatusOnAnswer=Автоматично призначати статус під час відповіді на запит
 TicketAutoChangeStatusOnAnswerHelp=Коли користувач відповідає на запит, статус автоматично застосовується до запиту.
 TicketNumberingModules=Модуль нумерації квитків
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=Переглянути лише відкриті кви�
 TicketStatByStatus=Квитки за статусом
 OrderByDateAsc=Сортувати за зростаючою датою
 OrderByDateDesc=Сортувати за датою убування
-ShowAsConversation=Показати як список бесід
-MessageListViewType=Показати як список таблиці
 ConfirmMassTicketClosingSendEmail=Автоматично надсилати електронні листи під час закриття квитків
 ConfirmMassTicketClosingSendEmailQuestion=Ви хочете повідомити третіх осіб про закриття цих квитків?
 # Ticket card

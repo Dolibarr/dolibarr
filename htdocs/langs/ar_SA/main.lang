@@ -295,6 +295,7 @@ IPCreation=إنشاء IP
 DateModification=تاريخ التعديل
 DateModificationShort=تاريخ التعديل
 IPModification=تعديل IP
+LastModified=Last modified
 DateLastModification=تاريخ آخر تعديل
 DateValidation=تاريخ الاعتماد
 DateSigning=تاريخ التوقيع
@@ -717,6 +718,7 @@ SeeAll=عرض الكل
 Reason=سبب
 FeatureNotYetSupported=الميزة غير مدعومة حتى الآن
 CloseWindow=إغلاق النافذة
+CloseWindowShort=إغلاق
 Response=رد
 Priority=الأولوية
 SendByMail=ارسل بالبريد الإلكترونى
@@ -916,7 +918,7 @@ Genderother=الآخر
 ViewList=عرض القائمة
 ViewGantt=عرض Gantt
 ViewKanban=عرض Kanban
-ViewKanbanGroupBy=عرض كانبان (مُجمّع حسب)
+ViewKanbanGroupBy=Kanban view (grouped by)
 Mandatory=إلزامي
 Hello=أهلا
 GoodBye=مع السلامة
@@ -925,7 +927,7 @@ ConfirmDeleteObject=هل أنت متأكد أنك تريد حذف هذا الك�
 DeleteLine=حذف البند
 ConfirmDeleteLine=هل أنت متأكد أنك تريد حذف هذا البند؟
 ErrorPDFTkOutputFileNotFound=خطأ: لم يتم إنشاء الملف. يرجى التحقق من تثبيت الأمر "pdftk" في دليل مضمن في متغير البيئة $ PATH (نظام لينكس / يونكس فقط) أو اتصل بمسؤول النظام.
-NoPDFAvailableForDocGenAmongChecked=لم يكن هناك ملف PDF متاحًا لإنشاء المستند بين السجلات المحددة
+NoPDFAvailableForDocGenAmongChecked=No PDF were available for the document generation among selected record
 TooManyRecordForMassAction=تم تحديد عدد كبير جدًا من السجلات. الإجراء مقيد بقائمة %s سجلات.
 NoRecordSelected=لم يتم تحديد اي سجل
 MassFilesArea=مساحة للملفات التي تم إنشاؤها بواسطة إجراءات جماعية
@@ -1091,6 +1093,7 @@ SearchIntoProjects=مشاريع
 SearchIntoMO=أوامر التصنيع
 SearchIntoTasks=المهام
 SearchIntoCustomerInvoices=فواتير العملاء
+SearchIntoCustomerInvoicesRec=قالب الفواتير
 SearchIntoSupplierInvoices=فواتير الموردين
 SearchIntoCustomerOrders=اوامر البيع
 SearchIntoSupplierOrders=اوامر الشراء
@@ -1327,7 +1330,7 @@ SignedStatus=الحالة الموقعة
 NbRecordQualified=عدد السجلات المؤهلة
 auto=آلي
 UploadFile=الاستيراد المباشر للوثيقة
-OrClickToSelectAFile=أو انقر لتحديد ملف على القرص
+OrClickToSelectAFile=click to select a file on disk
 SelectAPredefinedFilter=حدد مرشحًا محددًا مسبقًا
 NetTotal=المجموع الصافي
 VATAmount=مبلغ ضريبة القيمة المضافة
@@ -1365,3 +1368,12 @@ Nobody=لا أحد
 Registered=مسجل
 ClickOnPlusToCreateOne=انقر على زر "زائد" لإضافة واحد.
 Free=حر
+ShowAsConversation=عرض كقائمة محادثات
+MessageListViewType=عرض كقائمة جداول
+Any=Any
+PreviousBalance=الرصيد السابق
+NewBalance=توازن جديد
+Input=Input
+Output=Output
+Approval=Approval
+Validation=Validation

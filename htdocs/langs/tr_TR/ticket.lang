@@ -57,7 +57,7 @@ Assigned=Atanan
 NeedMoreInformation=Muhabirlerin geri bildirimlerini bekliyorum
 NeedMoreInformationShort=Geribildirim için beklemek
 Waiting=Bekliyor
-SolvedClosed=Çözüldü
+SolvedClosed=Kapalı
 Deleted=Silindi
 # Dict
 Severity=Önem seviyesi
@@ -72,8 +72,10 @@ TicketPublicAccess=Kimlik gerektirmeyen herkese açık bir arayüz şu url'de ad
 TicketSetupDictionaries=Destek bildirimi, önem ve analitik kodlarının türleri sözlüklerden yapılandırılabilir
 TicketParamModule=Modül değişken kurulumu
 TicketParamMail=E-posta kurulumu
-TicketEmailNotificationFrom=Biletlerdeki Bildirim için e-posta gönderici (bilet oluşturma veya mesajları güncelleme)
-TicketEmailNotificationFromHelp=Gönderen e-posta bilet oluşturma veya mesaj ekleme için Bildirim e-postalarını göndermek için kullanılacaktır. örneği için noreply@örneği.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Bilet oluşturulmasını bu e-posta adresine bildir
 TicketEmailNotificationToHelp=Mevcutsa, bu e-posta adresine bir bilet oluşturulduğu bildirilecektir (diğer varsayılan alıcılarına ek olarak)
 TicketNewEmailBodyLabel=Bir destek bildirimi oluşturulduktan sonra metin mesajı gönderildi
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=Yalnızca mevcut kullanıcıya atanan biletler 
 TicketsActivatePublicInterface=Genel arayüzü etkinleştir
 TicketsActivatePublicInterfaceHelp=Genel arayüz, ziyaretçilerin destek bildirimi oluşturmasına izin verir.
 TicketsAutoAssignTicket=Destek bildirimini oluşturan kullanıcıyı otomatik olarak atayın
-TicketsAutoAssignTicketHelp=Bir bilet oluştururken, kullanıcıya otomatikman atanabilir (Örnekler: 0=Hiçbir zaman bilete otomatikman atanmaz, 1=Hiç kimse atanmamışsa bilete otomatikman atanır, 2=Birisi tanımlanmış olsa bile bilete otomatikman atanır).
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
 TicketAutoChangeStatusOnAnswer=otomatikman bir bilete yanıt verirken Durum atayın
 TicketAutoChangeStatusOnAnswerHelp=Bir kullanıcı bir bilete yanıt verdiğinde, Durum bilete otomatikman uygulanacaktır
 TicketNumberingModules=Destek bildirimi numaralandırma modülü
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=Sadece açık destek bildirimlerini görüntüle
 TicketStatByStatus=Duruma göre destek bildirimleri
 OrderByDateAsc=Artan tarihe göre sırala
 OrderByDateDesc=Azalan tarihe göre sırala
-ShowAsConversation=Görüşme listesi olarak göster
-MessageListViewType=Tablo listesi olarak göster
 ConfirmMassTicketClosingSendEmail=Biletleri kapatırken otomatik olarak e-posta gönder
 ConfirmMassTicketClosingSendEmailQuestion=Bu bildirimleri kapatırken üçüncü şahıslara bilgi vermek ister misiniz?
 # Ticket card

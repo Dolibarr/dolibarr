@@ -102,6 +102,7 @@ $langs->loadLangs(array("mymodule@mymodule", "other"));
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $lineid   = GETPOSTINT('lineid');
+//$socid = GETPOSTINT('socid');
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -160,7 +161,7 @@ if ($enablepermissioncheck) {
 
 $upload_dir = $conf->mymodule->multidir_output[isset($object->entity) ? $object->entity : 1].'/myobject';
 
-// Security check (enable the most restrictive one)
+// Security check (enable at least one, the most restrictive one)
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (isset($object->status) && ($object->status == $object::STATUS_DRAFT) ? 1 : 0);

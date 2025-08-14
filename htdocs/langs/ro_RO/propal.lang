@@ -125,3 +125,5 @@ Signed=semnat
 SignedOnly=Doar semnată
 ExpeditionSigned=Livrare semnată
 SignExpedition=Semnare livrare
+PROPOSAL_SHOW_SHIPPING_ADDRESS=Afișează adresa de livrare
+PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Mențiune obligatorie în unele țări (Franța, ...)

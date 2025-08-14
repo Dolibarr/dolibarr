@@ -23,14 +23,13 @@ Read=Lire
 NeedMoreInformation=En attente des commentaires des journalistes
 NeedMoreInformationShort=En attente de commentaires
 Waiting=En attendant
+SolvedClosed=Fermée
 Severity=Gravité
 TicketGroupIsPublicDesc=Si un groupe de tickets est public, il sera visible dans le formulaire lors de la création d'un ticket depuis l'interface publique
 MailToSendTicketMessage=Pour envoyer un e-mail à partir d'un message de ticket
 TicketPublicAccess=Une interface publique ne nécessitant aucune identification est disponible à l'adresse suivante
 TicketSetupDictionaries=Le type de ticket, la gravité et les codes analytiques sont configurables à partir de dictionnaires
 TicketParamMail=Configuration de la messagerie électronique
-TicketEmailNotificationFrom=E-mail de l'expéditeur pour la notification des tickets (création de ticket ou messages de mise à jour)
-TicketEmailNotificationFromHelp=Adresse e-mail de l'expéditeur à utiliser pour envoyer les notifications de création de tickets ou d'ajout de messages. Par exemple : noreply@example.com
 TicketNewEmailBodyLabel=SMS envoyé après la création d'un ticket
 TicketNewEmailBodyHelp=Le texte spécifié ici sera inséré dans l'email confirmant la création d'un nouveau ticket depuis l'interface publique. Les informations sur la consultation du ticket sont automatiquement ajoutées.
 TicketParamPublicInterface=Configuration de l'interface publique
@@ -56,7 +55,7 @@ TicketsEmailAlsoSendToMainAddressHelp=Activez cette option pour envoyer égaleme
 TicketsLimitViewAssignedOnly=Limiter l'affichage aux tickets attribués à l'utilisateur actuel (non efficace pour les utilisateurs externes, toujours limité au tiers dont ils dépendent)
 TicketsLimitViewAssignedOnlyHelp=Seuls les tickets attribués à l'utilisateur actuel seront visibles. Ne s'applique pas à un utilisateur disposant de droits de gestion des tickets.
 TicketsAutoAssignTicket=Attribuer automatiquement l'utilisateur qui a créé le ticket
-TicketsAutoAssignTicketHelp=Lors de la création d'un ticket, l'utilisateur peut être automatiquement affecté au ticket (exemples : 0 = Jamais affecté automatiquement au ticket, 1 = Automatiquement affecté au ticket si personne n'est affecté, 2 = Automatiquement affecté au ticket même si quelqu'un a été défini).
+TicketsAutoAssignTicketHelp=Lors de la création d'un ticket, l'utilisateur peut être automatiquement affecté au ticket<br>Exemples : 0 = Jamais automatiquement affecté au ticket, 1 = Automatiquement affecté au ticket si personne n'est affecté, 2 = Automatiquement affecté au ticket même si quelqu'un a été défini
 TicketAutoChangeStatusOnAnswer=Attribuer automatiquement un statut lors de la réponse à un ticket
 TicketAutoChangeStatusOnAnswerHelp=Lorsqu'un utilisateur répond à un ticket, le statut sera automatiquement appliqué au ticket
 TicketNotifyTiersAtCreation=Notifier un tiers lors de la création

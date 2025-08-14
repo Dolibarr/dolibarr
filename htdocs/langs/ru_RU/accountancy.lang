@@ -72,7 +72,7 @@ AccountancyAreaDescActionOnce=Следующие действия обычно �
 AccountancyAreaDescActionOnceBis=Следующие шаги необходимо предпринять, чтобы сэкономить ваше время в будущем, предложив вам автоматически правильную по умолчанию учетную запись учета при переносе данных в учетную запись.
 AccountancyAreaDescActionFreq=Следующие действия обычно выполняются каждый месяц, неделю или день для очень крупных компаний ...
 AccountancyAreaDescJournalSetup=ШАГ %s: Проверьте содержимое списка журналов в меню %s.
-AccountancyAreaDescChartModel=ШАГ %s: Убедитесь, что модель плана счетов существует, или создайте ее из меню %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists for your country or create one from menu %s
 AccountancyAreaDescChart=ШАГ %s: Выберите и|или заполните свой план счетов в меню %s
 AccountancyAreaDescFiscalPeriod=ШАГ %s: Определите фискальный период, который определяет диапазон даты, принятый для создания бухгалтерских записей. Для этого используйте пункт меню %s.
 AccountancyAreaDescVat=ШАГ %s: Определите бухгалтерские счета для каждой ставки НДС. Для этого используйте пункт меню %s.
@@ -275,7 +275,7 @@ HideOpeningBalance=Скрыть начальный баланс
 ShowSubtotalByGroup=Показать промежуточный итог по уровням
 Pcgtype=Группа счетов
 PcgtypeDesc=Группа счетов используется в качестве предопределенных критериев «фильтра» и «группировки» для некоторых бухгалтерских отчетов. Например, «ДОХОД» или «РАСХОДЫ» используются в качестве групп для бухгалтерских счетов продуктов для построения отчета о расходах/доходах.
-AccountingCategoriesDesc=Пользовательскую группу учетных записей можно использовать для группировки учетных записей бухгалтерского учета под одним именем, чтобы упростить использование фильтров или создание пользовательских отчетов.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Примиримый
 Centralized=Централизованный счет
 TotalVente=Общий оборот до налогообложения
@@ -319,7 +319,7 @@ NotReconciled=Не согласовано
 WarningRecordWithoutSubledgerAreExcluded=Предупреждение, все строки без определенной учетной записи вспомогательной книги фильтруются и исключаются из этого представления.
 AccountRemovedFromCurrentChartOfAccount=Бухгалтерский счет, которого нет в текущем плане счетов
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=Внимание, эта страница содержит только записи, переданные в систему учета.
-BookkeepingNumRefModelDesc = Возвращает ссылку номер в формате yyyyjjnnnn, где yyyy — это год и jj журнал код, nnnn — это последовательный автоинкрементный номер в зависимости от года и журнал код.
+BookkeepingNumRefModelDesc = Returns the reference number in the format yymmjjnnnnn where yy is the year, mm is the month and jj the journal code, nnnnn is a sequential auto-incrementing number depending on the year, the month and the journal code.
 BookkeepingNumberingModules = Модели нумерации бухгалтерского учета
 ## Admin
 BindingOptions=Параметры для перевод в бухгалтерском учете
@@ -389,6 +389,7 @@ Modelcsv_Gestinumv5=Экспорт для Gestinum (v5)
 Modelcsv_charlemagne=Экспорт для Aplim Charlemagne
 ChartofaccountsId=План счетов Id
 ExportToPdf = Экспорт в PDF
+ExportToCsv = Export to CSV
 PdfLedgerTitle = главная книга учетные записи
 PdfBalanceTitle = главная книга баланс
 PdfBookkeepingTitle = Журналы
@@ -440,7 +441,7 @@ AccountRemovedFromGroup=Аккаунт удален из группы
 SaleLocal=Местная продажа
 SaleExport=Продажа на экспорт
 SaleEEC=Продажа в ЕЭС
-SaleEECWithVAT=продажа находится в ЕЭС с ненулевым НДС, поэтому мы предполагаем, что это НЕ внутрисоюзная продажа и предлагаемая учетная запись - это стандартный продукт учетная запись.
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=продажа находится в ЕЭС без НДС, но НДС ID третьей стороны не определен. Мы возвращаемся к учетной записи для стандартный продажи. При необходимости вы можете исправить учетную запись НДС ID третьей стороны или изменить учетную запись продукт, предложенную для привязки.
 AnySale=Любой продажа
 ForbiddenTransactionAlreadyExported=Запрещено: транзакция проверена и/или экспортирована.
@@ -485,7 +486,7 @@ AccountancyClosureConfirmClose=Вы действительно хотите за
 AccountancyClosureConfirmAccountingReversal=Вы действительно хотите для записи записей «Нераспределенная прибыль»?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=проводка для (doc_type=%s, doc_id=%s, doc_det=%s) уже были записаны
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Некоторые обязательные шаги настройки не были выполнены, выполните их.
@@ -508,7 +509,7 @@ ErrorNoFiscalPeriodActiveFound=Не найдено ни одного актив�
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Бухгалтерский документ дата не относится к активному финансовому периоду.
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Бухгалтерский документ дата относится к закрытому финансовому периоду.
 Error_BOOKKEEPING_ADDON_NotDefined=Ошибка, правило нумерации бухгалтерских записей ссылка не определено в общем настройка бухгалтерского учета модуль
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Попробуйте вставить несбалансированный проводка в книгу для %s (платеж ID: %s). Отменено. Определенно ошибка.
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
 ProductUsage=Использование продукт или услуга
 ## Import
 ImportAccountingEntries=Бухгалтерские записи
@@ -537,15 +538,15 @@ ExpenseReportJournal=Журнал отчетов о затратах
 DocsAlreadyExportedAreIncluded=Включены уже экспортированные документы.
 ClickToShowAlreadyExportedLines=Нажмите, чтобы Показать уже экспортировался линии
 NAccounts=%s счета
-ACCOUNTING_USE_TREASURY_Desc=Это режим для казначейского учета. Мы используем только платежи и их дата для ведения учета.
-ACCOUNTING_USE_NON_TREASURY_Desc=Это режим для действительный бухгалтерского учета. Мы используем оба платежа счета-фактуры и для ведения бухгалтерского учета.
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
+ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
 PieceDesc=Ссылка на источник документ, который генерирует этот банк проводка (счет-фактура ссылка, отчёт о затратах ссылка, ...)
 BankTransactionRef=Ссылка на банк проводка (Необязательно, автоматический ID уже сгенерирован)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=Это приведет к клонированию записи бухгалтерского учета (все линии, связанные с этой записью бухгалтерского учета, будут клонированы). Вы действительно хотите для клонирования выбранных записей %s?
 ConfirmMassCloneBookkeepingWriting=Подтвердите массовое клонирование
-ConfirmMassReturnAccountBookkeepingWriting=Подтвердите массовое вымирание
-ConfirmMassReturnAccountBookkeepingWritingQuestion=Это приведет к аннулированию записи бухгалтерского учета (все линии, связанные с этой записью бухгалтерского учета, будут аннулированы). Вы действительно хотите для обхода выбранных записей %s?
+ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
+ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=Это изменит учетную запись всех выбранных линии.
 confirmMassAssignAccountBookkeepingWritingConfirm=Подтвердите массовое изменение аккаунта
 CloningSuccess=Успешное клонирование проводка: %s
@@ -560,6 +561,6 @@ NoAccountsChangedWithAccountNumber=Транзакции не обновлены 
 HasAlreadyBeenReversed=уже было отменено
 ErrorWhileCreating=Ошибка при создании %s
 ReturnAccount=Назад
-Clone=Клонер
+Clone=Дублировать
 AlreadyReturnedAccount=Запись №%s уже отменена
 SuccessReturnedAccount=Запись №%s была отменена
