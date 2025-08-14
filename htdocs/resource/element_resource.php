@@ -136,6 +136,8 @@ if (empty($reshook)) {
 			// TODO : add this check at update_linked_resource and when modifying event start or end date
 			// check if an event resource is already in use
 			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $objstat->element == 'action' && $resource_type == 'dolresource' && intval($busy) == 1) {
+				/** @var ActionComm $objstat */
+				'@phan-var-force ActionComm $objstat';
 				$eventDateStart = $objstat->datep;
 				$eventDateEnd   = $objstat->datef;
 				$isFullDayEvent = $objstat->fulldayevent;
