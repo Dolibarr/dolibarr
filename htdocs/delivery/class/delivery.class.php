@@ -586,7 +586,7 @@ class Delivery extends CommonObject
 		$this->note_private         = $expedition->note_private;
 		$this->note_public          = $expedition->note_public;
 		$this->fk_project           = $expedition->fk_project;
-		$this->date_delivery        = null;									// Date of real reception. The Expedition->date_delivery is the planned one.
+		$this->date_delivery        = '';									// Date of real reception. The Expedition->date_delivery is the planned one.
 		$this->fk_delivery_address  = $expedition->fk_delivery_address;
 		$this->socid                = $expedition->socid;
 		$this->ref_customer         = $expedition->ref_customer;
