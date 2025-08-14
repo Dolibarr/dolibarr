@@ -804,7 +804,7 @@ if (empty($reshook)) {
 					$object->note_private = dol_htmlcleanlastbr(GETPOST('note_private', 'restricthtml'));
 					$object->note = $object->note_private;
 				}
-				$object->customcode             = GETPOST('customcode', 'alpha');
+				$object->customcode = GETPOST('customcode', 'alpha');
 				$object->country_id = GETPOSTINT('country_id');
 				$object->state_id = GETPOSTINT('state_id');
 				$object->lifetime               = GETPOSTINT('lifetime');

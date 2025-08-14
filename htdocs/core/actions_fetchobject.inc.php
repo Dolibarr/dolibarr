@@ -38,6 +38,7 @@ if (((!empty($id) && $id > 0) || (!empty($ref) && !in_array($action, array('crea
 	if (($id > 0 && is_numeric($id)) || !empty($ref)) {	// To discard case when id is list of ids like '1,2,3...'
 		if ($object->element == 'usergroup') {
 			/** @var UserGroup $object */
+			'@phan-var-force UserGroup $object';
 			$ret = $object->fetch($id, (empty($ref) ? '' : $ref), true); // to load $object->members
 		} else {
 			$ret = $object->fetch($id, (empty($ref) ? '' : $ref));
