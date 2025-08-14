@@ -222,7 +222,7 @@ ModulesDeployDesc=إذا كانت الأذونات على نظام الملفا�
 ModulesMarketPlaces=ابحث عن تطبيقات / وحدات خارجية
 ModulesDevelopYourModule=تطوير التطبيق / الوحدات الخاصة بك
 ModulesDevelopDesc=يمكنك أيضًا تطوير الوحدة النمطية الخاصة بك أو العثور على شريك لتطوير وحدة من أجلك.
-DOLISTOREdescriptionLong=بدلاً من تشغيل موقع الويب <a href="https://www.dolistore.com">www.dolistore.com </a>للعثور على وحدة خارجية، يمكنك استخدام هذه الأداة المضمنة التي ستقوم بإجراء البحث في السوق الخارجي ومستودع dolibarr-community-modules نيابةً عنك (قد يكون بطيئًا، ويحتاج إلى الوصول إلى الإنترنت)...
+DOLISTOREdescriptionLong=Instead of visiting the source websites, you can use the following embedded tool that will perform the search on the different external sources for you (may be slow, need an internet access)...
 FreeModule=حر
 CompatibleUpTo=متوافق مع الإصدار %s (الحد الأدنى %s - الحد الأقصى %s).
 NotCompatible=نموذج غير متوافق مع جهاز Dolibarr %s (الحد الأدنى %s - الحد الأقصى %s).
@@ -255,7 +255,7 @@ Security=الأمن
 Passwords=كلمة السر
 DoNotStoreClearPassword=كلمات المرور المشفرة مخزنة في قاعدة البيانات.
 MainDbPasswordFileConfEncrypted=قم بإخفاء كلمة مرور قاعدة البيانات المخزنة في ملف الإعدادات conf.php. يوصى بتنشيط هذا الخيار.
-InstrucToEncodePass=لديك كلمة السر المشفرة في ملف <b>conf.php،</b> استبدال الخط <br> <b>$ dolibarr_main_db_pass = "..."؛</b> <br> بواسطة <br> <b>$ dolibarr_main_db_pass = "crypted:٪ ليالي".</b>
+InstrucToEncodePass=To have password encoded into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="...";</b><br>by<br><b>$dolibarr_main_db_pass="%s";</b>
 InstrucToClearPass=لديك كلمة مرور فك الشفرة (واضح) في ملف <b>conf.php،</b> استبدال الخط <br> <b>$ dolibarr_main_db_pass = "crypted: ...".</b> <br> بواسطة <br> <b>$ dolibarr_main_db_pass = "%s".</b>
 ProtectAndEncryptPdfFiles=حماية صيغة المستندات المتنقلة . غير منصوح به لانه يوقف التوليد الكمي للملفات بصيغة المستندات المتنقلة
 ProtectAndEncryptPdfFilesDesc=حماية الملفات بصيغة المستندات المتنقلة يجعلها متاحة للقراءة والطباعة في اي مستعرض لصيغة المستندات المتنقلة . لكن النسخ والتعديل غير ممكن بعد ذلك. يرجى ملاحظة ان هذه الميزة تجعل ميزة توليد ملفات مدمجة بصيغة المستندات المتنقلة غير ممكن
@@ -366,7 +366,8 @@ LastActivationIP=أحدث IP تفعيل
 LastActivationVersion=أحدث نسخة تفعيل
 UpdateServerOffline=خادم التحديث متواجد حاليا
 WithCounter=إدارة العداد
-GenericMaskCodes=يمكنك إدخال أي قناع ترقيم. في هذا القناع ، يمكن استخدام العلامات التالية: <br> <b> {000000} يتوافق </b> مع رقم سيتم زيادته في كل %s. أدخل أكبر عدد من الأصفار مثل الطول المطلوب للعداد. سيتم إكمال العداد بالأصفار من اليسار للحصول على أكبر عدد من الأصفار مثل القناع. <br> <b> {000000 + 000} </b> مثل الرقم السابق ولكن يتم تطبيق الإزاحة المقابلة للرقم الموجود على يمين علامة + بدءًا من أول %s. <br> <b> {000000 @ x} </b> مثل السابق ولكن تتم إعادة تعيين العداد إلى الصفر عند الوصول إلى الشهر x (x بين 1 و 12 ، أو 0 لاستخدام الأشهر الأولى من السنة المالية المحددة في التكوين الخاص بك ، أو 99 إلى إعادة تعيين إلى الصفر كل شهر). إذا تم استخدام هذا الخيار وكانت قيمة x 2 أو أعلى ، فسيكون التسلسل {yy} {mm} أو {yyyy} {mm} مطلوبًا أيضًا. <br> <b> {dd} </b> يوم (من 01 إلى 31). <br> <b> {mm} </b> شهر (من 01 إلى 12). <br> <b> {yy} </b>، <b> {yyyy} </b> أو <b> {y7 a039. <br>
+GenericMaskCodes=You may enter any numbering mask. In this mask, the following tags can be used:<br><b>{000000}</b> corresponds to a number which will be incremented on each %s. Enter as many zeros as the desired length of the counter. The counter will be completed by zeros from the left in order to have as many zeros as the mask. <br><b>{000000+000}</b> same as the previous one but an offset corresponding to the number to the right of the + sign is applied starting on the first %s. <br><b>{000000@x}</b> same as the previous one but the counter is reset to zero when month x is reached (x between 1 and 12, or 0 to use the early months of fiscal year defined in your configuration, or 99 to reset to zero every month). If this option is used and x is 2 or higher, then the sequence {yy}{mm} or {yyyy}{mm} is also required.<br>
+GenericMaskCodes1=<b>{yy}</b>, <b>{yyyy}</b> or <b>{y}</b> year over 2, 4 or 1 numbers. <br><b>{mm}</b> month (01 to 12).<br><b>{dd}</b> day (01 to 31).<br>
 GenericMaskCodes2= <b> {cccc} </b> رمز العميل على أحرف n <br> <b> {cccc000} a09a4b739 هو الرمز المخصص للعميل a09a4b739 متبوعًا برمز العميل a09a4b739. يتم إعادة تعيين هذا العداد المخصص للعميل في نفس الوقت مع العداد العالمي. <br> <b> {tttt} </b> رمز نوع الطرف الثالث على أحرف n (انظر القائمة الصفحة الرئيسية - الإعداد - القاموس - أنواع الأطراف الثالثة). إذا أضفت هذه العلامة ، فسيكون العداد مختلفًا لكل نوع من أنواع الجهات الخارجية. <br>
 GenericMaskCodes2b=<b>{uuuu}</b> أول س حرف من اسم المستخدم الذي ينشئ الكائن (س هو عدد "u").
 GenericMaskCodes3=جميع الشخصيات الاخرى في قناع سوف تظل سليمة. <br> المساحات غير مسموح بها. <br>
@@ -377,8 +378,8 @@ GenericMaskCodes4c=<u>مثال على المنتج الذي تم إنشاؤه ب
 GenericMaskCodes5=سيعطي الترتيب<b>ABC{yy}{mm}-{000000}</b> الصيغة التالية <b>2ABC2301-000099234</b><br> وسيعطي الترتيب<b>{0000+100@1}-ZZZ/{dd}/XXX</b> الصيغة <b>0199-ZZZ/31/XXX</b>
 GenericMaskCodes5b=سيعطي الترتيب <b>IN{yy}{mm}-{0000}-{t} </b> الصيغة <b>2IN2301-0099-A2</b>إذا كانت الشركة من نوع "المسؤول المسجل - Responsable Inscripto-" ورمزها من نوع 'A_RI'
 GenericNumRefModelDesc=العودة للتخصيص وفقا لعدد محدد القناع.
-DateStartThatModel=تعطيل استخدام قاعدة الترقيم هذه لجميع الجهات الخارجية التي تم إنشاؤها قبل
-DateStartThatModelHelp=يمكنك تعطيل قاعدة ترقيم الفيل -الترقيم الفريد- للجهات الخارجية التي تم إنشاؤها قبل تاريخ معين (على سبيل المثال، لأنها تم استيرادها بواسطة عملية ترحيل، من برنامج آخر يستخدم قاعدة مختلفة). اترك هذا الحقل فارغًا لتطبيق القاعدة على جميع الجهات الخارجية.
+DateStartThatModel=Disable use of this numbering rule for all thirdparties created before the
+DateStartThatModelHelp=You can disable the numbering rule for thirdparties created before a date (for example, because they were imported by a migration, from another software using a different rule). Let that field empty to have the rule applied on all thirdparties.
 ServerAvailableOnIPOrPort=الخدمة متاحة في معالجة <b>٪ ق %s</b> على الميناء
 ServerNotAvailableOnIPOrPort=الخدمة غير متاحة في التصدي <b>٪ ق %s</b> على الميناء
 DoTestServerAvailability=اختبار خدمة التوصيل
@@ -414,7 +415,8 @@ ThemeDir=جلود دليل
 ConnectionTimeout=انتهى وقت محاولة الاتصال
 ResponseTimeout=استجابة مهلة
 SmsTestMessage=رسالة اختبار من __PHONEFROM__ إلى __PHONETO__
-ModuleMustBeEnabledFirst=يجب تمكين <b>وحدة%s</b> أولا إذا كنت تحتاج هذه الميزة.
+ModuleMustBeEnabledFirst=The module <b>%s</b> must be enabled first if you need this feature.
+JobMustBeEnabledFirst=The scheduled job <b>%s</b> is not enabled. It must be enabled first if you need this feature (see the setup of module <b>%s</b>).
 SecurityToken=المفتاح لعناوين المواقع الآمنة
 NoSmsEngine=لايوجد مدير إرسال الرسائل النصية القصيرة . مدير إرسال الرسائل النصية القصيرة غير مثبت بصورة اولية لانه يعتمد على مورد خارجي ، لكن يمكنك ايجاد واحد هنا %s
 PDF=صيغة المستندات المتنقلة
@@ -1224,7 +1226,7 @@ Tables=الجداول
 TableName=اسم الجدول
 NbOfRecord=عدد السجلات
 Host=الخادم
-DriverType=سائق نوع
+DriverType=PHP Database Driver
 SummarySystem=نظام معلومات موجزة
 SummaryConst=قائمة بجميع Dolibarr الإعداد البارامترات
 MenuCompanySetup=الشركة | المؤسسة
@@ -1288,11 +1290,10 @@ Delays_MAIN_DELAY_MRP=طلب التصنيع قيد التنفيذ
 Delays_MAIN_DELAY_SUPPLIER_PROPALS_TO_CLOSE=لم يتم إغلاق اقتراح مورد
 Delays_MAIN_DELAY_SUPPLIER_PROPALS_TO_BILL=لم يتم إصدار فاتورة اقتراح مورد
 SetupDescription1=قبل البدء في استخدام Dolibarr ، يجب تحديد بعض المعلمات الأولية وتمكين / تكوين الوحدات النمطية.
-SetupDescription2=القسمان التاليان إلزاميان (المدخلان الأولان في قائمة الإعداد):
+SetupDescription2=The following two sections (the two first entries in the Setup menu) are mandatory:
 SetupDescription3= <a href="%s"> %s -> %s </a> <br> <br> تُستخدم المعطيات الأساسية لتخصيص السلوك الافتراضي لتطبيقك (على سبيل المثال للميزات المتعلقة بالبلد).
 SetupDescription4= <a href="%s"> %s -> %s </a> <br> <br> هذا البرنامج عبارة عن مجموعة من العديد من الوحدات  |  التطبيقات. يجب تمكين وتكوين الوحدات النمطية التى تحتاجها. ستظهر فى القائمة بعد تمكين هذه الوحدات.
 SetupDescription5=قائمة الإعدادات الأخرى تقوم بإدارة المعطيات الاختيارية.
-SetupDescriptionLink= <a href="%s"> %s - %s </a>
 SetupDescription3b=المعلمات الأساسية المستخدمة لتخصيص السلوك الافتراضي لتطبيقك (مثل الميزات المتعلقة بالبلد).
 SetupDescription4b=هذا البرنامج عبارة عن مجموعة من الوحدات/التطبيقات. يجب تفعيل الوحدات المتعلقة باحتياجاتك. ستظهر إدخالات القائمة مع تفعيل هذه الوحدات.
 AuditedSecurityEvents=الأحداث الأمنية التي يتم تدقيقها
@@ -1517,7 +1518,7 @@ WatermarkOnDraftInvoices=العلامة المائية على مشروع الف�
 PaymentsNumberingModule=المدفوعات نموذج الترقيم
 SuppliersPayment=مدفوعات الموردين
 SupplierPaymentSetup=إعداد مدفوعات البائعين
-InvoiceCheckPosteriorDate=يجب أن يكون تاريخ فاتورة أحدث من تاريخ آخر فاتورة من نفس النوع
+InvoiceCheckPosteriorDate=The invoice date must the same or later to the date of the last invoice of the same type
 InvoiceCheckPosteriorDateHelp=يُمنع التحقق من صحة الفاتورة إذا كان تاريخها سابقًا لتاريخ آخر فاتورة من نفس النوع.
 InvoiceOptionCategoryOfOperations=اعرض "فئة العمليات" المذكورة في فاتورة.
 InvoiceOptionCategoryOfOperationsHelp=حسب الحالة ستظهر الإشارة على شكل:<br>- فئة العمليات: تسليم البضائع<br>- فئة العمليات العمليات: تقديم الخدمات<br>- فئة العمليات: مختلط - تسليم البضائع وتقديم الخدمات
@@ -2008,8 +2009,10 @@ ConfirmDeleteFiscalYear=هل أنت متأكد من حذف هذه الفترة �
 ShowFiscalYear=عرض فترة المحاسبة
 ##### Assets #####
 AssetNumberingModules=وحدة ترقيم الأصول
-AlwaysEditable=يمكن تعديلها لجميع حالات الكائنات
-PermissionOnField=الإذن في الحقل
+AlwaysEditable=Editable for any status
+EmptyOnClone=Empty on clone
+EmptyOnCloneDesc=Value will be emptied after cloning an object
+PermissionOnField=Permission on the field
 MAIN_APPLICATION_TITLE=إجبار اسم المرئي من التطبيق (تحذير: وضع اسمك هنا قد كسر ميزة تسجيل الدخول التدوين الآلي عند استخدام تطبيقات الهاتف المتحرك DoliDroid)
 NbMajMin=الحد الأدنى لعدد الأحرف الكبيرة
 NbNumMin=الحد الأدنى لعدد الأحرف الرقمية
@@ -2236,7 +2239,7 @@ EmailCollectorExampleToCollectTicketRequestsDesc=جمع رسائل البريد 
 EmailCollectorExampleToCollectTicketRequests=مثال على جمع طلب التذكرة (الرسالة الأولى فقط)
 EmailCollectorExampleToCollectAnswersFromExternalEmailSoftwareDesc=امسح دليل صندوق البريد "المرسل" للعثور على رسائل البريد الإلكتروني التي تم إرسالها كإجابة على بريد إلكتروني آخر مباشرةً من برنامج البريد الإلكتروني الخاص بك وليس من Dolibarr. إذا تم العثور على مثل هذا البريد الإلكتروني ، يتم تسجيل حدث الإجابة في Dolibarr
 EmailCollectorExampleToCollectAnswersFromExternalEmailSoftware=مثال على جمع إجابات البريد الإلكتروني المرسلة من برنامج بريد إلكتروني خارجي
-EmailCollectorExampleToCollectDolibarrAnswersDesc=اجمع كل رسائل البريد الإلكتروني التي تمثل إجابة على رسالة بريد إلكتروني مرسلة من تطبيقك. سيتم تسجيل حدث (يجب تمكين جدول أعمال الوحدة النمطية) مع استجابة البريد الإلكتروني في مكان جيد. على سبيل المثال ، إذا أرسلت عرضًا تجاريًا أو طلبًا أو فاتورة أو رسالة لتذكرة عبر البريد الإلكتروني من التطبيق ، وقام المستلم بالرد على بريدك الإلكتروني ، فسيقوم النظام تلقائيًا بالتقاط الإجابة وإضافتها إلى نظام تخطيط موارد المؤسسات الخاص بك.
+EmailCollectorExampleToCollectDolibarrAnswersDesc=Collect all emails that are an answer of an email sent from your application. An event (Module Agenda must be enabled) with the email response will be recorded at the good place. For example, if you send by email a commercial proposal, order, invoice or a message for a ticket, from the application, and the recipient answers your email, the system will automatically catch the answer and add it into your ERP.
 EmailCollectorExampleToCollectDolibarrAnswers=مثال على جمع جميع الرسائل الداخلية التي تكون إجابات على الرسائل المرسلة من Dolibarr '
 EmailCollectorExampleToCollectLeadsDesc=Collect emails that match some rules and create automatically a lead (Module Project must be enabled) with the email information. You can use this collector if you want to follow your lead using the module Project (1 lead = 1 project), so your leads will be automatically generated. If the collector Collect_Responses is also enabled, when you send an email from your leads, proposals or any other object, you may also see answers of your customers or partners directly on the application.<br>Note: With this initial example, the title of the lead is generated including the email. If the third party can't be found in database (new customer), the lead will be attached to the third party with ID 1.
 EmailCollectorExampleToCollectLeads=مثال على جمع العملاء المحتملين
@@ -2280,7 +2283,7 @@ Protanopia=بروتوبيا
 Deuteranopes=الثنائيات
 Tritanopes=تريتانوبس
 ThisValueCanOverwrittenOnUserLevel=يمكن لكل مستخدم الكتابة فوق هذه القيمة من صفحة المستخدم الخاصة به - علامة التبويب "%s"
-DefaultCustomerType=نوع الجهة الخارجية الافتراضي لنموذج إنشاء "العميل" الجديد
+DefaultCustomerType=Default third-party type on the creation form from menu "%s" or "%s"
 ABankAccountMustBeDefinedOnPaymentModeSetup=ملاحظة: يجب تحديد الحساب المصرفي في الوحدة النمطية لكل وضع دفع (Paypal ، Stripe ، ...) حتى تعمل هذه الميزة.
 RootCategoryForProductsToSell=فئة جذر المنتجات للبيع
 RootCategoryForProductsToSellDesc=إذا تم تحديدها، فلن تتوفر سوى المنتجات الموجودة داخل هذه الفئة أو المنتجات التابعة لهذه الفئة في نقطة البيع
@@ -2472,6 +2475,7 @@ ScriptIsEmpty=لم يتم كتابة كود برمجي
 ShowHideTheNRequests=إظهار/إخفاء طلب (طلبات) SQL %s
 DefinedAPathForAntivirusCommandIntoSetup=حدد مسارًا لبرنامج مكافحة الفيروسات إلى <b>%s</b>
 TriggerCodes=أحداث قابله للاثارة
+TriggerCode=Triggerable event
 TriggerCodeInfo=أدخل هنا رمز (رموز) التشغيل التي يجب أن تنشئ منشورًا لطلب ويب (يُسمح فقط بعنوان URL الخارجي). يمكنك إدخال عدة رموز تشغيل مفصولة بفاصلة.
 EditableWhenDraftOnly=إذا لم يتم تحديدها، فلا يمكن تعديل القيمة إلا عندما يكون للكائن مسودة حالة
 PermissionToEditField=استبدل أذونات تعديل الحقل. إبقاء الحقل فارغًا (افتراضيًا) سيُفعّل صلاحية إنشاء/تحديث الكائن.
@@ -2553,8 +2557,8 @@ TextTranslation=ترجمة النص
 ImageGeneration=توليد الصورة
 VideoGeneration=توليد الفيديو
 AudioGeneration=توليد الصوت
-AIPromptForFeatures=مطالبات مخصصة للذكاء الاصطناعي للميزات (خدمة الذكاء الاصطناعي %s)
-AIModelForFeature=نموذج الذكاء الاصطناعي للميزات (خدمة الذكاء الاصطناعي %s)
+AIPromptForFeatures=AI custom prompts per features (AI service %s)
+AIModelForFeature=AI model per features (AI service %s)
 NewCustomPrompt=موجه مخصص جديد
 AudioTranscription=النسخ الصوتي
 AudioTranslation=الترجمة الصوتية
@@ -2562,9 +2566,9 @@ EnterAnIP=أدخل عنوان IP
 ConvertInto=تحويل إلى
 YouAreHere=أنت هنا
 SeeWikiDocForHelpInSetupOpenIDCOnnect=يمكنك إلقاء نظرة على وثائق الويكي للحصول على معلومات حول كيفية إعداد مصادقة اتصال "اوبن أي دي" -OpenID-
-BARCODE_ON_SHIPPING_PDF=إظهار الرمز الشريطي "باركود" -barcode- على مستند صيغة المستندات المنقولة -PDF- الخاص بالشحن
-BARCODE_ON_RECEPTION_PDF= إظهار الرمز الشريطي "باركود" على مستند صيغة المستندات المنقولة -PDF- الخاص بالاستقبال
-BARCODE_ON_STOCKTRANSFER_PDF=إظهار الرمز الشريطي على مستند صيغة المستندات المنقولة -PDF- الخاص بنقل المخزون
+BARCODE_ON_SHIPPING_PDF=Show the barcode (of the shipment ref) on the shipping PDF document
+BARCODE_ON_RECEPTION_PDF=Show the barcode (of the reception ref) on the reception PDF document
+BARCODE_ON_STOCKTRANSFER_PDF=Show the barcode (of the stock transfer ref) on the stock transfer PDF document
 Unstable=غير مستقر
 ModuleZapierForDolibarrName=زابيا لدوليبار
 ModuleZapierForDolibarrDesc=وحدة زابيا لدوليبار
@@ -2578,6 +2582,7 @@ SendToUrl=إرسال إلى عنوان محدد موقع الموارد المُ
 WebsiteTemplateWasCopied=تم حفظ قالب موقع الويب "%s" الذي توفره هذه الوحدة في دليل قوالب موقع الويب (/doctemplates/websites) وهو جاهز للاستيراد كموقع ويب جديد.
 EnabledByDefaultAtInstall=تم تمكينه افتراضيًا عند التثبيت
 VulnerableToRCEAttack=أنت معرض لهجمات تنفيذ التعليمات البرمجية عن بعد -RCE- باستخدام وظيفة dol_json_decode المخصصة بك
+OpenIDDesc=OpenID related parameters are defined here.
 OpenIDconnectSetup=إعداد وحدة "إتصال أوبن أي دي" -OpenID Connect-
 MainAuthenticationOidcClientIdName=معرف العميل
 MainAuthenticationOidcClientIdDesc=معرف عميل "إتصال أوبن أي دي" -OpenID Connect-
@@ -2675,3 +2680,20 @@ SameWindow=نفس النافذة
 NewWindow=نافذة جديدة / علامة تبويب جديدة
 Synchronize=تزامن
 ByDefault=افتراضيا
+Sources=Sources
+XYearSupport=%s-year support
+CacheForTranslationIsUsed=Warning, translation files seems loaded into a cache system. If you force some translations from here, think to reset the cache to have the change effective.
+TriggerData=Data sent to URL
+ErrorMessage=Error message received
+TriggerHistory=Trigger history
+ShowTriggerHistory=Show trigger history
+DeleteTriggereHistoryRecord=Delete trigger history record
+MAIN_ENABLE_AJAX_TOOLTIP=Use Ajax lazy load of tooltip content with Ajax
+MAIN_CACHE_COUNT=Keep the count of elements visible into badges in a cache (value may need several minutes to be up to date)
+MAIN_DO_FETCH_IN_ONE_SQL_REQUEST=Load content of object and lines into one request
+GoOnThisPageToInitBarCode=You can go on this page to initialize empty barcodes
+ClickHereToCheckSPFDMARCForSetup=Get a summary of the SPF and DMARC setup of all domains
+PDF_INVOICE_SHOW_BALANCE_SUMMARY= Show customer's previous and new balance
+SecurityModuleDeploymentSuccess=An external module has been deployed: %s
+SecurityModuleDeploymentError=A deployment of an external module has been tried and failed: %s
+DownloadOfModuleFileDisallowed=Download of module files not allowed (param $dolibarr_allow_download_external_modules must be set in conf.php)

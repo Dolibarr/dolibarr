@@ -174,7 +174,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= count($listoffiles);
 			//$texte.=$nbofiles?'</a>':'';
-			$texte .= '</b>';
+			$texte .= '</b><br>';
 		}
 
 		if ($nbofiles) {
@@ -214,7 +214,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 			}
 		}
 
-		$texte .= '<br><br>';
+		$texte .= '<br>';
 		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';

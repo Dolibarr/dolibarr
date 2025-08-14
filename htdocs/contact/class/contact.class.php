@@ -148,11 +148,6 @@ class Contact extends CommonObject
 	public $gender;
 
 	/**
-	 * @var int egroupware_id
-	 */
-	//private $egroupware_id;
-
-	/**
 	 * @var int birthday_alert
 	 */
 	public $birthday_alert;
@@ -898,12 +893,6 @@ class Contact extends CommonObject
 			$info["phpgwContactCatId"] = 0;
 			$info["phpgwContactAccess"] = "public";
 
-			/*
-			if (dol_strlen($this->egroupware_id) == 0) {
-				$this->egroupware_id = 1;
-			}
-			$info["phpgwContactOwner"] = $this->egroupware_id;
-			*/
 			$info["phpgwContactOwner"] = 1;
 
 			if ($this->email) {

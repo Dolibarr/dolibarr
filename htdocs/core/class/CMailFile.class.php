@@ -331,7 +331,11 @@ class CMailFile
 				// Note because media links are public, this should be useless, except avoid blocking images with email browser.
 				// This converts an embed file with src="/viewimage.php?modulepart... into a cid link
 				// TODO Exclude viewimage used for the read tracker ?
-				$findimg = $this->findHtmlImages($dolibarr_main_data_root.'/medias');
+				$dolibarr_main_data_root_images = $dolibarr_main_data_root;
+				if ($conf->entity !== 1) {
+					$dolibarr_main_data_root_images.='/'.$conf->entity.'/';
+				}
+				$findimg = $this->findHtmlImages($dolibarr_main_data_root_images.'/medias');
 				if ($findimg < 0) {
 					dol_syslog("CMailFile::CMailfile: Error on findHtmlImages");
 					$this->error = 'ErrorInAddAttachmentsImageBaseOnMedia';
@@ -1707,7 +1711,9 @@ class CMailFile
 		//$out.= "From: ".$this->getValidAddress($this->addr_from,3,1).$this->eol;
 
 		$out .= "Content-Type: multipart/mixed;".$this->eol2." boundary=\"".$this->mixed_boundary."\"".$this->eol2;
-		$out .= "Content-Transfer-Encoding: 8bit".$this->eol2; // TODO Seems to be ignored. Header is 7bit once received.
+		if (!getDolGlobalString("MAIN_EMAIL_DISABLE_ADD_CONTENT_ENCODING_8BIT")) {
+			$out .= "Content-Transfer-Encoding: 8bit".$this->eol2; // TODO Seems to be ignored. Header is 7bit once received.
+		}
 
 		dol_syslog("CMailFile::write_smtpheaders smtp_header=\n".$out, LOG_DEBUG);
 		return $out;

@@ -986,7 +986,7 @@ function dol_copy($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
  * @param	array<string,string>	$arrayreplacement		Array to use to replace filenames with another one during the copy (works only on file names, not on directory names).
  * @param	int						$excludesubdir			0=Do not exclude subdirectories, 1=Exclude subdirectories, 2=Exclude subdirectories if name is not a 2 chars (used for country codes subdirectories).
  * @param	string[]				$excludefileext			Exclude some file extensions
- * @param	int						$excludearchivefiles	Exclude archive files that begin with v+timestamp or d+timestamp (0 by default)
+ * @param	int						$excludearchivefiles	Exclude archive files that start with v+timestamp or d+timestamp (0 by default)
  * @return	int												Return integer <0 if error, 0 if nothing done (all files already exists and overwriteifexists=0), >0 if OK
  * @see		dol_copy()
  */
@@ -1998,12 +1998,12 @@ function dol_init_file_process($pathtoscan = '', $trackid = '')
  * @param   string		$trackid					Track id (used to prefix name of session vars to avoid conflict, when $updatesessionordb is 0)
  * @param	int<0,1>	$generatethumbs				1=Generate also thumbs for uploaded image files
  * @param   ?Object		$object						Object used to set the fields src_object_type and src_object_id.
- * @param	string		$forceFullTestIndexation	'1'=Force full text storage in database even if global option not set (consume a high level of data)
+ * @param	string		$forceFullTextIndexation	'1'=Force full text storage in database even if global option not set (consume a high level of data)
  * @param	int			$mode						0=Default mode use to move a file from default system upload dir to $upload_dir. 1=Mode to move an uploaded file from $keyforsourcefile into $upload_dir.
  * @return	int                             		Return integer <=0 if KO, nb of success if OK (>0)
  * @see dol_remove_file_process(), FileUpload::handleFileUpload()
  */
-function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionordb = 0, $keyforsourcefile = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1, $object = null, $forceFullTestIndexation = '', $mode = 0)
+function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionordb = 0, $keyforsourcefile = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1, $object = null, $forceFullTextIndexation = '', $mode = 0)
 {
 	global $db, $user, $conf, $langs;
 
@@ -2146,7 +2146,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 							deleteFilesIntoDatabaseIndex($upload_dir, basename($destfile).($resupload == 2 ? '.noexe' : ''), '');
 						}
 
-						$result = addFileIntoDatabaseIndex($upload_dir, basename($destfile).($resupload == 2 ? '.noexe' : ''), $TFile['name'][$i], 'uploaded', $sharefile, $object);
+						$result = addFileIntoDatabaseIndex($upload_dir, basename($destfile).($resupload == 2 ? '.noexe' : ''), $TFile['name'][$i], 'uploaded', $sharefile, $object, $forceFullTextIndexation);
 						if ($result < 0) {
 							if ($allowoverwrite) {
 								// Do not show error message. We can have an error due to DB_ERROR_RECORD_ALREADY_EXISTS

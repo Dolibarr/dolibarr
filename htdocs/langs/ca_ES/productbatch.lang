@@ -50,4 +50,5 @@ ToReplace=Substitueix
 CantMoveNonExistantSerial=Error. Demanes un moviment en un registre per a una sèrie que ja no existeix. Pot ser que porteu la mateixa sèrie al mateix magatzem diverses vegades en el mateix enviament o que l'utilitzi un altre enviament. Traieu aquest enviament i prepareu-ne un altre.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Reparació d'execució incompleta de la taula de lots amb el paràmetre '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= estoc cal correcció perquè el número de sèrie és únic.
-ErrorBatchesNeedStockManagement=Error. Un producte amb gestió de lots/lots s'ha de gestionar a estoc.
+ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
+ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)

@@ -72,7 +72,7 @@ AccountancyAreaDescActionOnce=Följande åtgärder utförs vanligtvis en gång b
 AccountancyAreaDescActionOnceBis=Nästa steg bör göras för att spara tid i framtiden genom att föreslå dig automatiskt rätt standardkonto när du överför data i bokföring
 AccountancyAreaDescActionFreq=Följande åtgärder utförs vanligtvis varje månad, vecka eller dag för mycket stora företag ...
 AccountancyAreaDescJournalSetup=STEG %s: Kontrollera innehållet i din tidskriftslista från menyn %s
-AccountancyAreaDescChartModel=STEG %s: Kontrollera att det finns en kontodiagrammodell eller skapa en från menyn %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists for your country or create one from menu %s
 AccountancyAreaDescChart=STEG %s: Välj och | eller slutför ditt kontoplan från meny %s
 AccountancyAreaDescFiscalPeriod=STEG %s: Definiera räkenskapsperioden som avgör datumintervallet som accepteras för att skapa bokföringsposter. Använd menyposten %s för detta.
 AccountancyAreaDescVat=STEG %s: Definiera redovisningskonton för varje moms. För detta, använd menyinmatningen %s.
@@ -275,7 +275,7 @@ HideOpeningBalance=Dölj öppningsbalansen
 ShowSubtotalByGroup=Visa delsumma efter nivå
 Pcgtype=Grupp av konto
 PcgtypeDesc=Kontogrupp används som fördefinierade kriterier för 'filter' och 'gruppering' för vissa redovisningsrapporter. Till exempel används 'INKOMST' eller 'KOSTNAD' som grupper för redovisning av produkter för att skapa en kostnads- / inkomstrapport.
-AccountingCategoriesDesc=Anpassad grupp av konton kan användas för att gruppera redovisningskonton i ett namn för att underlätta filteranvändning eller skapa anpassade rapporter.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Förenlig
 Centralized=Centraliserat konto
 TotalVente=Total turnover before tax
@@ -319,7 +319,7 @@ NotReconciled=Inte avstämd
 WarningRecordWithoutSubledgerAreExcluded=Varning, alla rader utan definierat underreskontrakonto filtreras och exkluderas från denna vy
 AccountRemovedFromCurrentChartOfAccount=Redovisningskonto som inte finns i gällande kontoplan
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=Varning, den här sidan innehåller endast poster som överförts till redovisningssystemet.
-BookkeepingNumRefModelDesc = Returnerar referensnumret i formatet yyyyjjnnnn där yyyy är året och jj journalkoden, nnnn är ett sekventiellt automatiskt ökande tal beroende på år och journalkod.
+BookkeepingNumRefModelDesc = Returns the reference number in the format yymmjjnnnnn where yy is the year, mm is the month and jj the journal code, nnnnn is a sequential auto-incrementing number depending on the year, the month and the journal code.
 BookkeepingNumberingModules = Modeller för bokföringsnumrering
 ## Admin
 BindingOptions=Alternativ för överföring inom redovisning
@@ -389,6 +389,7 @@ Modelcsv_Gestinumv5=Exportera för Gestinum (v5)
 Modelcsv_charlemagne=Export för Aplim Charlemagne
 ChartofaccountsId=Diagram över konton Id
 ExportToPdf = Exportera till PDF
+ExportToCsv = Export to CSV
 PdfLedgerTitle = Konton
 PdfBalanceTitle = Bokföringssaldo
 PdfBookkeepingTitle = Loggböcker
@@ -440,7 +441,7 @@ AccountRemovedFromGroup=Konto borttaget från grupp
 SaleLocal=Lokal försäljning
 SaleExport=Exportförsäljning
 SaleEEC=Försäljning i EEG
-SaleEECWithVAT=Försäljningen sker inom EES med en moms som inte är noll, så vi antar att detta INTE är en försäljning inom gemenskapen och det föreslagna kontot är standardproduktkontot.
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=Försäljningen sker inom EES utan moms, men tredje parts momsregistreringsnummer är inte angivet. Vi använder kontot för standardförsäljning. Du kan korrigera tredje parts momsregistreringsnummer eller ändra det produktkonto som föreslås för bindning vid behov.
 AnySale=Vilken försäljning som helst
 ForbiddenTransactionAlreadyExported=Förbjudet: Transaktionen har validerats och/eller exporterats.
@@ -485,7 +486,7 @@ AccountancyClosureConfirmClose=Är du säker på att du vill stänga innevarande
 AccountancyClosureConfirmAccountingReversal=Är du säker på att du vill spela in poster för "Behållna intäkter"?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=Transaktionen för (doc_type=%s, doc_id=%s, doc_det=>TX2ecTECT7fec8) var redan spelas in
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Några obligatoriska steg för installationen var inte färdiga, var god fyll i dem
@@ -508,7 +509,7 @@ ErrorNoFiscalPeriodActiveFound=Ingen aktiv räkenskapsperiod (med ett definierat
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Bokföringsdokumentets datum är inte inom den aktiva räkenskapsperioden
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Bokföringsdokumentets datum är inom en stängd räkenskapsperiod
 Error_BOOKKEEPING_ADDON_NotDefined=Fel, regeln för bokföringsnumreringsreferens är inte definierad i den allmänna inställningen av redovisningsmodulen.
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Försök att infoga en obalanserad transaktion i boken för %s (Betalnings-ID: %s). Avbrutet. Säkert en bugg.
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
 ProductUsage=Produkt- eller tjänsteanvändning
 ## Import
 ImportAccountingEntries=Redovisningsposter
@@ -537,15 +538,15 @@ ExpenseReportJournal=Kostnadsrapportsloggbok
 DocsAlreadyExportedAreIncluded=Dokument som redan exporterats ingår
 ClickToShowAlreadyExportedLines=Klicka för att visa redan exporterade rader
 NAccounts=%s-konton
-ACCOUNTING_USE_TREASURY_Desc=Detta är läget för kassörsredovisning. Vi använder endast betalningarna och deras datum för redovisningen.
-ACCOUNTING_USE_NON_TREASURY_Desc=Detta är läget för riktig redovisning. Vi använder både fakturor och betalningar för att göra redovisningen.
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
+ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
 PieceDesc=Referensen till källdokumentet som genererar denna banktransaktion (fakturaref, utgiftsrapportreferens, ...)
 BankTransactionRef=En referens för banktransaktionen (valfritt, ett automatiskt ID har redan genererats)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=Detta kommer att klona bokföringsposten (alla rader som är länkade till denna bokföringspost kommer att klonas). Är du säker på att du vill klona de valda %s-posterna?
 ConfirmMassCloneBookkeepingWriting=Bekräfta masskloning
-ConfirmMassReturnAccountBookkeepingWriting=Bekräfta massutdöende
-ConfirmMassReturnAccountBookkeepingWritingQuestion=Detta kommer att släcka bokföringsposten (alla rader som är länkade till denna bokföringspost kommer att släckas). Är du säker på att du vill kringgå de valda %s posterna?
+ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
+ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=Detta kommer att ändra kontot för alla valda rader.
 confirmMassAssignAccountBookkeepingWritingConfirm=Bekräfta masskontoändring
 CloningSuccess=Lyckad transaktionskloning: %s
@@ -560,6 +561,6 @@ NoAccountsChangedWithAccountNumber=Transaktioner som inte uppdaterats med konton
 HasAlreadyBeenReversed=har redan blivit omvänd
 ErrorWhileCreating=Fel vid skapandet %s
 ReturnAccount=Avkastning
-Clone=Klonare
+Clone=Klona
 AlreadyReturnedAccount=Post nr %s har redan återställts
 SuccessReturnedAccount=Post nr %s har återställts

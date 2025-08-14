@@ -1592,8 +1592,10 @@ if ($object->id > 0) {
 				$facturestatic->statut = $objp->status;	// deprecated
 				$facturestatic->status = $objp->status;
 				$facturestatic->paye = $objp->paye;
+
 				$facturestatic->alreadypaid = $objp->am;
 				$facturestatic->totalpaid = $objp->am;
+
 				$facturestatic->date = $db->jdate($objp->df);
 				$facturestatic->date_lim_reglement = $db->jdate($objp->dl);
 

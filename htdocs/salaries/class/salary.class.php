@@ -679,16 +679,16 @@ class Salary extends CommonObject
 
 			if ($obj) {
 				if ($multicurrency < 0) {
-					//$this->sumpayed = $obj->amount;
-					//$this->sumpayed_multicurrency = $obj->multicurrency_amount;
+					//$this->totalpaid = $obj->amount;
+					//$this->totalpaid_multicurrency = $obj->multicurrency_amount;
 					//return array('alreadypaid'=>(float) $obj->amount, 'alreadypaid_multicurrency'=>(float) $obj->multicurrency_amount);
 					return array();	// Not yet supported
 				} elseif ($multicurrency) {
-					//$this->sumpayed_multicurrency = $obj->multicurrency_amount;
+					//$this->totalpaid_multicurrency = $obj->multicurrency_amount;
 					//return (float) $obj->multicurrency_amount;
 					return -1;		// Not yet supported
 				} else {
-					//$this->sumpayed = $obj->amount;
+					//$this->totalpaid = $obj->amount;
 					return (float) $obj->amount;
 				}
 			} else {

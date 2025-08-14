@@ -57,7 +57,7 @@ Assigned=Asignado
 NeedMoreInformation=Esperando comentarios del remitente
 NeedMoreInformationShort=Esperando comentarios
 Waiting=En espera
-SolvedClosed=Resuelto
+SolvedClosed=Cerrado
 Deleted=Eliminado
 # Dict
 Severity=Gravedad
@@ -72,8 +72,10 @@ TicketPublicAccess=Una interfaz pública que no requiere identificación está d
 TicketSetupDictionaries=Los tipos de categorías y  los niveles de gravedad se pueden configurar en los diccionarios
 TicketParamModule=Configuración de variables del módulo
 TicketParamMail=Configuración de E-Mail
-TicketEmailNotificationFrom=Correo electrónico del remitente para notificación de tickets (creación de tickets o mensajes de actualización)
-TicketEmailNotificationFromHelp=Correo electrónico del remitente para enviar notificaciones sobre la creación de tickets o la adición de mensajes. Por ejemplo, noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Notificar creación de ticket a esta dirección de correo electrónico
 TicketEmailNotificationToHelp=Si está presente, esta dirección de correo electrónico recibirá una notificación sobre la creación de un ticket (además de cualquier otro destinatario predeterminado)
 TicketNewEmailBodyLabel=Mensaje de texto enviado después de crear un ticket
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=Solo los tickets asignados al usuario actual se
 TicketsActivatePublicInterface=Activar interfaz pública.
 TicketsActivatePublicInterfaceHelp=La interfaz pública permite a cualquier visitante crear tickets.
 TicketsAutoAssignTicket=Asignar automáticamente al usuario que creó el ticket
-TicketsAutoAssignTicketHelp=Al crear un ticket, el usuario puede ser asignado automáticamente al ticket (Ejemplos: 0=Nunca se asigna automáticamente al ticket, 1=Se asigna automáticamente al ticket si no hay nadie asignado, 2=Se asigna automáticamente al ticket incluso si se definió alguien).
+TicketsAutoAssignTicketHelp=Al crear un ticket, el usuario puede ser asignado automáticamente al ticket<br>Ejemplos: 0=Nunca se asigna automáticamente al ticket, 1=Se asigna automáticamente al ticket si no hay nadie asignado, 2=Se asigna automáticamente al ticket incluso si se definió alguien
 TicketAutoChangeStatusOnAnswer=Asignar automáticamente un estado al responder un ticket
 TicketAutoChangeStatusOnAnswerHelp=Cuando un usuario responde a un ticket, el estado se aplicará automáticamente al ticket.
 TicketNumberingModules=Módulo de numeración de tickets
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=Ver solo tickets abiertos
 TicketStatByStatus=Tickets por estado
 OrderByDateAsc=Ordenar por fecha ascendente
 OrderByDateDesc=Ordenar por fecha descendente
-ShowAsConversation=Mostrar como lista de conversación
-MessageListViewType=Mostrar como lista de tabla
 ConfirmMassTicketClosingSendEmail=Envíar e-mails automáticamente al cerrar tickets
 ConfirmMassTicketClosingSendEmailQuestion=¿Quiere avisar a los terceros al cerrar estos tickets?
 # Ticket card

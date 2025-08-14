@@ -72,7 +72,7 @@ AccountancyAreaDescActionOnce=Nasledujúce akcie sa zvyčajne vykonávajú iba r
 AccountancyAreaDescActionOnceBis=Ďalšie kroky by ste mali urobiť, aby ste v budúcnosti ušetrili čas tým, že vám pri prenose údajov v účtovníctve automaticky navrhneme správny predvolený účtovný účet
 AccountancyAreaDescActionFreq=Nasledujúce akcie sa zvyčajne vykonávajú každý mesiac, týždeň alebo deň pre veľmi veľké spoločnosti ...
 AccountancyAreaDescJournalSetup=KROK %s: Skontrolujte obsah svojho zoznamu časopisov z ponuky %s
-AccountancyAreaDescChartModel=KROK %s: Skontrolujte, či existuje model účtovnej osnovy, alebo si ho vytvorte z ponuky %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists for your country or create one from menu %s
 AccountancyAreaDescChart=KROK %s: Vyberte a|alebo doplňte svoj účtovný rozvrh z ponuky %s
 AccountancyAreaDescFiscalPeriod=KROK %s: Definujte fiškálne obdobie, ktoré určuje rozsah dátumov akceptovaných na vytváranie účtovných zápisov. Na to použite položku ponuky %s.
 AccountancyAreaDescVat=KROK %s: Definujte účty účtov pre každú sadzbu DPH. Na to použite položku ponuky %s.
@@ -275,7 +275,7 @@ HideOpeningBalance=Skryť počiatočný zostatok
 ShowSubtotalByGroup=Zobraziť medzisúčet podľa úrovne
 Pcgtype=Skupina účtov
 PcgtypeDesc=Skupina účtov sa používa ako preddefinované kritériá „filtra“ a „zoskupenia“ pre niektoré účtovné zostavy. Napríklad „PRÍJMY“ alebo „NÁKLADY“ sa používajú ako skupiny pre účtovné účty produktov na zostavenie správy o výdavkoch/príjmoch.
-AccountingCategoriesDesc=Vlastnú skupinu účtov možno použiť na zoskupenie účtovných účtov do jedného názvu, aby sa uľahčilo používanie filtra alebo vytváranie vlastných zostáv.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Zlučiteľné
 Centralized=Centralizovaný účet
 TotalVente=Celkový obrat pred zdanením
@@ -319,7 +319,7 @@ NotReconciled=Nezlúčené
 WarningRecordWithoutSubledgerAreExcluded=Upozornenie, všetky riadky bez definovaného účtu vedľajšej knihy sú filtrované a vylúčené z tohto zobrazenia
 AccountRemovedFromCurrentChartOfAccount=Účtovný účet, ktorý v aktuálnej účtovej osnove neexistuje
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=Upozornenie, táto stránka obsahuje iba položky prenesené do účtovného systému.
-BookkeepingNumRefModelDesc = Vráti referenčné číslo vo formáte yyyyjjnnnn, kde yyyy je rok a jj kód denníka, nnnn je sekvenčné automaticky sa zvyšujúce číslo v závislosti od roku a kódu denníka.
+BookkeepingNumRefModelDesc = Returns the reference number in the format yymmjjnnnnn where yy is the year, mm is the month and jj the journal code, nnnnn is a sequential auto-incrementing number depending on the year, the month and the journal code.
 BookkeepingNumberingModules = Účtovnícke číslovacie modely
 ## Admin
 BindingOptions=Možnosti prevodu v účtovníctve
@@ -389,6 +389,7 @@ Modelcsv_Gestinumv5=Export pre Gestinum (v5)
 Modelcsv_charlemagne=Export pre Aplima Charlemagne
 ChartofaccountsId=Účtovná osnova Id
 ExportToPdf = Exportovať do PDF
+ExportToCsv = Export to CSV
 PdfLedgerTitle = Účty hlavnej knihy
 PdfBalanceTitle = Zostatok v účtovnej knihe
 PdfBookkeepingTitle = časopisy
@@ -440,7 +441,7 @@ AccountRemovedFromGroup=Účet bol odstránený zo skupiny
 SaleLocal=Miestny predaj
 SaleExport=Vývozný predaj
 SaleEEC=Predaj v EHS
-SaleEECWithVAT=Predaj je v EHS s DPH identickou ako null, takže predpokladáme, že sa NEJEDNÁ o intrakomunitárny predaj a navrhovaný účet je štandardný účet produktu.
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=Predaj je v EHS bez DPH, ale IČ DPH tretej strany nie je definované. Pre štandardný predaj používame účet. V prípade potreby môžete opraviť IČ DPH tretej strany alebo zmeniť účet produktu navrhnutý pre záväzné nastavenie.
 AnySale=Akýkoľvek predaj
 ForbiddenTransactionAlreadyExported=Zakázané: Transakcia bola overená a/alebo exportovaná.
@@ -485,7 +486,7 @@ AccountancyClosureConfirmClose=Naozaj chcete uzavrieť aktuálne fiškálne obdo
 AccountancyClosureConfirmAccountingReversal=Naozaj chcete zaznamenávať položky „Nerozdelený zisk“?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=Transakcia pre (doc_type=%s, doc_id=%s, doc_det=%s) už boli zaznamenané
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Niektoré povinné kroky nastavenia neboli vykonané, dokončite ich
@@ -508,7 +509,7 @@ ErrorNoFiscalPeriodActiveFound=Nenašlo sa žiadne aktívne fiškálne obdobie (
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Dátum účtovného dokumentu nie je v aktívnom účtovnom období
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Dátum účtovného dokumentu je v uzavretom účtovnom období
 Error_BOOKKEEPING_ADDON_NotDefined=Chyba, pravidlo pre číslovanie účtovných záznamov nie je definované vo všeobecnom nastavení modulu Účtovníctvo.
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Skúste vložiť nevyrovnanú transakciu do knihy pre %s (ID platby: %s). Zrušené. Určite chyba.
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
 ProductUsage=Používanie produktu alebo služby
 ## Import
 ImportAccountingEntries=Účtovné zápisy
@@ -537,15 +538,15 @@ ExpenseReportJournal=Výdavkový denník
 DocsAlreadyExportedAreIncluded=Zahrnuté sú už exportované dokumenty
 ClickToShowAlreadyExportedLines=Kliknutím zobrazíte už exportované riadky
 NAccounts=%s účty
-ACCOUNTING_USE_TREASURY_Desc=Toto je režim pre účtovníctvo štátnej pokladnice. Na účtovníctvo používame iba platby a ich dátum.
-ACCOUNTING_USE_NON_TREASURY_Desc=Toto je spôsob skutočného účtovníctva. Na vedenie účtovníctva používame faktúry aj platby.
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
+ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
 PieceDesc=Referenčné číslo zdrojového dokumentu, ktorý generuje túto bankovú transakciu (referenčné číslo faktúry, referenčné číslo výkazu výdavkov atď.)
 BankTransactionRef=Referenčné číslo bankovej transakcie (voliteľné, automatické ID je už vygenerované)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=Týmto sa naklonuje účtovný záznam (všetky riadky prepojené s týmto účtovným záznamom budú naklonované). Naozaj chcete naklonovať vybraté záznamy %s?
 ConfirmMassCloneBookkeepingWriting=Potvrdenie hromadného klonovania
-ConfirmMassReturnAccountBookkeepingWriting=Potvrdiť masové vymieranie
-ConfirmMassReturnAccountBookkeepingWritingQuestion=Týmto sa zruší účtovný záznam (všetky riadky prepojené s týmto účtovným záznamom budú zrušené). Naozaj chcete obísť vybrané záznamy %s?
+ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
+ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=Týmto sa zmení účet všetkých vybratých riadkov.
 confirmMassAssignAccountBookkeepingWritingConfirm=Potvrdiť hromadnú zmenu účtu
 CloningSuccess=Úspešné klonovanie transakcie: %s
@@ -560,6 +561,6 @@ NoAccountsChangedWithAccountNumber=Transakcie neboli aktualizované s číslami 
 HasAlreadyBeenReversed=už bolo zrušené
 ErrorWhileCreating=Chyba počas vytvárania %s
 ReturnAccount=Return
-Clone=Klonovač
+Clone=Klon
 AlreadyReturnedAccount=Záznam č. %s už bol vrátený späť
 SuccessReturnedAccount=Záznam č. %s bol zrušený

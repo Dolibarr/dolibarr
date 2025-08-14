@@ -40,6 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/externalModules.class.php';
 
@@ -173,6 +174,8 @@ if ($mode == 'marketplace') {
 
 $object = new stdClass();
 
+$now = dol_now();
+
 
 /*
  * Actions
@@ -197,9 +200,10 @@ if ($action == 'install' && $allowonlineinstall) {
 	$error = 0;
 	$modulenameval = '';
 	// $original_file should match format module_modulename-x.y[.z].zip
+	$tmpfile = $_FILES['fileinstall']['tmp_name'];
 	$original_file = basename($_FILES["fileinstall"]["name"]);
 	$original_file = preg_replace('/\s*\(\d+\)\.zip$/i', '.zip', $original_file);
-	$newfile = $conf->admin->dir_temp.'/'.$original_file.'/'.$original_file;
+	$newfile = dol_sanitizePathName($conf->admin->dir_temp.'/'.$original_file.'/'.$original_file);
 
 	if (!$original_file) {
 		$langs->load("Error");
@@ -216,7 +220,7 @@ if ($action == 'install' && $allowonlineinstall) {
 			setEventMessages($langs->trans("ErrorFilenameDosNotMatchDolibarrPackageRules", $original_file, 'modulename-x[.y.z].zip'), null, 'errors');
 			$error++;
 		}
-		if (empty($_FILES['fileinstall']['tmp_name'])) {
+		if (empty($tmpfile)) {
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
 			$error++;
@@ -235,13 +239,13 @@ if ($action == 'install' && $allowonlineinstall) {
 			dol_mkdir($conf->admin->dir_temp.'/'.$tmpdir);
 		}
 
-		$result = dol_move_uploaded_file($_FILES['fileinstall']['tmp_name'], $newfile, 1, 0, $_FILES['fileinstall']['error']);
-		if ($result > 0) {
-			$result = dol_uncompress($newfile, $conf->admin->dir_temp.'/'.$tmpdir);
+		$result = dol_move_uploaded_file($tmpfile, $newfile, 1, 0, $_FILES['fileinstall']['error']);
+		if ((int) $result > 0) {
+			$resultuncompress = dol_uncompress($newfile, $conf->admin->dir_temp.'/'.$tmpdir);
 
-			if (!empty($result['error'])) {
+			if (!empty($resultuncompress['error'])) {
 				$langs->load("errors");
-				setEventMessages($langs->trans($result['error'], $original_file), null, 'errors');
+				setEventMessages($langs->trans($resultuncompress['error'], $original_file), null, 'errors');
 				$error++;
 			} else {
 				// Now we move the dir of the module
@@ -350,9 +354,9 @@ if ($action == 'install' && $allowonlineinstall) {
 								$submodulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulenameval;
 							}
 							dol_syslog("We copy now directory ".$submodulenamedir." into target dir ".$dirins.'/'.$modulenameval);
-							$result = dolCopyDir($submodulenamedir, $dirins.'/'.$modulenameval, '0444', 1);
-							if ($result <= 0) {
-								dol_syslog('Failed to call dolCopyDir result='.$result." with param ".$submodulenamedir." and ".$dirins.'/'.$modulenameval, LOG_WARNING);
+							$resultcopy = dolCopyDir($submodulenamedir, $dirins.'/'.$modulenameval, '0444', 1);
+							if ($resultcopy <= 0) {
+								dol_syslog('Failed to call dolCopyDir result='.$resultcopy." with param ".$submodulenamedir." and ".$dirins.'/'.$modulenameval, LOG_WARNING);
 								$langs->load("errors");
 								setEventMessages($langs->trans("ErrorFailToCopyDir", $submodulenamedir, $dirins.'/'.$modulenameval), null, 'errors');
 								$error++;
@@ -362,10 +366,24 @@ if ($action == 'install' && $allowonlineinstall) {
 				}
 			}
 		} else {
-			setEventMessages($langs->trans("ErrorFailToRenameFile", $_FILES['fileinstall']['tmp_name'], $newfile), null, 'errors');
+			setEventMessages($langs->trans("ErrorFailToRenameFile", $tmpfile, $newfile).' - code = '.$result, null, 'errors');
 			$error++;
 		}
 	}
+
+	// Add event purge
+	$securityevent = new Events($db);
+	if ($error) {
+		$text = $langs->trans("SecurityModuleDeploymentError", dol_sanitizePathName($_FILES["fileinstall"]["name"]));
+		$securityevent->type = 'MODULE_DEPLOYMENT_ERROR';
+	} else {
+		$text = $langs->trans("SecurityModuleDeploymentSuccess", dol_sanitizePathName($_FILES["fileinstall"]["name"]));
+		$securityevent->type = 'MODULE_DEPLOYMENT_SUCCESS';
+	}
+	$securityevent->dateevent = $now;
+	$securityevent->description = $text;
+
+	$resultcreateevent = $securityevent->create($user);
 
 	if (!$error) {
 		$searchParams = array(
@@ -1547,14 +1565,6 @@ if ($mode == 'deploy') {
 			print $langs->trans("UnpackPackageInModulesRoot", $dirins).'<br>';
 			print '<b>'.$langs->trans("StepNb", 4).'</b>: ';
 			print $langs->trans("SetupIsReadyForUse", DOL_URL_ROOT.'/admin/modules.php?mainmenu=home', $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Modules")).'<br>';
-		}
-	}
-
-	if (!empty($result['return'])) {
-		print '<br>';
-
-		foreach ($result['return'] as $value) {
-			echo $value.'<br>';
 		}
 	}
 

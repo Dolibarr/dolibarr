@@ -6,7 +6,7 @@
  * Copyright (C) 2016		Charlie Benke		    <charlie@patas-monkey.com>
  * Copyright (C) 2017       Open-DSI                <support@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,17 +170,13 @@ if ($action == 'set') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->ACTION_EVENT_ADDON_PDF == "$value") {
+		if (getDolGlobalString('ACTION_EVENT_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'ACTION_EVENT_ADDON_PDF', $conf->entity);
 		}
 	}
 } elseif ($action == 'setdoc') {
 	// Set default model
-	if (dolibarr_set_const($db, "ACTION_EVENT_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
-		$conf->global->ACTION_EVENT_ADDON_PDF = $value;
-	}
+	dolibarr_set_const($db, "ACTION_EVENT_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity);
 
 	// On active le modele
 	$ret = delDocumentModel($value, $type);
@@ -202,7 +198,8 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 $wikihelp = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda|DE:Modul_Terminplanung';
 llxHeader('', $langs->trans("AgendaSetup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-agenda_other');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("AgendaSetup"), $linkback, 'title_setup');
 
 
@@ -290,7 +287,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 						// Active
 						if (in_array($name, $def)) {
 							print '<td class="center">'."\n";
-							if ($conf->global->ACTION_EVENT_ADDON_PDF != "$name") {
+							if (getDolGlobalString('ACTION_EVENT_ADDON_PDF') != "$name") {
 								print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&token='.newToken().'&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'&type=action">';
 								print img_picto($langs->trans("Enabled"), 'switch_on');
 								print '</a>';
@@ -306,7 +303,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 
 						// Default
 						print '<td class="center">';
-						if ($conf->global->ACTION_EVENT_ADDON_PDF == "$name") {
+						if (getDolGlobalString('ACTION_EVENT_ADDON_PDF') == "$name") {
 							print img_picto($langs->trans("Default"), 'on');
 						} else {
 							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&amp;scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'&amp;type=action"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';

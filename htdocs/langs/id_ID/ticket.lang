@@ -57,7 +57,7 @@ Assigned=Ditugaskan
 NeedMoreInformation=Menunggu tanggapan reporter
 NeedMoreInformationShort=Menunggu balasan
 Waiting=Menunggu
-SolvedClosed=Terpecahkan
+SolvedClosed=Ditutup
 Deleted=Dihapus
 # Dict
 Severity=Kerasnya
@@ -72,8 +72,10 @@ TicketPublicAccess=Antarmuka publik yang tidak memerlukan identifikasi tersedia 
 TicketSetupDictionaries=Jenis tiket, keparahan dan kode analitik dapat dikonfigurasi dari kamus
 TicketParamModule=Pengaturan variabel modul
 TicketParamMail=Penyiapan email
-TicketEmailNotificationFrom=Email pengirim untuk pemberitahuan tiket (pembuatan tiket atau pembaruan pesan)
-TicketEmailNotificationFromHelp=Email pengirim yang digunakan untuk mengirim email notifikasi untuk pembuatan tiket atau penambahan pesan. Misalnya noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Beritahu pembuatan tiket ke alamat email ini
 TicketEmailNotificationToHelp=Jika ada, alamat email ini akan diberitahu tentang pembuatan tiket (selain penerima default lainnya)
 TicketNewEmailBodyLabel=Pesan teks dikirim setelah membuat tiket
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=Hanya tiket yang ditetapkan untuk pengguna saat
 TicketsActivatePublicInterface=Aktifkan antarmuka publik
 TicketsActivatePublicInterfaceHelp=Antarmuka publik memungkinkan setiap pengunjung untuk membuat tiket.
 TicketsAutoAssignTicket=Secara otomatis menetapkan pengguna yang membuat tiket
-TicketsAutoAssignTicketHelp=Saat membuat tiket, pengguna dapat secara otomatis ditetapkan ke tiket tersebut (Contoh: 0=Tidak pernah secara otomatis ditetapkan ke tiket, 1=Otomatis ditetapkan ke tiket jika tidak ada yang ditetapkan, 2=Otomatis ditetapkan ke tiket meskipun seseorang telah ditetapkan).
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
 TicketAutoChangeStatusOnAnswer=Tetapkan status secara otomatis saat menjawab tiket
 TicketAutoChangeStatusOnAnswerHelp=Ketika pengguna menjawab tiket, status akan secara otomatis diterapkan ke tiket
 TicketNumberingModules=Modul penomoran tiket
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=Lihat hanya tiket terbuka
 TicketStatByStatus=Tiket berdasarkan status
 OrderByDateAsc=Urutkan berdasarkan tanggal kenaikan
 OrderByDateDesc=Urutkan berdasarkan tanggal turun
-ShowAsConversation=Tampilkan sebagai daftar percakapan
-MessageListViewType=Tampilkan sebagai daftar tabel
 ConfirmMassTicketClosingSendEmail=Kirim email secara otomatis saat menutup tiket
 ConfirmMassTicketClosingSendEmailQuestion=Apakah Anda ingin memberi tahu pihak ketiga saat penutupan tiket ini?
 # Ticket card

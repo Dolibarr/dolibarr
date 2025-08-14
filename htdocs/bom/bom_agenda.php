@@ -149,7 +149,7 @@ if ($object->id > 0) {
 	$head = bomPrepareHead($object);
 
 
-	print dol_get_fiche_head($head, 'agenda', $langs->trans("BillOfMaterials"), -1, 'bom');
+	print dol_get_fiche_head($head, 'agenda', $langs->trans("BillOfMaterials"), -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------

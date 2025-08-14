@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2007  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015  Juanjo Menent		    <jmenent@2byte.es>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -271,7 +271,7 @@ foreach ($arrayhandler as $key => $module) {
 		print '</td>'."\n";
 
 		print '<td class="center">';
-		if ($conf->global->USER_PASSWORD_GENERATED == $key) {
+		if (getDolGlobalString('USER_PASSWORD_GENERATED') == $key) {
 			//print img_picto('', 'tick');
 			print img_picto($langs->trans("Enabled"), 'switch_on');
 		} else {

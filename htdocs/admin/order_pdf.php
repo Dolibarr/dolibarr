@@ -63,10 +63,14 @@ $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'order';
-$dirforterms = $conf->order->dir_output;
+$dirforterms = $conf->order->dir_output.'/';
 if (!empty($conf->order->multidir_output[$conf->entity])) {
 	$dirforterms = $conf->order->multidir_output[$conf->entity].'/';
 }
+
+$varname = 'MAIN_INFO_ORDER_TERMSOFSALE';
+$error = 0;
+
 
 /*
  * Actions
@@ -74,7 +78,6 @@ if (!empty($conf->order->multidir_output[$conf->entity])) {
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-$error = 0;
 if ($action == "update") {
 	if (GETPOSTISSET('MAIN_PDF_ADD_TERMSOFSALE_ORDER')) {
 		dolibarr_set_const($db, "MAIN_PDF_ADD_TERMSOFSALE_ORDER", GETPOST("MAIN_PDF_ADD_TERMSOFSALE_ORDER", 'int'), 'chaine', 0, '', $conf->entity);
@@ -84,16 +87,16 @@ if ($action == "update") {
 		dolibarr_del_const($db, "SALES_ORDER_SHOW_SHIPPING_ADDRESS", $conf->entity);
 	}
 
-	// Terms of sale
-	if ($_FILES['termsofsale']["name"]) {
-		if (!preg_match('/(\.pdf)$/i', $_FILES['termsofsale']["name"])) {	// Document can be used on a lot of different places. Only pdf can be supported.
+	// Add file
+	if ($_FILES[$varname]["name"]) {
+		if (!preg_match('/(\.pdf)$/i', $_FILES[$varname]["name"])) {	// Document can be used on a lot of different places. Only pdf can be supported.
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorBadFormat"), null, 'errors');
 		} else {
-			$original_file = $_FILES['termsofsale']["name"];
-			$result = dol_move_uploaded_file($_FILES['termsofsale']["tmp_name"], $dirforterms.$original_file, 1, 0, $_FILES['termsofsale']['error']);
+			$original_file = $_FILES[$varname]["name"];
+			$result = dol_move_uploaded_file($_FILES[$varname]["tmp_name"], $dirforterms.$original_file, 1, 0, $_FILES[$varname]['error']);
 			if ($result) {
-				dolibarr_set_const($db, 'MAIN_INFO_ORDER_TERMSOFSALE', $original_file, 'chaine', 0, '', $conf->entity);
+				dolibarr_set_const($db, $varname, $original_file, 'chaine', 0, '', $conf->entity);
 			}
 		}
 	}
@@ -124,11 +127,19 @@ $formfile = new FormFile($db);
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
+$maxfilesizearray = getMaxFileSizeArray();
+$tooltipconcatpdf = ($maxfilesizearray['maxmin'] > 0) ? $langs->trans('MaxSize').' : '.$maxfilesizearray['maxmin'].' '.$langs->trans('Kb') : '';
+$documenturl = DOL_URL_ROOT.'/document.php';
+if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) {
+	$documenturl = getDolGlobalString('DOL_URL_ROOT_DOCUMENT_PHP');
+}
+
 llxHeader('', $langs->trans("OrdersSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-order');
 
 //if ($mesg) print $mesg;
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("OrdersSetup"), $linkback, 'title_setup');
 
 $head = order_admin_prepare_head();
@@ -144,17 +155,6 @@ print '<table summary="more" class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td width="200px"></td></tr>';
 
 print '<tr class="oddeven"><td>';
-print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSOFSALE_ORDER"), $langs->trans("PdfAddTermOfSaleHelp"));
-print '</td><td>';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('MAIN_PDF_ADD_TERMSOFSALE_ORDER');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("MAIN_PDF_ADD_TERMSOFSALE_ORDER", $arrval, $conf->global->MAIN_PDF_ADD_TERMSOFSALE_ORDER);
-}
-print '</td></tr>';
-
-print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("SALES_ORDER_SHOW_SHIPPING_ADDRESS"), $langs->trans("SALES_ORDER_SHOW_SHIPPING_ADDRESSMore"));
 print '</td><td>';
 if ($conf->use_javascript_ajax) {
@@ -165,43 +165,39 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
-print '</table>';
-print '</div>';
-
-print load_fiche_titre($langs->trans("FileToConcatToGeneratedPDF"), '', 'file');
-print '<div class="div-table-responsive-no-min">';
-print '<table summary="more" class="noborder centpercent">';
-print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td width="200px"></td></tr>';
-
-// Terms of sale
-$tooltiptermsofsale = $langs->trans('AvailableFormats').' : pdf';
-$maxfilesizearray = getMaxFileSizeArray();
-$tooltiptermsofsale .= ($maxfilesizearray['maxmin'] > 0) ? '<br>'.$langs->trans('MaxSize').' : '.$maxfilesizearray['maxmin'].' '.$langs->trans('Kb') : '';
-$documenturl = DOL_URL_ROOT.'/document.php';
-if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) {
-	$documenturl = $conf->global->DOL_URL_ROOT_DOCUMENT_PHP;
+// Concat PDF
+print '<tr class="oddeven"><td>';
+print $form->textwithpicto($langs->trans("MAIN_PDF_ADD_TERMSOFSALE_ORDER"), $tooltipconcatpdf);
+print '</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_PDF_ADD_TERMSOFSALE_ORDER', array(), null, 0, 0, 1);
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("MAIN_PDF_ADD_TERMSOFSALE_ORDER", $arrval, getDolGlobalString('MAIN_PDF_ADD_TERMSOFSALE_ORDER'));
 }
-$modulepart = 'order';
 
-print '<tr class="oddeven"><td><label for="logo">'.$form->textwithpicto($langs->trans("FileToConcatToGeneratedPDF"), $tooltiptermsofsale).'</label></td><td>';
-print '<div class="centpercent nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
-print '<input type="file" class="flat minwidth100 maxwidthinputfileonsmartphone" name="termsofsale" id="termsofsale" accept="application/pdf">';
-
-if (getDolGlobalString("MAIN_INFO_ORDER_TERMSOFSALE")) {
-	$termofsale = getDolGlobalString("MAIN_INFO_ORDER_TERMSOFSALE");
-	if (file_exists($dirforterms.'/'.$termofsale)) {
-		$file = dol_dir_list($dirforterms, 'files', 0, $termofsale);
-		print '<div class="inline-block valignmiddle marginrightonly"><a href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($termofsale).'">'.$termofsale.'</a>'.$formfile->showPreview($file[0], $modulepart, $termofsale, 0, '');
-		print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removetermsofsale&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
+if (getDolGlobalString("MAIN_PDF_ADD_TERMSOFSALE_ORDER")) {
+	$modulepart = 'order';
+	print '<div class="inline-block nobordernopadding valignmiddle "><div class="inline-block marginrightonly">';
+	print '<input type="file" class="flat minwidth100 maxwidthinputfileonsmartphone" name="MAIN_INFO_ORDER_TERMSOFSALE" id="MAIN_INFO_ORDER_TERMSOFSALE" accept="application/pdf">';
+	if (getDolGlobalString("MAIN_INFO_ORDER_TERMSOFSALE")) {
+		$termofsale = getDolGlobalString("MAIN_INFO_ORDER_TERMSOFSALE");
+		if (file_exists($conf->propal->dir_output.'/'.$termofsale)) {
+			$file = dol_dir_list($conf->propal->dir_output, 'files', 0, $termofsale);
+			print '<div class="inline-block valignmiddle marginrightonly"><a href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($termofsale).'">'.$termofsale.'</a>'.$formfile->showPreview($file[0], $modulepart, $termofsale, 0, '');
+			print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removetermsofsale&modulepart='.$modulepart.'&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
+		}
 	}
+	print '</div>';
 }
-print '</div>';
 print '</td></tr>';
+
 print '</table>';
 print '</div>';
 
-
-print '<center><input type="submit" class="button button-edit reposition" value="'.$langs->trans("Save").'"></center>';
+if (getDolGlobalString("MAIN_PDF_ADD_TERMSOFSALE_ORDER")) {
+	print '<center><input type="submit" class="button button-edit reposition" value="'.$langs->trans("Save").'"></center>';
+}
 
 print '</form>';
 

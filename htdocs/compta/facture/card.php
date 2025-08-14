@@ -3517,7 +3517,7 @@ if (empty($reshook)) {
 		$id = $facid;
 	}
 	if (!empty($object->id) && $action == 'send') {
-		// load sumpayed, sumdeposit, sumcreditnote that can be used in email templates
+		// load totalpaid, totaldeposits, totalcreditnotes that can be used in email templates
 		$object->getSommePaiement(-1);
 		$object->getSumCreditNotesUsed(-1);
 		$object->getSumDepositsUsed(-1);
@@ -4797,7 +4797,7 @@ if ($action == 'create') {
 
 	$head = facture_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'), -1, 'bill');
+	print dol_get_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'), -1, $object->picto);
 
 	$formconfirm = '';
 

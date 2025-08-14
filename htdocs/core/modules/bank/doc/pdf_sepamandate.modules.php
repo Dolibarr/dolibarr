@@ -71,7 +71,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Translations
 		$langs->loadLangs(array("main", "bank", "withdrawals", "companies"));

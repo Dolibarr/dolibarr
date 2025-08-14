@@ -388,6 +388,8 @@ if (empty($reshook)) {
 			$object->localtax2_value		= GETPOST('lt2', 'alpha');
 
 			$object->forme_juridique_code	= GETPOSTINT('forme_juridique_code');
+			$object->birth				= dol_mktime(0, 0, 0, GETPOSTINT('birthmonth'), GETPOSTINT('birthday'), GETPOSTINT('birthyear'));
+
 			$object->effectif_id			= GETPOSTINT('effectif_id');
 			$object->typent_id				= GETPOSTINT('typent_id');
 
@@ -1850,6 +1852,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 			print '</td></tr>';
 
+			// Date birth
+			print '<tr><td>'.$form->editfieldkey('CompnanyBirthDate', 'birth', '', $object, 0).'</td>';
+			print '<td colspan="3" class="maxwidthonsmartphone">';
+			print $form->selectDate($object->birth, 'birth', 0, 0, 1, "", 1);
+			print '</td></tr>';
+
 			// Capital
 			print '<tr><td>'.$form->editfieldkey('Capital', 'capital', '', $object, 0).'</td>';
 			print '<td colspan="3"><input type="text" name="capital" id="capital" class="maxwidth100" value="'.$object->capital.'"> ';
@@ -2258,6 +2266,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
 			print '<div class="fichecenter2">';
+
 			// Call Hook tabContentEditThirdparty
 			$parameters = array();
 			// Note that $action and $object may be modified by hook
@@ -2692,8 +2701,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</td></tr>';
 
 				// Juridical type
-				print '<tr><td>'.$form->editfieldkey('JuridicalStatus', 'forme_juridique_code', '', $object, 0).'</td><td class="maxwidthonsmartphone" colspan="3">';
+				print '<tr><td>'.$form->editfieldkey('JuridicalStatus', 'forme_juridique_code', '', $object, 0).'</td>';
+				print '<td class="maxwidthonsmartphone" colspan="3">';
 				print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_id, '', 'forme_juridique_code');
+				print '</td></tr>';
+
+				// Date birth
+				print '<tr><td>'.$form->editfieldkey('CompnanyBirthDate', 'birth', '', $object, 0).'</td>';
+				print '<td class="maxwidthonsmartphone" colspan="3">';
+				print $form->selectDate($object->birth, 'birth', 0, 0, 1, "", 1);
 				print '</td></tr>';
 
 				// Capital
@@ -3211,6 +3227,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 			// Legal
 			print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td>'.dolPrintHTML($object->forme_juridique).'</td></tr>';
+
+			// Date birth
+			print '<tr><td>'.$langs->trans('CompnanyBirthDate').'</td><td>'.dol_print_date($object->birth).'</td></tr>';
 
 			// Capital
 			print '<tr><td>'.$langs->trans('Capital').'</td><td>';

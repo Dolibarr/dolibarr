@@ -124,7 +124,7 @@ if ($object->id && $upload_dir !== null) {
 	 */
 	$head = bomPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'document', $langs->trans("BillOfMaterials"), -1, 'bom');
+	print dol_get_fiche_head($head, 'document', $langs->trans("BillOfMaterials"), -1, $object->picto);
 
 
 	// Build file list

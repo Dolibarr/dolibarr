@@ -626,6 +626,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				$readok = 0;
 				$nbko++;
 			}
+		} elseif ($feature == 'webhook') {
+			if (empty($user->admin)) {
+				$readok = 0;
+				$nbko++;
+			}
 		} elseif (!empty($feature2)) { 													// This is for permissions on 2 levels (module->object->read)
 			$tmpreadok = 1;
 			foreach ($feature2 as $subfeature) {
@@ -724,6 +729,11 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 				}
 			} elseif ($feature == 'modulebuilder') {
 				if (!$user->hasRight('modulebuilder', 'run')) {
+					$createok = 0;
+					$nbko++;
+				}
+			} elseif ($feature == 'webhook') {
+				if (empty($user->admin)) {
 					$createok = 0;
 					$nbko++;
 				}
@@ -990,7 +1000,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		$checktask = array('projet_task'); // Test for task object
 		$checkhierarchy = array('expensereport', 'holiday');	// check permission among the hierarchy of user
 		$checkuser = array('bookmark');	// check permission among the fk_user (must be myself or null)
-		$nocheck = array('barcode', 'stock'); // No test
+		$nocheck = array('barcode', 'stock', 'webhook'); // No test
 
 		//$checkdefault = 'all other not already defined'; // Test on entity + link to third party on field $dbt_keyfield. Not allowed if link is empty (Ex: invoice, orders...).
 
@@ -1252,7 +1262,7 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
  *	Calling this function terminate execution of PHP.
  *
  *	@param	string		$message					Force error message
- *	@param	int			$http_response_code			HTTP response code
+ *	@param	int			$http_response_code			HTTP response code (403 for forbidden access, 400 bad parameters or request)
  *  @param	int<0,1>	$stringalreadysanitized		1 if string is already sanitized with HTML entities
  *  @return	never
  *  @see accessforbidden()

@@ -1601,36 +1601,39 @@ class FormMail extends Form
 
 				if (template === "news") {
 					$("#post-dropdown-container").show();
-					console.log("Displaying dropdown for news template");
+					console.log("Displaying dropdown for news selection");
+				} else if (template === "products") {
+					$("#post-dropdown-container").show();
+					console.log("Displaying dropdown for products selection");
 				} else {
 					$("#post-dropdown-container").hide();
-
-					var csrfToken = "' .newToken().'";
-					$.ajax({
-						type: "POST",
-						url: "'.DOL_URL_ROOT.'/core/ajax/mailtemplate.php",
-						data: {
-							token: csrfToken,
-							template: template,
-							subject: subject,
-							fromtype: fromtype,
-							sendto: sendto,
-							sendtocc: sendtocc,
-							sendtoccc: sendtoccc,
-							selectedPosts: "[]"
-						},
-						success: function(response) {
-							jQuery("#'.$htmlContent.'").val(response);
-							var editorInstance = CKEDITOR.instances["'.$htmlContent.'"];
-							if (editorInstance) {
-								editorInstance.setData(response);
-							}
-						},
-						error: function(xhr, status, error) {
-							console.error("An error occurred: " + xhr.responseText);
-						}
-					});
 				}
+
+				var csrfToken = "' .newToken().'";
+				$.ajax({
+					type: "POST",
+					url: "'.DOL_URL_ROOT.'/core/ajax/mailtemplate.php",
+					data: {
+						token: csrfToken,
+						template: template,
+						subject: subject,
+						fromtype: fromtype,
+						sendto: sendto,
+						sendtocc: sendtocc,
+						sendtoccc: sendtoccc,
+						selectedPosts: "[]"
+					},
+					success: function(response) {
+						jQuery("#'.$htmlContent.'").val(response);
+						var editorInstance = CKEDITOR.instances["'.$htmlContent.'"];
+						if (editorInstance) {
+							editorInstance.setData(response);
+						}
+					},
+					error: function(xhr, status, error) {
+						console.error("An error occurred: " + xhr.responseText);
+					}
+				});
 			});
 
 			$("#blogpost-select").change(function() {

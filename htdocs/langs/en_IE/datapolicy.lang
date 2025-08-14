@@ -1,0 +1,2 @@
+# Dolibarr language file - Source file is en_US - datapolicy
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and be working correctly.
