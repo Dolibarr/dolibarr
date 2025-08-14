@@ -50,5 +50,5 @@ ToReplace=vervang
 CantMoveNonExistantSerial=Fout. U vraagt een verplaatsing op een record voor een serie die niet meer bestaat. Misschien neemt u hetzelfde serienummer meerdere keren in hetzelfde magazijn in dezelfde zending of is het door een andere zending gebruikt. Verwijder deze zending en maak een andere klaar.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Lottabel onvolledige runreparatie met parameter '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= voorraad correctie vereist vanwege uniek serienummer.
-ErrorBatchesNeedStockManagement=Fout. Een product met batch-/lotbeheer moet worden beheerd in voorraad.
+ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
 ForceBatchesNeedStockManagement=Een product met batch-/lotbeheer moet worden beheerd in voorraad (voorraad beheer forceren op ja)

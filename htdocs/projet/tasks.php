@@ -178,7 +178,7 @@ $arrayfields = array(
 	't.datee' => array('label' => "Deadline", 'checked' => '1', 'position' => 5),
 	't.planned_workload' => array('label' => "PlannedWorkload", 'checked' => '1', 'position' => 6),
 	't.duration_effective' => array('label' => "TimeSpent", 'checked' => '1', 'position' => 7),
-	't.progress_calculated' => array('label' => "ProgressCalculated", 'checked' => '1', 'position' => 8),
+	't.progress_calculated' => array('label' => "ProgressCalculated", 'checked' => '-1', 'position' => 8),
 	't.progress' => array('label' => "ProgressDeclared", 'checked' => '1', 'position' => 9),
 	't.progress_summary' => array('label' => "TaskProgressSummary", 'checked' => '1', 'position' => 10),
 	't.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 11),

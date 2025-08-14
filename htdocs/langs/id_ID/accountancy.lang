@@ -72,7 +72,7 @@ AccountancyAreaDescActionOnce=Tindakan berikut ini biasanya dilakukan hanya seka
 AccountancyAreaDescActionOnceBis=Langkah selanjutnya harus dilakukan untuk menghemat waktu Anda di masa depan dengan menyarankan Anda secara otomatis akun akuntansi default yang benar saat mentransfer data dalam akuntansi
 AccountancyAreaDescActionFreq=Tindakan berikut ini biasanya dilakukan setiap bulan, minggu atau hari untuk perusahaan yang sangat besar...
 AccountancyAreaDescJournalSetup=LANGKAH %s: Periksa isi daftar jurnal Anda dari menu %s
-AccountancyAreaDescChartModel=LANGKAH %s: Periksa apakah tersedia model bagan akun atau buat model barudari menu %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists for your country or create one from menu %s
 AccountancyAreaDescChart=LANGKAH %s: Pilih dan|atau selesaikan bagan akun Anda dari menu %s
 AccountancyAreaDescFiscalPeriod=LANGKAH %s: Tentukan periode fiskal yang menentukan rentang tanggal yang diterima untuk membuat entri akuntansi. Untuk ini, gunakan entri menu %s.
 AccountancyAreaDescVat=LANGKAH %s: Tentukan akun akuntansi untuk setiap Tarif PPN. Untuk ini, gunakan entri menu %s.
@@ -275,7 +275,7 @@ HideOpeningBalance=Sembunyikan saldo awal
 ShowSubtotalByGroup=Tunjukkan subtotal menurut level
 Pcgtype=Grup akun
 PcgtypeDesc=Grup akun digunakan sebagai kriteria 'filter' dan 'pengelompokan' yang telah ditentukan sebelumnya untuk beberapa laporan akuntansi. Misalnya, 'PENGHASILAN' atau 'BEBAN' digunakan sebagai grup untuk akun akuntansi produk untuk membangun laporan pengeluaran / pendapatan.
-AccountingCategoriesDesc=Grup akun khusus dapat digunakan untuk mengelompokkan akun akuntansi ke dalam satu nama untuk memudahkan penggunaan filter atau pembuatan laporan khusus.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Dapat didamaikan
 Centralized=Akun terpusat
 TotalVente=Total turnover before tax
@@ -319,7 +319,7 @@ NotReconciled=Tidak didamaikan
 WarningRecordWithoutSubledgerAreExcluded=Peringatan, semua baris tanpa akun subledger yang ditentukan akan difilter dan dikecualikan dari tampilan ini
 AccountRemovedFromCurrentChartOfAccount=Akun akuntansi yang tidak ada dalam bagan akun saat ini
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=Peringatan, halaman ini hanya berisi entri yang ditransfer ke sistem akuntansi.
-BookkeepingNumRefModelDesc = Mengembalikan nomor referensi dalam format yyyyjjnnnn di mana yyyy adalah tahun dan jj adalah kode jurnal, nnnn adalah nomor yang bertambah otomatis berurutan tergantung pada tahun dan kode jurnal.
+BookkeepingNumRefModelDesc = Returns the reference number in the format yymmjjnnnnn where yy is the year, mm is the month and jj the journal code, nnnnn is a sequential auto-incrementing number depending on the year, the month and the journal code.
 BookkeepingNumberingModules = Model penomoran pembukuan
 ## Admin
 BindingOptions=Pilihan untuk transfer di bidang akuntansi
@@ -389,6 +389,7 @@ Modelcsv_Gestinumv5=Ekspor untuk Gestinum (v5)
 Modelcsv_charlemagne=Ekspor untuk Aplim Charlemagne
 ChartofaccountsId=Bagan akun Id
 ExportToPdf = Ekspor ke PDF
+ExportToCsv = Export to CSV
 PdfLedgerTitle = Akun buku besar
 PdfBalanceTitle = Saldo Buku Besar
 PdfBookkeepingTitle = Jurnal
@@ -440,7 +441,7 @@ AccountRemovedFromGroup=Akun dihapus dari grup
 SaleLocal=Penjualan lokal
 SaleExport=Penjualan ekspor
 SaleEEC=Dijual dalam EEC
-SaleEECWithVAT=Penjualan dilakukan di EEC dengan PPN yang tidak nol, jadi kami berasumsi ini BUKAN penjualan intrakomunitas dan akun yang disarankan adalah akun produk standar.
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=Penjualan dilakukan di EEC tanpa PPN, tetapi ID PPN pihak ketiga tidak ditentukan. Kami menggunakan akun untuk penjualan standar. Anda dapat memperbaiki ID PPN pihak ketiga, atau mengubah akun produk yang disarankan untuk pengikatan jika diperlukan.
 AnySale=Penjualan apa pun
 ForbiddenTransactionAlreadyExported=Dilarang: Transaksi telah divalidasi dan/atau diekspor.
@@ -485,7 +486,7 @@ AccountancyClosureConfirmClose=Apakah Anda yakin ingin menutup periode fiskal sa
 AccountancyClosureConfirmAccountingReversal=Apakah Anda yakin ingin mencatat entri untuk "Laba ditahan"?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=Transaksi untuk (doc_type=%s, doc_id=%s, doc_det=%s) sudah direkam
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Beberapa langkah pengaturan wajib tidak dilakukan, harap lengkapi
@@ -508,7 +509,7 @@ ErrorNoFiscalPeriodActiveFound=Tidak ditemukan periode fiskal aktif (dengan tang
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Tanggal dokumen pembukuan tidak berada dalam masa fiskal aktif
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Tanggal dokumen pembukuan berada dalam periode fiskal tertutup
 Error_BOOKKEEPING_ADDON_NotDefined=Kesalahan, aturan penomoran pembukuan ref tidak didefinisikan dalam pengaturan umum modul Akuntansi
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Coba masukkan transaksi yang tidak seimbang dalam buku untuk %s (ID Pembayaran: %s). Dibatalkan. Pasti ada bug.
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
 ProductUsage=Penggunaan produk atau layanan
 ## Import
 ImportAccountingEntries=Entri akuntansi
@@ -537,15 +538,15 @@ ExpenseReportJournal=Jurnal Laporan Biaya
 DocsAlreadyExportedAreIncluded=Dokumen yang sudah diekspor disertakan
 ClickToShowAlreadyExportedLines=Klik untuk menampilkan baris yang sudah diekspor
 NAccounts=akun %s
-ACCOUNTING_USE_TREASURY_Desc=Ini adalah cara untuk akuntansi perbendaharaan. Kami hanya menggunakan pembayaran dan tanggalnya untuk melakukan akuntansi.
-ACCOUNTING_USE_NON_TREASURY_Desc=Ini adalah mode untuk akuntansi yang sebenarnya. Kami menggunakan faktur dan pembayaran untuk melakukan akuntansi.
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
+ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
 PieceDesc=Referensi dokumen sumber yang menghasilkan transaksi bank ini (Ref. Faktur, Ref. Laporan pengeluaran, ...)
 BankTransactionRef=Referensi untuk transaksi bank (Opsional, ID otomatis sudah dibuat)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=Ini akan mengkloning entri pembukuan (semua baris yang terhubung ke entri pembukuan ini akan dikloning). Apakah Anda yakin ingin mengkloning rekaman %s yang dipilih?
 ConfirmMassCloneBookkeepingWriting=Konfirmasi kloning massal
-ConfirmMassReturnAccountBookkeepingWriting=Konfirmasi kepunahan massal
-ConfirmMassReturnAccountBookkeepingWritingQuestion=Ini akan menghapus entri pembukuan (semua baris yang terhubung ke entri pembukuan ini akan dihapus). Apakah Anda yakin ingin mengabaikan rekaman yang dipilih %s?
+ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
+ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=Ini akan mengubah akun semua jalur yang dipilih.
 confirmMassAssignAccountBookkeepingWritingConfirm=Konfirmasi perubahan akun massal
 CloningSuccess=Kloning transaksi berhasil: %s
@@ -560,6 +561,6 @@ NoAccountsChangedWithAccountNumber=Transaksi tidak diperbarui dengan nomor akun:
 HasAlreadyBeenReversed=sudah dibalik
 ErrorWhileCreating=Kesalahan selama pembuatan %s
 ReturnAccount=Kembali
-Clone=kloning
+Clone=Gandakan
 AlreadyReturnedAccount=Entri n°%s telah dibatalkan
 SuccessReturnedAccount=Entri n°%s telah dibatalkan

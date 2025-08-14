@@ -57,7 +57,7 @@ Assigned=Tayinlangan
 NeedMoreInformation=Muxbirlarning fikri kutilmoqda
 NeedMoreInformationShort=Fikr-mulohaza kutilmoqda
 Waiting=Kutish
-SolvedClosed=Yechilgan
+SolvedClosed=Closed
 Deleted=O'chirildi
 # Dict
 Severity=Jiddiylik
@@ -72,8 +72,10 @@ TicketPublicAccess=Identifikatsiyani talab qilmaydigan umumiy interfeys quyidagi
 TicketSetupDictionaries=Chipta turi, jiddiyligi va analitik kodlari lug'atlarda sozlanishi mumkin
 TicketParamModule=Modulning o'zgaruvchini sozlash
 TicketParamMail=Elektron pochtani sozlash
-TicketEmailNotificationFrom=Chiptalar haqida bildirishnoma olish uchun jo'natuvchining elektron pochtasi (chipta yaratish yoki yangilanish xabarlari)
-TicketEmailNotificationFromHelp=Chiptalarni yaratish yoki xabar qo'shish uchun bildirishnomalarni yuborish uchun jo'natuvchining elektron pochtasi. Masalan, noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Chipta yaratilishi haqida ushbu elektron pochta manziliga xabar bering
 TicketEmailNotificationToHelp=Agar mavjud bo'lsa, ushbu elektron pochta manzili chipta yaratilishi haqida xabar qilinadi (boshqa birlamchi qabul qiluvchilarga qo'shimcha ravishda)
 TicketNewEmailBodyLabel=Chipta yaratilgandan so'ng yuborilgan matnli xabar
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=Faqat joriy foydalanuvchiga tayinlangan chiptal
 TicketsActivatePublicInterface=Umumiy interfeysni faollashtiring
 TicketsActivatePublicInterfaceHelp=Umumiy interfeys har qanday tashrif buyuruvchilarga chiptalarni yaratishga imkon beradi.
 TicketsAutoAssignTicket=Chiptani yaratgan foydalanuvchini avtomatik ravishda tayinlash
-TicketsAutoAssignTicketHelp=Chipta yaratishda foydalanuvchi avtomatik ravishda chiptaga tayinlanishi mumkin (Misollar: 0=Hech qachon chiptaga avtomatik ravishda tayinlanmaydi, 1=Hech kim tayinlanmagan bo'lsa, avtomatik ravishda chiptaga tayinlanadi, 2=Agar kimdir aniqlangan bo'lsa ham, chiptaga avtomatik ravishda tayinlanadi).
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
 TicketAutoChangeStatusOnAnswer=Chiptaga javob berishda avtomatik ravishda status tayinlang
 TicketAutoChangeStatusOnAnswerHelp=Foydalanuvchi chiptaga javob berganida, holat avtomatik ravishda chiptaga qo'llaniladi
 TicketNumberingModules=Chiptalarni raqamlash moduli
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=Faqat ochiq chiptalarni ko'ring
 TicketStatByStatus=Status bo'yicha chiptalar
 OrderByDateAsc=Sana bo'yicha o'sish sanasi bo'yicha saralash
 OrderByDateDesc=Kamayish sanasi bo'yicha saralash
-ShowAsConversation=Suhbat ro'yxati sifatida ko'rsatish
-MessageListViewType=Jadval ro'yxati sifatida ko'rsatish
 ConfirmMassTicketClosingSendEmail=Chiptalarni yopish paytida avtomatik ravishda elektron pochta xabarlarini yuboring
 ConfirmMassTicketClosingSendEmailQuestion=Ushbu chiptalarni yopish paytida uchinchi tomonlarga xabar berishni xohlaysizmi?
 # Ticket card

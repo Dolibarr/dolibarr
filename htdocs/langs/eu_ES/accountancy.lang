@@ -72,7 +72,7 @@ AccountancyAreaDescActionOnce=Ekintza hauek normalean behin bakarrik edo urtean 
 AccountancyAreaDescActionOnceBis=Hurrengo urratsak etorkizunean denbora aurrezteko eman beharko zenituzke, datuak kontabilitate-prozesuan transferitzerakoan automatikoki kontabilitate-kontu lehenetsi zuzena iradokiz.
 AccountancyAreaDescActionFreq=Enpresa oso handietan, ekintza hauek normalean hilero, astero edo egunero egiten dira...
 AccountancyAreaDescJournalSetup=%s URRATSA: Egiaztatu zure aldizkarien zerrendaren edukia %s menutik
-AccountancyAreaDescChartModel=%s URRATSA: Egiaztatu kontu-planaren eredu bat existitzen dela edo sortu bat %s menutik
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists for your country or create one from menu %s
 AccountancyAreaDescChart=%s URRATSA: Hautatu eta/edo osatu zure kontu-diagrama %s menutik
 AccountancyAreaDescFiscalPeriod=%s URRATSA: Definitu kontabilitate-idazpenak sortzeko onartutako daten tartea zehazten duen ekitaldi fiskala. Horretarako, erabili %s menu-sarrera.
 AccountancyAreaDescVat=%s URRATSA: Definitu BEZ tasa bakoitzerako kontabilitate kontuak. Horretarako, erabili %s menu sarrera.
@@ -275,7 +275,7 @@ HideOpeningBalance=Ezkutatu hasierako saldoa
 ShowSubtotalByGroup=Erakutsi azpitotala mailaren arabera
 Pcgtype=Kontu taldea.
 PcgtypeDesc=Kontu-taldeak kontabilitate-txosten batzuetarako aurrez definitutako 'iragazki' eta 'taldekatze' irizpide gisa erabiltzen dira. Adibidez, 'DIRU-SARRERA' edo 'GASTU' produktuen kontabilitate-kontuen talde gisa erabiltzen dira gastu/diru-sarreren txostena eraikitzeko.
-AccountingCategoriesDesc=Kontu-talde pertsonalizatuak erabil daitezke kontabilitate-kontuak izen bakarrean biltzeko, iragazkien erabilera edo txosten pertsonalizatuak sortzea errazteko.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Bateragarria
 Centralized=Kontu zentralizatua
 TotalVente=Total turnover before tax
@@ -319,7 +319,7 @@ NotReconciled=Ez da adiskidetu
 WarningRecordWithoutSubledgerAreExcluded=Abisua, azpiliburu konturik definitu gabe dauden lerro guztiak iragazi eta ikuspegi honetatik kanpo uzten dira.
 AccountRemovedFromCurrentChartOfAccount=Uneko kontu-planean existitzen ez den kontabilitate-kontua
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=Abisua, orrialde honek kontabilitate sistemara transferitutako sarrerak baino ez ditu.
-BookkeepingNumRefModelDesc = Erreferentzia zenbakia itzultzen du yyyyjjnnnn formatuan, non yyyy urtea den eta jj aldizkariaren kodea, nnnn urtearen eta aldizkariaren kodearen araberako zenbaki sekuentzial automatiko handitzailea den.
+BookkeepingNumRefModelDesc = Returns the reference number in the format yymmjjnnnnn where yy is the year, mm is the month and jj the journal code, nnnnn is a sequential auto-incrementing number depending on the year, the month and the journal code.
 BookkeepingNumberingModules = Kontabilitate-zenbakitze ereduak
 ## Admin
 BindingOptions=Kontabilitate transferentziarako aukerak
@@ -389,6 +389,7 @@ Modelcsv_Gestinumv5=Esportatu Gestinum-erako (v5)
 Modelcsv_charlemagne=Esportatu Aplim Charlemagnerentzat
 ChartofaccountsId=Kontuen Planaren IDa
 ExportToPdf = Esportatu PDFra
+ExportToCsv = Export to CSV
 PdfLedgerTitle = Kontu-liburua
 PdfBalanceTitle = Liburu-liburuko saldoa
 PdfBookkeepingTitle = Journals
@@ -440,7 +441,7 @@ AccountRemovedFromGroup=Kontua taldetik kendu da
 SaleLocal=Tokiko salmenta
 SaleExport=Esportazio salmenta
 SaleEEC=Salmenta EEEan
-SaleEECWithVAT=Salmenta EEEn da, BEZa ez nulua izanik, beraz, suposatzen dugu hau EZ dela komunitate barruko salmenta bat eta iradokitako kontua produktuaren kontu estandarra dela.
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=Salmenta EEEn dago, BEZik gabe, baina hirugarrenaren BEZ IDa ez dago definitu. Salmenta estandarretarako kontua erabiltzen dugu. Hirugarrenaren BEZ IDa konpondu dezakezu, edo behar izanez gero, loturarako iradokitako produktu kontua alda dezakezu.
 AnySale=Edozein salmenta
 ForbiddenTransactionAlreadyExported=Debekatuta: Transakzioa balioztatu eta/edo esportatu da.
@@ -485,7 +486,7 @@ AccountancyClosureConfirmClose=Ziur zaude uneko ekitaldi fiskala itxi nahi duzul
 AccountancyClosureConfirmAccountingReversal=Ziur zaude "Atxikitako irabaziak" ataleko sarrerak erregistratu nahi dituzula?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) were already recorded
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Konfigurazioko derrigorrezko urrats batzuk ez dira egin, mesedez, osatu itzazu.
@@ -508,7 +509,7 @@ ErrorNoFiscalPeriodActiveFound=Ez da aurkitu hasiera eta amaiera data zehaztuta 
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Kontabilitate-dokumentuaren data ez dago aktibo dagoen aldi fiskalaren barruan.
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Kontabilitate-dokumentuaren data itxitako ekitaldi fiskal baten barruan dago.
 Error_BOOKKEEPING_ADDON_NotDefined=Errorea, kontabilitate-zenbaketaren erreferentziaren araua ez dago definituta Kontabilitate moduluaren konfigurazio orokorrean.
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Saiatu %s-ren liburuan transakzio orekatu gabe bat txertatzen (Ordainketa IDa: %s). Bertan behera utzita. Akats bat izango da, dudarik gabe.
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
 ProductUsage=Produktu edo zerbitzuaren erabilera
 ## Import
 ImportAccountingEntries=Kontabilitate-sarrerak
@@ -537,15 +538,15 @@ ExpenseReportJournal=Gastuen Txostenaren Egunkaria
 DocsAlreadyExportedAreIncluded=Dagoeneko esportatutako dokumentuak barne daude
 ClickToShowAlreadyExportedLines=Egin klik dagoeneko esportatutako lerroak erakusteko
 NAccounts=%s kontuak
-ACCOUNTING_USE_TREASURY_Desc=Hau da diruzaintzako kontabilitatearen modua. Ordainketak eta haien data soilik erabiltzen ditugu kontabilitatea egiteko.
-ACCOUNTING_USE_NON_TREASURY_Desc=Hau da benetako kontabilitatearen modua. Fakturak eta ordainketak erabiltzen ditugu kontabilitatea egiteko.
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
+ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
 PieceDesc=Banku-transakzio hau sortzen duen iturburu-dokumentuaren erreferentzia (Faktura-erreferentzia, Gastu-txostenaren erreferentzia, ...)
 BankTransactionRef=Bankuko transakzioaren erreferentzia (Aukerakoa, ID automatiko bat sortuta dago dagoeneko)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=Honek kontabilitate-sarrera klonatuko du (kontabilitate-sarrera honekin lotutako lerro guztiak klonatuko dira). Ziur zaude hautatutako %s erregistroak klonatu nahi dituzula?
 ConfirmMassCloneBookkeepingWriting=Klonazio masiboa berretsi
-ConfirmMassReturnAccountBookkeepingWriting=Baieztatu desagertze masiboa
-ConfirmMassReturnAccountBookkeepingWritingQuestion=Honek kontabilitate-sarrera itzaliko du (kontabilitate-sarrera honekin lotutako lerro guztiak itzaliko dira). Ziur zaude hautatutako %s erregistroak saltatu nahi dituzula?
+ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
+ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=Honek hautatutako lerro guztien kontua aldatuko du.
 confirmMassAssignAccountBookkeepingWritingConfirm=Berretsi kontu aldaketa masiboa
 CloningSuccess=Transakzioaren klonazio arrakastatsua: %s
@@ -560,6 +561,6 @@ NoAccountsChangedWithAccountNumber=Transakzioak ez dira kontu-zenbakiekin eguner
 HasAlreadyBeenReversed=dagoeneko alderantzikatu da
 ErrorWhileCreating=Errorea sortu zen %s
 ReturnAccount=Return
-Clone=Klonatzailea
+Clone=Clone
 AlreadyReturnedAccount=%s sarrera jada alderantzikatu da
 SuccessReturnedAccount=%s sarrera alderantzikatu da

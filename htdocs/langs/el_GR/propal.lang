@@ -125,3 +125,5 @@ Signed=υπογεγραμμένη
 SignedOnly=Μόνο υπογεγραμμένη
 ExpeditionSigned=Η αποστολή υπογράφηκε
 SignExpedition=Υπογραφή αποστολής
+PROPOSAL_SHOW_SHIPPING_ADDRESS=Εμφάνιση διεύθυνσης αποστολής
+PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Υποχρεωτική αναφορά για κάποιες χώρες (Γαλλία, ...)
