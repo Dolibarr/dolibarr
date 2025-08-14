@@ -645,18 +645,18 @@ if (empty($reshook)) {
 			$object->seuil_stock_alerte 	 = GETPOST('seuil_stock_alerte') ? GETPOST('seuil_stock_alerte') : 0;
 			$object->desiredstock          = GETPOST('desiredstock') ? GETPOST('desiredstock') : 0;
 			$object->canvas             	 = GETPOST('canvas');
-			$object->net_measure           = GETPOST('net_measure');
-			$object->net_measure_units      = GETPOST('net_measure_units') === '' ? null : GETPOSTINT('net_measure_units'); // This is not the fk_unit but the power of unit
-			$object->weight             	 = GETPOST('weight');
-			$object->weight_units       	 = GETPOST('weight_units'); // This is not the fk_unit but the power of unit
-			$object->length             	 = GETPOST('size');
-			$object->length_units       	 = GETPOST('size_units'); // This is not the fk_unit but the power of unit
+			$object->net_measure = GETPOST('net_measure');
+			$object->net_measure_units = GETPOST('net_measure_units') === '' ? null : GETPOSTINT('net_measure_units'); // This is not the fk_unit but the power of unit
+			$object->weight = GETPOST('weight');
+			$object->weight_units = GETPOST('weight_units') === '' ? null : GETPOSTINT('weight_units'); // This is not the fk_unit but the power of unit
+			$object->length = GETPOST('size');
+			$object->length_units = GETPOST('size_units') === '' ? null : GETPOSTINT('size_units'); // This is not the fk_unit but the power of unit
 			$object->width = GETPOST('sizewidth');
-			$object->height             	 = GETPOST('sizeheight');
-			$object->surface            	 = GETPOST('surface');
-			$object->surface_units      	 = GETPOST('surface_units'); // This is not the fk_unit but the power of unit
-			$object->volume             	 = GETPOST('volume');
-			$object->volume_units       	 = GETPOST('volume_units'); // This is not the fk_unit but the power of unit
+			$object->height = GETPOST('sizeheight');
+			$object->surface = GETPOST('surface');
+			$object->surface_units  = GETPOST('surface_units') === '' ? null : GETPOSTINT('surface_units'); // This is not the fk_unit but the power of unit
+			$object->volume = GETPOST('volume');
+			$object->volume_units = GETPOST('volume_units') === '' ? null : GETPOSTINT('volume_units'); // This is not the fk_unit but the power of unit
 			$finished = GETPOSTINT('finished');
 			if ($finished >= 0) {
 				$object->finished = $finished;
