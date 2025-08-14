@@ -605,7 +605,7 @@ if (empty($reshook)) {
 		$datedelivery = dol_mktime(GETPOSTINT('liv_hour'), GETPOSTINT('liv_min'), 0, GETPOSTINT('liv_month'), GETPOSTINT('liv_day'), GETPOSTINT('liv_year'));
 
 		$object->fetch($id);
-		$result = $object->setDeliveryDate($user, $datedelivery);
+		$result = $object->setDeliveryDate($user, $datedelivery);	// Set the planned delivery date
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -707,7 +707,6 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'updateline' && $permissiontoadd && GETPOST('save')) {
 		// Update a line
-		// Clean parameters
 		$qty = 0;
 		$entrepot_id = 0;
 		$batch_id = 0;
@@ -1144,12 +1143,12 @@ if ($action == 'create') {
 			print '<tr><td>' . $langs->trans("DateDeliveryPlanned") . '</td>';
 			print '<td colspan="3">';
 			print img_picto('', 'action', 'class="pictofixedwidth"');
-			$date_delivery = ($date_delivery ? $date_delivery : $object->delivery_date); // $date_delivery comes from GETPOST
+			$date_delivery = ($date_delivery ? $date_delivery : $object->date_delivery); // $date_delivery comes from GETPOST
 			print $form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
 			print "</td>\n";
 			print '</tr>';
 
-			// Date sending
+			// Date shipment
 			print '<tr><td>' . $langs->trans("DateShipping") . '</td>';
 			print '<td colspan="3">';
 			print img_picto('', 'action', 'class="pictofixedwidth"');
@@ -1216,20 +1215,6 @@ if ($action == 'create') {
 			print '<input name="tracking_number" size="20" value="' . GETPOST('tracking_number', 'alpha') . '">';
 			print "</td></tr>\n";
 
-			// Other attributes
-			$parameters = array('objectsrc' => isset($objectsrc) ? $objectsrc : '', 'colspan' => ' colspan="3"', 'cols' => '3', 'socid' => $socid);
-			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $expe, $action); // Note that $action and $object may have been modified by hook
-			print $hookmanager->resPrint;
-
-			if (empty($reshook)) {
-				// copy from order
-				if ($object->fetch_optionals() > 0) {
-					$expe->array_options = array_merge($expe->array_options, $object->array_options);
-				}
-				print $expe->showOptionals($extrafields, 'edit', $parameters);
-			}
-
-
 			// Incoterms
 			if (isModEnabled('incoterm')) {
 				print '<tr>';
@@ -1250,6 +1235,14 @@ if ($action == 'create') {
 				print $form->selectarray('model', $list, getDolGlobalString('EXPEDITION_ADDON_PDF'), 0, 0, 0, '', 0, 0, 0, '', 'widthcentpercentminusx');
 				print "</td></tr>\n";
 			}
+
+			// Other attributes. Fields from hook formObjectOptions and Extrafields.
+			// $objectsrc is Commande|Facture
+			$objectsav = $object;	// Because Expedition is $expe and not $object that is wrongly a duplicate of $objectsrc.
+			$object = $expe;
+			$parameters = array('objectsrc' => isset($objectsrc) ? $objectsrc : '', 'cols' => '3', 'socid' => $socid);
+			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+			$object = $objectsav;
 
 			print "</table>";
 
@@ -3088,6 +3081,21 @@ if ($action == 'create') {
 				}
 			}
 
+			// This is just to generate a delivery receipt when option to do this is on
+			//var_dump($object->linkedObjectsIds['delivery']);
+			if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && ($object->status == Expedition::STATUS_VALIDATED || $object->status == Expedition::STATUS_CLOSED) && $user->hasRight('expedition', 'delivery', 'creer') && empty($object->linkedObjectsIds['delivery'])) {
+				print dolGetButtonAction('', $langs->trans('CreateDeliveryOrder'), 'default', $_SERVER["PHP_SELF"] . '?action=create_delivery&token=' . newToken() . '&id=' . $object->id, '');
+			}
+
+			// Sign
+			if ($object->status > Expedition::STATUS_DRAFT) {
+				if ($object->signed_status != Expedition::$SIGNED_STATUSES['STATUS_SIGNED_ALL']) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=sign&token=' . newToken() . '">' . $langs->trans("SignShipping") . '</a></div>';
+				} else {
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=unsign&token=' . newToken() . '">' . $langs->trans("UnsignShipping") . '</a></div>';
+				}
+			}
+
 			// Create bill
 			if (isModEnabled('invoice') && ($object->status == Expedition::STATUS_VALIDATED || $object->status == Expedition::STATUS_CLOSED)) {
 				if ($user->hasRight('facture', 'creer')) {
@@ -3097,12 +3105,6 @@ if ($action == 'create') {
 				}
 			}
 
-			// This is just to generate a delivery receipt
-			//var_dump($object->linkedObjectsIds['delivery']);
-			if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && ($object->status == Expedition::STATUS_VALIDATED || $object->status == Expedition::STATUS_CLOSED) && $user->hasRight('expedition', 'delivery', 'creer') && empty($object->linkedObjectsIds['delivery'])) {
-				print dolGetButtonAction('', $langs->trans('CreateDeliveryOrder'), 'default', $_SERVER["PHP_SELF"] . '?action=create_delivery&token=' . newToken() . '&id=' . $object->id, '');
-			}
-
 			// Set Billed and Closed
 			if ($object->status == Expedition::STATUS_VALIDATED) {
 				if ($user->hasRight('expedition', 'creer') && $object->status > 0) {
@@ -3110,15 +3112,6 @@ if ($action == 'create') {
 						print dolGetButtonAction('', $langs->trans('ClassifyBilled'), 'default', $_SERVER["PHP_SELF"] . '?action=classifybilled&token=' . newToken() . '&id=' . $object->id, '');
 					}
 					print dolGetButtonAction('', $langs->trans("Close"), 'default', $_SERVER["PHP_SELF"] . '?action=classifyclosed&token=' . newToken() . '&id=' . $object->id, '');
-				}
-			}
-
-			// Sign
-			if ($object->status > Expedition::STATUS_DRAFT) {
-				if ($object->signed_status != Expedition::$SIGNED_STATUSES['STATUS_SIGNED_ALL']) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=sign&token=' . newToken() . '">' . $langs->trans("SignShipping") . '</a></div>';
-				} else {
-					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=unsign&token=' . newToken() . '">' . $langs->trans("UnsignShipping") . '</a></div>';
 				}
 			}
 

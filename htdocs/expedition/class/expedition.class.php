@@ -210,7 +210,7 @@ class Expedition extends CommonObject
 	public $weight;
 
 	/**
-	 * @var int|string Date delivery planned
+	 * @var int|string 	Date delivery planned (the real date of reception is managed only when the delivery receipt feature is on)
 	 */
 	public $date_delivery;
 
@@ -2628,7 +2628,7 @@ class Expedition extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET fk_statut = ".self::STATUS_CLOSED;
-		if (empty($this->date_shipping)) {	// Date of real shipment was not yet set, we force it on closing
+		if (empty($this->date_shipping)) {		// Date of real shipment was not yet set, we force it on closing
 			$sql .= ", date_expedition = '".$this->db->escape($this->db->idate(dol_now()))."'";
 		}
 		$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut > 0";

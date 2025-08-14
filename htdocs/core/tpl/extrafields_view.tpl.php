@@ -24,12 +24,13 @@
  * @var DoliDB $db
  * @var ExtraFields $extrafields
  * @var Form $form
+ * @var Hookmanager $hookmanager
  * @var Translate $langs
  * @var User $user
  *
  * @var string	$action
  * @var	array<string,mixed>	$parameters		Array of parameters
- * @var int 	$cols
+ * @var int 	$cols		@deprecated 	Add this information into $parameters['cols']
  * @var string	$forcefieldid
  * @var string	$forceobjectid
  */
@@ -45,16 +46,18 @@ if (!is_object($form)) {
 }
 
 ?>
-<!-- BEGIN PHP TEMPLATE extrafields_view.tpl.php -->
+<!-- BEGIN PHP TEMPLATE core/tpl/extrafields_view.tpl.php -->
 <?php
 if (!isset($parameters) || !is_array($parameters)) {
 	$parameters = array();
 }
 if (!empty($cols)) {
-	$parameters['colspan'] = ' colspan="'.$cols.'"';
+	$parameters['colspan'] = ' colspan="'.$cols.'"';	// deprecated, keptfor backward compatibility
 }
-if (!empty($cols)) {
+if (!empty($cols) && !isset($parameters['cols'])) {
 	$parameters['cols'] = $cols;
+} elseif (isset($parameters['cols'])) {
+	$cols = $parameters['cols'];
 }
 if (!empty($object->fk_soc)) {
 	$parameters['socid'] = $object->fk_soc;
@@ -68,9 +71,9 @@ if ($reshook < 0) {
 
 //var_dump($extrafields->attributes[$object->table_element]);
 if (empty($reshook) && !empty($object->table_element) && isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label'])) {
-	$lastseparatorkeyfound = '';
+	//$lastseparatorkeyfound = '';
 	$extrafields_collapse_num = '';
-	$extrafields_collapse_num_old = '';
+	//$extrafields_collapse_num_old = '';
 	$i = 0;
 
 	// Loop on each extrafield
@@ -121,7 +124,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 
 			print $extrafields->showSeparator($tmpkeyextra, $object);
 
-			$lastseparatorkeyfound = $tmpkeyextra;
+			//$lastseparatorkeyfound = $tmpkeyextra;
 		} else {
 			$collapse_group = $extrafields_collapse_num.(!empty($object->id) ? '_'.$object->id : '');
 
@@ -137,7 +140,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 				print ' style="display: none;"';
 			}
 			print '>';
-			$extrafields_collapse_num_old = $extrafields_collapse_num;
+			//$extrafields_collapse_num_old = $extrafields_collapse_num;
 			print '<td>';
 			print '<table class="nobordernopadding centpercent">';
 			print '<tr>';
@@ -308,6 +311,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 
 				print '</form>';
 
+				/** @var $formai	?FormAI */
 				if (empty($formai) || $formai instanceof FormAI) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formai.class.php';
 					$formai = new FormAI($db);
@@ -338,4 +342,4 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 	}
 }
 ?>
-<!-- END PHP TEMPLATE extrafields_view.tpl.php -->
+<!-- END PHP TEMPLATE core/tpl/extrafields_view.tpl.php -->
