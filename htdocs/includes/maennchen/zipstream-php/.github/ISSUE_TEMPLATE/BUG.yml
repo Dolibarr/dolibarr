@@ -1,0 +1,71 @@
+name: 🐞 Bug Report
+description: Something is broken?
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        - Create a discussion instead if you are looking for support:
+          https://github.com/maennchen/ZipStream-PHP/discussions
+  - type: input
+    id: version
+    attributes:
+      label: ZipStream-PHP version
+      placeholder: x.y.z
+    validations:
+      required: true
+  - type: input
+    id: php-version
+    attributes:
+      label: PHP version
+      placeholder: x.y.z
+    validations:
+      required: true
+  - type: checkboxes
+    id: constraints
+    attributes:
+      label: Constraints for Bug Report
+      options:
+        - label: |
+            I'm using a version of ZipStream that is currently supported:
+            https://github.com/maennchen/ZipStream-PHP#version-support
+          required: true
+        - label: |
+            I'm using a version of PHP that has active support:
+            https://www.php.net/supported-versions.php
+          required: true
+        - label: |
+            I'm using a version of PHP that is compatible with your used
+            ZipStream version.
+          required: true
+        - label: |
+            I'm using the latest release of the used ZipStream major version.
+          required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Provide a summary describing the problem you are experiencing.
+    validations:
+      required: true
+  - type: textarea
+    id: current-behaviour
+    attributes:
+      label: Current behavior
+      description: What is the current (buggy) behavior?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: How to reproduce
+      description: Provide steps to reproduce the bug.
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behaviour
+    attributes:
+      label: Expected behavior
+      description: What was the expected (correct) behavior?
+    validations:
+      required: true

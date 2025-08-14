@@ -1,0 +1,29 @@
+on:
+  push:
+    tags:
+      - "[0-9]+.[0-9]+.[0-9]+-beta.[0-9]+"
+
+name: "Beta Tag"
+
+permissions:
+  contents: read
+
+jobs:
+  docs:
+    name: "Docs"
+
+    uses: ./.github/workflows/part_docs.yml
+
+  release:
+    name: "Release"
+
+    needs: ["docs"]
+
+    permissions:
+      id-token: write
+      contents: write
+      attestations: write
+
+    uses: ./.github/workflows/part_release.yml
+    with:
+      releaseName: "${{ github.ref_name }}"

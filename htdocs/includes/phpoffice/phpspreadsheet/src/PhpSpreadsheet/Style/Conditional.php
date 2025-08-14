@@ -3,16 +3,47 @@
 namespace PhpOffice\PhpSpreadsheet\Style;
 
 use PhpOffice\PhpSpreadsheet\IComparable;
+use PhpOffice\PhpSpreadsheet\Style\ConditionalFormatting\ConditionalColorScale;
+use PhpOffice\PhpSpreadsheet\Style\ConditionalFormatting\ConditionalDataBar;
 
 class Conditional implements IComparable
 {
     // Condition types
     const CONDITION_NONE = 'none';
+    const CONDITION_BEGINSWITH = 'beginsWith';
     const CONDITION_CELLIS = 'cellIs';
-    const CONDITION_CONTAINSTEXT = 'containsText';
-    const CONDITION_EXPRESSION = 'expression';
+    const CONDITION_COLORSCALE = 'colorScale';
     const CONDITION_CONTAINSBLANKS = 'containsBlanks';
+    const CONDITION_CONTAINSERRORS = 'containsErrors';
+    const CONDITION_CONTAINSTEXT = 'containsText';
+    const CONDITION_DATABAR = 'dataBar';
+    const CONDITION_ENDSWITH = 'endsWith';
+    const CONDITION_EXPRESSION = 'expression';
     const CONDITION_NOTCONTAINSBLANKS = 'notContainsBlanks';
+    const CONDITION_NOTCONTAINSERRORS = 'notContainsErrors';
+    const CONDITION_NOTCONTAINSTEXT = 'notContainsText';
+    const CONDITION_TIMEPERIOD = 'timePeriod';
+    const CONDITION_DUPLICATES = 'duplicateValues';
+    const CONDITION_UNIQUE = 'uniqueValues';
+
+    private const CONDITION_TYPES = [
+        self::CONDITION_BEGINSWITH,
+        self::CONDITION_CELLIS,
+        self::CONDITION_COLORSCALE,
+        self::CONDITION_CONTAINSBLANKS,
+        self::CONDITION_CONTAINSERRORS,
+        self::CONDITION_CONTAINSTEXT,
+        self::CONDITION_DATABAR,
+        self::CONDITION_DUPLICATES,
+        self::CONDITION_ENDSWITH,
+        self::CONDITION_EXPRESSION,
+        self::CONDITION_NONE,
+        self::CONDITION_NOTCONTAINSBLANKS,
+        self::CONDITION_NOTCONTAINSERRORS,
+        self::CONDITION_NOTCONTAINSTEXT,
+        self::CONDITION_TIMEPERIOD,
+        self::CONDITION_UNIQUE,
+    ];
 
     // Operator types
     const OPERATOR_NONE = '';
@@ -27,48 +58,55 @@ class Conditional implements IComparable
     const OPERATOR_CONTAINSTEXT = 'containsText';
     const OPERATOR_NOTCONTAINS = 'notContains';
     const OPERATOR_BETWEEN = 'between';
+    const OPERATOR_NOTBETWEEN = 'notBetween';
+
+    const TIMEPERIOD_TODAY = 'today';
+    const TIMEPERIOD_YESTERDAY = 'yesterday';
+    const TIMEPERIOD_TOMORROW = 'tomorrow';
+    const TIMEPERIOD_LAST_7_DAYS = 'last7Days';
+    const TIMEPERIOD_LAST_WEEK = 'lastWeek';
+    const TIMEPERIOD_THIS_WEEK = 'thisWeek';
+    const TIMEPERIOD_NEXT_WEEK = 'nextWeek';
+    const TIMEPERIOD_LAST_MONTH = 'lastMonth';
+    const TIMEPERIOD_THIS_MONTH = 'thisMonth';
+    const TIMEPERIOD_NEXT_MONTH = 'nextMonth';
 
     /**
      * Condition type.
-     *
-     * @var string
      */
-    private $conditionType = self::CONDITION_NONE;
+    private string $conditionType = self::CONDITION_NONE;
 
     /**
      * Operator type.
-     *
-     * @var string
      */
-    private $operatorType = self::OPERATOR_NONE;
+    private string $operatorType = self::OPERATOR_NONE;
 
     /**
      * Text.
-     *
-     * @var string
      */
-    private $text;
+    private string $text = '';
 
     /**
      * Stop on this condition, if it matches.
-     *
-     * @var bool
      */
-    private $stopIfTrue = false;
+    private bool $stopIfTrue = false;
 
     /**
      * Condition.
      *
-     * @var string[]
+     * @var (bool|float|int|string)[]
      */
-    private $condition = [];
+    private array $condition = [];
 
-    /**
-     * Style.
-     *
-     * @var Style
-     */
-    private $style;
+    private ?ConditionalDataBar $dataBar = null;
+
+    private ?ConditionalColorScale $colorScale = null;
+
+    private Style $style;
+
+    private bool $noFormatSet = false;
+
+    private int $priority = 0;
 
     /**
      * Create a new Conditional.
@@ -79,12 +117,34 @@ class Conditional implements IComparable
         $this->style = new Style(false, true);
     }
 
+    public function getPriority(): int
+    {
+        return $this->priority;
+    }
+
+    public function setPriority(int $priority): self
+    {
+        $this->priority = $priority;
+
+        return $this;
+    }
+
+    public function getNoFormatSet(): bool
+    {
+        return $this->noFormatSet;
+    }
+
+    public function setNoFormatSet(bool $noFormatSet): self
+    {
+        $this->noFormatSet = $noFormatSet;
+
+        return $this;
+    }
+
     /**
      * Get Condition type.
-     *
-     * @return string
      */
-    public function getConditionType()
+    public function getConditionType(): string
     {
         return $this->conditionType;
     }
@@ -92,23 +152,21 @@ class Conditional implements IComparable
     /**
      * Set Condition type.
      *
-     * @param string $pValue Condition type, see self::CONDITION_*
+     * @param string $type Condition type, see self::CONDITION_*
      *
      * @return $this
      */
-    public function setConditionType($pValue)
+    public function setConditionType(string $type): static
     {
-        $this->conditionType = $pValue;
+        $this->conditionType = $type;
 
         return $this;
     }
 
     /**
      * Get Operator type.
-     *
-     * @return string
      */
-    public function getOperatorType()
+    public function getOperatorType(): string
     {
         return $this->operatorType;
     }
@@ -116,23 +174,21 @@ class Conditional implements IComparable
     /**
      * Set Operator type.
      *
-     * @param string $pValue Conditional operator type, see self::OPERATOR_*
+     * @param string $type Conditional operator type, see self::OPERATOR_*
      *
      * @return $this
      */
-    public function setOperatorType($pValue)
+    public function setOperatorType(string $type): static
     {
-        $this->operatorType = $pValue;
+        $this->operatorType = $type;
 
         return $this;
     }
 
     /**
      * Get text.
-     *
-     * @return string
      */
-    public function getText()
+    public function getText(): string
     {
         return $this->text;
     }
@@ -140,23 +196,19 @@ class Conditional implements IComparable
     /**
      * Set text.
      *
-     * @param string $value
-     *
      * @return $this
      */
-    public function setText($value)
+    public function setText(string $text): static
     {
-        $this->text = $value;
+        $this->text = $text;
 
         return $this;
     }
 
     /**
      * Get StopIfTrue.
-     *
-     * @return bool
      */
-    public function getStopIfTrue()
+    public function getStopIfTrue(): bool
     {
         return $this->stopIfTrue;
     }
@@ -164,13 +216,11 @@ class Conditional implements IComparable
     /**
      * Set StopIfTrue.
      *
-     * @param bool $value
-     *
      * @return $this
      */
-    public function setStopIfTrue($value)
+    public function setStopIfTrue(bool $stopIfTrue): static
     {
-        $this->stopIfTrue = $value;
+        $this->stopIfTrue = $stopIfTrue;
 
         return $this;
     }
@@ -178,9 +228,9 @@ class Conditional implements IComparable
     /**
      * Get Conditions.
      *
-     * @return string[]
+     * @return (bool|float|int|string)[]
      */
-    public function getConditions()
+    public function getConditions(): array
     {
         return $this->condition;
     }
@@ -188,16 +238,16 @@ class Conditional implements IComparable
     /**
      * Set Conditions.
      *
-     * @param string[] $pValue Condition
+     * @param bool|(bool|float|int|string)[]|float|int|string $conditions Condition
      *
      * @return $this
      */
-    public function setConditions($pValue)
+    public function setConditions($conditions): static
     {
-        if (!is_array($pValue)) {
-            $pValue = [$pValue];
+        if (!is_array($conditions)) {
+            $conditions = [$conditions];
         }
-        $this->condition = $pValue;
+        $this->condition = $conditions;
 
         return $this;
     }
@@ -205,37 +255,65 @@ class Conditional implements IComparable
     /**
      * Add Condition.
      *
-     * @param string $pValue Condition
+     * @param bool|float|int|string $condition Condition
      *
      * @return $this
      */
-    public function addCondition($pValue)
+    public function addCondition($condition): static
     {
-        $this->condition[] = $pValue;
+        $this->condition[] = $condition;
 
         return $this;
     }
 
     /**
      * Get Style.
-     *
-     * @return Style
      */
-    public function getStyle()
+    public function getStyle(mixed $cellData = null): Style
     {
+        if ($this->conditionType === self::CONDITION_COLORSCALE && $cellData !== null && $this->colorScale !== null && is_numeric($cellData)) {
+            $style = new Style(isConditional: true);
+            $style->getFill()->setFillType(Fill::FILL_SOLID);
+            $style->getFill()->getStartColor()->setARGB($this->colorScale->getColorForValue((float) $cellData));
+
+            return $style;
+        }
+
         return $this->style;
     }
 
     /**
      * Set Style.
      *
-     * @param Style $pValue
-     *
      * @return $this
      */
-    public function setStyle(Style $pValue = null)
+    public function setStyle(Style $style): static
     {
-        $this->style = $pValue;
+        $this->style = $style;
+
+        return $this;
+    }
+
+    public function getDataBar(): ?ConditionalDataBar
+    {
+        return $this->dataBar;
+    }
+
+    public function setDataBar(ConditionalDataBar $dataBar): static
+    {
+        $this->dataBar = $dataBar;
+
+        return $this;
+    }
+
+    public function getColorScale(): ?ConditionalColorScale
+    {
+        return $this->colorScale;
+    }
+
+    public function setColorScale(ConditionalColorScale $colorScale): static
+    {
+        $this->colorScale = $colorScale;
 
         return $this;
     }
@@ -245,14 +323,14 @@ class Conditional implements IComparable
      *
      * @return string Hash code
      */
-    public function getHashCode()
+    public function getHashCode(): string
     {
         return md5(
-            $this->conditionType .
-            $this->operatorType .
-            implode(';', $this->condition) .
-            $this->style->getHashCode() .
-            __CLASS__
+            $this->conditionType
+            . $this->operatorType
+            . implode(';', $this->condition)
+            . $this->style->getHashCode()
+            . __CLASS__
         );
     }
 
@@ -269,5 +347,13 @@ class Conditional implements IComparable
                 $this->$key = $value;
             }
         }
+    }
+
+    /**
+     * Verify if param is valid condition type.
+     */
+    public static function isValidConditionType(string $type): bool
+    {
+        return in_array($type, self::CONDITION_TYPES);
     }
 }

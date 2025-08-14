@@ -3,20 +3,15 @@
 namespace PhpOffice\PhpSpreadsheet\Writer\Ods;
 
 use PhpOffice\PhpSpreadsheet\Shared\XMLWriter;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 class Styles extends WriterPart
 {
     /**
      * Write styles.xml to XML format.
      *
-     * @param Spreadsheet $spreadsheet
-     *
-     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
-     *
      * @return string XML Output
      */
-    public function write(Spreadsheet $spreadsheet = null)
+    public function write(): string
     {
         $objWriter = null;
         if ($this->getParentWriter()->getUseDiskCaching()) {
@@ -61,8 +56,17 @@ class Styles extends WriterPart
 
         $objWriter->writeElement('office:font-face-decls');
         $objWriter->writeElement('office:styles');
-        $objWriter->writeElement('office:automatic-styles');
-        $objWriter->writeElement('office:master-styles');
+        $objWriter->startElement('office:automatic-styles');
+        $objWriter->startElement('style:page-layout');
+        $objWriter->writeAttribute('style:name', 'Mpm1');
+        $objWriter->endElement(); // style:page-layout
+        $objWriter->endElement(); // office:automatic-styles
+        $objWriter->startElement('office:master-styles');
+        $objWriter->startElement('style:master-page');
+        $objWriter->writeAttribute('style:name', 'Default');
+        $objWriter->writeAttribute('style:page-layout-name', 'Mpm1');
+        $objWriter->endElement(); //style:master-page
+        $objWriter->endElement(); //office:master-styles
         $objWriter->endElement();
 
         return $objWriter->getData();

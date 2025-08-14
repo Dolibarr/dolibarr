@@ -2,7 +2,6 @@
 
 namespace PhpOffice\PhpSpreadsheet\Writer;
 
-use PhpOffice\PhpSpreadsheet\Shared\File;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Exception as WriterException;
 use PhpOffice\PhpSpreadsheet\Writer\Ods\Content;
@@ -12,154 +11,136 @@ use PhpOffice\PhpSpreadsheet\Writer\Ods\Mimetype;
 use PhpOffice\PhpSpreadsheet\Writer\Ods\Settings;
 use PhpOffice\PhpSpreadsheet\Writer\Ods\Styles;
 use PhpOffice\PhpSpreadsheet\Writer\Ods\Thumbnails;
-use ZipArchive;
+use ZipStream\Exception\OverflowException;
+use ZipStream\ZipStream;
 
 class Ods extends BaseWriter
 {
     /**
-     * Private writer parts.
-     *
-     * @var Ods\WriterPart[]
-     */
-    private $writerParts = [];
-
-    /**
      * Private PhpSpreadsheet.
-     *
-     * @var Spreadsheet
      */
-    private $spreadSheet;
+    private Spreadsheet $spreadSheet;
+
+    private Content $writerPartContent;
+
+    private Meta $writerPartMeta;
+
+    private MetaInf $writerPartMetaInf;
+
+    private Mimetype $writerPartMimetype;
+
+    private Settings $writerPartSettings;
+
+    private Styles $writerPartStyles;
+
+    private Thumbnails $writerPartThumbnails;
 
     /**
      * Create a new Ods.
-     *
-     * @param Spreadsheet $spreadsheet
      */
     public function __construct(Spreadsheet $spreadsheet)
     {
         $this->setSpreadsheet($spreadsheet);
 
-        $writerPartsArray = [
-            'content' => Content::class,
-            'meta' => Meta::class,
-            'meta_inf' => MetaInf::class,
-            'mimetype' => Mimetype::class,
-            'settings' => Settings::class,
-            'styles' => Styles::class,
-            'thumbnails' => Thumbnails::class,
-        ];
-
-        foreach ($writerPartsArray as $writer => $class) {
-            $this->writerParts[$writer] = new $class($this);
-        }
+        $this->writerPartContent = new Content($this);
+        $this->writerPartMeta = new Meta($this);
+        $this->writerPartMetaInf = new MetaInf($this);
+        $this->writerPartMimetype = new Mimetype($this);
+        $this->writerPartSettings = new Settings($this);
+        $this->writerPartStyles = new Styles($this);
+        $this->writerPartThumbnails = new Thumbnails($this);
     }
 
-    /**
-     * Get writer part.
-     *
-     * @param string $pPartName Writer part name
-     *
-     * @return null|Ods\WriterPart
-     */
-    public function getWriterPart($pPartName)
+    public function getWriterPartContent(): Content
     {
-        if ($pPartName != '' && isset($this->writerParts[strtolower($pPartName)])) {
-            return $this->writerParts[strtolower($pPartName)];
-        }
+        return $this->writerPartContent;
+    }
 
-        return null;
+    public function getWriterPartMeta(): Meta
+    {
+        return $this->writerPartMeta;
+    }
+
+    public function getWriterPartMetaInf(): MetaInf
+    {
+        return $this->writerPartMetaInf;
+    }
+
+    public function getWriterPartMimetype(): Mimetype
+    {
+        return $this->writerPartMimetype;
+    }
+
+    public function getWriterPartSettings(): Settings
+    {
+        return $this->writerPartSettings;
+    }
+
+    public function getWriterPartStyles(): Styles
+    {
+        return $this->writerPartStyles;
+    }
+
+    public function getWriterPartThumbnails(): Thumbnails
+    {
+        return $this->writerPartThumbnails;
     }
 
     /**
      * Save PhpSpreadsheet to file.
      *
-     * @param string $pFilename
-     *
-     * @throws WriterException
+     * @param resource|string $filename
      */
-    public function save($pFilename)
+    public function save($filename, int $flags = 0): void
     {
-        if (!$this->spreadSheet) {
-            throw new WriterException('PhpSpreadsheet object unassigned.');
-        }
+        $this->processFlags($flags);
 
         // garbage collect
         $this->spreadSheet->garbageCollect();
 
-        // If $pFilename is php://output or php://stdout, make it a temporary file...
-        $originalFilename = $pFilename;
-        if (strtolower($pFilename) == 'php://output' || strtolower($pFilename) == 'php://stdout') {
-            $pFilename = @tempnam(File::sysGetTempDir(), 'phpxltmp');
-            if ($pFilename == '') {
-                $pFilename = $originalFilename;
-            }
-        }
+        $this->openFileHandle($filename);
 
-        $zip = $this->createZip($pFilename);
+        $zip = $this->createZip();
 
-        $zip->addFromString('META-INF/manifest.xml', $this->getWriterPart('meta_inf')->writeManifest());
-        $zip->addFromString('Thumbnails/thumbnail.png', $this->getWriterPart('thumbnails')->writeThumbnail());
-        $zip->addFromString('content.xml', $this->getWriterPart('content')->write());
-        $zip->addFromString('meta.xml', $this->getWriterPart('meta')->write());
-        $zip->addFromString('mimetype', $this->getWriterPart('mimetype')->write());
-        $zip->addFromString('settings.xml', $this->getWriterPart('settings')->write());
-        $zip->addFromString('styles.xml', $this->getWriterPart('styles')->write());
+        $zip->addFile('META-INF/manifest.xml', $this->getWriterPartMetaInf()->write());
+        $zip->addFile('Thumbnails/thumbnail.png', $this->getWriterPartthumbnails()->write());
+        // Settings always need to be written before Content; Styles after Content
+        $zip->addFile('settings.xml', $this->getWriterPartsettings()->write());
+        $zip->addFile('content.xml', $this->getWriterPartcontent()->write());
+        $zip->addFile('meta.xml', $this->getWriterPartmeta()->write());
+        $zip->addFile('mimetype', $this->getWriterPartmimetype()->write());
+        $zip->addFile('styles.xml', $this->getWriterPartstyles()->write());
 
         // Close file
-        if ($zip->close() === false) {
-            throw new WriterException("Could not close zip file $pFilename.");
+        try {
+            $zip->finish();
+        } catch (OverflowException) {
+            throw new WriterException('Could not close resource.');
         }
 
-        // If a temporary file was used, copy it to the correct file stream
-        if ($originalFilename != $pFilename) {
-            if (copy($pFilename, $originalFilename) === false) {
-                throw new WriterException("Could not copy temporary zip file $pFilename to $originalFilename.");
-            }
-            @unlink($pFilename);
-        }
+        $this->maybeCloseFileHandle();
     }
 
     /**
      * Create zip object.
-     *
-     * @param string $pFilename
-     *
-     * @throws WriterException
-     *
-     * @return ZipArchive
      */
-    private function createZip($pFilename)
+    private function createZip(): ZipStream
     {
-        // Create new ZIP file and open it for writing
-        $zip = new ZipArchive();
-
-        if (file_exists($pFilename)) {
-            unlink($pFilename);
-        }
         // Try opening the ZIP file
-        if ($zip->open($pFilename, ZipArchive::OVERWRITE) !== true) {
-            if ($zip->open($pFilename, ZipArchive::CREATE) !== true) {
-                throw new WriterException("Could not open $pFilename for writing.");
-            }
+        if (!is_resource($this->fileHandle)) {
+            throw new WriterException('Could not open resource for writing.');
         }
 
-        return $zip;
+        // Create new ZIP stream
+        return ZipStream0::newZipStream($this->fileHandle);
     }
 
     /**
      * Get Spreadsheet object.
-     *
-     * @throws WriterException
-     *
-     * @return Spreadsheet
      */
-    public function getSpreadsheet()
+    public function getSpreadsheet(): Spreadsheet
     {
-        if ($this->spreadSheet !== null) {
-            return $this->spreadSheet;
-        }
-
-        throw new WriterException('No PhpSpreadsheet assigned.');
+        return $this->spreadSheet;
     }
 
     /**
@@ -169,7 +150,7 @@ class Ods extends BaseWriter
      *
      * @return $this
      */
-    public function setSpreadsheet(Spreadsheet $spreadsheet)
+    public function setSpreadsheet(Spreadsheet $spreadsheet): static
     {
         $this->spreadSheet = $spreadsheet;
 

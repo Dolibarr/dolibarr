@@ -1,3 +1,67 @@
+6.10.0 (2025-05-27)
+	- Embedded files support (Factur-X 1.07 / ZUGFeRD 2.3) #789
+
+6.9.5 (2025-05-27)
+	- Automatically add destinations from HTML code #804
+	- Wrong default value when $table_el['old_cell_padding'] is missing #807
+	- Fixed PHP warning when empty hash link for image exists in HTML #809
+	- Fix for application of alpha component to SVG RGBA fills #810
+
+6.9.4 (2025-05-13)
+	- Update donation link.
+
+6.9.3 (2025-04-20)
+	- New fix for "Deserialization of untrusted data" (check on valid protocols).
+	- Removed global phar configuration.
+
+6.9.2 (2025-04-18)
+	- Quick fix for "Deserialization of untrusted data" security vulnerability reported by Positive Technologies.
+	- Disable phar protocol globally.
+
+6.9.1 (2025-04-03)
+	- Fixed "Path Traversal" security vulnerability reported by Positive Technologies.
+
+6.9.0 (2025-03-30)
+	- Added PHP 8.4 testing.
+	- Removed tcpdf_import.php and tcpdf_parser.php files (for a parser check the tc-lib-pdf-parser project instead).
+	- Fix composer.json.
+
+6.8.2 (2025-01-26)
+	- Fix some annotation flags values.
+	- Remove examples from packaging.
+
+6.8.1 (2025-01-26) - UNTAGGED
+	- Check relative paths on SVG images.
+
+6.8.0 (2024-12-23)
+	- Requires PHP 7.1+ and curl extension.
+	- Escape error message.
+	- Use strict time-constant function to compare TCPDF-tag hashes.
+	- Add K_CURLOPTS config array to set custom cURL options (NOTE: some defaults have changed).
+	- Add some addTTFfont fixes from tc-lib-pdf-font.
+
+6.7.8 (2024-12-13)
+	- Improve SVG detection by checking for (mandatory) namespace.
+	- Use late state binding now that minimum PHP version is 5.5.
+
+6.7.7 (2024-10-26)
+	- Update regular expression to avoid ReDoS (CVE-2024-22641)
+	- [PHP 8.4] Fix: Curl CURLOPT_BINARYTRANSFER deprecated #675
+	- SVG detection fix for inline data images #646
+	- Fix count svg #647
+	- Since the version 6.7.4, the "0" is considered like empty string and not displayed
+	- Fixed handling of transparency in PDF/A mode in addExtGState method
+	- Encrypt /DA string when document is encrypted
+	- Improve quality of generated seed, avoid potential security pitfall
+	- Try to use random_bytes() first if it's available
+	- Do not include the server parameters in the generated seed, as they might contain sensitive data
+	- Fix bug on _getannotsrefs when there are empty signature appearances but not other annot on a page
+	- Fix SVG coordinate parser that caused drawing artifacts
+	- Remove usage of xml_set_object() function
+
+6.7.6 (2024-10-06)
+	- Forbid access to parent folder in HTML images.
+
 6.7.5 (2024-04-20)
 	- Update GitHub actions
 	- fix: CSV-2024-22640 (#712)

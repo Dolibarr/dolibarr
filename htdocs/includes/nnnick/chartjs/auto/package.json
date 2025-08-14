@@ -1,0 +1,8 @@
+{
+    "name": "chart.js-auto",
+    "private": true,
+    "description": "auto registering package",
+    "main": "auto.js",
+    "module": "auto.mjs",
+    "types": "auto.mts"
+}

@@ -1,0 +1,36 @@
+extends:
+  - chartjs
+  - plugin:es/restrict-to-es2018
+  - plugin:markdown/recommended
+
+settings:
+  es:
+    aggressive: true
+
+env:
+  es6: true
+  browser: true
+  node: true
+
+parserOptions:
+  ecmaVersion: 2021
+  sourceType: module
+  ecmaFeatures:
+    impliedStrict: true
+    modules: true
+
+plugins: ['html', 'es']
+
+rules:
+  class-methods-use-this: "off"
+  complexity: ["warn", 10]
+  max-statements: ["warn", 30]
+  no-empty-function: "off"
+  no-use-before-define: ["error", { "functions": false }]
+  # disable everything, except Rest/Spread Properties in ES2018
+  es/no-async-iteration: "error"
+  es/no-malformed-template-literals: "error"
+  es/no-regexp-lookbehind-assertions: "error"
+  es/no-regexp-named-capture-groups: "error"
+  es/no-regexp-s-flag: "error"
+  es/no-regexp-unicode-property-escapes: "error"

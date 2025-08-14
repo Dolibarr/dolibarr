@@ -1,0 +1,91 @@
+name: Release
+
+on:
+  release:
+    permissions:
+      contents: write  # for actions/upload-release-asset to upload release asset
+    types: [published]
+
+jobs:
+  setup:
+    permissions:
+      contents: none
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.trim.outputs.version }}
+    steps:
+      - id: trim
+        run: echo "::set-output name=version::${TAG:1}"
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+
+  release:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          registry-url: https://registry.npmjs.org/
+          cache: npm
+      - name: Setup and build
+        run: |
+          npm ci
+          npm install -g json
+          json -I -f package.json -e "this.version=\"$VERSION\""
+          json -I -f package-lock.json -e "this.version=\"$VERSION\""
+          npm run build
+          ./scripts/docs-config.sh "$VERSION" release
+          npm run docs
+          npm pack
+        env:
+          VERSION: ${{ needs.setup.outputs.version }}
+      - name: Publish to NPM
+        run: ./scripts/publish.sh
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          VERSION: ${{ needs.setup.outputs.version }}
+      - name: Deploy Docs
+        run: ./scripts/deploy-docs.sh "$VERSION" release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_AUTH_TOKEN }}
+          GH_AUTH_EMAIL: ${{ secrets.GH_AUTH_EMAIL }}
+          VERSION: ${{ needs.setup.outputs.version }}
+      - name: Upload NPM package file
+        id: upload-npm-package-file
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ needs.setup.outputs.version }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ${{ format('chart.js-{0}.tgz', needs.setup.outputs.version) }}
+          asset_name: ${{ format('chart.js-{0}.tgz', needs.setup.outputs.version) }}
+          asset_content_type: application/gzip
+  release-tag:
+    needs: [setup, release]
+    runs-on: ubuntu-latest
+    if: "!github.event.release.prerelease"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          registry-url: https://registry.npmjs.org/
+          cache: npm
+      - name: Setup and build
+        run: |
+          npm ci
+          npm install -g json
+          json -I -f package.json -e "this.version=\"$VERSION\""
+          json -I -f package-lock.json -e "this.version=\"$VERSION\""
+          npm run build
+          ./scripts/docs-config.sh "$VERSION"
+          npm run docs
+        env:
+          VERSION: ${{ needs.setup.outputs.version }}
+      - name: Deploy Docs
+        run: ./scripts/deploy-docs.sh "$VERSION"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_AUTH_TOKEN }}
+          GH_AUTH_EMAIL: ${{ secrets.GH_AUTH_EMAIL }}
+          VERSION: ${{ needs.setup.outputs.version }}

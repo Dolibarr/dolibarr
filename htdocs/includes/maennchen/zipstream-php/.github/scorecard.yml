@@ -1,0 +1,14 @@
+annotations:
+  - checks:
+      - fuzzing
+    reasons:
+      - reason: not-applicable # PHP is memory safe
+  - checks:
+      - packaging
+    reasons:
+      - reason: not-supported # Using Composer
+  - checks:
+      - signed-releases
+    reasons:
+      - reason: not-applicable # Releases are distributed via Composer
+

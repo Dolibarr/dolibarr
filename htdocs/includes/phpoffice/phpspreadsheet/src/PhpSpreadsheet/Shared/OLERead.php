@@ -6,7 +6,7 @@ use PhpOffice\PhpSpreadsheet\Reader\Exception as ReaderException;
 
 class OLERead
 {
-    private $data = '';
+    private string $data = '';
 
     // Size of a sector = 512 bytes
     const BIG_BLOCK_SIZE = 0x200;
@@ -21,12 +21,12 @@ class OLERead
     const SMALL_BLOCK_THRESHOLD = 0x1000;
 
     // header offsets
-    const NUM_BIG_BLOCK_DEPOT_BLOCKS_POS = 0x2c;
+    const NUM_BIG_BLOCK_DEPOT_BLOCKS_POS = 0x2C;
     const ROOT_START_BLOCK_POS = 0x30;
-    const SMALL_BLOCK_DEPOT_BLOCK_POS = 0x3c;
+    const SMALL_BLOCK_DEPOT_BLOCK_POS = 0x3C;
     const EXTENSION_BLOCK_POS = 0x44;
     const NUM_EXTENSION_BLOCK_POS = 0x48;
-    const BIG_BLOCK_DEPOT_BLOCKS_POS = 0x4c;
+    const BIG_BLOCK_DEPOT_BLOCKS_POS = 0x4C;
 
     // property storage offsets (directory offsets)
     const SIZE_OF_NAME_POS = 0x40;
@@ -34,85 +34,52 @@ class OLERead
     const START_BLOCK_POS = 0x74;
     const SIZE_POS = 0x78;
 
-    public $wrkbook;
+    public ?int $wrkbook = null;
 
-    public $summaryInformation;
+    public ?int $summaryInformation = null;
 
-    public $documentSummaryInformation;
+    public ?int $documentSummaryInformation = null;
 
-    /**
-     * @var int
-     */
-    private $numBigBlockDepotBlocks;
+    private int $numBigBlockDepotBlocks;
 
-    /**
-     * @var int
-     */
-    private $rootStartBlock;
+    private int $rootStartBlock;
 
-    /**
-     * @var int
-     */
-    private $sbdStartBlock;
+    private int $sbdStartBlock;
 
-    /**
-     * @var int
-     */
-    private $extensionBlock;
+    private int $extensionBlock;
 
-    /**
-     * @var int
-     */
-    private $numExtensionBlocks;
+    private int $numExtensionBlocks;
 
-    /**
-     * @var string
-     */
-    private $bigBlockChain;
+    private string $bigBlockChain;
 
-    /**
-     * @var string
-     */
-    private $smallBlockChain;
+    private string $smallBlockChain;
 
-    /**
-     * @var string
-     */
-    private $entry;
+    private string $entry;
 
-    /**
-     * @var int
-     */
-    private $rootentry;
+    private int $rootentry;
 
-    /**
-     * @var array
-     */
-    private $props = [];
+    /** @var mixed[][] */
+    private array $props = [];
 
     /**
      * Read the file.
-     *
-     * @param $pFilename string Filename
-     *
-     * @throws ReaderException
      */
-    public function read($pFilename)
+    public function read(string $filename): void
     {
-        File::assertFile($pFilename);
+        File::assertFile($filename);
 
         // Get the file identifier
         // Don't bother reading the whole file until we know it's a valid OLE file
-        $this->data = file_get_contents($pFilename, false, null, 0, 8);
+        $this->data = (string) file_get_contents($filename, false, null, 0, 8);
 
         // Check OLE identifier
-        $identifierOle = pack('CCCCCCCC', 0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1);
+        $identifierOle = pack('CCCCCCCC', 0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1);
         if ($this->data != $identifierOle) {
-            throw new ReaderException('The filename ' . $pFilename . ' is not recognised as an OLE file');
+            throw new ReaderException('The filename ' . $filename . ' is not recognised as an OLE file');
         }
 
         // Get the file data
-        $this->data = file_get_contents($pFilename);
+        $this->data = (string) file_get_contents($filename);
 
         // Total number of sectors used for the SAT
         $this->numBigBlockDepotBlocks = self::getInt4d($this->data, self::NUM_BIG_BLOCK_DEPOT_BLOCKS_POS);
@@ -134,7 +101,7 @@ class OLERead
 
         $bbdBlocks = $this->numBigBlockDepotBlocks;
 
-        if ($this->numExtensionBlocks != 0) {
+        if ($this->numExtensionBlocks !== 0) {
             $bbdBlocks = (self::BIG_BLOCK_SIZE - self::BIG_BLOCK_DEPOT_BLOCKS_POS) / 4;
         }
 
@@ -168,7 +135,6 @@ class OLERead
             $pos += 4 * $bbs;
         }
 
-        $pos = 0;
         $sbdBlock = $this->sbdStartBlock;
         $this->smallBlockChain = '';
         while ($sbdBlock != -2) {
@@ -182,19 +148,15 @@ class OLERead
 
         // read the directory stream
         $block = $this->rootStartBlock;
-        $this->entry = $this->_readData($block);
+        $this->entry = $this->readData($block);
 
         $this->readPropertySets();
     }
 
     /**
      * Extract binary stream data.
-     *
-     * @param int $stream
-     *
-     * @return string
      */
-    public function getStream($stream)
+    public function getStream(?int $stream): ?string
     {
         if ($stream === null) {
             return null;
@@ -203,8 +165,11 @@ class OLERead
         $streamData = '';
 
         if ($this->props[$stream]['size'] < self::SMALL_BLOCK_THRESHOLD) {
-            $rootdata = $this->_readData($this->props[$this->rootentry]['startBlock']);
+            /** @var int */
+            $temp = $this->props[$this->rootentry]['startBlock'];
+            $rootdata = $this->readData($temp);
 
+            /** @var int */
             $block = $this->props[$stream]['startBlock'];
 
             while ($block != -2) {
@@ -216,8 +181,10 @@ class OLERead
 
             return $streamData;
         }
-        $numBlocks = $this->props[$stream]['size'] / self::BIG_BLOCK_SIZE;
-        if ($this->props[$stream]['size'] % self::BIG_BLOCK_SIZE != 0) {
+        /** @var int */
+        $temp = $this->props[$stream]['size'];
+        $numBlocks = $temp / self::BIG_BLOCK_SIZE;
+        if ($temp % self::BIG_BLOCK_SIZE != 0) {
             ++$numBlocks;
         }
 
@@ -225,6 +192,7 @@ class OLERead
             return '';
         }
 
+        /** @var int */
         $block = $this->props[$stream]['startBlock'];
 
         while ($block != -2) {
@@ -239,13 +207,12 @@ class OLERead
     /**
      * Read a standard stream (by joining sectors using information from SAT).
      *
-     * @param int $bl Sector ID where the stream starts
+     * @param int $block Sector ID where the stream starts
      *
      * @return string Data for standard stream
      */
-    private function _readData($bl)
+    private function readData(int $block): string
     {
-        $block = $bl;
         $data = '';
 
         while ($block != -2) {
@@ -260,7 +227,7 @@ class OLERead
     /**
      * Read entries in the directory stream.
      */
-    private function readPropertySets()
+    private function readPropertySets(): void
     {
         $offset = 0;
 
@@ -318,13 +285,8 @@ class OLERead
 
     /**
      * Read 4 bytes of data at specified position.
-     *
-     * @param string $data
-     * @param int $pos
-     *
-     * @return int
      */
-    private static function getInt4d($data, $pos)
+    private static function getInt4d(string $data, int $pos): int
     {
         if ($pos < 0) {
             // Invalid position

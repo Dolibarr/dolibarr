@@ -3,11 +3,11 @@
 // File name   : tcpdf_autoconfig.php
 // Version     : 1.1.1
 // Begin       : 2013-05-16
-// Last Update : 2014-12-18
+// Last Update : 2025-04-18
 // Authors     : Nicola Asuni - Tecnick.com LTD - www.tecnick.com - info@tecnick.com
 // License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
-// Copyright (C) 2011-2014 Nicola Asuni - Tecnick.com LTD
+// Copyright (C) 2011-2025 Nicola Asuni - Tecnick.com LTD
 //
 // This file is part of TCPDF software library.
 //
@@ -37,14 +37,19 @@
  * @file
  * Try to automatically configure some TCPDF constants if not defined.
  * @package com.tecnick.tcpdf
- * @version 1.1.1
+ * @version 1.2.1
  */
 
-// @CHANGE LDR DOCUMENT_ROOT fix for IIS Webserver
+// Disable phar stream wrapper globally.
+// if (in_array('phar', stream_get_wrappers(), true)) {
+//     stream_wrapper_unregister('phar');
+// }
+
+// DOCUMENT_ROOT fix for IIS Webserver
 if ((!isset($_SERVER['DOCUMENT_ROOT'])) OR (empty($_SERVER['DOCUMENT_ROOT']))) {
-	if (isset($_SERVER['SCRIPT_FILENAME']) && isset($_SERVER['PHP_SELF'])) {
+	if(isset($_SERVER['SCRIPT_FILENAME'])) {
 		$_SERVER['DOCUMENT_ROOT'] = str_replace( '\\', '/', substr($_SERVER['SCRIPT_FILENAME'], 0, 0-strlen($_SERVER['PHP_SELF'])));
-	} elseif (isset($_SERVER['PATH_TRANSLATED']) && isset($_SERVER['PHP_SELF'])) {
+	} elseif(isset($_SERVER['PATH_TRANSLATED'])) {
 		$_SERVER['DOCUMENT_ROOT'] = str_replace( '\\', '/', substr(str_replace('\\\\', '\\', $_SERVER['PATH_TRANSLATED']), 0, 0-strlen($_SERVER['PHP_SELF'])));
 	} else {
 		// define here your DOCUMENT_ROOT path if the previous fails (e.g. '/var/www')
@@ -238,6 +243,11 @@ if (!defined('K_TCPDF_THROW_EXCEPTION_ERROR')) {
 
 if (!defined('K_TIMEZONE')) {
 	define('K_TIMEZONE', @date_default_timezone_get());
+}
+
+// Custom cURL options for curl_setopt_array.
+if (!defined('K_CURLOPTS')) {
+	define('K_CURLOPTS', array());
 }
 
 //============================================================+

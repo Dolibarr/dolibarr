@@ -14,7 +14,7 @@ use Exception;
  * @copyright  2010 Luracast
  * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link       http://luracast.com/products/restler/
- *
+ * @version    3.0.0rc6
  */
 
 class RestException extends Exception
@@ -72,7 +72,7 @@ class RestException extends Exception
     private $stage;
 
     /**
-     * @param int         $httpStatusCode http status code
+     * @param string      $httpStatusCode http status code
      * @param string|null $errorMessage   error message
      * @param array       $details        any extra detail about the exception
      * @param Exception   $previous       previous exception if any
@@ -136,3 +136,4 @@ class RestException extends Exception
         . $this->getStage() . ' stage';
     }
 }
+

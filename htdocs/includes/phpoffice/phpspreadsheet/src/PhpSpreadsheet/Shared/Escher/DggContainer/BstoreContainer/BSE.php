@@ -2,6 +2,8 @@
 
 namespace PhpOffice\PhpSpreadsheet\Shared\Escher\DggContainer\BstoreContainer;
 
+use PhpOffice\PhpSpreadsheet\Shared\Escher\DggContainer\BstoreContainer;
+
 class BSE
 {
     const BLIPTYPE_ERROR = 0x00;
@@ -17,51 +19,45 @@ class BSE
 
     /**
      * The parent BLIP Store Entry Container.
-     *
-     * @var \PhpOffice\PhpSpreadsheet\Shared\Escher\DggContainer\BstoreContainer
+     * Property is currently unused.
      */
-    private $parent;
+    private BstoreContainer $parent;
 
     /**
      * The BLIP (Big Large Image or Picture).
-     *
-     * @var BSE\Blip
      */
-    private $blip;
+    private ?BSE\Blip $blip = null;
 
     /**
      * The BLIP type.
-     *
-     * @var int
      */
-    private $blipType;
+    private int $blipType;
 
     /**
      * Set parent BLIP Store Entry Container.
-     *
-     * @param \PhpOffice\PhpSpreadsheet\Shared\Escher\DggContainer\BstoreContainer $parent
      */
-    public function setParent($parent)
+    public function setParent(BstoreContainer $parent): void
     {
         $this->parent = $parent;
     }
 
+    public function getParent(): BstoreContainer
+    {
+        return $this->parent;
+    }
+
     /**
      * Get the BLIP.
-     *
-     * @return BSE\Blip
      */
-    public function getBlip()
+    public function getBlip(): ?BSE\Blip
     {
         return $this->blip;
     }
 
     /**
      * Set the BLIP.
-     *
-     * @param BSE\Blip $blip
      */
-    public function setBlip($blip)
+    public function setBlip(BSE\Blip $blip): void
     {
         $this->blip = $blip;
         $blip->setParent($this);
@@ -69,20 +65,16 @@ class BSE
 
     /**
      * Get the BLIP type.
-     *
-     * @return int
      */
-    public function getBlipType()
+    public function getBlipType(): int
     {
         return $this->blipType;
     }
 
     /**
      * Set the BLIP type.
-     *
-     * @param int $blipType
      */
-    public function setBlipType($blipType)
+    public function setBlipType(int $blipType): void
     {
         $this->blipType = $blipType;
     }

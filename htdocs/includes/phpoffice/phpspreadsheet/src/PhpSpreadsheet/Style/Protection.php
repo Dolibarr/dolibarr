@@ -2,8 +2,6 @@
 
 namespace PhpOffice\PhpSpreadsheet\Style;
 
-use PhpOffice\PhpSpreadsheet\Exception as PhpSpreadsheetException;
-
 class Protection extends Supervisor
 {
     /** Protection styles */
@@ -13,17 +11,13 @@ class Protection extends Supervisor
 
     /**
      * Locked.
-     *
-     * @var string
      */
-    protected $locked;
+    protected ?string $locked = null;
 
     /**
      * Hidden.
-     *
-     * @var string
      */
-    protected $hidden;
+    protected ?string $hidden = null;
 
     /**
      * Create a new Protection.
@@ -35,7 +29,7 @@ class Protection extends Supervisor
      *                                    Leave this value at default unless you understand exactly what
      *                                        its ramifications are
      */
-    public function __construct($isSupervisor = false, $isConditional = false)
+    public function __construct(bool $isSupervisor = false, bool $isConditional = false)
     {
         // Supervisor?
         parent::__construct($isSupervisor);
@@ -50,22 +44,23 @@ class Protection extends Supervisor
     /**
      * Get the shared style component for the currently active cell in currently active sheet.
      * Only used for style supervisor.
-     *
-     * @return Protection
      */
-    public function getSharedComponent()
+    public function getSharedComponent(): self
     {
-        return $this->parent->getSharedComponent()->getProtection();
+        /** @var Style $parent */
+        $parent = $this->parent;
+
+        return $parent->getSharedComponent()->getProtection();
     }
 
     /**
      * Build style array from subcomponents.
      *
-     * @param array $array
+     * @param mixed[] $array
      *
-     * @return array
+     * @return array{protection: mixed[]}
      */
-    public function getStyleArray($array)
+    public function getStyleArray(array $array): array
     {
         return ['protection' => $array];
     }
@@ -82,22 +77,20 @@ class Protection extends Supervisor
      * );
      * </code>
      *
-     * @param array $pStyles Array containing style information
-     *
-     * @throws PhpSpreadsheetException
+     * @param array{locked?: string, hidden?: string} $styleArray Array containing style information
      *
      * @return $this
      */
-    public function applyFromArray(array $pStyles)
+    public function applyFromArray(array $styleArray): static
     {
         if ($this->isSupervisor) {
-            $this->getActiveSheet()->getStyle($this->getSelectedCells())->applyFromArray($this->getStyleArray($pStyles));
+            $this->getActiveSheet()->getStyle($this->getSelectedCells())->applyFromArray($this->getStyleArray($styleArray));
         } else {
-            if (isset($pStyles['locked'])) {
-                $this->setLocked($pStyles['locked']);
+            if (isset($styleArray['locked'])) {
+                $this->setLocked($styleArray['locked']);
             }
-            if (isset($pStyles['hidden'])) {
-                $this->setHidden($pStyles['hidden']);
+            if (isset($styleArray['hidden'])) {
+                $this->setHidden($styleArray['hidden']);
             }
         }
 
@@ -106,10 +99,8 @@ class Protection extends Supervisor
 
     /**
      * Get locked.
-     *
-     * @return string
      */
-    public function getLocked()
+    public function getLocked(): ?string
     {
         if ($this->isSupervisor) {
             return $this->getSharedComponent()->getLocked();
@@ -121,17 +112,17 @@ class Protection extends Supervisor
     /**
      * Set locked.
      *
-     * @param string $pValue see self::PROTECTION_*
+     * @param string $lockType see self::PROTECTION_*
      *
      * @return $this
      */
-    public function setLocked($pValue)
+    public function setLocked(string $lockType): static
     {
         if ($this->isSupervisor) {
-            $styleArray = $this->getStyleArray(['locked' => $pValue]);
+            $styleArray = $this->getStyleArray(['locked' => $lockType]);
             $this->getActiveSheet()->getStyle($this->getSelectedCells())->applyFromArray($styleArray);
         } else {
-            $this->locked = $pValue;
+            $this->locked = $lockType;
         }
 
         return $this;
@@ -139,10 +130,8 @@ class Protection extends Supervisor
 
     /**
      * Get hidden.
-     *
-     * @return string
      */
-    public function getHidden()
+    public function getHidden(): ?string
     {
         if ($this->isSupervisor) {
             return $this->getSharedComponent()->getHidden();
@@ -154,17 +143,17 @@ class Protection extends Supervisor
     /**
      * Set hidden.
      *
-     * @param string $pValue see self::PROTECTION_*
+     * @param string $hiddenType see self::PROTECTION_*
      *
      * @return $this
      */
-    public function setHidden($pValue)
+    public function setHidden(string $hiddenType): static
     {
         if ($this->isSupervisor) {
-            $styleArray = $this->getStyleArray(['hidden' => $pValue]);
+            $styleArray = $this->getStyleArray(['hidden' => $hiddenType]);
             $this->getActiveSheet()->getStyle($this->getSelectedCells())->applyFromArray($styleArray);
         } else {
-            $this->hidden = $pValue;
+            $this->hidden = $hiddenType;
         }
 
         return $this;
@@ -175,16 +164,26 @@ class Protection extends Supervisor
      *
      * @return string Hash code
      */
-    public function getHashCode()
+    public function getHashCode(): string
     {
         if ($this->isSupervisor) {
             return $this->getSharedComponent()->getHashCode();
         }
 
         return md5(
-            $this->locked .
-            $this->hidden .
-            __CLASS__
+            $this->locked
+            . $this->hidden
+            . __CLASS__
         );
+    }
+
+    /** @return mixed[] */
+    protected function exportArray1(): array
+    {
+        $exportedArray = [];
+        $this->exportArray2($exportedArray, 'locked', $this->getLocked());
+        $this->exportArray2($exportedArray, 'hidden', $this->getHidden());
+
+        return $exportedArray;
     }
 }

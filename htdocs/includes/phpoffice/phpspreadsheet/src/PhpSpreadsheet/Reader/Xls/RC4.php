@@ -4,19 +4,19 @@ namespace PhpOffice\PhpSpreadsheet\Reader\Xls;
 
 class RC4
 {
-    // Context
-    protected $s = [];
+    /** @var int[] */
+    protected array $s = []; // Context
 
-    protected $i = 0;
+    protected int $i = 0;
 
-    protected $j = 0;
+    protected int $j = 0;
 
     /**
      * RC4 stream decryption/encryption constrcutor.
      *
      * @param string $key Encryption key/passphrase
      */
-    public function __construct($key)
+    public function __construct(string $key)
     {
         $len = strlen($key);
 
@@ -38,10 +38,8 @@ class RC4
      * Symmetric decryption/encryption function.
      *
      * @param string $data Data to encrypt/decrypt
-     *
-     * @return string
      */
-    public function RC4($data)
+    public function RC4(string $data): string
     {
         $len = strlen($data);
         for ($c = 0; $c < $len; ++$c) {

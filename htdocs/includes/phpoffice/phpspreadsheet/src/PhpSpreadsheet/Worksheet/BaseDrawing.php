@@ -5,106 +5,137 @@ namespace PhpOffice\PhpSpreadsheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Cell\Hyperlink;
 use PhpOffice\PhpSpreadsheet\Exception as PhpSpreadsheetException;
 use PhpOffice\PhpSpreadsheet\IComparable;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing\Shadow;
+use SimpleXMLElement;
 
 class BaseDrawing implements IComparable
 {
+    const EDIT_AS_ABSOLUTE = 'absolute';
+    const EDIT_AS_ONECELL = 'oneCell';
+    const EDIT_AS_TWOCELL = 'twoCell';
+    private const VALID_EDIT_AS = [
+        self::EDIT_AS_ABSOLUTE,
+        self::EDIT_AS_ONECELL,
+        self::EDIT_AS_TWOCELL,
+    ];
+
+    /**
+     * The editAs attribute, used only with two cell anchor.
+     */
+    protected string $editAs = '';
+
     /**
      * Image counter.
-     *
-     * @var int
      */
-    private static $imageCounter = 0;
+    private static int $imageCounter = 0;
 
     /**
      * Image index.
-     *
-     * @var int
      */
-    private $imageIndex = 0;
+    private int $imageIndex;
 
     /**
      * Name.
-     *
-     * @var string
      */
-    protected $name;
+    protected string $name = '';
 
     /**
      * Description.
-     *
-     * @var string
      */
-    protected $description;
+    protected string $description = '';
 
     /**
      * Worksheet.
-     *
-     * @var Worksheet
      */
-    protected $worksheet;
+    protected ?Worksheet $worksheet = null;
 
     /**
      * Coordinates.
-     *
-     * @var string
      */
-    protected $coordinates;
+    protected string $coordinates = 'A1';
 
     /**
      * Offset X.
-     *
-     * @var int
      */
-    protected $offsetX;
+    protected int $offsetX = 0;
 
     /**
      * Offset Y.
-     *
-     * @var int
      */
-    protected $offsetY;
+    protected int $offsetY = 0;
+
+    /**
+     * Coordinates2.
+     */
+    protected string $coordinates2 = '';
+
+    /**
+     * Offset X2.
+     */
+    protected int $offsetX2 = 0;
+
+    /**
+     * Offset Y2.
+     */
+    protected int $offsetY2 = 0;
 
     /**
      * Width.
-     *
-     * @var int
      */
-    protected $width;
+    protected int $width = 0;
 
     /**
      * Height.
-     *
-     * @var int
      */
-    protected $height;
+    protected int $height = 0;
+
+    /**
+     * Pixel width of image. See $width for the size the Drawing will be in the sheet.
+     */
+    protected int $imageWidth = 0;
+
+    /**
+     * Pixel width of image. See $height for the size the Drawing will be in the sheet.
+     */
+    protected int $imageHeight = 0;
 
     /**
      * Proportional resize.
-     *
-     * @var bool
      */
-    protected $resizeProportional;
+    protected bool $resizeProportional = true;
 
     /**
      * Rotation.
-     *
-     * @var int
      */
-    protected $rotation;
+    protected int $rotation = 0;
+
+    protected bool $flipVertical = false;
+
+    protected bool $flipHorizontal = false;
 
     /**
      * Shadow.
-     *
-     * @var Drawing\Shadow
      */
-    protected $shadow;
+    protected Shadow $shadow;
 
     /**
      * Image hyperlink.
-     *
-     * @var null|Hyperlink
      */
-    private $hyperlink;
+    private ?Hyperlink $hyperlink = null;
+
+    /**
+     * Image type.
+     */
+    protected int $type = IMAGETYPE_UNKNOWN;
+
+    /** @var null|SimpleXMLElement|string[] */
+    protected $srcRect = [];
+
+    /**
+     * Percentage multiplied by 100,000, e.g. 40% = 40,000.
+     * Opacity=x is the same as transparency=100000-x.
+     */
+    protected ?int $opacity = null;
 
     /**
      * Create a new BaseDrawing.
@@ -112,87 +143,48 @@ class BaseDrawing implements IComparable
     public function __construct()
     {
         // Initialise values
-        $this->name = '';
-        $this->description = '';
-        $this->worksheet = null;
-        $this->coordinates = 'A1';
-        $this->offsetX = 0;
-        $this->offsetY = 0;
-        $this->width = 0;
-        $this->height = 0;
-        $this->resizeProportional = true;
-        $this->rotation = 0;
-        $this->shadow = new Drawing\Shadow();
+        $this->setShadow();
 
         // Set image index
         ++self::$imageCounter;
         $this->imageIndex = self::$imageCounter;
     }
 
-    /**
-     * Get image index.
-     *
-     * @return int
-     */
-    public function getImageIndex()
+    public function __destruct()
+    {
+        $this->worksheet = null;
+    }
+
+    public function getImageIndex(): int
     {
         return $this->imageIndex;
     }
 
-    /**
-     * Get Name.
-     *
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * Set Name.
-     *
-     * @param string $pValue
-     *
-     * @return $this
-     */
-    public function setName($pValue)
+    public function setName(string $name): self
     {
-        $this->name = $pValue;
+        $this->name = $name;
 
         return $this;
     }
 
-    /**
-     * Get Description.
-     *
-     * @return string
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
 
-    /**
-     * Set Description.
-     *
-     * @param string $description
-     *
-     * @return $this
-     */
-    public function setDescription($description)
+    public function setDescription(string $description): self
     {
         $this->description = $description;
 
         return $this;
     }
 
-    /**
-     * Get Worksheet.
-     *
-     * @return Worksheet
-     */
-    public function getWorksheet()
+    public function getWorksheet(): ?Worksheet
     {
         return $this->worksheet;
     }
@@ -200,27 +192,27 @@ class BaseDrawing implements IComparable
     /**
      * Set Worksheet.
      *
-     * @param Worksheet $pValue
-     * @param bool $pOverrideOld If a Worksheet has already been assigned, overwrite it and remove image from old Worksheet?
-     *
-     * @throws PhpSpreadsheetException
-     *
-     * @return $this
+     * @param bool $overrideOld If a Worksheet has already been assigned, overwrite it and remove image from old Worksheet?
      */
-    public function setWorksheet(Worksheet $pValue = null, $pOverrideOld = false)
+    public function setWorksheet(?Worksheet $worksheet = null, bool $overrideOld = false): self
     {
         if ($this->worksheet === null) {
-            // Add drawing to \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet
-            $this->worksheet = $pValue;
-            $this->worksheet->getCell($this->coordinates);
-            $this->worksheet->getDrawingCollection()->append($this);
+            // Add drawing to Worksheet
+            if ($worksheet !== null) {
+                $this->worksheet = $worksheet;
+                if (!($this instanceof Drawing && $this->getPath() === '')) {
+                    $this->worksheet->getCell($this->coordinates);
+                }
+                $this->worksheet->getDrawingCollection()
+                    ->append($this);
+            }
         } else {
-            if ($pOverrideOld) {
-                // Remove drawing from old \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet
+            if ($overrideOld) {
+                // Remove drawing from old Worksheet
                 $iterator = $this->worksheet->getDrawingCollection()->getIterator();
 
                 while ($iterator->valid()) {
-                    if ($iterator->current()->getHashCode() == $this->getHashCode()) {
+                    if ($iterator->current()->getHashCode() === $this->getHashCode()) {
                         $this->worksheet->getDrawingCollection()->offsetUnset($iterator->key());
                         $this->worksheet = null;
 
@@ -228,146 +220,127 @@ class BaseDrawing implements IComparable
                     }
                 }
 
-                // Set new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet
-                $this->setWorksheet($pValue);
+                // Set new Worksheet
+                $this->setWorksheet($worksheet);
             } else {
-                throw new PhpSpreadsheetException('A Worksheet has already been assigned. Drawings can only exist on one \\PhpOffice\\PhpSpreadsheet\\Worksheet.');
+                throw new PhpSpreadsheetException('A Worksheet has already been assigned. Drawings can only exist on one Worksheet.');
             }
         }
 
         return $this;
     }
 
-    /**
-     * Get Coordinates.
-     *
-     * @return string
-     */
-    public function getCoordinates()
+    public function getCoordinates(): string
     {
         return $this->coordinates;
     }
 
-    /**
-     * Set Coordinates.
-     *
-     * @param string $pValue eg: 'A1'
-     *
-     * @return $this
-     */
-    public function setCoordinates($pValue)
+    public function setCoordinates(string $coordinates): self
     {
-        $this->coordinates = $pValue;
+        $this->coordinates = $coordinates;
+        if ($this->worksheet !== null) {
+            if (!($this instanceof Drawing && $this->getPath() === '')) {
+                $this->worksheet->getCell($this->coordinates);
+            }
+        }
 
         return $this;
     }
 
-    /**
-     * Get OffsetX.
-     *
-     * @return int
-     */
-    public function getOffsetX()
+    public function getOffsetX(): int
     {
         return $this->offsetX;
     }
 
-    /**
-     * Set OffsetX.
-     *
-     * @param int $pValue
-     *
-     * @return $this
-     */
-    public function setOffsetX($pValue)
+    public function setOffsetX(int $offsetX): self
     {
-        $this->offsetX = $pValue;
+        $this->offsetX = $offsetX;
 
         return $this;
     }
 
-    /**
-     * Get OffsetY.
-     *
-     * @return int
-     */
-    public function getOffsetY()
+    public function getOffsetY(): int
     {
         return $this->offsetY;
     }
 
-    /**
-     * Set OffsetY.
-     *
-     * @param int $pValue
-     *
-     * @return $this
-     */
-    public function setOffsetY($pValue)
+    public function setOffsetY(int $offsetY): self
     {
-        $this->offsetY = $pValue;
+        $this->offsetY = $offsetY;
 
         return $this;
     }
 
-    /**
-     * Get Width.
-     *
-     * @return int
-     */
-    public function getWidth()
+    public function getCoordinates2(): string
+    {
+        return $this->coordinates2;
+    }
+
+    public function setCoordinates2(string $coordinates2): self
+    {
+        $this->coordinates2 = $coordinates2;
+
+        return $this;
+    }
+
+    public function getOffsetX2(): int
+    {
+        return $this->offsetX2;
+    }
+
+    public function setOffsetX2(int $offsetX2): self
+    {
+        $this->offsetX2 = $offsetX2;
+
+        return $this;
+    }
+
+    public function getOffsetY2(): int
+    {
+        return $this->offsetY2;
+    }
+
+    public function setOffsetY2(int $offsetY2): self
+    {
+        $this->offsetY2 = $offsetY2;
+
+        return $this;
+    }
+
+    public function getWidth(): int
     {
         return $this->width;
     }
 
-    /**
-     * Set Width.
-     *
-     * @param int $pValue
-     *
-     * @return $this
-     */
-    public function setWidth($pValue)
+    public function setWidth(int $width): self
     {
         // Resize proportional?
-        if ($this->resizeProportional && $pValue != 0) {
+        if ($this->resizeProportional && $width != 0) {
             $ratio = $this->height / ($this->width != 0 ? $this->width : 1);
-            $this->height = round($ratio * $pValue);
+            $this->height = (int) round($ratio * $width);
         }
 
         // Set width
-        $this->width = $pValue;
+        $this->width = $width;
 
         return $this;
     }
 
-    /**
-     * Get Height.
-     *
-     * @return int
-     */
-    public function getHeight()
+    public function getHeight(): int
     {
         return $this->height;
     }
 
-    /**
-     * Set Height.
-     *
-     * @param int $pValue
-     *
-     * @return $this
-     */
-    public function setHeight($pValue)
+    public function setHeight(int $height): self
     {
         // Resize proportional?
-        if ($this->resizeProportional && $pValue != 0) {
+        if ($this->resizeProportional && $height != 0) {
             $ratio = $this->width / ($this->height != 0 ? $this->height : 1);
-            $this->width = round($ratio * $pValue);
+            $this->width = (int) round($ratio * $height);
         }
 
         // Set height
-        $this->height = $pValue;
+        $this->height = $height;
 
         return $this;
     }
@@ -382,100 +355,59 @@ class BaseDrawing implements IComparable
      * </code>
      *
      * @author Vincent@luo MSN:kele_100@hotmail.com
-     *
-     * @param int $width
-     * @param int $height
-     *
-     * @return $this
      */
-    public function setWidthAndHeight($width, $height)
+    public function setWidthAndHeight(int $width, int $height): self
     {
-        $xratio = $width / ($this->width != 0 ? $this->width : 1);
-        $yratio = $height / ($this->height != 0 ? $this->height : 1);
-        if ($this->resizeProportional && !($width == 0 || $height == 0)) {
-            if (($xratio * $this->height) < $height) {
-                $this->height = ceil($xratio * $this->height);
-                $this->width = $width;
-            } else {
-                $this->width = ceil($yratio * $this->width);
-                $this->height = $height;
-            }
-        } else {
+        if ($this->width === 0 || $this->height === 0 || $width === 0 || $height === 0 || !$this->resizeProportional) {
             $this->width = $width;
             $this->height = $height;
+        } else {
+            $xratio = $width / $this->width;
+            $yratio = $height / $this->height;
+            if (($xratio * $this->height) < $height) {
+                $this->height = (int) ceil($xratio * $this->height);
+                $this->width = $width;
+            } else {
+                $this->width = (int) ceil($yratio * $this->width);
+                $this->height = $height;
+            }
         }
 
         return $this;
     }
 
-    /**
-     * Get ResizeProportional.
-     *
-     * @return bool
-     */
-    public function getResizeProportional()
+    public function getResizeProportional(): bool
     {
         return $this->resizeProportional;
     }
 
-    /**
-     * Set ResizeProportional.
-     *
-     * @param bool $pValue
-     *
-     * @return $this
-     */
-    public function setResizeProportional($pValue)
+    public function setResizeProportional(bool $resizeProportional): self
     {
-        $this->resizeProportional = $pValue;
+        $this->resizeProportional = $resizeProportional;
 
         return $this;
     }
 
-    /**
-     * Get Rotation.
-     *
-     * @return int
-     */
-    public function getRotation()
+    public function getRotation(): int
     {
         return $this->rotation;
     }
 
-    /**
-     * Set Rotation.
-     *
-     * @param int $pValue
-     *
-     * @return $this
-     */
-    public function setRotation($pValue)
+    public function setRotation(int $rotation): self
     {
-        $this->rotation = $pValue;
+        $this->rotation = $rotation;
 
         return $this;
     }
 
-    /**
-     * Get Shadow.
-     *
-     * @return Drawing\Shadow
-     */
-    public function getShadow()
+    public function getShadow(): Shadow
     {
         return $this->shadow;
     }
 
-    /**
-     * Set Shadow.
-     *
-     * @param Drawing\Shadow $pValue
-     *
-     * @return $this
-     */
-    public function setShadow(Drawing\Shadow $pValue = null)
+    public function setShadow(?Shadow $shadow = null): self
     {
-        $this->shadow = $pValue;
+        $this->shadow = $shadow ?? new Shadow();
 
         return $this;
     }
@@ -485,20 +417,23 @@ class BaseDrawing implements IComparable
      *
      * @return string Hash code
      */
-    public function getHashCode()
+    public function getHashCode(): string
     {
         return md5(
-            $this->name .
-            $this->description .
-            $this->worksheet->getHashCode() .
-            $this->coordinates .
-            $this->offsetX .
-            $this->offsetY .
-            $this->width .
-            $this->height .
-            $this->rotation .
-            $this->shadow->getHashCode() .
-            __CLASS__
+            $this->name
+            . $this->description
+            . (($this->worksheet === null) ? '' : (string) $this->worksheet->getHashInt())
+            . $this->coordinates
+            . $this->offsetX
+            . $this->offsetY
+            . $this->coordinates2
+            . $this->offsetX2
+            . $this->offsetY2
+            . $this->width
+            . $this->height
+            . $this->rotation
+            . $this->shadow->getHashCode()
+            . __CLASS__
         );
     }
 
@@ -519,19 +454,122 @@ class BaseDrawing implements IComparable
         }
     }
 
-    /**
-     * @param null|Hyperlink $pHyperlink
-     */
-    public function setHyperlink(Hyperlink $pHyperlink = null)
+    public function setHyperlink(?Hyperlink $hyperlink = null): void
     {
-        $this->hyperlink = $pHyperlink;
+        $this->hyperlink = $hyperlink;
+    }
+
+    public function getHyperlink(): ?Hyperlink
+    {
+        return $this->hyperlink;
     }
 
     /**
-     * @return null|Hyperlink
+     * Set Fact Sizes and Type of Image.
      */
-    public function getHyperlink()
+    protected function setSizesAndType(string $path): void
     {
-        return $this->hyperlink;
+        if ($this->imageWidth === 0 && $this->imageHeight === 0 && $this->type === IMAGETYPE_UNKNOWN) {
+            $imageData = getimagesize($path);
+
+            if (!empty($imageData)) {
+                $this->imageWidth = $imageData[0];
+                $this->imageHeight = $imageData[1];
+                $this->type = $imageData[2];
+            }
+        }
+        if ($this->width === 0 && $this->height === 0) {
+            $this->width = $this->imageWidth;
+            $this->height = $this->imageHeight;
+        }
+    }
+
+    /**
+     * Get Image Type.
+     */
+    public function getType(): int
+    {
+        return $this->type;
+    }
+
+    public function getImageWidth(): int
+    {
+        return $this->imageWidth;
+    }
+
+    public function getImageHeight(): int
+    {
+        return $this->imageHeight;
+    }
+
+    public function getEditAs(): string
+    {
+        return $this->editAs;
+    }
+
+    public function setEditAs(string $editAs): self
+    {
+        $this->editAs = $editAs;
+
+        return $this;
+    }
+
+    public function validEditAs(): bool
+    {
+        return in_array($this->editAs, self::VALID_EDIT_AS, true);
+    }
+
+    /**
+     * @return null|SimpleXMLElement|string[]
+     */
+    public function getSrcRect()
+    {
+        return $this->srcRect;
+    }
+
+    /**
+     * @param null|SimpleXMLElement|string[] $srcRect
+     */
+    public function setSrcRect($srcRect): self
+    {
+        $this->srcRect = $srcRect;
+
+        return $this;
+    }
+
+    public function setFlipHorizontal(bool $flipHorizontal): self
+    {
+        $this->flipHorizontal = $flipHorizontal;
+
+        return $this;
+    }
+
+    public function getFlipHorizontal(): bool
+    {
+        return $this->flipHorizontal;
+    }
+
+    public function setFlipVertical(bool $flipVertical): self
+    {
+        $this->flipVertical = $flipVertical;
+
+        return $this;
+    }
+
+    public function getFlipVertical(): bool
+    {
+        return $this->flipVertical;
+    }
+
+    public function setOpacity(?int $opacity): self
+    {
+        $this->opacity = $opacity;
+
+        return $this;
+    }
+
+    public function getOpacity(): ?int
+    {
+        return $this->opacity;
     }
 }

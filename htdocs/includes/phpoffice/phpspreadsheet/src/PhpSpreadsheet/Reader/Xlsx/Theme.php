@@ -6,33 +6,27 @@ class Theme
 {
     /**
      * Theme Name.
-     *
-     * @var string
      */
-    private $themeName;
+    private string $themeName;
 
     /**
      * Colour Scheme Name.
-     *
-     * @var string
      */
-    private $colourSchemeName;
+    private string $colourSchemeName;
 
     /**
      * Colour Map.
      *
-     * @var array of string
+     * @var string[]
      */
-    private $colourMap;
+    private array $colourMap;
 
     /**
      * Create a new Theme.
      *
-     * @param mixed $themeName
-     * @param mixed $colourSchemeName
-     * @param mixed $colourMap
+     * @param string[] $colourMap
      */
-    public function __construct($themeName, $colourSchemeName, $colourMap)
+    public function __construct(string $themeName, string $colourSchemeName, array $colourMap)
     {
         // Initialise values
         $this->themeName = $themeName;
@@ -41,53 +35,30 @@ class Theme
     }
 
     /**
-     * Get Theme Name.
+     * Not called by Reader, never accessible any other time.
      *
-     * @return string
+     * @codeCoverageIgnore
      */
-    public function getThemeName()
+    public function getThemeName(): string
     {
         return $this->themeName;
     }
 
     /**
-     * Get colour Scheme Name.
+     * Not called by Reader, never accessible any other time.
      *
-     * @return string
+     * @codeCoverageIgnore
      */
-    public function getColourSchemeName()
+    public function getColourSchemeName(): string
     {
         return $this->colourSchemeName;
     }
 
     /**
      * Get colour Map Value by Position.
-     *
-     * @param mixed $index
-     *
-     * @return string
      */
-    public function getColourByIndex($index)
+    public function getColourByIndex(int $index): ?string
     {
-        if (isset($this->colourMap[$index])) {
-            return $this->colourMap[$index];
-        }
-
-        return null;
-    }
-
-    /**
-     * Implement PHP __clone to create a deep clone, not just a shallow copy.
-     */
-    public function __clone()
-    {
-        $vars = get_object_vars($this);
-        foreach ($vars as $key => $value) {
-            if ((is_object($value)) && ($key != '_parent')) {
-                $this->$key = clone $value;
-            } else {
-                $this->$key = $value;
-            }
-        }
+        return $this->colourMap[$index] ?? null;
     }
 }

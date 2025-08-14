@@ -8,22 +8,16 @@ class Font
 {
     /**
      * Color index.
-     *
-     * @var int
      */
-    private $colorIndex;
+    private int $colorIndex;
 
     /**
      * Font.
-     *
-     * @var \PhpOffice\PhpSpreadsheet\Style\Font
      */
-    private $font;
+    private \PhpOffice\PhpSpreadsheet\Style\Font $font;
 
     /**
      * Constructor.
-     *
-     * @param \PhpOffice\PhpSpreadsheet\Style\Font $font
      */
     public function __construct(\PhpOffice\PhpSpreadsheet\Style\Font $font)
     {
@@ -33,23 +27,21 @@ class Font
 
     /**
      * Set the color index.
-     *
-     * @param int $colorIndex
      */
-    public function setColorIndex($colorIndex)
+    public function setColorIndex(int $colorIndex): void
     {
         $this->colorIndex = $colorIndex;
     }
 
+    private static int $notImplemented = 0;
+
     /**
      * Get font record data.
-     *
-     * @return string
      */
-    public function writeFont()
+    public function writeFont(): string
     {
-        $font_outline = 0;
-        $font_shadow = 0;
+        $font_outline = self::$notImplemented;
+        $font_shadow = self::$notImplemented;
 
         $icv = $this->colorIndex; // Index to color palette
         if ($this->font->getSuperscript()) {
@@ -60,7 +52,7 @@ class Font
             $sss = 0;
         }
         $bFamily = 0; // Font family
-        $bCharSet = \PhpOffice\PhpSpreadsheet\Shared\Font::getCharsetFromFontName($this->font->getName()); // Character set
+        $bCharSet = \PhpOffice\PhpSpreadsheet\Shared\Font::getCharsetFromFontName((string) $this->font->getName()); // Character set
 
         $record = 0x31; // Record identifier
         $reserved = 0x00; // Reserved
@@ -89,12 +81,12 @@ class Font
             self::mapBold($this->font->getBold()),
             // Superscript/Subscript
             $sss,
-            self::mapUnderline($this->font->getUnderline()),
+            self::mapUnderline((string) $this->font->getUnderline()),
             $bFamily,
             $bCharSet,
             $reserved
         );
-        $data .= StringHelper::UTF8toBIFF8UnicodeShort($this->font->getName());
+        $data .= StringHelper::UTF8toBIFF8UnicodeShort((string) $this->font->getName());
 
         $length = strlen($data);
         $header = pack('vv', $record, $length);
@@ -104,14 +96,10 @@ class Font
 
     /**
      * Map to BIFF5-BIFF8 codes for bold.
-     *
-     * @param bool $bold
-     *
-     * @return int
      */
-    private static function mapBold($bold)
+    private static function mapBold(?bool $bold): int
     {
-        if ($bold) {
+        if ($bold === true) {
             return 0x2BC; //  700 = Bold font weight
         }
 
@@ -121,9 +109,9 @@ class Font
     /**
      * Map of BIFF2-BIFF8 codes for underline styles.
      *
-     * @var array of int
+     * @var int[]
      */
-    private static $mapUnderline = [
+    private static array $mapUnderline = [
         \PhpOffice\PhpSpreadsheet\Style\Font::UNDERLINE_NONE => 0x00,
         \PhpOffice\PhpSpreadsheet\Style\Font::UNDERLINE_SINGLE => 0x01,
         \PhpOffice\PhpSpreadsheet\Style\Font::UNDERLINE_DOUBLE => 0x02,
@@ -133,12 +121,8 @@ class Font
 
     /**
      * Map underline.
-     *
-     * @param string $underline
-     *
-     * @return int
      */
-    private static function mapUnderline($underline)
+    private static function mapUnderline(string $underline): int
     {
         if (isset(self::$mapUnderline[$underline])) {
             return self::$mapUnderline[$underline];

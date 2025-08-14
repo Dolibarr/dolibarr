@@ -10,22 +10,53 @@ namespace PhpOffice\PhpSpreadsheet\Chart;
  */
 class Axis extends Properties
 {
+    const AXIS_TYPE_CATEGORY = 'catAx';
+    const AXIS_TYPE_DATE = 'dateAx';
+    const AXIS_TYPE_VALUE = 'valAx';
+
+    const TIME_UNIT_DAYS = 'days';
+    const TIME_UNIT_MONTHS = 'months';
+    const TIME_UNIT_YEARS = 'years';
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->fillColor = new ChartColor();
+    }
+
+    /**
+     * Chart Major Gridlines as.
+     */
+    private ?GridLines $majorGridlines = null;
+
+    /**
+     * Chart Minor Gridlines as.
+     */
+    private ?GridLines $minorGridlines = null;
+
     /**
      * Axis Number.
      *
-     * @var array of mixed
+     * @var array{format: string, source_linked: int, numeric: ?bool}
      */
-    private $axisNumber = [
+    private array $axisNumber = [
         'format' => self::FORMAT_CODE_GENERAL,
         'source_linked' => 1,
+        'numeric' => null,
     ];
+
+    private string $axisType = '';
+
+    private ?AxisText $axisText = null;
+
+    private ?Title $dispUnitsTitle = null;
 
     /**
      * Axis Options.
      *
-     * @var array of mixed
+     * @var array<string, null|string>
      */
-    private $axisOptions = [
+    private array $axisOptions = [
         'minimum' => null,
         'maximum' => null,
         'major_unit' => null,
@@ -36,522 +67,278 @@ class Axis extends Properties
         'axis_labels' => self::AXIS_LABELS_NEXT_TO,
         'horizontal_crosses' => self::HORIZONTAL_CROSSES_AUTOZERO,
         'horizontal_crosses_value' => null,
+        'textRotation' => null,
+        'hidden' => null,
+        'majorTimeUnit' => self::TIME_UNIT_YEARS,
+        'minorTimeUnit' => self::TIME_UNIT_MONTHS,
+        'baseTimeUnit' => self::TIME_UNIT_DAYS,
+        'logBase' => null,
+        'dispUnitsBuiltIn' => null,
+    ];
+    public const DISP_UNITS_HUNDREDS = 'hundreds';
+    public const DISP_UNITS_THOUSANDS = 'thousands';
+    public const DISP_UNITS_TEN_THOUSANDS = 'tenThousands';
+    public const DISP_UNITS_HUNDRED_THOUSANDS = 'hundredThousands';
+    public const DISP_UNITS_MILLIONS = 'millions';
+    public const DISP_UNITS_TEN_MILLIONS = 'tenMillions';
+    public const DISP_UNITS_HUNDRED_MILLIONS = 'hundredMillions';
+    public const DISP_UNITS_BILLIONS = 'billions';
+    public const DISP_UNITS_TRILLIONS = 'trillions';
+    public const TRILLION_INDEX = (PHP_INT_SIZE > 4) ? 1000000000000 : '1000000000000';
+    public const DISP_UNITS_BUILTIN_INT = [
+        100 => self::DISP_UNITS_HUNDREDS,
+        1000 => self::DISP_UNITS_THOUSANDS,
+        10000 => self::DISP_UNITS_TEN_THOUSANDS,
+        100000 => self::DISP_UNITS_HUNDRED_THOUSANDS,
+        1000000 => self::DISP_UNITS_MILLIONS,
+        10000000 => self::DISP_UNITS_TEN_MILLIONS,
+        100000000 => self::DISP_UNITS_HUNDRED_MILLIONS,
+        1000000000 => self::DISP_UNITS_BILLIONS,
+        self::TRILLION_INDEX => self::DISP_UNITS_TRILLIONS, // overflow for 32-bit
     ];
 
     /**
      * Fill Properties.
-     *
-     * @var array of mixed
      */
-    private $fillProperties = [
-        'type' => self::EXCEL_COLOR_TYPE_ARGB,
-        'value' => null,
-        'alpha' => 0,
+    private ChartColor $fillColor;
+
+    private const NUMERIC_FORMAT = [
+        Properties::FORMAT_CODE_NUMBER,
+        Properties::FORMAT_CODE_DATE,
+        Properties::FORMAT_CODE_DATE_ISO8601,
     ];
 
-    /**
-     * Line Properties.
-     *
-     * @var array of mixed
-     */
-    private $lineProperties = [
-        'type' => self::EXCEL_COLOR_TYPE_ARGB,
-        'value' => null,
-        'alpha' => 0,
-    ];
-
-    /**
-     * Line Style Properties.
-     *
-     * @var array of mixed
-     */
-    private $lineStyleProperties = [
-        'width' => '9525',
-        'compound' => self::LINE_STYLE_COMPOUND_SIMPLE,
-        'dash' => self::LINE_STYLE_DASH_SOLID,
-        'cap' => self::LINE_STYLE_CAP_FLAT,
-        'join' => self::LINE_STYLE_JOIN_BEVEL,
-        'arrow' => [
-            'head' => [
-                'type' => self::LINE_STYLE_ARROW_TYPE_NOARROW,
-                'size' => self::LINE_STYLE_ARROW_SIZE_5,
-            ],
-            'end' => [
-                'type' => self::LINE_STYLE_ARROW_TYPE_NOARROW,
-                'size' => self::LINE_STYLE_ARROW_SIZE_8,
-            ],
-        ],
-    ];
-
-    /**
-     * Shadow Properties.
-     *
-     * @var array of mixed
-     */
-    private $shadowProperties = [
-        'presets' => self::SHADOW_PRESETS_NOSHADOW,
-        'effect' => null,
-        'color' => [
-            'type' => self::EXCEL_COLOR_TYPE_STANDARD,
-            'value' => 'black',
-            'alpha' => 40,
-        ],
-        'size' => [
-            'sx' => null,
-            'sy' => null,
-            'kx' => null,
-        ],
-        'blur' => null,
-        'direction' => null,
-        'distance' => null,
-        'algn' => null,
-        'rotWithShape' => null,
-    ];
-
-    /**
-     * Glow Properties.
-     *
-     * @var array of mixed
-     */
-    private $glowProperties = [
-        'size' => null,
-        'color' => [
-            'type' => self::EXCEL_COLOR_TYPE_STANDARD,
-            'value' => 'black',
-            'alpha' => 40,
-        ],
-    ];
-
-    /**
-     * Soft Edge Properties.
-     *
-     * @var array of mixed
-     */
-    private $softEdges = [
-        'size' => null,
-    ];
+    private bool $noFill = false;
 
     /**
      * Get Series Data Type.
-     *
-     * @param mixed $format_code
-     *
-     * @return string
      */
-    public function setAxisNumberProperties($format_code)
+    public function setAxisNumberProperties(string $format_code, ?bool $numeric = null, int $sourceLinked = 0): void
     {
-        $this->axisNumber['format'] = (string) $format_code;
-        $this->axisNumber['source_linked'] = 0;
+        $format = $format_code;
+        $this->axisNumber['format'] = $format;
+        $this->axisNumber['source_linked'] = $sourceLinked;
+        if (is_bool($numeric)) {
+            $this->axisNumber['numeric'] = $numeric;
+        } elseif (in_array($format, self::NUMERIC_FORMAT, true)) {
+            $this->axisNumber['numeric'] = true;
+        }
     }
 
     /**
      * Get Axis Number Format Data Type.
-     *
-     * @return string
      */
-    public function getAxisNumberFormat()
+    public function getAxisNumberFormat(): string
     {
         return $this->axisNumber['format'];
     }
 
     /**
      * Get Axis Number Source Linked.
-     *
-     * @return string
      */
-    public function getAxisNumberSourceLinked()
+    public function getAxisNumberSourceLinked(): string
     {
         return (string) $this->axisNumber['source_linked'];
     }
 
+    public function getAxisIsNumericFormat(): bool
+    {
+        return $this->axisType === self::AXIS_TYPE_DATE || (bool) $this->axisNumber['numeric'];
+    }
+
+    public function setAxisOption(string $key, null|float|int|string $value): void
+    {
+        if ($value !== null && $value !== '') {
+            $this->axisOptions[$key] = (string) $value;
+        }
+    }
+
     /**
      * Set Axis Options Properties.
-     *
-     * @param string $axis_labels
-     * @param string $horizontal_crosses_value
-     * @param string $horizontal_crosses
-     * @param string $axis_orientation
-     * @param string $major_tmt
-     * @param string $minor_tmt
-     * @param string $minimum
-     * @param string $maximum
-     * @param string $major_unit
-     * @param string $minor_unit
      */
-    public function setAxisOptionsProperties($axis_labels, $horizontal_crosses_value = null, $horizontal_crosses = null, $axis_orientation = null, $major_tmt = null, $minor_tmt = null, $minimum = null, $maximum = null, $major_unit = null, $minor_unit = null)
-    {
-        $this->axisOptions['axis_labels'] = (string) $axis_labels;
-        ($horizontal_crosses_value !== null) ? $this->axisOptions['horizontal_crosses_value'] = (string) $horizontal_crosses_value : null;
-        ($horizontal_crosses !== null) ? $this->axisOptions['horizontal_crosses'] = (string) $horizontal_crosses : null;
-        ($axis_orientation !== null) ? $this->axisOptions['orientation'] = (string) $axis_orientation : null;
-        ($major_tmt !== null) ? $this->axisOptions['major_tick_mark'] = (string) $major_tmt : null;
-        ($minor_tmt !== null) ? $this->axisOptions['minor_tick_mark'] = (string) $minor_tmt : null;
-        ($minor_tmt !== null) ? $this->axisOptions['minor_tick_mark'] = (string) $minor_tmt : null;
-        ($minimum !== null) ? $this->axisOptions['minimum'] = (string) $minimum : null;
-        ($maximum !== null) ? $this->axisOptions['maximum'] = (string) $maximum : null;
-        ($major_unit !== null) ? $this->axisOptions['major_unit'] = (string) $major_unit : null;
-        ($minor_unit !== null) ? $this->axisOptions['minor_unit'] = (string) $minor_unit : null;
+    public function setAxisOptionsProperties(
+        string $axisLabels,
+        ?string $horizontalCrossesValue = null,
+        ?string $horizontalCrosses = null,
+        ?string $axisOrientation = null,
+        ?string $majorTmt = null,
+        ?string $minorTmt = null,
+        null|float|int|string $minimum = null,
+        null|float|int|string $maximum = null,
+        null|float|int|string $majorUnit = null,
+        null|float|int|string $minorUnit = null,
+        null|float|int|string $textRotation = null,
+        ?string $hidden = null,
+        ?string $baseTimeUnit = null,
+        ?string $majorTimeUnit = null,
+        ?string $minorTimeUnit = null,
+        null|float|int|string $logBase = null,
+        ?string $dispUnitsBuiltIn = null
+    ): void {
+        $this->axisOptions['axis_labels'] = $axisLabels;
+        $this->setAxisOption('horizontal_crosses_value', $horizontalCrossesValue);
+        $this->setAxisOption('horizontal_crosses', $horizontalCrosses);
+        $this->setAxisOption('orientation', $axisOrientation);
+        $this->setAxisOption('major_tick_mark', $majorTmt);
+        $this->setAxisOption('minor_tick_mark', $minorTmt);
+        $this->setAxisOption('minimum', $minimum);
+        $this->setAxisOption('maximum', $maximum);
+        $this->setAxisOption('major_unit', $majorUnit);
+        $this->setAxisOption('minor_unit', $minorUnit);
+        $this->setAxisOption('textRotation', $textRotation);
+        $this->setAxisOption('hidden', $hidden);
+        $this->setAxisOption('baseTimeUnit', $baseTimeUnit);
+        $this->setAxisOption('majorTimeUnit', $majorTimeUnit);
+        $this->setAxisOption('minorTimeUnit', $minorTimeUnit);
+        $this->setAxisOption('logBase', $logBase);
+        $this->setAxisOption('dispUnitsBuiltIn', $dispUnitsBuiltIn);
     }
 
     /**
      * Get Axis Options Property.
-     *
-     * @param string $property
-     *
-     * @return string
      */
-    public function getAxisOptionsProperty($property)
+    public function getAxisOptionsProperty(string $property): ?string
     {
+        if ($property === 'textRotation') {
+            if ($this->axisText !== null) {
+                if ($this->axisText->getRotation() !== null) {
+                    return (string) $this->axisText->getRotation();
+                }
+            }
+        }
+
         return $this->axisOptions[$property];
     }
 
     /**
      * Set Axis Orientation Property.
-     *
-     * @param string $orientation
      */
-    public function setAxisOrientation($orientation)
+    public function setAxisOrientation(string $orientation): void
     {
         $this->axisOptions['orientation'] = (string) $orientation;
     }
 
-    /**
-     * Set Fill Property.
-     *
-     * @param string $color
-     * @param int $alpha
-     * @param string $type
-     */
-    public function setFillParameters($color, $alpha = 0, $type = self::EXCEL_COLOR_TYPE_ARGB)
+    public function getAxisType(): string
     {
-        $this->fillProperties = $this->setColorProperties($color, $alpha, $type);
+        return $this->axisType;
+    }
+
+    public function setAxisType(string $type): self
+    {
+        if ($type === self::AXIS_TYPE_CATEGORY || $type === self::AXIS_TYPE_VALUE || $type === self::AXIS_TYPE_DATE) {
+            $this->axisType = $type;
+        } else {
+            $this->axisType = '';
+        }
+
+        return $this;
     }
 
     /**
-     * Set Line Property.
-     *
-     * @param string $color
-     * @param int $alpha
-     * @param string $type
+     * Set Fill Property.
      */
-    public function setLineParameters($color, $alpha = 0, $type = self::EXCEL_COLOR_TYPE_ARGB)
+    public function setFillParameters(?string $color, ?int $alpha = null, ?string $AlphaType = ChartColor::EXCEL_COLOR_TYPE_RGB): void
     {
-        $this->lineProperties = $this->setColorProperties($color, $alpha, $type);
+        $this->fillColor->setColorProperties($color, $alpha, $AlphaType);
     }
 
     /**
      * Get Fill Property.
-     *
-     * @param string $property
-     *
-     * @return string
      */
-    public function getFillProperty($property)
+    public function getFillProperty(string $property): string
     {
-        return $this->fillProperties[$property];
+        return (string) $this->fillColor->getColorProperty($property);
     }
 
-    /**
-     * Get Line Property.
-     *
-     * @param string $property
-     *
-     * @return string
-     */
-    public function getLineProperty($property)
+    public function getFillColorObject(): ChartColor
     {
-        return $this->lineProperties[$property];
+        return $this->fillColor;
     }
 
-    /**
-     * Set Line Style Properties.
-     *
-     * @param float $line_width
-     * @param string $compound_type
-     * @param string $dash_type
-     * @param string $cap_type
-     * @param string $join_type
-     * @param string $head_arrow_type
-     * @param string $head_arrow_size
-     * @param string $end_arrow_type
-     * @param string $end_arrow_size
-     */
-    public function setLineStyleProperties($line_width = null, $compound_type = null, $dash_type = null, $cap_type = null, $join_type = null, $head_arrow_type = null, $head_arrow_size = null, $end_arrow_type = null, $end_arrow_size = null)
-    {
-        ($line_width !== null) ? $this->lineStyleProperties['width'] = $this->getExcelPointsWidth((float) $line_width) : null;
-        ($compound_type !== null) ? $this->lineStyleProperties['compound'] = (string) $compound_type : null;
-        ($dash_type !== null) ? $this->lineStyleProperties['dash'] = (string) $dash_type : null;
-        ($cap_type !== null) ? $this->lineStyleProperties['cap'] = (string) $cap_type : null;
-        ($join_type !== null) ? $this->lineStyleProperties['join'] = (string) $join_type : null;
-        ($head_arrow_type !== null) ? $this->lineStyleProperties['arrow']['head']['type'] = (string) $head_arrow_type : null;
-        ($head_arrow_size !== null) ? $this->lineStyleProperties['arrow']['head']['size'] = (string) $head_arrow_size : null;
-        ($end_arrow_type !== null) ? $this->lineStyleProperties['arrow']['end']['type'] = (string) $end_arrow_type : null;
-        ($end_arrow_size !== null) ? $this->lineStyleProperties['arrow']['end']['size'] = (string) $end_arrow_size : null;
-    }
+    private string $crossBetween = ''; // 'between' or 'midCat' might be better
 
-    /**
-     * Get Line Style Property.
-     *
-     * @param array|string $elements
-     *
-     * @return string
-     */
-    public function getLineStyleProperty($elements)
+    public function setCrossBetween(string $crossBetween): self
     {
-        return $this->getArrayElementsValue($this->lineStyleProperties, $elements);
-    }
-
-    /**
-     * Get Line Style Arrow Excel Width.
-     *
-     * @param string $arrow
-     *
-     * @return string
-     */
-    public function getLineStyleArrowWidth($arrow)
-    {
-        return $this->getLineStyleArrowSize($this->lineStyleProperties['arrow'][$arrow]['size'], 'w');
-    }
-
-    /**
-     * Get Line Style Arrow Excel Length.
-     *
-     * @param string $arrow
-     *
-     * @return string
-     */
-    public function getLineStyleArrowLength($arrow)
-    {
-        return $this->getLineStyleArrowSize($this->lineStyleProperties['arrow'][$arrow]['size'], 'len');
-    }
-
-    /**
-     * Set Shadow Properties.
-     *
-     * @param int $sh_presets
-     * @param string $sh_color_value
-     * @param string $sh_color_type
-     * @param string $sh_color_alpha
-     * @param float $sh_blur
-     * @param int $sh_angle
-     * @param float $sh_distance
-     */
-    public function setShadowProperties($sh_presets, $sh_color_value = null, $sh_color_type = null, $sh_color_alpha = null, $sh_blur = null, $sh_angle = null, $sh_distance = null)
-    {
-        $this->setShadowPresetsProperties((int) $sh_presets)
-            ->setShadowColor(
-                $sh_color_value === null ? $this->shadowProperties['color']['value'] : $sh_color_value,
-                $sh_color_alpha === null ? (int) $this->shadowProperties['color']['alpha'] : $sh_color_alpha,
-                $sh_color_type === null ? $this->shadowProperties['color']['type'] : $sh_color_type
-            )
-            ->setShadowBlur($sh_blur)
-            ->setShadowAngle($sh_angle)
-            ->setShadowDistance($sh_distance);
-    }
-
-    /**
-     * Set Shadow Color.
-     *
-     * @param int $shadow_presets
-     *
-     * @return $this
-     */
-    private function setShadowPresetsProperties($shadow_presets)
-    {
-        $this->shadowProperties['presets'] = $shadow_presets;
-        $this->setShadowProperiesMapValues($this->getShadowPresetsMap($shadow_presets));
+        $this->crossBetween = $crossBetween;
 
         return $this;
     }
 
-    /**
-     * Set Shadow Properties from Mapped Values.
-     *
-     * @param array $properties_map
-     * @param mixed &$reference
-     *
-     * @return $this
-     */
-    private function setShadowProperiesMapValues(array $properties_map, &$reference = null)
+    public function getCrossBetween(): string
     {
-        $base_reference = $reference;
-        foreach ($properties_map as $property_key => $property_val) {
-            if (is_array($property_val)) {
-                if ($reference === null) {
-                    $reference = &$this->shadowProperties[$property_key];
-                } else {
-                    $reference = &$reference[$property_key];
-                }
-                $this->setShadowProperiesMapValues($property_val, $reference);
-            } else {
-                if ($base_reference === null) {
-                    $this->shadowProperties[$property_key] = $property_val;
-                } else {
-                    $reference[$property_key] = $property_val;
-                }
-            }
-        }
+        return $this->crossBetween;
+    }
+
+    public function getMajorGridlines(): ?GridLines
+    {
+        return $this->majorGridlines;
+    }
+
+    public function getMinorGridlines(): ?GridLines
+    {
+        return $this->minorGridlines;
+    }
+
+    public function setMajorGridlines(?GridLines $gridlines): self
+    {
+        $this->majorGridlines = $gridlines;
 
         return $this;
     }
 
-    /**
-     * Set Shadow Color.
-     *
-     * @param string $color
-     * @param int $alpha
-     * @param string $type
-     *
-     * @return $this
-     */
-    private function setShadowColor($color, $alpha, $type)
+    public function setMinorGridlines(?GridLines $gridlines): self
     {
-        $this->shadowProperties['color'] = $this->setColorProperties($color, $alpha, $type);
+        $this->minorGridlines = $gridlines;
 
         return $this;
     }
 
-    /**
-     * Set Shadow Blur.
-     *
-     * @param float $blur
-     *
-     * @return $this
-     */
-    private function setShadowBlur($blur)
+    public function getAxisText(): ?AxisText
     {
-        if ($blur !== null) {
-            $this->shadowProperties['blur'] = (string) $this->getExcelPointsWidth($blur);
-        }
+        return $this->axisText;
+    }
+
+    public function setAxisText(?AxisText $axisText): self
+    {
+        $this->axisText = $axisText;
 
         return $this;
     }
 
-    /**
-     * Set Shadow Angle.
-     *
-     * @param int $angle
-     *
-     * @return $this
-     */
-    private function setShadowAngle($angle)
+    public function setNoFill(bool $noFill): self
     {
-        if ($angle !== null) {
-            $this->shadowProperties['direction'] = (string) $this->getExcelPointsAngle($angle);
-        }
+        $this->noFill = $noFill;
 
         return $this;
     }
 
-    /**
-     * Set Shadow Distance.
-     *
-     * @param float $distance
-     *
-     * @return $this
-     */
-    private function setShadowDistance($distance)
+    public function getNoFill(): bool
     {
-        if ($distance !== null) {
-            $this->shadowProperties['distance'] = (string) $this->getExcelPointsWidth($distance);
-        }
+        return $this->noFill;
+    }
+
+    public function setDispUnitsTitle(?Title $dispUnitsTitle): self
+    {
+        $this->dispUnitsTitle = $dispUnitsTitle;
 
         return $this;
     }
 
-    /**
-     * Get Shadow Property.
-     *
-     * @param string|string[] $elements
-     *
-     * @return null|array|int|string
-     */
-    public function getShadowProperty($elements)
+    public function getDispUnitsTitle(): ?Title
     {
-        return $this->getArrayElementsValue($this->shadowProperties, $elements);
+        return $this->dispUnitsTitle;
     }
 
     /**
-     * Set Glow Properties.
-     *
-     * @param float $size
-     * @param string $color_value
-     * @param int $color_alpha
-     * @param string $color_type
+     * Implement PHP __clone to create a deep clone, not just a shallow copy.
      */
-    public function setGlowProperties($size, $color_value = null, $color_alpha = null, $color_type = null)
+    public function __clone()
     {
-        $this->setGlowSize($size)
-            ->setGlowColor(
-                $color_value === null ? $this->glowProperties['color']['value'] : $color_value,
-                $color_alpha === null ? (int) $this->glowProperties['color']['alpha'] : $color_alpha,
-                $color_type === null ? $this->glowProperties['color']['type'] : $color_type
-            );
-    }
-
-    /**
-     * Get Glow Property.
-     *
-     * @param array|string $property
-     *
-     * @return string
-     */
-    public function getGlowProperty($property)
-    {
-        return $this->getArrayElementsValue($this->glowProperties, $property);
-    }
-
-    /**
-     * Set Glow Color.
-     *
-     * @param float $size
-     *
-     * @return $this
-     */
-    private function setGlowSize($size)
-    {
-        if ($size !== null) {
-            $this->glowProperties['size'] = $this->getExcelPointsWidth($size);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Set Glow Color.
-     *
-     * @param string $color
-     * @param int $alpha
-     * @param string $type
-     *
-     * @return $this
-     */
-    private function setGlowColor($color, $alpha, $type)
-    {
-        $this->glowProperties['color'] = $this->setColorProperties($color, $alpha, $type);
-
-        return $this;
-    }
-
-    /**
-     * Set Soft Edges Size.
-     *
-     * @param float $size
-     */
-    public function setSoftEdges($size)
-    {
-        if ($size !== null) {
-            $softEdges['size'] = (string) $this->getExcelPointsWidth($size);
-        }
-    }
-
-    /**
-     * Get Soft Edges Size.
-     *
-     * @return string
-     */
-    public function getSoftEdgesSize()
-    {
-        return $this->softEdges['size'];
+        parent::__clone();
+        $this->majorGridlines = ($this->majorGridlines === null) ? null : clone $this->majorGridlines;
+        $this->majorGridlines = ($this->minorGridlines === null) ? null : clone $this->minorGridlines;
+        $this->axisText = ($this->axisText === null) ? null : clone $this->axisText;
+        $this->dispUnitsTitle = ($this->dispUnitsTitle === null) ? null : clone $this->dispUnitsTitle;
+        $this->fillColor = clone $this->fillColor;
     }
 }

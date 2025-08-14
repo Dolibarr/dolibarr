@@ -4,20 +4,26 @@ namespace PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Comment;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx\Namespaces;
 use PhpOffice\PhpSpreadsheet\Shared\XMLWriter;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 class Comments extends WriterPart
 {
+    private const VALID_HORIZONTAL_ALIGNMENT = [
+        Alignment::HORIZONTAL_CENTER,
+        Alignment::HORIZONTAL_DISTRIBUTED,
+        Alignment::HORIZONTAL_JUSTIFY,
+        Alignment::HORIZONTAL_LEFT,
+        Alignment::HORIZONTAL_RIGHT,
+    ];
+
     /**
      * Write comments to XML format.
      *
-     * @param \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $pWorksheet
-     *
-     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
-     *
      * @return string XML Output
      */
-    public function writeComments(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $pWorksheet)
+    public function writeComments(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $worksheet): string
     {
         // Create XML writer
         $objWriter = null;
@@ -31,7 +37,7 @@ class Comments extends WriterPart
         $objWriter->startDocument('1.0', 'UTF-8', 'yes');
 
         // Comments cache
-        $comments = $pWorksheet->getComments();
+        $comments = $worksheet->getComments();
 
         // Authors cache
         $authors = [];
@@ -44,7 +50,7 @@ class Comments extends WriterPart
 
         // comments
         $objWriter->startElement('comments');
-        $objWriter->writeAttribute('xmlns', 'http://schemas.openxmlformats.org/spreadsheetml/2006/main');
+        $objWriter->writeAttribute('xmlns', Namespaces::MAIN);
 
         // Loop through authors
         $objWriter->startElement('authors');
@@ -69,23 +75,20 @@ class Comments extends WriterPart
     /**
      * Write comment to XML format.
      *
-     * @param XMLWriter $objWriter XML Writer
-     * @param string $pCellReference Cell reference
-     * @param Comment $pComment Comment
-     * @param array $pAuthors Array of authors
-     *
-     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
+     * @param string $cellReference Cell reference
+     * @param Comment $comment Comment
+     * @param array<string, int> $authors Array of authors
      */
-    private function writeComment(XMLWriter $objWriter, $pCellReference, Comment $pComment, array $pAuthors)
+    private function writeComment(XMLWriter $objWriter, string $cellReference, Comment $comment, array $authors): void
     {
         // comment
         $objWriter->startElement('comment');
-        $objWriter->writeAttribute('ref', $pCellReference);
-        $objWriter->writeAttribute('authorId', $pAuthors[$pComment->getAuthor()]);
+        $objWriter->writeAttribute('ref', $cellReference);
+        $objWriter->writeAttribute('authorId', (string) $authors[$comment->getAuthor()]);
 
         // text
         $objWriter->startElement('text');
-        $this->getParentWriter()->getWriterPart('stringtable')->writeRichText($objWriter, $pComment->getText());
+        $this->getParentWriter()->getWriterPartstringtable()->writeRichText($objWriter, $comment->getText());
         $objWriter->endElement();
 
         $objWriter->endElement();
@@ -94,13 +97,9 @@ class Comments extends WriterPart
     /**
      * Write VML comments to XML format.
      *
-     * @param \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $pWorksheet
-     *
-     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
-     *
      * @return string XML Output
      */
-    public function writeVMLComments(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $pWorksheet)
+    public function writeVMLComments(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $worksheet): string
     {
         // Create XML writer
         $objWriter = null;
@@ -114,13 +113,13 @@ class Comments extends WriterPart
         $objWriter->startDocument('1.0', 'UTF-8', 'yes');
 
         // Comments cache
-        $comments = $pWorksheet->getComments();
+        $comments = $worksheet->getComments();
 
         // xml
         $objWriter->startElement('xml');
-        $objWriter->writeAttribute('xmlns:v', 'urn:schemas-microsoft-com:vml');
-        $objWriter->writeAttribute('xmlns:o', 'urn:schemas-microsoft-com:office:office');
-        $objWriter->writeAttribute('xmlns:x', 'urn:schemas-microsoft-com:office:excel');
+        $objWriter->writeAttribute('xmlns:v', Namespaces::URN_VML);
+        $objWriter->writeAttribute('xmlns:o', Namespaces::URN_MSOFFICE);
+        $objWriter->writeAttribute('xmlns:x', Namespaces::URN_EXCEL);
 
         // o:shapelayout
         $objWriter->startElement('o:shapelayout');
@@ -168,29 +167,33 @@ class Comments extends WriterPart
     /**
      * Write VML comment to XML format.
      *
-     * @param XMLWriter $objWriter XML Writer
-     * @param string $pCellReference Cell reference, eg: 'A1'
-     * @param Comment $pComment Comment
+     * @param string $cellReference Cell reference, eg: 'A1'
+     * @param Comment $comment Comment
      */
-    private function writeVMLComment(XMLWriter $objWriter, $pCellReference, Comment $pComment)
+    private function writeVMLComment(XMLWriter $objWriter, string $cellReference, Comment $comment): void
     {
         // Metadata
-        [$column, $row] = Coordinate::coordinateFromString($pCellReference);
-        $column = Coordinate::columnIndexFromString($column);
+        [$column, $row] = Coordinate::indexesFromString($cellReference);
         $id = 1024 + $column + $row;
-        $id = substr($id, 0, 4);
+        $id = substr("$id", 0, 4);
 
         // v:shape
         $objWriter->startElement('v:shape');
         $objWriter->writeAttribute('id', '_x0000_s' . $id);
         $objWriter->writeAttribute('type', '#_x0000_t202');
-        $objWriter->writeAttribute('style', 'position:absolute;margin-left:' . $pComment->getMarginLeft() . ';margin-top:' . $pComment->getMarginTop() . ';width:' . $pComment->getWidth() . ';height:' . $pComment->getHeight() . ';z-index:1;visibility:' . ($pComment->getVisible() ? 'visible' : 'hidden'));
-        $objWriter->writeAttribute('fillcolor', '#' . $pComment->getFillColor()->getRGB());
+        $objWriter->writeAttribute('style', 'position:absolute;margin-left:' . $comment->getMarginLeft() . ';margin-top:' . $comment->getMarginTop() . ';width:' . $comment->getWidth() . ';height:' . $comment->getHeight() . ';z-index:1;visibility:' . ($comment->getVisible() ? 'visible' : 'hidden'));
+        $objWriter->writeAttribute('fillcolor', '#' . $comment->getFillColor()->getRGB());
         $objWriter->writeAttribute('o:insetmode', 'auto');
 
         // v:fill
         $objWriter->startElement('v:fill');
-        $objWriter->writeAttribute('color2', '#' . $pComment->getFillColor()->getRGB());
+        $objWriter->writeAttribute('color2', '#' . $comment->getFillColor()->getRGB());
+        if ($comment->hasBackgroundImage()) {
+            $bgImage = $comment->getBackgroundImage();
+            $objWriter->writeAttribute('o:relid', 'rId' . $bgImage->getImageIndex());
+            $objWriter->writeAttribute('o:title', $bgImage->getName());
+            $objWriter->writeAttribute('type', 'frame');
+        }
         $objWriter->endElement();
 
         // v:shadow
@@ -206,12 +209,14 @@ class Comments extends WriterPart
         $objWriter->endElement();
 
         // v:textbox
+        $textBoxArray = [Comment::TEXTBOX_DIRECTION_RTL => 'rtl', Comment::TEXTBOX_DIRECTION_LTR => 'ltr'];
+        $textboxRtl = $textBoxArray[strtolower($comment->getTextBoxDirection())] ?? 'auto';
         $objWriter->startElement('v:textbox');
-        $objWriter->writeAttribute('style', 'mso-direction-alt:auto');
+        $objWriter->writeAttribute('style', "mso-direction-alt:$textboxRtl");
 
         // div
         $objWriter->startElement('div');
-        $objWriter->writeAttribute('style', 'text-align:left');
+        $objWriter->writeAttribute('style', ($textboxRtl === 'rtl' ? 'text-align:right;direction:rtl' : 'text-align:left'));
         $objWriter->endElement();
 
         $objWriter->endElement();
@@ -229,11 +234,17 @@ class Comments extends WriterPart
         // x:AutoFill
         $objWriter->writeElement('x:AutoFill', 'False');
 
+        // x:TextHAlign horizontal alignment of text
+        $alignment = strtolower($comment->getAlignment());
+        if (in_array($alignment, self::VALID_HORIZONTAL_ALIGNMENT, true)) {
+            $objWriter->writeElement('x:TextHAlign', ucfirst($alignment));
+        }
+
         // x:Row
-        $objWriter->writeElement('x:Row', ($row - 1));
+        $objWriter->writeElement('x:Row', (string) ($row - 1));
 
         // x:Column
-        $objWriter->writeElement('x:Column', ($column - 1));
+        $objWriter->writeElement('x:Column', (string) ($column - 1));
 
         $objWriter->endElement();
 

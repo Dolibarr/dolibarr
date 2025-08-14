@@ -2,7 +2,6 @@
 
 namespace PhpOffice\PhpSpreadsheet\Writer;
 
-use PhpOffice\PhpSpreadsheet\Calculation\Calculation;
 use PhpOffice\PhpSpreadsheet\Shared\File;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
@@ -12,45 +11,30 @@ abstract class Pdf extends Html
 {
     /**
      * Temporary storage directory.
-     *
-     * @var string
      */
-    protected $tempDir = '';
+    protected string $tempDir;
 
     /**
      * Font.
-     *
-     * @var string
      */
-    protected $font = 'freesans';
+    protected string $font = 'freesans';
 
     /**
      * Orientation (Over-ride).
-     *
-     * @var string
      */
-    protected $orientation;
+    protected ?string $orientation = null;
 
     /**
      * Paper size (Over-ride).
-     *
-     * @var int
      */
-    protected $paperSize;
-
-    /**
-     * Temporary storage for Save Array Return type.
-     *
-     * @var string
-     */
-    private $saveArrayReturnType;
+    protected ?int $paperSize = null;
 
     /**
      * Paper Sizes xRef List.
      *
-     * @var array
+     * @var array<int, float[]|string>
      */
-    protected static $paperSizes = [
+    protected static array $paperSizes = [
         PageSetup::PAPERSIZE_LETTER => 'LETTER', //    (8.5 in. by 11 in.)
         PageSetup::PAPERSIZE_LETTER_SMALL => 'LETTER', //    (8.5 in. by 11 in.)
         PageSetup::PAPERSIZE_TABLOID => [792.00, 1224.00], //    (11 in. by 17 in.)
@@ -127,16 +111,15 @@ abstract class Pdf extends Html
     public function __construct(Spreadsheet $spreadsheet)
     {
         parent::__construct($spreadsheet);
-        $this->setUseInlineCss(true);
-        $this->tempDir = File::sysGetTempDir();
+        //$this->setUseInlineCss(true);
+        $this->tempDir = File::sysGetTempDir() . '/phpsppdf';
+        $this->isPdf = true;
     }
 
     /**
      * Get Font.
-     *
-     * @return string
      */
-    public function getFont()
+    public function getFont(): string
     {
         return $this->font;
     }
@@ -148,11 +131,9 @@ abstract class Pdf extends Html
      *      'arialunicid0-korean'
      *      'arialunicid0-japanese'.
      *
-     * @param string $fontName
-     *
      * @return $this
      */
-    public function setFont($fontName)
+    public function setFont(string $fontName)
     {
         $this->font = $fontName;
 
@@ -161,10 +142,8 @@ abstract class Pdf extends Html
 
     /**
      * Get Paper Size.
-     *
-     * @return int
      */
-    public function getPaperSize()
+    public function getPaperSize(): ?int
     {
         return $this->paperSize;
     }
@@ -172,23 +151,19 @@ abstract class Pdf extends Html
     /**
      * Set Paper Size.
      *
-     * @param string $pValue Paper size see PageSetup::PAPERSIZE_*
-     *
-     * @return self
+     * @param int $paperSize Paper size see PageSetup::PAPERSIZE_*
      */
-    public function setPaperSize($pValue)
+    public function setPaperSize(int $paperSize): self
     {
-        $this->paperSize = $pValue;
+        $this->paperSize = $paperSize;
 
         return $this;
     }
 
     /**
      * Get Orientation.
-     *
-     * @return string
      */
-    public function getOrientation()
+    public function getOrientation(): ?string
     {
         return $this->orientation;
     }
@@ -196,23 +171,19 @@ abstract class Pdf extends Html
     /**
      * Set Orientation.
      *
-     * @param string $pValue Page orientation see PageSetup::ORIENTATION_*
-     *
-     * @return self
+     * @param string $orientation Page orientation see PageSetup::ORIENTATION_*
      */
-    public function setOrientation($pValue)
+    public function setOrientation(string $orientation): self
     {
-        $this->orientation = $pValue;
+        $this->orientation = $orientation;
 
         return $this;
     }
 
     /**
      * Get temporary storage directory.
-     *
-     * @return string
      */
-    public function getTempDir()
+    public function getTempDir(): string
     {
         return $this->tempDir;
     }
@@ -220,18 +191,14 @@ abstract class Pdf extends Html
     /**
      * Set temporary storage directory.
      *
-     * @param string $pValue Temporary storage directory
-     *
-     * @throws WriterException when directory does not exist
-     *
-     * @return self
+     * @param string $temporaryDirectory Temporary storage directory
      */
-    public function setTempDir($pValue)
+    public function setTempDir(string $temporaryDirectory): self
     {
-        if (is_dir($pValue)) {
-            $this->tempDir = $pValue;
+        if (is_dir($temporaryDirectory)) {
+            $this->tempDir = $temporaryDirectory;
         } else {
-            throw new WriterException("Directory does not exist: $pValue");
+            throw new WriterException("Directory does not exist: $temporaryDirectory");
         }
 
         return $this;
@@ -240,44 +207,23 @@ abstract class Pdf extends Html
     /**
      * Save Spreadsheet to PDF file, pre-save.
      *
-     * @param string $pFilename Name of the file to save as
-     *
-     * @throws WriterException
+     * @param resource|string $filename Name of the file to save as
      *
      * @return resource
      */
-    protected function prepareForSave($pFilename)
+    protected function prepareForSave($filename)
     {
-        //  garbage collect
-        $this->spreadsheet->garbageCollect();
-
-        $this->saveArrayReturnType = Calculation::getArrayReturnType();
-        Calculation::setArrayReturnType(Calculation::RETURN_ARRAY_AS_VALUE);
-
         //  Open file
-        $fileHandle = fopen($pFilename, 'w');
-        if ($fileHandle === false) {
-            throw new WriterException("Could not open file $pFilename for writing.");
-        }
+        $this->openFileHandle($filename);
 
-        //  Set PDF
-        $this->isPdf = true;
-        //  Build CSS
-        $this->buildCSS(true);
-
-        return $fileHandle;
+        return $this->fileHandle;
     }
 
     /**
      * Save PhpSpreadsheet to PDF file, post-save.
-     *
-     * @param resource $fileHandle
      */
-    protected function restoreStateAfterSave($fileHandle)
+    protected function restoreStateAfterSave(): void
     {
-        //  Close file
-        fclose($fileHandle);
-
-        Calculation::setArrayReturnType($this->saveArrayReturnType);
+        $this->maybeCloseFileHandle();
     }
 }

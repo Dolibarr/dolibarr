@@ -26,133 +26,105 @@ use PhpOffice\PhpSpreadsheet\Shared\OLE;
  * Class for creating PPS's for OLE containers.
  *
  * @author   Xavier Noguer <xnoguer@php.net>
- *
- * @category PhpSpreadsheet
  */
 class PPS
 {
+    private const ALL_ONE_BITS = (PHP_INT_SIZE > 4) ? 0xFFFFFFFF : -1;
+
     /**
      * The PPS index.
-     *
-     * @var int
      */
-    public $No;
+    public int $No;
 
     /**
      * The PPS name (in Unicode).
-     *
-     * @var string
      */
-    public $Name;
+    public string $Name;
 
     /**
      * The PPS type. Dir, Root or File.
-     *
-     * @var int
      */
-    public $Type;
+    public int $Type;
 
     /**
      * The index of the previous PPS.
-     *
-     * @var int
      */
-    public $PrevPps;
+    public int $PrevPps;
 
     /**
      * The index of the next PPS.
-     *
-     * @var int
      */
-    public $NextPps;
+    public int $NextPps;
 
     /**
      * The index of it's first child if this is a Dir or Root PPS.
-     *
-     * @var int
      */
-    public $DirPps;
+    public int $DirPps;
 
     /**
      * A timestamp.
-     *
-     * @var int
      */
-    public $Time1st;
+    public float|int $Time1st;
 
     /**
      * A timestamp.
-     *
-     * @var int
      */
-    public $Time2nd;
+    public float|int $Time2nd;
 
     /**
      * Starting block (small or big) for this PPS's data  inside the container.
-     *
-     * @var int
      */
-    public $startBlock;
+    public ?int $startBlock = null;
 
     /**
      * The size of the PPS's data (in bytes).
-     *
-     * @var int
      */
-    public $Size;
+    public int $Size;
 
     /**
      * The PPS's data (only used if it's not using a temporary file).
-     *
-     * @var string
      */
-    public $_data;
+    public string $_data = '';
 
     /**
      * Array of child PPS's (only used by Root and Dir PPS's).
      *
-     * @var array
+     * @var mixed[]
      */
-    public $children = [];
+    public array $children = [];
 
     /**
      * Pointer to OLE container.
-     *
-     * @var OLE
      */
-    public $ole;
+    public OLE $ole;
 
     /**
      * The constructor.
      *
-     * @param int $No The PPS index
-     * @param string $name The PPS name
-     * @param int $type The PPS type. Dir, Root or File
-     * @param int $prev The index of the previous PPS
-     * @param int $next The index of the next PPS
-     * @param int $dir The index of it's first child if this is a Dir or Root PPS
-     * @param int $time_1st A timestamp
-     * @param int $time_2nd A timestamp
-     * @param string $data The (usually binary) source data of the PPS
-     * @param array $children Array containing children PPS for this PPS
+     * @param ?int $No The PPS index
+     * @param ?string $name The PPS name
+     * @param ?int $type The PPS type. Dir, Root or File
+     * @param ?int $prev The index of the previous PPS
+     * @param ?int $next The index of the next PPS
+     * @param ?int $dir The index of it's first child if this is a Dir or Root PPS
+     * @param null|float|int $time_1st A timestamp
+     * @param null|float|int $time_2nd A timestamp
+     * @param ?string $data The (usually binary) source data of the PPS
+     * @param mixed[] $children Array containing children PPS for this PPS
      */
-    public function __construct($No, $name, $type, $prev, $next, $dir, $time_1st, $time_2nd, $data, $children)
+    public function __construct(?int $No, ?string $name, ?int $type, ?int $prev, ?int $next, ?int $dir, $time_1st, $time_2nd, ?string $data, array $children)
     {
-        $this->No = $No;
-        $this->Name = $name;
-        $this->Type = $type;
-        $this->PrevPps = $prev;
-        $this->NextPps = $next;
-        $this->DirPps = $dir;
-        $this->Time1st = $time_1st;
-        $this->Time2nd = $time_2nd;
-        $this->_data = $data;
+        $this->No = (int) $No;
+        $this->Name = (string) $name;
+        $this->Type = (int) $type;
+        $this->PrevPps = (int) $prev;
+        $this->NextPps = (int) $next;
+        $this->DirPps = (int) $dir;
+        $this->Time1st = $time_1st ?? 0;
+        $this->Time2nd = $time_2nd ?? 0;
+        $this->_data = (string) $data;
         $this->children = $children;
-        if ($data != '') {
-            $this->Size = strlen($data);
-        } else {
-            $this->Size = 0;
-        }
+        $this->Size = strlen((string) $data);
     }
 
     /**
@@ -160,11 +132,11 @@ class PPS
      *
      * @return int The amount of data (in bytes)
      */
-    public function getDataLen()
+    public function getDataLen(): int
     {
-        if (!isset($this->_data)) {
-            return 0;
-        }
+        //if (!isset($this->_data)) {
+        //    return 0;
+        //}
 
         return strlen($this->_data);
     }
@@ -174,7 +146,7 @@ class PPS
      *
      * @return string The binary string
      */
-    public function _getPpsWk()
+    public function getPpsWk(): string
     {
         $ret = str_pad($this->Name, 64, "\x00");
 
@@ -191,9 +163,10 @@ class PPS
             . "\x00\x00\x00\x00"                  // 100
             . OLE::localDateToOLE($this->Time1st)          // 108
             . OLE::localDateToOLE($this->Time2nd)          // 116
-            . pack('V', isset($this->startBlock) ? $this->startBlock : 0)  // 120
+            . pack('V', $this->startBlock ?? 0)  // 120
             . pack('V', $this->Size)               // 124
             . pack('V', 0); // 128
+
         return $ret;
     }
 
@@ -201,36 +174,36 @@ class PPS
      * Updates index and pointers to previous, next and children PPS's for this
      * PPS. I don't think it'll work with Dir PPS's.
      *
-     * @param array &$raList Reference to the array of PPS's for the whole OLE
+     * @param self[] $raList Reference to the array of PPS's for the whole OLE
      *                          container
-     * @param mixed $to_save
-     * @param mixed $depth
      *
      * @return int The index for this PPS
      */
-    public static function _savePpsSetPnt(&$raList, $to_save, $depth = 0)
+    public static function savePpsSetPnt(array &$raList, mixed $to_save, int $depth = 0): int
     {
         if (!is_array($to_save) || (empty($to_save))) {
-            return 0xFFFFFFFF;
-        } elseif (count($to_save) == 1) {
+            return self::ALL_ONE_BITS;
+        }
+        /** @var self[] $to_save */
+        if (count($to_save) == 1) {
             $cnt = count($raList);
             // If the first entry, it's the root... Don't clone it!
             $raList[$cnt] = ($depth == 0) ? $to_save[0] : clone $to_save[0];
             $raList[$cnt]->No = $cnt;
-            $raList[$cnt]->PrevPps = 0xFFFFFFFF;
-            $raList[$cnt]->NextPps = 0xFFFFFFFF;
-            $raList[$cnt]->DirPps = self::_savePpsSetPnt($raList, @$raList[$cnt]->children, $depth++);
+            $raList[$cnt]->PrevPps = self::ALL_ONE_BITS;
+            $raList[$cnt]->NextPps = self::ALL_ONE_BITS;
+            $raList[$cnt]->DirPps = self::savePpsSetPnt($raList, @$raList[$cnt]->children, $depth++);
         } else {
-            $iPos = floor(count($to_save) / 2);
+            $iPos = (int) floor(count($to_save) / 2);
             $aPrev = array_slice($to_save, 0, $iPos);
             $aNext = array_slice($to_save, $iPos + 1);
             $cnt = count($raList);
             // If the first entry, it's the root... Don't clone it!
             $raList[$cnt] = ($depth == 0) ? $to_save[$iPos] : clone $to_save[$iPos];
             $raList[$cnt]->No = $cnt;
-            $raList[$cnt]->PrevPps = self::_savePpsSetPnt($raList, $aPrev, $depth++);
-            $raList[$cnt]->NextPps = self::_savePpsSetPnt($raList, $aNext, $depth++);
-            $raList[$cnt]->DirPps = self::_savePpsSetPnt($raList, @$raList[$cnt]->children, $depth++);
+            $raList[$cnt]->PrevPps = self::savePpsSetPnt($raList, $aPrev, $depth++);
+            $raList[$cnt]->NextPps = self::savePpsSetPnt($raList, $aNext, $depth++);
+            $raList[$cnt]->DirPps = self::savePpsSetPnt($raList, @$raList[$cnt]->children, $depth++);
         }
 
         return $cnt;

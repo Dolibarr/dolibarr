@@ -1,0 +1,21 @@
+{
+    "php_disable_ini": true,
+    "bootstrap": "vendor/autoload.php",
+    "path": "test/benchmark",
+    "php_config": {
+        "extension": [ "json.so" ]
+    },
+    "outputs": {
+         "benchmarks_file": {
+             "extends": "html",
+             "file": "benchmarks.html",
+             "title": "gfx-php benchmarks"
+         }
+    },
+    "reports": {
+        "my_report": {
+            "extends": "aggregate"
+        }
+    },
+    "time_unit": "microseconds"
+}

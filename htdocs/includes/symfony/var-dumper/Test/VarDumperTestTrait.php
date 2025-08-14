@@ -19,30 +19,66 @@ use Symfony\Component\VarDumper\Dumper\CliDumper;
  */
 trait VarDumperTestTrait
 {
-	public function assertDumpEquals($dump, $data, $message = '')
-	{
-		$this->assertSame(rtrim($dump), $this->getDump($data), $message);
-	}
+    /**
+     * @internal
+     */
+    private array $varDumperConfig = [
+        'casters' => [],
+        'flags' => null,
+    ];
 
-	public function assertDumpMatchesFormat($dump, $data, $message = '')
-	{
-		$this->assertStringMatchesFormat(rtrim($dump), $this->getDump($data), $message);
-	}
+    protected function setUpVarDumper(array $casters, ?int $flags = null): void
+    {
+        $this->varDumperConfig['casters'] = $casters;
+        $this->varDumperConfig['flags'] = $flags;
+    }
 
-	protected function getDump($data, $key = null)
-	{
-		$flags = getenv('DUMP_LIGHT_ARRAY') ? CliDumper::DUMP_LIGHT_ARRAY : 0;
-		$flags |= getenv('DUMP_STRING_LENGTH') ? CliDumper::DUMP_STRING_LENGTH : 0;
+    /**
+     * @after
+     */
+    protected function tearDownVarDumper(): void
+    {
+        $this->varDumperConfig['casters'] = [];
+        $this->varDumperConfig['flags'] = null;
+    }
 
-		$cloner = new VarCloner();
-		$cloner->setMaxItems(-1);
-		$dumper = new CliDumper(null, null, $flags);
-		$dumper->setColors(false);
-		$data = $cloner->cloneVar($data)->withRefHandles(false);
-		if (null !== $key && null === $data = $data->seek($key)) {
-			return;
-		}
+    public function assertDumpEquals(mixed $expected, mixed $data, int $filter = 0, string $message = '')
+    {
+        $this->assertSame($this->prepareExpectation($expected, $filter), $this->getDump($data, null, $filter), $message);
+    }
 
-		return rtrim($dumper->dump($data, true));
-	}
+    public function assertDumpMatchesFormat(mixed $expected, mixed $data, int $filter = 0, string $message = '')
+    {
+        $this->assertStringMatchesFormat($this->prepareExpectation($expected, $filter), $this->getDump($data, null, $filter), $message);
+    }
+
+    protected function getDump(mixed $data, string|int|null $key = null, int $filter = 0): ?string
+    {
+        if (null === $flags = $this->varDumperConfig['flags']) {
+            $flags = getenv('DUMP_LIGHT_ARRAY') ? CliDumper::DUMP_LIGHT_ARRAY : 0;
+            $flags |= getenv('DUMP_STRING_LENGTH') ? CliDumper::DUMP_STRING_LENGTH : 0;
+            $flags |= getenv('DUMP_COMMA_SEPARATOR') ? CliDumper::DUMP_COMMA_SEPARATOR : 0;
+        }
+
+        $cloner = new VarCloner();
+        $cloner->addCasters($this->varDumperConfig['casters']);
+        $cloner->setMaxItems(-1);
+        $dumper = new CliDumper(null, null, $flags);
+        $dumper->setColors(false);
+        $data = $cloner->cloneVar($data, $filter)->withRefHandles(false);
+        if (null !== $key && null === $data = $data->seek($key)) {
+            return null;
+        }
+
+        return rtrim($dumper->dump($data, true));
+    }
+
+    private function prepareExpectation(mixed $expected, int $filter): string
+    {
+        if (!\is_string($expected)) {
+            $expected = $this->getDump($expected, null, $filter);
+        }
+
+        return rtrim($expected);
+    }
 }

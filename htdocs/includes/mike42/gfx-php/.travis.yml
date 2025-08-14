@@ -1,0 +1,37 @@
+---
+dist: trusty
+sudo: required
+
+language: php
+
+php:
+  - 7.0
+  - 7.1
+  - 7.2
+  - 7.3
+  - nightly
+
+matrix:
+  allow_failures:
+    - php: nightly
+
+install:
+  - composer install
+
+before_script:
+  - bash -c 'if [[ $TRAVIS_PHP_VERSION == hhvm* ]]; then echo "hhvm.php7.all = 1" | sudo tee -a /etc/hhvm/php.ini; fi'
+  - mkdir -p build/logs/
+
+script:
+  # Check code style
+  - php vendor/bin/phpcs --standard=psr2 src/ -n
+  # Unit tests
+  - php vendor/bin/phpunit --coverage-clover build/logs/clover.xml
+  # Example scripts must work too
+  - mkdir -p tmp && (cd tmp && find ../example -name '*.php' -print0 | xargs -n 1 -0 sh -c 'echo $0; php $0 || exit 255')
+
+after_success:
+  # Upload coverage statistics to coveralls service after test
+  - wget -c -nc https://github.com/satooshi/php-coveralls/releases/download/v1.0.1/coveralls.phar
+  - php coveralls.phar -v
+...
