@@ -57,7 +57,7 @@ Assigned=Təyin edilmişdir
 NeedMoreInformation=Jurnalist rəyini gözləyirik
 NeedMoreInformationShort=Əlaqə gözləyirik
 Waiting=Gözləyirəm
-SolvedClosed=Həll olundu
+SolvedClosed=Closed
 Deleted=Silindi
 # Dict
 Severity=Ciddilik
@@ -72,8 +72,10 @@ TicketPublicAccess=Heç bir identifikasiya tələb olunmayan ictimai interfeys a
 TicketSetupDictionaries=Biletin növü, ciddiliyi və analitik kodları lüğətlərdən konfiqurasiya edilə bilər
 TicketParamModule=Modul dəyişənlərinin qurulması
 TicketParamMail=E-poçtun qurulması
-TicketEmailNotificationFrom=Biletlər haqqında bildiriş göndərən e-poçt (biletin yaradılması və ya yeniləmə mesajları)
-TicketEmailNotificationFromHelp=Biletlərin yaradılması və ya mesaj əlavə edilməsi üçün bildiriş e-poçtlarını göndərmək üçün istifadə etmək üçün göndərən e-poçtu. Məsələn, noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Biletin yaradılmasını bu e-poçt ünvanına bildirin
 TicketEmailNotificationToHelp=Əgər varsa, bu e-poçt ünvanına biletin yaradılması barədə bildiriş göndəriləcək (digər standart alıcılara əlavə olaraq)
 TicketNewEmailBodyLabel=Bilet yaratdıqdan sonra göndərilən mətn mesajı
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=Yalnız cari istifadəçiyə təyin edilmiş bi
 TicketsActivatePublicInterface=İctimai interfeysi aktivləşdirin
 TicketsActivatePublicInterfaceHelp=İctimai interfeys istənilən ziyarətçiyə bilet yaratmağa imkan verir.
 TicketsAutoAssignTicket=Bileti yaradan istifadəçini avtomatik təyin edin
-TicketsAutoAssignTicketHelp=Bilet yaratarkən istifadəçi avtomatik olaraq biletə təyin edilə bilər (Nümunələr: 0=Heç vaxt biletə avtomatik təyin olunmur, 1=Heç kim təyin edilməyibsə, avtomatik olaraq biletə təyin edilir, 2=Kimsə müəyyən edilmiş olsa belə, avtomatik bilet təyin olunur).
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
 TicketAutoChangeStatusOnAnswer=Bilete cavab verərkən avtomatik olaraq status təyin edin
 TicketAutoChangeStatusOnAnswerHelp=İstifadəçi biletə cavab verdikdə status avtomatik olaraq biletə tətbiq olunacaq
 TicketNumberingModules=Biletlərin nömrələnməsi modulu
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=Yalnız açıq biletlərə baxın
 TicketStatByStatus=Biletlər statusa görə
 OrderByDateAsc=Artan tarixə görə çeşidləyin
 OrderByDateDesc=Azalan tarixə görə çeşidləyin
-ShowAsConversation=Söhbət siyahısı kimi göstərin
-MessageListViewType=Cədvəl siyahısı kimi göstərin
 ConfirmMassTicketClosingSendEmail=Biletləri bağlayarkən avtomatik olaraq e-poçt göndərin
 ConfirmMassTicketClosingSendEmailQuestion=Bu biletləri bağlayarkən üçüncü tərəfləri xəbərdar etmək istəyirsiniz?
 # Ticket card

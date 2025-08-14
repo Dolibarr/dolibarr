@@ -72,7 +72,7 @@ AccountancyAreaDescActionOnce=Järgmisi toiminguid tehakse tavaliselt ainult ük
 AccountancyAreaDescActionOnceBis=Järgmised sammud tuleks astuda, et tulevikus teie aega kokku hoida, pakkudes teile andmete edastamisel raamatupidamisse automaatselt õiget vaikekontot.
 AccountancyAreaDescActionFreq=Väga suurtes ettevõtetes teostatakse järgmisi toiminguid tavaliselt iga kuu, nädala või päeva tagant...
 AccountancyAreaDescJournalSetup=SAMM %s: Kontrollige oma ajakirjade loendi sisu menüüst %s
-AccountancyAreaDescChartModel=SAMM %s: Kontrollige, kas kontoplaani mudel on olemas, või looge see menüüst %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists for your country or create one from menu %s
 AccountancyAreaDescChart=SAMM %s: Valige ja|või täitke oma kontoplaan menüüst %s
 AccountancyAreaDescFiscalPeriod=SAMM %s: Määrake eelarveperiood, mis määrab raamatupidamiskannete loomiseks aktsepteeritud kuupäevade vahemiku. Selleks kasutage menüükirjet %s.
 AccountancyAreaDescVat=SAMM %s: Määrake iga käibemaksumäära jaoks raamatupidamiskontod. Selleks kasutage menüükirjet %s.
@@ -275,7 +275,7 @@ HideOpeningBalance=Peida algsaldo
 ShowSubtotalByGroup=Näita vahesummat taseme järgi
 Pcgtype=Kontogrupp
 PcgtypeDesc=Kontogruppe kasutatakse mõnede raamatupidamisaruannete puhul eelnevalt määratletud filtri- ja rühmitamiskriteeriumidena. Näiteks gruppe „TULU” või „KULU” kasutatakse toodete raamatupidamiskontode rühmadena kulu-/tuluaruande koostamiseks.
-AccountingCategoriesDesc=Kohandatud kontode gruppi saab kasutada raamatupidamiskontode grupeerimiseks ühe nime alla, et hõlbustada filtrite kasutamist või kohandatud aruannete loomist.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Lepitatav
 Centralized=Tsentraliseeritud konto
 TotalVente=Total turnover before tax
@@ -319,7 +319,7 @@ NotReconciled=Not reconciled
 WarningRecordWithoutSubledgerAreExcluded=Hoiatus, kõik read, millel pole alampearaamatu kontot määratletud, filtreeritakse ja jäetakse sellest vaatest välja.
 AccountRemovedFromCurrentChartOfAccount=Raamatupidamiskonto, mida praeguses kontoplaanis ei eksisteeri
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=Hoiatus, see leht sisaldab ainult raamatupidamissüsteemi üle kantud kandeid.
-BookkeepingNumRefModelDesc = Tagastab viitenumbri vormingus yyyyjjnnnn, kus yyyy on aasta ja jj on kandekood, nnnn on järjestikune automaatselt kasvav number, mis sõltub aastast ja kandekoodist.
+BookkeepingNumRefModelDesc = Returns the reference number in the format yymmjjnnnnn where yy is the year, mm is the month and jj the journal code, nnnnn is a sequential auto-incrementing number depending on the year, the month and the journal code.
 BookkeepingNumberingModules = Raamatupidamise nummerdamismudelid
 ## Admin
 BindingOptions=Raamatupidamises ülekande valikud
@@ -389,6 +389,7 @@ Modelcsv_Gestinumv5=Eksport Gestinumile (v5)
 Modelcsv_charlemagne=Eksport Aplim Charlemagne'i jaoks
 ChartofaccountsId=Kontoplaani ID
 ExportToPdf = Ekspordi PDF-vormingusse
+ExportToCsv = Export to CSV
 PdfLedgerTitle = Pearaamatukontod
 PdfBalanceTitle = Pearaamatu saldo
 PdfBookkeepingTitle = Journals
@@ -440,7 +441,7 @@ AccountRemovedFromGroup=Konto eemaldati grupist
 SaleLocal=Kohalik müük
 SaleExport=Ekspordi müük
 SaleEEC=Müük EMÜ-s
-SaleEECWithVAT=Müük toimub EMÜ-s ja käibemaks ei ole null, seega eeldame, et tegemist EI OLE ühendusesisese müügiga ja soovitatud konto on standardne tootekonto.
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=Müük toimub EMÜ-s ilma käibemaksuta, kuid kolmanda osapoole käibemaksukohustuslase number pole määratletud. Kasutame standardmüügi puhul kontot. Vajadusel saate parandada kolmanda osapoole käibemaksukohustuslase numbrit või muuta sidumiseks soovitatud tootekontot.
 AnySale=Igasugune müük
 ForbiddenTransactionAlreadyExported=Keelatud: tehing on valideeritud ja/või eksporditud.
@@ -485,7 +486,7 @@ AccountancyClosureConfirmClose=Kas olete kindel, et soovite praeguse eelarveperi
 AccountancyClosureConfirmAccountingReversal=Kas olete kindel, et soovite teha kandeid "Jaotamata kasumi" kohta?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=Tehing: (doc_type=%s, doc_id=%s, doc_det=>weres juba salvestatud
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Mõned kohustuslikud seadistusetapid jäid tegemata, palun tehke need ära
@@ -508,7 +509,7 @@ ErrorNoFiscalPeriodActiveFound=Aktiivset eelarveperioodi (mille algus- ja lõppk
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Raamatupidamisdokumendi kuupäev ei ole aktiivses eelarveperioodil.
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Raamatupidamisdokumendi kuupäev on suletud eelarveperioodil.
 Error_BOOKKEEPING_ADDON_NotDefined=Viga, raamatupidamise nummerdamise viite reegel pole raamatupidamismooduli üldises seadistuses määratletud.
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Proovige lisada raamatusse tasakaalustamata tehing makse %s (makse ID: %s) jaoks. Tühistatud. Kindlasti viga.
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
 ProductUsage=Toote või teenuse kasutamine
 ## Import
 ImportAccountingEntries=Raamatupidamiskanded
@@ -537,15 +538,15 @@ ExpenseReportJournal=Kuluaruannete päevik
 DocsAlreadyExportedAreIncluded=Juba eksporditud dokumendid on kaasatud
 ClickToShowAlreadyExportedLines=Klõpsake juba eksporditud ridade kuvamiseks
 NAccounts=%s kontod
-ACCOUNTING_USE_TREASURY_Desc=See on riigikassa raamatupidamise režiim. Raamatupidamise jaoks kasutame ainult makseid ja nende kuupäeva.
-ACCOUNTING_USE_NON_TREASURY_Desc=See on päris raamatupidamise viis. Raamatupidamise tegemiseks kasutame nii arveid kui ka makseid.
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
+ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
 PieceDesc=Selle pangatehingu genereeriva alusdokumendi viide (arve viide, kuluaruande viide, ...)
 BankTransactionRef=Pangatehingu viide (valikuline, automaatne ID on juba genereeritud)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=See kloonib raamatupidamiskande (kõik selle raamatupidamiskandega seotud read kloonitakse). Kas olete kindel, et soovite valitud %s kirjed kloonida?
 ConfirmMassCloneBookkeepingWriting=Masskloonimise kinnitamine
-ConfirmMassReturnAccountBookkeepingWriting=Massilise väljasuremise kinnitamine
-ConfirmMassReturnAccountBookkeepingWritingQuestion=See kustutab raamatupidamiskande (kõik selle raamatupidamiskandega seotud read kustutatakse). Kas olete kindel, et soovite valitud %s kirjetest mööda minna?
+ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
+ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=See muudab kõigi valitud ridade kontot.
 confirmMassAssignAccountBookkeepingWritingConfirm=Massilise konto muutmise kinnitamine
 CloningSuccess=Tehingu kloonimine õnnestus: %s
@@ -560,6 +561,6 @@ NoAccountsChangedWithAccountNumber=Tehinguid pole kontonumbritega uuendatud: %s
 HasAlreadyBeenReversed=on juba tagasi pööratud
 ErrorWhileCreating=Viga loomisel %s
 ReturnAccount=Return
-Clone=Kloonija
+Clone=Klooni
 AlreadyReturnedAccount=Kirje nr %s on juba tühistatud
 SuccessReturnedAccount=Kirje nr %s on tühistatud
