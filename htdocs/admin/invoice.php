@@ -359,6 +359,8 @@ foreach ($dirmodels as $reldir) {
 }
 
 $arrayofmodules = dol_sort_array($arrayofmodules, 'position');
+/** @var ModeleNumRefFactures[] $arrayofmodules */
+'@phan-var-force ModeleNumRefFactures[] $arrayofmodules';
 
 foreach ($arrayofmodules as $module) {
 	$file = strtolower($module->getName($langs));
@@ -558,6 +560,7 @@ foreach ($dirmodels as $reldir) {
 							$module = new $classname($db);
 
 							'@phan-var-force ModelePDFFactures $module';
+							/** @var ModelePDFFactures $module */
 
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {

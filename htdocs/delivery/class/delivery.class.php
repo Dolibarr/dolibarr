@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@inodbox.com>
- * Copyright (C) 2006-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
- * Copyright (C) 2011-2023 Philippe Grand	     <philippe.grand@atoo-net.com>
- * Copyright (C) 2013      Florian Henry	     <florian.henry@open-concept.pro>
- * Copyright (C) 2014-2015 Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2003       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2014  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2006-2007  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2007       Franky Van Liedekerke   <franky.van.liedekerke@telenet.be>
+ * Copyright (C) 2011-2023  Philippe Grand	        <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013       Florian Henry	        <florian.henry@open-concept.pro>
+ * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -586,7 +586,7 @@ class Delivery extends CommonObject
 		$this->note_private         = $expedition->note_private;
 		$this->note_public          = $expedition->note_public;
 		$this->fk_project           = $expedition->fk_project;
-		$this->date_delivery        = null;									// Date of real reception. The Expedition->date_delivery is the planned one.
+		$this->date_delivery        = '';									// Date of real reception. The Expedition->date_delivery is the planned one.
 		$this->fk_delivery_address  = $expedition->fk_delivery_address;
 		$this->socid                = $expedition->socid;
 		$this->ref_customer         = $expedition->ref_customer;
