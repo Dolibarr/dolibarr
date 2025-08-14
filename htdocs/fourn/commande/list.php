@@ -1774,6 +1774,7 @@ if ($resql) {
 		$objectstatic->note_private = $obj->note_private;
 		$objectstatic->statut = $obj->fk_statut;
 		$objectstatic->status = $obj->fk_statut;
+		
 
 		if ($mode == 'kanban') {
 			if ($i == 0) {
