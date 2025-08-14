@@ -405,7 +405,7 @@ DisabledBecauseNotEnouthCreditNote=Norint pašalinti situacijos sąskaitą fakt�
 RemoveSituationFromCycle=Pašalinti šią sąskaitą faktūrą iš ciklo
 ConfirmRemoveSituationFromCycle=Pašalinti šią sąskaitą faktūrą %s iš ciklo?
 ConfirmOuting=Patvirtinkite išvyką
-FrequencyPer_d=Kas **span class='notranslate'>%s** dienas
+FrequencyPer_d=Kas %s dienas
 FrequencyPer_m=Every %s months
 FrequencyPer_y=Kas %s metus
 FrequencyUnit=Dažnio vienetas

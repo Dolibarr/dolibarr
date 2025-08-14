@@ -255,7 +255,7 @@ Security=सुरक्षा
 Passwords=पासवर्डों
 DoNotStoreClearPassword=डेटाबेस में संग्रहीत पासवर्ड एन्क्रिप्ट करें.
 MainDbPasswordFileConfEncrypted=conf.php में संग्रहीत डेटाबेस पासवर्ड को अस्पष्ट करें। इस विकल्प को सक्रिय करने की अनुशंसा की जाती है।
-InstrucToEncodePass=<b>conf.php</b> फ़ाइल में पासवर्ड एनकोड करने के लिए, पंक्ति <br><b>$dolibarr_main_db_pass="...";</b><span से बदलें class='notranslate'><br>by<br><b>$dolibarr_main_db_pass="%s";</b>
+InstrucToEncodePass=<b>conf.php</b> फ़ाइल में पासवर्ड एनकोड करने के लिए, पंक्ति <br><b>$dolibarr_main_db_pass="...";</b><br>by<br><b>$dolibarr_main_db_pass="%s";</b>
 InstrucToClearPass=To have password decoded (clear) into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="crypted:...";</b><br>by<br><b>$dolibarr_main_db_pass="%s";</b>
 ProtectAndEncryptPdfFiles=जेनरेट की गई PDF फ़ाइलों को सुरक्षित रखें। यह अनुशंसित नहीं है क्योंकि यह बड़ी मात्रा में PDF बनाने की प्रक्रिया को बाधित करता है।
 ProtectAndEncryptPdfFilesDesc=PDF दस्तावेज़ की सुरक्षा इसे किसी भी PDF ब्राउज़र के साथ पढ़ने और प्रिंट करने के लिए उपलब्ध रखती है। हालाँकि, संपादन और प्रतिलिपि बनाना अब संभव नहीं है। ध्यान दें कि इस सुविधा का उपयोग करने से वैश्विक मर्ज किए गए PDF का निर्माण काम नहीं करता है।
