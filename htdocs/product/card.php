@@ -549,11 +549,11 @@ if (empty($reshook)) {
 		if (!$error) {
 			$units = GETPOSTINT('units');
 
-			$object->entity				= $conf->entity;
-			$object->ref				= (string) $ref;
-			$object->label				= GETPOST('label', $label_security_check);
-			$object->price_base_type	= GETPOST('price_base_type', 'aZ09');
-			$object->mandatory_period	= empty(GETPOST("mandatoryperiod", 'alpha')) ? 0 : 1;
+			$object->entity = $conf->entity;
+			$object->ref = (string) $ref;
+			$object->label = GETPOST('label', $label_security_check);
+			$object->price_base_type = GETPOST('price_base_type', 'aZ09');
+			$object->mandatory_period = empty(GETPOST("mandatoryperiod", 'alpha')) ? 0 : 1;
 			if ($object->price_base_type == 'TTC') {
 				$object->price_ttc = GETPOSTFLOAT('price');
 			} else {
@@ -606,8 +606,8 @@ if (empty($reshook)) {
 			$object->localtax1_type = $localtax1_type;
 			$object->localtax2_type = $localtax2_type;
 
-			$object->type               	 = $type;
-			$object->status             	 = GETPOSTINT('statut');
+			$object->type = $type;
+			$object->status = GETPOSTINT('statut');
 			$object->status_buy = GETPOSTINT('statut_buy');
 			$object->status_batch = GETPOSTINT('status_batch');
 			$object->sell_or_eat_by_mandatory = GETPOSTINT('sell_or_eat_by_mandatory');
@@ -625,25 +625,25 @@ if (empty($reshook)) {
 				$mesg = 'Failed to get bar code type information ';
 				setEventMessages($mesg.$stdobject->error, $stdobject->errors, 'errors');
 			}
-			$object->barcode_type_code      = $stdobject->barcode_type_code;
-			$object->barcode_type_coder     = $stdobject->barcode_type_coder;
-			$object->barcode_type_label     = $stdobject->barcode_type_label;
+			$object->barcode_type_code = $stdobject->barcode_type_code;
+			$object->barcode_type_coder = $stdobject->barcode_type_coder;
+			$object->barcode_type_label = $stdobject->barcode_type_label;
 
-			$object->description        	 = dol_htmlcleanlastbr(GETPOST('desc', 'restricthtml'));
+			$object->description = dol_htmlcleanlastbr(GETPOST('desc', 'restricthtml'));
 			$object->url = GETPOST('url');
-			$object->note_private          	 = dol_htmlcleanlastbr(GETPOST('note_private', 'restricthtml'));
-			$object->note               	 = $object->note_private; // deprecated
-			$object->customcode              = GETPOST('customcode', 'alphanohtml');
+			$object->note_private = dol_htmlcleanlastbr(GETPOST('note_private', 'restricthtml'));
+			$object->note = $object->note_private; // deprecated
+			$object->customcode = GETPOST('customcode', 'alphanohtml');
 			$object->country_id = GETPOSTINT('country_id');
 			$object->state_id = GETPOSTINT('state_id');
-			$object->lifetime               = GETPOSTINT('lifetime');
-			$object->qc_frequency           = GETPOSTINT('qc_frequency');
-			$object->duration_value     	 = $duration_value;
-			$object->duration_unit      	 = $duration_unit;
-			$object->fk_default_warehouse	 = GETPOSTINT('fk_default_warehouse');
-			$object->fk_default_workstation	 = GETPOSTINT('fk_default_workstation');
-			$object->seuil_stock_alerte 	 = GETPOST('seuil_stock_alerte') ? GETPOST('seuil_stock_alerte') : 0;
-			$object->desiredstock          = GETPOST('desiredstock') ? GETPOST('desiredstock') : 0;
+			$object->lifetime = GETPOSTINT('lifetime');
+			$object->qc_frequency = GETPOSTINT('qc_frequency');
+			$object->duration_value = $duration_value;
+			$object->duration_unit = $duration_unit;
+			$object->fk_default_warehouse = GETPOSTINT('fk_default_warehouse');
+			$object->fk_default_workstation = GETPOSTINT('fk_default_workstation');
+			$object->seuil_stock_alerte = GETPOST('seuil_stock_alerte') ? GETPOST('seuil_stock_alerte') : 0;
+			$object->desiredstock = GETPOST('desiredstock') ? GETPOST('desiredstock') : 0;
 			$object->canvas = GETPOST('canvas');
 			$object->net_measure = GETPOST('net_measure');
 			$object->net_measure_units = GETPOST('net_measure_units') === '' ? null : GETPOSTINT('net_measure_units'); // This is not the fk_unit but the power of unit
