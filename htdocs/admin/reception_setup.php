@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018	   Quentin Vial-Gouteyron    <quentin.vial-gouteyron@atm-consulting.fr>
+/* Copyright (C) 2018	    Quentin Vial-Gouteyron      <quentin.vial-gouteyron@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
@@ -131,6 +131,7 @@ if ($action == 'updateMask') {
 
 		$module = new $classname($db);
 		'@phan-var-force ModelePdfReception $module';
+		/** @var ModelePdfReception $module */
 
 		if ($module->write_file($exp, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=reception&file=SPECIMEN.pdf");
@@ -220,8 +221,8 @@ foreach ($dirmodels as $reldir) {
 					require_once $dir.'/'.$file.'.php';
 
 					$module = new $file();
-
 					'@phan-var-force ModelNumRefReception $module';
+					/** @var ModelNumRefReception $module */
 
 					if ($module->isEnabled()) {
 						// Show modules according to features level
@@ -364,12 +365,13 @@ foreach ($dirmodels as $reldir) {
 							$module = new $classname($db);
 
 							'@phan-var-force ModelePdfReception $module';
+							/** @var ModelePdfReception $module */
 
 							$modulequalified = 1;
-							if (isset($module->version) && $module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
+							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
 							}
-							if (isset($module->version) && $module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
+							if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 								$modulequalified = 0;
 							}
 
