@@ -644,7 +644,7 @@ if (empty($reshook)) {
 			$object->fk_default_workstation	 = GETPOSTINT('fk_default_workstation');
 			$object->seuil_stock_alerte 	 = GETPOST('seuil_stock_alerte') ? GETPOST('seuil_stock_alerte') : 0;
 			$object->desiredstock          = GETPOST('desiredstock') ? GETPOST('desiredstock') : 0;
-			$object->canvas             	 = GETPOST('canvas');
+			$object->canvas = GETPOST('canvas');
 			$object->net_measure = GETPOST('net_measure');
 			$object->net_measure_units = GETPOST('net_measure_units') === '' ? null : GETPOSTINT('net_measure_units'); // This is not the fk_unit but the power of unit
 			$object->weight = GETPOST('weight');
@@ -792,12 +792,12 @@ if (empty($reshook)) {
 				$object->oldcopy = dol_clone($object, 1);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 				if (!getDolGlobalString('PRODUCT_GENERATE_REF_AFTER_FORM')) {
-					$object->ref                = (string) $ref;
+					$object->ref = (string) $ref;
 				}
-				$object->label                  = GETPOST('label', $label_security_check);
+				$object->label = GETPOST('label', $label_security_check);
 
 				$desc = dol_htmlcleanlastbr(preg_replace('/&nbsp;$/', '', GETPOST('desc', 'restricthtml')));
-				$object->description            = $desc;
+				$object->description = $desc;
 
 				$object->url = GETPOST('url');
 				if (getDolGlobalString('MAIN_DISABLE_NOTES_TAB')) {
@@ -807,37 +807,37 @@ if (empty($reshook)) {
 				$object->customcode = GETPOST('customcode', 'alpha');
 				$object->country_id = GETPOSTINT('country_id');
 				$object->state_id = GETPOSTINT('state_id');
-				$object->lifetime               = GETPOSTINT('lifetime');
-				$object->qc_frequency           = GETPOSTINT('qc_frequency');
-				$object->status                 = GETPOSTINT('statut');
-				$object->status_buy             = GETPOSTINT('statut_buy');
+				$object->lifetime = GETPOSTINT('lifetime');
+				$object->qc_frequency = GETPOSTINT('qc_frequency');
+				$object->status = GETPOSTINT('statut');
+				$object->status_buy = GETPOSTINT('statut_buy');
 				$object->status_batch = GETPOSTINT('status_batch');
 				$object->sell_or_eat_by_mandatory = GETPOSTINT('sell_or_eat_by_mandatory');
 				$object->batch_mask = GETPOST('batch_mask', 'alpha');
-				$object->fk_default_warehouse   = GETPOSTINT('fk_default_warehouse');
-				$object->fk_default_workstation   = GETPOSTINT('fk_default_workstation');
+				$object->fk_default_warehouse = GETPOSTINT('fk_default_warehouse');
+				$object->fk_default_workstation = GETPOSTINT('fk_default_workstation');
 				// removed from update view so GETPOST always empty
 				/*
-				$object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
-				$object->desiredstock           = GETPOST('desiredstock');
+				$object->seuil_stock_alerte = GETPOST('seuil_stock_alerte');
+				$object->desiredstock = GETPOST('desiredstock');
 				*/
-				$object->duration_value         = GETPOST('duration_value');
-				$object->duration_unit          = GETPOST('duration_unit', 'alpha');
+				$object->duration_value = GETPOST('duration_value');
+				$object->duration_unit = GETPOST('duration_unit', 'alpha');
 
-				$object->canvas                 = GETPOST('canvas');
-				$object->net_measure            = GETPOST('net_measure');
-				$object->net_measure_units      = GETPOST('net_measure_units') === '' ? null : GETPOSTINT('net_measure_units'); // This is not the fk_unit but the power of unit
-				$object->weight                 = GETPOST('weight');
-				$object->weight_units           = GETPOST('weight_units'); // This is not the fk_unit but the power of unit
-				$object->length                 = GETPOST('size');
-				$object->length_units           = GETPOST('size_units'); // This is not the fk_unit but the power of unit
+				$object->canvas = GETPOST('canvas');
+				$object->net_measure = GETPOST('net_measure');
+				$object->net_measure_units = GETPOST('net_measure_units') === '' ? null : GETPOSTINT('net_measure_units'); // This is not the fk_unit but the power of unit
+				$object->weight = GETPOST('weight');
+				$object->weight_units = GETPOST('weight_units') === '' ? null : GETPOSTINT('weight_units'); // This is not the fk_unit but the power of unit
+				$object->length = GETPOST('size');
+				$object->length_units = GETPOST('size_units') === '' ? null : GETPOSTINT('size_units'); // This is not the fk_unit but the power of unit
 				$object->width = GETPOST('sizewidth');
 				$object->height = GETPOST('sizeheight');
 
-				$object->surface                = GETPOST('surface');
-				$object->surface_units          = GETPOST('surface_units'); // This is not the fk_unit but the power of unit
-				$object->volume                 = GETPOST('volume');
-				$object->volume_units           = GETPOST('volume_units'); // This is not the fk_unit but the power of unit
+				$object->surface = GETPOST('surface');
+				$object->surface_units = GETPOST('surface_units') === '' ? null : GETPOSTINT('surface_units'); // This is not the fk_unit but the power of unit
+				$object->volume = GETPOST('volume');
+				$object->volume_units = GETPOST('volume_units') === '' ? null : GETPOSTINT('volume_units'); // This is not the fk_unit but the power of unit
 
 				$finished = GETPOSTINT('finished');
 				if ($finished >= 0) {
@@ -854,8 +854,8 @@ if (empty($reshook)) {
 				}
 
 				// managed_in_stock
-				$object->stockable_product   = (int) GETPOSTISSET('stockable_product');
-				if ($object->status_batch > 0  && $object->stockable_product == 0 && isModEnabled('stock') && isModEnabled('productbatch')) {
+				$object->stockable_product = (int) GETPOSTISSET('stockable_product');
+				if ($object->status_batch > 0 && $object->stockable_product == 0 && isModEnabled('stock') && isModEnabled('productbatch')) {
 					$object->stockable_product = 1;
 					setEventMessages($langs->trans('ForceBatchesNeedStockManagement'), null, 'warnings');
 				}
@@ -879,9 +879,9 @@ if (empty($reshook)) {
 					$mesg = 'Failed to get bar code type information ';
 					setEventMessages($mesg.$stdobject->error, $stdobject->errors, 'errors');
 				}
-				$object->barcode_type_code      = $stdobject->barcode_type_code;
-				$object->barcode_type_coder     = $stdobject->barcode_type_coder;
-				$object->barcode_type_label     = $stdobject->barcode_type_label;
+				$object->barcode_type_code = $stdobject->barcode_type_code;
+				$object->barcode_type_coder = $stdobject->barcode_type_coder;
+				$object->barcode_type_label = $stdobject->barcode_type_label;
 
 				$accountancy_code_sell = GETPOST('accountancy_code_sell', 'alpha');
 				$accountancy_code_sell_intra = GETPOST('accountancy_code_sell_intra', 'alpha');
