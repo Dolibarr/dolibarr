@@ -126,16 +126,6 @@ if (GETPOST('action') == 'disable_specialchar') {
 if (GETPOST('save', 'alpha')) {
 	$error = 0;
 
-	$fckeditor_skin = GETPOST('fckeditor_skin', 'alpha');
-	if (!empty($fckeditor_skin)) {
-		$result = dolibarr_set_const($db, 'FCKEDITOR_SKIN', $fckeditor_skin, 'chaine', 0, '', $conf->entity);
-		if ($result <= 0) {
-			$error++;
-		}
-	} else {
-		$error++;
-	}
-
 	$fckeditor_test = GETPOST('formtestfield', 'restricthtml');
 	if (!empty($fckeditor_test)) {
 		$result = dolibarr_set_const($db, 'FCKEDITOR_TEST', $fckeditor_test, 'chaine', 0, '', $conf->entity);
@@ -162,7 +152,8 @@ if (GETPOST('save', 'alpha')) {
 
 llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-fckeditor');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("AdvancedEditor"), $linkback, 'title_setup');
 print '<br>';
 

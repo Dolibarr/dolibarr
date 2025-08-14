@@ -23,28 +23,6 @@
  */
 
 /**
- * Prepare array with list of tabs
- *
- * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
- */
-function openid_connect_prepare_head()
-{
-	global $langs, $conf;
-	$h = 0;
-	$head = array();
-
-	$head[$h][0] = dol_buildpath("/admin/openid_connect.php", 1);
-	$head[$h][1] = $langs->trans("Parameters");
-	$head[$h][2] = 'settings';
-	$h++;
-
-	complete_head_from_modules($conf, $langs, null, $head, $h, 'openid_connect_admin');
-
-	return $head;
-}
-
-
-/**
  * return the current state
  *
  * @return  string				String containing the state

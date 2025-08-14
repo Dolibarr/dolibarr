@@ -42,7 +42,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class FactureFournisseurRec extends CommonInvoice
 {
-	const TRIGGER_PREFIX = 'SUPPLIERBILLREC';
+	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'SUPPLIERBILLREC';
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -66,7 +71,7 @@ class FactureFournisseurRec extends CommonInvoice
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'bill';
+	public $picto = 'supplier_invoice';
 
 	/**
 	 * {@inheritdoc}

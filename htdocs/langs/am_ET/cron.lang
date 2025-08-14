@@ -77,6 +77,7 @@ CronType=የሥራ ዓይነት
 CronType_method=የ PHP ክፍል የጥሪ ዘዴ
 CronType_command=የሼል ትዕዛዝ
 CronCannotLoadClass=የክፍል ፋይልን መጫን አልተቻለም %s (ክፍል %s ለመጠቀም)
+CronModuleNotEnabledInThisEntity=Cron module not enabled in this entity (to use %s method of %s object)
 CronCannotLoadObject=የክፍል ፋይል %s ተጭኗል፣ ነገር ግን %s አልተገኘም
 UseMenuModuleToolsToAddCronJobs=ወደ ሜኑ ይሂዱ "<a href="%s">ቤት - የአስተዳዳሪ መሳሪያዎች - የታቀዱ ስራዎችን ለማየት እና ለማረም</a>"
 JobDisabled=ሥራ ተወግዷል

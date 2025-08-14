@@ -69,6 +69,7 @@ AllOrders=Todas las órdenes
 NbOfOrders=Numero de ordenes
 OrdersStatistics=Estadísticas de Order
 OrdersStatisticsSuppliers=Estadísticas de orden de compra
+NumberOfOrders=Numero de ordenes
 AmountOfOrdersByMonthHT=Cantidad de pedidos por mes (sin impuestos)
 ListOfOrders=Lista de pedidos
 ConfirmCloseOrder=¿Está seguro de que desea configurar este pedido para entregado? Una vez que se entrega un pedido, se puede configurar para facturarse.

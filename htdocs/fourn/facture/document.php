@@ -111,7 +111,7 @@ llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-fourn-facture page-ca
 
 if ($object->id > 0) {
 	$head = facturefourn_prepare_head($object);
-	print dol_get_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'), -1, 'supplier_invoice');
+	print dol_get_fiche_head($head, 'documents', $langs->trans('SupplierInvoice'), -1, $object->picto);
 
 	$totalpaid = $object->getSommePaiement();
 
@@ -130,7 +130,7 @@ if ($object->id > 0) {
 	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>';
-		if (0) {
+		if (0) {	// @phpstan-ignore-line
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';

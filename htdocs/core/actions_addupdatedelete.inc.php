@@ -61,6 +61,9 @@
  * @var string $hidedetails
  * @var string $hidedesc
  * @var string $hideref
+ * @var ?string $confirm
+ * @var ?int $lineid
+ * @var ?int $id
  */
 // $action or $cancel must be defined
 // $object must be defined

@@ -32,6 +32,7 @@ require '../main.inc.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ * @var	Societe	$mysoc
  */
 
 // Load translation files required by the page
@@ -111,7 +112,9 @@ if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_IN
 
 print '<section class="setupsection setupcompany cursorpointer">';
 
-print img_picto('', 'company', 'class="paddingright valignmiddle double"').' '.$langs->trans("SetupDescriptionLink", DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit&token='.newToken()), $langs->transnoentities("Setup"), $langs->transnoentities("MenuCompanySetup"));
+print img_picto('', 'company', 'class="paddingright valignmiddle double"');
+print ' ';
+print '<a class="nounderlineimp" href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit&token='.newToken()).'">'.$langs->transnoentities("Setup").' - '.$langs->transnoentities("MenuCompanySetup").'</a>';
 print '<br><br>';
 print $langs->trans("SetupDescription3b");
 if (!empty($setupcompanynotcomplete)) {
@@ -141,7 +144,9 @@ foreach ($listofmodulesautoenabled as $moduleautoenable) {
 }
 
 // Show info setup module
-print img_picto('', 'cog', 'class="paddingright valignmiddle double"').' '.$langs->trans("SetupDescriptionLink", DOL_URL_ROOT.'/admin/modules.php?mainmenu=home', $langs->transnoentities("Setup"), $langs->transnoentities("Modules"));
+print img_picto('', 'cog', 'class="paddingright valignmiddle double"');
+print ' ';
+print '<a class="nounderlineimp" href="'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home">'.$langs->transnoentities("Setup").' - '.$langs->transnoentities("Modules").'</a>';
 print '<br><br>'.$langs->trans("SetupDescription4b");
 if ($nbmodulesnotautoenabled <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
 	$langs->load("errors");

@@ -4,6 +4,7 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Anthony Damhet				<a.damhet@progiseize.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +53,7 @@ $id = GETPOSTINT('id');
 
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
+$splitamounts = GETPOST('splitamounts', 'array');
 
 // Security check
 $socid = GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('socid');
@@ -68,8 +70,6 @@ $result = restrictedArea($user, 'societe', $id, '&societe', '', 'fk_soc', 'rowid
 
 $permissiontocreate = ($user->hasRight('societe', 'creer') || $user->hasRight('facture', 'creer'));
 
-
-
 /*
  * Actions
  */
@@ -77,6 +77,87 @@ $permissiontocreate = ($user->hasRight('societe', 'creer') || $user->hasRight('f
 if (GETPOST('cancel', 'alpha') && !empty($backtopage)) {
 	header("Location: ".$backtopage);
 	exit;
+}
+
+if ($action == 'confirm_split_more' && $permissiontocreate) {
+	$error = 0;
+	$remid = (GETPOSTINT("remid") ? GETPOSTINT("remid") : 0);
+	$discount = new DiscountAbsolute($db);
+	$res = $discount->fetch($remid);
+	if (!($res > 0)) {
+		$error++;
+		setEventMessages($langs->trans("ErrorFailedToLoadDiscount"), null, 'errors');
+	}
+	if (empty($splitamounts)) {
+		$error++;
+		setEventMessages($langs->trans("TotalOfDiscountMustEqualsOriginal"), null, 'errors');
+	}
+	if (!$error) {
+		$totalsplitted = 0;
+		foreach ($splitamounts as $key => $value) {
+			$totalsplitted += (float) $value;
+		}
+		if ($totalsplitted != (float) $discount->amount_ttc) {
+			$error++;
+			setEventMessages($langs->trans("TotalOfDiscountMustEqualsOriginal"), null, 'errors');
+		}
+	}
+
+	if (!$error) {
+		$db->begin();
+
+		foreach ($splitamounts as $key => $value) {
+			if ((float) $value == 0) {
+				continue;
+			}
+			//
+			$newdiscount = new DiscountAbsolute($db);
+			$newdiscount->fk_facture_source = $discount->fk_facture_source;
+			$newdiscount->fk_facture = $discount->fk_facture;
+			$newdiscount->fk_facture_line = $discount->fk_facture_line;
+			$newdiscount->fk_invoice_supplier_source = $discount->fk_invoice_supplier_source;
+			$newdiscount->fk_invoice_supplier = $discount->fk_invoice_supplier;
+			$newdiscount->fk_invoice_supplier_line = $discount->fk_invoice_supplier_line;
+			if ($discount->description == '(CREDIT_NOTE)' || $discount->description == '(DEPOSIT)') {
+				$newdiscount->description = $discount->description;
+			} else {
+				$newdiscount->description = $discount->description.' (1)';
+			}
+			$newdiscount->fk_user = $discount->fk_user;
+			$newdiscount->fk_soc = $discount->fk_soc;
+			$newdiscount->socid = $discount->socid;
+			$newdiscount->discount_type = $discount->discount_type;
+			$newdiscount->datec = $discount->datec;
+			$newdiscount->tva_tx = $discount->tva_tx;
+			$newdiscount->vat_src_code = $discount->vat_src_code;
+			$newdiscount->amount_ttc = price2num($value);
+			$newdiscount->amount_ht = price2num($newdiscount->amount_ttc / (1 + $newdiscount->tva_tx / 100), 'MT');
+			$newdiscount->amount_tva = price2num($newdiscount->amount_ttc - $newdiscount->amount_ht);
+			$newdiscount->multicurrency_amount_ttc = (float) $value * ($discount->multicurrency_amount_ttc / $discount->amount_ttc);
+			$newdiscount->multicurrency_amount_ht = price2num($newdiscount->multicurrency_amount_ttc / (1 + $newdiscount->tva_tx / 100), 'MT');
+			$newdiscount->multicurrency_amount_tva = price2num($newdiscount->multicurrency_amount_ttc - $newdiscount->multicurrency_amount_ht);
+
+			$newdiscountID = $newdiscount->create($user);
+			if (!$newdiscountID) {
+				$error++;
+			}
+		}
+
+		if (!$error) {
+			$discount->fk_facture_source = 0;
+			$discount->fk_invoice_supplier_source = 0;
+			$res = $discount->delete($user);
+			if ($res > 0) {
+				$db->commit();
+				header("Location: ".$_SERVER["PHP_SELF"].'?id='.$id.($backtopage ? '&backtopage='.urlencode($backtopage) : '')); // To avoid pb with back
+				exit;
+			} else {
+				$db->rollback();
+			}
+		} else {
+			$db->rollback();
+		}
+	}
 }
 
 if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permissiontocreate) {
@@ -570,15 +651,162 @@ if ($socid > 0) {
 			print '</div>';
 
 			if (count($showconfirminfo)) {
-				$amount1 = price2num($showconfirminfo['amount_ttc'] / 2, 'MT');
-				$amount2 = ($showconfirminfo['amount_ttc'] - (float) $amount1);
-				$formquestion = array(
-					'text' => $langs->trans('TypeAmountOfEachNewDiscount'),
-					0 => array('type' => 'text', 'name' => 'amount_ttc_1', 'label' => $langs->trans("AmountTTC").' 1', 'value' => $amount1, 'size' => '5'),
-					1 => array('type' => 'text', 'name' => 'amount_ttc_2', 'label' => $langs->trans("AmountTTC").' 2', 'value' => $amount2, 'size' => '5')
-				);
-				$langs->load("dict");
-				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'].($backtopage ? '&backtopage='.urlencode($backtopage) : ''), $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount', price($showconfirminfo['amount_ttc']), $langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, '', 0);
+				if (getDolGlobalInt('DISCOUNT_SPLIT_MORE_THAN_TWO_PARTS') && !getDolGlobalInt('MAIN_DISABLE_JAVASCRIPT')) {
+					print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'].'" id="formsplit" data-totaltosplit="'.$showconfirminfo['amount_ttc'].'" data-remaintosplit="0">';
+
+					//
+					print '<input type="hidden" name="action" value="confirm_split_more">';
+					print '<input type="hidden" name="token" value="'.newToken().'">';
+
+					print '<div class="div-table-responsive-no-min">';
+					print '<table class="valid centpercent">';
+					print '<tbody>';
+
+					// Title
+					print '<tr class="validtitre">';
+					print '<td class="validtitre" colspan="4">'.img_picto('', 'split', '', 0, 0, 0, '', 'paddingright').' '.$langs->trans('SplitDiscountTitle').'</td>';
+					print '</tr>';
+
+					print '<tr class="valid">';
+					print '<td class="" colspan="4">'.$langs->trans('TypeAmountOfEachNewDiscountSplit').'</td>';
+					print '</tr>';
+
+					//
+					if (empty($splitamounts)) {
+						$amount1 = price2num($showconfirminfo['amount_ttc'] / 2, 'MT');
+						$amount2 = ($showconfirminfo['amount_ttc'] - (float) $amount1);
+						$remaintosplit = (float) $showconfirminfo['amount_ttc'] - ((float) $amount1 + (float) $amount2);
+
+						print '<tr class="valid splitline" id="splitline-1">';
+						print '<td class="right bold">'.$langs->trans('AmountTTC').' 1:</td>';
+						print '<td class="right"><input type="number" step="any" min="0" class="flat splitinput" name="splitamounts[1]" value="'.$amount1.'"></td>';
+						print '<td class="right delsplitline"></td>';
+						print '<td class="right"></td>';
+						print '</tr>';
+
+						print '<tr class="valid splitline" id="splitline-2">';
+						print '<td class="right bold">'.$langs->trans('AmountTTC').' 2:</td>';
+						print '<td class="right"><input type="number" step="any" min="0" class="flat splitinput" name="splitamounts[2]" value="'.$amount2.'"></td>';
+						print '<td class="right delsplitline"></td>';
+						print '<td class="right"></td>';
+						print '</tr>';
+					} else {
+						$nbSplitLines = count($splitamounts);
+						$remaintosplit = $showconfirminfo['amount_ttc'];
+						foreach ($splitamounts as $numero => $value) {
+							$remaintosplit -= (float) $value;
+							print '<tr class="valid splitline" id="splitline-'.$numero.'">';
+							print '<td class="right bold">'.$langs->trans('AmountTTC').' '.$numero.':</td>';
+							print '<td class="right"><input type="number" step="any" min="0" class="flat splitinput" name="splitamounts['.$numero.']" value="'.$splitamounts[$numero].'"></td>';
+							print '<td class="right delsplitline"></td>';
+							print '<td class="right"></td>';
+							print '</tr>';
+						}
+					}
+
+					print '<tr class="valid">';
+					print '<td class="right"></td>';
+					print '<td class="right"><span class="fas fa-plus-circle" id="splitaddline" style="cursor:pointer;"></span></td>';
+					print '<td class="right"></td>';
+					print '</tr>';
+
+					print '<tr class="valid">';
+					print '<td colspan="3">&nbsp;</td>';
+					print '</tr>';
+
+					//
+					print '<tr class="valid">';
+					print '<td class="right bold">'.$langs->trans('RemainToSplit').':</td>';
+					print '<td class="right"><span id="remaintosplit">'.price($remaintosplit).'</span> '.$conf->currency.'</td>';
+					print '<td class="right"></td>';
+					print '</tr>';
+
+					print '<tr class="valid">';
+					print '<td class="right bold"></td>';
+					print '<td class="right"><input type="submit" class="button valignmiddle confirmvalidatebutton small nomarginright"></td>';
+					print '<td class="right"></td>';
+					print '</tr>';
+
+					print '</tbody>';
+					print '</table>';
+					print '</div>';
+					print '</form>';
+					print '<br>';
+					?>
+					<script nonce="<?php print getNonce(); ?>" type="text/javascript">
+						$(document).ready(function () {
+
+							let formsplit = $('#formsplit');
+							let totaltosplit = formsplit.data('totaltosplit');
+
+							function calcRemainToPay(){
+								let items = formsplit.find('.splitinput');
+								let remaintosplit = totaltosplit;
+
+								items.each(function(e){
+									var itemvalue = parseFloat($(this).val().replace(',', '.'));
+									if (isNaN(itemvalue)) {
+										itemvalue = 0;
+									}
+									remaintosplit -= itemvalue;
+								});
+
+								let remaintosplitval = remaintosplit.toFixed(2);
+								console.log(remaintosplitval);
+								formsplit.data('remaintosplit', remaintosplitval);
+								formsplit.find('#remaintosplit').html(remaintosplitval.replace('.',','));
+								formsplit.find('input[type=submit]').prop('disabled', true);
+								if (remaintosplit == 0) {
+									formsplit.find('input[type=submit]').prop('disabled', false);
+								}
+							}
+
+							// Addline
+							$(document).on('click', '#splitaddline', function(){
+								let splitlines = formsplit.find('.splitline');
+								let numlines = splitlines.length;
+								let nextNum = numlines + 1;
+								let newInputValue = formsplit.data('remaintosplit');
+								$('#splitline-'+numlines).find('.delsplitline').html('');
+								var splitTemplate = '<tr class="splitline" id="splitline-'+ nextNum +'">';
+								splitTemplate += '<td class="right bold"><?php echo $langs->trans('AmountTTC'); ?> '+ nextNum +':</td>';
+								splitTemplate += '<td class="right"><input type="number" step="any" min="0" class="flat splitinput" name="splitamounts['+ nextNum +']" value="'+ parseFloat(newInputValue) +'"></td>';
+								splitTemplate += '<td class="right delsplitline"><span class="fas fa-trash icon-delsplitline" data-splitline="'+ nextNum +'" style="cursor:pointer;"></span></td>';
+								splitTemplate += '<td class="right"></td>';
+								splitTemplate += '</tr>';
+								$('#splitline-'+numlines).after(splitTemplate);
+								calcRemainToPay();
+							});
+
+							// Update line
+							$(document).on('change', '.splitinput', function(){
+								calcRemainToPay();
+							});
+
+							// Delete line
+							$(document).on('click', '.icon-delsplitline', function(){
+								let num = parseInt($(this).data('splitline'));
+								let numBefore = num - 1;
+								if (numBefore > 2) {
+									$('#splitline-'+numBefore).find('.delsplitline').html('<span class="fas fa-trash icon-delsplitline" data-splitline="'+ numBefore +'"></span>');
+								}
+								$('#splitline-'+num).remove();
+								calcRemainToPay();
+							});
+						});
+					</script>
+					<?php
+				} else {
+					$amount1 = price2num($showconfirminfo['amount_ttc'] / 2, 'MT');
+					$amount2 = ($showconfirminfo['amount_ttc'] - (float) $amount1);
+					$formquestion = array(
+						'text' => $langs->trans('TypeAmountOfEachNewDiscount'),
+						0 => array('type' => 'text', 'name' => 'amount_ttc_1', 'label' => $langs->trans("AmountTTC").' 1', 'value' => $amount1, 'size' => '5'),
+						1 => array('type' => 'text', 'name' => 'amount_ttc_2', 'label' => $langs->trans("AmountTTC").' 2', 'value' => $amount2, 'size' => '5')
+					);
+					$langs->load("dict");
+					print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'].($backtopage ? '&backtopage='.urlencode($backtopage) : ''), $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount', price($showconfirminfo['amount_ttc']), $langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, '', 0);
+				}
 			}
 		} else {
 			dol_print_error($db);
@@ -717,15 +945,162 @@ if ($socid > 0) {
 			print '</div>';
 
 			if (count($showconfirminfo)) {
-				$amount1 = price2num($showconfirminfo['amount_ttc'] / 2, 'MT');
-				$amount2 = ($showconfirminfo['amount_ttc'] - (float) $amount1);
-				$formquestion = array(
-					'text' => $langs->trans('TypeAmountOfEachNewDiscount'),
-					0 => array('type' => 'text', 'name' => 'amount_ttc_1', 'label' => $langs->trans("AmountTTC").' 1', 'value' => $amount1, 'size' => '5'),
-					1 => array('type' => 'text', 'name' => 'amount_ttc_2', 'label' => $langs->trans("AmountTTC").' 2', 'value' => $amount2, 'size' => '5')
-				);
-				$langs->load("dict");
-				print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'].($backtopage ? '&backtopage='.urlencode($backtopage) : ''), $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount', price($showconfirminfo['amount_ttc']), $langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, 0, 0);
+				if (getDolGlobalInt('DISCOUNT_SPLIT_MORE_THAN_TWO_PARTS') && !getDolGlobalInt('MAIN_DISABLE_JAVASCRIPT')) {
+					print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'].'" id="formsplit" data-totaltosplit="'.$showconfirminfo['amount_ttc'].'" data-remaintosplit="0">';
+
+					//
+					print '<input type="hidden" name="action" value="confirm_split_more">';
+					print '<input type="hidden" name="token" value="'.newToken().'">';
+
+					print '<div class="div-table-responsive-no-min">';
+					print '<table class="valid centpercent">';
+					print '<tbody>';
+
+					// Title
+					print '<tr class="validtitre">';
+					print '<td class="validtitre" colspan="4">'.img_picto('', 'split', '', 0, 0, 0, '', 'paddingright').' '.$langs->trans('SplitDiscountTitle').'</td>';
+					print '</tr>';
+
+					print '<tr class="valid">';
+					print '<td class="" colspan="4">'.$langs->trans('TypeAmountOfEachNewDiscountSplit').'</td>';
+					print '</tr>';
+
+					//
+					if (empty($splitamounts)) {
+						$amount1 = price2num($showconfirminfo['amount_ttc'] / 2, 'MT');
+						$amount2 = ($showconfirminfo['amount_ttc'] - (float) $amount1);
+						$remaintosplit = (float) $showconfirminfo['amount_ttc'] - ((float) $amount1 + (float) $amount2);
+
+						print '<tr class="valid splitline" id="splitline-1">';
+						print '<td class="right bold">'.$langs->trans('AmountTTC').' 1:</td>';
+						print '<td class="right"><input type="number" step="any" min="0" class="flat splitinput" name="splitamounts[1]" value="'.$amount1.'"></td>';
+						print '<td class="right delsplitline"></td>';
+						print '<td class="right"></td>';
+						print '</tr>';
+
+						print '<tr class="valid splitline" id="splitline-2">';
+						print '<td class="right bold">'.$langs->trans('AmountTTC').' 2:</td>';
+						print '<td class="right"><input type="number" step="any" min="0" class="flat splitinput" name="splitamounts[2]" value="'.$amount2.'"></td>';
+						print '<td class="right delsplitline"></td>';
+						print '<td class="right"></td>';
+						print '</tr>';
+					} else {
+						$nbSplitLines = count($splitamounts);
+						$remaintosplit = $showconfirminfo['amount_ttc'];
+						foreach ($splitamounts as $numero => $value) {
+							$remaintosplit -= (float) $value;
+							print '<tr class="valid splitline" id="splitline-'.$numero.'">';
+							print '<td class="right bold">'.$langs->trans('AmountTTC').' '.$numero.':</td>';
+							print '<td class="right"><input type="number" step="any" min="0" class="flat splitinput" name="splitamounts['.$numero.']" value="'.$splitamounts[$numero].'"></td>';
+							print '<td class="right delsplitline"></td>';
+							print '<td class="right"></td>';
+							print '</tr>';
+						}
+					}
+
+					print '<tr class="valid">';
+					print '<td class="right"></td>';
+					print '<td class="right"><span class="fas fa-plus-circle" id="splitaddline" style="cursor:pointer;"></span></td>';
+					print '<td class="right"></td>';
+					print '</tr>';
+
+					print '<tr class="valid">';
+					print '<td colspan="3">&nbsp;</td>';
+					print '</tr>';
+
+					//
+					print '<tr class="valid">';
+					print '<td class="right bold">'.$langs->trans('RemainToSplit').':</td>';
+					print '<td class="right"><span id="remaintosplit">'.price($remaintosplit).'</span> '.$conf->currency.'</td>';
+					print '<td class="right"></td>';
+					print '</tr>';
+
+					print '<tr class="valid">';
+					print '<td class="right bold"></td>';
+					print '<td class="right"><input type="submit" class="button valignmiddle confirmvalidatebutton small nomarginright"></td>';
+					print '<td class="right"></td>';
+					print '</tr>';
+
+					print '</tbody>';
+					print '</table>';
+					print '</div>';
+					print '</form>';
+					print '<br>';
+					?>
+					<script nonce="<?php print getNonce(); ?>" type="text/javascript">
+						$(document).ready(function () {
+
+							let formsplit = $('#formsplit');
+							let totaltosplit = formsplit.data('totaltosplit');
+
+							function calcRemainToPay(){
+								let items = formsplit.find('.splitinput');
+								let remaintosplit = totaltosplit;
+
+								items.each(function(e){
+									var itemvalue = parseFloat($(this).val().replace(',', '.'));
+									if (isNaN(itemvalue)) {
+										itemvalue = 0;
+									}
+									remaintosplit -= itemvalue;
+								});
+
+								let remaintosplitval = remaintosplit.toFixed(2);
+								console.log(remaintosplitval);
+								formsplit.data('remaintosplit', remaintosplitval);
+								formsplit.find('#remaintosplit').html(remaintosplitval.replace('.',','));
+								formsplit.find('input[type=submit]').prop('disabled', true);
+								if (remaintosplit == 0) {
+									formsplit.find('input[type=submit]').prop('disabled', false);
+								}
+							}
+
+							// Addline
+							$(document).on('click', '#splitaddline', function(){
+								let splitlines = formsplit.find('.splitline');
+								let numlines = splitlines.length;
+								let nextNum = numlines + 1;
+								let newInputValue = formsplit.data('remaintosplit');
+								$('#splitline-'+numlines).find('.delsplitline').html('');
+								var splitTemplate = '<tr class="splitline" id="splitline-'+ nextNum +'">';
+								splitTemplate += '<td class="right bold"><?php echo $langs->trans('AmountTTC'); ?> '+ nextNum +':</td>';
+								splitTemplate += '<td class="right"><input type="number" step="any" min="0" class="flat splitinput" name="splitamounts['+ nextNum +']" value="'+ parseFloat(newInputValue) +'"></td>';
+								splitTemplate += '<td class="right delsplitline"><span class="fas fa-trash icon-delsplitline" data-splitline="'+ nextNum +'" style="cursor:pointer;"></span></td>';
+								splitTemplate += '<td class="right"></td>';
+								splitTemplate += '</tr>';
+								$('#splitline-'+numlines).after(splitTemplate);
+								calcRemainToPay();
+							});
+
+							// Update line
+							$(document).on('change', '.splitinput', function(){
+								calcRemainToPay();
+							});
+
+							// Delete line
+							$(document).on('click', '.icon-delsplitline', function(){
+								let num = parseInt($(this).data('splitline'));
+								let numBefore = num - 1;
+								if (numBefore > 2) {
+									$('#splitline-'+numBefore).find('.delsplitline').html('<span class="fas fa-trash icon-delsplitline" data-splitline="'+ numBefore +'"></span>');
+								}
+								$('#splitline-'+num).remove();
+								calcRemainToPay();
+							});
+						});
+					</script>
+					<?php
+				} else {
+					$amount1 = price2num($showconfirminfo['amount_ttc'] / 2, 'MT');
+					$amount2 = ($showconfirminfo['amount_ttc'] - (float) $amount1);
+					$formquestion = array(
+						'text' => $langs->trans('TypeAmountOfEachNewDiscount'),
+						0 => array('type' => 'text', 'name' => 'amount_ttc_1', 'label' => $langs->trans("AmountTTC").' 1', 'value' => $amount1, 'size' => '5'),
+						1 => array('type' => 'text', 'name' => 'amount_ttc_2', 'label' => $langs->trans("AmountTTC").' 2', 'value' => $amount2, 'size' => '5')
+					);
+					$langs->load("dict");
+					print $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&remid='.$showconfirminfo['rowid'].($backtopage ? '&backtopage='.urlencode($backtopage) : ''), $langs->trans('SplitDiscount'), $langs->trans('ConfirmSplitDiscount', price($showconfirminfo['amount_ttc']), $langs->transnoentities("Currency".$conf->currency)), 'confirm_split', $formquestion, 0, 0);
+				}
 			}
 		} else {
 			dol_print_error($db);

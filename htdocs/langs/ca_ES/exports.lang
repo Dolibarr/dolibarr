@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - exports
+ImportExportArea=Importacions / Exportacions
 ExportsArea=Exportacions
 ImportArea=Importació
 NewExport=Exportació nova
@@ -31,10 +32,10 @@ ExportCsvSeparator=Separador de caràcters Csv
 ImportCsvSeparator=Separador de caràcters Csv
 Step=Pas
 FormatedImport=Assistent d'importació
-FormatedImportDesc1=Aquest mòdul us permet actualitzar les dades existents o afegir nous objectes a la base de dades d'un fitxer sense coneixements tècnics, utilitzant un assistent.
+FormatedImportDesc1=Feu clic aquí per utilitzar l'assistent per actualitzar dades existents o afegir objectes nous a la base de dades des d'un fitxer.
 FormatedImportDesc2=El primer pas és triar el tipus de dades que voleu importar, a continuació, el format del fitxer font, a continuació, els camps que voleu importar.
 FormatedExport=Assistent d'exportació
-FormatedExportDesc1=Aquestes eines permeten exportar dades personalitzades mitjançant un assistent per a ajudar-vos en el procés sense necessitat de coneixements tècnics.
+FormatedExportDesc1=Feu clic aquí per utilitzar l'assistent per exportar dades en un format compatible
 FormatedExportDesc2=El primer pas és triar un conjunt de dades predefinit, després els camps que voleu exportar i en quin ordre.
 FormatedExportDesc3=Quan se seleccionen les dades per a exportar, podeu triar el format del fitxer de sortida.
 Sheet=Fulla
@@ -83,7 +84,7 @@ RunSimulateImportFile=Executeu la simulació d'importació
 FieldNeedSource=Aquest camp requereix les dades de l'arxiu d'origen
 SomeMandatoryFieldHaveNoSource=Alguns camps obligatoris no tenen camp font a l'arxiu d'origen
 InformationOnSourceFile=Arxiu font
-InformationOnTargetTables=Target fields
+InformationOnTargetTables=Camps objectiu
 SelectAtLeastOneField=Bascular com a mínim un camp origen a la columna de camps a exportar
 SelectFormat=Seleccioneu aquest format de fitxer d'importació
 RunImportFile=Importa dades

@@ -136,6 +136,8 @@ if (empty($reshook)) {
 			// TODO : add this check at update_linked_resource and when modifying event start or end date
 			// check if an event resource is already in use
 			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $objstat->element == 'action' && $resource_type == 'dolresource' && intval($busy) == 1) {
+				/** @var ActionComm $objstat */
+				'@phan-var-force ActionComm $objstat';
 				$eventDateStart = $objstat->datep;
 				$eventDateEnd   = $objstat->datef;
 				$isFullDayEvent = $objstat->fulldayevent;
@@ -394,7 +396,7 @@ if (!$ret) {
 			if (isModEnabled('project')) {
 				$langs->load("projects");
 				//$morehtmlref .= '<br>';
-				if (0) {
+				if (0) {	// @phpstan-ignore-line
 					$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 					if ($action != 'classify') {
 						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';

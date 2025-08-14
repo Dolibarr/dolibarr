@@ -1627,13 +1627,13 @@ class FormTicket
 			$modelmail_array[$line->id] = $line->label;
 		}
 
+		$ticketstat = new Ticket($this->db);
+		$res = $ticketstat->fetch(0, '', $this->track_id);
+
 		print '<table class="border" width="'.$width.'">';
 
 		// External users can't send message email
 		if ($user->hasRight("ticket", "write") && !$user->socid) {
-			$ticketstat = new Ticket($this->db);
-			$res = $ticketstat->fetch(0, '', $this->track_id);
-
 			print '<tr><td class="width200"></td><td>';
 			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : (getDolGlobalInt('TICKETS_MESSAGE_FORCE_MAIL') ? 'checked' : ''));
 			print '<input type="checkbox" name="send_email" value="1" id="send_msg_email" '.$checkbox_selected.'/> ';
@@ -1685,10 +1685,19 @@ class FormTicket
 			}
 			*/
 
-			// From
+			// From (and Reply-To if defined)
 			$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
-			print '<tr class="email_line"><td class="width200"><span class="">'.$langs->trans("MailFrom").'</span></td>';
-			print '<td><span class="">'.img_picto('', 'email', 'class="pictofixedwidth"').$from.'</span></td></tr>';
+			$replyto = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_REPLYTO');
+			print '<tr class="email_line"><td class="width200"><span class="">'.$langs->trans("MailFrom");
+			if ($replyto) {
+				print ' <span class="opacitymedium">('.$langs->trans("MailReply").')</span>';
+			}
+			print '</span></td>';
+			print '<td><span class="">'.img_picto('', 'email', 'class="pictofixedwidth"').$from;
+			if ($replyto) {
+				print ' <span class="opacitymedium">('.$replyto.')</span>';
+			}
+			print '</span></td></tr>';
 
 			// Recipients / adressed-to
 			print '<tr class="email_line"><td>'.$langs->trans('MailRecipients');

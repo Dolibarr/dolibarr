@@ -2061,6 +2061,11 @@ if ($action == 'create' || $action == 'adduserldap') {
 					print showValueWithClipboardCPButton($object->api_key, 1, $langs->transnoentities("Hidden"));		// TODO Add an option to also reveal the hash, not only copy paste
 					print '</span>';
 				}
+
+				if (getDolGlobalString('API_ENABLE_COUNT_CALLS')) {
+					print ' &nbsp; <span class="badge badge-info" title="'.$langs->trans("TotalAPICall").'">'.getDolUserInt('API_COUNT_CALL').'</span>';
+				}
+
 				print '</td></tr>';
 			}
 			if ((getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) || (getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 1 && $object->id == $user->id)) {

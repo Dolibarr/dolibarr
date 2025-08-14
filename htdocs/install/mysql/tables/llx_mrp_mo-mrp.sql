@@ -41,6 +41,7 @@ CREATE TABLE llx_mrp_mo(
 	fk_bom integer,
 	fk_project integer,
 	last_main_doc varchar(255),
-    fk_parent_line integer
+	fk_parent_line integer,
+	extraparams varchar(255) DEFAULT NULL
     -- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

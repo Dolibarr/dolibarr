@@ -359,8 +359,8 @@ class Asset extends CommonObject
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
-		global $langs, $extrafields;
-		$error = 0;
+		//global $langs, $extrafields;
+		//$error = 0;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 

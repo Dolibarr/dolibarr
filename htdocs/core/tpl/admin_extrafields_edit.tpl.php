@@ -65,6 +65,7 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 			var unique = jQuery("#unique");
 			var required = jQuery("#required");
 			var alwayseditable = jQuery("#alwayseditable");
+			var emptyonclone = jQuery("#emptyonclone");
 			var list = jQuery("#list");
 			var totalizable = jQuery("#totalizable");
 			<?php
@@ -89,14 +90,14 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 				console.log("We enter a computed formula");
 				jQuery("#default_value").val('');
 				/* jQuery("#unique, #required, #alwayseditable, #list").removeAttr('checked'); */
-				jQuery("#default_value, #unique, #required, #alwayseditable, #list").attr('disabled', true);
-				jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_list").hide();
+				jQuery("#default_value, #unique, #required, #alwayseditable, #emptyonclone, #list").attr('disabled', true);
+				jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_emptyonclone, tr.extra_list").hide();
 			}
 			else
 			{
 				console.log("No computed formula");
-				jQuery("#default_value, #unique, #required, #alwayseditable, #list").attr('disabled', false);
-				jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_list").show();
+				jQuery("#default_value, #unique, #required, #alwayseditable, #emptyonclone, #list").attr('disabled', false);
+				jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_emptyonclone, tr.extra_list").show();
 			}
 
 			// Case of ai prompt
@@ -136,14 +137,14 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 
 			if (type == 'separate' || type == 'point' || type == 'linestrg' || type == 'polygon')
 			{
-				required.removeAttr('checked').prop('disabled', true); alwayseditable.removeAttr('checked').prop('disabled', true); list.removeAttr('checked').prop('disabled', true);
+				required.removeAttr('checked').prop('disabled', true); alwayseditable.removeAttr('checked').prop('disabled', true); emptyonclone.removeAttr('checked').prop('disabled', true); list.removeAttr('checked').prop('disabled', true);
 				jQuery('#size, #default_value, #langfile').val('').prop('disabled', true);
 				jQuery('#list').val(3);	// visible on create/update/view form only
 			}
 			else
 			{
 				default_value.removeAttr('disabled');
-				required.removeAttr('disabled'); alwayseditable.removeAttr('disabled'); list.removeAttr('disabled');
+				required.removeAttr('disabled'); alwayseditable.removeAttr('disabled'); emptyonclone.removeAttr('disabled'); list.removeAttr('disabled');
 			}
 		}
 		init_typeoffields(jQuery("#type").val());
@@ -181,6 +182,7 @@ $unique = $extrafields->attributes[$elementtype]['unique'][$attrname];
 $required = $extrafields->attributes[$elementtype]['required'][$attrname];
 $pos = $extrafields->attributes[$elementtype]['pos'][$attrname];
 $alwayseditable = $extrafields->attributes[$elementtype]['alwayseditable'][$attrname];
+$emptyonclone = $extrafields->attributes[$elementtype]['emptyonclone'][$attrname];
 $param = $extrafields->attributes[$elementtype]['param'][$attrname];
 $perms = $extrafields->attributes[$elementtype]['perms'][$attrname];
 $langfile = $extrafields->attributes[$elementtype]['langfile'][$attrname];
@@ -332,6 +334,9 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 
 <!-- Always editable -->
 <tr class="extra_alwayseditable"><td><?php echo $form->textwithpicto($langs->trans("AlwaysEditable"), $langs->trans("EditableWhenDraftOnly")); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable"<?php echo($alwayseditable ? ' checked' : ''); ?>></td></tr>
+
+<!-- Empty on clone -->
+<tr class="extra_emptyonclone"><td><?php echo $form->textwithpicto($langs->trans("EmptyOnClone"), $langs->trans("EmptyOnCloneDesc")); ?></td><td class="valeur"><input id="emptyonclone" type="checkbox" name="emptyonclone"<?php echo($emptyonclone ? ' checked' : ''); ?>></td></tr>
 
 <!-- Permission to edit -->
 <tr class="extra_perms"><td><?php echo $form->textwithpicto($langs->trans("PermissionOnField"), $langs->trans("PermissionToEditField")); ?></td><td class="valeur"><input id="perms" class="minwidth200" type="text" name="perms" value="<?php echo $perms; ?>"></td></tr>

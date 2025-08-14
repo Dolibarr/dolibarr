@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2020	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2018	Ferran Marcet				<fmarcet@2byte.es>
- * Copyright (C) 2014-2022	Charlene Benke				<charlene@patas-monkey.com>
+ * Copyright (C) 2014-2025	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2015-2016	Abbes Bahfir				<bafbes@gmail.com>
  * Copyright (C) 2018-2022	Philippe Grand				<philippe.grand@atoo-net.com>
  * Copyright (C) 2020-2025  Frédéric France				<frederic.france@free.fr>
@@ -1163,7 +1163,7 @@ if ($action == 'create') {
 		print '<table class="border centpercent">';
 		print '<tr><td class="fieldrequired">'.$langs->trans("ThirdParty").'</td><td>';
 		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300');
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&customer=3&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 		print '</td></tr>';
 		print '</table>';
 
@@ -1190,7 +1190,7 @@ if ($action == 'create') {
 
 	$head = fichinter_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("InterventionCard"), -1, 'intervention');
+	print dol_get_fiche_head($head, 'card', $langs->trans("InterventionCard"), -1, $object->picto);
 
 	$formconfirm = '';
 
@@ -1236,6 +1236,7 @@ if ($action == 'create') {
 		$formquestion[] = [
 			'type' 		=> 'select',
 			'name' 		=> 'signed_status',
+			'select_show_empty' => 0,
 			'label'		=> '<span class="fieldrequired">'.$langs->trans('SignStatus').'</span>',
 			'values'	=> $object->getSignedStatusLocalisedArray()
 		];
@@ -1539,7 +1540,7 @@ if ($action == 'create') {
 
 					$temps = $objectline->showOptionals($extrafields, 'view', array(), '', '', '1', 'line');
 					if (!empty($temps)) {
-						print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
+						print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$objp->rowid.'" name="extrafield_lines_area_'.$objp->rowid.'">';
 						print $temps;
 						print '</div>';
 					}

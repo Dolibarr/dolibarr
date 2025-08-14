@@ -56,7 +56,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php'
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -65,7 +64,6 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  * @var Translate $langs
  * @var User $user
  */
-
 if (isModEnabled('propal')) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
@@ -99,6 +97,8 @@ if (isModEnabled('invoice')) {
 if (isModEnabled('productbatch')) {
 	$langs->load("productbatch");
 }
+
+$backtopageforcancel = GETPOST('backtopageforcancel');
 
 $mesg = '';
 $error = 0;
@@ -539,9 +539,9 @@ if (empty($reshook)) {
 			$action = "create";
 			$error++;
 		}
-		$stockable_product = (int) ($type == 0 || ($type == 1 && !empty($conf->global->STOCK_SUPPORTS_SERVICES)));
+		$stockable_product = (int) ($type == 0 || ($type == 1 && getDolGlobalInt('STOCK_SUPPORTS_SERVICES')));
 		if (GETPOST('status_batch') && $stockable_product == 0 && isModEnabled('stock') && isModEnabled('productbatch')) {
-			setEventMessages($langs->trans('ErrorBatchesNeedStockManagement', $langs->transnoentities('Unit')), null, 'errors');
+			setEventMessages($langs->trans('ErrorBatchesNeedStockManagement'), null, 'errors');
 			$action = "create";
 			$error++;
 		}
@@ -855,6 +855,10 @@ if (empty($reshook)) {
 
 				// managed_in_stock
 				$object->stockable_product   = (int) GETPOSTISSET('stockable_product');
+				if ($object->status_batch > 0  && $object->stockable_product == 0 && isModEnabled('stock') && isModEnabled('productbatch')) {
+					$object->stockable_product = 1;
+					setEventMessages($langs->trans('ForceBatchesNeedStockManagement'), null, 'warnings');
+				}
 
 				$units = GETPOSTINT('units');
 				if ($units > 0) {
@@ -919,7 +923,6 @@ if (empty($reshook)) {
 				if ($object->isService()) {
 					$object->mandatory_period =  (!empty($checkmandatory)) ? 1 : 0 ;
 				}
-
 
 
 				// Fill array 'array_options' with data from add form
@@ -1360,6 +1363,18 @@ if (isModEnabled('accounting')) {
 $sellOrEatByMandatoryList = null;
 if (isModEnabled('productbatch')) {
 	$sellOrEatByMandatoryList = Product::getSellOrEatByMandatoryList();
+
+	$disableSellBy = getDolGlobalString('PRODUCT_DISABLE_SELLBY');
+	$disableEatBy  = getDolGlobalString('PRODUCT_DISABLE_EATBY');
+
+	if ($disableSellBy) {
+		unset($sellOrEatByMandatoryList[Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_BY]);
+		unset($sellOrEatByMandatoryList[Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT]);
+	}
+	if ($disableEatBy) {
+		unset($sellOrEatByMandatoryList[Product::SELL_OR_EAT_BY_MANDATORY_ID_EAT_BY]);
+		unset($sellOrEatByMandatoryList[Product::SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT]);
+	}
 }
 
 $title = $langs->trans('ProductServiceCard');
@@ -1585,6 +1600,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			if ($showbarcode && is_object($modBarCodeProduct)) {
+				//var_dump($modBarCodeProduct); exit;
+
 				print '<tr><td>'.$langs->trans('BarcodeType').'</td><td>';
 				if (GETPOSTISSET('fk_barcode_type')) {
 					$fk_barcode_type = GETPOST('fk_barcode_type') ? GETPOST('fk_barcode_type') : 0;
@@ -1599,14 +1616,16 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				$formbarcode = new FormBarCode($db);
 				print $formbarcode->selectBarcodeType($fk_barcode_type, 'fk_barcode_type', 1);
 				print '</td>';
-				print '</tr><tr>';
-				print '<td>'.$langs->trans("BarcodeValue").'</td><td>';
+				print '</tr>';
+
+				print '<tr>';
+				print '<td'.($modBarCodeProduct->code_null ? '' : ' class="fieldrequired"').'>'.$langs->trans("BarcodeValue").'</td><td>';
 				$tmpcode = GETPOSTISSET('barcode') ? GETPOST('barcode') : $object->barcode;
 				if (empty($tmpcode) && !empty($modBarCodeProduct->code_auto)) {
 					$tmpcode = $modBarCodeProduct->getNextValue($object, $fk_barcode_type);
 				}
 				print img_picto('', 'barcode', 'class="pictofixedwidth"');
-				print '<input class="maxwidth100" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
+				print '<input class="maxwidth150" type="text" name="barcode" value="'.dol_escape_htmltag($tmpcode).'">';
 				print '</td></tr>';
 			}
 
