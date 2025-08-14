@@ -24,7 +24,7 @@
  * @var DoliDB $db
  * @var ExtraFields $extrafields
  * @var Form $form
- * @var Hookmanager $hookmanager
+ * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  *
@@ -311,7 +311,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 
 				print '</form>';
 
-				/** @var $formai	?FormAI */
+				/** @var ?FormAI $formai */
 				if (empty($formai) || $formai instanceof FormAI) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formai.class.php';
 					$formai = new FormAI($db);
