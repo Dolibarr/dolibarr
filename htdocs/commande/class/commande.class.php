@@ -1010,7 +1010,7 @@ class Commande extends CommonOrder
 			return -1;
 		}
 
-		$now = dol_now();
+		$this->date_creation = dol_now();
 
 		$this->db->begin();
 
@@ -1026,7 +1026,7 @@ class Commande extends CommonOrder
 		$sql .= ", multicurrency_tx";
 		$sql .= ", import_key";
 		$sql .= ")";
-		$sql .= " VALUES ('(PROV)', ".((int) $this->socid).", '".$this->db->idate($now)."', ".((int) $user->id);
+		$sql .= " VALUES ('(PROV)', ".((int) $this->socid).", '".$this->db->idate($this->date_creation)."', ".((int) $user->id);
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
 		$sql .= ", '".$this->db->idate($date)."'";
 		$sql .= ", ".($this->source >= 0 && $this->source != '' ? $this->db->escape((string) $this->source) : 'null');
