@@ -471,10 +471,13 @@ if ($action == 'edit') {
 		$vartosmtpstype = 'MAIN_MAIL_SMTPS_AUTH_TYPE';
 		if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
 			// Note: Default value for MAIN_MAIL_SMTPS_AUTH_TYPE if not defined is 'LOGIN' (but login/pass may be empty and they won't be provided in such a case)
+			print '<input type="radio" id="radio_none" name="'.$vartosmtpstype.'" value="NONE"'.(getDolGlobalString($vartosmtpstype) == 'NONE' ? ' checked' : '').'> ';
+			print '<label for="radio_none" >'.$langs->trans("UseAUTHNONE").'</label>';
+			print '<br>';
 			print '<input type="radio" id="radio_pw" name="'.$vartosmtpstype.'" value="LOGIN"'.(getDolGlobalString($vartosmtpstype, 'LOGIN') == 'LOGIN' ? ' checked' : '').'> ';
 			print '<label for="radio_pw" >'.$langs->trans("UseAUTHLOGIN").'</label>';
 			print '<br>';
-			print '<input type="radio" id="radio_plain" name="'.$vartosmtpstype.'" value="PLAIN"'.(getDolGlobalString($vartosmtpstype, 'PLAIN') == 'PLAIN' ? ' checked' : '').'> ';
+			print '<input type="radio" id="radio_plain" name="'.$vartosmtpstype.'" value="PLAIN"'.(getDolGlobalString($vartosmtpstype) == 'PLAIN' ? ' checked' : '').'> ';
 			print '<label for="radio_plain" >'.$langs->trans("UseAUTHPLAIN").'</label>';
 			print '<br>';
 			print '<input type="radio" id="radio_oauth" name="'.$vartosmtpstype.'" value="XOAUTH2"'.(getDolGlobalString($vartosmtpstype) == 'XOAUTH2' ? ' checked' : '').(isModEnabled('oauth') ? '' : ' disabled').'> ';
@@ -731,7 +734,9 @@ if ($action == 'edit') {
 		if (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail'), array('smtps', 'swiftmailer'))) {
 			$authtype = getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE', 'LOGIN');
 			$text = '';
-			if ($authtype === "LOGIN") {
+			if ($authtype === "NONE") {
+				$text = $langs->trans("None");
+			} elseif ($authtype === "LOGIN") {
 				$text = $langs->trans("UseAUTHLOGIN");
 			} elseif ($authtype === "PLAIN") {
 				$text = $langs->trans("UseAUTHPLAIN");

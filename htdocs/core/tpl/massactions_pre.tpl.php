@@ -4,6 +4,7 @@
  * Copyright (C) 2015	    Marcos García		    <marcosgdf@gmail.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -324,7 +325,7 @@ if ($massaction == 'presend') {
 	// Make substitution in email content
 	$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $object);
 
-	$substitutionarray['__EMAIL__'] = $sendto;
+	$substitutionarray['__EMAIL__'] = empty($sendto) ? '__EMAIL__' : $sendto;
 	$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefined&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-undefined", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
 	$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'UrlToPayOnlineIfApplicable';
 	$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__'] = 'TextAndUrlToPayOnlineIfApplicable';
@@ -423,16 +424,16 @@ if ($massaction == 'predisable') {
 }
 if ($massaction == 'presetcommercial') {
 	$formquestion = array();
-	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'AND u.statut = 1', 0, '', '', 0, 1);
+	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'u.statut:=:1', 0, '', '', 0, 1);
 	$formquestion[] = array('type' => 'other',
 			'name' => 'affectedcommercial',
 			'label' => $form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0),
 			'value' => $form->multiselectarray('commercial', $userlist, null, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', '', 1));
-	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmAllocateCommercial"), $langs->trans("ConfirmAllocateCommercialQuestion", count($toselect)), "affectcommercial", $formquestion, 1, 0, 200, 500, 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmAllocateCommercial"), $langs->trans("ConfirmAllocateCommercialQuestion", count($toselect)), "assignsalerepresentative", $formquestion, 1, 0, 200, 500, 1);
 }
 if ($massaction == 'unsetcommercial') {
 	$formquestion = array();
-	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'AND u.statut = 1', 0, '', '', 0, 1);
+	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'u.statut:=:1', 0, '', '', 0, 1);
 	$formquestion[] = array('type' => 'other',
 		'name' => 'unassigncommercial',
 		'label' => $form->editfieldkey('UnallocateCommercial', 'commercial_id', '', $object, 0),

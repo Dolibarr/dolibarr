@@ -2796,7 +2796,7 @@ class Ticket extends CommonObject
 							// Customer company infos
 							$message .= '<br><br>';
 							$message .= "==============================================";
-							$message .= !empty($object->thirdparty->name) ? '<br>'.$langs->trans('Thirdparty')." : ".$object->thirdparty->name : '';
+							$message .= !empty($object->thirdparty->name) ? '<br>'.$langs->trans('ThirdParty')." : ".$object->thirdparty->name : '';
 							$message .= !empty($object->thirdparty->town) ? '<br>'.$langs->trans('Town')." : ".$object->thirdparty->town : '';
 							$message .= !empty($object->thirdparty->phone) ? '<br>'.$langs->trans('Phone')." : ".$object->thirdparty->phone : '';
 
@@ -2867,7 +2867,7 @@ class Ticket extends CommonObject
 
 									// Contact type
 									$recipient = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], -1).' ('.strtolower((string) $info_sendto['libelle']).')';
-									$message .= (!empty($recipient) ? $langs->trans('TicketNotificationRecipient').' : '.$recipient.'<br>' : '');
+									$message .= (!empty($recipient) ? '<br>'.$langs->trans('TicketNotificationRecipient').' : '.$recipient.'<br>' : '');
 								}
 							}
 							$message .= '<br>';
@@ -2949,7 +2949,7 @@ class Ticket extends CommonObject
 										}
 
 										$recipient = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], -1).' ('.strtolower((string) $info_sendto['libelle']).')';
-										$message .= (!empty($recipient) ? $langs->trans('TicketNotificationRecipient').' : '.$recipient.'<br>' : '');
+										$message .= (!empty($recipient) ? '<br>'.$langs->trans('TicketNotificationRecipient').' : '.$recipient.'<br>' : '');
 									}
 								}
 

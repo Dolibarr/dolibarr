@@ -2340,7 +2340,7 @@ class Contrat extends CommonObject
 				$labelShort = $langs->trans("BoardNotActivatedServicesShort");
 				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&search_status=0&sortfield=cd.date_fin_validite&sortorder=asc';
 				$url_late = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&search_status=0&search_option=late';
-			} elseif ($mode == 'active') {
+			} elseif ($mode == 'expired') {
 				$warning_delay = $conf->contract->services->expires->warning_delay;
 				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&search_status=4&filter=expired&sortfield=cd.date_fin_validite&sortorder=asc';
 				$url_late = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&search_status=4&search_option=late';

@@ -93,7 +93,7 @@ $datestartvalidity = dol_mktime(0, 0, 0, GETPOSTINT('datestartvaliditymonth'), G
 $dateendvalidity = dol_mktime(0, 0, 0, GETPOSTINT('dateendvaliditymonth'), GETPOSTINT('dateendvalidityday'), GETPOSTINT('dateendvalidityyear'));
 $dateofbirth = dol_mktime(0, 0, 0, GETPOSTINT('dateofbirthmonth'), GETPOSTINT('dateofbirthday'), GETPOSTINT('dateofbirthyear'));
 
-$childids = $user->getAllChildIds(1);	// For later, test on salary visibility
+$childids = $user->getAllChildIds(1);	// For test on hrm fields (like salary visibility)
 
 $object = new User($db);
 $extrafields = new ExtraFields($db);
@@ -123,15 +123,15 @@ $feature2 = 'user';
 $result = restrictedArea($user, 'user', $id, 'user', $feature2);
 
 // Define value to know what current user can do on users. A test on logged user is done later to complete
-$permissiontoadd = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
-$permissiontoread = (!empty($user->admin) || $user->hasRight("user", "user", "read"));
-$permissiontoedit = (!empty($user->admin) || $user->hasRight("user", "user", "write"));
-$permissiontodisable = (!empty($user->admin) || $user->hasRight("user", "user", "delete"));
+$permissiontoadd = (!empty($user->admin) || $user->hasRight("user", "user", "write")) && (empty($user->socid) || $user->socid == $object->socid);
+$permissiontoread = (!empty($user->admin) || $user->hasRight("user", "user", "read")) && (empty($user->socid) || $user->socid == $object->socid);
+$permissiontoedit = (!empty($user->admin) || $user->hasRight("user", "user", "write")) && (empty($user->socid) || $user->socid == $object->socid);
+$permissiontodisable = (!empty($user->admin) || $user->hasRight("user", "user", "delete")) && (empty($user->socid) || $user->socid == $object->socid);
 $permissiontoreadgroup = $permissiontoread;
 $permissiontoeditgroup = $permissiontoedit;
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-	$permissiontoreadgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "read"));
-	$permissiontoeditgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "write"));
+	$permissiontoreadgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "read")) && (empty($user->socid) || $user->socid == $object->socid);
+	$permissiontoeditgroup = (!empty($user->admin) || $user->hasRight("user", "group_advance", "write")) && (empty($user->socid) || $user->socid == $object->socid);
 }
 
 $permissiontoclonesuperadmin = ($permissiontoadd && empty($user->entity));
@@ -156,9 +156,9 @@ $permissiontoeditpasswordandsee = false;
 $permissiontoeditpasswordandsend = false;
 if ($id > 0) {
 	// $user is the current logged user, $id is the user we want to edit
-	$permissiontoedit = ((($user->id == $id) && $user->hasRight("user", "self", "write")) || (($user->id != $id) && $user->hasRight("user", "user", "write")));
-	$permissiontoeditpasswordandsee = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password") && $user->admin));
-	$permissiontoeditpasswordandsend = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password")));
+	$permissiontoedit = ((($user->id == $id) && $user->hasRight("user", "self", "write")) || (($user->id != $id) && $user->hasRight("user", "user", "write"))) && (empty($user->socid) || $user->socid == $object->socid);
+	$permissiontoeditpasswordandsee = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password") && $user->admin))&& (empty($user->socid) || $user->socid == $object->socid);
+	$permissiontoeditpasswordandsend = ((($user->id == $id) && $user->hasRight("user", "self", "password")) || (($user->id != $id) && $user->hasRight("user", "user", "password")))&& (empty($user->socid) || $user->socid == $object->socid);
 }
 
 $passwordismodified = false;
@@ -2558,34 +2558,36 @@ if ($action == 'create' || $action == 'adduserldap') {
 					$type = $object->contact_id;
 				}
 
+				$eventsCompanyContact = array();
+				$eventsCompanyContact[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1&token='.currentToken(), 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 				if ($object->socid > 0 && !($object->contact_id > 0)) {	// external user but no link to a contact
-					print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, array(), 0, 'maxwidth300');
+					print img_picto('', 'company', 'class="pictofixedwidth"');
+					print $form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300');
 					print img_picto('', 'contact', 'class="pictofixedwidth"');
-					//print $form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
 					print $form->select_contact(0, 0, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
 					if ($object->ldap_sid) {
 						print ' ('.$langs->trans("DomainUser").')';
 					}
 				} elseif ($object->socid > 0 && $object->contact_id > 0) {	// external user with a link to a contact
-					print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, array(), 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
+					print img_picto('', 'company', 'class="pictofixedwidth"');
+					print $form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
 					print img_picto('', 'contact', 'class="pictofixedwidth"');
-					//print $form->selectcontacts(0, $object->contact_id, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
 					print $form->select_contact(0, $object->contact_id, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
 					if ($object->ldap_sid) {
 						print ' ('.$langs->trans("DomainUser").')';
 					}
 				} elseif (!($object->socid > 0) && $object->contact_id > 0) {	// internal user with a link to a contact
-					print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(0, 'socid', '', '&nbsp;', 0, 0, array(), 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
+					print img_picto('', 'company', 'class="pictofixedwidth"');
+					print $form->select_company(0, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
 					print img_picto('', 'contact', 'class="pictofixedwidth"');
-					//print $form->selectcontacts(0, $object->contact_id, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
 					print $form->select_contact(0, $object->contact_id, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
 					if ($object->ldap_sid) {
 						print ' ('.$langs->trans("DomainUser").')';
 					}
 				} else {	// $object->socid is not > 0 here
-					print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(0, 'socid', '', '&nbsp;', 0, 0, array(), 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
+					print img_picto('', 'company', 'class="pictofixedwidth"');
+					print $form->select_company(0, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
 					print img_picto('', 'contact', 'class="pictofixedwidth"');
-					//print $form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
 					print $form->select_contact(0, 0, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
 				}
 			}
@@ -2707,7 +2709,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td></tr>';
 
 			// Country
-			print '<tr><td>'.$form->editfieldkey('Country', 'selectcounty_id', '', $object, 0).'</td><td>';
+			print '<tr><td>'.$form->editfieldkey('Country', 'selectcountry_id', '', $object, 0).'</td><td>';
 			print img_picto('', 'country', 'class="pictofixedwidth"');
 			if ($permissiontoedit) {
 				print $form->select_country((GETPOST('country_id') != '' ? GETPOST('country_id') : $object->country_id), 'country_id');

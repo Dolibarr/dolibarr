@@ -108,7 +108,7 @@ $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOSTINT('originid') ? GETPOSTINT('originid') : GETPOSTINT('origin_id')); // For backward compatibility
 $fac_rec = GETPOSTINT('fac_rec');
 $facid = GETPOSTINT('facid');
-$ref_client = GETPOSTINT('ref_client');
+$ref_client = GETPOST('ref_client', 'alpha');
 $rank = (GETPOSTINT('rank') > 0) ? GETPOSTINT('rank') : -1;
 $projectid = (GETPOSTINT('projectid') ? GETPOSTINT('projectid') : 0);
 $selectedLines = GETPOST('toselect', 'array');
@@ -685,7 +685,7 @@ if (empty($reshook)) {
 		$object->setValueFrom('ref', GETPOST('ref'), '', 0, '', '', $user, 'BILL_MODIFY');
 	} elseif ($action == 'setref_client' && $usercancreate) {
 		$object->fetch($id);
-		$object->set_ref_client(GETPOST('ref_client'));
+		$object->set_ref_client(GETPOST('ref_client', 'alpha'));
 	} elseif ($action == 'confirm_valid' && $confirm == 'yes' && $usercanvalidate) {
 		// Classify to validated
 		$idwarehouse = GETPOSTINT('idwarehouse');
@@ -1367,7 +1367,7 @@ if (empty($reshook)) {
 							$tva_tx = 0;
 						}
 
-						$object->addline($langs->trans('invoiceAvoirLineWithPaymentRestAmount'), $remain_to_pay, 1, $tva_tx, 0, 0, 0, 0, '', '', 0, 0, 0, 'TTC');
+						$object->addline($langs->trans('invoiceAvoirLineWithPaymentRestAmount'), 0, 1, $tva_tx, 0, 0, 0, 0, '', '', 0, 0, 0, 'TTC', $remain_to_pay);
 					}
 				}
 
@@ -2794,7 +2794,7 @@ if (empty($reshook)) {
 		// Invoice situation
 		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 			$previousprogress = $line->getAllPrevProgress($line->fk_facture);
-			$fullprogress = price2num(GETPOST('progress', 'alpha'), 2);
+			$fullprogress = (float) price2num(GETPOST('progress', 'alpha'), 2);
 
 			if ($fullprogress < $previousprogress) {
 				$error++;
@@ -2912,7 +2912,7 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	} elseif ($action == 'updatealllines' && $usercancreate && GETPOST('all_percent') == $langs->trans('Modifier')) {	// Update all lines of situation invoice
+	} elseif ($action == 'updatealllines' && $usercancreate && GETPOST('all_percent') == $langs->trans('Modify')) {	// Update all lines of situation invoice
 		if (!$object->fetch($id) > 0) {
 			dol_print_error($db);
 		}
@@ -3520,7 +3520,7 @@ if ($action == 'create') {
 				</script>';
 			}
 			if (!GETPOSTINT('fac_rec')) {
-				print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
+				print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&customer=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 			}
 			print '</td>';
 			print '</tr>'."\n";
@@ -3797,8 +3797,7 @@ if ($action == 'create') {
 				print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 				$tmp = '<input type="radio" name="type" id="radio_situation" value="0" disabled> ';
 				$text = $tmp.'<label>'.$langs->trans("InvoiceSituationAsk").'</label> ';
-				$text .= '<span class="opacitymedium">('.$langs->trans("YouMustCreateInvoiceFromThird").')</span> ';
-				$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', 'nowraponall', 0, 3, 'firstsituationonsmartphone');
+				$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc").'<br><br>'.$langs->trans("YouMustCreateInvoiceFromThird"), 1, 'help', 'nowraponall', 0, 3, 'firstsituationonsmartphone');
 				print $desc;
 				print '</div></div>';
 			}
@@ -5686,7 +5685,7 @@ if ($action == 'create') {
 		print '</div>';
 		print '</div>';
 
-		print '<div class="clearboth"></div><br><br>';
+		print '<div class="clearboth"></div><br>';
 
 		if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 			$blocname = 'contacts';

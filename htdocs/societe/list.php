@@ -11,7 +11,7 @@
  * Copyright (C) 2017       Juanjo Menent      	    <jmenent@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2020       Open-Dsi                <support@open-dsi.fr>
- * Copyright (C) 2021-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Anthony Berton          <anthony.berton@bb2a.fr>
  * Copyright (C) 2023       William Mead            <william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
@@ -337,6 +337,7 @@ $arrayfields['sales.representative'] = array('label' => $langs->trans("SalesRepr
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
+// @phpstan-ignore-next-line
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 '@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
@@ -1212,7 +1213,9 @@ if ($optioncss != '') {
 }
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-print '<input type="hidden" name="action" value="list">';
+if (empty($massaction)) {
+	print '<input type="hidden" name="action" value="list">';
+}
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 //print '<input type="hidden" name="page" value="'.$page.'">';
@@ -1237,6 +1240,7 @@ foreach (array(1, 2, 3, 4, 5, 6) as $key) {
 	$label = $langs->transnoentities("ProfId".$key.$mysoc->country_code);
 	$textprofid[$key] = '';
 	if ($label != "ProfId".$key.$mysoc->country_code) {	// Get only text between ()
+		$reg = array();
 		if (preg_match('/\((.*)\)/i', $label, $reg)) {
 			$label = $reg[1];
 		}
@@ -1295,9 +1299,9 @@ $userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'u.statu
 $userlist[-2] = $langs->trans("NoSalesRepresentativeAffected");
 if ($user->hasRight("societe", "client", "voir") || $socid) {
 	$moreforfilter .= '<div class="divsearchfield">';
-	$tmptitle = $langs->trans('SalesRepresentatives');
+	$tmptitle = $langs->transnoentitiesnoconv('SalesRepresentatives');
 	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"');
-	$moreforfilter .=  $form->multiselectarray('search_sale', $userlist, $search_sale, 0, 0, '', 0, 300, '', '', $langs->trans('SalesRepresentatives'), 1);
+	$moreforfilter .=  $form->multiselectarray('search_sale', $userlist, $search_sale, 0, 0, '', 0, 300, '', '', $langs->transnoentitiesnoconv('SalesRepresentatives'), 1);
 	$moreforfilter .= '</div>';
 }
 if (!empty($moreforfilter)) {

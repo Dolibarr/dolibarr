@@ -1256,7 +1256,7 @@ if ($action == 'create') {
 		print '<td>';
 		print img_picto('', 'company', 'class="pictofixedwidth"');
 		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300 widthcentpercentminusxx maxwidth500');
-		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
+		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&customer=3&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 		print '</td>';
 	}
 	print '</tr>'."\n";
@@ -2067,7 +2067,9 @@ if ($action == 'create') {
 					if ($objp->fk_product > 0) {
 						$product = new Product($db);
 						$product->fetch($objp->fk_product);
-						$dateactend = dol_time_plus_duree(time(), $product->duration_value, $product->duration_unit);
+						if (!empty($product->duration_value) && !empty($product->duration_unit)) {
+							$dateactend = dol_time_plus_duree(time(), $product->duration_value, $product->duration_unit);
+						}
 					}
 				}
 
@@ -2375,7 +2377,7 @@ if ($action == 'create') {
 				print '<br><!-- Link to sign -->';
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 
-				print showOnlineSignatureUrl('contract', $object->ref).'<br>';
+				print showOnlineSignatureUrl('contract', $object->ref, $object).'<br>';
 			}
 
 			print '</div><div class="fichehalfright">';

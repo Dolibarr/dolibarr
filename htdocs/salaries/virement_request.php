@@ -161,6 +161,23 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+// payment mode
+if ($action == 'setmode' && $permissiontoadd) {
+	$object->fetch($id);
+	$result = $object->setPaymentMethods(GETPOSTINT('mode_reglement_id'));
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+}
+
+// bank account
+if ($action == 'setbankaccount' && $permissiontoadd) {
+	$object->fetch($id);
+	$result = $object->setBankAccount(GETPOSTINT('fk_account'));
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+}
 
 if ($action == "add" && $permissiontoadd) {
 	//var_dump($object);exit;
@@ -169,7 +186,8 @@ if ($action == "add" && $permissiontoadd) {
 
 		$sourcetype = 'salaire';
 		$newtype = 'salaire';
-		$paymentservice = GETPOST('paymentservice');
+		$paymentservice = GETPOST('paymentservice');	// value can be 'stripesepa'. not used yet.
+
 		$result = $object->demande_prelevement($user, price2num(GETPOST('request_transfer', 'alpha')), $newtype, $sourcetype);
 
 		if ($result > 0) {

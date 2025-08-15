@@ -152,8 +152,14 @@ if (!function_exists('dol_loginfunction')) {
 		// Title
 		$appli = constant('DOL_APPLICATION_TITLE');
 		$title = $appli.(getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? '' : ' '.constant('DOL_VERSION'));
-		if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-			$title = getDolGlobalString('MAIN_APPLICATION_TITLE');
+
+		$customapplication = getDolGlobalString('MAIN_APPLICATION_TITLE');
+		if ($customapplication) {
+			if (preg_match('/^\+/', $customapplication)) {
+				$title .= $customapplication;
+			} else {
+				$title = $customapplication;
+			}
 		}
 		$titletruedolibarrversion = constant('DOL_VERSION'); // $title used by login template after the @ to inform of true Dolibarr version
 
@@ -480,10 +486,10 @@ function encodedecode_dbpassconf($level = 0)
 /**
  * Return a generated password using default module
  *
- * @param		bool		$generic				true=Create generic password (32 chars/numbers), false=Use the configured password generation module
- * @param		?array<string>	$replaceambiguouschars	Discard ambiguous characters. For example array('I').
- * @param       int         $length                 Length of random string (Used only if $generic is true)
- * @return		string		    					New value for password
+ * @param		bool			$generic				true=Create a generic key (32 chars/numbers), false=Create a password using the configured password generation module.
+ * @param		?array<string>	$replaceambiguouschars	Discard ambiguous characters. For example: array('I').
+ * @param       int        		$length                	Length of random string (Used only if $generic is true)
+ * @return		string		    						New value for password
  * @see dol_hash(), dolJSToSetRandomPassword()
  */
 function getRandomPassword($generic = false, $replaceambiguouschars = null, $length = 32)

@@ -625,7 +625,7 @@ if ($type == Categorie::TYPE_CUSTOMER) {
 			$param = '&limit='.$limit.'&id='.$id.'&type='.$type;
 			$num = count($socs);
 			$nbtotalofrecords = '';
-			$newcardbutton = dolGetButtonTitle($langs->trans("AddThirdParty"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create&client=3&custcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->hasRight('societe', 'creer'));
+			$newcardbutton = dolGetButtonTitle($langs->trans("AddThirdParty"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/societe/card.php?action=create&customer=3&custcats[]='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id), '', $user->hasRight('societe', 'creer'));
 
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			print_barre_liste($langs->trans("Customers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'companies', 0, $newcardbutton, '', $limit);

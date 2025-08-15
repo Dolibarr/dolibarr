@@ -9279,13 +9279,19 @@ parameters:
 		-
 			message: '#^Property Conf\:\:\$commande \(stdClass\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 3
+			count: 2
 			path: ../../htdocs/core/class/conf.class.php
 
 		-
 			message: '#^Property Conf\:\:\$contrat \(stdClass\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
+			path: ../../htdocs/core/class/conf.class.php
+
+		-
+			message: '#^Property Conf\:\:\$bank \(stdClass\) in isset\(\) is not nullable\.$#'
+			identifier: isset.property
+			count: 1
 			path: ../../htdocs/core/class/conf.class.php
 
 		-

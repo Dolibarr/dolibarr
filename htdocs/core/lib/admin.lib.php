@@ -242,7 +242,7 @@ function run_sql($sqlfile, $silent = 1, $entity = 0, $usesavepoint = 1, $handler
 			// Add line buf to buffer if not a comment
 			if ($nocommentremoval || !preg_match('/^\s*--/', $buf)) {
 				if (empty($nocommentremoval)) {
-					$buf = preg_replace('/([,;ERLT\)])\s*--.*$/i', '\1', $buf); //remove comment from a line that not start with -- before add it to the buffer
+					$buf = preg_replace('/([,;ERLT0\)])\s+--.*$/i', '\1', $buf); //remove comment on lines that does not start with --, before adding it to the buffer
 				}
 				if ($buffer) {
 					$buffer .= ' ';
@@ -1720,8 +1720,8 @@ function complete_elementList_with_modules(&$elementList)
 /**
  *	Show array with constants to edit
  *
- *	@param	array<string,array{type:string,label:string}>|array<int,string>	$tableau		Array of constants array('key'=>array('type'=>type, 'label'=>label)
- *                                                                                          where type can be 'string', 'text', 'textarea', 'html', 'yesno', 'emailtemplate:xxx', ...
+ *	@param	array<string,array{type:string,label:string,tooltip?:string}>|array<int,string>	$tableau		Array of constants array('key'=>array('type'=>type, 'label'=>label, 'tooltip'=>tooltip)
+ *                                                                                          				where type can be 'string', 'text', 'textarea', 'html', 'yesno', 'emailtemplate:xxx', ...
  *	@param	int<2,3>	$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (deprecated), 2=No form nor button at all, 3=No form nor button at all and each field has a unique name (form is output by caller, recommended)  (typed as int<2,3> to highlight the deprecated values)
  *  @param  string  	$helptext       Tooltip help to use for the column name of values
  *  @param	string		$text			Text to use for the column name of values
@@ -1901,6 +1901,8 @@ function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = 'Valu
 					//var_dump($arraydefaultmessage);
 					//var_dump($arrayofmessagename);
 					print $form->selectarray('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $arrayofmessagename, $obj->value.':'.$tmp[1], 'None', 0, 0, '', 0, 0, 0, '', '', 1);
+
+					print '<a href="'.DOL_URL_ROOT.'/admin/mails_templates.php?action=create&type_template='.urlencode($tmp[1]).'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_picto('', 'add').'</a>';
 				} elseif (preg_match('/MAIL_FROM$/i', $const)) {
 					print img_picto('', 'email', 'class="pictofixedwidth"').'<input type="text" class="flat minwidth300" name="constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')).'" value="'.dol_escape_htmltag($obj->value).'">';
 				} else { // type = 'string' ou 'chaine'

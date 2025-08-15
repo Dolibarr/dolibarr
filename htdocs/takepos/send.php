@@ -89,7 +89,7 @@ if ($action == "send" && $user->hasRight('takepos', 'run')) {
 	$msg = "<html>".$arraydefaultmessage->content."<br>".$receipt."</html>";
 	$sendto = $email;
 	$from = $mysoc->email;
-	$mail = new CMailFile($subject, $sendto, $from, $msg, array(), array(), array(), '', '', 0, 1, '', '', '', '', '', '', DOL_DOCUMENT_ROOT.'/documents/takepos/temp');
+	$mail = new CMailFile($subject, $sendto, $from, $msg, array(), array(), array(), '', '', 0, 1, '', '', '', '', '', '', DOL_DATA_ROOT.'/documents/takepos/temp');
 	if ($mail->error || !empty($mail->errors)) {
 		setEventMessages($mail->error, $mail->errors, 'errors');
 	} else {

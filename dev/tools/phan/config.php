@@ -418,6 +418,7 @@ return [
 	'suppress_issue_types' => [
 		// Dolibarr uses a lot of internal deprecated stuff, not reporting
 		'PhanDeprecatedProperty',
+		'PhanDeprecatedImplicitNullableParam',
 
 		'PhanCompatibleNegativeStringOffset',	// return false positive
 		'PhanPluginConstantVariableBool',		// a lot of false positive, in most cases, we want to keep the code as it is

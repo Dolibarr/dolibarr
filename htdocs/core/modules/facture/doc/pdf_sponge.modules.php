@@ -2290,7 +2290,7 @@ class pdf_sponge extends ModelePDFFactures
 			$title = $outputlangs->transnoentities("InvoiceProForma");
 		}
 		if ($this->situationinvoice) {
-			$langs->loadLangs(array("other"));
+			$outputlangs->loadLangs(array("other"));
 			$title = $outputlangs->transnoentities("PDFInvoiceSituation") . " " . $outputlangs->transnoentities("NumberingShort") . $object->situation_counter . " -";
 		}
 		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && is_object($outputlangsbis)) {
@@ -2571,7 +2571,7 @@ class pdf_sponge extends ModelePDFFactures
 					$companystatic = new Societe($this->db);
 					$companystatic->fetch($object->contact->fk_soc);
 					$carac_client_name_shipping = pdfBuildThirdpartyName($object->contact, $outputlangs);
-					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $companystatic, $object->contact, ($usecontact ? 1 : 0), 'target', $object);
+					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $companystatic, $object->contact, 1, 'target', $object);
 				} else {
 					$carac_client_name_shipping = pdfBuildThirdpartyName($object->thirdparty, $outputlangs);
 					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'target', $object);

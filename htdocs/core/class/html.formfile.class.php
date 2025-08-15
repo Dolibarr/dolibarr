@@ -255,7 +255,7 @@ class FormFile
 			$out .= '<label for="overwritefile" class="opacitylow paddingright">'.$langs->trans("OverwriteIfExists").'</label>';
 			$out .= '</span>';
 		}
-		$out .= '<input type="submit" class="button small reposition" name="sendit" value="'.$langs->trans("Upload").'"';
+		$out .= '<input type="submit" class="button smallpaddingimp reposition" name="sendit" value="'.$langs->trans("Upload").'"';
 		$out .= (!getDolGlobalString('MAIN_UPLOAD_DOC') || empty($perm) ? ' disabled' : '');
 		$out .= '>';
 
@@ -355,7 +355,7 @@ class FormFile
 			$out2 .= '<input type="hidden" name="objectid" value="'.$object->id.'">';
 			$out2 .= '</div>';
 			$out2 .= '<div class="inline-block" style="padding-right: 10px;">';
-			$out2 .= '<input type="submit" class="button small reposition" name="linkit" value="'.$langs->trans("ToLink").'"';
+			$out2 .= '<input type="submit" class="button smallpaddingimp reposition" name="linkit" value="'.$langs->trans("ToLink").'"';
 			$out2 .= (!getDolGlobalString('MAIN_UPLOAD_DOC') || empty($perm) ? ' disabled' : '');
 			$out2 .= '>';
 			$out2 .= '</div>';
@@ -936,7 +936,7 @@ class FormFile
 
 				// Get list of files stored into database for same relative directory
 				if ($relativedir) {
-					completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+					completeFileArrayWithDatabaseInfo($file_list, $relativedir, $object);
 					'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $file_list';
 
 					//var_dump($sortfield.' - '.$sortorder);
@@ -973,7 +973,6 @@ class FormFile
 
 					// Show file name with link to download
 					$imgpreview = $this->showPreview($file, $modulepart, $relativepath, 0, $param);
-
 					$out .= '<td class="minwidth200 tdoverflowmax300">';
 					if ($imgpreview) {
 						$out .= '<span class="spanoverflow widthcentpercentminusx valignmiddle">';
@@ -988,7 +987,6 @@ class FormFile
 							$out .= 'target="_blank" ';
 						}
 						$out .= 'href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
-
 						$mime = dol_mimetype($relativepath, '', 0);
 						if (preg_match('/text/', $mime)) {
 							$out .= ' target="_blank" rel="noopener noreferrer"';
@@ -999,9 +997,11 @@ class FormFile
 						$out .= dol_trunc($file["name"], 150);
 						$out .= '</a>';
 					}
+
 					$out .= '</span>'."\n";
 					$out .= $imgpreview;
 					$out .= '</td>';
+
 
 					// Show file size
 					$size = (!empty($file['size']) ? $file['size'] : dol_filesize($filedir."/".$file["name"]));
@@ -1309,10 +1309,11 @@ class FormFile
 		// Define relative path used to store the file
 		if (empty($relativepath)) {
 			$relativepath = (!empty($object->ref) ? dol_sanitizeFileName($object->ref) : '').'/';
-			if (!empty($object->element) && $object->element == 'invoice_supplier') {
+			if (!empty($object->element) && $object->element == "societe" && !empty($object->id)) {
+				$relativepath = ($object->id).'/';
+			} elseif (!empty($object->element) && $object->element == 'invoice_supplier') {
 				$relativepath = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$relativepath; // TODO Call using a defined value for $relativepath
-			}
-			if (!empty($object->element) && $object->element == 'project_task') {
+			} elseif (!empty($object->element) && $object->element == 'project_task') {
 				$relativepath = 'Call_not_supported_._Call_function_using_a_defined_relative_path_.';
 			}
 		}
@@ -1429,7 +1430,7 @@ class FormFile
 
 			// Get list of files stored into database for same relative directory
 			if ($relativedir) {
-				completeFileArrayWithDatabaseInfo($filearray, $relativedir);
+				completeFileArrayWithDatabaseInfo($filearray, $relativedir, $object);
 				'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $filearray';
 
 				//var_dump($sortfield.' - '.$sortorder);
@@ -1505,7 +1506,7 @@ class FormFile
 
 
 					// File name
-					print '<td class="minwidth200 tdoverflowmax500" title="'.dolPrintHTMLForAttribute($file['name']).'">';
+					print '<td class="minwidth200imp tdoverflowmax500" title="'.dolPrintHTMLForAttribute($file['name']).'">';
 
 					// Show file name with link to download
 					//print "XX".$file['name'];	//$file['name'] must be utf8
@@ -1538,7 +1539,7 @@ class FormFile
 						}
 						print '<input type="hidden" name="section_dir" value="'.$section_dir.'">';
 						print '<input type="hidden" name="renamefilefrom" value="'.dol_escape_htmltag($file['name']).'">';
-						print '<input type="text" name="renamefileto" class="quatrevingtpercent" value="'.dol_escape_htmltag($file['name']).'">';
+						print '<input type="text" name="renamefileto" class="centpercentminusx" value="'.dol_escape_htmltag($file['name']).'">';
 						$editline = 1;
 					} else {
 						$filenametoshow = preg_replace('/\.noexe$/', '', $file['name']);
@@ -1584,7 +1585,6 @@ class FormFile
 							}
 							//print $file['path'].'/'.$smallfile.'<br>';
 
-
 							$urlforhref = getAdvancedPreviewUrl($modulepart, $relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(empty($object->entity) ? $conf->entity : $object->entity));
 							if (empty($urlforhref)) {
 								$urlforhref = DOL_URL_ROOT.'/viewimage.php?modulepart='.urlencode($modulepart).'&entity='.(empty($object->entity) ? $conf->entity : $object->entity).'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']));
@@ -1610,7 +1610,7 @@ class FormFile
 					}
 
 					// Shared or not - Hash of file
-					print '<td class="center">';
+					print '<td class="center minwidth100 nowraponsmartphone">';
 					if ($relativedir && $filearray[$key]['rowid'] > 0) {	// only if we are in a mode where a scan of dir were done and we have id of file in ECM table
 						if ($editline) {
 							print '<label for="idshareenabled'.$key.'">'.$langs->trans("FileSharedViaALink").'</label> ';
@@ -1635,7 +1635,7 @@ class FormFile
 								$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
 
 								print '<a href="'.$fulllink.'" target="_blank" rel="noopener">'.img_picto($langs->trans("FileSharedViaALink"), 'globe').'</a> ';
-								print '<input type="text" class="quatrevingtpercent minwidth200imp nopadding small" id="downloadlink'.$filearray[$key]['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
+								print '<input type="text" class="centpercentminusx minwidth200imp nopadding small" id="downloadlink'.$filearray[$key]['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
 							} else {
 								//print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
 							}

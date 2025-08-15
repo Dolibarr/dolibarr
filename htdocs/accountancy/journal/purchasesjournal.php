@@ -1173,7 +1173,7 @@ if (empty($action) || $action == 'view') {
 				print $accountoshow;
 			}
 			print '</td>';
-			print "<td>" . $bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'supplier'), $invoicestatic->ref_supplier, $langs->trans("SubledgerAccount")) . "</td>";
+			print "<td>" . $bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'supplier'), $invoicestatic->ref_supplier, $langs->trans("SubledgerAccount"), 1) . "</td>";
 			print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 			print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 			print "</tr>";
@@ -1216,7 +1216,7 @@ if (empty($action) || $action == 'view') {
 			print '</td>';
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];
-			print "<td>" . $bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'supplier'), $invoicestatic->ref_supplier, $accountingaccount->label) . "</td>";
+			print "<td>" . $bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'supplier'), $invoicestatic->ref_supplier, $accountingaccount->label, 1) . "</td>";
 			print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 			print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 			print "</tr>";
@@ -1279,7 +1279,7 @@ if (empty($action) || $action == 'view') {
 					$tmpvatrate = (empty($def_tva[$key][$k]) ? (empty($arrayofvat[$key][$k]) ? '' : $arrayofvat[$key][$k]) : implode(', ', $def_tva[$key][$k]));
 					$labelvatrate = $langs->trans("Taxes").' '.$tmpvatrate.' %';
 					$labelvatrate .= ($numtax ? ' - Localtax '.$numtax : '');
-					print "<td>" . $bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'supplier'), $invoicestatic->ref_supplier, $labelvatrate) . "</td>";
+					print "<td>" . $bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'supplier'), $invoicestatic->ref_supplier, $labelvatrate, 1) . "</td>";
 					print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 					print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 					print "</tr>";
@@ -1309,7 +1309,7 @@ if (empty($action) || $action == 'view') {
 					// Subledger account
 					print "<td>";
 					print '</td>';
-					print "<td>" . $bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'supplier'), $invoicestatic->ref_supplier, $langs->trans("VAT")." NPR (counterpart)") . "</td>";
+					print "<td>" . $bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'supplier'), $invoicestatic->ref_supplier, $langs->trans("VAT")." NPR (counterpart)", 1) . "</td>";
 					print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 					print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 					print "</tr>";

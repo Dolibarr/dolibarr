@@ -325,7 +325,7 @@ if ($resql) {
 
 			// Date ope
 			print '<td class="nowrap left">';
-			print '<span id="dateoperation_'.$objp->rowid.'">'.dol_print_date($db->jdate($objp->do), "day")."</span>";
+			print '<span id="dateoperation_'.$objp->facid.'">'.dol_print_date($db->jdate($objp->do), "day")."</span>";
 			print "</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;

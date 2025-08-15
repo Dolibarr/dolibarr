@@ -118,6 +118,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 $confirm 	= GETPOST('confirm', 'alpha');
+$canvas		= GETPOST('canvas', 'alpha');
 
 $dol_openinpopup = '';
 if (!empty($backtopagejsfields)) {
@@ -198,7 +199,7 @@ if (empty($reshook)) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = DOL_URL_ROOT.'/societe/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__');
+				$backtopage = DOL_URL_ROOT.'/societe/card.php?id='.((!empty($id) && $id > 0) ? $id : '__ID__') . (!empty($canvas) ? "&canvas=" . $canvas : "");
 			}
 		}
 	}
@@ -1483,8 +1484,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					break;
 			}
 
-			$selectedprospect = (GETPOSTISSET('prospect') ? GETPOSTINT('prospect') : $selectedprospect);
-			$selectedcustomer = (GETPOSTISSET('customer') ? GETPOSTINT('customer') : $selectedcustomer);
+			$selectedprospect = ((GETPOSTISSET('prospect') && $action == 'create') ? GETPOSTINT('prospect') : $selectedprospect);
+			$selectedcustomer = ((GETPOSTISSET('customer') && $action == 'create') ? GETPOSTINT('customer') : $selectedcustomer);
+			$selectedsupplier = ((GETPOSTISSET('supplier') && $action == 'create') ? GETPOSTINT('supplier') : $object->fournisseur);
+
 			print '<tr class="marginbottomlarge height50">';
 			if ($conf->browser->layout != 'phone') {
 				print '<td class="titlefieldcreate">'.$form->editfieldkey('', 'customerprospect', '', $object, 0, 'string', '', 0).'</td>';
@@ -1502,8 +1505,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))
 				|| (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire'))) {
 				// Supplier
-				$selected = (GETPOSTISSET('supplier') ? GETPOSTINT('supplier') : $object->fournisseur);
-				print '<span id="spannature3" class="spannature vendor-back paddinglarge marginrightonly"><label for="supplierinput" class="valignmiddle">'.$langs->trans("Vendor").'<input id="supplierinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="supplier" value="1"'.($selected ? ' checked="checked"' : '').'></label></span>';
+				print '<span id="spannature3" class="spannature vendor-back paddinglarge marginrightonly"><label for="supplierinput" class="valignmiddle">'.$langs->trans("Vendor").'<input id="supplierinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="supplier" value="1"'.($selectedsupplier ? ' checked="checked"' : '').'></label></span>';
 			}
 			// Add js to manage the background of nature
 			if ($conf->use_javascript_ajax) {
@@ -2284,7 +2286,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Ref/ID
 				if (getDolGlobalString('MAIN_SHOW_TECHNICAL_ID')) {
 					print '<tr><td class="titlefieldcreate">'.$langs->trans("ID").'</td><td colspan="3">';
-					print $object->ref;
+					print $object->id;
 					print '</td></tr>';
 				}
 

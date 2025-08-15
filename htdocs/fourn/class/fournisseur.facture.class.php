@@ -1072,10 +1072,12 @@ class FactureFournisseur extends CommonInvoice
 
 					$line->id               = $obj->rowid;
 					$line->rowid            = $obj->rowid;
+
 					$line->description      = $obj->line_desc;
 					$line->desc             = $obj->line_desc;
-					$line->date_start       = $obj->date_start;
-					$line->date_end         = $obj->date_end;
+					$line->date_start       = $this->db->jdate($obj->date_start);
+					$line->date_end         = $this->db->jdate($obj->date_end);
+
 					$line->product_ref      = $obj->product_ref;
 					$line->ref              = $obj->product_ref;
 					$line->ref_supplier		= $obj->ref_supplier;
@@ -2508,6 +2510,7 @@ class FactureFournisseur extends CommonInvoice
 
 		if ($res < 1) {
 			$this->errors[] = $line->error;
+			$this->errors = array_merge($this->errors, $line->errors);
 		} else {
 			// Update total price into invoice record
 			$res = $this->update_price('1', 'auto', 0, $this->thirdparty);

@@ -964,11 +964,6 @@ class Conf extends stdClass
 				}
 			}
 
-			// conf->main_checkbox_left_column = constant to set checkbox list to left
-			if (!isset($this->main_checkbox_left_column)) {
-				$this->main_checkbox_left_column = getDolGlobalInt("MAIN_CHECKBOX_LEFT_COLUMN");
-			}
-
 			// Set PRODUIT_LIMIT_SIZE if never defined
 			if (!isset($this->global->PRODUIT_LIMIT_SIZE)) {
 				$this->global->PRODUIT_LIMIT_SIZE = 1000;
@@ -1177,7 +1172,7 @@ class Conf extends stdClass
 				$this->contrat->services->inactifs->warning_delay = getDolGlobalInt('MAIN_DELAY_NOT_ACTIVATED_SERVICES') * 86400;
 				$this->contrat->services->expires->warning_delay = getDolGlobalInt('MAIN_DELAY_RUNNING_SERVICES') * 86400;
 			}
-			if (isset($this->commande)) {
+			if (isset($this->bank)) {
 				$this->bank->rappro	= new stdClass();
 				$this->bank->cheque	= new stdClass();
 				$this->bank->rappro->warning_delay = getDolGlobalInt('MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE') * 86400;
@@ -1200,6 +1195,11 @@ class Conf extends stdClass
 
 			if (!isset($this->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 				$this->global->MAIN_CHECKBOX_LEFT_COLUMN = 1;
+			}
+
+			// conf->main_checkbox_left_column = constant to set checkbox list to left
+			if (!isset($this->main_checkbox_left_column)) {
+				$this->main_checkbox_left_column = getDolGlobalInt("MAIN_CHECKBOX_LEFT_COLUMN");
 			}
 
 			// For modules that want to disable top or left menu

@@ -1986,7 +1986,7 @@ if ($action == 'create' && $usercancreate) {
 				});
 				</script>';
 			}
-			print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
+			print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&customer=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 			print '</td>';
 		}
 		print '</tr>'."\n";
@@ -3027,7 +3027,8 @@ if ($action == 'create' && $usercancreate) {
 					if ($numlines > 0) {
 						print dolGetButtonAction('', $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"].'?action=validate&amp;token='.newToken().'&amp;id='.$object->id, $object->id, 1);
 					} else {
-						print dolGetButtonAction($langs->trans("ErrorObjectMustHaveLinesToBeValidated", $object->ref), $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"].'?action=validate&amp;token='.newToken().'&amp;id='.$object->id, $object->id, 0);
+						$langs->load("errors");
+						print dolGetButtonAction($langs->trans("ErrorObjectMustHaveLinesToBeValidated", $object->ref), $langs->trans('Validate'), 'default', $_SERVER["PHP_SELF"].'?action=validate&amp;token='.newToken().'&amp;id='.$object->id, $object->id, -1);
 					}
 				}
 				// Edit
@@ -3060,9 +3061,9 @@ if ($action == 'create' && $usercancreate) {
 					'enabled' => (isModEnabled("intervention") && $object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && $object->getNbOfServicesLines() > 0),
 					'perm' => ($user->hasRight('ficheinter', 'creer') == 1),
 					'label' => 'AddIntervention',
-					'url' => '/fichinter/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid,
+					'url' => '/fichinter/card.php?action=create&origin=' . urlencode($object->element) . '&originid=' . ((int) $object->id) . '&socid=' . ((int) $object->socid),
 				);
-				/*if (isModEnabled('ficheinter')) {
+				/*if (isModEnabled('intervention')) {
 					$langs->load("interventions");
 
 					if ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && $object->getNbOfServicesLines() > 0) {
@@ -3091,29 +3092,32 @@ if ($action == 'create' && $usercancreate) {
 				}*/
 
 				$numshipping = 0;
-				if (isModEnabled('shipping')) {
-					$numshipping = $object->countNbOfShipments();
-				}
 
 				// Create shipment
-				if ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) {
-					if ((getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && $user->hasRight('expedition', 'creer')) || (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && $user->hasRight('expedition', 'delivery', 'creer'))) {
-						$arrayforbutaction[] = array(
-							'lang' => 'sendings',
-							'enabled' => (isModEnabled("shipping") && ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')))),
-							'perm' => $user->hasRight('expedition', 'creer'),
-							'label' => 'CreateShipment',
-							'url' => '/expedition/shipment.php?id=' . $object->id
-						);
-						/*
-						if ($user->hasRight('expedition', 'creer')) {
-						print dolGetButtonAction('', $langs->trans('CreateShipment'), 'default', DOL_URL_ROOT.'/expedition/shipment.php?id='.$object->id, '');
+				if (isModEnabled('shipping')) {
+					$numshipping = $object->countNbOfShipments();
+
+					if ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) {
+						if ((getDolGlobalInt('MAIN_SUBMODULE_EXPEDITION') && $user->hasRight('expedition', 'creer')) || (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY') && $user->hasRight('expedition', 'delivery', 'creer'))) {
+							// Add button to create shipment into the combo
+							$arrayforbutaction[] = array(
+								'lang' => 'sendings',
+								'enabled' => (isModEnabled("shipping") && ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')))),
+								'perm' => $user->hasRight('expedition', 'creer'),
+								'label' => 'CreateShipment',
+								'url' => '/expedition/shipment.php?id=' . $object->id
+							);
 						} else {
-						print dolGetButtonAction($langs->trans('NotAllowed'), $langs->trans('CreateShipment'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
-						}*/
-					} else {
-						$langs->load("errors");
-						print dolGetButtonAction($langs->trans('ErrorModuleSetupNotComplete'), $langs->trans('CreateShipment'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
+							//c$langs->load("errors");
+							//print dolGetButtonAction($langs->trans('ErrorModuleSetupNotComplete'), $langs->trans('CreateShipment'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
+							$arrayforbutaction[] = array(
+								'lang' => 'sendings',
+								'enabled' => (isModEnabled("shipping") && ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED && ($object->getNbOfProductsLines() > 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES')))),
+								'perm' => 0,
+								'label' => 'CreateShipment',
+								'url' => '/expedition/shipment.php?id=' . $object->id
+							);
+						}
 					}
 				}
 

@@ -62,6 +62,9 @@ if ($user->socid && $socid) {
 	$result = restrictedArea($user, 'societe', $socid);
 }
 
+$object = new ActionComm($db);
+$object->fetch($id);
+
 $usercancreate = $user->hasRight('agenda', 'allactions', 'create') || (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->hasRight('agenda', 'myactions', 'create'));
 
 
@@ -74,8 +77,6 @@ $form = new Form($db);
 $help_url = 'EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda|DE:Modul_Terminplanung';
 llxHeader('', $langs->trans("Agenda"), $help_url);
 
-$object = new ActionComm($db);
-$object->fetch($id);
 $object->info($object->id);
 
 $head = actions_prepare_head($object);
