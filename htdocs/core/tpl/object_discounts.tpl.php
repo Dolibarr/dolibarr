@@ -24,14 +24,22 @@
  * $backtopage				URL to come back to from discount modification pages
  */
 
- /**
- * @var Object		$object
+/**
+ * @var	Conf		$conf
  * @var Form 		$form
+ * @var Object		$object
  * @var Translate 	$langs
  * @var Societe		$thirdparty
- * @var	float		$absolute_discount		Amount of fixed discounts available
- * @var	float		$absolute_creditnote	Amount of credit notes available
+ * @var string		$backtopage
+ *
+ * @var	float		$absolute_discount				Amount of fixed discounts available
+ * @var	float		$absolute_creditnote			Amount of credit notes available
+ * @var int			$nb_creditnote_notyetavailable	Nb of cedit notes not yet available (not yet converted into discount)
+ * @var	string		$filterabsolutediscount
+ * @var	string		$filtercreditnote
+ * @var	string		$resteapayer
  * @var int			$cannotApplyDiscount
+ * @var	int			$discount_type
  */
 
 print '<!-- BEGIN object_discounts.tpl.php -->'."\n";
@@ -151,6 +159,12 @@ if ($absolute_discount <= 0 && $absolute_creditnote <= 0) {
 	if ($isInvoice && $object->statut == $objclassname::STATUS_DRAFT && $object->type != $objclassname::TYPE_CREDIT_NOTE && $object->type != $objclassname::TYPE_DEPOSIT) {
 		print ' '.$addabsolutediscount;
 	}
+}
+
+if ($nb_creditnote_notyetavailable > 0) {
+	print '<!-- absolute_creditnote not yet converted -->';
+	$translationKey = 'SomeNotConvertedCreditNoteExists';
+	print '<br><span class="opacitymedium">'.$langs->trans($translationKey, $nb_creditnote_notyetavailable).'</span>';
 }
 
 print '<!-- END template -->';
