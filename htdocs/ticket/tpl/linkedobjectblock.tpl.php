@@ -31,13 +31,14 @@ global $noMoreLinkedObjectBlockAfter;
 $langs = $GLOBALS['langs'];
 '@phan-var-force Translate $langs';
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-'@phan-var-force CommonObject[] $linkedObjectBlock';
+'@phan-var-force Ticket[] $linkedObjectBlock';
 
 // Load translation files required by the page
 $langs->load('ticket');
 
 $linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'datec', 'desc', 0, 0, 1);
-'@phan-var-force CommonObject[] $linkedObjectBlock';  // Repeat because type lost after dol_sort_array)
+'@phan-var-force Ticket[] $linkedObjectBlock';  // Repeat because type lost after dol_sort_array)
+/** @var Ticket[] $linkedObjectBlock */
 
 $total = 0;
 $ilink = 0;
