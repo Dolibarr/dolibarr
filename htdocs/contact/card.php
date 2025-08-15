@@ -8,7 +8,7 @@
  * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2019		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2020		Open-Dsi					<support@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
@@ -251,6 +251,7 @@ if (empty($reshook)) {
 		$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 		$object->roles = GETPOST("roles", 'array');
 
+		$object->status = 1; //Default status to Actif
 		$object->statut = 1; //Default status to Actif
 
 		// Note: Correct date should be completed with location to have exact GM time of birth.
@@ -1546,11 +1547,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Activer
-			if ($object->statut == 0 && $user->hasRight('societe', 'contact', 'creer')) {
+			if ($object->status == 0 && $user->hasRight('societe', 'contact', 'creer')) {
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=enable&token='.newToken().'">'.$langs->trans("Reactivate").'</a>';
 			}
 			// Desactiver
-			if ($object->statut == 1 && $user->hasRight('societe', 'contact', 'creer')) {
+			if ($object->status == 1 && $user->hasRight('societe', 'contact', 'creer')) {
 				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=disable&id='.$object->id.'&token='.newToken().'">'.$langs->trans("DisableUser").'</a>';
 			}
 
