@@ -19,8 +19,8 @@
  */
 
 /**
+ * @var ?Conf $conf
  * @var CommonObject $object
- * @var Translate $langs
  * @var User $user
  */
 // Protection to avoid direct call of template
