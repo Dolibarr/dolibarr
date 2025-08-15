@@ -11089,12 +11089,6 @@ parameters:
 			path: ../../../htdocs/core/tpl/extrafields_view.tpl.php
 
 		-
-			message: '#^Variable \$hookmanager might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/core/tpl/extrafields_view.tpl.php
-
-		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
 			count: 1
@@ -11531,24 +11525,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/debugbar/class/autoloader.php
-
-		-
-			message: '#^Variable \$hidedesc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/delivery/card.php
-
-		-
-			message: '#^Variable \$hidedetails might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/delivery/card.php
-
-		-
-			message: '#^Variable \$hideref might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/delivery/card.php
 
 		-
 			message: '#^Variable \$objectsrc might not be defined\.$#'
