@@ -1873,7 +1873,7 @@ if (!empty($_SESSION["basiclayout"]) && $_SESSION["basiclayout"] == 1) {
 		$result = $object->fetch($catid);
 		$prods = $object->getObjectsInCateg("product");
 		/** @var Product[] $prods */
-		'@phan-var-force  Product[] $prod';
+		'@phan-var-force  Product[] $prods';
 		$htmlforlines = '';
 		foreach ($prods as $row) {
 			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
