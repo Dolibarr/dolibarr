@@ -463,7 +463,7 @@ abstract class DoliDB implements Database
 	/**
 	 * Prepare a SQL statement for execution
 	 *
-	 * @param string $sql
+	 * @param string $sql SQL query to prepare
 	 * @return false|mysqli_stmt
 	 */
 	public function prepare($sql)
