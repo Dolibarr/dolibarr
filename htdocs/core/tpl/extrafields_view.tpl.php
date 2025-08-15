@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014	    Maxime Kohlhaas		<support@atm-consulting.fr>
  * Copyright (C) 2014	    Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2021-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@
  * @var DoliDB $db
  * @var ExtraFields $extrafields
  * @var Form $form
- * @var Hookmanager $hookmanager
+ * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  *
@@ -311,7 +311,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 
 				print '</form>';
 
-				/** @var $formai	?FormAI */
+				/** @var ?FormAI $formai */
 				if (empty($formai) || $formai instanceof FormAI) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formai.class.php';
 					$formai = new FormAI($db);
