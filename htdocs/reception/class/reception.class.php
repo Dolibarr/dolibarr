@@ -1906,7 +1906,7 @@ class Reception extends CommonObject
 
 						if ($qty <= 0) {
 							continue;
-						}						
+						}
 						dol_syslog(get_class($this)."::reopen reception movement index ".$i." ed.rowid=".$obj->rowid);
 
 						//var_dump($this->lines[$i]);
