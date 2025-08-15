@@ -169,10 +169,11 @@ class ActionsTicket extends CommonHookActions
 	/**
 	 * Get action title
 	 *
-	 * @param string 	$action    	Type of action
-	 * @return string			Title of action
+	 * @param 	string 			$action    	Type of action
+	 * @param	Ticket|null		$object		Object ticket
+	 * @return 	string						Title of action
 	 */
-	public function getTitle($action = '')
+	public function getTitle($action = '', $object = null)
 	{
 		global $langs;
 
@@ -181,11 +182,11 @@ class ActionsTicket extends CommonHookActions
 		} elseif ($action == 'edit') {
 			return $langs->trans("EditTicket");
 		} elseif ($action == 'view') {
-			return $langs->trans("TicketCard");
+			return $langs->trans("Ticket").(is_null($object) ? '' : ' '.$object->ref);
 		} elseif ($action == 'add_message') {
 			return $langs->trans("TicketAddMessage");
 		} else {
-			return $langs->trans("TicketsManagement");
+			return $langs->trans("Ticket");
 		}
 	}
 

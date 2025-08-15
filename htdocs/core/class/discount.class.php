@@ -614,30 +614,44 @@ class DiscountAbsolute extends CommonObject
 	 */
 	public function getAvailableDiscounts($company = null, $user = null, $filter = '', $maxvalue = 0, $discount_type = 0, $multicurrency = 0)
 	{
-		global $conf;
+		global $conf, $hookmanager;
 
 		dol_syslog(get_class($this)."::getAvailableDiscounts discount_type=".$discount_type, LOG_DEBUG);
 
-		$sql = "SELECT SUM(rc.amount_ttc) as amount, SUM(rc.multicurrency_amount_ttc) as multicurrency_amount";
-		$sql .= " FROM ".$this->db->prefix()."societe_remise_except as rc";
-		$sql .= " WHERE rc.entity = ".$conf->entity;
-		$sql .= " AND rc.discount_type=".((int) $discount_type);
-		if (!empty($discount_type)) {
-			$sql .= " AND (rc.fk_invoice_supplier IS NULL AND rc.fk_invoice_supplier_line IS NULL)"; // Available from supplier
+		$parameters = array(
+			'company' => $company,
+			'user' => $user,
+			'filter' => $filter,
+			'maxvalue' => $maxvalue,
+			'discount_type' => $discount_type,
+			'multicurrency' => $multicurrency
+		);
+
+		$reshook = $hookmanager->executeHooks('getAvailableDiscounts', $parameters);
+		if (empty($reshook)) {
+			$sql = "SELECT SUM(rc.amount_ttc) as amount, SUM(rc.multicurrency_amount_ttc) as multicurrency_amount";
+			$sql .= " FROM ".$this->db->prefix()."societe_remise_except as rc";
+			$sql .= " WHERE rc.entity = ".$conf->entity;
+			$sql .= " AND rc.discount_type=".((int) $discount_type);
+			if (!empty($discount_type)) {
+				$sql .= " AND (rc.fk_invoice_supplier IS NULL AND rc.fk_invoice_supplier_line IS NULL)"; // Available from supplier
+			} else {
+				$sql .= " AND (rc.fk_facture IS NULL AND rc.fk_facture_line IS NULL)"; // Available to customer
+			}
+			if (is_object($company)) {
+				$sql .= " AND rc.fk_soc = ".((int) $company->id);
+			}
+			if (is_object($user)) {
+				$sql .= " AND rc.fk_user = ".((int) $user->id);
+			}
+			if ($filter) {
+				$sql .= " AND (".$filter.")";
+			}
+			if ($maxvalue) {
+				$sql .= ' AND rc.amount_ttc <= '.((float) price2num($maxvalue));
+			}
 		} else {
-			$sql .= " AND (rc.fk_facture IS NULL AND rc.fk_facture_line IS NULL)"; // Available to customer
-		}
-		if (is_object($company)) {
-			$sql .= " AND rc.fk_soc = ".((int) $company->id);
-		}
-		if (is_object($user)) {
-			$sql .= " AND rc.fk_user = ".((int) $user->id);
-		}
-		if ($filter) {
-			$sql .= " AND (".$filter.")";
-		}
-		if ($maxvalue) {
-			$sql .= ' AND rc.amount_ttc <= '.((float) price2num($maxvalue));
+			$sql = $hookmanager->resArray['sql'];
 		}
 
 		$resql = $this->db->query($sql);
@@ -705,7 +719,7 @@ class DiscountAbsolute extends CommonObject
 	 *
 	 *	@param      CommonInvoice	  $invoice	    	Object invoice
 	 *	@param      int<-1,1>	      $multicurrency	1=Return multicurrency_amount instead of amount. TODO Add a mode multicurrency = -1 to return array with amount + multicurrency amount
-	 *	@return     int					        		Return integer <0 if KO, Sum of credit notes and excess received amount otherwise
+	 *	@return     float|string		        		Return string 'Error...' if KO, Sum of credit notes and excess received amount otherwise
 	 */
 	public function getSumCreditNotesUsed($invoice, $multicurrency = 0)
 	{
@@ -724,7 +738,7 @@ class DiscountAbsolute extends CommonObject
 		} else {
 			$this->error = get_class($this)."::getSumCreditNotesUsed was called with a bad object as a first parameter";
 			dol_print_error($this->db, $this->error);
-			return -1;
+			return 'ErrorBadElementType';
 		}
 
 		$resql = $this->db->query($sql);
@@ -737,7 +751,7 @@ class DiscountAbsolute extends CommonObject
 			}
 		} else {
 			$this->error = $this->db->lasterror();
-			return -1;
+			return 'ErrorBadSQLquery';
 		}
 	}
 	/**

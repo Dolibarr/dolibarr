@@ -161,8 +161,8 @@ $help_url = 'EN:Module_Holiday';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-holiday page-month_report');
 
-$search_month = GETPOSTINT("remonth") ? GETPOSTINT("remonth") : date("m", time());
-$search_year = GETPOSTINT("reyear") ? GETPOSTINT("reyear") : date("Y", time());
+$search_month = GETPOSTINT("search_month") ? GETPOSTINT("search_month") : (int) dol_print_date(dol_now(), "%m");
+$search_year = GETPOSTINT("search_year") ? GETPOSTINT("search_year") : (int) dol_print_date(dol_now(), "%Y");
 $year_month = sprintf("%04d", $search_year).'-'.sprintf("%02d", $search_month);
 
 $sql = "SELECT cp.rowid, cp.ref, cp.fk_user, cp.date_debut, cp.date_fin, cp.fk_type, cp.description, cp.halfday, cp.statut as status";
@@ -178,11 +178,11 @@ $sql .= " )";
 if (!empty($search_ref)) {
 	$sql .= natural_search('cp.ref', $search_ref);
 }
-if (!empty($search_employee) && $search_employee > 0) {
-	$sql .= " AND cp.fk_user = ".((int) $search_employee);
+if (!empty($search_employee) && $search_employee != '-1') {
+	$sql .= " AND cp.fk_user IN (".$db->sanitize($search_employee).")";
 }
 if (!empty($search_type) && $search_type != '-1') {
-	$sql .= ' AND cp.fk_type IN ('.$db->sanitize($search_type).')';
+	$sql .= " AND cp.fk_type IN (".$db->sanitize($search_type).")";
 }
 if (!empty($search_description)) {
 	$sql .= natural_search('cp.description', $search_description);
@@ -208,14 +208,20 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 if (!empty($search_ref)) {
 	$param .= '&search_ref='.urlencode($search_ref);
 }
-if (!empty($search_employee)) {
+if (!empty($search_employee) && $search_employee != '-1') {
 	$param .= '&search_employee='.urlencode($search_employee);
 }
-if (!empty($search_type)) {
+if (!empty($search_type) && $search_type != '-1') {
 	$param .= '&search_type='.urlencode($search_type);
 }
 if (!empty($search_description)) {
 	$param .= '&search_description='.urlencode($search_description);
+}
+if (!empty($search_month)) {
+	$param .= '&search_month='.((int) $search_month);
+}
+if (!empty($search_year)) {
+	$param .= '&search_year='.((int) $search_year);
 }
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -234,13 +240,13 @@ print load_fiche_titre($langs->trans('MenuReportMonth'), '', 'title_hrm');
 
 // Selection filter
 print '<div class="tabBar">';
-print $formother->select_month($search_month, 'remonth', 0, 0, 'minwidth50 maxwidth75imp valignmiddle', true);
-print $formother->selectyear($search_year, 'reyear', 0, 10, 5, 0, 0, '', 'valignmiddle width75', true);
-print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Search")).'" />';
+print $formother->select_month($search_month, 'search_month', 0, 1, 'minwidth50 maxwidth75imp valignmiddle', true);
+print $formother->selectyear($search_year, 'search_year', 0, 10, 5, 0, 0, '', 'valignmiddle width75', true);
+print '<input type="submit" class="button small" value="'.dol_escape_htmltag($langs->trans("Search")).'" />';
 print '</div>';
 print '<br>';
 
-$moreforfilter = '';
+//$moreforfilter = '';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
@@ -276,14 +282,14 @@ if (!empty($arrayfields['cp.fk_type']['checked'])) {
 	}
 
 	print '<th class="liste_titre">';
-	print $form->selectarray('search_type', $arraytypeleaves, $search_type, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100', 1);
+	print $form->selectarray('search_type', $arraytypeleaves, $search_type, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth150', 1);
 	print '</th>';
 }
 
 // Filter: Employee
 if (!empty($arrayfields['cp.fk_user']['checked'])) {
 	print '<th class="liste_titre">';
-	print $form->select_dolusers($search_employee, "search_employee", 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth100');
+	print $form->select_dolusers($search_employee, "search_employee", 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth150');
 	print '</th>';
 }
 
@@ -324,44 +330,44 @@ print '</tr>';
 print '<tr class="liste_titre">';
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 }
 if (!empty($arrayfields['cp.ref']['checked'])) {
-	print_liste_field_titre($arrayfields['cp.ref']['label'], $_SERVER["PHP_SELF"], 'cp.ref', '', '', '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cp.ref']['label'], $_SERVER["PHP_SELF"], 'cp.ref', '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cp.fk_type']['checked'])) {
-	print_liste_field_titre($arrayfields['cp.fk_type']['label'], $_SERVER["PHP_SELF"], 'cp.fk_type', '', '', '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cp.fk_type']['label'], $_SERVER["PHP_SELF"], 'cp.fk_type', '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cp.fk_user']['checked'])) {
-	print_liste_field_titre($arrayfields['cp.fk_user']['label'], $_SERVER["PHP_SELF"], 'u.lastname', '', '', '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cp.fk_user']['label'], $_SERVER["PHP_SELF"], 'u.lastname', '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['ct.label']['checked'])) {
-	print_liste_field_titre($arrayfields['ct.label']['label'], $_SERVER["PHP_SELF"], 'ct.label', '', '', '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['ct.label']['label'], $_SERVER["PHP_SELF"], 'ct.label', '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['cp.date_debut']['checked'])) {
-	print_liste_field_titre($arrayfields['cp.date_debut']['label'], $_SERVER["PHP_SELF"], 'cp.date_debut', '', '', '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre($arrayfields['cp.date_debut']['label'], $_SERVER["PHP_SELF"], 'cp.date_debut', '', $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['cp.date_fin']['checked'])) {
-	print_liste_field_titre($arrayfields['cp.date_fin']['label'], $_SERVER["PHP_SELF"], 'cp.date_fin', '', '', '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre($arrayfields['cp.date_fin']['label'], $_SERVER["PHP_SELF"], 'cp.date_fin', '', $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['used_days']['checked'])) {
-	print_liste_field_titre($arrayfields['used_days']['label'], $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'maxwidth125 right ');
+	print_liste_field_titre($arrayfields['used_days']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'maxwidth125 right ');
 }
 if (!empty($arrayfields['date_start_month']['checked'])) {
-	print_liste_field_titre($arrayfields['date_start_month']['label'], $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre($arrayfields['date_start_month']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['date_end_month']['checked'])) {
-	print_liste_field_titre($arrayfields['date_end_month']['label'], $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre($arrayfields['date_end_month']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ');
 }
 if (!empty($arrayfields['used_days_month']['checked'])) {
-	print_liste_field_titre($arrayfields['used_days_month']['label'], $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'maxwidth125 right ');
+	print_liste_field_titre($arrayfields['used_days_month']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'maxwidth125 right ');
 }
 if (!empty($arrayfields['cp.description']['checked'])) {
-	print_liste_field_titre($arrayfields['cp.description']['label'], $_SERVER["PHP_SELF"], 'cp.description', '', '', '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['cp.description']['label'], $_SERVER["PHP_SELF"], 'cp.description', '', $param, '', $sortfield, $sortorder);
 }
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 }
 print '</tr>';
 

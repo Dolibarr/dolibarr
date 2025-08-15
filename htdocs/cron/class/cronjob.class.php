@@ -430,9 +430,10 @@ class Cronjob extends CommonObject
 	 * @param	int			$id				Id object
 	 * @param	string		$objectname		Object name
 	 * @param	string		$methodname		Method name
+	 * @param	string		$label			Label
 	 * @return	int							if KO: <0 || if OK: >0
 	 */
-	public function fetch(int $id, string $objectname = '', string $methodname = '')
+	public function fetch(int $id, string $objectname = '', string $methodname = '', string $label = '')
 	{
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
@@ -472,13 +473,15 @@ class Cronjob extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."cronjob as t";
 		if ($id > 0) {
 			$sql .= " WHERE t.rowid = ".((int) $id);
+		} elseif ($label) {
+			$sql .= " WHERE t.entity IN(0, ".getEntity('cron').")";
+			$sql .= " AND t.label = '".$this->db->escape($label)."'";
 		} else {
 			$sql .= " WHERE t.entity IN(0, ".getEntity('cron').")";
 			$sql .= " AND t.objectname = '".$this->db->escape($objectname)."'";
 			$sql .= " AND t.methodename = '".$this->db->escape($methodname)."'";
 		}
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {
@@ -488,6 +491,7 @@ class Cronjob extends CommonObject
 				$this->ref = $obj->rowid;
 				$this->entity = $obj->entity;
 				$this->tms = $this->db->jdate($obj->tms);
+				$this->date_modification = $this->db->jdate($obj->tms);
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->label = $obj->label;
 				$this->jobtype = $obj->jobtype;

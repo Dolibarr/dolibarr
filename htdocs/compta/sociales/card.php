@@ -513,7 +513,7 @@ if ($id > 0) {
 		}
 
 
-		print dol_get_fiche_head($head, 'card', $langs->trans("SocialContribution"), -1, 'bill', 0, '', '', 0, '', 1);
+		print dol_get_fiche_head($head, 'card', $langs->trans("SocialContribution"), -1, $object->picto, 0, '', '', 0, '', 1);
 
 		// Print form confirm
 		print $formconfirm;

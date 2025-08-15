@@ -57,7 +57,7 @@ Assigned=Phân công
 NeedMoreInformation=Chờ phản hồi của phóng viên
 NeedMoreInformationShort=Chờ phản hồi
 Waiting=Đang chờ
-SolvedClosed=Đã giải quyết
+SolvedClosed=Đã đóng
 Deleted=Đã xóa
 # Dict
 Severity=Mức độ nghiêm trọng
@@ -72,8 +72,10 @@ TicketPublicAccess=Giao diện công cộng không yêu cầu nhận dạng có 
 TicketSetupDictionaries=Loại vé, mức độ nghiêm trọng và mã phân tích có thể được cấu hình từ từ điển
 TicketParamModule=Thiết lập biến thể mô-đun
 TicketParamMail=Thiết lập email
-TicketEmailNotificationFrom=Người gửi email để thông báo về vé (tạo vé hoặc cập nhật tin nhắn)
-TicketEmailNotificationFromHelp=Email của người gửi được sử dụng để gửi email thông báo cho việc tạo vé hoặc thêm tin nhắn. Ví dụ noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Thông báo việc tạo vé tới địa chỉ email này
 TicketEmailNotificationToHelp=Nếu có, địa chỉ email này sẽ được thông báo về việc tạo phiếu (ngoài bất kỳ người nhận mặc định nào khác)
 TicketNewEmailBodyLabel=Thông điệp văn bản được gửi sau khi tạo vé
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=Chỉ có vé được chỉ định cho ngư�
 TicketsActivatePublicInterface=Kích hoạt giao diện công cộng
 TicketsActivatePublicInterfaceHelp=Giao diện công cộng cho phép bất kỳ khách nào tạo vé.
 TicketsAutoAssignTicket=Tự động chỉ định người dùng đã tạo vé
-TicketsAutoAssignTicketHelp=Khi tạo phiếu, người dùng có thể được tự động gán vào phiếu đó (Ví dụ: 0=Không bao giờ được tự động gán vào phiếu, 1=Tự động gán vào phiếu nếu không có ai được gán, 2=Tự động gán vào phiếu ngay cả khi đã có người được xác định).
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
 TicketAutoChangeStatusOnAnswer=Tự động chỉ định trạng thái khi trả lời phiếu
 TicketAutoChangeStatusOnAnswerHelp=Khi người dùng trả lời một phiếu, trạng thái sẽ tự động được áp dụng cho phiếu đó
 TicketNumberingModules=Mô-đun đánh số vé
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=Chỉ xem vé mở
 TicketStatByStatus=Vé theo tình trạng
 OrderByDateAsc=Sắp xếp theo ngày tăng dần
 OrderByDateDesc=Sắp xếp theo ngày giảm dần
-ShowAsConversation=Hiển thị dưới dạng danh sách cuộc hội thoại
-MessageListViewType=Hiển thị dưới dạng danh sách bảng
 ConfirmMassTicketClosingSendEmail=Tự động gửi email khi đóng yêu cầu
 ConfirmMassTicketClosingSendEmailQuestion=Bạn có muốn thông báo cho bên thứ ba khi đóng các vé này không?
 # Ticket card

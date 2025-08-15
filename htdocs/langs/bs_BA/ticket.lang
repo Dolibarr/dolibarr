@@ -57,7 +57,7 @@ Assigned=Dodijeljeno
 NeedMoreInformation=Čeka se povratna informacija novinara
 NeedMoreInformationShort=Čekam povratnu informaciju
 Waiting=Čekanje
-SolvedClosed=Rešeno
+SolvedClosed=Zaključeno
 Deleted=Izbrisano
 # Dict
 Severity=Ozbiljnost
@@ -72,8 +72,10 @@ TicketPublicAccess=Javni interfejs koji ne zahteva identifikaciju dostupan je na
 TicketSetupDictionaries=Tip karte, ozbiljnost i analitički kodovi se mogu konfigurirati iz rječnika
 TicketParamModule=Podešavanje varijable modula
 TicketParamMail=Podešavanje e-pošte
-TicketEmailNotificationFrom=E-mail pošiljatelja za obavještenja o tiketima (kreiranje tiketa ili ažurirane poruke)
-TicketEmailNotificationFromHelp=E-mail pošiljatelja koji će se koristiti za slanje e-mailova s obavijestima za kreiranje tiketa ili dodavanje poruka. Na primjer noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Obavijestite kreiranje ulaznice na ovu e-mail adresu
 TicketEmailNotificationToHelp=Ako je prisutna, ova e-mail adresa će biti obaviještena o kreiranju tiketa (pored svih ostalih zadanih primalaca)
 TicketNewEmailBodyLabel=Tekstualna poruka poslana nakon kreiranja tiketa
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=Biće vidljive samo karte dodijeljene trenutnom
 TicketsActivatePublicInterface=Aktivirajte javni interfejs
 TicketsActivatePublicInterfaceHelp=Javni interfejs omogućava svim posetiocima da kreiraju ulaznice.
 TicketsAutoAssignTicket=Automatski dodijelite korisnika koji je kreirao kartu
-TicketsAutoAssignTicketHelp=Prilikom kreiranja tiketa, korisnik može biti automatski dodijeljen tiketu (Primjeri: 0=Nikada se automatski ne dodjeljuje tiketu, 1=Automatski se dodjeljuje tiketu ako niko nije dodijeljen, 2=Automatski se dodjeljuje tiketu čak i ako je neko definisan).
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
 TicketAutoChangeStatusOnAnswer=Automatski dodijeli status prilikom odgovaranja na zahtjev
 TicketAutoChangeStatusOnAnswerHelp=Kada korisnik odgovori na tiket, status će se automatski primijeniti na tiket.
 TicketNumberingModules=Modul numeracije karata
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=Pogledajte samo otvorene karte
 TicketStatByStatus=Karte po statusu
 OrderByDateAsc=Sortiraj po rastućem datumu
 OrderByDateDesc=Poredaj po opadajućem datumu
-ShowAsConversation=Prikaži kao listu razgovora
-MessageListViewType=Prikaži kao listu tabela
 ConfirmMassTicketClosingSendEmail=Automatski šaljite e-poštu prilikom zatvaranja karata
 ConfirmMassTicketClosingSendEmailQuestion=Želite li obavijestiti treća lica kada zatvorite ove karte?
 # Ticket card

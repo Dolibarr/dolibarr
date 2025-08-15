@@ -261,21 +261,6 @@ class modWebhook extends DolibarrModules
 		$r = 0;
 		// Add here entries to declare new permissions
 		/* BEGIN MODULEBUILDER PERMISSIONS */
-		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Read Webhooks'; // Permission label
-		$this->rights[$r][4] = 'webhook_target';
-		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->webhook->webhook_target->read)
-		$r++;
-		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/Update Webhooks'; // Permission label
-		$this->rights[$r][4] = 'webhook_target';
-		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->webhook->webhook_target->write)
-		$r++;
-		$this->rights[$r][0] = $this->numero . sprintf("%02d", $r + 1); // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Delete Webhooks'; // Permission label
-		$this->rights[$r][4] = 'webhook_target';
-		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->webhook->webhook_target->delete)
-		$r++;
 		/* END MODULEBUILDER PERMISSIONS */
 
 		// Main menu entries to add

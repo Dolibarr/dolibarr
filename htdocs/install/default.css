@@ -62,10 +62,9 @@
 }
 
 body {
-	font-size:14px;
 	font-family: roboto,arial,tahoma,verdana,helvetica;
-	/* background: #fcfcfc; */
 	margin: 15px 30px 10px;
+	font-size: 0.95em;
 }
 
 table.main-inside {

@@ -62,6 +62,10 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 if (isModEnabled('order')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
+if (isModEnabled('category')) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+}
 
 /**
  * @var Conf $conf
@@ -164,6 +168,13 @@ $search_datem_start = GETPOSTDATE('search_datem_start', 'getpost', 'tzuserrel');
 $search_datem_end = GETPOSTDATE('search_datem_end', 'getpostend', 'tzuserrel');
 
 $search_categ_cus = GETPOST("search_categ_cus", 'intcomma');
+$searchCategoryInvoiceOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategoryInvoiceOperator = GETPOSTINT('search_category_invoice_operator');
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
+	$searchCategoryInvoiceOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
+}
+$searchCategoryInvoiceList = GETPOST('search_category_invoice_list', 'array');
 $search_product_category = GETPOST('search_product_category', 'intcomma');
 $search_fac_rec_source_title = GETPOST("search_fac_rec_source_title", 'alpha');
 $search_fk_fac_rec_source = GETPOST('search_fk_fac_rec_source', 'int');
@@ -368,6 +379,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_user = '';
 	$search_sale = '';
 	$search_product_category = '';
+	$searchCategoryInvoiceList = array();
 	$search_ref = '';
 	$search_refcustomer = '';
 	$search_type = '';
@@ -1000,6 +1012,35 @@ if ($search_sale && $search_sale != '-1') {
 	}
 }
 
+// Search for tag/category ($searchCategoryInvoiceList is an array of ID)
+if (!empty($searchCategoryInvoiceList)) {
+	$searchCategoryInvoiceSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryInvoiceList as $searchCategoryInvoice) {
+		if (intval($searchCategoryInvoice) == -2) {
+			$searchCategoryInvoiceSqlList[] = "NOT EXISTS (SELECT ck.fk_invoice FROM ".MAIN_DB_PREFIX."categorie_invoice as ck WHERE f.rowid = ck.fk_invoice)";
+		} elseif (intval($searchCategoryInvoice) > 0) {
+			if ($searchCategoryInvoiceOperator == 0) {
+				$searchCategoryInvoiceSqlList[] = " EXISTS (SELECT ck.fk_invoice FROM ".MAIN_DB_PREFIX."categorie_invoice as ck WHERE f.rowid = ck.fk_invoice AND ck.fk_categorie = ".((int) $searchCategoryInvoice).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryInvoice);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryInvoiceSqlList[] = " EXISTS (SELECT ck.fk_invoice FROM ".MAIN_DB_PREFIX."categorie_invoice as ck WHERE f.rowid = ck.fk_invoice AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryInvoiceOperator == 1) {
+		if (!empty($searchCategoryInvoiceSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryInvoiceSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryInvoiceSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryInvoiceSqlList).")";
+		}
+	}
+}
+
 // Search for tag/category ($searchCategoryProductList is an array of ID)
 $searchCategoryProductList = $search_product_category ? array($search_product_category) : array();
 $searchCategoryProductOperator = 0;
@@ -1074,7 +1115,11 @@ if ($search_all) {
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+if (empty($reshook)) {
+	$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+} else {
+	$sql = $hookmanager->resPrint;
+}
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -1091,7 +1136,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -1133,7 +1178,7 @@ if ($search_fk_fac_rec_source) {
 
 	$head = invoice_rec_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'generated', $langs->trans('InvoicesGeneratedFromRec'), -1, 'bill'); // Add a div
+	print dol_get_fiche_head($head, 'generated', $langs->trans('InvoicesGeneratedFromRec'), -1, $object->picto); // Add a div
 }
 
 $param = '';
@@ -1262,6 +1307,12 @@ if ($search_user > 0) {
 }
 if ($search_login) {
 	$param .= '&search_login='.urlencode($search_login);
+}
+if ($searchCategoryInvoiceOperator == 1) {
+	$param .= "&search_category_invoice_operator=".urlencode((string) ($searchCategoryInvoiceOperator));
+}
+foreach ($searchCategoryInvoiceList as $searchCategoryInvoice) {
+	$param .= "&search_category_invoice_list[]=".urlencode($searchCategoryInvoice);
 }
 if ($search_product_category > 0) {
 	$param .= '&search_product_category='.urlencode((string) $search_product_category);
@@ -1430,6 +1481,12 @@ if ($search_all) {
 
 // If the user can view prospects other than his'
 $moreforfilter = '';
+
+if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
+	$formcategory = new FormCategory($db);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_INVOICE, $searchCategoryInvoiceList, 'minwidth300', $searchCategoryInvoiceOperator ? $searchCategoryInvoiceOperator : 0);
+}
+
 if ($user->hasRight("user", "user", "lire")) {
 	$langs->load("commercial");
 	$moreforfilter .= '<div class="divsearchfield">';
@@ -2281,7 +2338,7 @@ if ($num > 0) {
 
 				print '<td class="nobordernopadding nowraponall">';
 				if ($contextpage == 'poslist') {
-					print dol_escape_htmltag($obj->ref);
+					print dolPrintHTML($obj->ref);
 				} else {
 					print $facturestatic->getNomUrl(1, '', 200, 0, '', 0, 1);
 				}
@@ -2528,7 +2585,7 @@ if ($num > 0) {
 				}
 			}
 
-			// Channel
+			// Input channel
 			if (!empty($arrayfields['f.fk_input_reason']['checked'])) {
 				print '<td>';
 				$form->formInputReason($_SERVER['PHP_SELF'], (string) $obj->fk_input_reason, 'none');
@@ -2721,12 +2778,15 @@ if ($num > 0) {
 
 			// Currency
 			if (!empty($arrayfields['f.multicurrency_code']['checked'])) {
-				print '<td class="nowraponall tdoverflowmax125" title="'.dol_escape_htmltag($obj->multicurrency_code.' - '.$langs->transnoentitiesnoconv('Currency'.$obj->multicurrency_code)).'">';
-				if (!getDolGlobalString('MAIN_SHOW_ONLY_CODE_MULTICURRENCY')) {
-					print $langs->transnoentitiesnoconv('Currency'.$obj->multicurrency_code);
+				if (!getDolGlobalString('MAIN_SHOW_ONLY_CODE_MULTICURRENCY') && !empty($obj->multicurrency_code)) {
+					$title = $obj->multicurrency_code.' - '.$langs->transnoentitiesnoconv('Currency'.$obj->multicurrency_code);
+					$label = $langs->transnoentitiesnoconv('Currency'.$obj->multicurrency_code);
 				} else {
-					print dol_escape_htmltag($obj->multicurrency_code);
+					$title = $obj->multicurrency_code;
+					$label = $obj->multicurrency_code;
 				}
+				print '<td class="nowraponall tdoverflowmax125" title="'.dolPrintHTMLForAttribute($title).'">';
+				print dolPrintHTML($label);
 				print "</td>\n";
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2864,7 +2924,7 @@ if ($num > 0) {
 			// Note public
 			if (!empty($arrayfields['f.note_public']['checked'])) {
 				print '<td class="sensiblehtmlcontent center">';
-				print dolPrintHTML($obj->note_public);
+				print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2872,8 +2932,8 @@ if ($num > 0) {
 			}
 			// Note private
 			if (!empty($arrayfields['f.note_private']['checked'])) {
-				print '<td class="center">';
-				print dolPrintHTML($obj->note_private);
+				print '<td class="sensiblehtmlcontent center">';
+				print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

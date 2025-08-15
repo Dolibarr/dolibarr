@@ -148,7 +148,7 @@ CSSListClass=CSS pour la liste
 NotEditable=Non éditable
 ForeignKey=Clé étrangère
 ForeignKeyDesc=Si la valeur de ce champ doit être garantie existe dans une autre table. Saisissez ici une valeur correspondant à la syntaxe : nomtable.champparentàvérifier
-TypeOfFieldsHelp=Exemple:<br>varchar(99)<br>email<br>téléphone<br>ip<br>url<br> mot de passe<br>double(24,8)<br>réel<br>texte<br>html<br>date<br>dateheure<br>horodatage<br>étoiles (Nombre D'Étoiles) Nombre D'Étoiles doit être compris entre 1 et 10.<br>entier<br>entier:Nom de la classe:chemin relatif/vers/classfile.class.php[:1[:filtre]]<br><br> «1» signifie que nous ajoutons un bouton + après la liste déroulante pour créer l'enregistrement<br>'filtre' est une condition qui utilise la syntaxe de filtre universel, exemple : '((status:=:1) et (fk_user:=:__USER_ID__) et (entity:IN:(__SHARED_ENTITIES__))'
+TypeOfFieldsHelp=Exemple:<br>varchar(99)<br>email<br>phone<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>stars(Nombre D'Étoiles) Nombre D'Étoiles doit être compris entre 1 et 10.<br>integer<br>integer:Nom de la classe:chemin relatif/vers/classfile.class.php[:1[:filtre]]<br><br> «1» signifie que nous ajoutons un bouton + après la liste déroulante pour créer l'enregistrement<br>'filtre' est une condition qui utilise la syntaxe de filtre Universel, exemple : '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=Il s'agit du type de champ/attribut.
 AsciiToHtmlConverter=Convertisseur Ascii en HTML
 AsciiToPdfConverter=Convertisseur Ascii en PDF

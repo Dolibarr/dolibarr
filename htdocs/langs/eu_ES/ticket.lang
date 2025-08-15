@@ -57,7 +57,7 @@ Assigned=Esleituta
 NeedMoreInformation=Kazetarien iritziaren zain
 NeedMoreInformationShort=Iritzien zain
 Waiting=Itxaroten
-SolvedClosed=Konpondua
+SolvedClosed=Closed
 Deleted=Ezabatuta
 # Dict
 Severity=Larritasuna
@@ -72,8 +72,10 @@ TicketPublicAccess=Identifikaziorik behar ez duen interfaze publiko bat eskuraga
 TicketSetupDictionaries=Txartelaren mota, larritasuna eta analisi-kodeak hiztegietatik konfigura daitezke.
 TicketParamModule=Modulu aldagaien konfigurazioa
 TicketParamMail=Posta elektronikoaren konfigurazioa
-TicketEmailNotificationFrom=Txartelen jakinarazpenetarako bidaltzailearen helbide elektronikoa (txartelen sorrera edo eguneratze mezuak)
-TicketEmailNotificationFromHelp=Txartelak sortzeari edo mezuak gehitzeari buruzko jakinarazpen-mezu elektronikoak bidaltzeko bidaltzailearen helbide elektronikoa. Adibidez, noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Jakinarazi txartelaren sorrera helbide elektroniko honetara
 TicketEmailNotificationToHelp=Baldin badago, helbide elektroniko honi jakinaraziko zaio txartela sortzearen berri (beste hartzaile lehenetsiez gain)
 TicketNewEmailBodyLabel=Txartela sortu ondoren bidalitako testu-mezua
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=Uneko erabiltzaileari esleitutako txartelak bak
 TicketsActivatePublicInterface=Aktibatu interfaze publikoa
 TicketsActivatePublicInterfaceHelp=Interfaze publikoak bisitari guztiei sarrerak sortzeko aukera ematen die.
 TicketsAutoAssignTicket=Txartela sortu duen erabiltzailea automatikoki esleitu
-TicketsAutoAssignTicketHelp=Txartel bat sortzerakoan, erabiltzailea automatikoki esleitu dakioke txartelari (Adibideak: 0=Inoiz ez da automatikoki esleituko txartelari, 1=Automatikoki esleituko zaio txartelari inor esleitu ez bada, 2=Automatikoki esleituko zaio txartelari norbait definitu bada ere).
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
 TicketAutoChangeStatusOnAnswer=Txartel bati erantzutean egoera bat automatikoki esleitu
 TicketAutoChangeStatusOnAnswerHelp=Erabiltzaile batek txartel bati erantzuten dionean, egoera automatikoki aplikatuko zaio txartel horri.
 TicketNumberingModules=Txartelen zenbakitze modulua
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=Ikusi sarrera irekiak bakarrik
 TicketStatByStatus=Txartelak egoeraren arabera
 OrderByDateAsc=Ordenatu dataren arabera goranzko
 OrderByDateDesc=Ordenatu dataren arabera beheranzko
-ShowAsConversation=Erakutsi elkarrizketa-zerrenda gisa
-MessageListViewType=Erakutsi taula-zerrenda gisa
 ConfirmMassTicketClosingSendEmail=Txartelak ixtean mezu elektronikoak automatikoki bidali
 ConfirmMassTicketClosingSendEmailQuestion=Txartel hauek ixtean hirugarrenei jakinarazi nahi diezu?
 # Ticket card

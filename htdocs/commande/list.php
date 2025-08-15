@@ -17,6 +17,7 @@
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024		William Mead			    <william.mead@manchenumerique.fr>
+ * Copyright (C) 2025		Lenin Rivas			    	<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,6 +55,11 @@ require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
+if (isModEnabled('category')) {
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+}
 
 /**
  * @var Conf $conf
@@ -99,6 +105,13 @@ $search_datedelivery_end = dol_mktime(23, 59, 59, GETPOSTINT('search_datedeliver
 $socid = GETPOSTINT('socid');
 
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
+$searchCategoryOrderOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategoryOrderOperator = GETPOSTINT('search_category_order_operator');
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
+	$searchCategoryOrderOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
+}
+$searchCategoryOrderList = GETPOST('search_category_order_list', 'array');
 $search_product_category = GETPOST('search_product_category', 'intcomma');
 $search_id = GETPOST('search_id', 'int');
 $search_ref = GETPOST('search_ref', 'alpha') != '' ? GETPOST('search_ref', 'alpha') : GETPOST('sref', 'alpha');
@@ -315,6 +328,7 @@ if (empty($reshook)) {
 		$search_user = '';
 		$search_sale = '';
 		$search_product_category = '';
+		$searchCategoryOrderList = array();
 		$search_id = '';
 		$search_ref = '';
 		$search_ref_ext = '';
@@ -477,6 +491,36 @@ if (empty($reshook)) {
 				if ($res == 0) {
 					$errors[] = $cmd->ref.' : '.$langs->trans($objecttmp->errors[0]);
 					$error++;
+				}
+
+				// Linked Expeditions
+				if (getDolGlobalString('ORDER_MASS_ACTION_BILLED_LINK_EXPEDITIONS')) {
+					$cmd->fetchObjectLinked();
+					// Add object linked
+					if (!$error && $cmd->id && !empty($cmd->linkedObjectsIds['shipping']) && is_array($cmd->linkedObjectsIds['shipping'])) {
+						$cmd->linked_objects = $cmd->linkedObjectsIds;
+						foreach ($cmd->linked_objects as $origin_type => $tmp_origin_id) {
+							// IF more of same type
+							if ($origin_type == 'shipping') {
+								if (is_array($tmp_origin_id)) {       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
+									foreach ($tmp_origin_id as $origin_id) {
+										$res = $objecttmp->add_object_linked($origin_type, $origin_id);
+										if (!$res) {
+											$errors[] = $cmd->ref.' : '.$langs->trans($objecttmp->errors[0]);
+											$error++;
+										}
+									}
+								} else { // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
+									$origin_id = $tmp_origin_id;
+									$res = $objecttmp->add_object_linked($origin_type, $origin_id);
+									if (!$res) {
+										$errors[] = $cmd->ref.' : '.$langs->trans($objecttmp->errors[0]);
+										$error++;
+									}
+								}
+							}
+						}
+					}
 				}
 
 				if (!$error) {
@@ -756,6 +800,9 @@ if (empty($reshook)) {
 			if ($search_project_ref >= 0) {
 				$param .= "&search_project_ref=".urlencode($search_project_ref);
 			}
+			if ($search_project != '') {
+				$param .= "&search_project=".urlencode($search_project);
+			}
 			if ($search_billed != '') {
 				$param .= '&search_billed='.urlencode($search_billed);
 			}
@@ -1010,7 +1057,12 @@ if ($search_status != '') {
 	}
 }
 if ($search_option == 'late') {
-	$sql .= " AND c.date_commande < '".$db->idate(dol_now() - $conf->order->client->warning_delay)."'";
+	// Use delivery date if set and not disabled, otherwise use order date.
+	if (!getDolGlobalString('ORDER_DISABLE_DELIVERY_DATE')) {
+		$sql .= " AND ((c.date_livraison IS NOT NULL AND c.date_livraison < '".$db->idate(dol_now() - $conf->order->client->warning_delay)."') OR (c.date_livraison IS NULL AND c.date_commande < '".$db->idate(dol_now() - $conf->order->client->warning_delay)."'))";
+	} else {
+		$sql .= " AND c.date_commande < '".$db->idate(dol_now() - $conf->order->client->warning_delay)."'";
+	}
 }
 if ($search_datecloture_start) {
 	$sql .= " AND c.date_cloture >= '".$db->idate($search_datecloture_start)."'";
@@ -1138,8 +1190,38 @@ if ($search_sale && $search_sale != '-1') {
 		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
 	}
 }
+
+// Search for tag/category ($searchCategoryOrderList is an array of ID)
+if (!empty($searchCategoryOrderList)) {
+	$searchCategoryOrderSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategoryOrderList as $searchCategoryOrder) {
+		if (intval($searchCategoryOrder) == -2) {
+			$searchCategoryOrderSqlList[] = "NOT EXISTS (SELECT ck.fk_order FROM ".MAIN_DB_PREFIX."categorie_order as ck WHERE c.rowid = ck.fk_order)";
+		} elseif (intval($searchCategoryOrder) > 0) {
+			if ($searchCategoryOrderOperator == 0) {
+				$searchCategoryOrderSqlList[] = " EXISTS (SELECT ck.fk_order FROM ".MAIN_DB_PREFIX."categorie_order as ck WHERE c.rowid = ck.fk_order AND ck.fk_categorie = ".((int) $searchCategoryOrder).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategoryOrder);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategoryOrderSqlList[] = " EXISTS (SELECT ck.fk_order FROM ".MAIN_DB_PREFIX."categorie_order as ck WHERE c.rowid = ck.fk_order AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategoryOrderOperator == 1) {
+		if (!empty($searchCategoryOrderSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategoryOrderSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategoryOrderSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategoryOrderSqlList).")";
+		}
+	}
+}
+
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
-$searchCategoryCustomerOperator = -1;
+$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
 $searchCategoryCustomerList = array($search_categ_cus);
 if (!empty($searchCategoryCustomerList)) {
 	$searchCategoryCustomerSqlList = array();
@@ -1169,7 +1251,7 @@ if (!empty($searchCategoryCustomerList)) {
 	}
 }
 // Search for tag/category ($searchCategoryProductList is an array of ID)
-$searchCategoryProductOperator = -1;
+$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
 $searchCategoryProductList = array($search_product_category);
 if (!empty($searchCategoryProductList)) {
 	$searchCategoryProductSqlList = array();
@@ -1212,7 +1294,11 @@ if ($search_all) {
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+if (empty($reshook)) {
+	$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+} else {
+	$sql = $hookmanager->resPrint;
+}
 //print $sql;
 
 // Count total nb of records
@@ -1229,7 +1315,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -1408,6 +1494,9 @@ if ($search_multicurrency_montant_ttc != '') {
 if ($search_project_ref >= 0) {
 	$param .= "&search_project_ref=".urlencode($search_project_ref);
 }
+if ($search_project != '') {
+	$param .= "&search_project=".urlencode($search_project);
+}
 if ($search_town != '') {
 	$param .= '&search_town='.urlencode($search_town);
 }
@@ -1422,6 +1511,12 @@ if ($search_country != '') {
 }
 if ($search_type_thirdparty && $search_type_thirdparty != '-1') {
 	$param .= '&search_type_thirdparty='.urlencode((string) ($search_type_thirdparty));
+}
+if ($searchCategoryOrderOperator == 1) {
+	$param .= "&search_category_order_operator=".urlencode((string) ($searchCategoryOrderOperator));
+}
+foreach ($searchCategoryOrderList as $searchCategoryOrder) {
+	$param .= "&search_category_order_list[]=".urlencode($searchCategoryOrder);
 }
 if ($search_product_category != '') {
 	$param .= '&search_product_category='.urlencode((string) ($search_product_category));
@@ -1594,6 +1689,11 @@ if ($search_all) {
 }
 
 $moreforfilter = '';
+
+if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
+	$formcategory = new FormCategory($db);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_ORDER, $searchCategoryOrderList, 'minwidth300', $searchCategoryOrderOperator ? $searchCategoryOrderOperator : 0);
+}
 
 // If the user can view prospects? sales other than his own
 if ($user->hasRight("user", "user", "lire")) {
@@ -2162,11 +2262,11 @@ if (!empty($arrayfields['c.date_cloture']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.note_public']['checked'])) {
-	print_liste_field_titre($arrayfields['c.note_public']['label'], $_SERVER["PHP_SELF"], "c.note_public", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['c.note_public']['label'], $_SERVER["PHP_SELF"], "c.note_public", "", $param, '', $sortfield, $sortorder, '');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['c.note_private']['checked'])) {
-	print_liste_field_titre($arrayfields['c.note_private']['label'], $_SERVER["PHP_SELF"], "c.note_private", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['c.note_private']['label'], $_SERVER["PHP_SELF"], "c.note_private", "", $param, '', $sortfield, $sortorder, '');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['shippable']['checked'])) {
@@ -2848,8 +2948,8 @@ while ($i < $imaxinloop) {
 
 		// Note public
 		if (!empty($arrayfields['c.note_public']['checked'])) {
-			print '<td class="flat maxwidth250imp">';
-			print '<div class="small lineheightsmall">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public), 5).'</div>';
+			print '<td class="sensiblehtmlcontent maxwidth250imp classfortooltip" title="'.dolPrintHTMLForAttribute(dolGetFirstLineOfText($obj->note_public, 20)).'">';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2858,8 +2958,8 @@ while ($i < $imaxinloop) {
 
 		// Note private
 		if (!empty($arrayfields['c.note_private']['checked'])) {
-			print '<td class="flat maxwidth250imp">';
-			print '<div class="small lineheightsmall">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private), 5).'</div>';
+			print '<td class="sensiblehtmlcontent maxwidth250imp classfortooltip" title="'.dolPrintHTMLForAttribute(dolGetFirstLineOfText($obj->note_private, 20)).'">';
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

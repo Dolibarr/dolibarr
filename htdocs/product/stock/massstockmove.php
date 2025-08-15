@@ -216,7 +216,7 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 				// Define value of products moved
 				$pricesrc = 0;
 				if (!empty($product->pmp)) {
-					$pricesrc = $product->pmp;
+					$pricesrc = (float) $product->pmp;
 				}
 				$pricedest = $pricesrc;
 

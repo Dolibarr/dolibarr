@@ -141,7 +141,7 @@ if ($id > 0 || !empty($ref)) {
 		llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-order page-card_contact');
 
 		$head = commande_prepare_head($object);
-		print dol_get_fiche_head($head, 'contact', $langs->trans("CustomerOrder"), -1, 'order');
+		print dol_get_fiche_head($head, 'contact', $langs->trans("CustomerOrder"), -1, $object->picto);
 
 		// Order card
 
@@ -157,7 +157,7 @@ if ($id > 0 || !empty($ref)) {
 		if (isModEnabled('project')) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>';
-			if (0) {
+			if (0) {	// @phpstan-ignore-line
 				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';

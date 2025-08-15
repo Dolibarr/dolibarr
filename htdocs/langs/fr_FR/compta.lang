@@ -3,10 +3,10 @@ MenuFinancial=Facturation | Paiement
 TaxModuleSetupToModifyRules=Aller dans la <a href="%s">configuration du module Taxes</a> pour modifier les règles de calcul
 TaxModuleSetupToModifyRulesLT=Aller dans la <a href="%s">configuration de l'institution</a> pour modifier les règles de calcul
 OptionMode=Option de tenue de comptabilité
-OptionModeTrue=Option Recettes-Dépenses
-OptionModeVirtual=Option Créances-Dettes
-OptionModeTrueDesc=Dans ce contexte, le chiffre d'affaires est calculé en fonction des paiements (date de paiement). La validité des chiffres n'est assurée que si la comptabilité est contrôlée par les entrées/sorties de paiements.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=Dans ce mode, le chiffre d'affaires est calculé sur la base des factures (date de validation). Payées ou non, elles apparaissent dans le résultat dès qu'elles sont dues.
+OptionModeTrueDesc=Dans ce contexte, le chiffre d'affaires est calculé en fonction des paiements (date de paiement). La validité des chiffres n'est assurée que si la comptabilité est contrôlée par les entrées/sorties de paiements.
 FeatureIsSupportedInInOutModeOnly=Fonction disponible uniquement en mode compta CREANCES-DETTES (Voir configuration du module compta)
 VATReportBuildWithOptionDefinedInModule=Les montants obtenus sont ceux calculés à partir des règles de calcul paramétrées pour le module Taxes.
 LTReportBuildWithOptionDefinedInModule=Les montants obtenus sont ceux calculés à partir des règles de calcul paramétrées dans la configuration de l'institution.

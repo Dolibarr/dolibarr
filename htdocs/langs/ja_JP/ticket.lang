@@ -57,7 +57,7 @@ Assigned=割り当て済
 NeedMoreInformation=記者のフィードバック待機中
 NeedMoreInformationShort=フィードバック待機中
 Waiting=待っている
-SolvedClosed=解決した
+SolvedClosed=閉じる
 Deleted=削除
 # Dict
 Severity=重大度
@@ -72,8 +72,10 @@ TicketPublicAccess=IDを必要としない公開インターフェイスは、�
 TicketSetupDictionaries=チケットのタイプ、重大度、および分析コードは辞書から構成できる
 TicketParamModule=モジュール変数の設定
 TicketParamMail=メールの設定
-TicketEmailNotificationFrom=チケットに関する通知（チケットの作成またはメッセージの更新）の送信者メール
-TicketEmailNotificationFromHelp=チケット作成またはメッセージ追加に関する通知メールを送信する際に使用する送信者メールアドレス。例：noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=このメールアドレスにチケット作成を通知する
 TicketEmailNotificationToHelp=存在する場合、この電子メール アドレスにチケット作成の通知が送信される (他のデフォルトの受信者に加えて)
 TicketNewEmailBodyLabel=チケット作成後に送信されるテキストメッセージ
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=現在のユーザに割り当てられてい�
 TicketsActivatePublicInterface=公開インターフェイスを活性化する
 TicketsActivatePublicInterfaceHelp=公開インターフェイスにより、全訪問者がチケットを作成できる。
 TicketsAutoAssignTicket=チケットを作成したユーザを自動的に割り当てる
-TicketsAutoAssignTicketHelp=チケットを作成するときに、ユーザ を 自動的に チケットに割り当てることができる (例: 0 = チケットに 自動的に を割り当てない、1 = 誰も割り当てられていない場合は 自動的に をチケットに割り当てる、2 = 誰かが定義されている場合でも 自動的に をチケットに割り当てる)。
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
 TicketAutoChangeStatusOnAnswer=自動的に チケットに回答するときにステータスを割り当てる
 TicketAutoChangeStatusOnAnswerHelp=ユーザがチケットに回答すると、ステータスが自動的にチケットに適用される
 TicketNumberingModules=チケット採番モジュール
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=開いているチケットのみを表示する
 TicketStatByStatus=状態別のチケット
 OrderByDateAsc=昇順で並べ替え
 OrderByDateDesc=日付の降順で並べ替え
-ShowAsConversation=会話リストとして表示
-MessageListViewType=テーブルリストとして表示
 ConfirmMassTicketClosingSendEmail=チケットを閉じるときに自動的にメールを送信する
 ConfirmMassTicketClosingSendEmailQuestion=これらのチケットを閉じるときにサードパーティに通知するか？
 # Ticket card

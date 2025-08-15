@@ -1139,6 +1139,171 @@ class Thirdparties extends DolibarrApi
 		return $obj_ret;
 	}
 
+	/**
+	 * Split a discount in 2 smaller discount
+	 *
+	 * @param	int		$id             ID of the thirdparty
+	 * @param	int		$discountid		ID of a discount coming from a credit note
+	 * @param	float	$amount_ttc_1	Amount 1 (inc. tax)
+	 * @param	float	$amount_ttc_2	Amount 2 (inc. tax)
+	 *
+	 *
+	 * @url     POST {id}/splitdiscount/{discountid}
+	 *
+	 * @return	array					List of fixed discount of the third party
+	 * @phan-return stdClass[]
+	 * @phpstan-return stdClass[]
+	 *
+	 * @throws RestException 400
+	 * @throws RestException 401
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 405
+	 * @throws RestException 409
+	 * @throws RestException 500
+	 */
+	public function splitdiscount($id, $discountid, $amount_ttc_1, $amount_ttc_2)
+	{
+		$obj_ret = array();
+
+		if (!DolibarrApiAccess::$user->hasRight('societe', 'creer') || !DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
+			throw new RestException(403);
+		}
+
+		if (empty($id)) {
+			throw new RestException(400, 'Thirdparty ID is mandatory');
+		}
+		if (empty($discountid)) {
+			throw new RestException(400, 'Discount ID is mandatory');
+		}
+		if (empty($amount_ttc_1) || empty($amount_ttc_2)) {
+			throw new RestException(400, 'Amount are mandatory');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('societe', $id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->company->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Thirdparty not found');
+		}
+		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+		$discount = new DiscountAbsolute($this->db);
+		$res = $discount->fetch($discountid);
+		if (!($res > 0)) {
+			throw new RestException(404, 'Discount not found');
+		}
+		if ($discount->socid != $id) {
+			throw new RestException(405, 'Discount not owned by this thirdpartie');
+		}
+
+		if ( price2num((float) $amount_ttc_1 + (float) $amount_ttc_2) != $discount->amount_ttc) {
+			throw new RestException(405, 'Sum of the 2 discounts is different that the original discount');
+		}
+		if ($discount->fk_facture_line) {
+			throw new RestException(409, 'Discount is already used');
+		}
+
+		$newdiscount1 = new DiscountAbsolute($this->db);
+		$newdiscount2 = new DiscountAbsolute($this->db);
+
+		$newdiscount1->fk_facture_source = $discount->fk_facture_source;
+		$newdiscount2->fk_facture_source = $discount->fk_facture_source;
+		$newdiscount1->fk_facture = $discount->fk_facture;
+		$newdiscount2->fk_facture = $discount->fk_facture;
+		$newdiscount1->fk_facture_line = $discount->fk_facture_line;
+		$newdiscount2->fk_facture_line = $discount->fk_facture_line;
+		$newdiscount1->fk_invoice_supplier_source = $discount->fk_invoice_supplier_source;
+		$newdiscount2->fk_invoice_supplier_source = $discount->fk_invoice_supplier_source;
+		$newdiscount1->fk_invoice_supplier = $discount->fk_invoice_supplier;
+		$newdiscount2->fk_invoice_supplier = $discount->fk_invoice_supplier;
+		$newdiscount1->fk_invoice_supplier_line = $discount->fk_invoice_supplier_line;
+		$newdiscount2->fk_invoice_supplier_line = $discount->fk_invoice_supplier_line;
+		if ($discount->description == '(CREDIT_NOTE)' || $discount->description == '(DEPOSIT)') {
+			$newdiscount1->description = $discount->description;
+			$newdiscount2->description = $discount->description;
+		} else {
+			$newdiscount1->description = $discount->description.' (1)';
+			$newdiscount2->description = $discount->description.' (2)';
+		}
+
+		$newdiscount1->fk_user = $discount->fk_user;
+		$newdiscount2->fk_user = $discount->fk_user;
+		$newdiscount1->fk_soc = $discount->fk_soc;
+		$newdiscount1->socid = $discount->socid;
+		$newdiscount2->fk_soc = $discount->fk_soc;
+		$newdiscount2->socid = $discount->socid;
+		$newdiscount1->discount_type = $discount->discount_type;
+		$newdiscount2->discount_type = $discount->discount_type;
+		$newdiscount1->datec = $discount->datec;
+		$newdiscount2->datec = $discount->datec;
+		$newdiscount1->tva_tx = $discount->tva_tx;
+		$newdiscount2->tva_tx = $discount->tva_tx;
+		$newdiscount1->vat_src_code = $discount->vat_src_code;
+		$newdiscount2->vat_src_code = $discount->vat_src_code;
+		$newdiscount1->amount_ttc = $amount_ttc_1;
+		$newdiscount2->amount_ttc = price2num($discount->amount_ttc - $newdiscount1->amount_ttc);
+		$newdiscount1->amount_ht = price2num($newdiscount1->amount_ttc / (1 + $newdiscount1->tva_tx / 100), 'MT');
+		$newdiscount2->amount_ht = price2num($newdiscount2->amount_ttc / (1 + $newdiscount2->tva_tx / 100), 'MT');
+		$newdiscount1->amount_tva = price2num($newdiscount1->amount_ttc - $newdiscount1->amount_ht);
+		$newdiscount2->amount_tva = price2num($newdiscount2->amount_ttc - $newdiscount2->amount_ht);
+
+		$newdiscount1->multicurrency_amount_ttc = (float) $amount_ttc_1 * ($discount->multicurrency_amount_ttc / $discount->amount_ttc);
+		$newdiscount2->multicurrency_amount_ttc = price2num($discount->multicurrency_amount_ttc - $newdiscount1->multicurrency_amount_ttc);
+		$newdiscount1->multicurrency_amount_ht = price2num($newdiscount1->multicurrency_amount_ttc / (1 + $newdiscount1->tva_tx / 100), 'MT');
+		$newdiscount2->multicurrency_amount_ht = price2num($newdiscount2->multicurrency_amount_ttc / (1 + $newdiscount2->tva_tx / 100), 'MT');
+		$newdiscount1->multicurrency_amount_tva = price2num($newdiscount1->multicurrency_amount_ttc - $newdiscount1->multicurrency_amount_ht);
+		$newdiscount2->multicurrency_amount_tva = price2num($newdiscount2->multicurrency_amount_ttc - $newdiscount2->multicurrency_amount_ht);
+
+		// DiscountAbsolute->amount_ttc  ->amount_ht  ->amount_tva    are marked as @deprecated  but seems to yet be in use so we fill ->amout_xxx and ->total_xxx
+		// the same for multicurrency_amount_xxx and multicurrency_total_xxx
+		$newdiscount1->total_ttc = (float) price2num($newdiscount1->amount_ttc);
+		$newdiscount1->total_ht = (float) price2num($newdiscount1->amount_ht);
+		$newdiscount1->total_tva = (float) price2num($newdiscount1->amount_tva);
+		$newdiscount2->total_ttc = (float) price2num($newdiscount2->amount_ttc);
+		$newdiscount2->total_ht = (float) price2num($newdiscount2->amount_ht);
+		$newdiscount2->total_tva = (float) price2num($newdiscount2->amount_tva);
+		$newdiscount1->multicurrency_total_ttc = (float) price2num($newdiscount1->multicurrency_amount_ttc);
+		$newdiscount1->multicurrency_total_ht = (float) price2num($newdiscount1->multicurrency_amount_ht);
+		$newdiscount1->multicurrency_total_tva = (float) price2num($newdiscount1->multicurrency_amount_tva);
+		$newdiscount2->multicurrency_total_ttc = (float) price2num($newdiscount2->multicurrency_amount_ttc);
+		$newdiscount2->multicurrency_total_ht = (float) price2num($newdiscount2->multicurrency_amount_ht);
+		$newdiscount2->multicurrency_total_tva = (float) price2num($newdiscount2->multicurrency_amount_tva);
+
+		$this->db->begin();
+
+		$discount->fk_facture_source = 0; // This is to delete only the require record (that we will recreate with two records) and not all family with same fk_facture_source
+		// This is to delete only the require record (that we will recreate with two records) and not all family with same fk_invoice_supplier_source
+		$discount->fk_invoice_supplier_source = 0;
+		$res = $discount->delete(DolibarrApiAccess::$user);
+		$newid1 = $newdiscount1->create(DolibarrApiAccess::$user);
+		$newid2 = $newdiscount2->create(DolibarrApiAccess::$user);
+		if ($res <= 0 || $newid1 <= 0 || $newid2 <= 0) {
+			$this->db->rollback();
+			throw new RestException(500, 'Operation fail');
+		}
+
+		$this->db->commit();
+
+		$sql = "SELECT f.ref, f.type as factype, re.fk_facture_source, re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc, re.description, re.fk_facture, re.fk_facture_line";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re, ".MAIN_DB_PREFIX."facture as f";
+		$sql .= " WHERE re.rowid IN ( $newid1, $newid2 ) AND f.rowid = re.fk_facture_source AND re.fk_soc = ".((int) $id);
+
+		$sql .= $this->db->order("f.type", "ASC");
+
+		$result = $this->db->query($sql);
+		if (!$result) {
+			throw new RestException(503, $this->db->lasterror());
+		} else {
+			// $num = $this->db->num_rows($result);
+			while ($obj = $this->db->fetch_object($result)) {
+				$obj_ret[] = $obj;
+			}
+		}
+
+		return $obj_ret;
+	}
 
 
 	/**

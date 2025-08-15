@@ -85,16 +85,16 @@ class Interfaces
 
 		// Check parameters
 		if (!is_object($object) || !is_object($conf)) {	// Error
-			$error = 'function run_triggers called with wrong parameters action='.$action.' object='.((string) (int) is_object($object)).' user='.((string) (int) is_object($user)).' langs='.((string) (int) is_object($langs)).' conf='.((string) (int) is_object($conf));
+			$error = 'function run_triggers called with wrong parameters object or conf. action='.$action.' object='.((string) (int) is_object($object)).' user='.((string) (int) is_object($user)).' langs='.((string) (int) is_object($langs)).' conf='.((string) (int) is_object($conf));
 			dol_syslog(get_class($this).'::run_triggers '.$error, LOG_ERR);
 			$this->errors[] = $error;
 			return -1;
 		}
 		if (!is_object($langs)) {	// Warning
-			dol_syslog(get_class($this).'::run_triggers was called with wrong parameters action='.$action.' object='.((string) (int) is_object($object)).' user='.((string) (int) is_object($user)).' langs='.((string) (int) is_object($langs)).' conf='.((string) (int) is_object($conf)), LOG_WARNING);
+			dol_syslog(get_class($this).'::run_triggers was called with wrong parameters langs. action='.$action.' object='.((string) (int) is_object($object)).' user='.((string) (int) is_object($user)).' langs='.((string) (int) is_object($langs)).' conf='.((string) (int) is_object($conf)), LOG_WARNING);
 		}
 		if (!is_object($user)) {	    // Warning
-			dol_syslog(get_class($this).'::run_triggers was called with wrong parameters action='.$action.' object='.((string) (int) is_object($object)).' user='.((string) (int) is_object($user)).' langs='.((string) (int) is_object($langs)).' conf='.((string) (int) is_object($conf)), LOG_WARNING);
+			dol_syslog(get_class($this).'::run_triggers was called with wrong parameters user. action='.$action.' object='.((string) (int) is_object($object)).' user='.((string) (int) is_object($user)).' langs='.((string) (int) is_object($langs)).' conf='.((string) (int) is_object($conf)), LOG_WARNING);
 			$user = new User($this->db);
 		}
 

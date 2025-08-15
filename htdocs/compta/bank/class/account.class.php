@@ -474,8 +474,6 @@ class Account extends CommonObject
 	 */
 	public function canBeConciliated()
 	{
-		global $conf;
-
 		if (empty($this->rappro)) {
 			return -1;
 		}
@@ -984,7 +982,7 @@ class Account extends CommonObject
 
 			if (!$error && !empty($this->oldref) && $this->oldref !== $this->ref) {
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'bank/".$this->db->escape($this->ref)."'";
-				$sql .= " WHERE filepath = 'bank/".$this->db->escape($this->oldref)."' and src_object_type='bank_account' and entity = ".((int) $conf->entity);
+				$sql .= " WHERE filepath = 'bank/".$this->db->escape($this->oldref)."' and src_object_type = 'bank_account' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -1512,9 +1510,11 @@ class Account extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @param array<string,mixed> $params params to construct tooltip data
-	 * @since v18
+	 *
+	 * @param array<string,mixed> 	$params 	Params to construct tooltip data
 	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
+	 *
+	 * @since v18
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -1530,11 +1530,12 @@ class Account extends CommonObject
 			$pictos .= ' '.$this->getLibStatut(5);
 		}
 		$datas['picto'] = $pictos;
+		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		$datas['label'] = '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
-		$datas['accountnumber'] = '<br><b>'.$langs->trans('AccountNumber').':</b> '.$this->number;
+		$datas['accountnumber'] = '<br><br><b>'.$langs->trans('AccountNumber').':</b> '.$this->number;
 		$datas['iban'] = '<br><b>'.$langs->trans('IBAN').':</b> '.getIbanHumanReadable($this);
 		$datas['bic'] = '<br><b>'.$langs->trans('BIC').':</b> '.$this->bic;
-		$datas['accountcurrency'] = '<br><b>'.$langs->trans("AccountCurrency").':</b> '.$this->currency_code;
+		$datas['accountcurrency'] = '<br><br><b>'.$langs->trans("AccountCurrency").':</b> '.$this->currency_code;
 
 		if (isModEnabled('accounting')) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -1973,7 +1974,6 @@ class Account extends CommonObject
 		$this->specimen        = 1;
 		$this->ref             = 'MBA';
 		$this->label           = 'My Big Company Bank account';
-		$this->courant         = Account::TYPE_CURRENT;
 		$this->clos            = Account::STATUS_OPEN;
 		$this->type            = Account::TYPE_CURRENT;
 		$this->status          = Account::STATUS_OPEN;
@@ -2006,7 +2006,7 @@ class Account extends CommonObject
 	 */
 	public static function replaceThirdparty($dbs, $origin_id, $dest_id)
 	{
-		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_url SET url_id = ".((int) $dest_id)." WHERE url_id = ".((int) $origin_id)." AND type='company'";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_url SET url_id = ".((int) $dest_id)." WHERE url_id = ".((int) $origin_id)." AND type = 'company'";
 
 		if ($dbs->query($sql)) {
 			return true;
@@ -2815,13 +2815,13 @@ class AccountLine extends CommonObjectLine
 			$result .= yn($this->rappro);
 		}
 		if (isModEnabled('accounting') && ($option == 'showall' || $option == 'showconciliatedandaccounted')) {
-			$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping";
+			$sql = "SELECT COUNT(rowid) as nb, MAX(piece_num) as banktransactionid FROM ".MAIN_DB_PREFIX."accounting_bookkeeping";
 			$sql .= " WHERE doc_type = 'bank' AND fk_doc = ".((int) $this->id);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$obj = $this->db->fetch_object($resql);
 				if ($obj && $obj->nb) {
-					$result .= ' - '.$langs->trans("Accounted").': '.yn(1);
+					$result .= ' - '.$langs->trans("Accounted").': <span title="'.$langs->trans("TransactionNumShort").' '.$obj->banktransactionid.'">'.yn(1).'</span>';
 				} else {
 					$result .= ' - '.$langs->trans("Accounted").': '.yn(0);
 				}

@@ -350,7 +350,7 @@ if ($object->id > 0) {
 	$listofopendirectdebitorcredittransfer = $object->getListOfOpenDirectDebitOrCreditTransfer($type);
 	$numopen = count($listofopendirectdebitorcredittransfer);
 
-	print dol_get_fiche_head($head, 'standingorders', $title, -1, ($type == 'bank-transfer' ? 'supplier_invoice' : 'bill'));
+	print dol_get_fiche_head($head, 'standingorders', $title, -1, ($type == 'bank-transfer' ? 'supplier_invoice' : $object->picto));
 
 	// Invoice content
 	if ($type == 'bank-transfer') {
@@ -383,7 +383,7 @@ if ($object->id > 0) {
 	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>';
-		if (0) {
+		if (0) {	// @phpstan-ignore-line
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
@@ -799,7 +799,7 @@ if ($object->id > 0) {
 	}
 
 	// Add a transfer request
-	if ($object->status > $object::STATUS_DRAFT && $object->paid == 0 && $num == 0) {
+	if ($object->status > $object::STATUS_DRAFT && $object->paid == 0 && $numopen == 0) {
 		if ($resteapayer > 0) {
 			if ($user_perms) {
 				$remaintopaylesspendingdebit = $resteapayer - $pending;
@@ -841,7 +841,7 @@ if ($object->id > 0) {
 					if ($res > 0 && !$companyBankAccount->verif()) {
 						print img_warning('Error on default bank number for IBAN : '.$langs->trans($companyBankAccount->error));
 					}
-				} elseif ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
+				} elseif (($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
 					print img_warning($langs->trans("NoDefaultIBANFound"));
 				}
 
@@ -888,7 +888,7 @@ if ($object->id > 0) {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AmountMustBePositive")).'">'.$buttonlabel.'</a>';
 		}
 	} else {
-		if ($num == 0) {
+		if ($numopen == 0) {
 			if ($object->status > $object::STATUS_DRAFT) {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AlreadyPaid")).'">'.$buttonlabel.'</a>';
 			} else {

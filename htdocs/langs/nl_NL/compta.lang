@@ -3,10 +3,10 @@ MenuFinancial=Facturatie | Betaling
 TaxModuleSetupToModifyRules=Ga naar <a href="%s">Belastingen module setup</a> om regels voor de berekening wijzigen
 TaxModuleSetupToModifyRulesLT=Ga naar <a href="%s">Bedrijf instellingen</a> om regels voor de berekening wijzigen
 OptionMode=Optie voor boekhouding
-OptionModeTrue=Periodetoerekening boekhouding
-OptionModeVirtual=Kasboekhouding
-OptionModeTrueDesc=In deze context wordt de omzet berekend over betalingen (datum van betaling). De validiteit van de cijfers is alleen gegarandeerd als de boekhouding wordt gecontroleerd via de input/output van betalingen.
+OptionModeVirtual=Periodetoerekening boekhouding
+OptionModeTrue=Kasboekhouding
 OptionModeVirtualDesc=In deze context, wordt de omzet berekend op basis van facturen (datum van validatie). Wanneer deze facturen verschuldigd zijn worden ze opgesomd in de omzetuitvoer, of ze nu betaald zijn of niet.
+OptionModeTrueDesc=In deze context wordt de omzet berekend over betalingen (datum van betaling). De validiteit van de cijfers is alleen gegarandeerd als de boekhouding wordt gecontroleerd via de input/output van betalingen.
 FeatureIsSupportedInInOutModeOnly=Functionaliteit alleen beschikbaar in de VORDERINGEN-SCHULDEN modus (zie de boekhoudingsmodule instellingen)
 VATReportBuildWithOptionDefinedInModule=De hier getoonde bedragen zijn berekend door gebruik te maken van regels zoals ingesteld in de Belastingmoduleinstellingen.
 LTReportBuildWithOptionDefinedInModule=Bedragen hier getoond worden berekend volgens de regels bepaald door bedrijf instellingen.

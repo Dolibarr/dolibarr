@@ -138,7 +138,7 @@ class Ai
 			}
 		}
 
-		dol_syslog("Call API for apiKey=".substr($this->apiKey, 0, 3).'***********, apiEndpoint='.$this->apiEndpoint.", model=".$model);
+		dol_syslog("Call API for apiKey=".substr($this->apiKey, 0, 5).'***********, apiEndpoint='.$this->apiEndpoint.", model=".$model);
 
 		try {
 			if (empty($this->apiEndpoint)) {
@@ -256,7 +256,7 @@ class Ai
 				throw new Exception('API request failed. No http received');
 			}
 			if (!empty($response['http_code']) && $response['http_code'] != 200) {
-				if ($response['http_code'] == 400 && !empty($response['content'])) {
+				if (in_array($response['http_code'], array(400, 401, 403, 429)) && !empty($response['content'])) {
 					$tmp = json_decode($response['content'], true);
 					if (!empty($tmp['message'])) {
 						return array(
