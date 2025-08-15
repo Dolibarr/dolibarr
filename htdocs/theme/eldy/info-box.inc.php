@@ -580,7 +580,7 @@ a.vmenu span, span.vmenu, span.vmenu span {
 }
 .box-flex-item, .kanbanlabel {
 	margin-top: 5px;
-	margin-<?php echo $right; ?>: 7px;
+	margin-<?php echo $right; ?>: 20px;
 	margin-bottom: 0px;
 	margin-<?php echo $left; ?>: 10px;
 }
