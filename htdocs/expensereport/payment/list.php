@@ -58,6 +58,7 @@ $massaction = GETPOST('massaction', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'vendorpaymentlist';
 $mode = GETPOST('mode', 'alpha');
+$toselect = GETPOSTISSET('toselect') ? GETPOST('toselect', 'array:int') : array();
 
 $socid = GETPOSTINT('socid');
 

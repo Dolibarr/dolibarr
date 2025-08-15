@@ -471,6 +471,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 	}
 }
 
+
 // Creation
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewMemberType"), '', 'members');
@@ -593,14 +594,18 @@ if ($rowid > 0) {
 		print yn($object->vote);
 		print '</tr>';
 
-		// Duration
-		print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td colspan="2">'.$object->duration_value.'&nbsp;';
+		$durationarray = array();
 		if ($object->duration_value > 1) {
-			$dur = array("i" => $langs->trans("Minutes"), "h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
-		} elseif ($object->duration_value > 0) {
-			$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hour"), "d" => $langs->trans("Day"), "w" => $langs->trans("Week"), "m" => $langs->trans("Month"), "y" => $langs->trans("Year"));
+			$durationarray = array("s" => $langs->trans("Seconds"), "mn" => $langs->trans("Minutes"), "i" => $langs->trans("Minutes"), "h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
+		} else {
+			$durationarray = array("s" => $langs->trans("Seconds"), "mn" => $langs->trans("Minutes"), "i" => $langs->trans("Minute"), "h" => $langs->trans("Hour"), "d" => $langs->trans("Day"), "w" => $langs->trans("Week"), "m" => $langs->trans("Month"), "y" => $langs->trans("Year"));
 		}
-		print(!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
+
+		// Duration
+		print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td colspan="2">';
+		print $object->duration_value > 0 ? $object->duration_value : '';
+		print '&nbsp;';
+		print (!empty($object->duration_unit) && isset($durationarray[$object->duration_unit]) ? $langs->trans($durationarray[$object->duration_unit]) : '');
 		print '</td></tr>';
 
 		// Description
@@ -1022,7 +1027,7 @@ if ($rowid > 0) {
 
 		print '<tr><td>'.$langs->trans("Amount").'</td><td>';
 		print '<input name="amount" size="5" value="';
-		print((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
+		print ((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
 		print '">';
 		print '</td></tr>';
 
@@ -1035,7 +1040,7 @@ if ($rowid > 0) {
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
-		print '<input name="duration_value" size="5" value="'.$object->duration_value.'"> ';
+		print '<input name="duration_value" size="5" value="'.($object->duration_value > 0 ? $object->duration_value : '').'"> ';
 		print $formproduct->selectMeasuringUnits("duration_unit", "time", ($object->duration_unit === '' ? 'y' : $object->duration_unit), 0, 1);
 		print '</td></tr>';
 

@@ -456,7 +456,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 */
 	public function update($notrigger = 0)
 	{
-		global $conf;
+		global $user;
 
 		$pu = price2num($this->subprice);
 		$qty = price2num($this->qty);
@@ -567,8 +567,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 		}
 
 		if (!$error && !$notrigger) {
-			global $langs, $user;
-
 			// Call trigger
 			if ($this->call_trigger('LINEBILL_SUPPLIER_MODIFY', $user) < 0) {
 				$this->db->rollback();
@@ -795,8 +793,18 @@ class SupplierInvoiceLine extends CommonObjectLine
 				// End call triggers
 			}
 
-			$this->db->commit();
-			return $this->id;
+			if (!$error) {
+				$this->db->commit();
+				return $this->id;
+			}
+
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::insert ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+
+			$this->db->rollback();
+			return -3;
 		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();

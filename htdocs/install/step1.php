@@ -33,6 +33,7 @@ define('DONOTLOADCONF', 1); // To avoid loading conf by file inc.php
 include 'inc.php';
 
 global $langs;
+
 /**
  * @var Translate $langs
  */

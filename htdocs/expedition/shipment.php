@@ -226,6 +226,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 }
 
+
 /*
  * View
  */
@@ -254,8 +255,6 @@ if ($id > 0 || !empty($ref)) {
 
 		$author = new User($db);
 		$author->fetch($object->user_author_id);
-
-		$res = $object->fetch_optionals();
 
 		$head = commande_prepare_head($object);
 		print dol_get_fiche_head($head, 'shipping', $langs->trans("CustomerOrder"), -1, 'order');
@@ -601,7 +600,8 @@ if ($id > 0 || !empty($ref)) {
 		 *  Lines or orders with quantity shipped and remain to ship
 		 *  Note: Qty shipped are already available into $object->expeditions[fk_product]
 		 */
-		print '<table id="tablelines" class="noborder noshadow" width="100%">';
+		print '<div class="div-table-responsive-no-min">';
+		print '<table id="tablelines" class="noborder noshadow centpercent">';
 
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.product_type as type, cd.label, cd.description,";
 		$sql .= " cd.price, cd.tva_tx, cd.subprice,";
@@ -839,14 +839,13 @@ if ($id > 0 || !empty($ref)) {
 			$db->free($resql);
 
 			if (!$num) {
-				print '<tr '.$bc[false].'><td colspan="5">'.$langs->trans("NoArticleOfTypeProduct").'<br>';
+				print '<tr><td colspan="5"><span class="opacitymedium">'.$langs->trans("NoArticleOfTypeProduct").'</span></td></tr>';
 			}
-
-			print "</table>";
 		} else {
 			dol_print_error($db);
 		}
 
+		print "</table>";
 		print '</div>';
 
 

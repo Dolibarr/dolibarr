@@ -868,11 +868,13 @@ class EmailCollector extends CommonObject
 		if (function_exists('mb_convert_encoding')) {
 			// change spaces by entropy because mb_convert fail with spaces
 			$str = preg_replace("/ /", "xxxSPACExxx", $str);		// the replacement string must be valid in utf7 so _ can't be used
+			$str = preg_replace("/_/", "xxxUNDERSCORExxx", $str); // encode underscore to avoid encoding issues with mb_convert
 			$str = preg_replace("/\[Gmail\]/", "xxxGMAILxxx", $str);	// the replacement string must be valid in utf7 so _ can't be used
 			// if mb_convert work
 			if ($str = mb_convert_encoding($str, "UTF-7")) {
 				// change characters
 				$str = preg_replace("/\+A/", "&A", $str);
+				$str = preg_replace("/xxxUNDERSCORExxx/", "_", $str);
 				// change to spaces again
 				$str = preg_replace("/xxxSPACExxx/", " ", $str);
 				// change to [Gmail] again
@@ -2325,7 +2327,7 @@ class EmailCollector extends CommonObject
 									$trackid = $objectemail->track_id;
 								}
 								if (empty($objectemail->origin_references)) {
-									$objectemail->origin_references = $headers['References'];
+									$objectemail->origin_references = !empty($headers['References']) ? $headers['References'] : null;
 									$changeonticket_references = true;
 								} else {
 									foreach ($arrayofreferences as $key => $referencetmp) {
@@ -2679,6 +2681,7 @@ class EmailCollector extends CommonObject
 											// Search into contacts of thirdparties to try to guess the thirdparty to use
 											$resultContact = $contactstatic->findNearest(0, '', '', '', $emailtouseforthirdparty, '', 0);
 											if ($resultContact > 0) {
+												$contactstatic->fetch($resultContact);
 												$idtouseforthirdparty = $contactstatic->socid;
 												$result = $thirdpartystatic->fetch($idtouseforthirdparty);
 												if ($result > 0) {

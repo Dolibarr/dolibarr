@@ -310,7 +310,7 @@ abstract class ActionsCardCommon
 			$this->tpl['showhead'] = dol_get_fiche_head($head, 'card', '', 0, 'company');
 			$this->tpl['showend'] = dol_get_fiche_end();
 
-			$this->tpl['showrefnav'] = $form->showrefnav($this->object, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
+			$this->tpl['showrefnav'] = $form->showrefnav($this->object, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'name');
 
 			$this->tpl['checkcustomercode'] = $this->object->check_codeclient();
 			$this->tpl['checksuppliercode'] = $this->object->check_codefournisseur();
@@ -416,7 +416,7 @@ abstract class ActionsCardCommon
 		global $langs, $mysoc;
 
 		$this->object->id = GETPOSTINT("socid");
-		$this->object->name = GETPOST("nom");
+		$this->object->name = GETPOST("name") ? GETPOST("name") : GETPOST("nom");
 		$this->object->prefix_comm			= GETPOST("prefix_comm");
 		$this->object->client = GETPOSTINT("client");
 		$this->object->code_client			= GETPOST("code_client");

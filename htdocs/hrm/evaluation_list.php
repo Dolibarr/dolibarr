@@ -710,8 +710,6 @@ while ($i < $imaxinloop) {
 					print $object->getLibStatut(5);
 				} elseif ($key == 'rowid') {
 					print $object->showOutputField($val, $key, $object->id, '');
-				} elseif ($key == 'label') {
-					print $object->showOutputField($val, $key, $object->label, '');
 				} else {
 					print $object->showOutputField($val, $key, $object->$key, '');
 				}
