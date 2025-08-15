@@ -887,6 +887,8 @@ DirectPrint
 Disassemble
 Dispatch
 DispatchVerb
+DocumentSigned
+DocumentUnsigned
 DoCreditTransferBeforePayments3
 DoNotAutofillButAutoConcat
 DoNotRemovePreviousCombinations

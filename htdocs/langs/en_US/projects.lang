@@ -327,3 +327,5 @@ CloneProgression=Clone progression
 CloneTimes=Clone times
 CloneFile=Clone files
 ConfirmCloneTask=Do you want to clone this task?
+TaskBackToDraft=Task status is back to draft
+TaskValidated=Task validated

@@ -90,7 +90,7 @@ espace
 methode
 datee
 
-# Some string found because part of a text the is html entities escaped into file
+# Some string found because it is part text that is html entities escaped into files
 tre
 activ
 

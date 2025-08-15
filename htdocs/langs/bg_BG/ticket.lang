@@ -57,7 +57,7 @@ Assigned=Възложен
 NeedMoreInformation=Очаквам обратна връзка от репортера
 NeedMoreInformationShort=Очаквам обратна връзка
 Waiting=В изчакване
-SolvedClosed=Решен
+SolvedClosed=Приключено
 Deleted=Изтрит
 # Dict
 Severity=Приоритет
@@ -72,8 +72,10 @@ TicketPublicAccess=Публичен интерфейс, който не изис
 TicketSetupDictionaries=Видът на тикета, приоритетът и категорията се конфигурират от речници
 TicketParamModule=Настройка на променливите в модула
 TicketParamMail=Настройка за имейл известяване
-TicketEmailNotificationFrom=Имейл на подателя за Известие на тикети (създаване на тикет или съобщения за актуализация)
-TicketEmailNotificationFromHelp=Имейл адрес на подателя, който да се използва за изпращане на имейли с Известие за създаване или добавяне на съобщение тикети. Например noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Уведомете тикет създаване на този имейл адрес
 TicketEmailNotificationToHelp=Ако е наличен, този имейл адрес ще бъде уведомен за създаване на тикет (в допълнение към всички други получатели по подразбиране)
 TicketNewEmailBodyLabel=Текстово съобщение, изпратено след създаване на тикет
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=Само тикети, възложени на 
 TicketsActivatePublicInterface=Активиране на публичния интерфейс
 TicketsActivatePublicInterfaceHelp=Публичният интерфейс позволява на всички посетители да създават тикети.
 TicketsAutoAssignTicket=Автоматично възлагане на тикета на потребителя, който го е създал
-TicketsAutoAssignTicketHelp=При създаване на тикет, потребителят може да бъде автоматично присвоен на тикет(Примери: 0=Никога автоматично не е присвоен на тикет, 1=автоматично присвоен на тикет ако никой не е зададен, 2=автоматично се зададе на тикет, дори ако някой е бил дефиниран).
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
 TicketAutoChangeStatusOnAnswer=автоматично присвояване на статус при отговаряне на тикет
 TicketAutoChangeStatusOnAnswerHelp=Когато потребител отговори на тикет, статусът автоматично ще бъде приложен към тикет
 TicketNumberingModules=Модул за номериране на тикети
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=Преглед на активни тикети
 TicketStatByStatus=Тикети по статус
 OrderByDateAsc=Сортиране по възходяща дата
 OrderByDateDesc=Сортиране по низходяща дата
-ShowAsConversation=Показване като списък със съобщения
-MessageListViewType=Показване като списък с таблици
 ConfirmMassTicketClosingSendEmail=автоматично изпраща имейли при затваряне тикети
 ConfirmMassTicketClosingSendEmailQuestion=Искате ли да уведомите трети страни при затварянето на тези тикети?
 # Ticket card

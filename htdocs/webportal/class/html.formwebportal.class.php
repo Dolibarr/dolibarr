@@ -126,7 +126,7 @@ class FormWebPortal extends Form
 		$out .= '>';
 		*/
 
-		$out = $this->selectDate($value === '' ? -1 : $value, $name, 0, 0, 0, "", 1, 0, 0, '');
+		$out = $this->selectDate($value === '' ? -1 : $value, $name, 0, 0, 0, "", 1, 0, 0, '', '', '', '', 1, '', $placeholder);
 
 		return $out;
 	}

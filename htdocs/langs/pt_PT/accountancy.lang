@@ -72,7 +72,7 @@ AccountancyAreaDescActionOnce=As seguintes ações são geralmente executadas ap
 AccountancyAreaDescActionOnceBis=As próximas etapas devem ser executadas para economizar seu tempo no futuro, sugerindo automaticamente o padrão correto Contabilista conta ao transferir dados em Contabilista
 AccountancyAreaDescActionFreq=As seguintes ações são normalmente executadas a cada mês, semana ou dia para grandes empresas...
 AccountancyAreaDescJournalSetup=ETAPA %s: verificar conteúdo da lista de seu periódico no menu %s
-AccountancyAreaDescChartModel=ETAPA %s: verificar que existe ou cria um modelo de gráfico de conta um do menu %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists for your country or create one from menu %s
 AccountancyAreaDescChart=ETAPA %s: Selecione e|ou complete seu gráfico de conta no menu %s
 AccountancyAreaDescFiscalPeriod=ETAPA %s: Defina o período fiscal que determina o intervalo de datas aceitos para a criação de entradas Contabilista. Para isso, utilize a entrada de menu %s.
 AccountancyAreaDescVat=PASSO %s: Defina a conta contabilística para cada taxa de IVA. Para tal pode usar a entrada %s do menu.
@@ -275,7 +275,7 @@ HideOpeningBalance=Ocultar abertura balanço, saldo
 ShowSubtotalByGroup=Mostrar subtotal por nível
 Pcgtype=Grupo de conta
 PcgtypeDesc=Grupo de conta são usados como 'filtro' predefinido e critérios de 'agrupamento' para alguns Contabilista  relatórios. Por exemplo, 'INCOME' ou 'EXPENSE' são usados como grupos para Contabilista contas de produtos para criar o relatório de despesas/receitas.
-AccountingCategoriesDesc=O grupo personalizado de contas pode ser usado para agrupar contas Contabilista em um nome para facilitar o uso de filtros ou a criação de relatórios personalizados.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Reconciliável
 Centralized=conta centralizado
 TotalVente=Total de volume de negócios sem impostos
@@ -319,7 +319,7 @@ NotReconciled=Não reconciliado
 WarningRecordWithoutSubledgerAreExcluded=Atenção, todas as linhas sem livro auxiliar conta definidas são filtradas e excluídas deste visualizar
 AccountRemovedFromCurrentChartOfAccount=Contabilista conta que não existe no plano de contas atual
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=Aviso, esta página contém apenas entradas transferidas para o sistema Contabilista.
-BookkeepingNumRefModelDesc = Retorna o número de referência no formato aaaajjnnnn, onde aaaa é o ano e jj do diário Código, nnnn é um número sequencial de incremento automático dependendo do ano e do diário Código.
+BookkeepingNumRefModelDesc = Returns the reference number in the format yymmjjnnnnn where yy is the year, mm is the month and jj the journal code, nnnnn is a sequential auto-incrementing number depending on the year, the month and the journal code.
 BookkeepingNumberingModules = Modelos de numeração contábil
 ## Admin
 BindingOptions=Opções para a transferência em contabilidade
@@ -389,6 +389,7 @@ Modelcsv_Gestinumv5=Exportar para Gestinum (v5)
 Modelcsv_charlemagne=Exportação para Aplim Carlos Magno
 ChartofaccountsId=ID de plano de contas
 ExportToPdf = Exportar para PDF
+ExportToCsv = Export to CSV
 PdfLedgerTitle = Contas contábeis
 PdfBalanceTitle = Razão balanço, saldo
 PdfBookkeepingTitle = Diários
@@ -440,7 +441,7 @@ AccountRemovedFromGroup=conta removido do grupo
 SaleLocal=Venda local
 SaleExport=Venda de exportação
 SaleEEC=Venda em EEC
-SaleEECWithVAT=A venda é em EEC com IVA não nulo, então supomos que esta NÃO é uma venda intracomunitária e o conta sugerido é o produto padrão conta.
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=A venda é feita em EEC sem IVA, mas o IVA Id. de terceiros não está definido. Para vendas padrão, utilizamos o conta. Você pode corrigir o IVA Id. de terceiros ou alterar o produto conta sugerido para vinculação, se necessário.
 AnySale=Qualquer venda
 ForbiddenTransactionAlreadyExported=Proibido: a transação foi validada e/ou exportada.
@@ -485,7 +486,7 @@ AccountancyClosureConfirmClose=Tem a certeza que pretende para encerrar o perío
 AccountancyClosureConfirmAccountingReversal=Tem a certeza que pretende para registrar lançamentos para "Lucros retidos"?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=Transação para (doc_type=%s, doc_id=%s, doc_det=%s) já foram gravados
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Não foram efetuados alguns passos obrigatórios da configuração, por favor complete-os
@@ -508,7 +509,7 @@ ErrorNoFiscalPeriodActiveFound=Nenhum período fiscal ativo (com início e e fim
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=O documento de escrituração contábil data não está dentro do período fiscal ativo
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=O documento contábil data está dentro de um período fiscal fechado
 Error_BOOKKEEPING_ADDON_NotDefined=Erro, a regra para referência de numeração contábil não está definida na configuração geral de Contabilidade módulo
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Tente inserir uma transação não balanceada no livro para %s (Pagamento Id.: %s). Cancelado. Certamente um bug.
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
 ProductUsage=Uso do produto ou serviço
 ## Import
 ImportAccountingEntries=Entradas contábeis
@@ -537,15 +538,15 @@ ExpenseReportJournal=Diário de relatórios de despesas
 DocsAlreadyExportedAreIncluded=Os documentos já exportados estão incluídos
 ClickToShowAlreadyExportedLines=Clique para mostrar linhas já exportadas
 NAccounts=%s contas
-ACCOUNTING_USE_TREASURY_Desc=Este é o modo de contabilidade de tesouraria. Estamos usando apenas os pagamentos e e data para fazer a contabilidade.
-ACCOUNTING_USE_NON_TREASURY_Desc=Este é o modo de contabilidade real. Estamos usando as duas faturas e para fazer a contabilidade.
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
+ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
 PieceDesc=A referência do documento de origem que gera esta transação bancária (fatura Ref, relatório de despesas ref, ...)
 BankTransactionRef=Uma referência para a transação bancária (Opcional, um Id. automático já foi gerado)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=Isso clonará a entrada contábil (todas as linhas vinculadas a esta entrada contábil serão clonadas). Tem a certeza que pretende para clonar os registros %s selecionados?
 ConfirmMassCloneBookkeepingWriting=Confirmar clonagem em massa
-ConfirmMassReturnAccountBookkeepingWriting=Confirmar extinção em massa
-ConfirmMassReturnAccountBookkeepingWritingQuestion=Isso extinguirá a entrada contábil (todas as linhas vinculadas a esta entrada contábil serão extintas). Tem a certeza que pretende para ignorar os %s registros selecionados?
+ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
+ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=Isso alterará o conta de todas as linhas selecionadas.
 confirmMassAssignAccountBookkeepingWritingConfirm=Confirmar alteração em massa conta
 CloningSuccess=Clonagem de transação bem-sucedida: %s
@@ -560,6 +561,6 @@ NoAccountsChangedWithAccountNumber=Transações não atualizadas com números co
 HasAlreadyBeenReversed=já foi revertido
 ErrorWhileCreating=Erro durante a criação %s
 ReturnAccount=Voltar
-Clone=Clonador
+Clone=Clonar
 AlreadyReturnedAccount=A entrada n°%s já foi revertida
 SuccessReturnedAccount=A entrada n°%s foi revertida

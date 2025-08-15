@@ -86,9 +86,10 @@ function shipping_prepare_head($object)
 		$h++;
 	}
 
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->expedition->dir_output."/sending/".dol_sanitizeFileName($object->ref);
+	// Files
+	require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+	require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
+	$upload_dir = $conf->expedition->dir_output . "/sending/" . dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/expedition/document.php?id='.$object->id;
@@ -99,6 +100,7 @@ function shipping_prepare_head($object)
 	$head[$h][2] = 'documents';
 	$h++;
 
+	// Notes
 	$nbNote = 0;
 	if (!empty($object->note_private)) {
 		$nbNote++;
@@ -112,6 +114,41 @@ function shipping_prepare_head($object)
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
 	}
 	$head[$h][2] = 'note';
+	$h++;
+
+	// Events
+	$head[$h][0] = DOL_URL_ROOT . '/expedition/agenda.php?id=' . $object->id;
+	$head[$h][1] = $langs->trans("Events");
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
+		$nbEvent = 0;
+		// Enable caching of thirdparty count actioncomm
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
+		$cachekey = 'count_events_expedition_' . $object->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbEvent = $dataretrieved;
+		} else {
+			$sql = "SELECT COUNT(id) as nb";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "actioncomm";
+			$sql .= " WHERE fk_element = " . ((int) $object->id);
+			$sql .= " AND elementtype = 'shipping'";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$nbEvent = $obj->nb;
+			} else {
+				dol_syslog('Failed to count actioncomm ' . $db->lasterror(), LOG_ERR);
+			}
+			dol_setcache($cachekey, $nbEvent, 120);    // If setting cache fails, this is not a problem, so we do not test result.
+		}
+
+		$head[$h][1] .= '/';
+		$head[$h][1] .= $langs->trans("Agenda");
+		if ($nbEvent > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbEvent . '</span>';
+		}
+	}
+	$head[$h][2] = 'agenda';
 	$h++;
 
 	// Show more tabs from modules
@@ -187,6 +224,7 @@ function delivery_prepare_head($object)
 		$h++;
 	}
 
+	// Files
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->expedition->dir_output."/sending/".dol_sanitizeFileName($tmpobject->ref);
@@ -200,6 +238,7 @@ function delivery_prepare_head($object)
 	$head[$h][2] = 'documents';
 	$h++;
 
+	// Notes
 	$nbNote = 0;
 	if (!empty($tmpobject->note_private)) {
 		$nbNote++;
@@ -214,6 +253,42 @@ function delivery_prepare_head($object)
 	}
 	$head[$h][2] = 'note';
 	$h++;
+
+	// Events
+	$head[$h][0] = DOL_URL_ROOT . '/expedition/agenda.php?id=' . $tmpobject->id;
+	$head[$h][1] = $langs->trans("Events");
+	if (isModEnabled('agenda') && ($user->hasRight('agenda', 'myactions', 'read') || $user->hasRight('agenda', 'allactions', 'read'))) {
+		$nbEvent = 0;
+		// Enable caching of thirdparty count actioncomm
+		require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
+		$cachekey = 'count_events_expedition_' . $tmpobject->id;
+		$dataretrieved = dol_getcache($cachekey);
+		if (!is_null($dataretrieved)) {
+			$nbEvent = $dataretrieved;
+		} else {
+			$sql = "SELECT COUNT(id) as nb";
+			$sql .= " FROM " . MAIN_DB_PREFIX . "actioncomm";
+			$sql .= " WHERE fk_element = " . ((int) $tmpobject->id);
+			$sql .= " AND elementtype = 'shipping'";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$nbEvent = $obj->nb;
+			} else {
+				dol_syslog('Failed to count actioncomm ' . $db->lasterror(), LOG_ERR);
+			}
+			dol_setcache($cachekey, $nbEvent, 120);    // If setting cache fails, this is not a problem, so we do not test result.
+		}
+
+		$head[$h][1] .= '/';
+		$head[$h][1] .= $langs->trans("Agenda");
+		if ($nbEvent > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbEvent . '</span>';
+		}
+	}
+	$head[$h][2] = 'agenda';
+	$h++;
+
 
 	$object->id = $tmpobject->id;
 

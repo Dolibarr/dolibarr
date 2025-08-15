@@ -1540,7 +1540,7 @@ if ($action == 'create') {
 
 					$temps = $objectline->showOptionals($extrafields, 'view', array(), '', '', '1', 'line');
 					if (!empty($temps)) {
-						print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
+						print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$objp->rowid.'" name="extrafield_lines_area_'.$objp->rowid.'">';
 						print $temps;
 						print '</div>';
 					}

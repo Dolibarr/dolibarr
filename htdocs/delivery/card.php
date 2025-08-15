@@ -181,10 +181,10 @@ if ($action == 'add' && $permissiontoadd) {
 			$outputlangs->setDefaultLang($newlang);
 		}
 		$model = $object->model_pdf;
-		$ret = $object->fetch($id); // Reload to get new records
+		$ret = $object->fetch($id); // Reload to get new record
 
 		// Phan does not use suggested tyhpe for $hide*, ignore: @phan-suppress-next-line PhanTypeMismatchArgument
-		$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		$result = $object->generateDocument($model, $outputlangs, 0, 0, 0);
 		if ($result < 0) {
 			dol_print_error($db, $object->error, $object->errors);
 		}
@@ -303,6 +303,7 @@ if ($action == 'create') {
 		// However, origin of shipment in future may differs (commande, proposal, ...)
 		$expedition = new Expedition($db);
 		$result = $expedition->fetch($object->origin_id);
+
 		$typeobject = $expedition->origin; // example: commande
 		if ($object->origin_id > 0) {
 			$object->fetch_origin();
@@ -464,7 +465,7 @@ if ($action == 'create') {
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="setdate_delivery">';
 				print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, 0, "setdate_delivery", 1, 1);
-				print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
+				print '<input type="submit" class="button smallpaddingimp button-edit" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			} else {
 				print $object->date_delivery ? dol_print_date($object->date_delivery, 'dayhour') : '&nbsp;';

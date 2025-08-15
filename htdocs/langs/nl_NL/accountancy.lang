@@ -389,6 +389,7 @@ Modelcsv_Gestinumv5=Exporteren voor Gestinum (v5)
 Modelcsv_charlemagne=Exporteren voor Aplim Charlemagne
 ChartofaccountsId=Rekeningschema Id
 ExportToPdf = Exporteren naar PDF
+ExportToCsv = Export to CSV
 PdfLedgerTitle = Grootboekrekeningen
 PdfBalanceTitle = Grootboeksaldo
 PdfBookkeepingTitle = Dagboeken
@@ -440,7 +441,7 @@ AccountRemovedFromGroup=Rekening uit groep verwijderd.
 SaleLocal=Lokale verkoop
 SaleExport=Verkoop buitenland
 SaleEEC=Verkoop binnen de EU
-SaleEECWithVAT=De verkoop vindt plaats binnen de EEG, met een BTW-tarief dat niet nul is. We gaan er dan ook van uit dat dit GEEN intracommunautaire verkoop is en de voorgestelde rekening is de standaardproductrekening.
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=De verkoop vindt plaats in de EEG zonder btw, maar het btw-nummer van de derde partij is niet gedefinieerd. We vallen terug op het account voor standaardverkopen. U kunt het btw-nummer van de derde partij aanpassen of het voorgestelde productaccount voor binding wijzigen indien nodig.
 AnySale=Elke verkoop
 ForbiddenTransactionAlreadyExported=Niet toegestaan: De transactie is gevalideerd en/of geëxporteerd.
@@ -485,7 +486,7 @@ AccountancyClosureConfirmClose=Weet u zeker dat u de huidige fiscale periode wil
 AccountancyClosureConfirmAccountingReversal=Weet u zeker dat u boekingen voor de "Ingehouden winsten" wilt vastleggen?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=Transactie voor (doc_type=%s, doc_id=%s, doc_det=%s) zijn al geregistreerd
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Sommige verplichte stappen zijn nog niet volledig uitgevoerd. Maak deze alsnog.
@@ -508,7 +509,7 @@ ErrorNoFiscalPeriodActiveFound=Er is geen actieve fiscale periode (met een gedef
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=De datum van het boekhouddocument valt niet binnen de actieve fiscale periode
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=De datum van het boekhouddocument valt binnen een gesloten fiscale periode
 Error_BOOKKEEPING_ADDON_NotDefined=Fout, de regel voor boekhoudkundige nummering is niet gedefinieerd in de algemene instellingen van de boekhoudmodule
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Probeer een niet-gebalanceerde transactie in te voeren in het boek voor %s (Betalings-ID: %s). Geannuleerd. Waarschijnlijk een bug.
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
 ProductUsage=Product- of servicegebruik
 ## Import
 ImportAccountingEntries=Boekingen
@@ -537,15 +538,15 @@ ExpenseReportJournal=Kostenoverzicht
 DocsAlreadyExportedAreIncluded=Reeds geëxporteerde documenten zijn inbegrepen
 ClickToShowAlreadyExportedLines=Klik om reeds geëxporteerde regels weer te geven
 NAccounts=%s accounts
-ACCOUNTING_USE_TREASURY_Desc=Dit is de modus voor de financiële administratie. We gebruiken alleen de betalingen en hun datum voor de boekhouding.
-ACCOUNTING_USE_NON_TREASURY_Desc=Dit is de modus voor echte boekhouding. We gebruiken zowel de Facturen als betalingen voor de boekhouding.
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
+ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
 PieceDesc=De referentie van het brondocument dat deze banktransactie genereert (Factuur Ref, Onkostennota ref, ...)
 BankTransactionRef=Een referentie voor de banktransactie (optioneel, er wordt al automatisch een ID gegenereerd)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=Hiermee wordt de boekhoudkundige post gekloond (alle regels die aan deze boekhoudkundige post zijn gekoppeld, worden gekloond). Weet u zeker dat u de geselecteerde %s-records wilt klonen?
 ConfirmMassCloneBookkeepingWriting=Massa klonen bevestigen
-ConfirmMassReturnAccountBookkeepingWriting=Bevestig massa-extinctie
-ConfirmMassReturnAccountBookkeepingWritingQuestion=Hiermee wordt de boekhoudkundige post verwijderd (alle regels die aan deze boekhoudkundige post zijn gekoppeld, worden verwijderd). Weet u zeker dat u de geselecteerde %s-records wilt overslaan?
+ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
+ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=Hiermee wijzigt u de rekening van alle geselecteerde lijnen.
 confirmMassAssignAccountBookkeepingWritingConfirm=Massale accountwijziging bevestigen
 CloningSuccess=Succesvol klonen van transacties: %s
@@ -560,6 +561,6 @@ NoAccountsChangedWithAccountNumber=Transacties niet bijgewerkt met rekeningnumme
 HasAlreadyBeenReversed=is al teruggedraaid
 ErrorWhileCreating=Fout tijdens het aanmaken van %s
 ReturnAccount=Terug
-Clone=Kloner
+Clone=Klonen
 AlreadyReturnedAccount=Invoer nr. %s is al teruggedraaid
 SuccessReturnedAccount=Invoer nr. %s is teruggedraaid
