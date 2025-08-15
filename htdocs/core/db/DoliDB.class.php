@@ -459,4 +459,25 @@ abstract class DoliDB implements Database
 
 		return false;
 	}
+
+	/**
+	 * Prepare a SQL statement for execution
+	 *
+	 * @param string $sql
+	 * @return false|mysqli_stmt
+	 */
+	public function prepare($sql)
+	{
+		if (!$this->connected) {
+			$this->lasterror = 'Not connected to database';
+			return false;
+		}
+
+		$stmt = $this->db->prepare($sql);
+		if ($stmt === false) {
+			$this->lasterror = $this->db->error;
+		}
+
+		return $stmt;
+	}
 }
