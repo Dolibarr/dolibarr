@@ -31,7 +31,10 @@ global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
 '@phan-var-force Translate $langs';
-/** @var Translate $langs */
+/**
+ * @var Translate $langs
+ * @var CommonObject $object
+ */
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 '@phan-var-force Ticket[] $linkedObjectBlock';
 /** @var Ticket[] $linkedObjectBlock */
@@ -56,7 +59,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		<td class="linkedcol-element tdoverflowmax100"><?php echo $langs->trans("Ticket"); ?>
 		</td>
 		<td class="linkedcol-name tdoverflowmax150"><?php echo $objectlink->getNomUrl(1); ?></td>
-		<td class="linkedcol-ref center"><?php echo $objectlink->ref_client; ?></td>
+		<td class="linkedcol-ref center"><?php echo $objectlink->track_id; ?></td>
 		<td class="linkedcol-date center"><?php echo dol_print_date($objectlink->datec, 'day'); ?></td>
 		<?php
 		//$objectlink->socid = $objectlink->fk_soc;

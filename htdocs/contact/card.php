@@ -251,6 +251,7 @@ if (empty($reshook)) {
 		$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 		$object->roles = GETPOST("roles", 'array');
 
+		$object->status = 1; //Default status to Actif
 		$object->statut = 1; //Default status to Actif
 
 		// Note: Correct date should be completed with location to have exact GM time of birth.
@@ -1546,11 +1547,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			// Activer
-			if ($object->statut == 0 && $user->hasRight('societe', 'contact', 'creer')) {
+			if ($object->status == 0 && $user->hasRight('societe', 'contact', 'creer')) {
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=enable&token='.newToken().'">'.$langs->trans("Reactivate").'</a>';
 			}
 			// Desactiver
-			if ($object->statut == 1 && $user->hasRight('societe', 'contact', 'creer')) {
+			if ($object->status == 1 && $user->hasRight('societe', 'contact', 'creer')) {
 				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=disable&id='.$object->id.'&token='.newToken().'">'.$langs->trans("DisableUser").'</a>';
 			}
 

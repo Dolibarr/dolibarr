@@ -9,7 +9,7 @@
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2018		Nicolas ZABOURI				<info@inovea-conseil.com>
  * Copyright (C) 2018		Juanjo Menent				<jmenent@2byte.es>
- * Copyright (C) 2019-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2019		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2020		Open-Dsi					<support@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
@@ -1436,6 +1436,7 @@ while ($i < $imaxinloop) {
 	$contactstatic->ref_ext = $obj->ref_ext;
 	$contactstatic->lastname = $obj->lastname;
 	$contactstatic->firstname = $obj->firstname;
+	$contactstatic->status = $obj->statut;
 	$contactstatic->statut = $obj->statut;
 	$contactstatic->poste = $obj->poste;
 	$contactstatic->email = $obj->email;
