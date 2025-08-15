@@ -2933,6 +2933,7 @@ img.photoref, div.photoref {
 	width: 80px;
 	object-fit: contain;
 }
+
 img.photokanban, div.photokanban {
 	padding: 0;
 	border: none;

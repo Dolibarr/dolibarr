@@ -474,8 +474,6 @@ class Account extends CommonObject
 	 */
 	public function canBeConciliated()
 	{
-		global $conf;
-
 		if (empty($this->rappro)) {
 			return -1;
 		}
@@ -984,7 +982,7 @@ class Account extends CommonObject
 
 			if (!$error && !empty($this->oldref) && $this->oldref !== $this->ref) {
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'bank/".$this->db->escape($this->ref)."'";
-				$sql .= " WHERE filepath = 'bank/".$this->db->escape($this->oldref)."' and src_object_type='bank_account' and entity = ".((int) $conf->entity);
+				$sql .= " WHERE filepath = 'bank/".$this->db->escape($this->oldref)."' and src_object_type = 'bank_account' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -1976,7 +1974,6 @@ class Account extends CommonObject
 		$this->specimen        = 1;
 		$this->ref             = 'MBA';
 		$this->label           = 'My Big Company Bank account';
-		$this->courant         = Account::TYPE_CURRENT;
 		$this->clos            = Account::STATUS_OPEN;
 		$this->type            = Account::TYPE_CURRENT;
 		$this->status          = Account::STATUS_OPEN;
@@ -2009,7 +2006,7 @@ class Account extends CommonObject
 	 */
 	public static function replaceThirdparty($dbs, $origin_id, $dest_id)
 	{
-		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_url SET url_id = ".((int) $dest_id)." WHERE url_id = ".((int) $origin_id)." AND type='company'";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."bank_url SET url_id = ".((int) $dest_id)." WHERE url_id = ".((int) $origin_id)." AND type = 'company'";
 
 		if ($dbs->query($sql)) {
 			return true;

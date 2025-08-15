@@ -373,7 +373,7 @@ function getInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
 						'ref' => $invoice->ref,
 						'ref_ext' => $invoice->ref_ext ? $invoice->ref_ext : '', // If not defined, field is not added into soap
 						'thirdparty_id' => $invoice->socid,
-						'fk_user_author' => $invoice->fk_user_author ? $invoice->fk_user_author : '',
+						'fk_user_author' => $invoice->user_creation_id ? $invoice->user_creation_id : '',
 						'fk_user_valid' => $invoice->user_validation_id ? $invoice->user_validation_id : '',
 						'date' => $invoice->date ? dol_print_date($invoice->date, 'dayrfc') : '',
 						'date_due' => $invoice->date_lim_reglement ? dol_print_date($invoice->date_lim_reglement, 'dayrfc') : '',
@@ -386,7 +386,7 @@ function getInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
 						'total' => $invoice->total_ttc,
 						'note_private' => $invoice->note_private ? $invoice->note_private : '',
 						'note_public' => $invoice->note_public ? $invoice->note_public : '',
-						'status' => $invoice->statut,
+						'status' => $invoice->status,
 						'project_id' => $invoice->fk_project,
 						'close_code' => $invoice->close_code ? $invoice->close_code : '',
 						'close_note' => $invoice->close_note ? $invoice->close_note : '',
@@ -621,11 +621,11 @@ function createInvoice($authentication, $invoice)
 			$newline->desc = $line['desc'];
 			$newline->fk_product = (int) $line['product_id'];
 			$newline->tva_tx = isset($line['vat_rate']) ? $line['vat_rate'] : 0;
-			$newline->qty = $line['qty'];
+			$newline->qty = (float) $line['qty'];
 			$newline->subprice = isset($line['unitprice']) ? $line['unitprice'] : null;
-			$newline->total_ht = $line['total_net'];
-			$newline->total_tva = $line['total_vat'];
-			$newline->total_ttc = $line['total'];
+			$newline->total_ht = (float) $line['total_net'];
+			$newline->total_tva = (float) $line['total_vat'];
+			$newline->total_ttc = (float) $line['total'];
 			$newline->date_start = dol_stringtotime($line['date_start']);
 			$newline->date_end = dol_stringtotime($line['date_end']);
 

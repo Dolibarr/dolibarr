@@ -775,6 +775,7 @@ abstract class CommonObject
 	 */
 	public $sendtoid;
 
+
 	/**
 	 * @var	float		Amount already paid from getSommePaiement() + getSumCreditNotesUsed() + getSumDepositsUsed() (used to show correct status)
 	 * @see $totalpaid
@@ -783,9 +784,16 @@ abstract class CommonObject
 
 	/**
 	 * @var	float		Amount already paid from getSommePaiement()
-	 * @see $alreadpaid
+	 * @see $alreadpaid, $totalpaid_multicurrency
 	 */
 	public $totalpaid;
+
+	/**
+	 * @var int|float	Amount already paid from getSommePaiement(), like $totalpaid, but in the foreign currency
+	 * @see $totalpaid, $alreadypaid
+	 */
+	public $totalpaid_multicurrency;
+
 
 	/**
 	 * @var array<int,string>		Array with labels of status
@@ -1275,7 +1283,7 @@ abstract class CommonObject
 			} elseif ($obj = $this->db->fetch_object($resql_allowed_contacts)) {
 				if ($obj->cnt == 0) {
 					$langs->load("companies");
-					$this->error = $langs->trans("ErrorCommercialNotAllowedForThirdparty", $user->admin);
+					$this->error = $langs->trans("ErrorCommercialNotAllowedForThirdparty", $user->id);
 					dol_syslog(get_class($this)."::add_contact ".$this->error, LOG_ERR);
 					return -3;
 				}

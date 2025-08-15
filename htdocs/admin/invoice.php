@@ -295,7 +295,8 @@ llxHeader("", $langs->trans("BillsSetup"), 'EN:Invoice_Configuration|FR:Configur
 $form = new Form($db);
 
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("BillsSetup"), $linkback, 'title_setup');
 
 $head = invoice_admin_prepare_head();
@@ -358,6 +359,8 @@ foreach ($dirmodels as $reldir) {
 }
 
 $arrayofmodules = dol_sort_array($arrayofmodules, 'position');
+/** @var ModeleNumRefFactures[] $arrayofmodules */
+'@phan-var-force ModeleNumRefFactures[] $arrayofmodules';
 
 foreach ($arrayofmodules as $module) {
 	$file = strtolower($module->getName($langs));
@@ -557,6 +560,7 @@ foreach ($dirmodels as $reldir) {
 							$module = new $classname($db);
 
 							'@phan-var-force ModelePDFFactures $module';
+							/** @var ModelePDFFactures $module */
 
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {

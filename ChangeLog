@@ -14,6 +14,8 @@ WARNING:
 --------
 The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * The deprecated column egroupware_id has been dropped
+* The property $sumpayed (duplicated of $totalpaid), $sumdeposit (duplicate of $totaldeposits) and $sumcreditnote (duplicate of $totalcreditnotes) has
+  been removed (there are replaced with the property that was a duplication of (same for $sumpayed_multicurrency, $sumdeposit_multicurrency, $sumcreditnote_multicurrency).
 
 
 
@@ -28,7 +30,6 @@ NEW: ticket : display files linked to actioncomm (#32325)
 NEW: Support of monthly or weekly recurring events
 NEW: AI feature to autofill extrafields
 NEW: Introduce the view "Kanban Grouped By" opportunity status in projects
-NEW: #22848
 NEW: #32706 - Treasury accountancy (#33701)
 NEW: #33506 Add a constant to apply a ratio to resize images in ODT templates (#33543)
 NEW: Accountancy - Add centralized account (SQL & migration part) (#33384) (#33577)
@@ -65,7 +66,7 @@ NEW: Add Shared links on links in attachments (#33459)
 NEW: Add tags / category on supplier invoice (#33490)
 NEW: Add the possibility to merge PDF from the product list (#33723)
 NEW: allow stock management by product (#32326)
-NEW: attendee status Used - to ensure that only one attendee gets in on a ticket (#33987)
+NEW: attendee status "Showed up" - to ensure that only one attendee gets in on a ticket (#33987)
 NEW: auto-detect country from code in creation	(follow-up)
 NEW: autofix mysqldump command for backup when path is wrong
 NEW: Better presentation of list of user approver.

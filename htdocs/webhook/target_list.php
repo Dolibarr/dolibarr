@@ -140,16 +140,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // There is several ways to check permission.
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
-$enablepermissioncheck = 0;
-if ($enablepermissioncheck) {
-	$permissiontoread = $user->hasRight('webhook', 'target', 'read');
-	$permissiontoadd = $user->hasRight('webhook', 'target', 'write');
-	$permissiontodelete = $user->hasRight('webhook', 'target', 'delete');
-} else {
-	$permissiontoread = 1;
-	$permissiontoadd = 1;
-	$permissiontodelete = 1;
-}
+$permissiontoread = $permissiontoadd = $permissiontodelete = (!empty($user->admin) ? 1 : 0);
 
 // Security check (enable the most restrictive one)
 if ($user->socid > 0) {
@@ -361,7 +352,7 @@ if ($mode == 'modulesetup') {
 	$help_url = '';
 	$page_name = "WebhookSetup";
 	// Subheader
-	$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
+	$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 	print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 	$head = webhookAdminPrepareHead();

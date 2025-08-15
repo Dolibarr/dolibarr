@@ -57,7 +57,7 @@ Assigned=Assignat
 NeedMoreInformation=Esperant el comentari de l'informador
 NeedMoreInformationShort=Esperant comentaris
 Waiting=En espera
-SolvedClosed=Resolt
+SolvedClosed=Tancat
 Deleted=Esborrat
 # Dict
 Severity=Gravetat
@@ -72,8 +72,10 @@ TicketPublicAccess=Una interfície pública que no necessita identificació est�
 TicketSetupDictionaries=El tipus de tiquet, gravetat i codis analítics es poden configurar des dels diccionaris
 TicketParamModule=Configuració del mòdul de variables
 TicketParamMail=Configuració de correu electrònic
-TicketEmailNotificationFrom=Correu electrònic del remitent per a la notificació sobre tiquets (creació de tiquets o missatges d'actualització)
-TicketEmailNotificationFromHelp=Correu electrònic del remitent que s'utilitzarà per enviar els correus electrònics de notificació per a la creació de tiquets o l'addició de missatges. Per exemple, noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Notifiqueu la creació del tiquet a aquesta adreça de correu electrònic
 TicketEmailNotificationToHelp=Si està present, aquesta adreça de correu electrònic rebrà una notificació de la creació d'un bitllet (a més de qualsevol altre destinatari predeterminat)
 TicketNewEmailBodyLabel=Missatge de text enviat després de crear un tiquet
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=Només es veuran les entrades assignades a l'us
 TicketsActivatePublicInterface=Activar la interfície pública
 TicketsActivatePublicInterfaceHelp=La interfície pública permet qualsevol visitant per a crear tiquets.
 TicketsAutoAssignTicket=Assigna automàticament l'usuari que va crear el tiquet
-TicketsAutoAssignTicketHelp=Quan es crea un tiquet, l'usuari es pot assignar automàticament al tiquet (Exemples: 0=Mai s'ha assignat automàticament al tiquet, 1=Assignat automàticament al tiquet si no hi ha ningú assignat, 2=Assignat automàticament al tiquet encara que algú estigui definit).
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
 TicketAutoChangeStatusOnAnswer=Assigna automàticament un estat en contestar un tiquet
 TicketAutoChangeStatusOnAnswerHelp=Quan un usuari respon a un tiquet, l'estat s'aplicarà automàticament al tiquet
 TicketNumberingModules=Mòdul de numeració de tiquets
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=Mostra només els tiquets oberts
 TicketStatByStatus=Tiquets per estat
 OrderByDateAsc=Ordena per data ascendent
 OrderByDateDesc=Ordena per data descendent
-ShowAsConversation=Mostrar com a llista de converses
-MessageListViewType=Mostra com a llista de taula
 ConfirmMassTicketClosingSendEmail=Envieu correus electrònics automàticament quan tanqueu els tiquets
 ConfirmMassTicketClosingSendEmailQuestion=Voleu notificar als tercers quan tanqueu aquests tiquets?
 # Ticket card

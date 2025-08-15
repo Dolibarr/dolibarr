@@ -392,16 +392,16 @@ class Task extends CommonObjectLine
 		$this->labelStatus = array(
 			0 => 'Draft',
 			1 => 'Validated',
-			2 => 'In progress',
+			2 => 'InProgress',
 			3 => 'Closed',
-			4 => 'Transferred',
+			//4 => 'Transferred',
 		);
 		$this->labelStatusShort = array(
 			0 => 'Draft',
 			1 => 'Validated',
-			2 => 'In progress',
+			2 => 'InProgress',
 			3 => 'Closed',
-			4 => 'Transferred',
+			//4 => 'Transferred',
 		);
 	}
 
@@ -2483,17 +2483,17 @@ class Task extends CommonObjectLine
 			return $langs->trans($this->labelStatusShort[$status]);
 		} elseif ($mode == 2) {
 			switch ($status) {
-				case 0:
+				case 0:	// draft
 					return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut0').' '.$langs->trans($this->labelStatusShort[$status]);
-				case 1:
+				case 1: // validated
 					return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut1').' '.$langs->trans($this->labelStatusShort[$status]);
-				case 2:
+				case 2:	// in progress
 					return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut3').' '.$langs->trans($this->labelStatusShort[$status]);
-				case 3:
+				case 3:	// closed
 					return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6').' '.$langs->trans($this->labelStatusShort[$status]);
-				case 4:
+				case 4:	// transferred ?
 					return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6').' '.$langs->trans($this->labelStatusShort[$status]);
-				case 5:
+				case 5:	// ???
 					return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut5').' '.$langs->trans($this->labelStatusShort[$status]);
 			}
 		} elseif ($mode == 3) {
@@ -2518,11 +2518,11 @@ class Task extends CommonObjectLine
 				case 1:
 					return dolGetStatus($langs->trans($this->labelStatus[$status]), $langs->trans($this->labelStatusShort[$status]), '', 'status1', $mode);
 				case 2:
-					return dolGetStatus($langs->trans($this->labelStatus[$status]), $langs->trans($this->labelStatusShort[$status]), '', 'status2', $mode);
-				case 3:
 					return dolGetStatus($langs->trans($this->labelStatus[$status]), $langs->trans($this->labelStatusShort[$status]), '', 'status3', $mode);
+				case 3:
+					return dolGetStatus($langs->trans($this->labelStatus[$status]), $langs->trans($this->labelStatusShort[$status]), '', 'status6', $mode);
 				case 4:
-					return dolGetStatus($langs->trans($this->labelStatus[$status]), $langs->trans($this->labelStatusShort[$status]), '', 'status4', $mode);
+					return dolGetStatus($langs->trans($this->labelStatus[$status]), $langs->trans($this->labelStatusShort[$status]), '', 'status6', $mode);
 				case 5:
 					return dolGetStatus($langs->trans($this->labelStatus[$status]), $langs->trans($this->labelStatusShort[$status]), '', 'status5', $mode);
 			}

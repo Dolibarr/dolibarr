@@ -135,7 +135,7 @@ $help_url = "EN:Module_Shippings|FR:Module_Expeditions|ES:M&oacute;dulo_Expedici
 llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-shipping page-card_agenda');
 
 $head = shipping_prepare_head($object);
-print dol_get_fiche_head($head, 'shipping', $langs->trans("Shipment"), -1, $object->picto);
+print dol_get_fiche_head($head, 'agenda', $langs->trans("Shipment"), -1, $object->picto);
 
 
 // Shipping card

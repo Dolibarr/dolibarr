@@ -36,20 +36,8 @@ jobs:
         with:
           php-version: 8.2
           coverage: none # disable xdebug, pcov
-          tools: cs2pr,phan
+          tools: phan
       - name: Run Phan analysis
         run: |
           # shellcheck disable=2086
-          phan $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=checkstyle -o _phan.xml
-      - name: Add results to PR
-        if: ${{ always() }}
-        run: |
-          cs2pr --prepend-filename --prepend-source --notices-as-warnings _phan.xml
-      - name: Provide phan log as artifact
-        uses: actions/upload-artifact@v4
-        if: ${{ always() }}
-        with:
-          name: phan-srcrt
-          # path: ${{ github.workspace }}/phan.log
-          path: ${{ github.workspace }}/_phan.xml
-          retention-days: 2
+          phan $PHAN_QUICK -k "$PHAN_CONFIG" -B "$PHAN_BASELINE" --analyze-twice --minimum-target-php-version "$PHAN_MIN_PHP" --output-mode=github

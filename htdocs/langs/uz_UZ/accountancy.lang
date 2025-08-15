@@ -72,7 +72,7 @@ AccountancyAreaDescActionOnce=Quyidagi harakatlar odatda faqat bir marta yoki yi
 AccountancyAreaDescActionOnceBis=Kelajakda buxgalteriya hisobiga ma'lumotlarni uzatishda avtomatik ravishda to'g'ri standart hisob qaydnomasini taklif qilish orqali vaqtni tejash uchun keyingi qadamlar bajarilishi kerak.
 AccountancyAreaDescActionFreq=Quyidagi harakatlar odatda har oyda, haftada yoki kunda juda katta kompaniyalar uchun amalga oshiriladi ...
 AccountancyAreaDescJournalSetup=QADAM %s: %s menyusidan jurnal ro'yxati tarkibini tekshiring
-AccountancyAreaDescChartModel=QADAM %s: hisob jadvalining modeli mavjudligini tekshiring yoki menyudan %s yarating.
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists for your country or create one from menu %s
 AccountancyAreaDescChart=QADAM %s: tanlang va | yoki hisob qaydnomangizni %s menyusidan to'ldiring.
 AccountancyAreaDescFiscalPeriod=QADAM %s: Buxgalteriya yozuvlarini yaratish uchun qabul qilingan sanalar oralig'ini belgilaydigan moliyaviy davrni belgilang. Buning uchun %s menyusidan foydalaning.
 AccountancyAreaDescVat=QADAM %s: har bir QQS stavkasi bo'yicha buxgalteriya hisobini belgilang. Buning uchun %s menyu yozuvidan foydalaning.
@@ -275,7 +275,7 @@ HideOpeningBalance=Dastlabki qoldiqni yashirish
 ShowSubtotalByGroup=Subtotalni daraja bo'yicha ko'rsatish
 Pcgtype=Hisob guruhi
 PcgtypeDesc=Hisob-kitoblar guruhi ba'zi buxgalteriya hisobotlari uchun oldindan belgilangan "filtr" va "guruhlash" mezonlari sifatida ishlatiladi. Masalan, "KIRISh" yoki "XARAJATLAR" xarajatlar / daromadlar to'g'risidagi hisobotni tuzish uchun mahsulotlarning buxgalteriya hisobi guruhlari sifatida ishlatiladi.
-AccountingCategoriesDesc=Maxsus hisoblar guruhi filtrdan foydalanishni yoki maxsus hisobotlarni yaratishni osonlashtirish uchun buxgalteriya hisoblarini bitta nomga guruhlash uchun ishlatilishi mumkin.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Yarashtiriladigan
 Centralized=Markazlashtirilgan hisob
 TotalVente=Total turnover before tax
@@ -319,7 +319,7 @@ NotReconciled=Yarashtirilmagan
 WarningRecordWithoutSubledgerAreExcluded=Ogohlantirish, subregger hisobi aniqlanmagan barcha qatorlar filtrlanadi va bu ko'rinishdan chiqarib tashlanadi
 AccountRemovedFromCurrentChartOfAccount=Joriy hisobvaraqlar rejasida mavjud bo'lmagan buxgalteriya hisobi
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=Ogohlantirish, bu sahifada faqat buxgalteriya tizimiga o'tkazilgan yozuvlar mavjud.
-BookkeepingNumRefModelDesc = Malumot raqamini yyyyjjnnnn formatida qaytaradi, bu erda yyyy yil va jj jurnal kodi, nnnn yil va jurnal kodiga qarab ketma-ket avtomatik o'sish raqamidir.
+BookkeepingNumRefModelDesc = Returns the reference number in the format yymmjjnnnnn where yy is the year, mm is the month and jj the journal code, nnnnn is a sequential auto-incrementing number depending on the year, the month and the journal code.
 BookkeepingNumberingModules = Buxgalteriya hisobini raqamlash modellari
 ## Admin
 BindingOptions=Buxgalteriya hisobiga pul o'tkazish variantlari
@@ -389,6 +389,7 @@ Modelcsv_Gestinumv5=Gestinum uchun eksport (v5)
 Modelcsv_charlemagne=Aplim Buyuk Karl uchun eksport
 ChartofaccountsId=Hisob-kitoblar rejasi
 ExportToPdf = PDF formatiga eksport qilish
+ExportToCsv = Export to CSV
 PdfLedgerTitle = Buxgalteriya hisoblari
 PdfBalanceTitle = Buxgalteriya balansi
 PdfBookkeepingTitle = Journals
@@ -440,7 +441,7 @@ AccountRemovedFromGroup=Hisob guruhdan olib tashlandi
 SaleLocal=Mahalliy sotuv
 SaleExport=Eksportni sotish
 SaleEEC=EECda sotish
-SaleEECWithVAT=Savdo EECda QQS null emas, shuning uchun biz bu jamoa ichidagi savdo EMAS va tavsiya etilgan hisob standart mahsulot hisobidir.
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=Savdo EECda QQSsiz amalga oshiriladi, lekin uchinchi tomonning QQS identifikatori aniqlanmagan. Biz standart savdo hisobiga tushamiz. Siz uchinchi tomonning QQS identifikatorini tuzatishingiz yoki kerak bo'lsa, bog'lash uchun tavsiya etilgan mahsulot hisobini o'zgartirishingiz mumkin.
 AnySale=Har qanday savdo
 ForbiddenTransactionAlreadyExported=Taqiqlangan: tranzaktsiya tasdiqlangan va/yoki eksport qilingan.
@@ -485,7 +486,7 @@ AccountancyClosureConfirmClose=Haqiqatan ham joriy moliyaviy davrni yopmoqchimis
 AccountancyClosureConfirmAccountingReversal=Haqiqatan ham "Taqsimlanmagan daromad" uchun yozuvlarni yozmoqchimisiz?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) were already recorded
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=O'rnatishning ba'zi majburiy bosqichlari bajarilmadi, iltimos, ularni to'ldiring
@@ -508,7 +509,7 @@ ErrorNoFiscalPeriodActiveFound=No active fiscal period (with a start and end dat
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Buxgalteriya hujjati sanasi faol moliyaviy davrda emas
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Buxgalteriya hujjati sanasi yopiq moliyaviy davr ichida
 Error_BOOKKEEPING_ADDON_NotDefined=Xato, buxgalteriya hisobini raqamlash qoidasi Buxgalteriya modulining umumiy sozlamalarida aniqlanmagan
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=%s (Toʻlov identifikatori: %s) uchun balanssiz tranzaksiyani kitobga kiritishga harakat qiling. Bekor qilingan. Albatta xato.
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
 ProductUsage=Mahsulot yoki xizmatdan foydalanish
 ## Import
 ImportAccountingEntries=Buxgalteriya yozuvlari
@@ -537,15 +538,15 @@ ExpenseReportJournal=Xarajatlar bo'yicha hisobot jurnali
 DocsAlreadyExportedAreIncluded=Allaqachon eksport qilingan hujjatlar kiritilgan
 ClickToShowAlreadyExportedLines=Allaqachon eksport qilingan qatorlarni ko'rsatish uchun bosing
 NAccounts=%s hisob qaydnomalari
-ACCOUNTING_USE_TREASURY_Desc=Bu g'aznachilik hisobi rejimi. Biz buxgalteriya hisobini yuritish uchun faqat to'lovlar va ularning sanasidan foydalanamiz.
-ACCOUNTING_USE_NON_TREASURY_Desc=Bu haqiqiy buxgalteriya rejimi. Buxgalteriya hisobini yuritish uchun biz hisob-fakturalar va to'lovlardan foydalanamiz.
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
+ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
 PieceDesc=Ushbu bank tranzaksiyasini yaratuvchi dastlabki hujjatning ma'lumotnomasi (Invoice Ref, Xarajatlar hisoboti, ...)
 BankTransactionRef=Bank tranzaksiyasi uchun ma'lumotnoma (ixtiyoriy, avtomatik identifikator allaqachon yaratilgan)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=Bu buxgalteriya yozuvini klonlaydi (buxgalteriya yozuviga bog'langan barcha qatorlar klonlanadi). Haqiqatan ham tanlangan %s yozuvlarni klonlashni xohlaysizmi?
 ConfirmMassCloneBookkeepingWriting=Ommaviy klonlashni tasdiqlang
-ConfirmMassReturnAccountBookkeepingWriting=Ommaviy qirilib ketishni tasdiqlang
-ConfirmMassReturnAccountBookkeepingWritingQuestion=Bu buxgalteriya yozuvini o'chiradi (buxgalteriya yozuviga bog'langan barcha qatorlar o'chiriladi). Haqiqatan ham %s tanlangan yozuvlarni chetlab o‘tmoqchimisiz?
+ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
+ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=Bu barcha tanlangan satrlarning hisobini o'zgartiradi.
 confirmMassAssignAccountBookkeepingWritingConfirm=Hisobning ommaviy o'zgarishini tasdiqlang
 CloningSuccess=Muvaffaqiyatli tranzaksiya klonlash: %s
@@ -560,6 +561,6 @@ NoAccountsChangedWithAccountNumber=Hisob raqamlari bilan yangilanmagan tranzaksi
 HasAlreadyBeenReversed=allaqachon orqaga qaytarilgan
 ErrorWhileCreating=Yaratishdagi xatolik %s
 ReturnAccount=Return
-Clone=Kloner
+Clone=Clone
 AlreadyReturnedAccount=n°%s yozuvi allaqachon bekor qilingan
 SuccessReturnedAccount=n°%s yozuvi bekor qilindi

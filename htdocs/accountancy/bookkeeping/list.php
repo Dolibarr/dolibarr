@@ -1306,6 +1306,7 @@ while ($i < min($num, $limit)) {
 	// Document ref
 	$modulepart = '';	// may be used by include*.tpl.php
 	if (!empty($arrayfields['t.doc_ref']['checked'])) {
+		$documentlink = '';
 		$objectstatic = null;
 
 		if ($line->doc_type === 'customer_invoice') {
@@ -1317,7 +1318,7 @@ while ($i < min($num, $limit)) {
 			//$modulepart = 'facture';
 
 			$filename = dol_sanitizeFileName($line->doc_ref);
-			$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
+			$filedir = $conf->invoice->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
 			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
 		} elseif ($line->doc_type === 'supplier_invoice') {

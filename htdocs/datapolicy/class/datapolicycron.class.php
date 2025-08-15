@@ -401,7 +401,7 @@ class DataPolicyCron
 		foreach ($policy['anonymize_fields'] as $field => $val) {
 			if ($val == 'MAKEANONYMOUS') {
 				// For each field with rule "MAKEANONYMOUS, set the new value, keeping the ID.
-				$object->$field = $field . '-anonymous-' . $object->id;
+				$object->$field = $field . '-anon-' . $object->id;
 			} else {
 				// For others, force the value, but only if not already empty.
 				if (!empty($object->$field)) {

@@ -470,7 +470,7 @@ ErrorCanOnlyAutomaticallyGenerateADepositFromProposalOrOrder=Μπορείτε ν
 ErrorPaymentConditionsNotEligibleToDepositCreation=Οι επιλεγμένοι όροι πληρωμής δεν είναι κατάλληλοι για αυτόματη δημιουργία κατάθεσης
 # Paiement page
 DisplayOtherInvoicesToo = Εμφάνιση και άλλων τιμολογίων
-DisplayCreditNotesToo = Εμφάνιση και πιστωτικών σημειώσεων
+DisplayCreditNotesToo = Εμφάνιση και πιστωτικών
 HideOtherInvoices = Απόκρυψη άλλων τιμολογίων
 HideCreditNotes = Απόκρυψη πιστωτικών
 # PaymentType
@@ -689,6 +689,12 @@ CumulativeProgression=Σωρευτική πρόοδος
 INVOICE_ADD_EPC_QR_CODEPay=Σαρώστε αυτόν τον κωδικό QR για να πληρώσετε με ένα smartphone που υποστηρίζει πληρωμή με κωδικό EPC QR.
 InputValueIsNotAnNumber=Η τιμή εισόδου δεν είναι αριθμός
 LimitDepositInvoicePossibilityForConsistency=Limit deposit invoice type to keep consistencies between lines (from proposals or orders)
-ExtPaymentID=Εξωτερικό αναγνωριστικό πληρωμή
-ExtPaymentSite=Εξωτερικός ιστότοπος πληρωμή
-CantConvertToReducAnInvoiceOfThisType=Δεν είναι δυνατή η μετατροπή σε έκπτωση ενός τιμολογίου αυτού του τύπου
+ExtPaymentID=Αναγνωριστικό εξωτερικής πληρωμής
+ExtPaymentSite=Ιστότοπος εξωτερικής πληρωμής
+CantConvertToReducAnInvoiceOfThisType=Can't convert to discount an invoice of this type
+WithholdingTax=Παρακράτηση
+LabelWithholdingExist=The label for Withholding already exists
+TotalOfDiscountMustEqualsOriginal=The total of new discounts must be equal to the original discount amount.
+RemainToSplit=Remaining amount to be split
+TypeAmountOfEachNewDiscountSplit=Input amount for each of each parts
+SplitDiscountTitle=Split discount into several

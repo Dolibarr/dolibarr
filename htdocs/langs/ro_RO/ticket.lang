@@ -57,7 +57,7 @@ Assigned=Atribuit
 NeedMoreInformation=În aşteptare feedback de la raportor
 NeedMoreInformationShort=În aşteptare feedback
 Waiting=În aşteptare
-SolvedClosed=Rezolvat
+SolvedClosed=Închis
 Deleted=Șters
 # Dict
 Severity=Gravitate
@@ -72,8 +72,10 @@ TicketPublicAccess=O interfață publică care nu necesită identificarea este d
 TicketSetupDictionaries=Tipul tichetului, severitatea și codurile analitice sunt configurabile din dicționare
 TicketParamModule=Setări variabile modul
 TicketParamMail=Setări email
-TicketEmailNotificationFrom=Adresa de e-mail a expeditorului pentru notificări privind tichetele (crearea tichetelor sau mesajele de actualizare)
-TicketEmailNotificationFromHelp=Adresa de e-mail a expeditorului care va fi utilizată pentru trimiterea notificărilor prin e-mail pentru crearea de tichete sau adăugarea de mesaje. De exemplu, noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Notifică crearea de tichet la această adresă de email
 TicketEmailNotificationToHelp=Dacă este completată, această adresă de email va fi notificată cu privire la crearea unui tichet (în plus față de orice alți destinatari impliciti)
 TicketNewEmailBodyLabel=Mesaj text trimis după crearea unui tichet
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=Numai tichetele alocate utilizatorului curent v
 TicketsActivatePublicInterface=Activare interfață publică
 TicketsActivatePublicInterfaceHelp=Interfața publică permite vizitatorilor să creeze tichete.
 TicketsAutoAssignTicket=Atribuiţi automat utilizatorul care a creat tichetul
-TicketsAutoAssignTicketHelp=La crearea unui tichet, utilizatorul poate fi alocat automat tichetului (Exemple: 0=Niciodată nu a fost atribuit automat tichetului, 1=Atribuit automat tichetului dacă nimeni nu este alocat, 2=Alocat automat tichetului chiar dacă cineva a fost definit).
+TicketsAutoAssignTicketHelp=La crearea unui tichet, utilizatorul poate fi atribuit automat tichetului<br> Exemple: 0 = Niciodată atribuit automat tichetului, 1 = Atribuit automat tichetului dacă nimeni nu este atribuit, 2 = Atribuit automat tichetului chiar dacă cineva a fost definit.
 TicketAutoChangeStatusOnAnswer=Atribuie automat un statut atunci când se răspunde la un tichet
 TicketAutoChangeStatusOnAnswerHelp=Când un utilizator răspunde la un tichet, statutul va fi aplicat automat tichetului
 TicketNumberingModules=Modul de numerotare a tichetelor
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=Afişează numai tichetele deschise
 TicketStatByStatus=Tichete după status
 OrderByDateAsc=Sortare după dată ascendent
 OrderByDateDesc=Sortare după dată descendent
-ShowAsConversation=Afişare ca listă de conversaţie
-MessageListViewType=Afişare listă ca tabel
 ConfirmMassTicketClosingSendEmail=Trimitere automată email-uri la închiderea tichetelor
 ConfirmMassTicketClosingSendEmailQuestion=Vrei să anunți terții când închizi aceste tichete ?
 # Ticket card
@@ -341,4 +341,4 @@ TicketClosedToday=Tichet închis azi
 KMFoundForTicketGroup=Am găsit subiecte și întrebări frecvente care pot răspunde la întrebarea ta, te rugăm să le verifici înainte de trimiterea tichetului
 SetTitle=Setare titlu
 TicketSendToInternalCC=Forțează un e-mail ca destinatar CC pentru toate mesajele trimise de pe pagina de tichete.
-TicketSendToInternalCCHelp=Introdu adresa de e-mail pe care dorești să o utilizezi automat ca destinatar în copie carbon atunci când trimiți un e-mail de pe pagina de tichete.
+TicketSendToInternalCCHelp=Introdu adresa de email pe care dorești să o utilizezi automat ca destinatar în CC atunci când trimiți un email de pe pagina de tichete.

@@ -57,7 +57,7 @@ Assigned=pridelených
 NeedMoreInformation=Čaká sa na spätnú väzbu od reportéra
 NeedMoreInformationShort=Čaká sa na spätnú väzbu
 Waiting=Čakanie
-SolvedClosed=Vyriešené
+SolvedClosed=Zatvorené
 Deleted=Odstránené
 # Dict
 Severity=Závažnosť
@@ -72,8 +72,10 @@ TicketPublicAccess=Verejné rozhranie, ktoré nevyžaduje identifikáciu, je dos
 TicketSetupDictionaries=Typ lístka, závažnosť a analytické kódy sú konfigurovateľné zo slovníkov
 TicketParamModule=Nastavenie modulových premenných
 TicketParamMail=Nastavenie e-mailu
-TicketEmailNotificationFrom=E-mail odosielateľa pre upozornenia na tikety (vytvorenie tiketu alebo aktualizačné správy)
-TicketEmailNotificationFromHelp=E-mail odosielateľa, ktorý sa má použiť na odosielanie e-mailových upozornení pri vytváraní tiketov alebo pridávaní správ. Napríklad noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Oznámte vytvorenie tiketu na túto e-mailovú adresu
 TicketEmailNotificationToHelp=Ak je táto e-mailová adresa uvedená, bude upozornená na vytvorenie tiketu (okrem všetkých ostatných predvolených príjemcov).
 TicketNewEmailBodyLabel=Textová správa odoslaná po vytvorení tiketu
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=Viditeľné budú len lístky priradené aktuá
 TicketsActivatePublicInterface=Aktivujte verejné rozhranie
 TicketsActivatePublicInterfaceHelp=Verejné rozhranie umožňuje všetkým návštevníkom vytvárať vstupenky.
 TicketsAutoAssignTicket=Automaticky priradiť používateľa, ktorý vytvoril lístok
-TicketsAutoAssignTicketHelp=Pri vytváraní tiketu môže byť používateľ automaticky priradený k tiketu (Príklady: 0 = Nikdy nebude automaticky priradený k tiketu, 1 = Automaticky priradený k tiketu, ak nie je nikto priradený, 2 = Automaticky priradený k tiketu, aj keď bol niekto definovaný).
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
 TicketAutoChangeStatusOnAnswer=Automaticky priradiť stav pri odpovedi na tikety
 TicketAutoChangeStatusOnAnswerHelp=Keď používateľ odpovie na tiket, stav sa na tiket automaticky použije.
 TicketNumberingModules=Modul číslovania lístkov
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=Zobraziť iba otvorené vstupenky
 TicketStatByStatus=Vstupenky podľa stavu
 OrderByDateAsc=Zoradiť podľa vzostupného dátumu
 OrderByDateDesc=Zoradiť podľa dátumu zostupne
-ShowAsConversation=Zobraziť ako zoznam konverzácií
-MessageListViewType=Zobraziť ako zoznam tabuľky
 ConfirmMassTicketClosingSendEmail=Automaticky odosielať e-maily pri uzatváraní lístkov
 ConfirmMassTicketClosingSendEmailQuestion=Chcete upozorniť tretie strany pri uzatváraní týchto tiketov?
 # Ticket card

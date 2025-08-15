@@ -57,7 +57,7 @@ Assigned=Zugewiesen
 NeedMoreInformation=Warten auf Feedback des Erstellers
 NeedMoreInformationShort=Warten auf Feedback
 Waiting=Wartend
-SolvedClosed=Gelöst
+SolvedClosed=Beendet
 Deleted=Gelöscht
 # Dict
 Severity=Dringlichkeit
@@ -72,8 +72,10 @@ TicketPublicAccess=Ein öffentliches Interface (Nutzung ohne Identifizierung) is
 TicketSetupDictionaries=Die Anfragearten, Dringlichkeiten und Analyse-Codes sind in den Stammdaten konfigurierbar
 TicketParamModule=Modul Variableneinstellungen
 TicketParamMail=E-Mail Einrichtung
-TicketEmailNotificationFrom=Absender e-Mail-Adresse für Ticket-Benachrichtigungen (Erstellung oder Update eines Tickets)
-TicketEmailNotificationFromHelp=Absender e-Mail-Adresse, die zum Senden der Benachrichtigungs-E-Mails für Ticket-Erstellung oder Ticket-Nachrichten verwendet werden soll. Zum Beispiel noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Benachrichtigung über die Erstellung eines Tickets an diese E-Mail-Adresse
 TicketEmailNotificationToHelp=Falls vorhanden, wird diese e-Mail-Adresse (zusätzlich zu allen anderen Standardempfängern) über eine Ticket-Erstellung benachrichtigt.
 TicketNewEmailBodyLabel=Text Mitteilung die gesendet wird, wenn ein Ticket erstellt wurde
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=Nur dem aktuellen Benutzer zugewiesene Tickets 
 TicketsActivatePublicInterface=Öffentliches Interface aktivieren
 TicketsActivatePublicInterfaceHelp=Mit dem öffentlichen Interface können alle Besucher Tickets eröffnen.
 TicketsAutoAssignTicket=Den Ersteller automatisch dem Ticket zuweisen
-TicketsAutoAssignTicketHelp=Beim Erstellen eines Tickets kann der Benutzer dem Ticket automatisch zugewiesen werden (Beispiele: 0=Niemals automatisch dem Ticket zugewiesen, 1=automatisch dem Ticket, wenn niemand zugewiesen ist, 2=automatisch zugewiesen an Ticket, auch wenn jemand definiert wurde).
+TicketsAutoAssignTicketHelp=Beim Erstellen eines Tickets kann der Benutzer dem Ticket automatisch zugewiesen werden<br>Beispiele: 0=Niemals automatisch dem Ticket zugewiesen, 1=automatisch dem Ticket, wenn niemand zugewiesen ist, 2=automatisch zugewiesen an Ticket, auch wenn jemand definiert wurde).
 TicketAutoChangeStatusOnAnswer=Beim Beantworten einer Ticket-Anfrage automatisch einen Status zuweisen
 TicketAutoChangeStatusOnAnswerHelp=Wenn ein Benutzer auf ein Ticket antwortet, wird der Status dem Ticket automatisch zugewiesen
 TicketNumberingModules=Ticketnummerierungsmodul
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=Nur offene Tickets anzeigen
 TicketStatByStatus=Tickets nach Status
 OrderByDateAsc=Sortierung nach aufsteigendem Datum
 OrderByDateDesc=Sortierung nach absteigendem Datum
-ShowAsConversation=Als Konversationsliste anzeigen
-MessageListViewType=Als Tabellenliste anzeigen
 ConfirmMassTicketClosingSendEmail=Senden Sie automatisch E-Mails, wenn Sie Tickets schließen
 ConfirmMassTicketClosingSendEmailQuestion=Möchten Sie Geschäftspartner benachrichtigen, wenn Sie diese Tickets schließen?
 # Ticket card
