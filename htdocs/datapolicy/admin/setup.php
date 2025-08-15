@@ -157,89 +157,164 @@ if (!isModEnabled('cron')) {
 }
 print '<br><br>';
 
-if ($action == 'edit') {
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="update">';
+print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="update">';
+print '<input type="hidden" name="page_y" value="">';
 
-	print '<div class="div-table-responsive">';
-	print '<table class="tagtable nobottomiftotal liste">';
+print '<div class="div-table-responsive">';
+print '<table class="tagtable nobottomiftotal liste">';
 
-	// Table Headers
-	print '<tr class="liste_titre"><td class="titlefield"></td>';
-	print '<td>'.$langs->trans("DelayForAnonymization").'</td>';
-	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-		print '<td>'.$langs->trans("DelayForDeletion").'</td>';
-	}
+// Table Headers
+print '<tr class="liste_titre"><td class="titlefield"></td>';
+print '<td>'.$langs->trans("DelayForAnonymization").'</td>';
+print '<td>'.$langs->trans("DelayForDeletion").'</td>';
+print '</tr>';
+
+// ==============================================================================
+// == DYNAMIC VIEW RENDERING
+// ==============================================================================
+
+// Loop through each configuration group (e.g., ThirdParty, Member).
+foreach ($arrayofparameters as $title => $tab) {
+	print '<tr class="trforbreak liste_titre"><td class="titlefield trforbreak">'.$langs->trans($title).'</td>';
+	print '<td></td>';
+	print '<td></td>';
 	print '</tr>';
 
-	// ==============================================================================
-	// == DYNAMIC VIEW RENDERING
-	// ==============================================================================
+	// Loop through each entity within the group to create a table row.
+	foreach ($tab as $logicalKey => $val) {
+		print '<tr class="oddeven"><td>';
+		print $val['picto'];
+		print $langs->trans($val['label_key']);
+		print '</td>';
 
-	// Loop through each configuration group (e.g., ThirdParty, Member).
-	foreach ($arrayofparameters as $title => $tab) {
-		print '<tr class="trforbreak liste_titre"><td class="titlefield trforbreak">'.$langs->trans($title).'</td>';
-		print '<td></td>';
-		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-			print '<td></td>';
+		// Column 1: Anonymization
+		print '<td class="nowraponall">';
+		// Display the dropdown only if a constant key is defined for the 'anonymize' action.
+		if (!empty($val['config_keys']['anonymize'])) {
+			$selectedvalue = getDolGlobalString($val['config_keys']['anonymize']);
+
+			print Form::selectarray($val['config_keys']['anonymize'], $valTab, $selectedvalue);
+
+			//var_dump($val);
+			$listoffieldsid = '';
+			foreach ($arrayofelem[$logicalKey]['anonymize_fields'] as $tmpkey => $tmpval) {
+				if ($tmpval === 'MAKEANONYMOUS') {
+					$listoffieldsid .= ($listoffieldsid ? ', ' : '').$tmpkey.' -> field-anon-ID';
+				}
+			}
+			$otherfields = '';
+			foreach ($arrayofelem[$logicalKey]['anonymize_fields'] as $tmpkey => $tmpval) {
+				if ($tmpval !== 'MAKEANONYMOUS') {
+					$otherfields .= ($otherfields ? ', ' : '').$tmpkey.' -> '.json_encode($tmpval);
+				}
+			}
+
+			$sql = $arrayofelem[$logicalKey]['sql_template'];
+			$sql = preg_replace('/__ENTITY__/', (int) $conf->entity, $sql);
+			$sql = preg_replace('/__DELAY__/', (int) $selectedvalue, $sql);
+			$sql = preg_replace('/__NOW__/', "'".dol_print_date(dol_now(), 'standard')."'", $sql);
+			$sql = preg_replace('/^SELECT [\w+\s+\._]+ FROM/', 'SELECT COUNT(*) as nb FROM', $sql);
+
+			$htmltooltip = $langs->transnoentitiesnoconv("TheFollowingFieldsAreReplaceWith");
+			$htmltooltip .= '<br><small>'.$listoffieldsid.'</small>';
+			$htmltooltip .= '<br><br>'.$langs->transnoentitiesnoconv("OtherFieldsAreReplaceWithStaticValues");
+			$htmltooltip .= '<br><small>'.$otherfields.'</small>';
+			$htmltooltip .= '<br><br>'.$langs->transnoentitiesnoconv("TechnicalInformation").' - SQL:';
+			$htmltooltip .= '<br><small>'.$sql.'</small>';
+			print $form->textwithpicto('', $htmltooltip);
+
+			print ' &nbsp; ';
+			if ($action == 'count' && GETPOST('group') == $logicalKey) {
+				print '<span class="opacitymedium valignmiddle">'.$langs->trans("QualifiedNumber").' : </span>';
+
+				$estimatednumber = 0;
+				if ($sql) {
+					$resql = $db->query($sql);
+					if ($resql) {
+						$obj = $db->fetch_object($resql);
+						if ($obj) {
+							$estimatednumber = $obj->nb;
+						}
+					} else {
+						dol_print_error($db);
+					}
+				} else {
+					print 'Error, bad definition of the array of data policies profiles';
+				}
+
+				print '<span class="valignmiddle badge badge-info">'.$estimatednumber.'</span>';
+			} elseif ($selectedvalue) {
+				print '<span class="opacitymedium valignmiddle">'.$langs->trans("QualifiedNumber").' : </span>';
+
+				print '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=count&group='.urlencode($logicalKey).'">';
+				print $langs->trans("Calculate");
+				print '</a>';
+			}
 		}
+		print '</td>';
+
+		// Column 2: Deletion
+		print '<td>';
+		if (!empty($val['config_keys']['delete'])) {
+			$selectedvalue = getDolGlobalString($val['config_keys']['delete']);
+
+			// Display the dropdown only if a constant key is defined for the 'delete' action.
+			print Form::selectarray($val['config_keys']['delete'], $valTab, $selectedvalue);
+
+			$sql = $arrayofelem[$logicalKey]['sql_template_delete'];
+			$sql = preg_replace('/__ENTITY__/', (int) $conf->entity, $sql);
+			$sql = preg_replace('/__DELAY__/', (int) $selectedvalue, $sql);
+			$sql = preg_replace('/__NOW__/', "'".dol_print_date(dol_now(), 'standard')."'", $sql);
+			$sql = preg_replace('/^SELECT [\w+\s+\._]+ FROM/', 'SELECT COUNT(*) as nb FROM', $sql);
+
+			$htmltooltip = $langs->transnoentitiesnoconv("TechnicalInformation").' - SQL:';
+			$htmltooltip .= '<br><small>'.$sql.'</small>';
+			print $form->textwithpicto('', $htmltooltip);
+
+			print ' &nbsp; ';
+			if ($action == 'countdelete' && GETPOST('group') == $logicalKey) {
+				print '<span class="opacitymedium valignmiddle">'.$langs->trans("QualifiedNumber").' : </span>';
+
+				$estimatednumber = 0;
+				if ($sql) {
+					$resql = $db->query($sql);
+					if ($resql) {
+						$obj = $db->fetch_object($resql);
+						if ($obj) {
+							$estimatednumber = $obj->nb;
+						}
+					} else {
+						dol_print_error($db);
+					}
+				} else {
+					print 'Error, bad definition of the array of data policies profiles';
+				}
+
+				print '<span class="valignmiddle badge badge-info">'.$estimatednumber.'</span>';
+			} elseif ($selectedvalue) {
+				print '<span class="opacitymedium valignmiddle">'.$langs->trans("QualifiedNumber").' : </span>';
+
+				print '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=countdelete&group='.urlencode($logicalKey).'">';
+				print $langs->trans("Calculate");
+				print '</a>';
+			}
+		}
+		print '</td>';
+
 		print '</tr>';
-
-		// Loop through each entity within the group to create a table row.
-		foreach ($tab as $logicalKey => $val) {
-			print '<tr class="oddeven"><td>';
-			print $val['picto'];
-			print $langs->trans($val['label_key']);
-			print '</td>';
-
-			// Column 1: Anonymization
-			print '<td class="nowraponall">';
-			// Display the dropdown only if a constant key is defined for the 'anonymize' action.
-			if (!empty($val['config_keys']['anonymize'])) {
-				print Form::selectarray($val['config_keys']['anonymize'], $valTab, getDolGlobalString($val['config_keys']['anonymize']));
-
-				//var_dump($val);
-				$listoffieldsid = '';
-				foreach ($arrayofelem[$logicalKey]['anonymize_fields'] as $tmpkey => $tmpval) {
-					if ($tmpval === 'MAKEANONYMOUS') {
-						$listoffieldsid .= ($listoffieldsid ? ', ' : '').$tmpkey.' -> field-anon-ID';
-					}
-				}
-				$otherfields = '';
-				foreach ($arrayofelem[$logicalKey]['anonymize_fields'] as $tmpkey => $tmpval) {
-					if ($tmpval !== 'MAKEANONYMOUS') {
-						$otherfields .= ($otherfields ? ', ' : '').$tmpkey.' -> '.json_encode($tmpval);
-					}
-				}
-
-				$htmltooltip = $langs->transnoentitiesnoconv("TheFollowingFieldsAreReplaceWith");
-				$htmltooltip .= '<br><small>'.$listoffieldsid.'</small>';
-				$htmltooltip .= '<br><br>'.$langs->transnoentitiesnoconv("OtherFieldsAreReplaceWithStaticValues");
-				$htmltooltip .= '<br><small>'.$otherfields.'</small>';
-				print $form->textwithpicto('', $htmltooltip);
-			}
-			print '</td>';
-
-			// Column 2: Deletion
-			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-				print '<td>';
-				// Display the dropdown only if a constant key is defined for the 'delete' action.
-				print Form::selectarray($val['config_keys']['delete'], $valTab, getDolGlobalString($val['config_keys']['delete']));
-				print '</td>';
-			}
-			print '</tr>';
-		}
 	}
-
-	print '</table>';
-	print '</div>';
-
-	print $form->buttonsSaveCancel("Save", '');
-
-	print '</form>';
-	print '<br>';
 }
+
+print '</table>';
+print '</div>';
+
+print $form->buttonsSaveCancel("Save", '', array(), false, 'reposition');
+
+print '</form>';
+print '<br>';
+
 
 print dol_get_fiche_end();
 llxFooter();
