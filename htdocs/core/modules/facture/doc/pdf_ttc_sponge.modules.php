@@ -109,8 +109,23 @@ class pdf_ttc_sponge extends ModelePDFFactures
 
 
 	/**
-	 * @var array<string,array{rank:int,width:float|int,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of columns
-	 */
+ * @var array<string,array{
+ *   rank:int,
+ *   width:float|int|false,
+ *   status?:bool|int<0,1>,
+ *   'border-left'?:bool,
+ *   title:array{
+ *     textkey:string,
+ *     label?:string,
+ *     align?:string,
+ *     padding?:array{float,float,float,float}
+ *   },
+ *   content?:array{
+ *     align?:string,
+ *     padding?:array{float,float,float,float}
+ *   }
+ * }>
+ */
 	public $cols;
 
 	/**
@@ -201,9 +216,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 
 		dol_syslog("write_file outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'));
 
-		if (!is_object($outputlangs)) {
-			$outputlangs = $langs;
-		}
+
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
@@ -234,6 +247,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 
 		// Loop on each lines to detect if there is at least one image to show
 		$realpatharray = array();
+		$realpath = null;
 		$this->atleastonephoto = false;
 		if (getDolGlobalString('MAIN_GENERATE_INVOICES_WITH_PICTURE')) {
 			$objphoto = new Product($this->db);
@@ -332,9 +346,9 @@ class pdf_ttc_sponge extends ModelePDFFactures
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
 				$pdf->SetAutoPageBreak(1, 0);
 
-				$this->heightforinfotot = 50 + (4 * $nbpayments); // Height reserved to output the info and total part and payment part
-				$this->heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
-				$this->heightforfooter = $this->marge_basse + (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS') ? 12 : 22); // Height reserved to output the footer (value include bottom margin)
+				$this->heightforinfotot = (int) (50 + (4 * $nbpayments));
+				$this->heightforfreetext = (int) (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5);
+				$this->heightforfooter   = (int) ($this->marge_basse + (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS') ? 12 : 22));
 
 				$heightforqrinvoice = $heightforqrinvoice_firstpage = 0;
 				if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == 'bottom') {
@@ -387,7 +401,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 				if ($cert) {
 					$info = array(
 						'Name' => $this->emetteur->name,
-						'Location' => getCountry($this->emetteur->country_code, 0),
+						'Location' => getCountry($this->emetteur->country_code, '0'),
 						'Reason' => 'INVOICE',
 						'ContactInfo' => $this->emetteur->email
 					);
@@ -488,7 +502,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 						if ($object->fk_account > 0 || $object->fk_bank > 0 || getDolGlobalInt('FACTURE_RIB_NUMBER')) {
 							$pdf->SetXY($this->marge_gauche + 30, $pdf->GetY() - 15);
 							$pdf->SetFont('', '', $default_font_size - 4);
-							$pdf->MultiCell(40, 3, $langs->transnoentitiesnoconv("INVOICE_ADD_EPC_QR_CODEPay"), 0, 'L', 0);
+							$pdf->MultiCell(40, 3, $langs->transnoentitiesnoconv("INVOICE_ADD_EPC_QR_CODEPay"), 0, 'L', false);
 						}
 					}
 
@@ -593,12 +607,12 @@ class pdf_ttc_sponge extends ModelePDFFactures
 							}
 							$pdf->setTopMargin($this->tab_top_newpage);
 							// The only function to edit the bottom margin of current page to set it.
-							$pdf->setPageOrientation('', 1, $this->heightforfooter + $this->heightforfreetext);
+							$pdf->setPageOrientation('', true, $this->heightforfooter + $this->heightforfreetext);
 						}
 
 						// back to start
 						$pdf->setPage($pageposbeforenote);
-						$pdf->setPageOrientation('', 1, $this->heightforfooter + $this->heightforfreetext);
+						$pdf->setPageOrientation('', true, $this->heightforfooter + $this->heightforfreetext);
 						$pdf->SetFont('', '', $default_font_size - 1);
 						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $this->tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
 						$pageposafternote = $pdf->getPage();
@@ -612,7 +626,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 							$pdf->setPage($pageposafternote);
 							$pdf->setTopMargin($this->tab_top_newpage);
 							// The only function to edit the bottom margin of current page to set it.
-							$pdf->setPageOrientation('', 1, $this->heightforfooter + $this->heightforfreetext);
+							$pdf->setPageOrientation('', true, $this->heightforfooter + $this->heightforfreetext);
 							//$posyafter = $this->tab_top_newpage;
 						}
 
@@ -634,7 +648,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 							}
 
 							// Add footer
-							$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+							$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 							$this->_pagefoot($pdf, $object, $outputlangs, 1, $this->getHeightForQRInvoice($i, $object, $outputlangs));
 
 							$i++;
@@ -707,7 +721,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 
 					$pdf->setTopMargin($this->tab_top_newpage);
 					$page_bottom_margin =  $this->heightforfooter + $this->heightforfreetext + $this->heightforinfotot + $this->getHeightForQRInvoice($pdf->getPage(), $object, $langs);
-					$pdf->setPageOrientation('', 1, $page_bottom_margin);
+					$pdf->setPageOrientation('', true, $page_bottom_margin);
 					$pageposbefore = $pdf->getPage();
 
 					$showpricebeforepagebreak = 1;
@@ -715,7 +729,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 					$posYAfterDescription = 0;
 
 					if ($this->getColumnStatus('position')) {
-						$this->printStdColumnContent($pdf, $curY, 'position', $i + 1);
+						$this->printStdColumnContent($pdf, $curY, 'position', (string) ($i + 1));
 					}
 
 					if ($this->getColumnStatus('photo')) {
@@ -754,7 +768,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 						if ($pageposafter > $pageposbefore) {	// There is a pagebreak
 							$pdf->rollbackTransaction(true);
 							$pageposafter = $pageposbefore;
-							$pdf->setPageOrientation('', 1, $this->heightforfooter); // The only function to edit the bottom margin of current page to set it.
+							$pdf->setPageOrientation('', true, $this->heightforfooter); // The only function to edit the bottom margin of current page to set it.
 
 							$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
 
@@ -789,7 +803,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 					$pageposafter = $pdf->getPage();
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
-					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 
 					// We suppose that a too long description or photo were moved completely on next page
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
@@ -869,7 +883,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 
 
 					$sign = 1;
-					if (isset($object->type) && $object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
+					if ($object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
 						$sign = -1;
 					}
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
@@ -970,7 +984,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 						$this->_pagefoot($pdf, $object, $outputlangs, 1, $this->getHeightForQRInvoice($pdf->getPage(), $object, $outputlangs));
 						$pagenb++;
 						$pdf->setPage($pagenb);
-						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs, $outputlangsbis);
 						}
@@ -1010,10 +1024,10 @@ class pdf_ttc_sponge extends ModelePDFFactures
 				}
 
 				// Display infos area
-				$posy = $this->drawInfoTable($pdf, $object, $bottomlasttab, $outputlangs, $outputlangsbis);
+				$posy = $this->drawInfoTable($pdf, $object, (int) $bottomlasttab, $outputlangs, $outputlangsbis);
 
 				// Display total zone
-				$posy = $this->drawTotalTable($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs, $outputlangsbis);
+				$posy = $this->drawTotalTable($pdf, $object, $deja_regle, (int) $bottomlasttab, $outputlangs, $outputlangsbis);
 
 				// Display payment area
 				if (($deja_regle || $amount_credit_notes_included || $amount_deposits_included) && !getDolGlobalString('INVOICE_NO_PAYMENT_DETAILS')) {
@@ -1071,7 +1085,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 	{
 		if (empty($hidedetails) || $hidedetails > 1) {
 			$sign = 1;
-			if (isset($object->type) && $object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
+			if ($object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
 				$sign = -1;
 			}
 
@@ -1121,19 +1135,19 @@ class pdf_ttc_sponge extends ModelePDFFactures
 
 		$pdf->SetFont('', '', $default_font_size - 3);
 		$pdf->SetXY($tab3_posx, $tab3_top - 4);
-		$pdf->MultiCell(60, 3, $title, 0, 'L', 0);
+		$pdf->MultiCell(60, 3, $title, 0, 'L', false);
 
 		$pdf->line($tab3_posx, $tab3_top, $tab3_posx + $tab3_width, $tab3_top);
 
 		$pdf->SetFont('', '', $default_font_size - 4);
 		$pdf->SetXY($tab3_posx, $tab3_top);
-		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Payment"), 0, 'L', 0);
+		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Payment"), 0, 'L', false);
 		$pdf->SetXY($tab3_posx + 21, $tab3_top);
-		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Amount"), 0, 'L', 0);
+		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Amount"), 0, 'L', false);
 		$pdf->SetXY($tab3_posx + 40, $tab3_top);
-		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Type"), 0, 'L', 0);
+		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Type"), 0, 'L', false);
 		$pdf->SetXY($tab3_posx + 58, $tab3_top);
-		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Num"), 0, 'L', 0);
+		$pdf->MultiCell(20, 3, $outputlangs->transnoentities("Num"), 0, 'L', false);
 
 		$pdf->line($tab3_posx, $tab3_top - 1 + $tab3_height, $tab3_posx + $tab3_width, $tab3_top - 1 + $tab3_height);
 
@@ -1170,13 +1184,13 @@ class pdf_ttc_sponge extends ModelePDFFactures
 				$invoice->fetch($obj->fk_facture_source);
 
 				$pdf->SetXY($tab3_posx, $tab3_top + $y);
-				$pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($obj->datef), 'day', false, $outputlangs, true), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($obj->datef), 'day', false, $outputlangs, true), 0, 'L', false);
 				$pdf->SetXY($tab3_posx + 21, $tab3_top + $y);
-				$pdf->MultiCell(20, 3, price((isModEnabled("multicurrency") && $object->multicurrency_tx != 1) ? $obj->multicurrency_amount_ttc : $obj->amount_ttc, 0, $outputlangs), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, price((isModEnabled("multicurrency") && $object->multicurrency_tx != 1) ? $obj->multicurrency_amount_ttc : $obj->amount_ttc, 0, $outputlangs), 0, 'L', false);
 				$pdf->SetXY($tab3_posx + 40, $tab3_top + $y);
-				$pdf->MultiCell(20, 3, $text, 0, 'L', 0);
+				$pdf->MultiCell(20, 3, $text, 0, 'L', false);
 				$pdf->SetXY($tab3_posx + 58, $tab3_top + $y);
-				$pdf->MultiCell(20, 3, $invoice->ref, 0, 'L', 0);
+				$pdf->MultiCell(20, 3, $invoice->ref, 0, 'L', false);
 
 				$pdf->line($tab3_posx, $tab3_top + $y + 3, $tab3_posx + $tab3_width, $tab3_top + $y + 3);
 
@@ -1206,16 +1220,16 @@ class pdf_ttc_sponge extends ModelePDFFactures
 			while ($i < $num) {
 				$row = $this->db->fetch_object($resql);
 				$pdf->SetXY($tab3_posx, $tab3_top + $y);
-				$pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($row->date), 'day', false, $outputlangs, true), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, dol_print_date($this->db->jdate($row->date), 'day', false, $outputlangs, true), 0, 'L', false);
 				$pdf->SetXY($tab3_posx + 21, $tab3_top + $y);
-				$pdf->MultiCell(20, 3, price($sign * ((isModEnabled("multicurrency") && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount), 0, $outputlangs), 0, 'L', 0);
+				$pdf->MultiCell(20, 3, price($sign * ((isModEnabled("multicurrency") && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount), 0, $outputlangs), 0, 'L', false);
 				$pdf->SetXY($tab3_posx + 40, $tab3_top + $y);
 				$oper = $outputlangs->transnoentitiesnoconv("PaymentTypeShort".$row->code);
 
-				$pdf->MultiCell(20, 3, $oper, 0, 'L', 0);
+				$pdf->MultiCell(20, 3, $oper, 0, 'L', false);
 				$maxY = max($pdf->GetY() - $tab3_top - 3, $maxY);
 				$pdf->SetXY($tab3_posx + 58, $tab3_top + $y);
-				$pdf->MultiCell(30, 3, $row->num, 0, 'L', 0);
+				$pdf->MultiCell(30, 3, $row->num, 0, 'L', false);
 				$y = $maxY = max($pdf->GetY() - 3 - $tab3_top, $maxY);
 				$pdf->line($tab3_posx, $tab3_top + $y + 3, $tab3_posx + $tab3_width, $tab3_top + $y + 3);
 				$y += 3;
@@ -1240,9 +1254,9 @@ class pdf_ttc_sponge extends ModelePDFFactures
 	 *   @param  	Translate	$outputlangsbis	Object lang for output bis
 	 *   @return	int							Pos y
 	 */
-	protected function drawInfoTable(&$pdf, $object, $posy, $outputlangs, $outputlangsbis)
+	protected function drawInfoTable(&$pdf, $object, $posy, $outputlangs, ?Translate $outputlangsbis = null)
 	{
-		global $conf, $mysoc, $hookmanager;
+		global $conf, $mysoc, $hookmanager, $langs;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -1253,9 +1267,9 @@ class pdf_ttc_sponge extends ModelePDFFactures
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			if ($mysoc->forme_juridique_code == 92) {
-				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoiceAsso"), 0, 'L', 0);
+				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoiceAsso"), 0, 'L', false);
 			} else {
-				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
+				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', false);
 			}
 
 			$posy = $pdf->GetY() + 4;
@@ -1313,7 +1327,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 				$pdf->SetTextColor(200, 0, 0);
 				$pdf->SetFont('', '', $default_font_size - 2);
 				$this->error = $outputlangs->transnoentities("ErrorPaymentModeDefinedToWithoutSetup", $object->mode_reglement_code);
-				$pdf->MultiCell($posxend - $this->marge_gauche, 3, $this->error, 0, 'L', 0);
+				$pdf->MultiCell($posxend - $this->marge_gauche, 3, $this->error, 0, 'L', false);
 				$pdf->SetTextColor(0, 0, 0);
 
 				$posy = $pdf->GetY() + 1;
@@ -1377,7 +1391,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 
 					$langs->loadLangs(array('payment', 'paybox', 'stripe'));
 					$servicename = $langs->transnoentities('Online');
-					$paiement_url = getOnlinePaymentUrl('', 'invoice', $object->ref, '', '', '');
+					$paiement_url = getOnlinePaymentUrl(0, 'invoice', $object->ref, 0.0, '', '');
 					$linktopay = $langs->trans("ToOfferALinkForOnlinePayment", $servicename).' <a href="'.$paiement_url.'">'.$outputlangs->transnoentities("ClickHere").'</a>';
 
 					$pdf->SetXY($this->marge_gauche, $posy);
@@ -1405,20 +1419,20 @@ class pdf_ttc_sponge extends ModelePDFFactures
 						if (!getDolGlobalString('MAIN_PDF_HIDE_CHQ_ADDRESS')) {
 							$pdf->SetXY($this->marge_gauche, $posy);
 							$pdf->SetFont('', '', $default_font_size - $diffsizetitle);
-							$pdf->MultiCell($posxend - $this->marge_gauche, 3, $outputlangs->convToOutputCharset($account->owner_address), 0, 'L', 0);
+							$pdf->MultiCell($posxend - $this->marge_gauche, 3, $outputlangs->convToOutputCharset($account->owner_address), 0, 'L', false);
 							$posy = $pdf->GetY() + 2;
 						}
 					}
 					if ($conf->global->FACTURE_CHQ_NUMBER == -1) {
 						$pdf->SetXY($this->marge_gauche, $posy);
 						$pdf->SetFont('', 'B', $default_font_size - $diffsizetitle);
-						$pdf->MultiCell($posxend - $this->marge_gauche, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo', $this->emetteur->name), 0, 'L', 0);
+						$pdf->MultiCell($posxend - $this->marge_gauche, 3, $outputlangs->transnoentities('PaymentByChequeOrderedTo', $this->emetteur->name), 0, 'L', false);
 						$posy = $pdf->GetY() + 1;
 
 						if (!getDolGlobalString('MAIN_PDF_HIDE_CHQ_ADDRESS')) {
 							$pdf->SetXY($this->marge_gauche, $posy);
 							$pdf->SetFont('', '', $default_font_size - $diffsizetitle);
-							$pdf->MultiCell($posxend - $this->marge_gauche, 3, $outputlangs->convToOutputCharset($this->emetteur->getFullAddress()), 0, 'L', 0);
+							$pdf->MultiCell($posxend - $this->marge_gauche, 3, $outputlangs->convToOutputCharset($this->emetteur->getFullAddress()), 0, 'L', false);
 							$posy = $pdf->GetY() + 2;
 						}
 					}
@@ -1461,7 +1475,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 
 						$pdf->SetXY($qrPosX + 5, $posy);
 						$pdf->SetFont('', '', $default_font_size - 5);
-						$pdf->MultiCell(30, 3, $langs->trans("INVOICE_ADD_EPC_QR_CODEPay"), 0, 'L', 0);
+						$pdf->MultiCell(30, 3, $langs->trans("INVOICE_ADD_EPC_QR_CODEPay"), 0, 'L', false);
 						$posy = $pdf->GetY() + 2;
 					}
 				}
@@ -1483,7 +1497,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
 	 *	@return int							Position pour suite
 	 */
-	protected function drawTotalTable(&$pdf, $object, $deja_regle, $posy, $outputlangs, $outputlangsbis)
+	protected function drawTotalTable(&$pdf, $object, $deja_regle, $posy, $outputlangs, ?Translate $outputlangsbis = null)
 	{
 		global $conf, $mysoc, $hookmanager;
 
@@ -1496,7 +1510,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 
 		$tab2_top = $posy;
 		$tab2_hl = 4;
-		if (is_object($outputlangsbis)) {
+		if (($outputlangsbis instanceof Translate)) {
 			$pdf->SetFont('', '', $default_font_size - 2);
 		} else {
 			$pdf->SetFont('', '', $default_font_size - 1);
@@ -1527,7 +1541,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->SetFillColor(224, 224, 224);
 		$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("Total").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("Total") : ''), $useborder, 'L', 1);
+		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("Total").(($outputlangsbis instanceof Translate) ? ' / '.$outputlangsbis->transnoentities("Total") : ''), $useborder, 'L', 1);
 
 		$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($sign * $total_ttc, 0, $outputlangs), $useborder, 'R', 1);
@@ -1546,19 +1560,19 @@ class pdf_ttc_sponge extends ModelePDFFactures
 			// Already paid + Deposits
 			$index++;
 			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("Paid").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("Paid") : ''), 0, 'L', 0);
+			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("Paid").(($outputlangsbis instanceof Translate) ? ' / '.$outputlangsbis->transnoentities("Paid") : ''), 0, 'L', false);
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle + $depositsamount, 0, $outputlangs), 0, 'R', 0);
+			$pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle + $depositsamount, 0, $outputlangs), 0, 'R', false);
 
 			// Credit note
 			if ($creditnoteamount) {
 				$labeltouse = ($outputlangs->transnoentities("CreditNotesOrExcessReceived") != "CreditNotesOrExcessReceived") ? $outputlangs->transnoentities("CreditNotesOrExcessReceived") : $outputlangs->transnoentities("CreditNotes");
-				$labeltouse .= (is_object($outputlangsbis) ? (' / '.(($outputlangsbis->transnoentities("CreditNotesOrExcessReceived") != "CreditNotesOrExcessReceived") ? $outputlangsbis->transnoentities("CreditNotesOrExcessReceived") : $outputlangsbis->transnoentities("CreditNotes"))) : '');
+				$labeltouse .= (($outputlangsbis instanceof Translate) ? (' / '.(($outputlangsbis->transnoentities("CreditNotesOrExcessReceived") != "CreditNotesOrExcessReceived") ? $outputlangsbis->transnoentities("CreditNotesOrExcessReceived") : $outputlangsbis->transnoentities("CreditNotes"))) : '');
 				$index++;
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $labeltouse, 0, 'L', 0);
+				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $labeltouse, 0, 'L', false);
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($largcol2, $tab2_hl, price($creditnoteamount, 0, $outputlangs), 0, 'R', 0);
+				$pdf->MultiCell($largcol2, $tab2_hl, price($creditnoteamount, 0, $outputlangs), 0, 'R', false);
 			}
 
 			if ($object->close_code == Facture::CLOSECODE_DISCOUNTVAT) {
@@ -1566,7 +1580,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 				$pdf->SetFillColor(255, 255, 255);
 
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("EscompteOfferedShort").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("EscompteOfferedShort") : ''), $useborder, 'L', 1);
+				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("EscompteOfferedShort").(($outputlangsbis instanceof Translate) ? ' / '.$outputlangsbis->transnoentities("EscompteOfferedShort") : ''), $useborder, 'L', 1);
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price(price2num($object->total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 'MT'), 0, $outputlangs), $useborder, 'R', 1);
 
@@ -1577,7 +1591,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->SetFillColor(224, 224, 224);
 			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay").(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transnoentities("RemainderToPay") : ''), $useborder, 'L', 1);
+			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("RemainderToPay").(($outputlangsbis instanceof Translate) ? ' / '.$outputlangsbis->transnoentities("RemainderToPay") : ''), $useborder, 'L', 1);
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($resteapayer, 0, $outputlangs), $useborder, 'R', 1);
 
@@ -1599,12 +1613,13 @@ class pdf_ttc_sponge extends ModelePDFFactures
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Return list of active generation modules
-	 *
-	 *  @param	DoliDB	$db     			Database handler
-	 *  @param  integer	$maxfilenamelength  Max length of value to show
-	 *  @return	array						List of templates
-	 */
+ * Return list of available pdf models for invoices.
+ *
+ * @param DoliDB $db                Database handler
+ * @param int    $maxfilenamelength Max length of value to show
+ *
+ * @return array<int|string,mixed>
+ */
 	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
 		// phpcs:enable
@@ -1652,7 +1667,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 			}
 
 			$titre = $outputlangs->transnoentities("AmountInCurrency", $outputlangs->transnoentitiesnoconv("Currency".$currency));
-			if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && is_object($outputlangsbis)) {
+			if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && ($outputlangsbis instanceof Translate)) {
 				$titre .= ' - '.$outputlangsbis->transnoentities("AmountInCurrency", $outputlangsbis->transnoentitiesnoconv("Currency".$currency));
 			}
 
@@ -1764,7 +1779,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 			$langs->loadLangs(array("other"));
 			$title = $outputlangs->transnoentities("PDFInvoiceSituation") . " " . $outputlangs->transnoentities("NumberingShort") . $object->situation_counter . " -";
 		}
-		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && is_object($outputlangsbis)) {
+		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && ($outputlangsbis instanceof Translate)) {
 			$title .= ' - ';
 			if ($object->type == 0) {
 				if ($this->situationinvoice) {
@@ -1867,7 +1882,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 		$pdf->SetTextColor(0, 0, 60);
 
 		$title = $outputlangs->transnoentities("DateInvoice");
-		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && is_object($outputlangsbis)) {
+		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && ($outputlangsbis instanceof Translate)) {
 			$title .= ' - '.$outputlangsbis->transnoentities("DateInvoice");
 		}
 		$pdf->MultiCell($w, 3, $title." : ".dol_print_date($object->date, "day", false, $outputlangs, true), '', 'R');
@@ -1884,7 +1899,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$title = $outputlangs->transnoentities("DateDue");
-			if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && is_object($outputlangsbis)) {
+			if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && ($outputlangsbis instanceof Translate)) {
 				$title .= ' - '.$outputlangsbis->transnoentities("DateDue");
 			}
 			$pdf->MultiCell($w, 3, $title." : ".dol_print_date($object->date_lim_reglement, "day", false, $outputlangs, true), '', 'R');
@@ -2134,7 +2149,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 		$rank = 5;
 		$this->cols['desc'] = array(
 		'rank' => $rank,
-		'width' => false, // only for desc
+		'width' => 0, // only for desc
 		'status' => true,
 		'title' => array(
 			'textkey' => 'Designation',
