@@ -151,6 +151,7 @@ if (substr($module, 0, 16) == 'mod_codeproduct_' && substr($module, -3) == 'php'
 $result = dol_include_once('/core/modules/product/'.$module.'.php');
 if ($result > 0) {
 	$modCodeProduct = new $module();
+	/** @var ModeleProductCode $modCodeProduct */
 }
 
 $object = new Product($db);
