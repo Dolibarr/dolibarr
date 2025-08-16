@@ -2697,6 +2697,7 @@ class CommandeFournisseur extends CommonOrder
 
 				$sql = "UPDATE ".$this->db->prefix()."commande_fournisseur";
 				$sql .= " SET fk_statut = ".((int) $statut);
+				$sql .= ",date_livraison = ".($date ? "'".$this->db->idate($date)."'" : 'null');
 				$sql .= " WHERE rowid = ".((int) $this->id);
 				$sql .= " AND fk_statut IN (".self::STATUS_ORDERSENT.",".self::STATUS_RECEIVED_PARTIALLY.")"; // Process running or Partially received
 
