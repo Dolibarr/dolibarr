@@ -720,7 +720,7 @@ if (empty($reshook)) {
 						$object->multiprices["$i"] = (float) price2num(GETPOST("price_".$i), 'MU');
 						$object->multiprices_base_type["$i"] = GETPOST("multiprices_base_type_".$i);
 					} else {
-						$object->multiprices["$i"] = "";
+						$object->multiprices["$i"] = null;
 					}
 				}
 			}
