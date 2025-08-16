@@ -212,8 +212,8 @@ foreach ($arrayofparameters as $title => $tab) {
 			}
 
 			$sql = $arrayofelem[$logicalKey]['sql_template'];
-			$sql = preg_replace('/__ENTITY__/', (int) $conf->entity, $sql);
-			$sql = preg_replace('/__DELAY__/', (int) $selectedvalue, $sql);
+			$sql = preg_replace('/__ENTITY__/', (string) (int) $conf->entity, $sql);
+			$sql = preg_replace('/__DELAY__/', (string) (int) $selectedvalue, $sql);
 			$sql = preg_replace('/__NOW__/', "'".dol_print_date(dol_now(), 'standard')."'", $sql);
 			$sql = preg_replace('/^SELECT [\w+\s+\._]+ FROM/', 'SELECT COUNT(*) as nb FROM', $sql);
 
@@ -264,8 +264,8 @@ foreach ($arrayofparameters as $title => $tab) {
 			print Form::selectarray($val['config_keys']['delete'], $valTab, $selectedvalue);
 
 			$sql = $arrayofelem[$logicalKey]['sql_template_delete'];
-			$sql = preg_replace('/__ENTITY__/', (int) $conf->entity, $sql);
-			$sql = preg_replace('/__DELAY__/', (int) $selectedvalue, $sql);
+			$sql = preg_replace('/__ENTITY__/', (string) (int) $conf->entity, $sql);
+			$sql = preg_replace('/__DELAY__/', (string) (int) $selectedvalue, $sql);
 			$sql = preg_replace('/__NOW__/', "'".dol_print_date(dol_now(), 'standard')."'", $sql);
 			$sql = preg_replace('/^SELECT [\w+\s+\._]+ FROM/', 'SELECT COUNT(*) as nb FROM', $sql);
 
