@@ -1963,7 +1963,7 @@ ApiDesc=By enabling this module, Dolibarr become a REST server to provide miscel
 ApiProductionMode=Enable production mode (this will activate use of a cache for services management)
 ApiExporerIs=You can explore and test the APIs at URL
 OnlyActiveElementsAreExposed=Only elements from enabled modules are exposed
-ApiKey=Key for API
+ApiKey=Token for API
 WarningAPIExplorerDisabled=The API explorer has been disabled. API explorer is not required to provide API services. It is a tool for developer to find/test REST APIs. If you need this tool, go into setup of module API REST to activate it.
 ##### Bank #####
 BankSetupModule=Bank module setup
@@ -2707,3 +2707,5 @@ MainSecurityPolicySucesfullyRemoved=Content Security Policy successfully removed
 MainErrorRemovingSecurityPolicy=An error occurred when trying to remove a Content Security Policy
 MainSecurityPolicySucesfullyAdded=Content Security Policy successfully added
 MainErrorAddingSecurityPolicy=An error occurred when trying to add a Content Security Policy
+SecurityForConnection=Credentials for connexion
+AddCredential=Add a credential
