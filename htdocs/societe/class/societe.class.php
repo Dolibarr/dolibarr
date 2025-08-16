@@ -2810,6 +2810,48 @@ class Societe extends CommonObject
 		}
 	}
 
+
+	/**
+	 *  Return amount (with tax) of discounts currently available for a company, user or other criteria
+	 *
+	 *  @param      int<0,1>	$discount_type  0 => customer discount, 1 => supplier discount
+	 * 	@return		int							Return integer <0 if KO, nb otherwise
+	 */
+	public function getOpenCreditNotesNotYetConvertedIntoDiscount($discount_type = 0)
+	{
+		global $conf;
+
+		$sql = "SELECT COUNT(f.rowid) as nb, SUM(f.total_ttc) as amount, SUM(f.multicurrency_total_ttc) as multicurrency_amount";
+		if (!empty($discount_type)) {
+			$sql .= " FROM ".$this->db->prefix()."facture_fourn as f";
+		} else {
+			$sql .= " FROM ".$this->db->prefix()."facture as f";
+		}
+		$sql .= " WHERE f.entity = ".$conf->entity;
+		$sql .= " AND paye = 0 AND fk_statut = 1";
+		$sql .= " AND f.type = ".CommonInvoice::TYPE_CREDIT_NOTE;
+		$sql .= " AND NOT EXISTS (SELECT rowid FROM ".$this->db->prefix()."societe_remise_except as rc";
+		$sql .= " WHERE rc.discount_type = ".((int) $discount_type);
+		if (!empty($discount_type)) {
+			$sql .= " AND rc.fk_invoice_supplier = f.rowid";
+		} else {
+			$sql .= " AND rc.fk_facture = f.rowid";
+		}
+		$sql .= " AND rc.fk_soc = ".((int) $this->id);
+		$sql .= ")";
+		$sql .= " AND f.fk_soc = ".((int) $this->id);
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+
+			return $obj->nb;
+		}
+
+		return -1;
+	}
+
+
 	/**
 	 *  Return array of sales representatives
 	 *
