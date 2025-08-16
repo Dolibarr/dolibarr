@@ -821,8 +821,8 @@ if (empty($reshook)) {
 				$object->seuil_stock_alerte = GETPOST('seuil_stock_alerte');
 				$object->desiredstock = GETPOST('desiredstock');
 				*/
-				$object->duration_value = GETPOST('duration_value');
-				$object->duration_unit = GETPOST('duration_unit', 'alpha');
+				$object->duration_value = $duration_value;
+				$object->duration_unit = $duration_unit;
 
 				$object->canvas = GETPOST('canvas');
 				$object->net_measure = GETPOST('net_measure');
