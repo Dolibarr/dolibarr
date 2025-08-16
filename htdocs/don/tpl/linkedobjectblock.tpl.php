@@ -38,6 +38,7 @@ $total = 0;
 $ilink = 0;
 $lastObjectLink = null;
 foreach ($linkedObjectBlock as $key => $objectlink) {
+	'@phan-var-force Don $objectlink';
 	$ilink++;
 
 	$trclass = 'oddeven';
