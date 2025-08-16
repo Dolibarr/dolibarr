@@ -191,7 +191,7 @@ class Product extends CommonObject
 
 	//! Arrays for multiprices
 	/**
-	 * @var array<int,float|null>
+	 * @var array<int,float>
 	 */
 	public $multiprices = array();
 	/**
