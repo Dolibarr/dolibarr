@@ -2615,7 +2615,7 @@ class Adherent extends CommonObject
 
 		$now = dol_now();
 
-		$sql = "SELECT a.rowid, a.datefin, a.statut";
+		$sql = "SELECT a.rowid, a.datefin, a.statut as status";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		$sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
 		$sql .= " WHERE a.fk_adherent_type = t.rowid";
@@ -2662,8 +2662,8 @@ class Adherent extends CommonObject
 				$response->nbtodo++;
 
 				$adherentstatic->datefin = $this->db->jdate($obj->datefin);
-				$adherentstatic->statut = $obj->statut;
-				$adherentstatic->status = $obj->statut;
+				$adherentstatic->statut = $obj->status;
+				$adherentstatic->status = $obj->status;
 
 				if ($adherentstatic->hasDelay()) {
 					$response->nbtodolate++;
