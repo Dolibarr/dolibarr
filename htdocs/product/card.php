@@ -733,6 +733,7 @@ if (empty($reshook)) {
 			if (!$ref && getDolGlobalString('PRODUCT_GENERATE_REF_AFTER_FORM')) {
 				// Generate ref...
 				'@phan-var ModeleProductCode $modCodeProduct';
+				/** @var ModeleProductCode $modCodeProduct */
 				$ref = $modCodeProduct->getNextValue($object, $type);
 			}
 
@@ -1456,6 +1457,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		}
 		$result = dol_include_once('/core/modules/product/'.$module.'.php');
 		if ($result > 0) {
+			/** @var ModeleProductCode $modCodeProduct */
 			$modCodeProduct = new $module();
 		}
 
@@ -1504,6 +1506,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '<tr>';
 				$tmpcode = '';
 				if (!empty($modCodeProduct->code_auto)) {
+					/** @var ModeleProductCode $modCodeProduct */
 					$tmpcode = $modCodeProduct->getNextValue($object, $type);
 				}
 				print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("ProductRef").'</td><td><input id="ref" name="ref" class="maxwidth200" maxlength="128" value="'.dol_escape_htmltag(GETPOSTISSET('ref') ? GETPOST('ref', 'alphanohtml') : $tmpcode).'">';
@@ -3027,6 +3030,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 $tmpcode = '';
 if (!empty($modCodeProduct->code_auto)) {
+	/** @var ModeleProductCode $modCodeProduct */
 	$tmpcode = $modCodeProduct->getNextValue($object, $object->type);
 }
 
