@@ -109,23 +109,40 @@ class pdf_ttc_sponge extends ModelePDFFactures
 
 
 	/**
- * @var array<string,array{
- *   rank:int,
- *   width:float|false,
- *   status:bool|int<0,1>,
- *   'border-left'?:bool,
- *   title:array{
- *     textkey:string,
- *     label?:string,
- *     align?:string,
- *     padding?:array{float,float,float,float}
- *   },
- *   content?:array{
- *     align?:string,
- *     padding?:array{float,float,float,float}
- *   }
- * }>
- */
+	 * @var array<string,array{
+	 *   rank:int,
+	 *   width:float|false,
+	 *   status:bool|int,
+	 *   'border-left'?:bool,
+	 *   title:array{
+	 *     textkey:string,
+	 *     label?:string,
+	 *     align?:string,
+	 *     padding?:array{float,float,float,float}
+	 *   },
+	 *   content?:array{
+	 *     align?:string,
+	 *     padding?:array{float,float,float,float}
+	 *   }
+	 * }>
+	 * @phpstan-var array<string,array{
+	 *   rank:int,
+	 *   width:float|false,
+	 *   status:bool|int<0,1>,
+	 *   'border-left'?:bool,
+	 *   title:array{
+	 *     textkey:string,
+	 *     label?:string,
+	 *     align?:string,
+	 *     padding?:array{float,float,float,float}
+	 *   },
+	 *   content?:array{
+	 *     align?:string,
+	 *     padding?:array{float,float,float,float}
+	 *   }
+	 * }>
+	 * @phan-var array<string,array<string,mixed>>
+	 */
 	public $cols;
 
 	/**
@@ -227,12 +244,12 @@ class pdf_ttc_sponge extends ModelePDFFactures
 
 		global $outputlangsbis;
 		$outputlangsbis = null;
-		$olb = ($outputlangsbis instanceof Translate) ? $outputlangsbis : $outputlangs;
 		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
 			$outputlangsbis = new Translate('', $conf);
 			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
 			$outputlangsbis->loadLangs(array("main", "bills", "products", "dict", "companies"));
 		}
+		$olb = ($outputlangsbis instanceof Translate) ? $outputlangsbis : $outputlangs;
 
 		// Show Draft Watermark
 		if ($object->statut == $object::STATUS_DRAFT && (getDolGlobalString('FACTURE_DRAFT_WATERMARK'))) {
@@ -690,7 +707,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 						}
 					}
 
-					$tab_height = $tab_height - $height_note;
+					$tab_height -= $height_note;
 					$this->tab_top = $posyafter + 6;
 				} else {
 					$height_note = 0;
@@ -1039,10 +1056,10 @@ class pdf_ttc_sponge extends ModelePDFFactures
 				$this->_pagefoot($pdf, $object, $outputlangs, 0, $this->getHeightForQRInvoice($pdf->getPage(), $object, $langs));
 				if (method_exists($pdf, 'AliasNbPages')) {
 					// @phan-suppress-next-line PhanUndeclaredMethod
-					$pdf->AliasNbPages();
+					$pdf->setAliasNbPages();
 				}
 				if (method_exists($pdf, 'AliasNbPages')) {
-					$pdf->AliasNbPages();
+					$pdf->setAliasNbPages();
 				}
 
 				if (getDolGlobalString('INVOICE_ADD_SWISS_QR_CODE') == 'bottom') {
@@ -1262,7 +1279,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 	protected function drawInfoTable(&$pdf, $object, $posy, $outputlangs, ?Translate $outputlangsbis = null)
 	{
 		global $conf, $mysoc, $hookmanager, $langs;
-
+		if ($outputlangsbis === null) { $outputlangsbis = $outputlangs; }
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		$pdf->SetFont('', '', $default_font_size - 1);
@@ -1502,10 +1519,10 @@ class pdf_ttc_sponge extends ModelePDFFactures
 	 *  @param  Translate	$outputlangsbis	Object lang for output bis
 	 *	@return int							Position pour suite
 	 */
-	protected function drawTotalTable(&$pdf, $object, $deja_regle, $posy, $outputlangs, ?Translate $outputlangsbis = null)
+	protected function drawTotalTable(&$pdf, $object, $deja_regle, $posy, $outputlangs, $outputlangsbis = null)
 	{
 		global $conf, $mysoc, $hookmanager;
-
+		if ($outputlangsbis === null) { $outputlangsbis = $outputlangs; }
 		$sign = 1;
 		if ($object->type == 2 && getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE')) {
 			$sign = -1;
@@ -1646,7 +1663,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 	 *   @param      Translate|null   $outputlangsbis Langs object bis
 	 *   @return     void
 	 */
-	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '', ?Translate $outputlangsbis = null)
+	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '', $outputlangsbis = null)
 	{
 		global $conf;
 
@@ -1685,7 +1702,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
 			if (getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')) {
-				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, 'F', null, explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
+				$pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, $this->tabTitleHeight, 'F', array(), explode(',', getDolGlobalString('MAIN_PDF_TITLE_BACKGROUND_COLOR')));
 			}
 		}
 
@@ -1711,10 +1728,10 @@ class pdf_ttc_sponge extends ModelePDFFactures
  *  @param Facture                $object          Object to show
  *  @param int                    $showaddress     0=no, 1=yes
  *  @param Translate              $outputlangs     Object lang for output
- *  @param Translate|null         $outputlangsbis  Optional secondary lang
+ * 	@param Translate|null $outputlangsbis Langs object bis
  *  @return array{top_shift:int, shipp_shift:int}  top shift of linked object lines
  */
-	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, ?Translate $outputlangsbis = null)
+	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)
 	{
 		// phpcs:enable
 		global $conf, $langs;
@@ -1839,7 +1856,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 		}
 
 		if (getDolGlobalString('PDF_SHOW_PROJECT_TITLE')) {
-			$object->fetch_projet();
+			$object->fetch_projetdata();
 			if (!empty($object->project->ref)) {
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
@@ -2011,11 +2028,11 @@ class pdf_ttc_sponge extends ModelePDFFactures
 			} else {
 				$thirdparty = $object->thirdparty;
 			}
-
+			if ($thirdparty === null) return '';
 			$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
 			$mode = 'target';
-			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), $usecontact, $mode, $object);
+			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), ($usecontact ? 1 : 0), $mode, $object);
 
 			// Show recipient
 			$widthrecbox = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 100;
@@ -2060,8 +2077,9 @@ class pdf_ttc_sponge extends ModelePDFFactures
 					$contactshipping = $object->fetch_Contact($idaddressshipping[0]);
 					$companystatic = new Societe($this->db);
 					$companystatic->fetch($object->contact->fk_soc);
+					if ($thirdparty === null) return '';
 					$carac_client_name_shipping = pdfBuildThirdpartyName($object->contact, $outputlangs);
-					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $companystatic, $object->contact, $usecontact, 'target', $object);
+					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $companystatic, $object->contact, ($usecontact ? 1 : 0), 'target', $object);
 				} else {
 					$carac_client_name_shipping = pdfBuildThirdpartyName($object->thirdparty, $outputlangs);
 					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'target', $object);
@@ -2072,7 +2090,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 					// Show shipping frame
 					$pdf->SetXY($posx + 2, $posy - 5);
 					$pdf->SetFont('', '', $default_font_size - 2);
-					$pdf->MultiCell($widthrecbox, '', $outputlangs->transnoentities('ShippingTo'), 0, 'L', false);
+					$pdf->MultiCell($widthrecbox, 3, $outputlangs->transnoentities('ShippingTo'), 0, 'L', false);
 					$pdf->Rect($posx, $posy, $widthrecbox, $hautcadre);
 
 					// Show shipping name
@@ -2174,7 +2192,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 		);
 
 		// Image of product
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['photo'] = array(
 		'rank' => $rank,
 		'width' => getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20),
@@ -2194,7 +2212,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 		}
 
 		// MASQUER LA COLONNE TVA
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['vat'] = array(
 		'rank' => $rank,
 		'status' => false, // FORCÉ À FALSE
@@ -2286,7 +2304,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 		}
 
 		// MASQUER LE TOTAL HT
-		$rank = $rank + 1000;
+		$rank += 1000;
 		$this->cols['totalexcltax'] = array(
 		'rank' => $rank,
 		'width' => 26,
@@ -2298,7 +2316,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 		);
 
 		// AFFICHER UNIQUEMENT LE TOTAL TTC
-		$rank = $rank + 1010;
+		$rank += 1010;
 		$this->cols['totalincltax'] = array(
 		'rank' => $rank,
 		'width' => 26,
