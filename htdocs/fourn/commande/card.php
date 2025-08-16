@@ -1340,10 +1340,11 @@ if (empty($reshook)) {
 					}
 
 					$object->origin = $origin;
+					$object->origin_type = $origin;
 					$object->origin_id = $originid;
 
 					// Possibility to add external linked objects with hooks
-					$object->linked_objects[$object->origin] = $object->origin_id;
+					$object->linked_objects[$object->origin_type] = $object->origin_id;
 					$other_linked_objects = GETPOST('other_linked_objects', 'array');
 					if (!empty($other_linked_objects)) {
 						$object->linked_objects = array_merge($object->linked_objects, $other_linked_objects);
@@ -1355,7 +1356,7 @@ if (empty($reshook)) {
 
 						$srcobject = new $classname($db);
 
-						dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines");
+						dol_syslog("Try to find source object origin=".$object->origin_type." originid=".$object->origin_id." to add lines");
 						$result = $srcobject->fetch($object->origin_id);
 						if ($result > 0) {
 							$tmpdate = $srcobject->delivery_date;
