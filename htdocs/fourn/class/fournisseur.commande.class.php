@@ -298,9 +298,10 @@ class CommandeFournisseur extends CommonOrder
 	public $line;
 
 	/**
-	 * @var CommonObject Add for supplier_proposal
+	 * @var CommonObject|string|null Add for supplier_proposal
 	 */
 	public $origin;
+
 	/**
 	 * @var int
 	 */

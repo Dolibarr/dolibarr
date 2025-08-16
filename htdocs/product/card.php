@@ -1458,8 +1458,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		}
 		$result = dol_include_once('/core/modules/product/'.$module.'.php');
 		if ($result > 0) {
-			/** @var ModeleProductCode $modCodeProduct */
 			$modCodeProduct = new $module();
+			/** @var ModeleProductCode $modCodeProduct */
 		}
 
 		dol_set_focus('input[name="ref"]');
