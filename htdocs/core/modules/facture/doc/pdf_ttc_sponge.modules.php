@@ -133,7 +133,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 
 		$this->db = $db;
 		$this->name = "TTC Sponge";
-		$this->description = $langs->trans('PDFSpongeDescription');
+		$this->description = $langs->trans('PDFTtcSpongeDescription');
 		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
 		// Dimension page

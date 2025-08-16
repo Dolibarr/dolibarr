@@ -69,6 +69,7 @@ CustomerInvoicePaymentBack=Remboursement
 Payments=Règlements
 PaymentsBack=Remboursements
 paymentInInvoiceCurrency=Dans la devise des factures
+PDFTtcSpongeDescription=Modèle de facture PDF TTC Sponge. Affiche uniquement les montants TTC
 PaidBack=Remboursé
 DeletePayment=Supprimer le paiement
 ConfirmDeletePayment=Êtes-vous sûr de vouloir supprimer ce paiement ?
