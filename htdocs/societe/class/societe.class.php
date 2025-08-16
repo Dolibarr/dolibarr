@@ -1354,8 +1354,6 @@ class Societe extends CommonObject
 					}
 				}
 			} else {
-				//var_dump($conf->global->SOCIETE_EMAIL_UNIQUE);
-				//var_dump($conf->global->SOCIETE_EMAIL_MANDATORY);
 				if ($key == 'EMAIL') {
 					// Check for mandatory
 					if (getDolGlobalString('SOCIETE_EMAIL_MANDATORY') && !isValidEmail($this->email)) {
@@ -1795,8 +1793,7 @@ class Societe extends CommonObject
 
 							$result = $lmember->update($user, 0, 1, 1, 1); // Use nosync to 1 to avoid cyclic updates
 							if ($result < 0) {
-								$this->error = $lmember->error;
-								$this->errors = array_merge($this->errors, $lmember->errors);
+								$this->setErrorsFromObject($lmember);
 								dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
 								$error++;
 							}
@@ -2147,8 +2144,8 @@ class Societe extends CommonObject
 				$this->cond_reglement_id 	= $obj->cond_reglement;
 				$this->deposit_percent		= $obj->deposit_percent;
 				$this->transport_mode_id 	= $obj->transport_mode;
-				$this->mode_reglement_supplier_id 	= $obj->mode_reglement_supplier;
-				$this->cond_reglement_supplier_id 	= $obj->cond_reglement_supplier;
+				$this->mode_reglement_supplier_id = $obj->mode_reglement_supplier;
+				$this->cond_reglement_supplier_id = $obj->cond_reglement_supplier;
 				$this->transport_mode_supplier_id = $obj->transport_mode_supplier;
 				$this->shipping_method_id = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
 				$this->fk_account = $obj->fk_account;
