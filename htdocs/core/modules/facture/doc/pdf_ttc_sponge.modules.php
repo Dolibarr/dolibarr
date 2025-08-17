@@ -108,41 +108,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 	public $situationinvoice;
 
 
-	/**
-	 * @var array<string,array{
-	 *   rank:int,
-	 *   width:float|false,
-	 *   status:bool|int,
-	 *   'border-left'?:bool,
-	 *   title:array{
-	 *     textkey:string,
-	 *     label?:string,
-	 *     align?:string,
-	 *     padding?:array{float,float,float,float}
-	 *   },
-	 *   content?:array{
-	 *     align?:string,
-	 *     padding?:array{float,float,float,float}
-	 *   }
-	 * }>
-	 * @phpstan-var array<string,array{
-	 *   rank:int,
-	 *   width:float|false,
-	 *   status:bool|int<0,1>,
-	 *   'border-left'?:bool,
-	 *   title:array{
-	 *     textkey:string,
-	 *     label?:string,
-	 *     align?:string,
-	 *     padding?:array{float,float,float,float}
-	 *   },
-	 *   content?:array{
-	 *     align?:string,
-	 *     padding?:array{float,float,float,float}
-	 *   }
-	 * }>
-	 * @phan-var array<string,array<string,mixed>>
-	 */
+	/** @var array<string,array<string,mixed>> */
 	public $cols;
 
 	/**
@@ -1054,11 +1020,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 
 				// Pagefoot
 				$this->_pagefoot($pdf, $object, $outputlangs, 0, $this->getHeightForQRInvoice($pdf->getPage(), $object, $langs));
-				if (method_exists($pdf, 'AliasNbPages')) {
-					// @phan-suppress-next-line PhanUndeclaredMethod
-					$pdf->setAliasNbPages();
-				}
-				if (method_exists($pdf, 'AliasNbPages')) {
+				if (method_exists($pdf, 'setAliasNbPages')) {
 					$pdf->setAliasNbPages();
 				}
 
@@ -1273,10 +1235,10 @@ class pdf_ttc_sponge extends ModelePDFFactures
 	 *   @param		Facture		$object			Object to show
 	 *   @param		int			$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
-	 *   @param  	Translate	$outputlangsbis	Object lang for output bis
+	 *  @param  Translate|null  $outputlangsbis	Object lang for output bis
 	 *   @return	int							Pos y
 	 */
-	protected function drawInfoTable(&$pdf, $object, $posy, $outputlangs, ?Translate $outputlangsbis = null)
+	protected function drawInfoTable(&$pdf, $object, $posy, $outputlangs, $outputlangsbis = null)
 	{
 		global $conf, $mysoc, $hookmanager, $langs;
 		if ($outputlangsbis === null) { $outputlangsbis = $outputlangs; }
@@ -1866,7 +1828,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 		}
 
 		if (getDolGlobalString('PDF_SHOW_PROJECT')) {
-			$object->fetch_projet();
+			$object->fetch_projetdata();
 			if (!empty($object->project->ref)) {
 				$outputlangs->load("projects");
 				$posy += 3;
@@ -2114,6 +2076,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 		$pagehead = array('top_shift' => $top_shift, 'shipp_shift' => $shipp_shift);
 
 		return $pagehead;
+		return array('top_shift' => (int) $top_shift, 'shipp_shift' => (int) $shipp_shift);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -2224,7 +2187,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 		);
 
 		// PRIX UNITAIRE TTC AU LIEU DE HT
-		$rank = $rank + 10;
+		$rank += 10;
 		$this->cols['subprice'] = array(
 		'rank' => $rank,
 		'width' => 19,
@@ -2345,7 +2308,7 @@ class pdf_ttc_sponge extends ModelePDFFactures
 		if ($reshook < 0) {
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 		} elseif (empty($reshook)) {
-			$this->cols = array_replace($this->cols, $hookmanager->resArray);
+			$this->cols = array_replace($hookmanager->resArray, $this->cols);
 		} else {
 			$this->cols = $hookmanager->resArray;
 		}
