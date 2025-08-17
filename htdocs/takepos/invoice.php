@@ -4,7 +4,7 @@
  * Copyright (C) 2021    	Nicolas ZABOURI    		<info@inovea-conseil.com>
  * Copyright (C) 2022-2023	Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1666,7 +1666,7 @@ $( document ).ready(function() {
 		$result = $adh->fetch(0, '', $invoice->socid);
 		if ($result > 0) {
 			$adh->ref = $adh->getFullName($langs);
-			if (empty($adh->statut) || $adh->statut == Adherent::STATUS_EXCLUDED) {
+			if (empty($adh->status) || $adh->status == Adherent::STATUS_EXCLUDED) {
 				$s .= "<s>";
 			}
 			$s .= $adh->getFullName($langs);
@@ -1678,11 +1678,11 @@ $( document ).ready(function() {
 				}
 			} else {
 				$s .= '<br>'.$langs->trans("SubscriptionNotReceived");
-				if ($adh->statut > 0) {
+				if ($adh->status > 0) {
 					$s .= " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
 				}
 			}
-			if (empty($adh->statut) || $adh->statut == Adherent::STATUS_EXCLUDED) {
+			if (empty($adh->status) || $adh->status == Adherent::STATUS_EXCLUDED) {
 				$s .= "</s>";
 			}
 		} else {
@@ -1872,6 +1872,8 @@ if (!empty($_SESSION["basiclayout"]) && $_SESSION["basiclayout"] == 1) {
 		$catid = GETPOSTINT('catid');
 		$result = $object->fetch($catid);
 		$prods = $object->getObjectsInCateg("product");
+		/** @var Product[] $prods */
+		'@phan-var-force  Product[] $prods';
 		$htmlforlines = '';
 		foreach ($prods as $row) {
 			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {

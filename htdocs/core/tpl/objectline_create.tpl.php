@@ -6,7 +6,7 @@
  * Copyright (C) 2014		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015-2016	Marcos García		<marcosgdf@gmail.com>
- * Copyright (C) 2018-2024	Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2018       Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2019       Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2022       OpenDSI             <support@open-dsi.fr>
@@ -30,7 +30,7 @@
 
 /**
  * @var Conf $conf
- * @var CommonObject $this
+ * @var CommonObject|Facture $this
  * @var CommonObject $object
  * @var CommonObjectLine $line
  * @var ExtraFields $extrafields
@@ -56,7 +56,7 @@ if (empty($object) || !is_object($object)) {
 }
 
 '
-@phan-var-force CommonObject $this
+@phan-var-force CommonObject|Facture $this
 @phan-var-force CommonObject $object
 @phan-var-force Societe $buyer
 @phan-var-force Societe $seller
@@ -159,7 +159,7 @@ if ($nolinesbefore) {
 		<td class="linecoldiscount right"><?php echo $langs->trans('ReductionShort'); ?></td>
 		<?php
 		// Fields for situation invoice
-		if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
+		if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 			print '<td class="linecolcycleref right">'.$langs->trans('Progress').'</td>';
 			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 				print '<td class="nobottom nowrap right"></td>';

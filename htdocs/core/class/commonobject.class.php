@@ -4809,11 +4809,12 @@ abstract class CommonObject
 	 *      @param	int		$status			Status to set
 	 *      @param	?int	$elementId		Id of element to force (use this->id by default if null)
 	 *      @param	string	$elementType	Type of element to force (use this->table_element by default)
-	 *      @param	string	$trigkey		Trigger key to use for trigger. Use '' means automatic but it is not recommended and is deprecated.
-	 *      @param	string	$fieldstatus	Name of status field in this->table_element
+	 *      @param	string	$trigkey		Trigger key to use for trigger, or 'none' or use '' means automatic but it is not recommended and is deprecated.
+	 *      @param	string	$fieldstatus	Name of status field to update (commonly field 'status' or 'fk_statut' in this->table_element)
 	 *      @return int						Return integer <0 if KO, >0 if OK
+	 *      @see setStatusCommon()
 	 */
-	public function setStatut($status, $elementId = null, $elementType = '', $trigkey = '', $fieldstatus = 'fk_statut')
+	public function setStatut($status, $elementId = null, $elementType = '', $trigkey = '', $fieldstatus = '')
 	{
 		global $user;
 
@@ -4824,35 +4825,41 @@ abstract class CommonObject
 
 		$this->db->begin();
 
-		if ($elementTable == 'facture_rec') {
-			$fieldstatus = "suspended";
-		}
-		if ($elementTable == 'mailing') {
-			$fieldstatus = "statut";
-		}
-		if ($elementTable == 'cronjob') {
-			$fieldstatus = "status";
-		}
-		if ($elementTable == 'user') {
-			$fieldstatus = "statut";
-		}
-		if ($elementTable == 'expensereport') {
-			$fieldstatus = "fk_statut";
-		}
-		if ($elementTable == 'receptiondet_batch') {
-			$fieldstatus = "status";
-		}
-		if ($elementTable == 'prelevement_bons') {
-			$fieldstatus = "statut";
-		}
-		if (isset($this->fields) && is_array($this->fields) && array_key_exists('status', $this->fields)) {
-			$fieldstatus = 'status';
+		if (empty($fieldstatus)) {
+			if ($elementTable == 'facture_rec') {
+				$fieldstatus = "suspended";
+			}
+			if ($elementTable == 'mailing') {
+				$fieldstatus = "statut";
+			}
+			if ($elementTable == 'cronjob') {
+				$fieldstatus = "status";
+			}
+			if ($elementTable == 'user') {
+				$fieldstatus = "statut";
+			}
+			if ($elementTable == 'expensereport') {
+				$fieldstatus = "fk_statut";
+			}
+			if ($elementTable == 'receptiondet_batch') {
+				$fieldstatus = "status";
+			}
+			if ($elementTable == 'prelevement_bons') {
+				$fieldstatus = "statut";
+			}
+			if (isset($this->fields) && is_array($this->fields) && array_key_exists('status', $this->fields)) {
+				$fieldstatus = 'status';
+			}
+			// If still empty
+			if (empty($fieldstatus)) {
+				$fieldstatus = 'fk_statut';
+			}
 		}
 
 		$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($elementTable);
 		$sql .= " SET ".$this->db->sanitize($fieldstatus)." = ".((int) $status);
-		// If status = 1 = validated, update also fk_user_valid
-		// TODO Replace the test on $elementTable by doing a test on existence of the field in $this->fields
+		// If status = 1 = validated and we update the main status field, we can update also fk_user_valid
+		// TODO Replace the test on $elementTable by doing a test on existence of the field in $this->fields and on $fieldstatus
 		if ($status == 1 && in_array($elementTable, array('expensereport', 'inventory'))) {
 			$sql .= ", fk_user_valid = ".((int) $user->id);
 		}
@@ -4863,7 +4870,7 @@ abstract class CommonObject
 			$sql .= ", date_validation = '".$this->db->idate(dol_now())."'";
 		}
 		$sql .= " WHERE rowid = ".((int) $elementId);
-		$sql .= " AND ".$fieldstatus." <> ".((int) $status);	// We avoid update if status already correct
+		$sql .= " AND ".$this->db->sanitize($fieldstatus)." <> ".((int) $status);	// We avoid update if status already correct
 
 		dol_syslog(get_class($this)."::setStatut", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -4897,7 +4904,7 @@ abstract class CommonObject
 
 				$this->context = array_merge($this->context, array('newstatus' => $status));
 
-				if ($trigkey) {
+				if ($trigkey && $trigkey != 'none') {
 					// Call trigger
 					$result = $this->call_trigger($trigkey, $user);
 					if ($result < 0) {
@@ -4914,7 +4921,9 @@ abstract class CommonObject
 
 				if (empty($savElementId)) {
 					// If the element we update is $this (so $elementId was provided as null)
-					if ($fieldstatus == 'tosell') {
+					if ($fieldstatus == 'dispute_status') {
+						$this->dispute_status = $status;
+					} elseif ($fieldstatus == 'tosell') {
 						$this->status = $status;
 					} elseif ($fieldstatus == 'tobuy') {
 						$this->status_buy = $status;	// @phpstan-ignore-line
@@ -11183,6 +11192,7 @@ abstract class CommonObject
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *  @param  string  $triggercode    Trigger code to use
 	 *	@return	int						Return integer <0 if KO, >0 if OK
+	 *  @see setStatut()
 	 */
 	public function setStatusCommon($user, $status, $notrigger = 0, $triggercode = '')
 	{
