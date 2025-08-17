@@ -1024,7 +1024,7 @@ class Contact extends CommonObject
 		$langs->loadLangs(array("dict", "companies"));
 
 		$sql = "SELECT c.rowid, c.entity, c.fk_soc, c.ref_ext, c.civility as civility_code, c.name_alias, c.lastname, c.firstname,";
-		$sql .= " c.address, c.statut, c.zip, c.town,";
+		$sql .= " c.address, c.statut as status, c.zip, c.town,";
 		$sql .= " c.fk_pays as country_id,";
 		$sql .= " c.fk_departement as state_id,";
 		$sql .= " c.birthday,";
@@ -1088,7 +1088,7 @@ class Contact extends CommonObject
 
 				$this->date_creation     = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
-				$this->user_creation_id     = $obj->fk_user_creat;
+				$this->user_creation_id = $obj->fk_user_creat;
 				$this->user_modification_id = $obj->fk_user_modif;
 
 				$this->state_id		= $obj->state_id;
@@ -1103,8 +1103,8 @@ class Contact extends CommonObject
 				$this->socid		= $obj->fk_soc;		// Both fk_soc and socid are used
 				$this->socname		= $obj->socname;
 				$this->poste		= $obj->poste;
-				$this->status		= $obj->statut;
-				$this->statut		= $obj->statut;
+				$this->status		= $obj->status;
+				$this->statut		= $obj->status; // deprecated
 
 				$this->fk_prospectlevel = $obj->fk_prospectlevel;
 

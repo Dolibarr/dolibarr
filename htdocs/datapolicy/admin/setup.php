@@ -153,6 +153,8 @@ if (!isModEnabled('cron')) {
 	$tmpjob->fetch(0, '', '', 'DATAPOLICYJob');
 	if ($tmpjob->status != $tmpjob::STATUS_ENABLED) {
 		print info_admin($langs->trans("JobMustBeEnabledFirst", $langs->transnoentitiesnoconv("DATAPOLICYJob"), $langs->transnoentitiesnoconv("CronList")), 0, 0, 'warning');
+	} else {
+		// TODO Show last date/result of execution of the cron job
 	}
 }
 print '<br><br>';
