@@ -275,9 +275,8 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 			$db->begin();
 
 			// Add entry into table llx_bank
-			if (!$error) {
-				$bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1 * (float) price2num($amount), $numChqOrOpe, 0, $user, '', '', '', null, '', null, 'Record payout from public/stripe/ipn.php');
-			}
+			$bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1 * (float) price2num($amount), $numChqOrOpe, 0, $user, '', '', '', null, '', null, 'Record payout from public/stripe/ipn.php');
+
 			if (!($bank_line_id_from > 0)) {
 				$error++;
 			}
@@ -976,10 +975,12 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 
 	if ($statusdispute == 'needs_response') {
 		// Payment is disputed, but not yet refunded.
-		// We do nothing, except adding an agenda event
-		if (! $error && $tmpinvoice->status == Facture::STATUS_CLOSED) {
+		$db->begin();
+
+		// If invoice was closed, we reopen it
+		if ($tmpinvoice->status == Facture::STATUS_CLOSED) {
 			// Switch back the invoice to status validated
-			$result = $tmpinvoice->setStatut(Facture::STATUS_VALIDATED);
+			$result = $tmpinvoice->setStatut(Facture::STATUS_VALIDATED, null, '', 'none');	// Trigger will be run later
 			if ($result < 0) {
 				$errormsg = $tmpinvoice->error.implode(', ', $tmpinvoice->errors);
 				$error++;
@@ -1016,12 +1017,23 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 			$error++;
 		}
 
-		dol_syslog("The dispute_status of invoice ".$tmpinvoice->ref." has been modified to 1");
-		dol_syslog("The dispute_status of invoice ".$tmpinvoice->ref." has been modified to 1", LOG_DEBUG, 0, '_payment');
+		if (!$error) {
+			$db->commit();
 
-		http_response_code(200);
-		print "Payment dispute received for ".$TRANSACTIONID.". We have changed the status of dispute_status to 1 for invoice ".$tmpinvoice->ref;
-		return 1;
+			dol_syslog("The dispute_status of invoice ".$tmpinvoice->ref." has been modified to 1");
+			dol_syslog("The dispute_status of invoice ".$tmpinvoice->ref." has been modified to 1", LOG_DEBUG, 0, '_payment');
+
+			http_response_code(200);
+			print "Payment dispute received for ".$TRANSACTIONID.". We have changed the status of dispute_status to 1 for invoice ".$tmpinvoice->ref;
+			return 1;
+		} else {
+			$db->rollback();
+			dol_syslog("Technicalerror ".$db->lasterror());
+
+			http_response_code(500);
+			print $db->lasterror();
+			return -1;
+		}
 	} else {
 		// Payment dispute is confirmed and refunded.
 		$accountfrom = new Account($db);
