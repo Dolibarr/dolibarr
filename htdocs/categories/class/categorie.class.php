@@ -382,7 +382,7 @@ class Categorie extends CommonObject
 				foreach ($hookmanager->resArray as $mapList) {
 					$mapId = $mapList['id'];
 					$mapCode = $mapList['code'];
-					self::$MAP_ID_TO_CODE[$mapId] = $mapCode;
+					//self::$MAP_ID_TO_CODE[$mapId] = $mapCode;
 					$this->MAP_ID[$mapCode] = $mapId;
 					$this->MAP_CAT_FK[$mapCode] = isset($mapList['cat_fk']) ? $mapList['cat_fk'] : null;
 					$this->MAP_CAT_TABLE[$mapCode] = isset($mapList['cat_table']) ? $mapList['cat_table'] : null;
