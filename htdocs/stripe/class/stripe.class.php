@@ -24,7 +24,7 @@ require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/config.php'; // This set stripe global $stripearrayofkeys and $stripearrayofkeysbyenv
 /**
- * @var array<strint,mixed>		$stripearrayofkeys
+ * @var array<string,mixed>		$stripearrayofkeys
  * @var array<int,mixed>		$stripearrayofkeysbyenv
  */
 

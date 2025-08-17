@@ -743,12 +743,12 @@ class Tva extends CommonObject
 	/**
 	 *	Send name clickable (with possibly the picto)
 	 *
-	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *	@param	string	$option			link option
-	 *  @param	int  	$notooltip		1=Disable tooltip
-	 *  @param	string	$morecss		More CSS
+	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+	 *	@param	string	$option						Link option
+	 *  @param	int  	$notooltip					1=Disable tooltip
+	 *  @param	string	$morecss					More CSS
 	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return	string					Chaine with URL
+	 *	@return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{

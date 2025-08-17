@@ -1528,15 +1528,15 @@ class Contact extends CommonObject
 	 *	Use $this->id, $this->lastname, $this->firstname, this->civility_id
 	 *
 	 *	@param		int			$withpicto					Include picto with link (0=no picto, 1=picto + name, 2=picto only, -1=photo+name, -2=photo only)
-	 *	@param		string		$option						Where the link point to
-	 *	@param		int			$maxlen						Max length of
+	 *	@param		string		$option						Where the link point to ('nolink', ...)
+	 *	@param		int			$notooltip					1=Disable tooltip
 	 *  @param		string		$moreparam					Add more param into URL
 	 *  @param      int     	$save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@param		int			$notooltip					1=Disable tooltip
+	 *	@param		int			$maxlen						Max len
 	 *  @param  	string  	$morecss            		Add more css on link
 	 *	@return		string									String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $moreparam = '', $save_lastsearch_value = -1, $notooltip = 0, $morecss = 'valignmiddle')
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $moreparam = '', $save_lastsearch_value = -1, $maxlen = 0, $morecss = 'valignmiddle')
 	{
 		global $conf, $langs, $hookmanager;
 

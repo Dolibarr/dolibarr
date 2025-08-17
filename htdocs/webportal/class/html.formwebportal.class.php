@@ -948,9 +948,12 @@ class FormWebPortal extends Form
 				} else {
 					require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 					$categorytype = $InfoFieldList[5];
-					if (is_numeric($categorytype)) {
-						$categorytype = Categorie::$MAP_ID_TO_CODE[(int) $categorytype]; // For backward compatibility
+					if (is_numeric($categorytype)) {	// deprecated: must use the category code instead of id. For backward compatibility.
+						$tmpcategory = new Categorie($this->db);
+						$MAP_ID_TO_CODE = array_flip($tmpcategory->MAP_ID);
+						$categorytype = $MAP_ID_TO_CODE[(int) $categorytype];
 					}
+
 					$data = $this->select_all_categories($categorytype, '', 'parent', 64, $InfoFieldList[6], 1, 1);
 					$out .= '<option value="0">&nbsp;</option>';
 					foreach ($data as $data_key => $data_value) {

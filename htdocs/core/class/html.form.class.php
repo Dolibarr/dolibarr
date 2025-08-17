@@ -5870,7 +5870,7 @@ class Form
 	/**
 	 * Return list of categories having chosen type
 	 *
-	 * @param 	string|int 			$type 			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) should be avoid and is keptfor internal use only.
+	 * @param 	string|int 			$type 			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) should be avoid and is kept for internal use only.
 	 * @param 	int|'auto'|''		$selected 		Id of category preselected or 'auto' (autoselect category if there is only one element). Not used if $outputmode = 1.
 	 * @param 	string 				$htmlname 		HTML field name
 	 * @param 	int 				$maxlength 		Maximum length for labels

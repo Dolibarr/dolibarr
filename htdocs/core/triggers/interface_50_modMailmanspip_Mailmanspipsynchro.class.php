@@ -67,29 +67,23 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 		require_once DOL_DOCUMENT_ROOT."/mailmanspip/class/mailmanspip.class.php";
 		require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
 
-		if ($action == 'CATEGORY_LINK') {
+		if ($action == 'CATEGORY_MODIFY') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+
+			$return = 1;
 
 			// We add subscription if we change category (new category may means more mailing-list to subscribe)
 			if (is_object($object->context['linkto']) && method_exists($object->context['linkto'], 'add_to_abo') && $object->context['linkto']->add_to_abo() < 0) {
 				$this->error = $object->context['linkto']->error;
 				$this->errors = $object->context['linkto']->errors;
 				$return = -1;
-			} else {
-				$return = 1;
 			}
-
-			return $return;
-		} elseif ($action == 'CATEGORY_UNLINK') {
-			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			// We remove subscription if we change category (lessw category may means less mailing-list to subscribe)
 			if (is_object($object->context['unlinkoff']) && method_exists($object->context['unlinkoff'], 'del_to_abo') && $object->context['unlinkoff']->del_to_abo() < 0) {
 				$this->error = $object->context['unlinkoff']->error;
 				$this->errors = $object->context['unlinkoff']->errors;
 				$return = -1;
-			} else {
-				$return = 1;
 			}
 
 			return $return;
