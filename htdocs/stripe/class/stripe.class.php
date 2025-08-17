@@ -23,10 +23,6 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/config.php'; // This set stripe global $stripearrayofkeys and $stripearrayofkeysbyenv
-/**
- * @var array<string,mixed>		$stripearrayofkeys
- * @var array<int,mixed>		$stripearrayofkeysbyenv
- */
 
 /**
  *	Stripe class
@@ -844,7 +840,7 @@ class Stripe extends CommonObject
 	 */
 	public function cardStripe($cu, CompanyPaymentMode $object, $stripeacc = '', $status = 0, $createifnotlinkedtostripe = 0)
 	{
-		global $conf, $user, $langs;
+		global $conf, $langs;
 
 		$card = null;
 
