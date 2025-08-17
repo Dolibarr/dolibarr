@@ -65,6 +65,9 @@ if (empty($absolute_discount)) {
 if (empty($absolute_creditnote)) {
 	$absolute_creditnote = 0;
 }
+if (empty($nb_creditnote_notyetavailable)) {
+	$nb_creditnote_notyetavailable = 0;
+}
 
 
 // Relative and absolute discounts

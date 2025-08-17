@@ -756,7 +756,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 			return -1;
 		}
 	}
-} elseif ($event->type == 'checkout.session.completed') {		// Called when making payment with new Checkout method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
+} elseif ($event->type == 'checkout.session.completed') {		// Called when making payment with new Checkout method (getDolGlobalString('STRIPE_USE_NEW_CHECKOUT') is on).
 	// TODO: create fees
 } elseif ($event->type == 'payment_method.attached') {
 	dol_syslog("object = ".var_export($event->data, true));

@@ -62,8 +62,10 @@ if (empty($mode)) {
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $type = (GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
-if (is_numeric($type)) {
-	$type = Categorie::$MAP_ID_TO_CODE[(int) $type];
+if (is_numeric($type)) {	// deprecated: must use the category code instead of id. For backward compatibility.
+	$tmpcategory = new Categorie($db);
+	$MAP_ID_TO_CODE = array_flip($tmpcategory->MAP_ID);
+	$type = $MAP_ID_TO_CODE[(int) $type];
 }
 $nosearch = GETPOSTINT('nosearch');
 

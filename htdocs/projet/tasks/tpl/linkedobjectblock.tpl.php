@@ -4,6 +4,7 @@
  * Copyright (C) 2019 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024 Charlene Benke      <charlene@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +56,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	} ?>
 	<tr class="<?php echo $trclass; ?>">
 		<td class="linkedcol-element tdoverflowmax100"><?php echo $langs->trans("Task"); ?>
-		<?php if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) {
+		<?php if (!empty($showImportButton) && getDolGlobalInt('MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES')) {
 			print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';
 		} ?>
 		</td>

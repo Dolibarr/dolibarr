@@ -1673,9 +1673,12 @@ class ExtraFields
 					} else {
 						require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 						$categcode = $InfoFieldList[5];
-						if (is_numeric($categcode)) {
-							$categcode = Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]];
+						if (is_numeric($categcode)) {	// deprecated: must use the category code instead of id. For backward compatibility.
+							$tmpcategory = new Categorie($this->db);
+							$MAP_ID_TO_CODE = array_flip($tmpcategory->MAP_ID);
+							$categcode = $MAP_ID_TO_CODE[(int) $categcode];
 						}
+
 						$data = $form->select_all_categories($categcode, '', 'parent', 64, $InfoFieldList[6], 1, 1);
 						$out .= '<option value="0">&nbsp;</option>';
 						if (is_array($data)) {
@@ -1926,9 +1929,12 @@ class ExtraFields
 				} else {
 					require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 					$categcode = $InfoFieldList[5];
-					if (is_numeric($categcode)) {
-						$categcode = Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]];
+					if (is_numeric($categcode)) {	// deprecated: must use the category code instead of id. For backward compatibility.
+						$tmpcategory = new Categorie($this->db);
+						$MAP_ID_TO_CODE = array_flip($tmpcategory->MAP_ID);
+						$categcode = $MAP_ID_TO_CODE[(int) $categcode];
 					}
+
 					$data = $form->select_all_categories($categcode, '', 'parent', 64, $InfoFieldList[6], 1, 1);
 					$out = $form->multiselectarray($keyprefix.$key.$keysuffix, $data, $value_arr, 0, 0, '', 0, '100%');
 				}
