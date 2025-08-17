@@ -174,6 +174,17 @@ abstract class CommonInvoice extends CommonObject
 	public $stripechargeerror;
 
 	/**
+	 * @var string	Can be used to store a payment reference that must be unique for the invoice (not commonly used)
+	 */
+	public $payment_reference;
+
+	/**
+	 * @var int		1 if a dispute has been open on one payment of invoice, keep null or 0 if not
+	 */
+	public $dispute_status;
+
+
+	/**
 	 * Payment description
 	 * @var string
 	 */

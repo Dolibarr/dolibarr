@@ -11161,36 +11161,6 @@ parameters:
 			path: ../../../htdocs/core/tpl/object_discounts.tpl.php
 
 		-
-			message: '#^Variable \$backtopage might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/core/tpl/object_discounts.tpl.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/core/tpl/object_discounts.tpl.php
-
-		-
-			message: '#^Variable \$filterabsolutediscount might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/object_discounts.tpl.php
-
-		-
-			message: '#^Variable \$filtercreditnote might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/object_discounts.tpl.php
-
-		-
-			message: '#^Variable \$resteapayer might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/object_discounts.tpl.php
-
-		-
 			message: '#^Left side of \|\| is always true\.$#'
 			identifier: booleanOr.leftAlwaysTrue
 			count: 1
@@ -11495,12 +11465,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/cron/list.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 3
-			path: ../../../htdocs/datapolicy/class/datapolicy.class.php
 
 		-
 			message: '#^Method CdavLib\:\:getFullCalendarObjects\(\) should return array\<array\<string\>\> but returns list\<array\<string, int\|string\|false\>\>\.$#'
