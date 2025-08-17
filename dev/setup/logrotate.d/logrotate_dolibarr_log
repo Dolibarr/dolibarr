@@ -1,4 +1,4 @@
-# Example of logrorate file to put into /etc/logrotate.d to make the rotation of
+# Example of logrotate file to put into /etc/logrotate.d to make the rotation of
 # the dolibarr log files.
 /home/admin/wwwroot/dolibarr_documents/*.log {
         su admin www-data

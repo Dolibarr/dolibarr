@@ -185,7 +185,7 @@ class CommandeFournisseur extends CommonOrder
 	public $methode_commande;
 
 	/**
-	 *  @var null|int|'' Expected Delivery Date
+	 *  @var null|int|'' 	Expected planned Delivery Date
 	 */
 	public $delivery_date;
 
@@ -301,9 +301,10 @@ class CommandeFournisseur extends CommonOrder
 	public $line;
 
 	/**
-	 * @var CommonObject Add for supplier_proposal
+	 * @var CommonObject|string|null Add for supplier_proposal
 	 */
 	public $origin;
+
 	/**
 	 * @var int
 	 */

@@ -4788,6 +4788,8 @@ if ($action == 'create') {
 	$absolute_discount = price2num($absolute_discount, 'MT');
 	$absolute_creditnote = price2num($absolute_creditnote, 'MT');
 
+	$nb_creditnote_notyetavailable = $soc->getOpenCreditNotesNotYetConvertedIntoDiscount(0);
+
 	$author = new User($db);
 	if ($object->user_creation_id) {
 		$author->fetch($object->user_creation_id);
@@ -5245,7 +5247,7 @@ if ($action == 'create') {
 			print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1, '', 32)).'</span>';
 		}
 
-		// Retrieve credit note ids
+		// Retrieve credit note ids (credit notes generated from this invoice)
 		$object->getListIdAvoirFromInvoice();
 
 		if (!empty($object->creditnote_ids)) {

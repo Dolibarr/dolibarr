@@ -210,7 +210,7 @@ if (empty($reshook)) {
 			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
 			exit;
 		} else {
-			$mesg = $object->error;
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'confirm_unsign' && $confirm == 'yes' && $user->hasRight('contract', 'creer')) {
 		$result = $object->setSignedStatus($user, Contrat::$SIGNED_STATUSES['STATUS_NO_SIGNATURE'], 0, 'CONTRACT_MODIFY');
@@ -218,7 +218,7 @@ if (empty($reshook)) {
 			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
 			exit;
 		} else {
-			$mesg = $object->error;
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'confirm_closeline' && $confirm == 'yes' && $permissiontodisable) {
 		$date_end = '';

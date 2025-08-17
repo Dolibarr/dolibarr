@@ -17,15 +17,16 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  * or see https://www.gnu.org/
  */
+
 /** 	Function called to complete substitution array (before generating on ODT, or a personalized email)
 * 		functions xxx_completesubstitutionarray are called by make_substitutions() if file
 * 		is inside directory htdocs/core/substitutions
 *
-*		@param	array<string,string|float|null> $substitutionarray Array with substitution key=>val
-*		@param	Translate $langs Output langs
+*		@param	array<string,string|float|null> 	$substitutionarray	Array with substitution key=>val
+*		@param	Translate 							$langs 				Output langs
 *		@param	Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|CommandeFournisseur|FactureFournisseur $object Object to use to get values
-*		@param 	CommonObjectLine $line Line to use to get values
-* 		@return	void The entry parameter $substitutionarray is modified
+*		@param 	CommonObjectLine 					$line				Line to use to get values
+* 		@return	void 													The entry parameter $substitutionarray is modified
 */
 function subtotals_completesubstitutionarray_lines(&$substitutionarray, $langs, $object, $line)
 {

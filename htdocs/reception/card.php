@@ -1983,7 +1983,7 @@ if ($action == 'create') {
 								$htmltooltip .= '<br>';
 							}
 							$reception_static->fetch($receptionline_var['reception_id']);
-							$htmltooltip .= $reception_static->getNomUrl(1, 0, 0, 0, 1);
+							$htmltooltip .= $reception_static->getNomUrl(1, '', 0, 0, 1);
 							$htmltooltip .= ' - '.$receptionline_var['qty'];
 
 							$htmltext = $langs->trans("DateValidation").' : '.(empty($receptionline_var['date_valid']) ? $langs->trans("Draft") : dol_print_date($receptionline_var['date_valid'], 'dayhour'));

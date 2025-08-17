@@ -11089,12 +11089,6 @@ parameters:
 			path: ../../../htdocs/core/tpl/extrafields_view.tpl.php
 
 		-
-			message: '#^Variable \$hookmanager might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/core/tpl/extrafields_view.tpl.php
-
-		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
 			count: 1
@@ -11163,36 +11157,6 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/core/tpl/object_discounts.tpl.php
-
-		-
-			message: '#^Variable \$backtopage might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/core/tpl/object_discounts.tpl.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/core/tpl/object_discounts.tpl.php
-
-		-
-			message: '#^Variable \$filterabsolutediscount might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/object_discounts.tpl.php
-
-		-
-			message: '#^Variable \$filtercreditnote might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/object_discounts.tpl.php
-
-		-
-			message: '#^Variable \$resteapayer might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/core/tpl/object_discounts.tpl.php
 
@@ -11503,12 +11467,6 @@ parameters:
 			path: ../../../htdocs/cron/list.php
 
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 3
-			path: ../../../htdocs/datapolicy/class/datapolicy.class.php
-
-		-
 			message: '#^Method CdavLib\:\:getFullCalendarObjects\(\) should return array\<array\<string\>\> but returns list\<array\<string, int\|string\|false\>\>\.$#'
 			identifier: return.type
 			count: 1
@@ -11531,24 +11489,6 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/debugbar/class/autoloader.php
-
-		-
-			message: '#^Variable \$hidedesc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/delivery/card.php
-
-		-
-			message: '#^Variable \$hidedetails might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/delivery/card.php
-
-		-
-			message: '#^Variable \$hideref might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/delivery/card.php
 
 		-
 			message: '#^Variable \$objectsrc might not be defined\.$#'

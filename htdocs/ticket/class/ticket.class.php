@@ -1866,7 +1866,7 @@ class Ticket extends CommonObject
 			if (!empty($contacts)) {
 				// Ensure that contact is active and select first active contact
 				foreach ($contacts as $contact) {
-					if ((int) $contact->statut == 1) {
+					if ((int) $contact->status == 1) {
 						$actioncomm->contact_id = $contact->id;
 						break;
 					}

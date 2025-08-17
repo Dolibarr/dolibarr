@@ -220,6 +220,7 @@ class Contact extends CommonObject
 
 	/**
 	 * @var int  Status 0=inactive, 1=active
+	 * @deprecated Use $status
 	 */
 	public $statut;
 
@@ -378,6 +379,7 @@ class Contact extends CommonObject
 	{
 		$this->db = $db;
 		$this->statut = 1; // By default, status is enabled
+		$this->status = 1; // By default, status is enabled
 		$this->ismultientitymanaged = 1;
 		$this->isextrafieldmanaged = 1;
 
@@ -498,7 +500,11 @@ class Contact extends CommonObject
 		if (empty($this->priv)) {
 			$this->priv = 0;
 		}
-		if (empty($this->statut)) {
+		if (!empty($this->statut) && empty($this->status)) {
+			$this->status = 1;
+		}
+		if (empty($this->status)) {
+			$this->status = 0; // This is to convert '' into '0' to avoid bad sql request
 			$this->statut = 0; // This is to convert '' into '0' to avoid bad sql request
 		}
 
@@ -533,7 +539,7 @@ class Contact extends CommonObject
 		$sql .= " ".($user->id > 0 ? ((int) $user->id) : "null").",";
 		$sql .= " ".((int) $this->priv).",";
 		$sql .= " 0,";
-		$sql .= " ".((int) $this->statut).",";
+		$sql .= " ".((int) $this->status).",";
 		$sql .= " ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null").",";
 		$sql .= " ".((int) $this->entity).",";
 		$sql .= "'".$this->db->escape($this->ref_ext)."',";
@@ -627,7 +633,11 @@ class Contact extends CommonObject
 		$this->zip = (empty($this->zip) ? '' : trim($this->zip));
 		$this->town = (empty($this->town) ? '' : trim($this->town));
 		$this->country_id = (empty($this->country_id) || $this->country_id < 0) ? 0 : $this->country_id;
-		if (empty($this->statut)) {
+		if (!empty($this->statut) && empty($this->status)) {
+			$this->status = 1;
+		}
+		if (empty($this->status)) {
+			$this->status = 0;
 			$this->statut = 0;
 		}
 		if (empty($this->civility_code) && !is_numeric($this->civility_id)) {
@@ -669,7 +679,7 @@ class Contact extends CommonObject
 		if (isset($this->stcomm_id)) {
 			$sql .= ", fk_stcommcontact = ".($this->stcomm_id > 0 || $this->stcomm_id == -1 ? $this->stcomm_id : "0");
 		}
-		$sql .= ", statut = ".((int) $this->statut);
+		$sql .= ", statut = ".((int) $this->status);
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$this->db->escape((string) $user->id)."'" : "NULL");
 		$sql .= ", default_lang=".($this->default_lang ? "'".$this->db->escape($this->default_lang)."'" : "NULL");
 		$sql .= ", entity = ".((int) $this->entity);
@@ -1014,7 +1024,7 @@ class Contact extends CommonObject
 		$langs->loadLangs(array("dict", "companies"));
 
 		$sql = "SELECT c.rowid, c.entity, c.fk_soc, c.ref_ext, c.civility as civility_code, c.name_alias, c.lastname, c.firstname,";
-		$sql .= " c.address, c.statut, c.zip, c.town,";
+		$sql .= " c.address, c.statut as status, c.zip, c.town,";
 		$sql .= " c.fk_pays as country_id,";
 		$sql .= " c.fk_departement as state_id,";
 		$sql .= " c.birthday,";
@@ -1078,7 +1088,7 @@ class Contact extends CommonObject
 
 				$this->date_creation     = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
-				$this->user_creation_id     = $obj->fk_user_creat;
+				$this->user_creation_id = $obj->fk_user_creat;
 				$this->user_modification_id = $obj->fk_user_modif;
 
 				$this->state_id		= $obj->state_id;
@@ -1093,7 +1103,8 @@ class Contact extends CommonObject
 				$this->socid		= $obj->fk_soc;		// Both fk_soc and socid are used
 				$this->socname		= $obj->socname;
 				$this->poste		= $obj->poste;
-				$this->statut		= $obj->statut;
+				$this->status		= $obj->status;
+				$this->statut		= $obj->status; // deprecated
 
 				$this->fk_prospectlevel = $obj->fk_prospectlevel;
 
@@ -1517,15 +1528,15 @@ class Contact extends CommonObject
 	 *	Use $this->id, $this->lastname, $this->firstname, this->civility_id
 	 *
 	 *	@param		int			$withpicto					Include picto with link (0=no picto, 1=picto + name, 2=picto only, -1=photo+name, -2=photo only)
-	 *	@param		string		$option						Where the link point to
-	 *	@param		int			$maxlen						Max length of
+	 *	@param		string		$option						Where the link point to ('nolink', ...)
+	 *	@param		int			$notooltip					1=Disable tooltip
 	 *  @param		string		$moreparam					Add more param into URL
 	 *  @param      int     	$save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@param		int			$notooltip					1=Disable tooltip
+	 *	@param		int			$maxlen						Max len
 	 *  @param  	string  	$morecss            		Add more css on link
 	 *	@return		string									String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $moreparam = '', $save_lastsearch_value = -1, $notooltip = 0, $morecss = 'valignmiddle')
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $moreparam = '', $save_lastsearch_value = -1, $maxlen = 0, $morecss = 'valignmiddle')
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -1645,7 +1656,7 @@ class Contact extends CommonObject
 	 */
 	public function getLibStatut($mode)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1752,7 +1763,7 @@ class Contact extends CommonObject
 		$this->note_private = 'This is a comment (private)';
 
 		$this->socid = $socid;
-		$this->statut = 1;
+		$this->status = 1;
 
 		return 1;
 	}
@@ -1770,9 +1781,13 @@ class Contact extends CommonObject
 		$error = 0;
 
 		// Check parameters
-		if ($this->statut == $status) {
+		if (!empty($this->statut) && empty($this->status)) {
+			$this->status = 1;
+		}
+		if ($this->status == $status) {
 			return 0;
 		} else {
+			$this->status = $status;
 			$this->statut = $status;
 		}
 
@@ -1780,7 +1795,7 @@ class Contact extends CommonObject
 
 		// User disable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople";
-		$sql .= " SET statut = ".((int) $this->statut);
+		$sql .= " SET statut = ".((int) $this->status);
 		$sql .= ", fk_user_modif = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 		$result = $this->db->query($sql);
