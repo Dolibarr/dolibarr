@@ -3245,7 +3245,7 @@ class Adherent extends CommonObject
 								$actioncomm->contact_id = 0;
 								$actioncomm->authorid = $user->id; // User saving action
 								$actioncomm->userownerid = $user->id; // Owner of action
-								// Fields when action is en email (content should be added into note)
+								// Fields when action is an email (content should be added into note)
 								$actioncomm->email_msgid = $cmail->msgid;
 								$actioncomm->email_from = $from;
 								$actioncomm->email_sender = '';

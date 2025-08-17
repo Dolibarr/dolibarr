@@ -698,3 +698,5 @@ TotalOfDiscountMustEqualsOriginal=The total of new discounts must be equal to th
 RemainToSplit=Remaining amount to be split
 TypeAmountOfEachNewDiscountSplit=Input amount for each of each parts
 SplitDiscountTitle=Split discount into several
+DisputeStatus=Dispute status
+DisputeOpen=Dispute open

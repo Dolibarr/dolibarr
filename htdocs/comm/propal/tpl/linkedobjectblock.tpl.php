@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2010-2011  Regis Houssin <regis.houssin@inodbox.com>
- * Copyright (C) 2013       Juanjo Menent <jmenent@2byte.es>
- * Copyright (C) 2014       Marcos García <marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2010-2011  Regis Houssin 			<regis.houssin@inodbox.com>
+ * Copyright (C) 2013       Juanjo Menent 			<jmenent@2byte.es>
+ * Copyright (C) 2014       Marcos García 			<marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,13 +38,18 @@ global $user;
 
 $langs = $GLOBALS['langs'];
 '@phan-var-force Translate $langs';
+/**
+ * @var Translate $langs
+ * @var CommonObject $object
+ */
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 // Load translation files required by the page
 $langs->load("propal");
 
 $linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
-'@phan-var-force CommonObject[] $linkedObjectBlock';  // Repeat because type lost after dol_sort_array)
+'@phan-var-force Propal[] $linkedObjectBlock';  // Repeat because type lost after dol_sort_array)
+/** @var Propal[] $linkedObjectBlock */
 
 $total = 0;
 $ilink = 0;
@@ -63,7 +68,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	}
 	print '</td>';
 	print '<td class="linkedcol-name tdoverflowmax150">'.$objectlink->getNomUrl(1).'</td>';
-	print '<td class="linkedcol-ref" >'.$objectlink->ref_client.'</td>';
+	print '<td class="linkedcol-ref" >'.$objectlink->ref_customer.'</td>';
 	print '<td class="linkedcol-date center">'.dol_print_date($objectlink->date, 'day').'</td>';
 	print '<td class="linkedcol-amount right">';
 	if ($user->hasRight('propal', 'lire')) {

@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016	    Francis Appels       	<francis.appels@yahoo.com>
  * Copyright (C) 2021		Noé Cendrier			<noe.cendrier@altairis.fr>
- * Copyright (C) 2021-2024  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022-2023	Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023       Christian Foellmann     <christian@foellmann.de>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -216,15 +216,15 @@ if (empty($reshook)) {
 	if ($action == 'update' && !$cancel && $user->hasRight('stock', 'creer')) {
 		if ($object->fetch($id)) {
 			$object->label = GETPOST("libelle");
-			$object->fk_parent   = GETPOST("fk_parent");
+			$object->fk_parent = GETPOSTINT("fk_parent");
 			$object->fk_project = GETPOSTINT('projectid');
 			$object->description = GETPOST("desc", 'restricthtml');
-			$object->statut      = GETPOST("statut");
-			$object->lieu        = GETPOST("lieu");
-			$object->address     = GETPOST("address");
-			$object->zip         = GETPOST("zipcode");
-			$object->town        = GETPOST("town");
-			$object->country_id  = GETPOSTINT("country_id");
+			$object->statut = GETPOSTINT("statut");
+			$object->lieu = GETPOST("lieu");
+			$object->address = GETPOST("address");
+			$object->zip = GETPOST("zipcode");
+			$object->town = GETPOST("town");
+			$object->country_id = GETPOSTINT("country_id");
 			$object->phone = GETPOST("phone");
 			$object->fax = GETPOST("fax");
 

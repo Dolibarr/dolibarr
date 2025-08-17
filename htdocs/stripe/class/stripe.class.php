@@ -335,6 +335,32 @@ class Stripe extends CommonObject
 		return $selectedreader;
 	}
 
+
+	/**
+	 * Convert an amount in Stripe format into an amount into standard amount
+	 *
+	 * @param 	int|float	$amount				Amount in Stripe format (For example 1234 for 12.34 euros)
+	 * @param	string		$currency_code		Currency code (Example 'EUR')
+	 * @param	int			$direction			0=From standard to Stripe amount, 1=From Stripe to standard amount
+	 * @return	float							Standard float amount (For example 12.34)
+	 */
+	public function convertAmount($amount, $currency_code, $direction = 0)
+	{
+		$arrayzerounitcurrency = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+		if (!in_array($currency_code, $arrayzerounitcurrency)) {
+			if (empty($direction)) {
+				$newamount = (int) ($amount * 100);
+			} else {
+				$newamount = (float) ($amount / 100);
+			}
+		} else {
+			$newamount = $amount;
+		}
+
+		return $newamount;
+	}
+
+
 	/**
 	 * Get the Stripe payment intent. Create it with confirmnow=false
 	 * Warning. If a payment was tried and failed, a payment intent was created.
@@ -375,12 +401,7 @@ class Stripe extends CommonObject
 			$service = 'StripeLive';
 		}
 
-		$arrayzerounitcurrency = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
-		if (!in_array($currency_code, $arrayzerounitcurrency)) {
-			$stripeamount = $amount * 100;
-		} else {
-			$stripeamount = $amount;
-		}
+		$stripeamount = $this->convertAmount($amount, $currency_code, 0);
 
 		$fee = 0;
 		if (getDolGlobalString("STRIPE_APPLICATION_FEE_PERCENT")) {
@@ -391,11 +412,7 @@ class Stripe extends CommonObject
 		} elseif ($fee < (float) getDolGlobalString("STRIPE_APPLICATION_FEE_MINIMAL", '0')) {
 			$fee = (float) getDolGlobalString("STRIPE_APPLICATION_FEE_MINIMAL", '0');
 		}
-		if (!in_array($currency_code, $arrayzerounitcurrency)) {
-			$stripefee = round($fee * 100);
-		} else {
-			$stripefee = round($fee);
-		}
+		$stripefee = round($this->convertAmount($fee, $currency_code));
 
 		$paymentintent = null;
 
