@@ -181,7 +181,7 @@ abstract class CommonInvoice extends CommonObject
 	/**
 	 * @var int		1 if a dispute has been open on one payment of invoice, keep null or 0 if not
 	 */
-	public $dispute_status;
+	public $dispute_status = 0;
 
 
 	/**
