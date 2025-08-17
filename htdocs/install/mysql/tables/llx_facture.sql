@@ -81,7 +81,7 @@ create table llx_facture
   date_lim_reglement	date,									-- due date
 
   payment_reference     varchar(25),                            -- SEPA and any other national or custom payment id
-  dispute_status		integer,								-- set to 1 if a dispute on a payment on invoice is open
+  dispute_status		integer DEFAULT 0,						-- set to 1 if a dispute on a payment on invoice is open
 
   note_private			text,
   note_public			text,
