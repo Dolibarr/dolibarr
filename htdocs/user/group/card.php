@@ -448,9 +448,9 @@ if ($action == 'create') {
 						print '<td class="tdoverflowmax150">';
 						print $useringroup->getNomUrl(-1, '', 0, 0, 24, 0, 'login');
 						if (isModEnabled('multicompany') && $useringroup->admin && empty($useringroup->entity)) {
-							print img_picto($langs->trans("SuperAdministratorDesc"), 'redstar');
+							print img_picto($langs->trans("SuperAdministratorDesc"), 'redstar', 'class="valignmiddle paddingright paddingleft"');
 						} elseif ($useringroup->admin) {
-							print img_picto($langs->trans("AdministratorDesc"), 'star');
+							print img_picto($langs->trans("AdministratorDesc"), 'star', 'class="valignmiddle paddingright paddingleft"');
 						}
 						print '</td>';
 						print '<td>'.$useringroup->lastname.'</td>';

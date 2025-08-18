@@ -1141,7 +1141,8 @@ if (empty($reshook)) {
 					if ($element == 'project') {
 						$element = 'projet';
 					}
-					$object->origin    = GETPOST('origin', 'alpha');
+					$object->origin_type = GETPOST('origin', 'alpha');
+					$object->origin = $object->origin_type;
 					$object->origin_id = GETPOSTINT('originid');
 
 
@@ -1154,12 +1155,12 @@ if (empty($reshook)) {
 					$objectsrc->fetch($originid);
 					$objectsrc->fetch_thirdparty();
 
-					if (!empty($object->origin) && !empty($object->origin_id)) {
-						$object->linkedObjectsIds[$object->origin] = $object->origin_id;
+					if (!empty($object->origin_type) && !empty($object->origin_id)) {
+						$object->linkedObjectsIds[$object->origin_type] = $object->origin_id;
 					}
 
 					// Add also link with order if object is reception
-					if ($object->origin == 'reception') {
+					if ($object->origin_type == 'reception') {
 						$objectsrc->fetchObjectLinked();
 
 						if (count($objectsrc->linkedObjectsIds['order_supplier']) > 0) {
@@ -1285,7 +1286,7 @@ if (empty($reshook)) {
 									0,
 									array(), // array_options
 									null,
-									$object->origin,
+									$object->origin_type,
 									0,
 									'',
 									0, // special_code
@@ -1415,6 +1416,17 @@ if (empty($reshook)) {
 							$object->fetch_lines();
 						} else {
 							$error++;
+						}
+
+						if (!$error) {
+							// Hooks
+							$parameters = array('objFrom' => $srcobject);
+							$reshook = $hookmanager->executeHooks('createFrom', $parameters, $object, $action); // Note that $action and $object may have been
+							// modified by hook
+							if ($reshook < 0) {
+								setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+								$error++;
+							}
 						}
 					} else {
 						$error++;
@@ -2737,8 +2749,7 @@ if ($action == 'create') {
 		// Payment term
 		print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 		print img_picto('', 'payment', 'class="pictofixedwidth"');
-		print $form->getSelectConditionsPaiements($cond_reglement_id, 'cond_reglement_id', -1, 1);
-
+		print $form->getSelectConditionsPaiements($cond_reglement_id, 'cond_reglement_id', -1, 1, 0, 'maxwidth200 widthcentpercentminusx');
 		print '</td></tr>';
 
 		// Due date
@@ -2857,9 +2868,7 @@ if ($action == 'create') {
 		// Categories
 		if (isModEnabled("category")) {
 			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER_INVOICE, '', 'parent', 64, 0, 1);
-			$arrayselected = GETPOST('categories', 'array');
-			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+			print $form->selectCategories(Categorie::TYPE_SUPPLIER_INVOICE, 'categories', $object);
 			print "</td></tr>";
 		}
 
@@ -2973,11 +2982,7 @@ if ($action == 'create') {
 
 		$result = $object->fetch($id, $ref);
 		if ($result <= 0) {
-			$langs->load("errors");
-			print $langs->trans("ErrorRecordNotFound");
-			llxFooter();
-			$db->close();
-			exit;
+			recordNotFound('', 0);
 		}
 
 		$result = $object->fetch_thirdparty();
@@ -3588,19 +3593,12 @@ if ($action == 'create') {
 				print '</td></tr></table>';
 				print '</td>';
 				print '<td>';
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER_INVOICE, '', 'parent', 64, 0, 1);
 				if ($action == 'edittags') {
 					print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
 					print '<input type="hidden" name="action" value="settags">';
 					print '<input type="hidden" name="token" value="'.newToken().'">';
-					$c = new Categorie($db);
-					$cats = $c->containing($object->id, Categorie::TYPE_SUPPLIER_INVOICE);
-					$arrayselected = [];
-					foreach ($cats as $cat) {
-						$arrayselected[] = $cat->id;
-					}
-					print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, '0');
-					print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+					print $form->selectCategories(Categorie::TYPE_SUPPLIER_INVOICE, 'categories', $object);
+					print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
 					print '</form>';
 				} else {
 					print $form->showCategories($object->id, Categorie::TYPE_SUPPLIER_INVOICE, 1);
@@ -3641,7 +3639,7 @@ if ($action == 'create') {
 			if (GETPOST('calculationrule')) {
 				$calculationrule = GETPOST('calculationrule', 'alpha');
 			} else {
-				$calculationrule = (!getDolGlobalString('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND') ? 'totalofround' : 'roundoftotal');
+				$calculationrule = (!getDolGlobalString('MAIN_ROUNDOFTOTAL_NOT_TOTALOFROUND_SUPPLIER') ? 'totalofround' : 'roundoftotal');
 			}
 			if ($calculationrule == 'totalofround') {
 				$calculationrulenum = 1;

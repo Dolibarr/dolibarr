@@ -121,7 +121,7 @@ class MyModuleApi extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : 0;
+		$socid = DolibarrApiAccess::$user->socid ?: 0;
 
 		$restrictonsocid = 0; // Set to 1 if there is a field socid in table of object
 
@@ -137,9 +137,14 @@ class MyModuleApi extends DolibarrApi
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".$this->db->prefix().$tmpobject->table_element." AS t";
 		$sql .= " LEFT JOIN ".$this->db->prefix().$tmpobject->table_element."_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
-		$sql .= " WHERE 1 = 1";
-		if ($tmpobject->ismultientitymanaged) {
-			$sql .= ' AND t.entity IN ('.getEntity($tmpobject->element).')';
+		if (!empty($tmpobject->ismultientitymanaged) && (int) $tmpobject->ismultientitymanaged == 1) {
+			$sql .= " WHERE t.entity IN (".getEntity($tmpobject->element).")";
+		} elseif (preg_match('/^\w+@\w+$/', (string) $tmpobject->ismultientitymanaged)) {
+			$tmparray = explode('@', (string) $tmpobject->ismultientitymanaged);
+			$sql .= " LEFT JOIN ".$this->db->prefix().$tmparray[1]." as pt ON t.".$tmparray[0]." = pt.rowid";
+			$sql .= " WHERE pt.entity IN (".getEntity($tmpobject->element).")";
+		} else {
+			$sql .= " WHERE 1 = 1";
 		}
 		if ($restrictonsocid && $socid) {
 			$sql .= " AND t.fk_soc = ".((int) $socid);
@@ -247,8 +252,6 @@ class MyModuleApi extends DolibarrApi
 	 * @return 	Object						Object after update
 	 * @phan-return MyObject
 	 * @phpstan-return MyObject
-	 *
-	 * @phan-return  MyObject
 	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found

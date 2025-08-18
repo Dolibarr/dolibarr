@@ -327,6 +327,11 @@ class ActionComm extends CommonObject
 	public $email_from;
 
 	/**
+	 * @var string Email reply to
+	 */
+	public $email_reply_to;
+
+	/**
 	 * @var string Email sender
 	 */
 	public $email_sender;
@@ -820,6 +825,7 @@ class ActionComm extends CommonObject
 		$sql .= " a.fk_element as elementid, a.elementtype,";
 		$sql .= " a.priority, a.fulldayevent, a.location, a.transparency,";
 		$sql .= " a.email_msgid, a.email_subject, a.email_from, a.email_sender, a.email_to, a.email_tocc, a.email_tobcc, a.errors_to,";
+		$sql .= " a.recurid, a.recurrule, a.recurdateend,";
 		$sql .= " c.id as type_id, c.type as type_type, c.code as type_code, c.libelle as type_label, c.color as type_color, c.picto as type_picto,";
 		$sql .= " s.nom as socname,";
 		$sql .= " u.firstname, u.lastname as lastname,";
@@ -901,6 +907,10 @@ class ActionComm extends CommonObject
 				$this->fk_element = $obj->elementid;
 				$this->elementid = $obj->elementid;
 				$this->elementtype = $obj->elementtype;
+
+				$this->recurid = $obj->recurid;
+				$this->recurrule = $obj->recurrule;
+				$this->recurdateend = $this->db->jdate($obj->recurdateend);
 
 				$this->num_vote = $obj->num_vote;
 				$this->event_paid = $obj->event_paid;
@@ -1239,6 +1249,9 @@ class ActionComm extends CommonObject
 				foreach ($this->userassigned as $key => $val) {
 					if (!is_array($val)) {	// For backward compatibility when val=id
 						$val = array('id' => $val);
+					}
+					if (!isset($val['id']) || !is_scalar($val['id'])) {
+						continue;
 					}
 					if (!empty($already_inserted[$val['id']])) {
 						continue;
@@ -1590,7 +1603,9 @@ class ActionComm extends CommonObject
 			$statusType = 'status6';
 		}
 
-		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
+		$params = array('badgeParams' => array('attr' => array('title' => '<b>'.$langs->trans("Progression").'</b> : '.$labelStatus)));
+
+		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $params);
 	}
 
 	/**
@@ -1632,9 +1647,32 @@ class ActionComm extends CommonObject
 		if (!empty($this->location)) {
 			$datas['location'] = '<br><b>'.$langs->trans('Location').':</b> '.dol_escape_htmltag($this->location);
 		}
-		if (isset($this->transparency)) {
+		if (isset($this->transparency) && $this->datef && $this->datep != $this->datef && isset($this->transparency)) {
 			$datas['transparency'] = '<br><b>'.$langs->trans('Busy').':</b> '.yn($this->transparency);
 		}
+
+		$datas['date'] = '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datep, 'dayhourreduceformat', 'tzuserrel');
+		if ($this->datef) {
+			$tmpa = dol_getdate($this->datep);
+			$tmpb = dol_getdate($this->datef);
+			if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
+				if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
+					$datas['date'] .= '-'.dol_print_date($this->datef, 'hour', 'tzuserrel');
+				}
+			} else {
+				$datas['date'] .= '-'.dol_print_date($this->datef, 'dayhourreduceformat', 'tzuserrel');
+			}
+		}
+
+		if (!empty($this->recurid)) {
+			$datas['recurring'] = '<br><b>'.$langs->trans("RecurringEvent").':</b> ';
+			$datas['recurring'] .= img_picto($langs->trans("EventPartOfARecurringSerie", $this->recurid), 'recurring', 'class="pictofixedwidth"');
+			$reg = array();
+			if (preg_match('/FREQ=MONTHLY_BYMONTHDAY(\d+)/', $this->recurrule, $reg)) {
+				$datas['recurring'] .= $langs->trans("EveryMonth").' <span class="opacitymedium small">('.$langs->trans("DayOfMonth").' '.$reg[1].' - '.$langs->trans("Until").' '.dol_print_date($this->recurdateend, 'day').')</span>';
+			}
+		}
+
 		if (!empty($this->email_msgid)) {
 			$langs->load("mails");
 			$datas['space'] = '<br>';
@@ -1678,18 +1716,18 @@ class ActionComm extends CommonObject
 
 	/**
 	 *  Return URL of event
-	 *  Use $this->id, $this->type_code, $this->label and $this->type_label
+	 *  This uses $this->id, $this->type_code, $this->label and $this->type_label
 	 *
 	 *  @param	int<0,2>	$withpicto				0 = No picto, 1 = Include picto into link, 2 = Only picto
 	 *  @param	int			$maxlength				Max number of characters into label. If negative, use the ref as label.
-	 *  @param	string		$classname				Force style class on a link
+	 *  @param	string		$morecss				Force style class on a link
 	 *  @param	string		$option					'' = Link to action, 'birthday'= Link to contact, 'holiday' = Link to leave
 	 *  @param	int<0,1>	$overwritepicto			1 = Overwrite picto with this one
 	 *  @param	int<0,1>	$notooltip		    	1 = Disable tooltip
 	 *  @param  int<-1,1>	$save_lastsearch_value  -1 = Auto, 0 = No save of lastsearch_values when clicking, 1 = Save lastsearch_values whenclicking
 	 *  @return	string							Chaine avec URL
 	 */
-	public function getNomUrl($withpicto = 0, $maxlength = 0, $classname = '', $option = '', $overwritepicto = 0, $notooltip = 0, $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $maxlength = 0, $morecss = '', $option = '', $overwritepicto = 0, $notooltip = 0, $save_lastsearch_value = -1)
 	{
 		global $conf, $langs, $user, $hookmanager, $action;
 
@@ -1718,81 +1756,33 @@ class ActionComm extends CommonObject
 		// Set label of type
 		$labeltype = $this->getTypeLabel(1);
 
-		$tooltip = img_picto('', $this->picto).' <u>'.$langs->trans('Action').'</u>';
-
-		$tooltip .= ' &nbsp; - &nbsp; '.$this->getTypePicto('pictofixedwidth paddingright valignmiddle').$labeltype;
-		if (!empty($this->ref)) {
-			$tooltip .= '<br><b>'.$langs->trans('Ref').':</b> '.dol_escape_htmltag($this->ref);
-		}
-		if (!empty($label)) {
-			$tooltip .= '<br><b>'.$langs->trans('Title').':</b> '.dol_escape_htmltag($label);
-		}
-		if (!empty($this->location)) {
-			$tooltip .= '<br><b>'.$langs->trans('Location').':</b> '.dol_escape_htmltag($this->location);
-		}
-
-		$tooltip .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datep, 'dayhourreduceformat', 'tzuserrel');
-		if ($this->datef) {
-			$tmpa = dol_getdate($this->datep);
-			$tmpb = dol_getdate($this->datef);
-			if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
-				if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
-					$tooltip .= '-'.dol_print_date($this->datef, 'hour', 'tzuserrel');
-				}
-			} else {
-				$tooltip .= '-'.dol_print_date($this->datef, 'dayhourreduceformat', 'tzuserrel');
-			}
-		}
-
-		if ($this->datef && $this->datep != $this->datef && isset($this->transparency)) {
-			$tooltip .= '<br><b>'.$langs->trans('Busy').':</b> '.yn($this->transparency);
-		}
-		if (!empty($this->email_msgid)) {
-			$langs->load("mails");
-			$tooltip .= '<br>';
-			//$tooltip .= '<br><b>'.img_picto('', 'email').' '.$langs->trans("Email").'</b>';
-			$tooltip .= '<br><b>'.$langs->trans('MailTopic').':</b> '.dol_escape_htmltag($this->email_subject);
-			$tooltip .= '<br><b>'.$langs->trans('MailFrom').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), !empty($this->email_from) ? $this->email_from : '');
-			$tooltip .= '<br><b>'.$langs->trans('MailTo').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), !empty($this->email_to) ? $this->email_to : '');
-			if (!empty($this->email_tocc)) {
-				$tooltip .= '<br><b>'.$langs->trans('MailCC').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_tocc);
-			}
-			/* Disabled because bcc must remain by definition not visible
-			if (!empty($this->email_tobcc)) {
-				$tooltip .= '<br><b>'.$langs->trans('MailCCC').':</b> '.$this->email_tobcc;
-			} */
-		}
-		if (!empty($this->note_private)) {
-			$tooltip .= '<br><hr>';
-			$texttoshow = dolGetFirstLineOfText($this->note_private, 8);	// Try to limit length of content
-			$tooltip .= '<div class="tenlinesmax">';						// Restrict height of content into the tooltip
-			$tooltip .= (dol_textishtml($texttoshow) ? str_replace(array("\r", "\n"), "", $texttoshow) : str_replace(array("\r", "\n"), '<br>', $texttoshow));
-			$tooltip .= '</div>';
-		}
-
 		$linkclose = '';
+
+		$params = [
+			'id' => (string) $this->id,
+			'objecttype' => $this->element.($this->module ? '@'.$this->module : ''),
+			'option' => $option,
+			'nofetch' => 1,
+		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-			$params = [
-				'id' => $this->id,
-				'objecttype' => $this->element,
-				'option' => $option,
-				'nofetch' => 1,
-			];
 			$classfortooltip = 'classforajaxtooltip';
 			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
-			$tooltip = '';
+			//$label = '';		// $label is used as ref when $maxlength is not negative, so we must not empty it.
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
+
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowAction");
-				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($tooltip).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($tooltip ? ' title="'.dolPrintHTMLForAttribute($tooltip).'"' : ' title="tocomplete"');
-			$linkclose .= $dataparams.' class="'.$classname.' '.$classfortooltip.'"';
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$morecss.' '.$classfortooltip.'"';
 		} else {
-			$linkclose .= ' class="'.$classname.'"';
+			$linkclose .= ' class="'.$morecss.'"';
 		}
 
 		$url = '';
@@ -1831,12 +1821,16 @@ class ActionComm extends CommonObject
 			$labelshort = '';
 		} else {
 			if (getDolGlobalString('AGENDA_USE_EVENT_TYPE') && empty($label)) {
-				$label = $labeltype;
+				if (empty($this->label)) {
+					$label = $labeltype;
+				} else {
+					$label = $this->label;
+				}
 			}
 			if ($maxlength < 0) {
 				$labelshort = $this->ref;
 			} else {
-				$labelshort = dol_trunc($label, $maxlength);
+				$labelshort = dol_trunc(empty($this->label) ? $labeltype : $this->label, $maxlength);
 			}
 		}
 
@@ -2603,8 +2597,6 @@ class ActionComm extends CommonObject
 	 */
 	public function loadReminders($type = '', $fk_user = 0, $onlypast = true)
 	{
-		global $conf, $langs, $user;
-
 		$error = 0;
 
 		$this->reminders = array();
@@ -2664,7 +2656,7 @@ class ActionComm extends CommonObject
 	 */
 	public function sendEmailsReminder()
 	{
-		global $conf, $langs, $user;
+		global $langs, $user;
 
 		$error = 0;
 		$this->output = '';
@@ -2718,85 +2710,80 @@ class ActionComm extends CommonObject
 					// Load event
 					$res = $this->fetch($actionCommReminder->fk_actioncomm);
 					if ($res > 0) {
-						$res2 = $this->fetch_thirdparty();
-						if ($res2 >= 0) {
-							// PREPARE EMAIL
-							$errormesg = '';
+						// PREPARE EMAIL
+						$errormesg = '';
+						$this->fetch_thirdparty();
 
-							// Make substitution in email content
-							$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $this);
+						// Make substitution in email content
+						$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $this);
 
-							complete_substitutions_array($substitutionarray, $langs, $this);
+						complete_substitutions_array($substitutionarray, $langs, $this);
 
-							// Content
-							$sendContent = make_substitutions($langs->trans($arraymessage->content), $substitutionarray);
+						// Content
+						$sendContent = make_substitutions($langs->trans($arraymessage->content), $substitutionarray);
 
-							//Topic
-							$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->transnoentities('EventReminder'));
+						//Topic
+						$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->transnoentities('EventReminder'));
 
-							// Recipient
-							$recipient = new User($this->db);
-							$res = $recipient->fetch($actionCommReminder->fk_user);
-							if ($res > 0) {
-								if (!empty($recipient->email)) {
-									$to = $recipient->email;
-								} else {
-									$errormesg = "Failed to send remind to user id=".$actionCommReminder->fk_user.". No email defined for user.";
-									$error++;
-								}
+						// Recipient
+						$recipient = new User($this->db);
+						$res = $recipient->fetch($actionCommReminder->fk_user);
+						if ($res > 0) {
+							if (!empty($recipient->email)) {
+								$to = $recipient->email;
 							} else {
-								$errormesg = "Failed to load recipient with user id=".$actionCommReminder->fk_user;
+								$errormesg = "Failed to send remind to user id=" . $actionCommReminder->fk_user . ". No email defined for user.";
 								$error++;
-							}
-
-							// Sender
-							$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
-							if (empty($from)) {
-								$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
-								$error++;
-							}
-
-							if (!$error) {
-								// Errors Recipient
-								$errors_to = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
-
-								// Mail Creation
-								$cMailFile = new CMailFile($sendTopic, (string) $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', '', '', '', '');
-
-								// Sending Mail
-								if ($cMailFile->sendfile()) {
-									$nbMailSend++;
-								} else {
-									$errormesg = 'Failed to send email to: '.$to.' '.$cMailFile->error.implode(',', $cMailFile->errors);
-									$error++;
-								}
-							}
-
-							if (!$error) {
-								$actionCommReminder->status = $actionCommReminder::STATUS_DONE;
-
-								$res = $actionCommReminder->update($user);
-								if ($res < 0) {
-									$errorsMsg[] = "Failed to update status to done of ActionComm Reminder";
-									$error++;
-									break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
-								}
-							} else {
-								$actionCommReminder->status = $actionCommReminder::STATUS_ERROR;
-								$actionCommReminder->lasterror = dol_trunc($errormesg, 128, 'right', 'UTF-8', 1);
-
-								$res = $actionCommReminder->update($user);
-								if ($res < 0) {
-									$errorsMsg[] = "Failed to update status to error of ActionComm Reminder";
-									$error++;
-									break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
-								} else {
-									$errorsMsg[] = $errormesg;
-								}
 							}
 						} else {
-							$errorsMsg[] = 'Failed to fetch record thirdparty on actioncomm with ID = '.$actionCommReminder->fk_actioncomm;
+							$errormesg = "Failed to load recipient with user id=" . $actionCommReminder->fk_user;
 							$error++;
+						}
+
+						// Sender
+						$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+						if (empty($from)) {
+							$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
+							$error++;
+						}
+
+						if (!$error) {
+							// Errors Recipient
+							$errors_to = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
+
+							// Mail Creation
+							$cMailFile = new CMailFile($sendTopic, (string) $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', '', '', '', '');
+
+							// Sending Mail
+							if ($cMailFile->sendfile()) {
+								$nbMailSend++;
+							} else {
+								$errormesg = 'Failed to send email to: ' . $to . ' ' . $cMailFile->error . implode(',', $cMailFile->errors);
+								$error++;
+							}
+						}
+
+						if (!$error) {
+							$actionCommReminder->status = $actionCommReminder::STATUS_DONE;
+
+							$res = $actionCommReminder->update($user);
+							if ($res < 0) {
+								$errorsMsg[] = "Failed to update status to done of ActionComm Reminder";
+								$error++;
+								break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
+							}
+						} else {
+							$actionCommReminder->status = $actionCommReminder::STATUS_ERROR;
+							$actionCommReminder->lasterror = dol_trunc($errormesg, 128, 'right', 'UTF-8', 1);
+
+							$res = $actionCommReminder->update($user);
+							if ($res < 0) {
+								$errorsMsg[] = "Failed to update status to error of ActionComm Reminder";
+								$error++;
+								break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
+							} else {
+								$errorsMsg[] = $errormesg;
+							}
 						}
 					} else {
 						$errorsMsg[] = 'Failed to fetch record actioncomm with ID = '.$actionCommReminder->fk_actioncomm;

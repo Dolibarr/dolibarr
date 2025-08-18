@@ -284,6 +284,7 @@ class FactureFournisseurLigneRec extends CommonInvoiceLine
 			$this->total_localtax2          = $objp->total_localtax2;
 			$this->total_ttc                = $objp->total_ttc;
 			$this->product_type             = $objp->product_type;
+			$this->product_label            = $objp->product_label;
 			$this->date_start               = $objp->date_start;
 			$this->date_end                 = $objp->date_end;
 			$this->info_bits                = $objp->info_bits;

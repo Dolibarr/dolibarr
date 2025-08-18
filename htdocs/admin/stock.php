@@ -216,7 +216,8 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 llxHeader('', $langs->trans("StockSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-stock');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("StockSetup"), $linkback, 'title_setup');
 
 $head = stock_admin_prepare_head();
@@ -228,6 +229,15 @@ $formproduct = new FormProduct($db);
 
 
 $disableStockCalculateOn = array();
+if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+	$langs->load('products');
+	$disableStockCalculateOn[] = 'BILL';
+	$disableStockCalculateOn[] = 'VALIDATE_ORDER';
+	$disableStockCalculateOn[] = 'SUPPLIER_BILL';
+	$disableStockCalculateOn[] = 'SUPPLIER_VALIDATE_ORDER';
+	$disableStockCalculateOn[] = 'SHIPMENT_CLOSE';
+	print info_admin($langs->trans('WhenProductVirtualOnOptionAreForced'));
+}
 if (isModEnabled('productbatch')) {
 	// If module lot/serial enabled, we force the inc/dec mode to STOCK_CALCULATE_ON_SHIPMENT_CLOSE and STOCK_CALCULATE_ON_RECEPTION_CLOSE
 	$langs->load("productbatch");

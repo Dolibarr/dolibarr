@@ -167,8 +167,13 @@ $tmparray = $formfile->form_attach_new_file(
 	2
 );
 
-$formToUploadAFile = $tmparray['formToUploadAFile'];
-$formToAddALink = $tmparray['formToAddALink'];
+$formToUploadAFile = '';
+$formToAddALink = '';
+
+if (is_array($tmparray) && !empty($tmparray)) {
+	$formToUploadAFile = $tmparray['formToUploadAFile'];
+	$formToAddALink = $tmparray['formToAddALink'];
+}
 
 
 // List of document
@@ -198,7 +203,7 @@ $formfile->list_of_documents(
 );
 
 
-print "<br><br>";
+print "<br>";
 
 
 //List of links

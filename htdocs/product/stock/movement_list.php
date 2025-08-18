@@ -400,8 +400,6 @@ if ($action == "correct_stock" && $permissiontoadd) {
 		if ($product->hasbatch()) {
 			$batch = GETPOST('batch_number', 'alphanohtml');
 
-			//$eatby=GETPOST('eatby');
-			//$sellby=GETPOST('sellby');
 			$eatby = dol_mktime(0, 0, 0, GETPOSTINT('eatbymonth'), GETPOSTINT('eatbyday'), GETPOSTINT('eatbyyear'));
 			$sellby = dol_mktime(0, 0, 0, GETPOSTINT('sellbymonth'), GETPOSTINT('sellbyday'), GETPOSTINT('sellbyyear'));
 
@@ -510,17 +508,16 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 
 			if ($product->hasbatch()) {
 				$pdluo = new Productbatch($db);
-
 				$srcwarehouseid = 0;
-				$eatby = -1;
-				$sellby = -1;
+
+				$eatby = dol_mktime(0, 0, 0, GETPOSTINT('eatbymonth'), GETPOSTINT('eatbyday'), GETPOSTINT('eatbyyear'));
+				$sellby = dol_mktime(0, 0, 0, GETPOSTINT('sellbymonth'), GETPOSTINT('sellbyday'), GETPOSTINT('sellbyyear'));
+
 				if ($pdluoid > 0) {
 					$result = $pdluo->fetch($pdluoid);
 					if ($result) {
 						$srcwarehouseid = $pdluo->warehouseid;
 						$batch = $pdluo->batch;
-						$eatby = $pdluo->eatby;
-						$sellby = $pdluo->sellby;
 					} else {
 						setEventMessages($pdluo->error, $pdluo->errors, 'errors');
 						$error++;
@@ -528,8 +525,6 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 				} else {
 					$srcwarehouseid = $id;
 					$batch = GETPOST('batch_number', 'alphanohtml');
-					$eatby = $d_eatby;
-					$sellby = $d_sellby;
 				}
 
 				$result1 = -1;
@@ -542,7 +537,7 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 						GETPOSTFLOAT("nbpiece"),
 						1,
 						GETPOST("label", 'san_alpha'),
-						$pricesrc,
+						(float) $pricesrc,
 						$eatby,
 						$sellby,
 						$batch,
@@ -559,7 +554,7 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 						GETPOSTFLOAT("nbpiece"),
 						0,
 						GETPOST("label", 'san_alpha'),
-						$pricedest,
+						(float) $pricedest,
 						$eatby,
 						$sellby,
 						$batch,
@@ -578,7 +573,7 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 					GETPOSTFLOAT("nbpiece"),
 					1,
 					GETPOST("label", 'san_alpha'),
-					$pricesrc,
+					(float) $pricesrc,
 					GETPOST('inventorycode', 'alphanohtml'),
 					'',
 					null,
@@ -593,7 +588,7 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 					GETPOSTFLOAT("nbpiece"),
 					0,
 					GETPOST("label", 'san_alpha'),
-					$pricedest,
+					(float) $pricedest,
 					GETPOST('inventorycode', 'alphanohtml'),
 					'',
 					null,
@@ -796,7 +791,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -830,10 +825,6 @@ if ($id > 0 || $ref) {
 		dol_print_error($db);
 	}
 }
-
-
-// Output page
-// --------------------------------------------------------------------
 
 $i = 0;
 $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
@@ -1001,6 +992,8 @@ if ($action == "correction") {
 
 // Transfer of units
 if ($action == "transfert") {
+	$d_eatby = GETPOSTDATE('eatby');	// used by the tpl
+	$d_sellby = GETPOSTDATE('sellby');	// used by the tpl
 	include DOL_DOCUMENT_ROOT.'/product/stock/tpl/stocktransfer.tpl.php';
 	print '<br>';
 }
@@ -1630,8 +1623,12 @@ while ($i < $imaxinloop) {
 		}
 		// Price
 		if (!empty($arrayfields['m.price']['checked'])) {
+			$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'lire');
+			if ($productstatic->isService()) {
+				$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_supplier_prices') : $user->hasRight('service', 'lire');
+			}
 			print '<td class="right">';
-			if ($obj->price != 0) {
+			if ($obj->price != 0 && $usercancreadsupplierprice) {
 				print price($obj->price);
 			}
 			print '</td>';

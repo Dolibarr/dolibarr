@@ -58,6 +58,9 @@ $search_labelshort = GETPOST('search_labelshort', 'alpha');
 $search_accountparent = GETPOST('search_accountparent', 'alpha');
 $search_pcgtype = GETPOST('search_pcgtype', 'alpha');
 $search_import_key = GETPOST('search_import_key', 'alpha');
+$search_reconcilable = GETPOST("search_reconcilable", 'int');
+$search_centralized = GETPOST("search_centralized", 'int');
+$search_active = GETPOST("search_active", 'int');
 $toselect = GETPOST('toselect', 'array');
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $confirm = GETPOST('confirm', 'alpha');
@@ -158,6 +161,9 @@ if (empty($reshook)) {
 		$search_accountparent = "";
 		$search_pcgtype = "";
 		$search_import_key = "";
+		$search_reconcilable = "";
+		$search_centralized = "";
+		$search_active = "";
 		$search_array_options = array();
 	}
 	if ((GETPOSTINT('valid_change_chart') && GETPOSTINT('chartofaccounts') > 0)	// explicit click on button 'Change and load' with js on
@@ -318,6 +324,15 @@ if (strlen(trim($search_accountparent)) && $search_accountparent != '-1') {
 if (strlen(trim($search_pcgtype))) {
 	$sql .= natural_search("aa.pcg_type", $search_pcgtype);
 }
+if ($search_reconcilable != '' && $search_reconcilable != '-1') {
+	$sql .= " AND aa.reconcilable = ".((int) $search_reconcilable);
+}
+if ($search_centralized != '' && $search_centralized != '-1') {
+	$sql .= " AND aa.centralized = ".((int) $search_centralized);
+}
+if ($search_active != '' && $search_active != '-1') {
+	$sql .= " AND aa.active = ".((int) $search_active);
+}
 if (strlen(trim($search_import_key))) {
 	$sql .= natural_search("aa.import_key", $search_import_key);
 }
@@ -335,7 +350,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -437,6 +452,7 @@ if ($resql) {
 	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_system as a";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON a.fk_country = c.rowid AND c.active = 1";
 	$sql .= " WHERE a.active = 1";
+	$sql .= " ORDER BY c.code, a.pcg_version";
 
 	dol_syslog("accountancy/admin/account.php sql=".$sql);
 
@@ -448,9 +464,11 @@ if ($resql) {
 		while ($i < $numbis) {
 			$obj = $db->fetch_object($resqlchart);
 			if ($obj) {
-				print '<option value="'.$obj->rowid.'"';
+				$labeltoshow = $obj->country_code.' - '.$obj->pcg_version.' - '.$obj->label;
+				$htmltoshow = picto_from_langcode($obj->country_code).' '.$obj->country_code.' - '.$obj->pcg_version.' - '.$obj->label;
+				print '<option value="'.$obj->rowid.'" data-html="'.dolPrintHTMLForAttribute($htmltoshow).'"';
 				print ($pcgver == $obj->rowid) ? ' selected' : '';
-				print '>'.$obj->pcg_version.' - '.$obj->label.' - ('.$obj->country_code.')</option>';
+				print '>'.$labeltoshow.'</option>';
 			}
 			$i++;
 		}
@@ -537,16 +555,28 @@ if ($resql) {
 	if (!empty($arrayfields['aa.import_key']['checked'])) {
 		print '<td class="liste_titre"><input type="text" class="flat width75" name="search_import_key" value="'.$search_import_key.'"></td>';
 	}
+
+	// Reconcilable
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		if (!empty($arrayfields['aa.reconcilable']['checked'])) {
-			print '<td class="liste_titre">&nbsp;</td>';
+			print '<td class="liste_titre center">';
+			print $form->selectyesno('search_reconcilable', $search_reconcilable, 1, false, 1, 1, 'search_status onrightofpage width75');
+			print '</td>';
 		}
 	}
+
+	// Centralized
 	if (!empty($arrayfields['aa.centralized']['checked'])) {
-		print '<td class="liste_titre">&nbsp;</td>';
+		print '<td class="liste_titre center">';
+		print $form->selectyesno('search_centralized', $search_centralized, 1, false, 1, 1, 'search_status onrightofpage width75');
+		print '</td>';
 	}
+
+	// Active
 	if (!empty($arrayfields['aa.active']['checked'])) {
-		print '<td class="liste_titre">&nbsp;</td>';
+		print '<td class="liste_titre center">';
+		print $form->selectyesno('search_active', $search_active, 1, false, 1, 1, 'search_status onrightofpage width75');
+		print '</td>';
 	}
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -604,7 +634,7 @@ if ($resql) {
 	}
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		if (!empty($arrayfields['aa.reconcilable']['checked'])) {
-			print_liste_field_titre($arrayfields['aa.reconcilable']['label'], $_SERVER["PHP_SELF"], 'aa.reconcilable', '', $param, '', $sortfield, $sortorder);
+			print_liste_field_titre($arrayfields['aa.reconcilable']['label'], $_SERVER["PHP_SELF"], 'aa.reconcilable', '', $param, '', $sortfield, $sortorder, 'center ');
 			$totalarray['nbfield']++;
 		}
 	}

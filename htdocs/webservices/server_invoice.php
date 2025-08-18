@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -348,19 +348,19 @@ function getInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
 					$linesresp[] = array(
 						'id' => $line->id,
 						'type' => $line->product_type,
-												'desc' => dol_htmlcleanlastbr($line->desc),
-												'total_net' => $line->total_ht,
-												'total_vat' => $line->total_tva,
-												'total' => $line->total_ttc,
-												'vat_rate' => $line->tva_tx,
-												'qty' => $line->qty,
-												'unitprice' => $line->subprice,
-												'date_start' => $line->date_start ? dol_print_date($line->date_start, 'dayrfc') : '',
-												'date_end' => $line->date_end ? dol_print_date($line->date_end, 'dayrfc') : '',
-												'product_id' => $line->fk_product,
-												'product_ref' => $line->product_ref,
-												'product_label' => $line->product_label,
-												'product_desc' => $line->product_desc,
+						'desc' => dol_htmlcleanlastbr($line->desc),
+						'total_net' => $line->total_ht,
+						'total_vat' => $line->total_tva,
+						'total' => $line->total_ttc,
+						'vat_rate' => $line->tva_tx,
+						'qty' => $line->qty,
+						'unitprice' => $line->subprice,
+						'date_start' => $line->date_start ? dol_print_date($line->date_start, 'dayrfc') : '',
+						'date_end' => $line->date_end ? dol_print_date($line->date_end, 'dayrfc') : '',
+						'product_id' => $line->fk_product,
+						'product_ref' => $line->product_ref,
+						'product_label' => $line->product_label,
+						'product_desc' => $line->product_desc,
 					);
 					$i++;
 				}
@@ -373,7 +373,7 @@ function getInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
 						'ref' => $invoice->ref,
 						'ref_ext' => $invoice->ref_ext ? $invoice->ref_ext : '', // If not defined, field is not added into soap
 						'thirdparty_id' => $invoice->socid,
-						'fk_user_author' => $invoice->fk_user_author ? $invoice->fk_user_author : '',
+						'fk_user_author' => $invoice->user_creation_id ? $invoice->user_creation_id : '',
 						'fk_user_valid' => $invoice->user_validation_id ? $invoice->user_validation_id : '',
 						'date' => $invoice->date ? dol_print_date($invoice->date, 'dayrfc') : '',
 						'date_due' => $invoice->date_lim_reglement ? dol_print_date($invoice->date_lim_reglement, 'dayrfc') : '',
@@ -386,7 +386,7 @@ function getInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
 						'total' => $invoice->total_ttc,
 						'note_private' => $invoice->note_private ? $invoice->note_private : '',
 						'note_public' => $invoice->note_public ? $invoice->note_public : '',
-						'status' => $invoice->statut,
+						'status' => $invoice->status,
 						'project_id' => $invoice->fk_project,
 						'close_code' => $invoice->close_code ? $invoice->close_code : '',
 						'close_note' => $invoice->close_note ? $invoice->close_note : '',
@@ -553,7 +553,7 @@ function getInvoicesForThirdParty($authentication, $idthirdparty)
  * Create an invoice
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
- * @param	array{id:string,ref:string,ref_ext:string,thirdparty_id:int,fk_user_author:string,fk_user_valid:string,date:string,date_due:string,date_creation:string,date_validation:string,date_modification:string,payment_mode_id:string,type:int,total_net:float,total_vat:float,total:float,note_private:string,note_public:string,status:int,close_code:string,close_note:string,project_id:string,lines?:array{id:string,type:int,desc:string,vat_rate:float,qty:float,unitprice:float,total_net:float,total_vat:float,total:float,date_start:string,date_end:string,product_id:int,product_ref:string,product_label:string,product_desc:string}}		$invoice			Invoice
+ * @param	array{id:string,ref:string,ref_ext:string,thirdparty_id:int,fk_user_author:string,fk_user_valid:string,date:string,date_due:string,date_creation:string,date_validation:string,date_modification:string,payment_mode_id:string,type:int,total_net:float,total_vat:float,total:float,note_private:string,note_public:string,status:int,close_code:string,close_note:string,project_id:string,lines?:array<array{id:string,type:int,desc:string,vat_rate:float,qty:float,unitprice:float,total_net:float,total_vat:float,total:float,date_start:string,date_end:string,product_id:int,product_ref:string,product_label:string,product_desc:string}>}		$invoice			Invoice
  * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function createInvoice($authentication, $invoice)
@@ -589,7 +589,7 @@ function createInvoice($authentication, $invoice)
 		$new_invoice->date = dol_stringtotime($invoice['date'], 'dayrfc');
 		$new_invoice->note_private = $invoice['note_private'];
 		$new_invoice->note_public = $invoice['note_public'];
-		$new_invoice->statut = Facture::STATUS_DRAFT; // We start with status draft
+		$new_invoice->status = Facture::STATUS_DRAFT; // We start with status draft
 		$new_invoice->fk_project = (int) $invoice['project_id'];
 		$new_invoice->date_creation = $now;
 
@@ -617,15 +617,15 @@ function createInvoice($authentication, $invoice)
 		foreach ($arrayoflines as $line) {
 			// $key can be 'line' or '0','1',...
 			$newline = new FactureLigne($db);
-			$newline->product_type = $line['type'];
+			$newline->product_type = (int) $line['type'];
 			$newline->desc = $line['desc'];
-			$newline->fk_product = $line['product_id'];
+			$newline->fk_product = (int) $line['product_id'];
 			$newline->tva_tx = isset($line['vat_rate']) ? $line['vat_rate'] : 0;
-			$newline->qty = $line['qty'];
+			$newline->qty = (float) $line['qty'];
 			$newline->subprice = isset($line['unitprice']) ? $line['unitprice'] : null;
-			$newline->total_ht = $line['total_net'];
-			$newline->total_tva = $line['total_vat'];
-			$newline->total_ttc = $line['total'];
+			$newline->total_ht = (float) $line['total_net'];
+			$newline->total_tva = (float) $line['total_vat'];
+			$newline->total_ttc = (float) $line['total'];
 			$newline->date_start = dol_stringtotime($line['date_start']);
 			$newline->date_end = dol_stringtotime($line['date_end']);
 

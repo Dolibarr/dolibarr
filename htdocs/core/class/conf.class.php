@@ -377,6 +377,10 @@ class Conf extends stdClass
 	 */
 	public $category;
 
+	/**
+	 * @var ?stdClass
+	 */
+	public $mrp;
 
 	/**
 	 * Constructor
@@ -968,9 +972,9 @@ class Conf extends stdClass
 				$this->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY = 30; // Less than 1 minutes to be sure
 			}
 
-			// conf->global->ACCOUNTING_MODE = Option des modules Comptabilites (simple ou expert). Defini le mode de calcul des etats comptables (CA,...)
+			// Option for accounting modules (simple or double parties). Define mode of calculation of reports.
 			if (empty($this->global->ACCOUNTING_MODE)) {
-				$this->global->ACCOUNTING_MODE = 'RECETTES-DEPENSES'; // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
+				$this->global->ACCOUNTING_MODE = 'CREANCES-DETTES'; // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES' (default)
 			}
 
 			if (!isset($this->global->MAIN_ENABLE_AJAX_TOOLTIP)) {
@@ -991,6 +995,10 @@ class Conf extends stdClass
 			if (!isset($this->global->MAIN_HTML_TITLE)) {
 				$this->global->MAIN_HTML_TITLE = 'thirdpartynameonly,contactnameonly,projectnameonly';
 			}
+			// MAIN_FEATURE_TO_SHOW_TOP_MENU_URL_IN_FRAME
+			if (!isset($this->global->MAIN_FEATURE_TO_SHOW_TOP_MENU_URL_IN_FRAME)) {
+				$this->global->MAIN_FEATURE_TO_SHOW_TOP_MENU_URL_IN_FRAME = 1;
+			}
 
 			// conf->liste_limit = constant to limit size of lists
 			// This value can be overwritten by user choice in main.inc.php
@@ -1005,11 +1013,6 @@ class Conf extends stdClass
 				} elseif (!empty($_SESSION['dol_screenheight']) && $_SESSION['dol_screenheight'] > 1130) {
 					$this->liste_limit = 20;
 				}
-			}
-
-			// conf->main_checkbox_left_column = constant to set checkbox list to left
-			if (!isset($this->main_checkbox_left_column)) {
-				$this->main_checkbox_left_column = getDolGlobalInt("MAIN_CHECKBOX_LEFT_COLUMN");
 			}
 
 			// Set PRODUIT_LIMIT_SIZE if never defined
@@ -1080,7 +1083,7 @@ class Conf extends stdClass
 				$this->global->MAIN_MAX_DECIMALS_SHOWN = 8;
 			}
 
-			// Non working days
+			// Non working days by default if not set in setup
 			if (!isset($this->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY)) {
 				$this->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY = 1;
 			}
@@ -1138,7 +1141,7 @@ class Conf extends stdClass
 			}
 
 			// Use a SCA ready workflow with Stripe module (STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION by default if nothing defined)
-			if (!isset($this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) && empty($this->global->STRIPE_USE_NEW_CHECKOUT)) {
+			if (!isset($this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION) && !getDolGlobalString('STRIPE_USE_NEW_CHECKOUT')) {
 				$this->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 1;
 			}
 
@@ -1207,6 +1210,13 @@ class Conf extends stdClass
 				$this->propal->cloture->warning_delay = getDolGlobalInt('MAIN_DELAY_PROPALS_TO_CLOSE') * 86400;
 				$this->propal->facturation->warning_delay = getDolGlobalInt('MAIN_DELAY_PROPALS_TO_BILL') * 86400;
 			}
+			// @phpstan-ignore-next-line
+			if (isset($this->supplier_proposal)) {
+				$this->supplier_proposal->cloture = new stdClass();
+				$this->supplier_proposal->facturation = new stdClass();
+				$this->supplier_proposal->cloture->warning_delay = getDolGlobalInt('MAIN_DELAY_SUPPLIER_PROPALS_TO_CLOSE') * 86400;
+				$this->supplier_proposal->facturation->warning_delay = getDolGlobalInt('MAIN_DELAY_SUPPLIER_PROPALS_TO_BILL') * 86400;
+			}
 			if (isset($this->facture)) {
 				$this->facture->client = new stdClass();
 				$this->facture->fournisseur = new stdClass();
@@ -1236,6 +1246,10 @@ class Conf extends stdClass
 				$this->holiday->approve = new stdClass();
 				$this->holiday->approve->warning_delay = getDolGlobalInt('MAIN_DELAY_HOLIDAYS') * 86400;
 			}
+			if (isset($this->mrp)) {
+				$this->mrp->progress = new stdClass();
+				$this->mrp->progress->warning_delay = getDolGlobalInt('MAIN_DELAY_MRP') * 86400;
+			}
 
 			if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT')) {
 				$this->global->PRODUIT_MULTIPRICES_LIMIT = 5;
@@ -1243,6 +1257,11 @@ class Conf extends stdClass
 
 			if (!isset($this->global->MAIN_CHECKBOX_LEFT_COLUMN)) {
 				$this->global->MAIN_CHECKBOX_LEFT_COLUMN = 1;
+			}
+
+			// conf->main_checkbox_left_column = constant to set checkbox list to left
+			if (!isset($this->main_checkbox_left_column)) {
+				$this->main_checkbox_left_column = getDolGlobalInt("MAIN_CHECKBOX_LEFT_COLUMN");
 			}
 
 			// For modules that want to disable top or left menu
@@ -1271,10 +1290,10 @@ class Conf extends stdClass
 			}
 
 			if (empty($this->global->MAIN_MODULE_DOLISTORE_API_SRV)) {
-				$this->global->MAIN_MODULE_DOLISTORE_API_SRV = 'https://www.dolistore.com';
+				$this->global->MAIN_MODULE_DOLISTORE_API_SRV = 'https://www.dolistore.com/api/';
 			}
 			if (empty($this->global->MAIN_MODULE_DOLISTORE_API_KEY)) {
-				$this->global->MAIN_MODULE_DOLISTORE_API_KEY = 'dolistorecatalogpublickey1234567';
+				$this->global->MAIN_MODULE_DOLISTORE_API_KEY = 'dolistorepublicapi';
 			}
 
 			// Enable by default the CSRF protection by token.

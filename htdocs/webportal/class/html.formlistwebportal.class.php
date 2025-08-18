@@ -176,6 +176,8 @@ class FormListWebPortal
 					$search[$key . '_dtend'] = dol_mktime(23, 59, 59, $dateEndMonth, $dateEndDay, $dateEndYear);
 				}
 				*/
+				$search[$key . '_dtstart'] = dol_mktime(0, 0, 0, GETPOSTINT('search_'.$key.'_dtstartmonth'), GETPOSTINT('search_'.$key.'_dtstartday'), GETPOSTINT('search_'.$key.'_dtstartyear'));
+				$search[$key . '_dtend'] = dol_mktime(23, 59, 59, GETPOSTINT('search_'.$key.'_dtendmonth'), GETPOSTINT('search_'.$key.'_dtendday'), GETPOSTINT('search_'.$key.'_dtendyear'));
 				$search[$key . '_dtstartmonth'] = GETPOSTINT('search_' . $key . '_dtstartmonth');
 				$search[$key . '_dtstartday'] = GETPOSTINT('search_' . $key . '_dtstartday');
 				$search[$key . '_dtstartyear'] = GETPOSTINT('search_' . $key . '_dtstartyear');
@@ -591,7 +593,7 @@ class FormListWebPortal
 		}
 
 		// Hook fields
-		$parameters = array('arrayfields' => $arrayfields, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
+		$parameters = array('arrayfields' => $arrayfields, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'sortList' => $sortList, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		$html .= $hookmanager->resPrint;
 		$html .= '</tr>';
@@ -694,7 +696,9 @@ class FormListWebPortal
 			}
 			// Remain to pay
 			if (array_key_exists('remain_to_pay', $arrayfields) && !empty($arrayfields['remain_to_pay']['checked'])) {
-				// @phan-suppress-next-line PhanTypeMismatchArgument
+				// @phan-suppress-next-line PhanTypeInvalidDimOffset
+				$html .= '<td class="nowraponall" data-label="' . dolPrintHTMLForAttribute((string) $arrayfields['remain_to_pay']['label']) . '">';
+				// @phan-suppress-next-line PhanTypeMismatchArgument PhanTypeInvalidDimOffset
 				$html .= $this->form->showOutputFieldForObject($object, $arrayfields['remain_to_pay'], 'remain_to_pay', $remaintopay, '');
 				//$html .= price($remaintopay);
 				$html .= '</td>';

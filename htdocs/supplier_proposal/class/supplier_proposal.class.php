@@ -431,8 +431,8 @@ class SupplierProposal extends CommonObject
 	 *      @param      int			$rang               Position of line
 	 *      @param		int			$special_code		Special code (also used by externals modules!)
 	 *      @param		int			$fk_parent_line		Id of parent line
-	 *      @param		int			$fk_fournprice		Id supplier price. If 0, we will take best price. If -1 we keep it empty.
-	 *      @param		int			$pa_ht				Buying price without tax
+	 *      @param		int|string		$fk_fournprice		Id supplier price or string. If 0, we will take best price. If -1 we keep it empty.
+	 *      @param		float|string	$pa_ht				Buying price without tax (Can be '' to keep AWP unchanged or a float value)
 	 *      @param		string		$label				???
 	 *      @param		array<string,mixed>		$array_options		extrafields array
 	 * 		@param		string		$ref_supplier		Supplier price reference
@@ -717,7 +717,7 @@ class SupplierProposal extends CommonObject
 	 * 	@param		int			$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
 	 * 	@param		int			$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
 	 *  @param		int			$fk_fournprice		Id of origin supplier price
-	 *  @param		float		$pa_ht				Price (without tax) of product when it was bought
+	 *  @param		float|string	$pa_ht			Price (without tax) of product when it was bought (Can be '' to keep AWP unchanged or a float value)
 	 *  @param		string		$label				???
 	 *  @param		int<0,1>	$type				0/1=Product/service
 	 *  @param		array<string,mixed>	$array_options		extrafields array
@@ -1260,6 +1260,7 @@ class SupplierProposal extends CommonObject
 		$sql .= ", p.fk_mode_reglement";
 		$sql .= ', p.fk_account';
 		$sql .= ", p.fk_shipping_method";
+		$sql .= ", p.last_main_doc";
 		$sql .= ", p.fk_multicurrency, p.multicurrency_code, p.multicurrency_tx, p.multicurrency_total_ht, p.multicurrency_total_tva, p.multicurrency_total_ttc";
 		$sql .= ", c.label as statut_label";
 		$sql .= ", cr.code as cond_reglement_code, cr.libelle as cond_reglement, cr.libelle_facture as cond_reglement_libelle_doc";
@@ -1306,6 +1307,7 @@ class SupplierProposal extends CommonObject
 				$this->delivery_date        = $this->db->jdate($obj->delivery_date);
 				$this->shipping_method_id   = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
 
+				$this->last_main_doc    = $obj->last_main_doc;
 				$this->mode_reglement_id    = $obj->fk_mode_reglement;
 				$this->mode_reglement_code  = $obj->mode_reglement_code;
 				$this->mode_reglement       = $obj->mode_reglement;

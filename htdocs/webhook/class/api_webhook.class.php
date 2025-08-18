@@ -169,8 +169,13 @@ class Webhook extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('webhook', 'webhook_target', 'write')) {
 			throw new RestException(403);
 		}
-		// Check mandatory fields
-		$request_data = $this->_validate($request_data);
+
+		if (!is_array($request_data)) {
+			$request_data = array();
+		}
+
+		// Check mandatory fields (not using output, only possible exception is important)
+		$this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
 			$this->target->$field = $this->_checkValForAPI($field, $value, $this->target);

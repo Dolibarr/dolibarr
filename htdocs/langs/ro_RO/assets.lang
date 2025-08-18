@@ -4,71 +4,52 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 NewAsset=Activ nou
 AccountancyCodeAsset=Cod contabil (activ)
 AccountancyCodeDepreciationAsset=Cod contabil (contul de activ al deprecierii)
 AccountancyCodeDepreciationExpense=Cod contabil (cont de cheltuieli de amortizare)
 AssetsLines=Active
+ConfirmValidateAsset=Sigur doriți să validați acest element cu referința <b>%s</b>?
 DeleteType=Şterge
 DeleteAnAssetType=Şterge un model de activ
 ConfirmDeleteAssetType=Sigur vrei să ștergi acest model de activ?
 ShowTypeCard=Afişare model '%s'
-
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=Active
 # Module description 'ModuleAssetsDesc'
 ModuleAssetsDesc=Descrierea activelor
-
-#
 # Admin page
-#
 AssetSetup=Configurare active
 AssetSetupPage=Pagină de configurare active
 ExtraFieldsAssetModel=Atribute complementare (model Active)
-
 AssetsType=Model active
 AssetsTypeId=Id model activ
 AssetsTypeLabel=Etichetă model activ
 AssetsTypes=Modele de active
 ASSET_ACCOUNTANCY_CATEGORY=Grupă contabilă pentru active fixe
-
-#
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Perioada proporțională în zile pentru calcularea amortizării peste un an
 # Menu
-#
 MenuAssets=Active
 MenuNewAsset=Activ nou
 MenuAssetModels=Modele active
 MenuListAssets=Listă
 MenuNewAssetModel=Model nou de activ
 MenuListAssetModels=Listă
-
-#
 # Module
-#
 ConfirmDeleteAsset=Sigur vrei să ştergi acest activ?
-
-#
 # Tab
-#
 AssetDepreciationOptions=Opţiuni de amortizare
 AssetAccountancyCodes=Conturi contabile
 AssetDepreciation=Amortizare
-
-#
 # Asset
-#
 Asset=Active
 Assets=Active
 AssetReversalAmountHT=Valoare ajustare (fără taxe)
@@ -89,32 +70,21 @@ AssetNotDepreciated=Ne-depreciat
 AssetDisposal=Casare
 AssetConfirmDisposalAsk=Eşti sigur că vrei să amortizezi activul <b> %s</b>?
 AssetConfirmReOpenAsk=Eşti sigur că vrei să re-deschizi activul <b> %s</b>?
-
-#
 # Asset status
-#
+AssetInDraft=Schiţă
 AssetInProgress=În curs
 AssetDisposed=Casat
 AssetRecorded=Contabilizat
-
-#
 # Asset disposal
-#
 AssetDisposalDate=Dată casare
 AssetDisposalAmount=Valoare de casare
 AssetDisposalType=Tip de casare
 AssetDisposalDepreciated=Amortizare la anul de transfer
 AssetDisposalSubjectToVat=Amortizare supusă TVA-ului
-
-#
 # Asset model
-#
 AssetModel=Model activ
 AssetModels=Modele de active
-
-#
 # Asset depreciation options
-#
 AssetDepreciationOptionEconomic=Amortizare economică
 AssetDepreciationOptionAcceleratedDepreciation=Amortizare accelerată (taxă)
 AssetDepreciationOptionDepreciationType=Tip de amortizare
@@ -122,7 +92,6 @@ AssetDepreciationOptionDepreciationTypeLinear=Liniară
 AssetDepreciationOptionDepreciationTypeDegressive=Degresivă
 AssetDepreciationOptionDepreciationTypeExceptional=Excepţională
 AssetDepreciationOptionDegressiveRate=Cotă amortizare degresivă
-AssetDepreciationOptionAcceleratedDepreciation=Amortizare accelerată (taxă)
 AssetDepreciationOptionDuration=Durată
 AssetDepreciationOptionDurationType=Tip durată amortizare
 AssetDepreciationOptionDurationTypeAnnual=Anual
@@ -132,10 +101,7 @@ AssetDepreciationOptionRate=Cotă (%%)
 AssetDepreciationOptionAmountBaseDepreciationHT=Bază de amortizare (fără TVA)
 AssetDepreciationOptionAmountBaseDeductibleHT=Bază deductibilă (fără TVA)
 AssetDepreciationOptionTotalAmountLastDepreciationHT=Valoare totală amortizare (fără TVA)
-
-#
 # Asset accountancy codes
-#
 AssetAccountancyCodeDepreciationEconomic=Amortizare economică
 AssetAccountancyCodeAsset=Active
 AssetAccountancyCodeDepreciationAsset=Amortizare
@@ -149,10 +115,7 @@ AssetAccountancyCodeDepreciationAcceleratedDepreciation=Amortizare accelerată (
 AssetAccountancyCodeAcceleratedDepreciation=Cont
 AssetAccountancyCodeEndowmentAcceleratedDepreciation=Cheltuială cu amortizarea
 AssetAccountancyCodeProvisionAcceleratedDepreciation=Amortizare accelerată/Provizionare
-
-#
 # Asset depreciation
-#
 AssetBaseDepreciationHT=Baza de amortizare (fără TVA)
 AssetDepreciationBeginDate=Început amortizare pe
 AssetDepreciationDuration=Durată
@@ -164,11 +127,8 @@ AssetResidualHT=Valoare reziduală (fără TVA)
 AssetDispatchedInBookkeeping=Amortizare înregistrată
 AssetFutureDepreciationLine=Amortizare în viitor
 AssetDepreciationReversal=Ajustare
-
-#
 # Errors
-#
-AssetErrorAssetOrAssetModelIDNotProvide=Id sau model activ nu a fost furnizat
+AssetErrorAssetOrAssetModelIDNotProvide=Id-ul activului sau modelul găsit nu a fost furnizat
 AssetErrorFetchAccountancyCodesForMode=Eroare la preluarea conturilor contabile pentru metoda de amortizare '%s'
 AssetErrorDeleteAccountancyCodesForMode=Eroare la ștergerea conturilor contabile pentru metoda de amortizare '%s'.
 AssetErrorInsertAccountancyCodesForMode=Eroare la introducerea conturilor contabile pentru metoda de amortizare '%s'

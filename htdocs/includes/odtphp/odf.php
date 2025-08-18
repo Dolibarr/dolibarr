@@ -19,7 +19,7 @@ class OdfExceptionSegmentNotFound extends Exception
 /**
  * Templating class for odt file
  * You need PHP 5.2 at least
- * You need Zip Extension or PclZip library
+ * You need Zip Extension for ZIP_PROXY=PhpZipProxy, or PclZip library for ZIP_PROXY=PclZipProxy (bugged)
  *
  * @copyright  2008 - Julien Pauli - Cyril PIERRE de GEYER - Anaska (http://www.anaska.com)
  * @copyright  2010-2015 - Laurent Destailleur - eldy@users.sourceforge.net
@@ -125,20 +125,27 @@ class Odf
 			throw new OdfException('Temporary directory '.$this->config['PATH_TO_TMP'].' must exists');
 		}
 
-		// Create tmp direcoty (will be deleted in destructor)
+		// Create tmp direcoty (will be deleted in destructor __destruct() if code not commented)
 		if (!file_exists($this->tmpdir)) {
 			$result = mkdir($this->tmpdir);
 		}
 
+		// Fix because PclZipProxy is corrupting the zip file when updating one file inside the existing ODT file.
+		if ($this->config['ZIP_PROXY'] == 'PclZipProxy') {
+			$this->config['ZIP_PROXY'] = 'PhpZipProxy';
+		}
+
 		// Load zip proxy
 		$zipHandler = $this->config['ZIP_PROXY'];
+
 		if (!defined('PCLZIP_TEMPORARY_DIR')) define('PCLZIP_TEMPORARY_DIR', $this->tmpdir);
+
 		include_once 'zip/'.$zipHandler.'.php';
 		if (! class_exists($this->config['ZIP_PROXY'])) {
 			throw new OdfException($this->config['ZIP_PROXY'] . ' class not found - check your php settings');
 		}
-		$this->file = new $zipHandler($this->tmpdir);
 
+		$this->file = new $zipHandler($this->tmpdir);
 
 		if ($this->file->open($filename) !== true) {	// This also create the tmpdir directory
 			throw new OdfException("Error while Opening the file '$filename' - Check your odt filename");
@@ -155,6 +162,7 @@ class Odf
 		if (($this->stylesXml = $this->file->getFromName('styles.xml')) === false) {
 			throw new OdfException("Nothing to parse - Check that the styles.xml file is correctly formed in source file '$filename'");
 		}
+
 		$this->file->close();
 
 
@@ -162,6 +170,8 @@ class Odf
 		//print "filename=".$filename;
 		//print "tmpfile=".$tmpfile;
 
+		// Copy the ODT file into a temporary file so we will work from a safe stable source
+		//dol_copy($filename, $this->tmpfile);
 		copy($filename, $this->tmpfile);
 
 		// Now file has been loaded, we must move the [!-- BEGIN and [!-- END tags outside the
@@ -756,6 +766,7 @@ IMG;
 	private function _save()
 	{
 		$res=$this->file->open($this->tmpfile);    // tmpfile is odt template
+
 		$this->_parse('content');
 		$this->_parse('styles');
 		$this->_parse('meta');
@@ -766,6 +777,9 @@ IMG;
 		if (! $this->file->addFromString('content.xml', $this->contentXml)) {
 			throw new OdfException('Error during file export addFromString content');
 		}
+
+		// NOTE: After the first addFromString() that do the first $this->pclzip->delete, when using pclzip handler, the zip/oft file is corrupted (no way to edit it with Fileroller).
+
 		if (! $this->file->addFromString('meta.xml', $this->metaXml)) {
 			throw new OdfException('Error during file export addFromString meta');
 		}
@@ -856,11 +870,12 @@ IMG;
 	 * Convert the ODT file to PDF and export the file as attached file by HTTP
 	 * Note: you need to have JODConverter and OpenOffice or LibreOffice installed and executable on the same system as where this php script will be executed. You also need to chmod +x odt2pdf.sh
 	 *
-	 * @param 	string 	$name 	Name of ODT file to generate before generating PDF
+	 * @param 	string 	$name 					Name of ODT file to generate before generating PDF
+	 * @param	int		$dooutputfordownload	Output the file content to make the download
 	 * @throws OdfException
 	 * @return void
 	 */
-	public function exportAsAttachedPDF($name = "")
+	public function exportAsAttachedPDF($name = "", $dooutputfordownload = 1)
 	{
 		global $conf;
 
@@ -963,16 +978,18 @@ IMG;
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
 			$filename=''; $linenum=0;
 
-			if (php_sapi_name() != 'cli') {	// If we are in a web context (not into CLI context)
-				if (headers_sent($filename, $linenum)) {
-					throw new OdfException("headers already sent ($filename at $linenum)");
-				}
+			if ($dooutputfordownload) {
+				if (php_sapi_name() != 'cli') {    // If we are in a web context (not into CLI context)
+					if (headers_sent($filename, $linenum)) {
+						throw new OdfException("headers already sent ($filename at $linenum)");
+					}
 
-				if (getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
-					$name=preg_replace('/\.od(x|t)/i', '', $name);
-					header('Content-type: application/pdf');
-					header('Content-Disposition: attachment; filename="'.basename($name).'.pdf"');
-					readfile($name.".pdf");
+					if (getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+						$name = preg_replace('/\.od(x|t)/i', '', $name);
+						header('Content-type: application/pdf');
+						header('Content-Disposition: attachment; filename="' . basename($name) . '.pdf"');
+						readfile($name . ".pdf");
+					}
 				}
 			}
 
@@ -1023,6 +1040,9 @@ IMG;
 	 */
 	public function __destruct()
 	{
+		// uncomment this when making debug
+		// return
+
 		if (file_exists($this->tmpfile)) {
 			unlink($this->tmpfile);
 		}

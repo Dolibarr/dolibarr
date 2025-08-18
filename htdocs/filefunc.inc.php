@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
- * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2025 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2011 Regis Houssin        <regis.houssin@inodbox.com>
@@ -9,8 +9,8 @@
  * Copyright (C) 2006 	   Andre Cianfarani     <andre.cianfarani@acdeveloppement.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Bahfir Abbes         <bafbes@gmail.com>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025 MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ if (!defined('DOL_APPLICATION_TITLE')) {
 	define('DOL_APPLICATION_TITLE', 'Dolibarr');
 }
 if (!defined('DOL_VERSION')) {
-	define('DOL_VERSION', '22.0.0-alpha'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
+	define('DOL_VERSION', '23.0.0-alpha'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
 }
 
 if (!defined('EURO')) {
@@ -165,6 +165,23 @@ $conffiletoshow = "htdocs/conf/conf.php";
 // Include configuration
 // @phpstan-ignore-next-line
 $result = @include_once $conffile; // Keep @ because with some error reporting mode, this breaks the redirect done when file is not found
+
+/**
+ * @var ?string $dolibarr_main_stream_to_disable
+ * @var ?string $dolibarr_main_instance_unique_id
+ * @var ?string $dolibarr_strict_mode
+ * @var ?string $dolibarr_main_data_root
+ * @var ?string $dolibarr_main_db_prefix
+ * @var ?string $dolibarr_main_db_root
+ * @var ?string $dolibarr_main_db_user
+ * @var ?string $dolibarr_main_db_pass
+ * @var ?string $dolibarr_main_db_port
+ * @var ?string $dolibarr_main_db_type
+ * @var ?string $dolibarr_main_db_encryption
+ * @var ?string $dolibarr_main_db_encrypted_pass
+ * @var ?string $dolibarr_main_prod
+ * @var ?string $dolibarr_main_dolcrypt_key
+ */
 
 // Disable some not used PHP stream
 $listofwrappers = stream_get_wrappers();
@@ -468,11 +485,14 @@ if (!defined('DOL_DEFAULT_TTF_BOLD')) {
  */
 
 // If password is encoded, we decode it. Note: When page is called for install, $dolibarr_main_db_pass may not be defined yet.
-if ((!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) || !empty($dolibarr_main_db_encrypted_pass)) {
+if ((!empty($dolibarr_main_db_pass) && preg_match('/(dolcrypt|crypted):/i', $dolibarr_main_db_pass)) || !empty($dolibarr_main_db_encrypted_pass)) {
 	if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
 		$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
-		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
 		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this so we can use it later to know the password was initially encrypted
+		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
+	} elseif (!empty($dolibarr_main_db_pass) && preg_match('/dolcrypt:/i', $dolibarr_main_db_pass)) {
+		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this so we can use it later to know the password was initially encrypted
+		$dolibarr_main_db_pass = dolDecrypt($dolibarr_main_db_pass, (empty($dolibarr_main_dolcrypt_key) ? (empty($dolibarr_main_instance_unique_id) ? '' : $dolibarr_main_instance_unique_id) : $dolibarr_main_dolcrypt_key));
 	} else {
 		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 	}

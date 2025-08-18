@@ -363,7 +363,7 @@ class Salaries extends DolibarrApi
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object					PaymentSalary object
 	 *
-	 * @url     POST {id}/payments
+	 * @url     PUT {id}/payments
 	 *
 	 * @throws RestException
 	 */

@@ -197,6 +197,8 @@ class Website extends CommonObject
 			return -1;
 		}
 
+		$pathofwebsite = $conf->website->dir_output.'/'.$this->ref;
+
 		// Insert request
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'(';
 		$sql .= 'entity,';
@@ -254,8 +256,6 @@ class Website extends CommonObject
 			dol_mkdir($conf->medias->multidir_output[$conf->entity].'/image/'.$this->ref, DOL_DATA_ROOT);
 			dol_mkdir($conf->medias->multidir_output[$conf->entity].'/js/'.$this->ref, DOL_DATA_ROOT);
 
-			$pathofwebsite = $conf->website->dir_output.'/'.$this->ref;
-
 			// Check symlink documents/website/mywebsite/medias to point to documents/medias and restore it if ko.
 			// Recreate also dir of website if not found.
 			$pathtomedias = DOL_DATA_ROOT.'/medias';
@@ -283,7 +283,13 @@ class Website extends CommonObject
 			$stringtodolibarrfile = "# Some properties for Dolibarr web site CMS\n";
 			$stringtodolibarrfile .= "param=value\n";
 			//print $conf->website->dir_output.'/'.$this->ref.'/.dolibarr';exit;
-			file_put_contents($conf->website->dir_output.'/'.$this->ref.'/.dolibarr', $stringtodolibarrfile);
+			file_put_contents($pathofwebsite.'/.dolibarr', $stringtodolibarrfile);
+
+			$filelicense = $pathofwebsite.'/LICENSE';
+			if (!dol_is_file($filelicense)) {
+				$licensecontent = "LICENSE\n-------\nThis website template content (HTML and PHP code) is published under the license CC-BY-SA - https://creativecommons.org/licenses/by/4.0/";
+				$result = dolSaveLicense($filelicense, $licensecontent);
+			}
 		}
 
 		// Commit or rollback
@@ -1188,7 +1194,11 @@ class Website extends CommonObject
 			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo_small, "file=logos%2Fthumbs%2F__LOGO_SMALL_KEY__", $stringtoexport);
 			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo_mini, "file=logos%2Fthumbs%2F__LOGO_MINI_KEY__", $stringtoexport);
 			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo, "file=logos%2Fthumbs%2F__LOGO_KEY__", $stringtoexport);
-			$line .= "'".$this->db->escape(str_replace(array("\r\n", "\r", "\n"), "__N__", $stringtoexport))."', "; // Replace \r \n to have record on 1 line
+
+			if (getDolGlobalString('WEBSITE_EXPORT_SQL_ON_SEVERAL_LINES')) {
+				$line .= "/* new line */\n";	// Add a comment so we will able to restore a one line instruction on import
+			}
+			$line .= "'".$this->db->escape($stringtoexport)."', ";
 
 			// Make substitution with a generic path into page content
 			$stringtoexport = $objectpageold->content;
@@ -1206,8 +1216,11 @@ class Website extends CommonObject
 			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo_mini, "file=logos%2Fthumbs%2F__LOGO_MINI_KEY__", $stringtoexport);
 			$stringtoexport = str_replace('file=logos%2Fthumbs%2F'.$mysoc->logo, "file=logos%2Fthumbs%2F__LOGO_KEY__", $stringtoexport);
 
+			if (getDolGlobalString('WEBSITE_EXPORT_SQL_ON_SEVERAL_LINES')) {
+				$line .= "/* new line */\n";	// Add a comment so we will able to restore a one line instruction on import
+			}
+			$line .= "'".$this->db->escape($stringtoexport)."', ";
 
-			$line .= "'".$this->db->escape($stringtoexport)."', "; // Replace \r \n to have record on 1 line
 			$line .= "'".$this->db->escape($objectpageold->author_alias)."', ";
 			$line .= (int) $objectpageold->allowed_in_frames;
 			$line .= ");";
@@ -1358,7 +1371,7 @@ class Website extends CommonObject
 		}
 
 		// Load sql record
-		$runsql = run_sql($sqlfile, 1, 0, 0, '', 'none', 0, 1, 0, 0, 1); // The maxrowid of table is searched into this function two
+		$runsql = run_sql($sqlfile, 1, 0, 0, '', 'none', 0, 1, 0, 0, 1, ''); // The maxrowid of table is searched into this function two
 		if ($runsql <= 0) {
 			$this->errors[] = 'Failed to load sql file '.$sqlfile.' (ret='.((int) $runsql).')';
 			$error++;
@@ -1374,7 +1387,7 @@ class Website extends CommonObject
 				$reg = array();
 
 				// Warning fgets with second parameter that is null or 0 hang.
-				$buf = fgets($fp, 65000);
+				$buf = fgets($fp, 65000);	// No needto have a high value here for second parameter. We will process only short lines starting with '-- Page ID ...'
 				$newid = 0;
 
 				// Scan the line
@@ -1751,8 +1764,6 @@ class Website extends CommonObject
 	{
 		global $conf;
 
-		//$error = 0;
-
 		$website = $this;
 		if (empty($website->id) || empty($website->ref)) {
 			setEventMessages("Website id or ref is not defined", null, 'errors');
@@ -1817,7 +1828,7 @@ class Website extends CommonObject
 		// Export on target sources
 		$resultarray = dol_uncompress($pathtotmpzip, $destdir);
 
-		// Remove the file README and LICENSE from the $destdir/containers
+		// Remove the file README.md and LICENSE from the $destdir/containers
 		if (dol_is_file($destdir.'/containers/README.md')) {
 			dol_move($destdir.'/containers/README.md', $destdir.'/README.md', '0', 1, 0, 0);
 		}

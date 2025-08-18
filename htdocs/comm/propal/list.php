@@ -15,7 +15,7 @@
  * Copyright (C) 2018		Nicolas ZABOURI				<info@inovea-conseil.com>
  * Copyright (C) 2019-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2021		Anthony Berton				<anthony.berton@bb2a.fr>
- * Copyright (C) 2021-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2022		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			    <william.mead@manchenumerique.fr>
@@ -139,7 +139,7 @@ $search_date_delivery_endyear = GETPOSTINT('search_date_delivery_endyear');
 $search_date_delivery_start = dol_mktime(0, 0, 0, $search_date_delivery_startmonth, $search_date_delivery_startday, $search_date_delivery_startyear);
 $search_date_delivery_end = dol_mktime(23, 59, 59, $search_date_delivery_endmonth, $search_date_delivery_endday, $search_date_delivery_endyear);
 $search_availability = GETPOST('search_availability', 'intcomma');
-$search_categ_cus = GETPOST("search_categ_cus", 'intcomma');
+$search_categ_cus = GETPOSTINT("search_categ_cus");
 $search_fk_cond_reglement = GETPOST("search_fk_cond_reglement", 'intcomma');
 $search_fk_shipping_method = GETPOST("search_fk_shipping_method", 'intcomma');
 $search_fk_input_reason = GETPOST("search_fk_input_reason", 'intcomma');
@@ -365,7 +365,7 @@ if (empty($reshook)) {
 		$search_multicurrency_montant_vat = '';
 		$search_multicurrency_montant_ttc = '';
 		$search_login = '';
-		$search_product_category = '';
+		$search_product_category = 0;
 		$search_town = '';
 		$search_zip = "";
 		$search_state = "";
@@ -496,7 +496,7 @@ if ($action == "nosign" && $permissiontoclose) {
 		$db->begin();
 		foreach ($toselect as $checked) {
 			if ($tmpproposal->fetch($checked) > 0) {
-				if ($tmpproposal->status == $tmpproposal::STATUS_VALIDATED || (getDolGlobalString('PROPAL_SKIP_ACCEPT_REFUSE') && $tmpproposal->statut == $tmpproposal::STATUS_DRAFT)) {
+				if ($tmpproposal->status == $tmpproposal::STATUS_VALIDATED || (getDolGlobalString('PROPAL_SKIP_ACCEPT_REFUSE') && $tmpproposal->status == $tmpproposal::STATUS_DRAFT)) {
 					$tmpproposal->status = $tmpproposal::STATUS_NOTSIGNED;
 					if ($tmpproposal->closeProposal($user, $tmpproposal::STATUS_NOTSIGNED) > 0) {
 						setEventMessage($tmpproposal->ref." ".$langs->trans('NoSigned'), 'mesgs');
@@ -572,6 +572,7 @@ if (isModEnabled('margin')) {
 $companystatic = new Societe($db);
 $projectstatic = new Project($db);
 $formcompany = new FormCompany($db);
+$userstatic = new User($db);
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
@@ -781,8 +782,8 @@ if ($search_sale && $search_sale != '-1') {
 	}
 }
 // Search for tag/category ($searchCategoryCustomerList is an array of ID)
-$searchCategoryCustomerOperator = -1;
-$searchCategoryCustomerList = array($search_categ_cus);
+$searchCategoryCustomerOperator = GETPOSTINT('search_category_customer_operator');
+$searchCategoryCustomerList = ($search_categ_cus !== '-1' ? explode(',', (string) $search_categ_cus) : array());
 if (!empty($searchCategoryCustomerList)) {
 	$searchCategoryCustomerSqlList = array();
 	$listofcategoryid = '';
@@ -811,7 +812,7 @@ if (!empty($searchCategoryCustomerList)) {
 	}
 }
 // Search for tag/category ($searchCategoryProductList is an array of ID)
-$searchCategoryProductOperator = -1;
+$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
 $searchCategoryProductList = array($search_product_category);
 if (!empty($searchCategoryProductList)) {
 	$searchCategoryProductSqlList = array();
@@ -841,7 +842,7 @@ if (!empty($searchCategoryProductList)) {
 	}
 }
 if ($search_option == 'late') {
-	$sql .= " AND p.fin_validite < '".$db->idate(dol_now() - $conf->propal->cloture->warning_delay)."'";
+	$sql .= " AND p.fin_validite < '".$db->idate(dol_now() - getWarningDelay('propal', 'cloture'))."'";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -855,7 +856,11 @@ $sql .= $hookmanager->resPrint;
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+if (empty($reshook)) {
+	$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+} else {
+	$sql = $hookmanager->resPrint;
+}
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -866,12 +871,12 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
 		$objforcount = $db->fetch_object($resql);
-		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+		$nbtotalofrecords = (int) $objforcount->nbtotalofrecords;
 	} else {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -890,9 +895,6 @@ if (!$resql) {
 	dol_print_error($db);
 	exit;
 }
-
-$objectstatic = new Propal($db);
-$userstatic = new User($db);
 
 if ($socid > 0) {
 	$soc = new Societe($db);
@@ -1204,7 +1206,7 @@ if ($user->hasRight('user', 'user', 'lire')) {
 }
 // If the user can view products
 if (isModEnabled('category') && $user->hasRight('categorie', 'read') && ($user->hasRight('product', 'read') || $user->hasRight('service', 'read'))) {
-	$searchCategoryProductOperator = -1;
+	$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
 	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
 	$formcategory = new FormCategory($db);
@@ -1250,7 +1252,7 @@ print '<tr class="liste_titre_filter">';
 
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre" align="middle">';
+	print '<td class="liste_titre center">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
 	print '</td>';
@@ -1300,13 +1302,13 @@ if (!empty($arrayfields['state.nom']['checked'])) {
 }
 // Country
 if (!empty($arrayfields['country.code_iso']['checked'])) {
-	print '<td class="liste_titre" align="center">';
+	print '<td class="liste_titre center">';
 	print $form->select_country($search_country, 'search_country', '', 0, 'minwidth100imp maxwidth100');
 	print '</td>';
 }
 // Company type
 if (!empty($arrayfields['typent.code']['checked'])) {
-	print '<td class="liste_titre maxwidth100onsmartphone" align="center">';
+	print '<td class="liste_titre maxwidth100onsmartphone center">';
 	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 1, 0, 0, '', 0, 0, 0, getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC'), 'maxwidth100', 1);
 	print ajax_combobox('search_type_thirdparty');
 	print '</td>';
@@ -1526,7 +1528,7 @@ if (!empty($arrayfields['p.fk_statut']['checked'])) {
 }
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre" align="middle">';
+	print '<td class="liste_titre center">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
@@ -1545,7 +1547,7 @@ $totalarray = array(
 // Fields title
 print '<tr class="liste_titre">';
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.ref']['checked'])) {
@@ -1723,7 +1725,7 @@ if (!empty($arrayfields['p.tms']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.date_cloture']['checked'])) {
-	print_liste_field_titre($arrayfields['p.date_cloture']['label'], $_SERVER["PHP_SELF"], "p.date_cloture", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['p.date_cloture']['label'], $_SERVER["PHP_SELF"], "p.date_cloture", "", $param, '', $sortfield, $sortorder, 'center nowraponall ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.note_public']['checked'])) {
@@ -1744,7 +1746,7 @@ if (!empty($arrayfields['p.fk_statut']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ');
+	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
 	$totalarray['nbfield']++;
 }
 print '</tr>'."\n";
@@ -1782,13 +1784,13 @@ while ($i < $imaxinloop) {
 		$param .= "&search_option=".urlencode($search_option);
 	}
 
-	$objectstatic->id = $obj->rowid;
-	$objectstatic->ref = $obj->ref;
-	$objectstatic->ref_customer = $obj->ref_client;
-	$objectstatic->note_public = $obj->note_public;
-	$objectstatic->note_private = $obj->note_private;
-	$objectstatic->statut = $obj->status;
-	$objectstatic->status = $obj->status;
+	$object->id = $obj->rowid;
+	$object->ref = $obj->ref;
+	$object->ref_customer = $obj->ref_client;
+	$object->note_public = $obj->note_public;
+	$object->note_private = $obj->note_private;
+	$object->statut = $obj->status;	// deprecated
+	$object->status = $obj->status;
 
 	$companystatic->id = $obj->socid;
 	$companystatic->name = $obj->name;
@@ -1812,7 +1814,7 @@ while ($i < $imaxinloop) {
 	$multicurrency_totalInvoicedHT = 0;
 	$multicurrency_totalInvoicedTTC = 0;
 
-	$TInvoiceData = $objectstatic->InvoiceArrayList($obj->rowid);
+	$TInvoiceData = $object->InvoiceArrayList($object->id);
 
 	if (!empty($TInvoiceData)) {
 		foreach ($TInvoiceData as $invoiceData) {
@@ -1832,8 +1834,8 @@ while ($i < $imaxinloop) {
 
 	$marginInfo = array();
 	if ($with_margin_info) {
-		$objectstatic->fetch_lines();
-		$marginInfo = $formmargin->getMarginInfosArray($objectstatic);
+		$object->fetch_lines();
+		$marginInfo = $formmargin->getMarginInfosArray($object);
 		$total_ht += $obj->total_ht;
 		$total_margin += $marginInfo['total_margin'];
 	}
@@ -1844,16 +1846,16 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-		$objectstatic->thirdparty = $companystatic;
+		$object->thirdparty = $companystatic;
 		$userstatic->fetch($obj->fk_user_author);
 		$arrayofparams = array('selected' => in_array($object->id, $arrayofselected), 'authorlink' => $userstatic->getNomUrl(-2), 'projectlink' => $projectstatic->getNomUrl(2));
-		print $objectstatic->getKanbanView('', $arrayofparams);
+		print $object->getKanbanView('', $arrayofparams);
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
 		}
 	} else {
-		print '<tr data-rowid="'.$objectstatic->id.'" class="oddeven status'.$objectstatic->status.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? ' opacitymedium' : '').'">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven status'.$object->status.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? ' opacitymedium' : '').'">';
 
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -1877,7 +1879,7 @@ while ($i < $imaxinloop) {
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			// Picto + Ref
 			print '<td class="nobordernopadding nowraponall">';
-			print $objectstatic->getNomUrl(1, '', '', 0, 1, (isset($conf->global->PROPAL_LIST_SHOW_NOTES) ? $conf->global->PROPAL_LIST_SHOW_NOTES : 1));
+			print $object->getNomUrl(1, '', '', 0, 1, (isset($conf->global->PROPAL_LIST_SHOW_NOTES) ? $conf->global->PROPAL_LIST_SHOW_NOTES : 1));
 			print '</td>';
 			// Warning
 			$warnornote = '';
@@ -1894,7 +1896,7 @@ while ($i < $imaxinloop) {
 			$filename = dol_sanitizeFileName($obj->ref);
 			$filedir = $conf->propal->multidir_output[$obj->propal_entity].'/'.dol_sanitizeFileName($obj->ref);
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-			print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
+			print $formfile->getDocumentsLink($object->element, $filename, $filedir);
 			print '</td></tr></table>';
 
 			print "</td>\n";
@@ -2356,7 +2358,7 @@ while ($i < $imaxinloop) {
 		print $hookmanager->resPrint;
 		// Date creation
 		if (!empty($arrayfields['p.datec']['checked'])) {
-			print '<td align="center" class="nowrap">';
+			print '<td class="nowraponall center">';
 			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
@@ -2365,7 +2367,7 @@ while ($i < $imaxinloop) {
 		}
 		// Date modification
 		if (!empty($arrayfields['p.tms']['checked'])) {
-			print '<td align="center" class="nowrap">';
+			print '<td class="nowraponall center">';
 			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
@@ -2374,7 +2376,7 @@ while ($i < $imaxinloop) {
 		}
 		// Date cloture
 		if (!empty($arrayfields['p.date_cloture']['checked'])) {
-			print '<td align="center" class="nowrap">';
+			print '<td class="nowraponall center">';
 			print dol_print_date($db->jdate($obj->date_cloture), 'dayhour', 'tzuser');
 			print '</td>';
 			if (!$i) {
@@ -2384,7 +2386,7 @@ while ($i < $imaxinloop) {
 		// Note public
 		if (!empty($arrayfields['p.note_public']['checked'])) {
 			print '<td class="sensiblehtmlcontent center">';
-			print dolPrintHTML($obj->note_public);
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2393,7 +2395,7 @@ while ($i < $imaxinloop) {
 		// Note private
 		if (!empty($arrayfields['p.note_private']['checked'])) {
 			print '<td class="sensiblehtmlcontent center">';
-			print dolPrintHTML($obj->note_private);
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2410,14 +2412,14 @@ while ($i < $imaxinloop) {
 
 		// Status
 		if (!empty($arrayfields['p.fk_statut']['checked'])) {
-			print '<td class="nowrap center">'.$objectstatic->getLibStatut(5).'</td>';
+			print '<td class="nowrap center">'.$object->getLibStatut(5).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-			print '<td class="nowrap" align="center">';
+			print '<td class="nowrap center">';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
 				if (in_array($obj->rowid, $arrayofselected)) {

@@ -64,7 +64,7 @@ abstract class CommonDocGenerator
 	protected $db;
 
 	/**
-	 * @var ?Extrafields object
+	 * @var ?ExtraFields object
 	 */
 	public $extrafieldsCache;
 
@@ -659,7 +659,7 @@ abstract class CommonDocGenerator
 		// phpcs:enable
 		global $extrafields;
 
-		$sumpayed = $sumdeposit = $sumcreditnote = '';
+		$totalpaid = $totaldeposits = $totalcreditnotes = '';
 		$already_payed_all = 0;
 
 		if ($object->element == 'facture') {
@@ -669,10 +669,10 @@ abstract class CommonDocGenerator
 			if ($object->fk_facture_source > 0) {
 				$invoice_source->fetch($object->fk_facture_source);
 			}
-			$sumpayed = $object->getSommePaiement();
-			$sumdeposit = $object->getSumDepositsUsed();
-			$sumcreditnote = $object->getSumCreditNotesUsed();
-			$already_payed_all = $sumpayed + $sumdeposit + $sumcreditnote;
+			$totalpaid = $object->getSommePaiement();
+			$totaldeposits = $object->getSumDepositsUsed();
+			$totalcreditnotes = $object->getSumCreditNotesUsed();
+			$already_payed_all = $totalpaid + $totaldeposits + $totalcreditnotes;
 		}
 
 		// Ignore notice for deprecated date - @phan-suppress-next-line PhanUndeclaredProperty
@@ -707,7 +707,7 @@ abstract class CommonDocGenerator
 			$array_key.'_payment_mode_code' => $object->mode_reglement_code,
 			$array_key.'_payment_mode' => ($outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code) != 'PaymentType'.$object->mode_reglement_code ? $outputlangs->transnoentitiesnoconv('PaymentType'.$object->mode_reglement_code) : $object->mode_reglement),
 			$array_key.'_payment_term_code' => $object->cond_reglement_code,
-			$array_key.'_payment_term' => ($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) != 'PaymentCondition'.$object->cond_reglement_code ? $outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) : ($object->cond_reglement_doc ? $object->cond_reglement_doc : $object->cond_reglement)),
+			$array_key.'_payment_term' => ($outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) != 'PaymentCondition'.$object->cond_reglement_code ? $outputlangs->transnoentitiesnoconv('PaymentCondition'.$object->cond_reglement_code) : $object->cond_reglement_doc),
 
 			$array_key.'_incoterms' => (method_exists($object, 'display_incoterms') ? $object->display_incoterms() : ''),
 
@@ -737,12 +737,12 @@ abstract class CommonDocGenerator
 			$array_key.'_note' => $object->note_public, // For backward compatibility
 
 			// Payments
-			$array_key.'_already_payed_locale' => price($sumpayed, 0, $outputlangs),
-			$array_key.'_already_payed' => price2num($sumpayed),
-			$array_key.'_already_deposit_locale' => price($sumdeposit, 0, $outputlangs),
-			$array_key.'_already_deposit' => price2num($sumdeposit),
-			$array_key.'_already_creditnote_locale' => price($sumcreditnote, 0, $outputlangs),
-			$array_key.'_already_creditnote' => price2num($sumcreditnote),
+			$array_key.'_already_payed_locale' => price($totalpaid, 0, $outputlangs),
+			$array_key.'_already_payed' => price2num($totalpaid),
+			$array_key.'_already_deposit_locale' => price($totaldeposits, 0, $outputlangs),
+			$array_key.'_already_deposit' => price2num($totaldeposits),
+			$array_key.'_already_creditnote_locale' => price($totalcreditnotes, 0, $outputlangs),
+			$array_key.'_already_creditnote' => price2num($totalcreditnotes),
 
 			$array_key.'_already_payed_all_locale' => price(price2num($already_payed_all, 'MT'), 0, $outputlangs),
 			$array_key.'_already_payed_all' => price2num($already_payed_all, 'MT'),
@@ -1177,7 +1177,7 @@ abstract class CommonDocGenerator
 	 *
 	 *	@param  CommonObject	$object				Object with extrafields (must have $object->array_options filled)
 	 *	@param  array<string,float|string>	$array_to_fill      Substitution array
-	 *  @param  Extrafields		$extrafields        Extrafields object
+	 *  @param  ExtraFields		$extrafields        ExtraFields object
 	 *  @param  string			$array_key	        Prefix for name of the keys into returned array
 	 *  @param  Translate		$outputlangs        Lang object to use for output
 	 *	@return	array<string,float|string>				Substitution array

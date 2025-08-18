@@ -321,10 +321,11 @@ if (($action == 'settitle' || $action == 'setemail_from' || $action == 'setreply
  * View
  */
 
-llxHeader('', $langs->trans("Mailing"), 'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing');
-
 $form = new Form($db);
 $formmailing = new FormMailing($db);
+
+$help_url = 'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing';
+llxHeader('', $langs->trans("Mailing"), $help_url);
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 $totalarray = [
@@ -334,7 +335,7 @@ $totalarray = [
 if ($object->fetch($id) >= 0) {
 	$head = emailing_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'targets', $langs->trans("Mailing"), -1, 'email');
+	print dol_get_fiche_head($head, 'targets', $langs->trans("Mailing"), -1, $object->picto);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -364,10 +365,11 @@ if ($object->fetch($id) >= 0) {
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border centpercent tableforfield">';
+	print '<table class="border centpercent tableforfield">'."\n";
 
 	// From
-	print '<tr><td class="titlefield">'.$langs->trans("MailFrom").'</td><td>';
+	print '<tr><td class="titlefield">';
+	print $langs->trans("MailFrom").'</td><td>';
 	$emailarray = CMailFile::getArrayAddress($object->email_from);
 	foreach ($emailarray as $email => $name) {
 		if ($name && $name != $email) {
@@ -440,20 +442,19 @@ if ($object->fetch($id) >= 0) {
 	print '</td><td>';
 	$nbemail = ($object->nbemail ? $object->nbemail : 0);
 	if (is_numeric($nbemail)) {
-		$text = '';
+		$htmltooltip = '';
 		if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') < $nbemail) && ($object->status == 1 || ($object->status == 2 && $nbtry < $nbemail))) {
 			if (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') > 0) {
-				$text .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
+				$htmltooltip .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
 			} else {
-				$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
+				$htmltooltip .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
 			}
 		}
 		if (empty($nbemail)) {
 			$nbemail .= ' '.img_warning($langs->trans('ToAddRecipientsChooseHere'));//.' <span class="warning">'.$langs->trans("NoTargetYet").'</span>';
 		}
-		if ($text) {
-			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			print $form->textwithpicto($nbemail, $text, 1, 'warning');
+		if ($htmltooltip) {
+			print $form->textwithpicto($nbemail, $htmltooltip, 1, 'info');
 		} else {
 			print $nbemail;
 		}
@@ -473,7 +474,7 @@ if ($object->fetch($id) >= 0) {
 		}
 		print $text;
 		if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
-			if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') && getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'mail') {
+			if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'mail') {
 				print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER_EMAILING', getDolGlobalString('MAIN_MAIL_SMTP_SERVER')).')</span>';
 			}
 		} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE') != 'mail' && getDolGlobalString('MAIN_MAIL_SMTP_SERVER')) {
@@ -715,7 +716,7 @@ if ($object->fetch($id) >= 0) {
 	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
-		if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+		if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 			$page = 0;
 			$offset = 0;
 		}
@@ -811,7 +812,7 @@ if ($object->fetch($id) >= 0) {
 		print '<tr class="liste_titre_filter">';
 
 		// Action column
-		if ($conf->main_checkbox_left_column) {
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="liste_titre maxwidthsearch">';
 			$searchpicto = $form->showFilterButtons('left');
 			print $searchpicto;
@@ -854,7 +855,7 @@ if ($object->fetch($id) >= 0) {
 		print '</td>';
 
 		// Action column
-		if (empty($conf->main_checkbox_left_column)) {
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="liste_titre maxwidthsearch">';
 			$searchpicto = $form->showFilterButtons();
 			print $searchpicto;
@@ -869,7 +870,7 @@ if ($object->fetch($id) >= 0) {
 
 		print '<tr class="liste_titre">';
 		// Action column
-		if ($conf->main_checkbox_left_column) {
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 			$totalarray['nbfield']++;
 		}
@@ -884,7 +885,7 @@ if ($object->fetch($id) >= 0) {
 		print_liste_field_titre("DateSending", $_SERVER["PHP_SELF"], "mc.date_envoi", $param, '', '', $sortfield, $sortorder, 'center ');
 		print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "mc.statut", $param, '', '', $sortfield, $sortorder, 'center ');
 		// Action column
-		if (!$conf->main_checkbox_left_column) {
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 			$totalarray['nbfield']++;
 		}

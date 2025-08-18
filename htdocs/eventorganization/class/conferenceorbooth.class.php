@@ -285,7 +285,7 @@ class ConferenceOrBooth extends ActionComm
 	 */
 	public function fetch($id, $ref = null, $ref_ext = '', $email_msgid = '', $loadresources = 1)
 	{
-		global $dolibarr_main_url_root, $conf, $langs;
+		global $dolibarr_main_url_root;
 
 		$result = parent::fetch($id, $ref, $ref_ext, $email_msgid);
 
@@ -298,6 +298,7 @@ class ConferenceOrBooth extends ActionComm
 		$this->pubregister = $link_subscription;*/
 
 		$this->getActionCommFields();
+
 		return $result;
 	}
 
@@ -331,7 +332,7 @@ class ConferenceOrBooth extends ActionComm
 
 		// Manage filter
 		if (is_array($filter)) {	// deprecated, use $filter = USF syntax
-			dol_syslog("You are using a deprecated use of fetchAll. filter parameter mus be an USF string now.", LOG_WARNING);
+			dol_syslog("You are using a deprecated use of fetchAll. filter parameter must be an USF string now.", LOG_WARNING);
 			$sqlwhere = array();
 			if (count($filter) > 0) {
 				foreach ($filter as $key => $value) {

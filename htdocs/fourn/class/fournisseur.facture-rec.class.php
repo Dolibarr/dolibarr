@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			    <regis.houssin@inodbox.com>
@@ -43,7 +42,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class FactureFournisseurRec extends CommonInvoice
 {
-	const TRIGGER_PREFIX = 'SUPPLIERBILLREC';
+	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'SUPPLIERBILLREC';
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -67,7 +71,7 @@ class FactureFournisseurRec extends CommonInvoice
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'bill';
+	public $picto = 'supplier_invoice';
 
 	/**
 	 * {@inheritdoc}
@@ -75,18 +79,17 @@ class FactureFournisseurRec extends CommonInvoice
 	protected $table_ref_field = 'titre';
 
 	/**
-	 * @var string 	The label of recurring invoice
+	 * @var string 	The ref of the recurring invoice
 	 * @deprecated	Use $title
 	 */
 	public $titre;
 	/**
-	 * @var string The label of recurring invoice
+	 * @var string 	The ref of the recurring invoice
 	 */
 	public $title;
 
 	/**
 	 * @var string
-	 * @deprecated
 	 */
 	public $ref_supplier;
 	/**
@@ -336,9 +339,10 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param 	User		$user 			User object
 	 * @param 	int			$facFournId		Id invoice
 	 * @param 	int<0,1> 	$notrigger 		No trigger
+	 *  @param	int[]		$onlylines		Only the lines of the array
 	 * @return	int			            	Return integer <0 if KO, id of invoice created if OK
 	 */
-	public function create($user, $facFournId, $notrigger = 0)
+	public function create($user, $facFournId, $notrigger = 0, $onlylines = array())
 	{
 		global $conf;
 
@@ -350,7 +354,9 @@ class FactureFournisseurRec extends CommonInvoice
 		$this->title = empty($this->title) ? '' : $this->title;
 		$keyforref = $this->table_ref_field;
 		$this->ref = $this->$keyforref;
+
 		$this->ref_supplier = empty($this->ref_supplier) ? '' : $this->ref_supplier;
+
 		$this->usenewprice = empty($this->usenewprice) ? 0 : $this->usenewprice;
 		$this->suspended = empty($this->suspended) ? 0 : $this->suspended;
 		// No frequency defined then no next date to execution
@@ -448,6 +454,9 @@ class FactureFournisseurRec extends CommonInvoice
 				for ($i = 0; $i < $num; $i++) {
 					$facfourn_line = $facfourn_src->lines[$i];
 					'@phan-var-force SupplierInvoiceLine $facfourn_line';
+					if (!empty($onlylines) && !in_array($facfourn_line->id, $onlylines)) {
+						continue; // Skip unselected lines
+					}
 
 					$tva_tx = $facfourn_line->tva_tx;
 					if (!empty($facfourn_line->vat_src_code) && !preg_match('/\(/', (string) $tva_tx)) {
@@ -848,8 +857,8 @@ class FactureFournisseurRec extends CommonInvoice
 				$line->total_localtax2          = $objp->total_localtax2;
 				$line->total_ttc                = $objp->total_ttc;
 				$line->product_type             = $objp->product_type;
-				$line->date_start               = $objp->date_start;
-				$line->date_end                 = $objp->date_end;
+				$line->date_start               = $this->db->jdate($objp->date_start);
+				$line->date_end                 = $this->db->jdate($objp->date_end);
 				$line->info_bits                = $objp->info_bits	;
 				$line->special_code             = $objp->special_code;
 				$line->rang                     = $objp->rang;

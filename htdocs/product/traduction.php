@@ -98,7 +98,8 @@ if (empty($reshook)) {
 	if ($action == 'delete' && GETPOST('langtodelete', 'alpha') && $usercancreate) {
 		$object->delMultiLangs(GETPOST('langtodelete', 'alpha'), $user);
 		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-		$action = '';
+		header('Location:'.$_SERVER['PHP_SELF'].'?id='.$id);
+		exit;
 	}
 
 	// Add translation
@@ -127,7 +128,8 @@ if (empty($reshook)) {
 		}
 
 		if ($result > 0) {
-			$action = '';
+			header('Location:'.$_SERVER['PHP_SELF'].'?id='.$id);
+			exit;
 		} else {
 			$action = 'add';
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -154,7 +156,8 @@ if (empty($reshook)) {
 
 		$result = $object->setMultiLangs($user);
 		if ($result > 0) {
-			$action = '';
+			header('Location:'.$_SERVER['PHP_SELF'].'?id='.$id);
+			exit;
 		} else {
 			$action = 'edit';
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -167,7 +170,8 @@ if (empty($reshook)) {
 
 		$result = $object->delMultiLangs($langtodelete, $user);
 		if ($result > 0) {
-			$action = '';
+			header('Location:'.$_SERVER['PHP_SELF'].'?id='.$id);
+			exit;
 		} else {
 			$action = 'edit';
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -267,7 +271,7 @@ if ($action == 'edit') {
 
 			print '<div class="underbanner clearboth"></div>';
 			print '<table class="border centpercent">';
-			print '<tr><td class="tdtop titlefieldcreate fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.dol_escape_htmltag($object->multilangs[$key]["label"]).'"></td></tr>';
+			print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.dol_escape_htmltag($object->multilangs[$key]["label"]).'"></td></tr>';
 			print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>';
 			$doleditor = new DolEditor("desc-$key", $object->multilangs[$key]["description"], '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), ROWS_3, '90%');
 			$doleditor->Create();

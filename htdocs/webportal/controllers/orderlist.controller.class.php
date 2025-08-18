@@ -33,7 +33,7 @@ class OrderListController extends Controller
 	/**
 	 * @var FormListWebPortal Form for list
 	 */
-	protected $formList;
+	public $formList;
 
 
 	/**

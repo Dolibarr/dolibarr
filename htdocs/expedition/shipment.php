@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012-2015	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018-2022  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -209,7 +209,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$result = $object->updateExtraField($attribute_name, 'SHIPMENT_MODIFY');
+			$result = $object->updateExtraField($attribute_name, 'SHIPPING_MODIFY');
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
@@ -301,7 +301,7 @@ if ($order_id > 0 || !empty($ref)) {
 		if (isModEnabled('project')) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>';
-			if (0) {	// Do not change on shipment
+			if (0) {	// @phpstan-ignore-line  Do not change on shipment
 				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
@@ -470,7 +470,7 @@ if ($order_id > 0 || !empty($ref)) {
 		print $langs->trans('PaymentConditionsShort');
 		print '</td>';
 
-		if ($action != 'editconditions' && $object->statut == Expedition::STATUS_VALIDATED) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+		if ($action != 'editconditions' && $object->status == Expedition::STATUS_VALIDATED) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editconditions')
@@ -488,7 +488,7 @@ if ($order_id > 0 || !empty($ref)) {
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('PaymentMode');
 		print '</td>';
-		if ($action != 'editmode' && $object->statut == Expedition::STATUS_VALIDATED) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+		if ($action != 'editmode' && $object->status == Expedition::STATUS_VALIDATED) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="2">';
 		if ($action == 'editmode')
@@ -614,7 +614,7 @@ if ($order_id > 0 || !empty($ref)) {
 		$sql .= " cd.qty, cd.fk_unit, cd.rang,";
 		$sql .= ' cd.date_start,';
 		$sql .= ' cd.date_end,';
-		$sql .= ' cd.special_code,';
+		$sql .= ' cd.special_code, cd.extraparams,';
 		$sql .= ' p.rowid as prodid, p.label as product_label, p.entity, p.ref, p.fk_product_type as product_type, p.description as product_desc,';
 		$sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units,';
 		$sql .= ' p.surface, p.surface_units, p.volume, p.volume_units';
@@ -661,7 +661,7 @@ if ($order_id > 0 || !empty($ref)) {
 					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				}
 
-				if (empty($reshook)) {
+				if (empty($reshook) && $objp->special_code != SUBTOTALS_SPECIAL_CODE) {
 					// Show product and description
 					$type = isset($objp->type) ? $objp->type : $objp->product_type;
 
@@ -840,6 +840,9 @@ if ($order_id > 0 || !empty($ref)) {
 							}
 						}
 					}
+				} elseif (empty($reshook) && $objp->special_code == SUBTOTALS_SPECIAL_CODE) {
+					$line = $objp;
+					require dol_buildpath('/core/tpl/subtotal_expedition_view.tpl.php');
 				}
 				$i++;
 			}
@@ -864,7 +867,7 @@ if ($order_id > 0 || !empty($ref)) {
 			print '<div class="tabsAction">';
 
 			// Bouton expedier sans gestion des stocks
-			if (!isModEnabled('stock') && ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED)) {
+			if (!isModEnabled('stock') && ($object->status > Commande::STATUS_DRAFT && $object->status < Commande::STATUS_CLOSED)) {
 				if ($user->hasRight('expedition', 'creer')) {
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/card.php?action=create&amp;origin=commande&amp;object_id='.$order_id.'">'.$langs->trans("CreateShipment").'</a>';
 					if ($toBeShippedTotal <= 0) {
@@ -880,11 +883,11 @@ if ($order_id > 0 || !empty($ref)) {
 
 		// Button to create a shipment
 
-		if (isModEnabled('stock') && $object->statut == Commande::STATUS_DRAFT) {
+		if (isModEnabled('stock') && $object->status == Commande::STATUS_DRAFT) {
 			print $langs->trans("ValidateOrderFirstBeforeShipment");
 		}
 
-		if (isModEnabled('stock') && ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED)) {
+		if (isModEnabled('stock') && ($object->status > Commande::STATUS_DRAFT && $object->status < Commande::STATUS_CLOSED)) {
 			if ($user->hasRight('expedition', 'creer')) {
 				//print load_fiche_titre($langs->trans("CreateShipment"));
 				print '<div class="tabsAction">';
@@ -896,36 +899,27 @@ if ($order_id > 0 || !empty($ref)) {
 				print '<input type="hidden" name="origin" value="commande">';
 				print '<input type="hidden" name="origin_id" value="'.$object->id.'">';
 				print '<input type="hidden" name="projectid" value="'.$object->fk_project.'">';
-				//print '<table class="border centpercent">';
 
 				$langs->load("stocks");
 
-				//print '<tr>';
+				print '<div class="center formconsumeproduce">';
 
 				if (isModEnabled('stock')) {
-					//print '<td>';
 					print $langs->trans("WarehouseSource");
-					//print '</td>';
-					//print '<td>';
-					print $formproduct->selectWarehouses(!empty($object->warehouse_id) ? $object->warehouse_id : 'ifone', 'entrepot_id', '', 1, 0, 0, '', 0, 0, array(), 'minwidth200');
+					print $formproduct->selectWarehouses(empty($object->warehouse_id) ? 'ifone' : $object->warehouse_id, 'entrepot_id', '', 1, 0, 0, $langs->trans("Any"), 0, 0, array(), 'minwidth200');
 					if (count($formproduct->cache_warehouses) <= 0) {
 						print ' &nbsp; '.$langs->trans("WarehouseSourceNotDefined").' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create">'.$langs->trans("AddOne").'</a>';
 					}
-					//print '</td>';
 				}
-				//print '<td class="center">';
-				print '<input type="submit" class="butAction" named="save" value="'.$langs->trans("CreateShipment").'">';
+				print '<input type="submit" class="butAction marginbottomonly margintoponly" name="save" value="'.$langs->trans("CreateShipment").'">';
 				if ($toBeShippedTotal <= 0) {
 					print ' '.img_warning($langs->trans("WarningNoQtyLeftToSend"));
 				}
-				//print '</td></tr>';
-
-				//print "</table>";
+				print '<br><br>';
+				print '</div>';
 				print "</form>\n";
 
 				print '</div>';
-
-				$somethingshown = 1;
 			} else {
 				print '<div class="tabsAction">';
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("CreateShipment").'</a>';

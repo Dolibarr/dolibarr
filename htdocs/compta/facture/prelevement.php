@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004       Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2016  Laurent Destailleur		<eldy@users.sourceforge.net>
@@ -351,7 +350,7 @@ if ($object->id > 0) {
 	$listofopendirectdebitorcredittransfer = $object->getListOfOpenDirectDebitOrCreditTransfer($type);
 	$numopen = count($listofopendirectdebitorcredittransfer);
 
-	print dol_get_fiche_head($head, 'standingorders', $title, -1, ($type == 'bank-transfer' ? 'supplier_invoice' : 'bill'));
+	print dol_get_fiche_head($head, 'standingorders', $title, -1, ($type == 'bank-transfer' ? 'supplier_invoice' : $object->picto));
 
 	// Invoice content
 	if ($type == 'bank-transfer') {
@@ -384,7 +383,7 @@ if ($object->id > 0) {
 	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>';
-		if (0) {
+		if (0) {	// @phpstan-ignore-line
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
@@ -722,7 +721,49 @@ if ($object->id > 0) {
 
 
 	// For which amount ?
+	// Note: The 2 following SQL requests are wrong but it works because we have one record into pfd for one record into pl and for into p for the same fk_facture_fourn.
+	// The table prelevement and prelevement_lignes and must be removed in future and merged into prelevement_demande
+	// Step 1: Move field fk_... of llx_prelevement into llx_prelevement_lignes
+	// Step 2: Move field fk_... + status into prelevement_demande.
+	$pending = 0;
+	// Get pending requests open with no transfer receipt yet
+	$sql = "SELECT SUM(pfd.amount) as amount";
+	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+	if ($type == 'bank-transfer') {
+		$sql .= " WHERE pfd.fk_facture_fourn = ".((int) $object->id);
+	} else {
+		$sql .= " WHERE pfd.fk_facture = ".((int) $object->id);
+	}
+	$sql .= " AND pfd.traite = 0";
+	//$sql .= " AND pfd.type = 'ban'";
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		if ($obj) {
+			$pending += (float) $obj->amount;
+		}
+	} else {
+		dol_print_error($db);
+	}
+	// Get pending request with a transfer receipt generated but not yet processed
+	$sqlPending = "SELECT SUM(pl.amount) as amount";
+	$sqlPending .= " FROM ".$db->prefix()."prelevement_lignes as pl";
+	$sqlPending .= " INNER JOIN ".$db->prefix()."prelevement as p ON p.fk_prelevement_lignes = pl.rowid";
+	if ($type == 'bank-transfer') {
+		$sqlPending .= " WHERE p.fk_facture_fourn = ".((int) $object->id);
+	} else {
+		$sqlPending .= " WHERE p.fk_facture = ".((int) $object->id);
+	}
+	$sqlPending .= " AND (pl.statut IS NULL OR pl.statut = 0)";
+	$resPending = $db->query($sqlPending);
+	if ($resPending) {
+		if ($objPending = $db->fetch_object($resPending)) {
+			$pending += (float) $objPending->amount;
+		}
+	}
+	$db->free($resPending);
 
+	/*
 	$sql = "SELECT SUM(pfd.amount) as amount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 	if ($type == 'bank-transfer') {
@@ -737,12 +778,12 @@ if ($object->id > 0) {
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		if ($obj) {
-			$pending = $obj->amount;
+			$pendingAmount = $obj->amount;
 		}
 	} else {
 		dol_print_error($db);
 	}
-
+	*/
 
 	/*
 	 * Buttons
@@ -758,7 +799,7 @@ if ($object->id > 0) {
 	}
 
 	// Add a transfer request
-	if ($object->status > $object::STATUS_DRAFT && $object->paid == 0 && $num == 0) {
+	if ($object->status > $object::STATUS_DRAFT && $object->paid == 0 && $numopen == 0) {
 		if ($resteapayer > 0) {
 			if ($user_perms) {
 				$remaintopaylesspendingdebit = $resteapayer - $pending;
@@ -800,7 +841,7 @@ if ($object->id > 0) {
 					if ($res > 0 && !$companyBankAccount->verif()) {
 						print img_warning('Error on default bank number for IBAN : '.$langs->trans($companyBankAccount->error));
 					}
-				} elseif ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
+				} elseif (($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
 					print img_warning($langs->trans("NoDefaultIBANFound"));
 				}
 
@@ -847,7 +888,7 @@ if ($object->id > 0) {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AmountMustBePositive")).'">'.$buttonlabel.'</a>';
 		}
 	} else {
-		if ($num == 0) {
+		if ($numopen == 0) {
 			if ($object->status > $object::STATUS_DRAFT) {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AlreadyPaid")).'">'.$buttonlabel.'</a>';
 			} else {
@@ -1040,7 +1081,7 @@ if ($object->id > 0) {
 
 	// Past requests
 
-	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande, pfd.date_traite, pfd.fk_prelevement_bons, pfd.amount,";
+	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande, pfd.date_traite, pfd.fk_prelevement_bons, pfd.amount, pfd.fk_societe_rib, pfd.ext_payment_id, pfd.ext_payment_site,";
 	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.fk_bank_account, pb.amount as pb_amount,";
 	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status, u.photo as user_photo,";
 	$sql .= " sr.iban_prefix as iban, sr.bic as bic";
@@ -1055,6 +1096,7 @@ if ($object->id > 0) {
 	}
 	$sql .= " AND pfd.traite = 1";
 	$sql .= " AND pfd.type = 'ban'";
+	//$sql .= " AND pfd.entity IN (".getEntity('prelevement_demande').")";	// Disabled because the filter on fk_facture... should be enough.
 	$sql .= " ORDER BY pfd.date_demande DESC";
 
 	$resql = $db->query($sql);
@@ -1130,7 +1172,7 @@ if ($object->id > 0) {
 				// Show the bank account
 				$fk_bank_account = $withdrawreceipt->fk_bank_account;
 				if (empty($fk_bank_account)) {
-					$fk_bank_account = ($object->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+					$fk_bank_account = ($object->type == 'bank-transfer' ? getDolGlobalInt('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'));
 				}
 				if ($fk_bank_account > 0) {
 					$bankaccount = new Account($db);
@@ -1139,6 +1181,11 @@ if ($object->id > 0) {
 						print ' - ';
 						print $bankaccount->getNomUrl(1);
 					}
+				}
+				if (!empty($obj->ext_payment_id) || !empty($obj->ext_payment_site)) {
+					print ' - <span class="small opacitymedium">';
+					print $obj->ext_payment_id.'/'.$obj->ext_payment_site;
+					print '</span>';
 				}
 			}
 			print "</td>\n";

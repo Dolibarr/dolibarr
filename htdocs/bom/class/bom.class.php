@@ -432,7 +432,6 @@ class BOM extends CommonObject
 	 * Load object lines in memory from the database by type of product
 	 *
 	 * @param int<0,1>	$typeproduct	0 type product, 1 type service
-	 *
 	 * @return int<-1,1>				Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLinesbytypeproduct($typeproduct = 0)
@@ -468,6 +467,11 @@ class BOM extends CommonObject
 					$newline = new $objectlineclassname($this->db);
 					'@phan-var-force BOMLine $newline';
 					$newline->setVarsFromFetchObj($obj);
+
+					// Load also extrafields for the line
+					//if (empty($noextrafields)) {
+					$newline->fetch_optionals();
+					//}
 
 					$this->lines[] = $newline;
 				}
@@ -983,15 +987,15 @@ class BOM extends CommonObject
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($num);
-				$dirsource = $conf->bom->dir_output.'/'.$oldref;
-				$dirdest = $conf->bom->dir_output.'/'.$newref;
+				$dirsource = getMultidirOutput($this) . '/'.$oldref;
+				$dirdest = getMultidirOutput($this) . '/'.$newref;
 				if (!$error && file_exists($dirsource)) {
 					dol_syslog(get_class($this)."::validate() rename dir ".$dirsource." into ".$dirdest);
 
 					if (@rename($dirsource, $dirdest)) {
 						dol_syslog("Rename ok");
 						// Rename docs starting with $oldref with $newref
-						$listoffiles = dol_dir_list($conf->bom->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
+						$listoffiles = dol_dir_list(getMultidirOutput($this) . '/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
 						foreach ($listoffiles as $fileentry) {
 							$dirsource = $fileentry['name'];
 							$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
@@ -1438,16 +1442,20 @@ class BOM extends CommonObject
 							$this->error = $tmpproduct->error;
 							return -1;
 						}
-						$unit_cost = (!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp;
-						$line->unit_cost = (float) price2num($unit_cost);
-						if (empty($line->unit_cost)) {
+
+						$unit_cost = (float) (is_null($tmpproduct->cost_price) ? $tmpproduct->pmp : $tmpproduct->cost_price);
+						if (empty($unit_cost)) {	// @phpstan-ignore-line phpstan thinks this is always false. No,if unit_cost is 0, it is not.
 							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
 								if ($productFournisseur->fourn_remise_percent != "0") {
 									$line->unit_cost = $productFournisseur->fourn_unitprice_with_discount;
 								} else {
 									$line->unit_cost = $productFournisseur->fourn_unitprice;
 								}
+							} else {
+								$line->unit_cost = 0;
 							}
+						} else {
+							$line->unit_cost = (float) price2num($unit_cost);
 						}
 
 						$line->total_cost = (float) price2num($line->qty * $line->unit_cost, 'MT');

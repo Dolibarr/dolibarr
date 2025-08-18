@@ -700,7 +700,7 @@ if (empty($reshook)) {
 
 					$line->id = $line_id;
 					$line->fk_entrepot = GETPOSTINT($stockLocation);
-					$line->qty = GETPOSTINT($qty);
+					$line->qty = GETPOSTFLOAT($qty, 'MS');
 					$line->comment = GETPOST($comment, 'alpha');
 
 					if (isModEnabled('productbatch')) {
@@ -725,7 +725,7 @@ if (empty($reshook)) {
 				} else { // Product no predefined
 					$qty = "qtyl".$line_id;
 					$line->id = $line_id;
-					$line->qty = GETPOSTINT($qty);
+					$line->qty = GETPOSTFLOAT($qty, 'MS');
 					$line->fk_entrepot = 0;
 					if ($line->update($user) < 0) {
 						setEventMessages($line->error, $line->errors, 'errors');
@@ -1494,7 +1494,7 @@ if ($action == 'create') {
 	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>';
-		if (0) {    // Do not change on reception
+		if (0) {	// @phpstan-ignore-line  Do not change on reception
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify' && $permissiontoadd) {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
@@ -1983,7 +1983,7 @@ if ($action == 'create') {
 								$htmltooltip .= '<br>';
 							}
 							$reception_static->fetch($receptionline_var['reception_id']);
-							$htmltooltip .= $reception_static->getNomUrl(1, 0, 0, 0, 1);
+							$htmltooltip .= $reception_static->getNomUrl(1, '', 0, 0, 1);
 							$htmltooltip .= ' - '.$receptionline_var['qty'];
 
 							$htmltext = $langs->trans("DateValidation").' : '.(empty($receptionline_var['date_valid']) ? $langs->trans("Draft") : dol_print_date($receptionline_var['date_valid'], 'dayhour'));
