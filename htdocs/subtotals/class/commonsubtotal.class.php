@@ -152,7 +152,7 @@ trait CommonSubtotal
 				$rang,					// Rang
 				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
-		} elseif ($current_module == 'propal'&& $this instanceof Propal) {
+		} elseif ($current_module == 'propal' && $this instanceof Propal) {
 			$result = $this->addline(
 				$desc,					// Description
 				0,						// Unit price
@@ -169,7 +169,7 @@ trait CommonSubtotal
 				$rang,					// Rang
 				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
-		} elseif ($current_module == 'commande'&& $this instanceof Commande) {
+		} elseif ($current_module == 'commande' && $this instanceof Commande) {
 			$result = $this->addline(
 				$desc,					// Description
 				0,						// Unit price
@@ -189,13 +189,13 @@ trait CommonSubtotal
 				$rang,					// Rang
 				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
-		} elseif ($current_module == 'shipping'&& $this instanceof Expedition) {
+		} elseif ($current_module == 'shipping' && $this instanceof Expedition) {
 			$result = $this->addline(
 				0,						// Warehouse ID
 				(int) $parent_line,		// Source line
 				$depth					// Quantity
 			);
-		} elseif ($current_module == 'facturerec'&& $this instanceof FactureRec) {
+		} elseif ($current_module == 'facturerec' && $this instanceof FactureRec) {
 			$rang = $rang == -1 ? $rang : $rang-1;
 			$result = $this->addline(
 				$desc,					// Description
@@ -233,7 +233,36 @@ trait CommonSubtotal
 				$rang,					// Rang
 				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
+		} elseif ($current_module == 'supplier_order' && $this instanceof CommandeFournisseur) {
+			$rang = $rang == -1 ? $rang : $rang-1;
+			$result = $this->addline(
+				$desc,					// Description
+				0,						// Unit price
+				$depth,					// Quantity
+				0,						// VAT rate
+				0,						// Local tax 1
+				0,						// Local tax 2
+				0,						// FK product
+				0,						// fk fourn price
+				'',						// ref supplier
+				0,						// Remise percent
+				'',						// Price base type
+				0,						// PU ttc
+				self::$PRODUCT_TYPE,	// Type
+				0,						// info bits
+				0,						// no trigger
+				'',						// Date start
+				'',						// Date end
+				[],						// array_options
+				null,					// fk_unit
+				0,						// pu ht devise
+				'',						// origin type
+				0,						// origin id
+				$rang,					// Rang
+				SUBTOTALS_SPECIAL_CODE	// Special code
+			);
 		}
+
 
 		if ($current_module != 'shipping') {
 			foreach ($this->lines as $line) {
