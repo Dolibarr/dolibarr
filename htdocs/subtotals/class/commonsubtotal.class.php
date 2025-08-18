@@ -72,7 +72,13 @@ trait CommonSubtotal
 		}
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
-		$allowed_types = array('propal', 'commande', 'facture', 'facturerec', 'shipping');
+		$allowed_types = [
+			'propal',
+			'commande',
+			'facture',
+			'facturerec',
+			'shipping',
+		];
 		if (!in_array($current_module, $allowed_types)) {
 			if (isset($this->errors)) {
 				$this->errors[] = $langs->trans("UnsupportedModuleError");
@@ -122,88 +128,88 @@ trait CommonSubtotal
 		}
 
 		// Add the line calling the right module
-		if ($current_module == 'facture') {
-			$result = $this->addline( // @phpstan-ignore-line
-				$desc,					// Description @phpstan-ignore-line
-				0,						// Unit price @phpstan-ignore-line
-				$depth,					// Quantity @phpstan-ignore-line
-				0,						// VAT rate @phpstan-ignore-line
-				0,						// Local tax 1 @phpstan-ignore-line
-				0,						// Local tax 2 @phpstan-ignore-line
-				0,						// FK product @phpstan-ignore-line
-				0,						// Discount percentage @phpstan-ignore-line
-				'',						// Date start @phpstan-ignore-line
-				'',						// Date end @phpstan-ignore-line
-				0,						// FK code ventilation @phpstan-ignore-line
-				0,						// Info bits @phpstan-ignore-line
-				0,						// FK remise except @phpstan-ignore-line
-				'',						// Price base type @phpstan-ignore-line
-				0,						// PU ttc @phpstan-ignore-line
-				self::$PRODUCT_TYPE,	// Type @phpstan-ignore-line
-				$rang,					// Rang @phpstan-ignore-line
-				SUBTOTALS_SPECIAL_CODE	// Special code @phpstan-ignore-line
+		if ($current_module == 'facture' && $this instanceof Facture) {
+			$result = $this->addline(
+				$desc,					// Description
+				0,						// Unit price
+				$depth,					// Quantity
+				0,						// VAT rate
+				0,						// Local tax 1
+				0,						// Local tax 2
+				0,						// FK product
+				0,						// Discount percentage
+				'',						// Date start
+				'',						// Date end
+				0,						// FK code ventilation
+				0,						// Info bits
+				0,						// FK remise except
+				'',						// Price base type
+				0,						// PU ttc
+				self::$PRODUCT_TYPE,	// Type
+				$rang,					// Rang
+				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
-		} elseif ($current_module == 'propal') {
-			$result = $this->addline( // @phpstan-ignore-line
-				$desc,					// Description @phpstan-ignore-line
-				0,						// Unit price @phpstan-ignore-line
-				$depth,					// Quantity @phpstan-ignore-line
-				0,						// VAT rate @phpstan-ignore-line
-				0,						// Local tax 1 @phpstan-ignore-line
-				0,						// Local tax 2 @phpstan-ignore-line
-				0,						// FK product @phpstan-ignore-line
-				0,						// Discount percentage @phpstan-ignore-line
-				'',						// Price base type @phpstan-ignore-line
-				0,						// PU ttc @phpstan-ignore-line
-				0,						// Info bits @phpstan-ignore-line
-				self::$PRODUCT_TYPE,	// Type @phpstan-ignore-line
-				$rang,					// Rang @phpstan-ignore-line
-				SUBTOTALS_SPECIAL_CODE	// Special code @phpstan-ignore-line
+		} elseif ($current_module == 'propal' && $this instanceof Propal) {
+			$result = $this->addline(
+				$desc,					// Description
+				0,						// Unit price
+				$depth,					// Quantity
+				0,						// VAT rate
+				0,						// Local tax 1
+				0,						// Local tax 2
+				0,						// FK product
+				0,						// Discount percentage
+				'',						// Price base type
+				0,						// PU ttc
+				0,						// Info bits
+				self::$PRODUCT_TYPE,	// Type
+				$rang,					// Rang
+				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
-		} elseif ($current_module == 'commande') {
-			$result = $this->addline( // @phpstan-ignore-line
-				$desc,					// Description @phpstan-ignore-line
-				0,						// Unit price @phpstan-ignore-line
-				$depth,					// Quantity @phpstan-ignore-line
-				0,						// VAT rate @phpstan-ignore-line
-				0,						// Local tax 1 @phpstan-ignore-line
-				0,						// Local tax 2 @phpstan-ignore-line
-				0,						// FK product @phpstan-ignore-line
-				0,						// Discount percentage @phpstan-ignore-line
-				0,						// Info bits @phpstan-ignore-line
-				0,						// FK remise except @phpstan-ignore-line
-				'',						// Price base type @phpstan-ignore-line
-				0,						// PU ttc @phpstan-ignore-line
-				'',						// Date start @phpstan-ignore-line
-				'',						// Date end @phpstan-ignore-line
-				self::$PRODUCT_TYPE,	// Type @phpstan-ignore-line
-				$rang,					// Rang @phpstan-ignore-line
-				SUBTOTALS_SPECIAL_CODE	// Special code @phpstan-ignore-line
+		} elseif ($current_module == 'commande' && $this instanceof Commande) {
+			$result = $this->addline(
+				$desc,					// Description
+				0,						// Unit price
+				$depth,					// Quantity
+				0,						// VAT rate
+				0,						// Local tax 1
+				0,						// Local tax 2
+				0,						// FK product
+				0,						// Discount percentage
+				0,						// Info bits
+				0,						// FK remise except
+				'',						// Price base type
+				0,						// PU ttc
+				'',						// Date start
+				'',						// Date end
+				self::$PRODUCT_TYPE,	// Type
+				$rang,					// Rang
+				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
-		} elseif ($current_module == 'shipping') {
-			$result = $this->addline( // @phpstan-ignore-line
-				'',						// Warehouse ID @phpstan-ignore-line
-				(int) $parent_line,		// Source line @phpstan-ignore-line
-				$depth					// Quantity @phpstan-ignore-line
+		} elseif ($current_module == 'shipping' && $this instanceof Expedition) {
+			$result = $this->addline(
+				0,						// Warehouse ID
+				(int) $parent_line,		// Source line
+				$depth					// Quantity
 			);
-		} elseif ($current_module == 'facturerec') {
+		} elseif ($current_module == 'facturerec' && $this instanceof FactureRec) {
 			$rang = $rang == -1 ? $rang : $rang-1;
-			$result = $this->addline( // @phpstan-ignore-line
-				$desc,					// Description @phpstan-ignore-line
-				0,						// Unit price @phpstan-ignore-line
-				$depth,					// Quantity @phpstan-ignore-line
-				0,						// VAT rate @phpstan-ignore-line
-				0,						// Local tax 1 @phpstan-ignore-line
-				0,						// Local tax 2 @phpstan-ignore-line
-				0,						// FK product @phpstan-ignore-line
-				0,						// Discount percentage @phpstan-ignore-line
-				'',						// Price base type @phpstan-ignore-line
-				0,						// Info bits @phpstan-ignore-line
-				0,						// FK remise except @phpstan-ignore-line
-				0,						// PU ttc @phpstan-ignore-line
-				self::$PRODUCT_TYPE,	// Type @phpstan-ignore-line
-				$rang,					// Rang @phpstan-ignore-line
-				SUBTOTALS_SPECIAL_CODE	// Special code @phpstan-ignore-line
+			$result = $this->addline(
+				$desc,					// Description
+				0,						// Unit price
+				$depth,					// Quantity
+				0,						// VAT rate
+				0,						// Local tax 1
+				0,						// Local tax 2
+				0,						// FK product
+				0,						// Discount percentage
+				'',						// Price base type
+				0,						// Info bits
+				0,						// FK remise except
+				0,						// PU ttc
+				self::$PRODUCT_TYPE,	// Type
+				$rang,					// Rang
+				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
 			$this->fetch_lines();
 		}
@@ -211,6 +217,7 @@ trait CommonSubtotal
 		if ($current_module != 'shipping') {
 			foreach ($this->lines as $line) {
 				'@phan-var-force CommonObjectLine $line';
+				/** @var CommonObjectLine $line */
 				if ($line->id == $result) {
 					$line->extraparams["subtotal"] = $options;
 					$line->setExtraParameters();
