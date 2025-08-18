@@ -6,7 +6,7 @@
  * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2023	   	Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024	   	Jean-Rémi TAPONIER		<jean-remi@netlogic.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Mélina Joum				<melina.joum@altairis.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
@@ -44,10 +44,12 @@ function product_prepare_head($object)
 
 	$label = $langs->trans('Product');
 	$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_prices') : $user->hasRight('product', 'read');
+	$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'read');
 
 	if ($object->isService()) {
 		$label = $langs->trans('Service');
 		$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_prices') : $user->hasRight('service', 'read');
+		$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_supplier_prices') : $user->hasRight('service', 'read');
 	}
 
 	$h = 0;
@@ -77,7 +79,7 @@ function product_prepare_head($object)
 	if ((isModEnabled("supplier_proposal") || isModEnabled("supplier_order") || isModEnabled("supplier_invoice")) && ($user->hasRight('fournisseur', 'lire') || $user->hasRight('supplier_order', 'read') || $user->hasRight('supplier_invoice', 'read'))
 		|| (isModEnabled('margin') && $user->hasRight("margin", "liretous"))
 	) {
-		if ($usercancreadprice) {
+		if ($usercancreadsupplierprice) {
 			$head[$h][0] = DOL_URL_ROOT."/product/price_suppliers.php?id=".$object->id;
 			$head[$h][1] = $langs->trans("BuyingPrices");
 			$head[$h][2] = 'suppliers';
@@ -137,7 +139,7 @@ function product_prepare_head($object)
 		$h++;
 	}
 
-	if ($object->isProduct() || ($object->isService() && getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) {    // If physical product we can stock (or service with option)
+	if (($object->isProduct() || ($object->isService() && getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) && $object->stockable_product == Product::ENABLED_STOCK) {    // If physical product we can stock (or service with option)
 		if (isModEnabled('stock') && $user->hasRight('stock', 'lire')) {
 			$head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$object->id;
 			$head[$h][1] = $langs->trans("Stock");
@@ -361,7 +363,7 @@ function product_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
-	$nbExtrafields = $extrafields->attributes['product']['count'];
+	$nbExtrafields = isset($extrafields->attributes['product']['count']) ? $extrafields->attributes['product']['count'] : 0;
 	if ($nbExtrafields > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
@@ -372,7 +374,7 @@ function product_admin_prepare_head()
 	if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
 		$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_price_extrafields.php';
 		$head[$h][1] = $langs->trans("ProductLevelExtraFields");
-		$nbExtrafields = $extrafields->attributes['product_price']['count'];
+		$nbExtrafields = isset($extrafields->attributes['product_price']['count']) ? $extrafields->attributes['product_price']['count'] : 0;
 		if ($nbExtrafields > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 		}
@@ -384,7 +386,7 @@ function product_admin_prepare_head()
 	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 		$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_customer_extrafields.php';
 		$head[$h][1] = $langs->trans("ProductCustomerExtraFields");
-		$nbExtrafields = $extrafields->attributes['product_customer_price']['count'];
+		$nbExtrafields = isset($extrafields->attributes['product_customer_price']['count']) ? $extrafields->attributes['product_customer_price']['count'] : 0;
 		if ($nbExtrafields > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 		}
@@ -395,7 +397,7 @@ function product_admin_prepare_head()
 	// Supplier prices
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_supplier_extrafields.php';
 	$head[$h][1] = $langs->trans("ProductSupplierExtraFields");
-	$nbExtrafields = $extrafields->attributes['product_fournisseur_price']['count'];
+	$nbExtrafields = isset($extrafields->attributes['product_fournisseur_price']['count']) ? $extrafields->attributes['product_fournisseur_price']['count'] : 0;
 	if ($nbExtrafields > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
@@ -702,13 +704,13 @@ function show_stats_for_company($product, $socid)
 		print '</td><td class="right">';
 
 		print '</td><td class="right">';
-		print $form->textwithpicto($product->stats_bom['nb_toconsume'], $langs->trans("RowMaterial"));
+		print $form->textwithpicto((string) $product->stats_bom['nb_toconsume'], $langs->trans("RowMaterial"));
 		print ' ';
-		print $form->textwithpicto($product->stats_bom['nb_toproduce'], $langs->trans("Finished"));
+		print $form->textwithpicto((string) $product->stats_bom['nb_toproduce'], $langs->trans("Finished"));
 		print '</td><td class="right">';
-		print $form->textwithpicto($product->stats_bom['qty_toconsume'], $langs->trans("RowMaterial"));
+		print $form->textwithpicto((string) $product->stats_bom['qty_toconsume'], $langs->trans("RowMaterial"));
 		print ' ';
-		print $form->textwithpicto($product->stats_bom['qty_toproduce'], $langs->trans("Finished"));
+		print $form->textwithpicto((string) $product->stats_bom['qty_toproduce'], $langs->trans("Finished"));
 		print '</td>';
 		print '</tr>';
 	}
@@ -724,34 +726,34 @@ function show_stats_for_company($product, $socid)
 		print '<tr><td>';
 		print '<a href="'.DOL_URL_ROOT.'/product/stats/mo.php?id='.$product->id.'">'.img_object('', 'mrp', 'class="pictofixedwidth"').$langs->trans("MO").'</a>';
 		print '</td><td class="right">';
-		print $form->textwithpicto($product->stats_mo['customers_toconsume'], $langs->trans("ToConsume"));
+		print $form->textwithpicto((string) $product->stats_mo['customers_toconsume'], $langs->trans("ToConsume"));
 		print ' ';
-		print $form->textwithpicto($product->stats_mo['customers_consumed'], $langs->trans("QtyAlreadyConsumed"));
+		print $form->textwithpicto((string) $product->stats_mo['customers_consumed'], $langs->trans("QtyAlreadyConsumed"));
 		print ' ';
-		print $form->textwithpicto($product->stats_mo['customers_toproduce'], $langs->trans("QtyToProduce"));
+		print $form->textwithpicto((string) $product->stats_mo['customers_toproduce'], $langs->trans("QtyToProduce"));
 		print ' ';
-		print $form->textwithpicto($product->stats_mo['customers_produced'], $langs->trans("QtyAlreadyProduced"));
+		print $form->textwithpicto((string) $product->stats_mo['customers_produced'], $langs->trans("QtyAlreadyProduced"));
 		print '</td><td class="right">';
-		print $form->textwithpicto($product->stats_mo['nb_toconsume'], $langs->trans("ToConsume"));
+		print $form->textwithpicto((string) $product->stats_mo['nb_toconsume'], $langs->trans("ToConsume"));
 		print ' ';
-		print $form->textwithpicto($product->stats_mo['nb_consumed'], $langs->trans("QtyAlreadyConsumed"));
+		print $form->textwithpicto((string) $product->stats_mo['nb_consumed'], $langs->trans("QtyAlreadyConsumed"));
 		print ' ';
-		print $form->textwithpicto($product->stats_mo['nb_toproduce'], $langs->trans("QtyToProduce"));
+		print $form->textwithpicto((string) $product->stats_mo['nb_toproduce'], $langs->trans("QtyToProduce"));
 		print ' ';
-		print $form->textwithpicto($product->stats_mo['nb_produced'], $langs->trans("QtyAlreadyProduced"));
+		print $form->textwithpicto((string) $product->stats_mo['nb_produced'], $langs->trans("QtyAlreadyProduced"));
 		print '</td><td class="right">';
-		print $form->textwithpicto($product->stats_mo['qty_toconsume'], $langs->trans("ToConsume"));
+		print $form->textwithpicto((string) $product->stats_mo['qty_toconsume'], $langs->trans("ToConsume"));
 		print ' ';
-		print $form->textwithpicto($product->stats_mo['qty_consumed'], $langs->trans("QtyAlreadyConsumed"));
+		print $form->textwithpicto((string) $product->stats_mo['qty_consumed'], $langs->trans("QtyAlreadyConsumed"));
 		print ' ';
-		print $form->textwithpicto($product->stats_mo['qty_toproduce'], $langs->trans("QtyToProduce"));
+		print $form->textwithpicto((string) $product->stats_mo['qty_toproduce'], $langs->trans("QtyToProduce"));
 		print ' ';
-		print $form->textwithpicto($product->stats_mo['qty_produced'], $langs->trans("QtyAlreadyProduced"));
+		print $form->textwithpicto((string) $product->stats_mo['qty_produced'], $langs->trans("QtyAlreadyProduced"));
 		print '</td>';
 		print '</tr>';
 	}
 	$parameters = array('socid' => $socid);
-	$reshook = $hookmanager->executeHooks('addMoreProductStat', $parameters, $product, $nblines); // Note that $action and $object may have been modified by some hooks
+	$reshook = $hookmanager->executeHooks('addMoreProductStat', $parameters, $product, $nblines); // Note that $action and $object may have been modified by some hooks // TODO: Verify that $nblines is the correct value for argument $action
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
@@ -853,25 +855,25 @@ function show_stats_for_batch($batch, $socid)
 		print '<a href="'.dol_buildpath('/product/stock/stats/mo.php', 1).'?id='.$batch->id.'">'.img_object('', 'mrp', 'class="pictofixedwidth"').$langs->trans("MO").'</a>';
 		print '</td><td class="right">';
 		//      print $form->textwithpicto($batch->stats_mo['customers_toconsume'], $langs->trans("ToConsume")); Makes no sense with batch, at this moment we don't know batch number
-		print $form->textwithpicto($batch->stats_mo['customers_consumed'], $langs->trans("QtyAlreadyConsumed"));
+		print $form->textwithpicto((string) $batch->stats_mo['customers_consumed'], $langs->trans("QtyAlreadyConsumed"));
 		//      print $form->textwithpicto($batch->stats_mo['customers_toproduce'], $langs->trans("QtyToProduce")); Makes no sense with batch, at this moment we don't know batch number
-		print $form->textwithpicto($batch->stats_mo['customers_produced'], $langs->trans("QtyAlreadyProduced"));
+		print $form->textwithpicto((string) $batch->stats_mo['customers_produced'], $langs->trans("QtyAlreadyProduced"));
 		print '</td><td class="right">';
 		//      print $form->textwithpicto($batch->stats_mo['nb_toconsume'], $langs->trans("ToConsume")); Makes no sense with batch, at this moment we don't know batch number
-		print $form->textwithpicto($batch->stats_mo['nb_consumed'], $langs->trans("QtyAlreadyConsumed"));
+		print $form->textwithpicto((string) $batch->stats_mo['nb_consumed'], $langs->trans("QtyAlreadyConsumed"));
 		//      print $form->textwithpicto($batch->stats_mo['nb_toproduce'], $langs->trans("QtyToProduce")); Makes no sense with batch, at this moment we don't know batch number
-		print $form->textwithpicto($batch->stats_mo['nb_produced'], $langs->trans("QtyAlreadyProduced"));
+		print $form->textwithpicto((string) $batch->stats_mo['nb_produced'], $langs->trans("QtyAlreadyProduced"));
 		print '</td><td class="right">';
 		//      print $form->textwithpicto($batch->stats_mo['qty_toconsume'], $langs->trans("ToConsume")); Makes no sense with batch, at this moment we don't know batch number
-		print $form->textwithpicto($batch->stats_mo['qty_consumed'], $langs->trans("QtyAlreadyConsumed"));
+		print $form->textwithpicto((string) $batch->stats_mo['qty_consumed'], $langs->trans("QtyAlreadyConsumed"));
 		//      print $form->textwithpicto($batch->stats_mo['qty_toproduce'], $langs->trans("QtyToProduce")); Makes no sense with batch, at this moment we don't know batch number
-		print $form->textwithpicto($batch->stats_mo['qty_produced'], $langs->trans("QtyAlreadyProduced"));
+		print $form->textwithpicto((string) $batch->stats_mo['qty_produced'], $langs->trans("QtyAlreadyProduced"));
 		print '</td>';
 		print '</tr>';
 	}
 
 	$parameters = array('socid' => $socid);
-	$reshook = $hookmanager->executeHooks('addMoreBatchProductStat', $parameters, $batch, $nblines); // Note that $action and $object may have been modified by some hooks
+	$reshook = $hookmanager->executeHooks('addMoreBatchProductStat', $parameters, $batch, $nblines); // Note that $action and $object may have been modified by some hooks  // TODO: Verify that $nblines is the correct value for argument $action
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
@@ -886,15 +888,15 @@ function show_stats_for_batch($batch, $socid)
  *	Return translation label of a unit key.
  *  Function kept for backward compatibility.
  *
- *  @param	string  	$unitscale			Scale of unit: '0', '-3', '6', ...
+ *  @param	?int	  	$unitscale			Scale of unit: '0', '-3', '6', ...
  *	@param  string		$measuring_style    Style of unit: weight, volume,...
  *	@param	int			$unitid             ID of unit (rowid in llx_c_units table)
- *  @param	int			$use_short_label	1=Use short label ('g' instead of 'gram'). Short labels are not translated.
- *  @param	Translate	$outputlangs		Language object
+ *  @param	int<0,1>	$use_short_label	1=Use short label ('g' instead of 'gram'). Short labels are not translated.
+ *  @param	?Translate	$outputlangs		Language object
  *	@return	string	   			         	Unit string
  * 	@see	measuringUnitString() formproduct->selectMeasuringUnits()
  */
-function measuring_units_string($unitscale = '', $measuring_style = '', $unitid = 0, $use_short_label = 0, $outputlangs = null)
+function measuring_units_string($unitscale = null, $measuring_style = '', $unitid = 0, $use_short_label = 0, $outputlangs = null)
 {
 	return measuringUnitString($unitid, $measuring_style, $unitscale, $use_short_label, $outputlangs);
 }
@@ -904,13 +906,13 @@ function measuring_units_string($unitscale = '', $measuring_style = '', $unitid 
  *
  *	@param	int			$unitid             ID of unit (rowid in llx_c_units table)
  *	@param  string		$measuring_style    Style of unit: 'weight', 'volume', ..., '' = 'net_measure' for option PRODUCT_ADD_NET_MEASURE
- *  @param	string  	$unitscale			Scale of unit: '0', '-3', '6', ...
- *  @param	int			$use_short_label	1=Use very short label ('g' instead of 'gram'), not translated. 2=Use translated short label.
- *  @param	Translate	$outputlangs		Language object
+ *  @param	?int	  	$unitscale			Scale of unit: '0', '-3', '6', ...
+ *  @param	int<0,2>	$use_short_label	1=Use very short label ('g' instead of 'gram'), not translated. 2=Use translated short label.
+ *  @param	?Translate	$outputlangs		Language object
  *	@return	string|-1	   			        Unit string if OK, -1 if KO
  * 	@see	formproduct->selectMeasuringUnits()
  */
-function measuringUnitString($unitid, $measuring_style = '', $unitscale = '', $use_short_label = 0, $outputlangs = null)
+function measuringUnitString($unitid, $measuring_style = '', $unitscale = null, $use_short_label = 0, $outputlangs = null)
 {
 	global $langs, $db;
 	global $measuring_unit_cache;

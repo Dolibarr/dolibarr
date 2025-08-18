@@ -7,7 +7,7 @@
  * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2019		Thibault FOUCART			<support@ptibogxiv.net>
  * Copyright (C) 2023		Waël Almoman				<info@almoman.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -315,7 +315,7 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 		$db->begin();
 
 		// Create subscription
-		$crowid = $object->subscription($datesubscription, $amount, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend);
+		$crowid = $object->subscription($datesubscription, (float) $amount, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend);
 		if ($crowid <= 0) {
 			$error++;
 			$errmsg = $object->error;
@@ -323,7 +323,7 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 		}
 
 		if (!$error) {
-			$result = $object->subscriptionComplementaryActions($crowid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom, $emetteur_banque);
+			$result = $object->subscriptionComplementaryActions($crowid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, (float) $amount, $num_chq, $emetteur_nom, $emetteur_banque);
 			if ($result < 0) {
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -385,8 +385,8 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 					}
 
 					if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-						$subject = $arraydefaultmessage->topic;
-						$msg     = $arraydefaultmessage->content;
+						$subject = (string) $arraydefaultmessage->topic;
+						$msg     = (string) $arraydefaultmessage->content;
 					}
 
 					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
@@ -670,7 +670,7 @@ if ($action != 'editlogin' && $user->hasRight('adherent', 'creer')) {
 print '</tr></table>';
 print '</td><td colspan="2" class="valeur">';
 if ($action == 'editlogin') {
-	$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'userid', array());
+	$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, (string) $object->user_id, 'userid', array());
 } else {
 	if ($object->user_id) {
 		$linkeduser = new User($db);
@@ -733,6 +733,7 @@ if ($action != 'addsubscription' && $action != 'create_thirdparty') {
 
 		$num = $db->num_rows($result);
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">'."\n";
 
 		print '<tr class="liste_titre">';
@@ -768,8 +769,8 @@ if ($action != 'addsubscription' && $action != 'create_thirdparty') {
 
 			print '<tr class="oddeven">';
 			print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
-			print '<td class="center">'.dol_print_date($db->jdate($objp->datec), 'dayhour')."</td>\n";
-			print '<td class="center">';
+			print '<td class="center nowraponall">'.dol_print_date($db->jdate($objp->datec), 'dayhour')."</td>\n";
+			print '<td class="center tdoverflowmax125">';
 			if ($typeid > 0) {
 				print $adht->getNomUrl(1);
 			}
@@ -778,7 +779,7 @@ if ($action != 'addsubscription' && $action != 'create_thirdparty') {
 			print '<td class="center">'.dol_print_date($db->jdate($objp->datef), 'day')."</td>\n";
 			print '<td class="right amount">'.price($objp->subscription).'</td>';
 			if (isModEnabled('bank')) {
-				print '<td class="right">';
+				print '<td class="tdoverflowmax100 right">';
 				if ($objp->bid) {
 					$accountstatic->label = $objp->label;
 					$accountstatic->id = $objp->baid;
@@ -813,6 +814,7 @@ if ($action != 'addsubscription' && $action != 'create_thirdparty') {
 		}
 
 		print "</table>";
+		print '</div>';
 	} else {
 		dol_print_error($db);
 	}
@@ -1070,7 +1072,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 				}
 				if (getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && (isModEnabled('product') || isModEnabled('service'))) {
 					$prodtmp = new Product($db);
-					$result = $prodtmp->fetch(getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS'));
+					$result = $prodtmp->fetch(getDolGlobalInt('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS'));
 					if ($result < 0) {
 						setEventMessage($prodtmp->error, 'errors');
 					}
@@ -1100,7 +1102,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 				}
 				if (getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && (isModEnabled('product') || isModEnabled('service'))) {
 					$prodtmp = new Product($db);
-					$result = $prodtmp->fetch(getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS'));
+					$result = $prodtmp->fetch(getDolGlobalInt('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS'));
 					if ($result < 0) {
 						setEventMessage($prodtmp->error, 'errors');
 					}
@@ -1174,8 +1176,8 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 		}
 
 		if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-			$subject = $arraydefaultmessage->topic;
-			$msg     = $arraydefaultmessage->content;
+			$subject = (string) $arraydefaultmessage->topic;
+			$msg     = (string) $arraydefaultmessage->content;
 		}
 
 		$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);

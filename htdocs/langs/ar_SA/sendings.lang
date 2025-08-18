@@ -43,7 +43,7 @@ ConfirmCancelSending=هل أنت متأكد أنك تريد إلغاء هذه ا
 DocumentModelMerou=Mérou A5 نموذج
 WarningNoQtyLeftToSend=تحذير ، لا تنتظر أن المنتجات المشحونة.
 StatsOnShipmentsOnlyValidated=الإحصائيات هي فقط للشحنات التي تم التحقق من صحتها. التاريخ المستخدم هو تاريخ التحقق من صحة الشحنة (تاريخ التسليم المخطط ليس معروفًا دائمًا)
-DateShipping=Sending date
+DateShipping=تاريخ الإرسال
 DateDeliveryPlanned=التاريخ المحدد للتسليم
 RefDeliveryReceipt=إيصال تسليم المرجع
 StatusReceipt=إيصال تسليم الحالة
@@ -63,10 +63,12 @@ NoProductToShipFoundIntoStock=لم يتم العثور على أي منتج لل
 WeightVolShort=الوزن / المجلد.
 ValidateOrderFirstBeforeShipment=يجب عليك أولاً التحقق من صحة الطلب قبل التمكن من إجراء الشحنات.
 NoLineGoOnTabToAddSome=لا يوجد سطر، انتقل إلى علامة التبويب "%s" للإضافة
-CreateInvoiceForThisCustomerFromSendings=Create Bills
-IfValidateInvoiceIsNoSendingStayUnbilled=If invoice validation is 'No', the sending will remain to status 'Unbilled' until the invoice is validated.
-OptionToSetSendingBilledNotEnabled=Option from module Workflow, to set sending to 'Billed' automatically when invoice is validated, is not enabled, so you will have to set the status of sendings to 'Billed' manually after the invoice has been generated.
-ShipmentUpdated=Shipment successfully updated
+CreateInvoiceForThisCustomerFromSendings=إنشاء الفواتير
+IfValidateInvoiceIsNoSendingStayUnbilled=إذا كانت نتيجة التحقق من صحة الفاتورة هي "لا"، فسوف تظل عملية الإرسال في حالة "غير مفوترة" حتى يتم التحقق من صحة الفاتورة.
+OptionToSetSendingBilledNotEnabled=لم يتم تمكين الخيار من وحدة سير العمل، لتعيين الإرسال إلى "مُفوتر" تلقائيًا عند التحقق من صحة الفاتورة، لذلك سيتعين عليك تعيين حالة الإرسال إلى "مُفوتر" يدويًا بعد إنشاء الفاتورة.
+NoWarehouseInBase=لا يوجد مستودع في القاعدة
+ShipmentUpdated=تم تحديث الشحنة بنجاح
+ShipmentIncrementStockOnDelete = زيادة المخزون عند الحذف
 
 # Sending methods
 # ModelDocument
@@ -78,6 +80,7 @@ SumOfProductWeights=مجموع الأوزان المنتج
 # warehouse details
 DetailWarehouseNumber= تفاصيل مستودع
 DetailWarehouseFormat= W: %s (الكمية: %d)
+DetailChildrenFormat=%s : %s (الكمية: %s)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=عرض آخر تاريخ للدخول في المخزون أثناء إنشاء الشحنة للرقم التسلسلي أو الدفعة
 CreationOptions=الخيارات المتاحة أثناء إنشاء الشحنة
 ShipmentDistribution=توزيع الشحنة
@@ -87,8 +90,9 @@ ErrorTooMuchShipped=يجب ألا تكون الكمية المشحونة أكب�
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=مندوب متابعة الشحن
 TypeContact_shipping_external_BILLING=جهة اتصال فاتورة العميل
-TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
-TypeContact_shipping_external_SHIPPING=Customer contact for shipping
-TypeContact_shipping_external_DELIVERY=Customer contact for delivery
-CloseShipment=Close shipment
-ConfirmCloseShipment=Confirm close shipment
+TypeContact_shipping_external_CUSTOMER=التواصل مع العميل لمتابعة الشحن
+TypeContact_shipping_external_SHIPPING=الاتصال بالعميل للشحن
+TypeContact_shipping_external_DELIVERY=الاتصال بالعميل للحصول على التوصيل
+CloseShipment=إغلاق الشحنة
+ConfirmCloseShipment=تأكيد إغلاق الشحنة
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=قم مسبقًا بتحديد رقم الدفعة/الرقم التسلسلي مع تاريخ البيع/الاستهلاك الأقدم عند إنشاء شحنة

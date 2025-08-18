@@ -422,11 +422,11 @@ class modAgenda extends DolibarrModules
 			'type' => 'left',
 			'titre' => 'Categories',
 			'mainmenu' => 'agenda',
-			'url' => '/categories/index.php?mainmenu=agenda&amp;leftmenu=agenda&type=10',
+			'url' => '/categories/categorie_list.php?mainmenu=agenda&amp;leftmenu=agenda&type=10',
 			'langs' => 'agenda',
 			'position' => 170,
 			'perms' => '$user->hasRight("agenda", "allactions", "read")',
-			'enabled' => 'isModEnabled("category")',
+			'enabled' => 'isModEnabled("category") && getDolGlobalString("CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP")',
 			'target' => '',
 			'user' => 2
 		);

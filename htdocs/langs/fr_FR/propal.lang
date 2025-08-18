@@ -23,7 +23,10 @@ AllPropals=Toutes les propales
 SearchAProposal=Rechercher une proposition commerciale
 NoProposal=Pas de proposition
 ProposalsStatistics=Statistiques des propositions commerciales
+NumberOfProposals=Nombre de propositions commerciales
 NumberOfProposalsByMonth=Nombre par mois
+AmountOfProposals=Quantité de devis
+AmountOfProposalsHT=Montant de devis (excl. taxe)
 AmountOfProposalsByMonthHT=Montant par mois (HT)
 NbOfProposals=Nombre de propositions commerciales
 ShowPropal=Afficher proposition
@@ -77,7 +80,7 @@ AvailabilityTypeAV_1W=1 semaine
 AvailabilityTypeAV_2W=2 semaines
 AvailabilityTypeAV_3W=3 semaines
 AvailabilityTypeAV_1M=1 mois
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Commercial suivi proposition
 TypeContact_propal_external_BILLING=Contact client facturation proposition
 TypeContact_propal_external_CUSTOMER=Contact client suivi proposition
@@ -122,3 +125,5 @@ Signed=signé
 SignedOnly=Signé seulement
 ExpeditionSigned=Envoi signé
 SignExpedition=Signer l'envoi
+PROPOSAL_SHOW_SHIPPING_ADDRESS=Afficher l'adresse de livraison
+PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Indication obligatoire dans certains pays (France, ...)

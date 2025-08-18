@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2006-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2015		Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2016		Juanjo Menent   	<jmenent@2byte.es>
- * Copyright (C) 2019	    Nicolas ZABOURI     <info@inovea-conseil.com>
- * Copyright (C) 2021		Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2006-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2016		Juanjo Menent   		<jmenent@2byte.es>
+ * Copyright (C) 2019	    Nicolas ZABOURI     	<info@inovea-conseil.com>
+ * Copyright (C) 2021		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,13 +133,8 @@ function bank_prepare_head(Account $object)
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/compta/bank/annuel.php?account=".$object->id;
-	$head[$h][1] = $langs->trans("IOMonthlyReporting");
+	$head[$h][1] = $langs->trans("Reports");
 	$head[$h][2] = 'annual';
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT."/compta/bank/graph.php?account=".$object->id;
-	$head[$h][1] = $langs->trans("Graph");
-	$head[$h][2] = 'graph';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/compta/bank/treso.php?account=".$object->id;
@@ -162,6 +157,32 @@ function bank_prepare_head(Account $object)
 
 	return $head;
 }
+
+/**
+ * Prepare array with list of tabs for bank report
+ *
+ * @param   Account	$object		Object related to tabs
+ * @return  array<array{0:string,1:string,2:string}>	Array of tabs to show
+ */
+function bank_report_prepare_head(Account $object)
+{
+	global $db, $langs, $conf, $user;
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT."/compta/bank/annuel.php?account=".$object->id;
+	$head[$h][1] = $langs->trans("IOMonthlyReporting");
+	$head[$h][2] = 'annual';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/compta/bank/graph.php?account=".$object->id;
+	$head[$h][1] = $langs->trans("Graph");
+	$head[$h][2] = 'graph';
+	$h++;
+
+	return $head;
+}
 /**
  * Prepare array with list of tabs
  *
@@ -177,6 +198,7 @@ function bank_admin_prepare_head($object)
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('bank_account');
 	$extrafields->fetch_name_optionals_label('bank');
+	$extrafields->fetch_name_optionals_label('paiement');
 
 	$h = 0;
 	$head = array();
@@ -216,8 +238,16 @@ function bank_admin_prepare_head($object)
 	$head[$h][2] = 'bankline_extrafields';
 	$h++;
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin', 'remove');
+	$head[$h][0] = DOL_URL_ROOT.'/admin/bank_payments_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFields").' ('.$langs->trans("Payments").')';
+	$nbExtrafields = $extrafields->attributes['paiement']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
+	$head[$h][2] = 'bank_payments_extrafields';
+	$h++;
 
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin', 'remove');
 
 	return $head;
 }

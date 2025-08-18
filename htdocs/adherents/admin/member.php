@@ -8,9 +8,9 @@
  * Copyright (C) 2011-2012	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2012		J. Fernando Lagrange		<fernando@demo-tic.org>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2020-2024  Frédéric France      		<frederic.france@free.fr>
+ * Copyright (C) 2020-2025  Frédéric France      		<frederic.france@free.fr>
  * Copyright (C) 2023		Waël Almoman				<info@almoman.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
  * @var Translate $langs
  * @var User $user
  *
- * @var array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:float,custom_x:float,custom_y:float}> $_Avery_Labels
+ * @var array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:int,custom_x:float,custom_y:float}> $_Avery_Labels
  */
 
 // Load translation files required by the page
@@ -91,11 +91,7 @@ if ($action == 'set_default') {
 	$res = true;
 } elseif ($action == 'setdoc') {
 	// Set default model
-	if (dolibarr_set_const($db, "MEMBER_ADDON_PDF_ODT", $value, 'chaine', 0, '', $conf->entity)) {
-		// The constant that was read ahead of the new set
-		// we therefore go through a variable to have a consistent display
-		$conf->global->MEMBER_ADDON_PDF_ODT = $value;
-	}
+	dolibarr_set_const($db, "MEMBER_ADDON_PDF_ODT", $value, 'chaine', 0, '', $conf->entity);
 
 	// We activate the model
 	$ret = delDocumentModel($value, $type);
@@ -242,8 +238,8 @@ $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_M
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-admin');
 
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("MembersSetup"), $linkback, 'title_setup');
 
 
@@ -461,7 +457,7 @@ foreach ($dirmodels as $reldir) {
 
 
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								// Preview
@@ -540,7 +536,7 @@ print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED', (getDolGlobalString('ADH
 print "</td></tr>\n";
 
 // Create an external user login after an online payment of a membership subscription
-// TODO Move this into the validate() method of the member.
+// TODO Move this into a checkbox into the validate process of the memberinstead of a global option.
 print '<tr class="oddeven"><td>'.$langs->trans("MemberCreateAnExternalUserForSubscriptionValidated").'</td><td>';
 print $form->selectyesno('ADHERENT_CREATE_EXTERNAL_USER_LOGIN', getDolGlobalInt('ADHERENT_CREATE_EXTERNAL_USER_LOGIN'), 1, false, 0, 1);
 print "</td></tr>\n";
@@ -604,7 +600,7 @@ if (isModEnabled('invoice')) {
 		print '<td>';
 		$selected = getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS');
 		print img_picto('', 'product', 'class="pictofixedwidth"');
-		$form->select_produits($selected, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', '', 0, 0, 1, 2, '', 0, [], 0, 1, 0, 'minwidth100 maxwidth500 widthcentpercentminusx');
+		$form->select_produits((int) $selected, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', '', 0, 0, 1, 2, '', 0, [], 0, 1, 0, 'minwidth100 maxwidth500 widthcentpercentminusx');
 		print '</td>';
 	}
 	print "</tr>\n";

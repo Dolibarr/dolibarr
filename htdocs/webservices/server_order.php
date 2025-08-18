@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		JF FERRY			<jfefe@aternatik.fr>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
 *
 * This program is free software; you can redistribute it and/or modify
@@ -674,7 +674,7 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
  * Create order
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
- * @param array{id:string,ref:string,ref_client:string,ref_ext:string,thirdparty_id:int,status:int,billed:string,total_net:float,total_vat:float,total_localtax1:float,total_localtax2:float,total:float,date:string,date_creation:string,date_validation:string,date_modification:string,source:string,note_private:string,note_public:string,project_id:string,mode_reglement_id:string,mode_reglement_code:string,mode_reglement:string,cond_reglement_id:string,cond_reglement_code:string,cond_reglement:string,cond_reglement_doc:string,date_livraison:int,demand_reason_id:string,lines:array{lines:array<array{id:string,type:int,fk_commande:int,fk_parent_line:int,desc:string,qty:float,price:float,unitprice:float,vat_rate:float,remise:float,remise_percent:float,total_net:float,total_vat:float,total:float,date_start:int,date_end:int,product_id:int,product_ref:string,product_label:string,product_desc:string}>}}		$order		Order info
+ * @param array{id:string,ref:string,ref_client:string,ref_ext:string,thirdparty_id:int,status:int,billed:string,total_net:float,total_vat:float,total_localtax1:float,total_localtax2:float,total:float,date:string,date_creation:string,date_validation:string,date_modification:string,source:string,note_private:string,note_public:string,project_id:string,mode_reglement_id:string,mode_reglement_code:string,mode_reglement:string,cond_reglement_id:string,cond_reglement_code:string,cond_reglement:string,cond_reglement_doc:string,date_livraison:int,demand_reason_id:string,lines:array<array{id:string,type:int,fk_commande:int,fk_parent_line:int,desc:string,qty:float,price:float,unitprice:float,vat_rate:float,remise:float,remise_percent:float,total_net:float,total_vat:float,total:float,date_start:string,date_end:string,product_id:int,product_ref:string,product_label:string,product_desc:string}>}		$order		Order info
  * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function createOrder($authentication, $order)
@@ -685,6 +685,7 @@ function createOrder($authentication, $order)
 
 	$now = dol_now();
 
+	// TODO: socid is not defined in '$order_fields' above used to define the web interface - verify.
 	dol_syslog("Function: createOrder login=".$authentication['login']." socid :".$order['socid']);
 
 	if ($authentication['entity']) {
@@ -705,13 +706,16 @@ function createOrder($authentication, $order)
 	if (!$error) {
 		$newobject = new Commande($db);
 		$newobject->socid = $order['thirdparty_id'];
+		// TODO: 'type' is not defined in the $order_fields for the WS - verify
 		$newobject->type = $order['type'];
 		$newobject->ref_ext = $order['ref_ext'];
 		$newobject->date = dol_stringtotime($order['date'], 'dayrfc');
-		$newobject->date_lim_reglement = dol_stringtotime($order['date_due'], 'dayrfc');
+		// TODO: 'date_due' is not defined in the $order_fields for the WS - verify
+		$newobject->date_lim_reglement = dol_stringtotime((string) $order['date_due'], 'dayrfc');
 		$newobject->note_private = $order['note_private'];
 		$newobject->note_public = $order['note_public'];
 		$newobject->statut = Commande::STATUS_DRAFT; // We start with status draft
+		$newobject->status = Commande::STATUS_DRAFT; // We start with status draft
 		$newobject->billed = (int) $order['billed'];
 		$newobject->fk_project = (int) $order['project_id'];
 		$newobject->cond_reglement_id = (int) $order['cond_reglement_id'];
@@ -746,18 +750,18 @@ function createOrder($authentication, $order)
 			// $key can be 'line' or '0','1',...
 			$newline = new OrderLine($db);
 
-			$newline->type = $line['type'];
+			$newline->product_type = (int) $line['type'];
 			$newline->desc = $line['desc'];
-			$newline->fk_product = $line['product_id'];
-			$newline->tva_tx = $line['vat_rate'];
-			$newline->qty = $line['qty'];
-			$newline->price = $line['price'];
-			$newline->subprice = $line['unitprice'];
-			$newline->total_ht = $line['total_net'];
-			$newline->total_tva = $line['total_vat'];
-			$newline->total_ttc = $line['total'];
-			$newline->date_start = $line['date_start'];
-			$newline->date_end = $line['date_end'];
+			$newline->fk_product = (int) $line['product_id'];
+			$newline->tva_tx = (float) $line['vat_rate'];
+			$newline->qty = (float) $line['qty'];
+			$newline->price = (float) $line['price'];
+			$newline->subprice = (float) $line['unitprice'];
+			$newline->total_ht = (float) $line['total_net'];
+			$newline->total_tva = (float) $line['total_vat'];
+			$newline->total_ttc = (float) $line['total'];
+			$newline->date_start = dol_stringtotime($line['date_start']);
+			$newline->date_end = dol_stringtotime($line['date_end']);
 
 			$elementtype = 'commandedet';
 
@@ -921,7 +925,7 @@ function updateOrder($authentication, $order)
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 		$object = new Commande($db);
-		$result = $object->fetch($order['id'], (empty($order['id']) ? $order['ref'] : ''), (empty($order['id']) && empty($order['ref']) ? $order['ref_ext'] : ''));
+		$result = $object->fetch((int) $order['id'], (empty($order['id']) ? $order['ref'] : ''), (empty($order['id']) && empty($order['ref']) ? $order['ref_ext'] : ''));
 
 		if (!empty($object->id)) {
 			$objectfound = true;
@@ -937,7 +941,7 @@ function updateOrder($authentication, $order)
 					if ($result >= 0) {
 						// Define output language
 						$outputlangs = $langs;
-						$object->generateDocument($order->model_pdf, $outputlangs);
+						$object->generateDocument($object->model_pdf, $outputlangs);
 					}
 				}
 				if ($order['status'] == 0) {

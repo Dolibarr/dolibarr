@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012-2013  Charles-Fr BENKE		<charles.fr@benke.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,11 +58,11 @@ class FormIntervention
 	 *	@param  int		$selected   Id intervention preselected
 	 *	@param  string	$htmlname   Nom de la zone html
 	 *	@param	int		$maxlength	Maximum length of label
-	 *	@param	int		$showempty	Show empty line ('1' or string to show for empty line)
+	 *	@param	string	$showempty	Show empty line ('1' or string to show for empty line)
 	 *	@param	bool	$draftonly	Show only drafts intervention
 	 *	@return string         		HTML code for the select list if OK, empty if KO
 	 */
-	public function select_interventions($socid = -1, $selected = 0, $htmlname = 'interventionid', $maxlength = 16, $showempty = 1, $draftonly = false)
+	public function select_interventions($socid = -1, $selected = 0, $htmlname = 'interventionid', $maxlength = 16, $showempty = '1', $draftonly = false)
 	{
 		// phpcs:enable
 		global $user, $conf, $langs;

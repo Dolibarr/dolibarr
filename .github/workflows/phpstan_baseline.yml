@@ -1,3 +1,5 @@
+---
+# This run the script to update the phpstan baseline file dev/build/phpstan/phpstan-baseline.neon
 name: 'PHPStan baseline'
 
 on:
@@ -37,7 +39,7 @@ jobs:
         with:
           php-version: ${{ env.PHP_VERSION }}
           coverage: none # disable xdebug, pcov
-          tools: phpstan:2.0, cs2pr
+          tools: phpstan:2.1.8, cs2pr
           extensions: calendar, json, imagick, gd, zip, mbstring, intl, opcache, imap,
               mysql, pgsql, sqlite3, ldap, xml, mcrypt
         env:
@@ -60,8 +62,8 @@ jobs:
           github_token: ${{ env.GH_TOKEN }}
           phpstan_path: phpstan
           configuration_path: phpstan.neon.dist
-          phpstan_additional_arguments: --memory-limit 7G -a build/phpstan/bootstrap_action.php
-          baseline_path: build/phpstan/phpstan-baseline.neon
+          phpstan_additional_arguments: --memory-limit 7G -a dev/build/phpstan/bootstrap_action.php
+          baseline_path: dev/build/phpstan/phpstan-baseline.neon
           commit_name: Dolibot
           commit_email: dolibarr-bot@users.noreply.github.com
           commit_message: PHPStan > Update baseline

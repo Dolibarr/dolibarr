@@ -8,8 +8,8 @@
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018		Nicolas ZABOURI 		<info@inovea-conseil.com>
- * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,8 +40,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
-require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/dolistore.class.php';
+require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/externalModules.class.php';
 
 '
 @phan-var-force string $dolibarr_main_url_root_alt
@@ -72,8 +73,10 @@ if (GETPOSTISSET('mode')) {
 }
 
 $action = GETPOST('action', 'aZ09');
-$value = GETPOST('value', 'alpha');
 $page_y = GETPOSTINT('page_y');
+$optioncss = GETPOST('optioncss', 'aZ09');
+
+$value = GETPOST('value', 'alpha');
 $search_keyword = GETPOST('search_keyword', 'alpha');
 $search_status = GETPOST('search_status', 'alpha');
 $search_nature = GETPOST('search_nature', 'alpha');
@@ -81,15 +84,21 @@ $search_version = GETPOST('search_version', 'alpha');
 
 
 // For remotestore search
-$options              = array();
-$options['per_page']  = 10;
-$options['categorie'] = ((int) (GETPOSTINT('categorie') ? GETPOSTINT('categorie') : 0));
-$options['start']     = ((int) (GETPOSTINT('start') ? GETPOSTINT('start') : 0));
-$options['end']       = ((int) (GETPOSTINT('end') ? GETPOSTINT('end') : 0));
-$options['search']    = GETPOST('search_keyword', 'alpha');
+$options              		= array();
+$options['per_page']  		= 11;
+$options['no_page']   		= (GETPOSTINT('no_page') ? GETPOSTINT('no_page') : 1);
+$options['categorie'] 		= (GETPOSTINT('categorie') ? GETPOSTINT('categorie') : 0);
+$options['search']    		= GETPOST('search_keyword', 'alpha');
 
-$remotestore            = new Dolistore(false);
+// If it is a new search, we reset page to 1
+if (GETPOST('buttonsubmit', 'alphanohtml', 2)) {
+	$options['no_page'] = 1;
+}
 
+// MAIN_ENABLE_EXTERNALMODULES_DOLISTORE is 1 if we enabled the dolistore modules
+$options['search_source_dolistore']	= getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_DOLISTORE');
+// MAIN_ENABLE_EXTERNALMODULES_COMMUNITY is 1 if we enabled the community modules
+$options['search_source_github']	= getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY');
 
 if (!$user->admin) {
 	accessforbidden();
@@ -156,6 +165,17 @@ if (dol_is_file($dolibarrdataroot.'/installmodules.lock')) {
 	$allowonlineinstall = false;
 }
 
+//$remotestore = new Dolistore(false);
+$remotestore = new ExternalModules();
+if ($mode == 'marketplace') {
+	// Make remote calls
+	$remotestore->loadRemoteSources();
+}
+
+$object = new stdClass();
+
+$now = dol_now();
+
 
 /*
  * Actions
@@ -180,9 +200,10 @@ if ($action == 'install' && $allowonlineinstall) {
 	$error = 0;
 	$modulenameval = '';
 	// $original_file should match format module_modulename-x.y[.z].zip
+	$tmpfile = $_FILES['fileinstall']['tmp_name'];
 	$original_file = basename($_FILES["fileinstall"]["name"]);
 	$original_file = preg_replace('/\s*\(\d+\)\.zip$/i', '.zip', $original_file);
-	$newfile = $conf->admin->dir_temp.'/'.$original_file.'/'.$original_file;
+	$newfile = dol_sanitizePathName($conf->admin->dir_temp.'/'.$original_file.'/'.$original_file);
 
 	if (!$original_file) {
 		$langs->load("Error");
@@ -199,7 +220,7 @@ if ($action == 'install' && $allowonlineinstall) {
 			setEventMessages($langs->trans("ErrorFilenameDosNotMatchDolibarrPackageRules", $original_file, 'modulename-x[.y.z].zip'), null, 'errors');
 			$error++;
 		}
-		if (empty($_FILES['fileinstall']['tmp_name'])) {
+		if (empty($tmpfile)) {
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFileNotUploaded"), null, 'errors');
 			$error++;
@@ -218,13 +239,13 @@ if ($action == 'install' && $allowonlineinstall) {
 			dol_mkdir($conf->admin->dir_temp.'/'.$tmpdir);
 		}
 
-		$result = dol_move_uploaded_file($_FILES['fileinstall']['tmp_name'], $newfile, 1, 0, $_FILES['fileinstall']['error']);
-		if ($result > 0) {
-			$result = dol_uncompress($newfile, $conf->admin->dir_temp.'/'.$tmpdir);
+		$result = dol_move_uploaded_file($tmpfile, $newfile, 1, 0, $_FILES['fileinstall']['error']);
+		if ((int) $result > 0) {
+			$resultuncompress = dol_uncompress($newfile, $conf->admin->dir_temp.'/'.$tmpdir);
 
-			if (!empty($result['error'])) {
+			if (!empty($resultuncompress['error'])) {
 				$langs->load("errors");
-				setEventMessages($langs->trans($result['error'], $original_file), null, 'errors');
+				setEventMessages($langs->trans($resultuncompress['error'], $original_file), null, 'errors');
 				$error++;
 			} else {
 				// Now we move the dir of the module
@@ -333,9 +354,9 @@ if ($action == 'install' && $allowonlineinstall) {
 								$submodulenamedir = $conf->admin->dir_temp.'/'.$tmpdir.'/htdocs/'.$modulenameval;
 							}
 							dol_syslog("We copy now directory ".$submodulenamedir." into target dir ".$dirins.'/'.$modulenameval);
-							$result = dolCopyDir($submodulenamedir, $dirins.'/'.$modulenameval, '0444', 1);
-							if ($result <= 0) {
-								dol_syslog('Failed to call dolCopyDir result='.$result." with param ".$submodulenamedir." and ".$dirins.'/'.$modulenameval, LOG_WARNING);
+							$resultcopy = dolCopyDir($submodulenamedir, $dirins.'/'.$modulenameval, '0444', 1);
+							if ($resultcopy <= 0) {
+								dol_syslog('Failed to call dolCopyDir result='.$resultcopy." with param ".$submodulenamedir." and ".$dirins.'/'.$modulenameval, LOG_WARNING);
 								$langs->load("errors");
 								setEventMessages($langs->trans("ErrorFailToCopyDir", $submodulenamedir, $dirins.'/'.$modulenameval), null, 'errors');
 								$error++;
@@ -345,34 +366,24 @@ if ($action == 'install' && $allowonlineinstall) {
 				}
 			}
 		} else {
-			setEventMessages($langs->trans("ErrorFailToRenameFile", $_FILES['fileinstall']['tmp_name'], $newfile), null, 'errors');
+			setEventMessages($langs->trans("ErrorFailToRenameFile", $tmpfile, $newfile).' - code = '.$result, null, 'errors');
 			$error++;
 		}
 	}
 
-	/*
-	if (!$error) {
-		if (GETPOST('checkforcompliance')) {
-			$dir = $dirins;
-			$file = $modulenameval;
-			// $installedmodule
-			try {
-				$res = include_once $dir.$file; // A class already exists in a different file will send a non catchable fatal error.
-				$modName = substr($file, 0, dol_strlen($file) - 10);
-				if ($modName) {
-					if (class_exists($modName)) {
-						$objMod = new $modName($db);
-						'@phan-var-force DolibarrModules $objMod';
-
-						//var_dump($objMod);
-					}
-				}
-			} catch(Exception $e) {
-				// Nothing done
-			}
-		}
+	// Add event purge
+	$securityevent = new Events($db);
+	if ($error) {
+		$text = $langs->trans("SecurityModuleDeploymentError", dol_sanitizePathName($_FILES["fileinstall"]["name"]));
+		$securityevent->type = 'MODULE_DEPLOYMENT_ERROR';
+	} else {
+		$text = $langs->trans("SecurityModuleDeploymentSuccess", dol_sanitizePathName($_FILES["fileinstall"]["name"]));
+		$securityevent->type = 'MODULE_DEPLOYMENT_SUCCESS';
 	}
-	*/
+	$securityevent->dateevent = $now;
+	$securityevent->description = $text;
+
+	$resultcreateevent = $securityevent->create($user);
 
 	if (!$error) {
 		$searchParams = array(
@@ -465,8 +476,6 @@ if ($action == 'set' && $user->admin) {
 }
 
 
-
-
 /*
  * View
  */
@@ -505,6 +514,8 @@ $i = 0; // is a sequencer of modules found
 $j = 0; // j is module number. Automatically affected if module number not defined.
 $modNameLoaded = array();
 
+//if ($mode == 'common' || $mode == 'commonkanban') {
+// Load $modules (required for the badge count)
 foreach ($modulesdir as $dir) {
 	// Load modules attributes in arrays (name, numero, orders) from dir directory
 	//print $dir."\n<br>";
@@ -780,10 +791,10 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 	$moreforfilter .= '</div>';
 	$moreforfilter .= ' ';
 	$moreforfilter .= '<div class="divsearchfield valignmiddle inline-block">';
-	$moreforfilter .= '<input type="submit" name="buttonsubmit" class="button small nomarginleft" value="'.dol_escape_htmltag($langs->trans("Refresh")).'">';
+	$moreforfilter .= '<input type="submit" name="buttonsubmit" class="button small nomarginleft" value="'.dolPrintHTMLForAttribute($langs->trans("Refresh")).'">';
 	if ($search_keyword || ($search_nature && $search_nature != '-1') || ($search_version && $search_version != '-1') || ($search_status && $search_status != '-1')) {
 		$moreforfilter .= ' ';
-		$moreforfilter .= '<input type="submit" name="buttonreset" class="buttonreset noborderbottom" value="'.dol_escape_htmltag($langs->trans("Reset")).'">';
+		$moreforfilter .= '<input type="submit" name="buttonreset" class="buttonreset noborderbottom" value="'.dolPrintHTMLForAttribute($langs->trans("Reset")).'">';
 	}
 	$moreforfilter .= '</div>';
 	$moreforfilter .= '</div>';
@@ -797,7 +808,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 	$moreforfilter = '';
 
-	print '<div class="clearboth"></div><br>';
+	print '<div class="clearboth"></div><br><br>';
 
 	$object = new stdClass();
 	$parameters = array();
@@ -1246,20 +1257,68 @@ if ($mode == 'marketplace') {
 
 	print '<br>';
 
-	// Marketplace
+	print '<!-- summary of sources -->';
+
+	// Marketplace and community modules
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="list_of_modules" class="noborder centpercent">'."\n";
 	print '<tr class="liste_titre">'."\n";
 	print '<td class="hideonsmartphone">'.$form->textwithpicto($langs->trans("Provider"), $langs->trans("WebSiteDesc")).'</td>';
 	print '<td></td>';
-	print '<td>'.$langs->trans("URL").'</td>';
+	print '<td>';
+	print '</td>';
+	print '<td></td>';
 	print '</tr>';
 
-	print '<tr class="oddeven">'."\n";
 	$url = 'https://www.dolistore.com';
-	print '<td class="hideonsmartphone"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
-	print '<td><span class="opacitymedium">'.$langs->trans("DoliStoreDesc").'</span></td>';
-	print '<td><a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
+
+	// Marketplace
+	print '<tr class="oddeven">'."\n";
+	print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth100" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.svg"></a></td>';
+	print '<td><span class="opacitymedium">'.$langs->trans("DoliStoreDesc").'</span><br>';
+	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
+	print '<td>';
+	print ajax_constantonoff('MAIN_ENABLE_EXTERNALMODULES_DOLISTORE', array(), null, 0, 0, 1);
+	print '</td>';
+	print '<td class="center">';
+	if (!getDolGlobalString('MAIN_DISABLE_EXTERNALMODULES_DOLISTORE') && getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_DOLISTORE')) {
+		$messagetoadd = '<br><span class="small">';
+		if ($remotestore->dolistoreApiStatus <= 0) {
+			$messagetoadd = '<br>'.$remotestore->dolistoreApiError.'<br>Failed to get answer of remote API server<br>';
+		}
+
+		$messagetoadd .= '<br>Using Shop address MAIN_MODULE_DOLISTORE_SHOP_URL = '.$remotestore->shop_url;
+		$messagetoadd .= '<br>Using Remote API address MAIN_MODULE_DOLISTORE_API_URL = '.$remotestore->dolistore_api_url;
+		$messagetoadd .= '<br>Using API public key MAIN_MODULE_DOLISTORE_API_KEY = '.$remotestore->dolistore_api_key;
+		// Add basic auth if needed
+		$basicAuthLogin = getDolGlobalString('MAIN_MODULE_DOLISTORE_BASIC_LOGIN');
+		$basicAuthPassword = getDolGlobalString('MAIN_MODULE_DOLISTORE_BASIC_PASSWORD');
+		if ($basicAuthLogin) {
+			$messagetoadd .= '<br>Using basic auth login: base64('.$basicAuthLogin.':'.$basicAuthPassword.')';
+		}
+		$messagetoadd .= '</span>';
+
+		print $remotestore->libStatus($remotestore->dolistoreApiStatus, 2, $messagetoadd);
+	}
+	print '</td>';
+	print '</tr>';
+
+	$url = 'https://github.com/Dolibarr/dolibarr-community-modules';
+
+	// Community
+	print '<tr class="oddeven">'."\n";
+	print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth100" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg"></a></td>';
+	print '<td><span class="opacitymedium">'.$langs->trans("CommunityModulesDesc").'</span><br>';
+	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
+	print '<td>';
+	print ajax_constantonoff('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY', array(), null, 0, 0, 1);
+	print '</td>';
+	print '<td class="center">';
+	if (!getDolGlobalString('MAIN_DISABLE_EXTERNALMODULES_COMMUNITY') && getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY')) {
+		$messagetoadd = '<br><br><span class="small">Content of the repository index file '.$remotestore->file_source_url.' is in the local cache file '.$remotestore->cache_file.' (Date: '.dol_print_date(dol_filemtime($remotestore->cache_file), 'dayhour', 'tzuserrel').')</span>';
+		print $remotestore->libStatus($remotestore->githubFileStatus, 2, $messagetoadd);
+	}
+	print '</td>';
 	print '</tr>';
 
 	print "</table>\n";
@@ -1269,62 +1328,75 @@ if ($mode == 'marketplace') {
 
 	print '<br>';
 
-	$conf->global->MAIN_DISABLE_DOLISTORE_SEARCH = 1; // avoid warning with the new Dolistore website
-
-	if (!getDolGlobalString('MAIN_DISABLE_DOLISTORE_SEARCH') && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+	if ($remotestore->numberOfProviders > 0) {
 		// $options is array with filter criteria
+		$nbmaxtoshow = $options['per_page'];
+		$options['per_page']++;
 
-		if (getDolGlobalInt('MAIN_ENANLE_OLD_DOLISTORE')) {
-			$nbmaxtoshow = $options['per_page'];
-			$options['per_page']++;
+		//$remotestore->getRemoteCategories();
+		//$remotestore->getRemoteProducts($options);
 
-			$remotestore->getRemoteCategories();
-			$remotestore->getRemoteProducts($options);
+		print '<span class="opacitymedium">'.$langs->trans('DOLISTOREdescriptionLong').'</span><br><br>';
 
-			print '<span class="opacitymedium">'.$langs->trans('DOLISTOREdescriptionLong').'</span><br><br>';
+		$categories_tree = $remotestore->getCategories($options['categorie']);		// Call API to get the categories
 
-			$previouslink = $remotestore->get_previous_link();
-			$nextlink = $remotestore->get_next_link();
+		$products_list = $remotestore->getProducts($options);
 
-			print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="divsearchfield">';
+		$previouslink = $remotestore->get_previous_link();
 
-			print '<form method="POST" class="centpercent" id="searchFormList" action="'.$remotestore->url.'">'; ?>
-						<input type="hidden" name="token" value="<?php echo newToken(); ?>">
-						<input type="hidden" name="mode" value="marketplace">
-						<div class="divsearchfield">
-							<input name="search_keyword" placeholder="<?php echo $langs->trans('Keyword') ?>" id="search_keyword" type="text" class="minwidth200" value="<?php echo dol_escape_htmltag($options['search']) ?>"><br>
-						</div>
-						<div class="divsearchfield">
-							<input class="button buttongen" value="<?php echo $langs->trans('Rechercher') ?>" type="submit">
-							<a class="buttonreset" href="<?php echo $_SERVER["PHP_SELF"].'?mode=marketplace'; ?>"><?php echo $langs->trans('Reset') ?></a>
+		$nextlink = $remotestore->get_next_link();
 
-							&nbsp;
-						</div>
-			<?php
-			print $previouslink;
-			print $nextlink;
-			print '</form>';
 
-			print '</div></div>';
-			print '<div class="clearboth"></div>';
-			?>
+		print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="">';
 
+		print '<form method="POST" class="centpercent" id="searchFormList" action="'.$remotestore->url.'">'; ?>
+					<input type="hidden" name="token" value="<?php echo newToken(); ?>">
+					<input type="hidden" name="mode" value="marketplace">
+					<input type="hidden" name="page_y" value="">
+					<div class="divsearchfield">
+						<input name="search_keyword" placeholder="<?php echo $langs->trans('Keyword') ?>" id="search_keyword" type="text" class="minwidth200" value="<?php echo dolPrintHTMLForAttribute($options['search']) ?>">
+					</div>
+					<div class="divsearchfield">
+						<input name="buttonsubmit" class="button buttongen reposition" value="<?php echo $langs->trans('Search') ?>" type="submit">
+		<?php
+		if ($search_keyword !== '') {
+			print '<a class="buttonreset reposition" href="'.$_SERVER["PHP_SELF"].'?mode=marketplace">'.$langs->trans('Reset').'</a>';
+		}
+		?>
+						&nbsp;
+					</div>
+		<?php
+			$totalnboflines = '<span class="product-count opacitymedium paddingleft">';
+			$totalnboflines .= $langs->trans("itemFound", $remotestore->numberTotalOfProducts);
+			$totalnboflines .= '</span>';
+
+			print $totalnboflines;
+			print $remotestore->getPagination();
+		print '</form>';
+
+		print '</div></div>';
+		print '<div class="clearboth"></div>';
+		?>
+			<?php if (!empty($categories_tree)) { ?>
 				<div id="category-tree-left">
 					<ul class="tree">
-						<?php
-						echo $remotestore->get_categories();	// Do not use dol_escape_htmltag here, it is already a structured content?>
+					<?php
+						print $categories_tree; ?>
 					</ul>
 				</div>
+			<?php } ?>
 
-				<div id="listing-content">
-					<table summary="list_of_modules" id="list_of_modules" class="productlist centpercent">
-						<tbody id="listOfModules">
-							<?php echo $remotestore->get_products($nbmaxtoshow); ?>
-						</tbody>
-					</table>
-				</div>
-			<?php
-		}
+			<div id="listing-content" class="div-table-responsive" <?php if (empty($categories_tree)) { ?>style="width:100%;"<?php } ?>>
+				<table summary="list_of_modules" id="list_of_modules" class="productlist centpercent">
+					<tbody id="listOfModules">
+						<?php //echo $remotestore->get_products($nbmaxtoshow); ?>
+						<?php print $products_list; ?>
+					</tbody>
+				</table>
+			</div>
+			<div style="clear: both;"></div>
+			<div><?php print $remotestore->getPagination(); ?></div>
+		<?php
 	}
 }
 
@@ -1493,14 +1565,6 @@ if ($mode == 'deploy') {
 			print $langs->trans("UnpackPackageInModulesRoot", $dirins).'<br>';
 			print '<b>'.$langs->trans("StepNb", 4).'</b>: ';
 			print $langs->trans("SetupIsReadyForUse", DOL_URL_ROOT.'/admin/modules.php?mainmenu=home', $langs->transnoentitiesnoconv("Home").' - '.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Modules")).'<br>';
-		}
-	}
-
-	if (!empty($result['return'])) {
-		print '<br>';
-
-		foreach ($result['return'] as $value) {
-			echo $value.'<br>';
 		}
 	}
 

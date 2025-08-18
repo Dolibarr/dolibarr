@@ -9,7 +9,7 @@
  * Copyright (C) 2017-2022  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019-2020  Christophe Battarel	    <christophe@altairis.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -449,7 +449,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && $permissiontoreceive
 			if ($product > 0) {
 				$mouv->origin = &$object;
 				$mouv->setOrigin($object->element, $object->id);
-				$result = $mouv->livraison($user, $product, $entrepot, $qty, $price, $comment, '', $eatby, $sellby, $batch);
+				$result = $mouv->livraison($user, $product, $entrepot, $qty, (float) $price, $comment, '', (int) $eatby, (int) $sellby, $batch);
 				if ($result < 0) {
 					$errors = $mouv->errors;
 					$error++;
@@ -495,13 +495,13 @@ if ($action == 'updateline' && $permissiontoreceive && empty($cancel)) {
 			if ($product > 0) {
 				$mouv->origin = &$object;
 				$mouv->setOrigin($object->element, $object->id);
-				$result = $mouv->livraison($user, $product, $entrepot, $qty, $price, $comment, '', $eatby, $sellby, $batch);
+				$result = $mouv->livraison($user, $product, $entrepot, $qty, $price, $comment, '', (int) $eatby, (int) $sellby, $batch);
 				if ($result < 0) {
 					$errors = $mouv->errors;
 					$error++;
 				} else {
 					$mouv->origin = &$object;
-					$result = $mouv->reception($user, $product, $supplierorderdispatch->fk_entrepot, $supplierorderdispatch->qty, $price, $comment, $eatby, $sellby, $batch);
+					$result = $mouv->reception($user, $product, $supplierorderdispatch->fk_entrepot, $supplierorderdispatch->qty, $price, $comment, (int) $eatby, (int) $sellby, $batch);
 					if ($result < 0) {
 						$errors = $mouv->errors;
 						$error++;
@@ -582,13 +582,13 @@ if ($id > 0 || !empty($ref)) {
 	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>';
-		if (0) {
+		if (0) {	// @phpstan-ignore-line
 			$caneditproject = false;	// For static analysis
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify' && $caneditproject) {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -626,7 +626,7 @@ if ($id > 0 || !empty($ref)) {
 
 	// Author
 	print '<tr><td class="titlefield">'.$langs->trans("AuthorRequest").'</td>';
-	print '<td>'.$author->getNomUrl(1, '', 0, 0, 0).'</td>';
+	print '<td>'.$author->getNomUrl(-1, '', 0, 0, 0).'</td>';
 	print '</tr>';
 
 	$parameters = array();
@@ -950,13 +950,13 @@ if ($id > 0 || !empty($ref)) {
 							print '</td>';
 							if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 								print '<td class="nowraponall">';
-								$dlcdatesuffix = dol_mktime(0, 0, 0, GETPOST('dlc'.$suffix.'month'), GETPOST('dlc'.$suffix.'day'), GETPOST('dlc'.$suffix.'year'));
+								$dlcdatesuffix = dol_mktime(0, 0, 0, GETPOSTINT('dlc'.$suffix.'month'), GETPOSTINT('dlc'.$suffix.'day'), GETPOSTINT('dlc'.$suffix.'year'));
 								print $form->selectDate($dlcdatesuffix, 'dlc'.$suffix, 0, 0, 1, '');
 								print '</td>';
 							}
 							if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 								print '<td class="nowraponall">';
-								$dluodatesuffix = dol_mktime(0, 0, 0, GETPOST('dluo'.$suffix.'month'), GETPOST('dluo'.$suffix.'day'), GETPOST('dluo'.$suffix.'year'));
+								$dluodatesuffix = dol_mktime(0, 0, 0, GETPOSTINT('dluo'.$suffix.'month'), GETPOSTINT('dluo'.$suffix.'day'), GETPOSTINT('dluo'.$suffix.'year'));
 								print $form->selectDate($dluodatesuffix, 'dluo'.$suffix, 0, 0, 1, '');
 								print '</td>';
 							}
@@ -1294,9 +1294,13 @@ if ($id > 0 || !empty($ref)) {
 				// Date creation
 				print '<td class="center">'.dol_print_date($db->jdate($objp->datec), 'day').'</td>';
 
-				// Date delivery
-				if (property_exists($objp, "date_delivery")) {
-					print '<td class="center">' . dol_print_date($db->jdate($objp->date_delivery), 'day') . '</td>';
+				// Date delivery of reception
+				if (isModEnabled('reception')) {
+					print '<td class="center">';
+					if (!empty($objp->date_delivery)) {
+						print dol_print_date($db->jdate($objp->date_delivery), 'day');
+					}
+					print '</td>';
 				} else {
 					print '<td class="center"></td>';
 				}

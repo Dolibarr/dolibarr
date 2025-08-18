@@ -885,21 +885,6 @@ class RssParser
 	}
 }
 
-/*
- * A method for the xml_set_external_entity_ref_handler()
- *
- * @param XMLParser $parser
- * @param string $ent
- * @param string|false $base
- * @param string $sysID
- * @param string|false $pubID
- * @return bool
-function extEntHandler($parser, $ent, $base, $sysID, $pubID)  {
-	print 'extEntHandler ran';
-	return true;
-}
-*/
-
 /**
  * Function to convert an XML object into an array
  *

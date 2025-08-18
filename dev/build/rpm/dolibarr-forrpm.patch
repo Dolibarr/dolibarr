@@ -1,0 +1,28 @@
+diff -up htdocs/filefunc.inc.php.patch htdocs/filefunc.inc.php
+--- htdocs/filefunc.inc.php.patch	2011-09-03 02:32:48.666952000 +0200
++++ htdocs/filefunc.inc.php	2011-09-03 02:33:00.510952001 +0200
+@@ -63,8 +63,8 @@
+ $conffile = "conf/conf.php";
+ $conffiletoshow = "htdocs/conf/conf.php";
+ // For debian/redhat like systems
+-//$conffile = "/etc/dolibarr/conf.php";
+-//$conffiletoshow = "/etc/dolibarr/conf.php";
++$conffile = "/etc/dolibarr/conf.php";
++$conffiletoshow = "/etc/dolibarr/conf.php";
+
+
+ // Include configuration
+diff -up htdocs/install/inc.php.patch htdocs/install/inc.php
+--- htdocs/install/inc.php.patch	2011-09-03 02:33:26.450952000 +0200
++++ htdocs/install/inc.php	2011-09-03 02:33:36.286952001 +0200
+@@ -74,8 +74,8 @@
+ $conffile = "../conf/conf.php";
+ $conffiletoshow = "htdocs/conf/conf.php";
+ // For debian/redhat like systems
+-//$conffile = "/etc/dolibarr/conf.php";
+-//$conffiletoshow = "/etc/dolibarr/conf.php";
++$conffile = "/etc/dolibarr/conf.php";
++$conffiletoshow = "/etc/dolibarr/conf.php";
+
+ $short_options = "c:h";
+ $long_options = array(

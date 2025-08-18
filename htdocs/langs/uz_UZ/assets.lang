@@ -17,6 +17,7 @@ AccountancyCodeAsset=Buxgalteriya kodi (aktiv)
 AccountancyCodeDepreciationAsset=Buxgalteriya kodi (amortizatsiya aktivlari hisobi)
 AccountancyCodeDepreciationExpense=Buxgalteriya kodi (amortizatsiya xarajatlari hisobi)
 AssetsLines=Aktivlar
+ConfirmValidateAsset=Are you sure you want to validate this asset with the reference <b>%s</b>?
 DeleteType=O'chirish
 DeleteAnAssetType=Obyekt modelini o‘chirish
 ConfirmDeleteAssetType=Haqiqatan ham ushbu obyekt modelini o‘chirib tashlamoqchimisiz?
@@ -34,7 +35,7 @@ AssetsTypeId=Obyekt modeli identifikatori
 AssetsTypeLabel=Obyekt modeli yorlig‘i
 AssetsTypes=Aktivlar modellari
 ASSET_ACCOUNTANCY_CATEGORY=Asosiy vositalarni hisobga olish guruhi
-ASSET_DEPRECIATION_DURATION_PER_YEAR=Proportional period in days for calculating amortization over one year
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Bir yildan ortiq amortizatsiyani hisoblash uchun kunlardagi mutanosib davr
 # Menu
 MenuAssets=Aktivlar
 MenuNewAsset=Yangi aktiv
@@ -70,6 +71,7 @@ AssetDisposal=Utilizatsiya qilish
 AssetConfirmDisposalAsk=Haqiqatan ham <b> %s </b> aktivini utilizatsiya qilmoqchimisiz?
 AssetConfirmReOpenAsk=Haqiqatan ham <b> %s </b> aktivini qayta ochmoqchimisiz?
 # Asset status
+AssetInDraft=Qoralama
 AssetInProgress=Jarayonda
 AssetDisposed=Utilizatsiya qilingan
 AssetRecorded=Hisoblangan

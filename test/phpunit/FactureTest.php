@@ -176,7 +176,7 @@ class FactureTest extends CommonClassTest
 				'cond_reglement_doc', 'modelpdf',
 				'multicurrency_total_ht','multicurrency_total_tva',	'multicurrency_total_ttc','fk_multicurrency','multicurrency_code','multicurrency_tx',
 				'retained_warranty' ,'retained_warranty_date_limit', 'retained_warranty_fk_cond_reglement', 'specimen', 'situation_cycle_ref', 'situation_counter', 'situation_final',
-				'trackid','user_creat','user_valid'
+				'trackid','user_creat','user_valid', 'note'
 			)
 		);
 		$this->assertEquals($arraywithdiff, array());    // Actual, Expected

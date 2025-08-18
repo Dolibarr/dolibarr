@@ -66,7 +66,7 @@ class AssetDepreciationOptions extends CommonObject
 	 */
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -107,7 +107,7 @@ class AssetDepreciationOptions extends CommonObject
 		),
 	);
 	/**
-	 * @var int
+	 * @var int		ID parent asset
 	 */
 	public $fk_asset;
 	/**
@@ -272,9 +272,7 @@ class AssetDepreciationOptions extends CommonObject
 				} elseif ($field_info['type'] == 'boolean') {
 					$value = ((GETPOST($html_name) == '1' || GETPOST($html_name) == 'on') ? 1 : 0);
 				} elseif ($field_info['type'] == 'reference') {
-					// todo to check
-					$tmparraykey = array(); //array_keys($object->param_list);
-					$value = $tmparraykey[GETPOST($html_name)] . ',' . GETPOST($html_name . '2');
+					$value = GETPOST($html_name) . ',' . GETPOST($html_name . '2');
 				} else {
 					if ($field_key == 'lang') {
 						$value = GETPOST($html_name, 'aZ09') ? GETPOST($html_name, 'aZ09') : "";

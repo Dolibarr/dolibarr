@@ -5,8 +5,8 @@
  * Copyright (C) 2015-2020  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Benoit Bruchard			<benoitb21@gmail.com>
  * Copyright (C) 2019       Thibault FOUCART		<support@ptibogxiv.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,7 +110,7 @@ if ($action == 'specimen') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->DON_ADDON_MODEL == "$value") {
+		if (getDolGlobalString('DON_ADDON_MODEL') == "$value") {
 			dolibarr_del_const($db, 'DON_ADDON_MODEL', $conf->entity);
 		}
 	}
@@ -188,7 +188,7 @@ if (isModEnabled('accounting')) {
 $help_url = '';
 llxHeader('', $langs->trans("DonationsSetup"), $help_url, '', 0, 0, '', '', '', 'mod-donation page-admin');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 print load_fiche_titre($langs->trans("DonationsSetup"), $linkback, 'title_setup');
 
 $head = donation_admin_prepare_head();
@@ -262,7 +262,7 @@ if (is_resource($handle)) {
 
 				// Active
 				if (in_array($name, $def)) {
-					if ($conf->global->DON_ADDON_MODEL == $name) {
+					if (getDolGlobalString('DON_ADDON_MODEL') == $name) {
 						print "<td class=\"center\">\n";
 						print img_picto($langs->trans("Enabled"), 'switch_on');
 						print '</td>';
@@ -278,7 +278,7 @@ if (is_resource($handle)) {
 				}
 
 				// Default
-				if ($conf->global->DON_ADDON_MODEL == "$name") {
+				if (getDolGlobalString('DON_ADDON_MODEL') == "$name") {
 					print "<td class=\"center\">";
 					print img_picto($langs->trans("Default"), 'on');
 					print '</td>';
@@ -298,7 +298,7 @@ if (is_resource($handle)) {
 				$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
 				$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
 				print '<td class="center">';
-				print $form->textwithpicto('', $htmltooltip, -1, 0);
+				print $form->textwithpicto('', $htmltooltip, -1, 'info');
 				print '</td>';
 
 				// Preview

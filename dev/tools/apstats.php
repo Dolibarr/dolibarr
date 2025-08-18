@@ -138,24 +138,33 @@ if ($dirscc != 'disabled') {
 }
 
 // Get technical debt with PHPStan
-$output_arrtd = array();
+$output_arrver = array();
 if ($dirphpstan != 'disabled') {
 	$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --version';
 	print 'Execute PHPStan to get the version: '.$commandcheck."\n";
-	$resexectd = 0;
-	exec($commandcheck, $output_arrtd, $resexectd);
+	$resexecver = 0;
+	exec($commandcheck, $output_arrver, $resexecver);
 }
-$phpstanversion = $output_arrtd[0];
+$phpstanversion = $output_arrver[0];
 
 $output_arrtd = array();
 if ($dirphpstan != 'disabled') {
-	$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --level='.$PHPSTANLEVEL.' -v analyze -a build/phpstan/bootstrap.php --memory-limit 8G --error-format=github -c ~/preview.dolibarr.org/dolibarr/dev/tools/phpstan/phpstan_v1_apstats.neon';
+	$commandcheck = ($dirphpstan ? $dirphpstan.'/' : '').'phpstan --level='.$PHPSTANLEVEL.' -v analyze -a dev/build/phpstan/bootstrap.php --memory-limit 5G --error-format=github -c ~/preview.dolibarr.org/dolibarr/phpstan_apstats.neon';
 	print 'Execute PHPStan to get the technical debt: '.$commandcheck."\n";
 	$resexectd = 0;
 	exec($commandcheck, $output_arrtd, $resexectd);
 }
 
 // Get technical debt with Phan
+$output_arrverphan = array();
+if ($dirphpstan != 'disabled') {
+	$commandcheck = ($dir_phan ? $dir_phan.DIRECTORY_SEPARATOR : '') .'phan --version';
+	print 'Execute Phan to get the version: '.$commandcheck."\n";
+	$resexecverphan = 0;
+	exec($commandcheck, $output_arrverphan, $resexecverphan);
+}
+$phpphanversion = $output_arrverphan[0];
+
 $output_phan_json = array();
 $res_exec_phan = 0;
 if ($dir_phan != 'disabled') {
@@ -261,7 +270,7 @@ $nbofmonth = 3;
 $delay = (3600 * 24 * 30 * $nbofmonth);
 $arrayofalerts = array();
 
-$commandcheck = "git log --all --shortstat --no-renames --use-mailmap --pretty=".escapeshellarg('format:%cI;%H;%aN;%aE;%ce;%s')." --since=".escapeshellarg(dol_print_date(dol_now() - $delay, '%Y-%m-%d'))." | grep -i -E ".escapeshellarg("(#yogosha|CVE|Sec:|Sec )");
+$commandcheck = "git log --all --shortstat --no-renames --use-mailmap --pretty=".escapeshellarg('format:%cI;%H;%aN;%aE;%ce;%s')." --since=".escapeshellarg(dol_print_date(dol_now() - $delay, '%Y-%m-%d'))." | grep -i -E ".escapeshellarg("(#yogosha|CVE|Sec:|Sec |Sec$)");
 print 'Execute git log to get commits related to security: '.$commandcheck."\n";
 $output_arrglpu = array();
 $resexecglpu = 0;
@@ -270,7 +279,7 @@ foreach ($output_arrglpu as $val) {
 	// Parse the line to split interesting data
 	$tmpval = cleanVal2($val);
 
-	if (preg_match('/(#yogosha|CVE|Sec:|Sec\s)/i', $tmpval['title'])) {
+	if (preg_match('/(#yogosha|CVE|Sec:|Sec\s|Sec$)/i', $tmpval['title'])) {	// Recommended git comment:  "Sec: Fix #..."
 		$alreadyfound = '';
 		$alreadyfoundcommitid = '';
 		foreach ($arrayofalerts as $val) {
@@ -974,7 +983,7 @@ $html .= '</div>';
 $html .= '</div>';
 
 $html .= '<br>';
-$html .= 'Note:Search is git repository on regexstring #yogosha|CVE|Sec:|Sec\s<br>';
+$html .= 'Note:Search is done in git repository on regexstring #yogosha|CVE|Sec:|Sec\s<br>';
 $html .= 'You can use this URL for RSS notifications: <a href="/'.$outputfilerss.'">'.$outputfilerss.'</a><br><br>';
 
 $html .= '</section>';
@@ -1082,7 +1091,7 @@ if ($dir_phan != 'disabled') {
     ]});
 ';
 	$html .= '<section class="chapter" id="technicaldebtphan">'."\n";
-	$html .= '<h2><span class="fas fa-book-dead pictofixedwidth"></span>Technical debt <span class="opacitymedium">(PHAN '.$phan_nblines.' warnings)</span></h2>'."\n";
+	$html .= '<h2><span class="fas fa-book-dead pictofixedwidth"></span>Technical debt <span class="opacitymedium">('.$phpphanversion.' -> '.$phan_nblines.' warnings)</span></h2>'."\n";
 
 	$html .= '<div class="boxallwidth">'."\n";
 	$html .= '<div class="div-table-responsive">'."\n";
