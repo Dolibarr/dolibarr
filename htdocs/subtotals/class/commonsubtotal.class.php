@@ -467,7 +467,7 @@ trait CommonSubtotal
 				'',						// Label
 				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
-		} elseif ($current_module == 'facturerec') {
+		} elseif ($current_module == 'facturerec' && $this instanceof FactureRec) {
 			$objectline = new FactureLigneRec($this->db);
 			$objectline->fetch($lineid);
 			$line_rang = $objectline->rang;
