@@ -6762,7 +6762,7 @@ class Product extends CommonObject
 			dol_syslog(get_class($this)."::getLabelOfUnit Error ".$this->error, LOG_ERR);
 			return -1;
 		} elseif ($this->db->num_rows($resql) > 0 && $res = $this->db->fetch_array($resql)) {
-			$label = ($label_type == 'short_label' ? $res[$label_type] : $res['code']);
+			$label =  $res[$label_type] ? $res[$label_type] : '';
 		}
 		$this->db->free($resql);
 
