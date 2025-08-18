@@ -242,7 +242,13 @@ trait CommonSubtotal
 	{
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
-		$allowed_types = array('propal', 'commande', 'facture', 'facturerec', 'shipping');
+		$allowed_types = [
+			'propal',
+			'commande',
+			'facture',
+			'facturerec',
+			'shipping',
+		];
 		if (!in_array($current_module, $allowed_types)) {
 			if (isset($this->errors)) {
 				$this->errors[] = $langs->trans("UnsupportedModuleError");
@@ -268,20 +274,23 @@ trait CommonSubtotal
 		}
 
 		// Add the line calling the right module
-		if ($current_module == 'facture') {
-			$result = $this->deleteLine($id); // @phpstan-ignore-line
-		} elseif ($current_module == 'propal') {
-			$result = $this->deleteLine($id); // @phpstan-ignore-line
-		} elseif ($current_module == 'commande') {
-			$result = $this->deleteLine($user, $id); // @phpstan-ignore-line
+		if ($current_module == 'facture'&& $this instanceof Facture) {
+			$rowid = $id; // for phan suspicious parameter order...
+			$result = $this->deleteLine($rowid);
+		} elseif ($current_module == 'propal'&& $this instanceof Propal) {
+			$rowid = $id; // for phan suspicious parameter order...
+			$result = $this->deleteLine($rowid);
+		} elseif ($current_module == 'commande'&& $this instanceof Commande) {
+			$lineid = $id; // for phan suspicious parameter order...
+			$result = $this->deleteLine($user, $lineid);
 		} elseif ($current_module == 'facturerec') {
 			$line = new FactureLigneRec($this->db);
 			$line->id = $id;
-			$result = $line->delete($user); // @phpstan-ignore-line
+			$result = $line->delete($user);
 		} elseif ($current_module == 'shipping') {
 			$line = new ExpeditionLigne($this->db);
 			$line->id = $id;
-			$result = $line->delete($user); // @phpstan-ignore-line
+			$result = $line->delete($user);
 		}
 
 		return $result >= 0 ? $result : -1; // Return line ID or false
