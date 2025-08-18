@@ -157,12 +157,6 @@ parameters:
 			path: ../../../htdocs/accountancy/bookkeeping/export.php
 
 		-
-			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/accountancy/bookkeeping/export.php
-
-		-
 			message: '#^Property AccountancyCategory\:\:\$active \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 4
