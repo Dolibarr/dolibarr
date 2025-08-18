@@ -131,7 +131,7 @@ trait CommonSubtotal
 		}
 
 		// Add the line calling the right module
-		if ($current_module == 'facture') {
+		if ($current_module == 'facture' && $this instanceof Facture) {
 			/** @var Facture $this */
 			$result = $this->addline(
 				$desc,					// Description
