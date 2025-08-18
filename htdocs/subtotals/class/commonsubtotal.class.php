@@ -436,6 +436,7 @@ trait CommonSubtotal
 				SUBTOTALS_SPECIAL_CODE	// Special code @phpstan-ignore-line
 			);
 		} elseif ($current_module == 'propal') {
+			/** @var Propal $this */
 			$result = $this->updateline( // @phpstan-ignore-line
 				$lineid, 				// ID of line to change @phpstan-ignore-line
 				0,						// Unit price @phpstan-ignore-line
@@ -456,6 +457,7 @@ trait CommonSubtotal
 				self::$PRODUCT_TYPE		// Type @phpstan-ignore-line
 			);
 		} elseif ($current_module == 'commande') {
+			/** @var Commande $this */
 			$result = $this->updateline( // @phpstan-ignore-line
 				$lineid, 				// ID of line to change @phpstan-ignore-line
 				$desc,					// Description @phpstan-ignore-line
@@ -587,7 +589,8 @@ trait CommonSubtotal
 				}
 			} else {
 				if ($current_module == 'facture') {
-					$result = $this->updateline( // @phpstan-ignore-line
+					/** @var Facture $this */
+					$result = $this->updateline(
 						$this->lines[$i]->id, // @phpstan-ignore-line
 						$this->lines[$i]->desc, // @phpstan-ignore-line
 						$this->lines[$i]->subprice, // @phpstan-ignore-line
@@ -612,7 +615,7 @@ trait CommonSubtotal
 						$this->lines[$i]->multicurrency_subprice // @phpstan-ignore-line
 					);
 				} elseif ($current_module == 'commande') {
-					$result = $this->updateline( // @phpstan-ignore-line
+					$result = $this->updateline(
 						$this->lines[$i]->id, // @phpstan-ignore-line
 						$this->lines[$i]->desc, // @phpstan-ignore-line
 						$this->lines[$i]->subprice, // @phpstan-ignore-line
@@ -636,7 +639,8 @@ trait CommonSubtotal
 						$this->lines[$i]->multicurrency_subprice // @phpstan-ignore-line
 					);
 				} elseif ($current_module == 'propal') {
-					$result = $this->updateline( // @phpstan-ignore-line
+					/** @var Propal $this */
+					$result = $this->updateline(
 						$this->lines[$i]->id, // @phpstan-ignore-line
 						$this->lines[$i]->subprice, // @phpstan-ignore-line
 						$this->lines[$i]->qty, // @phpstan-ignore-line
