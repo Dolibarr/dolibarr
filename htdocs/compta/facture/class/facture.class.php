@@ -5557,7 +5557,6 @@ class Facture extends CommonInvoice
 
 		$this->note_public = 'This is a comment (public)';
 		$this->note_private = 'This is a comment (private)';
-		$this->note = 'This is a comment (private)';
 
 		$this->fk_user_author = $user->id;
 
@@ -5566,6 +5565,8 @@ class Facture extends CommonInvoice
 
 		$this->fk_incoterms = 0;
 		$this->location_incoterms = '';
+
+		$this->status = 0;
 
 		if (empty($option) || $option != 'nolines') {
 			// Lines
