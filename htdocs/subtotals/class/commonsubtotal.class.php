@@ -133,7 +133,6 @@ trait CommonSubtotal
 
 		// Add the line calling the right module
 		if ($current_module == 'facture' && $this instanceof Facture) {
-			/** @var Facture $this */
 			$result = $this->addline(
 				$desc,					// Description
 				0,						// Unit price
@@ -154,8 +153,7 @@ trait CommonSubtotal
 				$rang,					// Rang
 				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
-		} elseif ($current_module == 'propal') {
-			/** @var Propal $this */
+		} elseif ($current_module == 'propal'&& $this instanceof Propal) {
 			$result = $this->addline(
 				$desc,					// Description
 				0,						// Unit price
@@ -172,8 +170,7 @@ trait CommonSubtotal
 				$rang,					// Rang
 				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
-		} elseif ($current_module == 'commande') {
-			/** @var Commande $this */
+		} elseif ($current_module == 'commande'&& $this instanceof Commande) {
 			$result = $this->addline(
 				$desc,					// Description
 				0,						// Unit price
@@ -193,15 +190,13 @@ trait CommonSubtotal
 				$rang,					// Rang
 				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
-		} elseif ($current_module == 'shipping') {
-			/** @var Expedition $this */
+		} elseif ($current_module == 'shipping'&& $this instanceof Expedition) {
 			$result = $this->addline(
 				'',						// Warehouse ID
 				(int) $parent_line,		// Source line
 				$depth					// Quantity
 			);
-		} elseif ($current_module == 'facturerec') {
-			/** @var FactureRec $this */
+		} elseif ($current_module == 'facturerec'&& $this instanceof FactureRec) {
 			$rang = $rang == -1 ? $rang : $rang-1;
 			$result = $this->addline(
 				$desc,					// Description
@@ -221,8 +216,7 @@ trait CommonSubtotal
 				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
 			$this->fetch_lines();
-		} elseif ($current_module == 'supplier_proposal') {
-			/** @var SupplierProposal $this */
+		} elseif ($current_module == 'supplier_proposal' && $this instanceof SupplierProposal) {
 			$rang = $rang == -1 ? $rang : $rang-1;
 			$result = $this->addline(
 				$desc,					// Description
@@ -274,6 +268,7 @@ trait CommonSubtotal
 	 */
 	public function deleteSubtotalLine($langs, $id, $correspondingstline = false, $user = null)
 	{
+		/** @var Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|CommandeFournisseur|FactureFournisseur $this */
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
 		$allowed_types = [
@@ -311,14 +306,11 @@ trait CommonSubtotal
 		}
 
 		// Add the line calling the right module
-		if ($current_module == 'facture') {
-			/** @var Facture $this */
+		if ($current_module == 'facture' && $this instanceof Facture) {
 			$result = $this->deleteLine($id);
-		} elseif ($current_module == 'propal') {
-			/** @var Propal $this */
+		} elseif ($current_module == 'propal' && $this instanceof Propal) {
 			$result = $this->deleteLine($id);
-		} elseif ($current_module == 'commande') {
-			/** @var Commande $this */
+		} elseif ($current_module == 'commande' && $this instanceof Commande) {
 			$result = $this->deleteLine($user, $id);
 		} elseif ($current_module == 'facturerec') {
 			$line = new FactureLigneRec($this->db);
