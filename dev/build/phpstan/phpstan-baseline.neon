@@ -157,12 +157,6 @@ parameters:
 			path: ../../../htdocs/accountancy/bookkeeping/export.php
 
 		-
-			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/accountancy/bookkeeping/export.php
-
-		-
 			message: '#^Property AccountancyCategory\:\:\$active \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 4
@@ -3439,12 +3433,6 @@ parameters:
 			path: ../../../htdocs/comm/propal/list.php
 
 		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/comm/propal/tpl/linkedobjectblock.tpl.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
@@ -3641,12 +3629,6 @@ parameters:
 			identifier: variable.undefined
 			count: 3
 			path: ../../../htdocs/commande/list_det.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/commande/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: '#^Ternary operator condition is always false\.$#'
@@ -6073,21 +6055,9 @@ parameters:
 			path: ../../../htdocs/core/actions_dellink.inc.php
 
 		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/actions_fetchobject.inc.php
-
-		-
 			message: '#^Variable \$id might not be defined\.$#'
 			identifier: variable.undefined
 			count: 4
-			path: ../../../htdocs/core/actions_fetchobject.inc.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 9
 			path: ../../../htdocs/core/actions_fetchobject.inc.php
 
 		-
@@ -11809,12 +11779,6 @@ parameters:
 			path: ../../../htdocs/ecm/dir_add_card.php
 
 		-
-			message: '#^Parameter \#1 \$object of function ecm_prepare_head expects EcmDirectory, CommonObject given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/ecm/dir_card.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -11823,12 +11787,6 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/ecm/file_card.php
-
-		-
-			message: '#^Parameter \#1 \$object of function ecm_file_prepare_head expects EcmFiles, CommonObject given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/ecm/file_card.php
 
@@ -13552,12 +13510,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 2
-			path: ../../../htdocs/fourn/facture/card.php
-
-		-
-			message: '#^Property CommonObject\:\:\$fk_project \(int\) does not accept null\.$#'
-			identifier: assign.propertyType
-			count: 1
 			path: ../../../htdocs/fourn/facture/card.php
 
 		-
@@ -16435,12 +16387,6 @@ parameters:
 			path: ../../../htdocs/product/card.php
 
 		-
-			message: '#^Variable \$modCodeProduct might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/card.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
@@ -19125,7 +19071,7 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 2
+			count: 1
 			path: ../../../htdocs/public/stripe/ipn.php
 
 		-
@@ -19751,12 +19697,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/reception/list.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/reception/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
@@ -21533,12 +21473,6 @@ parameters:
 			identifier: if.alwaysTrue
 			count: 1
 			path: ../../../htdocs/ticket/messaging.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/ticket/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: '#^Call to function property_exists\(\) with User and ''admin'' will always evaluate to true\.$#'
