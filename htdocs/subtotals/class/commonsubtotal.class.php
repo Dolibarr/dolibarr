@@ -64,7 +64,7 @@ trait CommonSubtotal
 	 */
 	public function addSubtotalLine($langs, $desc, $depth, $options = array(), $parent_line = 0)
 	{
-		/** @var Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|CommandeFournisseur|FactureFournisseur $this */
+		/** @var CommonObject $this */
 		if (empty($desc)) {
 			if (isset($this->errors)) {
 				$this->errors[] = $langs->trans("TitleNeedDesc");
@@ -346,6 +346,7 @@ trait CommonSubtotal
 	 */
 	public function updateSubtotalLine($langs, $lineid, $desc, $depth, $options) // @phpstan-ignore-line
 	{
+		/** @var Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|CommandeFournisseur|FactureFournisseur $this */
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
 		$allowed_types = [
@@ -402,8 +403,7 @@ trait CommonSubtotal
 		}
 
 		// Update the line calling the right module
-		if ($current_module == 'facture') {
-			/** @var Facture $this */
+		if ($current_module == 'facture' && $this instanceof Facture) {
 			$result = $this->updateline(
 				$lineid, 				// ID of line to change
 				$desc,					// Description
@@ -425,8 +425,7 @@ trait CommonSubtotal
 				'',						// Label
 				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
-		} elseif ($current_module == 'propal') {
-			/** @var Propal $this */
+		} elseif ($current_module == 'propal' && $this instanceof Propal) {
 			$result = $this->updateline(
 				$lineid, 				// ID of line to change
 				0,						// Unit price
@@ -446,8 +445,7 @@ trait CommonSubtotal
 				'',						// Label
 				self::$PRODUCT_TYPE		// Type
 			);
-		} elseif ($current_module == 'commande') {
-			/** @var Commande $this */
+		} elseif ($current_module == 'commande' && $this instanceof Commande) {
 			$result = $this->updateline(
 				$lineid, 				// ID of line to change
 				$desc,					// Description
@@ -491,8 +489,7 @@ trait CommonSubtotal
 				$line_rang,				// Rang
 				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
-		} elseif ($current_module == 'supplier_proposal') {
-			/** @var SupplierProposal $this */
+		} elseif ($current_module == 'supplier_proposal' && $this instanceof SupplierProposal) {
 			$objectline = new SupplierProposalLine($this->db);
 			$objectline->fetch($lineid);
 			$line_rang = $objectline->rang;
@@ -577,8 +574,7 @@ trait CommonSubtotal
 					return 1;
 				}
 			} else {
-				if ($current_module == 'facture') {
-					/** @var Facture $this */
+				if ($current_module == 'facture' && $this instanceof Facture) {
 					$result = $this->updateline(
 						$this->lines[$i]->id,
 						$this->lines[$i]->desc,
@@ -603,7 +599,7 @@ trait CommonSubtotal
 						$this->lines[$i]->fk_unit,
 						$this->lines[$i]->multicurrency_subprice
 					);
-				} elseif ($current_module == 'commande') {
+				} elseif ($current_module == 'commande' && $this instanceof Commande) {
 					$result = $this->updateline(
 						$this->lines[$i]->id,
 						$this->lines[$i]->desc,
@@ -627,8 +623,7 @@ trait CommonSubtotal
 						$this->lines[$i]->fk_unit,
 						$this->lines[$i]->multicurrency_subprice
 					);
-				} elseif ($current_module == 'propal') {
-					/** @var Propal $this */
+				} elseif ($current_module == 'propal' && $this instanceof Propal) {
 					$result = $this->updateline(
 						$this->lines[$i]->id,
 						$this->lines[$i]->subprice,
