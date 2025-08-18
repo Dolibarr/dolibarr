@@ -72,7 +72,16 @@ trait CommonSubtotal
 		}
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
-		$allowed_types = array('propal', 'commande', 'facture', 'facturerec', 'shipping', 'supplier_proposal', 'supplier_order', 'supplier_invoice');
+		$allowed_types = [
+			'propal',
+			'commande',
+			'facture',
+			'facturerec',
+			'shipping',
+			'supplier_proposal',
+			'supplier_order',
+			'supplier_invoice',
+		];
 		if (!in_array($current_module, $allowed_types)) {
 			if (isset($this->errors)) {
 				$this->errors[] = $langs->trans("UnsupportedModuleError");
@@ -123,6 +132,7 @@ trait CommonSubtotal
 
 		// Add the line calling the right module
 		if ($current_module == 'facture') {
+			/** @var Facture $this */
 			$result = $this->addline( // @phpstan-ignore-line
 				$desc,					// Description @phpstan-ignore-line
 				0,						// Unit price @phpstan-ignore-line
@@ -144,6 +154,7 @@ trait CommonSubtotal
 				SUBTOTALS_SPECIAL_CODE	// Special code @phpstan-ignore-line
 			);
 		} elseif ($current_module == 'propal') {
+			/** @var Propal $this */
 			$result = $this->addline( // @phpstan-ignore-line
 				$desc,					// Description @phpstan-ignore-line
 				0,						// Unit price @phpstan-ignore-line
@@ -161,6 +172,7 @@ trait CommonSubtotal
 				SUBTOTALS_SPECIAL_CODE	// Special code @phpstan-ignore-line
 			);
 		} elseif ($current_module == 'commande') {
+			/** @var Commande $this */
 			$result = $this->addline( // @phpstan-ignore-line
 				$desc,					// Description @phpstan-ignore-line
 				0,						// Unit price @phpstan-ignore-line
@@ -181,12 +193,14 @@ trait CommonSubtotal
 				SUBTOTALS_SPECIAL_CODE	// Special code @phpstan-ignore-line
 			);
 		} elseif ($current_module == 'shipping') {
+			/** @var Expedition $this */
 			$result = $this->addline( // @phpstan-ignore-line
 				'',						// Warehouse ID @phpstan-ignore-line
 				(int) $parent_line,		// Source line @phpstan-ignore-line
 				$depth					// Quantity @phpstan-ignore-line
 			);
 		} elseif ($current_module == 'facturerec') {
+			/** @var FactureRec $this */
 			$rang = $rang == -1 ? $rang : $rang-1;
 			$result = $this->addline( // @phpstan-ignore-line
 				$desc,					// Description @phpstan-ignore-line
@@ -207,22 +221,23 @@ trait CommonSubtotal
 			);
 			$this->fetch_lines();
 		} elseif ($current_module == 'supplier_proposal') {
+			/** @var SupplierProposal $this */
 			$rang = $rang == -1 ? $rang : $rang-1;
-			$result = $this->addline( // @phpstan-ignore-line
-				$desc,					// Description @phpstan-ignore-line
-				0,						// Unit price @phpstan-ignore-line
-				$depth,					// Quantity @phpstan-ignore-line
-				0,						// VAT rate @phpstan-ignore-line
-				0,						// Local tax 1 @phpstan-ignore-line
-				0,						// Local tax 2 @phpstan-ignore-line
-				0,						// FK product @phpstan-ignore-line
-				0,						// Discount percentage @phpstan-ignore-line
-				'',						// Price base type @phpstan-ignore-line
-				0,						// PU ttc @phpstan-ignore-line
-				0,						// Info bits @phpstan-ignore-line
-				self::$PRODUCT_TYPE,	// Type @phpstan-ignore-line
-				$rang,					// Rang @phpstan-ignore-line
-				SUBTOTALS_SPECIAL_CODE	// Special code @phpstan-ignore-line
+			$result = $this->addline(
+				$desc,					// Description
+				0,						// Unit price
+				$depth,					// Quantity
+				0,						// VAT rate
+				0,						// Local tax 1
+				0,						// Local tax 2
+				0,						// FK product
+				0,						// Discount percentage
+				'',						// Price base type
+				0,						// PU ttc
+				0,						// Info bits
+				self::$PRODUCT_TYPE,	// Type
+				$rang,					// Rang
+				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
 		}
 
@@ -287,10 +302,13 @@ trait CommonSubtotal
 
 		// Add the line calling the right module
 		if ($current_module == 'facture') {
+			/** @var Facture $this */
 			$result = $this->deleteLine($id); // @phpstan-ignore-line
 		} elseif ($current_module == 'propal') {
+			/** @var Propal $this */
 			$result = $this->deleteLine($id); // @phpstan-ignore-line
 		} elseif ($current_module == 'commande') {
+			/** @var Commande $this */
 			$result = $this->deleteLine($user, $id); // @phpstan-ignore-line
 		} elseif ($current_module == 'facturerec') {
 			$line = new FactureLigneRec($this->db);
@@ -303,7 +321,7 @@ trait CommonSubtotal
 		} elseif ($current_module == 'supplier_proposal') {
 			$line = new SupplierProposalLine($this->db);
 			$line->id = $id;
-			$result = $line->delete($user); // @phpstan-ignore-line
+			$result = $line->delete($user);
 		}
 
 		return $result >= 0 ? $result : -1; // Return line ID or false
