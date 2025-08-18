@@ -498,19 +498,33 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 	$moreselect2theme = preg_replace('/widthcentpercentminus[^\s]*/', '', $moreselect2theme);
 
 	$tmpplugin = 'select2';
-	$msg = "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->
-		<script>
-			// full lowercase and delete accents
+	$msg = "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->'."\n";
+	$msg .= "<script>\n";
+
+	// Normalisation avec ou sans suppression des accents (configurable)
+	if (getDolGlobalString('MAIN_DISABLE_ACCENT_INSENSITIVE_SEARCH')) {
+		$msg .= '
+			// lowercase + remove accents
 			function normalizeString(str) {
 				return str
 					.normalize("NFD")
 					.replace(/[\u0300-\u036f]/g, "")
 					.toLowerCase();
 			}
+		';
+	} else {
+		$msg .= '
+			// lowercase only (accents kept)
+			function normalizeString(str) {
+				return str.toLowerCase();
+			}
+		';
+	}
 
-			$(document).ready(function () {
-				$(\''.(dol_escape_js(preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname)).'\').'.$tmpplugin.'({
-					dir: \'ltr\',';
+	$msg .= '
+		$(document).ready(function () {
+			$(\''.(dol_escape_js(preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname)).'\').'.$tmpplugin.'({
+				dir: \'ltr\',';
 	if (preg_match('/onrightofpage/', $morecss)) {	// when $morecss contains 'onrightofpage', the select2 component must also be inside a parent with class="parentonrightofpage"
 		$msg .= ' dropdownAutoWidth: true, dropdownParent: $(\'#'.$htmlname.'\').parent(), '."\n";
 	}
