@@ -246,10 +246,13 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	if ($result) {
 		$langs->load("errors");
 
+		$currency_code = $conf->currency;
+
 		$dateo = dol_now();
 		$label = $event->data->object->description;
-		$amount = $event->data->object->amount / 100;
-		$amount_to = $event->data->object->amount / 100;
+		$amount = $stripe->convertAmount($event->data->object->amount, $currency_code, 1);
+		$amount_to = $stripe->convertAmount($event->data->object->amount, $currency_code, 1);
+
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 		$accountfrom = new Account($db);
@@ -272,9 +275,8 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 			$db->begin();
 
 			// Add entry into table llx_bank
-			if (!$error) {
-				$bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1 * (float) price2num($amount), $numChqOrOpe, 0, $user, '', '', '', null, '', null, 'Record payout from public/stripe/ipn.php');
-			}
+			$bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1 * (float) price2num($amount), $numChqOrOpe, 0, $user, '', '', '', null, '', null, 'Record payout from public/stripe/ipn.php');
+
 			if (!($bank_line_id_from > 0)) {
 				$error++;
 			}
@@ -455,6 +457,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 		}
 
 		$payment_amount = $payment_amountInDolibarr;
+
 		// TODO Add this checks ? May not be required because the message is already decoded with $event = \Stripe\Webhook::constructEvent($payload, $sig_header, $endpoint_secret);
 		// - Check payment_amount in Stripe (received) is same than the one in Dolibarr
 		// - Check that payment intent is succeed (to avoid forged json webhook sent by malicious users)
@@ -756,7 +759,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 			return -1;
 		}
 	}
-} elseif ($event->type == 'checkout.session.completed') {		// Called when making payment with new Checkout method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
+} elseif ($event->type == 'checkout.session.completed') {		// Called when making payment with new Checkout method (getDolGlobalString('STRIPE_USE_NEW_CHECKOUT') is on).
 	// TODO: create fees
 } elseif ($event->type == 'payment_method.attached') {
 	dol_syslog("object = ".var_export($event->data, true));
@@ -782,7 +785,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 		$companypaymentmode->card_type       = $event->data->object->card->branding;
 
 		$companypaymentmode->owner_name      = $event->data->object->billing_details->name;
-		$companypaymentmode->proprio         = $companypaymentmode->owner_name;			// We may still need this formodulebuilder because name of field is "proprio"
+		$companypaymentmode->proprio         = $companypaymentmode->owner_name;			// We may still need this for modulebuilder code because name of field is "proprio"
 
 		$companypaymentmode->exp_date_month  = (int) $event->data->object->card->exp_month;
 		$companypaymentmode->exp_date_year   = (int) $event->data->object->card->exp_year;
@@ -824,7 +827,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 		$companypaymentmode->label           = '';
 		$companypaymentmode->number          = $db->escape($event->data->object->id);
 		$companypaymentmode->last_four       = $db->escape($event->data->object->card->last4);
-		$companypaymentmode->proprio         = $db->escape($event->data->object->billing_details->name);	// deprecated
+		$companypaymentmode->proprio         = $db->escape($event->data->object->billing_details->name);	// deprecated but still needed
 		$companypaymentmode->owner_name      = $db->escape($event->data->object->billing_details->name);
 		$companypaymentmode->exp_date_month  = (int) $event->data->object->card->exp_month;
 		$companypaymentmode->exp_date_year   = (int) $event->data->object->card->exp_year;
@@ -880,8 +883,21 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	$paymentmethodstripeid = $object->payment_method;
 	$customer_id = $object->customer;
 	$reason = $object->reason;
-	$amountdisputestripe = $object->amoutndispute;	// In stripe format
-	$amountdispute = $amountdisputestripe;			// In real currency format
+	$amountdisputestripe = $object->amount;			// In stripe format
+	$amountdispute = $stripe->convertAmount($amountdisputestripe, $currencyCodeType, 1);			// In real currency format
+	$statusdispute = $object->status;
+
+	// Get the amount of fees for the dispute
+	$balance_transactions_array = $object->balance_transactions;
+	$feesstripe = 0;
+	if (!empty($balance_transactions_array) && is_array($balance_transactions_array)) {
+		foreach ($balance_transactions_array as $tmpval) {
+			if (isset($tmpval['fee'])) {
+				$feesstripe += (int) $tmpval['fee'];		// In stripe format
+			}
+		}
+	}
+	$fees = $stripe->convertAmount($feesstripe, $currencyCodeType, 1);			// In real currency format
 
 	$invoice_id = 0;
 	$paymentTypeCode = "";			// payment type according to Stripe
@@ -942,74 +958,152 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	$tmpinvoice->fetch($invoice_id);
 	$tmpinvoice->fetch_thirdparty();
 
-	dol_syslog("The payment disputed is ".$amountdispute." and the invoice is ".$payment_amountInDolibarr);
-	dol_syslog("The payment disputed is ".$amountdispute." and the invoice is ".$payment_amountInDolibarr, LOG_DEBUG, 0, '_payment');
+	dol_syslog("The payment disputed has the amount ".$amountdispute.", fees of ".$fees." and the invoice has ".$payment_amountInDolibarr);
+	dol_syslog("The payment disputed has the amount ".$amountdispute.", fees of ".$fees." and the invoice has ".$payment_amountInDolibarr, LOG_DEBUG, 0, '_payment');
 
+	// Amount may differ: sometimes amount for chargback is higher or lower than initial amount. No explanation (may be currencyrate ?)
+	// So we disable this protection
+	/*
 	if ($amountdispute != $payment_amountInDolibarr) {
 		http_response_code(500);
-		print "The payment disputed is ".$amountdispute." and the invoice is ".$payment_amountInDolibarr.". Amount differs, we don't know what to do.";
+		print "The payment disputed has the amount ".$amountdispute." and the invoice has ".$payment_amountInDolibarr.". Amount is too different, we don't know what to do.";
+		dol_syslog("Amount differs, we don't know what to do - Return HTTP 500.", LOG_WARNING, 0, '_payment');
+		http_response_code(500);
 		return -1;
 	}
-
-	$accountfrom = new Account($db);
-	$accountfrom->fetch(getDolGlobalInt('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS'));
-
-	// Now we add a negative payment
-	$paiement = new Paiement($db);
-
-	$amounts = array();
-	$amounts[$tmpinvoice->id] = -1 * $payment_amountInDolibarr;
-
-	$paiement->datepaye = dol_now();
-	$paiement->amounts = $amounts; // Array with all payments dispatching with invoice id
-	/*$paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
-	$paiement->multicurrency_code = $multicurrency_code; // Array with all currency of payments dispatching
-	$paiement->multicurrency_tx = $multicurrency_tx; // Array with all currency tx of payments dispatching
 	*/
-	$paiement->paiementid   = dol_getIdFromCode($db, 'PRE', 'c_paiement', 'code', 'id', 1);
-	$paiement->num_payment  = $object->id;	// A string like 'du_...'
-	$paiement->note_public = 'Fund withdrawn by bank. Reason: '.$reason;
-	$paiement->note_private = '';
-	$paiement->fk_account   = $accountfrom->id;
 
-	$db->begin();
+	if ($statusdispute == 'needs_response') {
+		// Payment is disputed, but not yet refunded.
+		$db->begin();
 
-	$alreadytransferedinaccounting = $tmpinvoice->getVentilExportCompta();
+		// If invoice was closed, we reopen it
+		if ($tmpinvoice->status == Facture::STATUS_CLOSED) {
+			// Switch back the invoice to status validated
+			$result = $tmpinvoice->setStatut(Facture::STATUS_VALIDATED, null, '', 'none');	// Trigger will be run later
+			if ($result < 0) {
+				$errormsg = $tmpinvoice->error.implode(', ', $tmpinvoice->errors);
+				$error++;
+			}
+		}
 
-	if ($alreadytransferedinaccounting) {
-		// TODO Test if invoice already in accountancy.
-		// What to do ?
-		$errormsg = 'Error: the invoice '.$tmpinvoice->id.' is already transferred into accounting. Don\'t know what to do.';
-		$error++;
-	}
+		/* disabled, a record should already be done with the invoice update
+		$actioncomm = new ActionComm($db);
+		$actioncode = 'OTHER';
 
-	if (! $error && $tmpinvoice->status == Facture::STATUS_CLOSED) {
-		// Switch back the invoice to status validated
-		$result = $tmpinvoice->setStatut(Facture::STATUS_VALIDATED);
+		$actioncomm->type_code = 'AC_OTH_AUTO'; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
+		$actioncomm->code = 'AC_'.$actioncode;
+		$actioncomm->label = 'Payment dispute has been received by Stripe';
+		$actioncomm->note_private = 'Payment dispute has been received by Stripe';
+		$actioncomm->fk_project = 0;
+		$actioncomm->datep = $now;
+		$actioncomm->datef = $now;
+		$actioncomm->percentage = -1; // Not applicable
+		$actioncomm->socid = $tmpinvoice->thirdparty->id;
+		$actioncomm->contact_id = 0;
+		$actioncomm->authorid = $user->id; // User saving action
+		$actioncomm->userownerid = $user->id; // Owner of action
+
+		$actioncomm->elementid = $tmpinvoice->id;
+		$actioncomm->elementtype = $tmpinvoice->element;
+
+		$actioncomm->create($user);
+		*/
+
+		// Add a flag "dispute_status" in invoice table
+		$result = $tmpinvoice->setStatut(1, null, '', 'FACTURE_MODIFY', 'dispute_status');
 		if ($result < 0) {
 			$errormsg = $tmpinvoice->error.implode(', ', $tmpinvoice->errors);
 			$error++;
 		}
-	}
 
-	if (! $error) {
-		$paiement_id = $paiement->create($user, 0, $tmpinvoice->thirdparty); // This include regenerating documents
-		if ($paiement_id < 0) {
-			$errormsg = $paiement->error.implode(', ', $paiement->errors);
+		if (!$error) {
+			$db->commit();
+
+			dol_syslog("The dispute_status of invoice ".$tmpinvoice->ref." has been modified to 1");
+			dol_syslog("The dispute_status of invoice ".$tmpinvoice->ref." has been modified to 1", LOG_DEBUG, 0, '_payment');
+
+			http_response_code(200);
+			print "Payment dispute received for ".$TRANSACTIONID.". We have changed the status of dispute_status to 1 for invoice ".$tmpinvoice->ref;
+			return 1;
+		} else {
+			$db->rollback();
+			dol_syslog("Technicalerror ".$db->lasterror());
+
+			http_response_code(500);
+			print $db->lasterror();
+			return -1;
+		}
+	} else {
+		// Payment dispute is confirmed and refunded.
+		$accountfrom = new Account($db);
+		$accountfrom->fetch(getDolGlobalInt('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS'));
+
+		// Now we add a negative payment
+		$paiement = new Paiement($db);
+
+		$amounts = array();
+		$amounts[$tmpinvoice->id] = -1 * $payment_amountInDolibarr;
+
+		$paiement->datepaye = dol_now();
+		$paiement->amounts = $amounts; // Array with all payments dispatching with invoice id
+		/*$paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
+		$paiement->multicurrency_code = $multicurrency_code; // Array with all currency of payments dispatching
+		$paiement->multicurrency_tx = $multicurrency_tx; // Array with all currency tx of payments dispatching
+		*/
+		$paiement->paiementid   = dol_getIdFromCode($db, 'PRE', 'c_paiement', 'code', 'id', 1);
+		$paiement->num_payment  = $object->id;	// A string like 'du_...'
+		$paiement->note_public = 'Fund withdrawn by bank. Reason: '.$reason;
+		$paiement->note_private = '';
+		$paiement->fk_account   = $accountfrom->id;
+
+		$db->begin();
+
+		$alreadytransferedinaccounting = $tmpinvoice->getVentilExportCompta();
+
+		if ($alreadytransferedinaccounting) {
+			// TODO Test if invoice already in accountancy.
+			// What to do ?
+			$errormsg = 'Error: the invoice '.$tmpinvoice->id.' is already transferred into accounting. Don\'t know what to do.';
 			$error++;
 		}
-	}
 
-	if (!$error) {
-		//$db->commit();	// Code not yet enough tested
-		$db->rollback();
-		http_response_code(500);
-		return -1;
-	} else {
-		$db->rollback();
-		http_response_code(500);
-		print $errormsg;
-		return -1;
+		if (! $error && $tmpinvoice->status == Facture::STATUS_CLOSED) {
+			// Switch back the invoice to status validated
+			$result = $tmpinvoice->setStatut(Facture::STATUS_VALIDATED, null, '', 'none');
+			if ($result < 0) {
+				$errormsg = $tmpinvoice->error.implode(', ', $tmpinvoice->errors);
+				$error++;
+			}
+
+			$result = $tmpinvoice->setStatut(0, null, '', 'FACTURE_MODIFY', 'dispute_status');
+			if ($result < 0) {
+				$errormsg = $tmpinvoice->error.implode(', ', $tmpinvoice->errors);
+				$error++;
+			}
+		}
+
+		if (! $error) {
+			$paiement_id = $paiement->create($user, 0, $tmpinvoice->thirdparty); // This include regenerating documents
+			if ($paiement_id < 0) {
+				$errormsg = $paiement->error.implode(', ', $paiement->errors);
+				$error++;
+			}
+		}
+
+		if (!$error) {
+			//$db->commit();	// Code not yet enough tested
+			dol_syslog("Code not yet enough tested - Return HTTP 500.", LOG_WARNING, 0, '_payment');
+			$db->rollback();
+			http_response_code(500);
+			return -1;
+		} else {
+			dol_syslog("Error - Return HTTP 500.", LOG_WARNING, 0, '_payment');
+			$db->rollback();
+			http_response_code(500);
+			print $errormsg;
+			return -1;
+		}
 	}
 }
 

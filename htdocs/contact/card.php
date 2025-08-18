@@ -447,7 +447,7 @@ if (empty($reshook)) {
 			$object->phone_perso = (string) GETPOST("phone_perso", 'alpha');
 			$object->phone_mobile = (string) GETPOST("phone_mobile", 'alpha');
 			$object->fax = (string) GETPOST("fax", 'alpha');
-			$object->priv = (string) GETPOSTINT("priv");
+			$object->priv = GETPOSTINT("priv");
 			$object->note_public = (string) GETPOST("note_public", 'restricthtml');
 			$object->note_private = (string) GETPOST("note_private", 'restricthtml');
 

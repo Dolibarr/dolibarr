@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2013-2018	Jean-François Ferry	<hello+jf@librethic.io>
- * Copyright (C) 2016		Gilles Poirier 		<glgpoirier@gmail.com>
- * Copyright (C) 2019		Josep Lluís Amador	<joseplluis@lliuretic.cat>
- * Copyright (C) 2021-2024	Frédéric France		<frederic.france@free.fr>
+/* Copyright (C) 2013-2018	Jean-François Ferry		<hello+jf@librethic.io>
+ * Copyright (C) 2016		Gilles Poirier 			<glgpoirier@gmail.com>
+ * Copyright (C) 2019		Josep Lluís Amador		<joseplluis@lliuretic.cat>
+ * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -52,9 +52,9 @@ if (isModEnabled("product") || isModEnabled("service")) {
 $langs->loadLangs(array('resource', 'other', 'interventions'));
 
 /*
-$sortorder                      = GETPOST('sortorder','alpha');
-$sortfield                      = GETPOST('sortfield','alpha');
-$page                           = GETPOST('page','int');
+$sortorder = GETPOST('sortorder','alpha');
+$sortfield = GETPOST('sortfield','alpha');
+$page = GETPOST('page','int');
 */
 
 $object = new Dolresource($db);
@@ -145,7 +145,7 @@ if (empty($reshook)) {
 					if ($isFullDayEvent) {
 						$eventDateStartArr = dol_getdate($eventDateStart);
 						$eventDateStart = dol_mktime(0, 0, 0, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
-						$eventDateEnd   = dol_mktime(23, 59, 59, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
+						$eventDateEnd = dol_mktime(23, 59, 59, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
 					}
 				}
 

@@ -1720,14 +1720,14 @@ class ActionComm extends CommonObject
 	 *
 	 *  @param	int<0,2>	$withpicto				0 = No picto, 1 = Include picto into link, 2 = Only picto
 	 *  @param	int			$maxlength				Max number of characters into label. If negative, use the ref as label.
-	 *  @param	string		$classname				Force style class on a link
+	 *  @param	string		$morecss				Force style class on a link
 	 *  @param	string		$option					'' = Link to action, 'birthday'= Link to contact, 'holiday' = Link to leave
 	 *  @param	int<0,1>	$overwritepicto			1 = Overwrite picto with this one
 	 *  @param	int<0,1>	$notooltip		    	1 = Disable tooltip
 	 *  @param  int<-1,1>	$save_lastsearch_value  -1 = Auto, 0 = No save of lastsearch_values when clicking, 1 = Save lastsearch_values whenclicking
 	 *  @return	string							Chaine avec URL
 	 */
-	public function getNomUrl($withpicto = 0, $maxlength = 0, $classname = '', $option = '', $overwritepicto = 0, $notooltip = 0, $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $maxlength = 0, $morecss = '', $option = '', $overwritepicto = 0, $notooltip = 0, $save_lastsearch_value = -1)
 	{
 		global $conf, $langs, $user, $hookmanager, $action;
 
@@ -1780,9 +1780,9 @@ class ActionComm extends CommonObject
 				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
 			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
-			$linkclose .= $dataparams.' class="'.$classname.' '.$classfortooltip.'"';
+			$linkclose .= $dataparams.' class="'.$morecss.' '.$classfortooltip.'"';
 		} else {
-			$linkclose .= ' class="'.$classname.'"';
+			$linkclose .= ' class="'.$morecss.'"';
 		}
 
 		$url = '';

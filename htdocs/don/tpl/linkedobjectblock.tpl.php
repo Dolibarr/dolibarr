@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2010-2011	Regis Houssin <regis.houssin@inodbox.com>
- * Copyright (C) 2013		Juanjo Menent <jmenent@2byte.es>
- * Copyright (C) 2014       Marcos García <marcosgdf@gmail.com>
- * Copyright (C) 2017       Charlene Benke <cf.benke@patas-monkey.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2010-2011	Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2013		Juanjo Menent       <jmenent@2byte.es>
+ * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2017       Charlene Benke      <cf.benke@patas-monkey.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,14 +27,18 @@ global $user;
 global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
+'@phan-var-force Translate $langs';
+/** @var Translate $langs */
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-
+'@phan-var-force Don[] $linkedObjectBlock';
+/** @var Don[] $linkedObjectBlock */
 $langs->load("donations");
 
 $total = 0;
 $ilink = 0;
 $lastObjectLink = null;
 foreach ($linkedObjectBlock as $key => $objectlink) {
+	'@phan-var-force Don $objectlink';
 	$ilink++;
 
 	$trclass = 'oddeven';
@@ -43,7 +48,8 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	print '<tr class="'.$trclass.'">';
 	print '<td>'.$langs->trans("Donation").'</td>';
 	print '<td>'.$objectlink->getNomUrl(1).'</td>';
-	print '<td class="center">'.$objectlink->ref_client.'</td>';
+	// print '<td class="center">'.$objectlink->ref_client.'</td>'; // ref_client doesn't exists
+	print '<td class="center"></td>';
 	print '<td class="center">'.dol_print_date($objectlink->date, 'day').'</td>';
 	print '<td class="right">';
 	$total += $objectlink->total_ht;
