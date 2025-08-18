@@ -9,7 +9,7 @@
  * Copyright (C) 2013-2018	Philippe Grand				<philippe.grand@atoo-net.com>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016-2024	Charlene Benke				<charlene@patas-monkey.com>
+ * Copyright (C) 2016-2025	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2018-2025	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2022-2023	Solution Libre SAS			<contact@solution-libre.fr>
  * Copyright (C) 2023-2024	Benjamin Falière			<benjamin.faliere@altairis.fr>
@@ -388,6 +388,7 @@ class Categorie extends CommonObject
 					$this->MAP_CAT_TABLE[$mapCode] = isset($mapList['cat_table']) ? $mapList['cat_table'] : null;
 					$this->MAP_OBJ_CLASS[$mapCode] = $mapList['obj_class'];
 					$this->MAP_OBJ_TABLE[$mapCode] = $mapList['obj_table'];
+					self::$MAP_TYPE_TITLE_AREA[$mapCode] =  $mapList['label'];
 				}
 			}
 		}
