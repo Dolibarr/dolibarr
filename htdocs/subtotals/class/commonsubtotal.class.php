@@ -251,8 +251,8 @@ trait CommonSubtotal
 				self::$PRODUCT_TYPE,	// Type
 				0,						// info bits
 				0,						// no trigger
-				'',						// Date start
-				'',						// Date end
+				null,					// Date start
+				null,					// Date end
 				[],						// array_options
 				null,					// fk_unit
 				0,						// pu ht devise
