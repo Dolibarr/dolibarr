@@ -64,7 +64,7 @@ trait CommonSubtotal
 	 */
 	public function addSubtotalLine($langs, $desc, $depth, $options = array(), $parent_line = 0)
 	{
-		/** @var CommonObject $this */
+		/** @var Propal|Commande|Expedition|Facture|FactureRec|SupplierProposal|CommandeFournisseur|FactureFournisseur $this */
 		if (empty($desc)) {
 			if (isset($this->errors)) {
 				$this->errors[] = $langs->trans("TitleNeedDesc");
