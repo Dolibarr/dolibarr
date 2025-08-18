@@ -191,7 +191,7 @@ trait CommonSubtotal
 			);
 		} elseif ($current_module == 'shipping'&& $this instanceof Expedition) {
 			$result = $this->addline(
-				'',						// Warehouse ID
+				0,						// Warehouse ID
 				(int) $parent_line,		// Source line
 				$depth					// Quantity
 			);
@@ -344,7 +344,6 @@ trait CommonSubtotal
 	 */
 	public function updateSubtotalLine($langs, $lineid, $desc, $depth, $options) // @phpstan-ignore-line
 	{
-		/** @var Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|CommandeFournisseur|FactureFournisseur $this */
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
 		$allowed_types = [
