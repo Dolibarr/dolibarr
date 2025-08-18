@@ -64,7 +64,7 @@ trait CommonSubtotal
 	 */
 	public function addSubtotalLine($langs, $desc, $depth, $options = array(), $parent_line = 0)
 	{
-		/** @var Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|SupplierOrder|SupplierInvoice $this */
+		/** @var CommonObject $this */
 		if (empty($desc)) {
 			if (isset($this->errors)) {
 				$this->errors[] = $langs->trans("TitleNeedDesc");
@@ -274,7 +274,7 @@ trait CommonSubtotal
 	 */
 	public function deleteSubtotalLine($langs, $id, $correspondingstline = false, $user = null)
 	{
-		/** @var Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|SupplierOrder|SupplierInvoice $this */
+		/** @var CommonObject $this */
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
 		$allowed_types = [
@@ -355,7 +355,7 @@ trait CommonSubtotal
 	 */
 	public function updateSubtotalLine($langs, $lineid, $desc, $depth, $options) // @phpstan-ignore-line
 	{
-		/** @var Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|SupplierOrder|SupplierInvoice $this */
+		/** @var CommonObject $this */
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
 		$allowed_types = [
@@ -413,6 +413,7 @@ trait CommonSubtotal
 
 		// Update the line calling the right module
 		if ($current_module == 'facture') {
+			/** @var Facture $this */
 			$result = $this->updateline( // @phpstan-ignore-line
 				$lineid, 				// ID of line to change @phpstan-ignore-line
 				$desc,					// Description @phpstan-ignore-line
@@ -499,27 +500,28 @@ trait CommonSubtotal
 				SUBTOTALS_SPECIAL_CODE	// Special code @phpstan-ignore-line
 			);
 		} elseif ($current_module == 'supplier_proposal') {
+			/** @var SupplierProposal $this */
 			$objectline = new SupplierProposalLine($this->db);
 			$objectline->fetch($lineid);
 			$line_rang = $objectline->rang;
-			$result = $this->updateline( // @phpstan-ignore-line
-				$lineid,				// ID of line to change @phpstan-ignore-line
-				0,						// Unit price @phpstan-ignore-line
-				$depth,					// Quantity @phpstan-ignore-line
-				0,						// Discount percentage @phpstan-ignore-line
-				0,						// VAT rate @phpstan-ignore-line
-				0,						// Local tax 1 @phpstan-ignore-line
-				0,						// Local tax 2 @phpstan-ignore-line
-				$desc,					// Description @phpstan-ignore-line
-				'',						// Price base type @phpstan-ignore-line
-				0,						// Info bits @phpstan-ignore-line
-				SUBTOTALS_SPECIAL_CODE,	// Special code @phpstan-ignore-line
-				0,						// FK parent line @phpstan-ignore-line
-				0,						// @phpstan-ignore-line
-				0,						// @phpstan-ignore-line
-				0,						// @phpstan-ignore-line
-				'',						// @phpstan-ignore-line
-				self::$PRODUCT_TYPE		// Type @phpstan-ignore-line
+			$result = $this->updateline(
+				$lineid,				// ID of line to change
+				0,						// Unit price
+				$depth,					// Quantity
+				0,						// Discount percentage
+				0,						// VAT rate
+				0,						// Local tax 1
+				0,						// Local tax 2
+				$desc,					// Description
+				'',						// Price base type
+				0,						// Info bits
+				SUBTOTALS_SPECIAL_CODE,	// Special code
+				0,						// FK parent line
+				0,						//
+				0,						//
+				0,						//
+				'',						//
+				self::$PRODUCT_TYPE		// Type
 			);
 		}
 
@@ -553,7 +555,7 @@ trait CommonSubtotal
 	 */
 	public function updateSubtotalLineBlockLines($langs, $linerang, $mode, $value) // @phpstan-ignore-line
 	{
-		/** @var Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|SupplierOrder|SupplierInvoice $this */
+		/** @var CommonObject $this */
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
 		$allowed_types = [
@@ -677,7 +679,7 @@ trait CommonSubtotal
 	 */
 	public function getSubtotalLineAmount($line)
 	{
-		/** @var Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|SupplierOrder|SupplierInvoice $this */
+		/** @var CommonObject $this */
 		$final_amount = 0;
 		for ($i = $line->rang-1; $i > 0; $i--) {
 			if (is_null($this->lines[$i-1]) || $this->lines[$i-1]->rang >= $line->rang) {
@@ -705,7 +707,7 @@ trait CommonSubtotal
 	 */
 	public function getSubtotalLineMulticurrencyAmount($line)
 	{
-		/** @var Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|SupplierOrder|SupplierInvoice $this */
+		/** @var CommonObject $this */
 		$final_amount = 0;
 		for ($i = $line->rang-1; $i > 0; $i--) {
 			if (is_null($this->lines[$i-1]) || $this->lines[$i-1]->rang >= $line->rang) {
@@ -742,7 +744,7 @@ trait CommonSubtotal
 	 */
 	public function getPossibleTitles()
 	{
-		/** @var Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|SupplierOrder|SupplierInvoice $this */
+		/** @var CommonObject $this */
 		$titles = array();
 		foreach ($this->lines as $line) {
 			if ($line->special_code == SUBTOTALS_SPECIAL_CODE && $line->qty > 0) {
