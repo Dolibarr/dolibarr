@@ -769,7 +769,6 @@ trait CommonSubtotal
 	 */
 	public function getDisabledShippmentSubtotalLines()
 	{
-		/** @var Expedition $this */
 		$toDisableLines = array();
 		$toDisable = true;
 		$oldDesc = "";
