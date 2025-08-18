@@ -56,25 +56,36 @@ $formother = new FormOther($db);
 $default = 'ffffff';
 
 // Constant and translation of the module description
-$modules = array(
+$modules = [
 	'PROPAL' => array('lang' => 'propal', 'key' => 'Proposal', 'old_pdf' => '(azur model)'),
 	'COMMANDE' => array('lang' => 'orders', 'key' => 'CustomerOrder', 'old_pdf' => '(einstein model)'),
 	'FACTURE' => array('lang' => 'bills', 'key' => 'CustomerInvoice', 'old_pdf' => '(crabe model)'),
 	'FACTUREREC' => array('lang' => 'bills', 'key' => 'RecurringInvoiceTemplate'),
-	'SUPPLIER_PROPOSAL' => array('lang' => 'supplier_proposal', 'key' => 'SupplierProposal', 'old_pdf' => '(aurore model)'),
-	'SUPPLIER_ORDER' => array('lang' => 'orders', 'key' => 'SupplierOrder', 'old_pdf' => '(muscadet model)'),
-	'SUPPLIER_INVOICE' => array('lang' => 'bills', 'key' => 'SupplierInvoice'),
-);
+	'SUPPLIER_PROPOSAL' => [
+		'lang' => 'supplier_proposal',
+		'key' => 'SupplierProposal',
+		'old_pdf' => '(aurore model)',
+	],
+	'SUPPLIER_ORDER' => [
+		'lang' => 'orders',
+		'key' => 'SupplierOrder',
+		'old_pdf' => '(muscadet model)',
+	],
+	'SUPPLIER_INVOICE' => [
+		'lang' => 'bills',
+		'key' => 'SupplierInvoice',
+	],
+];
 // Conditions for the option to be offered
-$conditions = array(
-	'PROPAL' => (isModEnabled("propal")),
-	'COMMANDE' => (isModEnabled("order")),
-	'FACTURE' => (isModEnabled("invoice")),
-	'FACTUREREC' => (isModEnabled("invoice")),
+$conditions = [
+	'PROPAL' => isModEnabled("propal"),
+	'COMMANDE' => isModEnabled("order"),
+	'FACTURE' => isModEnabled("invoice"),
+	'FACTUREREC' => isModEnabled("invoice"),
 	'SUPPLIER_PROPOSAL' => isModEnabled("supplier_proposal"),
 	'SUPPLIER_ORDER' => isModEnabled("supplier_order"),
 	'SUPPLIER_INVOICE' => isModEnabled("supplier_invoice"),
-);
+];
 
 $max_depth = 0;
 

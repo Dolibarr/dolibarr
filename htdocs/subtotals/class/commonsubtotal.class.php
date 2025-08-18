@@ -64,6 +64,7 @@ trait CommonSubtotal
 	 */
 	public function addSubtotalLine($langs, $desc, $depth, $options = array(), $parent_line = 0)
 	{
+		/** @var Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|SupplierOrder|SupplierInvoice $this */
 		if (empty($desc)) {
 			if (isset($this->errors)) {
 				$this->errors[] = $langs->trans("TitleNeedDesc");
@@ -273,9 +274,19 @@ trait CommonSubtotal
 	 */
 	public function deleteSubtotalLine($langs, $id, $correspondingstline = false, $user = null)
 	{
+		/** @var Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|SupplierOrder|SupplierInvoice $this */
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
-		$allowed_types = array('propal', 'commande', 'facture', 'facturerec', 'shipping', 'supplier_proposal', 'supplier_order', 'supplier_invoice');
+		$allowed_types = [
+			'propal',
+			'commande',
+			'facture',
+			'facturerec',
+			'shipping',
+			'supplier_proposal',
+			'supplier_order',
+			'supplier_invoice',
+		];
 		if (!in_array($current_module, $allowed_types)) {
 			if (isset($this->errors)) {
 				$this->errors[] = $langs->trans("UnsupportedModuleError");
@@ -344,9 +355,19 @@ trait CommonSubtotal
 	 */
 	public function updateSubtotalLine($langs, $lineid, $desc, $depth, $options) // @phpstan-ignore-line
 	{
+		/** @var Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|SupplierOrder|SupplierInvoice $this */
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
-		$allowed_types = array('propal', 'commande', 'facture', 'facturerec', 'shipping', 'supplier_proposal', 'supplier_order', 'supplier_invoice');
+		$allowed_types = [
+			'propal',
+			'commande',
+			'facture',
+			'facturerec',
+			'shipping',
+			'supplier_proposal',
+			'supplier_order',
+			'supplier_invoice',
+		];
 		if (!in_array($current_module, $allowed_types)) {
 			if (isset($this->errors)) {
 				$this->errors[] = $langs->trans("UnsupportedModuleError");
@@ -532,9 +553,19 @@ trait CommonSubtotal
 	 */
 	public function updateSubtotalLineBlockLines($langs, $linerang, $mode, $value) // @phpstan-ignore-line
 	{
+		/** @var Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|SupplierOrder|SupplierInvoice $this */
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
-		$allowed_types = array('propal', 'commande', 'facture', 'facturerec', 'shipping', 'supplier_proposal', 'supplier_order', 'supplier_invoice');
+		$allowed_types = [
+			'propal',
+			'commande',
+			'facture',
+			'facturerec',
+			'shipping',
+			'supplier_proposal',
+			'supplier_order',
+			'supplier_invoice',
+		];
 		if (!in_array($current_module, $allowed_types)) {
 			if (isset($this->errors)) {
 				$this->errors[] = $langs->trans("UnsupportedModuleError");
@@ -646,6 +677,7 @@ trait CommonSubtotal
 	 */
 	public function getSubtotalLineAmount($line)
 	{
+		/** @var Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|SupplierOrder|SupplierInvoice $this */
 		$final_amount = 0;
 		for ($i = $line->rang-1; $i > 0; $i--) {
 			if (is_null($this->lines[$i-1]) || $this->lines[$i-1]->rang >= $line->rang) {
@@ -673,6 +705,7 @@ trait CommonSubtotal
 	 */
 	public function getSubtotalLineMulticurrencyAmount($line)
 	{
+		/** @var Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|SupplierOrder|SupplierInvoice $this */
 		$final_amount = 0;
 		for ($i = $line->rang-1; $i > 0; $i--) {
 			if (is_null($this->lines[$i-1]) || $this->lines[$i-1]->rang >= $line->rang) {
@@ -709,6 +742,7 @@ trait CommonSubtotal
 	 */
 	public function getPossibleTitles()
 	{
+		/** @var Propal|Commande|Facture|FactureRec|Expedition|SupplierProposal|SupplierOrder|SupplierInvoice $this */
 		$titles = array();
 		foreach ($this->lines as $line) {
 			if ($line->special_code == SUBTOTALS_SPECIAL_CODE && $line->qty > 0) {
@@ -748,6 +782,7 @@ trait CommonSubtotal
 	 */
 	public function getDisabledShippmentSubtotalLines()
 	{
+		/** @var Expedition $this */
 		$toDisableLines = array();
 		$toDisable = true;
 		$oldDesc = "";
