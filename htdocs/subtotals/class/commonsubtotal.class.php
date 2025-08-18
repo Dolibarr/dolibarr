@@ -274,13 +274,13 @@ trait CommonSubtotal
 		}
 
 		// Add the line calling the right module
-		if ($current_module == 'facture'&& $this instanceof Facture) {
+		if ($current_module == 'facture' && $this instanceof Facture) {
 			$rowid = $id; // for phan suspicious parameter order...
 			$result = $this->deleteLine($rowid);
-		} elseif ($current_module == 'propal'&& $this instanceof Propal) {
+		} elseif ($current_module == 'propal' && $this instanceof Propal) {
 			$rowid = $id; // for phan suspicious parameter order...
 			$result = $this->deleteLine($rowid);
-		} elseif ($current_module == 'commande'&& $this instanceof Commande) {
+		} elseif ($current_module == 'commande' && $this instanceof Commande) {
 			$lineid = $id; // for phan suspicious parameter order...
 			$result = $this->deleteLine($user, $lineid);
 		} elseif ($current_module == 'facturerec') {
