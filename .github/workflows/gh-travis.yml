@@ -35,7 +35,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Checkout travis file
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Run .travis.yml build script
         uses: ktomk/run-travis-yml@v1
         with:
