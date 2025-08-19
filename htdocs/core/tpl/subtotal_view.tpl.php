@@ -68,7 +68,7 @@ if ($line->qty > 0) { ?>
 		if (array_key_exists('titleforcepagebreak', $line_options)) {
 			echo '&nbsp;' . img_picto($langs->trans("ForcePageBreak"), 'file');
 		}
-		// Handling colspan for ref supplier
+		// Handling td for ref supplier
 		if (in_array($object->element, ['supplier_proposal'])) {
 			echo '<td></td>';
 		}
