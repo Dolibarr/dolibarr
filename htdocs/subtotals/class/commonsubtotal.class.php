@@ -518,7 +518,7 @@ trait CommonSubtotal
 					return 1;
 				}
 			} else {
-				if ($current_module == 'facture' && $this->instanceof Facture) {
+				if ($current_module == 'facture' && $this instanceof Facture) {
 					$result = $this->updateline(
 						$this->lines[$i]->id,
 						$this->lines[$i]->desc,
@@ -543,7 +543,7 @@ trait CommonSubtotal
 						$this->lines[$i]->fk_unit,
 						$this->lines[$i]->multicurrency_subprice
 					);
-				} elseif ($current_module == 'commande' && $this->instanceof Commande) {
+				} elseif ($current_module == 'commande' && $this instanceof Commande) {
 					$result = $this->updateline(
 						$this->lines[$i]->id,
 						$this->lines[$i]->desc,
