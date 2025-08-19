@@ -322,7 +322,13 @@ trait CommonSubtotal
 	{
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
-		$allowed_types = array('propal', 'commande', 'facture', 'facturerec', 'shipping');
+		$allowed_types = [
+			'propal',
+			'commande',
+			'facture',
+			'facturerec',
+			'shipping',
+		];
 		if (!in_array($current_module, $allowed_types)) {
 			if (isset($this->errors)) {
 				$this->errors[] = $langs->trans("UnsupportedModuleError");
@@ -367,91 +373,91 @@ trait CommonSubtotal
 		}
 
 		// Update the line calling the right module
-		if ($current_module == 'facture') {
-			$result = $this->updateline( // @phpstan-ignore-line
-				$lineid, 				// ID of line to change @phpstan-ignore-line
-				$desc,					// Description @phpstan-ignore-line
-				0,						// Unit price @phpstan-ignore-line
-				$depth,					// Quantity @phpstan-ignore-line
-				0,						// Discount percentage @phpstan-ignore-line
-				'',						// Date start @phpstan-ignore-line
-				'',						// Date end @phpstan-ignore-line
-				0,						// VAT rate @phpstan-ignore-line
-				0,						// Local tax 1 @phpstan-ignore-line
-				0,						// Local tax 2 @phpstan-ignore-line
-				'',						// Price base type @phpstan-ignore-line
-				0, 						// Info bits @phpstan-ignore-line
-				self::$PRODUCT_TYPE,	// Type @phpstan-ignore-line
-				0,						// FK parent line @phpstan-ignore-line
-				0,						// Skip update total @phpstan-ignore-line
-				0,						// FK fournprice @phpstan-ignore-line
-				0,						// PA ht @phpstan-ignore-line
-				'',						// Label @phpstan-ignore-line
-				SUBTOTALS_SPECIAL_CODE	// Special code @phpstan-ignore-line
+		if ($current_module == 'facture' && $this instanceof Facture) {
+			$result = $this->updateline(
+				$lineid, 				// ID of line to change
+				$desc,					// Description
+				0,						// Unit price
+				$depth,					// Quantity
+				0,						// Discount percentage
+				'',						// Date start
+				'',						// Date end
+				0,						// VAT rate
+				0,						// Local tax 1
+				0,						// Local tax 2
+				'',						// Price base type
+				0, 						// Info bits
+				self::$PRODUCT_TYPE,	// Type
+				0,						// FK parent line
+				0,						// Skip update total
+				0,						// FK fournprice
+				0,						// PA ht
+				'',						// Label
+				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
-		} elseif ($current_module == 'propal') {
-			$result = $this->updateline( // @phpstan-ignore-line
-				$lineid, 				// ID of line to change @phpstan-ignore-line
-				0,						// Unit price @phpstan-ignore-line
-				$depth,					// Quantity @phpstan-ignore-line
-				0,						// Discount percentage @phpstan-ignore-line
-				0,						// VAT rate @phpstan-ignore-line
-				0,						// Local tax 1 @phpstan-ignore-line
-				0,						// Local tax 2 @phpstan-ignore-line
-				$desc,					// Description @phpstan-ignore-line
-				'',						// Price base type @phpstan-ignore-line
-				0,						// Info bits @phpstan-ignore-line
-				SUBTOTALS_SPECIAL_CODE, // Special code @phpstan-ignore-line
-				0, 						// FK parent line @phpstan-ignore-line
-				0, 						// Skip update total @phpstan-ignore-line
-				0, 						// FK fournprice @phpstan-ignore-line
-				0, 						// PA ht @phpstan-ignore-line
-				'',						// Label @phpstan-ignore-line
-				self::$PRODUCT_TYPE		// Type @phpstan-ignore-line
+		} elseif ($current_module == 'propal' && $this instanceof Propal) {
+			$result = $this->updateline(
+				$lineid, 				// ID of line to change
+				0,						// Unit price
+				$depth,					// Quantity
+				0,						// Discount percentage
+				0,						// VAT rate
+				0,						// Local tax 1
+				0,						// Local tax 2
+				$desc,					// Description
+				'',						// Price base type
+				0,						// Info bits
+				SUBTOTALS_SPECIAL_CODE, // Special code
+				0, 						// FK parent line
+				0, 						// Skip update total
+				0, 						// FK fournprice
+				0, 						// PA ht
+				'',						// Label
+				self::$PRODUCT_TYPE		// Type
 			);
-		} elseif ($current_module == 'commande') {
-			$result = $this->updateline( // @phpstan-ignore-line
-				$lineid, 				// ID of line to change @phpstan-ignore-line
-				$desc,					// Description @phpstan-ignore-line
-				0,						// Unit price @phpstan-ignore-line
-				$depth,					// Quantity @phpstan-ignore-line
-				0,						// Discount percentage @phpstan-ignore-line
-				0,						// VAT rate @phpstan-ignore-line
-				0,						// Local tax 1 @phpstan-ignore-line
-				0,						// Local tax 2 @phpstan-ignore-line
-				'',						// Price base type @phpstan-ignore-line
-				0,						// Info bits @phpstan-ignore-line
-				'',						// Date start @phpstan-ignore-line
-				'',						// Date end @phpstan-ignore-line
-				self::$PRODUCT_TYPE,	// Type @phpstan-ignore-line
-				0, 						// FK parent line @phpstan-ignore-line
-				0, 						// Skip update total @phpstan-ignore-line
-				0, 						// FK fournprice @phpstan-ignore-line
-				0, 						// PA ht @phpstan-ignore-line
-				'',						// Label @phpstan-ignore-line
-				SUBTOTALS_SPECIAL_CODE	// Special code @phpstan-ignore-line
+		} elseif ($current_module == 'commande' && $this instanceof Commande) {
+			$result = $this->updateline(
+				$lineid, 				// ID of line to change
+				$desc,					// Description
+				0,						// Unit price
+				$depth,					// Quantity
+				0,						// Discount percentage
+				0,						// VAT rate
+				0,						// Local tax 1
+				0,						// Local tax 2
+				'',						// Price base type
+				0,						// Info bits
+				'',						// Date start
+				'',						// Date end
+				self::$PRODUCT_TYPE,	// Type
+				0, 						// FK parent line
+				0, 						// Skip update total
+				0, 						// FK fournprice
+				0, 						// PA ht
+				'',						// Label
+				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
-		} elseif ($current_module == 'facturerec') {
+		} elseif ($current_module == 'facturerec' && $this instanceof FactureRec) {
 			$objectline = new FactureLigneRec($this->db);
 			$objectline->fetch($lineid);
 			$line_rang = $objectline->rang;
-			$result = $this->updateline( // @phpstan-ignore-line
-				$lineid,				// ID of line to change @phpstan-ignore-line
-				$desc,					// Description @phpstan-ignore-line
-				0,						// Unit price @phpstan-ignore-line
-				$depth,					// Quantity @phpstan-ignore-line
-				0,						// VAT rate @phpstan-ignore-line
-				0,						// Local tax 1 @phpstan-ignore-line
-				0,						// Local tax 2 @phpstan-ignore-line
-				0,						// FK parent line @phpstan-ignore-line
-				0,						// Discount percentage @phpstan-ignore-line
-				'',						// Price base type @phpstan-ignore-line
-				0,						// Info bits @phpstan-ignore-line
-				0,						// FK parent line @phpstan-ignore-line
-				0,						// PU ttc @phpstan-ignore-line
-				self::$PRODUCT_TYPE,	// Type @phpstan-ignore-line
-				$line_rang,				// Rang @phpstan-ignore-line
-				SUBTOTALS_SPECIAL_CODE	// Special code @phpstan-ignore-line
+			$result = $this->updateline(
+				$lineid,				// ID of line to change
+				$desc,					// Description
+				0,						// Unit price
+				$depth,					// Quantity
+				0,						// VAT rate
+				0,						// Local tax 1
+				0,						// Local tax 2
+				0,						// FK parent line
+				0,						// Discount percentage
+				'',						// Price base type
+				0,						// Info bits
+				0,						// FK parent line
+				0,						// PU ttc
+				self::$PRODUCT_TYPE,	// Type
+				$line_rang,				// Rang
+				SUBTOTALS_SPECIAL_CODE	// Special code
 			);
 		}
 
