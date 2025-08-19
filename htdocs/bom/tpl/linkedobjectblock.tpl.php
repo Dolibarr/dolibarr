@@ -33,14 +33,21 @@ global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
 '@phan-var-force Translate $langs';
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var CommonObject $object
+ */
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 // Load translation files required by the page
 $langs->load("bom");
 
-'@phan-var-force array<int,BOM> $linkedObjectBlock';  // Type before use
+'@phan-var-force BOM[] $linkedObjectBlock';  // Type before use
+/** @var BOM[] $linkedObjectBlock */
 $linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
-'@phan-var-force array<int,BOM> $linkedObjectBlock';  // Type after dol_sort_array which looses typing
+'@phan-var-force BOM[] $linkedObjectBlock';  // Type after dol_sort_array which looses typing
+/** @var BOM[] $linkedObjectBlock */
 
 $total = 0;
 $ilink = 0;

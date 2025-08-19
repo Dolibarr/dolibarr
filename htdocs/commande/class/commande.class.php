@@ -1878,8 +1878,8 @@ class Commande extends CommonOrder
 	 *	@param  int     $idproduct          Product Id
 	 *	@param  float   $qty                Quantity
 	 *	@param  float   $remise_percent     Product discount relative
-	 * 	@param  int|string   $date_start         Start date of the line
-	 * 	@param  int|string   $date_end           End date of the line
+	 * 	@param  int|''  $date_start         Start date of the line
+	 * 	@param  int|''  $date_end           End date of the line
 	 * 	@return void
 	 *
 	 *	TODO	Remplacer les appels a cette fonction par generation object Ligne

@@ -28,7 +28,7 @@ jobs:
       #  if: false
 
       # Checkout git sources to analyze
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # Try to get the list of modified files into steps.changed-php.outputs.all_changed_files
       #- name: Get changed files

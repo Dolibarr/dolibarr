@@ -901,12 +901,6 @@ parameters:
 			path: ../../../htdocs/adherents/subscription/card.php
 
 		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/adherents/tpl/linkedobjectblock.tpl.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 2

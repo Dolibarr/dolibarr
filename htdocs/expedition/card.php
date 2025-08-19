@@ -2163,39 +2163,6 @@ if ($action == 'create') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('UnsignShipping'), $text, 'confirm_unsign', '', 0, 1);
 	}
 
-	// Confirm sign
-	if ($action == 'sign') {
-		$text = $langs->trans('ConfirmSignIntervention');
-		if (isModEnabled('notification')) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
-			$notify = new Notify($db);
-			$text .= '<br>';
-			$text .= $notify->confirmMessage('SHIPPING_MODIFY', $object->socid, $object);
-		}
-		$formquestion = [];
-		$formquestion[] = [
-			'type' 		=> 'select',
-			'name' 		=> 'signed_status',
-			'select_show_empty' => 1,
-			'label'		=> '<span class="fieldrequired">'.$langs->trans('SignStatus').'</span>',
-			'values'	=> $object->getSignedStatusLocalisedArray(),
-			//'default'   => $object->signed_status
-		];
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SignIntervention'), $text, 'confirm_sign', $formquestion, 0, 1);
-	}
-
-	// Confirm unsign
-	if ($action == 'unsign') {
-		$text = $langs->trans('ConfirmUnsignIntervention');
-		if (isModEnabled('notification')) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
-			$notify = new Notify($db);
-			$text .= '<br>';
-			$text .= $notify->confirmMessage('SHIPPING_MODIFY', $object->socid, $object);
-		}
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('UnsignIntervention'), $text, 'confirm_unsign', '', 0, 1);
-	}
-
 	// Call Hook formConfirm
 	$parameters = array('formConfirm' => $formconfirm);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
