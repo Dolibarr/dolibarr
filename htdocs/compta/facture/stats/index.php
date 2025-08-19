@@ -110,7 +110,7 @@ if ($mode == 'supplier') {
 	$dir = $conf->fournisseur->facture->dir_temp;
 }
 
-llxHeader('',$title);
+llxHeader('', $title);
 
 print load_fiche_titre($title, '', $picto);
 
