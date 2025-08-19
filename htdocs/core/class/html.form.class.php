@@ -1825,7 +1825,7 @@ class Form
 			$sql .= ", s.nom as company, s.town AS company_town";
 		}
 		$sql .= " FROM " . $this->db->prefix() . "socpeople as sp";
-		if ($showsoc > 0 || getDolGlobalString('CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST')) {
+		if ($user->socid > 0 || $showsoc > 0 || getDolGlobalString('CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST')) {
 			$sql .= " LEFT OUTER JOIN  " . $this->db->prefix() . "societe as s ON s.rowid=sp.fk_soc";
 		}
 		$sql .= " WHERE sp.entity IN (" . getEntity('contact') . ")";
