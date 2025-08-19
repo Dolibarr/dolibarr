@@ -2696,12 +2696,13 @@ class SupplierProposal extends CommonObject
 				$this->lines[$i]->rowid				= $obj->rowid;
 				$this->lines[$i]->label 			= $obj->custom_label;
 				$this->lines[$i]->description = $obj->description;
+				$this->lines[$i]->desc = $obj->description;
 				$this->lines[$i]->fk_product = $obj->fk_product;
 				$this->lines[$i]->ref = $obj->ref;
 				$this->lines[$i]->product_label = $obj->product_label;
-				$this->lines[$i]->product_desc		= $obj->product_desc;
+				$this->lines[$i]->product_desc = $obj->product_desc;
 				$this->lines[$i]->fk_product_type = $obj->fk_product_type; // deprecated
-				$this->lines[$i]->product_type		= $obj->product_type;
+				$this->lines[$i]->product_type = $obj->product_type;
 				$this->lines[$i]->qty = $obj->qty;
 				$this->lines[$i]->subprice = $obj->subprice;
 				$this->lines[$i]->fk_remise_except = $obj->fk_remise_except;
