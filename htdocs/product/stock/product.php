@@ -1349,7 +1349,7 @@ if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PA
 	// load variants
 	$title = $langs->trans("ProductCombinations");
 
-	print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0);
+	print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', 0);
 
 	print '<div class="div-table-responsive">'; ?>
 	<table class="liste">
