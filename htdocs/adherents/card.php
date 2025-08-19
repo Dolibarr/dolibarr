@@ -1060,41 +1060,93 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$morphys["phy"] = $langs->trans("Physical");
 		$morphys["mor"] = $langs->trans("Moral");
 		$checkednature = GETPOST("morphy", 'alpha');
+		$listetype_natures = $adht->morphyByType(1);
+		$listetype_natures_json = json_encode($listetype_natures);
 
 		print '<tr><td class="fieldrequired">'.$langs->trans("MemberNature")."</td><td>\n";
 		print '<span id="spannature1" class="nonature-back spannature paddinglarge marginrightonly"><label for="phisicalinput" class="valignmiddle">'.$morphys["phy"].'<input id="phisicalinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="phy"'.($checkednature == "phy" ? ' checked="checked"' : '').'></label></span>';
 		print '<span id="spannature2" class="nonature-back spannature paddinglarge marginrightonly"><label for="moralinput" class="valignmiddle">'.$morphys["mor"].'<input id="moralinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="mor"'.($checkednature == "mor" ? ' checked="checked"' : '').'></label></span>';
 
-		// Add js to manage the background of nature
+		// Add JS to manage the background of nature
 		if ($conf->use_javascript_ajax) {
+			print "<script>
+				var listetype_natures = $listetype_natures_json;
+			</script>";
 			print '<script>
+			jQuery(function($) {
 				function refreshNatureCss() {
-					jQuery(".spannature").each(function( index ) {
-						console.log(jQuery("#spannature"+(index+1)+" .checkforselect").is(":checked"));
-						if (jQuery("#spannature"+(index+1)+" .checkforselect").is(":checked")) {
-							if (index+1 == 1) {
-								jQuery("#spannature"+(index+1)).addClass("member-individual-back").removeClass("nonature-back");
-							}
-							if (index+1 == 2) {
-								jQuery("#spannature"+(index+1)).addClass("member-company-back").removeClass("nonature-back");
+					$(".spannature").each(function(index) {
+						let $span = $("#spannature" + (index + 1));
+						let checked = $span.find(".checkforselect").is(":checked");
+
+						if (checked) {
+							if (index === 0) {
+								$span.addClass("member-individual-back").removeClass("nonature-back member-company-back");
+							} else if (index === 1) {
+								$span.addClass("member-company-back").removeClass("nonature-back member-individual-back");
 							}
 						} else {
-							jQuery("#spannature"+(index+1)).removeClass("member-individual-back").removeClass("member-company-back").addClass("nonature-back");
+							$span.removeClass("member-individual-back member-company-back")
+								.addClass("nonature-back");
 						}
 					});
 				}
-				jQuery(".spannature").click(function(){
-					console.log("We click on a nature");
+
+				$(".spannature").on("click", function() {
+					console.log("Nature clicked");
 					refreshNatureCss();
 				});
+
+				$("#typeid").on("change", function() {
+					let morphy = listetype_natures[$(this).val()];
+
+					let $phyInput = $("#phisicalinput");
+					let $morInput = $("#moralinput");
+					let $tdLast = $("#tdlastname");
+					let $tdFirst = $("#tdfirstname");
+					let $tdCompany = $("#tdcompany");
+					let $span1 = $("#spannature1");
+					let $span2 = $("#spannature2");
+
+					switch (morphy) {
+						case "phy":
+							$phyInput.prop({disabled: false, checked: true});
+							$morInput.prop({disabled: true, checked: false});
+							$span1.addClass("member-individual-back").removeClass("nonature-back");
+							$span2.removeClass("member-company-back").addClass("nonature-back");
+							$tdLast.addClass("fieldrequired");
+							$tdFirst.addClass("fieldrequired");
+							$tdCompany.removeClass("fieldrequired");
+							break;
+
+						case "mor":
+							$phyInput.prop({disabled: true, checked: false});
+							$morInput.prop({disabled: false, checked: true});
+							$span2.addClass("member-company-back").removeClass("nonature-back");
+							$span1.removeClass("member-individual-back").addClass("nonature-back");
+							$tdCompany.addClass("fieldrequired");
+							$tdLast.removeClass("fieldrequired");
+							$tdFirst.removeClass("fieldrequired");
+							break;
+
+						default:
+							$phyInput.prop({disabled: false, checked: false});
+							$morInput.prop({disabled: false, checked: false});
+							$span1.removeClass("member-individual-back").addClass("nonature-back");
+							$span2.removeClass("member-company-back").addClass("nonature-back");
+					}
+				});
+
+				// Initial state
 				refreshNatureCss();
-				</script>';
+			});
+		</script>';
 		}
 
 		print "</td>\n";
 
 		// Company
-		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOSTISSET('societe') ? GETPOST('societe', 'alphanohtml') : $soc->name).'"></td></tr>';
+		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td>'.img_picto('', 'company').'<input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOSTISSET('societe') ? GETPOST('societe', 'alphanohtml') : $soc->name).'"></td></tr>';
 
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
@@ -1328,7 +1380,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print "</td></tr>";
 
 		// Company
-		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOSTISSET("societe") ? GETPOST("societe", 'alphanohtml', 2) : $object->company).'"></td></tr>';
+		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td>'.img_picto('', 'company').'<input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOSTISSET("societe") ? GETPOST("societe", 'alphanohtml', 2) : $object->company).'"></td></tr>';
 
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';

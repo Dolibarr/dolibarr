@@ -710,6 +710,81 @@ class AdherentType extends CommonObject
 	}
 
 	/**
+	 *  Return the array of morphy per membership type id
+	 *
+	 *  @param	int		$status			Filter on status of type
+	 *  @return array<int,string>		Array of membership type
+	 */
+	public function morphyByType($status = null)
+	{
+		$morphybytype = array();
+
+		$sql = "SELECT rowid, morphy";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type";
+		$sql .= " WHERE entity IN (".getEntity('member_type').")";
+		if ($status !== null) {
+			$sql .= " AND statut = ".((int) $status);
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$nump = $this->db->num_rows($resql);
+
+			if ($nump) {
+				$i = 0;
+				while ($i < $nump) {
+					$obj = $this->db->fetch_object($resql);
+
+					$morphybytype[$obj->rowid] = $obj->morphy;
+					$i++;
+				}
+			}
+		} else {
+			print $this->db->error();
+		}
+
+		return $morphybytype;
+	}
+
+	/**
+	 *  Return the array of caneditamount per membership type id
+	 *
+	 *  @param	int		$status			Filter on status of type
+	 *  @return array<int,string>		Array of membership type
+	 */
+	public function caneditamountByType($status = null)
+	{
+
+		$caneditamountbytype = array();
+
+		$sql = "SELECT rowid, caneditamount";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type";
+		$sql .= " WHERE entity IN (".getEntity('member_type').")";
+		if ($status !== null) {
+			$sql .= " AND statut = ".((int) $status);
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$nump = $this->db->num_rows($resql);
+
+			if ($nump) {
+				$i = 0;
+				while ($i < $nump) {
+					$obj = $this->db->fetch_object($resql);
+
+					$caneditamountbytype[$obj->rowid] = $obj->caneditamount;
+					$i++;
+				}
+			}
+		} else {
+			print $this->db->error();
+		}
+
+		return $caneditamountbytype;
+	}
+
+	/**
 	 * 	Return array of Member objects for member type this->id (or all if this->id not defined)
 	 *
 	 * 	@param	string		$excludefilter	Filter to exclude. This value must not come from a user input.
