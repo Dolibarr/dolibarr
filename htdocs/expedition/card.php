@@ -2081,9 +2081,9 @@ if ($action == 'create') {
 
 	// Confirm sign
 	if ($action == 'sign') {
-		$text = $langs->trans('ConfirmSignIntervention');
+		$text = $langs->trans('ConfirmSignShipping');
 		if (isModEnabled('notification')) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
 			$notify = new Notify($db);
 			$text .= '<br>';
 			$text .= $notify->confirmMessage('SHIPPING_MODIFY', $object->socid, $object);
@@ -2092,24 +2092,23 @@ if ($action == 'create') {
 		$formquestion[] = [
 			'type' 		=> 'select',
 			'name' 		=> 'signed_status',
-			'select_show_empty' => 1,
-			'label'		=> '<span class="fieldrequired">'.$langs->trans('SignStatus').'</span>',
-			'values'	=> $object->getSignedStatusLocalisedArray(),
-			//'default'   => $object->signed_status
+			'select_show_empty' => 0,
+			'label'		=> '<span class="fieldrequired">' . $langs->trans('SignStatus') . '</span>',
+			'values'	=> $object->getSignedStatusLocalisedArray()
 		];
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SignIntervention'), $text, 'confirm_sign', $formquestion, 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('SignShipping'), $text, 'confirm_sign', $formquestion, 0, 1);
 	}
 
 	// Confirm unsign
 	if ($action == 'unsign') {
-		$text = $langs->trans('ConfirmUnsignIntervention');
+		$text = $langs->trans('ConfirmUnsignShipping');
 		if (isModEnabled('notification')) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
+			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
 			$notify = new Notify($db);
 			$text .= '<br>';
 			$text .= $notify->confirmMessage('SHIPPING_MODIFY', $object->socid, $object);
 		}
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('UnsignIntervention'), $text, 'confirm_unsign', '', 0, 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('UnsignShipping'), $text, 'confirm_unsign', '', 0, 1);
 	}
 
 	// Call Hook formConfirm
