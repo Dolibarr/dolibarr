@@ -2041,12 +2041,6 @@ parameters:
 			path: ../../../htdocs/asset/tpl/depreciation_view.tpl.php
 
 		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/asset/tpl/linkedobjectblock.tpl.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 4
@@ -2183,12 +2177,6 @@ parameters:
 			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/bom/class/bom.class.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/bom/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: '#^Call to function is_object\(\) with BOMLine will always evaluate to true\.$#'
