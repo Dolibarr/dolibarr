@@ -19,16 +19,16 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * @var ?Conf $conf
+ * @var User $user
+ */
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
-
-/**
- * @var HookManager $hookmanager
- * @var User $user
- */
 
 print "<!-- BEGIN PHP TEMPLATE commande/tpl/linkedobjectblock.tpl.php -->\n";
 
@@ -38,9 +38,10 @@ global $noMoreLinkedObjectBlockAfter;
 $langs = $GLOBALS['langs'];
 '@phan-var-force Translate $langs';
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-'@phan-var-force CommonObject[] $linkedObjectBlock';
+'@phan-var-force Asset[] $linkedObjectBlock';
 /**
- * @var CommonObject[] $linkedObjectBlock
+ * @var Asset[] $linkedObjectBlock
+ * @var CommonObject $object
  * @var Translate $langs
  */
 
@@ -49,6 +50,7 @@ $langs->load("assets");
 
 $linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
 '@phan-var-force CommonObject[] $linkedObjectBlock';  // Repeat because type lost after dol_sort_array)
+/** @var Asset[] $linkedObjectBlock */
 
 $total = 0;
 $ilink = 0;
