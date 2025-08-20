@@ -688,7 +688,7 @@ if ($id > 0 || $ref) {
 
 
 			// AWP
-			print '<tr><td class="titlefield">';
+			print '<tr><td class="titlefieldmiddle">';
 			print $form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc"));
 			print '</td>';
 			print '<td>';
