@@ -212,10 +212,10 @@ if (empty($reshook)) {
 			$object->busy = $busy;
 			$object->mandatory = $mandatory;
 
-			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $object->objelement->element_type == 'action' && $object->resource_type == 'dolresource' && intval($object->busy) == 1) {
-				$eventDateStart = $object->objelement->datep;  // @phan-suppress-current-line PhanUndeclaredProperty
-				$eventDateEnd   = $object->objelement->datef;  // @phan-suppress-current-line PhanUndeclaredProperty
-				$isFullDayEvent = $object->objelement->fulldayevent;  // @phan-suppress-current-line PhanUndeclaredProperty
+			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $object->objelement instanceof ActionComm && $object->objelement->element_type == 'action' && $object->resource_type == 'dolresource' && intval($object->busy) == 1) {
+				$eventDateStart = $object->objelement->datep;
+				$eventDateEnd   = $object->objelement->datef;
+				$isFullDayEvent = $object->objelement->fulldayevent;
 				if (empty($eventDateEnd)) {
 					if ($isFullDayEvent) {
 						$eventDateStartArr = dol_getdate($eventDateStart);
