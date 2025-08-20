@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - bills
 Bill=Tagihan
-Bills=Tagihan - tagihan
+Bills=Tagihan
 BillsCustomers=Faktur pelanggan
 BillsCustomer=Tagihan pelanggan
 BillsSuppliers=Faktur vendor
@@ -52,7 +52,7 @@ PredefinedInvoices=Tagihan tetap sementara
 Invoice=Tagihan
 PdfInvoiceTitle=Tagihan
 PdfInvoiceSituationTitle=Situasi faktur
-Invoices=Tagihan - tagihan
+Invoices=Tagihan
 InvoiceLine=Baris tagihan
 InvoiceCustomer=Tagihan pelanggan
 CustomerInvoice=Tagihan pelanggan
@@ -182,8 +182,8 @@ LastCustomersBills=Faktur pelanggan %s terbaru
 LastSuppliersBills=Faktur vendor %s terbaru
 AllBills=Semua tagihan
 AllCustomerTemplateInvoices=Semua faktur template
-OtherBills=Tagihan - tagihan lainnya
-DraftBills=Konsep tagihan - tagihan
+OtherBills=Tagihan lainnya
+DraftBills=Konsep tagihan
 CustomersDraftInvoices=Faktur konsep pelanggan
 SuppliersDraftInvoices=Vendor konsep faktur
 Unpaid=Tidak dibayar
