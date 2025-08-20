@@ -8,7 +8,7 @@
  * Copyright (C) 2024	   	Jean-Rémi TAPONIER		<jean-remi@netlogic.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Mélina Joum				<melina.joum@altairis.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,13 +151,13 @@ function product_prepare_head($object)
 	// Tab to link resources
 	if (isModEnabled('resource')) {
 		if ($object->isProduct() && getDolGlobalString('RESOURCE_ON_PRODUCTS')) {
-			$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=product&ref='.$object->ref;
+			$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=product&element_id='.$object->id;
 			$head[$h][1] = $langs->trans("Resources");
 			$head[$h][2] = 'resources';
 			$h++;
 		}
 		if ($object->isService() && getDolGlobalString('RESOURCE_ON_SERVICES')) {
-			$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=service&ref='.$object->ref;
+			$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=service&element_id='.$object->id;
 			$head[$h][1] = $langs->trans("Resources");
 			$head[$h][2] = 'resources';
 			$h++;

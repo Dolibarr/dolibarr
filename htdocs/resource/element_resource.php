@@ -286,12 +286,17 @@ if (empty($reshook)) {
 
 	// Delete a resource linked to an element
 	if ($action == 'confirm_delete_linked_resource' && $user->hasRight('resource', 'delete') && $confirm === 'yes') {
-		$result = $object->delete_resource($lineid, $element);
+		$res = $object->fetchElementResource($lineid); // to have correct object deleting resource
+		if ($res) {
+			$result = $object->objelement->delete_resource($lineid, '');
 
-		if ($result >= 0) {
-			setEventMessages($langs->trans('RessourceLineSuccessfullyDeleted'), null, 'mesgs');
-			header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
-			exit;
+			if ($result >= 0) {
+				setEventMessages($langs->trans('RessourceLineSuccessfullyDeleted'), null, 'mesgs');
+				header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
+				exit;
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
