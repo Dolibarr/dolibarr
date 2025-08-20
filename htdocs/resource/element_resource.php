@@ -206,15 +206,15 @@ if (empty($reshook)) {
 	}
 
 	// Update resource
-	if ($action == 'update_linked_resource' && $user->hasRight('resource', 'write') && !GETPOST('cancel', 'alpha')) {
+	if ($action == 'update_linked_resource' && $user->hasRight('resource', 'write') && !$cancel) {
 		$res = $object->fetchElementResource($lineid);
 		if ($res) {
 			$object->busy = $busy;
 			$object->mandatory = $mandatory;
 
 			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $object->objelement instanceof ActionComm && $object->element_type == 'action' && $object->resource_type == 'dolresource' && intval($object->busy) == 1) {
-				$eventDateStart = $object->objelement->datep; // @phan-suppress-current-line PhanUndeclaredProperty
-				$eventDateEnd   = $object->objelement->datef; // @phan-suppress-current-line PhanUndeclaredProperty
+				$eventDateStart = $object->objelement->datep;  // @phan-suppress-current-line PhanUndeclaredProperty
+				$eventDateEnd   = $object->objelement->datef;  // @phan-suppress-current-line PhanUndeclaredProperty
 				$isFullDayEvent = $object->objelement->fulldayevent; // @phan-suppress-current-line PhanUndeclaredProperty
 				if (empty($eventDateEnd)) {
 					if ($isFullDayEvent) {
