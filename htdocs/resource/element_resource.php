@@ -212,7 +212,7 @@ if (empty($reshook)) {
 			$object->busy = $busy;
 			$object->mandatory = $mandatory;
 
-			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $object->objelement instanceof ActionComm && $object->objelement->element_type == 'action' && $object->resource_type == 'dolresource' && intval($object->busy) == 1) {
+			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $object->objelement instanceof ActionComm && $object->element_type == 'action' && $object->resource_type == 'dolresource' && intval($object->busy) == 1) {
 				$eventDateStart = $object->objelement->datep;
 				$eventDateEnd   = $object->objelement->datef;
 				$isFullDayEvent = $object->objelement->fulldayevent;
