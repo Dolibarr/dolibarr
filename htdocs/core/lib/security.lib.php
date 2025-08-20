@@ -545,7 +545,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 		'mode' => $mode,
 	);
 	if (!empty($hookmanager)) {
-		$reshook = $hookmanager->executeHooks('restrictedArea', $parameters);
+		$reshook = $hookmanager->executeHooks('restrictedArea', $parameters, is_object($object) ? $object : null);
 
 		if (isset($hookmanager->resArray['result'])) {
 			if ($hookmanager->resArray['result'] == 0) {
