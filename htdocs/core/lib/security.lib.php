@@ -1,9 +1,10 @@
 <?php
 
-/* Copyright (C) 2008-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2008-2021 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2020	   Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2008-2021  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2021  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2020	    Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -531,7 +532,18 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	//print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
 
 	// Get more permissions checks from hooks
-	$parameters = array('features' => $features,'feature2' => $feature2, 'originalfeatures' => $originalfeatures, 'objectid' => $objectid, 'dbt_select' => $dbt_select, 'idtype' => $dbt_select, 'isdraft' => $isdraft);
+	$parameters = array(
+		'features' => $features,
+		'feature2' => $feature2,
+		'tableandshare' => $tableandshare,
+		'originalfeatures' => $originalfeatures,
+		'objectid' => $objectid,
+		'dbt_keyfield' => $dbt_keyfield,
+		'dbt_select' => $dbt_select,
+		'idtype' => $dbt_select,
+		'isdraft' => $isdraft,
+		'mode' => $mode,
+	);
 	if (!empty($hookmanager)) {
 		$reshook = $hookmanager->executeHooks('restrictedArea', $parameters);
 
