@@ -366,7 +366,7 @@ class Contrat extends CommonObject
 	 *  @param	User		$user       Object User who activate contract
 	 *  @param  int			$line_id    Id of line to activate
 	 *  @param  int			$date_start Opening date
-	 *  @param  int|string	$date_end   Expected end date
+	 *  @param  int|''		$date_end   Expected end date
 	 * 	@param	string		$comment	A comment typed by user
 	 *  @return int         			Return integer <0 if KO, >0 if OK
 	 */
