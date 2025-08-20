@@ -5841,7 +5841,7 @@ abstract class CommonObject
 		dol_syslog(get_class($this)."::add_element_resource", LOG_DEBUG);
 		if ($this->db->query($sql)) {
 			if (!$notrigger) {
-				$result = $this->call_trigger(strtoupper($this->element).'_ADD_RESOURCE', $user);
+				$result = $this->call_trigger(strtoupper($this->TRIGGER_PREFIX).'_ADD_RESOURCE', $user);
 				if ($result < 0) {
 					$this->db->rollback();
 					return -1;
