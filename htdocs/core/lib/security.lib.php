@@ -531,7 +531,7 @@ function restrictedArea(User $user, $features, $object = 0, $tableandshare = '',
 	//print $features.' - '.$tableandshare.' - '.$feature2.' - '.$dbt_select."\n";
 
 	// Get more permissions checks from hooks
-	$parameters = array('features' => $features, 'originalfeatures' => $originalfeatures, 'objectid' => $objectid, 'dbt_select' => $dbt_select, 'idtype' => $dbt_select, 'isdraft' => $isdraft);
+	$parameters = array('features' => $features,'feature2' => $feature2, 'originalfeatures' => $originalfeatures, 'objectid' => $objectid, 'dbt_select' => $dbt_select, 'idtype' => $dbt_select, 'isdraft' => $isdraft);
 	if (!empty($hookmanager)) {
 		$reshook = $hookmanager->executeHooks('restrictedArea', $parameters);
 
