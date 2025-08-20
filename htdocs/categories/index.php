@@ -114,7 +114,7 @@ foreach ($listofmodulesautoenabled as $moduleautoenable) {
 	}
 }
 
-if (1 || $user->admin && $nbmodulesnotautoenabled <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
+if ($user->admin && $nbmodulesnotautoenabled <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
 	$langs->load("admin");
 	print info_admin($langs->trans("WarningOnlyCategoryTypesOfActivatedModules").' '.$langs->trans("YouCanEnableModulesFrom"));
 }
