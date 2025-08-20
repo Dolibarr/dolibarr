@@ -49,7 +49,7 @@ class TriggerHistory extends CommonObject
 	public $table_element = 'webhook_history';
 
 	/**
-	 * @var string 	If permission must be checked with hasRight('webhook', 'read') and not hasright('mymodyle', 'triggerhistory', 'read'), you can uncomment this line
+	 * @var string 	If permission must be checked with hasRight('webhook', 'read') and not hasright('mymodule', 'triggerhistory', 'read'), you can uncomment this line
 	 */
 	//public $element_for_permission = 'webhook';
 
