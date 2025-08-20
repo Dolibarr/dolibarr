@@ -5865,7 +5865,7 @@ abstract class CommonObject
 	 *    @param	int		$notrigger		Disable all triggers
 	 *    @return   int						>0 if OK, <0 if KO
 	 */
-	public function delete_resource($rowid, $element, $notrigger = 0)
+	public function delete_resource($rowid, $element = '', $notrigger = 0)
 	{
 		// phpcs:enable
 		global $user;
