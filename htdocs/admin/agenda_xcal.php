@@ -164,7 +164,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("FixTZ")."</td>";
 print "<td>";
 print '<input class="flat" type="text" size="4" name="AGENDA_EXPORT_FIX_TZ" value="'.dol_escape_htmltag($AGENDA_EXPORT_FIX_TZ).'">';
-print ' &nbsp; '.$langs->trans("FillThisOnlyIfRequired");
+print ' &nbsp; <span class="opacitymedium">'.$langs->trans("FillThisOnlyIfRequired").'</span>';
 print "</td>";
 print "</tr>";
 
@@ -181,7 +181,7 @@ print "</form>\n";
 clearstatcache();
 
 
-print "<br><br>";
+print "<br><br><br>";
 
 
 // Define $urlwithroot
