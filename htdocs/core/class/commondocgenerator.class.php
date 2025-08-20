@@ -886,6 +886,7 @@ abstract class CommonDocGenerator
 			'line_total_up' => price2num($line->subprice * (float) $line->qty),
 			'line_total_up_locale' => price($line->subprice * (float) $line->qty, 0, $outputlangs),
 			'line_qty' => $line->qty,
+			'line_qty_locale' => price($line->qty),
 			'line_discount_percent' => ($line->remise_percent ? $line->remise_percent.'%' : ''),
 			'line_price_ht' => price2num($line->total_ht),
 			'line_price_ttc' => price2num($line->total_ttc),
