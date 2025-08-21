@@ -2,7 +2,8 @@
 /* Copyright (C) 2008-2011	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013 		Florian Henry  		<florian.henry@open-concept.pro>
  * Copyright (C) 2015 		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024       Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2025       Charlene Benke		<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,6 +114,37 @@ if ($conf->use_javascript_ajax) {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_CATEGORIE_RECURSIV_ADD&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_CATEGORIE_RECURSIV_ADD&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+	}
+}
+print '</td></tr>';
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ShowCategorieMenu").'</td>';
+print '<td align="center" width="20">'.$form->textwithpicto('', $langs->trans("ShowCategorieMenuHelp"), 1, 'help').'</td>';
+
+print '<td align="center" width="100">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('CATEGORY_SHOW_MENU');
+} else {
+	if (!getDolGlobalString('CATEGORY_SHOW_MENU')) {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_CATEGORY_SHOW_MENU&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+	} else {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_CATEGORY_SHOW_MENU&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+	}
+}
+print '</td></tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("HideCategoriePopup").'</td>';
+print '<td align="center" width="20">'.$form->textwithpicto('', $langs->trans("HideCategoriePopupHelp"), 1, 'help').'</td>';
+
+print '<td align="center" width="100">';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('CATEGORY_HIDE_EDIT_IN_POPUP');
+} else {
+	if (!getDolGlobalString('CATEGORY_HIDE_EDIT_IN_POPUP')) {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_CATEGORY_HIDE_EDIT_IN_POPUP&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+	} else {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_CATEGORY_HIDE_EDIT_IN_POPUP&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
 print '</td></tr>';
