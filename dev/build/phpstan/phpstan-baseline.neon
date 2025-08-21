@@ -8731,24 +8731,6 @@ parameters:
 			path: ../../../htdocs/core/lib/agenda.lib.php
 
 		-
-			message: '#^Function ajax_constantonoff\(\) has parameter \$entity with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: ../../../htdocs/core/lib/ajax.lib.php
-
-		-
-			message: '#^Function ajax_constantonoff\(\) has parameter \$revertonoff with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: ../../../htdocs/core/lib/ajax.lib.php
-
-		-
-			message: '#^Function ajax_constantonoff\(\) has parameter \$strict with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: ../../../htdocs/core/lib/ajax.lib.php
-
-		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 2
