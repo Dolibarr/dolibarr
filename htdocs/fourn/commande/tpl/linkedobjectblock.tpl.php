@@ -33,7 +33,10 @@ global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
 '@phan-var-force Translate $langs';
-/** @var Translate $langs */
+/**
+ * @var CommonObject $object
+ * @var Translate $langs
+ */
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 '@phan-var-force CommandeFournisseur[] $linkedObjectBlock';
 /** @var CommandeFournisseur[] $linkedObjectBlock */
