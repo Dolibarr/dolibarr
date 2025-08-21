@@ -2050,14 +2050,14 @@ function dolPrintText($s)
  * To output a text inside an attribute, you can use dolPrintHTMLForAttribute() or dolPrintHTMLForTextArea() inside a textarea
  * With dolPrintHTML(), only content not already in HTML is encoded with HTML.
  *
- * @param	string	$s				String to print
- * @param	int		$allowiframe	Allow iframe tags
- * @return	string					String ready for HTML output (sanitized and escape)
+ * @param	int|float|string	$s				String to print
+ * @param	int					$allowiframe	Allow iframe tags
+ * @return	string								String ready for HTML output (sanitized and escape)
  * @see dolPrintHTMLForAttribute(), dolPrintHTMLFortextArea()
  */
 function dolPrintHTML($s, $allowiframe = 0)
 {
-	return dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 1, 1, $allowiframe)), 1, 1, 'common', 0, 1);
+	return dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr((string) $s), 1, 1, 1, $allowiframe)), 1, 1, 'common', 0, 1);
 }
 
 /**
