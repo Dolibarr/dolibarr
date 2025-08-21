@@ -58,6 +58,12 @@ class Product extends CommonObject
 	const SELL_OR_EAT_BY_MANDATORY_ID_SELL_AND_EAT = 3;
 
 	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'PRODUCT';
+
+	/**
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'product';

@@ -442,7 +442,7 @@ class Utils
 					$execmethod = 1;
 				}
 
-				dol_syslog("Utils::dumpDatabase execmethod=".$execmethod." command:".$fullcommandcrypted, LOG_INFO);
+				dol_syslog("Utils::dumpDatabase execmethod=".$execmethod.", lowmemorydump=".$lowmemorydump.", command=".$fullcommandcrypted, LOG_INFO);
 
 
 				/* If value has been forced with a php_admin_value, this has no effect. Example of value: '512M' */

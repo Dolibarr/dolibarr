@@ -6,7 +6,7 @@
  * Copyright (C) 2012		Christophe Battarel	    <christophe.battarel@altairis.fr>
  * Copyright (C) 2015		Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016-2023	Charlene Benke          <charlene@patas-monkey.com>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Pierre Ardoin           <mapiolca@me.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -44,6 +44,12 @@ class ProductFournisseur extends Product
 	 * @var DoliDB		Database handler.
 	 */
 	public $db;
+
+	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'SUPPLIER_PRODUCT';
 
 	/**
 	 * @var string		Error code (or message)

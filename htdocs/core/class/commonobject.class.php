@@ -5813,11 +5813,13 @@ abstract class CommonObject
 	 *	@param		string	$resource_type		'resource'
 	 *	@param		int		$busy				Busy or not
 	 *	@param		int		$mandatory			Mandatory or not
+	 *  @param		int		$notrigger			Disable all triggers
 	 *	@return		int							Return integer <=0 if KO, >0 if OK
 	 */
-	public function add_element_resource($resource_id, $resource_type, $busy = 0, $mandatory = 0)
+	public function add_element_resource($resource_id, $resource_type, $busy = 0, $mandatory = 0, $notrigger = 0)
 	{
 		// phpcs:enable
+		global $user;
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".$this->db->prefix()."element_resources (";
@@ -5838,6 +5840,13 @@ abstract class CommonObject
 
 		dol_syslog(get_class($this)."::add_element_resource", LOG_DEBUG);
 		if ($this->db->query($sql)) {
+			if (!$notrigger) {
+				$result = $this->call_trigger(strtoupper($this->TRIGGER_PREFIX).'_ADD_RESOURCE', $user);
+				if ($result < 0) {
+					$this->db->rollback();
+					return -1;
+				}
+			}
 			$this->db->commit();
 			return 1;
 		} else {
@@ -5852,11 +5861,11 @@ abstract class CommonObject
 	 *    Delete a link to resource line
 	 *
 	 *    @param	int		$rowid			Id of resource line to delete
-	 *    @param	string	$element		element name (for trigger) TODO: use $this->element into commonobject class
+	 *    @param	string	$element		element name (for trigger) replaced by $this->TRIGGER_PREFIX
 	 *    @param	int		$notrigger		Disable all triggers
 	 *    @return   int						>0 if OK, <0 if KO
 	 */
-	public function delete_resource($rowid, $element, $notrigger = 0)
+	public function delete_resource($rowid, $element = '', $notrigger = 0)
 	{
 		// phpcs:enable
 		global $user;
@@ -5875,7 +5884,7 @@ abstract class CommonObject
 			return -1;
 		} else {
 			if (!$notrigger) {
-				$result = $this->call_trigger(strtoupper($element).'_DELETE_RESOURCE', $user);
+				$result = $this->call_trigger(strtoupper($this->TRIGGER_PREFIX).'_DELETE_RESOURCE', $user);
 				if ($result < 0) {
 					$this->db->rollback();
 					return -1;

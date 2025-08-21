@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017       Laurent Destailleur      <eldy@users.sourceforge.net>
- * Copyright (C) 2023-2024  Frédéric France          <frederic.france@free.fr>
+ * Copyright (C) 2023-2025  Frédéric France          <frederic.france@free.fr>
  * Copyright (C) 2025		Alice Adminson				<myemail@mycompany.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,7 @@ class TriggerHistory extends CommonObject
 	public $table_element = 'webhook_history';
 
 	/**
-	 * @var string 	If permission must be checkec with hasRight('webhook', 'read') and not hasright('mymodyle', 'triggerhistory', 'read'), you can uncomment this line
+	 * @var string 	If permission must be checked with hasRight('webhook', 'read') and not hasright('mymodule', 'triggerhistory', 'read'), you can uncomment this line
 	 */
 	//public $element_for_permission = 'webhook';
 
