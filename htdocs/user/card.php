@@ -83,7 +83,7 @@ $mode = GETPOST('mode', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $group = GETPOSTINT("group", 3);
 $cancel = GETPOST('cancel', 'alpha');
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'useracard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'usercard'; // To manage different context of search
 
 if (empty($id) && $action != 'add' && $action != 'create') {
 	$id = $user->id;
@@ -1976,7 +1976,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<th class="liste_titre right">';
 			if (getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && $permissiontoeditpasswordandsee) {
 				$s = '<span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span>';
-				print dolButtonToOpenUrlInDialogPopup('openpopuptoaddcredential', $langs->trans("AddCredential"), $s, '/user/addcredential.php?userid='.$object->id.'&token='.newToken());
+				print dolButtonToOpenUrlInDialogPopup('openpopuptoaddcredential', $langs->trans("AddCredential"), $s, '/user/credentials.php?userid='.$object->id.'&token='.newToken());
 			}
 			print '</th>';
 			print '</tr>';
@@ -2045,8 +2045,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 					print '<td class="titlefieldmiddle">'.$langs->trans("OAUTH_ID");
 					print ' '.ucfirst($nameofservice).' ';
 					print '</td>';
-					print '<td>';
+
 					$constoauthlogin = 'OAUTH_'.strtoupper($nameofservice).'-Login_ID';
+					print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute(getDolGlobalString($constoauthlogin)).'">';
 					if (getDolGlobalString($constoauthlogin)) {
 						print getDolGlobalString($constoauthlogin);
 					}
