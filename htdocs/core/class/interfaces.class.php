@@ -185,6 +185,10 @@ class Interfaces
 			if (empty($modName)) {
 				continue;
 			}
+			if (!class_exists($modName)) {
+				dol_syslog(get_class($this)."::run_triggers action=".$action." A trigger file was found with a name interfaces_*_*_".preg_replace('/^interface/', '', strtolower($modName)).".class.php, but the class ".$modName." seems to not exists even after the include of this interface file. Surely a bug in the trigger file or in its name.", LOG_ERR);
+				continue;
+			}
 
 			$objMod = new $modName($this->db);
 			'@phan-var-force DolibarrTriggers $objMod';

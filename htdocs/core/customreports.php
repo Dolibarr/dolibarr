@@ -1223,7 +1223,7 @@ print '<div class="customreportsoutput'.($totalnbofrecord ? '' : ' customreports
 
 if (empty($newarrayoftype)) {
 	$langs->load("admin");
-	print info_admin($langs->trans("NoSupportedModulesHaveBeenActivated"), 0, 0, 'warning');
+	print info_admin($langs->trans("NoSupportedModulesHaveBeenActivated").' '.$langs->trans("YouCanEnableModulesFrom"), 0, 0, 'info');
 }
 
 if ($mode == 'grid') {

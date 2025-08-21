@@ -2966,12 +2966,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				// Unit
 				if (getDolGlobalString('PRODUCT_USE_UNITS')) {
-					$unit = $object->getLabelOfUnit();
+					$unit = $object->getLabelOfUnit('long', $langs);
 
 					print '<tr><td>'.$langs->trans('DefaultUnitToShow').'</td><td>';
-					if ($unit !== '') {
-						print $langs->trans($unit);
-					}
+					print $unit;
 					print '</td></tr>';
 				}
 

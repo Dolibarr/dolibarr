@@ -2323,7 +2323,7 @@ function pdf_getlineqty_keeptoship($object, $i, $outputlangs, $hidedetails = 0)
  */
 function pdf_getlineunit($object, $i, $outputlangs, $hidedetails = 0)
 {
-	global $hookmanager, $langs;
+	global $hookmanager;
 
 	$reshook = 0;
 	$result = '';
@@ -2348,7 +2348,7 @@ function pdf_getlineunit($object, $i, $outputlangs, $hidedetails = 0)
 	}
 	if (empty($reshook)) {
 		if (empty($hidedetails) || $hidedetails > 1) {
-			$result .= $langs->transnoentitiesnoconv($object->lines[$i]->getLabelOfUnit('short'));
+			$result .= $object->lines[$i]->getLabelOfUnit('short', $outputlangs, 1);
 		}
 	}
 	return $result;

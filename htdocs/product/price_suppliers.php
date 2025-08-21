@@ -602,9 +602,9 @@ if ($id > 0 || $ref) {
 				}
 				// Units
 				if (getDolGlobalString('PRODUCT_USE_UNITS')) {
-					$unit = $object->getLabelOfUnit();
+					$unit = $object->getLabelOfUnit('long', $langs);
 					if ($unit !== '') {
-						print '&nbsp;&nbsp;'.$langs->trans($unit);
+						print '&nbsp;&nbsp;'.$unit;
 					}
 				}
 				print '</td></tr>';
@@ -620,9 +620,9 @@ if ($id > 0 || $ref) {
 
 					// Units
 					if (getDolGlobalString('PRODUCT_USE_UNITS')) {
-						$unit = $object->getLabelOfUnit();
+						$unit = $object->getLabelOfUnit('long', $langs);
 						if ($unit !== '') {
-							print '&nbsp;&nbsp;'.$langs->trans($unit);
+							print '&nbsp;&nbsp;'.$unit;
 						}
 					}
 				}
@@ -1182,12 +1182,12 @@ if ($id > 0 || $ref) {
 						// Quantity
 						if (!empty($arrayfields['pfp.quantity']['checked'])) {
 							print '<td class="right">';
-							print $productfourn->fourn_qty;
+							print dolPrintHTML($productfourn->fourn_qty);
 							// Units
 							if (getDolGlobalString('PRODUCT_USE_UNITS')) {
-								$unit = $object->getLabelOfUnit();
+								$unit = $object->getLabelOfUnit('long', $langs);
 								if ($unit !== '') {
-									print '&nbsp;&nbsp;'.$langs->trans($unit);
+									print '&nbsp;&nbsp;'.$unit;
 								}
 							}
 							print '</td>';

@@ -863,9 +863,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			print '<td class="linecoluseunit nowrap left">';
 			$label = $productstatic->getLabelOfUnit('short');
-			if ($label !== '') {
-				print $langs->trans($label);
-			}
+			print $label;
 			print '</td>';
 		}
 

@@ -157,7 +157,7 @@ print dol_get_fiche_head($head, 'settings', '', -1, '');
 
 // Setup page goes here
 print '<span class="opacitymedium">'.$langs->trans("datapolicySetupPage").'</span>';
-print $form->textwithpicto('', $langs->trans('DATAPOLICY_Tooltip_SETUP', $langs->trans("DATAPOLICYJob"), $langs->transnoentities("CronList")));
+print $form->textwithpicto('', $langs->trans('DATAPOLICY_Tooltip_SETUP', $langs->transnoentitiesnoconv("DATAPOLICYJob"), $langs->transnoentitiesnoconv("CronList")));
 print '<br>';
 print '<br>';
 print '<br>';
