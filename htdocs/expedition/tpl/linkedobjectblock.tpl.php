@@ -32,7 +32,10 @@ global $user;
 
 $langs = $GLOBALS['langs'];
 '@phan-var-force Translate $langs';
-/** @var Translate $langs */
+/**
+ * @var CommonObject $object
+ * @var Translate $langs
+ */
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 '@phan-var-force Expedition[] $linkedObjectBlock';
 /** @var Expedition[] $linkedObjectBlock */

@@ -206,16 +206,16 @@ if (empty($reshook)) {
 	}
 
 	// Update resource
-	if ($action == 'update_linked_resource' && $user->hasRight('resource', 'write') && !GETPOST('cancel', 'alpha') && is_object($objstat)) {
+	if ($action == 'update_linked_resource' && $user->hasRight('resource', 'write') && !$cancel) {
 		$res = $object->fetchElementResource($lineid);
 		if ($res) {
 			$object->busy = $busy;
 			$object->mandatory = $mandatory;
 
-			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $object->element_type == 'action' && $object->resource_type == 'dolresource' && intval($object->busy) == 1) {
+			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $object->objelement instanceof ActionComm && $object->element_type == 'action' && $object->resource_type == 'dolresource' && intval($object->busy) == 1) {
 				$eventDateStart = $object->objelement->datep;  // @phan-suppress-current-line PhanUndeclaredProperty
 				$eventDateEnd   = $object->objelement->datef;  // @phan-suppress-current-line PhanUndeclaredProperty
-				$isFullDayEvent = $objstat->fulldayevent;
+				$isFullDayEvent = $object->objelement->fulldayevent; // @phan-suppress-current-line PhanUndeclaredProperty
 				if (empty($eventDateEnd)) {
 					if ($isFullDayEvent) {
 						$eventDateStartArr = dol_getdate($eventDateStart);
@@ -251,7 +251,7 @@ if (empty($reshook)) {
 				$resql = $db->query($sql);
 				if (!$resql) {
 					$error++;
-					$object->error    = $db->lasterror();
+					$object->error = $db->lasterror();
 					$object->errors[] = $object->error;
 				} else {
 					if ($db->num_rows($resql) > 0) {
@@ -261,7 +261,7 @@ if (empty($reshook)) {
 						while ($obj = $db->fetch_object($resql)) {
 							$object->error .= '<br> - '.$langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label.' ['.$obj->ac_id.']');
 						}
-						$object->errors[] = $objstat->error;
+						$object->errors[] = $object->error;
 					}
 					$db->free($resql);
 				}
@@ -286,12 +286,17 @@ if (empty($reshook)) {
 
 	// Delete a resource linked to an element
 	if ($action == 'confirm_delete_linked_resource' && $user->hasRight('resource', 'delete') && $confirm === 'yes') {
-		$result = $object->delete_resource($lineid, $element);
+		$res = $object->fetchElementResource($lineid); // to have correct object deleting resource
+		if ($res) {
+			$result = $object->objelement->delete_resource($lineid, '');
 
-		if ($result >= 0) {
-			setEventMessages($langs->trans('RessourceLineSuccessfullyDeleted'), null, 'mesgs');
-			header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
-			exit;
+			if ($result >= 0) {
+				setEventMessages($langs->trans('RessourceLineSuccessfullyDeleted'), null, 'mesgs');
+				header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
+				exit;
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}

@@ -1739,7 +1739,7 @@ if ($action == 'create') {
 						print '<td class="center">'.$objp->qty.'</td>';
 						// Unit
 						if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-							print '<td class="left">'.$langs->trans($object->lines[$cursorline - 1]->getLabelOfUnit()).'</td>';
+							print '<td class="left">'.$object->lines[$cursorline - 1]->getLabelOfUnit('long', $langs).'</td>';
 						}
 						// Discount
 						if ($objp->remise_percent > 0) {

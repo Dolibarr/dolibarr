@@ -268,7 +268,7 @@ if ($object->id > 0) {
 
 
 	if ($user->admin) {
-		print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
+		print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules")." ".$langs->trans("YouCanEnableModulesFrom"));
 		print '<br>';
 	}
 

@@ -38,6 +38,16 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string 	$dolibarr_main_authentication
+ * @var string	$dolibarr_api_count_always_enabled
+ */
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -64,16 +74,6 @@ if (isModEnabled('stock')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- *
- * @var string $dolibarr_main_authentication
- */
-
 // Load translation files required by page
 $langs->loadLangs(array('users', 'companies', 'ldap', 'admin', 'hrm', 'stocks', 'other'));
 
@@ -83,7 +83,7 @@ $mode = GETPOST('mode', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $group = GETPOSTINT("group", 3);
 $cancel = GETPOST('cancel', 'alpha');
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'useracard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'usercard'; // To manage different context of search
 
 if (empty($id) && $action != 'add' && $action != 'create') {
 	$id = $user->id;
@@ -1976,7 +1976,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<th class="liste_titre right">';
 			if (getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && $permissiontoeditpasswordandsee) {
 				$s = '<span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span>';
-				print dolButtonToOpenUrlInDialogPopup('openpopuptoaddcredential', $langs->trans("AddCredential"), $s, '/user/addcredential.php?userid='.$object->id.'&token='.newToken());
+				print dolButtonToOpenUrlInDialogPopup('openpopuptoaddcredential', $langs->trans("AddCredential"), $s, '/user/credentials.php?userid='.$object->id.'&token='.newToken());
 			}
 			print '</th>';
 			print '</tr>';
@@ -2045,8 +2045,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 					print '<td class="titlefieldmiddle">'.$langs->trans("OAUTH_ID");
 					print ' '.ucfirst($nameofservice).' ';
 					print '</td>';
-					print '<td>';
+
 					$constoauthlogin = 'OAUTH_'.strtoupper($nameofservice).'-Login_ID';
+					print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute(getDolGlobalString($constoauthlogin)).'">';
 					if (getDolGlobalString($constoauthlogin)) {
 						print getDolGlobalString($constoauthlogin);
 					}
@@ -2073,7 +2074,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 					print showValueWithClipboardCPButton($object->api_key, 1, $langs->transnoentities("Hidden"));		// TODO Add an option to also reveal the hash, not only copy paste
 					print '</span>';
 				}
-				if (getDolGlobalString('API_ENABLE_COUNT_CALLS')) {
+				if (getDolGlobalString('API_ENABLE_COUNT_CALLS') || !empty($dolibarr_api_count_always_enabled)) {
 					print ' &nbsp; <span class="badge badge-info" title="'.$langs->trans("TotalAPICall").'">'.getDolUserInt('API_COUNT_CALL').'</span>';
 				}
 				print '</td></tr>';

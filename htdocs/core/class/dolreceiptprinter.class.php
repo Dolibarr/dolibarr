@@ -593,7 +593,7 @@ class dolReceiptPrinter extends Printer
 		//$this->profile = CapabilityProfile::load("TM-T88IV");
 		$ret = $this->initPrinter($printerid);
 		if ($ret > 0) {
-			setEventMessages($this->error, $this->errors, 'errors');
+			setEventMessages("initPrinter error: ".$this->error, $this->errors, 'errors');
 		} else {
 			try {
 				if ($addimgandbarcode) {
@@ -1066,7 +1066,11 @@ class dolReceiptPrinter extends Printer
 							break;
 						case 3:
 							$parameters = explode(':', $parameter);
-							$this->connector = new NetworkPrintConnector($parameters[0], $parameters[1]);
+							if (empty($parameters[1])) {
+								$this->connector = new NetworkPrintConnector($parameters[0]);
+							} else {
+								$this->connector = new NetworkPrintConnector($parameters[0], $parameters[1]);
+							}
 							break;
 						case 4:	// LPT1, smb://...
 							$this->connector = new WindowsPrintConnector(dol_sanitizePathName($parameter));
