@@ -325,7 +325,7 @@ if (empty($listoftotps)) {
 	print '<tr><td colspan="2"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 }
 
-//print_fiche_titre($langs->trans("APIKey"));
+//print_fiche_titre($langs->trans("ApiKey"));
 
 print '</table>'."\n";
 print '</div>'."\n";
