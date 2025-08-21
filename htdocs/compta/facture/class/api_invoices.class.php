@@ -69,13 +69,21 @@ class Invoices extends DolibarrApi
 	 *
 	 * @param	int		$id				ID of invoice
 	 * @param   int     $contact_list	0:Return array contains all properties, 1:Return array contains just id, -1: Do not return contacts/adddesses
+	 * @param 	string 	$properties 	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param 	bool 	$withLines 		true or false to display or hide lines
 	 * @return	Object					Object with cleaned properties
 	 *
 	 * @throws	RestException
 	 */
-	public function get($id, $contact_list = 1)
+	public function get($id, $contact_list = 1, $properties = '', $withLines = true)
 	{
-		return $this->_fetch($id, '', '', $contact_list);
+		$invoice = $this->_fetch($id, '', '', $contact_list);
+
+		if (!$withLines) {
+			unset($invoice->lines);
+		}
+
+		return $this->_filterObjectProperties($invoice, $properties);
 	}
 
 	/**
@@ -157,6 +165,10 @@ class Invoices extends DolibarrApi
 			if (is_array($tmparray)) {
 				$this->invoice->contacts_ids = $tmparray;
 			}
+			$tmparray = $this->invoice->liste_contact(-1, 'internal', $contact_list);
+			if (is_array($tmparray)) {
+				$this->invoice->contacts_ids = $tmparray;
+			}
 		}
 
 		$this->invoice->fetchObjectLinked();
@@ -183,6 +195,7 @@ class Invoices extends DolibarrApi
 	 * @param string    $properties	      	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool      $pagination_data  	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0
 	 * @param int		$loadlinkedobjects	Load also linked object
+	 * @param bool 		$withLines 			true or false to display or hide lines
 	 * @return array                      	Array of invoice objects
 	 * @phan-return Facture[]|array{data:Facture[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 * @phpstan-return Facture[]|array{data:Facture[],pagination:array{total:int,page:int,page_count:int,limit:int}}
@@ -190,7 +203,7 @@ class Invoices extends DolibarrApi
 	 * @throws RestException 404 Not found
 	 * @throws RestException 503 Error
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $status = '', $sqlfilters = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0, $withLines = true)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
 			throw new RestException(403);
@@ -199,7 +212,7 @@ class Invoices extends DolibarrApi
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
-		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $thirdparty_ids;
+		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
@@ -209,6 +222,7 @@ class Invoices extends DolibarrApi
 
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture AS t";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe AS s ON (s.rowid = t.fk_soc)";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= ' WHERE t.entity IN ('.getEntity('invoice').')';
 		if ($socids) {
@@ -284,6 +298,10 @@ class Invoices extends DolibarrApi
 					if ($loadlinkedobjects) {
 						// retrieve linked objects
 						$invoice_static->fetchObjectLinked();
+					}
+
+					if (!$withLines) {
+						unset($invoice_static->lines);
 					}
 
 					// Add online_payment_url, copied from order
@@ -973,10 +991,6 @@ class Invoices extends DolibarrApi
 			throw new RestException(404, 'Invoice not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
-
 		return $this->_cleanObjectDatas($this->invoice);
 	}
 
@@ -1616,10 +1630,10 @@ class Invoices extends DolibarrApi
 	 * Warning: Take care that all invoices are owned by the same customer.
 	 * Example of value for parameter arrayofamounts: {"1": {"amount": "99.99", "multicurrency_amount": ""}, "2": {"amount": "", "multicurrency_amount": "10"}}
 	 *
-	 * @param array   $arrayofamounts     {@from body}  Array with id of invoices with amount to pay for each invoice
+	 * @param array   $arrayofamounts      {@from body}  Array with id of invoices with amount to pay for each invoice
 	 * @phan-param array<string,array{amount:string,multicurrency_amount:string}> $arrayofamounts
 	 * @phpstan-param array<string,array{amount:string,multicurrency_amount:string}> $arrayofamounts
-	 * @param string  $datepaye           {@from body}  Payment date
+	 * @param string  $datepaye            {@from body}  Payment date
 	 * @param int     $paymentid           {@from body}  Payment mode Id {@min 1}
 	 * @param string  $closepaidinvoices   {@from body}  Close paid invoices {@choice yes,no}
 	 * @param int     $accountid           {@from body}  Account Id {@min 1}
@@ -1694,23 +1708,23 @@ class Invoices extends DolibarrApi
 			$totalpaid = $this->invoice->getSommePaiement($is_multicurrency);
 			$totalcreditnotes = $this->invoice->getSumCreditNotesUsed($is_multicurrency);
 			$totaldeposits = $this->invoice->getSumDepositsUsed($is_multicurrency);
-			$remainstopay = $amount = price2num($total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
+			$remainstopay = $amount = (float) price2num($total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
 			if (!$is_multicurrency && $amountarray["amount"] != 'remain') {
-				$amount = price2num($amountarray["amount"], 'MT');
+				$amount = (float) price2num($amountarray["amount"], 'MT');
 			}
 
 			if ($is_multicurrency && $amountarray["multicurrency_amount"] != 'remain') {
-				$amount = price2num($amountarray["multicurrency_amount"], 'MT');
+				$amount = (float) price2num($amountarray["multicurrency_amount"], 'MT');
 			}
 
-			if ($amount > $remainstopay && !$accepthigherpayment) {
+			if (abs($amount) > abs($remainstopay) && !$accepthigherpayment) {
 				$this->db->rollback();
 				throw new RestException(400, 'Payment amount on invoice ID '.$id.' ('.$amount.') is higher than remain to pay ('.$remainstopay.')');
 			}
 
 			if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
-				$amount = price2num(-1 * (float) $amount, 'MT');
+				$amount = (float) price2num(-1 * abs((float) $amount), 'MT');
 			}
 
 			if ($is_multicurrency) {

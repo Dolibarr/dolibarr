@@ -229,6 +229,11 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 			dol_syslog("cron_run_jobs.php: we work on another entity conf than ".$conf->entity." so we reload mysoc, langs, user and conf", LOG_DEBUG);
 			echo " -> we change entity so we reload mysoc, langs, user and conf";
 
+			// if we switch to a different entity, we have to reset the $extrafields global var to
+			// make sure the extrafield definitions from this entity are properly loaded
+			if (($line->entity ?: 1) != $conf->entity && isset($extrafields) && !empty($extrafields->attributes)) {
+				$extrafields = new ExtraFields($db);
+			}
 			$conf->entity = (empty($line->entity) ? 1 : $line->entity);
 			$conf->setValues($db); // This make also the $mc->setValues($conf); that reload $mc->sharings
 			$mysoc->setMysoc($conf);

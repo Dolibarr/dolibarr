@@ -635,7 +635,7 @@ class Menubase
 	 *  @param	string	$myleftmenu     Value for left that defined leftmenu
 	 *  @param  int		$type_user      Looks for menu entry for 0=Internal users, 1=External users
 	 *  @param  string	$menu_handler   Name of menu_handler used ('auguria', 'eldy'...)
-	 * 	@param  array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,showtopmenuinframe:int,level?:int,prefix:string}>	$tabMenu	Array to store new entries found (in most cases, it's empty, but may be already filled)
+	 * 	@param  array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,positionfull:int|string,showtopmenuinframe:int,level?:int,prefix:string}>	$tabMenu	Array to store new entries found (in most cases, it's empty, but may be already filled)
 	 *  @return int     		        >0 if OK, <0 if KO
 	 */
 	public function menuLoad($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)

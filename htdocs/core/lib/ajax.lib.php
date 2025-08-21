@@ -31,7 +31,7 @@
  * The HTML field must be an input text with id=search_$htmlname.
  * This use the jQuery "autocomplete" function. If we want to use the select2, we must instead use input select into functions that call this method.
  *
- * @param string		$selected 			Preselected value
+ * @param string|int	$selected 			Preselected value
  * @param string|int	$htmlname 			HTML name of input field
  * @param string		$url 				Ajax Url to call for request: /path/page.php. Must return a json array ('key'=>id, 'value'=>String shown into input field once selected, 'label'=>String shown into combo list)
  * @param string		$urloption			More parameters on URL request
@@ -498,11 +498,32 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 	$moreselect2theme = preg_replace('/widthcentpercentminus[^\s]*/', '', $moreselect2theme);
 
 	$tmpplugin = 'select2';
-	$msg = "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->
-		<script>
-			$(document).ready(function () {
-				$(\''.(dol_escape_js(preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname)).'\').'.$tmpplugin.'({
-					dir: \'ltr\',';
+	$msg = "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->'."\n";
+	$msg .= "<script>\n";
+
+	if (getDolGlobalString('MAIN_DISABLE_ACCENT_INSENSITIVE_SEARCH')) {
+		$msg .= '
+			// lowercase + remove accents
+			function normalizeString(str) {
+				return str
+					.normalize("NFD")
+					.replace(/[\u0300-\u036f]/g, "")
+					.toLowerCase();
+			}
+		';
+	} else {
+		$msg .= '
+			// lowercase only (accents kept)
+			function normalizeString(str) {
+				return str.toLowerCase();
+			}
+		';
+	}
+
+	$msg .= '
+		$(document).ready(function () {
+			$(\''.(dol_escape_js(preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname)).'\').'.$tmpplugin.'({
+				dir: \'ltr\',';
 	if (preg_match('/onrightofpage/', $morecss)) {	// when $morecss contains 'onrightofpage', the select2 component must also be inside a parent with class="parentonrightofpage"
 		$msg .= ' dropdownAutoWidth: true, dropdownParent: $(\'#'.$htmlname.'\').parent(), '."\n";
 	}
@@ -513,9 +534,11 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 						if ($.trim(params.term) === "") {
 							return data;
 						}
-						keywords = (params.term).split(" ");
+						var term = normalizeString(params.term);
+						var text = normalizeString(data.text || "");
+						var keywords = term.split(" ");
 						for (var i = 0; i < keywords.length; i++) {
-							if (((data.text).toUpperCase()).indexOf((keywords[i]).toUpperCase()) == -1) {
+							if (text.indexOf(keywords[i]) === -1) {
 								return null;
 							}
 						}

@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+/* Copyright (C) 2015	Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025	William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +30,10 @@ require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 /**
  * API class for Interventions
  *
- * @access protected
- * @class  DolibarrApiAccess {@requires user,external}
+ * @since	7.0.0	Initial implementation
+ *
+ * @access	protected
+ * @class	DolibarrApiAccess {@requires user,external}
  */
 class Interventions extends DolibarrApi
 {
@@ -63,28 +65,32 @@ class Interventions extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
 		$this->db = $db;
 		$this->fichinter = new Fichinter($this->db);
 	}
 
 	/**
-	 * Get properties of intervention object
+	 * Get an intervention
 	 * Return an array with intervention information
 	 *
-	 * @param       int         $id         		ID of intervention
-	 * @param		string		$contact_type		Type of contact to return: 'external', 'thirdparty' or 'internal'
-	 * @return		Object							Object with cleaned properties
+	 * @since	7.0.0	Initial implementation
 	 *
-	 * @throws	RestException
+	 * @param	int			$id				ID of intervention
+	 * @param	string		$ref			Ref of object
+	 * @param	string		$ref_ext		External reference of object
+	 * @param   int         $contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
+	 * @return	Object						Cleaned intervention object
+	 *
+	 * @throws		RestException
 	 */
-	public function get($id, $contact_type = '')
+	public function get($id, $ref = '', $ref_ext = '', $contact_list = 1)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
 			throw new RestException(403);
 		}
 
-		$result = $this->fichinter->fetch($id);
+		$result = $this->fichinter->fetch($id, $ref, $ref_ext);
 		if (!$result) {
 			throw new RestException(404, 'Intervention not found');
 		}
@@ -93,32 +99,46 @@ class Interventions extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$this->fichinter->fetchObjectLinked();
-		if ($contact_type) {
-			$this->fichinter->contacts_ids = $this->fichinter->liste_contact(-1, $contact_type, 1);
+		if ($contact_list > -1) {
+			// Add external contacts ids
+			$tmparray = $this->fichinter->liste_contact(-1, 'external', $contact_list);
+			if (is_array($tmparray)) {
+				$this->fichinter->contacts_ids = $tmparray;
+			}
+			$tmparray = $this->fichinter->liste_contact(-1, 'internal', $contact_list);
+			if (is_array($tmparray)) {
+				$this->fichinter->contacts_ids_internal = $tmparray;
+			}
 		}
+
+		$this->fichinter->fetchObjectLinked();
+
 		return $this->_cleanObjectDatas($this->fichinter);
 	}
 
 	/**
-	 * List of interventions
-	 * Return a list of interventions
+	 * List interventions
 	 *
-	 * @param string	$sortfield				Sort field
-	 * @param string	$sortorder				Sort order
-	 * @param int		$limit					Limit for list
-	 * @param int		$page					Page number
-	 * @param string	$thirdparty_ids			Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param string    $sqlfilters             Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string    $properties				Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @param string	$contact_type			Type of contact to return: 'external', 'thirdparty' or 'internal'
-	 * @return  array                           Array of order objects
+	 * Get a list of interventions
+	 *
+	 * @since	7.0.0	Initial implementation
+	 *
+	 * @param	string	$sortfield				Sort field
+	 * @param	string	$sortorder				Sort order
+	 * @param	int		$limit					Limit for list
+	 * @param	int		$page					Page number
+	 * @param	string	$thirdparty_ids			Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
+	 * @param	string	$sqlfilters				Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param	string	$properties				Restrict the data returned to these properties. Ignored if empty. Comma separated list of property names
+	 * @param	string	$contact_type			Type of contacts: thirdparty, internal or external
+	 * @param	bool	$pagination_data		If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @return	array							Array of order objects
 	 * @phan-return array<object>
 	 * @phpstan-return array<object>
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $contact_type = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $contact_type = '', $pagination_data = false)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
 			throw new RestException(403);
@@ -127,7 +147,7 @@ class Interventions extends DolibarrApi
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
-		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $thirdparty_ids;
+		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
@@ -136,7 +156,9 @@ class Interventions extends DolibarrApi
 		}
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter AS t LEFT JOIN ".MAIN_DB_PREFIX."fichinter_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
+		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter AS t";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe AS s ON (s.rowid = t.fk_soc)";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."fichinter_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= ' WHERE t.entity IN ('.getEntity('intervention').')';
 		if ($socids) {
 			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
@@ -157,6 +179,9 @@ class Interventions extends DolibarrApi
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 		}
+
+		//this query will return total interventions with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -190,16 +215,37 @@ class Interventions extends DolibarrApi
 			throw new RestException(503, 'Error when retrieve intervention list : '.$this->db->lasterror());
 		}
 
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
+		}
+
 		return $obj_ret;
 	}
 
 	/**
-	 * Create intervention object
+	 * Create an intervention
 	 *
-	 * @param   array   $request_data   Request data
-	 * @phan-param ?array<string,string>    $request_data
-	 * @phpstan-param ?array<string,string> $request_data
-	 * @return  int     ID of intervention
+	 * @since	7.0.0	Initial implementation
+	 *
+	 * @param			array	$request_data	Request data
+	 * @phan-param		?array<string,string>	$request_data
+	 * @phpstan-param	?array<string,string>	$request_data
+	 * @return			int						ID of created intervention
+	 *
+	 * @throws RestException
 	 */
 	public function post($request_data = null)
 	{
@@ -226,13 +272,17 @@ class Interventions extends DolibarrApi
 	}
 
 	/**
-	 * Update intervention general fields (won't touch lines of ficinter)
+	 * Update intervention general fields (won't touch lines of fichinter)
 	 *
-	 * @param 	int   	$id             	Id of fichinter to update
-	 * @param 	array 	$request_data   	Datas
-	 * @phan-param ?array<string,string>	$request_data
-	 * @phpstan-param ?array<string,string>	$request_data
-	 * @return 	Object						Updated object
+	 * @since	22.0.0	Initial implementation
+	 *
+	 * @param			int		$id				ID of fichinter to update
+	 * @param			array	$request_data	Request data
+	 * @phan-param		?array<string,string>	$request_data
+	 * @phpstan-param	?array<string,string>	$request_data
+	 * @return			Object					Updated object
+	 *
+	 * @throws RestException
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -308,16 +358,20 @@ class Interventions extends DolibarrApi
 	*/
 
 	/**
-	 * Add a line to a given intervention
+	 * Add a line to an intervention
 	 *
-	 * @param	int		$id             Id of intervention to update
-	 * @param   array   $request_data   Request data
-	 * @phan-param ?array<string,string>    $request_data
-	 * @phpstan-param ?array<string,string> $request_data
+	 * @since	7.0.0	Initial implementation
 	 *
-	 * @url     POST {id}/lines
+	 * @param			int		$id				ID of intervention to update
+	 * @param			array	$request_data	Request data
+	 * @phan-param		?array<string,string>	$request_data
+	 * @phpstan-param	?array<string,string>	$request_data
 	 *
-	 * @return  int
+	 * @url		POST	{id}/lines
+	 *
+	 * @return	int		0 if ok, <0 if ko
+	 *
+	 * @throws RestException
 	 */
 	public function postLine($id, $request_data = null)
 	{
@@ -361,12 +415,16 @@ class Interventions extends DolibarrApi
 	}
 
 	/**
-	 * Delete intervention
+	 * Delete an intervention
 	 *
-	 * @param   int     $id         Intervention ID
-	 * @return  array
+	 * @since	8.0.0	Initial implementation
+	 *
+	 * @param	int		$id		Intervention ID
+	 * @return	array
 	 * @phan-return array<string,array{code:int,message:string}>
 	 * @phpstan-return array<string,array{code:int,message:string}>
+	 *
+	 * @throws RestException
 	 */
 	public function delete($id)
 	{
@@ -397,15 +455,15 @@ class Interventions extends DolibarrApi
 	/**
 	 * Reopen an intervention
 	 *
-	 * @since 	22.0.0 	Initial implementation
+	 * @since	22.0.0	Initial implementation
 	 *
-	 * @param 	int		$id		Intervention ID
+	 * @param	int		$id		Intervention ID
 	 *
 	 * @url		POST	{id}/reopen
 	 *
-	 * @return 	Object
+	 * @return	Object
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function reopen($id)
 	{
@@ -439,12 +497,16 @@ class Interventions extends DolibarrApi
 	 *   "notrigger": 0
 	 * }
 	 *
-	 * @param   int		$id             Intervention ID
-	 * @param   int		$notrigger      1=Does not execute triggers, 0= execute triggers
+	 * @since	7.0.0	Initial implementation
 	 *
-	 * @url POST    {id}/validate
+	 * @param	int		$id				Intervention ID
+	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *
-	 * @return  Object
+	 * @url		POST	{id}/validate
+	 *
+	 * @return	Object
+	 *
+	 * @throws RestException
 	 */
 	public function validate($id, $notrigger = 0)
 	{
@@ -476,11 +538,15 @@ class Interventions extends DolibarrApi
 	/**
 	 * Close an intervention
 	 *
-	 * @param		int		$id             Intervention ID
+	 * @since	7.0.0	Initial implementation
 	 *
-	 * @url POST    {id}/close
+	 * @param	int		$id		Intervention ID
 	 *
-	 * @return  Object
+	 * @url		POST	{id}/close
+	 *
+	 * @return	Object
+	 *
+	 * @throws RestException
 	 */
 	public function closeFichinter($id)
 	{
@@ -533,10 +599,10 @@ class Interventions extends DolibarrApi
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Clean sensible object datas
+	 * Clean sensible object data
 	 *
-	 * @param   Object  $object     Object to clean
-	 * @return  Object              Object with cleaned properties
+	 * @param	Object	$object		Object to clean
+	 * @return	Object				Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{

@@ -100,7 +100,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	<?php echo $prefix; ?>color: #6c6aa8 !important;
 }
 .bg-infobox-action{
-	<?php echo $prefix; ?>color: #a47080  !important;
+	<?php echo $prefix; ?>color: #906080  !important;
 }
 .bg-infobox-propal, .bg-infobox-facture, .bg-infobox-commande {
 	<?php echo $prefix; ?>color: #65953d !important;
@@ -132,7 +132,7 @@ a.vmenu span, span.vmenu, span.vmenu span {
 	/* To force no color on picto in left menu */
 	/* color: var(--colortextbackvmenu) !important; */
 }
-div.login_block_other a {
+div.login_block_other:not(.takepos) a {
 	color: var(--colortextbackvmenu);
 }
 
@@ -143,7 +143,7 @@ div.login_block_other a {
 	color: #6c6aa8;
 }
 .infobox-action{
-	color: #a47080;
+	color: #906080;
 }
 /* Color for customer object */
 .infobox-propal:not(.pictotitle):not(.error),
@@ -407,6 +407,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 .info-box-sm .info-box-module-enabled {
 	/* background: linear-gradient(0.35turn, #fff, #fff, #f6faf8, #e4efe8) */
 	background: var(--infoboxmoduleenabledbgcolor);
+	border-radius: 6px;
 }
 .info-box-content-warning span.font-status4 {
 	color: #bc9526 !important;
@@ -479,7 +480,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	color: #605ca8 !important;
 }
 .bg-infobox-action i.fa{
-	color: #d84b80  !important;
+	color: #906080  !important;
 }
 .bg-infobox-propal i.fa,
 .bg-infobox-facture i.fa,
@@ -608,6 +609,8 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .kanban.kanbancollapsed {
 	flex: unset;
 	width: 80px;
+	max-width: 80px;
+	overflow: hidden;
 }
 .kanban.kanbancollapsed .kanbanlabel, .text-vertical {
 	writing-mode: vertical-rl;
@@ -672,7 +675,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	max-width: 350px;
 }
 .info-box-module .info-box-content {
-	height: 6.3em;
+	height: 94px;
 }
 .fright {
 	float:right;
@@ -715,4 +718,32 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	.box-flex-item {
 		width: 250px;
 	}
+}
+
+/* customize section for home box link */
+.infobox-haslink .info-box-icon i {
+	transition: opacity 0.2s ease-in-out;
+}
+.infobox-haslink .info-box-icon:hover i {
+	opacity: 0.2;
+}
+.infobox-haslink .info-box-icon .info-box-createlink {
+	height:100%;
+	width:100%;
+	display:block;
+	position:absolute;
+	top:0;
+	left:0;
+	font-size:0.6em;
+	display: flex;
+	opacity: 0;
+	transition: opacity 0.2s ease-in-out;
+	color:inherit;
+	text-decoration: none;
+}
+.infobox-haslink .info-box-icon:hover .info-box-createlink {
+	opacity: 1;
+}
+.infobox-haslink .info-box-icon .info-box-createlink span.fas {
+	margin:auto;
 }

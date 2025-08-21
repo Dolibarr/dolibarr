@@ -1340,10 +1340,11 @@ if (empty($reshook)) {
 					}
 
 					$object->origin = $origin;
+					$object->origin_type = $origin;
 					$object->origin_id = $originid;
 
 					// Possibility to add external linked objects with hooks
-					$object->linked_objects[$object->origin] = $object->origin_id;
+					$object->linked_objects[$object->origin_type] = $object->origin_id;
 					$other_linked_objects = GETPOST('other_linked_objects', 'array');
 					if (!empty($other_linked_objects)) {
 						$object->linked_objects = array_merge($object->linked_objects, $other_linked_objects);
@@ -1355,7 +1356,7 @@ if (empty($reshook)) {
 
 						$srcobject = new $classname($db);
 
-						dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines");
+						dol_syslog("Try to find source object origin=".$object->origin_type." originid=".$object->origin_id." to add lines");
 						$result = $srcobject->fetch($object->origin_id);
 						if ($result > 0) {
 							$tmpdate = $srcobject->delivery_date;
@@ -1855,9 +1856,7 @@ if ($action == 'create') {
 		// Categories
 		if (isModEnabled("category")) {
 			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER_ORDER, '', 'parent', 64, 0, 1);
-			$arrayselected = GETPOST('categories', 'array');
-			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+			print $form->selectCategories(Categorie::TYPE_SUPPLIER_ORDER, 'categories', $object);
 			print "</td></tr>";
 		}
 
@@ -2393,19 +2392,12 @@ if ($action == 'create') {
 			print '</td></tr></table>';
 			print '</td>';
 			print '<td>';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER_ORDER, '', 'parent', 64, 0, 1);
 			if ($action == 'edittags') {
 				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 				print '<input type="hidden" name="action" value="settags">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
-				$c = new Categorie($db);
-				$cats = $c->containing($object->id, Categorie::TYPE_SUPPLIER_ORDER);
-				$arrayselected = [];
-				foreach ($cats as $cat) {
-					$arrayselected[] = $cat->id;
-				}
-				print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, '0');
-				print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				print $form->selectCategories(Categorie::TYPE_SUPPLIER_ORDER, 'categories', $object);
+				print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
 				print '</form>';
 			} else {
 				print $form->showCategories($object->id, Categorie::TYPE_SUPPLIER_ORDER, 1);

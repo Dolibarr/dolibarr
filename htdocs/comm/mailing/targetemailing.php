@@ -335,7 +335,7 @@ $totalarray = [
 if ($object->fetch($id) >= 0) {
 	$head = emailing_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'targets', $langs->trans("Mailing"), -1, 'email');
+	print dol_get_fiche_head($head, 'targets', $langs->trans("Mailing"), -1, $object->picto);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -454,7 +454,7 @@ if ($object->fetch($id) >= 0) {
 			$nbemail .= ' '.img_warning($langs->trans('ToAddRecipientsChooseHere'));//.' <span class="warning">'.$langs->trans("NoTargetYet").'</span>';
 		}
 		if ($htmltooltip) {
-			print $form->textwithpicto($nbemail, $htmltooltip, 1, 'warning');
+			print $form->textwithpicto($nbemail, $htmltooltip, 1, 'info');
 		} else {
 			print $nbemail;
 		}
@@ -716,7 +716,7 @@ if ($object->fetch($id) >= 0) {
 	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
-		if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+		if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 			$page = 0;
 			$offset = 0;
 		}
@@ -855,7 +855,7 @@ if ($object->fetch($id) >= 0) {
 		print '</td>';
 
 		// Action column
-		if (empty($conf->main_checkbox_left_column)) {
+		if (!$conf->main_checkbox_left_column) {
 			print '<td class="liste_titre maxwidthsearch">';
 			$searchpicto = $form->showFilterButtons();
 			print $searchpicto;
@@ -912,7 +912,7 @@ if ($object->fetch($id) >= 0) {
 				print '<tr class="oddeven">';
 
 				// Action column
-				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if ($conf->main_checkbox_left_column) {
 					print '<td class="center nowraponall">';
 					print '<!-- ID mailing_cibles = '.$obj->rowid.' -->';
 					if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
@@ -996,7 +996,7 @@ if ($object->fetch($id) >= 0) {
 				print '</td>';
 
 				// Action column
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+				if (!$conf->main_checkbox_left_column) {
 					print '<td class="center nowraponall">';
 					print '<!-- ID mailing_cibles = '.$obj->rowid.' -->';
 					if ($obj->status == $object::STATUS_DRAFT) {	// If status of target line is not sent yet

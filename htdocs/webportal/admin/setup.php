@@ -205,7 +205,7 @@ print ajax_autoselect('publicurlmember');
 //print '<a target="_blank" href="'.Context::getRootConfigUrl().'" >'.img_picto('', 'globe', 'class="pictofixedwidth"').Context::getRootConfigUrl().'</a>';
 
 // Setup page goes here
-print info_admin($langs->trans("UserAccountForWebPortalAreInThirdPartyTabHelp"));
+print info_admin($langs->trans("UserAccountForWebPortalAreInThirdPartyTabHelp", $langs->transnoentities("WebsiteAccount")));
 
 print '<br><br>';
 

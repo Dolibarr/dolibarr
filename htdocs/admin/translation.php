@@ -363,14 +363,21 @@ if ($mode == 'overwrite') {
 		$disablededit = ' disabled';
 	}
 
-	$infoOnTransProcess = '<div class="justify"><span class="opacitymedium">';
-	$infoOnTransProcess .= img_info().' '.$langs->trans("SomeTranslationAreUncomplete");
+	$text = $langs->trans("SomeTranslationAreUncomplete");
 	$urlwikitranslatordoc = 'https://wiki.dolibarr.org/index.php/Translator_documentation';
-	$infoOnTransProcess .= ' ('.str_replace('{s1}', '<a href="'.$urlwikitranslatordoc.'" target="_blank" rel="noopener noreferrer external">'.$langs->trans("Here").'</a>', $langs->trans("SeeAlso", '{s1}')).')<br>';
-	$infoOnTransProcess .= '<br>';
+	$text .= ' - <a href="'.$urlwikitranslatordoc.'" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeAlso", $langs->transnoentitiesnoconv("Here")).' '.img_picto('', 'url').'</a>.<br>';
+	$infoOnTransProcess = info_admin($text);
+
+	$infoOnTransProcess .= '<div class="justify">';
+	$infoOnTransProcess .= '<span class="opacitymedium">';
 	$infoOnTransProcess .= $langs->trans("TranslationOverwriteDesc", $langs->transnoentitiesnoconv("Language"), $langs->transnoentitiesnoconv("TranslationKey"), $langs->transnoentitiesnoconv("NewTranslationStringToShow"))."\n";
 	$infoOnTransProcess .= ' ('.$langs->trans("TranslationOverwriteDesc2").').'."<br>\n";
 	$infoOnTransProcess .= '</span></div>';
+
+	// If a cache for translation is on, show a warning.
+	if (isModEnabled('memcached') || getDolGlobalInt('MAIN_USE_CACHE_FOR_TRANSLATION')) {
+		$infoOnTransProcess .= info_admin($langs->trans("CacheForTranslationIsUsed"), 0, 0, '1', 'warning');
+	}
 
 	print $infoOnTransProcess;
 
@@ -643,8 +650,8 @@ if ($mode == 'searchkey') {
 		}
 		print '<span title="'.dolPrintHTMLForAttribute($titleforvalue).'" class="classfortooltip">';
 		print dolPrintHTML($val);
-		if (substr_count($langsenfileonly->tab_translate[$key], '%s') > 4) {
-			print '<br><div class="warning">Error, more than 4 %s in the source</div>';
+		if (substr_count($langsenfileonly->tab_translate[$key], '%s') > 5) {
+			print '<br><div class="warning">Error, more than 5 %s in the source</div>';
 		}
 		print '</span>';
 		print '</td>';
@@ -678,7 +685,7 @@ if ($mode == 'searchkey') {
 			if (getDolGlobalInt('MAIN_FEATURES_LEVEL')) {
 				$transifexlangfile = '$'; // $ means 'All'
 				//$transifexurl = 'https://www.transifex.com/dolibarr-association/dolibarr/translate/#'.$langcode.'/'.$transifexlangfile.'?key='.$key;
-				$transifexurl = 'https://www.transifex.com/dolibarr-association/dolibarr/translate/#'.$langcode.'/'.$transifexlangfile.'?q=key%3A'.$key;
+				$transifexurl = 'https://app.transifex.com/dolibarr-association/dolibarr/translate/#'.$langcode.'/'.$transifexlangfile.'?q=key%3A'.$key;
 
 				print ' &nbsp; <a href="'.$transifexurl.'" target="transifex">'.img_picto($langs->trans('FixOnTransifex'), 'globe').'</a>';
 			}

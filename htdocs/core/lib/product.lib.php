@@ -8,7 +8,7 @@
  * Copyright (C) 2024	   	Jean-Rémi TAPONIER		<jean-remi@netlogic.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Mélina Joum				<melina.joum@altairis.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,13 +151,13 @@ function product_prepare_head($object)
 	// Tab to link resources
 	if (isModEnabled('resource')) {
 		if ($object->isProduct() && getDolGlobalString('RESOURCE_ON_PRODUCTS')) {
-			$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=product&ref='.$object->ref;
+			$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=product&element_id='.$object->id;
 			$head[$h][1] = $langs->trans("Resources");
 			$head[$h][2] = 'resources';
 			$h++;
 		}
 		if ($object->isService() && getDolGlobalString('RESOURCE_ON_SERVICES')) {
-			$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=service&ref='.$object->ref;
+			$head[$h][0] = DOL_URL_ROOT.'/resource/element_resource.php?element=service&element_id='.$object->id;
 			$head[$h][1] = $langs->trans("Resources");
 			$head[$h][2] = 'resources';
 			$h++;
@@ -363,7 +363,7 @@ function product_admin_prepare_head()
 
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
-	$nbExtrafields = $extrafields->attributes['product']['count'];
+	$nbExtrafields = isset($extrafields->attributes['product']['count']) ? $extrafields->attributes['product']['count'] : 0;
 	if ($nbExtrafields > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}
@@ -374,7 +374,7 @@ function product_admin_prepare_head()
 	if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
 		$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_price_extrafields.php';
 		$head[$h][1] = $langs->trans("ProductLevelExtraFields");
-		$nbExtrafields = $extrafields->attributes['product_price']['count'];
+		$nbExtrafields = isset($extrafields->attributes['product_price']['count']) ? $extrafields->attributes['product_price']['count'] : 0;
 		if ($nbExtrafields > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 		}
@@ -386,7 +386,7 @@ function product_admin_prepare_head()
 	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 		$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_customer_extrafields.php';
 		$head[$h][1] = $langs->trans("ProductCustomerExtraFields");
-		$nbExtrafields = $extrafields->attributes['product_customer_price']['count'];
+		$nbExtrafields = isset($extrafields->attributes['product_customer_price']['count']) ? $extrafields->attributes['product_customer_price']['count'] : 0;
 		if ($nbExtrafields > 0) {
 			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 		}
@@ -397,7 +397,7 @@ function product_admin_prepare_head()
 	// Supplier prices
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_supplier_extrafields.php';
 	$head[$h][1] = $langs->trans("ProductSupplierExtraFields");
-	$nbExtrafields = $extrafields->attributes['product_fournisseur_price']['count'];
+	$nbExtrafields = isset($extrafields->attributes['product_fournisseur_price']['count']) ? $extrafields->attributes['product_fournisseur_price']['count'] : 0;
 	if ($nbExtrafields > 0) {
 		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
 	}

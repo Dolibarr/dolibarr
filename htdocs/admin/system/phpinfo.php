@@ -281,7 +281,7 @@ foreach ($phparray as $key => $value) {
 			if ($keyparam == 'X-ChromePhp-Data') {
 				$valtoshow = dol_trunc($keyvalue, 80);
 			}
-			print '<td colspan="2" class="wordbreak">';
+			print '<td colspan="2" class="wordbreak minwidth100">';
 			if ($keyparam == 'Path') {
 				$valtoshow = implode('; ', explode(';', trim($valtoshow)));
 			}

@@ -4,7 +4,7 @@
  * Copyright (C) 2012      Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2022      Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -345,11 +345,27 @@ if ($step == 1 || !$datatoimport) {
 
 	$head = import_prepare_head($param, 1);
 
-	print dol_get_fiche_head($head, 'step1', '', -1);
+	print dol_get_fiche_head($head, 'step1', 'Import', -1, 'upload');
 
-	print '<div class="opacitymedium">'.$langs->trans("SelectImportDataSet").'</div><br>';
+	print '<div class="opacitymedium">'.$langs->trans("SelectImportDataSet").'</div>';
 
-	// Affiche les modules d'imports
+
+	// Define $nbmodulesnotautoenabled - TODO This code is at different places
+	$nbmodulesnotautoenabled = count($conf->modules);
+	$listofmodulesautoenabled = array('agenda', 'fckeditor', 'export', 'import');
+	foreach ($listofmodulesautoenabled as $moduleautoenable) {
+		if (in_array($moduleautoenable, $conf->modules)) {
+			$nbmodulesnotautoenabled--;
+		}
+	}
+
+	if ($user->admin && $nbmodulesnotautoenabled <= getDolGlobalInt('MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING', 1)) {	// If only minimal initial modules enabled
+		print info_admin($langs->trans("WarningOnlyProfilesOfActivatedModules").' '.$langs->trans("YouCanEnableModulesFrom"));
+	}
+
+	print '<br>';
+
+	// Show profile for import
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent nomarginbottom">';
 	print '<tr class="liste_titre">';
@@ -415,7 +431,7 @@ if ($step == 2 && $datatoimport) {
 
 	$head = import_prepare_head($param, 2);
 
-	print dol_get_fiche_head($head, 'step2', '', -2);
+	print dol_get_fiche_head($head, 'step2', 'Import', -2, 'upload');
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
@@ -525,7 +541,7 @@ if ($step == 3 && $datatoimport) {
 
 	$head = import_prepare_head($param, 3);
 
-	print dol_get_fiche_head($head, 'step3', '', -2);
+	print dol_get_fiche_head($head, 'step3', 'Import', -2, 'upload');
 
 	/*
 	 * Confirm delete file
@@ -947,7 +963,7 @@ if ($step == 4 && $datatoimport) {
 
 	$head = import_prepare_head($param, 4);
 
-	print dol_get_fiche_head($head, 'step4', '', -2);
+	print dol_get_fiche_head($head, 'step4', 'Import', -2, 'upload');
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
@@ -1160,7 +1176,7 @@ if ($step == 4 && $datatoimport) {
 		$entity = (!empty($objimport->array_import_entities[0][$code]) ? $objimport->array_import_entities[0][$code] : $objimport->array_import_icon[0]);
 
 		$entityicon = !empty($entitytoicon[$entity]) ? $entitytoicon[$entity] : $entity; // $entityicon must string name of picto of the field like 'project', 'company', 'contact', 'modulename', ...
-		$entitylang = !empty($entitytolang[$entity]) ? $entitytolang[$entity] : $objimport->array_import_label[0]; // $entitylang must be a translation key to describe object the field is related to, like 'Company', 'Contact', 'MyModyle', ...
+		$entitylang = !empty($entitytolang[$entity]) ? $entitytolang[$entity] : $objimport->array_import_label[0]; // $entitylang must be a translation key to describe object the field is related to, like 'Company', 'Contact', 'MyModule', ...
 
 		print '<td class="nowraponall hideonsmartphone" style="font-weight: normal">=> </td>';
 		print '<td class="nowraponall" style="font-weight: normal">';
@@ -1615,7 +1631,7 @@ if ($step == 5 && $datatoimport) {
 	print '<input type="hidden" name="step" value="5">'; // step 5
 	print '<input type="hidden" name="action" value="launchsimu">'; // step 5
 
-	print dol_get_fiche_head($head, 'step5', '', -2);
+	print dol_get_fiche_head($head, 'step5', 'Import', -2, 'upload');
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
@@ -1676,7 +1692,7 @@ if ($step == 5 && $datatoimport) {
 	print '<td>';
 	$modulepart = 'import';
 	$relativepath = GETPOST('filetoimport');
-	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'&step=4'.$param.'" target="_blank" rel="noopener noreferrer">';
+	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart='.urlencode($modulepart).'&file='.urlencode($relativepath).'&step=4'.$param.'" target="_blank" rel="noopener noreferrer">';
 	print img_mime($file, '', 'pictofixedwidth');
 	print $filetoimport;
 	print img_picto($langs->trans("Download"), 'download', 'class="paddingleft opacitymedium"');
@@ -1765,7 +1781,7 @@ if ($step == 5 && $datatoimport) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';
 
-	print '<table width="100%" class="border tableforfield">';
+	print '<table class="centpercent border tableforfield">';
 
 	// Tables imported
 	print '<tr><td class="titlefieldcreate">';
@@ -1810,7 +1826,7 @@ if ($step == 5 && $datatoimport) {
 
 	// Fields imported
 	print '<tr><td>';
-	print $langs->trans("FieldsTarget").'</td><td>';
+	print $langs->trans("FieldsTarget").'</td><td class="small">';
 	$listfields = array();
 	$i = 0;
 	//print 'fieldsource='.$fieldssource;
@@ -1854,8 +1870,8 @@ if ($step == 5 && $datatoimport) {
 		// Launch import
 		$arrayoferrors = array();
 		$arrayofwarnings = array();
-		$maxnboferrors = !getDolGlobalString('IMPORT_MAX_NB_OF_ERRORS') ? 50 : $conf->global->IMPORT_MAX_NB_OF_ERRORS;
-		$maxnbofwarnings = !getDolGlobalString('IMPORT_MAX_NB_OF_WARNINGS') ? 50 : $conf->global->IMPORT_MAX_NB_OF_WARNINGS;
+		$maxnboferrors = getDolGlobalInt('IMPORT_MAX_NB_OF_ERRORS', 50);
+		$maxnbofwarnings = getDolGlobalInt('IMPORT_MAX_NB_OF_WARNINGS', 50);
 		$nboferrors = 0;
 		$nbofwarnings = 0;
 
@@ -2114,7 +2130,7 @@ if ($step == 6 && $datatoimport) {
 
 	$head = import_prepare_head($param, 6);
 
-	print dol_get_fiche_head($head, 'step6', '', -1);
+	print dol_get_fiche_head($head, 'step6', 'Import', -1, 'upload');
 
 	print '<div class="underbanner clearboth"></div>';
 	print '<div class="fichecenter">';

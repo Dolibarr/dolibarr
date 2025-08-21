@@ -414,26 +414,30 @@ if (empty($reshook)) {
 
 			if (GETPOSTINT('autoclose')) {
 				foreach ($object->lines as $line) {
-					if ($line->role == 'toconsume') {
-						$arrayoflines = $object->fetchLinesLinked('consumed', $line->id);
-						$alreadyconsumed = 0;
-						foreach ($arrayoflines as $line2) {
-							$alreadyconsumed += $line2['qty'];
-						}
+					$tmpproduct = new Product($db);
+					$tmpproduct->fetch($line->fk_product);
+					if ((int) $tmpproduct->stockable_product > 0) {
+						if ($line->role == 'toconsume') {
+							$arrayoflines = $object->fetchLinesLinked('consumed', $line->id);
+							$alreadyconsumed = 0;
+							foreach ($arrayoflines as $line2) {
+								$alreadyconsumed += $line2['qty'];
+							}
 
-						if ($alreadyconsumed < $line->qty) {
-							$consumptioncomplete = false;
+							if ($alreadyconsumed < $line->qty) {
+								$consumptioncomplete = false;
+							}
 						}
-					}
-					if ($line->role == 'toproduce') {
-						$arrayoflines = $object->fetchLinesLinked('produced', $line->id);
-						$alreadyproduced = 0;
-						foreach ($arrayoflines as $line2) {
-							$alreadyproduced += $line2['qty'];
-						}
+						if ($line->role == 'toproduce') {
+							$arrayoflines = $object->fetchLinesLinked('produced', $line->id);
+							$alreadyproduced = 0;
+							foreach ($arrayoflines as $line2) {
+								$alreadyproduced += $line2['qty'];
+							}
 
-						if ($alreadyproduced < $line->qty) {
-							$productioncomplete = false;
+							if ($alreadyproduced < $line->qty) {
+								$productioncomplete = false;
+							}
 						}
 					}
 				}
@@ -1417,7 +1421,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '<input type="hidden" name="product-'.$line->id.'-'.$i.'" value="'.$line->fk_product.'">';
 
 						// Qty
-						print '<td class="right"><input type="text" class="width50 right" id="qtytoconsume-' . $line->id . '-' . $i . '" name="qty-' . $line->id . '-' . $i . '" value="' . $preselected . '" ' . $disable . '></td>';
+						print '<td class="right">';
+						if ((int) $tmpproduct->stockable_product > 0) {
+							print '<input type="text" class="width50 right" id="qtytoconsume-' . $line->id . '-' . $i . '" name="qty-' . $line->id . '-' . $i . '" value="' . $preselected . '" ' . $disable . '>';
+						} else {
+							print '<input type="hidden" id="qtytoconsume-' . $line->id . '-' . $i . '" name="qty-' . $line->id . '-' . $i . '" value="0">';
+							print '<span class="opacitymedium">' . $langs->trans("StockDisabled") . '</span>';
+						}
+						print '</td>';
 
 						// Unit
 						print '<td></td>';
@@ -1432,7 +1443,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 						// Warehouse
 						print '<td>';
-						if ($tmpproduct->type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
+						if (($tmpproduct->type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))
+							&& ((int) $tmpproduct->stockable_product > 0)) {
 							if (empty($line->disable_stock_change)) {
 								$preselected = (GETPOSTISSET('idwarehouse-'.$line->id.'-'.$i) ? GETPOST('idwarehouse-'.$line->id.'-'.$i) : ($tmpproduct->fk_default_warehouse > 0 ? $tmpproduct->fk_default_warehouse : 'ifone'));
 								print $formproduct->selectWarehouses($preselected, 'idwarehouse-'.$line->id.'-'.$i, '', 1, 0, $line->fk_product, '', 1, 0, array(), 'maxwidth200 csswarehouse_'.$line->id.'_'.$i);
@@ -1440,7 +1452,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 								print '<span class="opacitymedium">'.$langs->trans("DisableStockChange").'</span>';
 							}
 						} else {
-							print '<span class="opacitymedium">'.$langs->trans("NoStockChangeOnServices").'</span>';
+							if ((int) $tmpproduct->stockable_product > 0) {
+								print '<span class="opacitymedium">' . $langs->trans("StockDisabled") . '</span>';
+							} else {
+								print '<span class="opacitymedium">' . $langs->trans("NoStockChangeOnServices") . '</span>';
+							}
 						}
 						print '</td>';
 

@@ -232,7 +232,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -480,7 +480,7 @@ while ($i < $imaxinloop) {
 		print '<td>';
 		print $line->LibStatut($obj->statut_ligne, 2);
 		print "&nbsp;";
-		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid_ligne.'">';
+		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid_ligne.($type == 'bank-transfer' ? '&type=bank-transfer' : '').'">';
 		print substr('000000'.$obj->rowid_ligne, -6);
 		print '</a></td>';
 

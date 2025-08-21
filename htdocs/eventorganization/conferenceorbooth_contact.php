@@ -119,7 +119,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
-if ($action == 'addcontact' && $permission) {	// Add a new contact
+if ($action == 'addcontact' && $permissiontoadd) {	// Add a new contact
 	$contactid = (GETPOST('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 	$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 	$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
@@ -135,10 +135,10 @@ if ($action == 'addcontact' && $permission) {	// Add a new contact
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-} elseif ($action == 'swapstatut' && $permission) {
+} elseif ($action == 'swapstatut' && $permissiontoadd) {
 	// Toggle the status of a contact
 	$result = $object->swapContactStatus(GETPOSTINT('ligne'));
-} elseif ($action == 'deletecontact' && $permission) {
+} elseif ($action == 'deletecontact' && $permissiondellink) {
 	// Deletes a contact
 	$result = $object->delete_contact($lineid);
 

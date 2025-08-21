@@ -24,7 +24,7 @@
 
 
 /**
- *      Support class for third parties, contacts, members, users or resources
+ * Support class for third parties, contacts, members, users or resources
  *
  *
  * Properties expected in the host class receiving this trait.

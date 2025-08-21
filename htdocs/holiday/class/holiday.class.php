@@ -1665,7 +1665,7 @@ class Holiday extends CommonObject
 	 */
 	public function updateSoldeCP($userID = 0, $nbHoliday = 0, $fk_type = 0)
 	{
-		global $user, $langs, $conf;
+		global $user, $langs;
 
 		$error = 0;
 
@@ -1678,11 +1678,17 @@ class Holiday extends CommonObject
 			$now = dol_now();
 
 			// Get month of last update
-			$lastUpdate = dol_stringtotime($this->getConfCP('lastUpdate', dol_print_date($now, '%Y%m%d%H%M%S')));
-			//print 'month: '.$month.' lastUpdate:'.$lastUpdate.' monthLastUpdate:'.$monthLastUpdate;exit;
+			$stringInDBForLastUpdate = $this->getConfCP('lastUpdate', dol_print_date($now, '%Y%m%d%H%M%S'));	// Example '20200101120000'
+			// Protection when $lastUpdate has a not valid value
+			if ($stringInDBForLastUpdate < '20000101000000') {
+				$stringInDBForLastUpdate = '20000101000000';
+			}
+			$lastUpdate = dol_stringtotime($stringInDBForLastUpdate);
+			//print 'lastUpdate:'.$lastUpdate;exit;
 
 			$yearMonthLastUpdate = dol_print_date($lastUpdate, '%Y%m');
 			$yearMonthNow = dol_print_date($now, '%Y%m');
+			//print 'yearMonthLastUpdate='.$yearMonthLastUpdate.' yearMonthNow='.$yearMonthNow;
 
 			// If month date is not same than the one of last update (the one we saved in database), then we update the timestamp and balance of each open user,
 			// catching up to the current month if a gap is detected
@@ -1772,6 +1778,7 @@ class Holiday extends CommonObject
 				//updating the date of the last monthly balance update
 				$newMonth = dol_get_next_month((int) dol_print_date($lastUpdate, '%m'), (int) dol_print_date($lastUpdate, '%Y'));
 				$lastUpdate = dol_mktime(0, 0, 0, (int) $newMonth['month'], 1, (int) $newMonth['year']);
+
 				$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
 				$sql .= " value = '".$this->db->escape(dol_print_date($lastUpdate, '%Y%m%d%H%M%S'))."'";
 				$sql .= " WHERE name = 'lastUpdate'";
@@ -2179,7 +2186,7 @@ class Holiday extends CommonObject
 	public function countActiveUsersWithoutCP()
 	{
 		$sql = "SELECT count(u.rowid) as compteur";
-		$sql .= " FROM ".MAIN_DB_PREFIX."user as u LEFT OUTER JOIN ".MAIN_DB_PREFIX."holiday_users hu ON (hu.fk_user=u.rowid)";
+		$sql .= " FROM ".MAIN_DB_PREFIX."user as u LEFT JOIN ".MAIN_DB_PREFIX."holiday_users hu ON (hu.fk_user=u.rowid)";
 		$sql .= " WHERE u.statut > 0 AND hu.fk_user IS NULL";
 
 		$result = $this->db->query($sql);
@@ -2360,7 +2367,7 @@ class Holiday extends CommonObject
 		$sql = "SELECT rowid, code, label, affect, delay, newbymonth";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_holiday_types";
 		$sql .= " WHERE (fk_country IS NULL OR fk_country = ".((int) $mysoc->country_id).')';
-		$sql .= " AND entity IN (".getEntity('c_holiday_types').")";
+		$sql .= " AND entity IN (0, ".getEntity('c_holiday_types').")";		// Need entity 0 (holiday types common to all countries= + current entity).
 		if ($active >= 0) {
 			$sql .= " AND active = ".((int) $active);
 		}

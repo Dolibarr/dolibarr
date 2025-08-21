@@ -908,7 +908,7 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 				$pdf->line($curx + 1, $cury + 1, $curx + 1, $cury + 6);
 			}
 
-
+			$bank_number_length = 0;
 			foreach ($account->getFieldsToShow() as $val) {
 				$pdf->SetXY($curx, $cury + 4);
 				$pdf->SetFont('', '', $default_font_size - 3);
@@ -938,6 +938,10 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 					break;
 				}
 
+				if ($content == '') {
+					continue;
+				}
+
 				$pdf->MultiCell($tmplength, 3, $outputlangs->convToOutputCharset($content), 0, 'C', false);
 				$pdf->SetXY($curx, $cury + 1);
 				$curx += $tmplength;
@@ -946,10 +950,13 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 				if (empty($onlynumber)) {
 					$pdf->line($curx, $cury + 1, $curx, $cury + 7);
 				}
+
+				// Only set this variable when table was printed
+				$bank_number_length = 8;
 			}
 
 			$curx = $savcurx;
-			$cury += 8;
+			$cury += $bank_number_length;
 		}
 	} elseif (!empty($account->number)) {
 		$pdf->SetFont('', 'B', $default_font_size - $diffsizecontent);
@@ -1866,7 +1873,9 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			if ($detail->batch) {
 				$dte[] = $outputlangs->transnoentitiesnoconv('printBatch', $detail->batch);
 			}
-			$dte[] = $outputlangs->transnoentitiesnoconv('printQty', (string) $detail->qty);
+			if ($detail->qty) {
+				$dte[] = $outputlangs->transnoentitiesnoconv('printQty', (string) $detail->qty);
+			}
 
 			// Add also info of planned warehouse for lot
 			if ($object->element == 'shipping' && $detail->fk_origin_stock > 0 && getDolGlobalInt('PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT')) {
@@ -2031,7 +2040,7 @@ function pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails = 0)
 
 			$tmpresult .= vatrate($object->lines[$i]->tva_tx, false, $object->lines[$i]->info_bits, -1);
 			if (!getDolGlobalString('MAIN_PDF_MAIN_HIDE_SECOND_TAX')) {
-				if ($object->lines[$i]->total_localtax1 != 0) {
+				if (price2num($object->lines[$i]->localtax1_tx)) {
 					if (preg_replace('/[\s0%]/', '', $tmpresult)) {
 						$tmpresult .= '/';
 					} else {
@@ -2041,7 +2050,7 @@ function pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails = 0)
 				}
 			}
 			if (!getDolGlobalString('MAIN_PDF_MAIN_HIDE_THIRD_TAX')) {
-				if ($object->lines[$i]->total_localtax2 != 0) {
+				if (price2num($object->lines[$i]->localtax2_tx)) {
 					if (preg_replace('/[\s0%]/', '', $tmpresult)) {
 						$tmpresult .= '/';
 					} else {
@@ -2581,11 +2590,11 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DatePropal");
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date, 'day', '', $outputlangs);
 			}
-		} elseif ($objecttype == 'commande' || $objecttype == 'supplier_order') {
+		} elseif ($objecttype == 'commande' || $objecttype == 'supplier_order' || $objecttype == 'order_supplier') {
 			'@phan-var-force array<Commande|CommandeFournisseur> $objects';
 			$outputlangs->load('orders');
 
-			if (count($objects) > 1 && count($objects) <= (getDolGlobalInt("MAXREFONDOC") ? getDolGlobalInt("MAXREFONDOC") : 10)) {
+			if (count($objects) > 1 && count($objects) <= getDolGlobalInt("MAXREFONDOC", 10) && !getDolGlobalString("PDF_HIDE_LINKED_OBJECT_IN_PUBLIC_NOTE")) {
 				if (empty($object->context['DolPublicNoteAppendedGetLinkedObjects'])) { // Check if already appended before add to avoid repeat data
 					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefOrder").' :');
 					foreach ($objects as $elementobject) {
@@ -2653,7 +2662,7 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 					}
 				}
 
-				if (empty($object->context['DolPublicNoteAppendedGetLinkedObjects'])) { // Check if already appended before add to avoid repeat data
+				if (empty($object->context['DolPublicNoteAppendedGetLinkedObjects']) && !getDolGlobalString("PDF_HIDE_LINKED_OBJECT_IN_PUBLIC_NOTE")) { // Check if already appended before add to avoid repeat data
 					$object->note_public = dol_concatdesc($object->note_public, $refListsTxt);
 				}
 			} elseif (count($objects) == 1) {
@@ -2740,15 +2749,17 @@ function pdf_getSizeForImage($realpath)
 }
 
 /**
- *	Return line total amount discount
+ *	Return line total amount discount.
+ *  Calculated by taking the unit price (subprice) * quantity - (total without tax)
  *
  *	@param	Commande|Facture|Propal			$object				Object
  *	@param	int								$i					Current line number
  *  @param  Translate						$outputlangs		Object langs for output
  *  @param	int<0,2>						$hidedetails		Hide details (0=no, 1=yes, 2=just special lines)
+ *  @param	int<0,1>						$multicurrency		1=Get value in the foreign currency
  * 	@return	int|float|string									Return total of line excl tax
  */
-function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails = 0)
+function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails = 0, $multicurrency = 0)
 {
 	global $hookmanager;
 
@@ -2770,7 +2781,8 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 				'i' => $i,
 				'outputlangs' => $outputlangs,
 				'hidedetails' => $hidedetails,
-				'special_code' => $special_code
+				'special_code' => $special_code,
+				'multicurrency' => $multicurrency
 			);
 
 			$action = '';
@@ -2785,7 +2797,11 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 		}
 
 		if (empty($hidedetails) || $hidedetails > 1) {
-			return (float) price2num($sign * (($object->lines[$i]->subprice * (float) $object->lines[$i]->qty) - $object->lines[$i]->total_ht), 'MT', 1);
+			if (empty($multicurrency)) {
+				return (float) price2num($sign * (($object->lines[$i]->subprice * (float) $object->lines[$i]->qty) - $object->lines[$i]->total_ht), 'MT', 1);
+			} else {
+				return (float) price2num($sign * (($object->lines[$i]->multicurrency_subprice * (float) $object->lines[$i]->qty) - $object->lines[$i]->multicurrency_total_ht), 'MT', 1);
+			}
 		}
 	}
 	return 0;

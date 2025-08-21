@@ -730,7 +730,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		global $conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		$diffsizetitle = (!getDolGlobalString('PDF_DIFFSIZE_TITLE') ? 3 : $conf->global->PDF_DIFFSIZE_TITLE);
+		$diffsizetitle = getDolGlobalInt('PDF_DIFFSIZE_TITLE', 3);
 
 		$pdf->SetFont('', '', $default_font_size - 1);
 

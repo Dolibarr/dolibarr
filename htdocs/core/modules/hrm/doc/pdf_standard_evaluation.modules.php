@@ -115,7 +115,8 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc, $user;
+		global $langs, $mysoc;
+
 		// Translations
 		$langs->loadLangs(array("main", "hrm"));
 
@@ -305,6 +306,8 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 				$iniY = $tab_top + 7;
 				$nexY = $tab_top + 7;
 
+				$showmorebeforepagebreak = 0;
+
 				$pdf->setTopMargin($tab_top_newpage);
 				// Loop on each lines
 				$i = 0;
@@ -324,8 +327,8 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 					$curY = $nexY;
 					$pdf->startTransaction();
 
+					// Shod fields of line
 					$this->printLine($pdf, $object, $i, $curY, $default_font_size, $outputlangs, $hidedetails);
-
 
 
 					$pageposafter = $pdf->getPage();
@@ -495,39 +498,64 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 	 */
 	protected function printLine(&$pdf, $object, $linenumber, $curY, $default_font_size, $outputlangs, $hidedetails = 0)
 	{
-		global $conf;
 		$objectligne = $object->lines[$linenumber];
 		$pdf->SetFont('', '', $default_font_size - 1);
 		$pdf->SetTextColor(0, 0, 0);
 
+		// Rank of employee
+		$rankemptoshow = "-";
+		if ($objectligne->rankorder > 0) {
+			$rankemptoshow = (string) $objectligne->rankorder;
+		} elseif ($objectligne->rankorder < 0) {
+			$rankemptoshow = $outputlangs->transnoentitiesnoconv("NA");
+		}
+		$pdf->SetXY($this->posxrankemp, $curY);
+		$pdf->MultiCell($this->posxrequiredrank - $this->posxrankemp - 0.8, 4, $rankemptoshow, 0, 'C');
+
+		// Expected required Rank
+		$rankexpectedtoshow = "-";
+		if ($objectligne->required_rank > 0) {
+			if ($objectligne->rankorder != 0) {
+				$rankexpectedtoshow = $objectligne->required_rank;
+			}
+		} elseif ($objectligne->required_rank < 0) {
+			$rankexpectedtoshow = $outputlangs->transnoentitiesnoconv("NA");
+		}
+		$pdf->SetXY($this->posxrequiredrank, $curY);
+		$pdf->MultiCell($this->posxresult - $this->posxrequiredrank - 0.8, 4, $rankexpectedtoshow, 0, 'C');
+
 		// Result
 		$pdf->SetXY($this->posxresult - 1, $curY);
 
-		if ($objectligne->rankorder > $objectligne->required_rank) {
+		if ($objectligne->required_rank < 0) {	// NA
+			$pdf->SetFillColor(255, 255, 255);
+		} elseif ($objectligne->rankorder > $objectligne->required_rank) {	// Higher than expected
 			// Teal Green
-			$pdf->SetFillColor(0, 109, 91);
-		} elseif ($objectligne->rankorder == $objectligne->required_rank) {
+			$pdf->SetFillColor(20, 129, 111);
+		} elseif ($objectligne->rankorder == $objectligne->required_rank) {	// Same than expected
 			// Seafoam Green
-			$pdf->SetFillColor(159, 226, 191);
-		} elseif ($objectligne->rankorder < $objectligne->required_rank) {
-			// red
+			$pdf->SetFillColor(169, 236, 201);
+		} elseif ($objectligne->rankorder < $objectligne->required_rank) {	// Lower than expected
+			// Red
 			$pdf->SetFillColor(205, 92, 92);
 		}
-		if ($objectligne->rankorder == 0 || $objectligne->required_rank == 0) {
+		if ($objectligne->rankorder <= 0 || $objectligne->required_rank == 0) {
 			// No fill color
-			$pdf->SetFillColor(255, 255, 255);
+			$pdf->SetFillColor(240, 240, 240);
 		}
-		$result = (($objectligne->required_rank != 0 && $objectligne->rankorder != 0) ? $objectligne->rankorder . "/" . $objectligne->required_rank : "-");
+		$result = "-";
+		if ($objectligne->required_rank < 0) {
+			if ($objectligne->rankorder > 0) {
+				$result = $objectligne->rankorder;
+			}
+		} elseif ($objectligne->rankorder < 0) {
+			$result = $outputlangs->transnoentitiesnoconv("NA");
+		} elseif ($objectligne->required_rank != 0 && $objectligne->rankorder != 0) {
+			$result = $objectligne->rankorder . "/" . $objectligne->required_rank;
+		}
 		$pdf->MultiCell($this->posxresult - 210 - 0.8 - 4, 4, $result, 0, 'C', true);
 
-
-		// required Rank
-		$pdf->SetXY($this->posxrequiredrank, $curY);
-		$pdf->MultiCell($this->posxresult - $this->posxrequiredrank - 0.8, 4, (($objectligne->required_rank != 0 && $objectligne->rankorder != 0) ? $objectligne->required_rank : "-"), 0, 'C');
-
-		// Rank Employee
-		$pdf->SetXY($this->posxrankemp, $curY);
-		$pdf->MultiCell($this->posxrequiredrank - $this->posxrankemp - 0.8, 4, (($objectligne->rankorder != 0) ? $objectligne->rankorder : "-"), 0, 'C');
+		// The next fields can be on several lines so we output them at end so the pos on next line will work correctly
 
 		// Skill
 		$skill = new Skill($this->db);
@@ -539,8 +567,6 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 			$comment .= '<br>' . $outputlangs->trans("Description").': '.$skill->description;
 		}
 		$pdf->writeHTMLCell($this->posxrankemp - $this->posxskill - 0.8, 4, $this->posxskill - 1, $curY, $comment, 0, 1);
-
-
 
 		// Line num
 		$pdf->SetXY($this->posxpiece, $curY);

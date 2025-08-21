@@ -7,7 +7,7 @@
  * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -181,22 +181,22 @@ if ($result) {
 	while ($i < $num) {
 		$obj = $db->fetch_object($result);
 		// les variables
-		$cptcli = ((getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') != "") ? $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER : $langs->trans("CodeNotDef"));
+		$cptcli = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER', $langs->trans("CodeNotDef"));
 		$compta_soc = (!empty($obj->code_compta_client) ? $obj->code_compta_client : $cptcli);
 		$compta_prod = $obj->accountancy_code_sell;
 		if (empty($compta_prod)) {
 			if ($obj->product_type == 0) {
-				$compta_prod = (getDolGlobalString('ACCOUNTING_PRODUCT_SOLD_ACCOUNT') ? $conf->global->ACCOUNTING_PRODUCT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prod = getDolGlobalString('ACCOUNTING_PRODUCT_SOLD_ACCOUNT', $langs->trans("CodeNotDef"));
 			} else {
-				$compta_prod = (getDolGlobalString('ACCOUNTING_SERVICE_SOLD_ACCOUNT') ? $conf->global->ACCOUNTING_SERVICE_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
+				$compta_prod = getDolGlobalString('ACCOUNTING_SERVICE_SOLD_ACCOUNT', $langs->trans("CodeNotDef"));
 			}
 		}
-		$cpttva = (getDolGlobalString('ACCOUNTING_VAT_SOLD_ACCOUNT') ? $conf->global->ACCOUNTING_VAT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
+		$cpttva = getDolGlobalString('ACCOUNTING_VAT_SOLD_ACCOUNT', $langs->trans("CodeNotDef"));
 		$compta_tva = (!empty($obj->account_tva) ? $obj->account_tva : $cpttva);
 
-		$account_localtax1 = getLocalTaxesFromRate($obj->tva_tx, 1, $obj->thirdparty, $mysoc);
+		$account_localtax1 = getLocalTaxesFromRate($obj->tva_tx, 1, $obj->socid, $mysoc);
 		$compta_localtax1 = (!empty($account_localtax1[3]) ? $account_localtax1[3] : $langs->trans("CodeNotDef"));
-		$account_localtax2 = getLocalTaxesFromRate($obj->tva_tx, 2, $obj->thirdparty, $mysoc);
+		$account_localtax2 = getLocalTaxesFromRate($obj->tva_tx, 2, $obj->socid, $mysoc);
 		$compta_localtax2 = (!empty($account_localtax2[3]) ? $account_localtax2[3] : $langs->trans("CodeNotDef"));
 
 		// Situation invoices handling
@@ -257,7 +257,8 @@ if ($result) {
 print '<table class="liste noborder centpercent">';
 print '<tr class="liste_titre">';
 //print "<td>".$langs->trans("JournalNum")."</td>";
-print '<td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Piece').' ('.$langs->trans('InvoiceRef').')</td>';
+print '<td>'.$langs->trans('Date').'</td>';
+print '<td>'.$langs->trans('Piece').' ('.$langs->trans('InvoiceRef').')</td>';
 print '<td>'.$langs->trans('Account').'</td>';
 print '<td>'.$langs->trans('Type').'</td>';
 print '<td class="right">'.$langs->trans('AccountingDebit').'</td>';
@@ -306,8 +307,8 @@ foreach ($tabfac as $key => $val) {
 		foreach ($line['var'] as $k => $mt) {
 			if (isset($line['nomtcheck']) || $mt) {
 				print '<tr class="oddeven">';
-				print "<td>".dol_print_date($db->jdate($val["date"]))."</td>";
-				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
+				print '<td class="nowraponall">'.dol_print_date($db->jdate($val["date"]), 'day')."</td>";
+				print '<td class="tdoverflowmax150">'.$invoicestatic->getNomUrl(1)."</td>";
 				print "<td>".$k."</td><td>".$line['label']."</td>";
 
 				if (isset($line['inv'])) {

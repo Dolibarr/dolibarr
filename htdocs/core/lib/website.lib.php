@@ -1392,6 +1392,10 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
  */
 function getImageFromHtmlContent($htmlContent, $imageNumber = 1)
 {
+	if (empty($htmlContent)) {
+		return '';
+	}
+
 	$dom = new DOMDocument();
 
 	libxml_use_internal_errors(false);	// Avoid to fill memory with xml errors
@@ -1508,9 +1512,14 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					dol_mkdir(dirname($filetosave));
 
 					$fp = fopen($filetosave, "w");
-					fwrite($fp, $tmpgeturl['content']);
-					fclose($fp);
-					dolChmod($filetosave);
+					if ($fp) {
+						fwrite($fp, $tmpgeturl['content']);
+						fclose($fp);
+						dolChmod($filetosave);
+					} else {
+						setEventMessages('Error failed to open file '.$filetosave.' for writing', null, 'errors');
+						//print 'Failed to open file '.$filetosave.' for writing.';
+					}
 				}
 			}
 		}

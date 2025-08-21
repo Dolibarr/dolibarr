@@ -45,6 +45,12 @@ class ActionComm extends CommonObject
 	public $element = 'action';
 
 	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'ACTION';
+
+	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'actioncomm';
@@ -325,6 +331,11 @@ class ActionComm extends CommonObject
 	 * @var string Email from
 	 */
 	public $email_from;
+
+	/**
+	 * @var string Email reply to
+	 */
+	public $email_reply_to;
 
 	/**
 	 * @var string Email sender
@@ -1245,6 +1256,9 @@ class ActionComm extends CommonObject
 					if (!is_array($val)) {	// For backward compatibility when val=id
 						$val = array('id' => $val);
 					}
+					if (!isset($val['id']) || !is_scalar($val['id'])) {
+						continue;
+					}
 					if (!empty($already_inserted[$val['id']])) {
 						continue;
 					}
@@ -1595,7 +1609,9 @@ class ActionComm extends CommonObject
 			$statusType = 'status6';
 		}
 
-		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
+		$params = array('badgeParams' => array('attr' => array('title' => '<b>'.$langs->trans("Progression").'</b> : '.$labelStatus)));
+
+		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $params);
 	}
 
 	/**
@@ -1706,18 +1722,18 @@ class ActionComm extends CommonObject
 
 	/**
 	 *  Return URL of event
-	 *  Use $this->id, $this->type_code, $this->label and $this->type_label
+	 *  This uses $this->id, $this->type_code, $this->label and $this->type_label
 	 *
 	 *  @param	int<0,2>	$withpicto				0 = No picto, 1 = Include picto into link, 2 = Only picto
 	 *  @param	int			$maxlength				Max number of characters into label. If negative, use the ref as label.
-	 *  @param	string		$classname				Force style class on a link
+	 *  @param	string		$morecss				Force style class on a link
 	 *  @param	string		$option					'' = Link to action, 'birthday'= Link to contact, 'holiday' = Link to leave
 	 *  @param	int<0,1>	$overwritepicto			1 = Overwrite picto with this one
 	 *  @param	int<0,1>	$notooltip		    	1 = Disable tooltip
 	 *  @param  int<-1,1>	$save_lastsearch_value  -1 = Auto, 0 = No save of lastsearch_values when clicking, 1 = Save lastsearch_values whenclicking
 	 *  @return	string							Chaine avec URL
 	 */
-	public function getNomUrl($withpicto = 0, $maxlength = 0, $classname = '', $option = '', $overwritepicto = 0, $notooltip = 0, $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $maxlength = 0, $morecss = '', $option = '', $overwritepicto = 0, $notooltip = 0, $save_lastsearch_value = -1)
 	{
 		global $conf, $langs, $user, $hookmanager, $action;
 
@@ -1759,7 +1775,7 @@ class ActionComm extends CommonObject
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
 			$classfortooltip = 'classforajaxtooltip';
 			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
-			$label = '';
+			//$label = '';		// $label is used as ref when $maxlength is not negative, so we must not empty it.
 		} else {
 			$label = implode($this->getTooltipContentArray($params));
 		}
@@ -1770,9 +1786,9 @@ class ActionComm extends CommonObject
 				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
 			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
-			$linkclose .= $dataparams.' class="'.$classname.' '.$classfortooltip.'"';
+			$linkclose .= $dataparams.' class="'.$morecss.' '.$classfortooltip.'"';
 		} else {
-			$linkclose .= ' class="'.$classname.'"';
+			$linkclose .= ' class="'.$morecss.'"';
 		}
 
 		$url = '';
@@ -1820,7 +1836,7 @@ class ActionComm extends CommonObject
 			if ($maxlength < 0) {
 				$labelshort = $this->ref;
 			} else {
-				$labelshort = dol_trunc($label, $maxlength);
+				$labelshort = dol_trunc(empty($this->label) ? $labeltype : $this->label, $maxlength);
 			}
 		}
 
@@ -2700,85 +2716,80 @@ class ActionComm extends CommonObject
 					// Load event
 					$res = $this->fetch($actionCommReminder->fk_actioncomm);
 					if ($res > 0) {
-						$res2 = $this->fetch_thirdparty();
-						if ($res2 >= 0) {
-							// PREPARE EMAIL
-							$errormesg = '';
+						// PREPARE EMAIL
+						$errormesg = '';
+						$this->fetch_thirdparty();
 
-							// Make substitution in email content
-							$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $this);
+						// Make substitution in email content
+						$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $this);
 
-							complete_substitutions_array($substitutionarray, $langs, $this);
+						complete_substitutions_array($substitutionarray, $langs, $this);
 
-							// Content
-							$sendContent = make_substitutions($langs->trans($arraymessage->content), $substitutionarray);
+						// Content
+						$sendContent = make_substitutions($langs->trans($arraymessage->content), $substitutionarray);
 
-							//Topic
-							$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->transnoentities('EventReminder'));
+						//Topic
+						$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->transnoentities('EventReminder'));
 
-							// Recipient
-							$recipient = new User($this->db);
-							$res = $recipient->fetch($actionCommReminder->fk_user);
-							if ($res > 0) {
-								if (!empty($recipient->email)) {
-									$to = $recipient->email;
-								} else {
-									$errormesg = "Failed to send remind to user id=".$actionCommReminder->fk_user.". No email defined for user.";
-									$error++;
-								}
+						// Recipient
+						$recipient = new User($this->db);
+						$res = $recipient->fetch($actionCommReminder->fk_user);
+						if ($res > 0) {
+							if (!empty($recipient->email)) {
+								$to = $recipient->email;
 							} else {
-								$errormesg = "Failed to load recipient with user id=".$actionCommReminder->fk_user;
+								$errormesg = "Failed to send remind to user id=" . $actionCommReminder->fk_user . ". No email defined for user.";
 								$error++;
-							}
-
-							// Sender
-							$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
-							if (empty($from)) {
-								$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
-								$error++;
-							}
-
-							if (!$error) {
-								// Errors Recipient
-								$errors_to = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
-
-								// Mail Creation
-								$cMailFile = new CMailFile($sendTopic, (string) $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', '', '', '', '');
-
-								// Sending Mail
-								if ($cMailFile->sendfile()) {
-									$nbMailSend++;
-								} else {
-									$errormesg = 'Failed to send email to: '.$to.' '.$cMailFile->error.implode(',', $cMailFile->errors);
-									$error++;
-								}
-							}
-
-							if (!$error) {
-								$actionCommReminder->status = $actionCommReminder::STATUS_DONE;
-
-								$res = $actionCommReminder->update($user);
-								if ($res < 0) {
-									$errorsMsg[] = "Failed to update status to done of ActionComm Reminder";
-									$error++;
-									break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
-								}
-							} else {
-								$actionCommReminder->status = $actionCommReminder::STATUS_ERROR;
-								$actionCommReminder->lasterror = dol_trunc($errormesg, 128, 'right', 'UTF-8', 1);
-
-								$res = $actionCommReminder->update($user);
-								if ($res < 0) {
-									$errorsMsg[] = "Failed to update status to error of ActionComm Reminder";
-									$error++;
-									break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
-								} else {
-									$errorsMsg[] = $errormesg;
-								}
 							}
 						} else {
-							$errorsMsg[] = 'Failed to fetch record thirdparty on actioncomm with ID = '.$actionCommReminder->fk_actioncomm;
+							$errormesg = "Failed to load recipient with user id=" . $actionCommReminder->fk_user;
 							$error++;
+						}
+
+						// Sender
+						$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+						if (empty($from)) {
+							$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
+							$error++;
+						}
+
+						if (!$error) {
+							// Errors Recipient
+							$errors_to = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
+
+							// Mail Creation
+							$cMailFile = new CMailFile($sendTopic, (string) $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', '', '', '', '');
+
+							// Sending Mail
+							if ($cMailFile->sendfile()) {
+								$nbMailSend++;
+							} else {
+								$errormesg = 'Failed to send email to: ' . $to . ' ' . $cMailFile->error . implode(',', $cMailFile->errors);
+								$error++;
+							}
+						}
+
+						if (!$error) {
+							$actionCommReminder->status = $actionCommReminder::STATUS_DONE;
+
+							$res = $actionCommReminder->update($user);
+							if ($res < 0) {
+								$errorsMsg[] = "Failed to update status to done of ActionComm Reminder";
+								$error++;
+								break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
+							}
+						} else {
+							$actionCommReminder->status = $actionCommReminder::STATUS_ERROR;
+							$actionCommReminder->lasterror = dol_trunc($errormesg, 128, 'right', 'UTF-8', 1);
+
+							$res = $actionCommReminder->update($user);
+							if ($res < 0) {
+								$errorsMsg[] = "Failed to update status to error of ActionComm Reminder";
+								$error++;
+								break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
+							} else {
+								$errorsMsg[] = $errormesg;
+							}
 						}
 					} else {
 						$errorsMsg[] = 'Failed to fetch record actioncomm with ID = '.$actionCommReminder->fk_actioncomm;

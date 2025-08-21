@@ -59,11 +59,13 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 			console.log("select a new type (add) = "+type);
 			var size = jQuery("#size");
 			var computed_value = jQuery("#computed_value");
+			var ai_prompt = jQuery("#ai_prompt");
 			var langfile = jQuery("#langfile");
 			var default_value = jQuery("#default_value");
 			var unique = jQuery("#unique");
 			var required = jQuery("#required");
 			var alwayseditable = jQuery("#alwayseditable");
+			var emptyonclone = jQuery("#emptyonclone");
 			var list = jQuery("#list");
 			var totalizable = jQuery("#totalizable");
 			<?php
@@ -88,14 +90,21 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 				console.log("We enter a computed formula");
 				jQuery("#default_value").val('');
 				/* jQuery("#unique, #required, #alwayseditable, #list").removeAttr('checked'); */
-				jQuery("#default_value, #unique, #required, #alwayseditable, #list").attr('disabled', true);
-				jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_list").hide();
+				jQuery("#default_value, #unique, #required, #alwayseditable, #emptyonclone, #list").attr('disabled', true);
+				jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_emptyonclone, tr.extra_list").hide();
 			}
 			else
 			{
 				console.log("No computed formula");
-				jQuery("#default_value, #unique, #required, #alwayseditable, #list").attr('disabled', false);
-				jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_list").show();
+				jQuery("#default_value, #unique, #required, #alwayseditable, #emptyonclone, #list").attr('disabled', false);
+				jQuery("tr.extra_default_value, tr.extra_unique, tr.extra_required, tr.extra_alwayseditable, tr.extra_emptyonclone, tr.extra_list").show();
+			}
+
+			// Case of ai prompt
+			if (type == 'text' || type == 'varchar' || type == 'int' || type == 'double' || type == 'price' || type == 'html') {
+				jQuery("tr.extra_ai_prompt").show();
+			} else {
+				jQuery(ai_prompt).val(''); jQuery("tr.extra_ai_prompt").hide();
 			}
 
 			if (type == 'date')          { size.val('').prop('disabled', true); unique.removeAttr('disabled'); jQuery("#value_choice").hide();jQuery("#helpchkbxlst").hide(); }
@@ -131,14 +140,14 @@ $listofexamplesforlink = 'Societe:societe/class/societe.class.php<br>Contact:con
 
 			if (type == 'separate' || type == 'point' || type == 'linestrg' || type == 'polygon')
 			{
-				required.removeAttr('checked').prop('disabled', true); alwayseditable.removeAttr('checked').prop('disabled', true); list.removeAttr('checked').prop('disabled', true);
+				required.removeAttr('checked').prop('disabled', true); alwayseditable.removeAttr('checked').prop('disabled', true); emptyonclone.removeAttr('checked').prop('disabled', true); list.removeAttr('checked').prop('disabled', true);
 				jQuery('#size, #default_value, #langfile').val('').prop('disabled', true);
 				jQuery('#list').val(3);	// visible on create/update/view form only
 			}
 			else
 			{
 				default_value.removeAttr('disabled');
-				langfile.removeAttr('disabled');required.removeAttr('disabled'); alwayseditable.removeAttr('disabled'); list.removeAttr('disabled');
+				langfile.removeAttr('disabled');required.removeAttr('disabled'); alwayseditable.removeAttr('disabled'); emptyonclone.removeAttr('disabled'); list.removeAttr('disabled');
 			}
 		}
 		init_typeoffields('<?php echo GETPOST('type', 'alpha'); ?>');
@@ -218,6 +227,34 @@ print $formadmin->selectTypeOfFields('type', GETPOST('type', 'alpha'));
 <?php } ?>
 <td class="valeur"><textarea name="computed_value" id="computed_value" class="quatrevingtpercent" rows="<?php echo ROWS_4 ?>"><?php echo(GETPOSTISSET('computed_value') ? GETPOST('computed_value', 'restricthtml') : ''); ?></textarea></td>
 </tr>
+<!-- AI Prompt -->
+<tr class="extra_ai_prompt">
+	<td><?php
+	if ($elementtype == "projet") {
+		$elementtype = "project";
+	}
+	$elementprop = getElementProperties($elementtype);
+	$object = fetchObjectByElement(0, $elementtype);
+	if ($elementprop["module"] == "adherent") {
+		$elementprop["module"] = "member";
+	}
+	if ($elementprop["module"] == "projet") {
+		$elementprop["module"] = "project";
+	}
+	if ($elementprop["module"] == "contrat") {
+		$elementprop["module"] = "contract";
+		$object->element = "contract";
+	}
+	if ($elementprop["module"] == "ficheinter") {
+		$elementprop["module"] = "intervention";
+	}
+	$substitutionarray = getCommonSubstitutionArray($langs, 1, null, $object, array("object", $elementprop["module"]));
+	$texthelp = $langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
+	foreach ($substitutionarray as $key => $val) {
+		$texthelp .= $key.' -> '.$val.'<br>';
+	}
+	echo $form->textwithpicto($langs->trans("AIPromptExtrafield"), $texthelp, 1, 'help', 'valignmiddle', 0, 3, 'abc');?></td>
+<td class="valeur"><textarea name="ai_prompt" id="ai_prompt" class="quatrevingtpercent" rows="<?php echo ROWS_4 ?>"><?php echo(GETPOSTISSET('ai_prompt') ? GETPOST('ai_prompt', 'restricthtml') : ''); ?></textarea></td></tr>
 <!-- Default Value (at sql setup level) -->
 <tr class="extra_default_value"><td><?php echo $langs->trans("DefaultValue").' ('.$langs->trans("Database").')'; ?></td><td class="valeur"><input id="default_value" type="text" name="default_value" class="minwidth200" value="<?php echo(GETPOST('default_value', 'alpha') ? GETPOST('default_value', 'alpha') : ''); ?>"></td></tr>
 <!-- Unique -->
@@ -226,6 +263,8 @@ print $formadmin->selectTypeOfFields('type', GETPOST('type', 'alpha'));
 <tr class="extra_required"><td><?php echo $langs->trans("Mandatory"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required"<?php echo(GETPOST('required', 'alpha') ? ' checked' : ''); ?>></td></tr>
 <!-- Always editable -->
 <tr class="extra_alwayseditable"><td><?php echo $form->textwithpicto($langs->trans("AlwaysEditable"), $langs->trans("EditableWhenDraftOnly")); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable"<?php echo((GETPOST('alwayseditable', 'alpha') || !GETPOST('button', 'alpha')) ? ' checked' : ''); ?>></td></tr>
+<!-- Empty on clone -->
+<tr class="extra_emptyonclone"><td><?php echo $form->textwithpicto($langs->trans("EmptyOnClone"), $langs->trans("EmptyOnCloneDesc")); ?></td><td class="valeur"><input id="emptyonclone" type="checkbox" name="emptyonclone"<?php echo((GETPOST('emptyonclone', 'alpha')) ? ' checked' : ''); ?>></td></tr>
 <!-- Visibility -->
 <tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc").'<br><br>'.$langs->trans("ItCanBeAnExpression")); ?>
 </td><td class="valeur"><input id="list" class="width50" type="text" name="list" value="<?php echo GETPOSTISSET('list') ? GETPOSTINT('list') : '1'; ?>"></td></tr>

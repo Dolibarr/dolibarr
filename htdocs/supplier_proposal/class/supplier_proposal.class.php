@@ -15,7 +15,7 @@
  * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
- * Copyright (C) 2022      Gauthier VERDOL     		<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2022       Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1260,6 +1260,7 @@ class SupplierProposal extends CommonObject
 		$sql .= ", p.fk_mode_reglement";
 		$sql .= ', p.fk_account';
 		$sql .= ", p.fk_shipping_method";
+		$sql .= ", p.last_main_doc";
 		$sql .= ", p.fk_multicurrency, p.multicurrency_code, p.multicurrency_tx, p.multicurrency_total_ht, p.multicurrency_total_tva, p.multicurrency_total_ttc";
 		$sql .= ", c.label as statut_label";
 		$sql .= ", cr.code as cond_reglement_code, cr.libelle as cond_reglement, cr.libelle_facture as cond_reglement_libelle_doc";
@@ -1306,6 +1307,7 @@ class SupplierProposal extends CommonObject
 				$this->delivery_date        = $this->db->jdate($obj->delivery_date);
 				$this->shipping_method_id   = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
 
+				$this->last_main_doc    = $obj->last_main_doc;
 				$this->mode_reglement_id    = $obj->fk_mode_reglement;
 				$this->mode_reglement_code  = $obj->mode_reglement_code;
 				$this->mode_reglement       = $obj->mode_reglement;
@@ -2690,9 +2692,10 @@ class SupplierProposal extends CommonObject
 
 				$this->lines[$i] = new SupplierProposalLine($this->db);
 				$this->lines[$i]->id = $obj->rowid; // for backward compatibility
-				$this->lines[$i]->rowid				= $obj->rowid;
-				$this->lines[$i]->label 			= $obj->custom_label;
-				$this->lines[$i]->description = $obj->description;
+				$this->lines[$i]->rowid = $obj->rowid;
+				$this->lines[$i]->label = $obj->custom_label;
+				$this->lines[$i]->description = $obj->description; // deprecated
+				$this->lines[$i]->desc = $obj->description;
 				$this->lines[$i]->fk_product = $obj->fk_product;
 				$this->lines[$i]->ref = $obj->ref;
 				$this->lines[$i]->product_label = $obj->product_label;

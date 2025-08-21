@@ -277,6 +277,24 @@ class SocieteAccount extends CommonObject
 			}
 		}
 
+		if ($this->site == 'dolibarr_portal') {
+			// Check that entry does not already exists
+			$sql = "SELECT sa.rowid, sa.entity";
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe_account as sa";
+			$sql .= " WHERE sa.login = '".$this->db->escape($this->login)."'";
+			$sql .= " AND sa.entity IN (".getEntity('societe').")";
+			$sql .= " AND sa.site = 'dolibarr_portal'";
+			$sql .= " ORDER BY sa.rowid DESC"; // To always get the same order
+
+			$result = $this->db->query($sql);
+			if ($result) {
+				if ($this->db->num_rows($result)) {
+					$this->error = 'ErrorLoginAlreadyExists';
+					return -2;
+				}
+			}
+		}
+
 		return $this->createCommon($user, $notrigger);
 	}
 

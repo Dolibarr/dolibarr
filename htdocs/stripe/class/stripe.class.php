@@ -22,8 +22,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/stripe/config.php'; // This set stripe global env
-
+require_once DOL_DOCUMENT_ROOT.'/stripe/config.php'; // This set stripe global $stripearrayofkeys and $stripearrayofkeysbyenv
 
 /**
  *	Stripe class
@@ -336,6 +335,32 @@ class Stripe extends CommonObject
 		return $selectedreader;
 	}
 
+
+	/**
+	 * Convert an amount in Stripe format into an amount into standard amount
+	 *
+	 * @param 	int|float	$amount				Amount in Stripe format (For example 1234 for 12.34 euros)
+	 * @param	string		$currency_code		Currency code (Example 'EUR')
+	 * @param	int			$direction			0=From standard to Stripe amount, 1=From Stripe to standard amount
+	 * @return	float							Standard float amount (For example 12.34)
+	 */
+	public function convertAmount($amount, $currency_code, $direction = 0)
+	{
+		$arrayzerounitcurrency = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
+		if (!in_array($currency_code, $arrayzerounitcurrency)) {
+			if (empty($direction)) {
+				$newamount = (int) ($amount * 100);
+			} else {
+				$newamount = (float) ($amount / 100);
+			}
+		} else {
+			$newamount = $amount;
+		}
+
+		return $newamount;
+	}
+
+
 	/**
 	 * Get the Stripe payment intent. Create it with confirmnow=false
 	 * Warning. If a payment was tried and failed, a payment intent was created.
@@ -345,22 +370,22 @@ class Stripe extends CommonObject
 	 * Note: This is used when option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is on when making a payment from the public/payment/newpayment.php page
 	 * but not when using the STRIPE_USE_NEW_CHECKOUT.
 	 *
-	 * @param   float		$amount                             Amount
-	 * @param   string		$currency_code                      Currency code
-	 * @param   string		$tag                                Tag
-	 * @param   string		$description                        Description
-	 * @param	?CommonObject	$object						    Object to pay with Stripe
-	 * @param	?string		$customer							Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
-	 * @param	?string		$key							    ''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
-	 * @param	int<0,1>	$status							    Status (0=test, 1=live)
-	 * @param	int<0,1>	$usethirdpartyemailforreceiptemail	1=use thirdparty email for receipt
-	 * @param	'automatic'|'manual'	$mode		                        automatic=automatic confirmation/payment when conditions are ok, manual=need to call confirm() on intent
-	 * @param   bool		$confirmnow                         false=default, true=try to confirm immediately after create (if conditions are ok)
-	 * @param   ?string		$payment_method                     'pm_....' (if known)
-	 * @param   int<0,1>	$off_session                        If we use an already known payment method to pay when customer is not available during the checkout flow.
-	 * @param	int<0,1>	$noidempotency_key					Do not use the idempotency_key when creating the PaymentIntent
-	 * @param	int			$did								ID of an existing line into llx_prelevement_demande (Dolibarr intent). If provided, no new line will be created.
-	 * @return 	?\Stripe\PaymentIntent				        Stripe PaymentIntent or null if not found and failed to create
+	 * @param   float			$amount                             Amount
+	 * @param   string			$currency_code                      Currency code
+	 * @param   string			$tag                                Tag
+	 * @param   string			$description                        Description
+	 * @param	?CommonObject	$object						    	Object to pay with Stripe
+	 * @param	?string			$customer							Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
+	 * @param	?string			$key							    ''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
+	 * @param	int<0,1>		$status							    Status (0=test, 1=live)
+	 * @param	int<0,1>		$usethirdpartyemailforreceiptemail	1=use thirdparty email for receipt
+	 * @param	'automatic'|'manual'|'terminal'		$mode			Automatic=automatic confirmation/payment when conditions are ok, manual=need to call confirm() on intent, terminal=manual
+	 * @param   bool			$confirmnow                     	False=default, true=try to confirm immediately after create (if conditions are ok)
+	 * @param   ?string			$payment_method                 	'pm_....' (if known)
+	 * @param   int<0,1>		$off_session                    	If we use an already known payment method to pay when customer is not available during the checkout flow.
+	 * @param	int<0,1>		$noidempotency_key					Do not use the idempotency_key when creating the PaymentIntent
+	 * @param	int				$did								ID of an existing line into llx_prelevement_demande (Dolibarr intent). If provided, no new line will be created.
+	 * @return 	?\Stripe\PaymentIntent				        		Stripe PaymentIntent or null if not found and failed to create
 	 */
 	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false, $payment_method = null, $off_session = 0, $noidempotency_key = 1, $did = 0)
 	{
@@ -376,12 +401,7 @@ class Stripe extends CommonObject
 			$service = 'StripeLive';
 		}
 
-		$arrayzerounitcurrency = array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
-		if (!in_array($currency_code, $arrayzerounitcurrency)) {
-			$stripeamount = $amount * 100;
-		} else {
-			$stripeamount = $amount;
-		}
+		$stripeamount = $this->convertAmount($amount, $currency_code, 0);
 
 		$fee = 0;
 		if (getDolGlobalString("STRIPE_APPLICATION_FEE_PERCENT")) {
@@ -392,11 +412,7 @@ class Stripe extends CommonObject
 		} elseif ($fee < (float) getDolGlobalString("STRIPE_APPLICATION_FEE_MINIMAL", '0')) {
 			$fee = (float) getDolGlobalString("STRIPE_APPLICATION_FEE_MINIMAL", '0');
 		}
-		if (!in_array($currency_code, $arrayzerounitcurrency)) {
-			$stripefee = round($fee * 100);
-		} else {
-			$stripefee = round($fee);
-		}
+		$stripefee = round($this->convertAmount($fee, $currency_code));
 
 		$paymentintent = null;
 
@@ -454,6 +470,8 @@ class Stripe extends CommonObject
 				}
 			}
 
+			$stripemode = $mode;
+
 			// list of payment method types
 			$paymentmethodtypes = array("card");
 			$descriptor = dol_trunc($tag, 10, 'right', 'UTF-8', 1);
@@ -476,8 +494,11 @@ class Stripe extends CommonObject
 			if (getDolGlobalInt('STRIPE_SOFORT')) {
 				$paymentmethodtypes[] = "sofort";
 			}
-			if (getDolGlobalInt('STRIPE_CARD_PRESENT') && $mode == 'terminal') {
-				$paymentmethodtypes = array("card_present");
+			if ($mode == 'terminal') {
+				if (getDolGlobalInt('STRIPE_CARD_PRESENT')) {
+					$paymentmethodtypes = array("card_present");
+				}
+				$stripemode = 'manual';
 			}
 
 			global $dolibarr_main_url_root;
@@ -486,7 +507,7 @@ class Stripe extends CommonObject
 
 			$dataforintent = array(
 				"confirm" => $confirmnow, // try to confirm immediately after create (if conditions are ok)
-				"confirmation_method" => $mode,
+				"confirmation_method" => $stripemode,
 				"amount" => $stripeamount,
 				"currency" => $currency_code,
 				"payment_method_types" => $paymentmethodtypes,	// When payment_method_types is set, return_url is not required but payment mode can't be managed from dashboard
@@ -836,7 +857,7 @@ class Stripe extends CommonObject
 	 */
 	public function cardStripe($cu, CompanyPaymentMode $object, $stripeacc = '', $status = 0, $createifnotlinkedtostripe = 0)
 	{
-		global $conf, $user, $langs;
+		global $conf, $langs;
 
 		$card = null;
 
@@ -1075,7 +1096,7 @@ class Stripe extends CommonObject
 
 						$service = 'StripeTest';
 						$servicestatus = 0;
-						if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
+						if (getDolGlobalString('STRIPE_LIVE')/* && !GETPOST('forcesandbox', 'alpha') */) {
 							$service = 'StripeLive';
 							$servicestatus = 1;
 						}

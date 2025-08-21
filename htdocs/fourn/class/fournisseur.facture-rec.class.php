@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			    <regis.houssin@inodbox.com>
@@ -43,7 +42,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class FactureFournisseurRec extends CommonInvoice
 {
-	const TRIGGER_PREFIX = 'SUPPLIERBILLREC';
+	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'SUPPLIERBILLREC';
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -67,7 +71,7 @@ class FactureFournisseurRec extends CommonInvoice
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'bill';
+	public $picto = 'supplier_invoice';
 
 	/**
 	 * {@inheritdoc}
@@ -853,8 +857,8 @@ class FactureFournisseurRec extends CommonInvoice
 				$line->total_localtax2          = $objp->total_localtax2;
 				$line->total_ttc                = $objp->total_ttc;
 				$line->product_type             = $objp->product_type;
-				$line->date_start               = $objp->date_start;
-				$line->date_end                 = $objp->date_end;
+				$line->date_start               = $this->db->jdate($objp->date_start);
+				$line->date_end                 = $this->db->jdate($objp->date_end);
 				$line->info_bits                = $objp->info_bits	;
 				$line->special_code             = $objp->special_code;
 				$line->rang                     = $objp->rang;

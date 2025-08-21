@@ -1,8 +1,7 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2017	Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024	Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +55,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
+	const STATUS_USED = 5;					// was present, presence confirmed, no more entrances can be done using this ticket
 	const STATUS_CANCELED = 9;
 
 	/**
@@ -93,7 +93,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => 2, 'index' => 1, 'comment' => "Reference of object"),
 		//'fk_actioncomm' => array('type'=>'integer:ActionComm:comm/action/class/actioncomm.class.php:1', 'label'=>'ConferenceOrBooth', 'enabled'=>'1', 'position'=>15, 'notnull'=>0, 'visible'=>0, 'index'=>1, 'picto'=>'agenda'),
 		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'position' => 20, 'notnull' => 1, 'visible' => 0, 'index' => 1, 'picto' => 'project', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
-		'email' => array('type' => 'mail', 'label' => 'EmailAttendee', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'autofocusoncreate' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax150'),
+		'email' => array('type' => 'mail', 'label' => 'EmailAttendee', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'autofocusoncreate' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'csslist' => 'tdoverflowmax150'),
 		'firstname' => array('type' => 'varchar(100)', 'label' => 'Firstname', 'enabled' => 1, 'position' => 31, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax125'),
 		'lastname' => array('type' => 'varchar(100)', 'label' => 'Lastname', 'enabled' => 1, 'position' => 32, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax125'),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'position' => 40, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'help' => "OrganizationEventLinkToThirdParty", 'picto' => 'company', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
@@ -111,7 +111,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'position' => 1010, 'notnull' => -1, 'visible' => 0,),
 		'ip' => array('type' => 'varchar(250)', 'label' => 'IPAddress', 'enabled' => 1, 'position' => 900, 'notnull' => -1, 'visible' => -2,),
-		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'default' => '0', 'notnull' => 1, 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Validated', '9' => 'Canceled'),),
+		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'default' => '0', 'notnull' => 1, 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Registered', '5' => 'ShowedUp', '9' => 'Canceled'),),
 	);
 	/**
 	 * @var int
@@ -476,7 +476,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 		// Manage filter
 		if (is_array($filter)) {	// deprecated, use $filter = USF syntax
-			dol_syslog("You are using a deprecated use of fetchAll. filter parameter mus be an USF string now.", LOG_WARNING);
+			dol_syslog("You are using a deprecated use of fetchAll. filter parameter must be an USF string now.", LOG_WARNING);
 			$sqlwhere = array();
 			if (count($filter) > 0) {
 				foreach ($filter as $key => $value) {
@@ -953,22 +953,30 @@ class ConferenceOrBoothAttendee extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			//$langs->load("eventorganization@eventorganization");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Registered');
+			$this->labelStatus[self::STATUS_USED] = $langs->trans('ShowedUp');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Validated');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Registered');
+			$this->labelStatusShort[self::STATUS_USED] = $langs->trans('ShowedUp');
 			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Disabled');
 		}
 
 		$statusType = 'status'.$status;
-		//if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
+		if ($status == self::STATUS_VALIDATED) {
+			$statusType = 'status2';
+		}
 		if ($status == self::STATUS_CANCELED) {
-			$statusType = 'status6';
+			$statusType = 'status9';
 		}
 
 		if ($status == self::STATUS_VALIDATED && $this->date_subscription && $this->amount) {
 			$statusType = 'status4';
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated').' - '.$langs->trans("Paid");
+		}
+
+		if ($status == self::STATUS_USED) {
+			$statusType = 'status6';
 		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);

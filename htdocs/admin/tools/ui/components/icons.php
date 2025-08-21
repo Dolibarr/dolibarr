@@ -42,14 +42,14 @@ $langs->load('uxdocumentation');
 $documentation = new Documentation($db);
 
 // Output html head + body - Param is Title
-$documentation->docHeader('Icons', [], ['admin/tools/ui/css/doc-icons.css']);
+$documentation->docHeader('Icons', [], ['admin/tools/ui/css/doc-icons.css'], GETPOST('hidenavmenu'));
 
 // Set view for menu and breadcrumb
 // Menu must be set in constructor of documentation class
 $documentation->view = array('Components','Icons');
 $form = new Form($db);
 
-
+$mode=GETPOST('mode'); // ex : no-btn
 $displayMode = GETPOST('displayMode') == 'kanban' ?  'kanban' : 'icon-only';
 $revertDisplayMode = $displayMode == 'kanban' ? 'icon-only' : 'kanban';
 $revertDisplayName = $displayMode == 'kanban' ? $langs->trans('ViewList') : $langs->trans('ViewKanban');
@@ -62,7 +62,7 @@ if (!GETPOST('hidenavmenu')) {
 }
 ?>
 
-<div class="doc-wrapper">
+<div class="doc-wrapper<?php print GETPOST('hidenavmenu') ? "-bis" : ""; ?>">
 
 		<?php
 		if (!GETPOST('hidenavmenu')) {
@@ -112,7 +112,11 @@ if (!GETPOST('hidenavmenu')) {
 				); ?>
 
 				<div class="right">
-					<?php print dolGetButtonTitle($revertDisplayName, '', $switchDisplayLinkIcon, $switchDisplayLink.'#img-picto-section-list', '', 1, ['forcenohideoftext'=>1]); ?>
+					<?php
+					if ($mode != 'no-btn') {
+						print dolGetButtonTitle($revertDisplayName, '', $switchDisplayLinkIcon, $switchDisplayLink.'#img-picto-section-list', '', 1, ['forcenohideoftext'=>1]);
+					}
+					?>
 				</div>
 
 				<div class="documentation-example">
@@ -142,7 +146,7 @@ if (!GETPOST('hidenavmenu')) {
 								</div>';
 							} else {
 								$tooltip = '<u>'.$langs->trans("DocCodeForMenuOrModuleBuilder").':</u><br>'.$iconName;
-								$tooltip .= '<br><u>'.$langs->trans("DocExampleForPHPCode").':</u><br>img_picto(\''.$labelAlt.'\', \''.$iconName.'\')';
+								$tooltip .= '<br><br><u>'.$langs->trans("DocExampleForPHPCode").':</u><br>img_picto(\''.$labelAlt.'\', \''.$iconName.'\')';
 								$iconCode = img_picto($tooltip, $iconName, '', 0, 0, 0, '', 'classfortooltip');
 								print '<span class="doc-icon-list-item">'.$iconCode;
 								print '<span class="doc-icon-hidden-name-for-search">'.$iconName.'</span></span>';
@@ -189,7 +193,11 @@ if (!GETPOST('hidenavmenu')) {
 				); ?>
 
 				<div class="right">
-					<?php print dolGetButtonTitle($revertDisplayName, '', $switchDisplayLinkIcon, $switchDisplayLink.'#icon-section-list', '', 1, ['forcenohideoftext'=>1]); ?>
+					<?php
+					if ($mode != 'no-btn') {
+						print dolGetButtonTitle($revertDisplayName, '', $switchDisplayLinkIcon, $switchDisplayLink.'#icon-section-list', '', 1, ['forcenohideoftext'=>1]);
+					}
+					?>
 				</div>
 
 				<div class="documentation-example">

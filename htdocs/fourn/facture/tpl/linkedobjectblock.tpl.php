@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2010-2011 Regis Houssin <regis.houssin@inodbox.com>
- * Copyright (C) 2014      Marcos García <marcosgdf@gmail.com>
- * Copyright (C) 2015      Charlie Benke <charlie@patas-monkey.com>
- * Copyright (C) 2016      Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2010-2011  Regis Houssin 			<regis.houssin@inodbox.com>
+ * Copyright (C) 2014       Marcos García 			<marcosgdf@gmail.com>
+ * Copyright (C) 2015       Charlie Benke 			<charlie@patas-monkey.com>
+ * Copyright (C) 2016       Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,9 +36,8 @@ global $noMoreLinkedObjectBlockAfter;
 $langs = $GLOBALS['langs'];
 '@phan-var-force Translate $langs';
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
-'
-@phan-var-force array<string,CommonObject> $linkedObjectBlock
-';
+'@phan-var-force FactureFournisseur[] $linkedObjectBlock';
+/** @var FactureFournisseur[] $linkedObjectBlock */
 
 
 $langs->load("bills");
@@ -53,7 +53,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	} ?>
 	<tr class="<?php echo $trclass; ?>">
 		<td><?php echo $langs->trans("SupplierInvoice"); ?></td>
-		<td><a href="<?php echo DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$objectlink->id ?>"><?php echo img_object($langs->trans("ShowBill"), "bill").' '.$objectlink->ref; ?></a></td>
+		<td><?php echo $objectlink->getNomUrl(1) ?></td>
 		<td class="left"><?php echo $objectlink->ref_supplier; ?></td>
 		<td class="center"><?php echo dol_print_date($objectlink->date, 'day'); ?></td>
 		<td class="right"><?php
@@ -62,7 +62,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 			if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE) {
 				$sign = -1;
 			}
-			if ($objectlink->statut != 3) {
+			if ($objectlink->status != 3) {
 				// If not abandoned
 				$total += $sign * $objectlink->total_ht;
 				echo price($objectlink->total_ht);

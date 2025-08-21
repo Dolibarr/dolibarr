@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2022       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,6 +50,7 @@ include '../../main.inc.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -58,7 +59,7 @@ include '../../main.inc.php';
 $objectType = GETPOST('objectType', 'aZ09');
 $objectId = GETPOST('objectId', 'aZ09');
 $field = GETPOST('field', 'aZ09');
-$value = GETPOST('value', 'aZ09');
+$value = GETPOST('value', 'alpha');
 
 $module = getElementProperties($objectType)['module'];
 $element_ref = '';

@@ -8,8 +8,8 @@
  * Copyright (C) 2014       Cedric GROSS            <c.gross@kreiz-it.fr>
  * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2019	      Ferran Marcet	          <fmarcet@2byte.es>
- * Copyright (C) 2024-2025	MDW				          <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019       Ferran Marcet	        <fmarcet@2byte.es>
+ * Copyright (C) 2024-2025  MDW				        <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -885,8 +885,16 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 			$datep = dol_mktime(0, 0, 0, GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), $tzforfullday ? $tzforfullday : 'tzuserrel');
 			$datef = dol_mktime(23, 59, 59, GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), $tzforfullday ? $tzforfullday : 'tzuserrel');
 		} else {
-			$datep = dol_mktime(GETPOSTINT("aphour"), GETPOSTINT("apmin"), GETPOSTINT("apsec"), GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), 'tzuserrel');
-			$datef = dol_mktime(GETPOSTINT("p2hour"), GETPOSTINT("p2min"), GETPOSTINT("apsec"), GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), 'tzuserrel');
+			if (!GETPOSTISSET('ap') && !GETPOSTISSET('aphour') && !GETPOSTISSET('apmin')) {	// If date fields are disabled, we keep old value
+				$datep = $object->datep;
+			} else {
+				$datep = dol_mktime(GETPOSTINT("aphour"), GETPOSTINT("apmin"), GETPOSTINT("apsec"), GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), 'tzuserrel');
+			}
+			if (!GETPOSTISSET('p2') && !GETPOSTISSET('p2hour') && !GETPOSTISSET('p2min')) {	// If date fields are disabled, we keep old value
+				$datef = $object->datef;
+			} else {
+				$datef = dol_mktime(GETPOSTINT("p2hour"), GETPOSTINT("p2min"), GETPOSTINT("apsec"), GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), 'tzuserrel');
+			}
 		}
 		//set end date to now if percentage is set to 100 and end date not set
 		$datef = (!$datef && $percentage == 100) ? dol_now() : $datef;
@@ -932,6 +940,18 @@ if (empty($reshook) && $action == 'update' && $usercancreate) {
 			$object->contact_id = key($object->socpeopleassigned);
 		}
 		$object->fk_project  = GETPOSTINT("projectid");
+		$taskid = GETPOSTINT('taskid');
+		if (!empty($taskid)) {
+			$taskProject = new Task($db);
+			if ($taskProject->fetch($taskid) > 0) {
+				$object->fk_project = $taskProject->fk_project;
+			}
+
+			$object->fk_element = $taskid;
+			$object->elementid = $taskid;
+			$object->elementtype = 'task';
+		}
+
 		$object->note_private = trim(GETPOST("note", "restricthtml"));
 
 		if (GETPOST("elementtype", 'alpha')) {
@@ -1590,8 +1610,7 @@ if ($action == 'create') {
 	if (isModEnabled('category')) {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 3);
-		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), 0, 0, 'minwidth300 quatrevingtpercent widthcentpercentminusx', 0, 0);
+		print $form->selectCategories(Categorie::TYPE_ACTIONCOMM, 'categories', $object);
 		print "</td></tr>";
 	}
 
@@ -1625,7 +1644,7 @@ if ($action == 'create') {
 	}
 
 	// Status
-	print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td>';
+	print '<tr><td>'.$langs->trans("Status").' / '.$langs->trans("Progression").'</td>';
 	print '<td>';
 	$percent = $complete !== '' ? $complete : -1;
 	if (GETPOSTISSET('status')) {
@@ -1725,7 +1744,7 @@ if ($action == 'create') {
 		print '$(document).ready(function () {
 	               $("#projectid").change(function () {
                         var url = "'.DOL_URL_ROOT.'/projet/ajax/projects.php?mode=gettasks&socid="+$("#search_socid").val()+"&projectid="+$("#projectid").val();
-						console.log("Call url to get new list of tasks: "+url);
+						console.log("Call url to get the new list of tasks: "+url);
                         $.get(url, function(data) {
                             console.log(data);
                             if (data) $("#taskid").html(data).select2();
@@ -1746,7 +1765,15 @@ if ($action == 'create') {
 
 		$tid = GETPOSTISSET("projecttaskid") ? GETPOSTINT("projecttaskid") : (GETPOSTISSET("taskid") ? GETPOSTINT("taskid") : '');
 
-		$formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 24, 0, '1', 1, 0, 0, 'maxwidth500 widthcentpercentminusxx', (string) $projectsListId);
+		if (empty($projectsListId)) {
+			print '<select class="valignmiddle flat maxwidth500 widthcentpercentminusxx minwidth150imp" id="taskid" name="taskid">';
+			print '<option class="opacitymedium">&nbsp;</option>';
+			print '<option class="opacitymedium" disabled data-html="'.dolPrintHTMLForAttribute($langs->trans("SelectAProjectFirst")).'">'.$langs->trans("SelectAProjectFirst").'</option>';
+			print '</select>';
+			print ajax_combobox('taskid');
+		} else {
+			print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 32, 0, '1', 1, 0, 0, 'maxwidth500 widthcentpercentminusxx', (string) $projectsListId, 'all', null, 1);
+		}
 		print '</td></tr>';
 	}
 
@@ -1915,11 +1942,7 @@ if ($action == 'create') {
 if ($id > 0 && $action != 'create') {
 	$result1 = $object->fetch($id);
 	if ($result1 <= 0) {
-		$langs->load("errors");
-		print $langs->trans("ErrorRecordNotFound");
-
-		llxFooter();
-		exit;
+		recordNotFound('', 0);
 	}
 
 	$result2 = $object->fetch_thirdparty();
@@ -1939,7 +1962,7 @@ if ($id > 0 && $action != 'create') {
 		$object->datep       = $datep;
 		$object->datef       = $datef;
 		$object->percentage  = $percentage;
-		$object->priority    = GETPOST("priority", "alphanohtml");
+		$object->priority = GETPOSTINT("priority");
 		$object->fulldayevent = GETPOST("fullday") ? 1 : 0;
 		$object->location    = GETPOST('location', "alphanohtml");
 		$object->socid       = GETPOSTINT("socid");
@@ -1947,8 +1970,8 @@ if ($id > 0 && $action != 'create') {
 		foreach ($socpeopleassigned as $tmpid) {
 			$object->socpeopleassigned[$id] = array('id' => $tmpid);
 		}
-		$object->contact_id   = GETPOSTINT("contactid");
-		$object->fk_project  = GETPOSTINT("projectid");
+		$object->contact_id = GETPOSTINT("contactid");
+		$object->fk_project = GETPOSTINT("projectid");
 
 		$object->note_private = GETPOST("note", 'restricthtml');
 	}
@@ -2142,10 +2165,6 @@ if ($id > 0 && $action != 'create') {
 
 		// Date start - end
 		print '<tr><td class="nowrap">';
-		/*print '<span class="fieldrequired">'.$langs->trans("DateActionStart").'</span>';
-		print ' - ';
-		print '<span id="dateend"'.($object->type_code == 'AC_RDV' ? ' class="fieldrequired"' : '').'>'.$langs->trans("DateActionEnd").'</span>';
-		*/
 		print '</td><td>';
 		$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
 		print $form->selectDate($datep ? $datep : $object->datep, 'ap', 1, 1, 0, "action", 1, 2, ($caneditdateorowner ? 0 : 1), 'fulldaystart', '', '', '', 1, '', '', $object->fulldayevent ? ($tzforfullday ? $tzforfullday : 'tzuserrel') : 'tzuserrel');
@@ -2205,7 +2224,7 @@ if ($id > 0 && $action != 'create') {
 		}
 
 		// Status
-		print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';
+		print '<tr><td class="nowrap">'.$langs->trans("Status").' / '.$langs->trans("Progression").'</td><td colspan="3">';
 		$percent = GETPOSTISSET("percentage") ? GETPOSTINT("percentage") : $object->percentage;
 		$formactions->form_select_status_action('formaction', (string) $percent, 1, 'complete', 0, 0, 'maxwidth200');
 		print '</td></tr>';
@@ -2213,14 +2232,7 @@ if ($id > 0 && $action != 'create') {
 		// Tags-Categories
 		if (isModEnabled('category')) {
 			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 3);
-			$c = new Categorie($db);
-			$cats = $c->containing($object->id, Categorie::TYPE_ACTIONCOMM);
-			$arrayselected = array();
-			foreach ($cats as $cat) {
-				$arrayselected[] = $cat->id;
-			}
-			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+			print $form->selectCategories(Categorie::TYPE_ACTIONCOMM, 'categories', $object);
 			print "</td></tr>";
 		}
 
@@ -2290,7 +2302,7 @@ if ($id > 0 && $action != 'create') {
 		}
 
 		// Object linked
-		if (!empty($object->fk_element) && !empty($object->elementtype)) {
+		if ($object->fk_project || (!empty($object->fk_element) && !empty($object->elementtype))) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			print '<tr>';
 			print '<td>'.$langs->trans("LinkedObject").'</td>';
@@ -2314,16 +2326,47 @@ if ($id > 0 && $action != 'create') {
                 })';
 				print '</script>'."\n";
 
-				$formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $object->fk_element, 'fk_element', 24, 0, '', 1, 0, 0, 'maxwidth500', (string) $object->fk_project);
+				print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $object->fk_element, 'fk_element', 24, 0, '', 1, 0, 0, 'maxwidth500', (string) $object->fk_project, 'all', null, 1);
 				print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
 
 				print '</td>';
 			} else {
-				print '<td>';
-				print dolGetElementUrl($object->fk_element, $object->elementtype, 1);
-				print '<input type="hidden" name="fk_element" value="'.$object->fk_element.'">';
-				print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
-				print '</td>';
+				if (empty($object->elementtype) && empty($object->elementid) && $object->fk_project) {
+					$projectsListId = GETPOSTINT('projectid') ? GETPOSTINT('projectid') : $object->fk_project;
+
+					print '<td id="project-task-input-container" >';
+
+					// update task list
+					print "\n".'<script type="text/javascript">';
+					print '$(document).ready(function () {
+							$("#projectid").change(function () {
+									var url = "'.DOL_URL_ROOT.'/projet/ajax/projects.php?mode=gettasks&socid="+$("#search_socid").val()+"&projectid="+$("#projectid").val();
+									console.log("Call url to get new list of tasks: "+url);
+									$.get(url, function(data) {
+										console.log(data);
+										if (data) $("#taskid").html(data).select2();
+									})
+							});
+						})';
+					print '</script>'."\n";
+
+					$tid = '';
+					if (GETPOSTISSET("projecttaskid") && GETPOSTINT("projecttaskid") > 0) {
+						$tid = GETPOSTINT("projecttaskid");
+					} elseif (GETPOSTISSET("taskid") && GETPOSTINT("taskid") > 0) {
+						$tid = GETPOSTINT("taskid");
+					}
+
+					print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $tid, 'taskid', 24, 0, '1', 1, 0, 0, 'maxwidth500 widthcentpercentminusxx', (string) $projectsListId, 'all', null, 1);
+
+					print '</td>';
+				} else {
+					print '<td>';
+					print dolGetElementUrl($object->fk_element, $object->elementtype, 1);
+					print '<input type="hidden" name="fk_element" value="'.$object->fk_element.'">';
+					print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
+					print '</td>';
+				}
 			}
 
 			print '</tr>';
@@ -2597,7 +2640,7 @@ if ($id > 0 && $action != 'create') {
 		}
 
 		// Date start
-		print '<tr><td>'.$langs->trans("DateActionStart").'</td><td>';
+		print '<tr><td>'.$langs->trans("DateActionStart").'</td><td title="'.dol_print_date($object->datep, 'dayhoursec', 'tzuserrel').'">';
 		// Test a date before the 27 march and one after
 		//print dol_print_date($object->datep, 'dayhour', 'gmt');
 		//print dol_print_date($object->datep, 'dayhour', 'tzuser');
@@ -2615,7 +2658,7 @@ if ($id > 0 && $action != 'create') {
 		print '</tr>';
 
 		// Date end
-		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td>';
+		print '<tr><td>'.$langs->trans("DateActionEnd").'</td><td title="'.dol_print_date($object->datef, 'dayhoursec', 'tzuserrel').'">';
 		if (empty($object->fulldayevent)) {
 			print dol_print_date($object->datef, 'dayhour', 'tzuserrel');
 		} else {

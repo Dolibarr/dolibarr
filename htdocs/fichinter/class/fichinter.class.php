@@ -1,14 +1,14 @@
 <?php
-/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011-2020 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2015-2020 Charlene Benke       <charlie@patas-monkey.com>
- * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
- * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2023-2024  William Mead        <william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2002-2003  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2011-2020  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2015-2020  Charlene Benke          <charlie@patas-monkey.com>
+ * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2023-2024  William Mead            <william.mead@manchenumerique.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonsignedobject.class.php';
 class Fichinter extends CommonObject
 {
 	use CommonSignedObject;
+
+	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'FICHINTER';
 
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -347,7 +353,7 @@ class Fichinter extends CommonObject
 		$sql .= ", ".((int) $this->fk_project > 0 ? ((int) $this->fk_project) : 0);
 		$sql .= ", ".((int) $this->fk_contrat > 0 ? ((int) $this->fk_contrat) : 0);
 		$sql .= ", ".((int) $this->status);
-		$sql .= ", ".($this->signed_status);
+		$sql .= ", ".((int) $this->signed_status);
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= ")";
@@ -489,9 +495,10 @@ class Fichinter extends CommonObject
 	 *
 	 *	@param		int		$rowid		Id of intervention
 	 *	@param		string	$ref		Ref of intervention
+	 *	@param		string	$ref_ext	Ref extern of intervention
 	 *	@return		int					Return integer <0 if KO, >0 if OK
 	 */
-	public function fetch($rowid, $ref = '')
+	public function fetch($rowid, $ref = '', $ref_ext = '')
 	{
 		$sql = "SELECT f.rowid, f.ref, f.ref_client, f.description, f.fk_soc, f.fk_statut as status, f.signed_status,";
 		$sql .= " f.datec, f.dateo, f.datee, f.datet, f.fk_user_author,";
@@ -499,14 +506,15 @@ class Fichinter extends CommonObject
 		$sql .= " f.tms as datem,";
 		$sql .= " f.duree, f.fk_projet as fk_project, f.note_public, f.note_private, f.model_pdf, f.last_main_doc, f.extraparams, fk_contrat, f.entity as entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
+		$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
 		if ($ref) {
-			$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
 			$sql .= " AND f.ref = '".$this->db->escape($ref)."'";
+		} elseif ($ref_ext) {
+			$sql .= " AND f.ref_ext = '".$this->db->escape($ref_ext)."'";
 		} else {
-			$sql .= " WHERE f.rowid = ".((int) $rowid);
+			$sql .= " AND f.rowid = ".((int) $rowid);
 		}
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {
@@ -1467,7 +1475,7 @@ class Fichinter extends CommonObject
 
 			if ($result >= 0) {
 				$this->db->commit();
-				return 1;
+				return $line->id;
 			} else {
 				$this->error = $this->db->error();
 				$this->db->rollback();

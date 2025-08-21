@@ -366,7 +366,7 @@ class Contrat extends CommonObject
 	 *  @param	User		$user       Object User who activate contract
 	 *  @param  int			$line_id    Id of line to activate
 	 *  @param  int			$date_start Opening date
-	 *  @param  int|string	$date_end   Expected end date
+	 *  @param  int|''		$date_end   Expected end date
 	 * 	@param	string		$comment	A comment typed by user
 	 *  @return int         			Return integer <0 if KO, >0 if OK
 	 */
@@ -470,9 +470,12 @@ class Contrat extends CommonObject
 	 */
 	public function closeAll(User $user, $notrigger = 0, $comment = '')
 	{
+		dol_syslog("closeAll begin", LOG_DEBUG, 1);
+
 		$this->db->begin();
 
 		// Load lines
+		// TODO Should be useless if object was fetched without the noline param.
 		$this->fetch_lines();
 
 		$now = dol_now();
@@ -498,7 +501,7 @@ class Contrat extends CommonObject
 			}
 		}
 
-		if (!$error && $this->statut == 0) {
+		if (!$error && $this->status == 0) {
 			$result = $this->validate($user, '', $notrigger);
 			if ($result < 0) {
 				$error++;
@@ -507,9 +510,15 @@ class Contrat extends CommonObject
 
 		if (!$error) {
 			$this->db->commit();
+
+			dol_syslog("closeAll end", LOG_DEBUG, -1);
+
 			return 1;
 		} else {
 			$this->db->rollback();
+
+			dol_syslog("closeAll end", LOG_DEBUG, -1);
+
 			return -1;
 		}
 	}
@@ -739,6 +748,7 @@ class Contrat extends CommonObject
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -1265,13 +1275,11 @@ class Contrat extends CommonObject
 			}
 		}
 
-		// Delete llx_ecm_files
+		// Delete record into ECM index and physically
 		if (!$error) {
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX."ecm_files WHERE src_object_type = '".$this->db->escape($this->table_element.(empty($this->module) ? "" : "@".$this->module))."' AND src_object_id = ".((int) $this->id);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$this->error = $this->db->lasterror();
-				$this->errors[] = $this->error;
+			$res = $this->deleteEcmFiles(0); // Deleting files physically is done later with the dol_delete_dir_recursive
+			if ($res) $res = $this->deleteEcmFiles(1); // Deleting files physically is done later with the dol_delete_dir_recursive
+			if (!$res) {
 				$error++;
 			}
 		}
@@ -2072,7 +2080,7 @@ class Contrat extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $maxlength = 0, $notooltip = 0, $save_lastsearch_value = -1)
 	{
-		global $conf, $langs, $user, $hookmanager;
+		global $langs, $user, $hookmanager;
 
 		$result = '';
 
@@ -2223,8 +2231,10 @@ class Contrat extends CommonObject
 
 		$sql = "SELECT c.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c";
-		if (!empty($product_categories)) {
+		if (!empty($product_categories) || !empty($line_status)) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON cd.fk_contrat = c.rowid";
+		}
+		if (!empty($product_categories)) {
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = cd.fk_product AND cp.fk_categorie IN (".$this->db->sanitize(implode(', ', $product_categories)).")";
 		}
 		$sql .= " WHERE c.fk_soc =".((int) $this->socid);
@@ -2315,7 +2325,7 @@ class Contrat extends CommonObject
 				$labelShort = $langs->trans("BoardNotActivatedServicesShort");
 				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&search_status=0&sortfield=cd.date_fin_validite&sortorder=asc';
 				$url_late = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&search_status=0&search_option=late';
-			} elseif ($mode == 'active') {
+			} elseif ($mode == 'expired') {
 				$warning_delay = $conf->contract->services->expires->warning_delay;
 				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&search_status=4&filter=expired&sortfield=cd.date_fin_validite&sortorder=asc';
 				$url_late = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&search_status=4&search_option=late';

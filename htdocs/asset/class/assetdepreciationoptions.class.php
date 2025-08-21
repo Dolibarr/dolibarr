@@ -107,7 +107,7 @@ class AssetDepreciationOptions extends CommonObject
 		),
 	);
 	/**
-	 * @var int
+	 * @var int		ID parent asset
 	 */
 	public $fk_asset;
 	/**
@@ -272,9 +272,7 @@ class AssetDepreciationOptions extends CommonObject
 				} elseif ($field_info['type'] == 'boolean') {
 					$value = ((GETPOST($html_name) == '1' || GETPOST($html_name) == 'on') ? 1 : 0);
 				} elseif ($field_info['type'] == 'reference') {
-					// todo to check
-					$tmparraykey = array(); //array_keys($object->param_list);
-					$value = $tmparraykey[GETPOST($html_name)] . ',' . GETPOST($html_name . '2');
+					$value = GETPOST($html_name) . ',' . GETPOST($html_name . '2');
 				} else {
 					if ($field_key == 'lang') {
 						$value = GETPOST($html_name, 'aZ09') ? GETPOST($html_name, 'aZ09') : "";
@@ -316,7 +314,7 @@ class AssetDepreciationOptions extends CommonObject
 		foreach ($this->deprecation_options_fields as $mode_key => $mode_info) {
 			if (!empty($mode_info['enabled_field'])) {
 				$info = explode(':', $mode_info['enabled_field']);
-				if ($deprecation_options[$info[0]][$info[1]] != $info[2]) {
+				if (!empty($this->deprecation_options[$info[0]][$info[1]]) && $deprecation_options[$info[0]][$info[1]] != $info[2]) {
 					unset($deprecation_options[$info[0]][$info[1]]);
 				}
 			}
@@ -502,7 +500,7 @@ class AssetDepreciationOptions extends CommonObject
 			if (!$error && !empty($this->deprecation_options[$mode_key])) {
 				if (!empty($mode_info['enabled_field'])) {
 					$info = explode(':', $mode_info['enabled_field']);
-					if ($this->deprecation_options[$info[0]][$info[1]] != $info[2]) {
+					if (!empty($this->deprecation_options[$info[0]][$info[1]]) && $this->deprecation_options[$info[0]][$info[1]] != $info[2]) {
 						continue;
 					}
 				}

@@ -319,8 +319,9 @@ a.commonlink { color: var(--colortextlink) !important; text-decoration: none; }
 th.liste_titre a div div:hover, th.liste_titre_sel a div div:hover { text-decoration: underline; }
 tr.liste_titre th.liste_titre_sel:not(.maxwidthsearch), tr.liste_titre td.liste_titre_sel:not(.maxwidthsearch),
 tr.liste_titre th.liste_titre:not(.maxwidthsearch), tr.liste_titre td.liste_titre:not(.maxwidthsearch) { opacity: 0.8; }
-/* th.liste_titre_sel a, th.liste_titre a, td.liste_titre_sel a, td.liste_titre a { color: #766; } */
-tr.liste_titre_filter th.liste_titre:not(.center) { text-align: unset; }
+tr.liste_titre_filter th.liste_titre:not(.center), tr.liste_titre_filter th.liste_titre_sel:not(.center) {
+	text-align: unset;
+}
 .liste_titre.trheight5em {
 	height: 4em !important;
 }
@@ -424,9 +425,19 @@ input {
 .liste_titre input {
 	line-height: 1.3em;
 }
-.tableforfield input, .refidno input {
-	padding: 2px;
+.tableforfield input {
+	padding-left: 2px;
 }
+.refidno input {
+	margin-top: 0 !important;
+	padding: 0;
+}
+.refidno .button.smallpaddingimp {
+	padding: 3px !important;
+	padding-left: 6px !important;
+	padding-right: 6px !important;
+}
+
 select {
 	padding-top: 4px;
 	padding-right: 4px;
@@ -503,7 +514,7 @@ textarea {
 	border-right: solid 1px var(--inputbordercolor);
 	border-bottom: solid 1px var(--inputbordercolor);
 
-	padding:4px;
+	padding:8px;
 	margin-left:0px;
 	margin-bottom:1px;
 	margin-top:1px;
@@ -541,6 +552,9 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 }
 input.short {
 	width: 40px;
+}
+input.shortbis {
+	width: 48px;
 }
 .nofocusvisible:focus-visible {
 	outline: none;
@@ -1013,7 +1027,7 @@ textarea.centpercent {
 	transform: scaleX(-1) translate(<?php print($left == 'left' ? '' : '-'); ?>2px, 0);
 }
 .rotate90 {
-	transform: rotate(90deg) translate(0, <?php print($left == 'left' ? '' : '-'); ?>2px);
+	transform: rotate(90deg) translate(2px, <?php print($left == 'left' ? '' : '-'); ?>4px);
 }
 .center {
 	text-align: center;
@@ -2404,6 +2418,10 @@ td.showDragHandle {
 .bodyforlist #id-right {
 	padding-bottom: 4px;
 }
+.bodyforlist.poslist #id-right {
+	display: block;
+}
+
 .page-modulehelp div#id-right {
 	display: flex;
 }
@@ -2625,6 +2643,11 @@ div.fiche {
 		print 'margin-bottom: 12px;'."\n";
 	} ?>
 }
+.dol_openinpopup div.fiche {
+	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '24' : '6')); ?>px;
+	margin-top: 0px;
+}
+
 .page-modulehelp div.fiche {
 	width: 100%;
 }
@@ -2834,11 +2857,11 @@ span.widthpictotitle.pictotitle {
 }
 .pictofixedwidth {
 	text-align: start;
-	width: 20px;
+	width: 20px;	/* Do not use em unit here */
 	/* padding-right: 0; */
 }
 img.pictofixedwidth {
-	width: 18px;
+	width: 18px;	/* Do not use em unit here */
 	padding-right: 2px;
 }
 
@@ -2910,6 +2933,7 @@ img.photoref, div.photoref {
 	width: 80px;
 	object-fit: contain;
 }
+
 img.photokanban, div.photokanban {
 	padding: 0;
 	border: none;
@@ -3681,6 +3705,9 @@ div.vmenu, td.vmenu {
 	<?php if (GETPOST('optioncss', 'aZ09') == 'print') { ?>
 	display: none;
 	<?php } ?>
+}
+.vmenudisabled {
+	margin-left: 8px !important;
 }
 
 /* Force vmenusearchselectcombo with type=text differently than without because beautify with select2 affect vmenusearchselectcombo differently */
@@ -4537,7 +4564,7 @@ table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.nobor
 td.linecoldescription {
 	padding: 6px 10px 6px 12px !important;			/* t r b l */
 }
-table.tableforfield td, .tagtr.table-border-row .tagtd {
+table.tableforfield td, .tagtr.table-border-row .tagtd, table.border.margintable .trforfield td {
 	padding: 2px 4px 2px 10px;			/* t r b l */
 }
 table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
@@ -4615,7 +4642,7 @@ div.refidno  {
 	font-weight: normal;
 	color: var(--refidnocolor);
 	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>;
-	line-height: 1.4em;
+	line-height: 1.5em;
 }
 div.refaddress div.address {
 	line-height: 1.2em;
@@ -5283,7 +5310,7 @@ span.dashboardlineko {
 }
 
 
-.fichecenter .tableforfield tr td, .tagtr.table-border-row {
+.fichecenter .tableforfield:not(.margintable) tr td, .tagtr.table-border-row {
 	background-color: var(--colorbacklineimpair2);
 }
 table.liste tr.oddeven:nth-of-type(odd) {
@@ -5388,6 +5415,7 @@ img.boxhandle, img.boxclose {
 	font-size: 1rem;
 	cursor: pointer;
 	display: flex;
+	white-space: nowrap;
 }
 .star {
 	color: #ccc;
@@ -5468,10 +5496,10 @@ div.ok {
 }
 
 div.info, div.warning, div.error, div.green {
-	padding-top: 8px;
+	padding-top: 16px;
 	padding-left: 10px;
 	padding-right: 4px;
-	padding-bottom: 8px;
+	padding-bottom: 16px;
 	margin: 1em 0em 1em 0em;
 	border-radius: 5px;
 }
@@ -5643,11 +5671,9 @@ div.titre {
 div.titre.small {
 	font-size: 1em;
 }
-div.fiche > table.table-fiche-title:first-of-type div {
+div.fiche > table.table-fiche-title:first-of-type div, div.fiche > form > table.table-fiche-title:first-of-type div {
 	color: var(--colortexttitlenotab);
 	font-size: 1.1em;
-	/* text-transform: uppercase; */
-	/* font-weight: 600; */
 }
 div.titre {
 	color: var(--colortexttitlenotab);
@@ -5695,7 +5721,7 @@ div.backgreypublicpayment {
 .poweredbypublicpayment {
 	float: right;
 	top: 8px;
-	right: 8px;
+	right: 12px;
 	position: absolute;
 	font-size: 0.8em;
 	color: #222;
@@ -5789,6 +5815,7 @@ div#card-errors {
 .ui-dialog-titlebar {
 }
 .ui-dialog-content {
+	margin-bottom: 10px;	/* same than .ui-widget-header */
 }
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-draggable {
 	z-index: 1005 !important;		/* Default 101 with ui-jquery, top menu have a z-index of 1000 */
@@ -5806,6 +5833,27 @@ div#card-errors {
 	padding-top: 5px;
 	padding-bottom: 5px;
 }
+.ui-widget-header {
+	padding: 8px !important;
+	background: unset;
+	border: unset;
+	border-bottom: 1px solid #AAA;
+	margin-bottom: 12px;
+}
+button.ui-button-icon-only.ui-dialog-titlebar-close {
+	padding: 12px;
+	margin-top: -15px;
+}
+.ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-dialog-buttons.ui-draggable {
+	box-shadow: 5px 5px 20px #AAA;
+}
+.ui-dialog .ui-dialog-buttonpane {
+	padding: .5em 1em .3em .4em;
+}
+.ui-dialog .ui-dialog-content, .ui-dialog .ui-dialog-titlebar.ui-widget-header {
+	padding-left: 1em !important;
+}
+
 
 /* ============================================================================== */
 /* For content of image preview                                                   */
@@ -5855,7 +5903,7 @@ div.ui-tooltip {
 }
 div.ui-tooltip.mytooltip {
 	border: none !important;
-	padding: 10px 15px;
+	padding: 20px 20px;
 	border-radius: 4px;
 	margin: 2px;
 	font-stretch: condensed;
@@ -5906,8 +5954,6 @@ if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 
 
 
-
-
 /* ============================================================================== */
 /* Calendar date picker                                                           */
 /* ============================================================================== */
@@ -5934,6 +5980,13 @@ div#ui-datepicker-div {
 	border: unset;
 	background: unset;
 }
+
+/* the button Previous / Next month */
+.ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next {
+	width: 2.5em;
+	height: 2.7em;
+}
+
 
 img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 
@@ -6171,6 +6224,11 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
 	margin: unset;
 }
 
+#divbodywebsite #websitetemplateconfigpage{
+	max-width: 1200px;
+	margin: 50px auto 0;
+}
+
 
 /* ============================================================================== */
 /*  Module agenda                                                                 */
@@ -6247,6 +6305,7 @@ td.peruser_holiday_imp {
 
 .cal_available { background: #0060d450; }
 .cal_chosen { background: #0060d4; }
+
 
 /* ============================================================================== */
 /*  Ajax - Combo list for autocompletion                                          */
@@ -6979,6 +7038,7 @@ div#ecm-layout-center {
 	padding-right: 10px !important;
 	padding-top: 10px !important;
 	word-wrap: break-word;
+	max-height: 320px;
 }
 .jnotify-container .jnotify-notification .jnotify-message {
 	font-weight: normal;
@@ -7597,7 +7657,7 @@ div.multi-select-menu[role="menu"] {
 
 .multi-select-menu input {
   margin-right: 0.3em;
-  vertical-align: 0.1em;
+  /* vertical-align: 0.1em; */
 }
 
 .multi-select-button {
@@ -7613,9 +7673,11 @@ div.multi-select-menu[role="menu"] {
   border: none;
   border-bottom: solid 1px var(--inputbordercolor);
   padding: 5px;
-  padding-left: 2px;
+  padding-left: 6px;
   height: 17px;
   border-radius: 3px;
+
+  text-align: start;
 }
 .multi-select-button:focus {
   outline: none;
@@ -7630,9 +7692,12 @@ div.multi-select-menu[role="menu"] {
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 0.5em 0.23em 0em 0.23em;
+  border-width: 0.4em 0.3em 0em 0.3em;
   border-color: #888 transparent transparent transparent;
   margin-left: 0.4em;
+  position: absolute;
+  right: 10px;
+  top: 12px;
 }
 
 .multi-select-container--open .multi-select-menu { display: block; }
@@ -7645,10 +7710,10 @@ div.multi-select-menu[role="menu"] {
 .multi-select-menuitem {
 	clear: both;
 	float: left;
-	padding-left: 5px;
+	padding-left: 10px;
 }
 label.multi-select-menuitem {
-	line-height: 24px;
+	line-height: 32px;
 	text-align: start;
 }
 
@@ -7755,6 +7820,9 @@ dd.dropdowndd ul li {
 	white-space: nowrap;
 }
 
+div.kanban.column div.ui-sortable-helper {
+	transform: rotate(4deg);
+}
 
 /* ============================================================================== */
 /*  Markdown rendering                                                             */
@@ -8064,11 +8132,11 @@ div.tabsElem a.tab {
 	border: 1px solid #888;
 }
 .publicnewmemberform div.tabBarWithBottom {
-	border: 1px solid #e8e8e8;
+	border: 2px solid #e8e8e8;
 	padding: 30px;
 	border-radius: 8px;
-	background-color: var(--colorbackgrey);
-	/*box-shadow: 2px 2px 10px #ddd;*/
+	/* background-color: var(--colorbackgrey); */
+	box-shadow: 2px 2px 10px #ddd;
 }
 
 .publicnewmemberform #tablesubscribe {
@@ -8449,6 +8517,32 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 
 
 /* ============================================================================== */
+/* For dolUIBlock() feature                                                       */
+/* ============================================================================== */
+
+#dol-block-ui {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.6);
+	z-index: 9999;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#dol-block-ui .message {
+	padding: 15px 20px 15px 50px;
+	color: #fff;
+	background: #000 no-repeat 10px center;
+	border-radius: 10px;
+	font-family: sans-serif;
+}
+
+
+/* ============================================================================== */
 /* For copy-paste feature                                                         */
 /* ============================================================================== */
 
@@ -8498,7 +8592,7 @@ div.clipboardCPValue.hidewithsize {
 
 
 /* ============================================================================== */
-/* CSS style used for hrm skill/rank (may be we can remove this)                  */
+/* CSS style used for HRM skill/rank (may be we can remove this)                  */
 /* ============================================================================== */
 
 .radio_js_bloc_number {
@@ -8532,12 +8626,13 @@ div.clipboardCPValue.hidewithsize {
 }
 
 #virtualcard-iframe {
-	border: 40px solid #aaa;
+	border: 1px solid #aaa;
 	vertical-align: top;
 	width: 10%;
 	min-width: 100px;
 	border-radius: 10px;
 	aspect-ratio: 0.6;
+	box-shadow: 0 0 5px #bbb;
 }
 .nopointervent {
 	pointer-events: none;
@@ -8810,9 +8905,12 @@ table.jPicker {
 	.loginbuttonexternal {
 		width: 260px;
 	}
-	.side-nav-vert .user-menu .dropdown-menu {
-		width: 278px !important;	/* must be width of menu + padding + padding of sidenav */
+
+	.side-nav-vert .user-menu .dropdown-menu, #topmenu-bookmark-dropdown .dropdown-menu, #topmenu-quickadd-dropdown .dropdown-menu {
+		width: 285px !important;	/* must be width of menu + padding + padding of sidenav */
+		min-width: unset !important;
 	}
+
 	div.login_block_other {
 		margin-right: unset;
 	}
@@ -8937,6 +9035,12 @@ table.jPicker {
 
 @media only screen and (max-width: 768px)
 {
+	.pictofixedwidth {
+		text-align: start;
+		width: 1.5em;
+		/* padding-right: 0; */
+	}
+
 	.ai_dropdown{
 		min-width : 280px !important;
 		width: calc(100% - 50px);
@@ -9029,6 +9133,11 @@ table.jPicker {
 	.dropdown dd ul {
 		max-width: 230px;
 	}
+}
+
+/** For toggle Display of customer/Supplyer Invoices and Credit Notes on Payment Page */
+:where(#fourn-invoices-paiments-list,#customer-invoices-paiments-list)[data-display-all-invoices="1"] tr[data-row-type="2"]{
+	font-weight: bold;
 }
 
 <?php
