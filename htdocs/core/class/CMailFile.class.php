@@ -2217,7 +2217,7 @@ class CMailFile
 	/**
 	 * Return a formatted address string for SMTP protocol
 	 *
-	 * @param	string		$address		     Example:
+	 * @param	string		$address		     Example: "John Doe <john@doe.com>, Alan Smith <alan@smith.com>" or "john@doe.com, alan@smith.com"
 	 * @param	int			$format			     Set
 	 * @param	int			$encode			     Set to 0 = No encode name, 1 = Encode name to RFC2822
 	 * @param   int         $maxnumberofemail    Set to 0 = No limit. Otherwise, maximum number of emails returned ($address may contains several email separated with ','). Add '...' if there is more.
