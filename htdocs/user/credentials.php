@@ -191,7 +191,7 @@ if (empty($reshook)) {
 	}
 
 	// Action to initialize data from a LDAP record
-	if ($action == 'addtotp' && $permissiontoadd) {
+	if ($action == 'addtotp' && $permissiontoadd) {		// @phan-suppress-current-line PhanPluginEmptyStatementIf
 		/*
 		$result = $xxx->create();
 		if ($result >= 0) {
@@ -233,9 +233,10 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 //$tmpurlforbutton = 'javascript:console.log("open add totp form");jQuery(".divsectiontotp").toggle(); void(0);';
 
-$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addtotp&token='.newToken().'&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
+$newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=addtotp&token='.newToken().'&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd ? 1 : 0);
 
 //$listoftotps = $user->fetchAll($sortorder, $sortfield, 1000, 0, "(fk_user:=:".((int) $object->id).") AND (service:=:'dolibarr_totp')", true);
+$listoftotps = array();
 $sql = "SELECT rowid, token, state, restricted_ips, datec, tms, lastaccess FROM ".$db->prefix()."oauth_token";
 $sql .= " WHERE fk_user = ".((int) $object->id)." AND service = 'dolibarr_totp'";
 $resql = $db->query($sql);
@@ -262,10 +263,8 @@ if (!empty($conf->use_javascript_ajax)) {
 print '</div><br>';
 */
 
-$moreforfilter = '';
-
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+print '<table class="tagtable nobottomiftotal liste">'."\n";
 
 // Fields title search
 // --------------------------------------------------------------------
