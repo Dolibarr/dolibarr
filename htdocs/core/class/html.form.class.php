@@ -5814,7 +5814,7 @@ class Form
 		$out .= img_picto('', 'category', 'class="pictofixedwidth"');
 		$out .= $this->multiselectarray($htmlname, $cate_arbo, $arrayselected, 0, 0, 'minwidth100 widthcentpercentminusxx', 0, 0);
 
-		if (!getDolGlobalString('CATEGORY_EDIT_IN_MENU_NOT_IN_POPUP')) {
+		if (!getDolGlobalString('CATEGORY_HIDE_EDIT_IN_POPUP')) {
 			// Add html code to add the edit button and go back
 			$jsonclose = 'doJsCodeAfterPopupClose'.$htmlname.'()';
 			$urltoopen = '/categories/categorie_list.php?type='.urlencode($categtype).'&nosearch=1';
