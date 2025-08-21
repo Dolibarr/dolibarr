@@ -41,7 +41,6 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 '@phan-var-force ExpenseReport[] $linkedObjectBlock';
 /** @var ExpenseReport[] $linkedObjectBlock */
 
-$var = true;
 $total = 0;
 $ilink = 0;
 foreach ($linkedObjectBlock as $key => $objectlink) {
