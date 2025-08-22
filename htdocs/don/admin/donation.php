@@ -79,6 +79,7 @@ if ($action == 'specimen') {
 		$classname = (string) $modele;
 		$obj = new $classname($db);
 		'@phan-var-force ModeleDon $obj';
+		/** @var ModeleDon $obj */
 
 		if ($obj->write_file($don, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=donation&file=SPECIMEN.html");
@@ -243,6 +244,7 @@ if (is_resource($handle)) {
 			require_once $dir.'/'.$file;
 			$module = new $classname($db);
 			'@phan-var-force ModeleDon $module';
+			/** @var ModeleDon $module */
 
 			// Show modules according to features level
 			if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
