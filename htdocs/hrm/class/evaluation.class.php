@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2021 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
- * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
- * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
+/* Copyright (C) 2017  		Laurent Destailleur 		<eldy@users.sourceforge.net>
+ * Copyright (C) 2021 		Gauthier VERDOL 			<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021 		Greg Rastklan 				<greg.rastklan@atm-consulting.fr>
+ * Copyright (C) 2021 		Jean-Pascal BOUDET 			<jean-pascal.boudet@atm-consulting.fr>
+ * Copyright (C) 2021 		Grégory BLEMAND 			<gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
