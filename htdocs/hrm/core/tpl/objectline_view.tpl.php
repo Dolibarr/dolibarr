@@ -44,6 +44,7 @@
  * @var int $i
  * @var int $permissiontoadd
  * @var CommonObjectLine $line
+ * @var CommonObject $this
  * @var ?Conf $conf
  * @var Form $form
  * @var Translate $langs
