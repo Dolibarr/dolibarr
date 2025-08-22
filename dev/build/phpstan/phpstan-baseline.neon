@@ -14203,42 +14203,6 @@ parameters:
 			path: ../../../htdocs/hrm/compare.php
 
 		-
-			message: '#^Cannot access property \$db on mixed\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: ../../../htdocs/hrm/core/tpl/objectline_view.tpl.php
-
-		-
-			message: '#^Cannot access property \$status on mixed\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: ../../../htdocs/hrm/core/tpl/objectline_view.tpl.php
-
-		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/hrm/core/tpl/objectline_view.tpl.php
-
-		-
-			message: '#^Variable \$i might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/hrm/core/tpl/objectline_view.tpl.php
-
-		-
-			message: '#^Variable \$line might not be defined\.$#'
-			identifier: variable.undefined
-			count: 12
-			path: ../../../htdocs/hrm/core/tpl/objectline_view.tpl.php
-
-		-
-			message: '#^Variable \$this might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/hrm/core/tpl/objectline_view.tpl.php
-
-		-
 			message: '#^Variable \$colwidth might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1

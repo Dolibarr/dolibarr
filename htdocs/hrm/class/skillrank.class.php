@@ -952,6 +952,7 @@ class SkillRank extends CommonObject
 			if (class_exists($classname)) {
 				$obj = new $classname();
 				'@phan-var-force ModeleNumRefEvaluation $obj';
+				/** @var ModeleNumRefEvaluation $obj */
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {
