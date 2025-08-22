@@ -2919,21 +2919,29 @@ if ($id > 0 && $action != 'create') {
 			print '<div class="clearboth"></div><div class="fichecenter"><div class="fichehalfleft">';
 			print '<a name="builddoc"></a>'; // ancre
 
-			/*
-			 * Generated documents
-			 */
-
+			// Generated documents
 			$filedir = $conf->agenda->multidir_output[$conf->entity].'/'.$object->id;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 
 			$genallowed = $user->hasRight('agenda', 'myactions', 'read');
 			$delallowed = $user->hasRight('agenda', 'myactions', 'create');
 
-
 			print $formfile->showdocuments('actions', (string) $object->id, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 0, 0, '', '', '', $langs->getDefaultLang());
 
+			if (getDolGlobalString('AGENDA_ENABLE_LINKED_ELEMENTS')) {
+				// Show links to link elements
+				$tmparray = $form->showLinkToObjectBlock($object, array(), array('myobject'), 1);
+				if (is_array($tmparray)) {
+					$linktoelem = $tmparray['linktoelem'];
+					$htmltoenteralink = $tmparray['htmltoenteralink'];
+					print $htmltoenteralink;
+					$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+				} else {
+					// backward compatibility
+					$somethingshown = $form->showLinkedObjectBlock($object, $tmparray);
+				}
+			}
 			print '</div><div class="fichehalfright">';
-
 
 			print '</div></div>';
 		}
