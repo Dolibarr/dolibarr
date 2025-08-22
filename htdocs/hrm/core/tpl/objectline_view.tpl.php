@@ -40,7 +40,9 @@
  */
 
 /**
+ * @var string $action
  * @var int $i
+ * @var int $permissiontoadd
  * @var CommonObjectLine $line
  * @var ?Conf $conf
  * @var Form $form
