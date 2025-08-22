@@ -1235,7 +1235,15 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
 		$hour = $minute = $second = 0;
 	}
 
-	if ($saverestore && !GETPOSTISSET($prefix . 'day') && !GETPOSTISSET($prefix . 'month') && !GETPOSTISSET($prefix . 'year')) {
+	if (
+		$saverestore
+		&& !GETPOSTISSET($prefix . 'day')
+		&& !GETPOSTISSET($prefix . 'month')
+		&& !GETPOSTISSET($prefix . 'year')
+		&& isset($_SESSION['DOLDATE_' . $saverestore . '_day'])
+		&& isset($_SESSION['DOLDATE_' . $saverestore . '_month'])
+		&& isset($_SESSION['DOLDATE_' . $saverestore . '_year'])
+	) {
 		$day = $_SESSION['DOLDATE_' . $saverestore . '_day'];
 		$month = $_SESSION['DOLDATE_' . $saverestore . '_month'];
 		$year = $_SESSION['DOLDATE_' . $saverestore . '_year'];
