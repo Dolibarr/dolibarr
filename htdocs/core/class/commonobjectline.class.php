@@ -295,45 +295,61 @@ abstract class CommonObjectLine extends CommonObject
 	}
 
 	/**
-	 *	Returns the label, short_label or code found in units dictionary from ->fk_unit.
-	 *  A langs->trans() must be called on result to get translated value.
+	 * Reads the units dictionary to return the translation code of a unit (if type='code'), or translated long label (if type='long') or short label (if type='short').
+	 * TODO Duplicate of getLabelOfUnit() in product.class.php
 	 *
-	 * 	@param	string $type 	Label type ('long', 'short' or 'code'). This can be a translation key.
-	 *	@return	string|int<-1,1>	Return integer <0 if KO, label if OK (Example: 'long', 'short' or 'unitCODE')
+	 * @param  	string 			$type 			Code type ('code', 'long' or 'short')
+	 * @param	Translate|null	$outputlangs	Language to use for long label translation
+	 * @param	int				$noentities		No entities
+	 * @return 	string|int 						Return integer <0 if KO, code or label of unit if OK.
 	 */
-	public function getLabelOfUnit($type = 'long')
+	public function getLabelOfUnit($type = 'long', $outputlangs = null, $noentities = 0)
 	{
 		global $langs;
 
 		if (empty($this->fk_unit)) {
 			return '';
 		}
-
-		$langs->load('products');
-
-		$label_type = 'label';
-		if ($type == 'short') {
-			$label_type = 'short_label';
-		} elseif ($type == 'code') {
-			$label_type = 'code';
+		if (empty($outputlangs)) {
+			$outputlangs = $langs;
 		}
 
-		$sql = "SELECT ".$label_type.", code from ".$this->db->prefix()."c_units where rowid = ".((int) $this->fk_unit);
+		$outputlangs->load('products');
+		$label = '';
+
+		$sql = "SELECT code, label, short_label FROM ".$this->db->prefix()."c_units where rowid = ".((int) $this->fk_unit);
 
 		$resql = $this->db->query($sql);
-		if ($resql && $this->db->num_rows($resql) > 0 && $res = $this->db->fetch_array($resql)) {
-			if ($label_type == 'code') {
-				$label = 'unit'.$res['code'];
-			} else {
-				$label = $res[$label_type];
-			}
-			$this->db->free($resql);
-			return $label;
-		} else {
-			$this->error = $this->db->lasterror();
+		if (!$resql) {
+			$this->error = $this->db->error();
 			dol_syslog(get_class($this)."::getLabelOfUnit Error ".$this->error, LOG_ERR);
 			return -1;
+		} elseif ($this->db->num_rows($resql) > 0 && $res = $this->db->fetch_array($resql)) {
+			if ($type == 'short') {
+				if ($noentities) {
+					$label = $outputlangs->transnoentitiesnoconv($res['short_label']);
+				} else {
+					$label = $outputlangs->trans($res['short_label']);
+				}
+			} elseif ($type == 'code') {
+				$label = $res['code'];
+			} else {
+				if ($outputlangs->trans('unit'.$res['code']) == 'unit'.$res['code']) {
+					// No translation available
+					$label = $res['label'];
+				} else {
+					// Return the translated value
+					if ($noentities) {
+						$label = $outputlangs->transnoentitiesnoconv('unit'.$res['code']);
+					} else {
+						$label = $outputlangs->trans('unit'.$res['code']);
+					}
+				}
+			}
 		}
+		$this->db->free($resql);
+
+		return $label;
 	}
 
 	/**

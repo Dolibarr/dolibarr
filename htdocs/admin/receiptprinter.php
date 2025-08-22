@@ -340,6 +340,7 @@ if ($mode == 'config' && $user->admin) {
 	print '<tr class="liste_titre">';
 	print '<th>'.$langs->trans("Name").'</th>';
 	print '<th>'.$langs->trans("Type").'</th>';
+	/* Profiles not used, so disabled
 	print '<th>';
 	$htmltext = $langs->trans("PROFILE_DEFAULT").' = '.$langs->trans("PROFILE_DEFAULT_HELP").'<br>';
 	$htmltext .= $langs->trans("PROFILE_SIMPLE").' = '.$langs->trans("PROFILE_SIMPLE_HELP").'<br>';
@@ -349,6 +350,7 @@ if ($mode == 'config' && $user->admin) {
 
 	print $form->textwithpicto($langs->trans("Profile"), $htmltext);
 	print '</th>';
+	*/
 	print '<th>'.$langs->trans("Parameters").'</th>';
 	print '<th></th>';
 	print "</tr>\n";
@@ -361,8 +363,10 @@ if ($mode == 'config' && $user->admin) {
 		print '<td><input class="minwidth100" type="text" name="printername"></td>';
 		$ret = $printer->selectTypePrinter();
 		print '<td>'.$printer->resprint.'</td>';
+		/* Profiles not used, so disabled
 		$ret = $printer->selectProfilePrinter();
 		print '<td>'.$printer->profileresprint.'</td>';
+		*/
 		print '<td><input class="minwidth150" type="text" name="parameter"></td>';
 		print '<td class="right">';
 		if ($action != 'editprinter') {
@@ -382,8 +386,10 @@ if ($mode == 'config' && $user->admin) {
 				print '<td><input type="text" class="minwidth200" name="printername" value="'.$printer->listprinters[$line]['name'].'"></td>';
 				$ret = $printer->selectTypePrinter((string) $printer->listprinters[$line]['fk_type']);
 				print '<td>'.$printer->resprint.'</td>';
+				/* Profiles not used, so disabled
 				$ret = $printer->selectProfilePrinter((string) $printer->listprinters[$line]['fk_profile']);
 				print '<td>'.$printer->profileresprint.'</td>';
+				*/
 				print '<td><input class="minwidth150" type="text" name="parameter" value="'.$printer->listprinters[$line]['parameter'].'"></td>';
 				print '<td>';
 				print $form->buttonsSaveCancel("Save", '');
@@ -392,7 +398,9 @@ if ($mode == 'config' && $user->admin) {
 			} else {
 				print '<td>'.$printer->listprinters[$line]['name'].'</td>';
 				print '<td>'.$langs->trans($printer->listprinters[$line]['fk_type_name']).'</td>';
+				/* Profiles not used, so disabled
 				print '<td>'.$langs->trans($printer->listprinters[$line]['fk_profile_name']).'</td>';
+				*/
 				print '<td>'.$printer->listprinters[$line]['parameter'].'</td>';
 				// edit icon
 				print '<td class="center">';

@@ -829,7 +829,7 @@ if ($action == 'create') {
 						if (is_null($productstatic->fk_unit)) {
 							$productstatic->fk_unit = 1;
 						}
-						print $langs->trans($productstatic->getLabelOfUnit());
+						print $productstatic->getLabelOfUnit('long', $langs);
 						print '</td>';
 					}
 
@@ -892,7 +892,7 @@ if ($action == 'create') {
 				$totalarray['val']['totalunit'] = $totalunit;
 				$totalarray['val']['totalvalue'] = price2num($totalvalue, 'MT');
 				$totalarray['val']['totalvaluesell'] = price2num($totalvaluesell, 'MT');
-				$totalarray['val']['units'] = $langs->trans($productstatic->getLabelOfUnit());
+				$totalarray['val']['units'] = $productstatic->getLabelOfUnit('long', $langs);
 
 				$parameters = array('context' => 'warehousecard', 'totalarray' => &$totalarray);
 				// Note that $action and $object may have been modified by hook

@@ -797,7 +797,7 @@ function show_stats_for_batch($batch, $socid)
 		}
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="'.dol_buildpath('/product/stock/stats/expedition.php', 1).'?id='.$batch->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("Shipments").'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/product/stock/stats/expedition.php?id='.$batch->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("Shipments").'</a>';
 		print '</td><td class="right">';
 		print $batch->stats_expedition['customers'];
 		print '</td><td class="right">';
@@ -816,7 +816,7 @@ function show_stats_for_batch($batch, $socid)
 		}
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="'.dol_buildpath('/product/stock/stats/reception.php', 1).'?id='.$batch->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("Receptions").'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/product/stock/stats/reception.php?id='.$batch->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("Receptions").'</a>';
 		print '</td><td class="right">';
 		print $batch->stats_reception['customers'];
 		print '</td><td class="right">';
@@ -833,7 +833,7 @@ function show_stats_for_batch($batch, $socid)
 		}
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="'.dol_buildpath('/product/stock/stats/commande_fournisseur.php', 1).'?id='.$batch->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("SuppliersOrders").'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/product/stock/stats/commande_fournisseur.php?id='.$batch->id.'">'.img_object('', 'bill', 'class="pictofixedwidth"').$langs->trans("SuppliersOrders").'</a>';
 		print '</td><td class="right">';
 		print $batch->stats_supplier_order['customers'];
 		print '</td><td class="right">';
@@ -852,7 +852,7 @@ function show_stats_for_batch($batch, $socid)
 		}
 		$langs->load("mrp");
 		print '<tr><td>';
-		print '<a href="'.dol_buildpath('/product/stock/stats/mo.php', 1).'?id='.$batch->id.'">'.img_object('', 'mrp', 'class="pictofixedwidth"').$langs->trans("MO").'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/product/stock/stats/mo.php?id='.$batch->id.'">'.img_object('', 'mrp', 'class="pictofixedwidth"').$langs->trans("MO").'</a>';
 		print '</td><td class="right">';
 		//      print $form->textwithpicto($batch->stats_mo['customers_toconsume'], $langs->trans("ToConsume")); Makes no sense with batch, at this moment we don't know batch number
 		print $form->textwithpicto((string) $batch->stats_mo['customers_consumed'], $langs->trans("QtyAlreadyConsumed"));

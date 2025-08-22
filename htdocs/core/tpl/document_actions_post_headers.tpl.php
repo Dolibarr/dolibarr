@@ -37,6 +37,7 @@
  * @var HookManager $hookmanager
  * @var Translate $langs
  *
+ * @var	string 	$action
  * @var string 	$relativepathwithnofile
  * @var	int		$permisstiontoadd			Permission or not to add a file (can use also $permission) and permission or not to edit file name or crop file (can use also $permtoedit)
  */

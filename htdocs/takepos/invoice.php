@@ -1290,6 +1290,13 @@ if (empty($reshook)) {
 		}
 
 		$sectionwithinvoicelink .= '</span><br>';
+
+		$customprinterallowed = true;
+		$arrayOfCountryWithPrintingOnBrowserMandatory = array('FR');
+		if (in_array($mysoc->country_code, $arrayOfCountryWithPrintingOnBrowserMandatory) && isModEnabled('blockedlog')) {
+			$customprinterallowed = false;
+		}
+
 		if (getDolGlobalInt('TAKEPOS_PRINT_INVOICE_DOC_INSTEAD_OF_RECEIPT')) {
 			$sectionwithinvoicelink .= ' <a target="_blank" class="button" href="' . DOL_URL_ROOT . '/document.php?token=' . newToken() . '&modulepart=facture&file=' . $invoice->ref . '/' . $invoice->ref . '.pdf">Invoice</a>';
 		} elseif (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
@@ -1298,7 +1305,7 @@ if (empty($reshook)) {
 			} else {
 				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
 			}
-		} elseif ((isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
+		} elseif ($customprinterallowed && (isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
 			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
 		} else {
 			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
@@ -1480,12 +1487,14 @@ function SendTicket(id)
 	return true;
 }
 
+/* Open the popup of the receipt to allow printing */
 function PrintBox(id, action) {
 	console.log("Open box before printing");
 	$.colorbox({href:"printbox.php?facid="+id+"&action="+action+"&token=<?php echo newToken(); ?>", width:"80%", height:"200px", transition:"none", iframe:"true", title:"<?php echo $langs->trans("PrintWithoutDetails"); ?>"});
 	return true;
 }
 
+/* Open the popup of the receipt to allow printing */
 function Print(id, gift){
 	console.log("Call Print() to generate the receipt.");
 	$.colorbox({href:"receipt.php?facid="+id+"&gift="+gift, width:"40%", height:"90%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("PrintTicket")); ?>'});
@@ -1521,12 +1530,11 @@ function TakeposConnector(id){
 // Call the ajax to execute the print.
 // With some external module another method may be called.
 function DolibarrTakeposPrinting(id) {
-	console.log("DolibarrTakeposPrinting Printing invoice ticket " + id);
+	console.log("DolibarrTakeposPrinting Printing invoice ticket by calling takepos/aja/ajax.php" + id);
 	$.ajax({
 		type: "GET",
 		data: { token: '<?php echo currentToken(); ?>' },
 		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=printinvoiceticket&token='.newToken().'&term='.urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '').'&id='; ?>" + id,
-
 	});
 	return true;
 }

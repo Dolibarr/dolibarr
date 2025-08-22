@@ -2302,7 +2302,7 @@ if ($id > 0 && $action != 'create') {
 		}
 
 		// Object linked
-		if ($object->fk_project || (!empty($object->fk_element) && !empty($object->elementtype))) {
+		if ($object->fk_project || (!empty($object->elementid) && !empty($object->elementtype))) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			print '<tr>';
 			print '<td>'.$langs->trans("LinkedObject").'</td>';
@@ -2326,7 +2326,7 @@ if ($id > 0 && $action != 'create') {
                 })';
 				print '</script>'."\n";
 
-				print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $object->fk_element, 'fk_element', 24, 0, '', 1, 0, 0, 'maxwidth500', (string) $object->fk_project, 'all', null, 1);
+				print $formproject->selectTasks((!empty($societe->id) ? $societe->id : -1), $object->elementid, 'fk_element', 24, 0, '', 1, 0, 0, 'maxwidth500', (string) $object->fk_project, 'all', null, 1);
 				print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
 
 				print '</td>';
@@ -2362,8 +2362,8 @@ if ($id > 0 && $action != 'create') {
 					print '</td>';
 				} else {
 					print '<td>';
-					print dolGetElementUrl($object->fk_element, $object->elementtype, 1);
-					print '<input type="hidden" name="fk_element" value="'.$object->fk_element.'">';
+					print dolGetElementUrl($object->elementid, $object->elementtype, 1);
+					print '<input type="hidden" name="fk_element" value="'.$object->elementid.'">';
 					print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
 					print '</td>';
 				}

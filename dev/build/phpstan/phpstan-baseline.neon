@@ -6811,18 +6811,6 @@ parameters:
 			path: ../../../htdocs/core/class/CMailFile.class.php
 
 		-
-			message: '#^Method CMailFile\:\:getValidAddress\(\) has parameter \$encode with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: ../../../htdocs/core/class/CMailFile.class.php
-
-		-
-			message: '#^Method CMailFile\:\:getValidAddress\(\) has parameter \$maxnumberofemail with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: ../../../htdocs/core/class/CMailFile.class.php
-
-		-
 			message: '#^Property CMailFile\:\:\$addr_bcc \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -8729,24 +8717,6 @@ parameters:
 			identifier: booleanNot.alwaysFalse
 			count: 2
 			path: ../../../htdocs/core/lib/agenda.lib.php
-
-		-
-			message: '#^Function ajax_constantonoff\(\) has parameter \$entity with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: ../../../htdocs/core/lib/ajax.lib.php
-
-		-
-			message: '#^Function ajax_constantonoff\(\) has parameter \$revertonoff with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: ../../../htdocs/core/lib/ajax.lib.php
-
-		-
-			message: '#^Function ajax_constantonoff\(\) has parameter \$strict with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: ../../../htdocs/core/lib/ajax.lib.php
 
 		-
 			message: '#^Left side of && is always true\.$#'
