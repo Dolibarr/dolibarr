@@ -428,7 +428,7 @@ if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currenc
 	<td class="linecoluttc_currency nowraponall right"><?php $coldisplay++; ?><?php
 	$multicurrency_upinctax = isset($line->pu_ttc_devise) ? $line->pu_ttc_devise : null;
 	if (!$multicurrency_upinctax) {
-	    $multicurrency_upinctax = price2num($line->multicurrency_subprice * (1 + ($line->tva_tx / 100)), 'MU'); // one tax
+		$multicurrency_upinctax = price2num($line->multicurrency_subprice * (1 + ($line->tva_tx / 100)), 'MU'); // one tax
 	}
 	if (getDolGlobalInt('MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES') && isset($line->multicurrency_total_ttc)) {
 		$multicurrency_upinctax = price2num($line->multicurrency_total_ttc / (float) $line->qty, 'MU');
