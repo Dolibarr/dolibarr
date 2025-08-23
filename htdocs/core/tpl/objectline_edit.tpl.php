@@ -282,7 +282,7 @@ $coldisplay++;
 		$coldisplay++;
 		$multicurrency_upinctax = isset($line->pu_ttc_devise) ? $line->pu_ttc_devise : null;
 		if (!$multicurrency_upinctax) {
-		    $multicurrency_upinctax = price2num($line->multicurrency_subprice * (1 + ($line->tva_tx / 100)), 'MU'); // One tax
+			$multicurrency_upinctax = price2num($line->multicurrency_subprice * (1 + ($line->tva_tx / 100)), 'MU'); // One tax
 		}
 		print '<td class="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right width50" id="multicurrency_price_ttc" name="multicurrency_price_ttc" value="'. ($multicurrency_upinctax ? $multicurrency_upinctax : price($line->multicurrency_subprice)).'" /></td>';
 	}
