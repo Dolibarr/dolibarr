@@ -1049,8 +1049,23 @@ if ($ispaymentok) {
 				$paiement->paiementid   = $paymentTypeId;
 				$paiement->num_payment = '';
 				$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
-				$paiement->ext_payment_id = $TRANSACTIONID;		// TODO LDR May be we should store py_... instead of pi_... but we started with pi_... so we continue.
-				//$paiement->ext_payment_id = $TRANSACTIONID.':'.$customer->id.'@'.$stripearrayofkeysbyenv[$servicestatus]['publishable_key'];	// TODO LDR It would be better if we could store this. Do we have customer->id and publishable_key ?
+
+				// Get $customerid and $pkey
+				$customerid = '';
+				if ($paymentIntent instanceof \Stripe\PaymentIntent) {
+					$customerid = $paymentIntent->customer;
+				}
+				$pkey = '';
+				if (isset($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])) {
+					$pkey = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
+				}
+
+				// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
+				if ($customerid && $pkey) {
+					$paiement->ext_payment_id = $TRANSACTIONID.':'.$customerid.'@'.$pkey;
+				} else {
+					$paiement->ext_payment_id = $TRANSACTIONID;
+				}
 				$paiement->ext_payment_site = $service;
 
 				if (!$error) {
@@ -1194,7 +1209,23 @@ if ($ispaymentok) {
 						$paiement->paiementid = $paymentTypeId;
 						$paiement->num_payment = '';
 						$paiement->note_public = 'Online payment ' . dol_print_date($now, 'standard') . ' from ' . $ipaddress;
-						$paiement->ext_payment_id = $TRANSACTIONID;		// 'pi_...' for Stripe, ... TODO Use 'pi_...:cus_...@pk_...'
+
+						// Get $customerid and $pkey
+						$customerid = '';
+						if ($paymentIntent instanceof \Stripe\PaymentIntent) {
+							$customerid = $paymentIntent->customer;
+						}
+						$pkey = '';
+						if (isset($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])) {
+							$pkey = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
+						}
+
+						// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
+						if ($customerid && $pkey) {
+							$paiement->ext_payment_id = $TRANSACTIONID.':'.$customerid.'@'.$pkey;
+						} else {
+							$paiement->ext_payment_id = $TRANSACTIONID;
+						}
 						$paiement->ext_payment_site = $service;			// 'StripeLive' or 'Stripe', or ...
 
 						if (!$error) {
@@ -1328,7 +1359,23 @@ if ($ispaymentok) {
 				$paiement->paymenttype = $paymentTypeId;
 				$paiement->num_payment = '';
 				$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
-				$paiement->ext_payment_id = $TRANSACTIONID;		// 'pi_...' for Stripe, ... TODO Use 'pi_...:cus_...@pk_...'
+
+				// Get $customerid and $pkey
+				$customerid = '';
+				if ($paymentIntent instanceof \Stripe\PaymentIntent) {
+					$customerid = $paymentIntent->customer;
+				}
+				$pkey = '';
+				if (isset($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])) {
+					$pkey = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
+				}
+
+				// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
+				if ($customerid && $pkey) {
+					$paiement->ext_payment_id = $TRANSACTIONID.':'.$customerid.'@'.$pkey;
+				} else {
+					$paiement->ext_payment_id = $TRANSACTIONID;
+				}
 				$paiement->ext_payment_site = $service;			// 'StripeLive' or 'Stripe', or ...
 
 				if (!$error) {
@@ -1463,7 +1510,23 @@ if ($ispaymentok) {
 					$paiement->paiementid   = $paymentTypeId;
 					$paiement->num_payment = '';
 					$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress.' for event registration';
-					$paiement->ext_payment_id = $TRANSACTIONID;		// 'pi_...' for Stripe, ... TODO Use 'pi_...:cus_...@pk_...'
+
+					// Get $customerid and $pkey
+					$customerid = '';
+					if ($paymentIntent instanceof \Stripe\PaymentIntent) {
+						$customerid = $paymentIntent->customer;
+					}
+					$pkey = '';
+					if (isset($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])) {
+						$pkey = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
+					}
+
+					// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
+					if ($customerid && $pkey) {
+						$paiement->ext_payment_id = $TRANSACTIONID.':'.$customerid.'@'.$pkey;
+					} else {
+						$paiement->ext_payment_id = $TRANSACTIONID;
+					}
 					$paiement->ext_payment_site = $service;			// 'StripeLive' or 'Stripe', or ...
 
 					if (!$error) {
@@ -1696,8 +1759,24 @@ if ($ispaymentok) {
 					$paiement->paiementid   = $paymentTypeId;
 					$paiement->num_payment = '';
 					$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
-					$paiement->ext_payment_id = $TRANSACTIONID;
-					$paiement->ext_payment_site = $service;
+
+					// Get $customerid and $pkey
+					$customerid = '';
+					if ($paymentIntent instanceof \Stripe\PaymentIntent) {
+						$customerid = $paymentIntent->customer;
+					}
+					$pkey = '';
+					if (isset($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])) {
+						$pkey = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
+					}
+
+					// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
+					if ($customerid && $pkey) {
+						$paiement->ext_payment_id = $TRANSACTIONID.':'.$customerid.'@'.$pkey;
+					} else {
+						$paiement->ext_payment_id = $TRANSACTIONID;
+					}
+					$paiement->ext_payment_site = $service;			// 'StripeLive' or 'Stripe', or ...
 
 					if (!$error) {
 						$paiement_id = $paiement->create($user, 1); // This include closing invoices and regenerating documents
@@ -1912,7 +1991,23 @@ if ($ispaymentok) {
 						$paiement->paiementid = $paymentTypeId;
 						$paiement->num_payment = '';
 						$paiement->note_public = 'Online payment ' . dol_print_date($now, 'standard') . ' from ' . $ipaddress;
-						$paiement->ext_payment_id = $TRANSACTIONID;		// pi_... for Stripe, ...
+
+						// Get $customerid and $pkey
+						$customerid = '';
+						if ($paymentIntent instanceof \Stripe\PaymentIntent) {
+							$customerid = $paymentIntent->customer;
+						}
+						$pkey = '';
+						if (isset($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])) {
+							$pkey = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
+						}
+
+						// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
+						if ($customerid && $pkey) {
+							$paiement->ext_payment_id = $TRANSACTIONID.':'.$customerid.'@'.$pkey;
+						} else {
+							$paiement->ext_payment_id = $TRANSACTIONID;
+						}
 						$paiement->ext_payment_site = $service;			// 'StripeLive' or 'Stripe', or ...
 
 						if (!$error) {

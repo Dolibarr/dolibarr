@@ -262,18 +262,18 @@ print '<input type="hidden" name="action" value="updateform">';
 
 // Force RP
 print '<tr class="oddeven">';
-print '<td>'.$form->textwithpicto($langs->trans('MainSecurityForceRP'), 'HTTP Header Referer-Policy<br><br>'.$langs->trans("Recommended").':<br>"strict-origin-when-cross-origin" '.$langs->trans("or").' "same-origin"=more secured"', 1, 'help', 'valignmiddle', 0, 3, 'MAIN_SECURITY_FORCERP').'</td>';
-print '<td><input class="minwidth500" name="MAIN_SECURITY_FORCERP" id="MAIN_SECURITY_FORCERP" value="'.getDolGlobalString("MAIN_SECURITY_FORCERP").'"></td>';
+print '<td>'.$form->textwithpicto($langs->trans('MainSecurityForceRP'), 'HTTP Header Referer-Policy<br><br>'.$langs->trans("Recommended").':<br>strict-origin-when-cross-origin <span class="opacitymedium"> &nbsp; '.$langs->trans("or").' &nbsp; </span> same-origin <span class="opacitymedium">(more secured)</span>', 1, 'help', 'valignmiddle', 0, 3, 'MAIN_SECURITY_FORCERP').'</td>';
+print '<td><input class="minwidth500" name="MAIN_SECURITY_FORCERP" id="MAIN_SECURITY_FORCERP" value="'.getDolGlobalString("MAIN_SECURITY_FORCERP").'" spellcheck="false"></td>';
 print '</tr>';
 // Force STS
 print '<tr class="oddeven">';
-print '<td>'.$form->textwithpicto($langs->trans('MainSecurityForceSTS'), 'HTTP Header Strict-Transport-Security<br><br>'.$langs->trans("Example").':<br>"max-age=31536000; includeSubDomains"', 1, 'help', 'valignmiddle', 0, 3, 'MAIN_SECURITY_FORCESTS').'</td>';
-print '<td><input class="minwidth500" name="MAIN_SECURITY_FORCESTS" id="MAIN_SECURITY_FORCESTS" value="'.getDolGlobalString("MAIN_SECURITY_FORCESTS").'"></td>';
+print '<td>'.$form->textwithpicto($langs->trans('MainSecurityForceSTS'), 'HTTP Header Strict-Transport-Security<br><br>'.$langs->trans("Example").':<br>max-age=31536000; includeSubDomains', 1, 'help', 'valignmiddle', 0, 3, 'MAIN_SECURITY_FORCESTS').'</td>';
+print '<td><input class="minwidth500" name="MAIN_SECURITY_FORCESTS" id="MAIN_SECURITY_FORCESTS" value="'.getDolGlobalString("MAIN_SECURITY_FORCESTS").'" spellcheck="false"></td>';
 print '</tr>';
 // Force PP
 print '<tr class="oddeven">';
-print '<td>'.$form->textwithpicto($langs->trans('MainSecurityForcePP'), 'HTTP Header Permissions-Policy<br><br>'.$langs->trans("Example").':<br>"camera=(), microphone=(), geolocation=*"', 1, 'help', 'valignmiddle', 0, 3, 'MAIN_SECURITY_FORCEPP').'</td>';
-print '<td><input class="minwidth500" name="MAIN_SECURITY_FORCEPP" id="MAIN_SECURITY_FORCEPP" value="'.getDolGlobalString("MAIN_SECURITY_FORCEPP").'"></td>';
+print '<td>'.$form->textwithpicto($langs->trans('MainSecurityForcePP'), 'HTTP Header Permissions-Policy<br><br>'.$langs->trans("Example").':<br>camera=*, microphone=(), geolocation=*', 1, 'help', 'valignmiddle', 0, 3, 'MAIN_SECURITY_FORCEPP').'</td>';
+print '<td><input class="minwidth500" name="MAIN_SECURITY_FORCEPP" id="MAIN_SECURITY_FORCEPP" value="'.getDolGlobalString("MAIN_SECURITY_FORCEPP").'" spellcheck="false"></td>';
 print '</tr>';
 
 $examplecsprule = "frame-ancestors 'self'; img-src * data:; font-src *; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com;";
@@ -285,7 +285,7 @@ print '<td>';
 
 print '<div class="div-table-responsive-no-min">';
 
-print '<input class="minwidth500 quatrevingtpercent" name="MAIN_SECURITY_FORCECSP" id="MAIN_SECURITY_FORCECSP" value="'.$forceCSP.'"> <a href="#" id="btnaddcontentsecuritypolicy">'.img_picto('', 'add').'</a><br>';
+print '<input class="minwidth500 quatrevingtpercent" name="MAIN_SECURITY_FORCECSP" id="MAIN_SECURITY_FORCECSP" value="'.$forceCSP.'" spellcheck="false"> <a href="#" id="btnaddcontentsecuritypolicy">'.img_picto('', 'add').'</a><br>';
 
 print '<br class="selectaddcontentsecuritypolicy hidden">';
 

@@ -2879,6 +2879,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print '<span class="amount nowraponall">';
 					$value = 0;
 					print price($value, 1, $langs, 1, -1, -1, $conf->currency);
+					// Note: On the transverse project view, we also have a warning if value is zero here
 					print '</span>';
 					print '</td>';
 				}

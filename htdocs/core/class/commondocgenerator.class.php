@@ -886,6 +886,7 @@ abstract class CommonDocGenerator
 			'line_total_up' => price2num($line->subprice * (float) $line->qty),
 			'line_total_up_locale' => price($line->subprice * (float) $line->qty, 0, $outputlangs),
 			'line_qty' => $line->qty,
+			'line_qty_locale' => price($line->qty),
 			'line_discount_percent' => ($line->remise_percent ? $line->remise_percent.'%' : ''),
 			'line_price_ht' => price2num($line->total_ht),
 			'line_price_ttc' => price2num($line->total_ttc),
@@ -943,8 +944,9 @@ abstract class CommonDocGenerator
 
 		// Units
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-			$resarray['line_unit'] = $outputlangs->trans($line->getLabelOfUnit('long'));
-			$resarray['line_unit_short'] = $outputlangs->trans($line->getLabelOfUnit('short'));
+			$resarray['line_unit'] = $line->getLabelOfUnit('long', $outputlangs);
+			$resarray['line_unit_short'] = $line->getLabelOfUnit('short', $outputlangs);
+			//$resarray['line_unit_code'] = $line->getLabelOfUnit('code', $outputlangs);
 		}
 
 		// Retrieve extrafields

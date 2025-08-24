@@ -587,8 +587,6 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(500, 'Error when validating expense report: '.$this->expensereport->error);
 		}
 
-		$this->expensereport->fetchObjectLinked();
-
 		return $this->_cleanObjectDatas($this->expensereport);
 	}
 
@@ -633,8 +631,6 @@ class ExpenseReports extends DolibarrApi
 		if ($result < 0) {
 			throw new RestException(500, 'Error when approving expense report: '.$this->expensereport->error);
 		}
-
-		$this->expensereport->fetchObjectLinked();
 
 		return $this->_cleanObjectDatas($this->expensereport);
 	}
@@ -682,7 +678,7 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(500, 'Error when denying expense report: '.$this->expensereport->error);
 		}
 
-		$this->expensereport->fetchObjectLinked();
+
 
 		return $this->_cleanObjectDatas($this->expensereport);
 	}

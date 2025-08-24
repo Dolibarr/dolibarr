@@ -505,12 +505,13 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 			$paiement->num_payment = '';
 			$paiement->note_public = '';
 			$paiement->note_private = 'Stripe Sepa payment received by IPN service listening webhooks - ' . dol_print_date($now, 'standard') . ' (TZ server) using servicestatus=' . $servicestatus . ($ipaddress ? ' from ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
+
 			$paiement->ext_payment_id = $TRANSACTIONID.':'.$customer_id.'@'.$stripearrayofkeysbyenv[$servicestatus]['publishable_key'];		// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
 			$paiement->ext_payment_site = $service;
 
 			$ispaymentdone = 0;
 			$sql = "SELECT p.rowid FROM ".MAIN_DB_PREFIX."paiement as p";
-			$sql .= " WHERE p.ext_payment_id = '".$db->escape($paiement->ext_payment_id)."'";
+			$sql .= " WHERE (p.ext_payment_id = '".$db->escape($paiement->ext_payment_id)."' OR p.ext_payment_id = '".$db->escape($TRANSACTIONID)."')";
 			$sql .= " AND p.ext_payment_site = '".$db->escape($paiement->ext_payment_site)."'";
 			$result = $db->query($sql);
 			if ($result) {
@@ -548,7 +549,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 				// Search again the payment to see if it is already linked to a bank payment record (We should always find the payment that was created before).
 				$ispaymentdone = 0;
 				$sql = "SELECT p.rowid, p.fk_bank FROM ".MAIN_DB_PREFIX."paiement as p";
-				$sql .= " WHERE p.ext_payment_id = '".$db->escape($paiement->ext_payment_id)."'";
+				$sql .= " WHERE (p.ext_payment_id = '".$db->escape($paiement->ext_payment_id)."' OR p.ext_payment_id = '".$db->escape($TRANSACTIONID)."')";
 				$sql .= " AND p.ext_payment_site = '".$db->escape($paiement->ext_payment_site)."'";
 				$sql .= " AND p.fk_bank <> 0";
 				$result = $db->query($sql);
@@ -595,7 +596,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 				$sql .= " ON pb.rowid = dp.fk_prelevement_bons";
 				$sql .= " WHERE dp.fk_facture = ".((int) $invoice_id);
 				$sql .= " AND dp.sourcetype = 'facture'";
-				$sql .= " AND dp.ext_payment_id = '".$db->escape($TRANSACTIONID)."'";
+				$sql .= " AND (dp.ext_payment_id = '".$db->escape($paiement->ext_payment_id)."' OR dp.ext_payment_id = '".$db->escape($TRANSACTIONID)."')";
 				$sql .= " AND dp.traite = 1";
 				$sql .= " AND statut = ".((int) $bon::STATUS_TRANSFERED); // To be sure that it's not already credited
 				$result = $db->query($sql);
@@ -887,6 +888,12 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	$amountdispute = $stripe->convertAmount($amountdisputestripe, $currencyCodeType, 1);			// In real currency format
 	$statusdispute = $object->status;
 
+	$pkey = '';
+	if (isset($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])) {
+		$pkey = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
+	}
+	$LONGTRANSACTIONID = $TRANSACTIONID.':'.$customer_id.'@'.$pkey;
+
 	// Get the amount of fees for the dispute
 	$balance_transactions_array = $object->balance_transactions;
 	$feesstripe = 0;
@@ -910,7 +917,8 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 
 	$sql = "SELECT pi.rowid, pi.fk_facture, pi.fk_prelevement_bons, pi.amount, pi.type, pi.traite";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pi";
-	$sql .= " WHERE pi.ext_payment_id = '".$db->escape($TRANSACTIONID)."'";
+	//$sql .= " WHERE pi.ext_payment_id = '".$db->escape($TRANSACTIONID)."'";
+	$sql .= " WHERE (pi.ext_payment_id = '".$db->escape($LONGTRANSACTIONID)."' OR pi.ext_payment_id = '".$db->escape($TRANSACTIONID)."')";
 	$sql .= " AND pi.ext_payment_site = '".$db->escape($service)."'";
 
 	$result = $db->query($sql);

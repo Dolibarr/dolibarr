@@ -638,6 +638,7 @@ class Reception extends CommonObject
 					if ($qty == 0 || ($qty < 0 && !getDolGlobalInt('RECEPTION_ALLOW_NEGATIVE_QTY'))) {
 						continue;
 					}
+
 					dol_syslog(get_class($this)."::valid movement index ".$i." ed.rowid=".$obj->rowid);
 
 					//var_dump($this->lines[$i]);
@@ -1756,7 +1757,8 @@ class Reception extends CommonObject
 						if ($qty <= 0) {
 							continue;
 						}
-						dol_syslog(get_class($this)."::valid movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
+
+						dol_syslog(get_class($this)."::valid movement index ".$i." ed.rowid=".$obj->rowid);
 
 						$mouvS = new MouvementStock($this->db);
 						$mouvS->origin = &$this;
@@ -1913,7 +1915,6 @@ class Reception extends CommonObject
 						if ($qty <= 0) {
 							continue;
 						}
-
 						dol_syslog(get_class($this)."::reopen reception movement index ".$i." ed.rowid=".$obj->rowid);
 
 						//var_dump($this->lines[$i]);
@@ -2045,6 +2046,10 @@ class Reception extends CommonObject
 						$obj = $this->db->fetch_object($resql);
 
 						$qty = $obj->qty;
+
+						if ($qty <= 0) {
+							continue;
+						}
 
 						dol_syslog(get_class($this)."::reopen reception movement index ".$i." ed.rowid=".$obj->rowid);
 

@@ -334,7 +334,7 @@ print '<br>';
 
 
 if ($user->admin) {
-	print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules"));
+	print info_admin($langs->trans("WarningOnlyPermissionOfActivatedModules")." ".$langs->trans("YouCanEnableModulesFrom"));
 }
 // If edited user is an extern user, we show warning for external users
 if (!empty($object->socid)) {

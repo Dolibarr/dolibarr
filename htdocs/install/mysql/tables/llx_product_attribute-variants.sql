@@ -15,7 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- llx_product_attribute is table for labels of product variants attributes. For exemple: COLOR, SIZE, ... 
+-- llx_product_attribute is table for labels of product variants attributes. For exemple: COLOR, SIZE, ...
 -- The different possible values (for example BLUE, GREEN, ... for COLOR) are defined into llx_product_attribute_value.
 -- ============================================================================
 

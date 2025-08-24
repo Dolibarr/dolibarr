@@ -72,6 +72,9 @@ $search_categ_cus = GETPOST("search_categ_cus", 'intcomma', 3) ? GETPOST("search
 if (empty($filtert) && !getDolGlobalString('AGENDA_ALL_CALENDARS')) {
 	$filtert = (string) $user->id;
 }
+if (empty($filtert)) {
+	$filtert = -1;
+}
 
 $newparam = '';
 
