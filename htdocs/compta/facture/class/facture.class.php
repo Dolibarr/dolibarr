@@ -3172,7 +3172,7 @@ class Facture extends CommonInvoice
 					if ($this->lines[$i]->fk_product > 0) {
 						$mouvP = new MouvementStock($this->db);
 						$mouvP->origin = &$this;
-						$mouvP->setOrigin($this->element, $this->id);
+						$mouvP->setOrigin($this->element, $this->id, 0,  0, $this->fk_project);
 						// We decrease stock for product
 						if ($this->type == self::TYPE_CREDIT_NOTE) {
 							$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceDeleteDolibarr", $this->ref));
@@ -3712,7 +3712,7 @@ class Facture extends CommonInvoice
 					if ($this->lines[$i]->fk_product > 0) {
 						$mouvP = new MouvementStock($this->db);
 						$mouvP->origin = &$this;	// deprecated
-						$mouvP->setOrigin($this->element, $this->id);
+						$mouvP->setOrigin($this->element, $this->id, 0,  0, $this->fk_project);
 
 						// We decrease stock for product
 						if ($this->type == self::TYPE_CREDIT_NOTE) {
@@ -4053,7 +4053,7 @@ class Facture extends CommonInvoice
 					if ($this->lines[$i]->fk_product > 0) {
 						$mouvP = new MouvementStock($this->db);
 						$mouvP->origin = &$this;
-						$mouvP->setOrigin($this->element, $this->id);
+						$mouvP->setOrigin($this->element, $this->id, 0,  0, $this->fk_project);
 						// We decrease stock for product
 						if ($this->type == self::TYPE_CREDIT_NOTE) {
 							$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceBackToDraftInDolibarr", $this->ref));

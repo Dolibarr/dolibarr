@@ -2745,7 +2745,7 @@ class Expedition extends CommonObject
 
 				$mouvS = new MouvementStock($this->db);
 				$mouvS->origin = &$this;
-				$mouvS->setOrigin($this->element, $this->id, $obj->cdid, $obj->edid);
+				$mouvS->setOrigin($this->element, $this->id, $obj->cdid, $obj->edid, $this->fk_project);
 
 				if (empty($obj->edbrowid)) {
 					// line without batch detail
@@ -2911,7 +2911,7 @@ class Expedition extends CommonObject
 						//var_dump($this->lines[$i]);
 						$mouvS = new MouvementStock($this->db);
 						$mouvS->origin = &$this;
-						$mouvS->setOrigin($this->element, $this->id);
+						$mouvS->setOrigin($this->element, $this->id, 0,  0, $this->fk_project);
 
 						if (empty($obj->edbrowid)) {
 							// line without batch detail

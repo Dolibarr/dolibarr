@@ -1350,7 +1350,7 @@ class CommandeFournisseur extends CommonOrder
 							$this->line = $this->lines[$i];
 							$mouvP = new MouvementStock($this->db);
 							$mouvP->origin = &$this;
-							$mouvP->setOrigin($this->element, $this->id);
+							$mouvP->setOrigin($this->element, $this->id, 0,  0, $this->fk_project);
 							// We decrement stock of product (and sub-products)
 							$up_ht_disc = $this->lines[$i]->subprice;
 							if (!empty($this->lines[$i]->remise_percent) && !getDolGlobalString('STOCK_EXCLUDE_DISCOUNT_FOR_PMP')) {
@@ -2360,7 +2360,7 @@ class CommandeFournisseur extends CommonOrder
 				if ($product > 0) {
 					// $price should take into account discount (except if option STOCK_EXCLUDE_DISCOUNT_FOR_PMP is on)
 					$mouv->origin = &$this;
-					$mouv->setOrigin($this->element, $this->id);
+					$mouv->setOrigin($this->element, $this->id, 0,  0, $this->fk_project);
 
 					// Method change if qty < 0
 					if (getDolGlobalString('SUPPLIER_ORDER_ALLOW_NEGATIVE_QTY_FOR_SUPPLIER_ORDER_RETURN') && $qty < 0) {

@@ -448,7 +448,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && $permissiontoreceive
 			$mouv = new MouvementStock($db);
 			if ($product > 0) {
 				$mouv->origin = &$object;
-				$mouv->setOrigin($object->element, $object->id);
+				$mouv->setOrigin($object->element, $object->id, 0,  0, $object->fk_project);
 				$result = $mouv->livraison($user, $product, $entrepot, $qty, (float) $price, $comment, '', (int) $eatby, (int) $sellby, $batch);
 				if ($result < 0) {
 					$errors = $mouv->errors;
@@ -494,7 +494,7 @@ if ($action == 'updateline' && $permissiontoreceive && empty($cancel)) {
 			$mouv = new MouvementStock($db);
 			if ($product > 0) {
 				$mouv->origin = &$object;
-				$mouv->setOrigin($object->element, $object->id);
+				$mouv->setOrigin($object->element, $object->id, 0,  0, $object->fk_project);
 				$result = $mouv->livraison($user, $product, $entrepot, $qty, $price, $comment, '', (int) $eatby, (int) $sellby, $batch);
 				if ($result < 0) {
 					$errors = $mouv->errors;

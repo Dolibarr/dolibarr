@@ -340,7 +340,7 @@ if (empty($reshook)) {
 							if ($product > 0 && $qtymouv != 0) {
 								// $price should take into account discount (except if option STOCK_EXCLUDE_DISCOUNT_FOR_PMP is on)
 								$mouv->origin = $objectorder;
-								$mouv->setOrigin($objectorder->element, $objectorder->id);
+								$mouv->setOrigin($objectorder->element, $objectorder->id, 0, 0, $objectorder->fk_project);
 
 								// Method change if qty < 0
 								if (getDolGlobalString('SUPPLIER_ORDER_ALLOW_NEGATIVE_QTY_FOR_SUPPLIER_ORDER_RETURN') && $qtymouv < 0) {
