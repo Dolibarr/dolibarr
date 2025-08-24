@@ -750,7 +750,7 @@ if (getDolGlobalInt("TAKEPOS_ENABLE_SUMUP")) {
 }
 
 $parameters = array('action_buttons' => $action_buttons);
-$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $invoice, $action); // Note that $invoice may have been modified by hook
+$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $invoice, $action); // Note that $action and $invoice may have been modified by hook
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 } elseif ($reshook == 0) {
