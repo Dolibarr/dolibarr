@@ -531,7 +531,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			while ($obj = $db->fetch_object($resql)) {
 				$userstatic->id = $obj->rowid;
 				$userstatic->login = $obj->login;
-				$userstatic->firstname = $obj->fistname;
+				$userstatic->firstname = $obj->firstname;
 				$userstatic->lastname = $obj->lastname;
 				$userstatic->photo = $obj->photo;
 
