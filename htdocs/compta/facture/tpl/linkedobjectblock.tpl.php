@@ -32,7 +32,10 @@ global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
 '@phan-var-force Translate $langs';
-
+/**
+ * @var CommonObject $object
+ * @var Translate $langs
+ */
 global $linkedObjectBlock;
 
 $langs->load("bills");
