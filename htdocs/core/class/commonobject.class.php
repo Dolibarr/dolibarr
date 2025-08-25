@@ -7036,6 +7036,10 @@ abstract class CommonObject
 		}
 
 		if (!$error && $trigger) {
+			if (!empty($this->table_element) && !empty($this->fields['rowid']) && !empty($this->fields['tms'])) {
+				$sql = 'UPDATE '.$this->db->prefix().$this->table_element . ' set tms="'.$this->db->idate(dol_now()). '" WHERE rowid='.$this->id;
+				$this->db->query($sql);
+			}
 			// Call trigger
 			$this->context = array('extrafieldaddupdate' => 1);
 			$result = $this->call_trigger($trigger, $userused);
@@ -7461,6 +7465,10 @@ abstract class CommonObject
 			}
 
 			if (!$error && $trigger) {
+				if (!empty($this->table_element) && !empty($this->fields['rowid']) && !empty($this->fields['tms'])) {
+					$sql = 'UPDATE '.$this->db->prefix().$this->table_element . ' set tms="'.$this->db->idate(dol_now()). '" WHERE rowid='.$this->id;
+					$this->db->query($sql);
+				}
 				// Call trigger
 				$this->context = array('extrafieldupdate' => 1);
 				$result = $this->call_trigger($trigger, $userused);
