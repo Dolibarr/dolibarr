@@ -3369,7 +3369,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$morehtmlstatus .= $object->getLibStatut(6);
 		}
 	} elseif ($object->element == 'product') {
-		/** @var product $object */
+		/** @var Product $object */
 		//$morehtmlstatus.=$langs->trans("Status").' ('.$langs->trans("Sell").') ';
 		if (!empty($conf->use_javascript_ajax) && $user->hasRight('produit', 'creer') && getDolGlobalString('MAIN_DIRECT_STATUS_UPDATE')) {
 			$morehtmlstatus .= ajax_object_onoff($object, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
