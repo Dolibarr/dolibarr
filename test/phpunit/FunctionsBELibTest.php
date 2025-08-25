@@ -50,14 +50,14 @@ class FunctionsBELibTest extends CommonClassTest
 	 */
 	public function testdolBECalculateStructuredCommunication()
 	{
-        // Basic test
-        $this->assertEquals(dolBECalculateStructuredCommunication('00000000', '99'), '+++000/0000/00097+++');
+		// Basic test
+		$this->assertEquals(dolBECalculateStructuredCommunication('00000000', '99'), '+++000/0000/00097+++');
 
-        // Test given in issue
+		// Test given in issue
 		$this->assertEquals(dolBECalculateStructuredCommunication('it-comp-25057', '0'), '+++200/0025/05702+++');
 
-        // Random test
-        $this->assertEquals(dolBECalculateStructuredCommunication('FA3698-5455', '0'), '+++203/6985/45505+++');
+		// Random test
+		$this->assertEquals(dolBECalculateStructuredCommunication('FA3698-5455', '0'), '+++203/6985/45505+++');
 	}
 
 }
