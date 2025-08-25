@@ -1246,7 +1246,7 @@ if ($action == 'create') {
 
 				// Qty already received
 				print '<td class="center">';
-				$quantityDelivered = $objectsrc->receptions[$line->id];
+				$quantityDelivered = isset($objectsrc->receptions[$line->id]) ? $objectsrc->receptions[$line->id] : 0;
 				if (! array_key_exists($line->id, $arrayofpurchaselinealreadyoutput)) {	// Add test to avoid to show qty twice
 					print $quantityDelivered;
 				}

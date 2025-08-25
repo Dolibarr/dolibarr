@@ -4849,10 +4849,9 @@ function dol_print_ip($ip, $mode = 0, $showname = 0)
  * Return the real IP of remote user.
  * Take HTTP_X_FORWARDED_FOR (defined when using proxy)
  * Then HTTP_CLIENT_IP if defined (rare)
- * Then REMOTE_ADDR (the last seerver ip in proxy chain).
- * 			REMOTE_ADDR can't be modified by client and may be the IP of a proxy.
- * 			Note: that if Apache module "remoteip" module is on, $_SERVER["REMOTE_ADDR"] may be replaced y HTTP_X_FORWARDED_FOR directly
- * 					from CF-Connecting-IP, but only if remote is in trusted cloudflare list.
+ * Then REMOTE_ADDR (the last seerver ip in proxy chain). REMOTE_ADDR can't be modified by client and may be the IP of a proxy.
+ * Note:	if Apache module "remoteip" module is on, Apache may replaced the $_SERVER["REMOTE_ADDR"] by HTTP_X_FORWARDED_FOR directly. For this
+ * 			Apache is using the CF-Connecting-IP header (HTTP_CF_CONNECTING_IP), but only if the remote IP is in the trusted cloudflare list (Apache must enable module and conf remoteip).
  *
  * @param	int		$trusted	0=Default, 1=Trusted value (the last IP that was not altered by client)
  * @return	string				Real IP of remote user.
