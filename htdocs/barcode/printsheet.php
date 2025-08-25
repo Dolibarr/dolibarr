@@ -85,20 +85,22 @@ $hookmanager->initHooks(array('printsheettools'));
 
 restrictedArea($user, 'barcode');
 
-$parameters = array();
+$object = new stdClass();
 
-// Note that $action and $object may have been modified by some
-$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
-if ($reshook < 0) {
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-}
 
 /*
  * Actions
  */
 
+// Note that $action and $object may have been modified by some
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
+
 if (empty($reshook)) {
-	if (GETPOST('submitproduct') && GETPOST('submitproduct')) {
+	if (GETPOST('submitproduct')) {
 		$action = ''; // We reset because we don't want to build doc
 		if (GETPOSTINT('productid') > 0) {
 			$result = $producttmp->fetch(GETPOSTINT('productid'));
@@ -117,7 +119,7 @@ if (empty($reshook)) {
 			}
 		}
 	}
-	if (GETPOST('submitthirdparty') && GETPOST('submitthirdparty')) {
+	if (GETPOST('submitthirdparty')) {
 		$action = ''; // We reset because we don't want to build doc
 		if (GETPOSTINT('socid') > 0) {
 			$thirdpartytmp->fetch(GETPOSTINT('socid'));

@@ -57,9 +57,13 @@ $action = GETPOST('action', 'aZ09');
  * Actions
  */
 
+$sqllog = '';
+$resultsql = true;
+
 if ($action == 'convert') {	// Convert engine into innodb
 	$sql = "ALTER TABLE ".$db->sanitize($table)." ENGINE=INNODB";
-	$db->query($sql);
+	$sqllog .= $sql.'<br>';
+	$resultsql = $db->query($sql);
 }
 if ($action == 'convertutf8') {
 	$collation = 'utf8_unicode_ci';
@@ -68,14 +72,18 @@ if ($action == 'convertutf8') {
 		$collation = 'utf8_general_ci';
 	}
 	$sql = "ALTER TABLE ".$db->sanitize($table)." CHARACTER SET utf8 COLLATE ".$db->sanitize($collation);	// Set the default value on table
+	$sqllog .= $sql.'<br>';
 	$resql1 = $db->query($sql);
 	if (!$resql1) {
 		setEventMessages($db->lasterror(), null, 'warnings');
+		$resultsql = $resql1;
 	} else {
 		$sql = "ALTER TABLE ".$db->sanitize($table)." CONVERT TO CHARACTER SET utf8 COLLATE ".$db->sanitize($collation);	// Switch fields (may fails due to foreign key)
+		$sqllog .= $sql.'<br>';
 		$resql2 = $db->query($sql);
 		if (!$resql2) {
 			setEventMessages($db->lasterror(), null, 'warnings');
+			$resultsql = $resql2;
 		}
 	}
 }
@@ -86,20 +94,25 @@ if ($action == 'convertutf8mb4') {
 		$collation = 'utf8mb4_general_ci';
 	}
 	$sql = "ALTER TABLE ".$db->sanitize($table)." CHARACTER SET utf8mb4 COLLATE ".$db->sanitize($collation);	// Set the default value on table
+	$sqllog .= $sql.'<br>';
 	$resql1 = $db->query($sql);
 	if (!$resql1) {
 		setEventMessages($db->lasterror(), null, 'warnings');
+		$resultsql = $resql1;
 	} else {
 		$sql = "ALTER TABLE ".$db->sanitize($table)." CONVERT TO CHARACTER SET utf8mb4 COLLATE ".$db->sanitize($collation);	// Switch fields (may fails due to foreign key)
+		$sqllog .= $sql.'<br>';
 		$resql2 = $db->query($sql);
 		if (!$resql2) {
 			setEventMessages($db->lasterror(), null, 'warnings');
+			$resultsql = $resql2;
 		}
 	}
 }
 if ($action == 'convertdynamic') {
 	$sql = "ALTER TABLE ".$db->sanitize($table)." ROW_FORMAT=DYNAMIC;";
-	$db->query($sql);
+	$sqllog .= $sql.'<br>';
+	$resultsql = $db->query($sql);
 }
 
 
@@ -109,8 +122,13 @@ if ($action == 'convertdynamic') {
 
 llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-database_tables');
 
-print load_fiche_titre($langs->trans("Tables")." ".ucfirst($conf->db->type), '', 'title_setup');
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/system/database.php?restore_lastsearch_values=1">'.img_picto($langs->trans("Back"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("Back").'</span></a>';
 
+print load_fiche_titre($langs->trans("Tables")." ".ucfirst($conf->db->type), $linkback, 'title_setup');
+
+if ($sqllog) {
+	print info_admin($sqllog.' '.(empty($resultsql) ? ' => KO '.$db->lasterror() : ' => OK'));
+}
 
 // Define request to get table description
 $base = 0;
@@ -216,10 +234,10 @@ if (!$base) {
 				if (isset($obj->Collation)) {
 					print '<br><span class="opacitymedium small">'.$langs->trans("ConvertInto");
 					if (!in_array($obj->Collation, array("utf8_unicode_ci"))) {
-						print ' <a class="reposition" href="database-tables.php?action=convertutf8&table='.urlencode($obj->Name).'&token='.newToken().'">utf8</a>';
+						print ' <a class="reposition" href="database-tables.php?action=convertutf8&table='.urlencode($obj->Name).'&token='.newToken().'" title="Charset utf8 + Collation utf8_unicode_ci">utf8</a>';
 					}
 					if (!in_array($obj->Collation, array("utf8mb4_unicode_ci"))) {
-						print ' <a class="reposition" href="database-tables.php?action=convertutf8mb4&table='.urlencode($obj->Name).'&token='.newToken().'">utf8mb4</a>';
+						print ' <a class="reposition" href="database-tables.php?action=convertutf8mb4&table='.urlencode($obj->Name).'&token='.newToken().'" title="Charset utf8mb4 + Collation utf8mb4_unicode_ci">utf8mb4</a>';
 					}
 					print '</span>';
 				}

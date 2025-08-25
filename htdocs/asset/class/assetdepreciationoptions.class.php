@@ -225,7 +225,7 @@ class AssetDepreciationOptions extends CommonObject
 	 */
 	public function setDeprecationOptionsFromPost($class_type = 0)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$error = 0;
 
