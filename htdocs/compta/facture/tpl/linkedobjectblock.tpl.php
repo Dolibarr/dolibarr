@@ -35,7 +35,7 @@ $langs = $GLOBALS['langs'];
 /**
  * @var CommonObject $object
  */
-global $linkedObjectBlock;
+$linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $langs->load("bills");
 
