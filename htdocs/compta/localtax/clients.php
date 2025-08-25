@@ -241,8 +241,8 @@ if ($calc == 0 || $calc == 2) {
 		$totalamount = 0;
 		$i = 1;
 		foreach ($coll_list as $coll_obj) {
-			if (($min == 0 || ($min > 0 && $coll_obj->amount > $min)) && ($local == 1 ? $coll_obj->localtax1 : $coll_obj->localtax2) != 0) {
-				$intra = str_replace($find, $replace, $coll_obj->tva_intra);
+			if (($min == 0 || ($min > 0 && $coll_obj['total_ht'] > $min)) && ($local == 1 ? $coll_obj['localtax1'] : $coll_obj['localtax2']) != 0) {
+				$intra = str_replace($find, $replace, $coll_obj['tva_intra']);
 				if (empty($intra)) {
 					if ($coll_obj->assuj == '1') {
 						$intra = $langs->trans('Unknown');
@@ -252,16 +252,16 @@ if ($calc == 0 || $calc == 2) {
 				}
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$i."</td>";
-				$company_static->id = $coll_obj->socid;
-				$company_static->name = $coll_obj->name;
+				$company_static->id = $coll_obj['company_id'];
+				$company_static->name = $coll_obj['company_name'];
 				print '<td class="nowrap">'.$company_static->getNomUrl(1).'</td>';
 				$find = array(' ', '.');
 				$replace = array('', '');
 				print '<td class="nowrap">'.$intra.'</td>';
-				print '<td class="nowrap right">'.price($coll_obj->amount).'</td>';
-				print '<td class="nowrap right">'.price($local == 1 ? $coll_obj->localtax1 : $coll_obj->localtax2).'</td>';
-				$totalamount += $coll_obj->amount;
-				$total += ($local == 1 ? $coll_obj->localtax1 : $coll_obj->localtax2);
+				print '<td class="nowrap right">'.price($coll_obj['total_ht']).'</td>';
+				print '<td class="nowrap right">'.price($local == 1 ? $coll_obj['localtax1'] : $coll_obj['localtax2']).'</td>';
+				$totalamount += $coll_obj['total_ht'];
+				$total += ($local == 1 ? $coll_obj['localtax1'] : $coll_obj['localtax2']);
 				print "</tr>\n";
 				$i++;
 			}
@@ -306,10 +306,10 @@ if ($calc == 0 || $calc == 1) {
 		$totalamount = 0;
 		$i = 1;
 		foreach ($coll_list as $coll_obj) {
-			if (($min == 0 || ($min > 0 && $coll_obj->amount > $min)) && ($local == 1 ? $coll_obj->localtax1 : $coll_obj->localtax2) != 0) {
+			if (($min == 0 || ($min > 0 && $coll_obj['total_ht'] > $min)) && ($local == 1 ? $coll_obj['localtax1'] : $coll_obj['localtax2']) != 0) {
 				$intra = str_replace($find, $replace, $coll_obj->tva_intra);
 				if (empty($intra)) {
-					if ($coll_obj->assuj == '1') {
+					if ($coll_obj['assuj'] == '1') {
 						$intra = $langs->trans('Unknown');
 					} else {
 						$intra = '';
@@ -317,16 +317,16 @@ if ($calc == 0 || $calc == 1) {
 				}
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$i."</td>";
-				$company_static->id = $coll_obj->socid;
-				$company_static->name = $coll_obj->name;
+				$company_static->id = $coll_obj['company_id'];
+				$company_static->name = $coll_obj['company_name'];
 				print '<td class="nowrap">'.$company_static->getNomUrl(1).'</td>';
 				$find = array(' ', '.');
 				$replace = array('', '');
 				print '<td class="nowrap">'.$intra."</td>";
-				print '<td class="nowrap right">'.price($coll_obj->amount).'</td>';
-				print '<td class="nowrap right">'.price($local == 1 ? $coll_obj->localtax1 : $coll_obj->localtax2).'</td>';
-				$totalamount += $coll_obj->amount;
-				$total += ($local == 1 ? $coll_obj->localtax1 : $coll_obj->localtax2);
+				print '<td class="nowrap right">'.price($coll_obj['total_ht']).'</td>';
+				print '<td class="nowrap right">'.price($local == 1 ? $coll_obj['localtax1'] : $coll_obj['localtax2']).'</td>';
+				$totalamount += $coll_obj['total_ht'];
+				$total += ($local == 1 ? $coll_obj['localtax1'] : $coll_obj['localtax2']);
 				print "</tr>\n";
 				$i++;
 			}
