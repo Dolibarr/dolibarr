@@ -77,9 +77,10 @@ ClickHereToTryAgain=<a href="%s">Click here to try again...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe back office. You can click here to switch on Stripe customer record: %s
 STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
 TERMINAL_LOCATION=Location (address) for Stripe Terminals
-RequestDirectDebitWithStripe=Request Direct Debit with Stripe
-RequesCreditTransferWithStripe=Request Credit Transfer with Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Enable the payments using Klarna
 STRIPE_BANCONTACT=Enable the payments using BANCONTACT
 STRIPE_IDEAL=Enable the payments using IDEAL
