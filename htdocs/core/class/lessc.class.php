@@ -1,6 +1,5 @@
 <?php
-
-/**
+/*
  * lessphp v0.8.0
  * http://leafo.net/lessphp
  *
@@ -40,7 +39,6 @@
  */
 class Lessc
 {
-
 	public static $VERSION = "v0.8.0";
 
 	public static $TRUE = array("keyword", "true");
@@ -768,7 +766,7 @@ class Lessc
 				$orderedArgs = array();
 				$keywordArgs = array();
 				foreach ((array) $args as $arg) {
-					$argval = null;
+					//$argval = null;
 					switch ($arg[0]) {
 						case "arg":
 							if (!isset($arg[2])) {
