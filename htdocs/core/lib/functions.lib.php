@@ -13113,7 +13113,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 
 						if ($isSellist) {
 							$newres .= $field." IN (SELECT t.".$key." FROM ".$db->prefix().$table." AS t WHERE t.".$label." LIKE '%".$db->escape($tmpcrit2)."%')";
-						}else{
+						} else {
 							if (preg_match('/^!/', $tmpcrit)) {
 								$tmps .= $db->sanitize($field) . " NOT LIKE "; // ! as exclude character
 								$tmpcrit2 = preg_replace('/^!/', '', $tmpcrit2);
@@ -13121,7 +13121,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 								$tmps .= $db->sanitize($field) . " LIKE ";
 							}
 							$tmps .= "'";
-	
+
 							if (preg_match('/^[\^\$]/', $tmpcrit)) {
 								$tmpbefore = '';
 								$tmpcrit2 = preg_replace('/^[\^\$]/', '', $tmpcrit2);
@@ -13130,7 +13130,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 								$tmpafter = '';
 								$tmpcrit2 = preg_replace('/[\^\$]$/', '', $tmpcrit2);
 							}
-	
+
 							if ($tmpcrit2 == '' || preg_match('/^!/', $tmpcrit)) {
 								$tmps = "(" . $tmps;
 							}
