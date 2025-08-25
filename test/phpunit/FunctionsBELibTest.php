@@ -59,5 +59,4 @@ class FunctionsBELibTest extends CommonClassTest
 		// Random test
 		$this->assertEquals(dolBECalculateStructuredCommunication('FA3698-5455', '0'), '+++203/6985/45505+++');
 	}
-
 }
