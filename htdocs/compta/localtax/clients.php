@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2011-2014	Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2014	    Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -244,7 +244,7 @@ if ($calc == 0 || $calc == 2) {
 			if (($min == 0 || ($min > 0 && $coll_obj['total_ht'] > $min)) && ($local == 1 ? $coll_obj['localtax1'] : $coll_obj['localtax2']) != 0) {
 				$intra = str_replace($find, $replace, $coll_obj['tva_intra']);
 				if (empty($intra)) {
-					if ($coll_obj->assuj == '1') {
+					if ($coll_obj['assuj'] == '1') {
 						$intra = $langs->trans('Unknown');
 					} else {
 						$intra = '';
@@ -307,7 +307,7 @@ if ($calc == 0 || $calc == 1) {
 		$i = 1;
 		foreach ($coll_list as $coll_obj) {
 			if (($min == 0 || ($min > 0 && $coll_obj['total_ht'] > $min)) && ($local == 1 ? $coll_obj['localtax1'] : $coll_obj['localtax2']) != 0) {
-				$intra = str_replace($find, $replace, $coll_obj->tva_intra);
+				$intra = str_replace($find, $replace, $coll_obj['tva_intra']);
 				if (empty($intra)) {
 					if ($coll_obj['assuj'] == '1') {
 						$intra = $langs->trans('Unknown');
