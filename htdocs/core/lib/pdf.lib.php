@@ -2623,6 +2623,7 @@ function pdf_getLinkedObjects($object, $outputlangs)
 			}
 		} elseif ($objecttype == 'fichinter') {
 			'@phan-var-force Fichinter[] $objects';
+			/** @var Fichinter[] $objects */
 			$outputlangs->load('interventions');
 			foreach ($objects as $elementobject) {
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("InterRef");
@@ -2632,6 +2633,7 @@ function pdf_getLinkedObjects($object, $outputlangs)
 			}
 		} elseif ($objecttype == 'shipping') {
 			'@phan-var-force Expedition[] $objects';
+			/** @var Expedition[] $objects */
 			$outputlangs->loadLangs(array("orders", "sendings"));
 
 			if (count($objects) > 1) {
