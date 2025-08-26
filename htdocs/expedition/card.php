@@ -1366,8 +1366,7 @@ if ($action == 'create') {
 				if (empty($reshook) && $line->special_code != SUBTOTALS_SPECIAL_CODE) {
 					// Show product and description
 					$type = $line->product_type ? $line->product_type : $line->fk_product_type;
-					// Try to enhance type detection using date_start and date_end for free lines where type
-					// was not saved.
+					// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 					if (!empty($line->date_start)) {
 						$type = 1;
 					}

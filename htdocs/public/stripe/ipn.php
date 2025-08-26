@@ -476,6 +476,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 			// For this case, payment on invoice (not yet recorded) must be done and direct debit order must be closed.
 
 			$paiement = new Paiement($db);
+
 			$paiement->datepaye = $now;
 			$paiement->date = $now;
 			if ($currencyCodeType == $conf->currency) {
@@ -869,7 +870,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	dol_syslog("object = ".var_export($event->data, true));
 	dol_syslog("object = ".var_export($event->data, true), LOG_DEBUG, 0, '_payment');
 } elseif ($event->type == 'charge.dispute.funds_withdrawn') {
-	// When a dispute/withdraw to cancel a SEPA payment is done
+	// When a dispute/withdraw to cancel a payment (card or SEPA) is done
 	dol_syslog("object = ".var_export($event->data, true));
 	dol_syslog("object = ".var_export($event->data, true), LOG_DEBUG, 0, '_payment');
 

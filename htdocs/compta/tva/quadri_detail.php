@@ -31,6 +31,14 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT . '/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
@@ -44,15 +52,6 @@ require_once DOL_DOCUMENT_ROOT . '/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/paymentexpensereport.class.php';
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
-
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
 
@@ -61,17 +60,28 @@ $invoice_type = GETPOSTISSET('invoice_type') ? GETPOST('invoice_type', 'alpha') 
 $vat_rate_show = GETPOSTISSET('vat_rate_show') ? GETPOST('vat_rate_show', 'alphanohtml') : -1;
 
 // Set $date_start_xxx and $date_end_xxx...
-include DOL_DOCUMENT_ROOT . '/compta/tva/initdatesforvat.inc.php';
-// Variables provided by include:
+include DOL_DOCUMENT_ROOT.'/compta/tva/initdatesforvat.inc.php';
+/**
+ * @var	int	$date_start
+ * @var int $date_end
+ * @var int $date_start_month
+ * @var int $date_start_year
+ * @var int $date_start_day
+ * @var int $date_end_month
+ * @var int $date_end_year
+ * @var int $date_end_day
+ * @var int $year_current
+ */
 '
 @phan-var-force int $date_start
 @phan-var-force int $date_end
-@phan-var-force string $date_start_month
-@phan-var-force string $date_start_year
-@phan-var-force string $date_start_day
-@phan-var-force string $date_end_month
-@phan-var-force string $date_end_year
-@phan-var-force string $date_end_day
+@phan-var-force int $date_start_month
+@phan-var-force int $date_start_year
+@phan-var-force int $date_start_day
+@phan-var-force int $date_end_month
+@phan-var-force int $date_end_year
+@phan-var-force int $date_end_day
+@phan-var-force int $year_current
 ';
 
 $min = price2num(GETPOST("min", "alpha"));
@@ -152,23 +162,7 @@ $calcmode .= ' <span class="opacitymedium">(' . $langs->trans("TaxModuleSetupToM
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
 $period .= ' - ';
 $period .= $form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
-$prevyear = $date_start_year;
-$q = 0;
-$prevquarter = $q;
-if ($prevquarter > 1) {
-	$prevquarter--;
-} else {
-	$prevquarter = 4;
-	$prevyear--;
-}
-$nextyear = $date_start_year;
-$nextquarter = $q;
-if ($nextquarter < 4) {
-	$nextquarter++;
-} else {
-	$nextquarter = 1;
-	$nextyear++;
-}
+
 $description = $fsearch;
 $builddate = dol_now();
 
@@ -458,7 +452,8 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			if ($invoice_type != 'customer' || !GETPOSTISSET('vat_rate_show') || GETPOST('vat_rate_show') != $rate) {
 				print '&amp;vat_rate_show=' . urlencode($rate);
 			}
-			print '&amp;date_startyear=' . urlencode($date_start_year) . '&amp;date_startmonth=' . urlencode($date_start_month) . '&amp;date_startday=' . urlencode($date_start_day) . '&amp;date_endyear=' . urlencode($date_end_year) . '&amp;date_endmonth=' . urlencode($date_end_month) . '&amp;date_endday=' . urlencode($date_end_day) . '">' . img_picto('', 'chevron-down', 'class="paddingrightonly"') . $langs->trans('VATReportShowByRateDetails') . '</a>';
+			print '&amp;date_startyear=' . ((int) $date_start_year) . '&amp;date_startmonth=' . ((int) $date_start_month) . '&amp;date_startday=' . ((int) $date_start_day) . '&amp;date_endyear=' . ((int) $date_end_year) . '&amp;date_endmonth=' . ((int) $date_end_month) . '&amp;date_endday=' . ((int) $date_end_day) . '">';
+			print img_picto('', 'chevron-down', 'class="paddingrightonly"') . $langs->trans('VATReportShowByRateDetails') . '</a>';
 			print '</td>';
 			print '</tr>' . "\n";
 
@@ -466,8 +461,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				// Define type
 				// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 				$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
-				// Try to enhance type detection using date_start and date_end for free lines where type
-				// was not saved.
+				// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 				if (!empty($fields['ddate_start'])) {
 					$type = 1;
 				}
@@ -518,8 +512,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					// Define type
 					// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 					$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
-					// Try to enhance type detection using date_start and date_end for free lines where type
-					// was not saved.
+					// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 					if (!empty($fields['ddate_start'])) {
 						$type = 1;
 					}
@@ -544,7 +537,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					}
 
 					// Company name
-					print '<td class="tdmaxoverflow150">';
+					print '<td class="tdoverflowmax150">';
 					//print $company_static->getNomUrl(1);
 					print $fields['company_link'];
 					print '</td>';
@@ -698,7 +691,8 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			if ($invoice_type != 'supplier' || !GETPOSTISSET('vat_rate_show') || GETPOST('vat_rate_show') != $rate) {
 				print '&amp;vat_rate_show=' . urlencode($rate);
 			}
-			print '&amp;date_startyear=' . urlencode($date_start_year) . '&amp;date_startmonth=' . urlencode($date_start_month) . '&amp;date_startday=' . urlencode($date_start_day) . '&amp;date_endyear=' . urlencode($date_end_year) . '&amp;date_endmonth=' . urlencode($date_end_month) . '&amp;date_endday=' . urlencode($date_end_day) . '">' . img_picto('', 'chevron-down', 'class="paddingrightonly"') . $langs->trans('VATReportShowByRateDetails') . '</a>';
+			print '&amp;date_startyear=' . ((int) $date_start_year) . '&amp;date_startmonth=' . ((int) $date_start_month) . '&amp;date_startday=' . ((int) $date_start_day) . '&amp;date_endyear=' . ((int) $date_end_year) . '&amp;date_endmonth=' . ((int) $date_end_month) . '&amp;date_endday=' . ((int) $date_end_day) . '">';
+			print img_picto('', 'chevron-down', 'class="paddingrightonly"') . $langs->trans('VATReportShowByRateDetails') . '</a>';
 			print '</td>';
 			print '</tr>' . "\n";
 
@@ -706,8 +700,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				// Define type
 				// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 				$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
-				// Try to enhance type detection using date_start and date_end for free lines where type
-				// was not saved.
+				// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 				if (!empty($fields['ddate_start'])) {
 					$type = 1;
 				}
@@ -756,8 +749,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					// Define type
 					// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 					$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
-					// Try to enhance type detection using date_start and date_end for free lines where type
-					// was not saved.
+					// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 					if (!empty($fields['ddate_start'])) {
 						$type = 1;
 					}
@@ -781,7 +773,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					}
 
 					// Company name
-					print '<td class="tdmaxoverflow150">';
+					print '<td class="tdoverflowmax150">';
 					//print $company_static->getNomUrl(1);
 					print $fields['company_link'];
 					print '</td>';
@@ -910,7 +902,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	print '<table class="noborder centpercent">';
 	$diff = $x_coll_sum - $x_paye_sum;
 	print '<tr class="liste_total">';
-	print '<td class="liste_total" colspan="' . $span . '">' . $langs->trans("TotalToPay") . ($q ? ', ' . $langs->trans("Quadri") . ' ' . $q : '') . '</td>';
+	print '<td class="liste_total" colspan="' . $span . '">' . $langs->trans("TotalToPay") . '</td>';
 	print '<td class="liste_total nowrap right"><b>' . price(price2num($diff, 'MT')) . "</b></td>\n";
 	print "</tr>\n";
 
