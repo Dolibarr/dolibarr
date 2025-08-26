@@ -2043,7 +2043,7 @@ parameters:
 		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
-			count: 4
+			count: 1
 			path: ../../../htdocs/barcode/printsheet.php
 
 		-
@@ -3937,12 +3937,6 @@ parameters:
 			path: ../../../htdocs/compta/bank/various_payment/info.php
 
 		-
-			message: '#^Variable \$morehtmlright might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/bank/various_payment/info.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
@@ -4581,24 +4575,6 @@ parameters:
 		-
 			message: '#^Call to function is_array\(\) with list\<array\<string, mixed\>\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/compta/localtax/quadri_detail.php
-
-		-
-			message: '#^Comparison operation "\<" between 0 and 4 is always true\.$#'
-			identifier: smaller.alwaysTrue
-			count: 1
-			path: ../../../htdocs/compta/localtax/quadri_detail.php
-
-		-
-			message: '#^Comparison operation "\>" between 0 and 1 is always false\.$#'
-			identifier: greater.alwaysFalse
-			count: 1
-			path: ../../../htdocs/compta/localtax/quadri_detail.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
 			count: 1
 			path: ../../../htdocs/compta/localtax/quadri_detail.php
 
@@ -5455,51 +5431,9 @@ parameters:
 			path: ../../../htdocs/compta/tva/clients.php
 
 		-
-			message: '#^Comparison operation "\<" between 0 and 4 is always true\.$#'
-			identifier: smaller.alwaysTrue
-			count: 1
-			path: ../../../htdocs/compta/tva/clients.php
-
-		-
-			message: '#^Comparison operation "\>" between 0 and 1 is always false\.$#'
-			identifier: greater.alwaysFalse
-			count: 1
-			path: ../../../htdocs/compta/tva/clients.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../../htdocs/compta/tva/clients.php
-
-		-
-			message: '#^Variable \$date_end might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/compta/tva/clients.php
-
-		-
-			message: '#^Variable \$date_start might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/compta/tva/clients.php
-
-		-
-			message: '#^Variable \$date_start_year might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/compta/tva/clients.php
-
-		-
 			message: '#^Variable \$description might not be defined\.$#'
 			identifier: variable.undefined
 			count: 8
-			path: ../../../htdocs/compta/tva/clients.php
-
-		-
-			message: '#^Variable \$year_current might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/compta/tva/clients.php
 
 		-
@@ -5541,78 +5475,6 @@ parameters:
 		-
 			message: '#^Call to function is_array\(\) with list\<array\{id\: mixed, descr\: mixed, pid\: mixed, pref\: mixed, ptype\: mixed, payment_id\: mixed, payment_ref\: mixed, payment_amount\: mixed, \.\.\.\}\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/compta/tva/quadri_detail.php
-
-		-
-			message: '#^Comparison operation "\<" between 0 and 4 is always true\.$#'
-			identifier: smaller.alwaysTrue
-			count: 1
-			path: ../../../htdocs/compta/tva/quadri_detail.php
-
-		-
-			message: '#^Comparison operation "\>" between 0 and 1 is always false\.$#'
-			identifier: greater.alwaysFalse
-			count: 1
-			path: ../../../htdocs/compta/tva/quadri_detail.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../../htdocs/compta/tva/quadri_detail.php
-
-		-
-			message: '#^Variable \$date_end might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
-			path: ../../../htdocs/compta/tva/quadri_detail.php
-
-		-
-			message: '#^Variable \$date_end_day might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/compta/tva/quadri_detail.php
-
-		-
-			message: '#^Variable \$date_end_month might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/compta/tva/quadri_detail.php
-
-		-
-			message: '#^Variable \$date_end_year might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/compta/tva/quadri_detail.php
-
-		-
-			message: '#^Variable \$date_start might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
-			path: ../../../htdocs/compta/tva/quadri_detail.php
-
-		-
-			message: '#^Variable \$date_start_day might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/compta/tva/quadri_detail.php
-
-		-
-			message: '#^Variable \$date_start_month might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/compta/tva/quadri_detail.php
-
-		-
-			message: '#^Variable \$date_start_year might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/compta/tva/quadri_detail.php
-
-		-
-			message: '#^Variable \$year_current might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/compta/tva/quadri_detail.php
 
@@ -11407,12 +11269,6 @@ parameters:
 			path: ../../../htdocs/delivery/class/delivery.class.php
 
 		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/delivery/tpl/linkedobjectblock.tpl.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -14099,42 +13955,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/hrm/compare.php
-
-		-
-			message: '#^Variable \$colwidth might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/hrm/core/tpl/skilldet.fiche.tpl.php
-
-		-
-			message: '#^Variable \$moreparam might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/hrm/core/tpl/skilldet.fiche.tpl.php
-
-		-
-			message: '#^Variable \$permission might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/hrm/core/tpl/skilldet.fiche.tpl.php
-
-		-
-			message: '#^Variable \$typeofdata might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/hrm/core/tpl/skilldet.fiche.tpl.php
-
-		-
-			message: '#^Variable \$value_private might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/hrm/core/tpl/skilldet.fiche.tpl.php
-
-		-
-			message: '#^Variable \$value_public might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/hrm/core/tpl/skilldet.fiche.tpl.php
 
 		-
 			message: '#^Property Establishment\:\:\$entity \(int\) in isset\(\) is not nullable\.$#'
@@ -18283,12 +18103,6 @@ parameters:
 			path: ../../../htdocs/projet/tasks/time.php
 
 		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/projet/tasks/tpl/linkedobjectblock.tpl.php
-
-		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -19033,12 +18847,6 @@ parameters:
 			path: ../../../htdocs/public/users/view.php
 
 		-
-			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
-			path: ../../../htdocs/public/users/view.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 3
@@ -19099,45 +18907,9 @@ parameters:
 			path: ../../../htdocs/public/website/index.php
 
 		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/public/website/index.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/public/website/index.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
-			path: ../../../htdocs/public/website/index.php
-
-		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 1
-			path: ../../../htdocs/public/website/javascript.js.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/public/website/javascript.js.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/public/website/javascript.js.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
 			path: ../../../htdocs/public/website/javascript.js.php
 
 		-
@@ -19186,12 +18958,6 @@ parameters:
 			message: '#^Variable \$extrafields in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
-			path: ../../../htdocs/reception/card.php
-
-		-
-			message: '#^Variable \$line might not be defined\.$#'
-			identifier: variable.undefined
-			count: 40
 			path: ../../../htdocs/reception/card.php
 
 		-
