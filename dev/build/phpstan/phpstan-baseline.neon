@@ -1513,36 +1513,6 @@ parameters:
 			path: ../../../htdocs/admin/tools/dolibarr_export.php
 
 		-
-			message: '#^Variable \$dolibarr_main_db_name might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/admin/tools/dolibarr_export.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/admin/tools/dolibarr_export.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_host might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/admin/tools/dolibarr_import.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_name might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/admin/tools/dolibarr_import.php
-
-		-
-			message: '#^Variable \$dolibarr_main_db_user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/admin/tools/dolibarr_import.php
-
-		-
 			message: '#^Variable \$ExecTimeLimit in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
