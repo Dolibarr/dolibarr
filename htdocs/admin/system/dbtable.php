@@ -53,12 +53,12 @@ $action = GETPOST('action', 'aZ09');
  */
 
 
-$sqllog = '';
+$logsql = '';
 $resultsql = true;
 
 if ($action == 'convertutf8') {
 	$sql = "SHOW FULL COLUMNS IN ".$db->sanitize($table);
-	$sqllog .= $sql.'<br>';
+	$logsql .= $sql.'<br>';
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -68,7 +68,7 @@ if ($action == 'convertutf8') {
 			$row = $db->fetch_row($resql);
 			if ($row[0] == $field) {
 				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." CHARACTER SET utf8";		// We must not sanitize the $row[1]
-				$sqllog .= $sql.'<br>';
+				$logsql .= $sql.'<br>';
 
 				$db->query($sql);
 
@@ -79,7 +79,7 @@ if ($action == 'convertutf8') {
 				}
 
 				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." COLLATE ".$db->sanitize($collation);	// We must not sanitize the $row[1]
-				$sqllog .= $sql.'<br>';
+				$logsql .= $sql.'<br>';
 
 				$resql2 = $db->query($sql);
 				if (!$resql2) {
@@ -94,7 +94,7 @@ if ($action == 'convertutf8') {
 }
 if ($action == 'convertutf8mb4') {
 	$sql = "SHOW FULL COLUMNS IN ".$db->sanitize($table);
-	$sqllog .= $sql.'<br>';
+	$logsql .= $sql.'<br>';
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -104,7 +104,7 @@ if ($action == 'convertutf8mb4') {
 			$row = $db->fetch_row($resql);
 			if ($row[0] == $field) {
 				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." CHARACTER SET utf8mb4";		// We must not sanitize the $row[1]
-				$sqllog .= $sql.'<br>';
+				$logsql .= $sql.'<br>';
 
 				$db->query($sql);
 
@@ -115,7 +115,7 @@ if ($action == 'convertutf8mb4') {
 				}
 
 				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." COLLATE ".$db->sanitize($collation);	// We must not sanitize the $row[1]
-				$sqllog .= $sql.'<br>';
+				$logsql .= $sql.'<br>';
 
 				$resql2 = $db->query($sql);
 				if (!$resql2) {
@@ -140,8 +140,8 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/admin/system/database-tables.php?restore_
 
 print load_fiche_titre($langs->trans("Table")." ".$table, $linkback, 'title_setup');
 
-if ($sqllog) {
-	print info_admin($sqllog.' '.($resultsql ? ' => OK' : ' => KO '.$db->lasterror()));
+if ($logsql) {
+	print info_admin($logsql.' '.($resultsql ? ' => OK' : ' => KO '.$db->lasterror()));
 }
 
 // Define request to get table description

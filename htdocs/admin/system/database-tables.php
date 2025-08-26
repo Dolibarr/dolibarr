@@ -32,9 +32,6 @@ if (! defined('CSRFCHECK_WITH_TOKEN')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -42,6 +39,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $langs->load("admin");
 
@@ -57,12 +56,12 @@ $action = GETPOST('action', 'aZ09');
  * Actions
  */
 
-$sqllog = '';
+$logsql = '';
 $resultsql = true;
 
 if ($action == 'convert') {	// Convert engine into innodb
 	$sql = "ALTER TABLE ".$db->sanitize($table)." ENGINE=INNODB";
-	$sqllog .= $sql.'<br>';
+	$logsql .= $sql.'<br>';
 	$resultsql = $db->query($sql);
 }
 if ($action == 'convertutf8') {
@@ -72,14 +71,14 @@ if ($action == 'convertutf8') {
 		$collation = 'utf8_general_ci';
 	}
 	$sql = "ALTER TABLE ".$db->sanitize($table)." CHARACTER SET utf8 COLLATE ".$db->sanitize($collation);	// Set the default value on table
-	$sqllog .= $sql.'<br>';
+	$logsql .= $sql.'<br>';
 	$resql1 = $db->query($sql);
 	if (!$resql1) {
 		setEventMessages($db->lasterror(), null, 'warnings');
 		$resultsql = $resql1;
 	} else {
 		$sql = "ALTER TABLE ".$db->sanitize($table)." CONVERT TO CHARACTER SET utf8 COLLATE ".$db->sanitize($collation);	// Switch fields (may fails due to foreign key)
-		$sqllog .= $sql.'<br>';
+		$logsql .= $sql.'<br>';
 		$resql2 = $db->query($sql);
 		if (!$resql2) {
 			setEventMessages($db->lasterror(), null, 'warnings');
@@ -94,14 +93,14 @@ if ($action == 'convertutf8mb4') {
 		$collation = 'utf8mb4_general_ci';
 	}
 	$sql = "ALTER TABLE ".$db->sanitize($table)." CHARACTER SET utf8mb4 COLLATE ".$db->sanitize($collation);	// Set the default value on table
-	$sqllog .= $sql.'<br>';
+	$logsql .= $sql.'<br>';
 	$resql1 = $db->query($sql);
 	if (!$resql1) {
 		setEventMessages($db->lasterror(), null, 'warnings');
 		$resultsql = $resql1;
 	} else {
 		$sql = "ALTER TABLE ".$db->sanitize($table)." CONVERT TO CHARACTER SET utf8mb4 COLLATE ".$db->sanitize($collation);	// Switch fields (may fails due to foreign key)
-		$sqllog .= $sql.'<br>';
+		$logsql .= $sql.'<br>';
 		$resql2 = $db->query($sql);
 		if (!$resql2) {
 			setEventMessages($db->lasterror(), null, 'warnings');
@@ -111,7 +110,7 @@ if ($action == 'convertutf8mb4') {
 }
 if ($action == 'convertdynamic') {
 	$sql = "ALTER TABLE ".$db->sanitize($table)." ROW_FORMAT=DYNAMIC;";
-	$sqllog .= $sql.'<br>';
+	$logsql .= $sql.'<br>';
 	$resultsql = $db->query($sql);
 }
 
@@ -126,8 +125,8 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/admin/system/database.php?restore_lastsea
 
 print load_fiche_titre($langs->trans("Tables")." ".ucfirst($conf->db->type), $linkback, 'title_setup');
 
-if ($sqllog) {
-	print info_admin($sqllog.' '.(empty($resultsql) ? ' => KO '.$db->lasterror() : ' => OK'));
+if ($logsql) {
+	print info_admin($logsql.' '.(empty($resultsql) ? ' => KO '.$db->lasterror() : ' => OK'));
 }
 
 // Define request to get table description

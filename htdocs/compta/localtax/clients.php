@@ -194,9 +194,9 @@ $x_paye_sum = 0;  // Initialize value
 // IRPF that the customer has retained me
 if ($calc == 0 || $calc == 2) {
 	print '<tr class="liste_titre">';
-	print '<td class="left">'.$langs->trans("Num").'</td>';
-	print '<td class="left">'.$langs->trans("Customer").'</td>';
-	print '<td>'.$langs->transcountry("ProfId1", $mysoc->country_code).'</td>';
+	print '<td>'.$langs->trans("Num").'</td>';
+	print '<td>'.$langs->trans("Customer").'</td>';
+	print '<td>'.$langs->transcountry("VATIntraShort").'</td>';
 	print '<td class="right">'.$langs->trans("TotalHT").'</td>';
 	print '<td class="right">'.$vatcust.'</td>';
 	print "</tr>\n";
@@ -224,13 +224,7 @@ if ($calc == 0 || $calc == 2) {
 				$company_static->fetch($coll_key);
 
 				$intra = str_replace($find, $replace, $company_static->tva_intra);
-				if (empty($intra)) {
-					if ($coll_obj['assuj'] == '1') {
-						$intra = $langs->trans('Unknown');
-					} else {
-						$intra = '';
-					}
-				}
+
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$i."</td>";
 				print '<td class="nowrap">'.$company_static->getNomUrl(1).'</td>';
@@ -266,9 +260,9 @@ if ($calc == 0 || $calc == 2) {
 // IRPF I retained my supplier
 if ($calc == 0 || $calc == 1) {
 	print '<tr class="liste_titre">';
-	print '<td class="left">'.$langs->trans("Num")."</td>";
-	print '<td class="left">'.$langs->trans("Supplier")."</td>";
-	print '<td>'.$langs->transcountry("ProfId1", $mysoc->country_code).'</td>';
+	print '<td>'.$langs->trans("Num")."</td>";
+	print '<td>'.$langs->trans("Supplier")."</td>";
+	print '<td>'.$langs->transcountry("VATIntraShort").'</td>';
 	print '<td class="right">'.$langs->trans("TotalHT").'</td>';
 	print '<td class="right">'.$vatsup.'</td>';
 	print "</tr>\n";
@@ -289,13 +283,7 @@ if ($calc == 0 || $calc == 1) {
 				$company_static->fetch($coll_key);
 
 				$intra = str_replace($find, $replace, $company_static->tva_intra);
-				if (empty($intra)) {
-					if ($coll_obj['assuj'] == '1') {
-						$intra = $langs->trans('Unknown');
-					} else {
-						$intra = '';
-					}
-				}
+
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$i."</td>";
 				print '<td class="nowrap">'.$company_static->getNomUrl(1).'</td>';
