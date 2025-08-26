@@ -2734,6 +2734,9 @@ class Facture extends CommonInvoice
 		if (!isset($this->user_creation_id) && isset($this->fk_user_author)) {
 			$this->user_creation_id = $this->fk_user_author;
 		}
+		if (!isset($this->user_modifcation_id) && !empty($user->id)) {
+			$this->user_modification_id = $user->id;
+		}
 		if (!isset($this->user_validation_id) && isset($this->fk_user_valid)) {
 			$this->user_validation_id = $this->fk_user_valid;
 		}
@@ -2762,6 +2765,7 @@ class Facture extends CommonInvoice
 		$sql .= " revenuestamp=".((isset($this->revenuestamp) && $this->revenuestamp != '') ? (float) $this->revenuestamp : "null").",";
 		$sql .= " fk_statut=".(isset($this->status) ? (int) $this->status : "null").",";
 		$sql .= " fk_user_author=".(isset($this->user_creation_id) ? ((int) $this->user_creation_id) : "null").",";
+		$sql .= " fk_user_modif=".(!empty($user->id) ? ((int) $user->id) : "null").",";
 		$sql .= " fk_user_valid=".(isset($this->user_validation_id) ? (int) $this->user_validation_id : "null").",";
 		$sql .= " fk_facture_source=".(isset($this->fk_facture_source) ? (int) $this->fk_facture_source : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? (int) $this->fk_project : "null").",";
@@ -5168,7 +5172,7 @@ class Facture extends CommonInvoice
 	{
 		$sql = 'SELECT c.rowid, datec, date_valid as datev, tms as datem,';
 		$sql .= ' date_closing as dateclosing,';
-		$sql .= ' fk_user_author, fk_user_valid, fk_user_closing';
+		$sql .= ' fk_user_author, fk_user_modif, fk_user_valid, fk_user_closing';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture as c';
 		$sql .= ' WHERE c.rowid = '.((int) $id);
 
@@ -5179,6 +5183,7 @@ class Facture extends CommonInvoice
 
 				$this->id = $obj->rowid;
 				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->user_validation_id = $obj->fk_user_valid;
 				$this->user_closing_id = $obj->fk_user_closing;
 
