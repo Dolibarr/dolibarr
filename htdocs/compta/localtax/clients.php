@@ -44,56 +44,31 @@ require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
 
-$local = GETPOSTINT('localTaxType');
+include DOL_DOCUMENT_ROOT.'/compta/tva/initdatesforvat.inc.php';
+/**
+ * @var	int	$date_start
+ * @var int $date_end
+ * @var int $date_start_month
+ * @var int $date_start_year
+ * @var int $date_start_day
+ * @var int $date_end_month
+ * @var int $date_end_year
+ * @var int $date_end_day
+ * @var int $year_current
+ */
+'
+@phan-var-force int $date_start
+@phan-var-force int $date_end
+@phan-var-force int $date_start_month
+@phan-var-force int $date_start_year
+@phan-var-force int $date_start_day
+@phan-var-force int $date_end_month
+@phan-var-force int $date_end_year
+@phan-var-force int $date_end_day
+@phan-var-force int $year_current
+';
 
-// Date range
-$year = GETPOSTINT("year");
-if (empty($year)) {
-	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-	$year_start = $year_current;
-} else {
-	$year_current = $year;
-	$year_start = $year;
-}
-$date_start = dol_mktime(0, 0, 0, GETPOSTINT("date_startmonth"), GETPOSTINT("date_startday"), GETPOSTINT("date_startyear"));
-$date_end = dol_mktime(23, 59, 59, GETPOSTINT("date_endmonth"), GETPOSTINT("date_endday"), GETPOSTINT("date_endyear"));
-$q = 0;
-// Quarter
-if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
-	$q = GETPOST("q");
-	if (empty($q)) {
-		if (GETPOST("month")) {
-			$date_start = dol_get_first_day($year_start, GETPOSTINT("month"), false);
-			$date_end = dol_get_last_day($year_start, GETPOSTINT("month"), false);
-		} else {
-			$date_start = dol_get_first_day($year_start, !getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START, false);
-			if (!getDolGlobalString('MAIN_INFO_VAT_RETURN') || getDolGlobalInt('MAIN_INFO_VAT_RETURN') == 2) {
-				$date_end = dol_time_plus_duree($date_start, 3, 'm') - 1;
-			} elseif (getDolGlobalInt('MAIN_INFO_VAT_RETURN') == 3) {
-				$date_end = dol_time_plus_duree($date_start, 1, 'y') - 1;
-			} elseif (getDolGlobalInt('MAIN_INFO_VAT_RETURN') == 1) {
-				$date_end = dol_time_plus_duree($date_start, 1, 'm') - 1;
-			}
-		}
-	} else {
-		if ($q == 1) {
-			$date_start = dol_get_first_day($year_start, 1, false);
-			$date_end = dol_get_last_day($year_start, 3, false);
-		}
-		if ($q == 2) {
-			$date_start = dol_get_first_day($year_start, 4, false);
-			$date_end = dol_get_last_day($year_start, 6, false);
-		}
-		if ($q == 3) {
-			$date_start = dol_get_first_day($year_start, 7, false);
-			$date_end = dol_get_last_day($year_start, 9, false);
-		}
-		if ($q == 4) {
-			$date_start = dol_get_first_day($year_start, 10, false);
-			$date_end = dol_get_last_day($year_start, 12, false);
-		}
-	}
-}
+$local = GETPOSTINT('localTaxType');
 
 $min = price2num(GETPOST("min", "alpha"));
 if (empty($min)) {
@@ -102,7 +77,7 @@ if (empty($min)) {
 
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
-$modetax = getDolGlobalString('TAX_MODE');
+$modetax = getDolGlobalInt('TAX_MODE');
 if (GETPOSTISSET("modetax")) {
 	$modetax = GETPOSTINT("modetax");
 }
@@ -131,6 +106,8 @@ $calcmode = "Unknown";
 $find = '';
 $replace = '';
 $period = '';
+
+
 /*
  * View
  */
@@ -146,20 +123,20 @@ foreach ($listofparams as $param) {
 	}
 }
 
-llxHeader('', '', '', '', 0, 0, '', '', $morequerystring);
-
-
 $name = $langs->transcountry($local == 1 ? "LT1ReportByCustomers" : "LT2ReportByCustomers", $mysoc->country_code);
+
+llxHeader('', $name, '', '', 0, 0, '', '', $morequerystring);
+
 
 $fsearch = '<!-- hidden fields for form -->';
 $fsearch .= '<input type="hidden" name="token" value="'.newToken().'">';
 $fsearch .= '<input type="hidden" name="modetax" value="'.$modetax.'">';
 $fsearch .= '<input type="hidden" name="localTaxType" value="'.$local.'">';
 $fsearch .= $langs->trans("SalesTurnoverMinimum").': ';
-$fsearch .= '<input type="text" name="min" id="min" value="'.$min.'" size="6">';
+$fsearch .= '<input type="text" name="min" id="min" value="'.$min.'" class="width75 right">';
 
+// Show report header
 $calc = getDolGlobalString('MAIN_INFO_LOCALTAX_CALC').$local;
-// Affiche en-tete du rapport
 $description = '';
 if ($calc == 0 || $calc == 1) {	// Calculate on invoice for goods and services
 	$calcmode = $calc == 0 ? $langs->trans("CalcModeLT".$local) : $langs->trans("CalcModeLT".$local."Rec");
@@ -170,7 +147,6 @@ if ($calc == 0 || $calc == 1) {	// Calculate on invoice for goods and services
 	}
 	$description .= $fsearch;
 	$description .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRulesLT", DOL_URL_ROOT.'/admin/company.php').')</span>';
-	$builddate = dol_now();
 
 	$elementcust = $langs->trans("CustomersInvoices");
 	$productcust = $langs->trans("Description");
@@ -188,7 +164,6 @@ if ($calc == 2) { 	// Invoice for goods, payment for services
 	}
 	$description .= $fsearch;
 	$description .= '<span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRulesLT", DOL_URL_ROOT.'/admin/company.php').')</span>';
-	$builddate = dol_now();
 
 	$elementcust = $langs->trans("CustomersInvoices");
 	$productcust = $langs->trans("Description");
@@ -197,6 +172,26 @@ if ($calc == 2) { 	// Invoice for goods, payment for services
 	$productsup = $langs->trans("Description");
 	$amountsup = $langs->trans("AmountHT");
 }
+// Set period
+$period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
+$prevyear = $date_start_year;
+$q = 0;
+$prevquarter = $q;
+if ($prevquarter > 1) {
+	$prevquarter--;
+} else {
+	$prevquarter = 4;
+	$prevyear--;
+}
+$nextyear = $date_start_year;
+$nextquarter = $q;
+if ($nextquarter < 4) {
+	$nextquarter++;
+} else {
+	$nextquarter = 1;
+	$nextyear++;
+}
+$builddate = dol_now();
 
 $periodlink = '';
 $exportlink = '';
@@ -206,8 +201,9 @@ report_header($name, '', $period, $periodlink, $description, $builddate, $export
 $vatcust = $langs->transcountry($local == 1 ? "LT1" : "LT2", $mysoc->country_code);
 $vatsup = $langs->transcountry($local == 1 ? "LT1" : "LT2", $mysoc->country_code);
 
+// VAT Received
 print '<div class="div-table-responsive">';
-print '<table class="liste noborder centpercent">';
+print '<table class="noborder centpercent">';
 
 $x_coll_sum = 0;  // Initialize value
 $x_paye_sum = 0;  // Initialize value
@@ -240,11 +236,13 @@ if ($calc == 0 || $calc == 2) {
 		$total = 0;
 		$totalamount = 0;
 		$i = 1;
-		foreach ($coll_list as $coll_obj) {
-			if (($min == 0 || ($min > 0 && $coll_obj['total_ht'] > $min)) && ($local == 1 ? $coll_obj['localtax1'] : $coll_obj['localtax2']) != 0) {
-				$intra = str_replace($find, $replace, $coll_obj['tva_intra']);
+		foreach ($coll_list as $coll_key => $coll_obj) {
+			if (($min == 0 || ($min > 0 && $coll_obj['totalht'] > $min)) && ($local == 1 ? $coll_obj['localtax1'] : $coll_obj['localtax2']) != 0) {
+				$company_static->fetch($coll_key);
+
+				$intra = str_replace($find, $replace, $company_static->tva_intra);
 				if (empty($intra)) {
-					if ($coll_obj->assuj == '1') {
+					if ($coll_obj['assuj'] == '1') {
 						$intra = $langs->trans('Unknown');
 					} else {
 						$intra = '';
@@ -252,15 +250,13 @@ if ($calc == 0 || $calc == 2) {
 				}
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$i."</td>";
-				$company_static->id = $coll_obj['company_id'];
-				$company_static->name = $coll_obj['company_name'];
 				print '<td class="nowrap">'.$company_static->getNomUrl(1).'</td>';
 				$find = array(' ', '.');
 				$replace = array('', '');
 				print '<td class="nowrap">'.$intra.'</td>';
-				print '<td class="nowrap right">'.price($coll_obj['total_ht']).'</td>';
+				print '<td class="nowrap right">'.price($coll_obj['totalht']).'</td>';
 				print '<td class="nowrap right">'.price($local == 1 ? $coll_obj['localtax1'] : $coll_obj['localtax2']).'</td>';
-				$totalamount += $coll_obj['total_ht'];
+				$totalamount += $coll_obj['totalht'];
 				$total += ($local == 1 ? $coll_obj['localtax1'] : $coll_obj['localtax2']);
 				print "</tr>\n";
 				$i++;
@@ -305,9 +301,11 @@ if ($calc == 0 || $calc == 1) {
 		$total = 0;
 		$totalamount = 0;
 		$i = 1;
-		foreach ($coll_list as $coll_obj) {
-			if (($min == 0 || ($min > 0 && $coll_obj['total_ht'] > $min)) && ($local == 1 ? $coll_obj['localtax1'] : $coll_obj['localtax2']) != 0) {
-				$intra = str_replace($find, $replace, $coll_obj->tva_intra);
+		foreach ($coll_list as $coll_key => $coll_obj) {
+			if (($min == 0 || ($min > 0 && $coll_obj['totalht'] > $min)) && ($local == 1 ? $coll_obj['localtax1'] : $coll_obj['localtax2']) != 0) {
+				$company_static->fetch($coll_key);
+
+				$intra = str_replace($find, $replace, $company_static->tva_intra);
 				if (empty($intra)) {
 					if ($coll_obj['assuj'] == '1') {
 						$intra = $langs->trans('Unknown');
@@ -317,15 +315,13 @@ if ($calc == 0 || $calc == 1) {
 				}
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$i."</td>";
-				$company_static->id = $coll_obj['company_id'];
-				$company_static->name = $coll_obj['company_name'];
 				print '<td class="nowrap">'.$company_static->getNomUrl(1).'</td>';
 				$find = array(' ', '.');
 				$replace = array('', '');
 				print '<td class="nowrap">'.$intra."</td>";
-				print '<td class="nowrap right">'.price($coll_obj['total_ht']).'</td>';
+				print '<td class="nowrap right">'.price($coll_obj['totalht']).'</td>';
 				print '<td class="nowrap right">'.price($local == 1 ? $coll_obj['localtax1'] : $coll_obj['localtax2']).'</td>';
-				$totalamount += $coll_obj['total_ht'];
+				$totalamount += $coll_obj['totalht'];
 				$total += ($local == 1 ? $coll_obj['localtax1'] : $coll_obj['localtax2']);
 				print "</tr>\n";
 				$i++;

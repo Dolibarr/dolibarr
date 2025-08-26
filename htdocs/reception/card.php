@@ -54,6 +54,7 @@ if (isModEnabled("propal")) {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 }
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.orderline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
 if (isModEnabled('productbatch')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
@@ -1141,7 +1142,7 @@ if ($action == 'create') {
 			}
 
 			// $objectsrc->lines contains the line of the purchase order
-			// $dispatchLines is list of lines with dispatching detail (with product, qty and warehouse). One purchase order line may have n of this dispatch lines.
+			// $dispatchLines is an array with dispatching detail (with product, qty, warehouse and fk_commandefourndet). One purchase order line may have n of this dispatch lines.
 
 			$arrayofpurchaselinealreadyoutput = array();
 
@@ -1149,6 +1150,7 @@ if ($action == 'create') {
 			$indiceAsked = 1;
 			while ($indiceAsked <= $numAsked) {	// Loop on $dispatchLines. Warning: $dispatchLines must be sorted by fk_commandefourndet (it is a regroupment key on output)
 				$product = new Product($db);
+				$line = new CommandeFournisseurLigne($db);	// By default
 
 				// We search the purchase order line that is linked to the dispatchLines
 				foreach ($objectsrc->lines as $supplierLine) {
@@ -1158,10 +1160,11 @@ if ($action == 'create') {
 					}
 				}
 
+				// Now $line can be CommandeFournisseurLigne but could be other type of line.
+
 				// Show product and description
 				$type = $line->product_type ? $line->product_type : $line->fk_product_type;
-				// Try to enhance type detection using date_start and date_end for free lines where type
-				// was not saved.
+				// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 				if (!empty($line->date_start)) {
 					$type = 1;
 				}

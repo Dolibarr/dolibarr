@@ -397,8 +397,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				if (($local == 1 && $fields['localtax1'] != 0) || ($local == 2 && $fields['localtax2'] != 0)) {
 					// Define type
 					$type = ($fields['dtype'] ? $fields['dtype'] : $fields['ptype']);
-					// Try to enhance type detection using date_start and date_end for free lines where type
-					// was not saved.
+					// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 					if (!empty($fields['ddate_start'])) {
 						$type = 1;
 					}
@@ -558,8 +557,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				if (($local == 1 && $fields['localtax1'] != 0) || ($local == 2 && $fields['localtax2'] != 0)) {
 					// Define type
 					$type = ($fields['dtype'] ? $fields['dtype'] : $fields['ptype']);
-					// Try to enhance type detection using date_start and date_end for free lines where type
-					// was not saved.
+					// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 					if (!empty($fields['ddate_start'])) {
 						$type = 1;
 					}

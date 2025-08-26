@@ -448,7 +448,7 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 					$pkey = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
 				}
 
-				if ($TRANSACTIONID && $customerid && $pkey) {
+				if ($customerid && $pkey) {
 					$LONGTRANSACTIONID = $TRANSACTIONID.':'.$customerid.'@'.$pkey;
 				}
 			} catch (\Stripe\Exception\ApiErrorException $e) {
