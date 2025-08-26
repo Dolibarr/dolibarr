@@ -2569,7 +2569,7 @@ function pdf_getlinetotalwithtax($object, $i, $outputlangs, $hidedetails = 0)
  * 	@param	Translate		$outputlangs	Object lang for output
  * 	@return	array<string,array<string,null|int|float|string>>	Linked objects
  */
-function pdf_getLinkedObjects(&$object, $outputlangs)
+function pdf_getLinkedObjects($object, $outputlangs)
 {
 	global $db, $hookmanager;
 
@@ -2582,6 +2582,7 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 			// For invoice, we don't want to have a reference line on document. Image we are using recurring invoice, we will have a line longer than document width.
 		} elseif ($objecttype == 'propal' || $objecttype == 'supplier_proposal') {
 			'@phan-var-force array<Propal|SupplierProposal> $objects';
+			/** @var array<Propal|SupplierProposal> $objects */
 			$outputlangs->load('propal');
 
 			foreach ($objects as $elementobject) {
@@ -2592,6 +2593,7 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 			}
 		} elseif ($objecttype == 'commande' || $objecttype == 'supplier_order' || $objecttype == 'order_supplier') {
 			'@phan-var-force array<Commande|CommandeFournisseur> $objects';
+			/** @var array<Commande|CommandeFournisseur> $objects */
 			$outputlangs->load('orders');
 
 			if (count($objects) > 1 && count($objects) <= getDolGlobalInt("MAXREFONDOC", 10) && !getDolGlobalString("PDF_HIDE_LINKED_OBJECT_IN_PUBLIC_NOTE")) {
@@ -2611,6 +2613,7 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 			}
 		} elseif ($objecttype == 'contrat') {
 			'@phan-var-force Contrat[] $objects';
+			/** Contrat[] $objects */
 			$outputlangs->load('contracts');
 			foreach ($objects as $elementobject) {
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefContract");
