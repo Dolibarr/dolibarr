@@ -896,7 +896,7 @@ if ($resql) {
 				// Active
 				print '<td class="center" class="nowrap">';
 				if ($canbedisabled) {
-					print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
+					print '<a href="'.$url.'action='.$acts[$obj->active].'&token='.newToken().'">'.$actl[$obj->active].'</a>';
 				} else {
 					print $langs->trans("AlwaysActive");
 				}
