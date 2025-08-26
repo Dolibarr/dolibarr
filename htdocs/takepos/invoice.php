@@ -80,14 +80,20 @@ if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->la
 
 // REDIRECT TO TERMINAL SELECT IF NO TERMINAL SELECTED
 if (empty($_SESSION["takeposterminal"])) {
-	print <<<SCRIPT
+	if (getDolGlobalInt('TAKEPOS_NUM_TERMINALS') == 1) {
+		$_SESSION["takeposterminal"] = 1; // Use terminal 1 if there is only 1 terminal
+	} elseif (!empty($_COOKIE["takeposterminal"])) {
+		$_SESSION["takeposterminal"] = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE["takeposterminal"]); // Restore takeposterminal from previous session
+	} else {
+		print <<<SCRIPT
 <script language="javascript">
 	$( document ).ready(function() {
 		ModalBox('ModalTerminal');
 	});
 </script>
 SCRIPT;
-	exit;
+		exit;
+	}
 }
 
 /**
