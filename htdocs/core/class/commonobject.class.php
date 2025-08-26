@@ -7468,7 +7468,6 @@ abstract class CommonObject
 				if (!empty($this->table_element) && !empty($this->fields['rowid']) && !empty($this->fields['tms'])) {
 					$sql = "UPDATE ".$this->db->prefix().$this->table_element . " set tms=CURRENT_TIMESTAMP() WHERE rowid=".(int) $this->id;
 					$this->db->query($sql);
-					print $sql;
 				}
 				// Call trigger
 				$this->context = array('extrafieldupdate' => 1);
