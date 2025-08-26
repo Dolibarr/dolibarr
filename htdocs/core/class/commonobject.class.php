@@ -7037,7 +7037,7 @@ abstract class CommonObject
 
 		if (!$error && $trigger) {
 			if (!empty($this->table_element) && !empty($this->fields['rowid']) && !empty($this->fields['tms'])) {
-				$sql = "UPDATE ".$this->db->prefix().$this->table_element . " set tms='".$this->db->idate(dol_now()). "' WHERE rowid=".(int) $this->id;
+				$sql = "UPDATE ".$this->db->prefix().$this->table_element . " set tms=CURRENT_TIMESTAMP() WHERE rowid=".(int) $this->id;
 				$this->db->query($sql);
 			}
 			// Call trigger
@@ -7466,8 +7466,9 @@ abstract class CommonObject
 
 			if (!$error && $trigger) {
 				if (!empty($this->table_element) && !empty($this->fields['rowid']) && !empty($this->fields['tms'])) {
-					$sql = "UPDATE ".$this->db->prefix().$this->table_element . " set tms='".$this->db->idate(dol_now()). "' WHERE rowid=".(int) $this->id;
+					$sql = "UPDATE ".$this->db->prefix().$this->table_element . " set tms=CURRENT_TIMESTAMP() WHERE rowid=".(int) $this->id;
 					$this->db->query($sql);
+					print $sql;
 				}
 				// Call trigger
 				$this->context = array('extrafieldupdate' => 1);
