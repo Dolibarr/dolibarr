@@ -2997,7 +2997,6 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function setStatus($user, $status)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$this->db->begin();

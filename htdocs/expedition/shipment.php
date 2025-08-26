@@ -665,8 +665,7 @@ if ($order_id > 0 || !empty($ref)) {
 					// Show product and description
 					$type = isset($objp->type) ? $objp->type : $objp->product_type;
 
-					// Try to enhance type detection using date_start and date_end for free lines where type
-					// was not saved.
+					// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 					if (!empty($objp->date_start)) {
 						$type = 1;
 					}
