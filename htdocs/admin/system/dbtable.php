@@ -84,6 +84,7 @@ if ($action == 'convertutf8') {
 				$resql2 = $db->query($sql);
 				if (!$resql2) {
 					setEventMessages($db->lasterror(), null, 'warnings');
+					$resultsql = false;
 				}
 
 				break;
@@ -119,6 +120,7 @@ if ($action == 'convertutf8mb4') {
 				$resql2 = $db->query($sql);
 				if (!$resql2) {
 					setEventMessages($db->lasterror(), null, 'warnings');
+					$resultsql = false;
 				}
 
 				break;
@@ -139,7 +141,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/admin/system/database-tables.php?restore_
 print load_fiche_titre($langs->trans("Table")." ".$table, $linkback, 'title_setup');
 
 if ($sqllog) {
-	print info_admin($sqllog.' '.(empty($resultsql) ? ' => KO '.$db->lasterror() : ' => OK'));
+	print info_admin($sqllog.' '.($resultsql ? ' => OK' : ' => KO '.$db->lasterror()));
 }
 
 // Define request to get table description

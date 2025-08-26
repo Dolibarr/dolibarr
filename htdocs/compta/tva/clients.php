@@ -55,15 +55,26 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
 
 include DOL_DOCUMENT_ROOT.'/compta/tva/initdatesforvat.inc.php';
+/**
+ * @var	int	$date_start
+ * @var int $date_end
+ * @var int $date_start_month
+ * @var int $date_start_year
+ * @var int $date_start_day
+ * @var int $date_end_month
+ * @var int $date_end_year
+ * @var int $date_end_day
+ * @var int $year_current
+ */
 '
 @phan-var-force int $date_start
 @phan-var-force int $date_end
-@phan-var-force string $date_start_month
-@phan-var-force string $date_start_year
-@phan-var-force string $date_start_day
-@phan-var-force string $date_end_month
-@phan-var-force string $date_end_year
-@phan-var-force string $date_end_day
+@phan-var-force int $date_start_month
+@phan-var-force int $date_start_year
+@phan-var-force int $date_start_day
+@phan-var-force int $date_end_month
+@phan-var-force int $date_end_year
+@phan-var-force int $date_end_day
 @phan-var-force int $year_current
 ';
 
@@ -125,7 +136,7 @@ $fsearch = '<!-- hidden fields for form -->';
 $fsearch .= '<input type="hidden" name="token" value="'.newToken().'">';
 $fsearch .= '<input type="hidden" name="modetax" value="'.$modetax.'">';
 $fsearch .= $langs->trans("SalesTurnoverMinimum").': ';
-$fsearch .= '<input type="text" name="min" id="min" value="'.$min.'" size="6">';
+$fsearch .= '<input type="text" name="min" id="min" value="'.$min.'" class="width75 right">';
 
 // Show report header
 $name = $langs->trans("VATReportByThirdParties");
@@ -221,7 +232,7 @@ $vatsup = $langs->trans("VATPaid");
 
 // VAT Received
 print '<div class="div-table-responsive">';
-print "<table class=\"noborder\" width=\"100%\">";
+print '<table class="noborder centpercent">';
 
 $y = $year_current;
 $total = 0;
@@ -409,7 +420,6 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	$x_paye_sum = 0;
 	$x_paye_ht = 0;
 
-	//print '<tr><td colspan="'.($span+1).'">'..')</td></tr>';
 
 	// Customers invoices
 	print '<tr class="liste_titre">';
@@ -449,7 +459,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 			if (is_array($x_both[$thirdparty_id]['coll']['detail'])) {
 				// VAT Rate
 				print "<tr>";
-				print '<td class="tax_rate">';
+				print '<td class="tax_rate" colspan="2">';
 				if (is_numeric($thirdparty_id)) {
 					$company_static->fetch($thirdparty_id);
 					print $langs->trans("ThirdParty").': '.$company_static->getNomUrl(1);
@@ -458,15 +468,14 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					$user_static->fetch($tmpid);
 					print $langs->trans("User").': '.$user_static->getNomUrl(1);
 				}
-				print '</td><td colspan="'.($span + 1).'"></td>';
+				print '</td><td colspan="'.$span.'"></td>';
 				print '</tr>'."\n";
 
 				foreach ($x_both[$thirdparty_id]['coll']['detail'] as $index => $fields) {
 					// Define type
 					// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 					$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
-					// Try to enhance type detection using date_start and date_end for free lines where type
-					// was not saved.
+					// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 					if (!empty($fields['ddate_start'])) {
 						$type = 1;
 					}
@@ -656,8 +665,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					// Define type
 					// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 					$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
-					// Try to enhance type detection using date_start and date_end for free lines where type
-					// was not saved.
+					// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 					if (!empty($fields['ddate_start'])) {
 						$type = 1;
 					}

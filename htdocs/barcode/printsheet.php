@@ -495,7 +495,7 @@ print '<br>';
 
 print '</div>';
 
-print '<br><input type="submit" class="button" id="submitformbarcodegen" '.((GETPOST("selectorforbarcode") && GETPOST("selectorforbarcode")) ? '' : 'disabled ').'value="'.$langs->trans("BuildPageToPrint").'">';
+print '<br><input type="submit" class="button" id="submitformbarcodegen" '.(GETPOST("selectorforbarcode") ? '' : 'disabled ').'value="'.$langs->trans("BuildPageToPrint").'">';
 
 print '</form>';
 print '<br>';

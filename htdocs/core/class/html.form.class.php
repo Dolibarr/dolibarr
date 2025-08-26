@@ -1841,7 +1841,7 @@ class Form
 			$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = sp.fk_soc AND sc.fk_user = ".(int) $user->id .")";
 		}
 		if ($user->socid > 0) {
-			$sql .= " AND sp.rowid = ".((int) $user->socid);
+			$sql .= " AND sp.fk_soc = ".((int) $user->socid);
 		}
 		if ($filter) {
 			// $filter is safe because, if it contains '(' or ')', it has been sanitized by testSqlAndScriptInject() and forgeSQLFromUniversalSearchCriteria()

@@ -466,8 +466,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				// Define type
 				// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 				$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
-				// Try to enhance type detection using date_start and date_end for free lines where type
-				// was not saved.
+				// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 				if (!empty($fields['ddate_start'])) {
 					$type = 1;
 				}
@@ -518,8 +517,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					// Define type
 					// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 					$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
-					// Try to enhance type detection using date_start and date_end for free lines where type
-					// was not saved.
+					// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 					if (!empty($fields['ddate_start'])) {
 						$type = 1;
 					}
@@ -706,8 +704,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 				// Define type
 				// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 				$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
-				// Try to enhance type detection using date_start and date_end for free lines where type
-				// was not saved.
+				// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 				if (!empty($fields['ddate_start'])) {
 					$type = 1;
 				}
@@ -756,8 +753,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					// Define type
 					// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
 					$type = (isset($fields['dtype']) ? $fields['dtype'] : $fields['ptype']);
-					// Try to enhance type detection using date_start and date_end for free lines where type
-					// was not saved.
+					// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 					if (!empty($fields['ddate_start'])) {
 						$type = 1;
 					}
