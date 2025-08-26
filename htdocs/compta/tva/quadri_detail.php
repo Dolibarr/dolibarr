@@ -537,7 +537,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					}
 
 					// Company name
-					print '<td class="tdmaxoverflow150">';
+					print '<td class="tdoverflowmax150">';
 					//print $company_static->getNomUrl(1);
 					print $fields['company_link'];
 					print '</td>';
@@ -773,7 +773,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					}
 
 					// Company name
-					print '<td class="tdmaxoverflow150">';
+					print '<td class="tdoverflowmax150">';
 					//print $company_static->getNomUrl(1);
 					print $fields['company_link'];
 					print '</td>';
@@ -902,7 +902,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	print '<table class="noborder centpercent">';
 	$diff = $x_coll_sum - $x_paye_sum;
 	print '<tr class="liste_total">';
-	print '<td class="liste_total" colspan="' . $span . '">' . $langs->trans("TotalToPay") . ($q ? ', ' . $langs->trans("Quadri") . ' ' . $q : '') . '</td>';
+	print '<td class="liste_total" colspan="' . $span . '">' . $langs->trans("TotalToPay") . '</td>';
 	print '<td class="liste_total nowrap right"><b>' . price(price2num($diff, 'MT')) . "</b></td>\n";
 	print "</tr>\n";
 
