@@ -196,7 +196,7 @@ if ($calc == 0 || $calc == 2) {
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Num").'</td>';
 	print '<td>'.$langs->trans("Customer").'</td>';
-	print '<td>'.$langs->transcountry("VATIntraShort").'</td>';
+	print '<td>'.$langs->trans("VATIntraShort").'</td>';
 	print '<td class="right">'.$langs->trans("TotalHT").'</td>';
 	print '<td class="right">'.$vatcust.'</td>';
 	print "</tr>\n";
@@ -262,7 +262,7 @@ if ($calc == 0 || $calc == 1) {
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Num")."</td>";
 	print '<td>'.$langs->trans("Supplier")."</td>";
-	print '<td>'.$langs->transcountry("VATIntraShort").'</td>';
+	print '<td>'.$langs->trans("VATIntraShort").'</td>';
 	print '<td class="right">'.$langs->trans("TotalHT").'</td>';
 	print '<td class="right">'.$vatsup.'</td>';
 	print "</tr>\n";
