@@ -389,6 +389,7 @@ if (empty($reshook)) {
 				}
 
 				$pricestoupdate[$i] = array(
+					'price_label' => '', // no change so empty value
 					'price' => price2num($newprice[$i], '', 2),
 					'price_min' => price2num($newprice_min[$i], '', 2),
 					'price_base_type' => $newpricebase[$i],

@@ -332,7 +332,7 @@ class CMailFile
 				// This converts an embed file with src="/viewimage.php?modulepart... into a cid link
 				// TODO Exclude viewimage used for the read tracker ?
 				$dolibarr_main_data_root_images = $dolibarr_main_data_root;
-				if ($conf->entity !== 1) {
+				if ((int) $conf->entity !== 1) {
 					$dolibarr_main_data_root_images.='/'.$conf->entity.'/';
 				}
 				$findimg = $this->findHtmlImages($dolibarr_main_data_root_images.'/medias');

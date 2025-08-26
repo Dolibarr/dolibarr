@@ -5977,12 +5977,6 @@ parameters:
 			path: ../../../htdocs/contrat/ticket.php
 
 		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/contrat/tpl/linkedobjectblock.tpl.php
-
-		-
 			message: '#^Loose comparison using \=\= between 1 and 0 will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
 			count: 1
@@ -6802,12 +6796,6 @@ parameters:
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 2
-			path: ../../../htdocs/core/class/CMailFile.class.php
-
-		-
-			message: '#^Method CMailFile\:\:getValidAddress\(\) has no return type specified\.$#'
-			identifier: missingType.return
-			count: 1
 			path: ../../../htdocs/core/class/CMailFile.class.php
 
 		-
@@ -10897,12 +10885,6 @@ parameters:
 			path: ../../../htdocs/core/tpl/contacts.tpl.php
 
 		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/core/tpl/document_actions_post_headers.tpl.php
-
-		-
 			message: '#^Variable \$conf might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -12451,12 +12433,6 @@ parameters:
 			path: ../../../htdocs/expedition/stats/month.php
 
 		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/expedition/tpl/linkedobjectblock.tpl.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -12613,12 +12589,6 @@ parameters:
 			path: ../../../htdocs/expensereport/list.php
 
 		-
-			message: '#^Variable \$outputlangs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expensereport/payment/card.php
-
-		-
 			message: '#^Variable \$linkback might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -12646,48 +12616,6 @@ parameters:
 			message: '#^Variable \$action might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
-			path: ../../../htdocs/expensereport/tpl/expensereport_addfile.tpl.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expensereport/tpl/expensereport_addfile.tpl.php
-
-		-
-			message: '#^Variable \$formfile might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expensereport/tpl/expensereport_addfile.tpl.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/expensereport/tpl/expensereport_addfile.tpl.php
-
-		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expensereport/tpl/expensereport_addfile.tpl.php
-
-		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/expensereport/tpl/expensereport_linktofile.tpl.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 7
-			path: ../../../htdocs/expensereport/tpl/expensereport_linktofile.tpl.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/expensereport/tpl/expensereport_linktofile.tpl.php
 
 		-
@@ -12695,18 +12623,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/expensereport/tpl/expensereport_linktofile.tpl.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
-			path: ../../../htdocs/expensereport/tpl/expensereport_linktofile.tpl.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expensereport/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: '#^Property Export\:\:\$fk_user \(int\) in isset\(\) is not nullable\.$#'
@@ -12863,12 +12779,6 @@ parameters:
 			identifier: booleanAnd.rightAlwaysFalse
 			count: 1
 			path: ../../../htdocs/fichinter/note.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/fichinter/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: '#^If condition is always true\.$#'
@@ -13435,12 +13345,6 @@ parameters:
 			path: ../../../htdocs/fourn/commande/list.php
 
 		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/fourn/commande/tpl/linkedobjectblock.tpl.php
-
-		-
 			message: '#^Variable \$socid might not be defined\.$#'
 			identifier: variable.undefined
 			count: 4
@@ -13535,12 +13439,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/fourn/facture/rapport.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/fourn/facture/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: '#^Left side of && is always true\.$#'
@@ -14201,42 +14099,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/hrm/compare.php
-
-		-
-			message: '#^Cannot access property \$db on mixed\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: ../../../htdocs/hrm/core/tpl/objectline_view.tpl.php
-
-		-
-			message: '#^Cannot access property \$status on mixed\.$#'
-			identifier: property.nonObject
-			count: 1
-			path: ../../../htdocs/hrm/core/tpl/objectline_view.tpl.php
-
-		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/hrm/core/tpl/objectline_view.tpl.php
-
-		-
-			message: '#^Variable \$i might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/hrm/core/tpl/objectline_view.tpl.php
-
-		-
-			message: '#^Variable \$line might not be defined\.$#'
-			identifier: variable.undefined
-			count: 12
-			path: ../../../htdocs/hrm/core/tpl/objectline_view.tpl.php
-
-		-
-			message: '#^Variable \$this might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/hrm/core/tpl/objectline_view.tpl.php
 
 		-
 			message: '#^Variable \$colwidth might not be defined\.$#'
@@ -16897,12 +16759,6 @@ parameters:
 			path: ../../../htdocs/product/price_suppliers.php
 
 		-
-			message: '#^Variable \$result might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/price_suppliers.php
-
-		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
 			count: 1
@@ -17421,18 +17277,6 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/product/stock/product.php
-
-		-
-			message: '#^Variable \$sortfield might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/product.php
-
-		-
-			message: '#^Variable \$sortorder might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/product/stock/product.php
 
@@ -19249,30 +19093,6 @@ parameters:
 			path: ../../../htdocs/public/webportal/webportal.main.inc.php
 
 		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/public/webportal/webportal.main.inc.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/public/webportal/webportal.main.inc.php
-
-		-
-			message: '#^Variable \$hookmanager might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/webportal/webportal.main.inc.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 16
-			path: ../../../htdocs/public/webportal/webportal.main.inc.php
-
-		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 1
@@ -20933,12 +20753,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/supplier_proposal/note.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/supplier_proposal/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'

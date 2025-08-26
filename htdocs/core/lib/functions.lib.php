@@ -1235,7 +1235,15 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
 		$hour = $minute = $second = 0;
 	}
 
-	if ($saverestore && !GETPOSTISSET($prefix . 'day') && !GETPOSTISSET($prefix . 'month') && !GETPOSTISSET($prefix . 'year')) {
+	if (
+		$saverestore
+		&& !GETPOSTISSET($prefix . 'day')
+		&& !GETPOSTISSET($prefix . 'month')
+		&& !GETPOSTISSET($prefix . 'year')
+		&& isset($_SESSION['DOLDATE_' . $saverestore . '_day'])
+		&& isset($_SESSION['DOLDATE_' . $saverestore . '_month'])
+		&& isset($_SESSION['DOLDATE_' . $saverestore . '_year'])
+	) {
 		$day = $_SESSION['DOLDATE_' . $saverestore . '_day'];
 		$month = $_SESSION['DOLDATE_' . $saverestore . '_month'];
 		$year = $_SESSION['DOLDATE_' . $saverestore . '_year'];
@@ -3354,12 +3362,14 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	}
 
 	if ($object->element == 'societe') {
+		/** @var Societe $object */
 		if (!empty($conf->use_javascript_ajax) && $user->hasRight('societe', 'creer') && getDolGlobalString('MAIN_DIRECT_STATUS_UPDATE')) {
 			$morehtmlstatus .= ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
 		} else {
 			$morehtmlstatus .= $object->getLibStatut(6);
 		}
 	} elseif ($object->element == 'product') {
+		/** @var Product $object */
 		//$morehtmlstatus.=$langs->trans("Status").' ('.$langs->trans("Sell").') ';
 		if (!empty($conf->use_javascript_ajax) && $user->hasRight('produit', 'creer') && getDolGlobalString('MAIN_DIRECT_STATUS_UPDATE')) {
 			$morehtmlstatus .= ajax_object_onoff($object, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
@@ -3374,6 +3384,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$morehtmlstatus .= '<span class="statusrefbuy">' . $object->getLibStatut(6, 1) . '</span>';
 		}
 	} elseif (in_array($object->element, array('salary'))) {
+		/** @var Salary $object */
 		'@phan-var-force Salary $object';
 		$tmptxt = $object->getLibStatut(6, $object->alreadypaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
@@ -3381,6 +3392,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		}
 		$morehtmlstatus .= $tmptxt;
 	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier'))) {	// TODO Move this to use ->alreadypaid
+		/** @var Facture|FactureFournisseur|CommonInvoice $object */
 		'@phan-var-force Facture|FactureFournisseur|CommonInvoice $object';
 		$totalallpayments = $object->getSommePaiement(0);
 		$totalallpayments += $object->getSumCreditNotesUsed(0);
@@ -3391,6 +3403,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		}
 		$morehtmlstatus .= $tmptxt;
 	} elseif (in_array($object->element, array('chargesociales', 'loan', 'tva'))) {	// TODO Move this to use ->alreadypaid
+		/** @var ChargeSociales|Loan|Tva $object */
 		'@phan-var-force ChargeSociales|Loan|Tva $object';
 		$tmptxt = $object->getLibStatut(6, $object->totalpaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
@@ -3398,12 +3411,14 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		}
 		$morehtmlstatus .= $tmptxt;
 	} elseif ($object->element == 'contrat' || $object->element == 'contract') {
-		if ($object->statut == 0) {
+		/** @var Contrat $object */
+		if ($object->status == 0) {
 			$morehtmlstatus .= $object->getLibStatut(5);
 		} else {
 			$morehtmlstatus .= $object->getLibStatut(4);
 		}
 	} elseif ($object->element == 'facturerec') {
+		/** @var FactureRec $object */
 		'@phan-var-force FactureRec $object';
 		if ($object->frequency == 0) {
 			$morehtmlstatus .= $object->getLibStatut(2);
@@ -3411,6 +3426,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$morehtmlstatus .= $object->getLibStatut(5);
 		}
 	} elseif ($object->element == 'project_task') {
+		/** @var Task $object */
 		$tmptxt = $object->getLibStatut(4);
 		$morehtmlstatus .= $tmptxt;
 	} elseif (method_exists($object, 'getLibStatut')) { // Generic case for status
@@ -3433,12 +3449,14 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 
 	// Add alias for thirdparty
 	if (!empty($object->name_alias)) {
+		/** @var Societe $object */
 		'@phan-var-force Societe $object';
 		$morehtmlref .= '<div class="refidno opacitymedium">' . dol_escape_htmltag($object->name_alias) . '</div>';
 	}
 
 	// Add label
 	if (in_array($object->element, array('product', 'bank_account', 'project_task'))) {
+		/** @var Product|Account|Task $object */
 		if (!empty($object->label)) {
 			$morehtmlref .= '<div class="refidno opacitymedium">' . $object->label . '</div>';
 		}
@@ -4841,10 +4859,9 @@ function dol_print_ip($ip, $mode = 0, $showname = 0)
  * Return the real IP of remote user.
  * Take HTTP_X_FORWARDED_FOR (defined when using proxy)
  * Then HTTP_CLIENT_IP if defined (rare)
- * Then REMOTE_ADDR (the last seerver ip in proxy chain).
- * 			REMOTE_ADDR can't be modified by client and may be the IP of a proxy.
- * 			Note: that if Apache module "remoteip" module is on, $_SERVER["REMOTE_ADDR"] may be replaced y HTTP_X_FORWARDED_FOR directly
- * 					from CF-Connecting-IP, but only if remote is in trusted cloudflare list.
+ * Then REMOTE_ADDR (the last seerver ip in proxy chain). REMOTE_ADDR can't be modified by client and may be the IP of a proxy.
+ * Note:	if Apache module "remoteip" module is on, Apache may replaced the $_SERVER["REMOTE_ADDR"] by HTTP_X_FORWARDED_FOR directly. For this
+ * 			Apache is using the CF-Connecting-IP header (HTTP_CF_CONNECTING_IP), but only if the remote IP is in the trusted cloudflare list (Apache must enable module and conf remoteip).
  *
  * @param	int		$trusted	0=Default, 1=Trusted value (the last IP that was not altered by client)
  * @return	string				Real IP of remote user.
