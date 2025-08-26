@@ -334,7 +334,7 @@ if ($calc == 0) {
 
 	$diff = $x_coll_sum - $x_paye_sum;
 	print '<tr class="liste_total">';
-	print '<td class="liste_total" colspan="4">'.$langs->trans("TotalToPay").($q ? ', '.$langs->trans("Quadri").' '.$q : '').'</td>';
+	print '<td class="liste_total" colspan="4">'.$langs->trans("TotalToPay").'</td>';
 	print '<td class="liste_total nowrap right"><b>'.price(price2num($diff, 'MT'))."</b></td>\n";
 	print "</tr>\n";
 }

@@ -693,6 +693,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 						} else {
 							$text = img_object($langs->trans('Product'), 'product');
 						}
+						$reg = array();
 						if (preg_match('/^\((.*)\)$/', $fields['descr'], $reg)) {
 							if ($reg[1] == 'DEPOSIT') {
 								$fields['descr'] = $langs->transnoentitiesnoconv('Deposit');
@@ -797,7 +798,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 
 	$diff = $x_coll_sum - $x_paye_sum;
 	print '<tr class="liste_total">';
-	print '<td class="liste_total" colspan="'.($span + 1).'">'.$langs->trans("TotalToPay").($q ? ', '.$langs->trans("Quadri").' '.$q : '').'</td>';
+	print '<td class="liste_total" colspan="'.($span + 1).'">'.$langs->trans("TotalToPay").'</td>';
 	print '<td class="liste_total nowrap right"><b>'.price(price2num($diff, 'MT'))."</b></td>\n";
 	print "</tr>\n";
 
