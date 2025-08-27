@@ -732,7 +732,7 @@ abstract class CommonObject
 	public $user_validation_id;
 
 	/**
-	 * @var int			User id closing object
+	 * @var int|null		User id closing object
 	 */
 	public $user_closing_id;
 
