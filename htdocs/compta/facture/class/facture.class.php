@@ -5565,7 +5565,7 @@ class Facture extends CommonInvoice
 		$this->note_public = 'This is a comment (public)';
 		$this->note_private = 'This is a comment (private)';
 
-		$this->fk_creation_id = $user->id;
+		$this->user_creation_id = $user->id;
 
 		$this->multicurrency_tx = 1;
 		$this->multicurrency_code = $conf->currency;
