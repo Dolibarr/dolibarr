@@ -5558,7 +5558,6 @@ class Facture extends CommonInvoice
 		$this->note_public = 'This is a comment (public)';
 		$this->note_private = 'This is a comment (private)';
 
-		$this->fk_user_author = $user->id;
 		$this->fk_creation_id = $user->id;
 		$this->fk_modification_id = $user->id;
 
