@@ -14,6 +14,7 @@
  * Copyright (C) 2018	    Quentin Vial-Gouteyron  <quentin.vial-gouteyron@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1151,11 +1152,18 @@ if ($action == 'create') {
 				$product = new Product($db);
 
 				// We search the purchase order line that is linked to the dispatchLines
+				$line = null;
 				foreach ($objectsrc->lines as $supplierLine) {
 					if ($dispatchLines[$indiceAsked]['fk_commandefourndet'] == $supplierLine->id) {
 						$line = $supplierLine;
 						break;
 					}
+				}
+
+				if ($line === null) {
+					// No supplier line found for this dispatch entry. Skip safely
+					$indiceAsked++;
+					continue;
 				}
 
 				// Show product and description
