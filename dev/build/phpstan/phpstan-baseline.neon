@@ -4381,18 +4381,6 @@ parameters:
 			path: ../../../htdocs/compta/facture/stats/index.php
 
 		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/facture/tpl/linkedobjectblock.tpl.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/facture/tpl/linkedobjectblockForRec.tpl.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -18091,22 +18079,10 @@ parameters:
 			path: ../../../htdocs/public/bookcal/bookcalAjax.php
 
 		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 11
-			path: ../../../htdocs/public/bookcal/bookcalAjax.php
-
-		-
 			message: '#^Variable \$user might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/public/bookcal/index.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/clicktodial/cidlookup.php
 
 		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
