@@ -1293,6 +1293,7 @@ class Facture extends CommonInvoice
 		$object->date               = (empty($this->date) ? dol_now() : $this->date);
 		$object->user_creation_id   = $user->id;
 		$object->user_validation_id = null;
+		$object->user_modification_id = null;
 		$object->fk_user_author     = $user->id;
 		$object->fk_user_valid      = null;
 		$object->fk_facture_source  = 0;
@@ -1625,6 +1626,7 @@ class Facture extends CommonInvoice
 		$this->origin_id = $object->id;
 
 		$this->fk_user_author = $user->id;
+		$this->user_creation_id = $user->id;
 
 		// get extrafields from original line
 		$object->fetch_optionals();
