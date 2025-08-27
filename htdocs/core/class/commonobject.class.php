@@ -743,7 +743,7 @@ abstract class CommonObject
 	public $user_modification;
 
 	/**
-	 * @var int			User ID who last modified the object
+	 * @var int|null		User ID who last modified the object
 	 */
 	public $user_modification_id;
 
