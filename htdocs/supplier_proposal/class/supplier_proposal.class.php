@@ -1250,13 +1250,13 @@ class SupplierProposal extends CommonObject
 
 		$sql = "SELECT p.rowid, p.entity, p.ref, p.fk_soc as socid";
 		$sql .= ", p.total_ttc, p.total_tva, p.localtax1, p.localtax2, p.total_ht";
-		$sql .= ", p.datec";
+		$sql .= ", p.datec, GREATEST(p.tms, pef.tms) as date_modification";
 		$sql .= ", p.date_valid as datev";
 		$sql .= ", p.date_livraison as delivery_date";
 		$sql .= ", p.model_pdf, p.extraparams";
 		$sql .= ", p.note_private, p.note_public";
 		$sql .= ", p.fk_projet as fk_project, p.fk_statut as status";
-		$sql .= ", p.fk_user_author, p.fk_user_valid, p.fk_user_cloture";
+		$sql .= ", p.fk_user_author, p.fk_user_modif, p.fk_user_valid, p.fk_user_cloture";
 		$sql .= ", p.fk_cond_reglement";
 		$sql .= ", p.fk_mode_reglement";
 		$sql .= ', p.fk_account';
@@ -1267,6 +1267,7 @@ class SupplierProposal extends CommonObject
 		$sql .= ", cr.code as cond_reglement_code, cr.libelle as cond_reglement, cr.libelle_facture as cond_reglement_libelle_doc";
 		$sql .= ", cp.code as mode_reglement_code, cp.libelle as mode_reglement";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_propalst as c, ".MAIN_DB_PREFIX."supplier_proposal as p";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."supplier_proposal_extrafields as pef ON pef.fk_object=p.rowid";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid';
 		$sql .= " WHERE p.fk_statut = c.id";
@@ -1303,10 +1304,11 @@ class SupplierProposal extends CommonObject
 				$this->datec                = $this->db->jdate($obj->datec); // TODO deprecated
 				$this->datev                = $this->db->jdate($obj->datev); // TODO deprecated
 				$this->date_creation = $this->db->jdate($obj->datec);	// Creation date
-				$this->date                 = $this->date_creation;
+				$this->date_modification = $this->db->jdate($obj->date_modification);	// Modification date
+				$this->date = $this->date_creation;
 				$this->date_validation = $this->db->jdate($obj->datev); // Validation date
-				$this->delivery_date        = $this->db->jdate($obj->delivery_date);
-				$this->shipping_method_id   = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
+				$this->delivery_date = $this->db->jdate($obj->delivery_date);
+				$this->shipping_method_id = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
 
 				$this->last_main_doc    = $obj->last_main_doc;
 				$this->mode_reglement_id    = $obj->fk_mode_reglement;
@@ -1321,16 +1323,17 @@ class SupplierProposal extends CommonObject
 				$this->extraparams = (array) (!empty($obj->extraparams) ? json_decode($obj->extraparams, true) : array());
 
 				$this->user_author_id = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->user_validation_id = $obj->fk_user_valid;
 				$this->user_closing_id = $obj->fk_user_cloture;
 
 				// Multicurrency
-				$this->fk_multicurrency 		= $obj->fk_multicurrency;
+				$this->fk_multicurrency = $obj->fk_multicurrency;
 				$this->multicurrency_code = $obj->multicurrency_code;
-				$this->multicurrency_tx 		= $obj->multicurrency_tx;
+				$this->multicurrency_tx = $obj->multicurrency_tx;
 				$this->multicurrency_total_ht = $obj->multicurrency_total_ht;
-				$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
-				$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
+				$this->multicurrency_total_tva = $obj->multicurrency_total_tva;
+				$this->multicurrency_total_ttc = $obj->multicurrency_total_ttc;
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
