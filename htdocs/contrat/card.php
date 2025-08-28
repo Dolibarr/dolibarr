@@ -2306,6 +2306,16 @@ if ($action == 'create') {
 						'enabled' => true,
 					);
 				}
+				if (isModEnabled('propal') && $object->status > 0 && $soc->client == 1) {
+					$arrayofcreatebutton[] = array(
+						'attr' => array('style' => 'text-align: left;'),
+						'url' => '/comm/propal/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id.'&renewal=true',
+						'label' => $langs->trans('AddRenewalProp'),
+						'lang' => 'propal',
+						'perm' => $user->hasRight('propale', 'creer') ? true : false,
+						'enabled' => true,
+					);
+				}
 				if (count($arrayofcreatebutton)) {
 					unset($params['attr']['title']);
 					print dolGetButtonAction('', $langs->trans("Create"), 'default', $arrayofcreatebutton, '', true, $params);
