@@ -1030,8 +1030,7 @@ class MyObject extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = "SELECT t.rowid,";
-		$sql .= " t.date_creation as datec";
+		$sql = "SELECT t.rowid, t.date_creation as datec";
 		if (!empty($this->isextrafieldmanaged) && $this->isextrafieldmanaged == 1) {
 			$sql .= ", GREATEST(t.tms, te.tms) as datem";
 		} else {
@@ -1071,10 +1070,10 @@ class MyObject extends CommonObject
 				if (!empty($this->fields['fk_user_valid'])) {
 					$this->user_validation_id = $obj->fk_user_valid;
 				}
-				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 				if (!empty($obj->datev)) {
-					$this->date_validation   = empty($obj->datev) ? '' : $this->db->jdate($obj->datev);
+					$this->date_validation = empty($obj->datev) ? '' : $this->db->jdate($obj->datev);
 				}
 			}
 
