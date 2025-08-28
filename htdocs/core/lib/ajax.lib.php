@@ -501,7 +501,7 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 	$msg = "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->'."\n";
 	$msg .= "<script>\n";
 
-	if (getDolGlobalString('MAIN_DISABLE_ACCENT_INSENSITIVE_SEARCH')) {
+	if (getDolGlobalString('MAIN_ENABLE_ACCENT_INSENSITIVE_SEARCH')) {
 		$msg .= '
 			// lowercase + remove accents
 			function normalizeString(str) {
