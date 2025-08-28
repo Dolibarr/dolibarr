@@ -6,7 +6,7 @@
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2019	   Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -298,8 +298,9 @@ if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 }
 $sql .= ", s.logo";
 $sql .= ", s.entity";
-$sql .= ", s.canvas, s.tms as date_modification, s.status as status";
+$sql .= ", s.canvas, GREATEST(s.tms, sef.tms) as date_modification, s.status as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as sef ON sef.fk_object=s.rowid";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 }
@@ -323,7 +324,7 @@ if (empty($reshook)) {
 	}
 }
 $sql .= $hookmanager->resPrint;
-$sql .= $db->order("s.tms", "DESC");
+$sql .= $db->order("date_modification", "DESC");
 $sql .= $db->plimit($max, 0);
 
 //print $sql;
