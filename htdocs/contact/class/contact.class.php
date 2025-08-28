@@ -1040,12 +1040,13 @@ class Contact extends CommonObject
 		$sql .= " c.priv, c.note_private, c.note_public, c.default_lang, c.canvas,";
 		$sql .= " c.fk_prospectlevel, c.fk_stcommcontact, st.libelle as stcomm, st.picto as stcomm_picto,";
 		$sql .= " c.import_key,";
-		$sql .= " c.datec as date_creation, c.tms as date_modification, c.fk_user_creat, c.fk_user_modif,";
+		$sql .= " c.datec as date_creation, GREATEST(c.tms, cef.tms) as date_modification, c.fk_user_creat, c.fk_user_modif,";
 		$sql .= " co.label as country, co.code as country_code,";
 		$sql .= " d.nom as state, d.code_departement as state_code,";
 		$sql .= " u.rowid as user_id, u.login as user_login,";
 		$sql .= " s.nom as socname, s.address as socaddress, s.zip as soccp, s.town as soccity, s.default_lang as socdefault_lang";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as cef ON cef.fk_object=c.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON c.fk_pays = co.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON c.fk_departement = d.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
@@ -1435,8 +1436,9 @@ class Contact extends CommonObject
 	public function info($id)
 	{
 		$sql = "SELECT c.rowid, c.datec as datec, c.fk_user_creat,";
-		$sql .= " c.tms as tms, c.fk_user_modif";
+		$sql .= " GREATEST(c.tms, cef.tms) as tms, c.fk_user_modif";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as cef ON cef.fk_object=c.rowid";
 		$sql .= " WHERE c.rowid = ".((int) $id);
 
 		$resql = $this->db->query($sql);
