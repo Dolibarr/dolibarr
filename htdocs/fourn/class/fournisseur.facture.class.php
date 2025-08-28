@@ -1230,10 +1230,10 @@ class FactureFournisseur extends CommonInvoice
 			else $this->fk_project = intval($this->fk_project);
 		}
 		if (isset($this->mode_reglement_id)) {
-			$this->mode_reglement_id = trim($this->mode_reglement_id);
+			$this->mode_reglement_id = (int) $this->mode_reglement_id;
 		}
 		if (isset($this->cond_reglement_id)) {
-			$this->cond_reglement_id = trim($this->cond_reglement_id);
+			$this->cond_reglement_id = (int) $this->cond_reglement_id;
 		}
 		if (isset($this->note_private)) {
 			$this->note = trim($this->note_private);
