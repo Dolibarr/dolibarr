@@ -494,7 +494,7 @@ class SupplierProposal extends CommonObject
 			return -1;
 		}
 
-		if ($this->statut == self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			$this->db->begin();
 
 			if ($fk_product > 0) {
@@ -897,7 +897,7 @@ class SupplierProposal extends CommonObject
 	{
 		global $user;
 
-		if ($this->statut == 0) {
+		if ($this->status == 0) {
 			$line = new SupplierProposalLine($this->db);
 
 			// For triggers
@@ -1185,6 +1185,7 @@ class SupplierProposal extends CommonObject
 		}
 
 		$this->id = 0;
+		$this->status = 0;
 		$this->statut = 0;
 
 		if (!getDolGlobalString('SUPPLIER_PROPOSAL_ADDON') || !is_readable(DOL_DOCUMENT_ROOT."/core/modules/supplier_proposal/" . getDolGlobalString('SUPPLIER_PROPOSAL_ADDON').".php")) {
@@ -1254,7 +1255,7 @@ class SupplierProposal extends CommonObject
 		$sql .= ", p.date_livraison as delivery_date";
 		$sql .= ", p.model_pdf, p.extraparams";
 		$sql .= ", p.note_private, p.note_public";
-		$sql .= ", p.fk_projet as fk_project, p.fk_statut";
+		$sql .= ", p.fk_projet as fk_project, p.fk_statut as status";
 		$sql .= ", p.fk_user_author, p.fk_user_valid, p.fk_user_cloture";
 		$sql .= ", p.fk_cond_reglement";
 		$sql .= ", p.fk_mode_reglement";
@@ -1297,8 +1298,8 @@ class SupplierProposal extends CommonObject
 				$this->note                 = $obj->note_private; // TODO deprecated
 				$this->note_private         = $obj->note_private;
 				$this->note_public          = $obj->note_public;
-				$this->statut               = (int) $obj->fk_statut;
-				$this->status               = (int) $obj->fk_statut;
+				$this->statut               = (int) $obj->status;
+				$this->status               = (int) $obj->status;
 				$this->datec                = $this->db->jdate($obj->datec); // TODO deprecated
 				$this->datev                = $this->db->jdate($obj->datev); // TODO deprecated
 				$this->date_creation = $this->db->jdate($obj->datec);	// Creation date
@@ -1678,20 +1679,21 @@ class SupplierProposal extends CommonObject
 	 *	Reopen the commercial proposal
 	 *
 	 *	@param      User	$user		Object user that close
-	 *	@param      int		$statut		Statut
+	 *	@param      int		$status		Status
 	 *	@param      string	$note		Comment
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         		Return integer <0 if KO, >0 if OK
 	 */
-	public function reopen($user, $statut, $note = '', $notrigger = 0)
+	public function reopen($user, $status, $note = '', $notrigger = 0)
 	{
 		global $langs, $conf;
 
-		$this->statut = $statut;
+		$this->status = $status;
+		$this->statut = $status;
 		$error = 0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal";
-		$sql .= " SET fk_statut = ".((int) $this->statut).",";
+		$sql .= " SET fk_statut = ".((int) $this->status).",";
 		if (!empty($note)) {
 			$sql .= " note_private = '".$this->db->escape($note)."',";
 		}
@@ -1748,6 +1750,7 @@ class SupplierProposal extends CommonObject
 		$hidedetails = 0;
 		$hidedesc = 0;
 		$hideref = 0;
+		$this->status = $status;
 		$this->statut = $status;
 		$error = 0;
 		$now = dol_now();
@@ -1949,7 +1952,7 @@ class SupplierProposal extends CommonObject
 
 		$error = 0;
 
-		if ($this->statut == self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			dol_syslog(get_class($this)."::setDraft already draft status", LOG_WARNING);
 			return 0;
 		}
