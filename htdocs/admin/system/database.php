@@ -53,27 +53,27 @@ if (!$user->admin) {
  * Actions
  */
 
-$sqllog = '';
+$logsql = '';
 $resultsql = null;
 
 if ($action == 'convertutf8unicode') {			// Test on permission already done.
 	$sql = "ALTER DATABASE ".$db->sanitize($db->database_name)." CHARACTER SET utf8 COLLATE utf8_unicode_ci";
-	$sqllog .= $sql.'<br>';
+	$logsql .= $sql.'<br>';
 	$resultsql = $db->query($sql);
 }
 if ($action == 'convertutf8mb4unicode') {		// Test on permission already done.
 	$sql = "ALTER DATABASE ".$db->sanitize($db->database_name)." CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
-	$sqllog .= $sql.'<br>';
+	$logsql .= $sql.'<br>';
 	$resultsql = $db->query($sql);
 }
 if ($action == 'convertutf8general') {			// Test on permission already done.
 	$sql = "ALTER DATABASE ".$db->sanitize($db->database_name)." CHARACTER SET utf8 COLLATE utf8_general_ci";
-	$sqllog .= $sql.'<br>';
+	$logsql .= $sql.'<br>';
 	$resultsql = $db->query($sql);
 }
 if ($action == 'convertutf8mb4general') {		// Test on permission already done.
 	$sql = "ALTER DATABASE ".$db->sanitize($db->database_name)." CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci";
-	$sqllog .= $sql.'<br>';
+	$logsql .= $sql.'<br>';
 	$resultsql = $db->query($sql);
 }
 
@@ -88,8 +88,8 @@ llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_database');
 
 print load_fiche_titre($langs->trans("InfoDatabase"), '', 'title_setup');
 
-if ($sqllog) {
-	print info_admin($sqllog.' '.(empty($resultsql) ? ' => KO '.$db->lasterror() : ' => OK'));
+if ($logsql) {
+	print info_admin($logsql.' '.(empty($resultsql) ? ' => KO '.$db->lasterror() : ' => OK'));
 }
 
 // Database
