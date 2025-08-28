@@ -836,41 +836,29 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 if (empty($reshook) && $action == 'update' && $usercancreate) {
 	if (empty($cancel)) {
 		$fulldayevent = GETPOST('fullday');
-		$aphour = GETPOSTINT('aphour');
-		$apmin = GETPOSTINT('apmin');
-		$p2hour = GETPOSTINT('p2hour');
-		$p2min = GETPOSTINT('p2min');
-		$percentage = in_array(GETPOST('status'), array(-1, 100)) ? GETPOST('status') : (in_array($complete, array(-1, 100)) ? $complete : GETPOSTINT("percentage")); // If status is -1 or 100, percentage is not defined and we must use status
-
-		// Clean parameters
-		if ($aphour == -1) {
-			$aphour = '0';
-		}
-		if ($apmin == -1) {
-			$apmin = '0';
-		}
-		if ($p2hour == -1) {
-			$p2hour = '0';
-		}
-		if ($p2min == -1) {
-			$p2min = '0';
-		}
 
 		$object->fetch($id);
 		$object->fetch_optionals();
 		$object->fetch_userassigned();
 		$object->oldcopy = dol_clone($object, 2);
 
-		// Clean parameters
+		// Get date parameters. When the <select> elements for hour / minute are disabled, their value is not sent with the http query.
+		// In that case, we keep the value that is already set on the object.
+		$tzToUse = 'tzuserrel';
+		$hmStart = GETPOSTISSET('aphour') ? 'getpost' : dol_print_date($object->datep, '%H:%M:%S');
+		$hmEnd =  GETPOSTISSET('p2hour') ? 'getpost' : dol_print_date($object->datef, '%H:%M:%S');
 		if ($fulldayevent) {
-			$tzforfullday = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT');
 			// For "full day" events, we must store date in GMT (It must be viewed as same moment everywhere)
-			$datep = dol_mktime(0, 0, 0, GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), $tzforfullday ? $tzforfullday : 'tzuserrel');
-			$datef = dol_mktime(23, 59, 59, GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), $tzforfullday ? $tzforfullday : 'tzuserrel');
-		} else {
-			$datep = dol_mktime(GETPOSTINT("aphour"), GETPOSTINT("apmin"), GETPOSTINT("apsec"), GETPOSTINT("apmonth"), GETPOSTINT("apday"), GETPOSTINT("apyear"), 'tzuserrel');
-			$datef = dol_mktime(GETPOSTINT("p2hour"), GETPOSTINT("p2min"), GETPOSTINT("apsec"), GETPOSTINT("p2month"), GETPOSTINT("p2day"), GETPOSTINT("p2year"), 'tzuserrel');
+			// and we ignore hour/min/sec parameters.
+			$tzToUse = getDolGlobalString('MAIN_STORE_FULL_EVENT_IN_GMT', 'tzuserrel');
+			$hmStart = '00:00:00';
+			$hmEnd = '23:59:59';
 		}
+		$datep = GETPOSTDATE('ap', $hmStart, $tzToUse);
+		$datef = GETPOSTDATE('p2', $hmEnd, $tzToUse);
+
+		$percentage = in_array(GETPOST('status'), array(-1, 100)) ? GETPOST('status') : (in_array($complete, array(-1, 100)) ? $complete : GETPOSTINT('percentage')); // If status is -1 or 100, percentage is not defined and we must use status
+
 		//set end date to now if percentage is set to 100 and end date not set
 		$datef = (!$datef && $percentage == 100) ? dol_now() : $datef;
 
