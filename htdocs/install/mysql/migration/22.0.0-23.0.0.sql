@@ -92,4 +92,9 @@ ALTER TABLE llx_prelevement_lignes ADD COLUMN iban	varchar(80);   -- full iban. 
 ALTER TABLE llx_prelevement_lignes ADD COLUMN rum	varchar(32);   -- rum used
 
 
+ALTER TABLE llx_product_customer_price CHANGE COLUMN localtax1_tx localtax1_tx varchar(20) DEFAULT '0';
+ALTER TABLE llx_product_customer_price CHANGE COLUMN localtax2_tx localtax2_tx varchar(20) DEFAULT '0';
+ALTER TABLE llx_product_customer_price_log CHANGE COLUMN localtax1_tx localtax1_tx varchar(20) DEFAULT '0';
+ALTER TABLE llx_product_customer_price_log CHANGE COLUMN localtax2_tx localtax2_tx varchar(20) DEFAULT '0';
+
 -- end of migration

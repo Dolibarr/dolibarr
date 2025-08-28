@@ -731,12 +731,13 @@ if (!isModEnabled('api') && !isModEnabled('webservices')) {
 	}
 	if (isModEnabled('api')) {
 		print '<strong>API_ENDPOINT_RULES</strong> = '.getDolGlobalString('API_ENDPOINT_RULES', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Example").': login:0,users:0,setup:1,status:1,tickets:1,...)</span>')."<br>\n";
+
+		print '<br>';
+
+		print '<strong>API_DISABLE_LOGIN_API</strong> = '.getDolGlobalString('API_DISABLE_LOGIN_API', '0').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 1)</span><br>';
 	}
 }
 
-print '<br>';
-
-print '<strong>API_DISABLE_LOGIN_API</strong> = '.getDolGlobalString('API_DISABLE_LOGIN_API', '0').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 1)</span><br>';
 
 print '</div>';
 
@@ -778,7 +779,7 @@ print '<div class="divsection wordbreak">';
 //print '<strong>'.$langs->trans("PasswordEncryption").'</strong>: ';
 print '<strong>'.$langs->trans("AlgorithmFor", $langs->transnoentitiesnoconv("Passwords"));
 print $form->textwithpicto('', 'non reversible encryption, defined into MAIN_SECURITY_HASH_ALGO');
-print '</strong>: '.getDolGlobalString('MAIN_SECURITY_HASH_ALGO', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>')." &nbsp; ";
+print '</strong> = '.getDolGlobalString('MAIN_SECURITY_HASH_ALGO', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>')." &nbsp; ";
 if (!getDolGlobalString('MAIN_SECURITY_HASH_ALGO')) {
 	print '<span class="opacitymedium"> &nbsp; &nbsp; (If unset: \'md5\')</span>';
 }
@@ -803,7 +804,7 @@ $exampletodecrypt = GETPOST('exampletodecrypt', 'password');
 
 print '<strong>'.$langs->trans("AlgorithmFor", $langs->transnoentitiesnoconv("SensitiveData"));
 print $form->textwithpicto('', 'reversible encryption done with dolEncrypt/dolDecrypt');
-print '</strong>: '.constant('MAIN_SECURITY_REVERSIBLE_ALGO').' with key defined into conf.php file in $dolibarr_main_dolcrypt_key (or $dolibarr_main_instance_unique_id)<br>';
+print '</strong> = '.constant('MAIN_SECURITY_REVERSIBLE_ALGO').' with key defined into conf.php file in $dolibarr_main_dolcrypt_key (or $dolibarr_main_instance_unique_id)<br>';
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="action" value="doldecrypt">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
