@@ -52,7 +52,7 @@ class Interventions extends DolibarrApi
 	public static $FIELDSLINE = array(
 		'description',
 		'date',
-		'duree',
+		'duration',
 	);
 
 	/**
