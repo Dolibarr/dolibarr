@@ -1196,12 +1196,10 @@ class MyObject extends CommonObject
 		$langs->load("mymodule@mymodule");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'standard_myobject';
-
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (getDolGlobalString('MYOBJECT_ADDON_PDF')) {
-				$modele = getDolGlobalString('MYOBJECT_ADDON_PDF');
+			} else {
+				$modele = getDolGlobalString('MYOBJECT_ADDON_PDF', 'standard_myobject');
 			}
 		}
 
