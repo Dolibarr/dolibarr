@@ -2186,7 +2186,7 @@ class Holiday extends CommonObject
 	public function countActiveUsersWithoutCP()
 	{
 		$sql = "SELECT count(u.rowid) as compteur";
-		$sql .= " FROM ".MAIN_DB_PREFIX."user as u LEFT OUTER JOIN ".MAIN_DB_PREFIX."holiday_users hu ON (hu.fk_user=u.rowid)";
+		$sql .= " FROM ".MAIN_DB_PREFIX."user as u LEFT JOIN ".MAIN_DB_PREFIX."holiday_users hu ON (hu.fk_user=u.rowid)";
 		$sql .= " WHERE u.statut > 0 AND hu.fk_user IS NULL";
 
 		$result = $this->db->query($sql);
@@ -2493,7 +2493,7 @@ class Holiday extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as h";
 		$sql .= " WHERE h.statut > 1";
 		$sql .= " AND h.entity IN (".getEntity('holiday').")";
-		if (!$user->hasRight('expensereport', 'readall')) {
+		if (!$user->hasRight('holiday', 'readall')) {
 			$userchildids = $user->getAllChildIds(1);
 			$sql .= " AND (h.fk_user IN (".$this->db->sanitize(implode(',', $userchildids)).")";
 			$sql .= " OR h.fk_validator IN (".$this->db->sanitize(implode(',', $userchildids))."))";
@@ -2535,7 +2535,7 @@ class Holiday extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."holiday as h";
 		$sql .= " WHERE h.statut = 2";
 		$sql .= " AND h.entity IN (".getEntity('holiday').")";
-		if (!$user->hasRight('expensereport', 'read_all')) {
+		if (!$user->hasRight('holiday', 'read_all')) {
 			$userchildids = $user->getAllChildIds(1);
 			$sql .= " AND (h.fk_user IN (".$this->db->sanitize(implode(',', $userchildids)).")";
 			$sql .= " OR h.fk_validator IN (".$this->db->sanitize(implode(',', $userchildids))."))";

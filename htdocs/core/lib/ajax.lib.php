@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007-2015 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2007-2010  Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2015  Regis Houssin        	<regis.houssin@inodbox.com>
+ * Copyright (C) 2012       Christophe Battarel  	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -498,11 +498,32 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 	$moreselect2theme = preg_replace('/widthcentpercentminus[^\s]*/', '', $moreselect2theme);
 
 	$tmpplugin = 'select2';
-	$msg = "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->
-		<script>
-			$(document).ready(function () {
-				$(\''.(dol_escape_js(preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname)).'\').'.$tmpplugin.'({
-					dir: \'ltr\',';
+	$msg = "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->'."\n";
+	$msg .= "<script>\n";
+
+	if (getDolGlobalString('MAIN_ENABLE_ACCENT_INSENSITIVE_SEARCH')) {
+		$msg .= '
+			// lowercase + remove accents
+			function normalizeString(str) {
+				return str
+					.normalize("NFD")
+					.replace(/[\u0300-\u036f]/g, "")
+					.toLowerCase();
+			}
+		';
+	} else {
+		$msg .= '
+			// lowercase only (accents kept)
+			function normalizeString(str) {
+				return str.toLowerCase();
+			}
+		';
+	}
+
+	$msg .= '
+		$(document).ready(function () {
+			$(\''.(dol_escape_js(preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname)).'\').'.$tmpplugin.'({
+				dir: \'ltr\',';
 	if (preg_match('/onrightofpage/', $morecss)) {	// when $morecss contains 'onrightofpage', the select2 component must also be inside a parent with class="parentonrightofpage"
 		$msg .= ' dropdownAutoWidth: true, dropdownParent: $(\'#'.$htmlname.'\').parent(), '."\n";
 	}
@@ -513,9 +534,11 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
 						if ($.trim(params.term) === "") {
 							return data;
 						}
-						keywords = (params.term).split(" ");
+						var term = normalizeString(params.term);
+						var text = normalizeString(data.text || "");
+						var keywords = term.split(" ");
 						for (var i = 0; i < keywords.length; i++) {
-							if (((data.text).toUpperCase()).indexOf((keywords[i]).toUpperCase()) == -1) {
+							if (text.indexOf(keywords[i]) === -1) {
 								return null;
 							}
 						}
@@ -640,10 +663,10 @@ function ajax_event($htmlname, $events)
  * 	On/off button for constant
  *
  * 	@param  string      $code                   Name of constant
- * 	@param  array<string,string[]>	$input      Array of complementary actions to do if success ("disabled"|"enabled'|'set'|'del') => CSS element to switch, 'alert' => message to show, ... Example: array('disabled'=>array(0=>'cssid'))
+ * 	@param  array<string,string[]>	$input      It's array of complementary actions to do if success ("disabled"|"enabled'|'set'|'del') => CSS element to switch, 'alert' => message to show, ... Example: array('disabled'=>array(0=>'cssid'))
  * 	@param  ?int        $entity                 Entity. Current entity is used if null.
- *  @param  int<0,1>    $revertonoff            1=Revert on/off
- *  @param  int<0,1>    $strict                 0=Default, 1=Only the complementary actions "disabled and "enabled" (found into $input) are processed. Use only "disabled" with delConstant and "enabled" with setConstant.
+ *  @param  int<0,1>    $revertonoff            1 = Revert on/off
+ *  @param  int<0,1>    $strict                 0 = Default, 1=Only the complementary actions "disabled and "enabled" (found into $input) are processed. Use only "disabled" with delConstant and "enabled" with setConstant.
  *  @param  int         $forcereload            Force to reload page if we click/change value (this is supported only when there is no 'alert' option in input)
  *  @param  int<0,2>    $marginleftonlyshort    1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No left margin.
  *  @param  int<0,1>    $forcenoajax            1 = Force to use a ahref link instead of ajax code.

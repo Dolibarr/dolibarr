@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2021 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
- * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
- * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2017  		Laurent Destailleur 		<eldy@users.sourceforge.net>
+ * Copyright (C) 2021 		Gauthier VERDOL 			<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021 		Greg Rastklan 				<greg.rastklan@atm-consulting.fr>
+ * Copyright (C) 2021 		Jean-Pascal BOUDET 			<jean-pascal.boudet@atm-consulting.fr>
+ * Copyright (C) 2021 		Grégory BLEMAND 			<gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -139,43 +139,6 @@ class SkillRank extends CommonObject
 	 * @var int
 	 */
 	public $rankorder;
-
-
-	// If this object has a subtable with lines
-
-	// /**
-	//  * @var string    Name of subtable line
-	//  */
-	// public $table_element_line = 'hrm_skillrankline';
-
-	// /**
-	//  * @var string    Field with ID of parent key if this object has a parent
-	//  */
-	// public $fk_element = 'fk_skillrank';
-
-	// /**
-	//  * @var string    Name of subtable class that manage subtable lines
-	//  */
-	// public $class_element_line = 'SkillRankline';
-
-	// /**
-	//  * @var array	List of child tables. To test if we can delete object.
-	//  */
-	// protected $childtables = array();
-
-	// /**
-	//  * @var array    List of child tables. To know object to delete on cascade.
-	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
-	//  */
-	// protected $childtablesoncascade = array('hrm_skillrankdet');
-
-	// /**
-	//  * @var SkillRankLine[]     Array of subtable lines
-	//  */
-	// public $lines = array();
-
-
 
 	/**
 	 * Constructor
@@ -989,6 +952,7 @@ class SkillRank extends CommonObject
 			if (class_exists($classname)) {
 				$obj = new $classname();
 				'@phan-var-force ModeleNumRefEvaluation $obj';
+				/** @var ModeleNumRefEvaluation $obj */
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {

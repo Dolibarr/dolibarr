@@ -80,21 +80,20 @@ if (!$res && file_exists("../../../main.inc.php")) {
 if (!$res) {
 	die("Include of main fails");
 }
-
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-dol_include_once('/mymodule/class/myobject.class.php');
-dol_include_once('/mymodule/lib/mymodule_myobject.lib.php');
-
 /**
+ * The main.inc.php has been included so the following variable are now defined:
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
- * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
+ * @var Societe $mysoc
  */
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+dol_include_once('/mymodule/class/myobject.class.php');
+dol_include_once('/mymodule/lib/mymodule_myobject.lib.php');
 
 // Load translation files required by the page
 $langs->loadLangs(array("mymodule@mymodule", "other"));
@@ -103,6 +102,7 @@ $langs->loadLangs(array("mymodule@mymodule", "other"));
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $lineid   = GETPOSTINT('lineid');
+//$socid = GETPOSTINT('socid');
 
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -161,7 +161,7 @@ if ($enablepermissioncheck) {
 
 $upload_dir = $conf->mymodule->multidir_output[isset($object->entity) ? $object->entity : 1].'/myobject';
 
-// Security check (enable the most restrictive one)
+// Security check (enable at least one, the most restrictive one)
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (isset($object->status) && ($object->status == $object::STATUS_DRAFT) ? 1 : 0);

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -88,7 +88,12 @@ require_once DOL_DOCUMENT_ROOT . '/public/webportal/lib/webportal.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/webportal/class/context.class.php';
 require_once DOL_DOCUMENT_ROOT . '/webportal/class/webportalmember.class.php';
 require_once DOL_DOCUMENT_ROOT . '/webportal/class/webportalpartnership.class.php';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ */
 // Init session. Name of session is specific to WEBPORTAL instance.
 // Must be done after the include of filefunc.inc.php so global variables of conf file are defined (like $dolibarr_main_instance_unique_id or $dolibarr_main_force_https).
 // Note: the function dol_getprefix is defined into functions.lib.php but may have been defined to return a different key to manage another area to protect.

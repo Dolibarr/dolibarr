@@ -42,12 +42,14 @@ require_once DOL_DOCUMENT_ROOT.'/website/lib/websiteaccount.lib.php';
 $langs->loadLangs(array("companies", "website", "other"));
 
 // Get parameters
-$id         = GETPOSTINT('id');
-$ref        = GETPOST('ref', 'alpha');
 $action     = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
+
+$id         = GETPOSTINT('id');
+$ref        = GETPOST('ref', 'alpha');
+$socid = 0;
 
 // Initialize a technical objects
 $object = new SocieteAccount($db);
@@ -317,7 +319,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// ------------------------------------------------------------
 	$linkback = '';
 	if ($socid) {
-		$linkback = '<a href="'.DOL_URL_ROOT.'/societe/website.php?socid='.$socid.'&restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToListForThirdParty").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/societe/website.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToListForThirdParty").'</a>';
 	}
 	//if ($fk_website) {
 	//	$linkback = '<a href="'.DOL_URL_ROOT.'/website/website_card.php?fk_website='.$fk_website.'&restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';

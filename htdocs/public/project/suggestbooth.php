@@ -321,6 +321,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 				$contact->country_id = GETPOSTINT("country_id");
 				$contact->state_id = GETPOSTINT("state_id");
 				$contact->email = $email;
+				$contact->status = 1; //Default status to Actif
 				$contact->statut = 1; //Default status to Actif
 
 				$resultcreatecontact = $contact->create($user);

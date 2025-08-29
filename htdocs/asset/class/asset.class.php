@@ -107,6 +107,7 @@ class Asset extends CommonObject
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'default' => '1', 'index' => 1, 'position' => 5),
 		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => 4, 'noteditable' => 0, 'default' => '(PROV)', 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'validate' => 1, 'comment' => "Reference of object", "css" => "maxwidth150"),
 		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax125', 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1,),
 		'fk_asset_model' => array('type' => 'integer:AssetModel:asset/class/assetmodel.class.php:1:((status:=:1) and (entity:IN:__SHARED_ENTITIES__))', 'label' => 'AssetModel', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'validate' => 1, 'csslist' => 'tdoverflowmax75', 'css' => 'maxwidth300'),
@@ -359,8 +360,8 @@ class Asset extends CommonObject
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
-		global $langs, $extrafields;
-		$error = 0;
+		//global $langs, $extrafields;
+		//$error = 0;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -970,16 +971,19 @@ class Asset extends CommonObject
 			// Get fiscal period
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+
 			// @FIXME getCurrentPeriodOfFiscalYear return the first period found. What if there is several ? And what if not closed ? And what if end date not yet defined.
 			$dates = getCurrentPeriodOfFiscalYear($this->db, $conf, $this->date_start > $this->date_acquisition ? $this->date_start : $this->date_acquisition);
 			$init_fiscal_period_start = $dates['date_start'];
 			$init_fiscal_period_end = $dates['date_end'];
+			/*
 			if (empty($init_fiscal_period_start) || empty($init_fiscal_period_end)) {
 				$pastmonthyear = $dates['pastmonthyear'];
 				$pastmonth = $dates['pastmonth'];
 				$init_fiscal_period_start = dol_get_first_day((int) $pastmonthyear, (int) $pastmonth, false);
 				$init_fiscal_period_end = dol_get_last_day((int) $pastmonthyear, (int) $pastmonth, false);
 			}
+			*/
 
 			foreach ($options->deprecation_options as $mode_key => $fields) {
 				// Get last depreciation lines save in bookkeeping
@@ -1111,8 +1115,9 @@ class Asset extends CommonObject
 				$nb_days_in_month = getDolGlobalInt('ASSET_DEPRECIATION_DURATION_PER_MONTH', 30);
 				$period_amount = (float) ($fields['duration'] > 0 ? price2num($depreciation_period_amount / $fields['duration'], 'MT') : 0);
 				$first_period_found = false;
-				// TODO fix declaration of $begin_period
-				$first_period_date = isset($begin_period) && $begin_period > $fiscal_period_start ? $begin_period : $fiscal_period_start;
+
+				//$first_period_date = isset($begin_period) && $begin_period > $fiscal_period_start ? $begin_period : $fiscal_period_start;
+				$first_period_date = $fiscal_period_start;
 
 				$ref_date_format = "%Y" . ($fields['duration_type'] == 1 || $fields['duration_type'] == 2 ? '-%m' : '') . ($fields['duration_type'] == 2 ? '-%d' : '');
 

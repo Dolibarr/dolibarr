@@ -59,6 +59,12 @@ class Societe extends CommonObject
 	use CommonPeople;
 
 	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'COMPANY'; 	// to be overridden in child class implementations, i.e. 'BILL', 'TASK', 'PROPAL', etc.
+
+	/**
 	 * @var string ID of module.
 	 */
 	public $module = 'societe';
@@ -202,6 +208,7 @@ class Societe extends CommonObject
 		'fk_effectif' => array('type' => 'integer', 'label' => 'Workforce', 'enabled' => 1, 'visible' => -1, 'position' => 170),
 		'fk_typent' => array('type' => 'integer', 'label' => 'TypeOfCompany', 'enabled' => 1, 'visible' => -1, 'position' => 175, 'csslist' => 'minwidth200'),
 		'fk_forme_juridique' => array('type' => 'integer', 'label' => 'JuridicalStatus', 'enabled' => 1, 'visible' => -1, 'position' => 180),
+		'birth' => array('type' => 'date', 'label' => 'CompnanyBirthDate', 'enabled' => 1, 'visible' => -1, 'position' => 182),
 		'fk_currency' => array('type' => 'varchar(3)', 'label' => 'Currency', 'enabled' => 1, 'visible' => -1, 'position' => 185),
 		'siren' => array('type' => 'varchar(128)', 'label' => 'Idprof1', 'enabled' => 1, 'visible' => -1, 'position' => 190),
 		'siret' => array('type' => 'varchar(128)', 'label' => 'Idprof2', 'enabled' => 1, 'visible' => -1, 'position' => 195),
@@ -560,10 +567,14 @@ class Societe extends CommonObject
 	 */
 	public $forme_juridique_code = 0;
 	/**
-	 * @var string Label for Legal Form (of company)
+	 * @var string 	Label for Legal Form (of company)
 	 * @see CommonDocGenerator::get_substitutionarray_mysoc()
 	 */
 	public $forme_juridique;
+	/**
+	 * @var int|null 	Date of company creation
+	 */
+	public $birth;
 
 	/**
 	 * @var string
@@ -1343,8 +1354,6 @@ class Societe extends CommonObject
 					}
 				}
 			} else {
-				//var_dump($conf->global->SOCIETE_EMAIL_UNIQUE);
-				//var_dump($conf->global->SOCIETE_EMAIL_MANDATORY);
 				if ($key == 'EMAIL') {
 					// Check for mandatory
 					if (getDolGlobalString('SOCIETE_EMAIL_MANDATORY') && !isValidEmail($this->email)) {
@@ -1684,6 +1693,7 @@ class Societe extends CommonObject
 			}
 
 			$sql .= ",fk_forme_juridique = ".(!empty($this->forme_juridique_code) ? "'".$this->db->escape((string) $this->forme_juridique_code)."'" : "null");
+			$sql .= ",birth = ".(!empty($this->birth) ? "'".$this->db->idate($this->birth)."'" : "null");
 
 			$sql .= ",mode_reglement = ".(!empty($this->mode_reglement_id) ? "'".$this->db->escape((string) $this->mode_reglement_id)."'" : "null");
 			$sql .= ",cond_reglement = ".(!empty($this->cond_reglement_id) ? "'".$this->db->escape((string) $this->cond_reglement_id)."'" : "null");
@@ -1783,8 +1793,7 @@ class Societe extends CommonObject
 
 							$result = $lmember->update($user, 0, 1, 1, 1); // Use nosync to 1 to avoid cyclic updates
 							if ($result < 0) {
-								$this->error = $lmember->error;
-								$this->errors = array_merge($this->errors, $lmember->errors);
+								$this->setErrorsFromObject($lmember);
 								dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
 								$error++;
 							}
@@ -1911,7 +1920,7 @@ class Societe extends CommonObject
 		$sql = 'SELECT s.rowid, s.nom as name, s.name_alias, s.entity, s.ref_ext, s.address, s.datec as date_creation, s.prefix_comm';
 		$sql .= ', s.status, s.fk_warehouse';
 		$sql .= ', s.price_level';
-		$sql .= ', s.tms as date_modification, s.fk_user_creat, s.fk_user_modif';
+		$sql .= ', GREATEST(s.tms, sef.tms) as date_modification, s.fk_user_creat, s.fk_user_modif';
 		$sql .= ', s.phone, s.phone_mobile, s.fax, s.email';
 		$sql .= ', s.socialnetworks';
 		$sql .= ', s.url, s.zip, s.town, s.note_private, s.note_public, s.client, s.fournisseur';
@@ -1920,6 +1929,7 @@ class Societe extends CommonObject
 		$sql .= ', s.fk_typent as typent_id';
 		$sql .= ', s.fk_effectif as effectif_id';
 		$sql .= ', s.fk_forme_juridique as forme_juridique_code';
+		$sql .= ', s.birth';
 		$sql .= ', s.webservices_url, s.webservices_key, s.model_pdf, s.last_main_doc';
 		if (!getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 			$sql .= ', s.accountancy_code_customer_general, s.code_compta';
@@ -1955,6 +1965,7 @@ class Societe extends CommonObject
 			$sql .= ', sr.remise_client, sr2.remise_supplier';
 		}
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as sef ON sef.fk_object=s.rowid';
 		if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = ".((int) $conf->entity);
 		}
@@ -2121,6 +2132,7 @@ class Societe extends CommonObject
 
 				$this->forme_juridique_code = $obj->forme_juridique_code;
 				$this->forme_juridique = $obj->forme_juridique_code ? $obj->forme_juridique : '';
+				$this->birth = $this->db->jdate($obj->birth);
 
 				$this->fk_prospectlevel = $obj->fk_prospectlevel;
 
@@ -2133,8 +2145,8 @@ class Societe extends CommonObject
 				$this->cond_reglement_id 	= $obj->cond_reglement;
 				$this->deposit_percent		= $obj->deposit_percent;
 				$this->transport_mode_id 	= $obj->transport_mode;
-				$this->mode_reglement_supplier_id 	= $obj->mode_reglement_supplier;
-				$this->cond_reglement_supplier_id 	= $obj->cond_reglement_supplier;
+				$this->mode_reglement_supplier_id = $obj->mode_reglement_supplier;
+				$this->cond_reglement_supplier_id = $obj->cond_reglement_supplier;
 				$this->transport_mode_supplier_id = $obj->transport_mode_supplier;
 				$this->shipping_method_id = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
 				$this->fk_account = $obj->fk_account;
@@ -2795,6 +2807,48 @@ class Societe extends CommonObject
 			return -1;
 		}
 	}
+
+
+	/**
+	 *  Return amount (with tax) of discounts currently available for a company, user or other criteria
+	 *
+	 *  @param      int<0,1>	$discount_type  0 => customer discount, 1 => supplier discount
+	 * 	@return		int							Return integer <0 if KO, nb otherwise
+	 */
+	public function getOpenCreditNotesNotYetConvertedIntoDiscount($discount_type = 0)
+	{
+		global $conf;
+
+		$sql = "SELECT COUNT(f.rowid) as nb, SUM(f.total_ttc) as amount, SUM(f.multicurrency_total_ttc) as multicurrency_amount";
+		if (!empty($discount_type)) {
+			$sql .= " FROM ".$this->db->prefix()."facture_fourn as f";
+		} else {
+			$sql .= " FROM ".$this->db->prefix()."facture as f";
+		}
+		$sql .= " WHERE f.entity = ".$conf->entity;
+		$sql .= " AND paye = 0 AND fk_statut = 1";
+		$sql .= " AND f.type = ".CommonInvoice::TYPE_CREDIT_NOTE;
+		$sql .= " AND NOT EXISTS (SELECT rowid FROM ".$this->db->prefix()."societe_remise_except as rc";
+		$sql .= " WHERE rc.discount_type = ".((int) $discount_type);
+		if (!empty($discount_type)) {
+			$sql .= " AND rc.fk_invoice_supplier = f.rowid";
+		} else {
+			$sql .= " AND rc.fk_facture = f.rowid";
+		}
+		$sql .= " AND rc.fk_soc = ".((int) $this->id);
+		$sql .= ")";
+		$sql .= " AND f.fk_soc = ".((int) $this->id);
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+
+			return $obj->nb;
+		}
+
+		return -1;
+	}
+
 
 	/**
 	 *  Return array of sales representatives
@@ -4342,9 +4396,10 @@ class Societe extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = "SELECT s.rowid, s.nom as name, s.datec, tms as datem,";
+		$sql = "SELECT s.rowid, s.nom as name, s.datec, GREATEST(s.tms, sef.tms) as datem,";
 		$sql .= " fk_user_creat, fk_user_modif";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as sef ON sef.fk_object=s.rowid";
 		$sql .= " WHERE s.rowid = ".((int) $id);
 
 		$result = $this->db->query($sql);
@@ -5571,7 +5626,11 @@ class Societe extends CommonObject
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
-		$return .= img_picto('', $this->picto);
+		if (!empty($this->logo) && class_exists('Form')) {
+			$return .= Form::showphoto('societe', $this, 0, 40, 0, 'photokanban', 'mini', 0); // Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
+		} else {
+			$return .= img_picto('', $this->picto);
+		}
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
 		$return .= '<div class="info-box-ref inline-block tdoverflowmax125 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref);

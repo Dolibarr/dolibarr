@@ -6,6 +6,7 @@
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -742,12 +743,12 @@ class Tva extends CommonObject
 	/**
 	 *	Send name clickable (with possibly the picto)
 	 *
-	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *	@param	string	$option			link option
-	 *  @param	int  	$notooltip		1=Disable tooltip
-	 *  @param	string	$morecss		More CSS
+	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+	 *	@param	string	$option						Link option
+	 *  @param	int  	$notooltip					1=Disable tooltip
+	 *  @param	string	$morecss					More CSS
 	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@return	string					Chaine with URL
+	 *	@return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
@@ -971,5 +972,32 @@ class Tva extends CommonObject
 		$return .= '</div>';
 		$return .= '</div>';
 		return $return;
+	}
+
+	/**
+	 *	Id of vat payment object
+	 *
+	 *	@param	string		$label     Label of vat payment
+	 *	@return	int
+	 */
+	public function getIdForLabel($label)
+	{
+		$id = 0;
+		$sql = "SELECT t.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."tva as t";
+		$sql .= " WHERE t.label = '".$this->db->escape($label)."'";
+
+		dol_syslog(get_class($this)."::getIdForLabel", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result) {
+			if ($this->db->num_rows($result)) {
+				$obj = $this->db->fetch_object($result);
+				$id = $obj->rowid;
+			}
+			$this->db->free($result);
+		} else {
+			dol_print_error($this->db);
+		}
+		return $id;
 	}
 }

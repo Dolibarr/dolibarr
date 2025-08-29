@@ -175,6 +175,7 @@ class Facture extends CommonInvoice
 	 * @var int id of source invoice if replacement invoice or credit note
 	 */
 	public $fk_facture_source;
+
 	public $linked_objects = array();
 
 	/**
@@ -213,7 +214,7 @@ class Facture extends CommonInvoice
 	public $situation_cycle_ref;
 
 	/**
-	 * @var int Situation counter inside the cycle
+	 * @var ?int Situation counter inside the cycle
 	 */
 	public $situation_counter;
 
@@ -1080,7 +1081,7 @@ class Facture extends CommonInvoice
 						0,
 						$fk_parent_line,
 						$fk_product_fournisseur_price,
-						$buyprice,
+						is_null($buyprice) ? '' : $buyprice,	// do not use (float) here, it may be ''
 						$_facrec->lines[$i]->label,
 						empty($_facrec->lines[$i]->array_options) ? null : $_facrec->lines[$i]->array_options,
 						100,	// situation percent is undefined on recurring invoice lines
@@ -1292,9 +1293,11 @@ class Facture extends CommonInvoice
 		$object->date               = (empty($this->date) ? dol_now() : $this->date);
 		$object->user_creation_id   = $user->id;
 		$object->user_validation_id = null;
+		$object->user_modification_id = null;
 		$object->fk_user_author     = $user->id;
 		$object->fk_user_valid      = null;
 		$object->fk_facture_source  = 0;
+		$object->fk_fac_rec_source  = 0;
 		$object->date_creation      = '';
 		$object->date_modification = '';
 		$object->date_validation    = '';
@@ -1623,6 +1626,7 @@ class Facture extends CommonInvoice
 		$this->origin_id = $object->id;
 
 		$this->fk_user_author = $user->id;
+		$this->user_creation_id = $user->id;
 
 		// get extrafields from original line
 		$object->fetch_optionals();
@@ -2218,6 +2222,7 @@ class Facture extends CommonInvoice
 		$sql .= ', f.module_source, f.pos_source';
 		$sql .= ", i.libelle as label_incoterms";
 		$sql .= ", f.retained_warranty as retained_warranty, f.retained_warranty_date_limit as retained_warranty_date_limit, f.retained_warranty_fk_cond_reglement as retained_warranty_fk_cond_reglement";
+		$sql .= ", f.payment_reference, f.dispute_status";
 
 		if ($doFetchInOneSqlRequest && $extraFieldsCheck) {
 			foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
@@ -2329,6 +2334,9 @@ class Facture extends CommonInvoice
 				$this->retained_warranty    = $obj->retained_warranty;
 				$this->retained_warranty_date_limit         = $this->db->jdate($obj->retained_warranty_date_limit);
 				$this->retained_warranty_fk_cond_reglement  = $obj->retained_warranty_fk_cond_reglement;
+
+				$this->payment_reference = $obj->payment_reference;
+				$this->dispute_status    = $obj->dispute_status;
 
 				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
@@ -2728,6 +2736,9 @@ class Facture extends CommonInvoice
 		if (!isset($this->user_creation_id) && isset($this->fk_user_author)) {
 			$this->user_creation_id = $this->fk_user_author;
 		}
+		if (!isset($this->user_modifcation_id) && !empty($user->id)) {
+			$this->user_modification_id = $user->id;
+		}
 		if (!isset($this->user_validation_id) && isset($this->fk_user_valid)) {
 			$this->user_validation_id = $this->fk_user_valid;
 		}
@@ -2756,6 +2767,7 @@ class Facture extends CommonInvoice
 		$sql .= " revenuestamp=".((isset($this->revenuestamp) && $this->revenuestamp != '') ? (float) $this->revenuestamp : "null").",";
 		$sql .= " fk_statut=".(isset($this->status) ? (int) $this->status : "null").",";
 		$sql .= " fk_user_author=".(isset($this->user_creation_id) ? ((int) $this->user_creation_id) : "null").",";
+		$sql .= " fk_user_modif=".(!empty($user->id) ? ((int) $user->id) : "null").",";
 		$sql .= " fk_user_valid=".(isset($this->user_validation_id) ? (int) $this->user_validation_id : "null").",";
 		$sql .= " fk_facture_source=".(isset($this->fk_facture_source) ? (int) $this->fk_facture_source : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? (int) $this->fk_project : "null").",";
@@ -3866,7 +3878,8 @@ class Facture extends CommonInvoice
 			}
 
 			if (!$error && !$this->is_last_in_cycle()) {
-				if (!$this->updatePriceNextInvoice($langs)) {
+				$resupdatenext = $this->updatePriceNextInvoice($langs);
+				if (!$resupdatenext) {
 					$error++;
 				}
 			}
@@ -3896,13 +3909,19 @@ class Facture extends CommonInvoice
 						$i++;
 					}
 
-					if (empty($final)) {
-						$this->situation_final = 0;
+					if (!$final) {
+						if ($this->situation_final) {
+							// If we must change situation_final
+							$this->situation_final = 0;
+							$this->setFinal($user, 1);		// Trigger is disabled, already run by the validate
+						}
 					} else {
-						$this->situation_final = 1;
+						if (!$this->situation_final) {
+							// If we must change situation_final
+							$this->situation_final = 1;
+							$this->setFinal($user, 1);		// Trigger is disabled, already run by the validate
+						}
 					}
-
-					$this->setFinal($user);
 				}
 			}
 		}
@@ -4457,8 +4476,8 @@ class Facture extends CommonInvoice
 	 *  @param	float		$pu              	Prix unitaire (HT ou TTC selon price_base_type) (> 0 even for credit note lines)
 	 *  @param	float		$qty             	Quantity
 	 *  @param	float		$remise_percent  	Percentage discount of the line
-	 *  @param	int		    $date_start      	Date de debut de validite du service
-	 *  @param	int		    $date_end        	Date de fin de validite du service
+	 *  @param	int|''		$date_start      	Date de debut de validite du service
+	 *  @param	int|''		$date_end        	Date de fin de validite du service
 	 *  @param	float|string	$txtva          	VAT Rate (Can be '8.5', '8.5 (ABC)')
 	 * 	@param	float		$txlocaltax1		Local tax 1 rate
 	 *  @param	float		$txlocaltax2		Local tax 2 rate
@@ -5155,7 +5174,7 @@ class Facture extends CommonInvoice
 	{
 		$sql = 'SELECT c.rowid, datec, date_valid as datev, tms as datem,';
 		$sql .= ' date_closing as dateclosing,';
-		$sql .= ' fk_user_author, fk_user_valid, fk_user_closing';
+		$sql .= ' fk_user_author, fk_user_modif, fk_user_valid, fk_user_closing';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture as c';
 		$sql .= ' WHERE c.rowid = '.((int) $id);
 
@@ -5166,6 +5185,7 @@ class Facture extends CommonInvoice
 
 				$this->id = $obj->rowid;
 				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->user_validation_id = $obj->fk_user_valid;
 				$this->user_closing_id = $obj->fk_user_closing;
 
@@ -5544,15 +5564,16 @@ class Facture extends CommonInvoice
 
 		$this->note_public = 'This is a comment (public)';
 		$this->note_private = 'This is a comment (private)';
-		$this->note = 'This is a comment (private)';
 
-		$this->fk_user_author = $user->id;
+		$this->user_creation_id = $user->id;
 
 		$this->multicurrency_tx = 1;
 		$this->multicurrency_code = $conf->currency;
 
 		$this->fk_incoterms = 0;
 		$this->location_incoterms = '';
+
+		$this->status = 0;
 
 		if (empty($option) || $option != 'nolines') {
 			// Lines

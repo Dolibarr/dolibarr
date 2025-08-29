@@ -107,7 +107,7 @@ $site_account = 'UnknownSiteAccount';
 // Init Stripe objects
 if (isModEnabled('stripe')) {
 	$service = 'StripeTest';
-	if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
+	if (getDolGlobalString('STRIPE_LIVE')/* && !GETPOST('forcesandbox', 'alpha') */) {
 		$service = 'StripeLive';
 		$servicestatus = 1;
 	}
@@ -906,11 +906,10 @@ llxHeader('', $title, $help_url);
 $head = societe_prepare_head($object);
 
 // Show sandbox warning
-/*if (isModEnabled('paypal') && (!empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox','alpha')))		// We can force sand box with param 'forcesandbox'
-{
-	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Paypal'), [], 'warning');
-}*/
-if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
+//if (isModEnabled('paypal') && (getDolGlobalString('PAYPAL_API_SANDBOX')/* || GETPOST('forcesandbox','alpha') */))	{
+//	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Paypal'), [], 'warning');
+//}
+if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */)) {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning');
 }
 
@@ -1167,7 +1166,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				} else {
 					$service = 'StripeTest';
 					$servicestatus = 0;
-					if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
+					if (getDolGlobalString('STRIPE_LIVE')/* && !GETPOST('forcesandbox', 'alpha') */) {
 						$service = 'StripeLive';
 						$servicestatus = 1;
 					}
@@ -1514,6 +1513,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	if (isModEnabled('stripe') && !empty($conf->stripeconnect->enabled) && !empty($stripesupplieracc)) {
 		print load_fiche_titre($langs->trans('StripeBalance').($stripesupplieracc ? ' (Stripe connection with StripeConnect account '.$stripesupplieracc.')' : ' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, 'stripe-s');
 		$balance = \Stripe\Balance::retrieve(array("stripe_account" => $stripesupplieracc));
+		print '<!-- List of Stripe connected accounts -->'."\n";
 		print '<table class="liste centpercent noborder">'."\n";
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Currency').'</td>';
@@ -1571,6 +1571,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	$rib_list = $object->get_all_rib();
 
 	if (is_array($rib_list)) {
+		print '<!-- List of bank accounts -->'."\n";
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="liste centpercent noborder">';
 
@@ -1683,7 +1684,6 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 			if (isModEnabled('prelevement')) {
 				// RUM
-				//print '<td>'.$prelevement->buildRumNumber($object->code_client, $rib->datec, $rib->id).'</td>';
 				print '<td class="tdoverflowmax100 small" title="'.dolPrintHTMLForAttribute($rib->rum).'">'.dolPrintHTML($rib->rum);
 				print '<br><span class="opacitymedium">'.dolPrintHTML($rib->frstrecur).'</span>';	// FRST or RCUR
 				print '</td>';
@@ -1820,9 +1820,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			$nbremote++;
 
 			print '<tr class="oddeven">';
+			// Label
 			print '<td>';
 			print '</td>';
-			// Src ID
+			// External ID
 			print '<td class="tdoverflowmax150">';
 			$connect = '';
 			if (!empty($stripeacc)) {
@@ -1838,8 +1839,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print $src->id;
 			print '</td>';
 			// Bank
+			/*
 			print '<td>';
-			print'</td>';
+			print '</td>';
+			*/
 			// Account number
 			print '<td>';
 			print '</td>';

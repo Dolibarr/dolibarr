@@ -525,13 +525,13 @@ if (empty($reshook)) {
 	} elseif ($action == 'confirm_reopen' && $usercanclose && !GETPOST('cancel', 'alpha')) {
 		// Reopen proposal
 		// prevent browser refresh from reopening proposal several times
-		if ($object->statut == SupplierProposal::STATUS_SIGNED || $object->statut == SupplierProposal::STATUS_NOTSIGNED || $object->statut == SupplierProposal::STATUS_CLOSE) {
+		if ($object->status == SupplierProposal::STATUS_SIGNED || $object->status == SupplierProposal::STATUS_NOTSIGNED || $object->status == SupplierProposal::STATUS_CLOSE) {
 			$object->reopen($user, SupplierProposal::STATUS_VALIDATED);
 		}
 	} elseif ($action == 'close' && $usercanclose && !GETPOST('cancel', 'alpha')) {
 		// Close proposal
 		// prevent browser refresh from reopening proposal several times
-		if ($object->statut == SupplierProposal::STATUS_SIGNED) {
+		if ($object->status == SupplierProposal::STATUS_SIGNED) {
 			$object->setStatut(SupplierProposal::STATUS_CLOSE);
 		}
 	} elseif ($action == 'setstatut' && $usercanclose && !GETPOST('cancel', 'alpha')) {
@@ -541,7 +541,7 @@ if (empty($reshook)) {
 			$action = 'statut';
 		} else {
 			// prevent browser refresh from closing proposal several times
-			if ($object->statut == SupplierProposal::STATUS_VALIDATED) {
+			if ($object->status == SupplierProposal::STATUS_VALIDATED) {
 				$object->cloture($user, GETPOSTINT('statut'), GETPOST('note', 'restricthtml'));
 			}
 		}
@@ -1705,7 +1705,7 @@ if ($action == 'create') {
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('PaymentConditionsShort');
 		print '</td>';
-		if ($action != 'editconditions' && $object->statut != SupplierProposal::STATUS_NOTSIGNED) {
+		if ($action != 'editconditions' && $object->status != SupplierProposal::STATUS_NOTSIGNED) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetConditions'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -1724,7 +1724,7 @@ if ($action == 'create') {
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('DeliveryDate');
 		print '</td>';
-		if ($action != 'editdate_livraison' && $object->statut != SupplierProposal::STATUS_NOTSIGNED) {
+		if ($action != 'editdate_livraison' && $object->status != SupplierProposal::STATUS_NOTSIGNED) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetDeliveryDate'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -1749,7 +1749,7 @@ if ($action == 'create') {
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('PaymentMode');
 		print '</td>';
-		if ($action != 'editmode' && $object->statut != SupplierProposal::STATUS_NOTSIGNED) {
+		if ($action != 'editmode' && $object->status != SupplierProposal::STATUS_NOTSIGNED) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetMode'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -1897,7 +1897,7 @@ if ($action == 'create') {
 		<input type="hidden" name="backtopage" value="'.$backtopage.'">
 		';
 
-		if (!empty($conf->use_javascript_ajax) && $object->statut == SupplierProposal::STATUS_DRAFT) {
+		if (!empty($conf->use_javascript_ajax) && $object->status == SupplierProposal::STATUS_DRAFT) {
 			include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 		}
 
@@ -1919,7 +1919,7 @@ if ($action == 'create') {
 		}
 
 		// Form to add new line
-		if ($object->statut == SupplierProposal::STATUS_DRAFT && $usercancreate) {
+		if ($object->status == SupplierProposal::STATUS_DRAFT && $usercancreate) {
 			if ($action != 'editline') {
 				// Add products/services form
 
@@ -1981,7 +1981,7 @@ if ($action == 'create') {
 		if (empty($reshook)) {
 			if ($action != 'statut' && $action != 'editline') {
 				// Validate
-				if ($object->statut == SupplierProposal::STATUS_DRAFT && $object->total_ttc >= 0 && count($object->lines) > 0 && $usercanvalidate) {
+				if ($object->status == SupplierProposal::STATUS_DRAFT && $object->total_ttc >= 0 && count($object->lines) > 0 && $usercanvalidate) {
 					if (count($object->lines) > 0) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate&token='.newToken().'">'.$langs->trans('Validate').'</a></div>';
 					}
@@ -1989,19 +1989,19 @@ if ($action == 'create') {
 				}
 
 				// Edit
-				if ($object->statut == SupplierProposal::STATUS_VALIDATED && $usercancreate) {
+				if ($object->status == SupplierProposal::STATUS_VALIDATED && $usercancreate) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=modif&token='.newToken().'">'.$langs->trans('Modify').'</a></div>';
 				}
 
 				// ReOpen
-				if (($object->statut == SupplierProposal::STATUS_SIGNED || $object->statut == SupplierProposal::STATUS_NOTSIGNED || $object->statut == SupplierProposal::STATUS_CLOSE) && $usercanclose) {
+				if (($object->status == SupplierProposal::STATUS_SIGNED || $object->status == SupplierProposal::STATUS_NOTSIGNED || $object->status == SupplierProposal::STATUS_CLOSE) && $usercanclose) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().(!getDolGlobalString('MAIN_JUMP_TAG') ? '' : '#reopen').'"';
 					print '>'.$langs->trans('ReOpen').'</a></div>';
 				}
 
 				// Send
 				if (empty($user->socid)) {
-					if ($object->statut == SupplierProposal::STATUS_VALIDATED || $object->statut == SupplierProposal::STATUS_SIGNED) {
+					if ($object->status == SupplierProposal::STATUS_VALIDATED || $object->status == SupplierProposal::STATUS_SIGNED) {
 						if ($usercansend) {
 							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
 						} else {
@@ -2011,20 +2011,20 @@ if ($action == 'create') {
 				}
 
 				// Create an order
-				if (isModEnabled("supplier_order") && $object->statut == SupplierProposal::STATUS_SIGNED) {
+				if (isModEnabled("supplier_order") && $object->status == SupplierProposal::STATUS_SIGNED) {
 					if ($usercancreateorder) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'&amp;token='.newToken().'">'.$langs->trans("AddSupplierOrderShort").'</a></div>';
 					}
 				}
 
 				// Set accepted/refused
-				if ($object->statut == SupplierProposal::STATUS_VALIDATED && $usercanclose) {
+				if ($object->status == SupplierProposal::STATUS_VALIDATED && $usercanclose) {
 					print '<div class="inline-block divButAction"><a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;token='.newToken().'&amp;action=statut'.(!getDolGlobalString('MAIN_JUMP_TAG') ? '' : '#acceptedrefused').'"';
 					print '>'.$langs->trans('SetAcceptedRefused').'</a></div>';
 				}
 
 				// Close
-				if ($object->statut == SupplierProposal::STATUS_SIGNED && $usercanclose) {
+				if ($object->status == SupplierProposal::STATUS_SIGNED && $usercanclose) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;token='.newToken().'&amp;action=close'.(!getDolGlobalString('MAIN_JUMP_TAG') ? '' : '#close').'"';
 					print '>'.$langs->trans('Close').'</a></div>';
 				}
@@ -2035,7 +2035,7 @@ if ($action == 'create') {
 				}
 
 				// Delete
-				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', (($object->statut == SupplierProposal::STATUS_DRAFT && $usercancreate) || $usercandelete));
+				print dolGetButtonAction($langs->trans("Delete"), '', 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken(), 'delete', (($object->status == SupplierProposal::STATUS_DRAFT && $usercancreate) || $usercandelete));
 			}
 		}
 

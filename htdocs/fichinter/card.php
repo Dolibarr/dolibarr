@@ -1190,7 +1190,7 @@ if ($action == 'create') {
 
 	$head = fichinter_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("InterventionCard"), -1, 'intervention');
+	print dol_get_fiche_head($head, 'card', $langs->trans("InterventionCard"), -1, $object->picto);
 
 	$formconfirm = '';
 
@@ -1540,7 +1540,7 @@ if ($action == 'create') {
 
 					$temps = $objectline->showOptionals($extrafields, 'view', array(), '', '', '1', 'line');
 					if (!empty($temps)) {
-						print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
+						print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$objp->rowid.'" name="extrafield_lines_area_'.$objp->rowid.'">';
 						print $temps;
 						print '</div>';
 					}

@@ -57,7 +57,7 @@ Assigned=Caktuar
 NeedMoreInformation=Në pritje të komenteve të gazetarëve
 NeedMoreInformationShort=Në pritje të komenteve
 Waiting=Ne pritje
-SolvedClosed=E zgjidhur
+SolvedClosed=Mbyllur
 Deleted=U fshi
 # Dict
 Severity=Ashpërsia
@@ -72,8 +72,10 @@ TicketPublicAccess=Një ndërfaqe publike që nuk kërkon identifikim është e 
 TicketSetupDictionaries=Lloji i biletës, ashpërsia dhe kodet analitike janë të konfigurueshme nga fjalorët
 TicketParamModule=Konfigurimi i variablit të modulit
 TicketParamMail=Konfigurimi i emailit
-TicketEmailNotificationFrom=Email-i i dërguesit për njoftim mbi biletat (krijimi i biletës ose mesazhet e përditësimit)
-TicketEmailNotificationFromHelp=Email-i i dërguesit që do të përdoret për të dërguar email-et e njoftimeve për krijimin e biletave ose shtimin e mesazheve. Për shembull noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Njoftoni krijimin e biletave në këtë adresë e-mail
 TicketEmailNotificationToHelp=Nëse është e pranishme, kjo adresë email-i do të njoftohet për krijimin e një bilete (përveç çdo marrësi tjetër të parazgjedhur)
 TicketNewEmailBodyLabel=Mesazhi me tekst u dërgua pas krijimit të një bilete
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=Vetëm biletat e caktuara për përdoruesin akt
 TicketsActivatePublicInterface=Aktivizo ndërfaqen publike
 TicketsActivatePublicInterfaceHelp=Ndërfaqja publike lejon çdo vizitor të krijojë bileta.
 TicketsAutoAssignTicket=Cakto automatikisht përdoruesin që krijoi biletën
-TicketsAutoAssignTicketHelp=Kur krijohet një biletë, përdoruesit mund t'i caktohet automatikisht bileta (Shembuj: 0=Nuk i caktohet kurrë automatikisht biletës, 1=I caktohet automatikisht biletës nëse nuk i caktohet askush, 2=I caktohet automatikisht biletës edhe nëse është përcaktuar dikush).
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
 TicketAutoChangeStatusOnAnswer=Cakto automatikisht një status kur përgjigjesh një tikete
 TicketAutoChangeStatusOnAnswerHelp=Kur një përdorues i përgjigjet një tikete, statusi do të zbatohet automatikisht në tiketë.
 TicketNumberingModules=Moduli i numërimit të biletave
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=Shikoni vetëm biletat e hapura
 TicketStatByStatus=Biletat sipas statusit
 OrderByDateAsc=Rendit sipas datës në rritje
 OrderByDateDesc=Rendit sipas datës zbritëse
-ShowAsConversation=Shfaq si listë bisedash
-MessageListViewType=Shfaq si listë tabele
 ConfirmMassTicketClosingSendEmail=Dërgoni automatikisht email kur mbyllni biletat
 ConfirmMassTicketClosingSendEmailQuestion=Dëshironi të njoftoni palët e treta kur mbyllni këto bileta?
 # Ticket card

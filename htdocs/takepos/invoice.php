@@ -4,7 +4,7 @@
  * Copyright (C) 2021    	Nicolas ZABOURI    		<info@inovea-conseil.com>
  * Copyright (C) 2022-2023	Christophe Battarel		<christophe.battarel@altairis.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1290,6 +1290,13 @@ if (empty($reshook)) {
 		}
 
 		$sectionwithinvoicelink .= '</span><br>';
+
+		$customprinterallowed = true;
+		$arrayOfCountryWithPrintingOnBrowserMandatory = array('FR');
+		if (in_array($mysoc->country_code, $arrayOfCountryWithPrintingOnBrowserMandatory) && isModEnabled('blockedlog')) {
+			$customprinterallowed = false;
+		}
+
 		if (getDolGlobalInt('TAKEPOS_PRINT_INVOICE_DOC_INSTEAD_OF_RECEIPT')) {
 			$sectionwithinvoicelink .= ' <a target="_blank" class="button" href="' . DOL_URL_ROOT . '/document.php?token=' . newToken() . '&modulepart=facture&file=' . $invoice->ref . '/' . $invoice->ref . '.pdf">Invoice</a>';
 		} elseif (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
@@ -1298,7 +1305,7 @@ if (empty($reshook)) {
 			} else {
 				$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="TakeposPrinting('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
 			}
-		} elseif ((isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
+		} elseif ($customprinterallowed && (isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
 			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
 		} else {
 			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.')">'.$langs->trans('PrintTicket').'</button>';
@@ -1480,12 +1487,14 @@ function SendTicket(id)
 	return true;
 }
 
+/* Open the popup of the receipt to allow printing */
 function PrintBox(id, action) {
 	console.log("Open box before printing");
 	$.colorbox({href:"printbox.php?facid="+id+"&action="+action+"&token=<?php echo newToken(); ?>", width:"80%", height:"200px", transition:"none", iframe:"true", title:"<?php echo $langs->trans("PrintWithoutDetails"); ?>"});
 	return true;
 }
 
+/* Open the popup of the receipt to allow printing */
 function Print(id, gift){
 	console.log("Call Print() to generate the receipt.");
 	$.colorbox({href:"receipt.php?facid="+id+"&gift="+gift, width:"40%", height:"90%", transition:"none", iframe:"true", title:'<?php echo dol_escape_js($langs->trans("PrintTicket")); ?>'});
@@ -1521,12 +1530,11 @@ function TakeposConnector(id){
 // Call the ajax to execute the print.
 // With some external module another method may be called.
 function DolibarrTakeposPrinting(id) {
-	console.log("DolibarrTakeposPrinting Printing invoice ticket " + id);
+	console.log("DolibarrTakeposPrinting Printing invoice ticket by calling takepos/aja/ajax.php" + id);
 	$.ajax({
 		type: "GET",
 		data: { token: '<?php echo currentToken(); ?>' },
 		url: "<?php print DOL_URL_ROOT.'/takepos/ajax/ajax.php?action=printinvoiceticket&token='.newToken().'&term='.urlencode(isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '').'&id='; ?>" + id,
-
 	});
 	return true;
 }
@@ -1666,7 +1674,7 @@ $( document ).ready(function() {
 		$result = $adh->fetch(0, '', $invoice->socid);
 		if ($result > 0) {
 			$adh->ref = $adh->getFullName($langs);
-			if (empty($adh->statut) || $adh->statut == Adherent::STATUS_EXCLUDED) {
+			if (empty($adh->status) || $adh->status == Adherent::STATUS_EXCLUDED) {
 				$s .= "<s>";
 			}
 			$s .= $adh->getFullName($langs);
@@ -1678,11 +1686,11 @@ $( document ).ready(function() {
 				}
 			} else {
 				$s .= '<br>'.$langs->trans("SubscriptionNotReceived");
-				if ($adh->statut > 0) {
+				if ($adh->status > 0) {
 					$s .= " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
 				}
 			}
-			if (empty($adh->statut) || $adh->statut == Adherent::STATUS_EXCLUDED) {
+			if (empty($adh->status) || $adh->status == Adherent::STATUS_EXCLUDED) {
 				$s .= "</s>";
 			}
 		} else {
@@ -1872,6 +1880,8 @@ if (!empty($_SESSION["basiclayout"]) && $_SESSION["basiclayout"] == 1) {
 		$catid = GETPOSTINT('catid');
 		$result = $object->fetch($catid);
 		$prods = $object->getObjectsInCateg("product");
+		/** @var Product[] $prods */
+		'@phan-var-force  Product[] $prods';
 		$htmlforlines = '';
 		foreach ($prods as $row) {
 			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {

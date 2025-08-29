@@ -4,7 +4,7 @@
  * Copyright (C) 2022-2023  	Udo Tamm            	<dev@dolibit.de>
  * Copyright (C) 2023       	Alexandre Spangaro  	<aspangaro@easya.solutions>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -114,7 +114,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->TICKET_ADDON_PDF == "$value") {
+		if (getDolGlobalString('TICKET_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'TICKET_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -198,11 +198,22 @@ if ($action == 'updateMask') {
 	include_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 
 	$notification_email = GETPOST('TICKET_NOTIFICATION_EMAIL_FROM', 'alpha');
-	$notification_email_description = "Sender of ticket replies sent from Dolibarr";
+	$notification_email_description = "Email of user allowed to send ticket replies from Dolibarr";
 	if (!empty($notification_email)) {
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_FROM', $notification_email, 'chaine', 0, $notification_email_description, $conf->entity);
 	} else { // If an empty e-mail address is providen, use the global "FROM" since an empty field will cause other issues
 		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_FROM', getDolGlobalString('MAIN_MAIL_EMAIL_FROM'), 'chaine', 0, $notification_email_description, $conf->entity);
+	}
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	$notification_email_replyto = GETPOST('TICKET_NOTIFICATION_EMAIL_REPLYTO', 'alpha');
+	$notification_email_replyto_description = "Email that must appears as the sender of ticket replies sent from Dolibarr";
+	if (!empty($notification_email)) {
+		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_REPLYTO', $notification_email_replyto, 'chaine', 0, $notification_email_replyto_description, $conf->entity);
+	} else {
+		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_REPLYTO', getDolGlobalString('MAIN_MAIL_EMAIL_FROM'), 'chaine', 0, $notification_email_replyto_description, $conf->entity);
 	}
 	if (!($res > 0)) {
 		$error++;
@@ -264,7 +275,7 @@ $page_name = 'TicketSetup';
 llxHeader('', $langs->trans($page_name), $help_url, '', 0, 0, '', '', '', 'mod-admin page-ticket');
 
 // Subheader
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
@@ -645,13 +656,23 @@ if (!getDolGlobalString('FCKEDITOR_ENABLE_MAIL')) {
 	print "</tr>\n";
 }
 
-// Email to send notifications
+// Email of sender allowed to send technical notifications
 print '<tr class="oddeven"><td><label for="TICKET_NOTIFICATION_EMAIL_FROM" class="block">'.$langs->trans("TicketEmailNotificationFrom").'</label></td>';
 print '<td class="left">';
 print img_picto('', 'email', 'class="pictofixedwidth"');
 print '<input type="text" class="minwidth200" id="TICKET_NOTIFICATION_EMAIL_FROM" name="TICKET_NOTIFICATION_EMAIL_FROM" value="' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'"></td>';
 print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationFromHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+// Email that must appears as the sender of email notifications
+print '<tr class="oddeven"><td><label for="TICKET_NOTIFICATION_EMAIL_REPLYTO" class="block">'.$langs->trans("TicketEmailNotificationReplyTo").'</label></td>';
+print '<td class="left">';
+print img_picto('', 'email', 'class="pictofixedwidth"');
+print '<input type="text" class="minwidth200" id="TICKET_NOTIFICATION_EMAIL_REPLYTO" name="TICKET_NOTIFICATION_EMAIL_REPLYTO" value="' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_REPLYTO').'"></td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationReplyToHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 

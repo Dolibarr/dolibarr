@@ -9,7 +9,7 @@
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France		  <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France		<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,10 +26,7 @@
  *
  * Need to have the following variables defined:
  * $object (invoice, order, ...)
- * $conf
- * $langs
  * $dateSelector
- * $forceall (0 by default, 1 for supplier invoices/orders)
  * $element     (used to test $user->rights->$element->creer)
  * $permtoedit  (used to replace test $user->rights->$element->creer)
  * $senderissupplier (0 by default, 1 for supplier invoices/orders)
@@ -54,9 +51,9 @@
  *
  * @var string $action
  * @var int $i
- * @var 0|1 $forceall
+ * @var int $forceall
  * @var int $num
- * @var 0|1 $senderissupplier
+ * @var int $senderissupplier
  * @var string $text
  * @var string $description
  */
@@ -69,7 +66,7 @@ if (empty($object) || !is_object($object)) {
 '
 @phan-var-force PropaleLigne|ContratLigne|CommonObjectLine|CommonInvoiceLine|CommonOrderLine|ExpeditionLigne|DeliveryLine|FactureFournisseurLigneRec|SupplierInvoiceLine|SupplierProposalLine $line
 @phan-var-force CommonObject $this
-@phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|FactureFournisseur|FactureFournisseur|SupplierProposal $object
+@phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|CommandeFournisseur|FactureFournisseur|SupplierProposal $object
 @phan-var-force 0|1 $forceall
 @phan-var-force int $num
 @phan-var-force ?Product $product_static
@@ -440,10 +437,8 @@ print '</td>';
 
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	print '<td class="linecoluseunit nowrap left">';
-	$label = $line->getLabelOfUnit('short');
-	if ($label !== '') {
-		print $langs->trans($label);
-	}
+	$label = $line->getLabelOfUnit('short', $langs);
+	print $label;
 	print '</td>';
 }
 if (!empty($line->remise_percent) && $line->special_code != 3) {

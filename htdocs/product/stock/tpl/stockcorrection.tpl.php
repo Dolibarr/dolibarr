@@ -46,7 +46,7 @@ if (empty($conf) || !is_object($conf)) {
 
 ?>
 
-<!-- BEGIN PHP TEMPLATE STOCKCORRECTION.TPL.PHP -->
+<!-- BEGIN PHP TEMPLATE PRODUCT/STOCK/TPL/STOCKCORRECTION.TPL.PHP -->
 <?php
 
 $productref = '';
@@ -148,7 +148,7 @@ print load_fiche_titre($langs->trans("StockCorrection"), '', 'generic');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">'."\n";
 
-print dol_get_fiche_head();
+print dol_get_fiche_head(array(), '', '', 0, '', 0, '', '', 0, '', 0, 'marginbottomonly');
 
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="correct_stock">';
@@ -276,6 +276,8 @@ print '<input type="submit" class="button button-save" name="save" value="'.dol_
 print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 print '<input type="submit" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 print '</div>';
+
+print '<br>';
 
 print '</form>';
 ?>

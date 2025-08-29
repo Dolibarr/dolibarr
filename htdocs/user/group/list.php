@@ -214,7 +214,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -371,25 +371,23 @@ $totalarray['nbfield'] = 0;
 print '<tr class="liste_titre_filter">';
 // Action column
 if ($conf->main_checkbox_left_column) {
-	print '<td class="liste_titre center maxwidthsearch">';
-	$searchpicto = $form->showFilterButtons('left');
-	print $searchpicto;
-	print '</td>';
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	$totalarray['nbfield']++;
 }
-print_liste_field_titre("Group", $_SERVER["PHP_SELF"], "g.nom", $param, "", "", $sortfield, $sortorder);
+print_liste_field_titre("Group", $_SERVER["PHP_SELF"], "g.nom", '', $param, "", $sortfield, $sortorder);
 $totalarray['nbfield']++;
 //multicompany
 if (isModEnabled('multicompany') && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE') && $conf->entity == 1) {
-	print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], "g.entity", $param, "", '', $sortfield, $sortorder, 'center ');
+	print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], "g.entity", '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
-print_liste_field_titre("NbOfUsers", $_SERVER["PHP_SELF"], "nb", $param, "", '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre("NbOfUsers", $_SERVER["PHP_SELF"], "nb", '', $param, '', $sortfield, $sortorder, 'center ');
 $totalarray['nbfield']++;
-print_liste_field_titre("NbOfPermissions", $_SERVER["PHP_SELF"], "nbpermissions", $param, "", '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre("NbOfPermissions", $_SERVER["PHP_SELF"], "nbpermissions", '', $param, '', $sortfield, $sortorder, 'center ');
 $totalarray['nbfield']++;
-print_liste_field_titre("DateCreationShort", $_SERVER["PHP_SELF"], "g.datec", $param, "", '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre("DateCreationShort", $_SERVER["PHP_SELF"], "g.datec", '', $param, '', $sortfield, $sortorder, 'center ');
 $totalarray['nbfield']++;
-print_liste_field_titre("DateLastModification", $_SERVER["PHP_SELF"], "g.tms", $param, "", '', $sortfield, $sortorder, 'center ');
+print_liste_field_titre("DateLastModification", $_SERVER["PHP_SELF"], "g.tms", '', $param, '', $sortfield, $sortorder, 'center ');
 $totalarray['nbfield']++;
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
@@ -403,7 +401,7 @@ print $hookmanager->resPrint;
  }*/
 // Action column
 if (!$conf->main_checkbox_left_column) {
-	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	$totalarray['nbfield']++;
 }
 print '</tr>'."\n";
@@ -468,7 +466,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 
-		print '<td class="tdoverflowmax125">';
+		print '<td class="tdoverflowmax200">';
 		print $object->getNomUrl(1);
 		if (isModEnabled('multicompany') && !$obj->entity) {
 			print img_picto($langs->trans("GlobalGroup"), 'redstar');
@@ -495,11 +493,11 @@ while ($i < $imaxinloop) {
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
-		print '<td class="center nowrap">'.dol_print_date($db->jdate($obj->datec), "dayhour").'</td>';
+		print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->datec), "dayhour").'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
-		print '<td class="center nowrap">'.dol_print_date($db->jdate($obj->tms), "dayhour").'</td>';
+		print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->tms), "dayhour").'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

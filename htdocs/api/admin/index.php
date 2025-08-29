@@ -29,9 +29,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -40,8 +37,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  * @var Translate $langs
  * @var User $user
  *
- * @var string $dolibarr_main_url_root
+ * @var string 	$dolibarr_main_url_root
+ * @var	string	$dolibarr_api_count_always_enabled
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 // Load translation files required by the page
 $langs->load("admin");
@@ -85,18 +85,22 @@ if ($action == 'setproductionmode') {
 
 // Disable compression mode
 if ($action == 'setdisablecompression') {
-	$status = GETPOST('status', 'alpha');
+	if (dolibarr_set_const($db, 'API_DISABLE_COMPRESSION', GETPOSTINT('status'), 'chaine', 0, '', 0) <= 0) {
+		dol_print_error($db);
+	}
+}
 
-	if (dolibarr_set_const($db, 'API_DISABLE_COMPRESSION', $status, 'chaine', 0, '', 0) > 0) {
-		header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	} else {
+// Disable compression mode
+if ($action == 'setenablecount' && !empty($dolibarr_api_count_always_enabled)) {
+	if (dolibarr_set_const($db, 'API_ENABLE_COUNT_CALLS', GETPOSTINT('status'), 'chaine', 0, '', 0) <= 0) {
 		dol_print_error($db);
 	}
 }
 
 if ($action == 'save') {
-	dolibarr_set_const($db, 'API_RESTRICT_ON_IP', GETPOST('API_RESTRICT_ON_IP', 'alpha'));
+	if (dolibarr_set_const($db, 'API_RESTRICT_ON_IP', GETPOST('API_RESTRICT_ON_IP', 'alpha')) <= 0) {
+		dol_print_error($db);
+	}
 }
 
 
@@ -109,7 +113,8 @@ dol_mkdir(DOL_DATA_ROOT.'/api/temp'); // May have been deleted by a purge
 
 llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-api page-admin-index');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("ApiSetup"), $linkback, 'title_setup');
 
 print '<span class="opacitymedium">'.$langs->trans("ApiDesc")."</span><br>\n";
@@ -153,6 +158,27 @@ if ($disable_compression) {
 	print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablecompression&token='.newToken().'&status=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 	print '</a></td>';
+}
+print '<td>&nbsp;</td>';
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("API_ENABLE_COUNT_CALLS").'</td>';
+$enable_count = getDolGlobalBool('API_ENABLE_COUNT_CALLS');
+if (!empty($dolibarr_api_count_always_enabled)) {
+	print '<td>';
+	print img_picto($langs->trans("AlwaysEnabled"), 'switch_on', 'class="opacitymedium"');
+	print '</td>';
+} else {
+	if ($enable_count) {
+		print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setenablecount&token='.newToken().'&status=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+		print '</a></td>';
+	} else {
+		print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setenablecount&token='.newToken().'&status=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+		print '</a></td>';
+	}
 }
 print '<td>&nbsp;</td>';
 print '</tr>';

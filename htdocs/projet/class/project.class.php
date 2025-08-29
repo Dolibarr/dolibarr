@@ -1415,7 +1415,7 @@ class Project extends CommonObject
 	 *
 	 * 	@param	int<0,2>	$withpicto		          0=No picto, 1=Include picto into link, 2=Only picto
 	 * 	@param	string		$option			          Variant where the link point to ('', 'nolink')
-	 * 	@param	int			$addlabel		          0=Default, 1=Add label into string, >1=Add first chars into string
+	 * 	@param	int			$addlabel		          0=Default, 1=Add label into string, n>1=Add the n first chars of label in ref, -1=Label replace the ref
 	 *  @param	string		$moreinpopup	          Text to add into popup
 	 *  @param	string		$sep			          Separator between ref and label if option addlabel is set
 	 *  @param	int<0,1>   	$notooltip		          1=Disable tooltip
@@ -1505,11 +1505,15 @@ class Project extends CommonObject
 			$result .= img_object(($notooltip ? '' : $label), $picto, 'class="pictofixedwidth em088"', 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
-			$result .= $this->ref;
+			if ($addlabel >= 0) {
+				$result .= $this->ref;
+			} else {
+				$result .= $this->title;
+			}
 		}
 		$result .= $linkend;
 		if ($withpicto != 2) {
-			$result .= (($addlabel && $this->title) ? '<span class="opacitymedium">'.$sep.dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)).'</span>' : '');
+			$result .= (($addlabel > 0 && $this->title) ? '<span class="opacitymedium">'.$sep.dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)).'</span>' : '');
 		}
 
 		global $action;
@@ -2640,11 +2644,12 @@ class Project extends CommonObject
 
 	/**
 	 * Method for calculating weekly hours worked and generating a report
+	 *
 	 * @return int   0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
 	public function createWeeklyReport()
 	{
-		global $mysoc, $user;
+		global $mysoc, $user, $langs;
 
 		$now = dol_now();
 		$nowDate = dol_getdate($now, true);
@@ -2685,19 +2690,32 @@ class Project extends CommonObject
 		} else {
 			$reportContent = "<span>Weekly time report from $startDate to $endDate </span><br><br>";
 			$reportContent .= '<table border="1" style="border-collapse: collapse;">';
-			$reportContent .= '<tr><th>Nom d\'utilisateur</th><th>Temps saisi (heures)</th><th>Temps travaillé par semaine (heures)</th></tr>';
+			$reportContent .= '<tr><th>'.$langs->trans("User").'</th><th>Temps saisi (heures)</th><th>Temps travaillé par semaine (heures)</th></tr>';
 
-			$weekendEnabled = 0;
 			$to = '';
 			$nbMailSend = 0;
 			$error = 0;
 			$errors_to = '';
 			while ($obj = $this->db->fetch_object($resql)) {
 				$to = $obj->email;
+
+				$weekendEnabled = 0;
 				$numHolidays = num_public_holiday($lastWeekStartTS, $lastWeekEndTS, $mysoc->country_code, 1);
-				if (getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY') && getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY')) {
-					$numHolidays -= 2;
-					$weekendEnabled = 2;
+				if (getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_MONDAY')) {
+					$numHolidays -= 1;
+					$weekendEnabled += 1;
+				}
+				if (getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_TUESDAY')) {
+					$numHolidays -= 1;
+					$weekendEnabled += 1;
+				}
+				if (getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY')) {
+					$numHolidays -= 1;
+					$weekendEnabled += 1;
+				}
+				if (getDolGlobalString('MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY')) {
+					$numHolidays -= 1;
+					$weekendEnabled += 1;
 				}
 
 				$dailyHours = $obj->weeklyhours / (7 - $weekendEnabled);

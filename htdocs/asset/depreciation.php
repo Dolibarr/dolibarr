@@ -2,7 +2,7 @@
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,7 +142,7 @@ if ($id > 0 || !empty($ref)) {
 		$now = dol_now();
 
 		foreach ($assetdepreciationoptions->deprecation_options_fields as $mode_key => $fields) {
-			$lines = $object->depreciation_lines[$mode_key];
+			$lines = isset($object->depreciation_lines[$mode_key]) ? $object->depreciation_lines[$mode_key] : '';
 			if (!empty($lines)) {
 				$mode_info = $assetdepreciationoptions->deprecation_options_fields[$mode_key];
 				$depreciation_info = $assetdepreciationoptions->getGeneralDepreciationInfoForMode($mode_key);

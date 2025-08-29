@@ -267,7 +267,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -737,7 +737,7 @@ while ($i < $imaxinloop) {
 
 		// Banque
 		if (!empty($arrayfields['d.bank']['checked'])) {
-			print '<td class="tdmaxoverflow100">';
+			print '<td class="tdoverflowmax100">';
 			if ($obj->fk_account > 0) {
 				$accountstatic->id = $obj->fk_account;
 				$accountstatic->fetch($obj->fk_account);

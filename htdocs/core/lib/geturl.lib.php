@@ -30,6 +30,8 @@
  * - you can set MAIN_SECURITY_ANTI_SSRF_SERVER_IP to set static ip of server
  * - common local lookup ips like 127.*.*.* are automatically added
  *
+ * You can enable constant MAIN_CURL_DEBUG to get detail of output/input into dolibarr_curl.logfile.
+ *
  * @param	string	  	$url 			    URL to call.
  * @param	'POST'|'GET'|'HEAD'|'PUT'|'PUTALREADYFORMATED'|'POSTALREADYFORMATED'|'DELETE'	$postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'DELETE'
  * @param	string    	$param			    Parameters of URL (x=value1&y=value2) or may be a formatted content with $postorget='PUTALREADYFORMATED'
@@ -44,13 +46,12 @@
  */
 function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array(), $allowedschemes = array('http', 'https'), $localurl = 0, $ssl_verifypeer = -1, $timeoutconnect = 0, $timeoutresponse = 0)
 {
-	//declaring of global variables
-	global $conf;
-	$USE_PROXY = !getDolGlobalString('MAIN_PROXY_USE') ? 0 : $conf->global->MAIN_PROXY_USE;
-	$PROXY_HOST = !getDolGlobalString('MAIN_PROXY_HOST') ? 0 : $conf->global->MAIN_PROXY_HOST;
-	$PROXY_PORT = !getDolGlobalString('MAIN_PROXY_PORT') ? 0 : $conf->global->MAIN_PROXY_PORT;
-	$PROXY_USER = !getDolGlobalString('MAIN_PROXY_USER') ? 0 : $conf->global->MAIN_PROXY_USER;
-	$PROXY_PASS = !getDolGlobalString('MAIN_PROXY_PASS') ? 0 : $conf->global->MAIN_PROXY_PASS;
+	// Get global variables for proxy use
+	$USE_PROXY = getDolGlobalInt('MAIN_PROXY_USE');
+	$PROXY_HOST = getDolGlobalString('MAIN_PROXY_HOST');
+	$PROXY_PORT = getDolGlobalInt('MAIN_PROXY_PORT');
+	$PROXY_USER = getDolGlobalString('MAIN_PROXY_USER');
+	$PROXY_PASS = getDolGlobalString('MAIN_PROXY_PASS');
 
 	dol_syslog("getURLContent postorget=".$postorget." URL=".$url." param=".$param);
 
@@ -66,7 +67,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	 print $nvpStr;
 	 exit;*/
 	curl_setopt($ch, CURLOPT_VERBOSE, 1);
-	curl_setopt($ch, CURLOPT_USERAGENT, 'Dolibarr geturl function');
+	curl_setopt($ch, CURLOPT_USERAGENT, 'Dolibarr geturl function');	// set the Dolibarr user agent name
 
 	// We use @ here because this may return warning if safe mode is on or open_basedir is on (following location is forbidden when safe mode is on).
 	// We force value to false so we will manage redirection ourself later.
@@ -76,6 +77,10 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $addheaders);
 	}
 	curl_setopt($ch, CURLINFO_HEADER_OUT, true); // To be able to retrieve request header and log it
+
+	if (getDolGlobalInt('MAIN_CURL_GET_RESPONSE_HEADER')) {
+		curl_setopt($ch, CURLOPT_HEADER, true); // To be able to retrieve response header
+	}
 
 	// By default use the TLS version decided by PHP.
 	// You can force, if supported a version like TLSv1 or TLSv1.2
@@ -119,8 +124,13 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		}
 	}
 
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeoutconnect ? $timeoutconnect : getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5));
-	curl_setopt($ch, CURLOPT_TIMEOUT, $timeoutresponse ? $timeoutresponse : getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
+	$newtimeoutconnect = ($timeoutconnect ? $timeoutconnect : getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5));
+	$newtimeoutresponse = ($timeoutresponse ? $timeoutresponse : getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
+
+	dol_syslog("getURLContent newtimeoutconnect=".$newtimeoutconnect." newtimeoutresponse=".$newtimeoutresponse);
+
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $newtimeoutconnect);
+	curl_setopt($ch, CURLOPT_TIMEOUT, $newtimeoutresponse);
 
 	// limit size of downloaded files.
 	$maxsize = getDolGlobalInt('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED');
@@ -178,7 +188,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	do {
 		if ($maxRedirection < 1) {
-			break;
+			return array('http_code' => 400, 'content' => 'Maximum number of redirections reached', 'curl_error_no' => 1, 'curl_error_msg' => 'Maximum number of redirections reached');
 		}
 
 		curl_setopt($ch, CURLOPT_URL, $newUrl);
@@ -192,7 +202,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		if (in_array($hosttocheck, array('metadata.google.internal'))) {
 			$info['http_code'] = 400;
 			$info['content'] = 'Error bad hostname '.$hosttocheck.' (Used by Google metadata). This value for hostname is not allowed.';
-			break;
+			return array('http_code' => 400, 'content' => $info['content'], 'curl_error_no' => 1, 'curl_error_msg' => $info['content']);
 		}
 
 		// Clean host name $hosttocheck to convert it into an IP $iptocheck
@@ -220,7 +230,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 			if ($tmpresult) {
 				$info['http_code'] = 400;
 				$info['content'] = $tmpresult;
-				break;
+				return array('http_code' => 400, 'content' => $tmpresult, 'curl_error_no' => 1, 'curl_error_msg' => $tmpresult);
 			}
 		}
 
@@ -298,6 +308,10 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		// Add more keys to $rep
 		if ($response) {
 			$rep['content'] = (string) $response;
+			if (getDolGlobalInt('MAIN_CURL_GET_RESPONSE_HEADER')) { // In this case, response contains header + body
+				$rep['header'] = substr($rep['content'], 0, intval($rep['header_size']));
+				$rep['content'] = substr($rep['content'], intval($rep['header_size']));
+			}
 		} else {
 			$rep['content'] = '';
 		}
@@ -371,9 +385,10 @@ function isIPAllowed($iptocheck, $localurl)
 
 /**
  * Function get second level domain name.
- * For example: https://www.abc.mydomain.com/dir/page.html return 'mydomain'
+ * For example: https://www.abc.mydomain.com/dir/page.html returns 'mydomain' with mode 0, 'mydomain.om' with mode 1, 'abc.mydomain.com' with mode 2.
+ * For example: part1@mydomain.com returns 'mydomain.com' with mode 1
  *
- * @param	string	  $url 				    Full URL.
+ * @param	string	  $url 				    Full URL or Email.
  * @param	int	 	  $mode					0=return 'mydomain', 1=return 'mydomain.com', 2=return 'abc.mydomain.com'
  * @return	string						    Returns domaine name
  */
@@ -398,8 +413,10 @@ function getDomainFromURL($url, $mode = 0)
 		$mode++;
 	}
 
-	$tmpdomain = preg_replace('/^https?:\/\//i', '', $url); // Remove http(s)://
-	$tmpdomain = preg_replace('/\/.*$/i', '', $tmpdomain); // Remove part after /
+	$tmpdomain = preg_replace('/^https?:\/\/[^:]+:[^@]+@/i', '', $url); 	// Remove http(s)://login@pass in https://login@pass:mydomain.com/path, so we now got mydomain.com/path
+	$tmpdomain = preg_replace('/^https?:\/\//i', '', $tmpdomain); 			// Remove http(s)://
+	$tmpdomain = preg_replace('/\/.*$/i', '', $tmpdomain); 					// Remove part after /
+	$tmpdomain = preg_replace('/^[^@]+@/i', '', $tmpdomain); 				// Remove part1@ in part1@part2 (for emails)
 	if ($mode == 3) {
 		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)\.([^\.]+)\.([^\.]+)$/', '\1.\2.\3.\4', $tmpdomain);
 	} elseif ($mode == 2) {

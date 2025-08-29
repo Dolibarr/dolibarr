@@ -42,6 +42,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/doldeprecationhandler.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commontrigger.class.php';
 
 /**
  *	Parent class of all other business classes (invoices, contracts, proposals, orders, ...)
@@ -51,8 +52,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doldeprecationhandler.class.php';
 abstract class CommonObject
 {
 	use DolDeprecationHandler;
-
-	const TRIGGER_PREFIX = ''; // to be overridden in child class implementations, i.e. 'BILL', 'TASK', 'PROPAL', etc.
+	use CommonTrigger;
 
 	/**
 	 * @var string		ID of module.
@@ -124,8 +124,8 @@ abstract class CommonObject
 	public $table_element_line = '';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity in local table, 'field@table'=Test entity into the field@table (example 'fk_soc@societe')
+	 * @var int<0,1>|string|null  	Does this object support multicompany module ?
+	 * 								0=No test on entity, 1=Test with field entity in local table, 'field@table'=Test entity into the field@table (example 'fk_soc@societe')
 	 */
 	public $ismultientitymanaged;
 
@@ -732,7 +732,7 @@ abstract class CommonObject
 	public $user_validation_id;
 
 	/**
-	 * @var int			User id closing object
+	 * @var int|null		User id closing object
 	 */
 	public $user_closing_id;
 
@@ -743,7 +743,7 @@ abstract class CommonObject
 	public $user_modification;
 
 	/**
-	 * @var int			User ID who last modified the object
+	 * @var int|null		User ID who last modified the object
 	 */
 	public $user_modification_id;
 
@@ -775,6 +775,7 @@ abstract class CommonObject
 	 */
 	public $sendtoid;
 
+
 	/**
 	 * @var	float		Amount already paid from getSommePaiement() + getSumCreditNotesUsed() + getSumDepositsUsed() (used to show correct status)
 	 * @see $totalpaid
@@ -783,9 +784,16 @@ abstract class CommonObject
 
 	/**
 	 * @var	float		Amount already paid from getSommePaiement()
-	 * @see $alreadpaid
+	 * @see $alreadpaid, $totalpaid_multicurrency
 	 */
 	public $totalpaid;
+
+	/**
+	 * @var int|float	Amount already paid from getSommePaiement(), like $totalpaid, but in the foreign currency
+	 * @see $totalpaid, $alreadypaid
+	 */
+	public $totalpaid_multicurrency;
+
 
 	/**
 	 * @var array<int,string>		Array with labels of status
@@ -1275,7 +1283,7 @@ abstract class CommonObject
 			} elseif ($obj = $this->db->fetch_object($resql_allowed_contacts)) {
 				if ($obj->cnt == 0) {
 					$langs->load("companies");
-					$this->error = $langs->trans("ErrorCommercialNotAllowedForThirdparty", $user->admin);
+					$this->error = $langs->trans("ErrorCommercialNotAllowedForThirdparty", $user->id);
 					dol_syslog(get_class($this)."::add_contact ".$this->error, LOG_ERR);
 					return -3;
 				}
@@ -2715,11 +2723,11 @@ abstract class CommonObject
 				// Triggers
 				if (!$error && !$notrigger) {
 					// Call triggers
+					$triggerName = (empty($this->TRIGGER_PREFIX) ? strtoupper(get_class($this)) : $this->TRIGGER_PREFIX);
 					if (get_class($this) == 'Commande') {
-						$result = $this->call_trigger('ORDER_MODIFY', $user);
-					} else {
-						$result = $this->call_trigger(strtoupper(get_class($this)).'_MODIFY', $user);
+						$triggerName = 'ORDER';	// TODO Remove this when TRIGGER_PREFI in order is implemented
 					}
+					$result = $this->call_trigger($triggerName.'_MODIFY', $user);
 					if ($result < 0) {
 						$error++;
 					}
@@ -3356,9 +3364,12 @@ abstract class CommonObject
 			if (!$notrigger) {
 				// Call trigger
 				$this->context['bankaccountupdate'] = 1;
-				$triggerName = strtoupper(get_class($this)).'_MODIFY';
-				// Special cases
-				if ($triggerName == 'FACTUREREC_MODIFY') {
+
+				$triggerName = (empty($this->TRIGGER_PREFIX) ? strtoupper(get_class($this)) : $this->TRIGGER_PREFIX);
+				if (get_class($this) == 'Commande') {
+					$triggerName = 'ORDER';	// TODO Remove this when TRIGGER_PREFI in order is implemented
+				}
+				if ($triggerName == 'FACTUREREC_MODIFY') {	// TODO Use the $this->TRIGGER_PREFIX when implemented
 					$triggerName = 'BILLREC_MODIFY';
 				}
 				$result = $this->call_trigger($triggerName, $userused);
@@ -3848,29 +3859,30 @@ abstract class CommonObject
 				$this->note_private = $note;
 			}
 			if (empty($notrigger)) {
+				// TODO Use the $this->TRIGGER_PREFIX when implemented
 				switch ($this->element) {
 					case 'societe':
-						$trigger_name = 'COMPANY_MODIFY';
+						$triggerName = 'COMPANY_MODIFY';
 						break;
 					case 'commande':
-						$trigger_name = 'ORDER_MODIFY';
+						$triggerName = 'ORDER_MODIFY';
 						break;
 					case 'facture':
-						$trigger_name = 'BILL_MODIFY';
+						$triggerName = 'BILL_MODIFY';
 						break;
 					case 'invoice_supplier':
-						$trigger_name = 'BILL_SUPPLIER_MODIFY';
+						$triggerName = 'BILL_SUPPLIER_MODIFY';
 						break;
 					case 'facturerec':
-						$trigger_name = 'BILLREC_MODIFIY';
+						$triggerName = 'BILLREC_MODIFIY';
 						break;
 					case 'expensereport':
-						$trigger_name = 'EXPENSE_REPORT_MODIFY';
+						$triggerName = 'EXPENSE_REPORT_MODIFY';
 						break;
 					default:
-						$trigger_name = strtoupper($this->element) . '_MODIFY';
+						$triggerName = strtoupper($this->element) . '_MODIFY';
 				}
-				$ret = $this->call_trigger($trigger_name, $user);
+				$ret = $this->call_trigger($triggerName, $user);
 				if ($ret < 0) {
 					return -1;
 				}
@@ -4310,7 +4322,8 @@ abstract class CommonObject
 				// Call trigger
 				$this->context['link_origin'] = $origin;
 				$this->context['link_origin_id'] = $origin_id;
-				$result = $this->call_trigger('OBJECT_LINK_INSERT', $f_user);
+
+				$result = $this->call_trigger('OBJECT_LINK_INSERT', $f_user);	// Note: We should have used here a hook. Not a business event
 				if ($result < 0) {
 					$error++;
 				}
@@ -4380,6 +4393,22 @@ abstract class CommonObject
 
 		$this->linkedObjectsIds = array();
 		$this->linkedObjects = array();
+
+		// Hook for allowing modules to completely alter the behavior of the method
+		$parameters = array(
+			'sourceid' => $sourceid,
+			'sourcetype' => $sourcetype,
+			'targetid' => $targetid,
+			'targettype' => $targettype,
+			'clause' => $clause,
+			'alsosametype' => $alsosametype,
+			'orderby' => $orderby,
+			'loadalsoobjects' => $loadalsoobjects
+		);
+		$reshook = $hookmanager->executeHooks('fetchObjectLinked', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			return $reshook;
+		}
 
 		$justsource = false;
 		$justtarget = false;
@@ -4580,7 +4609,8 @@ abstract class CommonObject
 				$this->context['link_source_type'] = $sourcetype;
 				$this->context['link_target_id'] = $targetid;
 				$this->context['link_target_type'] = $targettype;
-				$result = $this->call_trigger('OBJECT_LINK_MODIFY', $f_user);
+
+				$result = $this->call_trigger('OBJECT_LINK_MODIFY', $f_user);	// Note: We should have used here a hook. Not a business event
 				if ($result < 0) {
 					$error++;
 				}
@@ -4641,7 +4671,8 @@ abstract class CommonObject
 			$this->context['link_source_type'] = $sourcetype;
 			$this->context['link_target_id'] = $targetid;
 			$this->context['link_target_type'] = $targettype;
-			$result = $this->call_trigger('OBJECT_LINK_DELETE', $f_user);
+
+			$result = $this->call_trigger('OBJECT_LINK_DELETE', $f_user);	// Note: We should have used here a hook. Not a business event
 			if ($result < 0) {
 				$error++;
 			}
@@ -4778,11 +4809,12 @@ abstract class CommonObject
 	 *      @param	int		$status			Status to set
 	 *      @param	?int	$elementId		Id of element to force (use this->id by default if null)
 	 *      @param	string	$elementType	Type of element to force (use this->table_element by default)
-	 *      @param	string	$trigkey		Trigger key to use for trigger. Use '' means automatic but it is not recommended and is deprecated.
-	 *      @param	string	$fieldstatus	Name of status field in this->table_element
+	 *      @param	string	$trigkey		Trigger key to use for trigger, or 'none' or use '' means automatic but it is not recommended and is deprecated.
+	 *      @param	string	$fieldstatus	Name of status field to update (commonly field 'status' or 'fk_statut' in this->table_element)
 	 *      @return int						Return integer <0 if KO, >0 if OK
+	 *      @see setStatusCommon()
 	 */
-	public function setStatut($status, $elementId = null, $elementType = '', $trigkey = '', $fieldstatus = 'fk_statut')
+	public function setStatut($status, $elementId = null, $elementType = '', $trigkey = '', $fieldstatus = '')
 	{
 		global $user;
 
@@ -4793,35 +4825,41 @@ abstract class CommonObject
 
 		$this->db->begin();
 
-		if ($elementTable == 'facture_rec') {
-			$fieldstatus = "suspended";
-		}
-		if ($elementTable == 'mailing') {
-			$fieldstatus = "statut";
-		}
-		if ($elementTable == 'cronjob') {
-			$fieldstatus = "status";
-		}
-		if ($elementTable == 'user') {
-			$fieldstatus = "statut";
-		}
-		if ($elementTable == 'expensereport') {
-			$fieldstatus = "fk_statut";
-		}
-		if ($elementTable == 'receptiondet_batch') {
-			$fieldstatus = "status";
-		}
-		if ($elementTable == 'prelevement_bons') {
-			$fieldstatus = "statut";
-		}
-		if (isset($this->fields) && is_array($this->fields) && array_key_exists('status', $this->fields)) {
-			$fieldstatus = 'status';
+		if (empty($fieldstatus)) {
+			if ($elementTable == 'facture_rec') {
+				$fieldstatus = "suspended";
+			}
+			if ($elementTable == 'mailing') {
+				$fieldstatus = "statut";
+			}
+			if ($elementTable == 'cronjob') {
+				$fieldstatus = "status";
+			}
+			if ($elementTable == 'user') {
+				$fieldstatus = "statut";
+			}
+			if ($elementTable == 'expensereport') {
+				$fieldstatus = "fk_statut";
+			}
+			if ($elementTable == 'receptiondet_batch') {
+				$fieldstatus = "status";
+			}
+			if ($elementTable == 'prelevement_bons') {
+				$fieldstatus = "statut";
+			}
+			if (isset($this->fields) && is_array($this->fields) && array_key_exists('status', $this->fields)) {
+				$fieldstatus = 'status';
+			}
+			// If still empty
+			if (empty($fieldstatus)) {
+				$fieldstatus = 'fk_statut';
+			}
 		}
 
 		$sql = "UPDATE ".$this->db->prefix().$this->db->sanitize($elementTable);
 		$sql .= " SET ".$this->db->sanitize($fieldstatus)." = ".((int) $status);
-		// If status = 1 = validated, update also fk_user_valid
-		// TODO Replace the test on $elementTable by doing a test on existence of the field in $this->fields
+		// If status = 1 = validated and we update the main status field, we can update also fk_user_valid
+		// TODO Replace the test on $elementTable by doing a test on existence of the field in $this->fields and on $fieldstatus
 		if ($status == 1 && in_array($elementTable, array('expensereport', 'inventory'))) {
 			$sql .= ", fk_user_valid = ".((int) $user->id);
 		}
@@ -4832,7 +4870,7 @@ abstract class CommonObject
 			$sql .= ", date_validation = '".$this->db->idate(dol_now())."'";
 		}
 		$sql .= " WHERE rowid = ".((int) $elementId);
-		$sql .= " AND ".$fieldstatus." <> ".((int) $status);	// We avoid update if status already correct
+		$sql .= " AND ".$this->db->sanitize($fieldstatus)." <> ".((int) $status);	// We avoid update if status already correct
 
 		dol_syslog(get_class($this)."::setStatut", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -4866,7 +4904,7 @@ abstract class CommonObject
 
 				$this->context = array_merge($this->context, array('newstatus' => $status));
 
-				if ($trigkey) {
+				if ($trigkey && $trigkey != 'none') {
 					// Call trigger
 					$result = $this->call_trigger($trigkey, $user);
 					if ($result < 0) {
@@ -4883,7 +4921,9 @@ abstract class CommonObject
 
 				if (empty($savElementId)) {
 					// If the element we update is $this (so $elementId was provided as null)
-					if ($fieldstatus == 'tosell') {
+					if ($fieldstatus == 'dispute_status') {
+						$this->dispute_status = $status;
+					} elseif ($fieldstatus == 'tosell') {
 						$this->status = $status;
 					} elseif ($fieldstatus == 'tobuy') {
 						$this->status_buy = $status;	// @phpstan-ignore-line
@@ -5732,7 +5772,9 @@ abstract class CommonObject
 		$this->tpl['multicurrency_price'] = price($line->multicurrency_subprice);
 		$this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-			$this->tpl['unit'] = $langs->transnoentities($line->getLabelOfUnit('long'));
+			$this->tpl['unit'] = $line->getLabelOfUnit('long', $langs);
+			$this->tpl['unit_short'] = $line->getLabelOfUnit('short', $langs);
+			//$this->tpl['unit_code'] = $line->getLabelOfUnit('code');
 		}
 		$this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? vatrate((string) $line->remise_percent, true) : '&nbsp;';
 
@@ -5773,11 +5815,13 @@ abstract class CommonObject
 	 *	@param		string	$resource_type		'resource'
 	 *	@param		int		$busy				Busy or not
 	 *	@param		int		$mandatory			Mandatory or not
+	 *  @param		int		$notrigger			Disable all triggers
 	 *	@return		int							Return integer <=0 if KO, >0 if OK
 	 */
-	public function add_element_resource($resource_id, $resource_type, $busy = 0, $mandatory = 0)
+	public function add_element_resource($resource_id, $resource_type, $busy = 0, $mandatory = 0, $notrigger = 0)
 	{
 		// phpcs:enable
+		global $user;
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".$this->db->prefix()."element_resources (";
@@ -5798,6 +5842,13 @@ abstract class CommonObject
 
 		dol_syslog(get_class($this)."::add_element_resource", LOG_DEBUG);
 		if ($this->db->query($sql)) {
+			if (!$notrigger) {
+				$result = $this->call_trigger(strtoupper($this->TRIGGER_PREFIX).'_ADD_RESOURCE', $user);
+				if ($result < 0) {
+					$this->db->rollback();
+					return -1;
+				}
+			}
 			$this->db->commit();
 			return 1;
 		} else {
@@ -5812,11 +5863,11 @@ abstract class CommonObject
 	 *    Delete a link to resource line
 	 *
 	 *    @param	int		$rowid			Id of resource line to delete
-	 *    @param	string	$element		element name (for trigger) TODO: use $this->element into commonobject class
+	 *    @param	string	$element		element name (for trigger) replaced by $this->TRIGGER_PREFIX
 	 *    @param	int		$notrigger		Disable all triggers
 	 *    @return   int						>0 if OK, <0 if KO
 	 */
-	public function delete_resource($rowid, $element, $notrigger = 0)
+	public function delete_resource($rowid, $element = '', $notrigger = 0)
 	{
 		// phpcs:enable
 		global $user;
@@ -5835,7 +5886,7 @@ abstract class CommonObject
 			return -1;
 		} else {
 			if (!$notrigger) {
-				$result = $this->call_trigger(strtoupper($element).'_DELETE_RESOURCE', $user);
+				$result = $this->call_trigger(strtoupper($this->TRIGGER_PREFIX).'_DELETE_RESOURCE', $user);
 				if ($result < 0) {
 					$this->db->rollback();
 					return -1;
@@ -6313,51 +6364,6 @@ abstract class CommonObject
 	}
 
 
-	/* For triggers */
-
-
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 * Call trigger based on this instance.
-	 * Some context information may also be provided into array property this->context.
-	 * NB:  Error from trigger are stacked in interface->errors
-	 * NB2: If return code of triggers are < 0, action calling trigger should cancel all transaction.
-	 *
-	 * @param   string    $triggerName   trigger's name to execute
-	 * @param   User      $user           Object user
-	 * @return  int                       Result of run_triggers
-	 */
-	public function call_trigger($triggerName, $user)
-	{
-		// phpcs:enable
-		global $langs, $conf;
-
-		if (!empty(self::TRIGGER_PREFIX) && strpos($triggerName, self::TRIGGER_PREFIX . '_') !== 0) {
-			dol_print_error(null, 'The trigger "' . $triggerName . '" does not start with "' . self::TRIGGER_PREFIX . '_" as required.');
-			exit;
-		}
-		if (!is_object($langs)) {	// If lang was not defined, we set it. It is required by run_triggers().
-			dol_syslog("call_trigger was called with no langs variable defined".getCallerInfoString(), LOG_WARNING);
-			include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
-			$langs = new Translate('', $conf);
-			$langs->load("main");
-		}
-
-		include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-		$interface = new Interfaces($this->db);
-		$result = $interface->run_triggers($triggerName, $this, $user, $langs, $conf);
-
-		if ($result < 0) {
-			if (!empty($this->errors)) {
-				$this->errors = array_unique(array_merge($this->errors, $interface->errors)); // We use array_unique because when a trigger call another trigger on same object, this->errors is added twice.
-			} else {
-				$this->errors = $interface->errors;
-			}
-		}
-		return $result;
-	}
-
-
 	/* Functions for data in other language */
 
 
@@ -6752,17 +6758,21 @@ abstract class CommonObject
 			$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$attributeKey];
 			$attributeUnique   = $extrafields->attributes[$this->table_element]['unique'][$attributeKey];
 			$attrfieldcomputed = $extrafields->attributes[$this->table_element]['computed'][$attributeKey];
+			$attributeEmptyOnClone = $extrafields->attributes[$this->table_element]['emptyonclone'][$attributeKey];
 
 			// If we clone, we have to clean unique extrafields to prevent duplicates.
+			// If we clone, we have to clean extrafields having "empty on clone" option on.
 			// This behaviour can be prevented by external code by changing $this->context['createfromclone'] value in createFrom hook
-			if (!empty($this->context['createfromclone']) && $this->context['createfromclone'] == 'createfromclone' && !empty($attributeUnique)) {
+			if (!empty($this->context['createfromclone']) && $this->context['createfromclone'] == 'createfromclone' && (!empty($attributeUnique) || !empty($attributeEmptyOnClone))) {
 				$new_array_options[$key] = null;
+				continue;
 			}
 
 			// If we create product combination, we have to clean unique extrafields to prevent duplicates.
 			// This behaviour can be prevented by external code by changing $this->context['createproductcombination'] value in hook
 			if (!empty($this->context['createproductcombination']) && $this->context['createproductcombination'] == 'createproductcombination' && !empty($attributeUnique)) {
 				$new_array_options[$key] = null;
+				continue;
 			}
 
 			// Similar code than into insertExtraFields
@@ -6784,6 +6794,7 @@ abstract class CommonObject
 				} else {
 					$new_array_options[$key] = null;
 				}
+				continue;
 			}
 
 			switch ($attributeType) {
@@ -6959,10 +6970,7 @@ abstract class CommonObject
 				continue;
 			}
 			if (preg_match('/error/i', $newValue)) {
-				dol_syslog(
-					'Bad syntax string for '.$geoDataType['shortname'].' '.$newValue.' to generate SQL request',
-					LOG_WARNING
-				);
+				dol_syslog('Bad syntax string for '.$geoDataType['shortname'].' '.$newValue.' to generate SQL request', LOG_WARNING);
 				$sqlColumnValues[$attributeKey] = 'null';
 				continue;
 			}
@@ -6983,10 +6991,20 @@ abstract class CommonObject
 		}
 		$extrafieldsTable = $this->db->prefix() . $table_element . '_extrafields';
 
-		dol_syslog(get_class($this)."::insertExtraFields delete then insert", LOG_DEBUG);
+		dol_syslog(get_class($this)."::insertExtraFields update or insert record line", LOG_DEBUG);
+
+		$linealreadyfound = 0;
+		$sql = "SELECT COUNT(rowid) as nb FROM ".$this->db->prefix().$table_element."_extrafields WHERE fk_object = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$tmpobj = $this->db->fetch_object($resql);
+			if ($tmpobj) {
+				$linealreadyfound = $tmpobj->nb;
+			}
+		}
 
 		// if the extrafields row already exists for the object, we update it
-		if ($this->db->getRow("SELECT 1 FROM {$extrafieldsTable} WHERE fk_object = ".((int) $this->id))) {
+		if ($linealreadyfound) {
 			array_shift($sqlColumnValues); // drop the 'fk_object' column because its value won't change
 			$sqlColumnValueString = implode(
 				',',
@@ -7022,6 +7040,13 @@ abstract class CommonObject
 		if (!$resql) {
 			$this->error = $this->db->lasterror();
 			$error++;
+		}
+
+		// Update also the user of last modification in parent table
+		if (!$error && !empty($this->fields['fk_user_modif'])) {
+			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
+			$sql .= " SET fk_user_modif = ".(int) $user->id;
+			$this->db->query($sql);
 		}
 
 		if (!$error && $trigger) {
@@ -7424,6 +7449,7 @@ abstract class CommonObject
 				if ($this->array_options["options_".$key] === null) {
 					$sql = "UPDATE ".$this->db->prefix().$table_element."_extrafields SET ".$key." = null";
 				} else {
+					// TODO What about if field is type int or float ($attributeType = price, int, ...) ?
 					$sql = "UPDATE ".$this->db->prefix().$table_element."_extrafields SET ".$key." = '".$this->db->escape($new_array_options["options_".$key])."'";
 				}
 				$sql .= " WHERE fk_object = ".((int) $this->id);
@@ -7438,6 +7464,13 @@ abstract class CommonObject
 				if ($result < 0) {
 					$error++;
 				}
+			}
+
+			// Update also the user of last modification in parent table
+			if (!$error && !empty($this->fields['fk_user_modif'])) {
+				$sql = "UPDATE ".$this->db->prefix().$this->table_element;
+				$sql .= " SET fk_user_modif = ".(int) $user->id;
+				$this->db->query($sql);
 			}
 
 			if (!$error) {
@@ -8089,9 +8122,12 @@ abstract class CommonObject
 				} else {
 					require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 					$categcode = $InfoFieldList[5];
-					if (is_numeric($categcode)) {
-						$categcode = Categorie::$MAP_ID_TO_CODE[(int) $InfoFieldList[5]];
+					if (is_numeric($categcode)) {	// deprecated: must use the category code instead of id. For backward compatibility.
+						$tmpcategory = new Categorie($this->db);
+						$MAP_ID_TO_CODE = array_flip($tmpcategory->MAP_ID);
+						$categcode = $MAP_ID_TO_CODE[(int) $categcode];
 					}
+
 					$data = $form->select_all_categories($categcode, '', 'parent', 64, $InfoFieldList[6], 1, 1);
 					$out .= '<option value="0">&nbsp;</option>';
 					foreach ($data as $data_key => $data_value) {
@@ -8327,9 +8363,12 @@ abstract class CommonObject
 				} else {
 					require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 					$categcode = $InfoFieldList[5];
-					if (is_numeric($categcode)) {
-						$categcode = Categorie::$MAP_ID_TO_CODE[(int) $InfoFieldList[5]];
+					if (is_numeric($categcode)) {	// deprecated: must use the category code instead of id. For backward compatibility.
+						$tmpcategory = new Categorie($this->db);
+						$MAP_ID_TO_CODE = array_flip($tmpcategory->MAP_ID);
+						$categcode = $MAP_ID_TO_CODE[(int) $categcode];
 					}
+
 					$data = $form->select_all_categories($categcode, '', 'parent', 64, $InfoFieldList[6], 1, 1);
 					$out = $form->multiselectarray($keyprefix . $key . $keysuffix, $data, $value_arr, 0, 0, $morecss, 0, '100%');
 				}
@@ -9173,7 +9212,7 @@ abstract class CommonObject
 			} else {
 				return true;
 			}
-		} elseif ($type == 'mail') {
+		} elseif ($type == 'mail' || $type == 'email') {
 			if (!$validate->isEmail($fieldValue)) {
 				$this->setFieldError($fieldKey, $validate->error);
 				return false;
@@ -9773,7 +9812,7 @@ abstract class CommonObject
 	 * @param float		$unitPrice			Product unit price
 	 * @param float		$discountPercent	Line discount percent
 	 * @param int		$fk_product			Product id
-	 * @return float|int<-1,-1>				Return buy price if OK, integer <0 if KO
+	 * @return float|int<-2,-1>				Return buy price if OK, integer <0 if KO
 	 */
 	public function defineBuyPrice($unitPrice = 0.0, $discountPercent = 0.0, $fk_product = 0)
 	{
@@ -9826,7 +9865,8 @@ abstract class CommonObject
 				}
 			}
 		}
-		return $buyPrice;
+
+		return (float) $buyPrice;
 	}
 
 	/**
@@ -10489,6 +10529,9 @@ abstract class CommonObject
 		if (array_key_exists('ref', $fieldvalues)) {
 			$fieldvalues['ref'] = dol_string_nospecial($fieldvalues['ref']); // If field is a ref, we sanitize data
 		}
+		if (getDolGlobalString('MAIN_DISABLE_AUTO_UPDATE_OF_TMS_FIELDS') && array_key_exists('tms', $fieldvalues)) {	// If we want the explicit update of tms fields instead of deprecated update by database
+			$fieldvalues['tms'] = $this->db->idate($now);
+		}
 
 		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
 
@@ -10787,13 +10830,16 @@ abstract class CommonObject
 
 		// Note: Here, $fieldvalues contains same keys (or less) that are inside ->fields
 
-		if (array_key_exists('date_modification', $fieldvalues) && empty($fieldvalues['date_modification'])) {
+		if (array_key_exists('date_modification', $fieldvalues)) {
 			$fieldvalues['date_modification'] = $this->db->idate($now);
 		}
-		if (array_key_exists('fk_user_modif', $fieldvalues) && !($fieldvalues['fk_user_modif'] > 0)) {
+		if (getDolGlobalString('MAIN_DISABLE_AUTO_UPDATE_OF_TMS_FIELDS') && array_key_exists('tms', $fieldvalues)) {	// If we want the explicit update of tms fields instead of deprecated update by database
+			$fieldvalues['tms'] = $this->db->idate($now);
+		}
+		if (array_key_exists('fk_user_modif', $fieldvalues)) {
 			$fieldvalues['fk_user_modif'] = $user->id;
 		}
-		if (array_key_exists('user_modification_id', $fieldvalues) && !($fieldvalues['user_modification_id'] > 0)) {
+		if (array_key_exists('user_modification_id', $fieldvalues)) {
 			$fieldvalues['user_modification_id'] = $user->id;
 		}
 		// @phan-suppress-next-line PhanUndeclaredProperty
@@ -10861,7 +10907,7 @@ abstract class CommonObject
 
 		// Update extrafield
 		if (!$error) {
-			$result = $this->insertExtraFields();	// This delete and reinsert extrafields
+			$result = $this->insertExtraFields();	// This update extrafields
 			if ($result < 0) {
 				$error++;
 			}
@@ -11182,6 +11228,7 @@ abstract class CommonObject
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *  @param  string  $triggercode    Trigger code to use
 	 *	@return	int						Return integer <0 if KO, >0 if OK
+	 *  @see setStatut()
 	 */
 	public function setStatusCommon($user, $status, $notrigger = 0, $triggercode = '')
 	{

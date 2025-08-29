@@ -3,6 +3,7 @@
  * Copyright (C) 2019		Cedric Ancelin			<icedo.anc@gmail.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -196,15 +197,13 @@ class Products extends DolibarrApi
 	 */
 	public function index($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $ids_only = false, $variant_filter = 0, $pagination_data = false, $includestockdata = 0, $properties = '')
 	{
-		global $db, $conf;
-
 		if (!DolibarrApiAccess::$user->hasRight('produit', 'lire')) {
 			throw new RestException(403);
 		}
 
 		$obj_ret = array();
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+		$socid = DolibarrApiAccess::$user->socid ?: '';
 
 		$sql = "SELECT t.rowid, t.ref, t.ref_ext";
 		$sql .= " FROM ".$this->db->prefix()."product as t";
@@ -451,8 +450,10 @@ class Products extends DolibarrApi
 				if ($this->product->tva_npr != $oldproduct->tva_npr) {
 					$pricemodified = true;
 				}
-				if ($this->product->default_vat_code != $oldproduct->default_vat_code) {
-					$pricemodified = true;
+				if (!empty($this->product->default_vat_code)) {
+					if ($this->product->default_vat_code != $oldproduct->default_vat_code) {
+						$pricemodified = true;
+					}
 				}
 
 				if ($this->product->price_base_type == 'TTC') {
@@ -798,7 +799,7 @@ class Products extends DolibarrApi
 			throw new RestException(400, 'API not available: this mode of pricing is not enabled by setup');
 		}
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+		$socid = DolibarrApiAccess::$user->socid ?: '';
 		if ($socid > 0 && $socid != $thirdparty_id) {
 			throw new RestException(403, 'Getting prices for all customers or for the customer ID '.$thirdparty_id.' is not allowed for login '.DolibarrApiAccess::$user->login);
 		}
@@ -918,7 +919,7 @@ class Products extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+		$socid = DolibarrApiAccess::$user->socid ?: '';
 		if ($socid > 0 && $socid != $fourn_id) {
 			throw new RestException(403, 'Adding purchase price for the supplier ID '.$fourn_id.' is not allowed for login '.DolibarrApiAccess::$user->login);
 		}
@@ -1016,7 +1017,7 @@ class Products extends DolibarrApi
 		$obj_ret = array();
 
 		// Force id of company for external users
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+		$socid = DolibarrApiAccess::$user->socid ?: '';
 		if ($socid > 0) {
 			if ($supplier != $socid || empty($supplier)) {
 				throw new RestException(403, 'As an external user, you can request only for your supplier id = '.$socid);
@@ -1129,7 +1130,7 @@ class Products extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+		$socid = DolibarrApiAccess::$user->socid ?: '';
 
 		$result = $this->product->fetch($id, $ref, $ref_ext, $barcode);
 		if (!$result) {

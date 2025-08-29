@@ -72,7 +72,7 @@ AccountancyAreaDescActionOnce=Następujące akcje są wykonywane zwykle tylko ra
 AccountancyAreaDescActionOnceBis=Należy wykonać kolejne kroki, aby zaoszczędzić czas w przyszłości, sugerując automatycznie prawidłowe domyślne konto księgowe podczas przesyłania danych w księgowości
 AccountancyAreaDescActionFreq=Następujące akcje są wykonywane zwykle każdego miesiąca, tygodnia lub dnia dla naprawdę wielkich firm...
 AccountancyAreaDescJournalSetup=KROK %s: Sprawdź zawartość listy czasopism z menu %s
-AccountancyAreaDescChartModel=KROK %s: Sprawdź, czy istnieje model planu kont lub utwórz go z menu %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists for your country or create one from menu %s
 AccountancyAreaDescChart=KROK %s: Wybierz i | lub uzupełnij swój plan kont z menu %s
 AccountancyAreaDescFiscalPeriod=KROK %s: Zdefiniuj okres fiskalny, który określa zakres dat akceptowanych do tworzenia wpisów księgowych. W tym celu użyj wpisu menu %s.
 AccountancyAreaDescVat=Krok %s: Zdefiniuj konta księgowe dla każdej stawki VAT. W tym celu użyj pozycji menu %s.
@@ -275,7 +275,7 @@ HideOpeningBalance=Ukryj saldo otwarcia
 ShowSubtotalByGroup=Pokaż sumę częściową według poziomu
 Pcgtype=Grupa konta
 PcgtypeDesc=Grupa kont jest używana jako predefiniowane kryteria „filtru” i „grupowania” w niektórych raportach księgowych. Na przykład „DOCHÓD” lub „WYDATEK” są używane jako grupy dla kont księgowych produktów w celu utworzenia raportu kosztów / dochodów.
-AccountingCategoriesDesc=Niestandardowa grupa kont może służyć do grupowania kont księgowych w jedną nazwę, aby ułatwić korzystanie z filtrów lub tworzenie niestandardowych raportów.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Do pogodzenia
 Centralized=Konto scentralizowane
 TotalVente=Łączny obrót przed opodatkowaniem
@@ -319,7 +319,7 @@ NotReconciled=Nie pogodzono się
 WarningRecordWithoutSubledgerAreExcluded=Uwaga, wszystkie wiersze bez zdefiniowanego konta księgi pomocniczej są filtrowane i wykluczane z tego widoku
 AccountRemovedFromCurrentChartOfAccount=Konto księgowe, które nie istnieje w bieżącym planie kont
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=Uwaga, ta strona zawiera jedynie wpisy przeniesione do systemu księgowego.
-BookkeepingNumRefModelDesc = Zwraca numer referencyjny w formacie yyyyjjnnnn, gdzie yyyy to rok, a jj to kod dziennika, nnnn to sekwencyjny numer automatycznie zwiększający się w zależności od roku i kodu dziennika.
+BookkeepingNumRefModelDesc = Returns the reference number in the format yymmjjnnnnn where yy is the year, mm is the month and jj the journal code, nnnnn is a sequential auto-incrementing number depending on the year, the month and the journal code.
 BookkeepingNumberingModules = Modele numeracji księgowej
 ## Admin
 BindingOptions=Opcje przelewu w księgowości
@@ -389,6 +389,7 @@ Modelcsv_Gestinumv5=Eksport dla Gestinum (v5)
 Modelcsv_charlemagne=Eksport dla Aplim Charlemagne
 ChartofaccountsId=Id planu kont
 ExportToPdf = Eksportuj do PDF
+ExportToCsv = Export to CSV
 PdfLedgerTitle = Konta księgowe
 PdfBalanceTitle = Saldo księgi głównej
 PdfBookkeepingTitle = Dzienniki
@@ -440,7 +441,7 @@ AccountRemovedFromGroup=Konto zostało usunięte z grupy
 SaleLocal=Sprzedaż lokalna
 SaleExport=Sprzedaż eksportowa
 SaleEEC=Sprzedaż w EWG
-SaleEECWithVAT=Sprzedaż odbywa się na terenie EWG z podatkiem VAT, więc zakładamy, że NIE jest to sprzedaż wewnątrzwspólnotowa, a sugerowanym rozliczeniem jest standardowe rozliczenie produktu.
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=Sprzedaż odbywa się w EEC bez VAT, ale identyfikator VAT strony trzeciej nie jest zdefiniowany. W przypadku sprzedaży standardowej korzystamy z konta. Możesz naprawić identyfikator VAT strony trzeciej lub zmienić sugerowane konto produktu do wiązania, jeśli to konieczne.
 AnySale=Jakakolwiek sprzedaż
 ForbiddenTransactionAlreadyExported=Zabronione: transakcja została zatwierdzona i/lub wyeksportowana.
@@ -485,7 +486,7 @@ AccountancyClosureConfirmClose=Czy na pewno chcesz zamknąć bieżący okres fis
 AccountancyClosureConfirmAccountingReversal=Czy na pewno chcesz rejestrować wpisy dla „Zysków zatrzymanych”?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=Transakcja dla (doc_type=%s, doc_id=%s, doc_det=%s) zostały już nagrane
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Niektóre obowiązkowe kroki konfiguracji nie zostały wykonane. Proszę je uzupełnić.
@@ -508,7 +509,7 @@ ErrorNoFiscalPeriodActiveFound=Nie znaleziono aktywnego okresu fiskalnego (z okr
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Data dokumentu księgowego nie mieści się w aktywnym okresie obrachunkowym
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Data dokumentu księgowego przypada w zamkniętym okresie obrachunkowym
 Error_BOOKKEEPING_ADDON_NotDefined=Błąd, reguła numeracji księgowej nie jest zdefiniowana w ogólnych ustawieniach modułu księgowości
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Spróbuj wstawić niezbilansowaną transakcję do księgi dla %s (ID płatności: %s). Anulowano. To na pewno błąd.
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
 ProductUsage=Wykorzystanie produktu lub usługi
 ## Import
 ImportAccountingEntries=Zapisy księgowe
@@ -537,15 +538,15 @@ ExpenseReportJournal=Dziennik wydatków
 DocsAlreadyExportedAreIncluded=Uwzględnione są już wyeksportowane dokumenty
 ClickToShowAlreadyExportedLines=Kliknij, aby wyświetlić już wyeksportowane linie
 NAccounts=%s kont
-ACCOUNTING_USE_TREASURY_Desc=To jest tryb księgowości skarbowej. Do prowadzenia księgowości używamy tylko płatności i ich daty.
-ACCOUNTING_USE_NON_TREASURY_Desc=To jest tryb prawdziwej księgowości. Używamy zarówno faktur, jak i płatności do prowadzenia księgowości.
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
+ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
 PieceDesc=Numer referencyjny dokumentu źródłowego, który generuje daną transakcję bankową (numer referencyjny faktury, numer referencyjny raportu wydatków, ...)
 BankTransactionRef=Odniesienie do transakcji bankowej (Opcjonalne, automatyczne ID jest już generowane)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=Spowoduje to sklonowanie wpisu księgowego (wszystkie wiersze połączone z tym wpisem księgowym zostaną sklonowane). Czy na pewno chcesz sklonować wybrane rekordy %s?
 ConfirmMassCloneBookkeepingWriting=Potwierdź klonowanie masowe
-ConfirmMassReturnAccountBookkeepingWriting=Potwierdź masowe wymieranie
-ConfirmMassReturnAccountBookkeepingWritingQuestion=Spowoduje to wygaszenie wpisu księgowego (wszystkie wiersze połączone z tym wpisem księgowym zostaną wygaszone). Czy na pewno chcesz pominąć wybrane rekordy %s?
+ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
+ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=Spowoduje to zmianę konta wszystkich wybranych linii.
 confirmMassAssignAccountBookkeepingWritingConfirm=Potwierdź masową zmianę konta
 CloningSuccess=Pomyślne klonowanie transakcji: %s
@@ -560,6 +561,6 @@ NoAccountsChangedWithAccountNumber=Transakcje nie zostały zaktualizowane o nume
 HasAlreadyBeenReversed=zostało już odwrócone
 ErrorWhileCreating=Błąd podczas tworzenia %s
 ReturnAccount=Powrót
-Clone=Klonowanie
+Clone=Duplikuj
 AlreadyReturnedAccount=Wpis nr %s został już cofnięty
 SuccessReturnedAccount=Wpis nr %s został cofnięty

@@ -199,7 +199,8 @@ $formproduct = new FormProduct($db);
 
 llxHeader('', $langs->trans("StripeSetup"));
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("ModuleSetup").' Stripe', $linkback);
 
 $head = stripeadmin_prepare_head();
@@ -443,7 +444,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current c
 	print $langs->trans("TERMINAL_LOCATION").'</td><td>';
 	$service = 'StripeTest';
 	$servicestatus = 0;
-	if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
+	if (getDolGlobalString('STRIPE_LIVE')/* && !GETPOST('forcesandbox', 'alpha') */) {
 		$service = 'StripeLive';
 		$servicestatus = 1;
 	}
@@ -454,7 +455,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current c
 		if (!empty($site_account)) {
 			\Stripe\Stripe::setApiKey($site_account);
 		}
-		if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
+		if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE')/* || GETPOST('forcesandbox', 'alpha') */)) {
 			$service = 'StripeTest';
 			$servicestatus = '0';
 			dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning');
@@ -496,6 +497,16 @@ if ($conf->use_javascript_ajax) {
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
 	print $form->selectarray("STRIPE_SEPA_DIRECT_DEBIT", $arrval, getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT'));
+}
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>';
+print $langs->trans("STRIPE_SEPA_CREDIT_TRANSFER").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('STRIPE_SEPA_CREDIT_TRANSFER');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("STRIPE_SEPA_CREDIT_TRANSFER", $arrval, getDolGlobalString('STRIPE_SEPA_CREDIT_TRANSFER'));
 }
 print '</td></tr>';
 

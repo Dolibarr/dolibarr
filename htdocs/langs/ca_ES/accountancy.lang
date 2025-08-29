@@ -72,7 +72,7 @@ AccountancyAreaDescActionOnce=Les accions següents s'executen normalment una so
 AccountancyAreaDescActionOnceBis=Cal fer els passos següents per a estalviar-vos temps en el futur suggerint-vos automàticament el compte comptable predeterminat correcte quan transferiu dades a la comptabilitat
 AccountancyAreaDescActionFreq=Les accions següents s'executen normalment cada mes, setmana o dia per empreses molt grans...
 AccountancyAreaDescJournalSetup=PAS %s: comproveu el contingut de la vostra llista de diaris des del menú %s
-AccountancyAreaDescChartModel=PAS %s: Comproveu que existeix un model de pla comptable o creeu-ne un des del menú %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists for your country or create one from menu %s
 AccountancyAreaDescChart=PAS %s: Seleccioneu o completeu el vostre pla comptable al menú %s
 AccountancyAreaDescFiscalPeriod=PAS %s: Definiu el període fiscal que determina l'interval de dates acceptades per crear assentaments comptables. Per a això, utilitzeu l'entrada de menú %s.
 AccountancyAreaDescVat=PAS %s: Defineix comptes comptables per cada tipus d'IVA. Per això, utilitzeu l'entrada del menú %s.
@@ -275,7 +275,7 @@ HideOpeningBalance=Amaga el saldo inicial
 ShowSubtotalByGroup=Mostra el subtotal per nivell
 Pcgtype=Grup de comptes
 PcgtypeDesc=Els grups de comptes s'utilitzen com a criteris de «filtre» i «agrupació» predefinits per a alguns informes de comptabilitat. Per exemple, «INCOME» o «EXPENSE» s'utilitzen com a grups per als comptes comptables dels productes per a crear l'informe de despeses/ingressos.
-AccountingCategoriesDesc=El grup de comptes personalitzat es pot utilitzar per a agrupar els comptes comptables en un sol nom per a facilitar l'ús del filtre o la creació d'informes personalitzats.
+AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Reconciliable
 Centralized=Compte centralitzat
 TotalVente=Total turnover before tax
@@ -319,7 +319,7 @@ NotReconciled=No conciliat
 WarningRecordWithoutSubledgerAreExcluded=Avís, totes les línies sense un compte de registre secundari definit es filtren i s'exclouen d'aquesta vista
 AccountRemovedFromCurrentChartOfAccount=Compte comptable que no existeix al pla comptable actual
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=Avís, aquesta pàgina només conté entrades transferides al sistema de comptabilitat.
-BookkeepingNumRefModelDesc = Retorna el número de referència en el format yyyyjjnnnn on yyyy és l'any i jj el codi del diari, nnnn és un número seqüencial que s'incrementa automàticament en funció de l'any i el codi del diari.
+BookkeepingNumRefModelDesc = Returns the reference number in the format yymmjjnnnnn where yy is the year, mm is the month and jj the journal code, nnnnn is a sequential auto-incrementing number depending on the year, the month and the journal code.
 BookkeepingNumberingModules = Models de numeració de comptabilitat
 ## Admin
 BindingOptions=Opcions per al traspàs en comptabilitat
@@ -389,6 +389,7 @@ Modelcsv_Gestinumv5=Exporta per a Gestinum (v5)
 Modelcsv_charlemagne=Exportació per a Aplim Carlemany
 ChartofaccountsId=Id pla comptable
 ExportToPdf = Exporta a PDF
+ExportToCsv = Export to CSV
 PdfLedgerTitle = Comptes de llibre major
 PdfBalanceTitle = Saldo del llibre major
 PdfBookkeepingTitle = Diaris
@@ -440,7 +441,7 @@ AccountRemovedFromGroup=S'ha eliminat el compte del grup
 SaleLocal=Venda local
 SaleExport=Venda d’exportació
 SaleEEC=Venda en CEE
-SaleEECWithVAT=La venda és a la CEE amb un IVA no nul, així que suposem que NO és una venda intracomunitaria i que el compte suggerit és el compte de producte estàndard.
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=La venda és a la CEE sense IVA, però l'identificador d'IVA del tercer no està definit. Tornem al compte de vendes estàndard. Podeu corregir l'identificador d'IVA del tercer o canviar el compte del producte suggerit per vincular-lo si cal.
 AnySale=Qualsevol venda
 ForbiddenTransactionAlreadyExported=Prohibit: la transacció ha estat validada i/o exportada.
@@ -485,7 +486,7 @@ AccountancyClosureConfirmClose=Esteu segur que voleu tancar l'exercici fiscal ac
 AccountancyClosureConfirmAccountingReversal=Esteu segur que voleu registrar entrades per als "Guanys retinguts"?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=La transacció per a (doc_type=%s, doc_id=%s, doc_det=%s) ja es va registrar
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=No s'han fet alguns passos obligatoris de configuració, si us plau, completeu-los
@@ -508,7 +509,7 @@ ErrorNoFiscalPeriodActiveFound=No s'ha trobat cap període fiscal actiu (amb dat
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=La data del document de comptabilitat no es troba dins de l'exercici fiscal actiu
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=La data del document de comptabilitat es troba dins d'un període fiscal tancat
 Error_BOOKKEEPING_ADDON_NotDefined=Error, la regla per a la numeració de la comptabilitat no està definida a la configuració general del mòdul Comptabilitat
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Intenteu inserir una transacció no equilibrada al llibre per a %s (ID de pagament: %s). Cancel·lat. Segurament un error.
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
 ProductUsage=Ús del producte o servei
 ## Import
 ImportAccountingEntries=Entrades de comptabilitat
@@ -537,15 +538,15 @@ ExpenseReportJournal=Diari d'informe de despeses
 DocsAlreadyExportedAreIncluded=S'inclouen els documents ja exportats
 ClickToShowAlreadyExportedLines=Feu clic per a mostrar les línies ja exportades
 NAccounts=comptes %s
-ACCOUNTING_USE_TREASURY_Desc=Aquesta és la modalitat de comptabilitat de tresoreria. Estem utilitzant només els pagaments i la seva data per fer la comptabilitat.
-ACCOUNTING_USE_NON_TREASURY_Desc=Aquesta és la modalitat de la comptabilitat real. Estem utilitzant tant les factures com els pagaments per fer la comptabilitat.
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
+ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
 PieceDesc=La referència del document d'origen que genera aquesta transacció bancària (referència de factura, referència d'informe de despeses, ...)
 BankTransactionRef=Una referència per a la transacció bancària (opcional, ja s'ha generat un ID automàtic)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=Això clonarà l'entrada de comptabilitat (totes les línies vinculades a aquesta entrada de comptabilitat es clonaran). Esteu segur que voleu clonar els registres %s seleccionats?
 ConfirmMassCloneBookkeepingWriting=Confirma la clonació massiva
-ConfirmMassReturnAccountBookkeepingWriting=Confirmar l'extinció massiva
-ConfirmMassReturnAccountBookkeepingWritingQuestion=Això extingirà l'entrada de comptabilitat (totes les línies vinculades a aquesta entrada de comptabilitat s'extingiran). Esteu segur que voleu ometre els registres seleccionats %s?
+ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
+ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=Això canviarà el compte de totes les línies seleccionades.
 confirmMassAssignAccountBookkeepingWritingConfirm=Confirma el canvi de compte massiu
 CloningSuccess=Clonació de transaccions correcta: %s
@@ -560,6 +561,6 @@ NoAccountsChangedWithAccountNumber=Transaccions no actualitzades amb números de
 HasAlreadyBeenReversed=ja s'ha invertit
 ErrorWhileCreating=Error durant la creació %s
 ReturnAccount=Tornar
-Clone=Clonador
+Clone=Clona
 AlreadyReturnedAccount=L'entrada núm. %s ja s'ha revertit.
 SuccessReturnedAccount=L'entrada núm. %s s'ha revertit.

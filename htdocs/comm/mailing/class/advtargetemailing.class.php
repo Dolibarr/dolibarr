@@ -543,7 +543,7 @@ class AdvanceTargetingMailing extends CommonObject
 		$sql = "SELECT";
 		$sql .= " t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as t";
-		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_extrafields as te ON te.fk_object=t.rowid ";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as te ON te.fk_object=t.rowid ";
 
 		$sqlwhere = array();
 
@@ -641,6 +641,27 @@ class AdvanceTargetingMailing extends CommonObject
 						if ($arrayquery['options_'.$key] > 0) {
 							$sqlwhere[] = " (te.".$key." = ".((int) $arrayquery["options_".$key]).")";
 						}
+					} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'chkbxlst'
+						&& is_array($arrayquery['options_'.$key])) {
+						if (count($arrayquery['options_'.$key])) {
+							$i2 = 0;
+							$field = "te.".$key;
+							$sqlwhereselllist="";
+							foreach ($arrayquery['options_'.$key] as $data) {
+								$data = trim($data);
+								if ($data) {
+									$sqlwhereselllist .= ($i2 > 0 ? " OR (" : "(").$field." LIKE '".$this->db->escape($data).",%'";
+									$sqlwhereselllist .= " OR ".$field." = '".$this->db->escape($data)."'";
+									$sqlwhereselllist .= " OR ".$field." LIKE '%,".$this->db->escape($data)."'";
+									$sqlwhereselllist .= " OR ".$field." LIKE '%,".$this->db->escape($data).",%'";
+									$sqlwhereselllist .= ")";
+									$i2++; // a criteria for 1 more field was added to string (we can add several criteria for the same field as it is a multiselect search criteria)
+								}
+							}
+							if (!empty($sqlwhereselllist)) {
+								$sqlwhere[] = "( ".$sqlwhereselllist." )";
+							}
+						}
 					} else {
 						if (is_array($arrayquery['options_'.$key])) {
 							$sqlwhere[] = " (te.".$key." IN (".$this->db->sanitize("'".implode("','", $arrayquery["options_".$key])."'", 1)."))";
@@ -698,11 +719,11 @@ class AdvanceTargetingMailing extends CommonObject
 		$sql = "SELECT";
 		$sql .= " t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
-		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as te ON te.fk_object=t.rowid ";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as te ON te.fk_object=t.rowid ";
 
 		if (!empty($withThirdpartyFilter)) {
-			$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe as ts ON ts.rowid=t.fk_soc";
-			$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_extrafields as tse ON tse.fk_object=ts.rowid ";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as ts ON ts.rowid=t.fk_soc";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as tse ON tse.fk_object=ts.rowid ";
 		}
 
 		$sqlwhere = array();
@@ -711,7 +732,7 @@ class AdvanceTargetingMailing extends CommonObject
 
 		if (count($arrayquery) > 0) {
 			if (array_key_exists('contact_categ', $arrayquery)) {
-				$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_contact as contactcateg ON contactcateg.fk_socpeople=t.rowid ";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_contact as contactcateg ON contactcateg.fk_socpeople=t.rowid ";
 			}
 
 			if (!empty($arrayquery['contact_lastname'])) {
@@ -782,6 +803,31 @@ class AdvanceTargetingMailing extends CommonObject
 								$sqlwhere[] = " (te.".$key." = ".((int) $arrayquery["options_".$key."_cnct"])." OR ((te.".$key." IS NULL) AND (te.fk_object IS NOT NULL)))";
 							} else {
 								$sqlwhere[] = " (te.".$key." = ".((int) $arrayquery["options_".$key."_cnct"]).")";
+							}
+						}
+					} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'link') {
+						if ($arrayquery['options_'.$key."_cnct"] > 0) {
+							$sqlwhere[]= " (te.".$key." = ".((int) $arrayquery["options_".$key."_cnct"]).")";
+						}
+					} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'chkbxlst'
+						&& is_array($arrayquery['options_'.$key.'_cnct'])) {
+						if (count($arrayquery['options_'.$key.'_cnct'])) {
+							$i2 = 0;
+							$field = "te.".$key;
+							$sqlwhereselllist="";
+							foreach ($arrayquery['options_'.$key.'_cnct'] as $data) {
+								$data = trim($data);
+								if ($data) {
+									$sqlwhereselllist .= ($i2 > 0 ? " OR (" : "(").$field." LIKE '".$this->db->escape($data).",%'";
+									$sqlwhereselllist .= " OR ".$field." = '".$this->db->escape($data)."'";
+									$sqlwhereselllist .= " OR ".$field." LIKE '%,".$this->db->escape($data)."'";
+									$sqlwhereselllist .= " OR ".$field." LIKE '%,".$this->db->escape($data).",%'";
+									$sqlwhereselllist .= ")";
+									$i2++; // a criteria for 1 more field was added to string (we can add several criteria for the same field as it is a multiselect search criteria)
+								}
+							}
+							if (!empty($sqlwhereselllist)) {
+								$sqlwhere[] = "( ".$sqlwhereselllist." )";
 							}
 						}
 					} else {
@@ -887,6 +933,31 @@ class AdvanceTargetingMailing extends CommonObject
 							} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'boolean') {
 								if ($arrayquery['options_'.$key] != '') {
 									$sqlwhere[] = " (tse.".$key." = ".((int) $arrayquery["options_".$key]).")";
+								}
+							} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'link') {
+								if ($arrayquery['options_'.$key] > 0) {
+									$sqlwhere[]= " (te.".$key." = ".((int) $arrayquery["options_".$key]).")";
+								}
+							} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'chkbxlst'
+								&& is_array($arrayquery['options_'.$key])) {
+								if (count($arrayquery['options_'.$key])) {
+									$i2 = 0;
+									$field = "tse.".$key;
+									$sqlwhereselllist="";
+									foreach ($arrayquery['options_'.$key] as $data) {
+										$data = trim($data);
+										if ($data) {
+											$sqlwhereselllist  .= ($i2 > 0 ? " OR (" : "(").$field." LIKE '".$this->db->escape($data).",%'";
+											$sqlwhereselllist  .= " OR ".$field." = '".$this->db->escape($data)."'";
+											$sqlwhereselllist  .= " OR ".$field." LIKE '%,".$this->db->escape($data)."'";
+											$sqlwhereselllist  .= " OR ".$field." LIKE '%,".$this->db->escape($data).",%'";
+											$sqlwhereselllist  .= ")";
+											$i2++; // a criteria for 1 more field was added to string (we can add several criteria for the same field as it is a multiselect search criteria)
+										}
+									}
+									if (!empty($sqlwhereselllist)) {
+										$sqlwhere[] = "( ".$sqlwhereselllist." )";
+									}
 								}
 							} else {
 								if (is_array($arrayquery['options_'.$key])) {

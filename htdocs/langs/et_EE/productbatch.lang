@@ -50,4 +50,5 @@ ToReplace=Asenda
 CantMoveNonExistantSerial=Viga. Te taotlete teisaldamist kirjele, mille seerianumbrit enam ei eksisteeri. Võib-olla olete sama seerianumbri samast laost samasse saadetisesse mitu korda võtnud või on seda juba kasutatud mõne teise saadetise jaoks. Eemaldage see saadetis ja valmistage ette uus.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Partiitabel on mittetäieliku käivitamise parandusega parameetriga '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Laoseisu korrigeerimine on vajalik unikaalse seerianumbri tõttu.
-ErrorBatchesNeedStockManagement=Viga. Partii/partii haldamisega toodet tuleb hallata laos.
+ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
+ForceBatchesNeedStockManagement=A product with batch/lot management must be managed in stock (stock management force to yes)

@@ -57,7 +57,7 @@ Assigned=Hozzárendelve
 NeedMoreInformation=Várakozás a riporter visszajelzésére
 NeedMoreInformationShort=Visszajelzésre vár
 Waiting=Várakozás
-SolvedClosed=Megoldva
+SolvedClosed=Zárva
 Deleted=Törölve
 # Dict
 Severity=Súlyosság
@@ -72,8 +72,10 @@ TicketPublicAccess=A következő URL-címen elérhető egy nyilvános interfész
 TicketSetupDictionaries=A jegy típusa, súlyossága és az analitikai kódok szótárakból konfigurálhatók
 TicketParamModule=Modulváltozó beállítása
 TicketParamMail=E-mail beállítása
-TicketEmailNotificationFrom=Feladó e-mail címe a jegyekről szóló értesítésekhez (jegy létrehozása vagy frissítési üzenetek)
-TicketEmailNotificationFromHelp=A feladó e-mail címe, amelyre a jegyek létrehozásához vagy üzenet hozzáadásához értesítő e-maileket kell küldeni. Például noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Értesítés a jegy létrehozásáról erre az e-mail címre
 TicketEmailNotificationToHelp=Ha meg van adva, ez az e-mail cím értesítést kap a jegy létrehozásáról (az alapértelmezett címzettek mellett).
 TicketNewEmailBodyLabel=Szöveges üzenet a jegy létrehozása után
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=Csak az aktuális felhasználóhoz rendelt jegy
 TicketsActivatePublicInterface=Nyilvános felület aktiválása
 TicketsActivatePublicInterfaceHelp=A nyilvános felület lehetővé teszi a látogatók számára, hogy jegyeket hozzanak létre.
 TicketsAutoAssignTicket=A jegyet létrehozó felhasználó automatikus hozzárendelése
-TicketsAutoAssignTicketHelp=Jegy létrehozásakor a felhasználó automatikusan hozzárendelhető a jegyhez (Példák: 0=Soha nem lesz automatikusan hozzárendelve a jegyhez, 1=Automatikusan hozzárendelve a jegyhez, ha senki sincs hozzárendelve, 2=Automatikusan hozzárendelve a jegyhez, még akkor is, ha valaki meg van határozva).
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
 TicketAutoChangeStatusOnAnswer=Állapot automatikus hozzárendelése jegy megválaszolásakor
 TicketAutoChangeStatusOnAnswerHelp=Amikor egy felhasználó válaszol egy jegyre, az állapot automatikusan alkalmazásra kerül a jegyre.
 TicketNumberingModules=Jegyszámozási modul
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=Csak a nyitott jegyek megtekintése
 TicketStatByStatus=Jegyek állapot szerint
 OrderByDateAsc=Rendezés növekvő dátum szerint
 OrderByDateDesc=Rendezés csökkenő dátum szerint
-ShowAsConversation=Megjelenítés beszélgetési listaként
-MessageListViewType=Megjelenítés táblázatlistaként
 ConfirmMassTicketClosingSendEmail=Automatikus e-mailek küldése a jegyek lezárásakor
 ConfirmMassTicketClosingSendEmailQuestion=Értesíteni szeretné a harmadik feleket a jegyek lezárásakor?
 # Ticket card

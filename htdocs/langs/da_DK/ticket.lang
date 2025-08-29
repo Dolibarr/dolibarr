@@ -57,7 +57,7 @@ Assigned=Tildelt
 NeedMoreInformation=Afventer tilbagemelding fra sagsopretter
 NeedMoreInformationShort=Afventer tilbagemelding
 Waiting=Afventer
-SolvedClosed=Løst
+SolvedClosed=Lukket
 Deleted=Slettet
 # Dict
 Severity=Alvorlighed
@@ -72,8 +72,10 @@ TicketPublicAccess=En offentlig grænseflade, der kræver ingen identifikation, 
 TicketSetupDictionaries=Typen af sag, alvorlighed og analytiske koder kan konfigureres fra ordbøger
 TicketParamModule=Indstilling af modulvariabler
 TicketParamMail=E-mail opsætning
-TicketEmailNotificationFrom=Afsenderens e-mailadresse til notifikation om billetter (oprettelse af billetter eller opdateringer)
-TicketEmailNotificationFromHelp=Afsenderens e-mailadresse, der skal bruges til at sende notifikationsmails om oprettelse af billetter eller tilføjelse af beskeder. For eksempel noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Giv besked om oprettelse af billet til denne e-mailadresse
 TicketEmailNotificationToHelp=Hvis den er til stede, vil denne e-mailadresse blive underrettet om en billetoprettelse (ud over eventuelle andre standardmodtagere)
 TicketNewEmailBodyLabel=Tekstbesked sendt efter oprettelse af en sag
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=Kun opgaver tildelt den aktuelle bruger vil væ
 TicketsActivatePublicInterface=Aktivér den offentlige grænseflade
 TicketsActivatePublicInterfaceHelp=Offentlig grænseflade tillader alle besøgende at lave sager.
 TicketsAutoAssignTicket=Tildel automatisk brugeren, der oprettede sagen
-TicketsAutoAssignTicketHelp=Når du opretter en billet, kan brugeren automatisk tildeles billetten (Eksempler: 0=Aldrig automatisk tildelt til billetten, 1=Automatisk tildelt til billetten, hvis ingen er tildelt, 2=Automatisk tildelt til billetten, selvom nogen var defineret).
+TicketsAutoAssignTicketHelp=Når en billet oprettes, kan brugeren automatisk tildeles billetten.<br>Eksempler: 0=Aldrig automatisk tildelt billetten, 1=Automatisk tildelt billetten, hvis ingen er tildelt, 2=Automatisk tildelt billetten, selvom der er defineret en person.
 TicketAutoChangeStatusOnAnswer=Tildel automatisk en status, når du besvarer en billet
 TicketAutoChangeStatusOnAnswerHelp=Når en bruger svarer på en billet, vil status automatisk blive anvendt på billetten
 TicketNumberingModules=Sag nummererings modul
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=Se kun åbne sager
 TicketStatByStatus=Sager efter status
 OrderByDateAsc=Sorter efter stigende dato
 OrderByDateDesc=Sorter efter faldende dato
-ShowAsConversation=Vis som samtaleliste
-MessageListViewType=Vis som tabelliste
 ConfirmMassTicketClosingSendEmail=Send automatisk e-mails, når du lukker billetter
 ConfirmMassTicketClosingSendEmailQuestion=Vil du underrette tredjeparter, når du lukker disse billetter?
 # Ticket card

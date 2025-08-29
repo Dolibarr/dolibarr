@@ -33,6 +33,9 @@ define('ALLOWED_IF_UPGRADE_UNLOCK_FOUND', 1);
 include_once 'inc.php';
 
 /**
+ * @var string $conffile
+ * @var string $conffiletoshow
+ *
  * @var Conf $conf already created in inc.php
  * @var Translate $langs
  *
@@ -42,8 +45,6 @@ include_once 'inc.php';
  * @var string $dolibarr_main_db_user
  * @var string $dolibarr_main_db_pass
  * @var string $dolibarr_main_db_encrypted_pass
- * @var string $conffile
- * @var string $conffiletoshow
  */
 
 $err = 0;
@@ -239,6 +240,7 @@ $memrequired = 64 * 1024 * 1024;
 $memmaxorig = @ini_get("memory_limit");
 $memmax = @ini_get("memory_limit");
 if ($memmaxorig != '') {
+	$reg = array();
 	preg_match('/([0-9]+)([a-zA-Z]*)/i', $memmax, $reg);
 	if ($reg[2]) {
 		if (strtoupper($reg[2]) == 'G') {
@@ -345,7 +347,7 @@ if (!file_exists($conffile)) {
 
 	// Requirements met/all ok: display the next step button
 	if ($checksok) {
-		$ok = 0;
+		$ok = false;
 
 		// Try to create db connection
 		if (file_exists($conffile)) {
@@ -358,11 +360,14 @@ if (!file_exists($conffile)) {
 					require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 
 					// If password is encoded, we decode it
-					if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass)) {
+					if (preg_match('/(crypted|dolcrypt):/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass)) {
 						require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
 						if (preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
 							$dolibarr_main_db_encrypted_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass); // We need to set this as it is used to know the password was initially encrypted
 							$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
+						} elseif (preg_match('/dolcrypt:/i', $dolibarr_main_db_pass)) {
+							$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially encrypted
+							$dolibarr_main_db_pass = dolDecrypt($dolibarr_main_db_pass);
 						} else {
 							$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 						}
@@ -375,6 +380,7 @@ if (!file_exists($conffile)) {
 					$conf->db->name = $dolibarr_main_db_name;
 					$conf->db->user = $dolibarr_main_db_user;
 					$conf->db->pass = $dolibarr_main_db_pass;
+
 					$db = getDoliDBInstance($conf->db->type, $conf->db->host, (string) $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 					if ($db->connected && $db->database_selected) {
 						$ok = true;
@@ -404,13 +410,13 @@ if (!file_exists($conffile)) {
 
 			// Current version is $conf->global->MAIN_VERSION_LAST_UPGRADE
 			// Version to install is DOL_VERSION
-			$dolibarrlastupgradeversionarray = preg_split('/[\.-]/', isset($conf->global->MAIN_VERSION_LAST_UPGRADE) ? $conf->global->MAIN_VERSION_LAST_UPGRADE : (isset($conf->global->MAIN_VERSION_LAST_INSTALL) ? $conf->global->MAIN_VERSION_LAST_INSTALL : ''));
+			$dolibarrlastupgradeversionarray = preg_split('/[\.-]/', getDolGlobalString('MAIN_VERSION_LAST_UPGRADE', getDolGlobalString('MAIN_VERSION_LAST_INSTALL')));
 			$dolibarrversiontoinstallarray = versiondolibarrarray();
 		}
 
 		// Show title
 		if (getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') || getDolGlobalString('MAIN_VERSION_LAST_INSTALL')) {
-			print $langs->trans("VersionLastUpgrade").': <b><span class="ok">'.(!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') ? $conf->global->MAIN_VERSION_LAST_INSTALL : $conf->global->MAIN_VERSION_LAST_UPGRADE).'</span></b> - ';
+			print $langs->trans("VersionLastUpgrade").': <b><span class="ok">'.getDolGlobalString('MAIN_VERSION_LAST_UPGRADE', getDolGlobalString('MAIN_VERSION_LAST_INSTALL')).'</span></b> - ';
 			print $langs->trans("VersionProgram").': <b><span class="ok">'.DOL_VERSION.'</span></b>';
 			//print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired"));
 			print '<br>';

@@ -967,6 +967,7 @@ class Commande extends CommonOrder
 
 		// Set tmp vars
 		$date = ($this->date_commande ? $this->date_commande : $this->date);
+		$this->import_key = trim((string) $this->import_key);
 		$delivery_date = $this->delivery_date;
 
 		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
@@ -1009,7 +1010,7 @@ class Commande extends CommonOrder
 			return -1;
 		}
 
-		$now = dol_now();
+		$this->date_creation = dol_now();
 
 		$this->db->begin();
 
@@ -1023,8 +1024,9 @@ class Commande extends CommonOrder
 		$sql .= ", fk_multicurrency";
 		$sql .= ", multicurrency_code";
 		$sql .= ", multicurrency_tx";
+		$sql .= ", import_key";
 		$sql .= ")";
-		$sql .= " VALUES ('(PROV)', ".((int) $this->socid).", '".$this->db->idate($now)."', ".((int) $user->id);
+		$sql .= " VALUES ('(PROV)', ".((int) $this->socid).", '".$this->db->idate($this->date_creation)."', ".((int) $user->id);
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
 		$sql .= ", '".$this->db->idate($date)."'";
 		$sql .= ", ".($this->source >= 0 && $this->source != '' ? $this->db->escape((string) $this->source) : 'null');
@@ -1051,6 +1053,7 @@ class Commande extends CommonOrder
 		$sql .= ", ".(int) $this->fk_multicurrency;
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql .= ", ".(float) $this->multicurrency_tx;
+		$sql .= ", '".$this->db->escape($this->import_key)."'";
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -1068,10 +1071,15 @@ class Commande extends CommonOrder
 				for ($i = 0; $i < $num; $i++) {
 					$line = $this->lines[$i];
 
-					// Test and convert into object this->lines[$i]. When coming from REST API, we may still have an array
+					// Test and convert into OrderLine object this->lines[$i]. When coming from REST API, we may still have an array
 					//if (! is_object($line)) $line=json_decode(json_encode($line), false);  // convert recursively array into object.
 					if (!is_object($line)) {
-						$line = (object) $line;
+						$lineobj = new OrderLine($this->db);
+						foreach ($line as $key => $val) {
+							$lineobj->$key = $val;
+						}
+						$line = $lineobj;
+						$this->lines[$i] = $line;
 					}
 
 					// Reset fk_parent_line for no child products and special product
@@ -1542,8 +1550,8 @@ class Commande extends CommonOrder
 	 *	@param      int				$fk_remise_except	Id remise
 	 *	@param      string			$price_base_type	HT or TTC
 	 *	@param      float			$pu_ttc    		    Prix unitaire TTC
-	 *	@param      int|string		$date_start       	Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-	 *	@param      int|string		$date_end         	End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+	 *	@param      int|''			$date_start       	Start date of the line
+	 *	@param      int|''			$date_end         	End date of the line
 	 *	@param      int<0,1>		$type				Type of line (0=product, 1=service). Not used if fk_product is defined, the type of product is used.
 	 *	@param      int				$rang             	Position of line
 	 *	@param		int				$special_code		Special code (also used by externals modules!)
@@ -1824,9 +1832,12 @@ class Commande extends CommonOrder
 							$this->line_order(true, 'DESC');
 						} elseif ($ranktouse > 0 && $ranktouse <= count($this->lines)) {
 							// Update all rank of all other lines starting from the same $ranktouse
-							$linecount = count($this->lines);
-							for ($ii = $ranktouse; $ii <= $linecount; $ii++) {
-								$this->updateRangOfLine($this->lines[$ii - 1]->id, $ii + 1);
+							foreach ($this->lines as $tmpline) {
+								if ($tmpline->rang >= $ranktouse) {
+									if (!empty($tmpline->id)) {
+										$this->updateRangOfLine($tmpline->id, $tmpline->rang + 1);
+									}
+								}
 							}
 						}
 
@@ -1867,8 +1878,8 @@ class Commande extends CommonOrder
 	 *	@param  int     $idproduct          Product Id
 	 *	@param  float   $qty                Quantity
 	 *	@param  float   $remise_percent     Product discount relative
-	 * 	@param  int|string   $date_start         Start date of the line
-	 * 	@param  int|string   $date_end           End date of the line
+	 * 	@param  int|''  $date_start         Start date of the line
+	 * 	@param  int|''  $date_end           End date of the line
 	 * 	@return void
 	 *
 	 *	TODO	Remplacer les appels a cette fonction par generation object Ligne
@@ -3098,8 +3109,8 @@ class Commande extends CommonOrder
 	 *  @param		float			$txlocaltax2		Local tax 2 rate
 	 *  @param    	string			$price_base_type	HT or TTC
 	 *  @param    	int				$info_bits        	Miscellaneous information on line
-	 *  @param    	int|string		$date_start        	Start date of the line
-	 *  @param    	int|string		$date_end          	End date of the line
+	 *  @param    	int|''			$date_start        	Start date of the line
+	 *  @param    	int|''			$date_end          	End date of the line
 	 * 	@param		int				$type				Type of line (0=product, 1=service)
 	 * 	@param		int				$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
 	 * 	@param		int				$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
@@ -3423,6 +3434,7 @@ class Commande extends CommonOrder
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
+		$sql .= " fk_warehouse=".($this->warehouse_id > 0 ? $this->warehouse_id : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null").",";
 		$sql .= " module_source = ".(isset($this->module_source) ? "'".$this->db->escape($this->module_source)."'" : "null").",";
 		$sql .= " pos_source = ".(isset($this->pos_source) ? "'".$this->db->escape($this->pos_source)."'" : "null");

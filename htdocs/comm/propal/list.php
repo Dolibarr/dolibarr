@@ -842,7 +842,7 @@ if (!empty($searchCategoryProductList)) {
 	}
 }
 if ($search_option == 'late') {
-	$sql .= " AND p.fin_validite < '".$db->idate(dol_now() - $conf->propal->cloture->warning_delay)."'";
+	$sql .= " AND p.fin_validite < '".$db->idate(dol_now() - getWarningDelay('propal', 'cloture'))."'";
 }
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -856,7 +856,11 @@ $sql .= $hookmanager->resPrint;
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+if (empty($reshook)) {
+	$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+} else {
+	$sql = $hookmanager->resPrint;
+}
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -867,12 +871,12 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$resql = $db->query($sqlforcount);
 	if ($resql) {
 		$objforcount = $db->fetch_object($resql);
-		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+		$nbtotalofrecords = (int) $objforcount->nbtotalofrecords;
 	} else {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -2382,7 +2386,7 @@ while ($i < $imaxinloop) {
 		// Note public
 		if (!empty($arrayfields['p.note_public']['checked'])) {
 			print '<td class="sensiblehtmlcontent center">';
-			print dolPrintHTML($obj->note_public);
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2391,7 +2395,7 @@ while ($i < $imaxinloop) {
 		// Note private
 		if (!empty($arrayfields['p.note_private']['checked'])) {
 			print '<td class="sensiblehtmlcontent center">';
-			print dolPrintHTML($obj->note_private);
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

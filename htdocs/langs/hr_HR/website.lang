@@ -64,7 +64,7 @@ YouCanCreatePageOrImportTemplate=Možete stvoriti novu stranicu ili uvesti cijel
 SyntaxHelp=Pomoć za određene savjete za sintaksu
 YouCanEditHtmlSourceckeditor=Izvorni HTML kod možete urediti pomoću gumba "Izvor" u uređivaču.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> PHP kod možete uključiti u ovaj izvorni kod koristeći oznake <strong>&lt;?php ?&gt;</strong>. Dostupne su sljedeće globalne varijable: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> Također možete uključiti sadržaj druge stranice/spremnika sljedećom sintaksom:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> Možete napraviti preusmjeravanje na drugu stranicu/spremnik sljedećom sintaksom (Napomena: nemojte ispisivati nikakav sadržaj prije preusmjeravanja):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>Preusmjeravanje možete napraviti i s GET parametrima:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> Za dodavanje poveznice na drugu stranicu upotrijebite sintaksu:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;moja poveznica&lt;a&gt;</strong><br><br>
-YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> Možete dinamički postaviti <strong>SEO naslov i metaoznake</strong> (naslov, ključne riječi, opis). Jednostavno definirajte sljedeće varijable:<br> <code>$__PAGE_TITLE__ = "Vrijednost naslova …";</code><br> <code>$__PAGE_KEYWORDS__ = "ključna riječ1, ključna riječ2, ključna riječ3 …"; // Odvojeni zarezom</code><br> <code>$__PAGE_DESC__ = "Opis …";</code><br>
+YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> You can dynamically set <strong>SEO title and meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>define('__SEO_PAGE_TITLE__', "Title value …");</code><br> <code>define('__SEO_PAGE_KEYWORDS__', 'keyword1, keyword2, keyword3 …');</code><br> <code>define('__SEO_PAGE_DESC__', "Description …");</code><br>
 YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> Da biste uključili poveznicu <strong>za preuzimanje</strong> datoteke pohranjene u direktoriju <strong>dokumenti</strong>, upotrijebite <strong>document.php</strong> omotač:<br>Primjer, za datoteku u documents/ecm (potrebno je evidentirati), sintaksa je:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>Za datoteku u dokumente/medije (otvoreni direktorij za javni pristup), sintaksa je:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
 YouCanEditHtmlSourced=Za datoteku dijeljenu putem poveznice za dijeljenje (otvoreni pristup pomoću hash ključa datoteke za dijeljenje), sintaksa je:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
 YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Uključiti <strong>slika</strong> pohranjena u <strong>medij</strong> direktorij (direktorij otvoren za javni pristup), koristite relativni put koji počinje s <strong>/medias</strong>, primjer:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
@@ -81,7 +81,7 @@ LanguageMustNotBeSameThanClonedPage=Klonirate stranicu kao prijevod. Jezik nove 
 ParentPageId=ID roditeljske stranice
 WebsiteId=ID web stranice
 CreateByFetchingExternalPage=izradi stranica/spremnik dohvaćanjem stranice s vanjskog URL-a...
-OrEnterPageInfoManually=Ili izradite stranicu od nule ili iz predloška stranice...
+OrEnterPageInfoManually=Create page from scratch or from a page template...
 FetchAndCreate=Dohvati i kreiraj
 ExportSite=Izvoz web stranice
 ImportSite=Uvezite predložak web stranice
@@ -99,7 +99,7 @@ SorryWebsiteIsCurrentlyOffLine=Nažalost, ova web stranica trenutno nije na mre�
 WEBSITE_USE_WEBSITE_ACCOUNTS=Omogući tablicu računa web stranice za treće strane
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Omogućite tablicu za pohranjivanje računa web stranice (prijava/lozinka) za svaku treću stranu
 YouMustDefineTheHomePage=Najprije morate definirati zadanu početnu stranicu
-OnlyEditionOfSourceForGrabbedContentFuture=Upozorenje: Izrada web stranice uvozom vanjske web stranice rezervirana je za iskusne korisnike. Ovisno o složenosti izvorne stranice, rezultat uvoza može se razlikovati od izvornika. Također, ako izvorna stranica koristi uobičajene CSS stilove ili sukobljeni JavaScript, to može pokvariti izgled ili značajke uređivača web-mjesta prilikom rada na ovoj stranici. Ova je metoda brži način za izradi stranicu, ali preporučuje se izradi vašu novu stranicu od nule ili iz predloženog predloška stranice.<br>Napomena također da ugrađeni uređivač možda neće raditi ispravno kada se koristi na preuzetoj vanjskoj stranici.
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users and can work only pages rendered with HTML and CSS only. Importing pages rendered by JS frameworks are NOT supported. Depending on the complexity of the source page, the result of importation will probably differ from the original page. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quick way to create a page for very advanced users when source page allows it, but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a page that was grabbed.
 OnlyEditionOfSourceForGrabbedContent=Moguća je samo izmjena HTML izvora kada se sadržaj preuzima s vanjske stranice
 GrabImagesInto=Uzmite i slike pronađene u css-u i stranici.
 ImagesShouldBeSavedInto=Slike bi trebale biti spremljene u imenik
@@ -423,8 +423,8 @@ contactFormPhone = Telefon
 contactFormSubjectEntered = Unesen je predmet
 contactFormMessageLabel = Poruka
 contactFormSuccessAlert = Hvala vam na poruci. Uskoro ćemo vam se javiti.
-socials=Socijalna mreža
-rgpd=RGPD
+socials=Društvene mreže
+rgpd=GDPR
 joinUs=Pridružite se nama
 home=Početna stranica
 anonymous=Anonimno
@@ -455,3 +455,4 @@ SampleGoalOne=Promicati suradnju i solidarnost među članovi.
 SampleGoaltwo=Poticati odgovorne i održive prakse u svim aktivnostima.
 SampleGoalthree=Podržite utjecajne projekte koji koriste društvu u cjelini.
 SHOW_LANG_SELECTOR=Padajući izbornik za odabir jezika prikaza
+ForAdvancedWebmastersOnly=For technical webmasters only

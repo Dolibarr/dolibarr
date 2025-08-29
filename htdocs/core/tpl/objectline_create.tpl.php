@@ -6,7 +6,7 @@
  * Copyright (C) 2014		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015-2016	Marcos García		<marcosgdf@gmail.com>
- * Copyright (C) 2018-2024	Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2018       Ferran Marcet       <fmarcet@2byte.es>
  * Copyright (C) 2019       Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2022       OpenDSI             <support@open-dsi.fr>
@@ -26,25 +26,29 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Need to have the following variables defined:
- * $object (invoice, order, ...)
- * $conf
- * $langs
- * $dateSelector
- * $forceall (0 by default, 1 for supplier invoices/orders)
- * $senderissupplier (0 by default, 1 or 2 for supplier invoices/orders)
- * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  */
+
 /**
- * @var CommonObject $this
+ * @var Conf $conf
+ * @var CommonObject|Facture $this
  * @var CommonObject $object
  * @var CommonObjectLine $line
+ * @var ExtraFields $extrafields
  * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ * @var Societe $buyer
+ * @var Societe $seller
+ *
+ * @var string $action
+ * @var string $usehm
+ * @var int $dateSelector
+ * @var int $forceall (0 by default, 1 for supplier invoices/orders)
+ * @var int $senderissupplier (0 by default, 1 or 2 for supplier invoices/orders)
+ * @var int $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  */
+
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error: this template page cannot be called directly as an URL";
@@ -52,7 +56,7 @@ if (empty($object) || !is_object($object)) {
 }
 
 '
-@phan-var-force CommonObject $this
+@phan-var-force CommonObject|Facture $this
 @phan-var-force CommonObject $object
 @phan-var-force Societe $buyer
 @phan-var-force Societe $seller
@@ -155,7 +159,7 @@ if ($nolinesbefore) {
 		<td class="linecoldiscount right"><?php echo $langs->trans('ReductionShort'); ?></td>
 		<?php
 		// Fields for situation invoice
-		if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
+		if (property_exists($this, 'situation_cycle_ref') && isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
 			print '<td class="linecolcycleref right">'.$langs->trans('Progress').'</td>';
 			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 				print '<td class="nobottom nowrap right"></td>';
@@ -627,18 +631,18 @@ if ((isModEnabled("service") || ($object->element == 'contrat')) && $dateSelecto
 	}
 
 	if (!$date_start) {
-		if (isset($conf->global->MAIN_DEFAULT_DATE_START_HOUR)) {
+		if (getDolGlobalString('MAIN_DEFAULT_DATE_START_HOUR') != '') {
 			print 'jQuery("#date_starthour").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_START_HOUR').'");';
 		}
-		if (isset($conf->global->MAIN_DEFAULT_DATE_START_MIN)) {
+		if (getDolGlobalString('MAIN_DEFAULT_DATE_START_MIN') != '') {
 			print 'jQuery("#date_startmin").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_START_MIN').'");';
 		}
 	}
 	if (!$date_end) {
-		if (isset($conf->global->MAIN_DEFAULT_DATE_END_HOUR)) {
+		if (getDolGlobalString('MAIN_DEFAULT_DATE_END_HOUR')) {
 			print 'jQuery("#date_endhour").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_END_HOUR').'");';
 		}
-		if (isset($conf->global->MAIN_DEFAULT_DATE_END_MIN)) {
+		if (getDolGlobalString('MAIN_DEFAULT_DATE_END_MIN')) {
 			print 'jQuery("#date_endmin").val("' . getDolGlobalString('MAIN_DEFAULT_DATE_END_MIN').'");';
 		}
 	}
