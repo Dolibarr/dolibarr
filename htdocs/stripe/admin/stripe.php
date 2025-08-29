@@ -500,6 +500,16 @@ if ($conf->use_javascript_ajax) {
 }
 print '</td></tr>';
 
+print '<tr class="oddeven"><td>';
+print $langs->trans("STRIPE_SEPA_CREDIT_TRANSFER").'</td><td>';
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('STRIPE_SEPA_CREDIT_TRANSFER');
+} else {
+	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	print $form->selectarray("STRIPE_SEPA_CREDIT_TRANSFER", $arrval, getDolGlobalString('STRIPE_SEPA_CREDIT_TRANSFER'));
+}
+print '</td></tr>';
+
 
 // Activate Klarna
 if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current code
