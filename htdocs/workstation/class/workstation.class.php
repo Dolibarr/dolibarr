@@ -48,17 +48,6 @@ class Workstation extends CommonObject
 	public $table_element = 'workstation_workstation';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int<0,1>	Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
-
-	/**
 	 * @var string String with name of icon for workstation. Must be the part after the 'object_' into object_workstation.png
 	 */
 	public $picto = 'workstation';
@@ -194,7 +183,7 @@ class Workstation extends CommonObject
 		$this->db = $db;
 
 		$this->ismultientitymanaged = 1;
-		$this->isextrafieldmanaged = 0;
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
