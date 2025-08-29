@@ -1475,7 +1475,7 @@ class Adherent extends CommonObject
 		$sql .= " t.libelle as type, t.subscription as subscription,";
 		$sql .= " u.rowid as user_id, u.login as user_login";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'adherent_extrafields as aef ON aef.fk_object=d.rowid';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'adherent_extrafields as aef ON aef.fk_object = d.rowid';
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON d.country = c.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as dep ON d.state_id = dep.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON d.rowid = u.fk_member";
@@ -2977,7 +2977,7 @@ class Adherent extends CommonObject
 		$sql .= ' GREATEST(a.tms, aef.tms) as datem,';
 		$sql .= ' a.fk_user_author, a.fk_user_valid, a.fk_user_mod';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'adherent as a';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'adherent_extrafields as aef ON aef.fk_object=a.rowid';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'adherent_extrafields as aef ON aef.fk_object = a.rowid';
 		$sql .= ' WHERE a.rowid = '.((int) $id);
 
 		dol_syslog(get_class($this)."::info", LOG_DEBUG);
