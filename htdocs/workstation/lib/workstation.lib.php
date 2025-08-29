@@ -30,7 +30,10 @@
  */
 function workstationAdminPrepareHead()
 {
-	global $langs, $conf;
+	global $conf, $db, $langs;
+
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('workstation_workstation');
 
 	$langs->load("workstation");
 
@@ -41,12 +44,14 @@ function workstationAdminPrepareHead()
 	$head[$h][2] = 'settings';
 	$h++;
 
-	/*
 	$head[$h][0] = DOL_URL_ROOT."/admin/workstation_extrafields.php";
 	$head[$h][1] = $langs->trans("ExtraFields");
-	$head[$h][2] = 'myobject_extrafields';
+	$nbExtrafields = $extrafields->attributes['workstation_workstation']['count'];
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	}
+	$head[$h][2] = 'workstation_extrafields';
 	$h++;
-	*/
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
