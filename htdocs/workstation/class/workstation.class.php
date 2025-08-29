@@ -789,9 +789,10 @@ class Workstation extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT t.rowid, t.date_creation as datec, t.tms as datem,';
+		$sql = 'SELECT t.rowid, t.date_creation as datec, GREATEST(t.tms, tef.tms) as datem,';
 		$sql .= ' t.fk_user_creat, t.fk_user_modif';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.$this->table_element.'_extrafields as tef ON tef.fk_object=t.rowid';
 		$sql .= ' WHERE t.rowid = '.((int) $id);
 		$result = $this->db->query($sql);
 		if ($result) {
