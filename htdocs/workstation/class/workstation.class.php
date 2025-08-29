@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2017       Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2020       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2017       Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2020       Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -800,8 +800,8 @@ class Workstation extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
-		$sql .= ' fk_user_creat, fk_user_modif';
+		$sql = 'SELECT t.rowid, t.date_creation as datec, t.tms as datem,';
+		$sql .= ' t.fk_user_creat, t.fk_user_modif';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE t.rowid = '.((int) $id);
 		$result = $this->db->query($sql);
