@@ -1953,7 +1953,26 @@ function dol_string_unaccent($str)
 			'%C3%BB' => 'u',
 			'%C3%BC' => 'u',
 			'%C3%BD' => 'y',
-			'%C3%BF' => 'y'
+			'%C3%BF' => 'y',
+			'%CC%80' => '', 
+			'%CC%81' => '', 
+			'%CC%82' => '', 
+			'%CC%83' => '', 
+			'%CC%84' => '',
+			'%CC%85' => '', 
+			'%CC%86' => '', 
+			'%CC%87' => '', 
+			'%CC%88' => '', 
+			'%CC%89' => '',
+			'%CC%8A' => '', 
+			'%CC%8B' => '', 
+			'%CC%8C' => '', 
+			'%CC%8D' => '', 
+			'%CC%8E' => '',
+			'%CC%8F' => '', 
+			'%CC%90' => '', 
+			'%CC%91' => '', 
+			'%CC%A7' => '',
 		);
 		$string = strtr($string, $replacements);
 		return rawurldecode($string);
