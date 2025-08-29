@@ -11923,12 +11923,6 @@ parameters:
 			path: ../../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
 
 		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/eventorganization/tpl/linkedobjectblock.tpl.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 2
@@ -15575,12 +15569,6 @@ parameters:
 			identifier: empty.variable
 			count: 2
 			path: ../../../htdocs/mrp/mo_production.php
-
-		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/mrp/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: '#^Parameter \#1 \$object of method MultiCurrencies\:\:_cleanObjectDatasRate\(\) expects MultiCurrency, CurrencyRate given\.$#'
