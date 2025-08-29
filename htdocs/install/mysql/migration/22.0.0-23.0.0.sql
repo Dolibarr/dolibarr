@@ -104,4 +104,6 @@ ALTER TABLE llx_subscription ADD INDEX idx_subscription_fk_adherent (fk_adherent
 ALTER TABLE llx_subscription ADD INDEX idx_subscription_fk_bank (fk_bank);
 ALTER TABLE llx_subscription ADD INDEX idx_subscription_dateadh (dateadh);
 
+ALTER TABLE llx_bank_import ADD COLUMN fitid varchar(255) NULL after id_account; -- OFX Financial Institution Transaction ID "FITID"
+
 -- end of migration
