@@ -122,6 +122,9 @@ if (($action == 'set') && !empty($id)) {	// Test on permission already done in h
 	if ($triggerkey == 'PRODUCT_UPDATE') {
 		$triggerkey = 'PRODUCT_MODIFY';
 	}
+    if ($triggerkey == 'PRODUCT_MODIFY') {
+        unset($object->module);
+    }
 
 	$result = $object->setValueFrom($field, $value, $object->table_element, $id, $format, '', $user, $triggerkey);
 
