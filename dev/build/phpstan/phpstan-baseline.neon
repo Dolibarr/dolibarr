@@ -18403,12 +18403,6 @@ parameters:
 			path: ../../../htdocs/public/project/suggestbooth.php
 
 		-
-			message: '#^Variable \$contact might not be defined\.$#'
-			identifier: variable.undefined
-			count: 10
-			path: ../../../htdocs/public/project/suggestbooth.php
-
-		-
 			message: '#^Variable \$emailcompany might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
