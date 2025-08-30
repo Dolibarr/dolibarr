@@ -1749,6 +1749,7 @@ class User extends CommonObject
 
 		$this->civility_code = trim((string) $this->civility_code);
 		$this->login = trim((string) $this->login);
+		$this->user_creation_id = (int) $user->id;
 		if (!isset($this->entity)) {
 			$this->entity = $conf->entity; // If not defined, we use default value
 		}
@@ -1810,8 +1811,8 @@ class User extends CommonObject
 		}
 
 		// Insert into database
-		$sql = "INSERT INTO ".$this->db->prefix()."user (datec, login, ldap_sid, entity)";
-		$sql .= " VALUES('".$this->db->idate($this->datec)."', '".$this->db->escape($this->login)."', '".$this->db->escape($this->ldap_sid)."', ".((int) $this->entity).")";
+		$sql = "INSERT INTO ".$this->db->prefix()."user (datec, login, ldap_sid, fk_user_creat, entity)";
+		$sql .= " VALUES('".$this->db->idate($this->datec)."', '".$this->db->escape($this->login)."', '".$this->db->escape($this->ldap_sid)."', ".(int) $this->user_creation_id.", ".((int) $this->entity).")";
 		$result = $this->db->query($sql);
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -2122,7 +2123,7 @@ class User extends CommonObject
 		$this->lastname						= trim((string) $this->lastname);
 		$this->firstname					= trim((string) $this->firstname);
 		$this->ref_employee					= trim((string) $this->ref_employee);
-		$this->national_registration_number	= trim((string) $this->national_registration_number);
+		$this->national_registration_number = trim((string) $this->national_registration_number);
 		$this->employee						= ($this->employee > 0 ? $this->employee : 0);
 		$this->login						= trim((string) $this->login);
 		$this->gender						= trim((string) $this->gender);
@@ -2151,8 +2152,9 @@ class User extends CommonObject
 		$this->note_private					= trim((string) $this->note_private);
 		$this->openid						= trim((string) $this->openid);
 		$this->admin						= ($this->admin > 0 ? $this->admin : 0);
+		$this->user_modification_id = $user->id;
 
-		$this->accountancy_code_user_general	= trim((string) $this->accountancy_code_user_general);
+		$this->accountancy_code_user_general = trim((string) $this->accountancy_code_user_general);
 		$this->accountancy_code				= trim((string) $this->accountancy_code);
 		$this->color						= trim((string) $this->color);
 		$this->dateemployment				= empty($this->dateemployment) ? '' : $this->dateemployment;
@@ -2255,6 +2257,7 @@ class User extends CommonObject
 		$sql .= ", photo = ".($this->photo ? "'".$this->db->escape($this->photo)."'" : "null");
 		$sql .= ", openid = ".($this->openid ? "'".$this->db->escape($this->openid)."'" : "null");
 		$sql .= ", fk_user = ".($this->fk_user > 0 ? "'".((int) $this->fk_user)."'" : "null");
+		$sql .= ", fk_user_modif = ".($this->user_modification_id > 0 ? "'".((int) $this->user_modification_id)."'" : "null");
 		$sql .= ", fk_user_expense_validator = ".($this->fk_user_expense_validator > 0 ? "'".((int) $this->fk_user_expense_validator)."'" : "null");
 		$sql .= ", fk_user_holiday_validator = ".($this->fk_user_holiday_validator > 0 ? "'".((int) $this->fk_user_holiday_validator)."'" : "null");
 		if (isset($this->thm) || $this->thm != '') {
@@ -3654,9 +3657,10 @@ class User extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = "SELECT u.rowid, u.login as ref, u.datec,";
-		$sql .= " u.tms as date_modification, u.entity";
+		$sql = "SELECT u.rowid, u.login as ref, u.datec, fk_user_creat as user_creation_id, fk_user_modif as user_modification_id,";
+		$sql .= " GREATEST(u.tms, uef.tms) as date_modification, u.entity";
 		$sql .= " FROM ".$this->db->prefix()."user as u";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."user_extrafields as uef ON uef.fk_object = u.rowid";
 		$sql .= " WHERE u.rowid = ".((int) $id);
 
 		$result = $this->db->query($sql);
@@ -3665,6 +3669,9 @@ class User extends CommonObject
 				$obj = $this->db->fetch_object($result);
 
 				$this->id = $obj->rowid;
+
+				$this->user_creation_id = $obj->user_creation_id;
+				$this->user_modification_id = $obj->user_modification_id;
 
 				$this->ref = (!$obj->ref) ? $obj->rowid : $obj->ref;
 				$this->date_creation = $this->db->jdate($obj->datec);
