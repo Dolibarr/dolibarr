@@ -21895,12 +21895,6 @@ parameters:
 			path: ../../../htdocs/workstation/class/workstation.class.php
 
 		-
-			message: '#^Property Workstation\:\:\$ismultientitymanaged \(int\<0, 1\>\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/workstation/class/workstation.class.php
-
-		-
 			message: '#^Property Workstation\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
