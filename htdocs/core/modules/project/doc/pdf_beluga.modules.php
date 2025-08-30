@@ -428,7 +428,7 @@ class pdf_beluga extends ModelePDFProjects
 						'table' => 'expensereport',
 						'datefieldname' => 'date_debut',
 						'margin' => 'minus',
-						'disableamount' => 1,
+						'disableamount' => 0,
 						'test' => isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire'),
 						'lang' => 'trip'),
 					'agenda' => array(
@@ -643,6 +643,9 @@ class pdf_beluga extends ModelePDFProjects
 									}
 									if (empty($date)) {
 										$date = $element->datev; // Intervention card
+									}
+									if (empty($date)) {
+										$date = $element->date_debut; // Expense report
 									}
 								}
 
