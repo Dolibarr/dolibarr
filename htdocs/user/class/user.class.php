@@ -550,6 +550,7 @@ class User extends CommonObject
 		$sql .= " u.admin, u.login, u.note_private, u.note_public,";
 		$sql .= " u.pass, u.pass_crypted, u.pass_temp, u.api_key,";
 		$sql .= " u.fk_soc, u.fk_socpeople, u.fk_member, u.fk_user, u.ldap_sid, u.fk_user_expense_validator, u.fk_user_holiday_validator,";
+		$sql .= " fk_user_creat as user_creation_id, fk_user_modif as user_modification_id,";
 		$sql .= " u.statut as status, u.lang, u.entity,";
 		$sql .= " u.datec as datec,";
 		$sql .= " GREATEST(u.tms, uef.tms) as datem,";
@@ -659,12 +660,12 @@ class User extends CommonObject
 				$this->employee = $obj->employee;
 
 				$this->login = $obj->login;
-				$this->gender       = $obj->gender;
-				$this->birth        = $this->db->jdate($obj->birth);
+				$this->gender = $obj->gender;
+				$this->birth = $this->db->jdate($obj->birth);
 				$this->pass_indatabase = $obj->pass;
 				$this->pass_indatabase_crypted = $obj->pass_crypted;
 				$this->pass = $obj->pass;
-				$this->pass_temp	= $obj->pass_temp;
+				$this->pass_temp = $obj->pass_temp;
 				$this->datelastpassvalidation = $obj->datelastpassvalidation;
 				$this->api_key = dolDecrypt($obj->api_key);
 
@@ -680,18 +681,20 @@ class User extends CommonObject
 				$this->state_code   = $obj->state_code;
 				$this->state        = ($obj->state != '-' ? $obj->state : '');
 
-				$this->office_phone	= $obj->office_phone;
-				$this->office_fax   = $obj->office_fax;
-				$this->user_mobile  = $obj->user_mobile;
+				$this->office_phone = $obj->office_phone;
+				$this->office_fax = $obj->office_fax;
+				$this->user_mobile = $obj->user_mobile;
 				$this->personal_mobile = $obj->personal_mobile;
 				$this->email = $obj->email;
 				$this->email_oauth2 = $obj->email_oauth2;
 				$this->personal_email = $obj->personal_email;
 				$this->socialnetworks = ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
+				$this->user_creation_id = $obj->user_creation_id;
+				$this->user_modification_id = $obj->user_modification_id;
 
 				$this->job = $obj->job;
 				$this->signature = $obj->signature;
-				$this->admin		= $obj->admin;
+				$this->admin = $obj->admin;
 				$this->note_public = $obj->note_public;
 				$this->note_private = $obj->note_private;
 
