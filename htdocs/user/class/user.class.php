@@ -669,17 +669,17 @@ class User extends CommonObject
 				$this->datelastpassvalidation = $obj->datelastpassvalidation;
 				$this->api_key = dolDecrypt($obj->api_key);
 
-				$this->address 		= $obj->address;
-				$this->zip 			= $obj->zip;
-				$this->town 		= $obj->town;
+				$this->address = $obj->address;
+				$this->zip = $obj->zip;
+				$this->town = $obj->town;
 
 				$this->country_id = $obj->country_id;
 				$this->country_code = $obj->country_id ? $obj->country_code : '';
 				//$this->country = $obj->country_id?($langs->trans('Country'.$obj->country_code)!='Country'.$obj->country_code?$langs->transnoentities('Country'.$obj->country_code):$obj->country):'';
 
-				$this->state_id     = $obj->state_id;
-				$this->state_code   = $obj->state_code;
-				$this->state        = ($obj->state != '-' ? $obj->state : '');
+				$this->state_id = $obj->state_id;
+				$this->state_code = $obj->state_code;
+				$this->state = ($obj->state != '-' ? $obj->state : '');
 
 				$this->office_phone = $obj->office_phone;
 				$this->office_fax = $obj->office_fax;
@@ -698,19 +698,19 @@ class User extends CommonObject
 				$this->note_public = $obj->note_public;
 				$this->note_private = $obj->note_private;
 
-				$this->statut		= $obj->status;			// deprecated
-				$this->status		= $obj->status;
+				$this->statut = $obj->status;			// deprecated
+				$this->status = $obj->status;
 
-				$this->photo		= $obj->photo;
-				$this->openid		= $obj->openid;
-				$this->lang			= $obj->lang;
-				$this->entity		= $obj->entity;
+				$this->photo = $obj->photo;
+				$this->openid = $obj->openid;
+				$this->lang = $obj->lang;
+				$this->entity = $obj->entity;
 
 				$this->accountancy_code_user_general = $obj->accountancy_code_user_general;
 				$this->accountancy_code = $obj->accountancy_code;
 
-				$this->thm			= $obj->thm;
-				$this->tjm			= $obj->tjm;
+				$this->thm = $obj->thm;
+				$this->tjm = $obj->tjm;
 				$this->salary = $obj->salary;
 				$this->salaryextra = $obj->salaryextra;
 				$this->weeklyhours = $obj->weeklyhours;
@@ -718,8 +718,8 @@ class User extends CommonObject
 				$this->dateemployment = $this->db->jdate($obj->dateemployment);
 				$this->dateemploymentend = $this->db->jdate($obj->dateemploymentend);
 
-				$this->datec				= $this->db->jdate($obj->datec);
-				$this->datem				= $this->db->jdate($obj->datem);
+				$this->datec = $this->db->jdate($obj->datec);
+				$this->datem = $this->db->jdate($obj->datem);
 				$this->datelastlogin = $this->db->jdate($obj->datel);
 				$this->datepreviouslogin = $this->db->jdate($obj->datep);
 				$this->flagdelsessionsbefore = $this->db->jdate($obj->flagdelsessionsbefore, 'gmt');
@@ -728,9 +728,9 @@ class User extends CommonObject
 				$this->datestartvalidity = $this->db->jdate($obj->datestartvalidity);
 				$this->dateendvalidity = $this->db->jdate($obj->dateendvalidity);
 
-				$this->socid                = $obj->fk_soc;
-				$this->contact_id           = $obj->fk_socpeople;
-				$this->fk_member            = $obj->fk_member;
+				$this->socid = $obj->fk_soc;
+				$this->contact_id = $obj->fk_socpeople;
+				$this->fk_member = $obj->fk_member;
 				$this->fk_user = $obj->fk_user;
 				$this->fk_user_expense_validator = $obj->fk_user_expense_validator;
 				$this->fk_user_holiday_validator = $obj->fk_user_holiday_validator;
