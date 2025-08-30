@@ -3615,6 +3615,7 @@ class User extends CommonObject
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
+		$this->user_creation_id = $user->id;
 
 		$this->lastname = 'DOLIBARR';
 		$this->firstname = 'SPECIMEN';
@@ -3645,7 +3646,6 @@ class User extends CommonObject
 		$this->iplastlogin = '127.0.0.1';
 		$this->datepreviouslogin = $now;
 		$this->ippreviouslogin = '127.0.0.1';
-		$this->statut = 1;		// deprecated
 		$this->status = 1;
 
 		$this->entity = 1;
