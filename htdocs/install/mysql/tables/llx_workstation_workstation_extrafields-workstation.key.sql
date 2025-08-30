@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2021      Frédéric France  <frederic.france@free.fr>
+-- Copyright (C) 2025      Frédéric France  <frederic.france@free.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,4 +16,4 @@
 --
 -- ===================================================================
 
-ALTER TABLE llx_asset_extrafields ADD INDEX idx_asset_extrafields (fk_object);
+ALTER TABLE llx_workstation_workstation_extrafields ADD INDEX idx_workstation_workstation_extrafields (fk_object);

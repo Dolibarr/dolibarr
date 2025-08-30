@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2021      Frédéric France  <frederic.france@free.fr>
+-- Copyright (C) 2025      Frédéric France   <frederic.france@free.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -12,8 +12,16 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <https://www.gnu.org/licenses/>.
---
+-- along with this program. If not, see https://www.gnu.org/licenses/.
 -- ===================================================================
+--
+-- Table for extrafields of workstation
+--
 
-ALTER TABLE llx_asset_extrafields ADD INDEX idx_asset_extrafields (fk_object);
+create table llx_workstation_workstation_extrafields
+(
+    rowid           integer     AUTO_INCREMENT PRIMARY KEY,
+    tms             timestamp   DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    fk_object       integer     NOT NULL,
+    import_key      varchar(14)                          -- import key
+) ENGINE=innodb;
