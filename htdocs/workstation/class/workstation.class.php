@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2017       Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2020       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2017       Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2020       Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -46,17 +46,6 @@ class Workstation extends CommonObject
 	 * @var string Name of table without prefix where object is stored. This is also the key used for extrafields management.
 	 */
 	public $table_element = 'workstation_workstation';
-
-	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int<0,1>	Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
 
 	/**
 	 * @var string String with name of icon for workstation. Must be the part after the 'object_' into object_workstation.png
@@ -194,7 +183,7 @@ class Workstation extends CommonObject
 		$this->db = $db;
 
 		$this->ismultientitymanaged = 1;
-		$this->isextrafieldmanaged = 0;
+		$this->isextrafieldmanaged = 1;
 
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
@@ -800,9 +789,10 @@ class Workstation extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
-		$sql .= ' fk_user_creat, fk_user_modif';
+		$sql = 'SELECT t.rowid, t.date_creation as datec, GREATEST(t.tms, tef.tms) as datem,';
+		$sql .= ' t.fk_user_creat, t.fk_user_modif';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.$this->table_element.'_extrafields as tef ON tef.fk_object=t.rowid';
 		$sql .= ' WHERE t.rowid = '.((int) $id);
 		$result = $this->db->query($sql);
 		if ($result) {

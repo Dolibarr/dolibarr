@@ -1,7 +1,7 @@
 <?php
 
-/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2017       Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -91,7 +91,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 // Permissions
 $permissiontoread = $user->hasRight('workstation', 'workstation', 'read');
 $permissiontoadd = $user->hasRight('workstation', 'workstation', 'write');      // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->hasRight('workstation', 'workstation', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DISABLED);
+$permissiontodelete = $user->hasRight('workstation', 'workstation', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == Workstation::STATUS_DISABLED);
 $permissionnote = $user->hasRight('workstation', 'workstation', 'write');      // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('workstation', 'workstation', 'write');      // Used by the include of actions_dellink.inc.php
 
@@ -472,7 +472,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Disable / Enable
 			if ($permissiontoadd) {
-				if ($object->status == $object::STATUS_ENABLED) {
+				if ($object->status == Workstation::STATUS_ENABLED) {
 					print dolGetButtonAction('', $langs->trans('Disable'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=disable&token='.newToken(), '', $permissiontoadd);
 				} else {
 					print dolGetButtonAction('', $langs->trans('Enable'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=enable&token='.newToken(), '', $permissiontoadd);
