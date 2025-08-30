@@ -426,7 +426,7 @@ class pdf_beluga extends ModelePDFProjects
 						'title' => "ListExpenseReportsAssociatedProject",
 						'class' => 'ExpenseReport',
 						'table' => 'expensereport',
-						'datefieldname' => 'dated',
+						'datefieldname' => 'date_debut',
 						'margin' => 'minus',
 						'disableamount' => 1,
 						'test' => isModEnabled('expensereport') && $user->hasRight('expensereport', 'lire'),
