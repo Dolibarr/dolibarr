@@ -265,7 +265,7 @@ if (empty($reshook)) {
 				$mode_reglement_id = 0;
 				$fk_account = 0;
 				$transport_mode_id = 0;
-				$mutlicurrency_code = null;
+				$multicurrency_code = null;
 
 				if (!empty($rcp->cond_reglement_id)) {
 					$cond_reglement_id = $rcp->cond_reglement_id;
