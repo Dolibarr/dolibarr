@@ -119,7 +119,7 @@ if ($arrayofconfboothtype == -1) {
 }
 
 // Security check
-if (empty($conf->eventorganization->enabled)) {
+if (!isModEnabled('eventorganization')) {
 	httponly_accessforbidden('Module Event organization not enabled');
 }
 
