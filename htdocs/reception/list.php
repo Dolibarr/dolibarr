@@ -403,7 +403,7 @@ if (empty($reshook)) {
 				if ($rcp->origin_object->multicurrency_code != $objecttmp->multicurrency_code) {
 					$errors[] = $rcp->ref." : ".$langs->trans("ReceptionMustBeInTheSameCurrencyThanOther");
 				}
-				
+
 				$res = $objecttmp->add_object_linked($objecttmp->origin, $id_reception);
 
 				if ($res == 0) {
