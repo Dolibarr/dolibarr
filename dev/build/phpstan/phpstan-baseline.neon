@@ -2779,12 +2779,6 @@ parameters:
 			path: ../../../htdocs/comm/action/class/cactioncomm.class.php
 
 		-
-			message: '#^Variable \$TSystem might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/comm/action/class/cactioncomm.class.php
-
-		-
 			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 2
