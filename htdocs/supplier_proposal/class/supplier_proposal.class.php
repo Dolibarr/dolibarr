@@ -278,8 +278,6 @@ class SupplierProposal extends CommonObject
 	 */
 	public function __construct($db, $socid = 0, $supplier_proposalid = 0)
 	{
-		global $conf, $langs;
-
 		$this->db = $db;
 
 		$this->ismultientitymanaged = 1;
@@ -1246,8 +1244,6 @@ class SupplierProposal extends CommonObject
 	 */
 	public function fetch($rowid, $ref = '')
 	{
-		global $conf;
-
 		$sql = "SELECT p.rowid, p.entity, p.ref, p.fk_soc as socid";
 		$sql .= ", p.total_ttc, p.total_tva, p.localtax1, p.localtax2, p.total_ht";
 		$sql .= ", p.datec, GREATEST(p.tms, pef.tms) as date_modification";
