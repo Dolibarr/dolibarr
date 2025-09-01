@@ -313,6 +313,9 @@ $form = new Form($db);
 					}
 				</style>
 				<script nonce="<?php echo getNonce(); ?>" >
+					/**
+					 * TODO : when include this code in core of Dolibarr, add it to a js file note directly in page
+					 * */
 					$(function() {
 
 						/**
@@ -342,6 +345,25 @@ $form = new Form($db);
 							if (e.ctrlKey) {
 								e.stopPropagation();
 							}
+						});
+
+						$(document).on("mousedown click", ".row-with-select input.checkforselect", function (e) {
+							// Prevents automatic change of “checked”
+							e.preventDefault();
+							e.stopPropagation(); // parent click trigger will be done below
+
+							let parentRow = $(this).closest(".row-with-select");
+
+							// this part of code prevent weird behavior when user (ctrl or maj) + click directly on checkbox
+							// We simulate a click on the parent line
+							parentRow.trigger({
+								type: "click",
+								ctrlKey: !e.shiftKey, // simulate ctrlKey click will automatically prop activate the checkbox with parent event but not if shift key is pressed.
+								metaKey: !e.shiftKey, // simulate metaKey click will automatically prop activate the checkbox with parent event but not if shift key is pressed.
+								shiftKey: e.shiftKey,
+								originalEvent: e
+							});
+
 						});
 
 						$(document).on("click", ".row-with-select", function (e) {

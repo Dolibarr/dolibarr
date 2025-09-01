@@ -117,6 +117,7 @@ MustBeLowerThanPHPLimit=Note: your PHP configuration currently limits the maximu
 NoMaxSizeByPHPLimit=Note: No limit is set in your PHP configuration
 MaxSizeForUploadedFiles=Maximum size for uploaded files (0 to disallow any upload)
 UseCaptchaCode=Use graphical code (CAPTCHA)
+UseAntivirusOnUploadedFile=Use Antivirus on uploaded files (on alert, upload is denied)
 AntiVirusCommand=Full path to antivirus command
 AntiVirusCommandExample=Example for ClamAv Daemon (require clamav-daemon): /usr/bin/clamdscan<br>Example for ClamWin (very very slow): c:\\Progra~1\\ClamWin\\bin\\clamscan.exe
 AntiVirusParam= More parameters on command line

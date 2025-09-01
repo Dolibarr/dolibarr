@@ -557,9 +557,9 @@ print '<br>';
 */
 
 print '<strong>'.$langs->trans("AntivirusEnabledOnUpload").'</strong>: ';
-print !getDolGlobalString('MAIN_ANTIVIRUS_COMMAND') ? img_warning().' ' : img_picto('', 'tick').' ';
-print yn(!getDolGlobalString('MAIN_ANTIVIRUS_COMMAND') ? 0 : 1);
-if (!getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')) {
+print getDolGlobalString('MAIN_ANTIVIRUS_UPLOAD_ON') ? img_picto('', 'tick').' ' : img_warning().' ';
+print yn(!getDolGlobalString('MAIN_ANTIVIRUS_UPLOAD_ON') ? 0 : 1);
+if (!getDolGlobalString('MAIN_ANTIVIRUS_UPLOAD_ON') || !getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')) {
 	print ' - <span class="opacitymedium">'.$langs->trans("Recommended").': '.$langs->trans("DefinedAPathForAntivirusCommandIntoSetup", $langs->transnoentitiesnoconv("Home")." - ".$langs->transnoentitiesnoconv("Setup")." - ".$langs->transnoentitiesnoconv("Security")).'</span>';
 } else {
 	print ' &nbsp; - ' . getDolGlobalString('MAIN_ANTIVIRUS_COMMAND');
