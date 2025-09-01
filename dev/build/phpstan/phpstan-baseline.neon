@@ -2161,12 +2161,6 @@ parameters:
 			path: ../../../htdocs/bom/tpl/objectline_create.tpl.php
 
 		-
-			message: '#^Variable \$extrafields might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/bom/tpl/objectline_create.tpl.php
-
-		-
 			message: '#^Call to function is_object\(\) with BOMLine will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
