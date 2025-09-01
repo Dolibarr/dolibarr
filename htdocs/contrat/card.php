@@ -2278,6 +2278,16 @@ if ($action == 'create') {
 
 				// Create ... buttons
 				$arrayofcreatebutton = array();
+				if (isModEnabled('propal') && $object->status > 0 && $soc->client == 1) {
+					$arrayofcreatebutton[] = array(
+						'attr' => array('style' => 'text-align: left;'),
+						'url' => '/comm/propal/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id.'&renewal=true',
+						'label' => $langs->trans('AddProp'),
+						'lang' => 'propal',
+						'perm' => $user->hasRight('propale', 'creer') ? true : false,
+						'enabled' => true,
+					);
+				}
 				if (isModEnabled('order') && $object->status > 0 && $object->nbofservicesclosed < $nbofservices) {
 					$arrayofcreatebutton[] = array(
 						'url' => '/commande/card.php?action=create&token='.newToken().'&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
@@ -2303,16 +2313,6 @@ if ($action == 'create') {
 						'label' => $langs->trans('AddSupplierInvoice'),
 						'lang' => 'bills',
 						'perm' => $user->hasRight('fournisseur', 'facture', 'creer') ? true : false,
-						'enabled' => true,
-					);
-				}
-				if (isModEnabled('propal') && $object->status > 0 && $soc->client == 1) {
-					$arrayofcreatebutton[] = array(
-						'attr' => array('style' => 'text-align: left;'),
-						'url' => '/comm/propal/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id.'&renewal=true',
-						'label' => $langs->trans('AddRenewalProp'),
-						'lang' => 'propal',
-						'perm' => $user->hasRight('propale', 'creer') ? true : false,
 						'enabled' => true,
 					);
 				}
