@@ -10777,12 +10777,6 @@ parameters:
 			path: ../../../htdocs/core/tpl/extrafields_list_search_sql.tpl.php
 
 		-
-			message: '#^Variable \$extrafields might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/extrafields_list_search_sql.tpl.php
-
-		-
 			message: '#^Variable \$sql might not be defined\.$#'
 			identifier: variable.undefined
 			count: 7
@@ -17179,12 +17173,6 @@ parameters:
 			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_list.php
 
 		-
-			message: '#^Variable \$extrafields might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/tpl/extrafields_add.tpl.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 2
@@ -21886,12 +21874,6 @@ parameters:
 			message: '#^Property Workstation\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/workstation/workstation_card.php
-
-		-
-			message: '#^Variable \$extrafields might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/workstation/workstation_card.php
 
 		-
