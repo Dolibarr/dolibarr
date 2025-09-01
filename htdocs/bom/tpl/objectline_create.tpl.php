@@ -40,6 +40,8 @@ require_once DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php";
  * @var Form $form
  * @var Societe $buyer
  * @var Translate $langs
+ *
+ * @var string $action
  */
 
 // Protection to avoid direct call of template
