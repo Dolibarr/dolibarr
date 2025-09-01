@@ -2826,11 +2826,6 @@ parameters:
 			count: 1
 			path: ../../../htdocs/comm/action/index.php
 
-		-
-			message: '#^Variable \$theme_datacolor might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/comm/action/index.php
 
 		-
 			message: '#^Variable \$socid might not be defined\.$#'

@@ -1585,10 +1585,25 @@ $cacheusers = array();
 $color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/theme_vars.inc.php";
 if (is_readable($color_file)) {
 	include $color_file;
-	/** @var array<int,mixed>	$theme_datacolor */
+	/** @var array{0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int},3:array{0:int,1:int,2:int}} $theme_datacolor */
 }
 if (!is_array($theme_datacolor)) {
-	$theme_datacolor = array(array(137, 86, 161), array(60, 147, 183), array(250, 190, 80), array(80, 166, 90), array(190, 190, 100), array(91, 115, 247), array(140, 140, 220), array(190, 120, 120), array(115, 125, 150), array(100, 170, 20), array(150, 135, 125), array(85, 135, 150), array(150, 135, 80), array(150, 80, 150));
+	$theme_datacolor = array(
+		array(137, 86, 161),
+		array(60, 147, 183),
+		array(250, 190, 80),
+		array(80, 166, 90),
+		array(190, 190, 100),
+		array(91, 115, 247),
+		array(140, 140, 220),
+		array(190, 120, 120),
+		array(115, 125, 150),
+		array(100, 170, 20),
+		array(150, 135, 125),
+		array(85, 135, 150),
+		array(150, 135, 80),
+		array(150, 80, 150)
+	);
 }
 
 $massactionbutton = '';
@@ -1911,6 +1926,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	'@phan-var-force array{0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int},3:array{0:int,1:int,2:int}} $theme_datacolor
 	 @phan-var-force User[] $cacheusers
 	 @phan-var-force array<int<0,3>> $colorindexused';
+	/**
+	 * @var array{0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int},3:array{0:int,1:int,2:int}} $theme_datacolor
+	 * @var User[] $cacheusers
+	 * @var array<int<0,3>> $colorindexused
+	 */
 
 	if ($conf->use_javascript_ajax) {	// Enable the "Show more button..."
 		$conf->global->MAIN_JS_SWITCH_AGENDA = 1;
