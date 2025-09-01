@@ -1585,6 +1585,7 @@ $cacheusers = array();
 $color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/theme_vars.inc.php";
 if (is_readable($color_file)) {
 	include $color_file;
+	global $theme_datacolor;
 	/** @var array{0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int},3:array{0:int,1:int,2:int}} $theme_datacolor */
 }
 if (!is_array($theme_datacolor)) {
