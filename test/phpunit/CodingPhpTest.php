@@ -293,6 +293,22 @@ class CodingPhpTest extends CommonClassTest
 		//exit;
 
 
+		// Part to scan code vulnerability on SQL injection
+
+
+		// Check sql using ' instead of "
+		$ok = true;
+		$matches = array();
+		preg_match_all('/LIKE \\\/', $filecontent, $matches, PREG_SET_ORDER);
+		foreach ($matches as $key => $val) {
+			var_dump($matches);
+			$ok = false;
+			break;
+		}
+		//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+		$this->assertTrue($ok, "Found a LIKE \' when we should have LIKE ' - Bad.");
+		//exit;
+
 
 		// Check sql string DELETE|OR|AND|WHERE|INSERT ... yyy = ".$xxx
 		//  with xxx that is not 'thi' (for $this->db->sanitize) and 'db-' (for $db->sanitize). It means we forget a ' if string, or an (int) if int, when forging sql request.
