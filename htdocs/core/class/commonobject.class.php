@@ -7693,7 +7693,7 @@ abstract class CommonObject
 								    $("#"+child_list).hide();
 								//Show mother lists
 								} else if ($("#"+parent_list).val() != 0){
-								    $("#"+parent_list).show();
+								    showOptions'.$type.'(child_list, parent_list, orig_select[child_list]);
 								}
 								//Show the child list if the parent list value is selected
 								$("select[name=\""+parent_list+"\"]").click(function() {
