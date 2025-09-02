@@ -164,7 +164,7 @@ class Holiday extends CommonObject
 	public $events = array();
 
 	/**
-	 * @var array<int,array{id:int,rowid:int,date_action:int,fk_user_action:int,fk_user_update:int,type_action:stringt,prev_solde:float,new_solde:float,fk_type:int}>
+	 * @var array<int,array{id:int,rowid:int,date_action:int,fk_user_action:int,fk_user_update:int,type_action:string,prev_solde:float,new_solde:float,fk_type:int}>
 	 */
 	public $logs = array();
 
