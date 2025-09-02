@@ -432,7 +432,7 @@ class Fichinter extends CommonObject
 		if (!dol_strlen((string) $this->fk_project)) {
 			$this->fk_project = 0;
 		}
-		if (isset($this->ref_client)) {
+		if (!empty($this->ref_client)) {
 			$this->ref_client = trim($this->ref_client);
 		}
 
