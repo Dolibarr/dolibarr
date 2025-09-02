@@ -972,13 +972,13 @@ class Fichinter extends CommonObject
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
 
-		if ($option == 'nolink' || empty($url)) {
+		if ($option == 'nolink') {
 			$linkstart = '<span';
 		} else {
 			$linkstart = '<a href="'.$url.'"';
 		}
 		$linkstart .= $linkclose.'>';
-		if ($option == 'nolink' || empty($url)) {
+		if ($option == 'nolink') {
 			$linkend = '</span>';
 		} else {
 			$linkend = '</a>';
@@ -1506,6 +1506,7 @@ class Fichinter extends CommonObject
 		$this->note_private = 'Private note';
 		$this->note_public = 'SPECIMEN';
 		$this->duration = 0;
+		$this->user_creation_id = 1;
 		$nbp = 25;
 		$xnbp = 0;
 		while ($xnbp < $nbp) {
