@@ -13351,12 +13351,6 @@ parameters:
 			path: ../../../htdocs/holiday/class/holiday.class.php
 
 		-
-			message: '#^Property Holiday\:\:\$logs has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/holiday/class/holiday.class.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 3
