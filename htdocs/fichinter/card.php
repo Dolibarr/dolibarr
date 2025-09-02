@@ -956,7 +956,7 @@ if ($action == 'create') {
 			}
 			$objectsrc->fetch_thirdparty();
 
-			$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
+			$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : 0);
 
 			$soc = $objectsrc->thirdparty;
 

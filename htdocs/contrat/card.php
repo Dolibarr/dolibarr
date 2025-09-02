@@ -1203,7 +1203,7 @@ if ($action == 'create') {
 			$objectsrc->fetch_optionals();
 			$object->array_options = $objectsrc->array_options;
 
-			$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
+			$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : 0);
 
 			$soc = $objectsrc->thirdparty;
 
