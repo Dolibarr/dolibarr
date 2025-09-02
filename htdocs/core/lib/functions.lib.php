@@ -2963,19 +2963,22 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 				$popuptab = 1;
 				$outmore .= '<div class="popuptabset wordwrap">'; // The css used to hide/show popup
 			}
-			$outmore .= '<div class="popuptab wordwrap" style="display:inherit;">';
+			$outmore_content = '';
+
 			if (isset($links[$i][2]) && $links[$i][2] == 'image') {
 				if (!empty($links[$i][0])) {
-					$outmore .= '<a class="tabimage'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+					$outmore_content .= '<a class="tabimage'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 				} else {
-					$outmore .= '<span class="tabspan">'.$links[$i][1].'</span>'."\n";
+					$outmore_content .= '<span class="tabspan">'.$links[$i][1].'</span>'."\n";
 				}
 			} elseif (!empty($links[$i][1])) {
-				$outmore .= '<a'.(!empty($links[$i][2]) ? ' id="'.$links[$i][2].'"' : '').' class="wordwrap inline-block'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'">';
-				$outmore .= preg_replace('/([a-z])\|([a-z])/i', '\\1 | \\2', $links[$i][1]); // Replace x|y with x | y to allow wrap on long composed texts.
-				$outmore .= '</a>'."\n";
+				$outmore_content .= '<a'.(!empty($links[$i][2]) ? ' id="'.$links[$i][2].'"' : '').' class="wordwrap inline-block'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'">';
+				$outmore_content .= preg_replace('/([a-z])\|([a-z])/i', '\\1 | \\2', $links[$i][1]); // Replace x|y with x | y to allow wrap on long composed texts.
+				$outmore_content .= '</a>'."\n";
 			}
-			$outmore .= '</div>';
+			if ($outmore_content !== '') {
+				$outmore .= '<div class="popuptab wordwrap" style="display:inherit;">' . $outmore_content . '</div>';
+			}
 
 			$nbintab++;
 		}
