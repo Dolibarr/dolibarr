@@ -1115,7 +1115,7 @@ class Fichinter extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error && !$notrigger) {
+		if (!$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('FICHINTER_DELETE', $user);
 			if ($result < 0) {
@@ -1127,11 +1127,9 @@ class Fichinter extends CommonObject
 		}
 
 		// Delete linked object
-		if (!$error) {
-			$res = $this->deleteObjectLinked();
-			if ($res < 0) {
-				$error++;
-			}
+		$res = $this->deleteObjectLinked();
+		if ($res < 0) {
+			$error++;
 		}
 
 		// Delete linked contacts
@@ -1677,7 +1675,7 @@ class Fichinter extends CommonObject
 		if (!empty($arraydata['thirdparty'])) {
 			$tmpthirdparty = $arraydata['thirdparty'];
 			'@phan-var-force Societe $tmpthirdparty';
-			/** @var Societe $thirdparty */
+			/** @var Societe $tmpthirdparty */
 			$return .= '<br><span class="info-box-label">'.$tmpthirdparty->getNomUrl(1).'</span>';
 		}
 		if (!empty($this->duration)) {
