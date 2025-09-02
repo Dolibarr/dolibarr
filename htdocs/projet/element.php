@@ -1276,7 +1276,7 @@ foreach ($listofreferent as $key => $value) {
 					$qualifiedfortotal = false; // It makes no sense to include canceled orders in the total
 				}
 
-				if ($key == "order_supplier" && $element->status == 7) {
+				if ($key == "order_supplier" && ($element->status == 6 || $element->status == 7)) {
 					print '<tr class="oddeven tr_canceled" style=display:none>';
 				} else {
 					print '<tr class="oddeven" >';
