@@ -1253,7 +1253,7 @@ if ($action == 'create') {
 		}
 		$objectsrc->fetch_thirdparty();
 
-		$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : 0);
+		// $projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : 0);
 		$soc = $objectsrc->thirdparty;
 
 		$cond_reglement_id 	= (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0)); // TODO maybe add default value option
@@ -1407,9 +1407,9 @@ if ($action == 'create') {
 
 			$formproject = new FormProjets($db);
 
-			// if ($origin == 'project') {
-			// 	$projectid = ($originid ? $originid : 0);
-			// }
+			if ($origin == 'project') {
+				$projectid = ($originid ? $originid : 0);
+			}
 
 			print '<tr>';
 			print '<td>'.$langs->trans("Project").'</td><td colspan="2">';
