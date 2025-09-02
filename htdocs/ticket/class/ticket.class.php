@@ -80,11 +80,6 @@ class Ticket extends CommonObject
 	public $socid;
 
 	/**
-	 * @var int Project ID
-	 */
-	public $fk_project;
-
-	/**
 	 * @var int Contract ID
 	 */
 	public $fk_contract;
