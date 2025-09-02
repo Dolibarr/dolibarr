@@ -594,12 +594,10 @@ class Fichinter extends CommonObject
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			if (!$error) {
-				// Call trigger
-				$result = $this->call_trigger('FICHINTER_UNVALIDATE', $user);
-				if ($result < 0) {
-					$error++;
-				}
+			// Call trigger
+			$result = $this->call_trigger('FICHINTER_UNVALIDATE', $user);
+			if ($result < 0) {
+				$error++;
 			}
 
 			if (!$error) {
@@ -638,7 +636,7 @@ class Fichinter extends CommonObject
 			$now = dol_now();
 
 			// Define new ref
-			if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+			if ((preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
 				$num = $this->getNextNumRef($this->thirdparty);
 			} else {
 				$num = $this->ref;
