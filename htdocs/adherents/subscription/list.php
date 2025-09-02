@@ -737,7 +737,7 @@ while ($i < $imaxinloop) {
 
 		// Banque
 		if (!empty($arrayfields['d.bank']['checked'])) {
-			print '<td class="tdmaxoverflow100">';
+			print '<td class="tdoverflowmax100">';
 			if ($obj->fk_account > 0) {
 				$accountstatic->id = $obj->fk_account;
 				$accountstatic->fetch($obj->fk_account);

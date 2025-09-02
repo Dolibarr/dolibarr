@@ -1030,21 +1030,28 @@ class MyObject extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = "SELECT rowid,";
-		$sql .= " date_creation as datec, tms as datem";
+		$sql = "SELECT t.rowid, t.date_creation as datec";
+		if (!empty($this->isextrafieldmanaged) && $this->isextrafieldmanaged == 1) {
+			$sql .= ", GREATEST(t.tms, te.tms) as datem";
+		} else {
+			$sql .= ", t.tms as datem";
+		}
 		if (!empty($this->fields['date_validation'])) {
-			$sql .= ", date_validation as datev";
+			$sql .= ", t.date_validation as datev";
 		}
 		if (!empty($this->fields['fk_user_creat'])) {
-			$sql .= ", fk_user_creat";
+			$sql .= ", t.fk_user_creat";
 		}
 		if (!empty($this->fields['fk_user_modif'])) {
-			$sql .= ", fk_user_modif";
+			$sql .= ", t.fk_user_modif";
 		}
 		if (!empty($this->fields['fk_user_valid'])) {
-			$sql .= ", fk_user_valid";
+			$sql .= ", t.fk_user_valid";
 		}
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as t";
+		if (!empty($this->isextrafieldmanaged) && $this->isextrafieldmanaged == 1) {
+			$sql .= " LEFT JOIN ".$this->db->prefix().$this->table_element."_extrafields as te ON te.fk_object = t.rowid";
+		}
 		$sql .= " WHERE t.rowid = ".((int) $id);
 
 		$result = $this->db->query($sql);
@@ -1063,10 +1070,10 @@ class MyObject extends CommonObject
 				if (!empty($this->fields['fk_user_valid'])) {
 					$this->user_validation_id = $obj->fk_user_valid;
 				}
-				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 				if (!empty($obj->datev)) {
-					$this->date_validation   = empty($obj->datev) ? '' : $this->db->jdate($obj->datev);
+					$this->date_validation = empty($obj->datev) ? '' : $this->db->jdate($obj->datev);
 				}
 			}
 
@@ -1189,12 +1196,10 @@ class MyObject extends CommonObject
 		$langs->load("mymodule@mymodule");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'standard_myobject';
-
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (getDolGlobalString('MYOBJECT_ADDON_PDF')) {
-				$modele = getDolGlobalString('MYOBJECT_ADDON_PDF');
+			} else {
+				$modele = getDolGlobalString('MYOBJECT_ADDON_PDF', 'standard_myobject');
 			}
 		}
 

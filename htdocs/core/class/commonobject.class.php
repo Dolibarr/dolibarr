@@ -232,7 +232,7 @@ abstract class CommonObject
 	public $project;
 
 	/**
-	 * @var int 			The related project ID
+	 * @var ?int 			The related project ID
 	 * @see setProject(), project
 	 */
 	public $fk_project;
@@ -732,7 +732,7 @@ abstract class CommonObject
 	public $user_validation_id;
 
 	/**
-	 * @var int			User id closing object
+	 * @var int|null		User id closing object
 	 */
 	public $user_closing_id;
 
@@ -743,7 +743,7 @@ abstract class CommonObject
 	public $user_modification;
 
 	/**
-	 * @var int			User ID who last modified the object
+	 * @var int|null		User ID who last modified the object
 	 */
 	public $user_modification_id;
 
@@ -6970,10 +6970,7 @@ abstract class CommonObject
 				continue;
 			}
 			if (preg_match('/error/i', $newValue)) {
-				dol_syslog(
-					'Bad syntax string for '.$geoDataType['shortname'].' '.$newValue.' to generate SQL request',
-					LOG_WARNING
-				);
+				dol_syslog('Bad syntax string for '.$geoDataType['shortname'].' '.$newValue.' to generate SQL request', LOG_WARNING);
 				$sqlColumnValues[$attributeKey] = 'null';
 				continue;
 			}
@@ -6994,10 +6991,20 @@ abstract class CommonObject
 		}
 		$extrafieldsTable = $this->db->prefix() . $table_element . '_extrafields';
 
-		dol_syslog(get_class($this)."::insertExtraFields delete then insert", LOG_DEBUG);
+		dol_syslog(get_class($this)."::insertExtraFields update or insert record line", LOG_DEBUG);
+
+		$linealreadyfound = 0;
+		$sql = "SELECT COUNT(rowid) as nb FROM ".$this->db->prefix().$table_element."_extrafields WHERE fk_object = ".((int) $this->id);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$tmpobj = $this->db->fetch_object($resql);
+			if ($tmpobj) {
+				$linealreadyfound = $tmpobj->nb;
+			}
+		}
 
 		// if the extrafields row already exists for the object, we update it
-		if ($this->db->getRow("SELECT 1 FROM {$extrafieldsTable} WHERE fk_object = ".((int) $this->id))) {
+		if ($linealreadyfound) {
 			array_shift($sqlColumnValues); // drop the 'fk_object' column because its value won't change
 			$sqlColumnValueString = implode(
 				',',
@@ -7033,6 +7040,13 @@ abstract class CommonObject
 		if (!$resql) {
 			$this->error = $this->db->lasterror();
 			$error++;
+		}
+
+		// Update also the user of last modification in parent table
+		if (!$error && !empty($this->fields['fk_user_modif'])) {
+			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
+			$sql .= " SET fk_user_modif = ".(int) $user->id;
+			$this->db->query($sql);
 		}
 
 		if (!$error && $trigger) {
@@ -7435,6 +7449,7 @@ abstract class CommonObject
 				if ($this->array_options["options_".$key] === null) {
 					$sql = "UPDATE ".$this->db->prefix().$table_element."_extrafields SET ".$key." = null";
 				} else {
+					// TODO What about if field is type int or float ($attributeType = price, int, ...) ?
 					$sql = "UPDATE ".$this->db->prefix().$table_element."_extrafields SET ".$key." = '".$this->db->escape($new_array_options["options_".$key])."'";
 				}
 				$sql .= " WHERE fk_object = ".((int) $this->id);
@@ -7449,6 +7464,13 @@ abstract class CommonObject
 				if ($result < 0) {
 					$error++;
 				}
+			}
+
+			// Update also the user of last modification in parent table
+			if (!$error && !empty($this->fields['fk_user_modif'])) {
+				$sql = "UPDATE ".$this->db->prefix().$this->table_element;
+				$sql .= " SET fk_user_modif = ".(int) $user->id;
+				$this->db->query($sql);
 			}
 
 			if (!$error) {
@@ -10507,6 +10529,9 @@ abstract class CommonObject
 		if (array_key_exists('ref', $fieldvalues)) {
 			$fieldvalues['ref'] = dol_string_nospecial($fieldvalues['ref']); // If field is a ref, we sanitize data
 		}
+		if (getDolGlobalString('MAIN_DISABLE_AUTO_UPDATE_OF_TMS_FIELDS') && array_key_exists('tms', $fieldvalues)) {	// If we want the explicit update of tms fields instead of deprecated update by database
+			$fieldvalues['tms'] = $this->db->idate($now);
+		}
 
 		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
 
@@ -10808,7 +10833,7 @@ abstract class CommonObject
 		if (array_key_exists('date_modification', $fieldvalues)) {
 			$fieldvalues['date_modification'] = $this->db->idate($now);
 		}
-		if (getDolGlobalString('MAIN_DISABLE_AUTO_UPDATE_OF_TMS_FIELDS') && array_key_exists('tms', $fieldvalues)) {	// If we want the auto update of tms fields by database (deprecated, prefer by PHP code)
+		if (getDolGlobalString('MAIN_DISABLE_AUTO_UPDATE_OF_TMS_FIELDS') && array_key_exists('tms', $fieldvalues)) {	// If we want the explicit update of tms fields instead of deprecated update by database
 			$fieldvalues['tms'] = $this->db->idate($now);
 		}
 		if (array_key_exists('fk_user_modif', $fieldvalues)) {
@@ -10882,7 +10907,7 @@ abstract class CommonObject
 
 		// Update extrafield
 		if (!$error) {
-			$result = $this->insertExtraFields();	// This delete and reinsert extrafields
+			$result = $this->insertExtraFields();	// This update extrafields
 			if ($result < 0) {
 				$error++;
 			}

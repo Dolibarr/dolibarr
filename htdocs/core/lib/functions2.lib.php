@@ -1611,6 +1611,7 @@ function numero_semaine($time)
 {
 	$stime = dol_print_date($time, '%Y-%m-%d');
 
+	$reg = array();
 	if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?/i', $stime, $reg)) {
 		// Date est au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
 		$annee = (int) $reg[1];
@@ -1876,9 +1877,10 @@ function version_webserver()
  * 	@param	DoliDB		$db				    Database handler
  * 	@param	string		$type			    Type of models (company, invoice, ...)
  *  @param  int		    $maxfilenamelength  Max length of value to show
+ *  @param	int			$showempty			Add an empty record if 1
  * 	@return	string[]|int<-1,0>	    		0 if no module is activated, or array(key=>label). For modules that need directory scan, key is completed with ":filename", -1 if error
  */
-function getListOfModels($db, $type, $maxfilenamelength = 0)
+function getListOfModels($db, $type, $maxfilenamelength = 0, $showempty = 0)
 {
 	global $conf, $hookmanager, $langs;
 
@@ -1889,18 +1891,29 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 	$sql = "SELECT nom as id, nom as doc_template_name, libelle as label, description as description";
 	$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 	$sql .= " WHERE type = '".$db->escape($type)."'";
-	$sql .= " AND entity IN (0,".$conf->entity.")";
+	$sql .= " AND entity IN (0,".((int) $conf->entity).")";
 	$sql .= " ORDER BY description DESC";
 
 	dol_syslog('/core/lib/function2.lib.php::getListOfModels', LOG_DEBUG);
+
 	$resql_models = $db->query($sql);
 	if ($resql_models) {
 		$num = $db->num_rows($resql_models);
+
+		if ($showempty) {
+			$docmodels[0] = '&nbsp;';
+		}
+
 		$i = 0;
 		while ($i < $num) {
 			$found = 1;
 
 			$obj = $db->fetch_object($resql_models);
+
+			if ($obj->id == '0') {	// We discard bad record (should not happen)
+				$i++;
+				continue;
+			}
 
 			// If this generation module needs to scan a directory, then description field is filled
 			// with the constant that contains list of directories to scan (COMPANY_ADDON_PDF_ODT_PATH, ...).
@@ -1950,6 +1963,7 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 					$docmodels[$obj->id] = $obj->label ? $obj->label : $obj->doc_template_name;
 				}
 			}
+
 			$i++;
 		}
 	} else {

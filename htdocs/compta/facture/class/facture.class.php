@@ -1293,6 +1293,7 @@ class Facture extends CommonInvoice
 		$object->date               = (empty($this->date) ? dol_now() : $this->date);
 		$object->user_creation_id   = $user->id;
 		$object->user_validation_id = null;
+		$object->user_modification_id = null;
 		$object->fk_user_author     = $user->id;
 		$object->fk_user_valid      = null;
 		$object->fk_facture_source  = 0;
@@ -1625,6 +1626,7 @@ class Facture extends CommonInvoice
 		$this->origin_id = $object->id;
 
 		$this->fk_user_author = $user->id;
+		$this->user_creation_id = $user->id;
 
 		// get extrafields from original line
 		$object->fetch_optionals();
@@ -2734,6 +2736,9 @@ class Facture extends CommonInvoice
 		if (!isset($this->user_creation_id) && isset($this->fk_user_author)) {
 			$this->user_creation_id = $this->fk_user_author;
 		}
+		if (!isset($this->user_modification_id) && !empty($user->id)) {
+			$this->user_modification_id = $user->id;
+		}
 		if (!isset($this->user_validation_id) && isset($this->fk_user_valid)) {
 			$this->user_validation_id = $this->fk_user_valid;
 		}
@@ -2762,6 +2767,7 @@ class Facture extends CommonInvoice
 		$sql .= " revenuestamp=".((isset($this->revenuestamp) && $this->revenuestamp != '') ? (float) $this->revenuestamp : "null").",";
 		$sql .= " fk_statut=".(isset($this->status) ? (int) $this->status : "null").",";
 		$sql .= " fk_user_author=".(isset($this->user_creation_id) ? ((int) $this->user_creation_id) : "null").",";
+		$sql .= " fk_user_modif=".(!empty($user->id) ? ((int) $user->id) : "null").",";
 		$sql .= " fk_user_valid=".(isset($this->user_validation_id) ? (int) $this->user_validation_id : "null").",";
 		$sql .= " fk_facture_source=".(isset($this->fk_facture_source) ? (int) $this->fk_facture_source : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? (int) $this->fk_project : "null").",";
@@ -4661,7 +4667,7 @@ class Facture extends CommonInvoice
 				$rangmax = $this->line_max($fk_parent_line);
 				$this->line->rang = $rangmax + 1;
 			}
-			$apply_abs_price_on_credit_note=false;
+			$apply_abs_price_on_credit_note = false;
 			if ($this->type == self::TYPE_CREDIT_NOTE  && !getDolGlobalInt('FACTURE_ENABLE_NEGATIVE_LINES') && !getDolGlobalInt('INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN')) {
 				$apply_abs_price_on_credit_note = true;
 			}
@@ -5168,7 +5174,7 @@ class Facture extends CommonInvoice
 	{
 		$sql = 'SELECT c.rowid, datec, date_valid as datev, tms as datem,';
 		$sql .= ' date_closing as dateclosing,';
-		$sql .= ' fk_user_author, fk_user_valid, fk_user_closing';
+		$sql .= ' fk_user_author, fk_user_modif, fk_user_valid, fk_user_closing';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture as c';
 		$sql .= ' WHERE c.rowid = '.((int) $id);
 
@@ -5179,6 +5185,7 @@ class Facture extends CommonInvoice
 
 				$this->id = $obj->rowid;
 				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->user_validation_id = $obj->fk_user_valid;
 				$this->user_closing_id = $obj->fk_user_closing;
 
@@ -5558,7 +5565,7 @@ class Facture extends CommonInvoice
 		$this->note_public = 'This is a comment (public)';
 		$this->note_private = 'This is a comment (private)';
 
-		$this->fk_user_author = $user->id;
+		$this->user_creation_id = $user->id;
 
 		$this->multicurrency_tx = 1;
 		$this->multicurrency_code = $conf->currency;
