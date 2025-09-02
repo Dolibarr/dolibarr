@@ -2941,12 +2941,6 @@ parameters:
 			path: ../../../htdocs/comm/action/pertype.php
 
 		-
-			message: '#^Variable \$theme_datacolor might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/comm/action/pertype.php
-
-		-
 			message: '#^Loose comparison using \!\= between ''show_peruser'' and ''show_day'' will always evaluate to true\.$#'
 			identifier: notEqual.alwaysTrue
 			count: 1
@@ -3003,12 +2997,6 @@ parameters:
 		-
 			message: '#^Variable \$mode in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/comm/action/peruser.php
-
-		-
-			message: '#^Variable \$theme_datacolor might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/comm/action/peruser.php
 
