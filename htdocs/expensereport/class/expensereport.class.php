@@ -101,14 +101,14 @@ class ExpenseReport extends CommonObject
 	/**
 	 * 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=paid, 99=denied
 	 *
-	 * @var int		Status
+	 * @var |null	Status
 	 */
 	public $status;
 
 	/**
 	 * 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=paid, 99=denied
 	 *
-	 * @var int		Status
+	 * @var int|null	Status
 	 * @deprecated Use $status
 	 */
 	public $fk_statut;
@@ -2772,7 +2772,7 @@ class ExpenseReport extends CommonObject
 		$result = $this->db->query($sql);
 
 		if ($result) {
-			if ($conf->global->EXPENSEREPORT_CALCULATE_MILEAGE_EXPENSE_COEFFICIENT_ON_CURRENT_YEAR) {
+			if (getDolGlobalInt('EXPENSEREPORT_CALCULATE_MILEAGE_EXPENSE_COEFFICIENT_ON_CURRENT_YEAR')) {
 				$arrayDate = dol_getdate(dol_now());
 				$sql = " SELECT count(n.qty) as cumul FROM ".MAIN_DB_PREFIX."expensereport_det n";
 				$sql .= " LEFT JOIN  ".MAIN_DB_PREFIX."expensereport e ON e.rowid = n.fk_expensereport";
