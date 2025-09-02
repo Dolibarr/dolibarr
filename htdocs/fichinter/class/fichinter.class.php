@@ -305,7 +305,7 @@ class Fichinter extends CommonObject
 		if (!is_numeric($this->duration)) {
 			$this->duration = 0;
 		}
-		if (isset($this->ref_client)) {
+		if (!empty($this->ref_client)) {
 			$this->ref_client = trim($this->ref_client);
 		}
 
