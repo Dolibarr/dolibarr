@@ -2342,7 +2342,7 @@ class Societe extends CommonObject
 		}
 
 		// Then search ref, ref_ext or alias with a OR (+ restriction on is_client and is_supplier)
-		dol_syslog("Thirdparty not found with profids search so we try ref, ref_ext or ref_alias search", LOG_DEBUG);
+		dol_syslog("Thirdparty not found with email search so we try ref, ref_ext or ref_alias search", LOG_DEBUG);
 		$sqlref = "";
 		if ($ref) {
 			$sqlref .= " s.nom = '".$this->db->escape($ref)."'";

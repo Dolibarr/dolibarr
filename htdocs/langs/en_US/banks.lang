@@ -201,4 +201,4 @@ CountryIsInSepa=Countries in Sepa area
 Bank_line=Bank transaction line
 BankId=Bank line ID
 BankAccountForcedOnRequest=This bank account was defined during the request
-BankAccountUsedByDefault=This bank account is the default bank account of the thirdparty.
+BankAccountUsedByDefault=This is the default bank account of the thirdparty.

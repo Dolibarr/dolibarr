@@ -295,6 +295,8 @@ if (empty($reshook)) {
 		if (!$error) {
 			$db->begin();
 
+			$model_pdf = (GETPOST('model') != '0' && GETPOST('model') != '-1') ? GETPOST('model') : '';
+
 			// When a copy request was made, make the copy
 			if (GETPOST('createmode') == 'copy' && GETPOSTINT('copie_supplier_proposal') > 0) {
 				if ($object->fetch(GETPOSTINT('copie_supplier_proposal')) > 0) {
@@ -306,7 +308,7 @@ if (empty($reshook)) {
 					$object->fk_account = GETPOSTINT('fk_account');
 					$object->socid = GETPOSTINT('socid');
 					$object->fk_project = GETPOSTINT('projectid');
-					$object->model_pdf = GETPOST('model');
+					$object->model_pdf = $model_pdf;
 					$object->author = $user->id; // deprecated
 					$object->user_creation_id = $user->id;
 					$object->note = GETPOST('note', 'restricthtml');
@@ -325,7 +327,7 @@ if (empty($reshook)) {
 				$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
 				$object->fk_account = GETPOSTINT('fk_account');
 				$object->fk_project = GETPOSTINT('projectid');
-				$object->model_pdf = GETPOST('model');
+				$object->model_pdf = $model_pdf;
 				$object->author = $user->id; // deprecated
 				$object->user_creation_id = $user->id;
 				$object->note = GETPOST('note', 'restricthtml');
@@ -351,6 +353,7 @@ if (empty($reshook)) {
 				if ($origin && $originid) {
 					// Parse element/subelement (ex: project_task)
 					$element = $subelement = $origin;
+					$regs = array();
 					if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
 						$element = $regs[1];
 						$subelement = $regs[2];
@@ -375,10 +378,11 @@ if (empty($reshook)) {
 					}
 
 					$object->origin = $origin;
+					$object->origin_type = $origin;
 					$object->origin_id = $originid;
 
 					// Possibility to add external linked objects with hooks
-					$object->linked_objects [$object->origin] = $object->origin_id;
+					$object->linked_objects [$object->origin_type] = $object->origin_id;
 					if (GETPOSTISARRAY('other_linked_objects')) {
 						$object->linked_objects = array_merge($object->linked_objects, GETPOST('other_linked_objects', 'array:int'));
 					}
@@ -391,7 +395,7 @@ if (empty($reshook)) {
 						$srcobject = new $classname($db);
 						'@phan-var-force Commande|Propal|Contrat|Fichinter|Expedition $srcobject';  // Maybe other class but CommonObject is too generic
 
-						dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines");
+						dol_syslog("Try to find source object origin=".$object->origin_type." originid=".$object->origin_id." to add lines");
 						$result = $srcobject->fetch($object->origin_id);
 
 						if ($result > 0) {
@@ -502,10 +506,12 @@ if (empty($reshook)) {
 							}
 							$model = $object->model_pdf;
 
-							$ret = $object->fetch($id); // Reload to get new records
-							$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
-							if ($result < 0) {
-								dol_print_error($db, $object->error, $object->errors);
+							if (!empty($model)) {
+								$ret = $object->fetch($id); // Reload to get new records
+								$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+								if ($result < 0) {
+									dol_print_error($db, $object->error, $object->errors);
+								}
 							}
 						}
 
@@ -1390,7 +1396,7 @@ if ($action == 'create') {
 		print '<td colspan="2">';
 		print img_picto('', 'pdf', 'class="pictofixedwidth"');
 		$list = ModelePDFSupplierProposal::liste_modeles($db);
-		$preselected = (getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT') ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT : $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF);
+		$preselected = getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF_ODT_DEFAULT', getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF'));
 		print $form->selectarray('model', $list, $preselected, 0, 0, 0, '', 0, 0, 0, '', '', 1);
 		print "</td></tr>";
 

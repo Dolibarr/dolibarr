@@ -2161,12 +2161,6 @@ parameters:
 			path: ../../../htdocs/bom/tpl/objectline_create.tpl.php
 
 		-
-			message: '#^Variable \$extrafields might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/bom/tpl/objectline_create.tpl.php
-
-		-
 			message: '#^Call to function is_object\(\) with BOMLine will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -2779,12 +2773,6 @@ parameters:
 			path: ../../../htdocs/comm/action/class/cactioncomm.class.php
 
 		-
-			message: '#^Variable \$TSystem might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/comm/action/class/cactioncomm.class.php
-
-		-
 			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 2
@@ -2823,12 +2811,6 @@ parameters:
 		-
 			message: '#^Variable \$reshook in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/comm/action/index.php
-
-		-
-			message: '#^Variable \$theme_datacolor might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/comm/action/index.php
 
@@ -9157,18 +9139,6 @@ parameters:
 			path: ../../../htdocs/core/modules/barcode/doc/tcpdfbarcode.modules.php
 
 		-
-			message: '#^Parameter \#2 \$type of method mod_barcode_product_standard\:\:literalBarcodeType\(\) expects int, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/barcode/mod_barcode_product_standard.php
-
-		-
-			message: '#^Parameter \#2 \$type of method mod_barcode_thirdparty_standard\:\:literalBarcodeType\(\) expects int, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/modules/barcode/mod_barcode_thirdparty_standard.php
-
-		-
 			message: '#^Property CommonObject\:\:\$entity \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -10786,12 +10756,6 @@ parameters:
 			message: '#^Variable \$db might not be defined\.$#'
 			identifier: variable.undefined
 			count: 8
-			path: ../../../htdocs/core/tpl/extrafields_list_search_sql.tpl.php
-
-		-
-			message: '#^Variable \$extrafields might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/core/tpl/extrafields_list_search_sql.tpl.php
 
 		-
@@ -17191,12 +17155,6 @@ parameters:
 			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_list.php
 
 		-
-			message: '#^Variable \$extrafields might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/tpl/extrafields_add.tpl.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 2
@@ -18400,12 +18358,6 @@ parameters:
 			message: '#^Right side of \|\| is always false\.$#'
 			identifier: booleanOr.rightAlwaysFalse
 			count: 2
-			path: ../../../htdocs/public/project/suggestbooth.php
-
-		-
-			message: '#^Variable \$contact might not be defined\.$#'
-			identifier: variable.undefined
-			count: 10
 			path: ../../../htdocs/public/project/suggestbooth.php
 
 		-
@@ -21904,12 +21856,6 @@ parameters:
 			message: '#^Property Workstation\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/workstation/workstation_card.php
-
-		-
-			message: '#^Variable \$extrafields might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/workstation/workstation_card.php
 
 		-

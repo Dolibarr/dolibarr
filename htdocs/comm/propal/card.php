@@ -92,6 +92,7 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $origin = GETPOST('origin', 'alpha');
 $originid = GETPOSTINT('originid');
+$renewal = GETPOST('renewal');	// for contract renewal
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $lineid = GETPOSTINT('lineid');
@@ -606,11 +607,14 @@ if (empty($reshook)) {
 						$element = $subelement = 'expedition';
 					}
 
-					$object->origin = $origin;
-					$object->origin_id = $originid;
+					// If this is a renewal proposal for a contract, we might choose to systematically create a new contract,
+					if (($origin != 'contrat' || $renewal != 'true') && !getDolGlobalInt('CONTRACT_NEW_CONTRACT_ON_RENEWAL')) {
+						$object->origin = $origin;
+						$object->origin_id = $originid;
 
-					// Possibility to add external linked objects with hooks
-					$object->linked_objects[$object->origin] = $object->origin_id;
+						// Possibility to add external linked objects with hooks
+						$object->linked_objects[$object->origin] = $object->origin_id;
+					}
 					if (GETPOSTISARRAY('other_linked_objects')) {
 						$object->linked_objects = array_merge($object->linked_objects, GETPOST('other_linked_objects', 'array:int'));
 					}
@@ -664,6 +668,15 @@ if (empty($reshook)) {
 								}
 								if ($lines[$i]->date_end) {
 									$date_end = $lines[$i]->date_end;
+								}
+
+								// For a contract renewal, we report duration, starting after the end of contract
+								if ($origin == 'contrat' && $renewal == 'true') {
+									if ($lines[$i]->date_start && $lines[$i]->date_end) {
+										$duration = $lines[$i]->date_end - $lines[$i]->date_start;
+										$date_start = $lines[$i]->date_end + 86400;
+										$date_end = $date_start + $duration;
+									}
 								}
 
 								// Reset fk_parent_line for no child products and special product
@@ -2326,6 +2339,9 @@ if ($action == 'create') {
 	if ($origin != 'project' && $originid) {
 		print '<input type="hidden" name="origin" value="' . $origin . '">';
 		print '<input type="hidden" name="originid" value="' . $originid . '">';
+		if ($origin == 'contrat' && !empty($renewal)) {
+			print '<input type="hidden" name="renewal" value="' . $renewal . '">';
+		}
 	} elseif ($origin == 'project' && !empty($projectid)) {
 		print '<input type="hidden" name="projectid" value="' . $projectid . '">';
 	}
