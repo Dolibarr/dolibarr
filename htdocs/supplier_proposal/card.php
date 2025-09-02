@@ -1407,9 +1407,9 @@ if ($action == 'create') {
 
 			$formproject = new FormProjets($db);
 
-			if ($origin == 'project') {
-				$projectid = ($originid ? $originid : 0);
-			}
+			// if ($origin == 'project') {
+			// 	$projectid = ($originid ? $originid : 0);
+			// }
 
 			print '<tr>';
 			print '<td>'.$langs->trans("Project").'</td><td colspan="2">';
