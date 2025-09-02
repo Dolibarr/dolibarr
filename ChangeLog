@@ -189,7 +189,7 @@ The following changes may create regressions for some external modules, but were
 ***** ChangeLog for 21.0.4 compared to 21.0.3 *****
 FIX: #35147 SQL Error on Beluga Export when ExpenseReport is enabled (#35149)
 FIX: error when using a code too large in dictionary
-FIX: Security when using feature Advanced Target of emailing (hidden in v21, default in v22+). Possible
+FIX: Security when using Advanced Target page of emailing (feature hidden in v21, default in v22+). Possible
      SQL injection by users with permission to make and send mass emailing.
 
 
