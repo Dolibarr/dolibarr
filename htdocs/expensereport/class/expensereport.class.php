@@ -1346,7 +1346,7 @@ class ExpenseReport extends CommonObject
 		$this->date_valid = $now; // Required for the getNextNum later.
 
 		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+		if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 			$num = $this->getNextNumRef();
 		} else {
 			$num = $this->ref;
@@ -1369,7 +1369,7 @@ class ExpenseReport extends CommonObject
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			if (!$error && !$notrigger) {
+			if (!$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('EXPENSE_REPORT_VALIDATE', $fuser);
 				if ($result < 0) {
