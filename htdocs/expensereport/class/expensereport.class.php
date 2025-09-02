@@ -99,14 +99,14 @@ class ExpenseReport extends CommonObject
 	public $user_approve_id;
 
 	/**
-	 * 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=paid, 99=denied
+	 * 0=draft, 2=validated (awaiting approval), 4=canceled, 5=approved, 6=paid, 99=denied
 	 *
-	 * @var |null	Status
+	 * @var int|null	Status
 	 */
 	public $status;
 
 	/**
-	 * 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=paid, 99=denied
+	 * 0=draft, 2=validated (awaiting approval), 4=canceled, 5=approved, 6=paid, 99=denied
 	 *
 	 * @var int|null	Status
 	 * @deprecated Use $status
