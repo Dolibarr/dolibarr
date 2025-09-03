@@ -141,7 +141,7 @@ class Evaluation extends CommonObject
 	 */
 	public $import_key;
 	/**
-	 * @var int
+	 * @var int|null
 	 */
 	public $status;
 	/**
