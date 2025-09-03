@@ -5577,7 +5577,7 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 6
+			count: 4
 			path: ../../../htdocs/contrat/class/contrat.class.php
 
 		-
@@ -11907,7 +11907,7 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 7
+			count: 5
 			path: ../../../htdocs/expedition/class/expedition.class.php
 
 		-
@@ -12323,18 +12323,6 @@ parameters:
 			identifier: booleanNot.alwaysTrue
 			count: 1
 			path: ../../../htdocs/expensereport/payment/payment.php
-
-		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/expensereport/tpl/expensereport_linktofile.tpl.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expensereport/tpl/expensereport_linktofile.tpl.php
 
 		-
 			message: '#^Property Export\:\:\$fk_user \(int\) in isset\(\) is not nullable\.$#'
