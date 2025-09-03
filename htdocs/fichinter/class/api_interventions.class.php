@@ -176,10 +176,10 @@ class Interventions extends DolibarrApi
 			}
 		}
 
-		$parameters = array('sqlfilters' => &$sqlfilters);
+		$parameters = array('sqlfilters' => $sqlfilters);
 		$object = new stdClass();
 		$action = 'list';
-		$reshook = $hookmanager->executeHooks('printindexapiWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		$reshook = $hookmanager->executeHooks('printindexapiWhere', &$parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 
 		// Add sql filters
