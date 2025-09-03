@@ -146,7 +146,6 @@ class Interventions extends DolibarrApi
 		}
 
 		global $hookmanager;
-		$hookmanager->initHooks(array('interventionsindexapi'));
 
 		$obj_ret = array();
 
@@ -179,7 +178,7 @@ class Interventions extends DolibarrApi
 		if ($sqlfilters) {
 			$parameters = array('sqlfilters' => $sqlfilters);
 			$object = new stdClass();
-			$action = 'list';
+			$action = 'intervention-index-list';
 			$reshook = $hookmanager->executeHooks('printindexapiWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if ($hookmanager->resPrint) {
 				$sql .= $hookmanager->resPrint;
