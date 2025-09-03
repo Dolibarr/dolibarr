@@ -1953,7 +1953,26 @@ function dol_string_unaccent($str)
 			'%C3%BB' => 'u',
 			'%C3%BC' => 'u',
 			'%C3%BD' => 'y',
-			'%C3%BF' => 'y'
+			'%C3%BF' => 'y',
+			'%CC%80' => '',
+			'%CC%81' => '',
+			'%CC%82' => '',
+			'%CC%83' => '',
+			'%CC%84' => '',
+			'%CC%85' => '',
+			'%CC%86' => '',
+			'%CC%87' => '',
+			'%CC%88' => '',
+			'%CC%89' => '',
+			'%CC%8A' => '',
+			'%CC%8B' => '',
+			'%CC%8C' => '',
+			'%CC%8D' => '',
+			'%CC%8E' => '',
+			'%CC%8F' => '',
+			'%CC%90' => '',
+			'%CC%91' => '',
+			'%CC%A7' => '',
 		);
 		$string = strtr($string, $replacements);
 		return rawurldecode($string);
@@ -13096,6 +13115,22 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 						$newres .= (($i2 > 0 || $i3 > 0) ? ' OR ' : '');
 					}
 
+					$isSellist = false;
+					$table = $label = $key = null;
+
+					if (strpos($field, 'ef.') === 0) {
+						$extrafieldName = substr($field, 3);
+						$extrafields = new ExtraFields($db);
+						$extrafields->fetch_name_optionals_label('product');
+
+						if (isset($extrafields->attributes['product']['type'][$extrafieldName]) && $extrafields->attributes['product']['type'][$extrafieldName] === 'sellist') {
+							$isSellist = true;
+							$paramArray = $extrafields->attributes['product']['param'][$extrafieldName]['options'] ?? [];
+							$param = array_key_first($paramArray);
+							list($table, $label, $key) = explode(':', $param);
+						}
+					}
+
 					if (preg_match('/\.(id|rowid)$/', $field)) {	// Special case for rowid that is sometimes a ref so used as a search field
 						$newres .= $db->sanitize($field) . " = " . (is_numeric($tmpcrit) ? ((float) $tmpcrit) : '0');
 					} else {
@@ -13104,33 +13139,37 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 						$tmpafter = '%';
 						$tmps = '';
 
-						if (preg_match('/^!/', $tmpcrit)) {
-							$tmps .= $db->sanitize($field) . " NOT LIKE "; // ! as exclude character
-							$tmpcrit2 = preg_replace('/^!/', '', $tmpcrit2);
+						if ($isSellist) {
+							$newres .= $field." IN (SELECT t.".$key." FROM ".$db->prefix().$table." AS t WHERE t.".$label." LIKE '%".$db->escape($tmpcrit2)."%')";
 						} else {
-							$tmps .= $db->sanitize($field) . " LIKE ";
-						}
-						$tmps .= "'";
+							if (preg_match('/^!/', $tmpcrit)) {
+								$tmps .= $db->sanitize($field) . " NOT LIKE "; // ! as exclude character
+								$tmpcrit2 = preg_replace('/^!/', '', $tmpcrit2);
+							} else {
+								$tmps .= $db->sanitize($field) . " LIKE ";
+							}
+							$tmps .= "'";
 
-						if (preg_match('/^[\^\$]/', $tmpcrit)) {
-							$tmpbefore = '';
-							$tmpcrit2 = preg_replace('/^[\^\$]/', '', $tmpcrit2);
-						}
-						if (preg_match('/[\^\$]$/', $tmpcrit)) {
-							$tmpafter = '';
-							$tmpcrit2 = preg_replace('/[\^\$]$/', '', $tmpcrit2);
-						}
+							if (preg_match('/^[\^\$]/', $tmpcrit)) {
+								$tmpbefore = '';
+								$tmpcrit2 = preg_replace('/^[\^\$]/', '', $tmpcrit2);
+							}
+							if (preg_match('/[\^\$]$/', $tmpcrit)) {
+								$tmpafter = '';
+								$tmpcrit2 = preg_replace('/[\^\$]$/', '', $tmpcrit2);
+							}
 
-						if ($tmpcrit2 == '' || preg_match('/^!/', $tmpcrit)) {
-							$tmps = "(" . $tmps;
-						}
-						$newres .= $tmps;
-						$newres .= $tmpbefore;
-						$newres .= $db->escape($tmpcrit2);
-						$newres .= $tmpafter;
-						$newres .= "'";
-						if ($tmpcrit2 == '' || preg_match('/^!/', $tmpcrit)) {
-							$newres .= " OR " . $field . " IS NULL)";
+							if ($tmpcrit2 == '' || preg_match('/^!/', $tmpcrit)) {
+								$tmps = "(" . $tmps;
+							}
+							$newres .= $tmps;
+							$newres .= $tmpbefore;
+							$newres .= $db->escape($tmpcrit2);
+							$newres .= $tmpafter;
+							$newres .= "'";
+							if ($tmpcrit2 == '' || preg_match('/^!/', $tmpcrit)) {
+								$newres .= " OR " . $field . " IS NULL)";
+							}
 						}
 					}
 
