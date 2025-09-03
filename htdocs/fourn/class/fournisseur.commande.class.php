@@ -217,11 +217,6 @@ class CommandeFournisseur extends CommonOrder
 	public $source;
 
 	/**
-	 * @var int ID
-	 */
-	public $fk_project;
-
-	/**
 	 * @var int Payment conditions ID
 	 */
 	public $cond_reglement_id;

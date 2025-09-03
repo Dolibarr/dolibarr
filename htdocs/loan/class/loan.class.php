@@ -143,11 +143,6 @@ class Loan extends CommonObject
 	public $fk_user_modif;
 
 	/**
-	 * @var int ID
-	 */
-	public $fk_project;
-
-	/**
 	 * @var float totalpaid
 	 */
 	public $totalpaid;
