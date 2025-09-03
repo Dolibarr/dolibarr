@@ -368,6 +368,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	global $stripearrayofkeysbyenv;
 	$error = 0;
 	$object = $event->data->object;
+	$objectType = $object->metadata->dol_type;
 	$TRANSACTIONID = $object->id;	// Example 'pi_123456789...'
 	$ipaddress = $object->metadata->ipaddress;
 	$now = dol_now();
@@ -375,6 +376,8 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	$paymentmethodstripeid = $object->payment_method;
 	$customer_id = $object->customer;
 	$invoice_id = "";
+	$supplierinvoice_id = "";
+	$salary_id = "";
 	$paymentTypeCode = "";				// payment type according to Stripe
 	$paymentTypeCodeInDolibarr = "";	// payment type according to Dolibarr
 	$payment_amount = 0;
@@ -383,7 +386,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	dol_syslog("Try to find a payment in database for the payment_intent id = ".$TRANSACTIONID);
 	dol_syslog("Try to find a payment in database for the payment_intent id = ".$TRANSACTIONID, LOG_DEBUG, 0, '_payment');
 
-	$sql = "SELECT pi.rowid, pi.fk_facture, pi.fk_prelevement_bons, pi.amount, pi.type, pi.traite";
+	$sql = "SELECT pi.rowid, pi.fk_facture, fk_facture_fourn, fk_salary, pi.fk_prelevement_bons, pi.amount, pi.type, pi.traite";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pi";
 	$sql .= " WHERE pi.ext_payment_id = '".$db->escape($TRANSACTIONID)."'";
 	$sql .= " AND pi.ext_payment_site = '".$db->escape($service)."'";
@@ -400,6 +403,8 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 					// This is a direct-debit with an order (llx_bon_prelevement) ALREADY generated, so
 					// it means we received here the confirmation that payment request is finished.
 					$invoice_id = $obj->fk_facture;
+					$supplierinvoice_id = $obj->fk_facture_fourn;
+					$salary_id = $obj->fk_salary;
 					$payment_amountInDolibarr = $obj->amount;
 					$paymentTypeCodeInDolibarr = $obj->type;
 
@@ -476,6 +481,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 			// For this case, payment on invoice (not yet recorded) must be done and direct debit order must be closed.
 
 			$paiement = new Paiement($db);
+
 			$paiement->datepaye = $now;
 			$paiement->date = $now;
 			if ($currencyCodeType == $conf->currency) {
@@ -869,7 +875,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	dol_syslog("object = ".var_export($event->data, true));
 	dol_syslog("object = ".var_export($event->data, true), LOG_DEBUG, 0, '_payment');
 } elseif ($event->type == 'charge.dispute.funds_withdrawn') {
-	// When a dispute/withdraw to cancel a SEPA payment is done
+	// When a dispute/withdraw to cancel a payment (card or SEPA) is done
 	dol_syslog("object = ".var_export($event->data, true));
 	dol_syslog("object = ".var_export($event->data, true), LOG_DEBUG, 0, '_payment');
 

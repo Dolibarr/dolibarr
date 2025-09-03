@@ -159,7 +159,7 @@ if (getDolGlobalString($paramcreditorlong)) {
 
 $ispaymentok = false;
 // If payment is ok
-$PAYMENTSTATUS = $TRANSACTIONID = $TAXAMT = $NOTE = '';
+$PAYMENTSTATUS = $TRANSACTIONID = $LONGTRANSACTIONID = $TAXAMT = $NOTE = '';
 // If payment is ko
 $ErrorCode = $ErrorShortMsg = $ErrorLongMsg = $ErrorSeverityCode = '';
 
@@ -436,6 +436,20 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 					$error++;
 					$errmsg = 'Stripe payment not succeeded. Status: ' . $paymentIntent->status;
 					dol_syslog($errmsg, LOG_ERR, 0, '_payment');
+				}
+
+				// Get $customerid and $pkey to forge $LONGTRANSACTIONID
+				$customerid = '';
+				$pkey = '';
+				if ($paymentIntent instanceof \Stripe\PaymentIntent) {
+					$customerid = $paymentIntent->customer;
+				}
+				if (isset($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])) {
+					$pkey = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
+				}
+
+				if ($customerid && $pkey) {
+					$LONGTRANSACTIONID = $TRANSACTIONID.':'.$customerid.'@'.$pkey;
 				}
 			} catch (\Stripe\Exception\ApiErrorException $e) {
 				$error++;
@@ -1050,19 +1064,9 @@ if ($ispaymentok) {
 				$paiement->num_payment = '';
 				$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
 
-				// Get $customerid and $pkey
-				$customerid = '';
-				if ($paymentIntent instanceof \Stripe\PaymentIntent) {
-					$customerid = $paymentIntent->customer;
-				}
-				$pkey = '';
-				if (isset($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])) {
-					$pkey = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
-				}
-
 				// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
-				if ($customerid && $pkey) {
-					$paiement->ext_payment_id = $TRANSACTIONID.':'.$customerid.'@'.$pkey;
+				if ($LONGTRANSACTIONID) {
+					$paiement->ext_payment_id = $LONGTRANSACTIONID;
 				} else {
 					$paiement->ext_payment_id = $TRANSACTIONID;
 				}
@@ -1210,19 +1214,9 @@ if ($ispaymentok) {
 						$paiement->num_payment = '';
 						$paiement->note_public = 'Online payment ' . dol_print_date($now, 'standard') . ' from ' . $ipaddress;
 
-						// Get $customerid and $pkey
-						$customerid = '';
-						if ($paymentIntent instanceof \Stripe\PaymentIntent) {
-							$customerid = $paymentIntent->customer;
-						}
-						$pkey = '';
-						if (isset($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])) {
-							$pkey = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
-						}
-
 						// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
-						if ($customerid && $pkey) {
-							$paiement->ext_payment_id = $TRANSACTIONID.':'.$customerid.'@'.$pkey;
+						if ($LONGTRANSACTIONID) {
+							$paiement->ext_payment_id = $LONGTRANSACTIONID;
 						} else {
 							$paiement->ext_payment_id = $TRANSACTIONID;
 						}
@@ -1360,19 +1354,9 @@ if ($ispaymentok) {
 				$paiement->num_payment = '';
 				$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
 
-				// Get $customerid and $pkey
-				$customerid = '';
-				if ($paymentIntent instanceof \Stripe\PaymentIntent) {
-					$customerid = $paymentIntent->customer;
-				}
-				$pkey = '';
-				if (isset($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])) {
-					$pkey = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
-				}
-
 				// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
-				if ($customerid && $pkey) {
-					$paiement->ext_payment_id = $TRANSACTIONID.':'.$customerid.'@'.$pkey;
+				if ($LONGTRANSACTIONID) {
+					$paiement->ext_payment_id = $LONGTRANSACTIONID;
 				} else {
 					$paiement->ext_payment_id = $TRANSACTIONID;
 				}
@@ -1511,19 +1495,9 @@ if ($ispaymentok) {
 					$paiement->num_payment = '';
 					$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress.' for event registration';
 
-					// Get $customerid and $pkey
-					$customerid = '';
-					if ($paymentIntent instanceof \Stripe\PaymentIntent) {
-						$customerid = $paymentIntent->customer;
-					}
-					$pkey = '';
-					if (isset($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])) {
-						$pkey = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
-					}
-
 					// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
-					if ($customerid && $pkey) {
-						$paiement->ext_payment_id = $TRANSACTIONID.':'.$customerid.'@'.$pkey;
+					if ($LONGTRANSACTIONID) {
+						$paiement->ext_payment_id = $LONGTRANSACTIONID;
 					} else {
 						$paiement->ext_payment_id = $TRANSACTIONID;
 					}
@@ -1760,19 +1734,9 @@ if ($ispaymentok) {
 					$paiement->num_payment = '';
 					$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
 
-					// Get $customerid and $pkey
-					$customerid = '';
-					if ($paymentIntent instanceof \Stripe\PaymentIntent) {
-						$customerid = $paymentIntent->customer;
-					}
-					$pkey = '';
-					if (isset($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])) {
-						$pkey = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
-					}
-
 					// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
-					if ($customerid && $pkey) {
-						$paiement->ext_payment_id = $TRANSACTIONID.':'.$customerid.'@'.$pkey;
+					if ($LONGTRANSACTIONID) {
+						$paiement->ext_payment_id = $LONGTRANSACTIONID;
 					} else {
 						$paiement->ext_payment_id = $TRANSACTIONID;
 					}
@@ -1992,19 +1956,9 @@ if ($ispaymentok) {
 						$paiement->num_payment = '';
 						$paiement->note_public = 'Online payment ' . dol_print_date($now, 'standard') . ' from ' . $ipaddress;
 
-						// Get $customerid and $pkey
-						$customerid = '';
-						if ($paymentIntent instanceof \Stripe\PaymentIntent) {
-							$customerid = $paymentIntent->customer;
-						}
-						$pkey = '';
-						if (isset($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])) {
-							$pkey = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
-						}
-
 						// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
-						if ($customerid && $pkey) {
-							$paiement->ext_payment_id = $TRANSACTIONID.':'.$customerid.'@'.$pkey;
+						if ($LONGTRANSACTIONID) {
+							$paiement->ext_payment_id = $LONGTRANSACTIONID;
 						} else {
 							$paiement->ext_payment_id = $TRANSACTIONID;
 						}

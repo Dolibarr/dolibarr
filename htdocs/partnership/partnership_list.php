@@ -174,7 +174,7 @@ $permissiontodelete = $user->hasRight('partnership', 'delete');
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$result = restrictedArea($user, 'partnership', $object->id);
+//restrictedArea($user, 'partnership', $object->id);
 if (empty($conf->partnership->enabled)) {
 	accessforbidden();
 }

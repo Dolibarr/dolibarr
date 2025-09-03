@@ -32,8 +32,10 @@ global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
 '@phan-var-force Translate $langs';
-
-global $linkedObjectBlock;
+/**
+ * @var CommonObject $object
+ */
+$linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $langs->load("bills");
 
@@ -76,12 +78,12 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	}
 	print '</td>';
 	print '<td class="linkedcol-name tdoverflowmax150">'.$objectlink->getNomUrl(1).'</td>';
-	print '<td class="linkedcol-ref tdoverflowmax150" title="'.dol_escape_htmltag($objectlink->ref_client).'">'.dol_escape_htmltag($objectlink->ref_client).'</td>';
+	print '<td class="linkedcol-ref tdoverflowmax150" title="'.dol_escape_htmltag($objectlink->ref_customer).'">'.dol_escape_htmltag($objectlink->ref_customer).'</td>';
 	print '<td class="linkedcol-date center">'.dol_print_date($objectlink->date, 'day').'</td>';
 	print '<td class="linkedcol-amount right nowraponall">';
 	if (!empty($objectlink) && $objectlink->element == 'facture' && $user->hasRight('facture', 'lire')) {
 		'@phan-var-force Facture $objectlink';
-		if ($objectlink->statut != 3) {
+		if ($objectlink->status != 3) {
 			// If not abandoned
 			$total += $objectlink->total_ht;
 			echo price($objectlink->total_ht);

@@ -848,7 +848,7 @@ class Product extends CommonObject
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -2976,7 +2976,7 @@ class Product extends CommonObject
 		} else {
 			$sql .= " p.pmp,";
 		}
-		$sql .= " p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
+		$sql .= " p.datec, GREATEST(p.tms, pef.tms) AS tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
 		$sql .= " p.fk_price_expression, p.price_autogen, p.stockable_product, p.model_pdf,";
 		$sql .= " p.price_label,";
 		if ($separatedStock) {
@@ -2985,6 +2985,7 @@ class Product extends CommonObject
 			$sql .= " p.stock";
 		}
 		$sql .= " FROM ".$this->db->prefix()."product as p";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."product_extrafields as pef ON pef.fk_object=p.rowid";
 		if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED') || $separatedEntityPMP) {
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 		}
@@ -7154,9 +7155,10 @@ class Product extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = "SELECT p.rowid, p.ref, p.datec as date_creation, p.tms as date_modification,";
+		$sql = "SELECT p.rowid, p.ref, p.datec as date_creation, GREATEST(p.tms, pef.tms) as date_modification,";
 		$sql .= " p.fk_user_author, p.fk_user_modif";
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as p";
+		$sql .= " LEFT JOIN ".$this->db->prefix().$this->table_element."_extrafields as pef ON pef.fk_object=p.rowid";
 		$sql .= " WHERE p.rowid = ".((int) $id);
 
 		$result = $this->db->query($sql);
@@ -7170,7 +7172,7 @@ class Product extends CommonObject
 				$this->user_creation_id = $obj->fk_user_author;
 				$this->user_modification_id = $obj->fk_user_modif;
 
-				$this->date_creation     = $this->db->jdate($obj->date_creation);
+				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
 			}
 

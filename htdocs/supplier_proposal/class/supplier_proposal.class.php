@@ -1,19 +1,19 @@
 <?php
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville		<rodolphe@quiedeville.org>
- * Copyright (C) 2004      Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2011 Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005      Marc Barilley			<marc@ocebo.com>
- * Copyright (C) 2005-2013 Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2006      Andre Cianfarani			<acianfa@free.fr>
- * Copyright (C) 2008      Raphael Bertrand			<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2020 Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2010-2018 Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2012-2014 Christophe Battarel  	<christophe.battarel@altairis.fr>
- * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2014      Marcos García            <marcosgdf@gmail.com>
- * Copyright (C) 2016      Ferran Marcet            <fmarcet@2byte.es>
- * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2002-2004  Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004       Eric Seigne				<eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2011  Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005       Marc Barilley			<marc@ocebo.com>
+ * Copyright (C) 2005-2013  Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2006       Andre Cianfarani		<acianfa@free.fr>
+ * Copyright (C) 2008       Raphael Bertrand		<raphael.bertrand@resultic.fr>
+ * Copyright (C) 2010-2020  Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2018  Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2012-2014  Christophe Battarel  	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2014       Marcos García            <marcosgdf@gmail.com>
+ * Copyright (C) 2016       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
  * Copyright (C) 2022       Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -278,8 +278,6 @@ class SupplierProposal extends CommonObject
 	 */
 	public function __construct($db, $socid = 0, $supplier_proposalid = 0)
 	{
-		global $conf, $langs;
-
 		$this->db = $db;
 
 		$this->ismultientitymanaged = 1;
@@ -494,7 +492,7 @@ class SupplierProposal extends CommonObject
 			return -1;
 		}
 
-		if ($this->statut == self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			$this->db->begin();
 
 			if ($fk_product > 0) {
@@ -897,7 +895,7 @@ class SupplierProposal extends CommonObject
 	{
 		global $user;
 
-		if ($this->statut == 0) {
+		if ($this->status == 0) {
 			$line = new SupplierProposalLine($this->db);
 
 			// For triggers
@@ -1185,6 +1183,7 @@ class SupplierProposal extends CommonObject
 		}
 
 		$this->id = 0;
+		$this->status = 0;
 		$this->statut = 0;
 
 		if (!getDolGlobalString('SUPPLIER_PROPOSAL_ADDON') || !is_readable(DOL_DOCUMENT_ROOT."/core/modules/supplier_proposal/" . getDolGlobalString('SUPPLIER_PROPOSAL_ADDON').".php")) {
@@ -1245,17 +1244,15 @@ class SupplierProposal extends CommonObject
 	 */
 	public function fetch($rowid, $ref = '')
 	{
-		global $conf;
-
 		$sql = "SELECT p.rowid, p.entity, p.ref, p.fk_soc as socid";
 		$sql .= ", p.total_ttc, p.total_tva, p.localtax1, p.localtax2, p.total_ht";
-		$sql .= ", p.datec";
+		$sql .= ", p.datec, GREATEST(p.tms, pef.tms) as date_modification";
 		$sql .= ", p.date_valid as datev";
 		$sql .= ", p.date_livraison as delivery_date";
 		$sql .= ", p.model_pdf, p.extraparams";
 		$sql .= ", p.note_private, p.note_public";
-		$sql .= ", p.fk_projet as fk_project, p.fk_statut";
-		$sql .= ", p.fk_user_author, p.fk_user_valid, p.fk_user_cloture";
+		$sql .= ", p.fk_projet as fk_project, p.fk_statut as status";
+		$sql .= ", p.fk_user_author, p.fk_user_modif, p.fk_user_valid, p.fk_user_cloture";
 		$sql .= ", p.fk_cond_reglement";
 		$sql .= ", p.fk_mode_reglement";
 		$sql .= ', p.fk_account';
@@ -1266,6 +1263,7 @@ class SupplierProposal extends CommonObject
 		$sql .= ", cr.code as cond_reglement_code, cr.libelle as cond_reglement, cr.libelle_facture as cond_reglement_libelle_doc";
 		$sql .= ", cp.code as mode_reglement_code, cp.libelle as mode_reglement";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_propalst as c, ".MAIN_DB_PREFIX."supplier_proposal as p";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."supplier_proposal_extrafields as pef ON pef.fk_object=p.rowid";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid';
 		$sql .= " WHERE p.fk_statut = c.id";
@@ -1297,15 +1295,16 @@ class SupplierProposal extends CommonObject
 				$this->note                 = $obj->note_private; // TODO deprecated
 				$this->note_private         = $obj->note_private;
 				$this->note_public          = $obj->note_public;
-				$this->statut               = (int) $obj->fk_statut;
-				$this->status               = (int) $obj->fk_statut;
+				$this->statut               = (int) $obj->status;
+				$this->status               = (int) $obj->status;
 				$this->datec                = $this->db->jdate($obj->datec); // TODO deprecated
 				$this->datev                = $this->db->jdate($obj->datev); // TODO deprecated
 				$this->date_creation = $this->db->jdate($obj->datec);	// Creation date
-				$this->date                 = $this->date_creation;
+				$this->date_modification = $this->db->jdate($obj->date_modification);	// Modification date
+				$this->date = $this->date_creation;
 				$this->date_validation = $this->db->jdate($obj->datev); // Validation date
-				$this->delivery_date        = $this->db->jdate($obj->delivery_date);
-				$this->shipping_method_id   = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
+				$this->delivery_date = $this->db->jdate($obj->delivery_date);
+				$this->shipping_method_id = ($obj->fk_shipping_method > 0) ? $obj->fk_shipping_method : null;
 
 				$this->last_main_doc    = $obj->last_main_doc;
 				$this->mode_reglement_id    = $obj->fk_mode_reglement;
@@ -1320,16 +1319,17 @@ class SupplierProposal extends CommonObject
 				$this->extraparams = (array) (!empty($obj->extraparams) ? json_decode($obj->extraparams, true) : array());
 
 				$this->user_author_id = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->user_validation_id = $obj->fk_user_valid;
 				$this->user_closing_id = $obj->fk_user_cloture;
 
 				// Multicurrency
-				$this->fk_multicurrency 		= $obj->fk_multicurrency;
+				$this->fk_multicurrency = $obj->fk_multicurrency;
 				$this->multicurrency_code = $obj->multicurrency_code;
-				$this->multicurrency_tx 		= $obj->multicurrency_tx;
+				$this->multicurrency_tx = $obj->multicurrency_tx;
 				$this->multicurrency_total_ht = $obj->multicurrency_total_ht;
-				$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
-				$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
+				$this->multicurrency_total_tva = $obj->multicurrency_total_tva;
+				$this->multicurrency_total_ttc = $obj->multicurrency_total_ttc;
 
 				// Retrieve all extrafield
 				// fetch optionals attributes and labels
@@ -1678,20 +1678,19 @@ class SupplierProposal extends CommonObject
 	 *	Reopen the commercial proposal
 	 *
 	 *	@param      User	$user		Object user that close
-	 *	@param      int		$statut		Statut
+	 *	@param      int		$status		Status
 	 *	@param      string	$note		Comment
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         		Return integer <0 if KO, >0 if OK
 	 */
-	public function reopen($user, $statut, $note = '', $notrigger = 0)
+	public function reopen($user, $status, $note = '', $notrigger = 0)
 	{
 		global $langs, $conf;
 
-		$this->statut = $statut;
 		$error = 0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal";
-		$sql .= " SET fk_statut = ".((int) $this->statut).",";
+		$sql .= " SET fk_statut = ".((int) $status).",";
 		if (!empty($note)) {
 			$sql .= " note_private = '".$this->db->escape($note)."',";
 		}
@@ -1728,6 +1727,9 @@ class SupplierProposal extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		} else {
+			$this->statut = $status;
+			$this->status = $status;
+
 			$this->db->commit();
 			return 1;
 		}
@@ -1748,24 +1750,27 @@ class SupplierProposal extends CommonObject
 		$hidedetails = 0;
 		$hidedesc = 0;
 		$hideref = 0;
-		$this->statut = $status;
+
 		$error = 0;
 		$now = dol_now();
 
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal";
-		$sql .= " SET fk_statut = ".((int) $status).", note_private = '".$this->db->escape($note)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
+		$sql .= " SET fk_statut = ".((int) $status).", note_private = '".$this->db->escape($note)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$modelpdf = $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED : (empty($this->model_pdf) ? '' : $this->model_pdf);
+			$this->statut = $status;
+			$this->status = $status;
+
+			$modelpdf = getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED', (empty($this->model_pdf) ? '' : $this->model_pdf));
 			$triggerName = 'PROPOSAL_SUPPLIER_CLOSE_REFUSED';
 
 			if ($status == 2) {
 				$triggerName = 'PROPOSAL_SUPPLIER_CLOSE_SIGNED';
-				$modelpdf = $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL : (empty($this->model_pdf) ? '' : $this->model_pdf);
+				$modelpdf = getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL', (empty($this->model_pdf) ? '' : $this->model_pdf));
 
 				if (getDolGlobalString('SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL')) {     // TODO This option was not tested correctly. Error if product ref does not exists
 					$result = $this->updateOrCreatePriceFournisseur($user);
@@ -1783,7 +1788,7 @@ class SupplierProposal extends CommonObject
 					$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $this->thirdparty->default_lang);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				//$ret=$object->fetch($id);    // Reload to get new records
+
 				$this->generateDocument($modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 
@@ -1949,7 +1954,7 @@ class SupplierProposal extends CommonObject
 
 		$error = 0;
 
-		if ($this->statut == self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			dol_syslog(get_class($this)."::setDraft already draft status", LOG_WARNING);
 			return 0;
 		}
@@ -2181,10 +2186,11 @@ class SupplierProposal extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = "SELECT c.rowid, ";
+		$sql = "SELECT c.rowid, GREATEST(c.tms, cef.tms) as date_modification,";
 		$sql .= " c.datec as date_creation, c.date_valid as date_validation, c.date_cloture as date_closure,";
-		$sql .= " c.fk_user_author, c.fk_user_valid, c.fk_user_cloture";
+		$sql .= " c.fk_user_author, c.fk_user_modif, c.fk_user_valid, c.fk_user_cloture";
 		$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as c";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."supplier_proposal_extrafields as cef ON cef.fk_object=c.rowid";
 		$sql .= " WHERE c.rowid = ".((int) $id);
 
 		$result = $this->db->query($sql);
@@ -2193,13 +2199,15 @@ class SupplierProposal extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 
-				$this->id                = $obj->rowid;
+				$this->id = $obj->rowid;
 
-				$this->date_creation     = $this->db->jdate($obj->date_creation);
-				$this->date_validation   = $this->db->jdate($obj->date_validation);
-				$this->date_cloture      = $this->db->jdate($obj->date_closure);
+				$this->date_creation = $this->db->jdate($obj->date_creation);
+				$this->date_modification = empty($obj->date_modification) ? '' : $this->db->jdate($obj->date_modification);
+				$this->date_validation = $this->db->jdate($obj->date_validation);
+				$this->date_cloture = $this->db->jdate($obj->date_closure);
 
 				$this->user_creation_id = $obj->fk_user_author;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->user_validation_id = $obj->fk_user_valid;
 				$this->user_closing_id = $obj->fk_user_cloture;
 			}
@@ -2218,7 +2226,7 @@ class SupplierProposal extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut((isset($this->statut) ? $this->statut : $this->status), $mode);
+		return $this->LibStatut((isset($this->status) ? $this->status : $this->statut), $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2759,19 +2767,23 @@ class SupplierProposal extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$langs->load("supplier_proposal");
 		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'aurore';
+			$modele = '';	// On supplier documents, template can be empty( no doc generated in this case)
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF')) {
 				$modele = getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF');
 			}
+		}
+
+		if (empty($modele)) {
+			return 1;
 		}
 
 		$modelpath = "core/modules/supplier_proposal/doc/";

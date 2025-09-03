@@ -162,7 +162,7 @@ class Societe extends CommonObject
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -1920,7 +1920,7 @@ class Societe extends CommonObject
 		$sql = 'SELECT s.rowid, s.nom as name, s.name_alias, s.entity, s.ref_ext, s.address, s.datec as date_creation, s.prefix_comm';
 		$sql .= ', s.status, s.fk_warehouse';
 		$sql .= ', s.price_level';
-		$sql .= ', s.tms as date_modification, s.fk_user_creat, s.fk_user_modif';
+		$sql .= ', GREATEST(s.tms, sef.tms) as date_modification, s.fk_user_creat, s.fk_user_modif';
 		$sql .= ', s.phone, s.phone_mobile, s.fax, s.email';
 		$sql .= ', s.socialnetworks';
 		$sql .= ', s.url, s.zip, s.town, s.note_private, s.note_public, s.client, s.fournisseur';
@@ -1965,6 +1965,7 @@ class Societe extends CommonObject
 			$sql .= ', sr.remise_client, sr2.remise_supplier';
 		}
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as sef ON sef.fk_object=s.rowid';
 		if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = ".((int) $conf->entity);
 		}
@@ -2341,7 +2342,7 @@ class Societe extends CommonObject
 		}
 
 		// Then search ref, ref_ext or alias with a OR (+ restriction on is_client and is_supplier)
-		dol_syslog("Thirdparty not found with profids search so we try ref, ref_ext or ref_alias search", LOG_DEBUG);
+		dol_syslog("Thirdparty not found with email search so we try ref, ref_ext or ref_alias search", LOG_DEBUG);
 		$sqlref = "";
 		if ($ref) {
 			$sqlref .= " s.nom = '".$this->db->escape($ref)."'";
@@ -4395,9 +4396,10 @@ class Societe extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = "SELECT s.rowid, s.nom as name, s.datec, tms as datem,";
+		$sql = "SELECT s.rowid, s.nom as name, s.datec, GREATEST(s.tms, sef.tms) as datem,";
 		$sql .= " fk_user_creat, fk_user_modif";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as sef ON sef.fk_object=s.rowid";
 		$sql .= " WHERE s.rowid = ".((int) $id);
 
 		$result = $this->db->query($sql);

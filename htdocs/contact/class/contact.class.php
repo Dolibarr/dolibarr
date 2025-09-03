@@ -76,7 +76,7 @@ class Contact extends CommonObject
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -1040,12 +1040,13 @@ class Contact extends CommonObject
 		$sql .= " c.priv, c.note_private, c.note_public, c.default_lang, c.canvas,";
 		$sql .= " c.fk_prospectlevel, c.fk_stcommcontact, st.libelle as stcomm, st.picto as stcomm_picto,";
 		$sql .= " c.import_key,";
-		$sql .= " c.datec as date_creation, c.tms as date_modification, c.fk_user_creat, c.fk_user_modif,";
+		$sql .= " c.datec as date_creation, GREATEST(c.tms, cef.tms) as date_modification, c.fk_user_creat, c.fk_user_modif,";
 		$sql .= " co.label as country, co.code as country_code,";
 		$sql .= " d.nom as state, d.code_departement as state_code,";
 		$sql .= " u.rowid as user_id, u.login as user_login,";
 		$sql .= " s.nom as socname, s.address as socaddress, s.zip as soccp, s.town as soccity, s.default_lang as socdefault_lang";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as cef ON cef.fk_object=c.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON c.fk_pays = co.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON c.fk_departement = d.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
@@ -1435,8 +1436,9 @@ class Contact extends CommonObject
 	public function info($id)
 	{
 		$sql = "SELECT c.rowid, c.datec as datec, c.fk_user_creat,";
-		$sql .= " c.tms as tms, c.fk_user_modif";
+		$sql .= " GREATEST(c.tms, cef.tms) as tms, c.fk_user_modif";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as cef ON cef.fk_object=c.rowid";
 		$sql .= " WHERE c.rowid = ".((int) $id);
 
 		$resql = $this->db->query($sql);

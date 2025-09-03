@@ -80,7 +80,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 // Security check
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$result = restrictedArea($user, 'website', $id);
+//restrictedArea($user, 'website', $id);
 $permissiontoaccess = (isModEnabled('website') && $user->hasRight('website', 'read')) || isModEnabled('webportal');
 if (!$permissiontoaccess) {
 	accessforbidden('NotAllowed');
@@ -416,12 +416,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Modify
 			if ($permissiontoadd) {
-				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : '').'&action=edit&token='.newToken(), '', $permissiontoadd);
+				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->fk_soc) ? '&socid='.$object->fk_soc : '').'&action=edit&token='.newToken(), '', $permissiontoadd);
 			}
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : '').'&action=clone&token='.newToken(), '', $permissiontoadd);
+				print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->fk_soc) ? '&socid='.$object->fk_soc : '').'&action=clone&token='.newToken(), '', $permissiontoadd);
 			}
 
 			// Delete

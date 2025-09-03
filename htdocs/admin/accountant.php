@@ -50,6 +50,8 @@ if (!$user->admin) {
 
 $error = 0;
 
+$object = new stdClass();
+
 
 /*
  * Actions

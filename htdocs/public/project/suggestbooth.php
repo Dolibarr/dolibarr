@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+/* Copyright (C) 2021		Dorian Vabre				<dorian.vabre@gmail.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
@@ -66,6 +66,7 @@ global $dolibarr_main_url_root;
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
+ * @var User $user
  */
 
 // Init vars
@@ -117,7 +118,7 @@ if ($arrayofconfboothtype == -1) {
 	$arrayofconfboothtype = [];
 }
 // Security check
-if (empty($conf->eventorganization->enabled)) {
+if (!isModEnabled('eventorganization')) {
 	httponly_accessforbidden('Module Event organization not enabled');
 }
 
@@ -249,6 +250,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 	}
 
 	$thirdparty = null;
+	$contact = null;
 	if (!$error) {
 		// Getting the thirdparty or creating it
 		$thirdparty = new Societe($db);
@@ -291,6 +293,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			}
 			$modCodeClient = new $module($db);
 			'@phan-var-force ModeleThirdPartyCode $modCodeClient';
+			/** @var ModeleThirdPartyCode $modCodeClient */
 
 			if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
 				$tmpcode = $modCodeClient->getNextValue($thirdparty, 0);
@@ -363,6 +366,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 					}
 					$modCodeFournisseur = new $module($db);
 					'@phan-var-force ModeleThirdPartyCode $modCodeFournisseur';
+					/** @var ModeleThirdPartyCode $modCodeFournisseur */
 					if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
 						$tmpcode = $modCodeFournisseur->getNextValue($thirdparty, 1);
 					}
@@ -462,8 +466,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 							}
 							$resultfacture = $facture->create($user);
 							if ($resultfacture <= 0) {
-								$contact->error = $facture->error;
-								$contact->errors = $facture->errors;
+								$contact->setErrorsFromObject($facture);
 								$error++;
 							} else {
 								$db->commit();
@@ -476,8 +479,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 							$vattouse = get_default_tva($mysoc, $thirdparty, $productforinvoicerow->id);
 							$result = $facture->addline($langs->trans("BoothLocationFee", $conforbooth->label, dol_print_date($conforbooth->datep, '%d/%m/%y %H:%M:%S'), dol_print_date($conforbooth->datep2, '%d/%m/%y %H:%M:%S')), (float) $project->price_booth, 1, $vattouse, 0, 0, $productforinvoicerow->id, 0, dol_now(), '', 0, 0, 0, 'HT', 0, 1);
 							if ($result <= 0) {
-								$contact->error = $facture->error;
-								$contact->errors = $facture->errors;
+								$contact->setErrorsFromObject($facture);
 								$error++;
 							}
 							/*if (!$error) {

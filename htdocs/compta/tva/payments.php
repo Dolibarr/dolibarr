@@ -80,7 +80,7 @@ $object = new Tva($db);
 if ($user->socid) {
 	$socid = $user->socid;
 }
-//$result = restrictedArea($user, 'tax|salaries', '', '', 'charges|');
+//restrictedArea($user, 'tax|salaries', '', '', 'charges|');
 $result = restrictedArea($user, 'tax', '', 'tva', 'charges');
 
 

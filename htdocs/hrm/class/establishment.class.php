@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015		Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -96,7 +96,7 @@ class Establishment extends CommonObject
 	public $country_id;
 
 	/**
-	 * @var int Status 0=open, 1=closed
+	 * @var int|null Status 0=open, 1=closed
 	 */
 	public $status;
 

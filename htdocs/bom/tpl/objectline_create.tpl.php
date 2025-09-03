@@ -6,7 +6,7 @@
  * Copyright (C) 2014		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014       Raphaël Doursenaud  	<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2024		Vincent Maury			<vmaury@timgroup.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -36,9 +36,12 @@ require_once DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php";
 /**
  * @var CommonObject $this
  * @var CommonObject $object
+ * @var ExtraFields $extrafields
  * @var Form $form
  * @var Societe $buyer
  * @var Translate $langs
+ *
+ * @var string $action
  */
 
 // Protection to avoid direct call of template
