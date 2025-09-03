@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+/* Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -118,7 +118,7 @@ class ExpeditionTest extends CommonClassTest
 
 		$localobject->name = "foobar";
 
-		$result = $localobject->update($localobject->id, $user);
+		$result = $localobject->update($user);
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0, $localobject->errorsToString());
 
