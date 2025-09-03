@@ -129,14 +129,6 @@ class Evaluation extends CommonObject
 	 */
 	public $description;
 	/**
-	 * @var string
-	 */
-	public $note_public;
-	/**
-	 * @var string
-	 */
-	public $note_private;
-	/**
 	 * @var int
 	 */
 	public $fk_user_creat;
@@ -323,13 +315,10 @@ class Evaluation extends CommonObject
 			// @phan-suppress-next-line PhanTypeMismatchProperty
 			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
 		}
-		if (property_exists($object, 'label')) {
-			// @phan-suppress-next-line PhanTypeInvalidDimOffset
-			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
+		if (!empty($object->label)) {
+			$object->label = $langs->trans("CopyOf")." ".$object->label;
 		}
-		if (property_exists($object, 'status')) {
-			$object->status = self::STATUS_DRAFT;
-		}
+		$object->status = self::STATUS_DRAFT;
 		if (property_exists($object, 'date_creation')) {
 			$object->date_creation = dol_now();
 		}
