@@ -181,7 +181,7 @@ class Interventions extends DolibarrApi
 		$action = 'list';
 		$reshook = $hookmanager->executeHooks('printindexapiWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
-		
+
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
@@ -190,9 +190,7 @@ class Interventions extends DolibarrApi
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 		}
-		
 
-		
 		//this query will return total interventions with the filters given
 		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
 
