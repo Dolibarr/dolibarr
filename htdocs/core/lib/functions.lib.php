@@ -1235,7 +1235,15 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
 		$hour = $minute = $second = 0;
 	}
 
-	if ($saverestore && !GETPOSTISSET($prefix . 'day') && !GETPOSTISSET($prefix . 'month') && !GETPOSTISSET($prefix . 'year')) {
+	if (
+		$saverestore
+		&& !GETPOSTISSET($prefix . 'day')
+		&& !GETPOSTISSET($prefix . 'month')
+		&& !GETPOSTISSET($prefix . 'year')
+		&& isset($_SESSION['DOLDATE_' . $saverestore . '_day'])
+		&& isset($_SESSION['DOLDATE_' . $saverestore . '_month'])
+		&& isset($_SESSION['DOLDATE_' . $saverestore . '_year'])
+	) {
 		$day = $_SESSION['DOLDATE_' . $saverestore . '_day'];
 		$month = $_SESSION['DOLDATE_' . $saverestore . '_month'];
 		$year = $_SESSION['DOLDATE_' . $saverestore . '_year'];
@@ -1561,6 +1569,9 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 				}
 				// if (@file_exists($dirroot.'/'.$path)) {
 				if (@file_exists($dirroot . '/' . $path)) {	// avoid [php:warn]
+					if ($key != 'main' && preg_match('/^core\//', $path)) {	// When searching into an alternative custom path, we don't want path like 'core/...' because path should be 'modulename/core/...'
+						continue;
+					}
 					$res = $dirroot . '/' . $path;
 					return $res;
 				}
@@ -1945,7 +1956,26 @@ function dol_string_unaccent($str)
 			'%C3%BB' => 'u',
 			'%C3%BC' => 'u',
 			'%C3%BD' => 'y',
-			'%C3%BF' => 'y'
+			'%C3%BF' => 'y',
+			'%CC%80' => '',
+			'%CC%81' => '',
+			'%CC%82' => '',
+			'%CC%83' => '',
+			'%CC%84' => '',
+			'%CC%85' => '',
+			'%CC%86' => '',
+			'%CC%87' => '',
+			'%CC%88' => '',
+			'%CC%89' => '',
+			'%CC%8A' => '',
+			'%CC%8B' => '',
+			'%CC%8C' => '',
+			'%CC%8D' => '',
+			'%CC%8E' => '',
+			'%CC%8F' => '',
+			'%CC%90' => '',
+			'%CC%91' => '',
+			'%CC%A7' => '',
 		);
 		$string = strtr($string, $replacements);
 		return rawurldecode($string);
@@ -3000,19 +3030,22 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 				$popuptab = 1;
 				$outmore .= '<div class="popuptabset wordwrap">'; // The css used to hide/show popup
 			}
-			$outmore .= '<div class="popuptab wordwrap" style="display:inherit;">';
+			$outmore_content = '';
+
 			if (isset($links[$i][2]) && $links[$i][2] == 'image') {
 				if (!empty($links[$i][0])) {
-					$outmore .= '<a class="tabimage' . ($morecss ? ' ' . $morecss : '') . '" href="' . $links[$i][0] . '">' . $links[$i][1] . '</a>' . "\n";
+					$outmore_content .= '<a class="tabimage'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 				} else {
-					$outmore .= '<span class="tabspan">' . $links[$i][1] . '</span>' . "\n";
+					$outmore_content .= '<span class="tabspan">'.$links[$i][1].'</span>'."\n";
 				}
 			} elseif (!empty($links[$i][1])) {
-				$outmore .= '<a' . (!empty($links[$i][2]) ? ' id="' . $links[$i][2] . '"' : '') . ' class="wordwrap inline-block' . ($morecss ? ' ' . $morecss : '') . '" href="' . $links[$i][0] . '">';
-				$outmore .= preg_replace('/([a-z])\|([a-z])/i', '\\1 | \\2', $links[$i][1]); // Replace x|y with x | y to allow wrap on long composed texts.
-				$outmore .= '</a>' . "\n";
+				$outmore_content .= '<a'.(!empty($links[$i][2]) ? ' id="'.$links[$i][2].'"' : '').' class="wordwrap inline-block'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'">';
+				$outmore_content .= preg_replace('/([a-z])\|([a-z])/i', '\\1 | \\2', $links[$i][1]); // Replace x|y with x | y to allow wrap on long composed texts.
+				$outmore_content .= '</a>'."\n";
 			}
-			$outmore .= '</div>';
+			if ($outmore_content !== '') {
+				$outmore .= '<div class="popuptab wordwrap" style="display:inherit;">' . $outmore_content . '</div>';
+			}
 
 			$nbintab++;
 		}
@@ -3354,12 +3387,14 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	}
 
 	if ($object->element == 'societe') {
+		/** @var Societe $object */
 		if (!empty($conf->use_javascript_ajax) && $user->hasRight('societe', 'creer') && getDolGlobalString('MAIN_DIRECT_STATUS_UPDATE')) {
 			$morehtmlstatus .= ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
 		} else {
 			$morehtmlstatus .= $object->getLibStatut(6);
 		}
 	} elseif ($object->element == 'product') {
+		/** @var Product $object */
 		//$morehtmlstatus.=$langs->trans("Status").' ('.$langs->trans("Sell").') ';
 		if (!empty($conf->use_javascript_ajax) && $user->hasRight('produit', 'creer') && getDolGlobalString('MAIN_DIRECT_STATUS_UPDATE')) {
 			$morehtmlstatus .= ajax_object_onoff($object, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
@@ -3374,23 +3409,29 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$morehtmlstatus .= '<span class="statusrefbuy">' . $object->getLibStatut(6, 1) . '</span>';
 		}
 	} elseif (in_array($object->element, array('salary'))) {
+		/** @var Salary $object */
 		'@phan-var-force Salary $object';
 		$tmptxt = $object->getLibStatut(6, $object->alreadypaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
 			$tmptxt = $object->getLibStatut(5, $object->alreadypaid);
 		}
 		$morehtmlstatus .= $tmptxt;
-	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier'))) {	// TODO Move this to use ->alreadypaid
+	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier'))) {
+		/** @var Facture|FactureFournisseur|CommonInvoice $object */
 		'@phan-var-force Facture|FactureFournisseur|CommonInvoice $object';
-		$totalallpayments = $object->getSommePaiement(0);
-		$totalallpayments += $object->getSumCreditNotesUsed(0);
-		$totalallpayments += $object->getSumDepositsUsed(0);
-		$tmptxt = $object->getLibStatut(6, $totalallpayments);
+		if (!isset($object->alreadypaid)) {
+			$object->totalpaid = $object->getSommePaiement(0);
+			$object->totalcreditnotes = $object->getSumCreditNotesUsed(0);
+			$object->totaldeposits = $object->getSumDepositsUsed(0);
+			$object->alreadypaid = $object->totalpaid + $object->totalcreditnotes + $object->totaldeposits;
+		}
+		$tmptxt = $object->getLibStatut(6, $object->alreadypaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
-			$tmptxt = $object->getLibStatut(5, $totalallpayments);
+			$tmptxt = $object->getLibStatut(5, $object->alreadypaid);
 		}
 		$morehtmlstatus .= $tmptxt;
-	} elseif (in_array($object->element, array('chargesociales', 'loan', 'tva'))) {	// TODO Move this to use ->alreadypaid
+	} elseif (in_array($object->element, array('chargesociales', 'loan', 'tva'))) {	// TODO Move this to use ->alreadypaid like for invoices
+		/** @var ChargeSociales|Loan|Tva $object */
 		'@phan-var-force ChargeSociales|Loan|Tva $object';
 		$tmptxt = $object->getLibStatut(6, $object->totalpaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
@@ -3398,12 +3439,14 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		}
 		$morehtmlstatus .= $tmptxt;
 	} elseif ($object->element == 'contrat' || $object->element == 'contract') {
-		if ($object->statut == 0) {
+		/** @var Contrat $object */
+		if ($object->status == 0) {
 			$morehtmlstatus .= $object->getLibStatut(5);
 		} else {
 			$morehtmlstatus .= $object->getLibStatut(4);
 		}
 	} elseif ($object->element == 'facturerec') {
+		/** @var FactureRec $object */
 		'@phan-var-force FactureRec $object';
 		if ($object->frequency == 0) {
 			$morehtmlstatus .= $object->getLibStatut(2);
@@ -3411,6 +3454,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$morehtmlstatus .= $object->getLibStatut(5);
 		}
 	} elseif ($object->element == 'project_task') {
+		/** @var Task $object */
 		$tmptxt = $object->getLibStatut(4);
 		$morehtmlstatus .= $tmptxt;
 	} elseif (method_exists($object, 'getLibStatut')) { // Generic case for status
@@ -3433,12 +3477,14 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 
 	// Add alias for thirdparty
 	if (!empty($object->name_alias)) {
+		/** @var Societe $object */
 		'@phan-var-force Societe $object';
 		$morehtmlref .= '<div class="refidno opacitymedium">' . dol_escape_htmltag($object->name_alias) . '</div>';
 	}
 
 	// Add label
 	if (in_array($object->element, array('product', 'bank_account', 'project_task'))) {
+		/** @var Product|Account|Task $object */
 		if (!empty($object->label)) {
 			$morehtmlref .= '<div class="refidno opacitymedium">' . $object->label . '</div>';
 		}
@@ -4841,10 +4887,9 @@ function dol_print_ip($ip, $mode = 0, $showname = 0)
  * Return the real IP of remote user.
  * Take HTTP_X_FORWARDED_FOR (defined when using proxy)
  * Then HTTP_CLIENT_IP if defined (rare)
- * Then REMOTE_ADDR (the last seerver ip in proxy chain).
- * 			REMOTE_ADDR can't be modified by client and may be the IP of a proxy.
- * 			Note: that if Apache module "remoteip" module is on, $_SERVER["REMOTE_ADDR"] may be replaced y HTTP_X_FORWARDED_FOR directly
- * 					from CF-Connecting-IP, but only if remote is in trusted cloudflare list.
+ * Then REMOTE_ADDR (the last seerver ip in proxy chain). REMOTE_ADDR can't be modified by client and may be the IP of a proxy.
+ * Note:	if Apache module "remoteip" module is on, Apache may replaced the $_SERVER["REMOTE_ADDR"] by HTTP_X_FORWARDED_FOR directly. For this
+ * 			Apache is using the CF-Connecting-IP header (HTTP_CF_CONNECTING_IP), but only if the remote IP is in the trusted cloudflare list (Apache must enable module and conf remoteip).
  *
  * @param	int		$trusted	0=Default, 1=Trusted value (the last IP that was not altered by client)
  * @return	string				Real IP of remote user.
@@ -13079,6 +13124,22 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 						$newres .= (($i2 > 0 || $i3 > 0) ? ' OR ' : '');
 					}
 
+					$isSellist = false;
+					$table = $label = $key = null;
+
+					if (strpos($field, 'ef.') === 0) {
+						$extrafieldName = substr($field, 3);
+						$extrafields = new ExtraFields($db);
+						$extrafields->fetch_name_optionals_label('product');
+
+						if (isset($extrafields->attributes['product']['type'][$extrafieldName]) && $extrafields->attributes['product']['type'][$extrafieldName] === 'sellist') {
+							$isSellist = true;
+							$paramArray = $extrafields->attributes['product']['param'][$extrafieldName]['options'] ?? [];
+							$param = array_key_first($paramArray);
+							list($table, $label, $key) = explode(':', $param);
+						}
+					}
+
 					if (preg_match('/\.(id|rowid)$/', $field)) {	// Special case for rowid that is sometimes a ref so used as a search field
 						$newres .= $db->sanitize($field) . " = " . (is_numeric($tmpcrit) ? ((float) $tmpcrit) : '0');
 					} else {
@@ -13087,33 +13148,37 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 						$tmpafter = '%';
 						$tmps = '';
 
-						if (preg_match('/^!/', $tmpcrit)) {
-							$tmps .= $db->sanitize($field) . " NOT LIKE "; // ! as exclude character
-							$tmpcrit2 = preg_replace('/^!/', '', $tmpcrit2);
+						if ($isSellist) {
+							$newres .= $field." IN (SELECT t.".$key." FROM ".$db->prefix().$table." AS t WHERE t.".$label." LIKE '%".$db->escape($tmpcrit2)."%')";
 						} else {
-							$tmps .= $db->sanitize($field) . " LIKE ";
-						}
-						$tmps .= "'";
+							if (preg_match('/^!/', $tmpcrit)) {
+								$tmps .= $db->sanitize($field) . " NOT LIKE "; // ! as exclude character
+								$tmpcrit2 = preg_replace('/^!/', '', $tmpcrit2);
+							} else {
+								$tmps .= $db->sanitize($field) . " LIKE ";
+							}
+							$tmps .= "'";
 
-						if (preg_match('/^[\^\$]/', $tmpcrit)) {
-							$tmpbefore = '';
-							$tmpcrit2 = preg_replace('/^[\^\$]/', '', $tmpcrit2);
-						}
-						if (preg_match('/[\^\$]$/', $tmpcrit)) {
-							$tmpafter = '';
-							$tmpcrit2 = preg_replace('/[\^\$]$/', '', $tmpcrit2);
-						}
+							if (preg_match('/^[\^\$]/', $tmpcrit)) {
+								$tmpbefore = '';
+								$tmpcrit2 = preg_replace('/^[\^\$]/', '', $tmpcrit2);
+							}
+							if (preg_match('/[\^\$]$/', $tmpcrit)) {
+								$tmpafter = '';
+								$tmpcrit2 = preg_replace('/[\^\$]$/', '', $tmpcrit2);
+							}
 
-						if ($tmpcrit2 == '' || preg_match('/^!/', $tmpcrit)) {
-							$tmps = "(" . $tmps;
-						}
-						$newres .= $tmps;
-						$newres .= $tmpbefore;
-						$newres .= $db->escape($tmpcrit2);
-						$newres .= $tmpafter;
-						$newres .= "'";
-						if ($tmpcrit2 == '' || preg_match('/^!/', $tmpcrit)) {
-							$newres .= " OR " . $field . " IS NULL)";
+							if ($tmpcrit2 == '' || preg_match('/^!/', $tmpcrit)) {
+								$tmps = "(" . $tmps;
+							}
+							$newres .= $tmps;
+							$newres .= $tmpbefore;
+							$newres .= $db->escape($tmpcrit2);
+							$newres .= $tmpafter;
+							$newres .= "'";
+							if ($tmpcrit2 == '' || preg_match('/^!/', $tmpcrit)) {
+								$newres .= " OR " . $field . " IS NULL)";
+							}
 						}
 					}
 
@@ -15236,7 +15301,7 @@ function showValueWithClipboardCPButton($valuetocopy, $showonlyonhover = 1, $tex
 
 
 /**
- * Decode an encode string. The string can be encoded in json format (recommended) or with serialize (avoid this)
+ * Decode an encoded string. The string can be encoded in json format (recommended) or with serialize (avoid this)
  *
  * @param 	string	$stringtodecode		String to decode (json or serialize coded)
  * @return	mixed						The decoded object.
@@ -15245,7 +15310,7 @@ function jsonOrUnserialize($stringtodecode)
 {
 	$result = json_decode($stringtodecode);
 	if ($result === null) {
-		$result = unserialize($stringtodecode);
+		$result = unserialize($stringtodecode);	// For backward compatibility. Is no more used in recent versions.
 	}
 
 	return $result;

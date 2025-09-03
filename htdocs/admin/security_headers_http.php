@@ -26,10 +26,6 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -37,9 +33,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("users", "admin", "other"));
+$langs->loadLangs(array("users", "admin", "other", "website"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -53,10 +52,12 @@ $selectarrayCSPSources = GetContentPolicySources();
 $forceCSPArr = GetContentPolicyToArray($forceCSP);
 $error = 0;
 
+
 /*
  * Actions
  */
 
+$reg = array();
 if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$code = $reg[1];
 	$value = (GETPOST($code, 'alpha') ? GETPOST($code, 'alpha') : 1);
@@ -134,7 +135,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	}
 
 	header("Location: ".$_SERVER["PHP_SELF"]);
-	exit();
+	exit;
 } elseif ($action == "updateform" && GETPOST("btn_MAIN_SECURITY_FORCECSP")) {
 	$directivecsp = GETPOST("select_identifier_MAIN_SECURITY_FORCECSP");
 	$sourcecsp = GETPOST("select_source_MAIN_SECURITY_FORCECSP");
@@ -202,7 +203,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 		setEventMessages($langs->trans("MainErrorAddingSecurityPolicy"), null, 'errors');
 	}
 	header("Location: ".$_SERVER["PHP_SELF"]);
-	exit();
+	exit;
 } elseif ($action == "updateform") {
 	$db->begin();
 	$res1 = $res2 = $res3 = $res4 = 0;
@@ -221,6 +222,9 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	if ($res1 >= 0 && $res2 >= 0 && $res3 >= 0 && $res4 >= 0 && $res5 >= 0) {
 		$db->commit();
 		setEventMessages($langs->trans("Saved"), null, 'mesgs');
+
+		header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
 	} else {
 		$db->rollback();
 		setEventMessages($langs->trans("ErrorSavingChanges"), null, 'errors');
@@ -249,16 +253,16 @@ print '<br>';
 
 print '<span class="opacitymedium">'.$langs->trans("HTTPHeaderEditor").'. '.$langs->trans("ReservedToAdvancedUsers").'.</span><br><br>';
 
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="updateform">';
+
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("HTTPHeader").'</td>';
 print '<td></td>'."\n";
 print '</tr>';
-
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="updateform">';
 
 // Force RP
 print '<tr class="oddeven">';
@@ -413,6 +417,8 @@ print '<script>
 		});
 	});
 </script>';
+
+print '</form>';
 
 print dol_get_fiche_end();
 print '</div>';

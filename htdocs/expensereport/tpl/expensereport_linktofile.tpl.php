@@ -18,10 +18,12 @@
 
 /**
  * @var int $colspan
+ * @var string $action
  * @var string $filenamelinked
  * @var Conf $conf
  * @var DoliDB $db
  * @var CommonObject $object
+ * @var Translate $langs
  */
 '
 @phan-var-force int $colspan

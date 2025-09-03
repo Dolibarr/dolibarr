@@ -794,7 +794,7 @@ if (!$error && $massaction == 'cancelorders') {
 			break;
 		} else {
 			// TODO We do not provide warehouse so no stock change here for the moment.
-			$result = $cmd->cancel();
+			$result = $cmd->cancel($user);
 		}
 
 		if ($result < 0) {

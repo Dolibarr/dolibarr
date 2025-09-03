@@ -477,14 +477,14 @@ if ($nboftargetok) {
 			{
 				print 'Run git tag -a -f -m "'.$MAJOR.'.'.$MINOR.'.'.$BUILD.'" "'.$MAJOR.'.'.$MINOR.'.'.$BUILD.'"'."\n";
 				$ret=`git tag -a -f -m "$MAJOR.$MINOR.$BUILD" "$MAJOR.$MINOR.$BUILD"`;
-				print 'Run git push $GITREMOTENAME -f "$MAJOR.$MINOR.$BUILD"'."\n";
+				print 'Run git push '.$GITREMOTENAME.' -f "$MAJOR.$MINOR.$BUILD"'."\n";
 				$ret=`git push $GITREMOTENAME -f -"$MAJOR.$MINOR.$BUILD"`;
 				#$ret=`git push -f origin "$MAJOR.$MINOR.$BUILD"`;
 			}
 		}
 		else
 		{
-			print 'Run git push $GITREMOTENAME --tags'."\n";
+			print "Run git push $GITREMOTENAME --tags\n";
 			$ret=`git push $GITREMOTENAME --tags`;
 			#$ret=`git push origin "$MAJOR.$MINOR.$BUILD"`;
 		}

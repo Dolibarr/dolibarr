@@ -1559,7 +1559,7 @@ class FormFile
 						$editline = 1;
 					} else {
 						$filenametoshow = preg_replace('/\.noexe$/', '', $file['name']);
-						print dol_escape_htmltag(dol_trunc($filenametoshow, 200));
+						print dolPrintHTML(dol_trunc($filenametoshow, 200));
 						print '</a>';
 					}
 					// Preview link
@@ -1757,8 +1757,8 @@ class FormFile
 					} else {
 						print '<td class="right">';
 						print '<input type="hidden" name="ecmfileid" value="'.(empty($filearray[$key]['rowid']) ? '' : $filearray[$key]['rowid']).'">';
-						print '<input type="submit" class="button button-save smallpaddingimp" name="renamefilesave" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
-						print '<input type="submit" class="button button-cancel smallpaddingimp" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+						print '<input type="submit" class="button button-save smallpaddingimp" name="renamefilesave" value="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("Save")).'">';
+						print '<input type="submit" class="button button-cancel smallpaddingimp" name="cancel" value="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("Cancel")).'">';
 						print '</td>';
 						if (empty($disablemove) && count($filearray) > 1) {
 							print '<td class="right"></td>';
@@ -1778,7 +1778,7 @@ class FormFile
 				if (empty($textifempty)) {
 					print '<span class="opacitymedium">'.$langs->trans("NoFileFound").'</span>';
 				} else {
-					print '<span class="opacitymedium">'.$textifempty.'</span>';
+					print '<span class="opacitymedium">'.dolPrintHTML($textifempty).'</span>';
 				}
 				print '</td></tr>';
 			}

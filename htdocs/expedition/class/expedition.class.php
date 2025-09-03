@@ -1483,11 +1483,12 @@ class Expedition extends CommonObject
 	/**
 	 * 	Cancel shipment.
 	 *
-	 *  @param  int  $notrigger 			Disable triggers
-	 *  @param  bool $also_update_stock  	true if the stock should be increased back (false by default)
-	 * 	@return	int							>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
+	 * 	@param	User	$user				User making action
+	 *  @param  int  	$notrigger 			Disable triggers
+	 *  @param  bool 	$also_update_stock  Use true if the stock should be increased back (false by default)
+	 * 	@return	int							Return >0 if OK, 0 if deletion done but failed to delete files, <0 if KO
 	 */
-	public function cancel($notrigger = 0, $also_update_stock = false)
+	public function cancel($user, $notrigger = 0, $also_update_stock = false)
 	{
 		global $conf, $langs, $user;
 

@@ -1385,7 +1385,7 @@ function dolCheckVirus($src_file, $dest_file = '')
 		return $reterrors;
 	}
 
-	if (getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')) {
+	if (getDolGlobalString('MAIN_ANTIVIRUS_UPLOAD_ON')) {
 		if (!class_exists('AntiVir')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/antivir.class.php';
 		}

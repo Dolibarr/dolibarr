@@ -625,14 +625,13 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
 					'total' => $order->total_ttc,
 					'project_id' => $order->fk_project,
 
-					'date' => $order->date_commande ? dol_print_date($order->date_commande, 'dayrfc') : '',
+					'date' => $order->date ? dol_print_date($order->date, 'dayrfc') : '',
 
 					'source' => $order->source,
 					'billed' => $order->billed,
 					'note_private' => $order->note_private,
 					'note_public' => $order->note_public,
 					'cond_reglement_id' => $order->cond_reglement_id,
-					'cond_reglement' => $order->cond_reglement,
 					'cond_reglement_doc' => $order->cond_reglement_doc,
 					'cond_reglement_code' => $order->cond_reglement_code,
 					'mode_reglement_id' => $order->mode_reglement_id,
@@ -674,8 +673,8 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
  * Create order
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
- * @param array{id:string,ref:string,ref_client:string,ref_ext:string,thirdparty_id:int,status:int,billed:string,total_net:float,total_vat:float,total_localtax1:float,total_localtax2:float,total:float,date:string,date_creation:string,date_validation:string,date_modification:string,source:string,note_private:string,note_public:string,project_id:string,mode_reglement_id:string,mode_reglement_code:string,mode_reglement:string,cond_reglement_id:string,cond_reglement_code:string,cond_reglement:string,cond_reglement_doc:string,date_livraison:int,demand_reason_id:string,lines:array<array{id:string,type:int,fk_commande:int,fk_parent_line:int,desc:string,qty:float,price:float,unitprice:float,vat_rate:float,remise:float,remise_percent:float,total_net:float,total_vat:float,total:float,date_start:string,date_end:string,product_id:int,product_ref:string,product_label:string,product_desc:string}>}		$order		Order info
- * @return array{result:array{result_code:string,result_label:string}} Array result
+ * @param 	array{id:string,ref:string,ref_client:string,ref_ext:string,thirdparty_id:int,status:int,billed:string,total_net:float,total_vat:float,total_localtax1:float,total_localtax2:float,total:float,date:string,date_creation:string,date_validation:string,date_modification:string,source:string,note_private:string,note_public:string,project_id:string,mode_reglement_id:string,mode_reglement_code:string,mode_reglement:string,cond_reglement_id:string,cond_reglement_code:string,cond_reglement:string,cond_reglement_doc:string,date_livraison:int,demand_reason_id:string,lines:array<array{line:mixed,id:string,type:int,fk_commande:int,fk_parent_line:int,desc:string,qty:float,price:float,unitprice:float,vat_rate:float,remise:float,remise_percent:float,total_net:float,total_vat:float,total:float,date_start:string,date_end:string,product_id:int,product_ref:string,product_label:string,product_desc:string}>}		$order		Order info
+ * @return 	array{result:array{result_code:string,result_label:string}} Array result
  */
 function createOrder($authentication, $order)
 {

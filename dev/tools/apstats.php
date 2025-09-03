@@ -254,19 +254,20 @@ foreach (array('proj', 'dep') as $source) {
 }
 
 
+// Get stats on nb of commits
+/*
 $nbofmonth = 2;
 $delay = (3600 * 24 * 30 * $nbofmonth);
 
-// Get stats on nb of commits
 $commandcheck = "git log --all --shortstat --no-renames --no-merges --use-mailmap --pretty=".escapeshellarg('format:%cI;%H;%aN;%aE;%ce;%s')." --since=".dol_print_date(dol_now() - $delay, '%Y-%m-%d'); // --since=  --until=...
 print 'Execute git log to get list of commits: '.$commandcheck."\n";
 $output_arrglpu = array();
 $resexecglpu = 0;
 //exec($commandcheck, $output_arrglpu, $resexecglpu);
-
+*/
 
 // Get git information for security alerts
-$nbofmonth = 3;
+$nbofmonth = 6;
 $delay = (3600 * 24 * 30 * $nbofmonth);
 $arrayofalerts = array();
 
@@ -733,12 +734,6 @@ $html .= <<<END
 END;
 
 
-$html .= '<!-- ';
-foreach ($output_arrglpu as $line) {
-	$html .= $line."\n";
-}
-$html .= ' -->';
-
 $html .= '</div>';
 
 $html .= '</section>'."\n";
@@ -886,7 +881,7 @@ if (count($output_phan_json) != 0) {
 $title_security_short = "Last security issues";
 $title_security = ($project ? "[".$project."] " : "").$title_security_short;
 
-$html .= '<section class="chapter" id="linesofcode">'."\n";
+$html .= '<section class="chapter" id="securityalerts">'."\n";
 $html .= '<h2><span class="fas fa-code pictofixedwidth"></span>'.$title_security_short.' <span class="opacitymedium">(last '.($nbofmonth != 1 ? $nbofmonth.' months' : 'month').')</span></h2>'."\n";
 
 $html .= '<div class="boxallwidth">'."\n";
@@ -983,7 +978,7 @@ $html .= '</div>';
 $html .= '</div>';
 
 $html .= '<br>';
-$html .= 'Note:Search is done in git repository on regexstring #yogosha|CVE|Sec:|Sec\s<br>';
+$html .= 'Note:Search is done in git repository on regex string "#yogosha|CVE|Sec:|Sec\s" (not case sensitive)<br>';
 $html .= 'You can use this URL for RSS notifications: <a href="/'.$outputfilerss.'">'.$outputfilerss.'</a><br><br>';
 
 $html .= '</section>';
