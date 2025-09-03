@@ -1139,7 +1139,7 @@ if ($action == 'create') {
 			if (isModEnabled('project') && is_object($formproject)) {
 				$projectid = GETPOSTINT('projectid');
 				if (empty($projectid) && !empty($object->fk_project)) {
-					$projectid = $object->fk_project;
+					$projectid = (int) $object->fk_project;
 				}
 				if ($origin == 'project') {
 					$projectid = ($object->id ? $object->id : 0);

@@ -551,9 +551,9 @@ class Contracts extends DolibarrApi
 				unset($result->line);
 			}
 			return $this->_cleanObjectDatas($result);
+		} else {
+			throw new RestException(500, implode(';', $this->contract->errors));
 		}
-
-		return false;
 	}
 
 	/**

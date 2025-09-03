@@ -2263,7 +2263,7 @@ if ($action == 'create') {
 			}
 			$objectsrc->fetch_thirdparty();
 
-			$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : 0);
+			$projectid = (int) $objectsrc->fk_project;
 			$ref_client = (!empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
 
 			$soc = $objectsrc->thirdparty;
