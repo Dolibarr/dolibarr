@@ -146,7 +146,7 @@ if (empty($conf->stocktransfer->enabled)) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-//$result = restrictedArea($user, 'stocktransfer', $id, '');
+//restrictedArea($user, 'stocktransfer', $id, '');
 if (!$permissiontoread) {
 	accessforbidden();
 }

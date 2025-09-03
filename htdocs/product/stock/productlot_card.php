@@ -137,7 +137,7 @@ if ($user->socid > 0) { // Protection if external user
 	//$socid = $user->socid;
 	accessforbidden();
 }
-//$result = restrictedArea($user, 'productbatch');
+//restrictedArea($user, 'productbatch');
 if (!$permissiontoread) {
 	accessforbidden();
 }
