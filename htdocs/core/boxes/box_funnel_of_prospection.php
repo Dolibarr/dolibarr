@@ -268,7 +268,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 					$dolgraph->SetMinValue(0);
 					$dolgraph->SetData($dataseries);
 					$dolgraph->SetLegend($liststatus);
-					$dolgraph->setHideXValues(true);
+					$dolgraph->setHideXValues(false);
 					$dolgraph->setHideYValues(true);
 					$dolgraph->SetDataColor(array_values($colorseriesstat));
 					$dolgraph->setShowLegend(2);
@@ -286,6 +286,7 @@ class box_funnel_of_prospection extends ModeleBoxes
 					$dolgraph->setTooltipsLabels($customlabels);
 					$dolgraph->mode = 'depth';
 					$dolgraph->draw('idgraphleadfunnel');
+
 					$stringtoprint .= $dolgraph->show($totaloppnb ? 0 : 1);
 				}
 				$stringtoprint .= '</div>';

@@ -1,5 +1,5 @@
--- ============================================================================
--- Copyright (C) 2016      Marcos García         <marcosgdf@gmail.com>
+-- ===================================================================
+-- Copyright (C) 2025      Frédéric France  <frederic.france@free.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,7 +14,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- ============================================================================
+-- ===================================================================
 
-ALTER TABLE llx_product_attribute ADD UNIQUE INDEX uk_product_attribute_ref (ref);
-
+ALTER TABLE llx_workstation_workstation_extrafields ADD INDEX idx_workstation_workstation_extrafields (fk_object);

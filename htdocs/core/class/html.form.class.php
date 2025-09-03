@@ -681,9 +681,10 @@ class Form
 		} else {
 			$classfortooltip = 'classfortooltiponclick';
 			$textfordialog .= '<div style="display: none;" id="idfortooltiponclick_' . $tooltiptrigger . '" class="classfortooltiponclicktext"';
+			// Set default title of dialog
 			global $langs;
 			if ($langs instanceof Translate) {
-				$textfordialog .= ' title="'.$langs->trans("Help").'"';
+				$textfordialog .= ' title="'.$langs->trans("Note").'"';
 			}
 			$textfordialog .= '>' . $htmltext . '</div>';
 		}
@@ -801,7 +802,7 @@ class Form
 
 		$img = '';
 		if ($type == 'info') {
-			$img = img_help(0, $alt);
+			$img = img_help(($tooltiptrigger != '' ? 2 : 0), $alt);
 		} elseif ($type == 'help') {
 			$img = img_help(($tooltiptrigger != '' ? 2 : 1), $alt);
 		} elseif ($type == 'helpclickable') {
@@ -819,7 +820,9 @@ class Form
 			$img = img_picto($alt, $type); // $type can be an image path
 		}
 
-		return $this->textwithtooltip($text, $htmltooltip, ((($tooltiptrigger && !$img) || strpos($type, 'clickable')) ? 3 : 2), $direction, $img, $extracss, $notabs, '', $noencodehtmltext, $tooltiptrigger, $forcenowrap);
+		$tooltipon = ((($tooltiptrigger && !$img) || strpos($type, 'clickable')) ? 3 : 2);
+
+		return $this->textwithtooltip($text, $htmltooltip, $tooltipon, $direction, $img, $extracss, $notabs, '', $noencodehtmltext, $tooltiptrigger, $forcenowrap);
 	}
 
 	/**
@@ -1823,7 +1826,7 @@ class Form
 		}
 		$sql .= " FROM " . $this->db->prefix() . "socpeople as sp";
 		if ($showsoc > 0 || getDolGlobalString('CONTACT_SHOW_EMAIL_PHONE_TOWN_SELECTLIST')) {
-			$sql .= " LEFT OUTER JOIN  " . $this->db->prefix() . "societe as s ON s.rowid=sp.fk_soc";
+			$sql .= " LEFT JOIN  " . $this->db->prefix() . "societe as s ON s.rowid = sp.fk_soc";
 		}
 		$sql .= " WHERE sp.entity IN (" . getEntity('contact') . ")";
 		$sql .= " AND ((sp.fk_user_creat = ".((int) $user->id)." AND sp.priv = 1) OR sp.priv = 0)"; // check if this is a private contact
@@ -1838,7 +1841,7 @@ class Form
 			$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = sp.fk_soc AND sc.fk_user = ".(int) $user->id .")";
 		}
 		if ($user->socid > 0) {
-			$sql .= " AND s.rowid = ".((int) $user->socid);
+			$sql .= " AND sp.fk_soc = ".((int) $user->socid);
 		}
 		if ($filter) {
 			// $filter is safe because, if it contains '(' or ')', it has been sanitized by testSqlAndScriptInject() and forgeSQLFromUniversalSearchCriteria()
@@ -5867,7 +5870,7 @@ class Form
 	/**
 	 * Return list of categories having chosen type
 	 *
-	 * @param 	string|int 			$type 			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) should be avoid and is keptfor internal use only.
+	 * @param 	string|int 			$type 			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) should be avoid and is kept for internal use only.
 	 * @param 	int|'auto'|''		$selected 		Id of category preselected or 'auto' (autoselect category if there is only one element). Not used if $outputmode = 1.
 	 * @param 	string 				$htmlname 		HTML field name
 	 * @param 	int 				$maxlength 		Maximum length for labels
@@ -6024,7 +6027,7 @@ class Form
 
 		// Set height automatically if not defined
 		if (empty($height)) {
-			$height = 240;
+			$height = 250;
 			if (is_array($formquestion) && count($formquestion) > 2) {
 				$height += ((count($formquestion) - 2) * 24);
 			}
@@ -6407,17 +6410,17 @@ class Form
 	/**
 	 * Show a form to select a project
 	 *
-	 * @param 	string 		$page 				Page
-	 * @param 	int 		$socid 				Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
-	 * @param 	string 		$selected 			Id preselected project
-	 * @param 	string 		$htmlname 			Name of select field
-	 * @param 	int<0,2>	$discard_closed 	Discard closed projects (0=Keep,1=hide completely except $selected,2=Disable)
-	 * @param 	int 		$maxlength 			Max length
-	 * @param 	int 		$forcefocus 		Force focus on field (works with javascript only)
-	 * @param 	int<0,1>	$nooutput 			No print is done. String is returned.
-	 * @param 	string 		$textifnoproject 	Text to show if no project
-	 * @param 	string 		$morecss 			More CSS
-	 * @return	string                      	Return html content
+	 * @param 	string 				$page 				Page
+	 * @param 	int 				$socid 				Id third party (-1=all, 0=only projects not linked to a third party, id=projects not linked or linked to third party id)
+	 * @param 	int|string|Project 	$selected 			Id of the preselected project
+	 * @param 	string 				$htmlname 			Name of select field
+	 * @param 	int<0,2>			$discard_closed 	Discard closed projects (0=Keep,1=hide completely except $selected,2=Disable)
+	 * @param 	int 				$maxlength 			Max length
+	 * @param 	int 				$forcefocus 		Force focus on field (works with javascript only)
+	 * @param 	int<0,1>			$nooutput 			No print is done. String is returned.
+	 * @param 	string 				$textifnoproject 	Text to show if no project
+	 * @param 	string 				$morecss 			More CSS
+	 * @return	string              		        	Return html content
 	 */
 	public function form_project($page, $socid, $selected = '', $htmlname = 'projectid', $discard_closed = 0, $maxlength = 20, $forcefocus = 0, $nooutput = 0, $textifnoproject = '', $morecss = '')
 	{
@@ -6441,7 +6444,9 @@ class Form
 			$out .= '</form>';
 		} else {
 			$out .= '<span class="project_head_block">';
-			if ($selected) {
+			if ($selected instanceof Project) {
+				$out .= $selected->getNomUrl(0, '', 1);
+			} elseif (is_numeric($selected)) {
 				$projet = new Project($this->db);
 				$projet->fetch((int) $selected);
 				$out .= $projet->getNomUrl(0, '', 1);
@@ -7882,11 +7887,13 @@ class Form
 					$hour = "0" . $hour;
 				}
 				$retstring .= '<option value="' . $hour . '"' . (($hour == $shour) ? ' selected' : '') . '>' . $hour;
-				//$retstring .= (empty($conf->dol_optimize_smallscreen) ? '' : 'H');
 				$retstring .= '</option>';
 			}
 			$retstring .= '</select>';
 
+			if ($disabled) {
+				$retstring .= '<input type="hidden" id="' . $prefix . 'hour"   name="' . $prefix . 'hour"   value="' . $shour . '">' . "\n";
+			}
 			if ($m) {
 				$retstring .= ":";
 			}
@@ -7903,7 +7910,10 @@ class Form
 				$retstring .= '<option value="' . $min_str . '"' . (($min_str == $smin) ? ' selected' : '') . '>' . $min_str . '</option>';
 			}
 			$retstring .= '</select>';
-
+			if ($disabled) {
+				$retstring .= '<input type="hidden" id="' . $prefix . 'min"   name="' . $prefix . 'min"   value="' . $smin . '">' . "\n";
+			}
+			// Add also seconds
 			$retstring .= '<input type="hidden" name="' . $prefix . 'sec" value="' . $ssec . '">';
 		}
 
@@ -9437,9 +9447,6 @@ class Form
 						$out .= ' selected'; // To preselect a value
 					}
 				}
-				if (!empty($nohtmlescape)) {	// deprecated. Use instead the key 'data-html' into input $array, managed at next step to use HTML content.
-					$out .= ' data-html="' . dol_escape_htmltag($selectOptionValue) . '"';
-				}
 
 				if (is_array($tmpvalue)) {
 					foreach ($tmpvalue as $keyforvalue => $valueforvalue) {
@@ -9450,7 +9457,10 @@ class Form
 							$out .= ' '.dol_escape_htmltag($keyforvalue).'="'.dol_escape_htmltag($valueforvalue).'"';
 						}
 					}
+				} elseif (!empty($nohtmlescape)) {	// deprecated. Use instead the previous cas, an array with 'data-html', 'data-xxx' ... to use HTML content in the select
+					$out .= ' data-html="' . dol_escape_htmltag($selectOptionValue) . '"';
 				}
+
 				$out .= '>';
 				$out .= $selectOptionValue;
 				$out .= "</option>\n";

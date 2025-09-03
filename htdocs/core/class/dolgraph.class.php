@@ -1488,7 +1488,7 @@ class DolGraph
 				if ($this->hideXValues) {
 					$this->stringtoshow .= 'x: { display: false }';
 				}
-				if ($this->hideYValues || $this->hideXValues) {
+				if ($this->hideYValues && $this->hideXValues) {
 					$this->stringtoshow .= ', ';
 				}
 				if ($this->hideYValues) {

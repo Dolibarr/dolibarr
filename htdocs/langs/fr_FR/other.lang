@@ -119,6 +119,7 @@ PredefinedMailContentLink=Vous pouvez cliquer sur le lien ci-dessous pour effect
 PredefinedMailContentGeneric=__(Hello)__\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__
 PredefinedMailContentSendActionComm=Rappel de l'événement "__EVENT_LABEL__" le __EVENT_DATE__ à __EVENT_TIME__<br> <br>Ceci est un message automatique. Veuillez ne pas y répondre.
 DemoDesc=Dolibarr est un logiciel de gestion proposant plusieurs modules métiers. Une démonstration qui inclut tous ces modules n'a pas de sens car ce cas n'existe jamais (plusieurs centaines de modules disponibles). Aussi, quelques profils type de démo sont disponibles.
+DemoDesc2=Il s'agit d'une démo partagée restreinte, vous préférerez peut-être tester sur votre propre instance dédiée avec un accès complet à Administrateur, pour ce faire, <a href="%s" target="_blank">cliquez ici <span class="fas fa-external-link-alt"></span></a>.
 ChooseYourDemoProfil=Veuillez choisir le profil de démonstration qui correspond le mieux à votre activité…
 ChooseYourDemoProfilMore=...ou construisez votre propre profil<br>(sélection manuelle des modules)
 DemoFundation=Gestion des adhérents d'une association
@@ -382,3 +383,4 @@ TLS/STARTTLS=TLS/STARTTLS
 FillExtrafieldWithAi=Remplissez le champ supplémentaire avec du contenu IA
 ExtrafieldFiller=Remplissage de champ supplémentaire
 OurProductSelection=Notre sélection de nouveaux produits
+NoSupportedModulesHaveBeenActivated=The reporting tool can generate dynamic reports for some modules only. There is no supported module enabled yet.

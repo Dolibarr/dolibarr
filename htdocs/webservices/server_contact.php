@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012       JF FERRY             <jfefe@aternatik.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -318,7 +318,7 @@ function getContact($authentication, $id, $ref_ext)
 					'country_code' => $contact->country_code,
 					'country' => $contact->country,
 					'socid' => $contact->socid,
-					'status' => $contact->statut,
+					'status' => $contact->status,
 					'phone_pro' => $contact->phone_pro,
 					'fax' => $contact->fax,
 					'phone_perso' => $contact->phone_perso,
@@ -428,7 +428,7 @@ function createContact($authentication, $contact)
 		$newobject->country_code = $contact['country_code'];
 		$newobject->country = $contact['country'];
 		$newobject->socid = (int) $contact['socid'];
-		$newobject->statut = (int) $contact['status'];
+		$newobject->status = (int) $contact['status'];
 		$newobject->phone_pro = $contact['phone_pro'];
 		$newobject->fax = $contact['fax'];
 		$newobject->phone_perso = $contact['phone_perso'];
@@ -437,7 +437,7 @@ function createContact($authentication, $contact)
 		$newobject->email = $contact['email'];
 		$newobject->birthday = $contact['birthday'];
 		$newobject->default_lang = $contact['default_lang'];
-		$newobject->note = $contact['note'];
+		$newobject->note_private = $contact['note'];
 		$newobject->ref_facturation = (int) $contact['ref_facturation'];
 		$newobject->ref_contrat = (int) $contact['ref_contrat'];
 		$newobject->ref_commande = (int) $contact['ref_commande'];
@@ -590,7 +590,7 @@ function getContactsForThirdParty($authentication, $idthirdparty)
 					'ref_propal' => $contact->ref_propal ? $contact->ref_propal : '',
 					'user_id' => $contact->user_id ? $contact->user_id : '',
 					'user_login' => $contact->user_login ? $contact->user_login : '',
-					'status' => $contact->statut ? $contact->statut : ''
+					'status' => $contact->status ? $contact->status : ''
 				);
 
 				$i++;

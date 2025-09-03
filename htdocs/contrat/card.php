@@ -210,7 +210,7 @@ if (empty($reshook)) {
 			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
 			exit;
 		} else {
-			$mesg = $object->error;
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'confirm_unsign' && $confirm == 'yes' && $user->hasRight('contract', 'creer')) {
 		$result = $object->setSignedStatus($user, Contrat::$SIGNED_STATUSES['STATUS_NO_SIGNATURE'], 0, 'CONTRACT_MODIFY');
@@ -218,7 +218,7 @@ if (empty($reshook)) {
 			header('Location: ' . $_SERVER["PHP_SELF"] . '?id=' . $object->id);
 			exit;
 		} else {
-			$mesg = $object->error;
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	} elseif ($action == 'confirm_closeline' && $confirm == 'yes' && $permissiontodisable) {
 		$date_end = '';
@@ -1203,7 +1203,7 @@ if ($action == 'create') {
 			$objectsrc->fetch_optionals();
 			$object->array_options = $objectsrc->array_options;
 
-			$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
+			$projectid = (int) $objectsrc->fk_project;
 
 			$soc = $objectsrc->thirdparty;
 
@@ -1739,7 +1739,7 @@ if ($action == 'create') {
 						print '<td class="center">'.$objp->qty.'</td>';
 						// Unit
 						if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-							print '<td class="left">'.$langs->trans($object->lines[$cursorline - 1]->getLabelOfUnit()).'</td>';
+							print '<td class="left">'.$object->lines[$cursorline - 1]->getLabelOfUnit('long', $langs).'</td>';
 						}
 						// Discount
 						if ($objp->remise_percent > 0) {
@@ -2278,7 +2278,18 @@ if ($action == 'create') {
 
 				// Create ... buttons
 				$arrayofcreatebutton = array();
-				if (isModEnabled('order') && $object->status > 0 && $object->nbofservicesclosed < $nbofservices) {
+				if (isModEnabled('propal') && $object->status > 0 && $soc->client > 0) {
+					$arrayofcreatebutton[] = array(
+						'attr' => array('style' => 'text-align: left;'),
+						'url' => '/comm/propal/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id.'&renewal=true',
+						'label' => $langs->trans('AddProp'),
+						'lang' => 'propal',
+						'perm' => $user->hasRight('propale', 'creer') ? true : false,
+						'enabled' => true,
+					);
+				}
+				//if (isModEnabled('order') && $object->status > 0 && $object->nbofservicesclosed < $nbofservices) {
+				if (isModEnabled('order') && $object->status > 0 && $soc->client > 0) {
 					$arrayofcreatebutton[] = array(
 						'url' => '/commande/card.php?action=create&token='.newToken().'&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
 						'label' => $langs->trans('AddOrder'),

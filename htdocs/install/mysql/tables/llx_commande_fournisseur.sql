@@ -33,11 +33,11 @@ create table llx_commande_fournisseur
   fk_projet					integer DEFAULT 0,             -- project id
 
   tms						timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  date_creation				datetime,                      -- date de creation 
-  date_valid				datetime,                      -- date de validation
-  date_approve				datetime,                      -- date de approve
-  date_approve2				datetime,                      -- date de approve 2 (when double approving is accivated)
-  date_commande				date,                          -- date de la commande
+  date_creation				datetime,                      -- date of creation
+  date_valid				datetime,                      -- date of validation
+  date_approve				datetime,                      -- date of approval
+  date_approve2				datetime,                      -- date of approval 2 (when double approving is accivated)
+  date_commande				date,                          -- date of purchase order
   fk_user_author			integer,                       -- user making creation
   fk_user_modif				integer,                       -- user making last change
   fk_user_valid				integer,                       -- user validating
@@ -59,11 +59,12 @@ create table llx_commande_fournisseur
   model_pdf					varchar(255),
   last_main_doc				varchar(255),					-- relative filepath+filename of last main generated document
 
-  date_livraison			datetime default NULL,
-  fk_account				integer,                       -- bank account
-  fk_cond_reglement			integer,                       -- condition de reglement
-  fk_mode_reglement			integer,                       -- mode de reglement
-  fk_input_method			integer default 0,            -- id coming from c_input_reason, '0' if no defined
+  date_livraison			datetime default NULL,			-- date planned of delivery (expected shipment date)
+  date_reception        	datetime default NULL,			-- date of real final reception (when everything is received)
+  fk_account				integer,                        -- bank account
+  fk_cond_reglement			integer,                        -- condition de reglement
+  fk_mode_reglement			integer,                        -- mode de reglement
+  fk_input_method			integer default 0,              -- id coming from c_input_reason, '0' if no defined
   fk_incoterms				integer,						-- for incoterms
   location_incoterms		varchar(255),					-- for incoterms
   import_key				varchar(14),

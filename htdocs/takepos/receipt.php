@@ -29,7 +29,7 @@
  *	\brief      Page to show a receipt.
  */
 
-// Include main (when fie in included into send.php, $action is set and main was already loaded)
+// Include main (when file in included into send.php, $action is set and main was already loaded)
 if (!isset($action)) {
 	//if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER', '1');	// Not disabled cause need to load personalized language
 	//if (! defined('NOREQUIREDB'))		define('NOREQUIREDB', '1');		// Not disabled cause need to load personalized language
@@ -59,6 +59,7 @@ include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
  * @var Translate $langs
  * @var User $user
  */
+
 $langs->loadLangs(array("main", "bills", "cashdesk", "companies"));
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
@@ -77,7 +78,7 @@ if (!$user->hasRight('takepos', 'run')) {
  * View
  */
 
-top_htmlhead('', '', 1);
+top_htmlhead('', '', 2);
 
 if ((string) $place != '' && !empty($_SESSION["takeposterminal"])) {
 	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture";
@@ -93,6 +94,7 @@ if ((string) $place != '' && !empty($_SESSION["takeposterminal"])) {
 $object = new Facture($db);
 $object->fetch($facid);
 
+print '<body>';
 
 // Record entry in blocked logs
 // DOL_DOCUMENT_ROOT.'/blockedlog/ajax/block-add.php?id='.$object->id.'&element='.$object->element.'&action=DOC_PREVIEW&token='.newToken();
@@ -111,7 +113,6 @@ jQuery(document).ready(function () {
 });
 </script>";
 
-
 // Call to external receipt modules if exist
 $parameters = array();
 $hookmanager->initHooks(array('takeposfrontend'));
@@ -123,7 +124,7 @@ if (!empty($hookmanager->resPrint)) {
 
 // IMPORTANT: This file is sended to 'Takepos Printing' application. Keep basic file. No external files as css, js... If you need images use absolute path.
 ?>
-<body>
+
 <style>
 .right {
 	text-align: right;
@@ -397,7 +398,7 @@ if (getDolGlobalString('TAKEPOS_PRINT_PAYMENT_METHOD')) {
 }
 ?>
 </table>
-<div style="border-top-style: double;">
+
 <br>
 <br>
 <br>
@@ -415,15 +416,19 @@ if (getDolGlobalString('TAKEPOS_FOOTER') || getDolGlobalString($constFreeText)) 
 	}
 	print $newfreetext;
 }
-?>
 
-<script type="text/javascript">
+if (!GETPOST('forcenoautoopen')) {
+	?>
+	<script type="text/javascript">
 	<?php
 	if ($facid) {
 		print 'window.print();';
 	} //Avoid print when is specimen
 	?>
-</script>
+	</script>
+	<?php
+}
 
-</body>
+print "</body>";
+?>
 </html>

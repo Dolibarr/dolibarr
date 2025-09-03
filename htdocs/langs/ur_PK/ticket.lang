@@ -57,7 +57,7 @@ Assigned=تفویض کردہ
 NeedMoreInformation=رپورٹر کی رائے کا انتظار ہے۔
 NeedMoreInformationShort=رائے کا انتظار ہے۔
 Waiting=انتظار کر رہا ہے۔
-SolvedClosed=حل ہو گیا۔
+SolvedClosed=Closed
 Deleted=حذف کر دیا گیا۔
 # Dict
 Severity=شدت
@@ -72,8 +72,10 @@ TicketPublicAccess=ایک عوامی انٹرفیس جس کے لیے کسی شن
 TicketSetupDictionaries=ٹکٹ کی قسم، شدت اور تجزیاتی کوڈ لغات سے قابل ترتیب ہیں۔
 TicketParamModule=ماڈیول متغیر سیٹ اپ
 TicketParamMail=ای میل سیٹ اپ
-TicketEmailNotificationFrom=Sender e-mail for notification on tickets (creation of ticket or update messages)
-TicketEmailNotificationFromHelp=Sender e-mail to use to send the notification emails for tickets creation or message addition. For example noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=اس ای میل ایڈریس پر ٹکٹ بنانے کی اطلاع دیں۔
 TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation (in addition to any other default recipients)
 TicketNewEmailBodyLabel=ٹکٹ بنانے کے بعد ٹیکسٹ میسج بھیجا گیا۔
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=صرف موجودہ صارف کو تفویض ک
 TicketsActivatePublicInterface=عوامی انٹرفیس کو چالو کریں۔
 TicketsActivatePublicInterfaceHelp=عوامی انٹرفیس کسی بھی زائرین کو ٹکٹ بنانے کی اجازت دیتا ہے۔
 TicketsAutoAssignTicket=ٹکٹ بنانے والے صارف کو خود بخود تفویض کریں۔
-TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket(Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined).
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
 TicketAutoChangeStatusOnAnswer=Automatically assign a status when answering a ticket
 TicketAutoChangeStatusOnAnswerHelp=When a user answers to a ticket, the status will automatically be applied to the ticket
 TicketNumberingModules=ٹکٹوں کی تعداد کا ماڈیول
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=صرف کھلی ٹکٹیں دیکھیں
 TicketStatByStatus=حیثیت کے لحاظ سے ٹکٹ
 OrderByDateAsc=صعودی تاریخ کے حساب سے ترتیب دیں۔
 OrderByDateDesc=نزولی تاریخ کے مطابق ترتیب دیں۔
-ShowAsConversation=گفتگو کی فہرست کے بطور دکھائیں۔
-MessageListViewType=ٹیبل لسٹ کے بطور دکھائیں۔
 ConfirmMassTicketClosingSendEmail=ٹکٹ بند کرتے وقت خودکار طور پر ای میلز بھیجیں۔
 ConfirmMassTicketClosingSendEmailQuestion=کیا آپ ان ٹکٹوں کو بند کرتے وقت فریق ثالث کو مطلع کرنا چاہتے ہیں؟
 # Ticket card

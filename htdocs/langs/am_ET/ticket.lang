@@ -57,7 +57,7 @@ Assigned=ተመድቧል
 NeedMoreInformation=የሪፖርተር አስተያየት በመጠበቅ ላይ
 NeedMoreInformationShort=ግብረ መልስ በመጠበቅ ላይ
 Waiting=በመጠበቅ ላይ
-SolvedClosed=ተፈቷል
+SolvedClosed=Closed
 Deleted=ተሰርዟል።
 # Dict
 Severity=ከባድነት
@@ -72,8 +72,10 @@ TicketPublicAccess=ምንም መለያ የማይፈልግ ይፋዊ በይነገ
 TicketSetupDictionaries=የቲኬት አይነት፣ ክብደት እና የትንታኔ ኮዶች ከመዝገበ-ቃላት የሚዋቀሩ ናቸው።
 TicketParamModule=ሞጁል ተለዋዋጭ ማዋቀር
 TicketParamMail=የኢሜል ማዋቀር
-TicketEmailNotificationFrom=Sender e-mail for notification on tickets (creation of ticket or update messages)
-TicketEmailNotificationFromHelp=Sender e-mail to use to send the notification emails for tickets creation or message addition. For example noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=ለዚህ ኢ-ሜይል አድራሻ የቲኬት መፍጠርን አሳውቅ
 TicketEmailNotificationToHelp=If present, this e-mail address will be notified of a ticket creation (in addition to any other default recipients)
 TicketNewEmailBodyLabel=ቲኬት ከፈጠሩ በኋላ የጽሑፍ መልእክት ተልኳል።
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=ለአሁኑ ተጠቃሚ የተሰጡ ትኬ�
 TicketsActivatePublicInterface=ይፋዊ በይነገጽን ያንቁ
 TicketsActivatePublicInterfaceHelp=የህዝብ በይነገጽ ማንኛውም ጎብኚዎች ትኬቶችን እንዲፈጥሩ ያስችላቸዋል።
 TicketsAutoAssignTicket=ቲኬቱን የፈጠረውን ተጠቃሚ በራስ-ሰር ይመድቡ
-TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket(Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined).
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
 TicketAutoChangeStatusOnAnswer=Automatically assign a status when answering a ticket
 TicketAutoChangeStatusOnAnswerHelp=When a user answers to a ticket, the status will automatically be applied to the ticket
 TicketNumberingModules=የቲኬቶች ቁጥር መስጫ ሞጁል
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=ክፍት ትኬቶችን ብቻ ይመልከቱ
 TicketStatByStatus=ትኬቶች በሁኔታ
 OrderByDateAsc=በሚወጣበት ቀን ደርድር
 OrderByDateDesc=በሚወርድበት ቀን ደርድር
-ShowAsConversation=እንደ የውይይት ዝርዝር አሳይ
-MessageListViewType=እንደ ሰንጠረዥ ዝርዝር አሳይ
 ConfirmMassTicketClosingSendEmail=ቲኬቶችን በሚዘጉበት ጊዜ ኢሜይሎችን በራስ-ሰር ይላኩ።
 ConfirmMassTicketClosingSendEmailQuestion=እነዚህን ትኬቶች ሲዘጉ ለሶስተኛ ወገኖች ማሳወቅ ይፈልጋሉ?
 # Ticket card

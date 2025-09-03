@@ -389,6 +389,7 @@ Modelcsv_Gestinumv5=Eksport til Gestinum (v5)
 Modelcsv_charlemagne=Eksport til Aplim Karl den Store
 ChartofaccountsId=ID for kontoplan
 ExportToPdf = Eksporter til PDF
+ExportToCsv = Export to CSV
 PdfLedgerTitle = Finanskonti
 PdfBalanceTitle = Finansbalance
 PdfBookkeepingTitle = Kladder
@@ -440,7 +441,7 @@ AccountRemovedFromGroup=Kontoen blev fjernet fra gruppen
 SaleLocal=Lokalt salg
 SaleExport=Eksport salg
 SaleEEC=Salg i EU
-SaleEECWithVAT=Salget er i EEC med en moms, der ikke er nul, så vi antager, at dette IKKE er et intrakommunalt salg, og den foreslåede konto er standardproduktkontoen.
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
 SaleEECWithoutVATNumber=Salget er i EEC uden moms, men tredjemands moms-id er ikke defineret. Vi falder tilbage på kontoen for standardsalg. Du kan rette tredjepartens moms-id eller ændre den produktkonto, der er foreslået til binding, hvis det er nødvendigt.
 AnySale=Ethvert salg
 ForbiddenTransactionAlreadyExported=Forbudt: Transaktionen er blevet valideret og/eller eksporteret.
@@ -485,7 +486,7 @@ AccountancyClosureConfirmClose=Er du sikker på, at du vil lukke den nuværende 
 AccountancyClosureConfirmAccountingReversal=Er du sikker på, at du vil registrere poster for "Overført indtjening"?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=Transaktion for (doc_type=%s, doc_id=%s, doc_det=b0ecb2ec87fspan>fz) blev allerede registreret
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Visse obligatoriske trin i opsætningen blev ikke udført. Gør venligst dette
@@ -508,7 +509,7 @@ ErrorNoFiscalPeriodActiveFound=Der blev ikke fundet nogen aktiv regnskabsperiode
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Datoen for bogføringsdokumentet er ikke inden for den aktive regnskabsperiode
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Datoen for bogføringsdokumentet er inden for en lukket regnskabsperiode
 Error_BOOKKEEPING_ADDON_NotDefined=Fejl, reglen for bogføringsnummerering ref er ikke defineret i den generelle opsætning af Regnskabsmodulet
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Prøv at indsætte en ikke-afbalanceret transaktion i bogen for %s (Betalings-id: %s). Annulleret. Sikkert en fejl.
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
 ProductUsage=Brug af produkt eller tjeneste
 ## Import
 ImportAccountingEntries=Regnskabsposter
@@ -537,15 +538,15 @@ ExpenseReportJournal=Udgifts Journal
 DocsAlreadyExportedAreIncluded=Dokumenter, der allerede er eksporteret, er inkluderet
 ClickToShowAlreadyExportedLines=Klik for at vise allerede eksporterede linjer
 NAccounts=%s konti
-ACCOUNTING_USE_TREASURY_Desc=Dette er metoden for finansregnskab. Vi bruger kun betalingerne og deres dato til at udføre bogføringen.
-ACCOUNTING_USE_NON_TREASURY_Desc=Dette er metoden for ægte regnskab. Vi bruger både fakturaer og betalinger til bogføringen.
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
+ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
 PieceDesc=Referencen til det kildedokument, der genererer denne banktransaktion (fakturaref., udgiftsrapportrefer., ...)
 BankTransactionRef=En reference til banktransaktionen (valgfrit, et automatisk ID er allerede genereret)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=Dette vil klone bogføringsposten (alle linjer, der er knyttet til denne bogføringspost, vil blive klonet). Er du sikker på, at du vil klone de valgte %s poster?
 ConfirmMassCloneBookkeepingWriting=Bekræft massekloning
-ConfirmMassReturnAccountBookkeepingWriting=Bekræft masseudryddelse
-ConfirmMassReturnAccountBookkeepingWritingQuestion=Dette vil slette bogføringsposten (alle linjer, der er knyttet til denne bogføringspost, vil blive slettet). Er du sikker på, at du vil omgå de valgte %s poster?
+ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
+ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=Dette vil ændre kontoen for alle valgte linjer.
 confirmMassAssignAccountBookkeepingWritingConfirm=Bekræft ændring af massekonto
 CloningSuccess=Kloning af transaktion gennemført: %s
@@ -560,6 +561,6 @@ NoAccountsChangedWithAccountNumber=Transaktioner ikke opdateret med kontonumre: 
 HasAlreadyBeenReversed=er allerede blevet vendt
 ErrorWhileCreating=Fejl under oprettelse %s
 ReturnAccount=Returner
-Clone=Kloner
+Clone=Klon
 AlreadyReturnedAccount=Post nr. %s er allerede blevet tilbageført
 SuccessReturnedAccount=Post nr. %s er blevet omvendt

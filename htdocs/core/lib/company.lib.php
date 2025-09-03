@@ -7,7 +7,7 @@
  * Copyright (C) 2013-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <contact@altairis.fr>
  * Copyright (C) 2013-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Rui Strecht             <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018-2024  Ferran Marcet           <fmarcet@2byte.es>
@@ -1583,6 +1583,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 
 			$contactstatic->id = $obj->rowid;
 			$contactstatic->ref = $obj->rowid;
+			$contactstatic->status = $obj->statut;
 			$contactstatic->statut = $obj->statut;
 			$contactstatic->lastname = $obj->lastname;
 			$contactstatic->firstname = $obj->firstname;
@@ -1948,6 +1949,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') {
 			$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "element_resources as er";
 			$sql .= " ON er.resource_type = 'dolresource'";
+			$sql .= " AND er.element_type = 'action'";
 			$sql .= " AND er.element_id = a.id";
 			$sql .= " AND er.resource_id = " . ((int) $filterobj->id);
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Project') {

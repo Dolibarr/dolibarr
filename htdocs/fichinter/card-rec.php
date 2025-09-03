@@ -747,8 +747,7 @@ if ($action == 'create') {
 
 				// TODO: $objp is not set here, so why test?
 				if (isset($objp) && is_object($objp)) {  // $objp always null @phpstan-ignore-line
-					// Try to enhance type detection using date_start and date_end for free lines when type
-					// was not saved.
+					// Try to enhance type detection using date_start and date_end for free lines when type was not saved.
 					if (!empty($objp->date_start)) {
 						$type = 1;
 					}

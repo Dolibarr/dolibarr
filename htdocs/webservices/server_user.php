@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016  Laurent Destailleur  		<eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -606,6 +606,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 						$contact->phone_pro = $thirdparty->phone;
 						$contact->phone_mobile = $thirdpartywithuser['phone_mobile'];
 						$contact->fax = $thirdparty->fax;
+						$contact->status = 1;
 						$contact->statut = 1;
 						$contact->country_id = $thirdparty->country_id;
 						$contact->country_code = $thirdparty->country_code;

@@ -1235,7 +1235,15 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
 		$hour = $minute = $second = 0;
 	}
 
-	if ($saverestore && !GETPOSTISSET($prefix . 'day') && !GETPOSTISSET($prefix . 'month') && !GETPOSTISSET($prefix . 'year')) {
+	if (
+		$saverestore
+		&& !GETPOSTISSET($prefix . 'day')
+		&& !GETPOSTISSET($prefix . 'month')
+		&& !GETPOSTISSET($prefix . 'year')
+		&& isset($_SESSION['DOLDATE_' . $saverestore . '_day'])
+		&& isset($_SESSION['DOLDATE_' . $saverestore . '_month'])
+		&& isset($_SESSION['DOLDATE_' . $saverestore . '_year'])
+	) {
 		$day = $_SESSION['DOLDATE_' . $saverestore . '_day'];
 		$month = $_SESSION['DOLDATE_' . $saverestore . '_month'];
 		$year = $_SESSION['DOLDATE_' . $saverestore . '_year'];
@@ -1561,6 +1569,9 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 				}
 				// if (@file_exists($dirroot.'/'.$path)) {
 				if (@file_exists($dirroot . '/' . $path)) {	// avoid [php:warn]
+					if ($key != 'main' && preg_match('/^core\//', $path)) {	// When searching into an alternative custom path, we don't want path like 'core/...' because path should be 'modulename/core/...'
+						continue;
+					}
 					$res = $dirroot . '/' . $path;
 					return $res;
 				}
@@ -1945,7 +1956,26 @@ function dol_string_unaccent($str)
 			'%C3%BB' => 'u',
 			'%C3%BC' => 'u',
 			'%C3%BD' => 'y',
-			'%C3%BF' => 'y'
+			'%C3%BF' => 'y',
+			'%CC%80' => '',
+			'%CC%81' => '',
+			'%CC%82' => '',
+			'%CC%83' => '',
+			'%CC%84' => '',
+			'%CC%85' => '',
+			'%CC%86' => '',
+			'%CC%87' => '',
+			'%CC%88' => '',
+			'%CC%89' => '',
+			'%CC%8A' => '',
+			'%CC%8B' => '',
+			'%CC%8C' => '',
+			'%CC%8D' => '',
+			'%CC%8E' => '',
+			'%CC%8F' => '',
+			'%CC%90' => '',
+			'%CC%91' => '',
+			'%CC%A7' => '',
 		);
 		$string = strtr($string, $replacements);
 		return rawurldecode($string);
@@ -2196,9 +2226,9 @@ function dolPrintText($s)
  * To output a text inside an attribute, you can use dolPrintHTMLForAttribute() or dolPrintHTMLForTextArea() inside a textarea
  * With dolPrintHTML(), only content not already in HTML is encoded with HTML.
  *
- * @param	string	$s				String to print
- * @param	int		$allowiframe	Allow iframe tags
- * @return	string					String ready for HTML output (sanitized and escape)
+ * @param	int|float|string	$s				String to print
+ * @param	int					$allowiframe	Allow iframe tags
+ * @return	string								String ready for HTML output (sanitized and escape)
  * @see dolPrintHTMLForAttribute(), dolPrintHTMLFortextArea(), dolPrintText()
  */
 function dolPrintHTML($s, $allowiframe = 0)
@@ -2208,7 +2238,7 @@ function dolPrintHTML($s, $allowiframe = 0)
 
 	// dol_htmlentitiesbr encode all chars except "'" if string is not already HTML, but
 	// encode only special char like é but not &, <, >, ", ' if already HTML.
-	$stringWithEntitesForSpecialChar = dol_htmlentitiesbr($s);
+	$stringWithEntitesForSpecialChar = dol_htmlentitiesbr((string) $s);
 
 	return dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags($stringWithEntitesForSpecialChar, 1, 1, 1, $allowiframe)), 1, 1, 'common', 0, 1);
 }
@@ -2871,7 +2901,7 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
  *	@param  string	$title      		Title
  *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header (if you set this to 1, using print dol_get_fiche_end() to close tab is not required), -2=Add tab header with no sepaaration under tab (to start a tab just after), -3=Add tab header but no footer separation
  * 	@param	string	$picto				Add a picto on tab title
- *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
+ *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodule/img/myimg.png',1) for $picto.
  *  @param	string	$morehtmlright		Add more html content on right of tabs title
  *  @param	string	$morecss			More Css
  *  @param	int		$limittoshow		Limit number of tabs to show. Use 0 to use automatic default value.
@@ -2892,7 +2922,7 @@ function dol_fiche_head($links = array(), $active = '0', $title = '', $notab = 0
  *	@param  string	$title      		Title
  *	@param  int		$notab				-1 or 0=Add tab header, 1=no tab header (if you set this to 1, using print dol_get_fiche_end() to close tab is not required), -2=Add tab header with no separation under tab (to start a tab just after), -3=-2+'noborderbottom'
  * 	@param	string	$picto				Add a picto on tab title
- *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
+ *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodule/img/myimg.png',1) for $picto.
  *  @param	string	$morehtmlright		Add more html content on right of tabs title
  *  @param	string	$morecss			More CSS on the link <a>
  *  @param	int		$limittoshow		Limit number of tabs to show. Use 0 to use automatic default value.
@@ -3354,12 +3384,14 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 	}
 
 	if ($object->element == 'societe') {
+		/** @var Societe $object */
 		if (!empty($conf->use_javascript_ajax) && $user->hasRight('societe', 'creer') && getDolGlobalString('MAIN_DIRECT_STATUS_UPDATE')) {
 			$morehtmlstatus .= ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
 		} else {
 			$morehtmlstatus .= $object->getLibStatut(6);
 		}
 	} elseif ($object->element == 'product') {
+		/** @var Product $object */
 		//$morehtmlstatus.=$langs->trans("Status").' ('.$langs->trans("Sell").') ';
 		if (!empty($conf->use_javascript_ajax) && $user->hasRight('produit', 'creer') && getDolGlobalString('MAIN_DIRECT_STATUS_UPDATE')) {
 			$morehtmlstatus .= ajax_object_onoff($object, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
@@ -3374,23 +3406,29 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$morehtmlstatus .= '<span class="statusrefbuy">' . $object->getLibStatut(6, 1) . '</span>';
 		}
 	} elseif (in_array($object->element, array('salary'))) {
+		/** @var Salary $object */
 		'@phan-var-force Salary $object';
 		$tmptxt = $object->getLibStatut(6, $object->alreadypaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
 			$tmptxt = $object->getLibStatut(5, $object->alreadypaid);
 		}
 		$morehtmlstatus .= $tmptxt;
-	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier'))) {	// TODO Move this to use ->alreadypaid
+	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier'))) {
+		/** @var Facture|FactureFournisseur|CommonInvoice $object */
 		'@phan-var-force Facture|FactureFournisseur|CommonInvoice $object';
-		$totalallpayments = $object->getSommePaiement(0);
-		$totalallpayments += $object->getSumCreditNotesUsed(0);
-		$totalallpayments += $object->getSumDepositsUsed(0);
-		$tmptxt = $object->getLibStatut(6, $totalallpayments);
+		if (!isset($object->alreadypaid)) {
+			$object->totalpaid = $object->getSommePaiement(0);
+			$object->totalcreditnotes = $object->getSumCreditNotesUsed(0);
+			$object->totaldeposits = $object->getSumDepositsUsed(0);
+			$object->alreadypaid = $object->totalpaid + $object->totalcreditnotes + $object->totaldeposits;
+		}
+		$tmptxt = $object->getLibStatut(6, $object->alreadypaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
-			$tmptxt = $object->getLibStatut(5, $totalallpayments);
+			$tmptxt = $object->getLibStatut(5, $object->alreadypaid);
 		}
 		$morehtmlstatus .= $tmptxt;
-	} elseif (in_array($object->element, array('chargesociales', 'loan', 'tva'))) {	// TODO Move this to use ->alreadypaid
+	} elseif (in_array($object->element, array('chargesociales', 'loan', 'tva'))) {	// TODO Move this to use ->alreadypaid like for invoices
+		/** @var ChargeSociales|Loan|Tva $object */
 		'@phan-var-force ChargeSociales|Loan|Tva $object';
 		$tmptxt = $object->getLibStatut(6, $object->totalpaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
@@ -3398,12 +3436,14 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		}
 		$morehtmlstatus .= $tmptxt;
 	} elseif ($object->element == 'contrat' || $object->element == 'contract') {
-		if ($object->statut == 0) {
+		/** @var Contrat $object */
+		if ($object->status == 0) {
 			$morehtmlstatus .= $object->getLibStatut(5);
 		} else {
 			$morehtmlstatus .= $object->getLibStatut(4);
 		}
 	} elseif ($object->element == 'facturerec') {
+		/** @var FactureRec $object */
 		'@phan-var-force FactureRec $object';
 		if ($object->frequency == 0) {
 			$morehtmlstatus .= $object->getLibStatut(2);
@@ -3411,6 +3451,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$morehtmlstatus .= $object->getLibStatut(5);
 		}
 	} elseif ($object->element == 'project_task') {
+		/** @var Task $object */
 		$tmptxt = $object->getLibStatut(4);
 		$morehtmlstatus .= $tmptxt;
 	} elseif (method_exists($object, 'getLibStatut')) { // Generic case for status
@@ -3433,12 +3474,14 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 
 	// Add alias for thirdparty
 	if (!empty($object->name_alias)) {
+		/** @var Societe $object */
 		'@phan-var-force Societe $object';
 		$morehtmlref .= '<div class="refidno opacitymedium">' . dol_escape_htmltag($object->name_alias) . '</div>';
 	}
 
 	// Add label
 	if (in_array($object->element, array('product', 'bank_account', 'project_task'))) {
+		/** @var Product|Account|Task $object */
 		if (!empty($object->label)) {
 			$morehtmlref .= '<div class="refidno opacitymedium">' . $object->label . '</div>';
 		}
@@ -4841,10 +4884,9 @@ function dol_print_ip($ip, $mode = 0, $showname = 0)
  * Return the real IP of remote user.
  * Take HTTP_X_FORWARDED_FOR (defined when using proxy)
  * Then HTTP_CLIENT_IP if defined (rare)
- * Then REMOTE_ADDR (the last seerver ip in proxy chain).
- * 			REMOTE_ADDR can't be modified by client and may be the IP of a proxy.
- * 			Note: that if Apache module "remoteip" module is on, $_SERVER["REMOTE_ADDR"] may be replaced y HTTP_X_FORWARDED_FOR directly
- * 					from CF-Connecting-IP, but only if remote is in trusted cloudflare list.
+ * Then REMOTE_ADDR (the last seerver ip in proxy chain). REMOTE_ADDR can't be modified by client and may be the IP of a proxy.
+ * Note:	if Apache module "remoteip" module is on, Apache may replaced the $_SERVER["REMOTE_ADDR"] by HTTP_X_FORWARDED_FOR directly. For this
+ * 			Apache is using the CF-Connecting-IP header (HTTP_CF_CONNECTING_IP), but only if the remote IP is in the trusted cloudflare list (Apache must enable module and conf remoteip).
  *
  * @param	int		$trusted	0=Default, 1=Trusted value (the last IP that was not altered by client)
  * @return	string				Real IP of remote user.
@@ -7275,7 +7317,7 @@ function load_fiche_titre($title, $morehtmlright = '', $picto = 'generic', $pict
  *  @param	string	    $morehtmlright		More html to show (after arrows)
  *  @param  string      $morecss            More css to the table
  *  @param  int         $limit              Max number of lines (-1 = use default, 0 = no limit, > 0 = limit).
- *  @param  int|string  $selectlimitsuffix    Suffix for limit ID of -1 to hide the select limit combo
+ *  @param  int|string  $selectlimitsuffix    Suffix for limit ID or -1 to hide the select limit combo
  *  @param  int         $hidenavigation     Force to hide the arrows and page for navigation
  *  @param  int			$pagenavastextinput 1=Do not suggest list of pages to navigate but suggest the page number into an input field.
  *  @param	string		$morehtmlrightbeforearrow	More html to show (before arrows)
@@ -8754,7 +8796,6 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 	if (empty($level) && array_key_exists($modulepart, $arrayforoldpath)) {
 		$level = $arrayforoldpath[$modulepart];
 	}
-
 	if (!empty($level) && array_key_exists($modulepart, $arrayforoldpath)) {
 		// This part should be removed once all code is using "get_exdir" to forge path, with parameter $object and $modulepart provided.
 		if (empty($num) && is_object($object)) {
@@ -8779,8 +8820,12 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 		// We will enhance here a common way of forging path for document storage.
 		// In a future, we may distribute directories on several levels depending on setup and object.
 		// Here, $object->id, $object->ref and $modulepart are required.
-		//var_dump($modulepart);
-		$path = dol_sanitizeFileName(empty($object->ref) ? (string) ((is_object($object) && property_exists($object, 'id')) ? $object->id : '') : $object->ref);
+		if (in_array($modulepart, array('societe', 'thirdparty')) && $object instanceOf Societe) {
+			// Special case for thirdparty, where the ref is a company name that is not unique so path on disk is using the ID instead of the ref
+			$path = dol_sanitizeFileName((string) $object->id);
+		} else {
+			$path = dol_sanitizeFileName(empty($object->ref) ? (string) ((is_object($object) && property_exists($object, 'id')) ? $object->id : '') : $object->ref);
+		}
 	}
 
 	if (empty($withoutslash) && !empty($path)) {
@@ -10502,7 +10547,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 		$already_payed_all = 0;
 		if (is_object($object) && ($object instanceof Facture)) {
-			$already_payed_all = $object->sumpayed + $object->sumdeposit + $object->sumcreditnote;
+			$already_payed_all = $object->totalpaid + $object->totaldeposits + $object->totalcreditnotes;
 		}
 
 		$substitutionarray['__AMOUNT_EXCL_TAX__'] = is_object($object) ? $object->total_ht : '';
@@ -13076,6 +13121,22 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 						$newres .= (($i2 > 0 || $i3 > 0) ? ' OR ' : '');
 					}
 
+					$isSellist = false;
+					$table = $label = $key = null;
+
+					if (strpos($field, 'ef.') === 0) {
+						$extrafieldName = substr($field, 3);
+						$extrafields = new ExtraFields($db);
+						$extrafields->fetch_name_optionals_label('product');
+
+						if (isset($extrafields->attributes['product']['type'][$extrafieldName]) && $extrafields->attributes['product']['type'][$extrafieldName] === 'sellist') {
+							$isSellist = true;
+							$paramArray = $extrafields->attributes['product']['param'][$extrafieldName]['options'] ?? [];
+							$param = array_key_first($paramArray);
+							list($table, $label, $key) = explode(':', $param);
+						}
+					}
+
 					if (preg_match('/\.(id|rowid)$/', $field)) {	// Special case for rowid that is sometimes a ref so used as a search field
 						$newres .= $db->sanitize($field) . " = " . (is_numeric($tmpcrit) ? ((float) $tmpcrit) : '0');
 					} else {
@@ -13084,33 +13145,37 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 						$tmpafter = '%';
 						$tmps = '';
 
-						if (preg_match('/^!/', $tmpcrit)) {
-							$tmps .= $db->sanitize($field) . " NOT LIKE "; // ! as exclude character
-							$tmpcrit2 = preg_replace('/^!/', '', $tmpcrit2);
+						if ($isSellist) {
+							$newres .= $field." IN (SELECT t.".$key." FROM ".$db->prefix().$table." AS t WHERE t.".$label." LIKE '%".$db->escape($tmpcrit2)."%')";
 						} else {
-							$tmps .= $db->sanitize($field) . " LIKE ";
-						}
-						$tmps .= "'";
+							if (preg_match('/^!/', $tmpcrit)) {
+								$tmps .= $db->sanitize($field) . " NOT LIKE "; // ! as exclude character
+								$tmpcrit2 = preg_replace('/^!/', '', $tmpcrit2);
+							} else {
+								$tmps .= $db->sanitize($field) . " LIKE ";
+							}
+							$tmps .= "'";
 
-						if (preg_match('/^[\^\$]/', $tmpcrit)) {
-							$tmpbefore = '';
-							$tmpcrit2 = preg_replace('/^[\^\$]/', '', $tmpcrit2);
-						}
-						if (preg_match('/[\^\$]$/', $tmpcrit)) {
-							$tmpafter = '';
-							$tmpcrit2 = preg_replace('/[\^\$]$/', '', $tmpcrit2);
-						}
+							if (preg_match('/^[\^\$]/', $tmpcrit)) {
+								$tmpbefore = '';
+								$tmpcrit2 = preg_replace('/^[\^\$]/', '', $tmpcrit2);
+							}
+							if (preg_match('/[\^\$]$/', $tmpcrit)) {
+								$tmpafter = '';
+								$tmpcrit2 = preg_replace('/[\^\$]$/', '', $tmpcrit2);
+							}
 
-						if ($tmpcrit2 == '' || preg_match('/^!/', $tmpcrit)) {
-							$tmps = "(" . $tmps;
-						}
-						$newres .= $tmps;
-						$newres .= $tmpbefore;
-						$newres .= $db->escape($tmpcrit2);
-						$newres .= $tmpafter;
-						$newres .= "'";
-						if ($tmpcrit2 == '' || preg_match('/^!/', $tmpcrit)) {
-							$newres .= " OR " . $field . " IS NULL)";
+							if ($tmpcrit2 == '' || preg_match('/^!/', $tmpcrit)) {
+								$tmps = "(" . $tmps;
+							}
+							$newres .= $tmps;
+							$newres .= $tmpbefore;
+							$newres .= $db->escape($tmpcrit2);
+							$newres .= $tmpafter;
+							$newres .= "'";
+							if ($tmpcrit2 == '' || preg_match('/^!/', $tmpcrit)) {
+								$newres .= " OR " . $field . " IS NULL)";
+							}
 						}
 					}
 
@@ -15233,7 +15298,7 @@ function showValueWithClipboardCPButton($valuetocopy, $showonlyonhover = 1, $tex
 
 
 /**
- * Decode an encode string. The string can be encoded in json format (recommended) or with serialize (avoid this)
+ * Decode an encoded string. The string can be encoded in json format (recommended) or with serialize (avoid this)
  *
  * @param 	string	$stringtodecode		String to decode (json or serialize coded)
  * @return	mixed						The decoded object.
@@ -15242,7 +15307,7 @@ function jsonOrUnserialize($stringtodecode)
 {
 	$result = json_decode($stringtodecode);
 	if ($result === null) {
-		$result = unserialize($stringtodecode);
+		$result = unserialize($stringtodecode);	// For backward compatibility. Is no more used in recent versions.
 	}
 
 	return $result;

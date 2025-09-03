@@ -45,8 +45,12 @@ create table llx_paiement_extrafields
 
 ALTER TABLE llx_paiement_extrafields ADD UNIQUE INDEX uk_paiement_extrafields (fk_object);
 
+ALTER TABLE llx_facture ADD COLUMN dispute_status integer DEFAULT 0 after payment_reference;
+
 ALTER TABLE llx_commande ADD COLUMN ip varchar(250);
 ALTER TABLE llx_commande ADD COLUMN user_agent varchar(255);
+
+ALTER TABLE llx_commande_fournisseur ADD COLUMN date_reception datetime default NULL;
 
 ALTER TABLE llx_c_currencies ADD COLUMN max_decimal_unit tinyint NULL;	-- Number of decimal in this currency for unit prices
 ALTER TABLE llx_c_currencies ADD COLUMN max_decimal_tot tinyint NULL;	-- Number of decimal in this currency for total prices
@@ -56,6 +60,7 @@ ALTER TABLE llx_oauth_token ADD COLUMN apicount_previous_month BIGINT UNSIGNED D
 ALTER TABLE llx_oauth_token ADD COLUMN apicount_month BIGINT UNSIGNED DEFAULT 0;			-- increased by 1 at each page access, saved into pageviews_previous_month when on different month than lastaccess
 ALTER TABLE llx_oauth_token ADD COLUMN apicount_total BIGINT UNSIGNED DEFAULT 0;			-- increased by 1 at each page access, no reset
 
+ALTER TABLE llx_webhook_target ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 
 ALTER TABLE llx_extrafields ADD COLUMN emptyonclone integer DEFAULT 0 AFTER alwayseditable;
 
@@ -77,9 +82,28 @@ ALTER TABLE llx_adherent ADD COLUMN birth_place varchar(64) after birth;
 
 ALTER TABLE llx_societe ADD COLUMN birth date DEFAULT NULL after fk_forme_juridique;
 
+DELETE FROM llx_user_rights WHERE fk_id IN (SELECT id FROM llx_rights_def WHERE module = 'webhook' AND perms = 'webhook_target');
+DELETE FROM llx_usergroup_rights WHERE fk_id IN (SELECT id FROM llx_rights_def WHERE module = 'webhook' AND perms = 'webhook_target');
+
+DELETE FROM llx_rights_def WHERE module = 'webhook' AND perms = 'webhook_target';
+
 ALTER TABLE llx_prelevement_lignes ADD COLUMN bic   varchar(11);   -- 11 according to ISO 9362
 ALTER TABLE llx_prelevement_lignes ADD COLUMN iban	varchar(80);   -- full iban. 34 according to ISO 13616 but we set 80 to allow to store it with encryption information
 ALTER TABLE llx_prelevement_lignes ADD COLUMN rum	varchar(32);   -- rum used
 
+
+ALTER TABLE llx_product_customer_price CHANGE COLUMN localtax1_tx localtax1_tx varchar(20) DEFAULT '0';
+ALTER TABLE llx_product_customer_price CHANGE COLUMN localtax2_tx localtax2_tx varchar(20) DEFAULT '0';
+ALTER TABLE llx_product_customer_price_log CHANGE COLUMN localtax1_tx localtax1_tx varchar(20) DEFAULT '0';
+ALTER TABLE llx_product_customer_price_log CHANGE COLUMN localtax2_tx localtax2_tx varchar(20) DEFAULT '0';
+
+ALTER TABLE llx_subscription DROP INDEX idx_subscription_fk_adherent;
+ALTER TABLE llx_subscription DROP INDEX idx_subscription_fk_bank;
+ALTER TABLE llx_subscription DROP INDEX idx_subscription_dateadh;
+ALTER TABLE llx_subscription ADD INDEX idx_subscription_fk_adherent (fk_adherent);
+ALTER TABLE llx_subscription ADD INDEX idx_subscription_fk_bank (fk_bank);
+ALTER TABLE llx_subscription ADD INDEX idx_subscription_dateadh (dateadh);
+
+ALTER TABLE llx_bank_import ADD COLUMN fitid varchar(255) NULL after id_account; -- OFX Financial Institution Transaction ID "FITID"
 
 -- end of migration
