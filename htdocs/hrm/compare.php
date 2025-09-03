@@ -160,7 +160,7 @@ $fk_usergroup1 = GETPOSTINT('fk_usergroup1');
 							?></td>
 						</tr>
 						<tr>
-							<td><b><?php print $langs->trans('or'); ?></b><td></td></td>
+							<td><b><?php print $langs->trans('or'); ?></b></td><td></td>
 						</tr>
 						<tr>
 							<td><?php
