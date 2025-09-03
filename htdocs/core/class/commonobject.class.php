@@ -748,25 +748,25 @@ abstract class CommonObject
 	public $user_modification_id;
 
 	/**
-	 * @var int ID
+	 * @var int 		ID
 	 * @deprecated	Use $user_creation_id
 	 */
 	public $fk_user_creat;
 
 	/**
-	 * @var int ID
+	 * @var int 		ID
 	 * @deprecated 	Use $user_modification_id
 	 */
 	public $fk_user_modif;
 
 
 	/**
-	 * @var string XX
+	 * @var string 		XX
 	 */
 	public $next_prev_filter;
 
 	/**
-	 * @var int<0,1> 1 if object is specimen
+	 * @var int<0,1> 	1 if object is specimen
 	 */
 	public $specimen = 0;
 
@@ -777,26 +777,26 @@ abstract class CommonObject
 
 
 	/**
-	 * @var	?float		Amount already paid from getSommePaiement() + getSumCreditNotesUsed() + getSumDepositsUsed() (used to show correct status)
+	 * @var	?float			Amount already paid from getSommePaiement() + getSumCreditNotesUsed() + getSumDepositsUsed() (used to show correct status)
 	 * @see $totalpaid
 	 */
 	public $alreadypaid;
 
 	/**
-	 * @var	?float		Amount already paid from getSommePaiement()
+	 * @var	?float			Amount already paid from getSommePaiement()
 	 * @see $alreadpaid, $totalpaid_multicurrency
 	 */
 	public $totalpaid;
 
 	/**
-	 * @var ?int|?float	Amount already paid from getSommePaiement(), like $totalpaid, but in the foreign currency
+	 * @var int|float|null	Amount already paid from getSommePaiement(), like $totalpaid, but in the foreign currency
 	 * @see $totalpaid, $alreadypaid
 	 */
 	public $totalpaid_multicurrency;
 
 
 	/**
-	 * @var array<int,string>		Array with labels of status
+	 * @var array<int,string>	Array with labels of status
 	 */
 	public $labelStatus = array();
 
