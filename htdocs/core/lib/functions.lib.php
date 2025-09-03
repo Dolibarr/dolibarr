@@ -1443,6 +1443,7 @@ function dol_include_once($relpath, $classname = '')
 function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 {
 	global $conf;
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$path = preg_replace('/^\//', '', $path);
 
@@ -1455,6 +1456,9 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 				}
 				// if (@file_exists($dirroot.'/'.$path)) {
 				if (@file_exists($dirroot.'/'.$path)) {	// avoid [php:warn]
+					if (empty(dol_dir_list($dirroot.'/'.$path, "files"))) {
+						continue;
+					}
 					$res = $dirroot.'/'.$path;
 					return $res;
 				}
