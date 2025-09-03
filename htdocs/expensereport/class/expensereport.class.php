@@ -1683,9 +1683,9 @@ class ExpenseReport extends CommonObject
 			$this->db->begin();
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET fk_statut = ".self::STATUS_CANCELED.", fk_user_cancel = ".((int) $fuser->id);
-			$sql .= ", date_cancel='".$this->db->idate($this->date_cancel)."'";
-			$sql .= ", detail_cancel='".$this->db->escape($detail)."'";
+			$sql .= " SET fk_statut = ".((int) self::STATUS_CANCELED).", fk_user_cancel = ".((int) $fuser->id);
+			$sql .= ", date_cancel = '".$this->db->idate($this->date_cancel)."'";
+			$sql .= ", detail_cancel = '".$this->db->escape($detail)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::set_cancel", LOG_DEBUG);

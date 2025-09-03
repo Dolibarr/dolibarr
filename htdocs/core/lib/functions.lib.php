@@ -3413,18 +3413,21 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$tmptxt = $object->getLibStatut(5, $object->alreadypaid);
 		}
 		$morehtmlstatus .= $tmptxt;
-	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier'))) {	// TODO Move this to use ->alreadypaid
+	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier'))) {
 		/** @var Facture|FactureFournisseur|CommonInvoice $object */
 		'@phan-var-force Facture|FactureFournisseur|CommonInvoice $object';
-		$totalallpayments = $object->getSommePaiement(0);
-		$totalallpayments += $object->getSumCreditNotesUsed(0);
-		$totalallpayments += $object->getSumDepositsUsed(0);
-		$tmptxt = $object->getLibStatut(6, $totalallpayments);
+		if (!isset($object->alreadypaid)) {
+			$object->totalpaid = $object->getSommePaiement(0);
+			$object->totalcreditnotes = $object->getSumCreditNotesUsed(0);
+			$object->totaldeposits = $object->getSumDepositsUsed(0);
+			$object->alreadypaid = $object->totalpaid + $object->totalcreditnotes + $object->totaldeposits;
+		}
+		$tmptxt = $object->getLibStatut(6, $object->alreadypaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
-			$tmptxt = $object->getLibStatut(5, $totalallpayments);
+			$tmptxt = $object->getLibStatut(5, $object->alreadypaid);
 		}
 		$morehtmlstatus .= $tmptxt;
-	} elseif (in_array($object->element, array('chargesociales', 'loan', 'tva'))) {	// TODO Move this to use ->alreadypaid
+	} elseif (in_array($object->element, array('chargesociales', 'loan', 'tva'))) {	// TODO Move this to use ->alreadypaid like for invoices
 		/** @var ChargeSociales|Loan|Tva $object */
 		'@phan-var-force ChargeSociales|Loan|Tva $object';
 		$tmptxt = $object->getLibStatut(6, $object->totalpaid);
