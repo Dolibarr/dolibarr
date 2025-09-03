@@ -78,7 +78,7 @@ if ((getDolGlobalString('TAKEPOS_PHONE_BASIC_LAYOUT') == 1 && $conf->browser->la
 	}
 }
 
-// REDIRECT TO TERMINAL SELECT IF NO TERMINAL SELECTED
+// When session has expired (selected terminal has been lost from session), redirect to the terminal selection.
 if (empty($_SESSION["takeposterminal"])) {
 	if (getDolGlobalInt('TAKEPOS_NUM_TERMINALS') == 1) {
 		$_SESSION["takeposterminal"] = 1; // Use terminal 1 if there is only 1 terminal
