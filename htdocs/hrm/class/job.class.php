@@ -1061,7 +1061,7 @@ class Job extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(0) : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">' . $this->getNomUrl(0) . '</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
@@ -1069,9 +1069,9 @@ class Job extends CommonObject
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Type").'</span>';
 			$return .= ' : <span class="info-box-label ">'.$this->fields['deplacement']['arrayofkeyval'][$this->deplacement].'</span>';
 		}*/
-		if (property_exists($this, 'description') && !(empty($this->description))) {
+		if (empty($this->description)) {
 			//$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Description").'</span> : ';
-			$return .= '<br><span class="info-box-label ">'.(strlen($this->description) > 30 ? dol_substr($this->description, 0, 25).'...' : $this->description).'</span>';
+			$return .= '<br><span class="info-box-label ">' . dol_trunc($this->description, 25) . '</span>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
