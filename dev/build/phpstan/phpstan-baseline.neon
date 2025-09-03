@@ -13321,12 +13321,6 @@ parameters:
 			path: ../../../htdocs/hrm/admin/admin_hrm.php
 
 		-
-			message: '#^Property Establishment\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/hrm/class/establishment.class.php
-
-		-
 			message: '#^Call to function method_exists\(\) with \$this\(Evaluation\) and ''getLibStatut'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
