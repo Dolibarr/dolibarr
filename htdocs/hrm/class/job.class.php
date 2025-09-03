@@ -270,15 +270,13 @@ class Job extends CommonObject
 		unset($object->import_key);
 
 		// Clear fields
-		if (property_exists($object, 'ref')) {
-			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
-		}
+		$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
 		$object->label = $langs->trans("CopyOf")." ".$object->label;
 		$object->date_creation = dol_now();
 		if (property_exists($object, 'date_modification')) {
 			$object->date_modification = null;
 		}
-		// ...
+
 		// Clear extrafields that are unique
 		if (is_array($object->array_options) && count($object->array_options) > 0) {
 			$extrafields->fetch_name_optionals_label($this->table_element);
