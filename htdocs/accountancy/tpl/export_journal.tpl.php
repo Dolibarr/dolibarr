@@ -98,7 +98,7 @@ if (is_object($hookmanager)) {
 	$parameters = array(
 		'type_export'       => $type_export ?? '',
 		'format'            => $format ?? '',
-		'format_code'       => isset($accountancyexport) && is_object($accountancyexport) && method_exists($accountancyexport, 'getFormatCode') ? $accountancyexport->getFormatCode($formatexportset) : '',
+		'format_code'       => $accountancyexport->getFormatCode($formatexportset),
 		'code'              => $code ?? '',
 		'prefix'            => $prefix ?? '',
 		'filename'          => $filename ?? '',
@@ -106,9 +106,9 @@ if (is_object($hookmanager)) {
 		'period_end'        => $endaccountingperiod ?? '',
 		'siren'             => $siren ?? '',
 		'ndate_in_filename' => $nodateexport ?? 0,
-		'now_datetime'      => $date_export ?? '',
+		'now_datetime'      => $date_export,
 		// Value by default
-		'defaultfilename'   => $completefilename ?? ''
+		'defaultfilename'   => $completefilename
 	);
 
 	// Hook called by modules: setExportFilename
@@ -116,8 +116,7 @@ if (is_object($hookmanager)) {
 	if ($reshook > 0) {
 		if (!empty($hookmanager->resArray['filename'])) {
 			$completefilename = $hookmanager->resArray['filename'];
-		} elseif (isset($hookmanager->resPrint) && $hookmanager->resPrint !== '') {
-			// Compatibility
+		} elseif ($hookmanager->resPrint !== '') {
 			$completefilename = $hookmanager->resPrint;
 		}
 	}
