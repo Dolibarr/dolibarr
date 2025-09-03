@@ -7,6 +7,7 @@
  * Copyright (C) 2006 	    Jean Heimburger         <jean@tiaris.info>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	Abbes Bahfir			<contact@01consulting.eu>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -967,6 +968,9 @@ class Conf extends stdClass
 				$this->global->MAIN_MONNAIE = 'EUR';
 			}
 			$this->currency = $this->global->MAIN_MONNAIE;
+
+			// Alias for main company country (split id:code:label)
+			if (!empty($this->global->MAIN_INFO_SOCIETE_COUNTRY)) list($this->country_id, $this->country_code, $this->country) = explode(':', $this->global->MAIN_INFO_SOCIETE_COUNTRY);
 
 			if (empty($this->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY)) {
 				$this->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY = 30; // Less than 1 minutes to be sure
