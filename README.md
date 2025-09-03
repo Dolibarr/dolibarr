@@ -99,6 +99,7 @@ Follow these step-by-step instructions to seamlessly upgrade Dolibarr to the lat
 
 See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog) file.
 
+Adding new templates must be done by adding files into a module directory. Adding files into custom with same path of the core without having using a module is now forbidden
 
 ## FEATURES
 

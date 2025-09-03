@@ -1569,6 +1569,9 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 				}
 				// if (@file_exists($dirroot.'/'.$path)) {
 				if (@file_exists($dirroot . '/' . $path)) {	// avoid [php:warn]
+					if ($key != 'main' && preg_match('/^core\//', $path)) {	// When searching into an alternative custom path, we don't wan't path like 'core/...' because path should be 'modulename/core/...'
+						continue;
+					}
 					$res = $dirroot . '/' . $path;
 					return $res;
 				}
