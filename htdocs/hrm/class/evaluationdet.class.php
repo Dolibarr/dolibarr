@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2021 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
- * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
- * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2017       Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2021       Gauthier VERDOL             <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021       Greg Rastklan               <greg.rastklan@atm-consulting.fr>
+ * Copyright (C) 2021       Jean-Pascal BOUDET          <jean-pascal.boudet@atm-consulting.fr>
+ * Copyright (C) 2021       Grégory BLEMAND             <gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -149,42 +149,6 @@ class EvaluationLine extends CommonObjectLine
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
 
-
-	// If this object has a subtable with lines
-
-	// /**
-	//  * @var string    Name of subtable line
-	//  */
-	// public $table_element_line = 'hrm_evaluationline';
-
-	// /**
-	//  * @var string    Field with ID of parent key if this object has a parent
-	//  */
-	// public $fk_element = 'fk_evaluationdet';
-
-	// /**
-	//  * @var string    Name of subtable class that manage subtable lines
-	//  */
-	// public $class_element_line = 'EvaluationLine';
-
-	// /**
-	//  * @var array	List of child tables. To test if we can delete object.
-	//  */
-	// protected $childtables = array();
-
-	// /**
-	//  * @var array    List of child tables. To know object to delete on cascade.
-	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
-	//  */
-	// protected $childtablesoncascade = array('hrm_evaluationdetdet');
-
-	// /**
-	//  * @var EvaluationLine[]     Array of subtable lines
-	//  */
-	// public $lines = array();
-
-
 	/**
 	 * Constructor
 	 *
@@ -205,12 +169,6 @@ class EvaluationLine extends CommonObjectLine
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
-
-		// Example to show how to set values of fields definition dynamically
-		/*if ($user->rights->hrm->evaluationdet->read) {
-			$this->fields['myfield']['visible'] = 1;
-			$this->fields['myfield']['noteditable'] = 0;
-		}*/
 
 		// Unset fields that are disabled
 		foreach ($this->fields as $key => $val) {
@@ -351,25 +309,9 @@ class EvaluationLine extends CommonObjectLine
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && !empty($this->table_element_line)) {
-			$this->fetchLines();
-		}
+
 		return $result;
 	}
-
-	/**
-	 * Load object lines in memory from the database
-	 *
-	 * @return int         Return integer <0 if KO, 0 if not found, >0 if OK
-	 */
-	public function fetchLines()
-	{
-		$this->lines = array();
-
-		$result = $this->fetchLinesCommon();
-		return $result;
-	}
-
 
 	/**
 	 * Load list of objects in memory from the database.
@@ -661,13 +603,6 @@ class EvaluationLine extends CommonObjectLine
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->write))
-		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->hrm_advance->validate))))
-		 {
-		 $this->error='Permission denied';
-		 return -1;
-		 }*/
-
 		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'EVALUATIONLINE_CANCEL');
 	}
 
@@ -684,13 +619,6 @@ class EvaluationLine extends CommonObjectLine
 		if ($this->status != self::STATUS_CANCELED) {
 			return 0;
 		}
-
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->write))
-		 || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->hrm->hrm_advance->validate))))
-		 {
-		 $this->error='Permission denied';
-		 return -1;
-		 }*/
 
 		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'EVALUATIONLINE_REOPEN');
 	}
@@ -956,6 +884,7 @@ class EvaluationLine extends CommonObjectLine
 			if (class_exists($classname)) {
 				$obj = new $classname();
 				'@phan-var-force ModeleNumRefEvaluation $obj';
+				/** @var ModeleNumRefEvaluation $obj */
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {
