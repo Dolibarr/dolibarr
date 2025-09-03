@@ -2523,7 +2523,7 @@ class SupplierProposal extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs, $menumanager;
+		global $conf, $langs;
 
 		$langs->load('supplier_proposal');
 
@@ -2531,7 +2531,7 @@ class SupplierProposal extends CommonObject
 			return ['optimize' => $langs->trans("ShowSupplierProposal")];
 		}
 
-		$option = $params['option'] ?? '';
+		//$option = $params['option'] ?? '';
 		$datas = [];
 
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("SupplierProposal").'</u>';

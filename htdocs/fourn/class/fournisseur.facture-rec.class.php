@@ -840,8 +840,10 @@ class FactureFournisseurRec extends CommonInvoice
 				$line->label                    = $objp->label;
 				$line->description              = $objp->line_desc;
 				$line->desc                     = $objp->line_desc;
-				$line->pu_ht                    = $objp->pu_ht;
-				$line->pu_ttc                   = $objp->pu_ttc;
+				$line->pu_ht                    = $objp->pu_ht;		// deprecated
+				$line->subprice                 = $objp->pu_ht;
+				$line->pu_ttc                   = $objp->pu_ttc;	// deprecated
+				$line->subprice_ttc             = $objp->pu_ttc;
 				$line->qty                      = $objp->qty;
 				$line->remise_percent           = $objp->remise_percent;
 				$line->fk_remise_except         = $objp->fk_remise_except;
