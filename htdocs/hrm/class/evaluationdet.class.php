@@ -799,43 +799,4 @@ class EvaluationLine extends CommonObjectLine
 			return "";
 		}
 	}
-
-	/**
-	 *  Create a document onto disk according to template module.
-	 *
-	 *  @param	string		$modele			Force template to use ('' to not force)
-	 *  @param	Translate	$outputlangs	object lang a utiliser pour traduction
-	 *  @param 	int<0,1>	$hidedetails    Hide details of lines
-	 *  @param	int<0,1>	$hidedesc       Hide description
-	 *  @param	int<0,1>	$hideref        Hide ref
-	 *  @param	?array<string,mixed>	$moreparams     Array to provide more information
-	 *  @return	int         				0 if KO, 1 if OK
-	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
-	{
-		global $conf, $langs;
-
-		$result = 0;
-		$includedocgeneration = 0;
-
-		$langs->load("hrm");
-
-		if (!dol_strlen($modele)) {
-			$modele = 'standard_evaluationdet';
-
-			if (!empty($this->model_pdf)) {
-				$modele = $this->model_pdf;
-			} elseif (getDolGlobalString('EVALUATIONLINE_ADDON_PDF')) {
-				$modele = getDolGlobalString('EVALUATIONLINE_ADDON_PDF');
-			}
-		}
-
-		$modelpath = "core/modules/hrm/doc/";
-
-		if ($includedocgeneration && !empty($modele)) {
-			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
-		}
-
-		return $result;
-	}
 }
