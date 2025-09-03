@@ -940,6 +940,7 @@ abstract class CommonInvoice extends CommonObject
 			'nbofopendirectdebitorcredittransfer' => $this->nbofopendirectdebitorcredittransfer,
 			'close_code' => $this->close_code,
 			'close_note' => $this->close_note,
+			'dispute_status' => $this->dispute_status
 		);
 
 		return $this->LibStatut($this->paye, $this->status, $mode, $alreadypaid, $this->type, $moreparams);
@@ -1056,7 +1057,14 @@ abstract class CommonInvoice extends CommonObject
 			$paramsbutton = array();
 		}
 
-		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $paramsbutton);
+		/*
+		if (isset($moreparams['dispute_status'])) {
+			$statusdispute = $moreparams['dispute_status'] ? img_picto($langs->trans("aa"), 'warning') : '';
+		}
+		*/
+		$statusbadge = dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $paramsbutton);
+
+		return $statusbadge;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
