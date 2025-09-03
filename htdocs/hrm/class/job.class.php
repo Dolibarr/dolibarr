@@ -899,7 +899,7 @@ class Job extends CommonObject
 	/**
 	 * 	Create an array of lines
 	 *
-	 * 	@return array|int		array of lines if OK, <0 if KO
+	 * 	@return JobLine[]|int		array of lines if OK, <0 if KO
 	 */
 	public function getLinesArray()
 	{
