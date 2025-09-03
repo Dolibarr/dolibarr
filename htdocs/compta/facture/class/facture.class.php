@@ -2736,7 +2736,7 @@ class Facture extends CommonInvoice
 		if (!isset($this->user_creation_id) && isset($this->fk_user_author)) {
 			$this->user_creation_id = $this->fk_user_author;
 		}
-		if (!isset($this->user_modifcation_id) && !empty($user->id)) {
+		if (!isset($this->user_modification_id) && !empty($user->id)) {
 			$this->user_modification_id = $user->id;
 		}
 		if (!isset($this->user_validation_id) && isset($this->fk_user_valid)) {
@@ -4667,7 +4667,7 @@ class Facture extends CommonInvoice
 				$rangmax = $this->line_max($fk_parent_line);
 				$this->line->rang = $rangmax + 1;
 			}
-			$apply_abs_price_on_credit_note=false;
+			$apply_abs_price_on_credit_note = false;
 			if ($this->type == self::TYPE_CREDIT_NOTE  && !getDolGlobalInt('FACTURE_ENABLE_NEGATIVE_LINES') && !getDolGlobalInt('INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN')) {
 				$apply_abs_price_on_credit_note = true;
 			}

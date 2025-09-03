@@ -433,7 +433,7 @@ if ($resql) {
 					$result_sql = $db->query($sql);
 
 					dol_syslog("update global status", LOG_DEBUG);
-					print "Update status of emailing id ".$id." to ".$statut."\n";
+					print "Update status of emailing id ".$id." to 3\n";
 				}
 			} else {
 				dol_print_error($db);

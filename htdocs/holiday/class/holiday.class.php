@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2011		Dimitri Mouillard	<dmouillard@teclib.com>
- * Copyright (C) 2012-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012-2016	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2016       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2011		Dimitri Mouillard		<dmouillard@teclib.com>
+ * Copyright (C) 2012-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2016	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2016       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -162,6 +162,10 @@ class Holiday extends CommonObject
 
 	public $holiday = array();
 	public $events = array();
+
+	/**
+	 * @var array<int,array{id:int,rowid:int,date_action:string,fk_user_action:int,fk_user_update:int,type_action:string,prev_solde:float,new_solde:float,fk_type:int}>
+	 */
 	public $logs = array();
 
 
@@ -2330,15 +2334,15 @@ class Holiday extends CommonObject
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
 
-				$tab_result[$i]['rowid'] = $obj->rowid;
-				$tab_result[$i]['id'] = $obj->rowid;
-				$tab_result[$i]['date_action'] = $obj->date_action;
-				$tab_result[$i]['fk_user_action'] = $obj->fk_user_action;
-				$tab_result[$i]['fk_user_update'] = $obj->fk_user_update;
-				$tab_result[$i]['type_action'] = $obj->type_action;
-				$tab_result[$i]['prev_solde'] = $obj->prev_solde;
-				$tab_result[$i]['new_solde'] = $obj->new_solde;
-				$tab_result[$i]['fk_type'] = $obj->fk_type;
+				$tab_result[$i]['rowid'] = (int) $obj->rowid;
+				$tab_result[$i]['id'] = (int) $obj->rowid;
+				$tab_result[$i]['date_action'] = (string) $obj->date_action;
+				$tab_result[$i]['fk_user_action'] = (int) $obj->fk_user_action;
+				$tab_result[$i]['fk_user_update'] = (int) $obj->fk_user_update;
+				$tab_result[$i]['type_action'] = (string) $obj->type_action;
+				$tab_result[$i]['prev_solde'] = (float) $obj->prev_solde;
+				$tab_result[$i]['new_solde'] = (float) $obj->new_solde;
+				$tab_result[$i]['fk_type'] = (int) $obj->fk_type;
 
 				$i++;
 			}

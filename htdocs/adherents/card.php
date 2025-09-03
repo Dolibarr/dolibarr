@@ -1667,10 +1667,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnValid()), $substitutionarray, $outputlangs);
 
 			$tmp = $langs->trans("SendingAnEMailToMember");
-			$tmp .= '<br>'.$langs->trans("MailFrom").': <b>'.getDolGlobalString('ADHERENT_MAIL_FROM').'</b>, ';
+			$tmp .= '<br>'.$langs->trans("MailFrom").': <b>'.getDolGlobalString('ADHERENT_MAIL_FROM', $conf->email_from).'</b>, ';
 			$tmp .= '<br>'.$langs->trans("MailRecipient").': <b>'.$object->email.'</b>';
 			$helpcontent = '';
-			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.getDolGlobalString('ADHERENT_MAIL_FROM').'<br>'."\n";
+			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.getDolGlobalString('ADHERENT_MAIL_FROM', $conf->email_from).'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("Subject").'</b>:<br>'."\n";
 			$helpcontent .= $subjecttosend."\n";
@@ -1731,10 +1731,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnResiliate()), $substitutionarray, $outputlangs);
 
 			$tmp = $langs->trans("SendingAnEMailToMember");
-			$tmp .= '<br>('.$langs->trans("MailFrom").': <b>'.getDolGlobalString('ADHERENT_MAIL_FROM').'</b>, ';
+			$tmp .= '<br>('.$langs->trans("MailFrom").': <b>'.getDolGlobalString('ADHERENT_MAIL_FROM', $conf->email_from).'</b>, ';
 			$tmp .= $langs->trans("MailRecipient").': <b>'.$object->email.'</b>)';
 			$helpcontent = '';
-			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.getDolGlobalString('ADHERENT_MAIL_FROM').'<br>'."\n";
+			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.getDolGlobalString('ADHERENT_MAIL_FROM', $conf->email_from).'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("Subject").'</b>:<br>'."\n";
 			$helpcontent .= $subjecttosend."\n";
@@ -1792,10 +1792,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnExclude()), $substitutionarray, $outputlangs);
 
 			$tmp = $langs->trans("SendingAnEMailToMember");
-			$tmp .= '<br>('.$langs->trans("MailFrom").': <b>'.getDolGlobalString('ADHERENT_MAIL_FROM').'</b>, ';
+			$tmp .= '<br>('.$langs->trans("MailFrom").': <b>'.getDolGlobalString('ADHERENT_MAIL_FROM', $conf->email_from).'</b>, ';
 			$tmp .= $langs->trans("MailRecipient").': <b>'.$object->email.'</b>)';
 			$helpcontent = '';
-			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.getDolGlobalString('ADHERENT_MAIL_FROM').'<br>'."\n";
+			$helpcontent .= '<b>'.$langs->trans("MailFrom").'</b>: '.getDolGlobalString('ADHERENT_MAIL_FROM', $conf->email_from).'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("MailRecipient").'</b>: '.$object->email.'<br>'."\n";
 			$helpcontent .= '<b>'.$langs->trans("Subject").'</b>:<br>'."\n";
 			$helpcontent .= $subjecttosend."\n";

@@ -278,8 +278,6 @@ class SupplierProposal extends CommonObject
 	 */
 	public function __construct($db, $socid = 0, $supplier_proposalid = 0)
 	{
-		global $conf, $langs;
-
 		$this->db = $db;
 
 		$this->ismultientitymanaged = 1;
@@ -1246,8 +1244,6 @@ class SupplierProposal extends CommonObject
 	 */
 	public function fetch($rowid, $ref = '')
 	{
-		global $conf;
-
 		$sql = "SELECT p.rowid, p.entity, p.ref, p.fk_soc as socid";
 		$sql .= ", p.total_ttc, p.total_tva, p.localtax1, p.localtax2, p.total_ht";
 		$sql .= ", p.datec, GREATEST(p.tms, pef.tms) as date_modification";
@@ -1691,12 +1687,10 @@ class SupplierProposal extends CommonObject
 	{
 		global $langs, $conf;
 
-		$this->status = $status;
-		$this->statut = $status;
 		$error = 0;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal";
-		$sql .= " SET fk_statut = ".((int) $this->status).",";
+		$sql .= " SET fk_statut = ".((int) $status).",";
 		if (!empty($note)) {
 			$sql .= " note_private = '".$this->db->escape($note)."',";
 		}
@@ -1733,6 +1727,9 @@ class SupplierProposal extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		} else {
+			$this->statut = $status;
+			$this->status = $status;
+
 			$this->db->commit();
 			return 1;
 		}
@@ -1753,25 +1750,27 @@ class SupplierProposal extends CommonObject
 		$hidedetails = 0;
 		$hidedesc = 0;
 		$hideref = 0;
-		$this->status = $status;
-		$this->statut = $status;
+
 		$error = 0;
 		$now = dol_now();
 
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposal";
-		$sql .= " SET fk_statut = ".((int) $status).", note_private = '".$this->db->escape($note)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
+		$sql .= " SET fk_statut = ".((int) $status).", note_private = '".$this->db->escape($note)."', date_cloture='".$this->db->idate($now)."', fk_user_cloture=".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$modelpdf = $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED : (empty($this->model_pdf) ? '' : $this->model_pdf);
+			$this->statut = $status;
+			$this->status = $status;
+
+			$modelpdf = getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF_ODT_CLOSED', (empty($this->model_pdf) ? '' : $this->model_pdf));
 			$triggerName = 'PROPOSAL_SUPPLIER_CLOSE_REFUSED';
 
 			if ($status == 2) {
 				$triggerName = 'PROPOSAL_SUPPLIER_CLOSE_SIGNED';
-				$modelpdf = $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL ? $conf->global->SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL : (empty($this->model_pdf) ? '' : $this->model_pdf);
+				$modelpdf = getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF_ODT_TOBILL', (empty($this->model_pdf) ? '' : $this->model_pdf));
 
 				if (getDolGlobalString('SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL')) {     // TODO This option was not tested correctly. Error if product ref does not exists
 					$result = $this->updateOrCreatePriceFournisseur($user);
@@ -1789,7 +1788,7 @@ class SupplierProposal extends CommonObject
 					$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $this->thirdparty->default_lang);
 					$outputlangs->setDefaultLang($newlang);
 				}
-				//$ret=$object->fetch($id);    // Reload to get new records
+
 				$this->generateDocument($modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 
@@ -2227,7 +2226,7 @@ class SupplierProposal extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut((isset($this->statut) ? $this->statut : $this->status), $mode);
+		return $this->LibStatut((isset($this->status) ? $this->status : $this->statut), $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2768,19 +2767,23 @@ class SupplierProposal extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$langs->load("supplier_proposal");
 		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'aurore';
+			$modele = '';	// On supplier documents, template can be empty( no doc generated in this case)
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
 			} elseif (getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF')) {
 				$modele = getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF');
 			}
+		}
+
+		if (empty($modele)) {
+			return 1;
 		}
 
 		$modelpath = "core/modules/supplier_proposal/doc/";

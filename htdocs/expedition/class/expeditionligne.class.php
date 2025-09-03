@@ -390,7 +390,6 @@ class ExpeditionLigne extends CommonObjectLine
 		$origin_id = $this->origin_id;
 		if ($origin_id > 0) {
 			if ((empty($this->fk_expedition)
-				|| empty($this->fk_product) // product id is mandatory
 				|| (empty($this->fk_elementdet) && empty($this->fk_parent)) // at least origin line id of parent line id is set
 				|| !is_numeric($this->qty))
 				&& !$skip_check_parameters) {
