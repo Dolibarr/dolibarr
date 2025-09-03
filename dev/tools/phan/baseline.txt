@@ -108,7 +108,7 @@ return [
         'htdocs/core/lib/company.lib.php' => ['PhanTypeMismatchArgumentNullable'],
         'htdocs/core/lib/files.lib.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/lib/functions2.lib.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/lib/pdf.lib.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
+        'htdocs/core/lib/pdf.lib.php' => ['PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
         'htdocs/core/lib/product.lib.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/lib/project.lib.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/lib/xcal.lib.php' => ['PhanUndeclaredProperty'],
