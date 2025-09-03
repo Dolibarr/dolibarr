@@ -2,6 +2,7 @@
 /* Copyright (C) 2015	Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2025	William Mead			<william@m34d.com>
+ * Copyright (C) 2025	Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,6 +145,9 @@ class Interventions extends DolibarrApi
 			throw new RestException(403);
 		}
 
+		global $hookmanager;
+		$hookmanager->initHooks(array('interventionsindexapi'));
+
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
@@ -171,6 +175,13 @@ class Interventions extends DolibarrApi
 				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
 			}
 		}
+
+		$parameters = array('sqlfilters' => &$sqlfilters);
+		$object = new stdClass();
+		$action = 'list';
+		$reshook = $hookmanager->executeHooks('printindexapiWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
+		
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
@@ -179,7 +190,9 @@ class Interventions extends DolibarrApi
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 		}
+		
 
+		
 		//this query will return total interventions with the filters given
 		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
 
