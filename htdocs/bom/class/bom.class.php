@@ -569,7 +569,7 @@ class BOM extends CommonObject
 	 * @param int<0,1>	$notrigger  0=launch triggers after, 1=disable triggers
 	 * @return int<-1,-1>|int<1,1>		Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = 1)
+	public function delete(User $user, $notrigger = 0)
 	{
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
