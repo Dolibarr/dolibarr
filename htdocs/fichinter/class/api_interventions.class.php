@@ -176,18 +176,19 @@ class Interventions extends DolibarrApi
 			}
 		}
 
-		$parameters = array('sqlfilters' => $sqlfilters);
-		$object = new stdClass();
-		$action = 'list';
-		$reshook = $hookmanager->executeHooks('printindexapiWhere', &$parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		$sql .= $hookmanager->resPrint;
-
-		// Add sql filters
 		if ($sqlfilters) {
-			$errormessage = '';
-			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
-			if ($errormessage) {
-				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			$parameters = array('sqlfilters' => $sqlfilters);
+			$object = new stdClass();
+			$action = 'list';
+			$reshook = $hookmanager->executeHooks('printindexapiWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			if ($hookmanager->resPrint) {
+				$sql .= $hookmanager->resPrint;
+			} else {
+				$errormessage = '';
+				$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+				if ($errormessage) {
+					throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+				}
 			}
 		}
 
