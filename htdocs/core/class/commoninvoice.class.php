@@ -1059,7 +1059,7 @@ abstract class CommonInvoice extends CommonObject
 
 		/*
 		if (isset($moreparams['dispute_status'])) {
-			$statusdispute = $moreparams['dispute_status'] ? img_picto($langs->trans("aa"), 'warning') : '';
+			$statusdispute = $moreparams['dispute_status'] ? img_picto($langs->trans("DisputeOpen"), 'warning') : '';
 		}
 		*/
 		$statusbadge = dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $paramsbutton);
