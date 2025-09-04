@@ -928,7 +928,7 @@ if (empty($reshook)) {
 		}
 		if ($id == DICT_PAIEMENT && strlen(GETPOST("code")) >= 6) {  // 6 char max on code for payment mode codes
 			$ok = 0;
-			setEventMessages($langs->transnoentities("ErrorFieldMustHaveLessThanXChar", $langs->transnoentities("Code"), 6), null, 'errors');
+			setEventMessages($langs->transnoentities("ErrorFieldMustHaveLessThanXChar", $langs->transnoentities("Code"), '6'), null, 'errors');
 		}
 
 		// Clean some parameters

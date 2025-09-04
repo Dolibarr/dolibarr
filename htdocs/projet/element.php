@@ -1306,12 +1306,12 @@ foreach ($listofreferent as $key => $value) {
 					if (!empty($element->close_code) && $element->close_code == 'replaced') {
 						$qualifiedfortotal = false; // Replacement invoice, do not include into total
 					}
-				} elseif ($key == 'order_supplier' && $element->status == 7) {
+				} elseif ($key == 'order_supplier' && ($element->status == 6 || $element->status == 7)) {
 					$qualifiedfortotal = false; // It makes no sense to include canceled orders in the total
 				}
 
-				if ($key == "order_supplier" && $element->status == 7) {
-					print '<tr class="oddeven tr_canceled" style=display:none>';
+				if ($key == "order_supplier" && ($element->status == 6 || $element->status == 7)) {
+					print '<tr class="oddeven tr_canceled">';
 				} else {
 					print '<tr class="oddeven" >';
 				}
