@@ -448,7 +448,7 @@ abstract class CommonObject
 	public $barcode_type_coder;
 
 	/**
-	 * @var int 		Payment method ID (cheque, cash, ...)
+	 * @var ?int 		Payment method ID (cheque, cash, ...)
 	 * @see setPaymentMethods()
 	 */
 	public $mode_reglement_id;

@@ -574,11 +574,11 @@ class Societe extends CommonObject
 	public $remise_supplier_percent;
 
 	/**
-	 * @var int
+	 * @var ?int 		Default Payment method ID (cheque, cash, ...)
 	 */
 	public $mode_reglement_id;
 	/**
-	 * @var int
+	 * @var ?int		Default Payment term
 	 */
 	public $cond_reglement_id;
 	/**
