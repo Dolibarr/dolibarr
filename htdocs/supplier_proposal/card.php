@@ -1354,7 +1354,7 @@ if ($action == 'create') {
 		// Mode of payment
 		print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
 		print img_picto('', 'bank', 'class="pictofixedwidth"');
-		$form->select_types_paiements(GETPOST('mode_reglement_id') > 0 ? GETPOSTINT('mode_reglement_id') : $mode_reglement_id, 'mode_reglement_id');
+		$form->select_types_paiements(GETPOST('mode_reglement_id') > 0 ? GETPOST('mode_reglement_id') : $mode_reglement_id, 'mode_reglement_id');
 		print '</td></tr>';
 
 		// Bank Account
