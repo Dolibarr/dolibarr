@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +63,7 @@ if ($query == "cat") {
 	$object = new Categorie($db);
 	$result = $object->fetch($id);
 
-	$upload_dir = $conf->categorie->multidir_output[$object->entity];
+	$upload_dir = $conf->categorie->multidir_output[$object->entity ?? 1];
 	$pdir = get_exdir($object->id, 2, 0, 0, $object, 'category').$object->id."/photos/";
 	$dir = $upload_dir.'/'.$pdir;
 

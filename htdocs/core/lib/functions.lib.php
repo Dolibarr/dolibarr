@@ -8763,7 +8763,7 @@ function yn($yesno, $format = 1, $color = 0)
 /**
  *	Return a path to have a the directory according to object where files are stored.
  *  This function is called by getMultidirOutput
- *  New usage:  $conf->module->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, '').'/'
+ *  New usage:  $conf->module->multidir_output[$object->entity ?? 1].'/'.get_exdir(0, 0, 0, 1, $object, '').'/'
  *         or:  $conf->module->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, '')
  *
  *  Example of output with new usage:       $object is invoice -> 'INYYMM-ABCD'

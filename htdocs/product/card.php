@@ -422,7 +422,7 @@ if (empty($reshook)) {
 					// Move files from the dir of the third party to delete into the dir of the third party to keep
 					if (!empty($conf->product->multidir_output[$productOrigin->entity])) {
 						$srcdir = $conf->product->multidir_output[$productOrigin->entity]."/".$productOrigin->ref;
-						$destdir = $conf->product->multidir_output[$object->entity]."/".$object->ref;
+						$destdir = $conf->product->multidir_output[$object->entity ?? 1]."/".$object->ref;
 
 						if (dol_is_dir($srcdir)) {
 							$dirlist = dol_dir_list($srcdir, 'files', 1);
@@ -3262,8 +3262,8 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 
 	// Documents
 	$objectref = dol_sanitizeFileName($object->ref);
-	if (!empty($conf->product->multidir_output[$object->entity])) {
-		$filedir = $conf->product->multidir_output[$object->entity].'/'.$objectref; //Check repertories of current entities
+	if (!empty($conf->product->multidir_output[$object->entity ?? 1])) {
+		$filedir = $conf->product->multidir_output[$object->entity ?? 1].'/'.$objectref; //Check repertories of current entities
 	} else {
 		$filedir = $conf->product->dir_output.'/'.$objectref;
 	}
@@ -3292,7 +3292,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	// Presend form
 	$modelmail = 'product_send';
 	$defaulttopic = $object->label;
-	$diroutput = $conf->product->multidir_output[$object->entity];
+	$diroutput = $conf->product->multidir_output[$object->entity ?? 1];
 	$trackid = 'prod' . $object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
