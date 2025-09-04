@@ -886,9 +886,9 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " t.fk_soc,";
 		$sql .= " t.datec,";
 		$sql .= " t.datef,";
-		$sql .= " t.tms,";
+		$sql .= " t.tms as datem,";
 		$sql .= " t.libelle as label,";
-		$sql .= " t.paye,";
+		$sql .= " t.paye as paid,";
 		$sql .= " t.close_code,";
 		$sql .= " t.close_note,";
 		$sql .= " t.tva,";
@@ -953,14 +953,15 @@ class FactureFournisseur extends CommonInvoice
 				$this->type					= empty($obj->type) ? self::TYPE_STANDARD : $obj->type;
 				$this->subtype				= (int) $obj->subtype;
 				$this->socid				= $obj->fk_soc;
-				$this->datec				= $this->db->jdate($obj->datec);
 				$this->date					= $this->db->jdate($obj->datef);
-				//$this->datep				= $this->db->jdate($obj->datef);
-				$this->tms                  = $this->db->jdate($obj->tms);
+				$this->date_creation		= $this->db->jdate($obj->datec);
+				$this->datec				= $this->db->jdate($obj->datec);
+				$this->date_modification    = $this->db->jdate($obj->datem);
+				$this->tms                  = $this->db->jdate($obj->datem);
 				$this->libelle              = $obj->label; // deprecated
 				$this->label				= $obj->label;
-				$this->paye					= $obj->paye;
-				$this->paid					= $obj->paye;
+				$this->paye					= $obj->paid;
+				$this->paid					= $obj->paid;
 				$this->close_code			= $obj->close_code;
 				$this->close_note			= $obj->close_note;
 				$this->total_localtax1		= $obj->localtax1;
@@ -1086,8 +1087,9 @@ class FactureFournisseur extends CommonInvoice
 					$line->product_barcode  = $obj->product_barcode;
 					$line->product_desc		= $obj->product_desc;
 					$line->subprice         = $obj->pu_ht;
-					$line->pu_ht            = $obj->pu_ht;
-					$line->pu_ttc			= $obj->pu_ttc;
+					$line->pu_ht            = $obj->pu_ht;	// deprecated
+					$line->subprice_ttc		= $obj->pu_ttc;
+					$line->pu_ttc			= $obj->pu_ttc;	// deprcated
 					$line->vat_src_code     = $obj->vat_src_code;
 					$line->tva_tx			= $obj->tva_tx;
 					$line->localtax1_tx		= $obj->localtax1_tx;
@@ -1185,11 +1187,11 @@ class FactureFournisseur extends CommonInvoice
 			$this->label = trim($this->label);
 		}
 		if (isset($this->paid)) {
-			$this->paid = (int) (bool) $this->paye;
-			$this->paye = $this->paid;
+			$this->paid = (int) (bool) $this->paid;
+			$this->paye = $this->paid;	// deprecated
 		} elseif (isset($this->paye)) {
 			$this->paid = (int) (bool) $this->paye;
-			$this->paye = $this->paid;
+			$this->paye = $this->paid;	// deprecared
 		}
 		if (isset($this->close_code)) {
 			$this->close_code = trim($this->close_code);
@@ -1235,6 +1237,9 @@ class FactureFournisseur extends CommonInvoice
 				$this->fk_project = (int) $this->fk_project;
 			}
 		}
+		if (isset($this->mode_reglement_id)) {
+			$this->mode_reglement_id = (int) $this->mode_reglement_id;
+		}
 		if (isset($this->cond_reglement_id)) {
 			$this->cond_reglement_id = (int) $this->cond_reglement_id;
 		}
@@ -1267,7 +1272,9 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " fk_soc=".(isset($this->socid) ? ((int) $this->socid) : "null").",";
 		$sql .= " datec=".(dol_strlen((string) $this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " datef=".(dol_strlen((string) $this->date) != 0 ? "'".$this->db->idate($this->date)."'" : 'null').",";
-		if (dol_strlen((string) $this->tms) != 0) {
+		if (dol_strlen((string) $this->date_modification) != 0) {
+			$sql .= " tms=".(dol_strlen((string) $this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : 'null').",";
+		} elseif (dol_strlen((string) $this->tms) != 0) {	// For backward compatibility
 			$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		}
 		$sql .= " libelle=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
@@ -1285,6 +1292,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " fk_facture_source=".($this->fk_facture_source ? ((int) $this->fk_facture_source) : "null").",";
 		$sql .= " vat_reverse_charge = ".($this->vat_reverse_charge != '' ? ((int) $this->vat_reverse_charge) : 0).",";
 		$sql .= " fk_projet=".(!empty($this->fk_project) ? ((int) $this->fk_project) : "null").",";
+		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? ((int) $this->mode_reglement_id) : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? ((int) $this->cond_reglement_id) : "null").",";
 		$sql .= " date_lim_reglement=".(dol_strlen((string) $this->date_echeance) != 0 ? "'".$this->db->idate($this->date_echeance)."'" : 'null').",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
@@ -2478,9 +2486,11 @@ class FactureFournisseur extends CommonInvoice
 		$line->desc = $desc;
 
 		$line->qty = ($this->type == self::TYPE_CREDIT_NOTE ? abs((float) $qty) : (float) $qty); // For credit note, quantity is always positive and unit price negative
+
 		$line->subprice = ($this->type == self::TYPE_CREDIT_NOTE ? -abs((float) $pu_ht) : (float) $pu_ht); // For credit note, unit price always negative, always positive otherwise
 		$line->pu_ht = $line->subprice;  // deprecated
-		$line->pu_ttc = ($this->type == self::TYPE_CREDIT_NOTE ? -abs((float) $pu_ttc) : (float) $pu_ttc); // For credit note, unit price always negative, always positive otherwise
+		$line->subprice_ttc = ($this->type == self::TYPE_CREDIT_NOTE ? -abs((float) $pu_ttc) : (float) $pu_ttc); // For credit note, unit price always negative, always positive otherwise
+		$line->pu_ttc = $line->subprice_ttc;  // deprecated
 
 		$line->remise_percent = $remise_percent;
 		$line->ref_supplier = $ref_supplier;
@@ -2644,9 +2654,9 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as ff ON f.rowid = ff.fk_facture_source";
 		$sql .= " WHERE (f.fk_statut = ".self::STATUS_VALIDATED." OR (f.fk_statut = ".self::STATUS_ABANDONED." AND f.close_code = '".self::CLOSECODE_ABANDONED."'))";
 		$sql .= " AND f.entity = ".$conf->entity;
-		$sql .= " AND f.paye = 0"; // Pas classee payee completement
-		$sql .= " AND pf.fk_paiementfourn IS NULL"; // Aucun paiement deja fait
-		$sql .= " AND ff.fk_statut IS NULL"; // Renvoi vrai si pas facture de replacement
+		$sql .= " AND f.paye = 0"; // Not closed completely
+		$sql .= " AND pf.fk_paiementfourn IS NULL"; // No payment already done
+		$sql .= " AND ff.fk_statut IS NULL"; // Return true (is null) if it is not a replacing invoice (we can't replace a replacing invoice)
 		if ($socid > 0) {
 			$sql .= " AND f.fk_soc = ".((int) $socid);
 		}
@@ -2677,8 +2687,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	(validated + payment in progress) or classified (paid in full or paid in part) + not already replaced + not already having
 	 *
 	 *	@param		int		$socid		Thirdparty id
-	 *	@return	array<int,array{ref:string,status:int,type:int,paye:int<0,1>,paymentornot:int<0,1>}>|int<-1,-1>		Table of invoices ($id => array('ref'=>,'paymentornot'=>,'status'=>,'paye'=>)
-	 *                                  <0 if error
+	 *	@return	array<int,array{ref:string,status:int,type:int,paid:int<0,1>,paye:int<0,1>,paymentornot:int<0,1>}>|int<-1,-1>		Table of invoices ($id => array('ref'=>,'paymentornot'=>,'status'=>,'paye'=>) or <0 if error
 	 */
 	public function list_qualified_avoir_supplier_invoices($socid = 0)
 	{
@@ -2687,7 +2696,7 @@ class FactureFournisseur extends CommonInvoice
 
 		$return = array();
 
-		$sql = "SELECT f.rowid as rowid, f.ref, f.fk_statut, f.type, f.subtype, f.paye, pf.fk_paiementfourn";
+		$sql = "SELECT f.rowid as rowid, f.ref, f.fk_statut, f.type, f.subtype, f.paye as paid, pf.fk_paiementfourn";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf ON f.rowid = pf.fk_facturefourn";
 		$sql .= " WHERE f.entity = ".$conf->entity;
@@ -2713,7 +2722,7 @@ class FactureFournisseur extends CommonInvoice
 				}
 				if ($qualified) {
 					$paymentornot = ($obj->fk_paiementfourn ? 1 : 0);
-					$return[$obj->rowid] = array('ref' => (string) $obj->ref, 'status' => (int) $obj->fk_statut, 'type' => (int) $obj->type, 'paye' => (int) $obj->paye, 'paymentornot' => (int) $paymentornot);
+					$return[$obj->rowid] = array('ref' => (string) $obj->ref, 'status' => (int) $obj->fk_statut, 'type' => (int) $obj->type, 'paid' => (int) $obj->paid, 'paye' => (int) $obj->paid, 'paymentornot' => (int) $paymentornot);
 				}
 			}
 
@@ -3118,7 +3127,6 @@ class FactureFournisseur extends CommonInvoice
 				$line->desc = $langs->trans("Description")." ".$xnbp;
 				$line->qty = 1;
 				$line->subprice = 100;
-				$line->pu_ht = $line->subprice; // the canelle template use pu_ht and not subprice
 				$line->price = 100;
 				$line->tva_tx = 19.6;
 				$line->localtax1_tx = 0;

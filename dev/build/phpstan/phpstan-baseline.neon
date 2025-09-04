@@ -5577,7 +5577,7 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 6
+			count: 4
 			path: ../../../htdocs/contrat/class/contrat.class.php
 
 		-
@@ -11907,7 +11907,7 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 7
+			count: 5
 			path: ../../../htdocs/expedition/class/expedition.class.php
 
 		-
@@ -12169,48 +12169,6 @@ parameters:
 			path: ../../../htdocs/expensereport/card.php
 
 		-
-			message: '#^Call to function method_exists\(\) with \$this\(ExpenseReport\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/expensereport/class/expensereport.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(ExpenseReport\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/expensereport/class/expensereport.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(ExpenseReport\) and ''date_debut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/expensereport/class/expensereport.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(ExpenseReport\) and ''date_fin'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/expensereport/class/expensereport.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 2
-			path: ../../../htdocs/expensereport/class/expensereport.class.php
-
-		-
-			message: '#^Property ExpenseReport\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/expensereport/class/expensereport.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/expensereport/class/expensereportline.class.php
-
-		-
 			message: '#^Call to function method_exists\(\) with \$this\(PaymentExpenseReport\) and ''getLibStatut'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -12323,18 +12281,6 @@ parameters:
 			identifier: booleanNot.alwaysTrue
 			count: 1
 			path: ../../../htdocs/expensereport/payment/payment.php
-
-		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/expensereport/tpl/expensereport_linktofile.tpl.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expensereport/tpl/expensereport_linktofile.tpl.php
 
 		-
 			message: '#^Property Export\:\:\$fk_user \(int\) in isset\(\) is not nullable\.$#'
@@ -13319,114 +13265,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/hrm/admin/admin_hrm.php
-
-		-
-			message: '#^Property Establishment\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/hrm/class/establishment.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(Evaluation\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/hrm/class/evaluation.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(Evaluation\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/hrm/class/evaluation.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Evaluation and ''date_creation'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/hrm/class/evaluation.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Evaluation and ''date_modification'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/hrm/class/evaluation.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Evaluation and ''label'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/hrm/class/evaluation.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Evaluation and ''ref'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/hrm/class/evaluation.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Evaluation and ''status'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/hrm/class/evaluation.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/hrm/class/evaluation.class.php
-
-		-
-			message: '#^Property Evaluation\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/hrm/class/evaluation.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with EvaluationLine and ''date_creation'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/hrm/class/evaluationdet.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with EvaluationLine and ''date_modification'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/hrm/class/evaluationdet.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with EvaluationLine and ''ref'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/hrm/class/evaluationdet.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with EvaluationLine and ''status'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/hrm/class/evaluationdet.class.php
-
-		-
-			message: '#^Left side of && is always false\.$#'
-			identifier: booleanAnd.leftAlwaysFalse
-			count: 1
-			path: ../../../htdocs/hrm/class/evaluationdet.class.php
-
-		-
-			message: '#^Method EvaluationLine\:\:fetchAll\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/hrm/class/evaluationdet.class.php
-
-		-
-			message: '#^Method EvaluationLine\:\:getLinesArray\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/hrm/class/evaluationdet.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/hrm/class/evaluationdet.class.php
 
 		-
 			message: '#^Call to function method_exists\(\) with \$this\(Job\) and ''getNomUrl'' will always evaluate to true\.$#'

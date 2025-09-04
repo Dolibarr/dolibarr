@@ -1569,6 +1569,9 @@ function dol_buildpath($path, $type = 0, $returnemptyifnotfound = 0)
 				}
 				// if (@file_exists($dirroot.'/'.$path)) {
 				if (@file_exists($dirroot . '/' . $path)) {	// avoid [php:warn]
+					if ($key != 'main' && preg_match('/^core\//', $path)) {	// When searching into an alternative custom path, we don't want path like 'core/...' because path should be 'modulename/core/...'
+						continue;
+					}
 					$res = $dirroot . '/' . $path;
 					return $res;
 				}
@@ -3027,19 +3030,22 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 				$popuptab = 1;
 				$outmore .= '<div class="popuptabset wordwrap">'; // The css used to hide/show popup
 			}
-			$outmore .= '<div class="popuptab wordwrap" style="display:inherit;">';
+			$outmore_content = '';
+
 			if (isset($links[$i][2]) && $links[$i][2] == 'image') {
 				if (!empty($links[$i][0])) {
-					$outmore .= '<a class="tabimage' . ($morecss ? ' ' . $morecss : '') . '" href="' . $links[$i][0] . '">' . $links[$i][1] . '</a>' . "\n";
+					$outmore_content .= '<a class="tabimage'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 				} else {
-					$outmore .= '<span class="tabspan">' . $links[$i][1] . '</span>' . "\n";
+					$outmore_content .= '<span class="tabspan">'.$links[$i][1].'</span>'."\n";
 				}
 			} elseif (!empty($links[$i][1])) {
-				$outmore .= '<a' . (!empty($links[$i][2]) ? ' id="' . $links[$i][2] . '"' : '') . ' class="wordwrap inline-block' . ($morecss ? ' ' . $morecss : '') . '" href="' . $links[$i][0] . '">';
-				$outmore .= preg_replace('/([a-z])\|([a-z])/i', '\\1 | \\2', $links[$i][1]); // Replace x|y with x | y to allow wrap on long composed texts.
-				$outmore .= '</a>' . "\n";
+				$outmore_content .= '<a'.(!empty($links[$i][2]) ? ' id="'.$links[$i][2].'"' : '').' class="wordwrap inline-block'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'">';
+				$outmore_content .= preg_replace('/([a-z])\|([a-z])/i', '\\1 | \\2', $links[$i][1]); // Replace x|y with x | y to allow wrap on long composed texts.
+				$outmore_content .= '</a>'."\n";
 			}
-			$outmore .= '</div>';
+			if ($outmore_content !== '') {
+				$outmore .= '<div class="popuptab wordwrap" style="display:inherit;">' . $outmore_content . '</div>';
+			}
 
 			$nbintab++;
 		}
@@ -3410,18 +3416,21 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 			$tmptxt = $object->getLibStatut(5, $object->alreadypaid);
 		}
 		$morehtmlstatus .= $tmptxt;
-	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier'))) {	// TODO Move this to use ->alreadypaid
+	} elseif (in_array($object->element, array('facture', 'invoice', 'invoice_supplier'))) {
 		/** @var Facture|FactureFournisseur|CommonInvoice $object */
 		'@phan-var-force Facture|FactureFournisseur|CommonInvoice $object';
-		$totalallpayments = $object->getSommePaiement(0);
-		$totalallpayments += $object->getSumCreditNotesUsed(0);
-		$totalallpayments += $object->getSumDepositsUsed(0);
-		$tmptxt = $object->getLibStatut(6, $totalallpayments);
+		if (!isset($object->alreadypaid)) {
+			$object->totalpaid = $object->getSommePaiement(0);
+			$object->totalcreditnotes = $object->getSumCreditNotesUsed(0);
+			$object->totaldeposits = $object->getSumDepositsUsed(0);
+			$object->alreadypaid = $object->totalpaid + $object->totalcreditnotes + $object->totaldeposits;
+		}
+		$tmptxt = $object->getLibStatut(6, $object->alreadypaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
-			$tmptxt = $object->getLibStatut(5, $totalallpayments);
+			$tmptxt = $object->getLibStatut(5, $object->alreadypaid);
 		}
 		$morehtmlstatus .= $tmptxt;
-	} elseif (in_array($object->element, array('chargesociales', 'loan', 'tva'))) {	// TODO Move this to use ->alreadypaid
+	} elseif (in_array($object->element, array('chargesociales', 'loan', 'tva'))) {	// TODO Move this to use ->alreadypaid like for invoices
 		/** @var ChargeSociales|Loan|Tva $object */
 		'@phan-var-force ChargeSociales|Loan|Tva $object';
 		$tmptxt = $object->getLibStatut(6, $object->totalpaid);

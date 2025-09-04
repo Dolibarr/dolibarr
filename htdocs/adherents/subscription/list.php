@@ -120,7 +120,7 @@ $arrayfields = array(
 );
 
 // Security check
-$result = restrictedArea($user, 'adherent', '', '', 'cotisation');
+restrictedArea($user, 'adherent', '', '', 'cotisation');
 
 $permissiontodelete = $user->hasRight('adherent', 'cotisation', 'creer');
 

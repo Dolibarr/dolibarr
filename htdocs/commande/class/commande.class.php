@@ -298,7 +298,7 @@ class Commande extends CommonOrder
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -881,10 +881,11 @@ class Commande extends CommonOrder
 	 * 	Cancel an order
 	 * 	If stock is decremented on order validation, we must reincrement it
 	 *
+	 * 	@param	User	$user			User making action
 	 *	@param	int		$idwarehouse	Id warehouse to use for stock change.
 	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
-	public function cancel($idwarehouse = -1)
+	public function cancel($user, $idwarehouse = -1)
 	{
 		global $user, $langs;
 
@@ -1753,15 +1754,6 @@ class Commande extends CommonOrder
 				$ranktouse = $rangmax + 1;
 			}
 
-			// TODO A virer
-			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
-			$price = $pu;
-			$remise = 0;
-			if ($remise_percent > 0) {
-				$remise = round(((float) $pu * $remise_percent / 100), 2);
-				$price = (float) $pu - $remise;
-			}
-
 			// Insert line
 			$this->line = new OrderLine($this->db);
 
@@ -1810,9 +1802,6 @@ class Commande extends CommonOrder
 			$this->line->multicurrency_total_ht 	= (float) $multicurrency_total_ht;
 			$this->line->multicurrency_total_tva 	= (float) $multicurrency_total_tva;
 			$this->line->multicurrency_total_ttc 	= (float) $multicurrency_total_ttc;
-
-			// TODO Do not use anymore
-			$this->line->price = $price;
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				$this->line->array_options = $array_options;
@@ -1910,8 +1899,10 @@ class Commande extends CommonOrder
 			// multiprix
 			if (getDolGlobalString('PRODUIT_MULTIPRICES') && $this->thirdparty->price_level) {
 				$price = $prod->multiprices[$this->thirdparty->price_level];
+				$price_ttc = $prod->multiprices_ttc[$this->thirdparty->price_level];
 			} else {
 				$price = $prod->price;
+				$price_ttc = $prod->price_ttc;
 			}
 
 			$line = new OrderLine($this->db);
@@ -1922,6 +1913,7 @@ class Commande extends CommonOrder
 			$line->desc = $prod->description;
 			$line->qty = $qty;
 			$line->subprice = $price;
+			$line->subprice_ttc = $price_ttc;
 			$line->remise_percent = $remise_percent;
 			$line->vat_src_code = $vat_src_code;
 			$line->tva_tx = $tva_tx;
@@ -3211,19 +3203,6 @@ class Commande extends CommonOrder
 			$multicurrency_total_ttc = $tabprice[18];
 			$pu_ht_devise = $tabprice[19];
 
-			// Anciens indicateurs: $price, $subprice (a ne plus utiliser)
-			$price = $pu_ht;
-			if ($price_base_type == 'TTC') {
-				$subprice = $pu_ttc;
-			} else {
-				$subprice = $pu_ht;
-			}
-			$remise = 0;
-			if ($remise_percent > 0) {
-				$remise = round(((float) $pu * $remise_percent / 100), 2);
-				$price = ((float) $pu - $remise);
-			}
-
 			// Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new OrderLine($this->db);
 			$line->fetch($rowid);
@@ -3332,9 +3311,6 @@ class Commande extends CommonOrder
 			$this->line->multicurrency_total_ht 	= (float) $multicurrency_total_ht;
 			$this->line->multicurrency_total_tva 	= (float) $multicurrency_total_tva;
 			$this->line->multicurrency_total_ttc 	= (float) $multicurrency_total_ttc;
-
-			// TODO deprecated
-			$this->line->price = $price;
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				// We replace values in this->line->array_options only for entries defined into $array_options

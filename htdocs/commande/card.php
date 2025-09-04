@@ -1921,7 +1921,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$result = $object->cancel($idwarehouse);
+			$result = $object->cancel($user, $idwarehouse);
 
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');

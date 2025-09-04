@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006	Rodolphe Quiedeville    	<rodolphe@quiedeville.org>
  * Copyright (C) 2004		Eric Seigne					<eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2025	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005		Marc Barilley / Ocebo		<marc@ocebo.com>
  * Copyright (C) 2005-2015	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2006		Andre Cianfarani			<acianfa@free.fr>
@@ -43,6 +43,14 @@
 
 // Libraries
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
@@ -72,15 +80,6 @@ if (isModEnabled('variants')) {
 if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Societe $mysoc
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'companies', 'compta', 'products', 'banks', 'main', 'withdrawals'));
@@ -652,6 +651,8 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm') && $usercancreate) {		// Set incoterm
 		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
+	} elseif ($action == 'set_dispute_status' && $usercancreate) {		// Set dispute status
+		$result = $object->setStatut(GETPOSTINT('dispute_status'), null, 'facture', 'FACTURE_MODIFY', 'dispute_status');
 	} elseif ($action == 'settags' && isModEnabled('category')) {		// Set tags
 		$result = $object->setCategories(GETPOST('categories', 'array'));
 	} elseif ($action == 'setbankaccount' && $usercancreate) {	// bank account
@@ -4527,6 +4528,13 @@ if ($action == 'create') {
 			print '</td></tr>';
 		}
 
+		// Dispute open
+		/* Not necessary on creation
+		print '<tr><td class="nowrap fieldrequired">'.$langs->trans('DisputeOpen').'</td><td colspan="2">';
+		//print yn($object->dispute_status);
+		print '</td></tr>';
+		*/
+
 		// Category
 		if (isModEnabled('category')) {
 			// Categories
@@ -4877,7 +4885,7 @@ if ($action == 'create') {
 		// we check object has a draft number
 		$objectref = substr($object->ref, 1, 4);
 		if ($objectref == 'PROV') {
-			$savdate = $object->date;
+			//$savdate = $object->date;
 			if (getDolGlobalString('FAC_FORCE_DATE_VALIDATION')) {
 				$object->date = dol_now();
 				$object->date_lim_reglement = $object->calculate_date_lim_reglement();
@@ -5421,8 +5429,6 @@ if ($action == 'create') {
 			} else {
 				$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, (string) $object->cond_reglement_id, 'none');
 			}
-		} else {
-			print '&nbsp;';
 		}
 		print '</td></tr>';
 
@@ -5445,8 +5451,6 @@ if ($action == 'create') {
 					print img_warning($langs->trans('Late'));
 				}
 			}
-		} else {
-			print '&nbsp;';
 		}
 		print '</td></tr>';
 
@@ -5495,8 +5499,6 @@ if ($action == 'create') {
 			print '<td><td class="right">';
 			if ($usercancreate) {
 				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$object->id.'&action=editincoterm&token='.newToken().'">'.img_edit().'</a>';
-			} else {
-				print '&nbsp;';
 			}
 			print '</td></tr></table>';
 			print '</td>';
@@ -5508,6 +5510,30 @@ if ($action == 'create') {
 			}
 			print '</td></tr>';
 		}
+
+		// Dispute open
+		print '<tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
+		print $langs->trans('DisputeOpen');
+		print '<td><td class="right">';
+		if ($usercancreate) {
+			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$object->id.'&action=editdispute_status&token='.newToken().'">'.img_edit().'</a>';
+		}
+		print '</td></tr></table>';
+		print '</td><td>';
+		if ($action != 'editdispute_status') {
+			print '<input type="checkbox" value="1" disabled="disabled"'.($object->dispute_status ? ' checked="checked"' : '').'>';
+		} else {
+			print '<form enctype="multipart/form-data" action="'.DOL_URL_ROOT.'/compta/facture/card.php" method="POST">';
+			print '<input type="hidden" name="action" value="set_dispute_status">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="id" value="'.$object->id.'">';
+			print '<input type="hidden" name="page_y" value="">';
+			print '<input type="checkbox" name="dispute_status" value="1" class="valignmiddle"'.($object->dispute_status ? ' checked="checked"' : '').'>';
+			print '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Save").'">';
+			print '</form>';
+		}
+		print '</td></tr>';
 
 		// Categories
 		if (isModEnabled('category')) {
@@ -6061,6 +6087,7 @@ if ($action == 'create') {
 
 			$resteapayeraffiche = $resteapayer;
 			$cssforamountpaymentcomplete = 'amountpaymentcomplete';
+			$cssforamountpaymentcompletenoresize = 'amountpaymentcompletenoresize';
 
 			// Loop on each credit note or deposit amount applied
 			$creditnoteamount = 0;
@@ -6115,6 +6142,7 @@ if ($action == 'create') {
 				print '</td><td class="right"><span class="amount">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaid, 'MT')).'</span></td><td>&nbsp;</td></tr>';
 				$resteapayeraffiche = 0;
 				$cssforamountpaymentcomplete = 'amountpaymentneutral';
+				$cssforamountpaymentcompletenoresize = 'amountpaymentneutralnoresize';
 			}
 			// Partially paid or abandoned 'badcustomer'
 			if (($object->status == Facture::STATUS_CLOSED || $object->status == Facture::STATUS_ABANDONED) && $object->close_code == 'badcustomer') {
@@ -6125,6 +6153,7 @@ if ($action == 'create') {
 				print '</td><td class="right">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaid, 'MT')).'</td><td>&nbsp;</td></tr>';
 				// $resteapayeraffiche=0;
 				$cssforamountpaymentcomplete = 'amountpaymentneutral';
+				$cssforamountpaymentcompletenoresize = 'amountpaymentneutralnoresize';
 			}
 			// Partially paid or abandoned 'product_returned'
 			if (($object->status == Facture::STATUS_CLOSED || $object->status == Facture::STATUS_ABANDONED) && $object->close_code == 'product_returned') {
@@ -6135,6 +6164,7 @@ if ($action == 'create') {
 				print '</td><td class="right"><span class="amount">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaid, 'MT')).'</span></td><td>&nbsp;</td></tr>';
 				$resteapayeraffiche = 0;
 				$cssforamountpaymentcomplete = 'amountpaymentneutral';
+				$cssforamountpaymentcompletenoresize = 'amountpaymentneutralnoresize';
 			}
 			// Partially paid or abandoned 'abandoned'
 			if (($object->status == Facture::STATUS_CLOSED || $object->status == Facture::STATUS_ABANDONED) && $object->close_code == 'abandon') {
@@ -6150,6 +6180,7 @@ if ($action == 'create') {
 				print '</td><td class="right"><span class="amount">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaid, 'MT')).'</span></td><td>&nbsp;</td></tr>';
 				$resteapayeraffiche = 0;
 				$cssforamountpaymentcomplete = 'amountpaymentneutral';
+				$cssforamountpaymentcompletenoresize = 'amountpaymentneutralnoresize';
 			}
 
 			// Billed
@@ -6178,7 +6209,7 @@ if ($action == 'create') {
 				}
 				print '</span>';
 				print '</td>';
-				print '<td class="right'.($resteapayeraffiche ? ' amountremaintopay' : (' '.$cssforamountpaymentcomplete)).'">';
+				print '<td class="right'.($resteapayeraffiche ? ' amountremaintopaynoresize' : (' '.$cssforamountpaymentcompletenoresize)).'">';
 				//print (empty($object->multicurrency_code) ? $conf->currency : $object->multicurrency_code).' ';
 				print price(price2num($object->multicurrency_tx * $resteapayeraffiche, 'MT'), 1, $langs, 1, -1, -1, (empty($object->multicurrency_code) ? $conf->currency : $object->multicurrency_code)).'</td><td>&nbsp;</td></tr>';
 			}
@@ -6195,10 +6226,10 @@ if ($action == 'create') {
 
 				$billedWithRetainedWarranty = $object->total_ttc - $retainedWarranty;
 
-				print '<tr><td colspan="'.$nbcols.'" align="right">'.$langs->trans("ToPayOn", dol_print_date($object->date_lim_reglement, 'day')).' :</td><td align="right">'.price($billedWithRetainedWarranty).'</td><td>&nbsp;</td></tr>';
+				print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("ToPayOn", dol_print_date($object->date_lim_reglement, 'day')).' :</td><td align="right">'.price($billedWithRetainedWarranty).'</td><td>&nbsp;</td></tr>';
 
 				// retained warranty
-				print '<tr><td colspan="'.$nbcols.'" align="right">';
+				print '<tr><td colspan="'.$nbcols.'" class="right">';
 				print $langs->trans("RetainedWarranty").' ('.$object->retained_warranty.'%)';
 				print !empty($object->retained_warranty_date_limit) ? ' '.$langs->trans("ToPayOn", dol_print_date($object->retained_warranty_date_limit, 'day')) : '';
 				print ' :</td><td align="right">'.price($retainedWarranty).'</td><td>&nbsp;</td></tr>';
@@ -6206,6 +6237,7 @@ if ($action == 'create') {
 		} else { // Credit note
 			$resteapayeraffiche = $resteapayer;
 			$cssforamountpaymentcomplete = 'amountpaymentneutral';
+			$cssforamountpaymentcompletenoresize = 'amountpaymentneutralnoresize';
 
 			// Total already paid back
 			print '<tr><td colspan="'.$nbcols.'" class="right">';
@@ -6234,7 +6266,7 @@ if ($action == 'create') {
 				}
 				print '</span>';
 				print '</td>';
-				print '<td class="right'.($resteapayeraffiche ? ' amountremaintopayback' : (' '.$cssforamountpaymentcomplete)).'">'.(!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency).' '.price(price2num($sign * $object->multicurrency_tx * $resteapayeraffiche, 'MT')).'</td><td>&nbsp;</td></tr>';
+				print '<td class="right'.($resteapayeraffiche ? ' amountremaintopaybacknoresize' : (' '.$cssforamountpaymentcompletenoresize)).'">'.price(price2num($sign * $object->multicurrency_tx * $resteapayeraffiche, 'MT'), 1, $langs, 1, -1, -1, (empty($object->multicurrency_code) ? $conf->currency : $object->multicurrency_code)).'</td><td>&nbsp;</td></tr>';
 			}
 
 			// Sold credit note

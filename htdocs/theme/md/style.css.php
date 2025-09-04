@@ -1952,19 +1952,34 @@ select.flat.selectlimit {
 	font-weight: bold;
 	white-space: nowrap;
 }
+.amountpaymentcompletenoresize {
+	color: var(--amountpaymentcomplete);
+	white-space: nowrap;
+}
 .amountremaintopay {
 	color: var(--amountremaintopaycolor);
 	font-weight: bold;
+	white-space: nowrap;
+}
+.amountremaintopaynoresize {
+	color: var(--amountremaintopaycolor);
 	white-space: nowrap;
 }
 .amountremaintopayback {
 	font-weight: bold;
 	white-space: nowrap;
 }
+.amountremaintopaybacknoresize {
+	white-space: nowrap;
+}
 .amountpaymentneutral {
 	color: var(--amountremaintopaybackcolor);
 	font-weight: bold;
 	font-size: 1.4em;
+	white-space: nowrap;
+}
+.amountpaymentneutralnoresize {
+	color: var(--amountremaintopaybackcolor);
 	white-space: nowrap;
 }
 

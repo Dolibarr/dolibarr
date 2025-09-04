@@ -117,6 +117,7 @@ $permissiontoadd = $user->hasRight('projet', 'creer');
 $permissiontodelete = $user->hasRight('projet', 'supprimer');
 $permissiondellink = $user->hasRight('projet', 'creer');	// Used by the include of actions_dellink.inc.php
 $permissiontoeditextra = $permissiontoadd;
+
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
 	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
@@ -126,7 +127,9 @@ if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->tabl
 /*
  * Actions
  */
+
 $error = 0;
+
 $parameters = array('id' => $socid, 'objcanvas' => $objcanvas);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {

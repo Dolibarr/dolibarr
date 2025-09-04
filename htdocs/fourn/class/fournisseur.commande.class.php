@@ -353,7 +353,7 @@ class CommandeFournisseur extends CommonOrder
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -637,13 +637,13 @@ class CommandeFournisseur extends CommonOrder
 		$this->lines = array();
 
 		$sql = "SELECT l.rowid, l.fk_commande, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description, l.qty,";
-		$sql .= " l.vat_src_code, l.tva_tx, l.remise_percent, l.subprice,";
+		$sql .= " l.vat_src_code, l.tva_tx, l.remise_percent, l.subprice, l.subprice_ttc,";
 		$sql .= " l.localtax1_tx, l. localtax2_tx, l.localtax1_type, l. localtax2_type, l.total_localtax1, l.total_localtax2,";
 		$sql .= " l.total_ht, l.total_tva, l.total_ttc, l.info_bits, l.special_code, l.fk_parent_line, l.rang,";
 		$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc, p.tobatch as product_tobatch, p.barcode as product_barcode,";
 		$sql .= " l.fk_unit, l.extraparams,";
 		$sql .= " l.date_start, l.date_end,";
-		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc';
+		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_subprice_ttc, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc';
 		$sql .= " FROM ".$this->db->prefix()."commande_fournisseurdet as l";
 		$sql .= ' LEFT JOIN '.$this->db->prefix().'product as p ON l.fk_product = p.rowid';
 		$sql .= " WHERE l.fk_commande = ".((int) $this->id);
@@ -676,7 +676,9 @@ class CommandeFournisseur extends CommonOrder
 				$line->localtax1_type	   = $objp->localtax1_type;
 				$line->localtax2_type	   = $objp->localtax2_type;
 				$line->subprice            = $objp->subprice;
-				$line->pu_ht = $objp->subprice;
+				$line->pu_ht 			   = $objp->subprice;	// deprecated
+				$line->subprice_ttc        = $objp->subprice_ttc;
+				$line->pu_ttc 			   = $objp->subprice_ttc;	// deprecated
 				$line->remise_percent      = $objp->remise_percent;
 
 				$line->vat_src_code        = $objp->vat_src_code;
@@ -738,6 +740,7 @@ class CommandeFournisseur extends CommonOrder
 				$line->fk_multicurrency = $objp->fk_multicurrency;
 				$line->multicurrency_code = $objp->multicurrency_code;
 				$line->multicurrency_subprice = $objp->multicurrency_subprice;
+				$line->multicurrency_subprice_ttc = $objp->multicurrency_subprice_ttc;
 				$line->multicurrency_total_ht = $objp->multicurrency_total_ht;
 				$line->multicurrency_total_tva = $objp->multicurrency_total_tva;
 				$line->multicurrency_total_ttc = $objp->multicurrency_total_ttc;
@@ -1457,13 +1460,11 @@ class CommandeFournisseur extends CommonOrder
 	 *
 	 * 	@param	User	$user			User making action
 	 *	@param	int		$idwarehouse	Id warehouse to use for stock change (not used for supplier orders).
-	 * 	@return	int						>0 if Ok, <0 if Ko
+	 * 	@return	int						Return >0 if OK, <0 if KO
 	 */
-	public function Cancel($user, $idwarehouse = -1)
+	public function cancel($user, $idwarehouse = -1)
 	{
 		// phpcs:enable
-		global $langs, $conf;
-
 		$error = 0;
 
 		//dol_syslog("CommandeFournisseur::Cancel");

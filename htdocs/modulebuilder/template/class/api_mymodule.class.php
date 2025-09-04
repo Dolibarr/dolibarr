@@ -114,6 +114,8 @@ class MyModuleApi extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
+		global $hookmanager;
+
 		$obj_ret = array();
 		$tmpobject = new MyObject($this->db);
 
@@ -157,11 +159,21 @@ class MyModuleApi extends DolibarrApi
 				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
 			}
 		}
-		if ($sqlfilters) {
-			$errormessage = '';
-			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
-			if ($errormessage) {
-				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+		// Add where from hooks and sqlfilters
+		$parameters = array('sqlfilters' => $sqlfilters, 'apimethod' => 'index');
+		$action = 'list';
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $tmpobject, $action); // Note that $action and $object may have been modified by hook
+		if ($reshook > 0) {
+			$sql .= $hookmanager->resPrint;
+		} elseif ($reshook == 0) {
+			$sql .= $hookmanager->resPrint;
+
+			if ($sqlfilters) {
+				$errormessage = '';
+				$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+				if ($errormessage) {
+					throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+				}
 			}
 		}
 

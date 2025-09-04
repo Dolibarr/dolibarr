@@ -109,7 +109,7 @@ if (empty($action) && empty($object->id)) {
 	accessforbidden('Object not found');
 }
 
-$permissiontoread = $user->hasRight('maling', 'lire');
+$permissiontoread = $user->hasRight('mailing', 'lire');
 $permissiontocreate = $user->hasRight('mailing', 'creer');
 $permissiontovalidatesend = $user->hasRight('mailing', 'valider');
 $permissiontodelete = $user->hasRight('mailing', 'supprimer');
@@ -188,7 +188,7 @@ if (GETPOSTINT('clearlist') && $permissiontocreate) {
 	*/
 }
 
-if (GETPOSTINT('exportcsv') && $permissiontoread) {
+if (GETPOSTINT('exportcsv') && $permissiontoread) {	// @phpstan-ignore-line
 	$completefilename = 'targets_emailing'.$object->id.'_'.dol_print_date(dol_now(), 'dayhourlog').'.csv';
 	header('Content-Type: text/csv');
 	header('Content-Disposition: attachment;filename='.$completefilename);

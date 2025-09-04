@@ -446,7 +446,7 @@ class SupplierProposal extends CommonObject
 	 */
 	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $fk_product = 0, $remise_percent = 0, $price_base_type = 'HT', $pu_ttc = 0, $info_bits = 0, $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $array_options = [], $ref_supplier = '', $fk_unit = 0, $origin = '', $origin_id = 0, $pu_ht_devise = 0, $date_start = 0, $date_end = 0)
 	{
-		global $mysoc, $conf, $langs;
+		global $mysoc, $langs;
 
 		dol_syslog(get_class($this)."::addline supplier_proposalid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type");
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -591,15 +591,6 @@ class SupplierProposal extends CommonObject
 				$ranktouse = $rangmax + 1;
 			}
 
-			// TODO A virer
-			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
-			$price = $pu;
-			$remise = 0;
-			if ($remise_percent > 0) {
-				$remise = round(((float) $pu * (float) $remise_percent / 100), 2);
-				$price = (float) $pu - $remise;
-			}
-
 			// Insert line
 			$this->line = new SupplierProposalLine($this->db);
 
@@ -726,7 +717,7 @@ class SupplierProposal extends CommonObject
 	 */
 	public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $array_options = [], $ref_supplier = '', $fk_unit = 0, $pu_ht_devise = 0)
 	{
-		global $conf, $user, $langs, $mysoc;
+		global $mysoc;
 
 		dol_syslog(get_class($this)."::updateLine $rowid, $pu, $qty, $remise_percent, $txtva, $desc, $price_base_type, $info_bits");
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -2532,7 +2523,7 @@ class SupplierProposal extends CommonObject
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs, $menumanager;
+		global $conf, $langs;
 
 		$langs->load('supplier_proposal');
 
@@ -2540,7 +2531,7 @@ class SupplierProposal extends CommonObject
 			return ['optimize' => $langs->trans("ShowSupplierProposal")];
 		}
 
-		$option = $params['option'] ?? '';
+		//$option = $params['option'] ?? '';
 		$datas = [];
 
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("SupplierProposal").'</u>';

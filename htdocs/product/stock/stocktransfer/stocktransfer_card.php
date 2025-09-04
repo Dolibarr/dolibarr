@@ -111,7 +111,7 @@ $upload_dir = $conf->stocktransfer->multidir_output[isset($object->entity) ? $ob
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
-//$result = restrictedArea($user, 'stocktransfer', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
+//restrictedArea($user, 'stocktransfer', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
 
 if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) {
 	accessforbidden();

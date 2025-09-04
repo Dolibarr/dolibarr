@@ -2642,6 +2642,7 @@ class ActionComm extends CommonObject
 				$tmpactioncommreminder->fk_user = $obj->fk_user;
 				$tmpactioncommreminder->fk_email_template = $obj->fk_email_template;
 				$tmpactioncommreminder->lasterror = $obj->lasterror;
+				$tmpactioncommreminder->fk_actioncomm = $this->id;
 
 				$this->reminders[$obj->id] = $tmpactioncommreminder;
 			}
