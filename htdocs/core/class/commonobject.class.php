@@ -454,13 +454,13 @@ abstract class CommonObject
 	public $mode_reglement_id;
 
 	/**
-	 * @var int 		Payment terms ID
+	 * @var ?int 		Payment terms ID
 	 * @see setPaymentTerms()
 	 */
 	public $cond_reglement_id;
 
 	/**
-	 * @var int 		Demand reason ID
+	 * @var ?int 		Demand reason ID
 	 */
 	public $demand_reason_id;
 
