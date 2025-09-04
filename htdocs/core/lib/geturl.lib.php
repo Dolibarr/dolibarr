@@ -152,7 +152,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		$array_param = null;
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH'); // RFC 5789
 		if (!is_array($param)) {
-			parse_str($param, $array_param);
+			parse_str($param, $array_param);  // @phan-suppress-current-line PhanPluginConstantVariableNull
 		} else {
 			dol_syslog("parameter param must be a string", LOG_WARNING);
 			$array_param = $param;
