@@ -1754,15 +1754,6 @@ class Commande extends CommonOrder
 				$ranktouse = $rangmax + 1;
 			}
 
-			// TODO A virer
-			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
-			$price = $pu;
-			$remise = 0;
-			if ($remise_percent > 0) {
-				$remise = round(((float) $pu * $remise_percent / 100), 2);
-				$price = (float) $pu - $remise;
-			}
-
 			// Insert line
 			$this->line = new OrderLine($this->db);
 
@@ -1811,9 +1802,6 @@ class Commande extends CommonOrder
 			$this->line->multicurrency_total_ht 	= (float) $multicurrency_total_ht;
 			$this->line->multicurrency_total_tva 	= (float) $multicurrency_total_tva;
 			$this->line->multicurrency_total_ttc 	= (float) $multicurrency_total_ttc;
-
-			// TODO Do not use anymore
-			$this->line->price = $price;
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				$this->line->array_options = $array_options;
@@ -1911,8 +1899,10 @@ class Commande extends CommonOrder
 			// multiprix
 			if (getDolGlobalString('PRODUIT_MULTIPRICES') && $this->thirdparty->price_level) {
 				$price = $prod->multiprices[$this->thirdparty->price_level];
+				$price_ttc = $prod->multiprices_ttc[$this->thirdparty->price_level];
 			} else {
 				$price = $prod->price;
+				$price_ttc = $prod->price_ttc;
 			}
 
 			$line = new OrderLine($this->db);
@@ -1923,6 +1913,7 @@ class Commande extends CommonOrder
 			$line->desc = $prod->description;
 			$line->qty = $qty;
 			$line->subprice = $price;
+			$line->subprice_ttc = $price_ttc;
 			$line->remise_percent = $remise_percent;
 			$line->vat_src_code = $vat_src_code;
 			$line->tva_tx = $tva_tx;
@@ -3212,19 +3203,6 @@ class Commande extends CommonOrder
 			$multicurrency_total_ttc = $tabprice[18];
 			$pu_ht_devise = $tabprice[19];
 
-			// Anciens indicateurs: $price, $subprice (a ne plus utiliser)
-			$price = $pu_ht;
-			if ($price_base_type == 'TTC') {
-				$subprice = $pu_ttc;
-			} else {
-				$subprice = $pu_ht;
-			}
-			$remise = 0;
-			if ($remise_percent > 0) {
-				$remise = round(((float) $pu * $remise_percent / 100), 2);
-				$price = ((float) $pu - $remise);
-			}
-
 			// Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new OrderLine($this->db);
 			$line->fetch($rowid);
@@ -3333,9 +3311,6 @@ class Commande extends CommonOrder
 			$this->line->multicurrency_total_ht 	= (float) $multicurrency_total_ht;
 			$this->line->multicurrency_total_tva 	= (float) $multicurrency_total_tva;
 			$this->line->multicurrency_total_ttc 	= (float) $multicurrency_total_ttc;
-
-			// TODO deprecated
-			$this->line->price = $price;
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				// We replace values in this->line->array_options only for entries defined into $array_options
@@ -3763,6 +3738,7 @@ class Commande extends CommonOrder
 		if (empty($donotshowbilled)) {
 			$billedtext .= ($billed ? ' - '.$langs->transnoentitiesnoconv("Billed") : '');
 		}
+		$billedtextlong = ($billed ? ' - '.$langs->transnoentitiesnoconv("Billed") : '');
 
 		$labelTooltip = '';
 
@@ -3775,11 +3751,11 @@ class Commande extends CommonOrder
 			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderDraftShort');
 			$statusType = 'status0';
 		} elseif ($status == self::STATUS_VALIDATED) {
-			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderValidated').$billedtext;
+			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderValidated').$billedtextlong;
 			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderValidatedShort').$billedtext;
 			$statusType = 'status1';
 		} elseif ($status == self::STATUS_SHIPMENTONPROCESS) {
-			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderSent').$billedtext;
+			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderSent').$billedtextlong;
 			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderSentShort').$billedtext;
 			$labelTooltip = $langs->transnoentitiesnoconv("StatusOrderSent");
 			if (!empty($this->delivery_date)) {
@@ -3787,7 +3763,7 @@ class Commande extends CommonOrder
 			}
 			$statusType = 'status4';
 		} elseif ($status == self::STATUS_CLOSED) {
-			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderDelivered').$billedtext;
+			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderDelivered').$billedtextlong;
 			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderDeliveredShort').$billedtext;
 			$statusType = 'status6';
 		} else {

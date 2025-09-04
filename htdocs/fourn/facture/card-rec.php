@@ -1538,8 +1538,15 @@ if ($action == 'create') {
 			// To set ref for getNomURL function
 			foreach ($object->lines as $line) {
 				$line->ref = $line->label;
+				$line->product_ref = $line->label;
 				$line->product_label = $line->label;
-				$line->subprice = $line->pu_ht;
+				// For backward compatibility
+				if (empty($line->subprice) && ! empty($line->pu_ht)) {
+					$line->subprice = $line->pu_ht;
+				}
+				if (empty($line->subprice_ttc) && ! empty($line->pu_ttc)) {
+					$line->subprice_ttc = $line->pu_ttc;
+				}
 			}
 
 			global $canchangeproduct;

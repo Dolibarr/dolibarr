@@ -156,7 +156,7 @@ class FactureFournisseurRec extends CommonInvoice
 	public $fk_project;
 
 	/**
-	 * @var int
+	 * @var ?int 	Payment method ID (cheque, cash, ...)
 	 */
 	public $mode_reglement_id;
 	/**
@@ -172,7 +172,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 */
 	public $cond_reglement_doc;
 	/**
-	 * @var int
+	 * @var int 	Payment term ID
 	 */
 	public $cond_reglement_id;
 
@@ -840,8 +840,10 @@ class FactureFournisseurRec extends CommonInvoice
 				$line->label                    = $objp->label;
 				$line->description              = $objp->line_desc;
 				$line->desc                     = $objp->line_desc;
-				$line->pu_ht                    = $objp->pu_ht;
-				$line->pu_ttc                   = $objp->pu_ttc;
+				$line->pu_ht                    = $objp->pu_ht;		// deprecated
+				$line->subprice                 = $objp->pu_ht;
+				$line->pu_ttc                   = $objp->pu_ttc;	// deprecated
+				$line->subprice_ttc             = $objp->pu_ttc;
 				$line->qty                      = $objp->qty;
 				$line->remise_percent           = $objp->remise_percent;
 				$line->fk_remise_except         = $objp->fk_remise_except;

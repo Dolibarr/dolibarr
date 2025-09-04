@@ -11,7 +11,7 @@ return [
     // # Issue statistics:
     // PhanUndeclaredProperty : 450+ occurrences
     // PhanTypeMismatchProperty : 100+ occurrences
-    // PhanTypeMismatchArgument : 75+ occurrences
+    // PhanTypeMismatchArgument : 70+ occurrences
     // PhanUndeclaredGlobalVariable : 70+ occurrences
     // PhanTypeMismatchArgumentNullable : 40+ occurrences
     // PhanTypeInvalidDimOffset : 20+ occurrences
@@ -194,7 +194,6 @@ return [
         'htdocs/holiday/card_group.php' => ['PhanTypeMismatchArgument'],
         'htdocs/holiday/list.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/hrm/class/evaluation.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/hrm/class/evaluationdet.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/hrm/class/job.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/hrm/class/position.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/hrm/class/skill.class.php' => ['PhanUndeclaredProperty'],
@@ -295,7 +294,7 @@ return [
         'htdocs/webservices/server_category.php' => ['PhanUndeclaredProperty'],
         'htdocs/webservices/server_contact.php' => ['PhanUndeclaredProperty'],
         'htdocs/webservices/server_invoice.php' => ['PhanUndeclaredProperty'],
-        'htdocs/webservices/server_order.php' => ['PhanTypeInvalidDimOffset', 'PhanTypeMismatchArgument', 'PhanTypeSuspiciousStringExpression', 'PhanUndeclaredProperty'],
+        'htdocs/webservices/server_order.php' => ['PhanTypeInvalidDimOffset', 'PhanTypeSuspiciousStringExpression', 'PhanUndeclaredProperty'],
         'htdocs/webservices/server_payment.php' => ['PhanUndeclaredProperty'],
         'htdocs/webservices/server_productorservice.php' => ['PhanUndeclaredProperty'],
         'htdocs/webservices/server_project.php' => ['PhanUndeclaredProperty'],

@@ -447,19 +447,19 @@ abstract class CommonObject
 	public $barcode_type_coder;
 
 	/**
-	 * @var int 		Payment method ID (cheque, cash, ...)
+	 * @var ?int 		Payment method ID (cheque, cash, ...)
 	 * @see setPaymentMethods()
 	 */
 	public $mode_reglement_id;
 
 	/**
-	 * @var int 		Payment terms ID
+	 * @var ?int 		Payment terms ID
 	 * @see setPaymentTerms()
 	 */
 	public $cond_reglement_id;
 
 	/**
-	 * @var int 		Demand reason ID
+	 * @var ?int 		Demand reason ID
 	 */
 	public $demand_reason_id;
 
@@ -748,25 +748,25 @@ abstract class CommonObject
 	public $user_modification_id;
 
 	/**
-	 * @var int ID
+	 * @var int 		ID
 	 * @deprecated	Use $user_creation_id
 	 */
 	public $fk_user_creat;
 
 	/**
-	 * @var int ID
+	 * @var int 		ID
 	 * @deprecated 	Use $user_modification_id
 	 */
 	public $fk_user_modif;
 
 
 	/**
-	 * @var string XX
+	 * @var string 		XX
 	 */
 	public $next_prev_filter;
 
 	/**
-	 * @var int<0,1> 1 if object is specimen
+	 * @var int<0,1> 	1 if object is specimen
 	 */
 	public $specimen = 0;
 
@@ -777,26 +777,26 @@ abstract class CommonObject
 
 
 	/**
-	 * @var	?float		Amount already paid from getSommePaiement() + getSumCreditNotesUsed() + getSumDepositsUsed() (used to show correct status)
+	 * @var	?float			Amount already paid from getSommePaiement() + getSumCreditNotesUsed() + getSumDepositsUsed() (used to show correct status)
 	 * @see $totalpaid
 	 */
 	public $alreadypaid;
 
 	/**
-	 * @var	?float		Amount already paid from getSommePaiement()
+	 * @var	?float			Amount already paid from getSommePaiement()
 	 * @see $alreadpaid, $totalpaid_multicurrency
 	 */
 	public $totalpaid;
 
 	/**
-	 * @var ?int|?float	Amount already paid from getSommePaiement(), like $totalpaid, but in the foreign currency
+	 * @var int|float|null	Amount already paid from getSommePaiement(), like $totalpaid, but in the foreign currency
 	 * @see $totalpaid, $alreadypaid
 	 */
 	public $totalpaid_multicurrency;
 
 
 	/**
-	 * @var array<int,string>		Array with labels of status
+	 * @var array<int,string>	Array with labels of status
 	 */
 	public $labelStatus = array();
 
@@ -5478,7 +5478,7 @@ abstract class CommonObject
 	 */
 	public function printObjectLine($action, $line, $var, $num, $i, $dateSelector, $seller, $buyer, $selected = 0, $extrafields = null, $defaulttpldir = '/core/tpl')
 	{
-		global $conf, $langs, $user, $object, $hookmanager;
+		global $conf, $langs, $user, $object, $hookmanager;	// used into tpl
 		global $form;
 		global $disableedit, $disablemove, $disableremove; // TODO We should not use global var for this !
 
@@ -5531,7 +5531,8 @@ abstract class CommonObject
 				$description .= (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : (!empty($line->description) ? dol_htmlentitiesbr($line->description) : '')); // Description is what to show on popup. We shown nothing if already into desc.
 			}
 
-			$line->pu_ttc = price2num((!empty($line->subprice) ? $line->subprice : 0) * (1 + ((!empty($line->tva_tx) ? $line->tva_tx : 0) / 100)), 'MU');
+			$line->subprice_ttc = (float) price2num((!empty($line->subprice) ? $line->subprice : 0) * (1 + ((!empty($line->tva_tx) ? $line->tva_tx : 0) / 100)), 'MU');
+			$line->pu_ttc = $line->subprice_ttc;	// deprecated
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			// Use global variables + $dateSelector + $seller and $buyer
@@ -5569,7 +5570,8 @@ abstract class CommonObject
 		if ($this->status == 0 && $action == 'editline' && $selected == $line->id) {
 			$label = (!empty($line->label) ? $line->label : (($line->fk_product > 0) ? $line->product_label : ''));
 
-			$line->pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx / 100)), 'MU');
+			$line->subprice_ttc = (float) price2num($line->subprice * (1 + ($line->tva_tx / 100)), 'MU');
+			$line->pu_ttc = $line->subprice_ttc;	// deprecated
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			// Use global variables + $dateSelector + $seller and $buyer

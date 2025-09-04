@@ -568,9 +568,6 @@ class Propal extends CommonObject
 			$line->rang = -1;
 			$line->info_bits = 2;
 
-			// TODO deprecated
-			$line->price = -(float) $remise->amount_ht;
-
 			$line->total_ht  = -(float) $remise->amount_ht;
 			$line->total_tva = -(float) $remise->amount_tva;
 			$line->total_ttc = -(float) $remise->amount_ttc;
@@ -785,15 +782,6 @@ class Propal extends CommonObject
 				$ranktouse = $rangmax + 1;
 			}
 
-			// TODO A virer
-			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
-			$price = $pu;
-			$remise = 0;
-			if ((float) $remise_percent > 0) {
-				$remise = round(((float) $pu * (float) $remise_percent / 100), 2);
-				$price = (float) $pu - $remise;
-			}
-
 			// Insert line
 			$this->line = new PropaleLigne($this->db);
 
@@ -847,9 +835,6 @@ class Propal extends CommonObject
 			if (empty($qty) && empty($special_code)) {
 				$this->line->special_code = 3;
 			}
-
-			// TODO deprecated
-			$this->line->price = $price;
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				$this->line->array_options = $array_options;
@@ -1004,14 +989,6 @@ class Propal extends CommonObject
 			$multicurrency_total_tva = $tabprice[17];
 			$multicurrency_total_ttc = $tabprice[18];
 			$pu_ht_devise = $tabprice[19];
-
-			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
-			$price = $pu;
-			$remise = 0;
-			if ((float) $remise_percent > 0) {
-				$remise = round(((float) $pu * (float) $remise_percent / 100), 2);
-				$price = (float) $pu - $remise;
-			}
 
 			// Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new PropaleLigne($this->db);
@@ -2020,7 +1997,6 @@ class Propal extends CommonObject
 				$line->subprice         = $objp->subprice;
 				$line->fk_remise_except = $objp->fk_remise_except;
 				$line->remise_percent   = $objp->remise_percent;
-				$line->price            = $objp->price; // TODO deprecated
 
 				$line->info_bits        = $objp->info_bits;
 				$line->total_ht         = $objp->total_ht;
@@ -3658,7 +3634,6 @@ class Propal extends CommonObject
 			$line->desc = $langs->trans("Description")." ".$xnbp;
 			$line->qty = 1;
 			$line->subprice = 100;
-			$line->price = 100;
 			$line->tva_tx = 20;
 			$line->localtax1_tx = 0;
 			$line->localtax2_tx = 0;

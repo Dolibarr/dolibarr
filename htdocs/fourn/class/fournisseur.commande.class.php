@@ -217,32 +217,37 @@ class CommandeFournisseur extends CommonOrder
 	public $source;
 
 	/**
-	 * @var int Payment conditions ID
+	 * @var int ID
+	 */
+	public $fk_project;
+
+	/**
+	 * @var ?int 	Payment conditions ID
 	 */
 	public $cond_reglement_id;
 
 	/**
-	 * @var string Payment conditions code
+	 * @var string 	Payment conditions code
 	 */
 	public $cond_reglement_code;
 
 	/**
-	 * @var string Payment conditions label
+	 * @var string 	Payment conditions label
 	 */
 	public $cond_reglement_label;
 
 	/**
-	 * @var string Payment conditions label on documents
+	 * @var string 	Payment conditions label on documents
 	 */
 	public $cond_reglement_doc;
 
 	/**
-	 * @var int Account ID
+	 * @var int 	Account ID
 	 */
 	public $fk_account;
 
 	/**
-	 * @var int Payment choice ID
+	 * @var ?int 	Payment choice ID
 	 */
 	public $mode_reglement_id;
 
@@ -637,13 +642,13 @@ class CommandeFournisseur extends CommonOrder
 		$this->lines = array();
 
 		$sql = "SELECT l.rowid, l.fk_commande, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description, l.qty,";
-		$sql .= " l.vat_src_code, l.tva_tx, l.remise_percent, l.subprice,";
+		$sql .= " l.vat_src_code, l.tva_tx, l.remise_percent, l.subprice, l.subprice_ttc,";
 		$sql .= " l.localtax1_tx, l. localtax2_tx, l.localtax1_type, l. localtax2_type, l.total_localtax1, l.total_localtax2,";
 		$sql .= " l.total_ht, l.total_tva, l.total_ttc, l.info_bits, l.special_code, l.fk_parent_line, l.rang,";
 		$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc, p.tobatch as product_tobatch, p.barcode as product_barcode,";
 		$sql .= " l.fk_unit, l.extraparams,";
 		$sql .= " l.date_start, l.date_end,";
-		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc';
+		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_subprice_ttc, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc';
 		$sql .= " FROM ".$this->db->prefix()."commande_fournisseurdet as l";
 		$sql .= ' LEFT JOIN '.$this->db->prefix().'product as p ON l.fk_product = p.rowid';
 		$sql .= " WHERE l.fk_commande = ".((int) $this->id);
@@ -676,7 +681,9 @@ class CommandeFournisseur extends CommonOrder
 				$line->localtax1_type	   = $objp->localtax1_type;
 				$line->localtax2_type	   = $objp->localtax2_type;
 				$line->subprice            = $objp->subprice;
-				$line->pu_ht = $objp->subprice;
+				$line->pu_ht 			   = $objp->subprice;	// deprecated
+				$line->subprice_ttc        = $objp->subprice_ttc;
+				$line->pu_ttc 			   = $objp->subprice_ttc;	// deprecated
 				$line->remise_percent      = $objp->remise_percent;
 
 				$line->vat_src_code        = $objp->vat_src_code;
@@ -738,6 +745,7 @@ class CommandeFournisseur extends CommonOrder
 				$line->fk_multicurrency = $objp->fk_multicurrency;
 				$line->multicurrency_code = $objp->multicurrency_code;
 				$line->multicurrency_subprice = $objp->multicurrency_subprice;
+				$line->multicurrency_subprice_ttc = $objp->multicurrency_subprice_ttc;
 				$line->multicurrency_total_ht = $objp->multicurrency_total_ht;
 				$line->multicurrency_total_tva = $objp->multicurrency_total_tva;
 				$line->multicurrency_total_ttc = $objp->multicurrency_total_ttc;

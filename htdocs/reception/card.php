@@ -1242,7 +1242,7 @@ if ($action == 'create') {
 					print $line->qty;
 				}
 				print '<input type="hidden" name="fk_commandefournisseurdet'.$indiceAsked.'" value="'.$line->id.'">';
-				print '<input type="hidden" name="pul'.$indiceAsked.'" value="'.$line->pu_ht.'">';
+				print '<input type="hidden" name="pul'.$indiceAsked.'" value="'.$line->subprice.'">';
 				print '<input name="qtyasked'.$indiceAsked.'" id="qtyasked'.$indiceAsked.'" type="hidden" value="'.$line->qty.'">';
 				print '</td>';
 				$qtyProdCom = $line->qty;

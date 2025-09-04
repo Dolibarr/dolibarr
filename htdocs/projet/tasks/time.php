@@ -1518,7 +1518,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print $langs->trans("PaymentConditions");
 				print '</td>';
 				print '<td>';
-				print $form->getSelectConditionsPaiements($projectstatic->thirdparty->cond_reglement_id, 'condidproject');
+				print $form->getSelectConditionsPaiements((int) $projectstatic->thirdparty->cond_reglement_id, 'condidproject');
 				print '</td>';
 				print '</tr>';
 				/*print '<tr>';
