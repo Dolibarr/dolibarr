@@ -1875,7 +1875,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<tr>';
 			print '<td>'.$form->editfieldkey('PaymentConditions', 'cond_reglement_id', '', $object, 0).'</td>';
 			print '<td colspan="3" class="maxwidthonsmartphone">';
-			print $form->getSelectConditionsPaiements($object->cond_reglement_id, 'cond_reglement_id', 1, 1, 1, '', (float) $object->deposit_percent);
+			print $form->getSelectConditionsPaiements((int) $object->cond_reglement_id, 'cond_reglement_id', 1, 1, 1, '', (float) $object->deposit_percent);
 			print '</td></tr>';
 
 			// Payment mode

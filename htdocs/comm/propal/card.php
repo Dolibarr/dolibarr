@@ -2417,7 +2417,7 @@ if ($action == 'create') {
 		print '<tr class="field_cond_reglement_id"><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 		print img_picto('', 'payment', 'class="pictofixedwidth"');
 		// at last resort we take the payment term id which may be filled by default values set (if not getpostisset)
-		print $form->getSelectConditionsPaiements($cond_reglement_id, 'cond_reglement_id', 1, 1, 0, '', $deposit_percent);
+		print $form->getSelectConditionsPaiements((int) $cond_reglement_id, 'cond_reglement_id', 1, 1, 0, '', $deposit_percent);
 		print '</td></tr>';
 
 		// Mode of payment

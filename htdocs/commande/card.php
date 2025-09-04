@@ -2374,7 +2374,7 @@ if ($action == 'create' && $usercancreate) {
 		// Terms of payment
 		print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 		print img_picto('', 'payment', 'class="pictofixedwidth"');
-		print $form->getSelectConditionsPaiements($cond_reglement_id, 'cond_reglement_id', 1, 1, 0, 'maxwidth200 widthcentpercentminusx', (float) $deposit_percent);
+		print $form->getSelectConditionsPaiements((int) $cond_reglement_id, 'cond_reglement_id', 1, 1, 0, 'maxwidth200 widthcentpercentminusx', (float) $deposit_percent);
 		print '</td></tr>';
 
 		// Payment mode
