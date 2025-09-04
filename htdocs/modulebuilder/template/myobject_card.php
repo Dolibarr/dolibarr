@@ -199,7 +199,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	$triggermodname = 'MYMODULE_MYOBJECT_MODIFY'; // Name of trigger action code to execute when we modify record
+	$triggermodname = $object::TRIGGER_PREFIX.'_MODIFY'; // Name of trigger action code to execute when we modify record. Used in actions_addupdatedelete.inc.php
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -216,12 +216,15 @@ if (empty($reshook)) {
 	// Action to build doc
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
+	// Other special actions
+	/*
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
 		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', null, 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
 		$object->setProject(GETPOSTINT('projectid'));
 	}
+	*/
 
 	// Actions to send emails
 	$triggersendname = 'MYMODULE_MYOBJECT_SENTBYMAIL';
@@ -232,14 +235,12 @@ if (empty($reshook)) {
 
 
 
-
 /*
  * View
  */
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-$formproject = new FormProjets($db);
 
 $title = $langs->trans("MyObject")." - ".$langs->trans('Card');
 //$title = $object->ref." - ".$langs->trans('Card');
