@@ -756,10 +756,11 @@ if (empty($reshook)) {
 
 			$price_ht =  price2num(GETPOST('elprice'), 'MU');
 			$remise_percent = price2num(GETPOST('elremise_percent'), 2);
-			if ($remise_percent > 0) {
+			// Discount applied 2 times => see line 803
+			/*if ($remise_percent > 0) {
 				$remise = round(($price_ht * $remise_percent / 100), 2);
 				$price_ht = ($price_ht - $remise);
-			}
+			}*/
 
 			$objectline->fk_product = GETPOST('idprod', 'int');
 			$objectline->description = GETPOST('product_desc', 'restricthtml');
