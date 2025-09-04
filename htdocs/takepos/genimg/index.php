@@ -84,7 +84,7 @@ if ($query == "cat") {
 
 	$objProd = new Product($db);
 	$objProd->fetch($id);
-	$image = $objProd->show_photos('product', $conf->product->multidir_output[$objProd->entity], 'small', 1);
+	$image = $objProd->show_photos('product', $conf->product->multidir_output[$objProd->entity ?? 1], 'small', 1);
 
 	$match = array();
 	preg_match('@src="([^"]+)"@', $image, $match);
