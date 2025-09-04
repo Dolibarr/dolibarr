@@ -81,7 +81,7 @@ abstract class CommonInvoice extends CommonObject
 	public $date_lim_reglement;
 
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $cond_reglement_id; // Id in llx_c_paiement
 	/**
@@ -98,7 +98,7 @@ abstract class CommonInvoice extends CommonObject
 	public $cond_reglement_doc;
 
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $mode_reglement_id;
 	/**
