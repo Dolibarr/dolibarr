@@ -3706,9 +3706,21 @@ class Commande extends CommonOrder
 				$labelTooltip .= ' - '.$langs->transnoentitiesnoconv("DateDeliveryPlanned").dol_print_date($this->delivery_date, 'day').$billedtext;
 			}
 			$statusType = 'status4';
-		} elseif ($status == self::STATUS_CLOSED) {
+		} elseif ($status == self::STATUS_CLOSED && empty(getDolGlobalString('ORDER_STATUS_LINK_BILLED'))) {
 			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderDelivered').$billedtext;
 			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderDeliveredShort').$billedtext;
+			$statusType = 'status6';
+		} elseif ($status == self::STATUS_CLOSED && (!$billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) && (!empty(getDolGlobalString('ORDER_STATUS_LINK_BILLED')))) {
+			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderToBill'); // translated into Delivered
+			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderToBillShort'); // translated into Delivered
+			$statusType = 'status4';
+		} elseif ($status == self::STATUS_CLOSED && ($billed && empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) && (!empty(getDolGlobalString('ORDER_STATUS_LINK_BILLED')))) {
+			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderProcessed').$billedtext;
+			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderProcessedShort').$billedtext;
+			$statusType = 'status6';
+		} elseif ($status == self::STATUS_CLOSED && (!empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT)) && (!empty(getDolGlobalString('ORDER_STATUS_LINK_BILLED')))) {
+			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderDelivered');
+			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderDeliveredShort');
 			$statusType = 'status6';
 		} else {
 			$labelStatus = $langs->transnoentitiesnoconv('Unknown');
