@@ -283,7 +283,7 @@ function getSupplierInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
 				foreach ($invoice->lines as $line) {
 					//var_dump($line); exit;
 					$linesresp[] = array(
-						'id' => $line->rowid,
+						'id' => $line->id,
 						'type' => $line->product_type,
 						'total_net' => $line->total_ht,
 						'total_vat' => $line->total_tva,
@@ -310,8 +310,8 @@ function getSupplierInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
 					'total_net' => $invoice->total_ht,
 					'total_vat' => $invoice->total_tva,
 					'total' => $invoice->total_ttc,
-					'date_creation' => dol_print_date($invoice->datec, 'dayhourrfc'),
-					'date_modification' => dol_print_date($invoice->datem, 'dayhourrfc'),
+					'date_creation' => dol_print_date($invoice->date_creation, 'dayhourrfc'),
+					'date_modification' => dol_print_date($invoice->date_modification, 'dayhourrfc'),
 					'date_invoice' => dol_print_date($invoice->date, 'dayhourrfc'),
 					'date_term' => dol_print_date($invoice->date_echeance, 'dayhourrfc'),
 					'label' => $invoice->label,
@@ -436,8 +436,8 @@ function getSupplierInvoicesForThirdParty($authentication, $idthirdparty)
 					'total_net' => $invoice->total_ht,
 					'total_vat' => $invoice->total_tva,
 					'total' => $invoice->total_ttc,
-					'date_creation' => dol_print_date($invoice->datec, 'dayhourrfc'),
-					'date_modification' => dol_print_date($invoice->datem, 'dayhourrfc'),
+					'date_creation' => dol_print_date($invoice->date_creation, 'dayhourrfc'),
+					'date_modification' => dol_print_date($invoice->date_modification, 'dayhourrfc'),
 					'date_invoice' => dol_print_date($invoice->date, 'dayhourrfc'),
 					'date_term' => dol_print_date($invoice->date_echeance, 'dayhourrfc'),
 					'label' => $invoice->label,

@@ -216,6 +216,7 @@ $order_fields = array(
 	'total_localtax2' => array('name' => 'total_localtax2', 'type' => 'xsd:double'),
 	'total' => array('name' => 'total', 'type' => 'xsd:double'),
 	'date' => array('name' => 'date', 'type' => 'xsd:date'),
+	'date_due' => array('name' => 'date_due', 'type' => 'xsd:date'),
 	'date_creation' => array('name' => 'date_creation', 'type' => 'xsd:dateTime'),
 	'date_validation' => array('name' => 'date_validation', 'type' => 'xsd:dateTime'),
 	'date_modification' => array('name' => 'date_modification', 'type' => 'xsd:dateTime'),
@@ -673,7 +674,7 @@ function getOrdersForThirdParty($authentication, $idthirdparty)
  * Create order
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
- * @param 	array{id:string,ref:string,ref_client:string,ref_ext:string,thirdparty_id:int,status:int,billed:string,total_net:float,total_vat:float,total_localtax1:float,total_localtax2:float,total:float,date:string,date_creation:string,date_validation:string,date_modification:string,source:string,note_private:string,note_public:string,project_id:string,mode_reglement_id:string,mode_reglement_code:string,mode_reglement:string,cond_reglement_id:string,cond_reglement_code:string,cond_reglement:string,cond_reglement_doc:string,date_livraison:int,demand_reason_id:string,lines:array<array{line:mixed,id:string,type:int,fk_commande:int,fk_parent_line:int,desc:string,qty:float,price:float,unitprice:float,vat_rate:float,remise:float,remise_percent:float,total_net:float,total_vat:float,total:float,date_start:string,date_end:string,product_id:int,product_ref:string,product_label:string,product_desc:string}>}		$order		Order info
+ * @param 	array{id:string,ref:string,ref_client:string,ref_ext:string,thirdparty_id:int,status:int,billed:string,total_net:float,total_vat:float,total_localtax1:float,total_localtax2:float,total:float,date:string,date_due:string,date_creation:string,date_validation:string,date_modification:string,source:string,note_private:string,note_public:string,project_id:string,mode_reglement_id:string,mode_reglement_code:string,mode_reglement:string,cond_reglement_id:string,cond_reglement_code:string,cond_reglement:string,cond_reglement_doc:string,date_livraison:int,demand_reason_id:string,lines:array<array{line:mixed,id:string,type:int,fk_commande:int,fk_parent_line:int,desc:string,qty:float,price:float,unitprice:float,vat_rate:float,remise:float,remise_percent:float,total_net:float,total_vat:float,total:float,date_start:string,date_end:string,product_id:int,product_ref:string,product_label:string,product_desc:string}>}		$order		Order info
  * @return 	array{result:array{result_code:string,result_label:string}} Array result
  */
 function createOrder($authentication, $order)
@@ -684,8 +685,7 @@ function createOrder($authentication, $order)
 
 	$now = dol_now();
 
-	// TODO: socid is not defined in '$order_fields' above used to define the web interface - verify.
-	dol_syslog("Function: createOrder login=".$authentication['login']." socid :".$order['socid']);
+	dol_syslog("Function: createOrder login=".$authentication['login']." socid :".$order['thirdparty_id']);
 
 	if ($authentication['entity']) {
 		$conf->entity = $authentication['entity'];
@@ -705,11 +705,8 @@ function createOrder($authentication, $order)
 	if (!$error) {
 		$newobject = new Commande($db);
 		$newobject->socid = $order['thirdparty_id'];
-		// TODO: 'type' is not defined in the $order_fields for the WS - verify
-		$newobject->type = $order['type'];
 		$newobject->ref_ext = $order['ref_ext'];
 		$newobject->date = dol_stringtotime($order['date'], 'dayrfc');
-		// TODO: 'date_due' is not defined in the $order_fields for the WS - verify
 		$newobject->date_lim_reglement = dol_stringtotime((string) $order['date_due'], 'dayrfc');
 		$newobject->note_private = $order['note_private'];
 		$newobject->note_public = $order['note_public'];
