@@ -420,8 +420,8 @@ if (empty($reshook)) {
 
 				if ($error) {
 					// Move files from the dir of the third party to delete into the dir of the third party to keep
-					if (!empty($conf->product->multidir_output[$productOrigin->entity])) {
-						$srcdir = $conf->product->multidir_output[$productOrigin->entity]."/".$productOrigin->ref;
+					if (!empty($conf->product->multidir_output[$productOrigin->entity ?? 1 ?? 1])) {
+						$srcdir = $conf->product->multidir_output[$productOrigin->entity ?? 1 ?? 1 ?? 1]."/".$productOrigin->ref;
 						$destdir = $conf->product->multidir_output[$object->entity ?? 1]."/".$object->ref;
 
 						if (dol_is_dir($srcdir)) {
