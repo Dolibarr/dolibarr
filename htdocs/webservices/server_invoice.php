@@ -553,7 +553,7 @@ function getInvoicesForThirdParty($authentication, $idthirdparty)
  * Create an invoice
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
- * @param	array{id:string,ref:string,ref_ext:string,thirdparty_id:int,fk_user_author:string,fk_user_valid:string,date:string,date_due:string,date_creation:string,date_validation:string,date_modification:string,payment_mode_id:string,type:int,total_net:float,total_vat:float,total:float,note_private:string,note_public:string,status:int,close_code:string,close_note:string,project_id:string,lines?:array<array{id:string,type:int,desc:string,vat_rate:float,qty:float,unitprice:float,total_net:float,total_vat:float,total:float,date_start:string,date_end:string,product_id:int,product_ref:string,product_label:string,product_desc:string}>}		$invoice			Invoice
+ * @param	array{id:string,ref:string,ref_ext:string,thirdparty_id:int,fk_user_author:string,fk_user_valid:string,date:string,date_due:string,date_creation:string,date_validation:string,date_modification:string,payment_mode_id:string,type:int,total_net:float,total_vat:float,total:float,note_private:string,note_public:string,status:int,close_code:string,close_note:string,project_id:string,lines?:array<array{line:mixed,id:string,type:int,desc:string,vat_rate:float,qty:float,unitprice:float,total_net:float,total_vat:float,total:float,date_start:string,date_end:string,product_id:int,product_ref:string,product_label:string,product_desc:string}>}		$invoice			Invoice
  * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function createInvoice($authentication, $invoice)
