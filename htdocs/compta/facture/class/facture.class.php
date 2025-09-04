@@ -4660,7 +4660,7 @@ class Facture extends CommonInvoice
 				if ($qty < $this->line->packaging) {
 					$qty = $this->line->packaging;
 				} else {
-					if (!empty($this->line->packaging) && fmod($qty, $this->line->packaging) > 0) {
+					if (!empty((float)$this->line->packaging) && fmod($qty, $this->line->packaging) > 0) {
 						$coeff = intval($qty / $this->line->packaging) + 1;
 						$qty = $this->line->packaging * $coeff;
 						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
