@@ -3184,7 +3184,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		// Wrapping for recruitment module
 		$accessallowed = $user->hasRight('recruitment', 'recruitmentjobposition', 'read');
 		$original_file = $conf->recruitment->dir_output.'/'.$original_file;
-	}elseif ($modulepart == 'hrm' && !empty($conf->hrm->dir_output)) {
+	} elseif ($modulepart == 'hrm' && !empty($conf->hrm->dir_output)) {
 		// Wrapping for recruitment module
 		$accessallowed = $user->hasRight('hrm', 'all', 'read');
 		$original_file = $conf->hrm->dir_output.'/'.$original_file;
