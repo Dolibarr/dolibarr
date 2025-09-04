@@ -162,6 +162,12 @@ class FactureFournisseur extends CommonInvoice
 	public $author;
 
 	/**
+	 * @var int 	Id User validating
+	 * @deprecated	Use $user_validation_id
+	 */
+	public $fk_user_valid;
+
+	/**
 	 * Date creation record (datec)
 	 *
 	 * @var integer
@@ -319,11 +325,6 @@ class FactureFournisseur extends CommonInvoice
 
 
 	/**
-	 * @var int Id User modifying
-	 */
-	public $fk_user_valid;
-
-	/**
 	 * Standard invoice
 	 */
 	const TYPE_STANDARD = 0;
@@ -375,6 +376,7 @@ class FactureFournisseur extends CommonInvoice
 	const CLOSECODE_BADCREDIT = 'badsupplier';
 	const CLOSECODE_ABANDONED = 'abandon';
 	const CLOSECODE_REPLACED = 'replaced';
+
 
 	/**
 	 *	Constructor
@@ -975,6 +977,7 @@ class FactureFournisseur extends CommonInvoice
 				$this->user_creation_id     = $obj->fk_user_author;
 				$this->author				= $obj->fk_user_author;	// deprecated
 				$this->user_validation_id   = $obj->fk_user_valid;
+				$this->fk_user_valid        = $obj->fk_user_valid;
 				$this->fk_facture_source	= $obj->fk_facture_source;
 				$this->vat_reverse_charge	= empty($obj->vat_reverse_charge) ? 0 : 1;
 				$this->fk_fac_rec_source	= $obj->fk_fac_rec_source;
