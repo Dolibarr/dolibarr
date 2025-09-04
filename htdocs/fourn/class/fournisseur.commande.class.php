@@ -222,32 +222,32 @@ class CommandeFournisseur extends CommonOrder
 	public $fk_project;
 
 	/**
-	 * @var int Payment conditions ID
+	 * @var ?int 	Payment conditions ID
 	 */
 	public $cond_reglement_id;
 
 	/**
-	 * @var string Payment conditions code
+	 * @var string 	Payment conditions code
 	 */
 	public $cond_reglement_code;
 
 	/**
-	 * @var string Payment conditions label
+	 * @var string 	Payment conditions label
 	 */
 	public $cond_reglement_label;
 
 	/**
-	 * @var string Payment conditions label on documents
+	 * @var string 	Payment conditions label on documents
 	 */
 	public $cond_reglement_doc;
 
 	/**
-	 * @var int Account ID
+	 * @var int 	Account ID
 	 */
 	public $fk_account;
 
 	/**
-	 * @var int Payment choice ID
+	 * @var ?int 	Payment choice ID
 	 */
 	public $mode_reglement_id;
 
