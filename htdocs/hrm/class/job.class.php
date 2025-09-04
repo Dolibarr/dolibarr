@@ -990,7 +990,6 @@ class Job extends CommonObject
 		global $conf, $langs;
 
 		$result = 0;
-		$includedocgeneration = 0;
 
 		$langs->load("hrm");
 
@@ -1006,7 +1005,7 @@ class Job extends CommonObject
 
 		$modelpath = "core/modules/hrm/doc/";
 
-		if ($includedocgeneration && !empty($modele)) {
+		if (!empty($modele)) {
 			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
 
