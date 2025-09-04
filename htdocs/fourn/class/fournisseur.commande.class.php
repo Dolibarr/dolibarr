@@ -637,7 +637,7 @@ class CommandeFournisseur extends CommonOrder
 		$this->lines = array();
 
 		$sql = "SELECT l.rowid, l.fk_commande, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description, l.qty,";
-		$sql .= " l.vat_src_code, l.tva_tx, l.remise_percent, l.subprice, l.subprice_ttc";
+		$sql .= " l.vat_src_code, l.tva_tx, l.remise_percent, l.subprice, l.subprice_ttc,";
 		$sql .= " l.localtax1_tx, l. localtax2_tx, l.localtax1_type, l. localtax2_type, l.total_localtax1, l.total_localtax2,";
 		$sql .= " l.total_ht, l.total_tva, l.total_ttc, l.info_bits, l.special_code, l.fk_parent_line, l.rang,";
 		$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc, p.tobatch as product_tobatch, p.barcode as product_barcode,";
