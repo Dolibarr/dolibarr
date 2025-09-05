@@ -735,59 +735,86 @@ if (empty($reshook)) {
 				}
 
 				// Logo/Photo save
-				$dir     = $conf->societe->multidir_output[$object->entity]."/".$object->id."/logos";
-				$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
-				if (GETPOST('deletephoto') && $object->logo) {
-					$fileimg = $dir.'/'.$object->logo;
-					$dirthumbs = $dir.'/thumbs';
-					dol_delete_file($fileimg);
-					dol_delete_dir_recursive($dirthumbs);
-				}
-				if ($file_OK) {
-					if (image_format_supported($_FILES['photo']['name']) > 0) {
-						if ($current_logo != $object->logo) {
-							$fileimg = $dir.'/'.$current_logo;
-							$dirthumbs = $dir.'/thumbs';
-							dol_delete_file($fileimg);
-							dol_delete_dir_recursive($dirthumbs);
-						}
+                $dir     = $conf->societe->multidir_output[$object->entity]."/".$object->id."/logos"; // Répertoire du logo
+                $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
 
-						dol_mkdir($dir);
+                // Vérifier si la case 'deletephoto' est cochée et si le logo existe
+                if (GETPOST('deletephoto')) {
+                    // Supprimer toutes les images et miniatures dans le répertoire
+                    if (is_dir($dir)) {
+                        $files = glob($dir.'/*'); // Récupérer tous les fichiers dans le répertoire
 
-						if (@is_dir($dir)) {
-							$newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
-							$result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1);
+                        foreach ($files as $file) {
+                            dol_delete_file($file); // Supprimer chaque fichier
+                        }
 
-							if (!($result > 0)) {
-								$errors[] = "ErrorFailedToSaveFile";
-							} else {
-								// Create thumbs
-								$object->addThumbs($newfile);
+                        // Supprimer aussi les miniatures
+                        $dirthumbs = $dir.'/thumbs';
+                        if (is_dir($dirthumbs)) {
+                            $thumbs_files = glob($dirthumbs.'/*'); // Récupérer toutes les miniatures
+                            foreach ($thumbs_files as $thumb_file) {
+                                dol_delete_file($thumb_file); // Supprimer chaque miniature
+                            }
+                            dol_delete_dir_recursive($dirthumbs); // Supprimer le répertoire des miniatures
+                        }
 
-								// Index file in database
-								if (getDolGlobalString('THIRDPARTY_LOGO_ALLOW_EXTERNAL_DOWNLOAD')) {
-									require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-									// the dir dirname($newfile) is directory of logo, so we should have only one file at once into index, so we delete indexes for the dir
-									deleteFilesIntoDatabaseIndex(dirname($newfile), '', '');
-									// now we index the uploaded logo file
-									addFileIntoDatabaseIndex(dirname($newfile), basename($newfile), '', 'uploaded', 1);
-								}
-							}
-						}
-					} else {
-						$errors[] = "ErrorBadImageFormat";
-					}
-				} else {
-					switch ($_FILES['photo']['error']) {
-						case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
-						case 2: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
-							$errors[] = "ErrorFileSizeTooLarge";
-							break;
-						case 3: //uploaded file was only partially uploaded
-							$errors[] = "ErrorFilePartiallyUploaded";
-							break;
-					}
-				}
+                        // Réinitialiser le logo dans l'objet
+                        $object->logo = '';
+                    }
+
+                    // Assurez-vous que la base de données est également mise à jour pour supprimer le logo
+                    // Par exemple, vous pouvez appeler une méthode spécifique ici pour supprimer l'entrée dans la base de données si nécessaire.
+                }
+
+
+                // Si un fichier est téléchargé
+                if ($file_OK) {
+                    if (image_format_supported($_FILES['photo']['name']) > 0) {
+                        // Si l'image actuelle est différente de la nouvelle image, on supprime l'image actuelle
+                        if ($current_logo != $object->logo) {
+                            $fileimg = $dir.'/'.$current_logo;
+                            $dirthumbs = $dir.'/thumbs';
+                            dol_delete_file($fileimg);
+                            dol_delete_dir_recursive($dirthumbs);
+                        }
+
+                        dol_mkdir($dir);
+
+                        if (@is_dir($dir)) {
+                            $newfile = $dir.'/'.dol_sanitizeFileName($_FILES['photo']['name']);
+                            $result = dol_move_uploaded_file($_FILES['photo']['tmp_name'], $newfile, 1);
+
+                            if (!($result > 0)) {
+                                $errors[] = "ErrorFailedToSaveFile";
+                            } else {
+                                // Création des miniatures
+                                $object->addThumbs($newfile);
+
+                                // Indexer le fichier dans la base de données
+                                if (getDolGlobalString('THIRDPARTY_LOGO_ALLOW_EXTERNAL_DOWNLOAD')) {
+                                    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+                                    // Supprimer les index dans le répertoire
+                                    deleteFilesIntoDatabaseIndex(dirname($newfile), '', '');
+                                    // Indexer le fichier de logo téléchargé
+                                    addFileIntoDatabaseIndex(dirname($newfile), basename($newfile), '', 'uploaded', 1);
+                                }
+                            }
+                        }
+                    } else {
+                        $errors[] = "ErrorBadImageFormat";
+                    }
+                } else {
+                    // Cas où aucun fichier n'est téléchargé
+                    switch ($_FILES['photo']['error']) {
+                        case 1: // Le fichier téléchargé dépasse la directive upload_max_filesize dans php.ini
+                        case 2: // Le fichier téléchargé dépasse la directive MAX_FILE_SIZE spécifiée dans le formulaire HTML
+                            $errors[] = "ErrorFileSizeTooLarge";
+                            break;
+                        case 3: // Le fichier téléchargé a été partiellement téléchargé
+                            $errors[] = "ErrorFilePartiallyUploaded";
+                            break;
+                    }
+                }
 				// Company logo management
 
 
