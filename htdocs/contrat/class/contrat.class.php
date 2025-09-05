@@ -169,24 +169,29 @@ class Contrat extends CommonObject
 	public $date_contrat;
 
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $commercial_signature_id;
+
 	/**
-	 * @var int|string
+	 * @var ?int
+	 * @deprecated
 	 */
 	public $fk_commercial_signature;
+
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $commercial_suivi_id;
+
 	/**
-	 * @var int|string
+	 * @var ?int
+	 * @deprecated
 	 */
 	public $fk_commercial_suivi;
 
 	/**
-	 * @var int
+	 * @var ?int
 	 * @deprecated Use fk_project instead
 	 * @see $fk_project
 	 */
@@ -1373,10 +1378,10 @@ class Contrat extends CommonObject
 			$this->socid = (int) $this->socid;
 		}
 		if (isset($this->fk_commercial_signature)) {
-			$this->fk_commercial_signature = trim($this->fk_commercial_signature);
+			$this->fk_commercial_signature = (int) $this->fk_commercial_signature;
 		}
 		if (isset($this->fk_commercial_suivi)) {
-			$this->fk_commercial_suivi = trim($this->fk_commercial_suivi);
+			$this->fk_commercial_suivi = (int) $this->fk_commercial_suivi;
 		}
 		if (isset($this->note_private)) {
 			$this->note_private = trim($this->note_private);
