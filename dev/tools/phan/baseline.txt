@@ -9,12 +9,12 @@
  */
 return [
     // # Issue statistics:
-    // PhanUndeclaredProperty : 450+ occurrences
+    // PhanUndeclaredProperty : 440+ occurrences
     // PhanTypeMismatchProperty : 100+ occurrences
     // PhanTypeMismatchArgument : 70+ occurrences
     // PhanUndeclaredGlobalVariable : 70+ occurrences
     // PhanTypeMismatchArgumentNullable : 40+ occurrences
-    // PhanTypeInvalidDimOffset : 20+ occurrences
+    // PhanTypeInvalidDimOffset : 15+ occurrences
     // PhanTypeMismatchDimFetch : 15+ occurrences
     // PhanUndeclaredMethod : 9 occurrences
     // PhanTypeMismatchArgumentProbablyReal : 8 occurrences
@@ -29,11 +29,9 @@ return [
     // PhanTypeExpectedObjectPropAccessButGotNull : 1 occurrence
     // PhanTypeMismatchArgumentNullableInternal : 1 occurrence
     // PhanTypeMismatchReturn : 1 occurrence
-    // PhanTypeSuspiciousStringExpression : 1 occurrence
 
     // Currently, file_suppressions and directory_suppressions are the only supported suppressions
     'file_suppressions' => [
-        'htdocs/bom/bom_card.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
         'htdocs/bom/tpl/objectline_create.tpl.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/bom/tpl/objectline_edit.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/bom/tpl/objectline_view.tpl.php' => ['PhanUndeclaredProperty'],
@@ -294,7 +292,7 @@ return [
         'htdocs/webservices/server_category.php' => ['PhanUndeclaredProperty'],
         'htdocs/webservices/server_contact.php' => ['PhanUndeclaredProperty'],
         'htdocs/webservices/server_invoice.php' => ['PhanUndeclaredProperty'],
-        'htdocs/webservices/server_order.php' => ['PhanTypeInvalidDimOffset', 'PhanTypeSuspiciousStringExpression', 'PhanUndeclaredProperty'],
+        'htdocs/webservices/server_order.php' => ['PhanUndeclaredProperty'],
         'htdocs/webservices/server_payment.php' => ['PhanUndeclaredProperty'],
         'htdocs/webservices/server_productorservice.php' => ['PhanUndeclaredProperty'],
         'htdocs/webservices/server_project.php' => ['PhanUndeclaredProperty'],
