@@ -159,10 +159,12 @@ class KnowledgeRecord extends CommonObject
 	 * @var string
 	 */
 	public $url;
+
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $status;
+
 	/**
 	 * @var string
 	 */
@@ -772,8 +774,9 @@ class KnowledgeRecord extends CommonObject
 		$nofetch = !empty($params['nofetch']);
 
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("KnowledgeRecord").'</u>';
-		$this->status = (int) $this->status;
-		$datas['picto'] .= ' '.$this->getLibStatut(5);
+		if (isset($this->status)) {
+			$datas['picto'] .= ' '.$this->getLibStatut(5);
+		}
 		$datas['label'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		$datas['question'] = '<br><b>'.$langs->trans('Question').':</b> '.$this->question;
 		$labellang = ($this->lang ? $langs->trans('Language_'.$this->lang) : '');
