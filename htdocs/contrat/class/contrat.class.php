@@ -186,12 +186,13 @@ class Contrat extends CommonObject
 
 	/**
 	 * @var ?int
-	 * @deprecated
+	 * @deprecated Use $commercial_suivi_id instead
+	 * @see $commercial_suivi_id
 	 */
 	public $fk_commercial_suivi;
 
 	/**
-	 * @var ?int
+	 * @var int
 	 * @deprecated Use fk_project instead
 	 * @see $fk_project
 	 */
