@@ -227,7 +227,6 @@ if (empty($reshook)) {
 		$fk_barcode_type = GETPOSTINT('fk_barcode_type');
 		$packaging = price2num(GETPOST("packaging", 'alphanohtml'), 'MS');
 
-
 		if ($tva_tx == '') {
 			$error++;
 			$langs->load("errors");
