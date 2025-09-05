@@ -2937,7 +2937,7 @@ class ActionComm extends CommonObject
 							// $errors_to = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
 
 							// Sms Creation
-							$CSMSFile = new CSMSFile($to, $from, $sendContent, 0, 0, 3, 1);
+							$CSMSFile = new CSMSFile((string) $to, $from, $sendContent, 0, 0, 3, 1);
 
 							// Sending Mail
 							if ($CSMSFile->sendfile()) {
