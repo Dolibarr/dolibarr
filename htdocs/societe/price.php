@@ -712,7 +712,6 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 			print '</tr>';
 
 			foreach ($prodcustprice->lines as $line) {
-				//var_dump($line->id);
 				$staticprod = new Product($db);
 				$staticprod->fetch($line->fk_product);
 
@@ -740,7 +739,6 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 				print '</td>';
 				print "<td>".dol_print_date($line->datec, "dayhour", 'tzuserrel')."</td>";
 
-				//ADD ++ FOR LINE
 				$i++;
 			}
 			print "</table>";
