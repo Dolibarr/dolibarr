@@ -227,6 +227,7 @@ if (empty($reshook)) {
 		$fk_barcode_type = GETPOSTINT('fk_barcode_type');
 		$packaging = price2num(GETPOST("packaging", 'alphanohtml'), 'MS');
 
+
 		if ($tva_tx == '') {
 			$error++;
 			$langs->load("errors");
@@ -318,7 +319,7 @@ if (empty($reshook)) {
 				if ($packaging < $quantity) {
 					$packaging = $quantity;
 				}*/
-				$object->packaging = $packaging;
+				$object->product_fourn_packaging = $packaging;
 
 				if (isModEnabled("multicurrency")) {
 					$multicurrency_tx = GETPOSTFLOAT("multicurrency_tx");
