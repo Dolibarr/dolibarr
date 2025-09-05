@@ -748,6 +748,9 @@ input.pageplusone {
 .fontsizeunset {
 	font-size: unset !important;
 }
+.unsetcolor {
+	color: unset !important;
+}
 .vmirror {
 	transform: scale(1, -1);
 }
@@ -4202,10 +4205,6 @@ span.tabspan {
 tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 {
 	border: 0px;
-}
-
-.unsetcolor {
-	color: unset !important;
 }
 
 .smallpaddingimp {
