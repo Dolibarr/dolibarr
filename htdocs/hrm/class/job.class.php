@@ -1028,7 +1028,7 @@ class Job extends CommonObject
 	/**
 	 * function for get required skills associate to job object
 	 * @param int  $id  Id of object
-	 * @return Object[]|int     list of ids skillranks
+	 * @return int[]|int     list of ids skillranks
 	 */
 	public function getSkillRankForJob($id)
 	{
@@ -1046,7 +1046,7 @@ class Job extends CommonObject
 			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
-				$skillranks[] = $obj;
+				$skillranks[] = $obj->rowid;
 				$i++;
 			}
 			$this->db->free($resql);
