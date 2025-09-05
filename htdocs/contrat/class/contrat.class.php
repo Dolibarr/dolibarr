@@ -192,13 +192,6 @@ class Contrat extends CommonObject
 	public $fk_commercial_suivi;
 
 	/**
-	 * @var int
-	 * @deprecated Use fk_project instead
-	 * @see $fk_project
-	 */
-	public $fk_projet;
-
-	/**
 	 * @var array<string,string>  (Encoded as JSON in database)
 	 */
 	public $extraparams = array();
