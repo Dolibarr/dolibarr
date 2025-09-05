@@ -273,9 +273,7 @@ class Job extends CommonObject
 		$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
 		$object->label = $langs->trans("CopyOf")." ".$object->label;
 		$object->date_creation = dol_now();
-		if (property_exists($object, 'date_modification')) {
-			$object->date_modification = null;
-		}
+		$object->date_modification = null;
 
 		// Clear extrafields that are unique
 		if (is_array($object->array_options) && count($object->array_options) > 0) {
@@ -899,7 +897,7 @@ class Job extends CommonObject
 	/**
 	 * 	Create an array of lines
 	 *
-	 * 	@return JobLine[]|int		array of lines if OK, <0 if KO
+	 * 	@return CommonObjectLine[]|int		array of lines if OK, <0 if KO
 	 */
 	public function getLinesArray()
 	{
