@@ -88,7 +88,7 @@ if ($object->id > 0) {
 	$object->fetch_thirdparty();
 }
 
-$upload_dir = $conf->contrat->multidir_output[$object->entity ?? 1].'/'.dol_sanitizeFileName($object->ref);
+$upload_dir = $conf->contrat->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'contract';
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context

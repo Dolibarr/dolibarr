@@ -72,7 +72,7 @@ if (is_numeric($type)) {
 	$type = array_search($type, $object->MAP_ID);	// For backward compatibility
 }
 
-$upload_dir = $conf->categorie->multidir_output[$object->entity ?? 1];
+$upload_dir = $conf->categorie->multidir_output[$object->entity ?? $conf->entity];
 
 // Security check
 $result = restrictedArea($user, 'categorie', $id, '&category');

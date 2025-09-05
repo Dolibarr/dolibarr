@@ -257,7 +257,7 @@ class pdf_standard extends ModelePDFProduct
 				foreach ($pdir as $midir) {
 					if (!$arephoto) {
 						if ($conf->entity != $object->entity) {
-							$dir = $conf->product->multidir_output[$object->entity ?? 1].'/'.$midir; //Check repertories of current entities
+							$dir = $conf->product->multidir_output[$object->entity ?? $conf->entity].'/'.$midir; //Check repertories of current entities
 						} else {
 							$dir = $conf->product->dir_output.'/'.$midir; //Check repertory of the current product
 						}
@@ -760,8 +760,8 @@ class pdf_standard extends ModelePDFProduct
 		if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
 			if ($this->emetteur->logo) {
 				$logodir = $conf->mycompany->dir_output;
-				if (!empty($conf->mycompany->multidir_output[$object->entity ?? 1])) {
-					$logodir = $conf->mycompany->multidir_output[$object->entity ?? 1];
+				if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+					$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 				}
 				if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
 					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;

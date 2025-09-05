@@ -104,7 +104,7 @@ $usercancreate = $user->hasRight("propal", "creer");
 
 if ($object->id > 0) {
 	$object->fetch_thirdparty();
-	$upload_dir = $conf->propal->multidir_output[$object->entity ?? 1].'/'.dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->propal->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
 	include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 }
 
@@ -119,7 +119,7 @@ llxHeader('', $title, $help_url);
 $form = new Form($db);
 
 if ($object->id > 0) {
-	$upload_dir = $conf->propal->multidir_output[$object->entity ?? 1].'/'.dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->propal->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
 
 	$head = propal_prepare_head($object);
 	print dol_get_fiche_head($head, 'document', $langs->trans('Proposal'), -1, $object->picto);

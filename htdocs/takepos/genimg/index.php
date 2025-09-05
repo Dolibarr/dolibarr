@@ -63,7 +63,7 @@ if ($query == "cat") {
 	$object = new Categorie($db);
 	$result = $object->fetch($id);
 
-	$upload_dir = $conf->categorie->multidir_output[$object->entity ?? 1];
+	$upload_dir = $conf->categorie->multidir_output[$object->entity ?? $conf->entity];
 	$pdir = get_exdir($object->id, 2, 0, 0, $object, 'category').$object->id."/photos/";
 	$dir = $upload_dir.'/'.$pdir;
 

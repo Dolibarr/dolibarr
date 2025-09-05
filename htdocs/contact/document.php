@@ -91,7 +91,7 @@ if ($id > 0) {
 	$object->fetch($id);
 }
 
-$upload_dir = $conf->societe->multidir_output[$object->entity ?? 1].'/contact/'.dol_sanitizeFileName($object->ref);
+$upload_dir = $conf->societe->multidir_output[$object->entity ?? $conf->entity].'/contact/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'contact';
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context

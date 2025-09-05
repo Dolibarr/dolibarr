@@ -441,9 +441,9 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 		global $object;
 		if (!empty($object->id)) {
 			if (isModEnabled("product")) {
-				$upload_dirold = $conf->product->multidir_output[$object->entity ?? 1].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
+				$upload_dirold = $conf->product->multidir_output[$object->entity ?? $conf->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
 			} else {
-				$upload_dirold = $conf->service->multidir_output[$object->entity ?? 1].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
+				$upload_dirold = $conf->service->multidir_output[$object->entity ?? $conf->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
 			}
 
 			$relativedirold = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $upload_dirold);

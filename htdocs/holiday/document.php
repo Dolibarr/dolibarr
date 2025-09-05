@@ -109,7 +109,7 @@ if (($id > 0) || $ref) {
 }
 
 
-$upload_dir = $conf->holiday->multidir_output[$object->entity ?? 1].'/'.get_exdir(0, 0, 0, 1, $object, '');
+$upload_dir = $conf->holiday->multidir_output[$object->entity ?? $conf->entity].'/'.get_exdir(0, 0, 0, 1, $object, '');
 $modulepart = 'holiday';
 
 // Protection if external user

@@ -85,8 +85,8 @@ $object = new Societe($db);
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
 
-	$upload_dir = $conf->societe->multidir_output[$object->entity ?? 1]."/".$object->id;
-	$courrier_dir = $conf->societe->multidir_output[$object->entity ?? 1]."/courrier/".get_exdir($object->id, 0, 0, 0, $object, 'thirdparty');
+	$upload_dir = $conf->societe->multidir_output[$object->entity ?? $conf->entity]."/".$object->id;
+	$courrier_dir = $conf->societe->multidir_output[$object->entity ?? $conf->entity]."/courrier/".get_exdir($object->id, 0, 0, 0, $object, 'thirdparty');
 }
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context

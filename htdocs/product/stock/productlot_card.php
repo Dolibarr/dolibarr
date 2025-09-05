@@ -109,7 +109,7 @@ if ($id || $ref) {
 		$batch = $tmp[1];
 	}
 	$object->fetch($id, $productid, $batch);
-	$upload_dir = $conf->productbatch->multidir_output[$object->entity ?? 1].'/'.get_exdir(0, 0, 0, 1, $object, $modulepart);
+	$upload_dir = $conf->productbatch->multidir_output[$object->entity ?? $conf->entity].'/'.get_exdir(0, 0, 0, 1, $object, $modulepart);
 	$filearray = dol_dir_list($upload_dir, "files");
 }
 
@@ -494,7 +494,7 @@ if ($action != 'presend') {
 	if ($includedocgeneration) {
 		$objref = dol_sanitizeFileName($object->ref);
 		$relativepath = $object->id.'/'.$objref.'.pdf';
-		$filedir = $conf->productbatch->multidir_output[$object->entity ?? 1].'/'.get_exdir(0, 0, 0, 1, $object, 'product_batch');
+		$filedir = $conf->productbatch->multidir_output[$object->entity ?? $conf->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'product_batch');
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = $usercanread; // If you can read, you can build the PDF to read content
 		$delallowed = $usercancreate; // If you can create/edit, you can remove a file on card

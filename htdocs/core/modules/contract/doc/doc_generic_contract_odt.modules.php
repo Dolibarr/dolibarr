@@ -235,7 +235,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 		// Load translation files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "deliveries"));
 
-		if ($conf->contract->multidir_output[$object->entity ?? 1]) {
+		if ($conf->contract->multidir_output[$object->entity ?? $conf->entity]) {
 			// If $object is id instead of object
 			if (!is_object($object)) {
 				$id = $object;
@@ -249,7 +249,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 
 			$object->fetch_thirdparty();
 
-			$dir = $conf->contract->multidir_output[$object->entity ?? 1];
+			$dir = $conf->contract->multidir_output[$object->entity ?? $conf->entity];
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;

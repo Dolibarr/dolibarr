@@ -99,7 +99,7 @@ if ($id || $ref) {
 	$object->fetch($id, $productid, $batch);
 
 	if (isModEnabled('productbatch')) {
-		$upload_dir = $conf->productbatch->multidir_output[$object->entity ?? 1].'/'.get_exdir(0, 0, 0, 1, $object, $modulepart);
+		$upload_dir = $conf->productbatch->multidir_output[$object->entity ?? $conf->entity].'/'.get_exdir(0, 0, 0, 1, $object, $modulepart);
 		$filearray = dol_dir_list($upload_dir, "files");
 	}
 }

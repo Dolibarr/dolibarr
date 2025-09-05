@@ -192,7 +192,7 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'WebsiteAccount';
 	$objectlabel = 'WebsiteAccount';
-	$uploaddir = empty($conf->societe->multidir_output[$object->entity ?? 1]) ? $conf->societe->dir_output : $conf->societe->multidir_output[$object->entity ?? 1];
+	$uploaddir = empty($conf->societe->multidir_output[$object->entity ?? $conf->entity]) ? $conf->societe->dir_output : $conf->societe->multidir_output[$object->entity ?? $conf->entity];
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }

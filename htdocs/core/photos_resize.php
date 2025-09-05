@@ -139,12 +139,12 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		if ($result <= 0) {
 			dol_print_error($db, 'Failed to load object');
 		}
-		$dir = $conf->product->multidir_output[$object->entity ?? 1]; // By default
+		$dir = $conf->product->multidir_output[$object->entity ?? $conf->entity]; // By default
 		if ($object->type == Product::TYPE_PRODUCT) {
-			$dir = $conf->product->multidir_output[$object->entity ?? 1];
+			$dir = $conf->product->multidir_output[$object->entity ?? $conf->entity];
 		}
 		if ($object->type == Product::TYPE_SERVICE) {
-			$dir = $conf->service->multidir_output[$object->entity ?? 1];
+			$dir = $conf->service->multidir_output[$object->entity ?? $conf->entity];
 		}
 	}
 } elseif ($modulepart == 'project') {
@@ -155,7 +155,7 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		if ($result <= 0) {
 			dol_print_error($db, 'Failed to load object');
 		}
-		$dir = $conf->project->multidir_output[$object->entity ?? 1]; // By default
+		$dir = $conf->project->multidir_output[$object->entity ?? $conf->entity]; // By default
 	}
 } elseif ($modulepart == 'propal') {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
@@ -165,7 +165,7 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		if ($result <= 0) {
 			dol_print_error($db, 'Failed to load object');
 		}
-		$dir = $conf->propal->multidir_output[$object->entity ?? 1]; // By default
+		$dir = $conf->propal->multidir_output[$object->entity ?? $conf->entity]; // By default
 	}
 } elseif ($modulepart == 'holiday') {
 	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';

@@ -104,7 +104,7 @@ $result = restrictedArea($user, 'commande', $id, '');
 
 if ($object->fetch($id)) {
 	$object->fetch_thirdparty();
-	$upload_dir = $conf->commande->multidir_output[$object->entity ?? 1]."/".dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->commande->multidir_output[$object->entity ?? $conf->entity]."/".dol_sanitizeFileName($object->ref);
 }
 
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
@@ -123,7 +123,7 @@ if ($id > 0 || !empty($ref)) {
 	if ($object->fetch($id, $ref)) {
 		$object->fetch_thirdparty();
 
-		$upload_dir = $conf->commande->multidir_output[$object->entity ?? 1].'/'.dol_sanitizeFileName($object->ref);
+		$upload_dir = $conf->commande->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
 
 		$head = commande_prepare_head($object);
 		print dol_get_fiche_head($head, 'documents', $langs->trans('CustomerOrder'), -1, $object->picto);

@@ -250,7 +250,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 
 			$object->fetch_thirdparty();
 
-			$dir = !empty($conf->reception->multidir_output[$object->entity ?? 1]) ? $conf->reception->multidir_output[$object->entity ?? 1] : $conf->reception->dir_output;
+			$dir = !empty($conf->reception->multidir_output[$object->entity ?? $conf->entity]) ? $conf->reception->multidir_output[$object->entity ?? $conf->entity] : $conf->reception->dir_output;
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;

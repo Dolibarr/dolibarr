@@ -249,7 +249,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 
 			$object->fetch_thirdparty();
 
-			$dir = empty($conf->facture->multidir_output[$object->entity ?? 1]) ? $conf->facture->dir_output : $conf->facture->multidir_output[$object->entity ?? 1];
+			$dir = empty($conf->facture->multidir_output[$object->entity ?? $conf->entity]) ? $conf->facture->dir_output : $conf->facture->multidir_output[$object->entity ?? $conf->entity];
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;

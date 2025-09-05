@@ -136,7 +136,7 @@ if ($id > 0 || !empty($ref)) {
 	if ($object->fetch($id, $ref) > 0) {
 		$object->fetch_thirdparty();
 
-		$upload_dir = $conf->facture->multidir_output[$object->entity ?? 1].'/'.dol_sanitizeFileName($object->ref);
+		$upload_dir = $conf->facture->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
 
 		$head = facture_prepare_head($object);
 		print dol_get_fiche_head($head, 'documents', $langs->trans('InvoiceCustomer'), -1, $object->picto);

@@ -239,8 +239,8 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
-		if ($conf->societe->multidir_output[$object->entity ?? 1]) {
-			$dir = $conf->societe->multidir_output[$object->entity ?? 1];
+		if ($conf->societe->multidir_output[$object->entity ?? $conf->entity]) {
+			$dir = $conf->societe->multidir_output[$object->entity ?? $conf->entity];
 			$objectref = dol_sanitizeFileName((string) $object->id);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;

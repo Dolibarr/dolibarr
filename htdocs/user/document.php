@@ -115,7 +115,7 @@ $object = new User($db);
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref, '', 1);
 	$object->loadRights();
-	// $upload_dir = $conf->user->multidir_output[$object->entity ?? 1] . "/" . $object->id ;
+	// $upload_dir = $conf->user->multidir_output[$object->entity ?? $conf->entity] . "/" . $object->id ;
 	// For users, the upload_dir is always $conf->user->entity for the moment
 	$upload_dir = $conf->user->dir_output."/".$object->id;
 }
