@@ -8317,13 +8317,13 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
  *	Return vat rate of a product in a particular country, or default country vat if product is unknown.
  *  Function called by get_default_tva(). Do not use this function directly, prefer to use get_default_tva().
  *
- *  @param	int				$idprod          	Id of product or 0 if not a predefined product
- *  @param  Societe			$thirdpartytouse  	Thirdparty with a ->country_code defined (FR, US, IT, ...)
- *	@param	int				$idprodfournprice	Id product_fournisseur_price (for "supplier" proposal/order/invoice)
- *  @return float|string   					    Vat rate to use with format 5.0 or '5.0 (XXX)'
+ *  @param	int				$idprod          				Id of product or 0 if not a predefined product
+ *  @param  Societe			$thirdpartytouseforcountry  	Thirdparty with a ->country_code defined (FR, US, IT, ...)
+ *	@param	int				$idprodfournprice				Id product_fournisseur_price (for "supplier" proposal/order/invoice)
+ *  @return float|string   					    			Vat rate to use with format 5.0 or '5.0 (XXX)'
  *  @see get_default_tva(), get_product_localtax_for_country()
  */
-function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournprice = 0)
+function get_product_vat_for_country($idprod, $thirdpartytouseforcountry, $idprodfournprice = 0)
 {
 	global $db, $mysoc;
 
@@ -8337,9 +8337,9 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 		$product = new Product($db);
 		$product->fetch($idprod);
 
-		if (($mysoc->country_code == $thirdpartytouse->country_code)
-			|| (in_array($mysoc->country_code, array('FR', 'MC')) && in_array($thirdpartytouse->country_code, array('FR', 'MC')))
-			|| (in_array($mysoc->country_code, array('MQ', 'GP')) && in_array($thirdpartytouse->country_code, array('MQ', 'GP')))
+		if (($mysoc->country_code == $thirdpartytouseforcountry->country_code)
+			|| (in_array($mysoc->country_code, array('FR', 'MC')) && in_array($thirdpartytouseforcountry->country_code, array('FR', 'MC')))
+			|| (in_array($mysoc->country_code, array('MQ', 'GP')) && in_array($thirdpartytouseforcountry->country_code, array('MQ', 'GP')))
 		) {
 			// If country of thirdparty to consider is ours
 			if ($idprodfournprice > 0) {     // We want vat for product for a "supplier" object
@@ -8370,7 +8370,7 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 			// If vat of product for the country not found or not defined, we return the first rate found (sorting on use_default, then on higher vat of country).
 			$sql = "SELECT t.taux as vat_rate, t.code as default_vat_code";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "c_tva as t, " . MAIN_DB_PREFIX . "c_country as c";
-			$sql .= " WHERE t.active = 1 AND t.fk_pays = c.rowid AND c.code = '" . $db->escape($thirdpartytouse->country_code) . "'";
+			$sql .= " WHERE t.active = 1 AND t.fk_pays = c.rowid AND c.code = '" . $db->escape($thirdpartytouseforcountry->country_code) . "'";
 			$sql .= " AND t.entity IN (" . getEntity('c_tva') . ")";
 			$sql .= " ORDER BY t.use_default DESC, t.taux DESC, t.code ASC, t.recuperableonly ASC";
 			$sql .= $db->plimit(1);
@@ -8412,13 +8412,13 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 /**
  *	Return localtax vat rate of a product in a particular country or default country vat if product is unknown
  *
- *  @param	int		$idprod         		Id of product
- *  @param  int		$local          		1 for localtax1, 2 for localtax 2
- *  @param  Societe	$thirdpartytouse    	Thirdparty with a ->country_code defined (FR, US, IT, ...)
- *  @return int             				Return integer <0 if KO, Vat rate if OK
+ *  @param	int		$idprod         				Id of product
+ *  @param  int		$local          				1 for localtax1, 2 for localtax 2
+ *  @param  Societe	$thirdpartytouseforcountry    	Thirdparty with a ->country_code defined (FR, US, IT, ...)
+ *  @return int             						Return integer <0 if KO, Vat rate if OK
  *  @see get_product_vat_for_country()
  */
-function get_product_localtax_for_country($idprod, $local, $thirdpartytouse)
+function get_product_localtax_for_country($idprod, $local, $thirdpartytouseforcountry)
 {
 	global $db, $mysoc;
 
@@ -8434,7 +8434,7 @@ function get_product_localtax_for_country($idprod, $local, $thirdpartytouse)
 		$product = new Product($db);
 		$result = $product->fetch($idprod);
 
-		if ($mysoc->country_code == $thirdpartytouse->country_code) { // If selling country is ours
+		if ($mysoc->country_code == $thirdpartytouseforcountry->country_code) { // If selling country is ours
 			/* Not defined yet, so we don't use this
 			if ($local==1) $ret=$product->localtax1_tx;
 			elseif ($local==2) $ret=$product->localtax2_tx;
@@ -8450,7 +8450,7 @@ function get_product_localtax_for_country($idprod, $local, $thirdpartytouse)
 		// If vat of product for the country not found or not defined, we return higher vat of country.
 		$sql = "SELECT taux as vat_rate, localtax1, localtax2";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "c_tva as t, " . MAIN_DB_PREFIX . "c_country as c";
-		$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='" . $db->escape($thirdpartytouse->country_code) . "'";
+		$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='" . $db->escape($thirdpartytouseforcountry->country_code) . "'";
 		$sql .= " AND t.entity IN (" . getEntity('c_tva') . ")";
 		$sql .= " ORDER BY t.taux DESC, t.recuperableonly ASC";
 		$sql .= $db->plimit(1);

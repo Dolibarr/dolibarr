@@ -249,12 +249,12 @@ abstract class CommonObjectLine extends CommonObject
 	public $multicurrency_code;
 
 	/**
-	 * @var float Multicurrency subprice without taxes
+	 * @var float Multicurrency unit price without taxes
 	 */
 	public $multicurrency_subprice;
 
 	/**
-	 * @var float Multicurrency subprice including taxes
+	 * @var float Multicurrency unit price including taxes
 	 */
 	public $multicurrency_subprice_ttc;
 
