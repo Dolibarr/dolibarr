@@ -5,7 +5,7 @@
  * Copyright (C) 2021 	Jean-Pascal BOUDET  <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 	Grégory BLEMAND     <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW				    <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,22 +135,10 @@ class Job extends CommonObject
 	// END MODULEBUILDER PROPERTIES
 
 
-	// If this object has a subtable with lines
-
-	// /**
-	//  * @var string    Name of subtable line
-	//  */
-	// public $table_element_line = 'hrm_jobline';
-
 	/**
 	 * @var string    Field with ID of parent key if this object has a parent
 	 */
 	public $fk_element = 'fk_job';
-
-	// /**
-	//  * @var string    Name of subtable class that manage subtable lines
-	//  */
-	// public $class_element_line = 'Jobline';
 
 	/**
 	 * @var array<string,string[]>	List of child tables. To test if we can delete object.
@@ -256,13 +244,6 @@ class Job extends CommonObject
 
 		// Load source object
 		$result = $object->fetchCommon($fromid);
-		if ($result > 0 && !empty($object->table_element_line)) {
-			$object->fetchLines();
-		}
-
-		// get lines so they will be clone
-		//foreach($this->lines as $line)
-		//	$line->fetch_optionals();
 
 		// Reset some properties
 		unset($object->id);
@@ -281,7 +262,6 @@ class Job extends CommonObject
 			foreach ($object->array_options as $key => $option) {
 				$shortkey = preg_replace('/options_/', '', $key);
 				if (!empty($extrafields->attributes[$this->table_element]['unique'][$shortkey])) {
-					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
 					unset($object->array_options[$key]);
 				}
 			}
@@ -333,9 +313,7 @@ class Job extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
-		if ($result > 0 && !empty($this->table_element_line)) {
-			$this->fetchLines();
-		}
+
 		return $result;
 	}
 
@@ -1050,7 +1028,7 @@ class Job extends CommonObject
 	/**
 	 * function for get required skills associate to job object
 	 * @param int  $id  Id of object
-	 * @return array|int     list of ids skillranks
+	 * @return Object[]|int     list of ids skillranks
 	 */
 	public function getSkillRankForJob($id)
 	{
