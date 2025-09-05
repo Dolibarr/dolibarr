@@ -343,6 +343,7 @@ class Contrat extends CommonObject
 
 			$obj = new $classname();
 			'@phan-var-force ModelNumRefContracts $obj';
+			/** @var ModelNumRefContracts $obj */
 			$numref = $obj->getNextValue($soc, $this);
 
 			if ($numref != "") {
