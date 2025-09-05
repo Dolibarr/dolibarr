@@ -123,13 +123,14 @@ class Contrat extends CommonObject
 
 	/**
 	 * Status of the contract
-	 * @var int
+	 * @var ?int
 	 * @deprecated
 	 */
 	public $statut = 0;
+
 	/**
 	 * Status of the contract (0=Draft, 1=Validated)
-	 * @var int
+	 * @var ?int
 	 */
 	public $status = 0;
 
@@ -1075,8 +1076,8 @@ class Contrat extends CommonObject
 			$result = dol_include_once('/core/modules/contract/'.$module.'.php');
 			if ($result > 0) {
 				$modCodeContract = new $module();
-				'@phan-var-force ModelNumRefContracts $modCodeContrat';
-				/** @var ModelNumRefContracts $modCodeContrat */
+				'@phan-var-force ModelNumRefContracts $modCodeContract';
+				/** @var ModelNumRefContracts $modCodeContract */
 
 				if (!empty($modCodeContract->code_auto)) {
 					// Force the ref to a draft value if numbering module is an automatic numbering
@@ -1116,7 +1117,7 @@ class Contrat extends CommonObject
 				}
 
 				// Add object linked
-				if (!$error && $this->id && !empty($this->linked_objects) && is_array($this->linked_objects)) {
+				if ($this->id && !empty($this->linked_objects) && is_array($this->linked_objects)) {
 					foreach ($this->linked_objects as $origin => $tmp_origin_id) {
 						if (is_array($tmp_origin_id)) {       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
 							foreach ($tmp_origin_id as $origin_id) {
