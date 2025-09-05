@@ -91,8 +91,9 @@ class box_last_modified_knowledgerecord extends ModeleBoxes
 		);
 
 		if ($user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
-			$sql = 'SELECT k.rowid as id, k.date_creation, k.ref, k.lang, k.question, k.status as status';
+			$sql = 'SELECT k.rowid as id, k.date_creation, GREATEST(k.tms, kef.tms) as datem, k.ref, k.lang, k.question, k.status as status';
 			$sql .= " FROM ".MAIN_DB_PREFIX."knowledgemanagement_knowledgerecord as k";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."knowledgemanagement_knowledgerecord_extrafields as kef ON kef.fk_object = k.rowid";
 			$sql .= " WHERE k.entity IN (".getEntity('knowledgemanagement').")";
 
 			if ($user->socid) {
@@ -101,7 +102,7 @@ class box_last_modified_knowledgerecord extends ModeleBoxes
 
 			$sql .= " AND k.status > 0";
 
-			$sql .= " ORDER BY k.tms DESC, k.rowid DESC ";
+			$sql .= " ORDER BY datem DESC, k.rowid DESC ";
 			$sql .= $this->db->plimit($max, 0);
 
 			$resql = $this->db->query($sql);
