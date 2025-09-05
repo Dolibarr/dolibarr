@@ -229,12 +229,6 @@ if (empty($reshook)) {
 	$uploaddir = $conf->product->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
-//	//TODO IF MASSACTION UPDATEPRICE & DELETE & CONFORM ! [ Foreach sur le select ]
-//	if ($action == 'updateprice' && $confirm == 'yes') {
-//		var_dump($_REQUEST);
-//		var_dump('VALIDATE !');
-//		//exit;
-//	}
 
 	if ($action == 'delete' && $confirm == 'yes') {
 		$action == 'delete_customer_price';
@@ -298,58 +292,6 @@ if (empty($reshook)) {
 			$action = '';
 		}
 	}
-
-//	if ($action == 'update_customer_price' && $confirm == 'yes' && $prodcustprice !== null && !$cancel && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
-//
-//		var_dump('MA NOUVELLE MASSACTION !!!!!');
-//		//exit;
-//		$prodcustprice->fetch(GETPOSTINT('lineid'));
-//
-//		$update_child_soc = GETPOSTINT('updatechildprice');
-//
-//		// update price by customer
-//		$prodcustprice->ref_customer = GETPOST('ref_customer', 'alpha');
-//		$prodcustprice->price = price2num(GETPOST("price"), 'MU');
-//		$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
-//		$prodcustprice->price_base_type = GETPOST("price_base_type", 'alpha');
-//		$prodcustprice->tva_tx = str_replace('*', '', GETPOST("tva_tx"));
-//		$prodcustprice->recuperableonly = (preg_match('/\*/', GETPOST("tva_tx")) ? 1 : 0);
-//		$prodcustprice->discount_percent = price2num(GETPOST("discount_percent"));
-//		$prodcustprice->date_begin = dol_mktime(0, 0, 0, GETPOSTINT('date_beginmonth'), GETPOSTINT('date_beginday'), GETPOSTINT('date_beginyear'), 'tzserver');	// If we enter the 02 january, we need to save the 02 january for server;
-//		$prodcustprice->date_end = dol_mktime(0, 0, 0, GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'), 'tzserver');	// If we enter the 02 january, we need to save the 02 january for server
-//
-//		$result = $prodcustprice->update($user, 0, $update_child_soc);
-//		if ($result > 0) {
-//			$extrafields->fetch_name_optionals_label("product_customer_price");
-//			$extralabels = !empty($extrafields->attributes["product_customer_price"]['label']) ? $extrafields->attributes["product_customer_price"]['label'] : '';
-//			$extrafield_values = $extrafields->getOptionalsFromPost("product_customer_price");
-//			if (!empty($extralabels) && is_array($extralabels)) {
-//				$productcustomerprice = new ProductCustomerPrice($db);
-//				$res = $productcustomerprice->fetch($prodcustprice->id);
-//				if ($res > 0) {
-//					foreach ($extrafield_values as $key => $value) {
-//						$productcustomerprice->array_options[$key] = $value;
-//					}
-//					$result2 = $productcustomerprice->insertExtraFields();
-//					if ($result2 < 0) {
-//						$prodcustprice->error = $productcustomerprice->error;
-//						$prodcustprice->errors = $productcustomerprice->errors;
-//						$error++;
-//					}
-//				}
-//			}
-//		}
-//		if ($result < 0) {
-//			setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
-//			$action = 'edit_customer_price';
-//		} else {
-//			setEventMessages($langs->trans("Save"), null, 'mesgs');
-//			$action = '';
-//		}
-//	}
-
-
-
 }
 
 
@@ -883,31 +825,12 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
-		//TODO TITLE BARRE LIST
 		print_barre_liste($langs->trans('PriceForEachProduct'), $page, $_SERVER['PHP_SELF'], $option, $sortfield, $sortorder, $massactionbutton, count($prodcustprice->lines), $nbtotalofrecords, '');
 		include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 
-		//TODO CHECKBOX TITLE
 		$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-		//$arrayfields = array();
-		//$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
-		//print '<input type="checkbox" id="checkforselects" name="checkforselects" class="checkallactions">';
-		//print '<input " class="flat checkforselect" type="checkbox" name="checkforselects" value="'.$prodcustprice->id.'"'.($selected ? ' checked="checked"' : '').'>';
-
-
-		//$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
-		//$selectedfields = $htmlofselectarray;
 		$selectedfields = (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
-		//var_dump($selectedfields);
-		//exit;
-//todo AJOUTER CHECKED ICI
-//		if (!empty($arrayfields['p.rowid']['checked'])) {
-//			print '<td class="liste_titre left">';
-//			print '<input class="flat width50" type="text" name="search_id" value="'.dol_escape_htmltag($search_id).'">';
-//			print '</td>';
-//		}
-
 
 
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -942,53 +865,19 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 
 		$colspan = 0;
 
-		//TODO AJOUTER CHECKBOX TITLE BARRE LIST
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;
-		//var_dump($totalarray);
-		//exit;
 
 
 		// Show line of result
 		$j = 0;
 		print '<tr data-rowid="'.$object->id.'" class="liste_titre_filter">';
-		//TODO CHECKBOX FOR ALL SELECTED !
-		// Action column
 
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 			$totalarray['nbfield']++;
 		}
-
-//		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-//			print '<td class="liste_titre center maxwidthsearch">';
-//			$searchpicto = $form->showFilterButtons();
-//			print $searchpicto;
-//			print '</td>';
-//		}
-
-
-
-
-//		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-//			print '<td>';
-//			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-//				$selected = 0;
-//				if (in_array($prodcustprice->id, $arrayofselected)) {
-//					$selected = 1;
-//				}
-//				//$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
-//
-//				print '<input " class="flat checkforselect" type="checkbox" name="checkforselects" value="'.$prodcustprice->id.'"'.($selected ? ' checked="checked"' : '').'>';
-//			}
-//			print '</td>';
-//			if (!$i) {
-//				$totalarray['nbfield']++;
-//			}
-//		}
-
-		//var_dump($selected);
 
 		foreach ($prodcustprice->fields as $key => $val) {
 			if (!empty($arrayfields['t.'.$key]['checked'])) {
@@ -1004,7 +893,6 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 				}
 			}
 		}
-		print '<td></td>';
 
 		$colspan++;
 
@@ -1015,14 +903,18 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 			$totalarray['nbfield']++;
 		}
 
-
 		print '</tr>';
 
 
-		//TODO SEARCH BARRE
 		if (count($prodcustprice->lines) > 0 || $search_prod) {
 
 			print '<tr class="liste_titre">';
+			// Print the search button
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')){
+				print '<td class="liste_titre maxwidthsearch">';
+				$searchpicto = $form->showFilterAndCheckAddButtons(0);
+				print $searchpicto;
+			}
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"><input type="text" class="flat width75" name="search_prod" value="'.$search_prod.'"></td>';
 			print '<td class="liste_titre" ><input type="text" class="flat width75" name="search_label" value="'.$search_label.'"></td>';
@@ -1037,7 +929,6 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
 			print '<td class="liste_titre"></td>';
-			print '<td class="liste_titre"></td>';
 			if (!empty($extralabels)) {
 				foreach ($extralabels as $key) {
 					print '<td class="right"></td>';
@@ -1045,27 +936,12 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 			}
 
 			// Print the search button
-			print '<td class="liste_titre maxwidthsearch">';
-			$searchpicto = $form->showFilterAndCheckAddButtons(0);
-			print $searchpicto;
-//			//TODO CHECKBOX TITLE
-//			$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-//			$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
-//			//print '<input type="checkbox" id="checkforselects" name="checkforselects" class="checkallactions">';
-//			//print '<input " class="flat checkforselect" type="checkbox" name="checkforselects" value="'.$prodcustprice->id.'"'.($selected ? ' checked="checked"' : '').'>';
-//
-//
-//			//$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
-//			$selectedfields = $htmlofselectarray;
-//			$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
-//			//var_dump($selectedfields);
-//			//exit;
-
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')){
+				print '<td class="liste_titre maxwidthsearch">';
+				$searchpicto = $form->showFilterAndCheckAddButtons(0);
+				print $searchpicto;
+			}
 			print '</td>';
-
-
-
-
 			print '</tr>';
 		}
 
@@ -1074,8 +950,6 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 
 		if (count($prodcustprice->lines) > 0) {
 			foreach ($prodcustprice->lines as $line) {
-				//var_dump($line->id);
-				//exit;
 				$staticprod = new Product($db);
 				$staticprod->fetch($line->fk_product);
 
@@ -1084,8 +958,6 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 
 				print '<tr class="oddeven">';
 
-				//TODO CHECKBOX FOR LINES
-				//var_dump($action);
 				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 					print '<td class="nowrap center">';
 					if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
@@ -1095,19 +967,24 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 						}
 						print '<input id="cb'.$line->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$line->id.'"'.($selected ? ' checked="checked"' : '').'>';
 					}
+					print '<a class="paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=showlog_customer_price&token='.newToken().'&socid='.$object->id.'&prodid='.$line->fk_product.'">';
+					print img_info();
+					print '</a>';
+					print ' ';
+					print '<a class="editfielda paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=edit_customer_price&token='.newToken().'&socid='.$object->id.'&lineid='.$line->id.'">';
+					print img_edit('default', 0, 'style="vertical-align: middle;"');
+					print '</a>';
+					print ' ';
+					print '<a class="paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=delete_customer_price&token='.newToken().'&socid='.$object->id.'&lineid='.$line->id.'">';
+					print img_delete('default', 'style="vertical-align: middle;"');
+					print '</a>';
+
 					print '</td>';
 					if (!$i) {
 						$totalarray['nbfield']++;
 					}
 				}
-				//var_dump($selected);
 
-//				var_dump($selected);
-//				var_dump('PRODCUST_PRICE_ID');
-//				var_dump($prodcustprice->id);
-//				var_dump('LINE_ID');
-//				var_dump($line->id);
-				//exit;
 
 
 
@@ -1132,18 +1009,9 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 				print '</td>';
 
 				// Extrafields
-				//$staticprod->label = $productcustomerprice->ref_customer;
-//				var_dump($line->ref_customer);
-//				exit;
 				$staticprod->label = $line->ref_customer;
 
-				//$extrafields->fetch_name_optionals_label("product_customer_price");
-				//var_dump($staticprod->label);
-				//var_dump($_REQUEST);
-				//exit;
-				//$extralabels = $extrafields->attributes["product_customer_price"]['label'];
-				//var_dump($extralabels);
-				//exit;
+
 				if (!empty($extralabels)) {
 					$sql  = "SELECT";
 					$sql .= " fk_object";
@@ -1173,34 +1041,34 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 				}
 				// Action
 				if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
-					print '<td class="right nowraponall">';
-					print '<a class="paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=showlog_customer_price&token='.newToken().'&socid='.$object->id.'&prodid='.$line->fk_product.'">';
-					print img_info();
-					print '</a>';
-					print ' ';
-					print '<a class="editfielda paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=edit_customer_price&token='.newToken().'&socid='.$object->id.'&lineid='.$line->id.'">';
-					print img_edit('default', 0, 'style="vertical-align: middle;"');
-					print '</a>';
-					print ' ';
-					print '<a class="paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=delete_customer_price&token='.newToken().'&socid='.$object->id.'&lineid='.$line->id.'">';
-					//TODO PICTO DELETE !
-					print img_delete('default', 'style="vertical-align: middle;"');
-					print '</a>';
-					print '</td>';
-				}
+					if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')){
+						print '<td class="right nowraponall">';
+						print '<a class="paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=showlog_customer_price&token='.newToken().'&socid='.$object->id.'&prodid='.$line->fk_product.'">';
+						print img_info();
+						print '</a>';
+						print ' ';
+						print '<a class="editfielda paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=edit_customer_price&token='.newToken().'&socid='.$object->id.'&lineid='.$line->id.'">';
+						print img_edit('default', 0, 'style="vertical-align: middle;"');
+						print '</a>';
+						print ' ';
+						print '<a class="paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=delete_customer_price&token='.newToken().'&socid='.$object->id.'&lineid='.$line->id.'">';
+						print img_delete('default', 'style="vertical-align: middle;"');
+						print '</a>';
 
-				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-					print '<td class="nowrap center">';
-					if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-						$selected = 0;
-						if (in_array($line->id , $arrayofselected)) {
-							$selected = 1;
+						print '&nbsp;';
+
+
+						if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+							$selected = 0;
+							if (in_array($line->id, $arrayofselected)) {
+								$selected = 1;
+							}
+							print '<input id="cb' . $line->id . '" class="flat checkforselect" type="checkbox" name="toselect[]" value="' . $line->id . '"' . ($selected ? ' checked="checked"' : '') . '>';
 						}
-						print '<input id="cb'.$line->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$line->id.'"'.($selected ? ' checked="checked"' : '').'>';
-					}
-					print '</td>';
-					if (!$i) {
-						$totalarray['nbfield']++;
+						if (!$i) {
+							$totalarray['nbfield']++;
+						}
+						print '</td>';
 					}
 				}
 

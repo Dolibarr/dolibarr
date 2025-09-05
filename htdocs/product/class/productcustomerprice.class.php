@@ -995,6 +995,20 @@ class ProductCustomerPrice extends CommonObject
 	}
 
 	/**
+	 * Update price of a customer for a product
+	 *
+	 * @param float      $newprice   New price (HT)
+	 * @param User       $user       User making the change
+	 * @return int                   >0 if OK, <0 if KO
+	 */
+	public function updatePrice($newprice, $user)
+	{
+		global $user;
+		$this->price = $newprice;
+		return $this->update($user);
+	}
+
+	/**
 	 * Force update price on child companies so child company has same prices than parent.
 	 *
 	 * @param 	User $user 					User that modifies
