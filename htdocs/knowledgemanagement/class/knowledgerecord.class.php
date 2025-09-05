@@ -109,18 +109,17 @@ class KnowledgeRecord extends CommonObject
 		'answer' => array('type' => 'html', 'label' => 'Solution', 'enabled' => 1, 'position' => 600, 'notnull' => 0, 'visible' => 3, 'searchall' => 1, 'csslist' => 'tdoverflowmax300', 'copytoclipboard' => 1, 'tdcss' => 'titlefieldcreate nowraponall'),
 		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'visible' => 5, 'default' => '0', 'index' => 1, 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Validated', 9 => 'Obsolete'),),
 	);
+
 	/**
 	 * @var int
 	 */
 	public $rowid;
+
 	/**
 	 * @var string
 	 */
 	public $ref;
-	/**
-	 * @var int
-	 */
-	public $entity;
+
 	/**
 	 * @var string
 	 */

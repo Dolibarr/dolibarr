@@ -101,11 +101,6 @@ class Establishment extends CommonObject
 	public $status;
 
 	/**
-	 * @var int Entity
-	 */
-	public $entity;
-
-	/**
 	 * @var int user mod id
 	 */
 	public $fk_user_mod;
