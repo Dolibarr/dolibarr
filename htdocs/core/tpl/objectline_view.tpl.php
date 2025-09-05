@@ -430,10 +430,10 @@ if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currenc
 	if (!$multicurrency_upinctax) {
 		$multicurrency_upinctax = price2num($line->multicurrency_subprice * (1 + ($line->tva_tx / 100)), 'MU'); // one tax
 	}
-	if (getDolGlobalInt('MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES') && isset($line->multicurrency_total_ttc)) {
+	if (getDolGlobalInt('MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES') && $line->multicurrency_total_ttc) {
 		$multicurrency_upinctax = price2num($line->multicurrency_total_ttc / (float) $line->qty, 'MU');
 	}
-	print(isset($multicurrency_upinctax) ? price($sign * $multicurrency_upinctax) : price($sign * $line->multicurrency_subprice));
+	print (isset($multicurrency_upinctax) ? price($sign * $multicurrency_upinctax) : price($sign * $line->multicurrency_subprice));
 	?></td>
 <?php } ?>
 	<td class="linecolqty nowraponall right"><?php $coldisplay++; ?>
