@@ -249,8 +249,6 @@ class Commande extends CommonOrder
 	 */
 	public $extraparams = array();
 
-	public $linked_objects = array();
-
 	/**
 	 * @var int User author ID
 	 */

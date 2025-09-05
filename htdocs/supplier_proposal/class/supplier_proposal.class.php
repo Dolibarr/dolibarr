@@ -2954,11 +2954,6 @@ class SupplierProposalLine extends CommonObjectLine
 	public $vat_src_code;
 
 	/**
-	 * Unit price before taxes
-	 * @var float
-	 */
-	public $subprice;
-	/**
 	 * @var float|string
 	 */
 	public $remise_percent;
@@ -3153,12 +3148,12 @@ class SupplierProposalLine extends CommonObjectLine
 	{
 		$sql = 'SELECT pd.rowid, pd.fk_supplier_proposal, pd.fk_parent_line, pd.fk_product, pd.label as custom_label, pd.description, pd.price, pd.qty, pd.tva_tx,';
 		$sql .= ' pd.date_start, pd.date_end,';
-		$sql .= ' pd.remise, pd.remise_percent, pd.fk_remise_except, pd.subprice,';
+		$sql .= ' pd.remise, pd.remise_percent, pd.fk_remise_except, pd.subprice, pd.subprice_ttc,';
 		$sql .= ' pd.info_bits, pd.total_ht, pd.total_tva, pd.total_ttc, pd.fk_product_fournisseur_price as fk_fournprice, pd.buy_price_ht as pa_ht, pd.special_code, pd.rang,';
 		$sql .= ' pd.localtax1_tx, pd.localtax2_tx, pd.total_localtax1, pd.total_localtax2,';
 		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,';
 		$sql .= ' pd.product_type, pd.ref_fourn as ref_produit_fourn, pd.extraparams,';
-		$sql .= ' pd.fk_multicurrency, pd.multicurrency_code, pd.multicurrency_subprice, pd.multicurrency_total_ht, pd.multicurrency_total_tva, pd.multicurrency_total_ttc, pd.fk_unit';
+		$sql .= ' pd.fk_multicurrency, pd.multicurrency_code, pd.multicurrency_subprice, pd.multicurrency_subprice_ttc, pd.multicurrency_total_ht, pd.multicurrency_total_tva, pd.multicurrency_total_ttc, pd.fk_unit';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'supplier_proposaldet as pd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pd.fk_product = p.rowid';
 		$sql .= ' WHERE pd.rowid = '.((int) $rowid);
@@ -3172,7 +3167,10 @@ class SupplierProposalLine extends CommonObjectLine
 				$this->label = $objp->custom_label;
 				$this->desc = $objp->description;
 				$this->qty = $objp->qty;
+
 				$this->subprice = $objp->subprice;
+				$this->subprice_ttc = $objp->subprice_ttc;
+
 				$this->tva_tx = $objp->tva_tx;
 				$this->remise_percent = $objp->remise_percent;
 				$this->fk_remise_except = $objp->fk_remise_except;
@@ -3196,9 +3194,7 @@ class SupplierProposalLine extends CommonObjectLine
 				$this->product_type = $objp->product_type;
 				$this->rang = $objp->rang;
 
-				$this->ref = $objp->product_ref; // deprecated
 				$this->product_ref = $objp->product_ref;
-				$this->libelle = $objp->product_label; // deprecated
 				$this->product_label = $objp->product_label;
 				$this->product_desc = $objp->product_desc;
 
@@ -3210,6 +3206,7 @@ class SupplierProposalLine extends CommonObjectLine
 				$this->fk_multicurrency = $objp->fk_multicurrency;
 				$this->multicurrency_code = $objp->multicurrency_code;
 				$this->multicurrency_subprice = $objp->multicurrency_subprice;
+				$this->multicurrency_subprice_ttc = $objp->multicurrency_subprice_ttc;
 				$this->multicurrency_total_ht = $objp->multicurrency_total_ht;
 				$this->multicurrency_total_tva = $objp->multicurrency_total_tva;
 				$this->multicurrency_total_ttc = $objp->multicurrency_total_ttc;
@@ -3233,7 +3230,7 @@ class SupplierProposalLine extends CommonObjectLine
 	 */
 	public function insert($notrigger = 0)
 	{
-		global $conf, $langs, $user;
+		global $user;
 
 		$error = 0;
 
@@ -3315,46 +3312,48 @@ class SupplierProposalLine extends CommonObjectLine
 		$sql .= ' (fk_supplier_proposal, fk_parent_line, label, description, fk_product, product_type,';
 		$sql .= ' date_start, date_end,';
 		$sql .= ' fk_remise_except, qty, tva_tx, vat_src_code, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
-		$sql .= ' subprice, remise_percent, ';
+		$sql .= ' subprice, subprice_ttc, remise_percent, ';
 		$sql .= ' info_bits, ';
 		$sql .= ' total_ht, total_tva, total_localtax1, total_localtax2, total_ttc, fk_product_fournisseur_price, buy_price_ht, special_code, rang,';
 		$sql .= ' ref_fourn,';
-		$sql .= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc, fk_unit)';
+		$sql .= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_subprice_ttc, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc, fk_unit)';
 		$sql .= " VALUES (".$this->fk_supplier_proposal.",";
 		$sql .= " ".($this->fk_parent_line > 0 ? ((int) $this->fk_parent_line) : "null").",";
 		$sql .= " ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
 		$sql .= " ".($this->fk_product ? ((int) $this->fk_product) : "null").",";
-		$sql .= " '".$this->db->escape((string) $this->product_type)."',";
+		$sql .= " ".((int) $this->product_type).",";
 		$sql .= " ".($this->date_start ? "'".$this->db->idate($this->date_start)."'" : "null").",";
 		$sql .= " ".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : "null").",";
 		$sql .= " ".($this->fk_remise_except ? ((int) $this->fk_remise_except) : "null").",";
-		$sql .= " ".price2num($this->qty, 'MS').",";
-		$sql .= " ".price2num($this->tva_tx).",";
+		$sql .= " ".(float) price2num($this->qty, 'MS').",";
+		$sql .= " ".(float) price2num($this->tva_tx).",";
 		$sql .= " '".$this->db->escape($this->vat_src_code)."',";
-		$sql .= " ".price2num($this->localtax1_tx).",";
-		$sql .= " ".price2num($this->localtax2_tx).",";
+		$sql .= " ".(float) price2num($this->localtax1_tx).",";
+		$sql .= " ".(float) price2num($this->localtax2_tx).",";
 		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
-		$sql .= " ".price2num($this->subprice, 'MU') .",";
+		$sql .= " ".(float) price2num($this->subprice, 'MU') .",";
+		$sql .= " ".(float) price2num($this->subprice_ttc, 'MU') .",";
 		$sql .= " ".((float) $this->remise_percent).",";
 		$sql .= " ".(isset($this->info_bits) ? ((int) $this->info_bits) : "null").",";
-		$sql .= " ".price2num($this->total_ht, 'MT').",";
-		$sql .= " ".price2num($this->total_tva, 'MT').",";
-		$sql .= " ".price2num($this->total_localtax1, 'MT').",";
-		$sql .= " ".price2num($this->total_localtax2, 'MT').",";
-		$sql .= " ".price2num($this->total_ttc, 'MT').",";
+		$sql .= " ".(float) price2num($this->total_ht, 'MT').",";
+		$sql .= " ".(float) price2num($this->total_tva, 'MT').",";
+		$sql .= " ".(float) price2num($this->total_localtax1, 'MT').",";
+		$sql .= " ".(float) price2num($this->total_localtax2, 'MT').",";
+		$sql .= " ".(float) price2num($this->total_ttc, 'MT').",";
 		$sql .= " ".(!empty($this->fk_fournprice) ? ((int) $this->fk_fournprice) : "null").",";
-		$sql .= " ".(isset($this->pa_ht) ? price2num($this->pa_ht, 'MU') : "null").",";
+		$sql .= " ".(isset($this->pa_ht) ? (float) price2num($this->pa_ht, 'MU') : "null").",";
 		$sql .= ' '.((int) $this->special_code).',';
 		$sql .= ' '.((int) $this->rang).',';
 		$sql .= " '".$this->db->escape($this->ref_fourn)."'";
 		$sql .= ", ".($this->fk_multicurrency > 0 ? ((int) $this->fk_multicurrency) : 'null');
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
-		$sql .= ", ".price2num($this->multicurrency_subprice, 'CU');
-		$sql .= ", ".price2num($this->multicurrency_total_ht, 'CT');
-		$sql .= ", ".price2num($this->multicurrency_total_tva, 'CT');
-		$sql .= ", ".price2num($this->multicurrency_total_ttc, 'CT');
+		$sql .= ", ".(float) price2num($this->multicurrency_subprice, 'CU');
+		$sql .= ", ".(float) price2num($this->multicurrency_subprice_ttc, 'CU');
+		$sql .= ", ".(float) price2num($this->multicurrency_total_ht, 'CT');
+		$sql .= ", ".(float) price2num($this->multicurrency_total_tva, 'CT');
+		$sql .= ", ".(float) price2num($this->multicurrency_total_ttc, 'CT');
 		$sql .= ", ".($this->fk_unit ? ((int) $this->fk_unit) : 'null');
 		$sql .= ')';
 
@@ -3440,7 +3439,7 @@ class SupplierProposalLine extends CommonObjectLine
 	 */
 	public function update($notrigger = 0)
 	{
-		global $conf, $langs, $user;
+		global $user;
 
 		$error = 0;
 
@@ -3512,42 +3511,44 @@ class SupplierProposalLine extends CommonObjectLine
 
 		// Mise a jour ligne en base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposaldet SET";
-		$sql .= " description='".$this->db->escape($this->desc)."'";
-		$sql .= " , label=".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
-		$sql .= " , product_type=".((int) $this->product_type);
-		$sql .= " , date_start=".($this->date_start ? "'".$this->db->idate($this->date_start)."'" : "null");
-		$sql .= " , date_end=".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : "null");
-		$sql .= " , tva_tx='".price2num($this->tva_tx)."'";
-		$sql .= " , localtax1_tx=".price2num($this->localtax1_tx);
-		$sql .= " , localtax2_tx=".price2num($this->localtax2_tx);
-		$sql .= " , localtax1_type='".$this->db->escape($this->localtax1_type)."'";
-		$sql .= " , localtax2_type='".$this->db->escape($this->localtax2_type)."'";
-		$sql .= " , qty='".price2num($this->qty)."'";
-		$sql .= " , subprice=".price2num($this->subprice);
-		$sql .= " , remise_percent=".price2num($this->remise_percent);
-		$sql .= " , info_bits='".$this->db->escape((string) $this->info_bits)."'";
+		$sql .= " description = '".$this->db->escape($this->desc)."'";
+		$sql .= " , label = ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
+		$sql .= " , product_type = ".((int) $this->product_type);
+		$sql .= " , date_start = ".($this->date_start ? "'".$this->db->idate($this->date_start)."'" : "null");
+		$sql .= " , date_end = ".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : "null");
+		$sql .= " , tva_tx = '".price2num($this->tva_tx)."'";
+		$sql .= " , localtax1_tx = ".(float) price2num($this->localtax1_tx);
+		$sql .= " , localtax2_tx = ".(float) price2num($this->localtax2_tx);
+		$sql .= " , localtax1_type = '".$this->db->escape($this->localtax1_type)."'";
+		$sql .= " , localtax2_type = '".$this->db->escape($this->localtax2_type)."'";
+		$sql .= " , qty = ".(float) price2num($this->qty);
+		$sql .= " , subprice = ".(float) price2num($this->subprice);
+		$sql .= " , subprice_ttc = ".(float) price2num($this->subprice_ttc);
+		$sql .= " , remise_percent = ".(float) price2num($this->remise_percent);
+		$sql .= " , info_bits = ".((int) $this->info_bits);
 		if (empty($this->skip_update_total)) {
-			$sql .= " , total_ht=".price2num($this->total_ht);
-			$sql .= " , total_tva=".price2num($this->total_tva);
-			$sql .= " , total_ttc=".price2num($this->total_ttc);
-			$sql .= " , total_localtax1=".price2num($this->total_localtax1);
-			$sql .= " , total_localtax2=".price2num($this->total_localtax2);
+			$sql .= " , total_ht = ".(float) price2num($this->total_ht);
+			$sql .= " , total_tva = ".(float) price2num($this->total_tva);
+			$sql .= " , total_ttc = ".(float) price2num($this->total_ttc);
+			$sql .= " , total_localtax1 = ".(float) price2num($this->total_localtax1);
+			$sql .= " , total_localtax2 = ".(float) price2num($this->total_localtax2);
 		}
-		$sql .= " , fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape((string) $this->fk_fournprice)."'" : "null");
-		$sql .= " , buy_price_ht=".price2num($this->pa_ht);
-		$sql .= " , special_code=".((int) $this->special_code);
-		$sql .= " , fk_parent_line=".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null");
+		$sql .= " , fk_product_fournisseur_price = ".(!empty($this->fk_fournprice) ? "'".$this->db->escape((string) $this->fk_fournprice)."'" : "null");
+		$sql .= " , buy_price_ht = ".(float) price2num($this->pa_ht);
+		$sql .= " , special_code = ".((int) $this->special_code);
+		$sql .= " , fk_parent_line = ".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null");
 		if (!empty($this->rang)) {
-			$sql .= ", rang=".((int) $this->rang);
+			$sql .= ", rang = ".((int) $this->rang);
 		}
-		$sql .= " , ref_fourn=".(!empty($this->ref_fourn) ? "'".$this->db->escape($this->ref_fourn)."'" : "null");
-		$sql .= " , fk_unit=".($this->fk_unit ? $this->fk_unit : 'null');
+		$sql .= " , ref_fourn = ".(!empty($this->ref_fourn) ? "'".$this->db->escape($this->ref_fourn)."'" : "null");
+		$sql .= " , fk_unit = ".($this->fk_unit ? (int) $this->fk_unit : 'null');
 
 		// Multicurrency
-		$sql .= " , multicurrency_subprice=".price2num($this->multicurrency_subprice);
-		$sql .= " , multicurrency_total_ht=".price2num($this->multicurrency_total_ht);
-		$sql .= " , multicurrency_total_tva=".price2num($this->multicurrency_total_tva);
-		$sql .= " , multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc);
+		$sql .= " , multicurrency_subprice = ".(float) price2num($this->multicurrency_subprice);
+		$sql .= " , multicurrency_subprice_ttc = ".(float) price2num($this->multicurrency_subprice_ttc);
+		$sql .= " , multicurrency_total_ht = ".(float) price2num($this->multicurrency_total_ht);
+		$sql .= " , multicurrency_total_tva = ".(float) price2num($this->multicurrency_total_tva);
+		$sql .= " , multicurrency_total_ttc = ".(float) price2num($this->multicurrency_total_ttc);
 
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -3594,9 +3595,9 @@ class SupplierProposalLine extends CommonObjectLine
 
 		// Mise a jour ligne en base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."supplier_proposaldet SET";
-		$sql .= " total_ht=".price2num($this->total_ht, 'MT');
-		$sql .= ",total_tva=".price2num($this->total_tva, 'MT');
-		$sql .= ",total_ttc=".price2num($this->total_ttc, 'MT');
+		$sql .= " total_ht = ".(float) price2num($this->total_ht, 'MT');
+		$sql .= ",total_tva = ".(float) price2num($this->total_tva, 'MT');
+		$sql .= ",total_ttc = ".(float) price2num($this->total_ttc, 'MT');
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog("SupplierProposalLine::update_total", LOG_DEBUG);

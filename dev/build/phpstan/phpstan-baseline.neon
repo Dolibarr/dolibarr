@@ -3313,12 +3313,6 @@ parameters:
 			path: ../../../htdocs/commande/class/commande.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$cond_reglement_id \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/commande/class/commande.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -4024,18 +4018,6 @@ parameters:
 			message: '#^Property CommonInvoice\:\:\$close_note \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property CommonInvoice\:\:\$cond_reglement_id \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property CommonInvoice\:\:\$mode_reglement_id \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
 			path: ../../../htdocs/compta/facture/class/facture.class.php
 
 		-
@@ -12283,18 +12265,6 @@ parameters:
 			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
 
 		-
-			message: '#^Property CommandeFournisseur\:\:\$cond_reglement_id \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: '#^Property CommandeFournisseur\:\:\$mode_reglement_id \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
 			message: '#^Property CommandeFournisseur\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -12428,12 +12398,6 @@ parameters:
 
 		-
 			message: '#^Property CommonInvoice\:\:\$close_note \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Property CommonInvoice\:\:\$cond_reglement_id \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
 			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
@@ -19015,18 +18979,6 @@ parameters:
 			path: ../../../htdocs/salaries/class/salary.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$alreadypaid \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/salaries/class/salary.class.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 1
-			path: ../../../htdocs/salaries/class/salary.class.php
-
-		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 2
@@ -19791,12 +19743,6 @@ parameters:
 		-
 			message: '#^Call to function is_object\(\) with Facture will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/takepos/pay.php
-
-		-
-			message: '#^Ternary operator condition is always true\.$#'
-			identifier: ternary.alwaysTrue
 			count: 1
 			path: ../../../htdocs/takepos/pay.php
 
