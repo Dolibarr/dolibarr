@@ -306,7 +306,6 @@ class CommandeFournisseur extends CommonOrder
 	 * @var int
 	 */
 	public $origin_id;
-	public $linked_objects = array();
 
 	/**
 	 * @var int Date of the purchase order payment deadline
