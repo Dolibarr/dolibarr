@@ -905,10 +905,9 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 
 
 		if (count($prodcustprice->lines) > 0 || $search_prod) {
-
 			print '<tr class="liste_titre">';
 			// Print the search button
-			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')){
+			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 				print '<td class="liste_titre maxwidthsearch">';
 				$searchpicto = $form->showFilterAndCheckAddButtons(0);
 				print $searchpicto;
@@ -934,7 +933,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 			}
 
 			// Print the search button
-			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')){
+			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 				print '<td class="liste_titre maxwidthsearch">';
 				$searchpicto = $form->showFilterAndCheckAddButtons(0);
 				print $searchpicto;
@@ -960,7 +959,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 					print '<td class="nowrap center">';
 					if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 						$selected = 0;
-						if (in_array($line->id , $arrayofselected)) {
+						if (in_array($line->id ,$arrayofselected)) {
 							$selected = 1;
 						}
 						print '<input id="cb'.$line->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$line->id.'"'.($selected ? ' checked="checked"' : '').'>';
@@ -1039,7 +1038,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 				}
 				// Action
 				if ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer')) {
-					if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')){
+					if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 						print '<td class="right nowraponall">';
 						print '<a class="paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=showlog_customer_price&token='.newToken().'&socid='.$object->id.'&prodid='.$line->fk_product.'">';
 						print img_info();
