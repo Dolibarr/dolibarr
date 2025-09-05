@@ -481,7 +481,7 @@ if ($action == 'importCSV' && $user->hasRight('stock', 'mouvement', 'creer')) {
 					$error++;
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
 				}
-				if (is_numeric($tmp_qty) === FALSE) {
+				if (!is_numeric($tmp_qty)) {
 					$error++;
 					setEventMessages('Qty need to be numeric value only', null, 'errors');
 				}
