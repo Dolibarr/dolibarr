@@ -530,7 +530,7 @@ if (count($typeleaves) == 0) {
 		print '</td>'."\n";
 
 		print '<td class="center">';
-		print '<a href="'.DOL_URL_ROOT.'/holiday/view_log.php?search_employee='.((int) $users[rowid]).'">'.img_picto($langs->trans('MenuLogCP'), 'list-alt').'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/holiday/view_log.php?search_employee='.((int) $users['rowid']).'">'.img_picto($langs->trans('MenuLogCP'), 'list-alt').'</a>';
 		print '</td>';
 
 		// Action column
