@@ -104,12 +104,6 @@ class Contrat extends CommonObject
 	public $ref_supplier;
 
 	/**
-	 * Entity of the contract
-	 * @var int
-	 */
-	public $entity;
-
-	/**
 	 * Client id linked to the contract
 	 * @var int
 	 */
@@ -554,7 +548,7 @@ class Contrat extends CommonObject
 		// Define new ref
 		if ($force_number) {
 			$num = $force_number;
-		} elseif (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+		} elseif (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 			$num = $this->getNextNumRef($this->thirdparty);
 		} else {
 			$num = $this->ref;
@@ -1082,6 +1076,7 @@ class Contrat extends CommonObject
 			if ($result > 0) {
 				$modCodeContract = new $module();
 				'@phan-var-force ModelNumRefContracts $modCodeContrat';
+				/** @var ModelNumRefContracts $modCodeContrat */
 
 				if (!empty($modCodeContract->code_auto)) {
 					// Force the ref to a draft value if numbering module is an automatic numbering
@@ -1094,11 +1089,9 @@ class Contrat extends CommonObject
 				}
 			}
 
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 			// Insert business contacts ('SALESREPSIGN','contrat')
