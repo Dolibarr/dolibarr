@@ -169,7 +169,7 @@ asort($listofmethods);
 
 if (!count($listofmethods)) {
 	$descnosms = $langs->trans("NoSmsEngine", '{Dolistore}');
-	$descnosms = str_replace('{Dolistore}', '<a href="https://www.dolistore.com/index.php?controller=search&orderby=position&orderway=desc&website=marketplace&search_query=sms">DoliStore</a>', $descnosms);
+	$descnosms = str_replace('{Dolistore}', '<a href="https://www.dolistore.com/index.php?controller=search&orderby=position&orderway=desc&website=marketplace&search_query=smsmanager">DoliStore</a>', $descnosms);
 	print '<div class="warning">'.$descnosms.'</div>';
 }
 
