@@ -471,7 +471,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 
 		// Discount
 		$discount_percent = price2num(GETPOST("discount_percent"));
-		print '<tr><td>'.$langs->trans("Discount666").'</td><td>';
+		print '<tr><td>'.$langs->trans("Discount").'</td><td>';
 		print '<input name="discount_percent" size="10" value="'.price($discount_percent).'">';
 		print '</td></tr>';
 
@@ -588,7 +588,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 			print '</td></tr>';
 
 			// Discount
-			print '<tr><td>'.$langs->trans("Discount555").'</td><td>';
+			print '<tr><td>'.$langs->trans("Discount").'</td><td>';
 			print '<input name="discount_percent" size="10" value="'.price($prodcustprice->discount_percent).'">';
 			print '</td></tr>';
 
@@ -696,7 +696,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 			print '<table class="noborder centpercent">';
 
 			print '<tr class="liste_titre_filter">';
-			print '<td>'.$langs->trans("ProductEGEGEG").'</td>';
+			print '<td>'.$langs->trans("Product").'</td>';
 			print '<td>'.$langs->trans('RefCustomer').'</td>';
 			print '<td>'.$langs->trans("AppliedPricesFrom").'</td>';
 			print '<td>'.$langs->trans("AppliedPricesTo").'</td>';
@@ -706,7 +706,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 			print '<td class="right">'.$langs->trans("TTC").'</td>';
 			print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("HT").'</td>';
 			print '<td class="right">'.$langs->trans("MinPrice").' '.$langs->trans("TTC").'</td>';
-			print '<td class="right">'.$langs->trans("Discount444").'</td>';
+			print '<td class="right">'.$langs->trans("Discount").'</td>';
 			print '<td class="right">'.$langs->trans("ChangedBy").'</td>';
 			print '<td>'.$langs->trans("DateCreation").'</td>';
 			print '</tr>';
