@@ -268,6 +268,23 @@ if (!isModEnabled('cron')) {
 	}
 }
 
+// AGENDA REMINDER SMS
+print '<tr class="oddeven">'."\n";
+print '<td>';
+print $langs->trans('AGENDA_REMINDER_SMS').'<br>';
+print '<span class="opacitymedium">'.$langs->trans('AGENDA_REMINDER_SMSHelp').'</span>';
+print '</td>'."\n";
+print '<td class="center">&nbsp;</td>'."\n";
+print '<td class="right nowraponall">'."\n";
+
+if (!getDolGlobalString('AGENDA_REMINDER_SMS')) {
+	print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_SMS&token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
+	print '</td></tr>'."\n";
+} else {
+	print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_SMS&token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
+	print '</td></tr>'."\n";
+}
+
 // AGENDA DEFAULT REMINDER EVENT TYPE
 if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
 	print '<tr class="oddeven">'."\n";
