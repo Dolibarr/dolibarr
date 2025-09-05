@@ -174,6 +174,7 @@ if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
 	$TRemindTypes['email'] = array('label' => $langs->trans('EMail'), 'disabled' => (getDolGlobalString('AGENDA_REMINDER_EMAIL') ? 0 : 1));
 }
 if (getDolGlobalString('AGENDA_REMINDER_SMS')) {
+	$langs->load('sms');
 	$TRemindTypes['sms'] = [
 		'label' => $langs->trans('Sms'),
 		'disabled' => (getDolGlobalString('MAIN_SMS_SENDMODE') ? 0 : 1),
