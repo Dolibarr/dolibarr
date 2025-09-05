@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2013-2015 Jean-François FERRY     <hello@librethic.io>
- * Copyright (C) 2016      Christophe Battarel     <christophe@altairis.fr>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2021      Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2021      Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2023      Charlene Benke	       <charlene.r@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024	   Irvine FLEITH		   <irvine.fleith@atm-consulting.fr>
+/* Copyright (C) 2013-2015  Jean-François FERRY     <hello@librethic.io>
+ * Copyright (C) 2016       Christophe Battarel     <christophe@altairis.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2023-2025  Charlene Benke	        <charlene.r@patas-monkey.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024	    Irvine FLEITH		    <irvine.fleith@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -272,7 +272,7 @@ class FormTicket
 			$subject = GETPOSTISSET('subject') ? GETPOST('subject', 'alpha') : '';
 			$email = GETPOSTISSET('email') ? GETPOST('email', 'alpha') : '';
 			$msg = GETPOSTISSET('message') ? GETPOST('message', 'restricthtml') : '';
-			$projectid = GETPOSTISSET('projectid') ? GETPOST('projectid', 'int') : '';
+			$projectid = GETPOSTISSET('projectid') ? GETPOSTINT('projectid') : 0;
 			$user_assign = GETPOSTISSET('fk_user_assign') ? GETPOSTINT('fk_user_assign') : $this->fk_user_create;
 		} else {
 			$ref = GETPOSTISSET("ref") ? GETPOST("ref", 'alpha') : $object->ref;
@@ -282,7 +282,7 @@ class FormTicket
 			$subject = GETPOSTISSET('subject') ? GETPOST('subject', 'alpha') : $object->subject;
 			$email = GETPOSTISSET('email') ? GETPOST('email', 'alpha') : $object->email_from;
 			$msg = GETPOSTISSET('message') ? GETPOST('message', 'restricthtml') : $object->message;
-			$projectid = GETPOSTISSET('projectid') ? GETPOST('projectid', 'int') : $object->fk_project;
+			$projectid = GETPOSTISSET('projectid') ? GETPOSTINT('projectid') : (int) $object->fk_project;
 			$user_assign = GETPOSTISSET('fk_user_assign') ? GETPOSTINT('fk_user_assign') : $object->fk_user_assign;
 		}
 
@@ -307,6 +307,7 @@ class FormTicket
 		}
 
 		print '<form method="POST" '.($withdolfichehead ? '' : 'style="margin-bottom: 30px;" ').'name="ticket" id="form_create_ticket" enctype="multipart/form-data" action="'.(!empty($this->param["returnurl"]) ? $this->param["returnurl"] : $_SERVER['PHP_SELF']).'">';
+
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.$this->action.'">';
 		if (!empty($object->id)) {
@@ -571,15 +572,10 @@ class FormTicket
 
 		// Categories
 		if (isModEnabled('category') && !$public) {
-			include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_TICKET, '', 'parent', 64, 0, 3);
-
-			if (count($cate_arbo)) {
-				// Categories
-				print '<tr><td class="wordbreak"></td><td>';
-				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', $langs->transnoentitiesnoconv("Categories"));
-				print "</td></tr>";
-			}
+			// Categories
+			print '<tr><td class="wordbreak"></td><td>';
+			print $form->selectCategories(Categorie::TYPE_TICKET, 'categories', $object);
+			print "</td></tr>";
 		}
 
 		// Attached files
@@ -770,7 +766,7 @@ class FormTicket
 				print '<tr><td><label for="contract"><span class="">'.$langs->trans("Contract").'</span></label></td><td>';
 				print img_picto('', 'contract', 'class="pictofixedwidth"');
 				// socid is for internal users null and not 0 or -1
-				print $formcontract->select_contract($user->socid ?? -1, GETPOSTINT('contactid'), 'contractid', 0, 1, 1, 1);
+				print $formcontract->select_contract($user->socid ?? -1, GETPOSTINT('contractid'), 'contractid', 0, 1, 1, 1);
 				print '</td></tr>';
 			}
 		}
@@ -837,7 +833,7 @@ class FormTicket
 			print dol_get_fiche_end();
 		}
 
-		print '<br>';
+		print '<br><br>';
 
 		if ($mode == 'create') {
 			print $form->buttonsSaveCancel(((isset($this->withreadid) && $this->withreadid > 0) ? "SendResponse" : "CreateTicket"), ($this->withcancel ? "Cancel" : ""));
@@ -1000,8 +996,8 @@ class FormTicket
 				print '<option value="">'.((is_numeric($empty) || $empty == 'ifone') ? '&nbsp;' : $empty).'</option>';
 			}
 
-			if (is_array($ticketstat->cache_category_tickets) && count($ticketstat->cache_category_tickets)) {
-				foreach ($ticketstat->cache_category_tickets as $id => $arraycategories) {
+			if (is_array($conf->cache['category_tickets']) && count($conf->cache['category_tickets'])) {
+				foreach ($conf->cache['category_tickets'] as $id => $arraycategories) {
 					// Exclude some record
 					if ($publicgroups) {
 						if (empty($arraycategories['public'])) {
@@ -1044,7 +1040,7 @@ class FormTicket
 						print ' selected="selected"';
 					} elseif ($arraycategories['use_default'] == "1" && empty($selected) && (!$empty || $empty == 'ifone')) {
 						print ' selected="selected"';
-					} elseif (count($ticketstat->cache_category_tickets) == 1 && (!$empty || $empty == 'ifone')) {	// If only 1 choice, we autoselect it
+					} elseif (count($conf->cache['category_tickets']) == 1 && (!$empty || $empty == 'ifone')) {	// If only 1 choice, we autoselect it
 						print ' selected="selected"';
 					}
 
@@ -1460,7 +1456,7 @@ class FormTicket
 	 */
 	public function showMessageForm($width = '40%')
 	{
-		global $conf, $langs, $user, $hookmanager, $form, $mysoc;
+		global $conf, $langs, $user, $hookmanager, $form;
 
 		$formmail = new FormMail($this->db);
 		$addfileaction = 'addfile';
@@ -1497,7 +1493,13 @@ class FormTicket
 				$model_id = (int) $this->param["models_id"];
 			}
 
-			$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id); // If $model_id is empty, preselect the first one
+			// If $model_id is empty, preselect the first one
+			$usedefault = ($model_id ? -1 : 1);
+			$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id, 1, '', $usedefault);
+			if (isset($arraydefaultmessage->id) && empty($model_id)) {
+				$model_id = $arraydefaultmessage->id;
+				$this->param['models_id'] = $model_id;
+			}
 		}
 
 		// Define list of attached files
@@ -1549,7 +1551,7 @@ class FormTicket
 		// Example 1 : Adding jquery code
 		print '<script nonce="'.getNonce().'" type="text/javascript">
 		jQuery(document).ready(function() {
-			send_email=' . $send_email.';
+			send_email='.((int) $send_email).';
 			if (send_email) {
 				if (!jQuery("#send_msg_email").is(":checked")) {
 					jQuery("#send_msg_email").prop("checked", true).trigger("change");
@@ -1612,7 +1614,8 @@ class FormTicket
 		$model_id = 0;
 		if (array_key_exists('models_id', $this->param)) {
 			$model_id = $this->param["models_id"];
-			$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id);
+			$usedefault = ($model_id ? -1 : 1);
+			$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id, 1, '', $usedefault);
 		}
 
 		$result = $formmail->fetchAllEMailTemplate(!empty($this->param["models"]) ? $this->param["models"] : "", $user, $outputlangs);
@@ -1624,14 +1627,14 @@ class FormTicket
 			$modelmail_array[$line->id] = $line->label;
 		}
 
+		$ticketstat = new Ticket($this->db);
+		$res = $ticketstat->fetch(0, '', $this->track_id);
+
 		print '<table class="border" width="'.$width.'">';
 
 		// External users can't send message email
 		if ($user->hasRight("ticket", "write") && !$user->socid) {
-			$ticketstat = new Ticket($this->db);
-			$res = $ticketstat->fetch(0, '', $this->track_id);
-
-			print '<tr><td></td><td>';
+			print '<tr><td class="width200"></td><td>';
 			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : (getDolGlobalInt('TICKETS_MESSAGE_FORCE_MAIL') ? 'checked' : ''));
 			print '<input type="checkbox" name="send_email" value="1" id="send_msg_email" '.$checkbox_selected.'/> ';
 			print '<label for="send_msg_email">'.$langs->trans('SendMessageByEmail').'</label>';
@@ -1643,6 +1646,19 @@ class FormTicket
 			}
 			$texttooltip = str_replace('{s1}', $langs->trans('MarkMessageAsPrivate'), $texttooltip);
 			print ' '.$form->textwithpicto('', $texttooltip, 1, 'help');
+
+			// Section to selection email template
+			if (count($modelmail_array) > 0) {
+				print ' &nbsp; <span class="email_line">';
+				print $formmail->selectarray('modelmailselected', $modelmail_array, $this->param['models_id'], $langs->trans('SelectMailModel'), 0, 0, "", 0, 0, 0, '', 'minwidth200');
+				if ($user->admin) {
+					print info_admin($langs->trans("YouCanChangeValuesForThisListFrom", $langs->transnoentitiesnoconv("Tools").' - '.$langs->transnoentitiesnoconv("EMailTemplates")), 1);
+				}
+				print ' &nbsp; ';
+				print '<input type="submit" class="button smallpaddingimp" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
+				print '</span>';
+			}
+
 			print '</td></tr>';
 
 			// Private message (not visible by customer/external user)
@@ -1656,37 +1672,32 @@ class FormTicket
 			}
 
 			// Zone to select its email template
+			/*
 			if (count($modelmail_array) > 0) {
 				print '<tr class="email_line"><td></td><td colspan="2"><div style="padding: 3px 0 3px 0">'."\n";
-				print $langs->trans('SelectMailModel').': '.$formmail->selectarray('modelmailselected', $modelmail_array, $this->param['models_id'], 1, 0, 0, "", 0, 0, 0, '', 'minwidth200');
+				print $formmail->selectarray('modelmailselected', $modelmail_array, $this->param['models_id'], $langs->trans('SelectMailModel'), 0, 0, "", 0, 0, 0, '', 'minwidth200');
 				if ($user->admin) {
 					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 				}
 				print ' &nbsp; ';
-				print '<input type="submit" class="button" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
+				print '<input type="submit" class="button smallpaddingimp" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 				print '</div></td>';
 			}
+			*/
 
-			// From
+			// From (and Reply-To if defined)
 			$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
-			print '<tr class="email_line"><td><span class="">'.$langs->trans("MailFrom").'</span></td>';
-			print '<td><span class="">'.img_picto('', 'email', 'class="pictofixedwidth"').$from.'</span></td></tr>';
-
-			// Subject/topic
-			$topic = "";
-			foreach ($formmail->lines_model as $line) {
-				if (!empty($this->substit) && $this->param['models_id'] == $line->id) {
-					$topic = make_substitutions($line->topic, $this->substit);
-					break;
-				}
+			$replyto = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_REPLYTO');
+			print '<tr class="email_line"><td class="width200"><span class="">'.$langs->trans("MailFrom");
+			if ($replyto) {
+				print ' <span class="opacitymedium">('.$langs->trans("MailReply").')</span>';
 			}
-			print '<tr class="email_line"><td>'.$langs->trans('Subject').'</td>';
-			if (empty($topic)) {
-				print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '. $ticketstat->subject .'" />';
-			} else {
-				print '<td><input type="text" class="text minwidth500" name="subject" value="'.make_substitutions($topic, $this->substit).'" />';
+			print '</span></td>';
+			print '<td><span class="">'.img_picto('', 'email', 'class="pictofixedwidth"').$from;
+			if ($replyto) {
+				print ' <span class="opacitymedium">('.$replyto.')</span>';
 			}
-			print '</td></tr>';
+			print '</span></td></tr>';
 
 			// Recipients / adressed-to
 			print '<tr class="email_line"><td>'.$langs->trans('MailRecipients');
@@ -1736,6 +1747,13 @@ class FormTicket
 				}
 			}
 			print '</td></tr>';
+
+			// Send to CC
+			$sendtocc = getDolGlobalString('TICKET_SEND_INTERNAL_CC');
+			if ($sendtocc) {
+				print '<tr class="email_line"><td><span class="">'.$langs->trans("MailCC").'</span></td>';
+				print '<td><span class="">'.img_picto('', 'email', 'class="pictofixedwidth"').$sendtocc.'</span></td></tr>';
+			}
 		}
 
 		$uselocalbrowser = false;
@@ -1758,6 +1776,22 @@ class FormTicket
 			print '</td></tr>';
 		}
 		*/
+
+		// Subject/topic
+		$topic = "";
+		foreach ($formmail->lines_model as $line) {
+			if (!empty($this->substit) && $this->param['models_id'] == $line->id) {
+				$topic = make_substitutions($line->topic, $this->substit);
+				break;
+			}
+		}
+		print '<tr class="email_line"><td class="fieldrequired">'.$langs->trans('MailTopic').'</td>';
+		if (empty($topic)) {
+			print '<td><input type="text" class="text minwidth500" name="subject" value="['.getDolGlobalString('MAIN_INFO_SOCIETE_NOM').' - '.$langs->trans("Ticket").' '.$ticketstat->ref.'] '. $ticketstat->subject .'" />';
+		} else {
+			print '<td><input type="text" class="text minwidth500" name="subject" value="'.make_substitutions($topic, $this->substit).'" />';
+		}
+		print '</td></tr>';
 
 		// Attached files
 		if (!empty($this->withfile)) {
@@ -1805,10 +1839,9 @@ class FormTicket
 		}
 
 		// MESSAGE
-
 		$defaultmessage = "";
 		if (is_object($arraydefaultmessage) && $arraydefaultmessage->content) {
-			$defaultmessage = $arraydefaultmessage->content;
+			$defaultmessage = (string) $arraydefaultmessage->content;
 		}
 		$defaultmessage = str_replace('\n', "\n", $defaultmessage);
 
@@ -1835,12 +1868,12 @@ class FormTicket
 			}
 			if (getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO')) {
 				$mail_intro = make_substitutions(getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO'), $this->substit);
-				print '<input type="hidden" name="mail_intro" value="'.$mail_intro.'">';
+				print '<input type="hidden" name="mail_intro" value="'.dolPrintHTMLForAttribute($mail_intro).'">';
 				$texttooltip .= '<br><u>'.$langs->trans("TicketMessageMailIntro").'</u><br>'.$mail_intro;
 			}
 			if (getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE')) {
 				$mail_signature = make_substitutions(getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE'), $this->substit);
-				print '<input type="hidden" name="mail_signature" value="'.$mail_signature.'">';
+				print '<input type="hidden" name="mail_signature" value="'.dolPrintHTMLForAttribute($mail_signature).'">';
 				$texttooltip .= '<br><br><u>'.$langs->trans("TicketMessageMailFooter").'</u><br>'.$mail_signature;
 			}
 			print $form->textwithpicto('', $texttooltip, 1, 'help');

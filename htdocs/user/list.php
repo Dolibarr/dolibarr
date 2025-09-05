@@ -4,10 +4,10 @@
  * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,33 +134,33 @@ $permissiontowritehr = $user->hasRight('hrm', 'write_personal_information', 'wri
 
 // Definition of fields for list
 $arrayfields = array(
-	'u.rowid' => array('label' => "TechnicalID", 'checked' => -1, 'position' => 5),
-	'u.login' => array('label' => "Login", 'checked' => 1, 'position' => 10),
-	'u.lastname' => array('label' => "Lastname", 'checked' => 1, 'position' => 15),
-	'u.firstname' => array('label' => "Firstname", 'checked' => 1, 'position' => 20),
-	'u.entity' => array('label' => "Entity", 'checked' => 1, 'position' => 50, 'enabled' => (isModEnabled('multicompany') && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE'))),
-	'u.gender' => array('label' => "Gender", 'checked' => 0, 'position' => 22),
-	'u.employee' => array('label' => "Employee", 'checked' => ($contextpage == 'employeelist' ? 1 : 0), 'position' => 25),
-	'u.fk_user' => array('label' => "HierarchicalResponsible", 'checked' => 1, 'position' => 27, 'csslist' => 'maxwidth150'),
-	'u.accountancy_code' => array('label' => "AccountancyCode", 'checked' => 0, 'position' => 30),
-	'u.office_phone' => array('label' => "PhonePro", 'checked' => 1, 'position' => 31),
-	'u.user_mobile' => array('label' => "PhoneMobile", 'checked' => 1, 'position' => 32),
-	'u.email' => array('label' => "EMail", 'checked' => 1, 'position' => 35),
-	'co.label' => array('label' => "Country", 'checked' => 0, 'position' => 37),
-	'u.api_key' => array('label' => "ApiKey", 'checked' => 0, 'position' => 40, "enabled" => (isModEnabled('api') && $user->admin)),
-	'u.fk_soc' => array('label' => "Company", 'checked' => ($contextpage == 'employeelist' ? 0 : 1), 'position' => 45),
-	'u.ref_employee' => array('label' => "RefEmployee", 'checked' => -1, 'position' => 50, 'enabled' => (isModEnabled('hrm') && $permissiontoreadhr)),
-	'u.national_registration_number' => array('label' => "NationalRegistrationNumber", 'checked' => -1, 'position' => 51, 'enabled' => (isModEnabled('hrm') && $permissiontoreadhr)),
-	'u.job' => array('label' => "PostOrFunction", 'checked' => -1, 'position' => 60),
-	'u.salary' => array('label' => "Salary", 'checked' => -1, 'position' => 80, 'enabled' => (isModEnabled('salaries') && $user->hasRight("salaries", "readall")), 'isameasure' => 1),
-	'u.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 500),
-	'u.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 500),
-	'u.statut' => array('label' => "Status", 'checked' => 1, 'position' => 1000),
+	'u.rowid' => array('label' => "TechnicalID", 'checked' => '-1', 'position' => 5),
+	'u.login' => array('label' => "Login", 'checked' => '1', 'position' => 10),
+	'u.lastname' => array('label' => "Lastname", 'checked' => '1', 'position' => 15),
+	'u.firstname' => array('label' => "Firstname", 'checked' => '1', 'position' => 20),
+	'u.entity' => array('label' => "Entity", 'checked' => '1', 'position' => 50, 'enabled' => (string) (int) (isModEnabled('multicompany') && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE'))),
+	'u.gender' => array('label' => "Gender", 'checked' => '0', 'position' => 22),
+	'u.employee' => array('label' => "Employee", 'checked' => ($contextpage == 'employeelist' ? '1' : '0'), 'position' => 25),
+	'u.fk_user' => array('label' => "HierarchicalResponsible", 'checked' => '1', 'position' => 27, 'csslist' => 'maxwidth150'),
+	'u.accountancy_code' => array('label' => "AccountancyCode", 'checked' => '0', 'position' => 30),
+	'u.office_phone' => array('label' => "PhonePro", 'checked' => '1', 'position' => 31),
+	'u.user_mobile' => array('label' => "PhoneMobile", 'checked' => '1', 'position' => 32),
+	'u.email' => array('label' => "EMail", 'checked' => '1', 'position' => 35),
+	'co.label' => array('label' => "Country", 'checked' => '0', 'position' => 37),
+	'u.api_key' => array('label' => "ApiKey", 'checked' => '0', 'position' => 40, "enabled" => (string) (int) (isModEnabled('api') && $user->admin)),
+	'u.fk_soc' => array('label' => "Company", 'checked' => ($contextpage == 'employeelist' ? '0' : '1'), 'position' => 45),
+	'u.ref_employee' => array('label' => "RefEmployee", 'checked' => '-1', 'position' => 50, 'enabled' => (string) (int) (isModEnabled('hrm') && $permissiontoreadhr)),
+	'u.national_registration_number' => array('label' => "NationalRegistrationNumber", 'checked' => '-1', 'position' => 51, 'enabled' => (string) (int) (isModEnabled('hrm') && $permissiontoreadhr)),
+	'u.job' => array('label' => "PostOrFunction", 'checked' => '-1', 'position' => 60),
+	'u.salary' => array('label' => "Salary", 'checked' => '-1', 'position' => 80, 'enabled' => (string) (int) (isModEnabled('salaries') && $user->hasRight("salaries", "readall")), 'isameasure' => 1),
+	'u.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 500),
+	'date_modification' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 500),
+	'u.statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
 );
 
 if (getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
-	$arrayfields['u.datelastlogin'] = array('label' => "LastConnexion", 'checked' => 1, 'position' => 100);
-	$arrayfields['u.datepreviouslogin'] = array('label' => "PreviousConnexion", 'checked' => 0, 'position' => 110);
+	$arrayfields['u.datelastlogin'] = array('label' => "LastConnexion", 'checked' => '1', 'position' => 100);
+	$arrayfields['u.datepreviouslogin'] = array('label' => "PreviousConnexion", 'checked' => '0', 'position' => 110);
 }
 
 // Extra fields
@@ -168,7 +168,6 @@ include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Init search fields
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
@@ -306,7 +305,6 @@ if (empty($reshook)) {
 	$uploaddir = $conf->user->dir_output;
 
 	global $error;
-	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// Disable or Enable records
 	if (!$error && ($massaction == 'disable' || $massaction == 'reactivate') && $permissiontoadd) {
@@ -317,7 +315,7 @@ if (empty($reshook)) {
 		$nbok = 0;
 		foreach ($toselect as $toselectid) {
 			if ($toselectid == $user->id) {
-				setEventMessages($langs->trans($massaction == 0 ? 'CantDisableYourself' : 'CanEnableYourself'), null, 'errors');
+				setEventMessages($langs->trans($massaction == 'disable' ? 'CantDisableYourself' : 'CanEnableYourself'), null, 'errors');
 				$error++;
 				break;
 			}
@@ -325,7 +323,7 @@ if (empty($reshook)) {
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
 				if ($objecttmp->admin) {
-					setEventMessages($langs->trans($massaction == 0 ? 'CantDisableAnAdminUserWithMassActions' : 'CantEnableAnAdminUserWithMassActions', $objecttmp->login), null, 'errors');
+					setEventMessages($langs->trans($massaction == 'disable' ? 'CantDisableAnAdminUserWithMassActions' : 'CantEnableAnAdminUserWithMassActions', $objecttmp->login), null, 'errors');
 					$error++;
 					break;
 				}
@@ -361,7 +359,12 @@ if (empty($reshook)) {
 		} else {
 			$db->rollback();
 		}
+
+		$massaction = '';
 	}
+
+	// Generic mass actions
+	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 
@@ -371,8 +374,6 @@ if (empty($reshook)) {
 
 $formother = new FormOther($db);
 $user2 = new User($db);
-
-$now = dol_now();
 
 $help_url = 'EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios|DE:Modul_Benutzer';
 if ($contextpage == 'employeelist' && $search_employee == 1) {
@@ -391,7 +392,7 @@ $sql .= " u.fk_user,";
 $sql .= " u.ref_employee, u.national_registration_number, u.job, u.salary, u.datelastlogin, u.datepreviouslogin,";
 $sql .= " u.datestartvalidity, u.dateendvalidity,";
 $sql .= " u.ldap_sid, u.statut as status, u.entity,";
-$sql .= " u.tms as date_modification, u.datec as date_creation,";
+$sql .= " GREATEST(u.tms, ef.tms) as date_modification, u.datec as date_creation,";
 $sql .= " u2.rowid as id2, u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2, u2.admin as admin2, u2.fk_soc as fk_soc2, u2.office_phone as ofice_phone2, u2.user_mobile as user_mobile2, u2.email as email2, u2.gender as gender2, u2.photo as photo2, u2.entity as entity2, u2.statut as status2,";
 $sql .= " s.nom as name, s.canvas,";
 $sql .= " co.code as country_code, co.label as country_label";
@@ -410,9 +411,7 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as u";
-if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (u.rowid = ef.fk_object)";
-}
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (u.rowid = ef.fk_object)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u2 ON u.fk_user = u2.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON u.fk_country = co.rowid";
@@ -538,7 +537,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -742,7 +741,7 @@ if (isModEnabled('stock') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) 
 	$formproduct = new FormProduct($db);
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('Warehouse');
-	$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', $tmptitle, 0, 0, $tmptitle);
+	$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', 1, 0, 0, $tmptitle);
 	$moreforfilter .= '</div>';
 }
 
@@ -804,7 +803,7 @@ if (!empty($arrayfields['u.employee']['checked'])) {
 // Supervisor
 if (!empty($arrayfields['u.fk_user']['checked'])) {
 	print '<td class="liste_titre">';
-	print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, array(), 0, '', 0, 0, 0, 0, '', 0, '', 'maxwidth125');
+	print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, array(), 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth125');
 	print '</td>';
 }
 if (!empty($arrayfields['u.accountancy_code']['checked'])) {
@@ -862,7 +861,7 @@ if (!empty($arrayfields['u.datec']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
-if (!empty($arrayfields['u.tms']['checked'])) {
+if (!empty($arrayfields['date_modification']['checked'])) {
 	// Date modification
 	print '<td class="liste_titre">';
 	print '</td>';
@@ -987,8 +986,8 @@ if (!empty($arrayfields['u.datec']['checked'])) {
 	print_liste_field_titre("DateCreationShort", $_SERVER["PHP_SELF"], "u.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['u.tms']['checked'])) {
-	print_liste_field_titre("DateModificationShort", $_SERVER["PHP_SELF"], "u.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+if (!empty($arrayfields['date_modification']['checked'])) {
+	print_liste_field_titre("DateModificationShort", $_SERVER["PHP_SELF"], "date_modification", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.statut']['checked'])) {
@@ -1032,7 +1031,7 @@ while ($i < $imaxinloop) {
 
 	$object->id = $obj->rowid;
 	$object->admin = $obj->admin;
-	$object->ref = $obj->rowid;
+	$object->ref = (string) $obj->rowid;
 	$object->login = $obj->login;
 	$object->statut = $obj->status;
 	$object->status = $obj->status;
@@ -1104,7 +1103,7 @@ while ($i < $imaxinloop) {
 		}
 		// TechnicalID
 		if (!empty($arrayfields['u.rowid']['checked'])) {
-			print '<td class="nowraponall">'.dol_escape_htmltag($obj->rowid).'</td>';
+			print '<td class="nowraponall">'.dolPrintHTML((string) $obj->rowid).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1123,18 +1122,21 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Lastname
 		if (!empty($arrayfields['u.lastname']['checked'])) {
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->lastname).'">'.dol_escape_htmltag($obj->lastname).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Fistname
 		if (!empty($arrayfields['u.firstname']['checked'])) {
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->lastname).'">'.dol_escape_htmltag($obj->firstname).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Gender
 		if (!empty($arrayfields['u.gender']['checked'])) {
 			print '<td class="center">';
 			if ($obj->gender) {
@@ -1197,6 +1199,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 
+		// Accountancy code
 		if (!empty($arrayfields['u.accountancy_code']['checked'])) {
 			print '<td>'.$obj->accountancy_code.'</td>';
 			if (!$i) {
@@ -1220,7 +1223,7 @@ while ($i < $imaxinloop) {
 		}
 		// Email
 		if (!empty($arrayfields['u.email']['checked'])) {
-			print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->fk_soc, 1, 0, 0, 1)."</td>\n";
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($obj->email, $obj->rowid, $obj->fk_soc, 1, 0, 0, 1)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1371,7 +1374,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Date modification
-		if (!empty($arrayfields['u.tms']['checked'])) {
+		if (!empty($arrayfields['date_modification']['checked'])) {
 			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 			print '</td>';

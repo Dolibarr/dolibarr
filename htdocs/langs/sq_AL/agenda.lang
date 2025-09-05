@@ -2,6 +2,7 @@
 IdAgenda=Ngjarja e identitetit
 Actions=Ngjarjet
 Agenda=Rendi i ditës
+AgendaEvents=Ngjarjet e rendit të ditës
 TMenuAgenda=Rendi i ditës
 Agendas=Axhendat
 LocalAgenda=Kalendari i parazgjedhur
@@ -44,6 +45,7 @@ PropalClosedRefusedInDolibarr=Propozimi %s u refuzua
 PropalValidatedInDolibarr=Propozimi %s u vërtetua
 PropalBackToDraftInDolibarr=Propozimi %s kthehu te statusi i draftit
 PropalClassifiedBilledInDolibarr=Propozimi %s i klasifikuar i faturuar
+InvoiceCreatedInDolibarr=Fatura %s u krijua
 InvoiceValidatedInDolibarr=Fatura %s u vërtetua
 InvoiceValidatedInDolibarrFromPos=Fatura %s e vërtetuar nga POS
 InvoiceBackToDraftInDolibarr=Fatura %s kthehet në statusin e draftit
@@ -134,14 +136,14 @@ AgendaModelModule=Modelet e dokumenteve për ngjarjen
 DateActionStart=Data e fillimit
 DateActionEnd=Data e përfundimit
 AgendaUrlOptions1=Ju gjithashtu mund të shtoni parametrat e mëposhtëm për të filtruar daljen:
-AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
+AgendaUrlOptions3=<b>logina=%s</b> për të kufizuar daljen në veprimet në pronësi të një përdoruesi <b>%s</b> (përdorni <b>logina=!%s</b> për ngjarje që nuk janë në pronësi të përdoruesit).
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> për të kufizuar daljen në veprimet e lidhura me projektin <span class='058</0epanslate'38>b. __PROJECT_ID__</b>.
-AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
-AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
+AgendaUrlOptionsType=<b>actiontype=%s</b> për të marrë ngjarje automatike ose manuale
+AgendaUrlOptionsCode=<b>actioncode=%s</b> për të marrë vetëm ngjarje me një kod të caktuar
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> për të përfshirë ngjarjet e festave.
-AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
-AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> për të kufizuar ngjarjet në %s ditët e fundit (parazgjedhja është %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> për të kufizuar në 50 ngjarjet e fundit (parazgjedhja dhe maksimumi është %s).
 AgendaShowBirthdayEvents=Ditëlindjet e kontakteve
 AgendaHideBirthdayEvents=Fshih ditëlindjet e kontakteve
 Busy=I zënë
@@ -203,5 +205,8 @@ BookingSuccessfullyBooked=Rezervimi juaj është ruajtur
 BookingReservationHourAfter=Ne konfirmojmë rezervimin e takimit tonë në datën %s
 BookcalBookingTitle=Takimi online
 Transparency = Transparenca
-ReadMore = Read more
-ReadLess = Read less
+ReadMore = Lexo më shumë
+ReadLess = Lexo më pak
+RecurringEvent=Ngjarje e përsëritur
+EventPartOfARecurringSerie=Ngjarja është pjesë e një serie të përsëritur me ID %s
+BookCalSystem=Rezervim online

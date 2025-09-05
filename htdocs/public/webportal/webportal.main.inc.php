@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ if (!function_exists('dol_getprefix')) {
 	 *  @param  string  $mode                   '' (prefix for session name) or 'email' (prefix for email id)
 	 *  @return	string                          A calculated prefix
 	 */
-	function dol_getprefix($mode = '')
+	function dol_getprefix($mode = '')  // @phan-suppress-current-line PhanRedefineFunction
 	{
 		global $dolibarr_main_instance_unique_id,
 		$dolibarr_main_cookie_cryptkey; // This is loaded by filefunc.inc.php
@@ -88,7 +88,12 @@ require_once DOL_DOCUMENT_ROOT . '/public/webportal/lib/webportal.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/webportal/class/context.class.php';
 require_once DOL_DOCUMENT_ROOT . '/webportal/class/webportalmember.class.php';
 require_once DOL_DOCUMENT_ROOT . '/webportal/class/webportalpartnership.class.php';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ */
 // Init session. Name of session is specific to WEBPORTAL instance.
 // Must be done after the include of filefunc.inc.php so global variables of conf file are defined (like $dolibarr_main_instance_unique_id or $dolibarr_main_force_https).
 // Note: the function dol_getprefix is defined into functions.lib.php but may have been defined to return a different key to manage another area to protect.
@@ -115,7 +120,7 @@ if (!defined('WEBPORTAL_NOREQUIRETRAN') || (!defined('WEBPORTAL_NOLOGIN') && !em
 	if (!is_object($langs)) { // This can occurs when calling page with NOREQUIRETRAN defined, however we need langs for error messages.
 		include_once DOL_DOCUMENT_ROOT . '/core/class/translate.class.php';
 		$langs = new Translate("", $conf);
-		$langcode = (GETPOST('lang', 'aZ09', 1) ? GETPOST('lang', 'aZ09', 1) : (empty($logged_user->conf->MAIN_LANG_DEFAULT) ? (!getDolGlobalString('MAIN_LANG_DEFAULT') ? 'auto' : $conf->global->MAIN_LANG_DEFAULT) : $logged_user->conf->MAIN_LANG_DEFAULT));
+		$langcode = (GETPOST('lang', 'aZ09', 1) ? GETPOST('lang', 'aZ09', 1) : (empty($logged_user->conf->MAIN_LANG_DEFAULT) ? getDolGlobalString('MAIN_LANG_DEFAULT', 'auto') : $logged_user->conf->MAIN_LANG_DEFAULT));
 		if (defined('MAIN_LANG_DEFAULT')) {
 			$langcode = constant('MAIN_LANG_DEFAULT');
 		}
@@ -183,7 +188,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 		if (empty($webportal_logged_thirdparty_account_id)) {
 			// Set cookie for timeout management
 			if (getDolGlobalString('MAIN_SESSION_TIMEOUT')) {
-				setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", '', !empty($dolibarr_main_force_https), true);
+				dolSetCookie($sessiontimeout, getDolGlobalString('MAIN_SESSION_TIMEOUT'), 0);
 			}
 
 			$context->controller = 'login';
@@ -225,7 +230,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 				$result = $logged_user->fetch($user_id);
 				if ($result <= 0) {
 					$error++;
-					$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedUser', $user_id);
+					$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedUser', (string) $user_id);
 					dol_syslog($error_msg, LOG_ERR);
 					$context->setEventMessages($error_msg, null, 'errors');
 				}
@@ -237,7 +242,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 				if (!$logged_thirdparty || !($logged_thirdparty->id > 0)) {
 					$result = $websiteaccount->fetch_thirdparty();
 					if ($result < 0) {
-						$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedThirdParty', $websiteaccount->fk_soc);
+						$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedThirdParty', (string) $websiteaccount->fk_soc);
 						//dol_syslog("Can't load third-party (ID: ".$websiteaccount->fk_soc.") even if session logged.", LOG_ERR);
 						dol_syslog($error_msg, LOG_ERR);
 						$context->setEventMessage($error_msg, 'errors');
@@ -253,7 +258,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 					$result = $logged_member->fetch(0, '', $websiteaccount->thirdparty->id);
 					if ($result < 0) {
 						$error++;
-						$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedMember', $websiteaccount->thirdparty->id);
+						$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedMember', (string) $websiteaccount->thirdparty->id);
 						dol_syslog($error_msg, LOG_ERR);
 						$context->setEventMessage($error_msg, 'errors');
 					}
@@ -265,7 +270,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 						$result = $logged_partnership->fetch(0, '', $logged_member->id, $websiteaccount->thirdparty->id);
 						if ($result < 0) {
 							$error++;
-							$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedPartnership', $websiteaccount->thirdparty->id, $logged_member->id);
+							$error_msg = $langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedPartnership', (string) $websiteaccount->thirdparty->id, (string) $logged_member->id);
 							dol_syslog($error_msg, LOG_ERR);
 							$context->setEventMessage($error_msg, 'errors');
 						}

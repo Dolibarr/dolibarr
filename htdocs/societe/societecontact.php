@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2015	Philippe Grand      <philippe.grand@atoo-net.com>
  * Copyright (C) 2014       Charles-Fr Benke	<charles.fr@benke.fr>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -266,7 +266,8 @@ if ($id > 0 || !empty($ref)) {
 						$memberstatic->ref = $objp->rowid;
 						$memberstatic->lastname = $objp->lastname;
 						$memberstatic->firstname = $objp->firstname;
-						$memberstatic->statut = $objp->statut;
+						$memberstatic->statut = $objp->statut;	// deprecated
+						$memberstatic->status = $objp->statut;
 						$memberstatic->datefin = $db->jdate($objp->datefin);
 
 						$companyname = $objp->company;

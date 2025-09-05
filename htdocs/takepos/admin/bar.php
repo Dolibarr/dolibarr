@@ -3,6 +3,7 @@
  * Copyright (C) 2011-2017  Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022       Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,7 +82,7 @@ if (GETPOST('action', 'alpha') == 'set') {
 
 if (getDolGlobalInt('TAKEPOS_ORDER_NOTES') == 1) {
 	$extrafields = new ExtraFields($db);
-	$extrafields->addExtraField('order_notes', 'Order notes', 'varchar', 0, 255, 'facturedet', 0, 0, '', '', 0, '', 0, 1);
+	$extrafields->addExtraField('order_notes', 'Order notes', 'varchar', 0, '255', 'facturedet', 0, 0, '', '', 0, '', '0', '1');
 }
 
 /*
@@ -123,9 +124,8 @@ print $langs->trans("EnableBarOrRestaurantFeatures");
 print ajax_constantonoff("TAKEPOS_BAR_RESTAURANT", array(), $conf->entity, 0, 0, 1, 0);
 print '</center>';
 
-print '<br>';
-
 if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
+	print '<br>';
 	print '<br>';
 	print '<a href="" onclick="Floors(); return false;"><span class="fa fa-glass-cheers"></span> '.$langs->trans("DefineTablePlan").'</a><br>';
 	print '<br><br>';
@@ -183,6 +183,7 @@ if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
 		print $langs->trans("SupplementCategory");
 		print '</td>';
 		print '<td class="nowrap">';
+		//print $form->selectCategories(Categorie::TYPE_PRODUCT, 'TAKEPOS_SUPPLEMENTS_CATEGORY', null);
 		print img_picto('', 'category', 'class="pictofixedwidth"');
 		print $form->select_all_categories(Categorie::TYPE_PRODUCT, getDolGlobalString('TAKEPOS_SUPPLEMENTS_CATEGORY'), 'TAKEPOS_SUPPLEMENTS_CATEGORY', 64, 0, 0, 0, 'minwidth 200 maxwidth500 widthcentpercentminusx');
 		print ajax_combobox('TAKEPOS_SUPPLEMENTS_CATEGORY');

@@ -203,22 +203,7 @@ if (!function_exists('dol_loginfunction')) {
 
 		if (getDolGlobalString('MAIN_SESSION_TIMEOUT')) {
 			if (session_status() != PHP_SESSION_ACTIVE) {
-				if (PHP_VERSION_ID < 70300) {
-					session_set_cookie_params(0, '/', null, !(empty($dolibarr_main_force_https) && isHTTPS() === false), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
-				} else {
-					// Only available for php >= 7.3
-					$sessioncookieparams = array(
-						'lifetime' => 0,
-						'path' => '/',
-						//'domain' => '.mywebsite.com', // the dot at the beginning allows compatibility with subdomains
-						'secure' => !(empty($dolibarr_main_force_https) && isHTTPS() === false),
-						'httponly' => true,
-						'samesite' => 'Lax'	// None || Lax  || Strict
-					);
-					session_set_cookie_params($sessioncookieparams);
-				}
-
-				setcookie($sessiontimeout, getDolGlobalString('MAIN_SESSION_TIMEOUT'), 0, "/", '', !empty($dolibarr_main_force_https), true);
+				dolSetCookie($sessiontimeout, getDolGlobalString('MAIN_SESSION_TIMEOUT'), 0);
 			}
 		}
 
@@ -424,20 +409,21 @@ function encodedecode_dbpassconf($level = 0)
 					$passwd_crypted = $val;
 					$val = dol_decode($val);
 					$passwd = $val;
-				} elseif (preg_match('/^dolcrypt:([^:]+):(.*)$/i', $buffer, $reg)) {
+				} elseif (preg_match('/^dolcrypt:([^:]+):(.*)$/i', $val, $reg)) {
 					// method dolEncrypt/dolDecrypt
 					$mode = 'dolcrypt:';
-					$val = preg_replace('/crypted:([^:]+):/i', '', $val);
-					$passwd_crypted = $val;
-					$val = dolDecrypt($buffer);
+					//$val = preg_replace('/dolcrypt:/i', '', $val);
+					$passwd_crypted = $reg[1].':'.$reg[2];
+					$val = dolDecrypt($val);
 					$passwd = $val;
 				} else {
 					$passwd = $val;
+					/* old method
 					$mode = 'crypted:';
 					$val = dol_encode($val);
-					$passwd_crypted = $val;
-					// TODO replace with dolEncrypt()
-					// ...
+					*/
+					$mode = 'dolcrypt:';
+					$passwd_crypted = preg_replace('/^dolcrypt:/', '', dolEncrypt($val));
 				}
 				$lineofpass = 1;
 			}
@@ -609,4 +595,37 @@ function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token
 	}
 
 	return $out;
+}
+
+/**
+ * Output the eye picto to show/hide a password HTML field.
+ *
+ * @param		string 		$htmlname			HTML name of element to insert key into
+ * @param		string		$htmlnameofinput	HTML id of input field
+ * @return		string		    				HTML javascript code to set a password
+ */
+function showEyeForField($htmlname, $htmlnameofinput)
+{
+	return '<!-- code to manage the eye hide/show -->
+<span id="'.$htmlname.'" tabindex="-1"><span class="fa fa-eye"></span></span>
+<script nonce="<?php echo getNonce(); ?>">
+	$(document).ready(function () {
+		$(\'#'.$htmlname.'\').on(\'click\', function (e) {
+			e.preventDefault();
+			if (event.detail === 0) return false; // Ignore keyboard "clicks"
+			console.log("We click on '.$htmlname.'");
+			const $passwordInput = $(\'#'.$htmlnameofinput.'\');
+
+			if ($passwordInput.is(\'[type=password]\')) {
+				$passwordInput.attr(\'type\', \'text\');
+				jQuery(\'#'.$htmlname.' .fa-eye\').attr(\'class\', \'fa fa-eye-slash\');
+			} else {
+				$passwordInput.attr(\'type\', \'password\');
+				jQuery(\'#'.$htmlname.' .fa-eye-slash\').attr(\'class\', \'fa fa-eye\');
+			}
+
+			return false; // This prevents the click from reloading the page
+		});
+	});
+</script>';
 }

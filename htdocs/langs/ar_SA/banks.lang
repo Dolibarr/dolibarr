@@ -23,6 +23,7 @@ BankBalanceAfter=الرصيد بعد
 BalanceMinimalAllowed=الحد الأدنى المسموح من الرصيد
 BalanceMinimalDesired=الحد الأدنى المطلوب من الرصيد
 InitialBankBalance=الرصيد الأولي
+DateInitialBalance=تاريخ الرصيد الأولي
 EndBankBalance=الرصيد النهائي
 CurrentBalance=الرصيد الحالي
 FutureBalance=الميزانية المستقبلة
@@ -31,6 +32,7 @@ Reconciliation=التسوية
 RIB=رقم الحساب المصرفي
 IBAN=رقم الآيبان
 BIC=رمز BIC / SWIFT
+CCI=رمز بين البنوك
 SwiftValid=بيك / سويفت صالحة
 SwiftNotValid=بيك / سويفت غير صالح
 IbanValid=بان صالحة
@@ -194,3 +196,7 @@ SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation=متغ�
 SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp=نعم = قم بتخزين "نوع الدفع" في قسم "تحويل الرصيد" في ملف SEPA<br><br> عند إنشاء ملف SEPA XML للحصول على الائتمان التحويلات، يمكن الآن وضع القسم "PaymentTypeInformation" داخل قسم "CreditTransferTransactionInformation" (بدلاً من قسم "Payment"). نوصي بشدة بإبقاء هذا الخيار دون تحديد لوضع PaymentTypeInformation على مستوى الدفع، حيث إن جميع البنوك لن تقبلها بالضرورة على مستوى CreditTransferTransactionInformation. اتصل بالمصرف الذي تتعامل معه قبل وضع PaymentTypeInformation على مستوى CreditTransferTransactionInformation.
 ToCreateRelatedRecordIntoBank=لإنشاء سجل مصرفي مفقود ذي صلة
 XNewLinesConciliated=%s تمت التوفيق بين الأسطر الجديدة
+InSepa=منطقة SEPA منطقة
+CountryIsInSepa=الدول في سيبا منطقة
+Bank_line=خط المعاملات المصرفية
+BankId=معرف خط البنك

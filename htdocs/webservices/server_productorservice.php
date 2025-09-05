@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      JF FERRY             <jfefe@aternatik.fr>
  * Copyright (C) 2020-2024 Frédéric France		<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -581,21 +581,6 @@ function createProductOrService($authentication, $product)
 		$newobject->customcode = isset($product['customcode']) ? $product['customcode'] : '';
 
 		$newobject->canvas = isset($product['canvas']) ? $product['canvas'] : '';
-		/*foreach($product['lines'] as $line)
-		{
-			$newline=new FactureLigne($db);
-			$newline->type=$line['type'];
-			$newline->desc=$line['desc'];
-			$newline->fk_product=$line['fk_product'];
-			$newline->total_ht=$line['total_net'];
-			$newline->total_vat=$line['total_vat'];
-			$newline->total_ttc=$line['total'];
-			$newline->vat=$line['vat_rate'];
-			$newline->qty=$line['qty'];
-			$newline->fk_product=$line['product_id'];
-		}*/
-		//var_dump($product['ref_ext']);
-		//var_dump($product['lines'][0]['type']);
 
 		$elementtype = 'product';
 
@@ -715,7 +700,7 @@ function updateProductOrService($authentication, $product)
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 		$newobject = new Product($db);
-		$newobject->fetch($product['id']);
+		$newobject->fetch((int) $product['id']);
 
 		if (isset($product['ref'])) {
 			$newobject->ref = $product['ref'];
@@ -877,7 +862,7 @@ function deleteProductOrService($authentication, $listofidstring)
 
 		foreach ($listofid as $id) {
 			$newobject = new Product($db);
-			$result = $newobject->fetch($id);
+			$result = $newobject->fetch((int) $id);
 
 			if ($result == 0) {
 				$error++;

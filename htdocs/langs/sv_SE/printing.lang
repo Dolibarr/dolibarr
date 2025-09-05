@@ -32,6 +32,7 @@ PRINTIPP_HOST=Print server
 PRINTIPP_PORT=Port
 PRINTIPP_USER=Inlogg
 PRINTIPP_PASSWORD=Lösenord
+PRINTIPP_SSL=Använd SSL
 NoDefaultPrinterDefined=Ingen standarskrivare är definerad
 DefaultPrinter=Standard skrivare
 Printer=Skrivare
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=Konfigurationsvariabler för skrivardrivrutin Google 
 PrintingDriverDescprintipp=Konfigurationsvariabler för utskriftskoppar Cups.
 PrintTestDescprintgcp=Lista över skrivare för Google Cloud Print.
 PrintTestDescprintipp=Lista över skrivare för koppar.
+Testbbbb

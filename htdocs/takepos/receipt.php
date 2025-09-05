@@ -6,7 +6,8 @@
  * Copyright (C) 2019      Josep Lluís Amador  <joseplluis@lliuretic.cat>
  * Copyright (C) 2021      Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 202        Ferran Marcet      <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
  *	\brief      Page to show a receipt.
  */
 
-// Include main (when fie in included into send.php, $action is set and main was already loaded)
+// Include main (when file in included into send.php, $action is set and main was already loaded)
 if (!isset($action)) {
 	//if (! defined('NOREQUIREUSER'))	define('NOREQUIREUSER', '1');	// Not disabled cause need to load personalized language
 	//if (! defined('NOREQUIREDB'))		define('NOREQUIREDB', '1');		// Not disabled cause need to load personalized language
@@ -58,6 +59,7 @@ include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
  * @var Translate $langs
  * @var User $user
  */
+
 $langs->loadLangs(array("main", "bills", "cashdesk", "companies"));
 
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
@@ -76,9 +78,9 @@ if (!$user->hasRight('takepos', 'run')) {
  * View
  */
 
-top_htmlhead('', '', 1);
+top_htmlhead('', '', 2);
 
-if ((string) $place != '') {
+if ((string) $place != '' && !empty($_SESSION["takeposterminal"])) {
 	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture";
 	$sql .= " WHERE ref = '(PROV-POS".$db->escape($_SESSION["takeposterminal"]."-".$place).")'";
 	$sql .= " AND entity IN (".getEntity('invoice').")";
@@ -92,6 +94,7 @@ if ((string) $place != '') {
 $object = new Facture($db);
 $object->fetch($facid);
 
+print '<body>';
 
 // Record entry in blocked logs
 // DOL_DOCUMENT_ROOT.'/blockedlog/ajax/block-add.php?id='.$object->id.'&element='.$object->element.'&action=DOC_PREVIEW&token='.newToken();
@@ -110,7 +113,6 @@ jQuery(document).ready(function () {
 });
 </script>";
 
-
 // Call to external receipt modules if exist
 $parameters = array();
 $hookmanager->initHooks(array('takeposfrontend'));
@@ -122,7 +124,7 @@ if (!empty($hookmanager->resPrint)) {
 
 // IMPORTANT: This file is sended to 'Takepos Printing' application. Keep basic file. No external files as css, js... If you need images use absolute path.
 ?>
-<body>
+
 <style>
 .right {
 	text-align: right;
@@ -156,6 +158,7 @@ $constFreeText = 'TAKEPOS_HEADER'.(empty($_SESSION['takeposterminal']) ? '0' : $
 if (getDolGlobalString('TAKEPOS_HEADER') || getDolGlobalString($constFreeText)) {
 	$newfreetext = '';
 	$substitutionarray = getCommonSubstitutionArray($langs);
+	complete_substitutions_array($substitutionarray, $langs, $object);
 	if (getDolGlobalString('TAKEPOS_HEADER')) {
 		$newfreetext .= make_substitutions(getDolGlobalString('TAKEPOS_HEADER'), $substitutionarray);
 	}
@@ -281,7 +284,7 @@ if (getDolGlobalString('TAKEPOS_SHOW_DATE_OF_PRINING')) {
 		?>
 	<tr>
 		<th align="right"><?php if ($gift != 1) {
-			echo $langs->trans("VAT").' '.vatrate($key, 1);
+			echo $langs->trans("VAT").' '.vatrate($key, true);
 						  } ?></th>
 		<td align="right"><?php if ($gift != 1) {
 			echo price($val, 1, '', 1, - 1, - 1, $conf->currency)."\n";
@@ -395,7 +398,7 @@ if (getDolGlobalString('TAKEPOS_PRINT_PAYMENT_METHOD')) {
 }
 ?>
 </table>
-<div style="border-top-style: double;">
+
 <br>
 <br>
 <br>
@@ -404,6 +407,7 @@ $constFreeText = 'TAKEPOS_FOOTER'.(empty($_SESSION['takeposterminal']) ? '0' : $
 if (getDolGlobalString('TAKEPOS_FOOTER') || getDolGlobalString($constFreeText)) {
 	$newfreetext = '';
 	$substitutionarray = getCommonSubstitutionArray($langs);
+	complete_substitutions_array($substitutionarray, $langs, $object);
 	if (getDolGlobalString($constFreeText)) {
 		$newfreetext .= make_substitutions(getDolGlobalString($constFreeText), $substitutionarray);
 	}
@@ -412,15 +416,19 @@ if (getDolGlobalString('TAKEPOS_FOOTER') || getDolGlobalString($constFreeText)) 
 	}
 	print $newfreetext;
 }
-?>
 
-<script type="text/javascript">
+if (!GETPOST('forcenoautoopen')) {
+	?>
+	<script type="text/javascript">
 	<?php
 	if ($facid) {
 		print 'window.print();';
 	} //Avoid print when is specimen
 	?>
-</script>
+	</script>
+	<?php
+}
 
-</body>
+print "</body>";
+?>
 </html>
