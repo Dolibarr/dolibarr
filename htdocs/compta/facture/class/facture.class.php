@@ -171,12 +171,11 @@ class Facture extends CommonInvoice
 	 * @var int id of template invoice when generated from a template invoice
 	 */
 	public $fk_fac_rec_source;
+
 	/**
 	 * @var int id of source invoice if replacement invoice or credit note
 	 */
 	public $fk_facture_source;
-
-	public $linked_objects = array();
 
 	/**
 	 * @var int ID Field to store bank id to use when payment mode is withdraw
