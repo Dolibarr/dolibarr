@@ -2623,6 +2623,7 @@ class Contrat extends CommonObject
 
 		// Clean data
 		$clonedObj->statut = 0;
+		$clonedObj->status = 0;
 		// Clean extrafields
 		if (is_array($clonedObj->array_options) && count($clonedObj->array_options) > 0) {
 			$extrafields->fetch_name_optionals_label($this->table_element);
@@ -2647,6 +2648,7 @@ class Contrat extends CommonObject
 		$obj = getDolGlobalString('CONTRACT_ADDON');
 		$modContract = new $obj();
 		'@phan-var-force ModelNumRefContracts $modContract';
+		/** @var ModelNumRefContracts $modContract */
 		$clonedObj->ref = $modContract->getNextValue($objsoc, $clonedObj);
 
 		// get extrafields so they will be clone
@@ -2659,8 +2661,7 @@ class Contrat extends CommonObject
 		$result = $clonedObj->create($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $clonedObj->error;
-			$this->errors[] = $clonedObj->error;
+			$this->setErrorsFromObject($clonedObj);
 		} else {
 			// copy external contacts if same company
 			if ($this->socid == $clonedObj->socid) {
@@ -2685,8 +2686,8 @@ class Contrat extends CommonObject
 			// Hook of thirdparty module
 			if (is_object($hookmanager)) {
 				$parameters = array(
-						'objFrom' => $this,
-						'clonedObj' => $clonedObj
+					'objFrom' => $this,
+					'clonedObj' => $clonedObj
 				);
 				$action = '';
 				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $clonedObj, $action); // Note that $action and $object may have been modified by some hooks
@@ -2926,17 +2927,13 @@ class Contrat extends CommonObject
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (!empty($arraydata['thirdparty'])) {
+		if (!empty($arraydata['thirdparty']) && $arraydata['thirdparty'] instanceof Societe) {
 			$tmpthirdparty = $arraydata['thirdparty'];
 			'@phan-var-force Societe $tmpthirdparty';
 			$return .= '<br><div class="info-box-label inline-block valignmiddle">'.$tmpthirdparty->getNomUrl(1).'</div>';
 		}
-		if (property_exists($this, 'date_contrat')) {
-			$return .= '<br><span class="opacitymedium valignmiddle">'.$langs->trans("DateContract").' : </span><span class="info-box-label valignmiddle">'.dol_print_date($this->date_contrat, 'day').'</span>';
-		}
-		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status valignmiddle">'.$this->getLibStatut(7).'</div>';
-		}
+		$return .= '<br><span class="opacitymedium valignmiddle">'.$langs->trans("DateContract").' : </span><span class="info-box-label valignmiddle">'.dol_print_date($this->date_contrat, 'day').'</span>';
+		$return .= '<br><div class="info-box-status valignmiddle">'.$this->getLibStatut(7).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
