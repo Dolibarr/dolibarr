@@ -3,7 +3,7 @@
  * Copyright (C) 2011		Dimitri Mouillard			<dmouillard@teclib.com>
  * Copyright (C) 2013		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2016		Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -530,7 +530,7 @@ if (count($typeleaves) == 0) {
 		print '</td>'."\n";
 
 		print '<td class="center">';
-		print '<a href="'.DOL_URL_ROOT.'/holiday/view_log.php?search_employee='.((int) $users[rowid]).'">'.img_picto($langs->trans('MenuLogCP'), 'list-alt').'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/holiday/view_log.php?search_employee='.((int) $users['rowid']).'">'.img_picto($langs->trans('MenuLogCP'), 'list-alt').'</a>';
 		print '</td>';
 
 		// Action column
