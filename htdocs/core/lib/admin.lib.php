@@ -1111,7 +1111,7 @@ function listOfSessions()
 						$idsess = $tmp[1];
 						$regs = array();
 						$arrayofSessions[$idsess]["login"] = '';
-						$loginfound = preg_match('/dol_login\|s:[0-9]+:"([A-Za-z0-9]+)"/i', $sessValues, $regs);
+						$loginfound = preg_match('/dol_login\|s:[0-9]+:"([^"]+)"/i', $sessValues, $regs);
 						if ($loginfound) {
 							$arrayofSessions[$idsess]["login"] = (string) $regs[1];
 						}
