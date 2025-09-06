@@ -88,7 +88,7 @@ class Contrat extends CommonObject
 
 	/**
 	 * Customer reference of the contract
-	 * @var string
+	 * @var ?string
 	 */
 	public $ref_customer;
 
@@ -99,7 +99,7 @@ class Contrat extends CommonObject
 
 	/**
 	 * Supplier reference of the contract
-	 * @var string
+	 * @var ?string
 	 */
 	public $ref_supplier;
 
@@ -949,7 +949,7 @@ class Contrat extends CommonObject
 				//$line->date_fin_prevue   = $this->db->jdate($objp->date_fin_validite);
 				//$line->date_fin_reel     = $this->db->jdate($objp->date_cloture);
 
-				$line->rang     = $objp->rang;
+				$line->rang = $objp->rang;
 
 				// Retrieve all extrafields for contract line
 				// fetch optionals attributes and labels
@@ -1096,7 +1096,7 @@ class Contrat extends CommonObject
 			}
 
 			// Insert business contacts ('SALESREPSIGN','contrat')
-			if (!$error) {
+			if (!$error && !empty($this->commercial_signature_id)) {
 				$result = $this->add_contact($this->commercial_signature_id, 'SALESREPSIGN', 'internal');
 				if ($result < 0) {
 					$error++;
@@ -1104,7 +1104,7 @@ class Contrat extends CommonObject
 			}
 
 			// Insert business contacts ('SALESREPFOLL','contrat')
-			if (!$error) {
+			if (!$error && !empty($this->commercial_suivi_id)) {
 				$result = $this->add_contact($this->commercial_suivi_id, 'SALESREPFOLL', 'internal');
 				if ($result < 0) {
 					$error++;
