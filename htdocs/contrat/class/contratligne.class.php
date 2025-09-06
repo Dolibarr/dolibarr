@@ -877,12 +877,10 @@ class ContratLigne extends CommonObjectLine
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'contratdet');
 
 			// Insert of extrafields
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$this->db->rollback();
-					return -1;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$this->db->rollback();
+				return -1;
 			}
 
 			if (!$notrigger) {
