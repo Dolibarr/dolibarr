@@ -1487,7 +1487,7 @@ class Contrat extends CommonObject
 			return -1;
 		}
 
-		if ($this->statut >= 0) {
+		if ($this->status >= 0) {
 			// Clean parameters
 			$pu_ht = price2num($pu_ht);
 			$pu_ttc = price2num($pu_ttc);
@@ -1640,16 +1640,14 @@ class Contrat extends CommonObject
 			if ($resql) {
 				$contractlineid = $this->db->last_insert_id(MAIN_DB_PREFIX."contratdet");
 
-				if (!$error) {
-					$contractline = new ContratLigne($this->db);
-					$contractline->array_options = $array_options;
-					$contractline->id = $contractlineid;
-					$result = $contractline->insertExtraFields();
-					if ($result < 0) {
-						$this->errors = array_merge($this->errors, $contractline->errors);
-						$this->error = $contractline->error;
-						$error++;
-					}
+				$contractline = new ContratLigne($this->db);
+				$contractline->array_options = $array_options;
+				$contractline->id = $contractlineid;
+				$result = $contractline->insertExtraFields();
+				if ($result < 0) {
+					$this->errors = array_merge($this->errors, $contractline->errors);
+					$this->error = $contractline->error;
+					$error++;
 				}
 
 				if (empty($error)) {

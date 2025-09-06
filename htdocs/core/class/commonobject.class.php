@@ -325,7 +325,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var string 		The object's reference
+	 * @var ?string 		The object's reference
 	 */
 	public $ref;
 
