@@ -2259,8 +2259,8 @@ class Contrat extends CommonObject
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 *      @param	User	$user           Object user
-	 *      @param  string	$mode           "inactive" pour services a activer, "expired" pour services expires
+	 *      @param	User	$user           		Object user
+	 *      @param  'inactive'|'expired'|'active'	$mode           "inactive" pour services a activer, "expired" pour services expires
 	 *      @return WorkboardResponse|int Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)
@@ -2275,6 +2275,7 @@ class Contrat extends CommonObject
 			$this->from .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 
+		$sql = '';
 		if ($mode == 'inactive') {
 			$sql = "SELECT cd.rowid, cd.date_ouverture_prevue as datefin";
 			$sql .= $this->from;
