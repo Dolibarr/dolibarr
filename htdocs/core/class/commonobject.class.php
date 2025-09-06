@@ -330,7 +330,7 @@ abstract class CommonObject
 	public $ref;
 
 	/**
-	 * @var string 		An external reference to the object
+	 * @var ?string 		An external reference to the object
 	 */
 	public $ref_ext;
 
