@@ -2275,7 +2275,6 @@ class Contrat extends CommonObject
 			$this->from .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 
-		$sql = '';
 		if ($mode == 'inactive') {
 			$sql = "SELECT cd.rowid, cd.date_ouverture_prevue as datefin";
 			$sql .= $this->from;
@@ -2297,6 +2296,8 @@ class Contrat extends CommonObject
 			$sql .= " AND cd.statut = 4";
 			//$datetouse = dol_now();
 			//$sql.= " AND cd.date_fin_validite < '".$this->db->idate($datetouse)."'";
+		} else {
+			return -1;
 		}
 		$sql .= " AND c.fk_soc = s.rowid";
 		$sql .= " AND c.entity = ".((int) $conf->entity);
