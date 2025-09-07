@@ -472,7 +472,7 @@ abstract class DoliDB implements Database
 	{
 		$sql;// Avoid "unused variable" warning
 		$this->lasterror = 'prepare() not implemented for this driver.';
-		
+
 		return false;
 	}
 }
