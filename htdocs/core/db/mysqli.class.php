@@ -1307,6 +1307,7 @@ class DoliDBMysqli extends DoliDB
 			$this->lasterror = 'Not connected to database';
 			return false;
 		}
+<<<<<<< HEAD
 		$stmt = $this->db->prepare($sql);
 		if ($stmt === false) {
 			$this->lasterror = $this->db->error;
@@ -1330,13 +1331,15 @@ class DoliDBMysqli extends DoliDB
 			return false;
 		}
 	
+=======
+>>>>>>> 2adc4bf7134 (fix : whitespaces)
 		$stmt = $this->db->prepare($sql);
 		if ($stmt === false) {
 			$this->lasterror = $this->db->error;
 			$this->lastqueryerror = $sql;
 			return false;
 		}
-	
+
 		return $stmt;
 	}
 }
