@@ -1531,5 +1531,4 @@ class DoliDBPgsql extends DoliDB
 
 		return $stmtname; // We just return the name of the prepared statement
 	}
-
 }

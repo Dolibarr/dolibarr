@@ -24,7 +24,7 @@
  * \brief 		Class file to manage Dolibarr database access
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/db/Database.interface.php';
+require_once DOL_DOCUMENT_ROOT . '/core/db/Database.interface.php';
 
 
 /**
@@ -104,7 +104,7 @@ abstract class DoliDB implements Database
 	public function ifsql($test, $resok, $resko)
 	{
 		//return 'IF('.$test.','.$resok.','.$resko.')';		// Not sql standard
-		return '(CASE WHEN '.$test.' THEN '.$resok.' ELSE '.$resko.' END)';
+		return '(CASE WHEN ' . $test . ' THEN ' . $resok . ' ELSE ' . $resko . ' END)';
 	}
 
 	/**
@@ -115,7 +115,7 @@ abstract class DoliDB implements Database
 	 */
 	public function stddevpop($nameoffield)
 	{
-		return 'STDDEV_POP('.$nameoffield.')';
+		return 'STDDEV_POP(' . $nameoffield . ')';
 	}
 
 	/**
@@ -142,10 +142,10 @@ abstract class DoliDB implements Database
 	public function regexpsql($subject, $pattern, $sqlstring = 0)
 	{
 		if ($sqlstring) {
-			return "(". $subject ." REGEXP '" . $this->escape($pattern) . "')";
+			return "(" . $subject . " REGEXP '" . $this->escape($pattern) . "')";
 		}
 
-		return "('". $this->escape($subject) ."' REGEXP '" . $this->escape($pattern) . "')";
+		return "('" . $this->escape($subject) . "' REGEXP '" . $this->escape($pattern) . "')";
 	}
 
 
@@ -186,7 +186,7 @@ abstract class DoliDB implements Database
 	 */
 	public function sanitize($stringtosanitize, $allowsimplequote = 0, $allowsequals = 0, $allowsspace = 0, $allowschars = 1)
 	{
-		$result = preg_replace('/[^0-9_\-\.,'.($allowschars ? '\p{L}' : '').($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').($allowsspace ? ' ' : '').']/ui', '', $stringtosanitize);
+		$result = preg_replace('/[^0-9_\-\.,' . ($allowschars ? '\p{L}' : '') . ($allowsequals ? '=' : '') . ($allowsimplequote ? "\'" : '') . ($allowsspace ? ' ' : '') . ']/ui', '', $stringtosanitize);
 		//$result = preg_replace('/[^0-9_\-\.,'.($allowschars ? 'a-z' : '').($allowsequals ? '=' : '').($allowsimplequote ? "\'" : '').($allowsspace ? ' ' : '').']/i', '', $stringtosanitize);
 
 		if ($allowsimplequote == 1) {
@@ -196,7 +196,7 @@ abstract class DoliDB implements Database
 			foreach ($tmpchars as $tmpchar) {
 				$reg = array();
 				if (preg_match('/^\'(.*)\'$/', $tmpchar, $reg)) {
-					$newstringarray[] = "'".str_replace("'", "", $reg[1])."'";
+					$newstringarray[] = "'" . str_replace("'", "", $reg[1]) . "'";
 				} else {
 					$newstringarray[] = str_replace("'", "", $tmpchar);
 				}
@@ -219,7 +219,7 @@ abstract class DoliDB implements Database
 			$ret = $this->query("BEGIN");
 			if ($ret) {
 				$this->transaction_opened++;
-				dol_syslog("BEGIN Transaction".($textinlog ? ' '.$textinlog : ''), LOG_DEBUG);
+				dol_syslog("BEGIN Transaction" . ($textinlog ? ' ' . $textinlog : ''), LOG_DEBUG);
 				dol_syslog('', 0, 1);
 				return 1;
 			} else {
@@ -245,7 +245,7 @@ abstract class DoliDB implements Database
 			$ret = $this->query("COMMIT");
 			if ($ret) {
 				$this->transaction_opened = 0;
-				dol_syslog("COMMIT Transaction".($log ? ' '.$log : ''), LOG_DEBUG);
+				dol_syslog("COMMIT Transaction" . ($log ? ' ' . $log : ''), LOG_DEBUG);
 				return 1;
 			} else {
 				return 0;
@@ -268,7 +268,7 @@ abstract class DoliDB implements Database
 		if ($this->transaction_opened <= 1) {
 			$ret = $this->query("ROLLBACK");
 			$this->transaction_opened = 0;
-			dol_syslog("ROLLBACK Transaction".($log ? ' '.$log : ''), LOG_DEBUG);
+			dol_syslog("ROLLBACK Transaction" . ($log ? ' ' . $log : ''), LOG_DEBUG);
 			return $ret;
 		} else {
 			$this->transaction_opened--;
@@ -293,9 +293,9 @@ abstract class DoliDB implements Database
 			$limit = $conf->liste_limit;
 		}
 		if ($offset > 0) {
-			return " LIMIT ".((int) $offset).",".((int) $limit)." ";
+			return " LIMIT " . ((int) $offset) . "," . ((int) $limit) . " ";
 		} else {
-			return " LIMIT ".((int) $limit)." ";
+			return " LIMIT " . ((int) $limit) . " ";
 		}
 	}
 
@@ -353,7 +353,7 @@ abstract class DoliDB implements Database
 					$oldsortorder = 'DESC';
 					$return .= ' DESC';
 				} else {
-					$return .= ' '.($oldsortorder ? $oldsortorder : 'ASC');
+					$return .= ' ' . ($oldsortorder ? $oldsortorder : 'ASC');
 				}
 
 				$i++;
@@ -390,7 +390,7 @@ abstract class DoliDB implements Database
 			return '';
 		}
 		$string = preg_replace('/([^0-9])/i', '', $string);
-		$tmp = $string.'000000';
+		$tmp = $string . '000000';
 		$date = dol_mktime((int) substr($tmp, 8, 2), (int) substr($tmp, 10, 2), (int) substr($tmp, 12, 2), (int) substr($tmp, 4, 2), (int) substr($tmp, 6, 2), (int) substr($tmp, 0, 4), $gm);
 		return $date;
 	}
@@ -442,7 +442,7 @@ abstract class DoliDB implements Database
 	public function getRows($sql)
 	{
 		if (!preg_match('/LIMIT \d+(?:(?:,\ *\d*)|(?:\ +OFFSET\ +\d*))?\ *;?$/', $sql)) {
-			trigger_error(__CLASS__ .'::'.__FUNCTION__.'() query must have a LIMIT clause', E_USER_ERROR);
+			trigger_error(__CLASS__ . '::' . __FUNCTION__ . '() query must have a LIMIT clause', E_USER_ERROR);
 		}
 
 		$resql = $this->query($sql);
@@ -467,12 +467,11 @@ abstract class DoliDB implements Database
 	 *
 	 * @param string $sql SQL query to prepare
 	 * @return mixed Driver-specific prepared statement object or false on failure
+	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
 	 */
 	public function prepare($sql)
 	{
 		$this->lasterror = 'prepare() not implemented for this driver.';
 		return false;
 	}
-
-
 }

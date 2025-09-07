@@ -1318,7 +1318,6 @@ class DoliDBMysqli extends DoliDB
 	
 		return $stmt;
 	}
-
 }
 
 if (class_exists('mysqli')) {
