@@ -270,11 +270,6 @@ class Societe extends CommonObject
 	);
 
 	/**
-	 * @var int Entity
-	 */
-	public $entity;
-
-	/**
 	 * Thirdparty name
 	 * @var ?string
 	 * @deprecated Use $name instead

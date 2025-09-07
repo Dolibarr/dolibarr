@@ -68,11 +68,6 @@ class EcmFiles extends CommonObject
 	public $share;
 
 	/**
-	 * @var int Entity
-	 */
-	public $entity;
-
-	/**
 	 * @var string filename, Note: Into ecm database record, the entry never ends with .noexe
 	 */
 	public $filename;

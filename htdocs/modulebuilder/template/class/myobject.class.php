@@ -160,11 +160,6 @@ class MyObject extends CommonObject
 	public $ref;
 
 	/**
-	 * @var int Entity
-	 */
-	public $entity;
-
-	/**
 	 * @var string label
 	 */
 	public $label;

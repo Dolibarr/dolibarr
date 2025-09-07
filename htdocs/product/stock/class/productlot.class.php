@@ -169,11 +169,6 @@ class Productlot extends CommonObject
 	);
 
 	/**
-	 * @var int Entity
-	 */
-	public $entity;
-
-	/**
 	 * @var int Product ID
 	 */
 	public $fk_product;

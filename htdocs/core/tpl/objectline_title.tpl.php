@@ -8,6 +8,7 @@
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
  * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2025       Lenin Rivas			<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,16 +118,22 @@ if (in_array($object->element, array('propal', 'commande', 'facture', 'supplier_
 }
 print '</th>';
 
-// Price HT
+// Price HT / excl tax
 print '<th class="linecoluht right nowraponall">'.$langs->trans('PriceUHT').'</th>';
 
-// Multicurrency
+// Multicurrency HT / excl tax
 if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
 	print '<th class="linecoluht_currency right" style="width: 80px">'.$langs->trans('PriceUTTC').' ('.$langs->getCurrencySymbol($this->multicurrency_code).')</th>';
 }
 
+// Price TTC / incl tax
 if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
-	print '<th class="right nowraponall">'.$langs->trans('PriceUTTC').'</th>';
+	print '<th class="linecoluttc right nowraponall">'.$langs->trans('PriceUTTC').'</th>';
+}
+
+// Multicurrency TTC / incl tax
+if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
+	print '<th class="linecoluttc_currency right " style="width: 80px">'.$langs->trans('PriceUTTCCurrency', $this->multicurrency_code).'</th>';
 }
 
 // Qty

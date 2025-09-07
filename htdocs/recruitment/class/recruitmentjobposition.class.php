@@ -139,10 +139,6 @@ class RecruitmentJobPosition extends CommonObject
 	 * @var string ref
 	 */
 	public $ref;
-	/**
-	 * @var int
-	 */
-	public $entity;
 
 	/**
 	 * @var string label

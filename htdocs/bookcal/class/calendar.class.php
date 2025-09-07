@@ -125,10 +125,6 @@ class Calendar extends CommonObject
 	 */
 	public $rowid;
 	/**
-	 * @var int
-	 */
-	public $entity;
-	/**
 	 * @var string
 	 */
 	public $ref;

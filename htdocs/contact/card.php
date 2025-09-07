@@ -378,7 +378,7 @@ if (empty($reshook)) {
 			$object->fetchRoles();
 
 			// Photo save
-			$dir = $conf->societe->multidir_output[$object->entity]."/contact/".$object->id."/photos";
+			$dir = $conf->societe->multidir_output[$object->entity ?? $conf->entity]."/contact/".$object->id."/photos";
 			$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
 			if (GETPOST('deletephoto') && $object->photo) {
 				$fileimg = $dir.'/'.$object->photo;
