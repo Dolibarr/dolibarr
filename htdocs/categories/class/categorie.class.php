@@ -180,7 +180,7 @@ class Categorie extends CommonObject
 	 */
 	public static $MAP_TYPE_TITLE_AREA = array(
 		'product'				=> 'Products',
-		'customer'				=> 'Customers',
+		'customer'				=> 'ProspectsOrCustomers',
 		'supplier'				=> 'Suppliers',
 		'member'				=> 'Members',
 		'contact'				=> 'Contacts',
