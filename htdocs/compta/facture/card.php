@@ -1561,7 +1561,11 @@ if (empty($reshook)) {
 		}
 
 		// Standard or deposit invoice, not from a Predefined template invoice
-		if ((GETPOST('type') == Facture::TYPE_STANDARD || GETPOST('type') == Facture::TYPE_DEPOSIT || GETPOST('type') == Facture::TYPE_PROFORMA || (GETPOST('type') == Facture::TYPE_SITUATION && GETPOSTINT('situations') < 0)) && GETPOST('fac_rec') <= 0) {
+		if ((GETPOST('type') == Facture::TYPE_STANDARD
+				|| GETPOST('type') == Facture::TYPE_DEPOSIT
+				|| GETPOST('type') == Facture::TYPE_PROFORMA
+				|| (GETPOST('type') == Facture::TYPE_SITUATION && GETPOSTINT('situations') <= 0))
+			&& GETPOST('fac_rec') <= 0) {
 			$typeamount = GETPOST('typedeposit', 'aZ09');
 			$valuestandardinvoice = price2num(str_replace('%', '', GETPOST('valuestandardinvoice', 'alpha')), 'MU');
 			$valuedeposit = price2num(str_replace('%', '', GETPOST('valuedeposit', 'alpha')), 'MU');

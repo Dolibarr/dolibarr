@@ -527,6 +527,13 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 
 
 	// TopMenuDisableImages
+	$listoftopmenumodes = array(
+		array('id' => 0, 'label' => $langs->transnoentitiesnoconv("IconAndText"), 'data-html' => $langs->transnoentitiesnoconv("IconAndText").' <span class="opacitymedium">('.$langs->trans("Default").')</span>'),
+		array('id' => 1, 'label' => $langs->transnoentitiesnoconv("TextOnly"), 'data-html' => $langs->transnoentitiesnoconv("TextOnly")),
+		array('id' => 2, 'label' => $langs->transnoentitiesnoconv("IconOnlyAllTextsOnHover"), 'data-html' => $langs->transnoentitiesnoconv("IconOnlyAllTextsOnHover")),
+		array('id' => 3, 'label' => $langs->transnoentitiesnoconv("IconOnlyTextOnHover"), 'data-html' => $langs->transnoentitiesnoconv("IconOnlyTextOnHover")),
+		array('id' => 4, 'label' => $langs->transnoentitiesnoconv("IconOnly"), 'data-html' => $langs->transnoentitiesnoconv("IconOnly")),
+	);
 	if ($foruserprofile) {
 		/*
 		 print '<tr class="oddeven">';
@@ -549,13 +556,6 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		 if ($edit) print '<br>('.$langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis").')';
 		 print '</td>';*/
 	} else {
-		$listoftopmenumodes = array(
-			$langs->transnoentitiesnoconv("IconAndText"),
-			$langs->transnoentitiesnoconv("TextOnly"),
-			$langs->transnoentitiesnoconv("IconOnlyAllTextsOnHover"),
-			$langs->transnoentitiesnoconv("IconOnlyTextOnHover"),
-			$langs->transnoentitiesnoconv("IconOnly"),
-		);
 		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans("TopMenuDisableImages").'</td>';
 		print '<td colspan="'.($colspan - 1).'">';

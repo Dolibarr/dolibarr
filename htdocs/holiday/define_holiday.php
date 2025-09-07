@@ -3,7 +3,7 @@
  * Copyright (C) 2011		Dimitri Mouillard			<dmouillard@teclib.com>
  * Copyright (C) 2013		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2016		Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
