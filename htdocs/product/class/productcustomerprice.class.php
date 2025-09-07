@@ -62,11 +62,6 @@ class ProductCustomerPrice extends CommonObject
 	public $table_element = 'product_customer_price';
 
 	/**
-	 * @var int Entity
-	 */
-	public $entity;
-
-	/**
 	 * @var string
 	 */
 	public $datec = '';

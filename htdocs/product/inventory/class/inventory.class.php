@@ -118,11 +118,6 @@ class Inventory extends CommonObject
 	public $ref;
 
 	/**
-	 * @var int Entity
-	 */
-	public $entity;
-
-	/**
 	 * @var int ID
 	 */
 	public $fk_warehouse;
