@@ -1331,7 +1331,6 @@ class DoliDBMysqli extends DoliDB
 		}
 	
 		$stmt = $this->db->prepare($sql);
-		
 		if ($stmt === false) {
 			$this->lasterror = $this->db->error;
 			$this->lastqueryerror = $sql;

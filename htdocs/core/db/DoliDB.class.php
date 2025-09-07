@@ -467,7 +467,6 @@ abstract class DoliDB implements Database
 	 *
 	 * @param string $sql SQL query to prepare
 	 * @return mixed Driver-specific prepared statement object or false on failure
-	 * @SuppressWarnings(PHPMD.UnusedFormalParameter)
 	 */
 	public function prepare($sql)
 	{
