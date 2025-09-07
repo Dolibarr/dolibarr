@@ -1307,14 +1307,13 @@ class DoliDBMysqli extends DoliDB
 			$this->lasterror = 'Not connected to database';
 			return false;
 		}
-	
 		$stmt = $this->db->prepare($sql);
 		if ($stmt === false) {
 			$this->lasterror = $this->db->error;
 			$this->lastqueryerror = $sql;
 			return false;
 		}
-	
+
 		return $stmt;
 	}
 }
