@@ -118,19 +118,20 @@ if (in_array($object->element, array('propal', 'commande', 'facture', 'supplier_
 }
 print '</th>';
 
-// Price HT
+// Price HT / excl tax
 print '<th class="linecoluht right nowraponall">'.$langs->trans('PriceUHT').'</th>';
 
-// Multicurrency HT
+// Multicurrency HT / excl tax
 if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency) {
 	print '<th class="linecoluht_currency right" style="width: 80px">'.$langs->trans('PriceUTTC').' ('.$langs->getCurrencySymbol($this->multicurrency_code).')</th>';
 }
 
+// Price TTC / incl tax
 if (!empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
 	print '<th class="linecoluttc right nowraponall">'.$langs->trans('PriceUTTC').'</th>';
 }
 
-// Multicurrency TTC
+// Multicurrency TTC / incl tax
 if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
 	print '<th class="linecoluttc_currency right " style="width: 80px">'.$langs->trans('PriceUTTCCurrency', $this->multicurrency_code).'</th>';
 }
