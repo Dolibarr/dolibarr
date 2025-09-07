@@ -470,8 +470,7 @@ abstract class DoliDB implements Database
 	 */
 	public function prepare($sql)
 	{
-		$sql;// Avoid "unused variable" warning
-		$this->lasterror = 'prepare() not implemented for this driver.';
+		$this->lasterror = 'prepare() not implemented for this driver. Failed to prepare '.$sql;
 
 		return false;
 	}
