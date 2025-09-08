@@ -181,7 +181,6 @@ StateOrigin=State|Province of origin
 Nature=Nature of product (raw/manufactured)
 NatureOfProductShort=Nature of product
 NatureOfProductDesc=Raw material or manufactured product
-ShortLabel=Short label
 Unit=Unit
 p=u.
 set=set
