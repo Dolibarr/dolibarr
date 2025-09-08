@@ -156,7 +156,7 @@ class AdherentType extends CommonObject
 	public $duration_unit;
 
 	/**
-	 * @var null|'0'|'1' Subscription required (0 or 1) default '1' in DB, null until value is fetched
+	 * @var int<0,1> Subscription required (0 or 1)
 	 */
 	public $subscription;
 
@@ -516,11 +516,9 @@ class AdherentType extends CommonObject
 			}
 
 			// Actions on extra fields
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 			if (!$error && !$notrigger) {
@@ -901,14 +899,12 @@ class AdherentType extends CommonObject
 	public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		$result = '';
-		$option = '';
 
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
 		$params = [
 			'id' => $this->id,
 			'objecttype' => $this->element,
-			'option' => $option,
 			'nofetch' => 1,
 		];
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
@@ -920,16 +916,15 @@ class AdherentType extends CommonObject
 		}
 
 		$url = DOL_URL_ROOT.'/adherents/type.php?rowid='.((int) $this->id);
-		if ($option != 'nolink') {
-			// Add param to save lastsearch_values or not
-			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
-				$add_save_lastsearch_values = 1;
-			}
-			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
-			}
+		// Add param to save lastsearch_values or not
+		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+		if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			$add_save_lastsearch_values = 1;
 		}
+		if ($add_save_lastsearch_values) {
+			$url .= '&save_lastsearch_values=1';
+		}
+
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 		$linkstart .= $dataparams.' class="'.$classfortooltip.'">';
@@ -1167,7 +1162,7 @@ class AdherentType extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">' . $this->getNomUrl() . '</span>';
 
 		//$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 
@@ -1176,20 +1171,14 @@ class AdherentType extends CommonObject
 		} else {
 			$return .= '<span class="right">&nbsp;</span>';
 		}
-		if (property_exists($this, 'vote')) {
-			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("VoteAllowed").' : '.yn($this->vote).'</span>';
+		$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("VoteAllowed").' : '.yn($this->vote).'</span>';
+		if (is_null($this->amount) || $this->amount === '') {
+			$return .= '<br>';
+		} else {
+			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Amount").'</span>';
+			$return .= '<span class="amount"> : '.price($this->amount).'</span>';
 		}
-		if (property_exists($this, 'amount')) {
-			if (is_null($this->amount) || $this->amount === '') {
-				$return .= '<br>';
-			} else {
-				$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Amount").'</span>';
-				$return .= '<span class="amount"> : '.price($this->amount).'</span>';
-			}
-		}
-		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
-		}
+		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
