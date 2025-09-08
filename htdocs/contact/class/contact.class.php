@@ -361,7 +361,7 @@ class Contact extends CommonObject
 	public $fk_prospectlevel;
 
 	/**
-	 * @var int
+	 * @var null|int Is null until fetched or set
 	 */
 	public $stcomm_id;
 
