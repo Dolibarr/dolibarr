@@ -4,7 +4,7 @@
  * Copyright (C) 2013-2021  Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014       Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015       Ari Elbaz (elarifr)  <github@accedinfo.com>
- * Copyright (C) 2018-2024  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -889,7 +889,7 @@ class AccountingAccount extends CommonObject
 						return -1;
 					}
 
-					$code_l = $accountdeposittoventilated->ref;
+					$code_l = (string) $accountdeposittoventilated->ref;
 					$code_p = '';
 					$code_t = '';
 					$suggestedid = $accountdeposittoventilated->rowid;
@@ -908,7 +908,7 @@ class AccountingAccount extends CommonObject
 						} elseif ($type == 'supplier') {
 							$accountdeposittoventilated->fetch(0, getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT'), 1);
 						}
-						$code_l = $accountdeposittoventilated->ref;
+						$code_l = (string) $accountdeposittoventilated->ref;
 						$code_p = '';
 						$code_t = '';
 						$suggestedid = $accountdeposittoventilated->rowid;
