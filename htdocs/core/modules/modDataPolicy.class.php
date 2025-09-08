@@ -117,14 +117,6 @@ class modDataPolicy extends DolibarrModules
 			array('DATAPOLICY_RECRUITMENT_CANDIDATURE', 'chaine', '', $langs->trans('NUMBER_MONTH_BEFORE_DELETION'), 0),
 		);
 
-		//$country = explode(":", getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY'));
-
-		// Some keys to add into the overwriting translation tables
-		/* $this->overwrite_translation = array(
-		  'en_US:ParentCompany'=>'Parent company or reseller',
-		  'fr_FR:ParentCompany'=>'Maison mère ou revendeur'
-		  ) */
-
 		if (!isModEnabled('datapolicy')) {
 			$conf->datapolicy = new stdClass();
 			$conf->datapolicy->enabled = 0;

@@ -1518,7 +1518,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				print $langs->trans("PaymentConditions");
 				print '</td>';
 				print '<td>';
-				print $form->getSelectConditionsPaiements($projectstatic->thirdparty->cond_reglement_id, 'condidproject');
+				print $form->getSelectConditionsPaiements((int) $projectstatic->thirdparty->cond_reglement_id, 'condidproject');
 				print '</td>';
 				print '</tr>';
 				/*print '<tr>';
@@ -1731,7 +1731,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				dol_print_error($db);
 			}
 
-			if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+			if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 				$page = 0;
 				$offset = 0;
 			}
@@ -1946,7 +1946,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		// Date
 		if (!empty($arrayfields['t.element_date']['checked'])) {
 			print '<td class="liste_titre left">';
-			print '<div class="nowrapfordate">';
+			print '<div class="nowrapfordate paddingright">';
 			print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 			print '</div>';
 			print '<div class="nowrapfordate">';
@@ -1966,19 +1966,19 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 		if (!empty($allprojectforuser)) {
 			if (!empty($arrayfields['p.project_ref']['checked'])) {
-				print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="$search_project_ref" value="' . dol_escape_htmltag($search_project_ref) . '"></td>';
+				print '<td class="liste_titre"><input type="text" class="flat maxwidth125" name="$search_project_ref" value="' . dol_escape_htmltag($search_project_ref) . '"></td>';
 			}
 			if (!empty($arrayfields['p.project_label']['checked'])) {
-				print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="$search_project_label" value="' . dol_escape_htmltag($search_project_label) . '"></td>';
+				print '<td class="liste_titre"><input type="text" class="flat maxwidth125" name="$search_project_label" value="' . dol_escape_htmltag($search_project_label) . '"></td>';
 			}
 		}
 		// Task
 		if ((empty($id) && empty($ref)) || !empty($projectidforalltimes)) {	// Not a dedicated task
 			if (!empty($arrayfields['t.element_ref']['checked'])) {
-				print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'"></td>';
+				print '<td class="liste_titre"><input type="text" class="flat maxwidth125" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'"></td>';
 			}
 			if (!empty($arrayfields['t.element_label']['checked'])) {
-				print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
+				print '<td class="liste_titre"><input type="text" class="flat maxwidth125" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
 			}
 		}
 		// Author
@@ -2344,7 +2344,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 
 			// User
 			if (!empty($arrayfields['author']['checked'])) {
-				print '<td class="tdoverflowmax100">';
+				print '<td class="tdoverflowmax125">';
 				if ($action == 'editline' && GETPOSTINT('lineid') == $task_time->rowid) {
 					// Here $object is task. TODO Add a cache
 					if (empty($object->id)) {
@@ -2380,7 +2380,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			if (!empty($arrayfields['t.note']['checked'])) {
 				if ($action == 'editline' && GETPOSTINT('lineid') == $task_time->rowid) {
 					print '<td class="small">';
-					print '<textarea name="timespent_note_line" width="95%" rows="' . ROWS_2 . '">' . dol_escape_htmltag($task_time->note, 0, 1) . '</textarea>';
+					print '<textarea name="timespent_note_line" class="centpercentimp" rows="' . ROWS_2 . '">' . dol_escape_htmltag($task_time->note, 0, 1) . '</textarea>';
 					print '</td>';
 				} else {
 					print '<td class="small tdoverflowmax150 classfortooltip" title="'.dol_string_onlythesehtmltags(dol_htmlentitiesbr($task_time->note)).'">';
@@ -2681,7 +2681,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if (!empty($arrayfields['t.note']['checked'])) {
 					print '<td class="tdoverflowmax300">';
 					if ($action == 'splitline' && GETPOSTINT('lineid') == $task_time->rowid) {
-						print '<textarea name="timespent_note_line" width="95%" rows="' . ROWS_2 . '">' . dol_escape_htmltag($task_time->note, 0, 1) . '</textarea>';
+						print '<textarea name="timespent_note_line" class="centpercentimp" rows="' . ROWS_2 . '">' . dol_escape_htmltag($task_time->note, 0, 1) . '</textarea>';
 					} else {
 						print dol_nl2br($task_time->note);
 					}
@@ -2846,7 +2846,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 				if (!empty($arrayfields['t.note']['checked'])) {
 					print '<td class="small tdoverflowmax300"">';
 					if ($action == 'splitline' && GETPOSTINT('lineid') == $task_time->rowid) {
-						print '<textarea name="timespent_note_line_2" width="95%" rows="' . ROWS_2 . '">' . dol_escape_htmltag($task_time->note, 0, 1) . '</textarea>';
+						print '<textarea name="timespent_note_line_2" class="centpercentimp" rows="' . ROWS_2 . '">' . dol_escape_htmltag($task_time->note, 0, 1) . '</textarea>';
 					} else {
 						print dol_nl2br($task_time->note);
 					}
@@ -2879,6 +2879,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print '<span class="amount nowraponall">';
 					$value = 0;
 					print price($value, 1, $langs, 1, -1, -1, $conf->currency);
+					// Note: On the transverse project view, we also have a warning if value is zero here
 					print '</span>';
 					print '</td>';
 				}

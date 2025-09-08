@@ -64,7 +64,7 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bookkeepinglist';
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php'));
 
 // Search Parameters
 $search_mvt_num = GETPOST('search_mvt_num', 'alpha');
@@ -785,7 +785,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -1306,6 +1306,7 @@ while ($i < min($num, $limit)) {
 	// Document ref
 	$modulepart = '';	// may be used by include*.tpl.php
 	if (!empty($arrayfields['t.doc_ref']['checked'])) {
+		$documentlink = '';
 		$objectstatic = null;
 
 		if ($line->doc_type === 'customer_invoice') {
@@ -1317,7 +1318,7 @@ while ($i < min($num, $limit)) {
 			//$modulepart = 'facture';
 
 			$filename = dol_sanitizeFileName($line->doc_ref);
-			$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
+			$filedir = $conf->invoice->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
 			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
 		} elseif ($line->doc_type === 'supplier_invoice') {

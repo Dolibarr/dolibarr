@@ -2,7 +2,7 @@
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2024	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -531,6 +531,7 @@ if ($id > 0 || !empty($ref)) {
 					$contactstatic->lastname = $tab[$i]['lastname'];
 					$contactstatic->firstname = $tab[$i]['firstname'];
 					$contactstatic->email = $tab[$i]['email'];
+					$contactstatic->status = $tab[$i]['statuscontact'];
 					$contactstatic->statut = $tab[$i]['statuscontact'];
 					print $contactstatic->getNomUrl(1);
 				}

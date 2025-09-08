@@ -1952,19 +1952,34 @@ select.flat.selectlimit {
 	font-weight: bold;
 	white-space: nowrap;
 }
+.amountpaymentcompletenoresize {
+	color: var(--amountpaymentcomplete);
+	white-space: nowrap;
+}
 .amountremaintopay {
 	color: var(--amountremaintopaycolor);
 	font-weight: bold;
+	white-space: nowrap;
+}
+.amountremaintopaynoresize {
+	color: var(--amountremaintopaycolor);
 	white-space: nowrap;
 }
 .amountremaintopayback {
 	font-weight: bold;
 	white-space: nowrap;
 }
+.amountremaintopaybacknoresize {
+	white-space: nowrap;
+}
 .amountpaymentneutral {
 	color: var(--amountremaintopaybackcolor);
 	font-weight: bold;
 	font-size: 1.4em;
+	white-space: nowrap;
+}
+.amountpaymentneutralnoresize {
+	color: var(--amountremaintopaybackcolor);
 	white-space: nowrap;
 }
 
@@ -5038,10 +5053,11 @@ tr.liste_titre_topborder td {
 	background: transparent;
 }
 tr.liste_titre:last-child th.liste_titre, tr.liste_titre:last-child th.liste_titre_sel, tr.liste_titre td.liste_titre, tr.liste_titre td.liste_titre_sel, form.liste_titre div.tagtd {				/* For last line of table headers only */
-	/* border-bottom: 1px solid var(--colortopbordertitle1); */
 	border-bottom: none;
 }
-tr.liste_titre_filter th.liste_titre:not(.center) { text-align: unset; }
+tr.liste_titre_filter th.liste_titre:not(.center), tr.liste_titre_filter th.liste_titre_sel:not(.center) {
+	text-align: unset;
+}
 
 /*
 div.liste_titre {
@@ -6011,7 +6027,7 @@ div.visible {
 }
 
 div.hidden, div.hiddenforpopup, header.hidden, tr.hidden, td.hidden,
-img.hidden, span.hidden, br.hidden, div.showifmore {
+img.hidden, span.hidden, br.hidden, div.showifmore, input.hidden {
 	display: none;
 }
 

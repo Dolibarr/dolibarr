@@ -319,8 +319,9 @@ a.commonlink { color: var(--colortextlink) !important; text-decoration: none; }
 th.liste_titre a div div:hover, th.liste_titre_sel a div div:hover { text-decoration: underline; }
 tr.liste_titre th.liste_titre_sel:not(.maxwidthsearch), tr.liste_titre td.liste_titre_sel:not(.maxwidthsearch),
 tr.liste_titre th.liste_titre:not(.maxwidthsearch), tr.liste_titre td.liste_titre:not(.maxwidthsearch) { opacity: 0.8; }
-/* th.liste_titre_sel a, th.liste_titre a, td.liste_titre_sel a, td.liste_titre a { color: #766; } */
-tr.liste_titre_filter th.liste_titre:not(.center) { text-align: unset; }
+tr.liste_titre_filter th.liste_titre:not(.center), tr.liste_titre_filter th.liste_titre_sel:not(.center) {
+	text-align: unset;
+}
 .liste_titre.trheight5em {
 	height: 4em !important;
 }
@@ -746,6 +747,9 @@ input.pageplusone {
 }
 .fontsizeunset {
 	font-size: unset !important;
+}
+.unsetcolor {
+	color: unset !important;
 }
 .vmirror {
 	transform: scale(1, -1);
@@ -1802,10 +1806,18 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 	font-size: 1.7em;
 	white-space: nowrap;
 }
+.amountpaymentcompletenoresize {
+	color: var(--amountpaymentcomplete);
+	white-space: nowrap;
+}
 .amountremaintopay {
 	color: var(--amountremaintopaycolor);
 	font-weight: bold;
 	font-size: 1.7em;
+	white-space: nowrap;
+}
+.amountremaintopaynoresize {
+	color: var(--amountremaintopaycolor);
 	white-space: nowrap;
 }
 .amountremaintopayback {
@@ -1814,9 +1826,16 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 	font-size: 1.7em;
 	white-space: nowrap;
 }
+.amountremaintopaybacknoresize {
+	color: var(--amountremaintopaybackcolor);
+	white-space: nowrap;
+}
 .amountpaymentneutral {
 	font-weight: bold;
 	font-size: 1.7em;
+	white-space: nowrap;
+}
+.amountpaymentneutralnoresize {
 	white-space: nowrap;
 }
 
@@ -2932,6 +2951,7 @@ img.photoref, div.photoref {
 	width: 80px;
 	object-fit: contain;
 }
+
 img.photokanban, div.photokanban {
 	padding: 0;
 	border: none;
@@ -4185,10 +4205,6 @@ span.tabspan {
 tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 {
 	border: 0px;
-}
-
-.unsetcolor {
-	color: unset !important;
 }
 
 .smallpaddingimp {
@@ -5669,11 +5685,11 @@ div.titre {
 div.titre.small {
 	font-size: 1em;
 }
+div.fiche > table.table-fiche-title:first-of-type div, div.fiche > form > table.table-fiche-title:first-of-type div {
+	font-size: 1.1em;
+}
 div.fiche > table.table-fiche-title:first-of-type div {
 	color: var(--colortexttitlenotab);
-	font-size: 1.1em;
-	/* text-transform: uppercase; */
-	/* font-weight: 600; */
 }
 div.titre {
 	color: var(--colortexttitlenotab);
@@ -5849,6 +5865,9 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 }
 .ui-dialog .ui-dialog-buttonpane {
 	padding: .5em 1em .3em .4em;
+}
+.ui-dialog .ui-dialog-content, .ui-dialog .ui-dialog-titlebar.ui-widget-header {
+	padding-left: 1em !important;
 }
 
 
@@ -6081,7 +6100,7 @@ div.visible {
 }
 
 div.hidden, div.hiddenforpopup, header.hidden, tr.hidden, td.hidden,
-img.hidden, span.hidden, br.hidden, div.showifmore {
+img.hidden, span.hidden, br.hidden, div.showifmore, input.hidden {
 	display: none;
 }
 .unvisible {

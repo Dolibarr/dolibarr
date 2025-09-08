@@ -231,6 +231,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."facture as f ";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."facturedet as d ON d.fk_facture = f.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
 $sql .= " WHERE f.fk_statut NOT IN (".$db->sanitize(implode(', ', $invoice_status_except_list)).")";
+
 $sql .= " AND f.entity IN (".getEntity('invoice').") ";
 if (!empty($startdate)) {
 	$sql .= " AND f.datef >= '".$db->idate($startdate)."'";
@@ -242,6 +243,13 @@ if ($search_ref) {
 	$sql .= natural_search('f.ref', $search_ref);
 }
 $sql .= " AND d.buy_price_ht IS NOT NULL";
+
+
+$parameters = array();
+$hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action);
+$sql .= $hookmanager->resPrint;
+
+
 $sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
@@ -249,7 +257,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	dol_syslog(__FILE__, LOG_DEBUG);
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}

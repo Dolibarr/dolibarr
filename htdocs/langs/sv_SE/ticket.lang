@@ -57,7 +57,7 @@ Assigned=Tilldelad
 NeedMoreInformation=Väntar på feedback från reporter
 NeedMoreInformationShort=Väntar på feedback
 Waiting=Väntar
-SolvedClosed=Löst
+SolvedClosed=Stängd
 Deleted=Raderade
 # Dict
 Severity=Allvarlighet
@@ -72,8 +72,10 @@ TicketPublicAccess=Ett offentligt gränssnitt som kräver ingen identifiering fi
 TicketSetupDictionaries=Typ av ärende, svårighetsgrad och analytiska koder är konfigurerbara från ordböcker
 TicketParamModule=Inställning av modulvariabler
 TicketParamMail=E-postinställningar
-TicketEmailNotificationFrom=Avsändarens e-postadress för aviseringar om ärenden (skapande av ärenden eller uppdateringsmeddelanden)
-TicketEmailNotificationFromHelp=Avsändarens e-postadress som ska användas för att skicka e-postmeddelanden med aviseringar om att skapa ärenden eller lägga till meddelanden. Till exempel noreply@example.com
+TicketEmailNotificationFrom=E-mail of sender allowed to send technical notification about tickets ("From" email for creation of ticket or update of messages)
+TicketEmailNotificationFromHelp=Sender e-mail to use as the From to send the notification emails for tickets creation or message addition. For example: noreply@example.com or robot@example.com
+TicketEmailNotificationReplyTo=E-mail that must appears to recipient as the sender of the notification ("Reply-To" email for creation of ticket or update of messages)
+TicketEmailNotificationReplyToHelp=Sender e-mail to use as the Reply-To to send the notification emails for tickets creation or message addition. If defined, this is the email that the recipient will reply to instead of the From. For example: support@example.com
 TicketEmailNotificationTo=Meddela skapande av ärendet till denna e-postadress
 TicketEmailNotificationToHelp=Om den finns kommer den här e-postadressen att meddelas om ett ärende skapas (utöver eventuella andra standardmottagare).
 TicketNewEmailBodyLabel=Textmeddelande skickat efter att du skapat en ärende
@@ -115,7 +117,7 @@ TicketsLimitViewAssignedOnlyHelp=Endast ärenden som tilldelats den nuvarande an
 TicketsActivatePublicInterface=Aktivera det offentliga gränssnittet
 TicketsActivatePublicInterfaceHelp=Offentligt gränssnitt tillåter alla besökare att skapa ärenden.
 TicketsAutoAssignTicket=Tilldela automatiskt användaren som skapade ärendet
-TicketsAutoAssignTicketHelp=När man skapar ett ärende kan användaren automatiskt tilldelas ärendet (exempel: 0=Tilldelas aldrig automatiskt ärendet, 1=Tilldelas automatiskt ärendet om ingen tilldelas någon, 2=Tilldelas automatiskt ärendet även om någon har definierats).
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket<br>Examples: 0=Never automatically assigned to the ticket, 1=Automatically assigned to the ticket if no one is assigned, 2=Automatically assigned to the ticket even if someone was defined
 TicketAutoChangeStatusOnAnswer=Tilldela automatiskt en status när du besvarar ett ärende
 TicketAutoChangeStatusOnAnswerHelp=När en användare svarar på ett ärende kommer statusen automatiskt att tillämpas på ärendet.
 TicketNumberingModules=Ärendenummermodul
@@ -156,8 +158,6 @@ TicketViewNonClosedOnly=Visa bara öppna ärenden
 TicketStatByStatus=Ärendeer efter status
 OrderByDateAsc=Sortera efter stigande datum
 OrderByDateDesc=Sortera efter fallande datum
-ShowAsConversation=Visa som konversationslista
-MessageListViewType=Visa som tabellista
 ConfirmMassTicketClosingSendEmail=Skicka e-post automatiskt när du stänger ärende
 ConfirmMassTicketClosingSendEmailQuestion=Vill du meddela tredje part när du stänger dessa ärenden?
 # Ticket card

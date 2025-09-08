@@ -928,7 +928,7 @@ if ($action == 'create') {	// aaa
 		}
 
 		if ($action != 'edit' && $action != 'edittxt' && $action != 'edithtml') {
-			print dol_get_fiche_head($head, 'card', $langs->trans("Mailing"), -1, 'email');
+			print dol_get_fiche_head($head, 'card', $langs->trans("Mailing"), -1, $object->picto);
 
 			// View mode mailing
 			if ($action == 'sendall') {
@@ -1351,7 +1351,7 @@ if ($action == 'create') {	// aaa
 			 * Edition mode mailing (CKeditor or HTML source)
 			 */
 
-			print dol_get_fiche_head($head, 'card', $langs->trans("Mailing"), -1, 'email');
+			print dol_get_fiche_head($head, 'card', $langs->trans("Mailing"), -1, $object->picto);
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 

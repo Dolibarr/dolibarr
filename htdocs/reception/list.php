@@ -276,6 +276,8 @@ if (empty($reshook)) {
 				$mode_reglement_id = 0;
 				$fk_account = 0;
 				$transport_mode_id = 0;
+				$multicurrency_code = null;
+
 				if (!empty($rcp->cond_reglement_id)) {
 					$cond_reglement_id = $rcp->cond_reglement_id;
 				}
@@ -288,11 +290,15 @@ if (empty($reshook)) {
 				if (!empty($rcp->transport_mode_id)) {
 					$transport_mode_id = $rcp->transport_mode_id;
 				}
+				if (!empty($rcp->multicurrency_code)) {
+					$multicurrency_code = $rcp->multicurrency_code;
+				}
 
 				if (empty($cond_reglement_id)
 					|| empty($mode_reglement_id)
 					|| empty($fk_account)
 					|| empty($transport_mode_id)
+					|| empty($multicurrency_code)
 				) {
 					if (!isset($rcp->supplier_order)) {
 						$rcp->fetch_origin();
@@ -313,6 +319,9 @@ if (empty($reshook)) {
 						if (empty($transport_mode_id) && !empty($supplierOrder->transport_mode_id)) {
 							$transport_mode_id = $supplierOrder->transport_mode_id;
 						}
+						if (empty($multicurrency_code) && !empty($supplierOrder->multicurrency_code)) {
+							$multicurrency_code = $supplierOrder->multicurrency_code;
+						}
 					}
 
 					// try get from third party of reception
@@ -330,6 +339,9 @@ if (empty($reshook)) {
 						if (empty($transport_mode_id) && !empty($soc->transport_mode_id)) {
 							$transport_mode_id = $soc->transport_mode_id;
 						}
+						if (empty($multicurrency_code) && !empty($soc->multicurrency_code)) {
+							$multicurrency_code = $soc->multicurrency_code;
+						}
 					}
 				}
 
@@ -340,6 +352,7 @@ if (empty($reshook)) {
 				$objecttmp->mode_reglement_id = $mode_reglement_id;
 				$objecttmp->fk_account = $fk_account;
 				$objecttmp->transport_mode_id = $transport_mode_id;
+				$objecttmp->multicurrency_code = $multicurrency_code;
 
 				// if the VAT reverse-charge is activated by default in supplier card to resume the information
 				if (is_object($soc)) {
@@ -397,6 +410,13 @@ if (empty($reshook)) {
 			}
 
 			if ($objecttmp->id > 0) {
+				if (!isset($rcp->origin_object)) {
+					$rcp->fetch_origin();
+				}
+				if ($rcp->origin_object->multicurrency_code != $objecttmp->multicurrency_code) {
+					$errors[] = $rcp->ref." : ".$langs->trans("ReceptionMustBeInTheSameCurrencyThanOther");
+				}
+
 				$res = $objecttmp->add_object_linked($objecttmp->origin, $id_reception);
 
 				if ($res == 0) {
@@ -506,7 +526,7 @@ if (empty($reshook)) {
 								array(),
 								null,
 								$lines[$i]->rowid,
-								0,
+								$lines[$i]->multicurrency_subprice,
 								$lines[$i]->ref_supplier
 							);
 
@@ -717,7 +737,11 @@ $sql .= $hookmanager->resPrint;
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object); // Note that $action and $object may have been modified by hook
-$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+if (empty($reshook)) {
+	$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+} else {
+	$sql = $hookmanager->resPrint;
+}
 
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
@@ -732,7 +756,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}

@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
 * This program is free software; you can redistribute it and/or modify
@@ -174,7 +174,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= count($listoffiles);
 			//$texte.=$nbofiles?'</a>':'';
-			$texte .= '</b>';
+			$texte .= '</b><br>';
 		}
 
 		if ($nbofiles) {
@@ -214,7 +214,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 			}
 		}
 
-		$texte .= '<br><br>';
+		$texte .= '<br>';
 		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
@@ -298,7 +298,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 
 			$object->fetch_thirdparty();
 
-			$dir = $conf->propal->multidir_output[$object->entity];
+			$dir = $conf->propal->multidir_output[$object->entity ?? $conf->entity];
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;

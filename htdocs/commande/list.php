@@ -1057,7 +1057,12 @@ if ($search_status != '') {
 	}
 }
 if ($search_option == 'late') {
-	$sql .= " AND c.date_commande < '".$db->idate(dol_now() - $conf->order->client->warning_delay)."'";
+	// Use delivery date if set and not disabled, otherwise use order date.
+	if (!getDolGlobalString('ORDER_DISABLE_DELIVERY_DATE')) {
+		$sql .= " AND ((c.date_livraison IS NOT NULL AND c.date_livraison < '".$db->idate(dol_now() - $conf->order->client->warning_delay)."') OR (c.date_livraison IS NULL AND c.date_commande < '".$db->idate(dol_now() - $conf->order->client->warning_delay)."'))";
+	} else {
+		$sql .= " AND c.date_commande < '".$db->idate(dol_now() - $conf->order->client->warning_delay)."'";
+	}
 }
 if ($search_datecloture_start) {
 	$sql .= " AND c.date_cloture >= '".$db->idate($search_datecloture_start)."'";
@@ -1289,7 +1294,11 @@ if ($search_all) {
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+if (empty($reshook)) {
+	$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+} else {
+	$sql = $hookmanager->resPrint;
+}
 //print $sql;
 
 // Count total nb of records
@@ -1306,7 +1315,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}

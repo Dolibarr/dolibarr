@@ -133,7 +133,12 @@ if ($action == "productinfo" && $user->hasRight('takepos', 'run')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$printer = new dolReceiptPrinter($db);
+
+		// TODO Set the profile into $this->profile (used by initPrinter). Profile not used yet.
+
+		// Init printer
 		$printer->initPrinter(getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$_SESSION["takeposterminal"]));
+
 		if ($printer->getPrintConnector()) {
 			if (!is_null($printer->printer)) {
 				$printer->printer->feed();

@@ -210,7 +210,7 @@ class Expedition extends CommonObject
 	public $weight;
 
 	/**
-	 * @var int|string Date delivery planned
+	 * @var int|string 	Date delivery planned (the real date of reception is managed only when the delivery receipt feature is on)
 	 */
 	public $date_delivery;
 
@@ -1000,7 +1000,7 @@ class Expedition extends CommonObject
 
 		// Validate
 		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET";
-		$sql .= " ref='".$this->db->escape($numref)."'";
+		$sql .= " ref = '".$this->db->escape($numref)."'";
 		$sql .= ", fk_statut = 1";
 		$sql .= ", date_valid = '".$this->db->idate($now)."'";
 		$sql .= ", fk_user_valid = ".((int) $user->id);
@@ -1483,11 +1483,12 @@ class Expedition extends CommonObject
 	/**
 	 * 	Cancel shipment.
 	 *
-	 *  @param  int  $notrigger 			Disable triggers
-	 *  @param  bool $also_update_stock  	true if the stock should be increased back (false by default)
-	 * 	@return	int							>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
+	 * 	@param	User	$user				User making action
+	 *  @param  int  	$notrigger 			Disable triggers
+	 *  @param  bool 	$also_update_stock  Use true if the stock should be increased back (false by default)
+	 * 	@return	int							Return >0 if OK, 0 if deletion done but failed to delete files, <0 if KO
 	 */
-	public function cancel($notrigger = 0, $also_update_stock = false)
+	public function cancel($user, $notrigger = 0, $also_update_stock = false)
 	{
 		global $conf, $langs, $user;
 
@@ -2627,7 +2628,10 @@ class Expedition extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET fk_statut = ".self::STATUS_CLOSED.", date_expedition = '".$this->db->escape($this->db->idate(dol_now()))."'";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET fk_statut = ".self::STATUS_CLOSED;
+		if (empty($this->date_shipping)) {		// Date of real shipment was not yet set, we force it on closing
+			$sql .= ", date_expedition = '".$this->db->escape($this->db->idate(dol_now()))."'";
+		}
 		$sql .= " WHERE rowid = ".((int) $this->id)." AND fk_statut > 0";
 
 		$resql = $this->db->query($sql);

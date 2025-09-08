@@ -38,6 +38,16 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string 	$dolibarr_main_authentication
+ * @var string	$dolibarr_api_count_always_enabled
+ */
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
@@ -64,16 +74,6 @@ if (isModEnabled('stock')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 }
 
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- *
- * @var string $dolibarr_main_authentication
- */
-
 // Load translation files required by page
 $langs->loadLangs(array('users', 'companies', 'ldap', 'admin', 'hrm', 'stocks', 'other'));
 
@@ -83,7 +83,7 @@ $mode = GETPOST('mode', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $group = GETPOSTINT("group", 3);
 $cancel = GETPOST('cancel', 'alpha');
-$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'useracard'; // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'usercard'; // To manage different context of search
 
 if (empty($id) && $action != 'add' && $action != 'create') {
 	$id = $user->id;
@@ -1965,13 +1965,20 @@ if ($action == 'create' || $action == 'adduserldap') {
 			// Credentials section
 
 			print '<br>';
+			print '<!-- credential section -->'."\n";
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder tableforfield centpercent">';
 
+			// Title line
 			print '<tr class="liste_titre"><th class="liste_titre">';
-			print img_picto('', 'security', 'class="paddingleft pictofixedwidth"').$langs->trans("Security");
+			print img_picto('', 'security', 'class="paddingleft pictofixedwidth"').$langs->trans("SecurityForConnection");
 			print '</th>';
-			print '<th class="liste_titre"></th>';
+			print '<th class="liste_titre right">';
+			if (getDolGlobalString('MAIN_SECURITY_ALLOW_TOTP') && $permissiontoeditpasswordandsee) {
+				$s = '<span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span>';
+				print dolButtonToOpenUrlInDialogPopup('openpopuptoaddcredential', $langs->trans("AddCredential"), $s, '/user/credentials.php?userid='.$object->id.'&token='.newToken());
+			}
+			print '</th>';
 			print '</tr>';
 
 			// Date login validity
@@ -1988,16 +1995,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</td>';
 			print "</tr>\n";
 
-			// Alternative email for OAUth2 login
-			if (!empty($object->email_oauth2) && preg_match('/googleoauth/', $dolibarr_main_authentication)) {
-				print '<tr class="nooddeven"><td class="titlefieldmiddle">'.$langs->trans("AlternativeEmailForOAuth2").'</td>';
-				print '<td>';
-				print dol_print_email($object->email_oauth2);
-				print '</td>';
-				print "</tr>\n";
-			}
-
-			// Password
+			// Password for LDAP or HTTP Basic
 			$valuetoshow = '';
 			if (preg_match('/ldap/', $dolibarr_main_authentication)) {
 				if (!empty($object->ldap_sid)) {
@@ -2017,25 +2015,8 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if (preg_match('/http/', $dolibarr_main_authentication)) {
 				$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').$langs->trans("HTTPBasicPassword");
 			}
-			/*
-			if (preg_match('/dolibarr/', $dolibarr_main_authentication)) {
-				if ($object->pass) {
-					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '');
-					$valuetoshow .= '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
-				} else {
-					if ($user->admin && $user->id == $object->id) {
-						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '');
-						$valuetoshow .= '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
-						$valuetoshow .= '<!-- Encrypted into '.$object->pass_indatabase_crypted.' -->';
-					} else {
-						$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '');
-						$valuetoshow .= '<span class="opacitymedium">'.$langs->trans("Hidden").'</span>';
-					}
-				}
-			}
-			*/
 
-			// Other form for user password
+			// Other info for user password
 			$parameters = array('valuetoshow' => $valuetoshow, 'caneditpasswordandsee' => $permissiontoeditpasswordandsee, 'caneditpasswordandsend' => $permissiontoeditpasswordandsend);
 			$reshook = $hookmanager->executeHooks('printUserPasswordField', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if ($reshook > 0) {
@@ -2052,7 +2033,39 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '</tr>'."\n";
 			}
 
-			// API key
+			// Token for OAuth
+			$tmparrayofauthmode = explode(',', $dolibarr_main_authentication);
+			foreach ($tmparrayofauthmode as $tmpauthmode) {
+				$langs->load("oauth");
+
+				$tmpauthmode = trim($tmpauthmode);
+				if (preg_match('/oauth/', $tmpauthmode)) {
+					$nameofservice = preg_replace('/oauth/', '', $tmpauthmode);
+					print '<tr class="nooddeven">';
+					print '<td class="titlefieldmiddle">'.$langs->trans("OAUTH_ID");
+					print ' '.ucfirst($nameofservice).' ';
+					print '</td>';
+
+					$constoauthlogin = 'OAUTH_'.strtoupper($nameofservice).'-Login_ID';
+					print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute(getDolGlobalString($constoauthlogin)).'">';
+					if (getDolGlobalString($constoauthlogin)) {
+						print getDolGlobalString($constoauthlogin);
+					}
+					print '</td>';
+					print "</tr>\n";
+
+					// Alternative email for OAuth2 login
+					if (!empty($object->email_oauth2)) {
+						print '<tr class="nooddeven"><td class="titlefieldmiddle">'.$langs->trans("AlternativeEmailForOAuth2").'</td>';
+						print '<td>';
+						print dol_print_email($object->email_oauth2);
+						print '</td>';
+						print "</tr>\n";
+					}
+				}
+			}
+
+			// Token for API
 			if (isModEnabled('api') && ($user->id == $id || $user->admin || $user->hasRight("api", "apikey", "generate"))) {
 				print '<tr class="nooddeven"><td>'.$langs->trans("ApiKey").'</td>';
 				print '<td>';
@@ -2061,8 +2074,12 @@ if ($action == 'create' || $action == 'adduserldap') {
 					print showValueWithClipboardCPButton($object->api_key, 1, $langs->transnoentities("Hidden"));		// TODO Add an option to also reveal the hash, not only copy paste
 					print '</span>';
 				}
+				if (getDolGlobalString('API_ENABLE_COUNT_CALLS') || !empty($dolibarr_api_count_always_enabled)) {
+					print ' &nbsp; <span class="badge badge-info" title="'.$langs->trans("TotalAPICall").'">'.getDolUserInt('API_COUNT_CALL').'</span>';
+				}
 				print '</td></tr>';
 			}
+			// Show private information about login
 			if ((getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) || (getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 1 && $object->id == $user->id)) {
 				print '<tr class="nooddeven"><td>'.$langs->trans("LastConnexion").'</td>';
 				print '<td>';
@@ -2075,6 +2092,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '</td>';
 				print "</tr>\n";
 			}
+
 			print '</table>';
 			print '</div>';
 

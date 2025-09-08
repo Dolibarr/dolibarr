@@ -687,3 +687,5 @@ ALTER TABLE llx_product_attribute_combination_price_level ADD UNIQUE INDEX uk_pr
 
 -- delete a constant that should not be set
 DELETE FROM llx_const WHERE name = 'INVOICE_USE_RETAINED_WARRANTY' AND value = -1;
+
+DELETE FROM llx_hrm_skilldet WHERE rankorder = 0;

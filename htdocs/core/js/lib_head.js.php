@@ -1083,14 +1083,20 @@ function document_preview(file, type, title)
 				console.log("Object width is small, we set width of popup according to image width.");
 				popupWidth = object_width + 50
 			}
-			popupHeight = $( window ).height() * 0.90 - 100;
+			if (popupWidth < 250) {	/* Set a minimal width because we need to have neough space for the buttons */
+				popupWidth = 250;
+			}
+
+			popupHeight = $( window ).height() * 0.90 - 160;
 			console.log("object_height="+object_height+" popup window height="+popupHeight);
-			if (object_height < (popupHeight - 100)) {
+			if (object_height < (popupHeight - 160)) {
 				console.log("Object height is small, we set height of popup according to image height.");
-				popupHeight = object_height + 100
+				popupHeight = object_height + 160
 			} else {
 				showOriginalSizeButton = true;
 			}
+
+			console.log("popupWidth="+popupWidth+" popupHeight="+popupHeight);
 
 			show_preview('image');
 
@@ -1108,7 +1114,7 @@ function document_preview(file, type, title)
 			var savMaxHeight = 0;
 			optionsbuttons = {
 				'<?php echo dol_escape_js($langs->transnoentitiesnoconv("RotateImage")); ?>': function() { curRot += 90; jQuery(".ui-dialog-content.ui-widget-content > object").css("transform","rotate(" + curRot + "deg)"); },
-				'<?php echo dol_escape_js($langs->transnoentitiesnoconv("CloseWindow")); ?>': function() { $( this ).dialog( "close" ); }
+				'<?php echo dol_escape_js($langs->transnoentitiesnoconv("CloseWindowShort")); ?>': function() { $( this ).dialog( "close" ); }
 				};
 			if (showOriginalSizeButton) {
 				optionsbuttons = {

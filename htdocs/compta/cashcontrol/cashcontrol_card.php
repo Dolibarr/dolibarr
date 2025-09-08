@@ -292,7 +292,7 @@ if ($action == "create" || $action == "start" || $action == 'close') {
 		$syear = $object->year_close;
 		$smonth = $object->month_close;
 		$sday = $object->day_close;
-	} elseif (GETPOST('posnumber', 'alpha') != '' && GETPOST('posnumber', 'alpha') != '' && GETPOST('posnumber', 'alpha') != '-1') {
+	} elseif (GETPOST('posnumber', 'alpha') != '' && GETPOST('posnumber', 'alpha') != '-1') {
 		$posmodule = GETPOST('posmodule', 'alpha');
 		$terminalid = GETPOST('posnumber', 'alpha');
 		$terminaltouse = $terminalid;

@@ -265,7 +265,7 @@ class pdf_cyan extends ModelePDFPropales
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->propal->multidir_output[$object->entity]."/".$objectref;
+				$dir = $conf->propal->multidir_output[$object->entity ?? $conf->entity]."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
 
@@ -304,8 +304,8 @@ class pdf_cyan extends ModelePDFPropales
 				// Set path to the background PDF File
 				if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
 					$logodir = $conf->mycompany->dir_output;
-					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-						$logodir = $conf->mycompany->multidir_output[$object->entity];
+					if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+						$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 					}
 					$pagecount = $pdf->setSourceFile($logodir.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
@@ -347,6 +347,8 @@ class pdf_cyan extends ModelePDFPropales
 				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS') ? 12 : 22); // Height reserved to output the footer (value include bottom margin)
 				//print $heightforinfotot + $heightforsignature + $heightforfreetext + $heightforfooter;exit;
+
+				$save_note_public = $object->note_public;	// Because $object->note_public may be modified by _pagehead() that calls pdf_writeLinkedObjects() that calls ... that modify $object->note_private
 
 				$top_shift = $this->_pagehead($pdf, $object, 1, $outputlangs, $outputlangsbis);
 				$pdf->SetFont('', '', $default_font_size - 1);
@@ -397,6 +399,8 @@ class pdf_cyan extends ModelePDFPropales
 						}
 					}
 				}
+
+				$object->note_public = $save_note_public;	// Now that we have output the note_public, we can restore it to initial value.
 
 				// Extrafields in note
 				$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
@@ -956,8 +960,8 @@ class pdf_cyan extends ModelePDFPropales
 				if (getDolGlobalString('MAIN_INFO_PROPAL_TERMSOFSALE') && getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_PROPAL')) {
 					$termsofsalefilename = getDolGlobalString('MAIN_INFO_PROPAL_TERMSOFSALE');
 					$termsofsale = $conf->propal->dir_output.'/'.$termsofsalefilename;
-					if (!empty($conf->propal->multidir_output[$object->entity])) {
-						$termsofsale = $conf->propal->multidir_output[$object->entity].'/'.$termsofsalefilename;
+					if (!empty($conf->propal->multidir_output[$object->entity ?? $conf->entity])) {
+						$termsofsale = $conf->propal->multidir_output[$object->entity ?? $conf->entity].'/'.$termsofsalefilename;
 					}
 					if (file_exists($termsofsale) && is_readable($termsofsale)) {
 						$pagecount = $pdf->setSourceFile($termsofsale);
@@ -1008,15 +1012,15 @@ class pdf_cyan extends ModelePDFPropales
 										$filetomerge_dir = null;
 										if (getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
 											if (isModEnabled("product")) {
-												$filetomerge_dir = $conf->product->multidir_output[$entity_product_file].'/'.get_exdir($product->id, 2, 0, 0, $product, 'product').$product->id."/photos";
+												$filetomerge_dir = $conf->product->multidir_output[$entity_product_file ?? $conf->entity].'/'.get_exdir($product->id, 2, 0, 0, $product, 'product').$product->id."/photos";
 											} elseif (isModEnabled("service")) {
-												$filetomerge_dir = $conf->service->multidir_output[$entity_product_file].'/'.get_exdir($product->id, 2, 0, 0, $product, 'product').$product->id."/photos";
+												$filetomerge_dir = $conf->service->multidir_output[$entity_product_file ?? $conf->entity].'/'.get_exdir($product->id, 2, 0, 0, $product, 'product').$product->id."/photos";
 											}
 										} else {
 											if (isModEnabled("product")) {
-												$filetomerge_dir = $conf->product->multidir_output[$entity_product_file].'/'.get_exdir(0, 0, 0, 0, $product, 'product');
+												$filetomerge_dir = $conf->product->multidir_output[$entity_product_file ?? $conf->entity].'/'.get_exdir(0, 0, 0, 0, $product, 'product');
 											} elseif (isModEnabled("service")) {
-												$filetomerge_dir = $conf->service->multidir_output[$entity_product_file].'/'.get_exdir(0, 0, 0, 0, $product, 'product');
+												$filetomerge_dir = $conf->service->multidir_output[$entity_product_file ?? $conf->entity].'/'.get_exdir(0, 0, 0, 0, $product, 'product');
 											}
 										}
 
@@ -1721,8 +1725,8 @@ class pdf_cyan extends ModelePDFPropales
 		if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
 			if ($this->emetteur->logo) {
 				$logodir = $conf->mycompany->dir_output;
-				if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-					$logodir = $conf->mycompany->multidir_output[$object->entity];
+				if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+					$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 				}
 				if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
 					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
@@ -1852,11 +1856,11 @@ class pdf_cyan extends ModelePDFPropales
 		}
 
 		$posy += 2;
-
+		$shipp_shift = 0;
 		$top_shift = 0;
 		// Show list of linked objects
 		$current_y = $pdf->getY();
-		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, 3, 'R', $default_font_size);
+		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, $w, 3, 'R', $default_font_size);	// May modify $object->note_public
 		if ($current_y < $pdf->getY()) {
 			$top_shift = $pdf->getY() - $current_y;
 		}
@@ -1890,6 +1894,7 @@ class pdf_cyan extends ModelePDFPropales
 
 			$hautcadre = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 38 : 40;
 			$widthrecbox = getDolGlobalString('MAIN_PDF_USE_ISO_LOCATION') ? 92 : 82;
+
 
 			// Show sender frame
 			if (!getDolGlobalString('MAIN_PDF_NO_SENDER_FRAME')) {
@@ -1971,11 +1976,49 @@ class pdf_cyan extends ModelePDFPropales
 			$pdf->SetXY($posx + 2, $posy);
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 			$pdf->MultiCell($widthrecbox, 4, $carac_client, 0, $ltrdirection);
+			// Show shipping/delivery addressAdd commentMore actions
+			if (getDolGlobalInt('PROPOSAL_SHOW_SHIPPING_ADDRESS')) {
+				$idaddressshipping = $object->getIdContact('external', 'SHIPPING');
+
+				if (!empty($idaddressshipping)) {
+					$contactshipping = $object->fetch_Contact($idaddressshipping[0]);
+					$companystatic = new Societe($this->db);
+					$companystatic->fetch($object->contact->fk_soc);
+					$carac_client_name_shipping = pdfBuildThirdpartyName($object->contact, $outputlangs);
+					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $companystatic, $object->contact, 1, 'target', $object);
+				} else {
+					$carac_client_name_shipping = pdfBuildThirdpartyName($object->thirdparty, $outputlangs);
+					$carac_client_shipping = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'target', $object);
+				}
+				if (!empty($carac_client_shipping)) {
+					$posy += $hautcadre;
+
+					$hautcadre -= 10;	// Height for the shipping address does not need to be as high as main box
+
+					// Show shipping frame
+					$pdf->SetXY($posx + 2, $posy - 5);
+					$pdf->SetFont('', '', $default_font_size - 2);
+					$pdf->MultiCell($widthrecbox, 0, $outputlangs->transnoentities('ShippingTo'), 0, 'L', false);
+					$pdf->RoundedRect($posx, $posy, $widthrecbox, $hautcadre, $this->corner_radius, '1234', 'D');
+
+					// Show shipping name
+					$pdf->SetXY($posx + 2, $posy + 3);
+					$pdf->SetFont('', 'B', $default_font_size);
+					$pdf->MultiCell($widthrecbox - 2, 2, $carac_client_name_shipping, '', 'L');
+
+					$posy = $pdf->getY();
+
+					// Show shipping information
+					$pdf->SetXY($posx + 2, $posy);
+					$pdf->SetFont('', '', $default_font_size - 1);
+					$pdf->MultiCell($widthrecbox - 2, 2, $carac_client_shipping, '', 'L');
+
+					$shipp_shift += $hautcadre + 10;
+				}
+			}
 		}
-
 		$pdf->SetTextColor(0, 0, 0);
-
-		return $top_shift;
+		return $shipp_shift;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

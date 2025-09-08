@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2013-2015 Jean-François FERRY     <hello@librethic.io>
- * Copyright (C) 2016      Christophe Battarel     <christophe@altairis.fr>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2021      Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2021      Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2023-2025 Charlene Benke	       <charlene.r@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024	   Irvine FLEITH		   <irvine.fleith@atm-consulting.fr>
+/* Copyright (C) 2013-2015  Jean-François FERRY     <hello@librethic.io>
+ * Copyright (C) 2016       Christophe Battarel     <christophe@altairis.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2023-2025  Charlene Benke	        <charlene.r@patas-monkey.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024	    Irvine FLEITH		    <irvine.fleith@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -272,7 +272,7 @@ class FormTicket
 			$subject = GETPOSTISSET('subject') ? GETPOST('subject', 'alpha') : '';
 			$email = GETPOSTISSET('email') ? GETPOST('email', 'alpha') : '';
 			$msg = GETPOSTISSET('message') ? GETPOST('message', 'restricthtml') : '';
-			$projectid = GETPOSTISSET('projectid') ? GETPOST('projectid', 'int') : '';
+			$projectid = GETPOSTISSET('projectid') ? GETPOSTINT('projectid') : 0;
 			$user_assign = GETPOSTISSET('fk_user_assign') ? GETPOSTINT('fk_user_assign') : $this->fk_user_create;
 		} else {
 			$ref = GETPOSTISSET("ref") ? GETPOST("ref", 'alpha') : $object->ref;
@@ -282,7 +282,7 @@ class FormTicket
 			$subject = GETPOSTISSET('subject') ? GETPOST('subject', 'alpha') : $object->subject;
 			$email = GETPOSTISSET('email') ? GETPOST('email', 'alpha') : $object->email_from;
 			$msg = GETPOSTISSET('message') ? GETPOST('message', 'restricthtml') : $object->message;
-			$projectid = GETPOSTISSET('projectid') ? GETPOST('projectid', 'int') : $object->fk_project;
+			$projectid = GETPOSTISSET('projectid') ? GETPOSTINT('projectid') : (int) $object->fk_project;
 			$user_assign = GETPOSTISSET('fk_user_assign') ? GETPOSTINT('fk_user_assign') : $object->fk_user_assign;
 		}
 

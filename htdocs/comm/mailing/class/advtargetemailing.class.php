@@ -543,7 +543,7 @@ class AdvanceTargetingMailing extends CommonObject
 		$sql = "SELECT";
 		$sql .= " t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as t";
-		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_extrafields as te ON te.fk_object=t.rowid ";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as te ON te.fk_object=t.rowid ";
 
 		$sqlwhere = array();
 
@@ -719,11 +719,11 @@ class AdvanceTargetingMailing extends CommonObject
 		$sql = "SELECT";
 		$sql .= " t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
-		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as te ON te.fk_object=t.rowid ";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as te ON te.fk_object=t.rowid ";
 
 		if (!empty($withThirdpartyFilter)) {
-			$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe as ts ON ts.rowid=t.fk_soc";
-			$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_extrafields as tse ON tse.fk_object=ts.rowid ";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as ts ON ts.rowid=t.fk_soc";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_extrafields as tse ON tse.fk_object=ts.rowid ";
 		}
 
 		$sqlwhere = array();
@@ -732,7 +732,7 @@ class AdvanceTargetingMailing extends CommonObject
 
 		if (count($arrayquery) > 0) {
 			if (array_key_exists('contact_categ', $arrayquery)) {
-				$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_contact as contactcateg ON contactcateg.fk_socpeople=t.rowid ";
+				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_contact as contactcateg ON contactcateg.fk_socpeople=t.rowid ";
 			}
 
 			if (!empty($arrayquery['contact_lastname'])) {
@@ -1013,9 +1013,9 @@ class AdvanceTargetingMailing extends CommonObject
 	 */
 	public function transformToSQL($column_to_test, $criteria)
 	{
-		$return_sql_criteria = '(';
+		$return_sql_criteria = "(";
 
-		//This is a multiple value test
+		// This is a multiple value test
 		if (preg_match('/;/', $criteria)) {
 			$return_sql_not_like = array();
 			$return_sql_like = array();
@@ -1023,23 +1023,23 @@ class AdvanceTargetingMailing extends CommonObject
 			$criteria_array = explode(';', $criteria);
 			foreach ($criteria_array as $inter_criteria) {
 				if (preg_match('/!/', $inter_criteria)) {
-					$return_sql_not_like[] = '('.$column_to_test.' NOT LIKE \''.str_replace('!', '', $inter_criteria).'\')';
+					$return_sql_not_like[] = "(".$this->db->sanitize($column_to_test)." NOT LIKE '".$this->db->sanitize(str_replace('!', '', $inter_criteria))."')";
 				} else {
-					$return_sql_like[] = '('.$column_to_test.' LIKE \''.$inter_criteria.'\')';
+					$return_sql_like[] = "(".$this->db->sanitize($column_to_test)." LIKE '".$this->db->sanitize($inter_criteria)."')";
 				}
 			}
 
 			if (count($return_sql_like) > 0) {
-				$return_sql_criteria .= '('.implode(' OR ', $return_sql_like).')';
+				$return_sql_criteria .= "(".implode(" OR ", $return_sql_like).")";	// element in arrays were sanitized previously
 			}
 			if (count($return_sql_not_like) > 0) {
-				$return_sql_criteria .= ' AND ('.implode(' AND ', $return_sql_not_like).')';
+				$return_sql_criteria .= " AND (".implode(" AND ", $return_sql_not_like).")";	// element in arrays were sanitized previously
 			}
 		} else {
-			$return_sql_criteria .= $column_to_test.' LIKE \''.$this->db->escape($criteria).'\'';
+			$return_sql_criteria .= $this->db->sanitize($column_to_test)." LIKE '".$this->db->escape($criteria)."'";
 		}
 
-		$return_sql_criteria .= ')';
+		$return_sql_criteria .= ")";
 
 		return $return_sql_criteria;
 	}

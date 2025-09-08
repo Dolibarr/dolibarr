@@ -27,9 +27,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -38,6 +35,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
  * @var Translate $langs
  * @var User $user
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+
 
 $langs->load("admin");
 
@@ -70,12 +71,12 @@ print '<tr class="oddeven"><td width="300">'.$langs->trans("VersionProgram").'</
 // If current version differs from last upgrade
 if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')) {
 	// Compare version with last install database version (upgrades never occurred)
-	if (DOL_VERSION != getDolGlobalString('MAIN_VERSION_LAST_INSTALL')) {
+	if (in_array(versioncompare(versiondolibarrarray(), preg_split('/[\-\.]/', getDolGlobalString('MAIN_VERSION_LAST_INSTALL'))), array(-2, -1, 1, 2))) {
 		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, getDolGlobalString('MAIN_VERSION_LAST_INSTALL')));
 	}
 } else {
 	// Compare version with last upgrade database version
-	if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_UPGRADE) {
+	if (in_array(versioncompare(versiondolibarrarray(), preg_split('/[\-\.]/', getDolGlobalString('MAIN_VERSION_LAST_UPGRADE'))), array(-2, -1, 1, 2))) {
 		print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, getDolGlobalString('MAIN_VERSION_LAST_UPGRADE')));
 	}
 }

@@ -1171,7 +1171,7 @@ if ($action == 'create') {
 
 		$head = supplier_invoice_rec_prepare_head($object);
 
-		print dol_get_fiche_head($head, 'card', $langs->trans('RepeatableInvoice'), -1, 'bill'); // Add a div
+		print dol_get_fiche_head($head, 'card', $langs->trans('RepeatableInvoice'), -1, $object->picto); // Add a div
 
 		// Recurring invoice content
 
@@ -1538,8 +1538,15 @@ if ($action == 'create') {
 			// To set ref for getNomURL function
 			foreach ($object->lines as $line) {
 				$line->ref = $line->label;
+				$line->product_ref = $line->label;
 				$line->product_label = $line->label;
-				$line->subprice = $line->pu_ht;
+				// For backward compatibility
+				if (empty($line->subprice) && ! empty($line->pu_ht)) {
+					$line->subprice = $line->pu_ht;
+				}
+				if (empty($line->subprice_ttc) && ! empty($line->pu_ttc)) {
+					$line->subprice_ttc = $line->pu_ttc;
+				}
 			}
 
 			global $canchangeproduct;

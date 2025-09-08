@@ -185,12 +185,12 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 	}
 
-	// User creation (old method using already loaded object and not id is kept for backward compatibility)
-	if (!empty($object->user_creation) || !empty($object->user_creation_id)) {
+	// Creation (old method using already loaded object and not id is kept for backward compatibility)
+	if (!empty($object->user_creation) || !empty($object->user_creation_id) || !empty($object->date_creation)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
-		print $langs->trans("CreatedBy");
+		print $langs->trans("Creation");
 		if ($usetable) {
 			print '</td><td>';
 		} else {
@@ -211,6 +211,20 @@ function dol_print_object_info($object, $usetable = 0)
 				print $langs->trans("Unknown");
 			}
 		}
+
+		if ((!empty($object->user_creation) || !empty($object->user_creation_id)) && !empty($object->date_creation)) {
+			print ' - ';
+		}
+
+		if (!empty($object->date_creation)) {
+			print '<div class="valignmiddle inline-block">';
+			print dol_print_date($object->date_creation, 'dayhour', 'tzserver');
+			if ($deltadateforuser) {
+				print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_creation, "dayhour", "tzuserrel").' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
+			}
+			print '</div>';
+		}
+
 		if ($usetable) {
 			print '</td></tr>';
 		} else {
@@ -218,39 +232,18 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 	}
 
-	// Date creation
-	if (!empty($object->date_creation)) {
+	// Last modification (old method using already loaded object and not id is kept for backward compatibility)
+	if (!empty($object->user_modification) || !empty($object->user_modification_id) || !empty($object->date_modification)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
-		print $langs->trans("DateCreation");
+		print $langs->trans("LastModified");
 		if ($usetable) {
 			print '</td><td>';
 		} else {
 			print ': ';
 		}
-		print dol_print_date($object->date_creation, 'dayhour', 'tzserver');
-		if ($deltadateforuser) {
-			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_creation, "dayhour", "tzuserrel").' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
-		}
-		if ($usetable) {
-			print '</td></tr>';
-		} else {
-			print '<br>';
-		}
-	}
-
-	// User change (old method using already loaded object and not id is kept for backward compatibility)
-	if (!empty($object->user_modification) || !empty($object->user_modification_id)) {
-		if ($usetable) {
-			print '<tr><td class="titlefield">';
-		}
-		print $langs->trans("ModifiedBy");
-		if ($usetable) {
-			print '</td><td>';
-		} else {
-			print ': ';
-		}
+		print '<div class="valignmiddle inline-block">';
 		if (is_object($object->user_modification)) {
 			if ($object->user_modification->id) {
 				print $object->user_modification->getNomUrl(-1, '', 0, 0, 0);
@@ -266,6 +259,18 @@ function dol_print_object_info($object, $usetable = 0)
 				print $langs->trans("Unknown");
 			}
 		}
+		print '</div>';
+
+		if (!empty($object->date_modification)) {
+			print ' - ';
+			print '<div class="valignmiddle inline-block">';
+			print dol_print_date($object->date_modification, 'dayhour', 'tzserver');
+			if ($deltadateforuser) {
+				print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_modification, "dayhour", "tzuserrel").' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
+			}
+			print '</div>';
+		}
+
 		if ($usetable) {
 			print '</td></tr>';
 		} else {
@@ -273,34 +278,12 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 	}
 
-	// Date change
-	if (!empty($object->date_modification)) {
+	// Validation (old method using already loaded object and not id is kept for backward compatibility)
+	if (!empty($object->user_validation) || !empty($object->user_validation_id) || !empty($object->date_validation)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
-		print $langs->trans("DateLastModification");
-		if ($usetable) {
-			print '</td><td>';
-		} else {
-			print ': ';
-		}
-		print dol_print_date($object->date_modification, 'dayhour', 'tzserver');
-		if ($deltadateforuser) {
-			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_modification, "dayhour", "tzuserrel").' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
-		}
-		if ($usetable) {
-			print '</td></tr>';
-		} else {
-			print '<br>';
-		}
-	}
-
-	// User validation (old method using already loaded object and not id is kept for backward compatibility)
-	if (!empty($object->user_validation) || !empty($object->user_validation_id)) {
-		if ($usetable) {
-			print '<tr><td class="titlefield">';
-		}
-		print $langs->trans("ValidatedBy");
+		print $langs->trans("Validation");
 		if ($usetable) {
 			print '</td><td>';
 		} else {
@@ -321,6 +304,17 @@ function dol_print_object_info($object, $usetable = 0)
 				print $langs->trans("Unknown");
 			}
 		}
+
+		if (!empty($object->date_validation)) {
+			print ' - ';
+			print '<div class="valignmiddle inline-block">';
+			print dol_print_date($object->date_validation, 'dayhour', 'tzserver');
+			if ($deltadateforuser) {
+				print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_validation, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
+			}
+			print '</div>';
+		}
+
 		if ($usetable) {
 			print '</td></tr>';
 		} else {
@@ -328,34 +322,12 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 	}
 
-	// Date validation
-	if (!empty($object->date_validation)) {
+	// Approval (old method using already loaded object and not id is kept for backward compatibility)
+	if (!empty($object->user_approve) || !empty($object->user_approve_id) || !empty($object->date_approve) || !empty($object->date_approval)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
-		print $langs->trans("DateValidation");
-		if ($usetable) {
-			print '</td><td>';
-		} else {
-			print ': ';
-		}
-		print dol_print_date($object->date_validation, 'dayhour', 'tzserver');
-		if ($deltadateforuser) {
-			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_validation, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
-		}
-		if ($usetable) {
-			print '</td></tr>';
-		} else {
-			print '<br>';
-		}
-	}
-
-	// User approve (old method using already loaded object and not id is kept for backward compatibility)
-	if (!empty($object->user_approve) || !empty($object->user_approve_id)) {
-		if ($usetable) {
-			print '<tr><td class="titlefield">';
-		}
-		print $langs->trans("ApprovedBy");
+		print $langs->trans("Approval");
 		if ($usetable) {
 			print '</td><td>';
 		} else {
@@ -378,6 +350,17 @@ function dol_print_object_info($object, $usetable = 0)
 				print $langs->trans("Unknown");
 			}
 		}
+
+		if (!empty($object->date_approve) || !empty($object->date_approval)) {
+			print ' - ';
+			print '<div class="valignmiddle inline-block">';
+			print dol_print_date($object->date_approve ? $object->date_approve : $object->date_approval, 'dayhour', 'tzserver');
+			if ($deltadateforuser) {
+				print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_approve, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
+			}
+			print '</div>';
+		}
+
 		if ($usetable) {
 			print '</td></tr>';
 		} else {
@@ -385,36 +368,13 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 	}
 
-	// Date approve
-	if (!empty($object->date_approve) || !empty($object->date_approval)) {
-		'@phan-var-force ExpenseReport|CommandeFournisseur $object';
-		if ($usetable) {
-			print '<tr><td class="titlefield">';
-		}
-		print $langs->trans("DateApprove");
-		if ($usetable) {
-			print '</td><td>';
-		} else {
-			print ': ';
-		}
-		print dol_print_date($object->date_approve ? $object->date_approve : $object->date_approval, 'dayhour', 'tzserver');
-		if ($deltadateforuser) {
-			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_approve, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
-		}
-		if ($usetable) {
-			print '</td></tr>';
-		} else {
-			print '<br>';
-		}
-	}
-
-	// User approve
-	if (!empty($object->user_approve_id2)) {
+	// Approval
+	if (!empty($object->user_approve_id2) || !empty($object->date_approve2)) {
 		'@phan-var-force CommandeFournisseur $object';
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
-		print $langs->trans("ApprovedBy");
+		print $langs->trans("Approval");
 		if ($usetable) {
 			print '</td><td>';
 		} else {
@@ -427,6 +387,17 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print $langs->trans("Unknown");
 		}
+
+		if (!empty($object->date_approve2)) {
+			print ' - ';
+			print '<div class="valignmiddle inline-block">';
+			print dol_print_date($object->date_approve2, 'dayhour', 'tzserver');
+			if ($deltadateforuser) {
+				print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_approve2, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
+			}
+			print '</div>';
+		}
+
 		if ($usetable) {
 			print '</td></tr>';
 		} else {
@@ -434,35 +405,13 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 	}
 
-	// Date approve
-	if (!empty($object->date_approve2)) {
-		if ($usetable) {
-			print '<tr><td class="titlefield">';
-		}
-		print $langs->trans("DateApprove2");
-		if ($usetable) {
-			print '</td><td>';
-		} else {
-			print ': ';
-		}
-		print dol_print_date($object->date_approve2, 'dayhour', 'tzserver');
-		if ($deltadateforuser) {
-			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_approve2, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
-		}
-		if ($usetable) {
-			print '</td></tr>';
-		} else {
-			print '<br>';
-		}
-	}
-
-	// User signature
-	if (!empty($object->user_signature) || !empty($object->user_signature_id)) {
+	// Signature
+	if (!empty($object->user_signature) || !empty($object->user_signature_id) || !empty($object->date_signature)) {
 		'@phan-var-force Propal $object';
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
-		print $langs->trans('SignedBy');
+		print $langs->trans('Signature');
 		if ($usetable) {
 			print '</td><td>';
 		} else {
@@ -483,6 +432,17 @@ function dol_print_object_info($object, $usetable = 0)
 				print $langs->trans('Unknown');
 			}
 		}
+
+		if (!empty($object->date_signature)) {
+			print ' - ';
+			print '<div class="valignmiddle inline-block">';
+			print dol_print_date($object->date_signature, 'dayhour');
+			if ($deltadateforuser) {
+				print ' <span class="opacitymedium">'.$langs->trans('CurrentHour').'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_signature, 'dayhour', 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans('ClientHour').'</span>';
+			}
+			print '</div>';
+		}
+
 		if ($usetable) {
 			print '</td></tr>';
 		} else {
@@ -490,34 +450,12 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 	}
 
-	// Date signature
-	if (!empty($object->date_signature)) {
+	// Closing
+	if (!empty($object->user_closing_id) || !empty($object->date_cloture) || !empty($object->date_closing)) {
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
-		print $langs->trans('DateSigning');
-		if ($usetable) {
-			print '</td><td>';
-		} else {
-			print ': ';
-		}
-		print dol_print_date($object->date_signature, 'dayhour');
-		if ($deltadateforuser) {
-			print ' <span class="opacitymedium">'.$langs->trans('CurrentHour').'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_signature, 'dayhour', 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans('ClientHour').'</span>';
-		}
-		if ($usetable) {
-			print '</td></tr>';
-		} else {
-			print '<br>';
-		}
-	}
-
-	// User close
-	if (!empty($object->user_closing_id)) {
-		if ($usetable) {
-			print '<tr><td class="titlefield">';
-		}
-		print $langs->trans("ClosedBy");
+		print $langs->trans("Closing");
 		if ($usetable) {
 			print '</td><td>';
 		} else {
@@ -530,6 +468,20 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print $langs->trans("Unknown");
 		}
+
+		if (!empty($object->date_cloture) || !empty($object->date_closing)) {
+			if (isset($object->date_cloture) && !empty($object->date_cloture)) {
+				$object->date_closing = $object->date_cloture;
+			}
+			print ' - ';
+			print '<div class="valignmiddle inline-block">';
+			print dol_print_date($object->date_closing, 'dayhour', 'tzserver');
+			if ($deltadateforuser) {
+				print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_closing, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
+			}
+			print '</div>';
+		}
+
 		if ($usetable) {
 			print '</td></tr>';
 		} else {
@@ -537,38 +489,13 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 	}
 
-	// Date close
-	if (!empty($object->date_cloture) || !empty($object->date_closing)) {
-		if (isset($object->date_cloture) && !empty($object->date_cloture)) {
-			$object->date_closing = $object->date_cloture;
-		}
-		if ($usetable) {
-			print '<tr><td class="titlefield">';
-		}
-		print $langs->trans("DateClosing");
-		if ($usetable) {
-			print '</td><td>';
-		} else {
-			print ': ';
-		}
-		print dol_print_date($object->date_closing, 'dayhour', 'tzserver');
-		if ($deltadateforuser) {
-			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_closing, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';
-		}
-		if ($usetable) {
-			print '</td></tr>';
-		} else {
-			print '<br>';
-		}
-	}
-
-	// User conciliate
-	if (!empty($object->user_rappro) || !empty($object->user_rappro_id)) {
+	// Reconciliation
+	if (!empty($object->user_rappro) || !empty($object->user_rappro_id) || !empty($object->date_rappro)) {
 		'@phan-var-force Account $object';
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
-		print $langs->trans("ReconciledBy");
+		print $langs->trans("Reconciliation");
 		if ($usetable) {
 			print '</td><td>';
 		} else {
@@ -591,6 +518,17 @@ function dol_print_object_info($object, $usetable = 0)
 				print $langs->trans("Unknown");
 			}
 		}
+
+		if (!empty($object->date_rappro)) {	// Note: date_rappro is not found on Dolibarr classes
+			print ' - ';
+			print '<div class="valignmiddle inline-block">';
+			print dol_print_date($object->date_rappro, 'dayhour', 'tzserver');  // @phan-suppress-current-line PhanUndeclaredProperty
+			if ($deltadateforuser) {
+				print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_rappro, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';  // @phan-suppress-current-line PhanUndeclaredProperty
+			}
+			print '</div>';
+		}
+
 		if ($usetable) {
 			print '</td></tr>';
 		} else {
@@ -598,36 +536,13 @@ function dol_print_object_info($object, $usetable = 0)
 		}
 	}
 
-	// Date conciliate  Note: date_rappro is not found on Dolibarr classes
-	if (!empty($object->date_rappro)) {
-		// Datte
-		if ($usetable) {
-			print '<tr><td class="titlefield">';
-		}
-		print $langs->trans("DateConciliating");
-		if ($usetable) {
-			print '</td><td>';
-		} else {
-			print ': ';
-		}
-		print dol_print_date($object->date_rappro, 'dayhour', 'tzserver');  // @phan-suppress-current-line PhanUndeclaredProperty
-		if ($deltadateforuser) {
-			print ' <span class="opacitymedium">'.$langs->trans("CurrentHour").'</span> &nbsp; / &nbsp; '.dol_print_date($object->date_rappro, "dayhour", 'tzuserrel').' &nbsp;<span class="opacitymedium">'.$langs->trans("ClientHour").'</span>';  // @phan-suppress-current-line PhanUndeclaredProperty
-		}
-		if ($usetable) {
-			print '</td></tr>';
-		} else {
-			print '<br>';
-		}
-	}
-
-	// Date send
+	// Last sending
 	if (!empty($object->date_envoi)) {
 		'@phan-var-force Mailing $object';
 		if ($usetable) {
 			print '<tr><td class="titlefield">';
 		}
-		print $langs->trans("DateLastSend");
+		print $langs->trans("LastSending");
 		if ($usetable) {
 			print '</td><td>';
 		} else {
@@ -1696,6 +1611,7 @@ function numero_semaine($time)
 {
 	$stime = dol_print_date($time, '%Y-%m-%d');
 
+	$reg = array();
 	if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?/i', $stime, $reg)) {
 		// Date est au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
 		$annee = (int) $reg[1];
@@ -1961,9 +1877,10 @@ function version_webserver()
  * 	@param	DoliDB		$db				    Database handler
  * 	@param	string		$type			    Type of models (company, invoice, ...)
  *  @param  int		    $maxfilenamelength  Max length of value to show
+ *  @param	int			$showempty			Add an empty record if 1
  * 	@return	string[]|int<-1,0>	    		0 if no module is activated, or array(key=>label). For modules that need directory scan, key is completed with ":filename", -1 if error
  */
-function getListOfModels($db, $type, $maxfilenamelength = 0)
+function getListOfModels($db, $type, $maxfilenamelength = 0, $showempty = 0)
 {
 	global $conf, $hookmanager, $langs;
 
@@ -1974,18 +1891,29 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 	$sql = "SELECT nom as id, nom as doc_template_name, libelle as label, description as description";
 	$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
 	$sql .= " WHERE type = '".$db->escape($type)."'";
-	$sql .= " AND entity IN (0,".$conf->entity.")";
+	$sql .= " AND entity IN (0,".((int) $conf->entity).")";
 	$sql .= " ORDER BY description DESC";
 
 	dol_syslog('/core/lib/function2.lib.php::getListOfModels', LOG_DEBUG);
+
 	$resql_models = $db->query($sql);
 	if ($resql_models) {
 		$num = $db->num_rows($resql_models);
+
+		if ($showempty) {
+			$docmodels[0] = '&nbsp;';
+		}
+
 		$i = 0;
 		while ($i < $num) {
 			$found = 1;
 
 			$obj = $db->fetch_object($resql_models);
+
+			if ($obj->id == '0') {	// We discard bad record (should not happen)
+				$i++;
+				continue;
+			}
 
 			// If this generation module needs to scan a directory, then description field is filled
 			// with the constant that contains list of directories to scan (COMPANY_ADDON_PDF_ODT_PATH, ...).
@@ -2035,6 +1963,7 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 					$docmodels[$obj->id] = $obj->label ? $obj->label : $obj->doc_template_name;
 				}
 			}
+
 			$i++;
 		}
 	} else {
@@ -2484,8 +2413,8 @@ function colorStringToArray($stringcolor, $colorifnotfound = array(88, 88, 88))
 
 /**
  * @param string 	$color 			the color you need to valid
- * @param boolean 	$allow_white 	in case of white isn't valid
- * @return boolean
+ * @param bool	 	$allow_white 	in case of white isn't valid
+ * @return bool
  */
 function colorValidateHex($color, $allow_white = true)
 {

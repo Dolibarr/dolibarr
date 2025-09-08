@@ -11,7 +11,7 @@
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
  * Copyright (C) 2016-2022 Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
@@ -130,13 +130,13 @@ class OrderLine extends CommonOrderLine
 
 	/**
 	 * Start date of line
-	 * @var int|string
+	 * @var int|''
 	 */
 	public $date_start;
 
 	/**
 	 * End date of line
-	 * @var int|string
+	 * @var int|''
 	 */
 	public $date_end;
 

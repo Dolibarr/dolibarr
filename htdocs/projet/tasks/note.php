@@ -98,7 +98,7 @@ if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
 }
 
-//$result = restrictedArea($user, 'projet', $id, '', 'task'); // TODO ameliorer la verification
+//restrictedArea($user, 'projet', $id, '', 'task'); // TODO ameliorer la verification
 restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
 $permissionnote = ($user->hasRight('projet', 'creer') || $user->hasRight('projet', 'all', 'creer'));

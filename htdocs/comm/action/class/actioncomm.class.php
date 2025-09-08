@@ -31,6 +31,7 @@
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/CSMSFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncommreminder.class.php';
 
 
@@ -43,6 +44,12 @@ class ActionComm extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'action';
+
+	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'ACTION';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
@@ -1720,14 +1727,14 @@ class ActionComm extends CommonObject
 	 *
 	 *  @param	int<0,2>	$withpicto				0 = No picto, 1 = Include picto into link, 2 = Only picto
 	 *  @param	int			$maxlength				Max number of characters into label. If negative, use the ref as label.
-	 *  @param	string		$classname				Force style class on a link
+	 *  @param	string		$morecss				Force style class on a link
 	 *  @param	string		$option					'' = Link to action, 'birthday'= Link to contact, 'holiday' = Link to leave
 	 *  @param	int<0,1>	$overwritepicto			1 = Overwrite picto with this one
 	 *  @param	int<0,1>	$notooltip		    	1 = Disable tooltip
 	 *  @param  int<-1,1>	$save_lastsearch_value  -1 = Auto, 0 = No save of lastsearch_values when clicking, 1 = Save lastsearch_values whenclicking
 	 *  @return	string							Chaine avec URL
 	 */
-	public function getNomUrl($withpicto = 0, $maxlength = 0, $classname = '', $option = '', $overwritepicto = 0, $notooltip = 0, $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $maxlength = 0, $morecss = '', $option = '', $overwritepicto = 0, $notooltip = 0, $save_lastsearch_value = -1)
 	{
 		global $conf, $langs, $user, $hookmanager, $action;
 
@@ -1780,9 +1787,9 @@ class ActionComm extends CommonObject
 				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
 			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
-			$linkclose .= $dataparams.' class="'.$classname.' '.$classfortooltip.'"';
+			$linkclose .= $dataparams.' class="'.$morecss.' '.$classfortooltip.'"';
 		} else {
-			$linkclose .= ' class="'.$classname.'"';
+			$linkclose .= ' class="'.$morecss.'"';
 		}
 
 		$url = '';
@@ -2636,6 +2643,7 @@ class ActionComm extends CommonObject
 				$tmpactioncommreminder->fk_user = $obj->fk_user;
 				$tmpactioncommreminder->fk_email_template = $obj->fk_email_template;
 				$tmpactioncommreminder->lasterror = $obj->lasterror;
+				$tmpactioncommreminder->fk_actioncomm = $this->id;
 
 				$this->reminders[$obj->id] = $tmpactioncommreminder;
 			}
@@ -2710,85 +2718,80 @@ class ActionComm extends CommonObject
 					// Load event
 					$res = $this->fetch($actionCommReminder->fk_actioncomm);
 					if ($res > 0) {
-						$res2 = $this->fetch_thirdparty();
-						if ($res2 >= 0) {
-							// PREPARE EMAIL
-							$errormesg = '';
+						// PREPARE EMAIL
+						$errormesg = '';
+						$this->fetch_thirdparty();
 
-							// Make substitution in email content
-							$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $this);
+						// Make substitution in email content
+						$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $this);
 
-							complete_substitutions_array($substitutionarray, $langs, $this);
+						complete_substitutions_array($substitutionarray, $langs, $this);
 
-							// Content
-							$sendContent = make_substitutions($langs->trans($arraymessage->content), $substitutionarray);
+						// Content
+						$sendContent = make_substitutions($langs->trans($arraymessage->content), $substitutionarray);
 
-							//Topic
-							$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->transnoentities('EventReminder'));
+						//Topic
+						$sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->transnoentities('EventReminder'));
 
-							// Recipient
-							$recipient = new User($this->db);
-							$res = $recipient->fetch($actionCommReminder->fk_user);
-							if ($res > 0) {
-								if (!empty($recipient->email)) {
-									$to = $recipient->email;
-								} else {
-									$errormesg = "Failed to send remind to user id=".$actionCommReminder->fk_user.". No email defined for user.";
-									$error++;
-								}
+						// Recipient
+						$recipient = new User($this->db);
+						$res = $recipient->fetch($actionCommReminder->fk_user);
+						if ($res > 0) {
+							if (!empty($recipient->email)) {
+								$to = $recipient->email;
 							} else {
-								$errormesg = "Failed to load recipient with user id=".$actionCommReminder->fk_user;
+								$errormesg = "Failed to send remind to user id=" . $actionCommReminder->fk_user . ". No email defined for user.";
 								$error++;
-							}
-
-							// Sender
-							$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
-							if (empty($from)) {
-								$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
-								$error++;
-							}
-
-							if (!$error) {
-								// Errors Recipient
-								$errors_to = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
-
-								// Mail Creation
-								$cMailFile = new CMailFile($sendTopic, (string) $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', '', '', '', '');
-
-								// Sending Mail
-								if ($cMailFile->sendfile()) {
-									$nbMailSend++;
-								} else {
-									$errormesg = 'Failed to send email to: '.$to.' '.$cMailFile->error.implode(',', $cMailFile->errors);
-									$error++;
-								}
-							}
-
-							if (!$error) {
-								$actionCommReminder->status = $actionCommReminder::STATUS_DONE;
-
-								$res = $actionCommReminder->update($user);
-								if ($res < 0) {
-									$errorsMsg[] = "Failed to update status to done of ActionComm Reminder";
-									$error++;
-									break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
-								}
-							} else {
-								$actionCommReminder->status = $actionCommReminder::STATUS_ERROR;
-								$actionCommReminder->lasterror = dol_trunc($errormesg, 128, 'right', 'UTF-8', 1);
-
-								$res = $actionCommReminder->update($user);
-								if ($res < 0) {
-									$errorsMsg[] = "Failed to update status to error of ActionComm Reminder";
-									$error++;
-									break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
-								} else {
-									$errorsMsg[] = $errormesg;
-								}
 							}
 						} else {
-							$errorsMsg[] = 'Failed to fetch record thirdparty on actioncomm with ID = '.$actionCommReminder->fk_actioncomm;
+							$errormesg = "Failed to load recipient with user id=" . $actionCommReminder->fk_user;
 							$error++;
+						}
+
+						// Sender
+						$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
+						if (empty($from)) {
+							$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
+							$error++;
+						}
+
+						if (!$error) {
+							// Errors Recipient
+							$errors_to = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
+
+							// Mail Creation
+							$cMailFile = new CMailFile($sendTopic, (string) $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', '', '', '', '');
+
+							// Sending Mail
+							if ($cMailFile->sendfile()) {
+								$nbMailSend++;
+							} else {
+								$errormesg = 'Failed to send email to: ' . $to . ' ' . $cMailFile->error . implode(',', $cMailFile->errors);
+								$error++;
+							}
+						}
+
+						if (!$error) {
+							$actionCommReminder->status = $actionCommReminder::STATUS_DONE;
+
+							$res = $actionCommReminder->update($user);
+							if ($res < 0) {
+								$errorsMsg[] = "Failed to update status to done of ActionComm Reminder";
+								$error++;
+								break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
+							}
+						} else {
+							$actionCommReminder->status = $actionCommReminder::STATUS_ERROR;
+							$actionCommReminder->lasterror = dol_trunc($errormesg, 128, 'right', 'UTF-8', 1);
+
+							$res = $actionCommReminder->update($user);
+							if ($res < 0) {
+								$errorsMsg[] = "Failed to update status to error of ActionComm Reminder";
+								$error++;
+								break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
+							} else {
+								$errorsMsg[] = $errormesg;
+							}
 						}
 					} else {
 						$errorsMsg[] = 'Failed to fetch record actioncomm with ID = '.$actionCommReminder->fk_actioncomm;
@@ -2824,6 +2827,181 @@ class ActionComm extends CommonObject
 			$this->db->commit(); // We commit also on error, to have the error message recorded.
 			$this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg) ? implode(', ', $errorsMsg) : $error);
 
+			dol_syslog(__METHOD__." end - ".$this->error, LOG_INFO);
+
+			return $error;
+		}
+	}
+
+	/**
+	 *  Send reminders by sms
+	 *  CAN BE A CRON TASK
+	 *
+	 *  @return int<-1,1>|string     0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function sendSmsReminder()
+	{
+		global $langs, $user;
+
+		$error = 0;
+		$this->output = '';
+		$this->error = '';
+		$nbSmsSent = 0;
+		$errorsMsg = array();
+
+		if (!isModEnabled('agenda')) {	// Should not happen. If module disabled, cron job should not be visible.
+			$langs->load("agenda");
+			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Agenda"));
+			return 0;
+		}
+		if (!getDolGlobalString('AGENDA_REMINDER_SMS')) {
+			$langs->load("agenda");
+			$this->output = $langs->trans('EventRemindersBySmsNotEnabled', $langs->transnoentitiesnoconv("Agenda"));
+			return 0;
+		}
+
+		$now = dol_now();
+		$actionCommReminder = new ActionCommReminder($this->db);
+
+		dol_syslog(__METHOD__." start", LOG_INFO);
+
+		$this->db->begin();
+
+		//Select all action comm reminders
+		$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
+		$sql .= " WHERE typeremind = 'sms'";
+		$sql .= " AND status = 0";	// 0=No yet sent, -1=Error. TODO Include reminder in error once we can count number of error, so we can try 5 times and not more on errors.
+		$sql .= " AND dateremind <= '".$this->db->idate($now)."'";
+		$sql .= " AND entity IN (".getEntity('actioncomm').")";
+		$sql .= $this->db->order("dateremind", "ASC");
+		$resql = $this->db->query($sql);
+
+		if ($resql) {
+			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			$formmail = new FormMail($this->db);
+			$to = null;  // Ensure 'to' is defined for static analysis
+
+			while ($obj = $this->db->fetch_object($resql)) {
+				$res = $actionCommReminder->fetch($obj->id);
+				if ($res < 0) {
+					$error++;
+					$errorsMsg[] = "Failed to load invoice ActionComm Reminder";
+				}
+
+				if (!$error) {
+					//Select email template
+					$arraymessage = $formmail->getEMailTemplate($this->db, 'actioncomm_send', $user, $langs, (!empty($actionCommReminder->fk_email_template)) ? $actionCommReminder->fk_email_template : -1, 1);
+
+					// Load event
+					$res = $this->fetch($actionCommReminder->fk_actioncomm);
+					if ($res > 0) {
+						// PREPARE SMS
+						$errormesg = '';
+						$this->fetch_thirdparty();
+
+						// Make substitution in email content
+						$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $this);
+
+						complete_substitutions_array($substitutionarray, $langs, $this);
+
+						// Content
+						$sendContent = dol_string_nohtmltag(make_substitutions($langs->trans($arraymessage->content), $substitutionarray));
+
+						// Topic
+						// $sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->transnoentities('EventReminder'));
+
+						// Recipient
+						$recipient = new User($this->db);
+						$res = $recipient->fetch($actionCommReminder->fk_user);
+						if ($res > 0) {
+							if (!empty($recipient->user_mobile)) {
+								$to = $recipient->user_mobile;
+							} else {
+								$errormesg = "Failed to send remind to user id=" . $actionCommReminder->fk_user . ". No email defined for user.";
+								$error++;
+							}
+						} else {
+							$errormesg = "Failed to load recipient with user id=" . $actionCommReminder->fk_user;
+							$error++;
+						}
+
+						// Sender
+						$from = getDolGlobalString('MAIN_SMS_FROM');
+						if (empty($from)) {
+							$errormesg = "Failed to get sender into global setup MAIN_SMS_FROM";
+							$error++;
+						}
+
+						if (!$error) {
+							// Errors Recipient
+							// $errors_to = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
+
+							// Sms Creation
+							$CSMSFile = new CSMSFile((string) $to, $from, $sendContent, 0, 0, 3, 1);
+
+							// Sending Mail
+							if ($CSMSFile->sendfile()) {
+								$nbSmsSent++;
+							} else {
+								$errormesg = 'Failed to send email to: ' . $to . ' ' . $CSMSFile->error . implode(',', $CSMSFile->errors);
+								$error++;
+							}
+						}
+
+						if (!$error) {
+							$actionCommReminder->status = $actionCommReminder::STATUS_DONE;
+
+							$res = $actionCommReminder->update($user);
+							if ($res < 0) {
+								$errorsMsg[] = "Failed to update status to done of ActionComm Reminder";
+								$error++;
+								break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
+							}
+						} else {
+							$actionCommReminder->status = $actionCommReminder::STATUS_ERROR;
+							$actionCommReminder->lasterror = dol_trunc($errormesg, 128, 'right', 'UTF-8', 1);
+
+							$res = $actionCommReminder->update($user);
+							if ($res < 0) {
+								$errorsMsg[] = "Failed to update status to error of ActionComm Reminder";
+								$error++;
+								break; // This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
+							} else {
+								$errorsMsg[] = $errormesg;
+							}
+						}
+					} else {
+						$errorsMsg[] = 'Failed to fetch record actioncomm with ID = '.$actionCommReminder->fk_actioncomm;
+						$error++;
+					}
+				}
+			}
+		} else {
+			$error++;
+		}
+
+		if (!$error) {
+			// Delete also very old past events (we do not keep more than 1 month record in past)
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
+			$sql .= " WHERE dateremind < '".$this->db->idate($now - (3600 * 24 * 32))."'";
+			$sql .= " AND status = ".((int) $actionCommReminder::STATUS_DONE);
+			$resql = $this->db->query($sql);
+
+			if (!$resql) {
+				$errorsMsg[] = 'Failed to delete old reminders';
+				//$error++;		// If this fails, we must not rollback other SQL requests already done. Never mind.
+			}
+		}
+
+		if (!$error) {
+			$this->output = 'Nb of SMS sent : '.$nbSmsSent;
+			$this->db->commit();
+			dol_syslog(__METHOD__." end - ".$this->output, LOG_INFO);
+
+			return 0;
+		} else {
+			$this->db->commit(); // We commit also on error, to have the error message recorded.
+			$this->error = 'Nb of SMS sent : '.$nbSmsSent.', '.(!empty($errorsMsg) ? implode(', ', $errorsMsg) : $error);
 			dol_syslog(__METHOD__." end - ".$this->error, LOG_INFO);
 
 			return $error;

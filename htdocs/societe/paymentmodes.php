@@ -9,7 +9,7 @@
  * Copyright (C) 2018-2023  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -538,14 +538,14 @@ if (empty($reshook)) {
 		$action = 'builddoc';
 		$moreparams = array(
 			'use_companybankid' => GETPOST('companybankid'),
-			'force_dir_output' => $conf->societe->multidir_output[$object->entity].'/'.dol_sanitizeFileName((string) $object->id)
+			'force_dir_output' => $conf->societe->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName((string) $object->id)
 		);
 		$_POST['lang_id'] = GETPOST('lang_idrib'.GETPOSTINT('companybankid'), 'alphanohtml');	// This is required by core/action_builddoc.inc.php
 		$_POST['model'] = GETPOST('modelrib'.GETPOSTINT('companybankid'), 'alphanohtml'); 		// This is required by core/action_builddoc.inc.php
 	}
 
 	$id = $socid;
-	$upload_dir = $conf->societe->multidir_output[$object->entity];
+	$upload_dir = $conf->societe->multidir_output[$object->entity ?? $conf->entity];
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	$id = $savid;
@@ -1513,6 +1513,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	if (isModEnabled('stripe') && !empty($conf->stripeconnect->enabled) && !empty($stripesupplieracc)) {
 		print load_fiche_titre($langs->trans('StripeBalance').($stripesupplieracc ? ' (Stripe connection with StripeConnect account '.$stripesupplieracc.')' : ' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, 'stripe-s');
 		$balance = \Stripe\Balance::retrieve(array("stripe_account" => $stripesupplieracc));
+		print '<!-- List of Stripe connected accounts -->'."\n";
 		print '<table class="liste centpercent noborder">'."\n";
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Currency').'</td>';
@@ -1570,6 +1571,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	$rib_list = $object->get_all_rib();
 
 	if (is_array($rib_list)) {
+		print '<!-- List of bank accounts -->'."\n";
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 		print '<table class="liste centpercent noborder">';
 
@@ -1682,7 +1684,6 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 			if (isModEnabled('prelevement')) {
 				// RUM
-				//print '<td>'.$prelevement->buildRumNumber($object->code_client, $rib->datec, $rib->id).'</td>';
 				print '<td class="tdoverflowmax100 small" title="'.dolPrintHTMLForAttribute($rib->rum).'">'.dolPrintHTML($rib->rum);
 				print '<br><span class="opacitymedium">'.dolPrintHTML($rib->frstrecur).'</span>';	// FRST or RCUR
 				print '</td>';
@@ -1819,9 +1820,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			$nbremote++;
 
 			print '<tr class="oddeven">';
+			// Label
 			print '<td>';
 			print '</td>';
-			// Src ID
+			// External ID
 			print '<td class="tdoverflowmax150">';
 			$connect = '';
 			if (!empty($stripeacc)) {
@@ -1837,8 +1839,10 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print $src->id;
 			print '</td>';
 			// Bank
+			/*
 			print '<td>';
-			print'</td>';
+			print '</td>';
+			*/
 			// Account number
 			print '<td>';
 			print '</td>';
@@ -1932,7 +1936,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		/*
 		 * Generated documents
 		 */
-		$filedir = $conf->societe->multidir_output[$object->entity].'/'.$object->id;
+		$filedir = $conf->societe->multidir_output[$object->entity ?? $conf->entity].'/'.$object->id;
 		$urlsource = $_SERVER["PHP_SELF"]."?socid=".$object->id;
 
 		print $formfile->showdocuments('company', (string) $object->id, $filedir, $urlsource, $permissiontoread, (int) $permissiontoaddupdatepaymentinformation, $object->model_pdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, '', '', $object->default_lang);

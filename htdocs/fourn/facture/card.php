@@ -1027,7 +1027,7 @@ if (empty($reshook)) {
 				$object->ref_supplier       = GETPOST('ref_supplier', 'alphanohtml');
 				$object->model_pdf          = GETPOST('model', 'alphanohtml');
 				$object->fk_project         = GETPOSTINT('projectid');
-				$object->cond_reglement_id	= (GETPOSTINT('type') == 3 ? 1 : GETPOST('cond_reglement_id'));
+				$object->cond_reglement_id	= (GETPOSTINT('type') == 3 ? 1 : GETPOSTINT('cond_reglement_id'));
 				$object->mode_reglement_id	= GETPOSTINT('mode_reglement_id');
 				$object->fk_account         = GETPOSTINT('fk_account');
 				$object->amount             = (float) price2num(GETPOST('amount'));  // FIXME: FactureFournisseur::$amount is deprecated and not used?
@@ -1141,7 +1141,8 @@ if (empty($reshook)) {
 					if ($element == 'project') {
 						$element = 'projet';
 					}
-					$object->origin    = GETPOST('origin', 'alpha');
+					$object->origin_type = GETPOST('origin', 'alpha');
+					$object->origin = $object->origin_type;
 					$object->origin_id = GETPOSTINT('originid');
 
 
@@ -1154,12 +1155,12 @@ if (empty($reshook)) {
 					$objectsrc->fetch($originid);
 					$objectsrc->fetch_thirdparty();
 
-					if (!empty($object->origin) && !empty($object->origin_id)) {
-						$object->linkedObjectsIds[$object->origin] = $object->origin_id;
+					if (!empty($object->origin_type) && !empty($object->origin_id)) {
+						$object->linkedObjectsIds[$object->origin_type] = $object->origin_id;
 					}
 
 					// Add also link with order if object is reception
-					if ($object->origin == 'reception') {
+					if ($object->origin_type == 'reception') {
 						$objectsrc->fetchObjectLinked();
 
 						if (count($objectsrc->linkedObjectsIds['order_supplier']) > 0) {
@@ -1285,7 +1286,7 @@ if (empty($reshook)) {
 									0,
 									array(), // array_options
 									null,
-									$object->origin,
+									$object->origin_type,
 									0,
 									'',
 									0, // special_code
@@ -2205,7 +2206,7 @@ if ($action == 'create') {
 		$objectsrc->fetch($originid);
 		$objectsrc->fetch_thirdparty();
 
-		$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
+		$projectid = (int) $objectsrc->fk_project;
 		//$ref_client			= (!empty($objectsrc->ref_client)?$object->ref_client:'');
 		$soc = $objectsrc->thirdparty;
 
@@ -2760,7 +2761,7 @@ if ($action == 'create') {
 		// Payment mode
 		print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
 		print img_picto('', 'bank', 'class="pictofixedwidth"');
-		$form->select_types_paiements($mode_reglement_id, 'mode_reglement_id', 'DBIT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx');
+		$form->select_types_paiements((string) $mode_reglement_id, 'mode_reglement_id', 'DBIT', 0, 1, 0, 0, 1, 'maxwidth200 widthcentpercentminusx');
 		print '</td></tr>';
 
 		// Bank Account

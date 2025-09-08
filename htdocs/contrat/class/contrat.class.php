@@ -104,12 +104,6 @@ class Contrat extends CommonObject
 	public $ref_supplier;
 
 	/**
-	 * Entity of the contract
-	 * @var int
-	 */
-	public $entity;
-
-	/**
 	 * Client id linked to the contract
 	 * @var int
 	 */
@@ -246,7 +240,7 @@ class Contrat extends CommonObject
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -366,7 +360,7 @@ class Contrat extends CommonObject
 	 *  @param	User		$user       Object User who activate contract
 	 *  @param  int			$line_id    Id of line to activate
 	 *  @param  int			$date_start Opening date
-	 *  @param  int|string	$date_end   Expected end date
+	 *  @param  int|''		$date_end   Expected end date
 	 * 	@param	string		$comment	A comment typed by user
 	 *  @return int         			Return integer <0 if KO, >0 if OK
 	 */
@@ -470,9 +464,12 @@ class Contrat extends CommonObject
 	 */
 	public function closeAll(User $user, $notrigger = 0, $comment = '')
 	{
+		dol_syslog("closeAll begin", LOG_DEBUG, 1);
+
 		$this->db->begin();
 
 		// Load lines
+		// TODO Should be useless if object was fetched without the noline param.
 		$this->fetch_lines();
 
 		$now = dol_now();
@@ -498,7 +495,7 @@ class Contrat extends CommonObject
 			}
 		}
 
-		if (!$error && $this->statut == 0) {
+		if (!$error && $this->status == 0) {
 			$result = $this->validate($user, '', $notrigger);
 			if ($result < 0) {
 				$error++;
@@ -507,9 +504,15 @@ class Contrat extends CommonObject
 
 		if (!$error) {
 			$this->db->commit();
+
+			dol_syslog("closeAll end", LOG_DEBUG, -1);
+
 			return 1;
 		} else {
 			$this->db->rollback();
+
+			dol_syslog("closeAll end", LOG_DEBUG, -1);
+
 			return -1;
 		}
 	}
@@ -739,6 +742,7 @@ class Contrat extends CommonObject
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -2070,7 +2074,7 @@ class Contrat extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $maxlength = 0, $notooltip = 0, $save_lastsearch_value = -1)
 	{
-		global $conf, $langs, $user, $hookmanager;
+		global $langs, $user, $hookmanager;
 
 		$result = '';
 
@@ -2323,7 +2327,7 @@ class Contrat extends CommonObject
 				$labelShort = $langs->trans("BoardExpiredServicesShort");
 			} else {
 				$warning_delay = $conf->contract->services->expires->warning_delay;
-				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&sortfield=cd.date_fin_validite&sortorder=asc';
+				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&search_status=4&sortfield=cd.date_fin_validite&sortorder=asc';
 				$url_late = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&search_option=late';
 				$label = $langs->trans("BoardRunningServices");
 				$labelShort = $langs->trans("BoardRunningServicesShort");

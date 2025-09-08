@@ -1138,7 +1138,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		if (is_numeric($tmpamounttoshow) && $tmpamounttoshow > 0) {
 			$line3 .= ($line3 ? " - " : "").$outputlangs->transnoentities("CapitalOf", price($tmpamounttoshow, 0, $outputlangs, 0, 0, 0, $conf->currency));
 		} elseif (!empty($fromcompany->capital)) {
-			$line3 .= ($line3 ? " - " : "").$outputlangs->transnoentities("CapitalOf", (string) $fromcompany->capital, $outputlangs);
+			$line3 .= ($line3 ? " - " : "").$outputlangs->transnoentities("CapitalOf", (string) $fromcompany->capital);
 		}
 	}
 	// Prof Id 1
@@ -1424,7 +1424,8 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
  */
 function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, $h, $align, $default_font_size)
 {
-	$linkedobjects = pdf_getLinkedObjects($object, $outputlangs);
+	$linkedobjects = pdf_getLinkedObjects($object, $outputlangs);	// May update $object->note_public
+
 	if (!empty($linkedobjects)) {
 		foreach ($linkedobjects as $linkedobject) {
 			$reftoshow = $linkedobject["ref_title"].' : '.$linkedobject["ref_value"];
@@ -1873,7 +1874,9 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			if ($detail->batch) {
 				$dte[] = $outputlangs->transnoentitiesnoconv('printBatch', $detail->batch);
 			}
-			$dte[] = $outputlangs->transnoentitiesnoconv('printQty', (string) $detail->qty);
+			if ($detail->qty) {
+				$dte[] = $outputlangs->transnoentitiesnoconv('printQty', (string) $detail->qty);
+			}
 
 			// Add also info of planned warehouse for lot
 			if ($object->element == 'shipping' && $detail->fk_origin_stock > 0 && getDolGlobalInt('PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT')) {
@@ -2321,7 +2324,7 @@ function pdf_getlineqty_keeptoship($object, $i, $outputlangs, $hidedetails = 0)
  */
 function pdf_getlineunit($object, $i, $outputlangs, $hidedetails = 0)
 {
-	global $hookmanager, $langs;
+	global $hookmanager;
 
 	$reshook = 0;
 	$result = '';
@@ -2346,7 +2349,7 @@ function pdf_getlineunit($object, $i, $outputlangs, $hidedetails = 0)
 	}
 	if (empty($reshook)) {
 		if (empty($hidedetails) || $hidedetails > 1) {
-			$result .= $langs->transnoentitiesnoconv($object->lines[$i]->getLabelOfUnit('short'));
+			$result .= $object->lines[$i]->getLabelOfUnit('short', $outputlangs, 1);
 		}
 	}
 	return $result;

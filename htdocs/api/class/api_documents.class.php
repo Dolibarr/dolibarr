@@ -369,7 +369,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Thirdparty not found');
 			}
 
-			$upload_dir = $conf->societe->multidir_output[$object->entity]."/".$object->id;
+			$upload_dir = $conf->societe->multidir_output[$object->entity ?? $conf->entity]."/".$object->id;
 		} elseif ($modulepart == 'user') {
 			require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
@@ -412,7 +412,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Proposal not found');
 			}
 
-			$upload_dir = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
+			$upload_dir = $conf->propal->multidir_output[$object->entity ?? $conf->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
 		} elseif ($modulepart == 'supplier_proposal') {
 			require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 
@@ -426,7 +426,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Supplier proposal not found');
 			}
 
-			$upload_dir = $conf->propal->multidir_output[$object->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
+			$upload_dir = $conf->propal->multidir_output[$object->entity ?? $conf->entity]."/".get_exdir(0, 0, 0, 1, $object, 'propal');
 		} elseif ($modulepart == 'commande' || $modulepart == 'order') {
 			require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
@@ -501,7 +501,7 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->fournisseur->dir_output."/facture/".get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').dol_sanitizeFileName($object->ref);
-		} elseif ($modulepart == 'produit' || $modulepart == 'product') {
+		} elseif ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'service') {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 			if (!DolibarrApiAccess::$user->hasRight('produit', 'lire')) {
@@ -516,7 +516,7 @@ class Documents extends DolibarrApi
 				throw new RestException(500, 'Error while fetching object: '.$object->error);
 			}
 
-			$upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'product');
+			$upload_dir = $conf->product->multidir_output[$object->entity ?? $conf->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'product');
 		} elseif ($modulepart == 'agenda' || $modulepart == 'action' || $modulepart == 'event') {
 			require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
@@ -545,6 +545,20 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($object->ref);
+		} elseif ($modulepart == 'ticket') {
+			require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
+
+			if (!DolibarrApiAccess::$user->hasRight('ticket', 'read')) {
+				throw new RestException(403);
+			}
+
+			$object = new Ticket($this->db);
+			$result = $object->fetch($id, $ref);
+			if (!$result) {
+				throw new RestException(404, 'Ticket not found');
+			}
+
+			$upload_dir = $conf->ticket->dir_output.'/'.dol_sanitizeFileName($object->ref);
 		} elseif ($modulepart == 'knowledgemanagement') {
 			require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class.php';
 
@@ -572,7 +586,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Category not found');
 			}
 
-			$upload_dir = $conf->categorie->multidir_output[$object->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'category').$object->id."/photos/".dol_sanitizeFileName($object->ref);
+			$upload_dir = $conf->categorie->multidir_output[$object->entity ?? $conf->entity].'/'.get_exdir($object->id, 2, 0, 0, $object, 'category').$object->id."/photos/".dol_sanitizeFileName($object->ref);
 		} elseif ($modulepart == 'ecm') {
 			throw new RestException(500, 'Modulepart Ecm not implemented yet.');
 			// require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
@@ -633,6 +647,16 @@ class Documents extends DolibarrApi
 			}
 
 			$upload_dir = $conf->mrp->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'mrp');
+		} elseif ($modulepart == 'contact' || $modulepart == 'socpeople') {
+			$modulepart = 'contact';
+			require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+
+			$object = new Contact($this->db);
+			$result = $object->fetch($id?$id:$ref);
+			if (!$result) {
+				throw new RestException(404, 'Contact not found');
+			}
+			$upload_dir = $conf->societe->multidir_output[$object->entity ?? $conf->entity] . "/contact/" . get_exdir(0, 0, 0, 1, $object, 'contact');
 		} else {
 			throw new RestException(500, 'Modulepart '.$modulepart.' not implemented yet.');
 		}

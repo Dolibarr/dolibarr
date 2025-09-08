@@ -80,11 +80,6 @@ class Ticket extends CommonObject
 	public $socid;
 
 	/**
-	 * @var int Project ID
-	 */
-	public $fk_project;
-
-	/**
 	 * @var int Contract ID
 	 */
 	public $fk_contract;
@@ -274,7 +269,7 @@ class Ticket extends CommonObject
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -1866,7 +1861,7 @@ class Ticket extends CommonObject
 			if (!empty($contacts)) {
 				// Ensure that contact is active and select first active contact
 				foreach ($contacts as $contact) {
-					if ((int) $contact->statut == 1) {
+					if ((int) $contact->status == 1) {
 						$actioncomm->contact_id = $contact->id;
 						break;
 					}
@@ -2880,7 +2875,7 @@ class Ticket extends CommonObject
 
 									// Contact type
 									$recipient = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], -1).' ('.strtolower((string) $info_sendto['libelle']).')';
-									$message .= (!empty($recipient) ? $langs->trans('TicketNotificationRecipient').' : '.$recipient.'<br>' : '');
+									$message .= (!empty($recipient) ? '<br>'.$langs->trans('TicketNotificationRecipient').' : '.$recipient.'<br>' : '');
 								}
 							}
 							$message .= '<br>';
@@ -2971,7 +2966,7 @@ class Ticket extends CommonObject
 										}
 
 										$recipient = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], -1).' ('.strtolower((string) $info_sendto['libelle']).')';
-										$message .= (!empty($recipient) ? $langs->trans('TicketNotificationRecipient').' : '.$recipient.'<br>' : '');
+										$message .= (!empty($recipient) ? '<br>'.$langs->trans('TicketNotificationRecipient').' : '.$recipient.'<br>' : '');
 									}
 								}
 

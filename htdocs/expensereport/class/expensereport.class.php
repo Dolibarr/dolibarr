@@ -6,7 +6,7 @@
  * Copyright (c) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2016-2020 	Ferran Marcet       	<fmarcet@2byte.es>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,16 +99,16 @@ class ExpenseReport extends CommonObject
 	public $user_approve_id;
 
 	/**
-	 * 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=paid, 99=denied
+	 * 0=draft, 2=validated (awaiting approval), 4=canceled, 5=approved, 6=paid, 99=denied
 	 *
-	 * @var int		Status
+	 * @var int|null	Status
 	 */
 	public $status;
 
 	/**
-	 * 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=paid, 99=denied
+	 * 0=draft, 2=validated (awaiting approval), 4=canceled, 5=approved, 6=paid, 99=denied
 	 *
-	 * @var int		Status
+	 * @var int|null	Status
 	 * @deprecated Use $status
 	 */
 	public $fk_statut;
@@ -308,9 +308,9 @@ class ExpenseReport extends CommonObject
 		'date_approve' => array('type' => 'datetime', 'label' => 'Date approve', 'enabled' => 1, 'visible' => -1, 'position' => 80),
 		'date_refuse' => array('type' => 'datetime', 'label' => 'Date refuse', 'enabled' => 1, 'visible' => -1, 'position' => 85),
 		'date_cancel' => array('type' => 'datetime', 'label' => 'Date cancel', 'enabled' => 1, 'visible' => -1, 'position' => 90),
-		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fk user author', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 100),
-		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fk user modif', 'enabled' => 1, 'visible' => -1, 'position' => 105),
-		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fk user valid', 'enabled' => 1, 'visible' => -1, 'position' => 110),
+		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 100),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -1, 'position' => 105),
+		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'position' => 110),
 		'fk_user_validator' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fk user validator', 'enabled' => 1, 'visible' => -1, 'position' => 115),
 		'fk_user_approve' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fk user approve', 'enabled' => 1, 'visible' => -1, 'position' => 120),
 		'fk_user_refuse' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fk user refuse', 'enabled' => 1, 'visible' => -1, 'position' => 125),
@@ -334,7 +334,7 @@ class ExpenseReport extends CommonObject
 		'tms' => array('type' => 'timestamp', 'label' => 'Tms', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 305),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -1, 'position' => 1000),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 1010),
-		'fk_statut' => array('type' => 'integer', 'label' => 'Fk statut', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500),
+		'fk_statut' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500),
 	);
 
 	/**
@@ -1346,7 +1346,7 @@ class ExpenseReport extends CommonObject
 		$this->date_valid = $now; // Required for the getNextNum later.
 
 		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+		if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 			$num = $this->getNextNumRef();
 		} else {
 			$num = $this->ref;
@@ -1369,7 +1369,7 @@ class ExpenseReport extends CommonObject
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			if (!$error && !$notrigger) {
+			if (!$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('EXPENSE_REPORT_VALIDATE', $fuser);
 				if ($result < 0) {
@@ -1683,9 +1683,9 @@ class ExpenseReport extends CommonObject
 			$this->db->begin();
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-			$sql .= " SET fk_statut = ".self::STATUS_CANCELED.", fk_user_cancel = ".((int) $fuser->id);
-			$sql .= ", date_cancel='".$this->db->idate($this->date_cancel)."'";
-			$sql .= ", detail_cancel='".$this->db->escape($detail)."'";
+			$sql .= " SET fk_statut = ".((int) self::STATUS_CANCELED).", fk_user_cancel = ".((int) $fuser->id);
+			$sql .= ", date_cancel = '".$this->db->idate($this->date_cancel)."'";
+			$sql .= ", detail_cancel = '".$this->db->escape($detail)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::set_cancel", LOG_DEBUG);
@@ -2772,7 +2772,7 @@ class ExpenseReport extends CommonObject
 		$result = $this->db->query($sql);
 
 		if ($result) {
-			if ($conf->global->EXPENSEREPORT_CALCULATE_MILEAGE_EXPENSE_COEFFICIENT_ON_CURRENT_YEAR) {
+			if (getDolGlobalInt('EXPENSEREPORT_CALCULATE_MILEAGE_EXPENSE_COEFFICIENT_ON_CURRENT_YEAR')) {
 				$arrayDate = dol_getdate(dol_now());
 				$sql = " SELECT count(n.qty) as cumul FROM ".MAIN_DB_PREFIX."expensereport_det n";
 				$sql .= " LEFT JOIN  ".MAIN_DB_PREFIX."expensereport e ON e.rowid = n.fk_expensereport";
@@ -2852,21 +2852,19 @@ class ExpenseReport extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">' . $this->getNomUrl(1) . '</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		if (array_key_exists('userauthor', $arraydata) && $arraydata['userauthor'] instanceof User) {
 			$return .= '<br><span class="info-box-label">'.$arraydata['userauthor']->getNomUrl(-1).'</span>';
 		}
-		if (property_exists($this, 'date_debut') && property_exists($this, 'date_fin')) {
+		if (isDolTms($this->date_debut) || isDolTms($this->date_fin)) {
 			$return .= '<br><span class="info-box-label">'.dol_print_date($this->date_debut, 'day').'</span>';
 			$return .= ' <span class="opacitymedium">'.$langs->trans("To").'</span> ';
 			$return .= '<span class="info-box-label">'.dol_print_date($this->date_fin, 'day').'</span>';
 		}
-		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
-		}
+		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';

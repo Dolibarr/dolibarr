@@ -387,6 +387,7 @@ class SecurityTest extends CommonClassTest
 	{
 		$stringtotest = 'eée';
 		$decodedstring = dol_string_onlythesehtmlattributes($stringtotest);
+
 		//$this->assertEquals('e&eacute;e', $decodedstring, 'Function did not sanitize correctly with test 1');
 		$this->assertEquals('eée', $decodedstring, 'Function did not sanitize correctly with test 1');
 

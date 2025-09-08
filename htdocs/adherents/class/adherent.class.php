@@ -338,7 +338,7 @@ class Adherent extends CommonObject
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -505,11 +505,8 @@ class Adherent extends CommonObject
 			$texttosend = dol_htmlentitiesbr($texttosend);
 		}
 
-		// Envoi mail confirmation
-		$from = $conf->email_from;
-		if (getDolGlobalString('ADHERENT_MAIL_FROM')) {
-			$from = getDolGlobalString('ADHERENT_MAIL_FROM');
-		}
+		// Send mail confirmation
+		$from = getDolGlobalString('ADHERENT_MAIL_FROM', $conf->email_from);
 
 		$trackid = 'mem'.$this->id;
 
@@ -1463,7 +1460,7 @@ class Adherent extends CommonObject
 		$sql .= " d.email, d.url, d.socialnetworks, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
 		$sql .= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
 		$sql .= " d.datec as datec,";
-		$sql .= " d.tms as datem,";
+		$sql .= " GREATEST(d.tms, aef.tms) as datem,";
 		$sql .= " d.datefin as datefin, d.default_lang,";
 		$sql .= " d.birth as birthday,";
 		$sql .= " d.datevalid as datev,";
@@ -1475,6 +1472,7 @@ class Adherent extends CommonObject
 		$sql .= " t.libelle as type, t.subscription as subscription,";
 		$sql .= " u.rowid as user_id, u.login as user_login";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'adherent_extrafields as aef ON aef.fk_object = d.rowid';
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON d.country = c.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as dep ON d.state_id = dep.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON d.rowid = u.fk_member";
@@ -2544,7 +2542,7 @@ class Adherent extends CommonObject
 				$labelStatus = $langs->trans("Validated").' - '.$langs->trans("WaitingSubscription");
 				$labelStatusShort = $langs->trans("WaitingSubscriptionShort");
 			} elseif ($date_end_subscription < dol_now()) {	// expired
-				$statusType = 'status8';
+				$statusType = 'status2';
 				$labelStatus = $langs->trans("Validated").' - '.$langs->trans("MemberStatusActiveLate");
 				$labelStatusShort = $langs->trans("MemberStatusActiveLateShort");
 			} else {
@@ -2615,7 +2613,7 @@ class Adherent extends CommonObject
 
 		$now = dol_now();
 
-		$sql = "SELECT a.rowid, a.datefin, a.statut";
+		$sql = "SELECT a.rowid, a.datefin, a.statut as status";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
 		$sql .= ", ".MAIN_DB_PREFIX."adherent_type as t";
 		$sql .= " WHERE a.fk_adherent_type = t.rowid";
@@ -2662,8 +2660,8 @@ class Adherent extends CommonObject
 				$response->nbtodo++;
 
 				$adherentstatic->datefin = $this->db->jdate($obj->datefin);
-				$adherentstatic->statut = $obj->statut;
-				$adherentstatic->status = $obj->statut;
+				$adherentstatic->statut = $obj->status;
+				$adherentstatic->status = $obj->status;
 
 				if ($adherentstatic->hasDelay()) {
 					$response->nbtodolate++;
@@ -2973,9 +2971,10 @@ class Adherent extends CommonObject
 	{
 		$sql = 'SELECT a.rowid, a.datec as datec,';
 		$sql .= ' a.datevalid as datev,';
-		$sql .= ' a.tms as datem,';
+		$sql .= ' GREATEST(a.tms, aef.tms) as datem,';
 		$sql .= ' a.fk_user_author, a.fk_user_valid, a.fk_user_mod';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'adherent as a';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'adherent_extrafields as aef ON aef.fk_object = a.rowid';
 		$sql .= ' WHERE a.rowid = '.((int) $id);
 
 		dol_syslog(get_class($this)."::info", LOG_DEBUG);
@@ -3186,7 +3185,7 @@ class Adherent extends CommonObject
 
 							$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
 							$msg = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
-							$from = getDolGlobalString('ADHERENT_MAIL_FROM');
+							$from = getDolGlobalString('ADHERENT_MAIL_FROM', $conf->email_from);
 							$to = $adherent->email;
 							$cc = getDolGlobalString('ADHERENT_CC_MAIL_FROM');
 
@@ -3245,7 +3244,7 @@ class Adherent extends CommonObject
 								$actioncomm->contact_id = 0;
 								$actioncomm->authorid = $user->id; // User saving action
 								$actioncomm->userownerid = $user->id; // Owner of action
-								// Fields when action is en email (content should be added into note)
+								// Fields when action is an email (content should be added into note)
 								$actioncomm->email_msgid = $cmail->msgid;
 								$actioncomm->email_from = $from;
 								$actioncomm->email_sender = '';

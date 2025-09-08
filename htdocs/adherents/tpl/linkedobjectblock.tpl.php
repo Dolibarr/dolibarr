@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2011	Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2013		Juanjo Menent <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García <marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 /**
- * @var Conf $conf
+ * @var ?Conf $conf
  * @var User $user
  */
 // Protection to avoid direct call of template
@@ -34,8 +34,13 @@ global $user;
 
 $langs = $GLOBALS['langs'];
 '@phan-var-force Translate $langs';
+/**
+ * @var Translate $langs
+ * @var CommonObject $object
+ */
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 '@phan-var-force Subscription[] $linkedObjectBlock';
+/** @var Subscription[] $linkedObjectBlock */
 $langs->load("members");
 
 $total = 0;

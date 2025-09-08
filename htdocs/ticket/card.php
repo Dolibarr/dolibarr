@@ -956,29 +956,36 @@ if ($action == 'create' || $action == 'presend') {
 			// If ticket create from public interface - TODO Add a more robust test to know if created by public interface
 			$createdfrompublicticket = 1;
 		} elseif (!empty($object->email_msgid)) {
-			// If ticket create by emailcollector - TODO Add a more robust test to know if created by email collector (using import ky ?)
+			// If ticket create by emailcollector - TODO Add a more robust test to know if created by email collector (using import key ?)
 			$createdfromemailcollector = 1;
 		}
 
 		//var_dump($object);
+		$htmltooltip = '';
 		if ($createdfrompublicticket) {
-			$htmltooptip = $langs->trans("OriginEmail").': '.$object->origin_email;
-			$htmltooptip .= '<br>'.$langs->trans("IP").': '.dol_print_ip($object->ip);
+			$htmltooltip .= $langs->trans("OriginEmail").': '.$object->origin_email;
+			$htmltooltip .= '<br>'.$langs->trans("IP").': '.dol_print_ip($object->ip);
 			$morehtmlref .= ($createdbyshown ? ' - ' : '<br>');
 			//$morehtmlref .= ($createdbyshown ? '' : '<span class="opacitymedium">'.$langs->trans("CreatedBy").' </span> ');
 			$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
-			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">- '.$form->textwithpicto($langs->trans("CreatedByPublicPortal"), $htmltooptip, 1, 'help', '', 0, 3, 'tooltip').'</small>';
+			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">- '.$form->textwithpicto($langs->trans("CreatedByPublicPortal"), $htmltooltip, 1, 'help', '', 0, 3, 'tooltipcreatedbyportal').'</small>';
 		} elseif ($createdfromemailcollector) {
 			$langs->load("mails");
-			$htmltooltip = $langs->trans("EmailMsgID").': '.$object->email_msgid;
-			$htmltooltip .= '<br>'.$langs->trans("EmailDate").': '.dol_print_date($object->email_date, 'dayhour');
-			$htmltooltip .= '<br>'.$langs->trans("MailFrom").': '.$object->origin_email;
-			$htmltooltip .= '<br>'.$langs->trans("MailReply").': '.$object->origin_replyto;
-			$htmltooltip .= '<br>'.$langs->trans("MailReferences").': '.$object->origin_references;
+
+			$htmltooltip .= '<b>'.$langs->trans("EmailMsgID").':</b> '.$object->email_msgid;
+			$htmltooltip .= '<br><b>'.$langs->trans("EmailDate").':</b> '.dol_print_date($object->email_date, 'dayhour');
+			$htmltooltip .= '<br><b>'.$langs->trans("MailFrom").':</b> '.$object->origin_email;
+			$htmltooltip .= '<br><b>'.$langs->trans("MailReply").':</b> '.$object->origin_replyto;
+			$htmltooltip .= '<br><b>'.$langs->trans("MailReferences").':</b> '.$object->origin_references;
 			$morehtmlref .= ($createdbyshown ? ' - ' : '<br>');
 			//$morehtmlref .= ($createdbyshown ? '' : '<span class="opacitymedium">'.$langs->trans("CreatedBy").'</span> ');
-			$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
-			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">- '.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $htmltooltip, 1, 'help', '', 0, 3, 'tooltip').'</small>';
+			$morehtmlref .= img_picto('From', 'email', 'class="paddingrightonly"');
+			$morehtmlref .= dol_escape_htmltag($object->origin_email);
+			if ($object->origin_replyto) {
+				$morehtmlref .= ' - '.img_picto('ReplyTo', 'email', 'class="paddingrightonly"');
+				$morehtmlref .= dol_escape_htmltag($object->origin_replyto);
+			}
+			$morehtmlref .= ' <small class="hideonsmartphone opacitymedium">- '.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $htmltooltip, 1, 'help', '', 0, 3, 'tooltipcreatedbyemailcollector').'</small>';
 		}
 
 		$permissiontoedit = $object->status < 8 && !$user->socid && $user->hasRight('ticket', 'write');

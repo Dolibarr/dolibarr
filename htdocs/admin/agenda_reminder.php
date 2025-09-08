@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017	    Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,7 +123,7 @@ if ($action == 'set') {
 
 		if ($module->write_file($commande, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=action&file=SPECIMEN.pdf");
-			return;
+			exit;
 		} else {
 			setEventMessages($module->error, $module->errors, 'errors');
 			dol_syslog($module->error, LOG_ERR);
@@ -139,7 +139,7 @@ if ($action == 'set') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->ACTION_EVENT_ADDON_PDF == "$value") {
+		if (getDolGlobalString('ACTION_EVENT_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'ACTION_EVENT_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -167,7 +167,8 @@ $formactions = new FormActions($db);
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-agenda_reminder');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("AgendaSetup"), $linkback, 'title_setup');
 
 
@@ -265,6 +266,23 @@ if (!isModEnabled('cron')) {
 			print '<span class="opacitymedium warning">'.$langs->trans("JobNotFound", $langs->transnoentitiesnoconv("sendEmailsReminder")).'</span>';
 		}
 	}
+}
+
+// AGENDA REMINDER SMS
+print '<tr class="oddeven">'."\n";
+print '<td>';
+print $langs->trans('AGENDA_REMINDER_SMS').'<br>';
+print '<span class="opacitymedium">'.$langs->trans('AGENDA_REMINDER_SMSHelp').'</span>';
+print '</td>'."\n";
+print '<td class="center">&nbsp;</td>'."\n";
+print '<td class="right nowraponall">'."\n";
+
+if (!getDolGlobalString('AGENDA_REMINDER_SMS')) {
+	print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_SMS&token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
+	print '</td></tr>'."\n";
+} else {
+	print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_SMS&token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
+	print '</td></tr>'."\n";
 }
 
 // AGENDA DEFAULT REMINDER EVENT TYPE
