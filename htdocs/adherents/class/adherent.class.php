@@ -901,11 +901,9 @@ class Adherent extends CommonObject
 			$action = 'update';
 
 			// Actions on extra fields
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 			// Update password
@@ -948,7 +946,7 @@ class Adherent extends CommonObject
 
 			if (!$error && $nbrowsaffected) { // If something has change in main data
 				// Update information on linked user if it is an update
-				if (!$error && $this->user_id > 0 && !$nosyncuser) {
+				if ($this->user_id > 0 && !$nosyncuser) {
 					require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 					dol_syslog(get_class($this)."::update update linked user");
@@ -1130,7 +1128,7 @@ class Adherent extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error && !$notrigger) {
+		if (!$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('MEMBER_DELETE', $user);
 			if ($result < 0) {
@@ -1911,8 +1909,7 @@ class Adherent extends CommonObject
 
 				$result = $invoice->create($user);
 				if ($result <= 0) {
-					$this->error = $invoice->error;
-					$this->errors = $invoice->errors;
+					$this->setErrorsFromObject($invoice);
 					$error++;
 				} else {
 					$this->invoice = $invoice;
@@ -1934,8 +1931,7 @@ class Adherent extends CommonObject
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				$result = $invoice->addline($label, 0, 1, $vattouse, 0, 0, $idprodsubscription, 0, $datesubscription, '', 0, 0, 0, 'TTC', $amount, 1);
 				if ($result <= 0) {
-					$this->error = $invoice->error;
-					$this->errors = $invoice->errors;
+					$this->setErrorsFromObject($invoice);
 					$error++;
 				}
 			}
@@ -1944,8 +1940,7 @@ class Adherent extends CommonObject
 				// Validate invoice
 				$result = $invoice->validate($user);
 				if ($result <= 0) {
-					$this->error = $invoice->error;
-					$this->errors = $invoice->errors;
+					$this->setErrorsFromObject($invoice);
 					$error++;
 				}
 			}
@@ -1973,22 +1968,18 @@ class Adherent extends CommonObject
 				$paiement->ext_payment_id = $ext_payment_id;
 				$paiement->ext_payment_site = $ext_payment_site;
 
-				if (!$error) {
-					// Create payment line for invoice
-					$paiement_id = $paiement->create($user);
-					if (!($paiement_id > 0)) {
-						$this->error = $paiement->error;
-						$this->errors = $paiement->errors;
-						$error++;
-					}
+				// Create payment line for invoice
+				$paiement_id = $paiement->create($user);
+				if (!($paiement_id > 0)) {
+					$this->setErrorsFromObject($paiement);
+					$error++;
 				}
 
 				if (!$error) {
 					// Add transaction into bank account
 					$bank_line_id = $paiement->addPaymentToBank($user, 'payment', '(SubscriptionPayment)', $accountid, $emetteur_nom, $emetteur_banque);
 					if (!($bank_line_id > 0)) {
-						$this->error = $paiement->error;
-						$this->errors = $paiement->errors;
+						$this->setErrorsFromObject($paiement);
 						$error++;
 					}
 				}
