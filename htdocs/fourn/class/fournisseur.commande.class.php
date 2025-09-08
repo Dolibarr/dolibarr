@@ -796,7 +796,7 @@ class CommandeFournisseur extends CommonOrder
 			if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 				$num = $this->getNextNumRef($soc);
 			} else {
-				$num = $this->ref;
+				$num = (string) $this->ref;
 			}
 			$this->newref = dol_sanitizeFileName($num);
 
@@ -1291,7 +1291,7 @@ class CommandeFournisseur extends CommonOrder
 			if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 				$num = $this->getNextNumRef($soc);
 			} else {
-				$num = $this->ref;
+				$num = (string) $this->ref;
 			}
 			$this->newref = dol_sanitizeFileName($num);
 
