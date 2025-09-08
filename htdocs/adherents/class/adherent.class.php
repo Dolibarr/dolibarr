@@ -288,7 +288,7 @@ class Adherent extends CommonObject
 	public $last_subscription_date_end;
 
 	/**
-	 * @var int|string date
+	 * @var null|float|string date, null until set
 	 */
 	public $last_subscription_amount;
 
@@ -1631,13 +1631,13 @@ class Adherent extends CommonObject
 				$this->last_subscription_date = $this->db->jdate($obj->datec);
 				$this->last_subscription_date_start = $this->db->jdate($obj->dateh);
 				$this->last_subscription_date_end = $this->db->jdate($obj->datef);
-				$this->last_subscription_amount = $obj->subscription;
+				$this->last_subscription_amount = (float) $obj->subscription;
 
 				$subscription = new Subscription($this->db);
 				$subscription->id = $obj->rowid;
 				$subscription->fk_adherent = $obj->fk_adherent;
 				$subscription->fk_type = $obj->fk_type;
-				$subscription->amount = $obj->subscription;
+				$subscription->amount = (float) $obj->subscription;
 				$subscription->note = $obj->note_public;
 				$subscription->note_public = $obj->note_public;
 				$subscription->fk_bank = $obj->fk_bank;
