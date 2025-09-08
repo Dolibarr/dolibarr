@@ -3082,7 +3082,7 @@ if ($action == 'create') {
 				// empty should not happened, but when it occurs, the test save life
 				$numref = $object->getNextNumRef($societe);
 			} else {
-				$numref = $object->ref;
+				$numref = (string) $object->ref;
 			}
 
 			if ($numref < 0) {

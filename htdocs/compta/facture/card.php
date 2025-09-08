@@ -4897,7 +4897,7 @@ if ($action == 'create') {
 			$numref = $object->getNextNumRef($soc);
 			// $object->date=$savdate;
 		} else {
-			$numref = $object->ref;
+			$numref = (string) $object->ref;
 		}
 
 		$text = $langs->trans('ConfirmValidateBill', $numref);
