@@ -2271,19 +2271,18 @@ class Contact extends CommonObject
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
-		//var_dump($this->photo);exit;
-		if (property_exists($this, 'photo') && !is_null($this->photo)) {
+		if (!is_null($this->photo)) {
 			$return .= Form::showphoto('contact', $this, 0, 60, 0, 'photokanban photoref photowithmargin photologintooltip', 'small', 0, 1);
 		} else {
 			$return .= img_picto('', $this->picto);
 		}
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<div class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(0) : $this->ref).'</div>';
+		$return .= '<div class="info-box-ref inline-block tdoverflowmax150 valignmiddle">' . $this->getNomUrl(0) . '</div>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
+		if (is_object($this->thirdparty)) {
 			$return .= '<div class="info-box-ref tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
 		}
 		/*if (property_exists($this, 'phone_pro') && !empty($this->phone_pro)) {
