@@ -899,14 +899,12 @@ class AdherentType extends CommonObject
 	public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		$result = '';
-		$option = '';
 
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
 		$params = [
 			'id' => $this->id,
 			'objecttype' => $this->element,
-			'option' => $option,
 			'nofetch' => 1,
 		];
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
@@ -918,16 +916,15 @@ class AdherentType extends CommonObject
 		}
 
 		$url = DOL_URL_ROOT.'/adherents/type.php?rowid='.((int) $this->id);
-		if ($option != 'nolink') {
-			// Add param to save lastsearch_values or not
-			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
-				$add_save_lastsearch_values = 1;
-			}
-			if ($add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
-			}
+		// Add param to save lastsearch_values or not
+		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+		if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			$add_save_lastsearch_values = 1;
 		}
+		if ($add_save_lastsearch_values) {
+			$url .= '&save_lastsearch_values=1';
+		}
+
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 		$linkstart .= $dataparams.' class="'.$classfortooltip.'">';
