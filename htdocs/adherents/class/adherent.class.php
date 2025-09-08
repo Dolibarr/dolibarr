@@ -3282,10 +3282,31 @@ class Adherent extends CommonObject
 		} else {
 			$this->output = 'Found '.($nbok + $nbko).' members to send reminder to.';
 			$this->output .= ' Send email successfully to '.$nbok.' members';
-			if (is_array($listofmembersok)) {
+			$listofids = '';
+			$i = 0;
+			foreach ($listofmembersok as $idmember) {
+				if ($i > 100) {
+					$listofids .= ', ...';
+					break;
+				}
+				if (empty($listofids)) {
+					$listofids .= ' [';
+				} else {
+					$listofids .= ', ';
+				}
+				$listofids .= $idmember;
+				$i++;
+			}
+			if ($listofids) {
+				$listofids .= ']';
+			}
+			$this->output .= ($listofids ? ' ids='.$listofids : '');
+
+			if ($nbko) {
+				$this->output .= ' - Canceled for '.$nbko.' member (no email or email sending error)';
 				$listofids = '';
 				$i = 0;
-				foreach ($listofmembersok as $idmember) {
+				foreach ($listofmembersko as $idmember) {
 					if ($i > 100) {
 						$listofids .= ', ...';
 						break;
@@ -3301,32 +3322,7 @@ class Adherent extends CommonObject
 				if ($listofids) {
 					$listofids .= ']';
 				}
-
 				$this->output .= ($listofids ? ' ids='.$listofids : '');
-			}
-			if ($nbko) {
-				$this->output .= ' - Canceled for '.$nbko.' member (no email or email sending error)';
-				if (is_array($listofmembersko)) {
-					$listofids = '';
-					$i = 0;
-					foreach ($listofmembersko as $idmember) {
-						if ($i > 100) {
-							$listofids .= ', ...';
-							break;
-						}
-						if (empty($listofids)) {
-							$listofids .= ' [';
-						} else {
-							$listofids .= ', ';
-						}
-						$listofids .= $idmember;
-						$i++;
-					}
-					if ($listofids) {
-						$listofids .= ']';
-					}
-					$this->output .= ($listofids ? ' ids='.$listofids : '');
-				}
 			}
 		}
 
@@ -3354,7 +3350,7 @@ class Adherent extends CommonObject
 		}
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">' . $this->getNomUrl() . '</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
