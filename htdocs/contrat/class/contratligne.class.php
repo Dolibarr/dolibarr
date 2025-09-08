@@ -395,7 +395,7 @@ class ContratLigne extends CommonObjectLine
 
 		$datas = [];
 		$datas['label'] = $langs->trans("ShowContractOfService").': '.$this->label;
-		if (empty($datas['label'])) {
+		if (empty($this->label)) {
 			$datas['label'] = $this->description;
 		}
 
@@ -415,7 +415,7 @@ class ContratLigne extends CommonObjectLine
 
 		$result = '';
 		$label = $langs->trans("ShowContractOfService").': '.$this->label;
-		if (empty($label)) {
+		if (empty($this->label)) {
 			$label = $this->description;
 		}
 		$classfortooltip = 'classfortooltip';
