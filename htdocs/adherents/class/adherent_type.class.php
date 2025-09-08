@@ -180,7 +180,7 @@ class AdherentType extends CommonObject
 	public $note_public;
 
 	/**
-	 * @var int<0,1>	Can vote
+	 * @var null|int<0,1>	Can vote, null until fetched
 	 */
 	public $vote;
 
@@ -868,7 +868,7 @@ class AdherentType extends CommonObject
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("MemberType").'</u> '.$this->getLibStatut(4);
 		$datas['label'] = '<br>'.$langs->trans("Label").': '.$this->label;
 		if (isset($this->subscription)) {
-			$datas['subscription'] = '<br>'.$langs->trans("SubscriptionRequired").': '.yn($this->subscription);
+			$datas['subscription'] = '<br>'.$langs->trans("SubscriptionRequired").': '.yn((int) $this->subscription);
 		}
 		if (isset($this->vote)) {
 			$datas['vote'] = '<br>'.$langs->trans("VoteAllowed").': '.yn($this->vote);
@@ -876,9 +876,23 @@ class AdherentType extends CommonObject
 		if (isset($this->duration)) {
 			$datas['duration'] = '<br>'.$langs->trans("Duration").': '.$this->duration_value;
 			if ($this->duration_value > 1) {
-				$dur = array("i" => $langs->trans("Minutes"), "h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
+				$dur = array(
+					"i" => $langs->trans("Minutes"),
+					"h" => $langs->trans("Hours"),
+					"d" => $langs->trans("Days"),
+					"w" => $langs->trans("Weeks"),
+					"m" => $langs->trans("Months"),
+					"y" => $langs->trans("Years")
+				);
 			} elseif ($this->duration_value > 0) {
-				$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hour"), "d" => $langs->trans("Day"), "w" => $langs->trans("Week"), "m" => $langs->trans("Month"), "y" => $langs->trans("Year"));
+				$dur = array(
+					"i" => $langs->trans("Minute"),
+					"h" => $langs->trans("Hour"),
+					"d" => $langs->trans("Day"),
+					"w" => $langs->trans("Week"),
+					"m" => $langs->trans("Month"),
+					"y" => $langs->trans("Year")
+				);
 			}
 			$datas['duration'] .= "&nbsp;" . (!empty($this->duration_unit) && isset($dur[$this->duration_unit]) ? $langs->trans($dur[$this->duration_unit]) : '');
 		}
