@@ -104,12 +104,6 @@ class Contrat extends CommonObject
 	public $ref_supplier;
 
 	/**
-	 * Entity of the contract
-	 * @var int
-	 */
-	public $entity;
-
-	/**
 	 * Client id linked to the contract
 	 * @var int
 	 */

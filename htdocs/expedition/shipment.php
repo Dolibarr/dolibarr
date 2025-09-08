@@ -738,7 +738,7 @@ if ($order_id > 0 || !empty($ref)) {
 						$text = $product_static->getNomUrl(1);
 						$text .= ' - '.$label;
 						$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($objp->description)).'<br>';
-						$description .= $product_static->show_photos('product', $conf->product->multidir_output[$product_static->entity], 1, 1, 0, 0, 0, 80);
+						$description .= $product_static->show_photos('product', $conf->product->multidir_output[$product_static->entity ?? $conf->entity], 1, 1, 0, 0, 0, 80);
 						print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i);
 
 						// Show range

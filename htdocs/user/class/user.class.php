@@ -190,11 +190,6 @@ class User extends CommonObject
 	public $api_key;
 
 	/**
-	 * @var int Entity
-	 */
-	public $entity;
-
-	/**
 	 * @var string Clear password in memory
 	 */
 	public $pass;

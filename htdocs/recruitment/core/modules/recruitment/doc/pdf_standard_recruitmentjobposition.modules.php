@@ -9,7 +9,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -272,8 +272,8 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 				// Set path to the background PDF File
 				if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
 					$logodir = $conf->mycompany->dir_output;
-					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-						$logodir = $conf->mycompany->multidir_output[$object->entity];
+					if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+						$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 					}
 					$pagecount = $pdf->setSourceFile($logodir.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
@@ -755,8 +755,8 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 		if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
 			if ($this->emetteur->logo) {
 				$logodir = $conf->mycompany->dir_output;
-				if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-					$logodir = $conf->mycompany->multidir_output[$object->entity];
+				if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+					$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 				}
 				if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
 					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;

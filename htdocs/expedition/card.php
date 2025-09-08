@@ -1615,7 +1615,9 @@ if ($action == 'create'&& $usercancreate) {
 	} elseif ($origin) {
 		$classname = ucfirst($origin);
 		$object = new $classname($db);
+		/* @var Commande|Facture $object */
 		'@phan-var-force Commande|Facture $object';
+
 		if ($object->fetch($origin_id)) {	// This include the fetch_lines
 			$soc = new Societe($db);
 			$soc->fetch($object->socid);
@@ -1695,7 +1697,7 @@ if ($action == 'create'&& $usercancreate) {
 			print '<tr><td>' . $langs->trans("DateDeliveryPlanned") . '</td>';
 			print '<td colspan="3">';
 			print img_picto('', 'action', 'class="pictofixedwidth"');
-			$date_delivery = ($date_delivery ? $date_delivery : $object->date_delivery); // $date_delivery comes from GETPOST
+			$date_delivery = ($date_delivery ? $date_delivery : $object->delivery_date); // $date_delivery comes from GETPOST
 			print $form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
 			print "</td>\n";
 			print '</tr>';
@@ -1704,7 +1706,7 @@ if ($action == 'create'&& $usercancreate) {
 			print '<tr><td>' . $langs->trans("DateShipping") . '</td>';
 			print '<td colspan="3">';
 			print img_picto('', 'action', 'class="pictofixedwidth"');
-			$date_shipping = ($date_shipping ? $date_shipping : $object->date_shipping); // $date_shipping comes from GETPOST
+			//$date_shipping = ($date_shipping ? $date_shipping : $object->date_shipping); // $date_shipping comes from GETPOST
 			print $form->selectDate($date_shipping ? $date_shipping : -1, 'date_shipping', 1, 1, 1);
 			print "</td>\n";
 			print '</tr>';

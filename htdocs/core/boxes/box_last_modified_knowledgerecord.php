@@ -1,9 +1,9 @@
 <?php
 /*
- * Copyright (C) 2013-2016  Jean-François FERRY <hello@librethic.io>
- * Copyright (C) 2016       Christophe Battarel <christophe@altairis.fr>
- * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
+ * Copyright (C) 2016       Christophe Battarel     <christophe@altairis.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,8 +91,9 @@ class box_last_modified_knowledgerecord extends ModeleBoxes
 		);
 
 		if ($user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
-			$sql = 'SELECT k.rowid as id, k.date_creation, k.ref, k.lang, k.question, k.status as status';
+			$sql = 'SELECT k.rowid as id, k.date_creation, GREATEST(k.tms, kef.tms) as date_modification, k.ref, k.lang, k.question, k.status as status';
 			$sql .= " FROM ".MAIN_DB_PREFIX."knowledgemanagement_knowledgerecord as k";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."knowledgemanagement_knowledgerecord_extrafields as kef ON kef.fk_object = k.rowid";
 			$sql .= " WHERE k.entity IN (".getEntity('knowledgemanagement').")";
 
 			if ($user->socid) {
@@ -101,7 +102,7 @@ class box_last_modified_knowledgerecord extends ModeleBoxes
 
 			$sql .= " AND k.status > 0";
 
-			$sql .= " ORDER BY k.tms DESC, k.rowid DESC ";
+			$sql .= " ORDER BY date_modification DESC, k.rowid DESC ";
 			$sql .= $this->db->plimit($max, 0);
 
 			$resql = $this->db->query($sql);
@@ -114,10 +115,12 @@ class box_last_modified_knowledgerecord extends ModeleBoxes
 					$objp = $this->db->fetch_object($resql);
 
 					$datec = $this->db->jdate($objp->date_creation);
+					$datem = $this->db->jdate($objp->date_modification);
 
 					$knowledgerecord = new KnowledgeRecord($this->db);
 					$knowledgerecord->id = $objp->id;
 					$knowledgerecord->date_creation = $objp->date_creation;
+					$knowledgerecord->date_modification = $objp->date_modification;
 					$knowledgerecord->ref = $objp->ref;
 					$knowledgerecord->status = $objp->status;
 					$knowledgerecord->question = $objp->question;
@@ -151,8 +154,8 @@ class box_last_modified_knowledgerecord extends ModeleBoxes
 
 					// Date creation
 					$this->info_box_contents[$i][$r] = array(
-						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateCreation").': '.dol_print_date($datec, 'dayhour', 'tzuserrel')).'"',
-						'text' => dol_print_date($datec, 'dayhour', 'tzuserrel'),
+						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateModification").': '.dol_print_date($datem, 'dayhour', 'tzuserrel')).'"',
+						'text' => dol_print_date($datem, 'dayhour', 'tzuserrel'),
 					);
 					$r++;
 

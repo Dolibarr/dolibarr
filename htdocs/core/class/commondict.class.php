@@ -49,7 +49,7 @@ abstract class CommonDict
 	public $id;
 
 	/**
-	 * @var int 		The environment ID when using a multicompany module
+	 * @var ?int 		The environment ID when using a multicompany module
 	 */
 	public $entity;
 

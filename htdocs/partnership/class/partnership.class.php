@@ -125,18 +125,17 @@ class Partnership extends CommonObject
 		'ip' => array('type' => 'ip', 'label' => 'IPOfApplicant', 'enabled' => 1, 'position' => 74, 'notnull' => 0, 'visible' => -2,),
 		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 2000, 'notnull' => 1, 'visible' => 2, 'default' => '0', 'index' => 1, 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Validated', 2 => 'Approved', 3 => 'Refused', 9 => 'Terminated'),),
 	);
+
 	/**
 	 * @var int
 	 */
 	public $rowid;
+
 	/**
 	 * @var string
 	 */
 	public $ref;
-	/**
-	 * @var int
-	 */
-	public $entity;
+
 	/**
 	 * @var int
 	 */
