@@ -1369,7 +1369,7 @@ class Contrat extends CommonObject
 		if (isset($this->status)) {
 			$this->status = (int) $this->status;
 		}
-		if (isset($this->socid)) {
+		if ((int) $this->socid > 0) {
 			$this->socid = (int) $this->socid;
 		}
 		if (isset($this->fk_commercial_signature)) {
