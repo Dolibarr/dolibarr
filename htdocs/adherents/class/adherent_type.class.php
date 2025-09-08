@@ -156,7 +156,7 @@ class AdherentType extends CommonObject
 	public $duration_unit;
 
 	/**
-	 * @var int<0,1> Subscription required (0 or 1)
+	 * @var null|'0'|'1' Subscription required (0 or 1) default '1' in DB, null until value is fetched
 	 */
 	public $subscription;
 
