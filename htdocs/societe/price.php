@@ -959,7 +959,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 					print '<td class="nowrap center">';
 					if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 						$selected = 0;
-						if (in_array( $line->id, $arrayofselected)) {
+						if (in_array($line->id, $arrayofselected)) {
 							$selected = 1;
 						}
 						print '<input id="cb'.$line->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$line->id.'"'.($selected ? ' checked="checked"' : '').'>';
