@@ -1317,7 +1317,7 @@ class Contact extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error && !$notrigger) {
+		if (!$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('CONTACT_DELETE', $user);
 			if ($result < 0) {
@@ -2293,9 +2293,7 @@ class Contact extends CommonObject
 			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Visibility").'</span>';
 			$return .= '<span> : '.$this->LibPubPriv($this->priv).'</span>';
 		}*/
-		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
-		}
+		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
