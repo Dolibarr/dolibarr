@@ -7142,8 +7142,8 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 	$tmpfield = explode(',', $field);
 	$field1 = trim($tmpfield[0]); // If $field is 'd.datep,d.id', it becomes 'd.datep'
 
-	if (strpos($tooltip, ':') !== false) {
-		$tmptooltip = explode(':', $tooltip);
+	if (strpos((string) $tooltip, ':') !== false) {
+		$tmptooltip = explode(':', (string) $tooltip);
 	} else {
 		$tmptooltip = array($tooltip);
 	}
