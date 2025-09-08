@@ -1740,6 +1740,8 @@ class Adherent extends CommonObject
 				$this->last_subscription_date_start = $date;
 				$this->last_subscription_date_end = $datefin;
 				$this->last_subscription_amount = $amount;
+			} else {
+				$error++;
 			}
 
 			if (!$error) {
