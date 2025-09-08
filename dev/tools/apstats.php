@@ -276,14 +276,14 @@ print 'Execute git log to get commits related to security: '.$commandcheck."\n";
 $output_arrglpu = array();
 $resexecglpu = 0;
 exec($commandcheck, $output_arrglpu, $resexecglpu);
-foreach ($output_arrglpu as $val) {
+foreach ($output_arrglpu as $valgitlog) {		// The most recent lines are first.
 	// Parse the line to split interesting data
-	$tmpval = cleanVal2($val);
+	$tmpval = cleanVal2($valgitlog);
 
 	if (preg_match('/(#yogosha|CVE|Sec:|Sec\s|Sec$)/i', $tmpval['title'])) {	// Recommended git comment:  "Sec: Fix #..."
 		$alreadyfound = '';
 		$alreadyfoundcommitid = '';
-		foreach ($arrayofalerts as $val) {
+		foreach ($arrayofalerts as $val) {	// Loop on already found alerts
 			if ($val['issueidyogosha'] && $val['issueidyogosha'] == $tmpval['issueidyogosha']) {	// Already in list
 				$alreadyfound = 'yogosha';
 				$alreadyfoundcommitid = $val['commitid'];
@@ -299,7 +299,9 @@ foreach ($output_arrglpu as $val) {
 				$alreadyfoundcommitid = $val['commitid'];
 				break;
 			}
-			if ($val['title'] && $val['title'] == $tmpval['title']) {	// Already in list
+			if ($val['title'] && $tmpval['title'] &&
+				(strpos($val['title'], $tmpval['title']) === 0 || strpos($val['title'], $tmpval['title']) > 0
+				|| strpos($tmpval['title'], $val['title']) === 0 || strpos($tmpval['title'], $val['title']) > 0)) {	// Already in list
 				$alreadyfound = 'title';
 				$alreadyfoundcommitid = $val['commitid'];
 				break;
@@ -347,69 +349,21 @@ foreach ($output_arrglpu as $val) {
 			/*var_dump($tmpval['commitid'].' '.$alreadyfoundcommitid);
 			var_dump($arrayofalerts[$alreadyfoundcommitid]['branch']);
 			var_dump($tmpval);*/
+
+			$arrayofalerts[$alreadyfoundcommitid]['commitidbis'][] = $tmpval['commitid'];	// Concat the new commitid to the list of commitidbis array of the already found case.
+
+			if (empty($arrayofalerts[$alreadyfoundcommitid]['issueid']) && !empty($tmpval['issueid'])) {	// If not Github was defined, we set it.
+				$arrayofalerts[$alreadyfoundcommitid]['issueid'] = $tmpval['issueid'];
+			}
+
+			if ($arrayofalerts[$alreadyfoundcommitid]['title'] != $tmpval['title']) {		// Concat label of the new line to the already found one (if it differs)
+				$arrayofalerts[$alreadyfoundcommitid]['title'] .= ', '.preg_replace('/\.$/', '', $tmpval['title']);
+			}
+
 			$arrayofalerts[$alreadyfoundcommitid]['branch'] = array_merge($arrayofalerts[$alreadyfoundcommitid]['branch'], $tmpval['branch']);
-
-			$arrayofalerts[$alreadyfoundcommitid]['commitidbis'][] = $tmpval['commitid'];
 		}
 	}
 }
-
-
-/*
-//$urlgit = 'https://api.github.com/search/issues?q=is:pr+repo:Dolibarr/dolibarr+created:>'.dol_print_date(dol_now() - $delay, "%Y-%m");
-$urlgit = 'https://api.github.com/search/commits?q=repo:Dolibarr/dolibarr+yogosha+created:>'.dol_print_date(dol_now() - $delay, "%Y-%m");
-
-// Count lines of code of application
-$newurl = $urlgit.'+CVE';
-$result = getURLContent($newurl);
-print 'Execute GET on github for '.$newurl."\n";
-if ($result && $result['http_code'] == 200) {
-	$arrayofalerts1 = json_decode($result['content']);
-
-	foreach ($arrayofalerts1->items as $val) {
-		$tmpval = cleanVal($val);
-		if (preg_match('/CVE/i', $tmpval['title'])) {
-			$arrayofalerts[$tmpval['number']] = $tmpval;
-		}
-	}
-} else {
-	print 'Error: failed to get github response';
-	exit(-1);
-}
-
-$newurl = $urlgit.'+yogosha';
-$result = getURLContent($newurl);
-print 'Execute GET on github for '.$newurl."\n";
-if ($result && $result['http_code'] == 200) {
-	$arrayofalerts2 = json_decode($result['content']);
-
-	foreach ($arrayofalerts2->items as $val) {
-		$tmpval = cleanVal($val);
-		if (preg_match('/yogosha:/i', $tmpval['title'])) {
-			$arrayofalerts[$tmpval['number']] = $tmpval;
-		}
-	}
-} else {
-	print 'Error: failed to get github response';
-	exit(-1);
-}
-
-$newurl = $urlgit.'+Sec:';
-$result = getURLContent($newurl);
-print 'Execute GET on github for '.$newurl."\n";
-if ($result && $result['http_code'] == 200) {
-	$arrayofalerts3 = json_decode($result['content']);
-	foreach ($arrayofalerts3->items as $val) {
-		$tmpval = cleanVal($val);
-		if (preg_match('/Sec:/i', $tmpval['title'])) {
-			$arrayofalerts[$tmpval['number']] = $tmpval;
-		}
-	}
-} else {
-	print 'Error: failed to get github response';
-	exit(-1);
-}
-*/
 
 $timeend = time();
 
@@ -957,7 +911,7 @@ foreach ($arrayofalerts as $key => $alert) {
 	}
 	$html .= '</td>';
 
-	// Description
+	// Title - Description
 	$html .= '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($alert['title']).'">'.dol_escape_htmltag($alert['title']).'</td>';
 
 	// Branches
@@ -1183,7 +1137,7 @@ function cleanVal2($val)
 	$tmpval['issueid'] = '';
 	$tmpval['issueidyogosha'] = '';
 	$tmpval['issueidcve'] = '';
-	$tmpval['title'] = array_key_exists(5, $tmp) ? $tmp[5] : '';
+	$tmpval['title'] = array_key_exists(5, $tmp) ? preg_replace('/\.$/', '', $tmp[5]) : '';
 	$tmpval['created_at'] = array_key_exists(0, $tmp) ? $tmp[0] : '';
 	$tmpval['updated_at'] = '';
 
@@ -1192,7 +1146,7 @@ function cleanVal2($val)
 		$tmpval['issueid'] = $reg[1];
 	}
 	if (preg_match('/CVE([0-9\-\s]+)/', $tmpval['title'], $reg)) {
-		$tmpval['issueidcve'] = preg_replace('/^\-/', '', trim($reg[1]));
+		$tmpval['issueidcve'] = preg_replace('/^\-/', '', preg_replace('/\s+/', '-', trim($reg[1])));
 	}
 	if (preg_match('/#yogosha(\d+)/i', $tmpval['title'], $reg)) {
 		$tmpval['issueidyogosha'] = $reg[1];

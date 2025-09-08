@@ -109,18 +109,17 @@ class KnowledgeRecord extends CommonObject
 		'answer' => array('type' => 'html', 'label' => 'Solution', 'enabled' => 1, 'position' => 600, 'notnull' => 0, 'visible' => 3, 'searchall' => 1, 'csslist' => 'tdoverflowmax300', 'copytoclipboard' => 1, 'tdcss' => 'titlefieldcreate nowraponall'),
 		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'visible' => 5, 'default' => '0', 'index' => 1, 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Validated', 9 => 'Obsolete'),),
 	);
+
 	/**
 	 * @var int
 	 */
 	public $rowid;
+
 	/**
 	 * @var string
 	 */
 	public $ref;
-	/**
-	 * @var int
-	 */
-	public $entity;
+
 	/**
 	 * @var string
 	 */
@@ -159,10 +158,12 @@ class KnowledgeRecord extends CommonObject
 	 * @var string
 	 */
 	public $url;
+
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $status;
+
 	/**
 	 * @var string
 	 */
@@ -772,7 +773,7 @@ class KnowledgeRecord extends CommonObject
 		$nofetch = !empty($params['nofetch']);
 
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("KnowledgeRecord").'</u>';
-		if (isset($this->statut)) {
+		if (isset($this->status)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
 		}
 		$datas['label'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
@@ -965,9 +966,10 @@ class KnowledgeRecord extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT rowid, date_creation as datec, tms as datem,';
-		$sql .= ' fk_user_creat, fk_user_modif';
+		$sql = 'SELECT t.rowid, t.date_creation as datec, GREATEST(t.tms, kef.tms) as datem,';
+		$sql .= ' t.fk_user_creat, t.fk_user_modif';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$this->table_element."_extrafields as kef ON kef.fk_object = t.rowid";
 		$sql .= ' WHERE t.rowid = '.((int) $id);
 		$result = $this->db->query($sql);
 		if ($result) {
@@ -978,7 +980,7 @@ class KnowledgeRecord extends CommonObject
 
 				$this->user_creation_id = $obj->fk_user_creat;
 				$this->user_modification_id = $obj->fk_user_modif;
-				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = empty($obj->datem) ? '' : $this->db->jdate($obj->datem);
 			}
 

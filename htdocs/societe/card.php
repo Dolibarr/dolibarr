@@ -735,7 +735,7 @@ if (empty($reshook)) {
 				}
 
 				// Logo/Photo save
-				$dir     = $conf->societe->multidir_output[$object->entity]."/".$object->id."/logos";
+				$dir     = $conf->societe->multidir_output[$object->entity ?? $conf->entity]."/".$object->id."/logos";
 				$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
 				if (GETPOST('deletephoto') && $object->logo) {
 					$fileimg = $dir.'/'.$object->logo;
@@ -930,7 +930,7 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$id = $socid;
-	$upload_dir = !empty($conf->societe->multidir_output[$object->entity]) ? $conf->societe->multidir_output[$object->entity] : $conf->societe->dir_output;
+	$upload_dir = !empty($conf->societe->multidir_output[$object->entity ?? $conf->entity]) ? $conf->societe->multidir_output[$object->entity ?? $conf->entity] : $conf->societe->dir_output;
 	$permissiontoadd = $user->hasRight('societe', 'creer');
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
@@ -3471,7 +3471,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				/*
 				 * Generated documents
 				 */
-				$filedir = $conf->societe->multidir_output[$object->entity].'/'.$object->id;
+				$filedir = $conf->societe->multidir_output[$object->entity ?? $conf->entity].'/'.$object->id;
 				$urlsource = $_SERVER["PHP_SELF"]."?socid=".$object->id;
 				$genallowed = $user->hasRight('societe', 'lire');
 				$delallowed = $user->hasRight('societe', 'creer');
@@ -3512,7 +3512,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		// Presend form
 		$modelmail = 'thirdparty';
 		$defaulttopic = 'Information';
-		$diroutput = $conf->societe->multidir_output[$object->entity];
+		$diroutput = $conf->societe->multidir_output[$object->entity ?? $conf->entity];
 		$trackid = 'thi'.$object->id;
 
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
