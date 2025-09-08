@@ -7196,7 +7196,7 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 	}
 	if ($tooltip && $tmptooltip[0]) {
 		// You can also use 'TranslationString:[keyfortooltiponclick]:[tooltipdirection]' for a tooltip on click or to change tooltip position.
-		$out .= $form->textwithpicto($langs->trans((string) $name), $langs->trans($tmptooltip[0]), (empty($tmptooltip[2]) ? '1' : $tmptooltip[2]), 'help', ((!empty($tmptooltip[2]) && $tmptooltip[2] == '-1') ? 'paddingrightonly' : ''), 0, 3, (empty($tmptooltip[1]) ? '' : 'extra_' . str_replace('.', '_', $field) . '_' . $tmptooltip[1]));
+		$out .= $form->textwithpicto($langs->trans((string) $name), $langs->trans((string) $tmptooltip[0]), (empty($tmptooltip[2]) ? '1' : $tmptooltip[2]), 'help', ((!empty($tmptooltip[2]) && $tmptooltip[2] == '-1') ? 'paddingrightonly' : ''), 0, 3, (empty($tmptooltip[1]) ? '' : 'extra_' . str_replace('.', '_', $field) . '_' . $tmptooltip[1]));
 	} else {
 		$out .= $langs->trans((string) $name);
 	}
