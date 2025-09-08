@@ -7093,7 +7093,7 @@ function dol_print_error_email($prefixcode, $errormessage = '', $errormessages =
  *	@param  ?string	$sortorder   Current sort order
  *  @param	string	$prefix		 Prefix for css. Use space after prefix to add your own CSS tag, for example 'mycss '.
  *  @param	?string	$tooltip	 Tooltip
- *  @param	int		$forcenowrapcolumntitle		No need for use 'wrapcolumntitle' css style
+ *  @param	int		$forcenowrapcolumntitle		No need to use 'wrapcolumntitle' css style
  *	@return	void
  */
 function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $moreparam = "", $moreattrib = "", $sortfield = "", $sortorder = "", $prefix = "", $tooltip = "", $forcenowrapcolumntitle = 0)
@@ -7104,18 +7104,18 @@ function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $m
 /**
  *	Get title line of an array
  *
- *	@param	?string		$name			Translation key of field to show or complete HTML string to show
- *	@param	int<0,2>	$thead	 		0=To use with standard table format, 1=To use inside <thead><tr>, 2=To use with <div>
- *	@param	string		$file			Url used when we click on sort picto
- *	@param	string		$field			Field to use for new sorting. Empty if this field is not sortable. Example "t.abc" or "t.abc,t.def"
- *	@param	string		$begin       	("" by default)
- *	@param	string		$moreparam		Add more parameters on sort url links ("" by default)
- *	@param  string		$moreattrib		Add more attributes on th ("" by default). To add more css class, use param $prefix.
- *	@param  ?string		$sortfield	 	Current field used to sort (Ex: 'd.datep,d.id')
- *	@param  ?string		$sortorder		Current sort order (Ex: 'asc,desc')
- *  @param	string		$prefix	 		Prefix for css. Use space after prefix to add your own CSS tag, for example 'mycss '.
- *  @param	int<0,1>	$disablesortlink	1=Disable sort link
- *  @param	?string		$tooltip 		Tooltip
+ *	@param	?string		$name						Translation key of field to show or complete HTML string to show
+ *	@param	int<0,2>	$thead	 					0=To use with standard table format, 1=To use inside <thead><tr>, 2=To use with <div>
+ *	@param	string		$file						Url used when we click on sort picto
+ *	@param	string		$field						Field to use for new sorting. Empty if this field is not sortable. Example "t.abc" or "t.abc,t.def"
+ *	@param	string		$begin       				("" by default)
+ *	@param	string		$moreparam					Add more parameters on sort url links ("" by default)
+ *	@param  string		$moreattrib					Add more attributes on th ("" by default). To add more css class, use param $prefix.
+ *	@param  ?string		$sortfield	 				Current field used to sort (Ex: 'd.datep,d.id')
+ *	@param  ?string		$sortorder					Current sort order (Ex: 'asc,desc')
+ *  @param	string		$prefix	 					Prefix for css. Use space after prefix to add your own CSS tag, for example 'mycss '.
+ *  @param	int<0,1>	$disablesortlink			1=Disable sort link
+ *  @param	?string		$tooltip 					Text of tooltip with syntax 'Tooltip' or 'Tooltip:[keytoenabledtheonclicktooltip]:[tooltipdirection]'
  *  @param	int<0,1> 	$forcenowrapcolumntitle		No need to use 'wrapcolumntitle' css style
  *	@return	string
  */
@@ -7142,7 +7142,15 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 	$tmpfield = explode(',', $field);
 	$field1 = trim($tmpfield[0]); // If $field is 'd.datep,d.id', it becomes 'd.datep'
 
-	if (!getDolGlobalString('MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE') && empty($forcenowrapcolumntitle)) {
+	if (strpos($tooltip, ':') !== false) {
+		$tmptooltip = explode(':', $tooltip);
+	} else {
+		$tmptooltip = array($tooltip);
+	}
+
+	$wrapcolumntitle = (empty($forcenowrapcolumntitle) || (!empty($tmptooltip[2]) && $tmptooltip[2] == '-1'));
+
+	if (!getDolGlobalString('MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE') && $wrapcolumntitle) {
 		$prefix = 'wrapcolumntitle ' . $prefix;
 	}
 
@@ -7156,7 +7164,7 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 
 	$tagstart = '<' . $tag . ' class="' . $prefix . $liste_titre . '" ' . $moreattrib;
 	//$out .= (($field && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && preg_match('/^[a-zA-Z_0-9\s\.\-:&;]*$/', $name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
-	$tagstart .= ($name && !getDolGlobalString('MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE') && empty($forcenowrapcolumntitle) && !dol_textishtml($name)) ? ' title="' . dolPrintHTMLForAttribute($langs->trans($name)) . '"' : '';
+	$tagstart .= ($name && !getDolGlobalString('MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE') && $wrapcolumntitle && !dol_textishtml($name)) ? ' title="' . dolPrintHTMLForAttribute($langs->trans($name)) . '"' : '';
 	$tagstart .= '>';
 
 	if (empty($thead) && $field && empty($disablesortlink)) {    // If this is a sort field
@@ -7187,13 +7195,8 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 		$out .= '>';
 	}
 	if ($tooltip) {
-		// You can also use 'TranslationString:keyfortooltiponclick:tooltipdirection' for a tooltip on click or to change tooltip position.
-		if (strpos($tooltip, ':') !== false) {
-			$tmptooltip = explode(':', $tooltip);
-		} else {
-			$tmptooltip = array($tooltip);
-		}
-		$out .= $form->textwithpicto($langs->trans((string) $name), $langs->trans($tmptooltip[0]), (empty($tmptooltip[2]) ? '1' : $tmptooltip[2]), 'help', '', 0, 3, (empty($tmptooltip[1]) ? '' : 'extra_' . str_replace('.', '_', $field) . '_' . $tmptooltip[1]));
+		// You can also use 'TranslationString:[keyfortooltiponclick]:[tooltipdirection]' for a tooltip on click or to change tooltip position.
+		$out .= $form->textwithpicto($langs->trans((string) $name), $langs->trans($tmptooltip[0]), (empty($tmptooltip[2]) ? '1' : $tmptooltip[2]), 'help', ((!empty($tmptooltip[2]) && $tmptooltip[2] == '-1') ? 'paddingrightonly' : ''), 0, 3, (empty($tmptooltip[1]) ? '' : 'extra_' . str_replace('.', '_', $field) . '_' . $tmptooltip[1]));
 	} else {
 		$out .= $langs->trans((string) $name);
 	}
