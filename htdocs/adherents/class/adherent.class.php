@@ -3345,7 +3345,7 @@ class Adherent extends CommonObject
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
-		if (property_exists($this, 'photo') || !empty($this->photo)) {
+		if (!empty($this->photo)) {
 			$return .= Form::showphoto('memberphoto', $this, 0, 60, 0, 'photokanban photowithmargin photologintooltip', 'small', 0, 1);
 		} else {
 			$return .= img_picto('', 'user');
@@ -3359,11 +3359,9 @@ class Adherent extends CommonObject
 		$return .= '<br><span class="info-box-label paddingright">'.$this->getmorphylib('', 2).'</span>';
 		$return .= '<span class="info-box-label opacitymedium">'.$this->type.'</span>';
 
-		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status paddingtop">';
-			$return .= $this->LibStatut($this->status, $this->need_subscription, $this->datefin, 5);
-			$return .= '</div>';
-		}
+		$return .= '<br><div class="info-box-status paddingtop">';
+		$return .= $this->LibStatut($this->status, $this->need_subscription, $this->datefin, 5);
+		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
