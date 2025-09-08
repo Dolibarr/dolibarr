@@ -1165,7 +1165,7 @@ class AdherentType extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">' . $this->getNomUrl() . '</span>';
 
 		//$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 
@@ -1174,20 +1174,14 @@ class AdherentType extends CommonObject
 		} else {
 			$return .= '<span class="right">&nbsp;</span>';
 		}
-		if (property_exists($this, 'vote')) {
-			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("VoteAllowed").' : '.yn($this->vote).'</span>';
+		$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("VoteAllowed").' : '.yn($this->vote).'</span>';
+		if (is_null($this->amount) || $this->amount === '') {
+			$return .= '<br>';
+		} else {
+			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Amount").'</span>';
+			$return .= '<span class="amount"> : '.price($this->amount).'</span>';
 		}
-		if (property_exists($this, 'amount')) {
-			if (is_null($this->amount) || $this->amount === '') {
-				$return .= '<br>';
-			} else {
-				$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Amount").'</span>';
-				$return .= '<span class="amount"> : '.price($this->amount).'</span>';
-			}
-		}
-		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
-		}
+		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
