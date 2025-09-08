@@ -230,10 +230,6 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 
-	if ($action == 'delete' && $confirm == 'yes') {
-		$action == 'delete_customer_price';
-	}
-
 	if ($action == 'delete_customer_price' && $prodcustprice !== null && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
 		// Delete price by customer
 		$prodcustprice->id = GETPOSTINT('lineid');
@@ -823,7 +819,20 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
-		print_barre_liste($langs->trans('PriceForEachProduct'), $page, $_SERVER['PHP_SELF'], $option, $sortfield, $sortorder, $massactionbutton, count($prodcustprice->lines), $nbtotalofrecords, '');
+
+		print_barre_liste(
+			$langs->trans('PriceForEachProduct'), // title
+			$page,                                // page
+			$_SERVER['PHP_SELF'],                 // file
+			$option,                              // options
+			$sortfield,                           // sortfield
+			$sortorder,                           // sortorder
+			$massactionbutton,                    // morehtmlcenter
+			count($prodcustprice->lines),         // num
+			$nbtotalofrecords,                    // totalnboflines
+			''                                    // picto
+		);
+
 		include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 
@@ -977,7 +986,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 					print '</a>';
 
 					print '</td>';
-					if (!$i) {
+					if ($i === 0) {
 						$totalarray['nbfield']++;
 					}
 				}
@@ -1062,7 +1071,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 							}
 							print '<input id="cb' . $line->id . '" class="flat checkforselect" type="checkbox" name="toselect[]" value="' . $line->id . '"' . ($selected ? ' checked="checked"' : '') . '>';
 						}
-						if (!$i) {
+						if ($i === 0) {
 							$totalarray['nbfield']++;
 						}
 						print '</td>';
