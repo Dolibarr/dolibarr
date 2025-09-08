@@ -141,7 +141,7 @@ class AdherentType extends CommonObject
 	public $morphy;
 
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $duration;
 
