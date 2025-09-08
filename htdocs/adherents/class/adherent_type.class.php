@@ -1083,7 +1083,7 @@ class AdherentType extends CommonObject
 		$this->label = 'MEMBERS TYPE SPECIMEN';
 		$this->note_public = 'This is a public note';
 		$this->mail_valid = 'This is welcome email';
-		$this->subscription = 1;
+		$this->subscription = '1';
 		$this->caneditamount = 0;
 		$this->vote = 0;
 
