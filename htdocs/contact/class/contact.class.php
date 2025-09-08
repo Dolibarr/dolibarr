@@ -558,12 +558,10 @@ class Contact extends CommonObject
 		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."socpeople");
 
-			if (!$error) {
-				$result = $this->update($this->id, $user, 1, 'add'); // This include updateRoles(), ...
-				if ($result < 0) {
-					$error++;
-					$this->error = $this->db->lasterror();
-				}
+			$result = $this->update($this->id, $user, 1, 'add'); // This include updateRoles(), ...
+			if ($result < 0) {
+				$error++;
+				$this->error = $this->db->lasterror();
 			}
 
 			if (!$error) {
@@ -1078,13 +1076,13 @@ class Contact extends CommonObject
 			} elseif ($num) {   // $num = 1
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id		= $obj->rowid;
-				$this->entity	= $obj->entity;
-				$this->ref		= $obj->rowid;
-				$this->ref_ext	= $obj->ref_ext;
+				$this->id = $obj->rowid;
+				$this->entity = $obj->entity;
+				$this->ref = $obj->rowid;
+				$this->ref_ext = $obj->ref_ext;
 
-				$this->civility_code    = $obj->civility_code;
-				$this->civility	        = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != "Civility".$obj->civility_code ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
+				$this->civility_code = $obj->civility_code;
+				$this->civility = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != "Civility".$obj->civility_code ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
 
 				$this->name_alias	= $obj->name_alias;
 				$this->lastname		= $obj->lastname;
@@ -1093,7 +1091,7 @@ class Contact extends CommonObject
 				$this->zip			= $obj->zip;
 				$this->town			= $obj->town;
 
-				$this->date_creation     = $this->db->jdate($obj->date_creation);
+				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
 				$this->user_creation_id = $obj->fk_user_creat;
 				$this->user_modification_id = $obj->fk_user_modif;
@@ -1121,10 +1119,10 @@ class Contact extends CommonObject
 				$this->statut_commercial = $libelle; // libelle statut commercial
 				$this->stcomm_picto = $obj->stcomm_picto; // Picto statut commercial
 
-				$this->phone_pro	= trim($obj->phone);
-				$this->fax			= trim($obj->fax);
-				$this->phone_perso	= trim($obj->phone_perso);
-				$this->phone_mobile	= trim($obj->phone_mobile);
+				$this->phone_pro = trim($obj->phone);
+				$this->fax = trim($obj->fax);
+				$this->phone_perso = trim($obj->phone_perso);
+				$this->phone_mobile = trim($obj->phone_mobile);
 
 				$this->email			= $obj->email;
 				$this->socialnetworks	= ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
