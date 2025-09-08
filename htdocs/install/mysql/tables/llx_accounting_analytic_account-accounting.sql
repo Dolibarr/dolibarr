@@ -17,7 +17,7 @@
 -- Table of 'analytic account' for accountancy module
 -- ============================================================================
 
-CREATE TABLE llx_c_accounting_analytic_account (
+CREATE TABLE llx_accounting_analytic_account (
     rowid               integer         AUTO_INCREMENT PRIMARY KEY,
     label               varchar(255)    NOT NULL,
     code                varchar(32)     NOT NULL,

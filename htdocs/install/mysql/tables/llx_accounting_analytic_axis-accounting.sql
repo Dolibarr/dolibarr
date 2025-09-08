@@ -17,7 +17,7 @@
 -- Table of 'analytic axis' for accountancy module
 -- ============================================================================
 
-CREATE TABLE llx_c_accounting_analytic_axis (
+CREATE TABLE llx_accounting_analytic_axis (
     rowid               integer         AUTO_INCREMENT PRIMARY KEY,
     label               varchar(255)    NOT NULL,
     code                varchar(32)     NOT NULL,

@@ -48,7 +48,7 @@ CREATE TABLE llx_paiement_extrafields (
 
 ALTER TABLE llx_paiement_extrafields ADD UNIQUE INDEX uk_paiement_extrafields (fk_object);
 
-CREATE TABLE llx_c_accounting_analytic_axis (
+CREATE TABLE llx_accounting_analytic_axis (
 	rowid               integer         AUTO_INCREMENT PRIMARY KEY,
 	label               varchar(255)    NOT NULL,
 	code                varchar(32)     NOT NULL,
@@ -61,9 +61,9 @@ CREATE TABLE llx_c_accounting_analytic_axis (
 	import_key          varchar(14)
 ) ENGINE=innodb;
 
-ALTER TABLE llx_c_accounting_analytic_axis ADD UNIQUE INDEX uk_c_accounting_analytic_axis(code, entity);
+ALTER TABLE llx_accounting_analytic_axis ADD UNIQUE INDEX uk_accounting_analytic_axis(code, entity);
 
-CREATE TABLE llx_c_accounting_analytic_account (
+CREATE TABLE llx_accounting_analytic_account (
 	rowid               integer         AUTO_INCREMENT PRIMARY KEY,
 	label               varchar(255)    NOT NULL,
 	code                varchar(32)     NOT NULL,
@@ -80,8 +80,8 @@ CREATE TABLE llx_c_accounting_analytic_account (
 	import_key          varchar(14)
 ) ENGINE=innodb;
 
-ALTER TABLE llx_c_accounting_analytic_account ADD UNIQUE INDEX uk_c_accounting_analytic_account(code, entity);
-ALTER TABLE llx_c_accounting_analytic_account ADD CONSTRAINT fk_accounting_analytic_account_fk_axis FOREIGN KEY (fk_axis) REFERENCES llx_c_accounting_analytic_axis (rowid);
+ALTER TABLE llx_accounting_analytic_account ADD UNIQUE INDEX uk_accounting_analytic_account(code, entity);
+ALTER TABLE llx_accounting_analytic_account ADD CONSTRAINT fk_accounting_analytic_account_fk_axis FOREIGN KEY (fk_axis) REFERENCES llx_accounting_analytic_axis (rowid);
 
 
 CREATE TABLE llx_accounting_analytic_distribution (
@@ -99,7 +99,7 @@ CREATE TABLE llx_accounting_analytic_distribution (
 	import_key          varchar(14)
 ) ENGINE=innodb;
 
-ALTER TABLE llx_accounting_analytic_distribution ADD CONSTRAINT fk_accounting_analytic_distribution_fk_analytic_account FOREIGN KEY (fk_analytic_account) REFERENCES llx_c_accounting_analytic_account (rowid);
+ALTER TABLE llx_accounting_analytic_distribution ADD CONSTRAINT fk_accounting_analytic_distribution_fk_analytic_account FOREIGN KEY (fk_analytic_account) REFERENCES llx_accounting_analytic_account (rowid);
 
 ALTER TABLE llx_facture ADD COLUMN dispute_status integer DEFAULT 0 after payment_reference;
 
