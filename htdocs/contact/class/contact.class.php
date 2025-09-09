@@ -700,11 +700,9 @@ class Contact extends CommonObject
 			$action = 'update';
 
 			// Actions on extra fields
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 			if (!$error) {
@@ -1570,11 +1568,7 @@ class Contact extends CommonObject
 
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
-			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
 			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
-				$add_save_lastsearch_values = 1;
-			}
-			if ($url && $add_save_lastsearch_values) {
 				$url .= '&save_lastsearch_values=1';
 			}
 		}
