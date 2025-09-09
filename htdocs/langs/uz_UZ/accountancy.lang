@@ -193,7 +193,7 @@ DONATION_ACCOUNTINGACCOUNT=Xayriyalarni ro'yxatdan o'tkazish uchun foydalaniladi
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Aʼzolik obunalarini roʻyxatdan oʻtkazish uchun foydalaniladigan hisob (Hisob jadvalidan) (Aʼzolik moduli – agar aʼzolik fakturasiz qayd etilgan boʻlsa)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Mijoz depozitini ro'yxatdan o'tkazish uchun standart hisob sifatida foydalaniladigan hisob (Hisob jadvalidan).
 UseAuxiliaryAccountOnCustomerDeposit=Mijoz hisobini dastlabki to‘lovlar qatori uchun yordamchi daftarda shaxsiy hisob sifatida saqlang (agar o‘chirib qo‘yilgan bo‘lsa, dastlabki to‘lovlar uchun shaxsiy hisob bo‘sh qoladi)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Standart sifatida foydalanish uchun hisob (Hisob jadvalidan).
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Ta'minotchi hisobvarag'ini dastlabki to'lovlar qatorlari uchun yordamchi daftarda shaxsiy hisob sifatida saqlang (agar o'chirilgan bo'lsa, dastlabki to'lovlar uchun shaxsiy hisob bo'sh qoladi)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Buxgalteriya hisobi sukut bo'yicha mijozning saqlanib qolgan kafolatini ro'yxatdan o'tkazish uchun
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Xuddi shu mamlakatda sotib olingan mahsulotlar uchun standart hisob sifatida foydalaniladigan hisob (Hisob jadvalidan) (mahsulot varaqasida belgilanmagan bo'lsa ishlatiladi)
@@ -278,6 +278,7 @@ PcgtypeDesc=Hisob-kitoblar guruhi ba'zi buxgalteriya hisobotlari uchun oldindan 
 AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Yarashtiriladigan
 Centralized=Markazlashtirilgan hisob
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
 DescVentilCustomer=Hisoblar jadvalidan mahsulot hisobiga bog'langan (yoki bog'lanmagan) mijozlar hisob-fakturalari ro'yxatini shu yerda ko'ring.
@@ -357,6 +358,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Yetkazib beruvchining xaridlari uchun
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transferred into accountancy differently: A additional debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Qo'shimcha kitobni ko'rish uchun uchinchi tomon kartalaridagi yorliqni faollashtiring
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=Bu opsiya yoqilgan boʻlsa, yarashtirish, chop etish va boshqalar uchun uchinchi tomon hisobini koʻrish va boshqarish uchun uchinchi tomon kartalarida yangi yorliq koʻrsatiladi.
+
 ## Export
 NotExportLettering=Faylni yaratishda harflarni eksport qilmang
 NotifiedExportDate=Hali eksport qilinmagan qatorlarni Eksport qilingan deb belgilang <span class="warning">(eksport qilingan deb belgilangan qatorni o‘zgartirish uchun butun tranzaksiyani o‘chirib tashlashingiz va uni buxgalteriya hisobiga qayta o‘tkazishingiz kerak)</span>

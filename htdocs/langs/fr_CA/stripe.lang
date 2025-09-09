@@ -58,8 +58,6 @@ PaymentWillBeRecordedForNextPeriod=Le paiement sera enregistré pour la période
 ClickHereToTryAgain=<a href="%s">Cliquez ici pour réessayer...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=En raison des règles d'authentification forte du client, la création d'une carte doit être effectuée depuis le back-office de Stripe. Vous pouvez cliquer ici pour activer l'enregistrement client Stripe : %s
 TERMINAL_LOCATION=Localisation (adresse) des terminaux Stripe
-RequesCreditTransferWithStripe=Demander un virement bancaire avec Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Activer les paiements par prélèvement automatique via Stripe
 STRIPE_KLARNA=Activer les paiements via Klarna
 STRIPE_BANCONTACT=Activer les paiements via BANCONTACT
 STRIPE_IDEAL=Activer les paiements en utilisant IDEAL

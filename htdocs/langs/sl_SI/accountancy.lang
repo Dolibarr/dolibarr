@@ -193,7 +193,7 @@ DONATION_ACCOUNTINGACCOUNT=Račun (iz kontnega načrta), ki se uporablja za regi
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Račun (iz kontnega načrta), ki se uporablja za registracijo članarin (modul Članstvo - če je članstvo evidentirano brez računa)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Račun (iz kontnega načrta), ki bo uporabljen kot privzeti račun za registracijo depozita strank
 UseAuxiliaryAccountOnCustomerDeposit=Shranjevanje računa stranke kot posameznega računa v pomožni knjigi za vrstice predplačil (če je onemogočeno, bo posamezni račun za vrstice predplačil ostal prazen)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Račun (iz kontnega načrta), ki bo uporabljen kot privzeti
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Shranite račun dobavitelja kot posamezni račun v pomožni knjigi za vrstice predplačil (če je onemogočeno, bo posamezni račun za vrstice predplačil ostal prazen)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Privzeto računovodski račun za registracijo obdržane garancije stranke
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Račun (iz kontnega načrta), ki se uporablja kot privzeti račun za izdelke, kupljene v isti državi (uporablja se, če ni opredeljen v listu izdelkov)
@@ -278,6 +278,7 @@ PcgtypeDesc=Skupine kontov se uporabljajo kot vnaprej določena merila 'filtra' 
 AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Spravljivo
 Centralized=Centralized account
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=Skupaj prihodek brez davka
 TotalMarge=Skupaj prodajna marža
 DescVentilCustomer=Tukaj si oglejte seznam vrstic računov strank, ki so vezane (ali ne) na račun izdelka iz kontnega načrta
@@ -357,6 +358,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Aktivirajte upravljanje obrnjene dav�
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transferred into accountancy differently: A additional debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Activate a tab on third-party cards to view the subsidiary ledger
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=When this option is enabled, a new tab is showing in third-party cards to view and manage accounting for the third-party as to reconcile, print & more
+
 ## Export
 NotExportLettering=Pri ustvarjanju datoteke ne izvažajte črk
 NotifiedExportDate=Označi še neizvožene vrstice kot izvožene <span class="warning">(če želite spremeniti vrstico, označeno kot izvoženo, boste morali izbrisati celotno transakcijo in jo znova prenesti v računovodstvo)</span>

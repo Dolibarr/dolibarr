@@ -77,9 +77,10 @@ ClickHereToTryAgain=<a href="%s">Kliknite ovdje da pokušate ponovno...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Zbog pravila Strong Customer Ovjera vjerodostojnosti, izrada kartice mora se izvršiti iz pozadinskog ureda Stripe. Možete kliknuti ovdje da uključite evidenciju korisnika Stripea: %s
 STRIPE_CARD_PRESENT=Kartica prisutna za Stripe terminale
 TERMINAL_LOCATION=Lokacija (adresa) za Stripe terminale
-RequestDirectDebitWithStripe=Zahtjev za izravno terećenje uz Stripe
-RequesCreditTransferWithStripe=Zatražite prijenos kredita sa Stripeom
-STRIPE_SEPA_DIRECT_DEBIT=Omogućite plaćanja izravnim zaduženjem putem Stripea
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Omogućite plaćanja putem Klarna
 STRIPE_BANCONTACT=Omogućite plaćanja koristeći BANCONTACT
 STRIPE_IDEAL=Omogućite plaćanja koristeći IDEAL

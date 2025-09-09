@@ -335,6 +335,7 @@ Select2ResultFoundUseArrows=Ich habe mehrere Resultate gefunden - wähle mit den
 Select2Enter=Eingabe
 Select2MoreCharactersMore=<strong>Suchsyntax:</strong><br><kbd><strong> |</strong></kbd><kbd> OR</kbd> (a|b)<br><kbd><strong>*</strong></kbd><kbd> Alle Zeichen</kbd> (a*b)<br><kbd><strong>^</strong></kbd><kbd> Beginnt mit</kbd> (^ab)<br><kbd><strong>$</strong></kbd><kbd> Endet mit</kbd> (ab$)<br>
 SearchIntoProductsOrServices=Produkte oder Dienstleistungen
+SearchIntoCustomerInvoicesRec=Rechnungs-Vorlagen
 SearchIntoCustomerOrders=Kundenbestellungen
 SearchIntoInterventions=Arbeitseinsätze
 SearchIntoExpenseReports=Spesenrapporte
