@@ -283,7 +283,7 @@ class Adherent extends CommonObject
 	public $last_subscription_date_start;
 
 	/**
-	 * @var int|string date
+	 * @var int|string|null date
 	 */
 	public $last_subscription_date_end;
 
