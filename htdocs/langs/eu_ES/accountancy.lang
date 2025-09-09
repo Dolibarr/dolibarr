@@ -193,7 +193,7 @@ DONATION_ACCOUNTINGACCOUNT=Dohaintzak erregistratzeko erabiliko den kontua (Kont
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Bazkidetzak erregistratzeko erabiliko den kontua (Kontuen Planetik) (Bazkidetza modulua - fakturarik gabe erregistratutako bazkidetza bada)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Bezeroen gordailua erregistratzeko kontu lehenetsi gisa erabiliko den kontua (Kontuen Planetik)
 UseAuxiliaryAccountOnCustomerDeposit=Gorde bezeroaren kontua banakako kontu gisa liburu osagarrian hasierako ordainketa-lerroetarako (desgaituta badago, hasierako ordainketa-lerroetarako banakako kontua hutsik geratuko da)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Kontua (Kontuen Planetik) lehenetsi gisa erabiltzeko
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Gorde hornitzailearen kontua banakako kontu gisa liburu osagarrian hasierako ordainketa-lerroetarako (desgaituta badago, hasierako ordainketa-lerroetarako banakako kontua hutsik geratuko da)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Bezeroak atxikitako bermea erregistratzeko kontabilitate-kontua lehenespenez
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Kontua (Kontuen Planetik) herrialde berean erositako produktuetarako kontu lehenetsi gisa erabiltzeko (produktuaren fitxan definituta ez badago erabiliko da)
@@ -278,6 +278,7 @@ PcgtypeDesc=Kontu-taldeak kontabilitate-txosten batzuetarako aurrez definitutako
 AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Bateragarria
 Centralized=Kontu zentralizatua
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
 DescVentilCustomer=Kontsultatu hemen kontu-planeko produktu-kontu bati lotutako (edo ez) bezeroen faktura-lerroen zerrenda.
@@ -357,6 +358,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Aktibatu hornitzaileen erosketetan BE
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Aukera hau gaituta dagoenean, hornitzaile edo saltzaile baten faktura kontabilitatera modu ezberdinean transferitu behar dela defini dezakezu: zordunketa-lerro gehigarri bat eta kreditu-lerro bat sortuko dira kontabilitatean "%s" konfigurazio-orrialdean definitutako kontu-planetik 2 kontu jakinetan.
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Aktibatu fitxa bat hirugarrenen txarteletan, bigarren mailako liburua ikusteko.
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=Aukera hau gaituta dagoenean, fitxa berri bat agertzen da hirugarrenen txarteletan, hirugarrenen kontabilitatea ikusteko eta kudeatzeko, hala nola, bateratzea, inprimatzea eta gehiago.
+
 ## Export
 NotExportLettering=Ez esportatu letrak fitxategia sortzean
 NotifiedExportDate=Markatu oraindik esportatu gabeko lerroak Esportatu gisa <span class="warning">(esportatu gisa markatutako lerro bat aldatzeko, transakzio osoa ezabatu eta kontabilitatera berriro transferitu beharko duzu)</span>

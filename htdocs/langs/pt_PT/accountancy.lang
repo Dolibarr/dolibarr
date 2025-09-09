@@ -193,7 +193,7 @@ DONATION_ACCOUNTINGACCOUNT=conta (do gráfico de conta) a ser usado para registr
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=conta (do gráfico de conta) a ser usado para registrar assinaturas de membros (Associação módulo  - se a associação for registrada sem fatura)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=conta (do gráfico de conta) a ser usado como o padrão conta para registrar o depósito cliente
 UseAuxiliaryAccountOnCustomerDeposit=Armazene cliente conta como conta individual no razão subsidiário para linhas de adiantamentos (se Desativado, conta individual para linhas de adiantamento permanecerá vazio)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=conta (do gráfico de conta) para ser usado como padrão
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Armazene o fornecedor conta como conta individual no razão subsidiário para linhas de adiantamentos (se Desativado, conta individual para linhas de adiantamento permanecerá vazio)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Contabilista conta por padrão para registrar cliente garantia retida
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=conta (do gráfico de conta) a ser usado como o padrão conta para os produtos adquiridos no mesmo país (usado se não estiver definido na ficha do produto)
@@ -278,6 +278,7 @@ PcgtypeDesc=Grupo de conta são usados como 'filtro' predefinido e critérios de
 AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Reconciliável
 Centralized=conta centralizado
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=Total de volume de negócios sem impostos
 TotalMarge=Margem total de vendas
 DescVentilCustomer=Consulte aqui a lista de fatura de clientes linhas vinculadas (ou não) a um produto conta do gráfico de conta
@@ -357,6 +358,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Ativar a gestão da autoliquidação 
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Quando esta opção está habilitada, você pode definir que um fornecedor ou um determinado Fornecedor, Vendedor fatura deve ser transferido para a contabilidade de forma diferente: Um adicional débito e uma linha de crédito será gerada no Contabilista em 2 contas específicas do gráfico de  conta definido na página de configuração "%s".
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Ative uma aba em cartões de terceiros para visualizar o razão auxiliar
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=Quando esta opção está habilitada, uma nova aba é exibida em cartões de terceiros para visualizar e e gerenciar Contabilista para terceiros, como reconciliar, imprimir e muito mais.
+
 ## Export
 NotExportLettering=Não exporte as letras ao gerar o ficheiro
 NotifiedExportDate=Sinalize linhas ainda não exportadas como Exportadas <span class="warning">(para modificar uma linha sinalizada como exportada, você precisará eliminar, apagar toda a transação e transfira-a novamente para Contabilista)</span>

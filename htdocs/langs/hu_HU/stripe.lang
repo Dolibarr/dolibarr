@@ -77,9 +77,10 @@ ClickHereToTryAgain=<a href="%s">Kattintson ide az újrapróbálkozáshoz...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Az erős vevő hitelesítési szabályok miatt a kártya létrehozását a Stripe háttérirodájából kell elvégezni. Ide kattintva bekapcsolhatja a Stripe vevő rekordot: %s
 STRIPE_CARD_PRESENT=Kártya ajándék a Stripe terminálokhoz
 TERMINAL_LOCATION=A Stripe terminálok helye (címe).
-RequestDirectDebitWithStripe=Kérjen csoportos beszedési megbízást a Stripe segítségével
-RequesCreditTransferWithStripe=Kérjen hitelátutalást a Stripe segítségével
-STRIPE_SEPA_DIRECT_DEBIT=Engedélyezze a csoportos beszedési megbízást a Stripe-on keresztül
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Engedélyezze a fizetést a Klarna használatával
 STRIPE_BANCONTACT=Engedélyezze a fizetést a BANCONTACT használatával
 STRIPE_IDEAL=Engedélyezze a fizetést az IDEAL használatával

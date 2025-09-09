@@ -77,9 +77,10 @@ ClickHereToTryAgain= <a href="%s"> Kliknij tutaj, aby spróbować ponownie ... <
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Ze względu na zasady Silnego Uwierzytelniania Klienta, utworzenie karty musi odbywać się z zaplecza Stripe. Możesz kliknąć tutaj, aby włączyć rekord klienta Stripe: %s
 STRIPE_CARD_PRESENT=Karta obecna dla terminali Stripe
 TERMINAL_LOCATION=Lokalizacja (adres) terminali Stripe
-RequestDirectDebitWithStripe=Poproś o polecenie zapłaty za pomocą Stripe
-RequesCreditTransferWithStripe=Poproś o przelew kredytowy za pomocą Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Włącz płatności poleceniem zapłaty za pośrednictwem Stripe
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Włącz płatności za pomocą Klarna
 STRIPE_BANCONTACT=Włącz płatności za pomocą BANCONTACT
 STRIPE_IDEAL=Włącz płatności za pomocą IDEAL

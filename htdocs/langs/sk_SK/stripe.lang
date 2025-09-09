@@ -77,9 +77,10 @@ ClickHereToTryAgain=<a href="%s">Kliknutím sem to skúste znova...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Kvôli pravidlám Strong Customer Authentication musí byť vytvorenie karty vykonané z back office Stripe. Kliknutím sem zapnite záznam zákazníka Stripe: %s
 STRIPE_CARD_PRESENT=Darčeková karta pre Stripe Terminály
 TERMINAL_LOCATION=Miesto (adresa) pre Stripe Terminals
-RequestDirectDebitWithStripe=Požiadajte o inkaso s Stripe
-RequesCreditTransferWithStripe=Požiadajte o prevod kreditu pomocou služby Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Povoľte platby inkasom cez Stripe
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Povoľte platby pomocou služby Klarna
 STRIPE_BANCONTACT=Povoľte platby pomocou BANCONTACT
 STRIPE_IDEAL=Povoľte platby pomocou IDEAL
