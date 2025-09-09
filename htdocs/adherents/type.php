@@ -172,7 +172,7 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 	$object->label = trim($label);
 	$object->morphy = trim($morphy);
 	$object->status = (int) $status;
-	$object->subscription = (int) $subscription;
+	$object->subscription = (string) (int) $subscription;
 	$object->amount = ($amount == '' ? '' : price2num($amount, 'MT'));
 	$object->caneditamount = $caneditamount;
 	$object->duration_value = $duration_value;
