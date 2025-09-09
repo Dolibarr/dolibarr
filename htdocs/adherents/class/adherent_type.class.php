@@ -516,9 +516,11 @@ class AdherentType extends CommonObject
 			}
 
 			// Actions on extra fields
-			$result = $this->insertExtraFields();
-			if ($result < 0) {
-				$error++;
+			if (!$error) {
+				$result = $this->insertExtraFields();
+				if ($result < 0) {
+					$error++;
+				}
 			}
 
 			if (!$error && !$notrigger) {
@@ -899,6 +901,7 @@ class AdherentType extends CommonObject
 	public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		$result = '';
+		$option = '';
 
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
