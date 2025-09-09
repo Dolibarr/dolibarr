@@ -44,6 +44,9 @@ class mod_codeproduct_leopard extends ModeleProductCode
 	public $name = 'Leopard';
 	public $version = 'dolibarr';
 
+	/**
+	 * @var int		Position of module among others
+	 */
 	public $position = 10;
 
 
