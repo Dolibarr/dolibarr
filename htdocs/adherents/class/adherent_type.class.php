@@ -930,7 +930,6 @@ class AdherentType extends CommonObject
 				$url .= '&save_lastsearch_values=1';
 			}
 		}
-
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 		$linkstart .= $dataparams.' class="'.$classfortooltip.'">';
