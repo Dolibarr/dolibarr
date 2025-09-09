@@ -1215,7 +1215,7 @@ class Societe extends CommonObject
 		$contact->zip               = $this->zip;
 		$contact->town              = $this->town;
 		$this->setUpperOrLowerCase();
-		$contact->phone_pro         = $this->phone;
+		$contact->phone_pro = $this->phone;
 		if (getDolGlobalString('CONTACTS_DEFAULT_ROLES')) {
 			$contact->roles = explode(',', getDolGlobalString('CONTACTS_DEFAULT_ROLES'));
 		}
