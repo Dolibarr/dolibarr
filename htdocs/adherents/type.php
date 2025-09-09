@@ -639,7 +639,7 @@ if ($rowid > 0) {
 		print '</tr>';
 
 		print '<tr><td>'.$form->textwithpicto($langs->trans("SubscriptionRequired"), $langs->trans("SubscriptionRequiredDesc")).'</td><td>';
-		print yn($object->subscription);
+		print yn((int) $object->subscription);
 		print '</tr>';
 
 		// Amount
