@@ -346,7 +346,7 @@ class Contact extends CommonObject
 	// END MODULEBUILDER PROPERTIES
 
 	/**
-	 * @var array<int,array{id:int,socid:int,element:string,source:string,code:string,label:string}> roles
+	 * @var null|array<int,array{id:int,socid:int,element:string,source:string,code:string,label:string}> roles, null until fetched or set
 	 */
 	public $roles;
 
