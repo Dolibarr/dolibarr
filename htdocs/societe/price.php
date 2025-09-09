@@ -984,11 +984,7 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 					print '<a class="paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=delete_customer_price&token='.newToken().'&socid='.$object->id.'&lineid='.$line->id.'">';
 					print img_delete('default', 'style="vertical-align: middle;"');
 					print '</a>';
-
 					print '</td>';
-					if ($i === 0) {
-						$totalarray['nbfield']++;
-					}
 				}
 
 
@@ -1070,9 +1066,6 @@ if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT
 								$selected = 1;
 							}
 							print '<input id="cb' . $line->id . '" class="flat checkforselect" type="checkbox" name="toselect[]" value="' . $line->id . '"' . ($selected ? ' checked="checked"' : '') . '>';
-						}
-						if ($i === 0) {
-							$totalarray['nbfield']++;
 						}
 						print '</td>';
 					}
