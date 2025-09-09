@@ -59,8 +59,6 @@ ClickHereToTryAgain=<a href="%s"> Clique aqui para tentar novamente... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Devido às regras de Autenticação Forte do Cliente, a criação de um cartão deve ser feita no back office do Stripe. Você pode clicar aqui para ativar o registro de cliente do Stripe: %s
 STRIPE_CARD_PRESENT=Cartão Presente para Terminais Stripe
 TERMINAL_LOCATION=Localização (endereço) para terminais Stripe
-RequestDirectDebitWithStripe=Solicitar débito direto com Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Habilitar pagamentos por débito direto através do Stripe
 ExampleOnlyForBECustomers=Somente para clientes belgas
 ExampleOnlyForDECustomers=Somente para clientes alemães
 ExampleOnlyForNLCustomers=Somente para clientes holandeses

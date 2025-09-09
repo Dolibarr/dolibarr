@@ -193,7 +193,7 @@ DONATION_ACCOUNTINGACCOUNT=Konto (aus dem Kontenplan), das zur Erfassung von Spe
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Konto (aus dem Kontenplan), das zur Erfassung von Mitgliedsbeiträgen verwendet werden soll (Mitgliedschaftsmodul - wenn die Mitgliedschaft ohne Rechnung erfasst wird)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Konto (aus dem Kontenplan), das als Standardkonto zur Erfassung von Kundenanzahlungen verwendet werden soll
 UseAuxiliaryAccountOnCustomerDeposit=Debitorenkonto als Einzelkonto im Nebenbuch für Anzahlungspositionen hinterlegen (bei Deaktivierung bleibt Einzelkonto für Anzahlungspositionen leer)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Konto (aus dem Kontenplan), das als Standard verwendet werden soll
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Lieferantenkonto als Einzelkonto im Nebenbuch für Anzahlungsbuchungen speichern (falls deaktiviert, bleibt Einzelkonto für Anzahlungsbuchungen leer)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Standard-Buchungskonto zur Erfassung der vom Kunden einbehaltenen Garantie
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Konto (aus dem Kontenplan), das als Standardkonto für die im selben Land gekauften Produkte verwendet werden soll (wird verwendet, wenn nicht im Produktblatt definiert)
@@ -278,6 +278,7 @@ PcgtypeDesc=Kontengruppen werden für einige Buchhaltungsberichte als vordefinie
 AccountingCategoriesDesc=Benutzerdefinierte Kontengruppen können verwendet werden, um mehrere Buchhaltungskonten unter einem Namen zu gruppieren, um die Verwendung von Filtern oder das Erstellen von benutzerdefinierten Berichten zu vereinfachen.
 Reconcilable=Abstimmkonto
 Centralized=Sammelkonto
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=Gesamtumsatz vor Steuern
 TotalMarge=Gesamtumsatzrendite
 DescVentilCustomer=Übersicht der kontierten und unkontierten Positionen aus Kundenrechnungen
@@ -357,6 +358,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Aktivieren Sie die Verwaltung des Rev
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Wenn diese Option aktiviert ist, können Sie festlegen, dass eine Lieferant oder eine bestimmte Kreditorenrechnung anders in die Buchhaltung übertragen werden muss: Eine zusätzliche Soll- und Habenbuchung wird in der Buchhaltung auf 2 gegebenen Konten aus dem Kontenplan generiert, die in der "%s" Setup-Seite festgelegt werden.
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Registerkarte auf Geschäftspartner-Karten aktivieren, um das Nebenbuchkonto anzuzeigen
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=Wenn diese Option aktiviert ist, wird in Geschäftspartner-Karten eine neue Registerkarte angezeigt, um Buchungssätze anzuzeigen, zu verwalten, abzugleichen, zu drucken und mehr
+
 ## Export
 NotExportLettering=Beim Generieren der Datei die Abstimmungsinformationen nicht exportieren
 NotifiedExportDate=Noch nicht exportierte Zeilen als exportiert kennzeichnen <span class="warning">(um eine als exportiert gekennzeichnete Zeile zu ändern, müssen Sie die gesamte Transaktion löschen und erneut in die Buchhaltung übertragen) </span>
@@ -389,7 +391,7 @@ Modelcsv_Gestinumv5=Export für Gestinum (v5)
 Modelcsv_charlemagne=Export für Aplim Charlemagne
 ChartofaccountsId=Kontenplan ID
 ExportToPdf = Als PDF exportieren
-ExportToCsv = Export to CSV
+ExportToCsv = Exportieren als CSV
 PdfLedgerTitle = Hauptbuch-Konten
 PdfBalanceTitle = Hauptbuch Saldo
 PdfBookkeepingTitle = Journale
@@ -441,7 +443,7 @@ AccountRemovedFromGroup=Konto aus der Gruppe entfernt
 SaleLocal=Verkauf Inland
 SaleExport=Verkauf Export (ausserhalb EWG)
 SaleEEC=Verkauf in EU/EWG
-SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intra-community sale and the suggested account is the standard product account.
+SaleEECWithVAT=Verkauf in EU/EWG mit USt. ungleich null. Daher nehmen wir an, dass dies KEIN innergemeinschaftlicher Verkauf ist. Das vorgeschlagene Konto ist daher das Standardbuchungskonto für Produkte.
 SaleEECWithoutVATNumber=Verkauf in EU/EWG ohne USt., aber die USt.-ID des Geschäftspartners ist nicht definiert. Wir greifen auf das Konto für Standardverkäufe zurück. Sie können die fehlende USt.-ID des Geschäftspartners nachtragen oder bei Bedarf das für die Kontierung vorgeschlagene Produktkonto ändern.
 AnySale=Alle Verkäufe
 ForbiddenTransactionAlreadyExported=Unzulässig: Die Transaktion wurde bereits freigegeben und/oder exportiert.
@@ -486,7 +488,7 @@ AccountancyClosureConfirmClose=Sind Sie sicher, dass Sie das aktuelle Geschäfts
 AccountancyClosureConfirmAccountingReversal=Sind Sie sicher, dass Sie Einträge für Eröffnungsbuchungen erzeugen wollen?
 
 ## Warning
-WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) has already been recorded
+WarningBookkeepingRecordAlreadyExists=Transaktion für (doc_type=%s, doc_id=%s, doc_det=%s) wurde bereits aufgezeichnet
 
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Einige obligatorische Einstellungen wurden noch nicht vorgenommen, bitte vervollständigen Sie die Einrichtung.
@@ -509,7 +511,7 @@ ErrorNoFiscalPeriodActiveFound=Kein aktives Geschäftsjahr (mit definiertem Star
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=Das Datum des Buchhaltungsdokuments befindet sich nicht im aktiven Geschäftsjahr
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=Das Datum des Buchhaltungsdokuments befindet sich in einem geschlossenen Geschäftsjahr
 Error_BOOKKEEPING_ADDON_NotDefined=Fehler: die Regel für die Buchungsnummerierung ist in der allgemeinen Konfiguration des Buchhaltungsmoduls noch nicht definiert.
-ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=You tried to insert a non balanced transaction in the book for %s (Payment ID: %s). Action is canceled
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Es wurde versucht, eine nicht ausgeglichenen Transaktion in die Buchhaltung für %s einzufügen (Zahlungs-ID: %s). Die Aktion wurde abgebrochen.
 ProductUsage=Produkt- oder Leistungs-Verwendung
 ## Import
 ImportAccountingEntries=Buchaltungseinträge
@@ -538,15 +540,15 @@ ExpenseReportJournal=Spesenabrechnung Journal
 DocsAlreadyExportedAreIncluded=Bereits exportierte Dokumente sind enthalten
 ClickToShowAlreadyExportedLines=Klicken Sie hier, um bereits exportierte Zeilen anzuzeigen
 NAccounts=%s Konten
-ACCOUNTING_USE_NON_TREASURY_Desc=This is the method for accrual accounting (known as "real" or "complete"). We use all the information (sales and purchase invoices, expense reports, bank, etc.) to generate the accounting.
-ACCOUNTING_USE_TREASURY_Desc=This is the cash accounting method. We only use payments and their dates to generate the accounting. Check with your accounting firm to see if you are eligible for this accounting method.
+ACCOUNTING_USE_NON_TREASURY_Desc=Dies ist der Modus für eine echte doppelte Buchführung. Es werden alle relevanten Buchungsinformationen (Ein- und Verkaufsrechnungen, Spesenabrechnungen, Bankdaten etc.) in der Buchhaltung verarbeitet.
+ACCOUNTING_USE_TREASURY_Desc=Dies ist der Modus für eine Einnahmen-Überschuss-Rechnung (Kassenbuch-basierte Buchhaltung). Es werden ausschließlich die Zahlungen und deren Datum für die Buchhaltung verwendet.
 PieceDesc=Die Belegreferenz des Quell-Dokuments, das diese Bank-Transaktion generiert (Rechnungsnr., Spesenabrechnungsnr., …)
 BankTransactionRef=Eine Referenz für die Bank-Transaktion (optional, eine automatische ID wurde bereits generiert)
 ## Mass Actions
 ConfirmMassCloneBookkeepingWritingQuestion=Dadurch wird der Buchhaltungseintrag dupliziert (alle mit diesem Buchhaltungseintrag verknüpften Zeilen werden dupliziert). Sind Sie sicher, dass Sie die die ausgewählten %s Datensätze duplizieren wollen?
 ConfirmMassCloneBookkeepingWriting=Massenaktion Duplizieren bestätigen
-ConfirmMassReturnAccountBookkeepingWriting=Confirm mass reversal
-ConfirmMassReturnAccountBookkeepingWritingQuestion=This will create reversal entries for the selected bookkeeping records (all lines linked to these records will be reversed: debit and credit will be swapped, and a reversal operation will be recorded). Are you sure you want to perform this reversal for the %s selected records?
+ConfirmMassReturnAccountBookkeepingWriting=Massenaktion zur Stornierung bestätigen
+ConfirmMassReturnAccountBookkeepingWritingQuestion=Dadurch werden Stornobuchungen für die ausgewählten Buchhaltungsdatensätze erstellt (alle mit diesen Datensätzen verknüpften Zeilen werden storniert: Soll und Haben wird getauscht, und es wird eine Stornierungsoperation aufgezeichnet). Sind Sie sicher, dass Sie eine Stornierung für die %s ausgewählten Datensätze durchführen wollen?
 ConfirmMassAssignAccountBookkeepingWritingQuestion=Dadurch wird das Buchungskonto aller ausgewählten Zeilen geändert.
 confirmMassAssignAccountBookkeepingWritingConfirm=Massenänderung von Buchungskonto bestätigen
 CloningSuccess=Erfolgreiches Duplizieren von Transaktionen: %s

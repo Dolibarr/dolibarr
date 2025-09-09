@@ -193,7 +193,7 @@ DONATION_ACCOUNTINGACCOUNT=Tili (tilikaaviosta), jota käytetään lahjoitusten 
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Tili (tilikartalta), jota käytetään jäsenmaksujen rekisteröintiin (Jäsenyysmoduuli - jos jäsenyys kirjataan ilman laskua)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Tili (tilikartasta), jota käytetään oletus-tilinä asiakkaan talletuksen rekisteröintiin
 UseAuxiliaryAccountOnCustomerDeposit=Tallenna asiakastili henkilökohtaisena tilinä tytäryhtiön kirjanpitoon käsirahariveille (jos se on poistettu käytöstä, henkilötili osamaksu-riville jää tyhjiksi)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Tili (tilikaaviosta), jota käytetään oletus
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Tallenna toimittaja-tili henkilökohtaisena tilinä tytäryhtiön kirjanpitoon käsirahariveille (jos se on poistettu käytöstä, osamaksu-rivien henkilökohtainen tili jää tyhjiksi )
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Kirjanpito tililtä oletus asiakkaan säilyttämän takuun rekisteröimiseksi
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Tili (tilikartasta), jota käytetään oletus-tilinä samassa maassa ostetulle tuotteet -tilille (käytetään, jos ei määritelty tuoteselosteessa)
@@ -278,6 +278,7 @@ PcgtypeDesc=ryhmä tiliä käytetään ennalta määritettyinä 'suodattimina' j
 AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Sovittava
 Centralized=Keskitetty tili
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
 DescVentilCustomer=Katso tästä luettelo asiakaslaskurin riveistä, jotka on sidottu (tai ei) tuotetiliin tilikartasta
@@ -357,6 +358,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Aktivoi toimittaja ostosten ALV:n kä
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Kun tämä vaihtoehto on käytössä, voit määrittää, että toimittaja tai tietty ostolasku on siirrettävä kirjanpitoon eri tavalla: Lisäveloitus ja luottoraja luodaan Kirjanpito kahdelle tietylle tilille "<span class=" määritellystä tilikaaviosta%s asetussivulla.
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Aktivoi välilehti kolmannen osapuolen korteissa tarkastellaksesi apukirjanpitoa
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=Kun tämä asetus on käytössä, kolmannen osapuolen korteissa näkyy uusi välilehti, jolla voit tarkastella ja -tiedostoa, jolla voit hallita Kirjanpito -tiedostoja kolmannen osapuolen puolesta, kuten täsmäytystä, tulostusta ja muita toimintoja.
+
 ## Export
 NotExportLettering=Älä vie kirjaimia luodessasi tiedosto
 NotifiedExportDate=Merkitse viemättömät rivit viedyiksi <span class="warning"> (jos haluat muokata viedyksi merkittyä riviä, sinun on poistettava koko tapahtuma ja siirrä se uudelleen muotoon Kirjanpito)</span>

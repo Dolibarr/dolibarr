@@ -77,9 +77,10 @@ ClickHereToTryAgain=<a href="%s">Tekrar denemek için burayı tıklayın...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Güçlü Müşteri Kimlik Doğrulaması kuralları nedeniyle bir kartın oluşturulması Stripe'ın arka ofisinden yapılmalıdır. Stripe müşteri kaydını açmak için burayı tıklayabilirsiniz: %s
 STRIPE_CARD_PRESENT=Şerit Terminaller için Kart Hediyesi
 TERMINAL_LOCATION=Şerit Terminalleri için konum (adres)
-RequestDirectDebitWithStripe=Stripe ile Otomatik Ödeme Talebi
-RequesCreditTransferWithStripe=Stripe ile Kredi Transferi Talep Edin
-STRIPE_SEPA_DIRECT_DEBIT=Stripe aracılığıyla Otomatik Ödeme ödemelerini etkinleştirin
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Klarna'yı kullanarak ödemeleri etkinleştirin
 STRIPE_BANCONTACT=BANCONTACT'ı kullanarak ödemeleri etkinleştirin
 STRIPE_IDEAL=IDEAL kullanarak ödemeleri etkinleştirin

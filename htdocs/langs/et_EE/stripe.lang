@@ -77,9 +77,10 @@ ClickHereToTryAgain=<a href="%s">Klõpsake siin, et uuesti proovida...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Tugeva kliendi autentimise reeglite tõttu tuleb kaardi loomine teha Stripe'i kontoris. Stripe'i kliendiandmete sisselülitamiseks klõpsake siin: %s
 STRIPE_CARD_PRESENT=Kaart Stripe'i terminalide jaoks olemas
 TERMINAL_LOCATION=Stripe'i terminalide asukoht (aadress)
-RequestDirectDebitWithStripe=Taotle otsekorraldust Stripe'i kaudu
-RequesCreditTransferWithStripe=Taotle krediidiülekannet Stripe'i kaudu
-STRIPE_SEPA_DIRECT_DEBIT=Luba otsekorralduse maksed Stripe'i kaudu
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Klarna kaudu maksete lubamine
 STRIPE_BANCONTACT=Luba maksed BANCONTACTi kaudu
 STRIPE_IDEAL=Luba maksed IDEALi abil

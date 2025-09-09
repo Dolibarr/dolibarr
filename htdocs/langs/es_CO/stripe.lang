@@ -51,7 +51,6 @@ ToOfferALinkForLiveWebhook=Enlace para configurar Stripe WebHook para llamar al 
 ClickHereToTryAgain=<a href="%s"> Haga clic aquí para volver a intentarlo ... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Debido a las reglas de autenticación reforzada de clientes, la creación de una tarjeta debe realizarse desde el back office de Stripe. Puede hacer clic aquí para activar el registro de cliente de Stripe: %s
 TERMINAL_LOCATION=Ubicación (dirección) de terminales Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Habilite los pagos con Débito Directo a través de Stripe
 STRIPE_KLARNA=Habilitar los pagos con Klarna
 STRIPE_BANCONTACT=Habilitar los pagos mediante BANCONTACT
 STRIPE_IDEAL=Habilitar los pagos mediante IDEAL

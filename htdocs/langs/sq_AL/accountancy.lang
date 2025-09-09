@@ -193,7 +193,7 @@ DONATION_ACCOUNTINGACCOUNT=Llogaria (nga Tabela e Llogarive) që do të përdore
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Llogaria (nga Tabela e Llogarive) që do të përdoret për të regjistruar abonimet e anëtarësimit (Moduli i anëtarësimit - nëse anëtarësimi regjistrohet pa faturë)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Llogaria (nga Grafiku i Llogarive) që do të përdoret si llogaria e paracaktuar për të regjistruar depozitën e klientit
 UseAuxiliaryAccountOnCustomerDeposit=Ruani llogarinë e klientit si llogari individuale në librin e varur për linjat e parapagimeve (nëse është e çaktivizuar, llogaria individuale për linjat e paradhënies do të mbetet bosh)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Llogaria (nga Grafiku i Llogarive) që do të përdoret si parazgjedhje
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Llogaria e furnitorit të dyqanit si llogari individuale në librin filial për linjat e parapagimeve (nëse është e çaktivizuar, llogaria individuale për linjat e paradhënies do të mbetet bosh)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Llogaria e kontabilitetit si parazgjedhje për të regjistruar garancinë e ruajtur të klientit
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Llogaria (nga Grafiku i Llogarive) që do të përdoret si llogaria e paracaktuar për produktet e blera brenda të njëjtit vend (përdoret nëse nuk përcaktohet në fletën e produktit)
@@ -278,6 +278,7 @@ PcgtypeDesc=Grupi i llogarive përdoren si kritere të paracaktuara 'filtri' dhe
 AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=E pajtueshme
 Centralized=Llogari e centralizuar
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
 DescVentilCustomer=Konsultohuni këtu me listën e linjave të faturave të klientit të lidhura (ose jo) në një llogari produkti nga grafiku i llogarisë
@@ -357,6 +358,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Aktivizoni menaxhimin e tarifës së 
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Kur aktivizohet ky opsion, ju mund të përcaktoni që një faturë furnizuesi ose një faturë e caktuar shitësi duhet të transferohet në kontabilitet ndryshe: Një debit shtesë dhe një linjë krediti do të gjenerohen në kontabilitet në 2 llogari të dhëna nga skema e llogarisë e përcaktuar në "%s" faqe konfigurimi.
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Aktivizoni një skedë në kartat e palëve të treta për të parë librin e llogarive të degëve.
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=Kur ky opsion është i aktivizuar, shfaqet një skedë e re në kartat e palëve të treta për të parë dhe menaxhuar kontabilitetin për palën e tretë, si për të pajtuar, printuar etj.
+
 ## Export
 NotExportLettering=Mos e eksportoni shkronjat kur krijoni skedarin
 NotifiedExportDate=Flamuroni linjat e paeksportuara ende si të eksportuara <span class="warning">(për të modifikuar një linjë të shënuar si të eksportuar, do t'ju duhet të fshini të gjithë transaksionin dhe ta transferoni atë në kontabilitet)</span>
