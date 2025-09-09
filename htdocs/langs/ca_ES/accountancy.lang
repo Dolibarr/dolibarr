@@ -193,7 +193,7 @@ DONATION_ACCOUNTINGACCOUNT=Compte (del pla comptable) que s'utilitzarà per a re
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Compte (del pla comptable) que s'utilitzarà per a registrar les subscripcions de socis (mòdul d'afiliació - si l'afiliació es registra sense factura)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Compte (del pla comptable) que s'utilitzarà com a compte predeterminat per a registrar el dipòsit del client
 UseAuxiliaryAccountOnCustomerDeposit=Emmagatzema el compte del client com a compte individual al llibre major subsidiari per a les línies de pagament inicial (si està desactivat, el compte individual per a les línies de pagament inicial romandrà buit)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Compte (del pla comptable) que s'utilitzarà com a predeterminat
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Emmagatzema el compte del proveïdor com a compte individual al llibre major subsidiari per a les línies de pagament inicial (si està desactivat, el compte individual de les línies de pagament inicial romandrà buit)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Compte comptable per defecte per a registrar la garantia retinguda del client
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Compte (del pla comptable) que s'utilitzarà com a compte predeterminat per als productes comprats al mateix país (utilitzat si no està definit a la fitxa del producte)
@@ -278,6 +278,7 @@ PcgtypeDesc=Els grups de comptes s'utilitzen com a criteris de «filtre» i «ag
 AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Reconciliable
 Centralized=Compte centralitzat
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=Total turnover before tax
 TotalMarge=Marge total de vendes
 DescVentilCustomer=Consulteu aquí la llista de línies de factura de client vinculades (o no) a un compte de producte des del pla comptable
@@ -357,6 +358,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Activar la gestió de la recàrrega d
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Quan aquesta opció està habilitada, podeu definir que un proveïdor o una factura de proveïdor determinada s'hagi de transferir a la comptabilitat d'una altra manera: es generarà una línia de dèbit i crèdit addicionals a la comptabilitat en 2 comptes determinats del pla comptable definit a la pàgina de configuració «%s».
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Activeu una pestanya a les targetes de tercers per veure el registre subsidiari
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=Quan aquesta opció està activada, es mostra una pestanya nova a les targetes de tercers per veure i gestionar la comptabilitat del tercer com per conciliar, imprimir i més.
+
 ## Export
 NotExportLettering=No exporteu la lletra en generar el fitxer
 NotifiedExportDate=Marca les línies encara no exportades com a Exportades <span class="warning">(per a modificar una línia indicada com a exportada, hauràs de suprimir tota la transacció i tornar-la a transferir a la comptabilitat)</span>

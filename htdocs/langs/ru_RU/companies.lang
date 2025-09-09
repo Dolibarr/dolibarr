@@ -348,6 +348,7 @@ VATIntraManualCheck=Вы также можете проверить вручну
 ErrorVATCheckMS_UNAVAILABLE=Проверка невозможна. Сервис проверки не предоставляется государством-членом ЕС (%s).
 NorProspectNorCustomer=Ни лид, ни клиент
 JuridicalStatus=Тип хозяйствующего субъекта
+CompnanyBirthDate=Εstablishment date of company
 Workforce=Трудовые ресурсы
 Staff=Сотрудники
 ProspectLevelShort=Лид

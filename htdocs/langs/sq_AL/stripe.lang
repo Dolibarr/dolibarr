@@ -77,9 +77,10 @@ ClickHereToTryAgain=<a href="%s">Kliko këtu për të provuar përsëri...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Për shkak të rregullave të forta të vërtetimit të klientit, krijimi i një karte duhet të bëhet nga Stripe back office. Mund të klikoni këtu për të aktivizuar regjistrimin e klientit Stripe: %s
 STRIPE_CARD_PRESENT=Dhuratë karte për terminalet me shirita
 TERMINAL_LOCATION=Vendndodhja (adresa) për Terminalet Stripe
-RequestDirectDebitWithStripe=Kërko Debitim Direkt me Stripe
-RequesCreditTransferWithStripe=Kërko Transfer Kredie me Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Aktivizo pagesat e Debitimit Direkt përmes Stripe
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Aktivizo pagesat duke përdorur Klarna
 STRIPE_BANCONTACT=Aktivizo pagesat duke përdorur BANCONTACT
 STRIPE_IDEAL=Aktivizo pagesat duke përdorur IDEAL

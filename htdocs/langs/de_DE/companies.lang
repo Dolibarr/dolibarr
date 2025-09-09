@@ -348,6 +348,7 @@ VATIntraManualCheck=Sie können die Überprüfung auch manuell auf der Internets
 ErrorVATCheckMS_UNAVAILABLE=Anfrage nicht möglich. Überprüfungsdienst wird vom Mitgliedsland nicht angeboten (%s).
 NorProspectNorCustomer=kein Interessent / kein Kunde
 JuridicalStatus=Unternehmensform
+CompnanyBirthDate=Εstablishment date of company
 Workforce=Mitarbeiter/innen
 Staff=Mitarbeiter
 ProspectLevelShort=Potenzial

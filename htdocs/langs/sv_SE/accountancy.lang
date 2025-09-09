@@ -193,7 +193,7 @@ DONATION_ACCOUNTINGACCOUNT=Konto (från kontoplanen) som ska användas för att 
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Konto (från kontoplanen) som ska användas för att registrera medlemskapsabonnemang (Medlemsmodul - om medlemskap registrerats utan faktura)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Konto (från kontoplanen) som ska användas som standardkonto för att registrera kundinsättning
 UseAuxiliaryAccountOnCustomerDeposit=Lagra kundkonto som individuellt konto i huvudboken för rader med förskottsbetalningar (om det är inaktiverat förblir individuellt konto för förskottsrader tomt)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Konto (från kontoplanen) som ska användas som standard
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Lagra leverantörskonto som individuellt konto i huvudboken för rader med förskottsbetalningar (om det är inaktiverat förblir individuellt konto för förskottsrader tomt)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Bokföringskonto som standard för att registrera kundbehållen garanti
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Konto (från kontoplanen) som ska användas som standardkonto för produkter köpta inom samma land (används om det inte definieras i produktbladet)
@@ -278,6 +278,7 @@ PcgtypeDesc=Kontogrupp används som fördefinierade kriterier för 'filter' och 
 AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Förenlig
 Centralized=Centraliserat konto
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=Total turnover before tax
 TotalMarge=Total försäljning marginal
 DescVentilCustomer=Se här listan över kundfakturarader bundna (eller inte) till ett produktkonto från kontoplan
@@ -357,6 +358,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Aktivera hanteringen av omvänd momss
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=När det här alternativet är aktiverat kan du definiera att en leverantör eller en given leverantörsfaktura måste överföras till bokföring på annat sätt: En extra debitering och en kreditgräns kommer att genereras i bokföringen på 2 givna konton från kontoplanen som definieras i "%s" inställningssida.
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Aktivera en flik på tredjepartskort för att visa dotterreskontran
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=När det här alternativet är aktiverat visas en ny flik i tredjepartskort för att visa och hantera redovisning för tredje part för avstämning, utskrift och mer.
+
 ## Export
 NotExportLettering=Exportera inte bokstäverna när filen genereras
 NotifiedExportDate=Flagga ännu inte exporterade rader som exporterade <span class="warning">(för att ändra en rad som flaggats som exporterad måste du radera hela transaktionen och överföra den till bokföringen igen)</span>

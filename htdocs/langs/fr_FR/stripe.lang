@@ -77,10 +77,10 @@ ClickHereToTryAgain=<a href="%s">Cliquez ici pour essayer à nouveau...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=En raison des règles d'Authentification Client Forte, la création d'une carte doit être effectuée à partir du backoffice de Stripe. Vous pouvez cliquer ici pour basculer sur la fiche client Stripe : %s
 STRIPE_CARD_PRESENT=Carte présente pour les terminaux Stripe
 TERMINAL_LOCATION=Localisation (adresse) pour les terminaux Stripe
-RequestDirectDebitWithStripe=Demander un prélèvement SEPA avec Stripe
-RequesCreditTransferWithStripe=Faire un virement SEPA avec Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Activer les paiements par prélèvement SEPA avec Stripe
-STRIPE_SEPA_CREDIT_TRANSFER=Activer les paiements par virement SEPA avec Stripe
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Activer les paiements utilisant Klarna
 STRIPE_BANCONTACT=Activer les paiements utilisant BANCONTACT
 STRIPE_IDEAL=Activer les paiements utilisant IDEAL

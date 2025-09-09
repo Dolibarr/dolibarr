@@ -193,7 +193,7 @@ DONATION_ACCOUNTINGACCOUNT=Konto (fra kontoplanen) som skal brukes til å regist
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Konto (fra kontoplanen) som skal brukes til å registrere medlemskapsabonnementer (Medlemsmodul - hvis medlemskap er registrert uten faktura)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Konto (fra kontoplanen) som skal brukes som standardkonto for å registrere kundeinnskudd
 UseAuxiliaryAccountOnCustomerDeposit=Lagre kundekonto som individuell konto i hovedbok for linjer med forskuddsbetalinger (hvis den er deaktivert, vil individuell konto for forskuddsbetalingslinjer forbli tom)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Konto (fra kontoplanen) som skal brukes som standard
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Lagre leverandørkonto som individuell konto i hovedbok for linjer med forskuddsbetalinger (hvis den er deaktivert, vil individuell konto for forskuddslinjer forbli tom)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Regnskapskonto som standard for å registrere garantibeløp
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Konto (fra kontoplanen) som skal brukes som standardkonto for varer kjøpt i samme land (brukes hvis det ikke er definert i varearket)
@@ -278,6 +278,7 @@ PcgtypeDesc=Kontogruppe brukes som forhåndsdefinerte 'filter' og 'gruppering' k
 AccountingCategoriesDesc=Tilpassede kontogrupper kan brukes til å gruppere regnskapskontoer under ett navn for å forenkle bruken av filtre eller bygging av tilpassede rapporter.
 Reconcilable=Kan avstemmes
 Centralized=Sentralisert konto
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=Total omsetning før skatt
 TotalMarge=Total salgsmargin
 DescVentilCustomer=Liste over kundefakturalinjer bundet (eller ikke) til en produktkonto fra kontoplan
@@ -357,6 +358,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Aktiver styring av omvendt avgiftspli
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Når dette alternativet er aktivert, kan du definere at en leverandør eller en gitt leverandør faktura må overføres til regnskap på en annen måte: En ekstra debet og en kredittgrense vil genereres inn i regnskapet på 2 gitte kontoer fra kontoplanen som er definert i "%s"-oppsettsside.
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Aktiver en fane på tredjepartskort for å vise subsidiær reskontro
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=Når dette alternativet er aktivert, vises en ny fane i tredjepartskort for å se og administrere regnskap for tredjeparten for å avstemme, skrive ut og mer.
+
 ## Export
 NotExportLettering=Ikke eksporter bokstaver når du genererer filen
 NotifiedExportDate=Flagg ennå ikke eksporterte linjer som eksportert <span class="warning"> (for å endre en linje flagget som eksportert, må du slette hele transaksjonen og overføre den til regnskapet på nytt) </span>

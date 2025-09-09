@@ -77,9 +77,10 @@ ClickHereToTryAgain= <a href="%s"> Klik di sini untuk mencoba lagi ... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Karena aturan Otentikasi Pelanggan yang Kuat, pembuatan kartu harus dilakukan dari back office Stripe. Anda dapat mengklik di sini untuk mengaktifkan data pelanggan Stripe: %s
 STRIPE_CARD_PRESENT=Hadiah Kartu untuk Terminal Stripe
 TERMINAL_LOCATION=Lokasi (alamat) Terminal Stripe
-RequestDirectDebitWithStripe=Minta Debit Langsung dengan Stripe
-RequesCreditTransferWithStripe=Minta Transfer Kredit dengan Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Aktifkan pembayaran Debit Langsung melalui Stripe
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Aktifkan pembayaran menggunakan Klarna
 STRIPE_BANCONTACT=Aktifkan pembayaran menggunakan BANCONTACT
 STRIPE_IDEAL=Aktifkan pembayaran menggunakan IDEAL
