@@ -40,7 +40,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	public $version = 'dolibarr';
 
 	/**
-	 * @var int
+	 * @var int		Position of module among others
 	 */
 	public $position = 50;
 
