@@ -3,10 +3,10 @@ MenuFinancial=Төлем | Төлем
 TaxModuleSetupToModifyRules=Есептеу ережелерін өзгерту үшін <a href="%s"> </a> салықтар модулін орнатуға өтіңіз.
 TaxModuleSetupToModifyRulesLT=<a href="%s"> Компанияның </a> орнатуына өтіңіз, есептеу ережелерін өзгертіңіз.
 OptionMode=Бухгалтерлік есепке арналған нұсқа
-OptionModeTrue=Accrual accounting
-OptionModeVirtual=Cash accounting
-OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=Бұл тұрғыда айналым шот -фактуралар бойынша есептеледі (валидация күні). Бұл шот -фактуралар төленген немесе төленбегеніне қарамастан, олар айналым өнімінде көрсетіледі.
+OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
 FeatureIsSupportedInInOutModeOnly=Мүмкіндік тек CREDITS-DEBTS есепке алу режимінде қол жетімді (Бухгалтерлік есеп модулінің конфигурациясын қараңыз)
 VATReportBuildWithOptionDefinedInModule=Мұнда көрсетілген сомалар Салық модулін орнату ережелерімен есептеледі.
 LTReportBuildWithOptionDefinedInModule=Мұнда көрсетілген сомалар Компанияның баптауы анықтайтын ережелер бойынша есептеледі.
@@ -302,7 +302,6 @@ ByVatRate=Сатудан алынатын салық мөлшерлемесі б
 TurnoverbyVatrate=Сатудан алынатын салық мөлшерлемесі бойынша есепке алынған айналым
 TurnoverCollectedbyVatrate=Сатудан алынатын салық мөлшерлемесі бойынша алынатын айналым
 PurchasebyVatrate=Сату бойынша салық ставкасы бойынша сатып алу
-LabelToShow=Қысқа белгі
 PurchaseTurnover=Сатып алу айналымы
 PurchaseTurnoverCollected=Сатып алу айналымы жиналды
 RulesPurchaseTurnoverDue=- Бұған жеткізушінің төленген немесе төленбеген шоттары кіреді. <br> - Ол осы шот -фактуралардың шот -фактура күніне негізделген. <br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Rule for lines dates
 Prepaid=Prepaid
 Postpaid=Postpaid
 SetRuleForLinesDates=Set rule for lines dates
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

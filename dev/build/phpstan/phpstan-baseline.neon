@@ -2239,12 +2239,6 @@ parameters:
 			path: ../../../htdocs/bookcal/calendar_card.php
 
 		-
-			message: '#^Variable \$soc might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/bookcal/calendar_card.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -13825,12 +13819,6 @@ parameters:
 			path: ../../../htdocs/knowledgemanagement/knowledgerecord_card.php
 
 		-
-			message: '#^Property KnowledgeRecord\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/knowledgemanagement/knowledgerecord_card.php
-
-		-
 			message: '#^Variable \$upload_dir might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -19595,12 +19583,6 @@ parameters:
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 3
 			path: ../../../htdocs/takepos/freezone.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/takepos/genimg/index.php
 
 		-
 			message: '#^Variable \$db might not be defined\.$#'

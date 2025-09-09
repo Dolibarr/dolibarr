@@ -77,9 +77,10 @@ ClickHereToTryAgain=<a href="%s">Clique aqui para tentar novamente...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Devido às fortes regras cliente Autenticação, a criação de um cartão deve ser feita no back office do Stripe. Você pode clicar aqui para ativar o registro Stripe cliente: %s
 STRIPE_CARD_PRESENT=Presente de cartão para terminais Stripe
 TERMINAL_LOCATION=Localização (endereço) dos Terminais Stripe
-RequestDirectDebitWithStripe=Solicitação Débito direto com Stripe
-RequesCreditTransferWithStripe=Solicitar transferência de crédito com Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Habilite os pagamentos Débito direto através do Stripe
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Habilite os pagamentos usando Klarna
 STRIPE_BANCONTACT=Habilitar pagamentos usando BANCONTACT
 STRIPE_IDEAL=Habilitar pagamentos usando IDEAL

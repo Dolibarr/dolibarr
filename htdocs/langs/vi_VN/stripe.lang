@@ -77,9 +77,10 @@ ClickHereToTryAgain=<a href="%s">Bấm vào đây để thử lại...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Do quy tắc Xác thực khách hàng mạnh mẽ, việc tạo thẻ phải được thực hiện từ văn phòng hỗ trợ của Stripe. Bạn có thể nhấp vào đây để bật hồ sơ khách hàng Stripe: %s
 STRIPE_CARD_PRESENT=Thẻ quà tặng cho thiết bị đầu cuối Stripe
 TERMINAL_LOCATION=Vị trí (địa chỉ) của Stripe Terminals
-RequestDirectDebitWithStripe=Yêu cầu ghi nợ trực tiếp với Stripe
-RequesCreditTransferWithStripe=Yêu cầu chuyển khoản tín dụng với Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Cho phép thanh toán Ghi nợ trực tiếp thông qua Stripe
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Cho phép thanh toán bằng Klarna
 STRIPE_BANCONTACT=Cho phép thanh toán bằng BANCONTACT
 STRIPE_IDEAL=Cho phép thanh toán bằng IDEAL

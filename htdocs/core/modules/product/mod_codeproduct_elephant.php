@@ -39,6 +39,8 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	public $name = 'Elephant';
 	public $version = 'dolibarr';
 
+	public $position = 50;
+
 	// variables not inherited
 
 	/**
