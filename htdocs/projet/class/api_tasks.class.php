@@ -252,7 +252,7 @@ class Tasks extends DolibarrApi
 		foreach ($this->task->lines as $line) {
 			array_push($result,$this->_cleanObjectDatas($line));
 		}
-		return result;
+		return $result;
 	}
 
 	/**
