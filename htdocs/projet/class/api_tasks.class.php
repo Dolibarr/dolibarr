@@ -252,7 +252,8 @@ class Tasks extends DolibarrApi
 		foreach ($this->task->lines as $line) {
 			array_push($result,$this->_cleanObjectDatas($line));
 		}
-		retu
+		return result;
+	}
 
 	/**
 	 * Get roles a user is assigned to a task with
