@@ -908,6 +908,7 @@ class AdherentType extends CommonObject
 		$params = [
 			'id' => $this->id,
 			'objecttype' => $this->element,
+			'option' => $option,
 			'nofetch' => 1,
 		];
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
@@ -919,13 +920,15 @@ class AdherentType extends CommonObject
 		}
 
 		$url = DOL_URL_ROOT.'/adherents/type.php?rowid='.((int) $this->id);
-		// Add param to save lastsearch_values or not
-		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-		if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
-			$add_save_lastsearch_values = 1;
-		}
-		if ($add_save_lastsearch_values) {
-			$url .= '&save_lastsearch_values=1';
+		if ($option != 'nolink') {
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+				$add_save_lastsearch_values = 1;
+			}
+			if ($add_save_lastsearch_values) {
+				$url .= '&save_lastsearch_values=1';
+			}
 		}
 
 		$linkstart = '<a href="'.$url.'"';
@@ -1174,14 +1177,20 @@ class AdherentType extends CommonObject
 		} else {
 			$return .= '<span class="right">&nbsp;</span>';
 		}
-		$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("VoteAllowed").' : '.yn($this->vote).'</span>';
-		if (is_null($this->amount) || $this->amount === '') {
-			$return .= '<br>';
-		} else {
-			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Amount").'</span>';
-			$return .= '<span class="amount"> : '.price($this->amount).'</span>';
+		if (property_exists($this, 'vote')) {
+			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("VoteAllowed").' : '.yn($this->vote).'</span>';
 		}
-		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
+		if (property_exists($this, 'amount')) {
+			if (is_null($this->amount) || $this->amount === '') {
+				$return .= '<br>';
+			} else {
+				$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Amount").'</span>';
+				$return .= '<span class="amount"> : '.price($this->amount).'</span>';
+			}
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
+		}
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
