@@ -951,7 +951,7 @@ class Notify
 						$template = $notifcode.'_TEMPLATE';
 						$labeltouse = getDolGlobalString($template);
 						if (!empty($labeltouse)) {
-							$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $object_type.'_send', $user, $outputlangs, 0, 1, $labeltouse);
+							$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $object_type, $user, $outputlangs, 0, 1, $labeltouse);
 						}
 						if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 							if (method_exists($object, 'fetch_thirdparty') && empty($object->thirdparty)) {
