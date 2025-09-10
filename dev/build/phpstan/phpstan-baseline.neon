@@ -10981,12 +10981,6 @@ parameters:
 			path: ../../../htdocs/don/info.php
 
 		-
-			message: '#^Variable \$projectstatic might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
-			path: ../../../htdocs/don/list.php
-
-		-
 			message: '#^Variable \$maxlength might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
