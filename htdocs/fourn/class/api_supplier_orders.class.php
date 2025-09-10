@@ -357,7 +357,7 @@ class SupplierOrders extends DolibarrApi
 			throw new RestException(404, 'Supplier order not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->commande->id, 'commande_fournisseur', 'commande')) {
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, 'commande_fournisseur', 'commande')) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
