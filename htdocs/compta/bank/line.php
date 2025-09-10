@@ -462,8 +462,8 @@ if ($result) {
 					print '</a>';
 				} elseif ($links[$key]['type'] == 'payment_loan') {
 					print '<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$links[$key]['url_id'].'">';
-					print img_object($langs->trans('PaymentLoan'), 'payment').' ';
-					print $langs->trans("PaymentLoan");
+					print img_object($langs->trans('LoanPayment'), 'payment').' ';
+					print $langs->trans("LoanPayment");
 					print '</a>';
 				} elseif ($links[$key]['type'] == 'loan') {
 					print '<a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$links[$key]['url_id'].'">';
