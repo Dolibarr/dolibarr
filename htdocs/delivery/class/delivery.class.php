@@ -54,6 +54,12 @@ class Delivery extends CommonObject
 	public $element = "delivery";
 
 	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'DELIVERY';
+
+	/**
 	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = "fk_delivery";
