@@ -360,9 +360,13 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account ba ON (ba.rowid = s.fk_accoun
 $sql .= " ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = s.fk_user";
 $sql .= " AND s.entity IN (".getEntity('salaries').")";
+if (!$user->hasRight('salaries', 'readchild')) {
+	$sql .= " AND s.fk_user = ".$user->id;
+}
 if (!$user->hasRight('salaries', 'readall')) {
 	$sql .= " AND s.fk_user IN (".$db->sanitize(implode(',', $childids)).")";
 }
+
 //print $sql;
 
 // Search criteria
