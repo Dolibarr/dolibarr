@@ -715,7 +715,7 @@ $sql .= " AND a.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual v
 if (!empty($actioncode)) {
 	if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
 		if ((is_array($actioncode) && in_array('AC_NON_AUTO',$actioncode))
-			||$actioncode == 'AC_NON_AUTO') {
+			|| $actioncode == 'AC_NON_AUTO') {
 			$sql .= " AND ca.type != 'systemauto'";
 		} elseif ((is_array($actioncode) && in_array('AC_ALL_AUTO',$actioncode))
 			|| $actioncode == 'AC_ALL_AUTO') {
