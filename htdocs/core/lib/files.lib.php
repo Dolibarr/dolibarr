@@ -1107,13 +1107,13 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 				include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 
 				$ecmfiletarget = new EcmFiles($db);
-				$resultecmtarget = $ecmfiletarget->fetch(0, '', $rel_filetorenameafter,'','','',0,$entity);
+				$resultecmtarget = $ecmfiletarget->fetch(0, '', $rel_filetorenameafter, '', '', '', 0, $entity);
 				if ($resultecmtarget > 0) {   // An entry for target name already exists for target, we delete it, a new one will be created.
 					$ecmfiletarget->delete($user);
 				}
 
 				$ecmfile = new EcmFiles($db);
-				$resultecm = $ecmfile->fetch(0, '', $rel_filetorenamebefore,'','','',0,$entity);
+				$resultecm = $ecmfile->fetch(0, '', $rel_filetorenamebefore, '', '', '', 0, $entity);
 				if ($resultecm > 0) {   // If an entry was found for src file, we use it to move entry
 					$filename = basename($rel_filetorenameafter);
 					$rel_dir = dirname($rel_filetorenameafter);
@@ -1167,7 +1167,7 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 					if (!empty($moreinfo) && !empty($moreinfo['cover'])) {
 						$ecmfile->cover = $moreinfo['cover'];
 					}
-					if(!empty($entity)) {
+					if (! empty($entity)) {
 						$ecmfile->entity = $entity;
 					}
 
@@ -2212,7 +2212,7 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 			if (isset($object->src_object_keywords)) {
 				$ecmfile->keywords = $object->src_object_keywords;
 			}
-			if(isset($object->entity)) {
+			if (isset($object->entity)) {
 				$ecmfile->entity = $object->entity;
 			}
 		}
@@ -2356,7 +2356,7 @@ function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded', $object =
 
 		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'ecm_files';
-			if(isset($object->entity)) {
+			if (isset($object->entity)) {
 				$sql .= ' WHERE entity = ' . ((int) $object->entity);
 			} else {
 				$sql .= ' WHERE entity = ' . ((int) $conf->entity);

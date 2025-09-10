@@ -458,7 +458,7 @@ class EcmFiles extends CommonObject
 			if ($filename != '*') {
 				$sql .= " AND t.filename = '".$this->db->escape($filename)."'";
 			}
-			if(!empty($entity)) {
+			if (! empty($entity)) {
 				$sql .= " AND t.entity = " . $entity;
 			} else {
 				$sql .= " AND t.entity = " . $conf->entity; // unique key include the entity so each company has its own index
@@ -467,7 +467,7 @@ class EcmFiles extends CommonObject
 		}
 		if (!empty($ref)) {		// hash of file path
 			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
-			if(!empty($entity)) {
+			if (! empty($entity)) {
 				$sql .= " AND t.entity = " . $entity;
 			} else {
 				$sql .= " AND t.entity = " . $conf->entity; // unique key include the entity so each company has its own index
@@ -476,7 +476,7 @@ class EcmFiles extends CommonObject
 		}
 		if (!empty($hashoffile)) {	// hash of content
 			$sql .= " AND t.label = '".$this->db->escape($hashoffile)."'";
-			if(!empty($entity)) {
+			if (! empty($entity)) {
 				$sql .= " AND t.entity = " . $entity;
 			} else {
 				$sql .= " AND t.entity = " . $conf->entity; // unique key include the entity so each company has its own index
@@ -494,7 +494,7 @@ class EcmFiles extends CommonObject
 		}
 		if ($src_object_type && $src_object_id) {
 			$sql .= " AND t.src_object_type = '".$this->db->escape($src_object_type)."' AND t.src_object_id = ".((int) $src_object_id);
-			if(!empty($entity)) {
+			if (! empty($entity)) {
 				$sql .= " AND t.entity = " . $entity;
 			} else {
 				$sql .= " AND t.entity = " . $conf->entity; // unique key include the entity so each company has its own index
