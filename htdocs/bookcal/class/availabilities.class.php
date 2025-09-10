@@ -192,43 +192,6 @@ class Availabilities extends CommonObject
 	public $fk_bookcal_calendar;
 	// END MODULEBUILDER PROPERTIES
 
-
-	// If this object has a subtable with lines
-
-	// /**
-	//  * @var string    Name of subtable line
-	//  */
-	// public $table_element_line = 'bookcal_availabilitiesline';
-
-	// /**
-	//  * @var string    Field with ID of parent key if this object has a parent
-	//  */
-	// public $fk_element = 'fk_availabilities';
-
-	// /**
-	//  * @var string    Name of subtable class that manage subtable lines
-	//  */
-	// public $class_element_line = 'Availabilitiesline';
-
-	// /**
-	//  * @var array	List of child tables. To test if we can delete object.
-	//  */
-	// protected $childtables = array();
-
-	// /**
-	//  * @var array    List of child tables. To know object to delete on cascade.
-	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
-	//  */
-	// protected $childtablesoncascade = array('bookcal_availabilitiesdet');
-
-	// /**
-	//  * @var AvailabilitiesLine[]     Array of subtable lines
-	//  */
-	// public $lines = array();
-
-
-
 	/**
 	 * Constructor
 	 *
@@ -325,19 +288,10 @@ class Availabilities extends CommonObject
 		unset($object->import_key);
 
 		// Clear fields
-		if (property_exists($object, 'ref')) {
-			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
-		}
-		if (property_exists($object, 'label')) {
-			// @phan-suppress-next-line PhanTypeInvalidDimOffset
-			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
-		}
-		if (property_exists($object, 'status')) {
-			$object->status = self::STATUS_DRAFT;
-		}
-		if (property_exists($object, 'date_creation')) {
-			$object->date_creation = dol_now();
-		}
+		$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
+		$object->label = $langs->trans("CopyOf")." ".$object->label;
+		$object->status = self::STATUS_DRAFT;
+		$object->date_creation = dol_now();
 		if (property_exists($object, 'date_modification')) {
 			$object->date_modification = null;
 		}
