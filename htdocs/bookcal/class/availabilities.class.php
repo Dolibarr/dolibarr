@@ -43,7 +43,13 @@ class Availabilities extends CommonObject
 	public $element = 'availabilities';
 
 	/**
-	 * @var string Name of table without prefix where object is stored. This is also the key used for extrafields management.
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'AVAILABILITIES';
+
+	/**
+	* @var string Name of table without prefix where object is stored. This is also the key used for extrafields management.
 	 */
 	public $table_element = 'bookcal_availabilities';
 
@@ -505,7 +511,7 @@ class Availabilities extends CommonObject
 		$this->db->begin();
 
 		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+		if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 			$num = $this->getNextNumRef();
 		} else {
 			$num = $this->ref;

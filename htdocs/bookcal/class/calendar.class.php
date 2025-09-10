@@ -43,6 +43,12 @@ class Calendar extends CommonObject
 	public $element = 'calendar';
 
 	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'CALENDAR';
+
+	/**
 	 * @var string Name of table without prefix where object is stored. This is also the key used for extrafields management.
 	 */
 	public $table_element = 'bookcal_calendar';
@@ -280,12 +286,8 @@ class Calendar extends CommonObject
 			// @phan-suppress-next-line PhanTypeInvalidDimOffset
 			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
 		}
-		if (property_exists($object, 'status')) {
-			$object->status = self::STATUS_DRAFT;
-		}
-		if (property_exists($object, 'date_creation')) {
-			$object->date_creation = dol_now();
-		}
+		$object->status = self::STATUS_DRAFT;
+		$object->date_creation = dol_now();
 		if (property_exists($object, 'date_modification')) {
 			$object->date_modification = null;
 		}
@@ -537,7 +539,7 @@ class Calendar extends CommonObject
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('MYOBJECT_VALIDATE', $user);
+				$result = $this->call_trigger('CALENDAR_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -620,7 +622,7 @@ class Calendar extends CommonObject
 			return 0;
 		}
 
-		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'MYOBJECT_UNVALIDATE');
+		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'CALENDAR_UNVALIDATE');
 	}
 
 	/**
@@ -637,7 +639,7 @@ class Calendar extends CommonObject
 			return 0;
 		}
 
-		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'MYOBJECT_CANCEL');
+		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'CALENDAR_CANCEL');
 	}
 
 	/**
@@ -654,7 +656,7 @@ class Calendar extends CommonObject
 			return 0;
 		}
 
-		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'MYOBJECT_REOPEN');
+		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'CALENDAR_REOPEN');
 	}
 
 	/**
@@ -970,15 +972,15 @@ class Calendar extends CommonObject
 		global $langs, $conf;
 		$langs->load("agenda");
 
-		if (getDolGlobalString('BOOKCAL_MYOBJECT_ADDON')) {
-			$conf->global->BOOKCAL_MYOBJECT_ADDON = 'mod_calendar_standard';
+		if (getDolGlobalString('BOOKCAL_CALENDAR_ADDON')) {
+			$conf->global->BOOKCAL_CALENDAR_ADDON = 'mod_calendar_standard';
 		}
 
-		if (getDolGlobalString('BOOKCAL_MYOBJECT_ADDON')) {
+		if (getDolGlobalString('BOOKCAL_CALENDAR_ADDON')) {
 			$mybool = false;
 
-			$file = getDolGlobalString('BOOKCAL_MYOBJECT_ADDON').".php";
-			$classname = getDolGlobalString('BOOKCAL_MYOBJECT_ADDON');
+			$file = getDolGlobalString('BOOKCAL_CALENDAR_ADDON').".php";
+			$classname = getDolGlobalString('BOOKCAL_CALENDAR_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1042,8 +1044,8 @@ class Calendar extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (getDolGlobalString('MYOBJECT_ADDON_PDF')) {
-				$modele = getDolGlobalString('MYOBJECT_ADDON_PDF');
+			} elseif (getDolGlobalString('CALENDAR_ADDON_PDF')) {
+				$modele = getDolGlobalString('CALENDAR_ADDON_PDF');
 			}
 		}
 
