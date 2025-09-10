@@ -298,10 +298,8 @@ class Availabilities extends CommonObject
 		$object->label = $langs->trans("CopyOf")." ".$object->label;
 		$object->status = self::STATUS_DRAFT;
 		$object->date_creation = dol_now();
-		if (property_exists($object, 'date_modification')) {
-			$object->date_modification = null;
-		}
-		// ...
+		$object->tms = null;
+
 		// Clear extrafields that are unique
 		if (is_array($object->array_options) && count($object->array_options) > 0) {
 			$extrafields->fetch_name_optionals_label($this->table_element);
