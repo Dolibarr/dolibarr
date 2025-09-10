@@ -265,10 +265,7 @@ class Calendar extends CommonObject
 		unset($object->import_key);
 
 		// Clear fields
-		if (property_exists($object, 'ref')) {
-			// @phan-suppress-next-line PhanTypeInvalidDimOffset
-			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
-		}
+		$object->ref = "Copy_Of_".$object->ref;
 		$object->label = $langs->trans("CopyOf")." ".$object->label;
 		$object->status = self::STATUS_DRAFT;
 		$object->date_creation = dol_now();
