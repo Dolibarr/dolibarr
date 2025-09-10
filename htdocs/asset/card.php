@@ -279,7 +279,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if ($ref == 'PROV') {
 			$numref = $object->getNextNumRef();
 		} else {
-			$numref = $object->ref;
+			$numref = (string) $object->ref;
 		}
 
 		$text = $langs->trans('ConfirmValidateAsset', $numref);
