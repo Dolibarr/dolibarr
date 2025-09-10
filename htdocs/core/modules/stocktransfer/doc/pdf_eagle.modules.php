@@ -1125,12 +1125,13 @@ class pdf_eagle extends ModelePDFStockTransfer
 			$classname = ucfirst($origin);
 			$linkedobject = new $classname($this->db);
 			'@phan-var-force CommonObject $linkedobject';
+			/** @var CommonObject $linkedobject */
 			$result = $linkedobject->fetch($origin_id);
 			if ($result >= 0) {
 				//$linkedobject->fetchObjectLinked()   Get all linked object to the $linkedobject (commonly order) into $linkedobject->linkedObjects
 
 				$pdf->SetFont('', '', $default_font_size - 2);
-				$text = $linkedobject->ref;
+				$text = (string) $linkedobject->ref;
 				if (isset($linkedobject->ref_client) && !empty($linkedobject->ref_client)) {
 					$text .= ' ('.$linkedobject->ref_client.')';
 				}

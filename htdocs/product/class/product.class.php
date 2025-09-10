@@ -5866,7 +5866,7 @@ class Product extends CommonObject
 
 		$result = '';
 
-		$newref = $this->ref;
+		$newref = (string) $this->ref;
 		if ($maxlength) {
 			$newref = dol_trunc($newref, $maxlength, 'middle');
 		}

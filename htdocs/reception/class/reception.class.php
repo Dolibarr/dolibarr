@@ -588,7 +588,7 @@ class Reception extends CommonObject
 		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
 			$numref = $this->getNextNumRef($soc);
 		} else {
-			$numref = $this->ref;
+			$numref = (string) $this->ref;
 		}
 
 		$this->newref = dol_sanitizeFileName($numref);
@@ -1889,7 +1889,7 @@ class Reception extends CommonObject
 			// If stock increment is done on closing
 			if (!$error && isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-				$numref = $this->ref;
+				$numref = (string) $this->ref;
 				$langs->load("agenda");
 
 				// Loop on each product line to add a stock movement

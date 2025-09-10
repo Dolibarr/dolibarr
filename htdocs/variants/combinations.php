@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016      	Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2017      	Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2022   	Open-Dsi			<support@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
@@ -374,7 +374,7 @@ if ($action === 'confirm_deletecombination' && $usercancreate) {
 
 	$product_child = new Product($db);
 	$product_child->fetch($prodcomb->fk_product_child);
-	$reference = $product_child->ref;
+	$reference = (string) $product_child->ref;
 	$weight_impact = $prodcomb->variation_weight;
 	$price_impact = $prodcomb->variation_price;
 	$price_impact_percent = $prodcomb->variation_price_percentage;
