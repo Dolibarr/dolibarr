@@ -619,7 +619,6 @@ PaymentCondition
 PaymentConditionShort
 PaymentDonation
 PaymentHigherThanReminderToPaySupplier
-PaymentSalary
 PaymentSendToStripeTerminal
 PaymentType
 PaymentTypeShort
