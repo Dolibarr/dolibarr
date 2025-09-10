@@ -511,6 +511,10 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 				$ecmfile->label = md5_file(dol_osencode($filearray[$key]['fullname'])); // $destfile is a full path to file
 				$ecmfile->fullpath_orig = $filearray[$key]['fullname'];
 				$ecmfile->gen_or_uploaded = 'unknown';
+				if (is_object($object)) {
+					$ecmfile->src_object_type = $object->element;
+					$ecmfile->src_object_id = $object->id;
+				}
 				$ecmfile->description = ''; // indexed content
 				$ecmfile->keywords = ''; // keyword content
 				// When you scan file with dol_dir_list_in_database, you scan for files in entity of object (like with projects), even if you
