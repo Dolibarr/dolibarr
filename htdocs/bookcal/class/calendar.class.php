@@ -130,10 +130,7 @@ class Calendar extends CommonObject
 	 * @var int
 	 */
 	public $rowid;
-	/**
-	 * @var string
-	 */
-	public $ref;
+
 	/**
 	 * @var string
 	 */
@@ -154,14 +151,7 @@ class Calendar extends CommonObject
 	 * @var string
 	 */
 	public $description;
-	/**
-	 * @var string
-	 */
-	public $note_public;
-	/**
-	 * @var string
-	 */
-	public $note_private;
+
 	/**
 	 * @var int
 	 */
@@ -174,10 +164,7 @@ class Calendar extends CommonObject
 	 * @var string
 	 */
 	public $import_key;
-	/**
-	 * @var int
-	 */
-	public $status;
+
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -285,7 +272,7 @@ class Calendar extends CommonObject
 		$object->label = $langs->trans("CopyOf")." ".$object->label;
 		$object->status = self::STATUS_DRAFT;
 		$object->date_creation = dol_now();
-		$object->tms = null;
+		$object->date_modification = null;
 
 		// Clear extrafields that are unique
 		if (is_array($object->array_options) && count($object->array_options) > 0) {

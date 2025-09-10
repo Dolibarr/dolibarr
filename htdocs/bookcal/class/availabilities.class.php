@@ -168,10 +168,7 @@ class Availabilities extends CommonObject
 	 * @var string
 	 */
 	public $model_pdf;
-	/**
-	 * @var int
-	 */
-	public $status;
+
 	/**
 	 * @var string
 	 */
@@ -298,7 +295,7 @@ class Availabilities extends CommonObject
 		$object->label = $langs->trans("CopyOf")." ".$object->label;
 		$object->status = self::STATUS_DRAFT;
 		$object->date_creation = dol_now();
-		$object->tms = null;
+		$object->date_modification = null;
 
 		// Clear extrafields that are unique
 		if (is_array($object->array_options) && count($object->array_options) > 0) {
