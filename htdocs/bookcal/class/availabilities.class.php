@@ -913,7 +913,7 @@ class Availabilities extends CommonObject
 	/**
 	 * 	Create an array of lines
 	 *
-	 * 	@return array|int		array of lines if OK, <0 if KO
+	 * 	@return Availabilities[]|int		array of lines if OK, <0 if KO
 	 */
 	public function getLinesArray()
 	{
@@ -968,6 +968,7 @@ class Availabilities extends CommonObject
 			if (class_exists($classname)) {
 				$obj = new $classname();
 				'@phan-var-force CommonNumRefGenerator $obj';
+				/** @var CommonNumRefGenerator $obj */
 
 				$numref = $obj->getNextValue($this);
 
@@ -1004,7 +1005,6 @@ class Availabilities extends CommonObject
 		global $conf, $langs;
 
 		$result = 0;
-		$includedocgeneration = 0;
 
 		$langs->load("agenda");
 
@@ -1020,7 +1020,7 @@ class Availabilities extends CommonObject
 
 		$modelpath = "core/modules/bookcal/doc/";
 
-		if ($includedocgeneration && !empty($modele)) {
+		if (!empty($modele)) {
 			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
 
