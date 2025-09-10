@@ -47,7 +47,7 @@ class EcmFiles extends CommonObject
 	public $table_element = 'ecm_files';
 
 	/**
-	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 * @var string String with name of icon for ecmfiles. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'folder-open';
 
@@ -58,32 +58,32 @@ class EcmFiles extends CommonObject
 	public $label;
 
 	/**
-	 * @var string hash for file sharing, empty by default (example: getRandomPassword(true))
+	 * @var ?string hash for file sharing, empty by default (example: getRandomPassword(true))
 	 */
 	public $share;
 
 	/**
-	 * @var string filename, Note: Into ecm database record, the entry never ends with .noexe
+	 * @var ?string filename, Note: Into ecm database record, the entry never ends with .noexe
 	 */
 	public $filename;
 
 	/**
-	 * @var string filepath
+	 * @var ?string filepath
 	 */
 	public $filepath;
 
 	/**
-	 * @var string fullpath origin
+	 * @var ?string fullpath origin
 	 */
 	public $fullpath_orig;
 
 	/**
-	 * @var string description
+	 * @var ?string description
 	 */
 	public $description;
 
 	/**
-	 * @var string keywords
+	 * @var ?string keywords
 	 */
 	public $keywords;
 
@@ -93,7 +93,7 @@ class EcmFiles extends CommonObject
 	public $content;
 
 	/**
-	 * @var string cover
+	 * @var ?string cover
 	 */
 	public $cover;
 
@@ -138,12 +138,12 @@ class EcmFiles extends CommonObject
 	public $acl;
 
 	/**
-	 * @var string src object type
+	 * @var ?string src object type
 	 */
 	public $src_object_type;
 
 	/**
-	 * @var int src object id
+	 * @var ?int src object id
 	 */
 	public $src_object_id;
 
