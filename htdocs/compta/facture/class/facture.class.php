@@ -3672,7 +3672,7 @@ class Facture extends CommonInvoice
 			}
 			$num = $this->getNextNumRef($this->thirdparty);
 		} else {
-			$num = $this->ref;
+			$num = (string) $this->ref;
 		}
 
 		if (!$num) {
