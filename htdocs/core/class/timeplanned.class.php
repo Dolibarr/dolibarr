@@ -92,19 +92,74 @@ class TimePlanned extends CommonObject
 		'datec' => array('type' => 'datetime', 'label' => 'datec', 'enabled' => 1, 'position' => 16, 'notnull' => 0, 'visible' => -1,),
 		'note' => array('type' => 'text', 'label' => 'note', 'enabled' => 1, 'position' => 18, 'notnull' => 0, 'visible' => -1,),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+
+	/**
+	 * @var string
+	 */
 	public $import_key;
+
+	/**
+	 * @var int
+	 */
 	public $fk_element;
+
+	/**
+	 * @var string
+	 */
 	public $elementtype;
+
+	/**
+	 * @var int|string
+	 */
 	public $element_date;
+
+	/**
+	 * @var int
+	 */
 	public $element_datehour;
+
+	/**
+	 * @var int
+	 */
 	public $element_date_withhour;
+
+	/**
+	 * @var int Note seems to be int (seconds) even if declared as double in DB.
+	 */
 	public $element_duration;
+
+	/**
+	 * @var int
+	 */
 	public $fk_product;
+
+	/**
+	 * @var int
+	 */
 	public $fk_user;
-	public $fk_socpeople;
+
+	/**
+	 * @var float
+	 */
 	public $thm;
+	
+	/**
+	 * @var int
+	 */
+	public $fk_socpeople;
+
+	/**
+	 * @var ?int	Date creation
+	 */
 	public $datec;
+
+	/**
+	 * @var string
+	 */
 	public $note;
 	// END MODULEBUILDER PROPERTIES
 
@@ -766,14 +821,7 @@ class TimePlanned extends CommonObject
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'label')) {
-			$return .= ' <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
-		}
-		if (property_exists($this, 'amount')) {
-			$return .= '<br>';
-			$return .= '<span class="info-box-label amount">';
-			$return .= price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
-		}
+
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(5).'</div>';
 		}
