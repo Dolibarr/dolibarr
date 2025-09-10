@@ -193,7 +193,7 @@ DONATION_ACCOUNTINGACCOUNT=Annetuste registreerimiseks kasutatav konto (kontopla
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Konto (kontoplaanist), mida kasutatakse liikmelisuse registreerimiseks (liikmelisuse moodul - kui liikmelisus on registreeritud ilma arvet esitamata)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Konto (kontoplaanist), mida kasutatakse kliendi sissemakse registreerimiseks vaikimisi kontona
 UseAuxiliaryAccountOnCustomerDeposit=Salvesta kliendikonto ettemaksu ridade jaoks tütarettevõtte pearaamatus individuaalse kontona (kui see on keelatud, jääb ettemaksu ridade individuaalne konto tühjaks)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Vaikimisi kasutatav konto (kontoplaanist)
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Salvesta tarnija konto ettemaksude ridade jaoks tütarettevõtte pearaamatus individuaalse kontona (kui see on keelatud, jääb ettemaksu ridade individuaalne konto tühjaks)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Vaikimisi raamatupidamiskonto kliendi säilitatud garantii registreerimiseks
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Konto (kontoplaanist), mida kasutatakse samas riigis ostetud toodete vaikekontona (kasutatakse, kui tootelehel pole seda määratletud)
@@ -278,6 +278,7 @@ PcgtypeDesc=Kontogruppe kasutatakse mõnede raamatupidamisaruannete puhul eelnev
 AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Lepitatav
 Centralized=Tsentraliseeritud konto
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
 DescVentilCustomer=Siit leiate nimekirja kliendiarve ridadest, mis on kontoplaanist seotud (või mitte) tootekontoga
@@ -357,6 +358,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Aktiveeri tarnijate ostude käibemaks
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Kui see valik on lubatud, saate määrata, et tarnija või antud müügiarve tuleb raamatupidamisse kanda erinevalt: raamatupidamisse genereeritakse täiendav deebet- ja krediidiliin kahele antud kontole kontoplaanist, mis on määratletud seadistuslehel "%s".
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Kolmanda osapoole kaartidel vahekaardi aktiveerimine tütarettevõtte pearaamatu vaatamiseks
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=Kui see valik on lubatud, kuvatakse kolmandate osapoolte kaartidel uus vahekaart, kus saab vaadata ja hallata kolmandate osapoolte raamatupidamist, näiteks leppida kokku, printida ja muud.
+
 ## Export
 NotExportLettering=Faili genereerimisel ärge eksportige tähti
 NotifiedExportDate=Märgi veel eksporditud read ekspordituks <span class="warning">(eksporditud rea muutmiseks peate kogu tehingu kustutama ja selle uuesti raamatupidamisse üle kandma)</span>

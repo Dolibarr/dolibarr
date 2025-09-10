@@ -193,7 +193,7 @@ DONATION_ACCOUNTINGACCOUNT=Účet (z účtovnej osnovy), ktorý sa má použiť 
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Účet (z účtovnej osnovy), ktorý sa má použiť na registráciu predplatného členstva (modul Členstvo - ak je členstvo zaznamenané bez faktúry)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Účet (z účtovnej osnovy), ktorý sa má použiť ako predvolený účet na registráciu vkladu zákazníka
 UseAuxiliaryAccountOnCustomerDeposit=Uložiť zákaznícky účet ako individuálny účet v vedľajšej knihe pre riadky záloh (ak je deaktivovaný, individuálny účet pre riadky zálohových platieb zostane prázdny)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Účet (z účtovnej osnovy), ktorý sa má použiť ako predvolený
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Uložiť účet dodávateľa ako individuálny účet v vedľajšej účtovnej knihe pre riadky záloh (ak je deaktivovaný, individuálny účet pre riadky zálohových platieb zostane prázdny)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Účtovný účet v predvolenom nastavení na registráciu záruky zákazníka
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Účet (z účtovnej osnovy), ktorý sa má použiť ako predvolený účet pre produkty zakúpené v tej istej krajine (používa sa, ak nie je definovaný v produktovom liste)
@@ -278,6 +278,7 @@ PcgtypeDesc=Skupina účtov sa používa ako preddefinované kritériá „filtr
 AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Zlučiteľné
 Centralized=Centralizovaný účet
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=Celkový obrat pred zdanením
 TotalMarge=Celkové predajné rozpätie
 DescVentilCustomer=Tu nájdete zoznam riadkov odberateľských faktúr viazaných (alebo nie) na produktový účet z účtovej osnovy
@@ -357,6 +358,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Aktivujte si správu prenesenia daňo
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Keď je táto možnosť zapnutá, môžete definovať, že faktúra dodávateľa alebo daného dodávateľa sa musí preniesť do účtovníctva inak: Do účtovníctva na 2 daných účtoch sa vygeneruje dodatočný debetný a kreditný rámec z účtovej osnovy definovanej v "%s“.
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Aktivujte kartu na kartách tretích strán a zobrazte si dcérsku knihu
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=Keď je táto možnosť povolená, v kartách tretích strán sa zobrazí nová karta na zobrazenie a správu účtovníctva pre tretiu stranu, ako aj na odsúhlasenie, tlač a ďalšie.
+
 ## Export
 NotExportLettering=Pri generovaní súboru neexportujte písmo
 NotifiedExportDate=Označiť ešte neexportované riadky ako exportované <span class="warning">(ak chcete upraviť riadok označený ako exportovaný, budete musieť vymazať celú transakciu a znova ju preniesť do účtovníctva)<span class=' nottranslate'></span></span>

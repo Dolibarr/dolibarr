@@ -77,9 +77,10 @@ ClickHereToTryAgain=<a href="%s">Кликнете тук, за да опитат
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Поради строгите правила за Клиент удостоверяване, създаването на карта трябва да се извърши от бек офиса на Stripe. Можете да щракнете тук, за да включите записа на Stripe Клиент: %s
 STRIPE_CARD_PRESENT=Налична карта за Stripe терминали
 TERMINAL_LOCATION=Местоположение (адрес) за Stripe терминали
-RequestDirectDebitWithStripe=Искане Директен дебит със Stripe
-RequesCreditTransferWithStripe=Искане Кредитен превод със Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Активирайте плащанията с директен дебит чрез Stripe
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Активирайте плащанията чрез Klarna
 STRIPE_BANCONTACT=Активирайте плащанията чрез BANCONTACT
 STRIPE_IDEAL=Активирайте плащанията чрез IDEAL

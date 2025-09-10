@@ -77,9 +77,10 @@ ClickHereToTryAgain=<a href="%s">Κάντε κλικ εδώ για να δοκι
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Λόγω των ισχυρών κανόνων ελέγχου ταυτότητας πελάτης, η δημιουργία μιας κάρτας πρέπει να γίνει από το Stripe. Μπορείτε να κάνετε κλικ εδώ για να ενεργοποιήσετε την εγγραφή  πελάτη Stripe: %s
 STRIPE_CARD_PRESENT=Δώροκάρτα για τερματικά Stripe
 TERMINAL_LOCATION=Τοποθεσία (διεύθυνση) για Stripe Terminals
-RequestDirectDebitWithStripe=Άμεση Χρέωση με Stripe
-RequesCreditTransferWithStripe=Αίτηση μεταφοράς πίστωσης με το Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Ενεργοποιήστε τις πληρωμές άμεσης χρέωσης μέσω Stripe
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Ενεργοποιήστε τις πληρωμές χρησιμοποιώντας το Klarna
 STRIPE_BANCONTACT=Ενεργοποιήστε τις πληρωμές χρησιμοποιώντας το BANCONTACT
 STRIPE_IDEAL=Ενεργοποιήστε τις πληρωμές χρησιμοποιώντας το IDEAL

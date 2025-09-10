@@ -348,6 +348,7 @@ VATIntraManualCheck=Ayrıca Avrupa Komisyonu web sitesinden de manuel olarak kon
 ErrorVATCheckMS_UNAVAILABLE=Denetlemiyor. Denetim hizmeti üye ülke (%s) tarafından sağlanmıyor.
 NorProspectNorCustomer=Ne aday ne de müşteri
 JuridicalStatus=Ticari varlık türü
+CompnanyBirthDate=Εstablishment date of company
 Workforce=İşgücü
 Staff=Çalışan sayısı
 ProspectLevelShort=Potansiyel
