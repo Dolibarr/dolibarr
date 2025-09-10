@@ -948,7 +948,7 @@ class Facture extends CommonInvoice
 
 						if (getDolGlobalString('MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION')) {
 							$originid = $line->origin_id;
-							$origintype = $line->origin;
+							$origintype = $line->origin_type;
 						} else {
 							$originid = $line->id;
 							$origintype = $this->element;
@@ -5945,7 +5945,7 @@ class Facture extends CommonInvoice
 
 		$hasDelay = $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay);
 		if ($hasDelay && !empty($this->retained_warranty) && !empty($this->retained_warranty_date_limit)) {
-			$totalpaid = $this->getSommePaiement();
+			$totalpaid = $this->getSommePaiement(0);
 			$totalpaid = (float) $totalpaid;
 			$RetainedWarrantyAmount = $this->getRetainedWarrantyAmount();
 			if ($totalpaid >= 0 && $RetainedWarrantyAmount >= 0) {
