@@ -98,12 +98,12 @@ class EcmFiles extends CommonObject
 	public $cover;
 
 	/**
-	 * @var int position
+	 * @var ?int position
 	 */
 	public $position;
 
 	/**
-	 * @var 'generated'|'uploaded'|'unknown'|'api'|'copy'|''
+	 * @var 'generated'|'uploaded'|'unknown'|'api'|'copy'|''|null
 	 */
 	public $gen_or_uploaded;
 
@@ -113,22 +113,22 @@ class EcmFiles extends CommonObject
 	public $extraparams;
 
 	/**
-	 * @var int|'' date create
+	 * @var null|int|'' date create
 	 */
 	public $date_c = '';
 
 	/**
-	 * @var int|'' date modify
+	 * @var null|int|'' date modify
 	 */
 	public $date_m = '';
 
 	/**
-	 * @var int ID
+	 * @var ?int ID
 	 */
 	public $fk_user_c;
 
 	/**
-	 * @var int ID
+	 * @var ?int ID
 	 */
 	public $fk_user_m;
 
