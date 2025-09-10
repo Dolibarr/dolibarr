@@ -11041,36 +11041,6 @@ parameters:
 			path: ../../../htdocs/ecm/dir_add_card.php
 
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/ecm/file_card.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/ecm/file_card.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../../htdocs/ecm/file_card.php
-
-		-
-			message: '#^Ternary operator condition is always true\.$#'
-			identifier: ternary.alwaysTrue
-			count: 1
-			path: ../../../htdocs/ecm/file_card.php
-
-		-
-			message: '#^Variable \$module might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/ecm/file_card.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 2
