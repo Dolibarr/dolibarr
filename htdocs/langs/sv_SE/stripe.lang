@@ -77,9 +77,10 @@ ClickHereToTryAgain= <a href="%s"> Klicka här för att försöka igen ... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=På grund av Strong Customer Authentication-regler måste skapandet av ett kort göras från Stripe back office. Du kan klicka här för att aktivera Stripe-kundregister: %s
 STRIPE_CARD_PRESENT=Presentkort för Stripe-terminaler
 TERMINAL_LOCATION=Plats (adress) för Stripe Terminals
-RequestDirectDebitWithStripe=Begär autogiro med Stripe
-RequesCreditTransferWithStripe=Begär kreditöverföring med Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Aktivera autogirobetalningar genom Stripe
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Aktivera betalningar med Klarna
 STRIPE_BANCONTACT=Aktivera betalningar med BANCONTACT
 STRIPE_IDEAL=Aktivera betalningar med IDEAL

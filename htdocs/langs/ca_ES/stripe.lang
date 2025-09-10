@@ -77,9 +77,10 @@ ClickHereToTryAgain=<a href="%s">Feu clic aquí per a tornar-ho a provar...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=A causa de les regles d'autenticació de client fortes, la creació d'una targeta s'ha de fer des de l'oficina administrativa de Stripe. Pots fer clic aquí per a activar el registre de client de Stripe: %s
 STRIPE_CARD_PRESENT=Targeta de regal per a terminals Stripe
 TERMINAL_LOCATION=Ubicació (adreça) de Stripe Terminals
-RequestDirectDebitWithStripe=Sol·liciteu domiciliació bancària amb Stripe
-RequesCreditTransferWithStripe=Sol·liciteu una transferència de crèdit amb Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Activeu els pagaments per domiciliació bancària mitjançant Stripe
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Activa els pagaments amb Klarna
 STRIPE_BANCONTACT=Activa els pagaments mitjançant BANCONTACT
 STRIPE_IDEAL=Activa els pagaments amb IDEAL

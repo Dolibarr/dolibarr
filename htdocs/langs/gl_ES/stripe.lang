@@ -77,9 +77,10 @@ ClickHereToTryAgain=<a href="%s"> Faga clic aquí para tentalo de novo ... </a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Debido as fortes regras de autenticación do cliente, a creación dunha tarxeta debe facerse desde o backoffice de Stripe. Pode premer aquí para activar o rexistro de cliente de Stripe:%s
 STRIPE_CARD_PRESENT=Transacción de tarxeta presente para terminais Stripe
 TERMINAL_LOCATION=Localización (enderezo) para terminais Stripe
-RequestDirectDebitWithStripe=Solicite domiciliación bancaria con Stripe
-RequesCreditTransferWithStripe=Solicite transferencia bancaria con Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Activa os pagamentos por domiciliación bancaria a través de Stripe
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Activa os pagamentos usando Klarna
 STRIPE_BANCONTACT=Activa os pagamentos mediante BANCONTACT
 STRIPE_IDEAL=Activa os pagamentos usando IDEAL

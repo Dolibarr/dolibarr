@@ -77,9 +77,10 @@ ClickHereToTryAgain=<a href="%s">Hier klicken und nochmal versuchen...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=Aufgrund strenger Kundenauthentifizierungs-Regeln muss die Erstellung einer Karte im Stripe-Backoffice erfolgen. Sie können hier klicken, um zum Stripe-Kundendatensatz zu wechseln: %s
 STRIPE_CARD_PRESENT='Card present' für Stripe-Terminals
 TERMINAL_LOCATION=Standort (Adresse) für Stripe-Terminals
-RequestDirectDebitWithStripe=Lastschrift über Stripe anfordern
-RequesCreditTransferWithStripe=Anfrage für eine Stripe-Guthabenauszahlung
-STRIPE_SEPA_DIRECT_DEBIT=Aktivieren Sie die Lastschriftzahlungen über Stripe
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Zahlungen mit Klarna aktivieren
 STRIPE_BANCONTACT=Zahlungen mit BANCONTACT aktivieren
 STRIPE_IDEAL=Zahlungen mit IDEAL aktivieren

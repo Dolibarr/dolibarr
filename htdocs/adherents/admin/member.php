@@ -264,7 +264,7 @@ print '  <td>'.$langs->trans("Name").'</td>';
 print '  <td>'.$langs->trans("Description").'</td>';
 print '  <td>'.$langs->trans("Example").'</td>';
 print '  <td class="center" width="80">'.$langs->trans("Status").'</td>';
-print '  <td class="center" width="60">'.$langs->trans("ShortInfo").'</td>';
+print '  <td class="center" width="60"></td>';
 print "</tr>\n";
 
 $arrayofmodules = array();
