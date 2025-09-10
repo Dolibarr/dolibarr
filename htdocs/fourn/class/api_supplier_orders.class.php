@@ -247,7 +247,7 @@ class SupplierOrders extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "commande", "creer") && !DolibarrApiAccess::$user->hasRight("supplier_order", "creer")) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 
 		if (!is_array($request_data)) {
