@@ -96,8 +96,6 @@ AADE_WEBSERVICE_USER
 API
 Accept
 AccountancyErrorMismatchLetteringCode
-AccountingAccount
-AccountingCode
 AccountingJournalType
 ActionAC_
 ActionAC_ALL_
@@ -154,7 +152,6 @@ BlockLogNeedElement
 BlockedLogAuthorityNeededToStoreYouFingerprintsInNonAlterableRemote
 BlockedLogAuthorityUrl
 BlockedLogSetup
-BookCalSystem
 Bookings
 BoxTitleLast
 BoxTitleLatest
@@ -619,7 +616,6 @@ PaymentCondition
 PaymentConditionShort
 PaymentDonation
 PaymentHigherThanReminderToPaySupplier
-PaymentSalary
 PaymentSendToStripeTerminal
 PaymentType
 PaymentTypeShort

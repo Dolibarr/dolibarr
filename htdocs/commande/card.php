@@ -2633,7 +2633,7 @@ if ($action == 'create' && $usercancreate) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			} else {
-				$numref = $object->ref;
+				$numref = (string) $object->ref;
 			}
 
 			$text = $langs->trans('ConfirmValidateOrder', $numref);

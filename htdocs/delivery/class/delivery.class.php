@@ -54,6 +54,12 @@ class Delivery extends CommonObject
 	public $element = "delivery";
 
 	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'DELIVERY';
+
+	/**
 	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = "fk_delivery";
@@ -429,7 +435,7 @@ class Delivery extends CommonObject
 					if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 						$numref = $objMod->getNextValue($soc, $this);
 					} else {
-						$numref = $this->ref;
+						$numref = (string) $this->ref;
 					}
 					$this->newref = dol_sanitizeFileName($numref);
 
