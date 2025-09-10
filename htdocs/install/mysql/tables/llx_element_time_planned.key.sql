@@ -1,6 +1,6 @@
 -- ===========================================================================
--- Copyright (C) 2014 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2024 Charlene Benke	   <charlene@patas-monkey.com>
+-- Copyright (C) 2014       Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2024-2025  Charlene Benke	     <charlene@patas-monkey.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
