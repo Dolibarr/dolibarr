@@ -913,7 +913,7 @@ class Availabilities extends CommonObject
 	/**
 	 * 	Create an array of lines
 	 *
-	 * 	@return Availabilities[]|int		array of lines if OK, <0 if KO
+	 * 	@return CommonObject[]|int		array of lines if OK, <0 if KO
 	 */
 	public function getLinesArray()
 	{
