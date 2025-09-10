@@ -3,10 +3,10 @@ MenuFinancial=Laskutus | Maksut
 TaxModuleSetupToModifyRules=Määritä laskentasäännöt <a href="%s"> Verojen moduulin määrittämiseen </a>
 TaxModuleSetupToModifyRulesLT=Siirry kohtaan <a href="%s">Yritysasetukset</a> ja muokkaa laskentasääntöjä
 OptionMode=Vaihtoehto kirjanpitotietojen
-OptionModeTrue=Kertymä Kirjanpito
-OptionModeVirtual=Käteisvarat Kirjanpito
-OptionModeTrueDesc=Tässä yhteydessä liikevaihto lasketaan maksujen (päiväys maksujen) perusteella. Lukujen oikeellisuus voidaan varmistaa vain, jos kirjanpitoa tarkastellaan maksujen syöttö- ja tulostietojen perusteella.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=Tässä yhteydessä, että liikevaihto on laskettava laskuista (päivämäärä validointi). Kun nämä laskut maksetaan, onko ne maksettu vai ei, ne on mainittu liikevaihto tuotos.
+OptionModeTrueDesc=Tässä yhteydessä liikevaihto lasketaan maksujen (päiväys maksujen) perusteella. Lukujen oikeellisuus voidaan varmistaa vain, jos kirjanpitoa tarkastellaan maksujen syöttö- ja tulostietojen perusteella.
 FeatureIsSupportedInInOutModeOnly=Ominaisuus saatavilla vain CREDITS-VELAT kirjanpitotietojen tilassa (Katso kirjanpidon moduulin määritykset)
 VATReportBuildWithOptionDefinedInModule=Määrät kuvassa on laskettu määrittelemien sääntöjen Tax moduuli setup.
 LTReportBuildWithOptionDefinedInModule=Tässä näkyvät summat on laskettu Yritys määrittämien sääntöjen mukaan.
@@ -302,7 +302,6 @@ ByVatRate=Myynnin mukaan vero
 TurnoverbyVatrate=Liikevaihto laskutettu myyntihinnalla vero
 TurnoverCollectedbyVatrate=Liikevaihto kerätty myynnin mukaan vero
 PurchasebyVatrate=Hankinta myyntihinnalla vero
-LabelToShow=Lyhyt etiketti
 PurchaseTurnover=Ostojen liikevaihto
 PurchaseTurnoverCollected=Ostojen kertynyt liikevaihto
 RulesPurchaseTurnoverDue=- Se sisältää toimittaja:n erääntyneet laskut riippumatta siitä, onko ne maksettu vai ei. <br> – Se perustuu näiden laskujen päiväys laskuun.<br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Rivien sääntö päivämäärät
 Prepaid=Ennakkoon maksettu
 Postpaid=Jälkimaksu
 SetRuleForLinesDates=Aseta sääntö riveille päivämäärät
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

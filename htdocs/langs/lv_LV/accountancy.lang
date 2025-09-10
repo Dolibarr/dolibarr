@@ -193,7 +193,7 @@ DONATION_ACCOUNTINGACCOUNT=Konts (no konta plāna), kas jāizmanto ziedojumu re�
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Konts (no konta plāna), kas jāizmanto, lai reģistrētu dalības abonementus (Dalības modulis - ja dalība reģistrēta bez rēķina)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Konts (no konta plāna), kas jāizmanto kā noklusējuma konts klienta depozīta reģistrēšanai
 UseAuxiliaryAccountOnCustomerDeposit=Saglabājiet klienta kontu kā individuālu kontu meitas virsgrāmatā pirmo iemaksu rindām (ja tas ir atspējots, individuālais konts pirmās iemaksas rindām paliks tukšs)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Konts (no konta plāna), kas jāizmanto kā noklusējuma konts
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Saglabājiet piegādātāja kontu kā individuālo kontu meitas virsgrāmatā pirmās iemaksas rindām (ja tas ir atspējots, individuālais konts pirmās iemaksas rindām paliks tukšs)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Grāmatvedības konts pēc noklusējuma, lai reģistrētu klienta saglabāto garantiju
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Konts (no konta plāna), kas jāizmanto kā noklusējuma konts produktiem, kas iegādāti tajā pašā valstī (izmanto, ja tas nav definēts produkta lapā)
@@ -278,6 +278,7 @@ PcgtypeDesc=Kontu grupa tiek izmantota kā iepriekš definēti “filtra” un �
 AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Samierināms
 Centralized=Centralized account
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=Kopējais apgrozījums pirms nodokļu nomaksas
 TotalMarge=Kopējā pārdošanas starpība
 DescVentilCustomer=Skatiet šeit to klientu rēķinu rindu sarakstu, kas ir piesaistītas (vai nav) ar produkta kontu no konta plāna
@@ -357,6 +358,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Aktivizēt PVN apgrieztās iekasēša
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Kad šī opcija ir iespējota, varat definēt, ka piegādātājs vai konkrēts piegādātāja rēķins ir jāpārskaita uz grāmatvedību atšķirīgi: 2 kontu grāmatvedībā tiks ģenerēts papildu debets un kredītlīnija no kontu plāna, kas definēts "%s" iestatīšanas lapa.
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Activate a tab on third-party cards to view the subsidiary ledger
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=When this option is enabled, a new tab is showing in third-party cards to view and manage accounting for the third-party as to reconcile, print & more
+
 ## Export
 NotExportLettering=Veidojot failu, neeksportējiet burtus
 NotifiedExportDate=Atzīmējiet vēl neeksportētas rindas kā Eksportētas <span class="warning"> (lai mainītu rindu, kas atzīmēta kā eksportēta, jums būs jāizdzēš viss darījums un atkārtoti jāpārsūta uz grāmatvedību) </span>

@@ -77,9 +77,10 @@ ClickHereToTryAgain=<a href="%s">Klik her for at prøve igen ...</a>
 CreationOfPaymentModeMustBeDoneFromStripeInterface=På grund af Strong Customer Authentication-regler skal oprettelsen af et kort ske fra Stripe back office. Du kan klikke her for at slå Stripe kunderegistrering til: %s
 STRIPE_CARD_PRESENT=Kort til stede til Stripe-terminaler
 TERMINAL_LOCATION=Placering (adresse) for Stripe Terminals
-RequestDirectDebitWithStripe=Anmod om direkte debitering med Stripe
-RequesCreditTransferWithStripe=Anmod om kreditoverførsel med Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Aktiver direkte debitering via Stripe
+RequestDirectDebitWithStripe=Request SEPA Direct Debit with Stripe
+RequesCreditTransferWithStripe=Make SEPA Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Enable SEPA Direct Debit payments with Stripe
+STRIPE_SEPA_CREDIT_TRANSFER=Enable SEPA Credit Transfer payments with Stripe
 STRIPE_KLARNA=Aktiver betalingerne med Klarna
 STRIPE_BANCONTACT=Aktiver betalingerne ved hjælp af BANCONTACT
 STRIPE_IDEAL=Aktiver betalingerne med IDEAL
