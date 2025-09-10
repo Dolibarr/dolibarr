@@ -3139,18 +3139,6 @@ parameters:
 			path: ../../../htdocs/comm/propal/class/propal.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$ref_ext \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$total_ht \(float\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -3302,18 +3290,6 @@ parameters:
 
 		-
 			message: '#^Property Commande\:\:\$socid \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$ref_ext \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/commande/class/commande.class.php
@@ -4048,18 +4024,6 @@ parameters:
 			message: '#^Property CommonInvoice\:\:\$type \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$ref_ext \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
 			path: ../../../htdocs/compta/facture/class/facture.class.php
 
 		-
@@ -5423,30 +5387,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/contrat/contact.php
-
-		-
-			message: '#^Variable \$badgeStatus0 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/contrat/index.php
-
-		-
-			message: '#^Variable \$badgeStatus1 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/contrat/index.php
-
-		-
-			message: '#^Variable \$badgeStatus4 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/contrat/index.php
-
-		-
-			message: '#^Variable \$badgeStatus6 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/contrat/index.php
 
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
@@ -11605,18 +11545,6 @@ parameters:
 			path: ../../../htdocs/expedition/class/expedition.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/expedition/class/expedition.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$ref_ext \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/expedition/class/expedition.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$shipping_method_id \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -12037,12 +11965,6 @@ parameters:
 			path: ../../../htdocs/fichinter/card.php
 
 		-
-			message: '#^Variable \$line might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/fichinter/card.php
-
-		-
 			message: '#^Right side of && is always false\.$#'
 			identifier: booleanAnd.rightAlwaysFalse
 			count: 1
@@ -12211,12 +12133,6 @@ parameters:
 			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$ref_ext \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
@@ -12316,12 +12232,6 @@ parameters:
 			message: '#^Property CommonInvoiceLine\:\:\$info_bits \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$ref_ext \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
 			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
 
 		-
@@ -16579,12 +16489,6 @@ parameters:
 			path: ../../../htdocs/projet/class/task.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/projet/class/task.class.php
-
-		-
 			message: '#^Property Task\:\:\$budget_amount \(float\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -17989,12 +17893,6 @@ parameters:
 			path: ../../../htdocs/reception/class/reception.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/reception/class/reception.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$shipping_method_id \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -18533,12 +18431,6 @@ parameters:
 			identifier: if.alwaysTrue
 			count: 1
 			path: ../../../htdocs/resource/card.php
-
-		-
-			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/resource/class/dolresource.class.php
 
 		-
 			message: '#^Property Dolresource\:\:\$busy \(int\) in isset\(\) is not nullable\.$#'
@@ -19732,12 +19624,6 @@ parameters:
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
-			path: ../../../htdocs/ticket/class/ticket.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
 			path: ../../../htdocs/ticket/class/ticket.class.php
 
 		-
