@@ -52,13 +52,8 @@ class EcmFiles extends CommonObject
 	public $picto = 'folder-open';
 
 	/**
-	 * @var string Ref hash of file path
-	 */
-	public $ref;
-
-	/**
 	 * hash of file content (md5_file(dol_osencode($destfull))
-	 * @var string Ecm Files label
+	 * @var ?string Ecm Files label, null until fetched or set
 	 */
 	public $label;
 
