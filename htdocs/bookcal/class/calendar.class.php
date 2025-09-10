@@ -1011,10 +1011,9 @@ class Calendar extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$result = 0;
-		$includedocgeneration = 0;
 
 		$langs->load("agenda");
 
@@ -1030,7 +1029,7 @@ class Calendar extends CommonObject
 
 		$modelpath = "core/modules/bookcal/doc/";
 
-		if ($includedocgeneration && !empty($modele)) {
+		if (!empty($modele)) {
 			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
 
