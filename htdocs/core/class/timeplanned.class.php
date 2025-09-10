@@ -146,7 +146,7 @@ class TimePlanned extends CommonObject
 	 * @var float
 	 */
 	public $thm;
-	
+
 	/**
 	 * @var int
 	 */
