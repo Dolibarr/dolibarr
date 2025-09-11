@@ -343,11 +343,7 @@ print '<tr><td>';
 print $form->textwithpicto($langs->trans("DirectDownloadInternalLink"), $langs->trans("PrivateDownloadLinkDesc"));
 print '</td><td>';
 $modulepart = 'ecm';
-$forcedownload = 1;
-$rellink = '/document.php?modulepart='.$modulepart;
-if ($forcedownload) {
-	$rellink .= '&attachment=1';
-}
+$rellink = '/document.php?modulepart=' . $modulepart . '&attachment=1';
 if (!empty($object->entity)) {
 	$rellink .= '&entity='.$object->entity;
 }
@@ -374,14 +370,9 @@ if ($action != 'edit') {
 print '</td><td>';
 if (!empty($object->share)) {
 	if ($action != 'edit') {
-		$forcedownload = 0;
-
 		$paramlink = '';
 		if (!empty($object->share)) {
 			$paramlink .= ($paramlink ? '&' : '').'hashp='.$object->share; // Hash for public share
-		}
-		if ($forcedownload) {
-			$paramlink .= ($paramlink ? '&' : '').'attachment=1';
 		}
 
 		$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
