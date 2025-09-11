@@ -2125,12 +2125,6 @@ parameters:
 			path: ../../../htdocs/bookcal/availabilities_card.php
 
 		-
-			message: '#^Property Availabilities\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/bookcal/availabilities_card.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 6
@@ -2179,12 +2173,6 @@ parameters:
 			path: ../../../htdocs/bookcal/booking_list.php
 
 		-
-			message: '#^Property Calendar\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/bookcal/booking_list.php
-
-		-
 			message: '#^Variable \$lineid might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -2217,12 +2205,6 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: ../../../htdocs/bookcal/calendar_card.php
-
-		-
-			message: '#^Property Calendar\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/bookcal/calendar_card.php
 
@@ -10627,30 +10609,6 @@ parameters:
 			path: ../../../htdocs/don/document.php
 
 		-
-			message: '#^Variable \$badgeStatus0 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/don/index.php
-
-		-
-			message: '#^Variable \$badgeStatus1 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/don/index.php
-
-		-
-			message: '#^Variable \$badgeStatus6 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/don/index.php
-
-		-
-			message: '#^Variable \$badgeStatus9 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/don/index.php
-
-		-
 			message: '#^Variable \$maxlength might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -10721,12 +10679,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/ecm/search.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/ecm/tpl/enablefiletreeajax.tpl.php
 
 		-
 			message: '#^Variable \$param might not be defined\.$#'
@@ -18517,7 +18469,7 @@ parameters:
 			path: ../../../htdocs/societe/class/societe.class.php
 
 		-
-			message: '#^Property Contact\:\:\$roles \(array\<int, array\{id\: int, socid\: int, element\: string, source\: string, code\: string, label\: string\}\>|null\) does not accept non\-empty\-list\<string\>\.$#'
+			message: '#^Property Contact\:\:\$roles \(array\<int, array\{id\: int, socid\: int, element\: string, source\: string, code\: string, label\: string\}\>\|null\) does not accept non\-empty\-list\<string\>\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: ../../../htdocs/societe/class/societe.class.php
