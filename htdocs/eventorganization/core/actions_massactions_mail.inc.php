@@ -101,7 +101,6 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 	$attendee = new ConferenceOrBoothAttendee($db);
 	$objecttmp = new $objectclass($db);
 	'@phan-var-force CommonObject $objecttmp';
-	/** @var CommonObject $objecttmp */
 
 	foreach ($toselect as $toselectid) {
 		$result = $objecttmp->fetch($toselectid);
@@ -195,6 +194,8 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 				$obj = $db->fetch_object($resql);
 				if ($obj) {
 					$from = dol_string_nospecial($obj->label, ' ', array(",")) . ' <' . $obj->email . '>';
+				} else {
+					$from = '';
 				}
 			} else {
 				$from = dol_string_nospecial(GETPOST('fromname'), ' ', array(",")) . ' <' . GETPOST('frommail') . '>';
