@@ -42,6 +42,7 @@
 
 ALTER TABLE llx_ticket ADD COLUMN note_public text after resolution;
 ALTER TABLE llx_ticket ADD COLUMN note_private text after resolution;
+ALTER TABLE llx_ticket ADD COLUMN fk_user_modif integer after resolution;
 
 
 CREATE TABLE llx_paiement_extrafields (
