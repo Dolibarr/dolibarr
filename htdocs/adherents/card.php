@@ -1860,7 +1860,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					'name' => 'member_origin',
 					'label' => $langs->trans('MergeOriginMember'),
 					'type' => 'other',
-					'value' => $form->selectMembers('', 'member_origin', '', 0, 1, '', 0, array(), 0, 'SelectMember', 0, 'minwidth200', null, 1, array($object->id))
+					'value' => $form->selectMembers('', 'member_origin', '', 0, 1, '', 0, array(), 0, 'SelectMember', 0, 'minwidth200', array(), 1, array($object->id))
 				)
 			);
 
