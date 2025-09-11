@@ -78,7 +78,7 @@ while ($i < $argc) {
 		$tmp = explode(':', $result['includeconstant'], 3);			// $includeconstant has been set with previous parse_str()
 		if (count($tmp) != 3) {
 			print "Error: Bad parameter includeconstant=".$result['includeconstant'] ."\n";
-			exit -1;
+			exit(1);
 		}
 		$includeconstants[$tmp[0]][$tmp[1]] = $tmp[2];
 	}

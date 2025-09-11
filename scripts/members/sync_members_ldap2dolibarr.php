@@ -156,7 +156,7 @@ if (!getDolGlobalString('LDAP_MEMBER_DN')) {
 }
 if ($typeid <= 0) {
 	print $langs->trans("Error").': Parameter id_member_type is not a valid ref of an existing member type'."\n";
-	exit(-2);
+	exit(2);
 }
 
 if (!empty($dolibarr_main_db_readonly)) {
