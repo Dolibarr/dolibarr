@@ -37,6 +37,7 @@
 // $diroutputmassaction may be defined
 /**
  * @var Conf $conf
+ * @var CommonObject $object
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
@@ -101,6 +102,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 		$attendee = new ConferenceOrBoothAttendee($db);
 		$objecttmp = new $objectclass($db);
 		'@phan-var-force CommonObject $objecttmp';
+		/** @var CommonObject $objecttmp */
 
 		foreach ($toselect as $toselectid) {
 			$result = $objecttmp->fetch($toselectid);
