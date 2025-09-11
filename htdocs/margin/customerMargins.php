@@ -2,7 +2,7 @@
 /* Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2014		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,7 +135,7 @@ if ($socid > 0) {
 } else {
 	print '<tr><td class="titlefield">'.$langs->trans('ThirdPartyName').'</td>';
 	print '<td class="maxwidthonsmartphone" colspan="4">';
-	print img_picto('', 'company').$form->select_company(0, 'socid', '((client:=:1) OR (client:=:3))', 1, 0, 0);
+	print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(0, 'socid', '((client:=:1) OR (client:=:3))', 1, 0, 0);
 	print '</td></tr>';
 }
 
@@ -164,7 +164,7 @@ foreach ($TRes as $prod) {
 
 print '<tr><td class="titlefield">'.$langs->trans('ProductOrService').'</td>';
 print '<td class="maxwidthonsmartphone" colspan="4">';
-print img_picto('', 'product').$form->multiselectarray('products', $TProducts, $TSelectedProducts, 0, 0, 'minwidth500');
+print img_picto('', 'product', 'class="pictofixedwidth"').$form->multiselectarray('products', $TProducts, $TSelectedProducts, 0, 0, 'minwidth500');
 print '</td></tr>';
 
 // Categories
@@ -180,11 +180,11 @@ print '</tr>';
 // Start date
 print '<td>'.$langs->trans('DateStart').' ('.$langs->trans("DateValidation").')</td>';
 print '<td>';
-print $form->selectDate($startdate, 'startdate', 0, 0, 1, "sel", 1, 1);
+print img_picto('', 'agenda', 'class="pictofixedwidth"').$form->selectDate($startdate, 'startdate', 0, 0, 1, "sel", 1, 1);
 print '</td>';
 print '<td>'.$langs->trans('DateEnd').' ('.$langs->trans("DateValidation").')</td>';
 print '<td>';
-print $form->selectDate($enddate, 'enddate', 0, 0, 1, "sel", 1, 1);
+print img_picto('', 'agenda', 'class="pictofixedwidth"').$form->selectDate($enddate, 'enddate', 0, 0, 1, "sel", 1, 1);
 print '</td>';
 print '<td style="text-align: center;">';
 print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Refresh')).'" />';
@@ -373,6 +373,7 @@ if ($result) {
 				$invoicestatic->id = $objp->facid;
 				$invoicestatic->ref = $objp->ref;
 				$invoicestatic->statut = $objp->statut;
+				$invoicestatic->status = $objp->statut;
 				$invoicestatic->type = $objp->type;
 
 				print '<td>';

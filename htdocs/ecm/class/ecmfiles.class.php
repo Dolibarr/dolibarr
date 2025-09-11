@@ -68,11 +68,6 @@ class EcmFiles extends CommonObject
 	public $share;
 
 	/**
-	 * @var int Entity
-	 */
-	public $entity;
-
-	/**
 	 * @var string filename, Note: Into ecm database record, the entry never ends with .noexe
 	 */
 	public $filename;
@@ -113,7 +108,7 @@ class EcmFiles extends CommonObject
 	public $position;
 
 	/**
-	 * @var 'generated'|'uploaded'|'unknown'|'copy'|''
+	 * @var 'generated'|'uploaded'|'unknown'|'api'|'copy'|''
 	 */
 	public $gen_or_uploaded;
 
@@ -158,6 +153,11 @@ class EcmFiles extends CommonObject
 	public $src_object_id;
 
 	/**
+	 * @var int ID of linked agenda event
+	 */
+	public $agenda_id;
+
+	/**
 	 * @var int section_id		ID of section = ID of EcmDirectory, directory of manual ECM (not stored into database)
 	 */
 	public $section_id;
@@ -187,6 +187,7 @@ class EcmFiles extends CommonObject
 		'note_public' => array('type' => 'text', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 155),
 		'note_private' => array('type' => 'text', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 160),
 		'acl' => array('type' => 'text', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 160, 'comment' => "for future permission 'per file'"),
+		'agenda_id' => array('type' => 'integer', 'label' => 'IdAgenda', 'enabled' => 1, 'visible' => 0, 'position' => 180, 'comment' => "Link to an actioncomm"),
 	);
 
 
@@ -307,6 +308,9 @@ class EcmFiles extends CommonObject
 		$extraparams = dol_trunc($extraparams, 250);
 
 		// Put here code to add control on parameters values
+		if (!empty($this->agenda_id)) {
+			$this->agenda_id = (int) $this->agenda_id;
+		}
 
 		// Insert request
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'(';
@@ -332,7 +336,8 @@ class EcmFiles extends CommonObject
 		$sql .= 'fk_user_m,';
 		$sql .= 'acl,';
 		$sql .= 'src_object_type,';
-		$sql .= 'src_object_id';
+		$sql .= 'src_object_id,';
+		$sql .= 'agenda_id';
 		$sql .= ') VALUES (';
 		$sql .= " '".$this->db->escape($this->ref)."', ";
 		$sql .= ' '.(!isset($this->label) ? 'NULL' : "'".$this->db->escape($this->label)."'").',';
@@ -356,7 +361,8 @@ class EcmFiles extends CommonObject
 		$sql .= ' '.(!isset($this->fk_user_m) ? 'NULL' : $this->fk_user_m).',';
 		$sql .= ' '.(!isset($this->acl) ? 'NULL' : "'".$this->db->escape($this->acl)."'").',';
 		$sql .= ' '.(!isset($this->src_object_type) ? 'NULL' : "'".$this->db->escape($this->src_object_type)."'").',';
-		$sql .= ' '.(!isset($this->src_object_id) ? 'NULL' : $this->src_object_id);
+		$sql .= ' '.(!isset($this->src_object_id) ? 'NULL' : $this->src_object_id).',';
+		$sql .= ' '.(empty($this->agenda_id) ? 'NULL' : (int) $this->agenda_id);
 		$sql .= ')';
 
 		$this->db->begin();
@@ -443,7 +449,8 @@ class EcmFiles extends CommonObject
 		$sql .= ' t.note_public,';
 		$sql .= " t.acl,";
 		$sql .= " t.src_object_type,";
-		$sql .= " t.src_object_id";
+		$sql .= " t.src_object_id,";
+		$sql .= " t.agenda_id";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE 1 = 1';
 		/* Fetching this table depends on filepath+filename, it must not depends on entity because filesystem on disk does not know what is Dolibarr entities
@@ -524,7 +531,7 @@ class EcmFiles extends CommonObject
 				$this->acl = $obj->acl;
 				$this->src_object_type = $obj->src_object_type;
 				$this->src_object_id = $obj->src_object_id;
-
+				$this->agenda_id = $obj->agenda_id;
 				$this->extraparams = (isset($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : null);
 			}
 
@@ -587,7 +594,8 @@ class EcmFiles extends CommonObject
 		$sql .= " t.fk_user_m,";
 		$sql .= " t.acl,";
 		$sql .= " t.src_object_type,";
-		$sql .= " t.src_object_id";
+		$sql .= " t.src_object_id,";
+		$sql .= " t.agenda_id";
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		$sql .= ' WHERE 1 = 1';
 
@@ -663,6 +671,7 @@ class EcmFiles extends CommonObject
 				$line->acl = $obj->acl;
 				$line->src_object_type = $obj->src_object_type;
 				$line->src_object_id = $obj->src_object_id;
+				$line->agenda_id = $obj->agenda_id;
 				$this->lines[] = $line;
 			}
 			$this->db->free($resql);
@@ -736,8 +745,9 @@ class EcmFiles extends CommonObject
 		if (isset($this->src_object_type)) {
 			$this->src_object_type = trim($this->src_object_type);
 		}
-
-		// Check parameters
+		if (!empty($this->agenda_id)) {
+			$this->agenda_id = (int) $this->agenda_id;
+		}
 		$extraparams = (!empty($this->extraparams) ? json_encode($this->extraparams) : null);
 		$extraparams = dol_trunc($extraparams, 250);
 
@@ -764,7 +774,8 @@ class EcmFiles extends CommonObject
 		$sql .= ' fk_user_m = '.($this->fk_user_m > 0 ? $this->fk_user_m : $user->id).',';
 		$sql .= ' acl = '.(isset($this->acl) ? "'".$this->db->escape($this->acl)."'" : "null").',';
 		$sql .= ' src_object_id = '.($this->src_object_id > 0 ? $this->src_object_id : "null").',';
-		$sql .= ' src_object_type = '.(isset($this->src_object_type) ? "'".$this->db->escape($this->src_object_type)."'" : "null");
+		$sql .= ' src_object_type = '.(isset($this->src_object_type) ? "'".$this->db->escape($this->src_object_type)."'" : "null").',';
+		$sql .= ' agenda_id = '.($this->agenda_id > 0 ? (int) $this->agenda_id : "null");
 		$sql .= ' WHERE rowid='.((int) $this->id);
 
 		$this->db->begin();

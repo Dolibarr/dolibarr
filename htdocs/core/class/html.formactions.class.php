@@ -325,7 +325,7 @@ class FormActions
 					print $labeltype;
 					print '</td>';
 
-					// Label
+					// Label / Title
 					print '<td class="tdoverflowmax250">';
 					print $actioncomm->getNomUrl(0);
 					print '</td>';

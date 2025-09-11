@@ -17,6 +17,7 @@ AccountancyCodeAsset=Regnskabskode (aktiv)
 AccountancyCodeDepreciationAsset=Regnskabskode (afskrivning aktiv konto)
 AccountancyCodeDepreciationExpense=Regnskabskode (afskrivningskostnadskonto)
 AssetsLines=Aktiver
+ConfirmValidateAsset=Er du sikker på, at du vil validere dette aktiv med referencen <b>%s</b>?
 DeleteType=Slet
 DeleteAnAssetType=Slet en aktivmodel
 ConfirmDeleteAssetType=Er du sikker på, at du vil slette denne aktivmodel?
@@ -70,6 +71,7 @@ AssetDisposal=Bortskaffelse
 AssetConfirmDisposalAsk=Er du sikker på, at du vil afhænde aktivet <b> %s </b>?
 AssetConfirmReOpenAsk=Er du sikker på, at du vil genåbne aktivet <b> %s </b>?
 # Asset status
+AssetInDraft=Udkast til
 AssetInProgress=I gang
 AssetDisposed=Bortskaffes
 AssetRecorded=Regnskabet

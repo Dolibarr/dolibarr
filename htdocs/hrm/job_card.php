@@ -195,7 +195,7 @@ if (empty($reshook)) {
 					$i = 0;
 					while ($i < count($skillRequire)) {
 						$skillrank = new SkillRank($db);
-						$skillrank->createFromClone($user, $skillRequire[$i]->rowid, $id);
+						$skillrank->createFromClone($user, $skillRequire[$i], $id);
 						$i++;
 					}
 				}
@@ -231,21 +231,6 @@ $formproject = new FormProjets($db);
 $title = $langs->trans("Job");
 $help_url = '';
 llxHeader('', $title, $help_url);
-
-// Example : Adding jquery code
-// print '<script type="text/javascript" language="javascript">
-// jQuery(document).ready(function() {
-// 	function init_myfunc()
-// 	{
-// 		jQuery("#myid").removeAttr(\'disabled\');
-// 		jQuery("#myid").attr(\'disabled\',\'disabled\');
-// 	}
-// 	init_myfunc();
-// 	jQuery("#mybutton").click(function() {
-// 		init_myfunc();
-// 	});
-// });
-// </script>';
 
 
 // Part to create

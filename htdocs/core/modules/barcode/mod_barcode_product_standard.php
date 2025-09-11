@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2011       Juanjo Menent	        <jmenent@2byte.es>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -58,7 +58,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 */
 	public function __construct()
 	{
-		$this->code_null = 0;
+		$this->code_null = 0;	// 1=can be empty
 		$this->code_modifiable = 1;
 		$this->code_modifiable_invalide = 1;
 		$this->code_modifiable_null = 1;
@@ -90,6 +90,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		$texte .= '<table class="nobordernopadding" width="100%">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("BarCode"), $langs->transnoentities("BarCode"));
+		$tooltip .= $langs->trans("GenericMaskCodes1");
 		$tooltip .= $langs->trans("GenericMaskCodes3EAN");
 		$tooltip .= '<strong>'.$langs->trans("Example").':</strong><br>';
 		$tooltip .= '04{0000000000}? (for internal use)<br>';
@@ -208,7 +209,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		//Begin barcode with key: for barcode with key (EAN13...) calculate and substitute the last  character (* or ?) used in the mask by the key
 		if ((substr($numFinal, -1) == '*') or (substr($numFinal, -1) == '?')) { // if last mask character is * or ? a joker, probably we have to calculate a key as last character (EAN13...)
 			$literaltype = '';
-			$literaltype = $this->literalBarcodeType($db, $type);//get literal_Barcode_Type
+			$literaltype = $this->literalBarcodeType($db, (int) $type);//get literal_Barcode_Type
 			switch ($literaltype) {
 				case 'EAN13': //EAN13 rowid = 2
 					if (strlen($numFinal) == 13) {// be sure that the mask length is correct for EAN13
@@ -238,10 +239,9 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 *  @param  int<0,1>  	$thirdparty_type   	0 = customer/prospect , 1 = supplier
 	 *  @param	string		$type       	    type of barcode (EAN, ISBN, ...)
 	 *  @return int<-7,0>						0 if OK
-	 * 											-1 ErrorBadCustomerCodeSyntax
-	 * 											-2 ErrorCustomerCodeRequired
-	 * 											-3 ErrorCustomerCodeAlreadyUsed
-	 * 											-4 ErrorPrefixRequired
+	 * 											-1 ErrorBadProductCodeSyntax
+	 * 											-2 ErrorProductCodeRequired
+	 * 											-3 ErrorProductCodeAlreadyUsed
 	 * 											-7 ErrorBadClass
 	 */
 	public function verif($db, &$code, $product, $thirdparty_type, $type)
@@ -257,10 +257,9 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 		$result = 0;
 		$code = strtoupper(trim($code));
-
-		if (empty($code) && $this->code_null && !getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK')) {
+		if (empty($code) && $this->code_null) {
 			$result = 0;
-		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK'))) {
+		} elseif (empty($code) && !$this->code_null && getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK')) {
 			$result = -2;
 		} else {
 			if ($this->verif_syntax($code, $type) >= 0) {
@@ -344,6 +343,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 		// Special case, if mask is on 12 digits instead of 13, we remove last char into code to test
 		if (in_array($typefortest, array('EAN13', 'ISBN'))) {	// We remove the CRC char not included into mask
+			$reg = array();
 			if (preg_match('/\{(0+)([@\+][0-9]+)?([@\+][0-9]+)?\}/i', $mask, $reg)) {
 				if (strlen($reg[1]) == 12) {
 					$newcodefortest = substr($newcodefortest, 0, 12);

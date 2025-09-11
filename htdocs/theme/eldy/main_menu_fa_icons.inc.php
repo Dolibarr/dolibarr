@@ -52,7 +52,6 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	-webkit-font-smoothing: antialiased;
 	text-align:center;
 	text-decoration:none;
-	color: var(--colortextbackhmenu);
 }
 .mainmenu:not(.fab)::before, .mainmenu:not(.fab) span:not(.fab)::before {
 	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
@@ -100,6 +99,9 @@ div.mainmenu.generic4::before {
 }
 .fa-link, .fa-unlink {
 	color: #555;
+}
+.fa-project-diagram:before {
+	font-size: 0.9em;
 }
 
 /* Define square Dolibarr logo in pure CSS */

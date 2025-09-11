@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014	Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014	Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2024	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)		<github@accedinfo.com>
  * Copyright (C) 2014		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
@@ -67,20 +67,22 @@ $nbletter = GETPOSTINT('ACCOUNTING_LETTERING_NBLETTERS');
 $formSetup = new FormSetup($db);
 
 // Main options
-$formSetup->newItem('BANK_DISABLE_DIRECT_INPUT')
-	->setAsYesNo();
-$formSetup->newItem('ACCOUNTANCY_COMBO_FOR_AUX')
-	->setAsYesNo();
-$formSetup->newItem('ACCOUNTING_MANAGE_ZERO')
-	->setAsYesNo();
+$formSetup->newItem('BANK_DISABLE_DIRECT_INPUT')->setAsYesNo();
+
+
+$formSetup->newItem('ACCOUNTANCY_COMBO_FOR_AUX')->setAsYesNo();
+
+$item = $formSetup->newItem('ACCOUNTING_MANAGE_ZERO')->setAsYesNo();
+$item->helpText = $langs->trans('ACCOUNTING_MANAGE_ZERO2');
+$item->fieldParams['helpText'] = 'noclick';
+
+
 if (!getDolGlobalInt('ACCOUNTING_MANAGE_ZERO')) {
-	$item = $formSetup->newItem('ACCOUNTING_LENGTH_GACCOUNT')
-		->setAsString();
+	$item = $formSetup->newItem('ACCOUNTING_LENGTH_GACCOUNT')->setAsString();
 	$item->fieldAttr['type'] = 'number';
 	$item->fieldAttr['class'] = 'maxwidth50 right';
 
-	$item = $formSetup->newItem('ACCOUNTING_LENGTH_AACCOUNT')
-		->setAsString();
+	$item = $formSetup->newItem('ACCOUNTING_LENGTH_AACCOUNT')->setAsString();
 	$item->fieldAttr['type'] = 'number';
 	$item->fieldAttr['class'] = 'maxwidth50 right';
 }
@@ -432,7 +434,7 @@ print '<br>';
 
 // Case of the parameter ACCOUNTING_MODE
 
-if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="updatemode">';
@@ -442,15 +444,16 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	print '<tr class="liste_titre">';
 	print '<td colspan="2">'.$langs->trans('OptionMode').'</td>';
 	print "</tr>\n";
-	print '<tr class="oddeven"><td class="nowraponall"><input type="radio" id="accounting_mode_1" name="accounting_mode" value="RECETTES-DEPENSES"'.($accounting_mode != 'CREANCES-DETTES' ? ' checked' : '').'><label for="accounting_mode_1"> '.$langs->trans('OptionModeTrue').'</label></td>';
-	print '<td><span class="opacitymedium">'.nl2br($langs->trans('ACCOUNTING_USE_TREASURY_Desc')).'</span>';
+	print '<tr class="oddeven"><td class="nowraponall"><input type="radio" id="accounting_mode_1" name="accounting_mode" value="CREANCES-DETTES"'.($accounting_mode != 'RECETTES-DEPENSES' ? ' checked' : '').'><label for="accounting_mode_1"> '.$langs->trans('OptionModeVirtual').'</label> ('.$langs->trans('Default').')</td>';
+	print '<td><span class="opacitymedium">'.nl2br($langs->trans('ACCOUNTING_USE_NON_TREASURY_Desc')).'</span>';
 	print "</td></tr>\n";
-	print '<tr class="oddeven"><td class="nowraponall"><input type="radio" id="accounting_mode_2" name="accounting_mode" value="CREANCES-DETTES"'.($accounting_mode == 'CREANCES-DETTES' ? ' checked' : '').'><label for="accounting_mode_2"> '.$langs->trans('OptionModeVirtual').'</label></td>';
-	print '<td><span class="opacitymedium">'.nl2br($langs->trans('ACCOUNTING_USE_NON_TREASURY_Desc'))."</span></td></tr>\n";
+	print '<tr class="oddeven"><td class="nowraponall"><input type="radio" id="accounting_mode_2" name="accounting_mode" value="RECETTES-DEPENSES"'.($accounting_mode == 'RECETTES-DEPENSES' ? ' checked' : '').'><label for="accounting_mode_2"> '.$langs->trans('OptionModeTrue').'</label></td>';
+	print '<td><span class="opacitymedium">'.nl2br($langs->trans('ACCOUNTING_USE_TREASURY_Desc'))."</span>";
+	print "</td></tr>\n";
 
 	print "</table>\n";
 
-	print '<div style="text-align:center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Save').'"></div>';
+	print '<div class="center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Save').'"></div>';
 	print '</form>';
 
 
@@ -458,8 +461,9 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 }
 
 
-// Show form main options
+// Show form for main parameters
 print $formSetup->generateOutput(true);
+
 
 print '<br><br><br>';
 
@@ -496,7 +500,7 @@ foreach ($list_binding as $key) {
 			1=>$langs->trans("ThirdPartyName") . ' - ' . $langs->trans("NumPiece"),
 			2=>$langs->trans("ThirdPartyName")
 		);
-		print $form->selectarray($key, $array, getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER', 0), 0, 0, 0, '', 0, 0, 0, '', 'onrightofpage width200');
+		print $form->selectarray($key, $array, getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER', 0), 0, 0, 0, '', 0, 0, 0, '', 'onrightofpage width300');
 	} else {
 		print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 	}
@@ -578,9 +582,124 @@ print '</div>';
 print '<div class="center"><input type="submit" class="button reposition" value="'.dol_escape_htmltag($langs->trans('Save')).'" name="button"></div>';
 
 
+// Show numbering options
+print '<br><br><br>';
+
+
+// Accountancy Numbering model
+$dirmodels = array_merge(array('/'), $conf->modules_parts['models']);
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td colspan="2">'.$langs->trans("BookkeepingNumberingModules").'</td>';
+print '<td class="nowrap">'.$langs->trans("Example").'</td>';
+print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
+print '<td class="center" width="16">'.$langs->trans("ShortInfo").'</td>';
+print '</tr>'."\n";
+
+clearstatcache();
+
+$arrayofmodules = array();
+
+foreach ($dirmodels as $reldir) {
+	$dir = dol_buildpath($reldir."core/modules/accountancy/");
+
+	if (is_dir($dir)) {
+		$handle = opendir($dir);
+		if (is_resource($handle)) {
+			while (($file = readdir($handle)) !== false) {
+				if (strpos($file, 'mod_bookkeeping_') === 0 && substr($file, dol_strlen($file) - 3, 3) == 'php') {
+					$file = substr($file, 0, dol_strlen($file) - 4);
+
+					require_once $dir.$file.'.php';
+
+					$module = new $file($db);
+
+					/** @var ModeleNumRefBookkeeping $module */
+					'@phan-var-force ModeleNumRefBookkeeping $module';
+
+					$arrayofmodules[] = $module;
+				}
+			}
+			closedir($handle);
+		}
+	}
+}
+
+$arrayofmodules = dol_sort_array($arrayofmodules, 'position');
+
+foreach ($arrayofmodules as $module) {
+	$file = 'mod_bookkeeping_'.strtolower($module->getName($langs));
+
+	// Show modules according to features level
+	if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
+		continue;
+	}
+	if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
+		continue;
+	}
+
+	if ($module->isEnabled()) {
+		print '<tr class="oddeven"><td class="width100">'.$module->name."</td><td>\n";
+		print $module->info($langs);
+		print '</td>';
+
+		// Show example of the numbering model
+		print '<td class="nowrap">';
+		$tmp = $module->getExample();
+		if (preg_match('/^Error/', $tmp)) {
+			$langs->load("errors");
+			print '<div class="error">'.$langs->trans($tmp).'</div>';
+		} elseif ($tmp == 'NotConfigured') {
+			print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
+		} else {
+			print $tmp;
+		}
+		print '</td>'."\n";
+
+		print '<td class="center">';
+		if (getDolGlobalString('BOOKKEEPING_ADDON') == $file) {
+			print img_picto($langs->trans("Activated"), 'switch_on');
+		} else {
+			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'">';
+			print img_picto($langs->trans("Disabled"), 'switch_off');
+			print '</a>';
+		}
+		print '</td>';
+
+		$bookkeeping = new BookKeeping($db);
+		$bookkeeping->initAsSpecimen();
+
+		// Info
+		$htmltooltip = ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+
+		$nextval = $module->getNextValue($bookkeeping);
+		if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+			$htmltooltip .= ''.$langs->trans("NextValue").': ';
+			if ($nextval) {
+				if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+					$nextval = $langs->trans($nextval);
+				}
+				$htmltooltip .= $nextval.'<br>';
+			} else {
+				$htmltooltip .= $langs->trans($module->error).'<br>';
+			}
+		}
+
+		print '<td class="center">';
+		print $form->textwithpicto('', $htmltooltip, 1, 'info');
+		print '</td>';
+
+		print "</tr>\n";
+	}
+}
+print '</table>';
+print '</div>';
+
 
 // Show advanced options
-print '<br><br>';
+print '<br><br><br>';
 
 
 // Advanced params
@@ -672,7 +791,8 @@ print '</div>';
 
 print '<div class="center"><input type="submit" class="button button-edit reposition" name="button" value="'.$langs->trans('Save').'"></div>';
 
-print '<br><br>';
+
+print '<br><br><br>';
 
 
 // Export options
@@ -786,123 +906,6 @@ print '<div class="center"><input type="submit" class="button reposition" value=
 
 
 print '</form>';
-
-
-// Accountancy Numbering model
-
-$dirmodels = array_merge(array('/'), $conf->modules_parts['models']);
-
-print load_fiche_titre($langs->trans("BookkeepingNumberingModules"), '', '');
-
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Name").'</td>';
-print '<td></td>';
-print '<td class="nowrap">'.$langs->trans("Example").'</td>';
-print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
-print '<td class="center" width="16">'.$langs->trans("ShortInfo").'</td>';
-print '</tr>'."\n";
-
-clearstatcache();
-
-$arrayofmodules = array();
-
-foreach ($dirmodels as $reldir) {
-	$dir = dol_buildpath($reldir."core/modules/accountancy/");
-
-	if (is_dir($dir)) {
-		$handle = opendir($dir);
-		if (is_resource($handle)) {
-			while (($file = readdir($handle)) !== false) {
-				if (strpos($file, 'mod_bookkeeping_') === 0 && substr($file, dol_strlen($file) - 3, 3) == 'php') {
-					$file = substr($file, 0, dol_strlen($file) - 4);
-
-					require_once $dir.$file.'.php';
-
-					$module = new $file($db);
-
-					/** @var ModeleNumRefBookkeeping $module */
-					'@phan-var-force ModeleNumRefBookkeeping $module';
-
-					$arrayofmodules[] = $module;
-				}
-			}
-			closedir($handle);
-		}
-	}
-}
-
-$arrayofmodules = dol_sort_array($arrayofmodules, 'position');
-
-foreach ($arrayofmodules as $module) {
-	$file = 'mod_bookkeeping_'.strtolower($module->getName($langs));
-
-	// Show modules according to features level
-	if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-		continue;
-	}
-	if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
-		continue;
-	}
-
-	if ($module->isEnabled()) {
-		print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
-		print $module->info($langs);
-		print '</td>';
-
-		// Show example of numbering model
-		print '<td class="nowrap">';
-		$tmp = $module->getExample();
-		if (preg_match('/^Error/', $tmp)) {
-			$langs->load("errors");
-			print '<div class="error">'.$langs->trans($tmp).'</div>';
-		} elseif ($tmp == 'NotConfigured') {
-			print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
-		} else {
-			print $tmp;
-		}
-		print '</td>'."\n";
-
-		print '<td class="center">';
-		if (getDolGlobalString('BOOKKEEPING_ADDON') == $file) {
-			print img_picto($langs->trans("Activated"), 'switch_on');
-		} else {
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'">';
-			print img_picto($langs->trans("Disabled"), 'switch_off');
-			print '</a>';
-		}
-		print '</td>';
-
-		$bookkeeping = new BookKeeping($db);
-		$bookkeeping->initAsSpecimen();
-
-		// Info
-		$htmltooltip = '';
-		$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-
-		$nextval = $module->getNextValue($bookkeeping);
-		if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-			$htmltooltip .= ''.$langs->trans("NextValue").': ';
-			if ($nextval) {
-				if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
-					$nextval = $langs->trans($nextval);
-				}
-				$htmltooltip .= $nextval.'<br>';
-			} else {
-				$htmltooltip .= $langs->trans($module->error).'<br>';
-			}
-		}
-
-		print '<td class="center">';
-		print $form->textwithpicto('', $htmltooltip, 1, 'info');
-		print '</td>';
-
-		print "</tr>\n";
-	}
-}
-print "</table></div><br>\n";
-
 
 // End of page
 llxFooter();

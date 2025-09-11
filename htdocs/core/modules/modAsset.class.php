@@ -58,9 +58,9 @@ class modAsset extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleAssetsName' not found (MyModue is name of module).
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description, used if translation string 'ModuleAssetsDesc' not found (MyModue is name of module).
-		$this->description = "Asset module";
+		$this->description = "Fixed asset management";
 		// Used only if file README.md and README-LL.md not found.
-		$this->descriptionlong = "Asset module to manage assets module and depreciation charge on Dolibarr";
+		$this->descriptionlong = "Asset module to manage fixed asset module and depreciation charge";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
 		$this->version = 'experimental';
@@ -108,6 +108,16 @@ class modAsset extends DolibarrModules
 			"chaine",
 			"360",
 			"Duration per year to calculate depreciation. In some case, can be 365 days",
+			0,
+			'current',
+			1
+		);
+
+		$this->const[2] = array(
+			"ASSET_ASSET_ADDON",
+			"chaine",
+			"mod_asset_standard",
+			"Name of numbering rules for fixed asset",
 			0,
 			'current',
 			1

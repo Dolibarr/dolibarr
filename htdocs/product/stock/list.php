@@ -382,7 +382,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -714,7 +714,6 @@ while ($i < $imaxinloop) {
 	$warehouse->setVarsFromFetchObj($obj);
 
 	$warehouse->label = $warehouse->ref;
-	$warehouse->sellvalue = $obj->sellvalue;
 
 	$object = $warehouse;
 
@@ -731,7 +730,7 @@ while ($i < $imaxinloop) {
 				$selected = 1;
 			}
 		}
-		print $object->getKanbanView('', array('selected' => $selected));
+		print $object->getKanbanView('', array('selected' => $selected, 'sellvalue' => $obj->sellvalue, 'isMultiPrices' => getDolGlobalString('PRODUIT_MULTIPRICES')));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

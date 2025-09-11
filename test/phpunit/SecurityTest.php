@@ -387,7 +387,9 @@ class SecurityTest extends CommonClassTest
 	{
 		$stringtotest = 'eée';
 		$decodedstring = dol_string_onlythesehtmlattributes($stringtotest);
-		$this->assertEquals('e&eacute;e', $decodedstring, 'Function did not sanitize correctly with test 1');
+
+		//$this->assertEquals('e&eacute;e', $decodedstring, 'Function did not sanitize correctly with test 1');
+		$this->assertEquals('eée', $decodedstring, 'Function did not sanitize correctly with test 1');
 
 		$stringtotest = '<div onload="ee"><a href="123"><span class="abc">abc</span></a></div>';
 		$decodedstring = dol_string_onlythesehtmlattributes($stringtotest);
@@ -612,6 +614,8 @@ class SecurityTest extends CommonClassTest
 
 		$conf->global->MAIN_USE_DOL_EVAL_NEW = 0;
 		//$conf->global->MAIN_USE_DOL_EVAL_NEW = 1;
+		$conf->global->MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL = 0;
+		$conf->global->MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL = 0;
 
 		$result = dol_eval('1==1', 1, 0);
 		print "result1 = ".$result."\n";
@@ -633,7 +637,7 @@ class SecurityTest extends CommonClassTest
 
 		$s = '(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"';
 		$result = (string) dol_eval($s, 1, 1, '2');
-		print "result3 = ".$result."\n";
+		print "result3c = ".$result."\n";
 		$this->assertEquals('Parent project not found', $result);
 
 		$s = '(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : \'Parent project not found\'';
@@ -642,13 +646,19 @@ class SecurityTest extends CommonClassTest
 		$this->assertEquals('Parent project not found', $result, 'Test 4');
 
 		$result = dol_eval('1==\x01', 1, 0);	// Check that we can't make dol_eval on string containing \ char.
-		print "result0 = ".$result."\n";
+		print "result5 = ".$result."\n";
 		$this->assertStringContainsString('Bad string syntax to evaluate (found chars that are not chars for a simple one line clean eval string)', $result);
 
 		$s = '4 < 5';
 		$result = (string) dol_eval($s, 1, 1, '2');
-		print "result5 = ".$result."\n";
+		print "result6 = ".$result."\n";
 		$this->assertEquals('1', $result, 'Test 5');
+
+		$s = 'MyClass::MyMethod()';
+		$result = dol_eval($s, 1, 1, '2');
+		print "result7 = ".$result."\n";
+		$this->assertStringContainsString('Bad string syntax to evaluate (double : char is forbidden without setting MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL)', $result);
+
 
 
 		/* not allowed. Not a one line eval string
@@ -679,6 +689,18 @@ class SecurityTest extends CommonClassTest
 		print "result = ".$result."\n";
 		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
 
+		$result = dol_eval('json_encode(array_map(implode("",["ex","ec"]), ["id"]))', 1, 1, '1');		// result of dol_eval may be an object Closure
+		print "result4a = ".json_encode($result)."\n";
+		$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil, it should due to the [ char and method "2"');
+
+		$result = dol_eval('json_encode(array_map(implode("",["ex","ec"]), ["id"]))', 1, 1, '2');		// result of dol_eval may be an object Closure
+		print "result4b = ".json_encode($result)."\n";
+		$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil, it should due to the use of array_map');
+
+		$result = dol_eval('json_encode(array_map(implode("",array("ex","ec"), array("id")))', 1, 1, '1');		// result of dol_eval may be an object Closure
+		print "result4c = ".json_encode($result)."\n";
+		$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil, it should due to the use of array_map');
+
 		$result = dol_eval('$a=function() { }; $a', 1, 1, '0');		// result of dol_eval may be an object Closure
 		print "result5 = ".json_encode($result)."\n";
 		$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'The string was not detected as evil');
@@ -706,6 +728,8 @@ class SecurityTest extends CommonClassTest
 		$result = (string) dol_eval("strrev('metsys') ('whoami')", 1, 1);
 		print "result8b = ".$result."\n";
 		$this->assertStringContainsString('Bad string syntax to evaluate (mode 1, found call of a function or method without using the direct name of the function)', $result, 'The string was not detected as evil');
+
+		$conf->global->MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL = 1;
 
 		$result = (string) dol_eval('$a="test"; $$a;', 1, 0);
 		print "result9 = ".$result."\n";
@@ -1273,6 +1297,30 @@ class SecurityTest extends CommonClassTest
 	public function testDolHtmlWithNoJs()
 	{
 		global $conf;
+
+		// Test on a string in hindi with MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES because
+		// in past this case was losing the UTF8.
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
+
+		$result = dol_htmlwithnojs('String in Hindi लेखाकर्म', 0, 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('String in Hindi लेखाकर्म', $result, 'Test js sanitizing a Hindi string is ko');
+
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;
+
+		$result = dol_htmlwithnojs('String in Hindi लेखाकर्म', 0, 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('String in Hindi लेखाकर्म', $result, 'Test js sanitizing a Hindi string is ko');
+
+		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
+		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
+
+		$result = dol_htmlwithnojs('String in Hindi लेखाकर्म', 0, 'restricthtml');
+		print __METHOD__." result=".$result."\n";
+		$this->assertEquals('String in Hindi लेखाकर्म', $result, 'Test js sanitizing a Hindi string is ko');
+
+
 
 		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
 		// If we set this to 1, it will also convert emoticon in htmlentities, so tests must be modified.

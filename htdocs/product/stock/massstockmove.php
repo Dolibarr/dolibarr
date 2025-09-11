@@ -216,7 +216,7 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 				// Define value of products moved
 				$pricesrc = 0;
 				if (!empty($product->pmp)) {
-					$pricesrc = $product->pmp;
+					$pricesrc = (float) $product->pmp;
 				}
 				$pricedest = $pricesrc;
 
@@ -480,6 +480,10 @@ if ($action == 'importCSV' && $user->hasRight('stock', 'mouvement', 'creer')) {
 				if (!$tmp_qty) {
 					$error++;
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
+				}
+				if (!is_numeric($tmp_qty)) {
+					$error++;
+					setEventMessages('Qty need to be numeric value only', null, 'errors');
 				}
 
 				// Check a batch number is provided if product need it

@@ -155,7 +155,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Make payment with Direct Debit Stripe
+	// Request payment with a Stripe Direct Debit for a customer invoice
 	if ($action == 'sepastripedirectdebit' && $usercancreate) {
 		$result = $object->makeStripeSepaRequest($user, GETPOSTINT('did'), 'direct-debit', 'facture');
 		if ($result < 0) {
@@ -170,7 +170,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	// Make payment with Direct Debit Stripe
+	// Make payment with a stripe sepa for a supplier invoice
 	if ($action == 'sepastripecredittransfer' && $usercancreate) {
 		$result = $object->makeStripeSepaRequest($user, GETPOSTINT('did'), 'bank-transfer', 'supplier_invoice');
 		if ($result < 0) {
@@ -350,7 +350,7 @@ if ($object->id > 0) {
 	$listofopendirectdebitorcredittransfer = $object->getListOfOpenDirectDebitOrCreditTransfer($type);
 	$numopen = count($listofopendirectdebitorcredittransfer);
 
-	print dol_get_fiche_head($head, 'standingorders', $title, -1, ($type == 'bank-transfer' ? 'supplier_invoice' : 'bill'));
+	print dol_get_fiche_head($head, 'standingorders', $title, -1, ($type == 'bank-transfer' ? 'supplier_invoice' : $object->picto));
 
 	// Invoice content
 	if ($type == 'bank-transfer') {
@@ -383,7 +383,7 @@ if ($object->id > 0) {
 	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>';
-		if (0) {
+		if (0) {	// @phpstan-ignore-line
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
@@ -799,7 +799,7 @@ if ($object->id > 0) {
 	}
 
 	// Add a transfer request
-	if ($object->status > $object::STATUS_DRAFT && $object->paid == 0 && $num == 0) {
+	if ($object->status > $object::STATUS_DRAFT && $object->paid == 0 && $numopen == 0) {
 		if ($resteapayer > 0) {
 			if ($user_perms) {
 				$remaintopaylesspendingdebit = $resteapayer - $pending;
@@ -841,7 +841,7 @@ if ($object->id > 0) {
 					if ($res > 0 && !$companyBankAccount->verif()) {
 						print img_warning('Error on default bank number for IBAN : '.$langs->trans($companyBankAccount->error));
 					}
-				} elseif ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
+				} elseif (($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
 					print img_warning($langs->trans("NoDefaultIBANFound"));
 				}
 
@@ -888,7 +888,7 @@ if ($object->id > 0) {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AmountMustBePositive")).'">'.$buttonlabel.'</a>';
 		}
 	} else {
-		if ($num == 0) {
+		if ($numopen == 0) {
 			if ($object->status > $object::STATUS_DRAFT) {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AlreadyPaid")).'">'.$buttonlabel.'</a>';
 			} else {
@@ -1051,7 +1051,7 @@ if ($object->id > 0) {
 					if ($obj->fk_prelevement_bons > 0) {
 						print ' &nbsp; ';
 					}
-					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripecredittransfer&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequestDirectDebitWithStripe").'</a>';
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=sepastripecredittransfer&paymentservice=stripesepa&token='.newToken().'&did='.$obj->rowid.'&id='.$object->id.'&type='.urlencode($type).'">'.img_picto('', 'stripe', 'class="pictofixedwidth"').$langs->trans("RequesCreditTransferWithStripe").'</a>';
 				}
 			}
 			print '</td>';
@@ -1081,7 +1081,7 @@ if ($object->id > 0) {
 
 	// Past requests
 
-	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande, pfd.date_traite, pfd.fk_prelevement_bons, pfd.amount,";
+	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande, pfd.date_traite, pfd.fk_prelevement_bons, pfd.amount, pfd.fk_societe_rib, pfd.ext_payment_id, pfd.ext_payment_site,";
 	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.fk_bank_account, pb.amount as pb_amount,";
 	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status, u.photo as user_photo,";
 	$sql .= " sr.iban_prefix as iban, sr.bic as bic";
@@ -1096,6 +1096,7 @@ if ($object->id > 0) {
 	}
 	$sql .= " AND pfd.traite = 1";
 	$sql .= " AND pfd.type = 'ban'";
+	//$sql .= " AND pfd.entity IN (".getEntity('prelevement_demande').")";	// Disabled because the filter on fk_facture... should be enough.
 	$sql .= " ORDER BY pfd.date_demande DESC";
 
 	$resql = $db->query($sql);
@@ -1171,7 +1172,7 @@ if ($object->id > 0) {
 				// Show the bank account
 				$fk_bank_account = $withdrawreceipt->fk_bank_account;
 				if (empty($fk_bank_account)) {
-					$fk_bank_account = ($object->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+					$fk_bank_account = ($object->type == 'bank-transfer' ? getDolGlobalInt('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'));
 				}
 				if ($fk_bank_account > 0) {
 					$bankaccount = new Account($db);
@@ -1180,6 +1181,11 @@ if ($object->id > 0) {
 						print ' - ';
 						print $bankaccount->getNomUrl(1);
 					}
+				}
+				if (!empty($obj->ext_payment_id) || !empty($obj->ext_payment_site)) {
+					print ' - <span class="small opacitymedium">';
+					print $obj->ext_payment_id.'/'.$obj->ext_payment_site;
+					print '</span>';
 				}
 			}
 			print "</td>\n";

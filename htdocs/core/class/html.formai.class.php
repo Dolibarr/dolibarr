@@ -97,9 +97,10 @@ class FormAI extends Form
 	 * @param	string		$format				Format for output ('', 'html', ...)
 	 * @param   string      $htmlContent    	HTML name of WYSIWYG field
 	 * @param	string		$onlyenhancements	Show only this enhancement features (show all if '')
+	 * @param	string		$aiprompt			Ai prompt for textgenerationextrafield function
 	 * @return 	string      					HTML code to ask AI instructions and autofill result
 	 */
-	public function getSectionForAIEnhancement($function = 'textgeneration', $format = '', $htmlContent = 'message', $onlyenhancements = '')
+	public function getSectionForAIEnhancement($function = 'textgeneration', $format = '', $htmlContent = 'message', $onlyenhancements = '', $aiprompt = "")
 	{
 		global $langs, $form;
 		require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
@@ -148,6 +149,12 @@ class FormAI extends Form
 			$out .= '<div id="ai_rephraser'.$htmlContent.'" class="ai_rephraser'.$htmlContent.' paddingtop paddingbottom ai_feature">';
 			$out .= img_picto('', 'edit', 'class="pictofixedwidth paddingrightonly"');
 			$out .= $form->selectarray("ai_rephraser".$htmlContent."_select", $stylearray, 0, $langs->trans("RephraserByAI").'...', 0, 0, 'minwidth250 ai_rephraser'.$htmlContent.'_select', 1);
+			$out .= '</div>';
+		}
+
+		if (in_array($onlyenhancements, array('textgenerationextrafield'))) {
+			$out .= '<div id="ai_textgenerationextrafield'.$htmlContent.'" class="ai_textgenerationextrafield'.$htmlContent.' paddingtop paddingbottom ai_feature">';
+			$out .= '<input id="input_ai_textgenerationextrafield'.$htmlContent.'" type="hidden" class="button smallpaddingimp" data-functionai="textgenerationextrafield" value="'.$aiprompt.'"/>';
 			$out .= '</div>';
 		}
 
@@ -210,6 +217,14 @@ class FormAI extends Form
 					console.log('We change #ai_summarize".$htmlContent."_select with lang '+$(this).val());
 					if ($(this).val() != null && $(this).val() != '' && $(this).val() != '-1') {
 						prepareCallAIGenerator($(this));
+					}
+				});
+				$('#linkforaiprompt".$function."').on('click', function() {
+					//Get value aiprompt + prepare ai generator
+					elementforprompt = $('#input_ai_textgenerationextrafield".$htmlContent."');
+					aiprompt = elementforprompt.val();
+					if (aiprompt != null && aiprompt != '' && aiprompt != '-1'){
+						prepareCallAIGenerator(elementforprompt);
 					}
 				});
 
@@ -276,6 +291,8 @@ class FormAI extends Form
 					} else if (functionai == 'textrephraser') {
 						style = $('#ai_rephraser'+htmlname+'_select').val();
 						instructions = 'Rephrase the following text in a '+style+' style: ' + texttomodify;
+					} else if (functionai == 'textgenerationextrafield'){
+						instructions = $(element).val();
 					} else {
 						instructions = userprompt;
 					}
@@ -394,7 +411,7 @@ class FormAI extends Form
 						console.log('Add response into field \'#'+htmlname+'\': '+response);
 
 						jQuery('#'+htmlname).val(response);		// If #htmlcontent is a input name or textarea
-						jQuery('#'+htmlname).html(response);	// If #htmlContent is a div
+						jQuery('#'+htmlname).html(response).trigger('change');	// If #htmlContent is a div and trigger event change for extrafield update
 						//jQuery('#'+htmlname+'preview').val(response);
 
 						if (CKEDITOR.instances) {
@@ -497,121 +514,5 @@ class FormAI extends Form
 				$this->substit_lines[$line->id] = $substit_line;	// @phan-suppress-current-line PhanTypeMismatchProperty
 			}
 		}
-	}
-
-	/**
-	 * Get list of substitution keys available for emails. This is used for tooltips help.
-	 * This include the complete_substitutions_array.
-	 *
-	 * @param	string	$mode		'formai', 'formaiwithlines', 'formaiforlines', 'ai', ...
-	 * @param	?Object	$object		Object if applicable
-	 * @return	array<string,string>               Array of substitution values for emails.
-	 */
-	public static function getAvailableSubstitKey($mode = 'formai', $object = null)
-	{
-		global $langs;
-
-		$tmparray = array();
-		if ($mode == 'formai' || $mode == 'formaiwithlines' || $mode == 'formaiforlines') {
-			$parameters = array('mode' => $mode);
-			$tmparray = getCommonSubstitutionArray($langs, 2, null, $object); // Note: On email templated edition, this is null because it is related to all type of objects
-			complete_substitutions_array($tmparray, $langs, null, $parameters);
-
-			if ($mode == 'formwithlines') {
-				$tmparray['__LINES__'] = '__LINES__'; // Will be set by the get_form function
-			}
-			if ($mode == 'formforlines') {
-				$tmparray['__QUANTITY__'] = '__QUANTITY__'; // Will be set by the get_form function
-			}
-		}
-
-		if ($mode == 'emailing') {
-			$parameters = array('mode' => $mode);
-			$tmparray = getCommonSubstitutionArray($langs, 2, array('object', 'objectamount'), $object); // Note: On email templated edition, this is null because it is related to all type of objects
-			complete_substitutions_array($tmparray, $langs, null, $parameters);
-
-			// For mass emailing, we have different keys specific to the data into tagerts list
-			$tmparray['__ID__'] = 'IdRecord';
-			$tmparray['__THIRDPARTY_CUSTOMER_CODE__'] = 'CustomerCode';
-			$tmparray['__EMAIL__'] = 'EMailRecipient';
-			$tmparray['__LASTNAME__'] = 'Lastname';
-			$tmparray['__FIRSTNAME__'] = 'Firstname';
-			$tmparray['__MAILTOEMAIL__'] = 'TagMailtoEmail';
-			$tmparray['__OTHER1__'] = 'Other1';
-			$tmparray['__OTHER2__'] = 'Other2';
-			$tmparray['__OTHER3__'] = 'Other3';
-			$tmparray['__OTHER4__'] = 'Other4';
-			$tmparray['__OTHER5__'] = 'Other5';
-			$tmparray['__CHECK_READ__'] = $langs->trans('TagCheckMail');
-			$tmparray['__UNSUBSCRIBE__'] = $langs->trans('TagUnsubscribe');
-			$tmparray['__UNSUBSCRIBE_URL__'] = $langs->trans('TagUnsubscribe').' (URL)';
-
-			$onlinepaymentenabled = 0;
-			if (isModEnabled('paypal')) {
-				$onlinepaymentenabled++;
-			}
-			if (isModEnabled('paybox')) {
-				$onlinepaymentenabled++;
-			}
-			if (isModEnabled('stripe')) {
-				$onlinepaymentenabled++;
-			}
-			if ($onlinepaymentenabled && getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
-				$tmparray['__SECUREKEYPAYMENT__'] = getDolGlobalString('PAYMENT_SECURITY_TOKEN');
-				if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
-					if (isModEnabled('member')) {
-						$tmparray['__SECUREKEYPAYMENT_MEMBER__'] = 'SecureKeyPAYMENTUniquePerMember';
-					}
-					if (isModEnabled('don')) {
-						$tmparray['__SECUREKEYPAYMENT_DONATION__'] = 'SecureKeyPAYMENTUniquePerDonation';
-					}
-					if (isModEnabled('invoice')) {
-						$tmparray['__SECUREKEYPAYMENT_INVOICE__'] = 'SecureKeyPAYMENTUniquePerInvoice';
-					}
-					if (isModEnabled('order')) {
-						$tmparray['__SECUREKEYPAYMENT_ORDER__'] = 'SecureKeyPAYMENTUniquePerOrder';
-					}
-					if (isModEnabled('contract')) {
-						$tmparray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = 'SecureKeyPAYMENTUniquePerContractLine';
-					}
-
-					//Online payment link
-					if (isModEnabled('member')) {
-						$tmparray['__ONLINEPAYMENTLINK_MEMBER__'] = 'OnlinePaymentLinkUniquePerMember';
-					}
-					if (isModEnabled('don')) {
-						$tmparray['__ONLINEPAYMENTLINK_DONATION__'] = 'OnlinePaymentLinkUniquePerDonation';
-					}
-					if (isModEnabled('invoice')) {
-						$tmparray['__ONLINEPAYMENTLINK_INVOICE__'] = 'OnlinePaymentLinkUniquePerInvoice';
-					}
-					if (isModEnabled('order')) {
-						$tmparray['__ONLINEPAYMENTLINK_ORDER__'] = 'OnlinePaymentLinkUniquePerOrder';
-					}
-					if (isModEnabled('contract')) {
-						$tmparray['__ONLINEPAYMENTLINK_CONTRACTLINE__'] = 'OnlinePaymentLinkUniquePerContractLine';
-					}
-				}
-			} else {
-				/* No need to show into tooltip help, option is not enabled
-				$vars['__SECUREKEYPAYMENT__']='';
-				$vars['__SECUREKEYPAYMENT_MEMBER__']='';
-				$vars['__SECUREKEYPAYMENT_INVOICE__']='';
-				$vars['__SECUREKEYPAYMENT_ORDER__']='';
-				$vars['__SECUREKEYPAYMENT_CONTRACTLINE__']='';
-				*/
-			}
-			if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
-				$tmparray['__PUBLICLINK_NEWMEMBERFORM__'] = 'BlankSubscriptionForm';
-			}
-		}
-
-		foreach ($tmparray as $key => $val) {
-			if (empty($val)) {
-				$tmparray[$key] = $key;
-			}
-		}
-
-		return $tmparray;
 	}
 }

@@ -538,7 +538,7 @@ if ($source == 'proposal') {
 	$result = $object->fetch_thirdparty();
 
 	// Proposer
-	print '<tr class="CTableRow2"><td class="CTableRow2">' . $langs->trans("Proposer");
+	print '<tr class="CTableRow2"><td class="CTableRow2">' . $langs->trans("CreditorName");
 	print '</td><td class="CTableRow2">';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
 	print '<b>' . $creditor . '</b>';
@@ -746,7 +746,6 @@ if ($action == "dosign" && empty($cancel)) {
 			$("#signbutton").on("click",function(){
 				console.log("We click on button sign");
 				document.body.style.cursor = \'wait\';
-				/* $("#signbutton").val(\''.dol_escape_js($langs->transnoentities('PleaseBePatient')).'\'); */
 				var signature = $("#signature").jSignature("getData", "image");
 				var name = document.getElementById("name").value;
 				$.ajax({

@@ -72,6 +72,8 @@ class box_services_expired extends ModeleBoxes
 		$this->info_box_head = array('text' => $langs->trans("BoxLastExpiredServices", $max));
 
 		if ($user->hasRight('contrat', 'lire')) {
+			$langs->load("contracts");
+
 			// Select contracts with at least one expired service
 			$sql = "SELECT ";
 			$sql .= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.ref_customer, c.ref_supplier,";
@@ -123,6 +125,7 @@ class box_services_expired extends ModeleBoxes
 					$contract->id = $objp->rowid;
 					$contract->ref = $objp->ref;
 					$contract->statut = $objp->fk_statut;
+					$contract->status = $objp->fk_statut;
 					$contract->ref_customer = $objp->ref_customer;
 					$contract->ref_supplier = $objp->ref_supplier;
 

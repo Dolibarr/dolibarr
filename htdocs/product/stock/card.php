@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2016	    Francis Appels       	<francis.appels@yahoo.com>
  * Copyright (C) 2021		Noé Cendrier			<noe.cendrier@altairis.fr>
- * Copyright (C) 2021-2024  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022-2023	Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023       Christian Foellmann     <christian@foellmann.de>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -216,15 +216,15 @@ if (empty($reshook)) {
 	if ($action == 'update' && !$cancel && $user->hasRight('stock', 'creer')) {
 		if ($object->fetch($id)) {
 			$object->label = GETPOST("libelle");
-			$object->fk_parent   = GETPOST("fk_parent");
+			$object->fk_parent = GETPOSTINT("fk_parent");
 			$object->fk_project = GETPOSTINT('projectid');
 			$object->description = GETPOST("desc", 'restricthtml');
-			$object->statut      = GETPOST("statut");
-			$object->lieu        = GETPOST("lieu");
-			$object->address     = GETPOST("address");
-			$object->zip         = GETPOST("zipcode");
-			$object->town        = GETPOST("town");
-			$object->country_id  = GETPOSTINT("country_id");
+			$object->statut = GETPOSTINT("statut");
+			$object->lieu = GETPOST("lieu");
+			$object->address = GETPOST("address");
+			$object->zip = GETPOST("zipcode");
+			$object->town = GETPOST("town");
+			$object->country_id = GETPOSTINT("country_id");
 			$object->phone = GETPOST("phone");
 			$object->fax = GETPOST("fax");
 
@@ -411,8 +411,7 @@ if ($action == 'create') {
 	if (isModEnabled('category')) {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 3);
-		print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+		print $form->selectCategories(Categorie::TYPE_WAREHOUSE, 'categories', $object);
 		print "</td></tr>";
 	}
 	print '</table>';
@@ -830,7 +829,7 @@ if ($action == 'create') {
 						if (is_null($productstatic->fk_unit)) {
 							$productstatic->fk_unit = 1;
 						}
-						print $langs->trans($productstatic->getLabelOfUnit());
+						print $productstatic->getLabelOfUnit('long', $langs);
 						print '</td>';
 					}
 
@@ -893,7 +892,7 @@ if ($action == 'create') {
 				$totalarray['val']['totalunit'] = $totalunit;
 				$totalarray['val']['totalvalue'] = price2num($totalvalue, 'MT');
 				$totalarray['val']['totalvaluesell'] = price2num($totalvaluesell, 'MT');
-				$totalarray['val']['units'] = $langs->trans($productstatic->getLabelOfUnit());
+				$totalarray['val']['units'] = $productstatic->getLabelOfUnit('long', $langs);
 
 				$parameters = array('context' => 'warehousecard', 'totalarray' => &$totalarray);
 				// Note that $action and $object may have been modified by hook
@@ -1010,14 +1009,7 @@ if ($action == 'create') {
 			// Tags-Categories
 			if (isModEnabled('category')) {
 				print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td colspan="3">';
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_WAREHOUSE, '', 'parent', 64, 0, 3);
-				$c = new Categorie($db);
-				$cats = $c->containing($object->id, Categorie::TYPE_WAREHOUSE);
-				$arrayselected = array();
-				foreach ($cats as $cat) {
-					$arrayselected[] = $cat->id;
-				}
-				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+				print $form->selectCategories(Categorie::TYPE_WAREHOUSE, 'categories', $object);
 				print "</td></tr>";
 			}
 

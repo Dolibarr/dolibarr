@@ -179,7 +179,12 @@ if ($id) {
 		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
 		print $id.'</td></tr>';
 
-		print '<tr><td class="titlefield">'.$langs->trans("WithdrawalsReceipts").'</td><td>';
+		if ($type == 'bank-transfer') {
+			print '<tr><td class="titlefield">'.$langs->trans("BankTransfers").'</td><td>';
+		} else {
+			print '<tr><td class="titlefield">'.$langs->trans("WithdrawalsReceipts").'</td><td>';
+		}
+
 		print $bon->getNomUrl(1).'</td></tr>';
 
 		print '<tr><td>'.$langs->trans("Date").'</td><td>'.dol_print_date($bon->datec, 'day').'</td></tr>';
@@ -278,7 +283,7 @@ if ($id) {
 		if (is_object($bon) && $bon->statut == BonPrelevement::STATUS_CREDITED) {
 			if ($lipre->statut == 2) {
 				if ($user->hasRight('prelevement', 'bons', 'credit')) {
-					print '<a class="butActionDelete" href="line.php?action=rejet&type='.$type.'&id='.$lipre->id.'">'.$langs->trans("StandingOrderReject").'</a>';
+					print '<a class="butActionDelete" href="line.php?action=rejet&token='.newToken().'&type='.$type.'&id='.$lipre->id.'">'.$langs->trans("StandingOrderReject").'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("StandingOrderReject").'</a>';
 				}
@@ -336,7 +341,7 @@ if ($id) {
 			dol_print_error($db);
 		}
 
-		if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+		if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 			$page = 0;
 			$offset = 0;
 		}

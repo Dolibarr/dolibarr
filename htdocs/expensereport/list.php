@@ -375,7 +375,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -869,7 +869,7 @@ if ($num > 0) {
 				print '</td>';
 				// Warning late icon and note
 				print '<td class="nobordernopadding nowrap">';
-				if ($expensereportstatic->status == 2 && $expensereportstatic->hasDelay('toappove')) {
+				if ($expensereportstatic->status == 2 && $expensereportstatic->hasDelay('toapprove')) {
 					print img_warning($langs->trans("Late"));
 				}
 				if ($expensereportstatic->status == 5 && $expensereportstatic->hasDelay('topay')) {

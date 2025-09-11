@@ -349,6 +349,19 @@ if ($action == 'create') {
 		print '<option value="left"'.(GETPOST("type") == 'left' ? ' selected' : '').'>'.$langs->trans('Left').'</option>';
 		print '</select>';
 		print ajax_combobox('topleft');
+
+		print '<script>
+		jQuery(document).ready(function() {
+			jQuery("#topleft").on("change", function() {
+				console.log("We change the type topleft with ");
+				if (jQuery("#topleft").val() == "top") {
+					jQuery(".menuidparent").hide();
+				} else {
+					jQuery(".menuidparent").show();
+				}
+			});
+		});
+		</script>';
 	}
 	print '</td><td>'.$langs->trans('DetailType').'</td></tr>';
 
@@ -360,7 +373,7 @@ if ($action == 'create') {
 	print '</td></tr>';
 
 	// MenuId Parent
-	print '<tr><td>'.$langs->trans('MenuIdParent').'</td>';
+	print '<tr class="menuidparent"><td>'.$langs->trans('MenuIdParent').'</td>';
 	if ($parent_rowid) {
 		print '<td>'.$parent_rowid.'<input type="hidden" name="menuIdParent" value="'.$parent_rowid.'"></td>';
 	} else {
@@ -383,7 +396,7 @@ if ($action == 'create') {
 	print '<td><input type="text" class="minwidth300" name="picto" value="'.dol_escape_htmltag(GETPOST("picto", 'alphanohtml')).'"></td><td>'.$langs->trans('Example').': fa-globe-americas';
 	print '<span class="opacitymedium small">';
 	print ' &nbsp; &nbsp; ';
-	print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?displayMode=icon-only#img-picto-section-list', '', '');
+	print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?hidenavmenu=1&displayMode=icon-only#img-picto-section-list', '', '');
 	print '</span>';
 	print '</td></tr>';
 
@@ -516,7 +529,7 @@ if ($action == 'create') {
 	print '<td><input type="text" class="minwidth300" name="picto" value="'.dol_escape_htmltag($menu->prefix).'"></td><td>'.$langs->trans('Example').': fa-globe-americas';
 	print '<span class="opacitymedium small">';
 	print ' &nbsp; &nbsp; ';
-	print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?displayMode=icon-only#img-picto-section-list', '', '');
+	print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?hidenavmenu=1&displayMode=icon-only#img-picto-section-list', '', '');
 	print '</span>';
 	print '</td></tr>';
 

@@ -60,10 +60,13 @@ class FormCategory extends Form
 
 		$filter = '';
 		$filter .= '<div class="divsearchfield">';
+		$filter .= '<a class="unsetcolor" href="'.DOL_URL_ROOT.'/categories/categorie_list.php?mode=hierarchy&type='.urlencode($type).'&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">';
 		$filter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
+		$filter .= '</a>';
 		if ($multiselect) {
 			$categoryArray = $this->select_all_categories($type, '', '', 64, 0, 2);
 			if ($nocateg) {
+				$langs->load("categories");
 				$categoryArray[-2] = "- ".$langs->trans('NotCategorized')." -";
 			}
 			$htmlName = "search_category_".$type."_list";

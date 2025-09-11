@@ -47,7 +47,7 @@ class FormProduct
 	 */
 	public $cache_warehouses = array();
 	/**
-	 * @var array<int,array<int,array{id:int,batch:string,entrepot_id:int,entrepot_label:string,qty:float}>>
+	 * @var array<int,array<int,array{id:int,batch:string,entrepot_id:int,entrepot_label:string,qty:float,eatbydate:int|string,sellbydate:int|string}>>
 	 */
 	public $cache_lot = array();
 	/**
@@ -283,10 +283,10 @@ class FormProduct
 	 *                                          'warehouseopen' = select products from open warehouses,
 	 *                                          'warehouseclosed' = select products from closed warehouses,
 	 *                                          'warehouseinternal' = select products from warehouses for internal correct/transfer only
-	 *  @param  int<0,1>    $empty			    1=Can be empty, 0 if not
+	 *  @param  int<0,1>|string    $empty		Use 1 or 'label'=Can be empty, 0 if not
 	 * 	@param	int<0,1>    $disabled		    1=Select is disabled
 	 * 	@param	int		    $fk_product		    Add quantity of stock in label for product with id fk_product. Nothing if 0.
-	 *  @param	string	    $empty_label	    Empty label if needed (only if $empty=1)
+	 *  @param	string	    $empty_label	    Empty label if needed (deprecated, set the label into the field $empty)
 	 *  @param	int<0,1>    $showstock		    1=Show stock count
 	 *  @param	int<0,1>   	$forcecombo		    1=Force combo iso ajax select2
 	 *	@param	array<array{method:string,url:string,htmlname:string,params:array<string,string>}>	$events		Events to add to select2
@@ -341,7 +341,7 @@ class FormProduct
 		//$out .= ' placeholder="todo"'; 	// placeholder for select2 must be added by setting the id+placeholder js param when calling select2
 		$out .= '>';
 		if ($empty) {
-			$out .= '<option value="-1">'.($empty_label ? $empty_label : '&nbsp;').'</option>';
+			$out .= '<option value="-1">'.(is_numeric($empty) ? ($empty_label ? $empty_label : '&nbsp;') : $empty).'</option>';
 		}
 		foreach ($this->cache_warehouses as $id => $arraytypes) {
 			$label = '';
@@ -861,7 +861,16 @@ class FormProduct
 						$label = $arraytypes['entrepot_label'] . ' - ';
 						$label .= $arraytypes['batch'];
 						// Notice: Chrome show 1 line with value and 1 for label. Firefox show only 1 line with label
-						$out .= '<option data-warehouse="'.dol_escape_htmltag($label).'" value="' . $arraytypes['batch'] . '">' . ($conf->browser->name === 'chrome' ? '' : $arraytypes['batch']) . ' (' . $langs->trans('TotalStock') . ': ' . $arraytypes['qty'] . ')</option>';
+						$optionLabel = ($conf->browser->name === 'chrome' ? '' : $arraytypes['batch']);
+						$optionLabel .= ' ('.$langs->trans('TotalStock').': '.$arraytypes['qty'];
+						if (!empty($arraytypes['sellbydate'])) {
+							$optionLabel .= ' - '.$langs->trans('printSellby', $arraytypes['sellbydate']);
+						}
+						if (!empty($arraytypes['eatbydate'])) {
+							$optionLabel .= ' - '.$langs->trans('printEatby', $arraytypes['eatbydate']);
+						}
+						$optionLabel .= ')';
+						$out .= '<option data-warehouse="'.dol_escape_htmltag($label).'" data-eatbydate="'.$arraytypes['eatbydate'].'" data-sellbydate="'.$arraytypes['sellbydate'].'" value="' . $arraytypes['batch'] . '">'.$optionLabel.'</option>';
 					}
 				}
 			}
@@ -923,10 +932,22 @@ class FormProduct
 				return $batch_count;
 			}
 
+			$is_eat_by_enabled = !getDolGlobalInt('PRODUCT_DISABLE_EATBY');
+			$is_sell_by_enabled = !getDolGlobalInt('PRODUCT_DISABLE_SELLBY');
+
 			$sql = "SELECT pb.batch, pb.rowid, ps.fk_entrepot, pb.qty, e.ref as label, ps.fk_product";
+			if ($is_eat_by_enabled) {
+				$sql .= ", pl.eatby";
+			}
+			if ($is_sell_by_enabled) {
+				$sql .= ", pl.sellby";
+			}
 			$sql .= " FROM ".$this->db->prefix()."product_batch as pb";
 			$sql .= " LEFT JOIN ".$this->db->prefix()."product_stock as ps on ps.rowid = pb.fk_product_stock";
 			$sql .= " LEFT JOIN ".$this->db->prefix()."entrepot as e on e.rowid = ps.fk_entrepot AND e.entity IN (".getEntity('stock').")";
+			if ($is_eat_by_enabled || $is_sell_by_enabled) {
+				$sql .= " LEFT JOIN ".$this->db->prefix()."product_lot as pl on ps.fk_product = pl.fk_product AND pb.batch = pl.batch";
+			}
 			if (!empty($productIdList)) {
 				$sql .= " WHERE ps.fk_product IN (".$this->db->sanitize($productIdList).")";
 			}
@@ -944,6 +965,14 @@ class FormProduct
 					$this->cache_lot[$obj->fk_product][$obj->rowid]['entrepot_id'] = $obj->fk_entrepot;
 					$this->cache_lot[$obj->fk_product][$obj->rowid]['entrepot_label'] = $obj->label;
 					$this->cache_lot[$obj->fk_product][$obj->rowid]['qty'] = $obj->qty;
+					$this->cache_lot[$obj->fk_product][$obj->rowid]['eatbydate'] = '';
+					if (!empty($obj->eatby)) {
+						$this->cache_lot[$obj->fk_product][$obj->rowid]['eatbydate'] = dol_print_date($this->db->jdate($obj->eatby), 'day');
+					}
+					$this->cache_lot[$obj->fk_product][$obj->rowid]['sellbydate'] = '';
+					if (!empty($obj->sellby)) {
+						$this->cache_lot[$obj->fk_product][$obj->rowid]['sellbydate'] = dol_print_date($this->db->jdate($obj->sellby), 'day');
+					}
 					$i++;
 				}
 

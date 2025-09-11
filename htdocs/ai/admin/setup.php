@@ -133,7 +133,7 @@ $title = "AiSetup";
 llxHeader('', $langs->trans($title), $help_url, '', 0, 0, '', '', '', 'mod-ai page-admin');
 
 // Subheader
-$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 
@@ -144,7 +144,6 @@ print dol_get_fiche_head($head, 'settings', $langs->trans($title), -1, "ai");
 
 if ($action == 'edit') {
 	print $formSetup->generateOutput(true);
-	print '<br>';
 } elseif (!empty($formSetup->items)) {
 	print $formSetup->generateOutput();
 	print '<div class="tabsAction">';
@@ -205,6 +204,8 @@ print dol_get_fiche_end();
 // The section for test
 
 if (getDolGlobalString("AI_API_SERVICE")) {
+	print '<br>';
+
 	// Section to test
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';

@@ -19,5 +19,5 @@ TypeHelpDevForm=Pomoc + Rozwój + Szkolenie
 BackToHelpCenter=W przeciwnym razie <a href="%s"> wróć do strony głównej Centrum pomocy </a>.
 LinkToGoldMember=Możesz zadzwonić do jednego z trenerów wybranych przez Dolibarr dla Twojego języka (%s), klikając ich widżet (status i maksymalna cena są aktualizowane automatycznie):
 PossibleLanguages=Obsługiwane języki
-SubscribeToFoundation=Pomóż projektowi Dolibarr, zasubskrybuj fundację
+SubscribeToFoundation=Pomóż projektowi Dolibarr, zapisz się do fundacji
 SeeOfficalSupport=Oficjalne wsparcie Dolibarr w Twoim języku: <br> <b> <a href="%s" target="_blank" rel="noopener noreferrer"> %s </a> </b>

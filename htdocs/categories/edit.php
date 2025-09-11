@@ -49,6 +49,7 @@ $action = (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'edit');
 $confirm = GETPOST('confirm');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
+$dol_openinpopup = GETPOST('dol_openinpopup', 'aZ');
 
 $socid = GETPOSTINT('socid');
 $label = (string) GETPOST('label', 'alphanohtml');
@@ -103,7 +104,7 @@ if (empty($reshook)) {
 			header("Location: ".$backtopage);
 			exit;
 		} else {
-			header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
+			header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.((int) $object->id).'&type='.urlencode($type).($dol_openinpopup ? '&dol_openinpopup='.urlencode($dol_openinpopup) : ''));
 			exit;
 		}
 	}
@@ -136,7 +137,7 @@ if (empty($reshook)) {
 					header("Location: ".$backtopage);
 					exit;
 				} else {
-					header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
+					header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.((int) $object->id).'&type='.urlencode($type).($dol_openinpopup ? '&dol_openinpopup='.urlencode($dol_openinpopup) : ''));
 					exit;
 				}
 			} else {
@@ -170,6 +171,7 @@ print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="id" value="'.$object->id.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+print '<input type="hidden" name="dol_openinpopup" value="'.$dol_openinpopup.'">';
 
 print dol_get_fiche_head([]);
 

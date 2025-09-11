@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
@@ -37,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/factureligne.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/subtotals/class/commonsubtotal.class.php';
 
 
 /**
@@ -44,7 +44,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class FactureRec extends CommonInvoice
 {
-	const TRIGGER_PREFIX = 'BILLREC';
+	use CommonSubtotal;
+
+	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'BILLREC';
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -69,11 +76,6 @@ class FactureRec extends CommonInvoice
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'bill';
-
-	/**
-	 * @var int Entity
-	 */
-	public $entity;
 
 	/**
 	 * {@inheritdoc}
@@ -204,10 +206,16 @@ class FactureRec extends CommonInvoice
 	 * @var int<0,1>
 	 */
 	public $auto_validate; // 0 to create in draft, 1 to create and validate the new invoice
+
 	/**
 	 * @var int<0,1>
 	 */
 	public $generate_pdf; // 1 to generate PDF on invoice generation (default)
+
+	/**
+	 * @var int<0,2>		Default is 0, 1=Use the last known currency rate to update main price, 2=to update foreign price
+	 */
+	public $usenewcurrencyrate;
 
 
 
@@ -223,7 +231,7 @@ class FactureRec extends CommonInvoice
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -254,7 +262,7 @@ class FactureRec extends CommonInvoice
 		'localtax2' => array('type' => 'double(24,8)', 'label' => 'Localtax2', 'enabled' => 1, 'visible' => -1, 'position' => 65, 'isameasure' => 1),
 		'total_ht' => array('type' => 'double(24,8)', 'label' => 'Total', 'enabled' => 1, 'visible' => -1, 'position' => 70, 'isameasure' => 1),
 		'total_ttc' => array('type' => 'double(24,8)', 'label' => 'Total ttc', 'enabled' => 1, 'visible' => -1, 'position' => 75, 'isameasure' => 1),
-		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fk user author', 'enabled' => 1, 'visible' => -1, 'position' => 80),
+		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'position' => 80),
 		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Fk projet', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 85),
 		'fk_cond_reglement' => array('type' => 'integer', 'label' => 'Fk cond reglement', 'enabled' => 1, 'visible' => -1, 'position' => 90),
 		'fk_mode_reglement' => array('type' => 'integer', 'label' => 'Fk mode reglement', 'enabled' => 1, 'visible' => -1, 'position' => 95),
@@ -490,6 +498,12 @@ class FactureRec extends CommonInvoice
 							}
 
 							$result = $objectline->insertExtraFields();
+							if ($result < 0) {
+								$error++;
+							}
+
+							$objectline->extraparams = $facline->extraparams;
+							$result = $objectline->setExtraParameters();
 							if ($result < 0) {
 								$error++;
 							}
@@ -1442,6 +1456,7 @@ class FactureRec extends CommonInvoice
 					$facture->status = self::STATUS_DRAFT;
 					$facture->date = (empty($facturerec->date_when) ? $now : $facturerec->date_when); // We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
 					$facture->socid = $facturerec->socid;
+
 					if (!empty($facturerec->fk_multicurrency)) {
 						$facture->fk_multicurrency = $facturerec->fk_multicurrency;
 						$facture->multicurrency_code = $facturerec->multicurrency_code;
@@ -1459,7 +1474,8 @@ class FactureRec extends CommonInvoice
 					$parameters['facture'] = &$facture;
 					$reshook = $hookmanager->executeHooks('beforeCreationOfEachRecurringInvoice', $parameters, $facturerec, $action); // note that $facturerec or $facture might be modified by hooks
 
-					$invoiceidgenerated = $facture->create($user);
+					// Create invoice. This may update prices according to multiplrice rules
+					$invoiceidgenerated = $facture->create($user, 0, 0, (isModEnabled('multicurrency') ? $facturerec->usenewcurrencyrate : 0));
 					if ($invoiceidgenerated <= 0) {
 						$this->setErrorsFromObject($facture);
 						$error++;
@@ -1566,7 +1582,7 @@ class FactureRec extends CommonInvoice
 			}
 		}
 
-		$url = DOL_URL_ROOT.'/compta/facture/card-rec.php?facid='.$this->id;
+		$url = DOL_URL_ROOT.'/compta/facture/card-rec.php?id='.$this->id;
 
 		if ($short) {
 			return $url;

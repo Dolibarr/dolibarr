@@ -392,16 +392,16 @@ class Task extends CommonObjectLine
 		$this->labelStatus = array(
 			0 => 'Draft',
 			1 => 'Validated',
-			2 => 'In progress',
+			2 => 'InProgress',
 			3 => 'Closed',
-			4 => 'Transferred',
+			//4 => 'Transferred',
 		);
 		$this->labelStatusShort = array(
 			0 => 'Draft',
 			1 => 'Validated',
-			2 => 'In progress',
+			2 => 'InProgress',
 			3 => 'Closed',
-			4 => 'Transferred',
+			//4 => 'Transferred',
 		);
 	}
 
@@ -1010,7 +1010,7 @@ class Task extends CommonObjectLine
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param	string	$option			'withproject' or ''
 	 *  @param	string	$mode			Mode 'task', 'time', 'contact', 'note', document' define page to link to.
-	 * 	@param	int		$addlabel		0=Default, 1=Add label into string, >1=Add first chars into string
+	 * 	@param	int		$addlabel		0=Default, 1=Add label into string, >1=Add first chars into string, -1=Label replace the ref
 	 *  @param	string	$sep			Separator between ref and label if option addlabel is set
 	 *  @param	int   	$notooltip		1=Disable tooltip
 	 *  @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
@@ -1072,11 +1072,15 @@ class Task extends CommonObjectLine
 			$result .= img_object(($notooltip ? '' : $label), $picto, 'class="paddingright"', 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
-			$result .= $this->ref;
+			if ($addlabel >= 0) {
+				$result .= $this->ref;
+			} else {
+				$result .= $this->label;
+			}
 		}
 		$result .= $linkend;
 		if ($withpicto != 2) {
-			$result .= (($addlabel && $this->label) ? $sep.dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
+			$result .= (($addlabel > 0 && $this->label) ? '<span class="opacitymedium">'.$sep.dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)).'</span>' : '');
 		}
 
 		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
@@ -2054,7 +2058,7 @@ class Task extends CommonObjectLine
 	}
 
 	/**
-	 *	Update time spent
+	 *	Update time spent line with id $this->timespent_id. New values are into ->timespent_xxx fields.
 	 *
 	 *  @param	User	$user           User id
 	 *  @param  int		$notrigger	    0=launch triggers after, 1=disable triggers
@@ -2069,10 +2073,6 @@ class Task extends CommonObjectLine
 		// Check parameters
 		if ($this->timespent_date == '') {
 			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Date"));
-			return -1;
-		}
-		if (!($this->timespent_fk_user > 0)) {
-			$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentities("User"));
 			return -1;
 		}
 
@@ -2099,11 +2099,14 @@ class Task extends CommonObjectLine
 
 		$timespent = new TimeSpent($this->db);
 		$timespent->fetch($this->timespent_id);
+
 		$timespent->element_date = $this->timespent_date;
 		$timespent->element_datehour = $this->timespent_datehour;
 		$timespent->element_date_withhour = $this->timespent_withhour;
 		$timespent->element_duration = $this->timespent_duration;
-		$timespent->fk_user = $this->timespent_fk_user;
+		if ($this->timespent_fk_user > 0) {
+			$timespent->fk_user = $this->timespent_fk_user;
+		}
 		$timespent->fk_product = $this->timespent_fk_product;
 		$timespent->note = $this->timespent_note;
 		$timespent->invoice_id = $this->timespent_invoiceid;
@@ -2480,17 +2483,17 @@ class Task extends CommonObjectLine
 			return $langs->trans($this->labelStatusShort[$status]);
 		} elseif ($mode == 2) {
 			switch ($status) {
-				case 0:
+				case 0:	// draft
 					return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut0').' '.$langs->trans($this->labelStatusShort[$status]);
-				case 1:
+				case 1: // validated
 					return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut1').' '.$langs->trans($this->labelStatusShort[$status]);
-				case 2:
+				case 2:	// in progress
 					return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut3').' '.$langs->trans($this->labelStatusShort[$status]);
-				case 3:
+				case 3:	// closed
 					return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6').' '.$langs->trans($this->labelStatusShort[$status]);
-				case 4:
+				case 4:	// transferred ?
 					return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut6').' '.$langs->trans($this->labelStatusShort[$status]);
-				case 5:
+				case 5:	// ???
 					return img_picto($langs->trans($this->labelStatusShort[$status]), 'statut5').' '.$langs->trans($this->labelStatusShort[$status]);
 			}
 		} elseif ($mode == 3) {
@@ -2515,11 +2518,11 @@ class Task extends CommonObjectLine
 				case 1:
 					return dolGetStatus($langs->trans($this->labelStatus[$status]), $langs->trans($this->labelStatusShort[$status]), '', 'status1', $mode);
 				case 2:
-					return dolGetStatus($langs->trans($this->labelStatus[$status]), $langs->trans($this->labelStatusShort[$status]), '', 'status2', $mode);
-				case 3:
 					return dolGetStatus($langs->trans($this->labelStatus[$status]), $langs->trans($this->labelStatusShort[$status]), '', 'status3', $mode);
+				case 3:
+					return dolGetStatus($langs->trans($this->labelStatus[$status]), $langs->trans($this->labelStatusShort[$status]), '', 'status6', $mode);
 				case 4:
-					return dolGetStatus($langs->trans($this->labelStatus[$status]), $langs->trans($this->labelStatusShort[$status]), '', 'status4', $mode);
+					return dolGetStatus($langs->trans($this->labelStatus[$status]), $langs->trans($this->labelStatusShort[$status]), '', 'status6', $mode);
 				case 5:
 					return dolGetStatus($langs->trans($this->labelStatus[$status]), $langs->trans($this->labelStatusShort[$status]), '', 'status5', $mode);
 			}

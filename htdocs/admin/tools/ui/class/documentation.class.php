@@ -174,6 +174,15 @@ class Documentation
 			'url' => dol_buildpath($this->baseUrl.'/content/index.php', 1),
 			'icon' => 'far fa-file-alt',
 			'submenu' => array(
+				'Titles' => array(
+					'url' => dol_buildpath('admin/tools/ui/content/titles.php', 1),
+					'icon' => 'fas fa-heading',
+					'submenu' => array(),
+					'summary' => array(
+						'DocBasicUsage' => '#titlesection-basicusage',
+						'DocTitleWithFilters' => '#titlesection-withfilters',
+					),
+				),
 				'Tables' => array(
 					'url' => dol_buildpath('admin/tools/ui/content/tables.php', 1),
 					'icon' => 'fas fa-table',
@@ -237,6 +246,13 @@ class Documentation
 					'submenu' => array(),
 					'summary' => array(),
 				),
+
+				'ExperimentalUxIntuitiveSelect' => array(
+					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/intuitive-select/index.php', 1),
+					'icon' => 'fas fa-flask',
+					'submenu' => array(),
+					'summary' => array(),
+				),
 			)
 		);
 
@@ -252,14 +268,15 @@ class Documentation
 	}
 
 	/**
-	 *    Output header + body
+	 * Output header + body
 	 *
 	 * @param string $title Title of page
-	 * @param 	string[]	$arrayofjs		 Array of complementary js files
-	 * @param 	string[]	$arrayofcss		 Array of complementary css files
+	 * @param 	string[]	$arrayofjs		Array of complementary js files
+	 * @param 	string[]	$arrayofcss		Array of complementary css files
+	 * @param	string		$hidenavmenu	Hide nav menu
 	 * @return void
 	 */
-	public function docHeader($title = '', $arrayofjs = [], $arrayofcss = [])
+	public function docHeader($title = '', $arrayofjs = [], $arrayofcss = [], $hidenavmenu = '')
 	{
 		global $langs;
 		$title = (!empty($title)) ? dol_escape_htmltag($title) : $langs->trans('Documentation');
@@ -268,7 +285,7 @@ class Documentation
 
 		top_htmlhead('',  $title, 0, 0, $arrayofjs, $arrayofcss);
 
-		print '<body class="dolibarr-doc">';
+		print '<body class="dolibarr-doc'.($hidenavmenu ? "-bis" : "").'">';
 	}
 
 	/**
@@ -297,7 +314,7 @@ class Documentation
 	/**
 	 * Output sidebar
 	 *
-	 * @return void
+	 * @return 	void
 	 */
 	public function showSidebar()
 	{
@@ -396,7 +413,7 @@ class Documentation
 	{
 		$i = 0;
 		$menu_entry = [];
-		if (!empty($this->view)) :
+		if (!empty($this->view)) {
 			// On se place au bon niveau
 			foreach ($this->view as $view) {
 				$i++;
@@ -406,11 +423,11 @@ class Documentation
 					$menu_entry = $menu_entry['submenu'][$view];
 				}
 			}
-		endif;
+		}
 
-		if (!empty($menu_entry['summary']) || !empty($menu_entry['submenu'] && $showsubmenu)) {
+		if (!empty($menu_entry['summary']) || (!empty($menu_entry['submenu']) && $showsubmenu)) {
 			print '<div class="summary-wrapper">';
-				$this->displaySummary($menu_entry);
+			$this->displaySummary($menu_entry);
 			print '</div>';
 		}
 	}
@@ -427,21 +444,29 @@ class Documentation
 	 */
 	public function displaySummary($menu, $level = 0, $showsubmenu = 1, $showsubmenu_summary = 1)
 	{
-
 		global $langs;
 
 		$level++;
 		print '<ul class="documentation-summary level-'.$level.'"">';
 
-		if (!empty($menu['summary'])) :
+		if (!empty($menu['summary'])) {
 			foreach ($menu['summary'] as $summary_label => $summary_link) {
+				/*
 				if ($summary_link[0] == '#') {
-					$summary_link = $menu['url'].$summary_link;
+					$tmp_summary_link = $menu['url'];
+					if (GETPOSTINT('hidenavmenu')) {
+						$tmp_summary_link .= (strpos($tmp_summary_link, '?') === false ? '?' : '&').'hidenavmenu=1';
+					}
+					if (GETPOSTINT('displayMode')) {
+						$tmp_summary_link .= (strpos($tmp_summary_link, '?') === false ? '?' : '&').'displayMode=1';
+					}
+					$summary_link = $tmp_summary_link;
 				}
+				*/
 
 				print '<li><a href="'.$summary_link.'">'.$langs->trans($summary_label).'</a></li>';
 			}
-		endif;
+		}
 
 		if ($showsubmenu && !empty($menu['submenu'])) {
 			foreach ($menu['submenu'] as $key => $item) {

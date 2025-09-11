@@ -117,7 +117,7 @@ class Workstations extends DolibarrApi
 
 		$obj_ret = array();
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+		$socid = DolibarrApiAccess::$user->socid ?: '';
 
 		$sql = "SELECT t.rowid, t.ref";
 		$sql .= " FROM ".$this->db->prefix()."workstation_workstation as t";
