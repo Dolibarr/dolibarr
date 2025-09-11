@@ -229,7 +229,7 @@ class Tasks extends DolibarrApi
 	 * Get time spent of a task
 	 *
 	 * @param 	int   	$id         Id of task
-	 * @return	array				Array of timespent lines 
+	 * @return	array				Array of timespent lines
 	 *
 	 * @url	GET {id}/timespent
 	 */
@@ -240,17 +240,17 @@ class Tasks extends DolibarrApi
 		}
 
 		$result = $this->task->fetch($id);
-		if(!$result) {
+		if (!$result) {
 			throw new RestException(404, 'Task not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('tasks',$this->task->id)) {
+		if (!DolibarrApi::_checkAccessToResource('tasks', $this->task->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->task->fetchTimeSpentOnTask();
 		$result = array();
 		foreach ($this->task->lines as $line) {
-			array_push($result,$this->_cleanObjectDatas($line));
+			array_push($result, $this->_cleanObjectDatas($line));
 		}
 		return $result;
 	}
