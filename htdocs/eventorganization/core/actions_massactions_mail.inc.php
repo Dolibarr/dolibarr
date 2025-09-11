@@ -97,24 +97,22 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 
 	$listofselectedid = array();
 	$listofselectedref = array();
-	if (!$error) {
-		require_once DOL_DOCUMENT_ROOT . '/eventorganization/class/conferenceorboothattendee.class.php';
-		$attendee = new ConferenceOrBoothAttendee($db);
-		$objecttmp = new $objectclass($db);
-		'@phan-var-force CommonObject $objecttmp';
-		/** @var CommonObject $objecttmp */
+	require_once DOL_DOCUMENT_ROOT . '/eventorganization/class/conferenceorboothattendee.class.php';
+	$attendee = new ConferenceOrBoothAttendee($db);
+	$objecttmp = new $objectclass($db);
+	'@phan-var-force CommonObject $objecttmp';
+	/** @var CommonObject $objecttmp */
 
-		foreach ($toselect as $toselectid) {
-			$result = $objecttmp->fetch($toselectid);
-			if ($result > 0) {
-				$attendees = $attendee->fetchAll();
-				if (is_array($attendees) && count($attendees) > 0) {
-					foreach ($attendees as $attmail) {
-						if (!empty($attmail->email)) {
-							$attmail->fetch_thirdparty();
-							$listofselectedid[$attmail->email] = $attmail;
-							$listofselectedref[$attmail->email] = $objecttmp;
-						}
+	foreach ($toselect as $toselectid) {
+		$result = $objecttmp->fetch($toselectid);
+		if ($result > 0) {
+			$attendees = $attendee->fetchAll();
+			if (is_array($attendees) && count($attendees) > 0) {
+				foreach ($attendees as $attmail) {
+					if (!empty($attmail->email)) {
+						$attmail->fetch_thirdparty();
+						$listofselectedid[$attmail->email] = $attmail;
+						$listofselectedref[$attmail->email] = $objecttmp;
 					}
 				}
 			}
