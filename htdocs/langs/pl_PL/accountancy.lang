@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=Księgowość
 Accounting=Księgowość
+AccountingAccount=Konto księgowe
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=Separator kolumn dla eksportowanego pliku
 ACCOUNTING_EXPORT_DATE=Format daty dla eksportowanego pliku
 ACCOUNTING_EXPORT_PIECE=Exportuj ilość sztuk

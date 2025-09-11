@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=การบัญชี
 Accounting=การบัญชี
+AccountingAccount=บัญชีการบัญชี
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=คั่นคอลัมน์สำหรับแฟ้มส่งออก
 ACCOUNTING_EXPORT_DATE=รูปแบบวันที่สำหรับไฟล์การส่งออก
 ACCOUNTING_EXPORT_PIECE=Export the number of piece

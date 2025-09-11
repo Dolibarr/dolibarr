@@ -346,7 +346,7 @@ class Contact extends CommonObject
 	// END MODULEBUILDER PROPERTIES
 
 	/**
-	 * @var array<int,array{id:int,socid:int,element:string,source:string,code:string,label:string}> roles
+	 * @var null|array<int,array{id:int,socid:int,element:string,source:string,code:string,label:string}> roles, null until fetched or set
 	 */
 	public $roles;
 
@@ -361,7 +361,7 @@ class Contact extends CommonObject
 	public $fk_prospectlevel;
 
 	/**
-	 * @var int
+	 * @var null|int Is null until fetched or set
 	 */
 	public $stcomm_id;
 
@@ -558,12 +558,10 @@ class Contact extends CommonObject
 		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."socpeople");
 
-			if (!$error) {
-				$result = $this->update($this->id, $user, 1, 'add'); // This include updateRoles(), ...
-				if ($result < 0) {
-					$error++;
-					$this->error = $this->db->lasterror();
-				}
+			$result = $this->update($this->id, $user, 1, 'add'); // This include updateRoles(), ...
+			if ($result < 0) {
+				$error++;
+				$this->error = $this->db->lasterror();
 			}
 
 			if (!$error) {
@@ -702,11 +700,9 @@ class Contact extends CommonObject
 			$action = 'update';
 
 			// Actions on extra fields
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 			if (!$error) {
@@ -1078,13 +1074,13 @@ class Contact extends CommonObject
 			} elseif ($num) {   // $num = 1
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id		= $obj->rowid;
-				$this->entity	= $obj->entity;
-				$this->ref		= $obj->rowid;
-				$this->ref_ext	= $obj->ref_ext;
+				$this->id = $obj->rowid;
+				$this->entity = $obj->entity;
+				$this->ref = $obj->rowid;
+				$this->ref_ext = $obj->ref_ext;
 
-				$this->civility_code    = $obj->civility_code;
-				$this->civility	        = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != "Civility".$obj->civility_code ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
+				$this->civility_code = $obj->civility_code;
+				$this->civility = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != "Civility".$obj->civility_code ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
 
 				$this->name_alias	= $obj->name_alias;
 				$this->lastname		= $obj->lastname;
@@ -1093,7 +1089,7 @@ class Contact extends CommonObject
 				$this->zip			= $obj->zip;
 				$this->town			= $obj->town;
 
-				$this->date_creation     = $this->db->jdate($obj->date_creation);
+				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
 				$this->user_creation_id = $obj->fk_user_creat;
 				$this->user_modification_id = $obj->fk_user_modif;
@@ -1121,10 +1117,10 @@ class Contact extends CommonObject
 				$this->statut_commercial = $libelle; // libelle statut commercial
 				$this->stcomm_picto = $obj->stcomm_picto; // Picto statut commercial
 
-				$this->phone_pro	= trim($obj->phone);
-				$this->fax			= trim($obj->fax);
-				$this->phone_perso	= trim($obj->phone_perso);
-				$this->phone_mobile	= trim($obj->phone_mobile);
+				$this->phone_pro = trim($obj->phone);
+				$this->fax = trim($obj->fax);
+				$this->phone_perso = trim($obj->phone_perso);
+				$this->phone_mobile = trim($obj->phone_mobile);
 
 				$this->email			= $obj->email;
 				$this->socialnetworks	= ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
@@ -1317,7 +1313,7 @@ class Contact extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error && !$notrigger) {
+		if (!$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('CONTACT_DELETE', $user);
 			if ($result < 0) {
@@ -1576,7 +1572,7 @@ class Contact extends CommonObject
 			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
-			if ($url && $add_save_lastsearch_values) {
+			if ($add_save_lastsearch_values) {
 				$url .= '&save_lastsearch_values=1';
 			}
 		}
@@ -1595,13 +1591,13 @@ class Contact extends CommonObject
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
 
-		if ($option == 'nolink' || empty($url)) {
+		if ($option == 'nolink') {
 			$linkstart = '<span';
 		} else {
 			$linkstart = '<a href="'.$url.'"';
 		}
 		$linkstart .= $linkclose.'>';
-		if ($option == 'nolink' || empty($url)) {
+		if ($option == 'nolink') {
 			$linkend = '</span>';
 		} else {
 			$linkend = '</a>';
@@ -2271,19 +2267,18 @@ class Contact extends CommonObject
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
-		//var_dump($this->photo);exit;
-		if (property_exists($this, 'photo') && !is_null($this->photo)) {
+		if (!is_null($this->photo)) {
 			$return .= Form::showphoto('contact', $this, 0, 60, 0, 'photokanban photoref photowithmargin photologintooltip', 'small', 0, 1);
 		} else {
 			$return .= img_picto('', $this->picto);
 		}
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<div class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(0) : $this->ref).'</div>';
+		$return .= '<div class="info-box-ref inline-block tdoverflowmax150 valignmiddle">' . $this->getNomUrl(0) . '</div>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
+		if (is_object($this->thirdparty)) {
 			$return .= '<div class="info-box-ref tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
 		}
 		/*if (property_exists($this, 'phone_pro') && !empty($this->phone_pro)) {
@@ -2294,9 +2289,7 @@ class Contact extends CommonObject
 			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Visibility").'</span>';
 			$return .= '<span> : '.$this->LibPubPriv($this->priv).'</span>';
 		}*/
-		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
-		}
+		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';

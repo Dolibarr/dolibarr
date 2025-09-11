@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=Računovodstvo
 Accounting=Računovodstvo
+AccountingAccount=Računovodstveni račun
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=Odvajanje kolona za izvoznu datoteku
 ACCOUNTING_EXPORT_DATE=Format datuma za izvoznu datoteku
 ACCOUNTING_EXPORT_PIECE=Izvoz broja komada

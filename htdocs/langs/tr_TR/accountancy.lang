@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=Muhasebe
 Accounting=Muhasebe
+AccountingAccount=Muhasebe hesabı
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=Dışa aktarma dosyası için sütun ayırıcısı
 ACCOUNTING_EXPORT_DATE=Dışa aktarma dosyası için tarih biçimi
 ACCOUNTING_EXPORT_PIECE=Parça sayısını dışa aktar

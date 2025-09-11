@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=財務會計
 Accounting=簿記會計
+AccountingAccount=會計賬戶
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=匯出文件的欄位分隔符號
 ACCOUNTING_EXPORT_DATE=匯出文件的日期格式
 ACCOUNTING_EXPORT_PIECE=導出件數

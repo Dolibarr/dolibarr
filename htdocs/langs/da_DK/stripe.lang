@@ -92,3 +92,19 @@ ExampleOnlyForDECustomers=Kun for tyske kunder
 ExampleOnlyForNLCustomers=Kun for hollandske kunder
 ExampleOnlyForATBEDEITNLESCustomers=Kun for kunder fra Østrig, Belgien, Tyskland, Italien, Holland, Spanien
 ListOfSupportedHooksToActivate=Liste over understøttede hooks, der skal aktiveres
+# Paybox
+PayBoxSetup=PayBox modul opsætning
+PayBoxDesc=Dette modul tilbyder sider for at tillade betaling på <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external"> Paybox </a> af kunder. Dette kan bruges til en gratis betaling eller til en betaling på et bestemt Dolibarr-objekt (faktura, ordre, ...)
+PayBoxDoPayment=Betal med Paybox
+YouWillBeRedirectedOnPayBox=Du bliver omdirigeret om sikret Paybox siden til input du kreditkort informationer
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
+YourPaymentHasBeenRecorded=Denne side bekræfter, at din betaling er registreret. Tak.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
+PAYBOX_CGI_URL_V2=URL PAYBOX CGI-modul til betaling
+NewPayboxPaymentReceived=Ny Paybox modtaget
+NewPayboxPaymentFailed=Ny Paybox betaling forsøgt men mislykkedes
+PAYBOX_PAYONLINE_SENDEMAIL=E-mail-meddelelse efter betalingsforsøg (succes eller fiasko)
+PAYBOX_PBX_SITE=Value for PBX SITE
+PAYBOX_PBX_RANG=Value for PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Value for PBX ID
+PAYBOX_HMAC_KEY=HMAC-nøgle
