@@ -1218,7 +1218,7 @@ class Adherent extends CommonObject
 
 		$error = 0;
 		$member_origin = new Adherent($this->db);		// The member that we will delete
-		
+
 		dol_syslog("mergeMembers merge member id=".$member_origin_id." (will be deleted) into the member id=".$this->id);
 		if (!$error && $member_origin->fetch($member_origin_id) < 1) {
 			$this->error = $langs->trans('ErrorRecordNotFound');
@@ -1316,7 +1316,7 @@ class Adherent extends CommonObject
 					$error++;
 				}
 			}
-			
+
 			if (!$error) {
 				// Move files from the dir of the third party to delete into the dir of the third party to keep
 				if (!empty($conf->adherent->multidir_output[$this->entity])) {
@@ -1341,7 +1341,7 @@ class Adherent extends CommonObject
 				return 0;
 			} else {
 				$langs->load("errors");
-				$this->error = $langs->trans('ErrorsMemberMerge');
+				$this->error = $langs->trans('ErrorMembersMerge');
 				$this->db->rollback();
 				return -1;
 			}

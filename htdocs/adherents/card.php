@@ -1860,7 +1860,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 					'name' => 'member_origin',
 					'label' => $langs->trans('MergeOriginMember'),
 					'type' => 'other',
-					'value' => $form->selectMembers('', 'member_origin', '', 0, 1, '', 0, array(), 0, 'SelectMember', 0,'minwidth200', null, 1, '', array($object->id))
+					'value' => $form->selectMembers('', 'member_origin', '', 0, 1, '', 0, array(), 0, 'SelectMember', 0, 'minwidth200', null, 1, array($object->id))
 				)
 			);
 
@@ -2178,7 +2178,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				}
 
 				// Merge
-				print dolGetButtonAction($langs->trans('MergeMember'), $langs->trans('Merge'), 'danger', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=merge&token='.newToken(), '', $user->hasRight('adherent', 'supprimer'));
+				print dolGetButtonAction($langs->trans('MergeMembers'), $langs->trans('Merge'), 'danger', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=merge&token='.newToken(), '', $user->hasRight('adherent', 'supprimer'));
 
 				// Delete
 				if ($user->hasRight('adherent', 'supprimer')) {
