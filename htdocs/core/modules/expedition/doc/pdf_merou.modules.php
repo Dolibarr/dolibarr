@@ -152,7 +152,7 @@ class pdf_merou extends ModelePdfExpedition
 		}
 
 		// Load traductions files required by page
-		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch"));
+		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "sendings", "productbatch"));
 
 		if ($conf->expedition->dir_output) {
 			$object->fetch_thirdparty();

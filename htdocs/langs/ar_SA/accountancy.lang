@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=المحاسبة
 Accounting=الحسابات
+AccountingAccount=الحساب
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=فاصل العمود لملف التصدير
 ACCOUNTING_EXPORT_DATE=تنسيق التاريخ لملف التصدير
 ACCOUNTING_EXPORT_PIECE=تصدير عدد القطعة

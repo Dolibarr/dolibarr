@@ -200,5 +200,5 @@ InSepa=Τομέας SEPA
 CountryIsInSepa=Χώρες στον τομέα SEPA
 Bank_line=Γραμμή τραπεζικών συναλλαγών
 BankId=Αναγνωριστικό γραμμής τράπεζας
-BankAccountForcedOnRequest=This bank account was defined when preparing the bank transfer request. Delete it and redo the preparation from the source object if you need to change it.
-BankAccountUsedByDefault=This is the default bank account of the thirdparty.
+BankAccountForcedOnRequest=Αυτός ο τραπεζικός λογαριασμός ορίστηκε κατά την προετοιμασία του αιτήματος τραπεζικής μεταφοράς. Διαγράψτε τον και και επαναλάβετε την προετοιμασία από το αντικείμενο προέλευσης, εάν χρειάζεται να το αλλάξετε.
+BankAccountUsedByDefault=Αυτός είναι ο προεπιλεγμένος τραπεζικός λογαριασμός του τρίτου μέρους.

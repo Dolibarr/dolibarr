@@ -35,6 +35,7 @@
 
 -- V22 forgotten
 
+ALTER TABLE llx_opensurvey_user_studs ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 
 -- V23 migration

@@ -174,7 +174,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		}
 
 		// Load translation files required by the page
-		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "sendings", "deliveries"));
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "sendings"));
 
 		if ($conf->expedition->dir_output) {
 			$object->fetch_thirdparty();

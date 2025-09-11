@@ -328,4 +328,4 @@ RuleForLinesDates=Regel für Positions-Daten
 Prepaid=Prepaid
 Postpaid=Postpaid
 SetRuleForLinesDates=Regel für Positions-Daten festlegen
-SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption
+SomeNotConvertedCreditNoteExists=Es gibt <b>%s</b> Stornorechnungen, die noch nicht zur Weiterverwendung des Guthabens umgewandelt wurden

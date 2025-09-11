@@ -91,6 +91,7 @@ ProductToAddSearch=Rechercher un produit à ajouter
 NoMatchFound=Pas de résultat trouvé
 ListOfProductsServices=Liste des produits / services
 ProductAssociationList=Liste des produits/services composant(s) de ce kit
+ProductParentList=Liste des kits comprenant ce produit
 ErrorAssociationIsFatherOfThis=L'un des produits sélectionnés est le parent avec le produit actuel
 DeleteProduct=Supprimer un produit / service
 ConfirmDeleteProduct=Êtes-vous sûr de vouloir supprimer ce produit / service?

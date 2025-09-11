@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=Contabilidade
 Accounting=Contabilidade
+AccountingAccount=Conta contable
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=Separador de columnas no ficheiro de exportación
 ACCOUNTING_EXPORT_DATE=Formato de data no ficheiro de exportación
 ACCOUNTING_EXPORT_PIECE=Exportar o número de asento
@@ -193,7 +195,7 @@ DONATION_ACCOUNTINGACCOUNT=Conta (do Plan Contable) que se utilizará para rexis
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Conta (do Plan Contable) que se utilizará para rexistrar subscricións de asociados (módulo de adhesión - se asociado rexistrado sen factura)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Conta (do Plan Contable) que se utilizará como conta predeterminada para rexistrar o depósito do cliente
 UseAuxiliaryAccountOnCustomerDeposit=Almacenar a conta do cliente como unha conta individual para as liñas de anicipo no Libro Maior subsidiario (se está desactivada, a conta individual para as liñas de anticipo permanecerá baleira)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Conta (do Plan Contable) que se usará como conta predeterminada para rexistrar o depósito do provedor
 UseAuxiliaryAccountOnSupplierDeposit=Almacenar a conta do provedor como unha conta individual no libro maior subsidiario para as liñas de anticipo (se está desactivada, a conta individual para as liñas de anticipo permanecerá baleira)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Conta contable por defecto para rexistrar a garantía establecida para o cliente
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Conta (do Plan Contable) que se utilizará como conta predeterminada para os produtos adquiridos no mesmo país (utilizada se non está definida na ficha do produto)
@@ -278,7 +280,7 @@ PcgtypeDesc=Grupo e subgrupo de conta utilízanse como criterios predefinidos de
 AccountingCategoriesDesc=O grupo de contas personalizado pódese usar para agrupar contas de contabilidade nun só nome para facilitar o uso de filtros ou a creación de informes personalizados.
 Reconcilable=Reconciliable
 Centralized=Conta centralizada
-CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
+CentralizedAccountHelp=Cando se rexistra unha transacción contable nunha conta centralizada, tamén se permite rexistrar unha conta subsidiaria máis precisa nesta transacción.
 TotalVente=Total facturación antes de impostos
 TotalMarge=Total marxe vendas
 DescVentilCustomer=Consulte aquí a listaxe de liñas de factura de clientes ligadas (ou non) a unha conta de produto do plan contable

@@ -325,3 +325,4 @@ INVOICE_ADD_EPC_QR_CODEPay=Scannez ce code QR pour payer avec un smartphone pren
 LimitDepositInvoicePossibilityForConsistency=Limiter le type de facture d'acompte pour maintenir la cohérence entre les lignes (propositions ou commandes)
 CantConvertToReducAnInvoiceOfThisType=Impossible de convertir en remise une facture de ce type
 WithholdingTax=Retenue à la source
+DisputeStatus=Statut du litige

@@ -71,7 +71,7 @@ if (isModEnabled('project')) {
  * @var User $user
  */
 
-$langs->loadLangs(array("receptions", "companies", "bills", 'deliveries', 'orders', 'stocks', 'other', 'propal', 'sendings'));
+$langs->loadLangs(array("receptions", "companies", "bills", 'orders', 'stocks', 'other', 'propal', 'sendings'));
 
 if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
