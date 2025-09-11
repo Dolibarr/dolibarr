@@ -1310,7 +1310,7 @@ class Adherent extends CommonObject
 
 			if (!$error) {
 				// We finally remove the old member
-				if ($member_origin->delete($member_origin->id, $user) < 1) {
+				if ($member_origin->delete($user) < 1) {
 					$this->error = $member_origin->error;
 					$this->errors = $member_origin->errors;
 					$error++;
