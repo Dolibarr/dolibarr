@@ -370,12 +370,7 @@ if ($action != 'edit') {
 print '</td><td>';
 if (!empty($object->share)) {
 	if ($action != 'edit') {
-		$paramlink = '';
-		if (!empty($object->share)) {
-			$paramlink .= ($paramlink ? '&' : '').'hashp='.$object->share; // Hash for public share
-		}
-
-		$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
+		$fulllink = $urlwithroot.'/document.php?hashp='.$object->share; // Hash for public share
 		//if (!empty($object->ref))       $fulllink.='&hashn='.$object->ref;		// Hash of file path
 		//elseif (!empty($object->label)) $fulllink.='&hashc='.$object->label;		// Hash of file content
 
