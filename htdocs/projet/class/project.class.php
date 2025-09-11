@@ -2833,6 +2833,28 @@ class Project extends CommonObject
 	}
 
 	/**
+	 * Check if contact already exist in the project
+	 *
+	 * @param array $contactlistExternalCurrent List of contacts from project to merge
+	 * @param array $contactTmp Contacts to check
+	 * @return bool True if contact exist, false otherwise
+	 */
+	public function contactExistsInCurrentList($contactlistExternalCurrent, $contactTmp) : bool {
+		if (!is_array($contactlistExternalCurrent)) {
+			return false;
+		}
+
+		foreach ($contactlistExternalCurrent as $contactCurrent) {
+			if ($contactCurrent['id'] == $contactTmp['id']) {
+				dol_syslog("Contact " . $contactTmp['id'] . " with role " . $contactTmp['fk_c_type_contact'] . " already exists in current project, keeping current project contact");
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 *    Merge a project with current one, deleting the given project $projectId.
 	 *    The project given in parameter will be removed.
 	 *    This is called for example by the project/card.php file.
@@ -2891,13 +2913,7 @@ class Project extends CommonObject
 
 						// Check if contact already exists in current project
 						if (is_array($contactlistExternalCurrent)) {
-							foreach ($contactlistExternalCurrent as $contactCurrent) {
-								if ($contactCurrent['id'] == $contactTmp['id']) {
-									$contactExists = true;
-									dol_syslog("Contact " . $contactTmp['id'] . " with role " . $contactTmp['fk_c_type_contact'] . " already exists in current project, keeping current project contact");
-									break;
-								}
-							}
+							$contactExists = $this->contactExistsInCurrentList($contactlistExternalCurrent, $contactTmp);
 						}
 
 						// Add contact if it doesn't exist
@@ -2920,13 +2936,7 @@ class Project extends CommonObject
 
 						// Check if contact already exists in current project
 						if (is_array($contactlistInternalCurrent)) {
-							foreach ($contactlistInternalCurrent as $contactCurrent) {
-								if ($contactCurrent['id'] == $contactTmp['id']) {
-									$contactExists = true;
-									dol_syslog("Internal contact " . $contactTmp['id'] . " with role " . $contactTmp['fk_c_type_contact'] . " already exists in current project, keeping current project contact");
-									break;
-								}
-							}
+							$contactExists = $this->contactExistsInCurrentList($contactlistInternalCurrent, $contactTmp);
 						}
 
 						// Add contact if it doesn't exist
@@ -2977,7 +2987,7 @@ class Project extends CommonObject
 			}
 
 			// Merge categories if they exist for projects
-			if (class_exists('Categorie')) {
+			if (class_exists('Categorie') && isModEnabled('Categorie')) {
 				$static_cat = new Categorie($this->db);
 
 				$cats_ori = $static_cat->containing($tmpProject->id, 'project', 'id');
