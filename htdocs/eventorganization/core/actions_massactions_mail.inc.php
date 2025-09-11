@@ -246,6 +246,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 			if ($mailfile->error) {
 				$resaction .= '<div class="error">' . $mailfile->error . '</div>';
 			} else {
+				$mailfile->error = '';
 				$result = $mailfile->sendfile();
 				if ($result) {
 					$resaction .= $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($sendto, 2)) . '<br>'; // Must not contain "
