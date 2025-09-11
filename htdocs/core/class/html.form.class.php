@@ -8435,9 +8435,9 @@ class Form
 	}
 
 	/**
-	 *  Return list of projects in Ajax if Ajax activated or go to selectTicketsList
+	 *  Return list of projects in Ajax if Ajax activated or go to selectProjectsList
 	 *
-	 * @param 	string 		$selected 				Preselected tickets
+	 * @param 	string 		$selected 				Preselected projects
 	 * @param 	string 		$htmlname 				Name of HTML select field (must be unique in page).
 	 * @param 	string 		$filtertype				To add a filter
 	 * @param 	int<0,max>	$limit 					Limit on number of returned lines
@@ -8640,28 +8640,19 @@ class Form
 	 */
 	protected function constructProjectListOption(&$objp, &$opt, &$optJson, $selected, $filterkey = '')
 	{
-		$outkey = '';
-		$outref = '';
-		$outtype = '';
-
-		$label = $objp->label;
-
-		$outkey = $objp->rowid;
-		$outref = $objp->ref;
-		$outlabel = $objp->label;
-		$outtype = $objp->fk_product_type;
-
-		$opt = '<option value="' . $objp->rowid . '"';
-		$opt .= ($objp->rowid == $selected) ? ' selected' : '';
-		$opt .= '>';
-		$opt .= $objp->ref;
-		$objRef = $objp->ref;
-		if (!empty($filterkey) && $filterkey != '') {
-			$objRef = preg_replace('/(' . preg_quote($filterkey, '/') . ')/i', '<strong>$1</strong>', $objRef, 1);
+		$displayRef = $objp->ref;
+		if (!empty($filterkey)) {
+			$displayRef = preg_replace('/(' . preg_quote($filterkey, '/') . ')/i', '<strong>$1</strong>', $displayRef, 1);
 		}
 
-		$opt .= "</option>\n";
-		$optJson = array('key' => $outkey, 'value' => $outref, 'type' => $outtype);
+		$selectedAttr = ($objp->rowid == $selected) ? ' selected' : '';
+		$opt = "<option value=\"{$objp->rowid}\"{$selectedAttr}>{$displayRef}</option>\n";
+
+		$optJson = [
+			'key' => $objp->rowid,
+			'value' => $objp->ref,
+			'type' => ''
+		];
 	}
 
 

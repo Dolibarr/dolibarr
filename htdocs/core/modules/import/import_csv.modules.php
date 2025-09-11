@@ -29,7 +29,6 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.php';
 
-
 /**
  *	Class to import CSV files
  */

@@ -305,6 +305,31 @@ if (empty($reshook)) {
 		}
 	}
 
+	// Merge project
+	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->hasRight('projet', 'creer')) {
+		$projectIdTomerge = GETPOSTINT('projectid');
+		$projectOrigin = new Project($db);		// The thirdparty that we will delete
+
+		if ($projectIdTomerge <= 0) {
+			$langs->load('errors');
+			setEventMessages($langs->trans('ErrorProjectIdIsMandatory', $langs->transnoentitiesnoconv('MergeOriginProject')), null, 'errors');
+		} else {
+			if (!$error && $projectOrigin->fetch($projectIdTomerge) < 1) {
+				setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
+				$error++;
+			}
+			if (!$error) {
+				$result = $object->mergeProject($projectIdTomerge);
+				if ($result < 0) {
+					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
+				} else {
+					setEventMessages($langs->trans('ProjectMergeSuccess'), null, 'mesgs');
+				}
+			}
+		}
+	}
+
 	if ($action == 'update' && empty(GETPOST('cancel')) && $permissiontoadd) {
 		if (empty($ref)) {
 			$error++;
@@ -1037,6 +1062,19 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ToClone"), $text, "confirm_clone", $formquestion, '', 1, 400, 590);
 	}
+	// Merge confirmation
+	if ($action == 'merge') {
+		$formquestion = array(
+			array(
+				'name' => 'projectid',
+				'label' => $langs->trans('MergeOriginProject'),
+				'type' => 'other',
+				'value' => $form->selectProjects('', 'projectid', '', '', 0, 0, array(), 0, 'minwidth200', '', '', 1, null, true),
+			)
+		);
+
+		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("MergeProjects"), $langs->trans("ConfirmMergeProjects"), "confirm_merge", $formquestion, '', 1, 250);
+	}
 
 	// Call Hook formConfirm
 	$parameters = array('formConfirm' => $formconfirm);
@@ -1744,6 +1782,10 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 				} else {
 					print dolGetButtonAction($langs->trans('NotOwnerOfProject'), $langs->trans('Delete'), 'default', $_SERVER['PHP_SELF']. '#', '', false);
 				}
+			}
+			// Merge
+			if ($user->hasRight('projet', 'creer')) {
+				print dolGetButtonAction($langs->trans('Merge'), $langs->trans('Merge'), 'danger', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=merge&token='.newToken(), '', $permissiontodelete);
 			}
 		}
 	}
