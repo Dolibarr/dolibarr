@@ -34,6 +34,7 @@ CREATE TABLE llx_ticket
 	fk_statut integer,
 	note_public text,
 	note_private text,
+	fk_user_modif integer,
 	resolution integer,
 	progress integer DEFAULT 0,				-- progression 0 - 100 or null
 	timing varchar(20),
