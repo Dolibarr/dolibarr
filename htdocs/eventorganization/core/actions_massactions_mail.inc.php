@@ -272,18 +272,16 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 					$objectobj2->elementtype = $objectobj2->element;
 
 					$triggername = 'CONFERENCEORBOOTHATTENDEE_SENTBYMAIL';
-					if (!empty($triggername)) {
-						// Call trigger
-						$result = $objectobj2->call_trigger($triggername, $user);
-						if ($result < 0) {
-							$error++;
-						}
-						// End call triggers
+					// Call trigger
+					$result = $objectobj2->call_trigger($triggername, $user);
+					if ($result < 0) {
+						$error++;
+					}
+					// End call triggers
 
-						if ($error) {
-							setEventMessages($db->lasterror(), $objectobj2->errors, 'errors');
-							dol_syslog("Error in trigger " . $triggername . ' ' . $db->lasterror(), LOG_ERR);
-						}
+					if ($error) {
+						setEventMessages($db->lasterror(), $objectobj2->errors, 'errors');
+						dol_syslog("Error in trigger " . $triggername . ' ' . $db->lasterror(), LOG_ERR);
 					}
 
 					$nbsent++; // Nb of object sent
@@ -297,6 +295,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 					} else {
 						$resaction .= $langs->trans('ErrorFailedToSendMail', $from, $sendto) . '<br><div class="error">(unhandled error)</div>';
 					}
+					$nbignored++;
 				}
 			}
 		}  // foreach ($listofselectedid as $email => $attendees)
