@@ -1228,7 +1228,7 @@ class Adherent extends CommonObject
 		if (!$error) {
 			$this->db->begin();
 			$listofproperties = array(
-				'ref_ext', 'civility', 'lastname', 'firstname', 'morphy',	'societe', 'fk_soc', 'user_id','address',
+				'ref_ext', 'civility', 'lastname', 'firstname', 'morphy', 'societe', 'socid', 'user_id','address',
 				'zip', 'town', 'state_id', 'country', 'phone', 'phone_perso', 'phone_mobile', 'email',
 				'url', 'socialnetworks', 'birth', 'gender', 'photo', 'public', 'datefin', 'default_lang',
 				'canvas', 'model_pdf', 'import_key'
