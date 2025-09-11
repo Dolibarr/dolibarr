@@ -1920,6 +1920,7 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 				require_once DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . '.php';
 				$modTask = new $classnamemodtask();
 				'@phan-var-force ModeleNumRefTask $modTask';
+				/** @var ModeleNumRefTask $modTask */
 				$defaultref = $modTask->getNextValue(null, $clone_task);
 			}
 
