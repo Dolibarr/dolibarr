@@ -38,7 +38,9 @@
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var HookManager $hookmanager
  * @var Translate $langs
+ * @var User $user
  *
  * @var string $massaction
  * @var string $objectclass
@@ -66,13 +68,13 @@ if (empty($objectclass) || empty($uploaddir)) {
 $error = 0;
 
 // Mass actions. Controls on number of lines checked.
-$maxformassaction = (!getDolGlobalString('MAIN_LIMIT_FOR_MASS_ACTIONS') ? 1000 : $conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS);
+$maxformassaction = getDolGlobalInt('MAIN_LIMIT_FOR_MASS_ACTIONS', 1000);
 if (!empty($massaction) && is_array($toselect) && count($toselect) < 1) {
 	$error++;
 	setEventMessages($langs->trans("NoRecordSelected"), null, "warnings");
 }
 if (!$error && is_array($toselect) && count($toselect) > $maxformassaction) {
-	setEventMessages($langs->trans('TooManyRecordForMassAction', $maxformassaction), null, 'errors');
+	setEventMessages($langs->trans('TooManyRecordForMassAction', (string) $maxformassaction), null, 'errors');
 	$error++;
 }
 
