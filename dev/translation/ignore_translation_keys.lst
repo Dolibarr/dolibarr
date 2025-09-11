@@ -843,7 +843,6 @@ UpdateUser
 UpgradeHasBeenUnlocked
 Url
 Use of API for currency update is disabled by option MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER
-UserSetInGroup
 VCard
 Vacant
 ValidateAndSign
