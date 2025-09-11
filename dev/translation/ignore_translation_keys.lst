@@ -358,7 +358,6 @@ ErrorTechnicalError
 ErrorThirdPartyIdIsMandatory
 ErrorTicketIsNotValid
 ErrorTitreAlreadyExists
-ErrorUpdatingUsersCP
 ErrorUserFetch
 ErrorValueMustBeInteger
 ErrorValueTooHigh
@@ -870,7 +869,6 @@ Widgets
 Windows
 WorkingBoard
 Workload
-WrongAmount
 XDebug
 XmlCorrupted
 Y

@@ -1832,6 +1832,7 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 
 if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday' && $confirm == 'yes')) && $permissiontoapprove && is_array($toselect)) {
 	'@phan-var-force Holiday $holiday';  // Supposing that $holiday is set, it is needed.
+	/** @var Holiday $holiday */
 	$db->begin();
 	$objecttmp = new $objectclass($db);
 	$nbok = 0;
