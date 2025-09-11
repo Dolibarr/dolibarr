@@ -1262,7 +1262,7 @@ class Adherent extends CommonObject
 			$custcats_ori = $static_cat->containing($member_origin->id, 'member', 'id');
 			$custcats = $static_cat->containing($this->id, 'member', 'id');
 			$custcats = array_merge($custcats, $custcats_ori);
-			$this->setCategories($custcats, 'member');
+			$this->setCategories($custcats);
 
 			$result = $this->update($user, 1, 1, 1, 1, 'merge');
 			if ($result < 0) {
