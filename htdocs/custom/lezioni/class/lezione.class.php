@@ -110,38 +110,40 @@ class Lezione extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @inheritdoc
+	 * Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
-		"rowid" => array("type"=>"integer", "label"=>"TechnicalID", "enabled"=>"1", 'position'=>1, 'notnull'=>1, "visible"=>"0", "noteditable"=>"1", "index"=>"1", "css"=>"left", "comment"=>"Id"),
-		"ref" => array("type"=>"varchar(128)", "label"=>"Ref", "enabled"=>"1", 'position'=>1, 'notnull'=>1, "visible"=>"1", "noteditable"=>"1", "default"=>"(PROV)", "index"=>"1", "searchall"=>"1", "validate"=>"1", "comment"=>"Reference of object"),
-		"label" => array("type"=>"varchar(255)", "label"=>"Titolo", "enabled"=>"1", 'position'=>1, 'notnull'=>0, "visible"=>"1", "searchall"=>"1", "css"=>"minwidth300", "cssview"=>"wordbreak", "help"=>"Titolo o giustificante lezione, può essere lasciato nulla", "validate"=>"1",),
-		"amount" => array("type"=>"price", "label"=>"Prezzo Totale", "enabled"=>"1", 'position'=>8, 'notnull'=>1, "visible"=>"1", "default"=>"25", "isameasure"=>"1", "help"=>"Prezzo totale della lezione", "validate"=>"1",),
-		"fk_soc" => array("type"=>"integer:societe:societe/class/societe.class.php:1:((status:=:1) and (entity:in:__shared_entities__))", "label"=>"ThirdParty", "enabled"=>"isModEnabled('societe')", 'position'=>50, 'notnull'=>-1, "visible"=>"0", "index"=>"1", "css"=>"maxwidth500 widthcentpercentminusxx", "csslist"=>"tdoverflowmax150", "help"=>"OrganizationEventLinkToThirdParty", "validate"=>"1",),
-		"fk_project" => array("type"=>"integer:Project:projet/class/project.class.php:1", "label"=>"Project", "picto"=>"project", "enabled"=>"isModEnabled('project')", 'position'=>52, 'notnull'=>-1, "visible"=>"-1", "index"=>"1", "css"=>"maxwidth500 widthcentpercentminusxx", "csslist"=>"tdoverflowmax150", "validate"=>"1",),
-		"description" => array("type"=>"text", "label"=>"Descrizione Aggiuntiva", "enabled"=>"1", 'position'=>60, 'notnull'=>0, "visible"=>"3", "validate"=>"1",),
-		"note_public" => array("type"=>"html", "label"=>"NotePublic", "enabled"=>"1", 'position'=>61, 'notnull'=>0, "visible"=>"0", "cssview"=>"wordbreak", "validate"=>"1",),
-		"note_private" => array("type"=>"html", "label"=>"NotePrivate", "enabled"=>"1", 'position'=>62, 'notnull'=>0, "visible"=>"0", "cssview"=>"wordbreak", "validate"=>"1",),
-		"date_creation" => array("type"=>"datetime", "label"=>"DateCreation", "enabled"=>"1", 'position'=>500, 'notnull'=>1, "visible"=>"-2",),
-		"tms" => array("type"=>"timestamp", "label"=>"DateModification", "enabled"=>"1", 'position'=>501, 'notnull'=>0, "visible"=>"-2",),
-		"fk_user_creat" => array("type"=>"integer:User:user/class/user.class.php", "label"=>"UserAuthor", "picto"=>"user", "enabled"=>"1", 'position'=>510, 'notnull'=>1, "visible"=>"-2", "csslist"=>"tdoverflowmax150",),
-		"fk_user_modif" => array("type"=>"integer:User:user/class/user.class.php", "label"=>"UserModif", "picto"=>"user", "enabled"=>"1", 'position'=>511, 'notnull'=>-1, "visible"=>"-2", "csslist"=>"tdoverflowmax150",),
-		"last_main_doc" => array("type"=>"varchar(255)", "label"=>"LastMainDoc", "enabled"=>"1", 'position'=>600, 'notnull'=>0, "visible"=>"0",),
-		"import_key" => array("type"=>"varchar(14)", "label"=>"ImportId", "enabled"=>"1", 'position'=>1000, 'notnull'=>-1, "visible"=>"-2",),
-		"model_pdf" => array("type"=>"varchar(255)", "label"=>"Model pdf", "enabled"=>"1", 'position'=>1010, 'notnull'=>-1, "visible"=>"0",),
-		"status" => array("type"=>"integer", "label"=>"Status", "enabled"=>"1", 'position'=>2000, 'notnull'=>1, "visible"=>"1", "index"=>"1", "arrayofkeyval"=>array("0" => "Bozza", "1" => "Convalidato", "9" => "Annullato"), "validate"=>"1",),
-		"istruttore" => array("type"=>"integer:member:adherents/class/adherent.class.php:0:((fk_adherent_type:=:2) or (fk_adherent_type:=:3) or (fk_adherent_type:=:4))", "label"=>"Istruttore Incaricato", "enabled"=>"1", 'position'=>5, 'notnull'=>1, "visible"=>"1", "index"=>"1", "searchall"=>"1", "comment"=>"Istruttore Responsabile"),
-		"allievo" => array("type"=>"integer:member:adherents/class/adherent.class.php:1", "label"=>"Allievo", "enabled"=>"1", 'position'=>7, 'notnull'=>0, "visible"=>"1", "index"=>"1", "searchall"=>"1", "comment"=>"Allievo Lezione"),
-		"datalezione" => array("type"=>"date", "label"=>"Data Lezione", "enabled"=>"1", 'position'=>1, 'notnull'=>1, "visible"=>"1", "searchall"=>"1", "help"=>"Giorno della lezione",),
-		"numeroore" => array("type"=>"integer", "label"=>"Numero Ore", "enabled"=>"1", 'position'=>6, 'notnull'=>1, "visible"=>"1", "default"=>"1", "isameasure"=>"1", "help"=>"Numero di ore lezione", "validate"=>"1",),
-		"pagato" => array("type"=>"boolean", "label"=>"Lezione Pagata", "enabled"=>"1", 'position'=>10, 'notnull'=>1, "visible"=>"1", "default"=>"0", "searchall"=>"1",),
-		"compensoistruttore" => array("type"=>"price", "label"=>"Compenso Istruttore", "enabled"=>"1", 'position'=>9, 'notnull'=>1, "visible"=>"1", "default"=>"15", "isameasure"=>"1", "help"=>"Ammontare compenso istruttore (deve essere minore o uguale al prezzo totale della lezione)", "validate"=>"1",),
-		"numero_allievi" => array("type"=>"integer", "label"=>"Numero Allievi", "enabled"=>"1", 'position'=>7, 'notnull'=>1, "visible"=>"1", "default"=>"1", "isameasure"=>"1", "help"=>"Numero allievi", "validate"=>"1",),
-		"bank_transaction" => array("type"=>"integer", "label"=>"Transazione Bancaria", "enabled"=>"1", 'position'=>12, 'notnull'=>0, "visible"=>"0", "index"=>"1", "help"=>"Transazione bancaria associata al pagamento lezione",),
-		"luogo" => array("type"=>"varchar(99)", "label"=>"Luogo", "enabled"=>"1", 'position'=>4, 'notnull'=>0, "visible"=>"1", "searchall"=>"1", "help"=>"Luogo dove si è tenuta la lezione",),
-		"bank_account" => array("type"=>"integer", "label"=>"bank_account", "enabled"=>"1", 'position'=>11, 'notnull'=>0, "visible"=>"0", "comment"=>"Id Conto Bancario"),
-		"coordinatore" => array("type"=>"integer:member:adherents/class/adherent.class.php:0:((fk_adherent_type:=:2) or (fk_adherent_type:=:3) or (fk_adherent_type:=:4))", "label"=>"Coordinatore", "enabled"=>"1", 'position'=>13, 'notnull'=>0, "visible"=>"3", "searchall"=>"1", "help"=>"Coordinatore della lezione",),
-		"compenso_coordinatore" => array("type"=>"price", "label"=>"Compenso Coordinatore", "enabled"=>"1", 'position'=>14, 'notnull'=>0, "visible"=>"3", "isameasure"=>"1", "comment"=>"Compenso del coordinatore"),
+	public $fields = array(
+		"rowid" => array("type" => "integer", "label" => "TechnicalID", "enabled" => "1", 'position' => 1, 'notnull' => 1, "visible" => "0", "noteditable" => "1", "index" => "1", "css" => "left", "comment" => "Id"),
+		"ref" => array("type" => "varchar(128)", "label" => "Ref", "enabled" => "1", 'position' => 1, 'notnull' => 1, "visible" => "1", "noteditable" => "1", "default" => "(PROV)", "index" => "1", "searchall" => "1", "validate" => "1", "comment" => "Reference of object"),
+		"label" => array("type" => "varchar(255)", "label" => "Titolo", "enabled" => "1", 'position' => 1, 'notnull' => 0, "visible" => "1", "searchall" => "1", "css" => "minwidth300", "cssview" => "wordbreak", "help" => "Titolo o giustificante lezione, può essere lasciato nulla", "validate" => "1",),
+		"amount" => array("type" => "price", "label" => "Prezzo Totale", "enabled" => "1", 'position' => 8, 'notnull' => 1, "visible" => "1", "default" => "25", "isameasure" => "1", "help" => "Prezzo totale della lezione", "validate" => "1",),
+		"fk_soc" => array("type" => "integer:societe:societe/class/societe.class.php:1:((status:=:1) and (entity:in:__shared_entities__))", "label" => "ThirdParty", "enabled" => "isModEnabled('societe')", 'position' => 50, 'notnull' => -1, "visible" => "0", "index" => "1", "css" => "maxwidth500 widthcentpercentminusxx", "csslist" => "tdoverflowmax150", "help" => "OrganizationEventLinkToThirdParty", "validate" => "1",),
+		"fk_project" => array("type" => "integer:Project:projet/class/project.class.php:1", "label" => "Project", "picto" => "project", "enabled" => "isModEnabled('project')", 'position' => 52, 'notnull' => -1, "visible" => "-1", "index" => "1", "css" => "maxwidth500 widthcentpercentminusxx", "csslist" => "tdoverflowmax150", "validate" => "1",),
+		"description" => array("type" => "text", "label" => "Descrizione Aggiuntiva", "enabled" => "1", 'position' => 60, 'notnull' => 0, "visible" => "3", "validate" => "1",),
+		"note_public" => array("type" => "html", "label" => "NotePublic", "enabled" => "1", 'position' => 61, 'notnull' => 0, "visible" => "0", "cssview" => "wordbreak", "validate" => "1",),
+		"note_private" => array("type" => "html", "label" => "NotePrivate", "enabled" => "1", 'position' => 62, 'notnull' => 0, "visible" => "0", "cssview" => "wordbreak", "validate" => "1",),
+		"date_creation" => array("type" => "datetime", "label" => "DateCreation", "enabled" => "1", 'position' => 500, 'notnull' => 1, "visible" => "-2",),
+		"tms" => array("type" => "timestamp", "label" => "DateModification", "enabled" => "1", 'position' => 501, 'notnull' => 0, "visible" => "-2",),
+		"fk_user_creat" => array("type" => "integer:User:user/class/user.class.php", "label" => "UserAuthor", "picto" => "user", "enabled" => "1", 'position' => 510, 'notnull' => 1, "visible" => "-2", "csslist" => "tdoverflowmax150",),
+		"fk_user_modif" => array("type" => "integer:User:user/class/user.class.php", "label" => "UserModif", "picto" => "user", "enabled" => "1", 'position' => 511, 'notnull' => -1, "visible" => "-2", "csslist" => "tdoverflowmax150",),
+		"last_main_doc" => array("type" => "varchar(255)", "label" => "LastMainDoc", "enabled" => "1", 'position' => 600, 'notnull' => 0, "visible" => "0",),
+		"import_key" => array("type" => "varchar(14)", "label" => "ImportId", "enabled" => "1", 'position' => 1000, 'notnull' => -1, "visible" => "-2",),
+		"model_pdf" => array("type" => "varchar(255)", "label" => "Model pdf", "enabled" => "1", 'position' => 1010, 'notnull' => -1, "visible" => "0",),
+		"status" => array("type" => "integer", "label" => "Status", "enabled" => "1", 'position' => 2000, 'notnull' => 1, "visible" => "1", "index" => "1", "arrayofkeyval" => array("0" => "Bozza", "1" => "Convalidato", "9" => "Annullato"), "validate" => "1",),
+		"istruttore" => array("type" => "integer:member:adherents/class/adherent.class.php:0:((fk_adherent_type:=:2) or (fk_adherent_type:=:3) or (fk_adherent_type:=:4))", "label" => "Istruttore Incaricato", "enabled" => "1", 'position' => 5, 'notnull' => 1, "visible" => "1", "index" => "1", "searchall" => "1", "comment" => "Istruttore Responsabile"),
+		"allievo" => array("type" => "integer:member:adherents/class/adherent.class.php:1", "label" => "Allievo", "enabled" => "1", 'position' => 7, 'notnull' => 0, "visible" => "1", "index" => "1", "searchall" => "1", "comment" => "Allievo Lezione"),
+		"datalezione" => array("type" => "date", "label" => "Data Lezione", "enabled" => "1", 'position' => 1, 'notnull' => 1, "visible" => "1", "searchall" => "1", "help" => "Giorno della lezione",),
+		"numeroore" => array("type" => "integer", "label" => "Numero Ore", "enabled" => "1", 'position' => 6, 'notnull' => 1, "visible" => "1", "default" => "1", "isameasure" => "1", "help" => "Numero di ore lezione", "validate" => "1",),
+		"pagato" => array("type" => "boolean", "label" => "Lezione Pagata", "enabled" => "1", 'position' => 10, 'notnull' => 1, "visible" => "1", "default" => "0", "searchall" => "1",),
+		"compensoistruttore" => array("type" => "price", "label" => "Compenso Istruttore", "enabled" => "1", 'position' => 9, 'notnull' => 1, "visible" => "1", "default" => "15", "isameasure" => "1", "help" => "Ammontare compenso istruttore (deve essere minore o uguale al prezzo totale della lezione)", "validate" => "1",),
+		"numero_allievi" => array("type" => "integer", "label" => "Numero Allievi", "enabled" => "1", 'position' => 7, 'notnull' => 1, "visible" => "1", "default" => "1", "isameasure" => "1", "help" => "Numero allievi", "validate" => "1",),
+		"bank_transaction" => array("type" => "integer", "label" => "Transazione Bancaria", "enabled" => "1", 'position' => 12, 'notnull' => 0, "visible" => "0", "index" => "1", "help" => "Transazione bancaria associata al pagamento lezione",),
+		"luogo" => array("type" => "varchar(99)", "label" => "Luogo", "enabled" => "1", 'position' => 4, 'notnull' => 0, "visible" => "1", "searchall" => "1", "help" => "Luogo dove si è tenuta la lezione",),
+		"bank_account" => array("type" => "integer", "label" => "bank_account", "enabled" => "1", 'position' => 11, 'notnull' => 0, "visible" => "0", "comment" => "Id Conto Bancario"),
+		"coordinatore" => array("type" => "integer:member:adherents/class/adherent.class.php:0:((fk_adherent_type:=:2) or (fk_adherent_type:=:3) or (fk_adherent_type:=:4))", "label" => "Coordinatore", "enabled" => "1", 'position' => 13, 'notnull' => 0, "visible" => "3", "searchall" => "1", "help" => "Coordinatore della lezione",),
+		"compenso_coordinatore" => array("type" => "price", "label" => "Compenso Coordinatore", "enabled" => "1", 'position' => 14, 'notnull' => 0, "visible" => "3", "isameasure" => "1", "comment" => "Compenso del coordinatore"),
+		"fk_pacchetto" => array("type" => "integer:Pacchetto:custom/lezioni/class/pacchetto.class.php:1:((status:=:1))", "label" => "Pacchetto", "enabled" => "1", 'position' => 53, 'notnull' => 0, "visible" => "1", "searchall" => "1", "help" => "Riferimento Pacchetto Lezioni", "comment" => "Pacchetto Lezioni"),
 	);
 	public $rowid;
 	public $ref;
@@ -172,6 +174,7 @@ class Lezione extends CommonObject
 	public $bank_account;
 	public $coordinatore;
 	public $compenso_coordinatore;
+	public $fk_pacchetto;
 	// END MODULEBUILDER PROPERTIES
 
 
