@@ -278,7 +278,7 @@ if (empty($reshook)) {
 
 		if ($member_origin_id <= 0) {
 			$langs->load('errors');
-			setEventMessages($langs->trans('ErrorMemberIdIsMandatory', $langs->transnoentitiesnoconv('MergeOriginMember')), null, 'errors');
+			setEventMessages($langs->trans('MergeOriginMemberIsMAndatory'), null, 'errors');
 		} else {
 			if (!$error && $member_origin->fetch($member_origin_id) < 1) {
 				setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
