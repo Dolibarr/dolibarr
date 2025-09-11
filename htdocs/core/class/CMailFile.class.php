@@ -946,26 +946,26 @@ class CMailFile
 			}
 
 			$keyforsmtpserver = 'MAIN_MAIL_SMTP_SERVER';
-			$keyforsmtpport  = 'MAIN_MAIL_SMTP_PORT';
-			$keyforsmtpid    = 'MAIN_MAIL_SMTPS_ID';
-			$keyforsmtppw    = 'MAIN_MAIL_SMTPS_PW';
+			$keyforsmtpport = 'MAIN_MAIL_SMTP_PORT';
+			$keyforsmtpid = 'MAIN_MAIL_SMTPS_ID';
+			$keyforsmtppw = 'MAIN_MAIL_SMTPS_PW';
 			$keyforsmtpauthtype = 'MAIN_MAIL_SMTPS_AUTH_TYPE';
 			$keyforsmtpoauthservice = 'MAIN_MAIL_SMTPS_OAUTH_SERVICE';
-			$keyfortls       = 'MAIN_MAIL_EMAIL_TLS';
-			$keyforstarttls  = 'MAIN_MAIL_EMAIL_STARTTLS';
+			$keyfortls = 'MAIN_MAIL_EMAIL_TLS';
+			$keyforstarttls = 'MAIN_MAIL_EMAIL_STARTTLS';
 			$keyforsslseflsigned = 'MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED';
 			if (!empty($this->sendcontext)) {
 				$smtpContextKey = strtoupper($this->sendcontext);
 				$smtpContextSendMode = getDolGlobalString('MAIN_MAIL_SENDMODE_'.$smtpContextKey);
 				if (!empty($smtpContextSendMode) && $smtpContextSendMode != 'default') {
 					$keyforsmtpserver = 'MAIN_MAIL_SMTP_SERVER_'.$smtpContextKey;
-					$keyforsmtpport   = 'MAIN_MAIL_SMTP_PORT_'.$smtpContextKey;
-					$keyforsmtpid     = 'MAIN_MAIL_SMTPS_ID_'.$smtpContextKey;
-					$keyforsmtppw     = 'MAIN_MAIL_SMTPS_PW_'.$smtpContextKey;
+					$keyforsmtpport = 'MAIN_MAIL_SMTP_PORT_'.$smtpContextKey;
+					$keyforsmtpid = 'MAIN_MAIL_SMTPS_ID_'.$smtpContextKey;
+					$keyforsmtppw = 'MAIN_MAIL_SMTPS_PW_'.$smtpContextKey;
 					$keyforsmtpauthtype = 'MAIN_MAIL_SMTPS_AUTH_TYPE_'.$smtpContextKey;
 					$keyforsmtpoauthservice = 'MAIN_MAIL_SMTPS_OAUTH_SERVICE_'.$smtpContextKey;
-					$keyfortls        = 'MAIN_MAIL_EMAIL_TLS_'.$smtpContextKey;
-					$keyforstarttls   = 'MAIN_MAIL_EMAIL_STARTTLS_'.$smtpContextKey;
+					$keyfortls = 'MAIN_MAIL_EMAIL_TLS_'.$smtpContextKey;
+					$keyforstarttls = 'MAIN_MAIL_EMAIL_STARTTLS_'.$smtpContextKey;
 					$keyforsslseflsigned = 'MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_'.$smtpContextKey;
 				}
 			}
