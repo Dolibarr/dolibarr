@@ -384,13 +384,13 @@ if (!empty($object->share)) {
 			print ' <a href="'.$fulllink.'">'.img_picto($langs->trans("Download"), 'download', 'class="opacitymedium paddingrightonly"').'</a>'; // No target here
 		}
 	} else {
-		print '<input type="checkbox" name="shareenabled"'.($object->share ? ' checked="checked"' : '').' /> ';
+		print '<input type="checkbox" name="shareenabled" checked="checked" /> ';
 	}
 } else {
 	if ($action != 'edit') {
 		print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
 	} else {
-		print '<input type="checkbox" name="shareenabled"'.($object->share ? ' checked="checked"' : '').' /> ';
+		print '<input type="checkbox" name="shareenabled" /> ';
 	}
 }
 print '</td>';
