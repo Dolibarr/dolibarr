@@ -84,16 +84,17 @@ class Interfaces
 		}
 
 		// Check parameters
-		if (!is_object($object) || !is_object($conf)) {	// Error
+		if (!is_object($object) || !($conf instanceof Conf)) {	// Error
 			$error = 'function run_triggers called with wrong parameters object or conf. action='.$action.' object='.((string) (int) is_object($object)).' user='.((string) (int) is_object($user)).' langs='.((string) (int) is_object($langs)).' conf='.((string) (int) is_object($conf));
 			dol_syslog(get_class($this).'::run_triggers '.$error, LOG_ERR);
 			$this->errors[] = $error;
 			return -1;
 		}
-		if (!is_object($langs)) {	// Warning
+		if (!($langs instanceof Translate)) {	// Warning
 			dol_syslog(get_class($this).'::run_triggers was called with wrong parameters langs. action='.$action.' object='.((string) (int) is_object($object)).' user='.((string) (int) is_object($user)).' langs='.((string) (int) is_object($langs)).' conf='.((string) (int) is_object($conf)), LOG_WARNING);
+			$langs = new Translate('', $conf);
 		}
-		if (!is_object($user)) {	    // Warning
+		if (!($user instanceof User)) {	    	// Warning
 			dol_syslog(get_class($this).'::run_triggers was called with wrong parameters user. action='.$action.' object='.((string) (int) is_object($object)).' user='.((string) (int) is_object($user)).' langs='.((string) (int) is_object($langs)).' conf='.((string) (int) is_object($conf)), LOG_WARNING);
 			$user = new User($this->db);
 		}
@@ -105,6 +106,29 @@ class Interfaces
 		$modules = array();
 		$orders = array();
 		$i = 0;
+
+		// Special cases
+		global $mysoc;
+		if (getDolGlobalString('MAIN_FRANCE_TODO_LOI_FINANCE') && $object instanceof Facture && $action == 'BILL_VALIDATE'			// If we try to validate an invoice
+			&& in_array($mysoc->country_code, array('FR')) && $mysoc->tva_assuj	// If country is France and is using VAT
+			&& is_object($object) && property_exists($object, 'thirdparty') &&
+			$object->thirdparty instanceof Societe && !$object->thirdparty->isACompany() && !isModEnabled('blockedlog')) {
+			$langs->load("errors");
+			$error = 'You try to validate an invoice in the following situation:<br>';
+			$error .= 'Your country: '.$mysoc->country_code.'<br>';
+			$error .= 'Your are using VAT: '.yn($mysoc->tva_assuj).'<br>';
+			$error .= 'The invoice is intended for a thirdparty with type : '.($object->thirdparty->isACompany() ? 'company' : 'individual').'<br>';
+			$error .= 'Customer VAT number = '.$object->tva_intra.'<br>';
+			$error .= 'Customer Id prof = '.$object->thirdparty->idprof1.' '.$object->thirdparty->idprof2.' '.$object->thirdparty->idprof3.' '.$object->thirdparty->idprof4.' '.$object->thirdparty->idprof5.' '.$object->thirdparty->idprof6.'<br>';
+			$error .= 'Customer Business entity type = '.$object->thirdparty->typent_code.'<br>';
+			$error .= '<br>';
+			$error .= 'This means you are eligible the to the French Loi Finance 2025 and need to enable the module Unalterable Archives to be allowed to use a software to record payments.<br>';
+			$error .= 'Please enable the module Unalterable Archives first...';
+			dol_syslog(get_class($this).'::run_triggers '.$error, LOG_ERR);
+			$this->errors[] = $error;
+			return -1;
+		}
+
 
 		$dirtriggers = array_merge(array('/core/triggers'), $conf->modules_parts['triggers']);
 		foreach ($dirtriggers as $reldir) {
