@@ -110,17 +110,7 @@ class Ticket extends CommonObject
 	public $message;
 
 	/**
-	 * @var string Ticket note private
-	 */
-	public $note_private;
-
-	/**
-	 * @var string Ticket note public
-	 */
-	public $note_public;
-
-	/**
-	 * @var string Private message
+	 * @var string If message is private
 	 */
 	public $private;
 
