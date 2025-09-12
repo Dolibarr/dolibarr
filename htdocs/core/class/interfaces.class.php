@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2005-2009  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006       Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2010       Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005-2009  Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2006       Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
+ * Copyright (C) 2010       Regis Houssin        	<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ class Interfaces
 			$error .= 'Your country: '.$mysoc->country_code.'<br>';
 			$error .= 'Your are using VAT: '.yn($mysoc->tva_assuj).'<br>';
 			$error .= 'The invoice is intended for a thirdparty with type : '.($object->thirdparty->isACompany() ? 'company' : 'individual').'<br>';
-			$error .= 'Customer VAT number = '.$object->tva_intra.'<br>';
+			$error .= 'Customer VAT number = '.$object->thirdparty->tva_intra.'<br>';
 			$error .= 'Customer Id prof = '.$object->thirdparty->idprof1.' '.$object->thirdparty->idprof2.' '.$object->thirdparty->idprof3.' '.$object->thirdparty->idprof4.' '.$object->thirdparty->idprof5.' '.$object->thirdparty->idprof6.'<br>';
 			$error .= 'Customer Business entity type = '.$object->thirdparty->typent_code.'<br>';
 			$error .= '<br>';
