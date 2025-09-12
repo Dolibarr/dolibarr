@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005-2009  Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2006       Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
+ * Copyright (C) 2010       Regis Houssin        	<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,10 +69,10 @@ class Interfaces
 	 *   This function call all qualified triggers.
 	 *
 	 *   @param		string		$action     Trigger event code
-	 *   @param     Object		$object     Object concerned. Some context information may also be provided into array property object->context.
-	 *   @param     User		$user       Object user
-	 *   @param     Translate	$langs      Object lang
-	 *   @param     Conf		$conf       Object conf
+	 *   @param     ?Object		$object     Object concerned. Some context information may also be provided into array property object->context.
+	 *   @param     ?User		$user       Object user
+	 *   @param     ?Translate	$langs      Object lang
+	 *   @param     ?Conf		$conf       Object conf
 	 *   @return    int         			Nb of triggers ran if no error, -Nb of triggers with errors otherwise.
 	 */
 	public function run_triggers($action, $object, $user, $langs, $conf)
@@ -84,17 +85,18 @@ class Interfaces
 		}
 
 		// Check parameters
-		if (!is_object($object) || !is_object($conf)) {	// Error
+		if (!is_object($object) || !($conf instanceof Conf)) {	// Error
 			$error = 'function run_triggers called with wrong parameters object or conf. action='.$action.' object='.((string) (int) is_object($object)).' user='.((string) (int) is_object($user)).' langs='.((string) (int) is_object($langs)).' conf='.((string) (int) is_object($conf));
 			dol_syslog(get_class($this).'::run_triggers '.$error, LOG_ERR);
 			$this->errors[] = $error;
 			return -1;
 		}
-		if (!is_object($langs)) {	// Warning
-			dol_syslog(get_class($this).'::run_triggers was called with wrong parameters langs. action='.$action.' object='.((string) (int) is_object($object)).' user='.((string) (int) is_object($user)).' langs='.((string) (int) is_object($langs)).' conf='.((string) (int) is_object($conf)), LOG_WARNING);
+		if (!($langs instanceof Translate)) {	// Warning
+			dol_syslog(get_class($this).'::run_triggers was called with wrong parameters langs. action='.$action.' object='.((string) (int) is_object($object)).' user='.((string) (int) is_object($user)).' langs='.((string) (int) is_object($langs)).' conf=1', LOG_WARNING);
+			$langs = new Translate('', $conf);
 		}
-		if (!is_object($user)) {	    // Warning
-			dol_syslog(get_class($this).'::run_triggers was called with wrong parameters user. action='.$action.' object='.((string) (int) is_object($object)).' user='.((string) (int) is_object($user)).' langs='.((string) (int) is_object($langs)).' conf='.((string) (int) is_object($conf)), LOG_WARNING);
+		if (!($user instanceof User)) {	    	// Warning
+			dol_syslog(get_class($this).'::run_triggers was called with wrong parameters user. action='.$action.' object='.((string) (int) is_object($object)).' user='.((string) (int) is_object($user)).' langs=1 conf=1', LOG_WARNING);
 			$user = new User($this->db);
 		}
 
@@ -105,6 +107,34 @@ class Interfaces
 		$modules = array();
 		$orders = array();
 		$i = 0;
+
+		// Special cases
+		global $mysoc;
+		if (
+			getDolGlobalString('MAIN_FRANCE_TODO_LOI_FINANCE')
+			&& $object instanceof Facture && $action == 'BILL_VALIDATE'			// If we try to validate an invoice
+			&& in_array($mysoc->country_code, array('FR')) && $mysoc->tva_assuj	// If country is France and is using VAT
+			&& $object->thirdparty instanceof Societe
+			&& !$object->thirdparty->isACompany() // thirdparty is individual
+			&& !isModEnabled('blockedlog')
+		) {
+			$langs->load("errors");
+			$error = 'You try to validate an invoice in the following situation:<br>';
+			$error .= 'Your country: '.$mysoc->country_code.'<br>';
+			$error .= 'Your are using VAT: '.yn($mysoc->tva_assuj).'<br>';
+			// $error .= 'The invoice is intended for a thirdparty with type : '.($object->thirdparty->isACompany() ? 'company' : 'individual').'<br>';
+			$error .= 'The invoice is intended for a thirdparty with type : individual<br>';
+			$error .= 'Customer VAT number = '.$object->thirdparty->tva_intra.'<br>';
+			$error .= 'Customer Id prof = '.$object->thirdparty->idprof1.' '.$object->thirdparty->idprof2.' '.$object->thirdparty->idprof3.' '.$object->thirdparty->idprof4.' '.$object->thirdparty->idprof5.' '.$object->thirdparty->idprof6.'<br>';
+			$error .= 'Customer Business entity type = '.$object->thirdparty->typent_code.'<br>';
+			$error .= '<br>';
+			$error .= 'This means you are eligible the to the French Loi Finance 2025 and need to enable the module Unalterable Archives to be allowed to use a software to record payments.<br>';
+			$error .= 'Please enable the module Unalterable Archives first...';
+			dol_syslog(get_class($this).'::run_triggers '.$error, LOG_ERR);
+			$this->errors[] = $error;
+			return -1;
+		}
+
 
 		$dirtriggers = array_merge(array('/core/triggers'), $conf->modules_parts['triggers']);
 		foreach ($dirtriggers as $reldir) {

@@ -1022,10 +1022,6 @@ PDF/A-3b
 PartnershipSentByEMail
 PdfTitle
 ProcessingError
-PurchaseOrder
-PurchaseOrders
-ReceptionSentByEMail
-ReceptionValidated
 Recruited
 Ref. Product
 RefNewContract
@@ -1033,7 +1029,6 @@ Stable
 Suggested
 TicketMessageMailSignatureText
 TicketSetupPage
-Tiers
 Timeline
 Transfer
 TryAnotherConnectionMode
