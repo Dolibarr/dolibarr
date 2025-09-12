@@ -159,8 +159,36 @@ $array_fields = array(
 	'soldafter' => $outputlangs->transnoentitiesnoconv("BankBalanceAfter"),
 	'comment' => $outputlangs->transnoentitiesnoconv("Comment")
 );
-$array_selected = array('bankreceipt' => 'bankreceipt', 'bankaccount' => 'bankaccount', 'dateop' => 'dateop', 'dateval' => 'dateval', 'type' => 'type', 'description' => 'description', 'thirdparty' => 'thirdparty', 'accountelem' => 'accountelem', 'debit' => 'debit', 'credit' => 'credit', 'soldbefore' => 'soldbefore', 'soldafter' => 'soldafter', 'comment' => 'comment');
-$array_export_TypeFields = array('bankreceipt' => 'Text', 'bankaccount' => 'Text', 'dateop' => 'Date', 'dateval' => 'Date', 'type' => 'Text', 'description' => 'Text', 'thirdparty' => 'Text', 'accountelem' => 'Text', 'debit' => 'Number', 'credit' => 'Number', 'soldbefore' => 'Number', 'soldafter' => 'Number', 'comment' => 'Text');
+$array_selected = array(
+	'bankreceipt' => 'bankreceipt',
+	'bankaccount' => 'bankaccount',
+	'dateop' => 'dateop',
+	'dateval' => 'dateval',
+	'type' => 'type',
+	'description' => 'description',
+	'thirdparty' => 'thirdparty',
+	'accountelem' => 'accountelem',
+	'debit' => 'debit',
+	'credit' => 'credit',
+	'soldbefore' => 'soldbefore',
+	'soldafter' => 'soldafter',
+	'comment' => 'comment'
+);
+$array_export_TypeFields = array(
+	'bankreceipt' => 'Text',
+	'bankaccount' => 'Text',
+	'dateop' => 'Date',
+	'dateval' => 'Date',
+	'type' => 'Text',
+	'description' => 'Text',
+	'thirdparty' => 'Text',
+	'accountelem' => 'Text',
+	'debit' => 'Number',
+	'credit' => 'Number',
+	'soldbefore' => 'Number',
+	'soldafter' => 'Number',
+	'comment' => 'Text'
+);
 
 // Build request to find records for a bank account/receipt
 $listofnum = "";
