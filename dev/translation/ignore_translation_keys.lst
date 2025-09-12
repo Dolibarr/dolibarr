@@ -358,7 +358,6 @@ ErrorTechnicalError
 ErrorThirdPartyIdIsMandatory
 ErrorTicketIsNotValid
 ErrorTitreAlreadyExists
-ErrorUpdatingUsersCP
 ErrorUserFetch
 ErrorValueMustBeInteger
 ErrorValueTooHigh
@@ -806,7 +805,6 @@ Templates
 TestPrinterTemplate
 TestTemplateToPrinter
 Theme
-ThirdpartyHasNoDefaultBanAccount
 ThisIsInformationOnDocumentToSign
 ThisScreenAllowsYouToSignDocFrom
 TicketCategoryShort
@@ -843,8 +841,6 @@ UpdateUser
 UpgradeHasBeenUnlocked
 Url
 Use of API for currency update is disabled by option MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER
-UserRemovedFromGroup
-UserSetInGroup
 VCard
 Vacant
 ValidateAndSign
@@ -870,7 +866,6 @@ Widgets
 Windows
 WorkingBoard
 Workload
-WrongAmount
 XDebug
 XmlCorrupted
 Y

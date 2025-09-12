@@ -2271,7 +2271,7 @@ if ($action == 'create') {
 	}
 
 	// Presend form
-	$modelmail = 'shipping_send';
+	$modelmail = 'reception_send';
 	$defaulttopic = 'SendReceptionRef';
 	$diroutput = $conf->reception->dir_output;
 	$trackid = 'rec'.$object->id;
