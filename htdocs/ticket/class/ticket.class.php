@@ -113,7 +113,7 @@ class Ticket extends CommonObject
 	 * @var string Ticket note private
 	 */
 	public $note_private;
-	
+
 	/**
 	 * @var string Ticket note public
 	 */
