@@ -144,7 +144,7 @@ class Expedition extends CommonObject
 	 */
 	public $trueWeight;
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $weight_units;
 	/**
@@ -152,7 +152,7 @@ class Expedition extends CommonObject
 	 */
 	public $trueWidth;
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $width_units;
 	/**
@@ -160,7 +160,7 @@ class Expedition extends CommonObject
 	 */
 	public $trueHeight;
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $height_units;
 	/**
@@ -168,7 +168,7 @@ class Expedition extends CommonObject
 	 */
 	public $trueDepth;
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $depth_units;
 	/**
@@ -187,12 +187,12 @@ class Expedition extends CommonObject
 	public $multicurrency_subprice;
 
 	/**
-	 * @var int|string
+	 * @var null|int|string
 	 */
 	public $size_units;
 
 	/**
-	 * @var int|string
+	 * @var null|int|string
 	 */
 	public $sizeH;
 
