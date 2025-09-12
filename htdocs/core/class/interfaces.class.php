@@ -91,7 +91,7 @@ class Interfaces
 			return -1;
 		}
 		if (!($langs instanceof Translate)) {	// Warning
-			dol_syslog(get_class($this).'::run_triggers was called with wrong parameters langs. action='.$action.' object='.((string) (int) is_object($object)).' user='.((string) (int) is_object($user)).' langs='.((string) (int) is_object($langs)).' conf='.((string) (int) is_object($conf)), LOG_WARNING);
+			dol_syslog(get_class($this).'::run_triggers was called with wrong parameters langs. action='.$action.' object='.((string) (int) is_object($object)).' user='.((string) (int) is_object($user)).' langs='.((string) (int) is_object($langs)).' conf=1', LOG_WARNING);
 			$langs = new Translate('', $conf);
 		}
 		if (!($user instanceof User)) {	    	// Warning
