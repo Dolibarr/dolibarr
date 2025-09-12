@@ -1022,8 +1022,6 @@ PDF/A-3b
 PartnershipSentByEMail
 PdfTitle
 ProcessingError
-ReceptionSentByEMail
-ReceptionValidated
 Recruited
 Ref. Product
 RefNewContract
@@ -1031,7 +1029,6 @@ Stable
 Suggested
 TicketMessageMailSignatureText
 TicketSetupPage
-Tiers
 Timeline
 Transfer
 TryAnotherConnectionMode

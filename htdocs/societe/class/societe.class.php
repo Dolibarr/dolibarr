@@ -4421,29 +4421,33 @@ class Societe extends CommonObject
 	/**
 	 *  Check if third party is a company (Business) or an end user (Consumer)
 	 *
-	 *  @return		boolean		if a company: true || if a user: false
+	 *  @return		int		if a company > 0, if an individual = 0
 	 */
 	public function isACompany()
 	{
+		//global $mysoc;
+
 		// Define if third party is treated as company (or not) when nature is unknown
-		$isACompany = getDolGlobalInt('MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES', 1);	// default if not set is 1 because it was like this in all past versions
+		//$defaultvalue = in_array($mysoc->country_code, array('FR')) ? 0 : 1;	// TODO On old version, default was 1 for everybody, move this to defaultvalue = 0 for everybody
+		$defaultvalue = 1;
+		$isACompany = getDolGlobalInt('MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES', $defaultvalue);
 
 		// Now try to guess using different tips
 		if (!empty($this->tva_intra)) {
-			$isACompany = 1;
+			$isACompany = 2;
 		} elseif (!empty($this->idprof1) || !empty($this->idprof2) || !empty($this->idprof3) || !empty($this->idprof4) || !empty($this->idprof5) || !empty($this->idprof6)) {
-			$isACompany = 1;
+			$isACompany = 3;
 		} else {
 			if (!getDolGlobalString('MAIN_CUSTOMERS_ARE_COMPANIES_EVEN_IF_SET_AS_INDIVIDUAL')) {	// never or rarely set
 				if (preg_match('/^TE_PRIVATE/', $this->typent_code)) {	// TODO Add a field is_a_company into dictionary
 					$isACompany = 0;
 				}
 			} else {
-				$isACompany = 1;
+				$isACompany = 4;
 			}
 		}
 
-		return (bool) $isACompany;
+		return $isACompany;
 	}
 
 	/**
