@@ -68,12 +68,12 @@ class Interfaces
 	 *   Function called when a Dolibarr business event occurs
 	 *   This function call all qualified triggers.
 	 *
-	 *   @param		string			$action     Trigger event code
-	 *   @param     ?CommonObject	$object     Object concerned. Some context information may also be provided into array property object->context.
-	 *   @param     ?User			$user       Object user
-	 *   @param     ?Translate		$langs      Object lang
-	 *   @param     ?Conf			$conf       Object conf
-	 *   @return    int         				Nb of triggers ran if no error, -Nb of triggers with errors otherwise.
+	 *   @param		string		$action     Trigger event code
+	 *   @param     ?Object		$object     Object concerned. Some context information may also be provided into array property object->context.
+	 *   @param     ?User		$user       Object user
+	 *   @param     ?Translate	$langs      Object lang
+	 *   @param     ?Conf		$conf       Object conf
+	 *   @return    int         			Nb of triggers ran if no error, -Nb of triggers with errors otherwise.
 	 */
 	public function run_triggers($action, $object, $user, $langs, $conf)
 	{
@@ -115,14 +115,15 @@ class Interfaces
 			&& $object instanceof Facture && $action == 'BILL_VALIDATE'			// If we try to validate an invoice
 			&& in_array($mysoc->country_code, array('FR')) && $mysoc->tva_assuj	// If country is France and is using VAT
 			&& $object->thirdparty instanceof Societe
-			&& !$object->thirdparty->isACompany()
+			&& !$object->thirdparty->isACompany() // thirdparty is individual
 			&& !isModEnabled('blockedlog')
 		) {
 			$langs->load("errors");
 			$error = 'You try to validate an invoice in the following situation:<br>';
 			$error .= 'Your country: '.$mysoc->country_code.'<br>';
 			$error .= 'Your are using VAT: '.yn($mysoc->tva_assuj).'<br>';
-			$error .= 'The invoice is intended for a thirdparty with type : '.($object->thirdparty->isACompany() ? 'company' : 'individual').'<br>';
+			// $error .= 'The invoice is intended for a thirdparty with type : '.($object->thirdparty->isACompany() ? 'company' : 'individual').'<br>';
+			$error .= 'The invoice is intended for a thirdparty with type : individual<br>';
 			$error .= 'Customer VAT number = '.$object->thirdparty->tva_intra.'<br>';
 			$error .= 'Customer Id prof = '.$object->thirdparty->idprof1.' '.$object->thirdparty->idprof2.' '.$object->thirdparty->idprof3.' '.$object->thirdparty->idprof4.' '.$object->thirdparty->idprof5.' '.$object->thirdparty->idprof6.'<br>';
 			$error .= 'Customer Business entity type = '.$object->thirdparty->typent_code.'<br>';
