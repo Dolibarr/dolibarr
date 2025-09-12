@@ -92,12 +92,21 @@ class Controller
 	 */
 	public function checkAccess()
 	{
+		global $hookmanager;
 		$context = Context::getInstance();
 
 		if ($this->accessNeedLoggedUser) {
 			if (!$context->userIslog()) {
 				return false;
 			}
+		}
+
+		// Hooks for security access
+		$hookmanager->initHooks(array('webportaldao'));
+		$parameters = array('controller' => $context->controller);
+		$reshook = $hookmanager->executeHooks('checkAccess', $parameters, $context, $context->action);
+		if ($reshook > 0) {
+			$this->accessRight = !empty($hookmanager->resArray['accessRight']);
 		}
 
 		if (!$this->accessRight) {

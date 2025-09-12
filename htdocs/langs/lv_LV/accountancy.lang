@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=Grāmatvedība
 Accounting=Grāmatvedība
+AccountingAccount=Grāmatvedības konts
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=Eksportējamā faila kolonnu atdalītājs
 ACCOUNTING_EXPORT_DATE=Eksportējamā faila datuma formāts
 ACCOUNTING_EXPORT_PIECE=Eksportēt vienību skaitu

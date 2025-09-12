@@ -328,4 +328,4 @@ RuleForLinesDates=Κανόνας για ημερομηνίες γραμμών
 Prepaid=Προπληρωμένο
 Postpaid=Μεταπληρωμή
 SetRuleForLinesDates=Ορισμός κανόνα για ημερομηνίες γραμμών
-SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption
+SomeNotConvertedCreditNoteExists=Υπάρχουν <b>%s</b> πιστωτικά σημειώματα που δεν έχουν ακόμη μετατραπεί για κατανάλωση

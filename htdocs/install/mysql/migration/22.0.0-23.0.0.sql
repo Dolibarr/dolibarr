@@ -35,6 +35,7 @@
 
 -- V22 forgotten
 
+ALTER TABLE llx_opensurvey_user_studs ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 
 
 -- V23 migration
@@ -161,5 +162,7 @@ ALTER TABLE llx_subscription ADD INDEX idx_subscription_fk_bank (fk_bank);
 ALTER TABLE llx_subscription ADD INDEX idx_subscription_dateadh (dateadh);
 
 ALTER TABLE llx_bank_import ADD COLUMN fitid varchar(255) NULL after id_account; -- OFX Financial Institution Transaction ID "FITID"
+
+ALTER TABLE llx_element_contact ADD mandatory_signature TINYINT AFTER element_id;
 
 -- end of migration

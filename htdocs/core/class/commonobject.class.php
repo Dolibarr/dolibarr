@@ -325,12 +325,12 @@ abstract class CommonObject
 
 
 	/**
-	 * @var string 		The object's reference
+	 * @var ?string 		The object's reference
 	 */
 	public $ref;
 
 	/**
-	 * @var string 		An external reference to the object
+	 * @var ?string 		An external reference to the object
 	 */
 	public $ref_ext;
 
@@ -345,7 +345,7 @@ abstract class CommonObject
 	public $ref_next;
 
 	/**
-	 * @var string 		Ref to store on object to save the new ref to use for example when making a validate() of an object
+	 * @var ?string 		Ref to store on object to save the new ref to use for example when making a validate() of an object
 	 */
 	public $newref;
 
@@ -2428,7 +2428,7 @@ abstract class CommonObject
 		if ($fieldid == 'rowid') {
 			$sql .= " WHERE te.".$fieldid." < ".((int) $this->id);
 		} else {
-			$sql .= " WHERE te.".$fieldid." < '".$this->db->escape($this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
+			$sql .= " WHERE te.".$fieldid." < '".$this->db->escape((string) $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
 		}
 		if ($restrictiononfksoc == 1 && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND sc.fk_user = ".((int) $user->id);
@@ -2507,7 +2507,7 @@ abstract class CommonObject
 		if ($fieldid == 'rowid') {
 			$sql .= " WHERE te.".$fieldid." > ".((int) $this->id);
 		} else {
-			$sql .= " WHERE te.".$fieldid." > '".$this->db->escape($this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
+			$sql .= " WHERE te.".$fieldid." > '".$this->db->escape((string) $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
 		}
 		if ($restrictiononfksoc == 1 && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND (sc.fk_user = ".((int) $user->id);
@@ -3240,7 +3240,11 @@ abstract class CommonObject
 			if (!$notrigger) {
 				// Call trigger
 				$this->context = array('shippingmethodupdate' => 1);
-				$result = $this->call_trigger(strtoupper(get_class($this)).'_MODIFY', $userused);
+				$triggerPrefix = (empty($this->TRIGGER_PREFIX) ? strtoupper(get_class($this)) : $this->TRIGGER_PREFIX);
+				if (get_class($this) == 'Commande') {
+					$triggerPrefix = 'ORDER';	// TODO Remove this when TRIGGER_PREFI in order is implemented
+				}
+				$result = $this->call_trigger($triggerPrefix.'_MODIFY', $userused);
 				if ($result < 0) {
 					$error++;
 				}

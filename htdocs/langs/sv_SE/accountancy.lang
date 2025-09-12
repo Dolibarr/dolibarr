@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=Redovisning
 Accounting=Redovisning
+AccountingAccount=Redovisningskonto
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=Kolumnseparator för exportfil
 ACCOUNTING_EXPORT_DATE=Datumformat för exportfil
 ACCOUNTING_EXPORT_PIECE=Export the number of piece

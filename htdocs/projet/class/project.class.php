@@ -854,7 +854,7 @@ class Project extends CommonObject
 			}
 		}
 
-		return $substitution;
+		return (string) $substitution;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

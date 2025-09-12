@@ -233,7 +233,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 		$outputlangs->charset_output = 'UTF-8';
 
 		// Load translation files required by page
-		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "deliveries"));
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "sendginds"));
 
 		if ($conf->contract->multidir_output[$object->entity ?? $conf->entity]) {
 			// If $object is id instead of object

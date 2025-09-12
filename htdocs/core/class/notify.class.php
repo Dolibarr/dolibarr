@@ -1070,7 +1070,7 @@ class Notify
 		}
 
 		// Check notification using fixed email
-		// TODO Move vars NOTIFICATION_FIXEDEMAIL into table llx_notify_def and inclulde the case into previous loop of sql result
+		// TODO Move vars NOTIFICATION_FIXEDEMAIL into table llx_notify_def and include the case into previous loop of sql result
 		if (!$error) {
 			foreach ($conf->global as $key => $val) {
 				$reg = array();

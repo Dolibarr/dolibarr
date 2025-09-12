@@ -940,7 +940,7 @@ class BOM extends CommonObject
 			$this->fetch_product();
 			$num = $this->getNextNumRef($this->product);
 		} else {
-			$num = $this->ref;
+			$num = (string) $this->ref;
 		}
 		$this->newref = dol_sanitizeFileName($num);
 

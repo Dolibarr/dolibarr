@@ -1320,7 +1320,7 @@ class ProductFournisseur extends Product
 		$result = '';
 		$label = '';
 
-		$newref = $this->ref;
+		$newref = (string) $this->ref;
 		if ($maxlength) {
 			$newref = dol_trunc($newref, $maxlength, 'middle');
 		}

@@ -952,7 +952,7 @@ if ($socid > 0 && empty($object->id)) {
 	$result = $object->fetch($socid);
 	if ($result <= 0) {
 		dol_print_error(null, $object->error);
-		exit(-1);
+		exit(1);
 	}
 }
 
@@ -2575,7 +2575,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						}
 
 						$idprof_mandatory = 'SOCIETE_IDPROF'.($i).'_MANDATORY';
-						print '<td>'.$form->editfieldkey($idprof, $key, '', $object, 0, 'string', '', (int) !(empty($conf->global->$idprof_mandatory) || !$object->isACompany())).'</td><td>';
+						print '<td>'.$form->editfieldkey($idprof, $key, '', $object, 0, 'string', '', (int) (getDolGlobalString($idprof_mandatory) && $object->isACompany())).'</td><td>';
 						print $formcompany->get_input_id_prof($i, $key, $object->$key, $object->country_code);
 						print '</td>';
 						if (($j % $NBCOLS) == ($NBCOLS - 1)) {

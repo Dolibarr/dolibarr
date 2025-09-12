@@ -496,7 +496,8 @@ if (empty($reshook)) {
 
 	// Quick edit for extrafields
 	if ($action == 'update_extras' && $permissiontoeditextra) {
-		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+		// we may use oldcopy->hasBatch( in triggers so keep 1
+		$object->oldcopy = dol_clone($object, 1);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		$attribute_name = GETPOST('attribute', 'aZ09');
 
@@ -2417,11 +2418,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				// Customs code
 				if (!$object->isService() && !getDolGlobalString('PRODUCT_DISABLE_CUSTOMS_INFO')) {
-					print '<tr><td class="wordbreak">'.$form->textwithpicto($langs->trans("CustomsCode"), $langs->trans("CustomsCodeHelp")).'</td><td><input name="customcode" class="maxwidth100onsmartphone" value="'.(GETPOSTISSET('customcode') ? GETPOST('customcode') : $object->customcode).'"></td></tr>';
+					print '<tr><td class="wordbreak">'.$form->textwithpicto($langs->trans("CustomsCode"), $langs->trans("CustomsCodeHelp")).'</td>';
+					print '<td>' . img_picto('', 'fa-clipboard-check', 'class="pictofixedwidth"') . '<input name="customcode" class="maxwidth100onsmartphone" value="'.(GETPOSTISSET('customcode') ? GETPOST('customcode') : $object->customcode).'"></td></tr>';
 					// Origin country
 					print '<tr><td>'.$langs->trans("CountryOrigin").'</td>';
 					print '<td>';
-					print img_picto('', 'globe-americas', 'class="paddingrightonly"');
+					print img_picto('', 'globe-americas', 'class="pictofixedwidth"');
 					print $form->select_country((string) (GETPOSTISSET('country_id') ? GETPOSTINT('country_id') : $object->country_id), 'country_id', '', 0, 'minwidth100 maxwidthonsmartphone');
 					if ($user->admin) {
 						print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);

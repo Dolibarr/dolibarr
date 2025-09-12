@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=Buchführung
 Accounting=Buchhaltung
+AccountingAccount=Buchungskonto
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=Spaltentrennzeichen für die Exportdatei
 ACCOUNTING_EXPORT_DATE=Datumsformat der Exportdatei
 ACCOUNTING_EXPORT_PIECE=Stückzahl exportieren
@@ -193,7 +195,7 @@ DONATION_ACCOUNTINGACCOUNT=Konto (aus dem Kontenplan), das zur Erfassung von Spe
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Konto (aus dem Kontenplan), das zur Erfassung von Mitgliedsbeiträgen verwendet werden soll (Mitgliedschaftsmodul - wenn die Mitgliedschaft ohne Rechnung erfasst wird)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Konto (aus dem Kontenplan), das als Standardkonto zur Erfassung von Kundenanzahlungen verwendet werden soll
 UseAuxiliaryAccountOnCustomerDeposit=Debitorenkonto als Einzelkonto im Nebenbuch für Anzahlungspositionen hinterlegen (bei Deaktivierung bleibt Einzelkonto für Anzahlungspositionen leer)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Konto (aus dem Kontenplan), das als Standardkonto zur Verbuchung von Anzahlungen an Lieferanten verwendet werden soll
 UseAuxiliaryAccountOnSupplierDeposit=Lieferantenkonto als Einzelkonto im Nebenbuch für Anzahlungsbuchungen speichern (falls deaktiviert, bleibt Einzelkonto für Anzahlungsbuchungen leer)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Standard-Buchungskonto zur Erfassung der vom Kunden einbehaltenen Garantie
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Konto (aus dem Kontenplan), das als Standardkonto für die im selben Land gekauften Produkte verwendet werden soll (wird verwendet, wenn nicht im Produktblatt definiert)
@@ -278,7 +280,7 @@ PcgtypeDesc=Kontengruppen werden für einige Buchhaltungsberichte als vordefinie
 AccountingCategoriesDesc=Benutzerdefinierte Kontengruppen können verwendet werden, um mehrere Buchhaltungskonten unter einem Namen zu gruppieren, um die Verwendung von Filtern oder das Erstellen von benutzerdefinierten Berichten zu vereinfachen.
 Reconcilable=Abstimmkonto
 Centralized=Sammelkonto
-CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
+CentralizedAccountHelp=Bei Buchungen auf ein Sammelkonto kann optional auch ein zugehöriges detaillierteres Unterkonto erfasst werden.
 TotalVente=Gesamtumsatz vor Steuern
 TotalMarge=Gesamtumsatzrendite
 DescVentilCustomer=Übersicht der kontierten und unkontierten Positionen aus Kundenrechnungen

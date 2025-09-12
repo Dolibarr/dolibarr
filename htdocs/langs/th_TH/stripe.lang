@@ -92,3 +92,19 @@ ExampleOnlyForDECustomers=เฉพาะลูกค้าชาวเยอร
 ExampleOnlyForNLCustomers=เฉพาะลูกค้าชาวดัตช์เท่านั้น
 ExampleOnlyForATBEDEITNLESCustomers=เฉพาะลูกค้าจากออสเตรีย เบลเยียม เยอรมนี อิตาลี เนเธอร์แลนด์ สเปนเท่านั้น
 ListOfSupportedHooksToActivate=รายชื่อของตะขอที่รองรับเพื่อเปิดใช้งาน
+# Paybox
+PayBoxSetup=PayBox ติดตั้งโมดูล
+PayBoxDesc=This module offer pages to allow payment on <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+PayBoxDoPayment=Pay with Paybox
+YouWillBeRedirectedOnPayBox=คุณจะถูกเปลี่ยนเส้นทางในหน้า Paybox การรักษาความปลอดภัยในการป้อนข้อมูลบัตรเครดิต
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
+YourPaymentHasBeenRecorded=หน้านี้ยืนยันว่าชำระเงินของคุณได้รับการบันทึก ขอบคุณ
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
+PAYBOX_CGI_URL_V2=url ของ Paybox โมดูล CGI สำหรับการชำระเงิน
+NewPayboxPaymentReceived=การชำระเงิน Paybox ใหม่ที่ได้รับ
+NewPayboxPaymentFailed=การชำระเงิน Paybox ใหม่พยายาม แต่ล้มเหลว
+PAYBOX_PAYONLINE_SENDEMAIL=Email notification after payment attempt (success or fail)
+PAYBOX_PBX_SITE=ราคาเว็บไซต์ PBX
+PAYBOX_PBX_RANG=ราคา PBX รัง
+PAYBOX_PBX_IDENTIFIANT=ราคา PBX ID
+PAYBOX_HMAC_KEY=HMAC key

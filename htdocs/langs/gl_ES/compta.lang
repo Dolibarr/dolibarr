@@ -328,4 +328,4 @@ RuleForLinesDates=Regra para as datas das liñas
 Prepaid=Prepago
 Postpaid=Postpago
 SetRuleForLinesDates=Establece unha regra para as datas das liñas
-SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption
+SomeNotConvertedCreditNoteExists=Hai notas de crédito <b>%s</b> que aínda non foron convertidas para o seu consumo

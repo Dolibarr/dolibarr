@@ -56,7 +56,7 @@ if (getDolGlobalString('STRIPE_AUTO_RECORD_PAYOUT')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'other', 'paypal', 'paybox', 'stripe'));
+$langs->loadLangs(array('admin', 'other', 'paypal', 'stripe'));
 
 if (empty($user->admin)) {
 	accessforbidden();
