@@ -418,7 +418,7 @@ class Expedition extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->tracking_number = dol_sanitizeFileName($this->tracking_number);
+		$this->tracking_number = dol_sanitizeFileName((string) $this->tracking_number);
 		if (empty($this->fk_project)) {
 			$this->fk_project = 0;
 		}
@@ -968,6 +968,11 @@ class Expedition extends CommonObject
 		// Protection
 		if ($this->status) {
 			dol_syslog(get_class($this)."::valid not in draft status", LOG_WARNING);
+			return 0;
+		}
+
+		if (!isset($this->socid)) {
+			dol_syslog(get_class($this)."::can't valid socid not set", LOG_WARNING);
 			return 0;
 		}
 
