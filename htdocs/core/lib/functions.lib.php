@@ -10037,6 +10037,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = '__THIRDPARTY_CODE_FOURNISSEUR__';
 				$substitutionarray['__THIRDPARTY_EMAIL__'] = '__THIRDPARTY_EMAIL__';
 				//$substitutionarray['__THIRDPARTY_EMAIL_URLENCODED__'] = '__THIRDPARTY_EMAIL_URLENCODED__';	// We hide this one
+				$substitutionarray['__THIRDPARTY_URL__'] = '__THIRDPARTY_URL__';
+				//$substitutionarray['__THIRDPARTY_URL_URLENCODED__'] = '__THIRDPARTY_URL_URLENCODED__';		// We hide this one
 				$substitutionarray['__THIRDPARTY_PHONE__'] = '__THIRDPARTY_PHONE__';
 				$substitutionarray['__THIRDPARTY_FAX__'] = '__THIRDPARTY_FAX__';
 				$substitutionarray['__THIRDPARTY_ADDRESS__'] = '__THIRDPARTY_ADDRESS__';
@@ -10222,6 +10224,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = $object->code_fournisseur ?? '';
 				$substitutionarray['__THIRDPARTY_EMAIL__'] = $object->email ?? '';
 				$substitutionarray['__THIRDPARTY_EMAIL_URLENCODED__'] = urlencode($object->email ?? '');
+				$substitutionarray['__THIRDPARTY_URL__'] = $object->url ?? '';
+				$substitutionarray['__THIRDPARTY_URL_URLENCODED__'] = urlencode($object->url ?? '');
 				$substitutionarray['__THIRDPARTY_PHONE__'] = dol_print_phone($object->phone ?? '');
 				$substitutionarray['__THIRDPARTY_FAX__'] = dol_print_phone($object->fax ?? '');
 				$substitutionarray['__THIRDPARTY_ADDRESS__'] = $object->address ?? '';
@@ -10539,6 +10543,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				'@phan-var-force ActionComm $object';
 				/** @var ActionComm $object */
 				$substitutionarray['__EVENT_LABEL__'] = $object->label;
+				$substitutionarray['__EVENT_DESCRIPTION__'] = $object->note;
 				$substitutionarray['__EVENT_TYPE__'] = $outputlangs->trans("Action" . $object->type_code);
 				$substitutionarray['__EVENT_DATE__'] = dol_print_date($object->datep, 'day', 'auto', $outputlangs);
 				$substitutionarray['__EVENT_TIME__'] = dol_print_date($object->datep, 'hour', 'auto', $outputlangs);

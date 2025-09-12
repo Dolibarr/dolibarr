@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=Regnskap
 Accounting=Regnskap
+AccountingAccount=Regnskapskonto
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=Kolonneseparator for eksportfil
 ACCOUNTING_EXPORT_DATE=Datoformat for eksportfil
 ACCOUNTING_EXPORT_PIECE=Eksporter antall enheter

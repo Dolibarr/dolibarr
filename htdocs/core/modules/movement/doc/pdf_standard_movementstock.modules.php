@@ -190,7 +190,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 		}
 
 		// Load traductions files required by the page
-		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "stocks", "orders", "deliveries"));
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "stocks", "orders", "sendings"));
 
 		/**
 		 * TODO: get from object

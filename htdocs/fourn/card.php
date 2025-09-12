@@ -218,7 +218,7 @@ if ($id > 0 && empty($object->id)) {
 	$res = $object->fetch($id);
 	if ($object->id <= 0) {
 		dol_print_error($db, $object->error);
-		exit(-1);
+		exit(1);
 	}
 }
 

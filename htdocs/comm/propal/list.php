@@ -67,7 +67,7 @@ if (isModEnabled('category')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'propal', 'compta', 'bills', 'orders', 'products', 'deliveries', 'categories'));
+$langs->loadLangs(array('companies', 'propal', 'compta', 'bills', 'orders', 'products', 'sendings', 'categories'));
 if (isModEnabled("shipping")) {
 	$langs->loadLangs(array('sendings'));
 }

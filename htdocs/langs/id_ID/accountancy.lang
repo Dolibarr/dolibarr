@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=Akuntansi
 Accounting=Akuntansi
+AccountingAccount=Akun akuntansi
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=Kolom pemisah untuk ekspor data
 ACCOUNTING_EXPORT_DATE=Format tanggal untuk ekspor data
 ACCOUNTING_EXPORT_PIECE=Ekspor jumlah potongan

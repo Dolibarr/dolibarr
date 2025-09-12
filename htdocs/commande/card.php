@@ -77,7 +77,7 @@ if (isModEnabled('variants')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'deliveries', 'products', 'other'));
+$langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'products', 'other'));
 
 if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');

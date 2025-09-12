@@ -2144,7 +2144,7 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$myobject = 'expedition';
 		$module = 'expedition_bon';
 	} elseif ($objecttype == 'delivery') {
-		$langs->load('deliveries');
+		$langs->load('sendings');
 		$classpath = 'delivery/class';
 		$myobject = 'delivery';
 		$module = 'delivery_note';

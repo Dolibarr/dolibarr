@@ -106,11 +106,11 @@ if (!defined('USE_CUSTOM_REPORT_AS_INCLUDE')) {
 
 	if (empty($user) || empty($user->id)) {
 		print 'Page is called as an include but $user and its permission loaded with loadRights() are not defined. We stop here.';
-		exit(-1);
+		exit(1);
 	}
 	if (empty($object)) {
 		print 'Page is called as an include but $object is not defined. We stop here.';
-		exit(-1);
+		exit(1);
 	}
 }
 

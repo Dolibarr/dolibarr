@@ -92,3 +92,19 @@ ExampleOnlyForDECustomers=فقط للعملاء الألمان
 ExampleOnlyForNLCustomers=فقط للعملاء الهولنديين
 ExampleOnlyForATBEDEITNLESCustomers=مخصص فقط للعملاء من النمسا وبلجيكا وألمانيا وإيطاليا وهولندا وأسبانيا
 ListOfSupportedHooksToActivate=قائمة الخطافات المدعومة للتفعيل
+# Paybox
+PayBoxSetup=إعداد وحدة PayBox
+PayBoxDesc=This module offer pages to allow payment on <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+PayBoxDoPayment=Pay with Paybox
+YouWillBeRedirectedOnPayBox=سيتم إعادة توجيهك على صفحة Paybox الأمنة لإدخال معلومات بطاقة الائتمان الخاصة بك
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
+YourPaymentHasBeenRecorded=تؤكد هذه الصفحة أنه قد تم تسجيل دفعتك. شكرا لكم.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
+PAYBOX_CGI_URL_V2=Url من Paybox CGI وحدة للدفع
+NewPayboxPaymentReceived=تلقى الدفع Paybox الجديد
+NewPayboxPaymentFailed=دفع Paybox جديد حاول ولكنه فشل
+PAYBOX_PAYONLINE_SENDEMAIL=Email notification after payment attempt (success or fail)
+PAYBOX_PBX_SITE=قيمة PBX SITE
+PAYBOX_PBX_RANG=قيمة PBX رانج
+PAYBOX_PBX_IDENTIFIANT=قيمة PBX ID
+PAYBOX_HMAC_KEY=HMAC key

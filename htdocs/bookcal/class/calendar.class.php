@@ -43,6 +43,12 @@ class Calendar extends CommonObject
 	public $element = 'calendar';
 
 	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'CALENDAR';
+
+	/**
 	 * @var string Name of table without prefix where object is stored. This is also the key used for extrafields management.
 	 */
 	public $table_element = 'bookcal_calendar';
@@ -124,10 +130,7 @@ class Calendar extends CommonObject
 	 * @var int
 	 */
 	public $rowid;
-	/**
-	 * @var string
-	 */
-	public $ref;
+
 	/**
 	 * @var string
 	 */
@@ -148,14 +151,7 @@ class Calendar extends CommonObject
 	 * @var string
 	 */
 	public $description;
-	/**
-	 * @var string
-	 */
-	public $note_public;
-	/**
-	 * @var string
-	 */
-	public $note_private;
+
 	/**
 	 * @var int
 	 */
@@ -168,10 +164,7 @@ class Calendar extends CommonObject
 	 * @var string
 	 */
 	public $import_key;
-	/**
-	 * @var int
-	 */
-	public $status;
+
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -272,24 +265,12 @@ class Calendar extends CommonObject
 		unset($object->import_key);
 
 		// Clear fields
-		if (property_exists($object, 'ref')) {
-			// @phan-suppress-next-line PhanTypeInvalidDimOffset
-			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
-		}
-		if (property_exists($object, 'label')) {
-			// @phan-suppress-next-line PhanTypeInvalidDimOffset
-			$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
-		}
-		if (property_exists($object, 'status')) {
-			$object->status = self::STATUS_DRAFT;
-		}
-		if (property_exists($object, 'date_creation')) {
-			$object->date_creation = dol_now();
-		}
-		if (property_exists($object, 'date_modification')) {
-			$object->date_modification = null;
-		}
-		// ...
+		$object->ref = "Copy_Of_".$object->ref;
+		$object->label = $langs->trans("CopyOf")." ".$object->label;
+		$object->status = self::STATUS_DRAFT;
+		$object->date_creation = dol_now();
+		$object->date_modification = null;
+
 		// Clear extrafields that are unique
 		if (is_array($object->array_options) && count($object->array_options) > 0) {
 			$extrafields->fetch_name_optionals_label($this->table_element);
@@ -320,7 +301,7 @@ class Calendar extends CommonObject
 
 		if (!$error) {
 			// copy external contacts if same company
-			if (!empty($object->socid) && property_exists($this, 'fk_soc') && $this->fk_soc == $object->socid) {
+			if (!empty($object->socid) && $this->fk_soc == $object->socid) {
 				if ($this->copy_linked_contact($object, 'external') < 0) {
 					$error++;
 				}
@@ -507,7 +488,7 @@ class Calendar extends CommonObject
 		$this->db->begin();
 
 		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+		if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 			$num = $this->getNextNumRef();
 		} else {
 			$num = (string) $this->ref;
@@ -537,7 +518,7 @@ class Calendar extends CommonObject
 
 			if (!$error && !$notrigger) {
 				// Call trigger
-				$result = $this->call_trigger('MYOBJECT_VALIDATE', $user);
+				$result = $this->call_trigger('CALENDAR_VALIDATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
@@ -620,7 +601,7 @@ class Calendar extends CommonObject
 			return 0;
 		}
 
-		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'MYOBJECT_UNVALIDATE');
+		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'CALENDAR_UNVALIDATE');
 	}
 
 	/**
@@ -637,7 +618,7 @@ class Calendar extends CommonObject
 			return 0;
 		}
 
-		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'MYOBJECT_CANCEL');
+		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'CALENDAR_CANCEL');
 	}
 
 	/**
@@ -654,7 +635,7 @@ class Calendar extends CommonObject
 			return 0;
 		}
 
-		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'MYOBJECT_REOPEN');
+		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'CALENDAR_REOPEN');
 	}
 
 	/**
@@ -715,7 +696,7 @@ class Calendar extends CommonObject
 			$label = implode($this->getTooltipContentArray($params));
 		}
 
-		$url = dol_buildpath('/bookcal/calendar_card.php', 1).'?id='.$this->id;
+		$url = DOL_URL_ROOT . '/bookcal/calendar_card.php?id='.$this->id;
 
 		if ($option !== 'nolink') {
 			// Add param to save lastsearch_values or not
@@ -723,7 +704,7 @@ class Calendar extends CommonObject
 			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
-			if ($url && $add_save_lastsearch_values) {
+			if ($add_save_lastsearch_values) {
 				$url .= '&save_lastsearch_values=1';
 			}
 		}
@@ -740,13 +721,13 @@ class Calendar extends CommonObject
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
 
-		if ($option == 'nolink' || empty($url)) {
+		if ($option == 'nolink') {
 			$linkstart = '<span';
 		} else {
 			$linkstart = '<a href="'.$url.'"';
 		}
 		$linkstart .= $linkclose.'>';
-		if ($option == 'nolink' || empty($url)) {
+		if ($option == 'nolink') {
 			$linkend = '</span>';
 		} else {
 			$linkend = '</a>';
@@ -822,20 +803,12 @@ class Calendar extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">' . $this->getNomUrl() . '</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'label')) {
-			$return .= ' <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
-		}
-		if (property_exists($this, 'amount')) {
-			$return .= '<br>';
-			$return .= '<span class="info-box-label amount">'.price($this->amount, 0, $langs, 1, -1, -1, $conf->currency).'</span>';
-		}
-		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
-		}
+		$return .= ' <div class="inline-block opacitymedium valignmiddle tdoverflowmax100">'.$this->label.'</div>';
+		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
@@ -978,15 +951,15 @@ class Calendar extends CommonObject
 		global $langs, $conf;
 		$langs->load("agenda");
 
-		if (getDolGlobalString('BOOKCAL_MYOBJECT_ADDON')) {
-			$conf->global->BOOKCAL_MYOBJECT_ADDON = 'mod_calendar_standard';
+		if (getDolGlobalString('BOOKCAL_CALENDAR_ADDON')) {
+			$conf->global->BOOKCAL_CALENDAR_ADDON = 'mod_calendar_standard';
 		}
 
-		if (getDolGlobalString('BOOKCAL_MYOBJECT_ADDON')) {
+		if (getDolGlobalString('BOOKCAL_CALENDAR_ADDON')) {
 			$mybool = false;
 
-			$file = getDolGlobalString('BOOKCAL_MYOBJECT_ADDON').".php";
-			$classname = getDolGlobalString('BOOKCAL_MYOBJECT_ADDON');
+			$file = getDolGlobalString('BOOKCAL_CALENDAR_ADDON').".php";
+			$classname = getDolGlobalString('BOOKCAL_CALENDAR_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1038,10 +1011,9 @@ class Calendar extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$result = 0;
-		$includedocgeneration = 0;
 
 		$langs->load("agenda");
 
@@ -1050,48 +1022,18 @@ class Calendar extends CommonObject
 
 			if (!empty($this->model_pdf)) {
 				$modele = $this->model_pdf;
-			} elseif (getDolGlobalString('MYOBJECT_ADDON_PDF')) {
-				$modele = getDolGlobalString('MYOBJECT_ADDON_PDF');
+			} elseif (getDolGlobalString('CALENDAR_ADDON_PDF')) {
+				$modele = getDolGlobalString('CALENDAR_ADDON_PDF');
 			}
 		}
 
 		$modelpath = "core/modules/bookcal/doc/";
 
-		if ($includedocgeneration && !empty($modele)) {
+		if (!empty($modele)) {
 			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
 
 		return $result;
-	}
-
-	/**
-	 * Action executed by scheduler
-	 * CAN BE A CRON TASK. In such a case, parameters come from the schedule job setup field 'Parameters'
-	 * Use public function doScheduledJob($param1, $param2, ...) to get parameters
-	 *
-	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
-	 */
-	public function doScheduledJob()
-	{
-		//global $conf, $langs;
-
-		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
-
-		$error = 0;
-		$this->output = '';
-		$this->error = '';
-
-		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		$now = dol_now();
-
-		$this->db->begin();
-
-		// ...
-
-		$this->db->commit();
-
-		return $error;
 	}
 }
 

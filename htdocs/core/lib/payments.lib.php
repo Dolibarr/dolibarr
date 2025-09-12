@@ -174,7 +174,7 @@ function getValidOnlinePaymentMethods($paymentmethod = '', $mode = 0)
 		}
 	}
 	if ((empty($paymentmethod) || $paymentmethod == 'paybox') && isModEnabled('paybox')) {
-		$langs->loadLangs(array("paybox", "stripe"));
+		$langs->load("stripe");
 		if ($mode) {
 			$validpaymentmethod['paybox'] = array('label' => 'PayBox', 'status' => 'valid');
 		} else {

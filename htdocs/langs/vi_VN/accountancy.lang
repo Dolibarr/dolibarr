@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=Kế toán
 Accounting=Kế toán
+AccountingAccount=Tài khoản kế toán
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=Dấu ngăn cách cột trong file xuất ra
 ACCOUNTING_EXPORT_DATE=Định dạng ngày trong file xuất ra
 ACCOUNTING_EXPORT_PIECE=Xuất số lượng chiếc

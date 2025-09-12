@@ -324,8 +324,8 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
  * @param	int			$sortorder		Sort order (SORT_ASC, SORT_DESC)
  * @param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like description
  * @param	string		$sqlfilters		Filter as an Universal Search string.
- * @param	?Object		$object			Object used
  * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+ * @param	?Object		$object			Object used
  * @return	array<array{rowid:string,label:string,name:string,path:string,level1name:string,fullname:string,fullpath_orig:string,date_c:string,date_m:string,type:string,keywords:string,cover:string,position:int,acl:string,share:string,description:string}> Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
  * @see dol_dir_list()
  */
@@ -511,6 +511,10 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 				$ecmfile->label = md5_file(dol_osencode($filearray[$key]['fullname'])); // $destfile is a full path to file
 				$ecmfile->fullpath_orig = $filearray[$key]['fullname'];
 				$ecmfile->gen_or_uploaded = 'unknown';
+				if (is_object($object)) {
+					$ecmfile->src_object_type = $object->element;
+					$ecmfile->src_object_id = $object->id;
+				}
 				$ecmfile->description = ''; // indexed content
 				$ecmfile->keywords = ''; // keyword content
 				// When you scan file with dol_dir_list_in_database, you scan for files in entity of object (like with projects), even if you
@@ -1440,7 +1444,7 @@ function dolCheckOnFileName($src_file, $dest_file = '')
  * 	@param	int		$disablevirusscan	1=Disable virus scan
  * 	@param	integer	$uploaderrorcode	Value of PHP upload error code ($_FILES['field']['error'])
  * 	@param	int		$nohook				Disable all hooks
- * 	@param	string	$keyforsourcefile	Key for source frile in _FILES (not used)
+ * 	@param	string	$keyforsourcefile	Key for source file in _FILES (not used)
  *  @param	string	$upload_dir			For information. Already included into $dest_file.
  *  @param	int		$mode				0=Default mode use to move a file from default system upload dir to $upload_dir. 1=Mode to move an uploaded file from $keyforsourcefile into $upload_dir.
  *	@return int|string       			1 if OK, 2 if OK and .noexe appended, <0 or string if KO

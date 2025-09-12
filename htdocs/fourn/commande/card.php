@@ -81,7 +81,7 @@ if (isModEnabled('stock')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'orders', 'sendings', 'companies', 'bills', 'propal', 'receptions', 'supplier_proposal', 'deliveries', 'products', 'stocks', 'productbatch'));
+$langs->loadLangs(array('admin', 'orders', 'sendings', 'companies', 'bills', 'propal', 'receptions', 'supplier_proposal', 'products', 'stocks', 'productbatch'));
 if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
 }
@@ -1209,7 +1209,7 @@ if (empty($reshook)) {
 
 				$result = $object->Livraison($user, $date_liv, GETPOST("type"), GETPOST("comment")); // GETPOST("type") is 'tot', 'par', 'nev', 'can'
 				if ($result > 0) {
-					$langs->load("deliveries");
+					$langs->load("sendings");
 					setEventMessages($langs->trans("DeliveryStateSaved"), null);
 					$action = '';
 				} else {
