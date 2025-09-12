@@ -92,3 +92,19 @@ ExampleOnlyForDECustomers=僅適用於德國客戶
 ExampleOnlyForNLCustomers=僅適用於荷蘭客戶
 ExampleOnlyForATBEDEITNLESCustomers=僅適用於奧地利、比利時、德國、意大利、荷蘭、西班牙的客戶
 ListOfSupportedHooksToActivate=List of supported hooks to activate
+# Paybox
+PayBoxSetup=PayBox module setup
+PayBoxDesc=此模組提供允許客戶在 <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> 上付款的頁面。這可用於免費付款或針對特定 Dolibarr 物件（發票、訂單等）的付款
+PayBoxDoPayment=Pay with Paybox
+YouWillBeRedirectedOnPayBox=You will be redirected on secured Paybox page to input you credit card information
+SetupPayBoxToHavePaymentCreatedAutomatically=使用網址<b>%s</b>設置您的Paybox以在通過Paybox驗證時自動創建付款。
+YourPaymentHasBeenRecorded=This page confirms that your payment has been recorded. Thank you.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
+PAYBOX_CGI_URL_V2=Url of Paybox CGI module for payment
+NewPayboxPaymentReceived=New Paybox payment received
+NewPayboxPaymentFailed=New Paybox payment tried but failed
+PAYBOX_PAYONLINE_SENDEMAIL=Email notification after payment attempt (success or fail)
+PAYBOX_PBX_SITE=PBX SITE 的值
+PAYBOX_PBX_RANG=PBX Rang 的值
+PAYBOX_PBX_IDENTIFIANT=PBX ID 的值
+PAYBOX_HMAC_KEY=HMAC 密鑰

@@ -1,14 +1,14 @@
 # Dolibarr language file - Source file is en_US - receiptprinter
-ReceiptPrinterSetup=Setup of module RAW/Text Printers
+ReceiptPrinterSetup=Ρύθμιση ενότητας εκτυπωτών RAW/κειμένου
 PrinterAdded=Ο εκτυπωτής %s προστέθηκε
 PrinterUpdated=Ο εκτυπωτής %s ενημερώθηκε
 PrinterDeleted=Ο εκτυπωτής %s διαγράφηκε
 TestSentToPrinter=Δοκιμαστική αποστολή στον εκτυπωτή %s
 ReceiptPrinter=Εκτυπωτές αποδείξεων
-ReceiptPrinterDesc=Setup of RAW/Text printers
+ReceiptPrinterDesc=Ρύθμιση εκτυπωτών RAW/Κειμένου
 ReceiptPrinterTemplateDesc=Ρύθμιση προτύπων
 ReceiptPrinterTypeDesc=Παράδειγμα πιθανών τιμών για το πεδίο "Παράμετροι" ανάλογα με τον τύπο του προγράμματος οδήγησης(driver)
-ReceiptPrinterProfileDesc=Description of RAW/Text Printer's Profile
+ReceiptPrinterProfileDesc=Περιγραφή προφίλ εκτυπωτή RAW/κειμένου
 ListPrinters=Λίστα εκτυπωτών.
 FromServerPointOfView=Από την άποψη του διακομιστή ιστού. Αυτός ο εκτυπωτής πρέπει να είναι προσβάσιμος από τον διακομιστή ιστού που τον φιλοξενεί.
 SetupReceiptTemplate=Ρύθμιση προτύπου

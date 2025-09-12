@@ -1352,7 +1352,7 @@ abstract class CommonInvoice extends CommonObject
 			$bac = new CompanyBankAccount($this->db);	// Table societe_rib
 			$result = $bac->fetch(0, '', $this->socid, 1, 'ban');
 			if ($result <= 0 || empty($bac->id)) {
-				$this->error = $langs->trans("ThirdpartyHasNoDefaultBanAccount");
+				$this->error = $langs->trans("ThirdpartyHasNoDefaultBankAccount");
 				$this->errors[] = $this->error;
 				dol_syslog(get_class($this)."::makeStripeSepaRequest ".$this->error);
 				return -1;

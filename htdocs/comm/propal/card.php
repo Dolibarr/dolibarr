@@ -73,7 +73,7 @@ if (isModEnabled('variants')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'propal', 'compta', 'bills', 'orders', 'products', 'deliveries', 'sendings', 'other'));
+$langs->loadLangs(array('companies', 'propal', 'compta', 'bills', 'orders', 'products', 'sendings', 'other'));
 if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
 }
@@ -3150,7 +3150,6 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Delivery date
-		$langs->load('deliveries');
 		print '<tr><td>';
 		print $form->editfieldkey($langs->trans('DeliveryDate'), 'date_livraison', $object->delivery_date, $object, (int) ($usercancreate && $caneditfield), 'datepicker');
 		print '</td><td class="valuefieldedit">';

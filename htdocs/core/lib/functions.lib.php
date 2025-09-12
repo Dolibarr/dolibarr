@@ -10543,6 +10543,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				'@phan-var-force ActionComm $object';
 				/** @var ActionComm $object */
 				$substitutionarray['__EVENT_LABEL__'] = $object->label;
+				$substitutionarray['__EVENT_DESCRIPTION__'] = $object->note;
 				$substitutionarray['__EVENT_TYPE__'] = $outputlangs->trans("Action" . $object->type_code);
 				$substitutionarray['__EVENT_DATE__'] = dol_print_date($object->datep, 'day', 'auto', $outputlangs);
 				$substitutionarray['__EVENT_TIME__'] = dol_print_date($object->datep, 'hour', 'auto', $outputlangs);

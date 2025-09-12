@@ -5263,8 +5263,7 @@ class Form
 	{
 		global $langs, $user;
 
-		$langs->load("admin");
-		$langs->load("deliveries");
+		$langs->loadLangs(array("admin", "sendings"));
 
 		$sql = "SELECT rowid, code, libelle as label";
 		$sql .= " FROM " . $this->db->prefix() . "c_shipment_mode";
@@ -5322,7 +5321,7 @@ class Form
 	{
 		global $langs;
 
-		$langs->load("deliveries");
+		$langs->load("sendings");
 
 		if ($htmlname != "none") {
 			print '<form method="POST" action="' . $page . '">';

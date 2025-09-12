@@ -1444,7 +1444,7 @@ function dolCheckOnFileName($src_file, $dest_file = '')
  * 	@param	int		$disablevirusscan	1=Disable virus scan
  * 	@param	integer	$uploaderrorcode	Value of PHP upload error code ($_FILES['field']['error'])
  * 	@param	int		$nohook				Disable all hooks
- * 	@param	string	$keyforsourcefile	Key for source frile in _FILES (not used)
+ * 	@param	string	$keyforsourcefile	Key for source file in _FILES (not used)
  *  @param	string	$upload_dir			For information. Already included into $dest_file.
  *  @param	int		$mode				0=Default mode use to move a file from default system upload dir to $upload_dir. 1=Mode to move an uploaded file from $keyforsourcefile into $upload_dir.
  *	@return int|string       			1 if OK, 2 if OK and .noexe appended, <0 or string if KO

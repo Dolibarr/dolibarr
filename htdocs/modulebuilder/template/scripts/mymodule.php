@@ -54,7 +54,7 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 // Global variables
@@ -95,7 +95,7 @@ if (!$res && file_exists("../../../master.inc.php")) {
 }
 if (!$res) {
 	print "Include of master fails";
-	exit(-1);
+	exit(1);
 }
 // After this $db, $mysoc, $langs, $conf and $hookmanager are defined (Opened $db handler to database will be closed at end of file).
 // $user is created but empty.
@@ -129,7 +129,7 @@ $hookmanager->initHooks(array('cli'));
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
 if (!isset($argv[1])) {	// Check parameters
 	print "Usage: ".$script_file." param1 param2 ...\n";
-	exit(-1);
+	exit(1);
 }
 print '--- start'."\n";
 print 'Argument 1='.$argv[1]."\n";

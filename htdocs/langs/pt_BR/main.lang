@@ -652,3 +652,5 @@ ShowAsConversation=Mostrar como lista de conversas
 MessageListViewType=Mostrar como lista de tabelas
 PreviousBalance=Saldo anterior
 NewBalance=Novo saldo
+ShortLabel=Etiqueta curta
+NeedHelpCenter=Precisa de suporte?
