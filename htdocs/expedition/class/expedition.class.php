@@ -92,7 +92,7 @@ class Expedition extends CommonObject
 	public $fields = array();
 
 	/**
-	 * @var ?int ID of user author
+	 * @var int ID of user author
 	 */
 	public $user_author_id;
 
@@ -138,7 +138,7 @@ class Expedition extends CommonObject
 	public $billed;
 
 	/**
-	 * @var int|string
+	 * @var null|int|string
 	 */
 	public $trueWeight;
 	/**
@@ -146,7 +146,7 @@ class Expedition extends CommonObject
 	 */
 	public $weight_units;
 	/**
-	 * @var int|string
+	 * @var null|int|string
 	 */
 	public $trueWidth;
 	/**
@@ -154,7 +154,7 @@ class Expedition extends CommonObject
 	 */
 	public $width_units;
 	/**
-	 * @var int|string
+	 * @var null|int|string
 	 */
 	public $trueHeight;
 	/**
@@ -162,7 +162,7 @@ class Expedition extends CommonObject
 	 */
 	public $height_units;
 	/**
-	 * @var int|string
+	 * @var null|int|string
 	 */
 	public $trueDepth;
 	/**
@@ -170,7 +170,7 @@ class Expedition extends CommonObject
 	 */
 	public $depth_units;
 	/**
-	 * @var string A denormalized value
+	 * @var null|string A denormalized value
 	 */
 	public $trueSize;
 
