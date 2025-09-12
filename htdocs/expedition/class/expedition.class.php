@@ -92,12 +92,12 @@ class Expedition extends CommonObject
 	public $fields = array();
 
 	/**
-	 * @var int ID of user author
+	 * @var ?int ID of user author
 	 */
 	public $user_author_id;
 
 	/**
-	 * @var int ID of user author
+	 * @var ?int ID of user author
 	 */
 	public $fk_user_author;
 
