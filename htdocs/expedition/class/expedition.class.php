@@ -114,7 +114,7 @@ class Expedition extends CommonObject
 	public $ref_client;
 
 	/**
-	 * @var string Customer ref
+	 * @var ?string Customer ref
 	 */
 	public $ref_customer;
 
@@ -987,7 +987,7 @@ class Expedition extends CommonObject
 		$result = $soc->setAsCustomer();
 
 		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+		if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 			$numref = $this->getNextNumRef($soc);
 		} elseif (!empty($this->ref)) {
 			$numref = (string) $this->ref;
