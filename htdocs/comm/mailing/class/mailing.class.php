@@ -51,7 +51,7 @@ class Mailing extends CommonObject
 	/**
 	 * @var string Type of message ('email', 'sms')
 	 */
-	public $messtype;
+	public $messtype = 'email';
 
 	/**
 	 * @var string title
@@ -221,7 +221,9 @@ class Mailing extends CommonObject
 
 		$this->title = trim($this->title);
 		$this->email_from = trim($this->email_from);
-
+		if (empty($this->messtype)) {
+			$this->messtype = 'email';
+		}
 		if (!$this->email_from) {
 			if ($this->messtype !== 'sms') {
 				$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("MailFrom"));
@@ -237,8 +239,8 @@ class Mailing extends CommonObject
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing";
-		$sql .= " (date_creat, fk_user_creat, entity)";
-		$sql .= " VALUES ('".$this->db->idate($now)."', ".((int) $user->id).", ".((int) $conf->entity).")";
+		$sql .= " (messtype, date_creat, fk_user_creat, entity)";
+		$sql .= " VALUES ('".$this->db->escape($this->messtype)."', '".$this->db->idate($now)."', ".((int) $user->id).", ".((int) $conf->entity).")";
 
 		if (!$this->title) {
 			$this->title = $langs->trans("NoTitle");
@@ -296,10 +298,14 @@ class Mailing extends CommonObject
 			return -1;
 		}
 
+		if (empty($this->messtype)) {
+			$this->messtype = 'email';
+		}
+
 		$error = 0;
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing";
 		$sql .= " SET titre = '".$this->db->escape($this->title)."'";
 		$sql .= ", messtype = '".$this->db->escape($this->messtype)."'";
 		$sql .= ", sujet = '".$this->db->escape($this->sujet)."'";
