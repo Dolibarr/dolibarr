@@ -126,12 +126,12 @@ class Expedition extends CommonObject
 	public $entrepot_id;
 
 	/**
-	 * @var string Tracking number
+	 * @var ?string Tracking number
 	 */
 	public $tracking_number;
 
 	/**
-	 * @var string Tracking url
+	 * @var ?string Tracking url
 	 */
 	public $tracking_url;
 	/**
