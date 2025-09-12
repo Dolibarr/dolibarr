@@ -2839,7 +2839,8 @@ class Project extends CommonObject
 	 * @param array $contactTmp Contacts to check
 	 * @return bool True if contact exist, false otherwise
 	 */
-	public function contactExistsInCurrentList($contactlistExternalCurrent, $contactTmp) : bool {
+	public function contactExistsInCurrentList($contactlistExternalCurrent, $contactTmp) : bool
+	{
 		if (!is_array($contactlistExternalCurrent)) {
 			return false;
 		}
@@ -3223,7 +3224,8 @@ class Project extends CommonObject
 						}
 					}
 				}
-			}else {
+
+			} else {
 				$this->error .= $langs->trans('NoFilesFound');
 			}
 			// Clean up empty source directory if all files were moved
@@ -3275,7 +3277,7 @@ class Project extends CommonObject
 			return 0;
 		} else {
 			dol_syslog($langs->trans('ErrorsProjectMerge', $this->error), LOG_ERR);
-			setEventMessages( $langs->trans('ErrorsProjectMerge', $this->error), $this->errors, 'errors' );
+			setEventMessages($langs->trans('ErrorsProjectMerge', $this->error), $this->errors, 'errors');
 			$this->db->rollback();
 			return -1;
 		}
