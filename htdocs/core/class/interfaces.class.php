@@ -3,6 +3,7 @@
  * Copyright (C) 2006       Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
  * Copyright (C) 2010       Regis Houssin        	<regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,10 +110,14 @@ class Interfaces
 
 		// Special cases
 		global $mysoc;
-		if (getDolGlobalString('MAIN_FRANCE_TODO_LOI_FINANCE') && $object instanceof Facture && $action == 'BILL_VALIDATE'			// If we try to validate an invoice
+		if (
+			getDolGlobalString('MAIN_FRANCE_TODO_LOI_FINANCE')
+			&& $object instanceof Facture && $action == 'BILL_VALIDATE'			// If we try to validate an invoice
 			&& in_array($mysoc->country_code, array('FR')) && $mysoc->tva_assuj	// If country is France and is using VAT
-			&& property_exists($object, 'thirdparty')
-			&& $object->thirdparty instanceof Societe && !$object->thirdparty->isACompany() && !isModEnabled('blockedlog')) {
+			&& $object->thirdparty instanceof Societe
+			&& !$object->thirdparty->isACompany()
+			&& !isModEnabled('blockedlog')
+		) {
 			$langs->load("errors");
 			$error = 'You try to validate an invoice in the following situation:<br>';
 			$error .= 'Your country: '.$mysoc->country_code.'<br>';
