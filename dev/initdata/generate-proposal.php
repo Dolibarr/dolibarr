@@ -60,7 +60,7 @@ if (empty($argv[1])) {
 	print "Usage:  $script_file  nbofrecord\n";
 	print "Usage:  $script_file  100\n";
 	print "\n";
-	exit(-1);
+	exit(1);
 }
 
 define('GEN_NUMBER_PROPAL', ((int) $argv[1]) ?? 10);

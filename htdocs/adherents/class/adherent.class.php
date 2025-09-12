@@ -283,12 +283,12 @@ class Adherent extends CommonObject
 	public $last_subscription_date_start;
 
 	/**
-	 * @var int|string date
+	 * @var int|string|null date
 	 */
 	public $last_subscription_date_end;
 
 	/**
-	 * @var int|string date
+	 * @var null|float|string date, null until set
 	 */
 	public $last_subscription_amount;
 
@@ -901,11 +901,9 @@ class Adherent extends CommonObject
 			$action = 'update';
 
 			// Actions on extra fields
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 			// Update password
@@ -948,7 +946,7 @@ class Adherent extends CommonObject
 
 			if (!$error && $nbrowsaffected) { // If something has change in main data
 				// Update information on linked user if it is an update
-				if (!$error && $this->user_id > 0 && !$nosyncuser) {
+				if ($this->user_id > 0 && !$nosyncuser) {
 					require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 					dol_syslog(get_class($this)."::update update linked user");
@@ -1130,7 +1128,7 @@ class Adherent extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error && !$notrigger) {
+		if (!$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('MEMBER_DELETE', $user);
 			if ($result < 0) {
@@ -1633,13 +1631,13 @@ class Adherent extends CommonObject
 				$this->last_subscription_date = $this->db->jdate($obj->datec);
 				$this->last_subscription_date_start = $this->db->jdate($obj->dateh);
 				$this->last_subscription_date_end = $this->db->jdate($obj->datef);
-				$this->last_subscription_amount = $obj->subscription;
+				$this->last_subscription_amount = (float) $obj->subscription;
 
 				$subscription = new Subscription($this->db);
 				$subscription->id = $obj->rowid;
 				$subscription->fk_adherent = $obj->fk_adherent;
 				$subscription->fk_type = $obj->fk_type;
-				$subscription->amount = $obj->subscription;
+				$subscription->amount = (float) $obj->subscription;
 				$subscription->note = $obj->note_public;
 				$subscription->note_public = $obj->note_public;
 				$subscription->fk_bank = $obj->fk_bank;
@@ -1742,6 +1740,8 @@ class Adherent extends CommonObject
 				$this->last_subscription_date_start = $date;
 				$this->last_subscription_date_end = $datefin;
 				$this->last_subscription_amount = $amount;
+			} else {
+				$error++;
 			}
 
 			if (!$error) {
@@ -1911,8 +1911,7 @@ class Adherent extends CommonObject
 
 				$result = $invoice->create($user);
 				if ($result <= 0) {
-					$this->error = $invoice->error;
-					$this->errors = $invoice->errors;
+					$this->setErrorsFromObject($invoice);
 					$error++;
 				} else {
 					$this->invoice = $invoice;
@@ -1934,8 +1933,7 @@ class Adherent extends CommonObject
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				$result = $invoice->addline($label, 0, 1, $vattouse, 0, 0, $idprodsubscription, 0, $datesubscription, '', 0, 0, 0, 'TTC', $amount, 1);
 				if ($result <= 0) {
-					$this->error = $invoice->error;
-					$this->errors = $invoice->errors;
+					$this->setErrorsFromObject($invoice);
 					$error++;
 				}
 			}
@@ -1944,8 +1942,7 @@ class Adherent extends CommonObject
 				// Validate invoice
 				$result = $invoice->validate($user);
 				if ($result <= 0) {
-					$this->error = $invoice->error;
-					$this->errors = $invoice->errors;
+					$this->setErrorsFromObject($invoice);
 					$error++;
 				}
 			}
@@ -1973,22 +1970,18 @@ class Adherent extends CommonObject
 				$paiement->ext_payment_id = $ext_payment_id;
 				$paiement->ext_payment_site = $ext_payment_site;
 
-				if (!$error) {
-					// Create payment line for invoice
-					$paiement_id = $paiement->create($user);
-					if (!($paiement_id > 0)) {
-						$this->error = $paiement->error;
-						$this->errors = $paiement->errors;
-						$error++;
-					}
+				// Create payment line for invoice
+				$paiement_id = $paiement->create($user);
+				if (!($paiement_id > 0)) {
+					$this->setErrorsFromObject($paiement);
+					$error++;
 				}
 
 				if (!$error) {
 					// Add transaction into bank account
 					$bank_line_id = $paiement->addPaymentToBank($user, 'payment', '(SubscriptionPayment)', $accountid, $emetteur_nom, $emetteur_banque);
 					if (!($bank_line_id > 0)) {
-						$this->error = $paiement->error;
-						$this->errors = $paiement->errors;
+						$this->setErrorsFromObject($paiement);
 						$error++;
 					}
 				}
@@ -2441,16 +2434,15 @@ class Adherent extends CommonObject
 		$result .= $linkstart;
 
 		if ($withpictoimg) {
-			$paddafterimage = '';
 			if (abs($withpictoimg) == 1 || abs($withpictoimg) == 4) {
 				$morecss .= ' paddingrightonly';
 			}
 			// Only picto
 			if ($withpictoimg > 0) {
-				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'">'.img_object('', 'user', $paddafterimage.' '.($notooltip ? '' : $dataparams), 0, 0, $notooltip ? 0 : 1).'</span>';
+				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'">'.img_object('', 'user', ' '.($notooltip ? '' : $dataparams), 0, 0, $notooltip ? 0 : 1).'</span>';
 			} else {
 				// Picto must be a photo
-				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'"'.($paddafterimage ? ' '.$paddafterimage : '').'>';
+				$picto = '<span class="nopadding'.($morecss ? ' userimg'.$morecss : '').'">';
 				$picto .= Form::showphoto('memberphoto', $this, 0, 0, 0, 'userphoto'.(($withpictoimg == -3 || $withpictoimg == -4) ? 'small' : ''), 'mini', 0, 1);
 				$picto .= '</span>';
 			}
@@ -2458,7 +2450,7 @@ class Adherent extends CommonObject
 		}
 		if (($withpictoimg > -2 && $withpictoimg != 2) || $withpictoimg == -4) {
 			if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-				$result .= '<span class="nopadding valignmiddle'.((!isset($this->statut) || $this->statut) ? '' : ' strikefordisabled').
+				$result .= '<span class="nopadding valignmiddle'.((!isset($this->status) || $this->status) ? '' : ' strikefordisabled').
 				($morecss ? ' usertext'.$morecss : '').'">';
 			}
 			if ($mode == 'login') {
@@ -3219,9 +3211,9 @@ class Adherent extends CommonObject
 								if ($message) {
 									$actionmsg = $langs->transnoentities('MailFrom').': '.dol_escape_htmltag($from);
 									$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTo').': '.dol_escape_htmltag($sendto));
-									if ($sendtocc) {
-										$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".dol_escape_htmltag($sendtocc));
-									}
+									// if ($sendtocc) {
+									// 	$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".dol_escape_htmltag($sendtocc));
+									// }
 									$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('MailTopic').": ".$subject);
 									$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('TextUsedInTheMessageBody').":");
 									$actionmsg = dol_concatdesc($actionmsg, $message);
@@ -3289,10 +3281,31 @@ class Adherent extends CommonObject
 		} else {
 			$this->output = 'Found '.($nbok + $nbko).' members to send reminder to.';
 			$this->output .= ' Send email successfully to '.$nbok.' members';
-			if (is_array($listofmembersok)) {
+			$listofids = '';
+			$i = 0;
+			foreach ($listofmembersok as $idmember) {
+				if ($i > 100) {
+					$listofids .= ', ...';
+					break;
+				}
+				if (empty($listofids)) {
+					$listofids .= ' [';
+				} else {
+					$listofids .= ', ';
+				}
+				$listofids .= $idmember;
+				$i++;
+			}
+			if ($listofids) {
+				$listofids .= ']';
+			}
+			$this->output .= ($listofids ? ' ids='.$listofids : '');
+
+			if ($nbko) {
+				$this->output .= ' - Canceled for '.$nbko.' member (no email or email sending error)';
 				$listofids = '';
 				$i = 0;
-				foreach ($listofmembersok as $idmember) {
+				foreach ($listofmembersko as $idmember) {
 					if ($i > 100) {
 						$listofids .= ', ...';
 						break;
@@ -3308,32 +3321,7 @@ class Adherent extends CommonObject
 				if ($listofids) {
 					$listofids .= ']';
 				}
-
 				$this->output .= ($listofids ? ' ids='.$listofids : '');
-			}
-			if ($nbko) {
-				$this->output .= ' - Canceled for '.$nbko.' member (no email or email sending error)';
-				if (is_array($listofmembersko)) {
-					$listofids = '';
-					$i = 0;
-					foreach ($listofmembersko as $idmember) {
-						if ($i > 100) {
-							$listofids .= ', ...';
-							break;
-						}
-						if (empty($listofids)) {
-							$listofids .= ' [';
-						} else {
-							$listofids .= ', ';
-						}
-						$listofids .= $idmember;
-						$i++;
-					}
-					if ($listofids) {
-						$listofids .= ']';
-					}
-					$this->output .= ($listofids ? ' ids='.$listofids : '');
-				}
 			}
 		}
 
@@ -3354,25 +3342,23 @@ class Adherent extends CommonObject
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
-		if (property_exists($this, 'photo') || !empty($this->photo)) {
+		if (!empty($this->photo)) {
 			$return .= Form::showphoto('memberphoto', $this, 0, 60, 0, 'photokanban photowithmargin photologintooltip', 'small', 0, 1);
 		} else {
 			$return .= img_picto('', 'user');
 		}
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">' . $this->getNomUrl() . '</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		$return .= '<br><span class="info-box-label paddingright">'.$this->getmorphylib('', 2).'</span>';
 		$return .= '<span class="info-box-label opacitymedium">'.$this->type.'</span>';
 
-		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status paddingtop">';
-			$return .= $this->LibStatut($this->status, $this->need_subscription, $this->datefin, 5);
-			$return .= '</div>';
-		}
+		$return .= '<br><div class="info-box-status paddingtop">';
+		$return .= $this->LibStatut($this->status, $this->need_subscription, $this->datefin, 5);
+		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
