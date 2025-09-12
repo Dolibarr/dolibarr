@@ -1220,7 +1220,7 @@ class Adherent extends CommonObject
 		$member_origin = new Adherent($this->db);		// The member that we will delete
 
 		dol_syslog("mergeMembers merge member id=".$member_origin_id." (will be deleted) into the member id=".$this->id);
-		if (!$error && $member_origin->fetch($member_origin_id) < 1) {
+		if ($member_origin->fetch($member_origin_id) < 1) {
 			$this->error = $langs->trans('ErrorRecordNotFound');
 			$error++;
 		}
@@ -1291,8 +1291,7 @@ class Adherent extends CommonObject
 				$reshook = $hookmanager->executeHooks('replaceMember', $parameters, $this, $action);
 
 				if ($reshook < 0) {
-					$this->error = $hookmanager->error;
-					$this->errors = $hookmanager->errors;
+					$this->setErrorsFromObject($hookmanager);
 					$error++;
 				}
 			}
@@ -1311,8 +1310,7 @@ class Adherent extends CommonObject
 			if (!$error) {
 				// We finally remove the old member
 				if ($member_origin->delete($user) < 1) {
-					$this->error = $member_origin->error;
-					$this->errors = $member_origin->errors;
+					$this->setErrorsFromObject($member_origin);
 					$error++;
 				}
 			}
