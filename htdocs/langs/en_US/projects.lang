@@ -338,3 +338,4 @@ MergeProjects=Merge projects
 ErrorsProjectMerge=Error during merge project : %s
 CantMergeSameProject=You can't merge the same project
 NoFilesFound=No files found to merge
+ErrorProjectIdIsMandatory= Error id of project is Mandatory
