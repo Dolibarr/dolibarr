@@ -143,7 +143,7 @@ class Facture extends CommonInvoice
 	public $ref_client;
 
 	/**
-	 * @var string customer ref
+	 * @var ?string customer ref
 	 */
 	public $ref_customer;
 

@@ -90,7 +90,7 @@ class Delivery extends CommonObject
 	public $socid;
 
 	/**
-	 * @var string ref customer
+	 * @var ?string ref customer
 	 */
 	public $ref_customer;
 
