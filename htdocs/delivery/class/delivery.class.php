@@ -162,8 +162,8 @@ class Delivery extends CommonObject
 		}
 
 		$error = 0;
-
 		$now = dol_now();
+		$this->ref_customer = trim((string) $this->ref_customer);
 
 		/* Delivery note as draft On positionne en mode draft le bon de livraison */
 		$this->draft = 1;
