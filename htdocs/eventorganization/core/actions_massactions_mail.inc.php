@@ -246,7 +246,6 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 			if ($mailfile->error) {
 				$resaction .= '<div class="error">' . $mailfile->error . '</div>';
 			} else {
-				$mailfile->error = '';
 				$result = $mailfile->sendfile();
 				if ($result) {
 					$resaction .= $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($sendto, 2)) . '<br>'; // Must not contain "
@@ -288,7 +287,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 					$nbsent++; // Nb of object sent
 				} else {
 					$langs->load("other");
-					if ($mailfile->error) {
+					if ($mailfile->error) { // @phpstan-ignore-line
 						$resaction .= $langs->trans('ErrorFailedToSendMail', $from, $sendto);
 						$resaction .= '<br><div class="error">' . $mailfile->error . '</div>';
 					} elseif (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
