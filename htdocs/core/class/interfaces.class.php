@@ -111,8 +111,8 @@ class Interfaces
 		global $mysoc;
 		if (getDolGlobalString('MAIN_FRANCE_TODO_LOI_FINANCE') && $object instanceof Facture && $action == 'BILL_VALIDATE'			// If we try to validate an invoice
 			&& in_array($mysoc->country_code, array('FR')) && $mysoc->tva_assuj	// If country is France and is using VAT
-			&& is_object($object) && property_exists($object, 'thirdparty') &&
-			$object->thirdparty instanceof Societe && !$object->thirdparty->isACompany() && !isModEnabled('blockedlog')) {
+			&& property_exists($object, 'thirdparty')
+			&& $object->thirdparty instanceof Societe && !$object->thirdparty->isACompany() && !isModEnabled('blockedlog')) {
 			$langs->load("errors");
 			$error = 'You try to validate an invoice in the following situation:<br>';
 			$error .= 'Your country: '.$mysoc->country_code.'<br>';
