@@ -95,7 +95,7 @@ class Interfaces
 			$langs = new Translate('', $conf);
 		}
 		if (!($user instanceof User)) {	    	// Warning
-			dol_syslog(get_class($this).'::run_triggers was called with wrong parameters user. action='.$action.' object='.((string) (int) is_object($object)).' user='.((string) (int) is_object($user)).' langs='.((string) (int) is_object($langs)).' conf='.((string) (int) is_object($conf)), LOG_WARNING);
+			dol_syslog(get_class($this).'::run_triggers was called with wrong parameters user. action='.$action.' object='.((string) (int) is_object($object)).' user='.((string) (int) is_object($user)).' langs=1 conf=1', LOG_WARNING);
 			$user = new User($this->db);
 		}
 
