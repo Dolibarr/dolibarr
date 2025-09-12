@@ -67,12 +67,12 @@ class Interfaces
 	 *   Function called when a Dolibarr business event occurs
 	 *   This function call all qualified triggers.
 	 *
-	 *   @param		string		$action     Trigger event code
-	 *   @param     Object		$object     Object concerned. Some context information may also be provided into array property object->context.
-	 *   @param     User		$user       Object user
-	 *   @param     Translate	$langs      Object lang
-	 *   @param     Conf		$conf       Object conf
-	 *   @return    int         			Nb of triggers ran if no error, -Nb of triggers with errors otherwise.
+	 *   @param		string			$action     Trigger event code
+	 *   @param     ?CommonObject	$object     Object concerned. Some context information may also be provided into array property object->context.
+	 *   @param     ?User			$user       Object user
+	 *   @param     ?Translate		$langs      Object lang
+	 *   @param     ?Conf			$conf       Object conf
+	 *   @return    int         				Nb of triggers ran if no error, -Nb of triggers with errors otherwise.
 	 */
 	public function run_triggers($action, $object, $user, $langs, $conf)
 	{
