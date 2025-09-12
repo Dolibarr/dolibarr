@@ -93,16 +93,18 @@ class Expedition extends CommonObject
 
 	/**
 	 * @var int ID of user author
+	 * @deprecated use $user_creation_id
 	 */
 	public $user_author_id;
 
 	/**
 	 * @var ?int ID of user author
+	 * @deprecated use $user_creation_id
 	 */
 	public $fk_user_author;
 
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $socid;
 
@@ -856,17 +858,18 @@ class Expedition extends CommonObject
 			if ($this->db->num_rows($result)) {
 				$obj = $this->db->fetch_object($result);
 
-				$this->id                   = $obj->rowid;
-				$this->entity               = $obj->entity;
-				$this->ref                  = $obj->ref;
-				$this->socid                = $obj->socid;
+				$this->id = (int) $obj->rowid;
+				$this->entity = $obj->entity;
+				$this->ref = $obj->ref;
+				$this->socid = $obj->socid;
 				$this->ref_customer = $obj->ref_customer;
-				$this->ref_ext		    = $obj->ref_ext;
+				$this->ref_ext = $obj->ref_ext;
 				$this->status               = $obj->fk_statut;
 				$this->statut               = $this->status; // Deprecated
 				$this->signed_status		= $obj->signed_status;
 				$this->user_author_id       = $obj->fk_user_author;
 				$this->fk_user_author       = $obj->fk_user_author;
+				$this->user_creation_id = $obj->fk_user_author;
 				$this->date_creation        = $this->db->jdate($obj->date_creation);
 				$this->date_valid = $this->db->jdate($obj->date_valid);
 				$this->date                 = $this->db->jdate($obj->date_expedition); // TODO deprecated
@@ -1855,7 +1858,6 @@ class Expedition extends CommonObject
 						if ($origin_object->status == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
 							// Check if there is no more shipment. If not, we can move back status of order to "validated" instead of "shipment in progress"
 							$origin_object->loadExpeditions();
-							//var_dump($this->$origin->expeditions);exit;
 							if (count($origin_object->expeditions) <= 0) {
 								$origin_object->setStatut(Commande::STATUS_VALIDATED);
 							}
@@ -2130,10 +2132,10 @@ class Expedition extends CommonObject
 					$lineindex++;
 				} else {
 					$line->total_ht += $tabprice[0];
-					$line->total_localtax1 	+= $tabprice[9];
-					$line->total_localtax2 	+= $tabprice[10];
-					$line->total_ttc	 	+= $tabprice[2];
-					$line->total_tva	 	+= $tabprice[1];
+					$line->total_localtax1 += $tabprice[9];
+					$line->total_localtax2 += $tabprice[10];
+					$line->total_ttc += $tabprice[2];
+					$line->total_tva += $tabprice[1];
 				}
 
 				$i++;
