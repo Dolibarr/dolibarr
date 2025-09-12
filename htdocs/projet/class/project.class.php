@@ -3224,7 +3224,6 @@ class Project extends CommonObject
 						}
 					}
 				}
-
 			} else {
 				$this->error .= $langs->trans('NoFilesFound');
 			}
