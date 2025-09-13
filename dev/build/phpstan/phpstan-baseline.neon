@@ -20035,24 +20035,6 @@ parameters:
 			path: ../../../htdocs/website/samples/wrapper.php
 
 		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/website/samples/wrapper.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/website/samples/wrapper.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/website/samples/wrapper.php
-
-		-
 			message: '#^Variable \$socid in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1

@@ -146,7 +146,7 @@ if ($rss) {
 	$format = 'rss';
 	$type = '';
 	$filename = $original_file;
-	$dir_temp = $conf->website->dir_temp;
+	$dir_temp = (string) $conf->website->dir_temp;
 
 	include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
