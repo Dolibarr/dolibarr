@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
+/* Copyright (C) 2023-2024 	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2023-2024	Lionel Vessiller			<lvessiller@easya.solutions>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
@@ -134,7 +134,7 @@ class WebPortalMember extends Adherent
 		'login' => array('type' => 'varchar(50)', 'label' => 'Login', 'enabled' => 1, 'visible' => 4, 'position' => 240,),
 		'typeid' => array('type' => 'integer:AdherentType:adherents/class/adherent_type.class.php', 'label' => 'MemberType', 'enabled' => 1, 'visible' => 4, 'notnull' => 1, 'position' => 255),
 		'morphy' => array('type' => 'varchar(3)', 'label' => 'MemberNature', 'enabled' => 1, 'visible' => 4, 'notnull' => 1, 'position' => 260, 'arrayofkeyval' => self::MORPHY_LIST,),
-		'civility_id' => array('type' => 'sellist:c_civility:label:rowid::active=1', 'label' => 'Civility', 'enabled' => 1, 'visible' => 4, 'position' => 270,),
+		'civility_id' => array('type' => 'sellist:c_civility:label:code::active=1', 'label' => 'Civility', 'enabled' => 1, 'visible' => 4, 'position' => 270,),
 		'birth' => array('type' => 'date', 'label' => 'DateOfBirth', 'enabled' => 1, 'visible' => 4, 'position' => 290,),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'enabled' => 1, 'visible' => 5, 'position' => 300,),
 
