@@ -24,6 +24,9 @@ if (strpos($_SERVER["PHP_SELF"], 'website/samples/wrapper.php')) {
 if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 	require_once './master.inc.php';
 } // Load master if not already loaded
+/**
+ * @var Conf $conf
+ */
 include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
 $encoding = '';
