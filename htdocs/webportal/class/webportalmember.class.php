@@ -126,8 +126,8 @@ class WebPortalMember extends Adherent
 		'state_id' => array('type' => 'integer', 'label' => 'State id', 'enabled' => '!getDolGlobalString("MEMBER_DISABLE_STATE")', 'visible' => -5, 'position' => 90, 'showonheader' => 1,),
 		'country_id' => array('type' => 'integer:Ccountry:core/class/ccountry.class.php', 'label' => 'Country', 'enabled' => 1, 'visible' => 4, 'position' => 95, 'showonheader' => 1,),
 		'phone' => array('type' => 'varchar(30)', 'label' => 'Phone', 'enabled' => 1, 'visible' => 4, 'position' => 115, 'showonheader' => 1,),
-		'phone_perso' => array('type' => 'varchar(30)', 'label' => 'Phone perso', 'enabled' => 1, 'visible' => 4, 'position' => 120, 'showonheader' => 1,),
-		'phone_mobile' => array('type' => 'varchar(30)', 'label' => 'Phone mobile', 'enabled' => 1, 'visible' => 4, 'position' => 125, 'showonheader' => 1,),
+		'phone_perso' => array('type' => 'varchar(30)', 'label' => 'PhonePerso', 'enabled' => 1, 'visible' => 4, 'position' => 120, 'showonheader' => 1,),
+		'phone_mobile' => array('type' => 'varchar(30)', 'label' => 'PhoneMobile', 'enabled' => 1, 'visible' => 4, 'position' => 125, 'showonheader' => 1,),
 		'email' => array('type' => 'varchar(255)', 'label' => 'Email', 'enabled' => 1, 'visible' => 4, 'position' => 200, 'showonheader' => 1, 'picto' => 'email'),
 		'url' => array('type' => 'varchar(255)', 'label' => 'Url', 'enabled' => 1, 'visible' => 4, 'position' => 210, 'showonheader' => 1,),
 
