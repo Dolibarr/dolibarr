@@ -14,8 +14,6 @@ if (empty($context) || !is_object($context)) {
  * @var Translate $langs
  */
 
-global $langs;
-
 ?>
 
 <main class="container">
