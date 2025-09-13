@@ -2520,7 +2520,7 @@ class Expedition extends CommonObject
 	{
 		// phpcs:enable
 		global $langs;
-		$this->meths = array();
+		$this->meths = [];
 
 		$sql = "SELECT em.rowid, em.code, em.libelle as label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_shipment_mode as em";
@@ -2531,7 +2531,7 @@ class Expedition extends CommonObject
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
 				$label = $langs->trans('SendingMethod'.$obj->code);
-				$this->meths[$obj->rowid] = ($label != 'SendingMethod'.$obj->code ? $label : $obj->label);
+				$this->meths[(int) $obj->rowid] = ($label != 'SendingMethod'.$obj->code ? $label : $obj->label);
 			}
 		}
 	}
