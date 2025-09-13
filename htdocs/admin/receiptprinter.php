@@ -319,7 +319,7 @@ $head = receiptprinteradmin_prepare_head($mode);
 $line = -1;
 
 // mode = config
-if ($mode == 'config' && $user->admin) {
+if ($mode == 'config') {
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=config" autocomplete="off">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	if ($action != 'editprinter') {
@@ -451,7 +451,7 @@ if ($mode == 'config' && $user->admin) {
 }
 
 // mode = template
-if ($mode == 'template' && $user->admin) {
+if ($mode == 'template') {
 	print dol_get_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
 
 	//print info_admin($langs->trans("ThisFeatureIsForESCPOSPrintersOnly"));
