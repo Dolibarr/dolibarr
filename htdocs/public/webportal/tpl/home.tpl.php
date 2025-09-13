@@ -1,6 +1,7 @@
 <!-- file home.tpl.php -->
 <?php
-/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  */
 // Protection to avoid direct call of template
 if (empty($context) || !is_object($context)) {
@@ -8,8 +9,12 @@ if (empty($context) || !is_object($context)) {
 	exit(1);
 }
 '@phan-var-force Context $context';
+/**
+ * @var Context $context
+ * @var Translate $langs
+ */
 
-global $conf, $langs;
+global $langs;
 
 ?>
 
