@@ -1121,22 +1121,18 @@ class Expedition extends CommonObject
 
 		if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 			if ($this->status == self::STATUS_VALIDATED || $this->status == self::STATUS_CLOSED) {
-				// Expedition validee
+				// Expedition validated
 				include_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
 				$delivery = new Delivery($this->db);
 				$result = $delivery->create_from_sending($user, $this->id);
-				if ($result > 0) {
-					return $result;
-				} else {
-					$this->error = $delivery->error;
-					return $result;
+				if ($result <= 0) {
+					$this->setErrorsFromObject($delivery);
 				}
-			} else {
-				return 0;
+				return $result;
 			}
-		} else {
-			return 0;
 		}
+
+		return 0;
 	}
 
 	/**
