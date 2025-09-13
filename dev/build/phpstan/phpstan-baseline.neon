@@ -1231,12 +1231,6 @@ parameters:
 			path: ../../../htdocs/admin/oauthlogintokens.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/admin/openinghours.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -1253,12 +1247,6 @@ parameters:
 			identifier: if.alwaysTrue
 			count: 3
 			path: ../../../htdocs/admin/perms.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 11
-			path: ../../../htdocs/admin/receiptprinter.php
 
 		-
 			message: '#^If condition is always false\.$#'
