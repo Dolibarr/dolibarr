@@ -2744,8 +2744,7 @@ class Expedition extends CommonObject
 					// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
 					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans($labelmovement, $obj->ref));
 					if ($result < 0) {
-						$this->error = $mouvS->error;
-						$this->errors = $mouvS->errors;
+						$this->setErrorsFromObject($mouvS);
 						$error++;
 						break;
 					}
@@ -2755,8 +2754,7 @@ class Expedition extends CommonObject
 					// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
 					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $qty, $obj->subprice, $langs->trans($labelmovement, $obj->ref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
 					if ($result < 0) {
-						$this->error = $mouvS->error;
-						$this->errors = $mouvS->errors;
+						$this->setErrorsFromObject($mouvS);
 						$error++;
 						break;
 					}
@@ -2910,8 +2908,7 @@ class Expedition extends CommonObject
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
 							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ShipmentUnClassifyCloseddInDolibarr", $this->ref));
 							if ($result < 0) {
-								$this->error = $mouvS->error;
-								$this->errors = $mouvS->errors;
+								$this->setErrorsFromObject($mouvS);
 								$error++;
 								break;
 							}
@@ -2921,8 +2918,7 @@ class Expedition extends CommonObject
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
 							$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, -$qty, $obj->subprice, $langs->trans("ShipmentUnClassifyCloseddInDolibarr", $this->ref), '', $this->db->jdate($obj->eatby), $this->db->jdate($obj->sellby), $obj->batch, $obj->fk_origin_stock);
 							if ($result < 0) {
-								$this->error = $mouvS->error;
-								$this->errors = $mouvS->errors;
+								$this->setErrorsFromObject($mouvS);
 								$error++;
 								break;
 							}
