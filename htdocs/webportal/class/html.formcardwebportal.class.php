@@ -481,7 +481,7 @@ class FormCardWebPortal
 				$html .= (!empty($fullname) && $object->societe != $fullname) ? ' (' . dol_htmlentities($fullname) . $addgendertxt . ')' : '';
 			} else {
 				$html .= dol_htmlentities($fullname) . $addgendertxt;
-				if (empty($object->fk_soc)) {
+				if (empty($object->socid)) {
 					$html .= (!empty($object->societe) && $object->societe != $fullname) ? ' (' . dol_htmlentities((string) $object->societe) . ')' : '';
 				}
 			}
