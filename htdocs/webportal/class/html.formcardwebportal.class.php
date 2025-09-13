@@ -300,15 +300,15 @@ class FormCardWebPortal
 					}
 				} elseif (in_array($object->fields[$key]['type'], array('date', 'datetime'))) {
 					$postDate = GETPOST($key, 'alphanohtml');
-					// extract date YYYY-MM-DD for year, month and day
-					$dateArr = explode('-', $postDate);
+					// extract date DD-MM-YYYY for day, month and year
+					$dateArr = explode('/', $postDate);
 					$dateYear = 0;
 					$dateMonth = 0;
 					$dateDay = 0;
 					if (count($dateArr) == 3) {
-						$dateYear = (int) $dateArr[0];
+						$dateYear = (int) $dateArr[2];
 						$dateMonth = (int) $dateArr[1];
-						$dateDay = (int) $dateArr[2];
+						$dateDay = (int) $dateArr[0];
 					}
 					// extract time HH:ii:ss for hours, minutes and seconds
 					$postTime = GETPOST($key . '_time', 'alphanohtml');
