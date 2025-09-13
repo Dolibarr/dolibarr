@@ -1231,12 +1231,6 @@ parameters:
 			path: ../../../htdocs/admin/oauthlogintokens.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/admin/openinghours.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -1253,12 +1247,6 @@ parameters:
 			identifier: if.alwaysTrue
 			count: 3
 			path: ../../../htdocs/admin/perms.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 11
-			path: ../../../htdocs/admin/receiptprinter.php
 
 		-
 			message: '#^If condition is always false\.$#'
@@ -5173,12 +5161,6 @@ parameters:
 			path: ../../../htdocs/core/actions_massactions.inc.php
 
 		-
-			message: '#^Variable \$holiday might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/core/actions_massactions.inc.php
-
-		-
 			message: '#^Variable \$listofobjectthirdparties in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -7111,15 +7093,9 @@ parameters:
 			path: ../../../htdocs/core/class/html.formticket.class.php
 
 		-
-			message: '#^Call to function is_object\(\) with mixed will always evaluate to false\.$#'
-			identifier: function.impossibleType
-			count: 2
-			path: ../../../htdocs/core/class/interfaces.class.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 4
+			count: 2
 			path: ../../../htdocs/core/class/interfaces.class.php
 
 		-
@@ -10421,18 +10397,6 @@ parameters:
 			identifier: booleanNot.alwaysFalse
 			count: 1
 			path: ../../../htdocs/don/class/api_donations.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Don\) and ''societe'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/don/class/don.class.php
-
-		-
-			message: '#^Property Don\:\:\$societe \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/don/class/don.class.php
 
 		-
 			message: '#^Negated boolean expression is always true\.$#'
