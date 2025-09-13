@@ -246,7 +246,7 @@ class Expedition extends CommonObject
 	 */
 	public $meths;
 	/**
-	 * @var array<int,array{rowid:int,code:string,libelle:string,description:string,tracking:string,active:int>
+	 * @var array<int,array{rowid:int,code:string,libelle:string,description:string,tracking:string,active:int}>
 	 */
 	public $listmeths; // List of carriers
 
