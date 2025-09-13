@@ -476,13 +476,13 @@ class FormCardWebPortal
 		if ($object->element == 'member') {
 			'@phan-var-force Adherent $object';
 			/** @var Adherent $object */
-			if ($object->morphy == 'mor' && !empty($object->societe)) {
-				$html .= dol_htmlentities((string) $object->societe);
-				$html .= (!empty($fullname) && $object->societe != $fullname) ? ' (' . dol_htmlentities($fullname) . $addgendertxt . ')' : '';
+			if ($object->morphy == 'mor' && !empty($object->company)) {
+				$html .= dol_htmlentities((string) $object->company);
+				$html .= (!empty($fullname) && $object->company != $fullname) ? ' (' . dol_htmlentities($fullname) . $addgendertxt . ')' : '';
 			} else {
 				$html .= dol_htmlentities($fullname) . $addgendertxt;
 				if (empty($object->socid)) {
-					$html .= (!empty($object->societe) && $object->societe != $fullname) ? ' (' . dol_htmlentities((string) $object->societe) . ')' : '';
+					$html .= (!empty($object->company) && $object->company != $fullname) ? ' (' . dol_htmlentities((string) $object->company) . ')' : '';
 				}
 			}
 		} else {
