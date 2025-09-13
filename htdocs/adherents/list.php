@@ -415,7 +415,7 @@ $morecss = array();
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = "SELECT";
-$sql .= " d.rowid, d.ref, d.login, d.lastname, d.firstname, d.gender, d.societe as company, d.fk_soc,";
+$sql .= " d.rowid, d.ref, d.login, d.lastname, d.firstname, d.gender, d.societe as company, d.fk_soc as socid,";
 $sql .= " d.civility, d.datefin, d.address, d.zip, d.town, d.state_id, d.country,";
 $sql .= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.birth, d.public, d.photo,";
 $sql .= " d.fk_adherent_type as type_id, d.morphy, d.statut as status, d.datec as date_creation, d.tms as date_modification,";
@@ -1228,7 +1228,7 @@ while ($i < $imaxinloop) {
 	$memberstatic->gender = $obj->gender;
 	$memberstatic->status = $obj->status;
 	$memberstatic->datefin = $datefin;
-	$memberstatic->socid = $obj->fk_soc;
+	$memberstatic->socid = $obj->socid;
 	$memberstatic->photo = $obj->photo;
 	$memberstatic->email = $obj->email;
 	$memberstatic->morphy = $obj->morphy;
@@ -1236,7 +1236,7 @@ while ($i < $imaxinloop) {
 	$memberstatic->note_private = $obj->note_private;
 	$memberstatic->need_subscription = $obj->subscription;
 
-	if (!empty($obj->fk_soc)) {
+	if (!empty($obj->socid)) {
 		$memberstatic->fetch_thirdparty();
 		if ($memberstatic->thirdparty->id > 0) {
 			$companyname = $memberstatic->thirdparty->name;
