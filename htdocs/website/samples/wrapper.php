@@ -26,6 +26,8 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 } // Load master if not already loaded
 /**
  * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
  */
 include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 
