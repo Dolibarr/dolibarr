@@ -9799,18 +9799,6 @@ parameters:
 			path: ../../../htdocs/core/search_page.php
 
 		-
-			message: '#^Variable \$type2label might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/admin_extrafields_edit.tpl.php
-
-		-
-			message: '#^Variable \$type2label might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/admin_extrafields_view.tpl.php
-
-		-
 			message: '#^Property CommonObject\:\:\$lines \(array\<CommonObject\|stdClass\>\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
