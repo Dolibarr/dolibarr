@@ -4359,7 +4359,7 @@ if ($action == 'create') {
 	// For example print 239.2 - 229.3 - 9.9; does not return 0.
 	// $resteapayer=bcadd($object->total_ttc,$totalpaid,$conf->global->MAIN_MAX_DECIMALS_TOT);
 	// $resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
-	$resteapayer = price2num($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
+	$resteapayer = price2num($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits - $object->prorata_discount * (1 + $object->total_tva / $object->total_ttc), 'MT');
 
 	// Multicurrency
 	if (isModEnabled('multicurrency')) {
@@ -5199,25 +5199,80 @@ if ($action == 'create') {
 			$sign = -1; // We invert sign for output
 		}
 		print '<tr>';
-		// Amount HT
-		print '<td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
-		print '<td class="nowrap amountcard right">' . price($sign * $object->total_ht, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
-		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-			// Multicurrency Amount HT
-			print '<td class="nowrap amountcard right">' . price($sign * $object->multicurrency_total_ht, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
-		}
-		print '</tr>';
 
-		print '<tr>';
-		// Amount VAT
-		print '<td class="titlefieldmiddle">' . $langs->trans('AmountVAT') . '</td>';
-		print '<td class="nowrap amountcard right">' . price($sign * $object->total_tva, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
-		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
-			// Multicurrency Amount VAT
-			print '<td class="nowrap amountcard right">' . price($sign * $object->multicurrency_total_tva, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
-		}
-		print '</tr>';
+		if (getDolGlobalString('INVOICE_USE_PRORATA_DISCOUNT')) {
+			$special_lines = $object->getExtractSpecialLines($langs);
+			$sum_special_lines = 0;
+			foreach ($special_lines as $idx => $line) {
+				$sum_special_lines += $line['amountHT'];
+			}
+			// Contract amount
+			print '<tr>';
+			print '<td class="titlefieldmiddle">' . $langs->trans('MontantMarché') . '</td>';
+			print '<td class="nowrap amountcard right"><b>' . price($sign * $object->total_ht - $sum_special_lines, '', $langs, 0, -1, -1, $conf->currency) . '</b></td>';
+			print '</tr>';
 
+
+			// Special lines
+			foreach ($special_lines as $idx => $line) {
+				$name = $line['name'];
+				$total = (float) $line['amountHT'];
+				print '<tr>';
+				print '<td class="titlefieldmiddle" style="padding-left: 3%">' . $langs->trans($name) . '</td>';
+				print '<td class="nowrap amountcard right">' . price($total, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+				print '</tr>';
+			}
+			
+			// Amount work
+			print '<tr>';
+			print '<td class="titlefieldmiddle">' . $langs->trans('MontantTravaux') . '</td>';
+			print '<td class="nowrap amountcard right"><b>' . price($sign * $object->total_ht, '', $langs, 0, -1, -1, $conf->currency) . '</b></td>';
+			print '</tr>';
+
+			if ($object->prorata_discount > 0) {
+				// Amount Prorata
+				print '<tr>';
+				print '<td class="titlefieldmiddle" style="padding-left: 3%">' . $langs->trans('ProrataRate') . '</td>';
+				print '<td class="nowrap amountcard right">' . price(-$object->prorata_discount, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+				print '</tr>';
+			}
+
+			// Amount HT
+			print '<tr>';
+			print '<td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
+			print '<td class="nowrap amountcard right"><b>' . price($sign * $object->total_ht - $object->prorata_discount, '', $langs, 0, -1, -1, $conf->currency) . '</b></td>';
+			print '</tr>';
+
+			// Amount VAT
+			print '<tr>';
+			print '<td class="titlefieldmiddle">' . $langs->trans('AmountVAT') . '</td>';
+			print '<td class="nowrap amountcard right">' . price(round($sign * $object->total_tva  - $object->prorata_discount * ($object->total_tva / $object->total_ttc), 2), '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+			print '</tr>';
+
+
+		} else {
+			// Amount HT
+			print '<tr>';
+			print '<td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
+			print '<td class="nowrap amountcard right">' . price($sign * $object->total_ht, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+				// Multicurrency Amount HT
+				print '<td class="nowrap amountcard right">' . price($sign * $object->multicurrency_total_ht, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+			}
+			print '</tr>';
+		
+			print '<tr>';
+			// Amount VAT
+			print '<td class="titlefieldmiddle">' . $langs->trans('AmountVAT') . '</td>';
+			print '<td class="nowrap amountcard right">' . price($sign * $object->total_tva  - $object->prorata_discount, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+				// Multicurrency Amount VAT
+				print '<td class="nowrap amountcard right">' . price($sign * $object->multicurrency_total_tva, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+			}
+			print '</tr>';
+
+		}
+		
 		// Amount Local Taxes
 		if (($mysoc->localtax1_assuj == "1" && $mysoc->useLocalTax(1)) || $object->total_localtax1 != 0) {
 			print '<tr>';
@@ -5299,7 +5354,7 @@ if ($action == 'create') {
 		print '<tr>';
 		// Amount TTC
 		print '<td>' . $langs->trans('AmountTTC') . '</td>';
-		print '<td class="nowrap amountcard right">' . price($sign * $object->total_ttc, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+		print '<td class="nowrap amountcard right">' . price(round($object->total_ttc - $object->prorata_discount * (1 + $object->total_tva / $object->total_ttc), 2), '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
 			// Multicurrency Amount TTC
 			print '<td class="nowrap amountcard right">' . price($sign * $object->multicurrency_total_ttc, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
@@ -5706,7 +5761,11 @@ if ($action == 'create') {
 			print '<tr><td colspan="'.$nbcols.'" class="right">';
 			print '<span class="opacitymedium">';
 			print $langs->trans("Billed");
-			print '</td><td class="right">'.price($object->total_ttc).'</td><td>&nbsp;</td></tr>';
+			if (getDolGlobalString('INVOICE_USE_SITUATION')) {
+				print '</td><td class="right">'.price(round($object->total_ttc - $object->prorata_discount * (1 + $object->total_tva / $object->total_ttc), 2)).'</td><td>&nbsp;</td></tr>';
+			} else {
+				print '</td><td class="right">'.price($object->total_ttc).'</td><td>&nbsp;</td></tr>';
+			}
 			// Remainder to pay
 			print '<tr><td colspan="'.$nbcols.'" class="right">';
 			print '<span class="opacitymedium">';
@@ -5734,7 +5793,7 @@ if ($action == 'create') {
 			}
 
 			// Retained warranty : usualy use on construction industry
-			if (!empty($object->situation_final) && !empty($object->retained_warranty) && $displayWarranty) {
+			if (!empty($object->retained_warranty) && $displayWarranty) { // !empty($object->situation_final) && 
 				// Billed - retained warranty
 				if ($object->type == Facture::TYPE_SITUATION) {
 					$retainedWarranty = $total_global_ttc * $object->retained_warranty / 100;
