@@ -147,12 +147,12 @@ class BookKeeping extends CommonObject
 	public $sens;
 
 	/**
-	 * @var int ID
+	 * @var ?int ID
 	 */
 	public $fk_user_author;
 
 	/**
-	 * @var string key for import
+	 * @var ?string key for import
 	 */
 	public $import_key;
 
@@ -1416,16 +1416,15 @@ class BookKeeping extends CommonObject
 			$sql .= " AND t.subledger_account <> ''";
 			$sql .= " GROUP BY t.numero_compte, t.subledger_account, t.subledger_label";
 			$sortfield = 't.subledger_account'.($sortfield ? ','.$sortfield : '');
-			$sortorder = 'ASC'.($sortfield ? ','.$sortfield : '');
+			$sortorder = 'ASC'.($sortorder ? ','.$sortorder : '');
 		} else {
 			$sql .= ' GROUP BY t.numero_compte';
 			$sortfield = 't.numero_compte'.($sortfield ? ','.$sortfield : '');
 			$sortorder = 'ASC'.($sortorder ? ','.$sortorder : '');
 		}
 
-		if (!empty($sortfield)) {
-			$sql .= $this->db->order($sortfield, $sortorder);
-		}
+		$sql .= $this->db->order($sortfield, $sortorder);
+
 		if (!empty($limit)) {
 			$sql .= $this->db->plimit($limit + 1, $offset);
 		}
