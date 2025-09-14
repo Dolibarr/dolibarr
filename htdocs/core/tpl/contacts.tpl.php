@@ -72,7 +72,7 @@ if ($module == 'propal') {
 	} else {
 		$permission = $user->hasRight('supplier_order', 'creer');
 	}
-} elseif ($module == 'invoice_supplier' && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+} elseif ($module == 'invoice_supplier') {
 	if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 		$permission = $user->hasRight('fournisseur', 'facture', 'creer');
 	} else {

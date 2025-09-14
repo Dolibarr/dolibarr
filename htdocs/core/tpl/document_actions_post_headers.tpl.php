@@ -34,6 +34,7 @@
 /**
  * @var Conf $conf
  * @var CommonObject $object
+ * @var DoliDB $db
  * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
