@@ -70,6 +70,8 @@ class FormIntervention
 
 		$out = '';
 
+		$hideunselectables = getDolGlobalInt('MAIN_SHOW_UNSELECTABLES_IN_SELECT_INTERVENTIONS');
+
 		// Search all contacts
 		$sql = "SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut as status";
 		$sql .= " FROM ".$this->db->prefix()."fichinter as f";
@@ -121,7 +123,7 @@ class FormIntervention
 								$labeltoshow .= ' - '.$langs->trans("LinkedToAnotherCompany");
 							}
 
-							if ($disabled) {
+							if ($hideunselectables && $disabled) {
 								$resultat = '';
 							} else {
 								$resultat = '<option value="'.$obj->rowid.'"';

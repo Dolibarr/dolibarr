@@ -1029,7 +1029,7 @@ class FormFile
 						//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 						//print '<span class="opacitymedium">'.$langs->trans("Hash").' : '.$file['share'].'</span>';
-						$forcedownload = 0;
+						$forcedownload = getDolGlobalInt('MAIN_FORCE_DOWNLOAD_IN_HTML_FORMFILE');
 						$paramlink = '';
 						if (!empty($file['share'])) {
 							$paramlink .= /* ($paramlink ? '&' : ''). */'hashp='.$file['share']; // Hash for public share
@@ -1639,7 +1639,7 @@ class FormFile
 								//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 								//print '<span class="opacitymedium">'.$langs->trans("Hash").' : '.$file['share'].'</span>';
-								$forcedownload = 0;
+								$forcedownload = getDolGlobalInt('MAIN_FORCE_DOWNLOAD_IN_HTML_FORMFILE');
 								$paramlink = '';
 								if (!empty($file['share'])) {
 									$paramlink .= /* ($paramlink ? '&' : ''). */'hashp='.$file['share']; // Hash for public share
@@ -2163,7 +2163,7 @@ class FormFile
 					//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 					//print '<span class="opacitymedium">'.$langs->trans("Hash").' : '.$file['share'].'</span>';
-					$forcedownload = 0;
+					$forcedownload = getDolGlobalInt('MAIN_FORCE_DOWNLOAD_IN_HTML_FORMFILE');
 					$paramlink = '';
 					if (!empty($file['share'])) {
 						$paramlink .= /* ($paramlink ? '&' : ''). */'hashp='.$file['share']; // Hash for public share
