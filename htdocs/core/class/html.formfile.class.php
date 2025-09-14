@@ -2166,7 +2166,7 @@ class FormFile
 					$forcedownload = 0;
 					$paramlink = '';
 					if (!empty($file['share'])) {
-						$paramlink .= ($paramlink ? '&' : '').'hashp='.$file['share']; // Hash for public share
+						$paramlink .= /* ($paramlink ? '&' : ''). */'hashp='.$file['share']; // Hash for public share
 					}
 					if ($forcedownload) {
 						$paramlink .= ($paramlink ? '&' : '').'attachment=1';
