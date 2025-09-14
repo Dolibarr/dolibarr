@@ -11,11 +11,11 @@ require_once DOL_DOCUMENT_ROOT.'/couffignal/CommandeTools.php';
 class FactureTools
 {
 	/**
-	 * Get total amount excluding tax of validated orders linked to the project of the invoice
+	 * Get total HT of validated orders linked to the project of the invoice.
 	 *
 	 * @param DoliDB $db Database handler
 	 * @param Facture $facture Invoice object
-	 * @return array Array of orders with ref_client and total_ht
+	 * @return array List of orders with their client reference and total HT
 	 */
 	public static function getTotalHtOrdersLinkedToProjectOfInvoice(DoliDB $db, Facture $facture): array
 	{
@@ -23,18 +23,17 @@ class FactureTools
 			$facture->fetch_project();
 		}
 
-		$orders = CommandeTools::getOrdersValidatedFromProject($db, $facture->project);
+		$orders = CommandeTools::getOrdersValidatedFromProject($db, $facture->project, (int) $facture->socid);
 
 		return array_map(static fn ($order) => ['ref_client' => $order->ref_client, 'total_ht' => $order->total_ht], $orders);
 	}
 
-
 	/**
-	 * Check the difference between the last situation price and the total orders.
+	 * Calculate the difference between the last situation complete price and the total HT of orders linked to the project of the invoice.
 	 *
 	 * @param DoliDB $db Database handler
 	 * @param Facture $facture Invoice object
-	 * @return float Difference between the last situation price and the total orders
+	 * @return float The difference
 	 */
 	public static function calculateDifference(DoliDB $db, Facture $facture): float
 	{

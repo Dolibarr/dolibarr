@@ -2400,7 +2400,7 @@ function pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails = 0)
 				}
 				$actual_price = round($total_ht, 2);
 				$result .= price($sign * ($actual_price - $prev_price), 0, $outputlangs);
-				print "YYY" . $prev_progress . " - " . $prev_price . " - " . $object->lines[$i]->situation_percent . " - " . $actual_price;
+				//print "YYY" . $prev_progress . " - " . $prev_price . " - " . $object->lines[$i]->situation_percent . " - " . $actual_price;
 				// $result .= price($sign * ($total_ht / ($object->lines[$i]->situation_percent / 100)) * $progress, 0, $outputlangs);
 			} else {
 				$result .= price($sign * $total_ht, 0, $outputlangs);

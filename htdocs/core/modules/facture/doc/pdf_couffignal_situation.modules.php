@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/couffignal/FactureTools.php';
+require_once DOL_DOCUMENT_ROOT.'/couffignal/CoSousTraitant.php';
 // TSubtotal
 if (isModEnabled('subtotal')) dol_include_once('/subtotal/class/subtotal.class.php');
 
@@ -549,12 +550,15 @@ class pdf_couffignal_situation extends ModelePDFFactures
 				
 				// Footer
 				$this->_pagefoot($pdf, $object, $outputlangs, 1);
-				
+
 				// Recap table
-				$bottomlasttab = $this->_tableauBtp($pdf, $object, $tab_top, 0, $outputlangs, 0, 0, $object->multicurrency_code);
-				
+				$tab_top = $this->_tableauBtp($pdf, $object, $tab_top, 0, $outputlangs, 0, 0, $object->multicurrency_code);
+
+				// Répartition Co-traitants / Sous-traitance
+				$tab_top = $this->_tableauCoSousTraitants($pdf, $object, $tab_top, $outputlangs);
+				$tab_top += 8;
+
 				// Notes
-				$tab_top = $bottomlasttab + 5 + 25; // TODO : Clean the 25 (probably removed somewhere else)
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
 				if (getDolGlobalInt('MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE')) {
 					// Get first sale rep
@@ -1386,7 +1390,6 @@ class pdf_couffignal_situation extends ModelePDFFactures
 
 		$pdf->writeHtml(implode($linesOrders));
 		$h += (4*count($ordersTotalHt));
-
 		$this->printRectBtp($pdf, $this->margin_left, $tab_top, $rect_width, $h + 3, $hidetop, $hidebottom);
 		$tab_top += ($h+5);
 
@@ -2312,6 +2315,191 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		}
 		return $taxes;
 	}
+
+	/**
+	 * Generates a table of co-contractors and subcontractors details in the PDF.
+	 *
+	 * @param PDF $pdf PDF object to draw on.
+	 * @param Facture $object Object facture.
+	 * @param float $posy Current Y position to start rendering the table.
+	 * @param Translate $outputlangs Language object for translations.
+	 * @return float                   New Y position after rendering the table.
+	 */
+	function _tableauCoSousTraitants($pdf, $object, $posy, $outputlangs)
+	{
+		$sousTraitantsCoTraitants = CoSousTraitant::getSousTraitantsCoTraitants($this->db, $object);
+		if (empty($sousTraitantsCoTraitants)) {
+			return $posy;
+		}
+
+		// marge top
+		$posy += 5;
+
+		$default_font_size = pdf_getPDFFontSize($outputlangs) * 0.8;
+		
+		// Calcul des hauteurs de ligne basées sur la taille de police
+		$title_height = $default_font_size * 0.8;	// Hauteur pour les titres
+		$line_height = $default_font_size * 0.7;	 // Hauteur pour les lignes de données
+
+		// Calcul de la largeur disponible entre les marges
+		$page_width = $pdf->getPageWidth();
+		$available_width = $page_width - $this->margin_left - $this->margin_right;
+
+		// Définition des proportions relatives des colonnes
+		$column_ratios = array(
+			'Désignation' => 40,
+			'Marché HT' => 20,
+			'Facturé HT' => 20,
+			'Pourcentage' => 20
+		);
+
+		// Calcul des largeurs réelles des colonnes
+		$headers = array();
+		foreach ($column_ratios as $title => $ratio) {
+			$headers[$title] = ($ratio * $available_width) / 100;
+		}
+
+		$totalWidth = $available_width;
+			
+			// Style des bordures
+		$border = 'LRTB';
+
+		// Titre principal du tableau
+		$pdf->SetXY($this->margin_left, $posy);
+		$pdf->SetFont('', 'B', $default_font_size + 1);
+		$pdf->Cell($totalWidth, $title_height + 2, $outputlangs->trans("Répartition Co-traitance et Sous-traitance"), 1, 1, 'C');
+		$posy = $pdf->GetY();
+
+		// En-têtes des colonnes
+		$pdf->SetFont('', 'B', $default_font_size);
+		$currentX = $this->margin_left;
+		foreach ($headers as $title => $width) {
+			$pdf->SetXY($currentX, $posy);
+			$pdf->Cell($width, $title_height, $outputlangs->trans($title), $border, 0, 'C');
+			$currentX += $width;
+		}
+
+		$posy += $title_height;
+		
+		$pdf->SetFont('', '', $default_font_size);
+
+		// Section company
+		if (!empty($sousTraitantsCoTraitants['company'])) {
+			$company = $sousTraitantsCoTraitants['company'];
+			$pdf->SetXY($this->margin_left, $posy);
+			$pdf->SetFont('', 'B', $default_font_size);
+			$pdf->SetFillColor(230, 230, 230);
+			$companyText = html_entity_decode($outputlangs->trans("Company"), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+			$pdf->Cell($totalWidth, $title_height, $companyText, $border, 1, 'L', 1);
+			$posy = $pdf->GetY();
+			$pdf->SetFont('', '', $default_font_size);
+
+			$currentX = $this->margin_left;
+
+			// Nom
+			$pdf->SetXY($currentX, $posy);
+			$pdf->Cell($headers['Désignation'], $line_height, $company['name'], $border, 0, 'L');
+			$currentX += $headers['Désignation'];
+
+			// Marché HT
+			$pdf->SetXY($currentX, $posy);
+			$pdf->Cell($headers['Marché HT'], $line_height, price($company['market']['sum_total_ht']), $border, 0, 'R');
+			$currentX += $headers['Marché HT'];
+
+			// Facturé HT
+			$pdf->SetXY($currentX, $posy);
+			$pdf->Cell($headers['Facturé HT'], $line_height, price($company['factured']['sum_total_ht']), $border, 0, 'R');
+			$currentX += $headers['Facturé HT'];
+
+			// Pourcentage
+			$pdf->SetXY($currentX, $posy);
+			$pourcentage = ($company['market']['sum_total_ht'] > 0) ?
+				($company['factured']['sum_total_ht'] / $company['market']['sum_total_ht'] * 100) : 0;
+			$pdf->Cell($headers['Pourcentage'], $line_height, sprintf('%.2f%%', $pourcentage), $border, 0, 'R');
+
+			$posy += $line_height;
+		}
+
+		// Section Co-traitants
+		if (!empty($sousTraitantsCoTraitants['co_trait'])) {
+			// Titre de section Co-traitants
+			$pdf->SetXY($this->margin_left, $posy);
+			$pdf->SetFont('', 'B', $default_font_size);
+			$pdf->SetFillColor(230, 230, 230);
+			$pdf->Cell($totalWidth, $title_height, $outputlangs->trans("Co-traitants"), $border, 1, 'L', 1);
+			$posy = $pdf->GetY();
+			$pdf->SetFont('', '', $default_font_size);
+
+			foreach ($sousTraitantsCoTraitants['co_trait'] as $coTrait) {
+				$currentX = $this->margin_left;
+
+				// Nom
+				$pdf->SetXY($currentX, $posy);
+				$pdf->Cell($headers['Désignation'], $line_height, $coTrait['name'], $border, 0, 'L');
+				$currentX += $headers['Désignation'];
+
+				// Marché HT
+				$pdf->SetXY($currentX, $posy);
+				$pdf->Cell($headers['Marché HT'], $line_height, price($coTrait['market']['sum_total_ht']), $border, 0, 'R');
+				$currentX += $headers['Marché HT'];
+
+				// Facturé HT
+				$pdf->SetXY($currentX, $posy);
+				$pdf->Cell($headers['Facturé HT'], $line_height, price($coTrait['factured']['sum_total_ht']), $border, 0, 'R');
+				$currentX += $headers['Facturé HT'];
+
+				// Pourcentage
+				$pdf->SetXY($currentX, $posy);
+				$pourcentage = ($coTrait['market']['sum_total_ht'] > 0) ? 
+					($coTrait['factured']['sum_total_ht'] / $coTrait['market']['sum_total_ht'] * 100) : 0;
+				$pdf->Cell($headers['Pourcentage'], $line_height, sprintf('%.2f%%', $pourcentage), $border, 0, 'R');
+
+				$posy += $line_height;
+			}
+		}
+	
+		// Section Sous-traitants
+		// Ligne de séparation si nécessaire
+		if (!empty($sousTraitantsCoTraitants['sous_trait'])) {
+			// Titre de section Sous-traitants
+			$pdf->SetXY($this->margin_left, $posy);
+			$pdf->SetFont('', 'B', $default_font_size);
+			$pdf->SetFillColor(230, 230, 230);
+			$pdf->Cell($totalWidth, $title_height, $outputlangs->trans("Sous-traitants"), $border, 1, 'L', 1);
+			$posy = $pdf->GetY();
+			$pdf->SetFont('', '', $default_font_size);
+
+			foreach ($sousTraitantsCoTraitants['sous_trait'] as $sousTrait) {
+				$currentX = $this->margin_left;
+
+				// Nom
+				$pdf->SetXY($currentX, $posy);
+				$pdf->Cell($headers['Désignation'], $line_height, $sousTrait['name'], $border, 0, 'L');
+				$currentX += $headers['Désignation'];
+
+				// Marché HT
+				$pdf->SetXY($currentX, $posy);
+				$pdf->Cell($headers['Marché HT'], $line_height, price($sousTrait['market']['sum_total_ht']), $border, 0, 'R');
+				$currentX += $headers['Marché HT'];
+
+				// Facturé HT
+				$pdf->SetXY($currentX, $posy);
+				$pdf->Cell($headers['Facturé HT'], $line_height, price($sousTrait['factured']['sum_total_ht']), $border, 0, 'R');
+				$currentX += $headers['Facturé HT'];
+
+				// Pourcentage
+				$pdf->SetXY($currentX, $posy);
+				$pourcentage = ($sousTrait['market']['sum_total_ht'] > 0) ? 
+					($sousTrait['factured']['sum_total_ht'] / $sousTrait['market']['sum_total_ht'] * 100) : 0;
+				$pdf->Cell($headers['Pourcentage'], $line_height, sprintf('%.2f%%', $pourcentage), $border, 0, 'R');
+
+				$posy += $line_height;
+			}
+		}
+
+		return $posy;
+	}
+
 
 }
 
