@@ -60,7 +60,9 @@ $result = restrictedArea($user, 'ticket', $id, 'ticket');
 $object = new Ticket($db);
 $object->fetch($id, $ref);
 
+$permissiontoadd = $user->hasRight('ticket', 'write');
 $permissionnote = $user->hasRight('ticket', 'write'); // Used by the include of actions_setnotes.inc.php
+
 
 /*
  * Actions
@@ -92,6 +94,7 @@ if ($id > 0 || !empty($ref)) {
 	// Ticket card
 	$linkback = '<a href="'.DOL_URL_ROOT.'/ticket/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
+	$morehtmlref = '<div class="refidno">';
 	$morehtmlref .= $object->subject;
 	// Author
 	if ($object->fk_user_create > 0) {
