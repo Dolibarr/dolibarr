@@ -2,7 +2,7 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -300,15 +300,15 @@ class FormCardWebPortal
 					}
 				} elseif (in_array($object->fields[$key]['type'], array('date', 'datetime'))) {
 					$postDate = GETPOST($key, 'alphanohtml');
-					// extract date YYYY-MM-DD for year, month and day
-					$dateArr = explode('-', $postDate);
+					// extract date DD-MM-YYYY for day, month and year
+					$dateArr = explode('/', $postDate);
 					$dateYear = 0;
 					$dateMonth = 0;
 					$dateDay = 0;
 					if (count($dateArr) == 3) {
-						$dateYear = (int) $dateArr[0];
+						$dateYear = (int) $dateArr[2];
 						$dateMonth = (int) $dateArr[1];
-						$dateDay = (int) $dateArr[2];
+						$dateDay = (int) $dateArr[0];
 					}
 					// extract time HH:ii:ss for hours, minutes and seconds
 					$postTime = GETPOST($key . '_time', 'alphanohtml');
@@ -475,13 +475,14 @@ class FormCardWebPortal
 		$html .= '<div><strong>';
 		if ($object->element == 'member') {
 			'@phan-var-force Adherent $object';
-			if ($object->morphy == 'mor' && !empty($object->societe)) {
-				$html .= dol_htmlentities((string) $object->societe);
-				$html .= (!empty($fullname) && $object->societe != $fullname) ? ' (' . dol_htmlentities($fullname) . $addgendertxt . ')' : '';
+			/** @var Adherent $object */
+			if ($object->morphy == 'mor' && !empty($object->company)) {
+				$html .= dol_htmlentities((string) $object->company);
+				$html .= (!empty($fullname) && $object->company != $fullname) ? ' (' . dol_htmlentities($fullname) . $addgendertxt . ')' : '';
 			} else {
 				$html .= dol_htmlentities($fullname) . $addgendertxt;
-				if (empty($object->fk_soc)) {
-					$html .= (!empty($object->societe) && $object->societe != $fullname) ? ' (' . dol_htmlentities((string) $object->societe) . ')' : '';
+				if (empty($object->socid)) {
+					$html .= (!empty($object->company) && $object->company != $fullname) ? ' (' . dol_htmlentities((string) $object->company) . ')' : '';
 				}
 			}
 		} else {

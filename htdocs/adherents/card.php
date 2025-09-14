@@ -240,6 +240,7 @@ if (empty($reshook)) {
 			$tmpuser = dol_clone($object, 2);
 			if (GETPOST('internalorexternal', 'aZ09') == 'internal') {
 				$tmpuser->fk_soc = 0;
+				$tmpuser->socid = 0;
 			}
 
 			$result = $nuser->create_from_member($tmpuser, GETPOST('login', 'alphanohtml'));
