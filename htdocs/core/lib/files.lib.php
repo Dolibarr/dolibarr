@@ -4,7 +4,7 @@
  * Copyright (C) 2012-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023       Lenin Rivas         <lenin.rivas777@gmail.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
@@ -324,8 +324,8 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
  * @param	int			$sortorder		Sort order (SORT_ASC, SORT_DESC)
  * @param	int			$mode			0=Return array minimum keys loaded (faster), 1=Force all keys like description
  * @param	string		$sqlfilters		Filter as an Universal Search string.
- * @param	?Object		$object			Object used
  * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+ * @param	?Object		$object			Object used
  * @return	array<array{rowid:string,label:string,name:string,path:string,level1name:string,fullname:string,fullpath_orig:string,date_c:string,date_m:string,type:string,keywords:string,cover:string,position:int,acl:string,share:string,description:string}> Array of array('name'=>'xxx','fullname'=>'/abc/xxx','date'=>'yyy','size'=>99,'type'=>'dir|file',...)
  * @see dol_dir_list()
  */
@@ -441,9 +441,9 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 		global $object;
 		if (!empty($object->id)) {
 			if (isModEnabled("product")) {
-				$upload_dirold = $conf->product->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
+				$upload_dirold = $conf->product->multidir_output[$object->entity ?? $conf->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
 			} else {
-				$upload_dirold = $conf->service->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
+				$upload_dirold = $conf->service->multidir_output[$object->entity ?? $conf->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
 			}
 
 			$relativedirold = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $upload_dirold);
@@ -511,6 +511,10 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 				$ecmfile->label = md5_file(dol_osencode($filearray[$key]['fullname'])); // $destfile is a full path to file
 				$ecmfile->fullpath_orig = $filearray[$key]['fullname'];
 				$ecmfile->gen_or_uploaded = 'unknown';
+				if (is_object($object)) {
+					$ecmfile->src_object_type = $object->element;
+					$ecmfile->src_object_id = $object->id;
+				}
 				$ecmfile->description = ''; // indexed content
 				$ecmfile->keywords = ''; // keyword content
 				// When you scan file with dol_dir_list_in_database, you scan for files in entity of object (like with projects), even if you
@@ -1385,7 +1389,7 @@ function dolCheckVirus($src_file, $dest_file = '')
 		return $reterrors;
 	}
 
-	if (getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')) {
+	if (getDolGlobalString('MAIN_ANTIVIRUS_UPLOAD_ON')) {
 		if (!class_exists('AntiVir')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/antivir.class.php';
 		}
@@ -1440,7 +1444,7 @@ function dolCheckOnFileName($src_file, $dest_file = '')
  * 	@param	int		$disablevirusscan	1=Disable virus scan
  * 	@param	integer	$uploaderrorcode	Value of PHP upload error code ($_FILES['field']['error'])
  * 	@param	int		$nohook				Disable all hooks
- * 	@param	string	$keyforsourcefile	Key for source frile in _FILES (not used)
+ * 	@param	string	$keyforsourcefile	Key for source file in _FILES (not used)
  *  @param	string	$upload_dir			For information. Already included into $dest_file.
  *  @param	int		$mode				0=Default mode use to move a file from default system upload dir to $upload_dir. 1=Mode to move an uploaded file from $keyforsourcefile into $upload_dir.
  *	@return int|string       			1 if OK, 2 if OK and .noexe appended, <0 or string if KO
@@ -3588,6 +3592,10 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		// Wrapping for recruitment module
 		$accessallowed = $user->hasRight('recruitment', 'recruitmentjobposition', 'read');
 		$original_file = $conf->recruitment->dir_output.'/'.$original_file;
+	} elseif ($modulepart == 'hrm' && !empty($conf->hrm->dir_output)) {
+		// Wrapping for hrm module
+		$accessallowed = $user->hasRight('hrm', 'all', 'read');
+		$original_file = $conf->hrm->dir_output.'/'.$original_file;
 	} elseif ($modulepart == 'editor' && !empty($conf->fckeditor->dir_output)) {
 		// Wrapping for wysiwyg editor
 		$accessallowed = 1;

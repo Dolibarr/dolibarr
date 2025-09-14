@@ -313,7 +313,7 @@ class Projects extends DolibarrApi
 	{
 		global $conf;
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);

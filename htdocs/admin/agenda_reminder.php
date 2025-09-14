@@ -123,7 +123,7 @@ if ($action == 'set') {
 
 		if ($module->write_file($commande, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=action&file=SPECIMEN.pdf");
-			return;
+			exit;
 		} else {
 			setEventMessages($module->error, $module->errors, 'errors');
 			dol_syslog($module->error, LOG_ERR);
@@ -266,6 +266,23 @@ if (!isModEnabled('cron')) {
 			print '<span class="opacitymedium warning">'.$langs->trans("JobNotFound", $langs->transnoentitiesnoconv("sendEmailsReminder")).'</span>';
 		}
 	}
+}
+
+// AGENDA REMINDER SMS
+print '<tr class="oddeven">'."\n";
+print '<td>';
+print $langs->trans('AGENDA_REMINDER_SMS').'<br>';
+print '<span class="opacitymedium">'.$langs->trans('AGENDA_REMINDER_SMSHelp').'</span>';
+print '</td>'."\n";
+print '<td class="center">&nbsp;</td>'."\n";
+print '<td class="right nowraponall">'."\n";
+
+if (!getDolGlobalString('AGENDA_REMINDER_SMS')) {
+	print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_REMINDER_SMS&token='.newToken().'">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
+	print '</td></tr>'."\n";
+} else {
+	print '<a class="valignmiddle" href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_REMINDER_SMS&token='.newToken().'">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
+	print '</td></tr>'."\n";
 }
 
 // AGENDA DEFAULT REMINDER EVENT TYPE

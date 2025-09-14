@@ -166,3 +166,4 @@ NoPreviousBillForCustomer=No previous bill for customer
 Sumup=Sumup
 SumupAffiliate=Sumup affiliate
 SumupAppId=Sumup AppId
+NotAvailableForCountryWhenModuleIsOn=Not available for country %s when module %s is enabled

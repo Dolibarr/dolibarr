@@ -182,7 +182,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 		}
 
 		// Load translation files required by the page
-		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries", "compta"));
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "sendginds", "compta"));
 
 		// Show Draft Watermark
 		if ($object->statut == $object::STATUS_DRAFT && getDolGlobalString('COMMANDE_DRAFT_WATERMARK')) {
@@ -194,7 +194,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && $outputlangs->defaultlang != getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE')) {
 			$outputlangsbis = new Translate('', $conf);
 			$outputlangsbis->setDefaultLang(getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE'));
-			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries", "compta"));
+			$outputlangsbis->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "sendginds", "compta"));
 		}
 
 		$nblines = (is_array($object->lines) ? count($object->lines) : 0);
@@ -322,8 +322,8 @@ class pdf_eratosthene extends ModelePDFCommandes
 				// Set path to the background PDF File
 				if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
 					$logodir = $conf->mycompany->dir_output;
-					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-						$logodir = $conf->mycompany->multidir_output[$object->entity];
+					if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+						$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 					}
 					$pagecount = $pdf->setSourceFile($logodir.'/'.getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);

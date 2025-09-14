@@ -748,6 +748,9 @@ input.pageplusone {
 .fontsizeunset {
 	font-size: unset !important;
 }
+.unsetcolor {
+	color: unset !important;
+}
 .vmirror {
 	transform: scale(1, -1);
 }
@@ -1803,10 +1806,18 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 	font-size: 1.7em;
 	white-space: nowrap;
 }
+.amountpaymentcompletenoresize {
+	color: var(--amountpaymentcomplete);
+	white-space: nowrap;
+}
 .amountremaintopay {
 	color: var(--amountremaintopaycolor);
 	font-weight: bold;
 	font-size: 1.7em;
+	white-space: nowrap;
+}
+.amountremaintopaynoresize {
+	color: var(--amountremaintopaycolor);
 	white-space: nowrap;
 }
 .amountremaintopayback {
@@ -1815,9 +1826,16 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 	font-size: 1.7em;
 	white-space: nowrap;
 }
+.amountremaintopaybacknoresize {
+	color: var(--amountremaintopaybackcolor);
+	white-space: nowrap;
+}
 .amountpaymentneutral {
 	font-weight: bold;
 	font-size: 1.7em;
+	white-space: nowrap;
+}
+.amountpaymentneutralnoresize {
 	white-space: nowrap;
 }
 
@@ -4189,10 +4207,6 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 	border: 0px;
 }
 
-.unsetcolor {
-	color: unset !important;
-}
-
 .smallpaddingimp {
 	padding: 4px !important;
 	padding-left: 7px !important;
@@ -5671,11 +5685,11 @@ div.titre {
 div.titre.small {
 	font-size: 1em;
 }
+div.fiche > table.table-fiche-title:first-of-type div, div.fiche > form > table.table-fiche-title:first-of-type div {
+	font-size: 1.1em;
+}
 div.fiche > table.table-fiche-title:first-of-type div {
 	color: var(--colortexttitlenotab);
-	font-size: 1.1em;
-	/* text-transform: uppercase; */
-	/* font-weight: 600; */
 }
 div.titre {
 	color: var(--colortexttitlenotab);
@@ -6086,7 +6100,7 @@ div.visible {
 }
 
 div.hidden, div.hiddenforpopup, header.hidden, tr.hidden, td.hidden,
-img.hidden, span.hidden, br.hidden, div.showifmore {
+img.hidden, span.hidden, br.hidden, div.showifmore, input.hidden {
 	display: none;
 }
 .unvisible {

@@ -1,8 +1,7 @@
 # Dolibarr language file - Source file is en_US - other
+# THIS FILE MUST CONTAINS ENTRIES THAT ARE RARELY USED
 SecurityCode=Security code
 NumberingShort=N°
-Tools=Tools
-TMenuTools=Tools
 ToolsDesc=All tools not included in other menu entries are grouped here.<br>All the tools can be accessed via the left menu.
 Birthday=Birthday
 BirthdayAlert=Birthday alert
@@ -384,3 +383,25 @@ FillExtrafieldWithAi=Fill extrafield with AI content
 ExtrafieldFiller=Extrafield filler
 OurProductSelection=Our selection of new products
 NoSupportedModulesHaveBeenActivated=The reporting tool can generate dynamic reports for some modules only. There is no supported module enabled yet.
+# Bookmarks
+AddThisPageToBookmarks = Add current page to bookmarks
+BehaviourOnClick = Behavior when a bookmark URL is selected
+BookmarkTargetNewWindowShort = New tab
+BookmarkTargetReplaceWindowShort = Current tab
+BookmarkTitle = Bookmark name
+BookmarksManagement = Bookmarks management
+BookmarksMenuShortCut = Ctrl + shift + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Choose if the linked page should open in the current tab or a new tab
+CreateBookmark = Create bookmark
+EditBookmarks = List/edit bookmarks
+ListOfBookmarks = List of bookmarks
+NewBookmark = New bookmark
+NoBookmarkFound = No bookmark found
+NoBookmarks = No bookmarks defined
+OpenANewWindow = Open a new tab
+ReplaceWindow = Replace current tab
+SetHereATitleForLink = Set a name for the bookmark
+ShowBookmark = Show bookmark
+UrlOrLink = URL
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Use an external/absolute link (https://externalurl.com) or an internal/relative link (/mypage.php). You can also use phone like tel:0123456.
+SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation

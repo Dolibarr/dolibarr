@@ -5,10 +5,11 @@
  * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2018-2025	Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
+ * Copyright (C) 2025       Lenin Rivas			<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -275,6 +276,15 @@ $coldisplay++;
 			print ' readonly';
 		}
 		print '></td>';
+	}
+
+	if (isModEnabled("multicurrency") && $object->multicurrency_code != $conf->currency && !empty($inputalsopricewithtax) && !getDolGlobalInt('MAIN_NO_INPUT_PRICE_WITH_TAX')) {
+		$coldisplay++;
+		$multicurrency_upinctax = $line->multicurrency_subprice_ttc ? $line->multicurrency_subprice_ttc : null;
+		if (!$multicurrency_upinctax) {
+			$multicurrency_upinctax = price2num($line->multicurrency_subprice * (1 + ($line->tva_tx / 100)), 'MU'); // One tax
+		}
+		print '<td class="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right width50" id="multicurrency_price_ttc" name="multicurrency_price_ttc" value="'. ($multicurrency_upinctax ? $multicurrency_upinctax : price($line->multicurrency_subprice)).'" /></td>';
 	}
 	?>
 	<td class="right">

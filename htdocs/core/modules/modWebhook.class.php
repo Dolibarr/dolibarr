@@ -258,7 +258,7 @@ class modWebhook extends DolibarrModules
 
 		// Permissions provided by this module
 		$this->rights = array();
-		$r = 0;
+
 		// Add here entries to declare new permissions
 		/* BEGIN MODULEBUILDER PERMISSIONS */
 		/* END MODULEBUILDER PERMISSIONS */

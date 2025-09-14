@@ -4,7 +4,7 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2018-2021  Philippe Grand      <philippe.grand@atoo-net.com>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
 * This program is free software; you can redistribute it and/or modify
@@ -241,7 +241,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 		// Load translation files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills"));
 
-		if ($conf->expedition->multidir_output[$object->entity]."/sending") {
+		if ($conf->expedition->multidir_output[$object->entity ?? $conf->entity]."/sending") {
 			// If $object is id instead of object
 			if (!is_object($object)) {
 				$id = $object;
@@ -255,7 +255,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 
 			$object->fetch_thirdparty();
 
-			$dir = $conf->expedition->multidir_output[$object->entity]."/sending";
+			$dir = $conf->expedition->multidir_output[$object->entity ?? $conf->entity]."/sending";
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;

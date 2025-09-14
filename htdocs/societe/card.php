@@ -735,7 +735,7 @@ if (empty($reshook)) {
 				}
 
 				// Logo/Photo save
-				$dir     = $conf->societe->multidir_output[$object->entity]."/".$object->id."/logos";
+				$dir     = $conf->societe->multidir_output[$object->entity ?? $conf->entity]."/".$object->id."/logos";
 				$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
 				if (GETPOST('deletephoto') && $object->logo) {
 					$fileimg = $dir.'/'.$object->logo;
@@ -930,7 +930,7 @@ if (empty($reshook)) {
 
 	// Actions to build doc
 	$id = $socid;
-	$upload_dir = !empty($conf->societe->multidir_output[$object->entity]) ? $conf->societe->multidir_output[$object->entity] : $conf->societe->dir_output;
+	$upload_dir = !empty($conf->societe->multidir_output[$object->entity ?? $conf->entity]) ? $conf->societe->multidir_output[$object->entity ?? $conf->entity] : $conf->societe->dir_output;
 	$permissiontoadd = $user->hasRight('societe', 'creer');
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
@@ -952,7 +952,7 @@ if ($socid > 0 && empty($object->id)) {
 	$result = $object->fetch($socid);
 	if ($result <= 0) {
 		dol_print_error(null, $object->error);
-		exit(-1);
+		exit(1);
 	}
 }
 
@@ -1883,7 +1883,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<tr>';
 			print '<td>'.$form->editfieldkey('PaymentConditions', 'cond_reglement_id', '', $object, 0).'</td>';
 			print '<td colspan="3" class="maxwidthonsmartphone">';
-			print $form->getSelectConditionsPaiements($object->cond_reglement_id, 'cond_reglement_id', 1, 1, 1, '', (float) $object->deposit_percent);
+			print $form->getSelectConditionsPaiements((int) $object->cond_reglement_id, 'cond_reglement_id', 1, 1, 1, '', (float) $object->deposit_percent);
 			print '</td></tr>';
 
 			// Payment mode
@@ -2578,7 +2578,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						}
 
 						$idprof_mandatory = 'SOCIETE_IDPROF'.($i).'_MANDATORY';
-						print '<td>'.$form->editfieldkey($idprof, $key, '', $object, 0, 'string', '', (int) !(empty($conf->global->$idprof_mandatory) || !$object->isACompany())).'</td><td>';
+						print '<td>'.$form->editfieldkey($idprof, $key, '', $object, 0, 'string', '', (int) (getDolGlobalString($idprof_mandatory) && $object->isACompany())).'</td><td>';
 						print $formcompany->get_input_id_prof($i, $key, $object->$key, $object->country_code);
 						print '</td>';
 						if (($j % $NBCOLS) == ($NBCOLS - 1)) {
@@ -2703,7 +2703,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Juridical type
 				print '<tr><td>'.$form->editfieldkey('JuridicalStatus', 'forme_juridique_code', '', $object, 0).'</td>';
 				print '<td class="maxwidthonsmartphone" colspan="3">';
-				print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_id, '', 'forme_juridique_code');
+				print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'forme_juridique_code');
 				print '</td></tr>';
 
 				// Date birth
@@ -3474,7 +3474,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				/*
 				 * Generated documents
 				 */
-				$filedir = $conf->societe->multidir_output[$object->entity].'/'.$object->id;
+				$filedir = $conf->societe->multidir_output[$object->entity ?? $conf->entity].'/'.$object->id;
 				$urlsource = $_SERVER["PHP_SELF"]."?socid=".$object->id;
 				$genallowed = $user->hasRight('societe', 'lire');
 				$delallowed = $user->hasRight('societe', 'creer');
@@ -3515,7 +3515,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 		// Presend form
 		$modelmail = 'thirdparty';
 		$defaulttopic = 'Information';
-		$diroutput = $conf->societe->multidir_output[$object->entity];
+		$diroutput = $conf->societe->multidir_output[$object->entity ?? $conf->entity];
 		$trackid = 'thi'.$object->id;
 
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';

@@ -60,7 +60,7 @@ if (isModEnabled('project')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('bills', 'deliveries', 'orders', 'sendings'));
+$langs->loadLangs(array('bills', 'orders', 'sendings'));
 
 if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');

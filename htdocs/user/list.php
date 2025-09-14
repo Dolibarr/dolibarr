@@ -7,7 +7,7 @@
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -154,7 +154,7 @@ $arrayfields = array(
 	'u.job' => array('label' => "PostOrFunction", 'checked' => '-1', 'position' => 60),
 	'u.salary' => array('label' => "Salary", 'checked' => '-1', 'position' => 80, 'enabled' => (string) (int) (isModEnabled('salaries') && $user->hasRight("salaries", "readall")), 'isameasure' => 1),
 	'u.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 500),
-	'u.tms' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 500),
+	'date_modification' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 500),
 	'u.statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
 );
 
@@ -392,7 +392,7 @@ $sql .= " u.fk_user,";
 $sql .= " u.ref_employee, u.national_registration_number, u.job, u.salary, u.datelastlogin, u.datepreviouslogin,";
 $sql .= " u.datestartvalidity, u.dateendvalidity,";
 $sql .= " u.ldap_sid, u.statut as status, u.entity,";
-$sql .= " u.tms as date_modification, u.datec as date_creation,";
+$sql .= " GREATEST(u.tms, ef.tms) as date_modification, u.datec as date_creation,";
 $sql .= " u2.rowid as id2, u2.login as login2, u2.firstname as firstname2, u2.lastname as lastname2, u2.admin as admin2, u2.fk_soc as fk_soc2, u2.office_phone as ofice_phone2, u2.user_mobile as user_mobile2, u2.email as email2, u2.gender as gender2, u2.photo as photo2, u2.entity as entity2, u2.statut as status2,";
 $sql .= " s.nom as name, s.canvas,";
 $sql .= " co.code as country_code, co.label as country_label";
@@ -411,9 +411,7 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= " FROM ".MAIN_DB_PREFIX.$object->table_element." as u";
-if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (u.rowid = ef.fk_object)";
-}
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (u.rowid = ef.fk_object)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u2 ON u.fk_user = u2.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON u.fk_country = co.rowid";
@@ -863,7 +861,7 @@ if (!empty($arrayfields['u.datec']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
-if (!empty($arrayfields['u.tms']['checked'])) {
+if (!empty($arrayfields['date_modification']['checked'])) {
 	// Date modification
 	print '<td class="liste_titre">';
 	print '</td>';
@@ -988,8 +986,8 @@ if (!empty($arrayfields['u.datec']['checked'])) {
 	print_liste_field_titre("DateCreationShort", $_SERVER["PHP_SELF"], "u.datec", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
 }
-if (!empty($arrayfields['u.tms']['checked'])) {
-	print_liste_field_titre("DateModificationShort", $_SERVER["PHP_SELF"], "u.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
+if (!empty($arrayfields['date_modification']['checked'])) {
+	print_liste_field_titre("DateModificationShort", $_SERVER["PHP_SELF"], "date_modification", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.statut']['checked'])) {
@@ -1376,7 +1374,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Date modification
-		if (!empty($arrayfields['u.tms']['checked'])) {
+		if (!empty($arrayfields['date_modification']['checked'])) {
 			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->date_modification), 'dayhour', 'tzuser');
 			print '</td>';

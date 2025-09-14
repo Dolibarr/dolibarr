@@ -1761,7 +1761,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['thumbnail']['checked'])) {
 			$product_thumbnail_html = '';
 			if (!empty($product_static->entity)) {
-				$product_thumbnail = $product_static->show_photos('product', $conf->product->multidir_output[$product_static->entity], 1, 1, 0, 0, 0, 80);
+				$product_thumbnail = $product_static->show_photos('product', $conf->product->multidir_output[$product_static->entity ?? $conf->entity], 1, 1, 0, 0, 0, 80);
 				if ($product_static->nbphoto > 0) {
 					$product_thumbnail_html = $product_thumbnail;
 				}

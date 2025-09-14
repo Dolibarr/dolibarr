@@ -62,7 +62,7 @@ $socid = 0;
 if ($user->socid > 0) {
 	$socid = $user->socid;
 }
-//$result = restrictedArea($user, 'projet', $projectid);
+//restrictedArea($user, 'projet', $projectid);
 if (!$user->hasRight('projet', 'lire')) {
 	accessforbidden();
 }

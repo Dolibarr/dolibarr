@@ -81,24 +81,24 @@ abstract class CommonInvoice extends CommonObject
 	public $date_lim_reglement;
 
 	/**
-	 * @var int
+	 * @var ?int		Payment term ID
 	 */
 	public $cond_reglement_id; // Id in llx_c_paiement
 	/**
-	 * @var string|int Code in llx_c_paiement
+	 * @var string|int 	Code in llx_c_paiement
 	 */
 	public $cond_reglement_code; // Code in llx_c_paiement
 	/**
-	 * @var string
+	 * @var string		Label in llx_c_paiement
 	 */
 	public $cond_reglement_label;
 	/**
-	 * @var string Code in llx_c_paiement
+	 * @var string 		Label for doc in llx_c_paiement
 	 */
 	public $cond_reglement_doc;
 
 	/**
-	 * @var int
+	 * @var ?int 		Payment method ID (cheque, cash, ...)
 	 */
 	public $mode_reglement_id;
 	/**
@@ -172,6 +172,17 @@ abstract class CommonInvoice extends CommonObject
 	 * @var int
 	 */
 	public $stripechargeerror;
+
+	/**
+	 * @var string	Can be used to store a payment reference that must be unique for the invoice (not commonly used)
+	 */
+	public $payment_reference;
+
+	/**
+	 * @var int		1 if a dispute has been open on one payment of invoice, keep null or 0 if not
+	 */
+	public $dispute_status = 0;
+
 
 	/**
 	 * Payment description
@@ -453,7 +464,8 @@ abstract class CommonInvoice extends CommonObject
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".$this->db->prefix().$this->table_element;
 		$sql .= " WHERE fk_facture_source = ".((int) $this->id);
-		$sql .= " AND type = 2";
+		$sql .= " AND type = ".self::TYPE_CREDIT_NOTE;
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -928,6 +940,7 @@ abstract class CommonInvoice extends CommonObject
 			'nbofopendirectdebitorcredittransfer' => $this->nbofopendirectdebitorcredittransfer,
 			'close_code' => $this->close_code,
 			'close_note' => $this->close_note,
+			'dispute_status' => $this->dispute_status
 		);
 
 		return $this->LibStatut($this->paye, $this->status, $mode, $alreadypaid, $this->type, $moreparams);
@@ -1044,7 +1057,14 @@ abstract class CommonInvoice extends CommonObject
 			$paramsbutton = array();
 		}
 
-		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $paramsbutton);
+		/*
+		if (isset($moreparams['dispute_status'])) {
+			$statusdispute = $moreparams['dispute_status'] ? img_picto($langs->trans("DisputeOpen"), 'warning') : '';
+		}
+		*/
+		$statusbadge = dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $paramsbutton);
+
+		return $statusbadge;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1332,7 +1352,7 @@ abstract class CommonInvoice extends CommonObject
 			$bac = new CompanyBankAccount($this->db);	// Table societe_rib
 			$result = $bac->fetch(0, '', $this->socid, 1, 'ban');
 			if ($result <= 0 || empty($bac->id)) {
-				$this->error = $langs->trans("ThirdpartyHasNoDefaultBanAccount");
+				$this->error = $langs->trans("ThirdpartyHasNoDefaultBankAccount");
 				$this->errors[] = $this->error;
 				dol_syslog(get_class($this)."::makeStripeSepaRequest ".$this->error);
 				return -1;

@@ -4,6 +4,7 @@
  * Copyright (C) 2014       Marcos García   <marcosgdf@gmail.com>
  * Copyright (C) 2013-2020	Charlene BENKE	<charlie@patas-monkey.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,14 +33,21 @@ global $noMoreLinkedObjectBlockAfter;
 
 $langs = $GLOBALS['langs'];
 '@phan-var-force Translate $langs';
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var CommonObject $object
+ */
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 // Load translation files required by the page
 $langs->load("bom");
 
-'@phan-var-force array<int,BOM> $linkedObjectBlock';  // Type before use
+'@phan-var-force BOM[] $linkedObjectBlock';  // Type before use
+/** @var BOM[] $linkedObjectBlock */
 $linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
-'@phan-var-force array<int,BOM> $linkedObjectBlock';  // Type after dol_sort_array which looses typing
+'@phan-var-force BOM[] $linkedObjectBlock';  // Type after dol_sort_array which looses typing
+/** @var BOM[] $linkedObjectBlock */
 
 $total = 0;
 $ilink = 0;
@@ -52,7 +60,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	}
 	echo '<tr class="'.$trclass.'" >';
 	echo '<td class="linkedcol-element tdoverflowmax100">'.$langs->trans("Bom");
-	if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) {
+	if (!empty($showImportButton) && getDolGlobalInt('MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES')) {
 		print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, '1').'&amp;action=selectlines&amp;token='.newToken().'" data-element="'.$objectlink->element.'" data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';
 	}
 	echo '</td>';

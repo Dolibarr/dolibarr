@@ -158,11 +158,6 @@ class EmailCollector extends CommonObject
 	public $ref;
 
 	/**
-	 * @var int Entity
-	 */
-	public $entity;
-
-	/**
 	 * @var string label
 	 */
 	public $label;
@@ -904,6 +899,7 @@ class EmailCollector extends CommonObject
 		// Loop on each collector
 		foreach ($arrayofcollectors as $emailcollector) {
 			$result = $emailcollector->doCollectOneCollector(0);
+
 			dol_syslog("doCollect result = ".$result." for emailcollector->id = ".$emailcollector->id);
 
 			$this->error .= 'EmailCollector ID '.$emailcollector->id.':'.$emailcollector->error.'<br>';
@@ -911,6 +907,10 @@ class EmailCollector extends CommonObject
 				$this->error .= implode('<br>', $emailcollector->errors);
 			}
 			$this->output .= 'EmailCollector ID '.$emailcollector->id.': '.$emailcollector->lastresult.'<br>';
+
+			if ($result < 0) {
+				$nberror++;
+			}
 		}
 
 		return $nberror;
@@ -3779,7 +3779,7 @@ class EmailCollector extends CommonObject
 			$this->update($user);
 		}
 
-		dol_syslog("EmailCollector::doCollectOneCollector end", LOG_INFO);
+		dol_syslog("EmailCollector::doCollectOneCollector end error=".$error, LOG_INFO);
 
 		return $error ? -1 : 1;
 	}
