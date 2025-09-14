@@ -17077,12 +17077,6 @@ parameters:
 			path: ../../../htdocs/public/webportal/tpl/hero-header-banner.tpl.php
 
 		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/public/webportal/tpl/login.tpl.php
-
-		-
 			message: '#^Comparison operation "\>" between \-1 and 0 is always false\.$#'
 			identifier: greater.alwaysFalse
 			count: 1
@@ -19633,12 +19627,6 @@ parameters:
 			path: ../../../htdocs/webhook/target_list.php
 
 		-
-			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/webportal/admin/setup.php
-
-		-
 			message: '#^Loose comparison using \=\= between ''auto'' and ''auto'' will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 1
@@ -19953,12 +19941,6 @@ parameters:
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/website/index.php
-
-		-
-			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/website/index.php
 
