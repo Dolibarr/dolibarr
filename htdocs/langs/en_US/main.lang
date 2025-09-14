@@ -921,6 +921,7 @@ ViewGantt=Gantt view
 ViewKanban=Kanban view
 ViewKanbanGroupBy=Kanban view (grouped by)
 Mandatory=Mandatory
+Optional=Optional
 Hello=Hello
 GoodBye=GoodBye
 Sincerely=Sincerely

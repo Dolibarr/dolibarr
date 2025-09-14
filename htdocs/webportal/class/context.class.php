@@ -179,7 +179,7 @@ class Context
 	 */
 	private function __construct()
 	{
-		global $conf, $db;
+		global $db;
 
 		$this->db = $db;
 
@@ -204,7 +204,7 @@ class Context
 
 		$this->initController();
 
-		// Init de l'url de base
+		// Init of base URL. Must be the public URL.
 		$this->rootUrl = self::getRootConfigUrl();
 
 
@@ -306,16 +306,14 @@ class Context
 	 */
 	public static function getRootConfigUrl()
 	{
-		global $conf;
-
-		// Init de l'url de base
+		// Init of base URL
 		if (getDolGlobalString('WEBPORTAL_ROOT_URL')) {
 			$rootUrl = getDolGlobalString('WEBPORTAL_ROOT_URL');
 			if (substr($rootUrl, -1) !== '/') {
 				$rootUrl .= '/';
 			}
 		} else {
-			$rootUrl = dol_buildpath('/public/webportal/', 2);
+			$rootUrl = dol_buildpath('/public/webportal/', 3);	// Return the public URL for external access
 		}
 
 		return $rootUrl;

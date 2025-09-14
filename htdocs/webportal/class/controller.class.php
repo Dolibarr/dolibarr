@@ -205,7 +205,9 @@ class Controller
 	{
 		global $conf, $langs, $hookmanager, $db; // may be used into the tpl
 
-		$context = Context::getInstance(); // load for tpl
+		// load for tpl
+		// This set $context->rootUrl
+		$context = Context::getInstance();
 
 		if (!preg_match('/^[0-9\.A-ZaZ_\-]*$/ui', $templateName)) {
 			return false;

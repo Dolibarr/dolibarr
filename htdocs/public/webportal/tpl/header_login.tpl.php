@@ -1,5 +1,9 @@
 <!-- file header_login.tpl.php -->
 <?php
+/**
+ * @var Context $context	Object Context for webportal
+ */
+
 // Protection to avoid direct call of template
 if (empty($context) || !is_object($context)) {
 	print "Error, template page can't be called as URL";
@@ -7,6 +11,10 @@ if (empty($context) || !is_object($context)) {
 }
 
 global $langs;
+
+
+// Return HTTP headers
+top_httphead();
 ?>
 <!DOCTYPE html>
 <?php print '<html lang="'.substr($langs->defaultlang, 0, 2) . '">'."\n"; ?>
