@@ -70,17 +70,17 @@ class BookKeeping extends CommonObject
 	public $date_lim_reglement;
 
 	/**
-	 * @var string 	Doc type
+	 * @var ?string 	Doc type
 	 */
 	public $doc_type;
 
 	/**
-	 * @var string 	Doc ref
+	 * @var ?string 	Doc ref
 	 */
 	public $doc_ref;
 
 	/**
-	 * @var int 	ID
+	 * @var ?int 	ID
 	 */
 	public $fk_doc;
 
@@ -90,7 +90,7 @@ class BookKeeping extends CommonObject
 	public $fk_docdet;
 
 	/**
-	 * @var string 	Thirdparty code
+	 * @var ?string 	Thirdparty code
 	 */
 	public $thirdparty_code;
 
@@ -105,12 +105,12 @@ class BookKeeping extends CommonObject
 	public $subledger_label;
 
 	/**
-	 * @var string  doc_type
+	 * @var ?string  doc_type
 	 */
 	public $numero_compte;
 
 	/**
-	 * @var string label compte
+	 * @var ?string label compte
 	 */
 	public $label_compte;
 
