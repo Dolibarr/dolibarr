@@ -985,12 +985,6 @@ parameters:
 			path: ../../../htdocs/admin/index.php
 
 		-
-			message: '#^Variable \$setupcompanynotcomplete in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/admin/index.php
-
-		-
 			message: '#^Offset ''includerefgeneration'' on array\{label\: ''KnowledgeManagement'', includerefgeneration\: 1, includedocgeneration\: 0, class\: ''KnowledgeRecord''\} in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.offset
 			count: 1
@@ -12437,12 +12431,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/hrm/evaluation_list.php
-
-		-
-			message: '#^Variable \$setupcompanynotcomplete in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/hrm/index.php
 
 		-
 			message: '#^If condition is always false\.$#'

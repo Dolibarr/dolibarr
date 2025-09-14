@@ -79,6 +79,8 @@ if ($user->socid > 0) {
 
 if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY')) {
 	$setupcompanynotcomplete = 1;
+} else {
+	$setupcompanynotcomplete = 0;
 }
 
 $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
