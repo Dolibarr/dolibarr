@@ -267,7 +267,7 @@ foreach (array('internal', 'external') as $source) {
 			$entry->thirdparty_name = strtolower($companystatic->getFullName($langs));
 		} elseif ($contact['socid'] < 0) {
 			$entry->thirdparty_html = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
-			$entry->thirdparty_name = strtolower($conf->global->MAIN_INFO_SOCIETE_NOM);
+			$entry->thirdparty_name = strtolower(getDolGlobalString('MAIN_INFO_SOCIETE_NOM'));
 		}
 
 		if ($contact['source'] == 'internal') {
