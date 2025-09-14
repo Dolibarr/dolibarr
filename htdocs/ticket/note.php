@@ -63,6 +63,9 @@ $object->fetch($id, $ref);
 $permissiontoadd = $user->hasRight('ticket', 'write');
 $permissionnote = $user->hasRight('ticket', 'write'); // Used by the include of actions_setnotes.inc.php
 
+// Store current page url
+$url_page_current = DOL_URL_ROOT.'/ticket/document.php';
+
 
 /*
  * Actions
