@@ -242,6 +242,7 @@ print "<td>".$name."</td>";
 print getResultColumn($name, $activatedExtensions, $loadedExtensions, $functions);
 print "</tr>";
 
+// bcmath may be used by swiftmailer
 $functions = array();
 $name = "bcmath";
 print "<tr>";
