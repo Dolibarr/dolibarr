@@ -10843,6 +10843,12 @@ parameters:
 			path: ../../../htdocs/expedition/card.php
 
 		-
+			message: '#^Left side of && is always true\.$#'
+			identifier: booleanAnd.leftAlwaysTrue
+			count: 1
+			path: ../../../htdocs/expedition/class/expedition.class.php
+
+		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 2
