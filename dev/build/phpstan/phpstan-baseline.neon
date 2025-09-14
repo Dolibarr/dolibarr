@@ -6925,12 +6925,6 @@ parameters:
 			path: ../../../htdocs/core/class/html.formfile.class.php
 
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 3
-			path: ../../../htdocs/core/class/html.formfile.class.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
@@ -6959,12 +6953,6 @@ parameters:
 			identifier: booleanOr.alwaysFalse
 			count: 1
 			path: ../../../htdocs/core/class/html.formfile.class.php
-
-		-
-			message: '#^Left side of && is always false\.$#'
-			identifier: booleanAnd.leftAlwaysFalse
-			count: 1
-			path: ../../../htdocs/core/class/html.formintervention.class.php
 
 		-
 			message: '#^Left side of && is always true\.$#'
