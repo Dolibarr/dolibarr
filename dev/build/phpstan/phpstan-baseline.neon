@@ -325,6 +325,12 @@ parameters:
 			path: ../../../htdocs/accountancy/class/accountingjournal.class.php
 
 		-
+			message: '#^Parameter \#2 \$callback of function array_filter expects \(callable\(string\)\: bool\)\|null, ''strlen'' given\.$#'
+			identifier: argument.type
+			count: 3
+			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
+
+		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
