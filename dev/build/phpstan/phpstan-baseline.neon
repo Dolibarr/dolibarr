@@ -6961,18 +6961,6 @@ parameters:
 			path: ../../../htdocs/core/class/html.formfile.class.php
 
 		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 3
-			path: ../../../htdocs/core/class/html.formfile.class.php
-
-		-
-			message: '#^Variable \$fileinfo might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/core/class/html.formfile.class.php
-
-		-
 			message: '#^Left side of && is always false\.$#'
 			identifier: booleanAnd.leftAlwaysFalse
 			count: 1
