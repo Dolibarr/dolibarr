@@ -8,7 +8,7 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2016-2017	Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2019-2024	Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1032,7 +1032,7 @@ class FormFile
 						$forcedownload = 0;
 						$paramlink = '';
 						if (!empty($file['share'])) {
-							$paramlink .= ($paramlink ? '&' : '').'hashp='.$file['share']; // Hash for public share
+							$paramlink .= /* ($paramlink ? '&' : ''). */'hashp='.$file['share']; // Hash for public share
 						}
 						if ($forcedownload) {
 							$paramlink .= ($paramlink ? '&' : '').'attachment=1';
@@ -1642,7 +1642,7 @@ class FormFile
 								$forcedownload = 0;
 								$paramlink = '';
 								if (!empty($file['share'])) {
-									$paramlink .= ($paramlink ? '&' : '').'hashp='.$file['share']; // Hash for public share
+									$paramlink .= /* ($paramlink ? '&' : ''). */'hashp='.$file['share']; // Hash for public share
 								}
 								if ($forcedownload) {
 									$paramlink .= ($paramlink ? '&' : '').'attachment=1';
