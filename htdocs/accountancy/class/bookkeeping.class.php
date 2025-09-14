@@ -130,19 +130,19 @@ class BookKeeping extends CommonObject
 	public $credit;
 
 	/**
-	 * @var float FEC:Amount (Not necessary)
+	 * @var ?float FEC:Amount (Not necessary)
 	 * @deprecated No more used (we have info into debit/credit and sens)
 	 */
 	public $montant;
 
 	/**
-	 * @var float FEC:Amount (Not necessary)
+	 * @var ?float FEC:Amount (Not necessary)
 	 * @deprecated No more used (we have info into debit/credit and sens)
 	 */
 	public $amount;
 
 	/**
-	 * @var string FEC:Sens (Not necessary)
+	 * @var ?string FEC:Sens (Not necessary)
 	 */
 	public $sens;
 
@@ -157,17 +157,17 @@ class BookKeeping extends CommonObject
 	public $import_key;
 
 	/**
-	 * @var string code journal
+	 * @var ?string code journal
 	 */
 	public $code_journal;
 
 	/**
-	 * @var string label journal
+	 * @var ?string label journal
 	 */
 	public $journal_label;
 
 	/**
-	 * @var int accounting transaction id
+	 * @var ?int accounting transaction id
 	 */
 	public $piece_num;
 
