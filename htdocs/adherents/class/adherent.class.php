@@ -998,7 +998,7 @@ class Adherent extends CommonObject
 				}
 
 				// Update information on linked thirdparty if it is an update
-				if (!$error && $this->fk_soc > 0 && !$nosyncthirdparty) {
+				if (!$error && $this->socid > 0 && !$nosyncthirdparty) {
 					require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 					dol_syslog(get_class($this)."::update update linked thirdparty");
@@ -1006,7 +1006,7 @@ class Adherent extends CommonObject
 					// This member is linked with a thirdparty, so we also update thirdparty information
 					// if this is an update.
 					$lthirdparty = new Societe($this->db);
-					$result = $lthirdparty->fetch($this->fk_soc);
+					$result = $lthirdparty->fetch($this->socid);
 
 					if ($result > 0) {
 						$lthirdparty->address = $this->address;
@@ -1020,7 +1020,7 @@ class Adherent extends CommonObject
 						//$lthirdparty->phone_mobile=$this->phone_mobile;
 						$lthirdparty->default_lang = $this->default_lang;
 
-						$result = $lthirdparty->update($this->fk_soc, $user, 0, 1, 1, 'update'); // Use sync to 0 to avoid cyclic updates
+						$result = $lthirdparty->update($this->socid, $user, 0, 1, 1, 'update'); // Use sync to 0 to avoid cyclic updates
 
 						if ($result < 0) {
 							$this->error = $lthirdparty->error;
@@ -1586,18 +1586,18 @@ class Adherent extends CommonObject
 	 *
 	 *	@param	int		$rowid      			Id of object to load
 	 * 	@param	string	$ref					To load member from its ref
-	 * 	@param	int		$fk_soc					To load member from its link to third party
+	 * 	@param	int		$socid					To load member from its link to third party
 	 * 	@param	string	$ref_ext				External reference
 	 *  @param	bool	$fetch_optionals		To load optionals (extrafields)
 	 *  @param	bool	$fetch_subscriptions	To load member subscriptions
 	 *	@return int								>0 if OK, 0 if not found, <0 if KO
 	 */
-	public function fetch($rowid, $ref = '', $fk_soc = 0, $ref_ext = '', $fetch_optionals = true, $fetch_subscriptions = true)
+	public function fetch($rowid, $ref = '', $socid = 0, $ref_ext = '', $fetch_optionals = true, $fetch_subscriptions = true)
 	{
 		global $langs;
 
 		$sql = "SELECT d.rowid, d.ref, d.ref_ext, d.civility as civility_code, d.gender, d.firstname, d.lastname,";
-		$sql .= " d.societe as company, d.fk_soc, d.statut, d.public, d.address, d.zip, d.town, d.note_private,";
+		$sql .= " d.societe as company, d.fk_soc as socid, d.statut, d.public, d.address, d.zip, d.town, d.note_private,";
 		$sql .= " d.note_public,";
 		$sql .= " d.email, d.url, d.socialnetworks, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass, d.pass_crypted,";
 		$sql .= " d.photo, d.fk_adherent_type, d.morphy, d.entity,";
@@ -1621,12 +1621,12 @@ class Adherent extends CommonObject
 		$sql .= " WHERE d.fk_adherent_type = t.rowid";
 		if ($rowid) {
 			$sql .= " AND d.rowid=".((int) $rowid);
-		} elseif ($ref || $fk_soc) {
+		} elseif ($ref || $socid) {
 			$sql .= " AND d.entity IN (".getEntity('adherent').")";
 			if ($ref) {
 				$sql .= " AND d.ref='".$this->db->escape($ref)."'";
-			} elseif ($fk_soc > 0) {
-				$sql .= " AND d.fk_soc=".((int) $fk_soc);
+			} elseif ($socid > 0) {
+				$sql .= " AND d.fk_soc=".((int) $socid);
 			}
 		} elseif ($ref_ext) {
 			$sql .= " AND d.ref_ext='".$this->db->escape($ref_ext)."'";
@@ -1653,8 +1653,8 @@ class Adherent extends CommonObject
 				$this->login = $obj->login;
 				$this->societe = $obj->company;
 				$this->company = $obj->company;
-				$this->socid = $obj->fk_soc;
-				$this->fk_soc = $obj->fk_soc; // For backward compatibility
+				$this->socid = $obj->socid;
+				$this->fk_soc = $obj->socid; // For backward compatibility
 				$this->address = $obj->address;
 				$this->zip = $obj->zip;
 				$this->town = $obj->town;
@@ -1976,7 +1976,7 @@ class Adherent extends CommonObject
 			$customer = new Societe($this->db);
 
 			if (!$error) {
-				if (!($this->fk_soc > 0)) { // If not yet linked to a company
+				if (!($this->socid > 0)) { // If not yet linked to a company
 					if ($autocreatethirdparty) {
 						// Create a linked thirdparty to member
 						$companyalias = '';
@@ -2001,6 +2001,7 @@ class Adherent extends CommonObject
 							$error++;
 						} else {
 							$this->fk_soc = $result;
+							$this->socid = $result;
 						}
 					} else {
 						$langs->load("errors");
@@ -2011,7 +2012,7 @@ class Adherent extends CommonObject
 				}
 			}
 			if (!$error) {
-				$result = $customer->fetch($this->fk_soc);
+				$result = $customer->fetch($this->socid);
 				if ($result <= 0) {
 					$this->error = $customer->error;
 					$this->errors = $customer->errors;
@@ -2032,7 +2033,7 @@ class Adherent extends CommonObject
 						$this->errors[] = $this->error;
 					}
 				}
-				$invoice->socid = $this->fk_soc;
+				$invoice->socid = $this->socid;
 				// set customer's payment bank account on the invoice
 				if (!empty($customer->fk_account)) {
 					$invoice->fk_account = $customer->fk_account;
