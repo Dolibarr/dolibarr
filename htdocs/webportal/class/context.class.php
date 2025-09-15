@@ -245,6 +245,8 @@ class Context
 		$this->addControllerDefinition('invoicelist', $defaultControllersPath . 'invoicelist.controller.class.php', 'InvoiceListController');
 		$this->addControllerDefinition('membercard', $defaultControllersPath . 'membercard.controller.class.php', 'MemberCardController');
 		$this->addControllerDefinition('partnershipcard', $defaultControllersPath . 'partnershipcard.controller.class.php', 'PartnershipCardController');
+		//** ci-dessous l'ajout de GED
+		$this->addControllerDefinition('documentlist', $defaultControllersPath . 'documentlist.controller.class.php', 'DocumentListController');
 
 		// Hooks for init controller
 		$hookmanager->initHooks(array('webportaldao'));
