@@ -64,6 +64,16 @@ if ($context->userIsLog()) {
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
+	// menu documents (GED)
+	if (getDolGlobalInt('WEBPORTAL_DOCUMENT_LIST_ACCESS')) {
+		$navMenu['document_list'] = array(
+			'id' => 'document_list',
+			'rank' => 40,
+			'url' => $context->getControllerUrl('documentlist'),
+			'name' => $langs->trans('Documents partager'),
+			'group' => 'administrative' // group identifier for the group if necessary
+		);
+	}
 
 	// menu member
 	$cardAccess = getDolGlobalString('WEBPORTAL_MEMBER_CARD_ACCESS');
