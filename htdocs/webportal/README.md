@@ -3,7 +3,7 @@ Module Web Portal
 
 # Portail Web Personnalisé pour Dolibarr
 
-Ce projet est une version modifiée (un "fork") du projet officiel [Dolibarr ERP & CRM](https://github.com/Dolibarr/dolibarr), spécifiquement adaptée pour les besoins de [NOM DE VOTRE ENTREPRISE].
+Ce projet est une version modifiée (un "fork") du projet officiel [Dolibarr ERP & CRM](https://github.com/Dolibarr/dolibarr), spécifiquement adaptée pour les besoins de webmaster67.
 
 L'objectif principal de cette modification est d'ajouter un espace de partage de documents sécurisé et simple d'utilisation pour chaque Tiers (client, partenaire, etc.).
 
