@@ -652,7 +652,7 @@ class Salary extends CommonObject
 	 * 	Return amount of payments already done
 	 *
 	 *  @param 		int 			$multicurrency 		Return multicurrency_amount instead of amount. -1=Return both.
-	 *	@return		float|int|array<void>				Amount of payment already done, <0 and set ->error if KO
+	 *	@return		float|int|array{}					Amount of payment already done, <0 and set ->error if KO
 	 */
 	public function getSommePaiement($multicurrency = 0)
 	{
