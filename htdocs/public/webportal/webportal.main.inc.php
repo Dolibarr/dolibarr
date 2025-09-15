@@ -88,6 +88,9 @@ require_once DOL_DOCUMENT_ROOT . '/webportal/class/webportalpartnership.class.ph
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
+ *
+ * @var string $sessionname
+ * @var string $sessiontimeout
  */
 // Init session. Name of session is specific to WEBPORTAL instance.
 // Must be done after the include of filefunc.inc.php so global variables of conf file are defined (like $dolibarr_main_instance_unique_id or $dolibarr_main_force_https).
@@ -132,7 +135,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 	// Hooks for security access
 	$hookmanager->initHooks(array('login'));
 	$parameters = array(
-		// "webportal_sessionname" => $sessionname,
+		"webportal_sessionname" => $sessionname,
 		"webportal_anti_spam_session_key" => $anti_spam_session_key,
 	);
 	$reshook = $hookmanager->executeHooks('beforeLoginAuthentication', $parameters, $context);
@@ -213,7 +216,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 				dol_syslog("Can't load third-party account (ID: $webportal_logged_thirdparty_account_id) even if session logged.", LOG_WARNING);
 				session_destroy();
 				session_set_cookie_params(0, '/', null, !empty($dolibarr_main_force_https), true); // Add tag secure and httponly on session cookie
-				// session_name($sessionname);
+				session_name($sessionname);
 				session_start();
 
 				$context->setEventMessage($langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedThirdPartyAccount', $webportal_logged_thirdparty_account_id), 'errors');
@@ -308,7 +311,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 	if ($error) {
 		// Hooks on failed login
 		$parameters = array(
-			// "webportal_sessionname" => $sessionname,
+			"webportal_sessionname" => $sessionname,
 			"webportal_anti_spam_session_key" => $anti_spam_session_key,
 		);
 		$reshook = $hookmanager->executeHooks('afterLoginFailed', $parameters, $context);
@@ -318,7 +321,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 	} else {
 		// Hooks on after login
 		$parameters = array(
-			// "webportal_sessionname" => $sessionname,
+			"webportal_sessionname" => $sessionname,
 			"webportal_anti_spam_session_key" => $anti_spam_session_key,
 		);
 		$reshook = $hookmanager->executeHooks('afterLogin', $parameters, $context);
