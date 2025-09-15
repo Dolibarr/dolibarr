@@ -120,12 +120,12 @@ class PaymentSalary extends CommonObject
 	public $bank_line;
 
 	/**
-	 * @var int				ID of the user who created the payment
+	 * @var ?int				ID of the user who created the payment
 	 */
 	public $fk_user_author;
 
 	/**
-	 * @var int				ID of the user who modified the payment
+	 * @var ?int				ID of the user who modified the payment
 	 */
 	public $fk_user_modif;
 

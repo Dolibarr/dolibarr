@@ -131,7 +131,10 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 
 	// Hooks for security access
 	$hookmanager->initHooks(array('login'));
-	$parameters = array("webportal_sessionname" => $sessionname, "webportal_anti_spam_session_key" => $anti_spam_session_key);
+	$parameters = array(
+		// "webportal_sessionname" => $sessionname,
+		"webportal_anti_spam_session_key" => $anti_spam_session_key,
+	);
 	$reshook = $hookmanager->executeHooks('beforeLoginAuthentication', $parameters, $context);
 	if ($reshook < 0) {
 		$error++;
@@ -210,7 +213,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 				dol_syslog("Can't load third-party account (ID: $webportal_logged_thirdparty_account_id) even if session logged.", LOG_WARNING);
 				session_destroy();
 				session_set_cookie_params(0, '/', null, !empty($dolibarr_main_force_https), true); // Add tag secure and httponly on session cookie
-				session_name($sessionname);
+				// session_name($sessionname);
 				session_start();
 
 				$context->setEventMessage($langs->transnoentitiesnoconv('WebPortalErrorFetchLoggedThirdPartyAccount', $webportal_logged_thirdparty_account_id), 'errors');
@@ -304,14 +307,20 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 
 	if ($error) {
 		// Hooks on failed login
-		$parameters = array("webportal_sessionname" => $sessionname, "webportal_anti_spam_session_key" => $anti_spam_session_key);
+		$parameters = array(
+			// "webportal_sessionname" => $sessionname,
+			"webportal_anti_spam_session_key" => $anti_spam_session_key,
+		);
 		$reshook = $hookmanager->executeHooks('afterLoginFailed', $parameters, $context);
 		if ($reshook < 0) {
 			$error++;
 		}
 	} else {
 		// Hooks on after login
-		$parameters = array("webportal_sessionname" => $sessionname, "webportal_anti_spam_session_key" => $anti_spam_session_key);
+		$parameters = array(
+			// "webportal_sessionname" => $sessionname,
+			"webportal_anti_spam_session_key" => $anti_spam_session_key,
+		);
 		$reshook = $hookmanager->executeHooks('afterLogin', $parameters, $context);
 		if ($reshook < 0) {
 			$error++;
