@@ -102,12 +102,6 @@ class PaymentSalary extends CommonObject
 	public $fk_typepayment;
 
 	/**
-	 * @var ?string
-	 * @deprecated Use $num_payment
-	 */
-	public $num_paiement;
-
-	/**
 	 * @var ?string     Payment reference
 	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
@@ -234,9 +228,6 @@ class PaymentSalary extends CommonObject
 		if (isset($this->fk_typepayment)) {
 			$this->fk_typepayment = (int) $this->fk_typepayment;
 		}
-		if (isset($this->num_paiement)) {
-			$this->num_paiement = trim($this->num_paiement);
-		} // deprecated
 		if (isset($this->num_payment)) {
 			$this->num_payment = trim($this->num_payment);
 		}
@@ -371,7 +362,6 @@ class PaymentSalary extends CommonObject
 				$this->datep = $this->db->jdate($obj->datep);
 				$this->amount = $obj->amount;
 				$this->fk_typepayment = $obj->fk_typepayment;
-				$this->num_paiement = $obj->num_payment;
 				$this->num_payment = $obj->num_payment;
 				$this->note = $obj->note;
 				$this->note_private = $obj->note;
@@ -418,9 +408,6 @@ class PaymentSalary extends CommonObject
 		if (isset($this->fk_typepayment)) {
 			$this->fk_typepayment = (int) $this->fk_typepayment;
 		}
-		if (isset($this->num_paiement)) {
-			$this->num_paiement = trim($this->num_paiement);
-		} // deprecated
 		if (isset($this->num_payment)) {
 			$this->num_payment = trim($this->num_payment);
 		}
@@ -622,7 +609,7 @@ class PaymentSalary extends CommonObject
 		global $langs;
 
 		// Clean data
-		$this->num_payment = trim($this->num_payment ? $this->num_payment : $this->num_paiement);
+		$this->num_payment = trim((string) $this->num_payment);
 
 		$error = 0;
 
