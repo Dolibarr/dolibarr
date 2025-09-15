@@ -876,6 +876,7 @@ class Salary extends CommonObject
 		if (!empty($arraydata['user']) && is_object($arraydata['user'])) {
 			$user = $arraydata['user'];
 			'@phan-var-force User $user';
+			/** @var User $user */
 			$return .= '<br><span class="info-box-label">'.$user->getNomUrl(empty($arraydata['user']->photo) ? 1 : -1, '', 0, 0, 16, 0, '', 'maxwidth100').'</span>';
 		}
 		if (property_exists($this, 'amount')) {
@@ -890,12 +891,11 @@ class Salary extends CommonObject
 				$return .= '</span>';
 			}
 		}
-		if (method_exists($this, 'LibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, isset($this->alreadypaid) ? $this->alreadypaid : $this->totalpaid).'</div>';
-		}
+		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, isset($this->alreadypaid) ? $this->alreadypaid : $this->totalpaid).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
+
 		return $return;
 	}
 
