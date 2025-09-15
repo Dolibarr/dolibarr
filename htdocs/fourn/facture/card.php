@@ -2203,6 +2203,7 @@ if ($action == 'create') {
 		}
 		$objectsrc = new $classname($db);
 		'@phan-var-force Project|Commande|Propal|Facture|Contrat|CommandeFournisseur|CommonObject $objectsrc';
+		/** @var CommandeFournisseur|CommonObject $objectsrc */
 		$objectsrc->fetch($originid);
 		$objectsrc->fetch_thirdparty();
 
@@ -2419,7 +2420,7 @@ if ($action == 'create') {
 			}
 			$cond_reglement_id = $invoice_predefined->cond_reglement_id;
 			$mode_reglement_id = $invoice_predefined->mode_reglement_id;
-			$fk_account = (int) $invoice_predefined->fk_account;
+			$fk_account = $invoice_predefined->fk_account;
 			$note_public = $invoice_predefined->note_public;
 			$note_private = $invoice_predefined->note_private;
 
