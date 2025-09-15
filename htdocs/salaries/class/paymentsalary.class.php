@@ -486,7 +486,7 @@ class PaymentSalary extends CommonObject
 
 		if ($this->bank_line > 0) {
 			$accline = new AccountLine($this->db);
-			$accline->fetch($this->bank_line);
+			$accline->fetch((int) $this->bank_line);
 			$result = $accline->delete($user);
 			if ($result < 0) {
 				$this->setErrorsFromObject($accline);
