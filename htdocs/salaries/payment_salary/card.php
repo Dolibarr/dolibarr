@@ -184,7 +184,7 @@ print '<tr><td>'.$langs->trans('Note').'</td><td class="valeur sensiblehtmlconte
 
 // Bank account
 if (isModEnabled("bank")) {
-	if ($object->bank_account && !empty($object->bank_line)) {
+	if ($object->bank_account && isset($object->bank_line)) {
 		$bankline = new AccountLine($db);
 		$bankline->fetch($object->bank_line);
 
