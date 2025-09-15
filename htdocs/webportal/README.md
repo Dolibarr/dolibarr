@@ -13,7 +13,7 @@ La principale fonctionnalité ajoutée à ce module `Web Portal` est :
 
 * **Espace "Mes Documents" pour les Clients :** Une nouvelle page a été créée sur le portail, accessible via le menu principal. Elle permet à un client connecté de consulter et télécharger tous les fichiers que l'administrateur a partagés avec lui.
 * **Lien Direct avec la GED du Tiers :** La gestion des fichiers reste centralisée dans Dolibarr. Pour partager un fichier avec un client, il suffit de le déposer dans l'onglet **"Fichiers joints"** de sa fiche Tiers dans l'interface d'administration. Le fichier apparaît alors instantanément sur son portail.
-* **Système de Dossiers par ID :** Le système est configuré pour trouver les dossiers des Tiers en se basant sur leur ID numérique (ex: `/documents/societe/47/`).
+* **Système de Dossiers par ID :** Le système est configuré pour trouver les dossiers des Tiers en se basant sur leur ID numérique (ex: `/documents/societe/XX/`).
 
 ## Configuration Requise
 
