@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,12 +49,16 @@ session_cache_limiter('public');
 require_once __DIR__.'/../webportal.main.inc.php'; // __DIR__ allow this script to be included in custom themes
 /**
  * @var Conf $conf
+ * @var Translate $langs
  *
  * @var	string	$dolibarr_nocache
  */
 
 $fontlist = 'arial,tahoma,verdana,helvetica';
 $colorbacktitle1 = '#fff';
+$langs->load("main", 0, 1);
+$right = ($langs->trans("DIRECTION") == 'rtl' ? 'left' : 'right');
+$left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
 
 // Define css type
 top_httphead('text/css');
@@ -71,7 +76,7 @@ if (empty($dolibarr_nocache)) {
 @import "login.css";
 
 /**
-This file car overwrite default pico css
+This file can overwrite default pico css
  */
 
 

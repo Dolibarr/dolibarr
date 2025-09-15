@@ -373,6 +373,8 @@ class PaymentSalary extends CommonObject
 				$this->type_label = $obj->type_label;
 
 				$this->bank_account = $obj->fk_account;
+				$this->fk_account = $obj->fk_account;
+
 				$this->fk_bank = $obj->bank_line;
 				$this->bank_line = $obj->bank_line;
 			}
