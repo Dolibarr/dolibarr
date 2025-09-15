@@ -2,7 +2,7 @@
 /* Copyright (C) 2011-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -58,7 +58,7 @@ class PaymentSalary extends CommonObject
 	public $chid;
 
 	/**
-	 * @var int 			ID of the salary linked to the payment
+	 * @var ?int 			ID of the salary linked to the payment
 	 */
 	public $fk_salary;
 
@@ -87,7 +87,7 @@ class PaymentSalary extends CommonObject
 	public $total;
 
 	/**
-	 * @var float	Total amount of payment
+	 * @var ?float	Total amount of payment
 	 */
 	public $amount;
 
@@ -102,13 +102,13 @@ class PaymentSalary extends CommonObject
 	public $fk_typepayment;
 
 	/**
-	 * @var string
+	 * @var ?string
 	 * @deprecated Use $num_payment
 	 */
 	public $num_paiement;
 
 	/**
-	 * @var string      Payment reference
+	 * @var ?string     Payment reference
 	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
