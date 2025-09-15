@@ -97,7 +97,7 @@ class PaymentSalary extends CommonObject
 	public $amounts = array();
 
 	/**
-	 * @var int 			Payment type ID
+	 * @var ?int 			Payment type ID
 	 */
 	public $fk_typepayment;
 
@@ -115,12 +115,13 @@ class PaymentSalary extends CommonObject
 
 	/**
 	 * @inheritdoc
-	 * @var int
+	 * @var ?int
+	 * @deprecated use $bank_line
 	 */
 	public $fk_bank;
 
 	/**
-	 * @var int				ID of bank_line
+	 * @var ?int				ID of bank_line
 	 */
 	public $bank_line;
 
@@ -374,15 +375,15 @@ class PaymentSalary extends CommonObject
 				$this->num_payment = $obj->num_payment;
 				$this->note = $obj->note;
 				$this->note_private = $obj->note;
-				$this->fk_bank = $obj->fk_bank;
 				$this->fk_user_author = $obj->fk_user_author;
 				$this->fk_user_modif = $obj->fk_user_modif;
 
 				$this->type_code = $obj->type_code;
 				$this->type_label = $obj->type_label;
 
-				$this->bank_account   = $obj->fk_account;
-				$this->bank_line      = $obj->fk_bank;
+				$this->bank_account = $obj->fk_account;
+				$this->fk_bank = $obj->fk_bank;
+				$this->bank_line = $obj->fk_bank;
 			}
 			$this->db->free($resql);
 
@@ -498,7 +499,7 @@ class PaymentSalary extends CommonObject
 			$accline->fetch($this->bank_line);
 			$result = $accline->delete($user);
 			if ($result < 0) {
-				$this->errors[] = $accline->error;
+				$this->setErrorsFromObject($accline);
 				$error++;
 			}
 		}
