@@ -879,17 +879,15 @@ class Salary extends CommonObject
 			/** @var User $user */
 			$return .= '<br><span class="info-box-label">'.$user->getNomUrl(empty($arraydata['user']->photo) ? 1 : -1, '', 0, 0, 16, 0, '', 'maxwidth100').'</span>';
 		}
-		if (property_exists($this, 'amount')) {
-			$return .= '<br><span class="info-box-label amount">'.price($this->amount).'</span>';
-			if (property_exists($this, 'type_payment') && !empty($this->type_payment)) {
-				$return .= ' <span class="info-box-label opacitymedium small">';
-				if ($langs->trans("PaymentTypeShort".$this->type_payment) != "PaymentTypeShort".$this->type_payment) {
-					$return .= $langs->trans("PaymentTypeShort".$this->type_payment);
-				} elseif ($langs->trans("PaymentType".$this->type_payment) != "PaymentType".$this->type_payment) {
-					$return .= $langs->trans("PaymentType".$this->type_payment);
-				}
-				$return .= '</span>';
+		$return .= '<br><span class="info-box-label amount">'.price($this->amount).'</span>';
+		if (!empty($this->type_payment)) {
+			$return .= ' <span class="info-box-label opacitymedium small">';
+			if ($langs->trans("PaymentTypeShort".$this->type_payment) != "PaymentTypeShort".$this->type_payment) {
+				$return .= $langs->trans("PaymentTypeShort".$this->type_payment);
+			} elseif ($langs->trans("PaymentType".$this->type_payment) != "PaymentType".$this->type_payment) {
+				$return .= $langs->trans("PaymentType".$this->type_payment);
 			}
+			$return .= '</span>';
 		}
 		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3, isset($this->alreadypaid) ? $this->alreadypaid : $this->totalpaid).'</div>';
 		$return .= '</div>';
