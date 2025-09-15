@@ -17,6 +17,7 @@
 
 /**
  * @var Context $context	Object context for webportal
+ * @var Translate $langs
  */
 
 // Protection to avoid direct call of template
