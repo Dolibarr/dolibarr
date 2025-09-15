@@ -1,15 +1,43 @@
 Module Web Portal
 ================
 
-This is a module to provide a ready to use Web Portal for your customers, suppliers, partners or members of the mebership module.
+# Portail Web Personnalisé pour Dolibarr
 
-Accounts (login and pass) to access this portal can be created for any thirdparty (from the tab "Web site accounts").
+Ce projet est une version modifiée (un "fork") du projet officiel [Dolibarr ERP & CRM](https://github.com/Dolibarr/dolibarr), spécifiquement adaptée pour les besoins de [NOM DE VOTRE ENTREPRISE].
 
-It is better to have a standalone web server with its own virtual host and domain name to use this module, so using the web portal does not
-reaveal the domain and url of your backoffice installation. 
+L'objectif principal de cette modification est d'ajouter un espace de partage de documents sécurisé et simple d'utilisation pour chaque Tiers (client, partenaire, etc.).
 
+## Fonctionnalités Ajoutées
 
-It provides an interface to read or modify its data. This is for example, the list of the data than can be read (or modified):
+La principale fonctionnalité ajoutée à ce module `Web Portal` est :
+
+* **Espace "Mes Documents" pour les Clients :** Une nouvelle page a été créée sur le portail, accessible via le menu principal. Elle permet à un client connecté de consulter et télécharger tous les fichiers que l'administrateur a partagés avec lui.
+* **Lien Direct avec la GED du Tiers :** La gestion des fichiers reste centralisée dans Dolibarr. Pour partager un fichier avec un client, il suffit de le déposer dans l'onglet **"Fichiers joints"** de sa fiche Tiers dans l'interface d'administration. Le fichier apparaît alors instantanément sur son portail.
+* **Système de Dossiers par ID :** Le système est configuré pour trouver les dossiers des Tiers en se basant sur leur ID numérique (ex: `/documents/societe/47/`).
+
+## Configuration Requise
+
+Pour que la nouvelle page de documents fonctionne, les étapes suivantes sont nécessaires dans l'administration de Dolibarr :
+
+1.  **Déclaration du Contrôleur :**
+    Le nouveau contrôleur `documentlist.controller.class.php` doit être déclaré dans le fichier `htdocs/webportal/class/context.class.php`.
+
+2.  **Ajout du Lien au Menu :**
+    Un lien vers le nouveau contrôleur doit être ajouté dans le template du menu : `htdocs/public/webportal/tpl/menu.tpl.php`.
+
+3.  **Activation de l'Accès :**
+    Dans le menu `Accueil > Configuration > Divers`, la clé suivante doit être ajoutée :
+    * **Nom :** `WEBPORTAL_DOCUMENT_LIST_ACCESS`
+    * **Valeur :** `1`
+
+## Licence
+
+Ce projet est distribué sous la licence **GNU General Public License v3.0**, comme le projet Dolibarr original.
+
+## Crédits
+
+* **Auteurs du module original :** L'équipe Dolibarr et les contributeurs de la communauté open-source.
+* **Modifications et Intégration :** webmaster67 sébastien schaffhauser
 
 If the Thirdparty module is enabled:
 * Read/modify Name, phone, email, addresses of thirdparty
