@@ -878,16 +878,16 @@ class PaymentSalary extends CommonObject
 
 		$url = DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$this->id;
 
-		if ($option !== 'nolink') {
-			// Add param to save lastsearch_values or not
-			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
-				$add_save_lastsearch_values = 1;
-			}
-			if ($url && $add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
-			}
-		}
+		// if ($option !== 'nolink') {
+		// 	// Add param to save lastsearch_values or not
+		// 	$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+		// 	if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+		// 		$add_save_lastsearch_values = 1;
+		// 	}
+		// 	if ($url && $add_save_lastsearch_values) {
+		// 		$url .= '&save_lastsearch_values=1';
+		// 	}
+		// }
 
 		$linkclose = '';
 		if (empty($notooltip)) {
@@ -901,17 +901,19 @@ class PaymentSalary extends CommonObject
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
 
-		if ($option == 'nolink' || empty($url)) {
-			$linkstart = '<span';
-		} else {
-			$linkstart = '<a href="'.$url.'"';
-		}
-		$linkstart .= $linkclose.'>';
-		if ($option == 'nolink' || empty($url)) {
-			$linkend = '</span>';
-		} else {
-			$linkend = '</a>';
-		}
+		// if ($option == 'nolink') {
+		// 	$linkstart = '<span';
+		// } else {
+		// 	$linkstart = '<a href="'.$url.'"';
+		// }
+		// $linkstart .= $linkclose.'>';
+		// if ($option == 'nolink') {
+		// 	$linkend = '</span>';
+		// } else {
+		// 	$linkend = '</a>';
+		// }
+		$linkstart = '<a href="'.$url.'"';
+		$linkend = '</a>';
 
 		$result .= $linkstart;
 
@@ -1006,18 +1008,16 @@ class PaymentSalary extends CommonObject
 			$account->fetch($this->fk_bank);
 			$return .= ' |  <span class="info-box-label">'.$account->getNomUrl(1).'</span>';
 		}
-		if (property_exists($this, 'fk_user_author') && is_numeric($this->fk_user_author)) {
+		if (!empty($this->fk_user_author) && is_numeric($this->fk_user_author)) {
 			$userstatic = new User($this->db);
 			$userstatic->fetch($this->fk_user_author);
 			$return .= '<br><span class="info-box-status">'.$userstatic->getNomUrl(1).'</span>';
 		}
 
-		if (property_exists($this, 'fk_typepayment')) {
+		if (!empty($this->fk_typepayment)) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("PaymentMode").'</span> : <span class="info-box-label">'.$this->fk_typepayment.'</span>';
 		}
-		if (property_exists($this, 'amount')) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
-		}
+		$return .= '<br><span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
