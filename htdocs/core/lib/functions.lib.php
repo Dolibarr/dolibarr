@@ -11317,7 +11317,7 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
  *  @param	array<string|int,mixed>	$array 	Array to sort (array of array('key1'=>val1,'key2'=>val2,'key3'...) or array of objects)
  *  @phpstan-param T $array
  *  @phan-param T $array
- *  @param	string		$index				Key in array to use for sorting criteria
+ *  @param	string		$index				Key in array to use for sorting criteria. We can have several keys separated by a comma but we can have only 1 sorting order.
  *  @param	string		$order				Sort order ('asc' or 'desc')
  *  @param	int<-1,1>	$natsort			If values are strings (I said value not type): 0=Use alphabetical order, 1=use "natural" sort (natsort), -1=Force alpha order
  *                                          If values are numeric (I said value not type): 0=Use numeric order (even if type is string) so use a "natural" sort, 1=use "natural" sort too (same than 0), -1=Force alphabetical order
@@ -11336,19 +11336,31 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
 	if (is_array($array)) {
 		$sizearray = count($array);
 		if ($sizearray > 0) {
+			// Build a temp array with sorting key as value
 			$temp = array();
 			foreach (array_keys($array) as $key) {
+				$tmpmultikey = explode(',', $index);
+				$newindex = $tmpmultikey[0];
 				if (is_object($array[$key])) {
-					$temp[$key] = empty($array[$key]->$index) ? 0 : $array[$key]->$index;
+					$temp[$key] = empty($array[$key]->$newindex) ? 0 : $array[$key]->$newindex;
+					// Add other keys
+					if (!empty($tmpmultikey[1])) {
+						$newindex = $tmpmultikey[1];
+						$temp[$key] .= '__'.(empty($array[$key]->$newindex) ? 0 : $array[$key]->$newindex);
+					}
 				} else {
 					// @phan-suppress-next-line PhanTypeArraySuspiciousNullable,PhanTypeArraySuspicious,PhanTypeMismatchDimFetch
-					$temp[$key] = empty($array[$key][$index]) ? 0 : $array[$key][$index];
+					$temp[$key] = empty($array[$key][$newindex]) ? 0 : $array[$key][$newindex];
+					// Add other keys
+					if (!empty($tmpmultikey[1])) {
+						$newindex = $tmpmultikey[1];
+						$temp[$key] .= '__'.(empty($array[$key][$newindex]) ? 0 : $array[$key][$newindex]);
+					}
 				}
 				if ($natsort == -1) {
-					$temp[$key] = '___' . $temp[$key];        // We add a string at begin of value to force an alpha order when using asort.
+					$temp[$key] = '___'.$temp[$key];        // We add a string at begin of value to force an alpha order when using asort.
 				}
 			}
-
 			if (empty($natsort) || $natsort == -1) {
 				if ($order == 'asc') {
 					asort($temp);
@@ -14720,7 +14732,7 @@ function getElementProperties($elementType)
 		$classname = 'CommandeFournisseurLigne';
 		$table_element = 'commande_fournisseurdet';
 		$parent_element = 'commande_fournisseur';
-	} elseif ($elementType == 'invoice_supplier' || $elementType == 'supplier_invoice') {
+	} elseif ($elementType == 'invoice_supplier' || $elementType == 'supplier_invoice' || $elementType == 'facture_fourn') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.facture';

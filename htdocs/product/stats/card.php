@@ -356,6 +356,7 @@ if ($result || !($id > 0)) {
 	$arrayforlabel = array('byunit' => 'NumberOfUnits', 'bynumber' => 'NumberOf', 'byamount' => 'AmountIn');
 
 	if (isModEnabled('propal')) {
+		$langs->load("propal");
 		$graphfiles['propal'] = array('modulepart' => 'productstats_proposals',
 			'file' => $object->id.'/propal12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
 			'label' => $langs->transnoentitiesnoconv($arrayforlabel[$mode], $langs->transnoentitiesnoconv("Proposals")));

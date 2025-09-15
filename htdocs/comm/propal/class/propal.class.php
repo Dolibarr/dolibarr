@@ -119,7 +119,7 @@ class Propal extends CommonObject
 
 	/**
 	 * Ref from thirdparty
-	 * @var string
+	 * @var ?string
 	 */
 	public $ref_customer;
 
