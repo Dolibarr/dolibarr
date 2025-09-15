@@ -183,7 +183,7 @@ a.info-box-text.info-box-text-a {
 	/* display: table-cell; */
 	display: contents;
 }
-a.info-box-text-a i.fa.fa-exclamation-triangle {
+a.info-box-text-a i.fa.fa-exclamation-triangle, span.badge i.fa.fa-exclamation-triangle {
 	font-size: 0.9em;
 }
 
@@ -575,7 +575,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 .fa-weather-level4:before{
 	content: "\f0e7";
-	color : #b01000;
+	color : #993013;
 }
 
 

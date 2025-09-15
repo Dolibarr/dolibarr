@@ -26,6 +26,7 @@ The following changes may create regressions for some external modules, but were
 * The signature of the Sale order ->cancel() method and shipment ->cancel() has been modified to introduce the $user param like for other methods that modify a status.
 * Adding new document templates must be done by adding files into the mymodule/core/modules/xxx/doc directory. Adding files into custom directory with the
   same path than the core path without using a mymodule directory is now forbidden.
+* The directory theme/common/octicons has been removed
 
 
 ***** ChangeLog for 22.0.1 compared to 22.0.0 *****

@@ -52,7 +52,7 @@ if (!function_exists('dol_getprefix')) {
 	 *  Return a prefix to use for this Dolibarr instance, for session/cookie names or email id.
 	 *  The prefix is unique for instance and avoid conflict between multi-instances, even when having two instances with same root dir
 	 *  or two instances in same virtual servers.
-	 *  This function must not use dol_hash (that is used for password hash) and need to have all context $conf loaded.
+	 *  This function must not use dol_hash (that is used for password hash) and need to have all context $conf loaded when called.
 	 *
 	 *  @param  string  $mode                   '' (prefix for session name) or 'email' (prefix for email id)
 	 *  @return	string                          A calculated prefix
@@ -76,12 +76,7 @@ if (!function_exists('dol_getprefix')) {
 	}
 }
 
-$relDir = '';
-if (defined('MAIN_INC_REL_DIR')) {
-	$relDir = MAIN_INC_REL_DIR;
-}
-include $relDir.'../../main.inc.php';
-
+include __DIR__.'/../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT . '/societe/class/societeaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/public/webportal/lib/webportal.lib.php';
@@ -97,15 +92,14 @@ require_once DOL_DOCUMENT_ROOT . '/webportal/class/webportalpartnership.class.ph
 // Init session. Name of session is specific to WEBPORTAL instance.
 // Must be done after the include of filefunc.inc.php so global variables of conf file are defined (like $dolibarr_main_instance_unique_id or $dolibarr_main_force_https).
 // Note: the function dol_getprefix is defined into functions.lib.php but may have been defined to return a different key to manage another area to protect.
-$prefix = dol_getprefix('');
-$sessionname = 'WEBPORTAL_SESSID_' . $prefix;
-$sessiontimeout = 'WEBPORTAL_SESSTIMEOUT_' . $prefix;
-if (!empty($_COOKIE[$sessiontimeout]) && session_status() === PHP_SESSION_NONE) {
-	ini_set('session.gc_maxlifetime', $_COOKIE[$sessiontimeout]);
-}
+//$prefix = dol_getprefix('');
+//$sessionname = 'WEBPORTAL_SESSID_' . $prefix;
+//$sessiontimeout = 'WEBPORTAL_SESSTIMEOUT_' . $prefix;
+//if (!empty($_COOKIE[$sessiontimeout]) && session_status() === PHP_SESSION_NONE) {
+//	ini_set('session.gc_maxlifetime', $_COOKIE[$sessiontimeout]);
+//}
 
 $context = Context::getInstance();
-
 
 $hookmanager->initHooks(array('main', 'webportal'));
 

@@ -564,7 +564,7 @@ a.vmenu span, span.vmenu, span.vmenu span {
 }
 .fa-weather-level4:before{
 	content: "\f0e7";
-	color : #b01000;
+	color : #993013;
 }
 
 
