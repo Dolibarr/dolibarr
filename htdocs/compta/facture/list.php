@@ -1410,7 +1410,7 @@ $arrayofmassactions = array(
 );
 
 if (isModEnabled('category') && $user->hasRight('facture', 'creer')) {
- 	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
+	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 if ($user->hasRight('facture', 'paiement')) {
 	$arrayofmassactions['makepayment'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakePaymentAndClassifyPayed");
