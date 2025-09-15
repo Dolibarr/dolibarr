@@ -3,10 +3,10 @@ MenuFinancial=Fakturace | Platba
 TaxModuleSetupToModifyRules=Přejít na <a href="%s">Nastavení daní</a> pro změnu výpočtu daní
 TaxModuleSetupToModifyRulesLT=Jděte na <a href="%s">Nastavení firmy</a> pro úpravu podmínek pro kalkulaci
 OptionMode=Volba pro účetnictví
-OptionModeTrue=Akruální účetnictví
-OptionModeVirtual=Účetnictví v hotovosti
-OptionModeTrueDesc=V této souvislosti se obrat vypočítává z plateb (datum plateb). Platnost údajů je zaručena pouze tehdy, pokud je účetnictví kontrolováno prostřednictvím vstupů/výstupů plateb.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=V této souvislosti se počítá obrat přes faktury (datum schválení). Jsou-li tyto faktury jsou splatné, přestože byly zaplaceny či nikoliv, jsou uvedeny v obratu výstupu.
+OptionModeTrueDesc=V této souvislosti se obrat vypočítává z plateb (datum plateb). Platnost údajů je zaručena pouze tehdy, pokud je účetnictví kontrolováno prostřednictvím vstupů/výstupů plateb.
 FeatureIsSupportedInInOutModeOnly=Funkce dostupné pouze v ÚVĚRY-DLUHY účetního režimu. (viz konfigurace modulu Účetnictví)
 VATReportBuildWithOptionDefinedInModule=Částky uvedené zde jsou vypočteny na základě nastavených daňových pravidel.
 LTReportBuildWithOptionDefinedInModule=Částky se zde uvedené jsou vypočítány na základě pravidel definovaných nastavení firmy.
@@ -302,7 +302,6 @@ ByVatRate=Sazbou daně z prodeje
 TurnoverbyVatrate=Obrat je fakturován sazbou daně z prodeje
 TurnoverCollectedbyVatrate=Obrat shromážděný podle sazby daně z prodeje
 PurchasebyVatrate=Nákup podle sazby daně z prodeje
-LabelToShow=Krátký štítek
 PurchaseTurnover=Obrat z nákupu
 PurchaseTurnoverCollected=Shromážděný obrat z nákupu
 RulesPurchaseTurnoverDue=- Zahrnuje splatné faktury dodavatele, ať už jsou zaplaceny nebo ne. <br> - Je založeno na datu fakturace těchto faktur. <br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Pravidlo pro data řádků
 Prepaid=Předplacené
 Postpaid=Paušální platba
 SetRuleForLinesDates=Nastavení pravidla pro data řádků
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

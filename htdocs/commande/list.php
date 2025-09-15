@@ -70,7 +70,7 @@ if (isModEnabled('category')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('orders', 'sendings', 'deliveries', 'companies', 'compta', 'bills', 'stocks', 'products'));
+$langs->loadLangs(array('orders', 'sendings', 'companies', 'compta', 'bills', 'stocks', 'products'));
 
 // Get Parameters
 $action = GETPOST('action', 'aZ09');

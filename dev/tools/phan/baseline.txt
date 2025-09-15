@@ -27,7 +27,6 @@ return [
     // PhanPluginUndeclaredVariableIsset : 3 occurrences
     // PhanPossiblyUndeclaredVariable : 1 occurrence
     // PhanTypeExpectedObjectPropAccessButGotNull : 1 occurrence
-    // PhanTypeMismatchArgumentNullableInternal : 1 occurrence
     // PhanTypeMismatchReturn : 1 occurrence
 
     // Currently, file_suppressions and directory_suppressions are the only supported suppressions
@@ -36,7 +35,7 @@ return [
         'htdocs/bom/tpl/objectline_edit.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/bom/tpl/objectline_view.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/bookcal/availabilities_card.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
-        'htdocs/bookcal/calendar_card.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
+        'htdocs/bookcal/calendar_card.php' => ['PhanUndeclaredProperty'],
         'htdocs/bookcal/class/availabilities.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/bookcal/class/calendar.class.php' => ['PhanUndeclaredMethod', 'PhanUndeclaredProperty'],
         'htdocs/categories/viewcat.php' => ['PhanUndeclaredProperty'],

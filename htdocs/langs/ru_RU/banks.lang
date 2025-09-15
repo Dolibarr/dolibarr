@@ -200,3 +200,5 @@ InSepa=SEPA область
 CountryIsInSepa=Страны в Sepa область
 Bank_line=Банк проводка линия
 BankId=Банк линия ID
+BankAccountForcedOnRequest=This bank account was defined when preparing the bank transfer request. Delete it and redo the preparation from the source object if you need to change it.
+BankAccountUsedByDefault=This is the default bank account of the thirdparty.

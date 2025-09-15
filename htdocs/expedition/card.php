@@ -73,7 +73,7 @@ if (isModEnabled('project')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("sendings", "companies", "bills", 'deliveries', 'orders', 'stocks', 'other', 'propal', 'productbatch'));
+$langs->loadLangs(array("sendings", "companies", "bills", 'orders', 'stocks', 'other', 'propal', 'productbatch'));
 
 if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
@@ -2107,7 +2107,7 @@ if ($action == 'create') {
 		if ($objectref == 'PROV') {
 			$numref = $object->getNextNumRef($soc);
 		} else {
-			$numref = $object->ref;
+			$numref = (string) $object->ref;
 		}
 
 		$text = $langs->trans("ConfirmValidateSending", $numref);

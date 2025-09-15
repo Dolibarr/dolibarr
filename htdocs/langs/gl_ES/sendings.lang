@@ -69,6 +69,44 @@ OptionToSetSendingBilledNotEnabled=A opción do módulo Fluxo de traballo, para 
 NoWarehouseInBase=Non hai almacén na base
 ShipmentUpdated=O envío actualizouse correctamente
 ShipmentIncrementStockOnDelete = Aumentar o stock ao eliminar
+ConfirmSignShipping=Confirmar a sinatura do envío
+ConfirmUnsignShipping=Confirmar a cancelación do envío
+SignShipping=Asinar envío
+UnsignShipping=Envío sen sinatura
+
+# Deliveries
+Delivery=Envío
+DeliveryRef=Ref. envío
+DeliveryCard=Nota de recepción
+DeliveryOrder=Nota de recepción
+DeliveryDate=Data de entrega
+CreateDeliveryOrder=Xerar nota de entrega
+DeliveryStateSaved=Estado de entrega gardado
+SetDeliveryDate=Estableza a data de entrega estimada
+SetShippingDate=Indicar a data de entrega
+ValidateDeliveryReceipt=Validar a nota de entrega
+ValidateDeliveryReceiptConfirm=¿Está certo de querer validar esta entrega?
+DeleteDeliveryReceipt=Eliminar a nota de entrega
+DeleteDeliveryReceiptConfirm=¿Está certo de querer eliminar a nota de entrega <b>%s</b>?
+DeliveryMethod=Método de envío
+TrackingNumber=Nº de seguimento
+DeliveryNotValidated=Nota de recepción non validada
+StatusDeliveryCanceled=Anulado
+StatusDeliveryDraft=Non validada
+StatusDeliveryValidated=Pagada
+NameAndSignature=Nome e sinatura :
+ToAndDate=En___________________________________ a ____/_____/__________
+GoodStatusDeclaration=Teño recibido a mercancía en bo estado,
+Deliverer=Destinatario :
+Sender=Orixe
+Recipient=Destinatario fixo
+ErrorStockIsNotEnough=Non hai suficiente stock
+Shippable=Enviable
+NonShippable=Non enviable
+ShowShippableStatus=Amosar estado de envío
+ShowReceiving=Mostrar nota de recepción
+NonExistentOrder=Pedimento inexistente
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Cantidades de stock xa asignadas en liñas anteriores
 
 # Sending methods
 # ModelDocument

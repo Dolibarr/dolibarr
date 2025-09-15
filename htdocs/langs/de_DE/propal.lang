@@ -14,6 +14,7 @@ DeleteProp=Angebot löschen
 ValidateProp=Angebot freigeben
 CancelPropal=Abbrechen
 AddProp=Angebot erstellen
+AddRenewalProp=Angebots für Verlängerung erstellen
 ConfirmDeleteProp=Möchten Sie dieses Angebot wirklich löschen?
 ConfirmValidateProp=Möchten Sie dieses Angebot wirklich unter dem Namen <b>%s</b> freigeben?
 ConfirmCancelPropal=Sind Sie sicher, dass Sie das Angebot <b>%s</b> stornieren wollen?

@@ -88,7 +88,7 @@ class Contrat extends CommonObject
 
 	/**
 	 * Customer reference of the contract
-	 * @var string
+	 * @var ?string
 	 */
 	public $ref_customer;
 
@@ -99,7 +99,7 @@ class Contrat extends CommonObject
 
 	/**
 	 * Supplier reference of the contract
-	 * @var string
+	 * @var ?string
 	 */
 	public $ref_supplier;
 
@@ -123,13 +123,14 @@ class Contrat extends CommonObject
 
 	/**
 	 * Status of the contract
-	 * @var int
+	 * @var ?int
 	 * @deprecated
 	 */
 	public $statut = 0;
+
 	/**
 	 * Status of the contract (0=Draft, 1=Validated)
-	 * @var int
+	 * @var ?int
 	 */
 	public $status = 0;
 
@@ -168,28 +169,27 @@ class Contrat extends CommonObject
 	public $date_contrat;
 
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $commercial_signature_id;
-	/**
-	 * @var int|string
-	 */
-	public $fk_commercial_signature;
-	/**
-	 * @var int
-	 */
-	public $commercial_suivi_id;
-	/**
-	 * @var int|string
-	 */
-	public $fk_commercial_suivi;
 
 	/**
-	 * @var int
-	 * @deprecated Use fk_project instead
-	 * @see $fk_project
+	 * @var ?int
+	 * @deprecated
 	 */
-	public $fk_projet;
+	public $fk_commercial_signature;
+
+	/**
+	 * @var ?int
+	 */
+	public $commercial_suivi_id;
+
+	/**
+	 * @var ?int
+	 * @deprecated Use $commercial_suivi_id instead
+	 * @see $commercial_suivi_id
+	 */
+	public $fk_commercial_suivi;
 
 	/**
 	 * @var array<string,string>  (Encoded as JSON in database)
@@ -337,6 +337,7 @@ class Contrat extends CommonObject
 
 			$obj = new $classname();
 			'@phan-var-force ModelNumRefContracts $obj';
+			/** @var ModelNumRefContracts $obj */
 			$numref = $obj->getNextValue($soc, $this);
 
 			if ($numref != "") {
@@ -548,10 +549,10 @@ class Contrat extends CommonObject
 		// Define new ref
 		if ($force_number) {
 			$num = $force_number;
-		} elseif (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+		} elseif (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 			$num = $this->getNextNumRef($this->thirdparty);
 		} else {
-			$num = $this->ref;
+			$num = (string) $this->ref;
 		}
 		$this->newref = dol_sanitizeFileName($num);
 
@@ -948,7 +949,7 @@ class Contrat extends CommonObject
 				//$line->date_fin_prevue   = $this->db->jdate($objp->date_fin_validite);
 				//$line->date_fin_reel     = $this->db->jdate($objp->date_cloture);
 
-				$line->rang     = $objp->rang;
+				$line->rang = $objp->rang;
 
 				// Retrieve all extrafields for contract line
 				// fetch optionals attributes and labels
@@ -1075,7 +1076,8 @@ class Contrat extends CommonObject
 			$result = dol_include_once('/core/modules/contract/'.$module.'.php');
 			if ($result > 0) {
 				$modCodeContract = new $module();
-				'@phan-var-force ModelNumRefContracts $modCodeContrat';
+				'@phan-var-force ModelNumRefContracts $modCodeContract';
+				/** @var ModelNumRefContracts $modCodeContract */
 
 				if (!empty($modCodeContract->code_auto)) {
 					// Force the ref to a draft value if numbering module is an automatic numbering
@@ -1088,15 +1090,13 @@ class Contrat extends CommonObject
 				}
 			}
 
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 			// Insert business contacts ('SALESREPSIGN','contrat')
-			if (!$error) {
+			if (!$error && !empty($this->commercial_signature_id)) {
 				$result = $this->add_contact($this->commercial_signature_id, 'SALESREPSIGN', 'internal');
 				if ($result < 0) {
 					$error++;
@@ -1104,7 +1104,7 @@ class Contrat extends CommonObject
 			}
 
 			// Insert business contacts ('SALESREPFOLL','contrat')
-			if (!$error) {
+			if (!$error && !empty($this->commercial_suivi_id)) {
 				$result = $this->add_contact($this->commercial_suivi_id, 'SALESREPFOLL', 'internal');
 				if ($result < 0) {
 					$error++;
@@ -1117,7 +1117,7 @@ class Contrat extends CommonObject
 				}
 
 				// Add object linked
-				if (!$error && $this->id && !empty($this->linked_objects) && is_array($this->linked_objects)) {
+				if ($this->id && !empty($this->linked_objects) && is_array($this->linked_objects)) {
 					foreach ($this->linked_objects as $origin => $tmp_origin_id) {
 						if (is_array($tmp_origin_id)) {       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
 							foreach ($tmp_origin_id as $origin_id) {
@@ -1369,14 +1369,14 @@ class Contrat extends CommonObject
 		if (isset($this->status)) {
 			$this->status = (int) $this->status;
 		}
-		if (isset($this->socid)) {
+		if ((int) $this->socid > 0) {
 			$this->socid = (int) $this->socid;
 		}
 		if (isset($this->fk_commercial_signature)) {
-			$this->fk_commercial_signature = trim($this->fk_commercial_signature);
+			$this->fk_commercial_signature = (int) $this->fk_commercial_signature;
 		}
 		if (isset($this->fk_commercial_suivi)) {
-			$this->fk_commercial_suivi = trim($this->fk_commercial_suivi);
+			$this->fk_commercial_suivi = (int) $this->fk_commercial_suivi;
 		}
 		if (isset($this->note_private)) {
 			$this->note_private = trim($this->note_private);
@@ -1487,7 +1487,7 @@ class Contrat extends CommonObject
 			return -1;
 		}
 
-		if ($this->statut >= 0) {
+		if ($this->status >= 0) {
 			// Clean parameters
 			$pu_ht = price2num($pu_ht);
 			$pu_ttc = price2num($pu_ttc);
@@ -1640,16 +1640,14 @@ class Contrat extends CommonObject
 			if ($resql) {
 				$contractlineid = $this->db->last_insert_id(MAIN_DB_PREFIX."contratdet");
 
-				if (!$error) {
-					$contractline = new ContratLigne($this->db);
-					$contractline->array_options = $array_options;
-					$contractline->id = $contractlineid;
-					$result = $contractline->insertExtraFields();
-					if ($result < 0) {
-						$this->errors = array_merge($this->errors, $contractline->errors);
-						$this->error = $contractline->error;
-						$error++;
-					}
+				$contractline = new ContratLigne($this->db);
+				$contractline->array_options = $array_options;
+				$contractline->id = $contractlineid;
+				$result = $contractline->insertExtraFields();
+				if ($result < 0) {
+					$this->errors = array_merge($this->errors, $contractline->errors);
+					$this->error = $contractline->error;
+					$error++;
 				}
 
 				if (empty($error)) {
@@ -2261,8 +2259,8 @@ class Contrat extends CommonObject
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
-	 *      @param	User	$user           Object user
-	 *      @param  string	$mode           "inactive" pour services a activer, "expired" pour services expires
+	 *      @param	User	$user           		Object user
+	 *      @param  'inactive'|'expired'|'active'	$mode           "inactive" pour services a activer, "expired" pour services expires
 	 *      @return WorkboardResponse|int Return integer <0 if KO, WorkboardResponse if OK
 	 */
 	public function load_board($user, $mode)
@@ -2298,6 +2296,8 @@ class Contrat extends CommonObject
 			$sql .= " AND cd.statut = 4";
 			//$datetouse = dol_now();
 			//$sql.= " AND cd.date_fin_validite < '".$this->db->idate($datetouse)."'";
+		} else {
+			return -1;
 		}
 		$sql .= " AND c.fk_soc = s.rowid";
 		$sql .= " AND c.entity = ".((int) $conf->entity);
@@ -2617,6 +2617,7 @@ class Contrat extends CommonObject
 
 		// Clean data
 		$clonedObj->statut = 0;
+		$clonedObj->status = 0;
 		// Clean extrafields
 		if (is_array($clonedObj->array_options) && count($clonedObj->array_options) > 0) {
 			$extrafields->fetch_name_optionals_label($this->table_element);
@@ -2641,6 +2642,7 @@ class Contrat extends CommonObject
 		$obj = getDolGlobalString('CONTRACT_ADDON');
 		$modContract = new $obj();
 		'@phan-var-force ModelNumRefContracts $modContract';
+		/** @var ModelNumRefContracts $modContract */
 		$clonedObj->ref = $modContract->getNextValue($objsoc, $clonedObj);
 
 		// get extrafields so they will be clone
@@ -2653,8 +2655,7 @@ class Contrat extends CommonObject
 		$result = $clonedObj->create($user);
 		if ($result < 0) {
 			$error++;
-			$this->error = $clonedObj->error;
-			$this->errors[] = $clonedObj->error;
+			$this->setErrorsFromObject($clonedObj);
 		} else {
 			// copy external contacts if same company
 			if ($this->socid == $clonedObj->socid) {
@@ -2679,8 +2680,8 @@ class Contrat extends CommonObject
 			// Hook of thirdparty module
 			if (is_object($hookmanager)) {
 				$parameters = array(
-						'objFrom' => $this,
-						'clonedObj' => $clonedObj
+					'objFrom' => $this,
+					'clonedObj' => $clonedObj
 				);
 				$action = '';
 				$reshook = $hookmanager->executeHooks('createFrom', $parameters, $clonedObj, $action); // Note that $action and $object may have been modified by some hooks
@@ -2916,21 +2917,17 @@ class Contrat extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">' . $this->getNomUrl() . '</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (!empty($arraydata['thirdparty'])) {
+		if (!empty($arraydata['thirdparty']) && $arraydata['thirdparty'] instanceof Societe) {
 			$tmpthirdparty = $arraydata['thirdparty'];
 			'@phan-var-force Societe $tmpthirdparty';
 			$return .= '<br><div class="info-box-label inline-block valignmiddle">'.$tmpthirdparty->getNomUrl(1).'</div>';
 		}
-		if (property_exists($this, 'date_contrat')) {
-			$return .= '<br><span class="opacitymedium valignmiddle">'.$langs->trans("DateContract").' : </span><span class="info-box-label valignmiddle">'.dol_print_date($this->date_contrat, 'day').'</span>';
-		}
-		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status valignmiddle">'.$this->getLibStatut(7).'</div>';
-		}
+		$return .= '<br><span class="opacitymedium valignmiddle">'.$langs->trans("DateContract").' : </span><span class="info-box-label valignmiddle">'.dol_print_date($this->date_contrat, 'day').'</span>';
+		$return .= '<br><div class="info-box-status valignmiddle">'.$this->getLibStatut(7).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';

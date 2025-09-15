@@ -457,7 +457,7 @@ class KnowledgeManagement extends DolibarrApi
 	public function validate($id, $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'write')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->knowledgerecord->fetch($id);
 		if (!$result) {
@@ -494,7 +494,7 @@ class KnowledgeManagement extends DolibarrApi
 	public function cancel($id, $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'write')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->knowledgerecord->fetch($id);
 		if (!$result) {

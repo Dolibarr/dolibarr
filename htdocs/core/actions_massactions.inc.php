@@ -1832,6 +1832,7 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 
 if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday' && $confirm == 'yes')) && $permissiontoapprove && is_array($toselect)) {
 	'@phan-var-force Holiday $holiday';  // Supposing that $holiday is set, it is needed.
+	/** @var Holiday $holiday */
 	$db->begin();
 	$objecttmp = new $objectclass($db);
 	$nbok = 0;
@@ -1919,6 +1920,7 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 				require_once DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . '.php';
 				$modTask = new $classnamemodtask();
 				'@phan-var-force ModeleNumRefTask $modTask';
+				/** @var ModeleNumRefTask $modTask */
 				$defaultref = $modTask->getNextValue(null, $clone_task);
 			}
 

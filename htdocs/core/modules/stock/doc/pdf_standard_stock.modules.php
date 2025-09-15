@@ -182,7 +182,7 @@ class pdf_standard_stock extends ModelePDFStock
 		}
 
 		// Load traductions files required by page
-		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "stocks", "orders", "deliveries"));
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "stocks", "orders", "sendings"));
 
 		if ($conf->stock->dir_output) {
 			// Definition of $dir and $file

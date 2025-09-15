@@ -697,114 +697,6 @@ parameters:
 			path: ../../../htdocs/adherents/card.php
 
 		-
-			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 2
-			path: ../../../htdocs/adherents/class/adherent.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(Adherent\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/adherents/class/adherent.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(Adherent\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/adherents/class/adherent.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Adherent\) and ''photo'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/adherents/class/adherent.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Adherent\) and ''societe'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/adherents/class/adherent.class.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/adherents/class/adherent.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 5
-			path: ../../../htdocs/adherents/class/adherent.class.php
-
-		-
-			message: '#^Property Adherent\:\:\$last_subscription_amount \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/adherents/class/adherent.class.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../../htdocs/adherents/class/adherent.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(AdherentType\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/adherents/class/adherent_type.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(AdherentType\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/adherents/class/adherent_type.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(AdherentType\) and ''amount'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/adherents/class/adherent_type.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(AdherentType\) and ''vote'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/adherents/class/adherent_type.class.php
-
-		-
-			message: '#^Loose comparison using \!\= between '''' and ''nolink'' will always evaluate to true\.$#'
-			identifier: notEqual.alwaysTrue
-			count: 1
-			path: ../../../htdocs/adherents/class/adherent_type.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/adherents/class/adherent_type.class.php
-
-		-
-			message: '#^Property AdherentType\:\:\$duration \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/adherents/class/adherent_type.class.php
-
-		-
-			message: '#^Property AdherentType\:\:\$subscription \(int\<0, 1\>\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/adherents/class/adherent_type.class.php
-
-		-
-			message: '#^Property AdherentType\:\:\$vote \(int\<0, 1\>\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/adherents/class/adherent_type.class.php
-
-		-
 			message: '#^Call to function property_exists\(\) with \$this\(Subscription\) and ''amount'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -1339,12 +1231,6 @@ parameters:
 			path: ../../../htdocs/admin/oauthlogintokens.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/admin/openinghours.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -1361,12 +1247,6 @@ parameters:
 			identifier: if.alwaysTrue
 			count: 3
 			path: ../../../htdocs/admin/perms.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 11
-			path: ../../../htdocs/admin/receiptprinter.php
 
 		-
 			message: '#^If condition is always false\.$#'
@@ -2125,12 +2005,6 @@ parameters:
 			path: ../../../htdocs/bookcal/availabilities_card.php
 
 		-
-			message: '#^Property Availabilities\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/bookcal/availabilities_card.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 6
@@ -2179,12 +2053,6 @@ parameters:
 			path: ../../../htdocs/bookcal/booking_list.php
 
 		-
-			message: '#^Property Calendar\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/bookcal/booking_list.php
-
-		-
 			message: '#^Variable \$lineid might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -2221,12 +2089,6 @@ parameters:
 			path: ../../../htdocs/bookcal/calendar_card.php
 
 		-
-			message: '#^Property Calendar\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/bookcal/calendar_card.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 5
@@ -2235,12 +2097,6 @@ parameters:
 		-
 			message: '#^Variable \$permissiontoadd in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/bookcal/calendar_card.php
-
-		-
-			message: '#^Variable \$soc might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/bookcal/calendar_card.php
 
@@ -2291,216 +2147,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/bookcal/calendar_list.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/bookcal/calendar_note.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: ../../../htdocs/bookcal/calendar_note.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(Availabilities\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/bookcal/class/availabilities.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(Availabilities\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/bookcal/class/availabilities.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Availabilities\) and ''label'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/bookcal/class/availabilities.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Availabilities and ''date_creation'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/bookcal/class/availabilities.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Availabilities and ''date_modification'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/bookcal/class/availabilities.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Availabilities and ''label'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/bookcal/class/availabilities.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Availabilities and ''ref'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/bookcal/class/availabilities.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Availabilities and ''status'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/bookcal/class/availabilities.class.php
-
-		-
-			message: '#^Left side of && is always false\.$#'
-			identifier: booleanAnd.leftAlwaysFalse
-			count: 1
-			path: ../../../htdocs/bookcal/class/availabilities.class.php
-
-		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: ../../../htdocs/bookcal/class/availabilities.class.php
-
-		-
-			message: '#^Method Availabilities\:\:fetchAll\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/bookcal/class/availabilities.class.php
-
-		-
-			message: '#^Method Availabilities\:\:getLinesArray\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/bookcal/class/availabilities.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/bookcal/class/availabilities.class.php
-
-		-
-			message: '#^Property Availabilities\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/bookcal/class/availabilities.class.php
-
-		-
-			message: '#^Variable \$url in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 2
-			path: ../../../htdocs/bookcal/class/availabilities.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(Calendar\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/bookcal/class/calendar.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(Calendar\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/bookcal/class/calendar.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Calendar\) and ''fk_soc'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/bookcal/class/calendar.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Calendar\) and ''label'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/bookcal/class/calendar.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Calendar and ''date_creation'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/bookcal/class/calendar.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Calendar and ''date_modification'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/bookcal/class/calendar.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Calendar and ''label'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/bookcal/class/calendar.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Calendar and ''ref'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/bookcal/class/calendar.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with Calendar and ''status'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/bookcal/class/calendar.class.php
-
-		-
-			message: '#^Left side of && is always false\.$#'
-			identifier: booleanAnd.leftAlwaysFalse
-			count: 1
-			path: ../../../htdocs/bookcal/class/calendar.class.php
-
-		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: ../../../htdocs/bookcal/class/calendar.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/bookcal/class/calendar.class.php
-
-		-
-			message: '#^Property Calendar\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/bookcal/class/calendar.class.php
-
-		-
-			message: '#^Variable \$url in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 2
-			path: ../../../htdocs/bookcal/class/calendar.class.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 3
-			path: ../../../htdocs/bookcal/lib/bookcal_availabilities.lib.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/bookcal/lib/bookcal_availabilities.lib.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 2
-			path: ../../../htdocs/bookcal/lib/bookcal_calendar.lib.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 2
-			path: ../../../htdocs/bookcal/lib/bookcal_calendar.lib.php
 
 		-
 			message: '#^Call to function is_array\(\) with array\<mixed\> will always evaluate to true\.$#'
@@ -3145,18 +2791,6 @@ parameters:
 			path: ../../../htdocs/comm/propal/class/propal.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$ref_ext \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$total_ht \(float\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -3308,18 +2942,6 @@ parameters:
 
 		-
 			message: '#^Property Commande\:\:\$socid \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$ref_ext \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/commande/class/commande.class.php
@@ -4054,18 +3676,6 @@ parameters:
 			message: '#^Property CommonInvoice\:\:\$type \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/compta/facture/class/facture.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$ref_ext \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
 			path: ../../../htdocs/compta/facture/class/facture.class.php
 
 		-
@@ -5287,60 +4897,6 @@ parameters:
 			path: ../../../htdocs/contact/card.php
 
 		-
-			message: '#^Call to function method_exists\(\) with \$this\(Contact\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/contact/class/contact.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(Contact\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/contact/class/contact.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Contact\) and ''photo'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/contact/class/contact.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Contact\) and ''thirdparty'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/contact/class/contact.class.php
-
-		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: ../../../htdocs/contact/class/contact.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 3
-			path: ../../../htdocs/contact/class/contact.class.php
-
-		-
-			message: '#^Property Contact\:\:\$roles \(array\<int, array\<string, int\|string\>\>\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/contact/class/contact.class.php
-
-		-
-			message: '#^Property Contact\:\:\$stcomm_id \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/contact/class/contact.class.php
-
-		-
-			message: '#^Variable \$url in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 2
-			path: ../../../htdocs/contact/class/contact.class.php
-
-		-
 			message: '#^Loose comparison using \=\= between 0 and 1 will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
 			count: 1
@@ -5425,136 +4981,10 @@ parameters:
 			path: ../../../htdocs/contrat/card.php
 
 		-
-			message: '#^Call to function method_exists\(\) with \$this\(Contrat\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/contrat/class/contrat.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(Contrat\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/contrat/class/contrat.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Contrat\) and ''date_contrat'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/contrat/class/contrat.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 4
-			path: ../../../htdocs/contrat/class/contrat.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/contrat/class/contrat.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$ref_ext \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/contrat/class/contrat.class.php
-
-		-
-			message: '#^Property Contrat\:\:\$fk_commercial_signature \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/contrat/class/contrat.class.php
-
-		-
-			message: '#^Property Contrat\:\:\$fk_commercial_suivi \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/contrat/class/contrat.class.php
-
-		-
-			message: '#^Property Contrat\:\:\$ref_customer \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/contrat/class/contrat.class.php
-
-		-
-			message: '#^Property Contrat\:\:\$ref_supplier \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/contrat/class/contrat.class.php
-
-		-
-			message: '#^Property Contrat\:\:\$socid \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/contrat/class/contrat.class.php
-
-		-
-			message: '#^Property Contrat\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/contrat/class/contrat.class.php
-
-		-
-			message: '#^Property Contrat\:\:\$statut \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/contrat/class/contrat.class.php
-
-		-
-			message: '#^Variable \$sql might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/contrat/class/contrat.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/contrat/class/contratligne.class.php
-
-		-
-			message: '#^Offset ''label'' on array\{label\: non\-falsy\-string\} in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.offset
-			count: 1
-			path: ../../../htdocs/contrat/class/contratligne.class.php
-
-		-
-			message: '#^Variable \$label in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/contrat/class/contratligne.class.php
-
-		-
 			message: '#^Variable \$mesg might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/contrat/contact.php
-
-		-
-			message: '#^Variable \$badgeStatus0 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/contrat/index.php
-
-		-
-			message: '#^Variable \$badgeStatus1 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/contrat/index.php
-
-		-
-			message: '#^Variable \$badgeStatus4 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/contrat/index.php
-
-		-
-			message: '#^Variable \$badgeStatus6 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/contrat/index.php
 
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
@@ -5728,12 +5158,6 @@ parameters:
 			message: '#^Variable \$from might not be defined\.$#'
 			identifier: variable.undefined
 			count: 5
-			path: ../../../htdocs/core/actions_massactions.inc.php
-
-		-
-			message: '#^Variable \$holiday might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
 			path: ../../../htdocs/core/actions_massactions.inc.php
 
 		-
@@ -7627,18 +7051,6 @@ parameters:
 			path: ../../../htdocs/core/class/html.formsetup.class.php
 
 		-
-			message: '#^Loose comparison using \!\= between 1 and ''1'' will always evaluate to false\.$#'
-			identifier: notEqual.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/class/html.formsms.class.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/class/html.formsms.class.php
-
-		-
 			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -7669,15 +7081,9 @@ parameters:
 			path: ../../../htdocs/core/class/html.formticket.class.php
 
 		-
-			message: '#^Call to function is_object\(\) with mixed will always evaluate to false\.$#'
-			identifier: function.impossibleType
-			count: 2
-			path: ../../../htdocs/core/class/interfaces.class.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 4
+			count: 2
 			path: ../../../htdocs/core/class/interfaces.class.php
 
 		-
@@ -10981,18 +10387,6 @@ parameters:
 			path: ../../../htdocs/don/class/api_donations.class.php
 
 		-
-			message: '#^Call to function property_exists\(\) with \$this\(Don\) and ''societe'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/don/class/don.class.php
-
-		-
-			message: '#^Property Don\:\:\$societe \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/don/class/don.class.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 5
@@ -11059,40 +10453,10 @@ parameters:
 			path: ../../../htdocs/don/document.php
 
 		-
-			message: '#^Variable \$badgeStatus0 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/don/index.php
-
-		-
-			message: '#^Variable \$badgeStatus1 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/don/index.php
-
-		-
-			message: '#^Variable \$badgeStatus6 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/don/index.php
-
-		-
-			message: '#^Variable \$badgeStatus9 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/don/index.php
-
-		-
 			message: '#^Variable \$maxlength might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/don/info.php
-
-		-
-			message: '#^Variable \$projectstatic might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
-			path: ../../../htdocs/don/list.php
 
 		-
 			message: '#^Variable \$maxlength might not be defined\.$#'
@@ -11137,114 +10501,6 @@ parameters:
 			path: ../../../htdocs/don/payment/payment.php
 
 		-
-			message: '#^Property EcmFiles\:\:\$acl \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: '#^Property EcmFiles\:\:\$cover \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: '#^Property EcmFiles\:\:\$date_c \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: '#^Property EcmFiles\:\:\$date_m \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: '#^Property EcmFiles\:\:\$description \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: '#^Property EcmFiles\:\:\$filename \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: '#^Property EcmFiles\:\:\$filepath \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: '#^Property EcmFiles\:\:\$fk_user_c \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: '#^Property EcmFiles\:\:\$fk_user_m \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: '#^Property EcmFiles\:\:\$fullpath_orig \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: '#^Property EcmFiles\:\:\$gen_or_uploaded \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: '#^Property EcmFiles\:\:\$keywords \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: '#^Property EcmFiles\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: '#^Property EcmFiles\:\:\$position \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: '#^Property EcmFiles\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: '#^Property EcmFiles\:\:\$share \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: '#^Property EcmFiles\:\:\$src_object_id \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
-			message: '#^Property EcmFiles\:\:\$src_object_type \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/ecm/class/ecmfiles.class.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
@@ -11257,36 +10513,6 @@ parameters:
 			path: ../../../htdocs/ecm/dir_add_card.php
 
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/ecm/file_card.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/ecm/file_card.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../../htdocs/ecm/file_card.php
-
-		-
-			message: '#^Ternary operator condition is always true\.$#'
-			identifier: ternary.alwaysTrue
-			count: 1
-			path: ../../../htdocs/ecm/file_card.php
-
-		-
-			message: '#^Variable \$module might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/ecm/file_card.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 2
@@ -11297,12 +10523,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/ecm/search.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/ecm/tpl/enablefiletreeajax.tpl.php
 
 		-
 			message: '#^Variable \$param might not be defined\.$#'
@@ -11569,66 +10789,6 @@ parameters:
 			path: ../../../htdocs/eventorganization/conferenceorboothattendee_list.php
 
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
-
-		-
-			message: '#^Variable \$action might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
-
-		-
-			message: '#^Variable \$deliveryreceipt might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
-
-		-
-			message: '#^Variable \$from might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
-			path: ../../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
-
-		-
-			message: '#^Variable \$hookmanager might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
-
-		-
-			message: '#^Variable \$triggername in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
-
-		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/eventorganization/core/actions_massactions_mail.inc.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 2
@@ -11710,18 +10870,6 @@ parameters:
 			message: '#^Property CommonObject\:\:\$fk_delivery_address \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
-			path: ../../../htdocs/expedition/class/expedition.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/expedition/class/expedition.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$ref_ext \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
 			path: ../../../htdocs/expedition/class/expedition.class.php
 
 		-
@@ -12145,12 +11293,6 @@ parameters:
 			path: ../../../htdocs/fichinter/card.php
 
 		-
-			message: '#^Variable \$line might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/fichinter/card.php
-
-		-
 			message: '#^Right side of && is always false\.$#'
 			identifier: booleanAnd.rightAlwaysFalse
 			count: 1
@@ -12319,12 +11461,6 @@ parameters:
 			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$ref_ext \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
@@ -12424,12 +11560,6 @@ parameters:
 			message: '#^Property CommonInvoiceLine\:\:\$info_bits \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$ref_ext \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
 			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
 
 		-
@@ -13821,12 +12951,6 @@ parameters:
 		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/knowledgemanagement/knowledgerecord_card.php
-
-		-
-			message: '#^Property KnowledgeRecord\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/knowledgemanagement/knowledgerecord_card.php
 
@@ -16693,12 +15817,6 @@ parameters:
 			path: ../../../htdocs/projet/class/task.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/projet/class/task.class.php
-
-		-
 			message: '#^Property Task\:\:\$budget_amount \(float\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -18103,12 +17221,6 @@ parameters:
 			path: ../../../htdocs/reception/class/reception.class.php
 
 		-
-			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/reception/class/reception.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$shipping_method_id \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -18649,12 +17761,6 @@ parameters:
 			path: ../../../htdocs/resource/card.php
 
 		-
-			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/resource/class/dolresource.class.php
-
-		-
 			message: '#^Property Dolresource\:\:\$busy \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -19147,7 +18253,7 @@ parameters:
 			path: ../../../htdocs/societe/class/societe.class.php
 
 		-
-			message: '#^Property Contact\:\:\$roles \(array\<int, array\{id\: int, socid\: int, element\: string, source\: string, code\: string, label\: string\}\>\) does not accept non\-empty\-list\<string\>\.$#'
+			message: '#^Property Contact\:\:\$roles \(array\<int, array\{id\: int, socid\: int, element\: string, source\: string, code\: string, label\: string\}\>\|null\) does not accept non\-empty\-list\<string\>\.$#'
 			identifier: assign.propertyType
 			count: 1
 			path: ../../../htdocs/societe/class/societe.class.php
@@ -19597,12 +18703,6 @@ parameters:
 			path: ../../../htdocs/takepos/freezone.php
 
 		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/takepos/genimg/index.php
-
-		-
 			message: '#^Variable \$db might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -19852,12 +18952,6 @@ parameters:
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
-			path: ../../../htdocs/ticket/class/ticket.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
 			path: ../../../htdocs/ticket/class/ticket.class.php
 
 		-
@@ -20890,24 +19984,6 @@ parameters:
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
 			count: 1
-			path: ../../../htdocs/website/samples/wrapper.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/website/samples/wrapper.php
-
-		-
-			message: '#^Variable \$db might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/website/samples/wrapper.php
-
-		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
 			path: ../../../htdocs/website/samples/wrapper.php
 
 		-
