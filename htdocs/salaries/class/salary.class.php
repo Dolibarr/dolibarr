@@ -2,7 +2,7 @@
 /* Copyright (C) 2011-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -253,11 +253,9 @@ class Salary extends CommonObject
 		}
 
 		// Update extrafield
-		if (!$error) {
-			$result = $this->insertExtraFields();
-			if ($result < 0) {
-				$error++;
-			}
+		$result = $this->insertExtraFields();
+		if ($result < 0) {
+			$error++;
 		}
 
 		if (!$notrigger) {
@@ -340,7 +338,7 @@ class Salary extends CommonObject
 				$this->status 			= $obj->paye;
 				$this->fk_bank          = $obj->fk_bank;
 				$this->fk_user_author   = $obj->fk_user_author;
-				$this->fk_user_modif    = $obj->fk_user_modif;
+				$this->fk_user_modif = $obj->fk_user_modif;
 				$this->fk_account = $obj->fk_account;
 				$this->accountid = $obj->fk_account;
 
@@ -485,11 +483,9 @@ class Salary extends CommonObject
 
 			if ($this->id > 0) {
 				// Update extrafield
-				if (!$error) {
-					$result = $this->insertExtraFields();
-					if ($result < 0) {
-						$error++;
-					}
+				$result = $this->insertExtraFields();
+				if ($result < 0) {
+					$error++;
 				}
 
 				// Call trigger
