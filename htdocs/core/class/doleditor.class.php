@@ -410,7 +410,7 @@ class DolEditor
 						//enableSnippets: true,				// ???
 						showPrintMargin: false, 			// hides the vertical limiting strip
 						minLines: 10,
-						maxLines: '.(empty($this->height) ? '34' : (round($this->height / 10))).',
+						maxLines: '.(empty($this->height) ? '34' : (round(($this->height - 60) / 19))).',		// we remove 60 for the ace toolbar + bottom status line. 19 seems the height in px required for 1 line.
 				    	fontSize: "110%" // ensures that the editor fits in the environment
 					});
 

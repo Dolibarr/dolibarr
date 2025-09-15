@@ -309,7 +309,7 @@ class pdf_sponge extends ModelePDFFactures
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->facture->multidir_output[$object->entity]."/".$objectref;
+				$dir = $conf->facture->multidir_output[$object->entity ?? $conf->entity]."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
 			if (!file_exists($dir)) {
@@ -360,8 +360,8 @@ class pdf_sponge extends ModelePDFFactures
 				// Set path to the background PDF File
 				if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
 					$logodir = $conf->mycompany->dir_output;
-					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-						$logodir = $conf->mycompany->multidir_output[$object->entity];
+					if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+						$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 					}
 					$pagecount = $pdf->setSourceFile($logodir.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
@@ -1108,8 +1108,8 @@ class pdf_sponge extends ModelePDFFactures
 				// Add terms to sale
 				if (!empty($mysoc->termsofsale) && getDolGlobalInt('MAIN_PDF_ADD_TERMSOFSALE_INVOICE')) {
 					$termsofsale = $conf->mycompany->dir_output.'/'.$mysoc->termsofsale;
-					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-						$termsofsale = $conf->mycompany->multidir_output[$object->entity].'/'.$mysoc->termsofsale;
+					if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+						$termsofsale = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity].'/'.$mysoc->termsofsale;
 					}
 					if (file_exists($termsofsale) && is_readable($termsofsale)) {
 						$pagecount = $pdf->setSourceFile($termsofsale);
@@ -1590,7 +1590,7 @@ class pdf_sponge extends ModelePDFFactures
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 					global $langs;
 
-					$langs->loadLangs(array('payment', 'paybox', 'stripe'));
+					$langs->loadLangs(array('payment', 'stripe'));
 					$servicename = $langs->transnoentities('Online');
 					$paiement_url = getOnlinePaymentUrl(0, 'invoice', $object->ref, 0, '', 0);
 					$linktopay = $langs->trans("ToOfferALinkForOnlinePayment", $servicename).' <a href="'.$paiement_url.'">'.$outputlangs->transnoentities("ClickHere").'</a>';
@@ -2446,8 +2446,8 @@ class pdf_sponge extends ModelePDFFactures
 		if (!getDolGlobalInt('PDF_DISABLE_MYCOMPANY_LOGO')) {
 			if ($this->emetteur->logo) {
 				$logodir = $conf->mycompany->dir_output;
-				if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-					$logodir = $conf->mycompany->multidir_output[$object->entity];
+				if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+					$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 				}
 				if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
 					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
@@ -2938,7 +2938,7 @@ class pdf_sponge extends ModelePDFFactures
 			'border-left' => true, // add left line separator
 		);
 
-		if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT') && !getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN')) {
+		if (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT') && !getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN') && !getDolGlobalBool('PDF_PURCHASE_INVOICE_HIDE_VAT')) {
 			$this->cols['vat']['status'] = true;
 		}
 
@@ -3022,7 +3022,7 @@ class pdf_sponge extends ModelePDFFactures
 		$this->cols['totalexcltax'] = array(
 			'rank' => $rank,
 			'width' => 26, // in mm
-			'status' => !getDolGlobalBool('PDF_INVOICE_HIDE_PRICE_EXCL_TAX'),
+			'status' => !getDolGlobalBool('PDF_INVOICE_HIDE_PRICE_EXCL_TAX') && !getDolGlobalBool('PDF_PURCHASE_INVOICE_HIDE_PRICE_EXCL_TAX'),
 			'title' => array(
 				'textkey' => 'TotalHTShort'
 			),
@@ -3033,7 +3033,7 @@ class pdf_sponge extends ModelePDFFactures
 		$this->cols['totalincltax'] = array(
 			'rank' => $rank,
 			'width' => 26, // in mm
-			'status' => getDolGlobalBool('PDF_INVOICE_SHOW_PRICE_INCL_TAX'),
+			'status' => getDolGlobalBool('PDF_INVOICE_SHOW_PRICE_INCL_TAX') && !getDolGlobalBool('PDF_PURCHASE_INVOICE_SHOW_PRICE_INCL_TAX'),
 			'title' => array(
 				'textkey' => 'TotalTTCShort'
 			),

@@ -58,7 +58,7 @@ class PaymentTerm // extends CommonObject
 
 
 	/**
-	 * @var int Entity ID
+	 * @var ?int Entity ID
 	 */
 	public $entity;
 

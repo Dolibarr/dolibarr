@@ -201,9 +201,7 @@ $head = email_admin_prepare_head();
 $listofmethods = array();
 $listofmethods['mail'] = 'PHP mail function';
 $listofmethods['smtps'] = 'SMTP/SMTPS socket library';
-if (version_compare(phpversion(), '7.0', '>=')) {
-	$listofmethods['swiftmailer'] = 'Swift Mailer socket library';
-}
+$listofmethods['swiftmailer'] = 'Swift Mailer socket library';
 
 // List of oauth services
 $oauthservices = array();
@@ -1150,7 +1148,7 @@ if ($action == 'edit') {
 				print info_admin($langs->trans("SPFAndDMARCInformation").' :<br>'.$text, 0, 0, '1', '');
 			}
 		} else {
-			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=testsetup">'.$langs->trans("ClickHereToCheckSPFDMARCForSetup").'</a>';
+			print img_picto('', 'info', 'class="pictofixedwidth"').'<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=testsetup">'.$langs->trans("ClickHereToCheckSPFDMARCForSetup").'...</a>';
 			print '<br><br>';
 		}
 	}

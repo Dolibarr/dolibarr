@@ -83,20 +83,27 @@ class modCaptchaStandard extends ModeleCaptcha
 
 		$generator = new modGeneratePassStandard($db, $conf, $langs, $user);
 		$example = $generator->getExample();
-		$img = imagecreate(80, 32);
-		if (!$img) {
-			return "Problem with GD creation";
+
+		if (function_exists("imagecreate") && function_exists("imagepng")) {
+			$img = imagecreate(80, 32);
+			if (!$img) {
+				return "Problem with GD creation";
+			}
+			//$background_color = imagecolorallocate($img, 250, 250, 250);
+			$ecriture_color = imagecolorallocate($img, 0, 0, 0);
+			imagestring($img, 4, 15, 8, $example, $ecriture_color);
+
+			ob_start();
+			imagepng($img);
+			$image_data = ob_get_contents();
+			ob_end_clean();
+
+			return '<img class="inline-block valignmiddle" src="data:image/png;base64,' . base64_encode($image_data) . '" border="0" width="80" height="32" />';
+		} else {
+			// Image grise
+			$image_data_base64 = 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAAFElEQVR4nGNsaGhgwA2Y8MiNYGkA22EBlPG3fjQAAAAASUVORK5CYII=';
+			return '<img class="inline-block valignmiddle" src="data:image/png;base64,' . $image_data_base64 . '" border="0" width="80" height="32" />';
 		}
-		$background_color = imagecolorallocate($img, 250, 250, 250);
-		$ecriture_color = imagecolorallocate($img, 0, 0, 0);
-		imagestring($img, 4, 15, 8, $example, $ecriture_color);
-
-		ob_start();
-		imagepng($img);
-		$image_data = ob_get_contents();
-		ob_end_clean();
-
-		return '<img class="inline-block valignmiddle" src="data:image/png;base64,' . base64_encode($image_data) . '" border="0" width="80" height="32" />';
 	}
 
 	/**

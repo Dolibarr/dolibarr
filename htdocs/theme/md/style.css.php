@@ -1952,19 +1952,34 @@ select.flat.selectlimit {
 	font-weight: bold;
 	white-space: nowrap;
 }
+.amountpaymentcompletenoresize {
+	color: var(--amountpaymentcomplete);
+	white-space: nowrap;
+}
 .amountremaintopay {
 	color: var(--amountremaintopaycolor);
 	font-weight: bold;
+	white-space: nowrap;
+}
+.amountremaintopaynoresize {
+	color: var(--amountremaintopaycolor);
 	white-space: nowrap;
 }
 .amountremaintopayback {
 	font-weight: bold;
 	white-space: nowrap;
 }
+.amountremaintopaybacknoresize {
+	white-space: nowrap;
+}
 .amountpaymentneutral {
 	color: var(--amountremaintopaybackcolor);
 	font-weight: bold;
 	font-size: 1.4em;
+	white-space: nowrap;
+}
+.amountpaymentneutralnoresize {
+	color: var(--amountremaintopaybackcolor);
 	white-space: nowrap;
 }
 
@@ -2053,7 +2068,8 @@ div.ticketpublicarealist>form>div.div-table-responsive {
 	flex:1;
 }
 .flex-item-uploadfile {
-	border: 2px solid #888;
+	/* border: 2px solid #888; */
+	box-shadow: 2px 3px 10px #ccc;
 	border-radius: 5px;
 	cursor: pointer;
 	text-align: center;
@@ -6012,7 +6028,7 @@ div.visible {
 }
 
 div.hidden, div.hiddenforpopup, header.hidden, tr.hidden, td.hidden,
-img.hidden, span.hidden, br.hidden, div.showifmore {
+img.hidden, span.hidden, br.hidden, div.showifmore, input.hidden {
 	display: none;
 }
 

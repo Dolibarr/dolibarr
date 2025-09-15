@@ -47,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("deliveries", "other"));
+$langs->loadLangs(array("sendings", "other"));
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
@@ -135,7 +135,7 @@ $help_url = "EN:Module_Shippings|FR:Module_Expeditions|ES:M&oacute;dulo_Expedici
 llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-shipping page-card_agenda');
 
 $head = shipping_prepare_head($object);
-print dol_get_fiche_head($head, 'shipping', $langs->trans("Shipment"), -1, $object->picto);
+print dol_get_fiche_head($head, 'agenda', $langs->trans("Shipment"), -1, $object->picto);
 
 
 // Shipping card

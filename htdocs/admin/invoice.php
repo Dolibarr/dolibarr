@@ -335,6 +335,7 @@ foreach ($dirmodels as $reldir) {
 						$classname = "mod_facture_".$file;
 					}
 					// Check if there is a filter on country
+					$reg = array();
 					preg_match('/\-(.*)_(.*)$/', $classname, $reg);
 					if (!empty($reg[2]) && $reg[2] != strtoupper($mysoc->country_code)) {
 						continue;
@@ -359,6 +360,8 @@ foreach ($dirmodels as $reldir) {
 }
 
 $arrayofmodules = dol_sort_array($arrayofmodules, 'position');
+/** @var ModeleNumRefFactures[] $arrayofmodules */
+'@phan-var-force ModeleNumRefFactures[] $arrayofmodules';
 
 foreach ($arrayofmodules as $module) {
 	$file = strtolower($module->getName($langs));
@@ -558,6 +561,7 @@ foreach ($dirmodels as $reldir) {
 							$module = new $classname($db);
 
 							'@phan-var-force ModelePDFFactures $module';
+							/** @var ModelePDFFactures $module */
 
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {

@@ -77,7 +77,7 @@ if (isModEnabled('variants')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'deliveries', 'products', 'other'));
+$langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'products', 'other'));
 
 if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
@@ -1921,7 +1921,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$result = $object->cancel($idwarehouse);
+			$result = $object->cancel($user, $idwarehouse);
 
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -2035,7 +2035,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT . '/core/actions_printing.inc.php';
 
 	// Actions to build doc
-	$upload_dir = !empty($conf->commande->multidir_output[$object->entity]) ? $conf->commande->multidir_output[$object->entity] : $conf->commande->dir_output;
+	$upload_dir = !empty($conf->commande->multidir_output[$object->entity ?? $conf->entity]) ? $conf->commande->multidir_output[$object->entity ?? $conf->entity] : $conf->commande->dir_output;
 	$permissiontoadd = $usercancreate;
 	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 
@@ -2180,7 +2180,7 @@ if ($action == 'create' && $usercancreate) {
 			$objectsrc->fetch_optionals();
 			$object->array_options = $objectsrc->array_options;
 
-			$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
+			$projectid = (int) $objectsrc->fk_project;
 			$ref_client = (!empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
 
 			$soc = $objectsrc->thirdparty;
@@ -2377,7 +2377,7 @@ if ($action == 'create' && $usercancreate) {
 		// Terms of payment
 		print '<tr><td class="nowrap">' . $langs->trans('PaymentConditionsShort') . '</td><td>';
 		print img_picto('', 'payment', 'class="pictofixedwidth"');
-		print $form->getSelectConditionsPaiements($cond_reglement_id, 'cond_reglement_id', 1, 1, 0, 'maxwidth200 widthcentpercentminusx', (float) $deposit_percent);
+		print $form->getSelectConditionsPaiements((int) $cond_reglement_id, 'cond_reglement_id', 1, 1, 0, 'maxwidth200 widthcentpercentminusx', (float) $deposit_percent);
 		print '</td></tr>';
 
 		// Payment mode
@@ -2633,7 +2633,7 @@ if ($action == 'create' && $usercancreate) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			} else {
-				$numref = $object->ref;
+				$numref = (string) $object->ref;
 			}
 
 			$text = $langs->trans('ConfirmValidateOrder', $numref);
@@ -3640,7 +3640,7 @@ if ($action == 'create' && $usercancreate) {
 			// Documents
 			$objref = dol_sanitizeFileName($object->ref);
 			$relativepath = $objref . '/' . $objref . '.pdf';
-			$filedir = $conf->commande->multidir_output[$object->entity] . '/' . $objref;
+			$filedir = $conf->commande->multidir_output[$object->entity ?? $conf->entity] . '/' . $objref;
 			$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
 			$genallowed = $usercanread;
 			$delallowed = $usercancreate;

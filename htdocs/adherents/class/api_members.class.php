@@ -2,7 +2,7 @@
 /* Copyright (C) 2016	    Xebax Christy	        <xebax@wanadoo.fr>
  * Copyright (C) 2017	    Regis Houssin	        <regis.houssin@inodbox.com>
  * Copyright (C) 2020	    Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2020-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2020-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -138,7 +138,7 @@ class Members extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$sql = "SELECT rowid, fk_soc, key_account, site, date_creation, tms FROM ".MAIN_DB_PREFIX."societe_account";
+		$sql = "SELECT rowid, fk_soc as socid, key_account, site, date_creation, tms FROM ".MAIN_DB_PREFIX."societe_account";
 		$sql .= " WHERE site = '".$this->db->escape($site)."' AND key_account = '".$this->db->escape($key_account)."'";
 		$sql .= " AND entity IN (".getEntity('adherent').")";
 
@@ -147,7 +147,7 @@ class Members extends DolibarrApi
 		if ($result && $this->db->num_rows($result) == 1) {
 			$obj = $this->db->fetch_object($result);
 			$thirdparty = new Societe($this->db);
-			$result = $thirdparty->fetch($obj->fk_soc);
+			$result = $thirdparty->fetch($obj->socid);
 
 			if ($result <= 0) {
 				throw new RestException(404, 'thirdparty not found');

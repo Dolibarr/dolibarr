@@ -158,7 +158,7 @@ class pdf_squille extends ModelePdfReception
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
-		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "propal", "deliveries", "receptions", "productbatch", "sendings"));
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "propal", "receptions", "productbatch", "sendings"));
 
 		// Show Draft Watermark
 		if ($object->status == $object::STATUS_DRAFT && (getDolGlobalString('RECEPTION_DRAFT_WATERMARK'))) {
@@ -926,8 +926,8 @@ class pdf_squille extends ModelePdfReception
 		// Logo
 		if ($this->emetteur->logo) {
 			$logodir = $conf->mycompany->dir_output;
-			if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-				$logodir = $conf->mycompany->multidir_output[$object->entity];
+			if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+				$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 			}
 			if (!getDolGlobalInt('MAIN_PDF_USE_LARGE_LOGO')) {
 				$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;

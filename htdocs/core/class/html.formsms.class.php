@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 /**
  *       \file       htdocs/core/class/html.formsms.class.php
  *       \ingroup    core
- *       \brief      Fichier de la class permettant la generation du formulaire html d'envoi de mail unitaire
+ *       \brief      Class file for generating the HTML form used to send individual SMS messages
  */
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
@@ -84,7 +84,7 @@ class FormSms
 	public $withfrom;
 
 	/**
-	 * @var int<0,1>
+	 * @var int<0,1>|string[]
 	 */
 	public $withto;
 
@@ -315,7 +315,7 @@ function limitChars(textarea, limit, infodiv)
 			if ($this->withtoreadonly) {
 				print (!is_array($this->withto) && !is_numeric($this->withto)) ? $this->withto : "";
 			} else {
-				print '<input class="width150" id="sendto" name="sendto" value="'.dol_escape_htmltag(!is_array($this->withto) && $this->withto != '1' ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "+").'">';
+				print '<input class="width150" id="sendto" name="sendto" value="'.dol_escape_htmltag(!is_array($this->withto) /* && $this->withto != '1' // always true */ ? (GETPOSTISSET("sendto") ? GETPOST("sendto") : $this->withto) : "+").'">';
 				if (!empty($this->withtosocid) && $this->withtosocid > 0) {
 					$liste = array();
 					foreach ($soc->thirdparty_and_contact_phone_array() as $key => $value) {

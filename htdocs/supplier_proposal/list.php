@@ -125,7 +125,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortfield) {
-	$sortfield = 'sp.date_livraison';
+	$sortfield = 'sp.ref';
 }
 if (!$sortorder) {
 	$sortorder = 'DESC';

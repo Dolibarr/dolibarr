@@ -341,7 +341,7 @@ class Propal extends CommonObject
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -374,10 +374,10 @@ class Propal extends CommonObject
 		'fin_validite' => array('type' => 'datetime', 'label' => 'DateEnd', 'enabled' => 1, 'visible' => -1, 'position' => 65),
 		'date_valid' => array('type' => 'datetime', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -1, 'position' => 70),
 		'date_cloture' => array('type' => 'datetime', 'label' => 'DateClosing', 'enabled' => 1, 'visible' => -1, 'position' => 75),
-		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fk user author', 'enabled' => 1, 'visible' => -1, 'position' => 80),
+		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'position' => 80),
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 85),
 		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'position' => 90),
-		'fk_user_cloture' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fk user cloture', 'enabled' => 1, 'visible' => -1, 'position' => 95),
+		'fk_user_cloture' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserClosing', 'enabled' => 1, 'visible' => -1, 'position' => 95),
 		'price' => array('type' => 'double', 'label' => 'Price', 'enabled' => 1, 'visible' => -1, 'position' => 105),
 		'total_ht' => array('type' => 'double(24,8)', 'label' => 'TotalHT', 'enabled' => 1, 'visible' => -1, 'position' => 125, 'isameasure' => 1),
 		'total_tva' => array('type' => 'double(24,8)', 'label' => 'VAT', 'enabled' => 1, 'visible' => -1, 'position' => 130, 'isameasure' => 1),
@@ -568,9 +568,6 @@ class Propal extends CommonObject
 			$line->rang = -1;
 			$line->info_bits = 2;
 
-			// TODO deprecated
-			$line->price = -(float) $remise->amount_ht;
-
 			$line->total_ht  = -(float) $remise->amount_ht;
 			$line->total_tva = -(float) $remise->amount_tva;
 			$line->total_ttc = -(float) $remise->amount_ttc;
@@ -622,8 +619,8 @@ class Propal extends CommonObject
 	 *      @param		int			$fk_fournprice		Id supplier price
 	 *      @param		float|string	$pa_ht			Buying price without tax ('' to keep PMP unchanged or a float)
 	 *      @param		string		$label				???
-	 *		@param      int|string	$date_start       	Start date of the line
-	 *		@param      int|string	$date_end         	End date of the line
+	 *		@param      int|''		$date_start       	Start date of the line
+	 *		@param      int|''		$date_end         	End date of the line
 	 *      @param		array<string,mixed>	$array_options	extrafields array
 	 * 		@param 		int|null	$fk_unit 			Code of the unit to use. Null to use the default one
 	 *      @param		string		$origin				Depend on global conf MAIN_CREATEFROM_KEEP_LINE_ORIGIN_INFORMATION can be 'orderdet', 'propaldet'..., else 'order','propal,'....
@@ -785,15 +782,6 @@ class Propal extends CommonObject
 				$ranktouse = $rangmax + 1;
 			}
 
-			// TODO A virer
-			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
-			$price = $pu;
-			$remise = 0;
-			if ((float) $remise_percent > 0) {
-				$remise = round(((float) $pu * (float) $remise_percent / 100), 2);
-				$price = (float) $pu - $remise;
-			}
-
 			// Insert line
 			$this->line = new PropaleLigne($this->db);
 
@@ -847,9 +835,6 @@ class Propal extends CommonObject
 			if (empty($qty) && empty($special_code)) {
 				$this->line->special_code = 3;
 			}
-
-			// TODO deprecated
-			$this->line->price = $price;
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				$this->line->array_options = $array_options;
@@ -925,8 +910,8 @@ class Propal extends CommonObject
 	 *  @param		float|string	$pa_ht			Price (without tax) of product when it was bought (Can be '' to keep AWP unchanged or a float value)
 	 *  @param		string		$label				???
 	 *  @param		int			$type				0/1=Product/service
-	 *	@param      int|string	$date_start       	Start date of the line
-	 *	@param      int|string	$date_end         	End date of the line
+	 *	@param      int|''		$date_start       	Start date of the line
+	 *	@param      int|''		$date_end         	End date of the line
 	 *  @param		array<string,mixed>	$array_options	extrafields array
 	 * 	@param 		int|null	$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param		float		$pu_ht_devise		Unit price in currency
@@ -1005,14 +990,6 @@ class Propal extends CommonObject
 			$multicurrency_total_ttc = $tabprice[18];
 			$pu_ht_devise = $tabprice[19];
 
-			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
-			$price = $pu;
-			$remise = 0;
-			if ((float) $remise_percent > 0) {
-				$remise = round(((float) $pu * (float) $remise_percent / 100), 2);
-				$price = (float) $pu - $remise;
-			}
-
 			// Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new PropaleLigne($this->db);
 			$line->fetch($rowid);
@@ -1034,7 +1011,10 @@ class Propal extends CommonObject
 				if ($qty < $this->line->packaging) {
 					$qty = $this->line->packaging;
 				} else {
-					if (!empty($this->line->packaging) && ($qty % $this->line->packaging) > 0) {
+					if (!empty($this->line->packaging)
+						&& is_numeric($this->line->packaging)
+						&& (float) $this->line->packaging > 0
+						&& fmod((float) $qty, (float) $this->line->packaging) > 0) {
 						$coeff = intval($qty / $this->line->packaging) + 1;
 						$qty = $this->line->packaging * $coeff;
 						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');
@@ -2020,7 +2000,6 @@ class Propal extends CommonObject
 				$line->subprice         = $objp->subprice;
 				$line->fk_remise_except = $objp->fk_remise_except;
 				$line->remise_percent   = $objp->remise_percent;
-				$line->price            = $objp->price; // TODO deprecated
 
 				$line->info_bits        = $objp->info_bits;
 				$line->total_ht         = $objp->total_ht;
@@ -2132,7 +2111,7 @@ class Propal extends CommonObject
 		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
 			$num = $this->getNextNumRef($soc);
 		} else {
-			$num = $this->ref;
+			$num = (string) $this->ref;
 		}
 		$this->newref = dol_sanitizeFileName($num);
 
@@ -3658,7 +3637,6 @@ class Propal extends CommonObject
 			$line->desc = $langs->trans("Description")." ".$xnbp;
 			$line->qty = 1;
 			$line->subprice = 100;
-			$line->price = 100;
 			$line->tva_tx = 20;
 			$line->localtax1_tx = 0;
 			$line->localtax2_tx = 0;
@@ -4019,10 +3997,7 @@ class Propal extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $langs;
-
-		$langs->load("propale");
-		$outputlangs->load("products");
+		$outputlangs->loadLangs(array("propale", "products"));
 
 		if (!dol_strlen($modele)) {
 			$modele = 'azur';

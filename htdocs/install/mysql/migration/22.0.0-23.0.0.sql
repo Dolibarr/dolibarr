@@ -33,20 +33,81 @@
 -- To rebuild sequence for postgresql after insert, by forcing id autoincrement fields:
 -- -- VPGSQL8.2 SELECT dol_util_rebuild_sequences();
 
+-- V22 forgotten
+
+ALTER TABLE llx_opensurvey_user_studs ADD COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+
 -- V23 migration
 
-create table llx_paiement_extrafields
-(
-  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  fk_object                 integer NOT NULL,
-  import_key                varchar(14)                                 -- import key
+CREATE TABLE llx_paiement_extrafields (
+	rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+	tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_object                 integer NOT NULL,
+	import_key                varchar(14)                                 -- import key
 ) ENGINE=innodb;
 
 ALTER TABLE llx_paiement_extrafields ADD UNIQUE INDEX uk_paiement_extrafields (fk_object);
 
+CREATE TABLE llx_accounting_analytic_axis (
+	rowid               integer         AUTO_INCREMENT PRIMARY KEY,
+	label               varchar(255)    NOT NULL,
+	code                varchar(32)     NOT NULL,
+	active              integer         DEFAULT 1,
+	entity              integer         DEFAULT 1 NOT NULL,
+	datec               datetime,
+	tms                 timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_user_author      integer         NOT NULL,
+	fk_user_modif       integer,
+	import_key          varchar(14)
+) ENGINE=innodb;
+
+ALTER TABLE llx_accounting_analytic_axis ADD UNIQUE INDEX uk_accounting_analytic_axis(code, entity);
+
+CREATE TABLE llx_accounting_analytic_account (
+	rowid               integer         AUTO_INCREMENT PRIMARY KEY,
+	label               varchar(255)    NOT NULL,
+	code                varchar(32)     NOT NULL,
+	description			text,
+	fk_axis				integer			NOT NULL,
+	active              integer         DEFAULT 1,
+	entity              integer         DEFAULT 1 NOT NULL,
+	date_start			date,
+	date_end			date,
+	datec               datetime,
+	tms                 timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_user_author      integer         NOT NULL,
+	fk_user_modif       integer,
+	import_key          varchar(14)
+) ENGINE=innodb;
+
+ALTER TABLE llx_accounting_analytic_account ADD UNIQUE INDEX uk_accounting_analytic_account(code, entity);
+ALTER TABLE llx_accounting_analytic_account ADD CONSTRAINT fk_accounting_analytic_account_fk_axis FOREIGN KEY (fk_axis) REFERENCES llx_accounting_analytic_axis (rowid);
+
+
+CREATE TABLE llx_accounting_analytic_distribution (
+	rowid				integer			AUTO_INCREMENT PRIMARY KEY,
+	fk_source_line		integer			NOT NULL,		-- id de la ligne source (facture, écriture, etc.)
+	sourcetype			varchar(32)		NOT NULL,		-- ex: 'facturedet', 'accounting_line'
+	fk_analytic_account integer			NOT NULL,
+	percentage			real			DEFAULT 100,	-- ex: 50.0 pour 50%
+	amount				double(24,8),					-- optional, if you prefer to work on the amount
+	entity				integer			DEFAULT 1,
+	datec               datetime,
+	tms                 timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_user_author      integer         NOT NULL,
+	fk_user_modif       integer,
+	import_key          varchar(14)
+) ENGINE=innodb;
+
+ALTER TABLE llx_accounting_analytic_distribution ADD CONSTRAINT fk_accounting_analytic_distribution_fk_analytic_account FOREIGN KEY (fk_analytic_account) REFERENCES llx_accounting_analytic_account (rowid);
+
+ALTER TABLE llx_facture ADD COLUMN dispute_status integer DEFAULT 0 after payment_reference;
+
 ALTER TABLE llx_commande ADD COLUMN ip varchar(250);
 ALTER TABLE llx_commande ADD COLUMN user_agent varchar(255);
+
+ALTER TABLE llx_commande_fournisseur ADD COLUMN date_reception datetime default NULL;
 
 ALTER TABLE llx_c_currencies ADD COLUMN max_decimal_unit tinyint NULL;	-- Number of decimal in this currency for unit prices
 ALTER TABLE llx_c_currencies ADD COLUMN max_decimal_tot tinyint NULL;	-- Number of decimal in this currency for total prices
@@ -56,6 +117,7 @@ ALTER TABLE llx_oauth_token ADD COLUMN apicount_previous_month BIGINT UNSIGNED D
 ALTER TABLE llx_oauth_token ADD COLUMN apicount_month BIGINT UNSIGNED DEFAULT 0;			-- increased by 1 at each page access, saved into pageviews_previous_month when on different month than lastaccess
 ALTER TABLE llx_oauth_token ADD COLUMN apicount_total BIGINT UNSIGNED DEFAULT 0;			-- increased by 1 at each page access, no reset
 
+ALTER TABLE llx_webhook_target ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 
 ALTER TABLE llx_extrafields ADD COLUMN emptyonclone integer DEFAULT 0 AFTER alwayseditable;
 
@@ -77,9 +139,30 @@ ALTER TABLE llx_adherent ADD COLUMN birth_place varchar(64) after birth;
 
 ALTER TABLE llx_societe ADD COLUMN birth date DEFAULT NULL after fk_forme_juridique;
 
+DELETE FROM llx_user_rights WHERE fk_id IN (SELECT id FROM llx_rights_def WHERE module = 'webhook' AND perms = 'webhook_target');
+DELETE FROM llx_usergroup_rights WHERE fk_id IN (SELECT id FROM llx_rights_def WHERE module = 'webhook' AND perms = 'webhook_target');
+
+DELETE FROM llx_rights_def WHERE module = 'webhook' AND perms = 'webhook_target';
+
 ALTER TABLE llx_prelevement_lignes ADD COLUMN bic   varchar(11);   -- 11 according to ISO 9362
 ALTER TABLE llx_prelevement_lignes ADD COLUMN iban	varchar(80);   -- full iban. 34 according to ISO 13616 but we set 80 to allow to store it with encryption information
 ALTER TABLE llx_prelevement_lignes ADD COLUMN rum	varchar(32);   -- rum used
 
+
+ALTER TABLE llx_product_customer_price CHANGE COLUMN localtax1_tx localtax1_tx varchar(20) DEFAULT '0';
+ALTER TABLE llx_product_customer_price CHANGE COLUMN localtax2_tx localtax2_tx varchar(20) DEFAULT '0';
+ALTER TABLE llx_product_customer_price_log CHANGE COLUMN localtax1_tx localtax1_tx varchar(20) DEFAULT '0';
+ALTER TABLE llx_product_customer_price_log CHANGE COLUMN localtax2_tx localtax2_tx varchar(20) DEFAULT '0';
+
+ALTER TABLE llx_subscription DROP INDEX idx_subscription_fk_adherent;
+ALTER TABLE llx_subscription DROP INDEX idx_subscription_fk_bank;
+ALTER TABLE llx_subscription DROP INDEX idx_subscription_dateadh;
+ALTER TABLE llx_subscription ADD INDEX idx_subscription_fk_adherent (fk_adherent);
+ALTER TABLE llx_subscription ADD INDEX idx_subscription_fk_bank (fk_bank);
+ALTER TABLE llx_subscription ADD INDEX idx_subscription_dateadh (dateadh);
+
+ALTER TABLE llx_bank_import ADD COLUMN fitid varchar(255) NULL after id_account; -- OFX Financial Institution Transaction ID "FITID"
+
+ALTER TABLE llx_element_contact ADD mandatory_signature TINYINT AFTER element_id;
 
 -- end of migration

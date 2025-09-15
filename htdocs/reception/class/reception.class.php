@@ -588,7 +588,7 @@ class Reception extends CommonObject
 		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
 			$numref = $this->getNextNumRef($soc);
 		} else {
-			$numref = $this->ref;
+			$numref = (string) $this->ref;
 		}
 
 		$this->newref = dol_sanitizeFileName($numref);
@@ -620,7 +620,7 @@ class Reception extends CommonObject
 			$sql = "SELECT cd.fk_product, cd.subprice, cd.remise_percent,";
 			$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
 			$sql .= " ed.eatby, ed.sellby, ed.batch,";
-			$sql .= " ed.cost_price";
+			$sql .= " ed.fk_elementdet, ed.cost_price";
 			$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
 			$sql .= " ".MAIN_DB_PREFIX."receptiondet_batch as ed";
 			$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
@@ -638,12 +638,13 @@ class Reception extends CommonObject
 					if ($qty == 0 || ($qty < 0 && !getDolGlobalInt('RECEPTION_ALLOW_NEGATIVE_QTY'))) {
 						continue;
 					}
+
 					dol_syslog(get_class($this)."::valid movement index ".$i." ed.rowid=".$obj->rowid);
 
 					//var_dump($this->lines[$i]);
 					$mouvS = new MouvementStock($this->db);
 					$mouvS->origin = &$this;
-					$mouvS->setOrigin($this->element, $this->id);
+					$mouvS->setOrigin($this->element, $this->id, $obj->fk_elementdet, $obj->rowid);
 
 					if (empty($obj->batch)) {
 						// line without batch detail
@@ -1337,14 +1338,14 @@ class Reception extends CommonObject
 	/**
 	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      int			$withpicto      Add picto into link
-	 *	@param      int			$option         Where point the link
-	 *	@param      int			$max          	Max length to show
-	 *	@param      int			$short			Use short labels
-	 *  @param      int         $notooltip      1=No tooltip
-	 *	@return     string          			String with URL
+	 *  @param	int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *  @param	string  $option                     On what the link point to ('nolink', ...)
+	 *	@param	int		$max          				Max length to show
+	 *	@param  int		$short						Return only the URL. Is this used ?
+	 *  @param  int     $notooltip      			1=No tooltip
+	 *	@return string          					String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = 0, $max = 0, $short = 0, $notooltip = 0)
+	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $notooltip = 0)
 	{
 		global $langs, $hookmanager;
 
@@ -1737,7 +1738,7 @@ class Reception extends CommonObject
 				$sql = "SELECT cd.fk_product, cd.subprice,";
 				$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
 				$sql .= " ed.eatby, ed.sellby, ed.batch,";
-				$sql .= " ed.cost_price";
+				$sql .= " ed.fk_elementdet, ed.cost_price";
 				$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
 				$sql .= " ".MAIN_DB_PREFIX."receptiondet_batch as ed";
 				$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
@@ -1756,11 +1757,12 @@ class Reception extends CommonObject
 						if ($qty <= 0) {
 							continue;
 						}
-						dol_syslog(get_class($this)."::valid movement index ".$i." ed.rowid=".$obj->rowid." edb.rowid=".$obj->edbrowid);
+
+						dol_syslog(get_class($this)."::valid movement index ".$i." ed.rowid=".$obj->rowid);
 
 						$mouvS = new MouvementStock($this->db);
 						$mouvS->origin = &$this;
-						$mouvS->setOrigin($this->element, $this->id);
+						$mouvS->setOrigin($this->element, $this->id, $obj->fk_elementdet, $obj->rowid);
 
 						if (empty($obj->batch)) {
 							// line without batch detail
@@ -1887,7 +1889,7 @@ class Reception extends CommonObject
 			// If stock increment is done on closing
 			if (!$error && isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_RECEPTION_CLOSE')) {
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-				$numref = $this->ref;
+				$numref = (string) $this->ref;
 				$langs->load("agenda");
 
 				// Loop on each product line to add a stock movement
@@ -1895,7 +1897,7 @@ class Reception extends CommonObject
 				$sql = "SELECT ed.fk_product, cd.subprice,";
 				$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
 				$sql .= " ed.eatby, ed.sellby, ed.batch,";
-				$sql .= " ed.cost_price";
+				$sql .= " ed.fk_elementdet, ed.cost_price";
 				$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
 				$sql .= " ".MAIN_DB_PREFIX."receptiondet_batch as ed";
 				$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
@@ -1913,13 +1915,12 @@ class Reception extends CommonObject
 						if ($qty <= 0) {
 							continue;
 						}
-
 						dol_syslog(get_class($this)."::reopen reception movement index ".$i." ed.rowid=".$obj->rowid);
 
 						//var_dump($this->lines[$i]);
 						$mouvS = new MouvementStock($this->db);
 						$mouvS->origin = &$this;
-						$mouvS->setOrigin($this->element, $this->id);
+						$mouvS->setOrigin($this->element, $this->id, $obj->fk_elementdet, $obj->rowid);
 
 						if (empty($obj->batch)) {
 							// line without batch detail
@@ -2031,7 +2032,7 @@ class Reception extends CommonObject
 				$sql = "SELECT cd.fk_product, cd.subprice,";
 				$sql .= " ed.rowid, ed.qty, ed.fk_entrepot,";
 				$sql .= " ed.eatby, ed.sellby, ed.batch,";
-				$sql .= " ed.cost_price";
+				$sql .= " ed.fk_elementdet, ed.cost_price";
 				$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd,";
 				$sql .= " ".MAIN_DB_PREFIX."receptiondet_batch as ed";
 				$sql .= " WHERE ed.fk_reception = ".((int) $this->id);
@@ -2046,12 +2047,16 @@ class Reception extends CommonObject
 
 						$qty = $obj->qty;
 
+						if ($qty <= 0) {
+							continue;
+						}
+
 						dol_syslog(get_class($this)."::reopen reception movement index ".$i." ed.rowid=".$obj->rowid);
 
 						//var_dump($this->lines[$i]);
 						$mouvS = new MouvementStock($this->db);
 						$mouvS->origin = &$this;
-						$mouvS->setOrigin($this->element, $this->id);
+						$mouvS->setOrigin($this->element, $this->id, $obj->fk_elementdet, $obj->rowid);
 
 						if (empty($obj->batch)) {
 							// line without batch detail

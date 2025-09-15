@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,12 +58,12 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$result = restrictedArea($user, 'partnership', $id);
+//restrictedArea($user, 'partnership', $id);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->partnership->multidir_output[$object->entity]."/".$object->id;
+	$upload_dir = $conf->partnership->multidir_output[$object->entity ?? $conf->entity]."/".$object->id;
 }
 
 $permissiontoread = $user->hasRight('partnership', 'read');
@@ -74,7 +74,7 @@ $managedfor = getDolGlobalString('PARTNERSHIP_IS_MANAGED_FOR', 'thirdparty');
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$result = restrictedArea($user, 'partnership', $object->id);
+//restrictedArea($user, 'partnership', $object->id);
 if (empty($conf->partnership->enabled)) {
 	accessforbidden();
 }

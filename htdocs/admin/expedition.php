@@ -47,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "sendings", "deliveries", "other"));
+$langs->loadLangs(array("admin", "sendings", "other"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -495,7 +495,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowOnLineSign");
 print '</td>';
 print '<td>';
-print ajax_constantonoff('EXPEDITION_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, $langs->transnoentitiesnoconv("WarningOnlineSignature"));
+print ajax_constantonoff('EXPEDITION_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, $langs->transnoentitiesnoconv("WarningOnlineSignature", 'https://www.dolistore.com'));
 print '</td></tr>';
 
 // Pre fill shipment qty option

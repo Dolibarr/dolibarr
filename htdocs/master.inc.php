@@ -11,6 +11,7 @@
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -157,6 +158,9 @@ if (!defined('NOREQUIREDB')) {
 	$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, (int) $conf->db->port);
 
 	if ($db->error) {
+		if (is_object($langs)) {
+			$langs->setDefaultLang('auto');
+		}
 		// If we were into a website context
 		if (!defined('USEDOLIBARREDITOR') && !defined('USEDOLIBARRSERVER') && !empty($_SERVER['SCRIPT_FILENAME']) && (strpos($_SERVER['SCRIPT_FILENAME'], DOL_DATA_ROOT.'/website') === 0)) {
 			$sapi_type = php_sapi_name();
@@ -165,7 +169,6 @@ if (!defined('NOREQUIREDB')) {
 			}
 			print '<div class="center" style="text-align: center; margin: 100px;">';
 			if (is_object($langs)) {
-				$langs->setDefaultLang('auto');
 				$langs->load("website");
 				print $langs->trans("SorryWebsiteIsCurrentlyOffLine");
 			} else {
