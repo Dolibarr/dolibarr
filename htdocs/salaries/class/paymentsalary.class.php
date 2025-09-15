@@ -367,6 +367,7 @@ class PaymentSalary extends CommonObject
 				$this->note_private = $obj->note;
 				$this->fk_user_author = $obj->fk_user_author;
 				$this->fk_user_modif = $obj->fk_user_modif;
+				$this->user_modification_id = $obj->fk_user_modif;
 
 				$this->type_code = $obj->type_code;
 				$this->type_label = $obj->type_label;
