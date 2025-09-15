@@ -336,7 +336,7 @@ class PaymentSalary extends CommonObject
 		$sql .= " t.fk_typepayment,";
 		$sql .= " t.num_payment as num_payment,";
 		$sql .= " t.note,";
-		$sql .= " t.fk_bank,";
+		$sql .= " t.fk_bank as bank_line,";
 		$sql .= " t.fk_user_author,";
 		$sql .= " t.fk_user_modif,";
 		$sql .= " pt.code as type_code, pt.libelle as type_label,";
@@ -372,8 +372,8 @@ class PaymentSalary extends CommonObject
 				$this->type_label = $obj->type_label;
 
 				$this->bank_account = $obj->fk_account;
-				$this->fk_bank = $obj->fk_bank;
-				$this->bank_line = $obj->fk_bank;
+				$this->fk_bank = $obj->bank_line;
+				$this->bank_line = $obj->bank_line;
 			}
 			$this->db->free($resql);
 
