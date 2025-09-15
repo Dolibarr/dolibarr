@@ -8,7 +8,7 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2016-2017	Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2019-2024	Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1029,10 +1029,10 @@ class FormFile
 						//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 						//print '<span class="opacitymedium">'.$langs->trans("Hash").' : '.$file['share'].'</span>';
-						$forcedownload = 0;
+						$forcedownload = getDolGlobalInt('MAIN_FORCE_DOWNLOAD_IN_HTML_FORMFILE');
 						$paramlink = '';
 						if (!empty($file['share'])) {
-							$paramlink .= ($paramlink ? '&' : '').'hashp='.$file['share']; // Hash for public share
+							$paramlink .= /* ($paramlink ? '&' : ''). */'hashp='.$file['share']; // Hash for public share
 						}
 						if ($forcedownload) {
 							$paramlink .= ($paramlink ? '&' : '').'attachment=1';
@@ -1584,8 +1584,8 @@ class FormFile
 					print '<td class="center nowraponall">'.dol_print_date($file['date'], "dayhour", "tzuser").'</td>';
 
 					// Preview
+					$fileinfo = pathinfo($file['name']);
 					if (empty($useinecm) || $useinecm == 4 || $useinecm == 5 || $useinecm == 6) {
-						$fileinfo = pathinfo($file['name']);
 						print '<td class="center">';
 						if (image_format_supported($file['name']) >= 0) {
 							if ($useinecm == 5 || $useinecm == 6) {
@@ -1639,10 +1639,10 @@ class FormFile
 								//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 								//print '<span class="opacitymedium">'.$langs->trans("Hash").' : '.$file['share'].'</span>';
-								$forcedownload = 0;
+								$forcedownload = getDolGlobalInt('MAIN_FORCE_DOWNLOAD_IN_HTML_FORMFILE');
 								$paramlink = '';
 								if (!empty($file['share'])) {
-									$paramlink .= ($paramlink ? '&' : '').'hashp='.$file['share']; // Hash for public share
+									$paramlink .= /* ($paramlink ? '&' : ''). */'hashp='.$file['share']; // Hash for public share
 								}
 								if ($forcedownload) {
 									$paramlink .= ($paramlink ? '&' : '').'attachment=1';
@@ -2163,10 +2163,10 @@ class FormFile
 					//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 					//print '<span class="opacitymedium">'.$langs->trans("Hash").' : '.$file['share'].'</span>';
-					$forcedownload = 0;
+					$forcedownload = getDolGlobalInt('MAIN_FORCE_DOWNLOAD_IN_HTML_FORMFILE');
 					$paramlink = '';
 					if (!empty($file['share'])) {
-						$paramlink .= ($paramlink ? '&' : '').'hashp='.$file['share']; // Hash for public share
+						$paramlink .= /* ($paramlink ? '&' : ''). */'hashp='.$file['share']; // Hash for public share
 					}
 					if ($forcedownload) {
 						$paramlink .= ($paramlink ? '&' : '').'attachment=1';

@@ -299,33 +299,30 @@ class FormCardWebPortal
 						$value = GETPOST($key, 'restricthtml');
 					}
 				} elseif (in_array($object->fields[$key]['type'], array('date', 'datetime'))) {
-					$postDate = GETPOST($key, 'alphanohtml');
-					// extract date DD-MM-YYYY for day, month and year
-					$dateArr = explode('/', $postDate);
 					$dateYear = 0;
 					$dateMonth = 0;
 					$dateDay = 0;
-					if (count($dateArr) == 3) {
-						$dateYear = (int) $dateArr[2];
-						$dateMonth = (int) $dateArr[1];
-						$dateDay = (int) $dateArr[0];
+					if (GETPOSTINT($key.'day')) {
+						$dateDay = GETPOSTINT($key.'day');
+					}
+					if (GETPOSTINT($key.'month')) {
+						$dateMonth = GETPOSTINT($key.'month');
+					}
+					if (GETPOSTINT($key.'year')) {
+						$dateYear = GETPOSTINT($key.'year');
 					}
 					// extract time HH:ii:ss for hours, minutes and seconds
-					$postTime = GETPOST($key . '_time', 'alphanohtml');
-					$timeArr = explode(':', $postTime);
-					$timeHours = 12;
+					$timeHours = 0;
 					$timeMinutes = 0;
 					$timeSeconds = 0;
-					if (!empty($timeArr)) {
-						if (isset($timeArr[0])) {
-							$timeHours = (int) $timeArr[0];
-						}
-						if (isset($timeArr[1])) {
-							$timeMinutes = (int) $timeArr[1];
-						}
-						if (isset($timeArr[2])) {
-							$timeSeconds = (int) $timeArr[2];
-						}
+					if (GETPOSTINT($key.'hour')) {
+						$timeHours = GETPOSTINT($key.'hour');
+					}
+					if (GETPOSTINT($key.'min')) {
+						$timeMinutes = GETPOSTINT($key.'min');
+					}
+					if (GETPOSTINT($key.'sec')) {
+						$timeSeconds = GETPOSTINT($key.'sec');
 					}
 					$value = dol_mktime($timeHours, $timeMinutes, $timeSeconds, $dateMonth, $dateDay, $dateYear);
 				} elseif ($object->fields[$key]['type'] == 'duration') {

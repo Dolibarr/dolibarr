@@ -483,20 +483,20 @@ abstract class CommonObject
 	protected $depr_cond_reglement;  // Internal value for deprecation
 
 	/**
-	 * @var int 		Delivery address ID
+	 * @var ?int 		Delivery address ID
 	 * @see setDeliveryAddress()
 	 * @deprecated
 	 */
 	public $fk_delivery_address;
 
 	/**
-	 * @var int 		Shipping method ID
+	 * @var ?int 		Shipping method ID
 	 * @see setShippingMethod()
 	 */
 	public $shipping_method_id;
 
 	/**
-	 * @var string 		Shipping method label
+	 * @var ?string 		Shipping method label
 	 * @see setShippingMethod()
 	 */
 	public $shipping_method;

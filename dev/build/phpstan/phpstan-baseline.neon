@@ -325,135 +325,9 @@ parameters:
 			path: ../../../htdocs/accountancy/class/accountingjournal.class.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 2
-			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
-
-		-
 			message: '#^Parameter \#2 \$callback of function array_filter expects \(callable\(string\)\: bool\)\|null, ''strlen'' given\.$#'
 			identifier: argument.type
 			count: 3
-			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
-
-		-
-			message: '#^Property BookKeeping\:\:\$amount \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
-
-		-
-			message: '#^Property BookKeeping\:\:\$code_journal \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
-
-		-
-			message: '#^Property BookKeeping\:\:\$credit \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
-
-		-
-			message: '#^Property BookKeeping\:\:\$debit \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
-
-		-
-			message: '#^Property BookKeeping\:\:\$doc_ref \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 5
-			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
-
-		-
-			message: '#^Property BookKeeping\:\:\$doc_type \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 5
-			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
-
-		-
-			message: '#^Property BookKeeping\:\:\$fk_doc \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
-
-		-
-			message: '#^Property BookKeeping\:\:\$fk_docdet \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
-
-		-
-			message: '#^Property BookKeeping\:\:\$fk_user_author \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
-
-		-
-			message: '#^Property BookKeeping\:\:\$import_key \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
-
-		-
-			message: '#^Property BookKeeping\:\:\$journal_label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
-
-		-
-			message: '#^Property BookKeeping\:\:\$label_compte \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 5
-			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
-
-		-
-			message: '#^Property BookKeeping\:\:\$label_operation \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 5
-			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
-
-		-
-			message: '#^Property BookKeeping\:\:\$montant \(float\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
-
-		-
-			message: '#^Property BookKeeping\:\:\$numero_compte \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 5
-			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
-
-		-
-			message: '#^Property BookKeeping\:\:\$piece_num \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
-
-		-
-			message: '#^Property BookKeeping\:\:\$sens \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 5
-			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
-
-		-
-			message: '#^Property BookKeeping\:\:\$thirdparty_code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 5
-			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
-
-		-
-			message: '#^Ternary operator condition is always true\.$#'
-			identifier: ternary.alwaysTrue
-			count: 2
-			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
-
-		-
-			message: '#^Variable \$sortfield in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
 			path: ../../../htdocs/accountancy/class/bookkeeping.class.php
 
 		-
@@ -981,12 +855,6 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/admin/index.php
-
-		-
-			message: '#^Variable \$setupcompanynotcomplete in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/admin/index.php
 
@@ -6925,12 +6793,6 @@ parameters:
 			path: ../../../htdocs/core/class/html.formfile.class.php
 
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 3
-			path: ../../../htdocs/core/class/html.formfile.class.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
@@ -6959,24 +6821,6 @@ parameters:
 			identifier: booleanOr.alwaysFalse
 			count: 1
 			path: ../../../htdocs/core/class/html.formfile.class.php
-
-		-
-			message: '#^Ternary operator condition is always false\.$#'
-			identifier: ternary.alwaysFalse
-			count: 3
-			path: ../../../htdocs/core/class/html.formfile.class.php
-
-		-
-			message: '#^Variable \$fileinfo might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/core/class/html.formfile.class.php
-
-		-
-			message: '#^Left side of && is always false\.$#'
-			identifier: booleanAnd.leftAlwaysFalse
-			count: 1
-			path: ../../../htdocs/core/class/html.formintervention.class.php
 
 		-
 			message: '#^Left side of && is always true\.$#'
@@ -9799,18 +9643,6 @@ parameters:
 			path: ../../../htdocs/core/search_page.php
 
 		-
-			message: '#^Variable \$type2label might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/admin_extrafields_edit.tpl.php
-
-		-
-			message: '#^Variable \$type2label might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/admin_extrafields_view.tpl.php
-
-		-
 			message: '#^Property CommonObject\:\:\$lines \(array\<CommonObject\|stdClass\>\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -9849,18 +9681,6 @@ parameters:
 		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/core/tpl/contacts.tpl.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/core/tpl/contacts.tpl.php
-
-		-
-			message: '#^Variable \$conf might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/core/tpl/contacts.tpl.php
 
@@ -10831,122 +10651,8 @@ parameters:
 			path: ../../../htdocs/expedition/card.php
 
 		-
-			message: '#^Call to function method_exists\(\) with \$this\(Expedition\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/expedition/class/expedition.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(Expedition\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/expedition/class/expedition.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Expedition\) and ''thirdparty'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/expedition/class/expedition.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Expedition\) and ''total_ht'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/expedition/class/expedition.class.php
-
-		-
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: ../../../htdocs/expedition/class/expedition.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 5
-			path: ../../../htdocs/expedition/class/expedition.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$fk_delivery_address \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/expedition/class/expedition.class.php
-
-		-
-			message: '#^Property CommonObject\:\:\$shipping_method_id \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/expedition/class/expedition.class.php
-
-		-
-			message: '#^Property Expedition\:\:\$fk_user_author \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/expedition/class/expedition.class.php
-
-		-
-			message: '#^Property Expedition\:\:\$ref_customer \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/expedition/class/expedition.class.php
-
-		-
-			message: '#^Property Expedition\:\:\$size_units \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/expedition/class/expedition.class.php
-
-		-
-			message: '#^Property Expedition\:\:\$socid \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/expedition/class/expedition.class.php
-
-		-
-			message: '#^Property Expedition\:\:\$tracking_number \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/expedition/class/expedition.class.php
-
-		-
-			message: '#^Property Expedition\:\:\$trueDepth \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/expedition/class/expedition.class.php
-
-		-
-			message: '#^Property Expedition\:\:\$trueHeight \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/expedition/class/expedition.class.php
-
-		-
-			message: '#^Property Expedition\:\:\$trueWeight \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/expedition/class/expedition.class.php
-
-		-
-			message: '#^Property Expedition\:\:\$trueWidth \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/expedition/class/expedition.class.php
-
-		-
-			message: '#^Property Expedition\:\:\$weight_units \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/expedition/class/expedition.class.php
-
-		-
-			message: '#^Property ExpeditionLigne\:\:\$detail_batch \(array\<ExpeditionLineBatch\>\|stdClass\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/expedition/class/expedition.class.php
-
-		-
-			message: '#^Ternary operator condition is always true\.$#'
-			identifier: ternary.alwaysTrue
 			count: 1
 			path: ../../../htdocs/expedition/class/expedition.class.php
 
@@ -12425,12 +12131,6 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/hrm/evaluation_list.php
-
-		-
-			message: '#^Variable \$setupcompanynotcomplete in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/hrm/index.php
 
 		-
 			message: '#^If condition is always false\.$#'
@@ -17077,12 +16777,6 @@ parameters:
 			path: ../../../htdocs/public/webportal/tpl/hero-header-banner.tpl.php
 
 		-
-			message: '#^Variable \$langs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/public/webportal/tpl/login.tpl.php
-
-		-
 			message: '#^Comparison operation "\>" between \-1 and 0 is always false\.$#'
 			identifier: greater.alwaysFalse
 			count: 1
@@ -19525,12 +19219,6 @@ parameters:
 			path: ../../../htdocs/webhook/target_list.php
 
 		-
-			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/webportal/admin/setup.php
-
-		-
 			message: '#^Loose comparison using \=\= between ''auto'' and ''auto'' will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 1
@@ -19845,12 +19533,6 @@ parameters:
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/website/index.php
-
-		-
-			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/website/index.php
 

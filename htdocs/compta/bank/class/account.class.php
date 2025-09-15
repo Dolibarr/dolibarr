@@ -1500,7 +1500,7 @@ class Account extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			$nb = $obj->nb;
+			$nb = (int) $obj->nb;
 		} else {
 			dol_print_error($this->db);
 		}

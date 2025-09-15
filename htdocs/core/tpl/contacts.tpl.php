@@ -72,7 +72,7 @@ if ($module == 'propal') {
 	} else {
 		$permission = $user->hasRight('supplier_order', 'creer');
 	}
-} elseif ($module == 'invoice_supplier' && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
+} elseif ($module == 'invoice_supplier') {
 	if (!getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) {
 		$permission = $user->hasRight('fournisseur', 'facture', 'creer');
 	} else {
@@ -267,7 +267,7 @@ foreach (array('internal', 'external') as $source) {
 			$entry->thirdparty_name = strtolower($companystatic->getFullName($langs));
 		} elseif ($contact['socid'] < 0) {
 			$entry->thirdparty_html = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
-			$entry->thirdparty_name = strtolower($conf->global->MAIN_INFO_SOCIETE_NOM);
+			$entry->thirdparty_name = strtolower(getDolGlobalString('MAIN_INFO_SOCIETE_NOM'));
 		}
 
 		if ($contact['source'] == 'internal') {
