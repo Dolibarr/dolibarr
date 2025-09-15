@@ -6,7 +6,7 @@
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre SPANGARO			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -184,7 +184,7 @@ print '<tr><td>'.$langs->trans('Note').'</td><td class="valeur sensiblehtmlconte
 
 // Bank account
 if (isModEnabled("bank")) {
-	if ($object->bank_account) {
+	if ($object->bank_account && !empty($object->bank_line)) {
 		$bankline = new AccountLine($db);
 		$bankline->fetch($object->bank_line);
 
