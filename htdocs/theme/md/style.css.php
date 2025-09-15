@@ -1114,9 +1114,9 @@ div.floatright
 {
 	display:inline-block !important;
 }
-.displaycontent
+.displaycontents
 {
-	display:content;
+	display:contents !important;
 }
 .largenumber {
 	font-size: 1.4em;
