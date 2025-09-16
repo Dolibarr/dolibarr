@@ -69,6 +69,44 @@ OptionToSetSendingBilledNotEnabled=Параметр из рабочего про
 NoWarehouseInBase=Нет склад в базе
 ShipmentUpdated=Отгрузка успешно обновлена
 ShipmentIncrementStockOnDelete = Увеличивать остаток при удалении
+ConfirmSignShipping=Подтвердите подпись перевозка
+ConfirmUnsignShipping=Подтвердите отмену подписи перевозка
+SignShipping=Подписать перевозка
+UnsignShipping=Снять подпись перевозка
+
+# Deliveries
+Delivery=Доставка
+DeliveryRef=Ссылка Доставка
+DeliveryCard=Delivery receipt
+DeliveryOrder=Delivery receipt
+DeliveryDate=Дата доставки
+CreateDeliveryOrder=Generate delivery receipt
+DeliveryStateSaved=Delivery state saved
+SetDeliveryDate=Set estimated delivery date
+SetShippingDate=Установить дату отправки
+ValidateDeliveryReceipt=Подтверждение получения доставки
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
+DeleteDeliveryReceipt=Удалить подтверждение доставки
+DeleteDeliveryReceiptConfirm=Вы действительно хотите удалить квитанцию о доставке <b>%s</b>?
+DeliveryMethod=Способ доставки
+TrackingNumber=Номер отправления
+DeliveryNotValidated=Доставка не подтверждена
+StatusDeliveryCanceled=Отменена
+StatusDeliveryDraft=Черновик
+StatusDeliveryValidated=Получено
+NameAndSignature=Name and Signature:
+ToAndDate=Получатель ___________________________________ доставлено ____ / _____ / __________
+GoodStatusDeclaration=Указанные выше товары получены в надлежащем состоянии,
+Deliverer=Deliverer:
+Sender=Отправитель
+Recipient=Получатель
+ErrorStockIsNotEnough=Нет достаточного запаса на складе
+Shippable=Возможно к отправке
+NonShippable=Не возможно к отправке
+ShowShippableStatus=Show shippable status
+ShowReceiving=Show delivery receipt
+NonExistentOrder=Nonexistent order
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines
 
 # Sending methods
 # ModelDocument

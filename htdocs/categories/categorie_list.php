@@ -62,8 +62,10 @@ if (empty($mode)) {
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $type = (GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
-if (is_numeric($type)) {
-	$type = Categorie::$MAP_ID_TO_CODE[(int) $type];
+if (is_numeric($type)) {	// deprecated: must use the category code instead of id. For backward compatibility.
+	$tmpcategory = new Categorie($db);
+	$MAP_ID_TO_CODE = array_flip($tmpcategory->MAP_ID);
+	$type = $MAP_ID_TO_CODE[(int) $type];
 }
 $nosearch = GETPOSTINT('nosearch');
 
@@ -338,7 +340,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}

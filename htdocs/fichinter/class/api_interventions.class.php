@@ -156,7 +156,9 @@ class Interventions extends DolibarrApi
 		}
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter AS t LEFT JOIN ".MAIN_DB_PREFIX."fichinter_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
+		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter AS t";
+		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."societe AS s ON (s.rowid = t.fk_soc)";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."fichinter_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= ' WHERE t.entity IN ('.getEntity('intervention').')';
 		if ($socids) {
 			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
@@ -249,7 +251,7 @@ class Interventions extends DolibarrApi
 	public function post($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
@@ -375,7 +377,7 @@ class Interventions extends DolibarrApi
 	public function postLine($id, $request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		// Check mandatory fields
 		$result = $this->_validateLine($request_data);
@@ -467,7 +469,7 @@ class Interventions extends DolibarrApi
 	public function reopen($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->fichinter->fetch($id);
 		if (!$result) {
@@ -510,7 +512,7 @@ class Interventions extends DolibarrApi
 	public function validate($id, $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->fichinter->fetch($id);
 		if (!$result) {
@@ -550,7 +552,7 @@ class Interventions extends DolibarrApi
 	public function closeFichinter($id)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		$result = $this->fichinter->fetch($id);
 		if (!$result) {

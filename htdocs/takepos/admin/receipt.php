@@ -232,7 +232,10 @@ print '<br>';
 print load_fiche_titre($langs->trans("Preview"), '', '');
 print '<div style="width: 50%; float:center;background-color:#606060">';
 print '<center>';
-print '<iframe id="iframe" allowtransparency="true" style="background: #FFFFFF;" src="../receipt.php" width="80%" height="600"></iframe>';
+
+// Call takepos/receipt.php
+print '<iframe id="iframe" allowtransparency="true" style="background: #FFFFFF;" src="'.DOL_URL_ROOT.'/takepos/receipt.php?forcenoautoopen=1" width="80%" height="600"></iframe>';
+
 print '</center>';
 print '</div>';
 

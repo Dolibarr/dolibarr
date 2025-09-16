@@ -2,7 +2,7 @@
 /* Copyright (C) 2007-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2023-2024	William Mead		<william.mead@manchenumerique.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,11 +48,6 @@ class Cronjob extends CommonObject
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'cron';
-
-	/**
-	 * @var int Entity
-	 */
-	public $entity;
 
 	/**
 	 * @var string Job type
@@ -430,9 +425,10 @@ class Cronjob extends CommonObject
 	 * @param	int			$id				Id object
 	 * @param	string		$objectname		Object name
 	 * @param	string		$methodname		Method name
+	 * @param	string		$label			Label
 	 * @return	int							if KO: <0 || if OK: >0
 	 */
-	public function fetch(int $id, string $objectname = '', string $methodname = '')
+	public function fetch(int $id, string $objectname = '', string $methodname = '', string $label = '')
 	{
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
@@ -472,13 +468,15 @@ class Cronjob extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."cronjob as t";
 		if ($id > 0) {
 			$sql .= " WHERE t.rowid = ".((int) $id);
+		} elseif ($label) {
+			$sql .= " WHERE t.entity IN(0, ".getEntity('cron').")";
+			$sql .= " AND t.label = '".$this->db->escape($label)."'";
 		} else {
 			$sql .= " WHERE t.entity IN(0, ".getEntity('cron').")";
 			$sql .= " AND t.objectname = '".$this->db->escape($objectname)."'";
 			$sql .= " AND t.methodename = '".$this->db->escape($methodname)."'";
 		}
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {
@@ -488,6 +486,7 @@ class Cronjob extends CommonObject
 				$this->ref = $obj->rowid;
 				$this->entity = $obj->entity;
 				$this->tms = $this->db->jdate($obj->tms);
+				$this->date_modification = $this->db->jdate($obj->tms);
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->label = $obj->label;
 				$this->jobtype = $obj->jobtype;

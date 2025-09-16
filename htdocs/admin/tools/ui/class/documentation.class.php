@@ -174,6 +174,15 @@ class Documentation
 			'url' => dol_buildpath($this->baseUrl.'/content/index.php', 1),
 			'icon' => 'far fa-file-alt',
 			'submenu' => array(
+				'Titles' => array(
+					'url' => dol_buildpath('admin/tools/ui/content/titles.php', 1),
+					'icon' => 'fas fa-heading',
+					'submenu' => array(),
+					'summary' => array(
+						'DocBasicUsage' => '#titlesection-basicusage',
+						'DocTitleWithFilters' => '#titlesection-withfilters',
+					),
+				),
 				'Tables' => array(
 					'url' => dol_buildpath('admin/tools/ui/content/tables.php', 1),
 					'icon' => 'fas fa-table',

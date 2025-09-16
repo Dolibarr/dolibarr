@@ -72,7 +72,7 @@ $endyear = $year;
 $object = new Ticket($db);
 
 // Security check
-//$result = restrictedArea($user, 'ticket|knowledgemanagement', 0, '', '', '', '');
+//restrictedArea($user, 'ticket|knowledgemanagement', 0, '', '', '', '');
 if (!$user->hasRight('ticket', 'read') && !$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
 	accessforbidden('Not enough permissions');
 }

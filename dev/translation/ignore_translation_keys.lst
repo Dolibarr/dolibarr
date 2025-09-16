@@ -96,8 +96,6 @@ AADE_WEBSERVICE_USER
 API
 Accept
 AccountancyErrorMismatchLetteringCode
-AccountingAccount
-AccountingCode
 AccountingJournalType
 ActionAC_
 ActionAC_ALL_
@@ -154,7 +152,6 @@ BlockLogNeedElement
 BlockedLogAuthorityNeededToStoreYouFingerprintsInNonAlterableRemote
 BlockedLogAuthorityUrl
 BlockedLogSetup
-BookCalSystem
 Bookings
 BoxTitleLast
 BoxTitleLatest
@@ -309,7 +306,6 @@ ErrorBadSocialNetworkValue
 ErrorBadStatus
 ErrorBadValue
 ErrorBadValueForBatch
-ErrorBadValueForDate
 ErrorCanNotDeleteDir
 ErrorCantSplitAUsedDiscount
 ErrorChartOfAccountSystemNotSelected
@@ -362,7 +358,6 @@ ErrorTechnicalError
 ErrorThirdPartyIdIsMandatory
 ErrorTicketIsNotValid
 ErrorTitreAlreadyExists
-ErrorUpdatingUsersCP
 ErrorUserFetch
 ErrorValueMustBeInteger
 ErrorValueTooHigh
@@ -620,7 +615,6 @@ PaymentCondition
 PaymentConditionShort
 PaymentDonation
 PaymentHigherThanReminderToPaySupplier
-PaymentSalary
 PaymentSendToStripeTerminal
 PaymentType
 PaymentTypeShort
@@ -811,7 +805,6 @@ Templates
 TestPrinterTemplate
 TestTemplateToPrinter
 Theme
-ThirdpartyHasNoDefaultBanAccount
 ThisIsInformationOnDocumentToSign
 ThisScreenAllowsYouToSignDocFrom
 TicketCategoryShort
@@ -848,8 +841,6 @@ UpdateUser
 UpgradeHasBeenUnlocked
 Url
 Use of API for currency update is disabled by option MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER
-UserRemovedFromGroup
-UserSetInGroup
 VCard
 Vacant
 ValidateAndSign
@@ -875,7 +866,6 @@ Widgets
 Windows
 WorkingBoard
 Workload
-WrongAmount
 XDebug
 XmlCorrupted
 Y
@@ -1032,10 +1022,6 @@ PDF/A-3b
 PartnershipSentByEMail
 PdfTitle
 ProcessingError
-PurchaseOrder
-PurchaseOrders
-ReceptionSentByEMail
-ReceptionValidated
 Recruited
 Ref. Product
 RefNewContract
@@ -1043,7 +1029,6 @@ Stable
 Suggested
 TicketMessageMailSignatureText
 TicketSetupPage
-Tiers
 Timeline
 Transfer
 TryAnotherConnectionMode

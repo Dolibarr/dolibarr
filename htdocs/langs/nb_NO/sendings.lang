@@ -66,7 +66,47 @@ NoLineGoOnTabToAddSome=Ingen linjer, gå til fanen "%s" for å legge til
 CreateInvoiceForThisCustomerFromSendings=Opprett fakturaer
 IfValidateInvoiceIsNoSendingStayUnbilled=Hvis faktura valideringen er 'Nei', vil sendingen forbli til status 'Ufakturert' til faktura er validert.
 OptionToSetSendingBilledNotEnabled=Alternativ fra modul Workflow, for å sette sending til "Fakturert" automatisk når faktura er validert, er ikke aktivert, så du må sette statusen for sendinger til "Fakturert" manuelt etter faktura er generert.
-ShipmentUpdated=Shipment successfully updated
+NoWarehouseInBase=Ingen lagre i basen
+ShipmentUpdated=Forsendelsen er oppdatert
+ShipmentIncrementStockOnDelete = Øk beholdning ved sletting
+ConfirmSignShipping=Confirm Sign Shipping
+ConfirmUnsignShipping=Confirm Unsign Shipping
+SignShipping=Sign Shipping
+UnsignShipping=Unsign Shipping
+
+# Deliveries
+Delivery=Levering
+DeliveryRef=Leveranse ref.
+DeliveryCard=Leveringsbekreftelse
+DeliveryOrder=Leveringsbekreftelse
+DeliveryDate=Leveringsdato
+CreateDeliveryOrder=Generer leveringskvittering
+DeliveryStateSaved=Leveringsstatus lagret
+SetDeliveryDate=Angi estimert leveringsdato
+SetShippingDate=Angi leveringsdato
+ValidateDeliveryReceipt=Valider leveringskvittering
+ValidateDeliveryReceiptConfirm=Er du sikker på at du vil validere denne leveringskvitteringen?
+DeleteDeliveryReceipt=Slett leveringskvittering
+DeleteDeliveryReceiptConfirm=Er du sikker på at du vil slette leveringskvittering <b>%s</b>?
+DeliveryMethod=Leveringsmåte
+TrackingNumber=Trackingnummer
+DeliveryNotValidated=Levering ikke validert
+StatusDeliveryCanceled=Kansellert
+StatusDeliveryDraft=Kladd
+StatusDeliveryValidated=Mottatt
+NameAndSignature=Navn og signatur:
+ToAndDate=Til___________________________________ den ____/_____/__________
+GoodStatusDeclaration=Forsendelsen er mottatt uten skader,
+Deliverer=Levert av:
+Sender=Avsender
+Recipient=Mottager
+ErrorStockIsNotEnough=Ikke nok på lager
+Shippable=Kan sendes
+NonShippable=Kan ikke sendes
+ShowShippableStatus=Vis status sendingsklar
+ShowReceiving=Vis leveringskvittering
+NonExistentOrder=Ikkeeksisterende ordre
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Lagermengder som allerede er tildelt på tidligere linjer
 
 # Sending methods
 # ModelDocument
@@ -78,6 +118,7 @@ SumOfProductWeights=Sum varevekt
 # warehouse details
 DetailWarehouseNumber= Lagerdetaljer
 DetailWarehouseFormat= W:%s (Qty: %d)
+DetailChildrenFormat=%s : %s (Ant: %s)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Vis siste dato for oppføring i beholdning under opprettelse av forsendelse for serienummer eller batch
 CreationOptions=Tilgjengelige alternativer under opprettelse av forsendelse
 ShipmentDistribution=Forsendelsesdistribusjon
@@ -87,8 +128,9 @@ ErrorTooMuchShipped=Antall sendt skal ikke være større enn antall bestilt for 
 ##### Types of contacts #####
 TypeContact_shipping_internal_SALESREPFOLL=Representant for oppfølging av levering
 TypeContact_shipping_external_BILLING=Kundekontakt faktura
-TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
-TypeContact_shipping_external_SHIPPING=Customer contact for shipping
+TypeContact_shipping_external_CUSTOMER=Kundekontakt for oppfølging av frakt
+TypeContact_shipping_external_SHIPPING=Kundekontakt for frakt
 TypeContact_shipping_external_DELIVERY=Kundekontakt for levering
-CloseShipment=Close shipment
-ConfirmCloseShipment=Confirm close shipment
+CloseShipment=Lukk forsendelse
+ConfirmCloseShipment=Bekreft lukking av forsendelse
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=Forhåndsvelg batch-/serienummeret med den tidligste holdbarhetsdatoen når du oppretter en forsendelse.

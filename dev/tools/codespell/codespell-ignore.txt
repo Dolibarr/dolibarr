@@ -13,7 +13,7 @@ zar
 # Need as part of some PHP keys for some array variables
 referer
 
-# Name of contributores
+# Name of contributors
 noe
 udo
 tim
@@ -90,7 +90,7 @@ espace
 methode
 datee
 
-# Some string found because it is part text that is html entities escaped into files
+# Some string found because it is part of text that is html entities escaped into files
 tre
 activ
 

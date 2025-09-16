@@ -9,7 +9,7 @@
  * Copyright (C) 2013-2018	Philippe Grand				<philippe.grand@atoo-net.com>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016-2024	Charlene Benke				<charlene@patas-monkey.com>
+ * Copyright (C) 2016-2025	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2018-2025	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2022-2023	Solution Libre SAS			<contact@solution-libre.fr>
  * Copyright (C) 2023-2024	Benjamin Falière			<benjamin.faliere@altairis.fr>
@@ -105,8 +105,9 @@ class Categorie extends CommonObject
 	/**
 	 * @var array<int,string> 	Code mapping from ID
 	 *
-	 * @deprecated	This array should be removed in future, once previous constants are moved to the string value.
+	 * @deprecated	This array should be removed now. We can get it by doing: array_flip($categ->MAP_ID)
 	 */
+	/*
 	public static $MAP_ID_TO_CODE = array(
 		0  => 'product',
 		1  => 'supplier',
@@ -128,11 +129,10 @@ class Categorie extends CommonObject
 		20 => 'supplier_order',
 		21 => 'supplier_invoice'
 	);
+	*/
 
 	/**
 	 * @var array<string,string> Foreign keys mapping from type string when value does not match
-	 *
-	 * @todo Move to const array when PHP 5.6 will be our minimum target
 	 */
 	public $MAP_CAT_FK = array(
 		'customer'     => 'soc',
@@ -143,8 +143,6 @@ class Categorie extends CommonObject
 
 	/**
 	 * @var array<string,string> Category tables mapping from type string (llx_categorie_...) when value does not match
-	 *
-	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
 	public $MAP_CAT_TABLE = array(
 		'customer'     => 'societe',
@@ -154,8 +152,6 @@ class Categorie extends CommonObject
 
 	/**
 	 * @var array<string,string> Object class mapping from type string
-	 *
-	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
 	public $MAP_OBJ_CLASS = array(
 		'product'				=> 'Product',
@@ -181,8 +177,6 @@ class Categorie extends CommonObject
 
 	/**
 	 * @var array<string,string> 	Title/Label mapping from type string
-	 *
-	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
 	public static $MAP_TYPE_TITLE_AREA = array(
 		'product'				=> 'Products',
@@ -335,7 +329,7 @@ class Categorie extends CommonObject
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -388,12 +382,13 @@ class Categorie extends CommonObject
 				foreach ($hookmanager->resArray as $mapList) {
 					$mapId = $mapList['id'];
 					$mapCode = $mapList['code'];
-					self::$MAP_ID_TO_CODE[$mapId] = $mapCode;
+					//self::$MAP_ID_TO_CODE[$mapId] = $mapCode;
 					$this->MAP_ID[$mapCode] = $mapId;
 					$this->MAP_CAT_FK[$mapCode] = isset($mapList['cat_fk']) ? $mapList['cat_fk'] : null;
 					$this->MAP_CAT_TABLE[$mapCode] = isset($mapList['cat_table']) ? $mapList['cat_table'] : null;
 					$this->MAP_OBJ_CLASS[$mapCode] = $mapList['obj_class'];
 					$this->MAP_OBJ_TABLE[$mapCode] = $mapList['obj_table'];
+					self::$MAP_TYPE_TITLE_AREA[$mapCode] =  $mapList['label'];
 				}
 			}
 		}
@@ -1123,7 +1118,7 @@ class Categorie extends CommonObject
 				dol_print_error($this->db);
 			}
 
-			if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+			if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 				$page = 0;
 				$offset = 0;
 			}

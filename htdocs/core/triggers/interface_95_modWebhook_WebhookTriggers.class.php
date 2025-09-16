@@ -33,6 +33,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 require_once DOL_DOCUMENT_ROOT.'/webhook/class/target.class.php';
+require_once DOL_DOCUMENT_ROOT.'/webhook/class/triggerhistory.class.php';
 
 /**
  *  Class of triggers for Webhook module
@@ -77,6 +78,7 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 		// Or you can execute some code here
 		$nbPosts = 0;
 		$errors = 0;
+		$errorforhistory = 0;
 		$static_object = new Target($this->db);
 		$target_url = $static_object->fetchAll();	// TODO Replace this with a search with filter on $action trigger to avoid to filter later.
 
@@ -133,10 +135,12 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 				// warning; the test page use its own call
 				$response = getURLContent($tmpobject->url, $method, $jsonstr, 1, $headers, array('http', 'https'), 2, -1);
 
+				$errormsg = "";
 				if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {
 					$nbPosts++;
 				} else {
 					$errormsg = "The WebHook for ".$action." failed to get URL ".$tmpobject->url." with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : "");
+					$errorforhistory ++;
 
 					if ($tmpobject->type == Target::TYPE_BLOCKING) {
 						$errors++;
@@ -149,6 +153,19 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 					/*if (!empty($response['content'])) {
 						$this->errors[] = dol_trunc($response['content'], 200);
 					}*/
+				}
+
+				$triggerhistory = new TriggerHistory($this->db);
+				$triggerhistory->trigger_code = $action;
+				$triggerhistory->trigger_data = $jsonstr;
+				$triggerhistory->fk_target = $tmpobject->id;
+				$triggerhistory->url = $tmpobject->url;
+				$triggerhistory->error_message = $errormsg;
+				$triggerhistory->status = ($errorforhistory == 0 ? 1 : -1);
+				$resql = $triggerhistory->create($user);
+				if (!$resql) {
+					$errors++;
+					$this->errors = array_merge($this->errors, $triggerhistory->errors);
 				}
 			}
 		}

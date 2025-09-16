@@ -26,49 +26,54 @@
  * 				JQuery (providing object $) and JQuery-UI (providing $datepicker) libraries must be loaded before this file.
  */
 
-if (!defined('NOREQUIRESOC')) {
-	define('NOREQUIRESOC', '1');
-}
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', 1);
-}
-if (!defined('NOTOKENRENEWAL')) {
-	define('NOTOKENRENEWAL', 1);
-}
-if (!defined('NOLOGIN')) {
-	define('NOLOGIN', 1);
-}
-if (!defined('NOREQUIREMENU')) {
-	define('NOREQUIREMENU', 1);
-}
-if (!defined('NOREQUIREHTML')) {
-	define('NOREQUIREHTML', 1);
-}
-if (!defined('NOREQUIREAJAX')) {
-	define('NOREQUIREAJAX', '1');
-}
+if (!defined('MAIN_ALREADY_INCLUDED')) {
+	if (!defined('NOREQUIRESOC')) {
+		define('NOREQUIRESOC', '1');
+	}
+	if (!defined('NOCSRFCHECK')) {
+		define('NOCSRFCHECK', 1);
+	}
+	if (!defined('NOTOKENRENEWAL')) {
+		define('NOTOKENRENEWAL', 1);
+	}
+	if (!defined('NOLOGIN')) {
+		define('NOLOGIN', 1);
+	}
+	if (!defined('NOREQUIREMENU')) {
+		define('NOREQUIREMENU', 1);
+	}
+	if (!defined('NOREQUIREHTML')) {
+		define('NOREQUIREHTML', 1);
+	}
+	if (!defined('NOREQUIREAJAX')) {
+		define('NOREQUIREAJAX', '1');
+	}
 
-session_cache_limiter('public');
+	session_cache_limiter('public');
 
-require_once '../../main.inc.php';
+	require_once '../../main.inc.php';
+}
 /**
  * @var Conf $conf
  * @var Translate $langs
+ *
+ * @var string $dolibarr_nocache
  */
 
-/*
+
+/**
  * View
  */
-
-// Define javascript type
-top_httphead('text/javascript; charset=UTF-8');
-// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) {
-	header('Cache-Control: max-age=10800, public, must-revalidate');
-} else {
-	header('Cache-Control: no-cache');
+if (!defined('MAIN_ALREADY_INCLUDED')) {
+	// Define javascript type
+	top_httphead('text/javascript; charset=UTF-8');
+	// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
+	if (empty($dolibarr_nocache)) {
+		header('Cache-Control: max-age=10800, public, must-revalidate');
+	} else {
+		header('Cache-Control: no-cache');
+	}
 }
-
 
 
 // Define tradMonths javascript array (we define this in datepicker AND in parent page to avoid errors with IE8)
@@ -1054,61 +1059,74 @@ function document_preview(file, type, title)
 
 	if ($.inArray(type, ValidImageTypes) < 0) {
 		/* Not an image */
-		var width='85%';
-		var object_width='100%';
-		var height = ($( window ).height() - 60) * 0.90;
-		var object_height='98%';
+		var object_width = '100%';
+		var object_height = '98%';
+
+		var popupWidth = '85%';
+		var popupHeight = $( window ).height() * 0.90 - 100;
 
 		show_preview('notimage');
 
 	} else {
 		/* This is an image */
-		var object_width=0;
-		var object_height=0;
+		var object_width = 0;
+		var object_height = 0;
 
 		var img = new Image();
 
+		img.src = file;
 		img.onload = function() {
-			object_width = this.width;
-			object_height = this.height;
+			object_width = this.width;		/* the real width of image */
+			object_height = this.height;	/* the real height of image */
 
-			width = $( window ).width()*0.90;
-			console.log("object_width="+object_width+" window width="+width);
-			if(object_width < width){
+			/* Complete title with size of image */
+			title = title + ' (' + object_width + ' x ' + object_height + ')';
+
+			popupWidth = $( window ).width() * 0.85 - 50;
+			console.log("object_width="+object_width+" popup window width="+popupWidth);
+			if (object_width < popupWidth) {
 				console.log("Object width is small, we set width of popup according to image width.");
-				width = object_width + 30
+				popupWidth = object_width + 50
 			}
-			height = $( window ).height()*0.85;
-			console.log("object_height="+object_height+" window height="+height);
-			if(object_height < height){
+			if (popupWidth < 250) {	/* Set a minimal width because we need to have neough space for the buttons */
+				popupWidth = 250;
+			}
+
+			popupHeight = $( window ).height() * 0.90 - 160;
+			console.log("object_height="+object_height+" popup window height="+popupHeight);
+			if (object_height < (popupHeight - 160)) {
 				console.log("Object height is small, we set height of popup according to image height.");
-				height = object_height + 100
-			}
-			else
-			{
+				popupHeight = object_height + 160
+			} else {
 				showOriginalSizeButton = true;
 			}
+
+			console.log("popupWidth="+popupWidth+" popupHeight="+popupHeight);
 
 			show_preview('image');
 
 		};
-		img.src = file;
 	}
 
 	/* This function is local to document_preview. Variables like file, type, title, object_width and object_height are global inside this function */
 	function show_preview(mode) {
-		/* console.log("mode="+mode+" file="+file+" type="+type+" title=title+" width="+width+" height="+height); */
+		/* console.log("mode="+mode+" file="+file+" type="+type+" title=title+" width="+popupWidth+" height="+popupHeight); */
 		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam"></object>';
 
 		optionsbuttons = {}
-		if (mode == 'image' && showOriginalSizeButton)
-		{
+		if (mode == 'image') {
 			var curRot = 0;
+			var savMaxHeight = 0;
 			optionsbuttons = {
-				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("OriginalSize")); ?>": function() { console.log("Click on original size"); jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": "none" }); },
-				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("RotateImage")); ?>": function() { curRot += 90; jQuery(".ui-dialog-content.ui-widget-content > object").css("transform","rotate(" + curRot + "deg)"); },
-				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("CloseWindow")); ?>": function() { $( this ).dialog( "close" ); }
+				'<?php echo dol_escape_js($langs->transnoentitiesnoconv("RotateImage")); ?>': function() { curRot += 90; jQuery(".ui-dialog-content.ui-widget-content > object").css("transform","rotate(" + curRot + "deg)"); },
+				'<?php echo dol_escape_js($langs->transnoentitiesnoconv("CloseWindowShort")); ?>': function() { $( this ).dialog( "close" ); }
 				};
+			if (showOriginalSizeButton) {
+				optionsbuttons = {
+					'<?php echo dol_escape_js($langs->transnoentitiesnoconv("OriginalSize")); ?>': function() { console.log("Click on original size button"); savMaxHeight = jQuery(".ui-dialog-content.ui-widget-content > object").css("max-height"); console.log("savMaxHeight="+savMaxHeight); jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": (savMaxHeight == "none" ? "100%" : "none") }); },
+					  ...optionsbuttons
+				};
+			}
 		}
 
 		$("#dialogforpopup").addClass("center");
@@ -1117,15 +1135,14 @@ function document_preview(file, type, title)
 		$("#dialogforpopup").dialog({
 			closeOnEscape: true,
 			resizable: true,
-			width: width,
-			height: height,
+			width: popupWidth,
+			height: popupHeight,
 			modal: true,
 			title: title,
 			buttons: optionsbuttons
 		});
 
-		if (showOriginalSizeButton)
-		{
+		if (showOriginalSizeButton) {
 			jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": "100%", "width": "auto", "margin-left": "auto", "margin-right": "auto", "display": "block" });
 		}
 	}
@@ -1660,6 +1677,7 @@ $(document).ready(function() {
 
 /**
  * Function called when an item is moved to a different column
+ *
  * @param {jQuery} item - The dragged item
  * @param {jQuery} newColumn - The new column
  */

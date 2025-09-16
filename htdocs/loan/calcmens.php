@@ -1,6 +1,5 @@
 <?php
-/* TVI
- * Copyright (C) 2015	    Florian HENRY 		    <florian.henry@open-concept.pro>
+/* Copyright (C) 2015	    Florian HENRY 		    <florian.henry@open-concept.pro>
  * Copyright (C) 2020       Maxime DEMAREST         <maxime@indelog.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *

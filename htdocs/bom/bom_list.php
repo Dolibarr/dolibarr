@@ -74,7 +74,7 @@ $pagenext = $page + 1;
 // Initialize a technical objects
 $object = new BOM($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction = $conf->bom->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = getMultidirOutput($object) . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('bomlist')); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
@@ -143,10 +143,13 @@ if ($user->socid > 0) {
 }
 $result = restrictedArea($user, 'bom');
 
+$uploaddir = getMultidirOutput($object);
+
 
 /*
  * Actions
  */
+
 $error = 0;
 
 if (GETPOST('cancel', 'alpha')) {
@@ -191,7 +194,7 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'BOM';
 	$objectlabel = 'BillOfMaterials';
-	$uploaddir = $conf->bom->dir_output;
+
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 
@@ -403,7 +406,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}

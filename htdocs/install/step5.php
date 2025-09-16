@@ -103,7 +103,6 @@ $langs->loadLangs(array("admin", "install"));
 $login = GETPOST('login', 'alpha') ? GETPOST('login', 'alpha') : (empty($argv[5]) ? '' : $argv[5]);
 $pass = GETPOST('pass', 'alpha') ? GETPOST('pass', 'alpha') : (empty($argv[6]) ? '' : $argv[6]);
 $pass_verif = GETPOST('pass_verif', 'alpha') ? GETPOST('pass_verif', 'alpha') : (empty($argv[7]) ? '' : $argv[7]);
-$force_install_lockinstall = (int) (!empty($force_install_lockinstall) ? $force_install_lockinstall : (GETPOST('installlock', 'aZ09') ? GETPOST('installlock', 'aZ09') : (empty($argv[8]) ? '' : $argv[8])));
 
 $success = 0;
 
@@ -132,6 +131,7 @@ if (@file_exists($forcedfile)) {
 	 * @var string	$force_install_mainforcehttps
 	 * @var string	$force_install_distrib
 	 * @var string	$force_install_dolibarrlogin
+	 * @var string	$force_install_lockinstall
 	 * @var string	$force_install_module
 	 */
 	// If forced install is enabled, replace post values. These are empty because form fields are disabled.
@@ -141,6 +141,8 @@ if (@file_exists($forcedfile)) {
 		}
 	}
 }
+
+$force_install_lockinstall = (int) (!empty($force_install_lockinstall) ? $force_install_lockinstall : (GETPOST('installlock', 'aZ09') ? GETPOST('installlock', 'aZ09') : (empty($argv[8]) ? '' : $argv[8])));
 
 dolibarr_install_syslog("--- step5: entering step5.php page ".$versionfrom." ".$versionto);
 
@@ -545,7 +547,7 @@ if ($action == "set") {
 	// If upgrade
 	if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') || getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') == DOL_VERSION) {
 		// Upgrade is finished (database is on the same version than files)
-		print '<img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/checklist.svg" width="30" alt="Configuration">';
+		print '<img class="valignmiddle inline-block paddingright" src="../public/theme/common/checklist.svg" width="30" alt="Configuration">';
 		print ' <span class="valignmiddle">'.$langs->trans("SystemIsUpgraded")."</span><br>";
 
 		// Create install.lock file if it does not exists.

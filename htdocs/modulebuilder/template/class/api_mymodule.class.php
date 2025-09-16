@@ -114,6 +114,8 @@ class MyModuleApi extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
+		global $hookmanager;
+
 		$obj_ret = array();
 		$tmpobject = new MyObject($this->db);
 
@@ -137,9 +139,14 @@ class MyModuleApi extends DolibarrApi
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".$this->db->prefix().$tmpobject->table_element." AS t";
 		$sql .= " LEFT JOIN ".$this->db->prefix().$tmpobject->table_element."_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
-		$sql .= " WHERE 1 = 1";
-		if ($tmpobject->ismultientitymanaged) {
-			$sql .= ' AND t.entity IN ('.getEntity($tmpobject->element).')';
+		if (!empty($tmpobject->ismultientitymanaged) && (int) $tmpobject->ismultientitymanaged == 1) {
+			$sql .= " WHERE t.entity IN (".getEntity($tmpobject->element).")";
+		} elseif (preg_match('/^\w+@\w+$/', (string) $tmpobject->ismultientitymanaged)) {
+			$tmparray = explode('@', (string) $tmpobject->ismultientitymanaged);
+			$sql .= " LEFT JOIN ".$this->db->prefix().$tmparray[1]." as pt ON t.".$tmparray[0]." = pt.rowid";
+			$sql .= " WHERE pt.entity IN (".getEntity($tmpobject->element).")";
+		} else {
+			$sql .= " WHERE 1 = 1";
 		}
 		if ($restrictonsocid && $socid) {
 			$sql .= " AND t.fk_soc = ".((int) $socid);
@@ -152,11 +159,21 @@ class MyModuleApi extends DolibarrApi
 				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
 			}
 		}
-		if ($sqlfilters) {
-			$errormessage = '';
-			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
-			if ($errormessage) {
-				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+		// Add where from hooks and sqlfilters
+		$parameters = array('sqlfilters' => $sqlfilters, 'apimethod' => 'index');
+		$action = 'list';
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $tmpobject, $action); // Note that $action and $object may have been modified by hook
+		if ($reshook > 0) {
+			$sql .= $hookmanager->resPrint;
+		} elseif ($reshook == 0) {
+			$sql .= $hookmanager->resPrint;
+
+			if ($sqlfilters) {
+				$errormessage = '';
+				$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+				if ($errormessage) {
+					throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+				}
 			}
 		}
 

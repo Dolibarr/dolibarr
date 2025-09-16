@@ -87,7 +87,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paybox", "paypal", "stripe")); // File with generic data
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "paypal", "stripe")); // File with generic data
 
 // Hook to be used by external payment modules (ie Payzen, ...)
 $hookmanager = new HookManager($db);
@@ -353,6 +353,10 @@ if ((empty($paymentmethod) || $paymentmethod == 'paypal') && isModEnabled('paypa
 //}
 if ((empty($paymentmethod) || $paymentmethod == 'stripe') && isModEnabled('stripe')) {
 	require_once DOL_DOCUMENT_ROOT.'/stripe/config.php'; // This include also /stripe/lib/stripe.lib.php, /includes/stripe/stripe-php/init.php, ...
+	/**
+	 * @var array<strint,mixed>		$stripearrayofkeys
+	 * @var array<int,mixed>		$stripearrayofkeysbyenv
+	 */
 }
 
 // Initialize $validpaymentmethod
@@ -2731,7 +2735,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 					?>
 			var paymentElement = elements.create("payment");
 
-			// Add an instance of the card Element into the `card-element` <div>
+			// Add an instance of the card Element into the div #payment-element
 			paymentElement.mount("#payment-element");
 
 			// Handle form submission
@@ -2804,7 +2808,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 					?>
 			var cardElement = elements.create('card', {style: style});
 
-			// Add an instance of the card Element into the `card-element` <div>
+			// Add an instance of the card Element into the div #card-element
 			cardElement.mount('#card-element');
 
 			// Handle real-time validation errors from the card Element.

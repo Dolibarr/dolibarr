@@ -82,7 +82,7 @@ $hookmanager = new HookManager($db);
 
 $hookmanager->initHooks(array('newpayment'));
 
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paypal", "stripe"));
 
 // Clean parameters
 $PAYPAL_API_USER = "";
@@ -159,7 +159,7 @@ if (getDolGlobalString($paramcreditorlong)) {
 
 $ispaymentok = false;
 // If payment is ok
-$PAYMENTSTATUS = $TRANSACTIONID = $TAXAMT = $NOTE = '';
+$PAYMENTSTATUS = $TRANSACTIONID = $LONGTRANSACTIONID = $TAXAMT = $NOTE = '';
 // If payment is ko
 $ErrorCode = $ErrorShortMsg = $ErrorLongMsg = $ErrorSeverityCode = '';
 
@@ -436,6 +436,20 @@ if (isModEnabled('stripe') && $paymentmethod === 'stripe') {
 					$error++;
 					$errmsg = 'Stripe payment not succeeded. Status: ' . $paymentIntent->status;
 					dol_syslog($errmsg, LOG_ERR, 0, '_payment');
+				}
+
+				// Get $customerid and $pkey to forge $LONGTRANSACTIONID
+				$customerid = '';
+				$pkey = '';
+				if ($paymentIntent instanceof \Stripe\PaymentIntent) {
+					$customerid = $paymentIntent->customer;
+				}
+				if (isset($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])) {
+					$pkey = $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
+				}
+
+				if ($customerid && $pkey) {
+					$LONGTRANSACTIONID = $TRANSACTIONID.':'.$customerid.'@'.$pkey;
 				}
 			} catch (\Stripe\Exception\ApiErrorException $e) {
 				$error++;
@@ -1049,8 +1063,13 @@ if ($ispaymentok) {
 				$paiement->paiementid   = $paymentTypeId;
 				$paiement->num_payment = '';
 				$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
-				$paiement->ext_payment_id = $TRANSACTIONID;		// TODO LDR May be we should store py_... instead of pi_... but we started with pi_... so we continue.
-				//$paiement->ext_payment_id = $TRANSACTIONID.':'.$customer->id.'@'.$stripearrayofkeysbyenv[$servicestatus]['publishable_key'];	// TODO LDR It would be better if we could store this. Do we have customer->id and publishable_key ?
+
+				// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
+				if ($LONGTRANSACTIONID) {
+					$paiement->ext_payment_id = $LONGTRANSACTIONID;
+				} else {
+					$paiement->ext_payment_id = $TRANSACTIONID;
+				}
 				$paiement->ext_payment_site = $service;
 
 				if (!$error) {
@@ -1194,7 +1213,13 @@ if ($ispaymentok) {
 						$paiement->paiementid = $paymentTypeId;
 						$paiement->num_payment = '';
 						$paiement->note_public = 'Online payment ' . dol_print_date($now, 'standard') . ' from ' . $ipaddress;
-						$paiement->ext_payment_id = $TRANSACTIONID;		// 'pi_...' for Stripe, ... TODO Use 'pi_...:cus_...@pk_...'
+
+						// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
+						if ($LONGTRANSACTIONID) {
+							$paiement->ext_payment_id = $LONGTRANSACTIONID;
+						} else {
+							$paiement->ext_payment_id = $TRANSACTIONID;
+						}
 						$paiement->ext_payment_site = $service;			// 'StripeLive' or 'Stripe', or ...
 
 						if (!$error) {
@@ -1328,7 +1353,13 @@ if ($ispaymentok) {
 				$paiement->paymenttype = $paymentTypeId;
 				$paiement->num_payment = '';
 				$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
-				$paiement->ext_payment_id = $TRANSACTIONID;		// 'pi_...' for Stripe, ... TODO Use 'pi_...:cus_...@pk_...'
+
+				// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
+				if ($LONGTRANSACTIONID) {
+					$paiement->ext_payment_id = $LONGTRANSACTIONID;
+				} else {
+					$paiement->ext_payment_id = $TRANSACTIONID;
+				}
 				$paiement->ext_payment_site = $service;			// 'StripeLive' or 'Stripe', or ...
 
 				if (!$error) {
@@ -1463,7 +1494,13 @@ if ($ispaymentok) {
 					$paiement->paiementid   = $paymentTypeId;
 					$paiement->num_payment = '';
 					$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress.' for event registration';
-					$paiement->ext_payment_id = $TRANSACTIONID;		// 'pi_...' for Stripe, ... TODO Use 'pi_...:cus_...@pk_...'
+
+					// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
+					if ($LONGTRANSACTIONID) {
+						$paiement->ext_payment_id = $LONGTRANSACTIONID;
+					} else {
+						$paiement->ext_payment_id = $TRANSACTIONID;
+					}
 					$paiement->ext_payment_site = $service;			// 'StripeLive' or 'Stripe', or ...
 
 					if (!$error) {
@@ -1696,8 +1733,14 @@ if ($ispaymentok) {
 					$paiement->paiementid   = $paymentTypeId;
 					$paiement->num_payment = '';
 					$paiement->note_public  = 'Online payment '.dol_print_date($now, 'standard').' from '.$ipaddress;
-					$paiement->ext_payment_id = $TRANSACTIONID;
-					$paiement->ext_payment_site = $service;
+
+					// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
+					if ($LONGTRANSACTIONID) {
+						$paiement->ext_payment_id = $LONGTRANSACTIONID;
+					} else {
+						$paiement->ext_payment_id = $TRANSACTIONID;
+					}
+					$paiement->ext_payment_site = $service;			// 'StripeLive' or 'Stripe', or ...
 
 					if (!$error) {
 						$paiement_id = $paiement->create($user, 1); // This include closing invoices and regenerating documents
@@ -1912,7 +1955,13 @@ if ($ispaymentok) {
 						$paiement->paiementid = $paymentTypeId;
 						$paiement->num_payment = '';
 						$paiement->note_public = 'Online payment ' . dol_print_date($now, 'standard') . ' from ' . $ipaddress;
-						$paiement->ext_payment_id = $TRANSACTIONID;		// pi_... for Stripe, ...
+
+						// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
+						if ($LONGTRANSACTIONID) {
+							$paiement->ext_payment_id = $LONGTRANSACTIONID;
+						} else {
+							$paiement->ext_payment_id = $TRANSACTIONID;
+						}
 						$paiement->ext_payment_site = $service;			// 'StripeLive' or 'Stripe', or ...
 
 						if (!$error) {

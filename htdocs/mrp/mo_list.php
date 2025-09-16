@@ -348,7 +348,7 @@ foreach ($search as $key => $val) {
 		if ($key == 'status' && $search[$key] == -2) {
 			$sql .= " AND (t.status IN (".$db->sanitize($object::STATUS_VALIDATED.",".$object::STATUS_INPROGRESS)."))";
 			if ($search_option == 'late') {
-				$sql .= " AND (t.date_end_planned < '".$db->idate(dol_now() - $conf->mrp->progress->warning_delay)."')";
+				$sql .= " AND (t.date_end_planned < '".$db->idate(dol_now() - getWarningDelay('mrp', 'progress'))."')";
 			}
 			continue;
 		}
@@ -432,7 +432,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}

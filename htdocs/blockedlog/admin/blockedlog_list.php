@@ -737,14 +737,17 @@ print '</form>';
 print '<script type="text/javascript">
 
 jQuery(document).ready(function () {
-	jQuery("#dialogforpopup").dialog(
-	{ closeOnEscape: true, classes: { "ui-dialog": "highlight" },
-	maxHeight: window.innerHeight-60, height: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? 400 : 700).',
-	modal: true,
-	autoOpen: false }).css("z-index: 5000");
+	jQuery("#dialogforpopup").dialog({
+		closeOnEscape: true,
+		classes: { "ui-dialog": "highlight" },
+		maxHeight: window.innerHeight-60,
+		height: window.innerHeight-60,
+		width: '.($conf->browser->layout == 'phone' ? 400 : 700).',
+		modal: true,
+		autoOpen: false
+	}).css("z-index: 5000");
 
 	$("a[rel=show-info]").click(function() {
-
 	    console.log("We click on tooltip, we open popup and get content using an ajax call");
 
 		var fk_block = $(this).attr("data-blockid");

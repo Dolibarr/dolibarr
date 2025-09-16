@@ -496,15 +496,20 @@ if ($useajax) {
 	print '<script nonce="'.getNonce().'" type="text/javascript">';
 
 	// Enable jquery handlers on new generated HTML objects (same code than into lib_footer.js.php)
-	// Because the content is reloaded by ajax call, we must also reenable some jquery hooks
-	// Wrapper to manage document_preview
+	// Because the content is reloaded by ajax call, we must also redefine/reenable some jquery hooks.
+
+	// Handler to manage document_preview on click on a .documentpreview css class.
 	if ($conf->browser->layout != 'phone') {
 		print "\n/* JS CODE TO ENABLE document_preview */\n";
 		print '
                 jQuery(document).ready(function () {
 			        jQuery(".documentpreview").click(function () {
             		    console.log("We click on preview for element with href="+$(this).attr(\'href\')+" mime="+$(this).attr(\'mime\'));
-            		    document_preview($(this).attr(\'href\'), $(this).attr(\'mime\'), \''.dol_escape_js($langs->transnoentities("Preview")).'\');
+						var titledocpreview = $(this).attr(\'data-title\');
+						if (titledocpreview == undefined || titledocpreview == "") {
+							titledocpreview = \''.dol_escape_js($langs->transnoentities("Preview")).'\'
+						}
+            		    document_preview($(this).attr(\'href\'), $(this).attr(\'mime\'), titledocpreview);
                 		return false;
         			});
         		});

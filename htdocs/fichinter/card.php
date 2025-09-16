@@ -956,7 +956,7 @@ if ($action == 'create') {
 			}
 			$objectsrc->fetch_thirdparty();
 
-			$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
+			$projectid = (int) $objectsrc->fk_project;
 
 			$soc = $objectsrc->thirdparty;
 
@@ -1190,7 +1190,7 @@ if ($action == 'create') {
 
 	$head = fichinter_prepare_head($object);
 
-	print dol_get_fiche_head($head, 'card', $langs->trans("InterventionCard"), -1, 'intervention');
+	print dol_get_fiche_head($head, 'card', $langs->trans("InterventionCard"), -1, $object->picto);
 
 	$formconfirm = '';
 
@@ -1210,7 +1210,7 @@ if ($action == 'create') {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		} else {
-			$numref = $object->ref;
+			$numref = (string) $object->ref;
 		}
 		$text = $langs->trans('ConfirmValidateIntervention', $numref);
 		if (isModEnabled('notification')) {
@@ -1610,7 +1610,7 @@ if ($action == 'create') {
 
 					$temps = $objectline->showOptionals($extrafields, 'edit', array(), '', '', '1', 'line');
 					if (!empty($temps)) {
-						print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
+						print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$objectline->id.'" name="extrafield_lines_area_'.$objectline->id.'">';
 						print $temps;
 						print '</div>';
 					}

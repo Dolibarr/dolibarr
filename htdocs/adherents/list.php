@@ -415,7 +415,7 @@ $morecss = array();
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = "SELECT";
-$sql .= " d.rowid, d.ref, d.login, d.lastname, d.firstname, d.gender, d.societe as company, d.fk_soc,";
+$sql .= " d.rowid, d.ref, d.login, d.lastname, d.firstname, d.gender, d.societe as company, d.fk_soc as socid,";
 $sql .= " d.civility, d.datefin, d.address, d.zip, d.town, d.state_id, d.country,";
 $sql .= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.birth, d.public, d.photo,";
 $sql .= " d.fk_adherent_type as type_id, d.morphy, d.statut as status, d.datec as date_creation, d.tms as date_modification,";
@@ -599,7 +599,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -1228,7 +1228,7 @@ while ($i < $imaxinloop) {
 	$memberstatic->gender = $obj->gender;
 	$memberstatic->status = $obj->status;
 	$memberstatic->datefin = $datefin;
-	$memberstatic->socid = $obj->fk_soc;
+	$memberstatic->socid = $obj->socid;
 	$memberstatic->photo = $obj->photo;
 	$memberstatic->email = $obj->email;
 	$memberstatic->morphy = $obj->morphy;
@@ -1236,7 +1236,7 @@ while ($i < $imaxinloop) {
 	$memberstatic->note_private = $obj->note_private;
 	$memberstatic->need_subscription = $obj->subscription;
 
-	if (!empty($obj->fk_soc)) {
+	if (!empty($obj->socid)) {
 		$memberstatic->fetch_thirdparty();
 		if ($memberstatic->thirdparty->id > 0) {
 			$companyname = $memberstatic->thirdparty->name;
@@ -1468,7 +1468,7 @@ while ($i < $imaxinloop) {
 			if ($datefin) {
 				$s .= dol_print_date($datefin, 'day');
 				if ($memberstatic->hasDelay()) {
-					$textlate = ' ('.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($conf->adherent->subscription->warning_delay / 60 / 60 / 24) >= 0 ? '+' : '').ceil($conf->adherent->subscription->warning_delay / 60 / 60 / 24).' '.$langs->trans("days").')';
+					$textlate = ' ('.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil(getWarningDelay('member', 'subscription') / 60 / 60 / 24) >= 0 ? '+' : '').ceil(getWarningDelay('member', 'subscription') / 60 / 60 / 24).' '.$langs->trans("days").')';
 					$s .= " ".img_warning($langs->trans("SubscriptionLate").$textlate);
 				}
 			} else {

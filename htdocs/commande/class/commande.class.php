@@ -58,6 +58,12 @@ class Commande extends CommonOrder
 	public $element = 'commande';
 
 	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'ORDER';
+
+	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'commande';
@@ -249,8 +255,6 @@ class Commande extends CommonOrder
 	 */
 	public $extraparams = array();
 
-	public $linked_objects = array();
-
 	/**
 	 * @var int User author ID
 	 */
@@ -298,7 +302,7 @@ class Commande extends CommonOrder
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -537,7 +541,7 @@ class Commande extends CommonOrder
 		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
 			$num = $this->getNextNumRef($soc);
 		} else {
-			$num = $this->ref;
+			$num = (string) $this->ref;
 		}
 		$this->newref = dol_sanitizeFileName($num);
 
@@ -881,10 +885,11 @@ class Commande extends CommonOrder
 	 * 	Cancel an order
 	 * 	If stock is decremented on order validation, we must reincrement it
 	 *
+	 * 	@param	User	$user			User making action
 	 *	@param	int		$idwarehouse	Id warehouse to use for stock change.
 	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
-	public function cancel($idwarehouse = -1)
+	public function cancel($user, $idwarehouse = -1)
 	{
 		global $user, $langs;
 
@@ -967,6 +972,7 @@ class Commande extends CommonOrder
 
 		// Set tmp vars
 		$date = ($this->date_commande ? $this->date_commande : $this->date);
+		$this->import_key = trim((string) $this->import_key);
 		$delivery_date = $this->delivery_date;
 
 		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
@@ -1009,7 +1015,7 @@ class Commande extends CommonOrder
 			return -1;
 		}
 
-		$now = dol_now();
+		$this->date_creation = dol_now();
 
 		$this->db->begin();
 
@@ -1023,8 +1029,9 @@ class Commande extends CommonOrder
 		$sql .= ", fk_multicurrency";
 		$sql .= ", multicurrency_code";
 		$sql .= ", multicurrency_tx";
+		$sql .= ", import_key";
 		$sql .= ")";
-		$sql .= " VALUES ('(PROV)', ".((int) $this->socid).", '".$this->db->idate($now)."', ".((int) $user->id);
+		$sql .= " VALUES ('(PROV)', ".((int) $this->socid).", '".$this->db->idate($this->date_creation)."', ".((int) $user->id);
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
 		$sql .= ", '".$this->db->idate($date)."'";
 		$sql .= ", ".($this->source >= 0 && $this->source != '' ? $this->db->escape((string) $this->source) : 'null');
@@ -1051,6 +1058,7 @@ class Commande extends CommonOrder
 		$sql .= ", ".(int) $this->fk_multicurrency;
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql .= ", ".(float) $this->multicurrency_tx;
+		$sql .= ", '".$this->db->escape($this->import_key)."'";
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -1547,8 +1555,8 @@ class Commande extends CommonOrder
 	 *	@param      int				$fk_remise_except	Id remise
 	 *	@param      string			$price_base_type	HT or TTC
 	 *	@param      float			$pu_ttc    		    Prix unitaire TTC
-	 *	@param      int|string		$date_start       	Start date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
-	 *	@param      int|string		$date_end         	End date of the line - Added by Matelli (See http://matelli.fr/showcases/patchs-dolibarr/add-dates-in-order-lines.html)
+	 *	@param      int|''			$date_start       	Start date of the line
+	 *	@param      int|''			$date_end         	End date of the line
 	 *	@param      int<0,1>		$type				Type of line (0=product, 1=service). Not used if fk_product is defined, the type of product is used.
 	 *	@param      int				$rang             	Position of line
 	 *	@param		int				$special_code		Special code (also used by externals modules!)
@@ -1750,15 +1758,6 @@ class Commande extends CommonOrder
 				$ranktouse = $rangmax + 1;
 			}
 
-			// TODO A virer
-			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
-			$price = $pu;
-			$remise = 0;
-			if ($remise_percent > 0) {
-				$remise = round(((float) $pu * $remise_percent / 100), 2);
-				$price = (float) $pu - $remise;
-			}
-
 			// Insert line
 			$this->line = new OrderLine($this->db);
 
@@ -1807,9 +1806,6 @@ class Commande extends CommonOrder
 			$this->line->multicurrency_total_ht 	= (float) $multicurrency_total_ht;
 			$this->line->multicurrency_total_tva 	= (float) $multicurrency_total_tva;
 			$this->line->multicurrency_total_ttc 	= (float) $multicurrency_total_ttc;
-
-			// TODO Do not use anymore
-			$this->line->price = $price;
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				$this->line->array_options = $array_options;
@@ -1875,8 +1871,8 @@ class Commande extends CommonOrder
 	 *	@param  int     $idproduct          Product Id
 	 *	@param  float   $qty                Quantity
 	 *	@param  float   $remise_percent     Product discount relative
-	 * 	@param  int|string   $date_start         Start date of the line
-	 * 	@param  int|string   $date_end           End date of the line
+	 * 	@param  int|''  $date_start         Start date of the line
+	 * 	@param  int|''  $date_end           End date of the line
 	 * 	@return void
 	 *
 	 *	TODO	Remplacer les appels a cette fonction par generation object Ligne
@@ -1907,8 +1903,10 @@ class Commande extends CommonOrder
 			// multiprix
 			if (getDolGlobalString('PRODUIT_MULTIPRICES') && $this->thirdparty->price_level) {
 				$price = $prod->multiprices[$this->thirdparty->price_level];
+				$price_ttc = $prod->multiprices_ttc[$this->thirdparty->price_level];
 			} else {
 				$price = $prod->price;
+				$price_ttc = $prod->price_ttc;
 			}
 
 			$line = new OrderLine($this->db);
@@ -1919,6 +1917,7 @@ class Commande extends CommonOrder
 			$line->desc = $prod->description;
 			$line->qty = $qty;
 			$line->subprice = $price;
+			$line->subprice_ttc = $price_ttc;
 			$line->remise_percent = $remise_percent;
 			$line->vat_src_code = $vat_src_code;
 			$line->tva_tx = $tva_tx;
@@ -2376,7 +2375,7 @@ class Commande extends CommonOrder
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
 			if ($obj) {
-				$nb = $obj->nb;
+				$nb = (int) $obj->nb;
 			}
 
 			$this->db->free($resql);
@@ -3106,8 +3105,8 @@ class Commande extends CommonOrder
 	 *  @param		float			$txlocaltax2		Local tax 2 rate
 	 *  @param    	string			$price_base_type	HT or TTC
 	 *  @param    	int				$info_bits        	Miscellaneous information on line
-	 *  @param    	int|string		$date_start        	Start date of the line
-	 *  @param    	int|string		$date_end          	End date of the line
+	 *  @param    	int|''			$date_start        	Start date of the line
+	 *  @param    	int|''			$date_end          	End date of the line
 	 * 	@param		int				$type				Type of line (0=product, 1=service)
 	 * 	@param		int				$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
 	 * 	@param		int				$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
@@ -3207,19 +3206,6 @@ class Commande extends CommonOrder
 			$multicurrency_total_tva = $tabprice[17];
 			$multicurrency_total_ttc = $tabprice[18];
 			$pu_ht_devise = $tabprice[19];
-
-			// Anciens indicateurs: $price, $subprice (a ne plus utiliser)
-			$price = $pu_ht;
-			if ($price_base_type == 'TTC') {
-				$subprice = $pu_ttc;
-			} else {
-				$subprice = $pu_ht;
-			}
-			$remise = 0;
-			if ($remise_percent > 0) {
-				$remise = round(((float) $pu * $remise_percent / 100), 2);
-				$price = ((float) $pu - $remise);
-			}
 
 			// Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new OrderLine($this->db);
@@ -3332,9 +3318,6 @@ class Commande extends CommonOrder
 			$this->line->multicurrency_total_ht 	= (float) $multicurrency_total_ht;
 			$this->line->multicurrency_total_tva 	= (float) $multicurrency_total_tva;
 			$this->line->multicurrency_total_ttc 	= (float) $multicurrency_total_ttc;
-
-			// TODO deprecated
-			$this->line->price = $price;
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				// We replace values in this->line->array_options only for entries defined into $array_options
