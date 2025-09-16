@@ -229,7 +229,7 @@ class FactureFournisseur extends CommonInvoice
 	public $propalid;
 
 	/**
-	 * @var int ID
+	 * @var ?int ID
 	 */
 	public $fk_account;		// default bank account
 

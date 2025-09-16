@@ -186,7 +186,7 @@ print '<tr><td>'.$langs->trans('Note').'</td><td class="valeur sensiblehtmlconte
 if (isModEnabled("bank")) {
 	if ($object->bank_account && isset($object->bank_line)) {
 		$bankline = new AccountLine($db);
-		$bankline->fetch($object->bank_line);
+		$bankline->fetch((int) $object->bank_line);
 
 		print '<tr>';
 		print '<td>'.$langs->trans('BankTransactionLine').'</td>';
