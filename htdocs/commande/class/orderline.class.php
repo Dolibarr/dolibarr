@@ -589,6 +589,9 @@ class OrderLine extends CommonOrderLine
 		if (empty($this->remise_percent)) {
 			$this->remise_percent = 0;
 		}
+		if (empty($this->price)) {
+			$this->price = 0;
+		}
 		if (empty($this->remise)) {
 			$this->remise = 0;
 		}

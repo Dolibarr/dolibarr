@@ -73,7 +73,7 @@ if (isModEnabled('variants')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'propal', 'compta', 'bills', 'orders', 'products', 'deliveries', 'sendings', 'other'));
+$langs->loadLangs(array('companies', 'propal', 'compta', 'bills', 'orders', 'products', 'sendings', 'other'));
 if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
 }
@@ -644,7 +644,7 @@ if (empty($reshook)) {
 								$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : '');
 
 								// Positive line
-								$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
+								$product_type = ($lines[$i]->product_type ? (int) $lines[$i]->product_type : 0);
 
 								// Date start
 								$date_start = false;
@@ -1284,7 +1284,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error && isModEnabled('variants') && $prod_entry_mode != 'free') {
-			if ($combinations = GETPOST('combinations', 'array')) {
+			if ($combinations = GETPOST('combinations', 'array:alphanohtml')) {
 				//Check if there is a product with the given combination
 				$prodcomb = new ProductCombination($db);
 
@@ -3150,7 +3150,6 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Delivery date
-		$langs->load('deliveries');
 		print '<tr><td>';
 		print $form->editfieldkey($langs->trans('DeliveryDate'), 'date_livraison', $object->delivery_date, $object, (int) ($usercancreate && $caneditfield), 'datepicker');
 		print '</td><td class="valuefieldedit">';

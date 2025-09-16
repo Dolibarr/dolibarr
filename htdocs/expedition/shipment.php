@@ -59,7 +59,7 @@ if (isModEnabled("product") || isModEnabled("service")) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'deliveries', 'stocks', 'productbatch', 'incoterm', 'other'));
+$langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'stocks', 'productbatch', 'incoterm', 'other'));
 
 $order_id	= GETPOSTINT('id'); // id of order
 $ref		= GETPOST('ref', 'alpha');

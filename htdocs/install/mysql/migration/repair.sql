@@ -585,6 +585,11 @@ UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NUL
 DELETE FROM llx_rights_def WHERE module = 'hrm' AND perms = 'employee';
 
 
+-- Clean templates that does not exists
+DELETE FROM llx_document_model WHERE TYPE = 'bom' AND nom = 'alpha';
+DELETE FROM llx_const WHERE name = 'BOM_ADDON_PDF' AND value = 'alpha';
+DELETE FROM llx_const WHERE name = 'MRP_MO_ADDON_PDF' AND value = 'alpha';
+
 
 -- Sequence to fix the content of llx_bank.amount_main_currency (value was empty and should not for payment on bank account with a different currency so when amount_main_currency is different than amount)
 -- Note: amount is amount in the currency of the bank account

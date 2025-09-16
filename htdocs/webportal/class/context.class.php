@@ -179,7 +179,7 @@ class Context
 	 */
 	private function __construct()
 	{
-		global $conf, $db;
+		global $db;
 
 		$this->db = $db;
 
@@ -204,7 +204,7 @@ class Context
 
 		$this->initController();
 
-		// Init de l'url de base
+		// Init of base URL. Must be the public URL.
 		$this->rootUrl = self::getRootConfigUrl();
 
 
@@ -232,7 +232,7 @@ class Context
 	 */
 	public function initController()
 	{
-		global $db;
+		global $hookmanager;
 
 		$defaultControllersPath = __DIR__ . '/../controllers/';
 
@@ -246,10 +246,10 @@ class Context
 		$this->addControllerDefinition('membercard', $defaultControllersPath . 'membercard.controller.class.php', 'MemberCardController');
 		$this->addControllerDefinition('partnershipcard', $defaultControllersPath . 'partnershipcard.controller.class.php', 'PartnershipCardController');
 
-		// call triggers
-		//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		//$interface=new Interfaces($db);
-		//$interface->run_triggers('WebPortalInitController', $this, $logged_user, $langs, $conf);
+		// Hooks for init controller
+		$hookmanager->initHooks(array('webportaldao'));
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('initController', $parameters, $this);
 
 		// search for controller
 		$this->controllerInstance = new Controller();
@@ -306,16 +306,14 @@ class Context
 	 */
 	public static function getRootConfigUrl()
 	{
-		global $conf;
-
-		// Init de l'url de base
+		// Init of base URL
 		if (getDolGlobalString('WEBPORTAL_ROOT_URL')) {
 			$rootUrl = getDolGlobalString('WEBPORTAL_ROOT_URL');
 			if (substr($rootUrl, -1) !== '/') {
 				$rootUrl .= '/';
 			}
 		} else {
-			$rootUrl = dol_buildpath('/public/webportal/', 2);
+			$rootUrl = dol_buildpath('/public/webportal/', 3);	// Return the public URL for external access
 		}
 
 		return $rootUrl;
@@ -456,6 +454,16 @@ class Context
 	 */
 	public function userIsLog()
 	{
+		global $hookmanager;
+
+		// Hooks for security access
+		$hookmanager->initHooks(array('webportaldao'));
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('userIsLog', $parameters, $this);
+		if ($reshook > 0) {
+			return !empty($hookmanager->resArray['userIsLog']);
+		}
+
 		if (!empty($_SESSION["webportal_logged_thirdparty_account_id"])) {
 			return true;
 		} else {

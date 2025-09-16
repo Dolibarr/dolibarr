@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2018	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2017	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2015-2024	Alexandre Spangaro			<aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2019		Thibault FOUCART			<support@ptibogxiv.net>
  * Copyright (C) 2023		Waël Almoman				<info@almoman.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
@@ -631,7 +631,7 @@ if (isModEnabled('societe')) {
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<table class="nobordernopadding">';
 		print '<tr><td>';
-		print $form->select_company($object->fk_soc, 'socid', '', 1);
+		print $form->select_company($object->socid, 'socid', '', 1);
 		print '</td>';
 		print '<td class="left"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 		print '</tr></table></form>';
@@ -1055,11 +1055,11 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 				print '<input type="radio" class="moreaction" id="invoiceonly" name="paymentsave" value="invoiceonly"'.(!empty($invoiceonly) ? ' checked' : '');
 				//if (empty($object->fk_soc)) print ' disabled';
 				print '><label for="invoiceonly"> '.$langs->trans("MoreActionInvoiceOnly");
-				if ($object->fk_soc) {
+				if ($object->socid) {
 					print ' ('.$langs->trans("ThirdParty").': '.$company->getNomUrl(1).')';
 				} else {
 					print ' (';
-					if (empty($object->fk_soc)) {
+					if (empty($object->socid)) {
 						print img_warning($langs->trans("NoThirdPartyAssociatedToMember"));
 					}
 					print $langs->trans("NoThirdPartyAssociatedToMember");
@@ -1083,7 +1083,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 			// Add invoice with payments
 			if (isModEnabled('bank') && isModEnabled('societe') && isModEnabled('invoice')) {
 				print '<input type="radio" class="moreaction" id="bankviainvoice" name="paymentsave" value="bankviainvoice"'.(!empty($bankviainvoice) ? ' checked' : '');
-				//if (empty($object->fk_soc)) print ' disabled';
+				//if (empty($object->socid)) print ' disabled';
 				print '><label for="bankviainvoice">  '.$langs->trans("MoreActionBankViaInvoice");
 				if ($object->socid) {
 					print ' ('.$langs->trans("ThirdParty").': '.$company->getNomUrl(1).')';

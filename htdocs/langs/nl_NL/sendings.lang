@@ -69,6 +69,44 @@ OptionToSetSendingBilledNotEnabled=De optie uit de module Workflow, om het verze
 NoWarehouseInBase=Geen magazijn in de basis
 ShipmentUpdated=Verzending succesvol bijgewerkt
 ShipmentIncrementStockOnDelete = Verhoog voorraad bij verwijdering
+ConfirmSignShipping=Bevestiging ondertekenen verzending
+ConfirmUnsignShipping=Bevestig afmelden verzending
+SignShipping=Sign Shipping
+UnsignShipping=Verzending ongedaan maken
+
+# Deliveries
+Delivery=Levering
+DeliveryRef=Referentie aflevering
+DeliveryCard=Delivery receipt
+DeliveryOrder=Delivery receipt
+DeliveryDate=Leveringsdatum
+CreateDeliveryOrder=Genereer afleverbon
+DeliveryStateSaved=Status aflevering opgeslagen
+SetDeliveryDate=Set estimated delivery date
+SetShippingDate=Stel verzenddatum in
+ValidateDeliveryReceipt=Valideer ontvangstbewijs
+ValidateDeliveryReceiptConfirm=Weet u zeker dat u de afleverbon wilt valideren?
+DeleteDeliveryReceipt=Verwijder ontvangstbewijs
+DeleteDeliveryReceiptConfirm=Weet u zeker dat u de afleverbon wilt verwijderen <b>%s</b>?
+DeliveryMethod=Leveringswijze
+TrackingNumber=Volgnummer
+DeliveryNotValidated=Levering niet gevalideerd
+StatusDeliveryCanceled=Geannuleerd
+StatusDeliveryDraft=Ontwerp
+StatusDeliveryValidated=Ontvangen
+NameAndSignature=Name and Signature:
+ToAndDate=Aan________________________________ op ____ / _____ / __________
+GoodStatusDeclaration=Hebben de bovenstaande goederen in goede conditie ontvangen,
+Deliverer=Afgeleverd door:
+Sender=Verzender
+Recipient=Ontvanger
+ErrorStockIsNotEnough=Er is niet genoeg voorraad
+Shippable=Zendklaar
+NonShippable=Niet verzendbaar
+ShowShippableStatus=Toon verzendstatus
+ShowReceiving=Toon afleverbon
+NonExistentOrder=Niet bestaande order
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Hoeveelheid al toegekend in vorige regels
 
 # Sending methods
 # ModelDocument

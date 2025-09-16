@@ -571,3 +571,5 @@ ErrorFailedToUpdateLink=Falha ao atualizar link '<b>%s</b>'
 URLToLink=URL para link
 Settings=Configurações
 Free=Grátis
+ShortLabel=Etiqueta curta
+Efficiency=eficiência

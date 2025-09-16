@@ -200,5 +200,5 @@ InSepa=SEPA-Gebiet
 CountryIsInSepa=Länder im SEPA-Gebiet
 Bank_line=Zeile einer Banktransation
 BankId=ID Bankzeile
-BankAccountForcedOnRequest=This bank account was defined when preparing the bank transfer request. Delete it and redo the preparation from the source object if you need to change it.
-BankAccountUsedByDefault=This is the default bank account of the thirdparty.
+BankAccountForcedOnRequest=Dieses Bankkonto wurde bei der Vorbereitung der Überweisung festgelegt. Falls eine Änderung erforderlich ist: Löschen und die Vorbereitung der Überweisung im betreffenden Objekt erneut durchführen.
+BankAccountUsedByDefault=Dies ist das Standard-Bankkonto des Geschäftspartner.

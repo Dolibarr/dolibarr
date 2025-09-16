@@ -328,4 +328,4 @@ RuleForLinesDates=Regulă pentru datele liniilor
 Prepaid=Preplătit
 Postpaid=Plată ulterioară
 SetRuleForLinesDates=Setare regulă pentru datele liniilor
-SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption
+SomeNotConvertedCreditNoteExists=Există <b>%s</b> note de credit care nu au fost încă convertite pentru consum

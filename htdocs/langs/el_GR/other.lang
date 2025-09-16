@@ -1,8 +1,7 @@
 # Dolibarr language file - Source file is en_US - other
+# THIS FILE MUST CONTAINS ENTRIES THAT ARE RARELY USED
 SecurityCode=Κωδικός ασφαλείας
 NumberingShort=N°
-Tools=Εργαλεία
-TMenuTools=Εργαλεία
 ToolsDesc=Όλα τα εργαλεία που δεν περιλαμβάνονται σε άλλες καταχωρίσεις μενού ομαδοποιούνται εδώ. <br> Όλα τα εργαλεία μπορούν να προσπελαστούν μέσω του αριστερού μενού.
 Birthday=Γενέθλια
 BirthdayAlert=Ειδοποίηση γενεθλίων
@@ -384,3 +383,25 @@ FillExtrafieldWithAi=Συμπληρώστε το πεδίο συμπληρωμα
 ExtrafieldFiller=Extrafield filler
 OurProductSelection=Η επιλογή μας από νέα προϊόντα
 NoSupportedModulesHaveBeenActivated=Το εργαλείο αναφοράς μπορεί να δημιουργήσει δυναμική αναφορά μόνο για ορισμένες ενότητες. Δεν έχει ενεργοποιηθεί ακόμα κάποια υποστηριζόμενη ενότητα.
+# Bookmarks
+AddThisPageToBookmarks = Προσθέστε αυτή τη σελίδα στους σελιδοδείκτες
+BehaviourOnClick = Συμπεριφορά όταν επιλέγεται ένα URL σελιδοδείκτη
+BookmarkTargetNewWindowShort = Νέα καρτέλα
+BookmarkTargetReplaceWindowShort = Τρέχουσα καρτέλα
+BookmarkTitle = Όνομα σελιδοδείκτη
+BookmarksManagement = Διαχείριση σελιδοδεικτών
+BookmarksMenuShortCut = Ctrl + shift + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Επιλέξτε εάν η συνδεδεμένη σελίδα πρέπει να ανοίξει στην τρέχουσα καρτέλα ή σε μια νέα καρτέλα
+CreateBookmark = Δημιουργία σελιδοδείκτη
+EditBookmarks = Λίστα / επεξεργασία σελιδοδεικτών
+ListOfBookmarks = Λίστα σελιδοδεικτών
+NewBookmark = Νέος σελιδοδείκτης
+NoBookmarkFound = Δεν βρέθηκε σελιδοδείκτης
+NoBookmarks = Δεν έχουν οριστεί σελιδοδείκτες
+OpenANewWindow = Ανοίξτε μια νέα καρτέλα
+ReplaceWindow = Αντικατάσταση τρέχουσας καρτέλας
+SetHereATitleForLink = Ορίστε ένα όνομα για το σελιδοδείκτη
+ShowBookmark = Εμφάνιση σελιδοδείκτη
+UrlOrLink = URL
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Χρησιμοποιήστε έναν εξωτερικό/απόλυτο σύνδεσμο (https://externalurl.com) ή έναν εσωτερικό/σχετικό σύνδεσμο (/mypage.php). Μπορείτε επίσης να χρησιμοποιήσετε αριθμό τηλεφώνου όπως tel: 0123456.
+SubscribeToFoundation=Βοηθήστε την πλατφόρμα του Dolibarr, εγγραφείτε στο Dolibarr Foundation

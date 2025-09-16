@@ -34,6 +34,7 @@ AgendaSetupOtherDesc= Diese Seite bietet Optionen, um den Export Ihrer Dolibarr-
 AgendaExtSitesDesc=Diese Seite erlaubt es, externe Kalenderquellen zu definieren, um deren Termine in der Dolibarr-Terminplanung zu sehen.
 ActionsEvents=Veranstaltungen zur automatischen Übernahme in die Agenda
 EventRemindersByEmailNotEnabled=Aufgaben-/Terminerinnerungen via E-Mail sind in den Einstellungen des Moduls %s nicht aktiviert.
+EventRemindersBySmsNotEnabled=Aufgaben-/Terminerinnerungen via SMS sind in den Einstellungen des Moduls %s nicht aktiviert.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Geschäftspartner %s erstellt
 COMPANY_MODIFYInDolibarr=Geschäftspartner %s geändert

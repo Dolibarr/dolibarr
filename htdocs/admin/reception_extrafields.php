@@ -47,10 +47,7 @@ if (!$user->admin) {
 	accessforbidden();
 }
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("receptions");
-$langs->load("deliveries");
+$langs->loadLangs(array("admin", "other", "receptions", "sendings"));
 
 
 $extrafields = new ExtraFields($db);

@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=Kirjanpito
 Accounting=Accounting
+AccountingAccount=Kirjanpitotili
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=Sarake-erotin vientitiedostoon
 ACCOUNTING_EXPORT_DATE=Vientitiedoston päivämäärän muoto
 ACCOUNTING_EXPORT_PIECE=Vie kappaleen määrä

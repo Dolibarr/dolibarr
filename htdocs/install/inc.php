@@ -565,6 +565,7 @@ function pHeader($subtitle, $next, $action = 'set', $param = '', $forcejqueryurl
 	print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";
 	print '<meta name="generator" content="Dolibarr installer">'."\n";
 	print '<link rel="stylesheet" type="text/css" href="default.css">'."\n";
+	print '<link rel="stylesheet" type="text/css" href="../public/theme/common/fontawesome-5/css/all.min.css?layout=classic">'."\n";
 
 	print '<!-- Includes CSS for JQuery -->'."\n";
 	if ($jQueryUiCustomPath) {

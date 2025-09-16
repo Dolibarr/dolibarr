@@ -1,14 +1,14 @@
 # Dolibarr language file - Source file is en_US - receiptprinter
-ReceiptPrinterSetup=Setup of module RAW/Text Printers
+ReceiptPrinterSetup=Konfiguration des Moduls RAW-/Textdrucker
 PrinterAdded=Drucker %s zugefügt
 PrinterUpdated=Drucker %s geändert
 PrinterDeleted=Drucker %s gelöscht
 TestSentToPrinter=Sende Testseite zu Drucker %s
 ReceiptPrinter=Quittungsdrucker
-ReceiptPrinterDesc=Setup of RAW/Text printers
+ReceiptPrinterDesc=Konfiguration von RAW/Text-Druckern
 ReceiptPrinterTemplateDesc=Einrichtung von Vorlagen
 ReceiptPrinterTypeDesc=Beispiel für mögliche Werte für das Feld „Parameter“ je nach Treibertyp
-ReceiptPrinterProfileDesc=Description of RAW/Text Printer's Profile
+ReceiptPrinterProfileDesc=Beschreibung von RAW-/Textdrucker Profilen
 ListPrinters=Druckerliste
 FromServerPointOfView=Vom Web-Server aus betrachtet. Dieser Drucker muss vom Hosting-Web-Server aus erreichbar sein.
 SetupReceiptTemplate=Vorlagen Setup

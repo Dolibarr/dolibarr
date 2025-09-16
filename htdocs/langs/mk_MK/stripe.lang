@@ -92,3 +92,19 @@ ExampleOnlyForDECustomers=Само за германски клиенти
 ExampleOnlyForNLCustomers=Само за холандски клиенти
 ExampleOnlyForATBEDEITNLESCustomers=Само за клиенти од Австрија, Белгија, Германија, Италија, Холандија, Шпанија
 ListOfSupportedHooksToActivate=List of supported hooks to activate
+# Paybox
+PayBoxSetup=PayBox module setup
+PayBoxDesc=This module offer pages to allow payment on <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+PayBoxDoPayment=Pay with Paybox
+YouWillBeRedirectedOnPayBox=You will be redirected on secured Paybox page to input you credit card information
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
+YourPaymentHasBeenRecorded=This page confirms that your payment has been recorded. Thank you.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
+PAYBOX_CGI_URL_V2=Url of Paybox CGI module for payment
+NewPayboxPaymentReceived=New Paybox payment received
+NewPayboxPaymentFailed=New Paybox payment tried but failed
+PAYBOX_PAYONLINE_SENDEMAIL=Email notification after payment attempt (success or fail)
+PAYBOX_PBX_SITE=Value for PBX SITE
+PAYBOX_PBX_RANG=Value for PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Value for PBX ID
+PAYBOX_HMAC_KEY=HMAC key

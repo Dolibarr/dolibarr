@@ -250,7 +250,7 @@ class Form
 		}
 
 		// When option to edit inline is activated
-		if (getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE') && !preg_match('/^select;|day|datepicker|dayhour|datehourpicker/', $typeofdata)) { // TODO add jquery timepicker and support select
+		if (getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE') && !preg_match('/^select;|day|datepicker|dayhour|datehourpicker/', $typeofdata)) {
 			$ret .= $this->editInPlace($object, $value, $htmlname, ($perm ? 1 : 0), $typeofdata, $editvalue, $extObject, $custommsg);
 		} else {
 			if ($editaction == '') {
@@ -5263,8 +5263,7 @@ class Form
 	{
 		global $langs, $user;
 
-		$langs->load("admin");
-		$langs->load("deliveries");
+		$langs->loadLangs(array("admin", "sendings"));
 
 		$sql = "SELECT rowid, code, libelle as label";
 		$sql .= " FROM " . $this->db->prefix() . "c_shipment_mode";
@@ -5322,7 +5321,7 @@ class Form
 	{
 		global $langs;
 
-		$langs->load("deliveries");
+		$langs->load("sendings");
 
 		if ($htmlname != "none") {
 			print '<form method="POST" action="' . $page . '">';
@@ -7767,7 +7766,7 @@ class Form
 						$minYear = getDolGlobalInt('MIN_YEAR_SELECT_DATE', (idate('Y') - 100));
 						$maxYear = getDolGlobalInt('MAX_YEAR_SELECT_DATE', (idate('Y') + 100));
 
-						$retstring .= '<!-- datepicker usecalendar=eldy --><script nonce="' . getNonce() . '" type="text/javascript">';
+						$retstring .= '<!-- datepicker usecalendar='.$usecalendar.' --><script nonce="' . getNonce() . '" type="text/javascript">';
 						$retstring .= "$(function(){ $('#" . $prefix . "').datepicker({
 							dateFormat: '" . $langs->trans("FormatDateShortJQueryInput") . "',
 							autoclose: true,
@@ -8673,9 +8672,10 @@ class Form
 	 * @param string $morecss Add more css on select
 	 * @param array<string,string> $selected_combinations Selected combinations. Format: array([attrid] => attrval, [...])
 	 * @param int<0,1>	$nooutput No print, return the output into a string
+	 * @param string[] 	$excludeids Exclude IDs from the select combo
 	 * @return        string
 	 */
-	public function selectMembers($selected = '', $htmlname = 'adherentid', $filtertype = '', $limit = 0, $status = 1, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $selected_combinations = null, $nooutput = 0)
+	public function selectMembers($selected = '', $htmlname = 'adherentid', $filtertype = '', $limit = 0, $status = 1, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $selected_combinations = null, $nooutput = 0, $excludeids = array())
 	{
 		global $langs, $conf;
 
@@ -8716,7 +8716,7 @@ class Form
 		} else {
 			$filterkey = '';
 
-			$out .= $this->selectMembersList($selected, $htmlname, $filtertype, $limit, $filterkey, $status, 0, $showempty, $forcecombo, $morecss);
+			$out .= $this->selectMembersList($selected, $htmlname, $filtertype, $limit, $filterkey, $status, 0, $showempty, $forcecombo, $morecss, $excludeids);
 		}
 
 		if (empty($nooutput)) {
@@ -8741,9 +8741,10 @@ class Form
 	 * @param string|int<0,1> $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * @param int $forcecombo Force to use combo box
 	 * @param string $morecss Add more css on select
+	 * @param string[] $excludeids Exclude IDs from the select combo
 	 * @return mixed[]|string      Array of keys for json or HTML string component
 	 */
-	public function selectMembersList($selected = '', $htmlname = 'adherentid', $filtertype = '', $limit = 20, $filterkey = '', $status = 1, $outputmode = 0, $showempty = '1', $forcecombo = 0, $morecss = '')
+	public function selectMembersList($selected = '', $htmlname = 'adherentid', $filtertype = '', $limit = 20, $filterkey = '', $status = 1, $outputmode = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $excludeids = array())
 	{
 		global $langs, $conf;
 
@@ -8782,6 +8783,9 @@ class Form
 		}
 		if ($status != -1) {
 			$sql .= ' AND statut = ' . ((int) $status);
+		}
+		if (!empty($excludeids)) {
+			$sql .= " AND p.rowid NOT IN (" . $this->db->sanitize(implode(',', $excludeids)) . ")";
 		}
 		$sql .= $this->db->plimit($limit, 0);
 

@@ -1796,7 +1796,7 @@ if ($dirins && ($action == 'droptable' || $action == 'droptableextrafields') && 
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
 			if ($obj) {
-				$nb = $obj->nb;
+				$nb = (int) $obj->nb;
 			}
 		} else {
 			if ($db->lasterrno() == 'DB_ERROR_NOSUCHTABLE') {
