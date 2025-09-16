@@ -66,22 +66,22 @@ class AccountancyReport // extends CommonObject
 	public $id;
 
 	/**
-	 * @var string Accountancy code
+	 * @var ?string Accountancy code
 	 */
 	public $code;
 
 	/**
-	 * @var string Accountancy Category label
+	 * @var ?string Accountancy Category label
 	 */
 	public $label;
 
 	/**
-	 * @var int country id
+	 * @var ?int country id
 	 */
 	public $fk_country;
 
 	/**
-	 * @var int Is active
+	 * @var ?int Is active
 	 */
 	public $active;
 
