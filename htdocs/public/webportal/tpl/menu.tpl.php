@@ -64,7 +64,7 @@ if ($context->userIsLog()) {
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
-	// menu documents (GED)
+	// menu documents partage via documents joints des tiers.(GED)
 	if (getDolGlobalInt('WEBPORTAL_DOCUMENT_LIST_ACCESS')) {
 		$navMenu['document_list'] = array(
 			'id' => 'document_list',
@@ -74,6 +74,17 @@ if ($context->userIsLog()) {
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
+	// menu documents utiles pour partage avec tous les utilisateurs du portal fichiers vu et téléchargeable via (documents).
+    if (getDolGlobalInt('WEBPORTAL_SHARED_DOCUMENT_ACCESS')) {
+        $navMenu['document_utile'] = array(
+            'id' => 'document_utile',
+            'rank' => 50, // Juste après "Mes Documents"
+            'url' => $context->getControllerUrl('documentutile'),
+            'name' => 'Documents Utiles',
+            'group' => 'administrative'
+        );
+    }
+
 
 	// menu member
 	$cardAccess = getDolGlobalString('WEBPORTAL_MEMBER_CARD_ACCESS');
