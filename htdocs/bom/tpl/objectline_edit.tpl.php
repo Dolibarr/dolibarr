@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php";
  * @var BOMLine $line
  * @var CommonObject $this
  * @var CommonObject $object
- * @var Extrafields $extrafields
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $buyer
  * @var Societe $seller
