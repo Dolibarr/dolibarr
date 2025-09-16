@@ -277,48 +277,6 @@ parameters:
 			path: ../../../htdocs/accountancy/class/accountancyreport.class.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/accountancy/class/accountingaccount.class.php
-
-		-
-			message: '#^Property AccountingAccount\:\:\$account_number \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 3
-			path: ../../../htdocs/accountancy/class/accountingaccount.class.php
-
-		-
-			message: '#^Property AccountingAccount\:\:\$fk_pcg_version \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/accountancy/class/accountingaccount.class.php
-
-		-
-			message: '#^Property AccountingAccount\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/accountancy/class/accountingaccount.class.php
-
-		-
-			message: '#^Property AccountingAccount\:\:\$labelshort \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/accountancy/class/accountingaccount.class.php
-
-		-
-			message: '#^Property AccountingAccount\:\:\$pcg_type \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/accountancy/class/accountingaccount.class.php
-
-		-
-			message: '#^Ternary operator condition is always true\.$#'
-			identifier: ternary.alwaysTrue
-			count: 1
-			path: ../../../htdocs/accountancy/class/accountingaccount.class.php
-
-		-
 			message: '#^Call to function array_key_exists\(\) with ''error'' and array\{ref\: mixed, label\: mixed, acquisition_value_ht\: mixed, depreciation\: non\-empty\-array\<array\{date\: mixed, ref\: mixed, lines\: non\-empty\-array\}\>, disposal\?\: array\{date\: mixed, amount\: mixed, subject_to_vat\: bool\}\} will always evaluate to false\.$#'
 			identifier: function.impossibleType
 			count: 1
