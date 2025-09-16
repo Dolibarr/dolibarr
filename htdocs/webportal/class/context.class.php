@@ -245,8 +245,10 @@ class Context
 		$this->addControllerDefinition('invoicelist', $defaultControllersPath . 'invoicelist.controller.class.php', 'InvoiceListController');
 		$this->addControllerDefinition('membercard', $defaultControllersPath . 'membercard.controller.class.php', 'MemberCardController');
 		$this->addControllerDefinition('partnershipcard', $defaultControllersPath . 'partnershipcard.controller.class.php', 'PartnershipCardController');
-		//** ci-dessous l'ajout de GED
+		//** ci-dessous l'ajout de DocumentListController ajout de fichiers par les documents joints du tiers
 		$this->addControllerDefinition('documentlist', $defaultControllersPath . 'documentlist.controller.class.php', 'DocumentListController');
+		//** ci dessous l'ajout sur le menu du controleur DocumentUtileController.class.php afin de partager via le GED ( documents) "Documentscomptes"
+		$this->addControllerDefinition('documentutile', $defaultControllersPath . 'documentutile.controller.class.php', 'DocumentUtileController');
 
 		// Hooks for init controller
 		$hookmanager->initHooks(array('webportaldao'));
