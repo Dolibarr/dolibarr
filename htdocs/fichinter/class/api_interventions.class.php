@@ -205,6 +205,7 @@ class Interventions extends DolibarrApi
 					if ($contact_type) {
 						$fichinter_static->contacts_ids = $fichinter_static->liste_contact(-1, $contact_type, 1);
 					}
+					$fichinter_static->fetchObjectLinked();
 					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($fichinter_static), $properties);
 				}
 				$i++;
