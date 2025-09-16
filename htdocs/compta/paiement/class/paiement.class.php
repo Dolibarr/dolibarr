@@ -198,7 +198,7 @@ class Paiement extends CommonObject
 	public $bank_account;
 
 	/**
-	 * @var int bank account id of payment
+	 * @var ?int bank account id of payment
 	 */
 	public $fk_account;
 
