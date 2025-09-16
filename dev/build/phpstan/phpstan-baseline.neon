@@ -17671,42 +17671,6 @@ parameters:
 			path: ../../../htdocs/salaries/class/paymentsalary.class.php
 
 		-
-			message: '#^Call to function method_exists\(\) with \$this\(Salary\) and ''LibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/salaries/class/salary.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(Salary\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/salaries/class/salary.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Salary\) and ''amount'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/salaries/class/salary.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Salary\) and ''type_payment'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/salaries/class/salary.class.php
-
-		-
-			message: '#^Method Salary\:\:getSommePaiement\(\) return type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/salaries/class/salary.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 2
-			path: ../../../htdocs/salaries/class/salary.class.php
-
-		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 2
