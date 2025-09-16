@@ -80,17 +80,17 @@ class AccountingAccount extends CommonObject
 	public $datec;
 
 	/**
-	 * @var string pcg version
+	 * @var ?string pcg version
 	 */
 	public $fk_pcg_version;
 
 	/**
-	 * @var string pcg type
+	 * @var ?string pcg type
 	 */
 	public $pcg_type;
 
 	/**
-	 * @var string account number
+	 * @var ?string account number
 	 */
 	public $account_number;
 
@@ -115,12 +115,12 @@ class AccountingAccount extends CommonObject
 	public $status;
 
 	/**
-	 * @var string Label of account
+	 * @var ?string Label of account
 	 */
 	public $label;
 
 	/**
-	 * @var string Label short of account
+	 * @var ?string Label short of account
 	 */
 	public $labelshort;
 
@@ -436,16 +436,14 @@ class AccountingAccount extends CommonObject
 		if ($result > 0) {
 			$this->db->begin();
 
-			if (!$error) {
-				$sql = "DELETE FROM " . $this->db->prefix() . $this->table_element;
-				$sql .= " WHERE rowid=" . ((int) $this->id);
+			$sql = "DELETE FROM " . $this->db->prefix() . $this->table_element;
+			$sql .= " WHERE rowid=" . ((int) $this->id);
 
-				dol_syslog(get_class($this) . "::delete sql=" . $sql);
-				$resql = $this->db->query($sql);
-				if (!$resql) {
-					$error++;
-					$this->errors[] = "Error " . $this->db->lasterror();
-				}
+			dol_syslog(get_class($this) . "::delete sql=" . $sql);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$error++;
+				$this->errors[] = "Error " . $this->db->lasterror();
 			}
 
 			// Commit or rollback
