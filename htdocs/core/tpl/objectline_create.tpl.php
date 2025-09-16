@@ -870,6 +870,11 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 							$('#date_start').attr('type', data.type);
 							$('#date_end').attr('type', data.type);
 
+							if(<?php echo getDolGlobalInt('PRODUCT_USE_UNITS'); ?>) {
+								console.log("objectline_create.tpl set content of units");
+								jQuery("#units").val(data.default_unit).change();
+							}
+
 							$('#date_start').removeAttr('mandatoryperiod');
 							$('#date_end').removeAttr('mandatoryperiod');
 							$('#date_start').attr('mandatoryperiod', data.mandatory_period);

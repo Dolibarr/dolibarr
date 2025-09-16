@@ -1102,11 +1102,12 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
  * @param   int<0,1>	$overwriteifexists  Overwrite file if exists (1 by default)
  * @param   int<0,1>	$testvirus          Do an antivirus test. Move is canceled if a virus is found.
  * @param	int<0,1>	$indexdatabase		Index new file into database.
- * @param	array<string,mixed>	$moreinfo			Array with more information to set in index table
+ * @param	array<string,mixed>	$moreinfo   Array with more information to set in index table
+ * @param	int			$entity				Entity
  * @return  boolean 		            True if OK, false if KO
  * @see dol_move_uploaded_file()
  */
-function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $testvirus = 0, $indexdatabase = 1, $moreinfo = array())
+function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $testvirus = 0, $indexdatabase = 1, $moreinfo = array(), $entity = 0)
 {
 	global $user, $db;
 	$result = false;
@@ -1180,13 +1181,13 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 				include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 
 				$ecmfiletarget = new EcmFiles($db);
-				$resultecmtarget = $ecmfiletarget->fetch(0, '', $rel_filetorenameafter);
+				$resultecmtarget = $ecmfiletarget->fetch(0, '', $rel_filetorenameafter, '', '', '', 0, $entity);
 				if ($resultecmtarget > 0) {   // An entry for target name already exists for target, we delete it, a new one will be created.
 					$ecmfiletarget->delete($user);
 				}
 
 				$ecmfile = new EcmFiles($db);
-				$resultecm = $ecmfile->fetch(0, '', $rel_filetorenamebefore);
+				$resultecm = $ecmfile->fetch(0, '', $rel_filetorenamebefore, '', '', '', 0, $entity);
 				if ($resultecm > 0) {   // If an entry was found for src file, we use it to move entry
 					$filename = basename($rel_filetorenameafter);
 					$rel_dir = dirname($rel_filetorenameafter);
@@ -1239,6 +1240,9 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 					}
 					if (!empty($moreinfo) && !empty($moreinfo['cover'])) {
 						$ecmfile->cover = $moreinfo['cover'];
+					}
+					if (! empty($entity)) {
+						$ecmfile->entity = $entity;
 					}
 
 					$resultecm = $ecmfile->create($user);
@@ -1666,7 +1670,7 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 								dol_syslog("Try to remove also entries in database for full relative path = ".$rel_filetodelete, LOG_DEBUG);
 								include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 								$ecmfile = new EcmFiles($db);
-								$result = $ecmfile->fetch(0, '', $rel_filetodelete);
+								$result = $ecmfile->fetch(0, '', $rel_filetodelete, '', '', '', 0, $object->entity ?? 0);
 								if ($result >= 0 && $ecmfile->id > 0) {
 									$result = $ecmfile->delete($user);
 								}
@@ -2143,7 +2147,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 
 						// If we allow overwrite, we may need to also overwrite index, so we delete index first so insert can work
 						if ($allowoverwrite) {
-							deleteFilesIntoDatabaseIndex($upload_dir, basename($destfile).($resupload == 2 ? '.noexe' : ''), '');
+							deleteFilesIntoDatabaseIndex($upload_dir, basename($destfile).($resupload == 2 ? '.noexe' : ''), '', $object);
 						}
 
 						$result = addFileIntoDatabaseIndex($upload_dir, basename($destfile).($resupload == 2 ? '.noexe' : ''), $TFile['name'][$i], 'uploaded', $sharefile, $object, $forceFullTextIndexation);
@@ -2313,6 +2317,9 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 			if (isset($object->src_object_keywords)) {
 				$ecmfile->keywords = $object->src_object_keywords;
 			}
+			if (isset($object->entity)) {
+				$ecmfile->entity = $object->entity;
+			}
 		}
 
 		if (getDolGlobalString('MAIN_FORCE_SHARING_ON_ANY_UPLOADED_FILE')) {
@@ -2427,9 +2434,10 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
  *  @param      string	$dir			Directory name (full real path without ending /)
  *  @param		string	$file			File name
  *  @param		string	$mode			How file was created ('uploaded', 'generated', ...)
+ *  @param		Object	$object			object used for entity
  *	@return		int						Return integer <0 if KO, 0 if nothing done, >0 if OK
  */
-function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded')
+function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded', $object = null)
 {
 	global $conf, $db;
 
@@ -2453,7 +2461,11 @@ function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded')
 
 		if (!$error) {
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'ecm_files';
-			$sql .= ' WHERE entity = '.((int) $conf->entity);
+			if (isset($object->entity)) {
+				$sql .= ' WHERE entity = ' . ((int) $object->entity);
+			} else {
+				$sql .= ' WHERE entity = ' . ((int) $conf->entity);
+			}
 			$sql .= " AND filepath = '".$db->escape($rel_dir)."'";
 			if ($file) {
 				$sql .= " AND filename = '".$db->escape($file)."'";

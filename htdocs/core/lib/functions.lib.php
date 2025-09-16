@@ -13962,7 +13962,7 @@ function getElementProperties($elementType)
 		$classname = 'CommandeFournisseurLigne';
 		$table_element = 'commande_fournisseurdet';
 		$parent_element = 'commande_fournisseur';
-	} elseif ($elementType == 'invoice_supplier' || $elementType == 'supplier_invoice') {
+	} elseif ($elementType == 'invoice_supplier' || $elementType == 'supplier_invoice' || $elementType == 'facture_fourn') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.facture';

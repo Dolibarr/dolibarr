@@ -495,7 +495,8 @@ if (empty($reshook)) {
 
 	// Quick edit for extrafields
 	if ($action == 'update_extras' && $permissiontoeditextra) {
-		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+		// we may use oldcopy->hasBatch( in triggers so keep 1
+		$object->oldcopy = dol_clone($object, 1);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		$attribute_name = GETPOST('attribute', 'aZ09');
 

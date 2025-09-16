@@ -72,10 +72,9 @@ $type = GETPOST('search_type', 'alphanohtml') ? GETPOST('search_type', 'alphanoh
 $year = GETPOSTINT("year");
 $month = GETPOSTINT("month");
 $day = GETPOSTINT("day");
-
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
-if (GETPOST('search_actioncode', 'array')) {
-	$actioncode = GETPOST('search_actioncode', 'array', 3);
+if (GETPOST('search_actioncode', 'array:aZ09')) {
+	$actioncode = GETPOST('search_actioncode', 'array:aZ09', 3);
 	if (!count($actioncode)) {
 		$actioncode = '0';
 	}
@@ -484,22 +483,22 @@ $sql .= " WHERE a.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual
 // Condition on actioncode
 if (!empty($actioncode)) {
 	if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
-		if ($actioncode == 'AC_NON_AUTO') {
+		if ((is_array($actioncode) && in_array('AC_NON_AUTO', $actioncode)) || $actioncode == 'AC_NON_AUTO') {
 			$sql .= " AND c.type != 'systemauto'";
-		} elseif ($actioncode == 'AC_ALL_AUTO') {
+		} elseif ((is_array($actioncode) && in_array('AC_ALL_AUTO', $actioncode)) || $actioncode == 'AC_ALL_AUTO') {
 			$sql .= " AND c.type = 'systemauto'";
 		} else {
-			if ($actioncode == 'AC_OTH') {
+			if ((is_array($actioncode) && in_array('AC_OTH', $actioncode)) || $actioncode == 'AC_OTH') {
 				$sql .= " AND c.type != 'systemauto'";
 			}
-			if ($actioncode == 'AC_OTH_AUTO') {
+			if ((is_array($actioncode) && in_array('AC_OTH_AUTO', $actioncode)) || $actioncode == 'AC_OTH_AUTO') {
 				$sql .= " AND c.type = 'systemauto'";
 			}
 		}
 	} else {
-		if ($actioncode === 'AC_NON_AUTO') {
+		if ((is_array($actioncode) && in_array('AC_NON_AUTO', $actioncode)) || $actioncode === 'AC_NON_AUTO') {
 			$sql .= " AND c.type != 'systemauto'";
-		} elseif ($actioncode === 'AC_ALL_AUTO') {
+		} elseif ((is_array($actioncode) && in_array('AC_ALL_AUTO', $actioncode)) || $actioncode === 'AC_ALL_AUTO') {
 			$sql .= " AND c.type = 'systemauto'";
 		} else {
 			if (is_array($actioncode)) {
