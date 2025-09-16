@@ -988,7 +988,7 @@ class modProduct extends DolibarrModules
 			$this->import_label[$r] = "ProductsPricePerCustomer"; // Translation key
 			$this->import_icon[$r] = $this->picto;
 			$this->import_entities_array[$r] = array(); // We define here only fields that use another icon that the one defined into import_icon
-			$this->import_tables_array[$r] = array('sp' => $db->prefix().'product_customer_price', 'extra' => $db->prefix().'product_customer_price_extrafields');
+			$this->import_tables_array[$r] = array('sp' => $this->db->prefix().'product_customer_price', 'extra' => $this->db->prefix().'product_customer_price_extrafields');
 			$this->import_tables_creator_array[$r] = array('sp' => 'fk_user'); // Fields to store import user id
 			$this->import_fields_array[$r] = array(
 				'sp.fk_product' => "Products*",
