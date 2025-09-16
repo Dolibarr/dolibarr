@@ -250,7 +250,7 @@ class Form
 		}
 
 		// When option to edit inline is activated
-		if (getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE') && !preg_match('/^select;|day|datepicker|dayhour|datehourpicker/', $typeofdata)) { // TODO add jquery timepicker and support select
+		if (getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE') && !preg_match('/^select;|day|datepicker|dayhour|datehourpicker/', $typeofdata)) {
 			$ret .= $this->editInPlace($object, $value, $htmlname, ($perm ? 1 : 0), $typeofdata, $editvalue, $extObject, $custommsg);
 		} else {
 			if ($editaction == '') {

@@ -374,6 +374,11 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	<?php } ?>
 }
 
+.spannature {
+	padding-top: 5px !important;
+	padding-bottom: 6px !important;
+}
+
 .nonature-back {
 	background-color: #EEE;
 	padding: 2px;

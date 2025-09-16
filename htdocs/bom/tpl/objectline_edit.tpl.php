@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php";
  * @var BOMLine $line
  * @var CommonObject $this
  * @var CommonObject $object
+ * @var Extrafields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $buyer
  * @var Societe $seller
@@ -112,8 +113,7 @@ if ($line->fk_product > 0) {
 }
 
 if (is_object($hookmanager)) {
-	$fk_parent_line = (GETPOST('fk_parent_line') ? GETPOST('fk_parent_line') : $line->fk_parent_line);
-	$parameters = array('line' => $line, 'fk_parent_line' => $fk_parent_line, 'var' => $var, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer);
+	$parameters = array('line' => $line, 'var' => $var, 'seller' => $seller, 'buyer' => $buyer);
 	$reshook = $hookmanager->executeHooks('formEditProductOptions', $parameters, $this, $action);
 }
 
