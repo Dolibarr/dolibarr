@@ -72,9 +72,6 @@ if (empty($filtertype)) {
 
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax, $langs;
 
-if (empty($dateSelector)) {
-	$dateSelector = 0;
-}
 if (empty($forceall)) {
 	$forceall = 0;
 }
