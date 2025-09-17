@@ -633,10 +633,52 @@ print '<input type="hidden" name="page_y" value="">';
 
 print load_fiche_titre($langs->trans("MembersCards"), '', '');
 
-$helptext = '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-$helptext .= '__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
-$helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
-$helptext .= '__YEAR__, __MONTH__, __DAY__';
+$helptext = $langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
+// Set list of substitution variables (must be the same list than into the core/modules/member/doc/pdf_standard_member.class.php
+$helptext .= '<small>';
+
+$now = dol_now();
+$year = dol_print_date($now, '%Y');
+$month = dol_print_date($now, '%m');
+$day = dol_print_date($now, '%d');
+
+// List of values to scan for a replacement (Must be samevalues than into adherents/cartes/carte.php and pdf_standard_members.class.php)
+$substitutionarray = array(
+	'__MEMBER_ID__' => 'MemberID',
+	'__MEMBER_REF__' => 'MemberRef',
+	'__MEMBER_LOGIN__' => 'MemberLogin',
+	'__MEMBER_TITLE__' => 'MemberLogin',
+	'__MEMBER_FIRSTNAME__' => 'MemberFirstname',
+	'__MEMBER_LASTNAME__' => 'MemberLastname',
+	'__MEMBER_FULLNAME__' => 'MemberFullname',
+	'__MEMBER_COMPANY__' => 'Company',
+	'__MEMBER_ADDRESS__' => 'MemberAddress',
+	'__MEMBER_ZIP__' => 'MemberZip',
+	'__MEMBER_TOWN__' => 'MemberTown',
+	'__MEMBER_COUNTRY__' => 'MemberCountry',
+	'__MEMBER_COUNTRY_CODE__' =>'MemberCountryCode',
+	'__MEMBER_EMAIL__' => 'MemberEmail',
+	'__MEMBER_BIRTH__' => 'MemberBirthdate',
+	'__MEMBER_TYPE__' => 'MemberType',
+	'__MEMBER_PHOTO__' => 'MemberPhoto',
+	'__YEAR__' => $year,
+	'__MONTH__' => $month,
+	'__DAY__' => $day,
+	'__DOL_MAIN_URL_ROOT__' => (string) DOL_MAIN_URL_ROOT,
+	'__SERVER__' => "https://".$_SERVER["SERVER_NAME"]."/"
+);
+foreach ($substitutionarray as $key => $val) {
+	$helptext .= $key.' => '.$val.'<br>';
+}
+// Make substitutions for new variables
+/*
+$array_member = $this->getSubstitutionarrayMember($object, $outputlangs);
+$array_soc = $this->get_substitutionarray_mysoc($mysoc, $outputlangs);
+$array_other = $this->get_substitutionarray_other($outputlangs);
+
+$substitutionarray = array_merge($substitutionarray, $array_member, $array_soc, $array_other);
+*/
+$helptext .= '</small>';
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
@@ -653,32 +695,32 @@ $arrayoflabels = array();
 foreach (array_keys($_Avery_Labels) as $codecards) {
 	$arrayoflabels[$codecards] = $_Avery_Labels[$codecards]['name'];
 }
-print $form->selectarray('ADHERENT_CARD_TYPE', $arrayoflabels, getDolGlobalString('ADHERENT_CARD_TYPE') ? getDolGlobalString('ADHERENT_CARD_TYPE') : 'CARD', 1, 0, 0);
+print $form->selectarray('ADHERENT_CARD_TYPE', $arrayoflabels, getDolGlobalString('ADHERENT_CARD_TYPE', 'CARD'), 1, 0, 0);
 
 print "</td></tr>\n";
 
 // Text printed on top of member cards
 print '<tr class="oddeven"><td>'.$langs->trans("DescADHERENT_CARD_HEADER_TEXT").'</td><td>';
-print '<input type="text" class="flat minwidth300" name="ADHERENT_CARD_HEADER_TEXT" value="'.dol_escape_htmltag(getDolGlobalString('ADHERENT_CARD_HEADER_TEXT')).'">';
+print '<input type="text" class="flat minwidth300" name="ADHERENT_CARD_HEADER_TEXT" value="'.dol_escape_htmltag(getDolGlobalString('ADHERENT_CARD_HEADER_TEXT')).'" spellcheck="false">';
 print "</td></tr>\n";
 
 // Text printed on member cards (align on left)
 print '<tr class="oddeven"><td>'.$langs->trans("DescADHERENT_CARD_TEXT").'</td><td>';
-print '<textarea class="flat" name="ADHERENT_CARD_TEXT" cols="50" rows="5" wrap="soft">'."\n";
+print '<textarea class="flat" name="ADHERENT_CARD_TEXT" cols="50" rows="5" wrap="soft" spellcheck="false">'."\n";
 print getDolGlobalString('ADHERENT_CARD_TEXT');
 print '</textarea>';
 print "</td></tr>\n";
 
 // Text printed on member cards (align on right)
 print '<tr class="oddeven"><td>'.$langs->trans("DescADHERENT_CARD_TEXT_RIGHT").'</td><td>';
-print '<textarea class="flat" name="ADHERENT_CARD_TEXT_RIGHT" cols="50" rows="5" wrap="soft">'."\n";
+print '<textarea class="flat" name="ADHERENT_CARD_TEXT_RIGHT" cols="50" rows="5" wrap="soft" spellcheck="false">'."\n";
 print getDolGlobalString('ADHERENT_CARD_TEXT_RIGHT');
 print '</textarea>';
 print "</td></tr>\n";
 
 // Text printed on bottom of member cards
 print '<tr class="oddeven"><td>'.$langs->trans("DescADHERENT_CARD_FOOTER_TEXT").'</td><td>';
-print '<input type="text" class="flat minwidth300" name="ADHERENT_CARD_FOOTER_TEXT" value="'.dol_escape_htmltag(getDolGlobalString('ADHERENT_CARD_FOOTER_TEXT')).'">';
+print '<input type="text" class="flat minwidth300" name="ADHERENT_CARD_FOOTER_TEXT" value="'.dol_escape_htmltag(getDolGlobalString('ADHERENT_CARD_FOOTER_TEXT')).'" spellcheck="false">';
 print "</td></tr>\n";
 
 print '</table>';
@@ -702,11 +744,6 @@ print '<input type="hidden" name="page_y" value="">';
 
 print load_fiche_titre($langs->trans("MembersTickets"), '', '');
 
-$helptext = '*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-$helptext .= '__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
-$helptext .= '__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
-$helptext .= '__YEAR__, __MONTH__, __DAY__';
-
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
@@ -728,7 +765,7 @@ print "</td></tr>\n";
 
 // Text printed on member address sheets
 print '<tr class="oddeven"><td>'.$langs->trans("DescADHERENT_ETIQUETTE_TEXT").'</td><td>';
-print '<textarea class="flat" name="ADHERENT_ETIQUETTE_TEXT" cols="50" rows="5" wrap="soft">'."\n";
+print '<textarea class="flat" name="ADHERENT_ETIQUETTE_TEXT" cols="50" rows="5" wrap="soft" spellcheck="false">'."\n";
 print getDolGlobalString('ADHERENT_ETIQUETTE_TEXT');
 print '</textarea>';
 print "</td></tr>\n";

@@ -62,17 +62,18 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 require_once $path."../../htdocs/master.inc.php";
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
-require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
-require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
+ *
+ * @var string $dolibarr_main_db_readonly
  */
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
+require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 // Check parameters
 if (!isset($argv[1]) || !$argv[1]) {
@@ -128,7 +129,7 @@ if (!empty($dolibarr_main_db_readonly)) {
 
 // If param userlogin is reserved word 'firstadmin'
 if ($userlogin == 'firstadmin') {
-	$sql = 'SELECT login, entity from '.MAIN_DB_PREFIX.'user WHERE admin = 1 and statut = 1 ORDER BY entity LIMIT 1';
+	$sql = 'SELECT login, entity FROM '.MAIN_DB_PREFIX.'user WHERE admin = 1 and statut = 1 ORDER BY entity LIMIT 1';
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
@@ -202,7 +203,7 @@ $db->query($sql);
 dol_syslog("cron_run_jobs.php search qualified job using filter: ".json_encode($filter), LOG_DEBUG);
 echo "cron_run_jobs.php search qualified job using filter: ".json_encode($filter)."\n";
 
-$result = $object->fetchAll('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 1, $filter, ($forcequalified ? -1 : 0));
+$result = $object->fetchAll('ASC,ASC,ASC', 't.entity,t.priority,t.rowid', 0, 0, 1, $filter, ($forcequalified ? -1 : 0));
 if ($result < 0) {
 	echo "Error: ".$object->error;
 	dol_syslog("cron_run_jobs.php fetch Error ".$object->error, LOG_ERR);
@@ -220,7 +221,9 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 
 	// Loop over job
 	foreach ($object->lines as $line) {
+		/** @var CronJob $line */
 		'@phan-var-force CronJob $line';
+
 		dol_syslog("cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label, LOG_DEBUG);
 		echo "cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label;
 
