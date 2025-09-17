@@ -282,6 +282,7 @@ if (empty($reshook)) {
 
 		if (! $error) {
 			$db->commit();
+			$action = '';
 		} else {
 			$db->rollback();
 		}
