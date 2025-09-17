@@ -3,7 +3,7 @@
 /*
  * Copyright (C) 2013       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,7 +151,7 @@ $array_fields = array(
 	'dateval' => $outputlangs->transnoentitiesnoconv("DateValueShort"),
 	'type' => $outputlangs->transnoentitiesnoconv("Type"),
 	'description' => $outputlangs->transnoentitiesnoconv("Description"),
-	'thirdparty' => $outputlangs->transnoentitiesnoconv("Tiers"),
+	'thirdparty' => $outputlangs->transnoentitiesnoconv("ThirdParty"),
 	'accountelem' => $outputlangs->transnoentitiesnoconv("Piece"),
 	'debit' => $outputlangs->transnoentitiesnoconv("Debit"),
 	'credit' => $outputlangs->transnoentitiesnoconv("Credit"),
@@ -159,8 +159,36 @@ $array_fields = array(
 	'soldafter' => $outputlangs->transnoentitiesnoconv("BankBalanceAfter"),
 	'comment' => $outputlangs->transnoentitiesnoconv("Comment")
 );
-$array_selected = array('bankreceipt' => 'bankreceipt', 'bankaccount' => 'bankaccount', 'dateop' => 'dateop', 'dateval' => 'dateval', 'type' => 'type', 'description' => 'description', 'thirdparty' => 'thirdparty', 'accountelem' => 'accountelem', 'debit' => 'debit', 'credit' => 'credit', 'soldbefore' => 'soldbefore', 'soldafter' => 'soldafter', 'comment' => 'comment');
-$array_export_TypeFields = array('bankreceipt' => 'Text', 'bankaccount' => 'Text', 'dateop' => 'Date', 'dateval' => 'Date', 'type' => 'Text', 'description' => 'Text', 'thirdparty' => 'Text', 'accountelem' => 'Text', 'debit' => 'Number', 'credit' => 'Number', 'soldbefore' => 'Number', 'soldafter' => 'Number', 'comment' => 'Text');
+$array_selected = array(
+	'bankreceipt' => 'bankreceipt',
+	'bankaccount' => 'bankaccount',
+	'dateop' => 'dateop',
+	'dateval' => 'dateval',
+	'type' => 'type',
+	'description' => 'description',
+	'thirdparty' => 'thirdparty',
+	'accountelem' => 'accountelem',
+	'debit' => 'debit',
+	'credit' => 'credit',
+	'soldbefore' => 'soldbefore',
+	'soldafter' => 'soldafter',
+	'comment' => 'comment'
+);
+$array_export_TypeFields = array(
+	'bankreceipt' => 'Text',
+	'bankaccount' => 'Text',
+	'dateop' => 'Date',
+	'dateval' => 'Date',
+	'type' => 'Text',
+	'description' => 'Text',
+	'thirdparty' => 'Text',
+	'accountelem' => 'Text',
+	'debit' => 'Number',
+	'credit' => 'Number',
+	'soldbefore' => 'Number',
+	'soldafter' => 'Number',
+	'comment' => 'Text'
+);
 
 // Build request to find records for a bank account/receipt
 $listofnum = "";

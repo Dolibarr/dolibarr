@@ -250,7 +250,7 @@ class Form
 		}
 
 		// When option to edit inline is activated
-		if (getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE') && !preg_match('/^select;|day|datepicker|dayhour|datehourpicker/', $typeofdata)) { // TODO add jquery timepicker and support select
+		if (getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE') && !preg_match('/^select;|day|datepicker|dayhour|datehourpicker/', $typeofdata)) {
 			$ret .= $this->editInPlace($object, $value, $htmlname, ($perm ? 1 : 0), $typeofdata, $editvalue, $extObject, $custommsg);
 		} else {
 			if ($editaction == '') {
@@ -5263,8 +5263,7 @@ class Form
 	{
 		global $langs, $user;
 
-		$langs->load("admin");
-		$langs->load("deliveries");
+		$langs->loadLangs(array("admin", "sendings"));
 
 		$sql = "SELECT rowid, code, libelle as label";
 		$sql .= " FROM " . $this->db->prefix() . "c_shipment_mode";
@@ -5322,7 +5321,7 @@ class Form
 	{
 		global $langs;
 
-		$langs->load("deliveries");
+		$langs->load("sendings");
 
 		if ($htmlname != "none") {
 			print '<form method="POST" action="' . $page . '">';
@@ -7238,7 +7237,7 @@ class Form
 
 					$tmparray = array();
 					$tmparray['rowid']			= $obj->rowid;
-					$tmparray['type_vat']		= $obj->type_vat;
+					$tmparray['type_vat']		= ($obj->type_vat <= 0 ? 0 : $obj->type_vat);	// Some version have type_vat corrupted with value -1
 					$tmparray['code']			= $obj->code;
 					$tmparray['txtva']			= $obj->taux;
 					$tmparray['nprtva']			= $obj->recuperableonly;
@@ -7371,7 +7370,8 @@ class Form
 		} else {
 			$code_country = "'" . $mysoc->country_code . "'"; // Pour compatibilite ascendente
 		}
-		if (getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC')) {    // If option to have vat for end customer for services is on
+
+		if ($societe_vendeuse == $mysoc && getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC')) {    // If option to have vat for end customer for services is on
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 			// If SERVICE_ARE_ECOMMERCE_200238EC=1 combo list vat rate of purchaser and seller countries
 			// If SERVICE_ARE_ECOMMERCE_200238EC=2 combo list only the vat rate of the purchaser country
@@ -7420,7 +7420,6 @@ class Form
 		}
 
 		$num = count($arrayofvatrates);
-
 		if ($num > 0) {
 			// Define the vat rate to pre-select (if defaulttx not forced so is -1 or '')
 			if ($defaulttx < 0 || dol_strlen($defaulttx) == 0) {
@@ -7767,7 +7766,7 @@ class Form
 						$minYear = getDolGlobalInt('MIN_YEAR_SELECT_DATE', (idate('Y') - 100));
 						$maxYear = getDolGlobalInt('MAX_YEAR_SELECT_DATE', (idate('Y') + 100));
 
-						$retstring .= '<!-- datepicker usecalendar=eldy --><script nonce="' . getNonce() . '" type="text/javascript">';
+						$retstring .= '<!-- datepicker usecalendar='.$usecalendar.' --><script nonce="' . getNonce() . '" type="text/javascript">';
 						$retstring .= "$(function(){ $('#" . $prefix . "').datepicker({
 							dateFormat: '" . $langs->trans("FormatDateShortJQueryInput") . "',
 							autoclose: true,
@@ -8682,9 +8681,10 @@ class Form
 	 * @param string $morecss Add more css on select
 	 * @param array<string,string> $selected_combinations Selected combinations. Format: array([attrid] => attrval, [...])
 	 * @param int<0,1>	$nooutput No print, return the output into a string
+	 * @param string[] 	$excludeids Exclude IDs from the select combo
 	 * @return        string
 	 */
-	public function selectMembers($selected = '', $htmlname = 'adherentid', $filtertype = '', $limit = 0, $status = 1, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $selected_combinations = null, $nooutput = 0)
+	public function selectMembers($selected = '', $htmlname = 'adherentid', $filtertype = '', $limit = 0, $status = 1, $selected_input_value = '', $hidelabel = 0, $ajaxoptions = array(), $socid = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $selected_combinations = null, $nooutput = 0, $excludeids = array())
 	{
 		global $langs, $conf;
 
@@ -8725,7 +8725,7 @@ class Form
 		} else {
 			$filterkey = '';
 
-			$out .= $this->selectMembersList($selected, $htmlname, $filtertype, $limit, $filterkey, $status, 0, $showempty, $forcecombo, $morecss);
+			$out .= $this->selectMembersList($selected, $htmlname, $filtertype, $limit, $filterkey, $status, 0, $showempty, $forcecombo, $morecss, $excludeids);
 		}
 
 		if (empty($nooutput)) {
@@ -8750,9 +8750,10 @@ class Form
 	 * @param string|int<0,1> $showempty '' to not show empty line. Translation key to show an empty line. '1' show empty line with no text.
 	 * @param int $forcecombo Force to use combo box
 	 * @param string $morecss Add more css on select
+	 * @param string[] $excludeids Exclude IDs from the select combo
 	 * @return mixed[]|string      Array of keys for json or HTML string component
 	 */
-	public function selectMembersList($selected = '', $htmlname = 'adherentid', $filtertype = '', $limit = 20, $filterkey = '', $status = 1, $outputmode = 0, $showempty = '1', $forcecombo = 0, $morecss = '')
+	public function selectMembersList($selected = '', $htmlname = 'adherentid', $filtertype = '', $limit = 20, $filterkey = '', $status = 1, $outputmode = 0, $showempty = '1', $forcecombo = 0, $morecss = '', $excludeids = array())
 	{
 		global $langs, $conf;
 
@@ -8791,6 +8792,9 @@ class Form
 		}
 		if ($status != -1) {
 			$sql .= ' AND statut = ' . ((int) $status);
+		}
+		if (!empty($excludeids)) {
+			$sql .= " AND p.rowid NOT IN (" . $this->db->sanitize(implode(',', $excludeids)) . ")";
 		}
 		$sql .= $this->db->plimit($limit, 0);
 
@@ -9447,9 +9451,6 @@ class Form
 						$out .= ' selected'; // To preselect a value
 					}
 				}
-				if (!empty($nohtmlescape)) {	// deprecated. Use instead the key 'data-html' into input $array, managed at next step to use HTML content.
-					$out .= ' data-html="' . dol_escape_htmltag($selectOptionValue) . '"';
-				}
 
 				if (is_array($tmpvalue)) {
 					foreach ($tmpvalue as $keyforvalue => $valueforvalue) {
@@ -9460,7 +9461,10 @@ class Form
 							$out .= ' '.dol_escape_htmltag($keyforvalue).'="'.dol_escape_htmltag($valueforvalue).'"';
 						}
 					}
+				} elseif (!empty($nohtmlescape)) {	// deprecated. Use instead the previous cas, an array with 'data-html', 'data-xxx' ... to use HTML content in the select
+					$out .= ' data-html="' . dol_escape_htmltag($selectOptionValue) . '"';
 				}
+
 				$out .= '>';
 				$out .= $selectOptionValue;
 				$out .= "</option>\n";

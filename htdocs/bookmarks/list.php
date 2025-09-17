@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('bookmarks', 'admin'));
+$langs->loadLangs(array('other', 'admin'));
 
 // Get Parameters
 $action 	= GETPOST('action', 'aZ09');

@@ -34,6 +34,7 @@ AgendaSetupOtherDesc= Această pagină oferă opțiuni pentru a permite exportul
 AgendaExtSitesDesc=Această pagină vă permite să declaraţi sursele externe de calendare pentru a vedea evenimentele lor în agenda Dolibarr.
 ActionsEvents=Evenimente pentru care Dolibarr va crea o acţiune în agendă în mod automat
 EventRemindersByEmailNotEnabled=Evenimentul pentru reminder-e pe email nu a fost activat în configurarea modulului %s.
+EventRemindersBySmsNotEnabled=Mementourile de evenimente prin SMS nu au fost activate în configurarea modulului %s.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Terțul %s a fost creat
 COMPANY_MODIFYInDolibarr=Terţul %s a fost modificat

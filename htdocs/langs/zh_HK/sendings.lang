@@ -66,7 +66,47 @@ NoLineGoOnTabToAddSome=無行列，請轉到標籤 “%s” 以添加
 CreateInvoiceForThisCustomerFromSendings=建立帳單
 IfValidateInvoiceIsNoSendingStayUnbilled=如果發票驗證為“否”，則發貨狀態將保持為“未開票”直到發票驗證完成。
 OptionToSetSendingBilledNotEnabled=未啟用於工作流程模組中啟動的發票驗證後自動將發貨設為“已開票”的選項，因此您將需在發票生成後手動設置發貨狀態。
+NoWarehouseInBase=No warehouse in base
 ShipmentUpdated=Shipment successfully updated
+ShipmentIncrementStockOnDelete = Increase stock on deletion
+ConfirmSignShipping=Confirm Sign Shipping
+ConfirmUnsignShipping=Confirm Unsign Shipping
+SignShipping=Sign Shipping
+UnsignShipping=Unsign Shipping
+
+# Deliveries
+Delivery=Delivery
+DeliveryRef=送貨單號
+DeliveryCard=收貨單
+DeliveryOrder=收貨單
+DeliveryDate=交貨日期
+CreateDeliveryOrder=Generate delivery receipt
+DeliveryStateSaved=送貨狀態已保存
+SetDeliveryDate=Set estimated delivery date
+SetShippingDate=Set shipping date
+ValidateDeliveryReceipt=Validate delivery receipt
+ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
+DeleteDeliveryReceipt=Delete delivery receipt
+DeleteDeliveryReceiptConfirm=您確定要刪除送貨收據 <b>%s</b>？
+DeliveryMethod=Delivery method
+TrackingNumber=Tracking number
+DeliveryNotValidated=Delivery not validated
+StatusDeliveryCanceled=已取消
+StatusDeliveryDraft=草稿
+StatusDeliveryValidated=已收貨
+NameAndSignature=Name and Signature:
+ToAndDate=To___________________________________ on ____/_____/__________
+GoodStatusDeclaration=Have received the goods above in good condition,
+Deliverer=Deliverer:
+Sender=Sender
+Recipient=收貨人
+ErrorStockIsNotEnough=存貨不足
+Shippable=可出貨
+NonShippable=不可出貨
+ShowShippableStatus=顯示可出貨狀態
+ShowReceiving=顯示收貨單
+NonExistentOrder=訂單不存在
+StockQuantitiesAlreadyAllocatedOnPreviousLines = 存貨數量已分配到之前的項目
 
 # Sending methods
 # ModelDocument
@@ -78,6 +118,7 @@ SumOfProductWeights=產品重量總和
 # warehouse details
 DetailWarehouseNumber= 倉庫詳情
 DetailWarehouseFormat= 倉庫 : %s ( 數量: %d )
+DetailChildrenFormat=%s : %s (Qty: %s)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=在創建發貨時顯示序列號或批次的最後入庫日期
 CreationOptions=創建發貨時的可用選項
 ShipmentDistribution=發貨分配
@@ -92,3 +133,4 @@ TypeContact_shipping_external_SHIPPING=Customer contact for shipping
 TypeContact_shipping_external_DELIVERY=客戶收貨聯絡人
 CloseShipment=Close shipment
 ConfirmCloseShipment=Confirm close shipment
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=Pre-select the batch/serial number with the earliest sell-by/eat-by date when creating a shipment

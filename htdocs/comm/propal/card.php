@@ -73,7 +73,7 @@ if (isModEnabled('variants')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'propal', 'compta', 'bills', 'orders', 'products', 'deliveries', 'sendings', 'other'));
+$langs->loadLangs(array('companies', 'propal', 'compta', 'bills', 'orders', 'products', 'sendings', 'other'));
 if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
 }
@@ -92,6 +92,7 @@ $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
 $origin = GETPOST('origin', 'alpha');
 $originid = GETPOSTINT('originid');
+$renewal = GETPOST('renewal');	// for contract renewal
 $confirm = GETPOST('confirm', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $lineid = GETPOSTINT('lineid');
@@ -606,11 +607,14 @@ if (empty($reshook)) {
 						$element = $subelement = 'expedition';
 					}
 
-					$object->origin = $origin;
-					$object->origin_id = $originid;
+					// If this is a renewal proposal for a contract, we might choose to systematically create a new contract,
+					if (($origin != 'contrat' || $renewal != 'true') && !getDolGlobalInt('CONTRACT_NEW_CONTRACT_ON_RENEWAL')) {
+						$object->origin = $origin;
+						$object->origin_id = $originid;
 
-					// Possibility to add external linked objects with hooks
-					$object->linked_objects[$object->origin] = $object->origin_id;
+						// Possibility to add external linked objects with hooks
+						$object->linked_objects[$object->origin] = $object->origin_id;
+					}
 					if (GETPOSTISARRAY('other_linked_objects')) {
 						$object->linked_objects = array_merge($object->linked_objects, GETPOST('other_linked_objects', 'array:int'));
 					}
@@ -640,7 +644,7 @@ if (empty($reshook)) {
 								$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : '');
 
 								// Positive line
-								$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
+								$product_type = ($lines[$i]->product_type ? (int) $lines[$i]->product_type : 0);
 
 								// Date start
 								$date_start = false;
@@ -664,6 +668,15 @@ if (empty($reshook)) {
 								}
 								if ($lines[$i]->date_end) {
 									$date_end = $lines[$i]->date_end;
+								}
+
+								// For a contract renewal, we report duration, starting after the end of contract
+								if ($origin == 'contrat' && $renewal == 'true') {
+									if ($lines[$i]->date_start && $lines[$i]->date_end) {
+										$duration = $lines[$i]->date_end - $lines[$i]->date_start;
+										$date_start = $lines[$i]->date_end + 86400;
+										$date_end = $date_start + $duration;
+									}
 								}
 
 								// Reset fk_parent_line for no child products and special product
@@ -1271,7 +1284,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error && isModEnabled('variants') && $prod_entry_mode != 'free') {
-			if ($combinations = GETPOST('combinations', 'array')) {
+			if ($combinations = GETPOST('combinations', 'array:alphanohtml')) {
 				//Check if there is a product with the given combination
 				$prodcomb = new ProductCombination($db);
 
@@ -2154,7 +2167,7 @@ if (empty($reshook)) {
 	}
 
 	// Actions to build doc
-	$upload_dir = !empty($conf->propal->multidir_output[$object->entity]) ? $conf->propal->multidir_output[$object->entity] : $conf->propal->dir_output;
+	$upload_dir = !empty($conf->propal->multidir_output[$object->entity ?? $conf->entity]) ? $conf->propal->multidir_output[$object->entity ?? $conf->entity] : $conf->propal->dir_output;
 	$permissiontoadd = $usercancreate;
 	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 }
@@ -2244,19 +2257,20 @@ if ($action == 'create') {
 			$classname = ucfirst($subelement);
 			$objectsrc = new $classname($db);
 			'@phan-var-force Commande|Propal|Contrat|Expedition $objectsrc';  // Can be other class, but CommonObject is too generic
+			/** @var Commande|Propal|Contrat|Expedition $objectsrc */
 			$objectsrc->fetch($originid);
 			if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
 				$objectsrc->fetch_lines();
 			}
 			$objectsrc->fetch_thirdparty();
 
-			$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : 0);
+			$projectid = (int) $objectsrc->fk_project;
 			$ref_client = (!empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
 
 			$soc = $objectsrc->thirdparty;
 
-			$cond_reglement_id  = (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0));
-			$mode_reglement_id  = (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
+			$cond_reglement_id = (!empty($objectsrc->cond_reglement_id) ? $objectsrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 0));
+			$mode_reglement_id = (!empty($objectsrc->mode_reglement_id) ? $objectsrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
 			$warehouse_id      = (!empty($objectsrc->warehouse_id) ? $objectsrc->warehouse_id : (!empty($soc->warehouse_id) ? $soc->warehouse_id : 0));
 
 			// Replicate extrafields
@@ -2326,6 +2340,9 @@ if ($action == 'create') {
 	if ($origin != 'project' && $originid) {
 		print '<input type="hidden" name="origin" value="' . $origin . '">';
 		print '<input type="hidden" name="originid" value="' . $originid . '">';
+		if ($origin == 'contrat' && !empty($renewal)) {
+			print '<input type="hidden" name="renewal" value="' . $renewal . '">';
+		}
 	} elseif ($origin == 'project' && !empty($projectid)) {
 		print '<input type="hidden" name="projectid" value="' . $projectid . '">';
 	}
@@ -2419,7 +2436,7 @@ if ($action == 'create') {
 		print '<tr class="field_cond_reglement_id"><td class="nowrap">' . $langs->trans('PaymentConditionsShort') . '</td><td>';
 		print img_picto('', 'payment', 'class="pictofixedwidth"');
 		// at last resort we take the payment term id which may be filled by default values set (if not getpostisset)
-		print $form->getSelectConditionsPaiements($cond_reglement_id, 'cond_reglement_id', 1, 1, 0, '', $deposit_percent);
+		print $form->getSelectConditionsPaiements((int) $cond_reglement_id, 'cond_reglement_id', 1, 1, 0, '', $deposit_percent);
 		print '</td></tr>';
 
 		// Mode of payment
@@ -2431,7 +2448,7 @@ if ($action == 'create') {
 		// Bank Account
 		if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL') && isModEnabled("bank")) {
 			print '<tr class="field_fk_account"><td class="titlefieldcreate">' . $langs->trans('BankAccount') . '</td><td class="valuefieldcreate">';
-			print img_picto('', 'bank_account', 'class="pictofixedwidth"') . $form->select_comptes($fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
+			print img_picto('', 'bank_account', 'class="pictofixedwidth"') . $form->select_comptes((int) $fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 			print '</td></tr>';
 		}
 
@@ -2910,7 +2927,7 @@ if ($action == 'create') {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		} else {
-			$numref = $object->ref;
+			$numref = (string) $object->ref;
 		}
 
 		$text = $langs->trans('ConfirmValidateProp', $numref);
@@ -3134,7 +3151,6 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Delivery date
-		$langs->load('deliveries');
 		print '<tr><td>';
 		print $form->editfieldkey($langs->trans('DeliveryDate'), 'date_livraison', $object->delivery_date, $object, (int) ($usercancreate && $caneditfield), 'datepicker');
 		print '</td><td class="valuefieldedit">';
@@ -3668,7 +3684,7 @@ if ($action == 'create') {
 		 * Generated documents
 		 */
 		$objref = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->propal->multidir_output[$object->entity] . "/" . dol_sanitizeFileName($object->ref);
+		$filedir = $conf->propal->multidir_output[$object->entity ?? $conf->entity] . "/" . dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
 		$genallowed = $usercanread;
 		$delallowed = $usercancreate;
@@ -3714,7 +3730,7 @@ if ($action == 'create') {
 	// Presend form
 	$modelmail = 'propal_send';
 	$defaulttopic = 'SendPropalRef';
-	$diroutput = $conf->propal->multidir_output[$object->entity];
+	$diroutput = $conf->propal->multidir_output[$object->entity ?? $conf->entity];
 	$trackid = 'pro' . $object->id;
 
 	include DOL_DOCUMENT_ROOT . '/core/tpl/card_presend.tpl.php';

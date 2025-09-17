@@ -70,7 +70,7 @@ abstract class CommonObject
 	public $id;
 
 	/**
-	 * @var int 		The environment ID when using a multicompany module
+	 * @var ?int 		The environment ID when using a multicompany module
 	 */
 	public $entity;
 
@@ -232,7 +232,7 @@ abstract class CommonObject
 	public $project;
 
 	/**
-	 * @var int 			The related project ID
+	 * @var ?int 			The related project ID
 	 * @see setProject(), project
 	 */
 	public $fk_project;
@@ -325,12 +325,12 @@ abstract class CommonObject
 
 
 	/**
-	 * @var string 		The object's reference
+	 * @var ?string 		The object's reference
 	 */
 	public $ref;
 
 	/**
-	 * @var string 		An external reference to the object
+	 * @var ?string 		An external reference to the object
 	 */
 	public $ref_ext;
 
@@ -345,7 +345,7 @@ abstract class CommonObject
 	public $ref_next;
 
 	/**
-	 * @var string 		Ref to store on object to save the new ref to use for example when making a validate() of an object
+	 * @var ?string 		Ref to store on object to save the new ref to use for example when making a validate() of an object
 	 */
 	public $newref;
 
@@ -447,19 +447,19 @@ abstract class CommonObject
 	public $barcode_type_coder;
 
 	/**
-	 * @var int 		Payment method ID (cheque, cash, ...)
+	 * @var ?int 		Payment method ID (cheque, cash, ...)
 	 * @see setPaymentMethods()
 	 */
 	public $mode_reglement_id;
 
 	/**
-	 * @var int 		Payment terms ID
+	 * @var ?int 		Payment terms ID
 	 * @see setPaymentTerms()
 	 */
 	public $cond_reglement_id;
 
 	/**
-	 * @var int 		Demand reason ID
+	 * @var ?int 		Demand reason ID
 	 */
 	public $demand_reason_id;
 
@@ -483,20 +483,20 @@ abstract class CommonObject
 	protected $depr_cond_reglement;  // Internal value for deprecation
 
 	/**
-	 * @var int 		Delivery address ID
+	 * @var ?int 		Delivery address ID
 	 * @see setDeliveryAddress()
 	 * @deprecated
 	 */
 	public $fk_delivery_address;
 
 	/**
-	 * @var int 		Shipping method ID
+	 * @var ?int 		Shipping method ID
 	 * @see setShippingMethod()
 	 */
 	public $shipping_method_id;
 
 	/**
-	 * @var string 		Shipping method label
+	 * @var ?string 		Shipping method label
 	 * @see setShippingMethod()
 	 */
 	public $shipping_method;
@@ -558,14 +558,14 @@ abstract class CommonObject
 	public $last_main_doc;
 
 	/**
-	 * @var int 		Bank account ID sometimes, ID of record into llx_bank sometimes
+	 * @var ?int 		Bank account ID sometimes, ID of record into llx_bank sometimes
 	 * @deprecated
 	 * @see $fk_account
 	 */
 	public $fk_bank;
 
 	/**
-	 * @var int 		Bank account ID
+	 * @var ?int 		Bank account ID
 	 * @see SetBankAccount()
 	 */
 	public $fk_account;
@@ -748,25 +748,25 @@ abstract class CommonObject
 	public $user_modification_id;
 
 	/**
-	 * @var int ID
+	 * @var int 		ID
 	 * @deprecated	Use $user_creation_id
 	 */
 	public $fk_user_creat;
 
 	/**
-	 * @var int ID
+	 * @var ?int 		ID
 	 * @deprecated 	Use $user_modification_id
 	 */
 	public $fk_user_modif;
 
 
 	/**
-	 * @var string XX
+	 * @var string 		XX
 	 */
 	public $next_prev_filter;
 
 	/**
-	 * @var int<0,1> 1 if object is specimen
+	 * @var int<0,1> 	1 if object is specimen
 	 */
 	public $specimen = 0;
 
@@ -777,26 +777,26 @@ abstract class CommonObject
 
 
 	/**
-	 * @var	float		Amount already paid from getSommePaiement() + getSumCreditNotesUsed() + getSumDepositsUsed() (used to show correct status)
+	 * @var	?float			Amount already paid from getSommePaiement() + getSumCreditNotesUsed() + getSumDepositsUsed() (used to show correct status)
 	 * @see $totalpaid
 	 */
 	public $alreadypaid;
 
 	/**
-	 * @var	float		Amount already paid from getSommePaiement()
+	 * @var	?float			Amount already paid from getSommePaiement()
 	 * @see $alreadpaid, $totalpaid_multicurrency
 	 */
 	public $totalpaid;
 
 	/**
-	 * @var int|float	Amount already paid from getSommePaiement(), like $totalpaid, but in the foreign currency
+	 * @var int|float|null	Amount already paid from getSommePaiement(), like $totalpaid, but in the foreign currency
 	 * @see $totalpaid, $alreadypaid
 	 */
 	public $totalpaid_multicurrency;
 
 
 	/**
-	 * @var array<int,string>		Array with labels of status
+	 * @var array<int,string>	Array with labels of status
 	 */
 	public $labelStatus = array();
 
@@ -2428,7 +2428,7 @@ abstract class CommonObject
 		if ($fieldid == 'rowid') {
 			$sql .= " WHERE te.".$fieldid." < ".((int) $this->id);
 		} else {
-			$sql .= " WHERE te.".$fieldid." < '".$this->db->escape($this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
+			$sql .= " WHERE te.".$fieldid." < '".$this->db->escape((string) $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
 		}
 		if ($restrictiononfksoc == 1 && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND sc.fk_user = ".((int) $user->id);
@@ -2507,7 +2507,7 @@ abstract class CommonObject
 		if ($fieldid == 'rowid') {
 			$sql .= " WHERE te.".$fieldid." > ".((int) $this->id);
 		} else {
-			$sql .= " WHERE te.".$fieldid." > '".$this->db->escape($this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
+			$sql .= " WHERE te.".$fieldid." > '".$this->db->escape((string) $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
 		}
 		if ($restrictiononfksoc == 1 && !$user->hasRight('societe', 'client', 'voir') && !$socid) {
 			$sql .= " AND (sc.fk_user = ".((int) $user->id);
@@ -3240,7 +3240,11 @@ abstract class CommonObject
 			if (!$notrigger) {
 				// Call trigger
 				$this->context = array('shippingmethodupdate' => 1);
-				$result = $this->call_trigger(strtoupper(get_class($this)).'_MODIFY', $userused);
+				$triggerPrefix = (empty($this->TRIGGER_PREFIX) ? strtoupper(get_class($this)) : $this->TRIGGER_PREFIX);
+				if (get_class($this) == 'Commande') {
+					$triggerPrefix = 'ORDER';	// TODO Remove this when TRIGGER_PREFI in order is implemented
+				}
+				$result = $this->call_trigger($triggerPrefix.'_MODIFY', $userused);
 				if ($result < 0) {
 					$error++;
 				}
@@ -5478,7 +5482,7 @@ abstract class CommonObject
 	 */
 	public function printObjectLine($action, $line, $var, $num, $i, $dateSelector, $seller, $buyer, $selected = 0, $extrafields = null, $defaulttpldir = '/core/tpl')
 	{
-		global $conf, $langs, $user, $object, $hookmanager;
+		global $conf, $langs, $user, $object, $hookmanager;	// used into tpl
 		global $form;
 		global $disableedit, $disablemove, $disableremove; // TODO We should not use global var for this !
 
@@ -5531,7 +5535,8 @@ abstract class CommonObject
 				$description .= (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : (!empty($line->description) ? dol_htmlentitiesbr($line->description) : '')); // Description is what to show on popup. We shown nothing if already into desc.
 			}
 
-			$line->pu_ttc = price2num((!empty($line->subprice) ? $line->subprice : 0) * (1 + ((!empty($line->tva_tx) ? $line->tva_tx : 0) / 100)), 'MU');
+			$line->subprice_ttc = (float) price2num((!empty($line->subprice) ? $line->subprice : 0) * (1 + ((!empty($line->tva_tx) ? $line->tva_tx : 0) / 100)), 'MU');
+			$line->pu_ttc = $line->subprice_ttc;	// deprecated
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			// Use global variables + $dateSelector + $seller and $buyer
@@ -5569,7 +5574,8 @@ abstract class CommonObject
 		if ($this->status == 0 && $action == 'editline' && $selected == $line->id) {
 			$label = (!empty($line->label) ? $line->label : (($line->fk_product > 0) ? $line->product_label : ''));
 
-			$line->pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx / 100)), 'MU');
+			$line->subprice_ttc = (float) price2num($line->subprice * (1 + ($line->tva_tx / 100)), 'MU');
+			$line->pu_ttc = $line->subprice_ttc;	// deprecated
 
 			// Output template part (modules that overwrite templates must declare this into descriptor)
 			// Use global variables + $dateSelector + $seller and $buyer

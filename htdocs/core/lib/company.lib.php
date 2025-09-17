@@ -431,7 +431,7 @@ function societe_prepare_head(Societe $object)
 		} else {
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 			require_once DOL_DOCUMENT_ROOT . '/core/class/link.class.php';
-			$upload_dir = $conf->societe->multidir_output[$object->entity] . "/" . $object->id;
+			$upload_dir = $conf->societe->multidir_output[$object->entity ?? $conf->entity] . "/" . $object->id;
 			$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 			$nbLinks = Link::count($db, $object->element, $object->id);
 			$totalAttached = $nbFiles + $nbLinks;

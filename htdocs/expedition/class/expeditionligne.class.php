@@ -138,7 +138,7 @@ class ExpeditionLigne extends CommonObjectLine
 	/**
 	 * Detail of lot and qty = array(id in llx_expeditiondet_batch, fk_expeditiondet, batch, qty, fk_origin_stock)
 	 * We can use this to know warehouse planned to be used for each lot.
-	 * @var stdClass|ExpeditionLineBatch[]
+	 * @var null|stdClass|ExpeditionLineBatch[]
 	 */
 	public $detail_batch;
 
@@ -385,7 +385,6 @@ class ExpeditionLigne extends CommonObjectLine
 
 		// Check parameters
 		if ((empty($this->fk_expedition)
-			|| empty($this->fk_product) // product id is mandatory
 			|| (empty($this->fk_elementdet) && empty($this->fk_parent)) // at least origin line id of parent line id is set
 			|| !is_numeric($this->qty))
 			&& !$skip_check_parameters) {

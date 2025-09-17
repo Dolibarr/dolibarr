@@ -117,6 +117,7 @@ $permissiontoadd = $user->hasRight('projet', 'creer');
 $permissiontodelete = $user->hasRight('projet', 'supprimer');
 $permissiondellink = $user->hasRight('projet', 'creer');	// Used by the include of actions_dellink.inc.php
 $permissiontoeditextra = $permissiontoadd;
+
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
 	// For action 'update_extras', is there a specific permission set for the attribute to update
 	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
@@ -126,7 +127,9 @@ if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->tabl
 /*
  * Actions
  */
+
 $error = 0;
+
 $parameters = array('id' => $socid, 'objcanvas' => $objcanvas);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -476,7 +479,7 @@ if (empty($reshook)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 			$langs->load("other");
-			$upload_dir = $conf->project->multidir_output[$object->entity];
+			$upload_dir = $conf->project->multidir_output[$object->entity ?? $conf->entity];
 			$file = $upload_dir.'/'.GETPOST('file');
 			$ret = dol_delete_file($file, 0, 0, 0, $object);
 			if ($ret) {
@@ -1794,7 +1797,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		 * Generated documents
 		 */
 		$filename = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->project->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->ref);
+		$filedir = $conf->project->multidir_output[$object->entity ?? $conf->entity]."/".dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = ($user->hasRight('projet', 'lire') && $userAccess > 0);
 		$delallowed = ($user->hasRight('projet', 'creer') && $userWrite > 0);
@@ -1822,7 +1825,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	$modelmail = 'project';
 	$defaulttopic = 'SendProjectRef';
 	$defaulttopiclang = 'projects';
-	$diroutput = $conf->project->multidir_output[$object->entity];
+	$diroutput = $conf->project->multidir_output[$object->entity ?? $conf->entity];
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_PROJECT_TO'; // used to know the automatic BCC to add
 	$trackid = 'proj'.$object->id;
 

@@ -82,7 +82,7 @@ $hookmanager = new HookManager($db);
 
 $hookmanager->initHooks(array('newpayment'));
 
-$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
+$langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paypal", "stripe"));
 
 // Clean parameters
 $PAYPAL_API_USER = "";

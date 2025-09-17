@@ -3,10 +3,10 @@ MenuFinancial=Faturalandırma | Ödəniş
 TaxModuleSetupToModifyRules=Hesablama qaydalarına dəyişiklik etmək üçün <a href="%s">Vergilər modulunun quraşdırılması</a> bölməsinə keçin
 TaxModuleSetupToModifyRulesLT=Hesablama qaydalarına dəyişiklik etmək üçün <a href="%s">Şirkət quraşdırması</a> bölməsinə keçin
 OptionMode=Mühasibat uçotu üçün seçim
-OptionModeTrue=Hesablama uçotu
-OptionModeVirtual=Pul vəsaitlərinin uçotu
-OptionModeTrueDesc=Bu kontekstdə dövriyyə ödənişlər (ödənişlər tarixi) üzrə hesablanır. Rəqəmlərin etibarlılığı yalnız ödənişlər üzrə giriş/çıxış vasitəsilə mühasibat uçotu yoxlanıldıqda təmin edilir.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=Bu kontekstdə dövriyyə fakturalar üzrə hesablanır (təsdiqləmə tarixi). Bu qaimə-fakturalar ödənilib-ödənilməsə də, vaxtı çatdıqda, dövriyyə çıxışında qeyd olunur.
+OptionModeTrueDesc=Bu kontekstdə dövriyyə ödənişlər (ödənişlər tarixi) üzrə hesablanır. Rəqəmlərin etibarlılığı yalnız ödənişlər üzrə giriş/çıxış vasitəsilə mühasibat uçotu yoxlanıldıqda təmin edilir.
 FeatureIsSupportedInInOutModeOnly=Xüsusiyyət yalnız KREDİT-BORÇLAR mühasibat rejimində mövcuddur (Mühasibat modulunun konfiqurasiyasına baxın)
 VATReportBuildWithOptionDefinedInModule=Burada göstərilən məbləğlər Vergi modulunun qurulması ilə müəyyən edilmiş qaydalar əsasında hesablanır.
 LTReportBuildWithOptionDefinedInModule=Burada göstərilən məbləğlər Şirkət quraşdırması ilə müəyyən edilmiş qaydalar əsasında hesablanır.
@@ -302,7 +302,6 @@ ByVatRate=Satış vergisi dərəcəsi ilə
 TurnoverbyVatrate=Satış vergisi dərəcəsi ilə faktura edilmiş dövriyyə
 TurnoverCollectedbyVatrate=Satış vergisi dərəcəsi ilə yığılan dövriyyə
 PurchasebyVatrate=Satış vergisi dərəcəsi ilə alış
-LabelToShow=Qısa etiket
 PurchaseTurnover=Satınalma dövriyyəsi
 PurchaseTurnoverCollected=Satınalma dövriyyəsi yığılıb
 RulesPurchaseTurnoverDue=- Buraya təchizatçının ödənilməli və ya ödənilməmiş hesab-fakturaları daxildir. <br>- Bu fakturaların faktura tarixinə əsaslanır.<br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Xətt tarixləri üçün qayda
 Prepaid=Əvvəlcədən ödənilmiş
 Postpaid=Fakturalı ödəniş
 SetRuleForLinesDates=Xətt tarixləri üçün qayda təyin edin
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption
