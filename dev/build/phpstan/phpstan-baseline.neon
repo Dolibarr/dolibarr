@@ -571,36 +571,6 @@ parameters:
 			path: ../../../htdocs/adherents/card.php
 
 		-
-			message: '#^Call to function property_exists\(\) with \$this\(Subscription\) and ''amount'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/adherents/class/subscription.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Subscription\) and ''datef'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/adherents/class/subscription.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Subscription\) and ''dateh'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/adherents/class/subscription.class.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/adherents/class/subscription.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 2
-			path: ../../../htdocs/adherents/class/subscription.class.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
