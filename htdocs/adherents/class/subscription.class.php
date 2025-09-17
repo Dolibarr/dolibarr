@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -319,7 +319,7 @@ class Subscription extends CommonObject
 			$result = $member->fetch($this->fk_adherent);
 			$result = $member->update_end_date($user);
 
-			if (!$error && !$notrigger) {
+			if (!$notrigger) {
 				$this->context = array('member' => $member);
 				// Call triggers
 				$result = $this->call_trigger('MEMBER_SUBSCRIPTION_MODIFY', $user);
@@ -365,15 +365,13 @@ class Subscription extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error) {
-			if (!$notrigger) {
-				// Call triggers
-				$result = $this->call_trigger('MEMBER_SUBSCRIPTION_DELETE', $user);
-				if ($result < 0) {
-					$error++;
-				} // Do also here what you must do to rollback action if trigger fail
-				// End call triggers
-			}
+		if (!$notrigger) {
+			// Call triggers
+			$result = $this->call_trigger('MEMBER_SUBSCRIPTION_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			} // Do also here what you must do to rollback action if trigger fail
+			// End call triggers
 		}
 
 		if (!$error) {
