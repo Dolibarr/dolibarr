@@ -631,6 +631,8 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
