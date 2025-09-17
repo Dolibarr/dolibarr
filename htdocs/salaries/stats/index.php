@@ -219,12 +219,11 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 // Show filter box
 print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
+
 // User
 print '<tr><td>'.$langs->trans("Employee").'</td><td>';
-
 if (!$user->hasRight('salaries', 'readchild') && empty($useridtofilter)) {
 	print img_picto('', 'user', 'class="pictofixedwidth"');
 	print $form->select_dolusers(($userid ? $userid : -1), 'userid', 1, null, 0, !$user->hasRight('salaries', 'readall') ? 'hierarchyme' : '', '', '0', 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
@@ -232,6 +231,7 @@ if (!$user->hasRight('salaries', 'readchild') && empty($useridtofilter)) {
 	print $user->getNomUrl(1);
 }
 print '</td></tr>';
+
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';
 if (!in_array($year, $arrayyears)) {
@@ -244,7 +244,6 @@ print '<tr><td align="center" colspan="2"><input type="submit" name="submit" cla
 print '</table>';
 print '</form>';
 print '<br><br>';
-
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre" height="24">';
