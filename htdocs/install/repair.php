@@ -1987,12 +1987,15 @@ if ($ok && GETPOST('repair_supplier_order_duplicate_ref')) {
 if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 	$err = 0;
 	$db->begin();
-	$sql = "SELECT f.rowid, SUM(fd.total_ht) as total_ht";
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture f";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet fd ON fd.fk_facture = f.rowid";
-	$sql .= " WHERE f.total_ht = 0";
-	$sql .= " GROUP BY fd.fk_facture HAVING SUM(fd.total_ht) <> 0";
-
+	$sql = "
+		SELECT
+			f.rowid,
+			SUM(fd.total_ht) as total_ht
+		FROM ".MAIN_DB_PREFIX."facture f 
+			LEFT JOIN ".MAIN_DB_PREFIX."facturedet fd
+				ON fd.fk_facture = f.rowid
+		WHERE f.total_ht = 0 
+		GROUP BY fd.fk_facture HAVING SUM(fd.total_ht) != 0";
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -2004,27 +2007,36 @@ if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 				$sql_calculs = "
-					SELECT
-						SUM(fd.total_ht) as 'total_ht',
+					SELECT 
+						SUM(fd.total_ht) as 'total_ht', 
 						SUM(fd.total_tva) as 'total_tva',
 						SUM(fd.total_localtax1) as 'localtax1',
 						SUM(fd.total_localtax2) as 'localtax2',
 						SUM(fd.total_ttc) as 'total_ttc'
 					FROM
 						".MAIN_DB_PREFIX."facturedet fd
-					WHERE
+					WHERE 
 						fd.fk_facture = $obj->rowid";
 				$ressql_calculs = $db->query($sql_calculs);
 				while ($obj_calcul = $db->fetch_object($ressql_calculs)) {
+					// Calcul de la somme des paiements reçus
+					$sql_paiements = "SELECT SUM(amount) as somme from llx_paiement_facture WHERE fk_facture = $obj->rowid";
+					$montantPaiements = $db->fetch_object($db->query($sql_paiements))->somme;
+					$tHt= ($obj_calcul->total_ht ? price2num($obj_calcul->total_ht, 'MT') : 0);
+					$tTva = ($obj_calcul->total_tva ? price2num($obj_calcul->total_tva, 'MT') : 0);
+					$t1 = ($obj_calcul->localtax1 ? price2num($obj_calcul->localtax1, 'MT') : 0);
+					$t2 = ($obj_calcul->localtax2 ? price2num($obj_calcul->localtax2, 'MT') : 0);
+					$tTtc = $tHt + $tTva + $t1 + $t2;
 					$sql_maj = "
-						UPDATE ".MAIN_DB_PREFIX."facture
-						SET
-							total_ht = ".($obj_calcul->total_ht ? price2num($obj_calcul->total_ht, 'MT') : 0).",
-							total_tva = ".($obj_calcul->total_tva ? price2num($obj_calcul->total_tva, 'MT') : 0).",
-							localtax1 = ".($obj_calcul->localtax1 ? price2num($obj_calcul->localtax1, 'MT') : 0).",
-							localtax2 = ".($obj_calcul->localtax2 ? price2num($obj_calcul->localtax2, 'MT') : 0).",
-							total_ttc = ".($obj_calcul->total_ttc ? price2num($obj_calcul->total_ttc, 'MT') : 0)."
-						WHERE
+						UPDATE ".MAIN_DB_PREFIX."facture 
+						SET 
+							total_ht = $tHt, 
+							total_tva = $tTva, 
+							localtax1 = $t1, 
+							localtax2 = $t2, 
+							total_ttc = $tTtc, 
+							fk_statut = ".($tTtc == price2num($montantPaiements,'MT') ? 2 : 1 )."
+						WHERE 
 							rowid = $obj->rowid";
 					$db->query($sql_maj);
 				}
