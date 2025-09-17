@@ -3,7 +3,7 @@
 /*
  * Copyright (C) 2012 Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013 Florian Henry <forian.henry@open-concept.pro
- * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2013-2015  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -221,8 +221,8 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 
 	// Loop over job
 	foreach ($object->lines as $line) {
-		/** @var CronJob $line */
-		'@phan-var-force CronJob $line';
+		/** @var Cronjob $line */
+		'@phan-var-force Cronjob $line';
 
 		dol_syslog("cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label, LOG_DEBUG);
 		echo "cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label;
