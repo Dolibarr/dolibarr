@@ -2203,6 +2203,7 @@ if ($action == 'create') {
 		}
 		$objectsrc = new $classname($db);
 		'@phan-var-force Project|Commande|Propal|Facture|Contrat|CommandeFournisseur|CommonObject $objectsrc';
+		/** @var CommandeFournisseur|CommonObject $objectsrc */
 		$objectsrc->fetch($originid);
 		$objectsrc->fetch_thirdparty();
 
@@ -2768,7 +2769,7 @@ if ($action == 'create') {
 		if (isModEnabled("bank")) {
 			print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
 			// when bank account is empty (means not override by payment mode form a other object, like third-party), try to use default value
-			print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes($fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
+			print img_picto('', 'bank_account', 'class="pictofixedwidth"').$form->select_comptes((int) $fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 			print '</td></tr>';
 		}
 
