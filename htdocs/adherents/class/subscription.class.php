@@ -388,17 +388,10 @@ class Subscription extends CommonObject
 
 					if ($this->fk_bank > 0 && is_object($accountline) && $accountline->id > 0) {	// If we found bank account line (this means this->fk_bank defined)
 						$result = $accountline->delete($user); // Return false if refused because line is reconciled
-						if ($result > 0) {
-							$this->db->commit();
-							return 1;
-						} else {
-							$this->error = $accountline->error;
-							$this->db->rollback();
-							return -1;
+						if ($result <= 0) {
+							$this->setErrorsFromObject($accountline);
+							$error++;
 						}
-					} else {
-						$this->db->commit();
-						return 1;
 					}
 				} else {
 					$this->db->commit();
