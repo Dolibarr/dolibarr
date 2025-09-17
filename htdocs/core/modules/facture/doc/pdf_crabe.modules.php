@@ -919,6 +919,7 @@ class pdf_crabe extends ModelePDFFactures
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					return 0;
 				}
 
 				dolChmod($file);
