@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
 * This program is free software; you can redistribute it and/or modify
@@ -40,6 +40,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
  */
 class doc_generic_proposal_odt extends ModelePDFPropales
 {
+	/**
+	 * Issuer
+	 * @var Societe
+	 */
+	public $emetteur;
+
+	/**
+	 * @var array{0:int,1:int} Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 7.0 = array(7, 0)
+	 */
+	public $phpmin = array(7, 0);
+
 	/**
 	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental' Dolibarr version of the loaded document
 	 */
@@ -155,15 +167,6 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
 
-		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
-		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
-		$texte .= '<textarea class="flat" cols="60" name="value1">';
-		$texte .= $odtPath;
-		$texte .= '</textarea>';
-		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
-		$texte .= '<br></div></div>';
-
 		// Scan directories
 		$nbofiles = count($listoffiles);
 		if (!empty($odtPath)) {
@@ -171,7 +174,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
 			$texte .= count($listoffiles);
 			//$texte.=$nbofiles?'</a>':'';
-			$texte .= '</b>';
+			$texte .= '</b><br>';
 		}
 
 		if ($nbofiles) {
@@ -210,6 +213,17 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				$texte .= '</table>';
 			}
 		}
+
+		$texte .= '<br>';
+		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
+		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
+		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
+		$texte .= $odtPath;
+		$texte .= '</textarea>';
+		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
+		$texte .= '<input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.dolPrintHTMLForAttribute($langs->trans("Modify")).'">';
+		$texte .= '<br></div></div>';
+
 		// Add input to upload a new template file.
 		$texte .= '<div>'.$langs->trans("UploadNewTemplate");
 		$maxfilesizearray = getMaxFileSizeArray();
@@ -284,7 +298,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 
 			$object->fetch_thirdparty();
 
-			$dir = $conf->propal->multidir_output[$object->entity];
+			$dir = $conf->propal->multidir_output[$object->entity ?? $conf->entity];
 			$objectref = dol_sanitizeFileName($object->ref);
 			if (!preg_match('/specimen/i', $objectref)) {
 				$dir .= "/".$objectref;
@@ -436,15 +450,24 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				$parameters = array('odfHandler' => &$odfHandler, 'file' => $file, 'object' => $object, 'outputlangs' => $outputlangs, 'substitutionarray' => &$tmparray);
 				$reshook = $hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
+				// retrieve the constant to apply a ratio for image size or set the ratio to 1
+				if (getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO')) {
+					$ratio = floatval(getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO'));
+				} else {
+					$ratio = 1;
+				}
+
 				foreach ($tmparray as $key => $value) {
 					try {
-						if (preg_match('/logo$/', $key)) { // Image
+						if (preg_match('/logo$/', $key)) {
+							// Image
 							if (file_exists($value)) {
-								$odfHandler->setImage($key, $value);
+								$odfHandler->setImage($key, $value, $ratio);
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
-						} else { // Text
+						} else {
+							// Text
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
 					} catch (OdfException $e) {
@@ -463,6 +486,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				if ($foundtagforlines) {
 					$linenumber = 0;
 					foreach ($object->lines as $line) {
+						/** @var PropaleLigne $line */
 						$linenumber++;
 						$tmparray = $this->get_substitutionarray_lines($line, $outputlangs, $linenumber);
 						complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");

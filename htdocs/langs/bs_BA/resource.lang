@@ -1,36 +1,38 @@
 # Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Resursi
-MenuResourceAdd=New resource
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+MenuResourceAdd=Novi resurs
+DeleteResource=Izbriši resurs
+ConfirmDeleteResourceElement=Potvrdite brisanje resursa za ovaj element
+NoResourceInDatabase=Nema resursa u bazi podataka.
+NoResourceLinked=Nijedan resurs nije povezan
+ActionsOnResource=Događaji o ovom resursu
+ResourcePageIndex=Lista resursa
+ResourceSingular=Resurs
+ResourceCard=Kartica resursa
+NewResource=Novi resurs
+AddResource=Kreirajte resurs
+ResourceFormLabel_ref=Naziv resursa
+ResourceFormLabel_description=Opis resursa
+ResourceType=Vrsta resursa
+ResourceTypeID=ID tipa resursa
+ResourceTypeLabel=Oznaka tipa resursa
+ResourcesLinkedToElement=Resursi povezani sa elementom
 
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
-
-ResourcesLinkedToElement=Resources linked to element
-
-ShowResource=Show resource
-
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
-
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
-
-SelectResource=Select resource
-
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
+ShowResource=Prikaži resurs
+ResourceElementPage=Resursi elemenata
+ResourceCreatedWithSuccess=Resurs je uspješno kreiran
+RessourceLineSuccessfullyDeleted=Linija resursa je uspješno izbrisana
+RessourceLineSuccessfullyUpdated=Linija resursa je uspješno ažurirana
+ResourceLinkedWithSuccess=Resurs povezan sa uspjehom
+ConfirmDeleteResource=Potvrdite brisanje ovog resursa
+RessourceSuccessfullyDeleted=Resurs je uspješno obrisan
+DictionaryResourceType=Vrsta resursa
+SelectResource=Odaberite resurs
+IdResource=Id resurs
+AssetNumber=Serijski broj
+ResourceTypeCode=Šifra vrste resursa
 ImportDataset_resource_1=Resursi
+ErrorResourcesAlreadyInUse=Neki resursi su u upotrebi
+ErrorResourceUseInEvent=%s korišten u %s događaju
+MaxUsers=Maksimalan broj korisnika (mjesta, sjedišta itd.)
+MaxUsersLabel=Maksimalan broj korisnika

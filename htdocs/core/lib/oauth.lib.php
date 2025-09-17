@@ -2,6 +2,7 @@
 /* Copyright (C) 2012 Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013 Florian Henry <florian.henry@opn-concept.pro>
  * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -368,12 +369,12 @@ function oauthadmin_prepare_head()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath('/admin/oauth.php', 1);
+	$head[$h][0] = DOL_URL_ROOT.'/admin/oauth.php';
 	$head[$h][1] = $langs->trans("OAuthServices");
 	$head[$h][2] = 'services';
 	$h++;
 
-	$head[$h][0] = dol_buildpath('/admin/oauthlogintokens.php', 1);
+	$head[$h][0] = DOL_URL_ROOT.'/admin/oauthlogintokens.php';
 	$head[$h][1] = $langs->trans("TokenManager");
 	$head[$h][2] = 'tokengeneration';
 	$h++;

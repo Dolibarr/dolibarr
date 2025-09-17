@@ -1,11 +1,11 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2021 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
- * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
- * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2021 Gauthier VERDOL 			<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021 Greg Rastklan 			<greg.rastklan@atm-consulting.fr>
+ * Copyright (C) 2021 Jean-Pascal BOUDET		<jean-pascal.boudet@atm-consulting.fr>
+ * Copyright (C) 2021 Grégory BLEMAND 			<gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025 MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -161,6 +161,10 @@ if (!$permissiontoread) {
 	accessforbidden();
 }
 
+// Force the type of field fk_user to remove the filter on active user.
+// Note: Another fix would be to be able to filter on a freetet on firstname/lastname.
+//var_dump($object->fields['fk_user']);
+$object->fields['fk_user']['type'] = 'integer:User:user/class/user.class.php:0';
 
 
 /*
@@ -349,7 +353,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -513,7 +517,7 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column ? 'left' : '');  // This also change content of $arrayfields with user setup
 $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
@@ -677,11 +681,11 @@ while ($i < $imaxinloop) {
 		$jobstatic->status = $obj->job_status;
 
 		$userstatic->id = $obj->fk_user;
-		$userstatic->ref = $obj->fk_user;
+		$userstatic->ref = (string) $obj->fk_user;
 		$userstatic->firstname = $obj->firstname;
 		$userstatic->lastname = $obj->lastname;
 		$userstatic->email = $obj->email;
-		$userstatic->statut = $obj->statut;
+		$userstatic->statut = $obj->statut;	// deprecated
 		$userstatic->status = $obj->statut;
 		$userstatic->login = $obj->login;
 		$userstatic->photo = $obj->photo;
@@ -740,13 +744,13 @@ while ($i < $imaxinloop) {
 			if (!empty($arrayfields['t.'.$key]['checked'])) {
 				print '<td'.($cssforfield ? ' class="'.$cssforfield.((preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key)) ? ' classfortooltip' : '').'"' : '');
 				if (preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key) && !in_array($key, array('ref'))) {
-					print ' title="'.dol_escape_htmltag($object->$key).'"';
+					print ' title="'.dolPrintHTMLForAttribute((string) $object->$key).'"';
 				}
 				print '>';
 				if ($key == 'status') {
 					print $object->getLibStatut(5);
 				} elseif ($key == 'rowid') {
-					print $object->showOutputField($val, $key, $object->id, '');
+					print $object->showOutputField($val, $key, (string) $object->id, '');
 				} else {
 					print $object->showOutputField($val, $key, $object->$key, '');
 				}

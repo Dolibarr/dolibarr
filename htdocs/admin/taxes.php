@@ -6,7 +6,7 @@
  * Copyright (C) 2015-2022  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2023  		Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,10 +110,10 @@ if ($action == 'update') {
 			$valuebuyservice = 'payment';
 			break;
 		default:
-			$valuesellproduct = null;
-			$valuebuyproduct = null;
-			$valuesellservice = null;
-			$valuebuyservice = null;
+			$valuesellproduct = '';
+			$valuebuyproduct = '';
+			$valuesellservice = '';
+			$valuebuyservice = '';
 			break;
 	}
 
@@ -166,7 +166,8 @@ if (isModEnabled('accounting')) {
 	$formaccounting = new FormAccounting($db);
 }
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans('TaxSetup'), $linkback, 'title_setup');
 
 //print dol_get_fiche_head([], '', '', -1);

@@ -585,6 +585,11 @@ UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NUL
 DELETE FROM llx_rights_def WHERE module = 'hrm' AND perms = 'employee';
 
 
+-- Clean templates that does not exists
+DELETE FROM llx_document_model WHERE TYPE = 'bom' AND nom = 'alpha';
+DELETE FROM llx_const WHERE name = 'BOM_ADDON_PDF' AND value = 'alpha';
+DELETE FROM llx_const WHERE name = 'MRP_MO_ADDON_PDF' AND value = 'alpha';
+
 
 -- Sequence to fix the content of llx_bank.amount_main_currency (value was empty and should not for payment on bank account with a different currency so when amount_main_currency is different than amount)
 -- Note: amount is amount in the currency of the bank account
@@ -601,6 +606,10 @@ DELETE FROM llx_rights_def WHERE module = 'hrm' AND perms = 'employee';
 -- Sequence to fix the content of llx_bank.amount_main_currency (sign was wrong with some version)
 -- UPDATE llx_bank as b SET b.amount_main_currency = -b.amount_main_currency WHERE b.amount IS NOT NULL AND b.amount_main_currency IS NOT NULL AND SIGN(b.amount_main_currency) <> SIGN(b.amount);
 
+
+-- Sequence to fix the table llx_paiement_facture and llx_paiement for payment record on a bank account that does not exists anymore.
+-- delete from llx_paiement_facture where fk_paiement in (select rowid from llx_paiement WHERE fk_bank is not null AND fk_bank not in (select rowid from llx_bank));
+-- delete from llx_paiement WHERE fk_bank is not null AND fk_bank not in (select rowid from llx_bank);
 
 
 -- Delete duplicate entries into llx_c_transport_mode
@@ -683,3 +692,8 @@ ALTER TABLE llx_product_attribute_combination_price_level ADD UNIQUE INDEX uk_pr
 
 -- delete a constant that should not be set
 DELETE FROM llx_const WHERE name = 'INVOICE_USE_RETAINED_WARRANTY' AND value = -1;
+
+
+DELETE FROM llx_hrm_skilldet WHERE rankorder = 0;
+
+UPDATE llx_c_tva SET type_vat = 0 WHERE type_vat < 0;

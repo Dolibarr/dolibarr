@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('bookmarks', 'admin'));
+$langs->loadLangs(array('other', 'admin'));
 
 // Get Parameters
 $action 	= GETPOST('action', 'aZ09');
@@ -198,7 +198,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}

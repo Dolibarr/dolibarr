@@ -3,8 +3,8 @@
  * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
  * Copyright (C) 2004-2023	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,25 +102,25 @@ $fieldstosearchall = array(
 	'c.note' => "Label",
 );
 $arrayfields = array(
-	'd.ref' => array('label' => "Ref", 'checked' => 1),
-	'd.fk_type' => array('label' => "Type", 'checked' => 1),
-	'd.lastname' => array('label' => "Lastname", 'checked' => 1),
-	'd.firstname' => array('label' => "Firstname", 'checked' => 1),
-	'd.login' => array('label' => "Login", 'checked' => 1),
-	'c.note' => array('label' => "Label", 'checked' => 1),
-	'd.bank' => array('label' => "BankAccount", 'checked' => 1, 'enabled' => (isModEnabled('bank'))),
+	'd.ref' => array('label' => "Ref", 'checked' => '1'),
+	'd.fk_type' => array('label' => "Type", 'checked' => '1'),
+	'd.lastname' => array('label' => "Lastname", 'checked' => '1'),
+	'd.firstname' => array('label' => "Firstname", 'checked' => '1'),
+	'd.login' => array('label' => "Login", 'checked' => '1'),
+	'c.note' => array('label' => "Label", 'checked' => '1'),
+	'd.bank' => array('label' => "BankAccount", 'checked' => '1', 'enabled' => (string) (int) (isModEnabled('bank'))),
 	/*'d.note_public'=>array('label'=>"NotePublic", 'checked'=>0),
 	 'd.note_private'=>array('label'=>"NotePrivate", 'checked'=>0),*/
-	'c.dateadh' => array('label' => "DateSubscription", 'checked' => 1, 'position' => 100),
-	'c.datef' => array('label' => "EndSubscription", 'checked' => 1, 'position' => 101),
-	'd.amount' => array('label' => "Amount", 'checked' => 1, 'position' => 102),
-	'c.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 500),
-	'c.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 500),
+	'c.dateadh' => array('label' => "DateSubscription", 'checked' => '1', 'position' => 100),
+	'c.datef' => array('label' => "EndSubscription", 'checked' => '1', 'position' => 101),
+	'd.amount' => array('label' => "Amount", 'checked' => '1', 'position' => 102),
+	'c.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 500),
+	'c.tms' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 500),
 //	'd.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000)
 );
 
 // Security check
-$result = restrictedArea($user, 'adherent', '', '', 'cotisation');
+restrictedArea($user, 'adherent', '', '', 'cotisation');
 
 $permissiontodelete = $user->hasRight('adherent', 'cotisation', 'creer');
 
@@ -223,7 +223,7 @@ if ($search_ref) {
 	}
 }
 if ($search_type > 0) {
-	$sql .= natural_search(array('c.fk_type'), $search_type);
+	$sql .= natural_search(array('c.fk_type'), (string) $search_type);
 }
 if ($search_lastname) {
 	$sql .= natural_search(array('d.lastname', 'd.societe'), $search_lastname);
@@ -267,7 +267,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -637,7 +637,7 @@ while ($i < $imaxinloop) {
 	$adht = new AdherentType($db);
 	$adht->fetch($typeid);
 
-	$adherent->need_subscription = $adht->subscription;
+	$adherent->need_subscription = (int) $adht->subscription;
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
@@ -737,7 +737,7 @@ while ($i < $imaxinloop) {
 
 		// Banque
 		if (!empty($arrayfields['d.bank']['checked'])) {
-			print '<td class="tdmaxoverflow100">';
+			print '<td class="tdoverflowmax100">';
 			if ($obj->fk_account > 0) {
 				$accountstatic->id = $obj->fk_account;
 				$accountstatic->fetch($obj->fk_account);

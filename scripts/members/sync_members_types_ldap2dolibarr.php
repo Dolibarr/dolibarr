@@ -6,6 +6,7 @@
  * Copyright (C) 2013 Maxime Kohlhaas <maxime@atm-consulting.fr>
  * Copyright (C) 2017 Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,7 +72,7 @@ $hookmanager->initHooks(array('cli'));
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',', $argv));
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
 
 // List of fields to get from LDAP
 $required_fields = array(getDolGlobalString('LDAP_KEY_MEMBERS_TYPES'), getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_FULLNAME'), getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_DESCRIPTION'), getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS'));
@@ -123,7 +124,7 @@ print "login=".$conf->db->user."\n";
 print "database=".$conf->db->name."\n";
 print "----- Options:\n";
 print "commitiferror=".$forcecommit."\n";
-print "Mapped LDAP fields=".join(',', $required_fields)."\n";
+print "Mapped LDAP fields=".implode(',', $required_fields)."\n";
 print "\n";
 
 if (!$confirmed) {
@@ -151,7 +152,7 @@ if ($result >= 0) {
 		// Warning $ldapuser has a key in lowercase
 		foreach ($ldaprecords as $key => $ldapgroup) {
 			$membertype = new AdherentType($db);
-			$membertype->fetch($ldapgroup[getDolGlobalString('LDAP_KEY_MEMBERS_TYPES')]);
+			$membertype->fetch((int) $ldapgroup[getDolGlobalString('LDAP_KEY_MEMBERS_TYPES')]);
 			$membertype->label = $ldapgroup[getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_FULLNAME')];
 			$membertype->description = $ldapgroup[getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_DESCRIPTION')];
 			$membertype->entity = $conf->entity;
@@ -193,7 +194,7 @@ if ($result >= 0) {
 			}
 			$db->commit();
 		} else {
-			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", $error)."\n";
+			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", (string) $error)."\n";
 			$db->rollback();
 		}
 		print "\n";

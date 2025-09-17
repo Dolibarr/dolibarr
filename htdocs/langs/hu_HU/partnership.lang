@@ -74,3 +74,5 @@ NewPartnershipRequest=Új partnerségi kérelem
 NewPartnershipRequestDesc=Ez az űrlap lehetővé teszi, hogy kérjen részt partnerségi programunkban. Ha segítségre van szüksége az űrlap kitöltéséhez, kérjük, lépjen kapcsolatba e-mailben <b> %s </b> .
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Ennek az oldalnak tartalmaznia kell legalább egy linket a következő domainek egyikére: %s
 IPOfApplicant=A jelentkező IP címe
+PartnershipToReopen=Újranyitás
+PartnershipConfirmReOpenAsk=Biztosan újra szeretné nyitni ezt a partnerséget <b> %s</b>?

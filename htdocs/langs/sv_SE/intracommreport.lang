@@ -1,5 +1,5 @@
 IntraCommReport=Intracomm-rapport
-IntraCommReports=Intracomm reports
+IntraCommReports=Intracomm-rapporter
 
 Module68000Name = Intracomm-rapport
 Module68000Desc = Intracomm-rapporthantering (stöd för franska DEB/DES-format)
@@ -35,4 +35,4 @@ IntracommReportTypeDeclaration=Typ av deklaration
 IntracommReportDownload=ladda ner XML-fil
 # Invoice
 IntracommReportTransportMode=Transportläge
-DeleteIntraCommReport=Delete IntraComm report
+DeleteIntraCommReport=Ta bort IntraComm-rapport

@@ -4,89 +4,55 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # Module label 'ModuledatapolicyName'
-Module4100Name = Data Privacy Policy
+Module4100Name = डेटा गोपनीयता नीति
 # Module description 'ModuledatapolicyDesc'
-Module4100Desc = Module to manage Data Privacy (Conformity with the GDPR)
-
-#
+Module4100Desc = डेटा गोपनीयता को प्रबंधित करने के लिए मॉड्यूल (GDPR के अनुरूप)
 # Administration page
-#
-datapolicySetup = Module Data Privacy Policy Setup
-Deletion = Deletion of data
-datapolicySetupPage = Depending of laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding that necessary for the purposes for which they were collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without event (the duration which you will have indicated below).
-NB_MONTHS = %s months
-ONE_YEAR = 1 year
-NB_YEARS = %s years
-DATAPOLICY_TIERS_CLIENT = Customer
-DATAPOLICY_TIERS_PROSPECT = Prospect
-DATAPOLICY_TIERS_PROSPECT_CLIENT = Prospect/Customer
-DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = Nor prospect/Nor customer
-DATAPOLICY_TIERS_FOURNISSEUR = Supplier
-DATAPOLICY_CONTACT_CLIENT = Customer
-DATAPOLICY_CONTACT_PROSPECT = Prospect
-DATAPOLICY_CONTACT_PROSPECT_CLIENT = Prospect/Customer
-DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Nor prospect/Nor customer
-DATAPOLICY_CONTACT_FOURNISSEUR = Supplier
-DATAPOLICY_ADHERENT = Member
-DATAPOLICY_Tooltip_SETUP = Type of contact - Indicate your choices for each type.
-DATAPOLICYMail = Emails Setup
-DATAPOLICYSUBJECTMAIL = Subject of email
-DATAPOLICYCONTENTMAIL = Content of the email
-DATAPOLICYSUBSITUTION = You can use the following variables in your email (LINKACCEPT allows to create a link recording the agreement of the person, LINKREFUSED makes it possible to record the refusal of the person):
-DATAPOLICYACCEPT = Message after agreement
-DATAPOLICYREFUSE = Message after desagreement
-SendAgreementText = You can send a GDPR email to all your relevant contacts (who have not yet received an email and for which you have not registered anything about their GDPR agreement). To do this, use the following button.
-SendAgreement = Send emails
-AllAgreementSend = All emails have been sent
-TXTLINKDATAPOLICYACCEPT = Text for the link "agreement"
-TXTLINKDATAPOLICYREFUSE = Text for the link "desagreement"
-
-
-#
+datapolicySetup = मॉड्यूल डेटा गोपनीयता नीति सेटअप
+DataDeletion=डेटा हटाना
+DataAnonymization=डेटा का गुमनामीकरण
+DataAnonymizationOrDeletion=Anonymization or deletion of data
+datapolicySetupPage = आपके देश के कानूनों के आधार पर (उदाहरण <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external"> GDPR का अनुच्छेद 5</a>), व्यक्तिगत डेटा को उस अवधि से अधिक नहीं रखा जाना चाहिए, जिस अवधि के लिए डेटा को उस उद्देश्य के लिए आवश्यक है जिसके लिए इसे एकत्र किया गया था, अभिलेखीय उद्देश्यों को छोड़कर। <br> यह मॉड्यूल बिना किसी घटना के एक निश्चित अवधि के बाद स्वचालित रूप से एक अनामीकरण कर देगा (वह अवधि जो आपने नीचे इंगित की होगी) और यदि ऑब्जेक्ट में कोई मौजूदा व्यावसायिक ऑब्जेक्ट संतान नहीं है।
+NB_MONTHS = %s महीने
+ONE_YEAR = 1 वर्ष
+NB_YEARS = %s वर्ष
+DATAPOLICY_TIERS_CLIENT = ग्राहक
+DATAPOLICY_TIERS_PROSPECT = संभावना
+DATAPOLICY_TIERS_PROSPECT_CLIENT = संभावित/ग्राहक
+DATAPOLICY_TIERS_NIPROSPECT_NICLIENT = न कोई संभावना/न कोई ग्राहक
+DATAPOLICY_TIERS_FOURNISSEUR = देने वाला
+DATAPOLICY_CONTACT_CLIENT = ग्राहक
+DATAPOLICY_CONTACT_PROSPECT = संभावना
+DATAPOLICY_CONTACT_PROSPECT_CLIENT = संभावित/ग्राहक
+DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = न कोई संभावना/न कोई ग्राहक
+DATAPOLICY_CONTACT_FOURNISSEUR = देने वाला
+DATAPOLICY_ADHERENT = सदस्य
+DATAPOLICY_RECRUITMENT_CANDIDATURE = Application
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and be working correctly.
+SendAgreementText = आप अपने सभी प्रासंगिक संपर्कों को GDPR ईमेल भेज सकते हैं (जिन्हें अभी तक ईमेल नहीं मिला है और जिनके लिए आपने उनके GDPR समझौते के बारे में कुछ भी पंजीकृत नहीं किया है)। ऐसा करने के लिए, निम्न बटन का उपयोग करें।
+SendAgreement = ईमेल भेजो
+AllAgreementSend = सभी ईमेल भेज दिए गए हैं
+TXTLINKDATAPOLICYACCEPT = लिंक "समझौता" के लिए पाठ
+TXTLINKDATAPOLICYREFUSE = लिंक "असहमति" के लिए पाठ
+DelayForAnonymization=गुमनामीकरण में देरी
+DelayForDeletion=हटाने में देरी
 # Extrafields
-#
-DATAPOLICY_BLOCKCHECKBOX = GDPR : Processing of personal data
-DATAPOLICY_consentement = Consent obtained for the processing of personal data
-DATAPOLICY_opposition_traitement = Opposes the processing of his personal data
-DATAPOLICY_opposition_prospection = Opposes the processing of his personal data for the purposes of prospecting
-
-#
-# Popup
-#
-DATAPOLICY_POPUP_ANONYME_TITLE = Anonymize a thirdparty
-DATAPOLICY_POPUP_ANONYME_TEXTE = You can not delete this contact from Dolibarr because there are related items. In accordance with the GDPR, you will make all this data anonymous to respect your obligations. Would you like to continue ?
-
-#
-# Button for portability
-#
-DATAPOLICY_PORTABILITE = Portability GDPR
-DATAPOLICY_PORTABILITE_TITLE = Export of personal data
-DATAPOLICY_PORTABILITE_CONFIRMATION = You want to export the personal data of this contact. Are you sure ?
-
-#
+DATAPOLICY_BLOCKCHECKBOX = GDPR : व्यक्तिगत डेटा का प्रसंस्करण
+DATAPOLICY_consentement = व्यक्तिगत डेटा के प्रसंस्करण के लिए सहमति प्राप्त की गई
+DATAPOLICY_opposition_traitement = अपने व्यक्तिगत डेटा के प्रसंस्करण का विरोध करता है
+DATAPOLICY_opposition_prospection = पूर्वेक्षण के प्रयोजनों के लिए अपने व्यक्तिगत डेटा के प्रसंस्करण का विरोध करता है
 # Notes added during an anonymization
-#
-ANONYMISER_AT = Anonymised the %s
-
-# V2
-DATAPOLICYReturn = GDPR Validation
-DATAPOLICY_date = Date of agreement/desagreement GDPR
-DATAPOLICY_send = Date sending agreement email
-DATAPOLICYReturn = GDPR Validation
-DATAPOLICY_SEND = Send GDPR email
-MailSent = Email has been sent
-
-# ERROR
-ErrorSubjectIsRequired = Error : The subject of email is required. Indicate it in the module setup
-=Due to a technical problem, we were unable to register your choice. We apologize for that. Contact us to send us your choice.
-NUMBER_MONTH_BEFORE_DELETION = Number of month before deletion
+DATAPOLICY_date = सहमति/असहमति की तिथि GDPR
+DATAPOLICY_send = अनुबंध ईमेल भेजे जाने की तिथि
+MailSent = ईमेल भेज दिया गया है
+NUMBER_MONTH_BEFORE_DELETION = हटाए जाने से पहले महीनों की संख्या
+TheFollowingFieldsAreReplaceWith=Some fields will be replaced by a unique value:
+OtherFieldsAreReplaceWithStaticValues=Some other fields are replaced by a static value:

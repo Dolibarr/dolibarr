@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 class Projects extends DolibarrApi
 {
 	/**
-	 * @var string[]   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'ref',
@@ -39,12 +39,12 @@ class Projects extends DolibarrApi
 	);
 
 	/**
-	 * @var Project $project {@type Project}
+	 * @var Project {@type Project}
 	 */
 	public $project;
 
 	/**
-	 * @var Task $task {@type Task}
+	 * @var Task {@type Task}
 	 */
 	public $task;
 
@@ -209,7 +209,7 @@ class Projects extends DolibarrApi
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
-		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $thirdparty_ids;
+		$socids = DolibarrApiAccess::$user->socid ?: $thirdparty_ids;
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
@@ -219,6 +219,7 @@ class Projects extends DolibarrApi
 
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet as t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe AS s ON (s.rowid = t.fk_soc)";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_extrafields AS ef ON ef.fk_object = t.rowid";	// So we will be able to filter on extrafields
 		if ($category > 0) {
 			$sql .= ", ".MAIN_DB_PREFIX."categorie_project as c";
@@ -312,7 +313,7 @@ class Projects extends DolibarrApi
 	{
 		global $conf;
 		if (!DolibarrApiAccess::$user->hasRight('projet', 'creer')) {
-			throw new RestException(403, "Insuffisant rights");
+			throw new RestException(403, "Insufficiant rights");
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
@@ -459,7 +460,7 @@ class Projects extends DolibarrApi
 			$userp = new User($this->db);
 			$userp->fetch($userid);
 		}
-		$this->project->roles = $taskstatic->getUserRolesForProjectsOrTasks($userp, null, $id, 0);
+		$this->project->roles = $taskstatic->getUserRolesForProjectsOrTasks($userp, null, (string) $id, 0);
 		$result = array();
 		foreach ($this->project->roles as $line) {
 			array_push($result, $this->_cleanObjectDatas($line));

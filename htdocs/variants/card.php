@@ -2,6 +2,7 @@
 /* Copyright (C) 2016       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2018-2024	Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2022       Open-Dsi			<support@open-dsi.fr>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +51,7 @@ $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'productattribute'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$lineid = GETPOST('lineid', 'alpha');
+$lineid = GETPOSTINT('lineid');
 
 // Security check
 if (!isModEnabled('variants')) {
@@ -124,14 +125,14 @@ if (empty($reshook)) {
 
 	// Action to move up and down lines of object
 	if ($action == 'up' && $permissiontoedit) {
-		$object->line_up(GETPOST('rowid'), false);
+		$object->line_up(GETPOSTINT('rowid'), false);
 
-		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.GETPOST('rowid'));
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.GETPOSTINT('rowid'));
 		exit();
 	} elseif ($action == 'down' && $permissiontoedit) {
-		$object->line_down(GETPOST('rowid'), false);
+		$object->line_down(GETPOSTINT('rowid'), false);
 
-		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.GETPOST('rowid'));
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'#'.GETPOSTINT('rowid'));
 		exit();
 	}
 

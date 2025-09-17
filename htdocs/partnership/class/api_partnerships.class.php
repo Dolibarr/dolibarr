@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +37,7 @@ dol_include_once('/partnership/class/partnership.class.php');
 class Partnerships extends DolibarrApi
 {
 	/**
-	 * @var Partnership $partnership {@type Partnership}
+	 * @var Partnership {@type Partnership}
 	 */
 	public $partnership;
 
@@ -44,7 +45,6 @@ class Partnerships extends DolibarrApi
 	 * Constructor
 	 *
 	 * @url     GET /
-	 *
 	 */
 	public function __construct()
 	{
@@ -97,6 +97,8 @@ class Partnerships extends DolibarrApi
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of order objects
+	 * @phan-return Partnership[]
+	 * @phpstan-return Partnership[]
 	 *
 	 * @throws RestException
 	 *
@@ -111,7 +113,7 @@ class Partnerships extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : 0;
+		$socid = DolibarrApiAccess::$user->socid ?: 0;
 
 		$restrictonsocid = 0; // Set to 1 if there is a field socid in table of object
 
@@ -179,7 +181,9 @@ class Partnerships extends DolibarrApi
 	/**
 	 * Create partnership object
 	 *
-	 * @param array $request_data   Request datas
+	 * @param array $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int  ID of partnership
 	 *
 	 * @throws RestException
@@ -208,7 +212,7 @@ class Partnerships extends DolibarrApi
 		// Clean data
 		// $this->partnership->abc = sanitizeVal($this->partnership->abc, 'alphanohtml');
 
-		if ($this->partnership->create(DolibarrApiAccess::$user)<0) {
+		if ($this->partnership->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating Partnership", array_merge(array($this->partnership->error), $this->partnership->errors));
 		}
 		return $this->partnership->id;
@@ -218,7 +222,9 @@ class Partnerships extends DolibarrApi
 	 * Update partnership
 	 *
 	 * @param 	int   	$id             	Id of partnership to update
-	 * @param 	array 	$request_data   	Datas
+	 * @param 	array 	$request_data   	Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object						Updated object
 	 *
 	 * @throws RestException
@@ -262,7 +268,7 @@ class Partnerships extends DolibarrApi
 		// Clean data
 		// $this->partnership->abc = sanitizeVal($this->partnership->abc, 'alphanohtml');
 
-		if ($this->partnership->update(DolibarrApiAccess::$user, false) > 0) {
+		if ($this->partnership->update(DolibarrApiAccess::$user, 0) > 0) {
 			return $this->get($id);
 		} else {
 			throw new RestException(500, $this->partnership->error);
@@ -274,6 +280,8 @@ class Partnerships extends DolibarrApi
 	 *
 	 * @param   int     $id   Partnership ID
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @throws RestException
 	 *
@@ -372,16 +380,19 @@ class Partnerships extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param	array		$data   Array of data to validate
-	 * @return	array
+	 * @param ?array<string,string> $data   Array of data to validate
+	 * @return array<string,string>
 	 *
 	 * @throws	RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$partnership = array();
 		foreach ($this->partnership->fields as $field => $propfield) {
-			if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat')) || $propfield['notnull'] != 1) {
+			if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat')) || empty($propfield['notnull']) || $propfield['notnull'] != 1) {
 				continue; // Not a mandatory field
 			}
 			if (!isset($data[$field])) {

@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2018	   Quentin Vial-Gouteyron    <quentin.vial-gouteyron@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,8 +43,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
+$hookmanager->initHooks(array('receptionstats', 'globalcard'));
+
 $userid = GETPOSTINT('userid');
 $socid = GETPOSTINT('socid');
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 $nowyear = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 $year = GETPOSTINT('year') > 0 ? GETPOSTINT('year') : $nowyear;
@@ -235,7 +243,7 @@ print '</td></tr>';
 // User
 print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
 print img_picto('', 'user', 'class="pictofixedwidth"');
-print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+print $form->select_dolusers($userid, 'userid', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 print '</td></tr>';
 // Year
 print '<tr><td>'.$langs->trans("Year").'</td><td>';
@@ -253,6 +261,7 @@ print '</table>';
 print '</form>';
 print '<br><br>';
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre" height="24">';
 print '<td class="center">'.$langs->trans("Year").'</td>';
@@ -295,7 +304,7 @@ foreach ($data as $val) {
 print '</table>';
 
 
-print '</div><div class="fichetwothirdright">';
+print '</div></div><div class="fichetwothirdright">';
 
 
 // Show graphs

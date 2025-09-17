@@ -2,7 +2,7 @@
 /* Copyright (C) 2018      Alexandre Spangaro <aspangaro@open-dsi.fr>
  * Copyright (C) 2018      Fidesio            <contact@fidesio.com>
  * Copyright (C) 2021		Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -178,7 +178,7 @@ if (!$mesg) {
 	$px3->SetLegend($legend);
 	$px3->SetYLabel($langs->trans("AmountAverage"));
 	$px3->SetMaxValue($px3->GetCeilMaxValue());
-	$px3->SetMinValue($px3->GetFloorMinValue());
+	$px3->SetMinValue((int) $px3->GetFloorMinValue());
 	$px3->SetWidth($WIDTH);
 	$px3->SetHeight($HEIGHT);
 	$px3->SetShading(3);
@@ -224,6 +224,7 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 // User
 print '<tr><td>'.$langs->trans("Employee").'</td><td>';
+
 if (!$user->hasRight('salaries', 'readchild') && empty($useridtofilter)) {
 	print img_picto('', 'user', 'class="pictofixedwidth"');
 	print $form->select_dolusers(($userid ? $userid : -1), 'userid', 1, null, 0, !$user->hasRight('salaries', 'readall') ? 'hierarchyme' : '', '', '0', 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');

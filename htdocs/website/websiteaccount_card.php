@@ -42,12 +42,14 @@ require_once DOL_DOCUMENT_ROOT.'/website/lib/websiteaccount.lib.php';
 $langs->loadLangs(array("companies", "website", "other"));
 
 // Get parameters
-$id         = GETPOSTINT('id');
-$ref        = GETPOST('ref', 'alpha');
 $action     = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
+
+$id         = GETPOSTINT('id');
+$ref        = GETPOST('ref', 'alpha');
+$socid = 0;
 
 // Initialize a technical objects
 $object = new SocieteAccount($db);
@@ -78,7 +80,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 // Security check
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$result = restrictedArea($user, 'website', $id);
+//restrictedArea($user, 'website', $id);
 $permissiontoaccess = (isModEnabled('website') && $user->hasRight('website', 'read')) || isModEnabled('webportal');
 if (!$permissiontoaccess) {
 	accessforbidden('NotAllowed');
@@ -93,7 +95,7 @@ if ($object->id > 0) {
 		$permissiontocreate = isModEnabled('website') && $user->hasRight('website', 'write');
 		$permissiontodelete = isModEnabled('website') && $user->hasRight('website', 'delete');
 	} elseif ($object->site == 'dolibarr_portal') {
-		$permissiontocreate = isModEnabled('webportal') && $user->hasRight('webportal', 'write');
+		$permissiontocreate = $permissiontodelete = isModEnabled('webportal') && $user->hasRight('webportal', 'write');
 	}
 } else {
 	$permissiontocreate = isModEnabled('website') && $user->hasRight('website', 'write') || isModEnabled('webportal') && $user->hasRight('webportal', 'write');
@@ -225,9 +227,6 @@ if ($action == 'create') {
 	if (!empty($backtopageforcancel)) {
 		print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 	}
-	if (!empty($backtopagejsfields)) {
-		print '<input type="hidden" name="backtopagejsfields" value="'.$backtopagejsfields.'">';
-	}
 	if (!empty($dol_openinpopup)) {
 		print '<input type="hidden" name="dol_openinpopup" value="'.$dol_openinpopup.'">';
 	}
@@ -320,7 +319,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// ------------------------------------------------------------
 	$linkback = '';
 	if ($socid) {
-		$linkback = '<a href="'.DOL_URL_ROOT.'/societe/website.php?socid='.$socid.'&restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToListForThirdParty").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/societe/website.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToListForThirdParty").'</a>';
 	}
 	//if ($fk_website) {
 	//	$linkback = '<a href="'.DOL_URL_ROOT.'/website/website_card.php?fk_website='.$fk_website.'&restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
@@ -417,12 +416,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Modify
 			if ($permissiontoadd) {
-				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : '').'&action=edit&token='.newToken(), '', $permissiontoadd);
+				print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->fk_soc) ? '&socid='.$object->fk_soc : '').'&action=edit&token='.newToken(), '', $permissiontoadd);
 			}
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : '').'&action=clone&token='.newToken(), '', $permissiontoadd);
+				print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->fk_soc) ? '&socid='.$object->fk_soc : '').'&action=clone&token='.newToken(), '', $permissiontoadd);
 			}
 
 			// Delete

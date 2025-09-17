@@ -5,7 +5,7 @@
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -359,7 +359,7 @@ function displayPositionCard(&$object)
 //		/*
 //		 * Generated documents
 //		 */
-//		$filedir = $conf->societe->multidir_output[$object->entity].'/'.$object->id;
+//		$filedir = $conf->societe->multidir_output[$object->entity ?? $conf->entity].'/'.$object->id;
 //		$urlsource = $_SERVER["PHP_SELF"]."?socid=".$object->id;
 //		$genallowed = $user->hasRight('societe', 'lire');
 //		$delallowed = $user->hasRight('societe', 'creer');

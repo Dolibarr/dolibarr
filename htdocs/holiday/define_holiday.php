@@ -3,9 +3,9 @@
  * Copyright (C) 2011		Dimitri Mouillard			<dmouillard@teclib.com>
  * Copyright (C) 2013		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2016		Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,10 +83,10 @@ $extrafields = new ExtraFields($db);
 $holiday = new Holiday($db);
 
 $arrayfields = array(
-	'cp.rowid' => array('label' => $langs->trans("Employee"), 'checked' => 1, 'position' => 20),
-	'cp.fk_user' => array('label' => $langs->trans("Supervisor"), 'checked' => 1, 'position' => 30),
-	'cp.nbHoliday' => array('label' => $langs->trans("MenuConfCP"), 'checked' => 1, 'position' => 40),
-	'cp.note_public' => array('label' => $langs->trans("Note"), 'checked' => 1, 'position' => 50),
+	'cp.rowid' => array('label' => $langs->trans("Employee"), 'checked' => '1', 'position' => 20),
+	'cp.fk_user' => array('label' => $langs->trans("Supervisor"), 'checked' => '1', 'position' => 30),
+	'cp.nbHoliday' => array('label' => $langs->trans("MenuConfCP"), 'checked' => '1', 'position' => 40),
+	'cp.note_public' => array('label' => $langs->trans("Note"), 'checked' => '1', 'position' => 50),
 );
 
 $permissiontoread = $user->hasRight('holiday', 'read');
@@ -178,7 +178,7 @@ if (empty($reshook)) {
 			//print 'holiday: '.$val['rowid'].'-'.$userValue;exit;
 			if ($userValue != '') {
 				// We add the modification to the log (must be done before the update of balance because we read current value of balance inside this method)
-				$result = $holiday->addLogCP($user->id, $userID, $langs->transnoentitiesnoconv('ManualUpdate').$comment, $userValue, $val['rowid']);
+				$result = $holiday->addLogCP($user->id, $userID, $langs->transnoentitiesnoconv('ManualUpdate').$comment, (float) $userValue, $val['rowid']);
 				if ($result < 0) {
 					setEventMessages($holiday->error, $holiday->errors, 'errors');
 					$error++;
@@ -188,7 +188,7 @@ if (empty($reshook)) {
 				if ($result > 0) {
 					$nbok++;
 
-					$result = $holiday->updateSoldeCP($userID, $userValue, $val['rowid']);
+					$result = $holiday->updateSoldeCP($userID, (float) $userValue, $val['rowid']);
 					if ($result < 0) {
 						setEventMessages($holiday->error, $holiday->errors, 'errors');
 						$error++;
@@ -329,14 +329,14 @@ if (is_numeric($listUsers) && $listUsers < 0) {
 
 $i = 0;
 
-
-
 if (count($typeleaves) == 0) {
 	//print '<div class="info">';
 	print $langs->trans("NoLeaveWithCounterDefined")."<br>\n";
 	print $langs->trans("GoIntoDictionaryHolidayTypes");
 	//print '</div>';
 } else {
+	$listUsers = dol_sort_array($listUsers, $sortfield, $sortorder);
+
 	$canedit = 0;
 	if ($permissiontosetup) {
 		$canedit = 1;
@@ -373,7 +373,7 @@ if (count($typeleaves) == 0) {
 	// Supervisor
 	if (!empty($arrayfields['cp.fk_user']['checked'])) {
 		print '<td class="liste_titre">';
-		print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, null, 0, array(), '', 0, 0, 0, '', 0, '', 'maxwidth150');
+		print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, null, 0, array(), '', '', 0, 0, '', 0, '', 'maxwidth150');
 		print '</td>';
 	}
 	// Type of leave request
@@ -389,6 +389,7 @@ if (count($typeleaves) == 0) {
 	if (!empty($arrayfields['cp.note_public']['checked'])) {
 		print '<td class="liste_titre"></td>';
 	}
+	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"></td>';
 
 	// Action column
@@ -407,24 +408,25 @@ if (count($typeleaves) == 0) {
 		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 	}
 	if (!empty($arrayfields['cp.rowid']['checked'])) {
-		print_liste_field_titre('Employee', $_SERVER["PHP_SELF"]);
+		print_liste_field_titre('Employee', $_SERVER["PHP_SELF"], 'rowid', '', '', '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['cp.fk_user']['checked'])) {
-		print_liste_field_titre('Supervisor', $_SERVER["PHP_SELF"]);
+		print_liste_field_titre('Supervisor', $_SERVER["PHP_SELF"], 'fk_user', '', '', '', $sortfield, $sortorder);
 	}
 	if (!empty($arrayfields['cp.nbHoliday']['checked'])) {
 		if (count($typeleaves)) {
 			foreach ($typeleaves as $key => $val) {
 				$labeltype = ($langs->trans($val['code']) != $val['code']) ? $langs->trans($val['code']) : $langs->trans($val['label']);
-				print_liste_field_titre($labeltype, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'center ');
+				print_liste_field_titre($labeltype, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center ');
 			}
 		} else {
-			print_liste_field_titre('NoLeaveWithCounterDefined', $_SERVER["PHP_SELF"], '', '', '', '');
+			print_liste_field_titre('NoLeaveWithCounterDefined', $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder);
 		}
 	}
 	if (!empty($arrayfields['cp.note_public']['checked'])) {
-		print_liste_field_titre($permissiontosetup ? 'Note' : '', $_SERVER["PHP_SELF"]);
+		print_liste_field_titre($permissiontosetup ? $langs->trans("ReasonForModification") : '', $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder);
 	}
+	print_liste_field_titre('');
 	print_liste_field_titre('');
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -493,11 +495,11 @@ if (count($typeleaves) == 0) {
 				foreach ($typeleaves as $key => $val) {
 					$nbtoshow = '';
 					if ($holiday->getCPforUser($users['rowid'], $val['rowid']) != '') {
-						$nbtoshow = price2num($holiday->getCPforUser($users['rowid'], $val['rowid']), 5);
+						$nbtoshow = price2num((float) $holiday->getCPforUser($users['rowid'], $val['rowid']), 5);
 					}
 
 					//var_dump($users['rowid'].' - '.$val['rowid']);
-					print '<td style="text-align:center">';
+					print '<td class="center">';
 					if ($canedit) {
 						print '<input type="text"'.($canedit ? '' : ' disabled="disabled"').' value="'.$nbtoshow.'" name="nb_holiday_'.$val['rowid'].'['.$users['rowid'].']" class="width75 center" />';
 					} else {
@@ -523,9 +525,13 @@ if (count($typeleaves) == 0) {
 		// Button modify
 		print '<td class="center">';
 		if ($permissiontosetup) {	// Allowed to set the balance of any user
-			print '<input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Save")).'" class="button smallpaddingimp"/>';
+			print '<input type="submit" name="update_cp['.$users['rowid'].']" value="'.dol_escape_htmltag($langs->trans("Modify")).'" class="button smallpaddingimp"/>';
 		}
 		print '</td>'."\n";
+
+		print '<td class="center">';
+		print '<a href="'.DOL_URL_ROOT.'/holiday/view_log.php?search_employee='.((int) $users['rowid']).'">'.img_picto($langs->trans('MenuLogCP'), 'list-alt').'</a>';
+		print '</td>';
 
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

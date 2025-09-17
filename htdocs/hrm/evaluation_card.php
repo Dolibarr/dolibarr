@@ -5,7 +5,7 @@
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -376,7 +376,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		} else {
-			$numref = $object->ref;
+			$numref = (string) $object->ref;
 		}
 
 		$text = $langs->trans('ConfirmValidateEvaluation', $numref);
@@ -405,15 +405,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Create an array for form
 		$formquestion = array();
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
-	}
-
-	// Confirmation of action xxxx (You can use it for xxx = 'close', xxx = 'reopen', ...)
-	if ($action == 'xxx') {
-		$text = $langs->trans('ConfirmActionMyObject', $object->ref);
-
-		$formquestion = array();
-
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
 	}
 
 	// Call Hook formConfirm
@@ -590,15 +581,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 				$Tab[$num]->required_rank = '<span title="'.$required_rank_desc.'" class="radio_js_bloc_number TNote_1">' . $required_rank . '</span>';
 
-				if ($obj->userRankForSkill == -1) {
+				if ($obj->userRankForSkill < 0 || $obj->required_rank < 0) {
 					$title = $langs->trans('NA');
-					$class .= 'veryhappy diffnote';
+					$class .= 'na';
 				} elseif ($obj->userRankForSkill > $obj->required_rank) {
 					$title = $langs->trans('MaxlevelGreaterThanShort');
-					$class .= 'veryhappy diffnote';
+					$class .= 'veryhappy';
 				} elseif ($obj->userRankForSkill == $obj->required_rank) {
 					$title = $langs->trans('MaxLevelEqualToShort');
-					$class .= 'happy diffnote';
+					$class .= 'happy';
 				} elseif ($obj->userRankForSkill < $obj->required_rank) {
 					$title = $langs->trans('MaxLevelLowerThanShort');
 					$class .= 'sad';

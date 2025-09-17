@@ -8,8 +8,8 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2013 Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry		   <jfefe@aternatik.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -169,19 +169,18 @@ if ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL') {
 }
 
 // Activate a model
+$reg = array();
 if ($action == 'set') {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF == "$value") {
+		if (getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'SUPPLIER_PROPOSAL_ADDON_PDF', $conf->entity);
 		}
 	}
 } elseif ($action == 'setdoc') {
-	if (dolibarr_set_const($db, "SUPPLIER_PROPOSAL_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
-		$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF = $value;
-	}
+	dolibarr_set_const($db, "SUPPLIER_PROPOSAL_ADDON_PDF", empty($value) ? '' : $value, 'chaine', 0, '', $conf->entity);
 
 	// On active le modele
 	$ret = delDocumentModel($value, $type);
@@ -241,9 +240,8 @@ llxHeader('', $langs->trans("SupplierProposalSetup"), '', '', 0, 0, '', '', '', 
 
 $form = new Form($db);
 
-//if ($mesg) print $mesg;
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SupplierProposalSetup"), $linkback, 'title_setup');
 
 $head = supplier_proposal_admin_prepare_head();
@@ -307,7 +305,7 @@ foreach ($dirmodels as $reldir) {
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->SUPPLIER_PROPOSAL_ADDON == "$file") {
+						if (getDolGlobalString('SUPPLIER_PROPOSAL_ADDON') == "$file") {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'">';
@@ -336,7 +334,7 @@ foreach ($dirmodels as $reldir) {
 						}
 
 						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 0);
+						print $form->textwithpicto('', $htmltooltip, 1, 'info');
 						print '</td>';
 
 						print "</tr>\n";
@@ -449,10 +447,10 @@ foreach ($dirmodels as $reldir) {
 
 								// Default
 								print '<td align="center">';
-								if ($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF == "$name") {
-									print img_picto($langs->trans("Default"), 'on');
+								if (getDolGlobalString('SUPPLIER_PROPOSAL_ADDON_PDF') == "$name") {
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value=0&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Default"), 'on').'</a>';
 								} else {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Disabled").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 								}
 								print '</td>';
 
@@ -475,7 +473,7 @@ foreach ($dirmodels as $reldir) {
 
 
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								// Preview
