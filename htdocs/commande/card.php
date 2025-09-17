@@ -2389,7 +2389,7 @@ if ($action == 'create' && $usercancreate) {
 		// Bank Account
 		if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_ORDER') && isModEnabled("bank")) {
 			print '<tr><td>' . $langs->trans('BankAccount') . '</td><td>';
-			print img_picto('', 'bank_account', 'class="pictofixedwidth"') . $form->select_comptes($fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
+			print img_picto('', 'bank_account', 'class="pictofixedwidth"') . $form->select_comptes((int) $fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 			print '</td></tr>';
 		}
 

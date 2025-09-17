@@ -159,7 +159,7 @@ class Commande extends CommonOrder
 	public $deposit_percent;
 
 	/**
-	 * @var int bank account ID
+	 * @var ?int bank account ID
 	 */
 	public $fk_account;
 

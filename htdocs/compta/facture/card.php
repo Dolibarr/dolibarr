@@ -3715,6 +3715,7 @@ if ($action == 'create') {
 			$classname = ucfirst($subelement);
 			$objectsrc = new $classname($db);
 			'@phan-var-force Commande|Propal|Contrat|Expedition $objectsrc';
+			/** @var Commande|Propal|Contrat|Expedition $objectsrc */
 			$objectsrc->fetch($originid);
 			if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
 				$objectsrc->fetch_lines();
@@ -3745,12 +3746,13 @@ if ($action == 'create') {
 
 				$expesrc = new $classname($db);
 				'@phan-var-force Expedition $expesrc';
+				/** @var Expedition $expesrc */
 				dol_syslog("Is type Facture|Commande or Expedition: $element...expesrc($classname)=".get_class($expesrc));
 				$expesrc->fetch($expeoriginid);
 
-				$cond_reglement_id 	= (!empty($expesrc->cond_reglement_id) ? $expesrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 1));
-				$mode_reglement_id 	= (!empty($expesrc->mode_reglement_id) ? $expesrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
-				$fk_account         = (!empty($expesrc->fk_account) ? $expesrc->fk_account : (!empty($soc->fk_account) ? $soc->fk_account : 0));
+				$cond_reglement_id = (!empty($expesrc->cond_reglement_id) ? $expesrc->cond_reglement_id : (!empty($soc->cond_reglement_id) ? $soc->cond_reglement_id : 1));
+				$mode_reglement_id = (!empty($expesrc->mode_reglement_id) ? $expesrc->mode_reglement_id : (!empty($soc->mode_reglement_id) ? $soc->mode_reglement_id : 0));
+				$fk_account        = (!empty($expesrc->fk_account) ? $expesrc->fk_account : (!empty($soc->fk_account) ? $soc->fk_account : 0));
 
 				if (isModEnabled('multicurrency')) {
 					$currency_code 	= (!empty($expesrc->multicurrency_code) ? $expesrc->multicurrency_code : (!empty($soc->multicurrency_code) ? $soc->multicurrency_code : $objectsrc->multicurrency_code));
@@ -4502,7 +4504,7 @@ if ($action == 'create') {
 		if (isModEnabled("bank")) {
 			print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
 			print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-			print $form->select_comptes($fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth250 widthcentpercentminusx', 1);
+			print $form->select_comptes((int) $fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth250 widthcentpercentminusx', 1);
 			//print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_rec ? '&fac_rec='.$fac_rec : '')).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("NewBankAccount").'"></span></a>';
 			print '</td></tr>';
 		}

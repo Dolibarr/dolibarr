@@ -237,7 +237,7 @@ class CommandeFournisseur extends CommonOrder
 	public $cond_reglement_doc;
 
 	/**
-	 * @var int 	Account ID
+	 * @var ?int 	Account ID
 	 */
 	public $fk_account;
 
