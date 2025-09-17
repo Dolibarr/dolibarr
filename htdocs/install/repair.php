@@ -2022,20 +2022,20 @@ if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 					// Calcul de la somme des paiements reçus
 					$sql_paiements = "SELECT SUM(amount) as somme from llx_paiement_facture WHERE fk_facture = $obj->rowid";
 					$montantPaiements = $db->fetch_object($db->query($sql_paiements))->somme;
-					$tHt= ($obj_calcul->total_ht ? price2num($obj_calcul->total_ht, 'MT') : 0);
-					$tTva = ($obj_calcul->total_tva ? price2num($obj_calcul->total_tva, 'MT') : 0);
-					$t1 = ($obj_calcul->localtax1 ? price2num($obj_calcul->localtax1, 'MT') : 0);
-					$t2 = ($obj_calcul->localtax2 ? price2num($obj_calcul->localtax2, 'MT') : 0);
-					$tTtc = $tHt + $tTva + $t1 + $t2;
+					$totHt= ($obj_calcul->total_ht ? price2num($obj_calcul->total_ht, 'MT') : 0);
+					$totTva = ($obj_calcul->total_tva ? price2num($obj_calcul->total_tva, 'MT') : 0);
+					$totLocal1 = ($obj_calcul->localtax1 ? price2num($obj_calcul->localtax1, 'MT') : 0);
+					$totLocal2 = ($obj_calcul->localtax2 ? price2num($obj_calcul->localtax2, 'MT') : 0);
+					$totTtc = $totHt + $totTva + $totLocal1 + $totLocal2;
 					$sql_maj = "
 						UPDATE ".MAIN_DB_PREFIX."facture 
 						SET 
-							total_ht = $tHt, 
-							total_tva = $tTva, 
-							localtax1 = $t1, 
-							localtax2 = $t2, 
-							total_ttc = $tTtc, 
-							fk_statut = ".($tTtc == price2num($montantPaiements, 'MT') ? 2 : 1 )."
+							total_ht = $totHt, 
+							total_tva = $totTva, 
+							localtax1 = $totLocal1, 
+							localtax2 = $totLocal2, 
+							total_ttc = $totTtc, 
+							fk_statut = ".($totTtc == price2num($montantPaiements, 'MT') ? 2 : 1 )."
 						WHERE 
 							rowid = $obj->rowid";
 					$db->query($sql_maj);
