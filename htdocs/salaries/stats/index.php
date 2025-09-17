@@ -227,7 +227,7 @@ print '<tr><td>'.$langs->trans("Employee").'</td><td>';
 if (!$user->hasRight('salaries', 'readchild') && empty($useridtofilter)) {
 	print img_picto('', 'user', 'class="pictofixedwidth"');
 	print $form->select_dolusers(($userid ? $userid : -1), 'userid', 1, null, 0, !$user->hasRight('salaries', 'readall') ? 'hierarchyme' : '', '', '0', 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
-}else{
+}else {
 	print $user->getNomUrl(1);
 }
 print '</td></tr>';
