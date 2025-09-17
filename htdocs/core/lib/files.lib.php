@@ -2431,11 +2431,11 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 /**
  *  Delete files into database index using search criteria.
  *
- *  @param      string	$dir			Directory name (full real path without ending /)
- *  @param		string	$file			File name
- *  @param		string	$mode			How file was created ('uploaded', 'generated', ...)
- *  @param		Object	$object			object used for entity
- *	@return		int						Return integer <0 if KO, 0 if nothing done, >0 if OK
+ *  @param      string			$dir			Directory name (full real path without ending /)
+ *  @param		string			$file			File name
+ *  @param		string			$mode			How file was created ('uploaded', 'generated', ...)
+ *  @param		?CommonObject	$object			object used for entity
+ *	@return		int								Return integer <0 if KO, 0 if nothing done, >0 if OK
  */
 function deleteFilesIntoDatabaseIndex($dir, $file, $mode = 'uploaded', $object = null)
 {
