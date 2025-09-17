@@ -1546,7 +1546,7 @@ class Asset extends CommonObject
 	 */
 	public function getLabelStatus($mode = 0)
 	{
-		return $this->LibStatut($this->status, $mode);
+		return $this->LibStatut((int) $this->status, $mode);
 	}
 
 	/**
@@ -1557,7 +1557,7 @@ class Asset extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->status, $mode);
+		return $this->LibStatut((int) $this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
