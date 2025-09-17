@@ -555,7 +555,7 @@ class Subscription extends CommonObject
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'dateh') || property_exists($this, 'datef')) {
+		if (!empty($this->dateh) || !empty($this->datef)) {
 			$return .= '<br><span class="info-box-status opacitymedium small">'.dol_print_date($this->dateh, 'day').' - '.dol_print_date($this->datef, 'day').'</span>';
 		}
 
@@ -563,15 +563,14 @@ class Subscription extends CommonObject
 			$return .= '<br><div class="inline-block tdoverflowmax150">'.$arraydata['member']->getNomUrl(-4).'</div>';
 		}
 
-		if (property_exists($this, 'amount')) {
-			$return .= '<br><span class="amount inline-block">'.price($this->amount).'</span>';
-			if (!empty($arraydata['bank'])) {
-				$return .= ' &nbsp; <span class="info-box-label ">'.$arraydata['bank']->getNomUrl(-1).'</span>';
-			}
+		$return .= '<br><span class="amount inline-block">'.price($this->amount).'</span>';
+		if (!empty($arraydata['bank'])) {
+			$return .= ' &nbsp; <span class="info-box-label ">'.$arraydata['bank']->getNomUrl(-1).'</span>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
+
 		return $return;
 	}
 }
