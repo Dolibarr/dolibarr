@@ -85,12 +85,12 @@ class Delivery extends CommonObject
 	public $draft;
 
 	/**
-	 * @var int thirdparty id
+	 * @var ?int thirdparty id
 	 */
 	public $socid;
 
 	/**
-	 * @var string ref customer
+	 * @var ?string ref customer
 	 */
 	public $ref_customer;
 
@@ -162,8 +162,8 @@ class Delivery extends CommonObject
 		}
 
 		$error = 0;
-
 		$now = dol_now();
+		$this->ref_customer = trim((string) $this->ref_customer);
 
 		/* Delivery note as draft On positionne en mode draft le bon de livraison */
 		$this->draft = 1;
@@ -411,6 +411,11 @@ class Delivery extends CommonObject
 
 		dol_syslog(get_class($this)."::valid begin");
 
+		if (!isset($this->socid)) {
+			dol_syslog(get_class($this)."::can't valid socid not set", LOG_WARNING);
+			return 0;
+		}
+
 		$this->db->begin();
 
 		$error = 0;
@@ -429,6 +434,7 @@ class Delivery extends CommonObject
 					// Retrieving the new reference
 					$objMod = new $modName($this->db);
 					'@phan-var-force ModeleNumRefDeliveryOrder $objMod';
+					/** @var ModeleNumRefDeliveryOrder $objMod */
 					$soc = new Societe($this->db);
 					$soc->fetch($this->socid);
 

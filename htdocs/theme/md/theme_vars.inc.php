@@ -86,7 +86,7 @@ $badgeSecondary = '#999999';
 $badgeInfo      = '#17a2b8';
 $badgeSuccess   = '#28a745';
 $badgeWarning   = '#a37c0d'; // See $textWarning
-$badgeDanger    = '#8c4446'; // See $textDanger
+$badgeDanger    = '#993013'; // See $textDanger
 $badgeDark      = '#343a40';
 $badgeLight     = '#f8f9fa';
 

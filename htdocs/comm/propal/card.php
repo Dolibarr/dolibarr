@@ -644,7 +644,7 @@ if (empty($reshook)) {
 								$desc = (!empty($lines[$i]->desc) ? $lines[$i]->desc : '');
 
 								// Positive line
-								$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
+								$product_type = ($lines[$i]->product_type ? (int) $lines[$i]->product_type : 0);
 
 								// Date start
 								$date_start = false;
@@ -1284,7 +1284,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error && isModEnabled('variants') && $prod_entry_mode != 'free') {
-			if ($combinations = GETPOST('combinations', 'array')) {
+			if ($combinations = GETPOST('combinations', 'array:alphanohtml')) {
 				//Check if there is a product with the given combination
 				$prodcomb = new ProductCombination($db);
 
