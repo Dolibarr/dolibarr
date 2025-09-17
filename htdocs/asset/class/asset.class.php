@@ -248,16 +248,18 @@ class Asset extends CommonObject
 	 * @var string
 	 */
 	public $last_main_doc;
+
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $import_key;
 	/**
 	 * @var string
 	 */
 	public $model_pdf;
+
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $status;
 
