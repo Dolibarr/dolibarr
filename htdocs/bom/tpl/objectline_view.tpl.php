@@ -224,7 +224,7 @@ $tmpbom->calculateCosts();
 print '<td id="costline_'.$line->id.'" class="linecolcost nowrap right">';
 
 $line->qty = (float) $line->qty;
-if ($tmpbom->id > 0) $line->qty = $line->qty / $tmpbom->qty;
+if ($tmpbom->id > 0) $line->qty /= $tmpbom->qty;
 
 $coldisplay++;
 if (!empty($line->fk_bom_child)) {
