@@ -4,7 +4,7 @@
  * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2017		Rui Strecht			<rui.strecht@aliartalentos.com>
  * Copyright (C) 2020       Open-Dsi         	<support@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -250,7 +250,7 @@ class FormCompany extends Form
 	 *   Thus the links with the departments are done on a department independently of its name.
 	 *
 	 *   @param     string		$selected        	Code state preselected
-	 *   @param     <0>|string	$country_codeid     0=list for all countries, otherwise country code or country rowid to show
+	 *   @param     <0>|string	$country_codeid     Set to 0=list for all countries, otherwise country code or country rowid to show
 	 *   @param     string		$htmlname			Id of department
 	 *   @return	void
 	 */
