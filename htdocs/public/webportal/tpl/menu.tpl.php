@@ -1,4 +1,3 @@
-<!-- file menu.tpl.php -->
 <?php
 /* Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		sebastien schaffhauser	<sebastien@webmaster67.fr>
