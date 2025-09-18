@@ -1,91 +1,98 @@
 <?php
+/*
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (c) 2025       Schaffhauser sébastien      <sebastien@webmaster67.fr>
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation.
+ */
+
+require_once __DIR__ . '/abstractdocument.controller.class.php';
+
 /**
- * \file        htdocs/webportal/controllers/documentutile.controller.class.php
+ * \file        htdocs/webportal/controllers/shareddocuments.controller.class.php
  * \ingroup     webportal
- * \brief       This file is a controller for the shared documents list
+ * \brief       This file is a controller for the globally shared documents list.
  */
 
 /**
- * Class for DocumentUtileController
+ * Class for SharedDocumentsController
  */
-class SharedDocumentsController extends Controller 
+class SharedDocumentsController extends AbstractDocumentController
 {
-    public function checkAccess()
-    {
-        $this->accessRight = getDolGlobalInt('WEBPORTAL_SHARED_DOCUMENT_ACCESS');
-        return parent::checkAccess();
-    }
+	/**
+	 * Check access rights for this page.
+	 *
+	 * @return  bool
+	 */
+	public function checkAccess()
+	{
+		$this->accessRight = getDolGlobalInt('WEBPORTAL_SHARED_DOCUMENT_ACCESS');
+		return parent::checkAccess();
+	}
 
-    public function action()
-    {
-        global $langs;
-        $context = Context::getInstance();
-        if (!$context->controllerInstance->checkAccess()) {
-            return -1;
-        }
+	/**
+	 * Action method is called before html output.
+	 *
+	 * @return  int     <0 if KO, >0 if OK
+	 */
+	public function action()
+	{
+		global $langs;
+		$context = Context::getInstance();
+		if (!$context->controllerInstance->checkAccess()) {
+			return -1;
+		}
 
-        $langs->loadLangs(array('other'));
-        $context->title = 'Documents Utiles';
-        $context->desc = 'Documents utiles partagés avec tous nos clients';
-        $context->menu_active[] = 'shared_documents';
+		$langs->loadLangs(array('other', 'webportal@webportal'));
+		$context->title = $langs->trans('SharedDocuments');
+		$context->desc = $langs->trans('ListOfSharedDocuments');
+		$context->menu_active[] = 'shared_documents';
 
-        return 1;
-    }
-   // Or int, bool, etc., depending on what the function returns
-    public function display()
-{
-    global $conf;
-    $context = Context::getInstance();
-    if (!$context->controllerInstance->checkAccess()) {
-        $this->display404();
-        return;
-    }
+		return 1;
+	}
 
-    $this->loadTemplate('header');
-    $this->loadTemplate('menu');
-    $this->loadTemplate('hero-header-banner');
+	/**
+	 * Build and display the page.
+	 *
+	 * @return  void
+	 */
+	public function display()
+	{
+		global $conf, $langs;
+		$context = Context::getInstance();
+		if (!$context->controllerInstance->checkAccess()) {
+			$this->display404();
+			return;
+		}
 
-    print '<main class="container">';
+		$this->loadTemplate('header');
+		$this->loadTemplate('menu');
+		$this->loadTemplate('hero-header-banner');
 
-    echo '<h2>Documents Utiles</h2>';
-    echo '<p>Vous trouverez ici une liste de documents utiles (brochures, conditions générales, etc.) mis à votre disposition.</p>';
+		print '<main class="container">';
 
-    $shared_dir_name = 'Documentscomptes';
-    $dir_ged_partage = $conf->ecm->dir_output . '/' . $shared_dir_name;
-    $shared_dir_relative_path = 'ecm/' . $shared_dir_name;
+		// 1. Prepare data for this controller
+		$shared_dir_name = getDolGlobalString('WEBPORTAL_SHARED_DOCS_DIR', 'Documentscomptes');
+		$dir_ged_partage = $conf->ecm->dir_output . '/' . $shared_dir_name;
+		$shared_dir_relative_path = 'ecm/' . $shared_dir_name;
+		$fileList = dol_dir_list($dir_ged_partage, 'files', 0, '', '', 'date', SORT_DESC);
 
-    require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-    $liste_fichiers = dol_dir_list($dir_ged_partage, 'files', 0, '', '', 'date', SORT_DESC);
+		// 2. Define the link builder function
+		$linkBuilder = function ($file) use ($shared_dir_relative_path) {
+			return DOL_URL_ROOT . '/document.php?modulepart=ecm&file=' . urlencode($shared_dir_relative_path . '/' . $file['name']);
+		};
 
-    if (is_array($liste_fichiers) && count($liste_fichiers) > 0) {
-        echo '<table class="table" width="100%">';
-        echo '<thead><tr><th>Fichier</th><th style="text-align: right; white-space: nowrap;">Taille</th><th style="text-align: right; white-space: nowrap;">Date de dépôt</th></tr></thead>';
-        echo '<tbody>';
+		// 3. Call the parent method to display the table
+		$this->displayDocumentTable(
+			$langs->trans('SharedDocuments'),
+			$fileList,
+			$langs->trans('NoSharedDocumentAvailable'),
+			$linkBuilder
+		);
 
-        foreach ($liste_fichiers as $fichier) {
-            $lien_telechargement = DOL_URL_ROOT . '/document.php?modulepart=ecm&file=' . urlencode($shared_dir_relative_path . '/' . $fichier['name']);
+		print '</main>';
 
-            echo '<tr>';
-            echo '<td><a href="' . $lien_telechargement . '" target="_blank">' . htmlspecialchars($fichier['name']) . '</a></td>';
-
-            // We retrieve the file size manually for more reliability
-            $taille_fichier = filesize($dir_ged_partage . '/' . $fichier['name']);
-            echo '<td style="text-align: right;">' . dol_print_size($taille_fichier) . '</td>';
-            
-
-            echo '<td style="text-align: right;">' . dol_print_date($fichier['date'], 'dayhour') . '</td>';
-            echo '</tr>';
-        }
-
-        echo '</tbody></table>';
-    } else {
-        echo '<p>Aucun document utile n\'est disponible pour le moment.</p>';
-    }
-
-    echo '<br>';
-
-    print '</main>';
-
-    $this->loadTemplate('footer');
-}
+		$this->loadTemplate('footer');
+	}
 }
