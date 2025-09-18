@@ -50,7 +50,7 @@ class Cronjob extends CommonObject
 	public $picto = 'cron';
 
 	/**
-	 * @var string Job type
+	 * @var ?string Job type
 	 */
 	public $jobtype;
 
@@ -60,7 +60,7 @@ class Cronjob extends CommonObject
 	public $datec = '';
 
 	/**
-	 * @var string Cron Job label
+	 * @var ?string Cron Job label
 	 */
 	public $label;
 
@@ -128,7 +128,7 @@ class Cronjob extends CommonObject
 	public $lastresult;
 
 	/**
-	 * @var string 			Last output from end job execution
+	 * @var ?string 			Last output from end job execution
 	 */
 	public $lastoutput;
 
@@ -143,7 +143,7 @@ class Cronjob extends CommonObject
 	public $frequency;
 
 	/**
-	 * @var int 			Status
+	 * @var ?int 			Status
 	 */
 	public $status;
 
@@ -173,12 +173,12 @@ class Cronjob extends CommonObject
 	public $fk_user_mod;
 
 	/**
-	 * @var int 			Number of run job execution
+	 * @var ?int 			Number of run job execution
 	 */
 	public $nbrun;
 
 	/**
-	 * @var int 			Maximum run job execution
+	 * @var ?int 			Maximum run job execution
 	 */
 	public $maxrun;
 
