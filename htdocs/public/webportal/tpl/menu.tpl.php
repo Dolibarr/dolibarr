@@ -41,7 +41,6 @@ if ($context->userIsLog()) {
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
-
 	// menu orders
 	if (isModEnabled('order') && getDolGlobalInt('WEBPORTAL_ORDER_LIST_ACCESS')) {
 		$navMenu['order_list'] = array(
@@ -52,7 +51,6 @@ if ($context->userIsLog()) {
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
-
 	// menu invoices
 	if (isModEnabled('invoice') && getDolGlobalInt('WEBPORTAL_INVOICE_LIST_ACCESS')) {
 		$navMenu['invoice_list'] = array(
@@ -83,7 +81,6 @@ if ($context->userIsLog()) {
 			'group' => 'administrative'
 		);
 	}
-
 	// menu member
 	$cardAccess = getDolGlobalString('WEBPORTAL_MEMBER_CARD_ACCESS');
 	if (isModEnabled('member')
@@ -99,7 +96,6 @@ if ($context->userIsLog()) {
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
-
 	// menu partnership
 	$cardAccess = getDolGlobalString('WEBPORTAL_PARTNERSHIP_CARD_ACCESS');
 	if (isModEnabled('partnership')
@@ -115,7 +111,6 @@ if ($context->userIsLog()) {
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
-
 	// menu user with logout
 	$navUserMenu['user_logout'] = array(
 		'id' => 'user_logout',
@@ -124,7 +119,6 @@ if ($context->userIsLog()) {
 		'name' => img_picto($langs->trans('Logout'), 'logout', 'class="pictofixedwidth"'),
 	);
 }
-
 // GROUP MENU
 $navGroupMenu = array(
 	'administrative' => array(
