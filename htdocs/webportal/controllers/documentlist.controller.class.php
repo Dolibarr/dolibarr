@@ -28,7 +28,7 @@ class DocumentListController extends AbstractDocumentController
 	 *
 	 * @return  bool
 	 */
-	public function checkAccess()
+		public function checkAccess()
 	{
 		$this->accessRight = getDolGlobalInt('WEBPORTAL_DOCUMENT_LIST_ACCESS');
 		return parent::checkAccess();
