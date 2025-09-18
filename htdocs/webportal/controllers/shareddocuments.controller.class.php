@@ -68,11 +68,10 @@ class SharedDocumentsController extends Controller
             echo '<tr>';
             echo '<td><a href="' . $lien_telechargement . '" target="_blank">' . htmlspecialchars($fichier['name']) . '</a></td>';
 
-            // --- DEBUT DE LA CORRECTION ---
-            // On récupère la taille du fichier manuellement pour plus de fiabilité
+            // We retrieve the file size manually for more reliability
             $taille_fichier = filesize($dir_ged_partage . '/' . $fichier['name']);
             echo '<td style="text-align: right;">' . dol_print_size($taille_fichier) . '</td>';
-            // --- FIN DE LA CORRECTION ---
+            
 
             echo '<td style="text-align: right;">' . dol_print_date($fichier['date'], 'dayhour') . '</td>';
             echo '</tr>';
