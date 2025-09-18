@@ -7250,9 +7250,7 @@ class Product extends CommonObject
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'label')) {
-			$return .= '<br><span class="info-box-label opacitymedium inline-block tdoverflowmax150 valignmiddle" title="'.dol_escape_htmltag($this->label).'">'.dol_escape_htmltag($this->label).'</span>';
-		}
+		$return .= '<br><span class="info-box-label opacitymedium inline-block tdoverflowmax150 valignmiddle" title="'.dol_escape_htmltag($this->label).'">'.dol_escape_htmltag($this->label).'</span>';
 		if (property_exists($this, 'price') && property_exists($this, 'price_ttc')) {
 			if ($this->price_base_type == 'TTC') {
 				$return .= '<br><span class="info-box-status amount">'.price($this->price_ttc).' '.$langs->trans("TTC").'</span>';
@@ -7263,16 +7261,15 @@ class Product extends CommonObject
 			}
 		}
 		$br = 1;
-		if (property_exists($this, 'stock_reel') && $this->isProduct()) {
+		if (!empty($this->stock_reel) && $this->isProduct()) {
 			$return .= '<br><div class="info-box-status opacitymedium inline-block valignmiddle">'.img_picto($langs->trans('PhysicalStock'), 'stock').'</div><div class="inline-block valignmiddle paddingleft" title="'.$langs->trans('PhysicalStock').'">'.$this->stock_reel.'</div>';
 			$br = 0;
 		}
-		if (method_exists($this, 'getLibStatut')) {
-			if ($br) {
-				$return .= '<br><div class="info-box-status inline-block valignmiddle">'.$this->getLibStatut(3, 1).' '.$this->getLibStatut(3, 0).'</div>';
-			} else {
-				$return .= '<div class="info-box-status inline-block valignmiddle marginleftonly paddingleft">'.$this->getLibStatut(3, 1).' '.$this->getLibStatut(3, 0).'</div>';
-			}
+		if ($br) {
+			$return .= '<br>';
+			$return .= '<div class="info-box-status inline-block valignmiddle">'.$this->getLibStatut(3, 1).' '.$this->getLibStatut(3, 0).'</div>';
+		} else {
+			$return .= '<div class="info-box-status inline-block valignmiddle marginleftonly paddingleft">'.$this->getLibStatut(3, 1).' '.$this->getLibStatut(3, 0).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
