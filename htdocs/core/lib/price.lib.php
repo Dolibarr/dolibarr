@@ -347,13 +347,15 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 			break;
 	}
 	if ($uselocaltax1_rate && $apply_tax) {
-		$result[14] = price2num(($tot_sans_remise_withoutvat * (1 + ($localtax1_rate / 100))) - $tot_sans_remise_withoutvat, 'MT'); // amount tax1 for total_ht_without_discount
+		// We add 2 decimals for taxes to avoid rounding errors in the total
+		$dolMaxDecimalUnits = (int) getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT');
+		$result[14] = price2num(($tot_sans_remise_withoutvat * (1 + ($localtax1_rate / 100))) - $tot_sans_remise_withoutvat, $dolMaxDecimalUnits + 2); // amount tax1 for total_ht_without_discount
 		$result[8] += $result[14]; // total_ttc_without_discount + tax1
 
-		$result[9] = price2num(($tot_avec_remise_withoutvat * (1 + ($localtax1_rate / 100))) - $tot_avec_remise_withoutvat, 'MT'); // amount tax1 for total_ht
+		$result[9] = price2num(($tot_avec_remise_withoutvat * (1 + ($localtax1_rate / 100))) - $tot_avec_remise_withoutvat, $dolMaxDecimalUnits + 2); // amount tax1 for total_ht
 		$result[2] += $result[9]; // total_ttc + tax1
 
-		$result[11] = price2num(($pu_withouttax * (1 + ($localtax1_rate / 100))) - $pu_withouttax, 'MU'); // amount tax1 for pu_ht
+		$result[11] = price2num(($pu_withouttax * (1 + ($localtax1_rate / 100))) - $pu_withouttax, $dolMaxDecimalUnits + 2); // amount tax1 for pu_ht
 		$result[5] += $result[11]; // pu_ht + tax1
 	}
 
@@ -374,13 +376,15 @@ function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $uselocalt
 			break;
 	}
 	if ($uselocaltax2_rate && $apply_tax) {
-		$result[15] = price2num(($tot_sans_remise_withoutvat * (1 + ($localtax2_rate / 100))) - $tot_sans_remise_withoutvat, 'MT'); // amount tax2 for total_ht_without_discount
+		// We add 2 decimals for taxes to avoid rounding errors in the total
+		$dolMaxDecimalUnits = (int) getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT');
+		$result[15] = price2num(($tot_sans_remise_withoutvat * (1 + ($localtax2_rate / 100))) - $tot_sans_remise_withoutvat, $dolMaxDecimalUnits + 2); // amount tax2 for total_ht_without_discount
 		$result[8] += $result[15]; // total_ttc_without_discount + tax2
 
-		$result[10] = price2num(($tot_avec_remise_withoutvat * (1 + ($localtax2_rate / 100))) - $tot_avec_remise_withoutvat, 'MT'); // amount tax2 for total_ht
+		$result[10] = price2num(($tot_avec_remise_withoutvat * (1 + ($localtax2_rate / 100))) - $tot_avec_remise_withoutvat, $dolMaxDecimalUnits + 2); // amount tax2 for total_ht
 		$result[2] += $result[10]; // total_ttc + tax2
 
-		$result[12] = price2num(($pu_withouttax * (1 + ($localtax2_rate / 100))) - $pu_withouttax, 'MU'); // amount tax2 for pu_ht
+		$result[12] = price2num(($pu_withouttax * (1 + ($localtax2_rate / 100))) - $pu_withouttax, $dolMaxDecimalUnits + 2); // amount tax2 for pu_ht
 		$result[5] += $result[12]; // pu_ht + tax2
 	}
 
