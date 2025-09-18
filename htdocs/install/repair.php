@@ -2035,7 +2035,8 @@ if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 							localtax1 = $totLocal1,
 							localtax2 = $totLocal2,
 							total_ttc = $totTtc,
-							fk_statut = ".($totTtc == price2num($montantPaiements, 'MT') ? 2 : 1 )."
+							fk_statut = ".($totTtc == price2num($montantPaiements, 'MT') ? 2 : 1 ).",
+							paid = ".($totTtc == price2num($montantPaiements, 'MT') ? 1 : 0 )."
 						WHERE
 							rowid = $obj->rowid";
 					$db->query($sql_maj);
