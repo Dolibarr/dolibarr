@@ -388,7 +388,7 @@ class Product extends CommonObject
 	public $seuil_stock_alerte = 0;
 
 	/**
-	 * @var float Ask for replenishment when `$desiredstock` < `$stock_reel`
+	 * @var ?float Ask for replenishment when `$desiredstock` < `$stock_reel`
 	 */
 	public $desiredstock = 0;
 
