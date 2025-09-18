@@ -1,71 +1,30 @@
-Module Web Portal
-================
+# Module Web Portal pour Dolibarr
 
-# Portail Web Personnalisé pour Dolibarr
+Le module Web Portal offre une interface client sécurisée et personnalisable, permettant aux tiers (clients, fournisseurs, adhérents...) d'accéder à leurs informations et documents directement depuis une interface web publique.
 
-Ce projet est une version modifiée (un "fork") du projet officiel [Dolibarr ERP & CRM](https://github.com/Dolibarr/dolibarr), spécifiquement adaptée pour les besoins de webmaster67.
+## Nouvelles Fonctionnalités Proposées
 
-L'objectif principal de cette modification est d'ajouter un espace de partage de documents sécurisé et simple d'utilisation pour chaque Tiers (client, partenaire, etc.).
+Cette contribution ajoute deux nouveaux espaces de gestion de documents pour enrichir le portail.
 
-## Fonctionnalités Ajoutées
+### 1. Espace "Mes Documents" (par Tiers)
 
-La principale fonctionnalité ajoutée à ce module `Web Portal` est :
+* Une nouvelle page permet à un utilisateur connecté de consulter et télécharger les documents qui lui sont personnellement partagés.
+* **Lien avec la GED du Tiers :** Les fichiers sont gérés simplement en les ajoutant dans l'onglet "Fichiers joints" de la fiche Tiers dans l'interface d'administration de Dolibarr. Tout fichier ajouté y est instantanément visible sur le portail du client.
+* **Nommage des dossiers :** Le système utilise la **référence** du tiers (ex: `CU25-0001`) pour localiser le répertoire, conformément aux standards de Dolibarr.
 
-* **Espace "Mes Documents" pour les Clients :** Une nouvelle page a été créée sur le portail, accessible via le menu principal. Elle permet à un client connecté de consulter et télécharger tous les fichiers que l'administrateur a partagés avec lui.
-* **Lien Direct avec la GED du Tiers :** La gestion des fichiers reste centralisée dans Dolibarr. Pour partager un fichier avec un client, il suffit de le déposer dans l'onglet **"Fichiers joints"** de sa fiche Tiers dans l'interface d'administration. Le fichier apparaît alors instantanément sur son portail.
-* **Système de Dossiers par ID :** Le système est configuré pour trouver les dossiers des Tiers en se basant sur leur ID numérique (ex: `/documents/societe/XX/`).
+### 2. Espace "Documents Partagés" (global)
+
+* Une seconde page a été ajoutée pour afficher une liste de documents communs à **tous** les utilisateurs du portail (par exemple : brochures, conditions générales de vente, etc.).
+* **Gestion centralisée :** Les fichiers sont placés dans un répertoire unique au sein du module GED/ECM. Le nom de ce répertoire est configurable par l'administrateur.
 
 ## Configuration Requise
 
-Pour que la nouvelle page de documents fonctionne, les étapes suivantes sont nécessaires dans l'administration de Dolibarr :
+Toute la configuration s'effectue depuis la page de paramétrage du module WebPortal (**Accueil > Configuration > Modules > WebPortal**).
 
-1.  **Déclaration du Contrôleur :**
-    Le nouveau contrôleur `documentlist.controller.class.php` doit être déclaré dans le fichier `htdocs/webportal/class/context.class.php`.
-
-2.  **Ajout du Lien au Menu :**
-    Un lien vers le nouveau contrôleur doit être ajouté dans le template du menu : `htdocs/public/webportal/tpl/menu.tpl.php`.
-
-3.  **Activation de l'Accès :**
-    Dans le menu `Accueil > Configuration > Divers`, la clé suivante doit être ajoutée :
-    * **Nom :** `WEBPORTAL_DOCUMENT_LIST_ACCESS`
-    * **Valeur :** `1`
+1.  **Activer la page "Mes Documents"** : Activez l'option correspondante via l'interrupteur Oui/Non.
+2.  **Activer la page "Documents Partagés"** : Activez l'option correspondante. Cette fonctionnalité requiert que le module **ECM/GED** soit activé.
+3.  **Choisir le dossier partagé** : Saisissez le nom du répertoire des documents partagés (ex: `DocumentsPublics`) dans le champ de texte prévu à cet effet.
 
 ## Licence
 
-Ce projet est distribué sous la licence **GNU General Public License v3.0**, comme le projet Dolibarr original.
-
-## Crédits
-
-* **Auteurs du module original :** L'équipe Dolibarr et les contributeurs de la communauté open-source.
-* **Modifications et Intégration :** webmaster67 sébastien schaffhauser
-
-If the Thirdparty module is enabled:
-* Read/modify Name, phone, email, addresses of thirdparty
-
-If the Partnership module is enabled:
-* Read properties (status, start date, end date) of its partnership.
-
-If the Proposal module is enabled:
-* Read its orders
-
-If the Sale Order module is enabled:
-* Read its orders
-
-If the Invoice module is enabled:
-* Read its invoices
-
-If the Supplier module is enabled:
-* Read its price requests
-* Read its orders
-* Read its invoices
-
-If module Membership is enabled:
-* Read/modify Name, phone, email, addresses of thirdparty
-* Read its membership status (start and end date, amount paid)
-
- 
-
-Documentation
--------------
-
-[Module Web Portal](https://wiki.dolibarr.org/index.php/Module_Web_Portal)
+Ce projet est distribué sous la licence GNU General Public License v3.0, comme le projet Dolibarr original.
