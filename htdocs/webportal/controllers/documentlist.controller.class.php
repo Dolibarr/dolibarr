@@ -18,8 +18,8 @@ require_once __DIR__ . '/abstractdocument.controller.class.php';
 /**
  * Class for DocumentListController
  *
- * @method void display404()                     Inherited from Controller
- * @method void loadTemplate(string $template)    Inherited from Controller
+ * @method void display404()
+ * @method bool loadTemplate(string $templateName, mixed $vars = false)
  */
 class DocumentListController extends AbstractDocumentController
 {
@@ -37,9 +37,9 @@ class DocumentListController extends AbstractDocumentController
 	/**
 	 * Action method is called before html output.
 	 *
-	 * @return  int     <0 if KO, >0 if OK
+	 * @return int     <0 if KO, >0 if OK
 	 */
-	public function action()
+	public function action(): int
 	{
 		global $langs;
 		$context = Context::getInstance();
@@ -85,7 +85,7 @@ class DocumentListController extends AbstractDocumentController
 			$fileList = dol_dir_list($dir_ged_tiers, 'files', 0, '', '', 'date', SORT_DESC);
 
 			// 2. Define the link builder function
-			$linkBuilder = function ($file) use ($client_dir_name) {
+			$linkBuilder = function (array $file) use ($client_dir_name) {
 				return DOL_URL_ROOT . '/document.php?modulepart=societe&attachment=1&file=' . urlencode($client_dir_name . '/' . $file['name']);
 			};
 
