@@ -182,7 +182,6 @@ if (empty($reshook)) {
 					}
 				}
 			}
-
 			// add grouped items to this menu
 			foreach ($navGroupMenu as $groupId => $groupItem) {
 				// If group have more than 1 item, group is valid
