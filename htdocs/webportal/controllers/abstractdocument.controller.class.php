@@ -10,7 +10,7 @@
 require_once __DIR__ . '/../class/controller.class.php';
 
 /**
- * \file        htdocs/webportal/controllers/abstractdocument.controller.class.php
+* \file        htdocs/webportal/controllers/abstractdocument.controller.class.php
  * \ingroup     webportal
  * \brief       This file is an abstract controller with shared logic to display a list of documents.
  */
