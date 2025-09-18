@@ -8645,7 +8645,7 @@ class Form
 		}
 
 		$selectedAttr = ($objp->rowid == $selected) ? ' selected' : '';
-		$opt = "<option value=\"{$objp->rowid}\"{$selectedAttr}>{$displayRef}</option>\n";
+		$opt = '<option value="'.$objp->rowid.'"'.$selectedAttr.'>'.$displayRef.'</option>'."\n";
 
 		$optJson = [
 			'key' => $objp->rowid,
