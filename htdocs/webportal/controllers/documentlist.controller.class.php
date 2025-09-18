@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (c) 2025       Schaffhauser sébastien      <sebastien@webmaster67.fr>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
