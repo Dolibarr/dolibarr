@@ -469,3 +469,4 @@ WEBPORTAL_DOCUMENT_LIST_ACCESS=Activer la page "Mes Documents"
 WEBPORTAL_SHARED_DOCUMENT_ACCESS=Activer la page "Documents Partagés"
 WebPortalSharedDocsDir=Nom du répertoire des documents partagés
 WebPortalSharedDocsDirHelp=Indiquez le nom du répertoire, situé dans le dossier de la GED/ECM, qui contient les documents à partager avec tous les utilisateurs du portail.
+DateM=Modification Date
