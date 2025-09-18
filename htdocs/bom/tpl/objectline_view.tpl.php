@@ -325,7 +325,7 @@ if ($resql) {
 		// Qty
 		$label = $sub_bom_product->getLabelOfUnit('long', $langs);
 		if ($sub_bom_line->qty_frozen > 0) {
-			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price(price2num($sub_bom_line->qty, 'MT'), 0, '', 0, 0).'</td>';
+			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price(price2num($sub_bom_line->qty, 'MS'), 0, '', 0, 0).'</td>';
 			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				print '<td class="linecoluseunit nowrap left">';
 				print $label;
@@ -333,7 +333,7 @@ if ($resql) {
 			}
 			print '<td class="linecolqtyfrozen nowrap right" id="sub_bom_qty_frozen_'.$sub_bom_line->id.'">'.$langs->trans('Yes').'</td>';
 		} else {
-			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price(price2num($sub_bom_line->qty * $line->qty, 'MT'), 0, '', 0, 0).'</td>';
+			print '<td class="linecolqty nowrap right" id="sub_bom_qty_'.$sub_bom_line->id.'">'.price(price2num($sub_bom_line->qty * $line->qty, 'MS'), 0, '', 0, 0).'</td>';
 			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				print '<td class="linecoluseunit nowrap left">';
 				print $label;
@@ -356,7 +356,7 @@ if ($resql) {
 		// Cost
 		if (!empty($sub_bom->id)) {
 			$sub_bom->calculateCosts();
-			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price(price2num($sub_bom_line->qty * $line->qty * $sub_bom->unit_cost, 'MT')).'</span></td>';
+			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price(price2num($sub_bom_line->qty * $line->qty * $sub_bom->unit_cost, 'MS')).'</span></td>';
 		} elseif ($sub_bom_product->type == Product::TYPE_SERVICE && isModEnabled('workstation') && !empty($sub_bom_product->fk_default_workstation)) {
 			//Convert qty to hour
 			$unit = measuringUnitString($sub_bom_line->fk_unit, '', null, 1);
