@@ -63,7 +63,7 @@ $backtopage = GETPOST('backtopage', 'alpha');					// if not set, a default page 
 //$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
 $optioncss  = GETPOST('optioncss', 'aZ');
 $backtopage = GETPOST('backtopage', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');

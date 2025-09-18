@@ -496,7 +496,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action)) {
 // If first install
 if ($action == "set") {
 	if ($success) {
-		if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION)) {
+		if (!getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') || (getDolGlobalString('MAIN_VERSION_LAST_UPGRADE') == DOL_VERSION)) {
 			// Install is finished (database is on same version than files)
 			print '<br>'.$langs->trans("SystemIsInstalled")."<br>";
 

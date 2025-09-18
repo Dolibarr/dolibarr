@@ -458,7 +458,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 							$url = DOL_URL_ROOT.'/public/theme/common/nophoto.png';
 						}
 						print '<a href="'.$_SERVER["PHP_SELF"].($edit ? '?action=edit&token='.newToken().'&mode=template&theme=' : '?theme=').$subdir.(GETPOST('optioncss', 'alpha', 1) ? '&optioncss='.GETPOST('optioncss', 'alpha', 1) : '').($fuser ? '&id='.$fuser->id : '').'" style="font-weight: normal;" alt="'.$langs->trans("Preview").'">';
-						if ($subdir == $conf->global->MAIN_THEME) {
+						if ($subdir == getDolGlobalString('MAIN_THEME')) {
 							$title = $langs->trans("ThemeCurrentlyActive");
 						} else {
 							$title = $langs->trans("ShowPreview");
