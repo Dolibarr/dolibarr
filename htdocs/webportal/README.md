@@ -1,30 +1,29 @@
-# Module Web Portal pour Dolibarr
+# Web Portal Module for Dolibarr
 
-Le module Web Portal offre une interface client sécurisée et personnalisable, permettant aux tiers (clients, fournisseurs, adhérents...) d'accéder à leurs informations et documents directement depuis une interface web publique.
+The Web Portal module provides a secure and customizable client interface, allowing third parties (customers, suppliers, members, etc.) to access their information and documents directly from a public web interface.
 
-## Nouvelles Fonctionnalités Proposées
+## New Features Offered
 
-Cette contribution ajoute deux nouveaux espaces de gestion de documents pour enrichir le portail.
+This contribution adds two new document management areas to enhance the portal.
 
-### 1. Espace "Mes Documents" (par Tiers)
+### 1. "My Documents" Area (by Third Party)
 
-* Une nouvelle page permet à un utilisateur connecté de consulter et télécharger les documents qui lui sont personnellement partagés.
-* **Lien avec la GED du Tiers :** Les fichiers sont gérés simplement en les ajoutant dans l'onglet "Fichiers joints" de la fiche Tiers dans l'interface d'administration de Dolibarr. Tout fichier ajouté y est instantanément visible sur le portail du client.
-* **Nommage des dossiers :** Le système utilise la **référence** du tiers (ex: `CU25-0001`) pour localiser le répertoire, conformément aux standards de Dolibarr.
+* A new page allows a logged-in user to view and download documents shared with them personally.
+* **Link to the Third Party's EDM:** Files are managed simply by adding them to the "Attached Files" tab of the Third Party's file in the Dolibarr administration interface. Any file added is instantly visible on the client's portal. * **Folder naming:** The system uses the third-party **reference** (e.g., `CU25-0001`) to locate the directory, in accordance with Dolibarr standards.
 
-### 2. Espace "Documents Partagés" (global)
+### 2. "Shared Documents" area (global)
 
-* Une seconde page a été ajoutée pour afficher une liste de documents communs à **tous** les utilisateurs du portail (par exemple : brochures, conditions générales de vente, etc.).
-* **Gestion centralisée :** Les fichiers sont placés dans un répertoire unique au sein du module GED/ECM. Le nom de ce répertoire est configurable par l'administrateur.
+* A second page has been added to display a list of documents common to **all** portal users (e.g., brochures, general terms and conditions of sale, etc.).
+* **Centralized management:** Files are placed in a single directory within the ECM/DMS module. The name of this directory is configurable by the administrator.
 
-## Configuration Requise
+## Required configuration
 
-Toute la configuration s'effectue depuis la page de paramétrage du module WebPortal (**Accueil > Configuration > Modules > WebPortal**).
+All configuration is done from the WebPortal module settings page (**Home > Configuration > Modules > WebPortal**).
 
-1.  **Activer la page "Mes Documents"** : Activez l'option correspondante via l'interrupteur Oui/Non.
-2.  **Activer la page "Documents Partagés"** : Activez l'option correspondante. Cette fonctionnalité requiert que le module **ECM/GED** soit activé.
-3.  **Choisir le dossier partagé** : Saisissez le nom du répertoire des documents partagés (ex: `DocumentsPublics`) dans le champ de texte prévu à cet effet.
+1. **Enable the "My Documents" page**: Enable the corresponding option using the Yes/No switch.
+2. **Enable the "Shared Documents" page**: Enable the corresponding option. This feature requires the **ECM/GED** module to be enabled.
+3. **Choose the shared folder**: Enter the name of the shared documents directory (e.g., `PublicDocuments`) in the text field provided.
 
-## Licence
+## License
 
-Ce projet est distribué sous la licence GNU General Public License v3.0, comme le projet Dolibarr original.
+This project is distributed under the GNU General Public License v3.0, like the original Dolibarr project.
