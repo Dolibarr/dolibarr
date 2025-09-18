@@ -54,6 +54,7 @@ class SharedDocumentsController extends AbstractDocumentController
 
 		return 1;
 	}
+
 	/**
 	 * Build and display the page.
 	 *
@@ -81,9 +82,11 @@ class SharedDocumentsController extends AbstractDocumentController
 		$fileList = dol_dir_list($dir_ged_partage, 'files', 0, '', '', 'date', SORT_DESC);
 
 		// 2. Define the link builder function
+		/** @param array<string, mixed> $file */
 		$linkBuilder = function (array $file) use ($shared_dir_relative_path) {
 			return DOL_URL_ROOT . '/document.php?modulepart=ecm&file=' . urlencode($shared_dir_relative_path . '/' . $file['name']);
 		};
+
 		// 3. Call the parent method to display the table
 		$this->displayDocumentTable(
 			$langs->trans('SharedDocuments'),
