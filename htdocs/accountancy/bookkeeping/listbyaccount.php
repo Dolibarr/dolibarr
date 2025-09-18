@@ -60,7 +60,7 @@ $socid = GETPOSTINT('socid');
 $mode = (GETPOST('mode', 'alpha') ? GETPOST('mode', 'alpha') : 'customer'); // Only for tab view
 $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $type = GETPOST('type', 'alpha');
 if ($type == 'sub') {
 	$context_default = 'bookkeepingbysubaccountlist';

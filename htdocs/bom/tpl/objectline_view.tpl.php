@@ -37,20 +37,22 @@
 
 /**
  * @var Conf $conf
- * @var CommonObject $this
- * @var CommonObject $object
- * @var CommonObjectLine $line
  * @var Translate $langs
  * @var User $user
+ *
+ * @var BOMLine $line
+ * @var CommonObject $this
+ * @var CommonObject $object
  *
  * @var int $i
  * @var int $num
  * @var string $action
+ * @var int $disableremove
  */
 '
-@phan-var-force BOMLine $line
-@phan-var-force int $num
 @phan-var-force int $i
+@phan-var-force int $num
+@phan-var-force BOMLine $line
 @phan-var-force CommonObject $this
 @phan-var-force CommonObject $object
 ';
@@ -72,9 +74,6 @@ if (empty($filtertype)) {
 
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax, $langs;
 
-if (empty($dateSelector)) {
-	$dateSelector = 0;
-}
 if (empty($forceall)) {
 	$forceall = 0;
 }
@@ -240,7 +239,7 @@ if ($this->status == 0 && $user->hasRight('bom', 'write') && $action != 'selectl
 
 	print '<td class="linecoldelete center">';
 	$coldisplay++;
-	if (($line->fk_prev_id == null) && empty($disableremove)) {
+	if (empty($disableremove)) {
 		//La suppression n'est autorisée que si il n'y a pas de ligne dans une précédente situation
 		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=deleteline&token='.newToken().'&lineid='.$line->id.'">';
 		print img_delete();
@@ -364,7 +363,7 @@ if ($resql) {
 			}
 
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price(price2num($sub_bom_line->total_cost, 'MT')).'</span></td>';
-			$this->total_cost += $line->total_cost;
+			$total_cost += $line->total_cost;
 		} elseif ($sub_bom_product->cost_price > 0) {
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">';
 			print '<span class="amount">'.price(price2num($sub_bom_product->cost_price * $sub_bom_line->qty * (float) $line->qty, 'MT')).'</span></td>';

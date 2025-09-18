@@ -284,11 +284,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 // Actions to send emails
 
-$triggersendname = 'RECEPTION_SENTBYMAIL';
+$triggersendname = 'DELIVERY_SENTBYMAIL';
 $paramname = 'id';
-$autocopy = 'MAIN_MAIL_AUTOCOPY_RECEPTION_TO';
-$mode = 'emailfromreception';
-$trackid = 'bl' . $object->id;
+$autocopy = 'MAIN_MAIL_AUTOCOPY_DELIVERY_TO';
+$mode = 'emailfromdelivery';
+$trackid = 'del' . $object->id;
 include DOL_DOCUMENT_ROOT . '/core/actions_sendmails.inc.php';
 
 
@@ -759,10 +759,10 @@ if ($action == 'create') {
 	}
 
 	// Presend form
-	$modelmail = 'reception_send';
-	$defaulttopic = 'SendReceptionRef';
-	$diroutput = $conf->expedition->dir_output.'/receipt';
-	$trackid = 'bl'.$object->id;
+	$modelmail = 'delivery_send';
+	$defaulttopic = 'SendDeliveryRef';
+	$diroutput = $conf->expedition->dir_output . '/receipt';
+	$trackid = 'del' . $object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }

@@ -145,7 +145,6 @@ Banque
 Barcode
 BarcodeDesc
 BarcodeStickersMask
-BatchInformationNotfound
 BillOfMaterialsLine
 BlockLogNeedAmountsValue
 BlockLogNeedElement
@@ -1022,8 +1021,6 @@ PDF/A-3b
 PartnershipSentByEMail
 PdfTitle
 ProcessingError
-PurchaseOrder
-PurchaseOrders
 Recruited
 Ref. Product
 RefNewContract

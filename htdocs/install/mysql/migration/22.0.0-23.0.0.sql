@@ -40,6 +40,12 @@ ALTER TABLE llx_opensurvey_user_studs ADD COLUMN tms timestamp DEFAULT CURRENT_T
 
 -- V23 migration
 
+
+ALTER TABLE llx_ticket ADD COLUMN note_public text after resolution;
+ALTER TABLE llx_ticket ADD COLUMN note_private text after resolution;
+ALTER TABLE llx_ticket ADD COLUMN fk_user_modif integer after resolution;
+
+
 CREATE TABLE llx_paiement_extrafields (
 	rowid                     integer AUTO_INCREMENT PRIMARY KEY,
 	tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

@@ -159,7 +159,7 @@ class Commande extends CommonOrder
 	public $deposit_percent;
 
 	/**
-	 * @var int bank account ID
+	 * @var ?int bank account ID
 	 */
 	public $fk_account;
 
@@ -2375,7 +2375,7 @@ class Commande extends CommonOrder
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
 			if ($obj) {
-				$nb = $obj->nb;
+				$nb = (int) $obj->nb;
 			}
 
 			$this->db->free($resql);

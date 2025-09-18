@@ -7,7 +7,7 @@
  * Copyright (C) 2015-2016  Raphaël Doursenaud          <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -935,7 +935,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	if (preg_match('/\{(jj+)\}/i', $mask, $regJournal)) {
 		$journalcode = 'JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ';
 		if (is_object($objbookkeeping)) {
-			$journalcode = $objbookkeeping->code_journal;
+			$journalcode = (string) $objbookkeeping->code_journal;
 		}
 
 		$maskjournal = $regJournal[1];

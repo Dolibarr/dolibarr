@@ -745,7 +745,7 @@ if (empty($reshook)) {
 
 			if ($id > 0) {
 				// Category association
-				$categories = GETPOST('categories', 'array');
+				$categories = GETPOST('categories', 'array:int');
 				$object->setCategories($categories);
 
 				if (!empty($backtopage)) {
@@ -937,7 +937,7 @@ if (empty($reshook)) {
 				if (!$error && $object->check()) {
 					if ($object->update($object->id, $user) > 0) {
 						// Category association
-						$categories = GETPOST('categories', 'array');
+						$categories = GETPOST('categories', 'array:int');
 						$object->setCategories($categories);
 
 						$action = 'view';
