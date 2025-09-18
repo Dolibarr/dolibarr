@@ -71,6 +71,7 @@ $categ_id = GETPOSTINT('categ_id');
 $userid = GETPOSTINT('userid');
 $socid = GETPOSTINT('socid');
 $select_categ_categ_id = GETPOST('select_categ_categ_id', 'array');
+$select_categ_invoice_id=GETPOST('select_categ_invoice_id', 'array');
 // Security check
 if ($user->socid > 0) {
 	$action = '';
@@ -125,6 +126,10 @@ if ($mode == 'customer') {
 		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cat ON (f.fk_soc = cat.fk_soc)';
 		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_categ_id)).')';
 	}
+	if (is_array($select_categ_invoice_id) && !empty($select_categ_invoice_id)) {
+		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_invoice as cat ON (f.rowid = cat.fk_invoice)';
+		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_invoice_id)).')';
+	}
 }
 if ($mode == 'supplier') {
 	if ($object_status != '' && $object_status >= 0) {
@@ -133,6 +138,10 @@ if ($mode == 'supplier') {
 	if (is_array($select_categ_categ_id) && !empty($select_categ_categ_id)) {
 		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_fournisseur as cat ON (f.fk_soc = cat.fk_soc)';
 		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_categ_id)).')';
+	}
+	if (is_array($select_categ_invoice_id) && !empty($select_categ_invoice_id)) {
+		$stats->from .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_supplier_invoice as cat ON (f.rowid = cat.fk_supplier_invoice)';
+		$stats->where .= ' AND cat.fk_categorie IN ('.$db->sanitize(implode(',', $select_categ_invoice_id)).')';
 	}
 }
 
@@ -338,6 +347,28 @@ if (isModEnabled('category')) {
 	//print $formother->select_categories($cat_type, $categ_id, 'categ_id', true);
 	print '</td></tr>';
 }
+
+
+// Category facture
+if (isModEnabled('category')) {
+	$cat_type = '';
+	$cat_label = '';
+	if ($mode == 'customer') {
+		$cat_type = Categorie::TYPE_INVOICE;
+		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("BillsCustomers"));
+	}
+	if ($mode == 'supplier') {
+		$cat_type = Categorie::TYPE_SUPPLIER_INVOICE;
+		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("BillsSuppliers"));
+	}
+	print '<tr><td>'.$cat_label.'</td><td>';
+	$cate_arbo = $form->select_all_categories($cat_type, '', 'parent', 0, 0, 1);
+	print img_picto('', 'category', 'class="pictofixedwidth"');
+	print $form->multiselectarray('select_categ_invoice_id', $cate_arbo, GETPOST('select_categ_invoice_id', 'array'), 0, 0, 'widthcentpercentminusx maxwidth300');
+	//print $formother->select_categories($cat_type, $categ_id, 'categ_id', true);
+	print '</td></tr>';
+}
+
 
 // User
 print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
