@@ -1,29 +1,43 @@
-# Web Portal Module for Dolibarr
+Module Web Portal
+================
 
-The Web Portal module provides a secure and customizable client interface, allowing third parties (customers, suppliers, members, etc.) to access their information and documents directly from a public web interface.
+This is a module to provide a ready to use Web Portal for your customers, suppliers, partners or members of the mebership module.
 
-## New Features Offered
+Accounts (login and pass) to access this portal can be created for any thirdparty (from the tab "Web site accounts").
 
-This contribution adds two new document management areas to enhance the portal.
+It is better to have a standalone web server with its own virtual host and domain name to use this module, so using the web portal does not
+reaveal the domain and url of your backoffice installation. 
 
-### 1. "My Documents" Area (by Third Party)
 
-* A new page allows a logged-in user to view and download documents shared with them personally.
-* **Link to the Third Party's EDM:** Files are managed simply by adding them to the "Attached Files" tab of the Third Party's file in the Dolibarr administration interface. Any file added is instantly visible on the client's portal. * **Folder naming:** The system uses the third-party **reference** (e.g., `CU25-0001`) to locate the directory, in accordance with Dolibarr standards.
+It provides an interface to read or modify its data. This is for example, the list of the data than can be read (or modified):
 
-### 2. "Shared Documents" area (global)
+If the Thirdparty module is enabled:
+* Read/modify Name, phone, email, addresses of thirdparty
 
-* A second page has been added to display a list of documents common to **all** portal users (e.g., brochures, general terms and conditions of sale, etc.).
-* **Centralized management:** Files are placed in a single directory within the ECM/DMS module. The name of this directory is configurable by the administrator.
+If the Partnership module is enabled:
+* Read properties (status, start date, end date) of its partnership.
 
-## Required configuration
+If the Proposal module is enabled:
+* Read its orders
 
-All configuration is done from the WebPortal module settings page (**Home > Configuration > Modules > WebPortal**).
+If the Sale Order module is enabled:
+* Read its orders
 
-1. **Enable the "My Documents" page**: Enable the corresponding option using the Yes/No switch.
-2. **Enable the "Shared Documents" page**: Enable the corresponding option. This feature requires the **ECM/GED** module to be enabled.
-3. **Choose the shared folder**: Enter the name of the shared documents directory (e.g., `PublicDocuments`) in the text field provided.
+If the Invoice module is enabled:
+* Read its invoices
 
-## License
+If the Supplier module is enabled:
+* Read its price requests
+* Read its orders
+* Read its invoices
 
-This project is distributed under the GNU General Public License v3.0, like the original Dolibarr project.
+If module Membership is enabled:
+* Read/modify Name, phone, email, addresses of thirdparty
+* Read its membership status (start and end date, amount paid)
+
+ 
+
+Documentation
+-------------
+
+[Module Web Portal](https://wiki.dolibarr.org/index.php/Module_Web_Portal)
