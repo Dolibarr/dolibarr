@@ -133,12 +133,12 @@ class Cronjob extends CommonObject
 	public $lastoutput;
 
 	/**
-	 * @var string 			Unit frequency of job execution ('60', '86400', 'd', 'm', ...)
+	 * @var ?string 			Unit frequency of job execution ('60', '86400', 'd', 'm', ...)
 	 */
 	public $unitfrequency;
 
 	/**
-	 * @var int 			Frequency of job execution
+	 * @var ?int 			Frequency of job execution
 	 */
 	public $frequency;
 
