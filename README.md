@@ -17,7 +17,6 @@ Dolibarr has a large community ready to help you, free forums and [preferred par
 
 ![ScreenShot](https://www.dolibarr.org/medias/dolibarr_screenshot1_1920x1080.jpg)
 
-
 ## LICENSE
 
 Dolibarr is released under the terms of the GNU General Public License as published by the Free Software Foundation; either Version 3 of the License, or (at your option) any later version (GPL-3+).
