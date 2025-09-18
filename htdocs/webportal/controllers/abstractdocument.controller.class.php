@@ -27,10 +27,10 @@ abstract class AbstractDocumentController extends Controller
 	/**
 	 * Renders an HTML table for a given list of files.
 	 *
-	 * @param   string      $title              The main H2 title for the page.
-	 * @param   array       $fileList           The list of files from dol_dir_list().
-	 * @param   string      $noFileMessage      The message to display if the file list is empty.
-	 * @param   callable    $linkBuilder        A function that takes a file array and returns its download URL.
+	 * @param   string                               $title              The main H2 title for the page.
+	 * @param   array<int, array<string, mixed>>     $fileList           The list of files from dol_dir_list().
+	 * @param   string                               $noFileMessage      The message to display if the file list is empty.
+	 * @param   callable                             $linkBuilder        A function that takes a file array and returns its download URL.
 	 * @return  void
 	 */
 	protected function displayDocumentTable($title, $fileList, $noFileMessage, callable $linkBuilder)
