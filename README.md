@@ -78,7 +78,6 @@ Dolibarr is also available as a [Docker image](https://hub.docker.com/r/dolibarr
 
 If you lack the time to install it yourself, consider exploring commercial 'ready-to-use' Cloud offerings (refer to https://saas.dolibarr.org). Keep in mind that this third option comes with associated costs.
 
-
 ## UPGRADING
 
 Dolibarr supports upgrading, usually without the need for any (commercial) support (depending on if you use any commercial extensions). It supports upgrading all the way from any version after 2.8 without breakage. This is unique in the ERP ecosystem and a benefit our users highly appreciate!
@@ -91,11 +90,9 @@ Follow these step-by-step instructions to seamlessly upgrade Dolibarr to the lat
 - At your next access, Dolibarr will redirect you to the "install/" page to follow the upgrade process.
   If an `install.lock` file exists to lock any other upgrade process, the application will ask you to remove the file manually (you should find the `install.lock` file in the directory used to store generated and uploaded documents, in most cases, it is the directory called "*documents*").
 
-
 ## WHAT'S NEW
 
 See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog) file.
-
 
 ## FEATURES
 
