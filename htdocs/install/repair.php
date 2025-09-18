@@ -2020,7 +2020,7 @@ if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 				$ressql_calculs = $db->query($sql_calculs);
 				while ($obj_calcul = $db->fetch_object($ressql_calculs)) {
 					// Calcul de la somme des paiements reçus
-					$sql_paiements = "SELECT SUM(amount) as somme from llx_paiement_facture WHERE fk_facture = $obj->rowid";
+					$sql_paiements = "SELECT SUM(amount) as somme from ".MAIN_DB_PREFIX."paiement_facture WHERE fk_facture = $obj->rowid";
 					$montantPaiements = $db->fetch_object($db->query($sql_paiements))->somme;
 					$totHt= ($obj_calcul->total_ht ? price2num($obj_calcul->total_ht, 'MT') : 0);
 					$totTva = ($obj_calcul->total_tva ? price2num($obj_calcul->total_tva, 'MT') : 0);
