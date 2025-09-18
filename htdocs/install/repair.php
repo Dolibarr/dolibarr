@@ -1991,10 +1991,10 @@ if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 		SELECT
 			f.rowid,
 			SUM(fd.total_ht) as total_ht
-		FROM ".MAIN_DB_PREFIX."facture f 
+		FROM ".MAIN_DB_PREFIX."facture f
 			LEFT JOIN ".MAIN_DB_PREFIX."facturedet fd
 				ON fd.fk_facture = f.rowid
-		WHERE f.total_ht = 0 
+		WHERE f.total_ht = 0
 		GROUP BY fd.fk_facture HAVING SUM(fd.total_ht) != 0";
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -2007,8 +2007,8 @@ if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
 				$sql_calculs = "
-					SELECT 
-						SUM(fd.total_ht) as 'total_ht', 
+					SELECT
+						SUM(fd.total_ht) as 'total_ht',
 						SUM(fd.total_tva) as 'total_tva',
 						SUM(fd.total_localtax1) as 'localtax1',
 						SUM(fd.total_localtax2) as 'localtax2',
