@@ -70,7 +70,7 @@ if ($context->userIsLog()) {
 			'id' => 'document_list',
 			'rank' => 40,
 			'url' => $context->getControllerUrl('documentlist'),
-			'name' => $langs->trans('Documents partager'),
+			'name' => $langs->trans('SharedDocuments'),
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
