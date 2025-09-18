@@ -156,7 +156,7 @@ class CMailFile
 	public $headers;
 
 	/**
-	 * @var string Message
+	 * @var string|Swift_Message Message
 	 */
 	public $message;
 
