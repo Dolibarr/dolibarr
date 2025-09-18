@@ -3,8 +3,6 @@
 #
 
 # Common
-File=File
-Size=Size
 DateM=Modification Date
 
 # For documentlist.controller.class.php
