@@ -134,11 +134,11 @@ $db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf
 
 if ($db->connected) {
 	print '<tr><td class="nowrap">';
-	print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td class=\"right\">".$langs->trans("OK")."</td></tr>";
+	print $langs->trans("ServerConnection")." : ".$dolibarr_main_db_host.'</td><td class="right">'.$langs->trans("OK")."</td></tr>";
 	dolibarr_install_syslog("repair: ".$langs->transnoentities("ServerConnection").": ".$dolibarr_main_db_host.$langs->transnoentities("OK"));
 	$ok = 1;
 } else {
-	print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td class=\"right\">".$langs->transnoentities("Error")."</td></tr>";
+	print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name).'</td><td class="right">'.$langs->transnoentities("Error")."</td></tr>";
 	dolibarr_install_syslog("repair: ".$langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
 	$ok = 0;
 }
@@ -146,11 +146,11 @@ if ($db->connected) {
 if ($ok) {
 	if ($db->database_selected) {
 		print '<tr><td class="nowrap">';
-		print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td class=\"right\">".$langs->trans("OK")."</td></tr>";
+		print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name.'</td><td class="right">'.$langs->trans("OK")."</td></tr>";
 		dolibarr_install_syslog("repair: database connection successful: ".$dolibarr_main_db_name);
 		$ok = 1;
 	} else {
-		print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td class=\"right\">".$langs->trans("Error")."</td></tr>";
+		print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name).'</td><td class="right">'.$langs->trans("Error")."</td></tr>";
 		dolibarr_install_syslog("repair: ".$langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
 		$ok = 0;
 	}

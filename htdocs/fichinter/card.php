@@ -323,7 +323,7 @@ if (empty($reshook)) {
 			$mesg = $object->error;
 		}
 	} elseif ($action == 'add' && $permissiontoadd) {
-		$selectedLines = GETPOST('toselect', 'array');
+		$selectedLines = GETPOST('toselect', 'array:int');
 		$object->socid = $socid;
 		$object->duration = GETPOSTINT('duration');
 		$object->fk_project = GETPOSTINT('projectid');

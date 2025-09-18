@@ -2147,7 +2147,7 @@ class AccountLine extends CommonObjectLine
 	public $fk_bordereau;
 
 	/**
-	 * @var int 		ID of bank account
+	 * @var ?int 		ID of bank account
 	 */
 	public $fk_account;
 

@@ -401,7 +401,7 @@ if (empty($reshook)) {
 		}
 
 		if (($totalqty > 0 || getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) && !$error) {		// There is at least one thing to ship and no error
-			$selected_subtotal_lines = GETPOST('subtotal_toselect', 'array');
+			$selected_subtotal_lines = GETPOST('subtotal_toselect', 'array:int');
 			for ($i = 0; $i < $num; $i++) {
 				$qty = "qtyl" . $i;
 

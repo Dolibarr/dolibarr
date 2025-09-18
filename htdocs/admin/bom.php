@@ -144,24 +144,15 @@ if ($action == 'updateMask') {
 	// by calling method canBeActivated
 
 	dolibarr_set_const($db, "BOM_ADDON", $value, 'chaine', 0, '', $conf->entity);
-} elseif ($action == 'set_BOM_DRAFT_WATERMARK') {
+} elseif ($action == 'updateother') {
 	$draft = GETPOST("BOM_DRAFT_WATERMARK");
 	$res = dolibarr_set_const($db, "BOM_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
-
 	if (!($res > 0)) {
 		$error++;
 	}
 
-	if (!$error) {
-		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	} else {
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
-} elseif ($action == 'set_BOM_FREE_TEXT') {
 	$freetext = GETPOST("BOM_FREE_TEXT", 'restricthtml'); // No alpha here, we want exact string
-
 	$res = dolibarr_set_const($db, "BOM_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
-
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -458,13 +449,34 @@ print '</div>';
 print "<br>";
 print load_fiche_titre($langs->trans("OtherOptions"), '', '');
 
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="updateother">';
+
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td class="center" width="60"></td>';
-print "<td>&nbsp;</td>\n";
+print '<td class="center"></td>';
 print "</tr>\n";
+
+if (getDolGlobalString('MAIN_FEATURES_LEVEL') >= 1) {
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("BOM_SUB_BOM");
+	print '</td><td>';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('BOM_SUB_BOM');
+	} else {
+		if (!getDolGlobalString('BOM_SUB_BOM')) {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_BOM_SUB_BOM&token='.newToken().'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		} else {
+			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_BOM_SUB_BOM&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+		}
+	}
+
+	print "</td></tr>\n";
+}
+
 
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
@@ -474,9 +486,6 @@ foreach ($substitutionarray as $key => $val) {
 }
 $htmltext .= '</i>';
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="set_BOM_FREE_TEXT">';
 print '<tr class="oddeven"><td colspan="2">';
 print $form->textwithpicto($langs->trans("FreeLegalTextOnBOMs"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename = 'BOM_FREE_TEXT';
@@ -487,27 +496,24 @@ if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
 	$doleditor = new DolEditor($variablename, getDolGlobalString($variablename), '', 80, 'dolibarr_notes');
 	print $doleditor->Create();
 }
-print '</td><td class="right">';
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
-print '</form>';
 
-//Use draft Watermark
+// Use draft Watermark
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="set_BOM_DRAFT_WATERMARK">';
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("WatermarkOnDraftBOMs"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '</td><td>';
 print '<input class="flat minwidth200" type="text" name="BOM_DRAFT_WATERMARK" value="'.dol_escape_htmltag(getDolGlobalString('BOM_DRAFT_WATERMARK')).'">';
-print '</td><td class="right">';
-print '<input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";
-print '</form>';
 
 print '</table>';
+
+print '<center><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></center>';
+
 print '</div>';
+
+print '</form>';
+
 print '<br>';
 
 

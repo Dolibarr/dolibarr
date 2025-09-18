@@ -64,7 +64,7 @@ if (isModEnabled('eventorganization')) {
 
 $langs->loadLangs($langsArray);
 
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $action = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view';
 $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha'); // Result of a confirmation
@@ -219,7 +219,7 @@ if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 }
 if (isModEnabled("shipping")) {
 	$elementList['shipping_send'] = img_picto('', 'dolly', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendShipment'));
-	$elementList['reception_send'] = img_picto('', 'dolly', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendReception'));
+	$elementList['delivery_send'] = img_picto('', 'dolly', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendDelivery'));
 }
 if (isModEnabled("reception")) {
 	$elementList['reception_send'] = img_picto('', 'dollyrevert', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToSendReception'));
@@ -1159,7 +1159,8 @@ if ($num) {
 					$fieldsforcontent[] = 'content_lines';
 				}
 
-				$parameters = array('fieldsforcontent' => &$fieldsforcontent, 'tabname' => $tabname[$id]);
+				$tabname=isset($tabname[$id]) ? $tabname[$id] :'';
+				$parameters = array('fieldsforcontent' => &$fieldsforcontent, 'tabname' => $tabname);
 				$hookmanager->executeHooks('editEmailTemplateFieldsForContent', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 
 				foreach ($fieldsforcontent as $tmpfieldlist) {

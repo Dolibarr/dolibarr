@@ -61,7 +61,7 @@ $socid = GETPOSTINT('socid');
 $action     = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
-$toselect   = GETPOST('toselect', 'array');
+$toselect   = GETPOST('toselect', 'array:int');
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
@@ -239,7 +239,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	if ($massaction == 'confirm_createbills') {   // Create bills from sendings.
-		$sendings = GETPOST('toselect', 'array');
+		$sendings = GETPOST('toselect', 'array:int');
 		$createbills_onebythird = GETPOST('createbills_onebythird', 'int');
 		$validate_invoices = GETPOST('validate_invoices', 'int');
 
@@ -625,7 +625,7 @@ if (empty($reshook)) {
 	// If massaction is close
 	if ($massaction == 'classifyclose') {
 		$error = 0;
-		$selectids = GETPOST('toselect', 'array');
+		$selectids = GETPOST('toselect', 'array:int');
 		foreach ($selectids as $selectid) {
 			//	$object->fetch($selectid);
 			$object->fetch($selectid);

@@ -783,6 +783,7 @@ class FormFile
 			} else {
 				// For normalized standard modules
 				$file = dol_buildpath('/core/modules/'.$modulepart.'/modules_'.strtolower($submodulepart).'.php', 0);
+
 				if (file_exists($file)) {
 					$res = include_once $file;
 				} else {

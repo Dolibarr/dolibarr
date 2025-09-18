@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +18,7 @@
 
 /**
  * @var Context $context	Object context for webportal
+ * @var Translate $langs
  */
 
 // Protection to avoid direct call of template
@@ -83,13 +85,6 @@ top_httphead();
 	// Common dolibarr js functions
 	$jQueryUIJSUrl = $context->rootUrl.'js/lib_head.js.php';
 	print '<script src="'.$jQueryUIJSUrl.'"></script>'."\n";
-
-	// Date picker
-	/*
-	$jDatePickerJSUrl = dirname($context->rootUrl).'/includes/jquery/plugins/timepicker/jquery-ui-timepicker-addon.js';
-	print '<script src="'.$jDatePickerJSUrl.'"></script>'."\n";
-	//print '<script nonce="'.getNonce().'" src="'.DOL_URL_ROOT.'/core/js/timepicker.js.php?lang='.$langs->defaultlang.($ext ? '&amp;'.$ext : '').'"></script>'."\n";
-	*/
 	?>
 </head>
 <body data-theme="custom" data-controller="<?php print dol_escape_htmltag($context->controller); ?>">
