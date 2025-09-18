@@ -2102,6 +2102,7 @@ MailToSendProposal=Customer proposals
 MailToSendOrder=Sales orders
 MailToSendInvoice=Customer invoices
 MailToSendShipment=Shipments
+MailToSendDelivery=Deliveries
 MailToSendIntervention=Interventions
 MailToSendSupplierRequestForQuotation=Quotation request
 MailToSendSupplierOrder=Purchase orders
