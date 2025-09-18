@@ -2015,7 +2015,7 @@ if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 						SUM(fd.total_ttc) as 'total_ttc'
 					FROM
 						".MAIN_DB_PREFIX."facturedet fd
-					WHERE 
+					WHERE
 						fd.fk_facture = $obj->rowid";
 				$ressql_calculs = $db->query($sql_calculs);
 				while ($obj_calcul = $db->fetch_object($ressql_calculs)) {
@@ -2028,15 +2028,15 @@ if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 					$totLocal2 = ($obj_calcul->localtax2 ? price2num($obj_calcul->localtax2, 'MT') : 0);
 					$totTtc = $totHt + $totTva + $totLocal1 + $totLocal2;
 					$sql_maj = "
-						UPDATE ".MAIN_DB_PREFIX."facture 
-						SET 
-							total_ht = $totHt, 
-							total_tva = $totTva, 
-							localtax1 = $totLocal1, 
-							localtax2 = $totLocal2, 
-							total_ttc = $totTtc, 
+						UPDATE ".MAIN_DB_PREFIX."facture
+						SET
+							total_ht = $totHt,
+							total_tva = $totTva,
+							localtax1 = $totLocal1,
+							localtax2 = $totLocal2,
+							total_ttc = $totTtc,
 							fk_statut = ".($totTtc == price2num($montantPaiements, 'MT') ? 2 : 1 )."
-						WHERE 
+						WHERE
 							rowid = $obj->rowid";
 					$db->query($sql_maj);
 				}
