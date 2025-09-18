@@ -1,7 +1,7 @@
 <!-- file menu.tpl.php -->
 <?php
 /* Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		sebastien schaffhauser	<sebastien@webmaster67.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,11 +70,11 @@ if ($context->userIsLog()) {
 			'id' => 'document_list',
 			'rank' => 40,
 			'url' => $context->getControllerUrl('documentlist'),
-			'name' => $langs->trans('SharedDocuments'),
+			'name' => $langs->trans('MyDocuments'), // CORRIGÉ : Clé de traduction correcte
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
-        // Shared documents menu
+	// Shared documents menu
 	if (getDolGlobalInt('WEBPORTAL_SHARED_DOCUMENT_ACCESS')) {
 		$navMenu['shared_documents'] = array(
 			'id' => 'shared_documents',
@@ -211,7 +211,7 @@ if (empty($reshook)) {
 		<li class="brand">
 		<?php
 		$brandTitle = getDolGlobalString('WEBPORTAL_TITLE') ? getDolGlobalString('WEBPORTAL_TITLE') : getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
-		print '<a class="brand__logo-link"  href="'.$context->getControllerUrl().'" >';
+		print '<a class="brand__logo-link" href="'.$context->getControllerUrl().'" >';
 		if (!empty($context->theme->menuLogoUrl)) {
 			print '<img class="brand__logo-img" src="' . dol_escape_htmltag($context->theme->menuLogoUrl) . '" alt="' . dol_escape_htmltag($brandTitle) . '">';
 		} else {
@@ -232,7 +232,7 @@ if (empty($reshook)) {
 	<ul class="menu-entries-alt">
 	<?php
 	// show menu
-	print '<li data-deep="0" class="--item-propal-list nav-item  "><a href="'.$context->getControllerUrl().'">'.$langs->trans("Menu").'...</a></li>';
+	print '<li data-deep="0" class="--item-propal-list nav-item "><a href="'.$context->getControllerUrl().'">'.$langs->trans("Menu").'...</a></li>';
 	?>
 	</ul>
 	<ul class="logout">
