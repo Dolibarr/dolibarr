@@ -54,7 +54,6 @@ class SharedDocumentsController extends AbstractDocumentController
 
 		return 1;
 	}
-
 	/**
 	 * Build and display the page.
 	 *
