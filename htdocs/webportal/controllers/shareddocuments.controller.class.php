@@ -39,7 +39,7 @@ class SharedDocumentsController extends AbstractDocumentController
 	 *
 	 * @return int     <0 if KO, >0 if OK
 	 */
-	public function action(): int
+		public function action(): int
 	{
 		global $langs;
 		$context = Context::getInstance();
