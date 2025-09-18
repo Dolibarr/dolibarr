@@ -248,16 +248,18 @@ class Asset extends CommonObject
 	 * @var string
 	 */
 	public $last_main_doc;
+
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $import_key;
 	/**
 	 * @var string
 	 */
 	public $model_pdf;
+
 	/**
-	 * @var int
+	 * @var ?int
 	 */
 	public $status;
 
@@ -1544,7 +1546,7 @@ class Asset extends CommonObject
 	 */
 	public function getLabelStatus($mode = 0)
 	{
-		return $this->LibStatut($this->status, $mode);
+		return $this->LibStatut((int) $this->status, $mode);
 	}
 
 	/**
@@ -1555,7 +1557,7 @@ class Asset extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->status, $mode);
+		return $this->LibStatut((int) $this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1677,6 +1679,7 @@ class Asset extends CommonObject
 				$obj = new $classname();
 
 				'@phan-var-force ModeleNumRefAsset $obj';
+				/** @var ModeleNumRefAsset $obj */
 
 				$numref = $obj->getNextValue($this);
 

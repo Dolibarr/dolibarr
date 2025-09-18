@@ -204,7 +204,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	$selectedLines = GETPOST('toselect', 'array');
+	$selectedLines = GETPOST('toselect', 'array:int');
 
 	if ($cancel) {
 		if (!empty($backtopageforcancel)) {

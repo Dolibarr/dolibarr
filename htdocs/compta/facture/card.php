@@ -113,7 +113,7 @@ $ref_client = GETPOST('ref_client', 'alpha');
 $inputReasonId = GETPOSTINT('input_reason_id');
 $rank = (GETPOSTINT('rank') > 0) ? GETPOSTINT('rank') : -1;
 $projectid = (GETPOSTINT('projectid') ? GETPOSTINT('projectid') : 0);
-$selectedLines = GETPOST('toselect', 'array');
+$selectedLines = GETPOST('toselect', 'array:int');
 
 // PDF
 $hidedetails = (GETPOSTINT('hidedetails') ? GETPOSTINT('hidedetails') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));

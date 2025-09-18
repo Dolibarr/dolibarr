@@ -81,7 +81,7 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
@@ -104,7 +104,7 @@ if (GETPOSTISSET('formfilteraction')) {
 } elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
 	$searchCategoryProductOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
-$searchCategoryProductList = GETPOST('search_category_product_list', 'array');
+$searchCategoryProductList = GETPOST('search_category_product_list', 'array:int');
 $catid = GETPOSTINT('catid');
 if (!empty($catid) && empty($searchCategoryProductList)) {
 	$searchCategoryProductList = array($catid);

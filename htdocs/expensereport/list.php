@@ -57,7 +57,7 @@ $massaction  = GETPOST('massaction', 'alpha');
 $show_files  = GETPOSTINT('show_files');
 $confirm     = GETPOST('confirm', 'alpha');
 $cancel      = GETPOST('cancel', 'alpha'); // We click on a Cancel button
-$toselect    = GETPOST('toselect', 'array');
+$toselect    = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'expensereportlist';
 $mode        = GETPOST('mode', 'alpha');
 
