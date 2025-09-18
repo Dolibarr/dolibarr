@@ -3,8 +3,6 @@
 #
 
 # Common
-File=Fichier
-Size=Taille
 DateM=Date de Modification
 
 # For documentlist.controller.class.php (Documents specific to the logged-in third party)
