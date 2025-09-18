@@ -419,7 +419,7 @@ class Product extends CommonObject
 
 	/**
 	 * Status indicates whether the product is on sale '1' or not '0'
-	 * @var int
+	 * @var ?int
 	 * @deprecated  Use $status instead
 	 * @see $status
 	 */
@@ -434,7 +434,7 @@ class Product extends CommonObject
 
 	/**
 	 * Status indicate whether the product is available for purchase '1' or not '0'
-	 * @var int
+	 * @var ?int
 	 * @deprecated Use $status_buy instead
 	 * @see $status_buy
 	 */
@@ -1830,7 +1830,7 @@ class Product extends CommonObject
 		if (empty($objectisused)) {
 			$this->db->begin();
 
-			if (!$error && empty($notrigger)) {
+			if (empty($notrigger)) {
 				// Call trigger
 				$result = $this->call_trigger('PRODUCT_DELETE', $user);
 				if ($result < 0) {
