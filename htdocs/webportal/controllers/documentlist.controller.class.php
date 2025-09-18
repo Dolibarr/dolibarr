@@ -83,24 +83,24 @@ class DocumentListController extends Controller
 
         print '<main class="container">';
 
-        // On récupère le tiers connecté depuis le contexte
+       // We retrieve the connected third party from the context
         $thirdparty = $context->logged_thirdparty;
 
         if (!empty($thirdparty) && $thirdparty->id) {
 
             echo '<h2>Documents Partagés</h2>';
 
-            // On utilise l'ID du client pour trouver le nom du dossier
+            // We use the client ID to find the folder name
             $client_dir_name = $thirdparty->id;
             
-            // On récupère le chemin ABSOLU du répertoire GED du tiers
+            // We retrieve the ABSOLUTE path of the third party's GED directory
             $dir_ged_tiers = $conf->societe->dir_output . '/' . $client_dir_name;
 
-            // On récupère la liste des fichiers de ce répertoire
+            // We retrieve the list of files in this directory
             require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
             $liste_fichiers = dol_dir_list($dir_ged_tiers, 'files', 0, '', '', 'date', SORT_DESC);
 
-            // On vérifie s'il y a des fichiers et on les affiche
+            // We check if there are files and display them
             if (is_array($liste_fichiers) && count($liste_fichiers) > 0) {
                 echo '<table class="table" width="100%">';
                 echo '<thead>';
@@ -113,7 +113,7 @@ class DocumentListController extends Controller
                 echo '<tbody>';
 
                 foreach ($liste_fichiers as $fichier) {
-                    // On utilise aussi l'ID pour construire le lien de téléchargement
+                    // We also use the ID to build the download link
                     $lien_telechargement = DOL_URL_ROOT . '/document.php?modulepart=societe&attachment=1&file=' . urlencode($client_dir_name . '/' . $fichier['name']);
 
                     echo '<tr>';
