@@ -27,7 +27,6 @@ See the [COPYING](https://github.com/Dolibarr/dolibarr/blob/develop/COPYING) fil
 
 Other licenses apply for some included dependencies. See [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT) for a full list.
 
-Attention cette version est modifier par l'ajout de deux fonctionnalitées dans le webportal.
 ## INSTALLING
 
 There is a lot of different solutions to install Dolibarr.
