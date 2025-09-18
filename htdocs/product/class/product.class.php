@@ -383,7 +383,7 @@ class Product extends CommonObject
 	/**
 	 * Stock alert
 	 *
-	 * @var float
+	 * @var ?float
 	 */
 	public $seuil_stock_alerte = 0;
 
@@ -450,7 +450,7 @@ class Product extends CommonObject
 	/**
 	 * fk_default_bom indicates the default bom
 	 *
-	 * @var int
+	 * @var ?int
 	 */
 	public $fk_default_bom;
 
@@ -7251,17 +7251,15 @@ class Product extends CommonObject
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		$return .= '<br><span class="info-box-label opacitymedium inline-block tdoverflowmax150 valignmiddle" title="'.dol_escape_htmltag($this->label).'">'.dol_escape_htmltag($this->label).'</span>';
-		if (property_exists($this, 'price') && property_exists($this, 'price_ttc')) {
-			if ($this->price_base_type == 'TTC') {
-				$return .= '<br><span class="info-box-status amount">'.price($this->price_ttc).' '.$langs->trans("TTC").'</span>';
-			} else {
-				if ($this->status) {
-					$return .= '<br><span class="info-box-status amount">'.price($this->price).' '.$langs->trans("HT").'</span>';
-				}
+		if ($this->price_base_type == 'TTC') {
+			$return .= '<br><span class="info-box-status amount">'.price($this->price_ttc).' '.$langs->trans("TTC").'</span>';
+		} else {
+			if ($this->status) {
+				$return .= '<br><span class="info-box-status amount">'.price($this->price).' '.$langs->trans("HT").'</span>';
 			}
 		}
 		$br = 1;
-		if (!empty($this->stock_reel) && $this->isProduct()) {
+		if ($this->isProduct()) {
 			$return .= '<br><div class="info-box-status opacitymedium inline-block valignmiddle">'.img_picto($langs->trans('PhysicalStock'), 'stock').'</div><div class="inline-block valignmiddle paddingleft" title="'.$langs->trans('PhysicalStock').'">'.$this->stock_reel.'</div>';
 			$br = 0;
 		}
