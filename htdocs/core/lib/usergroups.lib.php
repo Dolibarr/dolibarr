@@ -517,7 +517,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '<td>'.$langs->trans("DarkThemeMode").'</td>';
 		print '<td colspan="'.($colspan - 1).'">';
 		if ($edit) {
-			print $form->selectarray('THEME_DARKMODEENABLED', $listofdarkmodes, getDolGlobalInt('THEME_DARKMODEENABLED'));
+			print $form->selectarray('THEME_DARKMODEENABLED', $listofdarkmodes, getDolGlobalInt('THEME_DARKMODEENABLED'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth150 maxwidth250');
 		} else {
 			print $listofdarkmodes[getDolGlobalInt('THEME_DARKMODEENABLED')];
 		}
