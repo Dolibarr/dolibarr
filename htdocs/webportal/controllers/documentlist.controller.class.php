@@ -35,11 +35,11 @@ class DocumentListController extends AbstractDocumentController
 	}
 
 	/**
-	 * Action method is called before html output.
-	 *
-	 * @return int     <0 if KO, >0 if OK
-	 */
-	public function action(): int
+ 	* Action method is called before html output.
+ 	*
+ 	* @return int  <0 if KO, >0 if OK
+ 	*/
+		public function action(): int
 	{
 		global $langs;
 		$context = Context::getInstance();
