@@ -19,7 +19,7 @@ require_once __DIR__ . '/abstractdocument.controller.class.php';
  * Class for SharedDocumentsController
  *
  * @method void display404()
- * @method bool loadTemplate(string $templateName, mixed $vars = false)
+ * @method bool loadTemplate(string $templateName, false|mixed $vars = false)
  */
 class SharedDocumentsController extends AbstractDocumentController
 {
