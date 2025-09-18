@@ -37,9 +37,9 @@ class SharedDocumentsController extends AbstractDocumentController
 	/**
 	 * Action method is called before html output.
 	 *
-	 * @return  int     <0 if KO, >0 if OK
+	 * @return int     <0 if KO, >0 if OK
 	 */
-	public function action()
+	public function action(): int
 	{
 		global $langs;
 		$context = Context::getInstance();
@@ -82,7 +82,7 @@ class SharedDocumentsController extends AbstractDocumentController
 		$fileList = dol_dir_list($dir_ged_partage, 'files', 0, '', '', 'date', SORT_DESC);
 
 		// 2. Define the link builder function
-		$linkBuilder = function ($file) use ($shared_dir_relative_path) {
+		$linkBuilder = function (array $file) use ($shared_dir_relative_path) {
 			return DOL_URL_ROOT . '/document.php?modulepart=ecm&file=' . urlencode($shared_dir_relative_path . '/' . $file['name']);
 		};
 
