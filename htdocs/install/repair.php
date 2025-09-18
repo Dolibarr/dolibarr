@@ -1995,7 +1995,7 @@ if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 			LEFT JOIN ".MAIN_DB_PREFIX."facturedet fd
 				ON fd.fk_facture = f.rowid
 		WHERE f.total_ht = 0
-		GROUP BY fd.fk_facture HAVING SUM(fd.total_ht) != 0";
+		GROUP BY fd.fk_facture HAVING SUM(fd.total_ht) <> 0";
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
