@@ -74,18 +74,16 @@ if ($context->userIsLog()) {
 			'group' => 'administrative' // group identifier for the group if necessary
 		);
 	}
-	// Shared documents menu
-if (getDolGlobalInt('WEBPORTAL_SHARED_DOCUMENT_ACCESS')) {
-    $navMenu['shared_documents'] = array(
-        'id' => 'shared_documents',
-        'rank' => 50,
-        // LA LIGNE CRUCIALE EST CI-DESSOUS :
-        'url' => $context->getControllerUrl('shareddocuments'), 
-        'name' => $langs->trans('SharedDocuments'),
-        'group' => 'administrative'
-    );
-}
-
+        // Shared documents menu
+	if (getDolGlobalInt('WEBPORTAL_SHARED_DOCUMENT_ACCESS')) {
+		$navMenu['shared_documents'] = array(
+			'id' => 'shared_documents',
+			'rank' => 50,
+			'url' => $context->getControllerUrl('shareddocuments'),
+			'name' => $langs->trans('SharedDocuments'),
+			'group' => 'administrative'
+		);
+	}
 
 	// menu member
 	$cardAccess = getDolGlobalString('WEBPORTAL_MEMBER_CARD_ACCESS');
