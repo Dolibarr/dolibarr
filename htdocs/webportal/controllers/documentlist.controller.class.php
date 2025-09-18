@@ -28,18 +28,18 @@ class DocumentListController extends AbstractDocumentController
 	 *
 	 * @return  bool
 	 */
-		public function checkAccess()
+	public function checkAccess()
 	{
 		$this->accessRight = getDolGlobalInt('WEBPORTAL_DOCUMENT_LIST_ACCESS');
 		return parent::checkAccess();
 	}
 
 	/**
- * Action method is called before HTML output.
- *
- * @return int Returns >0 on success, 0 if no action, <0 on error.
- */
-public function action(): int
+	 * Action method is called before HTML output.
+	 *
+	 * @return int Returns >0 on success, 0 if no action, <0 on error.
+	 */
+	public function action(): int
 	{
 		global $langs;
 		$context = Context::getInstance();
