@@ -1072,8 +1072,8 @@ class FactureFournisseur extends CommonInvoice
 					$line->id = $obj->rowid;
 					$line->rowid = $obj->rowid;
 					$line->description = $obj->description;
-					$line->date_start = $obj->date_start;
-					$line->date_end = $obj->date_end;
+					$line->date_start = $this->db->jdate($obj->date_start);
+					$line->date_end = $this->db->jdate($obj->date_end);
 
 					$line->product_ref = $obj->product_ref;
 					$line->ref = $obj->product_ref;
@@ -1229,8 +1229,11 @@ class FactureFournisseur extends CommonInvoice
 			if (empty($this->fk_project)) $this->fk_project = null;
 			else $this->fk_project = intval($this->fk_project);
 		}
+		if (isset($this->mode_reglement_id)) {
+			$this->mode_reglement_id = (int) $this->mode_reglement_id;
+		}
 		if (isset($this->cond_reglement_id)) {
-			$this->cond_reglement_id = trim($this->cond_reglement_id);
+			$this->cond_reglement_id = (int) $this->cond_reglement_id;
 		}
 		if (isset($this->note_private)) {
 			$this->note = trim($this->note_private);
@@ -1277,6 +1280,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " fk_facture_source=".($this->fk_facture_source ? ((int) $this->fk_facture_source) : "null").",";
 		$sql .= " vat_reverse_charge = ".($this->vat_reverse_charge != '' ? ((int) $this->db->escape($this->vat_reverse_charge)) : 0).",";
 		$sql .= " fk_projet=".(!empty($this->fk_project) ? ((int) $this->fk_project) : "null").",";
+		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? ((int) $this->mode_reglement_id) : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? ((int) $this->cond_reglement_id) : "null").",";
 		$sql .= " date_lim_reglement=".(dol_strlen($this->date_echeance) != 0 ? "'".$this->db->idate($this->date_echeance)."'" : 'null').",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
@@ -2439,6 +2443,7 @@ class FactureFournisseur extends CommonInvoice
 
 		if ($res < 1) {
 			$this->errors[] = $line->error;
+			$this->errors = array_merge($this->errors, $line->errors);
 		} else {
 			// Update total price into invoice record
 			$res = $this->update_price('1', 'auto', 0, $this->thirdparty);
@@ -3656,8 +3661,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->rowid = $obj->rowid;
 		$this->fk_facture_fourn = $obj->fk_facture_fourn;
 		$this->description		= $obj->description;
-		$this->date_start = $obj->date_start;
-		$this->date_end = $obj->date_end;
+		$this->date_start = $this->db->jdate($obj->date_start);
+		$this->date_end = $this->db->jdate($obj->date_end);
 		$this->product_ref		= $obj->product_ref;
 		$this->ref_supplier		= $obj->ref_supplier;
 		$this->product_desc		= $obj->product_desc;
@@ -4093,8 +4098,18 @@ class SupplierInvoiceLine extends CommonObjectLine
 				// End call triggers
 			}
 
-			$this->db->commit();
-			return $this->id;
+			if (!$error) {
+				$this->db->commit();
+				return $this->id;
+			}
+
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::insert ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+
+			$this->db->rollback();
+			return -1 * $error;
 		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
