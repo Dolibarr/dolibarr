@@ -1723,6 +1723,12 @@ parameters:
 			path: ../../../htdocs/bom/tpl/objectline_edit.tpl.php
 
 		-
+			message: '#^Variable \$dateSelector might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: ../../../htdocs/bom/tpl/objectline_edit.tpl.php
+
+		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
@@ -1761,6 +1767,12 @@ parameters:
 		-
 			message: '#^Variable \$permissiontoadd in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
+			count: 1
+			path: ../../../htdocs/bookcal/availabilities_card.php
+
+		-
+			message: '#^Variable \$soc might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/bookcal/availabilities_card.php
 
@@ -2127,7 +2139,7 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 3
+			count: 4
 			path: ../../../htdocs/comm/action/list.php
 
 		-
@@ -2684,6 +2696,12 @@ parameters:
 
 		-
 			message: '#^Property Commande\:\:\$socid \(int\) in isset\(\) is not nullable\.$#'
+			identifier: isset.property
+			count: 1
+			path: ../../../htdocs/commande/class/commande.class.php
+
+		-
+			message: '#^Property CommonObject\:\:\$shipping_method_id \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/commande/class/commande.class.php
@@ -9553,6 +9571,18 @@ parameters:
 			path: ../../../htdocs/core/tpl/contacts.tpl.php
 
 		-
+			message: '#^Variable \$conf might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: ../../../htdocs/core/tpl/document_actions_post_headers.tpl.php
+
+		-
+			message: '#^Variable \$db might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: ../../../htdocs/core/tpl/document_actions_post_headers.tpl.php
+
+		-
 			message: '#^Variable \$filearray might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -12735,7 +12765,7 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 33
+			count: 35
 			path: ../../../htdocs/main.inc.php
 
 		-
@@ -16177,6 +16207,12 @@ parameters:
 			path: ../../../htdocs/public/payment/newpayment.php
 
 		-
+			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
+			identifier: variable.undefined
+			count: 2
+			path: ../../../htdocs/public/payment/newpayment.php
+
+		-
 			message: '#^Variable \$invoice might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -16651,6 +16687,12 @@ parameters:
 			path: ../../../htdocs/public/webportal/tpl/menu.tpl.php
 
 		-
+			message: '#^Path in include\(\) "\.\./\.\./\.\./\.\./main\.inc\.php" is not a file or it does not exist\.$#'
+			identifier: include.fileNotFound
+			count: 1
+			path: ../../../htdocs/public/webportal/webportal.main.inc.php
+
+		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 1
@@ -16756,6 +16798,12 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 4
+			path: ../../../htdocs/reception/class/reception.class.php
+
+		-
+			message: '#^Property CommonObject\:\:\$shipping_method_id \(int\) in isset\(\) is not nullable\.$#'
+			identifier: isset.property
+			count: 2
 			path: ../../../htdocs/reception/class/reception.class.php
 
 		-
@@ -17819,6 +17867,12 @@ parameters:
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/societe/price.php
+
+		-
+			message: '#^Variable \$parameters might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: ../../../htdocs/societe/project.php
 
 		-
 			message: '#^Variable \$db might not be defined\.$#'
@@ -19019,6 +19073,12 @@ parameters:
 			identifier: equal.alwaysTrue
 			count: 1
 			path: ../../../htdocs/webportal/class/context.class.php
+
+		-
+			message: '#^Offset 0 on non\-empty\-list\<string\> in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: ../../../htdocs/webportal/class/html.formcardwebportal.class.php
 
 		-
 			message: '#^Result of && is always false\.$#'
