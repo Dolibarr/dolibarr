@@ -976,20 +976,12 @@ class pdf_octopus extends ModelePDFFactures
 						$sign = -1;
 					}
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
-					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
-					if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
-						if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
-							$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
-						} else {
-							$tvaligne = $sign * $object->lines[$i]->total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
-						}
-					} else {
-						if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
-							$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva;
-						} else {
-							$tvaligne = $sign * $object->lines[$i]->total_tva;
-						}
-					}
+                    // avec le INVOICE_USE_SITUATION = 2, le total_tva est ok en base, pas besoin de récupérer les situations précédentes
+                    if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
+                        $tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva;
+                    } else {
+                        $tvaligne = $sign * $object->lines[$i]->total_tva;
+                    }
 
 					$localtax1ligne = $object->lines[$i]->total_localtax1;
 					$localtax2ligne = $object->lines[$i]->total_localtax2;
@@ -1034,6 +1026,7 @@ class pdf_octopus extends ModelePDFFactures
 					}
 					$this->tva[$vatrate] += $tvaligne;	// ->tva is abandoned, we use now ->tva_array that is more complete
 					$vatcode = $object->lines[$i]->vat_src_code;
+                    
 					if (getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
 						if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['tot_ht'])) {
 							$this->tva_array[$vatrate . ($vatcode ? ' (' . $vatcode . ')' : '')]['tot_ht'] = 0;
@@ -1841,11 +1834,10 @@ class pdf_octopus extends ModelePDFFactures
 						}
 					}
 				}
-				//}
 
 				if (!getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
 					// VAT
-					foreach ($this->tva_array as $tvakey => $tvaval) {
+                    foreach ($this->tva_array as $tvakey => $tvaval) {
 						if ($tvakey != 0) {    // On affiche pas taux 0
 							$this->atleastoneratenotnull++;
 
