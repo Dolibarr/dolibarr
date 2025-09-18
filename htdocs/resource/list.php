@@ -45,7 +45,7 @@ $id				= GETPOSTINT('id');
 $action			= GETPOST('action', 'alpha');
 $massaction		= GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $confirm		= GETPOST('confirm', 'alpha');
-$toselect		= GETPOST('toselect', 'array');
+$toselect		= GETPOST('toselect', 'array:int');
 $contextpage	= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'interventionlist';
 
 $lineid			= GETPOSTINT('lineid');

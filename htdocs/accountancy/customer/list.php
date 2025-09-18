@@ -55,14 +55,14 @@ $langs->loadLangs(array("bills", "companies", "compta", "accountancy", "other", 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'accountancycustomerlist'; // To manage different context of search
 $optioncss = GETPOST('optioncss', 'alpha');
 
 $default_account = GETPOSTINT('default_account');
 
 // Select Box
-$mesCasesCochees = GETPOST('toselect', 'array');
+$mesCasesCochees = GETPOST('toselect', 'array:int');
 
 // Search Getpost
 $search_societe = GETPOST('search_societe', 'alpha');

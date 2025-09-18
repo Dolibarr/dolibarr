@@ -274,7 +274,7 @@ if (empty($reshook)) {
 			}
 			if (!$error && !empty($object->id) > 0) {
 				// Category association
-				$categories = GETPOST('categories', 'array');
+				$categories = GETPOST('categories', 'array:int');
 				$result = $object->setCategories($categories);
 				if ($result < 0) {
 					$langs->load("errors");
@@ -376,7 +376,7 @@ if (empty($reshook)) {
 				}
 			} else {
 				// Category association
-				$categories = GETPOST('categories', 'array');
+				$categories = GETPOST('categories', 'array:int');
 				$result = $object->setCategories($categories);
 				if ($result < 0) {
 					$error++;
