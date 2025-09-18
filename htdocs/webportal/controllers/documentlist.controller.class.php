@@ -1,34 +1,27 @@
 <?php
 /*
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- *
+ * Copyright (c) 2025       Schaffhauser sébastien      <sebastien@webmaster67.fr>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * the Free Software Foundation.
  */
+
+require_once __DIR__ . '/abstractdocument.controller.class.php';
 
 /**
  * \file        htdocs/webportal/controllers/documentlist.controller.class.php
  * \ingroup     webportal
- * \brief       This file is a controller for thirdparty's documents list (GED)
+ * \brief       This file is a controller for thirdparty's documents list (GED).
  */
 
 /**
  * Class for DocumentListController
  */
-class DocumentListController extends Controller
+class DocumentListController extends AbstractDocumentController
 {
     /**
-     * Check current access to controller
+     * Check access rights for this page.
      *
      * @return  bool
      */
@@ -39,38 +32,34 @@ class DocumentListController extends Controller
     }
 
     /**
-     * Action method is called before html output
-     * can be used to manage security and change context
+     * Action method is called before html output.
      *
-     * @return  int     Return integer < 0 on error, > 0 on success
+     * @return  int     <0 if KO, >0 if OK
      */
     public function action()
     {
         global $langs;
-
         $context = Context::getInstance();
         if (!$context->controllerInstance->checkAccess()) {
             return -1;
         }
 
-        // Load translation files required by the page
-        $langs->loadLangs(array('other'));
-
-        $context->title = $langs->trans('WebPortalDocumentListTitle');
-        $context->desc = $langs->trans('WebPortalDocumentListDesc');
+        $langs->loadLangs(array('other', 'webportal@webportal'));
+        $context->title = $langs->trans('MyDocuments');
+        $context->desc = $langs->trans('ListOfMyDocuments');
         $context->menu_active[] = 'document_list';
 
         return 1;
     }
 
     /**
-     * Display
+     * Build and display the page.
      *
      * @return  void
      */
     public function display()
     {
-        global $conf;
+        global $conf, $langs;
         $context = Context::getInstance();
         if (!$context->controllerInstance->checkAccess()) {
             $this->display404();
@@ -83,53 +72,27 @@ class DocumentListController extends Controller
 
         print '<main class="container">';
 
-       // We retrieve the connected third party from the context
         $thirdparty = $context->logged_thirdparty;
 
         if (!empty($thirdparty) && $thirdparty->id) {
-
-            echo '<h2>Documents Partagés</h2>';
-
-            // We use the client ID to find the folder name
-            $client_dir_name = $thirdparty->id;
-            
-            // We retrieve the ABSOLUTE path of the third party's GED directory
+            // 1. Prepare data
+            require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
+            $client_dir_name = dol_sanitizeFileName($thirdparty->ref);
             $dir_ged_tiers = $conf->societe->dir_output . '/' . $client_dir_name;
+            $fileList = dol_dir_list($dir_ged_tiers, 'files', 0, '', '', 'date', SORT_DESC);
 
-            // We retrieve the list of files in this directory
-            require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-            $liste_fichiers = dol_dir_list($dir_ged_tiers, 'files', 0, '', '', 'date', SORT_DESC);
+            // 2. Define the link builder function
+            $linkBuilder = function ($file) use ($client_dir_name) {
+                return DOL_URL_ROOT . '/document.php?modulepart=societe&attachment=1&file=' . urlencode($client_dir_name . '/' . $file['name']);
+            };
 
-            // We check if there are files and display them
-            if (is_array($liste_fichiers) && count($liste_fichiers) > 0) {
-                echo '<table class="table" width="100%">';
-                echo '<thead>';
-                echo '<tr>';
-                echo '<th>Fichier</th>';
-                echo '<th style="text-align: right; white-space: nowrap;">Taille</th>';
-                echo '<th style="text-align: right; white-space: nowrap;">Date Modification</th>';
-                echo '</tr>';
-                echo '</thead>';
-                echo '<tbody>';
-
-                foreach ($liste_fichiers as $fichier) {
-                    // We also use the ID to build the download link
-                    $lien_telechargement = DOL_URL_ROOT . '/document.php?modulepart=societe&attachment=1&file=' . urlencode($client_dir_name . '/' . $fichier['name']);
-
-                    echo '<tr>';
-                    echo '<td><a href="' . $lien_telechargement . '" target="_blank">' . htmlspecialchars($fichier['name']) . '</a></td>';
-                    echo '<td style="text-align: right;">' . dol_print_size($fichier['size']) . '</td>';
-                    echo '<td style="text-align: right;">' . dol_print_date($fichier['date'], 'dayhour') . '</td>';
-                    echo '</tr>';
-                }
-
-                echo '</tbody>';
-                echo '</table>';
-            } else {
-                echo '<p>Aucun document partagé n\'est disponible pour le moment.</p>';
-            }
-
-            echo '<br>';
+            // 3. Call the parent method to display the table
+            $this->displayDocumentTable(
+                $langs->trans('MyDocuments'),
+                $fileList,
+                $langs->trans('NoDocumentAvailable'),
+                $linkBuilder
+            );
         }
 
         print '</main>';
