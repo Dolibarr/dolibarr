@@ -31,7 +31,7 @@ class SharedDocumentsController extends Controller
 
         return 1;
     }
-
+   // Or int, bool, etc., depending on what the function returns
     public function display()
 {
     global $conf;
