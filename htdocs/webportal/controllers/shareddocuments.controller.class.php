@@ -18,8 +18,8 @@ require_once __DIR__ . '/abstractdocument.controller.class.php';
 /**
  * Class for SharedDocumentsController
  *
- * @method void display404()                     Inherited from Controller
- * @method void loadTemplate(string $template)    Inherited from Controller
+ * @method void display404()
+ * @method bool loadTemplate(string $templateName, mixed $vars = false)
  */
 class SharedDocumentsController extends AbstractDocumentController
 {
