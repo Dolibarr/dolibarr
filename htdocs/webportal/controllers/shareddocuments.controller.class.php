@@ -35,11 +35,11 @@ class SharedDocumentsController extends AbstractDocumentController
 	}
 
 	/**
-	 * Action method is called before html output.
-	 *
-	 * @return int  <0 if KO, >0 if OK
-	 */
-	public function action(): int
+ * Action method is called before HTML output.
+ *
+ * @return int Returns >0 on success, 0 if no action, <0 on error.
+ */
+public function action(): int
 	{
 		global $langs;
 		$context = Context::getInstance();
