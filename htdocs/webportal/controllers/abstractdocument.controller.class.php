@@ -66,4 +66,3 @@ abstract class AbstractDocumentController extends Controller
 
 		echo '<br>';
 	}
-}
