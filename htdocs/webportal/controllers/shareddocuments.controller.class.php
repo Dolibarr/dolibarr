@@ -28,7 +28,7 @@ class SharedDocumentsController extends AbstractDocumentController
 	 *
 	 * @return  bool
 	 */
-	public function checkAccess()
+		public function checkAccess()
 	{
 		$this->accessRight = getDolGlobalInt('WEBPORTAL_SHARED_DOCUMENT_ACCESS');
 		return parent::checkAccess();
