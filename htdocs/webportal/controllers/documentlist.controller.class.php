@@ -20,83 +20,83 @@ require_once __DIR__ . '/abstractdocument.controller.class.php';
  */
 class DocumentListController extends AbstractDocumentController
 {
-    /**
-     * Check access rights for this page.
-     *
-     * @return  bool
-     */
-    public function checkAccess()
-    {
-        $this->accessRight = getDolGlobalInt('WEBPORTAL_DOCUMENT_LIST_ACCESS');
-        return parent::checkAccess();
-    }
+	/**
+	 * Check access rights for this page.
+	 *
+	 * @return  bool
+	 */
+	public function checkAccess()
+	{
+		$this->accessRight = getDolGlobalInt('WEBPORTAL_DOCUMENT_LIST_ACCESS');
+		return parent::checkAccess();
+	}
 
-    /**
-     * Action method is called before html output.
-     *
-     * @return  int     <0 if KO, >0 if OK
-     */
-    public function action()
-    {
-        global $langs;
-        $context = Context::getInstance();
-        if (!$context->controllerInstance->checkAccess()) {
-            return -1;
-        }
+	/**
+	 * Action method is called before html output.
+	 *
+	 * @return  int     <0 if KO, >0 if OK
+	 */
+	public function action()
+	{
+		global $langs;
+		$context = Context::getInstance();
+		if (!$context->controllerInstance->checkAccess()) {
+			return -1;
+		}
 
-        $langs->loadLangs(array('other', 'webportal@webportal'));
-        $context->title = $langs->trans('MyDocuments');
-        $context->desc = $langs->trans('ListOfMyDocuments');
-        $context->menu_active[] = 'document_list';
+		$langs->loadLangs(array('other', 'webportal@webportal'));
+		$context->title = $langs->trans('MyDocuments');
+		$context->desc = $langs->trans('ListOfMyDocuments');
+		$context->menu_active[] = 'document_list';
 
-        return 1;
-    }
+		return 1;
+	}
 
-    /**
-     * Build and display the page.
-     *
-     * @return  void
-     */
-    public function display()
-    {
-        global $conf, $langs;
-        $context = Context::getInstance();
-        if (!$context->controllerInstance->checkAccess()) {
-            $this->display404();
-            return;
-        }
+	/**
+	 * Build and display the page.
+	 *
+	 * @return  void
+	 */
+	public function display()
+	{
+		global $conf, $langs;
+		$context = Context::getInstance();
+		if (!$context->controllerInstance->checkAccess()) {
+			$this->display404();
+			return;
+		}
 
-        $this->loadTemplate('header');
-        $this->loadTemplate('menu');
-        $this->loadTemplate('hero-header-banner');
+		$this->loadTemplate('header');
+		$this->loadTemplate('menu');
+		$this->loadTemplate('hero-header-banner');
 
-        print '<main class="container">';
+		print '<main class="container">';
 
-        $thirdparty = $context->logged_thirdparty;
+		$thirdparty = $context->logged_thirdparty;
 
-        if (!empty($thirdparty) && $thirdparty->id) {
-            // 1. Prepare data
-            require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
-            $client_dir_name = dol_sanitizeFileName($thirdparty->ref);
-            $dir_ged_tiers = $conf->societe->dir_output . '/' . $client_dir_name;
-            $fileList = dol_dir_list($dir_ged_tiers, 'files', 0, '', '', 'date', SORT_DESC);
+		if (!empty($thirdparty) && $thirdparty->id) {
+			// 1. Prepare data
+			require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
+			$client_dir_name = dol_sanitizeFileName($thirdparty->ref);
+			$dir_ged_tiers = $conf->societe->dir_output . '/' . $client_dir_name;
+			$fileList = dol_dir_list($dir_ged_tiers, 'files', 0, '', '', 'date', SORT_DESC);
 
-            // 2. Define the link builder function
-            $linkBuilder = function ($file) use ($client_dir_name) {
-                return DOL_URL_ROOT . '/document.php?modulepart=societe&attachment=1&file=' . urlencode($client_dir_name . '/' . $file['name']);
-            };
+			// 2. Define the link builder function
+			$linkBuilder = function ($file) use ($client_dir_name) {
+				return DOL_URL_ROOT . '/document.php?modulepart=societe&attachment=1&file=' . urlencode($client_dir_name . '/' . $file['name']);
+			};
 
-            // 3. Call the parent method to display the table
-            $this->displayDocumentTable(
-                $langs->trans('MyDocuments'),
-                $fileList,
-                $langs->trans('NoDocumentAvailable'),
-                $linkBuilder
-            );
-        }
+			// 3. Call the parent method to display the table
+			$this->displayDocumentTable(
+				$langs->trans('MyDocuments'),
+				$fileList,
+				$langs->trans('NoDocumentAvailable'),
+				$linkBuilder
+			);
+		}
 
-        print '</main>';
+		print '</main>';
 
-        $this->loadTemplate('footer');
-    }
+		$this->loadTemplate('footer');
+	}
 }
