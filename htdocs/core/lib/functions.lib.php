@@ -15940,7 +15940,16 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'FactureFournisseur') {
 				$sql .= " AND a.fk_element = o.rowid";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
+					$sql .= " AND a.fk_element = " . ((int) $filterobj->id) . " AND a.elementtype = 'invoice_supplier'";
+				}
+			} else {
+
+				if (is_object($filterobj) && !empty($filterobj->element) && !empty($filterobj->id)) {
+					$sql .= " AND a.fk_element = o.rowid";
+					$sql .= " AND a.elementtype = '" . $db->escape($filterobj->element) . "'";
+					if ($filterobj->id) {
+						$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
+					}
 				}
 			} else {
 
