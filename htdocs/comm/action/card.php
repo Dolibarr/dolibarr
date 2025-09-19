@@ -174,9 +174,11 @@ if (getDolGlobalString('AGENDA_REMINDER_SMS')) {
 		'disabled' => (getDolGlobalString('MAIN_SMS_SENDMODE') ? 0 : 1),
 	];
 }
+$enablereminders = getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER') || getDolGlobalString('AGENDA_REMINDER_SMS');
 $parameters = [
 	'socid' => $socid,
-	'TRemindTypes' => &$TRemindTypes
+	'TRemindTypes' => &$TRemindTypes,
+	'enablereminders' => &$enablereminders,
 ];
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -1841,7 +1843,7 @@ if ($action == 'create') {
 	print '</table>';
 
 
-	if (getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER') || getDolGlobalString('AGENDA_REMINDER_SMS')) {
+	if ($enablereminders) {
 		//checkbox create reminder
 		print '<hr>';
 		print '<br>';
@@ -2401,7 +2403,7 @@ if ($id > 0 && $action != 'create') {
 		print '</table>';
 
 		// Reminders
-		if (getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER') || getDolGlobalString('AGENDA_REMINDER_SMS')) {
+		if ($enablereminders) {
 			$filteruserid = $user->id;
 			if ($user->hasRight('agenda', 'allactions', 'read')) {
 				$filteruserid = 0;
@@ -2840,7 +2842,7 @@ if ($id > 0 && $action != 'create') {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 		// Reminders
-		if (getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER') || getDolGlobalString('AGENDA_REMINDER_SMS')) {
+		if ($enablereminders) {
 			$filteruserid = $user->id;
 			if ($user->hasRight('agenda', 'allactions', 'read')) {
 				$filteruserid = 0;
