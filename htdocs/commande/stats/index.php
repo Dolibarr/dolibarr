@@ -371,7 +371,7 @@ print '</td></tr>';
 // Category commande
 if (isModEnabled('category')) {
 	$cat_type = '';
- 	$cat_label = '';
+	$cat_label = '';
 	if ($mode == 'customer') {
 		$cat_type = Categorie::TYPE_ORDER;
 		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("CustomersOrders"));
