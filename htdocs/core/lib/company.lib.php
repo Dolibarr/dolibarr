@@ -954,7 +954,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 		$langs->load("projects");
 
 		$newcardbutton = '';
-		if (isModEnabled('project') && $user->hasRight('projet', 'creer') && empty($nocreatelink)) {
+		if ($user->hasRight('projet', 'creer') && empty($nocreatelink)) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AddProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT . '/projet/card.php?socid=' . $object->id . '&action=create&backtopage=' . urlencode($backtopage));
 		}
 
@@ -1133,7 +1133,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 						// To verify role of users
 						$userAccess = $projecttmp->restrictedProjectArea($user);
 
-						if ($user->hasRight('projet', 'lire') && $userAccess > 0) {
+						if ($userAccess > 0) {
 							print '<tr class="oddeven">';
 
 							// Ref
