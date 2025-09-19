@@ -372,10 +372,10 @@ print '</td></tr>';
 if (isModEnabled('category')) {
 	$cat_type = '';
  	$cat_label = '';
- 	if ($mode == 'customer') {
+	if ($mode == 'customer') {
 		$cat_type = Categorie::TYPE_ORDER;
- 		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("CustomersOrders"));
- 	}
+		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("CustomersOrders"));
+	}
 	if ($mode == 'supplier') {
 		$cat_type = Categorie::TYPE_SUPPLIER_ORDER;
 		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("SuppliersOrders"));
