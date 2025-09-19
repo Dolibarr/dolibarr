@@ -15940,7 +15940,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'FactureFournisseur') {
 				$sql .= " AND a.fk_element = o.rowid";
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = " . ((int) $filterobj->id) . " AND a.elementtype = 'invoice_supplier'";
+					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
 			} else {
 
