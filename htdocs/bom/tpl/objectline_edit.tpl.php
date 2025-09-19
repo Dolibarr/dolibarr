@@ -5,7 +5,7 @@
  * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		    <florian.henry@open-concept.pro>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		Vincent Maury		    <vmaury@timgroup.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php";
  * @var BOMLine $line
  * @var CommonObject $this
  * @var CommonObject $object
- * @var Extrafields $extrafields
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Societe $buyer
  * @var Societe $seller

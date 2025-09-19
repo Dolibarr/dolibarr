@@ -991,15 +991,15 @@ class pdf_sponge extends ModelePDFFactures
 					}
 					$this->tva[$vatrate] += $tvaligne;    // ->tva is abandoned, we use now ->tva_array that is more complete
 					$vatcode = $object->lines[$i]->vat_src_code;
+					if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'])) {
+						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] = 0;
+					}
 					if (getDolGlobalInt('PDF_INVOICE_SHOW_VAT_ANALYSIS')) {
 						if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['tot_ht'])) {
 							$this->tva_array[$vatrate . ($vatcode ? ' (' . $vatcode . ')' : '')]['tot_ht'] = 0;
 						}
 						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate' => $vatrate, 'vatcode' => $vatcode, 'amount' => $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne, 'tot_ht' => $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['tot_ht'] + $object->lines[$i]->total_ht);
 					} else {
-						if (empty($this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'])) {
-							$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] = 0;
-						}
 						$this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')] = array('vatrate' => $vatrate, 'vatcode' => $vatcode, 'amount' => $this->tva_array[$vatrate.($vatcode ? ' ('.$vatcode.')' : '')]['amount'] + $tvaligne);
 					}
 
@@ -1142,6 +1142,8 @@ class pdf_sponge extends ModelePDFFactures
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
@@ -1643,7 +1645,7 @@ class pdf_sponge extends ModelePDFFactures
 			// If payment mode not forced or forced to VIR, show payment with BAN
 			if (empty($object->mode_reglement_code) || $object->mode_reglement_code == 'VIR') {
 				if ($object->fk_account > 0 || $object->fk_bank > 0 || getDolGlobalInt('FACTURE_RIB_NUMBER')) {
-					$bankid = ($object->fk_account <= 0 ? getDolGlobalInt('FACTURE_RIB_NUMBER') : $object->fk_account);
+					$bankid = ($object->fk_account <= 0 ? getDolGlobalInt('FACTURE_RIB_NUMBER') : (int) $object->fk_account);
 					if ($object->fk_bank > 0) {
 						$bankid = $object->fk_bank; // For backward compatibility when object->fk_account is forced with object->fk_bank
 					}

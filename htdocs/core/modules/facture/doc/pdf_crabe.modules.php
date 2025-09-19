@@ -919,6 +919,8 @@ class pdf_crabe extends ModelePDFFactures
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
@@ -1483,7 +1485,7 @@ class pdf_crabe extends ModelePDFFactures
 						$bankid = $object->fk_bank; // For backward compatibility when object->fk_account is forced with object->fk_bank
 					}
 					$account = new Account($this->db);
-					$account->fetch($bankid);
+					$account->fetch((int) $bankid);
 
 					$curx = $this->marge_gauche;
 					$cury = $posy;

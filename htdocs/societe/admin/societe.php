@@ -434,7 +434,7 @@ foreach ($arrayofmodules as $file => $modCodeTiers) {
 	print '<td>'.$modCodeTiers->info($langs).'</td>'."\n";
 	print '<td class="nowrap">'.$modCodeTiers->getExample($langs).'</td>'."\n";
 
-	if ($conf->global->SOCIETE_CODECLIENT_ADDON == (string) $file) {
+	if (getDolGlobalString('SOCIETE_CODECLIENT_ADDON') == (string) $file) {
 		print '<td class="center">'."\n";
 		print img_picto($langs->trans("Activated"), 'switch_on');
 		print "</td>\n";

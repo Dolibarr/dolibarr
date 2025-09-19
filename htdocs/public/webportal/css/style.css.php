@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,7 +76,7 @@ if (empty($dolibarr_nocache)) {
 @import "login.css";
 
 /**
-This file car overwrite default pico css
+This file can overwrite default pico css
  */
 
 
