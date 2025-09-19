@@ -175,7 +175,7 @@ if (getDolGlobalString('AGENDA_REMINDER_SMS')) {
 	];
 }
 $TDurationTypes = $form->TDurationTypes;
-$TDurationTypesExcluded = ['y', 'm'];
+$TDurationTypesExcluded = ['y', 'm', 's'];
 $enablereminders = getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER') || getDolGlobalString('AGENDA_REMINDER_SMS');
 $parameters = [
 	'socid' => $socid,
@@ -2445,7 +2445,7 @@ if ($id > 0 && $action != 'create') {
 			// Reminder
 			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
 			print '<input type="number" name="offsetvalue" class="width50" value="'.$actionCommReminder->offsetvalue.'"> ';
-			print $form->selectTypeDuration('offsetunit', $actionCommReminder->offsetunit, array('y', 'm'));
+			print $form->selectTypeDuration('offsetunit', $actionCommReminder->offsetunit, $TDurationTypesExcluded);
 			print '</td></tr>';
 
 			// Reminder Type

@@ -113,7 +113,7 @@ class Form
 			'w' => $langs->trans('Weeks'),
 			'd' => $langs->trans('Days'),
 			'h' => $langs->trans('Hours'),
-			'i' => $langs->trans('Minutes')
+			'i' => $langs->trans('Minutes'),
 		];
 	}
 
