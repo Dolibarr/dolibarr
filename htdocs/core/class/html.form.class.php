@@ -78,7 +78,7 @@ class Form
 	public $num;
 
 	/**
-	 * @var array{y:string,m:string,w:string,d:string,h:string,i:string} Types of durations
+	 * @var array{y:string,m:string,w:string,d:string,h:string,i:string,s:string} Types of durations
 	 */
 	public $TDurationTypes;
 
