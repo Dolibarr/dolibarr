@@ -1491,7 +1491,11 @@ class BOM extends CommonObject
 
 			$this->total_cost = (float) price2num($this->total_cost, 'MT');
 
-			$this->unit_cost = (float) price2num($this->total_cost / $this->qty, 'MU');
+			if ($this->qty > 0) {
+				$this->unit_cost = (float) price2num($this->total_cost / $this->qty, 'MU');
+			} elseif ($this->qty < 0) {	
+				$this->unit_cost = (float) price2num($this->total_cost * $this->qty, 'MU');	
+			}
 		}
 
 		return 1;
