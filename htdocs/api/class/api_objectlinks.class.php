@@ -159,7 +159,7 @@ class ObjectLinks extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight((string) $srctype, 'creer') && !DolibarrApiAccess::$user->hasRight((string) $srctype, 'write')) {
 			throw new RestException(403, 'denied access to create the objectlinks sourcetype='.$this->objectlink->sourcetype);
 		}
-		if (!DolibarrApiAccess::$user->hasRight((string) $tgttype, 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight((string) $tgttype, 'creer') && !DolibarrApiAccess::$user->hasRight((string) $tgttype, 'write')) {
 			throw new RestException(403, 'denied access to create the objectlinks targettype='.$this->objectlink->targettype);
 		}
 
