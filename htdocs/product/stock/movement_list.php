@@ -382,7 +382,7 @@ if ($action == "correct_stock" && $permissiontoadd) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 		$action = 'correction';
 	}
-	if (!is_numeric(GETPOST("nbpiece"))) {
+	if (!GETPOSTFLOAT("nbpiece")) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldMustBeANumeric", $langs->transnoentitiesnoconv("NumberOfUnit")), null, 'errors');
 		$action = 'correction';
@@ -572,7 +572,7 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 					$id,
 					GETPOSTFLOAT("nbpiece"),
 					1,
-					GETPOST("label", 'san_alpha'),
+					GETPOST("label", 'alphanohtml'),
 					(float) $pricesrc,
 					GETPOST('inventorycode', 'alphanohtml'),
 					'',
@@ -587,7 +587,7 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 					GETPOSTINT("id_entrepot_destination"),
 					GETPOSTFLOAT("nbpiece"),
 					0,
-					GETPOST("label", 'san_alpha'),
+					GETPOST("label", 'alphanohtml'),
 					(float) $pricedest,
 					GETPOST('inventorycode', 'alphanohtml'),
 					'',

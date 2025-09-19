@@ -186,7 +186,7 @@ class Categorie extends CommonObject
 	 */
 	public static $MAP_TYPE_TITLE_AREA = array(
 		'product'				=> 'Products',
-		'customer'				=> 'Customers',
+		'customer'				=> 'ProspectsOrCustomers',
 		'supplier'				=> 'Suppliers',
 		'member'				=> 'Members',
 		'contact'				=> 'Contacts',
@@ -2057,7 +2057,7 @@ class Categorie extends CommonObject
 		$filename = preg_replace('/'.preg_quote($dir, '/').'/i', '', $file); // Nom du fichier
 
 		// On efface l'image d'origine
-		dol_delete_file($file, 1);
+		dol_delete_file($file, 0); // do not use disableglob, ecmfiles will not be deleted
 
 		// Si elle existe, on efface la vignette
 		$regs = array();

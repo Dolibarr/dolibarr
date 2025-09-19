@@ -91,7 +91,7 @@ class DolibarrApiAccess implements iAuthenticate
 	public function __isAllowed()
 	{
 		// phpcs:enable
-		global $conf, $user;
+		global $conf, $db, $langs, $user;
 
 		$login = '';
 		$stored_key = '';
@@ -152,6 +152,56 @@ class DolibarrApiAccess implements iAuthenticate
 						// We must also reload global conf to get params from the entity
 						dol_syslog("Entity was not set on http header with HTTP_DOLAPIENTITY (recommended for performance purpose), so we switch now on entity of user (".$conf->entity.") and we have to reload configuration.", LOG_WARNING);
 						$conf->setValues($this->db);
+
+						// set global mysoc after setting conf entity (the entity can be changed with the user logged)
+						// see master.inc.php
+						require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
+						$fmysoc = new Societe($db);
+						$fmysoc->setMysoc($conf);
+
+						// We set some specific default values according to country
+						if ($fmysoc->country_code == 'DE' && !isset($conf->global->MAIN_INVERT_SENDER_RECIPIENT)) {
+							// For DE, we need to invert our address with customer address
+							$conf->global->MAIN_INVERT_SENDER_RECIPIENT = 1;
+						}
+						if ($fmysoc->country_code == 'FR' && !isset($conf->global->INVOICE_CATEGORY_OF_OPERATION)) {
+							// For FR, default value of option to show category of operations is on by default. Decret n°2099-1299 2022-10-07
+							$conf->global->INVOICE_CATEGORY_OF_OPERATION = 1;
+						}
+						if ($fmysoc->country_code == 'FR' && !isset($conf->global->INVOICE_DISABLE_REPLACEMENT)) {
+							// For FR, the replacement invoice type is not allowed.
+							// From an accounting point of view, this creates holes in the numbering of the invoice.
+							// This is very problematic during a fiscal control.
+							$conf->global->INVOICE_DISABLE_REPLACEMENT = 1;
+						}
+						if ($fmysoc->country_code == 'GR' && !isset($conf->global->INVOICE_DISABLE_REPLACEMENT)) {
+							// The replacement invoice type is not allowed in Greece.
+							$conf->global->INVOICE_DISABLE_REPLACEMENT = 1;
+						}
+						if ($fmysoc->country_code == 'GR' && !isset($conf->global->INVOICE_DISABLE_DEPOSIT)) {
+							// The deposit invoice type is not allowed in Greece.
+							$conf->global->INVOICE_DISABLE_DEPOSIT = 1;
+						}
+
+						if (($fmysoc->localtax1_assuj || $fmysoc->localtax2_assuj) && !isset($conf->global->MAIN_NO_INPUT_PRICE_WITH_TAX)) {
+							// For countries using the 2nd or 3rd tax, we disable input/edit of lines using the price including tax (because 2nb and 3rd tax not yet taken into account).
+							// Work In Progress to support all taxes into unit price entry when MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES is set.
+							$conf->global->MAIN_NO_INPUT_PRICE_WITH_TAX = 1;
+						}
+						// Set also the global variable $mysoc
+						$mysoc = $fmysoc;
+
+						// Reload langs
+						$langcode = (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT);
+						if (!empty($user->conf->MAIN_LANG_DEFAULT)) {
+							$langcode = $user->conf->MAIN_LANG_DEFAULT;
+						}
+						if ($langs->getDefaultLang() != $langcode) {
+							$langs->setDefaultLang($langcode);
+							$langs->tab_translate = array();
+							$langs->loadLangs(array('main'));
+						}
 					}
 				} elseif ($nbrows > 1) {
 					throw new RestException(503, 'Error when fetching user api_key : More than 1 user with this apikey');

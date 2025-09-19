@@ -242,6 +242,7 @@ if ($resql) {
 if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	print load_fiche_titre($langs->trans("AgendaModelModule"), '', '');
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">'."\n";
 	print '<tr class="liste_titre">'."\n";
 	print '<td width="100">'.$langs->trans("Name").'</td>'."\n";
@@ -333,7 +334,9 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 			}
 		}
 	}
-	print '</table><br>';
+	print '</table>';
+	print '</div>';
+	print '<br>';
 
 	print load_fiche_titre($langs->trans('MiscellaneousOptions'), '', '');
 }
@@ -343,6 +346,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" name="agenda">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set">';
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder allwidth">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
@@ -353,7 +357,7 @@ print '</tr>'."\n";
 // AGENDA_DEFAULT_VIEW
 print '<tr class="oddeven">'."\n";
 $htmltext = $langs->trans("ThisValueCanOverwrittenOnUserLevel", $langs->transnoentitiesnoconv("UserGUISetup"));
-print '<td>'.$form->textwithpicto($langs->trans("AGENDA_DEFAULT_VIEW"), $htmltext).'</td>'."\n";
+print '<td class="minwidth200onall">'.$form->textwithpicto($langs->trans("AGENDA_DEFAULT_VIEW"), $htmltext).'</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right parentonrightofpage">'."\n";
 $tmplist = array('' => '&nbsp;', 'show_list' => $langs->trans("ViewList"), 'show_month' => $langs->trans("ViewCal"), 'show_week' => $langs->trans("ViewWeek"), 'show_day' => $langs->trans("ViewDay"), 'show_peruser' => $langs->trans("ViewPerUser"));
@@ -423,6 +427,7 @@ $formactions->form_select_status_action('agenda', getDolGlobalString('AGENDA_DEF
 print '</td></tr>'."\n";
 
 print '</table>';
+print '</div>';
 
 print $form->buttonsSaveCancel("Save", '');
 

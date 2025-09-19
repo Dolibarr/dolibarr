@@ -714,24 +714,24 @@ $sql .= " AND a.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual v
 // Condition on actioncode
 if (!empty($actioncode)) {
 	if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
-		if ($actioncode == 'AC_NON_AUTO') {
+		if ((is_array($actioncode) && in_array('AC_NON_AUTO', $actioncode)) || $actioncode == 'AC_NON_AUTO') {
 			$sql .= " AND ca.type != 'systemauto'";
-		} elseif ($actioncode == 'AC_ALL_AUTO') {
+		} elseif ((is_array($actioncode) && in_array('AC_ALL_AUTO', $actioncode))	|| $actioncode == 'AC_ALL_AUTO') {
 			$sql .= " AND ca.type = 'systemauto'";
 		} else {
-			if ($actioncode == 'AC_OTH') {
+			if ((is_array($actioncode) && in_array('AC_OTH', $actioncode)) || $actioncode == 'AC_OTH') {
 				$sql .= " AND ca.type != 'systemauto'";
 			}
-			if ($actioncode == 'AC_OTH_AUTO') {
+			if ((is_array($actioncode) && in_array('AC_OTH_AUTO', $actioncode)) || $actioncode == 'AC_OTH_AUTO') {
 				$sql .= " AND ca.type = 'systemauto'";
 			}
 		}
 	} else {
-		if ($actioncode == 'AC_NON_AUTO') {
+		if ((is_array($actioncode) && in_array('AC_NON_AUTO', $actioncode)) || $actioncode === 'AC_NON_AUTO') {
 			$sql .= " AND ca.type != 'systemauto'";
-		} elseif ($actioncode == 'AC_ALL_AUTO') {
+		} elseif ((is_array($actioncode) && in_array('AC_ALL_AUTO', $actioncode))	|| $actioncode === 'AC_ALL_AUTO') {
 			$sql .= " AND ca.type = 'systemauto'";
-		} elseif ($actioncode !== '-1' && $actioncode !== '-3') {
+		} elseif ((is_array($actioncode) && !in_array('-1', $actioncode) && !in_array('-3', $actioncode)) || ($actioncode !== '-1' && $actioncode !== '-3')) {
 			if (is_array($actioncode)) {
 				foreach ($actioncode as $key => $val) {
 					if ($val == '-1' || $val == '-2') {
@@ -2297,7 +2297,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				if ($ev['busy']) {
 					$style1 = 'onclickopenref peruser_busy';
 				}
-				if ($ev['css']) {
+				if (!empty($ev['css'])) {
 					$style1 .= ' '.$ev['css'];
 				}
 			}
@@ -2317,7 +2317,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				if ($ev['busy']) {
 					$style2 = 'onclickopenref peruser_busy';
 				}
-				if ($ev['css']) {
+				if (!empty($ev['css'])) {
 					$style2 .= ' '.$ev['css'];
 				}
 			}
@@ -2337,7 +2337,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				if ($ev['busy']) {
 					$style3 = 'onclickopenref peruser_busy';
 				}
-				if ($ev['css']) {
+				if (!empty($ev['css'])) {
 					$style3 .= ' '.$ev['css'];
 				}
 			}
@@ -2357,7 +2357,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 				if ($ev['busy']) {
 					$style4 = 'onclickopenref peruser_busy';
 				}
-				if ($ev['css']) {
+				if (!empty($ev['css'])) {
 					$style4 .= ' '.$ev['css'];
 				}
 			}

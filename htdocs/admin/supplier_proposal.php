@@ -169,6 +169,7 @@ if ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_PROPOSAL') {
 }
 
 // Activate a model
+$reg = array();
 if ($action == 'set') {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 } elseif ($action == 'del') {
@@ -179,9 +180,7 @@ if ($action == 'set') {
 		}
 	}
 } elseif ($action == 'setdoc') {
-	if (dolibarr_set_const($db, "SUPPLIER_PROPOSAL_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
-		$conf->global->SUPPLIER_PROPOSAL_ADDON_PDF = $value;
-	}
+	dolibarr_set_const($db, "SUPPLIER_PROPOSAL_ADDON_PDF", empty($value) ? '' : $value, 'chaine', 0, '', $conf->entity);
 
 	// On active le modele
 	$ret = delDocumentModel($value, $type);
@@ -450,9 +449,10 @@ foreach ($dirmodels as $reldir) {
 								// Default
 								print '<td align="center">';
 								if ($conf->global->SUPPLIER_PROPOSAL_ADDON_PDF == "$name") {
-									print img_picto($langs->trans("Default"), 'on');
+									//print img_picto($langs->trans("Default"), 'on');
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value=0&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Default"), 'on').'</a>';
 								} else {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.urlencode($name).'&scan_dir='.urlencode($module->scandir).'&label='.urlencode($module->name).'" alt="'.$langs->trans("Disabled").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 								}
 								print '</td>';
 

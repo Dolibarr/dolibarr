@@ -782,13 +782,13 @@ foreach ($accounts as $key => $type) {
 				if (is_numeric($result) && $result < 0) {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 				} else {
-					print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&id='.$objecttmp->id.'&search_account='.$objecttmp->id.'&search_conciliated=0&contextpage=banktransactionlist">';
+					print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&sortfield=b.datev,b.dateo,b.rowid&sortorder=asc,asc,asc&id='.((int) $objecttmp->id).'&search_account='.((int) $objecttmp->id).'&search_conciliated=0&contextpage=banktransactionlist">';
 					print '<span class="badge badge-info classfortooltip" title="'.dol_htmlentities($langs->trans("TransactionsToConciliate")).'">';
 					print $result->nbtodo;
 					print '</span>';
 					print '</a>';
 					if ($result->nbtodolate) {
-						print '<span title="'.dol_htmlentities($langs->trans("Late")).'" class="classfortooltip badge badge-danger marginleftonlyshort">';
+						print '<span title="'.dol_htmlentities($langs->trans("Late")).'" class="classfortooltip badge badge-warning marginleftonlyshort">';
 						print '<i class="fa fa-exclamation-triangle"></i> '.$result->nbtodolate;
 						print '</span>';
 					}

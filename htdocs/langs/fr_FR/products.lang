@@ -457,5 +457,5 @@ StockEnabled=Stock activé
 GenerateImage=Générer une image
 GenerateWithAI=Générer avec l'IA
 PriceByCustomeAndMultiPricesAbility=Des prix différents pour chaque client + Plusieurs segments de prix par produit/service (chaque client est dans un segment de prix)
-WhenProductVirtualOnOptionAreForced=When virtual products option is on, automatic stock decrease is forced to 'Decrease real stocks on shipping validation' and automatic increase mode is forced to 'Increase real stocks on manual dispatching into warehouses' and can't be edited. Other options can be defined as you want.
+WhenProductVirtualOnOptionAreForced=Lorsque l'option Gérer les Kits (Module Produit) est activée, certains modes de réduction ou d'augmentation automatique des stocks peuvent ne pas être disponibles. Les autres options n'ont pas de restriction.
 UpdatedRecently=Mis à jour récemment

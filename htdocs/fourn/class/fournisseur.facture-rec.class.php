@@ -151,7 +151,7 @@ class FactureFournisseurRec extends CommonInvoice
 	public $fk_project;
 
 	/**
-	 * @var int
+	 * @var ?int 	Payment method ID (cheque, cash, ...)
 	 */
 	public $mode_reglement_id;
 	/**
@@ -167,7 +167,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 */
 	public $cond_reglement_doc;
 	/**
-	 * @var int
+	 * @var int 	Payment term ID
 	 */
 	public $cond_reglement_id;
 

@@ -1235,6 +1235,9 @@ class FactureFournisseur extends CommonInvoice
 				$this->fk_project = (int) $this->fk_project;
 			}
 		}
+		if (isset($this->mode_reglement_id)) {
+			$this->mode_reglement_id = (int) $this->mode_reglement_id;
+		}
 		if (isset($this->cond_reglement_id)) {
 			$this->cond_reglement_id = (int) $this->cond_reglement_id;
 		}
@@ -1285,6 +1288,7 @@ class FactureFournisseur extends CommonInvoice
 		$sql .= " fk_facture_source=".($this->fk_facture_source ? ((int) $this->fk_facture_source) : "null").",";
 		$sql .= " vat_reverse_charge = ".($this->vat_reverse_charge != '' ? ((int) $this->vat_reverse_charge) : 0).",";
 		$sql .= " fk_projet=".(!empty($this->fk_project) ? ((int) $this->fk_project) : "null").",";
+		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? ((int) $this->mode_reglement_id) : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? ((int) $this->cond_reglement_id) : "null").",";
 		$sql .= " date_lim_reglement=".(dol_strlen((string) $this->date_echeance) != 0 ? "'".$this->db->idate($this->date_echeance)."'" : 'null').",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";

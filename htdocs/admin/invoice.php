@@ -334,6 +334,7 @@ foreach ($dirmodels as $reldir) {
 						$classname = "mod_facture_".$file;
 					}
 					// Check if there is a filter on country
+					$reg = array();
 					preg_match('/\-(.*)_(.*)$/', $classname, $reg);
 					if (!empty($reg[2]) && $reg[2] != strtoupper($mysoc->country_code)) {
 						continue;

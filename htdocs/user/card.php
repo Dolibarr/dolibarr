@@ -2633,7 +2633,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 			if (preg_match('/dolibarr/', $dolibarr_main_authentication) || preg_match('/forceuser/', $dolibarr_main_authentication)) {
 				if ($permissiontoeditpasswordandsee) {
-					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<input maxlength="128" type="password" class="flat" id="password" name="password" value="'.dol_escape_htmltag($object->pass).'" autocomplete="new-password">';
+					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<input maxlength="128" type="password" class="minwidth300 maxwidth400 widthcentpercentminusx" id="password" name="password" value="'.dol_escape_htmltag($object->pass).'" autocomplete="new-password">';
 					if (!empty($conf->use_javascript_ajax)) {
 						$valuetoshow .= img_picto((getDolGlobalString('USER_PASSWORD_GENERATED') === 'none' ? $langs->transnoentities('NoPasswordGenerationRuleConfigured') : $langs->transnoentities('Generate')), 'refresh', 'id="generate_password" class="paddingleft'.(getDolGlobalString('USER_PASSWORD_GENERATED') === 'none' ? ' opacitymedium' : ' linkobject').'"');
 					}
@@ -2743,7 +2743,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<td>';
 			print img_picto('', 'phoning', 'class="pictofixedwidth"');
 			if ($permissiontoedit && empty($object->ldap_sid)) {
-				print '<input type="text" name="office_phone" class="flat maxwidth200" value="'.$object->office_phone.'">';
+				print '<input type="text" name="office_phone" class="flat maxwidth200 widthcentpercentminusx" value="'.$object->office_phone.'">';
 			} else {
 				print '<input type="hidden" name="office_phone" value="'.$object->office_phone.'">';
 				print $object->office_phone;
@@ -2755,7 +2755,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<td>';
 			print img_picto('', 'phoning_mobile', 'class="pictofixedwidth"');
 			if ($permissiontoedit && empty($object->ldap_sid)) {
-				print '<input type="text" name="user_mobile" class="flat maxwidth200" value="'.$object->user_mobile.'">';
+				print '<input type="text" name="user_mobile" class="flat maxwidth200 widthcentpercentminusx" value="'.$object->user_mobile.'">';
 			} else {
 				print '<input type="hidden" name="user_mobile" value="'.$object->user_mobile.'">';
 				print $object->user_mobile;
@@ -2767,7 +2767,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<td>';
 			print img_picto('', 'phoning_fax', 'class="pictofixedwidth"');
 			if ($permissiontoedit && empty($object->ldap_sid)) {
-				print '<input type="text" name="office_fax" class="flat maxwidth200" value="'.$object->office_fax.'">';
+				print '<input type="text" name="office_fax" class="flat maxwidth200 widthcentpercentminusx" value="'.$object->office_fax.'">';
 			} else {
 				print '<input type="hidden" name="office_fax" value="'.$object->office_fax.'">';
 				print $object->office_fax;
@@ -2795,7 +2795,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 							print '<span class="fab '.$value['icon'].' pictofixedwidth"></span>';
 						}
 						if ($permissiontoedit && empty($object->ldap_sid)) {
-							print '<input type="text" name="'.$key.'" class="flat maxwidth200" value="'.(isset($object->socialnetworks[$key]) ? $object->socialnetworks[$key] : '').'">';
+							print '<input type="text" name="'.$key.'" class="flat maxwidth200 widthcentpercentminusx" value="'.(isset($object->socialnetworks[$key]) ? $object->socialnetworks[$key] : '').'">';
 						} else {
 							print '<input type="hidden" name="'.$key.'" value="'.$object->socialnetworks[$key].'">';
 							print $object->socialnetworks[$key];
@@ -2857,7 +2857,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if (isModEnabled('category') && $user->hasRight("categorie", "read")) {
 				print '<tr><td>'.$form->editfieldkey('Categories', 'usercats', '', $object, 0).'</td>';
 				print '<td>';
-				if (!$permissiontoedit) {
+				if ($permissiontoedit) {
 					print $form->selectCategories(Categorie::TYPE_USER, 'usercats', $object);
 				} else {
 					print $form->showCategories($object->id, Categorie::TYPE_USER, 1);

@@ -2160,9 +2160,9 @@ function dolPrintText($s)
  * To output a text inside an attribute, you can use dolPrintHTMLForAttribute() or dolPrintHTMLForTextArea() inside a textarea
  * With dolPrintHTML(), only content not already in HTML is encoded with HTML.
  *
- * @param	string	$s				String to print
- * @param	int		$allowiframe	Allow iframe tags
- * @return	string					String ready for HTML output (sanitized and escape)
+ * @param	int|float|string	$s				String to print
+ * @param	int					$allowiframe	Allow iframe tags
+ * @return	string								String ready for HTML output (sanitized and escape)
  * @see dolPrintHTMLForAttribute(), dolPrintHTMLFortextArea(), dolPrintText()
  */
 function dolPrintHTML($s, $allowiframe = 0)
@@ -2172,7 +2172,7 @@ function dolPrintHTML($s, $allowiframe = 0)
 
 	// dol_htmlentitiesbr encode all chars except "'" if string is not already HTML, but
 	// encode only special char like é but not &, <, >, ", ' if already HTML.
-	$stringWithEntitesForSpecialChar = dol_htmlentitiesbr($s);
+	$stringWithEntitesForSpecialChar = dol_htmlentitiesbr((string) $s);
 
 	return dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags($stringWithEntitesForSpecialChar, 1, 1, 1, $allowiframe)), 1, 1, 'common', 0, 1);
 }
@@ -2963,19 +2963,22 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 				$popuptab = 1;
 				$outmore .= '<div class="popuptabset wordwrap">'; // The css used to hide/show popup
 			}
-			$outmore .= '<div class="popuptab wordwrap" style="display:inherit;">';
+			$outmore_content = '';
+
 			if (isset($links[$i][2]) && $links[$i][2] == 'image') {
 				if (!empty($links[$i][0])) {
-					$outmore .= '<a class="tabimage'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+					$outmore_content .= '<a class="tabimage'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 				} else {
-					$outmore .= '<span class="tabspan">'.$links[$i][1].'</span>'."\n";
+					$outmore_content .= '<span class="tabspan">'.$links[$i][1].'</span>'."\n";
 				}
 			} elseif (!empty($links[$i][1])) {
-				$outmore .= '<a'.(!empty($links[$i][2]) ? ' id="'.$links[$i][2].'"' : '').' class="wordwrap inline-block'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'">';
-				$outmore .= preg_replace('/([a-z])\|([a-z])/i', '\\1 | \\2', $links[$i][1]); // Replace x|y with x | y to allow wrap on long composed texts.
-				$outmore .= '</a>'."\n";
+				$outmore_content .= '<a'.(!empty($links[$i][2]) ? ' id="'.$links[$i][2].'"' : '').' class="wordwrap inline-block'.($morecss ? ' '.$morecss : '').'" href="'.$links[$i][0].'">';
+				$outmore_content .= preg_replace('/([a-z])\|([a-z])/i', '\\1 | \\2', $links[$i][1]); // Replace x|y with x | y to allow wrap on long composed texts.
+				$outmore_content .= '</a>'."\n";
 			}
-			$outmore .= '</div>';
+			if ($outmore_content !== '') {
+				$outmore .= '<div class="popuptab wordwrap" style="display:inherit;">' . $outmore_content . '</div>';
+			}
 
 			$nbintab++;
 		}
@@ -7897,20 +7900,26 @@ function get_product_localtax_for_country($idprod, $local, $thirdpartytouse)
  */
 function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, $idprod = 0, $idprodfournprice = 0)
 {
-	global $conf, $db;
+	global $mysoc, $db;
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 	// Note: possible values for tva_assuj are 0/1 or franchise/reel
 	$seller_use_vat = ((is_numeric($thirdparty_seller->tva_assuj) && !$thirdparty_seller->tva_assuj) || (!is_numeric($thirdparty_seller->tva_assuj) && $thirdparty_seller->tva_assuj == 'franchise')) ? 0 : 1;
 
+	if (empty($thirdparty_seller->country_code)) {
+		$thirdparty_seller->country_code = $mysoc->country_code;
+	}
 	$seller_country_code = $thirdparty_seller->country_code;
 	$seller_in_cee = isInEEC($thirdparty_seller);
 
+	if (empty($thirdparty_buyer->country_code)) {
+		$thirdparty_buyer->country_code = $mysoc->country_code;
+	}
 	$buyer_country_code = $thirdparty_buyer->country_code;
 	$buyer_in_cee = isInEEC($thirdparty_buyer);
 
-	dol_syslog("get_default_tva: seller use vat=".$seller_use_vat.", seller country=".$seller_country_code.", seller in cee=".((string) (int) $seller_in_cee).", buyer vat number=".$thirdparty_buyer->tva_intra." buyer country=".$buyer_country_code.", buyer in cee=".((string) (int) $buyer_in_cee).", idprod=".$idprod.", idprodfournprice=".$idprodfournprice.", SERVICE_ARE_ECOMMERCE_200238EC=".(getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC') ? $conf->global->SERVICE_ARE_ECOMMERCE_200238EC : ''));
+	dol_syslog("get_default_tva: seller use vat=".$seller_use_vat.", seller country=".$seller_country_code.", seller in cee=".((string) (int) $seller_in_cee).", buyer vat number=".$thirdparty_buyer->tva_intra." buyer country=".$buyer_country_code.", buyer state=".$thirdparty_buyer->state_id." buyer in cee=".((string) (int) $buyer_in_cee).", idprod=".$idprod.", idprodfournprice=".$idprodfournprice.", SERVICE_ARE_ECOMMERCE_200238EC=".getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC'));
 
 	// If services are eServices according to EU Council Directive 2002/38/EC (http://ec.europa.eu/taxation_customs/taxation/vat/traders/e-commerce/article_1610_en.htm)
 	// we use the buyer VAT.
@@ -8076,6 +8085,18 @@ function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $id
 		return -1;
 	}
 
+	if (empty($thirdparty_seller->country_code)) {
+		$thirdparty_seller->country_code = $mysoc->country_code;
+	}
+	$seller_country_code = $thirdparty_seller->country_code;
+	//$seller_in_cee = isInEEC($thirdparty_seller);
+
+	if (empty($thirdparty_buyer->country_code)) {
+		$thirdparty_buyer->country_code = $mysoc->country_code;
+	}
+	$buyer_country_code = $thirdparty_buyer->country_code;
+	//$buyer_in_cee = isInEEC($thirdparty_buyer);
+
 	if ($local == 1) { // Localtax 1
 		if ($mysoc->country_code == 'ES') {
 			if (is_numeric($thirdparty_buyer->localtax1_assuj) && !$thirdparty_buyer->localtax1_assuj) {
@@ -8100,7 +8121,7 @@ function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $id
 		}
 	}
 
-	if ($thirdparty_seller->country_code == $thirdparty_buyer->country_code) {
+	if ($seller_country_code == $buyer_country_code) {
 		return get_product_localtax_for_country($idprod, $local, $thirdparty_seller);
 	}
 
@@ -9359,6 +9380,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = '__THIRDPARTY_CODE_FOURNISSEUR__';
 				$substitutionarray['__THIRDPARTY_EMAIL__'] = '__THIRDPARTY_EMAIL__';
 				//$substitutionarray['__THIRDPARTY_EMAIL_URLENCODED__'] = '__THIRDPARTY_EMAIL_URLENCODED__';	// We hide this one
+				$substitutionarray['__THIRDPARTY_URL__'] = '__THIRDPARTY_URL__';
+				//$substitutionarray['__THIRDPARTY_URL_URLENCODED__'] = '__THIRDPARTY_URL_URLENCODED__';		// We hide this one
 				$substitutionarray['__THIRDPARTY_PHONE__'] = '__THIRDPARTY_PHONE__';
 				$substitutionarray['__THIRDPARTY_FAX__'] = '__THIRDPARTY_FAX__';
 				$substitutionarray['__THIRDPARTY_ADDRESS__'] = '__THIRDPARTY_ADDRESS__';
@@ -9544,6 +9567,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = $object->code_fournisseur ?? '';
 				$substitutionarray['__THIRDPARTY_EMAIL__'] = $object->email ?? '';
 				$substitutionarray['__THIRDPARTY_EMAIL_URLENCODED__'] = urlencode($object->email ?? '');
+				$substitutionarray['__THIRDPARTY_URL__'] = $object->url ?? '';
+				$substitutionarray['__THIRDPARTY_URL_URLENCODED__'] = urlencode($object->url ?? '');
 				$substitutionarray['__THIRDPARTY_PHONE__'] = dol_print_phone($object->phone ?? '');
 				$substitutionarray['__THIRDPARTY_FAX__'] = dol_print_phone($object->fax ?? '');
 				$substitutionarray['__THIRDPARTY_ADDRESS__'] = $object->address ?? '';
@@ -13955,7 +13980,7 @@ function getElementProperties($elementType)
 		$classname = 'CommandeFournisseurLigne';
 		$table_element = 'commande_fournisseurdet';
 		$parent_element = 'commande_fournisseur';
-	} elseif ($elementType == 'invoice_supplier' || $elementType == 'supplier_invoice') {
+	} elseif ($elementType == 'invoice_supplier' || $elementType == 'supplier_invoice' || $elementType == 'facture_fourn') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.facture';

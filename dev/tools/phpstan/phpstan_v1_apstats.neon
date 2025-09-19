@@ -23,7 +23,6 @@ parameters:
 		- htdocs/install/doctemplates/*
 		- htdocs/langs/*
 		- htdocs/modulebuilder/template/test/*
-		- htdocs/support/*
 		analyse:
 		- htdocs/includes/geoPHP/*
 		- htdocs/includes/markrogoyski/*

@@ -412,13 +412,13 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 						$appli .= " ".DOL_VERSION;
 					}
 
-					$to = $adh->makeSubstitution($conf->global->MAIN_INFO_SOCIETE_MAIL);
-					$from = getDolGlobalString('ADHERENT_MAIL_FROM');
+					$to = $adh->makeSubstitution(getDolGlobalString('MAIN_INFO_SOCIETE_MAIL'));
+					$from = getDolGlobalString('ADHERENT_MAIL_FROM', $conf->email_from);
 					$mailfile = new CMailFile(
 						'['.$appli.'] ' . getDolGlobalString('ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT'),
 						$to,
 						$from,
-						$adh->makeSubstitution($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL),
+						$adh->makeSubstitution(getDolGlobalString('ADHERENT_AUTOREGISTER_NOTIF_MAIL')),
 						array(),
 						array(),
 						array(),

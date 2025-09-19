@@ -406,7 +406,7 @@ $memberstatic = new Adherent($db);
 $now = dol_now();
 
 // Page Header
-$title = $langs->trans("Members")." - ".$langs->trans("List");
+$title = $langs->trans("Members");
 $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
 $morejs = array();
 $morecss = array();

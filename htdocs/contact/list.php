@@ -448,7 +448,7 @@ $contactstatic = new Contact($db);
 
 $now = dol_now();
 
-$title = $langs->trans("Contacts")." - ".$langs->trans("List");
+$title = $langs->trans("Contacts");
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:M&oacute;dulo_Empresas';
 $morejs = array();
 $morecss = array();

@@ -5671,8 +5671,10 @@ div.titre.small {
 	font-size: 1em;
 }
 div.fiche > table.table-fiche-title:first-of-type div, div.fiche > form > table.table-fiche-title:first-of-type div {
-	color: var(--colortexttitlenotab);
 	font-size: 1.1em;
+}
+div.fiche > table.table-fiche-title:first-of-type div {
+	color: var(--colortexttitlenotab);
 }
 div.titre {
 	color: var(--colortexttitlenotab);

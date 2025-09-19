@@ -1026,7 +1026,9 @@ if ($action == 'create') {
 		$classname = ucfirst($origin);
 
 		$object = new $classname($db);
+		/* @var Commande|Facture $object */
 		'@phan-var-force Commande|Facture $object';
+
 		if ($object->fetch($origin_id)) {	// This include the fetch_lines
 			$soc = new Societe($db);
 			$soc->fetch($object->socid);
@@ -1107,7 +1109,7 @@ if ($action == 'create') {
 			print '<tr><td>'.$langs->trans("DateDeliveryPlanned").'</td>';
 			print '<td colspan="3">';
 			print img_picto('', 'action', 'class="pictofixedwidth"');
-			$date_delivery = ($date_delivery ? $date_delivery : $object->date_delivery); // $date_delivery comes from GETPOST
+			$date_delivery = ($date_delivery ? $date_delivery : $object->delivery_date); // $date_delivery comes from GETPOST
 			print $form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
 			print "</td>\n";
 			print '</tr>';
@@ -1116,7 +1118,7 @@ if ($action == 'create') {
 			print '<tr><td>' . $langs->trans("DateShipping") . '</td>';
 			print '<td colspan="3">';
 			print img_picto('', 'action', 'class="pictofixedwidth"');
-			$date_shipping = ($date_shipping ? $date_shipping : $object->date_shipping); // $date_shipping comes from GETPOST
+			//$date_shipping = ($date_shipping ? $date_shipping : $object->date_shipping); // $date_shipping comes from GETPOST
 			print $form->selectDate($date_shipping ? $date_shipping : -1, 'date_shipping', 1, 1, 1);
 			print "</td>\n";
 			print '</tr>';
@@ -2823,7 +2825,7 @@ if ($action == 'create') {
 							}
 						}
 						print $form->textwithtooltip(img_picto('', 'object_stock').' '.$langs->trans("DetailWarehouseNumber"), $detail);
-					} elseif (count($lines[$i]->detail_children) > 1) {
+					} elseif (count($lines[$i]->detail_children ?? []) > 1) {
 						$detail = '';
 						foreach ($lines[$i]->detail_children as $child_product_id => $child_stock_list) {
 							foreach ($child_stock_list as $warehouse_id => $total_qty) {
