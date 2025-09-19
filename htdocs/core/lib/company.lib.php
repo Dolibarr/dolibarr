@@ -1133,7 +1133,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 						// To verify role of users
 						$userAccess = $projecttmp->restrictedProjectArea($user);
 
-						if ($user->rights->projet->lire && $userAccess > 0) {
+						if ($user->hasRight('projet', 'lire') && $userAccess > 0) {
 							print '<tr class="oddeven">';
 
 							// Ref

@@ -1653,8 +1653,6 @@ class User extends CommonObject
 	 */
 	public function delete(User $user)
 	{
-		global $conf, $langs;
-
 		$error = 0;
 
 		$this->db->begin();
@@ -1886,7 +1884,7 @@ class User extends CommonObject
 	public function create_from_contact($contact, $login = '', $password = '')
 	{
 		// phpcs:enable
-		global $conf, $user, $langs;
+		global $user;
 
 		$error = 0;
 
@@ -2105,7 +2103,7 @@ class User extends CommonObject
 	 */
 	public function update($user, $notrigger = 0, $nosyncmember = 0, $nosyncmemberpass = 0, $nosynccontact = 0)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		if (empty($this->country_id) && !empty($this->country_code)) {
 			$country_id = getCountry($this->country_code, '3');
@@ -2527,7 +2525,7 @@ class User extends CommonObject
 		if (empty($passwordalreadycrypted)) {
 			if (getDolGlobalString('USER_PASSWORD_GENERATED')) {
 				// Add a check on rules for password syntax using the setup of the password generator
-				$modGeneratePassClass = 'modGeneratePass'.ucfirst($conf->global->USER_PASSWORD_GENERATED);
+				$modGeneratePassClass = 'modGeneratePass'.ucfirst(getDolGlobalString('USER_PASSWORD_GENERATED'));
 
 				include_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/'.$modGeneratePassClass.'.class.php';
 				if (class_exists($modGeneratePassClass)) {
@@ -2861,7 +2859,7 @@ class User extends CommonObject
 	public function SetInGroup($group, $entity, $notrigger = 0)
 	{
 		// phpcs:enable
-		global $conf, $langs, $user;
+		global $langs, $user;
 
 		$error = 0;
 
@@ -2917,7 +2915,7 @@ class User extends CommonObject
 	public function RemoveFromGroup($group, $entity, $notrigger = 0)
 	{
 		// phpcs:enable
-		global $conf, $langs, $user;
+		global $langs, $user;
 
 		$error = 0;
 
@@ -3479,7 +3477,7 @@ class User extends CommonObject
 				$info[getDolGlobalString($constname)] = $this->$varname;
 
 				// Check if it is the LDAP key and if its value has been changed
-				if (getDolGlobalString('LDAP_KEY_USERS') && $conf->global->LDAP_KEY_USERS == getDolGlobalString($constname)) {
+				if (getDolGlobalString('LDAP_KEY_USERS') && gtDolGlobalString('LDAP_KEY_USERS') == getDolGlobalString($constname)) {
 					if (is_object($this->oldcopy) && !$this->oldcopy->isEmpty() && $this->$varname != $this->oldcopy->$varname) {
 						$keymodified = true; // For check if LDAP key has been modified
 					}
@@ -3586,7 +3584,7 @@ class User extends CommonObject
 			}
 		}
 		if (getDolGlobalString('LDAP_FIELD_HOMEDIRECTORY') && getDolGlobalString('LDAP_FIELD_HOMEDIRECTORYPREFIX')) {
-			$info[getDolGlobalString('LDAP_FIELD_HOMEDIRECTORY')] = "{$conf->global->LDAP_FIELD_HOMEDIRECTORYPREFIX}/$this->login";
+			$info[getDolGlobalString('LDAP_FIELD_HOMEDIRECTORY')] = getDolGlobalString('LDAP_FIELD_HOMEDIRECTORYPREFIX')."/".$this->login;
 		}
 
 		return $info;
@@ -3602,7 +3600,7 @@ class User extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		global $user, $langs;
+		global $user;
 
 		$now = dol_now();
 
@@ -3720,8 +3718,6 @@ class User extends CommonObject
 	 */
 	public function getNbOfUsers($limitTo, $option = '', $admin = -1)
 	{
-		global $conf;
-
 		$sql = "SELECT count(rowid) as nb";
 		$sql .= " FROM ".$this->db->prefix()."user";
 		if ($option == 'superadmin') {
@@ -3760,7 +3756,7 @@ class User extends CommonObject
 	{
 		// phpcs:enable
 		// TODO: Voir pourquoi le update met à jour avec toutes les valeurs vide (global $user écrase ?)
-		global $user, $conf;
+		global $user;
 
 		$socialnetworks = getArrayOfSocialNetworks();
 
@@ -3840,8 +3836,6 @@ class User extends CommonObject
 	 */
 	private function loadParentOf()
 	{
-		global $conf;
-
 		$this->parentof = array();
 
 		// Load array[child]=parent
@@ -4075,8 +4069,6 @@ class User extends CommonObject
 	 */
 	public function loadStateBoard()
 	{
-		global $conf;
-
 		$this->nb = array();
 
 		$sql = "SELECT COUNT(DISTINCT u.rowid) as nb";
@@ -4118,7 +4110,7 @@ class User extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $user, $langs;
+		global $langs;
 
 		$langs->load("user");
 

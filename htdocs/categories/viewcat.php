@@ -1457,7 +1457,7 @@ if ($type == Categorie::TYPE_FICHINTER) {
 if ($type == Categorie::TYPE_ORDER) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
-	$permission = $user->rights->commande->creer;
+	$permission = $user->hasRight('commande', 'creer');
 
 	$objects = $object->getObjectsInCateg($type, 0, $limit, $offset);
 	if ($objects < 0) {
@@ -1538,7 +1538,7 @@ if ($type == Categorie::TYPE_ORDER) {
 if ($type == Categorie::TYPE_INVOICE) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-	$permission = $user->rights->facture->creer;
+	$permission = $user->hasRight('facture', 'creer');
 
 	$objects = $object->getObjectsInCateg($type, 0, $limit, $offset);
 	if ($objects < 0) {
@@ -1619,7 +1619,7 @@ if ($type == Categorie::TYPE_INVOICE) {
 if ($type == Categorie::TYPE_SUPPLIER_ORDER) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
-	$permission = $user->rights->fournisseur->commande->creer;
+	$permission = $user->hasRight('fournisseur', 'commande', 'creer');
 
 	$objects = $object->getObjectsInCateg($type, 0, $limit, $offset);
 	if ($objects < 0) {
@@ -1701,7 +1701,7 @@ if ($type == Categorie::TYPE_SUPPLIER_ORDER) {
 if ($type == Categorie::TYPE_SUPPLIER_INVOICE) {
 	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
-	$permission = $user->rights->fournisseur->facture->creer;
+	$permission = $user->hasRight('fournisseur', 'facture', 'creer');
 
 	$objects = $object->getObjectsInCateg($type, 0, $limit, $offset);
 	if ($objects < 0) {

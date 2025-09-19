@@ -254,7 +254,7 @@ if (isModEnabled('eventorganization') && $user->hasRight('eventorganization', 'r
 if (isModEnabled('partnership') && $user->hasRight('partnership', 'read')) {
 	$elementList['partnership_send'] = img_picto('', 'partnership', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToPartnership'));
 }
-if (isModEnabled('product') && !empty($user->rights->produit->lire)) {
+if (isModEnabled('product') && $user->hasRight('produit', 'lire')) {
 	$elementList['product_send'] = img_picto('', 'product', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('Product'));
 }
 

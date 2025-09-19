@@ -4895,6 +4895,7 @@ function dol_print_ip($ip, $mode = 0, $showname = 0)
  *
  * @param	int		$trusted	0=Default, 1=Trusted value (the last IP that was not altered by client)
  * @return	string				Real IP of remote user.
+ * @see getBrowserInfo()
  */
 function getUserRemoteIP($trusted = 0)
 {
