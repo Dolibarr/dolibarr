@@ -177,7 +177,7 @@ if (empty($reshook)) {
 				if ($id > 0) {
 					setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 
-					$categories = GETPOST('categories', 'array');
+					$categories = GETPOST('categories', 'array:int');
 					$object->setCategories($categories);
 					if (!empty($backtopage)) {
 						$backtopage = str_replace("__ID__", (string) $id, $backtopage);
@@ -245,7 +245,7 @@ if (empty($reshook)) {
 				$action = 'edit';
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
-				$categories = GETPOST('categories', 'array');
+				$categories = GETPOST('categories', 'array:int');
 				$object->setCategories($categories);
 				$action = '';
 			}

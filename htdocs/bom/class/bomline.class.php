@@ -129,7 +129,7 @@ class BOMLine extends CommonObjectLine
 	public $qty;
 
 	/**
-	 * @var float qty frozen
+	 * @var int qty frozen (smallint in db)
 	 */
 	public $qty_frozen;
 
