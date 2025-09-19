@@ -370,22 +370,22 @@ print $formother->select_categories($cat_type, $categ_id, 'categ_id', 0, 1, 'wid
 print '</td></tr>';
 // Category commande
 if (isModEnabled('category')) {
- 	$cat_type = '';
+	$cat_type = '';
  	$cat_label = '';
  	if ($mode == 'customer') {
- 		$cat_type = Categorie::TYPE_ORDER;
+		$cat_type = Categorie::TYPE_ORDER;
  		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("CustomersOrders"));
  	}
 	if ($mode == 'supplier') {
 		$cat_type = Categorie::TYPE_SUPPLIER_ORDER;
- 		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("SuppliersOrders"));
+		$cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("SuppliersOrders"));
 	}
- 	print '<tr><td>'.$cat_label.'</td><td>';
- 	$cate_arbo = $form->select_all_categories($cat_type, '', 'parent', 0, 0, 1);
- 	print img_picto('', 'category', 'class="pictofixedwidth"');
- 	print $form->multiselectarray('select_categ_comande_id', $cate_arbo, GETPOST('select_categ_comande_id', 'array'), 0, 0, 'widthcentpercentminusx maxwidth300');
- 	//print $formother->select_categories($cat_type, $categ_id, 'categ_id', true);
- 	print '</td></tr>';
+	print '<tr><td>'.$cat_label.'</td><td>';
+	$cate_arbo = $form->select_all_categories($cat_type, '', 'parent', 0, 0, 1);
+	print img_picto('', 'category', 'class="pictofixedwidth"');
+	print $form->multiselectarray('select_categ_comande_id', $cate_arbo, GETPOST('select_categ_comande_id', 'array'), 0, 0, 'widthcentpercentminusx maxwidth300');
+	//print $formother->select_categories($cat_type, $categ_id, 'categ_id', true);
+	print '</td></tr>';
 }
 // User
 print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
