@@ -15705,20 +15705,6 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 	$sql = null;
 	$sql2 = null;
 
-	//MODIF PICHINOV
-	$sql_dict = "SELECT code FROM " . MAIN_DB_PREFIX . "c_messagingcompatibility WHERE active = 1";
-	$res_dict = $db->query($sql_dict);
-	$compatibleElements = array();
-	if ($res_dict) {
-		while ($obj_dict = $db->fetch_object($res_dict)) {
-			$compatibleElements[] = $obj_dict->code;
-		}
-	}
-
-	$element = is_object($filterobj) ? $filterobj->element : '';
-
-	// END MODIF
-
 	if (isModEnabled('agenda')) {
 		// Search histo on actioncomm
 		if (is_object($objcon) && $objcon->id > 0) {
@@ -15739,15 +15725,13 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			$sql .= ", sp.lastname, sp.firstname";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') {
 			$sql .= ", m.lastname, m.firstname";
-			// } elseif (is_object($filterobj) && in_array(get_class($filterobj), array('Commande', 'CommandeFournisseur', 'Product', 'Ticket', 'BOM', 'Contrat', 'Facture', 'FactureFournisseur', 'Propal', 'Expedition'))) {
-			// 	$sql .= ", o.ref";
-			// } else {
-
-		} elseif (is_object($filterobj) && !empty($filterobj->table_element) && !empty($filterobj->element) && !empty($filterobj->id) && !empty($filterobj->fields['ref'])) {
+		} elseif (is_object($filterobj) && in_array(get_class($filterobj), array('Commande', 'CommandeFournisseur', 'Product', 'Ticket', 'BOM', 'Contrat', 'Facture', 'FactureFournisseur', 'Propal', 'Expedition'))) {
 			$sql .= ", o.ref";
+		} else {
+			if (is_object($filterobj) && !empty($filterobj->table_element) && !empty($filterobj->element) && !empty($filterobj->id)) {
+				$sql .= ", o.ref";
+			}
 		}
-
-
 		$sql .= " FROM " . MAIN_DB_PREFIX . "actioncomm as a";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as u on u.rowid = a.fk_user_action";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_actioncomm as c ON a.fk_action = c.id";
@@ -15769,36 +15753,31 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			$sql .= " AND er.resource_id = " . ((int) $filterobj->id);
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') {
 			$sql .= ", " . MAIN_DB_PREFIX . "adherent as m";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') {
+			$sql .= ", " . MAIN_DB_PREFIX . "commande_fournisseur as o";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Product') {
+			$sql .= ", " . MAIN_DB_PREFIX . "product as o";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') {
+			$sql .= ", " . MAIN_DB_PREFIX . "ticket as o";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'BOM') {
+			$sql .= ", " . MAIN_DB_PREFIX . "bom_bom as o";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
+			$sql .= ", " . MAIN_DB_PREFIX . "contrat as o";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Facture') {
+			$sql .= ", " . MAIN_DB_PREFIX . "facture as o";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'FactureFournisseur') {
+			$sql .= ", " . MAIN_DB_PREFIX . "facture_fourn as o";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Commande') {
+			$sql .= ", " . MAIN_DB_PREFIX . "commande as o";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {
+			$sql .= ", " . MAIN_DB_PREFIX . "expedition as o";
+		} elseif (is_object($filterobj) && get_class($filterobj) == 'Propal') {
+			$sql .= ", " . MAIN_DB_PREFIX . "propal as o";
+		} else {
+			if (is_object($filterobj) && !empty($filterobj->table_element) && !empty($filterobj->element) && !empty($filterobj->id)) {
+				$sql .= ", " . MAIN_DB_PREFIX . $filterobj->table_element . " as o";
+			}
 		}
-		// elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') {
-		// 	$sql .= ", " . MAIN_DB_PREFIX . "commande_fournisseur	 as o";
-		// } elseif (is_object($filterobj) && get_class($filterobj) == 'Product') {
-		// 	$sql .= ", " . MAIN_DB_PREFIX . "product as o";
-		// } elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') {
-		// 	$sql .= ", " . MAIN_DB_PREFIX . "ticket as o";
-		// } elseif (is_object($filterobj) && get_class($filterobj) == 'BOM') {
-		// 	$sql .= ", " . MAIN_DB_PREFIX . "bom_bom as o";
-		// } elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
-		// 	$sql .= ", " . MAIN_DB_PREFIX . "contrat as o";
-		// } elseif (is_object($filterobj) && get_class($filterobj) == 'Facture') {
-		// 	$sql .= ", " . MAIN_DB_PREFIX . "facture as o";
-		// } elseif (is_object($filterobj) && get_class($filterobj) == 'FactureFournisseur') {
-		// 	$sql .= ", " . MAIN_DB_PREFIX . "facture_fourn as o";
-		// } elseif (is_object($filterobj) && get_class($filterobj) == 'Commande') {
-		// 	$sql .= ", " . MAIN_DB_PREFIX . "commande as o";
-		// } elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {
-		// 	$sql .= ", " . MAIN_DB_PREFIX . "expedition as o";
-		// } elseif (is_object($filterobj) && get_class($filterobj) == 'Propal') {
-		// 	$sql .= ", " . MAIN_DB_PREFIX . "propal as o";
-		// } else {
-
-
-
-		elseif (is_object($filterobj) && !empty($filterobj->table_element) && !empty($filterobj->element) && !empty($filterobj->id)) {
-
-			$sql .= ", " . MAIN_DB_PREFIX . $filterobj->table_element . " as o";
-		}
-
 
 		$sql .= " WHERE a.entity IN (" . getEntity('agenda') . ")";
 		if (!$force_filter_contact) {
@@ -15816,72 +15795,64 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
-				// } elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {
-				// 	$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'shipping'";
-				// 	if ($filterobj->id) {
-				// 		$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
-				// 	}
-				// } elseif (is_object($filterobj) && get_class($filterobj) == 'Propal') {
-				// 	$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'propal'";
-				// 	if ($filterobj->id) {
-				// 		$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
-				// 	}
-				// } elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') {
-				// 	$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
-				// 	if ($filterobj->id) {
-				// 		$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
-				// 	}
-				// } elseif (is_object($filterobj) && get_class($filterobj) == 'Product') {
-				// 	$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'product'";
-				// 	if ($filterobj->id) {
-				// 		$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
-				// 	}
-				// } elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') {
-				// 	$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'ticket'";
-				// 	if ($filterobj->id) {
-				// 		$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
-				// 	}
-				// } elseif (is_object($filterobj) && get_class($filterobj) == 'BOM') {
-				// 	$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'bom'";
-				// 	if ($filterobj->id) {
-				// 		$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
-				// 	}
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'Expedition') {
+				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'shipping'";
+				if ($filterobj->id) {
+					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
+				}
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'Propal') {
+				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'propal'";
+				if ($filterobj->id) {
+					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
+				}
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') {
+				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
+				if ($filterobj->id) {
+					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
+				}
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'Product') {
+				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'product'";
+				if ($filterobj->id) {
+					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
+				}
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') {
+				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'ticket'";
+				if ($filterobj->id) {
+					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
+				}
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'BOM') {
+				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'bom'";
+				if ($filterobj->id) {
+					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
+				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'contract'";
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
 				}
-				// } elseif (is_object($filterobj) && get_class($filterobj) == 'Contact' && $filterobj->id) {
-				// 	$sql .= " AND a.fk_contact = sp.rowid";
-				// 	if ($filterobj->id) {
-				// 		$sql .= " AND a.fk_contact = " . ((int) $filterobj->id);
-				// 	}
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'Contact' && $filterobj->id) {
+				$sql .= " AND a.fk_contact = sp.rowid";
+				if ($filterobj->id) {
+					$sql .= " AND a.fk_contact = " . ((int) $filterobj->id);
+				}
 			} elseif (is_object($filterobj) && get_class($filterobj) == 'Facture') {
 				$sql .= " AND a.fk_element = o.rowid";
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = " . ((int) $filterobj->id) . " AND a.elementtype = 'invoice'";
 				}
-				// } elseif (is_object($filterobj) && get_class($filterobj) == 'FactureFournisseur') {
-				// 	$sql .= " AND a.fk_element = o.rowid";
-				// 	if ($filterobj->id) {
-				// 		$sql .= " AND a.fk_element = " . ((int) $filterobj->id) . " AND a.elementtype = 'invoice_supplier'";
-				// 	}
-				// } else {
-
-
-			} elseif (is_object($filterobj) && !empty($filterobj->element) && !empty($filterobj->id)) {
-
-				// Jointure sur la table des registres
+			} elseif (is_object($filterobj) && get_class($filterobj) == 'FactureFournisseur') {
 				$sql .= " AND a.fk_element = o.rowid";
-
-				var_dump($filterobj->element);
-
-				// Filtre sur le type d'élément (en utilisant la valeur dynamique de l'objet)
-				$sql .= " AND a.elementtype = '" . $db->escape($filterobj->element) . "'";
-
-				// Filtre sur l'ID de l'enregistrement spécifique
 				if ($filterobj->id) {
-					$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
+					$sql .= " AND a.fk_element = " . ((int) $filterobj->id) . " AND a.elementtype = 'invoice_supplier'";
+				}
+			} else {
+
+				if (is_object($filterobj) && !empty($filterobj->element) && !empty($filterobj->id)) {
+					$sql .= " AND a.fk_element = o.rowid";
+					$sql .= " AND a.elementtype = '" . $db->escape($filterobj->element) . "'";
+					if ($filterobj->id) {
+						$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
+					}
 				}
 			}
 		} else {
