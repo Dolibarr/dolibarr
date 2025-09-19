@@ -156,6 +156,7 @@ if (GETPOSTINT("notolderthan")) {
 } else {
 	$filters['notolderthan'] = getDolGlobalString('MAIN_AGENDA_EXPORT_PAST_DELAY', 100);
 }
+// Max security limit by default to 1000
 if (GETPOSTINT("limit")) {
 	$filters['limit'] = GETPOSTINT("limit");
 } else {
