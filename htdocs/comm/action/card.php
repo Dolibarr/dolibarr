@@ -174,14 +174,7 @@ if (getDolGlobalString('AGENDA_REMINDER_SMS')) {
 		'disabled' => (getDolGlobalString('MAIN_SMS_SENDMODE') ? 0 : 1),
 	];
 }
-$TDurationTypes = [
-	'y' => $langs->trans('Years'),
-	'm' => $langs->trans('Month'),
-	'w' => $langs->trans('Weeks'),
-	'd' => $langs->trans('Days'),
-	'h' => $langs->trans('Hours'),
-	'i' => $langs->trans('Minutes'),
-];
+$TDurationTypes = $form->TDurationTypes;
 $TDurationTypesExcluded = ['y', 'm'];
 $enablereminders = getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER') || getDolGlobalString('AGENDA_REMINDER_SMS');
 $parameters = [

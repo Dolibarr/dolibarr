@@ -2611,9 +2611,8 @@ if ($id > 0) {
 							} elseif ($value == 'icon') {
 								$valuetoshow = $obj->{$value}." ".img_picto("", preg_replace('/^fa-/', '', $obj->{$value}));
 							} elseif ($value == 'type_duration') {
-								$TDurationTypes = array('y' => $langs->trans('Years'), 'm' => $langs->trans('Month'), 'w' => $langs->trans('Weeks'), 'd' => $langs->trans('Days'), 'h' => $langs->trans('Hours'), 'i' => $langs->trans('Minutes'));
-								if (!empty($obj->{$value}) && array_key_exists($obj->{$value}, $TDurationTypes)) {
-									$valuetoshow = $TDurationTypes[$obj->{$value}];
+								if (!empty($obj->{$value}) && array_key_exists($obj->{$value}, $form->TDurationTypes)) {
+									$valuetoshow = $form->TDurationTypes[$obj->{$value}];
 								}
 							} elseif (in_array($value, array('leftmargin', 'topmargin', 'spacex', 'spacey', 'width', 'height', 'custom_x', 'custom_y'))) {
 								$valuetoshow = price2num($valuetoshow);

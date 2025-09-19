@@ -17,7 +17,7 @@
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2022  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018       Christophe Battarel     <christophe@altairis.fr>
  * Copyright (C) 2018       Josep Lluis Amador      <joseplluis@lliuretic.cat>
@@ -77,6 +77,11 @@ class Form
 	/** @var int 	Number of line returned by method to generate combo select */
 	public $num;
 
+	/**
+	 * @var array{y:string,m:string,w:string,d:string,h:string,i:string,} Types of durations
+	 */
+	public $TDurationTypes;
+
 	// Cache arrays
 	public $cache_types_paiements = array();
 	public $cache_conditions_paiements = array();
@@ -98,7 +103,18 @@ class Form
 	 */
 	public function __construct($db)
 	{
+		global $langs;
+
 		$this->db = $db;
+
+		$this->TDurationTypes = [
+			'y' => $langs->trans('Years'),
+			'm' => $langs->trans('Month'),
+			'w' => $langs->trans('Weeks'),
+			'd' => $langs->trans('Days'),
+			'h' => $langs->trans('Hours'),
+			'i' => $langs->trans('Minutes')
+		];
 	}
 
 	/**
@@ -8083,22 +8099,13 @@ class Form
 	{
 		global $langs;
 
-		$TDurationTypes = array(
-			'y' => $langs->trans('Years'),
-			'm' => $langs->trans('Month'),
-			'w' => $langs->trans('Weeks'),
-			'd' => $langs->trans('Days'),
-			'h' => $langs->trans('Hours'),
-			'i' => $langs->trans('Minutes')
-		);
-
 		// Removed undesired duration types
 		foreach ($excludetypes as $value) {
-			unset($TDurationTypes[$value]);
+			unset($this->TDurationTypes[$value]);
 		}
 
 		$retstring = '<select class="flat minwidth75 maxwidth100" id="select_' . $prefix . 'type_duration" name="' . $prefix . 'type_duration">';
-		foreach ($TDurationTypes as $key => $typeduration) {
+		foreach ($this->TDurationTypes as $key => $typeduration) {
 			$retstring .= '<option value="' . $key . '"';
 			if ($key == $selected) {
 				$retstring .= " selected";
