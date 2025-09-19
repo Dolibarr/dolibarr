@@ -156,7 +156,7 @@ class CMailFile
 	public $headers;
 
 	/**
-	 * @var string Message
+	 * @var string|Swift_Message Message
 	 */
 	public $message;
 
@@ -716,7 +716,7 @@ class CMailFile
 			}
 
 			// Set the From address with an associative array
-			//$this->message->setFrom(array('john@doe.com' => 'John Doe'));
+			// $this->message->setFrom(array('john@doe.com' => 'John Doe'));
 			if (!empty($this->addr_from)) {
 				try {
 					if (getDolGlobalString('MAIN_FORCE_DISABLE_MAIL_SPOOFING')) {
@@ -725,7 +725,7 @@ class CMailFile
 						$adressEmailFrom = array();
 						$emailMatchs = preg_match_all($regexp, $from, $adressEmailFrom);
 						$adressEmailFrom = reset($adressEmailFrom);
-						if ($emailMatchs !== false && filter_var(getDolGlobalString('MAIN_MAIL_SMTPS_ID'), FILTER_VALIDATE_EMAIL) && getDolGlobalString('MAIN_MAIL_SMTPS_ID') !== $adressEmailFrom) {
+						if ($emailMatchs !== false && filter_var(getDolGlobalString('MAIN_MAIL_SMTPS_ID'), FILTER_VALIDATE_EMAIL) && getDolGlobalString('MAIN_MAIL_SMTPS_ID') !== $adressEmailFrom[0]) {
 							$this->message->setFrom(getDolGlobalString('MAIN_MAIL_SMTPS_ID'));
 						} else {
 							$this->message->setFrom($this->getArrayAddress($this->addr_from));
