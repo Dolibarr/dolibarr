@@ -114,6 +114,7 @@ class Form
 			'd' => $langs->trans('Days'),
 			'h' => $langs->trans('Hours'),
 			'i' => $langs->trans('Minutes'),
+			's' => $langs->trans('Seconds'),
 		];
 	}
 
