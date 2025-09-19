@@ -1272,7 +1272,7 @@ if ($resql) {
 		'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 		'presend' => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	);
-	if (isModEnabled('category') && $user->hasRight("fournisseur","commande" ,"lire")) {
+	if (isModEnabled('category') && $user->hasRight("fournisseur", "commande", "lire")) {
 		$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 	}
 	if ($permissiontovalidate) {
