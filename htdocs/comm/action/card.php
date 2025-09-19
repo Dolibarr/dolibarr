@@ -174,18 +174,25 @@ if (getDolGlobalString('AGENDA_REMINDER_SMS')) {
 		'disabled' => (getDolGlobalString('MAIN_SMS_SENDMODE') ? 0 : 1),
 	];
 }
+$TDurationTypes = [
+	'y' => $langs->trans('Years'),
+	'm' => $langs->trans('Month'),
+	'w' => $langs->trans('Weeks'),
+	'd' => $langs->trans('Days'),
+	'h' => $langs->trans('Hours'),
+	'i' => $langs->trans('Minutes'),
+];
 $enablereminders = getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER') || getDolGlobalString('AGENDA_REMINDER_SMS');
 $parameters = [
 	'socid' => $socid,
 	'TRemindTypes' => &$TRemindTypes,
 	'enablereminders' => &$enablereminders,
+	'TDurationTypes' => $TDurationTypes,
 ];
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
-
-$TDurationTypes = array('y' => $langs->trans('Years'), 'm' => $langs->trans('Month'), 'w' => $langs->trans('Weeks'), 'd' => $langs->trans('Days'), 'h' => $langs->trans('Hours'), 'i' => $langs->trans('Minutes'));
 
 $result = restrictedArea($user, 'agenda', $object, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
 
