@@ -215,7 +215,7 @@ if (empty($reshook)) {
 			$id = $object->create($user);
 			if ($id > 0) {
 				// Category association
-				$categories = GETPOST('categories', 'array');
+				$categories = GETPOST('categories', 'array:int');
 				$object->setCategories($categories);
 
 				$action = '';
@@ -329,7 +329,7 @@ if (empty($reshook)) {
 			$result = $object->update($user);
 			if ($result >= 0) {
 				// Category association
-				$categories = GETPOST('categories', 'array');
+				$categories = GETPOST('categories', 'array:int');
 				$object->setCategories($categories);
 
 				$id = GETPOSTINT("id"); // Force load of this page

@@ -3089,7 +3089,7 @@ class pdf_octopus extends ModelePDFFactures
 				// 2. recalculer la TVA associée à ce montant HT
 				// 3. le cas échéant stocker cette information comme travaux_sup si cette ligne n'est pas liée à une ligne de la situation précédente
 				foreach ($previousInvoice->lines as $k => $l) {
-					$total_ht = floatval($l->total_ht);
+					$total_ht = (float) $l->total_ht;
 					if (empty($total_ht)) {
 						continue;
 					}
@@ -3370,7 +3370,7 @@ class pdf_octopus extends ModelePDFFactures
 
 		// Scroll through the lines of the current invoice to retrieve all data
 		foreach ($object->lines as $k => $l) {
-			$total_ht = floatval($l->total_ht);
+			$total_ht = (float) $l->total_ht;
 			if (empty($total_ht)) {
 				continue;
 			}

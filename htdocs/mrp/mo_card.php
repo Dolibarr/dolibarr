@@ -64,7 +64,7 @@ $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'mocard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$TBomLineId = GETPOST('bomlineid', 'array');
+$TBomLineId = GETPOST('bomlineid', 'array:int');
 $lineid   = GETPOSTINT('lineid');
 $socid = GETPOSTINT("socid");
 

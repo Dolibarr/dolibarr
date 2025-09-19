@@ -61,7 +61,7 @@ $search_import_key = GETPOST('search_import_key', 'alpha');
 $search_reconcilable = GETPOST("search_reconcilable", 'int');
 $search_centralized = GETPOST("search_centralized", 'int');
 $search_active = GETPOST("search_active", 'int');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $confirm = GETPOST('confirm', 'alpha');
 

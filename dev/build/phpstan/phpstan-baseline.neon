@@ -1711,24 +1711,6 @@ parameters:
 			path: ../../../htdocs/bom/class/bom.class.php
 
 		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/bom/class/bom.class.php
-
-		-
-			message: '#^Property BOM\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/bom/class/bom.class.php
-
-		-
-			message: '#^Property BOM\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/bom/class/bom.class.php
-
-		-
 			message: '#^Call to function is_object\(\) with BOMLine will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
