@@ -245,9 +245,9 @@ class Context
 		$this->addControllerDefinition('invoicelist', $defaultControllersPath . 'invoicelist.controller.class.php', 'InvoiceListController');
 		$this->addControllerDefinition('membercard', $defaultControllersPath . 'membercard.controller.class.php', 'MemberCardController');
 		$this->addControllerDefinition('partnershipcard', $defaultControllersPath . 'partnershipcard.controller.class.php', 'PartnershipCardController');
-		//** ci-dessous l'ajout de DocumentListController ajout de fichiers par les documents joints du tiers
+		//** below the addition of DocumentListController adding files by third party attached documents
 		$this->addControllerDefinition('documentlist', $defaultControllersPath . 'documentlist.controller.class.php', 'DocumentListController');
-		//** ci dessous l'ajout sur le menu du controleur DocumentUtileController.class.php afin de partager via le GED ( documents) "Documentscomptes"
+		//** Below is the addition to the menu of the DocumentUtileController.class.php controller in order to share via the GED (documents) "Documentscomptes"
 		$this->addControllerDefinition('documentutile', $defaultControllersPath . 'documentutile.controller.class.php', 'DocumentUtileController');
 
 		// Hooks for init controller
