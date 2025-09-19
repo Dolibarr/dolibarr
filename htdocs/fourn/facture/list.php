@@ -975,7 +975,7 @@ if ($searchCategorySupplierInvoiceOperator == 1) {
 }
 foreach ($searchCategorySupplierInvoiceList as $searchCategorySupplierInvoice) {
 	$param .= "&search_category_invoice_list[]=".urlencode($searchCategorySupplierInvoice);
-} 
+}
 if ($search_montant_ht != '') {
 	$param .= '&search_montant_ht='.urlencode($search_montant_ht);
 }
@@ -1052,7 +1052,7 @@ $arrayofmassactions = array(
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 if (isModEnabled('category') && $user->hasRight("fournisseur", "facture", "lire")) {
- $arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
+	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
 }
 if (isModEnabled('paymentbybanktransfer') && $user->hasRight("paymentbybanktransfer", "create")) {
 	$langs->load('withdrawals');
@@ -1118,7 +1118,6 @@ if ($search_all) {
 $moreforfilter = '';
 if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
-	
 	$formcategory = new FormCategory($db);
 	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_SUPPLIER_INVOICE, $searchCategorySupplierInvoiceList, 'minwidth300', $searchCategorySupplierInvoiceOperator ? $searchCategorySupplierInvoiceOperator : 0);
 }
