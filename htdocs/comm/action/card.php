@@ -182,12 +182,14 @@ $TDurationTypes = [
 	'h' => $langs->trans('Hours'),
 	'i' => $langs->trans('Minutes'),
 ];
+$TDurationTypesExcluded = ['y', 'm'];
 $enablereminders = getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER') || getDolGlobalString('AGENDA_REMINDER_SMS');
 $parameters = [
 	'socid' => $socid,
 	'TRemindTypes' => &$TRemindTypes,
 	'enablereminders' => &$enablereminders,
-	'TDurationTypes' => $TDurationTypes,
+	'TDurationTypes' => &$TDurationTypes,
+	'TDurationTypesExcluded' => &$TDurationTypesExcluded,
 ];
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -1863,7 +1865,7 @@ if ($action == 'create') {
 		//Reminder
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
 		print '<input class="width50" type="number" name="offsetvalue" value="'.(GETPOSTISSET('offsetvalue') ? GETPOSTINT('offsetvalue') : getDolGlobalInt('AGENDA_REMINDER_DEFAULT_OFFSET', 30)).'"> ';
-		print $form->selectTypeDuration('offsetunit', 'i', array('y', 'm'));
+		print $form->selectTypeDuration('offsetunit', 'i', $TDurationTypesExcluded);
 		print '</td></tr>';
 
 		//Reminder Type
