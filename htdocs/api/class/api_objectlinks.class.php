@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2025		Jon Bendtsen<jon.bendtsen.github@jonb.dk>
+/* Copyright (C) 2025		Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
@@ -208,10 +208,10 @@ class ObjectLinks extends DolibarrApi
 			if ($this->objectlink->targettype == 'subscription') {
 				$tgttype = 'adherent';
 			}
-			if (!DolibarrApiAccess::$user->hasRight(((string) $srctype), 'lire')) {
+			if (!DolibarrApiAccess::$user->hasRight(((string) $srctype), 'lire') && !DolibarrApiAccess::$user->hasRight(((string) $srctype), 'read')) {
 				throw new RestException(403, 'denied access to the objectlinks sourcetype');
 			}
-			if (!DolibarrApiAccess::$user->hasRight(((string) $tgttype), 'lire')) {
+			if (!DolibarrApiAccess::$user->hasRight(((string) $tgttype), 'lire') && !DolibarrApiAccess::$user->hasRight(((string) $tgttype), 'read')) {
 				throw new RestException(403, 'denied access to the objectlinks targettype');
 			}
 		} else {
@@ -274,10 +274,10 @@ class ObjectLinks extends DolibarrApi
 		if ($this->objectlink->targettype == 'subscription') {
 			$tgttype = 'adherent';
 		}
-		if (!DolibarrApiAccess::$user->hasRight((string) $srctype, 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight((string) $srctype, 'creer') && !DolibarrApiAccess::$user->hasRight((string) $srctype, 'write')) {
 			throw new RestException(403, 'denied access to get the objectlinks sourcetype='.$this->objectlink->sourcetype);
 		}
-		if (!DolibarrApiAccess::$user->hasRight((string) $tgttype, 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight((string) $tgttype, 'creer') && !DolibarrApiAccess::$user->hasRight((string) $tgttype, 'write')) {
 			throw new RestException(403, 'denied access to get the objectlinks targettype='.$this->objectlink->targettype);
 		}
 
@@ -338,10 +338,10 @@ class ObjectLinks extends DolibarrApi
 		if ($this->objectlink->targettype == 'subscription') {
 			$tgttype = 'adherent';
 		}
-		if (!DolibarrApiAccess::$user->hasRight((string) $srctype, 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight((string) $srctype, 'creer') && !DolibarrApiAccess::$user->hasRight((string) $srctype, 'write')) {
 			throw new RestException(403, 'denied access to delete the objectlinks sourcetype='.$this->objectlink->sourcetype);
 		}
-		if (!DolibarrApiAccess::$user->hasRight((string) $tgttype, 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight((string) $tgttype, 'creer') && !DolibarrApiAccess::$user->hasRight((string) $tgttype, 'write')) {
 			throw new RestException(403, 'denied access to delete the objectlinks targettype='.$this->objectlink->targettype);
 		}
 
@@ -392,10 +392,10 @@ class ObjectLinks extends DolibarrApi
 			if ($this->objectlink->targettype == 'subscription') {
 				$tgttype = 'adherent';
 			}
-			if (!DolibarrApiAccess::$user->hasRight(((string) $srctype), 'lire')) {
+			if (!DolibarrApiAccess::$user->hasRight(((string) $srctype), 'lire') && !DolibarrApiAccess::$user->hasRight(((string) $srctype), 'read')) {
 				throw new RestException(403, 'denied access to the objectlinks sourcetype');
 			}
-			if (!DolibarrApiAccess::$user->hasRight(((string) $tgttype), 'lire')) {
+			if (!DolibarrApiAccess::$user->hasRight(((string) $tgttype), 'lire') && !DolibarrApiAccess::$user->hasRight(((string) $tgttype), 'read')) {
 				throw new RestException(403, 'denied access to the objectlinks targettype');
 			}
 		} else {
