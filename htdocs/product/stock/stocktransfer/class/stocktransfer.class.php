@@ -72,7 +72,7 @@ class StockTransfer extends CommonObject
 	public $ref_client;
 
 	/**
-	 * @var string Customer ref
+	 * @var ?string Customer ref
 	 */
 	public $ref_customer;
 

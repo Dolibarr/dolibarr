@@ -110,7 +110,7 @@ class Ticket extends CommonObject
 	public $message;
 
 	/**
-	 * @var string Private message
+	 * @var string If message is private
 	 */
 	public $private;
 
@@ -311,6 +311,8 @@ class Ticket extends CommonObject
 		'fk_user_assign' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'AssignedTo', 'visible' => 1, 'enabled' => 1, 'position' => 507, 'notnull' => 1, 'csslist' => 'tdoverflowmax100 maxwidth150onsmartphone'),
 		'date_close' => array('type' => 'datetime', 'label' => 'TicketCloseOn', 'visible' => -1, 'enabled' => 1, 'position' => 510, 'notnull' => 1),
 		'message' => array('type' => 'html', 'label' => 'Message', 'visible' => -2, 'enabled' => 1, 'position' => 540, 'notnull' => -1,),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 110),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 115),
 		'email_msgid' => array('type' => 'varchar(255)', 'label' => 'EmailMsgID', 'visible' => -2, 'enabled' => 1, 'position' => 540, 'notnull' => -1, 'help' => 'EmailMsgIDDesc', 'csslist' => 'tdoverflowmax100'),
 		'email_date' => array('type' => 'datetime', 'label' => 'EmailDate', 'visible' => -2, 'enabled' => 1, 'position' => 541),
 		'progress' => array('type' => 'integer', 'label' => 'Progression', 'visible' => -1, 'enabled' => 1, 'position' => 540, 'notnull' => -1, 'css' => 'right', 'help' => "", 'isameasure' => 1, 'csslist' => 'width50'),
@@ -520,6 +522,8 @@ class Ticket extends CommonObject
 			$sql .= "email_date,";
 			$sql .= "subject,";
 			$sql .= "message,";
+			$sql .= "note_private,";
+			$sql .= "note_public,";
 			$sql .= "fk_statut,";
 			$sql .= "resolution,";
 			$sql .= "progress,";
@@ -549,6 +553,8 @@ class Ticket extends CommonObject
 			$sql .= " ".(!isDolTms($this->email_date) ? 'NULL' : "'".$this->db->idate($this->email_date)."'").",";
 			$sql .= " ".(!isset($this->subject) ? 'NULL' : "'".$this->db->escape($this->subject)."'").",";
 			$sql .= " ".(!isset($this->message) ? 'NULL' : "'".$this->db->escape($this->message)."'").",";
+			$sql .= " ".(!isset($this->note_private) ? 'NULL' : "'".$this->db->escape($this->note_private)."'").",";
+			$sql .= " ".(!isset($this->note_public) ? 'NULL' : "'".$this->db->escape($this->note_public)."'").",";
 			$sql .= " ".(!isset($this->status) ? '0' : ((int) $this->status)).",";
 			$sql .= " ".(!isset($this->resolution) ? 'NULL' : ((int) $this->resolution)).",";
 			$sql .= " ".(!isset($this->progress) ? '0' : ((int) $this->progress)).",";
@@ -676,6 +682,8 @@ class Ticket extends CommonObject
 		$sql .= " t.email_date,";
 		$sql .= " t.subject,";
 		$sql .= " t.message,";
+		$sql .= " t.note_private,";
+		$sql .= " t.note_public,";
 		$sql .= " t.fk_statut as status,";
 		$sql .= " t.resolution,";
 		$sql .= " t.progress,";
@@ -733,6 +741,8 @@ class Ticket extends CommonObject
 				$this->email_date = $this->db->jdate($obj->email_date);
 				$this->subject = $obj->subject;
 				$this->message = $obj->message;
+				$this->note_private = $obj->note_private;
+				$this->note_public = $obj->note_public;
 				$this->model_pdf = $obj->model_pdf;
 				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 				$this->ip = $obj->ip;
@@ -812,6 +822,8 @@ class Ticket extends CommonObject
 		$sql .= " t.fk_user_assign, ua.lastname as user_assign_lastname, ua.firstname as user_assign_firstname,";
 		$sql .= " t.subject,";
 		$sql .= " t.message,";
+		$sql .= " t.note_private,";
+		$sql .= " t.note_public,";
 		$sql .= " t.fk_statut as status,";
 		$sql .= " t.resolution,";
 		$sql .= " t.progress,";
@@ -933,6 +945,8 @@ class Ticket extends CommonObject
 
 					$line->subject = $obj->subject;
 					$line->message = $obj->message;
+					$line->note_private = $obj->note_private;
+					$line->note_public = $obj->note_public;
 					$line->fk_statut = $obj->status;
 					$line->status = $obj->status;
 					$line->resolution = $obj->resolution;
@@ -1086,6 +1100,8 @@ class Ticket extends CommonObject
 		$sql .= " fk_user_assign=".(isset($this->fk_user_assign) ? (int) $this->fk_user_assign : "null").",";
 		$sql .= " subject=".(isset($this->subject) ? "'".$this->db->escape($this->subject)."'" : "null").",";
 		$sql .= " message=".(isset($this->message) ? "'".$this->db->escape($this->message)."'" : "null").",";
+		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
+		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " fk_statut=".(isset($this->status) ? (int) $this->status : "0").",";
 		$sql .= " resolution=".(isset($this->resolution) ? (int) $this->resolution : "null").",";
 		$sql .= " progress=".(isset($this->progress) ? "'".$this->db->escape((string) $this->progress)."'" : "null").",";

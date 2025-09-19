@@ -62,7 +62,7 @@ $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'alpha');
-$toselect   = GETPOST('toselect', 'array');
+$toselect   = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'invoicetemplatelist'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');					// if not set, a default page will be used
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
@@ -83,7 +83,7 @@ $projectid = GETPOSTINT('projectid');
 
 $year_date_when = GETPOST('year_date_when');
 $month_date_when = GETPOST('month_date_when');
-$selectedLines = GETPOST('toselect', 'array');
+$selectedLines = GETPOST('toselect', 'array:int');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -311,7 +311,7 @@ if (empty($reshook)) {
 			$oldinvoice = new Facture($db);
 			$oldinvoice->fetch(GETPOSTINT('facid'));
 
-			$onlylines = GETPOST('toselect', 'array');
+			$onlylines = GETPOST('toselect', 'array:int');
 
 			$result = $object->create($user, $oldinvoice->id, 0, $onlylines);
 			if ($result > 0) {

@@ -81,7 +81,7 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
@@ -104,7 +104,7 @@ if (GETPOSTISSET('formfilteraction')) {
 } elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
 	$searchCategoryProductOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
-$searchCategoryProductList = GETPOST('search_category_product_list', 'array');
+$searchCategoryProductList = GETPOST('search_category_product_list', 'array:int');
 $catid = GETPOSTINT('catid');
 if (!empty($catid) && empty($searchCategoryProductList)) {
 	$searchCategoryProductList = array($catid);
@@ -298,7 +298,7 @@ $arrayfields = array(
 if (! empty($conf->stock->enabled)) {
 	// service
 	if ($type == 1) {
-		if (! empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+		if (getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 			$arrayfields['p.stockable_product'] = array('label' => $langs->trans('StockableProduct'), 'checked' => '0', 'position' => 1001);
 		}
 	} else {

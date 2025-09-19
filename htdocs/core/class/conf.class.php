@@ -957,7 +957,6 @@ class Conf extends stdClass
 					}
 				}
 			}
-
 			if (!isset($this->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT)) {
 				$this->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT = 1;
 			}

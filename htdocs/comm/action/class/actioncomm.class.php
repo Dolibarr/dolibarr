@@ -2465,7 +2465,7 @@ class ActionComm extends CommonObject
 				$desc .= ' ('.$mysoc->name.' - built by Dolibarr)';
 			} else {
 				if (empty($title)) {
-					$title = 'Dolibarr actions '.$mysoc->name;
+					$title = $langs->transnoentities("Events").' '.$mysoc->name;
 				}
 				$desc = $langs->transnoentities('ListOfActions');
 				$desc .= ' ('.$mysoc->name.' - built by Dolibarr)';

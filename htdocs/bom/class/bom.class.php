@@ -144,7 +144,7 @@ class BOM extends CommonObject
 	public $ref;
 
 	/**
-	 * @var string label
+	 * @var ?string label
 	 */
 	public $label;
 
@@ -154,7 +154,7 @@ class BOM extends CommonObject
 	public $bomtype;
 
 	/**
-	 * @var string description
+	 * @var ?string description
 	 */
 	public $description;
 
@@ -184,12 +184,12 @@ class BOM extends CommonObject
 	public $fk_warehouse;
 
 	/**
-	 * @var string import key
+	 * @var ?string import key
 	 */
 	public $import_key;
 
 	/**
-	 * @var int status
+	 * @var ?int status
 	 */
 	public $status;
 
@@ -197,14 +197,17 @@ class BOM extends CommonObject
 	 * @var int product Id
 	 */
 	public $fk_product;
+
 	/**
 	 * @var float
 	 */
 	public $qty;
+
 	/**
 	 * @var float
 	 */
 	public $duration;
+
 	/**
 	 * @var float
 	 */
@@ -444,13 +447,13 @@ class BOM extends CommonObject
 	{
 		$this->lines = array();
 
-		$objectlineclassname = get_class($this).'Line';
+		$objectlineclassname = $this->class_element_line;
 		if (!class_exists($objectlineclassname)) {
-			$this->error = 'Error, class '.$objectlineclassname.' not found during call of fetchLinesCommon';
+			$this->error = 'Error, class BOMLine not found during call of fetchLinesCommon';
 			return -1;
 		}
 
-		$objectline = new $objectlineclassname($this->db);
+		$objectline = new BOMLine($this->db);
 
 		'@phan-var-force BOMLine $objectline';
 
@@ -470,7 +473,7 @@ class BOM extends CommonObject
 			while ($i < $num_rows) {
 				$obj = $this->db->fetch_object($resql);
 				if ($obj) {
-					$newline = new $objectlineclassname($this->db);
+					$newline = new BOMLine($this->db);
 					'@phan-var-force BOMLine $newline';
 					$newline->setVarsFromFetchObj($obj);
 
@@ -609,7 +612,7 @@ class BOM extends CommonObject
 		$logtext .= ", fk_bom_child=$fk_bom_child, import_key=$import_key";
 		dol_syslog(get_class($this).$logtext, LOG_DEBUG);
 
-		if ($this->statut == self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 			// Clean parameters
@@ -717,7 +720,7 @@ class BOM extends CommonObject
 		$logtext .= ", import_key=$import_key";
 		dol_syslog(get_class($this).$logtext, LOG_DEBUG);
 
-		if ($this->statut == self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 			// Clean parameters
@@ -936,7 +939,7 @@ class BOM extends CommonObject
 		$this->db->begin();
 
 		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+		if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 			$this->fetch_product();
 			$num = $this->getNextNumRef($this->product);
 		} else {
