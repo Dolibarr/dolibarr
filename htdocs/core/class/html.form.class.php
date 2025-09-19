@@ -4570,7 +4570,7 @@ class Form
 	/**
 	 * Loads into a cache property the list of possible rules for line dates
 	 *
-	 * @return <-1,1>		Return 1 if OK, -1 if empty
+	 * @return -1|1		Return 1 if OK, -1 if empty
 	 */
 	public function load_cache_rule_for_lines_dates()
 	{
