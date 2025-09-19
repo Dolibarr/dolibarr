@@ -306,11 +306,6 @@ class BOM extends CommonObject
 			$this->efficiency = 1;
 		}
 
-		if ($this->qty <= 0) {
-			$this->error = 'Quantity must be greater than 0';
-			return -1;
-		}
-
 		return $this->createCommon($user, $notrigger);
 	}
 
