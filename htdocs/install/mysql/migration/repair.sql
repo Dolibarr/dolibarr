@@ -323,9 +323,18 @@ drop table tmp_accounting_account_double;
 drop table tmp_commande_extrafields_double;
 --select fk_object, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_links where label is not null group by fk_object having count(rowid) >= 2;
 create table tmp_commande_extrafields_double as (select fk_object, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_commande_extrafields group by fk_object having count(rowid) >= 2);
---select * from tmp_links_double;
+--select * from tmp_commande_extrafields_double;
 delete from llx_commande_extrafields where (rowid) in (select max_rowid from tmp_commande_extrafields_double);	--update to avoid duplicate, delete to delete
 drop table tmp_commande_extrafields_double;
+
+
+-- Sequence to removed duplicated values of llx_c_transport_mode. Run several times if you still have duplicate.
+drop table tmp_c_transport_mode;
+--select code, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_c_transport_mode group by code having count(rowid) >= 2
+create table tmp_c_transport_mode as (select code, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_c_transport_mode group by code having count(rowid) >= 2);
+--select * from tmp_c_transport_mode;
+delete from llx_c_transport_mode where (rowid) in (select max_rowid from tmp_c_transport_mode);
+drop table tmp_c_transport_mode;
 
 
 UPDATE llx_projet_task SET fk_task_parent = 0 WHERE fk_task_parent = rowid;
@@ -697,3 +706,7 @@ DELETE FROM llx_const WHERE name = 'INVOICE_USE_RETAINED_WARRANTY' AND value = -
 DELETE FROM llx_hrm_skilldet WHERE rankorder = 0;
 
 UPDATE llx_c_tva SET type_vat = 0 WHERE type_vat < 0;
+
+-- We can't have this on by default because we may have old payment mode using something else than stripe and account matching the pk_xxx rule.
+--update llx_societe_rib set ext_payment_site = 'StripeLive' where stripe_account like '%pk_live%' AND ext_payment_site IS NULL;
+--update llx_societe_rib set ext_payment_site = 'StripeTest' where stripe_account like '%pk_test%' AND ext_payment_site IS NULL;

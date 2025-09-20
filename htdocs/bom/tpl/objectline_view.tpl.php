@@ -363,7 +363,7 @@ if ($resql) {
 			}
 
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'"><span class="amount">'.price(price2num($sub_bom_line->total_cost, 'MT')).'</span></td>';
-			$this->total_cost += $line->total_cost;
+			$total_cost += $line->total_cost;
 		} elseif ($sub_bom_product->cost_price > 0) {
 			print '<td class="linecolcost nowrap right" id="sub_bom_cost_'.$sub_bom_line->id.'">';
 			print '<span class="amount">'.price(price2num($sub_bom_product->cost_price * $sub_bom_line->qty * (float) $line->qty, 'MT')).'</span></td>';

@@ -28,8 +28,15 @@
 
 	<rule ref="Internal.NoCodeFound" />
 
-
 	<!-- Rules from Generic Standard -->
+	<!--
+	<rule ref="PSR12.Files.OpenTag">
+        <properties>
+            <property name="ignoreIndent" value="true"/>
+        </properties>
+    </rule>
+	<exclude name="PSR12.WhiteSpace.ScopeIndent"/>
+    -->
 
 	<!-- We want to allow empty statement: It allows to put some code comments into the else for examples -->
 	<rule ref="Generic.CodeAnalysis.EmptyStatement">
