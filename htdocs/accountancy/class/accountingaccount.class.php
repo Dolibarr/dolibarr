@@ -735,7 +735,7 @@ class AccountingAccount extends CommonObject
 	 * @param 	FactureLigne|SupplierInvoiceLine	$factureDet 		Facture Det
 	 * @param 	array<string,int>					$accountingAccount 	Array of Accounting account
 	 * @param 	string 								$type 				Customer / Supplier
-	 * @return	array{suggestedaccountingaccountbydefaultfor:string,suggestedaccountingaccountfor:string,suggestedid:?int,code_l:string,code_p:string,code_t:string}|int<-1,-1>	Array of accounting accounts suggested or < 0 if technical error.
+	 * @return	array{suggestedaccountingaccountbydefaultfor:''|'eec'|'eecwithoutvatnumber'|'eecwithvat'|'export',suggestedaccountingaccountfor:string,suggestedid:?int,code_l:string,code_p:string,code_t:string}|int<-1,-1>	Array of accounting accounts suggested or < 0 if technical error.
 	 * 																	'suggestedaccountingaccountbydefaultfor'=>Will be used for the label to show on tooltip for account by default on any product
 	 * 																	'suggestedaccountingaccountfor'=>Is the account suggested for this product
 	 */

@@ -2655,7 +2655,7 @@ class Product extends CommonObject
 							include_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 							$priceparser = new PriceParser($this->db);
 							$price_result = $priceparser->parseProductSupplier($prod_supplier);
-							if ($result >= 0) {
+							if ($price_result >= 0) {
 								$obj->price = $price_result;
 							}
 						}
@@ -3028,9 +3028,10 @@ class Product extends CommonObject
 			$sql .= " p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
 			$sql .= " p.fk_price_expression, p.price_autogen, p.stockable_product, p.model_pdf,";
 			$sql .= " p.price_label";
-			if (!$separatedStock) {
-				$sql .= ", p.stock";
-			}
+			// can't be false TODO fix
+			// if (!$separatedStock) {
+			// 	$sql .= ", p.stock";
+			// }
 		}
 
 		$resql = $this->db->query($sql);
@@ -4433,9 +4434,9 @@ class Product extends CommonObject
 			// $ids is 'D', 'N', 'O', 'S', ... (First letter of month in user language)
 			$idx = ucfirst(dol_trunc(dol_print_date(dol_mktime(12, 0, 0, $month, 1, 1970), "%b"), 1, 'right', 'UTF-8', 1));
 
-			//print $idx.'-'.$year.'-'.$month.'<br>';
+			// print $idx.'-'.$year.'-'.$month.'<br>';
 			$result[$j] = array($idx, isset($tab[$year.$month]) ? $tab[$year.$month] : 0);
-			//            $result[$j] = array($monthnum,isset($tab[$year.$month])?$tab[$year.$month]:0);
+			// $result[$j] = array($monthnum,isset($tab[$year.$month])?$tab[$year.$month]:0);
 
 			$month = "0".($month - 1);
 			if (dol_strlen($month) == 3) {
@@ -4884,9 +4885,9 @@ class Product extends CommonObject
 	 */
 	public function add_sousproduit($id_pere, $id_fils, $qty, $incdec = 1, $notrigger = 0)
 	{
+		// phpcs:enable
 		global $user;
 
-		// phpcs:enable
 		// Clean parameters
 		if (!is_numeric($id_pere)) {
 			$id_pere = 0;
@@ -4957,9 +4958,9 @@ class Product extends CommonObject
 	 */
 	public function update_sousproduit($id_pere, $id_fils, $qty, $incdec = 1, $notrigger = 0)
 	{
+		// phpcs:enable
 		global $user;
 
-		// phpcs:enable
 		// Clean parameters
 		if (!is_numeric($id_pere)) {
 			$id_pere = 0;
@@ -5009,9 +5010,9 @@ class Product extends CommonObject
 	 */
 	public function del_sousproduit($fk_parent, $fk_child, $notrigger = 0)
 	{
+		// phpcs:enable
 		global $user;
 
-		// phpcs:enable
 		if (!is_numeric($fk_parent)) {
 			$fk_parent = 0;
 		}
@@ -5242,6 +5243,7 @@ class Product extends CommonObject
 	 */
 	public function clone_price($fromId, $toId)
 	{
+		// phpcs:enable
 		global $user;
 
 		$now = dol_now();
@@ -5778,7 +5780,7 @@ class Product extends CommonObject
 				}
 				$labelsize = "";
 				if ($this->length) {
-					$labelsize .= ($labelsize ? " - " : "")."<b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuringUnitString(0, 'size', $this->length_units);
+					$labelsize .= "<b>".$langs->trans("Length").'</b>: '.$this->length.' '.measuringUnitString(0, 'size', $this->length_units);
 				}
 				if ($this->width) {
 					$labelsize .= ($labelsize ? " - " : "")."<b>".$langs->trans("Width").'</b>: '.$this->width.' '.measuringUnitString(0, 'size', $this->width_units);
@@ -5792,7 +5794,7 @@ class Product extends CommonObject
 
 				$labelsurfacevolume = "";
 				if ($this->surface) {
-					$labelsurfacevolume .= ($labelsurfacevolume ? " - " : "")."<b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuringUnitString(0, 'surface', $this->surface_units);
+					$labelsurfacevolume .= "<b>".$langs->trans("Surface").'</b>: '.$this->surface.' '.measuringUnitString(0, 'surface', $this->surface_units);
 				}
 				if ($this->volume) {
 					$labelsurfacevolume .= ($labelsurfacevolume ? " - " : "")."<b>".$langs->trans("Volume").'</b>: '.$this->volume.' '.measuringUnitString(0, 'volume', $this->volume_units);
@@ -6009,7 +6011,7 @@ class Product extends CommonObject
 	/**
 	 *    Return label of a given status
 	 *
-	 * @param  int 		$status 	Statut
+	 * @param  int 		$status 	Status
 	 * @param  int<0,6>	$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 * @param  int<0,2>	$type   	0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
 	 * @return string              	Label of status
