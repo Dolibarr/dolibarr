@@ -457,3 +457,17 @@ SampleGoaltwo=Encourage responsible and sustainable practices across all activit
 SampleGoalthree=Support impactful projects that benefit society as a whole.
 SHOW_LANG_SELECTOR=Display language selection dropdown
 ForAdvancedWebmastersOnly=For technical webmasters only
+# For WebPortal Document Features
+MyDocuments=My Documents
+ListOfMyDocuments=List of my personal documents.
+WebPortalDocumentListTitle=My Documents
+WebPortalDocumentListDesc=List of my documents.
+NoDocumentAvailable=No documents are available at the moment.
+SharedDocuments=Shared Documents
+ListOfSharedDocuments=List of documents shared with all clients.
+NoSharedDocumentAvailable=No shared documents are available at the moment.
+WEBPORTAL_DOCUMENT_LIST_ACCESS=Enable "My Documents" page
+WEBPORTAL_SHARED_DOCUMENT_ACCESS=Enable "Shared Documents" page
+WebPortalSharedDocsDir=Name of the shared documents directory
+WebPortalSharedDocsDirHelp=Enter the name of the directory, located in the ECM/GED folder, that contains the documents to be shared with all portal users.
+DateM=Modification Date
