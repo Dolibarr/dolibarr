@@ -6070,8 +6070,8 @@ class Product extends CommonObject
 				$labelStatus = $langs->transnoentitiesnoconv('ProductStatusOnBuyShort');
 				$labelStatusShort = $langs->transnoentitiesnoconv('ProductStatusOnBuy');
 			} elseif ($type == 2) {
-				$labelStatus = ($status == 1 ? $langs->transnoentitiesnoconv('ProductStatusOnBatch') : $langs->transnoentitiesnoconv('ProductStatusOnSerial'));
-				$labelStatusShort = ($status == 1 ? $langs->transnoentitiesnoconv('ProductStatusOnBatchShort') : $langs->transnoentitiesnoconv('ProductStatusOnSerialShort'));
+				$labelStatus = $langs->transnoentitiesnoconv('ProductStatusOnBatch');
+				$labelStatusShort = $langs->transnoentitiesnoconv('ProductStatusOnBatchShort');
 			}
 		} elseif ($type == 2 && $status == 2) {
 			$labelStatus = $langs->transnoentitiesnoconv('ProductStatusOnSerial');
