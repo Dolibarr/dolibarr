@@ -413,7 +413,7 @@ class Product extends CommonObject
 	/**
 	 * Status indicates whether the product is on sale '1' or not '0'
 	 *
-	 * @var int
+	 * @var ?int
 	 */
 	public $status = 0;
 
@@ -787,7 +787,7 @@ class Product extends CommonObject
 	/**
 	 * Array with list of sub-products for Kits
 	 *
-	 * @var array<string,array<int,array{0:int,1:float,2:int,3:string,4:int,5:string}>>
+	 * @var null|array<string,array<int,array{0:int,1:float,2:int,3:string,4:int,5:string}>>
 	 */
 	public $sousprods = array();
 
