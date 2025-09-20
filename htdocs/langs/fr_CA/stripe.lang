@@ -65,3 +65,4 @@ StripeConnect_Mode=Mode de connexion Stripe
 ExampleOnlyForBECustomers=Uniquement pour les clients belges
 ExampleOnlyForDECustomers=Uniquement pour les clients allemands
 ExampleOnlyForATBEDEITNLESCustomers=Uniquement pour les clients d'Autriche, de Belgique, d'Allemagne, d'Italie, des Pays-Bas et d'Espagne
+YourPaymentHasBeenRecorded=Cette page confirme que votre paiement a été enregistré. Je vous remercie.

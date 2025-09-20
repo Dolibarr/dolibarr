@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=Contabilitate
 Accounting=Contabilitate
+AccountingAccount=Cont contabil
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=Separator coloane pentru fisier export
 ACCOUNTING_EXPORT_DATE=Format date pentru fişiere export
 ACCOUNTING_EXPORT_PIECE=Export număr de piesă
@@ -193,7 +195,7 @@ DONATION_ACCOUNTINGACCOUNT=Cont contabil (din Planul de Conturi) care va fi util
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Cont contabil (din Planul de Conturi) care va fi utilizat pentru a înregistra abonamentele de membru (modulul de Membri - dacă calitatea de membru este înregistrată fără factură)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Contul contabil (din Planul de Conturi) va fi utilizat ca și cont implicit pentru a înregistra un depozit de la client 
 UseAuxiliaryAccountOnCustomerDeposit=Stochează contul de client ca și cont contabil individual în registrul subsidiar pentru liniile de avans (dacă este dezactivat, contul individual pentru liniile de avans va rămâne gol)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Cont (din Planul de Conturi) care va fi utilizat ca și cont implicit pentru înregistrarea depozitului furnizor
 UseAuxiliaryAccountOnSupplierDeposit=Stocare cont furnizor ca și cont individual în registrul subsidiar pentru liniile de avans (dacă este dezactivat, contul individual pentru liniile de avans va rămâne gol) 
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Cont contabil implicit pentru înregistrarea garanției reținute de la client
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cont contabil (din Planul de Conturi) care va fi utilizat ca și cont implicit pentru produsele achiziționate din aceeași țară (utilizat dacă nu este definit în fișa de produs)
@@ -278,7 +280,7 @@ PcgtypeDesc=Grupele de conturi sunt utilizate ca criterii predefinite de 'filtra
 AccountingCategoriesDesc=Grupul personalizat de conturi poate fi utilizat pentru a grupa conturile contabile într-un singur nume, pentru a facilita utilizarea filtrelor sau crearea de rapoarte personalizate.
 Reconcilable=Compensabil
 Centralized=Cont centralizat
-CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
+CentralizedAccountHelp=Când o tranzacție contabilă se înregistrează într-un cont centralizat, ți se permite, de asemenea, să înregistrezi un cont auxiliar mai precis pentru această tranzacție.
 TotalVente=Cifra de afaceri totală înainte de impozitare
 TotalMarge=Total marje vânzări
 DescVentilCustomer=Consultă aici lista liniilor de factură ale clienților asociate (sau nu) unui cont de produs din planul de conturi 

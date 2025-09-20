@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=Könyvelés
 Accounting=Számvitel
+AccountingAccount=Számviteli számla
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=Oszlop határoló az export fájlhoz
 ACCOUNTING_EXPORT_DATE=Az exportfájl dátumformátuma
 ACCOUNTING_EXPORT_PIECE=Darabszám exportálása

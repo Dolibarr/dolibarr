@@ -158,7 +158,7 @@ class pdf_squille extends ModelePdfReception
 			$outputlangs->charset_output = 'ISO-8859-1';
 		}
 
-		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "propal", "deliveries", "receptions", "productbatch", "sendings"));
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "propal", "receptions", "productbatch", "sendings"));
 
 		// Show Draft Watermark
 		if ($object->status == $object::STATUS_DRAFT && (getDolGlobalString('RECEPTION_DRAFT_WATERMARK'))) {
@@ -663,6 +663,8 @@ class pdf_squille extends ModelePdfReception
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);

@@ -70,7 +70,8 @@ function getListOfAIServices()
 		'chatgpt' => array(
 			'label' => 'ChatGPT',
 			'url' => 'https://api.openai.com/v1/',
-			'textgeneration' => 'gpt-3.5-turbo',		// a lot of text transformation like: 'textgenerationemail', 'textgenerationwebpage', 'textgeneration', 'texttranslation', 'textsummarize'
+			'setup' => 'https://platform.openai.com/account/api-keys',
+			'textgeneration' => 'gpt-4.1-turbo',		// a lot of text transformation like: 'textgenerationemail', 'textgenerationwebpage', 'textgeneration', 'texttranslation', 'textsummarize'
 			'imagegeneration' => 'dall-e-3',
 			'audiogeneration' => 'tts-1',
 			'videogeneration' => 'na',
@@ -80,6 +81,7 @@ function getListOfAIServices()
 		'groq' => array(
 			'label' => 'Groq',
 			'url' => 'https://api.groq.com/openai/',
+			'setup' => 'https://platform.groq.com/signup',
 			'textgeneration' => 'mixtral-8x7b-32768',	// 'llama3-8b-8192', 'gemma-7b-it'
 			'imagegeneration' => 'na',
 			'audiogeneration' => 'na',
@@ -90,6 +92,7 @@ function getListOfAIServices()
 		'mistral' => array(
 			'label' => 'Mistral',
 			'url' => 'https://api.mistral.ai/v1/',
+			'setup' => 'https://console.mistral.ai/',
 			'textgeneration' => 'open-mistral-7b',
 			'imagegeneration' => 'na',
 			'audiogeneration' => 'na',
@@ -100,6 +103,7 @@ function getListOfAIServices()
 		'custom' => array(
 			'label' => 'Custom',
 			'url' => 'https://domainofapi.com/v1/',
+			'setup' => 'Ask your AI provider how to get your API key',
 			'textgeneration' => 'tinyllama-1.1b',
 			'imagegeneration' => 'mixtral-8x7b-32768',
 			'audiogeneration' => 'mixtral-8x7b-32768',
@@ -178,6 +182,13 @@ function aiAdminPrepareHead()
 	$head[$h][1] = $langs->trans("CustomPrompt");
 	$head[$h][2] = 'custom';
 	$h++;
+
+	if (getDolGlobalString("MAIN_FEATURES_LEVEL") >= 2) {
+		$head[$h][0] = dol_buildpath("/ai/admin/server_mcp.php", 1);
+		$head[$h][1] = $langs->trans("MCPServer");
+		$head[$h][2] = 'servermcp';
+		$h++;
+	}
 
 	/*
 	$head[$h][0] = dol_buildpath("/ai/admin/myobject_extrafields.php", 1);

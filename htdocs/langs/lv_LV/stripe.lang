@@ -92,3 +92,19 @@ ExampleOnlyForDECustomers=Tikai Vācijas klientiem
 ExampleOnlyForNLCustomers=Tikai Nīderlandes klientiem
 ExampleOnlyForATBEDEITNLESCustomers=Tikai klientiem no Austrijas, Beļģijas, Vācijas, Itālijas, Nīderlandes, Spānijas
 ListOfSupportedHooksToActivate=List of supported hooks to activate
+# Paybox
+PayBoxSetup=PayBox moduļa iestatīšana
+PayBoxDesc=This module offer pages to allow payment on <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+PayBoxDoPayment=Pay with Paybox
+YouWillBeRedirectedOnPayBox=Jums tiks novirzīts uz drošu Paybox lapā, lai ievadi kredītkartes informāciju
+SetupPayBoxToHavePaymentCreatedAutomatically=Izveidojiet savu Paybox ar URL <b> %s </b>, lai maksājums tiktu izveidots automātiski, ja to apstiprina Paybox.
+YourPaymentHasBeenRecorded=Šajā lapā apliecina, ka jūsu maksājums ir reģistrēts. Paldies.
+YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
+PAYBOX_CGI_URL_V2=URL Paybox CGI modulis par samaksu
+NewPayboxPaymentReceived=Jauns Paybox maksājums saņemts
+NewPayboxPaymentFailed=Jauns Paybox maksājums mēģināju, bet neizdevās
+PAYBOX_PAYONLINE_SENDEMAIL=Email notification after payment attempt (success or fail)
+PAYBOX_PBX_SITE=Value for PBX SITE
+PAYBOX_PBX_RANG=Value for PBX Rang
+PAYBOX_PBX_IDENTIFIANT=Value for PBX ID
+PAYBOX_HMAC_KEY=HMAC key

@@ -169,3 +169,4 @@ ErrorModifyMoDateStart = You must choose a start date earlier than the current s
 ErrorModifyMoDateEnd = You must choose an end date later than the start date. %s
 ErrorCancelMo=Error updating cancellation
 ErrorModifyMoDate=Error updating date modification
+BOM_SUB_BOM=Use sub-boms

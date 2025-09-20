@@ -54,6 +54,12 @@ class Delivery extends CommonObject
 	public $element = "delivery";
 
 	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'DELIVERY';
+
+	/**
 	 * @var string Field with ID of parent key if this field has a parent
 	 */
 	public $fk_element = "fk_delivery";
@@ -79,12 +85,12 @@ class Delivery extends CommonObject
 	public $draft;
 
 	/**
-	 * @var int thirdparty id
+	 * @var ?int thirdparty id
 	 */
 	public $socid;
 
 	/**
-	 * @var string ref customer
+	 * @var ?string ref customer
 	 */
 	public $ref_customer;
 
@@ -156,8 +162,8 @@ class Delivery extends CommonObject
 		}
 
 		$error = 0;
-
 		$now = dol_now();
+		$this->ref_customer = trim((string) $this->ref_customer);
 
 		/* Delivery note as draft On positionne en mode draft le bon de livraison */
 		$this->draft = 1;
@@ -405,6 +411,11 @@ class Delivery extends CommonObject
 
 		dol_syslog(get_class($this)."::valid begin");
 
+		if (!isset($this->socid)) {
+			dol_syslog(get_class($this)."::can't valid socid not set", LOG_WARNING);
+			return 0;
+		}
+
 		$this->db->begin();
 
 		$error = 0;
@@ -423,13 +434,14 @@ class Delivery extends CommonObject
 					// Retrieving the new reference
 					$objMod = new $modName($this->db);
 					'@phan-var-force ModeleNumRefDeliveryOrder $objMod';
+					/** @var ModeleNumRefDeliveryOrder $objMod */
 					$soc = new Societe($this->db);
 					$soc->fetch($this->socid);
 
 					if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 						$numref = $objMod->getNextValue($soc, $this);
 					} else {
-						$numref = $this->ref;
+						$numref = (string) $this->ref;
 					}
 					$this->newref = dol_sanitizeFileName($numref);
 
@@ -762,7 +774,7 @@ class Delivery extends CommonObject
 	{
 		global $langs;
 
-		$langs->load('deliveries');
+		$langs->load('sendings');
 
 		$datas = [];
 
@@ -1125,9 +1137,9 @@ class Delivery extends CommonObject
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-		global $conf, $langs;
+		global $langs;
 
-		$langs->load("deliveries");
+		$langs->load("sendings");
 		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {

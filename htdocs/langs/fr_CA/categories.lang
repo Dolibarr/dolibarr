@@ -56,5 +56,6 @@ AddSupplierInvoiceIntoCategory=Attribuer la catégorie à la facture fournisseur
 UseOrOperatorForCategories=Utiliser l'opérateur « OU » pour les catégories
 AddObjectIntoCategory=Affecter à la catégorie
 AddTicketIntoCategory=Attribuer la catégorie au ticket
+CategorieListOfType=Les catégories (ou étiquettes) permettent de classer les objets gérés par l'application. Sélectionnez le type de catégories/étiquettes que vous souhaitez afficher ou modifier en cliquant sur le crayon.
 NumberOfCategories=Nombre de tags/catégories
 MyTag=Mon tag

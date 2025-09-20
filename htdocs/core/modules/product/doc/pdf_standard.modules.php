@@ -140,7 +140,7 @@ class pdf_standard extends ModelePDFProduct
 		}
 
 		// Load traductions files required by page
-		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "deliveries"));
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "orders", "sendings"));
 
 		if (is_array($object->lines)) {
 			$nblines = count($object->lines);
@@ -591,6 +591,8 @@ class pdf_standard extends ModelePDFProduct
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
