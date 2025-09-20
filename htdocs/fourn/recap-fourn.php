@@ -96,9 +96,15 @@ if ($socid > 0) {
 		// Invoice list
 		print load_fiche_titre($langs->trans("SupplierPreview"));
 
+		// Add parameter for sorting
+		$param = '';
+		if ($socid > 0) {
+			$param .= '&socid=' . $socid;
+		}
+
 		print '<table class="noborder tagtable liste centpercent">';
 		print '<tr class="liste_titre">';
-		print_liste_field_titre($langs->trans("Date"), $_SERVER["PHP_SELF"], "f.datef", "", "", 'align="center" class="nowrap"', $sortfield, $sortorder);
+		print_liste_field_titre($langs->trans("Date"), $_SERVER["PHP_SELF"], "f.datef", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 		print '<td>' . $langs->trans("Element") . '</td>';
 		print '<td>' . $langs->trans("Status") . '</td>';
 		print '<td class="right">' . $langs->trans("Debit") . '</td>';
