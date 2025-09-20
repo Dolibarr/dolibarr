@@ -4359,7 +4359,12 @@ if ($action == 'create') {
 	// For example print 239.2 - 229.3 - 9.9; does not return 0.
 	// $resteapayer=bcadd($object->total_ttc,$totalpaid,$conf->global->MAIN_MAX_DECIMALS_TOT);
 	// $resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
-	$resteapayer = price2num($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits - $object->prorata_discount * (1 + $object->total_tva / $object->total_ttc), 'MT');
+	if ($object->total_ttc) {
+		$avg_vat_rate = $object->total_tva / $object->total_ttc;
+	} else {
+		$avg_vat_rate = 0;
+	}
+	$resteapayer = price2num($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits - $object->prorata_discount * (1 + $avg_vat_rate), 'MT');
 
 	// Multicurrency
 	if (isModEnabled('multicurrency')) {
@@ -5246,7 +5251,7 @@ if ($action == 'create') {
 			// Amount VAT
 			print '<tr>';
 			print '<td class="titlefieldmiddle">' . $langs->trans('AmountVAT') . '</td>';
-			print '<td class="nowrap amountcard right">' . price(round($sign * $object->total_tva  - $object->prorata_discount * ($object->total_tva / $object->total_ttc), 2), '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+			print '<td class="nowrap amountcard right">' . price(round($sign * $object->total_tva  - $object->prorata_discount * ($avg_vat_rate), 2), '', $langs, 0, -1, -1, $conf->currency) . '</td>';
 			print '</tr>';
 
 
@@ -5354,7 +5359,7 @@ if ($action == 'create') {
 		print '<tr>';
 		// Amount TTC
 		print '<td>' . $langs->trans('AmountTTC') . '</td>';
-		print '<td class="nowrap amountcard right">' . price(round($object->total_ttc - $object->prorata_discount * (1 + $object->total_tva / $object->total_ttc), 2), '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+		print '<td class="nowrap amountcard right">' . price(round($object->total_ttc - $object->prorata_discount * (1 + $avg_vat_rate), 2), '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
 			// Multicurrency Amount TTC
 			print '<td class="nowrap amountcard right">' . price($sign * $object->multicurrency_total_ttc, '', $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
@@ -5762,7 +5767,7 @@ if ($action == 'create') {
 			print '<span class="opacitymedium">';
 			print $langs->trans("Billed");
 			if (getDolGlobalString('INVOICE_USE_SITUATION')) {
-				print '</td><td class="right">'.price(round($object->total_ttc - $object->prorata_discount * (1 + $object->total_tva / $object->total_ttc), 2)).'</td><td>&nbsp;</td></tr>';
+				print '</td><td class="right">'.price(round($object->total_ttc - $object->prorata_discount * (1 + $avg_vat_rate), 2)).'</td><td>&nbsp;</td></tr>';
 			} else {
 				print '</td><td class="right">'.price($object->total_ttc).'</td><td>&nbsp;</td></tr>';
 			}
