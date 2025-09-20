@@ -98,8 +98,6 @@ class Form
 	 */
 	public function __construct($db)
 	{
-		global $langs;
-
 		$this->db = $db;
 	}
 
