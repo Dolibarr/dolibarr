@@ -165,6 +165,7 @@ if (!defined('NOREQUIRESOC')) {
 /*
  * Create object $langs (must be before all other code)
  */
+$langs = null;
 if (!defined('NOREQUIRETRAN')) {
 	$langs = new Translate('', $conf); // Must be after reading conf
 }
