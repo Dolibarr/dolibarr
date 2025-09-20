@@ -2350,15 +2350,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '</tr>';
 			}
 
-			// Civility
-			print '<tr><td class="titlefieldcreate"><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td>';
-			if ($permissiontoedit && !$object->ldap_sid) {
-				print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'aZ09') : $object->civility_code, 'civility_code');
-			} elseif ($object->civility_code) {
-				print $langs->trans("Civility".$object->civility_code);
-			}
-			print '</td></tr>';
-
 			// Lastname
 			print "<tr>";
 			print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Lastname").'</td>';
@@ -2394,6 +2385,62 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 			print '</td>';
 			print '</tr>';
+
+			// External user ?
+			print '<tr><td>'.$langs->trans("ExternalUser").' ?</td>';
+			print '<td>';
+			if ($user->id == $object->id || !$user->admin) {
+				// Read mode
+				$type = $langs->trans("Internal");
+				if ($object->socid) {
+					$type = $langs->trans("External");
+				}
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+				print $form->textwithpicto($type, $langs->trans("InternalExternalDesc"));
+				if ($object->ldap_sid) {
+					print ' ('.$langs->trans("DomainUser").')';
+				}
+			} else {
+				// Select mode
+				$type = 0;
+				if ($object->contact_id) {
+					$type = $object->contact_id;
+				}
+
+				$eventsCompanyContact = array();
+				$eventsCompanyContact[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1&token='.currentToken(), 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
+				if ($object->socid > 0 && !($object->contact_id > 0)) {	// external user but no link to a contact
+					print img_picto('', 'company', 'class="pictofixedwidth"');
+					print $form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300');
+					print img_picto('', 'contact', 'class="pictofixedwidth"');
+					print $form->select_contact(0, 0, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
+					if ($object->ldap_sid) {
+						print ' ('.$langs->trans("DomainUser").')';
+					}
+				} elseif ($object->socid > 0 && $object->contact_id > 0) {	// external user with a link to a contact
+					print img_picto('', 'company', 'class="pictofixedwidth"');
+					print $form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
+					print img_picto('', 'contact', 'class="pictofixedwidth"');
+					print $form->select_contact(0, $object->contact_id, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
+					if ($object->ldap_sid) {
+						print ' ('.$langs->trans("DomainUser").')';
+					}
+				} elseif (!($object->socid > 0) && $object->contact_id > 0) {	// internal user with a link to a contact
+					print img_picto('', 'company', 'class="pictofixedwidth"');
+					print $form->select_company(0, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
+					print img_picto('', 'contact', 'class="pictofixedwidth"');
+					print $form->select_contact(0, $object->contact_id, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
+					if ($object->ldap_sid) {
+						print ' ('.$langs->trans("DomainUser").')';
+					}
+				} else {	// $object->socid is not > 0 here
+					print img_picto('', 'company', 'class="pictofixedwidth"');
+					print $form->select_company(0, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
+					print img_picto('', 'contact', 'class="pictofixedwidth"');
+					print $form->select_contact(0, 0, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
+				}
+			}
+			print '</td></tr>';
 
 			// Administrator
 			print '<tr><td>'.$form->textwithpicto($langs->trans("Administrator"), $langs->trans("AdministratorDesc")).'</td>';
@@ -2469,6 +2516,17 @@ if ($action == 'create' || $action == 'adduserldap') {
 					} else {
 						print $yn;
 					}
+				}
+				print '</td></tr>';
+			}
+
+			// Civility
+			if (getDolGlobalString('MAIN_USE_TITLE_FOR_USER')) {
+				print '<tr><td class="titlefieldcreate"><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td>';
+				if ($permissiontoedit && !$object->ldap_sid) {
+					print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'aZ09') : $object->civility_code, 'civility_code');
+				} elseif ($object->civility_code) {
+					print $langs->trans("Civility".$object->civility_code);
 				}
 				print '</td></tr>';
 			}
@@ -2553,62 +2611,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 					print "</tr>\n";
 				}
 			}
-
-			// External user ?
-			print '<tr><td>'.$langs->trans("ExternalUser").' ?</td>';
-			print '<td>';
-			if ($user->id == $object->id || !$user->admin) {
-				// Read mode
-				$type = $langs->trans("Internal");
-				if ($object->socid) {
-					$type = $langs->trans("External");
-				}
-				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-				print $form->textwithpicto($type, $langs->trans("InternalExternalDesc"));
-				if ($object->ldap_sid) {
-					print ' ('.$langs->trans("DomainUser").')';
-				}
-			} else {
-				// Select mode
-				$type = 0;
-				if ($object->contact_id) {
-					$type = $object->contact_id;
-				}
-
-				$eventsCompanyContact = array();
-				$eventsCompanyContact[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1&token='.currentToken(), 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
-				if ($object->socid > 0 && !($object->contact_id > 0)) {	// external user but no link to a contact
-					print img_picto('', 'company', 'class="pictofixedwidth"');
-					print $form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300');
-					print img_picto('', 'contact', 'class="pictofixedwidth"');
-					print $form->select_contact(0, 0, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
-					if ($object->ldap_sid) {
-						print ' ('.$langs->trans("DomainUser").')';
-					}
-				} elseif ($object->socid > 0 && $object->contact_id > 0) {	// external user with a link to a contact
-					print img_picto('', 'company', 'class="pictofixedwidth"');
-					print $form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
-					print img_picto('', 'contact', 'class="pictofixedwidth"');
-					print $form->select_contact(0, $object->contact_id, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
-					if ($object->ldap_sid) {
-						print ' ('.$langs->trans("DomainUser").')';
-					}
-				} elseif (!($object->socid > 0) && $object->contact_id > 0) {	// internal user with a link to a contact
-					print img_picto('', 'company', 'class="pictofixedwidth"');
-					print $form->select_company(0, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
-					print img_picto('', 'contact', 'class="pictofixedwidth"');
-					print $form->select_contact(0, $object->contact_id, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
-					if ($object->ldap_sid) {
-						print ' ('.$langs->trans("DomainUser").')';
-					}
-				} else {	// $object->socid is not > 0 here
-					print img_picto('', 'company', 'class="pictofixedwidth"');
-					print $form->select_company(0, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
-					print img_picto('', 'contact', 'class="pictofixedwidth"');
-					print $form->select_contact(0, 0, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
-				}
-			}
-			print '</td></tr>';
 
 			print '</table>';
 
