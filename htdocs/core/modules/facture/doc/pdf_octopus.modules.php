@@ -2691,12 +2691,13 @@ class pdf_octopus extends ModelePDFFactures
 	 * 		@param	Facture		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
+	 *      @param	int			$heightforqrinvoice	Height for QR invoices
 	 *      @return	int								Return height of bottom margin including footer text
 	 */
-	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
+	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0, $heightforqrinvoice = 0)
 	{
 		$showdetails = getDolGlobalInt('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS', 0);
-		return pdf_pagefoot($pdf, $outputlangs, 'INVOICE_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext, $this->page_largeur, $this->watermark);
+		return pdf_pagefoot($pdf, $outputlangs, 'INVOICE_FREE_TEXT', $this->emetteur, $heightforqrinvoice + $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext, $this->page_largeur, $this->watermark);
 	}
 
 	/**
