@@ -123,7 +123,7 @@ class Cronjob extends CommonObject
 	public $datelastresult = '';
 
 	/**
-	 * @var string			Last result from end job execution
+	 * @var ?string			Last result from end job execution
 	 */
 	public $lastresult;
 
@@ -168,7 +168,7 @@ class Cronjob extends CommonObject
 	public $fk_user_author;
 
 	/**
-	 * @var int 			User ID of last modification
+	 * @var ?int 			User ID of last modification
 	 */
 	public $fk_user_mod;
 
@@ -183,17 +183,17 @@ class Cronjob extends CommonObject
 	public $maxrun;
 
 	/**
-	 * @var string 			Libname
+	 * @var ?string 			Libname
 	 */
 	public $libname;
 
 	/**
-	 * @var string 			A test condition to know if job is visible/qualified
+	 * @var ?string 			A test condition to know if job is visible/qualified
 	 */
 	public $test;
 
 	/**
-	 * @var string 			Autodelete
+	 * @var ?string 			Autodelete
 	 */
 	public $autodelete;
 
