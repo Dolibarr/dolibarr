@@ -114,6 +114,13 @@ $search_datelimit_endyear = GETPOSTINT('search_datelimit_endyear');
 $search_datelimit_start = dol_mktime(0, 0, 0, $search_datelimit_startmonth, $search_datelimit_startday, $search_datelimit_startyear);
 $search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $search_datelimit_endday, $search_datelimit_endyear);
 $search_categ_sup = GETPOST("search_categ_sup", 'intcomma');
+$searchCategorySupplierInvoiceList = GETPOST('search_category_supplier_invoice_list', 'array:int');
+$searchCategorySupplierInvoiceOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategorySupplierInvoiceOperator = GETPOSTINT('search_category_supplier_invoice_operator');
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
+	$searchCategorySupplierInvoiceOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
+}
 $search_product_category = GETPOST('search_product_category', 'intcomma');
 $search_fk_fac_rec_source = GETPOST('search_fk_fac_rec_source', 'int');
 
@@ -273,6 +280,7 @@ if (empty($reshook)) {
 		$search_user = '';
 		$search_sale = '';
 		$search_product_category = '';
+		$searchCategorySupplierInvoiceList = array();
 		$search_ref = "";
 		$search_refsupplier = "";
 		$search_type = "";
@@ -700,6 +708,34 @@ if ($search_sale && $search_sale != '-1') {
 		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
 	}
 }
+// Search for tag/category ($searchCategorySupplierInvoiceList is an array of ID)
+if (!empty($searchCategorySupplierInvoiceList)) {
+	$searchCategorySupplierInvoiceSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategorySupplierInvoiceList as $searchCategorySupplierInvoice) {
+		if (intval($searchCategorySupplierInvoice) == -2) {
+			$searchCategorySupplierInvoiceSqlList[] = "NOT EXISTS (SELECT ck.fk_supplier_invoice FROM ".MAIN_DB_PREFIX."categorie_supplier_invoice as ck WHERE f.rowid = ck.fk_supplier_invoice)";
+		} elseif (intval($searchCategorySupplierInvoice) > 0) {
+			if ($searchCategorySupplierInvoiceOperator == 0) {
+				$searchCategorySupplierInvoiceSqlList[] = " EXISTS (SELECT ck.fk_supplier_invoice FROM ".MAIN_DB_PREFIX."categorie_supplier_invoice as ck WHERE f.rowid = ck.fk_supplier_invoice AND ck.fk_categorie = ".((int) $searchCategorySupplierInvoice).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategorySupplierInvoice);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategorySupplierInvoiceSqlList[] = " EXISTS (SELECT ck.fk_supplier_invoice FROM ".MAIN_DB_PREFIX."categorie_supplier_invoice as ck WHERE f.rowid = ck.fk_supplier_invoice AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategorySupplierInvoiceOperator == 1) {
+		if (!empty($searchCategorySupplierInvoiceSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategorySupplierInvoiceSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategorySupplierInvoiceSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategorySupplierInvoiceSqlList).")";
+		}
+	}
+}
 $searchCategorySupplierList = $search_categ_sup ? array($search_categ_sup) : array();
 $searchCategorySupplierOperator = 0;
 // Search for tag/category ($searchCategorySupplierList is an array of ID)
@@ -934,6 +970,12 @@ if ($search_company_alias) {
 if ($search_login) {
 	$param .= '&search_login='.urlencode($search_login);
 }
+if ($searchCategorySupplierInvoiceOperator == 1) {
+	$param .= "&search_category_supplier_invoice_operator=".urlencode((string) ($searchCategorySupplierInvoiceOperator));
+}
+foreach ($searchCategorySupplierInvoiceList as $searchCategorySupplierInvoice) {
+	$param .= "&search_category_invoice_list[]=".urlencode($searchCategorySupplierInvoice);
+}
 if ($search_montant_ht != '') {
 	$param .= '&search_montant_ht='.urlencode($search_montant_ht);
 }
@@ -1009,7 +1051,9 @@ $arrayofmassactions = array(
   'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
-
+if (isModEnabled('category') && $user->hasRight("fournisseur", "facture", "lire")) {
+	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
+}
 if (isModEnabled('paymentbybanktransfer') && $user->hasRight("paymentbybanktransfer", "create")) {
 	$langs->load('withdrawals');
 	$arrayofmassactions['banktransfertrequest'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakeBankTransferOrder");
@@ -1072,6 +1116,11 @@ if ($search_all) {
 
 // If the user can view prospects other than his'
 $moreforfilter = '';
+if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+	$formcategory = new FormCategory($db);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_SUPPLIER_INVOICE, $searchCategorySupplierInvoiceList, 'minwidth300', $searchCategorySupplierInvoiceOperator ? $searchCategorySupplierInvoiceOperator : 0);
+}
 if ($user->hasRight("user", "user", "lire")) {
 	$langs->load("commercial");
 	$moreforfilter .= '<div class="divsearchfield">';

@@ -79,7 +79,7 @@ class pdf_sponge extends ModelePDFFactures
 	public $version = 'dolibarr';
 
 	/**
-	 * @var int heightforinfotot
+	 * @var int height for info total
 	 */
 	public $heightforinfotot;
 
@@ -99,7 +99,7 @@ class pdf_sponge extends ModelePDFFactures
 	public $tab_top;
 
 	/**
-	 * @var float tab_top_newpage
+	 * @var int|float tab_top_newpage
 	 */
 	public $tab_top_newpage;
 
@@ -203,7 +203,7 @@ class pdf_sponge extends ModelePDFFactures
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
 		// phpcs:enable
-		global $user, $langs, $conf, $mysoc, $db, $hookmanager, $nblines;
+		global $user, $langs, $conf, $mysoc, $hookmanager, $nblines;
 
 		dol_syslog("write_file outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'));
 
@@ -339,8 +339,12 @@ class pdf_sponge extends ModelePDFFactures
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
 				$pdf->setAutoPageBreak(true, 0);
 
-				$this->heightforinfotot = 50 + (4 * $nbpayments); // Height reserved to output the info and total part and payment part
-				$this->heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
+				// Compute height for total, free text and footer
+				$this->heightforinfotot = 50; // Height reserved to output the info and total part and payment part
+				if (!getDolGlobalString('INVOICE_NO_PAYMENT_DETAILS') && $nbpayments > 0) {
+					$this->heightforinfotot += (4 * $nbpayments);
+				}
+				$this->heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5);	// Height reserved to output the free text on last page
 				$this->heightforfooter = $this->marge_basse + (!getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS') ? 12 : 22); // Height reserved to output the footer (value include bottom margin)
 
 				$heightforqrinvoice = 0;
@@ -1316,7 +1320,7 @@ class pdf_sponge extends ModelePDFFactures
 	 */
 	protected function drawInfoTable(&$pdf, $object, $posy, $outputlangs, $outputlangsbis)
 	{
-		global $conf, $mysoc, $hookmanager;
+		global $mysoc;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -1894,7 +1898,7 @@ class pdf_sponge extends ModelePDFFactures
 			}
 		}
 
-		if ($total_discount_on_lines > 0) {
+		if ($total_discount_on_lines > 0 && !$object->isSituationInvoice()) {
 			// Show total NET before discount
 			$pdf->SetFillColor(255, 255, 255);
 			$pdf->SetXY($col1x, $tab2_top);
@@ -2474,6 +2478,7 @@ class pdf_sponge extends ModelePDFFactures
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
+		$subtitle = "";
 		$title = $outputlangs->transnoentities("PdfInvoiceTitle");
 		if ($object->type == 1) {
 			$title = $outputlangs->transnoentities("InvoiceReplacement");
@@ -2490,6 +2495,7 @@ class pdf_sponge extends ModelePDFFactures
 		if ($this->situationinvoice) {
 			$outputlangs->loadLangs(array("other"));
 			$title = $outputlangs->transnoentities("PDFInvoiceSituation") . " " . $outputlangs->transnoentities("NumberingShort") . $object->situation_counter . " -";
+			$subtitle = $outputlangs->transnoentities("PDFSituationTitle", (string) $object->situation_counter);
 		}
 		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && is_object($outputlangsbis)) {
 			$title .= ' - ';
@@ -2515,6 +2521,12 @@ class pdf_sponge extends ModelePDFFactures
 		}
 
 		$pdf->MultiCell($w, 3, $title, '', 'R');
+		if (!empty($subtitle)) {
+			$pdf->SetFont('', 'B', $default_font_size);
+			$pdf->SetXY($posx, $posy + 5);
+			$pdf->MultiCell($w, 6, $subtitle, '', 'R');
+			$posy += 2;
+		}
 
 		$pdf->SetFont('', 'B', $default_font_size);
 
@@ -2767,7 +2779,7 @@ class pdf_sponge extends ModelePDFFactures
 				$idaddressshipping = $object->getIdContact('external', 'SHIPPING');
 
 				if (!empty($idaddressshipping)) {
-					$contactshipping = $object->fetch_Contact($idaddressshipping[0]);
+					$object->fetch_contact($idaddressshipping[0]);	// Load $object->contact
 					$companystatic = new Societe($this->db);
 					$companystatic->fetch($object->contact->fk_soc);
 					$carac_client_name_shipping = pdfBuildThirdpartyName($object->contact, $outputlangs);

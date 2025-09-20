@@ -1416,6 +1416,21 @@ class BOM extends CommonObject
 				$tmpproduct->pmp = 0;
 				$result = $tmpproduct->fetch($line->fk_product, '', '', '', 0, 1, 1);	// We discard selling price and language loading
 
+				$unit_cost = (float) (is_null($tmpproduct->cost_price) ? $tmpproduct->pmp : $tmpproduct->cost_price);
+				if (empty($unit_cost)) {	// @phpstan-ignore-line phpstan thinks this is always false. No,if unit_cost is 0, it is not.
+					if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
+						if ($productFournisseur->fourn_remise_percent != "0") {
+							$line->unit_cost = $productFournisseur->fourn_unitprice_with_discount;
+						} else {
+							$line->unit_cost = $productFournisseur->fourn_unitprice;
+						}
+					} else {
+						$line->unit_cost = 0;
+					}
+				} else {
+					$line->unit_cost = (float) price2num($unit_cost);
+				}
+
 				if ($tmpproduct->type == $tmpproduct::TYPE_PRODUCT) {
 					if (empty($line->fk_bom_child)) {
 						if ($result < 0) {
@@ -1423,22 +1438,7 @@ class BOM extends CommonObject
 							return -1;
 						}
 
-						$unit_cost = (float) (is_null($tmpproduct->cost_price) ? $tmpproduct->pmp : $tmpproduct->cost_price);
-						if (empty($unit_cost)) {	// @phpstan-ignore-line phpstan thinks this is always false. No,if unit_cost is 0, it is not.
-							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
-								if ($productFournisseur->fourn_remise_percent != "0") {
-									$line->unit_cost = $productFournisseur->fourn_unitprice_with_discount;
-								} else {
-									$line->unit_cost = $productFournisseur->fourn_unitprice;
-								}
-							} else {
-								$line->unit_cost = 0;
-							}
-						} else {
-							$line->unit_cost = (float) price2num($unit_cost);
-						}
-
-						$line->total_cost = (float) price2num($line->qty * $line->unit_cost, 'MT');
+						$line->total_cost = (float) price2num($line->unit_cost * $line->qty / $line->efficiency, 'MT');
 
 						$this->total_cost += $line->total_cost;
 					} else {
@@ -1447,7 +1447,7 @@ class BOM extends CommonObject
 						if ($res > 0) {
 							$bom_child->calculateCosts();
 							$line->childBom[] = $bom_child;
-							$this->total_cost += (float) price2num($bom_child->total_cost * $line->qty, 'MT');
+							$line->total_cost = (float) price2num($bom_child->unit_cost * $line->qty / $line->efficiency, 'MT');
 							$this->total_cost += $line->total_cost;
 						} else {
 							$this->error = $bom_child->error;
@@ -1482,9 +1482,9 @@ class BOM extends CommonObject
 						}
 
 						if ($qtyhourservice) {
-							$line->total_cost = (float) price2num($qtyhourforline / $qtyhourservice * $tmpproduct->cost_price, 'MT');
+							$line->total_cost = (float) price2num($qtyhourforline / $qtyhourservice * $line->unit_cost, 'MT');
 						} else {
-							$line->total_cost = (float) price2num($line->qty * $tmpproduct->cost_price, 'MT');
+							$line->total_cost = (float) price2num($line->qty * $line->unit_cost, 'MT');
 						}
 					}
 
@@ -1534,7 +1534,7 @@ class BOM extends CommonObject
 			foreach ($this->lines as $line) {
 				if (!empty($line->childBom)) {
 					foreach ($line->childBom as $childBom) {
-						$childBom->getNetNeeds($TNetNeeds, $line->qty * $qty);
+						$childBom->getNetNeeds($TNetNeeds, $line->qty * $qty / $childBom->qty);
 					}
 				} else {
 					if (empty($TNetNeeds[$line->fk_product]['qty'])) {
@@ -1570,7 +1570,7 @@ class BOM extends CommonObject
 						//$TNetNeeds[$childBom->id]['fk_unit'] = $line->fk_unit;
 						$TNetNeeds[$childBom->id]['qty'] = $line->qty * $qty;
 						$TNetNeeds[$childBom->id]['level'] = $level;
-						$childBom->getNetNeedsTree($TNetNeeds, $line->qty * $qty, $level + 1);
+						$childBom->getNetNeedsTree($TNetNeeds, $line->qty * $qty / $childBom->qty, $level + 1);
 					}
 				} else {
 					// When using nested level (or not), the qty for needs must always use the same unit to be able to be cumulated.
