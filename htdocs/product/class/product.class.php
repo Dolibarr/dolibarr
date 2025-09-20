@@ -428,7 +428,7 @@ class Product extends CommonObject
 	/**
 	 * Status indicate whether the product is available for purchase '1' or not '0'
 	 *
-	 * @var int
+	 * @var ?int
 	 */
 	public $status_buy = 0;
 
