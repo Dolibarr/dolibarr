@@ -2872,7 +2872,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if (isModEnabled('category') && $user->hasRight("categorie", "read")) {
 				print '<tr><td>'.$form->editfieldkey('Categories', 'usercats', '', $object, 0).'</td>';
 				print '<td>';
-				if (!$permissiontoedit) {
+				if ($permissiontoedit) {
 					print $form->selectCategories(Categorie::TYPE_USER, 'usercats', $object);
 				} else {
 					print $form->showCategories($object->id, Categorie::TYPE_USER, 1);

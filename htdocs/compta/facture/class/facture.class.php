@@ -4647,7 +4647,7 @@ class Facture extends CommonInvoice
 
 					if ($product_stock < $qty) {
 						$langs->load("errors");
-						$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnInvoice', $product->ref);
+						$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnInvoice', (string) $product->ref);
 						$this->db->rollback();
 						return -3;
 					}
