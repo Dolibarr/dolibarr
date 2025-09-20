@@ -3429,7 +3429,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		}
 		$tmptxt = $object->getLibStatut(6, $object->alreadypaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
-			$tmptxt = $object->getLibStatut(5, $object->alreadypaid);
+			$tmptxt = $object->getLibStatut(5, (float) $object->alreadypaid);
 		}
 		$morehtmlstatus .= $tmptxt;
 	} elseif (in_array($object->element, array('chargesociales', 'loan', 'tva'))) {	// TODO Move this to use ->alreadypaid like for invoices
@@ -8831,7 +8831,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 		// We will enhance here a common way of forging path for document storage.
 		// In a future, we may distribute directories on several levels depending on setup and object.
 		// Here, $object->id, $object->ref and $modulepart are required.
-		if (in_array($modulepart, array('societe', 'thirdparty')) && $object instanceOf Societe) {
+		if (in_array($modulepart, array('societe', 'thirdparty')) && $object instanceof Societe) {
 			// Special case for thirdparty, where the ref is a company name that is not unique so path on disk is using the ID instead of the ref
 			$path = dol_sanitizeFileName((string) $object->id);
 		} else {
@@ -11650,14 +11650,14 @@ function dol_eval_new($s)
 {
 	// Only this global variables can be read by eval function and returned to caller
 	global $conf,	// Read of const is done with getDolGlobalString() but we need $conf->currency for example
-		$db, $langs, $user, $website, $websitepage,
-		$action, $mainmenu, $leftmenu,
-		$mysoc,
-		$objectoffield,	// To allow the use of $objectoffield in computed fields
+	$db, $langs, $user, $website, $websitepage,
+	$action, $mainmenu, $leftmenu,
+	$mysoc,
+	$objectoffield,	// To allow the use of $objectoffield in computed fields
 
-		// Old variables used
-		$object,
-		$obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
+	// Old variables used
+	$object,
+	$obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
 
 	// PHP < 7.4.0
 	defined('T_COALESCE_EQUAL') || define('T_COALESCE_EQUAL', PHP_INT_MAX);
