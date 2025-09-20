@@ -65,7 +65,7 @@ class Cronjob extends CommonObject
 	public $label;
 
 	/**
-	 * @var string Job command
+	 * @var ?string Job command
 	 */
 	public $command;
 	/**
@@ -103,17 +103,17 @@ class Cronjob extends CommonObject
 	public $datelastrun = '';
 
 	/**
-	 * @var string|int			Date for next job execution
+	 * @var string|int|null			Date for next job execution
 	 */
 	public $datenextrun = '';
 
 	/**
-	 * @var string|int			Date for end job execution
+	 * @var string|int|null			Date for end job execution
 	 */
 	public $dateend = '';
 
 	/**
-	 * @var string|int			Date for first start job execution
+	 * @var string|int|null			Date for first start job execution
 	 */
 	public $datestart = '';
 
@@ -148,7 +148,7 @@ class Cronjob extends CommonObject
 	public $status;
 
 	/**
-	 * @var int 			Is job running ?
+	 * @var ?int 			Is job running ?
 	 */
 	public $processing;
 
@@ -158,7 +158,7 @@ class Cronjob extends CommonObject
 	public $pid;
 
 	/**
-	 * @var string 			Email when an error occurs
+	 * @var ?string 			Email when an error occurs
 	 */
 	public $email_alert;
 
