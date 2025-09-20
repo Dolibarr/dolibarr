@@ -77,11 +77,6 @@ class Form
 	/** @var int 	Number of line returned by method to generate combo select */
 	public $num;
 
-	/**
-	 * @var array{y:string,m:string,w:string,d:string,h:string,i:string,s:string} Types of durations
-	 */
-	public $TDurationTypes;
-
 	// Cache arrays
 	public $cache_types_paiements = array();
 	public $cache_conditions_paiements = array();
@@ -106,8 +101,17 @@ class Form
 		global $langs;
 
 		$this->db = $db;
+	}
 
-		$this->TDurationTypes = [
+	/**
+	 * Return an array of Duration Types
+	 *
+	 * @param Translate $langs Translation to be used
+	 * @return array{y:string,m:string,w:string,d:string,h:string,i:string,s:string} Types of durations
+	 */
+	public function getDurationTypes($langs)
+	{
+		return [
 			'y' => $langs->trans('Years'),
 			'm' => $langs->trans('Month'),
 			'w' => $langs->trans('Weeks'),
