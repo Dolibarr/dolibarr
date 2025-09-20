@@ -5800,8 +5800,6 @@ class Form
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-
 	/**
 	 * Return HTML compopent to select a category
 	 *
@@ -5887,6 +5885,7 @@ class Form
 	}
 
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return list of categories having chosen type
 	 *
@@ -6558,6 +6557,7 @@ class Form
 	 */
 	public function form_rule_for_lines_dates($page, $selected = '', $htmlname = 'rule_for_lines_dates', $addempty = 0, $nooutput = 0): string
 	{
+		// phpcs:enable
 		global $langs;
 
 		$out = '';
