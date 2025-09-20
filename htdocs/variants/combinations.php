@@ -725,7 +725,8 @@ if (!empty($id) || !empty($ref)) {
 			} else {
 				$prodcomb->fetchCombinationPriceLevels();
 
-				for ($i = 1; $i <= getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT'); $i++) {
+				$maxi = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
+				for ($i = 1; $i <= $maxi; $i++) {
 					$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
 					$text = $langs->trans('ImpactOnPriceLevel', $i).' - '.getDolGlobalString($keyforlabel);
 					print '<tr>';
