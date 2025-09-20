@@ -572,27 +572,27 @@ class Product extends CommonObject
 	public $net_measure_units;	// scale -3, 0, 3, 6
 
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $accountancy_code_sell;
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $accountancy_code_sell_intra;
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $accountancy_code_sell_export;
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $accountancy_code_buy;
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $accountancy_code_buy_intra;
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $accountancy_code_buy_export;
 
