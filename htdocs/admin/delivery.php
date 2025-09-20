@@ -46,7 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "sendings", "deliveries", "other"));
+$langs->loadLangs(array("admin", "sendings", "other"));
 
 if (!$user->admin) {
 	accessforbidden();

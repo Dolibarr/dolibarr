@@ -446,6 +446,15 @@ if ($nboftargetok) {
 
 	   	print 'Create xml check file with md5 checksum with command php '.$SOURCE.'/dev/build/generate_filelist_xml.php release='.$MAJOR.'.'.$MINOR.'.'.$BUILD."\n";
 	  	$ret=`php $SOURCE/dev/build/generate_filelist_xml.php release=$MAJOR.$MINOR.$BUILD`;
+		my $retcode=$?;
+		if ($retcode!=0)
+		{
+				print "Error running generate_filelist_xml.php please check\n";
+				print $ret;
+				print "Canceled.\n";
+				exit;
+		}
+
 	  	print $ret."\n";
 	  	# Copy to final dir
 	  	$NEWDESTI=$DESTI;

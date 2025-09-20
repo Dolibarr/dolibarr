@@ -26,49 +26,54 @@
  * 				JQuery (providing object $) and JQuery-UI (providing $datepicker) libraries must be loaded before this file.
  */
 
-if (!defined('NOREQUIRESOC')) {
-	define('NOREQUIRESOC', '1');
-}
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', 1);
-}
-if (!defined('NOTOKENRENEWAL')) {
-	define('NOTOKENRENEWAL', 1);
-}
-if (!defined('NOLOGIN')) {
-	define('NOLOGIN', 1);
-}
-if (!defined('NOREQUIREMENU')) {
-	define('NOREQUIREMENU', 1);
-}
-if (!defined('NOREQUIREHTML')) {
-	define('NOREQUIREHTML', 1);
-}
-if (!defined('NOREQUIREAJAX')) {
-	define('NOREQUIREAJAX', '1');
-}
+if (!defined('MAIN_ALREADY_INCLUDED')) {
+	if (!defined('NOREQUIRESOC')) {
+		define('NOREQUIRESOC', '1');
+	}
+	if (!defined('NOCSRFCHECK')) {
+		define('NOCSRFCHECK', 1);
+	}
+	if (!defined('NOTOKENRENEWAL')) {
+		define('NOTOKENRENEWAL', 1);
+	}
+	if (!defined('NOLOGIN')) {
+		define('NOLOGIN', 1);
+	}
+	if (!defined('NOREQUIREMENU')) {
+		define('NOREQUIREMENU', 1);
+	}
+	if (!defined('NOREQUIREHTML')) {
+		define('NOREQUIREHTML', 1);
+	}
+	if (!defined('NOREQUIREAJAX')) {
+		define('NOREQUIREAJAX', '1');
+	}
 
-session_cache_limiter('public');
+	session_cache_limiter('public');
 
-require_once '../../main.inc.php';
+	require_once '../../main.inc.php';
+}
 /**
  * @var Conf $conf
  * @var Translate $langs
+ *
+ * @var string $dolibarr_nocache
  */
 
-/*
+
+/**
  * View
  */
-
-// Define javascript type
-top_httphead('text/javascript; charset=UTF-8');
-// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache)) {
-	header('Cache-Control: max-age=10800, public, must-revalidate');
-} else {
-	header('Cache-Control: no-cache');
+if (!defined('MAIN_ALREADY_INCLUDED')) {
+	// Define javascript type
+	top_httphead('text/javascript; charset=UTF-8');
+	// Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
+	if (empty($dolibarr_nocache)) {
+		header('Cache-Control: max-age=10800, public, must-revalidate');
+	} else {
+		header('Cache-Control: no-cache');
+	}
 }
-
 
 
 // Define tradMonths javascript array (we define this in datepicker AND in parent page to avoid errors with IE8)

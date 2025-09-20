@@ -565,7 +565,7 @@ function setEntity($currentobject)
 	if (is_object($mc) && method_exists($mc, 'setEntity')) {
 		return $mc->setEntity($currentobject);
 	} else {
-		return ((is_object($currentobject) && $currentobject->id > 0 && $currentobject->entity > 0) ? $currentobject->entity : $conf->entity);
+		return ((is_object($currentobject) && $currentobject->id > 0 && ((int) $currentobject->entity) > 0) ? (int) $currentobject->entity : $conf->entity);
 	}
 }
 
@@ -1680,7 +1680,7 @@ function dol_get_object_properties($obj, $properties = [])
 
 /**
  *  Create a clone of instance of object (new instance with same value for each properties)
- *  With native = 0: Property that are references are different memory area in the new object (full isolation clone). This means $this->object of new object may not be valid (except this->db that is voluntarly kept).
+ *  With native = 0: Deprecated. Property that are references are different memory area in the new object (full isolation clone). This means $this->objectproperty of the new object may not be valid (except this->db that is voluntarly kept).
  *  With native = 1: Use PHP clone. Property that are reference are same pointer. This means $this->db of new object is still valid but point to same this->db than original object.
  *  With native = 2: Property that are reference are different memory area in the new object (full isolation clone). Only scalar and array values are cloned. This means method are not availables and $this->db of new object is not valid.
  *
@@ -1697,6 +1697,8 @@ function dol_clone($object, $native = 2)
 {
 	if ($native == 0) {
 		// deprecated method, use the method with native = 2 instead
+		dol_syslog("Warning, call to dol_clone() with the deprecated parameter native=0, use 2 instead", LOG_WARNING);
+
 		$tmpsavdb = null;
 		if (isset($object->db) && isset($object->db->db) && is_object($object->db->db) && get_class($object->db->db) == 'PgSql\Connection') {
 			$tmpsavdb = $object->db;
@@ -1709,7 +1711,7 @@ function dol_clone($object, $native = 2)
 			$object->db = $tmpsavdb;
 		}
 	} elseif ($native == 2) {
-		// recommended method to have a full isolated cloned object
+		// recommended method to have a full secured isolated cloned object
 		$myclone = new stdClass();
 		$tmparray = get_object_vars($object);	// return only public properties
 
@@ -3427,7 +3429,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		}
 		$tmptxt = $object->getLibStatut(6, $object->alreadypaid);
 		if (empty($tmptxt) || $tmptxt == $object->getLibStatut(3)) {
-			$tmptxt = $object->getLibStatut(5, $object->alreadypaid);
+			$tmptxt = $object->getLibStatut(5, (float) $object->alreadypaid);
 		}
 		$morehtmlstatus .= $tmptxt;
 	} elseif (in_array($object->element, array('chargesociales', 'loan', 'tva'))) {	// TODO Move this to use ->alreadypaid like for invoices
@@ -4893,6 +4895,7 @@ function dol_print_ip($ip, $mode = 0, $showname = 0)
  *
  * @param	int		$trusted	0=Default, 1=Trusted value (the last IP that was not altered by client)
  * @return	string				Real IP of remote user.
+ * @see getBrowserInfo()
  */
 function getUserRemoteIP($trusted = 0)
 {
@@ -7093,7 +7096,7 @@ function dol_print_error_email($prefixcode, $errormessage = '', $errormessages =
  *	@param  ?string	$sortorder   Current sort order
  *  @param	string	$prefix		 Prefix for css. Use space after prefix to add your own CSS tag, for example 'mycss '.
  *  @param	?string	$tooltip	 Tooltip
- *  @param	int		$forcenowrapcolumntitle		No need for use 'wrapcolumntitle' css style
+ *  @param	int		$forcenowrapcolumntitle		No need to use 'wrapcolumntitle' css style
  *	@return	void
  */
 function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $moreparam = "", $moreattrib = "", $sortfield = "", $sortorder = "", $prefix = "", $tooltip = "", $forcenowrapcolumntitle = 0)
@@ -7104,18 +7107,18 @@ function print_liste_field_titre($name, $file = "", $field = "", $begin = "", $m
 /**
  *	Get title line of an array
  *
- *	@param	?string		$name			Translation key of field to show or complete HTML string to show
- *	@param	int<0,2>	$thead	 		0=To use with standard table format, 1=To use inside <thead><tr>, 2=To use with <div>
- *	@param	string		$file			Url used when we click on sort picto
- *	@param	string		$field			Field to use for new sorting. Empty if this field is not sortable. Example "t.abc" or "t.abc,t.def"
- *	@param	string		$begin       	("" by default)
- *	@param	string		$moreparam		Add more parameters on sort url links ("" by default)
- *	@param  string		$moreattrib		Add more attributes on th ("" by default). To add more css class, use param $prefix.
- *	@param  ?string		$sortfield	 	Current field used to sort (Ex: 'd.datep,d.id')
- *	@param  ?string		$sortorder		Current sort order (Ex: 'asc,desc')
- *  @param	string		$prefix	 		Prefix for css. Use space after prefix to add your own CSS tag, for example 'mycss '.
- *  @param	int<0,1>	$disablesortlink	1=Disable sort link
- *  @param	?string		$tooltip 		Tooltip
+ *	@param	?string		$name						Translation key of field to show or complete HTML string to show
+ *	@param	int<0,2>	$thead	 					0=To use with standard table format, 1=To use inside <thead><tr>, 2=To use with <div>
+ *	@param	string		$file						Url used when we click on sort picto
+ *	@param	string		$field						Field to use for new sorting. Empty if this field is not sortable. Example "t.abc" or "t.abc,t.def"
+ *	@param	string		$begin       				("" by default)
+ *	@param	string		$moreparam					Add more parameters on sort url links ("" by default)
+ *	@param  string		$moreattrib					Add more attributes on th ("" by default). To add more css class, use param $prefix.
+ *	@param  ?string		$sortfield	 				Current field used to sort (Ex: 'd.datep,d.id')
+ *	@param  ?string		$sortorder					Current sort order (Ex: 'asc,desc')
+ *  @param	string		$prefix	 					Prefix for css. Use space after prefix to add your own CSS tag, for example 'mycss '.
+ *  @param	int<0,1>	$disablesortlink			1=Disable sort link
+ *  @param	?string		$tooltip 					Text of tooltip with syntax 'Tooltip' or 'Tooltip:[keytoenabledtheonclicktooltip]:[tooltipdirection]'
  *  @param	int<0,1> 	$forcenowrapcolumntitle		No need to use 'wrapcolumntitle' css style
  *	@return	string
  */
@@ -7127,6 +7130,8 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 	if ($moreattrib == 'class="right"') {
 		$prefix .= 'right '; // For backward compatibility
 	}
+
+	$tooltip = (string) $tooltip;	// In case $tooltip is null
 
 	$sortorder = strtoupper((string) $sortorder);
 	$out = '';
@@ -7142,7 +7147,15 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 	$tmpfield = explode(',', $field);
 	$field1 = trim($tmpfield[0]); // If $field is 'd.datep,d.id', it becomes 'd.datep'
 
-	if (!getDolGlobalString('MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE') && empty($forcenowrapcolumntitle)) {
+	if (strpos((string) $tooltip, ':') !== false) {
+		$tmptooltip = explode(':', (string) $tooltip);
+	} else {
+		$tmptooltip = array($tooltip);
+	}
+
+	$wrapcolumntitle = (empty($forcenowrapcolumntitle) || (!empty($tmptooltip[2]) && $tmptooltip[2] == '-1'));
+
+	if (!getDolGlobalString('MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE') && $wrapcolumntitle) {
 		$prefix = 'wrapcolumntitle ' . $prefix;
 	}
 
@@ -7156,7 +7169,7 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 
 	$tagstart = '<' . $tag . ' class="' . $prefix . $liste_titre . '" ' . $moreattrib;
 	//$out .= (($field && empty($conf->global->MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE) && preg_match('/^[a-zA-Z_0-9\s\.\-:&;]*$/', $name)) ? ' title="'.dol_escape_htmltag($langs->trans($name)).'"' : '');
-	$tagstart .= ($name && !getDolGlobalString('MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE') && empty($forcenowrapcolumntitle) && !dol_textishtml($name)) ? ' title="' . dolPrintHTMLForAttribute($langs->trans($name)) . '"' : '';
+	$tagstart .= ($name && !getDolGlobalString('MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE') && $wrapcolumntitle && !dol_textishtml($name)) ? ' title="' . dolPrintHTMLForAttribute($langs->trans($name)) . '"' : '';
 	$tagstart .= '>';
 
 	if (empty($thead) && $field && empty($disablesortlink)) {    // If this is a sort field
@@ -7186,14 +7199,9 @@ function getTitleFieldOfList($name, $thead = 0, $file = "", $field = "", $begin 
 		//$out .= (getDolGlobalString('MAIN_DISABLE_WRAPPING_ON_COLUMN_TITLE') ? '' : ' title="'.dol_escape_htmltag($langs->trans($name)).'"');
 		$out .= '>';
 	}
-	if ($tooltip) {
-		// You can also use 'TranslationString:keyfortooltiponclick:tooltipdirection' for a tooltip on click or to change tooltip position.
-		if (strpos($tooltip, ':') !== false) {
-			$tmptooltip = explode(':', $tooltip);
-		} else {
-			$tmptooltip = array($tooltip);
-		}
-		$out .= $form->textwithpicto($langs->trans((string) $name), $langs->trans($tmptooltip[0]), (empty($tmptooltip[2]) ? '1' : $tmptooltip[2]), 'help', '', 0, 3, (empty($tmptooltip[1]) ? '' : 'extra_' . str_replace('.', '_', $field) . '_' . $tmptooltip[1]));
+	if ($tooltip && $tmptooltip[0]) {
+		// You can also use 'TranslationString:[keyfortooltiponclick]:[tooltipdirection]' for a tooltip on click or to change tooltip position.
+		$out .= $form->textwithpicto($langs->trans((string) $name), $langs->trans((string) $tmptooltip[0]), (empty($tmptooltip[2]) ? '1' : $tmptooltip[2]), 'help', ((!empty($tmptooltip[2]) && $tmptooltip[2] == '-1') ? 'paddingrightonly' : ''), 0, 3, (empty($tmptooltip[1]) ? '' : 'extra_' . str_replace('.', '_', $field) . '_' . $tmptooltip[1]));
 	} else {
 		$out .= $langs->trans((string) $name);
 	}
@@ -8317,13 +8325,13 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
  *	Return vat rate of a product in a particular country, or default country vat if product is unknown.
  *  Function called by get_default_tva(). Do not use this function directly, prefer to use get_default_tva().
  *
- *  @param	int				$idprod          	Id of product or 0 if not a predefined product
- *  @param  Societe			$thirdpartytouse  	Thirdparty with a ->country_code defined (FR, US, IT, ...)
- *	@param	int				$idprodfournprice	Id product_fournisseur_price (for "supplier" proposal/order/invoice)
- *  @return float|string   					    Vat rate to use with format 5.0 or '5.0 (XXX)'
+ *  @param	int				$idprod          				Id of product or 0 if not a predefined product
+ *  @param  Societe			$thirdpartytouseforcountry  	Thirdparty with a ->country_code defined (FR, US, IT, ...)
+ *	@param	int				$idprodfournprice				Id product_fournisseur_price (for "supplier" proposal/order/invoice)
+ *  @return float|string   					    			Vat rate to use with format 5.0 or '5.0 (XXX)'
  *  @see get_default_tva(), get_product_localtax_for_country()
  */
-function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournprice = 0)
+function get_product_vat_for_country($idprod, $thirdpartytouseforcountry, $idprodfournprice = 0)
 {
 	global $db, $mysoc;
 
@@ -8337,9 +8345,9 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 		$product = new Product($db);
 		$product->fetch($idprod);
 
-		if (($mysoc->country_code == $thirdpartytouse->country_code)
-			|| (in_array($mysoc->country_code, array('FR', 'MC')) && in_array($thirdpartytouse->country_code, array('FR', 'MC')))
-			|| (in_array($mysoc->country_code, array('MQ', 'GP')) && in_array($thirdpartytouse->country_code, array('MQ', 'GP')))
+		if (($mysoc->country_code == $thirdpartytouseforcountry->country_code)
+			|| (in_array($mysoc->country_code, array('FR', 'MC')) && in_array($thirdpartytouseforcountry->country_code, array('FR', 'MC')))
+			|| (in_array($mysoc->country_code, array('MQ', 'GP')) && in_array($thirdpartytouseforcountry->country_code, array('MQ', 'GP')))
 		) {
 			// If country of thirdparty to consider is ours
 			if ($idprodfournprice > 0) {     // We want vat for product for a "supplier" object
@@ -8370,7 +8378,7 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 			// If vat of product for the country not found or not defined, we return the first rate found (sorting on use_default, then on higher vat of country).
 			$sql = "SELECT t.taux as vat_rate, t.code as default_vat_code";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "c_tva as t, " . MAIN_DB_PREFIX . "c_country as c";
-			$sql .= " WHERE t.active = 1 AND t.fk_pays = c.rowid AND c.code = '" . $db->escape($thirdpartytouse->country_code) . "'";
+			$sql .= " WHERE t.active = 1 AND t.fk_pays = c.rowid AND c.code = '" . $db->escape($thirdpartytouseforcountry->country_code) . "'";
 			$sql .= " AND t.entity IN (" . getEntity('c_tva') . ")";
 			$sql .= " ORDER BY t.use_default DESC, t.taux DESC, t.code ASC, t.recuperableonly ASC";
 			$sql .= $db->plimit(1);
@@ -8412,13 +8420,13 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 /**
  *	Return localtax vat rate of a product in a particular country or default country vat if product is unknown
  *
- *  @param	int		$idprod         		Id of product
- *  @param  int		$local          		1 for localtax1, 2 for localtax 2
- *  @param  Societe	$thirdpartytouse    	Thirdparty with a ->country_code defined (FR, US, IT, ...)
- *  @return int             				Return integer <0 if KO, Vat rate if OK
+ *  @param	int		$idprod         				Id of product
+ *  @param  int		$local          				1 for localtax1, 2 for localtax 2
+ *  @param  Societe	$thirdpartytouseforcountry    	Thirdparty with a ->country_code defined (FR, US, IT, ...)
+ *  @return int             						Return integer <0 if KO, Vat rate if OK
  *  @see get_product_vat_for_country()
  */
-function get_product_localtax_for_country($idprod, $local, $thirdpartytouse)
+function get_product_localtax_for_country($idprod, $local, $thirdpartytouseforcountry)
 {
 	global $db, $mysoc;
 
@@ -8434,7 +8442,7 @@ function get_product_localtax_for_country($idprod, $local, $thirdpartytouse)
 		$product = new Product($db);
 		$result = $product->fetch($idprod);
 
-		if ($mysoc->country_code == $thirdpartytouse->country_code) { // If selling country is ours
+		if ($mysoc->country_code == $thirdpartytouseforcountry->country_code) { // If selling country is ours
 			/* Not defined yet, so we don't use this
 			if ($local==1) $ret=$product->localtax1_tx;
 			elseif ($local==2) $ret=$product->localtax2_tx;
@@ -8450,7 +8458,7 @@ function get_product_localtax_for_country($idprod, $local, $thirdpartytouse)
 		// If vat of product for the country not found or not defined, we return higher vat of country.
 		$sql = "SELECT taux as vat_rate, localtax1, localtax2";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "c_tva as t, " . MAIN_DB_PREFIX . "c_country as c";
-		$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='" . $db->escape($thirdpartytouse->country_code) . "'";
+		$sql .= " WHERE t.active=1 AND t.fk_pays = c.rowid AND c.code='" . $db->escape($thirdpartytouseforcountry->country_code) . "'";
 		$sql .= " AND t.entity IN (" . getEntity('c_tva') . ")";
 		$sql .= " ORDER BY t.taux DESC, t.recuperableonly ASC";
 		$sql .= $db->plimit(1);
@@ -8493,20 +8501,26 @@ function get_product_localtax_for_country($idprod, $local, $thirdpartytouse)
  */
 function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, $idprod = 0, $idprodfournprice = 0)
 {
-	global $conf, $db;
+	global $mysoc, $db;
 
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 
 	// Note: possible values for tva_assuj are 0/1 or franchise/reel
 	$seller_use_vat = ((is_numeric($thirdparty_seller->tva_assuj) && !$thirdparty_seller->tva_assuj) || (!is_numeric($thirdparty_seller->tva_assuj) && $thirdparty_seller->tva_assuj == 'franchise')) ? 0 : 1;
 
+	if (empty($thirdparty_seller->country_code)) {
+		$thirdparty_seller->country_code = $mysoc->country_code;
+	}
 	$seller_country_code = $thirdparty_seller->country_code;
 	$seller_in_cee = isInEEC($thirdparty_seller);
 
+	if (empty($thirdparty_buyer->country_code)) {
+		$thirdparty_buyer->country_code = $mysoc->country_code;
+	}
 	$buyer_country_code = $thirdparty_buyer->country_code;
 	$buyer_in_cee = isInEEC($thirdparty_buyer);
 
-	dol_syslog("get_default_tva: seller use vat=" . $seller_use_vat . ", seller country=" . $seller_country_code . ", seller in cee=" . ((string) (int) $seller_in_cee) . ", buyer vat number=" . $thirdparty_buyer->tva_intra . " buyer country=" . $buyer_country_code . ", buyer in cee=" . ((string) (int) $buyer_in_cee) . ", idprod=" . $idprod . ", idprodfournprice=" . $idprodfournprice . ", SERVICE_ARE_ECOMMERCE_200238EC=" . (getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC') ? $conf->global->SERVICE_ARE_ECOMMERCE_200238EC : ''));
+	dol_syslog("get_default_tva: seller use vat=".$seller_use_vat.", seller country=".$seller_country_code.", seller in cee=".((string) (int) $seller_in_cee).", buyer vat number=".$thirdparty_buyer->tva_intra." buyer country=".$buyer_country_code.", buyer state=".$thirdparty_buyer->state_id." buyer in cee=".((string) (int) $buyer_in_cee).", idprod=".$idprod.", idprodfournprice=".$idprodfournprice.", SERVICE_ARE_ECOMMERCE_200238EC=".getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC'));
 
 	// If services are eServices according to EU Council Directive 2002/38/EC (http://ec.europa.eu/taxation_customs/taxation/vat/traders/e-commerce/article_1610_en.htm)
 	// we use the buyer VAT.
@@ -8672,6 +8686,18 @@ function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $id
 		return -1;
 	}
 
+	if (empty($thirdparty_seller->country_code)) {
+		$thirdparty_seller->country_code = $mysoc->country_code;
+	}
+	$seller_country_code = $thirdparty_seller->country_code;
+	//$seller_in_cee = isInEEC($thirdparty_seller);
+
+	if (empty($thirdparty_buyer->country_code)) {
+		$thirdparty_buyer->country_code = $mysoc->country_code;
+	}
+	$buyer_country_code = $thirdparty_buyer->country_code;
+	//$buyer_in_cee = isInEEC($thirdparty_buyer);
+
 	if ($local == 1) { // Localtax 1
 		if ($mysoc->country_code == 'ES') {
 			if (is_numeric($thirdparty_buyer->localtax1_assuj) && !$thirdparty_buyer->localtax1_assuj) {
@@ -8696,7 +8722,7 @@ function get_default_localtax($thirdparty_seller, $thirdparty_buyer, $local, $id
 		}
 	}
 
-	if ($thirdparty_seller->country_code == $thirdparty_buyer->country_code) {
+	if ($seller_country_code == $buyer_country_code) {
 		return get_product_localtax_for_country($idprod, $local, $thirdparty_seller);
 	}
 
@@ -8763,7 +8789,7 @@ function yn($yesno, $format = 1, $color = 0)
 /**
  *	Return a path to have a the directory according to object where files are stored.
  *  This function is called by getMultidirOutput
- *  New usage:  $conf->module->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, '').'/'
+ *  New usage:  $conf->module->multidir_output[$object->entity ?? $conf->entity].'/'.get_exdir(0, 0, 0, 1, $object, '').'/'
  *         or:  $conf->module->dir_output.'/'.get_exdir(0, 0, 0, 0, $object, '')
  *
  *  Example of output with new usage:       $object is invoice -> 'INYYMM-ABCD'
@@ -8823,7 +8849,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart = '
 		// We will enhance here a common way of forging path for document storage.
 		// In a future, we may distribute directories on several levels depending on setup and object.
 		// Here, $object->id, $object->ref and $modulepart are required.
-		if (in_array($modulepart, array('societe', 'thirdparty')) && $object instanceOf Societe) {
+		if (in_array($modulepart, array('societe', 'thirdparty')) && $object instanceof Societe) {
 			// Special case for thirdparty, where the ref is a company name that is not unique so path on disk is using the ID instead of the ref
 			$path = dol_sanitizeFileName((string) $object->id);
 		} else {
@@ -8947,7 +8973,7 @@ function picto_required()
  *  - you can decide to convert line feed into a space
  *
  *	@param	string	$stringtoclean		String to clean
- *	@param	integer	$removelinefeed		1=Replace all new lines by 1 space, 0=Only ending new lines are removed others are replaced with \n, 2=The ending new line is removed but others are kept with the same number of \n than the nb of <br> when there is both "...<br>\n..."
+ *	@param	integer	$removelinefeed		1=Replace all new lines strings ('<br>, "\n", "\r") by 1 space, 0=The last new line endings are removed and others '<br>' are replaced with "\n", 2=The last new line endings are removed and others '<br>\n' are replaced with "\n" with the same nb of "\n" than the nb of <br> when there is both "...<br>\n..."
  *  @param  string	$pagecodeto      	Encoding of input/output string
  *  @param	integer	$strip_tags			0=Use internal strip, 1=Use strip_tags() php function (bugged when text contains a < char that is not for a html tag or when tags is not closed like '<img onload=aaa')
  *  @param	integer	$removedoublespaces	Replace double space into one space
@@ -10030,6 +10056,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = '__THIRDPARTY_CODE_FOURNISSEUR__';
 				$substitutionarray['__THIRDPARTY_EMAIL__'] = '__THIRDPARTY_EMAIL__';
 				//$substitutionarray['__THIRDPARTY_EMAIL_URLENCODED__'] = '__THIRDPARTY_EMAIL_URLENCODED__';	// We hide this one
+				$substitutionarray['__THIRDPARTY_URL__'] = '__THIRDPARTY_URL__';
+				//$substitutionarray['__THIRDPARTY_URL_URLENCODED__'] = '__THIRDPARTY_URL_URLENCODED__';		// We hide this one
 				$substitutionarray['__THIRDPARTY_PHONE__'] = '__THIRDPARTY_PHONE__';
 				$substitutionarray['__THIRDPARTY_FAX__'] = '__THIRDPARTY_FAX__';
 				$substitutionarray['__THIRDPARTY_ADDRESS__'] = '__THIRDPARTY_ADDRESS__';
@@ -10215,6 +10243,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_CODE_FOURNISSEUR__'] = $object->code_fournisseur ?? '';
 				$substitutionarray['__THIRDPARTY_EMAIL__'] = $object->email ?? '';
 				$substitutionarray['__THIRDPARTY_EMAIL_URLENCODED__'] = urlencode($object->email ?? '');
+				$substitutionarray['__THIRDPARTY_URL__'] = $object->url ?? '';
+				$substitutionarray['__THIRDPARTY_URL_URLENCODED__'] = urlencode($object->url ?? '');
 				$substitutionarray['__THIRDPARTY_PHONE__'] = dol_print_phone($object->phone ?? '');
 				$substitutionarray['__THIRDPARTY_FAX__'] = dol_print_phone($object->fax ?? '');
 				$substitutionarray['__THIRDPARTY_ADDRESS__'] = $object->address ?? '';
@@ -10435,7 +10465,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 					$typeforonlinepayment = 'ficheinter';
 				}
 
-				$url = getOnlinePaymentUrl(0, $typeforonlinepayment, $substitutionarray['__REF__'], $amounttouse);
+				$url = getOnlinePaymentUrl(0, $typeforonlinepayment, $substitutionarray['__REF__'], (float) $amounttouse);
 				$paymenturl = $url;
 			}
 
@@ -10532,6 +10562,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				'@phan-var-force ActionComm $object';
 				/** @var ActionComm $object */
 				$substitutionarray['__EVENT_LABEL__'] = $object->label;
+				$substitutionarray['__EVENT_DESCRIPTION__'] = $object->note;
 				$substitutionarray['__EVENT_TYPE__'] = $outputlangs->trans("Action" . $object->type_code);
 				$substitutionarray['__EVENT_DATE__'] = dol_print_date($object->datep, 'day', 'auto', $outputlangs);
 				$substitutionarray['__EVENT_TIME__'] = dol_print_date($object->datep, 'hour', 'auto', $outputlangs);
@@ -11305,7 +11336,7 @@ function dol_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
  *  @param	array<string|int,mixed>	$array 	Array to sort (array of array('key1'=>val1,'key2'=>val2,'key3'...) or array of objects)
  *  @phpstan-param T $array
  *  @phan-param T $array
- *  @param	string		$index				Key in array to use for sorting criteria
+ *  @param	string		$index				Key in array to use for sorting criteria. We can have several keys separated by a comma but we can have only 1 sorting order.
  *  @param	string		$order				Sort order ('asc' or 'desc')
  *  @param	int<-1,1>	$natsort			If values are strings (I said value not type): 0=Use alphabetical order, 1=use "natural" sort (natsort), -1=Force alpha order
  *                                          If values are numeric (I said value not type): 0=Use numeric order (even if type is string) so use a "natural" sort, 1=use "natural" sort too (same than 0), -1=Force alphabetical order
@@ -11324,19 +11355,31 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
 	if (is_array($array)) {
 		$sizearray = count($array);
 		if ($sizearray > 0) {
+			// Build a temp array with sorting key as value
 			$temp = array();
 			foreach (array_keys($array) as $key) {
+				$tmpmultikey = explode(',', $index);
+				$newindex = $tmpmultikey[0];
 				if (is_object($array[$key])) {
-					$temp[$key] = empty($array[$key]->$index) ? 0 : $array[$key]->$index;
+					$temp[$key] = empty($array[$key]->$newindex) ? 0 : $array[$key]->$newindex;
+					// Add other keys
+					if (!empty($tmpmultikey[1])) {
+						$newindex = $tmpmultikey[1];
+						$temp[$key] .= '__'.(empty($array[$key]->$newindex) ? 0 : $array[$key]->$newindex);
+					}
 				} else {
 					// @phan-suppress-next-line PhanTypeArraySuspiciousNullable,PhanTypeArraySuspicious,PhanTypeMismatchDimFetch
-					$temp[$key] = empty($array[$key][$index]) ? 0 : $array[$key][$index];
+					$temp[$key] = empty($array[$key][$newindex]) ? 0 : $array[$key][$newindex];
+					// Add other keys
+					if (!empty($tmpmultikey[1])) {
+						$newindex = $tmpmultikey[1];
+						$temp[$key] .= '__'.(empty($array[$key][$newindex]) ? 0 : $array[$key][$newindex]);
+					}
 				}
 				if ($natsort == -1) {
-					$temp[$key] = '___' . $temp[$key];        // We add a string at begin of value to force an alpha order when using asort.
+					$temp[$key] = '___'.$temp[$key];        // We add a string at begin of value to force an alpha order when using asort.
 				}
 			}
-
 			if (empty($natsort) || $natsort == -1) {
 				if ($order == 'asc') {
 					asort($temp);
@@ -11625,14 +11668,14 @@ function dol_eval_new($s)
 {
 	// Only this global variables can be read by eval function and returned to caller
 	global $conf,	// Read of const is done with getDolGlobalString() but we need $conf->currency for example
-		$db, $langs, $user, $website, $websitepage,
-		$action, $mainmenu, $leftmenu,
-		$mysoc,
-		$objectoffield,	// To allow the use of $objectoffield in computed fields
+	$db, $langs, $user, $website, $websitepage,
+	$action, $mainmenu, $leftmenu,
+	$mysoc,
+	$objectoffield,	// To allow the use of $objectoffield in computed fields
 
-		// Old variables used
-		$object,
-		$obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
+	// Old variables used
+	$object,
+	$obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
 
 	// PHP < 7.4.0
 	defined('T_COALESCE_EQUAL') || define('T_COALESCE_EQUAL', PHP_INT_MAX);
@@ -14708,7 +14751,7 @@ function getElementProperties($elementType)
 		$classname = 'CommandeFournisseurLigne';
 		$table_element = 'commande_fournisseurdet';
 		$parent_element = 'commande_fournisseur';
-	} elseif ($elementType == 'invoice_supplier' || $elementType == 'supplier_invoice') {
+	} elseif ($elementType == 'invoice_supplier' || $elementType == 'supplier_invoice' || $elementType == 'facture_fourn') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.facture';

@@ -217,11 +217,6 @@ class CommandeFournisseur extends CommonOrder
 	public $source;
 
 	/**
-	 * @var int ID
-	 */
-	public $fk_project;
-
-	/**
 	 * @var ?int 	Payment conditions ID
 	 */
 	public $cond_reglement_id;
@@ -242,7 +237,7 @@ class CommandeFournisseur extends CommonOrder
 	public $cond_reglement_doc;
 
 	/**
-	 * @var int 	Account ID
+	 * @var ?int 	Account ID
 	 */
 	public $fk_account;
 
@@ -306,7 +301,6 @@ class CommandeFournisseur extends CommonOrder
 	 * @var int
 	 */
 	public $origin_id;
-	public $linked_objects = array();
 
 	/**
 	 * @var int Date of the purchase order payment deadline
@@ -802,7 +796,7 @@ class CommandeFournisseur extends CommonOrder
 			if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 				$num = $this->getNextNumRef($soc);
 			} else {
-				$num = $this->ref;
+				$num = (string) $this->ref;
 			}
 			$this->newref = dol_sanitizeFileName($num);
 
@@ -1297,7 +1291,7 @@ class CommandeFournisseur extends CommonOrder
 			if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 				$num = $this->getNextNumRef($soc);
 			} else {
-				$num = $this->ref;
+				$num = (string) $this->ref;
 			}
 			$this->newref = dol_sanitizeFileName($num);
 
@@ -1799,8 +1793,6 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 
 		// Clean parameters
@@ -1840,7 +1832,7 @@ class CommandeFournisseur extends CommonOrder
 		$sql .= " fk_statut=".(isset($this->status) ? $this->status : "null").",";
 		$sql .= " fk_user_author=".(isset($this->user_author_id) ? $this->user_author_id : "null").",";
 		$sql .= " fk_user_valid=".(isset($this->user_validation_id) && $this->user_validation_id > 0 ? $this->user_validation_id : "null").",";
-		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
+		$sql .= " fk_projet=".((!empty($this->fk_project) && $this->fk_project > 0) ? $this->fk_project : "null").",";
 		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
 		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? $this->mode_reglement_id : "null").",";
 		$sql .= " date_livraison=".(strval($this->delivery_date) != '' ? "'".$this->db->idate($this->delivery_date)."'" : 'null').",";
@@ -2972,7 +2964,7 @@ class CommandeFournisseur extends CommonOrder
 			$ref = '';
 			if ($prod->fetch($comclient->lines[$i]->fk_product) > 0) {
 				$label  = $prod->label;
-				$ref    = $prod->ref;
+				$ref    = (string) $prod->ref;
 			}
 
 			$sql = "INSERT INTO ".$this->db->prefix()."commande_fournisseurdet";

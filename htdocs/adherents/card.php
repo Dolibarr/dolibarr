@@ -240,6 +240,7 @@ if (empty($reshook)) {
 			$tmpuser = dol_clone($object, 2);
 			if (GETPOST('internalorexternal', 'aZ09') == 'internal') {
 				$tmpuser->fk_soc = 0;
+				$tmpuser->socid = 0;
 			}
 
 			$result = $nuser->create_from_member($tmpuser, GETPOST('login', 'alphanohtml'));
@@ -270,6 +271,29 @@ if (empty($reshook)) {
 			}
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+	if ($action == 'confirm_merge' && $confirm == 'yes' && $user->hasRight('adherent', 'creer')) {
+		$member_origin_id = GETPOSTINT('member_origin');
+		$member_origin = new Adherent($db);		// The thirdparty that we will delete
+
+		if ($member_origin_id <= 0) {
+			$langs->load('errors');
+			setEventMessages($langs->trans('MergeOriginMemberIsMAndatory'), null, 'errors');
+		} else {
+			if (!$error && $member_origin->fetch($member_origin_id) < 1) {
+				setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
+				$error++;
+			}
+			if (!$error) {
+				$result = $object->mergeMembers($member_origin_id);
+				if ($result < 0) {
+					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
+				} else {
+					setEventMessages($langs->trans('MemberMergeSuccess'), null, 'mesgs');
+				}
+			}
 		}
 	}
 
@@ -1146,7 +1170,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print "</td>\n";
 
 		// Company
-		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td>'.img_picto('', 'company').'<input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOSTISSET('societe') ? GETPOST('societe', 'alphanohtml') : $soc->name).'"></td></tr>';
+		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td>'.img_picto('', 'company', 'class="pictofixedwidth"').'<input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOSTISSET('societe') ? GETPOST('societe', 'alphanohtml') : $soc->name).'"></td></tr>';
 
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
@@ -1170,11 +1194,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// EMail
 		print '<tr><td>'.(getDolGlobalString('ADHERENT_MAIL_REQUIRED') ? '<span class="fieldrequired">' : '').$langs->trans("EMail").(getDolGlobalString('ADHERENT_MAIL_REQUIRED') ? '</span>' : '').'</td>';
-		print '<td>'.img_picto('', 'object_email').' <input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(GETPOSTISSET('member_email') ? GETPOST('member_email', 'alpha') : $soc->email).'"></td></tr>';
+		print '<td>'.img_picto('', 'object_email', 'class="pictofixedwidth"').' <input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(GETPOSTISSET('member_email') ? GETPOST('member_email', 'alpha') : $soc->email).'"></td></tr>';
 
 		// Website
 		print '<tr><td>'.$form->editfieldkey('Web', 'member_url', GETPOST('member_url', 'alpha'), $object, 0).'</td>';
-		print '<td>'.img_picto('', 'globe').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="member_url" id="member_url" value="'.(GETPOSTISSET('member_url') ? GETPOST('member_url', 'alpha') : $object->url).'"></td></tr>';
+		print '<td>'.img_picto('', 'globe', 'class="pictofixedwidth"').' <input type="text" class="maxwidth500 widthcentpercentminusx" name="member_url" id="member_url" value="'.(GETPOSTISSET('member_url') ? GETPOST('member_url', 'alpha') : $object->url).'"></td></tr>';
 
 		// Address
 		print '<tr><td class="tdtop">'.$langs->trans("Address").'</td><td>';
@@ -1380,7 +1404,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print "</td></tr>";
 
 		// Company
-		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td>'.img_picto('', 'company').'<input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOSTISSET("societe") ? GETPOST("societe", 'alphanohtml', 2) : $object->company).'"></td></tr>';
+		print '<tr><td id="tdcompany">'.$langs->trans("Company").'</td><td>'.img_picto('', 'company', 'class="pictofixedwidth"').'<input type="text" name="societe" class="minwidth300" maxlength="128" value="'.(GETPOSTISSET("societe") ? GETPOST("societe", 'alphanohtml', 2) : $object->company).'"></td></tr>';
 
 		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td>';
@@ -1829,6 +1853,21 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if ($action == 'add_spip') {
 			print $form->formconfirm("card.php?rowid=".$id, $langs->trans('AddIntoSpip'), $langs->trans('AddIntoSpipConfirmation'), 'confirm_add_spip');
 		}
+
+		// Confirm merge
+		if ($action == 'merge') {
+			$formquestion = array(
+				array(
+					'name' => 'member_origin',
+					'label' => $langs->trans('MergeOriginMember'),
+					'type' => 'other',
+					'value' => $form->selectMembers('', 'member_origin', '', 0, 1, '', 0, array(), 0, 'SelectMember', 0, 'minwidth200', array(), 1, array($object->id))
+				)
+			);
+
+			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("MergeMembers"), $langs->trans("ConfirmMergeMembers"), "confirm_merge", $formquestion, 'no', 1, 300);
+		}
+
 		// Confirm removed from spip
 		if ($action == 'del_spip') {
 			print $form->formconfirm("card.php?rowid=$id", $langs->trans('DeleteIntoSpip'), $langs->trans('DeleteIntoSpipConfirmation'), 'confirm_del_spip');
@@ -2138,6 +2177,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 						print '<a class="butAction" href="card.php?rowid='.((int) $object->id).'&action=add_spip&token='.newToken().'">'.$langs->trans("AddIntoSpip").'</a>'."\n";
 					}
 				}
+
+				// Merge
+				print dolGetButtonAction($langs->trans('MergeMembers'), $langs->trans('Merge'), 'danger', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=merge&token='.newToken(), '', $user->hasRight('adherent', 'supprimer'));
 
 				// Delete
 				if ($user->hasRight('adherent', 'supprimer')) {

@@ -690,11 +690,13 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 							$openedDashBoard .= '</div>';
 							$openedDashBoard .= ' <div class="inline-block"><a href="'.$board->url_late.'" class="info-box-text info-box-text-a paddingleft">';
 						} else {
-							$openedDashBoard .= ' ';
+							$openedDashBoard .= ' <span class="info-box-text info-box-text-a displaycontents">';
 						}
 						$openedDashBoard .= $textLate;
 						if ($board->url_late) {
 							$openedDashBoard .= '</a>';
+						} else {
+							$openedDashBoard .= '</span>';
 						}
 					}
 					$openedDashBoard .= '</div>'."\n";

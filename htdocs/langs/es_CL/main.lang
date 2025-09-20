@@ -531,3 +531,5 @@ UserExpired=Expirado
 LinkedFiles=Links archivos y documentos
 ErrorFailedToDeleteLink=Error al eliminar el enlace '<b>%s</b>'
 ErrorFailedToUpdateLink=Error al actualizar el enlace '<b>%s</b>'
+Tools=Herramientas
+TMenuTools=Herramientas

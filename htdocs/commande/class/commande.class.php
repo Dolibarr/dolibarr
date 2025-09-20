@@ -58,6 +58,12 @@ class Commande extends CommonOrder
 	public $element = 'commande';
 
 	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'ORDER';
+
+	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'commande';
@@ -153,7 +159,7 @@ class Commande extends CommonOrder
 	public $deposit_percent;
 
 	/**
-	 * @var int bank account ID
+	 * @var ?int bank account ID
 	 */
 	public $fk_account;
 
@@ -248,8 +254,6 @@ class Commande extends CommonOrder
 	 * @var array<string,string>  (Encoded as JSON in database)
 	 */
 	public $extraparams = array();
-
-	public $linked_objects = array();
 
 	/**
 	 * @var int User author ID
@@ -537,7 +541,7 @@ class Commande extends CommonOrder
 		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
 			$num = $this->getNextNumRef($soc);
 		} else {
-			$num = $this->ref;
+			$num = (string) $this->ref;
 		}
 		$this->newref = dol_sanitizeFileName($num);
 
@@ -2371,7 +2375,7 @@ class Commande extends CommonOrder
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
 			if ($obj) {
-				$nb = $obj->nb;
+				$nb = (int) $obj->nb;
 			}
 
 			$this->db->free($resql);
@@ -3239,7 +3243,7 @@ class Commande extends CommonOrder
 
 					if ($product_stock < $qty) {
 						$langs->load("errors");
-						$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnOrder', $product->ref);
+						$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnOrder', (string) $product->ref);
 						$this->errors[] = $this->error;
 
 						dol_syslog(get_class($this)."::addline error=Product ".$product->ref.": ".$this->error, LOG_ERR);
@@ -3267,7 +3271,10 @@ class Commande extends CommonOrder
 				if ($qty < $this->line->packaging) {
 					$qty = $this->line->packaging;
 				} else {
-					if (!empty($this->line->packaging) && fmod($qty, $this->line->packaging) > 0) {
+					if (!empty($this->line->packaging)
+						&& is_numeric($this->line->packaging)
+						&& (float) $this->line->packaging > 0
+						&& fmod((float) $qty, (float) $this->line->packaging) > 0) {
 						$coeff = intval($qty / $this->line->packaging) + 1;
 						$qty = $this->line->packaging * $coeff;
 						setEventMessage($langs->trans('QtyRecalculatedWithPackaging'), 'mesgs');

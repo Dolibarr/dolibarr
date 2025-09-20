@@ -169,11 +169,6 @@ class Productlot extends CommonObject
 	);
 
 	/**
-	 * @var int Entity
-	 */
-	public $entity;
-
-	/**
 	 * @var int Product ID
 	 */
 	public $fk_product;
@@ -935,6 +930,7 @@ class Productlot extends CommonObject
 		}
 		$sql .= " WHERE cf.entity IN (".getEntity('expedition').")";
 		$sql .= " AND cfdi.batch = '".($this->db->escape($this->batch))."'";
+		$sql .= " AND cfdi.fk_product = " . (int) $this->fk_product;
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " AND cf.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}

@@ -387,7 +387,7 @@ if (empty($reshook)) {
 				} else {
 					if (isModEnabled("category")) {
 						// Categories association
-						$usercats = GETPOST('usercats', 'array');
+						$usercats = GETPOST('usercats', 'array:int');
 						$object->setCategories($usercats);
 					}
 					$db->commit();
@@ -655,7 +655,7 @@ if (empty($reshook)) {
 
 				if (!$error && !count($object->errors)) {
 					// Then we add the associated categories
-					$categories = GETPOST('usercats', 'array');
+					$categories = GETPOST('usercats', 'array:int');
 					$object->setCategories($categories);
 				}
 
@@ -2350,15 +2350,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '</tr>';
 			}
 
-			// Civility
-			print '<tr><td class="titlefieldcreate"><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td>';
-			if ($permissiontoedit && !$object->ldap_sid) {
-				print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'aZ09') : $object->civility_code, 'civility_code');
-			} elseif ($object->civility_code) {
-				print $langs->trans("Civility".$object->civility_code);
-			}
-			print '</td></tr>';
-
 			// Lastname
 			print "<tr>";
 			print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Lastname").'</td>';
@@ -2394,6 +2385,62 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 			print '</td>';
 			print '</tr>';
+
+			// External user ?
+			print '<tr><td>'.$langs->trans("ExternalUser").' ?</td>';
+			print '<td>';
+			if ($user->id == $object->id || !$user->admin) {
+				// Read mode
+				$type = $langs->trans("Internal");
+				if ($object->socid) {
+					$type = $langs->trans("External");
+				}
+				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+				print $form->textwithpicto($type, $langs->trans("InternalExternalDesc"));
+				if ($object->ldap_sid) {
+					print ' ('.$langs->trans("DomainUser").')';
+				}
+			} else {
+				// Select mode
+				$type = 0;
+				if ($object->contact_id) {
+					$type = $object->contact_id;
+				}
+
+				$eventsCompanyContact = array();
+				$eventsCompanyContact[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1&token='.currentToken(), 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
+				if ($object->socid > 0 && !($object->contact_id > 0)) {	// external user but no link to a contact
+					print img_picto('', 'company', 'class="pictofixedwidth"');
+					print $form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300');
+					print img_picto('', 'contact', 'class="pictofixedwidth"');
+					print $form->select_contact(0, 0, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
+					if ($object->ldap_sid) {
+						print ' ('.$langs->trans("DomainUser").')';
+					}
+				} elseif ($object->socid > 0 && $object->contact_id > 0) {	// external user with a link to a contact
+					print img_picto('', 'company', 'class="pictofixedwidth"');
+					print $form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
+					print img_picto('', 'contact', 'class="pictofixedwidth"');
+					print $form->select_contact(0, $object->contact_id, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
+					if ($object->ldap_sid) {
+						print ' ('.$langs->trans("DomainUser").')';
+					}
+				} elseif (!($object->socid > 0) && $object->contact_id > 0) {	// internal user with a link to a contact
+					print img_picto('', 'company', 'class="pictofixedwidth"');
+					print $form->select_company(0, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
+					print img_picto('', 'contact', 'class="pictofixedwidth"');
+					print $form->select_contact(0, $object->contact_id, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
+					if ($object->ldap_sid) {
+						print ' ('.$langs->trans("DomainUser").')';
+					}
+				} else {	// $object->socid is not > 0 here
+					print img_picto('', 'company', 'class="pictofixedwidth"');
+					print $form->select_company(0, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
+					print img_picto('', 'contact', 'class="pictofixedwidth"');
+					print $form->select_contact(0, 0, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
+				}
+			}
+			print '</td></tr>';
 
 			// Administrator
 			print '<tr><td>'.$form->textwithpicto($langs->trans("Administrator"), $langs->trans("AdministratorDesc")).'</td>';
@@ -2469,6 +2516,17 @@ if ($action == 'create' || $action == 'adduserldap') {
 					} else {
 						print $yn;
 					}
+				}
+				print '</td></tr>';
+			}
+
+			// Civility
+			if (getDolGlobalString('MAIN_USE_TITLE_FOR_USER')) {
+				print '<tr><td class="titlefieldcreate"><label for="civility_code">'.$langs->trans("UserTitle").'</label></td><td>';
+				if ($permissiontoedit && !$object->ldap_sid) {
+					print $formcompany->select_civility(GETPOSTISSET("civility_code") ? GETPOST("civility_code", 'aZ09') : $object->civility_code, 'civility_code');
+				} elseif ($object->civility_code) {
+					print $langs->trans("Civility".$object->civility_code);
 				}
 				print '</td></tr>';
 			}
@@ -2554,62 +2612,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 				}
 			}
 
-			// External user ?
-			print '<tr><td>'.$langs->trans("ExternalUser").' ?</td>';
-			print '<td>';
-			if ($user->id == $object->id || !$user->admin) {
-				// Read mode
-				$type = $langs->trans("Internal");
-				if ($object->socid) {
-					$type = $langs->trans("External");
-				}
-				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-				print $form->textwithpicto($type, $langs->trans("InternalExternalDesc"));
-				if ($object->ldap_sid) {
-					print ' ('.$langs->trans("DomainUser").')';
-				}
-			} else {
-				// Select mode
-				$type = 0;
-				if ($object->contact_id) {
-					$type = $object->contact_id;
-				}
-
-				$eventsCompanyContact = array();
-				$eventsCompanyContact[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1&token='.currentToken(), 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
-				if ($object->socid > 0 && !($object->contact_id > 0)) {	// external user but no link to a contact
-					print img_picto('', 'company', 'class="pictofixedwidth"');
-					print $form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300');
-					print img_picto('', 'contact', 'class="pictofixedwidth"');
-					print $form->select_contact(0, 0, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
-					if ($object->ldap_sid) {
-						print ' ('.$langs->trans("DomainUser").')';
-					}
-				} elseif ($object->socid > 0 && $object->contact_id > 0) {	// external user with a link to a contact
-					print img_picto('', 'company', 'class="pictofixedwidth"');
-					print $form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
-					print img_picto('', 'contact', 'class="pictofixedwidth"');
-					print $form->select_contact(0, $object->contact_id, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
-					if ($object->ldap_sid) {
-						print ' ('.$langs->trans("DomainUser").')';
-					}
-				} elseif (!($object->socid > 0) && $object->contact_id > 0) {	// internal user with a link to a contact
-					print img_picto('', 'company', 'class="pictofixedwidth"');
-					print $form->select_company(0, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
-					print img_picto('', 'contact', 'class="pictofixedwidth"');
-					print $form->select_contact(0, $object->contact_id, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
-					if ($object->ldap_sid) {
-						print ' ('.$langs->trans("DomainUser").')';
-					}
-				} else {	// $object->socid is not > 0 here
-					print img_picto('', 'company', 'class="pictofixedwidth"');
-					print $form->select_company(0, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
-					print img_picto('', 'contact', 'class="pictofixedwidth"');
-					print $form->select_contact(0, 0, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
-				}
-			}
-			print '</td></tr>';
-
 			print '</table>';
 
 			print '<hr>';
@@ -2646,7 +2648,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			}
 			if (preg_match('/dolibarr/', $dolibarr_main_authentication) || preg_match('/forceuser/', $dolibarr_main_authentication)) {
 				if ($permissiontoeditpasswordandsee) {
-					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<input maxlength="128" type="password" class="flat" id="password" name="password" value="'.dol_escape_htmltag($object->pass).'" autocomplete="new-password">';
+					$valuetoshow .= ($valuetoshow ? (' '.$langs->trans("or").' ') : '').'<input maxlength="128" type="password" class="minwidth300 maxwidth400 widthcentpercentminusx" id="password" name="password" value="'.dol_escape_htmltag($object->pass).'" autocomplete="new-password">';
 					if (!empty($conf->use_javascript_ajax)) {
 						$valuetoshow .= img_picto((getDolGlobalString('USER_PASSWORD_GENERATED') === 'none' ? $langs->transnoentities('NoPasswordGenerationRuleConfigured') : $langs->transnoentities('Generate')), 'refresh', 'id="generate_password" class="paddingleft'.(getDolGlobalString('USER_PASSWORD_GENERATED') === 'none' ? ' opacitymedium' : ' linkobject').'"');
 					}
@@ -2756,7 +2758,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<td>';
 			print img_picto('', 'phoning', 'class="pictofixedwidth"');
 			if ($permissiontoedit && empty($object->ldap_sid)) {
-				print '<input type="text" name="office_phone" class="flat maxwidth200" value="'.$object->office_phone.'">';
+				print '<input type="text" name="office_phone" class="flat maxwidth200 widthcentpercentminusx" value="'.$object->office_phone.'">';
 			} else {
 				print '<input type="hidden" name="office_phone" value="'.$object->office_phone.'">';
 				print $object->office_phone;
@@ -2768,7 +2770,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<td>';
 			print img_picto('', 'phoning_mobile', 'class="pictofixedwidth"');
 			if ($permissiontoedit && empty($object->ldap_sid)) {
-				print '<input type="text" name="user_mobile" class="flat maxwidth200" value="'.$object->user_mobile.'">';
+				print '<input type="text" name="user_mobile" class="flat maxwidth200 widthcentpercentminusx" value="'.$object->user_mobile.'">';
 			} else {
 				print '<input type="hidden" name="user_mobile" value="'.$object->user_mobile.'">';
 				print $object->user_mobile;
@@ -2780,7 +2782,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '<td>';
 			print img_picto('', 'phoning_fax', 'class="pictofixedwidth"');
 			if ($permissiontoedit && empty($object->ldap_sid)) {
-				print '<input type="text" name="office_fax" class="flat maxwidth200" value="'.$object->office_fax.'">';
+				print '<input type="text" name="office_fax" class="flat maxwidth200 widthcentpercentminusx" value="'.$object->office_fax.'">';
 			} else {
 				print '<input type="hidden" name="office_fax" value="'.$object->office_fax.'">';
 				print $object->office_fax;
@@ -2808,7 +2810,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 							print '<span class="fab '.$value['icon'].' pictofixedwidth"></span>';
 						}
 						if ($permissiontoedit && empty($object->ldap_sid)) {
-							print '<input type="text" name="'.$key.'" class="flat maxwidth200" value="'.(isset($object->socialnetworks[$key]) ? $object->socialnetworks[$key] : '').'">';
+							print '<input type="text" name="'.$key.'" class="flat maxwidth200 widthcentpercentminusx" value="'.(isset($object->socialnetworks[$key]) ? $object->socialnetworks[$key] : '').'">';
 						} else {
 							print '<input type="hidden" name="'.$key.'" value="'.$object->socialnetworks[$key].'">';
 							print $object->socialnetworks[$key];
@@ -2870,7 +2872,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			if (isModEnabled('category') && $user->hasRight("categorie", "read")) {
 				print '<tr><td>'.$form->editfieldkey('Categories', 'usercats', '', $object, 0).'</td>';
 				print '<td>';
-				if (!$permissiontoedit) {
+				if ($permissiontoedit) {
 					print $form->selectCategories(Categorie::TYPE_USER, 'usercats', $object);
 				} else {
 					print $form->showCategories($object->id, Categorie::TYPE_USER, 1);

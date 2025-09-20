@@ -190,10 +190,11 @@ class DolibarrApiAccess implements iAuthenticate
 							$conf->global->MAIN_NO_INPUT_PRICE_WITH_TAX = 1;
 						}
 						// Set also the global variable $mysoc
+						global $mysoc;
 						$mysoc = $fmysoc;
 
 						// Reload langs
-						$langcode = (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT);
+						$langcode = (!getDolGlobalString('MAIN_LANG_DEFAULT') ? 'auto' : $conf->global->MAIN_LANG_DEFAULT);
 						if (!empty($user->conf->MAIN_LANG_DEFAULT)) {
 							$langcode = $user->conf->MAIN_LANG_DEFAULT;
 						}

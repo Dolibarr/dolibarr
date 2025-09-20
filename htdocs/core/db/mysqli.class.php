@@ -1294,6 +1294,28 @@ class DoliDBMysqli extends DoliDB
 
 		return $result;
 	}
+
+	/**
+	 * Prepare a SQL statement for execution
+	 *
+	 * @param string $sql SQL query to prepare
+	 * @return false|mysqli_stmt
+	 */
+	public function prepare($sql)
+	{
+		if (!$this->connected) {
+			$this->lasterror = 'Not connected to database';
+			return false;
+		}
+		$stmt = $this->db->prepare($sql);
+		if ($stmt === false) {
+			$this->lasterror = $this->db->error;
+			$this->lastqueryerror = $sql;
+			return false;
+		}
+
+		return $stmt;
+	}
 }
 
 if (class_exists('mysqli')) {

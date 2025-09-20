@@ -123,7 +123,6 @@ ACCOUNTING_ACCOUNT_SUSPENSE=Cuenta (del plan de cuentas) que se utilizará como 
 DONATION_ACCOUNTINGACCOUNT=Cuenta (del plan de cuentas) que se utilizará para registrar donaciones (módulo de donaciones)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Cuenta (del plan de cuentas) que se utilizará para registrar las suscripciones de membresía (módulo de membresía, si la membresía se registró sin factura)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Cuenta (del plan de cuentas) que se utilizará como cuenta predeterminada para registrar el depósito del cliente
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Cuenta (del plan de cuentas) que se utilizará como predeterminada
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Cuenta contable por defecto para registrar la garantía retenida del cliente
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cuenta (del plan de cuentas) que se usará como cuenta predeterminada para los productos comprados dentro del mismo país (se usa si no está definida en la hoja del producto)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Cuenta (del plan de cuentas) que se usará como cuenta predeterminada para los productos comprados de EEC a otro país de EEC (se usa si no está definido en la hoja de producto)
