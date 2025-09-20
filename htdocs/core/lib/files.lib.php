@@ -1913,7 +1913,7 @@ function dol_meta_create($object)
 	if ($dir) {
 		$object->fetch_thirdparty();
 
-		$objectref = dol_sanitizeFileName($object->ref);
+		$objectref = dol_sanitizeFileName((string) $object->ref);
 		$dir = $dir."/".$objectref;
 		$file = $dir."/".$objectref.".meta";
 

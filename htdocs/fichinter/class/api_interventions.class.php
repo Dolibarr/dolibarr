@@ -132,13 +132,14 @@ class Interventions extends DolibarrApi
 	 * @param	string	$properties				Restrict the data returned to these properties. Ignored if empty. Comma separated list of property names
 	 * @param	string	$contact_type			Type of contacts: thirdparty, internal or external
 	 * @param	bool	$pagination_data		If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @param	int		$loadlinkedobjects		Load also linked objects
 	 * @return	array							Array of order objects
 	 * @phan-return array<object>
 	 * @phpstan-return array<object>
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $contact_type = '', $pagination_data = false)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $contact_type = '', $pagination_data = false, $loadlinkedobjects = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
 			throw new RestException(403);
@@ -207,6 +208,12 @@ class Interventions extends DolibarrApi
 					if ($contact_type) {
 						$fichinter_static->contacts_ids = $fichinter_static->liste_contact(-1, $contact_type, 1);
 					}
+
+					if ($loadlinkedobjects) {
+						// retrieve linked objects
+						$fichinter_static->fetchObjectLinked();
+					}
+
 					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($fichinter_static), $properties);
 				}
 				$i++;

@@ -32,33 +32,6 @@
  *  \brief      File that include conf.php file and commons lib like functions.lib.php
  */
 
-/**
- * @var ?string $dolibarr_font_DOL_DEFAULT_TTF
- * @var ?string $dolibarr_font_DOL_DEFAULT_TTF_BOLD
- * @var ?string $dolibarr_js_CKEDITOR
- * @var ?string $dolibarr_js_JQUERY
- * @var ?string $dolibarr_js_JQUERY_UI
- * @var ?string $dolibarr_lib_NUSOAP_PATH
- * @var ?string $dolibarr_lib_ODTPHP_PATH
- * @var ?string $dolibarr_lib_ODTPHP_PATHTOPCLZIP
- * @var ?string $dolibarr_lib_PHPEXCELNEW_PATH
- * @var ?string $dolibarr_lib_TCPDF_PATH
- * @var ?string $dolibarr_lib_TCPDI_PATH
- */
-'
-@phan-var-force ?string $dolibarr_font_DOL_DEFAULT_TTF
-@phan-var-force ?string $dolibarr_font_DOL_DEFAULT_TTF_BOLD
-@phan-var-force ?string $dolibarr_js_CKEDITOR
-@phan-var-force ?string $dolibarr_js_JQUERY
-@phan-var-force ?string $dolibarr_js_JQUERY_UI
-@phan-var-force ?string $dolibarr_lib_NUSOAP_PATH
-@phan-var-force ?string $dolibarr_lib_ODTPHP_PATH
-@phan-var-force ?string $dolibarr_lib_ODTPHP_PATHTOPCLZIP
-@phan-var-force ?string $dolibarr_lib_PHPEXCELNEW_PATH
-@phan-var-force ?string $dolibarr_lib_TCPDF_PATH
-@phan-var-force ?string $dolibarr_lib_TCPDI_PATH
-';
-
 if (!defined('DOL_APPLICATION_TITLE')) {
 	define('DOL_APPLICATION_TITLE', 'Dolibarr');
 }
@@ -120,7 +93,7 @@ function dol_session_regenerate_id()
  */
 function dol_session_rotate($sessionname = '')
 {
-	$oldsessionid = session_id();
+	//$oldsessionid = session_id();
 
 	// Backup the current session
 	$session_backup = $_SESSION;
@@ -144,7 +117,7 @@ function dol_session_rotate($sessionname = '')
 	unset($_SESSION['OBSOLETE']);
 	unset($_SESSION['EXPIRES']);
 
-	$newsessionid = session_id();
+	//$newsessionid = session_id();
 	//var_dump("oldsessionid=".$oldsessionid." - newsessionid=".$newsessionid);
 }
 
@@ -153,7 +126,7 @@ function dol_session_rotate($sessionname = '')
 // Define localization of conf file
 // --- Start of part replaced by Dolibarr packager makepack-dolibarr
 $conffile = "conf/conf.php";
-$conffiletoshow = "htdocs/conf/conf.php";
+$conffiletoshow = "htdocs/conf/conf.php";	// Used into the include
 // For debian/redhat like systems
 //$conffile = "/etc/dolibarr/conf.php";
 //$conffiletoshow = "/etc/dolibarr/conf.php";
@@ -165,12 +138,16 @@ $conffiletoshow = "htdocs/conf/conf.php";
 // Include configuration
 // @phpstan-ignore-next-line
 $result = @include_once $conffile; // Keep @ because with some error reporting mode, this breaks the redirect done when file is not found
-
 /**
+ * @var ?string $dolibarr_main_url_root
+ * @var ?string $dolibarr_main_url_root_alt
+ * @var ?string $dolibarr_main_document_root
+ * @var ?string $dolibarr_main_document_root_alt
  * @var ?string $dolibarr_main_stream_to_disable
  * @var ?string $dolibarr_main_instance_unique_id
  * @var ?string $dolibarr_strict_mode
  * @var ?string $dolibarr_main_data_root
+ * @var ?string $dolibarr_main_db_host
  * @var ?string $dolibarr_main_db_prefix
  * @var ?string $dolibarr_main_db_root
  * @var ?string $dolibarr_main_db_user
@@ -179,9 +156,45 @@ $result = @include_once $conffile; // Keep @ because with some error reporting m
  * @var ?string $dolibarr_main_db_type
  * @var ?string $dolibarr_main_db_encryption
  * @var ?string $dolibarr_main_db_encrypted_pass
+ * @var ?string $dolibarr_main_db_character_set
+ * @var ?string $dolibarr_main_db_collation
+ * @var ?string $dolibarr_main_db_cryptkey
  * @var ?string $dolibarr_main_prod
  * @var ?string $dolibarr_main_dolcrypt_key
+ * @var ?string $dolibarr_main_force_https
+ * @var ?string $dolibarr_main_limit_users
+ * @var ?string $dolibarr_mailing_limit_sendbyweb
+ * @var ?string $dolibarr_mailing_limit_sendbycli
+ * @var ?string $dolibarr_mailing_limit_sendbyday
+ * @var ?string $dolibarr_nocsrfcheck
+ *
+ * @var ?string $dolibarr_font_DOL_DEFAULT_TTF
+ * @var ?string $dolibarr_font_DOL_DEFAULT_TTF_BOLD
+ *
+ * @var ?string $dolibarr_js_CKEDITOR
+ * @var ?string $dolibarr_js_JQUERY
+ * @var ?string $dolibarr_js_JQUERY_UI
+ *
+ * @var ?string $dolibarr_lib_NUSOAP_PATH
+ * @var ?string $dolibarr_lib_ODTPHP_PATH
+ * @var ?string $dolibarr_lib_ODTPHP_PATHTOPCLZIP
+ * @var ?string $dolibarr_lib_PHPEXCELNEW_PATH
+ * @var ?string $dolibarr_lib_TCPDF_PATH
+ * @var ?string $dolibarr_lib_TCPDI_PATH
  */
+'
+@phan-var-force ?string $dolibarr_font_DOL_DEFAULT_TTF
+@phan-var-force ?string $dolibarr_font_DOL_DEFAULT_TTF_BOLD
+@phan-var-force ?string $dolibarr_js_CKEDITOR
+@phan-var-force ?string $dolibarr_js_JQUERY
+@phan-var-force ?string $dolibarr_js_JQUERY_UI
+@phan-var-force ?string $dolibarr_lib_NUSOAP_PATH
+@phan-var-force ?string $dolibarr_lib_ODTPHP_PATH
+@phan-var-force ?string $dolibarr_lib_ODTPHP_PATHTOPCLZIP
+@phan-var-force ?string $dolibarr_lib_PHPEXCELNEW_PATH
+@phan-var-force ?string $dolibarr_lib_TCPDF_PATH
+@phan-var-force ?string $dolibarr_lib_TCPDI_PATH
+';
 
 // Disable some not used PHP stream
 $listofwrappers = stream_get_wrappers();
