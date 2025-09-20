@@ -235,7 +235,7 @@ class Tasks extends DolibarrApi
 	 */
 	public function getTimespent($id)
 	{
-		if(!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
+		if (!DolibarrApiAccess::$user->hasRight('projet', 'lire')) {
 			throw new RestException(403);
 		}
 
