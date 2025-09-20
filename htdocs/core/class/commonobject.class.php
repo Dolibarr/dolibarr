@@ -792,7 +792,7 @@ abstract class CommonObject
 	public $labelStatusShort = array();
 
 	/**
-	 * @var array<string,int|string>	Array to store lists of tpl
+	 * @var array<string,int|float|string|null>	Array to store lists of tpl
 	 */
 	public $tpl;
 
