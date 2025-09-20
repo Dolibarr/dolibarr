@@ -198,8 +198,6 @@ ConfirmActionMyObject
 ConfirmActionTarget
 ConfirmCloneMyObject
 ConfirmCloneTask
-ConfirmCreateAdherent
-ConfirmDeleteAdherent
 ConfirmDeleteIndividual
 ConfirmDeleteReport
 ConfirmDeleteWebsiteAccount
