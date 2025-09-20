@@ -1291,7 +1291,8 @@ if (!$error && ($action == 'updateprice' && $confirm == 'yes') && $permissiontoa
 							setEventMessages($object->error, $object->errors, 'errors');
 						}
 					} elseif (getDolGlobalString('PRODUIT_MULTIPRICES')) {
-						for ($level = 1; $level <= getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT'); $level++) {
+						$maxlevel = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
+						for ($level = 1; $level <= $maxlevel; $level++) {
 							if ($object->price_base_type == 'TTC') {
 								$newprice = $object->multiprices_ttc[$level] * (100 + $pricepercentage) / 100;
 								$minprice = $object->multiprices_min_ttc[$level];
