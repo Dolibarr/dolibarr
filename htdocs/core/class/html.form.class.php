@@ -8104,13 +8104,15 @@ class Form
 	{
 		global $langs;
 
+		$TDurationTypes = $this->getDurationTypes($langs);
+
 		// Removed undesired duration types
 		foreach ($excludetypes as $value) {
-			unset($this->TDurationTypes[$value]);
+			unset($TDurationTypes[$value]);
 		}
 
 		$retstring = '<select class="flat minwidth75 maxwidth100" id="select_' . $prefix . 'type_duration" name="' . $prefix . 'type_duration">';
-		foreach ($this->TDurationTypes as $key => $typeduration) {
+		foreach ($TDurationTypes as $key => $typeduration) {
 			$retstring .= '<option value="' . $key . '"';
 			if ($key == $selected) {
 				$retstring .= " selected";
