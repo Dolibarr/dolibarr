@@ -3243,7 +3243,7 @@ class Commande extends CommonOrder
 
 					if ($product_stock < $qty) {
 						$langs->load("errors");
-						$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnOrder', $product->ref);
+						$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnOrder', (string) $product->ref);
 						$this->errors[] = $this->error;
 
 						dol_syslog(get_class($this)."::addline error=Product ".$product->ref.": ".$this->error, LOG_ERR);

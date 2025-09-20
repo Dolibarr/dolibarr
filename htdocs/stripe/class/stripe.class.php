@@ -592,7 +592,7 @@ class Stripe extends CommonObject
 
 				$paymentintent = \Stripe\PaymentIntent::create($dataforintent, $arrayofoptions);
 
-				if ($paymentintent instanceOf \Stripe\PaymentIntent) {
+				if ($paymentintent instanceof \Stripe\PaymentIntent) {
 					dol_syslog(get_class($this)."::getPaymentIntent paymentintent is a defined object");
 
 					// Store the payment intent
