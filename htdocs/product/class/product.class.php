@@ -5812,7 +5812,7 @@ class Product extends CommonObject
 				$datas['duration'] .= (!empty($this->duration_unit) && isset($dur[$this->duration_unit]) ? "&nbsp;".$langs->trans($dur[$this->duration_unit]) : '');
 			}
 			if (empty($user->socid)) {
-				if (!empty($this->pmp) && $this->pmp) {
+				if (isset($this->pmp) && $this->pmp) {
 					$datas['pmp'] = "<br><b>".$langs->trans("PMPValue").'</b>: '.price($this->pmp, 0, '', 1, -1, -1, $conf->currency);
 				}
 
