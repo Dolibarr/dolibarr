@@ -5801,7 +5801,7 @@ class Form
 	}
 
 	/**
-	 * Return HTML compopent to select a category
+	 * Return HTML component to select a category
 	 *
 	 * @param 	string			$categtype		Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) should be avoid and is keptfor internal use only.
 	 * @param 	string			$htmlname 		Html name
