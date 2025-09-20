@@ -109,7 +109,7 @@ class Form
 	 * @param Translate $langs Translation to be used
 	 * @return array{y:string,m:string,w:string,d:string,h:string,i:string,s:string} Types of durations
 	 */
-	public function getDurationTypes($langs)
+	public function getDurationTypes(Translate $langs)
 	{
 		return [
 			'y' => $langs->trans('Years'),
