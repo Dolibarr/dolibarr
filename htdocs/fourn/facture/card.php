@@ -1533,7 +1533,7 @@ if (empty($reshook)) {
 			GETPOSTINT('lineid'),
 			$label,
 			(float) $up,
-			(float) $tva_tx,
+			$tva_tx,
 			$localtax1_tx,
 			$localtax2_tx,
 			(float) price2num(GETPOST('qty'), 'MS'),
@@ -1589,7 +1589,7 @@ if (empty($reshook)) {
 		$localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty, $mysoc);
 		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty, $mysoc);
 		foreach ($object->lines as $line) {
-			$result = $object->updateline($line->id, $line->desc, $line->subprice, (float) $vat_rate, $localtax1_rate, $localtax2_rate, $line->qty, $line->fk_product, 'HT', $line->info_bits, $line->product_type, $line->remise_percent, 0, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier, $line->rang);
+			$result = $object->updateline($line->id, $line->desc, $line->subprice, $vat_rate, $localtax1_rate, $localtax2_rate, $line->qty, $line->fk_product, 'HT', $line->info_bits, $line->product_type, $line->remise_percent, 0, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice, $line->ref_supplier, $line->rang);
 		}
 	} elseif ($action == 'addline' && $usercancreate) {
 		// Add a product line
@@ -1885,7 +1885,7 @@ if (empty($reshook)) {
 			$price_base_type = 'HT';
 			$pu_devise = price2num($price_ht_devise, 'CU');
 
-			$result = $object->addline($line_desc, (float) $pu_ht, (float) $tva_tx, $localtax1_tx, $localtax2_tx, (float) $qty, 0, $remise_percent, $date_start, $date_end, 0, $tva_npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit, 0, (float) $pu_devise, $ref_supplier);
+			$result = $object->addline($line_desc, (float) $pu_ht, $tva_tx, $localtax1_tx, $localtax2_tx, (float) $qty, 0, $remise_percent, $date_start, $date_end, 0, $tva_npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit, 0, (float) $pu_devise, $ref_supplier);
 		}
 
 		//print "xx".$tva_tx; exit;
