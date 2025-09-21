@@ -209,13 +209,13 @@ class Propal extends CommonObject
 	public $price;
 
 	/**
-	 * @var float
+	 * @var ?float
 	 * @deprecated See $total_tva
 	 * @see $total_tva
 	 */
 	public $tva;
 	/**
-	 * @var float
+	 * @var ?float
 	 * @deprecated See $total_ttc
 	 * @see $total_ttc
 	 */
@@ -1404,8 +1404,7 @@ class Propal extends CommonObject
 				}
 
 				// Set delivery address
-				/*if (! $error && $this->fk_delivery_address)
-				{
+				/*if (! $error && $this->fk_delivery_address) {
 					$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 					$sql.= " SET fk_delivery_address = ".((int) $this->fk_delivery_address);
 					$sql.= " WHERE ref = '".$this->db->escape($this->ref)."'";
@@ -1415,17 +1414,15 @@ class Propal extends CommonObject
 				}*/
 
 				if (!$error) {
-					// Mise a jour infos denormalisees
+					// Update denormalized data
 					$resql = $this->update_price(1, 'auto', 0, $mysoc);
 					if ($resql) {
 						$action = 'update';
 
 						// Actions on extra fields
-						if (!$error) {
-							$result = $this->insertExtraFields();
-							if ($result < 0) {
-								$error++;
-							}
+						$result = $this->insertExtraFields();
+						if ($result < 0) {
+							$error++;
 						}
 
 						if (!$error && !$notrigger) {

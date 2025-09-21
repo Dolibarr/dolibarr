@@ -589,31 +589,31 @@ abstract class CommonObject
 	public $note;
 
 	/**
-	 * @var float 		Total amount excluding taxes (HT = "Hors Taxe" in French)
+	 * @var ?float 		Total amount excluding taxes (HT = "Hors Taxe" in French)
 	 * @see update_price()
 	 */
 	public $total_ht;
 
 	/**
-	 * @var float 		Total VAT amount (TVA = "Taxe sur la Valeur Ajoutée" in French)
+	 * @var ?float 		Total VAT amount (TVA = "Taxe sur la Valeur Ajoutée" in French)
 	 * @see update_price()
 	 */
 	public $total_tva;
 
 	/**
-	 * @var float 		Total local tax 1 amount
+	 * @var ?float 		Total local tax 1 amount
 	 * @see update_price()
 	 */
 	public $total_localtax1;
 
 	/**
-	 * @var float 		Total local tax 2 amount
+	 * @var ?float 		Total local tax 2 amount
 	 * @see update_price()
 	 */
 	public $total_localtax2;
 
 	/**
-	 * @var float 		Total amount including taxes (TTC = "Toutes Taxes Comprises" in French)
+	 * @var ?float 		Total amount including taxes (TTC = "Toutes Taxes Comprises" in French)
 	 * @see update_price()
 	 */
 	public $total_ttc;
