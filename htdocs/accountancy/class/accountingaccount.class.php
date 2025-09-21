@@ -890,7 +890,7 @@ class AccountingAccount extends CommonObject
 					$code_l = (string) $accountdeposittoventilated->ref;
 					$code_p = '';
 					$code_t = '';
-					$suggestedid = $accountdeposittoventilated->rowid;
+					$suggestedid = (int) $accountdeposittoventilated->rowid;
 					$suggestedaccountingaccountfor = 'deposit';
 				}
 
@@ -909,7 +909,7 @@ class AccountingAccount extends CommonObject
 						$code_l = (string) $accountdeposittoventilated->ref;
 						$code_p = '';
 						$code_t = '';
-						$suggestedid = $accountdeposittoventilated->rowid;
+						$suggestedid = (int) $accountdeposittoventilated->rowid;
 						$suggestedaccountingaccountfor = 'deposit';
 					}
 				}
