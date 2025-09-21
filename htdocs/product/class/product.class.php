@@ -4381,7 +4381,7 @@ class Product extends CommonObject
 	 * @param	string	$sql	Request to execute
 	 * @param	string	$mode	'byunit'=number of unit, 'bynumber'=nb of entities
 	 * @param	int		$year	Year (0=current year, -1=all years)
-	 * @return	array{}|array<int<0,11>,array<int,int|float>>|int<-1,-1>	Return integer <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 * @return	array<int<0,11>,array<int,int|float|string>>|int<-1,-1>	Return integer <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
 	private function _get_stats($sql, $mode, $year = 0)
 	{
@@ -4431,7 +4431,7 @@ class Product extends CommonObject
 		$result = array();
 
 		for ($j = 0; $j < 12; $j++) {
-			// $ids is 'D', 'N', 'O', 'S', ... (First letter of month in user language)
+			// $idx is 'D', 'N', 'O', 'S', ... (First letter of month in user language)
 			$idx = ucfirst(dol_trunc(dol_print_date(dol_mktime(12, 0, 0, $month, 1, 1970), "%b"), 1, 'right', 'UTF-8', 1));
 
 			// print $idx.'-'.$year.'-'.$month.'<br>';
