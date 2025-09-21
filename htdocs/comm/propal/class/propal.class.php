@@ -87,6 +87,12 @@ class Propal extends CommonObject
 	public $picto = 'propal';
 
 	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'PROPAL';
+
+	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
 	 * @var integer
 	 */
@@ -111,7 +117,7 @@ class Propal extends CommonObject
 
 	/**
 	 * Ref from thirdparty
-	 * @var string
+	 * @var ?string
 	 * @deprecated Use $ref_customer
 	 * @see $ref_customer
 	 */
