@@ -2455,42 +2455,6 @@ parameters:
 			path: ../../../htdocs/comm/propal/class/propal.class.php
 
 		-
-			message: '#^Call to function method_exists\(\) with \$this\(Propal\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Propal\) and ''thirdparty'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Call to function property_exists\(\) with \$this\(Propal\) and ''total_ht'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Property Propal\:\:\$date_signature \(int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Property Propal\:\:\$ref_client \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Property Propal\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1

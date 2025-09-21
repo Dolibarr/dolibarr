@@ -4067,7 +4067,7 @@ class Propal extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</div>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">' . $this->getNomUrl() . '</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
@@ -4075,18 +4075,14 @@ class Propal extends CommonObject
 			$return .= '<span class="info-box-ref"> | '.$arraydata['projectlink'].'</span>';
 		}
 		$return .= '<br>';
-		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
+		if (is_object($this->thirdparty)) {
 			$return .= '<div class="info-box-ref tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
 		}
-		if (property_exists($this, 'total_ht')) {
-			$return .= '<span class="info-box-label amount" title="'.$langs->trans("AmountHT").'">'.price($this->total_ht).'</span>';
-		}
+		$return .= '<span class="info-box-label amount" title="'.$langs->trans("AmountHT").'">'.price($this->total_ht).'</span>';
 		if (!empty($arraydata['authorlink'])) {
 			$return .= ' &nbsp; <span class="info-box-label">'.$arraydata['authorlink'].'</span>';
 		}
-		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
-		}
+		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
