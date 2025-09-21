@@ -204,7 +204,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	$selectedLines = GETPOST('toselect', 'array');
+	$selectedLines = GETPOST('toselect', 'array:int');
 
 	if ($cancel) {
 		if (!empty($backtopageforcancel)) {
@@ -813,11 +813,11 @@ if (empty($reshook)) {
 			}
 			$subprice_multicurrency = $line->subprice;
 			if (is_numeric($margin_rate) && $margin_rate > 0) {
-				$line->subprice = floatval(price2num(floatval($line->pa_ht) * (1 + floatval($margin_rate) / 100), 'MU'));
+				$line->subprice = (float) price2num((float) $line->pa_ht * (1 + (float) $margin_rate / 100), 'MU');
 			} elseif (is_numeric($mark_rate) && $mark_rate > 0) {
-				$line->subprice = floatval($line->pa_ht / (1 - (floatval($mark_rate) / 100)));
+				$line->subprice = (float) ($line->pa_ht / (1 - ((float) $mark_rate / 100)));
 			} else {
-				$line->subprice = floatval($line->pa_ht);
+				$line->subprice = (float) $line->pa_ht;
 			}
 
 			$prod = new Product($db);
@@ -1043,7 +1043,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error && isModEnabled('variants') && $prod_entry_mode != 'free') {
-			if ($combinations = GETPOST('combinations', 'array')) {
+			if ($combinations = GETPOST('combinations', 'array:alphanohtml')) {
 				//Check if there is a product with the given combination
 				$prodcomb = new ProductCombination($db);
 
@@ -2389,7 +2389,7 @@ if ($action == 'create' && $usercancreate) {
 		// Bank Account
 		if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_ORDER') && isModEnabled("bank")) {
 			print '<tr><td>' . $langs->trans('BankAccount') . '</td><td>';
-			print img_picto('', 'bank_account', 'class="pictofixedwidth"') . $form->select_comptes($fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
+			print img_picto('', 'bank_account', 'class="pictofixedwidth"') . $form->select_comptes((int) $fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 			print '</td></tr>';
 		}
 

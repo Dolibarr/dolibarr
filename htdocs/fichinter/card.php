@@ -323,7 +323,7 @@ if (empty($reshook)) {
 			$mesg = $object->error;
 		}
 	} elseif ($action == 'add' && $permissiontoadd) {
-		$selectedLines = GETPOST('toselect', 'array');
+		$selectedLines = GETPOST('toselect', 'array:int');
 		$object->socid = $socid;
 		$object->duration = GETPOSTINT('duration');
 		$object->fk_project = GETPOSTINT('projectid');
@@ -441,7 +441,7 @@ if (empty($reshook)) {
 											$label = $lines[$i]->product_label;
 										}
 
-										if ($prod->duration_value && $conf->global->FICHINTER_USE_SERVICE_DURATION) {
+										if ($prod->duration_value && getDolGlobalString('FICHINTER_USE_SERVICE_DURATION')) {
 											switch ($prod->duration_unit) {
 												default:
 												case 'h':

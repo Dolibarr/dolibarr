@@ -2,7 +2,7 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- *
+ * Copyright (C) 2025		Schaffhauser sébastien		<sebastien@webmaster67.fr>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -245,6 +245,10 @@ class Context
 		$this->addControllerDefinition('invoicelist', $defaultControllersPath . 'invoicelist.controller.class.php', 'InvoiceListController');
 		$this->addControllerDefinition('membercard', $defaultControllersPath . 'membercard.controller.class.php', 'MemberCardController');
 		$this->addControllerDefinition('partnershipcard', $defaultControllersPath . 'partnershipcard.controller.class.php', 'PartnershipCardController');
+		//** below the addition of DocumentListController adding files by third party attached documents
+		$this->addControllerDefinition('documentlist', $defaultControllersPath . 'documentlist.controller.class.php', 'DocumentListController');
+		//** Below is the addition to the menu of the DocumentUtileController.class.php controller in order to share via the GED (documents) "Documentscomptes"
+		$this->addControllerDefinition('documentutile', $defaultControllersPath . 'documentutile.controller.class.php', 'DocumentUtileController');
 
 		// Hooks for init controller
 		$hookmanager->initHooks(array('webportaldao'));

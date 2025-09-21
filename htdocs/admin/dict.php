@@ -2421,6 +2421,7 @@ if ($id > 0) {
 
 					if (empty($reshook)) {
 						$withentity = null;
+						$TDurationTypes = $form->getDurationTypes($langs);
 
 						foreach ($fieldlist as $field => $value) {
 							//var_dump($fieldlist);
@@ -2611,7 +2612,6 @@ if ($id > 0) {
 							} elseif ($value == 'icon') {
 								$valuetoshow = $obj->{$value}." ".img_picto("", preg_replace('/^fa-/', '', $obj->{$value}));
 							} elseif ($value == 'type_duration') {
-								$TDurationTypes = array('y' => $langs->trans('Years'), 'm' => $langs->trans('Month'), 'w' => $langs->trans('Weeks'), 'd' => $langs->trans('Days'), 'h' => $langs->trans('Hours'), 'i' => $langs->trans('Minutes'));
 								if (!empty($obj->{$value}) && array_key_exists($obj->{$value}, $TDurationTypes)) {
 									$valuetoshow = $TDurationTypes[$obj->{$value}];
 								}
@@ -3030,7 +3030,7 @@ function dictFieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 			print '</td>';
 		} elseif ($value == 'type_duration') {
 			print '<td>';
-			print $form->selectTypeDuration('', (empty($obj->type_duration) ? '' : $obj->type_duration), array('i','h'));
+			print $form->selectTypeDuration('', (empty($obj->type_duration) ? '' : $obj->type_duration), ['s', 'i', 'h']);
 			print '</td>';
 		} else {
 			$fieldValue = isset($obj->{$value}) ? $obj->{$value} : '';

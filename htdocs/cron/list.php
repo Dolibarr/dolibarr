@@ -47,7 +47,7 @@ $langs->loadLangs(array("admin", "cron", "bills", "members"));
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $confirm = GETPOST('confirm', 'alpha');
-$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'cronjoblist'; // To manage different context of search
 
 $id = GETPOSTINT('id');
@@ -161,7 +161,7 @@ if (empty($reshook)) {
 
 	// Execute jobs
 	if ($action == 'confirm_execute' && $confirm == "yes" && $permissiontoexecute) {
-		if (getDolGlobalString('CRON_KEY') && $conf->global->CRON_KEY != $securitykey) {
+		if (getDolGlobalString('CRON_KEY') && getDolGlobalString('CRON_KEY') != $securitykey) {
 			setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
 			$action = '';
 		} else {

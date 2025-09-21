@@ -56,7 +56,7 @@ $socid = GETPOSTINT('socid');
 
 $action = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
@@ -227,7 +227,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	if ($massaction == 'confirm_createbills' && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))) {
-		$receptions = GETPOST('toselect', 'array');
+		$receptions = GETPOST('toselect', 'array:int');
 		$createbills_onebythird = GETPOSTINT('createbills_onebythird');
 		$validate_invoices = GETPOSTINT('validate_invoices');
 

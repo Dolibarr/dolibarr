@@ -483,20 +483,20 @@ abstract class CommonObject
 	protected $depr_cond_reglement;  // Internal value for deprecation
 
 	/**
-	 * @var int 		Delivery address ID
+	 * @var ?int 		Delivery address ID
 	 * @see setDeliveryAddress()
 	 * @deprecated
 	 */
 	public $fk_delivery_address;
 
 	/**
-	 * @var int 		Shipping method ID
+	 * @var ?int 		Shipping method ID
 	 * @see setShippingMethod()
 	 */
 	public $shipping_method_id;
 
 	/**
-	 * @var string 		Shipping method label
+	 * @var ?string 		Shipping method label
 	 * @see setShippingMethod()
 	 */
 	public $shipping_method;
@@ -558,14 +558,14 @@ abstract class CommonObject
 	public $last_main_doc;
 
 	/**
-	 * @var int 		Bank account ID sometimes, ID of record into llx_bank sometimes
+	 * @var ?int 		Bank account ID sometimes, ID of record into llx_bank sometimes
 	 * @deprecated
 	 * @see $fk_account
 	 */
 	public $fk_bank;
 
 	/**
-	 * @var int 		Bank account ID
+	 * @var ?int 		Bank account ID
 	 * @see SetBankAccount()
 	 */
 	public $fk_account;
@@ -754,7 +754,7 @@ abstract class CommonObject
 	public $fk_user_creat;
 
 	/**
-	 * @var int 		ID
+	 * @var ?int 		ID
 	 * @deprecated 	Use $user_modification_id
 	 */
 	public $fk_user_modif;

@@ -160,12 +160,6 @@ if (empty($action) && empty($object->id)) {
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('actioncard', 'globalcard'));
 
-$parameters = array('socid' => $socid);
-$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook < 0) {
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-}
-
 $TRemindTypes = [];
 if (getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
 	$TRemindTypes['browser'] = array('label' => $langs->trans('BrowserPush'), 'disabled' => (getDolGlobalString('AGENDA_REMINDER_BROWSER') ? 0 : 1));
@@ -180,8 +174,20 @@ if (getDolGlobalString('AGENDA_REMINDER_SMS')) {
 		'disabled' => (getDolGlobalString('MAIN_SMS_SENDMODE') ? 0 : 1),
 	];
 }
-
-$TDurationTypes = array('y' => $langs->trans('Years'), 'm' => $langs->trans('Month'), 'w' => $langs->trans('Weeks'), 'd' => $langs->trans('Days'), 'h' => $langs->trans('Hours'), 'i' => $langs->trans('Minutes'));
+$TDurationTypes = $form->getDurationTypes($langs);
+$TDurationTypesExcluded = ['y', 'm', 's'];
+$enablereminders = getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER') || getDolGlobalString('AGENDA_REMINDER_SMS');
+$parameters = [
+	'socid' => $socid,
+	'TRemindTypes' => &$TRemindTypes,
+	'enablereminders' => &$enablereminders,
+	'TDurationTypes' => &$TDurationTypes,
+	'TDurationTypesExcluded' => &$TDurationTypesExcluded,
+];
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 $result = restrictedArea($user, 'agenda', $object, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
 
@@ -1839,7 +1845,7 @@ if ($action == 'create') {
 	print '</table>';
 
 
-	if (getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
+	if ($enablereminders) {
 		//checkbox create reminder
 		print '<hr>';
 		print '<br>';
@@ -1852,7 +1858,7 @@ if ($action == 'create') {
 		//Reminder
 		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
 		print '<input class="width50" type="number" name="offsetvalue" value="'.(GETPOSTISSET('offsetvalue') ? GETPOSTINT('offsetvalue') : getDolGlobalInt('AGENDA_REMINDER_DEFAULT_OFFSET', 30)).'"> ';
-		print $form->selectTypeDuration('offsetunit', 'i', array('y', 'm'));
+		print $form->selectTypeDuration('offsetunit', 'i', $TDurationTypesExcluded);
 		print '</td></tr>';
 
 		//Reminder Type
@@ -2399,7 +2405,7 @@ if ($id > 0 && $action != 'create') {
 		print '</table>';
 
 		// Reminders
-		if (getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
+		if ($enablereminders) {
 			$filteruserid = $user->id;
 			if ($user->hasRight('agenda', 'allactions', 'read')) {
 				$filteruserid = 0;
@@ -2439,7 +2445,7 @@ if ($id > 0 && $action != 'create') {
 			// Reminder
 			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
 			print '<input type="number" name="offsetvalue" class="width50" value="'.$actionCommReminder->offsetvalue.'"> ';
-			print $form->selectTypeDuration('offsetunit', $actionCommReminder->offsetunit, array('y', 'm'));
+			print $form->selectTypeDuration('offsetunit', $actionCommReminder->offsetunit, $TDurationTypesExcluded);
 			print '</td></tr>';
 
 			// Reminder Type
@@ -2838,7 +2844,7 @@ if ($id > 0 && $action != 'create') {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 		// Reminders
-		if (getDolGlobalString('AGENDA_REMINDER_EMAIL') || getDolGlobalString('AGENDA_REMINDER_BROWSER')) {
+		if ($enablereminders) {
 			$filteruserid = $user->id;
 			if ($user->hasRight('agenda', 'allactions', 'read')) {
 				$filteruserid = 0;

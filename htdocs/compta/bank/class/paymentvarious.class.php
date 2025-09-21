@@ -124,7 +124,7 @@ class PaymentVarious extends CommonObject
 	public $fk_project;
 
 	/**
-	 * @var int Bank account ID
+	 * @var ?int Bank account ID
 	 */
 	public $fk_account;
 

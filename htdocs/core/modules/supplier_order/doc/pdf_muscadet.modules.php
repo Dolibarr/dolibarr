@@ -690,6 +690,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);

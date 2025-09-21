@@ -852,6 +852,8 @@ class pdf_espadon extends ModelePdfExpedition
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);
@@ -1177,7 +1179,7 @@ class pdf_espadon extends ModelePdfExpedition
 				}
 				$Yoff += 8;
 				$pdf->SetXY($this->page_largeur - $this->marge_droite - $w, $Yoff);
-				$pdf->MultiCell($w, 2, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities($text), 0, 'R');
+				$pdf->MultiCell($w, 2, $outputlangs->transnoentities("RefOrder")." : ".$outputlangs->transnoentities((string) $text), 0, 'R');
 				$Yoff += 3;
 				$pdf->SetXY($this->page_largeur - $this->marge_droite - $w, $Yoff);
 				$pdf->MultiCell($w, 2, $outputlangs->transnoentities("OrderDate")." : ".dol_print_date($linkedobject->date, "day", false, $outputlangs, true), 0, 'R');
