@@ -558,6 +558,7 @@ class ActionComm extends CommonObject
 		$sql .= "ref_ext,";
 		$sql .= "fk_soc,";
 		$sql .= "fk_project,";
+		$sql .= "fk_task,";
 		$sql .= "note,";
 		$sql .= "fk_contact,";
 		$sql .= "fk_user_author,";
@@ -596,6 +597,7 @@ class ActionComm extends CommonObject
 		$sql .= (!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").", ";
 		$sql .= ((isset($this->socid) && $this->socid > 0) ? ((int) $this->socid) : "null").", ";
 		$sql .= ((isset($this->fk_project) && $this->fk_project > 0) ? ((int) $this->fk_project) : "null").", ";
+		$sql .= ((isset($this->fk_task) && $this->fk_task > 0) ? ((int) $this->fk_task) : "null").", ";
 		$sql .= " '".$this->db->escape($this->note_private)."', ";
 		$sql .= ((isset($this->contact_id) && $this->contact_id > 0) ? ((int) $this->contact_id) : "null").", "; // deprecated, use ->socpeopleassigned
 		$sql .= (isset($user->id) && $user->id > 0 ? $user->id : "null").", ";
@@ -1209,6 +1211,7 @@ class ActionComm extends CommonObject
 		$sql .= ", durationp = ".(isset($this->durationp) && $this->durationp >= 0 && $this->durationp != '' ? "'".$this->db->escape((string) $this->durationp)."'" : "null"); // deprecated
 		$sql .= ", note = '".$this->db->escape($this->note_private)."'";
 		$sql .= ", fk_project =".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
+		$sql .= ", fk_task =".($this->fk_task > 0 ? ((int) $this->fk_task) : "null");
 		$sql .= ", fk_soc =".($socid > 0 ? ((int) $socid) : "null");
 		$sql .= ", fk_contact =".($contactid > 0 ? ((int) $contactid) : "null");
 		$sql .= ", priority = '".$this->db->escape((string) $this->priority)."'";
