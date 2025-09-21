@@ -4381,7 +4381,7 @@ class Product extends CommonObject
 	 * @param	string	$sql	Request to execute
 	 * @param	string	$mode	'byunit'=number of unit, 'bynumber'=nb of entities
 	 * @param	int		$year	Year (0=current year, -1=all years)
-	 * @return	array<int<0,11>,array<int,int|float>>|int<-1,-1>	Return integer <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
+	 * @return	array{}|array<int<0,11>,array<int,int|float>>|int<-1,-1>	Return integer <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
 	private function _get_stats($sql, $mode, $year = 0)
 	{
