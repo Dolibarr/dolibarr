@@ -204,7 +204,7 @@ if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 	print '</td></tr>';
 
 	// Date start - end project
-	print '<tr><td>'.$langs->trans("Dates").'</td><td>';
+	print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
 	$start = dol_print_date($object->date_start, 'day');
 	print($start ? $start : '?');
 	$end = dol_print_date($object->date_end, 'day');

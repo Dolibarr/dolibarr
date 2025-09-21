@@ -97,12 +97,12 @@ class MyModuleApi extends DolibarrApi
 	 *
 	 * Get a list of myobjects
 	 *
-	 * @param string		   $sortfield			Sort field
-	 * @param string		   $sortorder			Sort order
-	 * @param int			   $limit				Limit for list
-	 * @param int			   $page				Page number
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param 	string		   $sortfield			Sort field
+	 * @param 	string		   $sortorder			Sort order
+	 * @param 	int			   $limit				Limit for list
+	 * @param 	int			   $page				Page number
+	 * @param 	string         $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param 	string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of MyObject objects
 	 * @phan-return array<int,MyObject>
 	 * @phpstan-return array<int,MyObject>
@@ -114,6 +114,8 @@ class MyModuleApi extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
+		global $hookmanager;
+
 		$obj_ret = array();
 		$tmpobject = new MyObject($this->db);
 
@@ -157,11 +159,21 @@ class MyModuleApi extends DolibarrApi
 				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".$this->db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
 			}
 		}
-		if ($sqlfilters) {
-			$errormessage = '';
-			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
-			if ($errormessage) {
-				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+		// Add where from hooks and sqlfilters
+		$parameters = array('sqlfilters' => $sqlfilters, 'apiroute' => 'myobject', 'apimethod' => 'index');
+		$action = 'list';
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $tmpobject, $action); // Note that $action and $object may have been modified by hook
+		if ($reshook > 0) {
+			$sql .= $hookmanager->resPrint;
+		} elseif ($reshook == 0) {
+			$sql .= $hookmanager->resPrint;
+
+			if ($sqlfilters) {
+				$errormessage = '';
+				$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+				if ($errormessage) {
+					throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+				}
 			}
 		}
 

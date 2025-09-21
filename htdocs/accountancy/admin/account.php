@@ -61,7 +61,7 @@ $search_import_key = GETPOST('search_import_key', 'alpha');
 $search_reconcilable = GETPOST("search_reconcilable", 'int');
 $search_centralized = GETPOST("search_centralized", 'int');
 $search_active = GETPOST("search_active", 'int');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $confirm = GETPOST('confirm', 'alpha');
 
@@ -98,20 +98,22 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
+$object = new AccountingAccount($db);
+
 $arrayfields = array(
 	'aa.account_number' => array('label' => "AccountNumber", 'checked' => '1'),
 	'aa.label' => array('label' => "Label", 'checked' => '1'),
-	'aa.labelshort' => array('label' => "LabelToShow", 'checked' => '1'),
+	'aa.labelshort' => array('label' => "ShortLabel", 'checked' => '1'),
 	'aa.account_parent' => array('label' => "Accountparent", 'checked' => '1'),
 	'aa.pcg_type' => array('label' => "Pcgtype", 'checked' => '1', 'help' => 'PcgtypeDesc'),
 	'categories' => array('label' => "AccountingCategories", 'checked' => '-1', 'help' => 'AccountingCategoriesDesc'),
 	'aa.reconcilable' => array('label' => "Reconcilable", 'checked' => '1'),
-	'aa.centralized' => array('label' => "Centralized", 'checked' => '1'),
+	'aa.centralized' => array('label' => "Centralized", 'checked' => '1', 'help' => 'CentralizedAccountHelp'),
 	'aa.import_key' => array('label' => "ImportId", 'checked' => '-1', 'help' => ''),
 	'aa.active' => array('label' => "Activated", 'checked' => '1')
 );
 
-if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
+if (!getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
 	unset($arrayfields['categories']);
 	unset($arrayfields['aa.reconcilable']);
 }
@@ -557,12 +559,10 @@ if ($resql) {
 	}
 
 	// Reconcilable
-	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-		if (!empty($arrayfields['aa.reconcilable']['checked'])) {
-			print '<td class="liste_titre center">';
-			print $form->selectyesno('search_reconcilable', $search_reconcilable, 1, false, 1, 1, 'search_status onrightofpage width75');
-			print '</td>';
-		}
+	if (!empty($arrayfields['aa.reconcilable']['checked'])) {
+		print '<td class="liste_titre center">';
+		print $form->selectyesno('search_reconcilable', $search_reconcilable, 1, false, 1, 1, 'search_status onrightofpage width75');
+		print '</td>';
 	}
 
 	// Centralized
@@ -574,10 +574,11 @@ if ($resql) {
 
 	// Active
 	if (!empty($arrayfields['aa.active']['checked'])) {
-		print '<td class="liste_titre center">';
+		print '<td class="liste_titre center parentonrightofpage">';
 		print $form->selectyesno('search_active', $search_active, 1, false, 1, 1, 'search_status onrightofpage width75');
 		print '</td>';
 	}
+
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="liste_titre center maxwidthsearch">';
@@ -614,12 +615,14 @@ if ($resql) {
 		print_liste_field_titre($arrayfields['aa.account_parent']['label'], $_SERVER["PHP_SELF"], "aa.account_parent", "", $param, '', $sortfield, $sortorder, 'left ');
 		$totalarray['nbfield']++;
 	}
+	// Main group
 	if (!empty($arrayfields['aa.pcg_type']['checked'])) {
-		print_liste_field_titre($arrayfields['aa.pcg_type']['label'], $_SERVER["PHP_SELF"], 'aa.pcg_type,aa.account_number', '', $param, '', $sortfield, $sortorder, '', $arrayfields['aa.pcg_type']['help'], 1);
+		print_liste_field_titre($arrayfields['aa.pcg_type']['label'], $_SERVER["PHP_SELF"], 'aa.pcg_type,aa.account_number', '', $param, '', $sortfield, $sortorder, 'right ', $arrayfields['aa.pcg_type']['help'].'::-1', 1);
 		$totalarray['nbfield']++;
 	}
+	// Number of custom groups
 	if (!empty($arrayfields['categories']['checked'])) {
-		print_liste_field_titre($arrayfields['categories']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '', $arrayfields['categories']['help'], 1);
+		print_liste_field_titre($arrayfields['categories']['label'], $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '', $arrayfields['categories']['help'].'::-1', 1);
 		$totalarray['nbfield']++;
 	}
 
@@ -629,21 +632,19 @@ if ($resql) {
 	print $hookmanager->resPrint;
 
 	if (!empty($arrayfields['aa.import_key']['checked'])) {
-		print_liste_field_titre($arrayfields['aa.import_key']['label'], $_SERVER["PHP_SELF"], 'aa.import_key', '', $param, '', $sortfield, $sortorder, '', $arrayfields['aa.import_key']['help'], 1);
+		print_liste_field_titre($arrayfields['aa.import_key']['label'], $_SERVER["PHP_SELF"], 'aa.import_key', '', $param, '', $sortfield, $sortorder, '', $arrayfields['aa.import_key']['help'].'::-1', 1);
 		$totalarray['nbfield']++;
 	}
-	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-		if (!empty($arrayfields['aa.reconcilable']['checked'])) {
-			print_liste_field_titre($arrayfields['aa.reconcilable']['label'], $_SERVER["PHP_SELF"], 'aa.reconcilable', '', $param, '', $sortfield, $sortorder, 'center ');
-			$totalarray['nbfield']++;
-		}
+	if (!empty($arrayfields['aa.reconcilable']['checked'])) {
+		print_liste_field_titre($arrayfields['aa.reconcilable']['label'], $_SERVER["PHP_SELF"], 'aa.reconcilable', '', $param, '', $sortfield, $sortorder, 'center ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['aa.centralized']['checked'])) {
-		print_liste_field_titre($arrayfields['aa.centralized']['label'], $_SERVER["PHP_SELF"], 'aa.centralized', '', $param, '', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['aa.centralized']['label'], $_SERVER["PHP_SELF"], 'aa.centralized', '', $param, '', $sortfield, $sortorder, '', $arrayfields['aa.centralized']['help'].'::-1', 1);
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['aa.active']['checked'])) {
-		print_liste_field_titre($arrayfields['aa.active']['label'], $_SERVER["PHP_SELF"], 'aa.active', '', $param, '', $sortfield, $sortorder);
+		print_liste_field_titre($arrayfields['aa.active']['label'], $_SERVER["PHP_SELF"], 'aa.active', '', $param, '', $sortfield, $sortorder, 'center ');
 		$totalarray['nbfield']++;
 	}
 	// Action column
@@ -759,7 +760,7 @@ if ($resql) {
 		}
 		// Custom accounts
 		if (!empty($arrayfields['categories']['checked'])) {
-			print "<td>";
+			print '<td class="right">';
 			// TODO Get all custom groups labels the account is in
 			print dol_escape_htmltag($obj->fk_accounting_category);
 			print "</td>\n";
@@ -783,23 +784,21 @@ if ($resql) {
 			}
 		}
 
-		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-			// Activated or not reconciliation on an accounting account
-			if (!empty($arrayfields['aa.reconcilable']['checked'])) {
-				print '<td class="center">';
-				if (empty($obj->reconcilable)) {
-					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=enable&mode=1&token='.newToken().'">';
-					print img_picto($langs->trans("Disabled"), 'switch_off');
-					print '</a>';
-				} else {
-					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=disable&mode=1&token='.newToken().'">';
-					print img_picto($langs->trans("Activated"), 'switch_on');
-					print '</a>';
-				}
-				print '</td>';
-				if (!$i) {
-					$totalarray['nbfield']++;
-				}
+		// Activated or not reconciliation on an accounting account
+		if (!empty($arrayfields['aa.reconcilable']['checked'])) {
+			print '<td class="center">';
+			if (empty($obj->reconcilable)) {
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=enable&mode=1&token='.newToken().'">';
+				print img_picto($langs->trans("Disabled"), 'switch_off');
+				print '</a>';
+			} else {
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=disable&mode=1&token='.newToken().'">';
+				print img_picto($langs->trans("Activated"), 'switch_on');
+				print '</a>';
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
 			}
 		}
 

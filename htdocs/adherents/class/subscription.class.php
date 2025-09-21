@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2002-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -319,7 +319,7 @@ class Subscription extends CommonObject
 			$result = $member->fetch($this->fk_adherent);
 			$result = $member->update_end_date($user);
 
-			if (!$error && !$notrigger) {
+			if (!$notrigger) {
 				$this->context = array('member' => $member);
 				// Call triggers
 				$result = $this->call_trigger('MEMBER_SUBSCRIPTION_MODIFY', $user);
@@ -365,15 +365,13 @@ class Subscription extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error) {
-			if (!$notrigger) {
-				// Call triggers
-				$result = $this->call_trigger('MEMBER_SUBSCRIPTION_DELETE', $user);
-				if ($result < 0) {
-					$error++;
-				} // Do also here what you must do to rollback action if trigger fail
-				// End call triggers
-			}
+		if (!$notrigger) {
+			// Call triggers
+			$result = $this->call_trigger('MEMBER_SUBSCRIPTION_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			} // Do also here what you must do to rollback action if trigger fail
+			// End call triggers
 		}
 
 		if (!$error) {
@@ -390,17 +388,10 @@ class Subscription extends CommonObject
 
 					if ($this->fk_bank > 0 && is_object($accountline) && $accountline->id > 0) {	// If we found bank account line (this means this->fk_bank defined)
 						$result = $accountline->delete($user); // Return false if refused because line is reconciled
-						if ($result > 0) {
-							$this->db->commit();
-							return 1;
-						} else {
-							$this->error = $accountline->error;
-							$this->db->rollback();
-							return -1;
+						if ($result <= 0) {
+							$this->setErrorsFromObject($accountline);
+							$error++;
 						}
-					} else {
-						$this->db->commit();
-						return 1;
 					}
 				} else {
 					$this->db->commit();
@@ -564,7 +555,7 @@ class Subscription extends CommonObject
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'dateh') || property_exists($this, 'datef')) {
+		if (!empty($this->dateh) || !empty($this->datef)) {
 			$return .= '<br><span class="info-box-status opacitymedium small">'.dol_print_date($this->dateh, 'day').' - '.dol_print_date($this->datef, 'day').'</span>';
 		}
 
@@ -572,15 +563,14 @@ class Subscription extends CommonObject
 			$return .= '<br><div class="inline-block tdoverflowmax150">'.$arraydata['member']->getNomUrl(-4).'</div>';
 		}
 
-		if (property_exists($this, 'amount')) {
-			$return .= '<br><span class="amount inline-block">'.price($this->amount).'</span>';
-			if (!empty($arraydata['bank'])) {
-				$return .= ' &nbsp; <span class="info-box-label ">'.$arraydata['bank']->getNomUrl(-1).'</span>';
-			}
+		$return .= '<br><span class="amount inline-block">'.price($this->amount).'</span>';
+		if (!empty($arraydata['bank'])) {
+			$return .= ' &nbsp; <span class="info-box-label ">'.$arraydata['bank']->getNomUrl(-1).'</span>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
+
 		return $return;
 	}
 }

@@ -172,8 +172,8 @@ class modWebsite extends DolibarrModules
 		// Remove permissions and default values
 		$this->remove($options);
 
-		// Copy flags and octicons directory
-		$dirarray = array('common/flags'=>'flags', 'common/octicons/build/svg'=>'octicons');
+		// Copy flags directory
+		$dirarray = array('common/flags'=>'flags');
 		foreach ($dirarray as $dirfrom => $dirtarget) {
 			$src = DOL_DOCUMENT_ROOT.'/theme/'.$dirfrom;
 			$dest = DOL_DATA_ROOT.'/medias/image/'.$dirtarget;

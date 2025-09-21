@@ -28,6 +28,14 @@
  *  \brief      Page to setup the donation module
  */
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ * @var Societe $mysoc
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
@@ -35,14 +43,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'donations', 'accountancy', 'other'));
@@ -380,9 +380,9 @@ print "</table>\n";
 print '</form>';
 
 /*
- *  French params
+ *  French only parameters
  */
-if (preg_match('/fr/i', getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY'))) {
+if (preg_match('/fr/i', $mysoc->country_code)) {
 	print '<br>';
 	print load_fiche_titre($langs->trans("FrenchOptions"), '', '');
 

@@ -6,7 +6,7 @@
  * Copyright (C) 2019		Nicolas ZABOURI				<info@inovea-conseil.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,6 +183,12 @@ if ($resql) {
 $colorseries = array();
 
 include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+/**
+ * @var string $badgeStatus0
+ * @var string $badgeStatus1
+ * @var string $badgeStatus4
+ * @var string $badgeStatus6
+ */
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder nohover centpercent">';

@@ -95,6 +95,8 @@ if ($actionsave) {
  * View
  */
 
+$form = new Form($db);
+
 if (!isset($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) {
 	$conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY = 100;
 }
@@ -139,13 +141,13 @@ print "</tr>";
 
 print '<tr class="oddeven">';
 print "<td>".$langs->trans("PastDelayVCalExport")."</td>";
-print '<td><input type="text" class="flat width50 right" name="MAIN_AGENDA_EXPORT_PAST_DELAY" value="'.$MAIN_AGENDA_EXPORT_PAST_DELAY.'"> '.$langs->trans("days")."</td>";
+print '<td><input type="text" class="flat width50 right" name="MAIN_AGENDA_EXPORT_PAST_DELAY" value="'.$MAIN_AGENDA_EXPORT_PAST_DELAY.'"> <span class="opacitymedium">'.$langs->trans("days")."</span></td>";
 print "<td>&nbsp;</td>";
 print "</tr>";
 
 print '<tr class="oddeven">';
 print "<td>".$langs->trans("UseACacheDelay")."</td>";
-print '<td><input type="text" class="flat width50 right" name="MAIN_AGENDA_EXPORT_CACHE" value="'.$MAIN_AGENDA_EXPORT_CACHE.'"></td>';
+print '<td><input type="text" class="flat width50 right" name="MAIN_AGENDA_EXPORT_CACHE" value="'.$MAIN_AGENDA_EXPORT_CACHE.'"> <span class="opacitymedium">'.$langs->trans("seconds").'</span></td>';
 print "<td>&nbsp;</td>";
 print "</tr>";
 
@@ -198,7 +200,7 @@ $urlvcal = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=vcal
 $urlvcal .= $urlwithroot.'/public/agenda/agendaexport.php?format=vcal'.$getentity.'&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', 'KEYNOTDEFINED')).'</a>';
 $message .= img_picto('', 'globe').' '.str_replace('{url}', $urlvcal, '<span class="opacitymedium">'.$langs->trans("WebCalUrlForVCalExport", 'vcal', '').'</span>');
 $message .= '<div class="urllink">';
-$message .= '<input type="text" id="onlinepaymenturl1" class="quatrevingtpercent" spellcheck="false" value="'.$urlwithroot.'/public/agenda/agendaexport.php?format=vcal'.$getentity.'&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...')).'">';
+$message .= '<input type="text" id="onlinepaymenturl1" class="quatrevingtpercentminusx" spellcheck="false" value="'.$urlwithroot.'/public/agenda/agendaexport.php?format=vcal'.$getentity.'&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...')).'">';
 if (getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY')) {
 	$message .= ' <a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=vcal'.$getentity.'&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...')).'">'.img_picto('', 'download').'</a>';
 }
@@ -210,7 +212,7 @@ $urlical = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical
 $urlical .= $urlwithroot.'/public/agenda/agendaexport.php?format=ical&type=event'.$getentity.'&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...')).'</a>';
 $message .= img_picto('', 'globe').' '.str_replace('{url}', $urlical, '<span class="opacitymedium">'.$langs->trans("WebCalUrlForVCalExport", 'ical/ics', '').'</span>');
 $message .= '<div class="urllink">';
-$message .= '<input type="text" id="onlinepaymenturl2" class="quatrevingtpercent" spellcheck="false" value="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.$getentity.'&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...')).'">';
+$message .= '<input type="text" id="onlinepaymenturl2" class="quatrevingtpercentminusx" spellcheck="false" value="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.$getentity.'&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...')).'">';
 if (getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY')) {
 	$message .= ' <a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.$getentity.'&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...')).'">'.img_picto('', 'download').'</a>';
 }
@@ -222,7 +224,7 @@ $urlrss = '<a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=rss'.
 $urlrss .= $urlwithroot.'/public/agenda/agendaexport.php?format=rss'.$getentity.'&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...')).'</a>';
 $message .= img_picto('', 'globe').' '.str_replace('{url}', $urlrss, '<span class="opacitymedium">'.$langs->trans("WebCalUrlForVCalExport", 'rss', '').'</span>');
 $message .= '<div class="urllink">';
-$message .= '<input type="text" id="onlinepaymenturl3" class="quatrevingtpercent" spellcheck="false" value="'.$urlwithroot.'/public/agenda/agendaexport.php?format=rss'.$getentity.'&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...')).'">';
+$message .= '<input type="text" id="onlinepaymenturl3" class="quatrevingtpercentminusx" spellcheck="false" value="'.$urlwithroot.'/public/agenda/agendaexport.php?format=rss'.$getentity.'&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...')).'">';
 if (getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY')) {
 	$message .= ' <a href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=rss'.$getentity.'&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...')).'">'.img_picto('', 'download').'</a>';
 }
@@ -240,7 +242,7 @@ $message .= $langs->trans("AgendaUrlOptionsType", 'systemauto|system').'<br>';
 $message .= $langs->trans("AgendaUrlOptionsCode", 'AC_COMPANY_CREATE,AC_PROPAL_VALIDATE,AC_CODE...').'<br>';
 $message .= $langs->trans("AgendaUrlOptionsIncludeHolidays", '1', '1').'<br>';
 //$defaultnotolderthan = getDolGlobalString('MAIN_AGENDA_EXPORT_PAST_DELAY', 100);
-//$message .= $langs->trans("AgendaUrlOptionsLimitDays", $defaultnotolderthan, $defaultnotolderthan, $defaultnotolderthan).'<br>';
+//$message .= $langs->trans("AgendaUrlOptionsLimitDays", 'X', 'X', $defaultnotolderthan).'<br>';	// This option is hidden because already set and defined into previous options
 $message .= $langs->trans("AgendaUrlOptionsLimit", '1000').'<br>';
 
 print info_admin($message);

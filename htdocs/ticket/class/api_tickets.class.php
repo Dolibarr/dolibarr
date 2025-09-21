@@ -67,16 +67,17 @@ class Tickets extends DolibarrApi
 	 *
 	 * Return an array with ticket information
 	 *
-	 * @param	int				$id			ID of ticket
-	 * @return  Object						Object with cleaned properties
+	 * @param	int				$id				ID of ticket
+	 * @param   int         	$contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
+	 * @return  Object							Object with cleaned properties
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 403
 	 * @throws RestException 404
 	 */
-	public function get($id)
+	public function get($id, $contact_list = 1)
 	{
-		return $this->getCommon($id, '', '');
+		return $this->getCommon($id, '', '', $contact_list);
 	}
 
 	/**
@@ -84,8 +85,9 @@ class Tickets extends DolibarrApi
 	 *
 	 * Return an array with ticket information
 	 *
-	 * @param	string			$track_id	Tracking ID of ticket
-	 * @return	array|mixed					Data without useless information
+	 * @param	string			$track_id		Tracking ID of ticket
+	 * @param   int         	$contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
+	 * @return	array|mixed						Data without useless information
 	 *
 	 * @url GET track_id/{track_id}
 	 *
@@ -93,9 +95,9 @@ class Tickets extends DolibarrApi
 	 * @throws RestException	403
 	 * @throws RestException	404
 	 */
-	public function getByTrackId($track_id)
+	public function getByTrackId($track_id, $contact_list = 1)
 	{
-		return $this->getCommon(0, $track_id, '');
+		return $this->getCommon(0, $track_id, '', $contact_list);
 	}
 
 	/**
@@ -103,8 +105,9 @@ class Tickets extends DolibarrApi
 	 *
 	 * Return an array with ticket information
 	 *
-	 * @param	string			$ref		Reference for ticket
-	 * @return	array|mixed					Data without useless information
+	 * @param	string			$ref			Reference for ticket
+	 * @param   int         	$contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
+	 * @return	array|mixed						Data without useless information
 	 *
 	 * @url GET ref/{ref}
 	 *
@@ -112,21 +115,22 @@ class Tickets extends DolibarrApi
 	 * @throws RestException 403
 	 * @throws RestException 404
 	 */
-	public function getByRef($ref)
+	public function getByRef($ref, $contact_list = 1)
 	{
-		return $this->getCommon(0, '', $ref);
+		return $this->getCommon(0, '', $ref, $contact_list);
 	}
 
 	/**
 	 * Get properties of a Ticket object
 	 * Return an array with ticket information
 	 *
-	 * @param	int				$id			ID of ticket
-	 * @param	string			$track_id	Tracking ID of ticket
-	 * @param	string			$ref		Reference for ticket
-	 * @return	array|mixed					Data without useless information
+	 * @param	int				$id				ID of ticket
+	 * @param	string			$track_id		Tracking ID of ticket
+	 * @param	string			$ref			Reference for ticket
+	 * @param   int         	$contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
+	 * @return	array|mixed						Data without useless information
 	 */
-	private function getCommon($id = 0, $track_id = '', $ref = '')
+	private function getCommon($id = 0, $track_id = '', $ref = '', $contact_list = 1)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ticket', 'read')) {
 			throw new RestException(403);
@@ -184,6 +188,19 @@ class Tickets extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
+		if ($contact_list > -1) {
+			// Add external contacts ids
+			$tmparray = $this->ticket->liste_contact(-1, 'external', $contact_list);
+			if (is_array($tmparray)) {
+				$this->ticket->contacts_ids = $tmparray;
+			}
+			$tmparray = $this->ticket->liste_contact(-1, 'internal', $contact_list);
+			if (is_array($tmparray)) {
+				$this->ticket->contacts_ids_internal = $tmparray;
+			}
+		}
+
 		return $this->_cleanObjectDatas($this->ticket);
 	}
 
@@ -198,14 +215,15 @@ class Tickets extends DolibarrApi
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
 	 * @param string	$sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101') and (t.fk_statut:=:1)"
-	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties		Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param int		$loadcontacts		Load also contacts/addresses (0=No, 1=Yes)
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 *
 	 * @return array Array of ticket objects
 	 * @phan-return Ticket[]|array{data:Ticket[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 * @phpstan-return Ticket[]|array{data:Ticket[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 */
-	public function index($socid = 0, $sortfield = "t.rowid", $sortorder = "ASC", $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function index($socid = 0, $sortfield = "t.rowid", $sortorder = "ASC", $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $loadcontacts = 0, $pagination_data = false)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ticket', 'read')) {
 			throw new RestException(403);
@@ -274,6 +292,19 @@ class Tickets extends DolibarrApi
 						$userStatic->fetch($ticket_static->fk_user_assign);
 						$ticket_static->fk_user_assign_string = $userStatic->firstname.' '.$userStatic->lastname;
 					}
+
+					if ($loadcontacts) {
+						// Add external contacts ids
+						$tmparray = $ticket_static->liste_contact(-1, 'external', 1);
+						if (is_array($tmparray)) {
+							$ticket_static->contacts_ids = $tmparray;
+						}
+						$tmparray = $ticket_static->liste_contact(-1, 'internal', 1);
+						if (is_array($tmparray)) {
+							$ticket_static->contacts_ids_internal = $tmparray;
+						}
+					}
+
 					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($ticket_static), $properties);
 				}
 				$i++;

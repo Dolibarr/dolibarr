@@ -190,7 +190,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 		}
 
 		// Load traductions files required by the page
-		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "stocks", "orders", "deliveries"));
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "stocks", "orders", "sendings"));
 
 		/**
 		 * TODO: get from object
@@ -797,6 +797,8 @@ class pdf_standard_movementstock extends ModelePDFMovement
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);

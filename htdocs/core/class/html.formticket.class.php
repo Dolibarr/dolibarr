@@ -326,7 +326,7 @@ class FormTicket
 			$defaultref = $ticketstat->getDefaultRef();
 
 			if ($mode == 'edit') {
-				$defaultref = $object->ref;
+				$defaultref = (string) $object->ref;
 			}
 			print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Ref").'</span></td><td>';
 			print '<input type="text" name="ref" value="'.dol_escape_htmltag($defaultref).'">';

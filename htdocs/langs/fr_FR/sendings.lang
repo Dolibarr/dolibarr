@@ -51,7 +51,6 @@ DateReceived=Date de réception réelle
 ClassifyReception=Classer Reçu
 SendShippingByEMail=Envoyer bon d'expédition par email
 SendShippingRef=Envoi du bordereau d'expédition %s
-SendReceptionRef=Envoi du bon de réception %s
 ActionsOnShipping=Événements sur l'expédition
 LinkToTrackYourPackage=Lien pour le suivi de votre colis
 ShipmentCreationIsDoneFromOrder=Pour le moment, la création d'une nouvelle expédition se fait depuis la fiche commande client.
@@ -70,6 +69,44 @@ OptionToSetSendingBilledNotEnabled=L'option du module Workflow, qui permet de d�
 NoWarehouseInBase=Pas de entrepôt dans la base
 ShipmentUpdated=Expédition mise à jour avec succès
 ShipmentIncrementStockOnDelete = Augmenter le stock lors de la suppression
+ConfirmSignShipping=Confirmer la signature expédition
+ConfirmUnsignShipping=Confirmer la désinscription expédition
+SignShipping=Panneau expédition
+UnsignShipping=Annuler la signature expédition
+
+# Deliveries
+Delivery=Livraison
+DeliveryRef=Référence de livraison
+DeliveryCard=Bon de réception
+DeliveryOrder=Bon de réception
+DeliveryDate=Date de livraison
+CreateDeliveryOrder=Générer bon de réception
+DeliveryStateSaved=Le statut de livraison est enregistré
+SetDeliveryDate=Définir la date de livraison estimée
+SetShippingDate=Définir la date d'expédition
+ValidateDeliveryReceipt=Valider le bon de livraison
+ValidateDeliveryReceiptConfirm=Êtes-vous sûr de vouloir valider ce bon de livraison ?
+DeleteDeliveryReceipt=Supprimer le bon de livraison
+DeleteDeliveryReceiptConfirm=Êtes-vous sûr de vouloir supprimer ce bon de livraison <b>%s</b> ?
+DeliveryMethod=Méthode de livraison
+TrackingNumber=Numéro de suivi
+DeliveryNotValidated=Bon de réception non validé
+StatusDeliveryCanceled=Annulé
+StatusDeliveryDraft=Brouillon
+StatusDeliveryValidated=Reçu
+NameAndSignature=Nom et Signature :
+ToAndDate=A___________________________________ le ____/_____/__________
+GoodStatusDeclaration=Déclare avoir reçu les marchandises ci-dessus en bon état,
+Deliverer=Livreur(s) :
+Sender=Émetteur
+Recipient=Email fixe cible destinataires
+ErrorStockIsNotEnough=Le stock est insuffisant
+Shippable=Expédiable
+NonShippable=Non expédiable
+ShowShippableStatus=Afficher le statut Expédiable
+ShowReceiving=Afficher le bon de réception
+NonExistentOrder=Commande inexistante
+StockQuantitiesAlreadyAllocatedOnPreviousLines = Quantités de stock déjà allouées sur les lignes précédentes
 
 # Sending methods
 # ModelDocument
