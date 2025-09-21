@@ -104,7 +104,7 @@ if ($socid > 0) {
 
 		print '<table class="noborder tagtable liste centpercent">';
 		print '<tr class="liste_titre">';
-		print_liste_field_titre($langs->trans("Date"), $_SERVER["PHP_SELF"], "f.datef", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
+		print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "f.datef", "", $param, 'align="center" class="nowrap"', $sortfield, $sortorder);
 		print '<td>' . $langs->trans("Element") . '</td>';
 		print '<td>' . $langs->trans("Status") . '</td>';
 		print '<td class="right">' . $langs->trans("Debit") . '</td>';
