@@ -1308,7 +1308,7 @@ class Propal extends CommonObject
 				}
 
 				// Add object linked
-				if (!$error && $this->id && !empty($this->linked_objects) && is_array($this->linked_objects)) {
+				if (!$error && !empty($this->linked_objects) && is_array($this->linked_objects)) {
 					foreach ($this->linked_objects as $origin => $tmp_origin_id) {
 						if (is_array($tmp_origin_id)) {       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
 							foreach ($tmp_origin_id as $origin_id) {
