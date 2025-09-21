@@ -898,6 +898,7 @@ class BOM extends CommonObject
 
 			$obj = new $classname();
 			'@phan-var-force ModeleNumRefBoms $obj';
+			/** @var ModeleNumRefBoms $obj */
 			$numref = $obj->getNextValue($prod, $this);
 
 			if ($numref != "") {
