@@ -136,6 +136,12 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 				}
 			}
 
+
+			$now = dol_now();
+			$year = dol_print_date($now, '%Y');
+			$month = dol_print_date($now, '%m');
+			$day = dol_print_date($now, '%d');
+
 			// List of values to scan for a replacement
 			$substitutionarray = array(
 				'__MEMBER_ID__' => $objp->rowid,
@@ -163,6 +169,28 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 			foreach ($adherentstatic->array_options as $key => $val) {
 				$substitutionarray['__'.strtoupper($key).'__'] = $val;
 			}
+
+			// Add old values for backward compatibility (need upgrade of member setup to be removed)
+			$substitutionarrayold = array(
+				'__ID__' => $objp->rowid,
+				'__REF__' => $objp->ref,
+				'__LOGIN__' => empty($objp->login) ? '' : $objp->login,
+				'__TITLE__' => empty($objp->civility) ? '' : $langs->trans("Civility".$objp->civility),
+				'__FIRSTNAME__' => empty($objp->firstname) ? '' : $objp->firstname,
+				'__LASTNAME__' => empty($objp->lastname) ? '' : $objp->lastname,
+				'__FULLNAME__' => $adherentstatic->getFullName($langs),
+				'__COMPANY__' => empty($objp->company) ? '' : $objp->company,
+				'__ADDRESS__' => empty($objp->address) ? '' : $objp->address,
+				'__ZIP__' => empty($objp->zip) ? '' : $objp->zip,
+				'__TOWN__' => empty($objp->town) ? '' : $objp->town,
+				'__COUNTRY__' => empty($objp->country) ? '' : $objp->country,
+				'__COUNTRY_CODE__' => empty($objp->country_code) ? '' : $objp->country_code,
+				'__EMAIL__' => empty($objp->email) ? '' : $objp->email,
+				'__BIRTH__' => dol_print_date($objp->birth, 'day'),
+				'__TYPE__' => empty($objp->type) ? '' : $objp->type,
+			);
+			$substitutionarray = array_merge($substitutionarray, $substitutionarrayold);
+
 			complete_substitutions_array($substitutionarray, $langs, $adherentstatic);
 
 			// For business cards
@@ -237,7 +265,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 				$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DescADHERENT_CARD_TYPE"));
 			}
 			if (!$mesg) {
-				$result = members_card_pdf_create($db, $arrayofmembers, $modelcard, $outputlangs, '', 'standard', 'tmp_cards');
+				$result = members_card_pdf_create($db, $arrayofmembers, $modelcard, $outputlangs, '', 'standard_member', 'tmp_cards');
 			}
 		} elseif ($mode == 'cardlogin') {
 			if (!count($arrayofmembers)) {
@@ -247,7 +275,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
 				$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DescADHERENT_CARD_TYPE"));
 			}
 			if (!$mesg) {
-				$result = members_card_pdf_create($db, $arrayofmembers, $model, $outputlangs, '', 'standard', 'tmp_cards_login');
+				$result = members_card_pdf_create($db, $arrayofmembers, $model, $outputlangs, '', 'standard_member', 'tmp_cards_login');
 			}
 		} elseif ($mode == 'label') {
 			if (!count($arrayofmembers)) {

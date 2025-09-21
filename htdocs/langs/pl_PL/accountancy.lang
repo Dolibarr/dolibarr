@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - Accountancy (Double entries)
 Accountancy=Księgowość
 Accounting=Księgowość
+AccountingAccount=Konto księgowe
+AccountingCode=Accounting code
 ACCOUNTING_EXPORT_SEPARATORCSV=Separator kolumn dla eksportowanego pliku
 ACCOUNTING_EXPORT_DATE=Format daty dla eksportowanego pliku
 ACCOUNTING_EXPORT_PIECE=Exportuj ilość sztuk
@@ -193,7 +195,7 @@ DONATION_ACCOUNTINGACCOUNT=Konto (z Planu Kont) na które będą rejestrowane da
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Konto (z Planu Kont) służące do rejestracji zapisów na członkostwo (moduł Członkostwo - w przypadku członkostwa rejestrowanego bez faktury)
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=Konto (z Planu Kont), które będzie używane jako konto domyślne do rejestracji wpłaty klienta
 UseAuxiliaryAccountOnCustomerDeposit=Zapisz konto klienta jako konto indywidualne w księdze pomocniczej dla linii zaliczek (jeśli opcja jest wyłączona, konto indywidualne dla linii zaliczek pozostanie puste)
-ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Konto (z Planu Kont), które ma być używane jako domyślne
+ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=Account (from the Chart Of Account) to be used as the default account to register supplier deposit
 UseAuxiliaryAccountOnSupplierDeposit=Zapisz konto dostawcy jako konto indywidualne w księdze pomocniczej dla linii zaliczek (w przypadku wyłączenia indywidualne konto dla linii zaliczek pozostanie puste)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=Domyślne konto księgowe do rejestracji zachowanej gwarancji klienta
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Konto (z Planu Kont), które będzie używane jako konto domyślne dla produktów zakupionych w tym samym kraju (używane, jeśli nie zostało to określone w karcie produktu)
@@ -278,6 +280,7 @@ PcgtypeDesc=Grupa kont jest używana jako predefiniowane kryteria „filtru” i
 AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease the use of filters or building of custom reports.
 Reconcilable=Do pogodzenia
 Centralized=Konto scentralizowane
+CentralizedAccountHelp=When a accounting transaction is recording on a centralized account, you are also allowed to record a more accurate subsidiary account on this transaction.
 TotalVente=Łączny obrót przed opodatkowaniem
 TotalMarge=Całkowita marża sprzedaży
 DescVentilCustomer=Tutaj możesz zapoznać się z listą wierszy faktury klienta powiązanych (lub nie) z kontem produktu z planu kont
@@ -357,6 +360,7 @@ ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=Aktywuj zarządzanie odwrotnym obcią
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=Gdy opcja jest włączona, można zdefiniować, że dostawca lub dana faktura dostawcy musi zostać przeniesiona do księgowości w inny sposób: Do rozliczenia zostanie wygenerowana dodatkowa linia debetowa i kredytowa na 2 danych rachunkach z planu kont zdefiniowanego w „%s” strona konfiguracji.
 ACCOUNTING_ENABLE_TABONTHIRDPARTY=Aktywuj kartę na kartach stron trzecich, aby wyświetlić rejestr pomocniczy
 ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=Po włączeniu tej opcji na kartach stron trzecich wyświetla się nowa karta umożliwiająca przeglądanie i zarządzanie księgowością strony trzeciej, w tym uzgadnianie, drukowanie i inne czynności
+
 ## Export
 NotExportLettering=Nie eksportuj napisów podczas generowania pliku
 NotifiedExportDate=Oznacz jeszcze nie wyeksportowane linie jako Wyeksportowane <span class="warning">(aby zmodyfikować linię oznaczoną jako wyeksportowaną, musisz usunąć całą transakcję i ponownie przenieść ją do księgowości)</span>

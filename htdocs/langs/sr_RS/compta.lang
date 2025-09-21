@@ -3,10 +3,10 @@ MenuFinancial=Billing | Payment
 TaxModuleSetupToModifyRules=Otvorite <a href="%s">podešavanja modula Taxes</a> da biste izmenili pravila kalkulacija
 TaxModuleSetupToModifyRulesLT=Otvori <a href="%s">Podešavanja kompanije</a> za izmenu pravila kalkulacije
 OptionMode=Opcije za računovodstvo
-OptionModeTrue=Accrual accounting
-OptionModeVirtual=Cash accounting
-OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=U ovom kontekstu, obrt je sračunat prema računima (datumima potvrde). Kada računima dođe datum naplate, uračunati su u obrt, bilo da su zaista naplaćeni ili ne.
+OptionModeTrueDesc=In this context, the turnover is calculated over payments (date of payments). The validity of the figures is assured only if the book-keeping is scrutinized through the input/output on payments.
 FeatureIsSupportedInInOutModeOnly=Funkcionalnost dostupna samo u računovodstvenom modu POTRAŽIVANJA-ZADUŽENJA (pogledajte podešavanja modula računovodstvo)
 VATReportBuildWithOptionDefinedInModule=Prikazani iznosi su sračunati po pravilima definisanim u podešavanjima modula Takse.
 LTReportBuildWithOptionDefinedInModule=Prikazani iznosi su sračunati po pravilima definisanim u Podešavanjima kompanije.
@@ -302,7 +302,6 @@ ByVatRate=By sale tax rate
 TurnoverbyVatrate=Turnover invoiced by sale tax rate
 TurnoverCollectedbyVatrate=Turnover collected by sale tax rate
 PurchasebyVatrate=Purchase by sale tax rate
-LabelToShow=Kratak naziv
 PurchaseTurnover=Purchase turnover
 PurchaseTurnoverCollected=Purchase turnover collected
 RulesPurchaseTurnoverDue=- It includes the supplier's due invoices whether they are paid or not. <br>- It is based on the invoice date of these invoices.<br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Rule for lines dates
 Prepaid=Prepaid
 Postpaid=Postpaid
 SetRuleForLinesDates=Set rule for lines dates
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

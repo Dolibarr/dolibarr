@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2019       Maxime Kohlhaas         <maxime@atm-consulting.fr>
- * Copyright (C) 2019-2023  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2023  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify

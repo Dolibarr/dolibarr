@@ -399,7 +399,6 @@ class AccountancyCategory // extends CommonObject
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$sql = "DELETE FROM ".$this->db->prefix().$this->table_element;
@@ -438,6 +437,7 @@ class AccountancyCategory // extends CommonObject
 	public function display($id)
 	{
 		global $conf;
+
 		$sql = "SELECT t.rowid, t.account_number, t.label";
 		$sql .= " FROM ".$this->db->prefix()."accounting_account as t";
 		$sql .= " WHERE t.fk_accounting_category = ".((int) $id);

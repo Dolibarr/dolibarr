@@ -48,7 +48,7 @@ $socid = GETPOSTINT("socid");
 if ($user->socid) {
 	$socid = $user->socid;
 }
-//$result = restrictedArea($user, 'salaries', '', '', '');
+//restrictedArea($user, 'salaries', '', '', '');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $rowid = GETPOST("rowid", 'alpha');

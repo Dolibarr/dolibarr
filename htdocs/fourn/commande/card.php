@@ -81,7 +81,7 @@ if (isModEnabled('stock')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'orders', 'sendings', 'companies', 'bills', 'propal', 'receptions', 'supplier_proposal', 'deliveries', 'products', 'stocks', 'productbatch'));
+$langs->loadLangs(array('admin', 'orders', 'sendings', 'companies', 'bills', 'propal', 'receptions', 'supplier_proposal', 'products', 'stocks', 'productbatch'));
 if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
 }
@@ -479,7 +479,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error && isModEnabled('variants') && $prod_entry_mode != 'free') {
-			if ($combinations = GETPOST('combinations', 'array')) {
+			if ($combinations = GETPOST('combinations', 'array:alphanohtml')) {
 				//Check if there is a product with the given combination
 				$prodcomb = new ProductCombination($db);
 
@@ -1209,7 +1209,7 @@ if (empty($reshook)) {
 
 				$result = $object->Livraison($user, $date_liv, GETPOST("type"), GETPOST("comment")); // GETPOST("type") is 'tot', 'par', 'nev', 'can'
 				if ($result > 0) {
-					$langs->load("deliveries");
+					$langs->load("sendings");
 					setEventMessages($langs->trans("DeliveryStateSaved"), null);
 					$action = '';
 				} else {
@@ -1286,7 +1286,7 @@ if (empty($reshook)) {
 	 */
 	if ($action == 'add' && $permissiontoadd) {
 		$error = 0;
-		$selectedLines = GETPOST('toselect', 'array');
+		$selectedLines = GETPOST('toselect', 'array:int');
 		if ($socid < 1) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Supplier')), null, 'errors');
 			$action = 'create';
@@ -1509,7 +1509,7 @@ if (empty($reshook)) {
 			}
 
 			if (isModEnabled('category')) {
-				$categories = GETPOST('categories', 'array');
+				$categories = GETPOST('categories', 'array:int');
 				if (method_exists($object, 'setCategories')) {
 					$object->setCategories($categories);
 				}
@@ -1639,7 +1639,7 @@ if ($action == 'create') {
 		$objectsrc->fetch_optionals();
 		$object->array_options = $objectsrc->array_options;
 
-		$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
+		$projectid = (int) $objectsrc->fk_project;
 		$ref_client = (!empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
 		$fk_account = 0;
 		if ($origin == "commande") {
@@ -1787,7 +1787,7 @@ if ($action == 'create') {
 		// Payment term
 		print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 		print img_picto('', 'payment', 'class="pictofixedwidth"');
-		print $form->getSelectConditionsPaiements((GETPOSTISSET('cond_reglement_id') &&  GETPOST('cond_reglement_id') != 0) ? GETPOST('cond_reglement_id') : $cond_reglement_id, 'cond_reglement_id', -1, 1);
+		print $form->getSelectConditionsPaiements((GETPOSTISSET('cond_reglement_id') &&  GETPOST('cond_reglement_id') != 0) ? GETPOSTINT('cond_reglement_id') : $cond_reglement_id, 'cond_reglement_id', -1, 1);
 		print '</td></tr>';
 
 		// Payment mode

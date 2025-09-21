@@ -848,7 +848,7 @@ class Product extends CommonObject
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -891,7 +891,7 @@ class Product extends CommonObject
 		//'tosell'       =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>'0', 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
 		//'tobuy'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>'0', 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
 		'mandatory_period' => array('type' => 'integer', 'label' => 'mandatoryperiod', 'enabled' => 1, 'visible' => -1,  'notnull' => 1, 'default' => '0', 'index' => 1,  'position' => 1000),
-		'stockable_product'	=>array('type' => 'integer', 'label' => 'stockable_product', 'enabled' => 1, 'visible' => 1, 'default' => '1', 'notnull' => 1, 'index' => 1, 'position' => 502),
+		'stockable_product'	=> array('type' => 'integer', 'label' => 'stockable_product', 'enabled' => 1, 'visible' => 1, 'default' => '1', 'notnull' => 1, 'index' => 1, 'position' => 502),
 	);
 
 	/**
@@ -1148,7 +1148,9 @@ class Product extends CommonObject
 					$sql .= ", fk_unit";
 					$sql .= ", mandatory_period";
 					$sql .= ", stockable_product";
-					if (!empty($this->default_vat_code)) $sql.=", default_vat_code";
+					if (!empty($this->default_vat_code)) {
+						$sql .= ", default_vat_code";
+					}
 					$sql .= ") VALUES (";
 					$sql .= "'".$this->db->idate($this->date_creation)."'";
 					$sql .= ", ".(!empty($this->entity) ? (int) $this->entity : (int) $conf->entity);
@@ -1181,7 +1183,9 @@ class Product extends CommonObject
 					$sql .= ", ".($this->fk_unit > 0 ? ((int) $this->fk_unit) : 'NULL');
 					$sql .= ", '".$this->db->escape((string) $this->mandatory_period)."'";
 					$sql .= ", ".((int) $this->stockable_product);
-					if (!empty($this->default_vat_code)) $sql.=", '".$this->db->escape($this->default_vat_code)."'";
+					if (!empty($this->default_vat_code)) {
+						$sql .= ", '".$this->db->escape($this->default_vat_code)."'";
+					}
 					$sql .= ")";
 					dol_syslog(get_class($this)."::Create", LOG_DEBUG);
 
@@ -1494,7 +1498,7 @@ class Product extends CommonObject
 		if ($result >= 0) {
 			// $this->oldcopy should have been set by the caller of update (here properties were already modified)
 			if (is_null($this->oldcopy) || (is_object($this->oldcopy) && $this->oldcopy->isEmpty())) {
-				$this->oldcopy = dol_clone($this, 1);
+				$this->oldcopy = dol_clone($this, 1); // 1 to clone with methods to avoid fatal error with $this->oldcopy->hasbatch()
 			}
 			// Test if batch management is activated on existing product
 			// If yes, we create missing entries into product_batch
@@ -2976,7 +2980,7 @@ class Product extends CommonObject
 		} else {
 			$sql .= " p.pmp,";
 		}
-		$sql .= " p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
+		$sql .= " p.datec, GREATEST(p.tms, pef.tms) AS tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
 		$sql .= " p.fk_price_expression, p.price_autogen, p.stockable_product, p.model_pdf,";
 		$sql .= " p.price_label,";
 		if ($separatedStock) {
@@ -2985,6 +2989,7 @@ class Product extends CommonObject
 			$sql .= " p.stock";
 		}
 		$sql .= " FROM ".$this->db->prefix()."product as p";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."product_extrafields as pef ON pef.fk_object=p.rowid";
 		if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED') || $separatedEntityPMP) {
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "product_perentity as ppe ON ppe.fk_product = p.rowid AND ppe.entity = " . ((int) $conf->entity);
 		}
@@ -5509,7 +5514,7 @@ class Product extends CommonObject
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
 			if ($obj) {
-				$nb = $obj->nb;
+				$nb = (int) $obj->nb;
 			}
 		} else {
 			return -1;
@@ -5533,7 +5538,7 @@ class Product extends CommonObject
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
 			if ($obj) {
-				$nb = $obj->nb;
+				$nb = (int) $obj->nb;
 			}
 		}
 
@@ -5865,7 +5870,7 @@ class Product extends CommonObject
 
 		$result = '';
 
-		$newref = $this->ref;
+		$newref = (string) $this->ref;
 		if ($maxlength) {
 			$newref = dol_trunc($newref, $maxlength, 'middle');
 		}
@@ -6160,8 +6165,7 @@ class Product extends CommonObject
 				$this->db->commit();
 				return 1;
 			} else {
-				$this->error = $movementstock->error;
-				$this->errors = $movementstock->errors;
+				$this->setErrorsFromObject($movementstock);
 
 				$this->db->rollback();
 				return -1;
@@ -7154,9 +7158,10 @@ class Product extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = "SELECT p.rowid, p.ref, p.datec as date_creation, p.tms as date_modification,";
+		$sql = "SELECT p.rowid, p.ref, p.datec as date_creation, GREATEST(p.tms, pef.tms) as date_modification,";
 		$sql .= " p.fk_user_author, p.fk_user_modif";
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as p";
+		$sql .= " LEFT JOIN ".$this->db->prefix().$this->table_element."_extrafields as pef ON pef.fk_object=p.rowid";
 		$sql .= " WHERE p.rowid = ".((int) $id);
 
 		$result = $this->db->query($sql);
@@ -7170,7 +7175,7 @@ class Product extends CommonObject
 				$this->user_creation_id = $obj->fk_user_author;
 				$this->user_modification_id = $obj->fk_user_modif;
 
-				$this->date_creation     = $this->db->jdate($obj->date_creation);
+				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
 			}
 
@@ -7232,7 +7237,7 @@ class Product extends CommonObject
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<div class="info-box-img">';
 		$label = '';
-		if ($this->is_photo_available($conf->product->multidir_output[$this->entity])) {
+		if ($this->entity !== null && $this->is_photo_available($conf->product->multidir_output[$this->entity])) {
 			$label .= $this->show_photos('product', $conf->product->multidir_output[$this->entity], 1, 1, 0, 0, 0, 120, 160, 0, 0, 0, '', 'photoref photokanban');
 			$return .= $label;
 		} else {

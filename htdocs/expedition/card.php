@@ -73,7 +73,7 @@ if (isModEnabled('project')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("sendings", "companies", "bills", 'deliveries', 'orders', 'stocks', 'other', 'propal', 'productbatch'));
+$langs->loadLangs(array("sendings", "companies", "bills", 'orders', 'stocks', 'other', 'propal', 'productbatch'));
 
 if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
@@ -401,7 +401,7 @@ if (empty($reshook)) {
 		}
 
 		if (($totalqty > 0 || getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) && !$error) {		// There is at least one thing to ship and no error
-			$selected_subtotal_lines = GETPOST('subtotal_toselect', 'array');
+			$selected_subtotal_lines = GETPOST('subtotal_toselect', 'array:int');
 			for ($i = 0; $i < $num; $i++) {
 				$qty = "qtyl" . $i;
 
@@ -549,7 +549,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $user->hasRight('expedition', 'supprimer')) {
 		$also_update_stock = (GETPOST('alsoUpdateStock', 'alpha') ? 1 : 0);
-		$result = $object->cancel(0, (bool) $also_update_stock);
+		$result = $object->cancel($user, 0, (bool) $also_update_stock);
 		if ($result > 0) {
 			$result = $object->setStatut(-1);
 		} else {
@@ -1078,7 +1078,9 @@ if ($action == 'create') {
 		$classname = ucfirst($origin);
 
 		$object = new $classname($db);
+		/* @var Commande|Facture $object */
 		'@phan-var-force Commande|Facture $object';
+
 		if ($object->fetch($origin_id)) {	// This include the fetch_lines
 			$soc = new Societe($db);
 			$soc->fetch($object->socid);
@@ -1139,7 +1141,7 @@ if ($action == 'create') {
 			if (isModEnabled('project') && is_object($formproject)) {
 				$projectid = GETPOSTINT('projectid');
 				if (empty($projectid) && !empty($object->fk_project)) {
-					$projectid = $object->fk_project;
+					$projectid = (int) $object->fk_project;
 				}
 				if ($origin == 'project') {
 					$projectid = ($object->id ? $object->id : 0);
@@ -1159,7 +1161,7 @@ if ($action == 'create') {
 			print '<tr><td>' . $langs->trans("DateDeliveryPlanned") . '</td>';
 			print '<td colspan="3">';
 			print img_picto('', 'action', 'class="pictofixedwidth"');
-			$date_delivery = ($date_delivery ? $date_delivery : $object->date_delivery); // $date_delivery comes from GETPOST
+			$date_delivery = ($date_delivery ? $date_delivery : $object->delivery_date); // $date_delivery comes from GETPOST
 			print $form->selectDate($date_delivery ? $date_delivery : -1, 'date_delivery', 1, 1, 1);
 			print "</td>\n";
 			print '</tr>';
@@ -1168,7 +1170,7 @@ if ($action == 'create') {
 			print '<tr><td>' . $langs->trans("DateShipping") . '</td>';
 			print '<td colspan="3">';
 			print img_picto('', 'action', 'class="pictofixedwidth"');
-			$date_shipping = ($date_shipping ? $date_shipping : $object->date_shipping); // $date_shipping comes from GETPOST
+			//$date_shipping = ($date_shipping ? $date_shipping : $object->date_shipping); // $date_shipping comes from GETPOST
 			print $form->selectDate($date_shipping ? $date_shipping : -1, 'date_shipping', 1, 1, 1);
 			print "</td>\n";
 			print '</tr>';
@@ -1366,8 +1368,7 @@ if ($action == 'create') {
 				if (empty($reshook) && $line->special_code != SUBTOTALS_SPECIAL_CODE) {
 					// Show product and description
 					$type = $line->product_type ? $line->product_type : $line->fk_product_type;
-					// Try to enhance type detection using date_start and date_end for free lines where type
-					// was not saved.
+					// Try to enhance type detection using date_start and date_end for free lines where type was not saved.
 					if (!empty($line->date_start)) {
 						$type = 1;
 					}
@@ -2106,7 +2107,7 @@ if ($action == 'create') {
 		if ($objectref == 'PROV') {
 			$numref = $object->getNextNumRef($soc);
 		} else {
-			$numref = $object->ref;
+			$numref = (string) $object->ref;
 		}
 
 		$text = $langs->trans("ConfirmValidateSending", $numref);
@@ -2881,8 +2882,8 @@ if ($action == 'create') {
 								$detail .= $langs->trans("DetailWarehouseFormat", $warehouse->label, $detail_entrepot->qty_shipped) . '<br>';
 							}
 						}
-						print $form->textwithtooltip(img_picto('', 'object_stock') . ' ' . $langs->trans("DetailWarehouseNumber"), $detail);
-					} elseif (count($lines[$i]->detail_children) > 1) {
+						print $form->textwithtooltip(img_picto('', 'object_stock').' '.$langs->trans("DetailWarehouseNumber"), $detail);
+					} elseif (count($lines[$i]->detail_children ?? []) > 1) {
 						$detail = '';
 						foreach ($lines[$i]->detail_children as $child_product_id => $child_stock_list) {
 							foreach ($child_stock_list as $warehouse_id => $total_qty) {

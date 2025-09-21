@@ -78,7 +78,7 @@ $socid = 0;
 if (!empty($user->socid) && $user->socid > 0) {
 	$socid = $user->socid;
 }
-//$result = restrictedArea($user, 'user', $id, 'usergroup', '');
+//restrictedArea($user, 'user', $id, 'usergroup', '');
 if (!$permissiontoread) {
 	accessforbidden();
 }

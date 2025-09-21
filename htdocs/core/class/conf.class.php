@@ -957,7 +957,6 @@ class Conf extends stdClass
 					}
 				}
 			}
-
 			if (!isset($this->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT)) {
 				$this->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT = 1;
 			}
@@ -1319,6 +1318,9 @@ class Conf extends stdClass
 
 			// Security
 			if (!defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {
+				if (defined('MAIN_ANTIVIRUS_UPLOAD_ON')) {
+					$this->global->MAIN_ANTIVIRUS_UPLOAD_ON = constant('MAIN_ANTIVIRUS_UPLOAD_ON');
+				}
 				if (defined('MAIN_ANTIVIRUS_COMMAND')) {
 					$this->global->MAIN_ANTIVIRUS_COMMAND = constant('MAIN_ANTIVIRUS_COMMAND');
 				}

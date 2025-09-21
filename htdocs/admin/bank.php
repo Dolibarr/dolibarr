@@ -175,7 +175,7 @@ if ($action == 'specimen') {
 
 		if ($module->write_file($object, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=bank&file=SPECIMEN.pdf");
-			return;
+			exit();
 		} else {
 			setEventMessages($module->error, null, 'errors');
 			dol_syslog($module->error, LOG_ERR);

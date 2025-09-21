@@ -3705,7 +3705,7 @@ class nusoap_server extends nusoap_base
     /**
      * wsdl instance (if one)
      *
-     * @var mixed
+     * @var mixed|wsdl
      * @access private
      */
     var $wsdl = false;

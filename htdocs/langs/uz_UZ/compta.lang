@@ -3,10 +3,10 @@ MenuFinancial=Hisob-kitoblar | To'lov
 TaxModuleSetupToModifyRules=Hisoblash qoidalarini o'zgartirish uchun <a href="%s"> soliqlar modulini o'rnatish </a> ga o'ting.
 TaxModuleSetupToModifyRulesLT=Hisoblash qoidalarini o'zgartirish uchun <a href="%s"> kompaniyasini sozlash </a>-ga o'ting.
 OptionMode=Buxgalteriya uchun variant
-OptionModeTrue=Hisoblash hisobi
-OptionModeVirtual=Naqd pul hisobi
-OptionModeTrueDesc=Shu nuqtai nazardan, aylanma to'lovlar (to'lovlar sanasi) bo'yicha hisoblanadi. Buxgalteriya hisobi to'lovlar bo'yicha kiritish/chiqarish orqali sinchiklab tekshirilgan taqdirdagina raqamlarning to'g'riligiga ishonch hosil qilinadi.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=Shu nuqtai nazardan, tovar aylanmasi schyot-fakturalar bo'yicha hisoblanadi (tasdiqlash sanasi). Ushbu hisob-fakturalar to'langan yoki to'lanmaganligiga qaramay, ular tovar aylanmasi bo'yicha ro'yxatga olinadi.
+OptionModeTrueDesc=Shu nuqtai nazardan, aylanma to'lovlar (to'lovlar sanasi) bo'yicha hisoblanadi. Buxgalteriya hisobi to'lovlar bo'yicha kiritish/chiqarish orqali sinchiklab tekshirilgan taqdirdagina raqamlarning to'g'riligiga ishonch hosil qilinadi.
 FeatureIsSupportedInInOutModeOnly=Xususiyat faqat CREDITS-DEBTS buxgalteriya rejimida mavjud (Buxgalteriya moduli konfiguratsiyasini ko'ring)
 VATReportBuildWithOptionDefinedInModule=Bu erda ko'rsatilgan miqdorlar Soliq modulini o'rnatish qoidalari asosida hisoblanadi.
 LTReportBuildWithOptionDefinedInModule=Bu erda ko'rsatilgan mablag'lar Kompaniya sozlamalari bo'yicha belgilangan qoidalar asosida hisoblanadi.
@@ -302,7 +302,6 @@ ByVatRate=Sotish bo'yicha soliq stavkasi bo'yicha
 TurnoverbyVatrate=Sotish bo'yicha soliq stavkasi bo'yicha hisob-kitob qilingan tovar aylanmasi
 TurnoverCollectedbyVatrate=Sotish soliq stavkasi bo'yicha yig'ilgan tovar aylanmasi
 PurchasebyVatrate=Sotish bo'yicha soliq stavkasi bo'yicha sotib olish
-LabelToShow=Qisqa yorliq
 PurchaseTurnover=Xaridlar aylanmasi
 PurchaseTurnoverCollected=Xarid qilish oboroti yig'ildi
 RulesPurchaseTurnoverDue=- Bu etkazib beruvchining to'langan yoki to'lanmagan hisob-fakturalarini o'z ichiga oladi. <br> - Ushbu hisob-fakturalarning hisob-kitob sanasiga asoslanadi. <br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Chiziqlar sanalari uchun qoida
 Prepaid=Oldindan to'langan
 Postpaid=Postpaid
 SetRuleForLinesDates=Chiziqlar sanalari uchun qoida o'rnating
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption

@@ -28,6 +28,14 @@
  *  \brief      Page to setup the donation module
  */
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ * @var Societe $mysoc
+ */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/donation.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
@@ -35,14 +43,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 }
-
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'donations', 'accountancy', 'other'));
@@ -79,6 +79,7 @@ if ($action == 'specimen') {
 		$classname = (string) $modele;
 		$obj = new $classname($db);
 		'@phan-var-force ModeleDon $obj';
+		/** @var ModeleDon $obj */
 
 		if ($obj->write_file($don, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=donation&file=SPECIMEN.html");
@@ -243,6 +244,7 @@ if (is_resource($handle)) {
 			require_once $dir.'/'.$file;
 			$module = new $classname($db);
 			'@phan-var-force ModeleDon $module';
+			/** @var ModeleDon $module */
 
 			// Show modules according to features level
 			if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -337,7 +339,7 @@ if (isModEnabled("societe")) {
 		print ajax_constantonoff('DONATION_USE_THIRDPARTIES');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("DONATION_USE_THIRDPARTIES", $arrval, $conf->global->DONATION_USE_THIRDPARTIES);
+		print $form->selectarray("DONATION_USE_THIRDPARTIES", $arrval, getDolGlobalString('DONATION_USE_THIRDPARTIES'));
 	}
 	print "</td>\n";
 	print "</tr>\n";
@@ -354,7 +356,7 @@ print '<label for="DONATION_ACCOUNTINGACCOUNT">'.$label.'</label></td>';
 print '<td class="center">';
 if (isModEnabled('accounting')) {
 	/** @var FormAccounting $formaccounting */
-	print $formaccounting->select_account($conf->global->DONATION_ACCOUNTINGACCOUNT, 'DONATION_ACCOUNTINGACCOUNT', 1, array(), 1, 1);
+	print $formaccounting->select_account(getDolGlobalString('DONATION_ACCOUNTINGACCOUNT'), 'DONATION_ACCOUNTINGACCOUNT', 1, array(), 1, 1);
 } else {
 	print '<input type="text" size="10" id="DONATION_ACCOUNTINGACCOUNT" name="DONATION_ACCOUNTINGACCOUNT" value="' . getDolGlobalString('DONATION_ACCOUNTINGACCOUNT').'">';
 }
@@ -378,9 +380,9 @@ print "</table>\n";
 print '</form>';
 
 /*
- *  French params
+ *  French only parameters
  */
-if (preg_match('/fr/i', $conf->global->MAIN_INFO_SOCIETE_COUNTRY)) {
+if (preg_match('/fr/i', $mysoc->country_code)) {
 	print '<br>';
 	print load_fiche_titre($langs->trans("FrenchOptions"), '', '');
 
@@ -397,7 +399,7 @@ if (preg_match('/fr/i', $conf->global->MAIN_INFO_SOCIETE_COUNTRY)) {
 		print ajax_constantonoff('DONATION_ART200');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("DONATION_ART200", $arrval, $conf->global->DONATION_ART200);
+		print $form->selectarray("DONATION_ART200", $arrval, getDolGlobalString('DONATION_ART200'));
 	}
 	print '</td></tr>';
 
@@ -408,7 +410,7 @@ if (preg_match('/fr/i', $conf->global->MAIN_INFO_SOCIETE_COUNTRY)) {
 		print ajax_constantonoff('DONATION_ART238');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("DONATION_ART238", $arrval, $conf->global->DONATION_ART238);
+		print $form->selectarray("DONATION_ART238", $arrval, getDolGlobalString('DONATION_ART238'));
 	}
 	print '</td></tr>';
 
@@ -419,7 +421,7 @@ if (preg_match('/fr/i', $conf->global->MAIN_INFO_SOCIETE_COUNTRY)) {
 		print ajax_constantonoff('DONATION_ART978');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("DONATION_ART978", $arrval, $conf->global->DONATION_ART978);
+		print $form->selectarray("DONATION_ART978", $arrval, getDolGlobalString('DONATION_ART978'));
 	}
 	print '</td></tr>';
 	print "</table>\n";

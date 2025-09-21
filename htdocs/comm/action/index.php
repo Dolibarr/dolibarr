@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003      Eric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
+/* Copyright (C) 2001-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2003       Eric Seigne             <erics@rycks.com>
+ * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2014       Cedric GROSS            <c.gross@kreiz-it.fr>
+ * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2017       Open-DSI                <support@open-dsi.fr>
  * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -743,7 +743,7 @@ if (!empty($conf->use_javascript_ajax)) {	// If javascript on
 
 // Load events from database into $eventarray
 $eventarray = array();
-
+$nbevents = 0;
 
 // DEFAULT CALENDAR + AUTOEVENT CALENDAR + CONFERENCEBOOTH CALENDAR
 $sql = 'SELECT ';
@@ -798,22 +798,22 @@ $sql .= " AND a.entity IN (".getEntity('agenda').")";	// bookcal is a "virtual v
 // Condition on actioncode
 if (!empty($actioncode)) {
 	if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
-		if ($actioncode == 'AC_NON_AUTO') {
+		if ((is_array($actioncode) && in_array('AC_NON_AUTO', $actioncode)) || $actioncode == 'AC_NON_AUTO') {
 			$sql .= " AND ca.type != 'systemauto'";
-		} elseif ($actioncode == 'AC_ALL_AUTO') {
+		} elseif ((is_array($actioncode) && in_array('AC_ALL_AUTO', $actioncode)) || $actioncode == 'AC_ALL_AUTO') {
 			$sql .= " AND ca.type = 'systemauto'";
 		} else {
-			if ($actioncode == 'AC_OTH') {
+			if ((is_array($actioncode) && in_array('AC_OTH', $actioncode)) || $actioncode == 'AC_OTH') {
 				$sql .= " AND ca.type != 'systemauto'";
 			}
-			if ($actioncode == 'AC_OTH_AUTO') {
+			if ((is_array($actioncode) && in_array('AC_OTH_AUTO', $actioncode)) || $actioncode == 'AC_OTH_AUTO') {
 				$sql .= " AND ca.type = 'systemauto'";
 			}
 		}
 	} else {
-		if ($actioncode === 'AC_NON_AUTO') {
+		if ((is_array($actioncode) && in_array('AC_NON_AUTO', $actioncode)) || $actioncode === 'AC_NON_AUTO') {
 			$sql .= " AND ca.type != 'systemauto'";
-		} elseif ($actioncode === 'AC_ALL_AUTO') {
+		} elseif ((is_array($actioncode) && in_array('AC_ALL_AUTO', $actioncode))	|| $actioncode === 'AC_ALL_AUTO') {
 			$sql .= " AND ca.type = 'systemauto'";
 		} else {
 			if (is_array($actioncode)) {
@@ -918,14 +918,18 @@ if ($search_categ_cus != -1) {
 
 // Sort on date
 $sql .= $db->order("datep");
-//print $sql;
+
+$MAXONSAMEPAGE = 5000; // Useless to have more. Protection to avoid memory overload when high number of event (for example after a mass import)
+
+$sql .= $db->plimit($MAXONSAMEPAGE + 1);
 
 dol_syslog("comm/action/index.php", LOG_DEBUG);
+
 $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
+	$nbevents += $num;
 
-	$MAXONSAMEPAGE = 10000; // Useless to have more. Protection to avoid memory overload when high number of event (for example after a mass import)
 	$i = 0;
 	while ($i < $num && $i < $MAXONSAMEPAGE) {
 		$obj = $db->fetch_object($resql);
@@ -1089,6 +1093,8 @@ if ($showbirthday) {
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
+		$nbevents += $num;
+
 		$i = 0;
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
@@ -1170,7 +1176,8 @@ if ($user->hasRight("holiday", "read")) {
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
-		$i   = 0;
+		$i = 0;
+		$nbevents += $num;
 
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
@@ -1277,12 +1284,16 @@ if (count($listofextcals)) {
 		// After this $ical->cal['VEVENT'] contains array of events, $ical->cal['DAYLIGHT'] contains daylight info, $ical->cal['STANDARD'] contains non daylight info, ...
 		//var_dump($ical->cal); exit;
 		$icalevents = array();
-		if (is_array($ical->get_event_list())) {
-			$icalevents = array_merge($icalevents, $ical->get_event_list()); // Add $ical->cal['VEVENT']
+		$tmparray = $ical->get_event_list();
+		if (is_array($tmparray)) {
+			$icalevents = array_merge($icalevents, $tmparray); // Add $ical->cal['VEVENT']
 		}
-		if (is_array($ical->get_freebusy_list())) {
-			$icalevents = array_merge($icalevents, $ical->get_freebusy_list()); // Add $ical->cal['VFREEBUSY']
+		$tmparray = $ical->get_freebusy_list();
+		if (is_array($tmparray)) {
+			$icalevents = array_merge($icalevents, $tmparray); // Add $ical->cal['VFREEBUSY']
 		}
+
+		$nbevents += count($icalevents);
 
 		if (count($icalevents) > 0) {
 			// Duplicate all repeatable events into new entries
@@ -1569,19 +1580,39 @@ $maxnbofchar = 0;
 $cachethirdparties = array();
 $cachecontacts = array();
 $cacheusers = array();
+// default values
+$theme_datacolor = array(
+	array(137, 86, 161),
+	array(60, 147, 183),
+	array(250, 190, 80),
+	array(80, 166, 90),
+	array(190, 190, 100),
+	array(91, 115, 247),
+	array(140, 140, 220),
+	array(190, 120, 120),
+	array(115, 125, 150),
+	array(100, 170, 20),
+	array(150, 135, 125),
+	array(85, 135, 150),
+	array(150, 135, 80),
+	array(150, 80, 150)
+);
 
 // Define theme_datacolor array
 $color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/theme_vars.inc.php";
 if (is_readable($color_file)) {
+	global $theme_datacolor;
 	include $color_file;
-}
-if (!is_array($theme_datacolor)) {
-	$theme_datacolor = array(array(137, 86, 161), array(60, 147, 183), array(250, 190, 80), array(80, 166, 90), array(190, 190, 100), array(91, 115, 247), array(140, 140, 220), array(190, 120, 120), array(115, 125, 150), array(100, 170, 20), array(150, 135, 125), array(85, 135, 150), array(150, 135, 80), array(150, 80, 150));
+	/** @var array<int,mixed> $theme_datacolor */
 }
 
 $massactionbutton = '';
 
 print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
+
+if ($nbevents > $MAXONSAMEPAGE) {
+	print info_admin('Number of results has been truncated to '.$MAXONSAMEPAGE, 0, 0, 'warning').'<br>';
+}
 
 // Show div with list of calendars
 print $s;
@@ -1895,6 +1926,11 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 	'@phan-var-force array{0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int},3:array{0:int,1:int,2:int}} $theme_datacolor
 	 @phan-var-force User[] $cacheusers
 	 @phan-var-force array<int<0,3>> $colorindexused';
+	/**
+	 * @var array{0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int},3:array{0:int,1:int,2:int}} $theme_datacolor
+	 * @var User[] $cacheusers
+	 * @var array<int<0,3>> $colorindexused
+	 */
 
 	if ($conf->use_javascript_ajax) {	// Enable the "Show more button..."
 		$conf->global->MAIN_JS_SWITCH_AGENDA = 1;

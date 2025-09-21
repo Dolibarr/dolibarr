@@ -49,7 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 $langs->loadLangs(array("mails", "admin"));
 
 $action = GETPOST('action', 'aZ09');
-$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $mode       = GETPOST('mode', 'aZ'); // The display mode ('list', 'kanban', 'hierarchy', 'calendar', 'gantt', ...)
 
@@ -109,7 +109,7 @@ if (empty($action) && empty($object->id)) {
 	accessforbidden('Object not found');
 }
 
-$permissiontoread = $user->hasRight('maling', 'lire');
+$permissiontoread = $user->hasRight('mailing', 'lire');
 $permissiontocreate = $user->hasRight('mailing', 'creer');
 $permissiontovalidatesend = $user->hasRight('mailing', 'valider');
 $permissiontodelete = $user->hasRight('mailing', 'supprimer');
@@ -188,7 +188,7 @@ if (GETPOSTINT('clearlist') && $permissiontocreate) {
 	*/
 }
 
-if (GETPOSTINT('exportcsv') && $permissiontoread) {
+if (GETPOSTINT('exportcsv') && $permissiontoread) {	// @phpstan-ignore-line
 	$completefilename = 'targets_emailing'.$object->id.'_'.dol_print_date(dol_now(), 'dayhourlog').'.csv';
 	header('Content-Type: text/csv');
 	header('Content-Disposition: attachment;filename='.$completefilename);
@@ -782,7 +782,7 @@ if ($object->fetch($id) >= 0) {
 
 		print '</form>';
 
-		print "\n<!-- List o selected targets -->\n";
+		print "\n<!-- List of selected targets -->\n";
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
