@@ -1693,18 +1693,6 @@ parameters:
 			path: ../../../htdocs/bom/class/api_boms.class.php
 
 		-
-			message: '#^Call to function method_exists\(\) with \$this\(BOM\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/bom/class/bom.class.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(BOM\) and ''getNomUrl'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/bom/class/bom.class.php
-
-		-
 			message: '#^Method BOM\:\:getNetNeedsTree\(\) has parameter \$TNetNeeds with no value type specified in iterable type array\.$#'
 			identifier: missingType.iterableValue
 			count: 1
