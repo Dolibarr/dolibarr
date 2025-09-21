@@ -228,8 +228,8 @@ class Tasks extends DolibarrApi
 	/**
 	 * Get time spent of a task
 	 *
-	 * @param 	int   	$id         Id of task
-	 * @return	array				Array of timespent lines
+	 * @param 	int   				$id         Id of task
+	 * @return	array<int,mixed>				Array of timespent lines
 	 *
 	 * @url	GET {id}/timespent
 	 */
