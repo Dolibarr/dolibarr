@@ -113,7 +113,7 @@ if ($socid > 0) {
 		print '<td class="right">' . $langs->trans("Author") . '</td>';
 		print '</tr>';
 
-		/** @var array<array{fk_facture?:int,fk_paiement?:int,date:int|string,datefieldforsort:string,link:string,status:string,amount:float,balance?:float,author:string}> $TData */
+		/** @var array<string|int,mixed> $TData */
 		$TData = array();
 
 		$sql = "SELECT s.nom, s.rowid as socid, f.ref_supplier, f.total_ttc, f.datef as df,";
