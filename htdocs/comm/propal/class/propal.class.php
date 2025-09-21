@@ -589,8 +589,7 @@ class Propal extends CommonObject
 					return -1;
 				}
 			} else {
-				$this->error = $line->error;
-				$this->errors = $line->errors;
+				$this->setErrorsFromObject($line);
 				$this->db->rollback();
 				return -2;
 			}
@@ -884,8 +883,7 @@ class Propal extends CommonObject
 					return -1;
 				}
 			} else {
-				$this->error = $this->line->error;
-				$this->errors = $this->line->errors;
+				$this->setErrorsFromObject($this->line);
 				$this->db->rollback();
 				return -2;
 			}
@@ -1088,8 +1086,7 @@ class Propal extends CommonObject
 				$this->db->commit();
 				return $result;
 			} else {
-				$this->error = $this->line->error;
-				$this->errors = $this->line->errors;
+				$this->setErrorsFromObject($this->line);
 				$this->db->rollback();
 				return -1;
 			}
@@ -1136,8 +1133,7 @@ class Propal extends CommonObject
 				$this->db->commit();
 				return 1;
 			} else {
-				$this->error = $line->error;
-				$this->errors = $line->errors;
+				$this->setErrorsFromObject($line);
 				$this->db->rollback();
 				return -1;
 			}
@@ -1614,8 +1610,7 @@ class Propal extends CommonObject
 		$object->context['createfromclone'] = 'createfromclone';
 		$result = $object->create($user);
 		if ($result < 0) {
-			$this->error = $object->error;
-			$this->errors = array_merge($this->errors, $object->errors);
+			$this->setErrorsFromObject($object);
 			$error++;
 		}
 
