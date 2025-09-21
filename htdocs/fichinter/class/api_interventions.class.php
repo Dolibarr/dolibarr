@@ -177,10 +177,10 @@ class Interventions extends DolibarrApi
 		}
 
 		if ($sqlfilters) {
-			$parameters = array('sqlfilters' => $sqlfilters,  'apimethod' => 'index');
+			$parameters = array('sqlfilters' => $sqlfilters, 'apiobject' => 'intervention', 'apimethod' => 'index');
 			$object = new stdClass();
-			$action = 'intervention-index-list';
-			$reshook = $hookmanager->executeHooks('printindexapiWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+			$action = 'list';
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if ($reshook > 0) {
 				$sql .= $hookmanager->resPrint;
 			} elseif ($reshook == 0) {
