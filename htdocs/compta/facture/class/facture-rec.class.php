@@ -706,7 +706,6 @@ class FactureRec extends CommonInvoice
 				$this->fk_societe_rib         = $obj->fk_societe_rib;
 				$this->note_private           = $obj->note_private;
 				$this->note_public            = $obj->note_public;
-				$this->user_author            = $obj->fk_user_author;	// deprecated
 				$this->user_creation_id       = $obj->fk_user_author;
 				$this->model_pdf              = $obj->model_pdf;
 				//$this->special_code = $obj->special_code;

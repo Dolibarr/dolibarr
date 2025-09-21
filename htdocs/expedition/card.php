@@ -488,7 +488,7 @@ if (empty($reshook)) {
 			}
 
 			if (($totalqty > 0 || getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) && !$error) {		// There is at least one thing to ship and no error
-				$selected_subtotal_lines = GETPOST('subtotal_toselect', 'array');
+				$selected_subtotal_lines = GETPOST('subtotal_toselect', 'array:int');
 				for ($i = 0; $i < $num; $i++) {
 					$qty = "qtyl" . $i;
 
@@ -517,6 +517,7 @@ if (empty($reshook)) {
 								if (!($objectsrc->lines[$i]->fk_product > 0)) {
 									$entrepot_id = 0;
 								}
+
 
 								$ret = $object->addline($entrepot_id, GETPOSTINT($idl), (float) price2num(GETPOSTFLOAT($qty), 'MS'), $array_options[$i]);
 								if ($ret < 0) {

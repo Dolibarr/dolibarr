@@ -395,10 +395,6 @@ class pdf_standard_movementstock extends ModelePDFMovement
 				$file = $dir."/".$objectref.".pdf";
 			}
 
-			$stockFournisseur = new ProductFournisseur($this->db);
-			$supplierprices = $stockFournisseur->list_product_fournisseur_price($object->id);
-			$object->supplierprices = $supplierprices;
-
 			$productstatic = new Product($this->db);
 
 			if (!file_exists($dir)) {

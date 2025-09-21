@@ -50,7 +50,7 @@ class Cronjob extends CommonObject
 	public $picto = 'cron';
 
 	/**
-	 * @var string Job type
+	 * @var ?string Job type
 	 */
 	public $jobtype;
 
@@ -60,12 +60,12 @@ class Cronjob extends CommonObject
 	public $datec = '';
 
 	/**
-	 * @var string Cron Job label
+	 * @var ?string Cron Job label
 	 */
 	public $label;
 
 	/**
-	 * @var string Job command
+	 * @var ?string Job command
 	 */
 	public $command;
 	/**
@@ -103,17 +103,17 @@ class Cronjob extends CommonObject
 	public $datelastrun = '';
 
 	/**
-	 * @var string|int			Date for next job execution
+	 * @var string|int|null			Date for next job execution
 	 */
 	public $datenextrun = '';
 
 	/**
-	 * @var string|int			Date for end job execution
+	 * @var string|int|null			Date for end job execution
 	 */
 	public $dateend = '';
 
 	/**
-	 * @var string|int			Date for first start job execution
+	 * @var string|int|null			Date for first start job execution
 	 */
 	public $datestart = '';
 
@@ -123,32 +123,32 @@ class Cronjob extends CommonObject
 	public $datelastresult = '';
 
 	/**
-	 * @var string			Last result from end job execution
+	 * @var ?string			Last result from end job execution
 	 */
 	public $lastresult;
 
 	/**
-	 * @var string 			Last output from end job execution
+	 * @var ?string 			Last output from end job execution
 	 */
 	public $lastoutput;
 
 	/**
-	 * @var string 			Unit frequency of job execution ('60', '86400', 'd', 'm', ...)
+	 * @var ?string 			Unit frequency of job execution ('60', '86400', 'd', 'm', ...)
 	 */
 	public $unitfrequency;
 
 	/**
-	 * @var int 			Frequency of job execution
+	 * @var ?int 			Frequency of job execution
 	 */
 	public $frequency;
 
 	/**
-	 * @var int 			Status
+	 * @var ?int 			Status
 	 */
 	public $status;
 
 	/**
-	 * @var int 			Is job running ?
+	 * @var ?int 			Is job running ?
 	 */
 	public $processing;
 
@@ -158,7 +158,7 @@ class Cronjob extends CommonObject
 	public $pid;
 
 	/**
-	 * @var string 			Email when an error occurs
+	 * @var ?string 			Email when an error occurs
 	 */
 	public $email_alert;
 
@@ -168,32 +168,32 @@ class Cronjob extends CommonObject
 	public $fk_user_author;
 
 	/**
-	 * @var int 			User ID of last modification
+	 * @var ?int 			User ID of last modification
 	 */
 	public $fk_user_mod;
 
 	/**
-	 * @var int 			Number of run job execution
+	 * @var ?int 			Number of run job execution
 	 */
 	public $nbrun;
 
 	/**
-	 * @var int 			Maximum run job execution
+	 * @var ?int 			Maximum run job execution
 	 */
 	public $maxrun;
 
 	/**
-	 * @var string 			Libname
+	 * @var ?string 			Libname
 	 */
 	public $libname;
 
 	/**
-	 * @var string 			A test condition to know if job is visible/qualified
+	 * @var ?string 			A test condition to know if job is visible/qualified
 	 */
 	public $test;
 
 	/**
-	 * @var string 			Autodelete
+	 * @var ?string 			Autodelete
 	 */
 	public $autodelete;
 
