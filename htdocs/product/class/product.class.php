@@ -2645,7 +2645,7 @@ class Product extends CommonObject
 							include_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 							$priceparser = new PriceParser($this->db);
 							$price_result = $priceparser->parseProductSupplier($prod_supplier);
-							if ($result >= 0) {
+							if ($price_result >= 0) {
 								$obj->price = $price_result;
 							}
 						}
