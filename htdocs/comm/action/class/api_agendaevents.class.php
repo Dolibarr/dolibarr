@@ -250,7 +250,18 @@ class AgendaEvents extends DolibarrApi
 				continue;
 			}
 
+			// Special handling for fk_task to ensure it's properly saved
+			if ($field === 'fk_task') {
+				$this->actioncomm->fk_task = (int) $value;
+				continue;
+			}
+
 			$this->actioncomm->$field = $this->_checkValForAPI($field, $value, $this->actioncomm);
+		}
+
+		// Auto-assign fk_task from elementid if fk_task is empty and elementtype is ticket
+		if (empty($this->actioncomm->fk_task) && !empty($request_data['elementid']) && !empty($request_data['elementtype']) && $request_data['elementtype'] === 'ticket') {
+			$this->actioncomm->fk_task = (int) $request_data['elementid'];
 		}
 		/*if (isset($request_data["lines"])) {
 		  $lines = array();
@@ -313,6 +324,12 @@ class AgendaEvents extends DolibarrApi
 				continue;
 			}
 
+			// Special handling for fk_task to ensure it's properly saved
+			if ($field === 'fk_task') {
+				$this->actioncomm->fk_task = (int) $value;
+				continue;
+			}
+
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
 					$this->actioncomm->array_options[$index] = $this->_checkValForAPI($field, $val, $this->actioncomm);
@@ -320,6 +337,11 @@ class AgendaEvents extends DolibarrApi
 				continue;
 			}
 			$this->actioncomm->$field = $this->_checkValForAPI($field, $value, $this->actioncomm);
+		}
+
+		// Auto-assign fk_task from elementid if fk_task is empty and elementtype is ticket
+		if (empty($this->actioncomm->fk_task) && !empty($request_data['elementid']) && !empty($request_data['elementtype']) && $request_data['elementtype'] === 'ticket') {
+			$this->actioncomm->fk_task = (int) $request_data['elementid'];
 		}
 
 		if ($this->actioncomm->update(DolibarrApiAccess::$user, 1) > 0) {
