@@ -131,7 +131,7 @@ class Propal extends CommonObject
 
 	/**
 	 * Status of the quote
-	 * @var int
+	 * @var ?int
 	 * @deprecated Try to use $status now
 	 * @see Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED, Propal::STATUS_CANCELED
 	 */
@@ -139,7 +139,7 @@ class Propal extends CommonObject
 
 	/**
 	 * Status of the quote
-	 * @var int
+	 * @var ?int
 	 * @see Propal::STATUS_DRAFT, Propal::STATUS_VALIDATED, Propal::STATUS_SIGNED, Propal::STATUS_NOTSIGNED, Propal::STATUS_BILLED, Propal::STATUS_CANCELED
 	 */
 	public $status;
@@ -152,7 +152,7 @@ class Propal extends CommonObject
 	public $datec;
 
 	/**
-	 * @var int|''
+	 * @var int|''|null
 	 * @deprecated Use $date_validation
 	 * @see $date_validation
 	 */
@@ -164,7 +164,7 @@ class Propal extends CommonObject
 	public $date_validation;
 
 	/**
-	 * @var int|''
+	 * @var int|''|null
 	 */
 	public $date_signature;
 
@@ -1182,7 +1182,7 @@ class Propal extends CommonObject
 			$this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 		}
 		if (empty($this->fk_multicurrency)) {
-			$this->multicurrency_code = $conf->currency;
+			$this->multicurrency_code = (string) $conf->currency;
 			$this->fk_multicurrency = 0;
 			$this->multicurrency_tx = 1;
 		}
@@ -1272,8 +1272,8 @@ class Propal extends CommonObject
 		$sql .= ", ".(!empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : 'NULL');
 		$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : 'NULL');
 		$sql .= ", ".($this->fk_account > 0 ? ((int) $this->fk_account) : 'NULL');
-		$sql .= ", '".$this->db->escape($this->ref_client)."'";
-		$sql .= ", '".$this->db->escape($this->ref_ext)."'";
+		$sql .= ", '".$this->db->escape((string) $this->ref_client)."'";
+		$sql .= ", '".$this->db->escape((string) $this->ref_ext)."'";
 		$sql .= ", ".(!isDolTms($delivery_date) ? "NULL" : "'".$this->db->idate($delivery_date)."'");
 		$sql .= ", ".($this->shipping_method_id > 0 ? $this->shipping_method_id : 'NULL');
 		$sql .= ", ".($this->warehouse_id > 0 ? $this->warehouse_id : 'NULL');
@@ -2554,6 +2554,7 @@ class Propal extends CommonObject
 
 			if (!$error) {
 				$this->oldcopy = clone $this;
+				$this->ref_customer = $ref_client;
 				$this->ref_client = $ref_client;
 			}
 
@@ -2865,14 +2866,12 @@ class Propal extends CommonObject
 
 		dol_syslog(get_class($this)."::cancel", LOG_DEBUG);
 		if ($this->db->query($sql)) {
-			if (!$error) {
-				// Call trigger
-				$result = $this->call_trigger('PROPAL_CANCEL', $user);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call triggers
+			// Call trigger
+			$result = $this->call_trigger('PROPAL_CANCEL', $user);
+			if ($result < 0) {
+				$error++;
 			}
+			// End call triggers
 
 			if (!$error) {
 				$this->statut = self::STATUS_CANCELED;	// deprecated
@@ -2969,7 +2968,7 @@ class Propal extends CommonObject
 	 *    @param    int		$offset				For pagination
 	 *    @param    string	$sortfield			Sort criteria
 	 *    @param    string	$sortorder			Sort order
-	 *    @return	array|int		       		-1 if KO, array with result if OK
+	 *    @return	array<int,string>|array<int,array{id:int,ref:string,name:string}>|int<-1,-1>	-1 if KO, array with result if OK
 	 */
 	public function liste_array($shortlist = 0, $draft = 0, $notcurrentuser = 0, $socid = 0, $limit = 0, $offset = 0, $sortfield = 'p.datep', $sortorder = 'DESC')
 	{
@@ -3753,6 +3752,7 @@ class Propal extends CommonObject
 
 			$obj = new $classname();
 			'@phan-var-force ModeleNumRefPropales $obj';
+			/** @var ModeleNumRefPropales $obj */
 
 			$numref = $obj->getNextValue($soc, $this);
 

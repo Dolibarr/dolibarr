@@ -602,7 +602,7 @@ class pdf_standard_asset extends ModelePDFAsset
 						}
 					}
 
-					if (($object->lines[$i]->info_bits & 0x01) == 0x01) {
+					if (((int) $object->lines[$i]->info_bits & 0x01) == 0x01) {
 						$vatrate .= '*';
 					}
 					if (!isset($this->tva[$vatrate])) {

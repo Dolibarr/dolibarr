@@ -2449,36 +2449,6 @@ parameters:
 			path: ../../../htdocs/comm/propal/class/api_proposals.class.php
 
 		-
-			message: '#^Call to function method_exists\(\) with \$this\(Propal\) and ''getLibStatut'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Right side of && is always true\.$#'
-			identifier: booleanAnd.rightAlwaysTrue
-			count: 1
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Negated boolean expression is always true\.$#'
-			identifier: booleanNot.alwaysTrue
-			count: 2
-			path: ../../../htdocs/comm/propal/class/propaleligne.class.php
-
-		-
-			message: '#^Property PropaleLigne\:\:\$info_bits \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/comm/propal/class/propaleligne.class.php
-
-		-
-			message: '#^Property PropaleLigne\:\:\$pa_ht \(float\|int\|string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/comm/propal/class/propaleligne.class.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 1

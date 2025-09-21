@@ -539,7 +539,8 @@ if (empty($reshook)) {
 				}
 			} else {
 				$object->ref = GETPOST('ref');
-				$object->ref_client = GETPOST('ref_client');
+				$object->ref_customer = GETPOST('ref_client');
+				$object->ref_client = $object->ref_customer;
 				$object->datep = $datep;
 				$object->date = $datep;
 				$object->delivery_date = $date_delivery;
@@ -626,6 +627,7 @@ if (empty($reshook)) {
 						$classname = ucfirst($subelement);
 						$srcobject = new $classname($db);
 						'@phan-var-force Commande|Propal|Contrat|Fichinter|Expedition $srcobject';  // Can be other class, but CommonObject is too generic
+						/** @var Commande|Propal|Contrat|Fichinter|Expedition $srcobject */
 
 						dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines");
 						$result = $srcobject->fetch($object->origin_id);
@@ -1994,7 +1996,7 @@ if (empty($reshook)) {
 				foreach ($object->lines as &$line) {
 					if ($line->id == GETPOSTINT('lineid')) {
 						$fournprice = $line->fk_fournprice;
-						$buyingprice = $line->pa_ht;
+						$buyingprice = (string) $line->pa_ht; // do not convert to float here, it breaks the functioning of $pa_ht_isemptystring
 						break;
 					}
 				}
@@ -2764,6 +2766,7 @@ if ($action == 'create') {
 				if (array_key_exists('facture', $object->linkedObjects)) {
 					foreach ($object->linkedObjects['facture'] as $invoice) {
 						'@phan-var-force Facture $invoice';
+						/** @var Facture $invoice */
 						if ($invoice->type == Facture::TYPE_DEPOSIT) {
 							$eligibleForDepositGeneration = false;
 							break;
@@ -2778,6 +2781,7 @@ if ($action == 'create') {
 						if (array_key_exists('facture', $order->linkedObjects)) {
 							foreach ($order->linkedObjects['facture'] as $invoice) {
 								'@phan-var-force Facture $invoice';
+								/** @var Facture $invoice */
 								if ($invoice->type == Facture::TYPE_DEPOSIT) {
 									$eligibleForDepositGeneration = false;
 									break 2;

@@ -5667,7 +5667,7 @@ abstract class CommonObject
 			$this->tpl['label'] .= img_picto('', 'rightarrow');
 		}
 
-		if (($line->info_bits & 2) == 2) {  // TODO Not sure this is used for source object
+		if (((int) $line->info_bits & 2) == 2) {  // TODO Not sure this is used for source object
 			$discount = new DiscountAbsolute($this->db);
 			if (property_exists($this, 'socid')) {
 				$discount->fk_soc = $this->socid;
@@ -5731,7 +5731,7 @@ abstract class CommonObject
 
 		// VAT Rate
 		$this->tpl['vat_rate'] = vatrate($line->tva_tx, true);
-		$this->tpl['vat_rate'] .= (($line->info_bits & 1) == 1) ? '*' : '';
+		$this->tpl['vat_rate'] .= (((int) $line->info_bits & 1) == 1) ? '*' : '';
 		if (!empty($line->vat_src_code) && !preg_match('/\(/', $this->tpl['vat_rate'])) {
 			$this->tpl['vat_rate'] .= ' ('.$line->vat_src_code.')';
 		}
@@ -5739,13 +5739,13 @@ abstract class CommonObject
 		$this->tpl['price'] = price($line->subprice);
 		$this->tpl['total_ht'] = price($line->total_ht);
 		$this->tpl['multicurrency_price'] = price($line->multicurrency_subprice);
-		$this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
+		$this->tpl['qty'] = (((int) $line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$this->tpl['unit'] = $line->getLabelOfUnit('long', $langs);
 			$this->tpl['unit_short'] = $line->getLabelOfUnit('short', $langs);
 			//$this->tpl['unit_code'] = $line->getLabelOfUnit('code');
 		}
-		$this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? vatrate((string) $line->remise_percent, true) : '&nbsp;';
+		$this->tpl['remise_percent'] = (((int) $line->info_bits & 2) != 2) ? vatrate((string) $line->remise_percent, true) : '&nbsp;';
 
 		// Is the line strike or not
 		$this->tpl['strike'] = 0;
