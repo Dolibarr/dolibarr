@@ -685,7 +685,7 @@ if ($num > 0) {
 		// Return code of last run
 		print '<td class="center tdlastresultcode" title="'.dol_escape_htmltag($obj->lastresult).'">';
 		if ($obj->lastresult != '') {
-			if (empty($obj->lastresult)) {
+			if (empty($obj->lastresult) || $obj->status == Cronjob::STATUS_DISABLED) {
 				print $obj->lastresult;		// Print '0'
 			} else {
 				print '<span class="error">'.dol_escape_htmltag(dol_trunc($obj->lastresult)).'</div>';

@@ -148,6 +148,9 @@ if ($id > 0) {
 		print '<td class="right">'.$langs->trans("Author").'</td>';
 		print '</tr>';
 
+		/**
+		 * @var array<int,array<string,mied>>	$TData
+		 */
 		$TData = array();
 
 		$sql = "SELECT s.nom, s.rowid as socid, f.ref, f.total_ttc, f.datef as df,";
@@ -225,7 +228,7 @@ if ($id > 0) {
 						$userstatic->login = $objp->login;
 
 						$values = array(
-						'fk_paiement' => $objp->rowid,
+							'fk_paiement' => $objp->rowid,
 							'date' => $db->jdate($objp->dp),
 							'datefieldforsort' => $db->jdate($objp->dp).'-'.$fac->ref,
 							'link' => $langs->trans("Payment").' '.$paymentstatic->getNomUrl(1),
