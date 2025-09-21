@@ -2719,13 +2719,11 @@ class Propal extends CommonObject
 				$this->generateDocument($modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 
-			if (!$error) {
-				$this->oldcopy = clone $this;
-				$this->statut = $status;	// deprecated
-				$this->status = $status;
-				$this->date_signature = $date_signature;
-				$this->note_private = $newprivatenote;
-			}
+			$this->oldcopy = clone $this;
+			$this->statut = $status;	// deprecated
+			$this->status = $status;
+			$this->date_signature = $date_signature;
+			$this->note_private = $newprivatenote;
 
 			if (!$notrigger && empty($error)) {
 				// Call trigger
