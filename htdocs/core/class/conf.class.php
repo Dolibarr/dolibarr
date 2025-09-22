@@ -346,6 +346,12 @@ class Conf extends stdClass
 	 * @var stdClass
 	 */
 	public $productbatch;
+
+	/**
+	 * @var stdClass
+	 */
+	public $api;
+
 	/**
 	 * @var ?stdClass
 	 * @deprecated Use project
