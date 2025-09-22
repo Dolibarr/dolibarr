@@ -6130,42 +6130,6 @@ parameters:
 			message: '#^Property CommonDict\:\:\$active \(int\<0, 1\>\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 4
-			path: ../../../htdocs/core/class/cregion.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$id \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/core/class/cregion.class.php
-
-		-
-			message: '#^Property Cregion\:\:\$cheflieu \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/cregion.class.php
-
-		-
-			message: '#^Property Cregion\:\:\$code_region \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/cregion.class.php
-
-		-
-			message: '#^Property Cregion\:\:\$fk_pays \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/cregion.class.php
-
-		-
-			message: '#^Property Cregion\:\:\$name \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/core/class/cregion.class.php
-
-		-
-			message: '#^Property CommonDict\:\:\$active \(int\<0, 1\>\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
 			path: ../../../htdocs/core/class/cstate.class.php
 
 		-
