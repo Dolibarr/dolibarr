@@ -472,7 +472,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'setretainedwarrantydatelimit' && $usercancreate) {
 		$object->fetch($id);
 		$retainedWarrantyDateLimit = GETPOST('retained_warranty_date_limit');
-		if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $retainedWarrantyDateLimit)) {
+		if (!empty($retainedWarrantyDateLimit) && dol_stringtotime($retainedWarrantyDateLimit)) {
 			$result = $object->setRetainedWarrantyDateLimit($retainedWarrantyDateLimit);
 			if ($result < 0) {
 				dol_print_error($db, $object->error);
