@@ -111,12 +111,12 @@ class Cregion extends CommonDict
 		$sql .= "cheflieu,";
 		$sql .= "active";
 		$sql .= ") VALUES (";
-		$sql .= " ".(!isset($this->id) ? 'NULL' : (int) $this->id).",";
-		$sql .= " ".(!isset($this->code_region) ? 'NULL' : (int) $this->code_region).",";
+		$sql .= (int) $this->id;
+		$sql .= ", ".(!isset($this->code_region) ? 'NULL' : (int) $this->code_region).",";
 		$sql .= " ".(!isset($this->fk_pays) ? 'NULL' : (int) $this->fk_pays).",";
 		$sql .= " ".(!isset($this->name) ? 'NULL' : "'".$this->db->escape($this->name)."'").",";
-		$sql .= " ".(!isset($this->cheflieu) ? 'NULL' : "'".$this->db->escape($this->cheflieu)."'").",";
-		$sql .= " " . (int) $this->active;
+		$sql .= " ".(!isset($this->cheflieu) ? 'NULL' : "'".$this->db->escape($this->cheflieu)."'");
+		$sql .= ", " . (int) $this->active;
 		$sql .= ")";
 
 		$this->db->begin();
@@ -185,7 +185,7 @@ class Cregion extends CommonDict
 					$this->fk_pays = (int) $obj->fk_pays;
 					$this->name = $obj->nom;
 					$this->cheflieu = $obj->cheflieu;
-					$this->active = $obj->active;
+					$this->active = (int) $obj->active;
 				}
 
 				$this->db->free($resql);
