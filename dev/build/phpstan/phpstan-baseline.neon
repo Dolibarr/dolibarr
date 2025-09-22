@@ -2491,6 +2491,18 @@ parameters:
 			path: ../../../htdocs/commande/card.php
 
 		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 2
+			path: ../../../htdocs/commande/class/api_orders.class.php
+
+		-
+			message: '#^Parameter \#1 \$object of method Orders\:\:_cleanObjectDatas\(\) expects object, array\<int, array\<string, int\|string\>\>\|int given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../../../htdocs/commande/class/api_orders.class.php
+
+		-
 			message: '#^Variable \$socid might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1

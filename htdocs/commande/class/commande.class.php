@@ -972,6 +972,11 @@ class Commande extends CommonOrder
 
 		// Clean parameters
 
+		if (empty($this->socid)) {
+			$this->error = 'ErrorWrongParameters';
+			return -1;
+		}
+
 		// Set tmp vars
 		$date = ($this->date_commande ? $this->date_commande : $this->date);
 		$this->import_key = trim((string) $this->import_key);
