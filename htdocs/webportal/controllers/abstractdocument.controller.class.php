@@ -22,8 +22,7 @@ require_once __DIR__ . '/../class/controller.class.php';
  * @property DoliDB $db          Inherited from Controller
  * @property int $accessRight    Inherited from Controller
  */
-abstract class AbstractDocumentController extends Controller
-	{
+abstract class AbstractDocumentController extends Controller {
 	/**
 	 * Renders an HTML file browser table for a given list of files and directories.
 	 *
@@ -40,7 +39,7 @@ abstract class AbstractDocumentController extends Controller
 		echo '<h2>' . htmlspecialchars($title) . '</h2>';
 
 		if (is_array($itemList) && count($itemList) > 0) {
-			// 1. Separate folders from files
+			// 1. Séparer les dossiers des fichiers
 			$directories = array();
 			$files = array();
 			foreach ($itemList as $item) {
@@ -51,7 +50,7 @@ abstract class AbstractDocumentController extends Controller
 				}
 			}
 
-			// 2. Display the table
+			// 2. Afficher le tableau
 			echo '<table class="table table-hover" width="100%">';
 			echo '<thead><tr>';
 			echo '<th>' . $langs->trans('Name') . '</th>';
@@ -60,20 +59,20 @@ abstract class AbstractDocumentController extends Controller
 			echo '</tr></thead>';
 			echo '<tbody>';
 
-			// 3. Show all folders first
+			// 3. Afficher tous les dossiers en premier
 			foreach ($directories as $dir) {
 				echo '<tr>';
-				// A folder link is for navigation
+				// Le lien d'un dossier est pour la navigation
 				echo '<td><a href="' . $linkBuilder['dir']($dir) . '">📁&nbsp;' . htmlspecialchars($dir['name']) . '</a></td>';
-				echo '<td style="text-align: right;">--</td>';// No size for a folder
+				echo '<td style="text-align: right;">--</td>'; // Pas de taille pour un dossier
 				echo '<td style="text-align: right;">' . dol_print_date($dir['date'], 'dayhour') . '</td>';
 				echo '</tr>';
 			}
 
-			// 4. Then display all files
+			// 4. Ensuite, afficher tous les fichiers
 			foreach ($files as $file) {
 				echo '<tr>';
-				// The link of a file is for downloading
+				// Le lien d'un fichier est pour le téléchargement
 				echo '<td><a href="' . $linkBuilder['file']($file) . '" target="_blank">📄&nbsp;' . htmlspecialchars($file['name']) . '</a></td>';
 				echo '<td style="text-align: right;">' . dol_print_size($file['size']) . '</td>';
 				echo '<td style="text-align: right;">' . dol_print_date($file['date'], 'dayhour') . '</td>';
