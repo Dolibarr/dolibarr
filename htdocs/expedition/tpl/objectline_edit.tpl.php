@@ -129,7 +129,7 @@ $coldisplay++;
 
 print '<td class="nobottom linecolqty right">';
 
-if (((int)$line->info_bits & 2) != 2) {
+if (((int) $line->info_bits & 2) != 2) {
 	print '<input size="3" type="text" class="flat right" name="qty" id="qty" value="'.$line->qty.'">';
 }
 print '</td>';
