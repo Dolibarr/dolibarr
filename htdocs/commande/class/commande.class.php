@@ -1172,7 +1172,7 @@ class Commande extends CommonOrder
 					}
 
 					// Add object linked
-					if (!$error && !empty($this->linked_objects) && is_array($this->linked_objects)) {
+					if (!empty($this->linked_objects) && is_array($this->linked_objects)) {
 						foreach ($this->linked_objects as $origin => $tmp_origin_id) {
 							if (is_array($tmp_origin_id)) {       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
 								foreach ($tmp_origin_id as $origin_id) {
@@ -3055,10 +3055,8 @@ class Commande extends CommonOrder
 
 		dol_syslog(get_class($this)."::classifyUnBilled", LOG_DEBUG);
 		if ($this->db->query($sql)) {
-			if (!$error) {
-				$this->oldcopy = clone $this;
-				$this->billed = 1;
-			}
+			$this->oldcopy = clone $this;
+			$this->billed = 1;
 
 			if (!$notrigger && empty($error)) {
 				// Call trigger
