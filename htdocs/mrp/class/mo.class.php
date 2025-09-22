@@ -829,6 +829,7 @@ class Mo extends CommonObject
 				if ($moline->qty <= 0) {
 					$error++;
 					$this->error = "BadValueForquantityToConsume";
+					$this->errors[] = $this->error;
 				} else {
 					$moline->fk_product = $line->fk_product;
 					$moline->role = $role;
@@ -838,11 +839,12 @@ class Mo extends CommonObject
 					if (!empty($line->fk_default_workstation)) {
 						$moline->fk_default_workstation = $line->fk_default_workstation;
 					}
-					$resultline = $moline->create($user, false); // Never use triggers here
+					$resultline = $moline->create($user, 0); // Never use triggers here
 					if ($resultline <= 0) {
 						$error++;
 						$this->error = $moline->error;
-						$this->errors = $moline->errors;
+						$this->errors[] = $moline->error;
+						$this->errors = array_merge($this->errors, $moline->errors);
 						dol_print_error($this->db, $moline->error, $moline->errors);
 					}
 				}
