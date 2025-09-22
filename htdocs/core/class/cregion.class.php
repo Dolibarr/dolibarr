@@ -37,12 +37,12 @@ class Cregion extends CommonDict
 	//public $table_element = 'c_regions'; //!< Name of table without prefix where object is stored
 
 	/**
-	 * @var int         The code of the region
+	 * @var ?int         The code of the region
 	 */
 	public $code_region;
 
 	/**
-	 * @var int         The ID of the country of the region
+	 * @var ?int         The ID of the country of the region
 	 */
 	public $fk_pays;
 
