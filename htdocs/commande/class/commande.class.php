@@ -538,7 +538,7 @@ class Commande extends CommonOrder
 		$result = $soc->setAsCustomer();
 
 		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+		if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 			$num = $this->getNextNumRef($soc);
 		} else {
 			$num = (string) $this->ref;
@@ -695,9 +695,7 @@ class Commande extends CommonOrder
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		if ($this->db->query($sql)) {
-			if (!$error) {
-				$this->oldcopy = clone $this;
-			}
+			$this->oldcopy = clone $this;
 
 			// If stock is decremented on validate order, we must reincrement it
 			if (isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_VALIDATE_ORDER') == 1) {
@@ -919,7 +917,7 @@ class Commande extends CommonOrder
 						$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("OrderCanceledInDolibarr", $this->ref)); // price is 0, we don't want WAP to be changed
 						if ($result < 0) {
 							$error++;
-							$this->error = $mouvP->error;
+							$this->setErrorsFromObject($mouvP);
 							break;
 						}
 					}
