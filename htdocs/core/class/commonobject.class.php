@@ -605,6 +605,10 @@ abstract class CommonObject
 	protected $labelStatus;
 	protected $labelStatusShort;
 
+	/**
+	 * @var string output
+	 */
+	public $output;
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
