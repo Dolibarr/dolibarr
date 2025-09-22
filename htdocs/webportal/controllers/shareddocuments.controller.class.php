@@ -78,14 +78,14 @@ class SharedDocumentsController extends AbstractDocumentController
 
 		// 1. Manage the current subfolder from the URL
 		$current_subdir = GETPOST('subdir', 'alpha');
-    	// Security: Clear the path to avoid attacks (eg: ../../)
+		// Security: Clear the path to avoid attacks (eg: ../../)
         $sanitized_subdir = '';
-        if (!empty($current_subdir)) {
+		if (!empty($current_subdir)) {
 			$parts = explode('/', $current_subdir);
             $safe_parts = array();
             foreach ($parts as $part) {
-                if ($part !== '.' && $part !== '..') {
-                    $safe_parts[] = dol_sanitizeFileName($part);
+				if ($part !== '.' && $part !== '..') {
+					$safe_parts[] = dol_sanitizeFileName($part);
                 }
             }
             $sanitized_subdir = implode('/', $safe_parts);
@@ -98,7 +98,7 @@ class SharedDocumentsController extends AbstractDocumentController
 
 		// 3. List ALL contents (files AND folders) of the current directory
 		$itemList = dol_dir_list($current_dir_ged_partage, 'all', 0, '', '', 'name', SORT_ASC);
-			if (is_array($itemList)) {
+		if (is_array($itemList)) {
             foreach ($itemList as $key => $item) {
                 // If the item is a file and its size is empty...
                 if ($item['type'] === 'file' && empty($item['size'])) {
@@ -106,9 +106,9 @@ class SharedDocumentsController extends AbstractDocumentController
                     // ... we recalculate its size and update the table.
                     // The @ avoids an error if the file is unreadable.
                     $itemList[$key]['size'] = @filesize($full_file_path);
-                }
-            }
-        }
+					}
+				}
+				}
 		// 4. Build the Breadcrumb
 		$baseUrl = $_SERVER['PHP_SELF'].'?controller=shareddocuments';
 		$breadcrumbs = '<nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="'.$baseUrl.'">'.dol_htmlentities($langs->trans("Home")).'</a></li>';
