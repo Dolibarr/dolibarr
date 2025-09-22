@@ -151,7 +151,7 @@ class Cchargesociales
 		$sql .= ') VALUES (';
 		$sql .= ' '.(!isset($this->libelle) ? 'NULL' : "'".$this->db->escape($this->libelle)."'").',';
 		$sql .= ' '.(!isset($this->deductible) ? 'NULL' : $this->deductible).',';
-		$sql .= ' '.(!isset($this->active) ? 'NULL' : $this->active).',';
+		$sql .= ' ' . (int) $this->active . ',';
 		$sql .= ' '.(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").',';
 		$sql .= ' '.(!isset($this->fk_pays) ? 'NULL' : $this->fk_pays).',';
 		$sql .= ' '.(!isset($this->module) ? 'NULL' : "'".$this->db->escape($this->module)."'").',';
