@@ -81,7 +81,7 @@ class SharedDocumentsController extends AbstractDocumentController
     	// Security: Clear the path to avoid attacks (eg: ../../)
         $sanitized_subdir = '';
         if (!empty($current_subdir)) {
-            $parts = explode('/', $current_subdir);
+			$parts = explode('/', $current_subdir);
             $safe_parts = array();
             foreach ($parts as $part) {
                 if ($part !== '.' && $part !== '..') {
@@ -90,7 +90,6 @@ class SharedDocumentsController extends AbstractDocumentController
             }
             $sanitized_subdir = implode('/', $safe_parts);
         }
-
 		// 2. Prepare the paths
 		$shared_dir_name = getDolGlobalString('WEBPORTAL_SHARED_DOCS_DIR', 'Documentscomptes');
 		$base_dir_ged_partage = $conf->ecm->dir_output . '/' . $shared_dir_name;
