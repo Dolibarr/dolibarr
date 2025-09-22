@@ -471,9 +471,14 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setretainedwarrantydatelimit' && $usercancreate) {
 		$object->fetch($id);
-		$result = $object->setRetainedWarrantyDateLimit(GETPOSTFLOAT('retained_warranty_date_limit'));
-		if ($result < 0) {
-			dol_print_error($db, $object->error);
+		$retainedWarrantyDateLimit = GETPOST('retained_warranty_date_limit');
+		if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $retainedWarrantyDateLimit)) {
+			$result = $object->setRetainedWarrantyDateLimit($retainedWarrantyDateLimit);
+			if ($result < 0) {
+				dol_print_error($db, $object->error);
+			}
+		} else {
+			dol_print_error(null, 'Bad date format');
 		}
 	} elseif ($action == 'setmulticurrencycode' && $usercancreate) {	 // Multicurrency Code
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
