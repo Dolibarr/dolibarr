@@ -35,7 +35,8 @@ $sanitizeRegex
 			'restricthtmlallowclass',
 			'restricthtmlallowunvalid',
 			'restricthtmlnolink',
-			'restricthtmlallowlinkscript'
+			'restricthtmlallowlinkscript',
+			'url',
 		)
 	).')*$/';
 
