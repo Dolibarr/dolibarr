@@ -550,7 +550,7 @@ llxHeader('', $title, $help_url, '', 0, 0, $morejs, '', '', 'mod-mrp page-card_p
 $newToken = newToken();
 
 // Part to show record
-if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
+if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create' && $action != 'reload'))) {
 	$res = $object->fetch_thirdparty();
 	$res = $object->fetch_optionals();
 

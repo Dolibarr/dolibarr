@@ -827,6 +827,7 @@ function GETPOSTISARRAY($paramname, $method = 0)
  *                               '' or 'none'=no check (deprecated)
  *                               'password'=allow characters for a password
  *                               'email'=allow characters for an email "email@domain.com"
+ *                               'url'=allow characters for an url
  *                               'array', 'array:restricthtml' or 'array:aZ09' to check it's an array
  *                               'int'=check it's numeric (integer or float)
  *                               'intcomma'=check it's integer+comma ('1,2,3,4...')
@@ -1322,6 +1323,11 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 			break;
 		case 'email':
 			$out = filter_var($out, FILTER_SANITIZE_EMAIL);
+			break;
+		case 'url':
+			//$out = filter_var($out, FILTER_SANITIZE_URL);	// Not reliable, replaced with FILTER_VALIDATE_URL
+			$out = preg_replace('/[^:\/\[\]a-z0-9@\$\'\*\~\.\-_,;\?\!=%&+#]+/i', '', $out);
+			// TODO Allow ( ) but only into password of https://login:password@domain...
 			break;
 		case 'aZ':
 			if (!is_array($out)) {
@@ -4950,18 +4956,22 @@ function isHTTPS()
  */
 function dolGetCountryCodeFromIp($ip)
 {
-	global $conf;
-
 	$countrycode = '';
 
 	if (isModEnabled('geoipmaxmind')) {
 		$datafile = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE');
 		//$ip='24.24.24.24';
 		//$datafile='/usr/share/GeoIP/GeoIP.dat';    Note that this must be downloaded datafile (not same than datafile provided with ubuntu packages)
-		include_once DOL_DOCUMENT_ROOT . '/core/class/dolgeoip.class.php';
-		$geoip = new DolGeoIP('country', $datafile);
-		//print 'ip='.$ip.' databaseType='.$geoip->gi->databaseType." GEOIP_CITY_EDITION_REV1=".GEOIP_CITY_EDITION_REV1."\n";
-		$countrycode = $geoip->getCountryCodeFromIP($ip);
+		if ($datafile) {
+			try {
+				include_once DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php';
+				$geoip = new DolGeoIP('country', $datafile);
+				//print 'ip='.$ip.' databaseType='.$geoip->gi->databaseType." GEOIP_CITY_EDITION_REV1=".GEOIP_CITY_EDITION_REV1."\n";
+				$countrycode = $geoip->getCountryCodeFromIP($ip);
+			} catch (Exception $e) {
+				//print 'Error with GeoIP database: '.$e->getMessage();
+			}
+		}
 	}
 
 	return $countrycode;
