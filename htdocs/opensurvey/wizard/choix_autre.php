@@ -74,16 +74,17 @@ if (GETPOST("ajoutcases") || GETPOST("ajoutcases_x")) {
 
 // Create survey into database
 if (GETPOSTISSET("confirmecreation")) {
-	//recuperation des données de champs textes
 	$toutchoix = '';
 	for ($i = 0; $i < $_SESSION["nbrecases"] + 1; $i++) {
-		if (!empty($arrayofchoices[$i])) {
+		$tmpchoice = $arrayofchoices[$i];
+		$tmptypecolumn = GETPOST('typecolonne'.$i, 'alphanohtml');
+		if (!empty($tmpchoice)) {
 			$toutchoix .= ',';
-			$toutchoix .= str_replace(array(",", "@"), " ", $arrayofchoices[$i]).(empty($arrayoftypecolumn[$i]) ? '' : '@'.$arrayoftypecolumn[$i]);
+			$toutchoix .= str_replace(array(",", "@"), " ", $tmpchoice).(empty($tmptypecolumn) ? '' : '@'.$tmptypecolumn);
 		}
 	}
 
-	$toutchoix = substr("$toutchoix", 1);
+	$toutchoix = substr($toutchoix, 1);
 	$_SESSION["toutchoix"] = $toutchoix;
 
 	//test de remplissage des cases
@@ -94,11 +95,11 @@ if (GETPOSTISSET("confirmecreation")) {
 		}
 	}
 
-	//message d'erreur si aucun champ renseigné
+	// Error if no field defined
 	if ($testremplissage != "ok" || (!$toutchoix)) {
 		setEventMessages($langs->trans("ErrorOpenSurveyOneChoice"), null, 'errors');
 	} else {
-		//format du sondage AUTRE
+		// format of survey AUTRE
 		$_SESSION["formatsondage"] = "A";
 
 		// Add into database
@@ -147,7 +148,7 @@ for ($i = 0; $i < $_SESSION["nbrecases"]; $i++) {
 	print '<tr><td>'.$langs->trans("TitleChoice").' '.$j.': </td><td><input type="text" name="choix[]" size="40" maxlength="40" value="'.dol_escape_htmltag($_SESSION["choix$i"]).'" id="choix'.$i.'">';
 	$tmparray = array('checkbox' => $langs->trans("CheckBox"), 'yesno' => $langs->trans("YesNoList"), 'foragainst' => $langs->trans("PourContreList"));
 
-	print ' &nbsp; '.$langs->trans("Type").' '.$form->selectarray("typecolonne[]", $tmparray, $_SESSION["typecolonne".$i]);
+	print ' &nbsp; '.$langs->trans("Type").' '.$form->selectarray("typecolonne".$i, $tmparray, $_SESSION["typecolonne".$i]);
 	print '</td></tr>'."\n";
 }
 
@@ -166,6 +167,7 @@ if ($conf->use_javascript_ajax) {
 	// jQuery code to handle the div click event
 	$(document).ready(function() {
 		$("#addchoice").on("click", function() {
+			console.log("Click on adchoice");
 			$("#ajoutcases").val("ajoutcases");
 			$("#surveyform").submit();
 		});

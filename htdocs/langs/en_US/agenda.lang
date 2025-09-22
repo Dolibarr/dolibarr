@@ -34,6 +34,7 @@ AgendaSetupOtherDesc= This page provides options to allow the export of your Dol
 AgendaExtSitesDesc=This page allows to declare external sources of calendars to see their events into Dolibarr agenda.
 ActionsEvents=Events for which Dolibarr will create an action in agenda automatically
 EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into %s module setup.
+EventRemindersBySmsNotEnabled=Event reminders by sms was not enabled into %s module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Third party %s created
 COMPANY_MODIFYInDolibarr=Third party %s modified

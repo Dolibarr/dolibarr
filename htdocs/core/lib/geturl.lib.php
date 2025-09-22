@@ -25,7 +25,7 @@
 
 /**
  * Function to get a content from an URL (use proxy if proxy defined).
- * Support Dolibarr setup for timeout and proxy.
+ * Support Dolibarr setup for timeout (MAIN_USE_*_TIMEOUT) and proxy (MAIN_PROXY_*)
  * Enhancement of CURL to add an anti SSRF protection:
  * - you can set MAIN_SECURITY_ANTI_SSRF_SERVER_IP to set static ip of server
  * - common local lookup ips like 127.*.*.* are automatically added
@@ -33,7 +33,7 @@
  * You can enable constant MAIN_CURL_DEBUG to get detail of output/input into dolibarr_curl.logfile.
  *
  * @param	string	  	$url 			    URL to call.
- * @param	'POST'|'GET'|'HEAD'|'PUT'|'PUTALREADYFORMATED'|'POSTALREADYFORMATED'|'DELETE'	$postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'DELETE'
+ * @param	'POST'|'GET'|'HEAD'|'PUT'|'PATCH'|'PUTALREADYFORMATED'|'POSTALREADYFORMATED'|'PATCHALREADYFORMATED'|'DELETE'	$postorget		    'POST', 'GET', 'HEAD', 'PUT', 'PATCH', 'PUTALREADYFORMATED', 'POSTALREADYFORMATED', 'PATCHALREADYFORMATED', 'DELETE'
  * @param	string    	$param			    Parameters of URL (x=value1&y=value2) or may be a formatted content with $postorget='PUTALREADYFORMATED'
  * @param	int<0,1>  	$followlocation		0=Do not follow, 1=Follow location.
  * @param	string[]  	$addheaders			Array of string to add into header. Example: ('Accept: application/xrds+xml', ....)
@@ -150,10 +150,10 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST'); // HTTP request is 'POST' but param string is taken as it is
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $param); // param = content of post, like a xml string
 	} elseif ($postorget == 'PUT') {
-		$array_param = null;
+		$array_param = array();
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
 		if (!is_array($param)) {
-			parse_str($param, $array_param);  // @phan-suppress-current-line PhanPluginConstantVariableNull
+			parse_str($param, $array_param);
 		} else {
 			dol_syslog("parameter param must be a string", LOG_WARNING);
 			$array_param = $param;
@@ -162,6 +162,19 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	} elseif ($postorget == 'PUTALREADYFORMATED') {
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $param); // param = content of post, like a xml string
+	} elseif ($postorget == 'PATCH') {
+		$array_param = array();
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH'); // RFC 5789
+		if (!is_array($param)) {
+			parse_str($param, $array_param);
+		} else {
+			dol_syslog("parameter param must be a string", LOG_WARNING);
+			$array_param = $param;
+		}
+		curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($array_param));
+	} elseif ($postorget == 'PATCHALREADYFORMATED') {
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PATCH'); // RFC 5789
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $param);
 	} elseif ($postorget == 'HEAD') {
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'HEAD'); // HTTP request is 'HEAD'
 		curl_setopt($ch, CURLOPT_NOBODY, true);

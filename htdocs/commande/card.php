@@ -77,7 +77,7 @@ if (isModEnabled('variants')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'deliveries', 'products', 'other'));
+$langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'products', 'other'));
 
 if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
@@ -204,7 +204,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	$selectedLines = GETPOST('toselect', 'array');
+	$selectedLines = GETPOST('toselect', 'array:int');
 
 	if ($cancel) {
 		if (!empty($backtopageforcancel)) {
@@ -813,11 +813,11 @@ if (empty($reshook)) {
 			}
 			$subprice_multicurrency = $line->subprice;
 			if (is_numeric($margin_rate) && $margin_rate > 0) {
-				$line->subprice = floatval(price2num(floatval($line->pa_ht) * (1 + floatval($margin_rate) / 100), 'MU'));
+				$line->subprice = (float) price2num((float) $line->pa_ht * (1 + (float) $margin_rate / 100), 'MU');
 			} elseif (is_numeric($mark_rate) && $mark_rate > 0) {
-				$line->subprice = floatval($line->pa_ht / (1 - (floatval($mark_rate) / 100)));
+				$line->subprice = (float) ($line->pa_ht / (1 - ((float) $mark_rate / 100)));
 			} else {
-				$line->subprice = floatval($line->pa_ht);
+				$line->subprice = (float) $line->pa_ht;
 			}
 
 			$prod = new Product($db);
@@ -1043,7 +1043,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error && isModEnabled('variants') && $prod_entry_mode != 'free') {
-			if ($combinations = GETPOST('combinations', 'array')) {
+			if ($combinations = GETPOST('combinations', 'array:alphanohtml')) {
 				//Check if there is a product with the given combination
 				$prodcomb = new ProductCombination($db);
 
@@ -1921,7 +1921,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$result = $object->cancel($idwarehouse);
+			$result = $object->cancel($user, $idwarehouse);
 
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -2035,7 +2035,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT . '/core/actions_printing.inc.php';
 
 	// Actions to build doc
-	$upload_dir = !empty($conf->commande->multidir_output[$object->entity]) ? $conf->commande->multidir_output[$object->entity] : $conf->commande->dir_output;
+	$upload_dir = !empty($conf->commande->multidir_output[$object->entity ?? $conf->entity]) ? $conf->commande->multidir_output[$object->entity ?? $conf->entity] : $conf->commande->dir_output;
 	$permissiontoadd = $usercancreate;
 	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 
@@ -2377,7 +2377,7 @@ if ($action == 'create' && $usercancreate) {
 		// Terms of payment
 		print '<tr><td class="nowrap">' . $langs->trans('PaymentConditionsShort') . '</td><td>';
 		print img_picto('', 'payment', 'class="pictofixedwidth"');
-		print $form->getSelectConditionsPaiements($cond_reglement_id, 'cond_reglement_id', 1, 1, 0, 'maxwidth200 widthcentpercentminusx', (float) $deposit_percent);
+		print $form->getSelectConditionsPaiements((int) $cond_reglement_id, 'cond_reglement_id', 1, 1, 0, 'maxwidth200 widthcentpercentminusx', (float) $deposit_percent);
 		print '</td></tr>';
 
 		// Payment mode
@@ -2389,7 +2389,7 @@ if ($action == 'create' && $usercancreate) {
 		// Bank Account
 		if (getDolGlobalString('BANK_ASK_PAYMENT_BANK_DURING_ORDER') && isModEnabled("bank")) {
 			print '<tr><td>' . $langs->trans('BankAccount') . '</td><td>';
-			print img_picto('', 'bank_account', 'class="pictofixedwidth"') . $form->select_comptes($fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
+			print img_picto('', 'bank_account', 'class="pictofixedwidth"') . $form->select_comptes((int) $fk_account, 'fk_account', 0, '', 1, '', 0, 'maxwidth200 widthcentpercentminusx', 1);
 			print '</td></tr>';
 		}
 
@@ -2633,7 +2633,7 @@ if ($action == 'create' && $usercancreate) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			} else {
-				$numref = $object->ref;
+				$numref = (string) $object->ref;
 			}
 
 			$text = $langs->trans('ConfirmValidateOrder', $numref);
@@ -3640,7 +3640,7 @@ if ($action == 'create' && $usercancreate) {
 			// Documents
 			$objref = dol_sanitizeFileName($object->ref);
 			$relativepath = $objref . '/' . $objref . '.pdf';
-			$filedir = $conf->commande->multidir_output[$object->entity] . '/' . $objref;
+			$filedir = $conf->commande->multidir_output[$object->entity ?? $conf->entity] . '/' . $objref;
 			$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
 			$genallowed = $usercanread;
 			$delallowed = $usercancreate;

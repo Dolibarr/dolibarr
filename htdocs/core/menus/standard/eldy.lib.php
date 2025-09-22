@@ -459,7 +459,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'classname' =>  $classname = (!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "tools") ? 'class="tmenusel"' : 'class="tmenu"',
 		'prefix' => img_picto('', 'tools', 'class="fa-fw pictofixedwidth"'),
 		'session' => ((!empty($_SESSION["mainmenu"]) && $_SESSION["mainmenu"] == "tools") ? 0 : 1),
-		'loadLangs' => array("other"),
+		'loadLangs' => array(),
 		'submenus' => array(),
 	);
 

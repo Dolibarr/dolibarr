@@ -76,19 +76,18 @@ $ai = new Ai($db);
 
 // Get parameters
 $function = empty($jsonData['function']) ? 'textgeneration' : $jsonData['function'];	// Default value. Can also be 'textgeneration', 'textgenerationemail', 'textgenerationwebpage', 'imagegeneration', 'videogeneration', ...
-$instructions = dol_string_nohtmltag($jsonData['instructions'], 1, 'UTF-8');
+
 $format = empty($jsonData['format']) ? '' : $jsonData['format'];						// Can be '' for text, 'html', ...
 
 if ($format == "html") {
 	$instructions = $jsonData['instructions'];
 } else {
-	$instructions = dol_string_nohtmltag($jsonData['instructions'], 1, 'UTF-8');
+	$instructions = dol_string_nohtmltag($jsonData['instructions'], 2, 'UTF-8');
 }
 
 
 // Note: The option AI_DEBUG will generate a log file dolibarr_ai.log when calling generateContent()
 dol_syslog("generate_content: function=".$function." format=".$format." instruction=".dol_substr($instructions, 0, 200));
-
 
 $generatedContent = $ai->generateContent($instructions, 'auto', $function, $format);
 

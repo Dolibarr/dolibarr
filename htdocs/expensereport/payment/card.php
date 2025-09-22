@@ -53,7 +53,7 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 // TODO Add rule to restrict access payment
-//$result = restrictedArea($user, 'facture', $id,'');
+//restrictedArea($user, 'facture', $id,'');
 
 $object = new PaymentExpenseReport($db);
 

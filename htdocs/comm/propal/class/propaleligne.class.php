@@ -554,9 +554,9 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= " ".($this->fk_parent_line > 0 ? "'".$this->db->escape((string) $this->fk_parent_line)."'" : "null").",";
 		$sql .= " ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
-		$sql .= " ".($this->fk_product ? "'".$this->db->escape((string) $this->fk_product)."'" : "null").",";
-		$sql .= " '".$this->db->escape((string) $this->product_type)."',";
-		$sql .= " ".($this->fk_remise_except ? "'".$this->db->escape((string) $this->fk_remise_except)."'" : "null").",";
+		$sql .= " ".($this->fk_product > 0 ? (int) $this->fk_product : "null").",";
+		$sql .= " ".((int) $this->product_type).",";
+		$sql .= " ".($this->fk_remise_except > 0 ? (int) $this->fk_remise_except : "null").",";
 		$sql .= " ".price2num($this->qty, 'MS').",";
 		$sql .= " ".(empty($this->vat_src_code) ? "''" : "'".$this->db->escape($this->vat_src_code)."'").",";
 		$sql .= " ".price2num($this->tva_tx).",";

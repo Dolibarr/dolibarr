@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2015      Ion Agorria          <ion@agorria.com>
+/* Copyright (C) 2015       Ion Agorria         <ion@agorria.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,7 +134,7 @@ class PriceParser
 	 *	@param	Product	$product    	The Product object to get information
 	 *	@param	string 	$expression     The expression to parse
 	 *	@param	array<string,mixed>  	$values		Strings to replace
-	 *  @return int 					> 0 if OK, < 1 if KO
+	 *  @return int 					Return > 0 if OK, < 1 if KO
 	 */
 	public function parseExpression($product, $expression, $values)
 	{
@@ -261,7 +262,7 @@ class PriceParser
 	 *
 	 *	@param	Product				$product    	The Product object to get information
 	 *	@param	array<string,mixed>	$extra_values   Any additional values for expression
-	 *	@return int 						> 0 if OK, < 1 if KO
+	 *	@return int 								Return > 0 if OK, < 1 if KO
 	 */
 	public function parseProduct($product, $extra_values = array())
 	{
@@ -308,7 +309,7 @@ class PriceParser
 	 *
 	 *	@param	ProductFournisseur	$product_supplier   The Product supplier object to get information
 	 *	@param	array<string,mixed>	$extra_values       Any additional values for expression
-	 *  @return int 				> 0 if OK, < 1 if KO
+	 *  @return int 				Return > 0 if OK, < 1 if KO
 	 */
 	public function parseProductSupplier($product_supplier, $extra_values = array())
 	{
@@ -339,7 +340,7 @@ class PriceParser
 	 *  @param  int					$product_id    	The Product id to get information
 	 *  @param  string 				$expression     The expression to parse
 	 *  @param  array<string,mixed>	$extra_values   Any additional values for expression
-	 *  @return int 				> 0 if OK, < 1 if KO
+	 *  @return int 				Return > 0 if OK, < 1 if KO
 	 */
 	public function testExpression($product_id, $expression, $extra_values = array())
 	{

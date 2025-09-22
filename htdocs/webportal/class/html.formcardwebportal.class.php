@@ -2,7 +2,7 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -299,33 +299,30 @@ class FormCardWebPortal
 						$value = GETPOST($key, 'restricthtml');
 					}
 				} elseif (in_array($object->fields[$key]['type'], array('date', 'datetime'))) {
-					$postDate = GETPOST($key, 'alphanohtml');
-					// extract date YYYY-MM-DD for year, month and day
-					$dateArr = explode('-', $postDate);
 					$dateYear = 0;
 					$dateMonth = 0;
 					$dateDay = 0;
-					if (count($dateArr) == 3) {
-						$dateYear = (int) $dateArr[0];
-						$dateMonth = (int) $dateArr[1];
-						$dateDay = (int) $dateArr[2];
+					if (GETPOSTINT($key.'day')) {
+						$dateDay = GETPOSTINT($key.'day');
+					}
+					if (GETPOSTINT($key.'month')) {
+						$dateMonth = GETPOSTINT($key.'month');
+					}
+					if (GETPOSTINT($key.'year')) {
+						$dateYear = GETPOSTINT($key.'year');
 					}
 					// extract time HH:ii:ss for hours, minutes and seconds
-					$postTime = GETPOST($key . '_time', 'alphanohtml');
-					$timeArr = explode(':', $postTime);
-					$timeHours = 12;
+					$timeHours = 0;
 					$timeMinutes = 0;
 					$timeSeconds = 0;
-					if (!empty($timeArr)) {
-						if (isset($timeArr[0])) {
-							$timeHours = (int) $timeArr[0];
-						}
-						if (isset($timeArr[1])) {
-							$timeMinutes = (int) $timeArr[1];
-						}
-						if (isset($timeArr[2])) {
-							$timeSeconds = (int) $timeArr[2];
-						}
+					if (GETPOSTINT($key.'hour')) {
+						$timeHours = GETPOSTINT($key.'hour');
+					}
+					if (GETPOSTINT($key.'min')) {
+						$timeMinutes = GETPOSTINT($key.'min');
+					}
+					if (GETPOSTINT($key.'sec')) {
+						$timeSeconds = GETPOSTINT($key.'sec');
 					}
 					$value = dol_mktime($timeHours, $timeMinutes, $timeSeconds, $dateMonth, $dateDay, $dateYear);
 				} elseif ($object->fields[$key]['type'] == 'duration') {
@@ -377,7 +374,7 @@ class FormCardWebPortal
 				}
 
 				if (isModEnabled('category')) {
-					$categories = GETPOST('categories', 'array');
+					$categories = GETPOST('categories', 'array:int');
 					if (method_exists($object, 'setCategories')) {
 						$object->setCategories($categories);
 					}
@@ -475,13 +472,14 @@ class FormCardWebPortal
 		$html .= '<div><strong>';
 		if ($object->element == 'member') {
 			'@phan-var-force Adherent $object';
-			if ($object->morphy == 'mor' && !empty($object->societe)) {
-				$html .= dol_htmlentities((string) $object->societe);
-				$html .= (!empty($fullname) && $object->societe != $fullname) ? ' (' . dol_htmlentities($fullname) . $addgendertxt . ')' : '';
+			/** @var Adherent $object */
+			if ($object->morphy == 'mor' && !empty($object->company)) {
+				$html .= dol_htmlentities((string) $object->company);
+				$html .= (!empty($fullname) && $object->company != $fullname) ? ' (' . dol_htmlentities($fullname) . $addgendertxt . ')' : '';
 			} else {
 				$html .= dol_htmlentities($fullname) . $addgendertxt;
-				if (empty($object->fk_soc)) {
-					$html .= (!empty($object->societe) && $object->societe != $fullname) ? ' (' . dol_htmlentities((string) $object->societe) . ')' : '';
+				if (empty($object->socid)) {
+					$html .= (!empty($object->company) && $object->company != $fullname) ? ' (' . dol_htmlentities((string) $object->company) . ')' : '';
 				}
 			}
 		} else {

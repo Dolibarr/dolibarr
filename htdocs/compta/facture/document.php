@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2011	Regis Houssin					<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Cédric Salvador					<csalvador@gpcsolutions.fr>
  * Copyright (C) 2017		Ferran Marcet					<fmarcet@2byte.es>
- * Copyright (C) 2017-2024	Frédéric France					<frederic.france@free.fr>
+ * Copyright (C) 2017-2025  Frédéric France					<frederic.france@free.fr>
  * Copyright (C) 2025		Alexandre Spangaro				<alexandre@inovea-conseil.com>
  * Copyright (C) 2025		MDW								<mdeweerd@users.noreply.github.com>
  *
@@ -136,7 +136,7 @@ if ($id > 0 || !empty($ref)) {
 	if ($object->fetch($id, $ref) > 0) {
 		$object->fetch_thirdparty();
 
-		$upload_dir = $conf->facture->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
+		$upload_dir = $conf->facture->multidir_output[$object->entity ?? $conf->entity].'/'.dol_sanitizeFileName($object->ref);
 
 		$head = facture_prepare_head($object);
 		print dol_get_fiche_head($head, 'documents', $langs->trans('InvoiceCustomer'), -1, $object->picto);

@@ -69,6 +69,7 @@ $formSetup = new FormSetup($db);
 // Main options
 $formSetup->newItem('BANK_DISABLE_DIRECT_INPUT')->setAsYesNo();
 
+
 $formSetup->newItem('ACCOUNTANCY_COMBO_FOR_AUX')->setAsYesNo();
 
 $item = $formSetup->newItem('ACCOUNTING_MANAGE_ZERO')->setAsYesNo();
@@ -460,8 +461,9 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
 }
 
 
-// Show form main options
+// Show form for main parameters
 print $formSetup->generateOutput(true);
+
 
 print '<br><br><br>';
 
@@ -498,7 +500,7 @@ foreach ($list_binding as $key) {
 			1=>$langs->trans("ThirdPartyName") . ' - ' . $langs->trans("NumPiece"),
 			2=>$langs->trans("ThirdPartyName")
 		);
-		print $form->selectarray($key, $array, getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER', 0), 0, 0, 0, '', 0, 0, 0, '', 'onrightofpage width200');
+		print $form->selectarray($key, $array, getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER', 0), 0, 0, 0, '', 0, 0, 0, '', 'onrightofpage width300');
 	} else {
 		print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 	}
@@ -579,8 +581,10 @@ print '</div>';
 
 print '<div class="center"><input type="submit" class="button reposition" value="'.dol_escape_htmltag($langs->trans('Save')).'" name="button"></div>';
 
+
 // Show numbering options
-print '<br><br>';
+print '<br><br><br>';
+
 
 // Accountancy Numbering model
 $dirmodels = array_merge(array('/'), $conf->modules_parts['models']);
@@ -695,7 +699,8 @@ print '</div>';
 
 
 // Show advanced options
-print '<br><br>';
+print '<br><br><br>';
+
 
 // Advanced params
 print '<div class="div-table-responsive-no-min">';
@@ -786,7 +791,8 @@ print '</div>';
 
 print '<div class="center"><input type="submit" class="button button-edit reposition" name="button" value="'.$langs->trans('Save').'"></div>';
 
-print '<br><br>';
+
+print '<br><br><br>';
 
 
 // Export options

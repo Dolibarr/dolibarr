@@ -48,7 +48,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
  * @var User $user
  */
 
-$langs->loadLangs(array("sendings", "receptions", "deliveries", 'companies', 'bills', 'orders'));
+$langs->loadLangs(array("sendings", "receptions", 'companies', 'bills', 'orders'));
 
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'shipmentlist'; // To manage different context of search
 
@@ -56,7 +56,7 @@ $socid = GETPOSTINT('socid');
 
 $action = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
@@ -227,7 +227,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	if ($massaction == 'confirm_createbills' && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))) {
-		$receptions = GETPOST('toselect', 'array');
+		$receptions = GETPOST('toselect', 'array:int');
 		$createbills_onebythird = GETPOSTINT('createbills_onebythird');
 		$validate_invoices = GETPOSTINT('validate_invoices');
 
@@ -276,6 +276,8 @@ if (empty($reshook)) {
 				$mode_reglement_id = 0;
 				$fk_account = 0;
 				$transport_mode_id = 0;
+				$multicurrency_code = null;
+
 				if (!empty($rcp->cond_reglement_id)) {
 					$cond_reglement_id = $rcp->cond_reglement_id;
 				}
@@ -288,11 +290,15 @@ if (empty($reshook)) {
 				if (!empty($rcp->transport_mode_id)) {
 					$transport_mode_id = $rcp->transport_mode_id;
 				}
+				if (!empty($rcp->multicurrency_code)) {
+					$multicurrency_code = $rcp->multicurrency_code;
+				}
 
 				if (empty($cond_reglement_id)
 					|| empty($mode_reglement_id)
 					|| empty($fk_account)
 					|| empty($transport_mode_id)
+					|| empty($multicurrency_code)
 				) {
 					if (!isset($rcp->supplier_order)) {
 						$rcp->fetch_origin();
@@ -313,6 +319,9 @@ if (empty($reshook)) {
 						if (empty($transport_mode_id) && !empty($supplierOrder->transport_mode_id)) {
 							$transport_mode_id = $supplierOrder->transport_mode_id;
 						}
+						if (empty($multicurrency_code) && !empty($supplierOrder->multicurrency_code)) {
+							$multicurrency_code = $supplierOrder->multicurrency_code;
+						}
 					}
 
 					// try get from third party of reception
@@ -330,6 +339,9 @@ if (empty($reshook)) {
 						if (empty($transport_mode_id) && !empty($soc->transport_mode_id)) {
 							$transport_mode_id = $soc->transport_mode_id;
 						}
+						if (empty($multicurrency_code) && !empty($soc->multicurrency_code)) {
+							$multicurrency_code = $soc->multicurrency_code;
+						}
 					}
 				}
 
@@ -340,6 +352,7 @@ if (empty($reshook)) {
 				$objecttmp->mode_reglement_id = $mode_reglement_id;
 				$objecttmp->fk_account = $fk_account;
 				$objecttmp->transport_mode_id = $transport_mode_id;
+				$objecttmp->multicurrency_code = $multicurrency_code;
 
 				// if the VAT reverse-charge is activated by default in supplier card to resume the information
 				if (is_object($soc)) {
@@ -397,6 +410,13 @@ if (empty($reshook)) {
 			}
 
 			if ($objecttmp->id > 0) {
+				if (!isset($rcp->origin_object)) {
+					$rcp->fetch_origin();
+				}
+				if ($rcp->origin_object->multicurrency_code != $objecttmp->multicurrency_code) {
+					$errors[] = $rcp->ref." : ".$langs->trans("ReceptionMustBeInTheSameCurrencyThanOther");
+				}
+
 				$res = $objecttmp->add_object_linked($objecttmp->origin, $id_reception);
 
 				if ($res == 0) {
@@ -506,7 +526,7 @@ if (empty($reshook)) {
 								array(),
 								null,
 								$lines[$i]->rowid,
-								0,
+								$lines[$i]->multicurrency_subprice,
 								$lines[$i]->ref_supplier
 							);
 
