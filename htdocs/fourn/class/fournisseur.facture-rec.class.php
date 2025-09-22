@@ -716,7 +716,7 @@ class FactureFournisseurRec extends CommonInvoice
 				$this->total_ht                 = $obj->total_ht;
 				$this->total_tva                = $obj->total_tva;
 				$this->total_ttc                = $obj->total_ttc;
-				$this->user_author              = $obj->fk_user_author;
+				$this->user_creation_id         = $obj->fk_user_author;
 				$this->user_modif               = $obj->fk_user_modif;
 				$this->fk_project               = $obj->fk_project;
 				$this->fk_account               = $obj->fk_account;

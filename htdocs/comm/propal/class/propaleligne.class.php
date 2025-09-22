@@ -152,7 +152,7 @@ class PropaleLigne extends CommonObjectLine
 	public $fk_fournprice;
 
 	/**
-	 * @var float|int|string
+	 * @var float|int|''|null
 	 */
 	public $pa_ht;
 
@@ -179,7 +179,7 @@ class PropaleLigne extends CommonObjectLine
 	 * Some other info:
 	 * Bit 0: 	0 si TVA normal - 1 if TVA NPR
 	 * Bit 1:	0 ligne normal - 1 if line with fixed discount
-	 * @var int
+	 * @var ?int
 	 */
 	public $info_bits = 0;
 
@@ -385,7 +385,7 @@ class PropaleLigne extends CommonObjectLine
 
 			if ($objp) {
 				$this->id = $objp->rowid;
-				$this->rowid			= $objp->rowid; // deprecated
+				$this->rowid = $objp->rowid; // deprecated
 				$this->fk_propal = $objp->fk_propal;
 				$this->fk_parent_line = $objp->fk_parent_line;
 				$this->label			= $objp->custom_label;
@@ -653,13 +653,11 @@ class PropaleLigne extends CommonObjectLine
 			dol_syslog("PropaleLigne::delete", LOG_DEBUG);
 			if ($this->db->query($sql)) {
 				// Remove extrafields
-				if (!$error) {
-					$this->id = $this->rowid;
-					$result = $this->deleteExtraFields();
-					if ($result < 0) {
-						$error++;
-						dol_syslog(get_class($this) . "::delete error -4 " . $this->error, LOG_ERR);
-					}
+				$this->id = $this->rowid;
+				$result = $this->deleteExtraFields();
+				if ($result < 0) {
+					$error++;
+					dol_syslog(get_class($this) . "::delete error -4 " . $this->error, LOG_ERR);
 				}
 			} else {
 				$this->error = $this->db->error() . " sql=" . $sql;
@@ -804,11 +802,9 @@ class PropaleLigne extends CommonObjectLine
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 			if (!$error && !$notrigger) {

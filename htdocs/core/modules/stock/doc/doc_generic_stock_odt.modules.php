@@ -248,7 +248,6 @@ class doc_generic_stock_odt extends ModelePDFStock
 
 			$stockFournisseur = new ProductFournisseur($this->db);
 			$supplierprices = $stockFournisseur->list_stock_fournisseur_price($object->id);
-			$object->supplierprices = $supplierprices;
 
 			$dir = $conf->product->dir_output;
 			$objectref = dol_sanitizeFileName($object->ref);
@@ -419,8 +418,8 @@ class doc_generic_stock_odt extends ModelePDFStock
 					$foundtagforlines = 0;
 					dol_syslog($e->getMessage(), LOG_INFO);
 				}
-				if ($foundtagforlines && !empty($object->supplierprices)) {
-					foreach ($object->supplierprices as $supplierprice) {
+				if ($foundtagforlines && !empty($supplierprices)) {
+					foreach ($supplierprices as $supplierprice) {
 						$array_lines = $this->get_substitutionarray_each_var_object($supplierprice, $outputlangs);
 						complete_substitutions_array($array_lines, $outputlangs, $object, $supplierprice, "completesubstitutionarray_lines");
 						// Call the ODTSubstitutionLine hook

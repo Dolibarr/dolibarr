@@ -561,7 +561,7 @@ class PartnershipUtils
 				$url = $href->getAttribute('href');
 				$url = filter_var($url, FILTER_SANITIZE_URL);
 				if (!(!filter_var($url, FILTER_VALIDATE_URL))) {
-					$webcontent .= $url;
+					$webcontent .= $url;	// $webcontent is used for a test only, so having content not completely sanitized is not a problem.
 				}
 			}
 		}

@@ -76,7 +76,7 @@ if ($line->qty > 0) { ?>
 			if (GETPOST('mode', 'aZ09') == 'vatforblocklines' && GETPOSTINT('lineid') == $line->id) {
 				$type_tva = $type_tva ?? 0;
 				print '<div class="inline-block nowraponall">';
-				print $form->load_tva('vatforblocklines', '', $mysoc, $object->thirdparty, 0, $line->info_bits, $line->product_type, false, 1, $type_tva);
+				print $form->load_tva('vatforblocklines', '', $mysoc, $object->thirdparty, 0, (int) $line->info_bits, $line->product_type, false, 1, $type_tva);
 				print '<input type="hidden" name="lineid" value="' . $line->id . '">';
 				print '<input class="inline-block button smallpaddingimp" type="submit" name="updateallvatlinesblock" value="' . $langs->trans("Update") . '">';
 				print '</div>';

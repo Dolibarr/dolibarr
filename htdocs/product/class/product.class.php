@@ -778,13 +778,6 @@ class Product extends CommonObject
 	public $price_autogen = 0;
 
 	/**
-	 * Array with list of supplier prices of product
-	 *
-	 * @var ProductFournisseur[]
-	 */
-	public $supplierprices;
-
-	/**
 	 * Array with list of sub-products for Kits
 	 *
 	 * @var null|array<string,array<int,array{0:int,1:float,2:int,3:string,4:int,5:string}>>
