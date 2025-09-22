@@ -169,7 +169,7 @@ class Commande extends CommonOrder
 	public $mode_reglement;
 
 	/**
-	 * @var int Payment mode id
+	 * @var ?int Payment mode id
 	 */
 	public $mode_reglement_id;
 
