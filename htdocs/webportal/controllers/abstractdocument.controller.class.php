@@ -22,7 +22,8 @@ require_once __DIR__ . '/../class/controller.class.php';
  * @property DoliDB $db          Inherited from Controller
  * @property int $accessRight    Inherited from Controller
  */
-abstract class AbstractDocumentController extends Controller {
+abstract class AbstractDocumentController extends Controller
+	{
 	/**
 	 * Renders an HTML file browser table for a given list of files and directories.
 	 *
