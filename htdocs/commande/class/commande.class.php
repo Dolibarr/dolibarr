@@ -525,6 +525,10 @@ class Commande extends CommonOrder
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 			return -1;
 		}
+		if (empty($this->socid)) {
+			$this->error = 'ErrorWrongParameters';
+			return -1;
+		}
 
 		$now = dol_now();
 
