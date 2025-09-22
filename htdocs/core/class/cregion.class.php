@@ -161,7 +161,7 @@ class Cregion extends CommonDict
 		$sql .= " t.rowid,";
 		$sql .= " t.code_region,";
 		$sql .= " t.fk_pays,";
-		$sql .= " t.nom,";
+		$sql .= " t.nom as name,";
 		$sql .= " t.cheflieu,";
 		$sql .= " t.active";
 		$sql .= " FROM ".$this->db->prefix()."c_regions as t";
@@ -183,7 +183,7 @@ class Cregion extends CommonDict
 					$this->id = $obj->rowid;
 					$this->code_region = (int) $obj->code_region;
 					$this->fk_pays = (int) $obj->fk_pays;
-					$this->name = $obj->nom;
+					$this->name = $obj->name;
 					$this->cheflieu = $obj->cheflieu;
 					$this->active = (int) $obj->active;
 				}
