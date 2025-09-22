@@ -4,7 +4,7 @@
  * Copyright (C) 2013		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2016		Jonathan TISSEAU			<jonathan.tisseau@86dev.fr>
  * Copyright (C) 2023		Anthony Berton				<anthony.berton@bb2a.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -68,12 +68,12 @@ $substitutionarrayfortest = array(
 	'__SENDEREMAIL_SIGNATURE__' => (($user->signature && !getDolGlobalString('MAIN_MAIL_DO_NOT_USE_SIGN')) ? $usersignature : ''), // Done into actions_sendmails
 	//'__ID__' => 'RecipientID',
 	//'__EMAIL__' => 'RecipientEMail',				// Done into actions_sendmails
-	'__LASTNAME__' => $langs->trans("Lastname").' ('.$langs->trans("Recipient").')',
-	'__FIRSTNAME__' => $langs->trans("Firstname").' ('.$langs->trans("Recipient").')',
-	//'__ADDRESS__'=> $langs->trans("Address").' ('.$langs->trans("Recipient").')',
-	//'__ZIP__'=> $langs->trans("Zip").' ('.$langs->trans("Recipient").')',
-	//'__TOWN_'=> $langs->trans("Town").' ('.$langs->trans("Recipient").')',
-	//'__COUNTRY__'=> $langs->trans("Country").' ('.$langs->trans("Recipient").')',
+	'__LASTNAME__' => $langs->trans("Lastname").' ('.$langs->trans("MailRecipient").')',
+	'__FIRSTNAME__' => $langs->trans("Firstname").' ('.$langs->trans("MailRecipient").')',
+	//'__ADDRESS__'=> $langs->trans("Address").' ('.$langs->trans("MailRecipient").')',
+	//'__ZIP__'=> $langs->trans("Zip").' ('.$langs->trans("MailRecipient").')',
+	//'__TOWN_'=> $langs->trans("Town").' ('.$langs->trans("MailRecipient").')',
+	//'__COUNTRY__'=> $langs->trans("Country").' ('.$langs->trans("MailRecipient").')',
 	'__DOL_MAIN_URL_ROOT__' => DOL_MAIN_URL_ROOT,
 	'__CHECK_READ__' => '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefinedtag&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-undefinedtag", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0" />',
 );

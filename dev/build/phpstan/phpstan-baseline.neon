@@ -3811,18 +3811,6 @@ parameters:
 			path: ../../../htdocs/compta/recap-compta.php
 
 		-
-			message: '#^Parameter \#1 \$array of function dol_sort_array contains unresolvable type\.$#'
-			identifier: argument.unresolvableType
-			count: 2
-			path: ../../../htdocs/compta/recap-compta.php
-
-		-
-			message: '#^Return type of call to function dol_sort_array contains unresolvable type\.$#'
-			identifier: function.unresolvableReturnType
-			count: 2
-			path: ../../../htdocs/compta/recap-compta.php
-
-		-
 			message: '#^Variable \$description might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -18615,12 +18603,6 @@ parameters:
 		-
 			message: '#^Call to function method_exists\(\) with \$this\(WebPortalPropal\) and ''getNomUrl'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/webportal/class/webportalpropal.class.php
-
-		-
-			message: '#^Property Propal\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/webportal/class/webportalpropal.class.php
 
