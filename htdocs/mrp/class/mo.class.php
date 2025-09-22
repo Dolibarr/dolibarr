@@ -814,7 +814,7 @@ class Mo extends CommonObject
 			$tmpproduct->fetch($line->fk_product);
 			if ($line->fk_bom_child > 0) {
 				$bom = new BOM($this->db);
-				$bom->fetch($line->fk_bom_child);
+				$bom->fetch((int) $line->fk_bom_child);
 				$error += $this->processBOM($user, $role, $bom, $quantity_line);
 			} else {
 				$moline = new MoLine($this->db);
