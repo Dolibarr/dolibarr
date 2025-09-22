@@ -4359,7 +4359,7 @@ if ($action == 'create') {
 	// For example print 239.2 - 229.3 - 9.9; does not return 0.
 	// $resteapayer=bcadd($object->total_ttc,$totalpaid,$conf->global->MAIN_MAX_DECIMALS_TOT);
 	// $resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
-	if ($object->total_ttc) {
+	if ($object->total_ttc != 0) {
 		$avg_vat_rate = $object->total_tva / $object->total_ttc;
 	} else {
 		$avg_vat_rate = 0;
