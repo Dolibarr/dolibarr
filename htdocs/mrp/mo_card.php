@@ -546,7 +546,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Reload BOM to consume and produce
 	if ($action == 'reload') {
-		$object->createProduction($user, $notrigger);
+		$object->createProduction($user, false);
 	}
 
 	// Confirmation of validation

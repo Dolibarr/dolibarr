@@ -825,7 +825,7 @@ class Mo extends CommonObject
 					$moline->fk_unit = $line->fk_unit;
 				}
 
-				$moline->qty = price2num($quantity_line, 'MS'); // Calculate with Qty to produce and  more presition
+				$moline->qty = (float) price2num($quantity_line, 'MS'); // Calculate with Qty to produce and  more presition
 				if ($moline->qty <= 0) {
 					$error++;
 					$this->error = "BadValueForquantityToConsume";
