@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2016       Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2016       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ class Cchargesociales
 	 */
 	public $deductible;
 	/**
-	 * @var string
+	 * @var ?int
 	 */
 	public $active;
 	/**
@@ -127,13 +127,15 @@ class Cchargesociales
 			array(
 				'libelle',
 				'deductible',
-				'active',
 				'code',
 				'fk_pays',
 				'module',
 				'accountancy_code',
 			)
 		);
+		if (isset($this->active)) {
+			$this->active = (int) $this->active;
+		}
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -542,7 +544,7 @@ class Cchargesociales
 		$this->libelle = '';
 		$this->label = '';
 		$this->deductible = '';
-		$this->active = '';
+		$this->active = 0;
 		$this->code = '';
 		$this->fk_pays = 0;
 		$this->module = '';
