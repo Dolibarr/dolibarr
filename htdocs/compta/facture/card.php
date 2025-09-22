@@ -5670,6 +5670,7 @@ if ($action == 'create') {
 			// Loop on each credit note or deposit amount applied
 			$creditnoteamount = 0;
 			$depositamount = 0;
+			$compensated_amount = 0;
 			$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 			$sql .= " re.description, re.fk_facture_source, re.fk_invoice_supplier_source";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re";
@@ -5713,6 +5714,10 @@ if ($action == 'create') {
 					if ($invoice->type == Facture::TYPE_DEPOSIT) {
 						$depositamount += $obj->amount_ttc;
 					}
+					if ($invoice->type == FactureFournisseur::TYPE_STANDARD) {
+						$compensated_amount += $obj->amount_ttc;
+					}
+					$resteapayeraffiche -= $obj->amount_ttc;
 				}
 			} else {
 				dol_print_error($db);
@@ -5724,7 +5729,7 @@ if ($action == 'create') {
 				print '<span class="opacitymedium">';
 				print $form->textwithpicto($langs->trans("Discount"), $langs->trans("HelpEscompte"), - 1);
 				print '</span>';
-				print '</td><td class="right"><span class="amount">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaid, 'MT')).'</span></td><td>&nbsp;</td></tr>';
+				print '</td><td class="right"><span class="amount">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $compensated_amount - $totalpaid, 'MT')).'</span></td><td>&nbsp;</td></tr>';
 				$resteapayeraffiche = 0;
 				$cssforamountpaymentcomplete = 'amountpaymentneutral';
 			}
@@ -5734,7 +5739,7 @@ if ($action == 'create') {
 				print '<span class="opacitymedium">';
 				print $form->textwithpicto($langs->trans("Abandoned"), $langs->trans("HelpAbandonBadCustomer"), - 1);
 				print '</span>';
-				print '</td><td class="right">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaid, 'MT')).'</td><td>&nbsp;</td></tr>';
+				print '</td><td class="right">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $compensated_amount  - $totalpaid, 'MT')).'</td><td>&nbsp;</td></tr>';
 				// $resteapayeraffiche=0;
 				$cssforamountpaymentcomplete = 'amountpaymentneutral';
 			}
@@ -5744,7 +5749,7 @@ if ($action == 'create') {
 				print '<span class="opacitymedium">';
 				print $form->textwithpicto($langs->trans("ProductReturned"), $langs->trans("HelpAbandonProductReturned"), - 1);
 				print '</span>';
-				print '</td><td class="right"><span class="amount">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaid, 'MT')).'</span></td><td>&nbsp;</td></tr>';
+				print '</td><td class="right"><span class="amount">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $compensated_amount - $totalpaid, 'MT')).'</span></td><td>&nbsp;</td></tr>';
 				$resteapayeraffiche = 0;
 				$cssforamountpaymentcomplete = 'amountpaymentneutral';
 			}
@@ -5758,7 +5763,7 @@ if ($action == 'create') {
 				print '<span class="opacitymedium">';
 				print $form->textwithpicto($langs->trans("Abandoned"), $text, - 1);
 				print '</span>';
-				print '</td><td class="right"><span class="amount">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaid, 'MT')).'</span></td><td>&nbsp;</td></tr>';
+				print '</td><td class="right"><span class="amount">'.price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $compensated_amount - $totalpaid, 'MT')).'</span></td><td>&nbsp;</td></tr>';
 				$resteapayeraffiche = 0;
 				$cssforamountpaymentcomplete = 'amountpaymentneutral';
 			}
