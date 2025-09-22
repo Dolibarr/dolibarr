@@ -90,10 +90,10 @@ class Cregion extends CommonDict
 			$this->fk_pays = (int) $this->fk_pays;
 		}
 		if (isset($this->name)) {
-			$this->name = trim($this->name);
+			$this->name = trim((string) $this->name);
 		}
 		if (isset($this->cheflieu)) {
-			$this->cheflieu = trim($this->cheflieu);
+			$this->cheflieu = trim((string) $this->cheflieu);
 		}
 		if (isset($this->active)) {
 			$this->active = (int) $this->active;
@@ -116,7 +116,7 @@ class Cregion extends CommonDict
 		$sql .= " ".(!isset($this->fk_pays) ? 'NULL' : (int) $this->fk_pays).",";
 		$sql .= " ".(!isset($this->name) ? 'NULL' : "'".$this->db->escape($this->name)."'").",";
 		$sql .= " ".(!isset($this->cheflieu) ? 'NULL' : "'".$this->db->escape($this->cheflieu)."'").",";
-		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape((string) $this->active)."'");
+		$sql .= " " . (int) $this->active;
 		$sql .= ")";
 
 		$this->db->begin();
