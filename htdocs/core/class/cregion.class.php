@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) Richard Rondu  <rondu.richard@lainwir3d.net>
- * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+/* Copyright (C)            Richard Rondu           <rondu.richard@lainwir3d.net>
+ * Copyright (C) 2007-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,12 +47,12 @@ class Cregion extends CommonDict
 	public $fk_pays;
 
 	/**
-	 * @var string      The name of the region
+	 * @var ?string      The name of the region
 	 */
 	public $name;
 
 	/**
-	 * @var string      The reference of the "chef-lieu" of the region
+	 * @var ?string      The reference of the "chef-lieu" of the region
 	 *                  A.k.a. the administrative headquarter of the region
 	 *                  (examples: HU33, PT9, 97601)
 	 */
