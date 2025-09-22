@@ -100,7 +100,7 @@ class Commande extends CommonOrder
 	protected $table_ref_field = 'ref';
 
 	/**
-	 * @var int Thirdparty ID
+	 * @var ?int Thirdparty ID
 	 */
 	public $socid;
 
