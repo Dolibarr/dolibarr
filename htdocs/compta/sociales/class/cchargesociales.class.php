@@ -80,7 +80,7 @@ class Cchargesociales
 	public $code;
 
 	/**
-	 * @var int ID
+	 * @var ?int ID
 	 */
 	public $fk_pays;
 
