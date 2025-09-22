@@ -5836,7 +5836,7 @@ class Facture extends CommonInvoice
 						}
 
 						// Errors Recipient
-						$errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;
+						$errors_to = getDolGlobalString('MAIN_MAIL_ERRORS_TO');;
 
 						$trackid = 'inv'.$tmpinvoice->id;
 						$sendcontext = 'standard';
