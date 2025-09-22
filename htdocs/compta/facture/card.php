@@ -4360,7 +4360,7 @@ if ($action == 'create') {
 	// $resteapayer=bcadd($object->total_ttc,$totalpaid,$conf->global->MAIN_MAX_DECIMALS_TOT);
 	// $resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
 	if ($object->total_ttc != 0) {
-		$avg_vat_rate = $object->total_tva / $object->total_ttc;
+		$avg_vat_rate = $object->total_tva / $object->total_ht;
 	} else {
 		$avg_vat_rate = 0;
 	}
@@ -5238,20 +5238,20 @@ if ($action == 'create') {
 				// Amount Prorata
 				print '<tr>';
 				print '<td class="titlefieldmiddle" style="padding-left: 3%">' . $langs->trans('ProrataRate') . '</td>';
-				print '<td class="nowrap amountcard right">' . price(-$object->prorata_discount, '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+				print '<td class="nowrap amountcard right">' . price(-round($object->prorata_discount, 2), '', $langs, 0, -1, -1, $conf->currency) . '</td>';
 				print '</tr>';
 			}
 
 			// Amount HT
 			print '<tr>';
 			print '<td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
-			print '<td class="nowrap amountcard right"><b>' . price($sign * $object->total_ht - $object->prorata_discount, '', $langs, 0, -1, -1, $conf->currency) . '</b></td>';
+			print '<td class="nowrap amountcard right"><b>' . price($sign * round($object->total_ht - $object->prorata_discount, 2), '', $langs, 0, -1, -1, $conf->currency) . '</b></td>';
 			print '</tr>';
 
 			// Amount VAT
 			print '<tr>';
 			print '<td class="titlefieldmiddle">' . $langs->trans('AmountVAT') . '</td>';
-			print '<td class="nowrap amountcard right">' . price(round($sign * $object->total_tva  - $object->prorata_discount * ($avg_vat_rate), 2), '', $langs, 0, -1, -1, $conf->currency) . '</td>';
+			print '<td class="nowrap amountcard right">' . price(round($sign * $object->total_tva - $object->prorata_discount * ($avg_vat_rate), 2), '', $langs, 0, -1, -1, $conf->currency) . '</td>';
 			print '</tr>';
 
 
@@ -5684,6 +5684,7 @@ if ($action == 'create') {
 						$invoice = new Facture($db);
 						$id = $obj->fk_facture_source;
 					} elseif (!empty($obj->fk_invoice_supplier_source)) {
+						require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 						$invoice = new FactureFournisseur($db);
 						$id = $obj->fk_invoice_supplier_source;
 					}
