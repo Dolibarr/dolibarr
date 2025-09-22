@@ -4872,18 +4872,22 @@ function isHTTPS()
  */
 function dolGetCountryCodeFromIp($ip)
 {
-	global $conf;
-
 	$countrycode = '';
 
 	if (isModEnabled('geoipmaxmind')) {
 		$datafile = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE');
 		//$ip='24.24.24.24';
 		//$datafile='/usr/share/GeoIP/GeoIP.dat';    Note that this must be downloaded datafile (not same than datafile provided with ubuntu packages)
-		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php';
-		$geoip = new DolGeoIP('country', $datafile);
-		//print 'ip='.$ip.' databaseType='.$geoip->gi->databaseType." GEOIP_CITY_EDITION_REV1=".GEOIP_CITY_EDITION_REV1."\n";
-		$countrycode = $geoip->getCountryCodeFromIP($ip);
+		if ($datafile) {
+			try {
+				include_once DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php';
+				$geoip = new DolGeoIP('country', $datafile);
+				//print 'ip='.$ip.' databaseType='.$geoip->gi->databaseType." GEOIP_CITY_EDITION_REV1=".GEOIP_CITY_EDITION_REV1."\n";
+				$countrycode = $geoip->getCountryCodeFromIP($ip);
+			} catch (Exception $e) {
+				//print 'Error with GeoIP database: '.$e->getMessage();
+			}
+		}
 	}
 
 	return $countrycode;
