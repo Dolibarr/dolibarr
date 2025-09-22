@@ -250,13 +250,12 @@ class AgendaEvents extends DolibarrApi
 				continue;
 			}
 
-			// Special handling for fk_task to ensure it's properly saved
-			if ($field === 'fk_task') {
-				$this->actioncomm->fk_task = (int) $value;
-				continue;
+			// Special handling for integer fields that are not defined in $fields array
+			if (in_array($field, array('fk_task', 'fk_project', 'fk_soc', 'fk_contact', 'fk_user_action', 'userownerid'))) {
+				$this->actioncomm->$field = (int) $value;
+			} else {
+				$this->actioncomm->$field = $this->_checkValForAPI($field, $value, $this->actioncomm);
 			}
-
-			$this->actioncomm->$field = $this->_checkValForAPI($field, $value, $this->actioncomm);
 		}
 
 		// Auto-assign fk_task from elementid if fk_task is empty and elementtype is ticket
@@ -324,19 +323,19 @@ class AgendaEvents extends DolibarrApi
 				continue;
 			}
 
-			// Special handling for fk_task to ensure it's properly saved
-			if ($field === 'fk_task') {
-				$this->actioncomm->fk_task = (int) $value;
-				continue;
-			}
-
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
 					$this->actioncomm->array_options[$index] = $this->_checkValForAPI($field, $val, $this->actioncomm);
 				}
 				continue;
 			}
-			$this->actioncomm->$field = $this->_checkValForAPI($field, $value, $this->actioncomm);
+			
+			// Special handling for integer fields that are not defined in $fields array
+			if (in_array($field, array('fk_task', 'fk_project', 'fk_soc', 'fk_contact', 'fk_user_action', 'userownerid'))) {
+				$this->actioncomm->$field = (int) $value;
+			} else {
+				$this->actioncomm->$field = $this->_checkValForAPI($field, $value, $this->actioncomm);
+			}
 		}
 
 		// Auto-assign fk_task from elementid if fk_task is empty and elementtype is ticket
