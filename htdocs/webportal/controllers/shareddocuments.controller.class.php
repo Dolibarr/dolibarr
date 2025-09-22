@@ -78,7 +78,7 @@ class SharedDocumentsController extends AbstractDocumentController
 
 		// 1. Manage the current subfolder from the URL
 		$current_subdir = GETPOST('subdir', 'alpha');
-        // Security: Clear the path to avoid attacks (eg: ../../)
+    	// Security: Clear the path to avoid attacks (eg: ../../)
         $sanitized_subdir = '';
         if (!empty($current_subdir)) {
             $parts = explode('/', $current_subdir);
