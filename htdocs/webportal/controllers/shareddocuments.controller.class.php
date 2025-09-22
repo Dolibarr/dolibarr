@@ -47,9 +47,8 @@ class SharedDocumentsController extends AbstractDocumentController
 			return -1;
 		}
 
+		$langs->loadLangs(array('other', 'webportal@webportal'));
 		$context->title = html_entity_decode($langs->trans('SharedDocuments'));
-		$context->desc = $langs->trans('ListOfSharedDocuments');
-		$context->title = $langs->trans('SharedDocuments');
 		$context->desc = $langs->trans('ListOfSharedDocuments');
 		$context->menu_active[] = 'shared_documents';
 
@@ -79,36 +78,37 @@ class SharedDocumentsController extends AbstractDocumentController
 		// 1. Manage the current subfolder from the URL
 		$current_subdir = GETPOST('subdir', 'alpha');
 		// Security: Clear the path to avoid attacks (eg: ../../)
-        $sanitized_subdir = '';
+		$sanitized_subdir = '';
 		if (!empty($current_subdir)) {
 			$parts = explode('/', $current_subdir);
-            $safe_parts = array();
-            foreach ($parts as $part) {
+			$safe_parts = array();
+			foreach ($parts as $part) {
 				if ($part !== '.' && $part !== '..') {
 					$safe_parts[] = dol_sanitizeFileName($part);
-                }
-            }
-            $sanitized_subdir = implode('/', $safe_parts);
-        }
+				}
+			}
+			$sanitized_subdir = implode('/', $safe_parts);
+		}
+
 		// 2. Prepare the paths
 		$shared_dir_name = getDolGlobalString('WEBPORTAL_SHARED_DOCS_DIR', 'Documentscomptes');
 		$base_dir_ged_partage = $conf->ecm->dir_output . '/' . $shared_dir_name;
-        // The full path now includes the visited subfolder
+		// Le chemin complet inclut maintenant le sous-dossier visité
 		$current_dir_ged_partage = $base_dir_ged_partage . '/' . $sanitized_subdir;
 
 		// 3. List ALL contents (files AND folders) of the current directory
 		$itemList = dol_dir_list($current_dir_ged_partage, 'all', 0, '', '', 'name', SORT_ASC);
 		if (is_array($itemList)) {
-            foreach ($itemList as $key => $item) {
-                // If the item is a file and its size is empty...
-                if ($item['type'] === 'file' && empty($item['size'])) {
-                    $full_file_path = $current_dir_ged_partage . '/' . $item['name'];
-                    // ... we recalculate its size and update the table.
-                    // The @ avoids an error if the file is unreadable.
-                    $itemList[$key]['size'] = @filesize($full_file_path);
-					}
+			foreach ($itemList as $key => $item) {
+				// If the item is a file and its size is empty...
+				if ($item['type'] === 'file' && empty($item['size'])) {
+					$full_file_path = $current_dir_ged_partage . '/' . $item['name'];
+					// ... on recalcule sa taille et on met à jour le tableau.
+					// Le @ évite une erreur si le fichier est illisible.
+					$itemList[$key]['size'] = @filesize($full_file_path);
 				}
-				}
+			}
+		}
 		// 4. Build the Breadcrumb
 		$baseUrl = $_SERVER['PHP_SELF'].'?controller=shareddocuments';
 		$breadcrumbs = '<nav aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="'.$baseUrl.'">'.dol_htmlentities($langs->trans("Home")).'</a></li>';
