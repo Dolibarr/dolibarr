@@ -105,12 +105,12 @@ class Commande extends CommonOrder
 	public $socid;
 
 	/**
-	 * @var string Thirdparty ref of order
+	 * @var ?string Thirdparty ref of order
 	 */
 	public $ref_client;
 
 	/**
-	 * @var string Thirdparty ref of order
+	 * @var ?string Thirdparty ref of order
 	 */
 	public $ref_customer;
 
