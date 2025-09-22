@@ -1193,7 +1193,7 @@ class Commande extends CommonOrder
 						}
 					}
 
-					if (!$error && $this->id && getDolGlobalString('MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN') && !empty($this->origin) && !empty($this->origin_id)) {   // Get contact from origin object
+					if (!$error && getDolGlobalString('MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN') && !empty($this->origin) && !empty($this->origin_id)) {   // Get contact from origin object
 						$originforcontact = empty($this->origin_type) ? $this->origin : $this->origin_type;
 						$originidforcontact = $this->origin_id;
 						if ($originforcontact == 'shipping') {     // shipment and order share the same contacts. If creating from shipment we take data of order
@@ -3005,10 +3005,8 @@ class Commande extends CommonOrder
 
 		dol_syslog(get_class($this)."::classifyBilled", LOG_DEBUG);
 		if ($this->db->query($sql)) {
-			if (!$error) {
-				$this->oldcopy = clone $this;
-				$this->billed = 1;
-			}
+			$this->oldcopy = clone $this;
+			$this->billed = 1;
 
 			if (!$notrigger && empty($error)) {
 				// Call trigger
