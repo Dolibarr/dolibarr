@@ -7,7 +7,7 @@
 
 	<!-- info: '*' is replaced with '.*', so better use '+' in some cases -->
 	<!-- info: 'relative' paths are relative to the examined file, so not ok. -->
-	<exclude-pattern>/build/(html|aps)/</exclude-pattern>
+	<exclude-pattern>/dev/build/(html|aps)/</exclude-pattern>
 	<exclude-pattern>/dev/tools/test/namespacemig/</exclude-pattern>
 	<exclude-pattern>/dev/tools/phan/stubs/</exclude-pattern>
 	<!-- <exclude-pattern>dev/initdata/dbf/includes</exclude-pattern> -->
@@ -28,8 +28,15 @@
 
 	<rule ref="Internal.NoCodeFound" />
 
-
 	<!-- Rules from Generic Standard -->
+	<!--
+	<rule ref="PSR12.Files.OpenTag">
+        <properties>
+            <property name="ignoreIndent" value="true"/>
+        </properties>
+    </rule>
+	<exclude name="PSR12.WhiteSpace.ScopeIndent"/>
+    -->
 
 	<!-- We want to allow empty statement: It allows to put some code comments into the else for examples -->
 	<rule ref="Generic.CodeAnalysis.EmptyStatement">
@@ -93,7 +100,7 @@
 	<!-- Lines can be 85 chars long, but never show errors -->
 	<rule ref="Generic.Files.LineLength">
 		<properties>
-			<property name="lineLimit" value="500" />
+			<property name="lineLimit" value="800" />
 			<property name="absoluteLineLimit" value="0" />
 		</properties>
 	</rule>
@@ -134,7 +141,7 @@
 
 	<rule ref="Generic.Formatting.SpaceAfterCast" />
 
-	<!-- <rule ref="Generic.Functions.CallTimePassByReference" /> -->
+	<!-- <rule ref="Generic.Functions.CallTimePassByReference" /> This rule does not exists anymore -->
 
 	<rule ref="Generic.Functions.FunctionCallArgumentSpacing" />
 

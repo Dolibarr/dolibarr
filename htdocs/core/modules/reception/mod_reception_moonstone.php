@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018		Quentin Vial-Gouteyron	<quentin.vial-gouteyron@atm-consulting.fr>
  * Copyright (C) 2019-2024  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,9 @@ class mod_reception_moonstone extends ModelNumRefReception
 {
 	public $version = 'dolibarr';
 	public $error = '';
+	/**
+	 * @var string
+	 */
 	public $nom = 'Moonstone';
 
 	/**
@@ -53,18 +57,23 @@ class mod_reception_moonstone extends ModelNumRefReception
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
 		$texte .= '<input type="hidden" name="maskconstreception" value="RECEPTION_MOONSTONE_MASK">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<input type="hidden" name="page_y" value="">';
+
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Reception"), $langs->transnoentities("Reception"));
+		$tooltip .= $langs->trans("GenericMaskCodes1");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes2");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Reception"), $langs->transnoentities("Reception"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
 		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskreception" value="'.getDolGlobalString("RECEPTION_MOONSTONE_MASK").'">', $tooltip, 1, 1).'</td>';
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskreception" value="'.getDolGlobalString("RECEPTION_MOONSTONE_MASK").'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Save").'"></td>';
 		$texte .= '</tr>';
 		$texte .= '</table>';
 		$texte .= '</form>';
@@ -98,9 +107,9 @@ class mod_reception_moonstone extends ModelNumRefReception
 	/**
 	 *	Return next value
 	 *
-	 *	@param	Societe			$objsoc     Third party object
-	 *	@param	Reception|null	$reception	Reception object
-	 *	@return string|int  				Value if OK, 0 if KO
+	 *	@param	Societe		$objsoc		Third party object
+	 *	@param	?Reception	$reception	Reception object
+	 *	@return string|int<-1,0>		Value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $reception)
 	{

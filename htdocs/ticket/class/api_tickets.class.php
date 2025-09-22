@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2016   Jean-François Ferry     <hello@librethic.io>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
@@ -31,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 class Tickets extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'subject',
@@ -39,7 +40,7 @@ class Tickets extends DolibarrApi
 	);
 
 	/**
-	 * @var array   $FIELDS_MESSAGES     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS_MESSAGES = array(
 		'track_id',
@@ -47,7 +48,7 @@ class Tickets extends DolibarrApi
 	);
 
 	/**
-	 * @var Ticket $ticket {@type Ticket}
+	 * @var Ticket {@type Ticket}
 	 */
 	public $ticket;
 
@@ -66,16 +67,17 @@ class Tickets extends DolibarrApi
 	 *
 	 * Return an array with ticket information
 	 *
-	 * @param	int				$id			ID of ticket
-	 * @return  Object						Object with cleaned properties
+	 * @param	int				$id				ID of ticket
+	 * @param   int         	$contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
+	 * @return  Object							Object with cleaned properties
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 403
 	 * @throws RestException 404
 	 */
-	public function get($id)
+	public function get($id, $contact_list = 1)
 	{
-		return $this->getCommon($id, '', '');
+		return $this->getCommon($id, '', '', $contact_list);
 	}
 
 	/**
@@ -83,8 +85,9 @@ class Tickets extends DolibarrApi
 	 *
 	 * Return an array with ticket information
 	 *
-	 * @param	string			$track_id	Tracking ID of ticket
-	 * @return	array|mixed					Data without useless information
+	 * @param	string			$track_id		Tracking ID of ticket
+	 * @param   int         	$contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
+	 * @return	array|mixed						Data without useless information
 	 *
 	 * @url GET track_id/{track_id}
 	 *
@@ -92,9 +95,9 @@ class Tickets extends DolibarrApi
 	 * @throws RestException	403
 	 * @throws RestException	404
 	 */
-	public function getByTrackId($track_id)
+	public function getByTrackId($track_id, $contact_list = 1)
 	{
-		return $this->getCommon(0, $track_id, '');
+		return $this->getCommon(0, $track_id, '', $contact_list);
 	}
 
 	/**
@@ -102,8 +105,9 @@ class Tickets extends DolibarrApi
 	 *
 	 * Return an array with ticket information
 	 *
-	 * @param	string			$ref		Reference for ticket
-	 * @return	array|mixed					Data without useless information
+	 * @param	string			$ref			Reference for ticket
+	 * @param   int         	$contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
+	 * @return	array|mixed						Data without useless information
 	 *
 	 * @url GET ref/{ref}
 	 *
@@ -111,21 +115,22 @@ class Tickets extends DolibarrApi
 	 * @throws RestException 403
 	 * @throws RestException 404
 	 */
-	public function getByRef($ref)
+	public function getByRef($ref, $contact_list = 1)
 	{
-		return $this->getCommon(0, '', $ref);
+		return $this->getCommon(0, '', $ref, $contact_list);
 	}
 
 	/**
 	 * Get properties of a Ticket object
 	 * Return an array with ticket information
 	 *
-	 * @param	int				$id			ID of ticket
-	 * @param	string			$track_id	Tracking ID of ticket
-	 * @param	string			$ref		Reference for ticket
-	 * @return	array|mixed					Data without useless information
+	 * @param	int				$id				ID of ticket
+	 * @param	string			$track_id		Tracking ID of ticket
+	 * @param	string			$ref			Reference for ticket
+	 * @param   int         	$contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
+	 * @return	array|mixed						Data without useless information
 	 */
-	private function getCommon($id = 0, $track_id = '', $ref = '')
+	private function getCommon($id = 0, $track_id = '', $ref = '', $contact_list = 1)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ticket', 'read')) {
 			throw new RestException(403);
@@ -135,7 +140,7 @@ class Tickets extends DolibarrApi
 		if (($id < 0) && !$track_id && !$ref) {
 			throw new RestException(400, 'Wrong parameters');
 		}
-		if ($id == 0) {
+		if (empty($id) && empty($ref) && empty($track_id)) {
 			$result = $this->ticket->initAsSpecimen();
 		} else {
 			$result = $this->ticket->fetch($id, $ref, $track_id);
@@ -161,17 +166,19 @@ class Tickets extends DolibarrApi
 				if ($this->ticket->cache_msgs_ticket[$i]['fk_user_author'] > 0) {
 					$user_action = new User($this->db);
 					$user_action->fetch($this->ticket->cache_msgs_ticket[$i]['fk_user_author']);
+				} else {
+					$user_action = null;
 				}
 
 				// Now define messages
 				$messages[] = array(
-				'id' => $this->ticket->cache_msgs_ticket[$i]['id'],
-				'fk_user_action' => $this->ticket->cache_msgs_ticket[$i]['fk_user_author'],
-				'fk_user_action_socid' =>  $user_action->socid,
-				'fk_user_action_string' => dolGetFirstLastname($user_action->firstname, $user_action->lastname),
-				'message' => $this->ticket->cache_msgs_ticket[$i]['message'],
-				'datec' => $this->ticket->cache_msgs_ticket[$i]['datec'],
-				'private' => $this->ticket->cache_msgs_ticket[$i]['private']
+					'id' => $this->ticket->cache_msgs_ticket[$i]['id'],
+					'fk_user_action' => $this->ticket->cache_msgs_ticket[$i]['fk_user_author'],
+					'fk_user_action_socid' =>  $user_action === null ? '' : $user_action->socid,
+					'fk_user_action_string' => $user_action === null ? '' : dolGetFirstLastname($user_action->firstname, $user_action->lastname),
+					'message' => $this->ticket->cache_msgs_ticket[$i]['message'],
+					'datec' => $this->ticket->cache_msgs_ticket[$i]['datec'],
+					'private' => $this->ticket->cache_msgs_ticket[$i]['private']
 				);
 				$i++;
 			}
@@ -181,6 +188,19 @@ class Tickets extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('ticket', $this->ticket->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
+
+		if ($contact_list > -1) {
+			// Add external contacts ids
+			$tmparray = $this->ticket->liste_contact(-1, 'external', $contact_list);
+			if (is_array($tmparray)) {
+				$this->ticket->contacts_ids = $tmparray;
+			}
+			$tmparray = $this->ticket->liste_contact(-1, 'internal', $contact_list);
+			if (is_array($tmparray)) {
+				$this->ticket->contacts_ids_internal = $tmparray;
+			}
+		}
+
 		return $this->_cleanObjectDatas($this->ticket);
 	}
 
@@ -195,12 +215,15 @@ class Tickets extends DolibarrApi
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
 	 * @param string	$sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101') and (t.fk_statut:=:1)"
-	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties		Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param int		$loadcontacts		Load also contacts/addresses (0=No, 1=Yes)
+	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 *
 	 * @return array Array of ticket objects
-	 *
+	 * @phan-return Ticket[]|array{data:Ticket[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return Ticket[]|array{data:Ticket[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 */
-	public function index($socid = 0, $sortfield = "t.rowid", $sortorder = "ASC", $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
+	public function index($socid = 0, $sortfield = "t.rowid", $sortorder = "ASC", $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $loadcontacts = 0, $pagination_data = false)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ticket', 'read')) {
 			throw new RestException(403);
@@ -208,7 +231,7 @@ class Tickets extends DolibarrApi
 
 		$obj_ret = array();
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $socid;
+		$socid = DolibarrApiAccess::$user->socid ?: $socid;
 
 		$search_sale = null;
 		// If the internal user must only see his customers, force searching by him
@@ -219,6 +242,7 @@ class Tickets extends DolibarrApi
 
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket AS t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe AS s ON (s.rowid = t.fk_soc)";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."ticket_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= ' WHERE t.entity IN ('.getEntity('ticket', 1).')';
 		if ($socid > 0) {
@@ -240,6 +264,9 @@ class Tickets extends DolibarrApi
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 		}
+
+		//this query will return total orders with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 
@@ -265,6 +292,19 @@ class Tickets extends DolibarrApi
 						$userStatic->fetch($ticket_static->fk_user_assign);
 						$ticket_static->fk_user_assign_string = $userStatic->firstname.' '.$userStatic->lastname;
 					}
+
+					if ($loadcontacts) {
+						// Add external contacts ids
+						$tmparray = $ticket_static->liste_contact(-1, 'external', 1);
+						if (is_array($tmparray)) {
+							$ticket_static->contacts_ids = $tmparray;
+						}
+						$tmparray = $ticket_static->liste_contact(-1, 'internal', 1);
+						if (is_array($tmparray)) {
+							$ticket_static->contacts_ids_internal = $tmparray;
+						}
+					}
+
 					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($ticket_static), $properties);
 				}
 				$i++;
@@ -273,13 +313,32 @@ class Tickets extends DolibarrApi
 			throw new RestException(503, 'Error when retrieve ticket list');
 		}
 
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
+		}
+
 		return $obj_ret;
 	}
 
 	/**
 	 * Create ticket object
 	 *
-	 * @param array $request_data   Request datas
+	 * @param array $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int  ID of ticket
 	 */
 	public function post($request_data = null)
@@ -317,9 +376,10 @@ class Tickets extends DolibarrApi
 	/**
 	 * Add a new message to an existing ticket identified by property ->track_id into request.
 	 *
-	 * @param array $request_data   Request datas
+	 * @param array $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int  ID of ticket
-	 *
 	 */
 	public function postNewMessage($request_data = null)
 	{
@@ -340,7 +400,7 @@ class Tickets extends DolibarrApi
 			$this->ticket->$field = $this->_checkValForAPI($field, $value, $this->ticket);
 		}
 		$ticketMessageText = $this->ticket->message;
-		$result = $this->ticket->fetch('', '', $this->ticket->track_id);
+		$result = $this->ticket->fetch(0, '', $this->ticket->track_id);
 		if (!$result) {
 			throw new RestException(404, 'Ticket not found');
 		}
@@ -355,7 +415,9 @@ class Tickets extends DolibarrApi
 	 * Update ticket
 	 *
 	 * @param 	int   	$id             	Id of ticket to update
-	 * @param 	array 	$request_data   	Datas
+	 * @param 	array 	$request_data   	Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
@@ -405,7 +467,8 @@ class Tickets extends DolibarrApi
 	 *
 	 * @param   int     $id   Ticket ID
 	 * @return  array
-	 *
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
@@ -436,13 +499,16 @@ class Tickets extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param array $data   Data to validate
-	 * @return array
+	 * @param ?array<string,string> $data   Data to validate
+	 * @return array<string,string>
 	 *
 	 * @throws RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$ticket = array();
 		foreach (Tickets::$FIELDS as $field) {
 			if (!isset($data[$field])) {
@@ -456,13 +522,16 @@ class Tickets extends DolibarrApi
 	/**
 	 * Validate fields before create or update object message
 	 *
-	 * @param array $data   Data to validate
-	 * @return array
+	 * @param ?array<string,string> $data   Data to validate
+	 * @return array<string,string>
 	 *
 	 * @throws RestException
 	 */
 	private function _validateMessage($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$ticket = array();
 		foreach (Tickets::$FIELDS_MESSAGES as $field) {
 			if (!isset($data[$field])) {
@@ -481,7 +550,6 @@ class Tickets extends DolibarrApi
 	 * @return  Object              Object with cleaned properties
 	 *
 	 * @todo use an array for properties to clean
-	 *
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -530,7 +598,6 @@ class Tickets extends DolibarrApi
 			"cache_msgs_ticket",
 			"cache_logs_ticket",
 			"cache_types_tickets",
-			"cache_category_tickets",
 			"regeximgext",
 			"labelStatus",
 			"labelStatusShort",

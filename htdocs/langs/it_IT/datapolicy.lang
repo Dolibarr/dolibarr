@@ -17,8 +17,10 @@ Module4100Name = Informativa sulla privacy dei dati
 Module4100Desc = modulo per gestire la Privacy dei Dati (Conformità al GDPR)
 # Administration page
 datapolicySetup = modulo Configurazione della politica sulla privacy dei dati
-Deletion = Cancellazione dei dati
-datapolicySetupPage = A seconda delle leggi dei vostri paesi (Esempio <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Articolo 5</a> del GDPR), i dati personali devono essere conservati per un periodo non superiore a quello necessario allo scopo per il quale sono stati raccolti, fatte salve le finalità di archiviazione.<br>La cancellazione sarà essere fatto automaticamente dopo una certa durata senza eventi (la durata che avrai indicato di seguito).
+DataDeletion=Cancellazione dei dati
+DataAnonymization=Anonimizzazione dei dati
+DataAnonymizationOrDeletion=Anonymization or deletion of data
+datapolicySetupPage = A seconda delle leggi del tuo Paese (Esempio <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Articolo 5</a> del GDPR), i dati personali devono essere conservati per un periodo non superiore a quello necessario per lo scopo per il quale sono stati raccolti, ad eccezione delle finalità di archiviazione.<br>Questo modulo effettuerà un'anonimizzazione automaticamente dopo un certo periodo di tempo senza eventi (la durata che avrai indicato di seguito) e se oggetto non ha attività figlie oggetto esistenti.
 NB_MONTHS = %s mesi
 ONE_YEAR = 1 anno
 NB_YEARS = %s anni
@@ -33,12 +35,15 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = cliente potenziale/cliente
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Né cliente potenziale/Né cliente
 DATAPOLICY_CONTACT_FOURNISSEUR = Fornitore
 DATAPOLICY_ADHERENT = Membro
-DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
+DATAPOLICY_RECRUITMENT_CANDIDATURE = Application
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and be working correctly.
 SendAgreementText = Puoi inviare un GDPR email a tutti i tuoi contatti rilevanti (che non hanno ancora ricevuto un email e per il quale non hai registrato nulla relativo al loro accordo GDPR). Per fare ciò, utilizza il pulsante seguire.
 SendAgreement = Inviare emails
 AllAgreementSend = Tutte le email sono state inviate
 TXTLINKDATAPOLICYACCEPT = Testo per l'collegamento "accordo"
 TXTLINKDATAPOLICYREFUSE = Testo per il collegamento "disaccordo"
+DelayForAnonymization=Ritardo per l'anonimizzazione
+DelayForDeletion=Ritardo per l'eliminazione
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = GDPR: Trattamento dei dati personali
 DATAPOLICY_consentement = Consenso ottenuto per il trattamento dei dati personali
@@ -49,3 +54,5 @@ DATAPOLICY_date = data di accordo/disaccordo GDPR
 DATAPOLICY_send = data accordo email inviato
 MailSent = email è stato inviato
 NUMBER_MONTH_BEFORE_DELETION = numero di mesi prima dell'eliminazione
+TheFollowingFieldsAreReplaceWith=Some fields will be replaced by a unique value:
+OtherFieldsAreReplaceWithStaticValues=Some other fields are replaced by a static value:

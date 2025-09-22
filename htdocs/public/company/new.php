@@ -4,11 +4,11 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  * Copyright (C) 2022       Udo Tamm                <dev@dolibit.de>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@
  *	\file       htdocs/public/company/new.php
  *	\ingroup    prospect
  *	\brief      Example of form to add a new prospect
- *
  */
 
 if (!defined('NOLOGIN')) {
@@ -46,9 +45,9 @@ if (!defined('NOBROWSERNOTIF')) {
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
 // Because 2 entities can have the same ref
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
-if (is_numeric($entity)) {
-	define("DOLENTITY", $entity);
-}
+// if (is_numeric($entity)) { // value is casted to int so always numeric
+define("DOLENTITY", $entity);
+// }
 
 
 // Load Dolibarr environment
@@ -62,6 +61,15 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/cunits.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formadmin.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/public.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 // Init vars
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
@@ -79,15 +87,15 @@ if (!isModEnabled('societe')) {
 }
 
 if (!getDolGlobalString('SOCIETE_ENABLE_PUBLIC')) {
-	httponly_accessforbidden("Online form for contact for public visitors has not been enabled");
+	httponly_accessforbidden("Online form for contact for public visitors has not been enabled (option SOCIETE_ENABLE_PUBLIC)");
 }
 
 
-//permissions
+// permissions
 
 $permissiontoadd 	= $user->hasRight('societe', 'creer');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('publicnewmembercard', 'globalcard'));
 
 $extrafields = new ExtraFields($db);
@@ -101,15 +109,17 @@ $extrafields->fetch_name_optionals_label($objectsoc->table_element); // fetch op
 /**
  * Show header for new prospect
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @param 	string		$title				Title
  * @param 	string		$head				Head array
  * @param 	int    		$disablejs			More content into html header
  * @param 	int    		$disablehead		More content into html header
- * @param 	array  		$arrayofjs			Array of complementary js files
- * @param 	array  		$arrayofcss			Array of complementary css files
+ * @param 	string[]|string	$arrayofjs			Array of complementary js files
+ * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs, $mysoc;
 
@@ -117,38 +127,8 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	print '<body id="mainbody" class="publicnewmemberform">';
 
-	// Define urllogo
-	$urllogo = DOL_URL_ROOT . '/theme/common/login_logo.png';
-
-	if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output . '/logos/thumbs/' . $mysoc->logo_small)) {
-		$urllogo = DOL_URL_ROOT . '/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file=' . urlencode('logos/thumbs/' . $mysoc->logo_small);
-	} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output . '/logos/' . $mysoc->logo)) {
-		$urllogo = DOL_URL_ROOT . '/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file=' . urlencode('logos/' . $mysoc->logo);
-	} elseif (is_readable(DOL_DOCUMENT_ROOT . '/theme/dolibarr_logo.svg')) {
-		$urllogo = DOL_URL_ROOT . '/theme/dolibarr_logo.svg';
-	}
-
-	print '<header class="center">';
-
-	// Output html code for logo
-	if ($urllogo) {
-		print '<div class="backgreypublicpayment">';
-		print '<div class="logopublicpayment">';
-		print '<img id="dolpaymentlogo" src="' . $urllogo . '">';
-		print '</div>';
-		if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
-			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">' . $langs->trans("PoweredBy") . '<br><img class="poweredbyimg" src="' . DOL_URL_ROOT . '/theme/dolibarr_logo.svg" width="80px"></a></div>';
-		}
-		print '</div>';
-	}
-
-	if (getDolGlobalString('MEMBER_IMAGE_PUBLIC_REGISTRATION')) {
-		print '<div class="backimagepublicregistration">';
-		print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('MEMBER_IMAGE_PUBLIC_REGISTRATION') . '">';
-		print '</div>';
-	}
-
-	print '</header>';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+	htmlPrintOnlineHeader($mysoc, $langs, 1, getDolGlobalString('THIRDPARTY_PUBLIC_INTERFACE_TOPIC'), 'THIRDPARTY_PUBLIC_INTERFACE_IMAGE');
 
 	print '<div class="divmainbodylarge">';
 }
@@ -156,13 +136,13 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 /**
  * Show footer for new societe
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @return	void
  */
-function llxFooterVierge()
+function llxFooterVierge()  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs;
-
-	$ext = '';
 
 	print '</div>';
 
@@ -170,7 +150,7 @@ function llxFooterVierge()
 
 	if (!empty($conf->use_javascript_ajax)) {
 		print "\n" . '<!-- Includes JS Footer of Dolibarr -->' . "\n";
-		print '<script src="' . DOL_URL_ROOT . '/core/js/lib_foot.js.php?lang=' . $langs->defaultlang . (!empty($ext) ? '&' . $ext : '') . '"></script>' . "\n";
+		print '<script src="' . DOL_URL_ROOT . '/core/js/lib_foot.js.php?lang=' . $langs->defaultlang . '"></script>' . "\n";
 	}
 
 	print "</body>\n";
@@ -191,7 +171,7 @@ if ($reshook < 0) {
 }
 
 // Action called when page is submitted
-if (empty($reshook) && $action == 'add') {
+if (empty($reshook) && $action == 'add') {	// Test on permission not required here. This is a public page. Security is done on constant and mitigation.
 	$error = 0;
 	$urlback = '';
 
@@ -203,9 +183,9 @@ if (empty($reshook) && $action == 'add') {
 	}
 
 	// Check Captcha code if is enabled
-	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
+	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_THIRDPARTY')) {
 		$sessionkey = 'dol_antispam_value';
-		$ok = (array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
+		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
 		if (!$ok) {
 			$error++;
 			$errmsg .= $langs->trans("ErrorBadValueForCode") . "<br>\n";
@@ -216,18 +196,15 @@ if (empty($reshook) && $action == 'add') {
 	if (!$error) {
 		$societe = new Societe($db);
 
-		// TODO Support MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS
-
-
 		$societe->name = GETPOST('name', 'alphanohtml');
 		$societe->client = GETPOSTINT('client') ? GETPOSTINT('client') : $societe->client;
-		$societe->address	= GETPOST('address', 'alphanohtml');
-		$societe->country_id				= GETPOSTINT('country_id');
-		$societe->phone					= GETPOST('phone', 'alpha');
-		$societe->fax				= GETPOST('fax', 'alpha');
-		$societe->email					= trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
+		$societe->address = GETPOST('address', 'alphanohtml');
+		$societe->country_id = GETPOSTINT('country_id');
+		$societe->phone = GETPOST('phone', 'alpha');
+		$societe->fax = GETPOST('fax', 'alpha');
+		$societe->email = trim(GETPOST('email', 'email'));
 		$societe->client = 2 ; // our client is a prospect
-		$societe->code_client		= '-1';
+		$societe->code_client = '-1';
 		$societe->name_alias = GETPOST('name_alias', 'alphanohtml');
 		$societe->note_private = GETPOST('note_private', 'alphanohtml');
 
@@ -240,6 +217,13 @@ if (empty($reshook) && $action == 'add') {
 			$errmsg .= $societe->error;
 		}
 		*/
+
+		$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
+
+		if (checkNbPostsForASpeceificIp($societe, $nb_post_max) <= 0) {
+			$error++;
+			$errmsg .= implode('<br>', $societe->errors);
+		}
 
 		if (!$error) {
 			$result = $societe->create($user);
@@ -277,7 +261,7 @@ if (empty($reshook) && $action == 'add') {
 // If MEMBER_URL_REDIRECT_SUBSCRIPTION is set to an url, we never go here because a redirect was done to this url. Same if we ask to redirect to the payment page.
 // backtopage parameter with an url was set on prospect submit page, we never go here because a redirect was done to this url.
 
-if (empty($reshook) && $action == 'added') {
+if (empty($reshook) && $action == 'added') {	// Test on permission not required here
 	llxHeaderVierge("newSocieteAdded");
 
 	// If we have not been redirected
@@ -305,7 +289,7 @@ $formadmin = new FormAdmin($db);
 llxHeaderVierge($langs->trans("ContactUs"));
 
 print '<br>';
-print load_fiche_titre(img_picto('', 'member_nocolor', 'class="pictofixedwidth"') . ' &nbsp; ' . $langs->trans("ContactUs"), '', '', 0, 0, 'center');
+print load_fiche_titre(img_picto('', 'member_nocolor', 'class="pictofixedwidth"') . ' &nbsp; ' . $langs->trans("ContactUs"), '', '', 0, '', 'center');
 
 
 print '<div align="center">';
@@ -424,7 +408,7 @@ if (isModEnabled('mailing') && getDolGlobalString('THIRDPARTY_SUGGEST_ALSO_ADDRE
 		print '</tr><tr>';
 	}
 	print '<td class="individualline noemail">' . $form->editfieldkey($langs->trans('No_Email') . ' (' . $langs->trans('Contact') . ')', 'contact_no_email', '', $objectsoc, 0) . '</td>';
-	print '<td class="individualline" ' . (($conf->browser->layout == 'phone') || !isModEnabled('mailing') ? ' colspan="3"' : '') . '>' . $form->selectyesno('contact_no_email', (GETPOSTISSET("contact_no_email") ? GETPOST("contact_no_email", 'alpha') : (empty($objectsoc->no_email) ? 0 : 1)), 1, false, 1) . '</td>';
+	print '<td class="individualline" ' . (($conf->browser->layout == 'phone') /* || !isModEnabled('mailing') */ ? ' colspan="3"' : '') . '>' . $form->selectyesno('contact_no_email', (GETPOSTISSET("contact_no_email") ? GETPOST("contact_no_email", 'alpha') : (empty($objectsoc->no_email) ? 0 : 1)), 1, false, 1) . '</td>';
 }
 print '</tr>';
 
@@ -447,7 +431,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 // TODO Move this into generic feature.
 
 // Display Captcha code if is enabled
-if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
+if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_THIRDPARTY')) {
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/security2.lib.php';
 	print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">' . $langs->trans("SecurityCode") . '</span></label></td><td>';
 	print '<span class="span-icon-security inline-block">';
@@ -455,7 +439,7 @@ if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
 	print '</span>';
 	print '<span class="nowrap inline-block">';
 	print '<img class="inline-block valignmiddle" src="' . DOL_URL_ROOT . '/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />';
-	print '<a class="inline-block valignmiddle" href="' . $php_self . '" tabindex="4" data-role="button">' . img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"') . '</a>';
+	print '<a class="inline-block valignmiddle" href="' . $_SERVER['PHP_SELF'] . '" tabindex="4" data-role="button">' . img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"') . '</a>';
 	print '</span>';
 	print '</td></tr>';
 }

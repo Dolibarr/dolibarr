@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2017	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2006-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2011-2013	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'errors'));
 
@@ -48,7 +57,7 @@ $action = GETPOST('action', 'aZ09');
  * Actions
  */
 
-if ($action == 'setvalue' && $user->admin) {
+if ($action == 'setvalue' /* && $user->admin */) {
 	$error = 0;
 	$db->begin();
 
@@ -95,7 +104,8 @@ if ($action == 'setvalue' && $user->admin) {
  */
 
 llxHeader('', $langs->trans("LDAPSetup"), 'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP', '', 0, 0, '', '', '', 'mod-admin page-ldap_members_types');
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 
 print load_fiche_titre($langs->trans("LDAPSetup"), $linkback, 'title_setup');
 
@@ -158,21 +168,21 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldName").'</td><td>';
 print '<input size="25" type="text" name="fieldfullname" value="' . getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_FULLNAME').'">';
 print '</td><td>'.$langs->trans("LDAPFieldCommonNameExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_MEMBER_TYPE_FIELD_FULLNAME"'.(($conf->global->LDAP_KEY_MEMBERS_TYPES && $conf->global->LDAP_KEY_MEMBERS_TYPES == $conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME) ? ' checked' : '')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_MEMBER_TYPE_FIELD_FULLNAME"'.((getDolGlobalString('LDAP_KEY_MEMBERS_TYPES') && getDolGlobalString('LDAP_KEY_MEMBERS_TYPES') == getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_FULLNAME')) ? ' checked' : '')."></td>";
 print '</tr>';
 
 // Description
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldDescription").'</td><td>';
 print '<input size="25" type="text" name="fielddescription" value="' . getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_DESCRIPTION').'">';
 print '</td><td>'.$langs->trans("LDAPFieldDescriptionExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_MEMBER_TYPE_FIELD_DESCRIPTION"'.(($conf->global->LDAP_KEY_MEMBERS_TYPES && $conf->global->LDAP_KEY_MEMBER_TYPES == $conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION) ? ' checked' : '')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_MEMBER_TYPE_FIELD_DESCRIPTION"'.((getDolGlobalString('LDAP_KEY_MEMBERS_TYPES') && getDolGlobalString('LDAP_KEY_MEMBER_TYPES') == getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_DESCRIPTION')) ? ' checked' : '')."></td>";
 print '</tr>';
 
 // User group
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldGroupMembers").'</td><td>';
 print '<input size="25" type="text" name="fieldmembertypemembers" value="' . getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS').'">';
 print '</td><td>'.$langs->trans("LDAPFieldGroupMembersExample").'</td>';
-print '<td class="right"><input type="radio" name="key" value="LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS"'.(($conf->global->LDAP_KEY_MEMBERS_TYPES && $conf->global->LDAP_KEY_MEMBERS_TYPES == $conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS) ? ' checked' : '')."></td>";
+print '<td class="right"><input type="radio" name="key" value="LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS"'.((getDolGlobalString('LDAP_KEY_MEMBERS_TYPES') && getDolGlobalString('LDAP_KEY_MEMBERS_TYPES') == getDolGlobalString('LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS')) ? ' checked' : '')."></td>";
 print '</tr>';
 
 print '</table>';

@@ -1,8 +1,10 @@
 <?php
-/* Copyright (C) 2015 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014 Juanjo Menent	      <jmenent@2byte.es>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024  Christophe Battarel	<christophe@altairis.fr>
+/* Copyright (C) 2015       Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2014       Juanjo Menent	        <jmenent@2byte.es>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024       Christophe Battarel	    <christophe@altairis.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -34,6 +36,12 @@ require_once DOL_DOCUMENT_ROOT."/reception/class/reception.class.php";
  */
 class ReceptionLineBatch extends CommonObjectLine
 {
+	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'LINERECEPTION'; 	// to be overridden in child class implementations, i.e. 'BILL', 'TASK', 'PROPAL', etc.
+
 	/**
 	 * @var DoliDB Database handler.
 	 */
@@ -100,11 +108,29 @@ class ReceptionLineBatch extends CommonObjectLine
 	 */
 	public $qty_asked;
 
+	/**
+	 * @var string
+	 */
 	public $libelle;
+	/**
+	 * @var string
+	 */
 	public $label;
+	/**
+	 * @var string
+	 */
 	public $desc;
+	/**
+	 * @var float
+	 */
 	public $tva_tx;
+	/**
+	 * @var string
+	 */
 	public $vat_src_code;
+	/**
+	 * @var string
+	 */
 	public $ref_supplier;
 
 	/**
@@ -117,7 +143,13 @@ class ReceptionLineBatch extends CommonObjectLine
 	 */
 	public $fk_user;
 
+	/**
+	 * @var int|string
+	 */
 	public $datec = '';
+	/**
+	 * @var string
+	 */
 	public $comment;
 
 	/**
@@ -125,9 +157,21 @@ class ReceptionLineBatch extends CommonObjectLine
 	 */
 	public $status;
 
+	/**
+	 * @var string
+	 */
 	public $batch;
-	public $eatby = '';
-	public $sellby = '';
+	/**
+	 * @var ?int
+	 */
+	public $eatby = null;
+	/**
+	 * @var ?int
+	 */
+	public $sellby = null;
+	/**
+	 * @var int|float
+	 */
 	public $cost_price = 0;
 
 
@@ -234,8 +278,8 @@ class ReceptionLineBatch extends CommonObjectLine
 		$sql .= " ".(!isset($this->comment) ? 'NULL' : "'".$this->db->escape($this->comment)."'").",";
 		$sql .= " ".(!isset($this->status) ? 'NULL' : (int) $this->status).",";
 		$sql .= " ".(!isset($this->batch) ? 'NULL' : "'".$this->db->escape($this->batch)."'").",";
-		$sql .= " ".(!isset($this->eatby) || dol_strlen($this->eatby) == 0 ? 'NULL' : "'".$this->db->idate($this->eatby)."'").",";
-		$sql .= " ".(!isset($this->sellby) || dol_strlen($this->sellby) == 0 ? 'NULL' : "'".$this->db->idate($this->sellby)."'").",";
+		$sql .= " ".(!isset($this->eatby) || dol_strlen((string) $this->eatby) == 0 ? 'NULL' : "'".$this->db->idate($this->eatby)."'").",";
+		$sql .= " ".(!isset($this->sellby) || dol_strlen((string) $this->sellby) == 0 ? 'NULL' : "'".$this->db->idate($this->sellby)."'").",";
 		$sql .= " ".((int) $this->fk_reception).",";
 		$sql .= " ".(!isset($this->cost_price) ? '0' : (float) $this->cost_price);
 		$sql .= ")";
@@ -415,10 +459,10 @@ class ReceptionLineBatch extends CommonObjectLine
 		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
 		$sql .= " comment=".(isset($this->comment) ? "'".$this->db->escape($this->comment)."'" : "null").",";
 		$sql .= " status=".(isset($this->status) ? $this->status : "null").",";
-		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
+		$sql .= " tms=".(dol_strlen((string) $this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " batch=".(isset($this->batch) ? "'".$this->db->escape($this->batch)."'" : "null").",";
-		$sql .= " eatby=".(dol_strlen($this->eatby) != 0 ? "'".$this->db->idate($this->eatby)."'" : 'null').",";
-		$sql .= " sellby=".(dol_strlen($this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null');
+		$sql .= " eatby=".(dol_strlen((string) $this->eatby) != 0 ? "'".$this->db->idate($this->eatby)."'" : 'null').",";
+		$sql .= " sellby=".(dol_strlen((string) $this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null');
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -655,8 +699,8 @@ class ReceptionLineBatch extends CommonObjectLine
 		$this->status = 0;
 		$this->tms = dol_now();
 		$this->batch = '';
-		$this->eatby = '';
-		$this->sellby = '';
+		$this->eatby = null;
+		$this->sellby = null;
 
 		return 1;
 	}
@@ -668,7 +712,7 @@ class ReceptionLineBatch extends CommonObjectLine
 	 * @param string 		$sortfield 		Sort field
 	 * @param int    		$limit     		limit
 	 * @param int    		$offset    		offset limit
-	 * @param string|array  $filter    		filter array
+	 * @param string|array<string,mixed>  $filter    		filter array
 	 * @param string 		$filtermode 	filter mode (AND or OR)
 	 * @return 								int Return integer <0 if KO, >0 if OK
 	 */

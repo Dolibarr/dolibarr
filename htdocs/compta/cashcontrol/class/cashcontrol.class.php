@@ -3,8 +3,8 @@
  * Copyright (C) 2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018 Andreu Bisquerra     <jove@bisquerra.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ class CashControl extends CommonObject
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -72,19 +72,19 @@ class CashControl extends CommonObject
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
 	public $fields = array(
-	'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 10),
+	'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
 	'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 15),
 	'ref' => array('type' => 'varchar(64)', 'label' => 'Ref', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 18),
 	'posmodule' => array('type' => 'varchar(30)', 'label' => 'Module', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 19),
-	'posnumber' => array('type' => 'varchar(30)', 'label' => 'Terminal', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 20, 'css' => 'center'),
+	'posnumber' => array('type' => 'varchar(30)', 'label' => 'Terminal', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 20, 'csslist' => 'width50 center'),
 	'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => 0, 'position' => 24),
 	'opening' => array('type' => 'price', 'label' => 'Opening', 'enabled' => 1, 'visible' => 1, 'position' => 25, 'csslist' => 'amount'),
 	'cash' => array('type' => 'price', 'label' => 'Cash', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'csslist' => 'amount'),
 	'cheque' => array('type' => 'price', 'label' => 'Cheque', 'enabled' => 1, 'visible' => 1, 'position' => 33, 'csslist' => 'amount'),
 	'card' => array('type' => 'price', 'label' => 'CreditCard', 'enabled' => 1, 'visible' => 1, 'position' => 36, 'csslist' => 'amount'),
-	'year_close' => array('type' => 'integer', 'label' => 'Year close', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 50, 'css' => 'center'),
-	'month_close' => array('type' => 'integer', 'label' => 'Month close', 'enabled' => 1, 'visible' => 1, 'position' => 55, 'css' => 'center'),
-	'day_close' => array('type' => 'integer', 'label' => 'Day close', 'enabled' => 1, 'visible' => 1, 'position' => 60, 'css' => 'center'),
+	'year_close' => array('type' => 'integer', 'label' => 'Year', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 50, 'css' => 'center'),
+	'month_close' => array('type' => 'integer', 'label' => 'Month', 'enabled' => 1, 'visible' => 1, 'position' => 55, 'css' => 'center'),
+	'day_close' => array('type' => 'integer', 'label' => 'Day', 'enabled' => 1, 'visible' => 1, 'position' => 60, 'css' => 'center'),
 	'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500),
 	'date_valid' => array('type' => 'datetime', 'label' => 'DateValidation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 502),
 	'tms' => array('type' => 'timestamp', 'label' => 'Tms', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 505),
@@ -98,33 +98,75 @@ class CashControl extends CommonObject
 	 * @var int Object Id
 	 */
 	public $id;
+
+	/**
+	 * @var string Label
+	 */
 	public $label;
+
+	/**
+	 * @var float Amount at opening
+	 */
 	public $opening;
+
+	/**
+	 * @var int Status
+	 */
 	public $status;
+
+	/**
+	 * @var int Year close
+	 */
 	public $year_close;
+
+	/**
+	 * @var int Month close
+	 */
 	public $month_close;
+
+	/**
+	 * @var int Day close
+	 */
 	public $day_close;
+
+	/**
+	 * @var string posmodule
+	 */
 	public $posmodule;
+
+	/**
+	 * @var string posnumber
+	 */
 	public $posnumber;
+
+	/**
+	 * @var float Cash amount
+	 */
 	public $cash;
+
+	/**
+	 * @var float cheque amount
+	 */
 	public $cheque;
+
+	/**
+	 * @var float Card amountS
+	 */
 	public $card;
 
 	/**
-	 * @var integer|string date_creation
+	 * @var int User ID create
 	 */
-	public $date_creation;
 	public $fk_user_creat;
 
 	/**
-	 * @var integer|string $date_modification
-	 */
-	public $date_modification;
-
-	/**
-	 * @var integer|string $date_valid
+	 * @var int|''
 	 */
 	public $date_valid;
+
+	/**
+	 * @var int User ID
+	 */
 	public $fk_user_valid;
 
 
@@ -258,7 +300,7 @@ class CashControl extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."pos_cash_fence";
 		$sql .= " SET status = ".self::STATUS_VALIDATED.",";
 		$sql .= " date_valid='".$this->db->idate($now)."',";
-		$sql .= " fk_user_valid = ".$user->id;
+		$sql .= " fk_user_valid = ".((int) $user->id);
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -379,7 +421,7 @@ class CashControl extends CommonObject
 	}
 
 	/**
-	 *  Return clicable link of object (with eventually picto)
+	 *  Return clickable link of object (with eventually picto)
 	 *
 	 *  @param  int     $withpicto                  Add picto into link
 	 *  @param  string  $option                     On what the link point to ('nolink', ...)
@@ -421,9 +463,9 @@ class CashControl extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -457,11 +499,11 @@ class CashControl extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -476,7 +518,7 @@ class CashControl extends CommonObject
 		//var_dump($this->fields['rowid']);exit;
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1, 1) : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1, '', 1) : $this->ref).'</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}

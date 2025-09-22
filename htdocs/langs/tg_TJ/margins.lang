@@ -6,6 +6,7 @@ TotalMargin=Маржаи умумӣ
 MarginOnProducts=Маржа / Маҳсулот
 MarginOnServices=Маржа / Хизматҳо
 MarginRate=Меъёри маржа
+ModifyMarginRates=Тағир додани меъёрҳои маржа
 MarkRate=Нархи меъёр
 DisplayMarginRates=Меъёрҳои маржа нишон диҳед
 DisplayMarkRates=Нишон додани сатҳи нишондиҳандаҳо
@@ -22,7 +23,7 @@ ProductService=Маҳсулот ё Хизмат
 AllProducts=Ҳама маҳсулот ва хидматҳо
 ChooseProduct/Service=Маҳсулот ё хидматро интихоб кунед
 ForceBuyingPriceIfNull=Маблағи харидан/арзиши хароҷот ба нархи фурӯш, агар муайян нашуда бошад
-ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
+ForceBuyingPriceIfNullDetails=Агар ҳангоми илова кардани сатри нав нархи харид/арзиш пешбинӣ нашуда бошад ва ин хосият "фаъол" бошад, маржа дар хати нав 0%% хоҳад буд (нархи харид/арзиш = нархи фурӯш). Агар ин хосият "ХОМӯш" бошад (тавсия дода мешавад), маржа ба арзиши аз рӯи пешфарз пешниҳодшуда баробар хоҳад буд (ва агар арзиши пешфарз пайдо нашавад, метавонад 100%% бошад).
 MARGIN_METHODE_FOR_DISCOUNT=Усули маржа барои тахфифҳои глобалӣ
 UseDiscountAsProduct=Ҳамчун маҳсулот
 UseDiscountAsService=Ҳамчун хидмат
@@ -37,7 +38,7 @@ CostPrice=Нархи арзиши
 UnitCharges=Хароҷоти воҳид
 Charges=Пардохтҳо
 AgentContactType=Навъи тамос бо агенти тиҷоратӣ
-AgentContactTypeDetails=Муайян кунед, ки кадом намуди тамос (дар ҳисобнома -фактураҳо пайванд карда шудааст) барои гузориши маржа барои як тамос/суроға истифода мешавад. Аҳамият диҳед, ки хондани омор дар тамос эътимоднок нест, зеро дар аксари ҳолатҳо тамосро дар фактураҳо возеҳ муайян кардан мумкин нест.
+AgentContactTypeDetails=Муайян кунед, ки кадом намуди тамос (дар ҳисобномаҳо алоқаманд аст) барои ҳисоботи маржа дар як тамос/суроға истифода мешавад. Аҳамият диҳед, ки хондани омор дар бораи мухотибон эътимоднок нест, зеро дар аксари ҳолатҳо тамос дар ҳисобнома-фактураҳо ба таври возеҳ муайян карда намешавад.
 rateMustBeNumeric=Нарх бояд арзиши рақамӣ бошад
 markRateShouldBeLesserThan100=Меъёри нишондиҳанда бояд аз 100 камтар бошад
 ShowMarginInfos=Маълумоти маржа нишон диҳед

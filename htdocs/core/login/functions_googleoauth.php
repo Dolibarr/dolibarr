@@ -53,7 +53,7 @@ function check_user_password_googleoauth($usertotest, $passwordtotest, $entityto
 
 			// We save data of form into a variable
 			$_SESSION['datafromloginform'] = array(
-				'entity'=>GETPOSTINT('entity'),
+				'entity'=>GETPOST('entity', 'int'), // avoid to return 0 if entity var not exists
 				'backtopage'=>GETPOST('backtopage'),
 				'tz'=>GETPOST('tz'),
 				'tz_string'=>GETPOST('tz_string'),

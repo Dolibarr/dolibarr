@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("mrp", "companies", "other", "mails"));
 
@@ -43,7 +52,7 @@ $ref = GETPOST('ref', 'alpha');
 // Security check - Protection if external user
 // if ($user->socid > 0) accessforbidden();
 // if ($user->socid > 0) $socid = $user->socid;
-// $result = restrictedArea($user, 'bom', $id);
+// restrictedArea($user, 'bom', $id);
 
 // Load variables for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -64,17 +73,18 @@ if (!$sortfield) {
 }
 //if (! $sortfield) $sortfield="position_name";
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new BOM($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction = $conf->bom->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = getMultidirOutput($object) . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('bomdocument', 'globalcard')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 
+$upload_dir = null;
 if ($id > 0 || !empty($ref)) {
 	$upload_dir = $conf->bom->multidir_output[$object->entity ? $object->entity : 1]."/".get_exdir(0, 0, 0, 1, $object);
 }
@@ -108,13 +118,13 @@ $morehtmlref = "";
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bom page-card_documents');
 
-if ($object->id) {
+if ($object->id && $upload_dir !== null) {
 	/*
 	 * Show tabs
 	 */
 	$head = bomPrepareHead($object);
 
-	print dol_get_fiche_head($head, 'document', $langs->trans("BillOfMaterials"), -1, 'bom');
+	print dol_get_fiche_head($head, 'document', $langs->trans("BillOfMaterials"), -1, $object->picto);
 
 
 	// Build file list

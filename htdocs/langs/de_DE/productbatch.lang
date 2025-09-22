@@ -6,8 +6,8 @@ ProductStatusNotOnBatch=Nein (keine Chargen-/Serien-Nr.)
 ProductStatusOnBatchShort=Los
 ProductStatusOnSerialShort=Seriennummer
 ProductStatusNotOnBatchShort=Keine
-BatchSellOrEatByMandatoryList= %s oder %s ist zwingend notwendig
-BatchSellOrEatByMandatoryNone=keine Muttergesellschaft
+BatchSellOrEatByMandatoryList= %s oder %s benutzen
+BatchSellOrEatByMandatoryNone=Nein (kein Verfalls- oder Haltbarkeitsdatum)
 BatchSellOrEatByMandatoryAll=%s und %s
 Batch=Charge/Seriennr.
 atleast1batchfield="Verzehr bis" oder "Verkaufen bis"-Datum oder Chargen- / Seriennummer
@@ -50,3 +50,5 @@ ToReplace=Ersetzen
 CantMoveNonExistantSerial=Fehler. Sie bitten um die Versendung für einen Datensatzes mit einer Seriennummer, die nicht mehr existiert. Möglicherweise verwenden Sie dieselbe Seriennummer mehrmals in derselben Sendung aus demselben Lager oder sie wurde von einer anderen Sendung verwendet. Entfernen Sie diese Sendung und bereiten Sie eine andere vor.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Chargen-Tabelle unvollständig, Reparatur mit URL-Parameter '...repair.php?standard=confirmed' durchführen
 IlligalQtyForSerialNumbers= Lagerbestandskorrektur erforderlich, da eindeutige Seriennummer.
+ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must also be managed in stock.
+ForceBatchesNeedStockManagement=Ein Produkt mit Los-/Chargen-Management muss im Lagerbestand verwaltet werden (Lagerbestand-Management auf „Ja“ setzen).

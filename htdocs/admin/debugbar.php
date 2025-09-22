@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2005-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2013	   Juanjo Menent        <jmenent@2byte.es>
+/* Copyright (C) 2005-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2007       Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2013	    Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,13 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-global $conf;
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 if (!$user->admin) {
 	accessforbidden();
@@ -60,7 +67,7 @@ if ($action == 'set') {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	} else {
 		$db->rollback();
-		setEventMessages($error, null, 'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -73,7 +80,8 @@ llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-debugbar');
 
 $form = new Form($db);
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("DebugBarSetup"), $linkback, 'title_setup');
 
 if (!function_exists('mb_check_encoding')) {
@@ -90,7 +98,7 @@ print '<input type="hidden" name="action" value="set">';
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td>';
+print '<td>'.$langs->trans("Parameter").'</td><td></td>';
 print '<td class="right"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 
@@ -102,7 +110,7 @@ print '<span class="opacitymedium"> '.$langs->trans("UsingLogFileShowAllRecordOf
 print '</td></tr>';
 
 print '<tr class="oddeven"><td class="nowrap">'.$langs->trans("DEBUGBAR_LOGS_LINES_NUMBER").'</td>';
-print '<td><input type="text" class="flat width75" name="DEBUGBAR_LOGS_LINES_NUMBER" value="'.(!getDolGlobalString('DEBUGBAR_LOGS_LINES_NUMBER') ? 250 : $conf->global->DEBUGBAR_LOGS_LINES_NUMBER).'">'; // This slow seriously output
+print '<td><input type="text" class="flat width75" name="DEBUGBAR_LOGS_LINES_NUMBER" value="'.getDolGlobalString('DEBUGBAR_LOGS_LINES_NUMBER', '250').'">'; // This slow seriously output
 print '</td><td>';
 print '<span class="opacitymedium">'.$langs->trans("WarningValueHigherSlowsDramaticalyOutput").'</span>';
 print '</td></tr>';

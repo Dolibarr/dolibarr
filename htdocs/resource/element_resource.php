@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2013-2018	Jean-François Ferry	<hello+jf@librethic.io>
- * Copyright (C) 2016		Gilles Poirier 		<glgpoirier@gmail.com>
- * Copyright (C) 2019		Josep Lluís Amador	<joseplluis@lliuretic.cat>
- * Copyright (C) 2021		Frédéric France		<frederic.france@netlogic.fr>
+/* Copyright (C) 2013-2018	Jean-François Ferry		<hello+jf@librethic.io>
+ * Copyright (C) 2016		Gilles Poirier 			<glgpoirier@gmail.com>
+ * Copyright (C) 2019		Josep Lluís Amador		<joseplluis@lliuretic.cat>
+ * Copyright (C) 2021-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,13 +40,21 @@ if (isModEnabled("product") || isModEnabled("service")) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('resource', 'other', 'interventions'));
 
 /*
-$sortorder                      = GETPOST('sortorder','alpha');
-$sortfield                      = GETPOST('sortfield','alpha');
-$page                           = GETPOST('page','int');
+$sortorder = GETPOST('sortorder','alpha');
+$sortfield = GETPOST('sortfield','alpha');
+$page = GETPOST('page','int');
 */
 
 $object = new Dolresource($db);
@@ -96,7 +105,7 @@ if ($element == 'product' || $element == 'service') {	// When RESOURCE_ON_PRODUC
 	$tmpobject = new Product($db);
 	$tmpobject->fetch($element_id);
 	$fieldtype = $tmpobject->type;
-	$result = restrictedArea($user, 'produit|service', $element_id, 'product&product', '', '', $fieldtype);
+	$result = restrictedArea($user, 'produit|service', $element_id, 'product&product', '', '', (string) $fieldtype);
 }
 
 
@@ -112,6 +121,7 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	$error = 0;
+	$objstat = null;
 
 	if ($action == 'add_element_resource' && !$cancel) {
 		$res = 0;
@@ -126,6 +136,8 @@ if (empty($reshook)) {
 			// TODO : add this check at update_linked_resource and when modifying event start or end date
 			// check if an event resource is already in use
 			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $objstat->element == 'action' && $resource_type == 'dolresource' && intval($busy) == 1) {
+				/** @var ActionComm $objstat */
+				'@phan-var-force ActionComm $objstat';
 				$eventDateStart = $objstat->datep;
 				$eventDateEnd   = $objstat->datef;
 				$isFullDayEvent = $objstat->fulldayevent;
@@ -133,7 +145,7 @@ if (empty($reshook)) {
 					if ($isFullDayEvent) {
 						$eventDateStartArr = dol_getdate($eventDateStart);
 						$eventDateStart = dol_mktime(0, 0, 0, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
-						$eventDateEnd   = dol_mktime(23, 59, 59, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
+						$eventDateEnd = dol_mktime(23, 59, 59, $eventDateStartArr['mon'], $eventDateStartArr['mday'], $eventDateStartArr['year']);
 					}
 				}
 
@@ -184,7 +196,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if (!$error && $res > 0) {
+		if (!$error && $res > 0 && is_object($objstat)) {
 			setEventMessages($langs->trans('ResourceLinkedWithSuccess'), null, 'mesgs');
 			header("Location: ".$_SERVER['PHP_SELF'].'?element='.$element.'&element_id='.$objstat->id);
 			exit;
@@ -194,16 +206,16 @@ if (empty($reshook)) {
 	}
 
 	// Update resource
-	if ($action == 'update_linked_resource' && $user->hasRight('resource', 'write') && !GETPOST('cancel', 'alpha')) {
+	if ($action == 'update_linked_resource' && $user->hasRight('resource', 'write') && !$cancel) {
 		$res = $object->fetchElementResource($lineid);
 		if ($res) {
 			$object->busy = $busy;
 			$object->mandatory = $mandatory;
 
-			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $object->element_type == 'action' && $object->resource_type == 'dolresource' && intval($object->busy) == 1) {
-				$eventDateStart = $object->objelement->datep;
-				$eventDateEnd   = $object->objelement->datef;
-				$isFullDayEvent = $objstat->fulldayevent;
+			if (getDolGlobalString('RESOURCE_USED_IN_EVENT_CHECK') && $object->objelement instanceof ActionComm && $object->element_type == 'action' && $object->resource_type == 'dolresource' && intval($object->busy) == 1) {
+				$eventDateStart = $object->objelement->datep;  // @phan-suppress-current-line PhanUndeclaredProperty
+				$eventDateEnd   = $object->objelement->datef;  // @phan-suppress-current-line PhanUndeclaredProperty
+				$isFullDayEvent = $object->objelement->fulldayevent; // @phan-suppress-current-line PhanUndeclaredProperty
 				if (empty($eventDateEnd)) {
 					if ($isFullDayEvent) {
 						$eventDateStartArr = dol_getdate($eventDateStart);
@@ -239,7 +251,7 @@ if (empty($reshook)) {
 				$resql = $db->query($sql);
 				if (!$resql) {
 					$error++;
-					$object->error    = $db->lasterror();
+					$object->error = $db->lasterror();
 					$object->errors[] = $object->error;
 				} else {
 					if ($db->num_rows($resql) > 0) {
@@ -249,7 +261,7 @@ if (empty($reshook)) {
 						while ($obj = $db->fetch_object($resql)) {
 							$object->error .= '<br> - '.$langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label.' ['.$obj->ac_id.']');
 						}
-						$object->errors[] = $objstat->error;
+						$object->errors[] = $object->error;
 					}
 					$db->free($resql);
 				}
@@ -274,19 +286,24 @@ if (empty($reshook)) {
 
 	// Delete a resource linked to an element
 	if ($action == 'confirm_delete_linked_resource' && $user->hasRight('resource', 'delete') && $confirm === 'yes') {
-		$result = $object->delete_resource($lineid, $element);
+		$res = $object->fetchElementResource($lineid); // to have correct object deleting resource
+		if ($res) {
+			$result = $object->objelement->delete_resource($lineid, '');
 
-		if ($result >= 0) {
-			setEventMessages($langs->trans('RessourceLineSuccessfullyDeleted'), null, 'mesgs');
-			header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
-			exit;
+			if ($result >= 0) {
+				setEventMessages($langs->trans('RessourceLineSuccessfullyDeleted'), null, 'mesgs');
+				header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
+				exit;
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 }
 
-$parameters = array('resource_id'=>$resource_id);
+$parameters = array('resource_id' => $resource_id);
 $reshook = $hookmanager->executeHooks('getElementResources', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -305,7 +322,7 @@ $help_url = '';
 llxHeader('', $pagetitle, $help_url, '', 0, 0, '', '', '', 'mod-resource page-element_resource');
 
 $now = dol_now();
-$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO * 24 * 60 * 60;
+$delay_warning = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO') * 24 * 60 * 60;
 
 // Load available resource, declared by modules
 $ret = count($object->available_resources);
@@ -326,11 +343,12 @@ if (!$ret) {
 	if (($element_id || $element_ref) && $element == 'action') {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 
-		// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+		// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 		$hookmanager->initHooks(array('actioncard', 'globalcard'));
 
 		$act = fetchObjectByElement($element_id, $element, $element_ref);
 		if (is_object($act)) {
+			'@phan-var-force ActionComm $act';
 			$head = actions_prepare_head($act);
 
 			print dol_get_fiche_head($head, 'resources', $langs->trans("Action"), -1, 'action');
@@ -383,12 +401,12 @@ if (!$ret) {
 			if (isModEnabled('project')) {
 				$langs->load("projects");
 				//$morehtmlref .= '<br>';
-				if (0) {
+				if (0) {	// @phpstan-ignore-line
 					$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 					if ($action != 'classify') {
 						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 					}
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 				} else {
 					if (!empty($object->fk_project)) {
 						$proj = new Project($db);
@@ -459,7 +477,7 @@ if (!$ret) {
 			$listofuserid = array();
 			if (empty($donotclearsession)) {
 				if ($act->userownerid > 0) {
-					$listofuserid[$act->userownerid] = array('id'=>$act->userownerid, 'transparency'=>$act->transparency); // Owner first
+					$listofuserid[$act->userownerid] = array('id' => $act->userownerid, 'transparency' => $act->transparency); // Owner first
 				}
 				if (!empty($act->userassigned)) {	// Now concat assigned users
 					// Restore array with key with same value than param 'id'
@@ -480,7 +498,7 @@ if (!$ret) {
 			$listofcontactid = array(); // not used yet
 			$listofotherid = array(); // not used yet
 			print '<div class="assignedtouser">';
-			print $form->select_dolusers_forevent('view', 'assignedtouser', 1, '', 0, '', '', 0, 0, 0, '', ($act->datep != $act->datef) ? 1 : 0, $listofuserid, $listofcontactid, $listofotherid);
+			print $form->select_dolusers_forevent('view', 'assignedtouser', 1, array(), 0, '', array(), '0', 0, 0, '', ($act->datep != $act->datef) ? 1 : 0, $listofuserid, $listofcontactid, $listofotherid);
 			print '</div>';
 			/*if (in_array($user->id,array_keys($listofuserid)))
 			{
@@ -502,6 +520,8 @@ if (!$ret) {
 	if (($element_id || $element_ref) && $element == 'societe') {
 		$socstatic = fetchObjectByElement($element_id, $element, $element_ref);
 		if (is_object($socstatic)) {
+			'@phan-var-force Societe $socstatic';
+			/** @var Societe $socstatic */
 			$savobject = $object;
 			$object = $socstatic;
 
@@ -554,8 +574,8 @@ if (!$ret) {
 			// Ref customer
 			//$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, $user->rights->ficheinter->creer, 'string', '', 0, 1);
 			//$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, $user->rights->ficheinter->creer, 'string', '', null, null, '', 1);
-			$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, 0, 'string', '', 0, 1);
-			$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, 0, 'string', '', null, null, '', 1);
+			$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, 0, 'string', '', 0, 1);
+			$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $fichinter->ref_client, $fichinter, 0, 'string', '', null, null, '', 1);
 			// Thirdparty
 			$morehtmlref .= '<br>'.$fichinter->thirdparty->getNomUrl(1, 'customer');
 			// Project
@@ -567,7 +587,7 @@ if (!$ret) {
 					if ($action != 'classify') {
 						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$fichinter->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 					}
-					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, $fichinter->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+					$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$fichinter->id, $fichinter->socid, (string) $fichinter->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 				} else {
 					if (!empty($fichinter->fk_project)) {
 						$proj = new Project($db);
@@ -613,7 +633,7 @@ if (!$ret) {
 
 
 	// hook for other elements linked
-	$parameters = array('element'=>$element, 'element_id'=>$element_id, 'element_ref'=>$element_ref);
+	$parameters = array('element' => $element, 'element_id' => $element_id, 'element_ref' => $element_ref);
 	$reshook = $hookmanager->executeHooks('printElementTab', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');

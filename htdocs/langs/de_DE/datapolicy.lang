@@ -17,8 +17,10 @@ Module4100Name = Datenschutzrichtlinien
 Module4100Desc = Modul zur Verwaltung der Datenschutzeinstellungen (DSGVO-Konform)
 # Administration page
 datapolicySetup = Modul Datenschutzrichtlinien einrichten
-Deletion = Löschung von Daten
-datapolicySetupPage = Abhängig von den Gesetzen Ihres Landes (Beispiel <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Artikel 5</a> der DSGVO) dürfen personenbezogene Daten nur für einen Zeitraum aufbewahrt werden, der den für die Zwecke erforderlichen Zeitraum, für die sie erhoben wurden, nicht überschreitet, mit Ausnahme von Archivierungszwecken.<br>Die Löschung erfolgt automatisch nach einer bestimmten Dauer ohne Ereignisse (die Dauer, die Sie unten angegeben haben).
+DataDeletion=Löschung von Daten
+DataAnonymization=Anonymisierung von Daten
+DataAnonymizationOrDeletion=Anonymisierung oder Löschung von Daten
+datapolicySetupPage = Abhängig von den Gesetzen Ihres Landes (Beispiel <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Artikel 5</a> der DSGVO) dürfen personenbezogene Daten nicht länger aufbewahrt werden, als die Dauer, für die die Daten für den Zweck, für den sie erhoben wurden, benötigt werden, mit Ausnahme von Archivierungszwecken.<br>Dieses Modul wird nach einer festgelegten Zeitspanne ohne Ereignisse (die Dauer, die Sie unten angeben) und wenn das Objekt keine existierenden Kind-Objekte hat, automatisch eine Anonymisierung vornehmen.
 NB_MONTHS = %s Monate
 ONE_YEAR = 1 Jahr
 NB_YEARS = %s Jahre
@@ -33,12 +35,15 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Interessent/Kunde
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Weder Interessent noch Kunde
 DATAPOLICY_CONTACT_FOURNISSEUR = Lieferant
 DATAPOLICY_ADHERENT = Mitglied
-DATAPOLICY_Tooltip_SETUP=Zeit ohne Interaktion festlegen, nach deren Ablauf der Datensatz automatisch gelöscht werden soll.
+DATAPOLICY_RECRUITMENT_CANDIDATURE = Bewerbung
+DATAPOLICY_Tooltip_SETUP=Die Anonymisierung wird durch den geplanten Job "%s" durchgeführt, der von Modul "%s" ausgeführt wird. Daher muss dieses Modul aktiviert sein und korrekt funktionieren.
 SendAgreementText = Sie können eine DSGVO-E-Mail an alle Ihre relevanten Kontakte senden (die noch keine E-Mail erhalten haben und für die Sie nichts über ihre DSGVO-Vereinbarung registriert haben). Verwenden Sie dazu die folgende Schaltfläche.
 SendAgreement = E-Mails senden
 AllAgreementSend = Alle E-Mails wurden versendet
 TXTLINKDATAPOLICYACCEPT = Text für den Link "Zustimmung"
 TXTLINKDATAPOLICYREFUSE = Text für den Link "Ablehnung"
+DelayForAnonymization=Zeit bis zur Anonymisierung
+DelayForDeletion=Zeit bis zur Löschung
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = DSGVO: Verarbeitung personenbezogener Daten
 DATAPOLICY_consentement = Einwilligung zur Verarbeitung personenbezogener Daten eingeholt
@@ -49,3 +54,6 @@ DATAPOLICY_date = Datum der Zustimmung/Ablehnung DSGVO
 DATAPOLICY_send = Datum, an dem die Vereinbarungs-E-Mail gesendet wurde
 MailSent = Die Email wurde verschickt
 NUMBER_MONTH_BEFORE_DELETION = Anzahl der Monate bis zum Löschen
+TheFollowingFieldsAreReplaceWith=Einige Felder werden durch einen eindeutigen Wert ersetzt:
+OtherFieldsAreReplaceWithStaticValues=Einige andere Felder werden durch einen statischen Wert ersetzt:
+QualifiedNumber=Qualifizierte Zahl

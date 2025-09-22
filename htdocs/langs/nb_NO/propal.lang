@@ -23,7 +23,10 @@ AllPropals=Alle tilbud
 SearchAProposal=Søk i tilbud
 NoProposal=Ingen tilbud
 ProposalsStatistics=Tilbudsstatistikk
+NumberOfProposals=Antall tilbud
 NumberOfProposalsByMonth=Antall tilbud pr måned
+AmountOfProposals=Beløp i tilbud
+AmountOfProposalsHT=Beløp i tilbud (ekskl. mva.)
 AmountOfProposalsByMonthHT=Beløp per måned (ekskl. MVA)
 NbOfProposals=Antall tilbud
 ShowPropal=Vis tilbud
@@ -77,13 +80,11 @@ AvailabilityTypeAV_1W=1 uke
 AvailabilityTypeAV_2W=2 uker
 AvailabilityTypeAV_3W=3 uker
 AvailabilityTypeAV_1M=En måned
-
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Representant for oppfølging av tilbud
 TypeContact_propal_external_BILLING=Kundekontakt faktura
 TypeContact_propal_external_CUSTOMER=Kundens tilbudsoppfølger
 TypeContact_propal_external_SHIPPING=Kundekontakt for levering
-
 # Document models
 CantBeNoSign=kan ikke settes til ikke signert
 CaseFollowedBy=Sak fulgt av
@@ -122,3 +123,7 @@ SignSociete_rib=Signer mandat
 SignPropal=Godta tilbudet
 Signed=signert
 SignedOnly=Kun signert
+ExpeditionSigned=Forsendelse signert
+SignExpedition=Signer forsendelse
+PROPOSAL_SHOW_SHIPPING_ADDRESS=Vis leveringsadresse
+PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Obligatorisk indikasjon i noen land (Frankrike, ...)

@@ -1,9 +1,8 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2021  Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) ---Put here your own copyright and developer email---
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +63,7 @@ class StockTransferLine extends CommonObjectLine
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -82,7 +81,7 @@ class StockTransferLine extends CommonObjectLine
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'comment' => "Id"),
@@ -96,17 +95,38 @@ class StockTransferLine extends CommonObjectLine
 		'pmp' => array('type' => 'double'/*, 'help'=>'THMEstimatedHelp'*/, 'label' => 'PMP', 'enabled' => 1, 'position' => 50, 'notnull' => 0, 'visible' => 1,),
 		'rang' => array('type' => 'integer', 'label' => 'Qty', 'enabled' => 1, 'position' => 45, 'notnull' => 0, 'visible' => 0, 'default' => '0', 'isameasure' => 1, 'css' => 'maxwidth75imp', 'help' => "Help text for quantity",),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var float
+	 */
 	public $amount;
 
 	/**
 	 * @var float Quantity
 	 */
 	public $qty;
+	/**
+	 * @var int
+	 */
 	public $fk_warehouse_destination;
+	/**
+	 * @var int
+	 */
 	public $fk_warehouse_source;
+	/**
+	 * @var int
+	 */
 	public $fk_stocktransfer;
+	/**
+	 * @var int
+	 */
 	public $fk_product;
+	/**
+	 * @var string
+	 */
 	public $batch;
 
 	/**
@@ -436,7 +456,7 @@ class StockTransferLine extends CommonObjectLine
 				$user,
 				$p->id,
 				$fk_entrepot,
-				$op[$direction],
+				(float) $op[$direction],
 				$direction,
 				empty($direction) ? $this->pmp : 0,
 				$label,
@@ -463,7 +483,7 @@ class StockTransferLine extends CommonObjectLine
 					$user,
 					$p->id,
 					$fk_entrepot,
-					$op[$direction],
+					(float) $op[$direction],
 					$direction,
 					empty($direction) ? $this->pmp : 0,
 					$label,
@@ -479,8 +499,8 @@ class StockTransferLine extends CommonObjectLine
 					return $result;
 				}
 			} else {
-				$this->error=$langs->trans('StockTransferNoBatchForProduct', $p->getNomUrl());
-				$this->errors[]= $this->error;
+				$this->error = $langs->trans('StockTransferNoBatchForProduct', $p->getNomUrl());
+				$this->errors[] = $this->error;
 				return -1;
 			}
 		}
@@ -525,7 +545,7 @@ class StockTransferLine extends CommonObjectLine
 		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
 			$num = $this->getNextNumRef();
 		} else {
-			$num = $this->ref;
+			$num = (string) $this->ref;
 		}
 		$this->newref = $num;
 
@@ -737,9 +757,9 @@ class StockTransferLine extends CommonObjectLine
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowStockTransferLine");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -912,13 +932,14 @@ class StockTransferLine extends CommonObjectLine
 				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
+				'@phan-var-force ModeleNumRefStockTransfer $obj';
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {
@@ -943,10 +964,10 @@ class StockTransferLine extends CommonObjectLine
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
 	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @param      int<0,1>	$hidedetails    Hide details of lines
+	 *  @param      int<0,1>	$hidedesc       Hide description
+	 *  @param      int<0,1>	$hideref        Hide ref
+	 *  @param      ?array<string,mixed>  $moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)

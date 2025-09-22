@@ -1,6 +1,8 @@
 <?php
-/* Copyright (C) 2009-2019	Laurent Destailleur	<eldy@users.sourceforge.org>
- * Copyright (C) 2011-2013  Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2009-2019	Laurent Destailleur		<eldy@users.sourceforge.org>
+ * Copyright (C) 2011-2013  Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +29,14 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Security check
 if (!$user->admin) {
@@ -83,7 +93,8 @@ $form = new Form($db);
 
 llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-geoipmaxmind');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("GeoIPMaxmindSetup"), $linkback, 'title_setup');
 print '<br>';
 
@@ -100,7 +111,7 @@ print '<input type="hidden" name="action" value="set">';
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td>';
+print '<td>'.$langs->trans("Parameter").'</td><td></td>';
 print '<td class="right"><input type="submit" class="button button-edit" value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 
@@ -108,7 +119,7 @@ print "</tr>\n";
 print '<tr class="oddeven"><td>'.$langs->trans("GeoIPLibVersion").'</td>';
 print '<td>';
 $arrayofvalues = array('php' => 'Native PHP functions', '1' => 'Embedded GeoIP v1', '2' => 'Embedded GeoIP v2');
-print $form->selectarray('geoipversion', $arrayofvalues, (isset($conf->global->GEOIP_VERSION) ? $conf->global->GEOIP_VERSION : '2'));
+print $form->selectarray('geoipversion', $arrayofvalues, getDolGlobalString('GEOIP_VERSION', '2'));
 if (getDolGlobalString('GEOIP_VERSION') == 'php') {
 	if ($geoip) {
 		$version = $geoip->getVersion();
@@ -130,7 +141,7 @@ if (getDolGlobalString('GEOIP_VERSION') == 'php') {
 	print 'Using geoip PHP internal functions. Value must be '.geoip_db_filename(GEOIP_COUNTRY_EDITION).' or '.geoip_db_filename(GEOIP_CITY_EDITION_REV1).' or /pathtodatafile/GeoLite2-Country.mmdb<br>';
 }
 print '<input type="text" class="minwidth200" name="GEOIPMAXMIND_COUNTRY_DATAFILE" value="'.dol_escape_htmltag(getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE')).'">';
-if (!file_exists($gimcdf)) {
+if (!file_exists(str_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, $gimcdf))) {
 	print '<div class="error">'.$langs->trans("ErrorFileNotFound", $gimcdf).'</div>';
 }
 print '</td><td>';
@@ -166,10 +177,11 @@ if ($geoip) {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 
+	$ip = '24.24.24.24';
+
 	print '<br><br>';
 	print '<br><span class="opacitymedium">'.$langs->trans("TestGeoIPResult", $ip).':</span>';
 
-	$ip = '24.24.24.24';
 	print '<br>'.$ip.' -> ';
 	$result = dol_print_ip($ip, 1);
 	if ($result) {

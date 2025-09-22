@@ -2,6 +2,615 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 23.0.0 compared to 22.0 *****
+
+For users:
+----------
+
+
+
+For developers:
+---------------
+
+
+
+WARNING:
+--------
+The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* The deprecated column egroupware_id has been dropped.
+* The property $sumpayed (duplicated of $totalpaid), $sumdeposit (duplicate of $totaldeposits) and $sumcreditnote (duplicate of $totalcreditnotes) has
+  been removed (there are replaced with the property that was a duplication of (same for $sumpayed_multicurrency, $sumdeposit_multicurrency, $sumcreditnote_multicurrency).
+* Parameters $maxlen and $notooltip of Contract have been inverted to follow the standard. It was breaking the common use of getNomUrl() but if you were using the parameter
+  maxlen (rare) by using the old signature, result may be a tooltip that is no more visible on ref printed by you module.
+* Removed array $MAP_ID_TO_CODE that was a duplicate of array "array_flip($categ->MAP_ID)"
+* The signature of the Sale order ->cancel() method and shipment ->cancel() has been modified to introduce the $user param like for other methods that modify a status.
+* Adding new document templates must be done by adding files into the mymodule/core/modules/xxx/doc directory. Adding files into custom directory with the
+  same path than the core path without using a mymodule directory is now forbidden.
+* The directory theme/common/octicons has been removed
+* The library timepicker.js has been removed. Was not used by Dolibarr.
+
+
+***** ChangeLog for 22.0.1 compared to 22.0.0 *****
+
+FIX: #34843 (#34875)
+FIX: #34936
+FIX: a Fatal error when a trigger files is not correctly named.
+FIX: array for arrayofkeyval is lost in module builder edit of property
+FIX: asset: could not select invoice in disposal pop-in (#34725)
+FIX: avoid php warning with "$forceFullTextIndexation" (#34881)
+FIX: bad consistency on test on permission to disable service
+FIX: Can edit status of tasks
+FIX: Create public ticket if email need exist. (#34965)
+FIX: DA026536: missing <br> in automatic e-mail (#34895)
+FIX: extrafields of type "int" not displayed on `projet/tasks.php` (#34896)
+FIX: Filter on the balance of leave
+FIX: Logo on company is no more visible.
+FIX: mailing destination list title (#34929)
+FIX: main checkbox left column was before global conf (#34858)
+FIX: Missing a column on group permissions
+FIX: several minor troubles with modulebuilder
+FIX: Test on mandatory product or thirdparty barcode
+FIX: trigger mailmanspip when un/linking categories
+FIX: Security when using Advanced Target page of emailing (feature hidden in v21, default in v22+). Possible
+     SQL injection by users with permission to make and send mass emailing.
+
+
+***** ChangeLog for 22.0.0 compared to 21.0 *****
+
+For users:
+----------
+NEW: Module WebPortal is moved as stable
+NEW: Subtotal module (#33502) - development
+NEW: shipment kits with dispatcher v2 (#33750)
+NEW: ticket : display files linked to actioncomm (#32325)
+NEW: Support of monthly or weekly recurring events
+NEW: AI feature to autofill extrafields
+NEW: Introduce the view "Kanban Grouped By" opportunity status in projects
+NEW: #32706 - Treasury accountancy (#33701)
+NEW: #33506 Add a constant to apply a ratio to resize images in ODT templates (#33543)
+NEW: Accountancy - Add centralized account (SQL & migration part) (#33384) (#33577)
+NEW: Accountancy - Add filter on chart of accounts (#33656)
+NEW: Accountancy - Centralized account are highlighted (#33648)
+NEW: Accountancy - Define fiscal year by default
+NEW: Accountancy - Show subledger account in thirdparty
+NEW: Add a delay to be sure that any Stripe action from webhooks are executed after interactive actions
+NEW: Add also start date fill buttons for salary clone
+NEW: Add a test mode for AI setup
+NEW: Add DateMaxPayment option on selectDate (#33601)
+NEW: Add/enhance the popup for preview of icons
+NEW: Add field usenewcurrencyrate
+NEW: Add globale MAIN_DISABLE_PDF_AUTO_DOWNLOAD_AFTER_CONVERT_FROM_ODT to disable the auto download after auto convert odt to pdf (#33511)
+NEW: add home box mrp (#33549)
+NEW: Add invoice tags
+NEW: Add ip into table of website accounts
+NEW: Add knowledgebase info on box_dolibarr_state_board.php (#33960)
+NEW: Add link to create shipment on picto
+NEW: Add link to picto help page on module builder
+NEW: Add management of date begin/end and discount for a customer price (Code + SQL)
+NEW: add new permissions to read supplier prices (#33598)
+NEW: Add option MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL
+NEW: Add option MAIN_MAIL_EMAIL_FROM_PASSWORDRESET
+NEW: Add options on intervention clone popup to clone or not contact and notes
+NEW: Add options PDF_XXX_SHOW_PRICE_INCL_TAX into PDF setup
+NEW: add option to not prefill qty line at shipment creation
+NEW: Add page list for categories.
+NEW: Add parameters for the hook selectProductsListWhere (#33718)
+NEW: add phone_mobile to export of thirdparty (#33893)
+NEW: Add public page for donation module (#33978)
+NEW: add setasnumber for forms (#33845)
+NEW: Add Shared links on links in attachments (#33459)
+NEW: Add tags / category on supplier invoice (#33490)
+NEW: Add the possibility to merge PDF from the product list (#33723)
+NEW: allow stock management by product (#32326)
+NEW: attendee status "Showed up" - to ensure that only one attendee gets in on a ticket (#33987)
+NEW: auto-detect country from code in creation	(follow-up)
+NEW: autofix mysqldump command for backup when path is wrong
+NEW: Better presentation of list of user approver.
+NEW: Can define a different PDF for concatenation for proposal, order and invoices
+NEW: Can filter on field "Refuse emailing" in list of thirdparties.
+NEW: Can filter on public/private notes in list sale orders thirdparties
+NEW: Can filter on string with spaces if search criteria is inside quote.
+NEW: Can force the tooltip before the text on column title.
+NEW: Can link member subscription/contribution with proposal, order and invoice (#33647)
+NEW: Can set a specific permission on an extrafields
+NEW: cash control: add hidden setting to show total including taxed in detail by vat rate
+NEW: Closing task
+NEW: CONSTANT: ORDER_TYPE_CONTACT_DEFAULT
+NEW: const PREVIEW_PICTO_ON_LEFT_OF_NAME for icon to preview documents (#33519)
+NEW: Dictionary - Manage countries of SEPA Area
+NEW: Dolibarr#22848 Add order tags
+NEW: Filter on date creation/date modification in invoice list
+NEW: fix #33456 (#33458)
+NEW: force Extrafields values when constants THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_(ORDER|INVOICE) are set (#33954)
+NEW: input reason for customer invoice (#33599)
+NEW: Invoice - Add constant to prevent modification of an invoice (#33455)
+NEW: Loan - Add total on each payment to see the global amount off the reimbursement
+NEW: login page: button to toggle the visibility of the password (#33698)
+NEW: Look and feel - Checkboxes and radio buttons are larger
+NEW: Allow user to define the number of email sent by batch directly from mailing config page (#32750)
+NEW: Mass action delete on donation list
+NEW: Merge surface and volume in one line on product card.
+NEW: Module external website is deprecated. Replaced with menu editor.
+NEW: Move right from advance to normal for thirdparty information payment page (#33885)d
+NEW: delays conf for supplier proposals (#33800)
+NEW: new option in invoice setup to limit options of deposit invoice (#33468)
+NEW: No auto open keyboard on smartphone when opening list of columns
+NEW: On list, see complete ref customer/supplier with constant MAIN_SHOW_GLOBAL_REF_CUSTOMER_SUPPLIER (#33373)
+NEW: Option MAIN_RESTRICTHTML_ONLY_VALID_HTML and MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY are on by default
+NEW: Option MAIN_SECURITY_MAXFILESIZE_DOWNLOADED become official
+NEW: Order - Add drag & drop file (#33848)
+NEW: reopen for interventions API (#33982)
+NEW: Rounding unit price - line discount before applying quantity - option MAIN_APPLY_DISCOUNT_ON_UNIT_PRICE_THEN_ROUND_BEFORE_MULTIPLICATION_BY_QTY (#33690)
+NEW: shipment with product in cache
+NEW: shipment with warehouse in cache
+NEW: Show code of stripe hooks supported in setup page
+NEW: Show country flag in list of chart of account
+NEW: Show IP of previous connection and date of last password change in the "Connection" widget.
+NEW: Some trans keys to prepare a new website template (#33886)
+NEW: SUBMIT_FOR_ALL_MARK_RESPAWN (#32101)
+NEW: Supplier orders - Add tags/categories (#33386)
+NEW: takepos cash control: add vat taxless total
+NEW: The closing reason of invoice appear on tooltip of invoice status
+NEW: The link "In accountancy" is now clickable to reach bookkeeping
+NEW: The public media browser is now a stable feature
+NEW: The signature is on the good page even if another module add pages
+NEW: Toggle Display of Supplier Invoices and Credit Notes on Payment Page (#33856)
+NEW: Try to set the tooltip as ajax call by default.
+NEW: Update of currency supports also apilayer (not only currencylayer)
+NEW: use specific landing page to home menu entry
+NEW: Use the packaging feature to round the quantities to some given multiples for the sale
+NEW: Use the PhpZipProxy handler to generate ODT files (avoid corrupted ODT with recent version of Libre Office).
+NEW: vcard (vcf) download for third party (#31957)
+NEW: Web pages of websites are protected by the WAF
+NEW: Add constant to show stock in products combo
+NEW: Can edit the module_source and pos_source field.
+NEW: Accountancy - Add actions on entries (Cloning, assigning, returning)
+NEW: Add conf PDF_HIDE_LINKED_OBJECT_IN_PUBLIC_NOTE to hide linked object in public note of pdf.
+NEW: Add MULTICURRENCY_SHOW_ALSO_MAIN_CURRENCY_ON_PDF for legal requirement that need both currencies on PDF
+NEW: Add note public and private on order export
+NEW: Finish dev for API_ENABLE_COUNT_CALLS (count of API use is visible on user API key field)
+
+For developers:
+---------------
+NEW: Add an API endpoint to get properties of a single line of an order (#34045)
+NEW: add const to not include default CSS in top_htmlhead with DISABLE_CSS_DEFAULT_THEME
+NEW: add const to not include default lib_head.js in top_htmlhead with DISABLE_LIB_HEAD_JS
+NEW: add const to not include JQuery UI in top_htmlhead DISABLE_JQUERY_UI
+NEW: add create category project link via api (#34016)
+NEW: add creditnotelist var in fetch
+NEW: add hook 'addMoreInformationsBlock'
+NEW: Add hook on API call (#33501)
+NEW: add hooks to modify select_produits_fournisseurs_list sql query
+NEW: Adding API endpoints for event attendee handling (#33932)
+NEW: Add internal contact of proposal, order and invoice on api call (#34009)
+NEW: Add option to create simple shipment of non origin. SQL part (#34071)
+NEW: add settodraft to the supplier invoice API (#34064)
+NEW: Can set isMandatory property in generic setup framework
+NEW: endpoints DELETE event atteendee by ID or REF (#33986)
+NEW: endpoints GET event attendee by ID or REF (#33984)
+NEW: endpoints PUT (update) event atteendee by ID or REF (#33985)
+NEW: hidden conf for api contrat putLine endpoint to only return the line (#33809)
+NEW: introduce method dolSetCookie
+NEW: Invoice - Document - Add hook on action
+NEW: Pagination data for intervention APi
+NEW: Add experimental Website Template for Association
+NEW: expense report API deny
+
+WARNING:
+--------
+The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* The use of GETPOST function is not allowed inside extrafields conditions or any strings that contains dynamic code evaluated with dol_eval().
+* The deprecated variable $trigger_name (duplicate of variable $triggersendname) has been removed. You must use $triggersendname everywhere now.
+* The behavior of constant STOCK_ALLOW_NEGATIVE_TRANSFER has been reversed. It has been renamed into STOCK_DISALLOW_NEGATIVE_TRANSFER.
+* Method Categoie->getObjectsInCateg() is deprecated. Try by using instead: getListForItem() or containing().
+* Global variables $bctag, $conffiletoshowshort, $type2label has been removed.
+* Deprecatedproperty ->fk_departement that was replaced by ->state_id has been completely removed.
+* If you setup the API to update multicurrency rate from internet, you may need to re-enter your API key (so API key will be crypted in database).
+* The signature of API get for intervention has been modified to match other get api on other objects.
+* The directory /build has been moved into /dev/build.
+* The API to create a website account /idthirdparty/accounts/site is now POST (instead of PUT) and to update is PUT (instead of PATCH).
+* Debug v22 - Invert option TICKET_DO_NOT_INCLUDE_LINK_TO_CUSTOMER (that add link to backoffice interface link when it should remain private)
+  into TICKET_INCLUDE_LINK_TO_PUBLIC_INTERFACE_IN_MESSAGE. It also avoid often emails marked as SPAM due to suspicious link.
+* The property ->price_ht of an object line that was a duplicate of ->subprice has been standardized. Use ->subprice everywhere now.
+
+
+***** ChangeLog for 21.0.4 compared to 21.0.3 *****
+FIX: #35147 SQL Error on Beluga Export when ExpenseReport is enabled (#35149)
+FIX: error when using a code too large in dictionary
+FIX: Security when using Advanced Target page of emailing (feature hidden in v21, default in v22+). Possible
+     SQL injection by users with permission to make and send mass emailing.
+
+
+***** ChangeLog for 21.0.3 compared to 21.0.2 *****
+FIX: #34843 (#34875)
+FIX: #34936
+FIX: #35005
+FIX: #35006 SQL error when using external user
+FIX: a Fatal error when a trigger files is not correctly named.
+FIX: array for arrayofkeyval is lost in module builder edit of property
+FIX: asset: could not select invoice in disposal pop-in (#34725)
+FIX: avoid php warning with "$forceFullTextIndexation" (#34881)
+FIX: bad consistency on test on permission to disable service
+FIX: Can edit status of tasks
+FIX: Create public ticket if email need exist. (#34965)
+FIX: DA026536: missing <br> in automatic e-mail (#34895)
+FIX: extrafields of type "int" not displayed on `projet/tasks.php` (#34896)
+FIX: Filter on the balance of leave
+FIX: Logo on company is no more visible.
+FIX: mailing destination list title (#34929)
+FIX: main checkbox left column was before global conf (#34858)
+FIX: Missing a column on group permissions
+FIX: several minor troubles with modulebuilder
+FIX: Test on mandatory product or thirdparty barcode
+FIX: trigger mailmanspip when un/linking categories
+SEC: Remove functions accepting callable params - Reported by phdwg1410 - CVE-2024-40137
+
+
+***** ChangeLog for 21.0.2 compared to 21.0.1 *****
+
+FIX: 21.0: $height and $width can be ints, but also 'auto' (#34636)
+FIX: #33030 (#34460)
+FIX: #33727 Sec
+FIX: #33774 #34214
+FIX: #33854
+FIX: #34313 Accountancy - Export with sources no longer works (#34324)
+FIX: (#34448)
+FIX: #34541 (#34597)
+FIX: #34564 (#34590)
+FIX: #34591 FIX: #34692
+FIX: #34618 (#34621)
+FIX: #34654
+FIX: accountancy: bad filter on custom account groups (#34205)
+FIX: accountancy balance: keep subtotals when sorting (#34001)
+FIX: accountancy closure: if subledger_label is not found, PHP8.2 throws an error. (#34736)
+FIX: accountancy: create new french PCG25-DEV accounting system in upgrade (#34036)
+FIX: accountancy expensereport journal: php 8.1 warning (#34457)
+FIX: accountancy fec export: remove dol_print_date warning (#34363)
+FIX: accountancy general ledger: last total not shown if last account group shown has only one entry (#34251)
+FIX: accountancy lettering: php8.1 warning (#34469)
+FIX: Accountancy - Problem with constant ACCOUNTANCY_COMBO_FOR_AUX (#34414)
+FIX: accountancy sales/purchases journal: sql error logged when no invoice in journal (#34339)
+FIX: accountancy: warning when account not found in plan (#34030)
+FIX: a comment without after a comma create a sql error (#33752)
+FIX: Add others allowed tags (table, tr, td) for the prices history table displayed in the link url of the supplier product in supplier product prices list (#34532)
+FIX: add payment to bank (#34263)
+FIX: allow double colon and string obfuscation in dol eval for computed extra fields (#34015)
+FIX: API expense report line comments (v18+) (#34297)
+FIX: Approver must be able to approve even if user not in hierarchy.
+FIX: asset depreciation: division by zero (#34218)
+FIX: asset depreciation: php warnings (#34219)
+FIX: avoid sql error when a comment is after without comma (#33758)
+FIX: Backport fix of substitution of thirdparty info in notification
+FIX: backport of replaceement of thirdparty information on notification
+FIX: bad value for company ref crashes canvas feature (#34331)
+FIX: bank payment rejection on SEPA (backport commit 100a657) (#33838)
+FIX: BankTransfer information in line.php (#34425)
+FIX: BankTransfer link in list.php (#34513)
+FIX: BankTransfer link in rejets.php (#34424)
+FIX: Bug filters (#34546)
+FIX: Can set default value of the nature of member
+FIX: Can set the default value of nature of thirdparty
+FIX: cash control report: php warning (#34358)
+FIX: common fields: php warning with select input field (#34495)
+FIX: constant PAYMENTBYBANKTRANSFER_ADDDAYS was never saved (#33799)
+FIX: creating acredit note from the remain to pay was always 0
+FIX: DetecHTML on upload file from filemanager fails due to need to lock
+FIX: Disallow special char in name of oauth entries
+FIX: do not add a filter on status when doing a global search on project
+FIX: Do not allow to force amount for online payment of order
+FIX: do not forget extrafields for BOM in export lines (#34020)
+FIX: Edition of target of menu entries
+FIX: element must be visible to set focus on select input when using default values (#34406)
+FIX: email collector: php 8 warning (#34496)
+FIX: encoding issues with underscores in mb_convert_encoding functionality (#34411)
+FIX: ensure dir exists before trying to move something in it (#34211)
+FIX: event info tab: php 8.1 warning (#34458)
+FIX: expense report card: mail notifications not sent (#34556)
+FIX: expensereport payment list: php warning (#34453)
+FIX: expensereport: php warning when generating pdf with multilangs (#34492)
+FIX: files lib: multiple php 8.1 warnings (#34462)
+FIX: filter agenda on user and resource SQL error (#34580)
+FIX: HTML broken by the trunc.
+FIX: html title when using custom value
+FIX: if filter is set on export for Duree type filed, then there is SQL error (#34616)
+FIX: interventions: sql error when signed_status not set (#34515)
+FIX: js warning (Backport commit 84d982c) (#34555)
+FIX: local taxes text in object line view mode (#34103)
+FIX: local taxes text in PDF (#34343)
+FIX: mandatory extrafelds on lines are not checked (#34228)
+FIX: manufacturing orders: php 8.1 warnings on agenda tab (#34475)
+FIX: mass assignment of sale representative
+FIX: Missing ol in no escape tags (#34261)
+FIX: modification de dates de pièces comptables sur plusieurs entités différentes (#34226)
+FIX: oauth: php 8 warnings (#34027)
+FIX: online propal sign: double header with logo when custom logo set (#34504)
+FIX: Order error translation (#33834)
+FIX: page of bom when only bom module is on
+FIX: partial result on timespent list (#33855)
+FIX: pgsql: boolean fields correctly defined in creation but not in migration (#34215)
+FIX: pgsql: case sensitivity in select queries (#34028)
+FIX: pgsql: error when creating sequences in migration scripts (#34021)
+FIX: PHP 8 Error 500 (#34545)
+FIX: prelevement order list: handle case of use by banktransfer module (#33801)
+FIX: pre-send mail mass action: keep __EMAIL__ substitution (#34522)
+FIX: prevent log warning with online signature url (#34361)
+FIX: Product batch series - Title, help url et picto (#34560)
+FIX: product multiprices: fatal error on vat update on php 8.2 (#34444)
+FIX: product suplier tab: last modif date column was wrongly dependent of module barcode (#34170)
+FIX: product translation: redirect after successful action (#34403)
+FIX: projects: go back to edit view after cloning (#34221)
+FIX: receptions: crash from api because of classes not found (#34523)
+FIX: Remove useless amp; after & (#34288)
+FIX: select supplier when creating object from project (#33766)
+FIX: social contribution payment: correct error reporting (#34002)
+FIX: stock control condition in reception delete (#33952)
+FIX: Tmparray string not array (#34287)
+FIX: Too heavy sql query (#34371)
+FIX: try to fix v18 github action workflow (#34439)
+FIX: Various payment - List - Can't see payment with subledger account (#34101)
+FIX: warehouse list: broken status filter (#33667)
+FIX: warnings when printing start/end date on line tpl (#34359)
+FIX: wrong multicompany filter (#34714)
+FIX: ws detection
+
+
+***** ChangeLog for 21.0.1 compared to 21.0.0 *****
+
+FIX: #33360
+FIX: #33365 Global search for single shipment (#33401)
+FIX: #33404 - to keep the method findNearest an agnostic method.
+FIX: #33435 Warnings
+FIX: Accountancy simplified - with multiple entities, amount of the entry is multiplied by the number of entities (#33370)
+FIX: Add a new email for notification
+FIX: Bad link to download tax vat document
+FIX: Blank page on agenda event per user
+FIX: blank page on smartphone for bank SEPA direct transfer page
+FIX: close all services on contract will close all lines (#33466)
+FIX: Count on supplier invoice list does not match count in DB (#33351)
+FIX: CR on script output
+FIX: CSS center end CSS in total
+FIX: Duplicate load of extrafield ->fetch_optionals()
+FIX: fatal error in notification sending email when error array is empty
+FIX: Link to country setup on company setup page
+FIX: Loading of deliveries in shipping card was loading everything
+FIX: Missing ref_ext in group by in list of product
+FIX: Must make different redirect in paymentok/ko according to frame or not.
+FIX: PAIEMENT Wrong field displayed for DateChequeReceived (#33390)
+FIX: picto for unknown mime type
+FIX: Replace compromised tj-actions/changed-files (#33481)
+FIX: Report by custom group was empty
+FIX: Responsive
+FIX: shipment dispatch origin line (#33415)
+FIX: Show the default duration of a membership type.
+FIX: Sort and search Ref Project column was missing (#33539)
+FIX: syntax error on list of intervention for external users
+FIX: text in tooltip on buttons when pb is not a permission problem
+FIX: Translation of column in list of invoice
+FIX: warnings (#33423)
+FIX: Warning when getNomUrl is called before top_httphead
+FIX: we must retrieve linked order_supplier and no other object (#33602)
+SEC FIX: Reflected XSS reported by 柏天浩
+
+
+***** ChangeLog for 21.0.0 compared to 20.0 *****
+
+For users:
+----------
+NEW: NEW Module - help to setup OpenID Connect (#30317)
+NEW: Module AI moved from experimental to stable
+NEW: Add hidden option CONTRACT_HIDE_MYCOMPANY_SIGNATURE_SECTION_PDF
+NEW: Add a tab on recurring invoice card to see the list of invoices generated from this recurring invoice (customer and supplier invoices) (#31463)
+NEW: #28871 signed_status to commande (#30359)
+NEW: #30269 linked project in column of last record tables (#30344)
+NEW: Accountancy - Add general account on thirdparty
+NEW: Accountancy - Add partial reconcile on subledger (#30027)
+NEW: Accountancy - Option to select the label of operation (#31200)
+NEW: Accountancy - Allow grouping taxes with primary line price (#26732)
+NEW: Activate PHPUnit with tests on permission on $action ==...
+NEW: Add advice for max size on list for better performance
+NEW: Add an advanced permission to validate knowledge (#30855)
+NEW: Add a test mode into the setup of AI module to test the AI prompts.
+NEW: Add a tool to decrypt data encrypted in database.
+NEW: Add auto generate document when reception is created (#30688)
+NEW: Add badge for generate invoice client tab (#31559)
+NEW: Add caldav on fichinter (#30582)
+NEW: Add column agenda_id to implement the link between files and event
+NEW: Add column "comment" in list of payment
+NEW: Add constant to hide version (#30865)
+NEW: Add country in search of project
+NEW: add duration extrafields (#31595)
+NEW: Add export for thirdparty bank accounts (#30807)
+NEW: Add export profile to export MO and lines of consumption/production
+NEW: Add option to store the text content of uploaded files into database (with conversion with pdftotext)
+NEW: Add Filter Assistance for Filling Filters Field (#31646)
+NEW: add last stock movement and product nature to StocksWithBatch export (#30578)
+NEW: Add member title to the labels (#31710)
+NEW: Add mode Customer price + level price (#31091)
+NEW: add option to add external billing contact on the supplier_proposal pdf (#30298)
+NEW: Add option to clone its default BOM when cloning a product (#30088)
+NEW: Add option to enable PDF frame rounded corners
+NEW: Add option to round weight and volume on shipment PDF
+NEW: add pdf regeneration to mass action for shipments (#29970)
+NEW: Add picto on list of notification email templates
+NEW: add recurring supplier invoice on supplier tab #30945 #30949
+NEW: Add sort by ref warehouse/product or ref product/warehouse on inventory product list (#31639)
+NEW: Add some improvement for ODT Contracts (#31715)
+NEW: Add terms of sale on documents (#24846)
+NEW: Add thirdparty state in substitution array (#31549)
+NEW: Add tooltip on closing accounting setup
+NEW: add trigger for linking and unlinking invoices (#30182)
+NEW: Add Unit price on supplier order stat product (#31055)
+NEW: add warehouseId parameters in select_produit to limit result to existing product in select (#30477)
+NEW: allow link feature to task (#30235)
+NEW: Authorize modification of a partially shipped order (#31423)
+NEW: autogenerate project reference in API (#30638)
+NEW: automatically change status on answering a ticket (#30556)
+NEW: Browser notifications use now jnotify (fix browser compatibility)
+NEW: can add extrafields with dol_move (#30574)
+NEW: Can change the type of a social contribution if no payment
+NEW: can delete a category translation (#31396)
+NEW: Can link an object to another using the ref. Close #31001
+NEW: Can set a class on the tr lines of form setup lines
+NEW: Can set border radius of list and tables
+NEW: Can set date of transmission in 1 click when validating SEPA
+NEW: Can set parameters with setup type yesno.
+NEW: Can set the contact type for the autoassigned user that creates a project (#30444)
+NEW: Can show raw value of oauth token
+NEW: Can use a specific profile to send email for password forgotten
+NEW: option to care grandchild (#31314)
+NEW: Look and feel - checkbox to choose thirdparty nature (#30192)
+NEW: Color line total and sub total (#26172)
+NEW: Constant to hide user login times (#29815)
+NEW: Const ASSET_ROUND_INTEGER_NUMBER_UPWARDS for ASSET Module. Compatibility to migrate from other accounting solutions. (#31615)
+NEW: Content of tab "attached files" is more compact.
+NEW: Contract signed status update (#30779)
+NEW: Create thirdparty notification by action code (#30541)
+NEW: Customer price and level price together
+NEW: default configuration for event reminder (#31407)
+NEW: determine multi-currency price on object line create tpl (#28021)
+NEW: Display for socialnetworks admin
+NEW: display mark rates in objectLineCreate (#30872)
+NEW: due date in accounting bookkeeping list and card (#30061)
+NEW: enhance the OAUTH2 token manager. Can refresh a token from page.
+NEW: EPC QR CODE - Use bank owner account name instead of company (#31735)
+NEW: fichinter list disable details option (#30884)
+NEW: filter on invoice dates in product margin tab (#29997) and thirdparty margin tab (#29998)
+NEW: FIX: Display invoice widgets by amount instead of number (#30215)
+NEW: Add the Clone of company (#29755)
+NEW: function for Preview In CKeditor products
+NEW: FY Changed Period handle in Module Asset (#31618)
+NEW: hidden option MAIN_TE_PRIVATE_FIRST_AND_LASTNAME_TO_UPPER (#31143)
+NEW: Hide completed items in Link to (#31329)
+NEW: Iban is saved encrypted
+NEW: if a user is associated with the expense report, then that user will get an associated credit line ($tabtp) generated.
+NEW: Implementing Billable tasks on projects using new attribute "billable" (#30092)
+NEW: Include a protection into check update of module to detect malware
+NEW: intervention signed status update (#30629)
+NEW: INTRA VAT ID field optionally mandatory and/or invoice mandatory in thirdparty module setup (#31663)
+NEW: Invoice - Generate payment information - Structured communication (#31376)
+NEW: Invoice line import - fk_product can be a ref (#30795)
+NEW: Look and feel v21 - Can have rounded border on tables
+NEW: Look and feel v21 - Toolbar for WYSIWYG editor is short on smartphone
+NEW: Management of extrafields on customer prices, level prices and default prices (#31313)
+NEW: manage several type of dangerous goods for a same parcel (#30238)
+NEW: Member - Can upload a file with drag and drop (#30265)
+NEW: Move the picto in the first tab label always visible
+NEW: ODTSubsitution for date_start_real / Contracts
+NEW: Look and feel - Opacity for finished lines (#30219)
+NEW: option: assign default roles to "individual" third-party contacts (#30499)
+NEW: option to allow freezing qty in BOM service's line (#29990)
+NEW: Add a page to list the lines of orderse (#31521)
+NEW: pagination in product margin tab
+NEW: payment term and mode on creating supplier (#31166) and third-party (#31067)
+NEW: PDF Add Customer accountancy code (#31544)
+NEW: PDF Add discount total if line discount exists (#31483)
+NEW: PDF Add option to print rounded corner frames (#31172)
+NEW: PDF Add shipping address in sales orders (#31293)
+NEW: PDF Add total discount if line discount exists
+NEW: PDF frame rounded corners
+NEW: Prelevement - Use structured payment data for Belgium (#31383)
+NEW: Preview product list when we choose model email layout Commerce (#30185)
+NEW: Can upload a file with drag and drop: Thirdparty (#30263) - Product/Service (#30250) - Project (#30276) - Propale (#30315)
+NEW: Public and private note options in thirdparty list (#31062)
+NEW: redirect to expedition card if global search has unique result (#30108)
+NEW: replenishment if the warehouse is set to the default selected user (#31229)
+NEW: retrieve Thirdparty by account (#31283)
+NEW: Share msg "not found" for widgets and add a button to add new record when none exists (#31309)
+NEW: shipment signed status update (#30928)
+NEW: Show detail of each multicurrency amount in popup of price
+NEW: show holidays at bottom of activity/permonth.php page (#31550)
+NEW: Show tooltip on number of qualified records
+NEW: Signature or proposal from the Web portal (#30062)
+NEW: Star Field Type for Extra Fields (#31348) and for for Module Builder (#31216)
+NEW: Support option PDF_ADD_POSITION on shipment espadon template
+NEW: Auto-suspend facture rec when nb gen max is reached (#31623)
+NEW: The margin section can now be shown/hidden
+NEW: Deal change in fiscal year period adjustments to shortened or extended periods (e.g., fiscal years of 9 or 15 months)
+NEW: (ticket, admin): More options entries (#30548)
+NEW: Update warehouse product list to add another sorting option (#30971)
+NEW: Can set blacklist of words into answer of AI (#30385)
+NEW: user list country filter (#30770)
+NEW: vat rate with department in dict (#31628) (#31627)
+NEW: When we export data of unlaterable log, we add an unalterable line in logs
+NEW Add option THEME_STICKY_TOPMENU = 'scrollleftmenu_after_mainpage' (or 'disabled')
+NEW value for FICHINTER_DISABLE_DETAILS. If FICHINTER_DISABLE_DETAILS is set to '2' details are disabled only on intervention list.
+SEC: security avoid RCE using -'- sequence to pass --checkpoint-action parameter in tar command.
+SEC: FIX Security path transversal with modulepart=medias (viewimage.php and download.php)
+
+PERF: Reduce nb of requests into num_public_holiday
+PERF: Reduce size for VCF files and virtualcard qrcode
+PERF: Reduce time to show the page of unalterable logs with high data
+
+For developers:
+---------------
+NEW: translation with action triggers API (#30595)
+NEW: more complete stock product API call (#30567)
+NEW: Projet - Add hook formconfirm (#31408)
+NEW: Can choose the zip handler to build ODT.
+NEW: Can force ip into log file name using a define('SYSLOG_FILE_ADDIP')
+NEW: Can force log file name using a define('SYSLOG_FILE_ADDSUFFIX')
+NEW: Can define the text on tooltip on a yesno check.
+NEW: Introduce value 'password' for mode of sanitization in GETPOST.
+NEW: Add getImageFromHtmlContent() method
+NEW: Add gitleaks into pre-commit
+NEW: Add hook after the line is processed in the sell journal page (#31439)
+NEW: add hook dolibarrDelConst (#30672)
+NEW: Add hook getLoginPageExtraContent, getPasswordResetPageExtraContent
+NEW: add hook in dolibarr_set_const admin.lib.php (#30605)
+NEW: Add hook on sell journal page for overwrite the processed journal data after the SQL request (#31033)
+NEW: force_install_noedit : add value 3 to block all technical parameters excepted main_url (#30080)
+NEW: Add a new hook on order list (#31315)
+NEW: Add ID of the line in the trigger context for addLine(), updateLine() and deleteLine() on contract (#30343)
+NEW: Add more log information
+NEW: Add pagination data to some api routes (#29895)
+NEW: Add test to forbidden NOW() SQL function.
+NEW: API call to re-generate a users password. (#30590)
+NEW: API close proposal now supports both private and public note (#30659)
+NEW: API_LOGINS_ALLOWED_FOR_GET_EXTRAFIELD (#30562)
+NEW: API /setup endpoint for getting action triggers (#30538)
+NEW: HOOK FORMCONFIRM IN TICKET (#31321)
+NEW: hook on expensereport added (#31380)
+QUAL line classes for various business object classes have been moved to individual files.
+QUAL: #30122 (#30131)
+QUAL: AccountancySystem: maintenance work to uniformize and clean up (#31391)
+QUAL: All $conf->global->module->enabled are replaced with isModEnabled()
+QUAL: bankline category table name (#30419)
+QUAL: Clean code
+QUAL: conformity PR for data structure of #29964 (#30014)
+QUAL: Edition of currency is shared in a common tpl file
+QUAL: Ergo btn and fix  (#30947)
+QUAL: Move function csvClean into functions2.lib.php
+QUAL: Move the public css file into the public directory
+QUAL: Removed inclusion of the file json.lib.php
+QUAL: simplifying readability of sql
+QUAL: Standardize name of user cookies
+QUAL: Suffix table name to have them created on module install
+QUAL: The property ->domiciliation and ->propio on bank accounts has been
+QUAL: Update inc.php (#29822)
+QUAL: Use archiveOrBackupFile for MAIN_MAIL_DEBUG_LOG_WITH_DATE
+QUAL: Use table_element in sql queries (#31355)
+QUAL: rename const WORKFLOW_EXPEDITION_CLASSIFY_NEWD_INVOICE to WORKFLOW_RECEPTION_CLASSIFY_NEWD_INVOICE
+QUAL: This configuration change in phan will report NEW: array types in phpdoc
+
+
+WARNING:
+--------
+
+The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* Prepare your module for deprecation of triggers code XXX_INSERT to support also XXX_CREATE.
+* More class properties (with old name in french) are now deprecated in favor of the property name in english.
+* The json emulator dol_json_encode/decode() is removed. The native json PHP module must be enabled/available (this is the case by default with most PHP installation).
+* The deprecated GET parameter "&sall=" has been removed, use now the "&search_all=".
+* The experimental and deprecated module WebserviceClient is completely removed (was never released and use deprecated architecture). It may be replaced with the stable module Webhook.
+* The dynamic properties ->no_button_delete, ->no_button_edit, ->no_button_copy for $object Product that could be set by an external module must no more be
+  set (not allowed by PHP 8.2). A module can already return an array with key 'no_button_delete', 'no_button_edit', 'no_button_copy' for the same purpose.
+* The old function dol_bc($var, $moreclass = '') has been removed. If you called it, just stop to call it (the function has no effect since a long time).
+* The trigger code CATEGORY_LINK and CATEGORY_UNLINK have been replaced with code CATEGORY_MODIFY. You can read ->context['linkto'] or ->context['unlinkoff'] to detect if we want to make a link or unlink.
+* The property ->domiciliation and ->propio on bank accounts has been deprecated and replaced with property ->address and ->owner_name everywhere.
+* If you were using the substitution key __MEMBER_CIVILITY__, you must now use __MEMBER_TITLE__
+* The hidden title of tab that was hidden by the CSS class tabTitleText has been completely removed from HTML content.
+
+
 ***** ChangeLog for 20.0.4 compared to 20.0.3 *****
 FIX: $this->origin_object can not be instance of CommandeFournisseur if it is already an instanceof CommonObject
 FIX: 17.0 API endpoints "PUT": prevent overwriting all extrafields if only some are supplied in the request cf. PR #29237
@@ -76,7 +685,7 @@ FIX: product variants copy: also copy multiprice variations
 FIX: refactorize (maybe broken feature for not received completely)
 FIX: remove debug trace
 FIX: remove socid when cloning a project without third parties
-FIX: removes traces of <<<HEAD conflicts following the postponement of branch 13 modifications (#32014)
+FIX: removes traces of HEAD conflicts following the postponement of branch 13 modifications (#32014)
 FIX: remove unused code
 FIX: same broken feature for propal and invoice
 FIX: select 2 no record found translate
@@ -169,7 +778,7 @@ FIX: wrong trigger name (MODIFY instead UPDATE)
 FIX: fatal when updating recurring supplier invoice line with php8 ($remise_percent is '' instead of 0) (#31713)
 FIX: supplier invoice template card: buyer and seller swapped in VAT-related function calls (probably a copy-paste from customer invoice templates) (#31446)
 FIX: #25853 Thirdparty Massaction (#25868)
-FIX: #28505 Blank page from thirparty to projects (#31637)
+FIX: #28505 Blank page from third party to projects (#31637)
 FIX: #30432 make thirdparty code_client and code_compta modifiable via API (#31668)
 FIX: #31015
 FIX: #31360 delete contact when using pgsql.
@@ -272,7 +881,6 @@ FIX: webhook must send POST in body. Add WEBHOOK_POST_SEND_DATA_IN_BODY
 FIX: when qty is not an integer, apply price() (#31138)
 FIX: Wrong price for BOM with workstation (#31142)
 FIX: determine multi-currency price on object line create tpl (#28021)
-
 
 ***** ChangeLog for 20.0.0 compared to 19.0 *****
 
@@ -384,7 +992,7 @@ NEW: fetch object by element for website account card
 NEW: filter on sale representative in contact list
 NEW: Filter shipments by selecting multiple shipping methods (#28376)
 NEW: Font param Look and Feel (#29302)
-NEW: functionality for stock configuration prompt in AI module (#28030)
+NEW: functionality for configuration of post and pre prompt in AI module (#28030)
 NEW: functionality to delete contact of company list
 NEW: functionality to display codebar on pdf files  (#29623)
 NEW: functionality to list event for user
@@ -411,7 +1019,7 @@ NEW: Module Website: Can link/unlink translation between web pages
 NEW: Move dir of cache for widgets
 NEW: multiselect with checkbox in categories/tags search for thirdparty list (#28335)
 NEW: new consts to redirect from massaction createbills (#29436)
-NEW: new global string to preselect yes for one bill per thirdparty in orderlist massaction (#29359)
+NEW: new global string to preselect yes for one bill per third party in orderlist massaction (#29359)
 NEW: notification action triggers for cancelling orders and invoices
 NEW: now button when editing an event
 NEW: online signature of shipments (#29559)
@@ -527,7 +1135,6 @@ QUAL: professional identifiers - remove TODO by adding profid.lib.php
 QUAL: Properties ->date_update and ->date_modification were merged
 QUAL: removed duplicate language file
 QUAL: Remove the external js library jstimezonedetect
-QUAL: Remove use of customurl filter. Must use the USF syntax.
 QUAL: Rename all input fields "tel" into "phone"
 QUAL: Rename column fk_origin_line on shipment lines into fk_elementdet to match a generic use. (#28989)
 QUAL: replace $conf->global with getDolGlobalString()
@@ -548,6 +1155,7 @@ The following changes may create regressions for some external modules, but were
   See https://wiki.dolibarr.org/index.php?title=Universal_Search_Filter_Syntax
 * The parameter $filter of methods fetchAll() does not accept array of SQL commands but must be a string of an Universal Search Filter syntax.
   See https://wiki.dolibarr.org/index.php?title=Universal_Search_Filter_Syntax
+* The use of 'customurl' into $filter has been removed. Must use the USF syntax.
 * Some API HTTP return code were moved from 401 to 403 to better follow REST specification.
 * More class properties (with old name in french) are now deprecated in favor of the property name in english.
 * dolibarrtriggers class VERSION_XXX constants have been deprecated. Please use array dictionary VERSIONS['XXX'].
@@ -566,7 +1174,7 @@ The following changes may create regressions for some external modules, but were
 * Removed trigger BILLREC_CREATEBILL. This trigger was not a CRUD event. If you used it, you can already use the trigger BILL_CREATE and
   test that ($object->fac_rec > 0) to know if creation trigger is from a recurring invoice or not. Also this old trigger was never enabled
   into table llx_c_action_trigger.
-* Renamings in expedition line table and class, fk_origin_line is now fk_elementdet in table and class.
+* Renaming into expedition line table and class: fk_origin_line is now fk_elementdet in table and class.
 * The signature of method fetch() of class CompanyBankAccount has been modified to match the signature of method Account->fetch()
 
 
@@ -1085,7 +1693,6 @@ NEW: updating for display Help title when try to delete Don (issue  #25314)
 NEW: Upgrade in module builder in menu section
 NEW: use account address in sepa mandate (#23642)
 NEW: VAT rate - Add entity
-NEW: Website: Support of js into the Dolibarr server preview
 NEW: When an user unset the batch management of products, transformation of each batch stock movement in global stock movement
 NEW: PDF Generation for each Human Resource Evaluations.
 
@@ -1186,7 +1793,7 @@ The following changes may create regressions for some external modules, but were
 * The delete() method of AdherentType, Contact, Delivery, MultiCurrency, CurrencyRate now need $user as first parameter.
 * A very high number of class properties (with old name in french) are now deprecated in favor of the property name in english.
 * The load of hook context productdao has been removed before calling loadvirtualstock. Modules must use the context of main parent page or 'all' for all cases.
-
+* booking.class.php was removed, please have a look at calendar.class.php
 
 ***** ChangeLog for 18.0.8 compared to 18.0.7 *****
 35 files changed, 647 insertions(+), 298 deletions(-)
@@ -2255,7 +2862,7 @@ NEW: Add link to create an element from the category page
 NEW: add margin infos to takepos invoice lines
 NEW: Add max size send for "backup and link to mail" option
 NEW: Add method httponly_accessforbidden()
-NEW: Add more advices into the Setup security page
+NEW: Add more advice into the Setup security page
 NEW: Add new global variable for keeping the previous signature information on proposal (case of reopening a proposal)
 NEW: Add objectLink on shipment
 NEW: Add option --force on CLI cron_run_jobs.php
@@ -3673,8 +4280,8 @@ NEW: add option in Workflow module to set a shipment as closed
 
 
  for Admins
-NEW: Add a security center page with all information and advices related to the security of your instance
-NEW: Add a performance center page with all information and advices related to the performance of your instance
+NEW: Add a security center page with all information and advice related to the security of your instance
+NEW: Add a performance center page with all information and advice related to the performance of your instance
 
  Modules
 NEW: Module Recruitment is now stable
@@ -3836,7 +4443,7 @@ FIX: fix checkbox displayed according to module project setup parameters - work 
 FIX: inconsistency in margin recording with option "Force to sale price"
 FIX: invoice PDF generation after payment
 FIX: mask selector fournisseur if module not activate
-FIX: merge thirdparty also work for bank URL entry
+FIX: merge third party also works for bank URL entry
 FIX: Missing extrafields into export of agenda record
 FIX: missing parameter in select for POP
 FIX: missing return edit if update error
@@ -7692,7 +8299,7 @@ NEW: Add index and constraints keys on supplier proposal detail table
 NEW: Add phpunit to check the engine is defined into sql create files.
 NEW: Add project and Hook to Loan
 NEW: Add REST API to push a file.
-NEW: Allow extrafields list select to be dependands on other standard list and not only other extrafields list
+NEW: Allow extrafields list select to be dependent on other standard list and not only other extrafields list
 NEW: Architecture to manage search criteria persistence (using save_lastsearch_values=1 on exit links and restore_lastsearch_values=1 in entry links)
 NEW: data files are now also parsed by phpunit for sql syntax
 NEW: Hook to allow inserting custom product head #6001
@@ -8716,7 +9323,7 @@ NEW: The clicktodial module is now able to provide link "tel:" on phone numbers.
 NEW: The conditional IF into ODT templates works also on not defined var so we can show data only if defined. Close #3819
 NEW: The free text in PDF footers can now be a HTML content. So the WYSIWYG editor is on by default to edit it into module setup.
 NEW: The thirdparties tabs, the contacts tabs and the members tabs are now presented using a new "top banner", saving space and using a same way to show address, status and navigation arrows.
-NEW: Thumbs for statistics on main page are fully clicable (not only link inside the thumb)
+NEW: Thumbs for statistics on main page are fully clickable (not only link inside the thumb)
 NEW: Translate extrafield's labels.
 NEW: Use new select2 component for juridical status, country and state selection.
 NEW: When creating order, proposal or invoice from thirdparty card, the project is asked during creation. A link to create project if it does not exists is also available.
@@ -9315,7 +9922,7 @@ NEW: [ task #851 ] Add a new field: Commercial name
 NEW: [ task #977 ] New option to manage product unit Migrated code from GPCSolutions/dolibarr:3.2-units branch and adapted for 3.8 with some improvements
 NEW: The line where mouse is over can be highlight with option THEME_ELDY_USE_HOVER (on by default)
 NEW: The notification module accept keyword __SUPERVISOR__ to send notification to supervisor of user.
-NEW: Thumbs for statistics on main page are fully clicable (not only link inside the thumb)
+NEW: Thumbs for statistics on main page are fully clickable (not only link inside the thumb)
 NEW: Title of page project contains project ref and label
 NEW: update skeleton and class builder
 NEW: Use new select2 component for juridical status, country and state selection.
@@ -10466,7 +11073,7 @@ For users:
   prices, radio).
 - New: [ task #798 ] Add range limit date on product/services as it is done on order
   and invoice.
-- New: [ task #814 ] Add extrafield feature for projects ands tasks.
+- New: [ task #814 ] Add extrafield feature for projects and tasks.
 - New: [ task #770 ] Add ODT document generation for Projects module.
 - New: [ task #741 ] Add intervention box.
 - New: [ task #826 ] Optional increase stock when deleting an invoice already validated.

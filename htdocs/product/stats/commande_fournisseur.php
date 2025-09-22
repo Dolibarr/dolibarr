@@ -3,6 +3,9 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024       Charlene Benke             <charlene@patas-monkey.com>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formorder.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'products', 'companies', 'sendings'));
 
@@ -44,7 +55,7 @@ if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('productstatssupplierorder'));
 
 $mesg = '';
@@ -106,7 +117,7 @@ if ($id > 0 || !empty($ref)) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
 
-	llxHeader("", "", $langs->trans("CardProduct".$product->type), '', '', 0, 0, '', '', 'mod-product page-stats_commande_fournisseur');
+	llxHeader("", "", $langs->trans("CardProduct".$product->type), '', 0, 0, '', '', 'mod-product page-stats_commande_fournisseur');
 
 	if ($result > 0) {
 		$head = product_prepare_head($product);
@@ -147,8 +158,8 @@ if ($id > 0 || !empty($ref)) {
 		if ($user->hasRight('fournisseur', 'commande', 'lire')) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client,";
 			$sql .= " c.rowid, d.total_ht as total_ht, c.ref,";
-			$sql .= " c.date_commande, c.fk_statut as statut, c.rowid as commandeid, d.rowid, d.qty,";
-			$sql .= " c.date_livraison as delivery_date";
+			$sql .= " c.date_livraison as delivery_date,";
+			$sql .= " c.date_commande, c.fk_statut as status, c.billed, c.rowid as commandeid, d.rowid, d.qty, d.subprice as unitprice";
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", sc.fk_soc, sc.fk_user ";
 			}
@@ -163,10 +174,10 @@ if ($id > 0 || !empty($ref)) {
 			$sql .= " AND d.fk_commande = c.rowid";
 			$sql .= " AND d.fk_product = ".((int) $product->id);
 			if (!empty($search_month)) {
-				$sql .= " AND MONTH(c.date_commande) IN (".$db->sanitize($search_month).")";
+				$sql .= " AND MONTH(c.date_commande) = ".((int) $search_month);
 			}
 			if (!empty($search_year)) {
-				$sql .= " AND YEAR(c.date_commande) IN (".$db->sanitize($search_year).")";
+				$sql .= " AND YEAR(c.date_commande) = ".((int) $search_year);
 			}
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
@@ -234,12 +245,12 @@ if ($id > 0 || !empty($ref)) {
 				print '<div class="divsearchfield">';
 				print $langs->trans('Period').' ('.$langs->trans("OrderDate").') - ';
 				print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.($search_month > 0 ? $search_month : '').'"> ';
-				print $langs->trans('Year').':'.$formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
+				print $langs->trans('Year').':'.$formother->selectyear(($search_year ? (string) $search_year : '-1'), 'search_year', 1, 20, 5);
 				print $langs->trans('Status');
 				$formorder->selectSupplierOrderStatus($search_status, 1, 'search_status');
 				print '<div style="vertical-align: middle; display: inline-block">';
-				print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-				print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
+				print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+				print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"), 'searchclear.png', '', 0, 1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
 				print '</div>';
 				print '</div>';
 				print '</div>';
@@ -254,7 +265,8 @@ if ($id > 0 || !empty($ref)) {
 				print_liste_field_titre("OrderDate", $_SERVER["PHP_SELF"], "c.date_commande", "", $option, 'align="center"', $sortfield, $sortorder);
 				print_liste_field_titre('DateDeliveryPlanned', $_SERVER['PHP_SELF'], 'c.date_livraison', '', $option, 'align="center"', $sortfield, $sortorder);
 				print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $option, 'align="center"', $sortfield, $sortorder);
-				print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], "c.total_ht", "", $option, 'align="right"', $sortfield, $sortorder);
+				print_liste_field_titre("UnitPrice", $_SERVER["PHP_SELF"], "d.unitprice", "", $option, 'align="right"', $sortfield, $sortorder);
+				print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], "d.total_ht", "", $option, 'align="right"', $sortfield, $sortorder);
 				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "c.fk_statut", "", $option, 'align="right"', $sortfield, $sortorder);
 				print "</tr>\n";
 
@@ -267,7 +279,11 @@ if ($id > 0 || !empty($ref)) {
 
 						$supplierorderstatic->id = $objp->commandeid;
 						$supplierorderstatic->ref = $objp->ref;
-						$supplierorderstatic->statut = $objp->statut;
+
+						$supplierorderstatic->statut = $objp->status;	// deprecated
+						$supplierorderstatic->status = $objp->status;
+						$supplierorderstatic->billed = $objp->billed;
+
 						$societestatic->fetch($objp->socid);
 
 						print '<tr class="oddeven">';
@@ -283,6 +299,7 @@ if ($id > 0 || !empty($ref)) {
 						print dol_print_date($db->jdate($objp->delivery_date), 'dayhour');
 						print '</td>';
 						print '<td class="center">'.$objp->qty."</td>\n";
+						print '<td align="right">'.price($objp->unitprice)."</td>\n";
 						print '<td align="right">'.price($objp->total_ht)."</td>\n";
 						print '<td align="right">'.$supplierorderstatic->getLibStatut(4).'</td>';
 						print "</tr>\n";
@@ -299,6 +316,7 @@ if ($id > 0 || !empty($ref)) {
 				// delivery planned date
 				print '<td></td>';
 				print '<td class="center">'.$total_qty.'</td>';
+				print '<td></td>';
 				print '<td align="right">'.price($total_ht).'</td>';
 				print '<td></td>';
 				print "</table>";

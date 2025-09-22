@@ -4,6 +4,8 @@
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +29,14 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $langs->load("admin");
 
 if (!$user->admin) {
@@ -42,8 +52,13 @@ $action = GETPOST('action', 'aZ09');
  * Actions
  */
 
+
+$logsql = '';
+$resultsql = true;
+
 if ($action == 'convertutf8') {
 	$sql = "SHOW FULL COLUMNS IN ".$db->sanitize($table);
+	$logsql .= $sql.'<br>';
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -53,6 +68,8 @@ if ($action == 'convertutf8') {
 			$row = $db->fetch_row($resql);
 			if ($row[0] == $field) {
 				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." CHARACTER SET utf8";		// We must not sanitize the $row[1]
+				$logsql .= $sql.'<br>';
+
 				$db->query($sql);
 
 				$collation = 'utf8_unicode_ci';
@@ -62,9 +79,12 @@ if ($action == 'convertutf8') {
 				}
 
 				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." COLLATE ".$db->sanitize($collation);	// We must not sanitize the $row[1]
+				$logsql .= $sql.'<br>';
+
 				$resql2 = $db->query($sql);
 				if (!$resql2) {
 					setEventMessages($db->lasterror(), null, 'warnings');
+					$resultsql = false;
 				}
 
 				break;
@@ -74,6 +94,7 @@ if ($action == 'convertutf8') {
 }
 if ($action == 'convertutf8mb4') {
 	$sql = "SHOW FULL COLUMNS IN ".$db->sanitize($table);
+	$logsql .= $sql.'<br>';
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -83,6 +104,8 @@ if ($action == 'convertutf8mb4') {
 			$row = $db->fetch_row($resql);
 			if ($row[0] == $field) {
 				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." CHARACTER SET utf8mb4";		// We must not sanitize the $row[1]
+				$logsql .= $sql.'<br>';
+
 				$db->query($sql);
 
 				$collation = 'utf8mb4_unicode_ci';
@@ -92,9 +115,12 @@ if ($action == 'convertutf8mb4') {
 				}
 
 				$sql = "ALTER TABLE ".$db->sanitize($table)." MODIFY ".$db->sanitize($row[0])." ".$row[1]." COLLATE ".$db->sanitize($collation);	// We must not sanitize the $row[1]
+				$logsql .= $sql.'<br>';
+
 				$resql2 = $db->query($sql);
 				if (!$resql2) {
 					setEventMessages($db->lasterror(), null, 'warnings');
+					$resultsql = false;
 				}
 
 				break;
@@ -110,11 +136,17 @@ if ($action == 'convertutf8mb4') {
 
 llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_dbtable');
 
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/system/database-tables.php?restore_lastsearch_values=1">'.img_picto($langs->trans("Back"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("Back").'</span></a>';
 
-print load_fiche_titre($langs->trans("Table")." ".$table, '', 'title_setup');
+print load_fiche_titre($langs->trans("Table")." ".$table, $linkback, 'title_setup');
+
+if ($logsql) {
+	print info_admin($logsql.' '.($resultsql ? ' => OK' : ' => KO '.$db->lasterror()));
+}
 
 // Define request to get table description
 $base = 0;
+$sql = null;
 if (preg_match('/mysql/i', $conf->db->type)) {
 	$sql = "SHOW TABLE STATUS LIKE '".$db->escape($db->escapeforlike($table))."'";
 	$base = 1;
@@ -123,7 +155,7 @@ if (preg_match('/mysql/i', $conf->db->type)) {
 	$base = 2;
 }
 
-if (!$base) {
+if (!$base || $sql === null) {
 	print $langs->trans("FeatureNotAvailableWithThisDatabaseDriver");
 } else {
 	$resql = $db->query($sql);
