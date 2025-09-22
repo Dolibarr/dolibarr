@@ -71,7 +71,7 @@ class Cchargesociales
 	 */
 	public $deductible;
 	/**
-	 * @var ?int
+	 * @var ?int<0,1>
 	 */
 	public $active;
 	/**
@@ -127,11 +127,13 @@ class Cchargesociales
 				'libelle',
 				'deductible',
 				'code',
-				'fk_pays',
 				'module',
 				'accountancy_code',
 			)
 		);
+		if (isset($this->fk_pays)) {
+			$this->fk_pays = (int) $this->fk_pays;
+		}
 		if (isset($this->active)) {
 			$this->active = (int) $this->active;
 		}
@@ -272,14 +274,17 @@ class Cchargesociales
 			array(
 				'libelle',
 				'deductible',
-				'active',
 				'code',
-				'fk_pays',
 				'module',
 				'accountancy_code',
 			)
 		);
-
+		if (isset($this->fk_pays)) {
+			$this->fk_pays = (int) $this->fk_pays;
+		}
+		if (isset($this->active)) {
+			$this->active = (int) $this->active;
+		}
 
 		// Check parameters
 		// Put here code to add a control on parameters values
