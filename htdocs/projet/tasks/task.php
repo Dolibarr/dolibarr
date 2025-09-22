@@ -478,27 +478,7 @@ if ($id > 0 || !empty($ref)) {
 
 	/*
 	 * Actions
-	*/
-	/*print '<div class="tabsAction">';
-
-	if ($user->rights->projet->all->creer || $user->rights->projet->creer)
-	{
-	if ($projectstatic->public || $userWrite > 0)
-	{
-	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create'.$param.'">'.$langs->trans('AddTask').'</a>';
-	}
-	else
-	{
-	print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('AddTask').'</a>';
-	}
-	}
-	else
-	{
-	print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTask').'</a>';
-	}
-
-	print '</div>';
-	*/
+	 */
 
 	// To verify role of users
 	//$userAccess = $projectstatic->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project

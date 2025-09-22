@@ -145,7 +145,7 @@ class Contrat extends CommonObject
 	public $fk_user_author;
 
 	/**
-	 * TODO: Which is the correct one?
+	 * TODO: Which is the correct one? user_author_id or user_creation_id ?
 	 * Author of the contract
 	 * @var int
 	 */
@@ -1346,9 +1346,6 @@ class Contrat extends CommonObject
 		}
 		if (empty($this->socid) && $this->fk_soc > 0) {
 			$this->socid = (int) $this->fk_soc;
-		}
-		if (empty($this->fk_project) && $this->projet > 0) {
-			$this->fk_project = (int) $this->projet;
 		}
 
 		if (isset($this->ref)) {

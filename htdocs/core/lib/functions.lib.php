@@ -10314,8 +10314,6 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$project = null;
 				if (!empty($object->project)) {
 					$project = $object->project;
-				} elseif (!empty($object->projet)) { // Deprecated, for backward compatibility
-					$project = $object->projet;
 				}
 				if (!is_null($project) && is_object($project)) {
 					$substitutionarray['__PROJECT_ID__'] = $project->id;

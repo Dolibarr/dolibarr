@@ -539,14 +539,9 @@ class EventAttendees extends DolibarrApi
 		unset($object->actiontypecode);
 		unset($object->name);
 		unset($object->civility_id);
-		unset($object->user_author);
-		unset($object->user_creation);
 		unset($object->user_creation_id);
-		unset($object->user_valid);
-		unset($object->user_validation);
 		unset($object->user_validation_id);
 		unset($object->user_closing_id);
-		unset($object->user_modification);
 		unset($object->user_modification_id);
 		unset($object->totalpaid);
 		unset($object->product);

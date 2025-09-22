@@ -245,7 +245,6 @@ class doc_generic_product_odt extends ModelePDFProduct
 			}
 			$productFournisseur = new ProductFournisseur($this->db);
 			$supplierprices = $productFournisseur->list_product_fournisseur_price($object->id);
-			$object->supplierprices = $supplierprices;
 
 			$dir = $conf->product->dir_output;
 			$objectref = dol_sanitizeFileName($object->ref);
@@ -415,8 +414,8 @@ class doc_generic_product_odt extends ModelePDFProduct
 				// Replace tags of lines
 				try {
 					$listlines = $odfHandler->setSegment('supplierprices');
-					if (!empty($object->supplierprices)) {
-						foreach ($object->supplierprices as $supplierprice) {
+					if (!empty($supplierprices)) {
+						foreach ($supplierprices as $supplierprice) {
 							$array_lines = $this->get_substitutionarray_each_var_object($supplierprice, $outputlangs);
 							complete_substitutions_array($array_lines, $outputlangs, $object, $supplierprice, "completesubstitutionarray_lines");
 							// Call the ODTSubstitutionLine hook
