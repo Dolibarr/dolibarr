@@ -63,6 +63,7 @@ create table llx_commande_fournisseur
   date_reception        	datetime default NULL,			-- date of real final reception (when everything is received)
   fk_account				integer,                        -- bank account
   fk_cond_reglement			integer,                        -- condition de reglement
+  deposit_percent			varchar(63) DEFAULT NULL,		-- default deposit % if payment term needs it
   fk_mode_reglement			integer,                        -- mode de reglement
   fk_input_method			integer default 0,              -- id coming from c_input_reason, '0' if no defined
   fk_incoterms				integer,						-- for incoterms
