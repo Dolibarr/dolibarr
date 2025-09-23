@@ -147,6 +147,7 @@ class Shipments extends DolibarrApi
 				$sql .= $hookmanager->resPrint;
 			} elseif ($reshook == 0) {
 				$sql .= $hookmanager->resPrint;
+			}
 			$errormessage = '';
 			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
 			if ($errormessage) {
