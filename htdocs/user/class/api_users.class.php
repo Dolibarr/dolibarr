@@ -623,7 +623,7 @@ class Users extends DolibarrApi
 	 *
 	 * @param int $id User ID
 	 * @param int $group Group ID
-	 * @return  array
+	 * @return  array{success:boolean,message:string}
 	 *
 	 * @throws RestException 403 Not allowed - only admin
 	 * @throws RestException 503 Error
