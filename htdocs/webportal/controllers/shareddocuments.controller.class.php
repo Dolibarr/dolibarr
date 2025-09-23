@@ -7,31 +7,31 @@
  * the Free Software Foundation.
  */
 
-
 require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 require_once __DIR__ . '/abstractdocument.controller.class.php';
 
 /**
-* \file        htdocs/webportal/controllers/shareddocuments.controller.class.php
-* \ingroup     webportal
-* \brief       This file is a controller for the globally shared documents list.
-*/
+ * \file        htdocs/webportal/controllers/shareddocuments.controller.class.php
+ * \ingroup     webportal
+ * \brief       This file is a controller for the globally shared documents list.
+ */
+
 /**
  * Class for SharedDocumentsController
  */
 class SharedDocumentsController extends AbstractDocumentController
 {
-/**
- * Check access rights for this page.
- *
- * @return  bool
- */
+	/**
+	 * Check access rights for this page.
+	 *
+	 * @return  bool
+	 */
 	public function checkAccess()
 	{
 		$this->accessRight = getDolGlobalInt('WEBPORTAL_SHARED_DOCUMENT_ACCESS');
 		return parent::checkAccess();
-		}
+	}
 
 	/**
 	 * Action method is called before html output.
@@ -52,7 +52,7 @@ class SharedDocumentsController extends AbstractDocumentController
 		$context->menu_active[] = 'shared_documents';
 
 		return 1;
-		}
+	}
 
 	/**
 	 * Build and display the page.
@@ -92,7 +92,7 @@ class SharedDocumentsController extends AbstractDocumentController
 		// 2. Prepare the paths
 		$shared_dir_name = getDolGlobalString('WEBPORTAL_SHARED_DOCS_DIR', 'Documentscomptes');
 		$base_dir_ged_partage = $conf->ecm->dir_output . '/' . $shared_dir_name;
-		// The full path now includes the visited subfolder
+		// The full path now includes the visited subdirectory
 		$current_dir_ged_partage = $base_dir_ged_partage . '/' . $sanitized_subdir;
 
 		// 3. List ALL contents (files AND folders) of the current directory
@@ -103,7 +103,7 @@ class SharedDocumentsController extends AbstractDocumentController
 				if ($item['type'] === 'file' && empty($item['size'])) {
 					$full_file_path = $current_dir_ged_partage . '/' . $item['name'];
 					// ... we recalculate its size and update the array.
-					// The @ prevents an error if the file is unreadable.
+					// The @ avoids an error if the file is unreadable.
 					$itemList[$key]['size'] = @filesize($full_file_path);
 				}
 			}
@@ -125,10 +125,12 @@ class SharedDocumentsController extends AbstractDocumentController
 
 		// 5. Define functions to build navigation and download links
 		$linkBuilder = array(
+			/** @param array{name: string, type: string, size: int|string, date: int} $dir */
 			'dir' => function (array $dir) use ($baseUrl, $sanitized_subdir) {
 				$new_subdir = (!empty($sanitized_subdir) ? $sanitized_subdir . '/' : '') . $dir['name'];
 				return $baseUrl . '&subdir=' . urlencode($new_subdir);
 			},
+			/** @param array{name: string, type: string, size: int|string, date: int} $file */
 			'file' => function (array $file) use ($shared_dir_name, $sanitized_subdir) {
 				$file_path = $shared_dir_name . '/' . (!empty($sanitized_subdir) ? $sanitized_subdir . '/' : '') . $file['name'];
 				return DOL_URL_ROOT . '/document.php?modulepart=ecm&file=' . urlencode($file_path);
