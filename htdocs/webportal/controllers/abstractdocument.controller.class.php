@@ -63,7 +63,7 @@ abstract class AbstractDocumentController extends Controller
 			// 3. Show all folders first
 			foreach ($directories as $dir) {
 				echo '<tr>';
-				// Le lien d'un dossier est pour la navigation
+				// A folder link is for navigation
 				echo '<td><a href="' . $linkBuilder['dir']($dir) . '">📁&nbsp;' . htmlspecialchars($dir['name']) . '</a></td>';
 				echo '<td style="text-align: right;">--</td>'; // Pas de taille pour un dossier
 				echo '<td style="text-align: right;">' . dol_print_date($dir['date'], 'dayhour') . '</td>';
