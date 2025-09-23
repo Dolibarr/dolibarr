@@ -243,8 +243,6 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 
 	// Si verif ok et action modify, on modifie la ligne
 	if ($ok && GETPOST('actionmodify', 'alpha')) {
-		$rowidcol = "rowid";
-
 		// Modify entry
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET ";
 		// Modifie valeur des champs
@@ -279,8 +277,6 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 }
 
 if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontoeditchart) {       // delete
-	$rowidcol = "rowid";
-
 	$sql = "DELETE from ".$db->sanitize($tabname[$id])." WHERE rowid = ".((int) $rowid);
 
 	dol_syslog("delete", LOG_DEBUG);
