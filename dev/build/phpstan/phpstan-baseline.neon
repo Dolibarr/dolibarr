@@ -3,24 +3,6 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 3
-			path: ../../../htdocs/accountancy/admin/accountmodel.php
-
-		-
-			message: '#^Left side of && is always false\.$#'
-			identifier: booleanAnd.leftAlwaysFalse
-			count: 3
-			path: ../../../htdocs/accountancy/admin/accountmodel.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''type_cdr'' and ''type_cdr'' will always evaluate to true\.$#'
-			identifier: equal.alwaysTrue
-			count: 2
-			path: ../../../htdocs/accountancy/admin/accountmodel.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
 			count: 1
 			path: ../../../htdocs/accountancy/admin/card.php
 
