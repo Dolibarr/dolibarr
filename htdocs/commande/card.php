@@ -1952,11 +1952,8 @@ if (empty($reshook)) {
 		}
 	}
 
-	// add lines from objectlinked
-	if ($action == 'import_lines_from_object'
-		&& $usercancreate
-		&& $object->status == Commande::STATUS_DRAFT
-	) {
+	// Add lines from objectlinked
+	if ($action == 'import_lines_from_object' && $usercancreate && $object->status == Commande::STATUS_DRAFT) {
 		$fromElement = GETPOST('fromelement');
 		$fromElementid = GETPOST('fromelementid');
 		$importLines = GETPOST('line_checkbox');

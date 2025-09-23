@@ -167,7 +167,7 @@ $usercancreatecontract = $user->hasRight("contrat", "creer");
 
 // Advanced Permissions
 $usercanvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $usercancreate) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('facture', 'invoice_advance', 'validate')));
-$usercansend = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('facture', 'invoice_advance', 'send')));
+$usercansend = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $usercanread) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('facture', 'invoice_advance', 'send')));
 $usercanreopen = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $usercancreate) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('facture', 'invoice_advance', 'reopen')));
 if (getDolGlobalString('INVOICE_DISALLOW_REOPEN')) {
 	$usercanreopen = false;
@@ -295,7 +295,7 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	} elseif ($action == 'confirm_delete' && $confirm == 'yes') {
+	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {
 		// Delete invoice
 		$result = $object->fetch($id);
 		$object->fetch_thirdparty();
@@ -311,8 +311,7 @@ if (empty($reshook)) {
 
 		$isErasable = $object->is_erasable();
 
-		if (($usercandelete && $isErasable > 0)
-			|| ($usercancreate && $isErasable == 1)) {
+		if (($isErasable > 0) || ($usercancreate && $isErasable == 1)) {
 			$result = $object->delete($user, 0, (int) $idwarehouse);
 			if ($result > 0) {
 				header('Location: '.DOL_URL_ROOT.'/compta/facture/list.php?restore_lastsearch_values=1');
@@ -652,7 +651,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm') && $usercancreate) {		// Set incoterm
 		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
-	} elseif ($action == 'settags' && isModEnabled('category')) {		// Set tags
+	} elseif ($action == 'settags' && isModEnabled('category') && $usercancreate) {		// Set tags
 		$result = $object->setCategories(GETPOST('categories', 'array'));
 	} elseif ($action == 'setbankaccount' && $usercancreate) {	// bank account
 		$result = $object->setBankAccount(GETPOSTINT('fk_account'));
@@ -3491,7 +3490,7 @@ if (empty($reshook)) {
 	if (empty($id)) {
 		$id = $facid;
 	}
-	if (!empty($object->id) && $action == 'send') {
+	if (!empty($object->id) && $action == 'send') {		// Test on permission not required
 		// load sumpayed, sumdeposit, sumcreditnote that can be used in email templates
 		$object->getSommePaiement(-1);
 		$object->getSumCreditNotesUsed(-1);

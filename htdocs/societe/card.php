@@ -402,7 +402,7 @@ if (empty($reshook)) {
 			$object->client					= $prospectcustomer;
 			$object->fournisseur			= (GETPOSTINT('supplier') > 0 ? 1 : 0);
 
-			if ($action == 'add') {
+			if ($action == 'add') {		// Test on permission already done
 				// for prospect, customer or supplier
 				if ($object->client > 0 || $object->fournisseur > 0) {
 					$form = new Form($db);
@@ -865,7 +865,7 @@ if (empty($reshook)) {
 		$result = $object->setWarehouse(GETPOSTINT('fk_warehouse'));
 	}
 
-	if ($action == 'confirm_clone' && $confirm != 'yes') {
+	if ($action == 'confirm_clone' && $confirm != 'yes') {	// Test on permission not required here
 		$action = '';
 	}
 	//clone company essential info

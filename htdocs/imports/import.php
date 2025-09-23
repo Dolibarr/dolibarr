@@ -248,7 +248,7 @@ if ($step == 3 && $datatoimport) {
 	}
 
 	// Delete file
-	if ($action == 'confirm_deletefile' && $confirm == 'yes') {
+	if ($action == 'confirm_deletefile' && $confirm == 'yes' && $user->hasRight('import', 'run')) {
 		$langs->load("other");
 
 		$param = '&datatoimport='.urlencode($datatoimport).'&format='.urlencode($format);
