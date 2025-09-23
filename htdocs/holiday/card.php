@@ -1627,7 +1627,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 							if ((($object->date_fin > dol_now()) && $permissiontoapprove) || $user->id == $object->fk_user_approve) {
 								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
 							} else {
-								if ($object->date_fin <= dol_now() /* && $permissiontoapprove */) { // $permissiontoapprove can't be true here because the three conditions in if are false to arrive here
+								if ($object->date_fin <= dol_now() && $permissiontoapprove) {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
 								} else {
 									print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("HolidayStarted").' - '.$langs->trans("NotAllowed").'">'.$langs->trans("ActionCancelCP").'</a>';
