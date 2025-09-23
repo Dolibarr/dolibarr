@@ -599,7 +599,7 @@ class Interventions extends DolibarrApi
 	}
 
 
-	/** 
+	/**
 	 * Delete the line of the interventional.
 	 *
 	 * @param int $id ID of the interventional
@@ -792,7 +792,7 @@ class Interventions extends DolibarrApi
 	 *
 	 * @url PUT /{id}/lines/{lineid}
 	 */
-	public function updateInterventionalLine($id, $lineid)
+	public function updateInterventionalLine($id, $lineid, $request_data)
 	{
 
 		$result = $this->fichinter->fetch($id);
@@ -828,7 +828,6 @@ class Interventions extends DolibarrApi
 	}
 
 
-	
 	/**
 	 * Validate fields before create or update object
 	 *
