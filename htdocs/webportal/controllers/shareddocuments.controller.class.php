@@ -13,26 +13,25 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 require_once __DIR__ . '/abstractdocument.controller.class.php';
 
 /**
- * \file        htdocs/webportal/controllers/shareddocuments.controller.class.php
- * \ingroup     webportal
- * \brief       This file is a controller for the globally shared documents list.
- */
-
+* \file        htdocs/webportal/controllers/shareddocuments.controller.class.php
+* \ingroup     webportal
+* \brief       This file is a controller for the globally shared documents list.
+*/
 /**
  * Class for SharedDocumentsController
  */
 class SharedDocumentsController extends AbstractDocumentController
 {
-	/**
-	 * Check access rights for this page.
-	 *
-	 * @return  bool
-	 */
+/**
+ * Check access rights for this page.
+ *
+ * @return  bool
+ */
 	public function checkAccess()
 	{
 		$this->accessRight = getDolGlobalInt('WEBPORTAL_SHARED_DOCUMENT_ACCESS');
 		return parent::checkAccess();
-	}
+		}
 
 	/**
 	 * Action method is called before html output.
@@ -53,7 +52,7 @@ class SharedDocumentsController extends AbstractDocumentController
 		$context->menu_active[] = 'shared_documents';
 
 		return 1;
-	}
+		}
 
 	/**
 	 * Build and display the page.
