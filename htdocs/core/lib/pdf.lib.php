@@ -2867,8 +2867,7 @@ function pdf_render_subtotals(
 	array              $bgColor,
 	bool               $isSubtotal = false,
 	bool               $applySubtotalLogic = true
-): void
-{
+): void {
 	$savePage = $pdf->getPage();
 	$saveX = $pdf->GetX();
 	$prevAlign = $generator->cols['desc']['content']['align'];
