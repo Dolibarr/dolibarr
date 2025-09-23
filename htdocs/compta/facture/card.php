@@ -166,7 +166,7 @@ $usercancreatecontract = $user->hasRight("contrat", "creer");
 
 // Advanced Permissions
 $usercanvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $usercancreate) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('facture', 'invoice_advance', 'validate')));
-$usercansend = (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('facture', 'invoice_advance', 'send')));
+$usercansend = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $usercanread) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('facture', 'invoice_advance', 'send')));
 $usercanreopen = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $usercancreate) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('facture', 'invoice_advance', 'reopen')));
 if (getDolGlobalString('INVOICE_DISALLOW_REOPEN')) {
 	$usercanreopen = false;
@@ -310,8 +310,7 @@ if (empty($reshook)) {
 
 		$isErasable = $object->is_erasable();
 
-		if (($usercandelete && $isErasable > 0)
-			|| ($usercancreate && $isErasable == 1)) {
+		if (($isErasable > 0) || ($usercancreate && $isErasable == 1)) {
 			$result = $object->delete($user, 0, (int) $idwarehouse);
 			if ($result > 0) {
 				header('Location: '.DOL_URL_ROOT.'/compta/facture/list.php?restore_lastsearch_values=1');

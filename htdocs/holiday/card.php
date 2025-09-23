@@ -622,7 +622,7 @@ if (empty($reshook)) {
 		$object->fetch($id);
 
 		// If status is waiting approval and approver is also user
-		if ($object->status == Holiday::STATUS_VALIDATED && ($user->id == $object->fk_validator || $permissiontoaddall) && $permissiontoapprove) {
+		if ($object->status == Holiday::STATUS_VALIDATED && ($user->id == $object->fk_validator || $permissiontoaddall)) {
 			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 			$object->date_approval = dol_now();
@@ -731,7 +731,7 @@ if (empty($reshook)) {
 			$object->fetch($id);
 
 			// If status pending validation and validator = user
-			if ($object->status == Holiday::STATUS_VALIDATED && ($user->id == $object->fk_validator || $permissiontoaddall) && $permissiontoapprove) {
+			if ($object->status == Holiday::STATUS_VALIDATED && ($user->id == $object->fk_validator || $permissiontoaddall)) {
 				$object->date_refuse = dol_now();
 				$object->fk_user_refuse = $user->id;
 				$object->statut = Holiday::STATUS_REFUSED;
@@ -1625,7 +1625,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					}
 					if ($object->status == Holiday::STATUS_APPROVED) { // If validated and approved
 						if ($user->id == $object->fk_validator || $user->id == $object->fk_user_approve || $permissiontoadd || $permissiontoaddall || $permissiontoapprove) {
-							if (($object->date_fin > dol_now()) || $permissiontoapprove || $user->id == $object->fk_user_approve) {
+							if ((($object->date_fin > dol_now()) && $permissiontoapprove) || $user->id == $object->fk_user_approve) {
 								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
 							} else {
 								if ($object->date_fin <= dol_now() && $permissiontoapprove) {

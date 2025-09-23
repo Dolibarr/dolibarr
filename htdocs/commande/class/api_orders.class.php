@@ -691,14 +691,15 @@ class Orders extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$contacts = $this->commande->liste_contact();
+		foreach (array('internal', 'external') as $source) {
+			$contacts = $this->commande->liste_contact(-1, $source);
+			foreach ($contacts as $contact) {
+				if ($contact['id'] == $contactid && $contact['code'] == $type) {
+					$result = $this->commande->delete_contact($contact['rowid']);
 
-		foreach ($contacts as $contact) {
-			if ($contact['id'] == $contactid && $contact['code'] == $type) {
-				$result = $this->commande->delete_contact($contact['rowid']);
-
-				if (!$result) {
-					throw new RestException(500, 'Error when deleted the contact');
+					if (!$result) {
+						throw new RestException(500, 'Error when deleting the contact '.$contact['rowid']);
+					}
 				}
 			}
 		}

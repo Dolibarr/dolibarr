@@ -157,60 +157,6 @@ parameters:
 			path: ../../../htdocs/accountancy/bookkeeping/export.php
 
 		-
-			message: '#^Property AccountancyCategory\:\:\$active \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
-			message: '#^Property AccountancyCategory\:\:\$category_type \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
-			message: '#^Property AccountancyCategory\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
-			message: '#^Property AccountancyCategory\:\:\$fk_country \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
-			message: '#^Property AccountancyCategory\:\:\$formula \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
-			message: '#^Property AccountancyCategory\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
-			message: '#^Property AccountancyCategory\:\:\$position \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
-			message: '#^Property AccountancyCategory\:\:\$range_account \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
-			message: '#^Property AccountancyCategory\:\:\$sens \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
 			message: '#^Call to function is_array\(\) with list\<string\> will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -3890,12 +3836,6 @@ parameters:
 
 		-
 			message: '#^Property Cchargesociales\:\:\$deductible \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/compta/sociales/class/cchargesociales.class.php
-
-		-
-			message: '#^Property Cchargesociales\:\:\$fk_pays \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
 			path: ../../../htdocs/compta/sociales/class/cchargesociales.class.php
