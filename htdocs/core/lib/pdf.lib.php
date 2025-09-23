@@ -2838,3 +2838,70 @@ function pdfExtractMetadata($file, $field = 'Keywords')
 		return "ERROR: FAILED TO READ PDF";
 	}
 }
+/**
+ * Render a subtotal line with a background fill and dynamic height.
+ *
+ *
+ * @param TCPDF              $pdf                  The current PDF object.
+ * @param CommonDocGenerator $generator            The template object (usually $this) giving access to margins, cols, etc.
+ * @param float              $curY                 The Y position where the line starts.
+ * @param CommonObject       $object               The business object containing lines (invoice, order, etc.).
+ * @param int                $i                    Index of the current line being printed.
+ * @param Translate          $outputlangs          Language object used for translations.
+ * @param int|bool           $hideref              Hide reference flag (passed through to printColDescContent).
+ * @param int|bool           $hidedesc             Hide description flag (passed through to printColDescContent).
+ * @param array              $bg_color             RGB array for background fill [R,G,B].
+ * @param bool               $is_subtotal          True if we are rendering a subtotal line.
+ * @param bool               $apply_subtotal_logic Whether to translate/align text specially for subtotal lines.
+ *
+ * @return void
+ */
+function pdf_render_subtotals($pdf, $generator, $curY, $object, $i, $outputlangs, $hideref, $hidedesc, $bg_color, $is_subtotal = false, $apply_subtotal_logic = true): void {
+	$save_page = $pdf->getPage();
+	$save_x = $pdf->GetX();
+	$original_desc = $object->lines[$i]->desc;
+	$prev_align = $generator->cols['desc']['content']['align'];
+
+	if ($is_subtotal && $apply_subtotal_logic) {
+		if ($object->lines[$i]->qty < 0) {
+			$outputlangs->load("subtotals");
+			$object->lines[$i]->desc = $outputlangs->trans("SubtotalOf", $object->lines[$i]->desc);
+			if ($prev_align == 'L')     $generator->cols['desc']['content']['align'] = 'R';
+			elseif ($prev_align == 'R') $generator->cols['desc']['content']['align'] = 'L';
+		}
+	}
+
+	$pdf->startTransaction();
+	$pdf->SetXY($save_x, $curY);
+	$generator->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
+	$page_after = $pdf->getPage();
+	$y_after = $pdf->GetY();
+	$pdf->rollbackTransaction(true);
+
+	$pdf->SetFillColor($bg_color[0], $bg_color[1], $bg_color[2]);
+	$w = $generator->page_largeur - $generator->marge_droite - $generator->marge_gauche;
+
+	if ($page_after == $save_page) {
+		$pdf->SetXY($generator->marge_gauche, $curY);
+		$pdf->MultiCell($w, max(0, $y_after - $curY), '', 0, '', true);
+	} else {
+		$pdf->SetXY($generator->marge_gauche, $curY);
+		$pdf->MultiCell($w, $pdf->getPageHeight() - $pdf->getBreakMargin() - $curY, '', 0, '', true);
+
+		$pdf->setPage($page_after);
+		$pdf->SetXY($generator->marge_gauche, $pdf->getMargins()['top']);
+		$pdf->MultiCell($w, max(0, $y_after - $pdf->getMargins()['top']), '', 0, '', true);
+
+		$pdf->setPage($save_page);
+	}
+
+	$pdf->SetTextColor(colorIsLight(implode(',', $bg_color)));
+
+	$pdf->SetXY($save_x, $curY);
+	$generator->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
+	$generator->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());
+
+	$pdf->SetTextColor(0, 0, 0);
+	$generator->cols['desc']['content']['align'] = $prev_align;
+	$object->lines[$i]->desc = $original_desc;
+}
