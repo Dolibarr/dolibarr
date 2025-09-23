@@ -109,7 +109,9 @@ class Shipments extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('expedition', 'lire')) {
 			throw new RestException(403);
 		}
-
+		
+		global $hookmanager;
+		
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
