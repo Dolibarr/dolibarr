@@ -2838,6 +2838,7 @@ function pdfExtractMetadata($file, $field = 'Keywords')
 		return "ERROR: FAILED TO READ PDF";
 	}
 }
+
 /**
  * Render subtotals line with a colored background and adapted text color .
  *
