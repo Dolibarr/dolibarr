@@ -193,6 +193,13 @@ class modUser extends DolibarrModules
 		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'user';
 		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'export';
 
+		$r++;
+		$this->rights[$r][self::KEY_ID] = 364;
+		$this->rights[$r][self::KEY_LABEL] = 'Read email templates';
+		$this->rights[$r][self::KEY_DEFAULT] = 0;
+		$this->rights[$r][self::KEY_FIRST_LEVEL] = 'email_templates';
+		$this->rights[$r][self::KEY_SECOND_LEVEL] = 'read';
+
 
 		// Menus
 		$this->menu = 1; // This module add menu entries. They are coded into menu manager.

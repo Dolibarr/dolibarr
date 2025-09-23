@@ -271,7 +271,8 @@ $error = 0;
 $acceptlocallinktomedia = (acceptLocalLinktoMedia() > 0 ? 1 : 0);
 
 // Security
-if (!empty($user->socid)) {
+$permissiontoread = ($user->admin || ($user->hasRight('user', 'email_templates', 'read')));
+if (!$permissiontoread) {
 	accessforbidden();
 }
 
