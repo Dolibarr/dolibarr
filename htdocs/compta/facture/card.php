@@ -310,7 +310,7 @@ if (empty($reshook)) {
 
 		$isErasable = $object->is_erasable();
 
-		if ($isErasable > 0 || ($usercancreate && $isErasable == 1)) {
+		if (($isErasable > 0) || ($usercancreate && $isErasable == 1)) {
 			$result = $object->delete($user, 0, (int) $idwarehouse);
 			if ($result > 0) {
 				header('Location: '.DOL_URL_ROOT.'/compta/facture/list.php?restore_lastsearch_values=1');
