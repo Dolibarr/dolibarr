@@ -100,17 +100,17 @@ class Commande extends CommonOrder
 	protected $table_ref_field = 'ref';
 
 	/**
-	 * @var int Thirdparty ID
+	 * @var ?int Thirdparty ID
 	 */
 	public $socid;
 
 	/**
-	 * @var string Thirdparty ref of order
+	 * @var ?string Thirdparty ref of order
 	 */
 	public $ref_client;
 
 	/**
-	 * @var string Thirdparty ref of order
+	 * @var ?string Thirdparty ref of order
 	 */
 	public $ref_customer;
 
@@ -169,7 +169,7 @@ class Commande extends CommonOrder
 	public $mode_reglement;
 
 	/**
-	 * @var int Payment mode id
+	 * @var ?int Payment mode id
 	 */
 	public $mode_reglement_id;
 
@@ -525,6 +525,10 @@ class Commande extends CommonOrder
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 			return -1;
 		}
+		if (empty($this->socid)) {
+			$this->error = 'ErrorWrongParameters';
+			return -1;
+		}
 
 		$now = dol_now();
 
@@ -538,7 +542,7 @@ class Commande extends CommonOrder
 		$result = $soc->setAsCustomer();
 
 		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+		if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 			$num = $this->getNextNumRef($soc);
 		} else {
 			$num = (string) $this->ref;
@@ -695,9 +699,7 @@ class Commande extends CommonOrder
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		if ($this->db->query($sql)) {
-			if (!$error) {
-				$this->oldcopy = clone $this;
-			}
+			$this->oldcopy = clone $this;
 
 			// If stock is decremented on validate order, we must reincrement it
 			if (isModEnabled('stock') && getDolGlobalInt('STOCK_CALCULATE_ON_VALIDATE_ORDER') == 1) {
@@ -919,7 +921,7 @@ class Commande extends CommonOrder
 						$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("OrderCanceledInDolibarr", $this->ref)); // price is 0, we don't want WAP to be changed
 						if ($result < 0) {
 							$error++;
-							$this->error = $mouvP->error;
+							$this->setErrorsFromObject($mouvP);
 							break;
 						}
 					}
@@ -969,6 +971,11 @@ class Commande extends CommonOrder
 		$error = 0;
 
 		// Clean parameters
+
+		if (empty($this->socid)) {
+			$this->error = 'ErrorWrongParameters';
+			return -1;
+		}
 
 		// Set tmp vars
 		$date = ($this->date_commande ? $this->date_commande : $this->date);
@@ -1174,7 +1181,7 @@ class Commande extends CommonOrder
 					}
 
 					// Add object linked
-					if (!$error && $this->id && !empty($this->linked_objects) && is_array($this->linked_objects)) {
+					if (!empty($this->linked_objects) && is_array($this->linked_objects)) {
 						foreach ($this->linked_objects as $origin => $tmp_origin_id) {
 							if (is_array($tmp_origin_id)) {       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
 								foreach ($tmp_origin_id as $origin_id) {
@@ -1195,7 +1202,7 @@ class Commande extends CommonOrder
 						}
 					}
 
-					if (!$error && $this->id && getDolGlobalString('MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN') && !empty($this->origin) && !empty($this->origin_id)) {   // Get contact from origin object
+					if (!$error && getDolGlobalString('MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN') && !empty($this->origin) && !empty($this->origin_id)) {   // Get contact from origin object
 						$originforcontact = empty($this->origin_type) ? $this->origin : $this->origin_type;
 						$originidforcontact = $this->origin_id;
 						if ($originforcontact == 'shipping') {     // shipment and order share the same contacts. If creating from shipment we take data of order
@@ -3007,10 +3014,8 @@ class Commande extends CommonOrder
 
 		dol_syslog(get_class($this)."::classifyBilled", LOG_DEBUG);
 		if ($this->db->query($sql)) {
-			if (!$error) {
-				$this->oldcopy = clone $this;
-				$this->billed = 1;
-			}
+			$this->oldcopy = clone $this;
+			$this->billed = 1;
 
 			if (!$notrigger && empty($error)) {
 				// Call trigger
@@ -3057,10 +3062,8 @@ class Commande extends CommonOrder
 
 		dol_syslog(get_class($this)."::classifyUnBilled", LOG_DEBUG);
 		if ($this->db->query($sql)) {
-			if (!$error) {
-				$this->oldcopy = clone $this;
-				$this->billed = 1;
-			}
+			$this->oldcopy = clone $this;
+			$this->billed = 1;
 
 			if (!$notrigger && empty($error)) {
 				// Call trigger

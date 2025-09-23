@@ -196,19 +196,18 @@ function dol_print_object_info($object, $usetable = 0)
 		} else {
 			print ': ';
 		}
-		$userstatic = new User($db);
-		$userstatic->fetch($object->user_creation_id);
-		if ($userstatic->id) {
+		print '<div class="valignmiddle inline-block">';
+		if ($object->user_creation_id > 0) {
+			$userstatic = new User($db);
+			$userstatic->fetch($object->user_creation_id);
 			print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 		} else {
 			print $langs->trans("Unknown");
 		}
-
-		if (!empty($object->user_creation_id) && !empty($object->date_creation)) {
-			print ' - ';
-		}
+		print '</div>';
 
 		if (!empty($object->date_creation)) {
+			print ' - ';
 			print '<div class="valignmiddle inline-block">';
 			print dol_print_date($object->date_creation, 'dayhour', 'tzserver');
 			if ($deltadateforuser) {
@@ -236,9 +235,9 @@ function dol_print_object_info($object, $usetable = 0)
 			print ': ';
 		}
 		print '<div class="valignmiddle inline-block">';
-		$userstatic = new User($db);
-		$userstatic->fetch($object->user_modification_id);
-		if ($userstatic->id) {
+		if ($object->user_modification_id > 0) {
+			$userstatic = new User($db);
+			$userstatic->fetch($object->user_modification_id);
 			print $userstatic->getNomUrl(-1, '', 0, 0, 0);
 		} else {
 			print $langs->trans("Unknown");
