@@ -51,7 +51,7 @@ abstract class AbstractDocumentController extends Controller
 				}
 			}
 
-			// 2. Afficher le tableau
+			// 2. Display the table
 			echo '<table class="table table-hover" width="100%">';
 			echo '<thead><tr>';
 			echo '<th>' . $langs->trans('Name') . '</th>';
@@ -60,7 +60,7 @@ abstract class AbstractDocumentController extends Controller
 			echo '</tr></thead>';
 			echo '<tbody>';
 
-			// 3. Afficher tous les dossiers en premier
+			// 3. Show all folders first
 			foreach ($directories as $dir) {
 				echo '<tr>';
 				// Le lien d'un dossier est pour la navigation
@@ -70,10 +70,10 @@ abstract class AbstractDocumentController extends Controller
 				echo '</tr>';
 			}
 
-			// 4. Ensuite, afficher tous les fichiers
+			// 4. Then display all files
 			foreach ($files as $file) {
 				echo '<tr>';
-				// Le lien d'un fichier est pour le téléchargement
+				// The link of a file is for downloading
 				echo '<td><a href="' . $linkBuilder['file']($file) . '" target="_blank">📄&nbsp;' . htmlspecialchars($file['name']) . '</a></td>';
 				echo '<td style="text-align: right;">' . dol_print_size($file['size']) . '</td>';
 				echo '<td style="text-align: right;">' . dol_print_date($file['date'], 'dayhour') . '</td>';
