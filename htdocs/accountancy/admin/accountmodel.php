@@ -276,7 +276,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontoeditchart) {       // delete
+if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontoeditchart) {	// @phpstan-ignore-line
 	$sql = "DELETE from ".$db->sanitize($tabname[$id])." WHERE rowid = ".((int) $rowid);
 
 	dol_syslog("delete", LOG_DEBUG);
@@ -291,7 +291,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontoeditchart) 
 }
 
 // activate
-if ($action == 'activate' && $permissiontoeditchart) {
+if ($action == 'activate' && $permissiontoeditchart) {								// @phpstan-ignore-line
 	$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET active = 1 WHERE rowid = ".((int) $rowid);
 	$result = $db->query($sql);
 	if (!$result) {
@@ -300,7 +300,7 @@ if ($action == 'activate' && $permissiontoeditchart) {
 }
 
 // disable
-if ($action == $acts[1] && $permissiontoeditchart) {
+if ($action == $acts[1] && $permissiontoeditchart) {								// @phpstan-ignore-line
 	$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET active = 0 WHERE rowid = ".((int) $rowid);
 	$result = $db->query($sql);
 	if (!$result) {

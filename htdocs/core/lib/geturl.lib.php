@@ -42,9 +42,10 @@
  * @param	int<-1,1>  	$ssl_verifypeer		-1=Auto (no ssl check on dev, check on prod), 0=No ssl check, 1=Always ssl check
  * @param	int			$timeoutconnect		Timeout connect
  * @param	int			$timeoutresponse	Timeout response
+ * @param	array<int, mixed>	$otherCurlOptions	Array of other curl options to set. Example: array(CURLOPT_SSL_VERIFYPEER => false)
  * @return	array{http_code:int,content:string,curl_error_no:int,curl_error_msg:string}    Returns an associative array containing the response from the server array('http_code'=>http response code, 'content'=>response, 'curl_error_no'=>errno, 'curl_error_msg'=>errmsg...)
  */
-function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array(), $allowedschemes = array('http', 'https'), $localurl = 0, $ssl_verifypeer = -1, $timeoutconnect = 0, $timeoutresponse = 0)
+function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 1, $addheaders = array(), $allowedschemes = array('http', 'https'), $localurl = 0, $ssl_verifypeer = -1, $timeoutconnect = 0, $timeoutresponse = 0, $otherCurlOptions = array())
 {
 	// Get global variables for proxy use
 	$USE_PROXY = getDolGlobalInt('MAIN_PROXY_USE');
@@ -191,6 +192,12 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		curl_setopt($ch, CURLOPT_PROXY, $PROXY_HOST.":".$PROXY_PORT);
 		if ($PROXY_USER) {
 			curl_setopt($ch, CURLOPT_PROXYUSERPWD, $PROXY_USER.":".$PROXY_PASS);
+		}
+	}
+
+	if (is_array($otherCurlOptions)) {
+		foreach ($otherCurlOptions as $option => $value) {
+			curl_setopt($ch, $option, $value);
 		}
 	}
 
