@@ -577,36 +577,19 @@ if ($resql) {
 					}
 				}
 
-				// Can an entry be erased or disabled ?
-				$iserasable = 1;
-				$canbedisabled = 1;
-				$canbemodified = 1; // true by default
-
 				$url = $_SERVER["PHP_SELF"].'?token='.newToken().($page ? '&page='.$page : '').'&sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.(!empty($obj->rowid) ? $obj->rowid : (!empty($obj->code) ? $obj->code : '')).'&code='.(!empty($obj->code) ? urlencode($obj->code) : '');
 				$url .= '&'.$param.'&';
 
 				// Active
 				print '<td class="center nowrap">';
-				if ($canbedisabled) {
-					print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
-				} else {
-					print $langs->trans("AlwaysActive");
-				}
+				print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
 				print "</td>";
 
 				// Modify link
-				if ($canbemodified) {
-					print '<td class="center"><a class="reposition editfielda" href="'.$url.'action=edit&token='.newToken().'">'.img_edit().'</a></td>';
-				} else {
-					print '<td>&nbsp;</td>';
-				}
+				print '<td class="center"><a class="reposition editfielda" href="'.$url.'action=edit&token='.newToken().'">'.img_edit().'</a></td>';
 
 				// Delete link
-				if ($iserasable) {
-					print '<td class="center"><a href="'.$url.'action=delete&token='.newToken().'">'.img_delete().'</a></td>';
-				} else {
-					print '<td>&nbsp;</td>';
-				}
+				print '<td class="center"><a href="'.$url.'action=delete&token='.newToken().'">'.img_delete().'</a></td>';
 
 				print "</tr>\n";
 			}
