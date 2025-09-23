@@ -2850,13 +2850,13 @@ function pdfExtractMetadata($file, $field = 'Keywords')
  * @param Translate          $outputlangs          Language object used for translations.
  * @param int|bool           $hideref              Hide reference flag (passed through to printColDescContent).
  * @param int|bool           $hidedesc             Hide description flag (passed through to printColDescContent).
- * @param array              $bg_color             RGB array for background fill [R,G,B].
+ * @param array<int, int>    $bg_color             RGB array for background fill [R,G,B].
  * @param bool               $is_subtotal          True if we are rendering a subtotal line.
  * @param bool               $apply_subtotal_logic Whether to translate/align text specially for subtotal lines.
  *
  * @return void
  */
-function pdf_render_subtotals($pdf, $generator, $curY, $object, $i, $outputlangs, $hideref, $hidedesc, $bg_color, $is_subtotal = false, $apply_subtotal_logic = true): void
+function pdf_render_subtotals($pdf, $generator, $curY, $object, $i, $outputlangs, $hideref, $hidedesc, $bg_color, $is_subtotal = false, $apply_subtotal_logic = true)
 {
 	$save_page = $pdf->getPage();
 	$save_x = $pdf->GetX();
@@ -2867,8 +2867,12 @@ function pdf_render_subtotals($pdf, $generator, $curY, $object, $i, $outputlangs
 		if ($object->lines[$i]->qty < 0) {
 			$outputlangs->load("subtotals");
 			$object->lines[$i]->desc = $outputlangs->trans("SubtotalOf", $object->lines[$i]->desc);
-			if ($prev_align == 'L')     $generator->cols['desc']['content']['align'] = 'R';
-			elseif ($prev_align == 'R') $generator->cols['desc']['content']['align'] = 'L';
+			if ($prev_align === 'L') {
+				$generator->cols['desc']['content']['align'] = 'R';
+			}
+			elseif ($prev_align === 'R') {
+				$generator->cols['desc']['content']['align'] = 'L';
+			}
 		}
 	}
 
@@ -2882,7 +2886,7 @@ function pdf_render_subtotals($pdf, $generator, $curY, $object, $i, $outputlangs
 	$pdf->SetFillColor($bg_color[0], $bg_color[1], $bg_color[2]);
 	$w = $generator->page_largeur - $generator->marge_droite - $generator->marge_gauche;
 
-	if ($page_after == $save_page) {
+	if ($page_after === $save_page) {
 		$pdf->SetXY($generator->marge_gauche, $curY);
 		$pdf->MultiCell($w, max(0, $y_after - $curY), '', 0, '', true);
 	} else {
