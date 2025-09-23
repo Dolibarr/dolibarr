@@ -507,8 +507,8 @@ class Conf
 			$this->admin->dir_temp = $rootfortemp.'/admin/temp';
 
 			// For api storage
-			$this->admin->dir_output = $rootfordata.'/api';
-			$this->admin->dir_temp = $rootfortemp.'/api/temp';
+			$this->api->dir_output = $rootfordata.'/api';
+			$this->api->dir_temp = $rootfortemp.'/api/temp';
 
 			// For user storage
 			$this->user->multidir_output = array($this->entity => $rootfordata."/users");
