@@ -79,17 +79,17 @@ class AccountancyCategory // extends CommonObject
 	public $label;
 
 	/**
-	 * @var string Accountancy range account
+	 * @var ?string Accountancy range account
 	 */
 	public $range_account;
 
 	/**
-	 * @var int Sens of the account:  0: credit - debit, 1: debit - credit
+	 * @var ?int Sens of the account:  0: credit - debit, 1: debit - credit
 	 */
 	public $sens;
 
 	/**
-	 * @var int Category type of accountancy
+	 * @var ?int Category type of accountancy
 	 */
 	public $category_type;
 
