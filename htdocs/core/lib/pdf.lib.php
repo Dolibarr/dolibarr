@@ -2856,7 +2856,8 @@ function pdfExtractMetadata($file, $field = 'Keywords')
  *
  * @return void
  */
-function pdf_render_subtotals($pdf, $generator, $curY, $object, $i, $outputlangs, $hideref, $hidedesc, $bg_color, $is_subtotal = false, $apply_subtotal_logic = true): void {
+function pdf_render_subtotals($pdf, $generator, $curY, $object, $i, $outputlangs, $hideref, $hidedesc, $bg_color, $is_subtotal = false, $apply_subtotal_logic = true): void
+{
 	$save_page = $pdf->getPage();
 	$save_x = $pdf->GetX();
 	$original_desc = $object->lines[$i]->desc;
