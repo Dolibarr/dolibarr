@@ -3895,12 +3895,6 @@ parameters:
 			path: ../../../htdocs/compta/sociales/class/cchargesociales.class.php
 
 		-
-			message: '#^Property Cchargesociales\:\:\$fk_pays \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/compta/sociales/class/cchargesociales.class.php
-
-		-
 			message: '#^Property Cchargesociales\:\:\$libelle \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
