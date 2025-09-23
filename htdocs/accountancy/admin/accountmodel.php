@@ -199,32 +199,15 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 	// Si verif ok et action add, on ajoute la ligne
 	if ($ok && GETPOST('actionadd', 'alpha')) {
 		$newid = 0;
-		if ($tabrowid[$id]) {
-			// Get free id for insert
-			$sql = "SELECT MAX(".$db->sanitize($tabrowid[$id]).") as newid FROM ".$db->sanitize($tabname[$id]);
-			$result = $db->query($sql);
-			if ($result) {
-				$obj = $db->fetch_object($result);
-				$newid = ($obj->newid + 1);
-			} else {
-				dol_print_error($db);
-			}
-		}
 
 		// Add new entry
 		$sql = "INSERT INTO ".$db->sanitize($tabname[$id])." (";
 		// List of fields
-		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldinsert)) {
-			$sql .= $db->sanitize($tabrowid[$id]).",";
-		}
 		$sql .= $db->sanitize($tabfieldinsert[$id]);
 		$sql .= ",active)";
 		$sql .= " VALUES(";
 
 		// List of values
-		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldinsert)) {
-			$sql .= $newid.",";
-		}
 		$i = 0;
 		foreach ($listfieldinsert as $f => $value) {
 			if ($value == 'price' || preg_match('/^amount/i', $value) || $value == 'taux') {
@@ -260,19 +243,12 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 
 	// Si verif ok et action modify, on modifie la ligne
 	if ($ok && GETPOST('actionmodify', 'alpha')) {
-		if ($tabrowid[$id]) {
-			$rowidcol = $tabrowid[$id];
-		} else {
-			$rowidcol = "rowid";
-		}
+		$rowidcol = "rowid";
 
 		// Modify entry
 		$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET ";
 		// Modifie valeur des champs
-		if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldmodify)) {
-			$sql .= $db->sanitize($tabrowid[$id])." = ";
-			$sql .= "'".$db->escape($rowid)."', ";
-		}
+
 		$i = 0;
 		foreach ($listfieldmodify as $field) {
 			if ($field == 'price' || preg_match('/^amount/i', $field) || $field == 'taux') {
@@ -291,7 +267,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 			}
 			$i++;
 		}
-		$sql .= " WHERE ".$rowidcol." = ".((int) $rowid);
+		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		dol_syslog("actionmodify", LOG_DEBUG);
 		//print $sql;
@@ -303,13 +279,9 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 }
 
 if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontoeditchart) {       // delete
-	if ($tabrowid[$id]) {
-		$rowidcol = $tabrowid[$id];
-	} else {
-		$rowidcol = "rowid";
-	}
+	$rowidcol = "rowid";
 
-	$sql = "DELETE from ".$db->sanitize($tabname[$id])." WHERE ".$db->sanitize($rowidcol)." = ".((int) $rowid);
+	$sql = "DELETE from ".$db->sanitize($tabname[$id])." WHERE rowid = ".((int) $rowid);
 
 	dol_syslog("delete", LOG_DEBUG);
 	$result = $db->query($sql);
@@ -701,16 +673,8 @@ function fieldListAccountModel($fieldlist, $obj = null, $tabname = '', $context 
 				print '</td>';
 			}
 		} elseif ($fieldlist[$field] == 'type_cdr') {
-			if ($fieldlist[$field] == 'type_cdr') {
-				print '<td class="center">';
-			} else {
-				print '<td>';
-			}
-			if ($fieldlist[$field] == 'type_cdr') {
-				print $form->selectarray($fieldlist[$field], array(0 => $langs->trans('None'), 1 => $langs->trans('AtEndOfMonth'), 2 => $langs->trans('CurrentNext')), (!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : ''));
-			} else {
-				print $form->selectyesno($fieldlist[$field], (!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : ''), 1);
-			}
+			print '<td class="center">';
+			print $form->selectarray($fieldlist[$field], array(0 => $langs->trans('None'), 1 => $langs->trans('AtEndOfMonth'), 2 => $langs->trans('CurrentNext')), (!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : ''));
 			print '</td>';
 		} elseif ($fieldlist[$field] == 'code' && isset($obj->{$fieldlist[$field]})) {
 			print '<td><input type="text" class="flat" value="'.(!empty($obj->{$fieldlist[$field]}) ? $obj->{$fieldlist[$field]} : '').'" size="10" name="'.$fieldlist[$field].'"></td>';
