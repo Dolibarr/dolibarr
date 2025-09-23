@@ -48,7 +48,7 @@ class DocumentListController extends AbstractDocumentController
 	/**
 	 * Action method is called before HTML output.
 	 *
-	 * @return int Returns >0 on success, 0 if no action, <0 on error.
+	 * @return int Returns >0 on success, <0 on error.
 	 */
 	public function action(): int
 	{
