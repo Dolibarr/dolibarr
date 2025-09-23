@@ -635,9 +635,8 @@ class pdf_espadon extends ModelePdfExpedition
 					if ($this->getColumnStatus('desc')) {
 						if ($object->lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE) {
 							$bg_color = colorStringToArray(getDolGlobalString("SUBTOTAL_BACK_COLOR_LEVEL_".abs($object->lines[$i]->qty)));
-							$pdf->SetFillColor($bg_color[0], $bg_color[1], $bg_color[2]);
-							$pdf->SetXY($pdf->GetX() + 1, $curY);
-							$pdf->MultiCell($this->page_largeur - $this->marge_droite  - $this->marge_gauche - 2, 6, '', 0, '', true);
+							$colorislight = colorIsLight(implode(',', $bg_color));
+
 							$previous_align = array();
 							$previous_align['align'] = $this->cols['desc']['content']['align'];
 							if ($object->lines[$i]->qty < 0) {
@@ -649,8 +648,43 @@ class pdf_espadon extends ModelePdfExpedition
 									$this->cols['desc']['content']['align'] = 'L';
 								}
 							}
+
+							$pdf->startTransaction();
+							$pdf->SetXY($pdf->GetX(), $curY);
+							$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
+							$page_after = $pdf->getPage();
+							$y_after = $pdf->GetY();
+							$pdf->rollbackTransaction(true);
+
+							$pdf->SetFillColor($bg_color[0], $bg_color[1], $bg_color[2]);
+
+							$save_page = $pdf->getPage();
+							$save_x = $pdf->GetX();
+							$save_y = $curY;
+
+							if ($page_after == $save_page) {
+								$pdf->SetXY($this->marge_gauche, $curY);
+								$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->marge_gauche, max(0, $y_after - $curY), '', 0, '', true);
+							} else {
+								$pdf->SetXY($this->marge_gauche, $curY);
+								$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->marge_gauche, $pdf->getPageHeight() - $pdf->getBreakMargin() - $curY, '', 0, '', true);
+
+								$pdf->setPage($page_after);
+								$pdf->SetXY($this->marge_gauche, $pdf->getMargins()['top']);
+								$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->marge_gauche, max(0, $y_after - $pdf->getMargins()['top']), '', 0, '', true);
+
+								$pdf->setPage($save_page);
+							}
+
+							if ($colorislight) {
+								$pdf->SetTextColor(0, 0, 0);
+							} else {
+								$pdf->SetTextColor(255, 255, 255);
+							}
+
 							$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
 							$this->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());
+
 							$this->cols['desc']['content']['align'] = $previous_align['align']; // Re align if we printed a subtotal ligne
 						} else {
 							$pdf->startTransaction();
