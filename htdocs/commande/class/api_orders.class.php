@@ -698,7 +698,7 @@ class Orders extends DolibarrApi
 					$result = $this->commande->delete_contact($contact['rowid']);
 
 					if (!$result) {
-						throw new RestException(500, 'Error when deleted the contact');
+						throw new RestException(500, 'Error when deleting the contact '.$contact['rowid']);
 					}
 				}
 			}
