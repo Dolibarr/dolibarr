@@ -519,7 +519,7 @@ if (empty($reshook)) {
 
 				// option to warn the validator in case of too short delay
 				if (!getDolGlobalString('HOLIDAY_HIDE_APPROVER_ABOUT_TOO_LOW_DELAY')) {
-					$delayForRequest = getDolGlobalFloat('HOLIDAY_DELAY_TO_APPROVE_FOR_TYPE_'.$object->fk_type);		// TODO Set delay depending of holiday leave type
+					$delayForRequest = getDolGlobalFloat('HOLIDAY_DELAY_TO_APPROVE_FOR_TYPE_'.$object->fk_type);		// Set delay depending of holiday leave type
 					if ($delayForRequest) {
 						$nowplusdelay = dol_time_plus_duree($now, $delayForRequest, 'd');
 
