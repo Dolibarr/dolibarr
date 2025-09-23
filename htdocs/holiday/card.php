@@ -1624,7 +1624,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					}
 					if ($object->status == Holiday::STATUS_APPROVED) { // If validated and approved
 						if ($user->id == $object->fk_validator || $user->id == $object->fk_user_approve || $permissiontoadd || $permissiontoaddall || $permissiontoapprove) {
-							if (($object->date_fin > dol_now()) || $permissiontoapprove || $user->id == $object->fk_user_approve) {
+							if ((($object->date_fin > dol_now()) && $permissiontoapprove) || $user->id == $object->fk_user_approve) {
 								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
 							} else {
 								if ($object->date_fin <= dol_now() /* && $permissiontoapprove */) { // $permissiontoapprove can't be true here because the three conditions in if are false to arrive here

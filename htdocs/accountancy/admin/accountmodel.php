@@ -276,7 +276,8 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontoeditchart) {       // delete
+// delete
+if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontoeditchart) {
 	$sql = "DELETE from ".$db->sanitize($tabname[$id])." WHERE rowid = ".((int) $rowid);
 
 	dol_syslog("delete", LOG_DEBUG);
