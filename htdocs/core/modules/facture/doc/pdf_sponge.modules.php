@@ -805,7 +805,7 @@ class pdf_sponge extends ModelePDFFactures
 							$this->setAfterColsLinePositionsData('desc', $pdf->GetY(), $pdf->getPage());
 						} else {
 							$bg_color = colorStringToArray(getDolGlobalString("SUBTOTAL_BACK_COLOR_LEVEL_".abs($object->lines[$i]->qty)));
-							pdf_render_subtotals($pdf, $this, $curY, $object,$i, $outputlangs, $hideref, $hidedesc, $bg_color, true, true);	
+							pdf_render_subtotals($pdf, $this, $curY, $object, $i, $outputlangs, $hideref, $hidedesc, $bg_color, true, true);
 						}
 					}
 
