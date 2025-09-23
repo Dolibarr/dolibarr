@@ -93,7 +93,7 @@ class SharedDocumentsController extends AbstractDocumentController
 		// 2. Prepare the paths
 		$shared_dir_name = getDolGlobalString('WEBPORTAL_SHARED_DOCS_DIR', 'Documentscomptes');
 		$base_dir_ged_partage = $conf->ecm->dir_output . '/' . $shared_dir_name;
-		// Le chemin complet inclut maintenant le sous-dossier visité
+		// The full path now includes the visited subfolder
 		$current_dir_ged_partage = $base_dir_ged_partage . '/' . $sanitized_subdir;
 
 		// 3. List ALL contents (files AND folders) of the current directory
