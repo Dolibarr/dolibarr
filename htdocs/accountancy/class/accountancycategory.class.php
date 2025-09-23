@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016		Jamal Elbaz			<jamelbaz@gmail.pro>
  * Copyright (C) 2016-2017	Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2024	Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -69,12 +69,12 @@ class AccountancyCategory // extends CommonObject
 	public $id;
 
 	/**
-	 * @var string Accountancy code
+	 * @var ?string Accountancy code
 	 */
 	public $code;
 
 	/**
-	 * @var string Accountancy Category label
+	 * @var ?string Accountancy Category label
 	 */
 	public $label;
 
@@ -94,22 +94,22 @@ class AccountancyCategory // extends CommonObject
 	public $category_type;
 
 	/**
-	 * @var string Formula
+	 * @var ?string Formula
 	 */
 	public $formula;
 
 	/**
-	 * @var int     Position
+	 * @var ?int     Position
 	 */
 	public $position;
 
 	/**
-	 * @var int country id
+	 * @var ?int country id
 	 */
 	public $fk_country;
 
 	/**
-	 * @var int Is active
+	 * @var ?int Is active
 	 */
 	public $active;
 
