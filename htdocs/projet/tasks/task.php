@@ -180,7 +180,7 @@ if ($action == 'confirm_merge' && $confirm == 'yes' && $user->hasRight('projet',
 	}
 }
 
-if ($action == 'confirm_clone' && $confirm == 'yes') {
+if ($action == 'confirm_clone' && $confirm == 'yes' && $user->hasRight('projet', 'creer')) {
 	//$clone_contacts = GETPOST('clone_contacts') ? 1 : 0;
 	$clone_prog = GETPOST('clone_prog') ? 1 : 0;
 	$clone_time = GETPOST('clone_time') ? 1 : 0;

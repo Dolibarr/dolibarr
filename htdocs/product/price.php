@@ -110,6 +110,13 @@ if ($object->id > 0) {
 
 $maxpricesupplier = 0;
 
+if ($object->id > 0) {
+	$permissiontoadd = $object->getRights()->creer;
+} else {
+	$permissiontoadd = ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'));
+}
+
+
 /*
  * Actions
  */
@@ -136,7 +143,7 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if (($action == 'update_vat') && !$cancel && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
+	if (($action == 'update_vat') && !$cancel && $permissiontoadd) {
 		$tva_tx_txt = GETPOST('tva_tx', 'alpha'); // tva_tx can be '8.5'  or  '8.5*'  or  '8.5 (XXX)' or '8.5* (XXX)'
 
 		$price_label = GETPOST('price_label', 'alpha');
@@ -278,7 +285,7 @@ if (empty($reshook)) {
 
 	$maxpricesupplier = 0;
 
-	if (($action == 'update_price' || $action == 'update_level_price') && !$cancel && $object->getRights()->creer) {
+	if (($action == 'update_price' || $action == 'update_level_price') && !$cancel && $permissiontoadd) {
 		$error = 0;
 		$pricestoupdate = array();
 
@@ -305,7 +312,8 @@ if (empty($reshook)) {
 		}
 
 		// Multiprices
-		if (!$error && (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || ($action == 'update_level_price' && getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')))) {
+		if (!$error && (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')
+			|| ($action == 'update_level_price' && getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')))) {	// Test on permission already done
 			$newprice = GETPOST('price', 'array');
 			$newprice_min = GETPOST('price_min', 'array');
 			$newpricebase = GETPOST('multiprices_base_type', 'array');
@@ -626,7 +634,7 @@ if (empty($reshook)) {
 	}
 
 	// Set Price by quantity
-	if ($action == 'activate_price_by_qty') {
+	if ($action == 'activate_price_by_qty' && $permissiontoadd) {
 		// Activating product price by quantity add a new price line with price_by_qty set to 1
 		$level = GETPOSTINT('level');
 		$basePrice = ($object->price_base_type == 'HT') ? $object->price : $object->price_ttc;
@@ -638,7 +646,7 @@ if (empty($reshook)) {
 		}
 	}
 	// Unset Price by quantity
-	if ($action == 'disable_price_by_qty') {
+	if ($action == 'disable_price_by_qty' && $permissiontoadd) {
 		// Disabling product price by quantity add a new price line with price_by_qty set to 0
 		$level = GETPOSTINT('level');
 		$basePrice = ($object->price_base_type == 'HT') ? $object->price : $object->price_ttc;
@@ -650,12 +658,12 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'edit_price_by_qty') { // Edition d'un prix par quantité
+	if ($action == 'edit_price_by_qty') { // Test on permission not required
 		$rowid = GETPOSTINT('rowid');
 	}
 
 	// Add or update price by quantity
-	if ($action == 'update_price_by_qty') {
+	if ($action == 'update_price_by_qty' && $permissiontoadd) {
 		// Récupération des variables
 		$rowid = GETPOSTINT('rowid');
 		$priceid = GETPOSTINT('priceid');
@@ -712,7 +720,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'delete_price_by_qty') {
+	if ($action == 'delete_price_by_qty' && $permissiontoadd) {
 		$rowid = GETPOSTINT('rowid');
 		if (!empty($rowid)) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price_by_qty";
@@ -724,7 +732,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'delete_all_price_by_qty') {
+	if ($action == 'delete_all_price_by_qty' && $permissiontoadd) {
 		$priceid = GETPOSTINT('priceid');
 		if (!empty($rowid)) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price_by_qty";

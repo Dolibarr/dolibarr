@@ -1196,9 +1196,8 @@ if (empty($reshook)) {
 		}
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
 		exit();
-	} elseif (	$action == 'addline' && !GETPOST('submitforalllines', 'alpha')
-				&& !GETPOST('submitforallmargins', 'alpha') && !GETPOST('markforalllines', 'alpha')
-				&& $usercancreate) {		// Add line
+	} elseif ($action == 'addline' && !GETPOST('submitforalllines', 'alpha') && !GETPOST('submitforallmargins', 'alpha') && !GETPOST('markforalllines', 'alpha') && $usercancreate) {
+		// Add line
 		// Set if we used free entry or predefined product
 		$predef = '';
 		$line_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');

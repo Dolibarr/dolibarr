@@ -71,7 +71,7 @@ class DolGeoIP
 				if (function_exists('stream_wrapper_restore')) {
 					stream_wrapper_restore('phar');
 				}
-				require_once DOL_DOCUMENT_ROOT.'/includes/geoip2/geoip2.phar';
+				include_once DOL_DOCUMENT_ROOT.'/includes/geoip2/geoip2.phar';
 			}
 		} elseif ($type == 'city') {
 			// geoip may have been already included with PEAR
@@ -79,7 +79,7 @@ class DolGeoIP
 				if (function_exists('stream_wrapper_restore')) {
 					stream_wrapper_restore('phar');
 				}
-				require_once DOL_DOCUMENT_ROOT.'/includes/geoip2/geoip2.phar';
+				include_once DOL_DOCUMENT_ROOT.'/includes/geoip2/geoip2.phar';
 			}
 		} else {
 			print 'ErrorBadParameterInConstructor';

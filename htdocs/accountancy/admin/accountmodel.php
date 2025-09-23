@@ -142,6 +142,7 @@ $tabrowid[31] = "";
 $tabhelp = array();
 $tabhelp[31] = array('pcg_version' => $langs->trans("EnterAnyCode"));
 
+$permissiontoeditchart = $user->hasRight('accounting', 'chartofaccount');
 
 
 /*
@@ -301,7 +302,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha')) {
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
+if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontoeditchart) {	// @phpstan-ignore-line
 	if ($tabrowid[$id]) {
 		$rowidcol = $tabrowid[$id];
 	} else {
@@ -322,7 +323,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
 }
 
 // activate
-if ($action == 'activate') {
+if ($action == 'activate' && $permissiontoeditchart) {								// @phpstan-ignore-line
 	$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET active = 1 WHERE rowid = ".((int) $rowid);
 	$result = $db->query($sql);
 	if (!$result) {
@@ -331,7 +332,7 @@ if ($action == 'activate') {
 }
 
 // disable
-if ($action == $acts[1]) {
+if ($action == $acts[1] && $permissiontoeditchart) {								// @phpstan-ignore-line
 	$sql = "UPDATE ".$db->sanitize($tabname[$id])." SET active = 0 WHERE rowid = ".((int) $rowid);
 	$result = $db->query($sql);
 	if (!$result) {

@@ -135,8 +135,9 @@ if (empty($reshook)) {
 
 	// Actions cancel, add, update, delete or clone
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
+
 	// The fetch/fetch_lines was redone into the inc.php so we must recall the calculateCosts()
-	if ($action == 'confirm_validate' && $object->id > 0) {
+	if ($action == 'confirm_validate' && $object->id > 0) {		// Test on permission not required
 		$object->calculateCosts();
 	}
 
