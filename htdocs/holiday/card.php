@@ -618,7 +618,7 @@ if (empty($reshook)) {
 	}
 
 	// Approve leave request
-	if ($action == 'confirm_valid' && $permissiontoapprove) {	// Test on permission done later
+	if ($action == 'confirm_valid') {	// Test on permission done later
 		$object->fetch($id);
 
 		// If status is waiting approval and approver is also user
@@ -726,7 +726,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'confirm_refuse' && GETPOST('confirm', 'alpha') == 'yes' && $permissiontoapprove) {	// Test on permission done later
+	if ($action == 'confirm_refuse' && GETPOST('confirm', 'alpha') == 'yes') {	// Test on permission done later
 		if (GETPOST('detail_refuse')) {
 			$object->fetch($id);
 
