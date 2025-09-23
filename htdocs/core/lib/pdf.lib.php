@@ -2839,7 +2839,7 @@ function pdfExtractMetadata($file, $field = 'Keywords')
 	}
 }
 /**
- * Render subtotals line with a colored background and adapted text color.
+ * Render subtotals line with a colored background and adapted text color .
  *
  * @param  TCPDF              $pdf                PDF instance
  * @param  CommonDocGenerator $generator          Generator object
@@ -2849,7 +2849,7 @@ function pdfExtractMetadata($file, $field = 'Keywords')
  * @param  Translate          $outputlangs        Output language object
  * @param  int                $hideref            Hide reference
  * @param  int                $hidedesc           Hide description
- * @param  array              $bgColor            RGB color array [R,G,B]
+ * @param  array<int, int>    $bgColor            RGB color array [R,G,B]
  * @param  bool               $isSubtotal         Whether this is a subtotal line
  * @param  bool               $applySubtotalLogic Whether to apply subtotal specific logic
  *
@@ -2867,17 +2867,15 @@ function pdf_render_subtotals(
 	array              $bgColor,
 	bool               $isSubtotal = false,
 	bool               $applySubtotalLogic = true
-): void {
+) {
 	$savePage = $pdf->getPage();
 	$saveX = $pdf->GetX();
 	$prevAlign = $generator->cols['desc']['content']['align'];
 
-	if ($isSubtotal && $applySubtotalLogic) {
-		if ($object->lines[$i]->qty < 0) {
-			$outputlangs->load("subtotals");
-			$object->lines[$i]->desc = $outputlangs->trans("SubtotalOf", $object->lines[$i]->desc);
-			$generator->cols['desc']['content']['align'] = ($prevAlign === 'L') ? 'R' : 'L';
-		}
+	if ($isSubtotal && $applySubtotalLogic && $object->lines[$i]->qty < 0) {
+		$outputlangs->load("subtotals");
+		$object->lines[$i]->desc = $outputlangs->trans("SubtotalOf", $object->lines[$i]->desc);
+		$generator->cols['desc']['content']['align'] = ($prevAlign === 'L') ? 'R' : 'L';
 	}
 
 	$pdf->startTransaction();
