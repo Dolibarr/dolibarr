@@ -524,7 +524,7 @@ if (empty($reshook)) {
 						$nowplusdelay = dol_time_plus_duree($now, $delayForRequest, 'd');
 
 						if ($object->date_debut < $nowplusdelay) {
-							$message = "<p>".$langs->transnoentities("HolidaysToValidateDelay", $delayForRequest)."</p>\n";
+							$message = "<p>".$langs->transnoentities("HolidaysToValidateDelay", (string) $delayForRequest)."</p>\n";
 						}
 					}
 				}
