@@ -615,7 +615,7 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * Remove user fron group (only admin)
+	 * Remove user from group (only admin)
 	 *
 	 * @since    23.0.0    Initial implementation
 	 *
