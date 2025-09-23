@@ -519,7 +519,7 @@ if (empty($reshook)) {
 
 				// option to warn the validator in case of too short delay
 				if (!getDolGlobalString('HOLIDAY_HIDE_APPROVER_ABOUT_TOO_LOW_DELAY')) {
-					$delayForRequest = getDolGlobalFloat('HOLIDAY_DELAY_TO_APPROVE_FOR_TYPE_'.$object->fk_type);		// Set delay depending of holiday leave type
+					$delayForRequest = getDolGlobalFloat('HOLIDAY_DELAY_TO_APPROVE_FOR_TYPE_'.$object->fk_type);	// Set delay depending of holiday leave type
 					if ($delayForRequest) {
 						$nowplusdelay = dol_time_plus_duree($now, $delayForRequest, 'd');
 
@@ -816,7 +816,6 @@ if (empty($reshook)) {
 			$action = 'refuse';
 		}
 	}
-
 
 	// If the request is validated
 	if ($action == 'confirm_draft' && GETPOST('confirm') == 'yes' && $permissiontoadd) {
@@ -1624,11 +1623,11 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 						}
 					}
 					if ($object->status == Holiday::STATUS_APPROVED) { // If validated and approved
-						if ($user->id == $object->fk_validator || $user->id == $object->fk_user_approve || $permissiontoadd || $permissiontoaddall || $permissiontoapprove) {
+						if ($user->id == $object->fk_user_approve || $user->id == $object->fk_validator || $permissiontoadd || $permissiontoaddall || $permissiontoapprove) {
 							if (($object->date_fin > dol_now()) || $permissiontoapprove || $user->id == $object->fk_user_approve) {
 								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
 							} else {
-								if ($object->date_fin <= dol_now() && $permissiontoapprove) {
+								if ($object->date_fin <= dol_now() /* && $permissiontoapprove */) { // $permissiontoapprove can't be true here because the three conditions in if are false to arrive here
 									print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel&token='.newToken().'" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
 								} else {
 									print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("HolidayStarted").' - '.$langs->trans("NotAllowed").'">'.$langs->trans("ActionCancelCP").'</a>';
