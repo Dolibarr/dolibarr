@@ -83,7 +83,7 @@ $colspan = 3;
 
 // Lines for extrafield
 $objectline = new ExpeditionLigne($this->db);
-$line = new ExpeditionLigne($object->db);
+
 print "<!-- BEGIN PHP TEMPLATE expedition/tpl/objectline_edit.tpl.php -->\n";
 
 $coldisplay = 0;
