@@ -1088,6 +1088,47 @@ class Users extends DolibarrApi
 		return $this->_cleanObjectDatas($notification);
 	}
 
+	/**
+	 * Generate an API key for a user (only admin)
+	 *
+	 * @since    23.0.0    Initial implementation
+	 *
+	 * @url POST {id}/generate-api-key
+	 *
+	 * @param int $id ID of the user
+	 * @return array{user_id:int,api_key:string}
+	 *
+	 * @throws RestException 403 Not allowed - only admin
+	 * @throws RestException 404 User not found
+	 * @throws RestException 500 If update failed
+	 */
+	public function generateApiKey($id)
+	{
+		global $conf;
+
+		if (!DolibarrApiAccess::$user->admin) {
+	       	throw new RestException(403, 'Only admin can generate API keys');
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+
+		$user = new User($this->db);
+		if ($user->fetch($id) <= 0) {
+			throw new RestException(404, 'User not found');
+		}
+
+		$user->api_key = dol_hash(getRandomPassword(true), 2); // sha1
+
+		if ($user->update($user) < 0) {
+			throw new RestException(500, 'Failed to update API key: '.$user->error);
+		}
+
+        return [
+			'user_id' => $id,
+			'api_key' => $user->api_key
+		];
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 * Clean sensible object datas
