@@ -5,8 +5,9 @@
  * Copyright (C) 2023       Charlene Benke          <charlene@patas_monkey.com>
  * Copyright (C) 2023       Christian Foellmann     <christian@foellmann.de>
  * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024       Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2025		Benjamin Falière		<benjamin@faliere.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,15 +62,10 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'aZ09');
 
 $dol_openinpopup = '';
-if (!empty($backtopagejsfields)) {
-	$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
-	$dol_openinpopup = preg_replace('/[^a-z0-9_]/i', '', $tmpbacktopagejsfields[0]);
-}
 
 $status = GETPOSTINT('status');
 $opp_status = GETPOSTINT('opp_status');
@@ -81,11 +77,9 @@ $date_end = dol_mktime(0, 0, 0, GETPOSTINT('projectendmonth'), GETPOSTINT('proje
 $date_start_event = dol_mktime(GETPOSTINT('date_start_eventhour'), GETPOSTINT('date_start_eventmin'), GETPOSTINT('date_start_eventsec'), GETPOSTINT('date_start_eventmonth'), GETPOSTINT('date_start_eventday'), GETPOSTINT('date_start_eventyear'), 'tzuserrel');
 $date_end_event = dol_mktime(GETPOSTINT('date_end_eventhour'), GETPOSTINT('date_end_eventmin'), GETPOSTINT('date_end_eventsec'), GETPOSTINT('date_end_eventmonth'), GETPOSTINT('date_end_eventday'), GETPOSTINT('date_end_eventyear'), 'tzuserrel');
 $location = GETPOST('location', 'alphanohtml');
-$fk_project = GETPOSTINT('fk_project');
 
 
 $mine = GETPOST('mode') == 'mine' ? 1 : 0;
-//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('projectcard', 'globalcard'));
@@ -121,12 +115,20 @@ if ($id == '' && $ref == '' && ($action != "create" && $action != "add" && $acti
 $permissiontoadd = $user->hasRight('projet', 'creer');
 $permissiontodelete = $user->hasRight('projet', 'supprimer');
 $permissiondellink = $user->hasRight('projet', 'creer');	// Used by the include of actions_dellink.inc.php
+$permissiontoeditextra = $permissiontoadd;
+
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 
 /*
  * Actions
  */
+
 $error = 0;
+
 $parameters = array('id' => $socid, 'objcanvas' => $objcanvas);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -271,7 +273,7 @@ if (empty($reshook)) {
 			}
 			if (!$error && !empty($object->id) > 0) {
 				// Category association
-				$categories = GETPOST('categories', 'array');
+				$categories = GETPOST('categories', 'array:int');
 				$result = $object->setCategories($categories);
 				if ($result < 0) {
 					$langs->load("errors");
@@ -373,7 +375,7 @@ if (empty($reshook)) {
 				}
 			} else {
 				// Category association
-				$categories = GETPOST('categories', 'array');
+				$categories = GETPOST('categories', 'array:int');
 				$result = $object->setCategories($categories);
 				if ($result < 0) {
 					$error++;
@@ -476,7 +478,7 @@ if (empty($reshook)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 			$langs->load("other");
-			$upload_dir = $conf->project->multidir_output[$object->entity];
+			$upload_dir = $conf->project->multidir_output[$object->entity ?? $conf->entity];
 			$file = $upload_dir.'/'.GETPOST('file');
 			$ret = dol_delete_file($file, 0, 0, 0, $object);
 			if ($ret) {
@@ -548,30 +550,28 @@ if (empty($reshook)) {
 			// Load new object
 			$newobject = new Project($db);
 			$newobject->fetch($result);
-			$newobject->fetch_optionals();
-			$newobject->fetch_thirdparty(); // Load new object
-			$object = $newobject;
-			$action = 'view';
-			$comefromclone = true;
 
 			setEventMessages($langs->trans("ProjectCreatedInDolibarr", $newobject->ref), null, 'mesgs');
-			//var_dump($newobject); exit;
+
+			header('Location: '.$_SERVER['PHP_SELF'].'?id='.$result.'&action=edit&comefromclone=1');
+			exit;
 		}
 	}
 
 	// Quick edit for extrafields
-	if ($action == 'update_extras' && $permissiontoadd) {
+	if ($action == 'update_extras' && $permissiontoeditextra) {
 		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
+		$attribute_name = GETPOST('attribute', 'aZ09');
+
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 		if ($ret < 0) {
 			$error++;
 		}
 
 		if (!$error) {
-			// Actions on extra fields
-			$result = $object->insertExtraFields('PROJECT_MODIFY');
+			$result = $object->updateExtraField($attribute_name, 'PROJECT_MODIFY');
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
@@ -638,7 +638,6 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
-	print '<input type="hidden" name="backtopagejsfields" value="'.$backtopagejsfields.'">';
 	print '<input type="hidden" name="dol_openinpopup" value="'.$dol_openinpopup.'">';
 
 	print dol_get_fiche_head();
@@ -815,12 +814,12 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 			print $text;
 		}
 		if (!GETPOSTISSET('backtopage')) {
-			$url = '/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create');
+			$url = '/societe/card.php?action=create&customer=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create');
 			$newbutton = '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span>';
 			// TODO @LDR Implement this
 			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-				$tmpbacktopagejsfields = 'addthirdparty:socid,search_socid';
-				print dolButtonToOpenUrlInDialogPopup('addthirdparty', $langs->transnoentitiesnoconv('AddThirdParty'), $newbutton, $url, '', '', '', $tmpbacktopagejsfields);
+				$jsonclose = 'TODO Not yet implemented';
+				print dolButtonToOpenUrlInDialogPopup('addthirdparty', $langs->transnoentitiesnoconv('AddThirdParty'), $newbutton, $url, '', '', '', $jsonclose);
 			} else {
 				print ' <a href="'.DOL_URL_ROOT.$url.'">'.$newbutton.'</a>';
 			}
@@ -894,9 +893,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	if (isModEnabled('category')) {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PROJECT, '', 'parent', 64, 0, 3);
-		$arrayselected = GETPOST('categories', 'array');
-		print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+		print $form->selectCategories(Categorie::TYPE_PROJECT, 'categories', $object);
 		print "</td></tr>";
 	}
 
@@ -1309,15 +1306,8 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 		// Tags-Categories
 		if (isModEnabled('category')) {
-			$arrayselected = array();
 			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PROJECT, '', 'parent', 64, 0, 3);
-			$c = new Categorie($db);
-			$cats = $c->containing($object->id, Categorie::TYPE_PROJECT);
-			foreach ($cats as $cat) {
-				$arrayselected[] = $cat->id;
-			}
-			print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, '0');
+			print $form->selectCategories(Categorie::TYPE_PROJECT, 'categories', $object);
 			print "</td></tr>";
 		}
 
@@ -1714,18 +1704,21 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 
 			// Buttons Create
 			if (!getDolGlobalString('PROJECT_HIDE_CREATE_OBJECT_BUTTON')) {
+				// We check the type of thirdparty
+				$is_customer_or_prospect = (!empty($object->thirdparty->prospect) || !empty($object->thirdparty->client));
+				$is_supplier_only= (!empty($object->thirdparty->fournisseur) && !$is_customer_or_prospect);
+
 				$arrayforbutaction = array(
-					//1 => array('lang' => 'propal', 'enabled' => 1, 'perm' => 1, 'label' => 'XXX'),
-					10 => array('lang' => 'propal', 'enabled' => isModEnabled("propal"), 'perm' => $user->hasRight('propal', 'creer') ? true : false, 'label' => 'AddProp', 'url' => '/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
-					20 => array('lang' => 'orders', 'enabled' => isModEnabled("order"), 'perm' => $user->hasRight('commande', 'creer') ? true : false, 'label' => 'CreateOrder', 'url' => '/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
-					30 => array('lang' => 'bills', 'enabled' => isModEnabled("invoice"), 'perm' => $user->hasRight('facture', 'creer') ? true : false, 'label' => 'CreateBill', 'url' => '/compta/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
-					40 => array('lang' => 'supplier_proposal', 'enabled' => isModEnabled("supplier_proposal"), 'perm' => $user->hasRight('supplier_proposal', 'creer') ? true : false, 'label' => 'AddSupplierProposal', 'url' => '/supplier_proposal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
-					50 => array('lang' => 'suppliers', 'enabled' => isModEnabled("supplier_order"), 'perm' => $user->hasRight('fournisseur', 'commande', 'creer') ? true : false, 'label' => 'AddSupplierOrder', 'url' => '/fourn/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
-					60 => array('lang' => 'suppliers', 'enabled' => isModEnabled("supplier_invoice"), 'perm' => $user->hasRight('fournisseur', 'facture', 'creer') ? true : false, 'label' => 'AddSupplierInvoice', 'url' => '/fourn/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
-					70 => array('lang' => 'interventions', 'enabled' => isModEnabled("intervention"), 'perm' => $user->hasRight('fichinter', 'creer') ? true : false, 'label' => 'AddIntervention', 'url' => '/fichinter/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
-					80 => array('lang' => 'contracts', 'enabled' => isModEnabled("contract"), 'perm' => $user->hasRight('contrat', 'creer') ? true : false, 'label' => 'AddContract', 'url' => '/contrat/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
-					90 => array('lang' => 'trips', 'enabled' => isModEnabled("expensereport"), 'perm' => $user->hasRight('expensereport', 'creer') ? true : false, 'label' => 'AddTrip', 'url' => '/expensereport/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
-					100 => array('lang' => 'donations', 'enabled' => isModEnabled("don"), 'perm' => $user->hasRight('don', 'creer') ? true : false, 'label' => 'AddDonation', 'url' => '/don/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+					10 => array('lang'=>'propal', 'enabled' => (isModEnabled("propal") && $is_customer_or_prospect), 'perm' => $user->hasRight('propal', 'creer') ? true : false, 'label' => 'AddProp', 'url'=>'/comm/propal/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+					20 => array('lang'=>'orders', 'enabled' => (isModEnabled("order") && $is_customer_or_prospect), 'perm' => $user->hasRight('commande', 'creer') ? true : false, 'label' => 'CreateOrder', 'url'=>'/commande/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+					30 => array('lang'=>'bills', 'enabled' => (isModEnabled("invoice") && $is_customer_or_prospect), 'perm' => $user->hasRight('facture', 'creer') ? true : false, 'label' => 'CreateBill', 'url'=>'/compta/facture/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+					40 => array('lang'=>'supplier_proposal', 'enabled' => isModEnabled("supplier_proposal"), 'perm' => $user->hasRight('supplier_proposal', 'creer') ? true : false, 'label' => 'AddSupplierProposal', 'url'=>'/supplier_proposal/card.php?action=create&amp;projectid='.$object->id.($is_supplier_only ? '&amp;socid='.$object->socid : '')),
+					50 => array('lang'=>'suppliers', 'enabled' => isModEnabled("supplier_order"), 'perm' => $user->hasRight('fournisseur', 'commande', 'creer') ? true : false, 'label' => 'AddSupplierOrder', 'url'=>'/fourn/commande/card.php?action=create&amp;projectid='.$object->id.($is_supplier_only ? '&amp;socid='.$object->socid : '')),
+					60 => array('lang'=>'suppliers', 'enabled' => isModEnabled("supplier_invoice"), 'perm' => $user->hasRight('fournisseur', 'facture', 'creer') ? true : false, 'label' => 'AddSupplierInvoice', 'url'=>'/fourn/facture/card.php?action=create&amp;projectid='.$object->id.($is_supplier_only ? '&amp;socid='.$object->socid : '')),
+					70 => array('lang'=>'interventions', 'enabled' => isModEnabled("intervention"), 'perm' => $user->hasRight('fichinter', 'creer') ? true : false, 'label' => 'AddIntervention', 'url'=>'/fichinter/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+					80 => array('lang'=>'contracts', 'enabled' => isModEnabled("contract"), 'perm' => $user->hasRight('contrat', 'creer') ? true : false, 'label' => 'AddContract', 'url'=>'/contrat/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+					90 => array('lang'=>'trips', 'enabled' => isModEnabled("expensereport"), 'perm' => $user->hasRight('expensereport', 'creer') ? true : false, 'label' => 'AddTrip', 'url'=>'/expensereport/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
+				   100 => array('lang'=>'donations', 'enabled' => isModEnabled("don"), 'perm' => $user->hasRight('don', 'creer') ? true : false, 'label' => 'AddDonation', 'url'=>'/don/card.php?action=create&amp;projectid='.$object->id.'&amp;socid='.$object->socid),
 				);
 
 				$params = array('backtopage' => $_SERVER["PHP_SELF"].'?id='.$object->id);
@@ -1803,7 +1796,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 		 * Generated documents
 		 */
 		$filename = dol_sanitizeFileName($object->ref);
-		$filedir = $conf->project->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->ref);
+		$filedir = $conf->project->multidir_output[$object->entity ?? $conf->entity]."/".dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = ($user->hasRight('projet', 'lire') && $userAccess > 0);
 		$delallowed = ($user->hasRight('projet', 'creer') && $userWrite > 0);
@@ -1831,7 +1824,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	$modelmail = 'project';
 	$defaulttopic = 'SendProjectRef';
 	$defaulttopiclang = 'projects';
-	$diroutput = $conf->project->multidir_output[$object->entity];
+	$diroutput = $conf->project->multidir_output[$object->entity ?? $conf->entity];
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_PROJECT_TO'; // used to know the automatic BCC to add
 	$trackid = 'proj'.$object->id;
 
@@ -1841,7 +1834,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('mainCardTabAddMore', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 } else {
-	print $langs->trans("RecordNotFound");
+	recordNotFound('', 0);
 }
 
 // End of page

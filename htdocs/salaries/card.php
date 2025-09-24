@@ -1,14 +1,14 @@
 <?php
 /* Copyright (C) 2011-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2015		    Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2015		    Charlie BENKE				    <charlie@patas-monkey.com>
- * Copyright (C) 2018-2024	Frédéric France				  <frederic.france@free.fr>
- * Copyright (C) 2021		    Gauthier VERDOL				  <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2023		    Maxime Nicolas				  <maxime@oarces.com>
- * Copyright (C) 2023		    Benjamin GREMBI				  <benjamin@oarces.com>
- * Copyright (C) 2024-2025	MDW							        <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025		Nick Fragoulis
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2015		Charlie BENKE				<charlie@patas-monkey.com>
+ * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023		Maxime Nicolas				<maxime@oarces.com>
+ * Copyright (C) 2023		Benjamin GREMBI				<benjamin@oarces.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,9 +121,15 @@ restrictedArea($user, 'salaries', $object->id, 'salary', '');
 $permissiontoread = $user->hasRight('salaries', 'read');
 $permissiontoadd = $user->hasRight('salaries', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->hasRight('salaries', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_UNPAID);
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 $upload_dir = $conf->salaries->multidir_output[$conf->entity];
 
+$error = 0;
 
 /*
  * Actions
@@ -453,29 +459,29 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 	}
 }
 
+
 // Action to update one extrafield
-if ($action == "update_extras" && $permissiontoadd) {
-	$object->fetch(GETPOSTINT('id'));
+if ($action == 'update_extras' && $permissiontoeditextra) {
+	$object->oldcopy = dol_clone($object, 2); // @phan-suppress-current-line PhanTypeMismatchProperty
 
-	$attributekey = GETPOST('attribute', 'alpha');
-	$attributekeylong = 'options_'.$attributekey;
+	$attribute = GETPOST('attribute', 'aZ09');
 
-	if (GETPOSTISSET($attributekeylong.'day') && GETPOSTISSET($attributekeylong.'month') && GETPOSTISSET($attributekeylong.'year')) {
-		// This is properties of a date
-		$object->array_options['options_'.$attributekey] = dol_mktime(GETPOSTINT($attributekeylong.'hour'), GETPOSTINT($attributekeylong.'min'), GETPOSTINT($attributekeylong.'sec'), GETPOSTINT($attributekeylong.'month'), GETPOSTINT($attributekeylong.'day'), GETPOSTINT($attributekeylong.'year'));
-		//var_dump(dol_print_date($object->array_options['options_'.$attributekey]));exit;
-	} else {
-		$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong, 'alpha');
+	// Fill array 'array_options' with data from update form
+	$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute);
+	if ($ret < 0) {
+		setEventMessages($extrafields->error, $object->errors, 'errors');
+		$error++;
 	}
 
-	$triggermodname = 'SALARY_MODIFY';
+	if (!$error) {
+		$result = $object->updateExtraField($attribute, 'SALARY_MODIFY');
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$error++;
+		}
+	}
 
-	$result = $object->insertExtraFields($triggermodname, $user);
-	if ($result > 0) {
-		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-		$action = 'view';
-	} else {
-		setEventMessages($object->error, $object->errors, 'errors');
+	if ($error) {
 		$action = 'edit_extras';
 	}
 }
@@ -778,8 +784,13 @@ if ($id > 0) {
 			$('#clone_date_start').after(
 				$('<button id=\"start_prev_month\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('PreviousMonthShort')."</button>')
 				.add('<button id=\"start_curr_month\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('CurrentMonthShort')."</button>')
-				.add('<button id=\"start_prev_week\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('PreviousWeekShort')."</button>')
-				.add('<button id=\"start_curr_week\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('CurrentWeekShort')."</button>')
+			";
+		if (getDolGlobalString('SALARY_MANAGEMENT_PER_WEEK')) {
+			$formconfirm .= "
+					.add('<button id=\"start_prev_week\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('PreviousWeekShort')."</button>')
+					.add('<button id=\"start_curr_week\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('CurrentWeekShort')."</button>')";
+		}
+		$formconfirm .= "
 			);
 
 			$('#start_prev_month').click(function(){
@@ -948,8 +959,9 @@ if ($id > 0) {
 	$morehtmlref .= '</div>';
 
 	$totalpaid = $object->getSommePaiement();
-	$object->alreadypaid = $totalpaid;
+
 	$object->totalpaid = $totalpaid;
+	$object->alreadypaid = $totalpaid;	// Same then $totalpaid because there is no amount of credit note or deposits for salary payments.
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
 
@@ -1193,6 +1205,11 @@ if ($id > 0) {
 			print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '');
 		}
 
+		// Transfer request
+		if ($object->status == $object::STATUS_UNPAID && ((price2num($object->amount) < 0 && $resteapayer < 0) || (price2num($object->amount) > 0 && $resteapayer > 0)) && $permissiontoadd) {
+			print dolGetButtonAction('', $langs->trans('MakeTransferRequest'), 'default', DOL_URL_ROOT . '/salaries/virement_request.php?id=' . $object->id, '');
+		}
+
 		// Emit payment
 		if ($object->status == $object::STATUS_UNPAID && ((price2num($object->amount) < 0 && $resteapayer < 0) || (price2num($object->amount) > 0 && $resteapayer > 0)) && $permissiontoadd) {
 			print dolGetButtonAction('', $langs->trans('DoPayment'), 'default', DOL_URL_ROOT.'/salaries/paiement_salary.php?action=create&token='.newToken().'&id='. $object->id, '');
@@ -1202,11 +1219,6 @@ if ($id > 0) {
 		// If payment complete $resteapayer <= 0 on a positive salary, or if amount is negative, we allow to classify as paid.
 		if ($object->status == $object::STATUS_UNPAID && (($resteapayer <= 0 && $object->amount > 0) || ($object->amount <= 0)) && $permissiontoadd) {
 			print dolGetButtonAction('', $langs->trans('ClassifyPaid'), 'default', $_SERVER["PHP_SELF"].'?action=paid&token='.newToken().'&id='.$object->id, '');
-		}
-
-		// Transfer request
-		if ($object->status == $object::STATUS_UNPAID && ((price2num($object->amount) < 0 && $resteapayer < 0) || (price2num($object->amount) > 0 && $resteapayer > 0)) && $permissiontoadd) {
-			print dolGetButtonAction('', $langs->trans('MakeTransferRequest'), 'default', DOL_URL_ROOT . '/salaries/virement_request.php?id=' . $object->id, '');
 		}
 
 		// Clone

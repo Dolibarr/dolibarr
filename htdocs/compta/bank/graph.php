@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005     	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2010	Laurent Destailleur 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009	Regis Houssin       	<regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -136,7 +136,7 @@ if ($result < 0) {
 	dol_syslog($log);
 
 
-	// Tableau 1
+	// Graph balance of the month
 
 	if ($mode == 'standard') {
 		// Loading table $amounts
@@ -259,6 +259,9 @@ if ($result < 0) {
 		}
 
 		$px1 = new DolGraph();
+
+		$px1->datacolor = array(array(120, 130, 250), array(160, 160, 180), array(190, 190, 220));
+
 		$px1->SetData($graph_datas);
 		$arraylegends = array($langs->transnoentities("Balance"));
 		if ($object->min_desired) {
@@ -397,6 +400,9 @@ if ($result < 0) {
 			}
 		}
 		$px2 = new DolGraph();
+
+		$px2->datacolor = array(array(120, 130, 250), array(160, 160, 180), array(190, 190, 220));
+
 		$px2->SetData($graph_datas);
 		$arraylegends = array($langs->transnoentities("Balance"));
 		if ($object->min_desired) {
@@ -515,6 +521,9 @@ if ($result < 0) {
 		}
 
 		$px3 = new DolGraph();
+
+		$px3->datacolor = array(array(120, 130, 250), array(160, 160, 180), array(190, 190, 220));
+
 		$px3->SetData($graph_datas);
 		$arraylegends = array($langs->transnoentities("Balance"));
 		if ($object->min_desired) {
@@ -546,7 +555,7 @@ if ($result < 0) {
 		$amounts = null;
 	}
 
-	// Tableau 4a - Credit/Debit
+	// Graph input/output - Credit/Debit for the month
 
 	if ($mode == 'standard') {
 		// Chargement du tableau $credits, $debits
@@ -645,7 +654,7 @@ if ($result < 0) {
 		}
 		$px4 = new DolGraph();
 		$px4->SetData($graph_datas);
-		$px4->SetLegend(array($langs->transnoentities("Credit"), $langs->transnoentities("Debit")));
+		$px4->SetLegend(array($langs->transnoentities("Credit").' ('.$langs->transnoentities("Input").')', $langs->transnoentities("Debit").' ('.$langs->transnoentities("Output").')'));
 		$px4->SetLegendWidthMin(180);
 		$px4->SetMaxValue($px4->GetCeilMaxValue() < 0 ? 0 : $px4->GetCeilMaxValue());
 		$px4->SetMinValue($px4->GetFloorMinValue() > 0 ? 0 : $px4->GetFloorMinValue());
@@ -746,7 +755,7 @@ if ($result < 0) {
 		}
 		$px5 = new DolGraph();
 		$px5->SetData($graph_datas);
-		$px5->SetLegend(array($langs->transnoentities("Credit"), $langs->transnoentities("Debit")));
+		$px5->SetLegend(array($langs->transnoentities("Credit").' ('.$langs->transnoentities("Input").')', $langs->transnoentities("Debit").' ('.$langs->transnoentities("Output").')'));
 		$px5->SetLegendWidthMin(180);
 		$px5->SetMaxValue($px5->GetCeilMaxValue() < 0 ? 0 : $px5->GetCeilMaxValue());
 		$px5->SetMinValue($px5->GetFloorMinValue() > 0 ? 0 : $px5->GetFloorMinValue());
@@ -810,7 +819,7 @@ print dol_get_fiche_end();
 $head = bank_report_prepare_head($object);
 print dol_get_fiche_head($head, 'graph', $langs->trans("FinancialAccount"), 0);
 
-print '<table class="notopnoleftnoright" width="100%">';
+print '<table class="notopnoleftnoright centerpercent">';
 
 // Navigation links
 print '<tr><td class="right">'.$morehtml.' &nbsp; &nbsp; ';
@@ -859,6 +868,8 @@ if ($mode == 'standard') {
 	print '<div class="center clearboth margintoponly">';
 	print $show1;
 	print '</div>';
+
+	print '<br><br>';
 
 	// For year
 	$prevyear = (int) $year - 1;

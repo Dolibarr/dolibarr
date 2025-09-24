@@ -48,7 +48,7 @@ $langs->loadLangs(array('products', 'contracts', 'companies'));
 
 // Get parameters
 $massaction = GETPOST('massaction', 'alpha');
-$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')).$mode; // To manage different context of search
@@ -418,7 +418,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -581,7 +581,7 @@ if (isModEnabled('category') && ($user->hasRight('produit', 'lire') || $user->ha
 }
 // alert on late date
 $moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= $langs->trans('Alert').' <input type="checkbox" name="search_option" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
+$moreforfilter .= '<label for="search_option">'.$langs->trans('Alert').'</label> <input type="checkbox" name="search_option" id="search_option" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
 $moreforfilter .= '</div>';
 
 $parameters = array();
@@ -882,7 +882,7 @@ while ($i < $imaxinloop) {
 			print $productstatic->getNomUrl(1, '', 24);
 			print $obj->label ? ' - '.dol_trunc($obj->label, 16) : '';
 			if (!empty($obj->description) && getDolGlobalString('PRODUCT_DESC_IN_LIST')) {
-				print '<br><span class="small">'.dol_nl2br($obj->description).'</span>';
+				print '<br><div class="small lineheightsmall">'.dol_nl2br($obj->description).'</div>';
 			}
 		} else {
 			if ($obj->type == 0) {

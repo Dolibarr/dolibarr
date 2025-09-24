@@ -103,6 +103,8 @@ if (!empty($_SESSION['massstockmove'])) {
 
 $error = 0;
 
+$permissiontodelete = $user->hasRight('stock', 'mouvement', 'creer');
+
 
 /*
  * Actions
@@ -216,7 +218,7 @@ if ($action == 'createmovements' && $user->hasRight('stock', 'mouvement', 'creer
 				// Define value of products moved
 				$pricesrc = 0;
 				if (!empty($product->pmp)) {
-					$pricesrc = $product->pmp;
+					$pricesrc = (float) $product->pmp;
 				}
 				$pricedest = $pricesrc;
 
@@ -356,7 +358,8 @@ if ($action == 'importCSV' && $user->hasRight('stock', 'mouvement', 'creer')) {
 		$labelsrecord = $importcsv->import_read_record();
 
 		if ($nblinesrecord < 1) {
-			setEventMessages($langs->trans("BadNumberOfLinesMustHaveAtLeastOneLinePlusTitle"), null, 'errors');
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorBadNumberOfLinesMustHaveAtLeastOneLinePlusTitle"), null, 'errors');
 		} else {
 			$i = 0;
 			$data = array();
@@ -480,6 +483,10 @@ if ($action == 'importCSV' && $user->hasRight('stock', 'mouvement', 'creer')) {
 					$error++;
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Qty")), null, 'errors');
 				}
+				if (!is_numeric($tmp_qty)) {
+					$error++;
+					setEventMessages('Qty need to be numeric value only', null, 'errors');
+				}
 
 				// Check a batch number is provided if product need it
 				if (!$error) {
@@ -521,16 +528,8 @@ if ($action == 'importCSV' && $user->hasRight('stock', 'mouvement', 'creer')) {
 	$_SESSION['massstockmove'] = json_encode($listofdata);
 }
 
-if ($action == 'confirm_deletefile' && $confirm == 'yes') {
+if ($action == 'confirm_deletefile' && $confirm == 'yes' && $permissiontodelete) {
 	$langs->load("other");
-
-	$param = '&datatoimport='.urlencode($datatoimport).'&format='.urlencode($format);
-	if ($excludefirstline) {
-		$param .= '&excludefirstline='.urlencode($excludefirstline);
-	}
-	if ($endatlinenb) {
-		$param .= '&endatlinenb='.urlencode($endatlinenb);
-	}
 
 	$file = $conf->stock->dir_temp.'/'.GETPOST('urlfile');
 	$ret = dol_delete_file($file);

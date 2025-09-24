@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010-2018 Regis Houssin  <regis.houssin@inodbox.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -267,8 +267,8 @@ class ActionsCardProduct
 		if ($action == 'view') {
 			// Photo
 			$this->tpl['nblines'] = 4;
-			if ($this->object->is_photo_available($conf->product->multidir_output[$this->object->entity])) {
-				$this->tpl['photos'] = $this->object->show_photos('product', $conf->product->multidir_output[$this->object->entity], 1, 1, 0, 0, 0, 80);
+			if ($this->object->is_photo_available($conf->product->multidir_output[$this->object->entity ?? 1])) {
+				$this->tpl['photos'] = $this->object->show_photos('product', $conf->product->multidir_output[$this->object->entity ?? 1], 1, 1, 0, 0, 0, 80);
 			}
 
 			// Nature

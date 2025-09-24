@@ -178,7 +178,7 @@ if (empty($reshook)) {
 
 			// Ensure that contact is active and select first active contact
 			foreach ($contacts as $key => $contact) {
-				if ((int) $contact->status == 1) {
+				if ((int) $contact->statut == 1) {
 					$cid = $key;
 					break;
 				}
@@ -531,7 +531,7 @@ $arrayofcss = array(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', '/public/t
 llxHeaderTicket($langs->trans("CreateTicket"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 
-print '<div class="ticketpublicarea ticketlargemargin centpercent">';
+print '<div class="ticketpublicarea ticketlargemargin">';
 
 if ($action != "infos_success") {
 	$formticket->withfromsocid = isset($socid) ? $socid : $user->socid;

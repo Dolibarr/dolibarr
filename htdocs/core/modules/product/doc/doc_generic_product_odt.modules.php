@@ -147,7 +147,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 
 		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
-		$texte .= '<textarea class="flat" cols="60" name="value1">';
+		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
 		$texte .= getDolGlobalString('PRODUCT_ADDON_PDF_ODT_PATH');
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
@@ -245,7 +245,6 @@ class doc_generic_product_odt extends ModelePDFProduct
 			}
 			$productFournisseur = new ProductFournisseur($this->db);
 			$supplierprices = $productFournisseur->list_product_fournisseur_price($object->id);
-			$object->supplierprices = $supplierprices;
 
 			$dir = $conf->product->dir_output;
 			$objectref = dol_sanitizeFileName($object->ref);
@@ -392,7 +391,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 
 				// retrieve the constant to apply a ratio for image size or set the ratio to 1
 				if (getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO')) {
-					$ratio = floatval(getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO'));
+					$ratio = (float) getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO');
 				} else {
 					$ratio = 1;
 				}
@@ -415,8 +414,8 @@ class doc_generic_product_odt extends ModelePDFProduct
 				// Replace tags of lines
 				try {
 					$listlines = $odfHandler->setSegment('supplierprices');
-					if (!empty($object->supplierprices)) {
-						foreach ($object->supplierprices as $supplierprice) {
+					if (!empty($supplierprices)) {
+						foreach ($supplierprices as $supplierprice) {
 							$array_lines = $this->get_substitutionarray_each_var_object($supplierprice, $outputlangs);
 							complete_substitutions_array($array_lines, $outputlangs, $object, $supplierprice, "completesubstitutionarray_lines");
 							// Call the ODTSubstitutionLine hook

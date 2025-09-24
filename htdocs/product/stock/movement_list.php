@@ -64,7 +64,7 @@ $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choi
 $confirm    = GETPOST('confirm', 'alpha'); // Result of a confirmation
 $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
-$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $backtopage = GETPOST("backtopage", "alpha");
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 $show_files = GETPOST('show_files', 'aZ');
@@ -187,6 +187,11 @@ $uploaddir = $conf->stock->dir_output.'/movements';
 $permissiontoread = $user->hasRight('stock', 'mouvement', 'lire');
 $permissiontoadd = $user->hasRight('stock', 'mouvement', 'creer');
 $permissiontodelete = $user->hasRight('stock', 'mouvement', 'creer'); // There is no deletion permission for stock movement as we should never delete
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 $usercanread = $user->hasRight('stock', 'mouvement', 'lire');
 $usercancreate = $user->hasRight('stock', 'mouvement', 'creer');
@@ -332,21 +337,25 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
-if ($action == 'update_extras' && $permissiontoadd) {
+if ($action == 'update_extras' && $permissiontoeditextra) {
 	$tmpwarehouse->oldcopy = dol_clone($tmpwarehouse, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
+	$attribute_name = GETPOST('attribute', 'aZ09');
+
 	// Fill array 'array_options' with data from update form
-	$ret = $extrafields->setOptionalsFromPost(null, $tmpwarehouse, GETPOST('attribute', 'restricthtml'));
+	$ret = $extrafields->setOptionalsFromPost(null, $tmpwarehouse, $attribute_name);
 	if ($ret < 0) {
 		$error++;
 	}
+
 	if (!$error) {
-		$result = $tmpwarehouse->insertExtraFields();
+		$result = $tmpwarehouse->updateExtraField($attribute_name, 'CONTRACT_MODIFY');
 		if ($result < 0) {
 			setEventMessages($tmpwarehouse->error, $tmpwarehouse->errors, 'errors');
 			$error++;
 		}
 	}
+
 	if ($error) {
 		$action = 'edit_extras';
 	}
@@ -373,7 +382,7 @@ if ($action == "correct_stock" && $permissiontoadd) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 		$action = 'correction';
 	}
-	if (!is_numeric(GETPOST("nbpiece"))) {
+	if (!GETPOSTFLOAT("nbpiece")) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldMustBeANumeric", $langs->transnoentitiesnoconv("NumberOfUnit")), null, 'errors');
 		$action = 'correction';
@@ -391,8 +400,6 @@ if ($action == "correct_stock" && $permissiontoadd) {
 		if ($product->hasbatch()) {
 			$batch = GETPOST('batch_number', 'alphanohtml');
 
-			//$eatby=GETPOST('eatby');
-			//$sellby=GETPOST('sellby');
 			$eatby = dol_mktime(0, 0, 0, GETPOSTINT('eatbymonth'), GETPOSTINT('eatbyday'), GETPOSTINT('eatbyyear'));
 			$sellby = dol_mktime(0, 0, 0, GETPOSTINT('sellbymonth'), GETPOSTINT('sellbyday'), GETPOSTINT('sellbyyear'));
 
@@ -501,17 +508,16 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 
 			if ($product->hasbatch()) {
 				$pdluo = new Productbatch($db);
-
 				$srcwarehouseid = 0;
-				$eatby = -1;
-				$sellby = -1;
+
+				$eatby = dol_mktime(0, 0, 0, GETPOSTINT('eatbymonth'), GETPOSTINT('eatbyday'), GETPOSTINT('eatbyyear'));
+				$sellby = dol_mktime(0, 0, 0, GETPOSTINT('sellbymonth'), GETPOSTINT('sellbyday'), GETPOSTINT('sellbyyear'));
+
 				if ($pdluoid > 0) {
 					$result = $pdluo->fetch($pdluoid);
 					if ($result) {
 						$srcwarehouseid = $pdluo->warehouseid;
 						$batch = $pdluo->batch;
-						$eatby = $pdluo->eatby;
-						$sellby = $pdluo->sellby;
 					} else {
 						setEventMessages($pdluo->error, $pdluo->errors, 'errors');
 						$error++;
@@ -519,8 +525,6 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 				} else {
 					$srcwarehouseid = $id;
 					$batch = GETPOST('batch_number', 'alphanohtml');
-					$eatby = $d_eatby;
-					$sellby = $d_sellby;
 				}
 
 				$result1 = -1;
@@ -533,7 +537,7 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 						GETPOSTFLOAT("nbpiece"),
 						1,
 						GETPOST("label", 'san_alpha'),
-						$pricesrc,
+						(float) $pricesrc,
 						$eatby,
 						$sellby,
 						$batch,
@@ -550,7 +554,7 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 						GETPOSTFLOAT("nbpiece"),
 						0,
 						GETPOST("label", 'san_alpha'),
-						$pricedest,
+						(float) $pricedest,
 						$eatby,
 						$sellby,
 						$batch,
@@ -568,8 +572,8 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 					$id,
 					GETPOSTFLOAT("nbpiece"),
 					1,
-					GETPOST("label", 'san_alpha'),
-					$pricesrc,
+					GETPOST("label", 'alphanohtml'),
+					(float) $pricesrc,
 					GETPOST('inventorycode', 'alphanohtml'),
 					'',
 					null,
@@ -583,8 +587,8 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 					GETPOSTINT("id_entrepot_destination"),
 					GETPOSTFLOAT("nbpiece"),
 					0,
-					GETPOST("label", 'san_alpha'),
-					$pricedest,
+					GETPOST("label", 'alphanohtml'),
+					(float) $pricedest,
 					GETPOST('inventorycode', 'alphanohtml'),
 					'',
 					null,
@@ -787,7 +791,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -821,10 +825,6 @@ if ($id > 0 || $ref) {
 		dol_print_error($db);
 	}
 }
-
-
-// Output page
-// --------------------------------------------------------------------
 
 $i = 0;
 $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
@@ -992,6 +992,8 @@ if ($action == "correction") {
 
 // Transfer of units
 if ($action == "transfert") {
+	$d_eatby = GETPOSTDATE('eatby');	// used by the tpl
+	$d_sellby = GETPOSTDATE('sellby');	// used by the tpl
 	include DOL_DOCUMENT_ROOT.'/product/stock/tpl/stocktransfer.tpl.php';
 	print '<br>';
 }
@@ -1621,8 +1623,12 @@ while ($i < $imaxinloop) {
 		}
 		// Price
 		if (!empty($arrayfields['m.price']['checked'])) {
+			$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'lire');
+			if ($productstatic->isService()) {
+				$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_supplier_prices') : $user->hasRight('service', 'lire');
+			}
 			print '<td class="right">';
-			if ($obj->price != 0) {
+			if ($obj->price != 0 && $usercancreadsupplierprice) {
 				print price($obj->price);
 			}
 			print '</td>';

@@ -175,6 +175,7 @@ class DoliDBPgsql extends DoliDB
 			$line = preg_replace('/GROUP_CONCAT/i', 'STRING_AGG', $line);
 			$line = preg_replace('/ SEPARATOR/i', ',', $line);
 			$line = preg_replace('/STRING_AGG\(([^,\)]+)\)/i', 'STRING_AGG(\\1, \',\')', $line);
+			$line = preg_replace('/STRING_AGG\(([^,]+),([^\)]+)\)/i', 'STRING_AGG(\\1::TEXT,\\2::TEXT)', $line);
 			//print $line."\n";
 
 			if ($type == 'auto') {
@@ -324,13 +325,13 @@ class DoliDBPgsql extends DoliDB
 
 			// To have PostgreSQL case sensitive
 			$count_like = 0;
-			$line = str_replace(' LIKE \'', ' ILIKE \'', $line, $count_like);
+			$line = str_replace(" LIKE '", " ILIKE '", $line, $count_like);
 			if (getDolGlobalString('PSQL_USE_UNACCENT') && $count_like > 0) {
 				// @see https://docs.PostgreSQL.fr/11/unaccent.html : 'unaccent()' function must be installed before
 				$line = preg_replace('/\s+(\(+\s*)([a-zA-Z0-9\-\_\.]+) ILIKE /', ' \1unaccent(\2) ILIKE ', $line);
 			}
 
-			$line = str_replace(' LIKE BINARY \'', ' LIKE \'', $line);
+			$line = str_replace(" LIKE BINARY '", " LIKE '", $line);
 
 			// Replace INSERT IGNORE into INSERT
 			$line = preg_replace('/^INSERT IGNORE/', 'INSERT', $line);
@@ -1033,16 +1034,16 @@ class DoliDBPgsql extends DoliDB
 		$infotables = array();
 
 		$sql = "SELECT ";
-		$sql .= "	infcol.column_name as 'Column',";
+		$sql .= "	infcol.column_name as \"Column\",";		// pgsql need " for alias names !
 		$sql .= "	CASE WHEN infcol.character_maximum_length IS NOT NULL THEN infcol.udt_name || '('||infcol.character_maximum_length||')'";
 		$sql .= "		ELSE infcol.udt_name";
-		$sql .= "	END as 'Type',";
-		$sql .= "	infcol.collation_name as 'Collation',";
-		$sql .= "	infcol.is_nullable as 'Null',";
-		$sql .= "	'' as 'Key',";
-		$sql .= "	infcol.column_default as 'Default',";
-		$sql .= "	'' as 'Extra',";
-		$sql .= "	'' as 'Privileges'";
+		$sql .= "	END as \"Type\",";		// pgsql need " for alias names !
+		$sql .= "	infcol.collation_name as \"Collation\",";		// pgsql need " for alias names !
+		$sql .= "	infcol.is_nullable as \"Null\",";		// pgsql need " for alias names !
+		$sql .= "	'' as \"Key\",";		// pgsql need " for alias names !
+		$sql .= "	infcol.column_default as \"Default\",";		// pgsql need " for alias names !
+		$sql .= "	'' as \"Extra\",";		// pgsql need " for alias names !
+		$sql .= "	'' as \"Privileges\"";		// pgsql need " for alias names !
 		$sql .= "	FROM information_schema.columns infcol";
 		$sql .= "	WHERE table_schema = 'public' ";
 		$sql .= "	AND table_name = '".$this->escape($table)."'";
@@ -1510,5 +1511,24 @@ class DoliDBPgsql extends DoliDB
 		*/
 
 		return array();
+	}
+
+	/**
+	 * Prepare a SQL statement for execution (PostgreSQL prepared statement)
+	 *
+	 * @param string $sql The SQL query to prepare
+	 * @return string|false The name of the prepared statement on success, or false on failure
+	 */
+	public function prepare($sql)
+	{
+		$stmtname = uniqid('dolipgstmt_'); // Generate a unique identifier for the statement
+
+		$result = pg_prepare($this->db, $stmtname, $sql);
+		if (!$result) {
+			$this->lasterror = pg_last_error($this->db);
+			return false;
+		}
+
+		return $stmtname; // We just return the name of the prepared statement
 	}
 }

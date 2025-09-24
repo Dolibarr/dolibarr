@@ -60,14 +60,14 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("orders", "sendings", 'deliveries', 'companies', 'compta', 'bills', 'projects', 'suppliers', 'products'));
+$langs->loadLangs(array("orders", "sendings", 'companies', 'compta', 'bills', 'projects', 'suppliers', 'products'));
 
 // Get Parameters
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'supplierorderlist';
 $mode = GETPOST('mode', 'alpha');
 
@@ -110,6 +110,13 @@ $search_date_approve_end = dol_mktime(23, 59, 59, $search_date_approve_endmonth,
 
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
+$searchCategorySupplierOrderList = GETPOST('search_category_supplier_order_list', 'array:int');
+$searchCategorySupplierOrderOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategorySupplierOrderOperator = GETPOSTINT('search_category_supplier_order_operator');
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
+	$searchCategorySupplierOrderOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
+}
 $search_product_category = GETPOSTINT('search_product_category');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_refsupp = GETPOST('search_refsupp', 'alpha');
@@ -148,6 +155,9 @@ if (GETPOSTISARRAY('search_status')) {
 $search_option = GETPOST('search_option', 'alpha');
 if ($search_option == 'late') {
 	$search_status = '1,2';
+}
+if ($search_option == 'recv_late') {
+	$search_status = '3,4';
 }
 
 $diroutputmassaction = $conf->fournisseur->commande->dir_output.'/temp/massgeneration/'.$user->id;
@@ -202,7 +212,7 @@ $enabledtypetiers = 0;
 $arrayfields = array(
 	'u.login' => array('label' => "AuthorRequest", 'enabled' => '1', 'position' => 41),
 	's.name_alias' => array('label' => "AliasNameShort", 'position' => 51, 'checked' => '0'),
-	's.town' => array('label' => "Town", 'enabled' => '1', 'position' => 55, 'checked' => '1'),
+	's.town' => array('label' => "Town", 'enabled' => '1', 'position' => 55, 'checked' => '0'),
 	's.zip' => array('label' => "Zip", 'enabled' => '1', 'position' => 56, 'checked' => '1'),
 	'state.nom' => array('label' => "StateShort", 'enabled' => '1', 'position' => 57),
 	'country.code_iso' => array('label' => "Country", 'enabled' => '1', 'position' => 58),
@@ -280,6 +290,7 @@ if (empty($reshook)) {
 		$search_user = '';
 		$search_sale = '';
 		$search_product_category = '';
+		$searchCategorySupplierOrderList = array();
 		$search_ref = '';
 		$search_refsupp = '';
 		$search_company = '';
@@ -386,7 +397,7 @@ if (empty($reshook)) {
 
 	// Mass action to generate vendor bills
 	if ($massaction == 'confirm_createsupplierbills') {
-		$orders = GETPOST('toselect', 'array');
+		$orders = GETPOST('toselect', 'array:int');
 		$createbills_onebythird = GETPOSTINT('createbills_onebythird');
 		$validate_invoices = GETPOSTINT('validate_invoices');
 
@@ -741,6 +752,12 @@ if (empty($reshook)) {
 			if ($search_user > 0) {
 				$param .= '&search_user='.urlencode((string) ($search_user));
 			}
+			if ($searchCategorySupplierOrderOperator == 1) {
+				$param .= "&search_category_supplier_order_operator=".urlencode((string) ($searchCategorySupplierOrderOperator));
+			}
+			foreach ($searchCategorySupplierOrderList as $searchCategorySupplierOrder) {
+				$param .= "&search_category_order_list[]=".urlencode($searchCategorySupplierOrder);
+			}
 			if ($search_sale > 0) {
 				$param .= '&search_sale='.urlencode($search_sale);
 			}
@@ -980,8 +997,36 @@ if ($search_sale && $search_sale != '-1') {
 		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = cf.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
 	}
 }
+// Search for tag/category ($searchCategorySupplierOrderList is an array of ID)
+if (!empty($searchCategorySupplierOrderList)) {
+	$searchCategorySupplierOrderSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategorySupplierOrderList as $searchCategorySupplierOrder) {
+		if (intval($searchCategorySupplierOrder) == -2) {
+			$searchCategorySupplierOrderSqlList[] = "NOT EXISTS (SELECT ck.fk_supplier_order FROM ".MAIN_DB_PREFIX."categorie_supplier_order as ck WHERE cf.rowid = ck.fk_supplier_order)";
+		} elseif (intval($searchCategorySupplierOrder) > 0) {
+			if ($searchCategorySupplierOrderOperator == 0) {
+				$searchCategorySupplierOrderSqlList[] = " EXISTS (SELECT ck.fk_supplier_order FROM ".MAIN_DB_PREFIX."categorie_supplier_order as ck WHERE cf.rowid = ck.fk_supplier_order AND ck.fk_categorie = ".((int) $searchCategorySupplierOrder).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategorySupplierOrder);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategorySupplierOrderSqlList[] = " EXISTS (SELECT ck.fk_supplier_order FROM ".MAIN_DB_PREFIX."categorie_supplier_order as ck WHERE cf.rowid = ck.fk_supplier_order AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategorySupplierOrderOperator == 1) {
+		if (!empty($searchCategorySupplierOrderSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategorySupplierOrderSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategorySupplierOrderSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategorySupplierOrderSqlList).")";
+		}
+	}
+}
 // Search for tag/category ($searchCategoryProductList is an array of ID)
-$searchCategoryProductOperator = -1;
+$searchCategoryProductOperator = GETPOSTINT('search_category_product_operator');
 $searchCategoryProductList = array($search_product_category);
 if (!empty($searchCategoryProductList)) {
 	$searchCategoryProductSqlList = array();
@@ -1031,7 +1076,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -1227,7 +1272,9 @@ if ($resql) {
 		'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 		'presend' => img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	);
-
+	if (isModEnabled('category') && $user->hasRight("fournisseur", "commande", "lire")) {
+		$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
+	}
 	if ($permissiontovalidate) {
 		if ($permissiontoapprove && !getDolGlobalString('SUPPLIER_ORDER_NO_DIRECT_APPROVE')) {
 			$arrayofmassactions['prevalidate'] = img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("ValidateAndApprove");
@@ -1331,7 +1378,11 @@ if ($resql) {
 	}
 
 	$moreforfilter = '';
-
+	if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+		$formcategory = new FormCategory($db);
+		$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_SUPPLIER_ORDER, $searchCategorySupplierOrderList, 'minwidth300', $searchCategorySupplierOrderOperator ? $searchCategorySupplierOrderOperator : 0);
+	}
 	// If the user can view prospects other than his'
 	if ($user->hasRight("user", "user", "lire")) {
 		$langs->load("commercial");
@@ -1358,7 +1409,7 @@ if ($resql) {
 	}
 	// alert on late date
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('Alert').' <input type="checkbox" name="search_option" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
+	$moreforfilter .= $langs->trans('Alert').' <input type="checkbox" name="search_option" value="'.(($search_status == '3,4') ? 'recv_late' : 'late').'"'.((array_search($search_option, array('late','recv_late')) !== false) ? ' checked' : '').'>';
 	$moreforfilter .= '</div>';
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -1771,6 +1822,7 @@ if ($resql) {
 		$objectstatic->note_public = $obj->note_public;
 		$objectstatic->note_private = $obj->note_private;
 		$objectstatic->statut = $obj->fk_statut;
+		$objectstatic->status = $obj->fk_statut;
 
 		if ($mode == 'kanban') {
 			if ($i == 0) {
@@ -1794,7 +1846,7 @@ if ($resql) {
 			print '<tr class="oddeven '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->billed == 1) ? 'opacitymedium' : '').'">';
 			// Action column
 			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-				print '<td class="nowrap center">';
+				print '<td class="nowraponall center">';
 				if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 					$selected = 0;
 					if (in_array($obj->rowid, $arrayofselected)) {
@@ -1809,7 +1861,7 @@ if ($resql) {
 			}
 			// Ref
 			if (!empty($arrayfields['cf.ref']['checked'])) {
-				print '<td class="nowrap">';
+				print '<td class="nowraponall">';
 
 				// Picto + Ref
 				print $objectstatic->getNomUrl(1, '', 0, -1, 1);
@@ -1835,7 +1887,7 @@ if ($resql) {
 				$projectstatic->id = $obj->project_id;
 				$projectstatic->ref = $obj->project_ref;
 				$projectstatic->title = $obj->project_title;
-				print '<td>';
+				print '<td class="tdoverflowmax125">';
 				if ($obj->project_id > 0) {
 					print $projectstatic->getNomUrl(1);
 				}
@@ -2099,7 +2151,7 @@ if ($resql) {
 			// Note public
 			if (!empty($arrayfields['cf.note_public']['checked'])) {
 				print '<td class="sensiblehtmlcontent center">';
-				print dolPrintHTML($obj->note_public);
+				print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
@@ -2109,7 +2161,7 @@ if ($resql) {
 			// Note private
 			if (!empty($arrayfields['cf.note_private']['checked'])) {
 				print '<td class="sensiblehtmlcontent center">';
-				print dolPrintHTML($obj->note_private);
+				print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

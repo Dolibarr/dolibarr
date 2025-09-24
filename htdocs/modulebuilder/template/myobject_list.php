@@ -23,7 +23,6 @@
  *		\brief      List page for myobject
  */
 
-
 // General defined Options
 //if (! defined('CSRFCHECK_WITH_TOKEN'))     define('CSRFCHECK_WITH_TOKEN', '1');					// Force use of CSRF protection with tokens even for GET
 //if (! defined('MAIN_AUTHENTICATION_MODE')) define('MAIN_AUTHENTICATION_MODE', 'aloginmodule');	// Force authentication handler
@@ -80,22 +79,21 @@ if (!$res && file_exists("../../../main.inc.php")) {
 if (!$res) {
 	die("Include of main fails");
 }
-
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-// load module libraries
-require_once __DIR__.'/class/myobject.class.php';
-// for other modules
-//dol_include_once('/othermodule/class/otherobject.class.php');
-
 /**
+ * The main.inc.php has been included so the following variable are now defined:
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
  */
+include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+// load module libraries
+include_once __DIR__.'/class/myobject.class.php';
+// for other modules
+//dol_include_once('/othermodule/class/otherobject.class.php');
 
 // Load translation files required by the page
 $langs->loadLangs(array("mymodule@mymodule", "other"));
@@ -163,8 +161,8 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 
-$fieldstosearchall = array();
 // List of fields to search into when doing a "search in all"
+$fieldstosearchall = array();
 // foreach ($object->fields as $key => $val) {
 // 	if (!empty($val['searchall'])) {
 // 		$fieldstosearchall['t.'.$key] = $val['label'];
@@ -178,7 +176,7 @@ $fieldstosearchall = array();
 // 	$fieldstosearchall = array_merge($fieldstosearchall, empty($hookmanager->resArray['fieldstosearchall']) ? array() : $hookmanager->resArray['fieldstosearchall']);
 // }
 
-// Definition of array of fields for columns
+// Definition of array of fields for columns from ->fields
 $tableprefix = 't';
 $arrayfields = array();
 foreach ($object->fields as $key => $val) {
@@ -187,18 +185,23 @@ foreach ($object->fields as $key => $val) {
 		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields[$tableprefix.'.'.$key] = array(
 			'label' => $val['label'],
-			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+			'checked' => (($visible < 0) ? '0' : '1'),
+			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
 	}
 }
+
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
+// Complete arrayfields with special fields
+/*$arrayfields = array_merge($arrayfields, array(
+	'anotherfield' => array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>'1', 'enabled'=>'1', 'position'=>'90', 'csslist'=>'right'),
+));*/
+
 $object->fields = dol_sort_array($object->fields, 'position');
-//$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // There is several ways to check permission.
@@ -326,8 +329,13 @@ if (isset($extrafields->attributes[$object->table_element]['label']) && is_array
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-if ($object->ismultientitymanaged == 1) {
+
+if (!empty($object->ismultientitymanaged) && (int) $object->ismultientitymanaged == 1) {
 	$sql .= " WHERE t.entity IN (".getEntity($object->element, (GETPOSTINT('search_current_entity') ? 0 : 1)).")";
+} elseif (preg_match('/^\w+@\w+$/', (string) $object->ismultientitymanaged)) {
+	$tmparray = explode('@', (string) $object->ismultientitymanaged);
+	$sql .= " LEFT JOIN ".$object->db->prefix().$tmparray[1]." as pt ON t.".$db->sanitize($tmparray[0])." = pt.rowid";
+	$sql .= " WHERE pt.entity IN (".getEntity($object->element, (GETPOSTINT('search_current_entity') ? 0 : 1)).")";
 } else {
 	$sql .= " WHERE 1 = 1";
 }
@@ -346,6 +354,12 @@ foreach ($search as $key => $val) {
 				$search[$key] = '';
 			}
 			$mode_search = 2;
+		}
+		if ($field_spec['type'] === 'boolean') {
+			$mode_search = 1;
+			if ($search[$key] == '-1') {
+				$search[$key] = '';
+			}
 		}
 		if (empty($field_spec['searchmulti'])) {
 			if (!is_array($search[$key]) && $search[$key] != '') {
@@ -414,7 +428,12 @@ if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 // Add groupby from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= $hookmanager->resPrint;
+if (empty($reshook)) {
+	$sql .= $hookmanager->resPrint;
+} else {
+	$sql = $hookmanager->resPrint;
+}
+
 $sql = preg_replace('/,\s*$/', '', $sql);
 */
 
@@ -422,7 +441,11 @@ $sql = preg_replace('/,\s*$/', '', $sql);
 /*
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+if (empty($reshook)) {
+	$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+} else {
+	$sql = $hookmanager->resPrint;
+}
 */
 
 // Count total nb of records
@@ -440,7 +463,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -562,8 +585,10 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
-$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+//$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanbanGroupBy'), '', 'fa fa-grip-vertical imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanbangroupby&groupby=p.fk_opp_status'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', ($mode == 'kanbangroupby' ? 2 : 1), array('morecss' => 'reposition'));
+//$newcardbutton .= dolGetButtonTitle($langs->trans('HierarchicView'), '', 'fa fa-stream paddingleft imgforviewmode', $_SERVER["PHP_SELF"].'?mode=hierarchy'.preg_replace('/(&|\?)*(mode|groupby)=[^&]+/', '', $param), '', (($mode == 'hierarchy') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitleSeparator();
 $newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/mymodule/myobject_card.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 
@@ -610,8 +635,8 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column ? 'left' : '');  // This also change content of $arrayfields with user setup
-$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+$selectedfields = (($mode != 'kanban' && $mode != 'kanbangroupby') ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
@@ -660,6 +685,8 @@ foreach ($object->fields as $key => $val) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 			$formadmin = new FormAdmin($db);
 			print $formadmin->select_language((isset($search[$key]) ? $search[$key] : ''), 'search_lang', 0, array(), 1, 0, 0, 'minwidth100imp maxwidth125', 2);
+		} elseif ($val['type'] === 'boolean') {
+			print $form->selectyesno('search_' . $key, $search[$key] ?? '', 1, false, 1);
 		} else {
 			print '<input type="text" class="flat maxwidth'.(in_array($val['type'], array('integer', 'price')) ? '50' : '75').'" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
 		}
@@ -720,7 +747,7 @@ $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 /*if (!empty($arrayfields['anotherfield']['checked'])) {
-	print '<th class="liste_titre right">'.$langs->trans("AnotherField").'</th>';
+	print '<th class="liste_titre">'.$langs->trans("AnotherField").'</th>';
 	$totalarray['nbfield']++;
 }*/
 // Action column
@@ -771,7 +798,7 @@ while ($i < $imaxinloop) {
 		$object->thirdparty = $companyobj;
 	}*/
 
-	if ($mode == 'kanban') {
+	if ($mode == 'kanban' || $mode == 'kanbangroupby') {
 		if ($i == 0) {
 			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
@@ -841,7 +868,13 @@ while ($i < $imaxinloop) {
 				} elseif ($key == 'rowid') {
 					print $object->showOutputField($val, $key, (string) $object->id, '');
 				} else {
+					if ($val['type'] == 'html') {
+						print '<div class="small lineheightsmall twolinesmax-normallineheight">';
+					}
 					print $object->showOutputField($val, $key, (string) $object->$key, '');
+					if ($val['type'] == 'html') {
+						print '</div>';
+					}
 				}
 				print '</td>';
 				if (!$i) {

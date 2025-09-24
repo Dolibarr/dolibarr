@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2019       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +53,7 @@ $error = 0;
  */
 
 $parameters = array();
+$object = null;
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -60,13 +61,27 @@ if ($reshook < 0) {
 
 if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 || ($action == 'updateedit')) {
-	dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_MONDAY", GETPOST("monday", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_TUESDAY", GETPOST("tuesday", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_WEDNESDAY", GETPOST("wednesday", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_THURSDAY", GETPOST("thursday", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_FRIDAY", GETPOST("friday", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_SATURDAY", GETPOST("saturday", 'alpha'), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_SUNDAY", GETPOST('sunday', 'alpha'), 'chaine', 0, '', $conf->entity);
+	if (!dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_MONDAY", GETPOST("monday", 'alpha'), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_TUESDAY", GETPOST("tuesday", 'alpha'), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_WEDNESDAY", GETPOST("wednesday", 'alpha'), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_THURSDAY", GETPOST("thursday", 'alpha'), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_FRIDAY", GETPOST("friday", 'alpha'), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_SATURDAY", GETPOST("saturday", 'alpha'), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
+	if (!dolibarr_set_const($db, "MAIN_INFO_OPENINGHOURS_SUNDAY", GETPOST('sunday', 'alpha'), 'chaine', 0, '', $conf->entity)) {
+		$error++;
+	}
 
 	if ($action != 'updateedit' && !$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');

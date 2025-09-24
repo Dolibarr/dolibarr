@@ -8,7 +8,7 @@
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
  * Copyright (C) 2016-2017	Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2019-2024	Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -253,10 +253,10 @@ class FormFile
 		if ($sectionid) {	// Show overwrite if exists for ECM module only
 			$langs->load('link');
 			$out .= '<span class="nowraponsmartphone"><input style="margin-right: 2px;" type="checkbox" id="overwritefile" name="overwritefile" value="1">';
-			$out .= '<label for="overwritefile" class="opacitylow paddingright">'.$langs->trans("OverwriteIfExists").'</label>';
+			$out .= '<label for="overwritefile" class="opacitylow paddingleft paddingright">'.$langs->trans("OverwriteIfExists").'</label>';
 			$out .= '</span>';
 		}
-		$out .= '<input type="submit" class="button small reposition" name="sendit" value="'.$langs->trans("Upload").'"';
+		$out .= '<input type="submit" class="button smallpaddingimp reposition" name="sendit" value="'.$langs->trans("Upload").'"';
 		$out .= (!getDolGlobalString('MAIN_UPLOAD_DOC') || empty($perm) ? ' disabled' : '');
 		$out .= '>';
 
@@ -357,7 +357,7 @@ class FormFile
 			$out2 .= '<input type="hidden" name="objectid" value="'.$object->id.'">';
 			$out2 .= '</div>';
 			$out2 .= '<div class="inline-block" style="padding-right: 10px;">';
-			$out2 .= '<input type="submit" class="button small reposition" name="linkit" value="'.$langs->trans("ToLink").'"';
+			$out2 .= '<input type="submit" class="button smallpaddingimp reposition" name="linkit" value="'.$langs->trans("ToLink").'"';
 			$out2 .= (!getDolGlobalString('MAIN_UPLOAD_DOC') || empty($perm) ? ' disabled' : '');
 			$out2 .= '>';
 			$out2 .= '</div>';
@@ -783,6 +783,7 @@ class FormFile
 			} else {
 				// For normalized standard modules
 				$file = dol_buildpath('/core/modules/'.$modulepart.'/modules_'.strtolower($submodulepart).'.php', 0);
+
 				if (file_exists($file)) {
 					$res = include_once $file;
 				} else {
@@ -938,7 +939,7 @@ class FormFile
 
 				// Get list of files stored into database for same relative directory
 				if ($relativedir) {
-					completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+					completeFileArrayWithDatabaseInfo($file_list, $relativedir, $object);
 					'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $file_list';
 
 					//var_dump($sortfield.' - '.$sortorder);
@@ -977,12 +978,14 @@ class FormFile
 
 					// Show file name with link to download
 					$imgpreview = $this->showPreview($file, $modulepart, $relativepath, 0, $param);
-
 					$out .= '<td class="minwidth200 tdoverflowmax300">';
 					if ($imgpreview) {
 						$out .= '<span class="spanoverflow widthcentpercentminusx valignmiddle">';
 					} else {
 						$out .= '<span class="spanoverflow">';
+					}
+					if (getDolGlobalInt('PREVIEW_PICTO_ON_LEFT_OF_NAME')) {
+						$out .= $imgpreview;
 					}
 					if (is_object($ecmfile)) {
 						$out .= $ecmfile->getNomUrl(1, $modulepart, 0, 0, ' documentdownload');
@@ -992,7 +995,6 @@ class FormFile
 							$out .= 'target="_blank" ';
 						}
 						$out .= 'href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
-
 						$mime = dol_mimetype($relativepath, '', 0);
 						if (preg_match('/text/', $mime)) {
 							$out .= ' target="_blank" rel="noopener noreferrer"';
@@ -1003,9 +1005,13 @@ class FormFile
 						$out .= dol_trunc($file["name"], 150);
 						$out .= '</a>';
 					}
+
 					$out .= '</span>'."\n";
-					$out .= $imgpreview;
+					if (!getDolGlobalInt('PREVIEW_PICTO_ON_LEFT_OF_NAME')) {
+						$out .= $imgpreview;
+					}
 					$out .= '</td>';
+
 
 					// Show file size
 					$size = (!empty($file['size']) ? $file['size'] : dol_filesize($filedir."/".$file["name"]));
@@ -1024,10 +1030,10 @@ class FormFile
 						//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 						//print '<span class="opacitymedium">'.$langs->trans("Hash").' : '.$file['share'].'</span>';
-						$forcedownload = 0;
+						$forcedownload = getDolGlobalInt('MAIN_FORCE_DOWNLOAD_IN_HTML_FORMFILE');
 						$paramlink = '';
 						if (!empty($file['share'])) {
-							$paramlink .= ($paramlink ? '&' : '').'hashp='.$file['share']; // Hash for public share
+							$paramlink .= /* ($paramlink ? '&' : ''). */'hashp='.$file['share']; // Hash for public share
 						}
 						if ($forcedownload) {
 							$paramlink .= ($paramlink ? '&' : '').'attachment=1';
@@ -1225,7 +1231,7 @@ class FormFile
 					if ($tmparray && $tmparray['url']) {
 						$tmpout .= '<li><a href="'.$tmparray['url'].'"'.($tmparray['css'] ? ' class="'.$tmparray['css'].'"' : '').($tmparray['mime'] ? ' mime="'.$tmparray['mime'].'"' : '').($tmparray['target'] ? ' target="'.$tmparray['target'].'"' : '').'>';
 						//$tmpout.= img_picto('','detail');
-						$tmpout .= '<i class="fa fa-search-plus paddingright" style="color: gray"></i>';
+						$tmpout .= img_picto('', 'search-plus', 'class="paddingright"');
 						$tmpout .= $langs->trans("Preview").' '.$ext.'</a></li>';
 					}
 				}
@@ -1313,10 +1319,11 @@ class FormFile
 		// Define relative path used to store the file
 		if (empty($relativepath)) {
 			$relativepath = (!empty($object->ref) ? dol_sanitizeFileName($object->ref) : '').'/';
-			if (!empty($object->element) && $object->element == 'invoice_supplier') {
+			if (!empty($object->element) && $object->element == "societe" && !empty($object->id)) {
+				$relativepath = ($object->id).'/';
+			} elseif (!empty($object->element) && $object->element == 'invoice_supplier') {
 				$relativepath = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$relativepath; // TODO Call using a defined value for $relativepath
-			}
-			if (!empty($object->element) && $object->element == 'project_task') {
+			} elseif (!empty($object->element) && $object->element == 'project_task') {
 				$relativepath = 'Call_not_supported_._Call_function_using_a_defined_relative_path_.';
 			}
 		}
@@ -1331,6 +1338,7 @@ class FormFile
 			$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $upload_dir);
 			$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
 		}
+
 		// For example here $upload_dir = '/pathtodocuments/commande/SO2001-123/'
 		// For example here $upload_dir = '/pathtodocuments/tax/vat/1'
 		// For example here $upload_dir = '/home/ldestailleur/git/dolibarr_dev/documents/fournisseur/facture/6/1/SI2210-0013' and relativedir='fournisseur/facture/6/1/SI2210-0013'
@@ -1393,7 +1401,7 @@ class FormFile
 			// Show title of list of existing files
 			$morehtmlright = '';
 			if (!empty($moreoptions['showhideaddbutton']) && $conf->use_javascript_ajax) {
-				$tmpurlforbutton = 'javascript:console.log("open add file form");jQuery(".divattachnewfile").toggle(); if (!jQuery(".divattachnewfile").is(":hidden")) { jQuery("input[type=\'file\']").click();}void(0);';
+				$tmpurlforbutton = 'javascript:console.log("open add file form");jQuery(".divattachnewfile").toggle(); if (!jQuery(".divattachnewfile").is(":hidden")) { jQuery("input[type=\'file\']").click(); } void(0);';
 				$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $tmpurlforbutton, '', $permtoeditline);
 			}
 
@@ -1433,9 +1441,9 @@ class FormFile
 				print "</tr>\n";
 			}
 
-			// Get list of files stored into database for same relative directory
+			// Get list of files stored into database for the same relative directory
 			if ($relativedir) {
-				completeFileArrayWithDatabaseInfo($filearray, $relativedir);
+				completeFileArrayWithDatabaseInfo($filearray, $relativedir, $object);
 				'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $filearray';
 
 				//var_dump($sortfield.' - '.$sortorder);
@@ -1445,18 +1453,22 @@ class FormFile
 			}
 
 			print '<tr class="liste_titre nodrag nodrop">';
-			//print $url.' sortfield='.$sortfield.' sortorder='.$sortorder;
+			// Name
 			print_liste_field_titre('Documents2', $url, "name", "", $param, '', $sortfield, $sortorder, 'left ');
+			// Size
 			print_liste_field_titre('Size', $url, "size", "", $param, '', $sortfield, $sortorder, 'right ');
+			// Date
 			print_liste_field_titre('Date', $url, "date", "", $param, '', $sortfield, $sortorder, 'center ');
+			// Preview
 			if (empty($useinecm) || $useinecm == 4 || $useinecm == 5 || $useinecm == 6) {
 				print_liste_field_titre('', $url, "", "", $param, '', $sortfield, $sortorder, 'center '); // Preview
 			}
 			// Shared or not - Hash of file
-			print_liste_field_titre('');
+			print_liste_field_titre('Shared');
 			// Action button
 			print_liste_field_titre('');
 			if (empty($disablemove) && count($filearray) > 1) {
+				// Move
 				print_liste_field_titre('');
 			}
 			print "</tr>\n";
@@ -1548,7 +1560,7 @@ class FormFile
 						$editline = 1;
 					} else {
 						$filenametoshow = preg_replace('/\.noexe$/', '', $file['name']);
-						print dol_escape_htmltag(dol_trunc($filenametoshow, 200));
+						print dolPrintHTML(dol_trunc($filenametoshow, 200));
 						print '</a>';
 					}
 					// Preview link
@@ -1573,8 +1585,8 @@ class FormFile
 					print '<td class="center nowraponall">'.dol_print_date($file['date'], "dayhour", "tzuser").'</td>';
 
 					// Preview
+					$fileinfo = pathinfo($file['name']);
 					if (empty($useinecm) || $useinecm == 4 || $useinecm == 5 || $useinecm == 6) {
-						$fileinfo = pathinfo($file['name']);
 						print '<td class="center">';
 						if (image_format_supported($file['name']) >= 0) {
 							if ($useinecm == 5 || $useinecm == 6) {
@@ -1589,7 +1601,6 @@ class FormFile
 								$smallfile = getImageFileNameForSize($file['name'], ''); // This is in case no _small image exist
 							}
 							//print $file['path'].'/'.$smallfile.'<br>';
-
 
 							$urlforhref = getAdvancedPreviewUrl($modulepart, $relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension']), 1, '&entity='.(empty($object->entity) ? $conf->entity : $object->entity));
 							if (empty($urlforhref)) {
@@ -1629,10 +1640,10 @@ class FormFile
 								//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 								//print '<span class="opacitymedium">'.$langs->trans("Hash").' : '.$file['share'].'</span>';
-								$forcedownload = 0;
+								$forcedownload = getDolGlobalInt('MAIN_FORCE_DOWNLOAD_IN_HTML_FORMFILE');
 								$paramlink = '';
 								if (!empty($file['share'])) {
-									$paramlink .= ($paramlink ? '&' : '').'hashp='.$file['share']; // Hash for public share
+									$paramlink .= /* ($paramlink ? '&' : ''). */'hashp='.$file['share']; // Hash for public share
 								}
 								if ($forcedownload) {
 									$paramlink .= ($paramlink ? '&' : '').'attachment=1';
@@ -1640,8 +1651,9 @@ class FormFile
 
 								$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
 
+								print '<!-- shared link -->';
 								print '<a href="'.$fulllink.'" target="_blank" rel="noopener">'.img_picto($langs->trans("FileSharedViaALink"), 'globe').'</a> ';
-								print '<input type="text" class="centpercentminusx minwidth200imp nopadding small" id="downloadlink'.$filearray[$key]['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
+								print '<input type="text" class="centpercentminusx minwidth50imp nopadding small" id="downloadlink'.$filearray[$key]['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
 							} else {
 								//print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
 							}
@@ -1746,8 +1758,8 @@ class FormFile
 					} else {
 						print '<td class="right">';
 						print '<input type="hidden" name="ecmfileid" value="'.(empty($filearray[$key]['rowid']) ? '' : $filearray[$key]['rowid']).'">';
-						print '<input type="submit" class="button button-save smallpaddingimp" name="renamefilesave" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
-						print '<input type="submit" class="button button-cancel smallpaddingimp" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+						print '<input type="submit" class="button button-save smallpaddingimp" name="renamefilesave" value="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("Save")).'">';
+						print '<input type="submit" class="button button-cancel smallpaddingimp" name="cancel" value="'.dolPrintHTMLForAttribute($langs->transnoentitiesnoconv("Cancel")).'">';
 						print '</td>';
 						if (empty($disablemove) && count($filearray) > 1) {
 							print '<td class="right"></td>';
@@ -1767,7 +1779,7 @@ class FormFile
 				if (empty($textifempty)) {
 					print '<span class="opacitymedium">'.$langs->trans("NoFileFound").'</span>';
 				} else {
-					print '<span class="opacitymedium">'.$textifempty.'</span>';
+					print '<span class="opacitymedium">'.dolPrintHTML($textifempty).'</span>';
 				}
 				print '</td></tr>';
 			}
@@ -1841,11 +1853,15 @@ class FormFile
 
 		if (!empty($addfilterfields)) {
 			print '<tr class="liste_titre nodrag nodrop">';
+			// Ref
 			print '<td class="liste_titre"></td>';
+			// Name
 			print '<td class="liste_titre"><input type="text" class="maxwidth100onsmartphone" name="search_doc_ref" value="'.dol_escape_htmltag($search_doc_ref).'"></td>';
+			// Size
 			print '<td class="liste_titre"></td>';
+			// Date
 			print '<td class="liste_titre"></td>';
-			// Action column
+			// Shared and action column
 			print '<td class="liste_titre right">';
 			$searchpicto = $form->showFilterButtons();
 			print $searchpicto;
@@ -2080,7 +2096,8 @@ class FormFile
 
 				print '<!-- Line list_of_autoecmfiles key='.$key.' -->'."\n";
 				print '<tr class="oddeven">';
-				print '<td>';
+				// Ref
+				print '<td class="tdoverflowmax150">';
 				if ($found > 0 && is_object($conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref])) {
 					$tmpobject = $conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref];
 					//if (! in_array($tmpobject->element, array('expensereport'))) {
@@ -2147,10 +2164,10 @@ class FormFile
 					//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 					//print '<span class="opacitymedium">'.$langs->trans("Hash").' : '.$file['share'].'</span>';
-					$forcedownload = 0;
+					$forcedownload = getDolGlobalInt('MAIN_FORCE_DOWNLOAD_IN_HTML_FORMFILE');
 					$paramlink = '';
 					if (!empty($file['share'])) {
-						$paramlink .= ($paramlink ? '&' : '').'hashp='.$file['share']; // Hash for public share
+						$paramlink .= /* ($paramlink ? '&' : ''). */'hashp='.$file['share']; // Hash for public share
 					}
 					if ($forcedownload) {
 						$paramlink .= ($paramlink ? '&' : '').'attachment=1';
@@ -2158,6 +2175,7 @@ class FormFile
 
 					$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
 
+					print '<!-- shared link -->';
 					print img_picto($langs->trans("FileSharedViaALink"), 'globe').' ';
 					print '<input type="text" class="quatrevingtpercent width100 nopadding nopadding small" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
 				}
@@ -2383,8 +2401,7 @@ class FormFile
 				$out .= '<a class="pictopreview '.$urladvancedpreview['css'].'" href="'.$urladvancedpreview['url'].'"'.(empty($urladvancedpreview['mime']) ? '' : ' mime="'.$urladvancedpreview['mime'].'"').' '.(empty($urladvancedpreview['target']) ? '' : ' target="'.$urladvancedpreview['target'].'"').'>';
 				//$out.= '<a class="pictopreview">';
 				if (empty($ruleforpicto)) {
-					//$out.= img_picto($langs->trans('Preview').' '.$file['name'], 'detail');
-					$out .= '<span class="fa fa-search-plus pictofixedwidth" style="color: gray"></span>';
+					$out .= img_picto('', 'search-plus', 'class="pictofixedwidth"');
 				} else {
 					$out .= img_mime($relativepath, $langs->trans('Preview').' '.$file['name'], 'pictofixedwidth');
 				}

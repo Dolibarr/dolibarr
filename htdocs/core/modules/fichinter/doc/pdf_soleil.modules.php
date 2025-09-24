@@ -7,7 +7,7 @@
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024	    Nick Fragoulis
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -133,7 +133,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	 *  @param		int<0,1>		$hidedetails		Do not show line details
 	 *  @param		int<0,1>		$hidedesc			Do not show desc
 	 *  @param		int<0,1>		$hideref			Do not show ref
-	 *  @return		int<0,1>							1=OK, 0=KO
+	 *  @return		int<-1,1>							1=OK,<=0 => KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -152,7 +152,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		$outputlangs->loadLangs(array("main", "interventions", "dict", "companies", "compta"));
 
 		// Show Draft Watermark
-		if ($object->statut == $object::STATUS_DRAFT && (getDolGlobalString('FICHINTER_DRAFT_WATERMARK'))) {
+		if ($object->status == $object::STATUS_DRAFT && (getDolGlobalString('FICHINTER_DRAFT_WATERMARK'))) {
 			$this->watermark = getDolGlobalString('FICHINTER_DRAFT_WATERMARK');
 		}
 
@@ -430,6 +430,8 @@ class pdf_soleil extends ModelePDFFicheinter
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);

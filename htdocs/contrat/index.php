@@ -6,7 +6,7 @@
  * Copyright (C) 2019		Nicolas ZABOURI				<info@inovea-conseil.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,11 +183,20 @@ if ($resql) {
 $colorseries = array();
 
 include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+/**
+ * @var string $badgeStatus0
+ * @var string $badgeStatus1
+ * @var string $badgeStatus4
+ * @var string $badgeStatus6
+ */
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder nohover centpercent">';
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Services").'</th></tr>'."\n";
-$listofstatus = array(0, 4, 4, 5);
+$listofstatus = array(0, 4, 4);	// Note: status 5=closed is useless as it increase all the time. We are interesting with 0, 4 expired and 4 non expired only.
+if (!getDolGlobalString('CONTRACT_HIDE_CLOSED_SERVICES_IN_GRAPH')) {
+	$listofstatus[] = 5;	// We add this status too (even if useless
+}
 $bool = false;
 foreach ($listofstatus as $status) {
 	$bool_str = (string) $bool;

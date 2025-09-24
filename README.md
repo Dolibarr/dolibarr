@@ -116,6 +116,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Product Variants
 - Bill of Materials (BOM)
 - Manufacturing Orders (MO)
+- Workstations / Workplaces
 
  Customer/Sales Management
 
@@ -175,12 +176,13 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Data export/import
 - Barcodes
 - LDAP connectivity
-- ClickToDial integration
+- Click-To-Dial integration
 - Mass emailing
 - RSS integration
 - Social platforms linking
 - Payment platforms integration (PayPal, Stripe, Paybox...)
 - Email-Collector
+- AI support via API
 
 (around 100 modules available by default, 1000+ addons at the official marketplace Dolistore.com)
 
@@ -237,7 +239,7 @@ These are features that Dolibarr does **not** yet fully support:
 Administrator, user, developer and translator's documentation are available along with other community resources in the [Wiki](https://wiki.dolibarr.org).
 
 
-## CONTRIBUTING
+## CONTRIBUTING AND RELEASE PROCESS
 
 This project exists thanks to all the people who contribute.
 Please read the instructions on how to contribute (report a bug/error, a feature request, send code, ...)  [[Contributing](https://github.com/Dolibarr/dolibarr/blob/develop/.github/CONTRIBUTING.md)]
@@ -245,6 +247,8 @@ Please read the instructions on how to contribute (report a bug/error, a feature
 A View on Contributors:
 
 [![Dolibarr](https://opencollective.com/dolibarr/contributors.svg?width=890&button=false)](https://github.com/Dolibarr/dolibarr/graphs/contributors)
+
+The release process is described into the file dev/build/makepack-howto.md
 
 
 ## CREDITS
@@ -258,10 +262,12 @@ See [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT) fil
 
 Follow Dolibarr project on:
 
-- [Mastodon](https://pouet.chapril.org/@dolibarr)
-- [Facebook](https://www.facebook.com/dolibarr)
-- [X](https://x.com/dolibarr)
 - [LinkedIn](https://www.linkedin.com/company/association-dolibarr)
+- [Mastodon](https://pouet.chapril.org/@dolibarr)
+- [BlueSky](https://bsky.app/profile/dolibarr.org)
+- [Threads](https://www.threads.net/@dolibarr)
+- [X](https://x.com/dolibarr)
+- [Facebook](https://www.facebook.com/dolibarr)
 - [Reddit](https://www.reddit.com/r/Dolibarr_ERP_CRM/)
 - [YouTube](https://www.youtube.com/user/DolibarrERPCRM)
 - [GitHub](https://github.com/Dolibarr/dolibarr)

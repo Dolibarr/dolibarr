@@ -3705,7 +3705,7 @@ class nusoap_server extends nusoap_base
     /**
      * wsdl instance (if one)
      *
-     * @var mixed
+     * @var mixed|wsdl
      * @access private
      */
     var $wsdl = false;
@@ -4466,7 +4466,8 @@ class nusoap_server extends nusoap_base
             $this->debug('methodname: ' . $this->methodname . ' methodURI: ' . $this->methodURI);
 
             // get/set custom response tag name
-            $outputMessage = $this->wsdl->getOperationData($this->methodname)['output']['message'];
+            $tmparray = $this->wsdl->getOperationData($this->methodname);
+            $outputMessage = (empty($tmparray) ? '' : $tmparray['output']['message']);
             $this->responseTagName = $outputMessage;
             $this->debug('responseTagName: ' . $this->responseTagName . ' methodURI: ' . $this->methodURI);
 
@@ -4789,6 +4790,9 @@ class wsdl extends nusoap_base
     /** @var mixed */
     var $serviceName;
     var $wsdl_info;
+
+    /** @var string */
+    var $schemaTargetNamespace;
 
     /**
      * constructor

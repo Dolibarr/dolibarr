@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -124,7 +124,7 @@ class PaymentVarious extends CommonObject
 	public $fk_project;
 
 	/**
-	 * @var int Bank account ID
+	 * @var ?int Bank account ID
 	 */
 	public $fk_account;
 
@@ -180,7 +180,7 @@ class PaymentVarious extends CommonObject
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -794,9 +794,10 @@ class PaymentVarious extends CommonObject
 	/**
 	 *	Return if a various payment linked to a bank line id was dispatched into bookkeeping
 	 *
-	 *	@return     int         Return integer <0 if KO, 0=no, 1=yes
+	 *	@param		int		$mode		0=Return nb of record, 1=return the transaction ID (piece_num)
+	 *	@return     int         		Return integer <0 if KO, 0=no, 1=yes or ID transaction
 	 */
-	public function getVentilExportCompta()
+	public function getVentilExportCompta($mode = 0)
 	{
 		$banklineid = $this->fk_bank;
 
@@ -804,7 +805,8 @@ class PaymentVarious extends CommonObject
 
 		$type = 'bank';
 
-		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $banklineid);
+		$sql = " SELECT ".($mode ? 'DISTINCT piece_num' : 'COUNT(ab.rowid)')." as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type = '".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $banklineid);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
@@ -817,7 +819,7 @@ class PaymentVarious extends CommonObject
 		}
 
 		if ($alreadydispatched) {
-			return 1;
+			return $alreadydispatched;
 		}
 		return 0;
 	}

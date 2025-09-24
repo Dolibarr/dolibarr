@@ -66,9 +66,15 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'interventionlist';
 $mode = GETPOST('mode', 'alpha');
+
+if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
+	$userschilds = $user->getAllChildIds();
+} else {
+	$userschilds = array();
+}
 
 $search_ref = GETPOST('search_ref') ? GETPOST('search_ref', 'alpha') : GETPOST('search_inter', 'alpha');
 $search_ref_client = GETPOST('search_ref_client', 'alpha');
@@ -168,6 +174,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
+$permissiontoreadallthirdparty = $user->hasRight('societe', 'client', 'voir');
 $permissiontoread = $user->hasRight('ficheinter', 'lire');
 $permissiontoadd = $user->hasRight('ficheinter', 'creer');
 $permissiontodelete = $user->hasRight('ficheinter', 'supprimer');
@@ -349,12 +356,18 @@ if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') && $atleastonefieldinlines)
 		$sql .= " AND fd.date <= '".$db->idate($search_date_end)."'";
 	}
 }
-if (!$user->hasRight('societe', 'client', 'voir')) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-}
-if ($socid) {
+if ($socid > 0) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
+// Restriction on sale representative
+if (empty($user->socid) && !$permissiontoreadallthirdparty) {
+	$sql .= " AND (EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id).")";
+	if (getDolGlobalInt('MAIN_SEE_SUBORDINATES') && $userschilds) {
+		$sql .= " OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user IN (".$db->sanitize(implode(',', $userschilds))."))";
+	}
+	$sql .= ")";
+}
+
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
@@ -392,7 +405,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -983,7 +996,7 @@ while ($i < $imaxinloop) {
 		// Note public
 		if (!empty($arrayfields['f.note_public']['checked'])) {
 			print '<td class="sensiblehtmlcontent center">';
-			print dolPrintHTML($obj->note_public);
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -992,7 +1005,7 @@ while ($i < $imaxinloop) {
 		// Note private
 		if (!empty($arrayfields['f.note_private']['checked'])) {
 			print '<td class="sensiblehtmlcontent center">';
-			print dolPrintHTML($obj->note_private);
+			print '<div class="small lineheightsmall twolinesmax-normallineheight">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private, 5)).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

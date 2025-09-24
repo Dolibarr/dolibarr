@@ -412,7 +412,9 @@ $formadmin = new FormAdmin($db);
 llxHeader('', $langs->trans("WebsiteSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-website');
 
 $titre = $langs->trans("WebsiteSetup");
-$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
+
+$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($titre, $linkback, 'title_setup');
 
 // Onglets
@@ -424,10 +426,12 @@ $head[$h][1] = $langs->trans("WebSites");
 $head[$h][2] = 'website';
 $h++;
 
+/* disable, no option for the moment
 $head[$h][0] = DOL_URL_ROOT."/admin/website_options.php";
 $head[$h][1] = $langs->trans("Options");
 $head[$h][2] = 'options';
 $h++;
+*/
 
 print dol_get_fiche_head($head, 'website', '', -1);
 

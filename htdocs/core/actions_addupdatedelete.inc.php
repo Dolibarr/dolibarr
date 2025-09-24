@@ -61,6 +61,9 @@
  * @var string $hidedetails
  * @var string $hidedesc
  * @var string $hideref
+ * @var ?string $confirm
+ * @var ?int $lineid
+ * @var ?int $id
  */
 // $action or $cancel must be defined
 // $object must be defined
@@ -421,12 +424,18 @@ if (preg_match('/^set(\w+)$/', $action, $reg) && GETPOSTINT('id') > 0 && !empty(
 }
 
 // Action to update one extrafield
-if ($action == "update_extras" && GETPOSTINT('id') > 0 && !empty($permissiontoadd)) {
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
+
+if ($action == "update_extras" && GETPOSTINT('id') > 0 && !empty($permissiontoeditextra)) {
 	$object->fetch(GETPOSTINT('id'));
 
 	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
-	$attribute = GETPOST('attribute', 'alphanohtml');
+	$attribute = GETPOST('attribute', 'aZ09');
 
 	$error = 0;
 
@@ -437,7 +446,7 @@ if ($action == "update_extras" && GETPOSTINT('id') > 0 && !empty($permissiontoad
 		setEventMessages($extrafields->error, $object->errors, 'errors');
 		$action = 'edit_extras';
 	} else {
-		$result = $object->updateExtraField($attribute, empty($triggermodname) ? '' : $triggermodname, $user);
+		$result = $object->updateExtraField($attribute, empty($triggermodname) ? '' : $triggermodname, $user);	// TODO Remove $triggermodname to use $object->TRIGGER_PREFIX.'_MODIFY' instead
 		if ($result > 0) {
 			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			$action = 'view';

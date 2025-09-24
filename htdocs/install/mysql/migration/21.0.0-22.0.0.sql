@@ -44,7 +44,7 @@ ALTER TABLE llx_societe_account ADD UNIQUE INDEX uk_societe_account_login_websit
 -- V22 migration
 
 ALTER TABLE llx_c_country ADD COLUMN sepa tinyint DEFAULT 0 NOT NULL;
-UPDATE llx_c_country SET sepa = 1 WHERE code IN ('AD','AT','BE','BG','CH','CY','CZ','DE','DK','EE','ES','FI','FR','GR','HR','HU','IE','IT','LT','LU','LV','MC','MT','NL','PL','PT','RO','SE','SI','SK','SM','VA');
+UPDATE llx_c_country SET sepa = 1 WHERE code IN ('AL','AD','AT','BE','BG','CH','CY','CZ','DE','DK','EE','ES','FI','FR','GB','GG','GR','HR','HU','IE','IM','IS','IT','JE','LI','LT','LU','LV','MC','MD','ME','MK','MT','NL','NO','PL','PM','PT','RO','RS','SE','SI','SK','SM','VA');
 
 -- fix element
 UPDATE llx_c_type_contact set element='shipping' WHERE element='expedition';
@@ -63,6 +63,8 @@ ALTER TABLE llx_societe_account ADD COLUMN ip varchar(250);
 
 ALTER TABLE llx_product ADD COLUMN packaging float(24,8) DEFAULT NULL;
 
+-- mailing
+UPDATE llx_const SET visible = 0 WHERE name='MAILING_LIMIT_SENDBYWEB';
 
 ALTER TABLE llx_categorie_member ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_category_bankline ADD COLUMN import_key varchar(14);
@@ -158,6 +160,35 @@ CREATE TABLE llx_bank_record_link
   fk_bank_import	integer		NOT NULL
 )ENGINE=innodb;
 
+CREATE TABLE llx_bank_import
+(
+  rowid                 integer         AUTO_INCREMENT PRIMARY KEY,
+  id_account			integer			NOT NULL,              	-- bank account ID in Dolibarr
+  record_type 			varchar(64)   	NULL,                  	-- OFX Type of transaction: DIRECTDEBIT, XFER, OTHER or code/type of operation
+  label         		varchar(255)  	NOT NULL,               -- label of operation
+  record_type_origin  	varchar(255)  	NOT NULL,               -- operation code/type origin
+  label_origin  		varchar(255)  	NOT NULL,               -- label of operation origin
+  comment				text			NULL,                   -- Comment/Motif
+  note				    text			NULL,                   -- Notes like "References"
+  bdate					date			NULL,                   -- date operation
+  vdate					date			NULL,                   -- date value
+  date_scraped			datetime		NULL,                  	-- date discarded
+  original_amount		double(24,8)	NULL,                	-- OFX amount
+  original_currency		varchar(255)	NULL,              		-- OFX Currency
+  amount_debit			double(24,8)	NOT NULL,          		-- money spent. For statement using debit/credit. For statement using 1 amount, use original_amount.
+  amount_credit       	double(24,8)  NOT NULL,          		-- money received. For statement using debit/credit. For statement using 1 amount, use original_amount.
+  deleted_date			datetime		NULL,                  	-- to flag this record as deleted
+  fk_duplicate_of		integer			NULL,                  	-- to flag this record as a duplicate of another one
+  status				smallint		NOT NULL,               -- 0=just imported
+  datec					datetime		NOT NULL,		        -- date creation
+  tms					timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,	-- date of last modification
+  fk_user_author	    integer         NOT NULL, 		   		-- user who created the record
+  fk_user_modif		    integer,					            -- user who modified the record
+  import_key			varchar(14),					        -- import key
+  datas					text			NOT NULL                -- full record/line coming from source
+)ENGINE=innodb;
+
+
 ALTER TABLE llx_bank_record_link ADD CONSTRAINT fk_bank_record_bank_record FOREIGN KEY (fk_bank_record) REFERENCES llx_bank_record (rowid);
 ALTER TABLE llx_bank_record_link ADD CONSTRAINT fk_bank_import_bank_import FOREIGN KEY (fk_bank_import) REFERENCES llx_bank_import (rowid);
 
@@ -195,14 +226,23 @@ ALTER TABLE llx_product_customer_price ADD CONSTRAINT fk_product_customer_price_
 UPDATE llx_product_customer_price SET date_begin = datec WHERE date_begin IS NULL;
 UPDATE llx_product_customer_price_log SET date_begin = datec WHERE date_begin IS NULL;
 
-ALTER TABLE llx_session ADD COLUMN date_creation datetime NOT NULL AFTER session_variable;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN ref VARCHAR(30) AFTER rowid;
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN ref VARCHAR(30) AFTER rowid;
+
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_ref (ref);
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_tmp_ref (ref);
+
+ALTER TABLE llx_session ADD COLUMN date_creation datetime AFTER session_variable;
+UPDATE llx_session SET date_creation = NOW() WHERE date_creation IS NULL;
+-- VMYSQL4.3 ALTER TABLE llx_session MODIFY COLUMN date_creation datetime NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_session ALTER COLUMN date_creation SET NOT NULL;
 
 ALTER TABLE llx_accounting_account ADD COLUMN centralized tinyint DEFAULT 0 NOT NULL AFTER active;
-UPDATE llx_accounting_account as acc SET acc.centralized = 1 WHERE acc.account_number in (SELECT value  FROM llx_const WHERE name IN (__ENCRYPT('ACCOUNTING_ACCOUNT_CUSTOMER')__,__ENCRYPT('ACCOUNTING_ACCOUNT_SUPPLIER')__,__ENCRYPT('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')__));
+UPDATE llx_accounting_account as acc SET acc.centralized = 1 WHERE acc.account_number in (SELECT value  FROM llx_const WHERE name IN (__ENCRYPT('ACCOUNTING_ACCOUNT_CUSTOMER')__,__ENCRYPT('ACCOUNTING_ACCOUNT_SUPPLIER')__,__ENCRYPT('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')__,__ENCRYPT('ACCOUNTING_ACCOUNT_EXPENSEREPORT')__));
 
 -- invert constant STOCK_ALLOW_NEGATIVE_TRANSFER because it was automatically set to 1, deleting the user config.
-INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT DISTINCT 'STOCK_DISALLOW_NEGATIVE_TRANSFER', entity, 1, 'chaine', 0, '' FROM llx_const c1 WHERE NOT EXISTS (SELECT rowid FROM llx_const c2 WHERE c2.name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND c2.value = '1' AND c2.entity = c1.entity);
-UPDATE llx_const SET name = 'STOCK_DISALLOW_NEGATIVE_TRANSFER', value = 1 WHERE name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND value = '0';
+INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT DISTINCT 'STOCK_DISALLOW_NEGATIVE_TRANSFER', entity, '1', 'chaine', 0, '' FROM llx_const as c1 WHERE NOT EXISTS (SELECT rowid FROM llx_const as c2 WHERE c2.name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND c2.value = '1' AND c2.entity = c1.entity);
+UPDATE llx_const SET name = 'STOCK_DISALLOW_NEGATIVE_TRANSFER', value = '1' WHERE name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND value = '0';
 DELETE FROM llx_const WHERE name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND value = '1';
 
 ALTER TABLE llx_links ADD COLUMN  share varchar(128) NULL AFTER objectid;
@@ -218,9 +258,74 @@ UPDATE llx_expeditiondet as ed SET ed.fk_product = (SELECT cd.fk_product FROM ll
 
 ALTER TABLE llx_webhook_target ADD COLUMN type integer DEFAULT 0 NOT NULL AFTER label;
 
+-- remove foreign keys we should not have (bad name and bad use)
+ALTER TABLE llx_webhook_target DROP FOREIGN KEY llx_webhook_target_fk_user_creat;
+ALTER TABLE llx_webhook_target DROP FOREIGN KEY fk_webhook_target_fk_user_creat;
+
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'pixelfed', 'Pixelfed', '{socialid}', 'fa-pixelfed', 0);
 
 -- Add input reason on invoice
 ALTER TABLE llx_facture ADD COLUMN fk_input_reason integer NULL DEFAULT NULL AFTER last_main_doc;
 ALTER TABLE llx_facture ADD INDEX idx_facture_fk_input_reason (fk_input_reason);
 ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_input_reason FOREIGN KEY (fk_input_reason) REFERENCES llx_c_input_reason (rowid);
+ALTER TABLE llx_website ADD COLUMN paymentframemode integer DEFAULT 0;
+ALTER TABLE llx_contratdet DROP COLUMN price_ht;
+ALTER TABLE llx_contratdet DROP COLUMN remise;
+
+ALTER TABLE llx_extrafields ADD COLUMN aiprompt text;
+
+ALTER TABLE llx_menu ADD COLUMN showtopmenuinframe integer DEFAULT 0;
+
+ALTER TABLE llx_entrepot MODIFY COLUMN phone varchar(30);
+ALTER TABLE llx_entrepot MODIFY COLUMN fax varchar(30);
+ALTER TABLE llx_establishment MODIFY COLUMN phone varchar(30);
+ALTER TABLE llx_resource MODIFY COLUMN phone varchar(30);
+ALTER TABLE llx_societe MODIFY COLUMN phone varchar(30);
+ALTER TABLE llx_societe MODIFY COLUMN phone_mobile varchar(30);
+ALTER TABLE llx_societe MODIFY COLUMN fax varchar(30);
+ALTER TABLE llx_user MODIFY COLUMN office_phone varchar(30);
+ALTER TABLE llx_user MODIFY COLUMN office_fax varchar(30);
+ALTER TABLE llx_user MODIFY COLUMN user_mobile varchar(30);
+ALTER TABLE llx_user MODIFY COLUMN personal_mobile varchar(30);
+ALTER TABLE llx_asset ADD COLUMN fk_user_valid integer;
+ALTER TABLE llx_asset ADD COLUMN date_valid datetime;
+
+CREATE TABLE llx_webhook_history(
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	trigger_data text NOT NULL,
+	fk_target integer NOT NULL,
+	url integer NOT NULL,
+	note_private text,
+	date_creation datetime NOT NULL,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_user_creat integer NOT NULL,
+	import_key varchar(14),
+	status integer DEFAULT 1 NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_societe_rib ADD COLUMN cci varchar(100) after iban_prefix;    -- Interbank code for some countries like Chile
+
+-- Move permission thirdparty_paymentinformation out of advanced rights
+UPDATE llx_rights_def SET perms = 'thirdparty_paymentinformation' WHERE perms = 'thirdparty_paymentinformation_advance';
+
+ALTER TABLE llx_eventorganization_conferenceorboothattendee DROP INDEX idx_eventorganization_conferenceorboothattendee_ref;
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD UNIQUE INDEX uk_eventorganization_confboothattendee(ref);
+
+ALTER TABLE llx_facture_rec ADD COLUMN usenewcurrencyrate integer DEFAULT 0;
+ALTER TABLE llx_facture_fourn_rec ADD COLUMN usenewcurrencyrate integer DEFAULT 0;
+
+ALTER TABLE llx_don ADD COLUMN ip varchar(250);
+
+ALTER TABLE llx_expeditiondet ADD COLUMN description text AFTER fk_entrepot;
+
+INSERT INTO llx_c_type_container (code, label, active, module, position, typecontainer, entity) VALUES ('setup', 'Setup screen', 1, 'system', 500, 'library', __ENTITY__);
+
+ALTER TABLE llx_mrp_mo ADD COLUMN extraparams varchar(255) DEFAULT NULL;
+
+UPDATE llx_actioncomm set code = 'AC_PAYMENT_STRIPE_IPN_SEPA_KO' where code = 'AC_IPN' and label like 'Payment error (SEPA%';
+
+ALTER TABLE llx_blockedlog ADD COLUMN debuginfo mediumtext;
+
+ALTER TABLE llx_webhook_history ADD COLUMN trigger_code text NOT NULL;
+ALTER TABLE llx_webhook_history ADD COLUMN error_message text;
+ALTER TABLE llx_webhook_history MODIFY COLUMN url varchar(255);

@@ -20,7 +20,7 @@
  */
 
 /**
- *      \file       test/phpunit/AllTest.php
+ *      \file       test/phpunit/AllTests.php
  *      \ingroup    test
  *      \brief      This file is a test suite to run all unit tests
  *      \remarks    To run this script as CLI:  phpunit filename.php
@@ -113,6 +113,8 @@ class AllTests
 		$suite->addTestSuite('FunctionsLibTest');
 		require_once dirname(__FILE__).'/Functions2LibTest.php';
 		$suite->addTestSuite('Functions2LibTest');
+		require_once dirname(__FILE__).'/FunctionsBELibTest.php';
+		$suite->addTestSuite('FunctionsBELibTest');
 		require_once dirname(__FILE__).'/ProfidLibTest.php';
 		$suite->addTestSuite('ProfidLibTest');
 		require_once dirname(__FILE__).'/XCalLibTest.php';
@@ -286,10 +288,6 @@ class AllTests
 		require_once dirname(__FILE__).'/ScriptsTest.php';
 		$suite->addTestSuite('ScriptsTest');
 
-		require_once dirname(__FILE__).'/ModulesTest.php';  // At end because it's the longer
-		$suite->addTestSuite('ModulesTest');
-
-
 		// GUI
 		require_once dirname(__FILE__).'/FormAdminTest.php';
 		$suite->addTestSuite('FormAdminTest');
@@ -310,6 +308,11 @@ class AllTests
 		// Website
 		require_once dirname(__FILE__).'/WebsiteTest.php';
 		$suite->addTestSuite('WebsiteTest');
+
+		// At end because it's the longer
+		// Also enabling and disabling modules is changing the context and global variables that changes behaviour of previous tests
+		require_once dirname(__FILE__).'/ModulesTest.php';
+		$suite->addTestSuite('ModulesTest');
 
 		return $suite;
 	}

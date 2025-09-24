@@ -232,6 +232,7 @@ if ($result || !($id > 0)) {
 	} else {
 		print '<input type="hidden" name="id" value="'.$id.'">';
 	}
+	print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 	// Year
 	print '<tr class="nooddeven"><td class="titlefield">'.$langs->trans("Year").'</td><td>';
@@ -266,6 +267,9 @@ if ($result || !($id > 0)) {
 	$param .= (GETPOSTISSET('id') ? '&id='.GETPOSTINT('id') : '&id='.$object->id).(($type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&search_year='.((int) $search_year).($notab ? '&notab='.$notab : '');
 	if ($socid > 0) {
 		$param .= '&socid='.((int) $socid);
+	}
+	if (!empty($search_categ)) {
+		$param .= '&search_categ='.((int) $search_categ);
 	}
 
 	// Choice of stats mode (byunit or bynumber)
@@ -352,6 +356,7 @@ if ($result || !($id > 0)) {
 	$arrayforlabel = array('byunit' => 'NumberOfUnits', 'bynumber' => 'NumberOf', 'byamount' => 'AmountIn');
 
 	if (isModEnabled('propal')) {
+		$langs->load("propal");
 		$graphfiles['propal'] = array('modulepart' => 'productstats_proposals',
 			'file' => $object->id.'/propal12m'.((string) $type != '' ? '_type'.$type : '').'_'.$mode.($search_year > 0 ? '_year'.$search_year : '').'.png',
 			'label' => $langs->transnoentitiesnoconv($arrayforlabel[$mode], $langs->transnoentitiesnoconv("Proposals")));

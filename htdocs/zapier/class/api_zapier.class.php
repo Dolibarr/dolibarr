@@ -155,7 +155,7 @@ class Zapier extends DolibarrApi
 
 		$obj_ret = array();
 
-		$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : 0;
+		$socid = DolibarrApiAccess::$user->socid ?: 0;
 
 		// Set to 1 if there is a field socid in table of object
 		$restrictonsocid = 0;

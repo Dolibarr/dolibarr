@@ -78,6 +78,11 @@ class SMTPs
 	private $_smtpsToken = null;
 
 	/**
+	 * @var ?string Message-ID to use
+	 */
+	private $_msgId = null;
+
+	/**
 	 * @var ?array{org:string,real?:string,addr:string,user:string,host:string} Who sends the Message
 	 * This can be defined via a INI file or via a setter method
 	 */
@@ -293,8 +298,20 @@ class SMTPs
 	 */
 	private $_options = array();
 
+
 	/**
-	 * Set delivery receipt
+	 * Set Message-ID
+	 *
+	 * @param	string	$_msgId		Message-ID to use
+	 * @return	void
+	 */
+	public function setMessageID($_msgId = '')
+	{
+		$this->_msgId = $_msgId;
+	}
+
+	/**
+	 * Set options
 	 *
 	 * @param	array<string,array<string,mixed>>	$_options	An array of options for stream_context_create()
 	 * @return	void
@@ -323,6 +340,27 @@ class SMTPs
 	public function getDeliveryReceipt()
 	{
 		return $this->_deliveryReceipt;
+	}
+
+	/**
+	 * Set socket timeout. May be increase when email sent after a long time and with a large file for the wake up of SMTP server.
+	 *
+	 * @param	int		$timeout	Delay in second for socket timeout (default is 10s)
+	 * @return	void
+	 */
+	public function setSMTPTimeout($timeout)
+	{
+		$this->_smtpTimeout = $timeout;
+	}
+
+	/**
+	 * Get socket timeout
+	 *
+	 * @return	int		Delay in second for socket timeout
+	 */
+	public function getSMTPTimeout()
+	{
+		return $this->_smtpTimeout;
 	}
 
 	/**
@@ -489,7 +527,7 @@ class SMTPs
 				// This connection attempt failed.
 				// @CHANGE LDR
 				if (empty($this->errstr)) {
-					$this->errstr = 'Failed to connect with fsockopen host='.$this->getHost().' port='.$this->getPort();
+					$this->errstr = 'Failed to connect with stream_context_create or fsockopen host='.$this->getHost().' port='.$this->getPort();
 				}
 				$this->_setErr($this->errno, $this->errstr);
 				$_retVal = false;
@@ -527,7 +565,7 @@ class SMTPs
 
 		$hosth = $host;	// so for example 'localhost' or 'smtp-relay.gmail.com'
 
-		if (getDolGlobalString('MAIL_SMTP_USE_FROM_FOR_HELO')) {
+		if (getDolGlobalString('MAIL_SMTP_USE_FROM_FOR_HELO')) {	// Note that default value is forced to MAIL_SMTP_USE_FROM_FOR_HELO=2 if not set
 			if (!is_numeric(getDolGlobalString('MAIL_SMTP_USE_FROM_FOR_HELO'))) {
 				// If value of MAIL_SMTP_USE_FROM_FOR_HELO is a string, we use it as domain name
 				$hosth = getDolGlobalString('MAIL_SMTP_USE_FROM_FOR_HELO');
@@ -1525,16 +1563,15 @@ class SMTPs
 
 		$host = dol_getprefix('email');
 
-		//NOTE: Message-ID should probably contain the username of the user who sent the msg
 		$_header .= 'Subject: '.$this->getSubject()."\r\n";
 		$_header .= 'Date: '.date("r")."\r\n";
 
 		$trackid = $this->getTrackId();
 		if ($trackid) {
-			$_header .= 'Message-ID: <'.time().'.SMTPs-dolibarr-'.$trackid.'@'.$host.">\r\n";
+			$_header .= 'Message-ID: <'.(empty($this->_msgId) ? uniqid().'.SMTPs-dolibarr-'.$trackid.'@'.$host : $this->_msgId).">\r\n";
 			$_header .= 'X-Dolibarr-TRACKID: '.$trackid.'@'.$host."\r\n";
 		} else {
-			$_header .= 'Message-ID: <'.time().'.SMTPs@'.$host.">\r\n";
+			$_header .= 'Message-ID: <'.(empty($this->_msgId) ? uniqid().'.SMTPs@'.$host : $this->_msgId).">\r\n";
 		}
 		if (!empty($_SERVER['REMOTE_ADDR'])) {
 			$_header .= "X-RemoteAddr: ".$_SERVER['REMOTE_ADDR']."\r\n";

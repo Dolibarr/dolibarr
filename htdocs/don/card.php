@@ -5,7 +5,7 @@
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2019  Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -101,6 +101,11 @@ $result = restrictedArea($user, 'don', $object->id);
 $permissiontoread = $user->hasRight('don', 'lire');
 $permissiontoadd = $user->hasRight('don', 'creer');
 $permissiontodelete = $user->hasRight('don', 'supprimer');
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 
 /*
@@ -260,7 +265,7 @@ if (empty($reshook)) {
 			$object->lastname = (string) GETPOST("lastname", 'alpha');
 			$object->societe = (string) GETPOST("societe", 'alpha');
 			$object->address = (string) GETPOST("address", 'alpha');
-			$object->amount = price2num(GETPOST("amount", 'alpha'), '', 2);
+			$object->amount = (float) price2num(GETPOST("amount", 'alpha'), '', 2);
 			$object->zip = (string) GETPOST("zipcode", 'alpha');
 			$object->town = (string) GETPOST("town", 'alpha');
 			$object->country_id = GETPOSTINT('country_id');
@@ -342,18 +347,19 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update_extras' && $permissiontoadd) {
+	if ($action == 'update_extras' && $permissiontoeditextra) {
 		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
-		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		$attribute_name = GETPOST('attribute', 'aZ09');
 
+		// Fill array 'array_options' with data from update form
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 		if ($ret < 0) {
 			$error++;
 		}
 
 		if (!$error) {
-			$result = $object->insertExtraFields('DON_MODIFY');
+			$result = $object->updateExtraField($attribute_name, 'DON_MODIFY');
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
@@ -447,7 +453,7 @@ if ($action == 'create') {
 				});
 				</script>';
 			}
-			print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
+			print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&customer=3&fournisseur=0&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 			print '</td>';
 		}
 		print '</tr>'."\n";
@@ -631,7 +637,7 @@ if (!empty($id) && $action == 'edit') {
 	// Payment mode
 	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
 	if ($object->mode_reglement_id) {
-		$selected = $object->mode_reglement_id;
+		$selected = (string) $object->mode_reglement_id;
 	} else {
 		$selected = '';
 	}

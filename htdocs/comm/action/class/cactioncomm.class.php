@@ -2,6 +2,7 @@
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -189,13 +190,13 @@ class CActionComm
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$nump = $this->db->num_rows($resql);
+			$TSystem = array(
+				'id' => [],
+				'code' => [],
+				'all' => []
+			);
 			if ($nump) {
 				$idforallfornewmodule = 96;
-				$TSystem = array(
-					'id' => [],
-					'code' => [],
-					'all' => []
-				);
 				$TSystemAuto = array(
 					'id' => [],
 					'code' => [],

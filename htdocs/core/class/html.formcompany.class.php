@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2017		Rui Strecht			<rui.strecht@aliartalentos.com>
- * Copyright (C) 2020       Open-Dsi         	<support@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2008-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2017		Rui Strecht				<rui.strecht@aliartalentos.com>
+ * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -250,7 +250,7 @@ class FormCompany extends Form
 	 *   Thus the links with the departments are done on a department independently of its name.
 	 *
 	 *   @param     string		$selected        	Code state preselected
-	 *   @param     0|string	$country_codeid     0=list for all countries, otherwise country code or country rowid to show
+	 *   @param     0|string	$country_codeid     Set to 0=list for all countries, otherwise country code or country rowid to show
 	 *   @param     string		$htmlname			Id of department
 	 *   @return	void
 	 */
@@ -524,7 +524,7 @@ class FormCompany extends Form
 	 *    A country separator is included in case the list for all countries is returned.
 	 *
 	 *    @param	int			$selected        	Preselected code for juridical type
-	 *    @param    0|string	$country_codeid		0=All countries, else the code of the country to display
+	 *    @param    0|string	$country_codeid		Set to 0=All countries, else the code of the country to display
 	 *    @param    string		$filter          	Add a SQL filter on list
 	 *    @return	void
 	 *    @deprecated Use print xxx->select_juridicalstatus instead
@@ -542,7 +542,7 @@ class FormCompany extends Form
 	 *    A country separator is included in case the list for all countries is returned.
 	 *
 	 *    @param	int			$selected        	Preselected code of juridical type
-	 *    @param    0|string	$country_codeid     0=list for all countries, otherwise list only country requested
+	 *    @param    0|string	$country_codeid     Set to 0=list for all countries, otherwise list only country requested
 	 *    @param    string		$filter          	Add a SQL filter on list. Data must not come from user input.
 	 *    @param	string		$htmlname			HTML name of select
 	 *    @param	string		$morecss			More CSS
@@ -651,7 +651,7 @@ class FormCompany extends Form
 	 */
 	public function selectCompaniesForNewContact($object, $var_id, $selected = 0, $htmlname = 'newcompany', $limitto = [], $forceid = 0, $moreparam = '', $morecss = '')
 	{
-		global $conf, $hookmanager;
+		global $conf, $user, $hookmanager;
 
 		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT')) {
 			// Use Ajax search
@@ -750,6 +750,13 @@ class FormCompany extends Form
 			// For ajax search we limit here. For combo list, we limit later
 			if (is_array($limitto) && count($limitto)) {
 				$sql .= " AND s.rowid IN (" . $this->db->sanitize(implode(',', $limitto)) . ")";
+			}
+			// filter user access
+			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user = ".(int) $user->id .")";
+			}
+			if ($user->socid > 0) {
+				$sql .= " AND s.rowid = ".((int) $user->socid);
 			}
 			// Add where from hooks
 			$parameters = array();

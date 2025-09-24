@@ -3,7 +3,7 @@
  * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -74,7 +74,7 @@ class SocieteAccount extends CommonObject
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
 	 *  'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -116,8 +116,8 @@ class SocieteAccount extends CommonObject
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'visible' => -1, 'enabled' => 1, 'position' => 46, 'notnull' => -1,),
 		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'visible' => -2, 'enabled' => 1, 'position' => 500, 'notnull' => 1,),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'visible' => -2, 'enabled' => 1, 'position' => 500, 'notnull' => 1,),
-		'fk_user_creat' => array('type' => 'integer', 'label' => 'UserAuthor', 'visible' => -2, 'enabled' => 1, 'position' => 500, 'notnull' => 1,),
-		'fk_user_modif' => array('type' => 'integer', 'label' => 'UserModif', 'visible' => -2, 'enabled' => 1, 'position' => 500, 'notnull' => -1,),
+		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'visible' => -2, 'enabled' => 1, 'position' => 500, 'notnull' => 1,),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'visible' => -2, 'enabled' => 1, 'position' => 500, 'notnull' => -1,),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'visible' => -2, 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'index' => 1,),
 		'status' => array('type' => 'integer', 'label' => 'Status', 'visible' => 1, 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'index' => 1, 'default' => '1', 'arrayofkeyval' => array(1 => 'Active', 0 => 'Disabled')),
 	);
@@ -274,6 +274,24 @@ class SocieteAccount extends CommonObject
 			if ((int) $this->fk_website <= 0) {
 				$this->error = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Website"));
 				return -1;
+			}
+		}
+
+		if ($this->site == 'dolibarr_portal') {
+			// Check that entry does not already exists
+			$sql = "SELECT sa.rowid, sa.entity";
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe_account as sa";
+			$sql .= " WHERE sa.login = '".$this->db->escape($this->login)."'";
+			$sql .= " AND sa.entity IN (".getEntity('societe').")";
+			$sql .= " AND sa.site = 'dolibarr_portal'";
+			$sql .= " ORDER BY sa.rowid DESC"; // To always get the same order
+
+			$result = $this->db->query($sql);
+			if ($result) {
+				if ($this->db->num_rows($result)) {
+					$this->error = 'ErrorLoginAlreadyExists';
+					return -2;
+				}
 			}
 		}
 

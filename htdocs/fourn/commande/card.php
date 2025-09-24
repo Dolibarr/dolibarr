@@ -81,7 +81,7 @@ if (isModEnabled('stock')) {
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'orders', 'sendings', 'companies', 'bills', 'propal', 'receptions', 'supplier_proposal', 'deliveries', 'products', 'stocks', 'productbatch'));
+$langs->loadLangs(array('admin', 'orders', 'sendings', 'companies', 'bills', 'propal', 'receptions', 'supplier_proposal', 'products', 'stocks', 'productbatch'));
 if (isModEnabled('incoterm')) {
 	$langs->load('incoterm');
 }
@@ -176,6 +176,11 @@ $permissionnote		= $usercancreate; // Used by the include of actions_setnotes.in
 $permissiondellink	= $usercancreate; // Used by the include of actions_dellink.inc.php
 $permissiontoedit	= $usercancreate; // Used by the include of actions_lineupdown.inc.php
 $permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 // Project permission
 $caneditproject = false;
@@ -364,53 +369,12 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'reopen' && $permissiontoadd) {	// no test on permission here, permission to use will depends on status
-		if (in_array($object->status, array(1, 2, 3, 4, 5, 6, 7, 9))) {
-			if ($object->status == 1) {
-				$newstatus = 0; // Validated->Draft
-			} elseif ($object->status == 2) {
-				$newstatus = 0; // Approved->Draft
-			} elseif ($object->status == 3) {
-				$newstatus = 2; // Ordered->Approved
-			} elseif ($object->status == 4) {
-				$newstatus = 3;
-			} elseif ($object->status == 5) {
-				//$newstatus=2;    // Ordered
-				// TODO Can we set it to submitted ?
-				//$newstatus=3;  // Submitted
-				// TODO If there is at least one reception, we can set to Received->Received partially
-				$newstatus = 4; // Received partially
-			} elseif ($object->status == 6) {
-				$newstatus = 2; // Canceled->Approved
-			} elseif ($object->status == 7) {
-				$newstatus = 3; // Canceled->Process running
-			} elseif ($object->status == 9) {
-				$newstatus = 1; // Refused->Validated
-			} else {
-				$newstatus = 2;
-			}
-
-			//print "old status = ".$object->status.' new status = '.$newstatus;
-			$db->begin();
-
-			$result = $object->setStatus($user, $newstatus);
-			if ($result > 0) {
-				if ($newstatus == 0) {
-					$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
-					$sql .= ' SET fk_user_approve = null, fk_user_approve2 = null, date_approve = null, date_approve2 = null';
-					$sql .= ' WHERE rowid = '.((int) $object->id);
-
-					$resql = $db->query($sql);
-				}
-
-				$db->commit();
-
-				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-				exit;
-			} else {
-				$db->rollback();
-
-				setEventMessages($object->error, $object->errors, 'errors');
-			}
+		$resSetReopen = $object->setReopen($user);
+		if ($resSetReopen) {
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+			exit;
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
@@ -515,7 +479,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error && isModEnabled('variants') && $prod_entry_mode != 'free') {
-			if ($combinations = GETPOST('combinations', 'array')) {
+			if ($combinations = GETPOST('combinations', 'array:alphanohtml')) {
 				//Check if there is a product with the given combination
 				$prodcomb = new ProductCombination($db);
 
@@ -566,7 +530,7 @@ if (empty($reshook)) {
 				if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (/* empty($newlang) && */ GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
 					if (empty($newlang)) {
@@ -717,7 +681,7 @@ if (empty($reshook)) {
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */) {
 					$newlang = $object->thirdparty->default_lang;
 					if (GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
@@ -1245,7 +1209,7 @@ if (empty($reshook)) {
 
 				$result = $object->Livraison($user, $date_liv, GETPOST("type"), GETPOST("comment")); // GETPOST("type") is 'tot', 'par', 'nev', 'can'
 				if ($result > 0) {
-					$langs->load("deliveries");
+					$langs->load("sendings");
 					setEventMessages($langs->trans("DeliveryStateSaved"), null);
 					$action = '';
 				} else {
@@ -1293,23 +1257,22 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
-	if ($action == 'update_extras' && $permissiontoadd) {
+	if ($action == 'update_extras' && $permissiontoeditextra) {
 		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
-		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		$attribute_name = GETPOST('attribute', 'aZ09');
+
+		// Fill array 'array_options' with data from update form
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 		if ($ret < 0) {
 			$error++;
 		}
 
 		if (!$error) {
-			// Actions on extra fields
-			if (!$error) {
-				$result = $object->insertExtraFields('ORDER_SUPPLIER_MODIFY');
-				if ($result < 0) {
-					$error++;
-					setEventMessages($object->error, $object->errors, 'errors');
-				}
+			$result = $object->updateExtraField($attribute_name, 'ORDER_SUPPLIER_MODIFY');
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
 			}
 		}
 
@@ -1323,7 +1286,7 @@ if (empty($reshook)) {
 	 */
 	if ($action == 'add' && $permissiontoadd) {
 		$error = 0;
-		$selectedLines = GETPOST('toselect', 'array');
+		$selectedLines = GETPOST('toselect', 'array:int');
 		if ($socid < 1) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Supplier')), null, 'errors');
 			$action = 'create';
@@ -1377,10 +1340,11 @@ if (empty($reshook)) {
 					}
 
 					$object->origin = $origin;
+					$object->origin_type = $origin;
 					$object->origin_id = $originid;
 
 					// Possibility to add external linked objects with hooks
-					$object->linked_objects[$object->origin] = $object->origin_id;
+					$object->linked_objects[$object->origin_type] = $object->origin_id;
 					$other_linked_objects = GETPOST('other_linked_objects', 'array');
 					if (!empty($other_linked_objects)) {
 						$object->linked_objects = array_merge($object->linked_objects, $other_linked_objects);
@@ -1392,7 +1356,7 @@ if (empty($reshook)) {
 
 						$srcobject = new $classname($db);
 
-						dol_syslog("Try to find source object origin=".$object->origin." originid=".$object->origin_id." to add lines");
+						dol_syslog("Try to find source object origin=".$object->origin_type." originid=".$object->origin_id." to add lines");
 						$result = $srcobject->fetch($object->origin_id);
 						if ($result > 0) {
 							$tmpdate = $srcobject->delivery_date;
@@ -1545,7 +1509,7 @@ if (empty($reshook)) {
 			}
 
 			if (isModEnabled('category')) {
-				$categories = GETPOST('categories', 'array');
+				$categories = GETPOST('categories', 'array:int');
 				if (method_exists($object, 'setCategories')) {
 					$object->setCategories($categories);
 				}
@@ -1675,7 +1639,7 @@ if ($action == 'create') {
 		$objectsrc->fetch_optionals();
 		$object->array_options = $objectsrc->array_options;
 
-		$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
+		$projectid = (int) $objectsrc->fk_project;
 		$ref_client = (!empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
 		$fk_account = 0;
 		if ($origin == "commande") {
@@ -1750,6 +1714,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="remise_percent" value="'.(empty($soc->remise_supplier_percent) ? '' : $soc->remise_supplier_percent).'">';
 	print '<input type="hidden" name="origin" value="'.$origin.'">';
 	print '<input type="hidden" name="originid" value="'.$originid.'">';
+	print '<input type="hidden" name="changecompany" value="0">';	// will be set to 1 by javascript so we know post is done after a company change
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	}
@@ -1791,6 +1756,7 @@ if ($action == 'create') {
 						console.log("We have changed the company - Reload page");
 						// reload page
 						$("input[name=action]").val("create");
+						$("input[name=changecompany]").val("1");
 						$("form[name=add]").submit();
 					});
 				});
@@ -1821,7 +1787,7 @@ if ($action == 'create') {
 		// Payment term
 		print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 		print img_picto('', 'payment', 'class="pictofixedwidth"');
-		print $form->getSelectConditionsPaiements((GETPOSTISSET('cond_reglement_id') &&  GETPOST('cond_reglement_id') != 0) ? GETPOST('cond_reglement_id') : $cond_reglement_id, 'cond_reglement_id', -1, 1);
+		print $form->getSelectConditionsPaiements((GETPOSTISSET('cond_reglement_id') &&  GETPOST('cond_reglement_id') != 0) ? GETPOSTINT('cond_reglement_id') : $cond_reglement_id, 'cond_reglement_id', -1, 1);
 		print '</td></tr>';
 
 		// Payment mode
@@ -1860,7 +1826,14 @@ if ($action == 'create') {
 
 			$langs->load('projects');
 			print '<tr><td>'.$langs->trans('Project').'</td><td>';
-			print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects((!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
+			if ($socid > 0) { // external user
+				$projSocFilter = $socid;
+			} elseif ((int) $societe->id == 0 || getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS')) {
+				$projSocFilter = -1;
+			} else {
+				$projSocFilter = $societe->id;
+			}
+			print img_picto('', 'project', 'class="pictofixedwidth"').$formproject->select_projects($projSocFilter, $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 0, 'maxwidth500');
 			print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?action=create&status=1'.(!empty($societe->id) ? '&socid='.$societe->id : "").'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create'.(!empty($societe->id) ? '&socid='.$societe->id : "")).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 			print '</td></tr>';
 		}
@@ -1890,9 +1863,7 @@ if ($action == 'create') {
 		// Categories
 		if (isModEnabled("category")) {
 			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER_ORDER, '', 'parent', 64, 0, 1);
-			$arrayselected = GETPOST('categories', 'array');
-			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+			print $form->selectCategories(Categorie::TYPE_SUPPLIER_ORDER, 'categories', $object);
 			print "</td></tr>";
 		}
 
@@ -1948,6 +1919,15 @@ if ($action == 'create') {
 		print $hookmanager->resPrint;
 
 		if (empty($reshook)) {
+			if (getDolGlobalString('THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_SUPPLIER_ORDER') && !empty($societe->id)) {
+				// copy from thirdparty
+				$tpExtrafields = new ExtraFields($db);
+				$tpExtrafieldLabels = $tpExtrafields->fetch_name_optionals_label($societe->table_element);
+				if ($societe->fetch_optionals() > 0) {
+					$object->array_options = array_merge($object->array_options, $societe->array_options);
+				}
+			}
+
 			print $object->showOptionals($extrafields, 'create');
 		}
 
@@ -2419,19 +2399,12 @@ if ($action == 'create') {
 			print '</td></tr></table>';
 			print '</td>';
 			print '<td>';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER_ORDER, '', 'parent', 64, 0, 1);
 			if ($action == 'edittags') {
 				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 				print '<input type="hidden" name="action" value="settags">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
-				$c = new Categorie($db);
-				$cats = $c->containing($object->id, Categorie::TYPE_SUPPLIER_ORDER);
-				$arrayselected = [];
-				foreach ($cats as $cat) {
-					$arrayselected[] = $cat->id;
-				}
-				print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, '0');
-				print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				print $form->selectCategories(Categorie::TYPE_SUPPLIER_ORDER, 'categories', $object);
+				print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
 				print '</form>';
 			} else {
 				print $form->showCategories($object->id, Categorie::TYPE_SUPPLIER_ORDER, 1);

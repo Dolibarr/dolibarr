@@ -28,7 +28,10 @@ require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
 
 /**
  * @var Conf $conf
@@ -108,7 +111,7 @@ if (isModEnabled('project')) {
 $morehtmlref .= '</div>';
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-$morehtmlstatus = $morehtmlright;
+$morehtmlstatus = '';
 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlstatus);
 
 print '<div class="fichecenter">';

@@ -565,6 +565,7 @@ function pHeader($subtitle, $next, $action = 'set', $param = '', $forcejqueryurl
 	print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";
 	print '<meta name="generator" content="Dolibarr installer">'."\n";
 	print '<link rel="stylesheet" type="text/css" href="default.css">'."\n";
+	print '<link rel="stylesheet" type="text/css" href="../public/theme/common/fontawesome-5/css/all.min.css?layout=classic">'."\n";
 
 	print '<!-- Includes CSS for JQuery -->'."\n";
 	if ($jQueryUiCustomPath) {
@@ -592,7 +593,7 @@ function pHeader($subtitle, $next, $action = 'set', $param = '', $forcejqueryurl
 
 	print '<div class="divlogoinstall" style="text-align:center">';
 	print '<img class="imglogoinstall" src="../theme/dolibarr_logo.svg" alt="Dolibarr logo" width="300px"><br>';
-	print DOL_VERSION;
+	print '<span class="opacitymedium">'.DOL_VERSION.'</span>';
 	print '</div><br>';
 
 	print '<span class="titre">';

@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - exports
+ImportExportArea=Importe/Exporte
 ExportsArea=Exporte
 ImportArea=Import
 NewExport=Neuer Export
@@ -31,10 +32,10 @@ ExportCsvSeparator=CSV-Trennzeichen
 ImportCsvSeparator=CSV-Trennzeichen
 Step=Schritt
 FormatedImport=Import-Assistent
-FormatedImportDesc1=Dieses Modul ermöglicht den Import personalisierter Daten mithilfe eines Assistenten.\nTechnische Kenntnisse sind hierbei nicht erforderlich.
+FormatedImportDesc1=Hier klicken, um mit Hilfe eines Assistenten vorhandene Daten zu aktualisieren oder neue Objekte aus einem Datei in die Datenbank einzufügen.
 FormatedImportDesc2=Zunächst müssen Sie die Art der zu importierenden Daten, dann das Format der Quelldatei und dann die zu importierenden Felder auswählen.
 FormatedExport=Export-Assistent
-FormatedExportDesc1=Dieses Modul ermöglicht den Export personalisierter Daten mithilfe eines Assistenten.\nTechnische Kenntnisse sind hierbei nicht erforderlich.
+FormatedExportDesc1=Hier klicken, um den Assistenten zum Exportieren von Daten in ein unterstütztes Format zu starten
 FormatedExportDesc2=Der erste Schritt besteht darin, einen vordefinierten Datensatz auszuwählen und dann anzugeben, welche Felder in welcher Reihenfolge exportiert werden sollen.
 FormatedExportDesc3=Wenn zu exportierende Daten ausgewählt sind, können Sie das Format der Ausgabedatei auswählen.
 Sheet=Blatt

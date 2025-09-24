@@ -33,6 +33,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 require_once DOL_DOCUMENT_ROOT.'/webhook/class/target.class.php';
+require_once DOL_DOCUMENT_ROOT.'/webhook/class/triggerhistory.class.php';
 
 /**
  *  Class of triggers for Webhook module
@@ -46,7 +47,9 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 	 */
 	public function __construct($db)
 	{
-		parent::__construct($db);
+		$this->db = $db;
+
+		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "demo";
 		$this->description = "Webhook triggers.";
 		$this->version = self::VERSIONS['dev'];
@@ -75,8 +78,9 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 		// Or you can execute some code here
 		$nbPosts = 0;
 		$errors = 0;
+		$errorforhistory = 0;
 		$static_object = new Target($this->db);
-		$target_url = $static_object->fetchAll();
+		$target_url = $static_object->fetchAll();	// TODO Replace this with a search with filter on $action trigger to avoid to filter later.
 
 		if (is_numeric($target_url) && $target_url < 0) {
 			dol_syslog("Error Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
@@ -91,11 +95,16 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 
 		$sendmanualtriggers = (!empty($object->context['sendmanualtriggers']) ? $object->context['sendmanualtriggers'] : "");
 		foreach ($target_url as $key => $tmpobject) {
-			$actionarray = explode(",", $tmpobject->trigger_codes);
+			// Set list of all triggers for this targetinto $actionarray
+			$actionarraytmp = explode(",", $tmpobject->trigger_codes);
+			$actionarray = array();
+			foreach ($actionarraytmp as $val) {
+				$actionarray[] = trim($val);
+			}
 
 			// Test on Target status
 			$testontargetstatus = ($tmpobject->status == Target::STATUS_AUTOMATIC_TRIGGER || ($tmpobject->status == Target::STATUS_MANUAL_TRIGGER && !empty($sendmanualtriggers)));
-			if (((!empty($object->context["actiontrigger"]) && in_array($object->context["actiontrigger"], array("sendtrigger", "testsend"))) || $testontargetstatus) && is_array($actionarray) && in_array($action, $actionarray)) {
+			if (((!empty($object->context["actiontrigger"]) && in_array($object->context["actiontrigger"], array("sendtrigger", "testsend"))) || $testontargetstatus) && in_array($action, $actionarray)) {
 				// Build the answer object
 				$resobject = new stdClass();
 				$resobject->triggercode = $action;
@@ -126,10 +135,12 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 				// warning; the test page use its own call
 				$response = getURLContent($tmpobject->url, $method, $jsonstr, 1, $headers, array('http', 'https'), 2, -1);
 
+				$errormsg = "";
 				if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {
 					$nbPosts++;
 				} else {
 					$errormsg = "The WebHook for ".$action." failed to get URL ".$tmpobject->url." with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : "");
+					$errorforhistory ++;
 
 					if ($tmpobject->type == Target::TYPE_BLOCKING) {
 						$errors++;
@@ -142,6 +153,19 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 					/*if (!empty($response['content'])) {
 						$this->errors[] = dol_trunc($response['content'], 200);
 					}*/
+				}
+
+				$triggerhistory = new TriggerHistory($this->db);
+				$triggerhistory->trigger_code = $action;
+				$triggerhistory->trigger_data = $jsonstr;
+				$triggerhistory->fk_target = $tmpobject->id;
+				$triggerhistory->url = $tmpobject->url;
+				$triggerhistory->error_message = $errormsg;
+				$triggerhistory->status = ($errorforhistory == 0 ? 1 : -1);
+				$resql = $triggerhistory->create($user);
+				if (!$resql) {
+					$errors++;
+					$this->errors = array_merge($this->errors, $triggerhistory->errors);
 				}
 			}
 		}

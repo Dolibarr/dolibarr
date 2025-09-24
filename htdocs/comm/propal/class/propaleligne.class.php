@@ -13,7 +13,7 @@
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2022       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
@@ -152,7 +152,7 @@ class PropaleLigne extends CommonObjectLine
 	public $fk_fournprice;
 
 	/**
-	 * @var float|int|string
+	 * @var float|int|''|null
 	 */
 	public $pa_ht;
 
@@ -179,7 +179,7 @@ class PropaleLigne extends CommonObjectLine
 	 * Some other info:
 	 * Bit 0: 	0 si TVA normal - 1 if TVA NPR
 	 * Bit 1:	0 ligne normal - 1 if line with fixed discount
-	 * @var int
+	 * @var ?int
 	 */
 	public $info_bits = 0;
 
@@ -298,12 +298,12 @@ class PropaleLigne extends CommonObjectLine
 	public $total_localtax2;
 
 	/**
-	 * @var int|string
+	 * @var int|''
 	 */
 	public $date_start;
 
 	/**
-	 * @var int|string
+	 * @var int|''
 	 */
 	public $date_end;
 
@@ -385,7 +385,7 @@ class PropaleLigne extends CommonObjectLine
 
 			if ($objp) {
 				$this->id = $objp->rowid;
-				$this->rowid			= $objp->rowid; // deprecated
+				$this->rowid = $objp->rowid; // deprecated
 				$this->fk_propal = $objp->fk_propal;
 				$this->fk_parent_line = $objp->fk_parent_line;
 				$this->label			= $objp->custom_label;
@@ -554,9 +554,9 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= " ".($this->fk_parent_line > 0 ? "'".$this->db->escape((string) $this->fk_parent_line)."'" : "null").",";
 		$sql .= " ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
-		$sql .= " ".($this->fk_product ? "'".$this->db->escape((string) $this->fk_product)."'" : "null").",";
-		$sql .= " '".$this->db->escape((string) $this->product_type)."',";
-		$sql .= " ".($this->fk_remise_except ? "'".$this->db->escape((string) $this->fk_remise_except)."'" : "null").",";
+		$sql .= " ".($this->fk_product > 0 ? (int) $this->fk_product : "null").",";
+		$sql .= " ".((int) $this->product_type).",";
+		$sql .= " ".($this->fk_remise_except > 0 ? (int) $this->fk_remise_except : "null").",";
 		$sql .= " ".price2num($this->qty, 'MS').",";
 		$sql .= " ".(empty($this->vat_src_code) ? "''" : "'".$this->db->escape($this->vat_src_code)."'").",";
 		$sql .= " ".price2num($this->tva_tx).",";
@@ -591,13 +591,10 @@ class PropaleLigne extends CommonObjectLine
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->rowid = $this->db->last_insert_id(MAIN_DB_PREFIX.'propaldet');
-
-			if (!$error) {
-				$this->id = $this->rowid;
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$this->id = $this->rowid;
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 			if (!$error && !$notrigger) {
@@ -610,12 +607,21 @@ class PropaleLigne extends CommonObjectLine
 				// End call triggers
 			}
 
-			$this->db->commit();
-			return 1;
+			if (!$error) {
+				$this->db->commit();
+				return (int) $this->id;
+			}
+
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+			$this->db->rollback();
+			return -3;
 		} else {
 			$this->error = $this->db->error()." sql=".$sql;
 			$this->db->rollback();
-			return -1;
+			return -2;
 		}
 	}
 
@@ -647,13 +653,11 @@ class PropaleLigne extends CommonObjectLine
 			dol_syslog("PropaleLigne::delete", LOG_DEBUG);
 			if ($this->db->query($sql)) {
 				// Remove extrafields
-				if (!$error) {
-					$this->id = $this->rowid;
-					$result = $this->deleteExtraFields();
-					if ($result < 0) {
-						$error++;
-						dol_syslog(get_class($this) . "::delete error -4 " . $this->error, LOG_ERR);
-					}
+				$this->id = $this->rowid;
+				$result = $this->deleteExtraFields();
+				if ($result < 0) {
+					$error++;
+					dol_syslog(get_class($this) . "::delete error -4 " . $this->error, LOG_ERR);
 				}
 			} else {
 				$this->error = $this->db->error() . " sql=" . $sql;
@@ -798,11 +802,9 @@ class PropaleLigne extends CommonObjectLine
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 			if (!$error && !$notrigger) {
@@ -815,8 +817,17 @@ class PropaleLigne extends CommonObjectLine
 				// End call triggers
 			}
 
-			$this->db->commit();
-			return 1;
+			if (!$error) {
+				$this->db->commit();
+				return 1;
+			}
+
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+			$this->db->rollback();
+			return -3;
 		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();

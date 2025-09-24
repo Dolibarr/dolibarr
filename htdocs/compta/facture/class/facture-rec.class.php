@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
@@ -7,7 +6,7 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2017-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2017-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Nick Fragoulis
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -37,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/factureligne.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/subtotals/class/commonsubtotal.class.php';
 
 
 /**
@@ -44,7 +44,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class FactureRec extends CommonInvoice
 {
-	const TRIGGER_PREFIX = 'BILLREC';
+	use CommonSubtotal;
+
+	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'BILLREC';
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -69,11 +76,6 @@ class FactureRec extends CommonInvoice
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'bill';
-
-	/**
-	 * @var int Entity
-	 */
-	public $entity;
 
 	/**
 	 * {@inheritdoc}
@@ -204,10 +206,16 @@ class FactureRec extends CommonInvoice
 	 * @var int<0,1>
 	 */
 	public $auto_validate; // 0 to create in draft, 1 to create and validate the new invoice
+
 	/**
 	 * @var int<0,1>
 	 */
 	public $generate_pdf; // 1 to generate PDF on invoice generation (default)
+
+	/**
+	 * @var int<0,2>		Default is 0, 1=Use the last known currency rate to update main price, 2=to update foreign price
+	 */
+	public $usenewcurrencyrate;
 
 
 
@@ -223,7 +231,7 @@ class FactureRec extends CommonInvoice
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -254,7 +262,7 @@ class FactureRec extends CommonInvoice
 		'localtax2' => array('type' => 'double(24,8)', 'label' => 'Localtax2', 'enabled' => 1, 'visible' => -1, 'position' => 65, 'isameasure' => 1),
 		'total_ht' => array('type' => 'double(24,8)', 'label' => 'Total', 'enabled' => 1, 'visible' => -1, 'position' => 70, 'isameasure' => 1),
 		'total_ttc' => array('type' => 'double(24,8)', 'label' => 'Total ttc', 'enabled' => 1, 'visible' => -1, 'position' => 75, 'isameasure' => 1),
-		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'Fk user author', 'enabled' => 1, 'visible' => -1, 'position' => 80),
+		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'position' => 80),
 		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Fk projet', 'enabled' => "isModEnabled('project')", 'visible' => -1, 'position' => 85),
 		'fk_cond_reglement' => array('type' => 'integer', 'label' => 'Fk cond reglement', 'enabled' => 1, 'visible' => -1, 'position' => 90),
 		'fk_mode_reglement' => array('type' => 'integer', 'label' => 'Fk mode reglement', 'enabled' => 1, 'visible' => -1, 'position' => 95),
@@ -493,6 +501,12 @@ class FactureRec extends CommonInvoice
 							if ($result < 0) {
 								$error++;
 							}
+
+							$objectline->extraparams = $facline->extraparams;
+							$result = $objectline->setExtraParameters();
+							if ($result < 0) {
+								$error++;
+							}
 						} elseif ($result2 < 0) {
 							$this->errors[] = $objectline->error;
 							$error++;
@@ -692,7 +706,6 @@ class FactureRec extends CommonInvoice
 				$this->fk_societe_rib         = $obj->fk_societe_rib;
 				$this->note_private           = $obj->note_private;
 				$this->note_public            = $obj->note_public;
-				$this->user_author            = $obj->fk_user_author;	// deprecated
 				$this->user_creation_id       = $obj->fk_user_author;
 				$this->model_pdf              = $obj->model_pdf;
 				//$this->special_code = $obj->special_code;
@@ -956,8 +969,8 @@ class FactureRec extends CommonInvoice
 	 * 	@param		float		$pu_ht_devise		Unit price in currency
 	 *  @param		int			$date_start_fill	1=Flag to fill start date when generating invoice
 	 *  @param		int			$date_end_fill		1=Flag to fill end date when generating invoice
-	 * 	@param		?int		$fk_fournprice		Supplier price id (to calculate margin) or ''
-	 * 	@param		float		$pa_ht				Buying price of line (to calculate margin) or ''
+	 * 	@param		int|string|null	$fk_fournprice		Supplier price id (to calculate margin) or string
+	 * 	@param		float		$pa_ht				Buying price of line (to calculate margin) (Can be '' to keep AWP unchanged or a float value)
 	 *  @param		int			$fk_parent_line		Id of parent line
 	 *	@return    	int             				Return integer <0 if KO, Id of line if OK
 	 */
@@ -1164,7 +1177,7 @@ class FactureRec extends CommonInvoice
 	 *  @param		int			$date_start_fill	1=Flag to fill start date when generating invoice
 	 *  @param		int			$date_end_fill		1=Flag to fill end date when generating invoice
 	 * 	@param		?int		$fk_fournprice		Id of origin supplier price
-	 * 	@param		float		$pa_ht				Price (without tax) of product for margin calculation
+	 * 	@param		float|string	$pa_ht			Price (without tax) of product for margin calculation (Can be '' to keep AWP unchanged or a float value)
 	 *  @param		int			$fk_parent_line		Id of parent line
 	 *	@return    	int             				Return integer <0 if KO, Id of line if OK
 	 */
@@ -1364,11 +1377,11 @@ class FactureRec extends CommonInvoice
 	 *  @param	int<0,max>	$restrictioninvoiceid	0=All qualified template invoices found. > 0 = restrict action on invoice ID
 	 *  @param	int<0,1>	$forcevalidation		1=Force validation of invoice whatever is template auto_validate flag.
 	 *	@param	int<0,1> 	$notrigger				Disable the trigger
-	 *  @return	int									0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
+	 *  @return	int									0 if OK, > 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
 	public function createRecurringInvoices($restrictioninvoiceid = 0, $forcevalidation = 0, $notrigger = 0)
 	{
-		global $conf, $langs, $db, $user, $hookmanager;
+		global $conf, $langs, $user, $hookmanager, $action;
 
 		$error = 0;
 		$nb_create = 0;
@@ -1419,6 +1432,7 @@ class FactureRec extends CommonInvoice
 
 				$this->db->begin();
 
+				$errorforinvoice = 0;
 				$invoiceidgenerated = 0;
 
 				$facture = null;
@@ -1441,6 +1455,7 @@ class FactureRec extends CommonInvoice
 					$facture->status = self::STATUS_DRAFT;
 					$facture->date = (empty($facturerec->date_when) ? $now : $facturerec->date_when); // We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
 					$facture->socid = $facturerec->socid;
+
 					if (!empty($facturerec->fk_multicurrency)) {
 						$facture->fk_multicurrency = $facturerec->fk_multicurrency;
 						$facture->multicurrency_code = $facturerec->multicurrency_code;
@@ -1455,30 +1470,34 @@ class FactureRec extends CommonInvoice
 						}
 					}
 
-					$invoiceidgenerated = $facture->create($user);
+					$parameters['facture'] = &$facture;
+					$reshook = $hookmanager->executeHooks('beforeCreationOfEachRecurringInvoice', $parameters, $facturerec, $action); // note that $facturerec or $facture might be modified by hooks
+
+					// Create invoice. This may update prices according to multiplrice rules
+					$invoiceidgenerated = $facture->create($user, 0, 0, (isModEnabled('multicurrency') ? $facturerec->usenewcurrencyrate : 0));
 					if ($invoiceidgenerated <= 0) {
-						$this->errors = $facture->errors;
-						$this->error = $facture->error;
+						$this->setErrorsFromObject($facture);
 						$error++;
+						$errorforinvoice++;
 					}
 
 
-					if (!$error && ($facturerec->auto_validate || $forcevalidation)) {
+					if (!$errorforinvoice && ($facturerec->auto_validate || $forcevalidation)) {
 						$result = $facture->validate($user);
 						if ($result <= 0) {
-							$this->errors = $facture->errors;
-							$this->error = $facture->error;
+							$this->setErrorsFromObject($facture);
 							$error++;
+							$errorforinvoice++;
 						}
 					}
-					if (!$error && $facturerec->generate_pdf) {
+					if (!$errorforinvoice && $facturerec->generate_pdf) {
 						// We refresh the object in order to have all necessary data (like date_lim_reglement)
 						$facture->fetch($facture->id);
 						$result = $facture->generateDocument($facturerec->model_pdf, $langs);
 						if ($result <= 0) {
-							$this->errors = $facture->errors;
-							$this->error = $facture->error;
+							$this->setErrorsFromObject($facture);
 							$error++;
+							$errorforinvoice++;
 						}
 					}
 				} else {
@@ -1488,6 +1507,7 @@ class FactureRec extends CommonInvoice
 					dol_syslog("createRecurringInvoices Failed to load invoice template with id=".$line->rowid.", entity=".$conf->entity);
 				}
 
+				// Commit or rollback
 				if (!$error && $invoiceidgenerated >= 0) {
 					$this->db->commit("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
 					dol_syslog("createRecurringInvoices Process invoice template ".$facturerec->ref." is finished with a success generation");
@@ -1502,6 +1522,7 @@ class FactureRec extends CommonInvoice
 					'cpt'        => $i,
 					'total'      => $num,
 					'errorCount' => $error,
+					'errorForInvoice' => $errorforinvoice,
 					'invoiceidgenerated' => $invoiceidgenerated,
 					'facturerec' => $facturerec, // it's an object which PHP passes by "reference", so modifiable by hooks.
 					'this'       => $this, // it's an object which PHP passes by "reference", so modifiable by hooks.
@@ -1560,7 +1581,7 @@ class FactureRec extends CommonInvoice
 			}
 		}
 
-		$url = DOL_URL_ROOT.'/compta/facture/card-rec.php?facid='.$this->id;
+		$url = DOL_URL_ROOT.'/compta/facture/card-rec.php?id='.$this->id;
 
 		if ($short) {
 			return $url;
@@ -1836,14 +1857,13 @@ class FactureRec extends CommonInvoice
 		$this->socid = 1;
 		$this->date = $nownotime;
 		$this->date_lim_reglement = $nownotime + 3600 * 24 * 30;
-		$this->cond_reglement_id   = 1;
+		$this->cond_reglement_id = 1;
 		$this->cond_reglement_code = 'RECEP';
 		$this->date_lim_reglement = $this->calculate_date_lim_reglement();
-		$this->mode_reglement_id   = 0; // Not forced to show payment mode CHQ + VIR
+		$this->mode_reglement_id = 0; // Not forced to show payment mode CHQ + VIR
 		$this->mode_reglement_code = ''; // Not forced to show payment mode CHQ + VIR
 		$this->note_public = 'This is a comment (public)';
 		$this->note_private = 'This is a comment (private)';
-		$this->note = 'This is a comment (private)';
 		$this->fk_incoterms = 0;
 		$this->location_incoterms = '';
 
@@ -2415,7 +2435,7 @@ class FactureLigneRec extends CommonInvoiceLine
 
 			$this->rang = $objp->rang;
 			$this->special_code = $objp->special_code;
-			$this->fk_unit          = $objp->fk_unit;
+			$this->fk_unit = $objp->fk_unit;
 			$this->fk_contract_line = $objp->fk_contract_line;
 			$this->import_key = $objp->import_key;
 			$this->fk_multicurrency = $objp->fk_multicurrency;

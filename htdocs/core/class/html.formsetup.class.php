@@ -188,7 +188,7 @@ class FormSetup
 			} elseif ($editMode) {
 				$out .= '<div class="form-setup-button-container center">'; // Todo : remove .center by adding style to form-setup-button-container css class in all themes
 				$out .= $this->htmlOutputMoreButton;
-				$out .= '<input class="button button-save" type="submit" value="' . $this->langs->trans("Save") . '">'; // Todo fix dolibarr style for <button and use <button instead of input
+				$out .= '<input class="button button-save reposition" type="submit" value="' . $this->langs->trans("Save") . '">'; // Todo fix dolibarr style for <button and use <button instead of input
 				/*$out .= ' &nbsp;&nbsp; ';
 				$out .= '<a class="button button-cancel" type="submit" href="' . $this->formAttributes['action'] . '">'.$this->langs->trans('Cancel').'</a>';
 				*/
@@ -233,7 +233,7 @@ class FormSetup
 				$out .= '<thead>';
 				$out .= '<tr class="liste_titre">';
 				$out .= '	<td>' . $this->langs->trans("Parameter") . '</td>';
-				$out .= '	<td>' . $this->langs->trans("Value") . '</td>';
+				$out .= '	<td></td>';
 				$out .= '</tr>';
 				$out .= '</thead>';
 			}
@@ -332,7 +332,7 @@ class FormSetup
 
 			$out .= '<td class="col-setup-title'.(!empty($item->fieldParams['isMandatory']) ? ' fieldrequired' : '').'">';
 			$out .= '<span id="helplink'.$item->confKey.'" class="spanforparamtooltip">';
-			$out .= $this->form->textwithpicto($item->getNameText(), $item->getHelpText(), 1, 'info', '', 0, 3, 'tootips'.$item->confKey);
+			$out .= $this->form->textwithpicto($item->getNameText(), $item->getHelpText(), 1, 'info', '', 0, 3, empty($item->fieldParams['helpText']) ? 'tootips'.$item->confKey : ($item->fieldParams['helpText'] != 'noclick' ? $item->fieldParams['helpText'] : ''));
 			$out .= '</span>';
 			$out .= '</td>';
 
@@ -402,9 +402,9 @@ class FormSetup
 		 */
 
 		$item = new FormSetupItem($confKey);
-		// need to be ignored from scrutinizer setTypeFromTypeString was created as deprecated to incite developer to use object oriented usage
-		// @phan-suppress-next-line PhanDeprecatedFunction
-		/** @scrutinizer ignore-deprecated */ $item->setTypeFromTypeString((string) $params['type']);
+		// setTypeFromTypeString was created as deprecated to incite developer to use object oriented usage
+		/** @phan-suppress-next-line PhanDeprecatedFunction */
+		$item->setTypeFromTypeString((string) $params['type']);
 
 		if (!empty($params['enabled']) && is_numeric($params['enabled'])) {
 			$item->enabled = (int) $params['enabled'];
@@ -817,6 +817,8 @@ class FormSetupItem
 				$val_const = GETPOST($this->confKey, 'restricthtml');
 			} elseif ($this->type == 'email') {
 				$val_const = GETPOST($this->confKey, 'alphawithlgt');
+			} elseif ($this->type == 'number') {
+				$val_const = GETPOSTINT($this->confKey);
 			} else {
 				$val_const = GETPOST($this->confKey, 'alphanohtml');
 			}
@@ -1225,8 +1227,8 @@ class FormSetupItem
 			$out .=  $this->generateOutputFieldColor();
 		} elseif ($this->type == 'yesno') {
 			if (!empty($conf->use_javascript_ajax)) {
-				$revertonoff = $this->fieldParams['revertonoff'] ? 1 : 0;
-				$forcereload = $this->fieldParams['forcereload'] ? 1 : 0;
+				$revertonoff = empty($this->fieldParams['revertonoff']) ? 0 : 1;
+				$forcereload = empty($this->fieldParams['forcereload']) ? 0 : 1;
 
 				$out .= ajax_constantonoff($this->confKey, array(), $this->entity, $revertonoff, 0, $forcereload);
 			} else {
@@ -1410,6 +1412,31 @@ class FormSetupItem
 		$this->type = 'string';
 		return $this;
 	}
+
+	/**
+	 * Set type of input as number
+	 * @param int $min minimum value for input number
+	 * @param int $max maximum value for input number
+	 * @param int $step legal number intervals
+	 *
+	 * @return self
+	 */
+	public function setAsNumber($min = null, $max = null, $step = null)
+	{
+		$this->type = 'number'; //for GETPOSTINT
+		$this->fieldAttr['type'] = 'number'; //generic thanks to generateAttributesStringFromArray
+		if (!is_null($min)) {
+			$this->fieldAttr['min'] = $min;
+		}
+		if (!is_null($max)) {
+			$this->fieldAttr['max'] = $max;
+		}
+		if (!is_null($step)) {
+			$this->fieldAttr['step'] = $step;
+		}
+		return $this;
+	}
+
 
 	/**
 	 * Set type of input as string

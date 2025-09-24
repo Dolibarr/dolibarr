@@ -65,7 +65,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 		$ok = 0;
 
-		if (empty($conf->ticket) || !isModEnabled('ticket')) {
+		if (!isModEnabled('ticket')) {
 			return 0; // Module not active, we do nothing
 		}
 
@@ -182,7 +182,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 							$old_MAIN_MAIL_AUTOCOPY_TO = '';
 							if (!getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
-								$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
+								$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
 								$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 							}
 
@@ -210,7 +210,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 							$sendto = $userstat->email;
 							$old_MAIN_MAIL_AUTOCOPY_TO = null;
 							if (!getDolGlobalString('TICKET_DISABLE_MAIL_AUTOCOPY_TO')) {
-								$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
+								$old_MAIN_MAIL_AUTOCOPY_TO = getDolGlobalString('MAIN_MAIL_AUTOCOPY_TO');
 								$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 							}
 

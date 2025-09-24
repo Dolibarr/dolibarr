@@ -49,6 +49,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+
 
 if (isModEnabled('workstation')) {
 	require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
@@ -79,7 +81,7 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
@@ -102,7 +104,7 @@ if (GETPOSTISSET('formfilteraction')) {
 } elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
 	$searchCategoryProductOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
 }
-$searchCategoryProductList = GETPOST('search_category_product_list', 'array');
+$searchCategoryProductList = GETPOST('search_category_product_list', 'array:int');
 $catid = GETPOSTINT('catid');
 if (!empty($catid) && empty($searchCategoryProductList)) {
 	$searchCategoryProductList = array($catid);
@@ -173,6 +175,8 @@ $extrafields = new ExtraFields($db);
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 $formproduct = new FormProduct($db);
+$formfile = new FormFile($db);
+
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -241,7 +245,7 @@ $arraypricelevel = array();
 $arrayfields = array(
 	'p.rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => '1', 'visible' => -2, 'noteditable' => 1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id', 'css' => 'left'),
 	'p.ref' => array('label' => 'ProductRef', 'checked' => '1', 'position' => 5),
-	'p.ref_ext' => array('label' => 'RefExt', 'checked' => '1', 'position' => 6, 'visible' => getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT')),
+	'p.ref_ext' => array('label' => 'RefExt', 'checked' => '-1', 'position' => 6, 'visible' => getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT')),
 	//'pfp.ref_fourn'=>array('label'=>$langs->trans("RefSupplier"), 'checked'=>1, 'enabled'=>(isModEnabled('barcode'))),
 	'thumbnail' => array('label' => 'Photo', 'checked' => '0', 'position' => 10),
 	'p.description' => array('label' => 'Description', 'checked' => '0', 'position' => 10),
@@ -294,7 +298,7 @@ $arrayfields = array(
 if (! empty($conf->stock->enabled)) {
 	// service
 	if ($type == 1) {
-		if (! empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+		if (getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
 			$arrayfields['p.stockable_product'] = array('label' => $langs->trans('StockableProduct'), 'checked' => '0', 'position' => 1001);
 		}
 	} else {
@@ -490,7 +494,8 @@ $sql .= ' p.import_key,';
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	$sql .= ' p.fk_unit, cu.label as cu_label,';
 }
-$sql .= ' MIN(pfp.unitprice) as bestpurchaseprice';
+//$sql .= ' MIN(pfp.unitprice) as bestpurchaseprice';
+$sql .= '(SELECT MIN(pfp.unitprice) FROM '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp WHERE p.rowid = pfp.fk_product) as bestpurchaseprice';
 if (isModEnabled('variants')) {
 	$sql .= ', pac.rowid as prod_comb_id';
 	$sql .= ', pac.fk_product_parent';
@@ -519,8 +524,8 @@ if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_extrafields as ef on (p.rowid = ef.fk_object)";
 }
-$linktopfp = " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
-$sql .= $linktopfp;
+//$linktopfp = " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
+//$sql .= $linktopfp;
 // multilang
 if (getDolGlobalInt('MAIN_MULTILANGS')) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_lang as pl ON pl.fk_product = p.rowid AND pl.lang = '".$db->escape($langs->getDefaultLang())."'";
@@ -676,7 +681,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-$sql .= " GROUP BY p.rowid, p.ref, p.ref_ext, p.description, p.label, p.barcode, p.price, p.tva_tx, p.price_ttc, p.price_base_type,";
+/*$sql .= " GROUP BY p.rowid, p.ref, p.ref_ext, p.description, p.label, p.barcode, p.price, p.tva_tx, p.price_ttc, p.price_base_type,";
 $sql .= " p.fk_product_type, p.duration, p.finished, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,";
 $sql .= ' p.datec, p.tms, p.entity, p.tobatch, p.pmp, p.cost_price, p.stock,';
 if (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
@@ -708,12 +713,13 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 //if (GETPOST("toolowstock")) $sql.= " HAVING SUM(s.reel) < p.seuil_stock_alerte";    // Not used yet
+*/
 
 $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
-	$sqlforcount = preg_replace('/'.preg_quote($linktopfp, '/').'/', '', $sqlforcount);
+	//$sqlforcount = preg_replace('/'.preg_quote($linktopfp, '/').'/', '', $sqlforcount);
 	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
 
 	$resql = $db->query($sqlforcount);
@@ -724,7 +730,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -736,6 +742,8 @@ $sql .= $db->order($sortfield, $sortorder);
 if ($limit) {
 	$sql .= $db->plimit($limit + 1, $offset);
 }
+
+//print $sql;
 
 $resql = $db->query($sql);
 if (!$resql) {
@@ -891,7 +899,7 @@ $param .= $hookmanager->resPrint;
 $arrayofmassactions = array(
 	'generate_doc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 	'edit_extrafields' => img_picto('', 'edit', 'class="pictofixedwidth"').$langs->trans("ModifyValueExtrafields"),
-	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+	'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 if ($user->hasRight($rightskey, 'creer')) {
@@ -1664,8 +1672,10 @@ while ($i < $imaxinloop) {
 	$object = $product_static;
 
 	$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_prices') : $user->hasRight('product', 'lire');
+	$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'lire');
 	if ($product_static->isService()) {
 		$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_prices') : $user->hasRight('service', 'lire');
+		$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_supplier_prices') : $user->hasRight('service', 'lire');
 	}
 
 	if ($mode == 'kanban') {
@@ -1751,7 +1761,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['thumbnail']['checked'])) {
 			$product_thumbnail_html = '';
 			if (!empty($product_static->entity)) {
-				$product_thumbnail = $product_static->show_photos('product', $conf->product->multidir_output[$product_static->entity], 1, 1, 0, 0, 0, 80);
+				$product_thumbnail = $product_static->show_photos('product', $conf->product->multidir_output[$product_static->entity ?? $conf->entity], 1, 1, 0, 0, 0, 80);
 				if ($product_static->nbphoto > 0) {
 					$product_thumbnail_html = $product_thumbnail;
 				}
@@ -2078,7 +2088,7 @@ while ($i < $imaxinloop) {
 		// Better buy price
 		if (!empty($arrayfields['p.minbuyprice']['checked'])) {
 			print  '<td class="right nowraponall">';
-			if ($product_static->status_buy && $obj->bestpurchaseprice != '' && $usercancreadprice) {
+			if ($product_static->status_buy && $obj->bestpurchaseprice != '' && $usercancreadsupplierprice) {
 				if ($product_fourn->find_min_price_product_fournisseur($obj->rowid) > 0) {
 					if ($product_fourn->product_fourn_price_id > 0) {
 						if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
@@ -2099,7 +2109,7 @@ while ($i < $imaxinloop) {
 		// Number of buy prices - Vendor prices
 		if (!empty($arrayfields['p.numbuyprice']['checked'])) {
 			print  '<td class="right">';
-			if ($product_static->status_buy && $usercancreadprice) {
+			if ($product_static->status_buy && $usercancreadsupplierprice) {
 				if (count($productFournList = $product_fourn->list_product_fournisseur_price($obj->rowid)) > 0) {
 					$htmltext = $product_fourn->display_price_product_fournisseur(1, 1, 0, 1, $productFournList);
 					print $form->textwithpicto((string) count($productFournList), $htmltext);
@@ -2124,7 +2134,7 @@ while ($i < $imaxinloop) {
 		// WAP
 		if (!empty($arrayfields['p.pmp']['checked'])) {
 			print '<td class="nowrap right">';
-			if ($usercancreadprice) {
+			if ($usercancreadsupplierprice) {
 				print '<span class="amount">'.price($product_static->pmp, 1, $langs)."</span>";
 			}
 			print '</td>';
@@ -2136,7 +2146,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['p.cost_price']['checked'])) {
 			print '<td class="nowrap right">';
 			//print $obj->cost_price;
-			if ($usercancreadprice) {
+			if ($usercancreadsupplierprice) {
 				print '<span class="amount">'.price($obj->cost_price).' '.$langs->trans("HT").'</span>';
 			}
 			print '</td>';
@@ -2182,15 +2192,15 @@ while ($i < $imaxinloop) {
 				if ($obj->seuil_stock_alerte != '' && $product_static->stock_reel < (float) $obj->seuil_stock_alerte) {
 					print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
 				}
-				if ($usercancreadprice) {
-					if ($product_static->stock_reel < 0) {
-						print '<span class="warning">';
-					}
-					print price(price2num($product_static->stock_reel, 'MS'), 0, $langs, 1, 0);
-					if ($product_static->stock_reel < 0) {
-						print '</span>';
-					}
+				/* why ? if ($usercancreadprice) { */
+				if ($product_static->stock_reel < 0) {
+					print '<span class="warning">';
 				}
+					print price(price2num($product_static->stock_reel, 'MS'), 0, $langs, 1, 0);
+				if ($product_static->stock_reel < 0) {
+					print '</span>';
+				}
+				/* } */
 			}
 			print '</td>';
 			if (!$i) {
@@ -2204,15 +2214,15 @@ while ($i < $imaxinloop) {
 				if ($obj->seuil_stock_alerte != '' && $product_static->stock_theorique < (float) $obj->seuil_stock_alerte) {
 					print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
 				}
-				if ($usercancreadprice) {
-					if ($product_static->stock_theorique < 0) {
-						print '<span class="warning">';
-					}
-					print price(price2num($product_static->stock_theorique, 'MS'), 0, $langs, 1, 0);
-					if ($product_static->stock_theorique < 0) {
-						print '</span>';
-					}
+				/* why ? if ($usercancreadprice) { */
+				if ($product_static->stock_theorique < 0) {
+					print '<span class="warning">';
 				}
+					print price(price2num($product_static->stock_theorique, 'MS'), 0, $langs, 1, 0);
+				if ($product_static->stock_theorique < 0) {
+					print '</span>';
+				}
+				/* } */
 			}
 			print '</td>';
 			if (!$i) {
@@ -2385,6 +2395,24 @@ print '</table>'."\n";
 print '</div>'."\n";
 
 print '</form>'."\n";
+
+
+$hidegeneratedfilelistifempty = 1;
+if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
+	$hidegeneratedfilelistifempty = 0;
+}
+
+// Show list of available documents
+$urlsource = $_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+$urlsource .= str_replace('&amp;', '&', $param);
+
+$filedir = $diroutputmassaction;
+$genallowed = $user->hasRight('product', 'lire');
+$delallowed = $user->hasRight('product', 'creer');
+
+$formfile = new FormFile($db);
+print $formfile->showdocuments('massfilesarea_product', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+
 
 // End of page
 llxFooter();

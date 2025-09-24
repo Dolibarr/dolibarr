@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,7 +131,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -184,7 +184,7 @@ if ($result) {
 			$fiscalyearstatic->label = $obj->label;
 			$fiscalyearstatic->date_start = $obj->date_start;
 			$fiscalyearstatic->date_end = $obj->date_end;
-			$fiscalyearstatic->statut = $obj->status;
+			$fiscalyearstatic->statut = $obj->status;	// deprecated
 			$fiscalyearstatic->status = $obj->status;
 
 			print '<tr class="oddeven">';

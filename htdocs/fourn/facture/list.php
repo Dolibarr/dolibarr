@@ -66,7 +66,7 @@ $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOSTINT('show_files');
 $confirm = GETPOST('confirm', 'alpha');
-$toselect = GETPOST('toselect', 'array');
+$toselect = GETPOST('toselect', 'array:int');
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'supplierinvoicelist';
 $mode = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
@@ -114,6 +114,13 @@ $search_datelimit_endyear = GETPOSTINT('search_datelimit_endyear');
 $search_datelimit_start = dol_mktime(0, 0, 0, $search_datelimit_startmonth, $search_datelimit_startday, $search_datelimit_startyear);
 $search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $search_datelimit_endday, $search_datelimit_endyear);
 $search_categ_sup = GETPOST("search_categ_sup", 'intcomma');
+$searchCategorySupplierInvoiceList = GETPOST('search_category_supplier_invoice_list', 'array:int');
+$searchCategorySupplierInvoiceOperator = 0;
+if (GETPOSTISSET('formfilteraction')) {
+	$searchCategorySupplierInvoiceOperator = GETPOSTINT('search_category_supplier_invoice_operator');
+} elseif (getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT')) {
+	$searchCategorySupplierInvoiceOperator = getDolGlobalString('MAIN_SEARCH_CAT_OR_BY_DEFAULT');
+}
 $search_product_category = GETPOST('search_product_category', 'intcomma');
 $search_fk_fac_rec_source = GETPOST('search_fk_fac_rec_source', 'int');
 
@@ -273,6 +280,7 @@ if (empty($reshook)) {
 		$search_user = '';
 		$search_sale = '';
 		$search_product_category = '';
+		$searchCategorySupplierInvoiceList = array();
 		$search_ref = "";
 		$search_refsupplier = "";
 		$search_type = "";
@@ -406,13 +414,62 @@ if (empty($reshook)) {
 			if (!empty($listofbills)) {
 				$nbwithdrawrequestok = 0;
 				foreach ($listofbills as $aBill) {
-					$db->begin();
-					$result = $aBill->demande_prelevement($user, $aBill->resteapayer, 'bank-transfer', 'supplier_invoice');
-					if ($result > 0) {
-						$db->commit();
-						$nbwithdrawrequestok++;
+					// Note: The 2 following SQL requests are wrong but it works because we have one record into pfd for one record into pl and for into p for the same fk_facture_fourn.
+					// The table prelevement and prelevement_lignes and must be removed in future and merged into prelevement_demande
+					// Step 1: Move field fk_... of llx_prelevement into llx_prelevement_lignes
+					// Step 2: Move field fk_... + status into prelevement_demande.
+					$pending = 0;
+					// Get pending requests open with no transfer receipt yet
+					$sql = "SELECT SUM(pfd.amount) as amount";
+					$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+					//if ($type == 'bank-transfer') {
+					$sql .= " WHERE pfd.fk_facture_fourn = ".((int) $aBill->id);
+					//} else {
+					//	$sql .= " WHERE pfd.fk_facture = ".((int) $aBill->id);
+					//}
+					$sql .= " AND pfd.traite = 0";
+					//$sql .= " AND pfd.type = 'ban'";
+					$resql = $db->query($sql);
+					if ($resql) {
+						$obj = $db->fetch_object($resql);
+						if ($obj) {
+							$pending += (float) $obj->amount;
+						}
 					} else {
-						$db->rollback();
+						dol_print_error($db);
+					}
+					// Get pending request with a transfer receipt generated but not yet processed
+					$sqlPending = "SELECT SUM(pl.amount) as amount";
+					$sqlPending .= " FROM ".$db->prefix()."prelevement_lignes as pl";
+					$sqlPending .= " INNER JOIN ".$db->prefix()."prelevement as p ON p.fk_prelevement_lignes = pl.rowid";
+					//if ($type == 'bank-transfer') {
+					$sqlPending .= " WHERE p.fk_facture_fourn = ".((int) $aBill->id);
+					//} else {
+					//	$sqlPending .= " WHERE p.fk_facture = ".((int) $aBill->id);
+					//}
+					$sqlPending .= " AND (pl.statut IS NULL OR pl.statut = 0)";
+					$resPending = $db->query($sqlPending);
+					if ($resPending) {
+						if ($objPending = $db->fetch_object($resPending)) {
+							$pending += (float) $objPending->amount;
+						}
+					}
+					$db->free($resPending);
+
+					$requestAmount = $aBill->resteapayer - $pending;
+					if ($requestAmount > 0) {
+						$db->begin();
+						$result = $aBill->demande_prelevement($user, $requestAmount, 'bank-transfer', 'supplier_invoice');
+						if ($result > 0) {
+							$db->commit();
+							$nbwithdrawrequestok++;
+						} else {
+							$db->rollback();
+							setEventMessages($aBill->error, $aBill->errors, 'errors');
+						}
+					} else {
+						$aBill->error = 'WithdrawRequestErrorNilAmount';
+						$aBill->errors[] = $aBill->error;
 						setEventMessages($aBill->error, $aBill->errors, 'errors');
 					}
 				}
@@ -651,6 +708,34 @@ if ($search_sale && $search_sale != '-1') {
 		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
 	}
 }
+// Search for tag/category ($searchCategorySupplierInvoiceList is an array of ID)
+if (!empty($searchCategorySupplierInvoiceList)) {
+	$searchCategorySupplierInvoiceSqlList = array();
+	$listofcategoryid = '';
+	foreach ($searchCategorySupplierInvoiceList as $searchCategorySupplierInvoice) {
+		if (intval($searchCategorySupplierInvoice) == -2) {
+			$searchCategorySupplierInvoiceSqlList[] = "NOT EXISTS (SELECT ck.fk_supplier_invoice FROM ".MAIN_DB_PREFIX."categorie_supplier_invoice as ck WHERE f.rowid = ck.fk_supplier_invoice)";
+		} elseif (intval($searchCategorySupplierInvoice) > 0) {
+			if ($searchCategorySupplierInvoiceOperator == 0) {
+				$searchCategorySupplierInvoiceSqlList[] = " EXISTS (SELECT ck.fk_supplier_invoice FROM ".MAIN_DB_PREFIX."categorie_supplier_invoice as ck WHERE f.rowid = ck.fk_supplier_invoice AND ck.fk_categorie = ".((int) $searchCategorySupplierInvoice).")";
+			} else {
+				$listofcategoryid .= ($listofcategoryid ? ', ' : '') .((int) $searchCategorySupplierInvoice);
+			}
+		}
+	}
+	if ($listofcategoryid) {
+		$searchCategorySupplierInvoiceSqlList[] = " EXISTS (SELECT ck.fk_supplier_invoice FROM ".MAIN_DB_PREFIX."categorie_supplier_invoice as ck WHERE f.rowid = ck.fk_supplier_invoice AND ck.fk_categorie IN (".$db->sanitize($listofcategoryid)."))";
+	}
+	if ($searchCategorySupplierInvoiceOperator == 1) {
+		if (!empty($searchCategorySupplierInvoiceSqlList)) {
+			$sql .= " AND (".implode(' OR ', $searchCategorySupplierInvoiceSqlList).")";
+		}
+	} else {
+		if (!empty($searchCategorySupplierInvoiceSqlList)) {
+			$sql .= " AND (".implode(' AND ', $searchCategorySupplierInvoiceSqlList).")";
+		}
+	}
+}
 $searchCategorySupplierList = $search_categ_sup ? array($search_categ_sup) : array();
 $searchCategorySupplierOperator = 0;
 // Search for tag/category ($searchCategorySupplierList is an array of ID)
@@ -736,12 +821,20 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= $hookmanager->resPrint;
+if (empty($reshook)) {
+	$sql .= $hookmanager->resPrint;
+} else {
+	$sql = $hookmanager->resPrint;
+}
 
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+if (empty($reshook)) {
+	$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+} else {
+	$sql = $hookmanager->resPrint;
+}
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -757,7 +850,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 		dol_print_error($db);
 	}
 
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -799,7 +892,7 @@ if ($search_fk_fac_rec_source) {
 	$object->fetch((int) $search_fk_fac_rec_source);
 
 	$head = supplier_invoice_rec_prepare_head($object);
-	print dol_get_fiche_head($head, 'generated', $langs->trans('InvoicesGeneratedFromRec'), -1, 'bill'); // Add a div
+	print dol_get_fiche_head($head, 'generated', $langs->trans('InvoicesGeneratedFromRec'), -1, $object->picto); // Add a div
 }
 
 if ($socid) {
@@ -877,6 +970,12 @@ if ($search_company_alias) {
 if ($search_login) {
 	$param .= '&search_login='.urlencode($search_login);
 }
+if ($searchCategorySupplierInvoiceOperator == 1) {
+	$param .= "&search_category_supplier_invoice_operator=".urlencode((string) ($searchCategorySupplierInvoiceOperator));
+}
+foreach ($searchCategorySupplierInvoiceList as $searchCategorySupplierInvoice) {
+	$param .= "&search_category_invoice_list[]=".urlencode($searchCategorySupplierInvoice);
+}
 if ($search_montant_ht != '') {
 	$param .= '&search_montant_ht='.urlencode($search_montant_ht);
 }
@@ -952,7 +1051,9 @@ $arrayofmassactions = array(
   'builddoc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
-
+if (isModEnabled('category') && $user->hasRight("fournisseur", "facture", "lire")) {
+	$arrayofmassactions['preaffecttag'] = img_picto('', 'category', 'class="pictofixedwidth"').$langs->trans("AffectTag");
+}
 if (isModEnabled('paymentbybanktransfer') && $user->hasRight("paymentbybanktransfer", "create")) {
 	$langs->load('withdrawals');
 	$arrayofmassactions['banktransfertrequest'] = img_picto('', 'payment', 'class="pictofixedwidth"').$langs->trans("MakeBankTransferOrder");
@@ -1015,6 +1116,11 @@ if ($search_all) {
 
 // If the user can view prospects other than his'
 $moreforfilter = '';
+if (isModEnabled('category') && $user->hasRight('categorie', 'read')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+	$formcategory = new FormCategory($db);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_SUPPLIER_INVOICE, $searchCategorySupplierInvoiceList, 'minwidth300', $searchCategorySupplierInvoiceOperator ? $searchCategorySupplierInvoiceOperator : 0);
+}
 if ($user->hasRight("user", "user", "lire")) {
 	$langs->load("commercial");
 	$moreforfilter .= '<div class="divsearchfield">';

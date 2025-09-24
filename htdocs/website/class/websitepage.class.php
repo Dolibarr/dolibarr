@@ -4,7 +4,7 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020 	   Nicolas ZABOURI		<info@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -118,9 +118,9 @@ class WebsitePage extends CommonObject
 	public $allowed_in_frames;
 
 	/**
-	 * @var int<0,1>	Disable WAF
+	 * @var string		Disable WAF ('all', 'NOSCANAUDIOFORINJECTION,NOSCANIFRAMEFORINJECTION,NOSCANOBJECTFORINJECTION')
 	 */
-	public $disable_waf = 0;
+	public $disable_waf = 'NOSCANAUDIOFORINJECTION,NOSCANIFRAMEFORINJECTION,NOSCANOBJECTFORINJECTION';	// TODO Manage field in page setup
 
 	/**
 	 * @var string 		Page html header
@@ -186,7 +186,7 @@ class WebsitePage extends CommonObject
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -225,9 +225,9 @@ class WebsitePage extends CommonObject
 		'date_creation'  => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500),
 		'tms'            => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 501),
 		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateValidation',     'enabled'=>1, 'visible'=>-1, 'position'=>502),
-		'fk_user_creat'  => array('type' => 'integer', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 510),
+		'fk_user_creat'  => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 510),
 		'author_alias'   => array('type' => 'varchar(64)', 'label' => 'AuthorAlias', 'enabled' => 1, 'visible' => -1, 'index' => 0, 'position' => 511, 'comment' => 'Author alias'),
-		'fk_user_modif'  => array('type' => 'integer', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -1, 'position' => 512),
+		'fk_user_modif'  => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -1, 'position' => 512),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'import_key'     => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -1, 'index' => 1, 'position' => 1000, 'notnull' => -1),
 		'object_type' => array('type' => 'varchar(255)', 'label' => 'ObjectType', 'enabled' => 1, 'visible' => 0, 'position' => 46, 'searchall' => 0, 'help' => ''),

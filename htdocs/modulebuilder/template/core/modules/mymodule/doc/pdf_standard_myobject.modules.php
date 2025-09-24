@@ -8,7 +8,7 @@
  * Copyright (C) 2012-2014	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
- * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) ---Replace with your own copyright and developer email---
@@ -322,8 +322,8 @@ class pdf_standard_myobject extends ModelePDFMyObject
 				// Set path to the background PDF File
 				if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
 					$logodir = $conf->mycompany->dir_output;
-					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
-						$logodir = $conf->mycompany->multidir_output[$object->entity];
+					if (!empty($conf->mycompany->multidir_output[$object->entity ?? $conf->entity])) {
+						$logodir = $conf->mycompany->multidir_output[$object->entity ?? $conf->entity];
 					}
 					$pagecount = $pdf->setSourceFile($logodir.'/'.getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
@@ -666,9 +666,9 @@ class pdf_standard_myobject extends ModelePDFMyObject
 
 
 					$sign = 1;
-					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
+					// Collection of totals by value of VAT in $this->tva["taux"]=total_tva
 					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
-					if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
+					if ($prev_progress > 0 && $object->lines instanceof CommonInvoiceLine && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
 						if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
 							$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
 						} else {
@@ -715,7 +715,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 						}
 					}
 
-					if (($object->lines[$i]->info_bits & 0x01) == 0x01) {
+					if (((int) $object->lines[$i]->info_bits & 0x01) == 0x01) {
 						$vatrate .= '*';
 					}
 
@@ -820,6 +820,8 @@ class pdf_standard_myobject extends ModelePDFMyObject
 				if ($reshook < 0) {
 					$this->error = $hookmanager->error;
 					$this->errors = $hookmanager->errors;
+					dolChmod($file);
+					return -1;
 				}
 
 				dolChmod($file);

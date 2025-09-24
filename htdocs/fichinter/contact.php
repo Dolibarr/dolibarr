@@ -123,7 +123,7 @@ if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();
 
 	$head = fichinter_prepare_head($object);
-	print dol_get_fiche_head($head, 'contact', $langs->trans("InterventionCard"), -1, 'intervention');
+	print dol_get_fiche_head($head, 'contact', $langs->trans("InterventionCard"), -1, $object->picto);
 
 
 	// Intervention card

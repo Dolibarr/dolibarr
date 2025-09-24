@@ -90,6 +90,15 @@ if (!$res && file_exists("../main.inc.php")) {
 if (!$res) {
 	die("Include of main fails");
 }
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string	$dolibarr_api_count_always_enabled
+ */
 
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/AutoLoader.php';
 
@@ -107,13 +116,6 @@ call_user_func(
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-/**
- * @var Conf $conf
- * @var DoliDB $db
- * @var HookManager $hookmanager
- * @var Translate $langs
- * @var User $user
- */
 
 
 $url = $_SERVER['PHP_SELF'];
@@ -351,6 +353,9 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 	if ($moduleobject == 'interventions') {
 		$classfile = 'interventions';
 	}
+	if ($moduleobject == 'eventattendees') {
+		$moduledirforclass = 'eventorganization';
+	}
 
 	$dir_part_file = dol_buildpath('/'.$moduledirforclass.'/class/api_'.$classfile.'.class.php', 0, 2);
 
@@ -459,7 +464,7 @@ if (Luracast\Restler\Defaults::$returnResponse) {
 	echo $result;
 }
 
-if (getDolGlobalInt("API_ENABLE_COUNT_CALLS") && $api->r->responseCode == 200) {
+if ((getDolGlobalInt("API_ENABLE_COUNT_CALLS") || !empty($dolibarr_api_count_always_enabled)) && $api->r->responseCode == 200) {
 	$error = 0;
 	$db->begin();
 	$userid = DolibarrApiAccess::$user->id;

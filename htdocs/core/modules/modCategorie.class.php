@@ -7,6 +7,7 @@
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2025		Charlene Benke		    <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -176,6 +177,9 @@ class modCategorie extends DolibarrModules
 		}
 		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_order'))) {
 			$typeexample .= ($typeexample ? " / " : "")."20=Supplier order";
+		}
+		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_invoice'))) {
+			$typeexample .= ($typeexample ? " / " : "")."21=Supplier invoice";
 		}
 
 		// Definition of vars
@@ -535,6 +539,24 @@ class modCategorie extends DolibarrModules
 			);
 		}
 
+		// 21 Supplier invoice
+		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_invoice'))) {
+			++$r;
+			$this->exportTagLinks(
+				$r,
+				'supplier_invoice',
+				'invoice_supplier',
+				'(isModEnabled("fournisseur") && !getDolGlobalString("MAIN_USE_NEW_SUPPLIERMOD")) || (isModEnabled("supplier_invoice"))',
+				['fournisseur', 'facture', 'export'],
+				[
+					'rowid' => [
+						'name' => 'SupplierInvoiceID',
+						'type' => 'Numeric'
+					]
+				]
+			);
+		}
+
 		// Imports
 		//--------
 
@@ -551,7 +573,7 @@ class modCategorie extends DolibarrModules
 			'ca.label' => "Label*", 'ca.type' => "Type*", 'ca.description' => "Description",
 			'ca.fk_parent' => 'ParentCategory'
 		);
-		$this->import_regex_array[$r] = array('ca.type' => '^(0|1|2|3|4|5|6|7|8|9|10|11|16|17|20)$');
+		$this->import_regex_array[$r] = array('ca.type' => '^(0|1|2|3|4|5|6|7|8|9|10|11|16|17|20|21)$');
 		$this->import_convertvalue_array[$r] = array(
 			'ca.fk_parent' => array(
 				'rule'          => 'fetchidfromcodeandlabel',
@@ -757,6 +779,18 @@ class modCategorie extends DolibarrModules
 				'CommandeFournisseur'
 			);
 		}
+
+		// 21 Supplier invoice
+		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_invoice'))) {
+			++$r;
+			$this->importTagLinks(
+				$r,
+				'supplier_invoice',
+				'/fourn/class/fournisseur.facture.class.php',
+				'invoice_supplier',
+				'FactureFournisseur'
+			);
+		}
 	}
 
 	/**
@@ -904,6 +938,13 @@ class modCategorie extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
+		if (isModEnabled("invoice")) {
+			$this->_load_tables('/install/mysql/', 'facture');
+		}
+		if (isModEnabled("order")) {
+			$this->_load_tables('/install/mysql/', 'commande');
+		}
+
 		// Permissions
 		$this->remove($options);
 

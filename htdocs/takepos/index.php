@@ -479,7 +479,8 @@ function MoreProducts(moreorless) {
 	if (maxproduct >= 1) {
 		limit = maxproduct-1;
 	}
-	var offset = <?php echo($MAXPRODUCT - 2); ?> * pageproducts;
+	var nb_cat_shown = $('.div5 div.wrapper2[data-iscat=1]').length;
+	var offset = <?php echo($MAXPRODUCT - 2); ?> * pageproducts - nb_cat_shown;
 	// Only show products for sale (tosell=1)
 	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&category='+currentcat+'&tosell=1&limit='+limit+'&offset='+offset, function(data) {
 		console.log("Call ajax.php (in MoreProducts) to get Products of category "+currentcat);
@@ -710,7 +711,15 @@ function New() {
  * return   void
  */
 function Search2(keyCodeForEnter, moreorless) {
-	var eventKeyCode = window.event.keyCode;
+	var eventKeyCode = null;
+
+	if (window.event && window.event.keyCode) {
+		eventKeyCode = window.event.keyCode;
+	}
+	if (eventKeyCode === null && keyCodeForEnter !== '') {
+		// No key code available, exit early if a key code is required
+		return;
+	}
 
 	console.log("Search2 Call ajax search to replace products keyCodeForEnter="+keyCodeForEnter+", eventKeyCode="+eventKeyCode);
 
@@ -1072,6 +1081,7 @@ $( document ).ready(function() {
 		$sql .= " entity = ".((int) $conf->entity)." AND ";
 		$sql .= " posnumber = ".((int) $_SESSION["takeposterminal"])." AND ";
 		$sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
+		$sql .= " AND status = 0 ";
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
@@ -1416,18 +1426,26 @@ if (getDolGlobalString('TAKEPOS_DIRECT_PAYMENT')) {
 
 // BAR RESTAURANT specific menu
 if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
-	//Button to print receipt before payment
+	// Button to print receipt before payment
+	$customprinterallowed = true;
+	$arrayOfCountryWithPrintingOnBrowserMandatory = array('FR');
+	if (in_array($mysoc->country_code, $arrayOfCountryWithPrintingOnBrowserMandatory) && isModEnabled('blockedlog')) {
+		$customprinterallowed = false;
+	}
+
 	if (getDolGlobalString('TAKEPOS_BAR_RESTAURANT')) {
-		if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {
-			if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var($conf->global->TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL) == true) {
-				$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action' => 'TakeposConnector(placeid);');
+		if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector") {		// deprecated method
+			if (getDolGlobalString('TAKEPOS_PRINT_SERVER') && filter_var(getDolGlobalString('TAKEPOS_PRINT_SERVER, FILTER_VALIDATE_URL')) == true) {
+				$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'TakeposConnector(placeid);');
 			} else {
-				$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action' => 'TakeposPrinting(placeid);');
+				$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'TakeposPrinting(placeid);');
 			}
-		} elseif ((isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
-			$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action' => 'DolibarrTakeposPrinting(placeid);');
+		} elseif ($customprinterallowed && (isModEnabled('receiptprinter') && getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$term) > 0) || getDolGlobalString('TAKEPOS_PRINT_METHOD') == "receiptprinter") {
+			// Button Print Receipt on special printer
+			$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'DolibarrTakeposPrinting(placeid);');
 		} else {
-			$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("Receipt").'</div>', 'action' => 'Print(placeid);');
+			// Button Print Receipt on browser
+			$menus[$r++] = array('title' => '<span class="fa fa-receipt paddingrightonly"></span><div class="trunc">'.$langs->trans("PrintTicket").'</div>', 'action' => 'Print(placeid);');
 		}
 	}
 	if (getDolGlobalString('TAKEPOS_PRINT_METHOD') == "takeposconnector" && getDolGlobalString('TAKEPOS_ORDER_NOTES') == 1) {
@@ -1452,6 +1470,7 @@ $sql = "SELECT rowid, status, entity FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE
 $sql .= " entity = ".((int) $conf->entity)." AND ";
 $sql .= " posnumber = ".((int) empty($_SESSION["takeposterminal"]) ? 0 : $_SESSION["takeposterminal"])." AND ";
 $sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
+$sql .= " AND status = 0";
 
 $resql = $db->query($sql);
 if ($resql) {
@@ -1588,7 +1607,7 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 												if ($count == ($MAXPRODUCT - 1)) {
 													?> onclick="MoreProducts('more')" <?php
 												} else {
-													echo 'onclick="ClickProduct('.$count.')"';
+													echo 'onclick="ClickProduct('.((int) $count).')"';
 												} ?>>
 					<?php
 					if ($count == ($MAXPRODUCT - 2)) {

@@ -1,8 +1,7 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2017	Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,15 +53,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 */
 	public $picto = 'contact';
 
-	/**
-	 * @var int<0,1>
-	 */
-	public $paid = 0;
-
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
+	const STATUS_USED = 5;					// was present, presence confirmed, no more entrances can be done using this ticket
 	const STATUS_CANCELED = 9;
-
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -74,7 +68,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -99,7 +93,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => 2, 'index' => 1, 'comment' => "Reference of object"),
 		//'fk_actioncomm' => array('type'=>'integer:ActionComm:comm/action/class/actioncomm.class.php:1', 'label'=>'ConferenceOrBooth', 'enabled'=>'1', 'position'=>15, 'notnull'=>0, 'visible'=>0, 'index'=>1, 'picto'=>'agenda'),
 		'fk_project' => array('type' => 'integer:Project:projet/class/project.class.php:1', 'label' => 'Project', 'enabled' => "isModEnabled('project')", 'position' => 20, 'notnull' => 1, 'visible' => 0, 'index' => 1, 'picto' => 'project', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
-		'email' => array('type' => 'mail', 'label' => 'EmailAttendee', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'autofocusoncreate' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax150'),
+		'email' => array('type' => 'mail', 'label' => 'EmailAttendee', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'index' => 1, 'autofocusoncreate' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'csslist' => 'tdoverflowmax150'),
 		'firstname' => array('type' => 'varchar(100)', 'label' => 'Firstname', 'enabled' => 1, 'position' => 31, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax125'),
 		'lastname' => array('type' => 'varchar(100)', 'label' => 'Lastname', 'enabled' => 1, 'position' => 32, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax125'),
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php:1:((status:=:1) AND (entity:IN:__SHARED_ENTITIES__))', 'label' => 'ThirdParty', 'enabled' => 'isModEnabled("societe")', 'position' => 40, 'notnull' => -1, 'visible' => 1, 'index' => 1, 'help' => "OrganizationEventLinkToThirdParty", 'picto' => 'company', 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150'),
@@ -117,7 +111,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'position' => 1010, 'notnull' => -1, 'visible' => 0,),
 		'ip' => array('type' => 'varchar(250)', 'label' => 'IPAddress', 'enabled' => 1, 'position' => 900, 'notnull' => -1, 'visible' => -2,),
-		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'default' => '0', 'notnull' => 1, 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Validated', '9' => 'Canceled'),),
+		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'default' => '0', 'notnull' => 1, 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Registered', '5' => 'ShowedUp', '9' => 'Canceled'),),
 	);
 	/**
 	 * @var int
@@ -431,7 +425,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 */
 	public function fetch($id, $ref = null)
 	{
-		$result = $this->fetchCommon($id, $ref);
+		$result = $this->fetchCommon($id, $ref, '', 0);
 		if ($result > 0 && !empty($this->table_element_line)) {
 			$this->fetchLines();
 		}
@@ -482,7 +476,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 		// Manage filter
 		if (is_array($filter)) {	// deprecated, use $filter = USF syntax
-			dol_syslog("You are using a deprecated use of fetchAll. filter parameter mus be an USF string now.", LOG_WARNING);
+			dol_syslog("You are using a deprecated use of fetchAll. filter parameter must be an USF string now.", LOG_WARNING);
 			$sqlwhere = array();
 			if (count($filter) > 0) {
 				foreach ($filter as $key => $value) {
@@ -736,8 +730,8 @@ class ConferenceOrBoothAttendee extends CommonObject
 		$project = new Project($this->db);
 		$result = $project->fetch($this->fk_project);
 
-		$this->projet = $project; // deprecated
 		$this->project = $project;
+
 		return $result;
 	}
 
@@ -779,7 +773,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *	Set back to validated status
 	 *
 	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
@@ -959,22 +953,30 @@ class ConferenceOrBoothAttendee extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			//$langs->load("eventorganization@eventorganization");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Registered');
+			$this->labelStatus[self::STATUS_USED] = $langs->trans('ShowedUp');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Validated');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Registered');
+			$this->labelStatusShort[self::STATUS_USED] = $langs->trans('ShowedUp');
 			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Disabled');
 		}
 
 		$statusType = 'status'.$status;
-		//if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
+		if ($status == self::STATUS_VALIDATED) {
+			$statusType = 'status2';
+		}
 		if ($status == self::STATUS_CANCELED) {
-			$statusType = 'status6';
+			$statusType = 'status9';
 		}
 
 		if ($status == self::STATUS_VALIDATED && $this->date_subscription && $this->amount) {
 			$statusType = 'status4';
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated').' - '.$langs->trans("Paid");
+		}
+
+		if ($status == self::STATUS_USED) {
+			$statusType = 'status6';
 		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
