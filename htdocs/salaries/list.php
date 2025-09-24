@@ -362,10 +362,10 @@ $sql .= " ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE u.rowid = s.fk_user";
 $sql .= " AND s.entity IN (".getEntity('salaries').")";
 if (!$user->hasRight('salaries', 'readchild')) {
-	$sql .= " AND s.fk_user = ".(int)$user->id;
+	$sql .= " AND s.fk_user = ".(int) $user->id;
 }
 if (!$user->hasRight('salaries', 'readall')) {
-	$sql .= " AND s.fk_user IN (".(int)$db->sanitize(implode(',', $childids)).")";
+	$sql .= " AND s.fk_user IN (".(int) $db->sanitize(implode(',', $childids)).")";
 }
 
 //print $sql;
