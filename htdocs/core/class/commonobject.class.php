@@ -1408,7 +1408,11 @@ abstract class CommonObject
 		if (!$error && empty($notrigger)) {
 			// Call trigger
 			$this->context['contact_id'] = ((int) $rowid);
-			$result = $this->call_trigger(strtoupper($this->element).'_DELETE_CONTACT', $user);
+			$triggerPrefix = (empty($this->TRIGGER_PREFIX) ? $this->element : $this->TRIGGER_PREFIX);
+			if ($this->element == 'Commande') {
+				$triggerPrefix = 'ORDER';	// TODO Remove this when TRIGGER_PREFI in order is implemented
+			}
+			$result = $this->call_trigger(strtoupper($triggerPrefix).'_DELETE_CONTACT', $user);
 			if ($result < 0) {
 				$error++;
 			}
