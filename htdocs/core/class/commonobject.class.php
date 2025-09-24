@@ -1306,7 +1306,11 @@ abstract class CommonObject
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				if (!$notrigger) {
-					$result = $this->call_trigger(strtoupper($this->element).'_ADD_CONTACT', $user);
+					$triggerPrefix = (empty($this->TRIGGER_PREFIX) ? $this->element : $this->TRIGGER_PREFIX);
+					if ($this->element == 'Commande') {
+						$triggerPrefix = 'ORDER';	// TODO Remove this when TRIGGER_PREFI in order is implemented
+					}
+					$result = $this->call_trigger(strtoupper($triggerPrefix).'_ADD_CONTACT', $user);
 					if ($result < 0) {
 						$this->db->rollback();
 						return -1;
