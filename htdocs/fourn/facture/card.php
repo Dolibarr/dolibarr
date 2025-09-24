@@ -2916,7 +2916,7 @@ if ($action == 'create') {
 		print '</tr>';
 
 
-		if (!empty($objectsrc) && is_object($objectsrc)) {
+		if (!empty($objectsrc)) {
 			print "\n<!-- ".$classname." info -->";
 			print "\n";
 			print '<input type="hidden" name="amount"         value="'.$objectsrc->total_ht.'">'."\n";
@@ -2980,7 +2980,7 @@ if ($action == 'create') {
 	print $form->buttonsSaveCancel("CreateDraft");
 
 	// Show origin lines
-	if (!empty($objectsrc) && is_object($objectsrc)) {
+	if (!empty($objectsrc)) {
 		print '<br>';
 
 		$title = $langs->trans('ProductsAndServices');
