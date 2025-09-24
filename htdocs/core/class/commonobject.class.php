@@ -1306,11 +1306,8 @@ abstract class CommonObject
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				if (!$notrigger) {
-					$triggerPrefix = (empty($this->TRIGGER_PREFIX) ? $this->element : $this->TRIGGER_PREFIX);
-					if ($this->element == 'Commande') {
-						$triggerPrefix = 'ORDER';	// TODO Remove this when TRIGGER_PREFI in order is implemented
-					}
-					$result = $this->call_trigger(strtoupper($triggerPrefix).'_ADD_CONTACT', $user);
+					$triggerPrefix = (empty($this->TRIGGER_PREFIX) ? strtoupper(get_class($this)) : $this->TRIGGER_PREFIX);
+					$result = $this->call_trigger($triggerPrefix.'_ADD_CONTACT', $user);
 					if ($result < 0) {
 						$this->db->rollback();
 						return -1;
@@ -1408,11 +1405,8 @@ abstract class CommonObject
 		if (!$error && empty($notrigger)) {
 			// Call trigger
 			$this->context['contact_id'] = ((int) $rowid);
-			$triggerPrefix = (empty($this->TRIGGER_PREFIX) ? $this->element : $this->TRIGGER_PREFIX);
-			if ($this->element == 'Commande') {
-				$triggerPrefix = 'ORDER';	// TODO Remove this when TRIGGER_PREFI in order is implemented
-			}
-			$result = $this->call_trigger(strtoupper($triggerPrefix).'_DELETE_CONTACT', $user);
+			$triggerPrefix = (empty($this->TRIGGER_PREFIX) ? strtoupper(get_class($this)) : $this->TRIGGER_PREFIX);
+			$result = $this->call_trigger($triggerPrefix.'_DELETE_CONTACT', $user);
 			if ($result < 0) {
 				$error++;
 			}
@@ -2695,9 +2689,6 @@ abstract class CommonObject
 				if (!$error && !$notrigger) {
 					// Call triggers
 					$triggerName = (empty($this->TRIGGER_PREFIX) ? strtoupper(get_class($this)) : $this->TRIGGER_PREFIX);
-					if (get_class($this) == 'Commande') {
-						$triggerName = 'ORDER';	// TODO Remove this when TRIGGER_PREFI in order is implemented
-					}
 					$result = $this->call_trigger($triggerName.'_MODIFY', $user);
 					if ($result < 0) {
 						$error++;
@@ -3212,9 +3203,6 @@ abstract class CommonObject
 				// Call trigger
 				$this->context = array('shippingmethodupdate' => 1);
 				$triggerPrefix = (empty($this->TRIGGER_PREFIX) ? strtoupper(get_class($this)) : $this->TRIGGER_PREFIX);
-				if (get_class($this) == 'Commande') {
-					$triggerPrefix = 'ORDER';	// TODO Remove this when TRIGGER_PREFI in order is implemented
-				}
 				$result = $this->call_trigger($triggerPrefix.'_MODIFY', $userused);
 				if ($result < 0) {
 					$error++;
