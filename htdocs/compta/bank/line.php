@@ -7,7 +7,7 @@
  * Copyright (C) 2015-2017 Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -457,13 +457,13 @@ if ($result) {
 					print '</a>';
 				} elseif ($links[$key]['type'] == 'payment_salary') {
 					print '<a href="'.DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$links[$key]['url_id'].'">';
-					print img_object($langs->trans('PaymentSalary'), 'payment').' ';
+					print img_object($langs->trans('SalaryPayment'), 'payment').' ';
 					print $langs->trans("SalaryPayment");
 					print '</a>';
 				} elseif ($links[$key]['type'] == 'payment_loan') {
 					print '<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$links[$key]['url_id'].'">';
 					print img_object($langs->trans('LoanPayment'), 'payment').' ';
-					print $langs->trans("PaymentLoan");
+					print $langs->trans("LoanPayment");
 					print '</a>';
 				} elseif ($links[$key]['type'] == 'loan') {
 					print '<a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$links[$key]['url_id'].'">';
@@ -637,18 +637,7 @@ if ($result) {
 
 			// Bank line
 			print '<tr><td class="toptd">'.$form->editfieldkey('RubriquesTransactions', 'custcats', '', $object, 0).'</td><td>';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_BANK_LINE, '', 'parent', 0, 0, 1);
-
-			$arrayselected = array();
-
-			$c = new Categorie($db);
-			$cats = $c->containing($bankline->id, Categorie::TYPE_BANK_LINE);
-			if (is_array($cats)) {
-				foreach ($cats as $cat) {
-					$arrayselected[] = $cat->id;
-				}
-			}
-			print img_picto('', 'category', 'class="paddingright"').$form->multiselectarray('custcats', $cate_arbo, $arrayselected, 0, 0, '', 0, "90%");
+			print $form->selectCategories(Categorie::TYPE_BANK_LINE, 'custcats', $object);
 			print "</td></tr>";
 		}
 

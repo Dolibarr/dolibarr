@@ -23,7 +23,10 @@ AllPropals=Tutti i preventivi
 SearchAProposal=Cerca un preventivo
 NoProposal=Nessun preventivo
 ProposalsStatistics=Statistiche Preventivi
+NumberOfProposals=numero di Proposte
 NumberOfProposalsByMonth=Numero per mese
+AmountOfProposals=Quantità di Proposte
+AmountOfProposalsHT=Quantità di Proposte (escl. imposte)
 AmountOfProposalsByMonthHT=Importo al mese (imposte escluse)
 NbOfProposals=Numero di preventivi
 ShowPropal=Visualizza preventivo
@@ -77,7 +80,7 @@ AvailabilityTypeAV_1W=1 settimana
 AvailabilityTypeAV_2W=2 settimane
 AvailabilityTypeAV_3W=3 settimane
 AvailabilityTypeAV_1M=1 mese
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Responsabile del preventivo
 TypeContact_propal_external_BILLING=Contatto per la fatturazione
 TypeContact_propal_external_CUSTOMER=Responsabile per il cliente
@@ -122,3 +125,5 @@ Signed=firmato
 SignedOnly=Solo firmato
 ExpeditionSigned=Spedizione firmata
 SignExpedition=Firma la spedizione
+PROPOSAL_SHOW_SHIPPING_ADDRESS=Mostra l'indirizzo di spedizione
+PROPOSAL_SHOW_SHIPPING_ADDRESSMore=Compulsory indication in some countries (France, ...)

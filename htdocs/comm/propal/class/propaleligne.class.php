@@ -13,13 +13,13 @@
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2022       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,7 +152,7 @@ class PropaleLigne extends CommonObjectLine
 	public $fk_fournprice;
 
 	/**
-	 * @var float|int|string
+	 * @var float|int|''|null
 	 */
 	public $pa_ht;
 
@@ -179,7 +179,7 @@ class PropaleLigne extends CommonObjectLine
 	 * Some other info:
 	 * Bit 0: 	0 si TVA normal - 1 if TVA NPR
 	 * Bit 1:	0 ligne normal - 1 if line with fixed discount
-	 * @var int
+	 * @var ?int
 	 */
 	public $info_bits = 0;
 
@@ -298,12 +298,12 @@ class PropaleLigne extends CommonObjectLine
 	public $total_localtax2;
 
 	/**
-	 * @var int|string
+	 * @var int|''
 	 */
 	public $date_start;
 
 	/**
-	 * @var int|string
+	 * @var int|''
 	 */
 	public $date_end;
 
@@ -343,6 +343,10 @@ class PropaleLigne extends CommonObjectLine
 	 */
 	public $multicurrency_total_ttc;
 
+	/**
+	 * @var float
+	 */
+	public $packaging;
 
 	/**
 	 * 	Class line Constructor
@@ -369,7 +373,8 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ' pd.localtax1_tx, pd.localtax2_tx, pd.total_localtax1, pd.total_localtax2,';
 		$sql .= ' pd.fk_multicurrency, pd.multicurrency_code, pd.multicurrency_subprice, pd.multicurrency_total_ht, pd.multicurrency_total_tva, pd.multicurrency_total_ttc,';
 		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,';
-		$sql .= ' pd.date_start, pd.date_end, pd.product_type';
+		$sql .= ' p.packaging,';
+		$sql .= ' pd.date_start, pd.date_end, pd.product_type, pd.extraparams';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'propaldet as pd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pd.fk_product = p.rowid';
 		$sql .= ' WHERE pd.rowid = '.((int) $rowid);
@@ -380,7 +385,7 @@ class PropaleLigne extends CommonObjectLine
 
 			if ($objp) {
 				$this->id = $objp->rowid;
-				$this->rowid			= $objp->rowid; // deprecated
+				$this->rowid = $objp->rowid; // deprecated
 				$this->fk_propal = $objp->fk_propal;
 				$this->fk_parent_line = $objp->fk_parent_line;
 				$this->label			= $objp->custom_label;
@@ -418,8 +423,12 @@ class PropaleLigne extends CommonObjectLine
 				$this->product_desc		= $objp->product_desc;
 				$this->fk_unit          = $objp->fk_unit;
 
+				$this->packaging      	= $objp->packaging;
+
 				$this->date_start       = $this->db->jdate($objp->date_start);
 				$this->date_end         = $this->db->jdate($objp->date_end);
+
+				$this->extraparams = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
 
 				// Multicurrency
 				$this->fk_multicurrency = $objp->fk_multicurrency;
@@ -542,12 +551,12 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ' date_start, date_end';
 		$sql .= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc)';
 		$sql .= " VALUES (".$this->fk_propal.",";
-		$sql .= " ".($this->fk_parent_line > 0 ? "'".$this->db->escape($this->fk_parent_line)."'" : "null").",";
+		$sql .= " ".($this->fk_parent_line > 0 ? "'".$this->db->escape((string) $this->fk_parent_line)."'" : "null").",";
 		$sql .= " ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
-		$sql .= " ".($this->fk_product ? "'".$this->db->escape($this->fk_product)."'" : "null").",";
+		$sql .= " ".($this->fk_product > 0 ? (int) $this->fk_product : "null").",";
 		$sql .= " ".((int) $this->product_type).",";
-		$sql .= " ".($this->fk_remise_except ? "'".$this->db->escape($this->fk_remise_except)."'" : "null").",";
+		$sql .= " ".($this->fk_remise_except > 0 ? (int) $this->fk_remise_except : "null").",";
 		$sql .= " ".price2num($this->qty, 'MS').",";
 		$sql .= " ".(empty($this->vat_src_code) ? "''" : "'".$this->db->escape($this->vat_src_code)."'").",";
 		$sql .= " ".price2num($this->tva_tx).",";
@@ -563,7 +572,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= " ".price2num($this->total_localtax1, 'MT').",";
 		$sql .= " ".price2num($this->total_localtax2, 'MT').",";
 		$sql .= " ".price2num($this->total_ttc, 'MT').",";
-		$sql .= " ".(!empty($this->fk_fournprice) ? "'".$this->db->escape($this->fk_fournprice)."'" : "null").",";
+		$sql .= " ".(!empty($this->fk_fournprice) ? "'".$this->db->escape((string) $this->fk_fournprice)."'" : "null").",";
 		$sql .= " ".(isset($this->pa_ht) ? "'".price2num($this->pa_ht)."'" : "null").",";
 		$sql .= ' '.((int) $this->special_code).',';
 		$sql .= ' '.((int) $this->rang).',';
@@ -582,13 +591,10 @@ class PropaleLigne extends CommonObjectLine
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->rowid = $this->db->last_insert_id(MAIN_DB_PREFIX.'propaldet');
-
-			if (!$error) {
-				$this->id = $this->rowid;
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$this->id = $this->rowid;
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 			if (!$error && !$notrigger) {
@@ -603,7 +609,7 @@ class PropaleLigne extends CommonObjectLine
 
 			if (!$error) {
 				$this->db->commit();
-				return 1;
+				return (int) $this->id;
 			}
 
 			foreach ($this->errors as $errmsg) {
@@ -647,13 +653,11 @@ class PropaleLigne extends CommonObjectLine
 			dol_syslog("PropaleLigne::delete", LOG_DEBUG);
 			if ($this->db->query($sql)) {
 				// Remove extrafields
-				if (!$error) {
-					$this->id = $this->rowid;
-					$result = $this->deleteExtraFields();
-					if ($result < 0) {
-						$error++;
-						dol_syslog(get_class($this) . "::delete error -4 " . $this->error, LOG_ERR);
-					}
+				$this->id = $this->rowid;
+				$result = $this->deleteExtraFields();
+				if ($result < 0) {
+					$error++;
+					dol_syslog(get_class($this) . "::delete error -4 " . $this->error, LOG_ERR);
 				}
 			} else {
 				$this->error = $this->db->error() . " sql=" . $sql;
@@ -768,7 +772,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ", remise_percent=".price2num($this->remise_percent);
 		$sql .= ", price=".(float) price2num($this->price); // TODO A virer
 		$sql .= ", remise=".(float) price2num($this->remise); // TODO A virer
-		$sql .= ", info_bits='".$this->db->escape($this->info_bits)."'";
+		$sql .= ", info_bits='".$this->db->escape((string) $this->info_bits)."'";
 		if (empty($this->skip_update_total)) {
 			$sql .= ", total_ht=".price2num($this->total_ht);
 			$sql .= ", total_tva=".price2num($this->total_tva);
@@ -776,7 +780,7 @@ class PropaleLigne extends CommonObjectLine
 			$sql .= ", total_localtax1=".price2num($this->total_localtax1);
 			$sql .= ", total_localtax2=".price2num($this->total_localtax2);
 		}
-		$sql .= ", fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape($this->fk_fournprice)."'" : "null");
+		$sql .= ", fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape((string) $this->fk_fournprice)."'" : "null");
 		$sql .= ", buy_price_ht=".price2num($this->pa_ht);
 		$sql .= ", special_code=".((int) $this->special_code);
 		$sql .= ", fk_parent_line=".($this->fk_parent_line > 0 ? (int) $this->fk_parent_line : "null");
@@ -798,11 +802,9 @@ class PropaleLigne extends CommonObjectLine
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 			if (!$error && !$notrigger) {

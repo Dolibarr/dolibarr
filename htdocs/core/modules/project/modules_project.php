@@ -68,10 +68,10 @@ abstract class ModelePDFProjects extends CommonDocGenerator
 	/**
 	 *	Function to build pdf project onto disk
 	 *
-	 *	@param	Project		$object					Object source to build document
-	 *	@param	Translate	$outputlangs			Lang output object
-	 * 	@param	string		$srctemplatepath	    Full path of source filename for generator using a template file
-	 *	@return	int<-1,1>      						1 if OK, <=0 if KO
+	 *	@param	Project			$object					Object source to build document
+	 *	@param	Translate		$outputlangs			Lang output object
+	 * 	@param	string			$srctemplatepath	    Full path of source filename for generator using a template file
+	 *	@return	int<-1,1>      							1 if OK, <=0 if KO
 	 */
 	abstract public function write_file($object, $outputlangs, $srctemplatepath = '');
 	// phpcs:enable

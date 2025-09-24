@@ -2,7 +2,7 @@
 /* Copyright (C) 2016	    Xebax Christy	        <xebax@wanadoo.fr>
  * Copyright (C) 2017	    Regis Houssin	        <regis.houssin@inodbox.com>
  * Copyright (C) 2020	    Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2020-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2020-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -138,7 +138,7 @@ class Members extends DolibarrApi
 			throw new RestException(403);
 		}
 
-		$sql = "SELECT rowid, fk_soc, key_account, site, date_creation, tms FROM ".MAIN_DB_PREFIX."societe_account";
+		$sql = "SELECT rowid, fk_soc as socid, key_account, site, date_creation, tms FROM ".MAIN_DB_PREFIX."societe_account";
 		$sql .= " WHERE site = '".$this->db->escape($site)."' AND key_account = '".$this->db->escape($key_account)."'";
 		$sql .= " AND entity IN (".getEntity('adherent').")";
 
@@ -147,7 +147,7 @@ class Members extends DolibarrApi
 		if ($result && $this->db->num_rows($result) == 1) {
 			$obj = $this->db->fetch_object($result);
 			$thirdparty = new Societe($this->db);
-			$result = $thirdparty->fetch($obj->fk_soc);
+			$result = $thirdparty->fetch($obj->socid);
 
 			if ($result <= 0) {
 				throw new RestException(404, 'thirdparty not found');
@@ -159,7 +159,7 @@ class Members extends DolibarrApi
 				throw new RestException(404, 'member not found');
 			}
 		} else {
-				throw new RestException(404, 'This account have many thirdparties attached or does not exist.');
+			throw new RestException(404, 'This account have many thirdparties attached or does not exist.');
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
@@ -508,7 +508,7 @@ class Members extends DolibarrApi
 	/**
 	 * Validate fields before creating an object
 	 *
-	 * @param array<string,null|int|float|string>	$data   Data to validate
+	 * @param ?array<string,null|int|float|string>	$data   Data to validate
 	 * @return array<string,null|int|float|string>			Return array with validated mandatory fields and their value
 	 * @phan-return array<string,?int|?float|?string>			Return array with validated mandatory fields and their value
 	 *
@@ -516,6 +516,9 @@ class Members extends DolibarrApi
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$member = array();
 
 		$mandatoryfields = array(
@@ -538,7 +541,7 @@ class Members extends DolibarrApi
 	 * @param   Object  $object    	Object to clean
 	 * @return  Object    			Object with cleaned properties
 	 */
-	protected function _cleanObjectDatas($object)
+	public function _cleanObjectDatas($object)
 	{
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
@@ -658,6 +661,9 @@ class Members extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('adherent', 'cotisation', 'creer')) {
 			throw new RestException(403);
 		}
+		if (is_numeric($start_date) || !is_numeric($end_date) || !is_numeric($amount)) {
+			throw new RestException(422, 'Malformed data');
+		}
 
 		$member = new Adherent($this->db);
 		$result = $member->fetch($id);
@@ -665,7 +671,7 @@ class Members extends DolibarrApi
 			throw new RestException(404, 'member not found');
 		}
 
-		return $member->subscription($start_date, $amount, 0, '', $label, '', '', '', $end_date);
+		return $member->subscription((int) $start_date, (float) $amount, 0, '', $label, '', '', '', (int) $end_date);
 	}
 
 	/**

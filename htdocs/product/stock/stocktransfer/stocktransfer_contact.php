@@ -5,6 +5,7 @@
  * Copyright (C) 2011-2015 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2021  Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,8 +93,8 @@ $upload_dir = $conf->stocktransfer->multidir_output[isset($object->entity) ? $ob
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
-//$result = restrictedArea($user, 'stocktransfer', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
-//$result = restrictedArea($user, 'stocktransfer', $object->id, '', 'stocktransfer');
+//restrictedArea($user, 'stocktransfer', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
+//restrictedArea($user, 'stocktransfer', $object->id, '', 'stocktransfer');
 
 if (!$permissiontoread || ($action === 'create' && !$permissiontoadd)) {
 	accessforbidden();
@@ -123,7 +124,7 @@ if ($action == 'addcontact' && $user->hasRight('stocktransfer', 'stocktransfer',
 	}
 } elseif ($action == 'swapstatut' && $user->hasRight('stocktransfer', 'stocktransfer', 'write')) { // Toggle the status of a contact
 	if ($object->id > 0) {
-		$result = $object->swapContactStatus(GETPOST('ligne'));
+		$result = $object->swapContactStatus(GETPOSTINT('ligne'));
 	}
 } elseif ($action == 'deletecontact' && $user->hasRight('stocktransfer', 'stocktransfer', 'write')) { // Deletes a contact
 	$result = $object->delete_contact($lineid);

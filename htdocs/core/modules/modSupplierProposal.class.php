@@ -125,7 +125,7 @@ class modSupplierProposal extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // id de la permission
-		$this->rights[$r][1] = 'Envoyer les demandes fournisseurs'; // libelle de la permission
+		$this->rights[$r][1] = 'Send supplier proposals'; // libelle de la permission
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
 		$this->rights[$r][4] = 'send_advance';
 

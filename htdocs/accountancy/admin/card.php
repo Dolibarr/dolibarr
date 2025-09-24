@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
  * Copyright (C) 2014       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -244,13 +245,13 @@ if ($action == 'create') {
 	print '<td><input name="label" size="70" value="'.$object->label.'"></td></tr>';
 
 	// Label short
-	print '<tr><td>'.$langs->trans("LabelToShow").'</td>';
+	print '<tr><td>'.$langs->trans("ShortLabel").'</td>';
 	print '<td><input name="labelshort" size="70" value="'.$object->labelshort.'"></td></tr>';
 
 	// Account parent
 	print '<tr><td>'.$langs->trans("Accountparent").'</td>';
 	print '<td>';
-	print $formaccounting->select_account($object->account_parent, 'account_parent', 1, [], 0, 0, 'minwidth200');
+	print $formaccounting->select_account((string) $object->account_parent, 'account_parent', 1, [], 0, 0, 'minwidth200');
 	print '</td></tr>';
 
 	// Chart of accounts type
@@ -313,21 +314,21 @@ if ($action == 'create') {
 
 			// Account number
 			print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("AccountNumber").'</span></td>';
-			print '<td><input name="account_number" size="30" value="'.$object->account_number.'"></td></tr>';
+			print '<td><input class="minwidth300" name="account_number" value="'.$object->account_number.'"></td></tr>';
 
 			// Label
 			print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td>';
-			print '<td><input name="label" size="70" value="'.$object->label.'"></td></tr>';
+			print '<td><input class="minwidth500" name="label" value="'.$object->label.'"></td></tr>';
 
 			// Label short
-			print '<tr><td>'.$langs->trans("LabelToShow").'</td>';
-			print '<td><input name="labelshort" size="70" value="'.$object->labelshort.'"></td></tr>';
+			print '<tr><td>'.$langs->trans("ShortLabel").'</td>';
+			print '<td><input class="minwidth300" name="labelshort" value="'.$object->labelshort.'"></td></tr>';
 
 			// Account parent
 			print '<tr><td>'.$langs->trans("Accountparent").'</td>';
 			print '<td>';
 			// Note: We accept disabled account as parent account so we can build a hierarchy and use only children
-			print $formaccounting->select_account($object->account_parent, 'account_parent', 1, array(), 0, 0, 'minwidth100 maxwidth300 maxwidthonsmartphone', 1, '');
+			print $formaccounting->select_account((string) $object->account_parent, 'account_parent', 1, array(), 0, 0, 'minwidth100 maxwidth300 maxwidthonsmartphone', '1', '');
 			print '</td></tr>';
 
 			// Chart of accounts type
@@ -385,7 +386,7 @@ if ($action == 'create') {
 			print '<td colspan="2">'.$object->label.'</td></tr>';
 
 			// Label to show
-			print '<tr><td class="titlefield">'.$langs->trans("LabelToShow").'</td>';
+			print '<tr><td class="titlefield">'.$langs->trans("ShortLabel").'</td>';
 			print '<td colspan="2">'.$object->labelshort.'</td></tr>';
 
 			// Account parent

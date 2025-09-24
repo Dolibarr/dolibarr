@@ -3,7 +3,7 @@
  * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2021	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2019-2024	Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,7 +47,7 @@ $langs->loadLangs(array("admin", "cron", "bills", "members"));
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $confirm = GETPOST('confirm', 'alpha');
-$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'cronjoblist'; // To manage different context of search
 
 $id = GETPOSTINT('id');
@@ -161,7 +161,7 @@ if (empty($reshook)) {
 
 	// Execute jobs
 	if ($action == 'confirm_execute' && $confirm == "yes" && $permissiontoexecute) {
-		if (getDolGlobalString('CRON_KEY') && $conf->global->CRON_KEY != $securitykey) {
+		if (getDolGlobalString('CRON_KEY') && getDolGlobalString('CRON_KEY') != $securitykey) {
 			setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
 			$action = '';
 		} else {
@@ -312,7 +312,7 @@ if (GETPOSTISSET('search_processing')) {
 // Manage filter
 if (is_array($filter) && count($filter) > 0) {
 	foreach ($filter as $key => $value) {
-		$sql .= " AND ".$key." LIKE '%".$db->escape($value)."%'";
+		$sql .= " AND ".$db->sanitize($key)." LIKE '%".$db->escape($value)."%'";
 	}
 }
 if (!empty($search_module_name)) {
@@ -331,7 +331,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -403,7 +403,7 @@ $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $head = [];
 if ($mode == 'modulesetup') {
-	$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
 	print load_fiche_titre($langs->trans("CronSetup"), $linkback, 'title_setup');
 
 	// Configuration header
@@ -616,6 +616,9 @@ if ($num > 0) {
 			$texttoshow .= $langs->trans('CronCommand').': '.dol_trunc($obj->command);
 			$texttoshow .= '<br>'.$langs->trans('CronArgs').': '.$obj->params;
 			$texttoshow .= '<br>'.$langs->trans('Comment').': '.$langs->trans($obj->note);
+		} else {
+			$texttoshow = '';
+			$texttoshow = '';
 		}
 		print '<span class="classfortooltip" title="'.dol_escape_htmltag($texttoshow, 1, 1).'">'.$text.'</a>';
 		print '</td>';
@@ -682,7 +685,7 @@ if ($num > 0) {
 		// Return code of last run
 		print '<td class="center tdlastresultcode" title="'.dol_escape_htmltag($obj->lastresult).'">';
 		if ($obj->lastresult != '') {
-			if (empty($obj->lastresult)) {
+			if (empty($obj->lastresult) || $obj->status == Cronjob::STATUS_DISABLED) {
 				print $obj->lastresult;		// Print '0'
 			} else {
 				print '<span class="error">'.dol_escape_htmltag(dol_trunc($obj->lastresult)).'</div>';

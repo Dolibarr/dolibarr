@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2019 Laurent Destailleur          <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,6 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
- * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */
@@ -124,7 +123,7 @@ if ($action == 'updateMask') {
 } elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0) {
-		if ($conf->global->MRP_MO_ADDON_PDF == "$value") {
+		if (getDolGlobalString('MRP_MO_ADDON_PDF') == "$value") {
 			dolibarr_del_const($db, 'MRP_MO_ADDON_PDF', $conf->entity);
 		}
 	}
@@ -186,7 +185,8 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 llxHeader("", $langs->trans("MrpSetupPage"), '', '', 0, 0, '', '', '', 'mod-admin page-mrp');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("MrpSetupPage"), $linkback, 'title_setup');
 
 $head = mrpAdminPrepareHead();
@@ -253,7 +253,7 @@ foreach ($dirmodels as $reldir) {
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->MRP_MO_ADDON == $file) {
+						if (getDolGlobalString('MRP_MO_ADDON') == $file) {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'">';
@@ -264,13 +264,15 @@ foreach ($dirmodels as $reldir) {
 
 						$mrp = new Mo($db);
 						$mrp->initAsSpecimen();
+						$product = new Product($db);
+						$product->initAsSpecimen();
 
 						// Info
 						$htmltooltip = '';
 						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
 						$mrp->type = 0;
-						$nextval = $module->getNextValue($mysoc, $mrp);
-						if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+						$nextval = $module->getNextValue($product, $mrp);
+						if ((string) $nextval != $langs->trans("NotAvailable")) {
 							$htmltooltip .= ''.$langs->trans("NextValue").': ';
 							if ($nextval) {
 								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
@@ -283,7 +285,7 @@ foreach ($dirmodels as $reldir) {
 						}
 
 						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 0);
+						print $form->textwithpicto('', $htmltooltip, 1, 'info');
 						print '</td>';
 
 						print "</tr>\n";
@@ -418,7 +420,7 @@ foreach ($dirmodels as $reldir) {
 
 
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								// Preview

@@ -2,11 +2,11 @@
 /* Copyright (C) 2013-2016 Jean-François FERRY  <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel  <christophe@altairis.fr>
  * Copyright (C) 2018      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2021-2024 Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2021      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2022-2023 Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Benjamin Falière		<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	   Irvine FLEITH		<irvine.fleith@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -76,6 +76,7 @@ $action    = GETPOST('action', 'aZ09');
 $cancel    = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
+$contextpage = GETPOST('contextpage', 'aZ');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma') ? GETPOST('sortfield', 'aZ09comma') : "a.datep";
@@ -151,6 +152,11 @@ $triggermodname = 'TICKET_MODIFY';
 $permissiontoread   = $user->hasRight('ticket', 'read');
 $permissiontoadd    = $user->hasRight('ticket', 'write');
 $permissiontodelete = $user->hasRight('ticket', 'delete');
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 $upload_dir = $conf->ticket->dir_output;
 
@@ -289,7 +295,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				// Category association
-				$categories = GETPOST('categories', 'array');
+				$categories = GETPOST('categories', 'array:int');
 				$object->setCategories($categories);
 			}
 
@@ -452,7 +458,7 @@ if (empty($reshook)) {
 	if (($action == "confirm_close" || $action == "confirm_abandon") && GETPOST('confirm', 'alpha') == 'yes' && $permissiontoadd) {
 		$object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha'));
 
-		if ($object->close($user, ($action == "confirm_abandon" ? 1 : 0))) {
+		if ($object->close($user, ($action == "confirm_abandon" ? 1 : 0))) {	// Test on pemrission already done
 			setEventMessages($langs->trans('TicketMarkedAsClosed'), null, 'mesgs');
 
 			$url = 'card.php?track_id=' . GETPOST('track_id', 'alpha');
@@ -509,7 +515,7 @@ if (empty($reshook)) {
 	// Set progress status
 	if ($action == 'set_progression' && $user->hasRight('ticket', 'write')) {
 		if ($object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha')) >= 0) {
-			$result = $object->setProgression(GETPOST('progress', 'alpha'));
+			$result = $object->setProgression(GETPOSTINT('progress'));
 
 			$url = 'card.php?track_id=' . $object->track_id;
 			header("Location: " . $url);
@@ -557,9 +563,9 @@ if (empty($reshook)) {
 			// prevent browser refresh from reopening ticket several times
 			if ($object->status == Ticket::STATUS_CLOSED || $object->status == Ticket::STATUS_CANCELED) {
 				if ($object->fk_user_assign != null) {
-					$res = $object->setStatut(Ticket::STATUS_ASSIGNED, null, '', 'TICKET_MODIFY');
+					$res = $object->setStatut(Ticket::STATUS_ASSIGNED, null, '', $triggermodname);
 				} else {
-					$res = $object->setStatut(Ticket::STATUS_NOT_READ, null, '', 'TICKET_MODIFY');
+					$res = $object->setStatut(Ticket::STATUS_NOT_READ, null, '', $triggermodname);
 				}
 				if ($res) {
 					$url = 'card.php?track_id=' . $object->track_id;
@@ -626,27 +632,26 @@ if (empty($reshook)) {
 	}
 
 	// Action to update an extrafield
-	if ($action == "update_extras" && $permissiontoadd) {
+	if ($action == "update_extras" && $permissiontoeditextra) {
 		$object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha'));
 
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		$attribute_name = GETPOST('attribute', 'aZ09');
+
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 		if ($ret < 0) {
 			$error++;
 		}
 
 		if (!$error) {
-			$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
+			$result = $object->updateExtraField($attribute_name, $triggermodname);
 			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
 			}
 		}
 
 		if ($error) {
-			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'edit_extras';
-		} else {
-			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-			$action = 'view';
 		}
 	}
 
@@ -702,7 +707,7 @@ if (isModEnabled('project')) {
 
 $help_url = 'EN:Module_Ticket|FR:DocumentationModuleTicket';
 
-$title = $actionobject->getTitle($action);
+$title = $actionobject->getTitle($action, $object);
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-ticket page-card');
 
@@ -737,7 +742,7 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->showForm(1, 'create', 0, null, $action, $object);
 
 	print dol_get_fiche_end();
-} elseif ($action == 'edit' && $user->rights->ticket->write && $object->status < Ticket::STATUS_CLOSED) {
+} elseif ($action == 'edit' && $user->hasRight('ticket', 'write') && $object->status < Ticket::STATUS_CLOSED) {
 	if (empty($permissiontoadd)) {
 		accessforbidden('NotEnoughPermissions', 0, 1);
 	}
@@ -787,7 +792,7 @@ if ($action == 'create' || $action == 'presend') {
 			}
 
 			// Default select all or no contact
-			$default = (getDolGlobalString('TICKET_NOTIFY_AT_CLOSING') ? -2 : -3);
+			$default = (getDolGlobalString('TICKET_NOTIFY_AT_CLOSING') ? '-2' : '-3');
 			$formquestion = array(
 				array(
 					'name' => 'contactid',
@@ -852,7 +857,7 @@ if ($action == 'create' || $action == 'presend') {
 				$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 				// Ref
-				print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">';
+				print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="3">';
 				// Define a complementary filter for search of next/prev ref.
 				if (!$user->hasRight('projet', 'all', 'lire')) {
 					$objectsListId = $projectstat->getProjectsAuthorizedForUser($user, $mine, 0);
@@ -913,7 +918,7 @@ if ($action == 'create' || $action == 'presend') {
 
 		$head = ticket_prepare_head($object);
 
-		print dol_get_fiche_head($head, 'tabTicket', $langs->trans("Ticket"), -1, 'ticket');
+		print dol_get_fiche_head($head, 'tabTicket', $langs->trans("Ticket"), -1, 'ticket', 0, '', '', 0, '', 1);
 
 		$morehtmlref = '<div class="refidno">';
 
@@ -936,7 +941,8 @@ if ($action == 'create' || $action == 'presend') {
 		// Author
 		$createdbyshown = 0;
 		if ($object->fk_user_create > 0) {
-			$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
+			$morehtmlref .= '<br>';
+			//$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("CreatedBy").'</span> ';
 
 			$fuser = new User($db);
 			$fuser->fetch($object->fk_user_create);
@@ -950,29 +956,36 @@ if ($action == 'create' || $action == 'presend') {
 			// If ticket create from public interface - TODO Add a more robust test to know if created by public interface
 			$createdfrompublicticket = 1;
 		} elseif (!empty($object->email_msgid)) {
-			// If ticket create by emailcollector - TODO Add a more robust test to know if created by email collector (using import ky ?)
+			// If ticket create by emailcollector - TODO Add a more robust test to know if created by email collector (using import key ?)
 			$createdfromemailcollector = 1;
 		}
 
 		//var_dump($object);
+		$htmltooltip = '';
 		if ($createdfrompublicticket) {
-			$htmltooptip = $langs->trans("OriginEmail").': '.$object->origin_email;
-			$htmltooptip .= '<br>'.$langs->trans("IP").': '.$object->ip;
+			$htmltooltip .= $langs->trans("OriginEmail").': '.$object->origin_email;
+			$htmltooltip .= '<br>'.$langs->trans("IP").': '.dol_print_ip($object->ip);
 			$morehtmlref .= ($createdbyshown ? ' - ' : '<br>');
-			$morehtmlref .= ($createdbyshown ? '' : $langs->trans("CreatedBy").' : ');
+			//$morehtmlref .= ($createdbyshown ? '' : '<span class="opacitymedium">'.$langs->trans("CreatedBy").' </span> ');
 			$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
-			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">- '.$form->textwithpicto($langs->trans("CreatedByPublicPortal"), $htmltooptip, 1, 'help', '', 0, 3, 'tooltip').'</small>';
+			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">- '.$form->textwithpicto($langs->trans("CreatedByPublicPortal"), $htmltooltip, 1, 'help', '', 0, 3, 'tooltipcreatedbyportal').'</small>';
 		} elseif ($createdfromemailcollector) {
 			$langs->load("mails");
-			$htmltooltip = $langs->trans("EmailMsgID").': '.$object->email_msgid;
-			$htmltooltip .= '<br>'.$langs->trans("EmailDate").': '.dol_print_date($object->email_date, 'dayhour');
-			$htmltooltip .= '<br>'.$langs->trans("MailFrom").': '.$object->origin_email;
-			$htmltooltip .= '<br>'.$langs->trans("MailReply").': '.$object->origin_replyto;
-			$htmltooltip .= '<br>'.$langs->trans("MailReferences").': '.$object->origin_references;
+
+			$htmltooltip .= '<b>'.$langs->trans("EmailMsgID").':</b> '.$object->email_msgid;
+			$htmltooltip .= '<br><b>'.$langs->trans("EmailDate").':</b> '.dol_print_date($object->email_date, 'dayhour');
+			$htmltooltip .= '<br><b>'.$langs->trans("MailFrom").':</b> '.$object->origin_email;
+			$htmltooltip .= '<br><b>'.$langs->trans("MailReply").':</b> '.$object->origin_replyto;
+			$htmltooltip .= '<br><b>'.$langs->trans("MailReferences").':</b> '.$object->origin_references;
 			$morehtmlref .= ($createdbyshown ? ' - ' : '<br>');
-			$morehtmlref .= ($createdbyshown ? '' : $langs->trans("CreatedBy").' : ');
-			$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
-			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">- '.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $htmltooltip, 1, 'help', '', 0, 3, 'tooltip').'</small>';
+			//$morehtmlref .= ($createdbyshown ? '' : '<span class="opacitymedium">'.$langs->trans("CreatedBy").'</span> ');
+			$morehtmlref .= img_picto('From', 'email', 'class="paddingrightonly"');
+			$morehtmlref .= dol_escape_htmltag($object->origin_email);
+			if ($object->origin_replyto) {
+				$morehtmlref .= ' - '.img_picto('ReplyTo', 'email', 'class="paddingrightonly"');
+				$morehtmlref .= dol_escape_htmltag($object->origin_replyto);
+			}
+			$morehtmlref .= ' <small class="hideonsmartphone opacitymedium">- '.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $htmltooltip, 1, 'help', '', 0, 3, 'tooltipcreatedbyemailcollector').'</small>';
 		}
 
 		$permissiontoedit = $object->status < 8 && !$user->socid && $user->hasRight('ticket', 'write');
@@ -981,13 +994,13 @@ if ($action == 'create' || $action == 'presend') {
 		// Thirdparty
 		if (isModEnabled("societe")) {
 			$morehtmlref .= '<br>';
-			$morehtmlref .= img_picto($langs->trans("ThirdParty"), 'company', 'class="pictofixedwidth"');
 			if ($action != 'editcustomer' && $permissiontoedit) {
+				$morehtmlref .= img_picto($langs->trans("ThirdParty"), 'company', 'class="pictofixedwidth"');
 				$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editcustomer&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->transnoentitiesnoconv('SetThirdParty'), 0).'</a> ';
 			}
-			$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, $action == 'editcustomer' ? 'editcustomer' : 'none', '', 1, 0, 0, array(), 1);
+			$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, (string) $object->socid, $action == 'editcustomer' ? 'editcustomer' : 'none', '', 1, 0, 0, array(), 1);
 			if (!empty($object->socid)) {
-				$morehtmlref .= ' - <a href="'.DOL_URL_ROOT.'/ticket/list.php?socid='.$object->socid.'&sortfield=t.datec&sortorder=desc'.(getDolGlobalBool('TICKET_CLIENT_OTHER_TICKET_ONLY_OPEN')?'&search_fk_statut[]=openall':'').'">'.img_picto($langs->trans("Tickets"), 'ticket', 'class="pictofixedwidth"').' '.$langs->trans("TicketHistory").'</a>';
+				$morehtmlref .= ' - <a href="'.DOL_URL_ROOT.'/ticket/list.php?socid='.$object->socid.'&sortfield=t.datec&sortorder=desc'.(getDolGlobalBool('TICKET_CLIENT_OTHER_TICKET_ONLY_OPEN') ? '&search_fk_statut[]=openall' : '').'">'.img_picto($langs->trans("Tickets"), 'ticket', 'class="pictofixedwidth"').' '.$langs->trans("TicketHistory").'</a>';
 			}
 		}
 
@@ -1001,7 +1014,7 @@ if ($action == 'create' || $action == 'presend') {
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
 					$object->fetchProject();
@@ -1053,7 +1066,7 @@ if ($action == 'create' || $action == 'presend') {
 		print '<table class="border tableforfield centpercent">';
 
 		// Track ID
-		print '<tr><td class="titlefield">'.$langs->trans("TicketTrackId").'</td><td>';
+		print '<tr><td class="titlefieldmiddle">'.$langs->trans("TicketTrackId").'</td><td>';
 		if (!empty($object->track_id)) {
 			if (empty($object->ref)) {
 				$object->ref = (string) $object->id;
@@ -1078,7 +1091,7 @@ if ($action == 'create' || $action == 'presend') {
 		// Creation date
 		print '<tr><td>'.$langs->trans("DateCreation").'</td><td>';
 		print dol_print_date($object->datec, 'dayhour', 'tzuser');
-		print '<span class="opacitymedium"> - '.$langs->trans("TimeElapsedSince").': <i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->datec, 60)).'</i></span>';
+		print '<span class="opacitymedium"><span class="small"> - '.$langs->trans("TimeElapsedSince").': <b><i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->datec, 60)).'</i></b></span></span>';
 		print '</td></tr>';
 
 		// Origin
@@ -1102,8 +1115,10 @@ if ($action == 'create' || $action == 'presend') {
 		print '<tr><td>'.$langs->trans("TicketReadOn").'</td><td>';
 		if (!empty($object->date_read)) {
 			print dol_print_date($object->date_read, 'dayhour', 'tzuser');
-			print '<span class="opacitymedium"> - '.$langs->trans("TicketTimeElapsedBeforeSince").': <i>'.convertSecondToTime(roundUpToNextMultiple($object->date_read - $object->datec, 60)).'</i>';
-			print ' / <i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->date_read, 60)).'</i></span>';
+			print '<span class="opacitymedium"><span class="small"> - '.$langs->trans("TimeElapsedSince").': ';
+			//print '<b><i>'.convertSecondToTime(roundUpToNextMultiple($object->date_read - $object->datec, 60)).'</i></b>';
+			//print ' / ';
+			print '<b><i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->date_read, 60)).'</i></b></span></span>';
 		}
 		print '</td></tr>';
 
@@ -1279,39 +1294,29 @@ if ($action == 'create' || $action == 'presend') {
 
 		// Tags/Categories
 		if (isModEnabled('category')) {
+			print '<!-- tag/categories -->'."\n";
 			print '<table class="border centpercent tableforfield">';
 			print '<tr>';
 			print '<td class="valignmiddle titlefield">';
-			print '<table class="nobordernopadding centpercent"><tr><td class="titlefield">';
+			print '<table class="nobordernopadding centpercent"><tr><td class="none">';
 			print $langs->trans("Categories");
 			if ($action != 'categories' && !$user->socid) {
-				print '<td class="right"><a class="editfielda" href="'.$url_page_current.'?action=categories&amp;track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
+				print '</td><td class="right"><a class="editfielda" href="'.$url_page_current.'?action=categories&track_id='.urlencode($object->track_id).'">'.img_edit($langs->trans('Modify')).'</a>';
 			}
+			print '</td>';
 			print '</table>';
 			print '</td>';
 
 			if ($user->hasRight('ticket', 'write') && $action == 'categories') {
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_TICKET, '', 'parent', 64, 0, 3);
-				if (is_array($cate_arbo)) {
-					// Categories
-					print '<td colspan="3">';
-					print '<form action="'.$url_page_current.'" method="POST">';
-					print '<input type="hidden" name="token" value="'.newToken().'">';
-					print '<input type="hidden" name="track_id" value="'.$track_id.'">';
-					print '<input type="hidden" name="action" value="set_categories">';
-
-					$category = new Categorie($db);
-					$cats = $category->containing($object->id, 'ticket');
-					$arrayselected = array();
-					foreach ($cats as $cat) {
-						$arrayselected[] = $cat->id;
-					}
-
-					print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'maxwidth500 widthcentpercentminusx', 0, 0);
-					print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Save').'">';
-					print '</form>';
-					print "</td>";
-				}
+				print '<td colspan="3">';
+				print '<form action="'.$url_page_current.'" method="POST">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="track_id" value="'.$track_id.'">';
+				print '<input type="hidden" name="action" value="set_categories">';
+				print $form->selectCategories(Categorie::TYPE_TICKET, 'categories', $object);
+				print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Save').'">';
+				print '</form>';
+				print "</td>";
 			} else {
 				print '<td colspan="3">';
 				print $form->showCategories($object->id, Categorie::TYPE_TICKET, 1);
@@ -1355,81 +1360,82 @@ if ($action == 'create' || $action == 'presend') {
 			foreach (array('internal', 'external') as $source) {
 				$tmpobject = $object;
 				$tab = $tmpobject->listeContact(-1, $source);
-				'@phan-var-force array<array{source:string,id:int,rowid:int,email:string,civility:string,firstname:string,lastname:string,labeltype:string,libelle:string,socid:int,code:string,status:int,statuscontact:string,fk_c_typecontact:string,phone:string,phone_mobile:string,phone_perso?:string,nom:string}> $tab';
-				$num = is_array($tab) ? 0 : count($tab);
+				// '@phan-var-force array<array{source:string,id:int,rowid:int,email:string,civility:string,firstname:string,lastname:string,labeltype:string,libelle:string,socid:int,code:string,status:int,statuscontact:int,fk_c_typecontact:string,phone:string,phone_mobile:string,phone_perso?:string,nom:string}> $tab';
+				$num = is_array($tab) ? count($tab) : 0;
 				$i = 0;
 				foreach (array_keys($tab) as $i) {
+					$tab_i = &$tab[$i];
 					$var = !$var;
 					print '<div class="tagtr '.($var ? 'pair' : 'impair').'">';
 
 					print '<div class="tagtd left">';
-					if ($tab[$i]['source'] == 'internal') {
+					if ($tab_i['source'] == 'internal') {
 						echo $langs->trans("User");
 					}
 
-					if ($tab[$i]['source'] == 'external') {
+					if ($tab_i['source'] == 'external') {
 						echo $langs->trans("ThirdPartyContact");
 					}
 
 					print '</div>';
 					print '<div class="tagtd left">';
 
-					if ($tab[$i]['socid'] > 0) {
-						$companystatic->fetch($tab[$i]['socid']);
+					if ($tab_i['socid'] > 0) {
+						$companystatic->fetch($tab_i['socid']);
 						echo $companystatic->getNomUrl(-1);
 					}
-					if ($tab[$i]['socid'] < 0) {
+					if ($tab_i['socid'] < 0) {
 						echo getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 					}
-					if (!$tab[$i]['socid']) {
+					if (!$tab_i['socid']) {
 						echo '&nbsp;';
 					}
 					print '</div>';
 
 					print '<div class="tagtd">';
-					if ($tab[$i]['source'] == 'internal') {
-						if ($userstatic->fetch($tab[$i]['id'])) {
+					if ($tab_i['source'] == 'internal') {
+						if ($userstatic->fetch($tab_i['id'])) {
 							print $userstatic->getNomUrl(-1);
 						}
 					}
-					if ($tab[$i]['source'] == 'external') {
-						if ($contactstatic->fetch($tab[$i]['id'])) {
+					if ($tab_i['source'] == 'external') {
+						if ($contactstatic->fetch($tab_i['id'])) {
 							print $contactstatic->getNomUrl(-1);
 						}
 					}
 					print ' </div>
-					<div class="tagtd">' . $tab[$i]['libelle'].'</div>';
+					<div class="tagtd">' . $tab_i['libelle'].'</div>';
 
 					print '<div class="tagtd">';
 
-					print dol_print_phone($tab[$i]['phone'], '', 0, 0, 'AC_TEL').'<br>';
+					print dol_print_phone($tab_i['phone'], '', 0, 0, 'AC_TEL').'<br>';
 
-					if (!empty($tab[$i]['phone_perso'])) {
+					if (array_key_exists('phone_perso', $tab_i) && !empty($tab_i['phone_perso'])) {
 						//print img_picto($langs->trans('PhonePerso'),'object_phoning.png','',0,0,0).' ';
-						print '<br>'.dol_print_phone($tab[$i]['phone_perso'], '', 0, 0, 'AC_TEL').'<br>';
+						print '<br>'.dol_print_phone((string) $tab_i['phone_perso'], '', 0, 0, 'AC_TEL').'<br>';
 					}
-					if (!empty($tab[$i]['phone_mobile'])) {
+					if (!empty($tab_i['phone_mobile'])) {
 						//print img_picto($langs->trans('PhoneMobile'),'object_phoning.png','',0,0,0).' ';
-						print dol_print_phone($tab[$i]['phone_mobile'], '', 0, 0, 'AC_TEL').'<br>';
+						print dol_print_phone($tab_i['phone_mobile'], '', 0, 0, 'AC_TEL').'<br>';
 					}
 					print '</div>';
 
 					print '<div class="tagtd center">';
 					if ($object->status >= 0) {
-						echo '<a href="contact.php?track_id='.$object->track_id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">';
+						echo '<a href="contact.php?track_id='.$object->track_id.'&amp;action=swapstatut&amp;ligne='.$tab_i['rowid'].'">';
 					}
 
-					if ($tab[$i]['source'] == 'internal') {
-						$userstatic->id = $tab[$i]['id'];
-						$userstatic->lastname = $tab[$i]['lastname'];
-						$userstatic->firstname = $tab[$i]['firstname'];
-						echo $userstatic->LibStatut($tab[$i]['statuscontact'], 3);
+					if ($tab_i['source'] == 'internal') {
+						$userstatic->id = $tab_i['id'];
+						$userstatic->lastname = $tab_i['lastname'];
+						$userstatic->firstname = $tab_i['firstname'];
+						echo $userstatic->LibStatut($tab_i['statuscontact'], 3);
 					}
-					if ($tab[$i]['source'] == 'external') {
-						$contactstatic->id = $tab[$i]['id'];
-						$contactstatic->lastname = $tab[$i]['lastname'];
-						$contactstatic->firstname = $tab[$i]['firstname'];
-						echo $contactstatic->LibStatut($tab[$i]['statuscontact'], 3);
+					if ($tab_i['source'] == 'external') {
+						$contactstatic->id = $tab_i['id'];
+						$contactstatic->lastname = $tab_i['lastname'];
+						$contactstatic->firstname = $tab_i['firstname'];
+						echo $contactstatic->LibStatut($tab_i['statuscontact'], 3);
 					}
 					if ($object->status >= 0) {
 						echo '</a>';
@@ -1527,9 +1533,9 @@ if ($action == 'create' || $action == 'presend') {
 
 			$outputlangs = $langs;
 			$newlang = '';
-			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
-			} elseif (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && is_object($object->thirdparty)) {
+			} elseif (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && is_object($object->thirdparty)) {
 				$newlang = $object->thirdparty->default_lang;
 			}
 			if (!empty($newlang)) {
@@ -1574,7 +1580,7 @@ if ($action == 'create' || $action == 'presend') {
 			$formticket->param['models'] = $modelmail;
 			$formticket->param['models_id'] = GETPOSTINT('modelmailselected');
 			//$formticket->param['socid']=$object->fk_soc;
-			$formticket->param['returnurl'] = $_SERVER["PHP_SELF"].'?track_id='.$object->track_id;
+			$formticket->param['returnurl'] = $_SERVER["PHP_SELF"].'?track_id='.urldecode($object->track_id);
 
 			$formticket->withsubstit = 1;
 			$formticket->substit = $substitutionarray;
@@ -1642,7 +1648,7 @@ if ($action == 'create' || $action == 'presend') {
 				$codelang = $object->thirdparty->default_lang;
 			}
 
-			print $formfile->showdocuments('ticket', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $codelang);
+			print $formfile->showdocuments('ticket', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $codelang);
 
 			// Show links to link elements
 			$tmparray = $form->showLinkToObjectBlock($object, array(), array('ticket'), 1);

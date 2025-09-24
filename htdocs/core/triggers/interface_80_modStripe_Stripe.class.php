@@ -81,7 +81,7 @@ class InterfaceStripe extends DolibarrTriggers
 
 		$service = 'StripeTest';
 		$servicestatus = 0;
-		if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
+		if (getDolGlobalString('STRIPE_LIVE')/* && !GETPOST('forcesandbox', 'alpha') */) {
 			$service = 'StripeLive';
 			$servicestatus = 1;
 		}

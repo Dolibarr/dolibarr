@@ -202,8 +202,8 @@ class AdherentStats extends Stats
 		$sql = "SELECT t.rowid as fk_adherent_type, t.libelle as label";
 		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_DRAFT, "'members_draft'", 'NULL').") as members_draft";
 		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_VALIDATED."  AND (d.datefin IS NULL AND t.subscription = '1')", "'members_pending'", 'NULL').") as members_pending";
-		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_VALIDATED."  AND (d.datefin >= '".$this->db->idate($now)."' OR t.subscription = 0)", "'members_uptodate'", 'NULL').") as members_uptodate";
-		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_VALIDATED."  AND (d.datefin < '".$this->db->idate($now)."' AND t.subscription = 1)", "'members_expired'", 'NULL').") as members_expired";
+		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_VALIDATED."  AND (d.datefin >= '".$this->db->idate($now)."' OR t.subscription = '0')", "'members_uptodate'", 'NULL').") as members_uptodate";
+		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_VALIDATED."  AND (d.datefin < '".$this->db->idate($now)."' AND t.subscription = '1')", "'members_expired'", 'NULL').") as members_expired";
 		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_EXCLUDED, "'members_excluded'", 'NULL').") as members_excluded";
 		$sql .= ", COUNT(".$this->db->ifsql("d.statut = ".Adherent::STATUS_RESILIATED, "'members_resiliated'", 'NULL').") as members_resiliated";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as t";

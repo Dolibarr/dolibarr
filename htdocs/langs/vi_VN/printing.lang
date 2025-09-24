@@ -32,6 +32,7 @@ PRINTIPP_HOST=Máy chủ in
 PRINTIPP_PORT=Port
 PRINTIPP_USER=Đăng nhập
 PRINTIPP_PASSWORD=Mật khẩu
+PRINTIPP_SSL=Sử dụng SSL
 NoDefaultPrinterDefined=Không có máy in mặc định được xác định
 DefaultPrinter=Máy in mặc định
 Printer=Máy in
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=Biến cấu hình cho trình điều khiển in Goog
 PrintingDriverDescprintipp=Các biến cấu hình để in Cup driver.
 PrintTestDescprintgcp=Danh sách các máy in cho Google Cloud Print.
 PrintTestDescprintipp=Danh sách các máy in cho Cups
+Testbbbb

@@ -69,7 +69,7 @@ class DiscountTest extends CommonClassTest
 
 		$localobject = new DiscountAbsolute($db);
 		$localobject->initAsSpecimen();
-		$localobject->fk_soc = $socid;
+		$localobject->socid = $socid;
 		$result = $localobject->create($user);
 
 		$this->assertLessThan($result, 0);

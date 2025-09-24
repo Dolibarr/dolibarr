@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2024	Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2015-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2017		Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -91,7 +91,7 @@ if ($id > 0) {
 	$object->fetch($id);
 }
 
-$upload_dir = $conf->societe->multidir_output[$object->entity].'/contact/'.dol_sanitizeFileName($object->ref);
+$upload_dir = $conf->societe->multidir_output[$object->entity ?? $conf->entity].'/contact/'.dol_sanitizeFileName($object->ref);
 $modulepart = 'contact';
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context

@@ -3,7 +3,7 @@
  * Copyright (C) 2008-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -301,15 +301,10 @@ $maxheightwin = (isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenhe
 $moreheadcss = '';
 $moreheadjs = '';
 
-//$morejs=array();
-$morejs = array('includes/jquery/plugins/blockUI/jquery.blockUI.js', 'core/js/blockUI.js'); // Used by ecm/tpl/enabledfiletreeajax.tpl.pgp
+$morejs=array();
 if (!getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 	$morejs[] = "includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
 }
-
-$moreheadjs .= '<script type="text/javascript">'."\n";
-$moreheadjs .= 'var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
-$moreheadjs .= '</script>'."\n";
 
 llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', 0, 0, $morejs, '', '', 'mod-ecm page-index_auto');
 
@@ -350,7 +345,7 @@ if (!getDolGlobalString('ECM_AUTO_TREE_HIDEN')) {
 	}
 	if (isModEnabled("supplier_order")) {
 		$rowspan++;
-		$sectionauto[] = array('position' => 80, 'level' => 1, 'module' => 'order_supplier', 'test' => isModEnabled("supplier_order"), 'label' => $langs->trans("SuppliersOrders"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("PurchaseOrders")));
+		$sectionauto[] = array('position' => 80, 'level' => 1, 'module' => 'order_supplier', 'test' => isModEnabled("supplier_order"), 'label' => $langs->trans("SuppliersOrders"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("SuppliersOrders")));
 	}
 	if (isModEnabled("supplier_invoice")) {
 		$rowspan++;
@@ -393,6 +388,9 @@ if (!getDolGlobalString('ECM_AUTO_TREE_HIDEN')) {
 		$langs->load("banks");
 		$rowspan++;
 		$sectionauto[] = array('position' => 180, 'level' => 1, 'module' => 'banque', 'test' => isModEnabled('bank'), 'label' => $langs->trans("BankAccount"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("BankAccount")));
+		// TODO Enable this
+		//$rowspan++;
+		//$sectionauto[] = array('position' => 182, 'level' => 1, 'module' => 'bank-statement', 'test' => isModEnabled('bank'), 'label' => $langs->trans("BankAccount").' - '.$langs->trans("Statement"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("BankAccount").' - '.$langs->transnoentitiesnoconv("Statement")));
 		$rowspan++;
 		$sectionauto[] = array('position' => 190, 'level' => 1, 'module' => 'chequereceipt', 'test' => isModEnabled('bank'), 'label' => $langs->trans("CheckReceipt"), 'desc' => $langs->trans("ECMDocsBy", $langs->transnoentitiesnoconv("CheckReceipt")));
 	}

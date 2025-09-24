@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2017		Rui Strecht			<rui.strecht@aliartalentos.com>
- * Copyright (C) 2020       Open-Dsi         	<support@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2008-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2008-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2017		Rui Strecht				<rui.strecht@aliartalentos.com>
+ * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,7 +142,7 @@ class FormCompany extends Form
 	/**
 	 *  Affiche formulaire de selection des modes de reglement
 	 *
-	 *  @param	int		$page        	Page
+	 *  @param	string	$page        	Page
 	 *  @param  int		$selected    	Id or code preselected
 	 *  @param  string	$htmlname   	Nom du formulaire select
 	 *	@param	int		$empty			Add empty value in list
@@ -194,7 +194,7 @@ class FormCompany extends Form
 	/**
 	 *  Affiche formulaire de selection des niveau de prospection pour les contacts
 	 *
-	 *  @param	int		$page        	Page
+	 *  @param	string	$page        	Page
 	 *  @param  int		$selected    	Id or code preselected
 	 *  @param  string	$htmlname   	Nom du formulaire select
 	 *	@param	int		$empty			Add empty value in list
@@ -249,15 +249,15 @@ class FormCompany extends Form
 	 *   The key of the list is the code (there can be several entries for a given code but in this case, the country field differs).
 	 *   Thus the links with the departments are done on a department independently of its name.
 	 *
-	 *   @param     string	$selected        	Code state preselected
-	 *   @param     int		$country_codeid     0=list for all countries, otherwise country code or country rowid to show
-	 *   @param     string	$htmlname			Id of department
+	 *   @param     string		$selected        	Code state preselected
+	 *   @param     0|string	$country_codeid     Set to 0=list for all countries, otherwise country code or country rowid to show
+	 *   @param     string		$htmlname			Id of department
 	 *   @return	void
 	 */
 	public function select_departement($selected = '', $country_codeid = 0, $htmlname = 'state_id')
 	{
 		// phpcs:enable
-		print $this->select_state($selected, $country_codeid, $htmlname);
+		print $this->select_state((int) $selected, $country_codeid, $htmlname);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -267,11 +267,11 @@ class FormCompany extends Form
 	 *   The key of the list is the code (there can be several entries for a given code but in this case, the country field differs).
 	 *   Thus the links with the departments are done on a department independently of its name.
 	 *
-	 *    @param	int		$selected        	Code state preselected (must be state id)
-	 *    @param    int		$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
-	 *    @param    string	$htmlname			Id of department. If '', we want only the string with <option>
-	 *    @param	string	$morecss			Add more css
-	 * 	  @return	string						String with HTML select
+	 *    @param	int			$selected        	Code state preselected (must be state id)
+	 *    @param    int|string	$country_codeid    	Country code or id: 0=list for all countries, otherwise country code or country rowid to show
+	 *    @param    string		$htmlname			Id of department. If '', we want only the string with <option>
+	 *    @param	string		$morecss			Add more css
+	 * 	  @return	string							String with HTML select
 	 *    @see select_country()
 	 */
 	public function select_state($selected = 0, $country_codeid = 0, $htmlname = 'state_id', $morecss = 'maxwidth200onsmartphone  minwidth300')
@@ -524,7 +524,7 @@ class FormCompany extends Form
 	 *    A country separator is included in case the list for all countries is returned.
 	 *
 	 *    @param	int			$selected        	Preselected code for juridical type
-	 *    @param    int			$country_codeid		0=All countries, else the code of the country to display
+	 *    @param    0|string	$country_codeid		Set to 0=All countries, else the code of the country to display
 	 *    @param    string		$filter          	Add a SQL filter on list
 	 *    @return	void
 	 *    @deprecated Use print xxx->select_juridicalstatus instead
@@ -542,7 +542,7 @@ class FormCompany extends Form
 	 *    A country separator is included in case the list for all countries is returned.
 	 *
 	 *    @param	int			$selected        	Preselected code of juridical type
-	 *    @param    int			$country_codeid     0=list for all countries, otherwise list only country requested
+	 *    @param    0|string	$country_codeid     Set to 0=list for all countries, otherwise list only country requested
 	 *    @param    string		$filter          	Add a SQL filter on list. Data must not come from user input.
 	 *    @param	string		$htmlname			HTML name of select
 	 *    @param	string		$morecss			More CSS
@@ -562,7 +562,7 @@ class FormCompany extends Form
 		$sql .= " WHERE f.fk_pays=c.rowid";
 		$sql .= " AND f.active = 1 AND c.active = 1";
 		if ($country_codeid) {
-			$sql .= " AND c.code = '" . $this->db->escape($country_codeid) . "'";
+			$sql .= " AND c.code = '" . $this->db->escape((string) $country_codeid) . "'";
 		}
 		if ($filter) {
 			$sql .= " " . $filter;
@@ -651,7 +651,7 @@ class FormCompany extends Form
 	 */
 	public function selectCompaniesForNewContact($object, $var_id, $selected = 0, $htmlname = 'newcompany', $limitto = [], $forceid = 0, $moreparam = '', $morecss = '')
 	{
-		global $conf, $hookmanager;
+		global $conf, $user, $hookmanager;
 
 		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT')) {
 			// Use Ajax search
@@ -751,6 +751,13 @@ class FormCompany extends Form
 			if (is_array($limitto) && count($limitto)) {
 				$sql .= " AND s.rowid IN (" . $this->db->sanitize(implode(',', $limitto)) . ")";
 			}
+			// filter user access
+			if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = s.rowid AND sc.fk_user = ".(int) $user->id .")";
+			}
+			if ($user->socid > 0) {
+				$sql .= " AND s.rowid = ".((int) $user->socid);
+			}
 			// Add where from hooks
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('selectCompaniesForNewContactListWhere', $parameters); // Note that $action and $object may have been modified by hook
@@ -810,7 +817,7 @@ class FormCompany extends Form
 	/**
 	 *  Return a select list with types of contacts
 	 *
-	 *  @param	Object		$object         	Object to use to find type of contact
+	 *  @param	?Object		$object         	Object to use to find type of contact
 	 *  @param  string		$selected       	Default selected value
 	 *  @param  string		$htmlname			HTML select name
 	 *  @param  string		$source				Source ('internal' or 'external')
@@ -1052,7 +1059,7 @@ class FormCompany extends Form
 	/**
 	 * Return a HTML select for thirdparty type
 	 *
-	 * @param int 		$selected 		Selected value
+	 * @param int<0,4>|'0'|'2,3'|'1,3'|'4'	$selected 	Selected value
 	 * @param string 	$htmlname 		HTML select name
 	 * @param string 	$htmlidname 	HTML select id
 	 * @param string 	$typeinput 		HTML output
@@ -1117,11 +1124,11 @@ class FormCompany extends Form
 	/**
 	 *  Output html select to select third-party type
 	 *
-	 *  @param	string	$page       	Page
-	 *  @param  string	$selected   	Id preselected
-	 *  @param  string	$htmlname		Name of HTML select
-	 *  @param  string	$filter         optional filters criteras
-	 *  @param  int     $nooutput       No print output. Return it only.
+	 *  @param	string		$page		Page
+	 *  @param  string		$selected	Id preselected
+	 *  @param  string		$htmlname	Name of HTML select
+	 *  @param  string		$filter		optional filters criteras
+	 *  @param  int<0,1>	$nooutput	No print output. Return it only.
 	 *  @return	void|string
 	 */
 	public function formThirdpartyType($page, $selected = '', $htmlname = 'socid', $filter = '', $nooutput = 0)
@@ -1158,11 +1165,11 @@ class FormCompany extends Form
 	/**
 	 *  Output html select to select prospect status
 	 *
-	 *  @param  string			$htmlname		Name of HTML select
-	 *  @param	Contact|null	$prospectstatic Prospect object
-	 *  @param  int				$statusprospect	status of prospect
-	 *  @param  int				$idprospect     id of prospect
-	 *  @param  string  		$mode      		select if we want activate de html part or js
+	 *  @param  string				$htmlname		Name of HTML select
+	 *  @param	Contact|Client|null	$prospectstatic Prospect object
+	 *  @param  int					$statusprospect	status of prospect
+	 *  @param  int					$idprospect     id of prospect
+	 *  @param  'html'|'js'			$mode      		select if we want activate de html part or js
 	 *  @return	void
 	 */
 	public function selectProspectStatus($htmlname, $prospectstatic, $statusprospect, $idprospect, $mode = "html")

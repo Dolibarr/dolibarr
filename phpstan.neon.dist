@@ -1,5 +1,5 @@
 includes:
-	- build/phpstan/phpstan-baseline.neon
+	- dev/build/phpstan/phpstan-baseline.neon
 parameters:
 	tmpDir: ./.github/tmp
 	parallel:
@@ -27,7 +27,27 @@ parameters:
 		- htdocs/modulebuilder/template/test/*
 		- htdocs/support/*
 		analyse:
-		- htdocs/includes/*
+		- htdocs/includes/geoPHP/*
+		- htdocs/includes/markrogoyski/*
+		- htdocs/includes/maximebf/*
+		- htdocs/includes/mike42/*
+		- htdocs/includes/mobiledetect/*
+		- htdocs/includes/nusoap/*
+		- htdocs/includes/OAuth/*
+		- htdocs/includes/odtphp/zip/*
+		- htdocs/includes/parsedown/*
+		- htdocs/includes/php-iban/*
+		- htdocs/includes/phpoffice/*
+		- htdocs/includes/printipp/*
+		- htdocs/includes/Psr/*
+		- htdocs/includes/restler/*
+		- htdocs/includes/sabre/*
+		- htdocs/includes/stripe/*
+		- htdocs/includes/swiftmailer/*
+		- htdocs/includes/symfony/*
+		- htdocs/includes/tcpdi/*
+		- htdocs/includes/tecnickcom/*
+		- htdocs/includes/webklex/*
 		- htdocs/core/class/lessc.class.php
 	# checkAlwaysTrueCheckTypeFunctionCall: false
 	# checkAlwaysTrueInstanceof: false
@@ -49,10 +69,14 @@ parameters:
 	reportMagicMethods: false
 	reportMagicProperties: false
 	treatPhpDocTypesAsCertain: false
-	# if you want to exclude something, generate the baseline to do that, adding here give the opportunity to add new errors
+	# if you want to exclude something, generate the baseline to do that, add here give only pattern that does not give the opportunity to introduce new errors
+	# or pattern to avoid false positive of some bugged or allowed phpstan checks
 	ignoreErrors:
 		- '#.*phan-var#'
-		- '#^Expression "''…" on a separate line does not do anything\.$#'
+		- '#^Expression "''…" on a separate line does not do anything#'
+		- '#Empty array passed to foreach#'
+		- '#Unable to resolve the template type T#'
+		- '#in empty\(\) always exists and is always falsy#'
 	internalErrorsCountLimit: 50
 	cache:
 		# nodesByFileCountMax: 512

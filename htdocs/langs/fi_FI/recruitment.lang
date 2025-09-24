@@ -64,3 +64,7 @@ NoPositionOpen=Tällä hetkellä ei avoimia paikkoja
 ConfirmClose=Vahvista peruutus
 ConfirmCloseAsk=Haluatko varmasti peruuttaa tämän rekrytointiehdokkaan
 Recruitment=Rekrytointi
+ApplyJobCandidature=Hae tätä työpaikkaa
+ErrorRecruitmmentCandidatureAlreadyExists= Sähköpostiosoitteella %s on jo työhakemus.
+RecruitmentCandidatureSaved=Työhakemus tallennettu onnistuneesti
+NoOpenJobOffer=Ei avoimia työpaikkoja tällä hetkellä

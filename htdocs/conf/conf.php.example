@@ -196,7 +196,7 @@ $dolibarr_main_db_readonly=0;
 // ================================
 // An secret ID that is unique for each installation.
 // This value is also never visible and never propagated outside of Dolibarr, so it can be used as a salt / key for some encryption (For example to get
-//  a unique hashed key, application will hash the value concatenated with a string. Example: md5('dolibarr'+dolibarr_main_instance_unique_id)
+// a unique hashed key, application will hash the value concatenated with a string. Example: sha256('dolibarr'+dolibarr_main_instance_unique_id)
 // WARNING: Changing this value will also make some sensitive values encrypted in database wrong.
 // Default value: randomly defined during installation
 // Examples:
@@ -207,7 +207,7 @@ $dolibarr_main_instance_unique_id='84b5bc91f83b56e458db71e0adac2b62';
 
 // dolibarr_main_dolcrypt_key
 // ==========================
-// An secret key to encrypt/decrypt data with dolcrypt() method, for reversible encryption.
+// An secret key to encrypt/decrypt data with the dolcrypt() method, for reversible encryption.
 // This value is also never visible and never propagated outside of Dolibarr, it is used as key for the dolcrypt encryption.
 // WARNING: Changing this value will also make some sensitive values encrypted in database wrong.
 // Default value: ''. When not defined, the $dolibarr_main_instance_unique_id will be used instead.
@@ -316,9 +316,9 @@ $dolibarr_main_restrict_os_commands='mariadb-dump, mariadb, mysqldump, mysql, pg
 // To restrict the activation and use of certain potentially security-sensitive modules.
 // Default value: array('dav')
 // Examples:
-// $dolibarr_main_disabled_modules = array('dav');
+// $dolibarr_main_disabled_modules = array('dav', 'api');
 //
-// $dolibarr_main_disabled_modules = array('dav');
+// $dolibarr_main_disabled_modules = array();
 
 // dolibarr_main_restrict_ip
 // =========================
@@ -333,7 +333,7 @@ $dolibarr_main_restrict_ip='';
 // dolibarr_nocsrfcheck
 // ====================
 // This parameter can be used to disable CSRF protection.
-// This might be required if you access Dolibarr behind a proxy that make bad URL rewriting, to avoid false alarms.
+// This might be required for debug purpose or if you access Dolibarr behind a proxy that make bad URL rewriting, to avoid false alarms.
 // In most cases, you should always keep this to 0.
 // Default value: 0
 // Possible values: 0 or 1 (no strict CSRF test, only test on referrer) or 2 (no CSRF test at all)
@@ -341,6 +341,18 @@ $dolibarr_main_restrict_ip='';
 // $dolibarr_nocsrfcheck='0';
 //
 $dolibarr_nocsrfcheck='0';
+
+// dolibarr_nocsrfcheck
+// ====================
+// This parameter can be used to disable CSRF protection.
+// This might be required for debug purpose or if you access Dolibarr behind a proxy that make bad URL rewriting, to avoid false alarms.
+// In most cases, you should always keep this to 0.
+// Default value: 0
+// Possible values: 0 or 1 (API is always enabled, can't be disabled from admin setup)
+// Examples:
+// $dolibarr_api_count_always_enabled='1';
+//
+// $dolibarr_api_count_always_enabled='1';
 
 // dolibarr_cron_allow_cli
 // =======================
@@ -439,7 +451,7 @@ $dolibarr_cron_allow_cli='0';
 
 // dolibarr_allow_download_external_modules
 // ========================================
-// Provide a link to download the zip of an external modules installed into custom directory from the web admin.
+// Provide a link to download the zip of an external modules, installed into custom directory, from the web admin.
 // Default value: 0
 // Examples:
 // $dolibarr_allow_download_external_modules=0;

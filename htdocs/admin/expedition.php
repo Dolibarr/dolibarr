@@ -7,8 +7,8 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011-2018	Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "sendings", "deliveries", "other"));
+$langs->loadLangs(array("admin", "sendings", "other"));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -178,7 +178,8 @@ $form = new Form($db);
 
 llxHeader("", $langs->trans("SendingsSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-expedition');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.img_picto($langs->trans("BackToModuleList"), 'back', 'class="pictofixedwidth"').'<span class="hideonsmartphone">'.$langs->trans("BackToModuleList").'</span></a>';
+
 print load_fiche_titre($langs->trans("SendingsSetup"), $linkback, 'title_setup');
 print '<br>';
 $head = expedition_admin_prepare_head();
@@ -243,7 +244,7 @@ foreach ($dirmodels as $reldir) {
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if ($conf->global->EXPEDITION_ADDON_NUMBER == "$file") {
+						if (getDolGlobalString('EXPEDITION_ADDON_NUMBER') == "$file") {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodel&token='.newToken().'&value='.urlencode($file).'&label='.urlencode($module->name).'">';
@@ -272,7 +273,7 @@ foreach ($dirmodels as $reldir) {
 						}
 
 						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 0);
+						print $form->textwithpicto('', $htmltooltip, 1, 'info');
 						print '</td>';
 
 						print '</tr>';
@@ -408,7 +409,7 @@ foreach ($dirmodels as $reldir) {
 								$htmltooltip .= '<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark, 1, 1);
 
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								// Preview
@@ -456,6 +457,13 @@ print '<td>';
 print ajax_constantonoff('SHIPPING_DISPLAY_STOCK_ENTRY_DATE');
 print '</td></tr>';
 
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans('SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST');
+print '</td>';
+print '<td>';
+print ajax_constantonoff('SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST');
+print '</td></tr>';
+
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
@@ -487,7 +495,15 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowOnLineSign");
 print '</td>';
 print '<td>';
-print ajax_constantonoff('EXPEDITION_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, $langs->transnoentitiesnoconv("WarningOnlineSignature"));
+print ajax_constantonoff('EXPEDITION_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, $langs->transnoentitiesnoconv("WarningOnlineSignature", 'https://www.dolistore.com'));
+print '</td></tr>';
+
+// Pre fill shipment qty option
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("DontPrefillShipmentQty");
+print '</td>';
+print '<td>';
+print ajax_constantonoff('SHIPMENT_DONT_PREFILL_QTY', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, '');
 print '</td></tr>';
 
 print '</table>';

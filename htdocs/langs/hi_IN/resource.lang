@@ -1,39 +1,38 @@
 # Dolibarr language file - Source file is en_US - resource
-MenuResourceIndex=Resources
-MenuResourceAdd=New resource
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
-ActionsOnResource=Events about this resource
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+MenuResourceIndex=संसाधन
+MenuResourceAdd=नया संसाधन
+DeleteResource=संसाधन हटाएं
+ConfirmDeleteResourceElement=इस तत्व के लिए संसाधन को हटाने की पुष्टि करें
+NoResourceInDatabase=डाटाबेस में कोई संसाधन नहीं है.
+NoResourceLinked=कोई संसाधन लिंक नहीं किया गया
+ActionsOnResource=इस संसाधन के बारे में घटनाएँ
+ResourcePageIndex=संसाधन सूची
+ResourceSingular=संसाधन
+ResourceCard=संसाधन कार्ड
+NewResource=नया संसाधन
+AddResource=संसाधन बनाएं
+ResourceFormLabel_ref=संसाधन का नाम
+ResourceFormLabel_description=संसाधन विवरण
+ResourceType=संसाधन प्रकार
+ResourceTypeID=संसाधन प्रकार आईडी
+ResourceTypeLabel=संसाधन प्रकार लेबल
+ResourcesLinkedToElement=तत्व से जुड़े संसाधन
 
-ResourcesLinkedToElement=Resources linked to element
-
-ShowResource=Show resource
-
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
-
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
-
-SelectResource=Select resource
-
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
-ImportDataset_resource_1=Resources
-
-ErrorResourcesAlreadyInUse=Some resources are in use
-ErrorResourceUseInEvent=%s used in %s event
+ShowResource=संसाधन दिखाएं
+ResourceElementPage=तत्व संसाधन
+ResourceCreatedWithSuccess=संसाधन सफलतापूर्वक बनाया गया
+RessourceLineSuccessfullyDeleted=संसाधन पंक्ति सफलतापूर्वक हटा दी गई
+RessourceLineSuccessfullyUpdated=संसाधन पंक्ति सफलतापूर्वक अपडेट की गई
+ResourceLinkedWithSuccess=सफलता से जुड़ा संसाधन
+ConfirmDeleteResource=इस संसाधन को हटाने की पुष्टि करें
+RessourceSuccessfullyDeleted=संसाधन सफलतापूर्वक हटा दिया गया
+DictionaryResourceType=संसाधनों का प्रकार
+SelectResource=संसाधन चुनें
+IdResource=आईडी संसाधन
+AssetNumber=क्रम संख्या
+ResourceTypeCode=संसाधन प्रकार कोड
+ImportDataset_resource_1=संसाधन
+ErrorResourcesAlreadyInUse=कुछ संसाधन उपयोग में हैं
+ErrorResourceUseInEvent=%s का उपयोग %s इवेंट में किया गया
+MaxUsers=अधिकतम उपयोगकर्ता (स्थान, सीटें, आदि)
+MaxUsersLabel=अधिकतम उपयोगकर्ता

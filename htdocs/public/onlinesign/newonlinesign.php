@@ -4,7 +4,7 @@
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2023		anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,6 +66,8 @@ require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
  * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
  */
 
 // Load translation files
@@ -91,13 +93,13 @@ $message = GETPOST('message', 'aZ09');
 // currency (iso code)
 
 $suffix = GETPOST("suffix", 'aZ09');
-$source = GETPOST("source", 'alpha');
+$source = (string) GETPOST("source", 'alpha');
 $ref = $REF = GETPOST("ref", 'alpha');
 $urlok = '';
 $urlko = '';
 
 
-if (empty($source)) {
+if ($source == '') {
 	$source = 'proposal';
 }
 if (!empty($refusepropal)) {
@@ -247,14 +249,14 @@ $title = $langs->trans("OnlineSignature");
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 llxHeader($head, $title, '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1);
 
-htmlPrintOnlineHeader($mysoc, $langs, $suffix);
+htmlPrintOnlineHeader($mysoc, $langs, 1, '', 'ONLINE_SIGN_IMAGE_PUBLIC_INTERFACE', 'ONLINE_SIGN_LOGO_'.$suffix, 'ONLINE_SIGN_LOGO');
 
 if ($action == 'refusepropal') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany') ? '&entity='.$entity : ''), $langs->trans('RefusePropal'), $langs->trans('ConfirmRefusePropal', $object->ref), 'confirm_refusepropal', '', '', 1);
 }
 
 // Check link validity for param 'source' to avoid use of the examples as value
-if (!empty($source) && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_ref', 'order_ref', 'proposal_ref', ''))) {
+if (/* $source !== '' :never empty &&  */ in_array($ref, array('member_ref', 'contractline_ref', 'invoice_ref', 'order_ref', 'proposal_ref', ''))) {
 	$langs->load("errors");
 	dol_print_error_email('BADREFINONLINESIGNFORM', $langs->trans("ErrorBadLinkSourceSetButBadValueForRef", $source, $ref));
 	// End of page
@@ -278,13 +280,13 @@ print '<input type="hidden" name="ref" value="'.$ref.'" />';
 print "\n";
 print '<!-- Form to sign -->'."\n";
 
-print '<table id="dolpublictable" summary="Payment form" class="center">'."\n";
-
 if ($source == 'proposal' && getDolGlobalString('PROPOSAL_IMAGE_PUBLIC_SIGN')) {
 	print '<div class="backimagepublicproposalsign">';
 	print '<img id="idPROPOSAL_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('PROPOSAL_IMAGE_PUBLIC_SIGN').'">';
 	print '</div>';
 }
+
+print '<table id="dolpublictable" summary="Payment form" class="center">'."\n";
 
 // Output introduction text
 $text = '';
@@ -385,6 +387,8 @@ if ($source == 'proposal') {
 	$last_main_doc_file = $object->last_main_doc;
 
 	if ($object->status == $object::STATUS_VALIDATED) {
+		$object->last_main_doc = preg_replace('/_signed-(\d+)/', '', $object->last_main_doc);	// We want to be sure to not work on the signed version
+
 		if (empty($last_main_doc_file) || !dol_is_file(DOL_DATA_ROOT.'/'.$object->last_main_doc)) {
 			// It seems document has never been generated, or was generated and then deleted.
 			// So we try to regenerate it with its default template.
@@ -413,7 +417,7 @@ if ($source == 'proposal') {
 				$datefilesigned = dol_filemtime($last_main_doc_file);
 				$datefilenotsigned = dol_filemtime($last_main_doc_file_not_signed);
 
-				if (empty($datefilenotsigned) || $datefilesigned > $datefilenotsigned) {
+				if (empty($datefilenotsigned) || $datefilesigned > $datefilenotsigned) {	// If file signed is more recent
 					$directdownloadlink = $object->getLastMainDocLink('proposal');
 					if ($directdownloadlink) {
 						print '<br><a href="'.$directdownloadlink.'">';
@@ -534,7 +538,7 @@ if ($source == 'proposal') {
 	$result = $object->fetch_thirdparty();
 
 	// Proposer
-	print '<tr class="CTableRow2"><td class="CTableRow2">' . $langs->trans("Proposer");
+	print '<tr class="CTableRow2"><td class="CTableRow2">' . $langs->trans("CreditorName");
 	print '</td><td class="CTableRow2">';
 	print img_picto('', 'company', 'class="pictofixedwidth"');
 	print '<b>' . $creditor . '</b>';
@@ -722,6 +726,12 @@ if ($action == "dosign" && empty($cancel)) {
 	print '<input type="submit" class="button butActionDelete marginleftonly marginrightonly" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
+	// Define $urlwithroot
+	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+	//$urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
+	// TODO Replace DOL_URL_ROOT with $urlwithroot ?
+
 	// Add js code managed into the div #signature
 	$urltogo = $_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&source='.urlencode($source).'&message=signed&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany') ? '&entity='.(int) $entity : '');
 	print '<script language="JavaScript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jSignature/jSignature.js"></script>
@@ -736,7 +746,6 @@ if ($action == "dosign" && empty($cancel)) {
 			$("#signbutton").on("click",function(){
 				console.log("We click on button sign");
 				document.body.style.cursor = \'wait\';
-				/* $("#signbutton").val(\''.dol_escape_js($langs->transnoentities('PleaseBePatient')).'\'); */
 				var signature = $("#signature").jSignature("getData", "image");
 				var name = document.getElementById("name").value;
 				$.ajax({

@@ -100,8 +100,6 @@ class CommandeStats extends Stats
 	 */
 	public function __construct($db, $socid, $mode, $userid = 0, $typentid = 0, $categid = 0)
 	{
-		global $user, $conf;
-
 		$this->db = $db;
 
 		$this->socid = ($socid > 0 ? $socid : 0);

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2013-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2013-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
 
@@ -83,7 +85,25 @@ if (!$user->hasRight('accounting', 'fiscalyear', 'write')) {              // If 
 /*
  * Actions
  */
+if ($action == 'setdefault') {
+	// Set a fiscal year as default
+	$error = 0;
 
+	$defaultFiscalYear = GETPOSTINT('value');
+	$defaultFiscalYearLabel = GETPOST('label', 'alpha');
+
+	if (!empty($defaultFiscalYear)) {
+		dolibarr_set_const($db, 'ACCOUNTANCY_FISCALYEAR_DEFAULT', $defaultFiscalYear, 'chaine', 0, '', $conf->entity);
+	} else {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("FiscalYearSetAsDefault", $defaultFiscalYearLabel), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
 
 
 /*
@@ -111,7 +131,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}
@@ -148,6 +168,7 @@ if ($result) {
 	print '<td>'.$langs->trans("DateEnd").'</td>';
 	print '<td class="center">'.$langs->trans("NumberOfAccountancyEntries").'</td>';
 	print '<td class="center">'.$langs->trans("NumberOfAccountancyMovements").'</td>';
+	print '<td class="center">'.$langs->trans("Default").'</td>';
 	print '<td class="right">'.$langs->trans("Status").'</td>';
 	print '</tr>';
 
@@ -160,9 +181,10 @@ if ($result) {
 
 			$fiscalyearstatic->ref = $obj->rowid;
 			$fiscalyearstatic->id = $obj->rowid;
+			$fiscalyearstatic->label = $obj->label;
 			$fiscalyearstatic->date_start = $obj->date_start;
 			$fiscalyearstatic->date_end = $obj->date_end;
-			$fiscalyearstatic->statut = $obj->status;
+			$fiscalyearstatic->statut = $obj->status;	// deprecated
 			$fiscalyearstatic->status = $obj->status;
 
 			print '<tr class="oddeven">';
@@ -174,12 +196,22 @@ if ($result) {
 			print '<td class="left">'.dol_print_date($db->jdate($obj->date_end), 'day').'</td>';
 			print '<td class="center">'.$object->getAccountancyEntriesByFiscalYear($obj->date_start, $obj->date_end).'</td>';
 			print '<td class="center">'.$object->getAccountancyMovementsByFiscalYear($obj->date_start, $obj->date_end).'</td>';
+
+			// Default
+			print '<td class="center">';
+			if (getDolGlobalString('ACCOUNTANCY_FISCALYEAR_DEFAULT') == (int) $fiscalyearstatic->ref) {
+				print img_picto($langs->trans("Default"), 'on');
+			} else {
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdefault&token='.newToken().'&value='.urlencode($fiscalyearstatic->ref).'&label='.urlencode($fiscalyearstatic->label).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("SetAsDefault"), 'off').'</a>';
+			}
+			print '</td>';
+
 			print '<td class="right">'.$fiscalyearstatic->LibStatut($obj->status, 5).'</td>';
 			print '</tr>';
 			$i++;
 		}
 	} else {
-		print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+		print '<tr class="oddeven"><td colspan="8"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 	print '</table>';
 	print '</div>';

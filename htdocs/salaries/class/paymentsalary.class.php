@@ -2,8 +2,8 @@
 /* Copyright (C) 2011-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ class PaymentSalary extends CommonObject
 	public $chid;
 
 	/**
-	 * @var int 			ID of the salary linked to the payment
+	 * @var ?int 			ID of the salary linked to the payment
 	 */
 	public $fk_salary;
 
@@ -87,7 +87,7 @@ class PaymentSalary extends CommonObject
 	public $total;
 
 	/**
-	 * @var float	Total amount of payment
+	 * @var ?float	Total amount of payment
 	 */
 	public $amount;
 
@@ -97,40 +97,35 @@ class PaymentSalary extends CommonObject
 	public $amounts = array();
 
 	/**
-	 * @var int 			Payment type ID
+	 * @var ?int 			Payment type ID
 	 */
 	public $fk_typepayment;
 
 	/**
-	 * @var string
-	 * @deprecated Use $num_payment
-	 */
-	public $num_paiement;
-
-	/**
-	 * @var string      Payment reference
+	 * @var ?string     Payment reference
 	 *                  (Cheque or bank transfer reference. Can be "ABC123")
 	 */
 	public $num_payment;
 
 	/**
 	 * @inheritdoc
-	 * @var int
+	 * @var ?int
+	 * @deprecated use $bank_line
 	 */
 	public $fk_bank;
 
 	/**
-	 * @var int				ID of bank_line
+	 * @var ?int				ID of bank_line
 	 */
 	public $bank_line;
 
 	/**
-	 * @var int				ID of the user who created the payment
+	 * @var ?int				ID of the user who created the payment
 	 */
 	public $fk_user_author;
 
 	/**
-	 * @var int				ID of the user who modified the payment
+	 * @var ?int				ID of the user who modified the payment
 	 */
 	public $fk_user_modif;
 
@@ -155,7 +150,7 @@ class PaymentSalary extends CommonObject
 	public $datev = '';
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
@@ -233,9 +228,6 @@ class PaymentSalary extends CommonObject
 		if (isset($this->fk_typepayment)) {
 			$this->fk_typepayment = (int) $this->fk_typepayment;
 		}
-		if (isset($this->num_paiement)) {
-			$this->num_paiement = trim($this->num_paiement);
-		} // deprecated
 		if (isset($this->num_payment)) {
 			$this->num_payment = trim($this->num_payment);
 		}
@@ -344,7 +336,7 @@ class PaymentSalary extends CommonObject
 		$sql .= " t.fk_typepayment,";
 		$sql .= " t.num_payment as num_payment,";
 		$sql .= " t.note,";
-		$sql .= " t.fk_bank,";
+		$sql .= " t.fk_bank as bank_line,";
 		$sql .= " t.fk_user_author,";
 		$sql .= " t.fk_user_modif,";
 		$sql .= " pt.code as type_code, pt.libelle as type_label,";
@@ -370,19 +362,21 @@ class PaymentSalary extends CommonObject
 				$this->datep = $this->db->jdate($obj->datep);
 				$this->amount = $obj->amount;
 				$this->fk_typepayment = $obj->fk_typepayment;
-				$this->num_paiement = $obj->num_payment;
 				$this->num_payment = $obj->num_payment;
 				$this->note = $obj->note;
 				$this->note_private = $obj->note;
-				$this->fk_bank = $obj->fk_bank;
 				$this->fk_user_author = $obj->fk_user_author;
 				$this->fk_user_modif = $obj->fk_user_modif;
+				$this->user_modification_id = $obj->fk_user_modif;
 
 				$this->type_code = $obj->type_code;
 				$this->type_label = $obj->type_label;
 
-				$this->bank_account   = $obj->fk_account;
-				$this->bank_line      = $obj->fk_bank;
+				$this->bank_account = $obj->fk_account;
+				$this->fk_account = $obj->fk_account;
+
+				$this->fk_bank = $obj->bank_line;
+				$this->bank_line = $obj->bank_line;
 			}
 			$this->db->free($resql);
 
@@ -417,9 +411,6 @@ class PaymentSalary extends CommonObject
 		if (isset($this->fk_typepayment)) {
 			$this->fk_typepayment = (int) $this->fk_typepayment;
 		}
-		if (isset($this->num_paiement)) {
-			$this->num_paiement = trim($this->num_paiement);
-		} // deprecated
 		if (isset($this->num_payment)) {
 			$this->num_payment = trim($this->num_payment);
 		}
@@ -495,10 +486,10 @@ class PaymentSalary extends CommonObject
 
 		if ($this->bank_line > 0) {
 			$accline = new AccountLine($this->db);
-			$accline->fetch($this->bank_line);
+			$accline->fetch((int) $this->bank_line);
 			$result = $accline->delete($user);
 			if ($result < 0) {
-				$this->errors[] = $accline->error;
+				$this->setErrorsFromObject($accline);
 				$error++;
 			}
 		}
@@ -621,7 +612,7 @@ class PaymentSalary extends CommonObject
 		global $langs;
 
 		// Clean data
-		$this->num_payment = trim($this->num_payment ? $this->num_payment : $this->num_paiement);
+		$this->num_payment = trim((string) $this->num_payment);
 
 		$error = 0;
 
@@ -636,7 +627,7 @@ class PaymentSalary extends CommonObject
 			// Insert payment into llx_bank
 			$bank_line_id = $acc->addline(
 				$this->datep,
-				$this->fk_typepayment, // Payment mode id or code ("CHQ or VIR for example")
+				(string) $this->fk_typepayment, // Payment mode id or code ("CHQ or VIR for example")
 				$label,
 				-$total,
 				$this->num_payment,
@@ -887,16 +878,16 @@ class PaymentSalary extends CommonObject
 
 		$url = DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$this->id;
 
-		if ($option !== 'nolink') {
-			// Add param to save lastsearch_values or not
-			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
-				$add_save_lastsearch_values = 1;
-			}
-			if ($url && $add_save_lastsearch_values) {
-				$url .= '&save_lastsearch_values=1';
-			}
-		}
+		// if ($option !== 'nolink') {
+		// 	// Add param to save lastsearch_values or not
+		// 	$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+		// 	if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+		// 		$add_save_lastsearch_values = 1;
+		// 	}
+		// 	if ($url && $add_save_lastsearch_values) {
+		// 		$url .= '&save_lastsearch_values=1';
+		// 	}
+		// }
 
 		$linkclose = '';
 		if (empty($notooltip)) {
@@ -910,17 +901,19 @@ class PaymentSalary extends CommonObject
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
 
-		if ($option == 'nolink' || empty($url)) {
-			$linkstart = '<span';
-		} else {
-			$linkstart = '<a href="'.$url.'"';
-		}
-		$linkstart .= $linkclose.'>';
-		if ($option == 'nolink' || empty($url)) {
-			$linkend = '</span>';
-		} else {
-			$linkend = '</a>';
-		}
+		// if ($option == 'nolink') {
+		// 	$linkstart = '<span';
+		// } else {
+		// 	$linkstart = '<a href="'.$url.'"';
+		// }
+		// $linkstart .= $linkclose.'>';
+		// if ($option == 'nolink') {
+		// 	$linkend = '</span>';
+		// } else {
+		// 	$linkend = '</a>';
+		// }
+		$linkstart = '<a href="'.$url.'"';
+		$linkend = '</a>';
 
 		$result .= $linkstart;
 
@@ -989,9 +982,9 @@ class PaymentSalary extends CommonObject
 	/**
 	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
-	 *  @return		string											HTML Code for Kanban thumb.
+	 *	@param	string	    			$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param	?array<string,mixed>	$arraydata	Array of data
+	 *  @return	string								HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -1005,28 +998,26 @@ class PaymentSalary extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">' . $this->getNomUrl(1) . '</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'fk_bank') && is_numeric($this->fk_bank)) {
+		if (!empty($this->fk_bank) && is_numeric($this->fk_bank)) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$account = new AccountLine($this->db);
 			$account->fetch($this->fk_bank);
 			$return .= ' |  <span class="info-box-label">'.$account->getNomUrl(1).'</span>';
 		}
-		if (property_exists($this, 'fk_user_author') && is_numeric($this->fk_user_author)) {
+		if (!empty($this->fk_user_author) && is_numeric($this->fk_user_author)) {
 			$userstatic = new User($this->db);
 			$userstatic->fetch($this->fk_user_author);
 			$return .= '<br><span class="info-box-status">'.$userstatic->getNomUrl(1).'</span>';
 		}
 
-		if (property_exists($this, 'fk_typepayment')) {
+		if (!empty($this->fk_typepayment)) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("PaymentMode").'</span> : <span class="info-box-label">'.$this->fk_typepayment.'</span>';
 		}
-		if (property_exists($this, 'amount')) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
-		}
+		$return .= '<br><span class="opacitymedium">'.$langs->trans("Amount").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';

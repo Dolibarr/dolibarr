@@ -1,7 +1,8 @@
 <?php
 
-/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2017       Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation_workstation.lib.php
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -53,13 +55,7 @@ $cancel      = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
 $backtopage  = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$backtopagejsfields = GETPOST('backtopagejsfields', 'alpha');
 $dol_openinpopup = GETPOST('dol_openinpopup', 'aZ09');
-
-if (!empty($backtopagejsfields)) {
-	$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
-	$dol_openinpopup = preg_replace('/[^a-z0-9_]/i', '', $tmpbacktopagejsfields[0]);
-}
 
 $groups	    = GETPOST('groups', 'array:int');
 $resources	= GETPOST('resources', 'array:int');
@@ -96,7 +92,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'inclu
 // Permissions
 $permissiontoread = $user->hasRight('workstation', 'workstation', 'read');
 $permissiontoadd = $user->hasRight('workstation', 'workstation', 'write');      // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->hasRight('workstation', 'workstation', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DISABLED);
+$permissiontodelete = $user->hasRight('workstation', 'workstation', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == Workstation::STATUS_DISABLED);
 $permissionnote = $user->hasRight('workstation', 'workstation', 'write');      // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('workstation', 'workstation', 'write');      // Used by the include of actions_dellink.inc.php
 
@@ -238,16 +234,16 @@ if ($action == 'create') {
 	print $langs->trans('UserGroups');
 	print '</td>';
 	print '<td>';
-	print img_picto('', 'group');
-	print $form->select_dolgroups($groups, 'groups', 1, '', 0, '', '', $object->entity, true, 'quatrevingtpercent widthcentpercentminusx');
+	print img_picto('', 'group', 'class="pictofixedwidth"');
+	print $form->select_dolgroups($groups, 'groups', 1, '', 0, '', array(), (string) $object->entity, true, 'quatrevingtpercent widthcentpercentminusx');
 	print '</td></tr>';
 
 	print '<tr id="wsresources"><td>';
 	print $langs->trans('Machines');
 	print '</td>';
 	print '<td>';
-	print img_picto('', 'resource');
-	print $formresource->select_resource_list($resources, 'resources', [], '', 0, '', '', $object->entity, true, 0, 'quatrevingtpercent widthcentpercentminusx', true);
+	print img_picto('', 'resource', 'class="pictofixedwidth"');
+	print $formresource->select_resource_list($resources, 'resources', '', 0, 0, 0, array(), (string) $object->entity, 0, 0, 'quatrevingtpercent widthcentpercentminusx', true);
 	print '</td></tr>';
 
 	// Other attributes
@@ -291,16 +287,16 @@ if (($id || $ref) && $action == 'edit') {
 	print $langs->trans('UserGroups');
 	print '</td>';
 	print '<td>';
-	print img_picto('', 'group');
-	print $form->select_dolgroups(empty($groups) ? $object->usergroups : $groups, 'groups', 1, '', 0, '', '', $object->entity, true, 'quatrevingtpercent widthcentpercentminusx');
+	print img_picto('', 'group', 'class="pictofixedwidth"');
+	print $form->select_dolgroups(empty($groups) ? $object->usergroups : $groups, 'groups', 1, '', 0, '', array(), (string) $object->entity, true, 'quatrevingtpercent widthcentpercentminusx');
 	print '</td></tr>';
 
 	print '<tr id="wsresources"><td>';
 	print $langs->trans('Machines');
 	print '</td>';
 	print '<td>';
-	print img_picto('', 'resource');
-	print $formresource->select_resource_list(empty($resources) ? $object->resources : $resources, 'resources', [], '', 0, '', '', $object->entity, true, 0, 'quatrevingtpercent widthcentpercentminusx', true);
+	print img_picto('', 'resource', 'class="pictofixedwidth"');
+	print $formresource->select_resource_list(empty($resources) ? $object->resources : $resources, 'resources', '', 0, 0, 0, array(), (string) $object->entity, 1, 0, 'quatrevingtpercent widthcentpercentminusx', true);
 	print '</td></tr>';
 
 	// Other attributes
@@ -327,10 +323,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action == 'delete' || ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))) {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteWorkstation'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 'action-delete');
 	}
+	$formquestion = array();
 	// Clone confirmation
 	if ($action == 'clone') {
 		// Create an array for form
-		$formquestion = array();
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
@@ -472,12 +468,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Clone
 			if ($permissiontoadd) {
-				print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.(!empty($object->socid) ? '&socid='.$object->socid : '').'&action=clone&token='.newToken(), '', $permissiontoadd);
+				print dolGetButtonAction('', $langs->trans('ToClone'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=clone&token='.newToken(), '', $permissiontoadd);
 			}
 
 			// Disable / Enable
 			if ($permissiontoadd) {
-				if ($object->status == $object::STATUS_ENABLED) {
+				if ($object->status == Workstation::STATUS_ENABLED) {
 					print dolGetButtonAction('', $langs->trans('Disable'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=disable&token='.newToken(), '', $permissiontoadd);
 				} else {
 					print dolGetButtonAction('', $langs->trans('Enable'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=enable&token='.newToken(), '', $permissiontoadd);

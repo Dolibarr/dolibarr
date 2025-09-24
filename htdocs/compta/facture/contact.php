@@ -5,8 +5,8 @@
  * Copyright (C) 2011-2015 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  * Copyright (C) 2023      Christian Foellmann  <christian@foellmann.de>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ if ($user->socid) {
 $object = new Facture($db);
 // Load object
 if ($id > 0 || !empty($ref)) {
-	$ret = $object->fetch($id, $ref, '', 0, getDolGlobalInt('INVOICE_USE_SITUATION'));
+	$ret = $object->fetch($id, $ref, '', 0, getDolGlobalBool('INVOICE_USE_SITUATION'));
 }
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('invoicecontactcard', 'globalcard'));
@@ -148,7 +148,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$totalpaid = $object->getSommePaiement();
 
-		print dol_get_fiche_head($head, 'contact', $langs->trans('InvoiceCustomer'), -1, 'bill');
+		print dol_get_fiche_head($head, 'contact', $langs->trans('InvoiceCustomer'), -1, $object->picto);
 
 		// Invoice content
 
@@ -164,12 +164,12 @@ if ($id > 0 || !empty($ref)) {
 		if (isModEnabled('project')) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>';
-			if (0) {
+			if (0) {	// @phpstan-ignore-line
 				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
@@ -201,7 +201,7 @@ if ($id > 0 || !empty($ref)) {
 		}
 	} else {
 		// Record not found
-		print "ErrorRecordNotFound";
+		recordNotFound('', 0);
 	}
 }
 
