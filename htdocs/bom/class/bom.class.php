@@ -1419,6 +1419,7 @@ class BOM extends CommonObject
 		$reshook = $hookmanager->executeHooks('calculateCostsBom', $parameters, $this); // Note that $action and $object may have been modified by hook
 
 		if ($reshook > 0) {
+			$hookmanager->executeHooks('calculateCostsBomAfter', $parameters, $this); // Note that $action and $object may have been modified by hook
 			return $hookmanager->resPrint;
 		}
 
@@ -1516,6 +1517,7 @@ class BOM extends CommonObject
 				$this->unit_cost = (float) price2num($this->total_cost * $this->qty, 'MU');
 			}
 		}
+		$hookmanager->executeHooks('calculateCostsBomAfter', $parameters, $this);
 
 		return 1;
 	}
