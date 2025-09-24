@@ -141,7 +141,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,cssview?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>|string,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 *
 	 * 'type' field format:
 	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
@@ -1347,7 +1347,8 @@ abstract class CommonObject
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				if (!$notrigger) {
-					$result = $this->call_trigger(strtoupper($this->element).'_ADD_CONTACT', $user);
+					$triggerPrefix = (empty($this->TRIGGER_PREFIX) ? strtoupper($this->element) : $this->TRIGGER_PREFIX);
+					$result = $this->call_trigger($triggerPrefix.'_ADD_CONTACT', $user);
 					if ($result < 0) {
 						$this->db->rollback();
 						return -1;
@@ -1445,7 +1446,8 @@ abstract class CommonObject
 		if (!$error && empty($notrigger)) {
 			// Call trigger
 			$this->context['contact_id'] = ((int) $rowid);
-			$result = $this->call_trigger(strtoupper($this->element).'_DELETE_CONTACT', $user);
+			$triggerPrefix = (empty($this->TRIGGER_PREFIX) ? strtoupper($this->element) : $this->TRIGGER_PREFIX);
+			$result = $this->call_trigger($triggerPrefix.'_DELETE_CONTACT', $user);
 			if ($result < 0) {
 				$error++;
 			}
@@ -2728,9 +2730,6 @@ abstract class CommonObject
 				if (!$error && !$notrigger) {
 					// Call triggers
 					$triggerName = (empty($this->TRIGGER_PREFIX) ? strtoupper(get_class($this)) : $this->TRIGGER_PREFIX);
-					if (get_class($this) == 'Commande') {
-						$triggerName = 'ORDER';	// TODO Remove this when TRIGGER_PREFI in order is implemented
-					}
 					$result = $this->call_trigger($triggerName.'_MODIFY', $user);
 					if ($result < 0) {
 						$error++;
@@ -3245,9 +3244,6 @@ abstract class CommonObject
 				// Call trigger
 				$this->context = array('shippingmethodupdate' => 1);
 				$triggerPrefix = (empty($this->TRIGGER_PREFIX) ? strtoupper(get_class($this)) : $this->TRIGGER_PREFIX);
-				if (get_class($this) == 'Commande') {
-					$triggerPrefix = 'ORDER';	// TODO Remove this when TRIGGER_PREFI in order is implemented
-				}
 				$result = $this->call_trigger($triggerPrefix.'_MODIFY', $userused);
 				if ($result < 0) {
 					$error++;
@@ -3871,9 +3867,6 @@ abstract class CommonObject
 				switch ($this->element) {
 					case 'societe':
 						$triggerName = 'COMPANY_MODIFY';
-						break;
-					case 'commande':
-						$triggerName = 'ORDER_MODIFY';
 						break;
 					case 'facture':
 						$triggerName = 'BILL_MODIFY';
