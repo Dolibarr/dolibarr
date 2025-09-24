@@ -115,7 +115,7 @@ print '</td>';
 // Qty
 print '<td class="linecolqty nowrap right">';
 $coldisplay++;
-echo $line->qty; // Yes, it is a quantity, not a price, but we just want the formatting role of function price
+echo price($line->qty, 0, '', 0, 0); // Yes, it is a quantity, not a price, but we just want the formatting role of function price
 print '</td>';
 
 // Unit
@@ -132,7 +132,7 @@ if (getDolGlobalInt('PRODUCT_USE_UNITS')) {		// For product, unit is shown only 
 if ($this->status == 0 && $user->hasRight('expedition', 'write') && $action != 'selectlines') {
 	print '<td class="linecoledit center">';
 	$coldisplay++;
-	if (((int) $line->info_bits & 2) != 2 || !empty($disableedit)) {
+	if (((int) $line->info_bits & 2) == 2 || !empty($disableedit)) {
 	} else {
 		print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&action=editline&token='.newToken().'&lineid='.$line->id.'">'.img_edit().'</a>';
 	}
