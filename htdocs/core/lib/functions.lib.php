@@ -15914,7 +15914,13 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			$sql .= ", m.lastname, m.firstname";
 		} elseif (is_object($filterobj) && in_array(get_class($filterobj), array('Commande', 'CommandeFournisseur', 'Product', 'Ticket', 'BOM', 'Contrat', 'Facture', 'FactureFournisseur', 'Propal', 'Expedition'))) {
 			$sql .= ", o.ref";
+		} else {
+			if (is_object($filterobj) && !empty($filterobj->table_element) && !empty($filterobj->element) && !empty($filterobj->id)) {
+				$sql .= ", o.ref";
+			}
 		}
+
+
 		$sql .= " FROM " . MAIN_DB_PREFIX . "actioncomm as a";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as u on u.rowid = a.fk_user_action";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_actioncomm as c ON a.fk_action = c.id";
@@ -15956,6 +15962,10 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			$sql .= ", " . MAIN_DB_PREFIX . "expedition as o";
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Propal') {
 			$sql .= ", " . MAIN_DB_PREFIX . "propal as o";
+		} else {
+			if (is_object($filterobj) && !empty($filterobj->table_element) && !empty($filterobj->element) && !empty($filterobj->id)) {
+				$sql .= ", " . MAIN_DB_PREFIX . $filterobj->table_element . " as o";
+			}
 		}
 		$sql .= " WHERE a.entity IN (" . getEntity('agenda') . ")";
 		if (!$force_filter_contact) {
@@ -16022,6 +16032,14 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 				$sql .= " AND a.fk_element = o.rowid";
 				if ($filterobj->id) {
 					$sql .= " AND a.fk_element = " . ((int) $filterobj->id) . " AND a.elementtype = 'invoice_supplier'";
+				}
+			} else {
+				if (is_object($filterobj) && !empty($filterobj->element) && !empty($filterobj->id)) {
+					$sql .= " AND a.fk_element = o.rowid";
+					$sql .= " AND a.elementtype = '" . $db->escape($filterobj->element) . "'";
+					if ($filterobj->id) {
+						$sql .= " AND a.fk_element = " . ((int) $filterobj->id);
+					}
 				}
 			}
 		} else {
