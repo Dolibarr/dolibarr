@@ -697,6 +697,9 @@ class Invoices extends DolibarrApi
 		if (!$result) {
 			throw new RestException(404, 'Invoice not found');
 		}
+		if ($this->invoice->status != 0) {
+			throw new RestException(403, 'Invoice not in Draft Status : '.$this->invoice->getLibStatut(1));
+		}
 
 		$updateRes = $this->invoice->deleteLine($lineid, $id);
 		if ($updateRes > 0) {

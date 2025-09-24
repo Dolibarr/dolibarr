@@ -73,6 +73,12 @@ if (!$user->hasRight('takepos', 'run')) {
 	accessforbidden();
 }
 
+/*
+ * Actions
+ */
+
+// None
+
 
 /*
  * View

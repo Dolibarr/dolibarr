@@ -2,6 +2,7 @@
 HRM=HRM
 Holidays=Leaves
 Holiday=Leave
+HolidayStarted=Leave started
 CPTitreMenu=Leave
 MenuReportMonth=Monthly statement
 MenuAddCP=New leave request

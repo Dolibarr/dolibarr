@@ -1,30 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 3
-			path: ../../../htdocs/accountancy/admin/accountmodel.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 3
-			path: ../../../htdocs/accountancy/admin/accountmodel.php
-
-		-
-			message: '#^Left side of && is always false\.$#'
-			identifier: booleanAnd.leftAlwaysFalse
-			count: 3
-			path: ../../../htdocs/accountancy/admin/accountmodel.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''type_cdr'' and ''type_cdr'' will always evaluate to true\.$#'
-			identifier: equal.alwaysTrue
-			count: 2
-			path: ../../../htdocs/accountancy/admin/accountmodel.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
@@ -155,60 +131,6 @@ parameters:
 			identifier: ternary.alwaysFalse
 			count: 1
 			path: ../../../htdocs/accountancy/bookkeeping/export.php
-
-		-
-			message: '#^Property AccountancyCategory\:\:\$active \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
-			message: '#^Property AccountancyCategory\:\:\$category_type \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
-			message: '#^Property AccountancyCategory\:\:\$code \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
-			message: '#^Property AccountancyCategory\:\:\$fk_country \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
-			message: '#^Property AccountancyCategory\:\:\$formula \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
-			message: '#^Property AccountancyCategory\:\:\$label \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
-			message: '#^Property AccountancyCategory\:\:\$position \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
-			message: '#^Property AccountancyCategory\:\:\$range_account \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancycategory.class.php
-
-		-
-			message: '#^Property AccountancyCategory\:\:\$sens \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 4
-			path: ../../../htdocs/accountancy/class/accountancycategory.class.php
 
 		-
 			message: '#^Call to function is_array\(\) with list\<string\> will always evaluate to true\.$#'
@@ -3007,12 +2929,6 @@ parameters:
 			path: ../../../htdocs/compta/facture/card.php
 
 		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: ../../../htdocs/compta/facture/card.php
-
-		-
 			message: '#^Loose comparison using \=\= between 0 and 0 will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 1
@@ -3890,12 +3806,6 @@ parameters:
 
 		-
 			message: '#^Property Cchargesociales\:\:\$deductible \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: ../../../htdocs/compta/sociales/class/cchargesociales.class.php
-
-		-
-			message: '#^Property Cchargesociales\:\:\$fk_pays \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
 			path: ../../../htdocs/compta/sociales/class/cchargesociales.class.php
@@ -11105,12 +11015,6 @@ parameters:
 			identifier: ternary.alwaysTrue
 			count: 3
 			path: ../../../htdocs/ftp/index.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/holiday/card.php
 
 		-
 			message: '#^If condition is always false\.$#'
