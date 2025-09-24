@@ -417,7 +417,65 @@ class ActionComm extends CommonObject
 	const EVENT_FINISHED = 100;
 
 
-	public $fields = array();
+	// BEGIN MODULEBUILDER PROPERTIES
+	/**
+	 * @inheritdoc
+	 * Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields = array(
+		"id" => array("type" => "integer", "label" => "Ref", "enabled" => "1", 'position' => 10, 'notnull' => 1, "visible" => "1",),
+		"ref" => array("type" => "varchar(30)", "label" => "Ref", "enabled" => "1", 'position' => 15, 'notnull' => 1, "visible" => "0", "csslist" => "tdoverflowmax150", "showoncombobox" => "1",),
+		"ref_ext" => array("type" => "varchar(255)", "label" => "Refext", "enabled" => "1", 'position' => 20, 'notnull' => 0, "visible" => "0",),
+		"fk_action" => array("type" => "integer", "label" => "Fkaction", "enabled" => "1", 'position' => 40, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"code" => array("type" => "varchar(50)", "label" => "Code", "enabled" => "1", 'position' => 45, 'notnull' => 0, "visible" => "0", "showoncombobox" => "1",),
+		"label" => array("type" => "varchar(255)", "label" => "Title", "enabled" => "1", 'position' => 50, 'notnull' => 1, "visible" => "1", "alwayseditable" => "1", "css" => "minwidth300", "cssview" => "wordbreak", "csslist" => "tdoverflowmax150",),
+		"note" => array("type" => "mediumtext", "label" => "Description", "enabled" => "1", 'position' => 51, 'notnull' => 0, "visible" => "-1",),
+		"datep" => array("type" => "datetime", "label" => "DateStart", "enabled" => "1", 'position' => 53, 'notnull' => 0, "visible" => "1",),
+		"datep2" => array("type" => "datetime", "label" => "DateEnd", "enabled" => "1", 'position' => 54, 'notnull' => 0, "visible" => "1",),
+		"fk_project" => array("type" => "integer", "label" => "Project", "picto" => "project", "enabled" => "1", 'position' => 75, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"fk_soc" => array("type" => "integer", "label" => "ThirdParty", "picto" => "company", "enabled" => "1", 'position' => 80, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"fk_contact" => array("type" => "integer", "label" => "Contact", "picto" => "contact", "enabled" => "1", 'position' => 85, 'notnull' => 0, "visible" => "-1", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"fk_parent" => array("type" => "integer", "label" => "Parent", "enabled" => "1", 'position' => 90, 'notnull' => 1, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"fk_user_action" => array("type" => "integer", "label" => "Fkuseraction", "picto" => "user", "enabled" => "1", 'position' => 95, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"transparency" => array("type" => "integer", "label" => "Transparency", "enabled" => "1", 'position' => 100, 'notnull' => 0, "visible" => "0",),
+		"fk_user_done" => array("type" => "integer", "label" => "Fkuserdone", "picto" => "user", "enabled" => "1", 'position' => 105, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"priority" => array("type" => "smallint(6)", "label" => "Priority", "enabled" => "1", 'position' => 110, 'notnull' => 0, "visible" => "0",),
+		"fulldayevent" => array("type" => "smallint(6)", "label" => "Fulldayevent", "enabled" => "1", 'position' => 115, 'notnull' => 1, "visible" => "0",),
+		"location" => array("type" => "varchar(128)", "label" => "Location", "enabled" => "1", 'position' => 125, 'notnull' => 0, "visible" => "0",),
+		"durationp" => array("type" => "double", "label" => "Durationp", "enabled" => "1", 'position' => 130, 'notnull' => 0, "visible" => "0",),
+		"durationa" => array("type" => "double", "label" => "Durationa", "enabled" => "1", 'position' => 135, 'notnull' => 0, "visible" => "0",),
+		"fk_element" => array("type" => "integer", "label" => "LinkedObject", "enabled" => "getDolGlobalString('AGENDA_SHOW_LINKED_OBJECT')", 'position' => 145, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"elementtype" => array("type" => "varchar(255)", "label" => "Elementtype", "enabled" => "1", 'position' => 150, 'notnull' => 0, "visible" => "0",),
+		"email_msgid" => array("type" => "varchar(256)", "label" => "Emailmsgid", "enabled" => "1", 'position' => 155, 'notnull' => 0, "visible" => "0",),
+		"email_subject" => array("type" => "varchar(256)", "label" => "Emailsubject", "enabled" => "1", 'position' => 160, 'notnull' => 0, "visible" => "0",),
+		"email_from" => array("type" => "varchar(256)", "label" => "Emailfrom", "enabled" => "1", 'position' => 165, 'notnull' => 0, "visible" => "0",),
+		"email_sender" => array("type" => "varchar(256)", "label" => "Emailsender", "enabled" => "1", 'position' => 170, 'notnull' => 0, "visible" => "0",),
+		"email_to" => array("type" => "varchar(256)", "label" => "Emailto", "enabled" => "1", 'position' => 175, 'notnull' => 0, "visible" => "0",),
+		"email_tocc" => array("type" => "varchar(256)", "label" => "Emailtocc", "enabled" => "1", 'position' => 180, 'notnull' => 0, "visible" => "0",),
+		"email_tobcc" => array("type" => "varchar(256)", "label" => "Emailtobcc", "enabled" => "1", 'position' => 185, 'notnull' => 0, "visible" => "0",),
+		"errors_to" => array("type" => "varchar(256)", "label" => "Errorsto", "enabled" => "1", 'position' => 190, 'notnull' => 0, "visible" => "0",),
+		"recurid" => array("type" => "varchar(128)", "label" => "Recurid", "enabled" => "1", 'position' => 195, 'notnull' => 0, "visible" => "0",),
+		"recurrule" => array("type" => "varchar(128)", "label" => "Recurrule", "enabled" => "1", 'position' => 200, 'notnull' => 0, "visible" => "0",),
+		"recurdateend" => array("type" => "datetime", "label" => "Recurdateend", "enabled" => "1", 'position' => 205, 'notnull' => 0, "visible" => "0",),
+		"import_key" => array("type" => "varchar(14)", "label" => "ImportId", "enabled" => "1", 'position' => 900, 'notnull' => 0, "visible" => "0",),
+		"extraparams" => array("type" => "varchar(255)", "label" => "Extraparams", "enabled" => "1", 'position' => 215, 'notnull' => 0, "visible" => "0",),
+		"calling_duration" => array("type" => "integer", "label" => "Callingduration", "enabled" => "1", 'position' => 220, 'notnull' => 0, "visible" => "0",),
+		"visibility" => array("type" => "varchar(12)", "label" => "Visibility", "enabled" => "1", 'position' => 225, 'notnull' => 0, "visible" => "0",),
+		"reply_to" => array("type" => "varchar(255)", "label" => "Replyto", "enabled" => "1", 'position' => 230, 'notnull' => 0, "visible" => "0",),
+		"num_vote" => array("type" => "integer", "label" => "Numvote", "enabled" => "1", 'position' => 235, 'notnull' => 0, "visible" => "0",),
+		"event_paid" => array("type" => "smallint(6)", "label" => "Eventpaid", "enabled" => "1", 'position' => 240, 'notnull' => 1, "visible" => "0",),
+		"status" => array("type" => "smallint(6)", "label" => "Status", "enabled" => "1", 'position' => 500, 'notnull' => 1, "visible" => "0",),
+		"ip" => array("type" => "varchar(250)", "label" => "Ip", "enabled" => "1", 'position' => 250, 'notnull' => 0, "visible" => "0",),
+		"fk_bookcal_calendar" => array("type" => "integer", "label" => "Fkbookcalcalendar", "enabled" => "1", 'position' => 255, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"fk_task" => array("type" => "integer", "label" => "Task", "picto" => "task", "enabled" => "1", 'position' => 260, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"fk_user_author" => array("type" => "integer", "label" => "UserCreation", "picto" => "user", "enabled" => "1", 'position' => 505, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"fk_user_mod" => array("type" => "integer", "label" => "UserModification", "picto" => "user", "enabled" => "1", 'position' => 506, 'notnull' => 0, "visible" => "0", "css" => "maxwidth500 widthcentpercentminusxx",),
+		"datec" => array("type" => "datetime", "label" => "DateCreation", "enabled" => "1", 'position' => 510, 'notnull' => 0, "visible" => "-1",),
+		"tms" => array("type" => "timestamp", "label" => "DateModification", "enabled" => "1", 'position' => 520, 'notnull' => 1, "visible" => "-1",),
+		"percent" => array("type" => "smallint(6)", "label" => "Status", "enabled" => "1", 'position' => 1000, 'notnull' => 1, "visible" => "1",),	// status
+	);
+	// END MODULEBUILDER PROPERTIES
+
 
 	/**
 	 *      Constructor

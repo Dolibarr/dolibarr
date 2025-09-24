@@ -2365,12 +2365,6 @@ parameters:
 			path: ../../../htdocs/comm/propal/card.php
 
 		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 4
-			path: ../../../htdocs/comm/propal/class/api_proposals.class.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 1
@@ -2411,12 +2405,6 @@ parameters:
 			identifier: variable.undefined
 			count: 3
 			path: ../../../htdocs/commande/card.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 2
-			path: ../../../htdocs/commande/class/api_orders.class.php
 
 		-
 			message: '#^Parameter \#1 \$object of method Orders\:\:_cleanObjectDatas\(\) expects object, array\<int, array\<string, int\|string\>\>\|int given\.$#'
@@ -2981,12 +2969,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/compta/facture/card.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 4
-			path: ../../../htdocs/compta/facture/class/api_invoices.class.php
 
 		-
 			message: '#^Negated boolean expression is always true\.$#'
@@ -9527,12 +9509,6 @@ parameters:
 			identifier: booleanNot.alwaysTrue
 			count: 1
 			path: ../../../htdocs/document.php
-
-		-
-			message: '#^Negated boolean expression is always false\.$#'
-			identifier: booleanNot.alwaysFalse
-			count: 1
-			path: ../../../htdocs/don/class/api_donations.class.php
 
 		-
 			message: '#^Negated boolean expression is always true\.$#'
