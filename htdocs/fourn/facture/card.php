@@ -2171,6 +2171,7 @@ if ($action == 'create') {
 		}
 	}
 
+	$objectsrc = null;  // Initialise
 	if (!empty($origin) && !empty($originid)) {
 		// Parse element/subelement (ex: project_task)
 		$element = $subelement = $origin;

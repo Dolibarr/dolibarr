@@ -304,7 +304,7 @@ if (empty($reshook)) {
 					$object->delivery_date = $date_delivery;
 					$object->shipping_method_id = GETPOSTINT('shipping_method_id');
 					$object->cond_reglement_id = GETPOSTINT('cond_reglement_id');
-					$object->deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'alpha');
+					$object->deposit_percent = GETPOSTFLOAT('cond_reglement_id_deposit_percent');
 					$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
 					$object->fk_account = GETPOSTINT('fk_account');
 					$object->socid = GETPOSTINT('socid');
@@ -325,7 +325,7 @@ if (empty($reshook)) {
 				$object->demand_reason_id = GETPOSTINT('demand_reason_id');
 				$object->shipping_method_id = GETPOSTINT('shipping_method_id');
 				$object->cond_reglement_id = GETPOSTINT('cond_reglement_id');
-				$object->deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'alpha');
+				$object->deposit_percent = GETPOSTFLOAT('cond_reglement_id_deposit_percent');
 				$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
 				$object->fk_account = GETPOSTINT('fk_account');
 				$object->fk_project = GETPOSTINT('projectid');
@@ -1158,7 +1158,7 @@ if (empty($reshook)) {
 		if ($result) {
 			$obj = $db->fetch_object($result);
 			if ($obj->code == 'DEP30PCTDEL') {
-				$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'), GETPOST('cond_reglement_id_deposit_percent', 'alpha'));
+				$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'), GETPOSTFLOAT('cond_reglement_id_deposit_percent'));
 			} else {
 				$object->deposit_percent = 0;
 				$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'), $object->deposit_percent);
@@ -1295,7 +1295,7 @@ if ($action == 'create') {
 		}
 	}
 	if (GETPOSTISSET('cond_reglement_id_deposit_percent')) {
-		$deposit_percent = GETPOST('cond_reglement_id_deposit_percent', 'alpha');
+		$deposit_percent = GETPOSTFLOAT('cond_reglement_id_deposit_percent');
 	}
 
 	$object = new SupplierProposal($db);
