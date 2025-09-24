@@ -1202,13 +1202,17 @@ if ($action == 'create') {
 				print "</td></tr>\n";
 			}
 
-			// Other attributes. Fields from hook formObjectOptions and Extrafields.
-			// $objectsrc is Commande|Facture
-			$objectsav = $object;	// Because Expedition is $expe and not $object that is wrongly a duplicate of $objectsrc.
-			$object = $expe;
-			$parameters = array('objectsrc' => isset($objectsrc) ? $objectsrc : '', 'cols' => '3', 'socid' => $socid);
-			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
-			$object = $objectsav;
+			$parameters = array('objectsrc' => isset($objectsrc) ? $objectsrc : '', 'colspan' => ' colspan="3"', 'cols' => '3', 'socid' => $socid);
+			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $expe, $action); // Note that $action and $object may have been modified by hook
+			print $hookmanager->resPrint;
+
+			if (empty($reshook)) {
+				// copy from order
+				if ($object->fetch_optionals() > 0) {
+					$expe->array_options = array_merge($expe->array_options, $object->array_options);
+				}
+				print $expe->showOptionals($extrafields, 'edit', $parameters);
+			}
 
 			print "</table>";
 
