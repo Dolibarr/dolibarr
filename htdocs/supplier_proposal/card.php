@@ -1153,15 +1153,15 @@ if (empty($reshook)) {
 		// Terms of payments
 		$sql = "SELECT code ";
 		$sql .= "FROM " . $db->prefix() . "c_payment_term";
-		$sql .= " WHERE rowid = " . ((int) GETPOST('cond_reglement_id', 'int'));
+		$sql .= " WHERE rowid = " . GETPOSTINT('cond_reglement_id');
 		$result = $db->query($sql);
 		if ($result) {
 			$obj = $db->fetch_object($result);
 			if ($obj->code == 'DEP30PCTDEL') {
-				$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'), GETPOSTFLOAT('cond_reglement_id_deposit_percent'));
+				$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'), GETPOSTFLOAT('cond_reglement_id_deposit_percent'));
 			} else {
 				$object->deposit_percent = 0;
-				$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'), $object->deposit_percent);
+				$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'), $object->deposit_percent);
 			}
 		}
 		//} elseif ($action == 'setremisepercent' && $usercancreate) {
@@ -1368,7 +1368,7 @@ if ($action == 'create') {
 		// Terms of payment
 		print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
 		print img_picto('', 'payment', 'class="pictofixedwidth"');
-		print $form->getSelectConditionsPaiements(GETPOST('cond_reglement_id') > 0 ? GETPOSTINT('cond_reglement_id') : $cond_reglement_id, 'cond_reglement_id', -1, 1, 0, '', $deposit_percent);
+		print $form->getSelectConditionsPaiements(GETPOSTISSET('cond_reglement_id') ? GETPOSTINT('cond_reglement_id') : $cond_reglement_id, 'cond_reglement_id', -1, 1, 0, '', $deposit_percent);
 		print '</td></tr>';
 
 		// Mode of payment

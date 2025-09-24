@@ -237,8 +237,8 @@ class CommandeFournisseur extends CommonOrder
 	public $cond_reglement_doc;
 
 	/**
-	 * @var float 	Deposit percent for payment terms.
-	 *				Populated by $CommonObject->setPaymentTerms().
+	 * @var float|string	Deposit percent for payment terms.
+	 *						Populated by $CommonObject->setPaymentTerms().
 	 * @see setPaymentTerms()
 	 */
 	public $deposit_percent;
