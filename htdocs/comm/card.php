@@ -184,7 +184,7 @@ if (empty($reshook)) {
 	}
 
 	// set accountancy code
-	if ($action == 'setcustomeraccountancycodegeneral') {
+	if ($action == 'setcustomeraccountancycodegeneral' && $permissiontoadd) {
 		$result = $object->fetch($id);
 		$object->accountancy_code_customer_general = GETPOST("customeraccountancycodegeneral");
 		$result = $object->update($object->id, $user, 1, 1, 0);
@@ -667,7 +667,7 @@ if ($object->id > 0) {
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'edittransportmode') {
-			$form->formSelectTransportMode($_SERVER['PHP_SELF'].'?socid='.$object->id, (!empty($object->transport_mode_id) ? $object->transport_mode_id : ''), 'transport_mode_id', 1);
+			$form->formSelectTransportMode($_SERVER['PHP_SELF'].'?socid='.$object->id, (!empty($object->transport_mode_id) ? $object->transport_mode_id : ''), 'transport_mode_id', 1, 1);
 		} else {
 			$form->formSelectTransportMode($_SERVER['PHP_SELF'].'?socid='.$object->id, (!empty($object->transport_mode_id) ? $object->transport_mode_id : ''), 'none');
 		}

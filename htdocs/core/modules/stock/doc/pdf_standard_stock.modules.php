@@ -195,10 +195,6 @@ class pdf_standard_stock extends ModelePDFStock
 				$file = $dir."/".$objectref.".pdf";
 			}
 
-			$stockFournisseur = new ProductFournisseur($this->db);
-			$supplierprices = $stockFournisseur->list_product_fournisseur_price($object->id);
-			$object->supplierprices = $supplierprices;
-
 			$productstatic = new Product($this->db);
 
 			if (!file_exists($dir)) {

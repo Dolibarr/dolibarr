@@ -510,7 +510,7 @@ if ($action == 'create') {
 			$object->fetch_thirdparty();
 
 			$author = new User($db);
-			$author->fetch((int) $object->user_author);
+			$author->fetch((int) $object->user_author_id);
 
 			$head = fichinter_rec_prepare_head($object);
 

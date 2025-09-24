@@ -180,7 +180,7 @@ if ($action == 'confirm_merge' && $confirm == 'yes' && $user->hasRight('projet',
 	}
 }
 
-if ($action == 'confirm_clone' && $confirm == 'yes') {
+if ($action == 'confirm_clone' && $confirm == 'yes' && $user->hasRight('projet', 'creer')) {
 	//$clone_contacts = GETPOST('clone_contacts') ? 1 : 0;
 	$clone_prog = GETPOST('clone_prog') ? 1 : 0;
 	$clone_time = GETPOST('clone_time') ? 1 : 0;
@@ -478,27 +478,7 @@ if ($id > 0 || !empty($ref)) {
 
 	/*
 	 * Actions
-	*/
-	/*print '<div class="tabsAction">';
-
-	if ($user->rights->projet->all->creer || $user->rights->projet->creer)
-	{
-	if ($projectstatic->public || $userWrite > 0)
-	{
-	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create'.$param.'">'.$langs->trans('AddTask').'</a>';
-	}
-	else
-	{
-	print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('AddTask').'</a>';
-	}
-	}
-	else
-	{
-	print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTask').'</a>';
-	}
-
-	print '</div>';
-	*/
+	 */
 
 	// To verify role of users
 	//$userAccess = $projectstatic->restrictedProjectArea($user); // We allow task affected to user even if a not allowed project

@@ -565,6 +565,13 @@ function societe_admin_prepare_head()
 	$head[$h][2] = 'attributes_contacts';
 	$h++;
 
+	if (getDolGlobalString('MAIN_FEATURES_LEVEL') >= 1) {
+		$head[$h][0] = DOL_URL_ROOT . '/societe/admin/public_interface.php';
+		$head[$h][1] = $langs->trans("PublicUrl");
+		$head[$h][2] = 'publicurl';
+		$h++;
+	}
+
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'company_admin', 'remove');
 
 	return $head;
@@ -954,7 +961,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 		$langs->load("projects");
 
 		$newcardbutton = '';
-		if (isModEnabled('project') && $user->hasRight('projet', 'creer') && empty($nocreatelink)) {
+		if ($user->hasRight('projet', 'creer') && empty($nocreatelink)) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AddProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT . '/projet/card.php?socid=' . $object->id . '&action=create&backtopage=' . urlencode($backtopage));
 		}
 
@@ -1133,7 +1140,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 						// To verify role of users
 						$userAccess = $projecttmp->restrictedProjectArea($user);
 
-						if ($user->rights->projet->lire && $userAccess > 0) {
+						if ($userAccess > 0) {
 							print '<tr class="oddeven">';
 
 							// Ref

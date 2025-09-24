@@ -204,7 +204,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	$selectedLines = GETPOST('toselect', 'array');
+	$selectedLines = GETPOST('toselect', 'array:int');
 
 	if ($cancel) {
 		if (!empty($backtopageforcancel)) {
@@ -813,11 +813,11 @@ if (empty($reshook)) {
 			}
 			$subprice_multicurrency = $line->subprice;
 			if (is_numeric($margin_rate) && $margin_rate > 0) {
-				$line->subprice = floatval(price2num(floatval($line->pa_ht) * (1 + floatval($margin_rate) / 100), 'MU'));
+				$line->subprice = (float) price2num((float) $line->pa_ht * (1 + (float) $margin_rate / 100), 'MU');
 			} elseif (is_numeric($mark_rate) && $mark_rate > 0) {
-				$line->subprice = floatval($line->pa_ht / (1 - (floatval($mark_rate) / 100)));
+				$line->subprice = (float) ($line->pa_ht / (1 - ((float) $mark_rate / 100)));
 			} else {
-				$line->subprice = floatval($line->pa_ht);
+				$line->subprice = (float) $line->pa_ht;
 			}
 
 			$prod = new Product($db);
@@ -1954,12 +1954,8 @@ if (empty($reshook)) {
 		}
 	}
 
-	// add lines from objectlinked
-	if (
-		$action == 'import_lines_from_object'
-		&& $usercancreate
-		&& $object->status == Commande::STATUS_DRAFT
-	) {
+	// Add lines from objectlinked
+	if ($action == 'import_lines_from_object' && $usercancreate && $object->status == Commande::STATUS_DRAFT) {
 		$fromElement = GETPOST('fromelement');
 		$fromElementid = GETPOST('fromelementid');
 		$importLines = GETPOST('line_checkbox');

@@ -142,6 +142,47 @@ abstract class CommonObject
 
 	/**
 	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 *
+	 * 'type' field format:
+	 *  	'integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter[:Sortfield]]]',
+	 *  	'select' (list of values are in 'options'. for integer list of values are in 'arrayofkeyval'),
+	 *  	'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter[:CategoryIdType[:CategoryIdList[:SortField]]]]]]',
+	 *  	'chkbxlst:...',
+	 *  	'varchar(x)',
+	 *  	'text', 'text:none', 'html',
+	 *   	'double(24,8)', 'real', 'price', 'stock',
+	 *  	'date', 'datetime', 'timestamp', 'duration',
+	 *  	'boolean', 'checkbox', 'radio', 'array',
+	 *  	'email', 'phone', 'url', 'password', 'ip'
+	 *		Note: Filter must be a Dolibarr Universal Filter syntax string. Example: "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.status:!=:0) or (t.nature:is:NULL)"
+	 * 'length' the length of field. Example: 255, '24,8'
+	 * 'label' the translation key.
+	 * 'langfile' the key of the language file for translation.
+	 * 'alias' the alias used into some old hard coded SQL requests
+	 * 'picto' is code of a picto to show before value in forms
+	 * 'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalInt("MY_SETUP_PARAM")' or 'isModEnabled("multicurrency")' ...)
+	 * 'position' is the sort order of field.
+	 * 'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+	 * 'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form (not create). 5=Visible on list and view form (not create/not update). 6=visible on list and update/view form (not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 * 'noteditable' says if field is not editable (1 or 0)
+	 * 'alwayseditable' says if field can be modified also when status is not draft ('1' or '0')
+	 * 'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 * 'index' if we want an index in database.
+	 * 'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
+	 * 'searchall' is 1 if we want to search in this field when making a search from the quick search button.
+	 * 'isameasure' must be set to 1 or 2 if field can be used for measure. Field type must be summable like integer or double(24,8). Use 1 in most cases, or 2 if you don't want to see the column total into list (for example for percentage)
+	 * 'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
+	 * 'placeholder' to set the placeholder of a varchar field.
+	 * 'help' and 'helplist' is a 'TranslationString' to use to show a tooltip on field. You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
+	 * 'showoncombobox' if value of the field must be visible into the label of the combobox that list record
+	 * 'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code like the constructor of the class.
+	 * 'arrayofkeyval' to set a list of values if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel"). Note that type can be 'integer' or 'varchar'
+	 * 'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
+	 * 'comment' is not used. You can store here any text of your choice. It is not used by application.
+	 * 'validate' is 1 if you need to validate the field with $this->validateField(). Need MAIN_ACTIVATE_VALIDATION_RESULT.
+	 * 'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
+	 *
+	 * Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
 	public $fields = array();
 
@@ -238,13 +279,6 @@ abstract class CommonObject
 	public $fk_project;
 
 	/**
-	 * @var ?Project	 	The related project object
-	 * @deprecated  Use $project instead.
-	 * @see $project
-	 */
-	private $projet;
-
-	/**
 	 * @var int
 	 * @deprecated  		Use $fk_project instead.
 	 * @see $fk_project
@@ -274,6 +308,12 @@ abstract class CommonObject
 	 * @see fetch_user()
 	 */
 	public $user;
+
+	/**
+	 * @var Product 	Populated by fetch_product()
+	 * @see fetch_product()
+	 */
+	public $product;
 
 	/**
 	 * @var string 		The type of originating object. Combined with `$origin_type`, it allows to reload `$origin_object`
@@ -590,31 +630,31 @@ abstract class CommonObject
 	public $note;
 
 	/**
-	 * @var float 		Total amount excluding taxes (HT = "Hors Taxe" in French)
+	 * @var ?float 		Total amount excluding taxes (HT = "Hors Taxe" in French)
 	 * @see update_price()
 	 */
 	public $total_ht;
 
 	/**
-	 * @var float 		Total VAT amount (TVA = "Taxe sur la Valeur Ajoutée" in French)
+	 * @var ?float 		Total VAT amount (TVA = "Taxe sur la Valeur Ajoutée" in French)
 	 * @see update_price()
 	 */
 	public $total_tva;
 
 	/**
-	 * @var float 		Total local tax 1 amount
+	 * @var ?float 		Total local tax 1 amount
 	 * @see update_price()
 	 */
 	public $total_localtax1;
 
 	/**
-	 * @var float 		Total local tax 2 amount
+	 * @var ?float 		Total local tax 2 amount
 	 * @see update_price()
 	 */
 	public $total_localtax2;
 
 	/**
-	 * @var float 		Total amount including taxes (TTC = "Toutes Taxes Comprises" in French)
+	 * @var ?float 		Total amount including taxes (TTC = "Toutes Taxes Comprises" in French)
 	 * @see update_price()
 	 */
 	public $total_ttc;
@@ -698,33 +738,9 @@ abstract class CommonObject
 	public $date_cloture;
 
 	/**
-	 * @var User		User author/creation
-	 * @deprecated		Store only id in user_creation_id
-	 */
-	public $user_author;
-
-	/**
-	 * @var User		User author/creation
-	 * @deprecated
-	 */
-	public $user_creation;
-
-	/**
 	 * @var int|null	User id author/creation
 	 */
 	public $user_creation_id;
-
-	/**
-	 * @var User		User of validation
-	 * @deprecated
-	 */
-	public $user_valid;
-
-	/**
-	 * @var User		User of validation
-	 * @deprecated
-	 */
-	public $user_validation;
 
 	/**
 	 * @var int|null		User id of validation
@@ -735,12 +751,6 @@ abstract class CommonObject
 	 * @var int|null		User id closing object
 	 */
 	public $user_closing_id;
-
-	/**
-	 * @var User	User last modifier
-	 * @deprecated
-	 */
-	public $user_modification;
 
 	/**
 	 * @var int|null		User ID who last modified the object
@@ -806,7 +816,7 @@ abstract class CommonObject
 	public $labelStatusShort = array();
 
 	/**
-	 * @var array<string,int|string>	Array to store lists of tpl
+	 * @var array<string,int|float|string|null>	Array to store lists of tpl
 	 */
 	public $tpl;
 
@@ -847,11 +857,6 @@ abstract class CommonObject
 	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object.
 	 */
 	protected $childtablesoncascade = array();
-
-	/**
-	 * @var Product 	Populated by fetch_product()
-	 */
-	public $product;
 
 	/**
 	 * @var int 		Populated by setPaymentTerms()
@@ -2062,7 +2067,6 @@ abstract class CommonObject
 		$project = new Project($this->db);
 		$result = $project->fetch($this->fk_project);
 
-		$this->projet = $project; // deprecated
 		$this->project = $project;
 
 		return $result;
@@ -5704,7 +5708,7 @@ abstract class CommonObject
 			$this->tpl['label'] .= img_picto('', 'rightarrow');
 		}
 
-		if (($line->info_bits & 2) == 2) {  // TODO Not sure this is used for source object
+		if (((int) $line->info_bits & 2) == 2) {  // TODO Not sure this is used for source object
 			$discount = new DiscountAbsolute($this->db);
 			if (property_exists($this, 'socid')) {
 				$discount->fk_soc = $this->socid;
@@ -5768,7 +5772,7 @@ abstract class CommonObject
 
 		// VAT Rate
 		$this->tpl['vat_rate'] = vatrate($line->tva_tx, true);
-		$this->tpl['vat_rate'] .= (($line->info_bits & 1) == 1) ? '*' : '';
+		$this->tpl['vat_rate'] .= (((int) $line->info_bits & 1) == 1) ? '*' : '';
 		if (!empty($line->vat_src_code) && !preg_match('/\(/', $this->tpl['vat_rate'])) {
 			$this->tpl['vat_rate'] .= ' ('.$line->vat_src_code.')';
 		}
@@ -5776,13 +5780,13 @@ abstract class CommonObject
 		$this->tpl['price'] = price($line->subprice);
 		$this->tpl['total_ht'] = price($line->total_ht);
 		$this->tpl['multicurrency_price'] = price($line->multicurrency_subprice);
-		$this->tpl['qty'] = (($line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
+		$this->tpl['qty'] = (((int) $line->info_bits & 2) != 2) ? $line->qty : '&nbsp;';
 		if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
 			$this->tpl['unit'] = $line->getLabelOfUnit('long', $langs);
 			$this->tpl['unit_short'] = $line->getLabelOfUnit('short', $langs);
 			//$this->tpl['unit_code'] = $line->getLabelOfUnit('code');
 		}
-		$this->tpl['remise_percent'] = (($line->info_bits & 2) != 2) ? vatrate((string) $line->remise_percent, true) : '&nbsp;';
+		$this->tpl['remise_percent'] = (((int) $line->info_bits & 2) != 2) ? vatrate((string) $line->remise_percent, true) : '&nbsp;';
 
 		// Is the line strike or not
 		$this->tpl['strike'] = 0;

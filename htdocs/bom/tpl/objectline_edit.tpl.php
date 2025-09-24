@@ -140,7 +140,7 @@ print '</td>';
 $coldisplay++;
 
 print '<td class="nobottom linecolqty right">';
-if (($line->info_bits & 2) != 2) {
+if (((int) $line->info_bits & 2) != 2) {
 	// I comment this because it shows info even when not required
 	// for example always visible on invoice but must be visible only if stock module on and stock decrease option is on invoice validation and status is not validated
 	// must also not be output for most entities (proposal, intervention, ...)

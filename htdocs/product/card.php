@@ -745,7 +745,7 @@ if (empty($reshook)) {
 
 			if ($id > 0) {
 				// Category association
-				$categories = GETPOST('categories', 'array');
+				$categories = GETPOST('categories', 'array:int');
 				$object->setCategories($categories);
 
 				if (!empty($backtopage)) {
@@ -937,7 +937,7 @@ if (empty($reshook)) {
 				if (!$error && $object->check()) {
 					if ($object->update($object->id, $user) > 0) {
 						// Category association
-						$categories = GETPOST('categories', 'array');
+						$categories = GETPOST('categories', 'array:int');
 						$object->setCategories($categories);
 
 						$action = 'view';
@@ -962,7 +962,7 @@ if (empty($reshook)) {
 	}
 
 	// Action clone object
-	if ($action == 'confirm_clone' && $confirm != 'yes') {
+	if ($action == 'confirm_clone' && $confirm != 'yes') {	// Test on permission not required
 		$action = '';
 	}
 	if ($action == 'confirm_clone' && $confirm == 'yes' && $usercancreate) {
@@ -1087,7 +1087,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete a product
-	if ($action == 'confirm_delete' && $confirm != 'yes') {
+	if ($action == 'confirm_delete' && $confirm != 'yes') {	// Test on permission not required
 		$action = '';
 	}
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete) {

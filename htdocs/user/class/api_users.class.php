@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2020-2025  Thibault FOUCART		<support@ptibogxiv.net>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * COpyright (C) 2025		William Mead		<william@m34d.com>
+/* Copyright (C) 2015		Jean-François Ferry     	<jfefe@aternatik.fr>
+ * Copyright (C) 2020-2025	Thibault FOUCART			<support@ptibogxiv.net>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2025		William Mead				<william@m34d.com>
+ * Copyright (C) 2025		Jean François Baillette		<jean-francois@swiiptel.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -611,6 +612,43 @@ class Users extends DolibarrApi
 		}
 
 		return 1;
+	}
+
+	/**
+	 * Remove user from group (only admin)
+	 *
+	 * @since    23.0.0    Initial implementation
+	 *
+	 * @url POST {id}/remove-group/{group}
+	 *
+	 * @param int $id User ID
+	 * @param int $group Group ID
+	 * @return  array{success:boolean,message:string}
+	 *
+	 * @throws RestException 403 Not allowed - only admin
+	 * @throws RestException 503 Error
+	 *
+	 */
+	public function removeUserFromGroup($id, $group)
+	{
+		if (!DolibarrApiAccess::$user->admin) {
+			throw new RestException(403, 'Only admin can remove users from groups');
+		}
+
+		$sql = "DELETE FROM " . MAIN_DB_PREFIX . "usergroup_user";
+		$sql .= " WHERE fk_user = " . ((int) $id);
+		$sql .= " AND fk_usergroup = " . ((int) $group);
+
+		$resql = $this->db->query($sql);
+
+		if (!$resql) {
+			throw new RestException(503, 'DB error: ' . $this->db->lasterror());
+		}
+
+		return [
+			'success' => true,
+			'message' => "User $id removed from group $group"
+		];
 	}
 
 	/**

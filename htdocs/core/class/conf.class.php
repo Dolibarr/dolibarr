@@ -346,6 +346,12 @@ class Conf extends stdClass
 	 * @var stdClass
 	 */
 	public $productbatch;
+
+	/**
+	 * @var stdClass
+	 */
+	public $api;
+
 	/**
 	 * @var ?stdClass
 	 * @deprecated Use project
@@ -957,7 +963,6 @@ class Conf extends stdClass
 					}
 				}
 			}
-
 			if (!isset($this->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT)) {
 				$this->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT = 1;
 			}

@@ -47,7 +47,6 @@ $ref = GETPOST('ref', 'alpha');
 
 $mode = GETPOST('mode', 'alpha');
 $mine = ($mode == 'mine' ? 1 : 0);
-//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
 
@@ -204,7 +203,7 @@ if (($id > 0 && is_numeric($id)) || !empty($ref)) {
 	print '</td></tr>';
 
 	// Date start - end project
-	print '<tr><td>'.$langs->trans("Dates").'</td><td>';
+	print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
 	$start = dol_print_date($object->date_start, 'day');
 	print($start ? $start : '?');
 	$end = dol_print_date($object->date_end, 'day');

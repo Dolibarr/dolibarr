@@ -264,7 +264,7 @@ class Mo extends CommonObject
 	public $fk_parent_line;
 
 	/**
-	 * @ var array{id:int,label:string,qty_bom:int|float,stock:float,seuil_stock_alerte:float,virtual_stock:float,qty:float,fk_unit:int,qty_frozen:float,disable_stock_change:int<0,1>,efficiency:float}	tpl
+	 * @var array{}|array{id:int,label:string,qty_bom:int|float,stock:float,seuil_stock_alerte:null|float,virtual_stock:float,qty:float,fk_unit:int,qty_frozen:int<0,1>,disable_stock_change:int<0,1>,efficiency:float}	tpl
 	 */
 	public $tpl = array();
 
@@ -777,49 +777,8 @@ class Mo extends CommonObject
 
 			if ($this->fk_bom > 0 && is_object($bom)) {	// If a BOM is defined, we know what to consume.
 				if ($bom->id > 0) {
-					// Lines to consume
-					if (!$error) {
-						foreach ($bom->lines as $line) {
-							$moline = new MoLine($this->db);
-
-							$moline->fk_mo = $this->id;
-							$moline->origin_id = $line->id;
-							$moline->origin_type = 'bomline';
-							if (!empty($line->fk_unit)) {
-								$moline->fk_unit = $line->fk_unit;
-							}
-							if ($line->qty_frozen) {
-								$moline->qty = $line->qty; // Qty to consume does not depends on quantity to produce
-							} else {
-								$moline->qty = (float) price2num(($line->qty / (!empty($bom->qty) ? $bom->qty : 1)) * $this->qty / (!empty($line->efficiency) ? $line->efficiency : 1), 'MS'); // Calculate with Qty to produce and  more presition
-							}
-							if ($moline->qty <= 0) {
-								$error++;
-								$this->error = "BadValueForquantityToConsume";
-								$this->errors[] = $this->error;
-								break;
-							} else {
-								$moline->fk_product = $line->fk_product;
-								$moline->role = $role;
-								$moline->position = $line->position;
-								$moline->qty_frozen = $line->qty_frozen;
-								$moline->disable_stock_change = $line->disable_stock_change;
-								if (!empty($line->fk_default_workstation)) {
-									$moline->fk_default_workstation = $line->fk_default_workstation;
-								}
-
-								$resultline = $moline->create($user, 0); // Never use triggers here
-								if ($resultline <= 0) {
-									$error++;
-									$this->error = $moline->error;
-									$this->errors[] = $moline->error;
-									$this->errors = array_merge($this->errors, $moline->errors);
-									dol_print_error($this->db, $moline->error, $moline->errors);
-									break;
-								}
-							}
-						}
-					}
+					// process lines to consume, this needs to recurse through BOM's
+					$error += $this->processBOM($user, $role, $bom, $this->qty);
 				}
 			}
 		}
@@ -832,6 +791,69 @@ class Mo extends CommonObject
 			return -1;
 		}
 	}
+
+
+	/**
+	* Recurse through BOM only adding products to list to consume/produce
+	*
+	* @param  User $user      User that modifies
+	* @param  string $role    MoLine Role that products are added as
+	* @param  BOM $bom        BOM to parse lines from
+	* @param  float $quantity Quantity modifier for sub products/BOM
+	* @return int             Return integer <0 if KO, >0 if OK
+	*/
+	public function processBOM(User $user, $role, $bom, $quantity)
+	{
+		$error = 0;
+
+		$quantity /= $bom->qty;
+		foreach ($bom->lines as $line) {
+			$quantity_line = !$line->qty_frozen ? $line->qty * $quantity / (!empty($line->efficiency) ? $line->efficiency : 1) : 1;
+
+			$tmpproduct = new Product($this->db);
+			$tmpproduct->fetch($line->fk_product);
+			if ($line->fk_bom_child > 0) {
+				$bom = new BOM($this->db);
+				$bom->fetch((int) $line->fk_bom_child);
+				$error += $this->processBOM($user, $role, $bom, $quantity_line);
+			} else {
+				$moline = new MoLine($this->db);
+				$moline->fk_mo = $this->id;
+				$moline->origin_id = $line->id;
+				$moline->origin_type = 'bomline';
+				if (!empty($line->fk_unit)) {
+					$moline->fk_unit = $line->fk_unit;
+				}
+
+				$moline->qty = (float) price2num($quantity_line, 'MS'); // Calculate with Qty to produce and  more presition
+				if ($moline->qty <= 0) {
+					$error++;
+					$this->error = "BadValueForquantityToConsume";
+					$this->errors[] = $this->error;
+				} else {
+					$moline->fk_product = $line->fk_product;
+					$moline->role = $role;
+					$moline->position = $line->position;
+					$moline->qty_frozen = $line->qty_frozen;
+					$moline->disable_stock_change = $line->disable_stock_change;
+					if (!empty($line->fk_default_workstation)) {
+						$moline->fk_default_workstation = $line->fk_default_workstation;
+					}
+					$resultline = $moline->create($user, 0); // Never use triggers here
+					if ($resultline <= 0) {
+						$error++;
+						$this->error = $moline->error;
+						$this->errors[] = $moline->error;
+						$this->errors = array_merge($this->errors, $moline->errors);
+						dol_print_error($this->db, $moline->error, $moline->errors);
+					}
+				}
+			}
+			if ($error) break;
+		}
+		return $error;
+	}
+
 
 	/**
 	 * Update quantities in lines to consume and/or lines to produce.
@@ -1113,7 +1135,7 @@ class Mo extends CommonObject
 		$this->db->begin();
 
 		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+		if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) { // empty should not happened, but when it occurs, the test save life
 			$this->fetch_product();
 			$num = $this->getNextNumRef($this->product);
 		} else {
@@ -1836,7 +1858,7 @@ class Mo extends CommonObject
 
 
 		global $conf;	// used into template
-		$res = include DOL_DOCUMENT_ROOT.'/mrp/tpl/originproductline.tpl.php';
+		include DOL_DOCUMENT_ROOT.'/mrp/tpl/originproductline.tpl.php';
 	}
 
 	/**

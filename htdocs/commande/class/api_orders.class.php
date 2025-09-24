@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -691,14 +691,15 @@ class Orders extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$contacts = $this->commande->liste_contact();
+		foreach (array('internal', 'external') as $source) {
+			$contacts = $this->commande->liste_contact(-1, $source);
+			foreach ($contacts as $contact) {
+				if ($contact['id'] == $contactid && $contact['code'] == $type) {
+					$result = $this->commande->delete_contact($contact['rowid']);
 
-		foreach ($contacts as $contact) {
-			if ($contact['id'] == $contactid && $contact['code'] == $type) {
-				$result = $this->commande->delete_contact($contact['rowid']);
-
-				if (!$result) {
-					throw new RestException(500, 'Error when deleted the contact');
+					if (!$result) {
+						throw new RestException(500, 'Error when deleting the contact '.$contact['rowid']);
+					}
 				}
 			}
 		}
@@ -977,9 +978,10 @@ class Orders extends DolibarrApi
 			throw new RestException(404, 'Order not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+		// test already done
+		// if (!DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
+		// 	throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		// }
 
 		$this->commande->fetchObjectLinked();
 
@@ -1022,9 +1024,10 @@ class Orders extends DolibarrApi
 			throw new RestException(404, 'Order not found');
 		}
 
-		if (!DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+		// test already done
+		// if (!DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
+		// 	throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		// }
 
 		$this->commande->fetchObjectLinked();
 

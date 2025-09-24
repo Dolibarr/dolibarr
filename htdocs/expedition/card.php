@@ -401,7 +401,7 @@ if (empty($reshook)) {
 		}
 
 		if (($totalqty > 0 || getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) && !$error) {		// There is at least one thing to ship and no error
-			$selected_subtotal_lines = GETPOST('subtotal_toselect', 'array');
+			$selected_subtotal_lines = GETPOST('subtotal_toselect', 'array:int');
 			for ($i = 0; $i < $num; $i++) {
 				$qty = "qtyl" . $i;
 
@@ -637,27 +637,27 @@ if (empty($reshook)) {
 		// Action update
 		$error = 0;
 
-		if ($action == 'settracking_number') {
+		if ($action == 'settracking_number') {	// Test on permission not required
 			$object->tracking_number = trim(GETPOST('tracking_number', 'alpha'));
 		}
-		if ($action == 'settracking_url') {
+		if ($action == 'settracking_url') {		// Test on permission not required
 			$object->tracking_url = trim(GETPOST('tracking_url', 'restricthtml'));
 		}
-		if ($action == 'settrueWeight') {
+		if ($action == 'settrueWeight') {		// Test on permission not required
 			$object->trueWeight = GETPOSTINT('trueWeight');
 			$object->weight_units = GETPOSTINT('weight_units');
 		}
-		if ($action == 'settrueWidth') {
+		if ($action == 'settrueWidth') {		// Test on permission not required
 			$object->trueWidth = GETPOSTINT('trueWidth');
 		}
-		if ($action == 'settrueHeight') {
+		if ($action == 'settrueHeight') {		// Test on permission not required
 			$object->trueHeight = GETPOSTINT('trueHeight');
 			$object->size_units = GETPOSTINT('size_units');
 		}
-		if ($action == 'settrueDepth') {
+		if ($action == 'settrueDepth') {		// Test on permission not required
 			$object->trueDepth = GETPOSTINT('trueDepth');
 		}
-		if ($action == 'setshipping_method_id') {
+		if ($action == 'setshipping_method_id') {	// Test on permission not required
 			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
 		}
 

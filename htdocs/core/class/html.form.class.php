@@ -17,7 +17,7 @@
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2023  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2022  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018       Christophe Battarel     <christophe@altairis.fr>
  * Copyright (C) 2018       Josep Lluis Amador      <joseplluis@lliuretic.cat>
@@ -99,6 +99,44 @@ class Form
 	public function __construct($db)
 	{
 		$this->db = $db;
+	}
+
+	/**
+	 * Return an array of Duration Types
+	 *
+	 * @param Translate $langs Translation to be used
+	 * @param bool $plurial return plurial or singular
+	 * @param bool $reverse change order of duration types
+	 * @return array{y:string,m:string,w:string,d:string,h:string,i:string,s:string} Types of durations
+	 */
+	public function getDurationTypes(Translate $langs, $plurial = true, $reverse = false)
+	{
+		if ($plurial) {
+			$arrayoftypes = [
+				'y' => $langs->trans('Years'),
+				'm' => $langs->trans('Month'),
+				'w' => $langs->trans('Weeks'),
+				'd' => $langs->trans('Days'),
+				'h' => $langs->trans('Hours'),
+				'i' => $langs->trans('Minutes'),
+				's' => $langs->trans('Seconds'),
+			];
+		} else {
+			$arrayoftypes = [
+				"y" => $langs->trans("Year"),
+				"m" => $langs->trans("Month"),
+				"w" => $langs->trans("Week"),
+				"d" => $langs->trans("Day"),
+				"h" => $langs->trans("Hour"),
+				"i" => $langs->trans("Minute"),
+				's' => $langs->trans('Second'),
+			];
+		}
+		if ($reverse) {
+			return array_reverse($arrayoftypes);
+		} else {
+			return $arrayoftypes;
+		}
 	}
 
 	/**
@@ -4553,7 +4591,7 @@ class Form
 	/**
 	 * Loads into a cache property the list of possible rules for line dates
 	 *
-	 * @return -1|1		OK=1 ; Empty=-1
+	 * @return -1|1		Return 1 if OK, -1 if empty
 	 */
 	public function load_cache_rule_for_lines_dates()
 	{
@@ -5779,10 +5817,8 @@ class Form
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-
 	/**
-	 * Return HTML compopent to select a category
+	 * Return HTML component to select a category
 	 *
 	 * @param 	string			$categtype		Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) should be avoid and is keptfor internal use only.
 	 * @param 	string			$htmlname 		Html name
@@ -5866,6 +5902,7 @@ class Form
 	}
 
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return list of categories having chosen type
 	 *
@@ -6537,6 +6574,7 @@ class Form
 	 */
 	public function form_rule_for_lines_dates($page, $selected = '', $htmlname = 'rule_for_lines_dates', $addempty = 0, $nooutput = 0): string
 	{
+		// phpcs:enable
 		global $langs;
 
 		$out = '';
@@ -8074,30 +8112,24 @@ class Form
 	/**
 	 * selectTypeDuration
 	 *
-	 * @param string $prefix Prefix
-	 * @param string $selected Selected duration type
-	 * @param string[] $excludetypes Array of duration types to exclude. Example array('y', 'm')
-	 * @return  string                    HTML select string
+	 * @param 	string 		$prefix 		Prefix
+	 * @param 	string 		$selected 		Selected duration type
+	 * @param 	string[] 	$excludetypes 	Array of duration types to exclude. Example array('y', 'm')
+	 * @param 	string 		$morecss 		Additional css on select
+	 * @return 	string      				HTML select string
 	 */
-	public function selectTypeDuration($prefix, $selected = 'i', $excludetypes = array())
+	public function selectTypeDuration($prefix, $selected = 'i', $excludetypes = array(), $morecss = 'minwidth75 maxwidth100')
 	{
 		global $langs;
 
-		$TDurationTypes = array(
-			'y' => $langs->trans('Years'),
-			'm' => $langs->trans('Month'),
-			'w' => $langs->trans('Weeks'),
-			'd' => $langs->trans('Days'),
-			'h' => $langs->trans('Hours'),
-			'i' => $langs->trans('Minutes')
-		);
+		$TDurationTypes = $this->getDurationTypes($langs);
 
 		// Removed undesired duration types
 		foreach ($excludetypes as $value) {
 			unset($TDurationTypes[$value]);
 		}
 
-		$retstring = '<select class="flat minwidth75 maxwidth100" id="select_' . $prefix . 'type_duration" name="' . $prefix . 'type_duration">';
+		$retstring = '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="select_' . $prefix . 'type_duration" name="' . $prefix . 'type_duration">';
 		foreach ($TDurationTypes as $key => $typeduration) {
 			$retstring .= '<option value="' . $key . '"';
 			if ($key == $selected) {
@@ -12416,9 +12448,10 @@ class Form
 	 * @param	int<0,1>	$default		1=Show also Default mail template
 	 * @param	int<0,1>	$addjscombo		Add js combobox
 	 * @param   string      $selected       Selected model mail
+	 * @param   string      $morecss        More css added to the select component
 	 * @return	string						HTML select string
 	 */
-	public function selectModelMail($prefix, $modelType = '', $default = 0, $addjscombo = 0, $selected = '')
+	public function selectModelMail($prefix, $modelType = '', $default = 0, $addjscombo = 0, $selected = '', $morecss = '')
 	{
 		global $langs, $user;
 
@@ -12439,7 +12472,7 @@ class Form
 			}
 		}
 
-		$retstring .= '<select class="flat" id="select_' . $prefix . 'model_mail" name="' . $prefix . 'model_mail">';
+		$retstring .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="select_' . $prefix . 'model_mail" name="' . $prefix . 'model_mail">';
 
 		foreach ($TModels as $id_model => $label_model) {
 			$retstring .= '<option value="' . $id_model . '"';

@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2007-2012  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2016       Florian Henry       <florian.henry@atm-consulting.fr>
- * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2007-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2014-2016  Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2016       Florian Henry           <florian.henry@atm-consulting.fr>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,12 +57,6 @@ class CGenericDic extends CommonDict
 	 * @var string Label
 	 */
 	public $label;
-
-	/**
-	 * @var int<0,1>
-	 */
-	public $active;
-
 
 	/**
 	 * Constructor

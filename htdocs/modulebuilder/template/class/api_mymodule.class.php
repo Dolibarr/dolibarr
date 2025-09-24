@@ -97,12 +97,12 @@ class MyModuleApi extends DolibarrApi
 	 *
 	 * Get a list of myobjects
 	 *
-	 * @param string		   $sortfield			Sort field
-	 * @param string		   $sortorder			Sort order
-	 * @param int			   $limit				Limit for list
-	 * @param int			   $page				Page number
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param 	string		   $sortfield			Sort field
+	 * @param 	string		   $sortorder			Sort order
+	 * @param 	int			   $limit				Limit for list
+	 * @param 	int			   $page				Page number
+	 * @param 	string         $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param 	string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of MyObject objects
 	 * @phan-return array<int,MyObject>
 	 * @phpstan-return array<int,MyObject>
@@ -160,7 +160,7 @@ class MyModuleApi extends DolibarrApi
 			}
 		}
 		// Add where from hooks and sqlfilters
-		$parameters = array('sqlfilters' => $sqlfilters, 'apimethod' => 'index');
+		$parameters = array('sqlfilters' => $sqlfilters, 'apiroute' => 'myobject', 'apimethod' => 'index');
 		$action = 'list';
 		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $tmpobject, $action); // Note that $action and $object may have been modified by hook
 		if ($reshook > 0) {

@@ -730,8 +730,8 @@ class ConferenceOrBoothAttendee extends CommonObject
 		$project = new Project($this->db);
 		$result = $project->fetch($this->fk_project);
 
-		$this->projet = $project; // deprecated
 		$this->project = $project;
+
 		return $result;
 	}
 
