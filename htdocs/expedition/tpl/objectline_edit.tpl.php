@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php";
  * @var CommonObject $this
  * @var CommonObject $object
  * @var HookManager $hookmanager
- * @var expeditionligne $line
+ * @var Expeditionligne $line
  * @var Societe $buyer
  * @var Societe $seller
  * @var Translate $langs
