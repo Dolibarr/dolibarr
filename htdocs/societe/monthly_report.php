@@ -54,9 +54,7 @@ $result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'ro
 // Get parameters
 $action = GETPOST('action', 'alpha');
 $report_type = GETPOST('report_type', 'alpha');
-if (empty($report_type)) $report_type = 'both'; // Default to both
-$report_type = GETPOST('report_type', 'alpha');
-if (empty($report_type)) $report_type = 'both'; // Default to both
+if (empty($report_type)) $report_type = 'both';
 
 // Initialize variables
 $form = new Form($db);
@@ -135,10 +133,9 @@ if ($action == 'print' || $action == 'print_content') {
 		print '<p><strong>' . $langs->trans("AppliedFilters") . ':</strong> ' . implode(', ', $filters_applied) . '</p>';
 	}
 
-	// Generate data for print view - USE SAME 3-YEAR LOGIC AS MAIN VIEW
+	// Generate data for print view
 	$current_year = (int)date('Y');
-	$years = array($current_year, $current_year - 1, $current_year - 2); // Only last 3 years
-	// Build comprehensive query for all years
+	$years = array($current_year, $current_year - 1, $current_year - 2);
 	$data_by_year = array();
 	foreach ($years as $year) {
 		// Build SQL based on report type
@@ -149,10 +146,10 @@ if ($action == 'print' || $action == 'print_content') {
 			$sql .= " SUM(f.total_ttc) as total_ttc,";
 			$sql .= " COUNT(f.rowid) as nb_invoices";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "facture as f";
-			$sql .= " WHERE f.fk_statut IN (1,2,3)"; // Include all validated, paid and credit notes
-			$sql .= " AND f.fk_soc = " . (int)$socid;
-			$sql .= " AND YEAR(f.datef) = " . (int)$year;
-			$sql .= " AND f.entity IN (" . getEntity('invoice') . ")";
+			$sql .= " WHERE f.fk_statut IN (1,2,3)";
+			$sql .= " AND f.fk_soc = ".(int)$socid;
+			$sql .= " AND YEAR(f.datef) = ".(int)$year;
+			$sql .= " AND f.entity IN (".getEntity('invoice').")";
 			$sql .= " GROUP BY MONTH(f.datef)";
 			$sql .= " ORDER BY month ASC";
 		} elseif ($report_type == 'supplier') {
@@ -162,7 +159,7 @@ if ($action == 'print' || $action == 'print_content') {
 			$sql .= " SUM(f.total_ttc) as total_ttc,";
 			$sql .= " COUNT(f.rowid) as nb_invoices";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn as f";
-			$sql .= " WHERE f.fk_statut IN (1,2,3)"; // Include all validated, paid and credit notes
+			$sql .= " WHERE f.fk_statut IN (1,2,3)";
 			$sql .= " AND f.fk_soc = " . (int)$socid;
 			$sql .= " AND YEAR(f.datef) = " . (int)$year;
 			$sql .= " AND f.entity IN (" . getEntity('supplier_invoice') . ")";
@@ -219,7 +216,6 @@ if ($action == 'print' || $action == 'print_content') {
 		print '</tr>';
 
 		// Data rows for each month
-		$month_names = array('', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
 		for ($month = 1; $month <= 12; $month++) {
 			$month_name = $langs->trans(dol_print_date(dol_mktime(0, 0, 0, $month, 1, 2024), "%B"));
 			print '<tr>';
@@ -373,7 +369,7 @@ print '<br>';
 
 print '<div class="fichecenter">';
 
-// Simple CSS for light borders to separate years
+// CSS styling for the monthly report table
 print '<style>
 .monthly-report-table {
     border-collapse: collapse;
@@ -413,11 +409,11 @@ print '<style>
 }
 </style>';
 
-// Build the SQL query to get monthly sums for this specific company
+// Get monthly data for the last 3 years
 $current_year = (int)date('Y');
-$years = array($current_year, $current_year - 1, $current_year - 2); // Only last 3 years
+$years = array($current_year, $current_year - 1, $current_year - 2);
 
-// Build comprehensive query for all years
+// Build data array for all years
 $data_by_year = array();
 foreach ($years as $year) {
 	// Build SQL based on report type
@@ -428,10 +424,10 @@ foreach ($years as $year) {
 		$sql .= " SUM(f.total_ttc) as total_ttc,";
 		$sql .= " COUNT(f.rowid) as nb_invoices";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "facture as f";
-		$sql .= " WHERE f.fk_statut IN (1,2,3)"; // Include all validated, paid and credit notes
-		$sql .= " AND f.fk_soc = " . (int)$socid;
-		$sql .= " AND YEAR(f.datef) = " . (int)$year;
-		$sql .= " AND f.entity IN (" . getEntity('invoice') . ")";
+		$sql .= " WHERE f.fk_statut IN (1,2,3)";
+		$sql .= " AND f.fk_soc = ".(int)$socid;
+		$sql .= " AND YEAR(f.datef) = ".(int)$year;
+		$sql .= " AND f.entity IN (".getEntity('invoice').")";
 		$sql .= " GROUP BY MONTH(f.datef)";
 		$sql .= " ORDER BY month ASC";
 	} elseif ($report_type == 'supplier') {
@@ -441,7 +437,7 @@ foreach ($years as $year) {
 		$sql .= " SUM(f.total_ttc) as total_ttc,";
 		$sql .= " COUNT(f.rowid) as nb_invoices";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn as f";
-		$sql .= " WHERE f.fk_statut IN (1,2,3)"; // Include all validated, paid and credit notes
+		$sql .= " WHERE f.fk_statut IN (1,2,3)";
 		$sql .= " AND f.fk_soc = " . (int)$socid;
 		$sql .= " AND YEAR(f.datef) = " . (int)$year;
 		$sql .= " AND f.entity IN (" . getEntity('supplier_invoice') . ")";
@@ -504,10 +500,10 @@ if (count($years) > 0) {
 	for ($month = 1; $month <= 12; $month++) {
 		$month_name = $langs->trans(dol_print_date(dol_mktime(0, 0, 0, $month, 1, 2024), "%B"));
 		print '<tr class="oddeven">';
-		print '<td>' . $month_name . '</td>'; // Removed <strong> to make months not bold
+		print '<td>'.$month_name.'</td>';
 
 		foreach ($years as $year_index => $year) {
-			$separator_class = ' first-year-separator'; // Always add separator for first year
+			$separator_class = ' first-year-separator';
 			if ($year_index > 0) $separator_class = ' year-separator';
 
 			// Get current and previous year data for percentage calculation
@@ -551,8 +547,6 @@ if (count($years) > 0) {
 		print '</tr>';
 	}
 
-	// Total row
-	print '<tr class="liste_total">';
 	// Total row
 	print '<tr class="liste_total">';
 	print '<td><strong>' . $langs->trans("Total") . '</strong></td>';
