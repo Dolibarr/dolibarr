@@ -14113,30 +14113,6 @@ parameters:
 			path: ../../../htdocs/product/stock/massstockmove.php
 
 		-
-			message: '#^Variable \$datatoimport might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/massstockmove.php
-
-		-
-			message: '#^Variable \$endatlinenb might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/massstockmove.php
-
-		-
-			message: '#^Variable \$excludefirstline might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/massstockmove.php
-
-		-
-			message: '#^Variable \$format might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/massstockmove.php
-
-		-
 			message: '#^Variable \$producttmp might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -16199,12 +16175,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/reception/list.php
-
-		-
-			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/recruitment/admin/public_interface.php
 
 		-
 			message: '#^If condition is always true\.$#'
