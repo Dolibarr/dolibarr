@@ -735,10 +735,8 @@ class Expedition extends CommonObject
 			$num = $this->getNextNumRef($soc);
 		} elseif (!empty($this->ref)) {
 			$num = $this->ref;
-		} else {
-			$num = "EXP".$this->id;
 		}
-    $this->newref = dol_sanitizeFileName($num);
+    	$this->newref = dol_sanitizeFileName($num);
 
 		$now = dol_now();
 
