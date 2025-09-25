@@ -1526,7 +1526,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 		foreach ($extralabels as $key => $value) {
 			$sql .= ", ".$key;
 		}
-	}	
+	}
 	$sql .= " FROM ".MAIN_DB_PREFIX."product_extrafields";
 	$sql .= " WHERE fk_object = ".((int) $object->id);
 	$resql = $db->query($sql);
@@ -1538,14 +1538,14 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUS
 					if (!empty($extrafields->attributes["product"]['langfile'][$key])) {
 						$langs->load($extrafields->attributes["product"]['langfile'][$key]);
 					}
-	
+
 					print '<tr><td'.($extrafields->attributes["product"]['required'][$key] ? ' class="fieldrequired"' : '').'>';
 					if (!empty($extrafields->attributes["product"]['help'][$key])) {
 						print $form->textwithpicto($langs->trans($value), $langs->trans($extrafields->attributes["product"]['help'][$key]));
 					} else {
 						print $langs->trans($value);
 					}
-	
+
 					print '<td align="left">'.$extrafields->showOutputField($key, $obj->{$key}, '', 'product')."</td></tr>";
 				}
 			}
