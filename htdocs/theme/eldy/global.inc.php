@@ -20,7 +20,7 @@
 
 /**
  *		\file       htdocs/theme/eldy/global.inc.php
- *		\brief      File for CSS style sheet Eldy
+ *		\brief      File for CSS style sheet Eldy. Called by styles.css.php.
  */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be called by steelsheet');
@@ -319,8 +319,9 @@ a.commonlink { color: var(--colortextlink) !important; text-decoration: none; }
 th.liste_titre a div div:hover, th.liste_titre_sel a div div:hover { text-decoration: underline; }
 tr.liste_titre th.liste_titre_sel:not(.maxwidthsearch), tr.liste_titre td.liste_titre_sel:not(.maxwidthsearch),
 tr.liste_titre th.liste_titre:not(.maxwidthsearch), tr.liste_titre td.liste_titre:not(.maxwidthsearch) { opacity: 0.8; }
-/* th.liste_titre_sel a, th.liste_titre a, td.liste_titre_sel a, td.liste_titre a { color: #766; } */
-tr.liste_titre_filter th.liste_titre:not(.center) { text-align: unset; }
+tr.liste_titre_filter th.liste_titre:not(.center), tr.liste_titre_filter th.liste_titre_sel:not(.center) {
+	text-align: unset;
+}
 .liste_titre.trheight5em {
 	height: 4em !important;
 }
@@ -424,9 +425,19 @@ input {
 .liste_titre input {
 	line-height: 1.3em;
 }
-.tableforfield input, .refidno input {
-	padding: 2px;
+.tableforfield input {
+	padding-left: 2px;
 }
+.refidno input {
+	margin-top: 0 !important;
+	padding: 0;
+}
+.refidno .button.smallpaddingimp {
+	padding: 3px !important;
+	padding-left: 6px !important;
+	padding-right: 6px !important;
+}
+
 select {
 	padding-top: 4px;
 	padding-right: 4px;
@@ -541,6 +552,9 @@ input.buttonpayment, button.buttonpayment, div.buttonpayment {
 }
 input.short {
 	width: 40px;
+}
+input.shortbis {
+	width: 48px;
 }
 .nofocusvisible:focus-visible {
 	outline: none;
@@ -734,6 +748,9 @@ input.pageplusone {
 .fontsizeunset {
 	font-size: unset !important;
 }
+.unsetcolor {
+	color: unset !important;
+}
 .vmirror {
 	transform: scale(1, -1);
 }
@@ -909,6 +926,10 @@ div.floatright
 .inline-blockimp
 {
 	display:inline-block !important;
+}
+.displaycontents
+{
+	display:contents !important;
 }
 .largenumber {
 	font-size: 1.4em;
@@ -1789,10 +1810,18 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 	font-size: 1.7em;
 	white-space: nowrap;
 }
+.amountpaymentcompletenoresize {
+	color: var(--amountpaymentcomplete);
+	white-space: nowrap;
+}
 .amountremaintopay {
 	color: var(--amountremaintopaycolor);
 	font-weight: bold;
 	font-size: 1.7em;
+	white-space: nowrap;
+}
+.amountremaintopaynoresize {
+	color: var(--amountremaintopaycolor);
 	white-space: nowrap;
 }
 .amountremaintopayback {
@@ -1801,9 +1830,16 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 	font-size: 1.7em;
 	white-space: nowrap;
 }
+.amountremaintopaybacknoresize {
+	color: var(--amountremaintopaybackcolor);
+	white-space: nowrap;
+}
 .amountpaymentneutral {
 	font-weight: bold;
 	font-size: 1.7em;
+	white-space: nowrap;
+}
+.amountpaymentneutralnoresize {
 	white-space: nowrap;
 }
 
@@ -1893,7 +1929,8 @@ div.ticketpublicarealist>form>div.div-table-responsive {
 	flex:1;
 }
 .flex-item-uploadfile {
-	border: 2px solid #888;
+	/* border: 2px solid #888; */
+	box-shadow: 2px 3px 10px #ccc;
 	border-radius: 5px;
 	cursor: pointer;
 	text-align: center;
@@ -2919,6 +2956,7 @@ img.photoref, div.photoref {
 	width: 80px;
 	object-fit: contain;
 }
+
 img.photokanban, div.photokanban {
 	padding: 0;
 	border: none;
@@ -3691,6 +3729,9 @@ div.vmenu, td.vmenu {
 	display: none;
 	<?php } ?>
 }
+.vmenudisabled {
+	margin-left: 8px !important;
+}
 
 /* Force vmenusearchselectcombo with type=text differently than without because beautify with select2 affect vmenusearchselectcombo differently */
 input.vmenusearchselectcombo[type=text] {
@@ -4171,10 +4212,6 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 	border: 0px;
 }
 
-.unsetcolor {
-	color: unset !important;
-}
-
 .smallpaddingimp {
 	padding: 4px !important;
 	padding-left: 7px !important;
@@ -4624,7 +4661,7 @@ div.refidno  {
 	font-weight: normal;
 	color: var(--refidnocolor);
 	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>;
-	line-height: 1.4em;
+	line-height: 1.5em;
 }
 div.refaddress div.address {
 	line-height: 1.2em;
@@ -5653,11 +5690,11 @@ div.titre {
 div.titre.small {
 	font-size: 1em;
 }
+div.fiche > table.table-fiche-title:first-of-type div, div.fiche > form > table.table-fiche-title:first-of-type div {
+	font-size: 1.1em;
+}
 div.fiche > table.table-fiche-title:first-of-type div {
 	color: var(--colortexttitlenotab);
-	font-size: 1.1em;
-	/* text-transform: uppercase; */
-	/* font-weight: 600; */
 }
 div.titre {
 	color: var(--colortexttitlenotab);
@@ -5834,6 +5871,9 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 .ui-dialog .ui-dialog-buttonpane {
 	padding: .5em 1em .3em .4em;
 }
+.ui-dialog .ui-dialog-content, .ui-dialog .ui-dialog-titlebar.ui-widget-header {
+	padding-left: 1em !important;
+}
 
 
 /* ============================================================================== */
@@ -5953,6 +5993,7 @@ div#ui-datepicker-div {
 	padding-left: 5px;
 	padding-right: 5px;
 	padding-top: 5px;
+	z-index: 1010 !important;	/* must be over menu bar */
 }
 .ui-datepicker .ui-datepicker table {
 	font-size: unset;
@@ -5961,6 +6002,13 @@ div#ui-datepicker-div {
 	border: unset;
 	background: unset;
 }
+
+/* the button Previous / Next month */
+.ui-datepicker .ui-datepicker-prev, .ui-datepicker .ui-datepicker-next {
+	width: 2.5em;
+	height: 2.7em;
+}
+
 
 img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 
@@ -5974,12 +6022,14 @@ select.ui-datepicker-year {
 	padding-right: 2px;
 }
 
+/*
 .bodyline {
 	border-radius: 8px;
 	border: 1px #E4ECEC outset;
 	padding: 0px;
 	margin-bottom: 5px;
 }
+*/
 table.dp {
 	width: 180px;
 	background-color: var(--inputbackgroundcolor);
@@ -6058,7 +6108,7 @@ div.visible {
 }
 
 div.hidden, div.hiddenforpopup, header.hidden, tr.hidden, td.hidden,
-img.hidden, span.hidden, br.hidden, div.showifmore {
+img.hidden, span.hidden, br.hidden, div.showifmore, input.hidden {
 	display: none;
 }
 .unvisible {
@@ -6282,7 +6332,7 @@ td.peruser_holiday_imp {
 
 
 /* ============================================================================== */
-/*  Ajax - Combo list for autocompletion                                          */
+/*  UI features                                                                   */
 /* ============================================================================== */
 
 .ui-widget-content {
@@ -6290,9 +6340,51 @@ td.peruser_holiday_imp {
 	background: var(--colorbackbody) !important;
 	color: var(--colortext) !important;
 }
-/*.ui-widget-header {
-	background: var(--colorbacktitle);
-}*/
+
+/* Style to overwrites UI JQuery styles */
+.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
+	/* border: 1px solid #888; */
+	background: var(--colorbacktitle1);
+	color: unset;
+	font-weight: bold;
+}
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover {
+	background: var(--colorbackhmenu1);
+	color: #ffffff !important;
+	border: 1px solid var(--colorbackhmenu1);
+}
+.ui-menu {
+	padding: 5px;
+/*
+	border-bottom-left-radius: 6px;
+	border-bottom-right-radius: 6px;
+	*/
+}
+.ui-menu .ui-menu-item a {
+	text-decoration:none;
+	display:block;
+	padding:.5em .6em;
+	line-height:1.5;
+	font-weight: normal;
+	font-family:<?php echo $fontlist; ?>;
+	font-size:1em;
+}
+.ui-widget {
+	font-family:<?php echo $fontlist; ?>;
+}
+/* .ui-button { margin-left: -2px; <?php print(preg_match('/chrome/', $conf->browser->name) ? 'padding-top: 1px;' : ''); ?> } */
+.ui-button { margin-left: -2px; }
+.ui-button-icon-only .ui-button-text { height: 8px; }
+.ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: 2px 0px 6px 0px; }
+.ui-button-text
+{
+	line-height: 1em !important;
+}
+
+
+/* ============================================================================== */
+/*  Ajax combo list for autocompletion                                            */
+/* ============================================================================== */
 
 .ui-autocomplete-loading {
 	background: white url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/working.gif', 1) ?>) right center no-repeat;
@@ -6322,6 +6414,7 @@ td.peruser_holiday_imp {
 		   height:18px;
 		   cursor:pointer;
 		 }
+.ui-autocomplete-input { margin: 0; padding: 4px; }
 
 
 /* ============================================================================== */
@@ -6548,47 +6641,6 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 .colorselector {
 	border: solid 1px #ddd !important;
 }
-
-/* Style to overwrites JQuery styles */
-.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
-	/* border: 1px solid #888; */
-	background: var(--colorbacktitle1);
-	color: unset;
-	font-weight: bold;
-}
-.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active, a.ui-button:active, .ui-button:active, .ui-button.ui-state-active:hover {
-	background: var(--colorbackhmenu1);
-	color: #ffffff !important;
-	border: 1px solid var(--colorbackhmenu1);
-}
-.ui-menu {
-	padding: 5px;
-/*
-	border-bottom-left-radius: 6px;
-	border-bottom-right-radius: 6px;
-	*/
-}
-.ui-menu .ui-menu-item a {
-	text-decoration:none;
-	display:block;
-	padding:.5em .6em;
-	line-height:1.5;
-	font-weight: normal;
-	font-family:<?php echo $fontlist; ?>;
-	font-size:1em;
-}
-.ui-widget {
-	font-family:<?php echo $fontlist; ?>;
-}
-/* .ui-button { margin-left: -2px; <?php print(preg_match('/chrome/', $conf->browser->name) ? 'padding-top: 1px;' : ''); ?> } */
-.ui-button { margin-left: -2px; }
-.ui-button-icon-only .ui-button-text { height: 8px; }
-.ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: 2px 0px 6px 0px; }
-.ui-button-text
-{
-	line-height: 1em !important;
-}
-.ui-autocomplete-input { margin: 0; padding: 4px; }
 
 
 /* ============================================================================== */
@@ -7012,6 +7064,7 @@ div#ecm-layout-center {
 	padding-right: 10px !important;
 	padding-top: 10px !important;
 	word-wrap: break-word;
+	max-height: 320px;
 }
 .jnotify-container .jnotify-notification .jnotify-message {
 	font-weight: normal;
@@ -7630,7 +7683,7 @@ div.multi-select-menu[role="menu"] {
 
 .multi-select-menu input {
   margin-right: 0.3em;
-  vertical-align: 0.1em;
+  /* vertical-align: 0.1em; */
 }
 
 .multi-select-button {
@@ -7646,9 +7699,11 @@ div.multi-select-menu[role="menu"] {
   border: none;
   border-bottom: solid 1px var(--inputbordercolor);
   padding: 5px;
-  padding-left: 2px;
+  padding-left: 6px;
   height: 17px;
   border-radius: 3px;
+
+  text-align: start;
 }
 .multi-select-button:focus {
   outline: none;
@@ -7663,9 +7718,12 @@ div.multi-select-menu[role="menu"] {
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 0.5em 0.23em 0em 0.23em;
+  border-width: 0.4em 0.3em 0em 0.3em;
   border-color: #888 transparent transparent transparent;
   margin-left: 0.4em;
+  position: absolute;
+  right: 10px;
+  top: 12px;
 }
 
 .multi-select-container--open .multi-select-menu { display: block; }
@@ -7678,10 +7736,10 @@ div.multi-select-menu[role="menu"] {
 .multi-select-menuitem {
 	clear: both;
 	float: left;
-	padding-left: 5px;
+	padding-left: 10px;
 }
 label.multi-select-menuitem {
-	line-height: 24px;
+	line-height: 32px;
 	text-align: start;
 }
 
@@ -7788,6 +7846,9 @@ dd.dropdowndd ul li {
 	white-space: nowrap;
 }
 
+div.kanban.column div.ui-sortable-helper {
+	transform: rotate(4deg);
+}
 
 /* ============================================================================== */
 /*  Markdown rendering                                                             */
@@ -9128,6 +9189,16 @@ include dol_buildpath($path.'/theme/'.$theme.'/search-input.inc.css', 0);
 print getDolGlobalString('THEME_CUSTOM_CSS');
 
 ?>
+
+/* Remove text selection - Intuitive table selection */
+.row-with-select[data-is-last-changed] * {
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Safari */
+	-khtml-user-select: none; /* Konqueror HTML */
+	-moz-user-select: none; /* Old versions of Firefox */
+	-ms-user-select: none; /* Internet Explorer/Edge */
+	user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+}
 
 div.extra_inline_chkbxlst, div.extra_inline_checkbox {
 	min-width:150px;

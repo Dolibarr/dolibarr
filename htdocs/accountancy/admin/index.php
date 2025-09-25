@@ -69,6 +69,7 @@ $formSetup = new FormSetup($db);
 // Main options
 $formSetup->newItem('BANK_DISABLE_DIRECT_INPUT')->setAsYesNo();
 
+
 $formSetup->newItem('ACCOUNTANCY_COMBO_FOR_AUX')->setAsYesNo();
 
 $item = $formSetup->newItem('ACCOUNTING_MANAGE_ZERO')->setAsYesNo();
@@ -433,7 +434,7 @@ print '<br>';
 
 // Case of the parameter ACCOUNTING_MODE
 
-if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="updatemode">';
@@ -446,7 +447,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 	print '<tr class="oddeven"><td class="nowraponall"><input type="radio" id="accounting_mode_1" name="accounting_mode" value="CREANCES-DETTES"'.($accounting_mode != 'RECETTES-DEPENSES' ? ' checked' : '').'><label for="accounting_mode_1"> '.$langs->trans('OptionModeVirtual').'</label> ('.$langs->trans('Default').')</td>';
 	print '<td><span class="opacitymedium">'.nl2br($langs->trans('ACCOUNTING_USE_NON_TREASURY_Desc')).'</span>';
 	print "</td></tr>\n";
-	print '<tr class="oddeven"><td class="nowraponall"><input type="radio" id="accounting_mode_2" name="accounting_mode" value="RECETTES-DEPENSES"'.($accounting_mode != 'CREANCES-DETTES' ? ' checked' : '').'><label for="accounting_mode_2"> '.$langs->trans('OptionModeTrue').'</label></td>';
+	print '<tr class="oddeven"><td class="nowraponall"><input type="radio" id="accounting_mode_2" name="accounting_mode" value="RECETTES-DEPENSES"'.($accounting_mode == 'RECETTES-DEPENSES' ? ' checked' : '').'><label for="accounting_mode_2"> '.$langs->trans('OptionModeTrue').'</label></td>';
 	print '<td><span class="opacitymedium">'.nl2br($langs->trans('ACCOUNTING_USE_TREASURY_Desc'))."</span>";
 	print "</td></tr>\n";
 
@@ -460,8 +461,9 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 }
 
 
-// Show form main options
+// Show form for main parameters
 print $formSetup->generateOutput(true);
+
 
 print '<br><br><br>';
 
@@ -498,7 +500,7 @@ foreach ($list_binding as $key) {
 			1=>$langs->trans("ThirdPartyName") . ' - ' . $langs->trans("NumPiece"),
 			2=>$langs->trans("ThirdPartyName")
 		);
-		print $form->selectarray($key, $array, getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER', 0), 0, 0, 0, '', 0, 0, 0, '', 'onrightofpage width200');
+		print $form->selectarray($key, $array, getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER', 0), 0, 0, 0, '', 0, 0, 0, '', 'onrightofpage width300');
 	} else {
 		print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 	}
@@ -579,18 +581,18 @@ print '</div>';
 
 print '<div class="center"><input type="submit" class="button reposition" value="'.dol_escape_htmltag($langs->trans('Save')).'" name="button"></div>';
 
-print '<br>';
+
+// Show numbering options
+print '<br><br><br>';
+
 
 // Accountancy Numbering model
 $dirmodels = array_merge(array('/'), $conf->modules_parts['models']);
 
-print load_fiche_titre($langs->trans("BookkeepingNumberingModules"), '', '');
-
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Name").'</td>';
-print '<td></td>';
+print '<td colspan="2">'.$langs->trans("BookkeepingNumberingModules").'</td>';
 print '<td class="nowrap">'.$langs->trans("Example").'</td>';
 print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
 print '<td class="center" width="16">'.$langs->trans("ShortInfo").'</td>';
@@ -697,7 +699,8 @@ print '</div>';
 
 
 // Show advanced options
-print '<br><br>';
+print '<br><br><br>';
+
 
 // Advanced params
 print '<div class="div-table-responsive-no-min">';
@@ -788,7 +791,8 @@ print '</div>';
 
 print '<div class="center"><input type="submit" class="button button-edit reposition" name="button" value="'.$langs->trans('Save').'"></div>';
 
-print '<br><br>';
+
+print '<br><br><br>';
 
 
 // Export options

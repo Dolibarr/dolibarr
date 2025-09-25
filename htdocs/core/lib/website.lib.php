@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1066,7 +1066,7 @@ function getNbOfImagePublicURLOfObject($object)
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		if ($obj) {
-			$nb = $obj->nb;
+			$nb = (int) $obj->nb;
 		}
 	}
 
@@ -1512,9 +1512,14 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					dol_mkdir(dirname($filetosave));
 
 					$fp = fopen($filetosave, "w");
-					fwrite($fp, $tmpgeturl['content']);
-					fclose($fp);
-					dolChmod($filetosave);
+					if ($fp) {
+						fwrite($fp, $tmpgeturl['content']);
+						fclose($fp);
+						dolChmod($filetosave);
+					} else {
+						setEventMessages('Error failed to open file '.$filetosave.' for writing', null, 'errors');
+						//print 'Failed to open file '.$filetosave.' for writing.';
+					}
 				}
 			}
 		}

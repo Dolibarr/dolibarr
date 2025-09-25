@@ -1,16 +1,16 @@
 <?php
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Benoit Mortier              <benoit.mortier@opensides.be>
- * Copyright (C) 2004-2013 Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin               <regis.houssin@inodbox.com>
- * Copyright (C) 2007      Franky Van Liedekerke       <franky.van.liedekerker@telenet.be>
- * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2013      Florian Henry		  	   <florian.henry@open-concept.pro>
- * Copyright (C) 2013      Alexandre Spangaro 	       <aspangaro@open-dsi.fr>
- * Copyright (C) 2013      Juanjo Menent	 	       <jmenent@2byte.es>
- * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
- * Copyright (C) 2019      Nicolas ZABOURI 	           <info@inovea-conseil.com>
- * Copyright (C) 2020      Open-Dsi  	               <support@open-dsi.fr>
+/* Copyright (C) 2002-2004  Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004       Benoit Mortier              <benoit.mortier@opensides.be>
+ * Copyright (C) 2004-2013  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin               <regis.houssin@inodbox.com>
+ * Copyright (C) 2007       Franky Van Liedekerke       <franky.van.liedekerker@telenet.be>
+ * Copyright (C) 2008       Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
+ * Copyright (C) 2013       Florian Henry		  	    <florian.henry@open-concept.pro>
+ * Copyright (C) 2013       Alexandre Spangaro 	        <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013       Juanjo Menent	 	        <jmenent@2byte.es>
+ * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
+ * Copyright (C) 2019       Nicolas ZABOURI             <info@inovea-conseil.com>
+ * Copyright (C) 2020       Open-Dsi                    <support@open-dsi.fr>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -47,6 +47,12 @@ class Contact extends CommonObject
 	use CommonPeople;
 
 	/**
+	 * @var string		Prefix to check for any trigger code of any business class to prevent bad value for trigger code.
+	 * @see CommonTrigger::call_trigger()
+	 */
+	public $TRIGGER_PREFIX = 'CONTACT';
+
+	/**
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'contact';
@@ -70,7 +76,7 @@ class Contact extends CommonObject
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if the field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
 	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
@@ -116,8 +122,8 @@ class Contact extends CommonObject
 		'fk_stcommcontact' => array('type' => 'integer', 'label' => 'ProspectStatus', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 220),
 		'fk_prospectcontactlevel' => array('type' => 'varchar(12)', 'label' => 'ProspectLevel', 'enabled' => 1, 'visible' => -1, 'position' => 255),
 		//no more used. Replace by a scan of email into mailing_unsubscribe. 'no_email' =>array('type'=>'smallint(6)', 'label'=>'No_Email', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>180),
-		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 3, 'position' => 195, 'searchall' => 1),
-		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 3, 'position' => 200, 'searchall' => 1),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 195, 'searchall' => 1),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 200, 'searchall' => 1),
 		'default_lang' => array('type' => 'varchar(6)', 'label' => 'Default lang', 'enabled' => 1, 'visible' => 3, 'position' => 205),
 		'canvas' => array('type' => 'varchar(32)', 'label' => 'Canvas', 'enabled' => 1, 'visible' => 3, 'position' => 210),
 		'ip' => array('type' => 'ip', 'label' => 'IPAddress', 'enabled' => '1', 'position' => 700, 'notnull' => 0, 'visible' => '-2', 'comment' => 'ip used to create record (for public submission page)'),
@@ -146,11 +152,6 @@ class Contact extends CommonObject
 	 * @var string gender
 	 */
 	public $gender;
-
-	/**
-	 * @var int egroupware_id
-	 */
-	//private $egroupware_id;
 
 	/**
 	 * @var int birthday_alert
@@ -225,6 +226,7 @@ class Contact extends CommonObject
 
 	/**
 	 * @var int  Status 0=inactive, 1=active
+	 * @deprecated Use $status
 	 */
 	public $statut;
 
@@ -344,7 +346,7 @@ class Contact extends CommonObject
 	// END MODULEBUILDER PROPERTIES
 
 	/**
-	 * @var array<int,array{id:int,socid:int,element:string,source:string,code:string,label:string}> roles
+	 * @var null|array<int,array{id:int,socid:int,element:string,source:string,code:string,label:string}> roles, null until fetched or set
 	 */
 	public $roles;
 
@@ -359,7 +361,7 @@ class Contact extends CommonObject
 	public $fk_prospectlevel;
 
 	/**
-	 * @var int
+	 * @var null|int Is null until fetched or set
 	 */
 	public $stcomm_id;
 
@@ -383,6 +385,7 @@ class Contact extends CommonObject
 	{
 		$this->db = $db;
 		$this->statut = 1; // By default, status is enabled
+		$this->status = 1; // By default, status is enabled
 		$this->ismultientitymanaged = 1;
 		$this->isextrafieldmanaged = 1;
 
@@ -503,7 +506,11 @@ class Contact extends CommonObject
 		if (empty($this->priv)) {
 			$this->priv = 0;
 		}
-		if (empty($this->statut)) {
+		if (!empty($this->statut) && empty($this->status)) {
+			$this->status = 1;
+		}
+		if (empty($this->status)) {
+			$this->status = 0; // This is to convert '' into '0' to avoid bad sql request
 			$this->statut = 0; // This is to convert '' into '0' to avoid bad sql request
 		}
 
@@ -538,7 +545,7 @@ class Contact extends CommonObject
 		$sql .= " ".($user->id > 0 ? ((int) $user->id) : "null").",";
 		$sql .= " ".((int) $this->priv).",";
 		$sql .= " 0,";
-		$sql .= " ".((int) $this->statut).",";
+		$sql .= " ".((int) $this->status).",";
 		$sql .= " ".(!empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'" : "null").",";
 		$sql .= " ".((int) $this->entity).",";
 		$sql .= "'".$this->db->escape($this->ref_ext)."',";
@@ -551,12 +558,10 @@ class Contact extends CommonObject
 		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."socpeople");
 
-			if (!$error) {
-				$result = $this->update($this->id, $user, 1, 'add'); // This include updateRoles(), ...
-				if ($result < 0) {
-					$error++;
-					$this->error = $this->db->lasterror();
-				}
+			$result = $this->update($this->id, $user, 1, 'add'); // This include updateRoles(), ...
+			if ($result < 0) {
+				$error++;
+				$this->error = $this->db->lasterror();
 			}
 
 			if (!$error) {
@@ -632,7 +637,11 @@ class Contact extends CommonObject
 		$this->zip = (empty($this->zip) ? '' : trim($this->zip));
 		$this->town = (empty($this->town) ? '' : trim($this->town));
 		$this->country_id = (empty($this->country_id) || $this->country_id < 0) ? 0 : $this->country_id;
-		if (empty($this->statut)) {
+		if (!empty($this->statut) && empty($this->status)) {
+			$this->status = 1;
+		}
+		if (empty($this->status)) {
+			$this->status = 0;
 			$this->statut = 0;
 		}
 		if (empty($this->civility_code) && !is_numeric($this->civility_id)) {
@@ -674,7 +683,7 @@ class Contact extends CommonObject
 		if (isset($this->stcomm_id)) {
 			$sql .= ", fk_stcommcontact = ".($this->stcomm_id > 0 || $this->stcomm_id == -1 ? $this->stcomm_id : "0");
 		}
-		$sql .= ", statut = ".((int) $this->statut);
+		$sql .= ", statut = ".((int) $this->status);
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$this->db->escape((string) $user->id)."'" : "NULL");
 		$sql .= ", default_lang=".($this->default_lang ? "'".$this->db->escape($this->default_lang)."'" : "NULL");
 		$sql .= ", entity = ".((int) $this->entity);
@@ -691,11 +700,9 @@ class Contact extends CommonObject
 			$action = 'update';
 
 			// Actions on extra fields
-			if (!$error) {
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 			if (!$error) {
@@ -898,12 +905,6 @@ class Contact extends CommonObject
 			$info["phpgwContactCatId"] = 0;
 			$info["phpgwContactAccess"] = "public";
 
-			/*
-			if (dol_strlen($this->egroupware_id) == 0) {
-				$this->egroupware_id = 1;
-			}
-			$info["phpgwContactOwner"] = $this->egroupware_id;
-			*/
 			$info["phpgwContactOwner"] = 1;
 
 			if ($this->email) {
@@ -1025,7 +1026,7 @@ class Contact extends CommonObject
 		$langs->loadLangs(array("dict", "companies"));
 
 		$sql = "SELECT c.rowid, c.entity, c.fk_soc, c.ref_ext, c.civility as civility_code, c.name_alias, c.lastname, c.firstname,";
-		$sql .= " c.address, c.statut, c.zip, c.town,";
+		$sql .= " c.address, c.statut as status, c.zip, c.town,";
 		$sql .= " c.fk_pays as country_id,";
 		$sql .= " c.fk_departement as state_id,";
 		$sql .= " c.birthday,";
@@ -1035,12 +1036,13 @@ class Contact extends CommonObject
 		$sql .= " c.priv, c.note_private, c.note_public, c.default_lang, c.canvas,";
 		$sql .= " c.fk_prospectlevel, c.fk_stcommcontact, st.libelle as stcomm, st.picto as stcomm_picto,";
 		$sql .= " c.import_key,";
-		$sql .= " c.datec as date_creation, c.tms as date_modification, c.fk_user_creat, c.fk_user_modif,";
+		$sql .= " c.datec as date_creation, GREATEST(c.tms, cef.tms) as date_modification, c.fk_user_creat, c.fk_user_modif,";
 		$sql .= " co.label as country, co.code as country_code,";
 		$sql .= " d.nom as state, d.code_departement as state_code,";
 		$sql .= " u.rowid as user_id, u.login as user_login,";
 		$sql .= " s.nom as socname, s.address as socaddress, s.zip as soccp, s.town as soccity, s.default_lang as socdefault_lang";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as cef ON cef.fk_object=c.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON c.fk_pays = co.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d ON c.fk_departement = d.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
@@ -1072,13 +1074,13 @@ class Contact extends CommonObject
 			} elseif ($num) {   // $num = 1
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id		= $obj->rowid;
-				$this->entity	= $obj->entity;
-				$this->ref		= $obj->rowid;
-				$this->ref_ext	= $obj->ref_ext;
+				$this->id = $obj->rowid;
+				$this->entity = $obj->entity;
+				$this->ref = $obj->rowid;
+				$this->ref_ext = $obj->ref_ext;
 
-				$this->civility_code    = $obj->civility_code;
-				$this->civility	        = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != "Civility".$obj->civility_code ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
+				$this->civility_code = $obj->civility_code;
+				$this->civility = $obj->civility_code ? ($langs->trans("Civility".$obj->civility_code) != "Civility".$obj->civility_code ? $langs->trans("Civility".$obj->civility_code) : $obj->civility_code) : '';
 
 				$this->name_alias	= $obj->name_alias;
 				$this->lastname		= $obj->lastname;
@@ -1087,9 +1089,9 @@ class Contact extends CommonObject
 				$this->zip			= $obj->zip;
 				$this->town			= $obj->town;
 
-				$this->date_creation     = $this->db->jdate($obj->date_creation);
+				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
-				$this->user_creation_id     = $obj->fk_user_creat;
+				$this->user_creation_id = $obj->fk_user_creat;
 				$this->user_modification_id = $obj->fk_user_modif;
 
 				$this->state_id		= $obj->state_id;
@@ -1104,7 +1106,8 @@ class Contact extends CommonObject
 				$this->socid		= $obj->fk_soc;		// Both fk_soc and socid are used
 				$this->socname		= $obj->socname;
 				$this->poste		= $obj->poste;
-				$this->statut		= $obj->statut;
+				$this->status		= $obj->status;
+				$this->statut		= $obj->status; // deprecated
 
 				$this->fk_prospectlevel = $obj->fk_prospectlevel;
 
@@ -1114,10 +1117,10 @@ class Contact extends CommonObject
 				$this->statut_commercial = $libelle; // libelle statut commercial
 				$this->stcomm_picto = $obj->stcomm_picto; // Picto statut commercial
 
-				$this->phone_pro	= trim($obj->phone);
-				$this->fax			= trim($obj->fax);
-				$this->phone_perso	= trim($obj->phone_perso);
-				$this->phone_mobile	= trim($obj->phone_mobile);
+				$this->phone_pro = trim($obj->phone);
+				$this->fax = trim($obj->fax);
+				$this->phone_perso = trim($obj->phone_perso);
+				$this->phone_mobile = trim($obj->phone_mobile);
 
 				$this->email			= $obj->email;
 				$this->socialnetworks	= ($obj->socialnetworks ? (array) json_decode($obj->socialnetworks, true) : array());
@@ -1310,7 +1313,7 @@ class Contact extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error && !$notrigger) {
+		if (!$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('CONTACT_DELETE', $user);
 			if ($result < 0) {
@@ -1429,8 +1432,9 @@ class Contact extends CommonObject
 	public function info($id)
 	{
 		$sql = "SELECT c.rowid, c.datec as datec, c.fk_user_creat,";
-		$sql .= " c.tms as tms, c.fk_user_modif";
+		$sql .= " GREATEST(c.tms, cef.tms) as tms, c.fk_user_modif";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as cef ON cef.fk_object=c.rowid";
 		$sql .= " WHERE c.rowid = ".((int) $id);
 
 		$resql = $this->db->query($sql);
@@ -1467,7 +1471,7 @@ class Contact extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			$nb = $obj->nb;
+			$nb = (int) $obj->nb;
 
 			$this->db->free($resql);
 			return $nb;
@@ -1528,15 +1532,15 @@ class Contact extends CommonObject
 	 *	Use $this->id, $this->lastname, $this->firstname, this->civility_id
 	 *
 	 *	@param		int			$withpicto					Include picto with link (0=no picto, 1=picto + name, 2=picto only, -1=photo+name, -2=photo only)
-	 *	@param		string		$option						Where the link point to
-	 *	@param		int			$maxlen						Max length of
+	 *	@param		string		$option						Where the link point to ('nolink', ...)
+	 *	@param		int			$notooltip					1=Disable tooltip
 	 *  @param		string		$moreparam					Add more param into URL
 	 *  @param      int     	$save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *	@param		int			$notooltip					1=Disable tooltip
+	 *	@param		int			$maxlen						Max len
 	 *  @param  	string  	$morecss            		Add more css on link
 	 *	@return		string									String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $maxlen = 0, $moreparam = '', $save_lastsearch_value = -1, $notooltip = 0, $morecss = 'valignmiddle')
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $moreparam = '', $save_lastsearch_value = -1, $maxlen = 0, $morecss = 'valignmiddle')
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -1568,7 +1572,7 @@ class Contact extends CommonObject
 			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
-			if ($url && $add_save_lastsearch_values) {
+			if ($add_save_lastsearch_values) {
 				$url .= '&save_lastsearch_values=1';
 			}
 		}
@@ -1587,13 +1591,13 @@ class Contact extends CommonObject
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 		}
 
-		if ($option == 'nolink' || empty($url)) {
+		if ($option == 'nolink') {
 			$linkstart = '<span';
 		} else {
 			$linkstart = '<a href="'.$url.'"';
 		}
 		$linkstart .= $linkclose.'>';
-		if ($option == 'nolink' || empty($url)) {
+		if ($option == 'nolink') {
 			$linkend = '</span>';
 		} else {
 			$linkend = '</a>';
@@ -1656,7 +1660,7 @@ class Contact extends CommonObject
 	 */
 	public function getLibStatut($mode)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1763,7 +1767,7 @@ class Contact extends CommonObject
 		$this->note_private = 'This is a comment (private)';
 
 		$this->socid = $socid;
-		$this->statut = 1;
+		$this->status = 1;
 
 		return 1;
 	}
@@ -1781,9 +1785,13 @@ class Contact extends CommonObject
 		$error = 0;
 
 		// Check parameters
-		if ($this->statut == $status) {
+		if (!empty($this->statut) && empty($this->status)) {
+			$this->status = 1;
+		}
+		if ($this->status == $status) {
 			return 0;
 		} else {
+			$this->status = $status;
 			$this->statut = $status;
 		}
 
@@ -1791,7 +1799,7 @@ class Contact extends CommonObject
 
 		// User disable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople";
-		$sql .= " SET statut = ".((int) $this->statut);
+		$sql .= " SET statut = ".((int) $this->status);
 		$sql .= ", fk_user_modif = ".((int) $user->id);
 		$sql .= " WHERE rowid = ".((int) $this->id);
 		$result = $this->db->query($sql);
@@ -2259,19 +2267,18 @@ class Contact extends CommonObject
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
 		$return .= '<span class="info-box-icon bg-infobox-action">';
-		//var_dump($this->photo);exit;
-		if (property_exists($this, 'photo') && !is_null($this->photo)) {
+		if (!is_null($this->photo)) {
 			$return .= Form::showphoto('contact', $this, 0, 60, 0, 'photokanban photoref photowithmargin photologintooltip', 'small', 0, 1);
 		} else {
 			$return .= img_picto('', $this->picto);
 		}
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<div class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(0) : $this->ref).'</div>';
+		$return .= '<div class="info-box-ref inline-block tdoverflowmax150 valignmiddle">' . $this->getNomUrl(0) . '</div>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
+		if (is_object($this->thirdparty)) {
 			$return .= '<div class="info-box-ref tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
 		}
 		/*if (property_exists($this, 'phone_pro') && !empty($this->phone_pro)) {
@@ -2282,9 +2289,7 @@ class Contact extends CommonObject
 			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Visibility").'</span>';
 			$return .= '<span> : '.$this->LibPubPriv($this->priv).'</span>';
 		}*/
-		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
-		}
+		$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';

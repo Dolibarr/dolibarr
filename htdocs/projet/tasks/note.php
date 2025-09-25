@@ -42,7 +42,6 @@ $langs->load('projects');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $mine = GETPOST('mode') == 'mine' ? 1 : 0;
-//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $withproject = GETPOSTINT('withproject');
@@ -98,7 +97,7 @@ if ($id > 0 || $ref) {
 	$object->fetch($id, $ref);
 }
 
-//$result = restrictedArea($user, 'projet', $id, '', 'task'); // TODO ameliorer la verification
+//restrictedArea($user, 'projet', $id, '', 'task'); // TODO ameliorer la verification
 restrictedArea($user, 'projet', $object->fk_project, 'projet&project');
 
 $permissionnote = ($user->hasRight('projet', 'creer') || $user->hasRight('projet', 'all', 'creer'));

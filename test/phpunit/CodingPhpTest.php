@@ -293,6 +293,22 @@ class CodingPhpTest extends CommonClassTest
 		//exit;
 
 
+		// Part to scan code vulnerability on SQL injection
+
+
+		// Check sql using ' instead of "
+		$ok = true;
+		$matches = array();
+		preg_match_all('/LIKE \\\/', $filecontent, $matches, PREG_SET_ORDER);
+		foreach ($matches as $key => $val) {
+			var_dump($matches);
+			$ok = false;
+			break;
+		}
+		//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+		$this->assertTrue($ok, "Found a LIKE \' when we should have LIKE ' - Bad.");
+		//exit;
+
 
 		// Check sql string DELETE|OR|AND|WHERE|INSERT ... yyy = ".$xxx
 		//  with xxx that is not 'thi' (for $this->db->sanitize) and 'db-' (for $db->sanitize). It means we forget a ' if string, or an (int) if int, when forging sql request.
@@ -692,27 +708,43 @@ class CodingPhpTest extends CommonClassTest
 
 			// Get the part of string to use for analysis
 			$reg = array();
-			if (preg_match('/\*\s+Action(.*)\*\s+View/ims', $filecontentorigin, $reg)) {
+			if (preg_match('/\*\s+Action(.*)\*\s+View/ims', $filecontentorigin, $reg)) {	// search '* Action... * View'
 				$filecontentaction = $reg[1];
 			} else {
 				$filecontentaction = $filecontent;
 			}
 
-			preg_match_all('/if.*\$action\s*==\s*[\'"][a-z\-_]+[\'"].*$/si', $filecontentaction, $matches, PREG_SET_ORDER);
+			// Uncomment this for a scan on one given file
+			//          if ($file['fullname'] != '/home/ldestailleur/git/dolibarr_22.0/htdocs/holiday/card.php') return;
+			//          if ($file['fullname'] != '/home/ldestailleur/git/dolibarr_22.0/htdocs/bom/bom_card.php') return;
+
+			/*
+			$filecontentaction = <<<'EOT'
+			Note that $action and $object may have been modified by some hooks
+
+			if ($action == 'add' && $permissiontoadd) {
+			// aaa
+
+			EOT;
+			*/
+			//var_dump($filecontentaction);
+			preg_match_all('/if\s[^\n\r]+\$action\s*==\s*[\'"][a-z\-_]+[\'"].*$/mi', $filecontentaction, $matches, PREG_SET_ORDER);
 
 			foreach ($matches as $key => $val) {
 				if (!preg_match('/\$user->hasR/', $val[0])
 					&& !preg_match('/\$permission/', $val[0])
 					&& !preg_match('/\$permto/', $val[0])
 					&& !preg_match('/\$usercan/', $val[0])
+					&& !preg_match('/\$candelete/', $val[0])
 					&& !preg_match('/\$canedit/', $val[0])
 					&& !preg_match('/\$user->admin/', $val[0])
+					&& !preg_match('/\->getRights\(\)->/', $val[0])
 					&& !preg_match('/already done/i', $val[0])
 					&& !preg_match('/done later/i', $val[0])
 					&& !preg_match('/not required/i', $val[0])) {
 					$ok = false;
 
-					//var_dump($file['fullname'].' '.$filecontentaction);exit;
+					var_dump($file['fullname'].' '.$val[0].' '.$filecontentaction);exit;
 
 					print "File ".$file['relativename']." - Line: ".$val[0]."\n";
 					break;

@@ -49,6 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "compta", "accountancy", "productbatch", "products"));
 
+$action = GETPOST('action');
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $account_parent = GETPOST('account_parent');
@@ -112,6 +113,7 @@ $contextpage = 'accountancycustomerlines';
 $hookmanager->initHooks([$contextpage ]);
 $formaccounting = new FormAccounting($db);
 
+$object = new stdClass();
 
 $arrayfields = array(
 	'fd.rowid' 				=> array('label' => "LineId", 				'position' => 1, 'checked' => '1', 'enabled' => '1'),
@@ -128,6 +130,7 @@ $arrayfields = array(
 );
 // @phpstan-ignore-next-line
 $arrayfields = dol_sort_array($arrayfields, 'position');
+
 
 /*
  * Actions
@@ -355,7 +358,7 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	if (($page * $limit) > (int) $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
 		$page = 0;
 		$offset = 0;
 	}

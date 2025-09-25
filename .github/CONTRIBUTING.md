@@ -153,7 +153,7 @@ Long description (Can span across multiple lines).
 Pull Request (PR) process is the process to submit a change (enhancement, bug fix, ...) into the code of the project. There is some rules to know and
 a process to follow to optimize the chance to have PRs merged efficiently...
 
-* A PR must be atomic. It means it must contains the lower possible changes for 1 need (1 bug fix or 1 new feature) without breaking usability of code. If a PR can be split into several PRs, it often means your PR is not atomic.
+* A PR must be atomic. It means it must contains the lower possible changes for 1 need (1 bug fix or 1 new feature) without breaking usability of code. If a PR can be split into several PRs, it often means your PR is not atomic. For PR on maintenance versions, the modified code must be as low as possible and only the absolutely necessary changes are allowed (You must have the number of lines modified as low as possible to have the visible bug fixed (no refactoring, no perf, no quality, no renaming must be joined). This allow to reduce to the maximum the number of future conflicts (so the number of regressions) when merging fixes into higher version to reduce the time of any future impact analysis.
 
 * Your Pull Request (PR) must pass the Continuous Integration checks and code quality checks.
 

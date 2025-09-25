@@ -1,12 +1,13 @@
 <?php
-/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2021-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2023		Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Vincent de Grandpré	    <vincent@de-grandpre.quebec>
+ * Copyright (C) 2024		Vincent de Grandpré		<vincent@de-grandpre.quebec>
+ * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,9 +29,7 @@
  */
 
 include_once 'inc.php';
-if (file_exists($conffile)) {
-	include_once $conffile;
-}
+
 /**
  * @var Conf $conf
  * @var Translate $langs
@@ -41,7 +40,13 @@ if (file_exists($conffile)) {
  * @var string $dolibarr_main_db_name
  * @var string $dolibarr_main_db_user
  * @var string $dolibarr_main_db_pass
+ * @var string $dolibarr_main_db_type
+ * @var string $conffile
  */
+
+if (file_exists($conffile)) {
+	include_once $conffile;
+}
 
 '
 @phan-var-force ?string $dolibarr_main_db_encryption
@@ -53,7 +58,6 @@ include_once $dolibarr_main_document_root.'/core/lib/images.lib.php';
 require_once $dolibarr_main_document_root.'/core/class/extrafields.class.php';
 require_once 'lib/repair.lib.php';
 
-$step = 2;
 $ok = 0;
 
 
@@ -95,57 +99,20 @@ pHeader($langs->trans("Repair"), "upgrade2", GETPOST('action', 'aZ09'));
 // Action to launch the repair script
 $actiondone = 1;
 
-print '<div class="warning" style="padding-top: 10px">';
-print $langs->trans("SetAtLeastOneOptionAsUrlParameter");
-print '</div>';
-
-//print 'You must set one of the following option with a parameter value that is "test" or "confirmed" on the URL<br>';
-//print $langs->trans("Example").': '.DOL_MAIN_URL_ROOT.'/install/repair.php?standard=confirmed<br>'."\n";
-print '<br>';
-
-print 'Option standard is '.(GETPOST('standard', 'alpha') ? GETPOST('standard', 'alpha') : 'undefined').'<br>'."\n";
-// Disable modules
-print 'Option force_disable_of_modules_not_found is '.(GETPOST('force_disable_of_modules_not_found', 'alpha') ? GETPOST('force_disable_of_modules_not_found', 'alpha') : 'undefined').'<br>'."\n";
-// Files
-print 'Option restore_thirdparties_logos is '.(GETPOST('restore_thirdparties_logos', 'alpha') ? GETPOST('restore_thirdparties_logos', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option restore_user_pictures is '.(GETPOST('restore_user_pictures', 'alpha') ? GETPOST('restore_user_pictures', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option rebuild_product_thumbs is '.(GETPOST('rebuild_product_thumbs', 'alpha') ? GETPOST('rebuild_product_thumbs', 'alpha') : 'undefined').'<br>'."\n";
-// Clean tables and data
-print 'Option clean_linked_elements is '.(GETPOST('clean_linked_elements', 'alpha') ? GETPOST('clean_linked_elements', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option clean_menus is '.(GETPOST('clean_menus', 'alpha') ? GETPOST('clean_menus', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option clean_orphelin_dir is '.(GETPOST('clean_orphelin_dir', 'alpha') ? GETPOST('clean_orphelin_dir', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option clean_product_stock_batch is '.(GETPOST('clean_product_stock_batch', 'alpha') ? GETPOST('clean_product_stock_batch', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option clean_perm_table is '.(GETPOST('clean_perm_table', 'alpha') ? GETPOST('clean_perm_table', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option clean_ecm_files_table is '.(GETPOST('clean_ecm_files_table', 'alpha') ? GETPOST('clean_ecm_files_table', 'alpha') : 'undefined').'<br>'."\n";
-print 'Option repair_link_dispatch_lines_supplier_order_lines, is '.(GETPOST('repair_link_dispatch_lines_supplier_order_lines', 'alpha') ? GETPOST('repair_link_dispatch_lines_supplier_order_lines', 'alpha') : 'undefined').'<br>'."\n";
-// Init data
-print 'Option set_empty_time_spent_amount is '.(GETPOST('set_empty_time_spent_amount', 'alpha') ? GETPOST('set_empty_time_spent_amount', 'alpha') : 'undefined').'<br>'."\n";
-// Structure
-print 'Option force_utf8_on_tables (force utf8 + row=dynamic), for mysql/mariadb only, is '.(GETPOST('force_utf8_on_tables', 'alpha') ? GETPOST('force_utf8_on_tables', 'alpha') : 'undefined').'<br>'."\n";
-print '<span class="valignmiddle">'."Option force_utf8mb4_on_tables (force utf8mb4 + row=dynamic), for mysql/mariadb only, is ".(GETPOST('force_utf8mb4_on_tables', 'alpha') ? GETPOST('force_utf8mb4_on_tables', 'alpha') : 'undefined');
-print '</span>';
-if ($dolibarr_main_db_character_set != 'utf8mb4') {
-	print '<img src="../theme/eldy/img/warning.png" class="pictofortooltip valignmiddle" title="If you switch to utf8mb4, you must also check the value for $dolibarr_main_db_character_set and $dolibarr_main_db_collation into conf/conf.php file.">';
-}
-print "<br>\n";
-print "Option force_collation_from_conf_on_tables (force ".$conf->db->character_set."/".$conf->db->dolibarr_main_db_collation." + row=dynamic), for mysql/mariadb only is ".(GETPOST('force_collation_from_conf_on_tables', 'alpha') ? GETPOST('force_collation_from_conf_on_tables', 'alpha') : 'undefined')."<br>\n";
-
-// Rebuild sequence
-print 'Option rebuild_sequences, for postgresql only, is '.(GETPOST('rebuild_sequences', 'alpha') ? GETPOST('rebuild_sequences', 'alpha') : 'undefined').'<br>'."\n";
-print '<br>';
-
-print '<hr>';
 
 print '<table cellspacing="0" cellpadding="1" class="centpercent">';
 $error = 0;
 
 // If password is encoded, we decode it
-if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass)) {
+if (preg_match('/(crypted|dolcrypt):/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass)) {
 	require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
 	if (preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
 		$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
-		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
 		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially encrypted
+		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
+	} elseif (preg_match('/dolcrypt:/i', $dolibarr_main_db_pass)) {
+		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially encrypted
+		$dolibarr_main_db_pass = dolDecrypt($dolibarr_main_db_pass);
 	} else {
 		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 	}
@@ -167,11 +134,11 @@ $db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf
 
 if ($db->connected) {
 	print '<tr><td class="nowrap">';
-	print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td class=\"right\">".$langs->trans("OK")."</td></tr>";
+	print $langs->trans("ServerConnection")." : ".$dolibarr_main_db_host.'</td><td class="right">'.$langs->trans("OK")."</td></tr>";
 	dolibarr_install_syslog("repair: ".$langs->transnoentities("ServerConnection").": ".$dolibarr_main_db_host.$langs->transnoentities("OK"));
 	$ok = 1;
 } else {
-	print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td class=\"right\">".$langs->transnoentities("Error")."</td></tr>";
+	print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name).'</td><td class="right">'.$langs->transnoentities("Error")."</td></tr>";
 	dolibarr_install_syslog("repair: ".$langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
 	$ok = 0;
 }
@@ -179,11 +146,11 @@ if ($db->connected) {
 if ($ok) {
 	if ($db->database_selected) {
 		print '<tr><td class="nowrap">';
-		print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td class=\"right\">".$langs->trans("OK")."</td></tr>";
+		print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name.'</td><td class="right">'.$langs->trans("OK")."</td></tr>";
 		dolibarr_install_syslog("repair: database connection successful: ".$dolibarr_main_db_name);
 		$ok = 1;
 	} else {
-		print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td class=\"right\">".$langs->trans("Error")."</td></tr>";
+		print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name).'</td><td class="right">'.$langs->trans("Error")."</td></tr>";
 		dolibarr_install_syslog("repair: ".$langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
 		$ok = 0;
 	}
@@ -198,6 +165,141 @@ if ($ok) {
 	dolibarr_install_syslog("repair: ".$langs->transnoentities("ServerVersion").": ".$version);
 	//print '<td class="right">'.join('.',$versionarray).'</td></tr>';
 }
+
+print '</table>';
+
+
+print '<br>';
+
+
+print '<div class="warning" style="padding-top: 10px">';
+print 'Select a link "test" or "confirmed" to launch a reparation on the chosen option...';
+print '</div>';
+print '<br>';
+
+
+print '<table class="liste centpercent" style="border: 1px solid #ccc">';
+print '<tr>';
+print '<th>Option</th>';
+print '<th>Information</th>';
+print '<th>Launch test</th>';
+print '<th>Launch confirmed</th>';
+print '</tr>';
+
+$warning_using_utf8mb4 = '';
+if ($dolibarr_main_db_character_set != 'utf8mb4') {
+	$warning_using_utf8mb4 = '<img src="../theme/eldy/img/warning.png" class="pictofortooltip valignmiddle" title="If you switch to utf8mb4, you must also check the value for $dolibarr_main_db_character_set and $dolibarr_main_db_collation into conf/conf.php file.">';
+}
+
+$sections = [
+	'Standard' => [
+		[
+			'name' => 'standard',
+			'info' => ''
+		]
+	],
+	'Modules' => [
+		[
+			'name' => 'force_disable_of_modules_not_found',
+			'info' => 'Disable modules not found'
+		]
+	],
+	'Files' => [
+		[
+			'name' => 'restore_thirdparties_logos',
+			'info' => 'Restore logos for thirdparties'
+		],
+		[
+			'name' => 'restore_user_pictures',
+			'info' => 'Restore user pictures'
+		],
+		[
+			'name' => 'rebuild_product_thumbs',
+			'info' => 'Rebuild product thumbnails'
+		]
+	],
+	'Clean tables and data' => [
+		[
+			'name' => 'clean_linked_elements',
+			'info' => 'Clean linked elements'
+		],
+		[
+			'name' => 'clean_menus',
+			'info' => 'Clean menus'
+		],
+		[
+			'name' => 'clean_orphelin_dir',
+			'info' => 'Clean orphan directories'
+		],
+		[
+			'name' => 'clean_product_stock_batch',
+			'info' => 'Clean product stock batch'
+		],
+		[
+			'name' => 'clean_perm_table',
+			'info' => 'Clean permissions table'
+		],
+		[
+			'name' => 'clean_ecm_files_table',
+			'info' => 'Clean ECM files table'
+		],
+		[
+			'name' => 'repair_link_dispatch_lines_supplier_order_lines',
+			'info' => 'Repair link between dispatch lines and supplier order lines'
+		]
+	],
+	'Init data' => [
+		[
+			'name' => 'set_empty_time_spent_amount',
+			'info' => 'Init empty time spent amount'
+		]
+	],
+	'Structure' => [
+		[
+			'name' => 'force_utf8_on_tables',
+			'info' => 'Force utf8 + row=dynamic, for mysql/mariadb only'
+		],
+		[
+			'name' => 'force_utf8mb4_on_tables',
+			'info' => 'Force utf8mb4 + row=dynamic, for mysql/mariadb only' . $warning_using_utf8mb4
+		],
+		[
+			'name' => 'force_collation_from_conf_on_tables',
+			'info' => 'Force '.$conf->db->character_set.'/'.$conf->db->dolibarr_main_db_collation.' + row=dynamic, for mysql/mariadb only'
+		]
+	],
+	'Rebuild sequence' => [
+		[
+			'name' => 'rebuild_sequences',
+			'info' => 'For postgresql only'
+		]
+	]
+];
+
+foreach ($sections as $section => $options) {
+	print '<tr style="background:#f4f4f4;font-weight:bold"><td colspan="5">'.$section.'</td></tr>';
+	foreach ($options as $opt) {
+		$option = $opt['name'];
+		$info = $opt['info'];
+		$value = GETPOST($option, 'alpha') ? GETPOST($option, 'alpha') : 'undefined';
+		// Generate links with the right option and value
+		$url_test = $_SERVER['PHP_SELF'].'?'.$option.'=test';
+		$url_confirmed = $_SERVER['PHP_SELF'].'?'.$option.'=confirmed';
+		print '<tr>';
+		print '<td>' . $option . '</td>';
+		print '<td>' . $info . '</td>';
+		print '<td class="center"><a href="'.$url_test.'" title="Launch test on option '.$option.'">test</a>'.($value == 'test' ? ' (X)' : '').'</td>';
+		print '<td class="center"><a href="'.$url_confirmed.'" title="Launch confirmed on option '.$option.'">confirmed</a>'.($value == 'confirmed' ? ' (X)' : '').'</td>';
+		print '</tr>';
+	}
+}
+print '</table>';
+
+
+print '<br id="sectionresult">';
+
+print '<table cellspacing="0" cellpadding="1" class="centpercent">';
+
 
 $conf->setValues($db);
 // Reset forced setup after the setValues
@@ -1885,12 +1987,15 @@ if ($ok && GETPOST('repair_supplier_order_duplicate_ref')) {
 if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 	$err = 0;
 	$db->begin();
-	$sql = "SELECT f.rowid, SUM(fd.total_ht) as total_ht";
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture f";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet fd ON fd.fk_facture = f.rowid";
-	$sql .= " WHERE f.total_ht = 0";
-	$sql .= " GROUP BY fd.fk_facture HAVING SUM(fd.total_ht) <> 0";
-
+	$sql = "
+		SELECT
+			f.rowid,
+			SUM(fd.total_ht) as total_ht
+		FROM ".MAIN_DB_PREFIX."facture f
+			LEFT JOIN ".MAIN_DB_PREFIX."facturedet fd
+				ON fd.fk_facture = f.rowid
+		WHERE f.total_ht = 0
+		GROUP BY fd.fk_facture HAVING SUM(fd.total_ht) <> 0";
 	$resql = $db->query($sql);
 	if ($resql) {
 		$num = $db->num_rows($resql);
@@ -1914,14 +2019,24 @@ if ($ok && GETPOST('recalculateinvoicetotal') == 'confirmed') {
 						fd.fk_facture = $obj->rowid";
 				$ressql_calculs = $db->query($sql_calculs);
 				while ($obj_calcul = $db->fetch_object($ressql_calculs)) {
+					// Calcul de la somme des paiements reçus
+					$sql_paiements = "SELECT SUM(amount) as somme from ".MAIN_DB_PREFIX."paiement_facture WHERE fk_facture = $obj->rowid";
+					$montantPaiements = $db->fetch_object($db->query($sql_paiements))->somme;
+					$totHt= ($obj_calcul->total_ht ? price2num($obj_calcul->total_ht, 'MT') : 0);
+					$totTva = ($obj_calcul->total_tva ? price2num($obj_calcul->total_tva, 'MT') : 0);
+					$totLocal1 = ($obj_calcul->localtax1 ? price2num($obj_calcul->localtax1, 'MT') : 0);
+					$totLocal2 = ($obj_calcul->localtax2 ? price2num($obj_calcul->localtax2, 'MT') : 0);
+					$totTtc = $totHt + $totTva + $totLocal1 + $totLocal2;
 					$sql_maj = "
 						UPDATE ".MAIN_DB_PREFIX."facture
 						SET
-							total_ht = ".($obj_calcul->total_ht ? price2num($obj_calcul->total_ht, 'MT') : 0).",
-							total_tva = ".($obj_calcul->total_tva ? price2num($obj_calcul->total_tva, 'MT') : 0).",
-							localtax1 = ".($obj_calcul->localtax1 ? price2num($obj_calcul->localtax1, 'MT') : 0).",
-							localtax2 = ".($obj_calcul->localtax2 ? price2num($obj_calcul->localtax2, 'MT') : 0).",
-							total_ttc = ".($obj_calcul->total_ttc ? price2num($obj_calcul->total_ttc, 'MT') : 0)."
+							total_ht = $totHt,
+							total_tva = $totTva,
+							localtax1 = $totLocal1,
+							localtax2 = $totLocal2,
+							total_ttc = $totTtc,
+							fk_statut = ".($totTtc == price2num($montantPaiements, 'MT') ? 2 : 1 ).",
+							paid = ".($totTtc == price2num($montantPaiements, 'MT') ? 1 : 0 )."
 						WHERE
 							rowid = $obj->rowid";
 					$db->query($sql_maj);

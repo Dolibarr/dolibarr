@@ -9,7 +9,8 @@
 #      files.  These should be fixed but are ignored for now
 #      so that continuous integration does not complain about it
 #      in order to detect newly introduced issues with the keys.
-#
+
+
 # ██████╗  █████╗ ██████╗ ████████╗ ██╗
 # ██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝███║
 # ██████╔╝███████║██████╔╝   ██║   ╚██║
@@ -76,6 +77,7 @@ ViewPageInNewTab
 WEBSITE_PAGE_EXAMPLE
 WebpageContent
 YourTicketSuccessfullySaved
+
 #
 # ██████╗  █████╗ ██████╗ ████████╗██████╗
 # ██╔══██╗██╔══██╗██╔══██╗╚══██╔══╝╚════██╗
@@ -94,8 +96,6 @@ AADE_WEBSERVICE_USER
 API
 Accept
 AccountancyErrorMismatchLetteringCode
-AccountingAccount
-AccountingCode
 AccountingJournalType
 ActionAC_
 ActionAC_ALL_
@@ -145,14 +145,12 @@ Banque
 Barcode
 BarcodeDesc
 BarcodeStickersMask
-BatchInformationNotfound
 BillOfMaterialsLine
 BlockLogNeedAmountsValue
 BlockLogNeedElement
 BlockedLogAuthorityNeededToStoreYouFingerprintsInNonAlterableRemote
 BlockedLogAuthorityUrl
 BlockedLogSetup
-BookCalSystem
 Bookings
 BoxTitleLast
 BoxTitleLatest
@@ -200,8 +198,6 @@ ConfirmActionMyObject
 ConfirmActionTarget
 ConfirmCloneMyObject
 ConfirmCloneTask
-ConfirmCreateAdherent
-ConfirmDeleteAdherent
 ConfirmDeleteIndividual
 ConfirmDeleteReport
 ConfirmDeleteWebsiteAccount
@@ -216,7 +212,6 @@ Control
 Convert
 Core
 Count
-CreateRemoteOrder
 CreateRepeatableIntervention
 Created
 CronCannotLoadLib
@@ -290,7 +285,6 @@ EmailcollectorFilter
 EmailingTargetSelector
 Empty
 End
-EnterAnIP
 EnterNameOfDictionnaryToDeleteDesc
 Entries
 ErrSCAAuthentication
@@ -308,7 +302,6 @@ ErrorBadSocialNetworkValue
 ErrorBadStatus
 ErrorBadValue
 ErrorBadValueForBatch
-ErrorBadValueForDate
 ErrorCanNotDeleteDir
 ErrorCantSplitAUsedDiscount
 ErrorChartOfAccountSystemNotSelected
@@ -361,7 +354,6 @@ ErrorTechnicalError
 ErrorThirdPartyIdIsMandatory
 ErrorTicketIsNotValid
 ErrorTitreAlreadyExists
-ErrorUpdatingUsersCP
 ErrorUserFetch
 ErrorValueMustBeInteger
 ErrorValueTooHigh
@@ -433,7 +425,6 @@ Gzip
 HTTPBasicPassword
 HelpAbandonProductReturned
 HideVersionLink
-HolidayStarted
 Hook
 Hooks
 IBANNotDefined
@@ -472,7 +463,6 @@ Lifetime
 LinkedElementsInvalidDeleted
 LinkedToAConcialitedTransaction
 ListOfAttendeesPerConference
-ListOfBookmark
 ListTicketsLinkToContract
 Load
 LocalTaxReport
@@ -512,7 +502,6 @@ Modulebuilder
 ModulebuilderSetup
 MonthShort
 MonthVeryShort
-Morphy
 Movement
 MultiCompanyMode
 Multicompanies
@@ -571,7 +560,6 @@ NoType
 NoTypeOfPagePleaseEditDictionary
 NoURL
 No_record_on_multicurrency_rate
-NobodyHasPermissionToValidateExpenseReport
 NotAllExportedMovementsCouldBeRecordedAsExportedOrValidated
 NotEnoughForAllOrders
 NotFound
@@ -622,7 +610,6 @@ PaymentCondition
 PaymentConditionShort
 PaymentDonation
 PaymentHigherThanReminderToPaySupplier
-PaymentSalary
 PaymentSendToStripeTerminal
 PaymentType
 PaymentTypeShort
@@ -813,7 +800,6 @@ Templates
 TestPrinterTemplate
 TestTemplateToPrinter
 Theme
-ThirdpartyHasNoDefaultBanAccount
 ThisIsInformationOnDocumentToSign
 ThisScreenAllowsYouToSignDocFrom
 TicketCategoryShort
@@ -850,8 +836,6 @@ UpdateUser
 UpgradeHasBeenUnlocked
 Url
 Use of API for currency update is disabled by option MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER
-UserRemovedFromGroup
-UserSetInGroup
 VCard
 Vacant
 ValidateAndSign
@@ -877,7 +861,6 @@ Widgets
 Windows
 WorkingBoard
 Workload
-WrongAmount
 XDebug
 XmlCorrupted
 Y
@@ -1034,10 +1017,6 @@ PDF/A-3b
 PartnershipSentByEMail
 PdfTitle
 ProcessingError
-PurchaseOrder
-PurchaseOrders
-ReceptionSentByEMail
-ReceptionValidated
 Recruited
 Ref. Product
 RefNewContract
@@ -1045,7 +1024,6 @@ Stable
 Suggested
 TicketMessageMailSignatureText
 TicketSetupPage
-Tiers
 Timeline
 Transfer
 TryAnotherConnectionMode

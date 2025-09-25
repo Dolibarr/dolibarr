@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@inodbox.com>
- * Copyright (C) 2012      Philippe Grand <philippe.grand@atoo-net.com>
- * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2010-2012  Regis Houssin  			<regis.houssin@inodbox.com>
+ * Copyright (C) 2012       Philippe Grand 			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -249,7 +250,7 @@ abstract class ActionsAdherentCardCommon
 			array('label' => $langs->trans("LoginToCreate"), 'type' => 'text', 'name' => 'login', 'value' => $login),
 			array('label' => $langs->trans("Password"), 'type' => 'text', 'name' => 'password', 'value' => $password));
 
-			$this->tpl['action_create_user'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id, $langs->trans("CreateDolibarrLogin"), $langs->trans("ConfirmCreateAdherent"), "confirm_create_user", $formquestion, 'no');
+			$this->tpl['action_create_user'] = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$this->object->id, $langs->trans("CreateDolibarrLogin"), $langs->trans("ConfirmCreateMember"), "confirm_create_user", $formquestion, 'no');
 		}
 	}
 
@@ -269,8 +270,8 @@ abstract class ActionsAdherentCardCommon
 
 		$this->object->fk_soc = GETPOSTINT("fk_soc");
 		$this->object->socid = GETPOSTINT("fk_soc");
-		$this->object->lastname			= GETPOST("lastname");
-		$this->object->firstname		= GETPOST("firstname");
+		$this->object->lastname = GETPOST("lastname");
+		$this->object->firstname = GETPOST("firstname");
 		$this->object->civility_id = GETPOST("civility_id");
 		$this->object->address = GETPOST("address");
 		$this->object->zip = GETPOST("zipcode");

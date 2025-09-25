@@ -3,10 +3,10 @@ MenuFinancial=Fakturowanie | Płatności
 TaxModuleSetupToModifyRules=Przejdź do <a href="%s">konfiguracji modułu Podatki</a> zmodyfikować zasady obliczania
 TaxModuleSetupToModifyRulesLT=Przejdź do <a href="%s">konfiguracji firmy</a> zmodyfikować zasady obliczania
 OptionMode=Opcja dla księgowości
-OptionModeTrue=Rachunkowość memoriałowa
-OptionModeVirtual=Rachunkowość kasowa
-OptionModeTrueDesc=W tym kontekście obrót oblicza się na podstawie płatności (data płatności). Ważność liczb jest zapewniona tylko wtedy, gdy księgowość jest kontrolowana poprzez wejście/wyjście płatności.
+OptionModeVirtual=Accrual accounting
+OptionModeTrue=Cash accounting
 OptionModeVirtualDesc=W tym kontekście, obrót jest obliczana na fakturach (data zatwierdzenia). Gdy te faktury są należne, czy zostały zapłacone, czy nie są one wymienione w obrocie wyjście.
+OptionModeTrueDesc=W tym kontekście obrót oblicza się na podstawie płatności (data płatności). Ważność liczb jest zapewniona tylko wtedy, gdy księgowość jest kontrolowana poprzez wejście/wyjście płatności.
 FeatureIsSupportedInInOutModeOnly=Funkcja dostępna tylko w KREDYTÓW-DŁUGI rachunkowych trybu (patrz Rachunkowych moduł konfiguracji)
 VATReportBuildWithOptionDefinedInModule=Kwoty wyświetlane tutaj są obliczane na zasadach określonych w konfiguracji moduly podatkowego
 LTReportBuildWithOptionDefinedInModule=Kwoty podane tutaj są obliczane na podstawie zasad określonych przez konfigurację firmy.
@@ -302,7 +302,6 @@ ByVatRate=Według stawki podatku od sprzedaży
 TurnoverbyVatrate=Obrót fakturowany według stawki podatku od sprzedaży
 TurnoverCollectedbyVatrate=Obrót pobierany według stawki podatku od sprzedaży
 PurchasebyVatrate=Zakup według stawki podatku od sprzedaży
-LabelToShow=Krótka etykieta
 PurchaseTurnover=Obrót zakupowy
 PurchaseTurnoverCollected=Zebrany obrót zakupowy
 RulesPurchaseTurnoverDue=- Obejmuje należne faktury dostawcy, niezależnie od tego, czy są opłacone, czy nie. <br> - Opiera się na dacie faktury tych faktur. <br>
@@ -329,3 +328,4 @@ RuleForLinesDates=Reguła dla dat linii
 Prepaid=Opłacony z góry
 Postpaid=Płatność z dołu
 SetRuleForLinesDates=Ustaw regułę dla dat wierszy
+SomeNotConvertedCreditNoteExists=There is <b>%s</b> credit notes not yet converted for consumption
